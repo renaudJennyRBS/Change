@@ -30,13 +30,17 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param \Zend\EventManager\EventManager $eventManager
 	 * @param $cmd
 	 * @param $arguments
-	 * @return \ArrayObject
+	 * @return \Change\Commands\Events\CommandResponseInterface
 	 */
 	protected function executeCommand($application, $eventManager, $cmd, $arguments)
 	{
 		$cmdEvent = new \Change\Commands\Events\Event($cmd, $application, $arguments);
+
+		$response = new \Change\Commands\Events\RestCommandResponse();
+		$cmdEvent->setCommandResponse($response);
+
 		$eventManager->trigger($cmdEvent);
-		return $cmdEvent->getOutputMessages();
+		return $cmdEvent->getCommandResponse();
 	}
 
 	public function testSetDocumentRoot()
@@ -45,10 +49,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$arguments = array('webBaseDirectory' => 'ChangeTests/UnitTestWorkspace/www', 'webBaseURLPath' => '');
 		$application = $this->getApplication();
 		$eventManager = $this->getCommandsEventManager($application);
-		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->assertInstanceOf('\ArrayObject', $output);
-		$this->assertGreaterThanOrEqual(1, $output->count());
-		$this->assertStringStartsWith('Web base Directory', $output[0][0]);
+		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
+		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
+		$result = $commandResponse->toArray();
+		$this->assertArrayHasKey('info', $result);
+		$this->assertGreaterThanOrEqual(1, count($result['info']));
+		$this->assertStringStartsWith('Web base Directory', $result['info'][0]);
 	}
 
 
@@ -58,10 +64,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:generate-db-schema';
 		$arguments = array('with-modules' => false);
-		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->assertInstanceOf('\ArrayObject', $output);
-		$this->assertEquals(1, $output->count());
-		$this->assertStringStartsWith('Change DB schema generated', $output[0][0]);
+		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
+		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
+		$result = $commandResponse->toArray();
+		$this->assertArrayHasKey('info', $result);
+		$this->assertEquals(1, count($result['info']));
+		$this->assertStringStartsWith('Change DB schema generated', $result['info'][0]);
 	}
 
 
@@ -71,13 +79,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:register-plugin';
 		$arguments = array("all" => true);
-		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->assertInstanceOf('\ArrayObject', $output);
-		$this->assertGreaterThan(2, $output->count());
-		foreach ($output as $msg)
-		{
-			$this->assertEquals(0 , $msg[1]);
-		}
+		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
+		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
+		$result = $commandResponse->toArray();
+		$this->assertArrayHasKey('info', $result);
+		$this->assertGreaterThan(2, count($result['info']));
+		$this->assertArrayNotHasKey('error', $result);
 	}
 
 	public function testInstallCorePackage()
@@ -86,13 +93,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-package';
 		$arguments = array('vendor' => 'Rbs', 'name' => 'Core');
-		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->assertInstanceOf('\ArrayObject', $output);
-		$this->assertGreaterThan(10, $output->count());
-		foreach ($output as $msg)
-		{
-			$this->assertEquals(0 , $msg[1]);
-		}
+		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
+		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
+		$result = $commandResponse->toArray();
+		$this->assertArrayHasKey('info', $result);
+		$this->assertGreaterThan(10, count($result['info']));
+		$this->assertArrayNotHasKey('error', $result);
 	}
 
 	public function testInstallEcomPackage()
@@ -101,13 +107,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-package';
 		$arguments = array('vendor' => 'Rbs', 'name' => 'ECom');
-		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->assertInstanceOf('\ArrayObject', $output);
-		$this->assertGreaterThan(2, $output->count());
-		foreach ($output as $msg)
-		{
-			$this->assertEquals(0 , $msg[1]);
-		}
+		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
+		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
+		$result = $commandResponse->toArray();
+		$this->assertArrayHasKey('info', $result);
+		$this->assertGreaterThan(2, count($result['info']));
+		$this->assertArrayNotHasKey('error', $result);
 	}
 
 	public function testInstallDemoPlugin()
@@ -116,13 +121,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-plugin';
 		$arguments = array('type' => 'theme', 'vendor' => 'Rbs', 'name' => 'Demo');
-		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
-		$this->assertInstanceOf('\ArrayObject', $output);
-		$this->assertGreaterThan(1, $output->count());
-		foreach ($output as $msg)
-		{
-			$this->assertEquals(0 , $msg[1]);
-		}
+		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
+		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
+		$result = $commandResponse->toArray();
+		$this->assertArrayHasKey('info', $result);
+		$this->assertGreaterThan(1, count($result['info']));
+		$this->assertArrayNotHasKey('error', $result);
 	}
 
 	public function testCleanUp()

@@ -12,11 +12,13 @@ class AddDefaultWebsite
 	{
 		$applicationServices = $event->getApplicationServices();
 
+		$response = $event->getCommandResponse();
+
 		/* @var $website \Rbs\Website\Documents\Website */
 		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Website_Website');
 		if ($query->getCountDocuments())
 		{
-			$event->addCommentMessage('Default Website already exist.');
+			$response->addCommentMessage('Default Website already exist.');
 			return;
 		}
 		$transactionManager = $applicationServices->getTransactionManager();
@@ -38,14 +40,14 @@ class AddDefaultWebsite
 				$applicationServices->getTreeManager()->insertNode($rootNode, $website);
 			}
 
-			$event->addInfoMessage('Default website successfully added at: ' . $website->getBaseurl());
+			$response->addInfoMessage('Default website successfully added at: ' . $website->getBaseurl());
 			$transactionManager->commit();
 		}
 		catch (\Exception $e)
 		{
 			$applicationServices->getLogging()->exception($e);
 			$transactionManager->rollBack($e);
-			$event->addErrorMessage($e->getMessage());
+			$response->addErrorMessage($e->getMessage());
 		}
 	}
 }

@@ -15,10 +15,12 @@ class Client
 	{
 		$applicationServices = $event->getApplicationServices();
 
+		$response = $event->getCommandResponse();
+
 		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
-			$event->addErrorMessage('Elasticsearch services not registered');
+			$response->addErrorMessage('Elasticsearch services not registered');
 			return;
 		}
 
@@ -34,13 +36,13 @@ class Client
 					$srvStat = $status->getServerStatus();
 					if ($srvStat['ok'])
 					{
-						$event->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
+						$response->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
 							. $srvStat['status'] . ')');
 						if ($event->getParam('list'))
 						{
 							foreach ($indexManager->getIndexesDefinition($name) as $indexDef)
 							{
-								$event->addInfoMessage('Declared index "' . $indexDef->getName() . '", mapping: '
+								$response->addInfoMessage('Declared index "' . $indexDef->getName() . '", mapping: '
 									. $indexDef->getMappingName()
 									. ', language: ' . $indexDef->getAnalysisLCID());
 								$idx = $client->getIndex($indexDef->getName());
@@ -49,11 +51,11 @@ class Client
 									$status = $idx->getStatus();
 									$numDocs = $status->get('docs')['num_docs'];
 									$size = $status->get('index')['size'];
-									$event->addInfoMessage('-- documents: ' . $numDocs . ' , size: ' . $size);
+									$response->addInfoMessage('-- documents: ' . $numDocs . ' , size: ' . $size);
 								}
 								else
 								{
-									$event->addCommentMessage('-- Not defined on client.');
+									$response->addCommentMessage('-- Not defined on client.');
 								}
 							}
 						}
@@ -65,18 +67,18 @@ class Client
 								if ($event->getParam('delete'))
 								{
 									$indexManager->deleteIndex($indexDef);
-									$event->addInfoMessage('index: "' . $indexName . '" deleted');
+									$response->addInfoMessage('index: "' . $indexName . '" deleted');
 								}
 								if ($event->getParam('create'))
 								{
 									$index = $indexManager->setIndexConfiguration($indexDef);
 									if ($index)
 									{
-										$event->addInfoMessage('index: "' . $indexName . '" created');
+										$response->addInfoMessage('index: "' . $indexName . '" created');
 									}
 									else
 									{
-										$event->addErrorMessage('index: "' . $indexName . '" not created');
+										$response->addErrorMessage('index: "' . $indexName . '" not created');
 									}
 								}
 
@@ -86,34 +88,34 @@ class Client
 									if (count($mapping))
 									{
 										$indexManager->setFacetMapping($indexDef, $mapping);
-										$event->addInfoMessage('index: "' . $indexName . '" facet mapping updated');
+										$response->addInfoMessage('index: "' . $indexName . '" facet mapping updated');
 									}
 									elseif ($event->getParam('facet-mapping'))
 									{
-										$event->addCommentMessage('index: "' . $indexName . '" has no facet to update');
+										$response->addCommentMessage('index: "' . $indexName . '" has no facet to update');
 									}
 								}
 							}
 							else
 							{
-								$event->addErrorMessage('index "' . $indexName . '" not found.');
+								$response->addErrorMessage('index "' . $indexName . '" not found.');
 							}
 						}
 					}
 					else
 					{
-						$event->addErrorMessage('Error: ' . print_r($srvStat, true));
+						$response->addErrorMessage('Error: ' . print_r($srvStat, true));
 					}
 				}
 				catch (\Exception $e)
 				{
 					$applicationServices->getLogging()->exception($e);
-					$event->addErrorMessage('Error on client ' . $name . ': ' . $e->getMessage());
+					$response->addErrorMessage('Error on client ' . $name . ': ' . $e->getMessage());
 				}
 			}
 			else
 			{
-				$event->addErrorMessage('Invalid client name: ' . $name);
+				$response->addErrorMessage('Invalid client name: ' . $name);
 			}
 		}
 		else
@@ -121,11 +123,11 @@ class Client
 			$clientsName = $indexManager->getClientsName();
 			if (count($clientsName))
 			{
-				$event->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));
+				$response->addInfoMessage('Declared clients: ' . implode(', ', $clientsName));
 			}
 			else
 			{
-				$event->addCommentMessage('No declared client.');
+				$response->addCommentMessage('No declared client.');
 			}
 		}
 	}

@@ -19,6 +19,7 @@ class DeregisterPlugin
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');
 
+		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();
 
@@ -37,20 +38,20 @@ class DeregisterPlugin
 				}
 				catch(\Exception $e)
 				{
-					$event->addErrorMessage("Error deregistering plugin");
+					$response->addErrorMessage("Error deregistering plugin");
 					$applicationServices->getLogging()->exception($e);
 					throw $e;
 				}
-				$event->addInfoMessage('Done!');
+				$response->addInfoMessage('Done!');
 			}
 			else
 			{
-				$event->addErrorMessage("Can not deregister configured plugin");
+				$response->addErrorMessage("Can not deregister configured plugin");
 			}
 		}
 		else
 		{
-			$event->addInfoMessage('Nothing to do');
+			$response->addInfoMessage('Nothing to do');
 		}
 	}
 }

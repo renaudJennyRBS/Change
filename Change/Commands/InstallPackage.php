@@ -19,6 +19,8 @@ class InstallPackage
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');
 
+		$response = $event->getCommandResponse();
+
 		$pluginManager = $applicationServices->getPluginManager();
 		$pluginManager->compile();
 
@@ -28,13 +30,13 @@ class InstallPackage
 		{
 			foreach ($plugins as $plugin)
 			{
-				$event->addInfoMessage($plugin . ' installed');
+				$response->addInfoMessage($plugin . ' installed');
 			}
-			$event->addInfoMessage(count($plugins) . ' plugin(s) installed.');
+			$response->addInfoMessage(count($plugins) . ' plugin(s) installed.');
 		}
 		else
 		{
-			$event->addInfoMessage('Package not installed.');
+			$response->addInfoMessage('Package not installed.');
 		}
 	}
 }

@@ -13,12 +13,14 @@ class CreateCommand
 	 */
 	public function execute(Event $event)
 	{
+		$response = $event->getCommandResponse();
+
 		$application = $event->getApplication();
 		$cmdName = $event->getParam('cmdname');
 		$validator = new \Zend\Validator\Regex('#^([a-z]+-{1})*[a-z]+$#');
 		if (!$validator->isValid($cmdName))
 		{
-			$event->addErrorMessage('Command name should be a lowercase dash separated string');
+			$response->addErrorMessage('Command name should be a lowercase dash separated string');
 			return;
 		}
 		$package = $event->getParam('package');
@@ -38,7 +40,7 @@ class CreateCommand
 
 		if (!$valid)
 		{
-			$event->addErrorMessage('Package name should be of the form vendor_module not installed');
+			$response->addErrorMessage('Package name should be of the form vendor_module not installed');
 			return;
 		}
 
@@ -70,11 +72,11 @@ class CreateCommand
 		$filePath = $commandDir . DIRECTORY_SEPARATOR . $className . '.php' ;
 		if (file_exists($filePath))
 		{
-			$event->addErrorMessage('File already exists at path ' . $filePath);
+			$response->addErrorMessage('File already exists at path ' . $filePath);
 			return;
 		}
 		\Change\Stdlib\File::write($commandDir . DIRECTORY_SEPARATOR . $className . '.php' , $content);
 
-		$event->addInfoMessage('Command added at path ' . $filePath);
+		$response->addInfoMessage('Command added at path ' . $filePath);
 	}
 }

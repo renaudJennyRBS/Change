@@ -18,6 +18,8 @@ class CompileDocuments
 		$compiler = new \Change\Documents\Generators\Compiler($application, $applicationServices);
 		$compiler->generate();
 		$nbModels = count($compiler->getModels());
-		$event->addInfoMessage($nbModels. ' document model compiled.');
+
+		$response = $event->getCommandResponse();
+		$response->addInfoMessage($nbModels. ' document model compiled.');
 	}
 }

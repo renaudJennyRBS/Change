@@ -17,6 +17,8 @@ class CompilePluginsRegistration
 		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$nbPlugins = count($plugins);
-		$event->addInfoMessage($nbPlugins. ' plugins registered');
+
+		$response = $event->getCommandResponse();
+		$response->addInfoMessage($nbPlugins. ' plugins registered');
 	}
 }

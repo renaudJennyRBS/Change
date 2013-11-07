@@ -19,6 +19,7 @@ class DisablePlugin
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');
 
+		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();
 
@@ -35,16 +36,16 @@ class DisablePlugin
 			}
 			catch(\Exception $e)
 			{
-				$event->addErrorMessage("Error disabling plugin");
+				$response->addErrorMessage("Error disabling plugin");
 				$applicationServices->getLogging()->exception($e);
 				throw $e;
 			}
 			$pluginManager->compile();
-			$event->addInfoMessage('Done.');
+			$response->addInfoMessage('Done.');
 		}
 		else
 		{
-			$event->addInfoMessage('Nothing to do');
+			$response->addInfoMessage('Nothing to do');
 		}
 	}
 }

@@ -13,11 +13,13 @@ class #className#
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
+//		$application = $event->getApplication();
 		//Code of your command here
 
-//		$applicationServices = new \Change\Application\ApplicationServices($application);
+//		$applicationServices = $event->getApplicationServices();
 
-		$event->addInfoMessage('Done.');
+		$response = $event->getCommandResponse();
+
+		$response->addInfoMessage('Done.');
 	}
 }

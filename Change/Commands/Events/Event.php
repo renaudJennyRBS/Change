@@ -8,14 +8,9 @@ class Event extends \Change\Events\Event
 {
 
 	/**
-	 * @var bool
+	 * @var CommandResponseInterface
 	 */
-	protected $success = true;
-
-	public function success()
-	{
-		return $this->success;
-	}
+	protected $commandResponse;
 
 	/**
 	 * @return \Change\Application
@@ -26,51 +21,19 @@ class Event extends \Change\Events\Event
 	}
 
 	/**
-	 * @return \ArrayObject
+	 * @param \Change\Commands\Events\CommandResponseInterface $commandResponse
 	 */
-	public function getOutputMessages()
+	public function setCommandResponse($commandResponse)
 	{
-		$outputMessages = $this->getParam('outputMessages');
-		if (!($outputMessages instanceof \ArrayObject))
-		{
-			$outputMessages = new \ArrayObject();
-			$this->setParam('outputMessages', $outputMessages);
-		}
-		return $outputMessages;
+		$this->commandResponse = $commandResponse;
 	}
 
 	/**
-	 * @param string $message
-	 * @param int $level
+	 * @return \Change\Commands\Events\CommandResponseInterface
 	 */
-	public function addMessage($message, $level = 0)
+	public function getCommandResponse()
 	{
-		$outputMessages = $this->getOutputMessages();
-		$outputMessages[] = array($message, $level);
+		return $this->commandResponse;
 	}
 
-	/**
-	 * @param string $message
-	 */
-	public function addInfoMessage($message)
-	{
-		$this->addMessage($message, 0);
-	}
-
-	/**
-	 * @param string $message
-	 */
-	public function addCommentMessage($message)
-	{
-		$this->addMessage($message, 1);
-	}
-
-	/**
-	 * @param string $message
-	 */
-	public function addErrorMessage($message)
-	{
-		$this->success = false;
-		$this->addMessage($message, 2);
-	}
 }

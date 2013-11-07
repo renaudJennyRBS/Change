@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest;
 
+use Change\Commands\Events\RestCommandResponse;
+
 /**
  * @name \Change\Http\Rest\CommandsResolver
  */
@@ -178,18 +180,28 @@ class CommandsResolver
 			}
 			$inputArgs = $arguments->getArrayCopy();
 			$cmdEvent = new \Change\Commands\Events\Event($cmd, $application, $arguments);
-			$eventManager->trigger($cmdEvent);
 
-			$result = new \Change\Http\Rest\Result\ArrayResult();
-			$result->setArray(array('command'=> $cmd, 'inputArguments' => $inputArgs, 'result' => $cmdEvent->getOutputMessages()));
-			if ($cmdEvent->success())
+			$response = new \Change\Commands\Events\RestCommandResponse();
+			$cmdEvent->setCommandResponse($response);
+
+			try
 			{
+				$eventManager->trigger($cmdEvent);
+
+				$result = new \Change\Http\Rest\Result\ArrayResult();
+				$result->setArray(array('command'=> $cmd, 'inputArguments' => $inputArgs, 'result' => $cmdEvent->getCommandResponse()->toArray()));
+
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 			}
-			else
+			catch (\RuntimeException $e)
 			{
-				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
+				$result = new \Change\Http\Rest\Result\ErrorResult($e->getCode(), $e->getMessage(), \Zend\Http\Response::STATUS_CODE_409);
 			}
+			catch (\Exception $e)
+			{
+				$result = new \Change\Http\Rest\Result\ErrorResult($e->getCode(), $e->getMessage(), \Zend\Http\Response::STATUS_CODE_500);
+			}
+
 			$event->setResult($result);
 		}
 
