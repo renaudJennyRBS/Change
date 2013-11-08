@@ -87,8 +87,8 @@
 					message += '<hr/>' +
 						options.question +
 						'<div class="btn-toolbar confirm-dialogbox">' +
-						'<button class="btn btn-primary btn-warning" type="button" id="' + uidOK + '">' + i18n.trans('m.rbs.admin.admin.js.yes | ucf') + '</button>' +
-						'<button type="button" class="btn" id="'+uidCancel+'">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button>' +
+						'<button class="btn btn-warning" type="button" id="' + uidOK + '">' + i18n.trans('m.rbs.admin.admin.js.yes | ucf') + '</button>' +
+						'<button type="button" class="btn btn-default" id="'+uidCancel+'">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button>' +
 						'</div>';
 					var opt = $.extend({}, { 'title': title, 'content': $filter('BBcode')(message) }, this.confirmPopoverOptions, options);
 					$el.popover(opt).popover('show');
