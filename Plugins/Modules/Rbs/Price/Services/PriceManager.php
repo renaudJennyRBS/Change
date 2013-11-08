@@ -1,53 +1,57 @@
 <?php
 namespace Rbs\Price\Services;
 
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
 use Rbs\Commerce\Interfaces\BillingArea;
 use Rbs\Price\Documents\Price;
 
 /**
 * @name \Rbs\Price\Services\PriceManager
 */
-class PriceManager
+class PriceManager implements \Zend\EventManager\EventsCapableInterface
 {
-	/**
-	 * @var \Rbs\Commerce\Services\CommerceServices
-	 */
-	protected $commerceServices;
+	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
+
+	const EVENT_MANAGER_IDENTIFIER = 'PriceManager';
+
+	const EVENT_GET_PRICE_BY_SKU = 'getPriceBySku';
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @var \Rbs\Commerce\Std\Context
+	 */
+	protected $context;
+
+	/**
+	 * @param \Rbs\Commerce\Std\Context $context
 	 * @return $this
 	 */
-	public function setCommerceServices(\Rbs\Commerce\Services\CommerceServices $commerceServices)
+	public function setContext(\Rbs\Commerce\Std\Context $context)
 	{
-		$this->commerceServices = $commerceServices;
+		$this->context = $context;
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
+	 * @return \Rbs\Commerce\Std\Context
 	 */
-	public function getCommerceServices()
+	protected function getContext()
 	{
-		return $this->commerceServices;
+		return $this->context;
 	}
 
 	/**
-	 * @return DocumentServices
+	 * @return string
 	 */
-	protected function getDocumentServices()
+	protected function getEventManagerIdentifier()
 	{
-		return $this->commerceServices->getDocumentServices();
+		return static::EVENT_MANAGER_IDENTIFIER;
 	}
 
 	/**
-	 * @return ApplicationServices
+	 * @return string[]
 	 */
-	protected function getApplicationServices()
+	protected function getListenerAggregateClassNames()
 	{
-		return $this->commerceServices->getApplicationServices();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/PriceManager');
 	}
 
 	/**
@@ -60,13 +64,12 @@ class PriceManager
 	 */
 	public function getPriceBySku($sku, $webStore, BillingArea $billingArea = null, array $targetIds = array())
 	{
-		$commerceServices = $this->getCommerceServices();
 		if ($billingArea === null)
 		{
-			$billingArea = $commerceServices->getBillingArea();
+			$billingArea = $this->getContext()->getBillingArea();
 		}
 
-		$price = $this->triggerGetPriceBySku($commerceServices, $sku, $webStore, $billingArea, $targetIds);
+		$price = $this->triggerGetPriceBySku($sku, $webStore, $billingArea, $targetIds);
 		if ($price === false && $sku && $billingArea)
 		{
 			return $this->getDefaultPriceBySku($sku, $webStore, $billingArea, $targetIds);
@@ -75,23 +78,21 @@ class PriceManager
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
 	 * @param BillingArea $billingArea
 	 * @param integer[] $targetIds
 	 * @return null|Price|boolean
 	 */
-	protected function triggerGetPriceBySku($commerceServices, $sku, $webStore, $billingArea, $targetIds)
+	protected function triggerGetPriceBySku($sku, $webStore, $billingArea, $targetIds)
 	{
-		$ev = $commerceServices->getEventManager();
+		$ev = $this->getEventManager();
 		$arguments = $ev->prepareArgs(array('price' => false));
 		$arguments['targetIds'] = $targetIds;
 		$arguments['sku'] = $sku;
 		$arguments['billingArea'] = $billingArea;
 		$arguments['webStore'] = $webStore;
-		$arguments['commerceServices'] = $commerceServices;
-		$ev->trigger('getPriceBySku', $this, $arguments);
+		$ev->trigger(static::EVENT_GET_PRICE_BY_SKU, $this, $arguments);
 		return $arguments['price'];
 	}
 
@@ -114,7 +115,7 @@ class PriceManager
 			$targetIds[] = 0;
 		}
 
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_Price');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
 		$and = array($query->activated(),
 			$query->eq('sku', $sku),
 			$query->eq('webStore', $webStore),
@@ -148,7 +149,12 @@ class PriceManager
 		{
 			if ($currencyCode === null)
 			{
-				$currencyCode = $this->getCommerceServices()->getBillingArea()->getCurrencyCode();
+				$billingArea = $this->getContext()->getBillingArea();
+				if (!$billingArea)
+				{
+					return null;
+				}
+				$currencyCode = $billingArea->getCurrencyCode();
 			}
 			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			return $nf->formatCurrency($value, $currencyCode);
@@ -162,7 +168,7 @@ class PriceManager
 	 */
 	public function getBillingAreaByCode($code)
 	{
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_BillingArea');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_BillingArea');
 		$query->andPredicates($query->eq('code', $code));
 		return $query->getFirstDocument();
 	}

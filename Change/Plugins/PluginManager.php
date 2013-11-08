@@ -4,22 +4,23 @@ namespace Change\Plugins;
 use Change\Db\DbProvider;
 use Change\Db\Query\ResultsConverter;
 use Change\Db\ScalarType;
-use Change\Workspace;
-use Zend\Stdlib\Glob;
-use Zend\EventManager\EventManager;
 use Change\Stdlib\File;
 use Zend\Json\Json;
+use Zend\Stdlib\Glob;
 
 /**
  * @api
  * @name \Change\Plugins\PluginManager
  */
-class PluginManager
+class PluginManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
 	const EVENT_MANAGER_IDENTIFIER = 'Plugin';
 
 	const EVENT_SETUP_INITIALIZE = 'setupInitialize';
 	const EVENT_SETUP_APPLICATION = 'setupApplication';
+	const EVENT_SETUP_DB_SCHEMA = 'setupDbSchema';
 	const EVENT_SETUP_SERVICES = 'setupServices';
 	const EVENT_SETUP_FINALIZE = 'setupFinalize';
 	const EVENT_SETUP_SUCCESS = 'setupSuccess';
@@ -29,9 +30,9 @@ class PluginManager
 	const EVENT_TYPE_THEME = 'theme';
 
 	/**
-	 * @var \Change\Application
+	 * @var \Change\Workspace
 	 */
-	protected $application;
+	protected $workspace;
 
 	/**
 	 * @var DbProvider
@@ -39,29 +40,37 @@ class PluginManager
 	protected $dbProvider;
 
 	/**
-	 * @var EventManager
+	 * @var \Change\Transaction\TransactionManager
 	 */
-	protected $eventManager;
+	protected $transactionManager;
+
+	/**
+	 * @var \Change\Application
+	 */
+	protected $installApplication;
 
 	/**
 	 * @var Plugin[]
 	 */
 	protected $plugins;
 
+
 	/**
-	 * @param \Change\Application $application
+	 * @param \Change\Workspace $workspace
+	 * @return $this
 	 */
-	public function setApplication($application)
+	public function setWorkspace(\Change\Workspace $workspace)
 	{
-		$this->application = $application;
+		$this->workspace = $workspace;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Application
+	 * @return \Change\Workspace
 	 */
-	public function getApplication()
+	protected function getWorkspace()
 	{
-		return $this->application;
+		return $this->workspace;
 	}
 
 	/**
@@ -81,11 +90,39 @@ class PluginManager
 	}
 
 	/**
-	 * @return \Change\Workspace
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
 	 */
-	protected function getWorkspace()
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
 	{
-		return $this->application->getWorkspace();
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	public function getTransactionManager()
+	{
+		return $this->transactionManager;
+	}
+
+	/**
+	 * @param \Change\Application $installApplication
+	 * @return $this
+	 */
+	public function setInstallApplication(\Change\Application $installApplication = null)
+	{
+		$this->installApplication = $installApplication;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	public function getInstallApplication()
+	{
+		return $this->installApplication;
 	}
 
 	/**
@@ -164,7 +201,6 @@ class PluginManager
 		return $plugins;
 	}
 
-
 	/**
 	 * @param boolean $checkRegistered
 	 * @return Plugin[]
@@ -208,7 +244,8 @@ class PluginManager
 	{
 		$allPlugins = $this->scanPlugins();
 		$registered = $this->loadRegistration($allPlugins);
-		return array_filter($allPlugins, function(Plugin $p) use ($registered) {
+		return array_filter($allPlugins, function (Plugin $p) use ($registered)
+		{
 			foreach ($registered as $rp)
 			{
 				if ($p->eq($rp))
@@ -262,7 +299,7 @@ class PluginManager
 
 		if (is_readable($basePath . DIRECTORY_SEPARATOR . 'Plugin.php'))
 		{
-			$className =  ($type === Plugin::TYPE_THEME ? '\\Theme\\' : '\\' )  . $vendor . '\\' . $shortName . '\\Plugin';
+			$className = ($type === Plugin::TYPE_THEME ? '\\Theme\\' : '\\') . $vendor . '\\' . $shortName . '\\Plugin';
 			require_once $basePath . DIRECTORY_SEPARATOR . 'Plugin.php';
 			if (class_exists($className, false))
 			{
@@ -298,7 +335,7 @@ class PluginManager
 			if (is_readable($compiledPluginsPath))
 			{
 				$pluginsDatas = unserialize(file_get_contents($compiledPluginsPath));
-				foreach($pluginsDatas as $pluginData)
+				foreach ($pluginsDatas as $pluginData)
 				{
 					$type = $pluginData['type'];
 					$vendor = $pluginData['vendor'];
@@ -354,7 +391,8 @@ class PluginManager
 		$isb = $this->getDbProvider()->getNewStatementBuilder('PluginManager::register');
 		$fb = $isb->getFragmentBuilder();
 		$isb->insert($fb->getPluginTable(), 'type', 'vendor', 'name', 'package', 'registration_date');
-		$isb->addValues($fb->parameter('type'), $fb->parameter('vendor'), $fb->parameter('name'), $fb->parameter('package'), $fb->dateTimeParameter('registrationDate'));
+		$isb->addValues($fb->parameter('type'), $fb->parameter('vendor'), $fb->parameter('name'), $fb->parameter('package'),
+			$fb->dateTimeParameter('registrationDate'));
 		$iq = $isb->insertQuery();
 		$iq->bindParameter('type', $plugin->getType());
 		$iq->bindParameter('vendor', $plugin->getVendor());
@@ -379,8 +417,8 @@ class PluginManager
 		$dsb->delete($fb->getPluginTable())
 			->where(
 				$fb->logicAnd($fb->eq($fb->getDocumentColumn('type'), $fb->parameter('type')),
-				$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor')),
-				$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name')))
+					$fb->eq($fb->getDocumentColumn('vendor'), $fb->parameter('vendor')),
+					$fb->eq($fb->getDocumentColumn('name'), $fb->parameter('name')))
 			);
 
 		$dq = $dsb->deleteQuery();
@@ -391,7 +429,8 @@ class PluginManager
 
 		if ($this->plugins !== null)
 		{
-			$this->plugins = array_filter($this->plugins, function (Plugin $p) use($plugin) {
+			$this->plugins = array_filter($this->plugins, function (Plugin $p) use ($plugin)
+			{
 				return !$p->eq($plugin);
 			});
 		}
@@ -417,7 +456,8 @@ class PluginManager
 			foreach ($registered as $infos)
 			{
 				if ($infos['type'] === $plugin->getType() && $infos['vendor'] === $plugin->getVendor()
-					&& $infos['name'] === $plugin->getShortName())
+					&& $infos['name'] === $plugin->getShortName()
+				)
 				{
 					$plugin->setPackage($infos['package']);
 					$plugin->setActivated($infos['activated']);
@@ -471,20 +511,20 @@ class PluginManager
 		$infos = $sqb->from($fb->getPluginTable())->query()->getFirstResult(array($resultsConverter, 'convertRow'));
 		if (is_array($infos))
 		{
-				$plugin->setPackage($infos['package']);
-				$plugin->setActivated($infos['activated']);
-				$plugin->setConfigured($infos['configured']);
-				$plugin->setRegistrationDate($infos['registration_date']);
-				$configDatas = array();
-				if ($infos['config_datas'])
+			$plugin->setPackage($infos['package']);
+			$plugin->setActivated($infos['activated']);
+			$plugin->setConfigured($infos['configured']);
+			$plugin->setRegistrationDate($infos['registration_date']);
+			$configDatas = array();
+			if ($infos['config_datas'])
+			{
+				$configDatas = json_decode($infos['config_datas'], true);
+				if (!is_array($configDatas))
 				{
-					$configDatas = json_decode($infos['config_datas'], true);
-					if (!is_array($configDatas))
-					{
-						$configDatas = array();
-					}
+					$configDatas = array();
 				}
-				$plugin->setConfiguration($configDatas);
+			}
+			$plugin->setConfiguration($configDatas);
 			return $plugin;
 		}
 		return null;
@@ -540,7 +580,8 @@ class PluginManager
 	{
 		$vendor = $this->normalizeVendorName($vendor);
 		$shortName = $this->normalizePluginName($shortName);
-		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($type, $vendor, $shortName) {
+		$result = array_filter($this->getPlugins(), function (Plugin $plugin) use ($type, $vendor, $shortName)
+		{
 			return $plugin->getType() === $type && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
 		});
 		return array_pop($result);
@@ -555,8 +596,10 @@ class PluginManager
 	{
 		$vendor = $this->normalizeVendorName($vendor);
 		$shortName = $this->normalizePluginName($shortName);
-		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor, $shortName) {
-			return $plugin->getType() === Plugin::TYPE_MODULE && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
+		$result = array_filter($this->getPlugins(), function (Plugin $plugin) use ($vendor, $shortName)
+		{
+			return $plugin->getType() === Plugin::TYPE_MODULE && $plugin->getVendor() === $vendor
+			&& $plugin->getShortName() === $shortName;
 		});
 		return array_pop($result);
 	}
@@ -568,7 +611,8 @@ class PluginManager
 	public function getModules($vendor = null)
 	{
 		$vendor = ($vendor) ? $this->normalizeVendorName($vendor) : null;
-		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
+		return array_filter($this->getPlugins(), function (Plugin $plugin) use ($vendor)
+		{
 			return $plugin->getType() === Plugin::TYPE_MODULE && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
 	}
@@ -582,8 +626,10 @@ class PluginManager
 	{
 		$vendor = $this->normalizeVendorName($vendor);
 		$shortName = $this->normalizePluginName($shortName);
-		$result = array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor, $shortName) {
-			return $plugin->getType() === Plugin::TYPE_THEME && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName;
+		$result = array_filter($this->getPlugins(), function (Plugin $plugin) use ($vendor, $shortName)
+		{
+			return $plugin->getType() === Plugin::TYPE_THEME && $plugin->getVendor() === $vendor
+			&& $plugin->getShortName() === $shortName;
 		});
 		return array_pop($result);
 	}
@@ -595,7 +641,8 @@ class PluginManager
 	public function getThemes($vendor = null)
 	{
 		$vendor = ($vendor) ? $this->normalizeVendorName($vendor) : null;
-		return array_filter($this->getPlugins(), function(Plugin $plugin) use ($vendor) {
+		return array_filter($this->getPlugins(), function (Plugin $plugin) use ($vendor)
+		{
 			return $plugin->getType() === Plugin::TYPE_THEME && ($vendor === null || $plugin->getVendor() === $vendor);
 		});
 	}
@@ -605,7 +652,8 @@ class PluginManager
 	 */
 	public function getRegisteredPlugins()
 	{
-		return array_filter($this->getPlugins(), function(Plugin $plugin) {
+		return array_filter($this->getPlugins(), function (Plugin $plugin)
+		{
 			return $plugin->getConfigured() === false;
 		});
 	}
@@ -615,36 +663,38 @@ class PluginManager
 	 */
 	public function getInstalledPlugins()
 	{
-		return array_filter($this->getPlugins(), function(Plugin $plugin) {
+		return array_filter($this->getPlugins(), function (Plugin $plugin)
+		{
 			return $plugin->getConfigured() === true;
 		});
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return string
 	 */
-	public function getEventManager()
+	protected function getEventManagerIdentifier()
 	{
-		if ($this->eventManager === null)
-		{
-			$this->eventManager = new \Zend\EventManager\EventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->setSharedManager($this->application->getSharedEventManager());
-			foreach ($this->getPlugins() as $plugin)
-			{
-				$listenerAggregate = new Register($plugin);
-				$listenerAggregate->attach($this->eventManager);
-			}
-		}
-		return $this->eventManager;
+		return static::EVENT_MANAGER_IDENTIFIER;
 	}
 
 	/**
-	 * @param Plugin $plugin
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @return array
 	 */
-	protected function registerPluginEvents($plugin, $eventManager)
+	protected function getListenerAggregateClassNames()
 	{
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/Plugin');
+	}
 
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		foreach ($this->getPlugins() as $plugin)
+		{
+			$listenerAggregate = new Register($plugin);
+			$listenerAggregate->attach($eventManager);
+		}
 	}
 
 	/**
@@ -720,21 +770,27 @@ class PluginManager
 	{
 		$this->getDbProvider()->closeConnection();
 
-		$eventManager = $this->getEventManager();
-
-		/* @var $plugins \Change\Plugins\Plugin[] */
-		$plugins = array();
-
-		$installApplication = clone($this->application);
+		$installApplication = $this->installApplication;
+		if (!($installApplication instanceof \Change\Application))
+		{
+			$installApplication = new \Change\Application();
+			$this->installApplication = $installApplication;
+		}
 
 		$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
 		$installApplication->setConfiguration($editableConfiguration->import($installApplication->getConfiguration()));
 
-		$eventArgs = $eventManager->prepareArgs(array('application' => $installApplication,
-			'context' => $context, 'type' => $eventType, 'vendor' => $vendor, 'name' => $name));
+		$oldEventManagerFactory = $this->getEventManagerFactory();
+		$this->setEventManagerFactory(new \Change\Events\EventManagerFactory($installApplication));
+		$this->clearEventManager();
+		$installEventManager = $this->getEventManager();
 
-		$event = new \Zend\EventManager\Event(static::EVENT_SETUP_INITIALIZE, $this, $eventArgs);
-		$results = $eventManager->trigger($event);
+		/* @var $plugins \Change\Plugins\Plugin[] */
+		$plugins = array();
+		$eventArgs = $installEventManager->prepareArgs(array('context' => $context, 'type' => $eventType, 'vendor' => $vendor, 'name' => $name));
+
+		$event = new \Change\Events\Event(static::EVENT_SETUP_INITIALIZE, $this, $eventArgs);
+		$results = $installEventManager->trigger($event);
 		$date = new \DateTime();
 		foreach ($results as $result)
 		{
@@ -745,13 +801,19 @@ class PluginManager
 				$plugins[] = $result;
 			}
 		}
+
 		$eventArgs['plugins'] = $plugins;
 
-		$applicationServices = new \Change\Application\ApplicationServices($installApplication);
-		$applicationServices->getDbProvider()->setCheckTransactionBeforeWriting(false);
-		$eventArgs['applicationServices'] = $applicationServices;
 		$event->setName(static::EVENT_SETUP_APPLICATION);
-		$eventManager->trigger($event);
+		$installEventManager->trigger($event);
+
+		$applicationServices = new \Change\Services\ApplicationServices($installApplication, $this->getEventManagerFactory());
+		$installEventManager->addService('applicationServices', $applicationServices);
+
+		$event->setName('registerServices');
+		$event->setParam('eventManagerFactory', $this->getEventManagerFactory());
+		$installEventManager->trigger($event);
+		$event->setParam('eventManagerFactory', null);
 
 		if ($eventType !== static::EVENT_TYPE_THEME)
 		{
@@ -760,25 +822,21 @@ class PluginManager
 
 			$generator = new \Change\Db\Schema\Generator($installApplication->getWorkspace(), $applicationServices->getDbProvider());
 			$generator->generatePluginsSchema();
-
-			$applicationServices->getDbProvider()->closeConnection();
 		}
 
-		$eventArgs['documentServices'] = new \Change\Documents\DocumentServices($applicationServices);
-		$eventArgs['presentationServices'] = new \Change\Presentation\PresentationServices($applicationServices);
+		$event->setName(static::EVENT_SETUP_DB_SCHEMA);
+		$installEventManager->trigger($event);
+		$applicationServices->getDbProvider()->getSchemaManager()->closeConnection();
 
 		$event->setName(static::EVENT_SETUP_SERVICES);
-		$eventManager->trigger($event);
+		$installEventManager->trigger($event);
 
 		$event->setName(static::EVENT_SETUP_FINALIZE);
-		$eventManager->trigger($event);
-
-		$applicationServices->getDbProvider()->closeConnection();
+		$installEventManager->trigger($event);
 
 		try
 		{
-			$this->getDbProvider()->getTransactionManager()->begin();
-
+			$this->getTransactionManager()->begin();
 			foreach ($plugins as $plugin)
 			{
 				$date = new \DateTime();
@@ -786,22 +844,24 @@ class PluginManager
 				$plugin->setConfigurationEntry('configuredDate', $date->format('c'));
 				$this->update($plugin);
 			}
-
 			$editableConfiguration->save();
-
-			$this->getDbProvider()->getTransactionManager()->commit();
+			$this->getTransactionManager()->commit();
 		}
 		catch (\Exception $e)
 		{
-			throw $this->getDbProvider()->getTransactionManager()->rollBack($e);
+			throw $this->getTransactionManager()->rollBack($e);
 		}
 
 		$event->setName(static::EVENT_SETUP_SUCCESS);
-		$eventManager->trigger($event);
+		$installEventManager->trigger($event);
+
+		$applicationServices->getDbProvider()->closeConnection();
+
+		$this->setEventManagerFactory($oldEventManagerFactory);
+		$this->clearEventManager();
 
 		return $plugins;
 	}
-
 
 	/**
 	 * @param $name
@@ -889,8 +949,8 @@ class PluginManager
 		$loader = new \Twig_Loader_Filesystem(__DIR__);
 		$twig = new \Twig_Environment($loader);
 
-
-		File::write(dirname($path) . DIRECTORY_SEPARATOR . 'Setup' . DIRECTORY_SEPARATOR . 'Install.php', $twig->render($twigFileName, $attributes));
+		File::write(dirname($path) . DIRECTORY_SEPARATOR . 'Setup' . DIRECTORY_SEPARATOR . 'Install.php',
+			$twig->render($twigFileName, $attributes));
 
 		$plugin = $this->getNewPlugin($path, $type === 'module' ? Plugin::TYPE_MODULE : Plugin::TYPE_THEME);
 		$this->register($plugin);

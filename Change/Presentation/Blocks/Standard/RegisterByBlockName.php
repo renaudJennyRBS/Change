@@ -2,6 +2,7 @@
 namespace Change\Presentation\Blocks\Standard;
 
 use Change\Presentation\Blocks\BlockManager;
+use Change\Presentation\Blocks\Information;
 use Zend\EventManager\EventManagerInterface;
 
 /**
@@ -52,6 +53,7 @@ class RegisterByBlockName
 			$classParts = array('', $names[0], $names[1], 'Blocks', $names[2]);
 			return implode('\\', $classParts);
 		}
+		return null;
 	}
 
 	/**
@@ -60,7 +62,6 @@ class RegisterByBlockName
 	 */
 	protected function attach(EventManagerInterface $events, $hasInformation = true)
 	{
-		$identifiers = array($this->blockName);
 		$className = $this->getClassName();
 		$callBack = function ($event) use ($className)
 		{
@@ -107,21 +108,27 @@ class RegisterByBlockName
 		//For backoffice edition
 		$className .= 'Information';
 		$blockName = $this->blockName;
-		$callBack = function (\Zend\EventManager\Event $event) use ($className, $blockName)
+		$callBack = function (\Change\Events\Event $event) use ($className, $blockName)
 		{
 			$blockManager = $event->getTarget();
 			if ($blockManager instanceof BlockManager)
 			{
-				$blockManager->registerBlock($blockName, function () use ($blockName, $className, $blockManager)
+				$blockManager->registerBlock($blockName, function () use ($blockName, $className, $blockManager, $event)
 				{
 					if (class_exists($className))
 					{
-						return new $className($blockName, $blockManager);
+						$class = new $className($blockName, $blockManager);
+						if ($class instanceof Information)
+						{
+							$class->onInformation($event);
+							return $class;
+						}
 					}
-					else
+					if ($event->getApplicationServices())
 					{
-						new \LogicException('Class ' . $className . ' not found', 999999);
+						$event->getApplicationServices()->getLogging()->error('Block Information class ' . $className . ' not found');
 					}
+					return null;
 				});
 			}
 		};

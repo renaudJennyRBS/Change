@@ -1,47 +1,59 @@
 <?php
 namespace Change\Http\OAuth;
 
-use Change\Http\OAuth\Consumer;
-use Change\Http\OAuth\OAuthDbEntry;
-use Zend\EventManager\Event;
-
 /**
- * @name \Change\Http\Rest\OAuth\OAuth
+ * @name \Change\Http\OAuth\OAuthManager
  */
-class OAuthManager
+class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 {
 	const EVENT_MANAGER_IDENTIFIER = 'OAuthManager';
 
 	use \Change\Events\EventsCapableTrait;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Db\DbProvider
 	 */
-	protected $applicationServices;
+	protected $dbProvider;
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @var \Change\Transaction\TransactionManager
 	 */
-	public function setApplicationServices($applicationServices)
+	protected $transactionManager;
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
 	{
-		$this->applicationServices = $applicationServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($this->applicationServices->getApplication()->getSharedEventManager());
-		}
+		$this->dbProvider = $dbProvider;
+		return $this;
 	}
 
 	/**
-	 * @throws \RuntimeException
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Db\DbProvider
 	 */
-	public function getApplicationServices()
+	protected function getDbProvider()
 	{
-		if (null === $this->applicationServices)
-		{
-			throw new \RuntimeException('application services not set');
-		}
-		return $this->applicationServices;
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
 	}
 
 
@@ -58,9 +70,7 @@ class OAuthManager
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplicationServices()->getApplication()->getConfiguration();
-		$classNames = $config->getEntry('Change/Events/OAuthManager');
-		return is_array($classNames) ? $classNames : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/OAuthManager');
 	}
 
 	/**
@@ -70,7 +80,7 @@ class OAuthManager
 	 */
 	public function getConsumerByApplication($application)
 	{
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('consumer_key'), $fb->column('consumer_secret'), $fb->column('token_access_validity'),
@@ -82,7 +92,7 @@ class OAuthManager
 
 		$result = $sq->getFirstResult($sq->getRowsConverter()
 			->addStrCol('consumer_key', 'consumer_secret', 'token_access_validity',
-			'token_request_validity')->addIntCol('timestamp_max_offset', 'application_id'));
+				'token_request_validity')->addIntCol('timestamp_max_offset', 'application_id'));
 		if ($result)
 		{
 			$consumer = new Consumer($result['consumer_key'], $result['consumer_secret']);
@@ -102,7 +112,7 @@ class OAuthManager
 	 */
 	public function getConsumerByApplicationId($applicationId)
 	{
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('consumer_key'), $fb->column('consumer_secret'), $fb->column('token_access_validity'),
@@ -112,7 +122,8 @@ class OAuthManager
 		$sq = $qb->query();
 		$sq->bindParameter('application_id', $applicationId);
 
-		$result = $sq->getFirstResult($sq->getRowsConverter()->addStrCol('consumer_key', 'consumer_secret', 'token_access_validity',
+		$result = $sq->getFirstResult($sq->getRowsConverter()
+			->addStrCol('consumer_key', 'consumer_secret', 'token_access_validity',
 			'token_request_validity', 'timestamp_max_offset', 'application')->addIntCol('timestamp_max_offset'));
 		if ($result)
 		{
@@ -132,11 +143,11 @@ class OAuthManager
 	 */
 	public function getConsumerByKey($consumerKey)
 	{
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('consumer_secret'), $fb->column('token_access_validity'),$fb->column('token_request_validity'),
-			$fb->column('timestamp_max_offset'), $fb->column('application_id'),$fb->column('application'))
+		$qb->select($fb->column('consumer_secret'), $fb->column('token_access_validity'), $fb->column('token_request_validity'),
+			$fb->column('timestamp_max_offset'), $fb->column('application_id'), $fb->column('application'))
 			->from($fb->table($qb->getSqlMapping()->getOAuthApplicationTable()))
 			->where($fb->eq($fb->column('consumer_key'), $fb->parameter('consumer_key')));
 		$qs = $qb->query();
@@ -162,7 +173,7 @@ class OAuthManager
 	 */
 	public function getRequestToken($token)
 	{
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
@@ -176,7 +187,6 @@ class OAuthManager
 			));
 		$qs = $qb->query();
 		$qs->bindParameter('token', $token);
-
 
 		$storedOAuthInfo = $qs->getFirstResult($qs->getRowsConverter()->addStrCol('token_secret',
 			'realm', 'creation_date', 'callback', 'verifier', 'accessor_id')
@@ -200,7 +210,7 @@ class OAuthManager
 	 */
 	public function getStoredOAuth($token, $consumerKey)
 	{
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
@@ -214,14 +224,16 @@ class OAuthManager
 		$qs->bindParameter('consumer_key', $consumerKey);
 		$qs->bindParameter('active', true);
 
-		$applicationInfo = $qs->getFirstResult($qs->getRowsConverter()->addIntCol('application_id')->addStrCol('consumer_secret'));
+		$applicationInfo = $qs->getFirstResult($qs->getRowsConverter()->addIntCol('application_id')
+			->addStrCol('consumer_secret'));
 		$applicationId = $applicationInfo['application_id'];
 
 		if (null !== $applicationId)
 		{
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('token_id'), $fb->column('token_secret'), $fb->column('realm'), $fb->column('token_type'), $fb->column('creation_date'),
+			$qb->select($fb->column('token_id'), $fb->column('token_secret'), $fb->column('realm'), $fb->column('token_type'),
+				$fb->column('creation_date'),
 				$fb->column('validity_date'), $fb->column('callback'), $fb->column('verifier'), $fb->column('authorized'),
 				$fb->column('accessor_id'), $fb->column('application_id'))
 				->from($fb->table($qb->getSqlMapping()->getOAuthTable()))
@@ -272,11 +284,11 @@ class OAuthManager
 	 */
 	public function insertToken($storedOAuth)
 	{
-		$dbProvider = $this->applicationServices->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 
 		try
 		{
-			$dbProvider->getTransactionManager()->begin();
+			$this->getTransactionManager()->begin();
 
 			if (null === $storedOAuth->getCreationDate())
 			{
@@ -307,14 +319,17 @@ class OAuthManager
 			$qb = $dbProvider->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 
-			$iq = $qb->insert($qb->getSqlMapping()->getOAuthTable())->addColumns($fb->column('token'), $fb->column('token_secret'),
+			$iq = $qb->insert($qb->getSqlMapping()->getOAuthTable())
+				->addColumns($fb->column('token'), $fb->column('token_secret'),
 				$fb->column('application_id'), $fb->column('realm'),
 				$fb->column('token_type'), $fb->column('creation_date'), $fb->column('validity_date'),
 				$fb->column('callback'), $fb->column('verifier'), $fb->column('authorized'), $fb->column('accessor_id'))
 				->addValues($fb->parameter('token'), $fb->parameter('token_secret'),
 					$fb->integerParameter('application_id'), $fb->parameter('realm'),
-					$fb->parameter('token_type'), $fb->dateTimeParameter('creation_date'), $fb->dateTimeParameter('validity_date'),
-					$fb->parameter('callback'), $fb->parameter('verifier'), $fb->booleanParameter('authorized'), $fb->integerParameter('accessor_id'))
+					$fb->parameter('token_type'), $fb->dateTimeParameter('creation_date'),
+					$fb->dateTimeParameter('validity_date'),
+					$fb->parameter('callback'), $fb->parameter('verifier'), $fb->booleanParameter('authorized'),
+					$fb->integerParameter('accessor_id'))
 				->insertQuery();
 
 			$iq->bindParameter('token', $storedOAuth->getToken());
@@ -332,11 +347,11 @@ class OAuthManager
 
 			$storedOAuth->setId(intval($dbProvider->getLastInsertId('change_oauth')));
 
-			$dbProvider->getTransactionManager()->commit();
+			$this->getTransactionManager()->commit();
 		}
 		catch (\Exception $e)
 		{
-			throw $dbProvider->getTransactionManager()->rollBack($e);
+			throw $this->getTransactionManager()->rollBack($e);
 		}
 	}
 
@@ -346,11 +361,11 @@ class OAuthManager
 	 */
 	public function updateToken($storedOAuth)
 	{
-		$dbProvider = $this->applicationServices->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 
 		try
 		{
-			$dbProvider->getTransactionManager()->begin();
+			$this->getTransactionManager()->begin();
 
 			$qb = $dbProvider->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
@@ -370,11 +385,11 @@ class OAuthManager
 			$uq->bindParameter('id', $storedOAuth->getId());
 			$uq->execute();
 
-			$dbProvider->getTransactionManager()->commit();
+			$this->getTransactionManager()->commit();
 		}
 		catch (\Exception $e)
 		{
-			throw $dbProvider->getTransactionManager()->rollBack($e);
+			throw $this->getTransactionManager()->rollBack($e);
 		}
 	}
 
@@ -383,7 +398,7 @@ class OAuthManager
 	 */
 	public function generateConsumerKey()
 	{
-		$dbProvider = $this->applicationServices->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 
 		$qb = $dbProvider->getNewQueryBuilder('generateConsumerKey');
 		if (!$qb->isCached())
@@ -395,7 +410,8 @@ class OAuthManager
 		$qs = $qb->query();
 		$rowConverter = $qs->getRowsConverter()->addIntCol('application_id');
 
-		do {
+		do
+		{
 			$consumerKey = \Change\Stdlib\String::random(64);
 			$qs->bindParameter('consumer_key', $consumerKey);
 			$applicationId = $qs->getFirstResult($rowConverter);
@@ -406,8 +422,8 @@ class OAuthManager
 	}
 
 	/**
-	* @return string
-	*/
+	 * @return string
+	 */
 	public function generateConsumerSecret()
 	{
 		return \Change\Stdlib\String::random(64);
@@ -415,7 +431,7 @@ class OAuthManager
 
 	public function generateTokenKey()
 	{
-		$dbProvider = $this->applicationServices->getDbProvider();
+		$dbProvider = $this->getDbProvider();
 
 		$qb = $dbProvider->getNewQueryBuilder('generateTokenKey');
 		if (!$qb->isCached())
@@ -427,7 +443,8 @@ class OAuthManager
 		$qs = $qb->query();
 		$rowConverter = $qs->getRowsConverter()->addIntCol('token_id');
 
-		do {
+		do
+		{
 			$tokenKey = \Change\Stdlib\String::random(64);
 			$qs->bindParameter('token', $tokenKey);
 			$tokenId = $qs->getFirstResult($rowConverter);
@@ -455,7 +472,7 @@ class OAuthManager
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['httpEvent' => $event, 'data' => $data]);
-		$event = new Event('loginFormHtml', $this, $args);
+		$event = new \Change\Events\Event('loginFormHtml', $this, $args);
 		$this->getEventManager()->trigger($event);
 		$html = $event->getParam('html');
 		if (\Change\Stdlib\String::isEmpty($html))

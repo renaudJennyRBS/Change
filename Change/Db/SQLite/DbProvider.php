@@ -26,7 +26,12 @@ class DbProvider extends \Change\Db\DbProvider
 	 * @var boolean
 	 */
 	protected $inTransaction = false;
-	
+
+	/**
+	 * @var null|array
+	 */
+	protected $registerShutDown = null;
+
 	/**
 	 * @return string
 	 */
@@ -42,18 +47,41 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		return array('Db', 'Db.Sqlite');
 	}
-	
+
 	/**
 	 * @param \PDO|null $driver
+	 * @return $this
 	 */
 	public function setDriver($driver)
 	{
+		if ($this->m_driver)
+		{
+			if ($this->inTransaction)
+			{
+				$this->m_driver->commit();
+			}
+		}
+
 		$this->m_driver = $driver;
 		if ($driver === null)
 		{
 			$duration = microtime(true) - $this->timers['init'];
 			$this->timers['duration'] = $duration;
 		}
+		else
+		{
+			if ($this->inTransaction)
+			{
+				$this->m_driver->beginTransaction();
+			}
+
+			if ($this->registerShutDown === null)
+			{
+				$this->registerShutDown = array($this, "closeConnection");
+				register_shutdown_function($this->registerShutDown);
+			}
+		}
+		return $this;
 	}
 	
 	/**
@@ -63,8 +91,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		if ($this->m_driver === null)
 		{
-			$this->m_driver = $this->getConnection($this->connectionInfos);
-			register_shutdown_function(array($this, "closeConnection"));
+			$this->setDriver($this->getConnection($this->connectionInfos));
 		}
 		return $this->m_driver;
 	}
@@ -81,7 +108,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			throw new \RuntimeException('Database not defined', 31001);
 		}
-		$dsn = $protocol . ':' . $this->getApplication()->getWorkspace()->composeAbsolutePath($connectionInfos['database']);
+		$dsn = $protocol . ':' . $this->workspace->composeAbsolutePath($connectionInfos['database']);
 		$pdo = new \PDO($dsn);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		return $pdo;
@@ -122,7 +149,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
 	public function beginTransaction($event = null)
@@ -137,13 +164,16 @@ class DbProvider extends \Change\Db\DbProvider
 			{
 				$this->timers['bt'] = microtime(true);
 				$this->inTransaction = true;
-				$this->getDriver()->beginTransaction();
+				if ($this->m_driver)
+				{
+					$this->m_driver->beginTransaction();
+				}
 			}
 		}
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
 	public function commit($event)
@@ -156,8 +186,11 @@ class DbProvider extends \Change\Db\DbProvider
 			}
 			else
 			{
-				$this->getDriver()->commit();
 				$this->inTransaction = false;
+				if ($this->m_driver)
+				{
+					$this->m_driver->commit();
+				}
 				$duration = round(microtime(true) - $this->timers['bt'], 4);
 				$this->getLogging()->info('commit: ' . number_format($duration, 3) . 's');
 				if ($duration > $this->timers['longTransaction'])
@@ -169,7 +202,7 @@ class DbProvider extends \Change\Db\DbProvider
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
 	public function rollBack($event)
@@ -183,7 +216,10 @@ class DbProvider extends \Change\Db\DbProvider
 			else
 			{
 				$this->inTransaction = false;
-				$this->getDriver()->rollBack();
+				if ($this->m_driver)
+				{
+					$this->m_driver->rollBack();
+				}
 				$duration = round(microtime(true) - $this->timers['bt'], 4);
 				$this->getLogging()->info('rollBack: ' . number_format($duration, 3) . 's');
 				if ($duration > $this->timers['longTransaction'])

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -14,7 +13,7 @@ class Exception extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -41,8 +40,7 @@ class Exception extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null

@@ -1,24 +1,22 @@
 <?php
 namespace Change\Presentation\Templates\Twig;
 
-use Change\Application\ApplicationServices;
+
 
 /**
- * Class Extension
- * @package Change\Presentation\Templates\Twig
  * @name \Change\Presentation\Templates\Twig\Extension
  */
 class Extension  implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var ApplicationServices
+	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
-	 * @param ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	function __construct(ApplicationServices $applicationServices)
+	function __construct(\Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->applicationServices = $applicationServices;
 	}
@@ -109,7 +107,7 @@ class Extension  implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Services\ApplicationServices
 	 */
 	protected function getApplicationServices()
 	{

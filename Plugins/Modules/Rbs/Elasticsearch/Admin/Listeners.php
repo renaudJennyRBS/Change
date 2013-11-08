@@ -24,9 +24,9 @@ class Listeners implements ListenerAggregateInterface
 	public function registerResources(Event $event)
 	{
 		$manager = $event->getManager();
-		$i18nManager = $manager->getApplicationServices()->getI18nManager();
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 
-		$pm = $manager->getApplicationServices()->getPluginManager();
+		$pm = $event->getApplicationServices()->getPluginManager();
 		$manager->registerStandardPluginAssets($pm->getModule('Rbs', 'Elasticsearch'));
 
 		$menu = array(

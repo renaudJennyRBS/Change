@@ -14,10 +14,12 @@ class AuthenticationManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getAuthenticationManager()
 	{
-		$authenticationManager = new AuthenticationManager();
-		$authenticationManager->setSharedEventManager($this->getApplication()->getSharedEventManager());
-		$authenticationManager->setDocumentServices($this->getDocumentServices());
-		return $authenticationManager;
+		return $this->getApplicationServices()->getAuthenticationManager();
+	}
+
+	public function testConstruct()
+	{
+		$this->assertInstanceOf('Change\User\AuthenticationManager', $this->getAuthenticationManager());
 	}
 
 	public function testLogin()
@@ -31,10 +33,7 @@ class AuthenticationManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				$event->getParam('password') == 'testPWD' &&
 				$event->getParam('realm') == 'testRealm')
 			{
-				if ($event->getParam('documentServices') instanceof \Change\Documents\DocumentServices)
-				{
-					$event->setParam('user', new User_2124512348());
-				}
+				$event->setParam('user', new User_2124512348());
 			}
 		};
 

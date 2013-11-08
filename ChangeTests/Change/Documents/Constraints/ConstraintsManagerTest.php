@@ -8,7 +8,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		$constraintsManager = $this->getDocumentServices()->getConstraintsManager();
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
 		$this->assertInstanceOf('\Change\Documents\Constraints\ConstraintsManager', $constraintsManager);
 		
 		$this->assertEquals('c.constraints', \Zend\Validator\AbstractValidator::getDefaultTranslatorTextDomain());

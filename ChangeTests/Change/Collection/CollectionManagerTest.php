@@ -8,12 +8,18 @@ use Change\Collection\CollectionManager;
  */
 class CollectionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	/**
+	 * @return CollectionManager
+	 */
 	protected function getCollectionManager()
 	{
-		$collectionManager = new CollectionManager();
-		$collectionManager->setSharedEventManager($this->getApplication()->getSharedEventManager());
-		$collectionManager->setDocumentServices($this->getDocumentServices());
+		$collectionManager = $this->getApplicationServices()->getCollectionManager();
 		return $collectionManager;
+	}
+
+	public function testConstruct()
+	{
+		$this->assertInstanceOf('Change\Collection\CollectionManager', $this->getCollectionManager());
 	}
 
 	public function testGetCollection()
@@ -21,7 +27,7 @@ class CollectionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cm = $this->getCollectionManager();
 		$this->assertNull($cm->getCollection('test'));
 
-		$callBack = function($event)
+		$callBack = function(\Change\Events\Event $event)
 		{
 			if ($event->getParam('code') === 'test')
 			{

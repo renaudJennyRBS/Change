@@ -2,24 +2,18 @@
 namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 
 /**
- * Class MenuInformation
- * @package Rbs\Website\Blocks
+ * @name \Rbs\Website\Blocks\MenuInformation
  */
 class MenuInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.menu', $ucf));
 		$this->addInformationMeta('templateName', Property::TYPE_STRING, true, 'menu-vertical.twig')
 			->setLabel($i18nManager->trans('m.rbs.website.blocks.menu-templatename', $ucf));

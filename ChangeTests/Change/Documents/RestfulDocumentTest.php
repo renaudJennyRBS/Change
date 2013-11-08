@@ -25,39 +25,22 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function tearDown()
 	{
-		parent::tearDown();
 		$this->getApplicationServices()->getTransactionManager()->commit();
-		$this->closeDbConnection();
+		parent::tearDown();
 	}
 
 	public function testPopulateDocumentFromRestEvent()
-	{/*
- * 		<property name="pStr" type="String" required="true"/>
-		<property name="pBool" type="Boolean" />
-		<property name="pInt" type="Integer" />
-		<property name="pFloat" type="Float" />
-		<property name="pDec" type="Decimal" />
-		<property name="pDa" type="Date" />
-		<property name="pDaTi" type="DateTime" />
-		<property name="pText" type="LongString" />
-		<property name="pJson" type="JSON" />
-		<property name="pXml" type="XML" />
-		<property name="pRt" type="RichText" />
-		<property name="plob" type="Lob" />
-		<property name="pObj" type="Object" />
-		<property name="pDocId" type="DocumentId" />
-		<property name="pStorUri" type="StorageUri" />
-
-		<property name="pDocInst" type="Document" document-type="Project_Tests_Localized" />
-		<property name="pDocArr" type="DocumentArray" document-type="Project_Tests_Localized"/>
- */
+	{
 		$data = ['model'=> 'toto', 'id' => 1, 'treeName' => 'foo', 'pStr' => 'a string', 'pBool' => true, 'pInt' => 10];
+
+
+		/* @var $document \Project\Tests\Documents\Basic */
+		$document = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+
 		$event = new \Change\Http\Event();
 		$event->setRequest(new \Change\Http\Request());
 		$event->getRequest()->setPost(new \Zend\Stdlib\Parameters($data));
-
-		/* @var $document \Project\Tests\Documents\Basic */
-		$document = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$event->setParams($this->getDefaultEventArguments());
 
 		$result = $document->populateDocumentFromRestEvent($event);
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $result);
@@ -70,7 +53,7 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$document->save();
 
 		/* @var $document \Project\Tests\Documents\Basic */
-		$newDocument = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$newDocument = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$result = $newDocument->populateDocumentFromRestEvent($event);
 		$this->assertEquals(false, $result);
 		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
@@ -92,9 +75,10 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event = new \Change\Http\Event();
 		$event->setRequest(new \Change\Http\Request());
 		$event->getRequest()->setPost(new \Zend\Stdlib\Parameters($data));
+		$event->setParams($this->getDefaultEventArguments());
 
-		$newDocument = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
-		$eventManager = $this->getApplication()->getSharedEventManager();
+		$newDocument = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$eventManager = $this->getEventManagerFactory()->getSharedEventManager();
 		$eventManager->attach('Project_Tests_Basic', 'populateDocumentFromRestEvent', function(\Change\Documents\Events\Event $event){
 			$document = $event->getDocument();
 			$this->assertNull($document->getPStr());
@@ -104,6 +88,5 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$result = $newDocument->populateDocumentFromRestEvent($event);
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $result);
 		$this->assertEquals('tutu', $newDocument->getPStr());
-
 	}
 }

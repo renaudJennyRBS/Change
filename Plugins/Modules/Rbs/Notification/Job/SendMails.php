@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Notification\Job;
 
-use Change\Presentation\PresentationServices;
-
 /**
  * @name \Rbs\Notification\Job\SendMails
  */
@@ -10,10 +8,9 @@ class SendMails
 {
 	public function execute(\Change\Job\Event $event)
 	{
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 
-		$themeManager = (new PresentationServices($documentServices->getApplicationServices()))->getThemeManager();
-		$themeManager->setDocumentServices($documentServices);
+		$themeManager = $applicationServices->getThemeManager();
 
 		$theme = $themeManager->getByName('Rbs_Demo');
 
@@ -22,13 +19,13 @@ class SendMails
 		if ($template)
 		{
 			//first check users want be notified by mail
-			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_User_User');
+			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_User');
 			$dqb->andPredicates($dqb->activated());
 			$users = $dqb->getDocuments();
 
-			$profileManager = new \Change\User\ProfileManager();
-			$profileManager->setDocumentServices($documentServices);
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$profileManager = $applicationServices->getProfileManager();
+			$i18nManager = $applicationServices->getApplicationServices()->getI18nManager();
+
 			//now check for each user their new notifications
 			foreach ($users as $user)
 			{
@@ -44,7 +41,7 @@ class SendMails
 					if ($date > $adminProfile->getPropertyValue('dateOfLastNotificationMailSent'))
 					{
 						/* @var $user \Rbs\User\Documents\User */
-						$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Notification_Notification');
+						$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Notification_Notification');
 						$dqb->andPredicates(
 							$dqb->eq('userId', $user->getId()),
 							$dqb->eq('status', \Rbs\Notification\Documents\Notification::STATUS_NEW)
@@ -56,7 +53,7 @@ class SendMails
 							$timezone = $userProfile->getPropertyValue('TimeZone') != null ? $userProfile->getPropertyValue('TimeZone') : $i18nManager->getTimeZone()->getName();
 							$lcid = $userProfile->getPropertyValue('LCID') != null ? $userProfile->getPropertyValue('LCID') : $i18nManager->getDefaultLCID();
 							$params = ['timezone' => $timezone, 'LCID' => $lcid];
-							$documentServices->getDocumentManager()->pushLCID($lcid);
+							$applicationServices->getDocumentManager()->pushLCID($lcid);
 							foreach($dqb->getDocuments() as $notification)
 							{
 								/* @var $notification \Rbs\Notification\Documents\Notification */
@@ -65,10 +62,10 @@ class SendMails
 									'creationDate' => $notification->getCurrentLocalization()->getCreationDate()
 								];
 							}
-							$mm = $documentServices->getApplicationServices()->getMailManager();
+							$mm = $applicationServices->getApplicationServices()->getMailManager();
 							$message = $mm->composeTemplateMessage($template, $params, null,
 								['noreply@change4.fr'], [$user->getEmail()]);
-							$documentServices->getDocumentManager()->popLCID();
+							$applicationServices->getDocumentManager()->popLCID();
 							$mm->send($message);
 
 							//set date of the last sent mail, useful to compare with the interval next we want send mail

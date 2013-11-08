@@ -2,7 +2,6 @@
 namespace Change\Documents\Events;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentManager;
 use Change\Documents\Events\Event as DocumentEvent;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
@@ -19,6 +18,8 @@ class ValidateListener
 	 */
 	protected $propertiesErrors;
 
+
+
 	/**
 	 * @param DocumentEvent $event
 	 */
@@ -31,7 +32,7 @@ class ValidateListener
 
 			$this->updateSystemProperties($document);
 
-			$this->validateProperties($document);
+			$this->validateProperties($document, $event);
 
 			if ($event->getName() === DocumentEvent::EVENT_UPDATE && $document instanceof Editable)
 			{
@@ -78,8 +79,9 @@ class ValidateListener
 
 	/**
 	 * @param AbstractDocument $document
+	 * @param DocumentEvent $event
 	 */
-	protected function validateProperties($document)
+	protected function validateProperties($document, $event)
 	{
 		$modifiedPropertyNames = $document->getModifiedPropertyNames();
 		foreach ($document->getDocumentModel()->getProperties() as $propertyName => $property)
@@ -87,7 +89,7 @@ class ValidateListener
 			/* @var $property Property */
 			if ($document->isNew() || in_array($propertyName, $modifiedPropertyNames))
 			{
-				$this->validatePropertyValue($property, $document);
+				$this->validatePropertyValue($property, $document, $event);
 			}
 		}
 	}
@@ -95,9 +97,10 @@ class ValidateListener
 	/**
 	 * @param Property $property
 	 * @param AbstractDocument $document
+	 * @param DocumentEvent $event
 	 * @return boolean
 	 */
-	protected function validatePropertyValue($property, $document)
+	protected function validatePropertyValue($property, $document, $event)
 	{
 		$value = $property->getValue($document);
 		if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
@@ -115,16 +118,17 @@ class ValidateListener
 			elseif ($nbValue > $property->getMaxOccurs())
 			{
 				$args = array('maxOccurs' => $property->getMaxOccurs());
-				$this->addPropertyError($property->getName(), new PreparedKey('c.constraints.maxoccurs', array('ucf'), array($args)));
+				$this->addPropertyError($property->getName(),
+					new PreparedKey('c.constraints.maxoccurs', array('ucf'), array($args)));
 				return false;
 			}
 			elseif ($nbValue < $property->getMinOccurs())
 			{
 				$args = array('minOccurs' => $property->getMinOccurs());
-				$this->addPropertyError($property->getName(), new PreparedKey('c.constraints.minoccurs', array('ucf'), array($args)));
+				$this->addPropertyError($property->getName(),
+					new PreparedKey('c.constraints.minoccurs', array('ucf'), array($args)));
 				return false;
 			}
-
 		}
 		elseif ($value === null || $value === '')
 		{
@@ -137,9 +141,8 @@ class ValidateListener
 		}
 		elseif ($property->hasConstraints())
 		{
-			$constraintManager = $document->getDocumentServices()->getConstraintsManager();
-			$defaultParams =  array('document' => $document, 'property' => $property);
-
+			$constraintManager = $event->getApplicationServices()->getConstraintsManager();
+			$defaultParams = array('document' => $document, 'property' => $property, 'documentEvent' => $event);
 			foreach ($property->getConstraintArray() as $name => $params)
 			{
 				$params += $defaultParams;

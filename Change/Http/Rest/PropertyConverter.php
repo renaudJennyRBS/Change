@@ -2,6 +2,7 @@
 namespace Change\Http\Rest;
 
 use Change\Documents\AbstractDocument;
+use Change\Documents\DocumentManager;
 use Change\Documents\Property;
 use Change\Http\UrlManager;
 /**
@@ -22,11 +23,12 @@ class PropertyConverter extends ValueConverter
 	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param \Change\Documents\Property $property
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param \Change\Http\UrlManager $urlManager
 	 */
-	public function __construct(AbstractDocument $document, Property $property, UrlManager $urlManager = null)
+	public function __construct(AbstractDocument $document, Property $property, DocumentManager $documentManager = null, UrlManager $urlManager = null)
 	{
-		parent::__construct($urlManager, $document->getDocumentServices()->getDocumentManager());
+		parent::__construct($urlManager, $documentManager);
 		$this->document = $document;
 		$this->property = $property;
 	}

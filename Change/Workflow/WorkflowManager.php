@@ -14,31 +14,6 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_PROCESS = 'process';
 
 	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-		if ($documentServices !== null && $this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -51,12 +26,7 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->documentServices)
-		{
-			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/WorkflowManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/WorkflowManager');
 	}
 
 	/**
@@ -70,9 +40,8 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('startTask' => $startTask,
 			'date' => ($date instanceof \DateTime) ? $date : new \DateTime()));
-		$args['documentServices'] = $this->getDocumentServices();
 
-		$event = new \Zend\EventManager\Event(static::EVENT_EXAMINE, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_EXAMINE, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		$workflow = $event->getParam('workflow');
@@ -127,10 +96,9 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 		$args = $em->prepareArgs($context);
 
 		$args['taskId'] = $taskId;
-		$args['documentServices'] = $this->getDocumentServices();
 		$args['date'] = $context[Interfaces\WorkItem::DATE_CONTEXT_KEY];
 
-		$event = new \Zend\EventManager\Event(static::EVENT_PROCESS, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_PROCESS, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		$workflowInstance = $event->getParam('workflowInstance');

@@ -15,6 +15,13 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
+	}
+
 	public function testExecute()
 	{
 		$user = $this->getNewUser();
@@ -22,8 +29,7 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 		$section = $this->getNewWebsite();
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$event->setDocumentServices($this->getDocumentServices());
+		$event->setParams($this->getDefaultEventArguments());
 
 		$request = new \Change\Http\Request();
 		$request->setMethod('POST');
@@ -46,8 +52,8 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 		$data = $result->toArray();
 		$this->assertFalse(array_key_exists('error', $data));
 		//check if review is created
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Rbs_Review_Review');
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), $model);
+		$model = $this->getApplicationServices()->getModelManager()->getModelByName('Rbs_Review_Review');
+		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery($model);
 		$query = $dqb->andPredicates($dqb->eq('target', $target));
 		$reviews = $query->getDocuments();
 		$this->assertCount(1, $reviews);
@@ -67,7 +73,7 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewTarget()
 	{
-		$target = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+		$target = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $target \Rbs\Catalog\Documents\Product */
 		$target->setLabel('Nintendo NES');
 		$target->getCurrentLocalization()->setTitle('Nintendo NES');
@@ -91,7 +97,7 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewUser()
 	{
-		$user = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
+		$user = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
 		/* @var $user \Rbs\User\Documents\User */
 		$user->setLabel('Mario Bros');
 		$user->setLogin('mario');
@@ -117,7 +123,7 @@ class PostReviewTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewWebsite()
 	{
-		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
+		$website = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		/* @var $website \Rbs\Website\Documents\Website */
 		$website->setLabel('test');
 		$website->getCurrentLocalization()->setTitle('test');

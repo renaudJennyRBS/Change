@@ -15,14 +15,13 @@ class GenerateSitemap
 		$websiteId = $event->getRequest()->getQuery('websiteId');
 		if ($websiteId)
 		{
-			$website = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($websiteId);
+			$website = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($websiteId);
 			if ($website instanceof \Rbs\Website\Documents\Website)
 			{
 				$lcid = $event->getRequest()->getQuery('LCID');
 				if ($lcid && in_array($lcid, $website->getLCIDArray()))
 				{
-					$jm = new \Change\Job\JobManager();
-					$jm->setApplicationServices($event->getApplicationServices());
+					$jm = $event->getApplicationServices()->getJobManager();
 					$job = $jm->createNewJob('Rbs_Seo_GenerateSitemap', [ 'websiteId' => $websiteId, 'LCID' => $lcid ]);
 					$result->setArray([ 'jobId' => $job->getId() ]);
 				}

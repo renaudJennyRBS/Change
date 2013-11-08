@@ -45,7 +45,7 @@ class AddPermissionRules
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $as
+	 * @param \Change\Services\ApplicationServices $as
 	 * @param integer $accessor
 	 * @param string $role
 	 * @param integer $resource
@@ -92,7 +92,7 @@ class AddPermissionRules
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $as
+	 * @param \Change\Services\ApplicationServices $as
 	 * @param integer $accessor
 	 * @param string $role
 	 * @param integer $resource

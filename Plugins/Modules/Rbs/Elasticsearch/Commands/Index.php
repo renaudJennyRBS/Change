@@ -13,10 +13,13 @@ class Index
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$documentServices = new \Change\Documents\DocumentServices($applicationServices);
-		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		$applicationServices = $event->getApplicationServices();
+		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		{
+			$event->addErrorMessage('Elasticsearch services not registered');
+			return;
+		}
 		$indexManager = $elasticsearchServices->getIndexManager();
 
 		$hasClient = false;
@@ -58,8 +61,7 @@ class Index
 		{
 			if ($event->getParam('useJob'))
 			{
-				$jobManager = new \Change\Job\JobManager();
-				$jobManager->setDocumentServices($documentServices);
+				$jobManager = $applicationServices->getJobManager();
 			}
 			else
 			{
@@ -67,9 +69,9 @@ class Index
 			}
 
 			$documentCount = 0;
-			foreach ($documentServices->getModelManager()->getModelsNames() as $modelsName)
+			foreach ($applicationServices->getModelManager()->getModelsNames() as $modelsName)
 			{
-				$model = $documentServices->getModelManager()->getModelByName($modelsName);
+				$model = $applicationServices->getModelManager()->getModelByName($modelsName);
 				if ($model->isAbstract() || $model->isStateless())
 				{
 					continue;
@@ -88,13 +90,13 @@ class Index
 				}
 				$event->addInfoMessage('Schedule indexation of ' . $modelsName . ' model...');
 
-				$LCID = $documentServices->getDocumentManager()->getLCID();
+				$LCID = $applicationServices->getDocumentManager()->getLCID();
 				$id = 0;
 				while (true)
 				{
 					$toIndex = array();
-					$documentServices->getDocumentManager()->reset();
-					$q = new \Change\Documents\Query\Query($documentServices, $model);
+					$applicationServices->getDocumentManager()->reset();
+					$q = $applicationServices->getDocumentManager()->getNewQuery($model);
 					$q->andPredicates($q->gt('id', $id));
 					$q->addOrder('id');
 					$docs = $q->getDocuments(0, 50);

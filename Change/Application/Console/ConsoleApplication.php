@@ -1,16 +1,14 @@
 <?php
 namespace Change\Application\Console;
 
-use \Change\Application\Console\ChangeCommand as Command;
-use Zend\Json\Json;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Output\OutputInterface;
+use Change\Application\Console\ChangeCommand as Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
+use Zend\Json\Json;
 
 /**
  * @name \Change\Application\Console\ConsoleApplication
@@ -21,12 +19,12 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	 * @var array
 	 */
 	protected $configuration;
-	
+
 	/**
 	 * @var \Change\Application
 	 */
 	protected $changeApplication;
-	
+
 	/**
 	 * @return \Change\Application
 	 */
@@ -34,7 +32,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	{
 		return $this->changeApplication;
 	}
-	
+
 	/**
 	 * @return array
 	 */
@@ -57,7 +55,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 		}
 		return $this->configuration;
 	}
-	
+
 	/**
 	 * @param \Change\Application $changeApplication
 	 */
@@ -65,19 +63,23 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	{
 		$this->changeApplication = $changeApplication;
 	}
-	
+
 	/**
 	 * Registers all the commands
 	 */
 	public function registerCommands()
 	{
 		$changeApplication = $this->getChangeApplication();
-		$eventManager = new \Zend\EventManager\EventManager('Commands');
-		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
-		$changeApplication->getSharedEventManager()->registerListenerAggregateClassNames($eventManager, $classNames);
-		$eventManager->setSharedManager($changeApplication->getSharedEventManager());
+		$eventManagerFactory = new \Change\Events\EventManagerFactory($changeApplication);
+		$eventManagerFactory->addSharedService('applicationServices', new \Change\Services\ApplicationServices($changeApplication, $eventManagerFactory));
 
-		$event = new \Change\Commands\Events\Event('config', $changeApplication, array());
+		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
+		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
+		$event = new \Change\Commands\Events\Event('registerServices', $changeApplication, array('eventManagerFactory' => $eventManagerFactory));
+		$eventManager->trigger($event);
+
+		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
+		$event = new \Change\Commands\Events\Event('config', $changeApplication, array('eventManagerFactory' => $eventManagerFactory));
 		$results = $eventManager->trigger($event);
 		foreach ($results as $result)
 		{
@@ -93,7 +95,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 
 	/**
 	 * @param array $commandsConfig
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 * @param \Change\Application $changeApplication
 	 */
 	protected function registerCommandsConfig($commandsConfig, $eventManager, $changeApplication)
@@ -129,7 +131,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 
 			if (isset($commandConfig['options']) && is_array($commandConfig['options']))
 			{
-				foreach($commandConfig['options'] as $optionName => $optionData)
+				foreach ($commandConfig['options'] as $optionName => $optionData)
 				{
 					$shortcut = isset($optionData['shortcut']) ? $optionData['shortcut'] : null;
 					if (array_key_exists('default', $optionData))
@@ -156,7 +158,7 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			}
 			if (isset($commandConfig['arguments']) && is_array($commandConfig['arguments']))
 			{
-				foreach($commandConfig['arguments'] as $argumentName => $argumentData)
+				foreach ($commandConfig['arguments'] as $argumentName => $argumentData)
 				{
 					$description = isset($argumentData['description']) ? $argumentData['description'] : '';
 					$mode = isset($argumentData['required']) && $argumentData['required']
@@ -166,13 +168,16 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 				}
 			}
 
-			$command->setCode(function(InputInterface $input, OutputInterface $output) use ($command, $eventManager, $changeApplication) {
+			$command->setCode(function (InputInterface $input, OutputInterface $output) use (
+				$command, $eventManager, $changeApplication
+			)
+			{
 				$args = $eventManager->prepareArgs(array_merge($input->getOptions(), $input->getArguments()));
 				$args['outputMessages'] = new \ArrayObject();
 				$event = new \Change\Commands\Events\Event($command->getName(), $changeApplication, $args);
 				$eventManager->trigger($event);
 				$hasErrors = false;
-				foreach($event->getOutputMessages() as $message)
+				foreach ($event->getOutputMessages() as $message)
 				{
 					list($string, $level) = $message;
 					switch ($level)

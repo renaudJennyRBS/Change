@@ -13,7 +13,7 @@ class SiteMap extends Menu
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Event params includes all params from Http\Event (ex: pathRule and page).
 	 * @param Event $event
 	 * @return Parameters

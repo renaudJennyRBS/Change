@@ -17,8 +17,7 @@ class Start
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
 			/* @var $document \Change\Documents\AbstractDocument */
-			$wm = new \Change\Workflow\WorkflowManager();
-			$wm->setDocumentServices($document->getDocumentServices());
+			$wm = $event->getApplicationServices()->getWorkflowManager();
 			$ctx = array(\Change\Workflow\Interfaces\WorkItem::DOCUMENT_ID_CONTEXT_KEY => $document->getId());
 			$wm->getNewWorkflowInstance('publicationProcess', $ctx);
 		}

@@ -1,20 +1,19 @@
 <?php
 namespace ChangeTests\Change\Documents;
 
-use Change\Documents\ModelManager;
-
 class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
 	{
 		static::initDocumentsClasses();
 	}
+
 	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function testInitializeDB()
 	{
-		return $this->getDocumentServices()->getModelManager();
+		return $this->getApplicationServices()->getModelManager();
 	}
 
 	/**

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Review\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -14,7 +13,7 @@ class ReviewList extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -29,7 +28,8 @@ class ReviewList extends Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();
-		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
+		$parameters->setParameterValue('pageNumber',
+			intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
 		if ($parameters->getParameter('targetId') === null)
 		{
@@ -44,8 +44,7 @@ class ReviewList extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -53,8 +52,9 @@ class ReviewList extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$target = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameterValue('targetId'));
-		$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Review_Review');
+		$target = $event->getApplicationServices()->getDocumentManager()
+			->getDocumentInstance($parameters->getParameterValue('targetId'));
+		$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Review_Review');
 		//TODO add section of page to predicate?
 		$dqb->andPredicates($dqb->published(), $dqb->eq('target', $target));
 		//TODO order on upvote comment, but a formula between upvote and downvote will be better
@@ -77,7 +77,7 @@ class ReviewList extends Block
 			$attributes['pageCount'] = $pageCount;
 
 			/* @var $product \Rbs\Catalog\Documents\Product */
-			foreach ($dqb->getDocuments(($pageNumber-1)*$reviewsPerPage, $reviewsPerPage) as $review)
+			foreach ($dqb->getDocuments(($pageNumber - 1) * $reviewsPerPage, $reviewsPerPage) as $review)
 			{
 				/* @var $review \Rbs\Review\Documents\Review */
 				$rows[] = $review->getInfoForTemplate($urlManager);

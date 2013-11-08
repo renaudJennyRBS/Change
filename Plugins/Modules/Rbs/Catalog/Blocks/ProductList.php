@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Catalog\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -37,7 +36,7 @@ class ProductList extends Block
 
 		if ($parameters->getParameter('productListId') !== null)
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$productList = $documentManager->getDocumentInstance($parameters->getParameter('productListId'));
 			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
@@ -45,9 +44,9 @@ class ProductList extends Block
 			}
 		}
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getWebStore();
+		$webStore = $commerceServices->getContext()->getWebStore();
 		if ($webStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
@@ -79,16 +78,16 @@ class ProductList extends Block
 		$productListId = $parameters->getParameter('productListId');
 		if ($productListId)
 		{
-			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			/* @var $productList \Rbs\Catalog\Documents\ProductList */
 			$productList = $documentManager->getDocumentInstance($productListId);
 			$attributes['productList'] = $productList;
 
 			$conditionId = $parameters->getParameter('conditionId');
-			$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
+			$query = $documentManager->getNewQuery('Rbs_Catalog_Product');
 			$query->andPredicates($query->published());
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
 			$subQuery->andPredicates(

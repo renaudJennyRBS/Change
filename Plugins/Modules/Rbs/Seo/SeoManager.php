@@ -1,32 +1,17 @@
 <?php
 namespace Rbs\Seo;
 
-use Change\Events\EventsCapableTrait;
-
 /**
  * @name \Rbs\Seo\SeoManager
  */
 class SeoManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait, \Change\Services\DefaultServicesTrait {
-		EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'SeoManager';
 
 	const VARIABLE_REGEXP = '/\{([a-z][A-Za-z0-9.]*\.[a-z][A-Za-z0-9.]*)\}/';
 
-	/**
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
-		}
-		return $this->sharedEventManager;
-	}
 
 	/**
 	 * @return null|string|string[]
@@ -41,16 +26,14 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplication()->getConfiguration('Change/Events/SeoManager');
-		return is_array($config) ? $config : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Seo/Events/SeoManager');
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach('getMetaVariables', array($this, 'onDefaultGetMetaVariables'), 5);
 		$eventManager->attach('getMetaSubstitutions', array($this, 'onDefaultGetMetaSubstitutions'), 5);
 		$eventManager->attach('getMetas', array($this, 'onDefaultGetMetas'), 5);
@@ -98,8 +81,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager = $this->getEventManager();
 		$args = $eventManager->prepareArgs(array(
-			'functions' => $functions,
-			'documentServices' => $this->getDocumentServices()
+			'functions' => $functions
 		));
 		$eventManager->trigger('getMetaVariables', $this, $args);
 		return isset($args['variables']) ? $args['variables'] : [];
@@ -111,11 +93,11 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultGetMetaVariables($event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices instanceof \Change\Services\ApplicationServices)
 		{
 			$variables = ($event->getParam('variables')) ? $event->getParam('variables') : [];
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$event->setParam('variables', array_merge($variables, [
 				'document.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-document-title', ['ucf']),
 				'page.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-page-title', ['ucf']),
@@ -164,12 +146,13 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onDefaultGetMetas(\Zend\EventManager\Event $event)
+	public function onDefaultGetMetas(\Change\Events\Event $event)
 	{
 		$page = $event->getParam('page');
 		$document = $event->getParam('document');
+
 		/* @var $seoManager \Rbs\Seo\SeoManager */
 		$seoManager = $event->getTarget();
 		if ($page instanceof \Change\Presentation\Interfaces\Page && $document instanceof \Change\Documents\Interfaces\Publishable)
@@ -177,19 +160,21 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			/* @var $document \Change\Documents\Interfaces\Publishable|\Change\Documents\AbstractDocument */
 			$metas = [ 'title' => null, 'description' => null, 'keywords' => null ];
 
-			$documentServices = $document->getDocumentServices();
+			$applicationServices = $event->getApplicationServices();
 			$regExp = static::VARIABLE_REGEXP;
 			$availableVariables = $seoManager->getMetaVariables(array_merge($document->getDocumentModel()->getAncestorsNames(), [$document->getDocumentModelName()]));
 
-			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Seo_DocumentSeo');
+			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Seo_DocumentSeo');
 			$dqb->andPredicates($dqb->eq('target', $document));
 			$documentSeo = $dqb->getFirstDocument();
 			/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
 
-			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Seo_ModelConfiguration');
+			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Seo_ModelConfiguration');
 			$dqb->andPredicates($dqb->eq('modelName', $document->getDocumentModelName()));
-			$modelConfiguration = $dqb->getFirstDocument();
+
 			/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
+			$modelConfiguration = $dqb->getFirstDocument();
+
 
 			if ($documentSeo)
 			{
@@ -201,6 +186,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 				$variables = array_filter($foundVariables, function ($foundVariable) use ($availableVariables){
 					return array_key_exists($foundVariable, $availableVariables);
 				});
+
 				$substitutions = $seoManager->getMetaSubstitutions($document, $page, $variables);
 
 				$metaTitle = $documentSeo->getCurrentLocalization()->getMetaTitle();
@@ -339,9 +325,9 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$seo = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+			$seo = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 			/* @var $seo \Rbs\Seo\Documents\DocumentSeo */
-			$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Website');
+			$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Website');
 			$websites = $dqb->getDocuments();
 			$sitemapGenerateForWebsites = [];
 			foreach ($websites as $website)

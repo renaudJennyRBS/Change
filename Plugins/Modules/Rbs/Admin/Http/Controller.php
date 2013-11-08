@@ -1,12 +1,8 @@
 <?php
 namespace Rbs\Admin\Http;
 
-use Change\Application\ApplicationServices;
-use Change\Application;
-use Change\Documents\DocumentServices;
 use Change\Http\Event;
 use Change\Http\Result;
-use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -24,37 +20,32 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		parent::attachEvents($eventManager);
+		$eventManager->attach(Event::EVENT_REQUEST, array($this, 'onDefaultRequest'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
 	}
 
-	/**
-	 * @param $request
-	 * @return \Change\Http\Event
-	 */
-	protected function createEvent($request)
+	public function onDefaultRegisterServices(Event $event)
 	{
-		$event = parent::createEvent($request);
-		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
-		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
+		parent::onDefaultRegisterServices($event);
+		$applicationServices = $event->getApplicationServices();
+		$applicationServices->getPermissionsManager()->allow(true);
+		$manager = new \Rbs\Admin\Manager();
+		$manager->setApplication($this->getApplication())
+			->setEventManagerFactory($this->getEventManagerFactory())
+			->setApplicationServices($applicationServices);
+		$event->setParam('manager', $manager);
+	}
 
-		$event->setParam('manager', new \Rbs\Admin\Manager($event->getApplicationServices(), $event->getDocumentServices()));
-
-		$authenticationManager = new \Change\User\AuthenticationManager();
-		$authenticationManager->setDocumentServices($event->getDocumentServices());
-		$event->setAuthenticationManager($authenticationManager);
-
-		$permissionsManager = new \Change\Permissions\PermissionsManager();
-		$permissionsManager->allow(true);
-		$permissionsManager->setApplicationServices($event->getApplicationServices());
-		$event->setPermissionsManager($permissionsManager);
-
-		$request->populateLCIDByHeader($event->getApplicationServices()->getI18nManager());
-		return $event;
+	public function onDefaultRequest(Event $event)
+	{
+		$request = $event->getRequest();
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		$request->populateLCIDByHeader($i18nManager);
 	}
 
 	/**

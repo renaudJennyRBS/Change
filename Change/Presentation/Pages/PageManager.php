@@ -1,25 +1,19 @@
 <?php
 namespace Change\Presentation\Pages;
 
-use Change\Events\EventsCapableTrait;
 use Change\Http\Web\Result\HtmlHeaderElement;
 use Change\Http\Web\Result\Page as PageResult;
-use Change\Presentation\Interfaces\Page;
 
 /**
  * @name \Change\Presentation\Pages\PageManager
  */
 class PageManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait
-	{
-		EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait;
 
 	const DEFAULT_IDENTIFIER = 'PageManager';
 
 	const EVENT_GET_CACHE_ADAPTER = 'getCacheAdapter';
-
 	const EVENT_GET_PAGE_RESULT = 'getPageResult';
 
 	/**
@@ -33,19 +27,9 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	protected $httpWebEvent;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
-	 * @var \Change\Presentation\PresentationServices
-	 */
-	protected $presentationServices;
+	protected $configuration;
 
 	/**
 	 * @var \Change\Http\Request
@@ -68,6 +52,24 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	protected $permissionsManager;
 
 	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	protected function getConfiguration()
+	{
+		return $this->configuration;
+	}
+
+	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -80,21 +82,15 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->applicationServices)
-		{
-			$config = $this->applicationServices->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/PageManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/PageManager');
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$this->defaultAttachEvents($eventManager);
-		$callback = function(PageEvent $event)
+		$callback = function (PageEvent $event)
 		{
 			(new DefaultPageResult())->onGetPageResult($event);
 		};
@@ -110,18 +106,6 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 		$this->httpWebEvent = $httpWebEvent;
 		if ($httpWebEvent)
 		{
-			if (null === $this->applicationServices)
-			{
-				$this->setApplicationServices($httpWebEvent->getApplicationServices());
-			}
-			if (null === $this->documentServices)
-			{
-				$this->setDocumentServices($httpWebEvent->getDocumentServices());
-			}
-			if (null === $this->presentationServices)
-			{
-				$this->setPresentationServices($httpWebEvent->getPresentationServices());
-			}
 			if (null === $this->request)
 			{
 				$this->setRequest($httpWebEvent->getRequest());
@@ -148,28 +132,6 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	public function getHttpWebEvent()
 	{
 		return $this->httpWebEvent;
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @return $this
-	 */
-	public function setApplicationServices($applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-		if ($applicationServices)
-		{
-			$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
-		}
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
 	}
 
 	/**
@@ -206,42 +168,6 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	public function getPermissionsManager()
 	{
 		return $this->permissionsManager;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices($documentServices)
-	{
-		$this->documentServices = $documentServices;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @return $this
-	 */
-	public function setPresentationServices($presentationServices)
-	{
-		$this->presentationServices = $presentationServices;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Presentation\PresentationServices
-	 */
-	public function getPresentationServices()
-	{
-		return $this->presentationServices;
 	}
 
 	/**
@@ -292,16 +218,15 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 			if ($this->getRequest()->isGet())
 			{
 				$cacheAdapter = $this->getCacheAdapter();
-				if ($cacheAdapter  && ($TTL = $page->getTTL()) > 0)
+				if ($cacheAdapter && ($TTL = $page->getTTL()) > 0)
 				{
-					$uid = $page->getIdentifier() . ' ' . $this->request->getPath() . '' . $this->getRequest()->getQuery()->toString();
+					$uid = $page->getIdentifier() . ' ' . $this->request->getPath() . '' . $this->getRequest()->getQuery()
+							->toString();
 					$cacheAdapter->getOptions()->setTtl($TTL);
 					$key = md5(serialize($uid));
 					if ($cacheAdapter->hasItem($key))
 					{
 						$result = $cacheAdapter->getItem($key);
-						$logging = $this->getApplicationServices()->getLogging();
-						$logging->info(__METHOD__ . '(' . $TTL . ', ' . $uid . ', ' . $key . ')');
 					}
 					else
 					{
@@ -325,7 +250,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 		$result = new PageResult($page->getIdentifier());
 		$result->getHeaders()->addHeaderLine('Content-Type: text/html;charset=utf-8');
 		$base = $this->getUrlManager()->getByPathInfo(null)->normalize()->toString();
-		$result->addNamedHeadAsString('base',  new HtmlHeaderElement('base', array('href' => $base, 'target' => '_self')));
+		$result->addNamedHeadAsString('base', new HtmlHeaderElement('base', array('href' => $base, 'target' => '_self')));
 
 		$eventManager = $this->getEventManager();
 		$args = $eventManager->prepareArgs(array('page' => $page, 'pageResult' => $result));
@@ -337,7 +262,6 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 		return $pageEvent->getPageResult();
 	}
 
-
 	/**
 	 * @return \Zend\Cache\Storage\Adapter\AbstractAdapter|null
 	 */
@@ -346,16 +270,16 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 		if (false === $this->cacheAdapter)
 		{
 			$this->cacheAdapter = null;
-			$configuration = $this->getApplicationServices()->getApplication()->getConfiguration();
+			$configuration = $this->getConfiguration();
 			if ($configuration->getEntry('Change/Cache/page'))
 			{
 				$eventManager = $this->getEventManager();
-				$event = new \Zend\EventManager\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
+				$event = new \Change\Events\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
 				$eventManager->trigger($event);
 				$cache = $event->getParam('cacheAdapter');
 				if ($cache instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter)
 				{
-					$this->cacheAdapter =  $cache;
+					$this->cacheAdapter = $cache;
 				}
 			}
 		}

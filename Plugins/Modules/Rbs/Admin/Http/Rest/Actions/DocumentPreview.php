@@ -6,7 +6,6 @@ use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\ArrayResult;
 
-use Change\Presentation\PresentationServices;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -31,7 +30,7 @@ class DocumentPreview
 		}
 
 		/* @var $documentManager \Change\Documents\DocumentManager */
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$document = $documentManager->getDocumentInstance($id);
 		$modelName = $document->getDocumentModelName();
 		$model = $document->getDocumentModel();
@@ -59,9 +58,9 @@ class DocumentPreview
 			'title' =>  $title
 		];
 
-		/* @var $as \Change\Application\ApplicationServices */
+		/* @var $as \Change\Services\ApplicationServices */
 		$as = $event->getApplicationServices();
-		$tplFile = $as->getApplication()->getWorkspace()->pluginsModulesPath()
+		$tplFile = $event->getApplication()->getWorkspace()->pluginsModulesPath()
 			. DIRECTORY_SEPARATOR . $model->getVendorName()
 			. DIRECTORY_SEPARATOR . $model->getShortModuleName()
 			. DIRECTORY_SEPARATOR . 'Admin'
@@ -77,12 +76,12 @@ class DocumentPreview
 			foreach ($model->getProperties() as $name => $property)
 			{
 				/* @var $property \Change\Documents\Property */
-				$c = new PropertyConverter($document, $property, $urlManager);
+				$c = new PropertyConverter($document, $property, $documentManager, $urlManager);
 				$properties[$name] = $c->getRestValue();
 			}
 
-			$ps = new PresentationServices($event->getApplicationServices());
-			$docPreview['content'] = $ps->getTemplateManager()->renderTemplateFile($tplFile, $properties);
+			$templateManager = $as->getTemplateManager();
+			$docPreview['content'] = $templateManager->renderTemplateFile($tplFile, $properties);
 		}
 		else
 		{

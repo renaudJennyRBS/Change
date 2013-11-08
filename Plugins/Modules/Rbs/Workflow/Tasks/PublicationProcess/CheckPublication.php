@@ -4,7 +4,7 @@ namespace Rbs\Workflow\Tasks\PublicationProcess;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
 use Change\Workflow\Interfaces\WorkItem;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 /**
 * @name \Rbs\Workflow\Tasks\PublicationProcess\CheckPublication
 */
@@ -54,8 +54,8 @@ class CheckPublication
 					}
 				}
 
-				$documentServices = $document->getDocumentServices();
-				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				$applicationServices = $event->getApplicationServices();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();

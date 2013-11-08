@@ -21,7 +21,7 @@ class PageResolver
 		$pathRule = $event->getParam('pathRule');
 		if ($pathRule instanceof PathRule && $document instanceof AbstractDocument)
 		{
-			$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+			$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
 			if (!($section instanceof Section))
 			{
 				if ($document instanceof Publishable)

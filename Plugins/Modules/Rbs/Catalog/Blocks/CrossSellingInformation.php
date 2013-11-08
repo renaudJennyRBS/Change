@@ -2,7 +2,6 @@
 namespace Rbs\Catalog\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 use Change\Presentation\Blocks\ParameterInformation;
 
@@ -11,16 +10,12 @@ use Change\Presentation\Blocks\ParameterInformation;
  */
 class CrossSellingInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-label'));
+		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-label', $ucf));
 		$this->addInformationMeta('title', Property::TYPE_STRING, false, null)
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.cross-selling-title', $ucf));
 		$this->addInformationMeta('crossSellingType', ParameterInformation::TYPE_COLLECTION, true, 'ACCESSORIES')

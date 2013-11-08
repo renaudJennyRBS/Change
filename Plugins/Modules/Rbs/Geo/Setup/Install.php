@@ -8,15 +8,12 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$cm = new \Change\Collection\CollectionManager();
-		$cm->setDocumentServices($documentServices);
+		$cm = $applicationServices->getCollectionManager();
 		if ($cm->getCollection('Rbs_Geo_Collection_UnitType') === null)
 		{
 			$tm = $applicationServices->getTransactionManager();
@@ -25,14 +22,14 @@ class Install extends \Change\Plugins\InstallBase
 				$tm->begin();
 
 				/* @var $collection \Rbs\Collection\Documents\Collection */
-				$collection = $documentServices->getDocumentManager()
+				$collection = $applicationServices->getDocumentManager()
 					->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 				$collection->setLabel('Territorial Unit Types');
 				$collection->setCode('Rbs_Geo_Collection_UnitType');
 				$collection->setLocked(true);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('STATE');
 				$item->setLabel('state');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
@@ -41,7 +38,7 @@ class Install extends \Change\Plugins\InstallBase
 				$collection->getItems()->add($item);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('DEPARTEMENT');
 				$item->setLabel('département');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
@@ -50,7 +47,7 @@ class Install extends \Change\Plugins\InstallBase
 				$collection->getItems()->add($item);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('REGION');
 				$item->setLabel('region');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
@@ -59,7 +56,7 @@ class Install extends \Change\Plugins\InstallBase
 				$collection->getItems()->add($item);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('COUNTY');
 				$item->setLabel('county');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
@@ -68,15 +65,17 @@ class Install extends \Change\Plugins\InstallBase
 				$collection->getItems()->add($item);
 
 				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 				$item->setValue('PROVINCE');
 				$item->setLabel('province');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.geo.documents.territorialunit.unit-province', array('ucf')));
 				$item->save();
+
 				$collection->getItems()->add($item);
 
 				$collection->save();
+
 				$tm->commit();
 			}
 			catch (\Exception $e)
@@ -95,13 +94,13 @@ class Install extends \Change\Plugins\InstallBase
 			$activable = array('FR', 'DE', 'CH', 'BE', 'LU', 'IT', 'ES', 'GB', 'US', 'CA', 'PT', 'NL', 'AT');
 			foreach ($countries as $countryData)
 			{
-				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Geo_Country');
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 				$query->andPredicates($query->eq('code', $countryData['code']));
 				/* @var $country \Rbs\geo\Documents\Country */
 				$country = $query->getFirstDocument();
 				if ($country === null)
 				{
-					$country = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
+					$country = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
 					$country->setCode($countryData['code']);
 				}
 
@@ -132,12 +131,12 @@ class Install extends \Change\Plugins\InstallBase
 				$tm->begin();
 
 				/* @var $collection \Rbs\Collection\Documents\Collection */
-				$collection = $documentServices->getDocumentManager()
+				$collection = $applicationServices->getDocumentManager()
 					->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 				$collection->setLabel('Countries used in project');
 				$collection->setCode('Rbs_Geo_Collection_Countries');
 
-				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Geo_Country');
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 				$query->andPredicates($query->activated());
 				$query->addOrder('code');
 
@@ -150,7 +149,7 @@ class Install extends \Change\Plugins\InstallBase
 					}
 
 					/* @var $item \Rbs\Collection\Documents\Item */
-					$item = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+					$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 					$item->setValue($country->getCode());
 					$item->setLabel($country->getLabel());
 					$item->getCurrentLocalization()->setTitle($country->getTitle());
@@ -173,17 +172,17 @@ class Install extends \Change\Plugins\InstallBase
 			$tm->begin();
 			foreach ($models as $model)
 			{
-				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Geo_AddressFields');
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_AddressFields');
 				$query->andPredicates($query->eq('label', $model['label']));
 				if (!$query->getFirstDocument())
 				{
 					/* @var $fields \Rbs\geo\Documents\AddressFields */
-					$fields = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_AddressFields');
+					$fields = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_AddressFields');
 
 					$fields->setLabel($model['label']);
 					foreach ($model['fields'] as $fieldData)
 					{
-						$field = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_AddressField');
+						$field = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_AddressField');
 						foreach ($fieldData as $propertyName => $propertyValue)
 						{
 							$field->getDocumentModel()->setPropertyValue($field, $propertyName, $propertyValue);
@@ -196,7 +195,7 @@ class Install extends \Change\Plugins\InstallBase
 
 					if (isset($model['countryCode']))
 					{
-						$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Geo_Country');
+						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 						$query->andPredicates($query->eq('code', $model['countryCode']));
 						/* @var $country \Rbs\geo\Documents\Country */
 						$country = $query->getFirstDocument();

@@ -19,14 +19,14 @@ class UpdateLocalizedDocument
 	protected function getDocument($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model || !$model->isLocalized())
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
 			return null;
@@ -72,8 +72,9 @@ class UpdateLocalizedDocument
 			return;
 		}
 
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$pop = false;
 		try
 		{
 			$documentManager->pushLCID($LCID);
@@ -101,7 +102,10 @@ class UpdateLocalizedDocument
 		}
 		catch (\Exception $e)
 		{
-			if ($pop) $documentManager->popLCID();
+			if ($pop)
+			{
+				$documentManager->popLCID();
+			}
 			throw $transactionManager->rollBack($e);
 		}
 	}

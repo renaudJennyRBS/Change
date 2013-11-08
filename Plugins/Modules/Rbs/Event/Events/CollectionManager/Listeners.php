@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Event\Events\CollectionManager;
 
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Change\Collection\CollectionManager;

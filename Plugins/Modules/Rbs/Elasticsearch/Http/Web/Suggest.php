@@ -5,8 +5,8 @@ use Change\Http\Web\Event;
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\Elasticsearch\Http\Web\Suggest
-*/
+ * @name \Rbs\Elasticsearch\Http\Web\Suggest
+ */
 class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	/**
@@ -20,46 +20,54 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		if ($searchText)
 		{
 			//Elastic search special chars
-			$t = str_replace(array('+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '\\', '/'), ' ', $searchText);
+			$t = str_replace(array('+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '\\',
+				'/'), ' ', $searchText);
 
 			//Other special chars
 			$t = str_replace(array(',', '.'), ' ', $t);
 
 			$t = array_map('trim', explode(' ', $t));
-			$t = array_reduce($t, function($r, $i) {if (mb_strlen($i) > 2) {$r[] = mb_substr($i, 0, 15);} return $r;}, array());
+			$t = array_reduce($t, function ($r, $i)
+			{
+				if (mb_strlen($i) > 2)
+				{
+					$r[] = mb_substr($i, 0, 15);
+				}
+				return $r;
+			}, array());
 			$terms = array_unique($t);
-			$result['terms'] = $terms ; //array_map('utf8_encode', $terms);
+			$result['terms'] = $terms; //array_map('utf8_encode', $terms);
 			if (count($terms))
 			{
 				$LCID = $event->getRequest()->getLCID();
 				$website = $event->getWebsite();
 				$result['LCID'] = $LCID;
 
-				$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($event->getApplicationServices(), $event->getDocumentServices());
-				$indexManager = $elasticsearchServices->getIndexManager();
-
-				$indexDef = $indexManager->findIndexDefinitionByMapping('fulltext', $LCID, array('website' => $website));
-				if ($indexDef)
+				$elasticsearchServices = $event->getServices('elasticsearchServices');
+				if ($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices)
 				{
-					$result['client'] = $indexDef->getClientName();
-					$result['indexName'] = $indexDef->getName();
-					$client = $indexManager->getClient($indexDef->getClientName());
-					if ($client)
+					$indexManager = $elasticsearchServices->getIndexManager();
+					$indexDef = $indexManager->findIndexDefinitionByMapping('fulltext', $LCID, array('website' => $website));
+					if ($indexDef)
 					{
-						$index = $client->getIndex($indexDef->getName());
-						$q = $this->buildQuery($terms);
-						$result['q'] = $q->toArray();
-
-						$resultSet = $index->getType($indexDef->getDefaultTypeName())->search($this->buildQuery($terms));
-
-						if ($resultSet->count())
+						$result['client'] = $indexDef->getClientName();
+						$result['indexName'] = $indexDef->getName();
+						$client = $indexManager->getClient($indexDef->getClientName());
+						if ($client)
 						{
-							$items = array();
-							foreach ($resultSet->getResults() as $r)
+							$index = $client->getIndex($indexDef->getName());
+							$q = $this->buildQuery($terms);
+							$result['q'] = $q->toArray();
+							$resultSet = $index->getType($indexDef->getDefaultTypeName())->search($this->buildQuery($terms));
+							if ($resultSet->count())
 							{
-								$items[] = $r->title;
+								$items = array();
+								foreach ($resultSet->getResults() as $r)
+								{
+									$items[] = $r->title;
+								}
+								$result['items'] = array_values(array_unique($items));
 							}
-							$result['items'] = array_values(array_unique($items));
 						}
 					}
 				}

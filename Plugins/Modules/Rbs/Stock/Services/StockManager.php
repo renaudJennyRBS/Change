@@ -1,14 +1,13 @@
 <?php
 namespace Rbs\Stock\Services;
 
-use Rbs\Commerce\Services\CommerceServices;
-use Rbs\Stock\Setup\Schema;
-
 /**
  * @name \Rbs\Stock\Services\StockManager
  */
 class StockManager
 {
+	use \Change\Services\DefaultServicesTrait;
+
 	const INVENTORY_UNIT_PIECE = 0;
 
 	const UNLIMITED_LEVEL = 1000000;
@@ -18,63 +17,27 @@ class StockManager
 	const THRESHOLD_UNAVAILABLE = 'UNAVAILABLE';
 
 	/**
-	 * @var CommerceServices
+	 * @var \Rbs\Commerce\Std\Context
 	 */
-	protected $commerceServices;
+	protected $context;
 
 	/**
-	 * @var \Change\Collection\CollectionManager
-	 */
-	protected $collectionManager;
-
-	/**
-	 * @param CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\Std\Context $context
 	 * @return $this
 	 */
-	public function setCommerceServices(CommerceServices $commerceServices)
+	public function setContext(\Rbs\Commerce\Std\Context $context)
 	{
-		$this->commerceServices = $commerceServices;
+		$this->context = $context;
 		return $this;
 	}
 
 	/**
-	 * @return CommerceServices
+	 * @return \Rbs\Commerce\Std\Context
 	 */
-	public function getCommerceServices()
+	protected function getContext()
 	{
-		return $this->commerceServices;
+		return $this->context;
 	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	protected function getDocumentServices()
-	{
-
-		return $this->commerceServices->getDocumentServices();
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->commerceServices->getApplicationServices();
-	}
-
-	/**
-	 * @return \Change\Collection\CollectionManager
-	 */
-	protected function getCollectionManager()
-	{
-		if ($this->collectionManager === null)
-		{
-			$this->collectionManager = new \Change\Collection\CollectionManager();
-			$this->collectionManager->setDocumentServices($this->getDocumentServices());
-		}
-		return $this->collectionManager;
-	}
-
 
 	/**
 	 * @param \Rbs\Stock\Documents\Sku $sku
@@ -83,7 +46,7 @@ class StockManager
 	 */
 	public function getInventoryEntry($sku, $warehouse = null)
 	{
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates(
 			$query->eq('sku', $sku),
 			$query->eq('warehouse', $warehouse)
@@ -104,7 +67,7 @@ class StockManager
 		if ($entry === null)
 		{
 			/* @var $entry \Rbs\Stock\Documents\InventoryEntry */
-			$entry = $this->getDocumentServices()->getDocumentManager()
+			$entry = $this->getApplicationServices()->getDocumentManager()
 				->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
 		}
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -142,7 +105,8 @@ class StockManager
 			$qb->insert($fb->table('rbs_stock_dat_mvt'),
 				$fb->column('sku_id'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
 			$qb->addValues(
-				$fb->integerParameter('skuId'), $fb->integerParameter('amount'), $fb->integerParameter('warehouseId'), $fb->dateTimeParameter('dateValue'));
+				$fb->integerParameter('skuId'), $fb->integerParameter('amount'), $fb->integerParameter('warehouseId'),
+				$fb->dateTimeParameter('dateValue'));
 		}
 		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : 0);
 		$dateValue = ($date instanceof \DateTime) ? $date : new \DateTime();
@@ -161,14 +125,14 @@ class StockManager
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @return integer
 	 */
-	public function getInventoryLevel(\Rbs\Stock\Documents\Sku $sku, $store)
+	public function getInventoryLevel(\Rbs\Stock\Documents\Sku $sku, $store = null)
 	{
 		if ($sku->getUnlimitedInventory())
 		{
 			return static::UNLIMITED_LEVEL;
 		}
 
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates($query->eq('sku', $sku), $query->eq('warehouse', 0));
 		$dbQueryBuilder = $query->dbQueryBuilder();
 		$fb = $dbQueryBuilder->getFragmentBuilder();
@@ -190,10 +154,15 @@ class StockManager
 		$level = intval($result['level']);
 		$movement = intval($result['movement']);
 
+		if ($store === null)
+		{
+			$store = $this->getContext()->getWebStore();
+		}
+
 		if ($store)
 		{
 			$skuId = $sku->getId();
-			$storeId = ($store instanceof \Change\Documents\AbstractDocument)? $store->getId() : intval($store);
+			$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
 			return $level + $movement - $this->getReservedQuantity($skuId, $storeId);
 		}
 		return $level + $movement;
@@ -205,7 +174,7 @@ class StockManager
 	 * @param integer $level
 	 * @return string
 	 */
-	public function getInventoryThreshold(\Rbs\Stock\Documents\Sku $sku, $store, $level = null)
+	public function getInventoryThreshold(\Rbs\Stock\Documents\Sku $sku, $store = null, $level = null)
 	{
 		if ($level === null)
 		{
@@ -233,7 +202,7 @@ class StockManager
 	 * @param string $threshold
 	 * @return string|null
 	 */
-	public function getInventoryThresholdTitle(\Rbs\Stock\Documents\Sku $sku, $store, $threshold = null)
+	public function getInventoryThresholdTitle(\Rbs\Stock\Documents\Sku $sku, $store = null, $threshold = null)
 	{
 		if ($threshold === null)
 		{
@@ -241,7 +210,7 @@ class StockManager
 		}
 		if ($threshold)
 		{
-			$cm = $this->getCollectionManager();
+			$cm = $this->getApplicationServices()->getCollectionManager();
 			$collection = $cm->getCollection('Rbs_Stock_Collection_Threshold');
 			if ($collection)
 			{
@@ -283,9 +252,11 @@ class StockManager
 					continue;
 				}
 
-				$currentReservation = array_reduce($currentReservations, function($result, \Rbs\Stock\Std\Reservation $res) use ($reservation) {
-					return $res->isSame($reservation) ? $res : $result;
-				});
+				$currentReservation = array_reduce($currentReservations,
+					function ($result, \Rbs\Stock\Std\Reservation $res) use ($reservation)
+					{
+						return $res->isSame($reservation) ? $res : $result;
+					});
 
 				if ($currentReservation instanceof \Rbs\Stock\Std\Reservation)
 				{
@@ -302,7 +273,8 @@ class StockManager
 
 			foreach ($currentReservations as $currentReservation)
 			{
-				$res = array_reduce($reservations, function(\Rbs\Stock\Std\Reservation $result = null, $res) {
+				$res = array_reduce($reservations, function (\Rbs\Stock\Std\Reservation $result = null, $res)
+				{
 					return ($result && $result->isSame($res)) ? null : $result;
 				}, $currentReservation);
 
@@ -426,9 +398,11 @@ class StockManager
 			$fb = $qb->getFragmentBuilder();
 			$skuTable = $fb->getDocumentTable('Rbs_Stock_Sku');
 			$resTable = $fb->table('rbs_stock_dat_res');
-			$qb->select($fb->column('id', $resTable), $fb->column('sku_id', $resTable),$fb->alias($fb->getDocumentColumn('code', $skuTable), 'sku_code'),
+			$qb->select($fb->column('id', $resTable), $fb->column('sku_id', $resTable),
+				$fb->alias($fb->getDocumentColumn('code', $skuTable), 'sku_code'),
 				$fb->column('reservation', $resTable), $fb->column('store_id', $resTable));
-			$qb->from($resTable)->innerJoin($skuTable, $fb->eq($fb->column('sku_id', $resTable), $fb->getDocumentColumn('id', $skuTable)));
+			$qb->from($resTable)
+				->innerJoin($skuTable, $fb->eq($fb->column('sku_id', $resTable), $fb->getDocumentColumn('id', $skuTable)));
 			$qb->where($fb->eq($fb->column('target', $resTable), $fb->parameter('targetIdentifier')));
 		}
 		$query = $qb->query();
@@ -437,7 +411,8 @@ class StockManager
 			->addNumCol('reservation')->addStrCol('sku_code'));
 		if (count($rows))
 		{
-			return array_map(function(array $row) {
+			return array_map(function (array $row)
+			{
 				return (new \Rbs\Stock\Std\Reservation($row['id']))
 					->setCodeSku($row['sku_code'])
 					->setQuantity($row['reservation'])
@@ -478,8 +453,6 @@ class StockManager
 		}
 	}
 
-
-
 	protected $skuIds = array();
 
 	/**
@@ -497,15 +470,18 @@ class StockManager
 			$skuId = $this->skuIds[$code];
 			if (is_int($skuId))
 			{
-				return $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($skuId);
+				return $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($skuId);
 			}
 			return null;
 		}
 
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_Sku');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
 		$query->andPredicates($query->eq('code', $code));
 		$sku = $query->getFirstDocument();
-		$this->skuIds[$code] = ($sku) ? $sku->getId() : null;
+		if ($sku)
+		{
+			$this->skuIds[$code] =  $sku->getId();
+		}
 		return $sku;
 	}
 }

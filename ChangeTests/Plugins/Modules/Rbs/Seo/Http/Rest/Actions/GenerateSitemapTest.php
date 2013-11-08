@@ -22,8 +22,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$website = $this->getNewWebsite();
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$event->setDocumentServices($this->getDocumentServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('websiteId' => $website->getId(), 'LCID' => $website->getCurrentLCID());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$generateSitemap = new \Rbs\Seo\Http\Rest\Actions\GenerateSitemap();
@@ -37,9 +36,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('jobId', $arrayResult);
 		$this->assertGreaterThan(0, $arrayResult['jobId']);
 
-		$jobManager = new \Change\Job\JobManager();
-		$jobManager->setApplicationServices($this->getApplicationServices());
-		$jobManager->setDocumentServices($this->getDocumentServices());
+		$jobManager = $this->getApplicationServices()->getJobManager();
 		$job = $jobManager->getJob($arrayResult['jobId']);
 		$jobArguments = $job->getArguments();
 		$this->assertArrayHasKey('websiteId', $jobArguments);
@@ -50,11 +47,11 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	/**
 	 * @return \Rbs\Website\Documents\Website
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getNewWebsite()
 	{
-		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
+		$website = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		/* @var $website \Rbs\Website\Documents\Website */
 		$website->setLabel('Website');
 		$website->getCurrentLocalization()->setTitle('Website');

@@ -2,7 +2,7 @@
 namespace Rbs\Commerce\Events\CartManager;
 
 use Rbs\Commerce\Cart\DefaultCartValidation;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -22,8 +22,8 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			$cs = $event->getParam('commerceServices');
-			if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$webStore = $event->getParam('webStore', null);
 				$billingArea = $event->getParam('billingArea', null);
@@ -36,8 +36,8 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			$cs = $event->getParam('commerceServices');
-			if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$cart = (new \Rbs\Commerce\Cart\CartStorage())->loadCart($event->getParam('cartIdentifier'), $cs);
 				if ($cart)
@@ -87,9 +87,6 @@ class Listeners implements ListenerAggregateInterface
 			(new DefaultCartValidation())->execute($event);
 		};
 		$events->attach('validCart', $callback, 5);
-
-
-
 	}
 
 	/**

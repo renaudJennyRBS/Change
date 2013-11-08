@@ -56,7 +56,7 @@ class ExecuteByName
 		{
 			$result = new \Change\Http\Web\Result\AjaxResult(array('exception' => array('code' => $e->getCode(), 'message' => $e->getMessage())));
 			$result->setHttpStatusCode((isset($e->httpStatusCode)) ? $e->httpStatusCode : HttpResponse::STATUS_CODE_500);
-			if ($event->getApplicationServices()->getApplication()->inDevelopmentMode())
+			if ($event->getApplication()->inDevelopmentMode())
 			{
 				$result->setEntry('trace', $e->getTraceAsString());
 			}

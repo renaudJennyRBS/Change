@@ -1,57 +1,84 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
-use Zend\Form\Annotation\AbstractArrayAnnotation;
-
 /**
  * @name \Rbs\Commerce\Cart\CartManager
  */
 class CartManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait;
+	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'CartManager';
 
 	/**
-	 * @var \Rbs\Commerce\Services\CommerceServices
+	 * @var \Rbs\Stock\Services\StockManager
 	 */
-	protected $commerceServices;
+	protected $stockManager;
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @var \Rbs\Price\Services\PriceManager
 	 */
-	public function setCommerceServices(\Rbs\Commerce\Services\CommerceServices $commerceServices)
+	protected $priceManager;
+
+	/**
+	 * @var \Rbs\Price\Services\TaxManager
+	 */
+	protected $taxManager;
+
+	/**
+	 * @param \Rbs\Price\Services\PriceManager $priceManager
+	 * @return $this
+	 */
+	public function setPriceManager(\Rbs\Price\Services\PriceManager $priceManager)
 	{
-		$this->commerceServices = $commerceServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($commerceServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
+		$this->priceManager = $priceManager;
+		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
+	 * @return \Rbs\Price\Services\PriceManager
 	 */
-	public function getCommerceServices()
+	protected  function getPriceManager()
 	{
-		return $this->commerceServices;
+		return $this->priceManager;
 	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices
+	 * @param \Rbs\Price\Services\TaxManager $taxManager
+	 * @return $this
 	 */
-	protected function getDocumentServices()
+	public function setTaxManager(\Rbs\Price\Services\TaxManager $taxManager)
 	{
-		return $this->commerceServices->getDocumentServices();
+		$this->taxManager = $taxManager;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Rbs\Price\Services\TaxManager
 	 */
-	protected function getApplicationServices()
+	protected function getTaxManager()
 	{
-		return $this->commerceServices->getApplicationServices();
+		return $this->taxManager;
 	}
+
+	/**
+	 * @param \Rbs\Stock\Services\StockManager $stockManager
+	 * @return $this
+	 */
+	public function setStockManager(\Rbs\Stock\Services\StockManager $stockManager)
+	{
+		$this->stockManager = $stockManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Stock\Services\StockManager
+	 */
+	protected function getStockManager()
+	{
+		return $this->stockManager;
+	}
+
 
 	/**
 	 * @return string
@@ -66,9 +93,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplicationServices()->getApplication()->getConfiguration();
-		$classNames = $config->getEntry('Change/Events/CartManager');
-		return is_array($classNames) ? $classNames : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CartManager');
 	}
 
 	/**
@@ -78,7 +103,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	public function getCartByIdentifier($cartIdentifier)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('cartIdentifier' => $cartIdentifier, 'commerceServices' => $this->getCommerceServices()));
+		$args = $em->prepareArgs(array('cartIdentifier' => $cartIdentifier));
 		$this->getEventManager()->trigger('getCartByIdentifier', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Interfaces\Cart)
 		{
@@ -98,7 +123,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		if ($cart instanceof \Rbs\Commerce\Interfaces\Cart && $cartToMerge instanceof \Rbs\Commerce\Interfaces\Cart)
 		{
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array('cart' => $cart, 'cartToMerge' => $cartToMerge, 'commerceServices' => $this->getCommerceServices()));
+			$args = $em->prepareArgs(array('cart' => $cart, 'cartToMerge' => $cartToMerge));
 			$this->getEventManager()->trigger('mergeCart', $this, $args);
 			if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Interfaces\Cart)
 			{
@@ -120,8 +145,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(
-			array('commerceServices' => $this->getCommerceServices(), 'webStore' => $webStore,
-				'billingArea' => $billingArea, 'zone' => $zone, 'context' => $context));
+			array('webStore' => $webStore, 'billingArea' => $billingArea, 'zone' => $zone, 'context' => $context));
 		$this->getEventManager()->trigger('getNewCart', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Interfaces\Cart)
 		{
@@ -140,7 +164,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$this->validCart($cart);
 
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array('cart' => $cart, 'commerceServices' => $this->getCommerceServices()));
+			$args = $em->prepareArgs(array('cart' => $cart));
 			$this->getEventManager()->trigger('saveCart', $this, $args);
 		}
 	}
@@ -158,8 +182,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 			$em = $this->getEventManager();
 			$args = $em->prepareArgs(array('cart' => $cart, 'errors' => new \ArrayObject(),
-				'lockForOwnerId' => $lockForOwnerId,
-				'commerceServices' => $this->getCommerceServices()));
+				'lockForOwnerId' => $lockForOwnerId));
 
 			$this->getEventManager()->trigger('validCart', $this, $args);
 
@@ -192,7 +215,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				if ($this->validCart($cart, $ownerId))
 				{
 					$em = $this->getEventManager();
-					$args = $em->prepareArgs(array('cart' => $cart, 'ownerId' => $ownerId, 'commerceServices' => $this->getCommerceServices()));
+					$args = $em->prepareArgs(array('cart' => $cart, 'ownerId' => $ownerId));
 					$this->getEventManager()->trigger('lockCart', $this, $args);
 				}
 				return $cart->isLocked();
@@ -352,18 +375,18 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$lineWebStoreId = $line->getOptions()->get('webStoreId', $cart->getWebStoreId());
 		foreach ($line->getItems() as $item)
 		{
-			$sku = $this->commerceServices->getStockManager()->getSkuByCode($item->getCodeSKU());
+			$sku = $this->getStockManager()->getSkuByCode($item->getCodeSKU());
 			if ($sku)
 			{
 				if (!$item->getOptions()->get('lockedPrice', false))
 				{
 					$webStoreId = $item->getOptions()->get('webStoreId', $lineWebStoreId);
-					$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $webStoreId, $cart->getBillingArea());
+					$price = $this->getPriceManager()->getPriceBySku($sku, $webStoreId, $cart->getBillingArea());
 					if ($price)
 					{
 						$priceValue = $price->getValue();
 						$cart->updateItemPrice($item, $priceValue);
-						$taxApplicationArray = $this->commerceServices->getTaxManager()->getTaxByValue($priceValue, $price->getTaxCategories(), $cart->getBillingArea(), $cart->getZone());
+						$taxApplicationArray = $this->getTaxManager()->getTaxByValue($priceValue, $price->getTaxCategories(), $cart->getBillingArea(), $cart->getZone());
 						$cart->updateItemTaxes($item, $taxApplicationArray);
 					}
 				}

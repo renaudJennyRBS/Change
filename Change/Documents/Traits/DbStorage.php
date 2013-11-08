@@ -3,7 +3,6 @@ namespace Change\Documents\Traits;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\AbstractModel;
-use Change\Documents\DocumentManager;
 use Change\Documents\Events\Event as DocumentEvent;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\PropertiesValidationException;
@@ -16,11 +15,11 @@ use Change\Documents\PropertiesValidationException;
  * @method initialize()
  * @method integer getPersistentState()
  * @method integer setPersistentState(integer $persistentState)
- * @method \Change\Application\ApplicationServices getApplicationServices()
+ * @method \Change\Db\DbProvider getDbProvider()
  * @method \Change\Documents\DocumentManager getDocumentManager()
  * @method \Change\Documents\AbstractModel getDocumentModel()
  * @method string getDocumentModelName()
- * @method \Zend\EventManager\EventManagerInterface getEventManager()
+ * @method \Change\Events\EventManager getEventManager()
  * @method string[] getModifiedPropertyNames()
  * @method boolean hasModifiedProperties()
  *
@@ -33,18 +32,10 @@ use Change\Documents\PropertiesValidationException;
  *
  * From \Change\Documents\Traits\Publication
  * @method string[] getValidPublicationStatusForCorrection()
- *
+
  */
 trait DbStorage
 {
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	protected function getDbProvider()
-	{
-		return $this->getApplicationServices()->getDbProvider();
-	}
-
 	/**
 	 * Load properties
 	 * @api
@@ -219,11 +210,6 @@ trait DbStorage
 	protected function assignId()
 	{
 		$dbp = $this->getDbProvider();
-		if (!$dbp->getTransactionManager()->started())
-		{
-			throw new \RuntimeException('Transaction not started', 121003);
-		}
-
 		$qb = $dbp->getNewStatementBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$dt = $fb->getDocumentIndexTable();
@@ -439,11 +425,6 @@ trait DbStorage
 	protected function updateDocument()
 	{
 		$dbp = $this->getDbProvider();
-		if (!$dbp->getTransactionManager()->started())
-		{
-			throw new \RuntimeException('Transaction not started', 121003);
-		}
-
 		$this->setPersistentState(AbstractDocument::STATE_SAVING);
 		$model = $this->getDocumentModel();
 		$columns = array();
@@ -575,10 +556,6 @@ trait DbStorage
 	public function deleteDocument()
 	{
 		$dbp = $this->getDbProvider();
-		if (!$dbp->getTransactionManager()->started())
-		{
-			throw new \RuntimeException('Transaction not started', 121003);
-		}
 		if ($this->getPersistentState() != AbstractDocument::STATE_LOADED)
 		{
 			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $this->getPersistentState(), 51009);
@@ -645,11 +622,6 @@ trait DbStorage
 	protected function saveDocumentMetas($metas)
 	{
 		$dbp = $this->getDbProvider();
-		if (!$dbp->getTransactionManager()->started())
-		{
-			throw new \RuntimeException('Transaction not started', 999999);
-		}
-
 		$qb = $dbp->getNewStatementBuilder(__METHOD__ . 'Delete');
 		if (!$qb->isCached())
 		{
@@ -801,7 +773,6 @@ trait DbStorage
 			$this->metas[$name] = $value;
 			$this->modifiedMetas = true;
 		}
-
 	}
 
 	/**

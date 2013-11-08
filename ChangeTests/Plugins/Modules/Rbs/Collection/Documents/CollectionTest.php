@@ -20,14 +20,13 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function tearDown()
 	{
-		parent::tearDown();
 		$this->getApplicationServices()->getTransactionManager()->commit();
-		$this->closeDbConnection();
+		parent::tearDown();
 	}
 
 	public function testGetItemByValue()
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$item = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 		/* @var $item \Rbs\Collection\Documents\Item */
 		$item->setLabel('Test1');
@@ -52,7 +51,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testConstraintUnique()
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 		/* @var $collection \Rbs\Collection\Documents\Collection */
 		$collection->setCode('rbsCollectionTestForUnique');

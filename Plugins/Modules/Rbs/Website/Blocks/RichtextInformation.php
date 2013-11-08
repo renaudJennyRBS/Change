@@ -2,20 +2,18 @@
 namespace Rbs\Website\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 
-class RichtextInformation  extends \Change\Presentation\Blocks\Information
+/**
+ * @name \Rbs\Website\Blocks\RichtextInformation
+ */
+class RichtextInformation extends \Change\Presentation\Blocks\Information
 {
-
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.richtext'));
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		$ucf = array('ucf');
+		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.richtext', $ucf));
 		$this->addInformationMeta('contentType', Property::TYPE_STRING, true, 'Markdown');
 	}
 }

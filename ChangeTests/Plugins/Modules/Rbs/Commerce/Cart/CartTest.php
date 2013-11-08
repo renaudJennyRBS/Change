@@ -6,9 +6,7 @@ include_once(__DIR__ . '/Assets/TestCartItemConfig.php');
 
 use ChangeTests\Modules\Commerce\Cart\Assets\TestCartItemConfig;
 use ChangeTests\Modules\Commerce\Cart\Assets\TestCartLineConfig;
-
 use Rbs\Commerce\Cart\Cart;
-use Rbs\Commerce\Services\CommerceServices;
 use Rbs\Price\Std\TaxApplication;
 
 class CartTest extends \ChangeTests\Change\TestAssets\TestCase
@@ -20,7 +18,7 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testConstructor()
 	{
-		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
 
 		$cart = new Cart('idt', $cs);
 		$this->assertSame($cs, $cart->getCommerceServices());
@@ -36,7 +34,7 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testSerialize()
 	{
-		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
 		$cart = new Cart('idt', $cs);
 		$cart->setZone('ZTEST');
 		$cart->setOwnerId(500);
@@ -48,12 +46,11 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $ba \Rbs\Price\Documents\BillingArea */
 		$ba = $this->getNewReadonlyDocument('Rbs_Price_BillingArea', 100);
 		$tax = $this->getNewReadonlyDocument('Rbs_Price_Tax', 101);
-		$taxApplication  = new TaxApplication($tax, 'cat', 'ZTEST', 0.1);
+		$taxApplication = new TaxApplication($tax, 'cat', 'ZTEST', 0.1);
 		$taxApplication->setValue(0.078);
 		$cart->setBillingArea($ba);
 
 		$cartItemConf = new TestCartItemConfig('skTEST', 2, 5.3, array($taxApplication), array('iOpt' => 'testIOpt'));
-
 
 		$cartLineConf = new TestCartLineConfig('k1', 'designation', array($cartItemConf), array('opt' => 'testOpt'));
 
@@ -84,7 +81,7 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('testOpt', $l->getOptions()->get('opt'));
 
 		$this->assertCount(1, $l->getItems());
-		$item =  $l->getItemByCodeSKU('skTEST');
+		$item = $l->getItemByCodeSKU('skTEST');
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\CartItem', $item);
 
 		$this->assertEquals(5.3, $item->getPriceValue());

@@ -23,13 +23,12 @@ class GetCurrentUser
 			'pseudonym' => $user->getName()
 		);
 
-		$result = new DocumentResult($event->getUrlManager(), $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($user->getId()));
+		$result = new DocumentResult($event->getUrlManager(), $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user->getId()));
 		$result->setProperties($properties);
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
 
-		$profileManager = new \Change\User\ProfileManager();
-		$profileManager->setDocumentServices($event->getDocumentServices());
+		$profileManager = $event->getApplicationServices()->getProfileManager();
 		$props = array();
 		$profile = $profileManager->loadProfile($user, 'Change_User');
 		if ($profile)

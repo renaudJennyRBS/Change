@@ -17,7 +17,7 @@ class CreateSeoForDocument
 			$genericService = $event->getServices('genericServices');
 			if ($genericService instanceof \Rbs\Generic\GenericServices)
 			{
-				$document = $genericService->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+				$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId);
 				if ($document)
 				{
 					$seoManager = $genericService->getSeoManager();

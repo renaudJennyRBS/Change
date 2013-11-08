@@ -19,12 +19,12 @@ class ModelConfigurationGeneratorTest extends \ChangeTests\Change\TestAssets\Tes
 	{
 
 		//check if there is no model configuration
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Seo_ModelConfiguration');
+		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Seo_ModelConfiguration');
 		$modelConfigurations = $dqb->getDocuments();
 		$this->assertCount(0, $modelConfigurations);
 
 		//find the number of publishable document
-		$modelManager = $this->getDocumentServices()->getModelManager();
+		$modelManager = $this->getApplicationServices()->getModelManager();
 		$publishableModelCount = 0;
 		foreach ($modelManager->getModelsNames() as $modelName)
 		{
@@ -35,8 +35,8 @@ class ModelConfigurationGeneratorTest extends \ChangeTests\Change\TestAssets\Tes
 			}
 		}
 
-		$event = new \Zend\EventManager\Event();
-		$event->setParam('application', $this->getApplication());
+		$event = new \Change\Events\Event();
+		$event->setParams($this->getDefaultEventArguments());
 		(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);
 
 		$modelConfigurations = $dqb->getDocuments();

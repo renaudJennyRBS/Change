@@ -2,7 +2,7 @@
 namespace Rbs\Price\Collection;
 
 use Change\Collection\CollectionArray;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 
 /**
  * @name \Rbs\Price\Collection\Collections
@@ -14,14 +14,14 @@ class Collections
 	 */
 	public function addBillingAreasForWebStore(Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
+		$applicationServices = $event->getApplicationServices();
 		$webStoreId = $event->getParam('webStoreId');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		if ($applicationServices)
 		{
 			$items = array();
 			if (intval($webStoreId) > 0)
 			{
-				$webStore = $documentServices->getDocumentManager()->getDocumentInstance($webStoreId);
+				$webStore = $applicationServices->getDocumentManager()->getDocumentInstance($webStoreId);
 				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 				{
 					foreach ($webStore->getBillingAreas() as $area)
@@ -41,10 +41,10 @@ class Collections
 	 */
 	public function addTaxRoundingStrategyCollection(Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$collection = new CollectionArray('Rbs_Price_Collection_TaxRoundingStrategy', array(
 				'u' => $i18nManager->trans('m.rbs.price.collection.taxroundingstrategy.on-unit-value'),
 				'l' => $i18nManager->trans('m.rbs.price.collection.taxroundingstrategy.on-line-value'),

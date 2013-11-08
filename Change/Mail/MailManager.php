@@ -12,6 +12,9 @@ use Zend\Mail\Message as ZendMessage;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
 
+/**
+ * @name \Change\Mail\MailManager
+ */
 class MailManager
 {
 

@@ -4,7 +4,6 @@ namespace Change\Http\Rest\Actions;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
-use Change\Http\Rest\Result\TreeNodeLink;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -20,14 +19,14 @@ class GetDocument
 	protected function getDocument($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model)
 		{
 			return null;
 		}
 
 		$documentId = intval($event->getParam('documentId'));
-		return $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		return $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 	}
 
 	/**
@@ -54,8 +53,6 @@ class GetDocument
 		$this->generateResult($event, $document);
 	}
 
-
-
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
@@ -65,7 +62,7 @@ class GetDocument
 	{
 		$urlManager = $event->getUrlManager();
 
-		$result = new DocumentResult($urlManager,  $document);
+		$result = new DocumentResult($urlManager, $document);
 		$event->setResult($result);
 		/* @var $documentLink DocumentLink */
 		$documentLink = $result->getRelLink('self')[0];

@@ -13,13 +13,16 @@ class Client
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$documentServices = new \Change\Documents\DocumentServices($applicationServices);
+		$applicationServices = $event->getApplicationServices();
 
-		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		{
+			$event->addErrorMessage('Elasticsearch services not registered');
+			return;
+		}
+
 		$indexManager = $elasticsearchServices->getIndexManager();
-
 		if (is_string($name = $event->getParam('name')))
 		{
 			$client = $indexManager->getClient($name);

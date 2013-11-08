@@ -93,10 +93,11 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$url->setPort($this->getPort());
 		$url->setPath('/');
 		$urlManager = new UrlManager($url, $this->getScriptName());
+		//TODO TransactionManager not set
+		$urlManager->setDbProvider($this->getDbProvider())->setDocumentManager($this->getDocumentManager());
 		$urlManager->setWebsite($this);
 		$urlManager->setLCID($LCID);
 		$urlManager->setBasePath($this->getPathPart());
-		$urlManager->setDocumentServices($this->getDocumentServices());
 
 		$this->getDocumentManager()->popLCID();
 		return $urlManager;
@@ -112,7 +113,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		{
 			/* @var $website Website */
 			$website = $event->getDocument();
-			$tm = $website->getDocumentServices()->getTreeManager();
+			$tm = $event->getApplicationServices()->getTreeManager();
 			$parentNode = $tm->getRootNode($website->getDocumentModel()->getTreeName());
 			if ($parentNode)
 			{

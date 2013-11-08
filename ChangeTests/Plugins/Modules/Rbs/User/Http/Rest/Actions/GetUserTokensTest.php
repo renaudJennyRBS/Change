@@ -1,5 +1,4 @@
 <?php
-
 use Change\Http\Event;
 use Change\Http\Request;
 
@@ -68,8 +67,7 @@ class GetUserTokensTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->invalidStoredOAuth->setCreationDate((new \DateTime())->sub(new \DateInterval('P5D')));
 		$this->invalidStoredOAuth->setValidityDate(new \DateTime());
 		$this->invalidStoredOAuth->setConsumerKey('consumerKeyForTests');
-		$oauth = new \Change\Http\OAuth\OAuthManager();
-		$oauth->setApplicationServices($this->getApplicationServices());
+		$oauth = $this->getApplicationServices()->getOAuthManager();
 		$oauth->insertToken($this->validStoredOAuth);
 		$oauth->insertToken($this->invalidStoredOAuth);
 
@@ -79,7 +77,7 @@ class GetUserTokensTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testExecute()
 	{
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('userId' => $this->validStoredOAuth->getAccessorId());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getUserTokens = new \Rbs\User\Http\Rest\Actions\GetUserTokens();

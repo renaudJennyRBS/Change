@@ -10,19 +10,16 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$themeModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
-		$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
+		$themeModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
+		$query = $applicationServices->getDocumentManager()->getNewQuery($themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
-		$themeManager = $presentationServices->getThemeManager();
-		$themeManager->setDocumentServices($documentServices);
+		$themeManager = $applicationServices->getThemeManager();
 		if ($theme instanceof \Rbs\Theme\Documents\Theme)
 		{
 			$themeManager->installPluginTemplates($plugin, $theme);
@@ -35,8 +32,9 @@ class Install extends \Change\Plugins\InstallBase
 		try
 		{
 			$transactionManager->begin();
+
 			/* @var $theme \Rbs\Theme\Documents\Theme */
-			$theme = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
+			$theme = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
 			$theme->setLabel('Demo');
 			$theme->setName('Rbs_Demo');
 			$theme->setActive(true);
@@ -46,10 +44,10 @@ class Install extends \Change\Plugins\InstallBase
 			$themeManager->installPluginAssets($plugin, $theme);
 			$this->writeAssetic($theme, $themeManager);
 
-			$pageTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
+			$pageTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
 
 			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
-			$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
+			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 			$pageTemplate->setTheme($theme);
 			$pageTemplate->setLabel('Sidebar');
 			$html = file_get_contents(__DIR__ . '/Assets/sidebarpage.twig');
@@ -62,7 +60,7 @@ class Install extends \Change\Plugins\InstallBase
 			$pageTemplate->save();
 
 			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
-			$pageTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
+			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 			$pageTemplate->setTheme($theme);
 			$pageTemplate->setLabel('No Sidebar');
 			$html = file_get_contents(__DIR__ . '/Assets/nosidebarpage.twig');
@@ -76,12 +74,12 @@ class Install extends \Change\Plugins\InstallBase
 
 			$i18nManager = $applicationServices->getI18nManager();
 			//mail template for Timeline message
-			$mailTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
+			$mailTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
 			$templatePath = __DIR__ . '/Assets/timeline-message-mail-' . $i18nManager->getLCID() . '.twig';
 			if (file_exists($templatePath))
 			{
 				/* @var $mailTemplate \Rbs\Theme\Documents\MailTemplate */
-				$mailTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
+				$mailTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
 				$mailTemplate->setTheme($theme);
 				$mailTemplate->setLabel('Timeline mention');
 				$mailTemplate->setCode('timeline_mention');
@@ -93,10 +91,10 @@ class Install extends \Change\Plugins\InstallBase
 			}
 
 			//mail template for Notifications
-			$mailTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
+			$mailTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
 			$availableLCID = $i18nManager->getSupportedLCIDs();
 			/* @var $mailTemplate \Rbs\Theme\Documents\MailTemplate */
-			$mailTemplate = $documentServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
+			$mailTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
 			$mailTemplate->setTheme($theme);
 			$mailTemplate->setLabel('Notifications');
 			$mailTemplate->setCode('notifications');
@@ -105,14 +103,14 @@ class Install extends \Change\Plugins\InstallBase
 				$templatePath = __DIR__ . '/Assets/notification-mail-' . $lcid . '.twig';
 				if (file_exists($templatePath))
 				{
-					$documentServices->getDocumentManager()->pushLCID($lcid);
+					$applicationServices->getDocumentManager()->pushLCID($lcid);
 					$currentLocalization = $mailTemplate->getCurrentLocalization();
 					$currentLocalization->setSubject($i18nManager->transForLCID($lcid, 't.rbs.demo.setup.notification-mail-subject'));
 					$html = file_get_contents($templatePath);
 					$currentLocalization->setContent($html);
 					$currentLocalization->setActive(true);
 					$mailTemplate->save();
-					$documentServices->getDocumentManager()->popLCID();
+					$applicationServices->getDocumentManager()->popLCID();
 				}
 			}
 

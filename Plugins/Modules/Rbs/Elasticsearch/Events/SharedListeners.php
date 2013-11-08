@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Events;
 
-use Change\Documents\Events\Event as DocumentEvent;
-use Change\Job\JobManager;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
@@ -19,64 +17,67 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			$document = $event->getDocument();
-			$application = $document->getApplicationServices()->getApplication();
-			$toIndex = $application->getContext()->get('elasticsearch_toIndex');
-			if ($toIndex)
+			if ($event instanceof \Change\Documents\Events\Event)
 			{
-				$deleted = ($event->getName() == DocumentEvent::EVENT_DELETED
-					|| $event->getName() == DocumentEvent::EVENT_LOCALIZED_DELETED);
-				$toIndex[] = ['LCID' => $document->getDocumentManager()->getLCID(), 'id' => $document->getId(),
-					'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
+				$document = $event->getDocument();
+				$application = $event->getApplication();
+				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
+				if ($toIndex)
+				{
+					$deleted = ($event->getName() == 'documents.deleted' || $event->getName() == 'documents.localized.deleted');
+					$toIndex[] = ['LCID' => $event->getApplicationServices()->getDocumentManager()->getLCID(),
+						'id' => $document->getId(),
+						'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
+				}
 			}
 		};
 
-		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_LOCALIZED_CREATED,
-			DocumentEvent::EVENT_UPDATED, DocumentEvent::EVENT_DELETED, DocumentEvent::EVENT_LOCALIZED_DELETED);
+		$eventNames = array('documents.created', 'documents.localized.created', 'documents.updated',
+			'documents.deleted', 'documents.localized.deleted');
 		$events->attach('Documents', $eventNames, $callback, 5);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			if ($event->getParam('primary'))
 			{
-				/** @var $tm \Change\Transaction\TransactionManager */
-				$tm = $event->getTarget();
-				$tm->getApplication()->getContext()->set('elasticsearch_toIndex', new \ArrayObject());
+				$event->getApplication()->getContext()->set('elasticsearch_toIndex', new \ArrayObject());
 			}
 		};
 		$events->attach('TransactionManager', 'begin', $callback);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			if ($event->getParam('primary'))
+			if ($event instanceof \Change\Events\Event && $event->getParam('primary'))
 			{
-				/** @var $transactionManager \Change\Transaction\TransactionManager */
-				$transactionManager = $event->getTarget();
-				$application = $transactionManager->getApplication();
 
+				$application = $event->getApplication();
 				/* @var $toIndex \ArrayObject */
 				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
 				if ($toIndex)
 				{
 					if (count($toIndex))
 					{
-						$jobManager = $application->getContext()->get('elasticsearch_JobManager');
-						if ($jobManager === null)
-						{
-							$as = new \Change\Application\ApplicationServices($application);
-							$jobManager = new JobManager();
-							$jobManager->setApplicationServices($as);
-							$application->getContext()->set('elasticsearch_JobManager', $jobManager);
-						}
-						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy());
+						/* @var $transactionManager \Change\Transaction\TransactionManager */
+						$jobManager = $event->getApplicationServices()->getJobManager();
+						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy(), null, false);
 					}
-					$transactionManager->getApplication()->getContext()->set('elasticsearch_toIndex', null);
+					$application->getContext()->set('elasticsearch_toIndex', null);
 				}
 			}
 		};
-		$events->attach('TransactionManager', 'commit', $callback);
+		$events->attach('TransactionManager', 'commit', $callback, 10);
+
+		$callback = function ($event){
+			if (($event instanceof \Change\Events\Event) &&
+				($eventManagerFactory = $event->getParam('eventManagerFactory')) instanceof \Change\Events\EventManagerFactory)
+			{
+				$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
+				$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+			}
+		};
+		$events->attach(array('Commands', 'JobManager', 'Http.Web', 'Http.Rest'), 'registerServices', $callback, 1);
 	}
 
 	/**

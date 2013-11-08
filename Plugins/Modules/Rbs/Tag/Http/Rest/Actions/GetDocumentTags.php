@@ -68,7 +68,7 @@ class GetDocumentTags
 		$sc = $qb->query();
 		$sc->bindParameter('docId', $docId);
 		$sc->setMaxResults(self::MAX_TAGS);
-		$collection = new DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
+		$collection = new DocumentCollection($event->getApplicationServices()->getDocumentManager(), $sc->getResults());
 		$result->setCount($collection->count());
 		$result->setLimit(self::MAX_TAGS);
 

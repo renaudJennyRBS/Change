@@ -1,13 +1,11 @@
 <?php
 namespace Rbs\Website\Http\Rest\Actions;
 
-use Change\Documents\Query\Query;
 use Change\Http\Event;
 use Zend\Http\Response as HttpResponse;
 
 /**
  * Returns the list of all the functions declared in the blocks.
- *
  * @name \Rbs\Website\Http\Rest\Actions\FunctionsList
  */
 class FunctionsList
@@ -22,21 +20,19 @@ class FunctionsList
 		$billingArea = null;
 		if ($request->isGet())
 		{
-			$event->setResult($this->generateResult($event->getDocumentServices()));
+			$event->setResult($this->generateResult($event->getApplicationServices()));
 		}
 	}
 
-
 	/**
-	 * @param $documentServices \Change\Documents\DocumentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return \Change\Http\Rest\Result\ArrayResult
 	 */
-	protected function generateResult($documentServices)
+	protected function generateResult($applicationServices)
 	{
 		$result = new \Change\Http\Rest\Result\ArrayResult();
 
-		$presentationServices = new \Change\Presentation\PresentationServices($documentServices->getApplicationServices());
-		$blockManager = $presentationServices->getBlockManager();
+		$blockManager = $applicationServices->getBlockManager();
 		$parsedFunctions = array();
 		foreach ($blockManager->getBlockNames() as $blockName)
 		{
@@ -45,10 +41,10 @@ class FunctionsList
 			{
 				foreach ($blockInfo->getFunctions() as $funcName => $label)
 				{
-					$query = new Query($documentServices, 'Rbs_Website_SectionPageFunction');
+					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
 					$query->andPredicates($query->eq('functionCode', $funcName));
 					$parsedFunctions[] = array(
-						"code"  => $funcName,
+						"code" => $funcName,
 						"label" => $label,
 						"usage" => $query->getCountDocuments()
 					);

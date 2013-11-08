@@ -51,16 +51,14 @@ class Facets extends Block
 
 	/**
 	 * @param Event $event
-	 * @return \Rbs\Elasticsearch\ElasticsearchServices
+	 * @return \Rbs\Elasticsearch\ElasticsearchServices|null
 	 */
 	protected function getElasticsearchServices($event)
 	{
 		$elasticsearchServices = $event->getServices('elasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
-			$applicationServices = $event->getDocumentServices()->getApplicationServices();
-			$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $event->getDocumentServices());
-			$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+			return null;
 		}
 		return $elasticsearchServices;
 	}
@@ -94,7 +92,7 @@ class Facets extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 		$parameters = $event->getBlockParameters();
 
 		$facetGroupIds = $parameters->getParameter('facetGroups');
@@ -103,7 +101,7 @@ class Facets extends Block
 		$facets = array();
 		foreach ($facetGroupIds as $facetGroupId)
 		{
-			$group = $documentServices->getDocumentManager()->getDocumentInstance($facetGroupId);
+			$group = $applicationServices->getDocumentManager()->getDocumentInstance($facetGroupId);
 			if ($group instanceof \Rbs\Elasticsearch\Documents\FacetGroup)
 			{
 				if ($storeIndexId == null)
@@ -124,26 +122,27 @@ class Facets extends Block
 			}
 		}
 
-		$storeIndex = $documentServices->getDocumentManager()->getDocumentInstance($storeIndexId);
+		$storeIndex = $applicationServices->getDocumentManager()->getDocumentInstance($storeIndexId);
 		if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
 		{
 			$attributes['facetGroups'] = $facetGroups;
 			$elasticsearchServices = $this->getElasticsearchServices($event);
-
+			if (!$elasticsearchServices)
+			{
+				return null;
+			}
 			$client = $elasticsearchServices->getIndexManager()->getClient($storeIndex->getClientName());
 			if ($client)
 			{
 				$index = $client->getIndex($storeIndex->getName());
 				if ($index->exists())
 				{
-					/* @var $commonServices \Change\Services\CommonServices */
-					$commonServices = $event->getServices('commonServices');
-					$elasticsearchServices->getFacetManager()->setCollectionManager($commonServices->getCollectionManager());
 					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $storeIndex);
+					$searchQuery->setI18nManager($applicationServices->getI18nManager());
+					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
 					$facetFilters = $parameters->getParameter('facetFilters');
 					$query = $searchQuery->getFacetsQuery(null, null, $facetFilters, $facets);
 					$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
-
 					$attributes['facetValues'] = $searchQuery->buildFacetValues($result->getFacets(),
 						$facetFilters, $facets);
 					return 'facets.twig';

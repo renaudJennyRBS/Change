@@ -22,7 +22,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		parent::setUp();
 		//declare a rich text manager listener for this test suit
 		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/RichTextManager/Rbs_Generic', '\\Rbs\\Generic\\Events\\RichTextManager\\Listeners');
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
 
 		//Now let's do the message
@@ -53,8 +53,8 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testOnCreate()
 	{
 		//test the markdown parser call when a new message creation
-		$dm = $this->getDocumentServices()->getDocumentManager();
-		$newMessage = $dm->getDocumentInstance($this->newMessageId, $dm->getModelManager()->getModelByName('Rbs_Timeline_Message'));
+		$dm = $this->getApplicationServices()->getDocumentManager();
+		$newMessage = $dm->getDocumentInstance($this->newMessageId, 'Rbs_Timeline_Message');
 		/* @var $newMessage \Rbs\Timeline\Documents\Message */
 		$this->assertNotNull($newMessage->getMessage()->getHtml());
 		//html result need to be trimed before comparing with expected result
@@ -65,11 +65,14 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @depends testOnCreate
 	 * @param \Rbs\Timeline\Documents\Message $message
 	 */
-	public function testOnUpdate($message)
+	public function testOnUpdate()
 	{
+		$dm = $this->getApplicationServices()->getDocumentManager();
+		/* @var $message \Rbs\Timeline\Documents\Message */
+		$message = $dm->getDocumentInstance($this->newMessageId, 'Rbs_Timeline_Message');
+
 		$message->setMessage('Hello: **Markdown bold** + edited message with *Markdown Italic* :-)');
 		$tm = $this->getApplicationServices()->getTransactionManager();
 
@@ -91,9 +94,9 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		//declare a profile manager listener for this test
 		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/ProfileManager/Rbs_Generic', '\\Rbs\\Generic\\Events\\ProfileManager\\Listeners');
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
-		$newMessage = $dm->getDocumentInstance($this->newMessageId, $dm->getModelManager()->getModelByName('Rbs_Timeline_Message'));
+		$newMessage = $dm->getDocumentInstance($this->newMessageId, $this->getApplicationServices()->getModelManager()->getModelByName('Rbs_Timeline_Message'));
 
 		$documentResult = new \Change\Http\Rest\Result\DocumentResult(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $newMessage);
 		$this->assertNotNull($documentResult);
@@ -138,9 +141,9 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		//declare a profile manager listener for this test
 		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/ProfileManager/Rbs_Generic', '\\Rbs\\Generic\\Events\\ProfileManager\\Listeners');
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
-		$newMessage = $dm->getDocumentInstance($this->newMessageId, $dm->getModelManager()->getModelByName('Rbs_Timeline_Message'));
+		$newMessage = $dm->getDocumentInstance($this->newMessageId, $this->getApplicationServices()->getModelManager()->getModelByName('Rbs_Timeline_Message'));
 
 		$documentLink = new \Change\Http\Rest\Result\DocumentLink(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $newMessage, \Change\Http\Rest\Result\DocumentLink::MODE_PROPERTY);
 		$this->assertNotNull($documentLink);
@@ -202,7 +205,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function createProfiledUser()
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
 
 		$user = $dm->getNewDocumentInstanceByModelName('Rbs_User_User');
@@ -222,8 +225,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 
 		$aUser = new \Rbs\User\Events\AuthenticatedUser($user);
-		$pm = new \Change\User\ProfileManager();
-		$pm->setDocumentServices($this->getDocumentServices());
+		$pm = $this->getApplicationServices()->getProfileManager();
 
 		$profile = new \Rbs\Admin\Profile\Profile();
 		//Choose a british singer for avatar

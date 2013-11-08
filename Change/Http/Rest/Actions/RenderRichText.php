@@ -3,7 +3,6 @@ namespace Change\Http\Rest\Actions;
 
 use Change\Http\Event;
 use Change\Http\Request;
-use Change\Presentation\PresentationServices;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -44,12 +43,8 @@ class RenderRichText
 		$richText->setRawText($rawText);
 		$richText->setEditor($request->getQuery('editor', 'Markdown'));
 
-		$presentationServices = $event->getPresentationServices();
-		if (! $presentationServices)
-		{
-			$presentationServices = new PresentationServices($event->getApplicationServices());
-		}
-		$event->setResult($this->generateResult($presentationServices->getRichTextManager()->setDocumentServices($event->getDocumentServices())->render($richText, $profile)));
+		$applicationServices = $event->getApplicationServices();
+		$event->setResult($this->generateResult($applicationServices->getRichTextManager()->render($richText, $profile)));
 	}
 
 	/**

@@ -2,8 +2,7 @@
 namespace Change\Http;
 
 use Change\Application;
-use Change\Events\EventsCapableTrait;
-use Zend\EventManager\EventManager;
+use Change\Services\ApplicationServices;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
@@ -12,9 +11,7 @@ use Zend\Http\Response as HttpResponse;
  */
 class Controller implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait {
-		EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait;
 
 	/**
 	 * @var Application
@@ -26,14 +23,12 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $actionResolver;
 
-
 	/**
 	 * @param Application $application
 	 */
 	public function __construct(Application $application)
 	{
 		$this->setApplication($application);
-		$this->setSharedEventManager($application->getSharedEventManager());
 	}
 
 	/**
@@ -65,14 +60,13 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplication()->getConfiguration();
 		$classes = array();
 		foreach ($this->getEventManagerIdentifier() as $name)
 		{
-			$entry = $config->getEntry('Change/Events/' . str_replace('.', '/', $name), array());
+			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $name));
 			if (is_array($entry))
 			{
-				foreach($entry as $className)
+				foreach ($entry as $className)
 				{
 					if (is_string($className))
 					{
@@ -83,30 +77,6 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		}
 		return array_unique($classes);
 	}
-
-	/**
-	 * @param EventManager $eventManager
-	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
-	{
-		$this->defaultAttachEvents($eventManager);
-		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
-	}
-
-	/**
-	 * @param \Zend\EventManager\Event $event
-	 */
-	public function onDefaultRegisterServices(\Zend\EventManager\Event $event)
-	{
-		$applicationServices = $event->getParam('applicationServices');
-		$documentServices = $event->getParam('documentServices');
-		if ($applicationServices && $documentServices)
-		{
-			$commonServices = new \Change\Services\CommonServices($applicationServices, $documentServices);
-			$event->setParam('commonServices', $commonServices);
-		}
-	}
-
 
 	/**
 	 * @param BaseResolver $actionResolver
@@ -135,21 +105,27 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function handle(Request $request)
 	{
-		$eventManager = $this->getEventManager();
+		if ($this->eventManagerFactory === null)
+		{
+			$this->eventManagerFactory = new \Change\Events\EventManagerFactory($this->application);
+			$this->eventManagerFactory->addSharedService('applicationServices',
+				new \Change\Services\ApplicationServices($this->application, $this->eventManagerFactory));
+		}
+
 		$event = $this->createEvent($request);
 		try
 		{
-			$this->doSendRegisterServices($eventManager, $event);
+			$this->doSendRegisterServices($event);
 
-			$this->doSendRequest($eventManager, $event);
+			$this->doSendRequest($event);
 
 			if (!($event->getResult() instanceof Result))
 			{
 				$this->getActionResolver()->resolve($event);
 
-				$this->doSendAction($eventManager, $event);
+				$this->doSendAction($event);
 
-				if ($this->checkAuthorization($eventManager, $event))
+				if ($this->checkAuthorization($event))
 				{
 					$action = $event->getAction();
 					if (is_callable($action))
@@ -158,7 +134,7 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 					}
 				}
 
-				$this->doSendResult($eventManager, $event);
+				$this->doSendResult($event);
 
 				if (!($event->getResult() instanceof Result))
 				{
@@ -166,11 +142,11 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 
-			$this->doSendResponse($eventManager, $event);
+			$this->doSendResponse($event);
 		}
 		catch (\Exception $exception)
 		{
-			$this->doSendException($eventManager, $event, $exception);
+			$this->doSendException($event, $exception);
 		}
 
 		if ($event->getResponse() instanceof Response)
@@ -182,17 +158,16 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 * @return boolean
 	 */
-	protected function checkAuthorization(EventManager $eventManager, Event $event)
+	protected function checkAuthorization(Event $event)
 	{
 		$authorization = $event->getAuthorization();
 		if (is_callable($authorization))
 		{
 			$permissionsManager = $event->getPermissionsManager();
-			$this->doSendAuthenticate($eventManager, $event);
+			$this->doSendAuthenticate($event);
 			if (!$permissionsManager->allow())
 			{
 				$user = $event->getAuthenticationManager()->getCurrentUser();
@@ -282,56 +257,56 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
-	 * @param Event $httpEvent
+	 * @param Event $event
 	 */
-	protected function doSendRegisterServices($eventManager, Event $httpEvent)
+	protected function doSendRegisterServices(Event $event)
 	{
-		$services = $eventManager->prepareArgs(array('applicationServices' => $httpEvent->getApplicationServices(),
-			'documentServices' => $httpEvent->getDocumentServices()));
-		$event = new \Zend\EventManager\Event('registerServices', $this, $services);
-		$eventManager->trigger($event);
-		$httpEvent->setParam('services', new \Zend\Stdlib\Parameters($services->getArrayCopy()));
+
+		$event->setName('registerServices');
+		$event->setTarget($this);
+		$event->setParam('eventManagerFactory', $this->eventManagerFactory);
+		$this->getEventManager()->trigger($event);
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendRequest($eventManager, Event $event)
+	protected function doSendRequest(Event $event)
 	{
 		$event->setName(Event::EVENT_REQUEST);
 		$event->setTarget($this);
-
-		$results = $eventManager->trigger($event, function($result) {return ($result instanceof Result);});
+		$results = $this->getEventManager()->trigger($event, function ($result)
+		{
+			return ($result instanceof Result);
+		});
 		if ($results->stopped() && ($results->last() instanceof Result))
 		{
 			$event->setResult($results->last());
 		}
 	}
 
-
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendAuthenticate($eventManager, Event $event)
+	protected function doSendAuthenticate(Event $event)
 	{
 		$event->setName(Event::EVENT_AUTHENTICATE);
 		$event->setTarget($this);
-		$eventManager->trigger($event);
+		$this->getEventManager()->trigger($event);
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendAction($eventManager, Event $event)
+	protected function doSendAction(Event $event)
 	{
 		$event->setName(Event::EVENT_ACTION);
 		$event->setTarget($this);
 
-		$results = $eventManager->trigger($event, function($result) {return ($result !== null) && is_callable($result);});
+		$results = $this->getEventManager()->trigger($event, function ($result)
+		{
+			return ($result !== null) && is_callable($result);
+		});
 		$last = $results->last();
 		if ($results->stopped() && ($last !== null && is_callable($last)))
 		{
@@ -340,15 +315,16 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendResult($eventManager, Event $event)
+	protected function doSendResult(Event $event)
 	{
 		$event->setName(Event::EVENT_RESULT);
 		$event->setTarget($this);
-
-		$results = $eventManager->trigger($event, function($result) {return ($result instanceof Result);});
+		$results = $this->getEventManager()->trigger($event, function ($result)
+		{
+			return ($result instanceof Result);
+		});
 		if ($results->stopped() && ($results->last() instanceof Result))
 		{
 			$event->setResult($results->last());
@@ -356,22 +332,23 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendResponse($eventManager, Event $event)
+	protected function doSendResponse(Event $event)
 	{
 		try
 		{
 			$event->setName(Event::EVENT_RESPONSE);
 			$event->setTarget($this);
 
-			$results = $eventManager->trigger($event, function($result) {return ($result instanceof Response);});
+			$results = $this->getEventManager()->trigger($event, function ($result)
+			{
+				return ($result instanceof Response);
+			});
 			if ($results->stopped() && ($results->last() instanceof Response))
 			{
 				$event->setResponse($results->last());
 			}
-
 		}
 		catch (\Exception $exception)
 		{
@@ -382,17 +359,16 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 
 			if (!($event->getParam('Exception') instanceof \Exception))
 			{
-				$this->doSendException($eventManager, $event, $exception);
+				$this->doSendException($event, $exception);
 			}
 		}
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 * @param \Exception $exception
 	 */
-	protected function doSendException($eventManager, $event, $exception)
+	protected function doSendException($event, $exception)
 	{
 		try
 		{
@@ -404,9 +380,8 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 			$event->setParam('Exception', $exception);
 			$event->setName(Event::EVENT_EXCEPTION);
 			$event->setTarget($this);
-			$eventManager->trigger($event);
-
-			$this->doSendResponse($eventManager, $event);
+			$this->getEventManager()->trigger($event);
+			$this->doSendResponse($event);
 		}
 		catch (\Exception $e)
 		{
@@ -415,26 +390,6 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 				$event->getApplicationServices()->getLogging()->exception($e);
 			}
 		}
-	}
-
-	/**
-	 * @param Request $request
-	 * @return Event
-	 */
-	protected function createEvent($request)
-	{
-		$event = new Event();
-		$event->setRequest($request);
-
-		$script = $request->getServer('SCRIPT_NAME');
-		if (strpos($request->getRequestUri(), $script) !== 0)
-		{
-			$script = null;
-		}
-
-		$urlManager = new UrlManager($request->getUri(), $script);
-		$event->setUrlManager($urlManager);
-		return $event;
 	}
 
 	/**
@@ -484,5 +439,40 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$response->setStatusCode($result->getHttpStatusCode());
 		$response->setHeaders($result->getHeaders());
 		return $response;
+	}
+
+	/**
+	 * @param Request $request
+	 * @return Event
+	 */
+	protected function createEvent($request)
+	{
+		$event = new Event();
+		$event->setRequest($request);
+
+		$script = $request->getServer('SCRIPT_NAME');
+		if (strpos($request->getRequestUri(), $script) !== 0)
+		{
+			$script = null;
+		}
+
+		$urlManager = new UrlManager($request->getUri(), $script);
+		$event->setUrlManager($urlManager);
+		return $event;
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultRegisterServices(Event $event)
+	{
 	}
 }

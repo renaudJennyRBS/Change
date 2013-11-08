@@ -19,7 +19,7 @@ class InsertDocumentsTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testInsert()
 	{
 		$tm = $this->getApplicationServices()->getTransactionManager();
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$this->iteration($tm, $dm, -1, null);
 
 		$sum = 0;

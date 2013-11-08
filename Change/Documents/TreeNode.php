@@ -290,7 +290,7 @@ class TreeNode
 	 */
 	public function getDocument()
 	{
-		return $this->getTreeManager()->getDocumentManager()->getDocumentInstance($this->documentId);
+		return $this->getTreeManager()->getDocumentByNode($this->documentId);
 	}
 
 

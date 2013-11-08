@@ -1,15 +1,14 @@
 <?php
 
 namespace ChangeTests\Plugins\Modules\Stock\Services;
-use Rbs\Stock\Services\StockManager;
 
 class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 
 	/**
-	 * @var \Rbs\Stock\Services\StockManager
+	 * @var \Rbs\Commerce\CommerceServices
 	 */
-	protected $sm;
+	protected $commerceServices;
 
 	public static function setUpBeforeClass()
 	{
@@ -27,14 +26,8 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function setUp()
 	{
 		parent::setUp();
-		$cs = new \Rbs\Commerce\Services\CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
-		$this->sm = $cs->getStockManager();
-	}
-
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
+		$this->commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
 	}
 
 	/**
@@ -42,9 +35,10 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getTestSku()
 	{
-		$tm = $this->sm->getCommerceServices()->getApplicationServices()->getTransactionManager();
+		$tm = $this->getApplicationServices()->getTransactionManager();
 		$tm->begin();
-		$sku = $this->sm->getCommerceServices()->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
+		/** @var $sku \Rbs\Stock\Documents\Sku */
+		$sku = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
 		$sku->setCode(\Change\Stdlib\String::random(24));
 		$sku->save();
 		$tm->commit();
@@ -57,20 +51,20 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getApplicationServices()->getTransactionManager()->begin();
 
 		$sku = $this->getTestSku();
-		$entry = $this->sm->setInventory(10, $sku);
+		$entry = $this->commerceServices->getStockManager()->setInventory(10, $sku);
 		$this->assertInstanceOf('\\Rbs\\Stock\\Documents\\InventoryEntry', $entry);
 		$this->assertGreaterThan(0, $entry->getId());
 		$this->assertEquals(10, $entry->getLevel());
 		$this->assertEquals($sku->getId(), $entry->getSku()->getId());
 		$this->assertEquals(null, $entry->getWarehouse());
 
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->eq('sku', $sku);
 		$this->assertEquals(1, $query->getCountDocuments());
 
 
 		// We update the previous entry
-		$reusedEntry = $this->sm->setInventory(20, $sku);
+		$reusedEntry = $this->commerceServices->getStockManager()->setInventory(20, $sku);
 		$this->assertInstanceOf('\\Rbs\\Stock\\Documents\\InventoryEntry', $reusedEntry);
 		$this->assertGreaterThan(0, $reusedEntry->getId());
 		$this->assertEquals(20, $reusedEntry->getLevel());
@@ -78,7 +72,7 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(null, $reusedEntry->getWarehouse());
 		$this->assertEquals($entry->getId(), $reusedEntry->getId());
 
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->eq('sku', $sku);
 		$this->assertEquals(1, $query->getCountDocuments());
 
@@ -90,15 +84,15 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getApplicationServices()->getTransactionManager()->begin();
 
 		$sku = $this->getTestSku();
-		$this->sm->setInventory(10, $sku);
+		$this->commerceServices->getStockManager()->setInventory(10, $sku);
 
-		$mvtId = $this->sm->addInventoryMovement(-5, $sku);
+		$mvtId = $this->commerceServices->getStockManager()->addInventoryMovement(-5, $sku);
 		$this->assertGreaterThan(0, $mvtId);
 
-		$mvtId2 = $this->sm->addInventoryMovement(-2, $sku);
+		$mvtId2 = $this->commerceServices->getStockManager()->addInventoryMovement(-2, $sku);
 		$this->assertGreaterThan($mvtId, $mvtId2);
 
-		$level = $this->sm->getInventoryLevel($sku, null);
+		$level = $this->commerceServices->getStockManager()->getInventoryLevel($sku, null);
 		$this->assertEquals(3, $level);
 
 		$this->getApplicationServices()->getTransactionManager()->commit();
@@ -109,12 +103,16 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getApplicationServices()->getTransactionManager()->begin();
 
 		$sku = $this->getTestSku();
-		$this->sm->setInventory(100, $sku);
 
-		$mvtId = $this->sm->addInventoryMovement(-5, $sku);
+		$this->commerceServices->getStockManager()->setInventory(100, $sku);
+
+		$entry = $this->commerceServices->getStockManager()->getInventoryEntry($sku);
+		$this->assertEquals(100, $entry->getLevel());
+
+		$mvtId = $this->commerceServices->getStockManager()->addInventoryMovement(-5, $sku);
 		$this->assertGreaterThan(0, $mvtId);
 
-		$mvtId2 = $this->sm->addInventoryMovement(-15, $sku);
+		$mvtId2 = $this->commerceServices->getStockManager()->addInventoryMovement(-15, $sku);
 		$this->assertGreaterThan($mvtId, $mvtId2);
 
 		$targetIdentifier = \Change\Stdlib\String::random(40);
@@ -122,10 +120,11 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$res1 = new \Rbs\Stock\Std\Reservation();
 		$res1->setWebStoreId(999)->setCodeSku($sku->getCode())->setQuantity(8);
 
-		$result = $this->sm->setReservations($targetIdentifier, array($res1));
+		$result = $this->commerceServices->getStockManager()->setReservations($targetIdentifier, array($res1));
+
 		$this->assertCount(0, $result);
 
-		$reservations = $this->sm->getReservations($targetIdentifier);
+		$reservations = $this->commerceServices->getStockManager()->getReservations($targetIdentifier);
 		$this->assertCount(1, $reservations);
 		/* @var $reservation \Rbs\Stock\Interfaces\Reservation */
 		$reservation = $reservations[0];
@@ -134,28 +133,28 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($sku->getCode(), $reservation->getCodeSku());
 		$this->assertEquals(8, $reservation->getQuantity());
 
-		$level = $this->sm->getInventoryLevel($sku, 999);
+		$level = $this->commerceServices->getStockManager()->getInventoryLevel($sku, 999);
 		$this->assertEquals(72, $level);
 
 		$res1->setQuantity(18);
-		$result = $this->sm->setReservations($targetIdentifier, array($res1));
+		$result = $this->commerceServices->getStockManager()->setReservations($targetIdentifier, array($res1));
 		$this->assertCount(0, $result);
 
-		$level = $this->sm->getInventoryLevel($sku, 999);
+		$level = $this->commerceServices->getStockManager()->getInventoryLevel($sku, 999);
 		$this->assertEquals(62, $level);
 
-		$result = $this->sm->setReservations('targetIdentifier', array($res1));
+		$result = $this->commerceServices->getStockManager()->setReservations('targetIdentifier', array($res1));
 		$this->assertCount(0, $result);
 
-		$level = $this->sm->getInventoryLevel($sku, 999);
+		$level = $this->commerceServices->getStockManager()->getInventoryLevel($sku, 999);
 		$this->assertEquals(62 - 18, $level);
 
-		$this->sm->unsetReservations('targetIdentifier');
-		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->commerceServices->getStockManager()->unsetReservations('targetIdentifier');
+		$level = $this->commerceServices->getStockManager()->getInventoryLevel($sku, 999);
 		$this->assertEquals(62, $level);
 
-		$this->sm->unsetReservations($targetIdentifier);
-		$level = $this->sm->getInventoryLevel($sku, 999);
+		$this->commerceServices->getStockManager()->unsetReservations($targetIdentifier);
+		$level = $this->commerceServices->getStockManager()->getInventoryLevel($sku, 999);
 		$this->assertEquals(80, $level);
 
 		$this->getApplicationServices()->getTransactionManager()->commit();

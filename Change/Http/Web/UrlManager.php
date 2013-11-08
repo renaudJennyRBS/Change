@@ -9,14 +9,19 @@ use Change\Documents\AbstractDocument;
 class UrlManager extends \Change\Http\UrlManager
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Db\DbProvider
 	 */
-	protected $applicationServices;
+	protected $dbProvider;
 
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Documents\DocumentManager
 	 */
-	protected $documentServices;
+	protected $documentManager;
+
+	/**
+	 * @var \Change\Transaction\TransactionManager
+	 */
+	protected $transactionManager;
 
 	/**
 	 * @var \Change\Http\Web\PathRuleManager
@@ -49,43 +54,57 @@ class UrlManager extends \Change\Http\UrlManager
 	protected $webUrlManagers = array();
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return $this
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->dbProvider = $dbProvider;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Db\DbProvider
 	 */
-	public function getApplicationServices()
+	protected function getDbProvider()
 	{
-		return $this->applicationServices;
+		return $this->dbProvider;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return $this
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
 	{
-		$this->documentServices = $documentServices;
-		if ($this->applicationServices === null)
-		{
-			$this->setApplicationServices($documentServices->getApplicationServices());
-		}
+		$this->documentManager = $documentManager;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices
+	 * @return \Change\Documents\DocumentManager
 	 */
-	public function getDocumentServices()
+	protected function getDocumentManager()
 	{
-		return $this->documentServices;
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
 	}
 
 	/**
@@ -105,7 +124,7 @@ class UrlManager extends \Change\Http\UrlManager
 	{
 		if ($this->pathRuleManager === null)
 		{
-			$this->pathRuleManager = new \Change\Http\Web\PathRuleManager($this->applicationServices);
+			$this->pathRuleManager = new \Change\Http\Web\PathRuleManager($this->getDbProvider());
 		}
 		return $this->pathRuleManager;
 	}
@@ -454,7 +473,7 @@ class UrlManager extends \Change\Http\UrlManager
 		else
 		{
 			/* @var $section \Change\Presentation\Interfaces\Section */
-			$section = $document->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+			$section = $this->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
 			return $this->getDefaultDocumentPathInfo($document, $section);
 		}
 	}
@@ -470,8 +489,7 @@ class UrlManager extends \Change\Http\UrlManager
 		$newPathRule = $this->dispatchPopulatePathRule($document, $genericPathRule);
 		if ($newPathRule instanceof PathRule && $newPathRule->getRelativePath())
 		{
-			$applicationServices = $this->getApplicationServices();
-			$transactionManager = $applicationServices->getTransactionManager();
+			$transactionManager = $this->getTransactionManager();
 			try
 			{
 				$transactionManager->begin();
@@ -539,9 +557,9 @@ class UrlManager extends \Change\Http\UrlManager
 			}
 		}
 
-		if (is_numeric($document) && $this->getDocumentServices())
+		if (is_numeric($document))
 		{
-			$document = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($document);
+			$document = $this->getDocumentManager()->getDocumentInstance($document);
 		}
 
 		if ($document instanceof \Change\Documents\AbstractDocument)

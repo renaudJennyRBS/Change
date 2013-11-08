@@ -2,7 +2,6 @@
 namespace Rbs\Admin\Http\Actions;
 
 use Change\Http\Event;
-use Change\Http\OAuth\OAuthManager;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -18,7 +17,7 @@ class GetHome
 	public function execute($event)
 	{
 		$result = new \Rbs\Admin\Http\Result\Home();
-		$templateFileName = implode(DIRECTORY_SEPARATOR, array( __DIR__ , 'Assets', 'home.twig'));
+		$templateFileName = implode(DIRECTORY_SEPARATOR, array(__DIR__, 'Assets', 'home.twig'));
 		$attributes = array('baseURL' => $event->getUrlManager()->getByPathInfo('/')->normalize()->toString());
 		$attributes['LCID'] = $event->getApplicationServices()->getI18nManager()->getLCID();
 		$attributes['lang'] = substr($attributes['LCID'], 0, 2);
@@ -27,17 +26,17 @@ class GetHome
 		$manager = $event->getParam('manager');
 		$attributes['resources'] = $manager->getResources();
 
-		$OAuth = new OAuthManager();
-		$OAuth->setApplicationServices($event->getApplicationServices());
+		$OAuth = $event->getApplicationServices()->getOAuthManager();
 		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
 		$attributes['OAuth']['Consumer'] = $consumer ? array_merge($consumer->toArray(), array('realm' => 'Rbs_Admin')) : array();
 		if (!isset($attributes['resources']['menu']))
 		{
 			$attributes['resources']['menu'] = array("sections" => array(), "entries" => array());
 		}
-		$renderer = function () use ($templateFileName, $manager, $attributes)
+		$devMode = $event->getApplication()->inDevelopmentMode();
+		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
 		{
-			$resourceDirectoryPath = $manager->getApplication()->inDevelopmentMode() ? $manager->getResourceDirectoryPath(): null;
+			$resourceDirectoryPath = $devMode ? $manager->getResourceDirectoryPath() : null;
 			$resourceBaseUrl = $manager->getResourceBaseUrl();
 
 			$scripts = $manager->prepareScriptAssets($resourceDirectoryPath, $resourceBaseUrl);

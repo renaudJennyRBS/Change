@@ -1,53 +1,34 @@
 <?php
 namespace Rbs\Price\Services;
 
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
-
 /**
-* @name \Rbs\Price\Services\TaxManager
-*/
+ * @name \Rbs\Price\Services\TaxManager
+ */
 class TaxManager
 {
-	/**
-	 * @var \Rbs\Commerce\Services\CommerceServices
-	 */
-	protected $commerceServices;
+	use \Change\Services\DefaultServicesTrait;
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @var \Rbs\Commerce\Std\Context
+	 */
+	protected $context;
+
+	/**
+	 * @param \Rbs\Commerce\Std\Context $context
 	 * @return $this
 	 */
-	public function setCommerceServices(\Rbs\Commerce\Services\CommerceServices $commerceServices)
+	public function setContext(\Rbs\Commerce\Std\Context $context)
 	{
-		$this->commerceServices = $commerceServices;
+		$this->context = $context;
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
+	 * @return \Rbs\Commerce\Std\Context
 	 */
-	public function getCommerceServices()
+	protected function getContext()
 	{
-		return $this->commerceServices;
-	}
-
-
-
-	/**
-	 * @return DocumentServices
-	 */
-	protected function getDocumentServices()
-	{
-		return $this->commerceServices->getDocumentServices();
-	}
-
-	/**
-	 * @return ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->commerceServices->getApplicationServices();
+		return $this->context;
 	}
 
 	/**
@@ -57,13 +38,16 @@ class TaxManager
 	protected function getEffectiveRate($taxApplicationArray)
 	{
 		$effectiveRate = 0.0;
-		array_walk($taxApplicationArray, function(\Rbs\Commerce\Interfaces\TaxApplication $taxApplication, $key) use (&$effectiveRate) {$effectiveRate += $taxApplication->getRate();});
+		array_walk($taxApplicationArray,
+			function (\Rbs\Commerce\Interfaces\TaxApplication $taxApplication, $key) use (&$effectiveRate)
+			{
+				$effectiveRate += $taxApplication->getRate();
+			});
 		return $effectiveRate;
 	}
 
-
 	/**
-	 * @param array<taxCode => category> $taxCategories
+	 * @param array <taxCode => category> $taxCategories
 	 * @param \Rbs\Commerce\Interfaces\Tax[] $taxes
 	 * @param string $zone
 	 * @return \Rbs\Price\Std\TaxApplication[]
@@ -72,7 +56,7 @@ class TaxManager
 	{
 		/* @var $taxRates \Rbs\Commerce\Interfaces\TaxApplication[] */
 		$taxRates = array();
-		foreach($taxes as $tax)
+		foreach ($taxes as $tax)
 		{
 			if (isset($taxCategories[$tax->getCode()]))
 			{
@@ -95,14 +79,14 @@ class TaxManager
 	 * @param $taxCategories
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @param string $zone
-	 * @param array<taxCode => category> $taxCategories
+	 * @param array <taxCode => category> $taxCategories
 	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
 	 */
 	public function getTaxByValue($value, $taxCategories, $billingArea = null, $zone = null)
 	{
 		if ($billingArea === null)
 		{
-			$billingArea =  $this->getCommerceServices()->getBillingArea();
+			$billingArea = $this->getContext()->getBillingArea();
 			if ($billingArea === null)
 			{
 				return array();
@@ -111,14 +95,14 @@ class TaxManager
 
 		if ($zone === null)
 		{
-			$zone = $this->getCommerceServices()->getZone();
+			$zone = $this->getContext()->getZone();
 			if ($zone === null)
 			{
 				return array();
 			}
 		}
 		$taxRates = $this->getTaxRates($taxCategories, $billingArea->getTaxes(), $zone);
-		foreach($taxRates as $taxApplication)
+		foreach ($taxRates as $taxApplication)
 		{
 			$taxApplication->setValue($taxApplication->getRate() * $value);
 		}
@@ -127,7 +111,7 @@ class TaxManager
 
 	/**
 	 * @param float $valueWithTax
-	 * @param array<taxCode => category> $taxCategories
+	 * @param array <taxCode => category> $taxCategories
 	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
 	 * @param string $zone
 	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
@@ -136,7 +120,7 @@ class TaxManager
 	{
 		if ($billingArea === null)
 		{
-			$billingArea =  $this->getCommerceServices()->getBillingArea();
+			$billingArea = $this->getContext()->getBillingArea();
 			if ($billingArea === null)
 			{
 				return array();
@@ -145,7 +129,7 @@ class TaxManager
 
 		if ($zone === null)
 		{
-			$zone = $this->getCommerceServices()->getZone();
+			$zone = $this->getContext()->getZone();
 			if ($zone === null)
 			{
 				return array();
@@ -153,10 +137,10 @@ class TaxManager
 		}
 
 		$taxRates = $this->getTaxRates($taxCategories, $billingArea->getTaxes(), $zone);
-		$value = $valueWithTax  / ( 1 + $this->getEffectiveRate($taxRates));
+		$value = $valueWithTax / (1 + $this->getEffectiveRate($taxRates));
 
 		/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
-		foreach($taxRates as $taxApplication)
+		foreach ($taxRates as $taxApplication)
 		{
 			$taxApplication->setValue($taxApplication->getRate() * $value);
 		}
@@ -215,12 +199,12 @@ class TaxManager
 			$taxCodeId = $this->taxCodeIds[$taxCode];
 			if (is_int($taxCodeId))
 			{
-				return $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($taxCodeId);
+				return $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($taxCodeId);
 			}
 			return null;
 		}
 
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Price_Tax');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 		$query->andPredicates($query->eq('code', $taxCode));
 		$tax = $query->getFirstDocument();
 		$this->taxCodeIds[$taxCode] = ($tax) ? $tax->getId() : null;
@@ -228,7 +212,7 @@ class TaxManager
 	}
 
 	/**
-	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax$tax
+	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax $tax
 	 * @return string
 	 */
 	public function taxTitle($tax)
@@ -240,7 +224,7 @@ class TaxManager
 		}
 		elseif (is_numeric($tax))
 		{
-			$taxDoc = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($tax);
+			$taxDoc = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($tax);
 			if ($taxDoc instanceof \Rbs\Commerce\Interfaces\Tax)
 			{
 				$taxCode = $taxDoc->getCode();
@@ -253,8 +237,7 @@ class TaxManager
 
 		if ($taxCode)
 		{
-			$cm = new \Change\Collection\CollectionManager();
-			$cm->setDocumentServices($this->getDocumentServices());
+			$cm = $this->getApplicationServices()->getCollectionManager();
 			$collection = $cm->getCollection('Rbs_Price_Collection_TaxTitle');
 			if ($collection)
 			{

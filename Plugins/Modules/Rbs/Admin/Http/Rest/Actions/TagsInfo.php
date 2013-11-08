@@ -3,9 +3,6 @@ namespace Rbs\Admin\Http\Rest\Actions;
 
 use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\ArrayResult;
-use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\Link;
 
 use Zend\Http\Response as HttpResponse;
 
@@ -26,13 +23,13 @@ class TagsInfo
 		$urlManager = $event->getUrlManager();
 
 		$tagIds = $event->getRequest()->getQuery('tags');
-		if (! is_array($tagIds))
+		if (!is_array($tagIds))
 		{
 			return;
 		}
 
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
-		$model = $documentManager->getModelManager()->getModelByName('Rbs_Tag_Tag');
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
 		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$tags = [];
 		foreach ($tagIds as $tagId)
@@ -43,7 +40,7 @@ class TagsInfo
 			$properties = array();
 			foreach ($model->getProperties() as $name => $property)
 			{
-				$c = new PropertyConverter($tag, $property, $urlManager);
+				$c = new PropertyConverter($tag, $property, $documentManager, $urlManager);
 				$properties[$name] = $c->getRestValue();
 			}
 			$properties['documentCount'] = $this->getDocumentCountForTag($qb, $tagId);

@@ -18,8 +18,8 @@ class GetTreeNodeAncestors
 	 */
 	public function execute($event)
 	{
-		$documentServices = $event->getDocumentServices();
-		$treeManager = $documentServices->getTreeManager();
+		$applicationServices = $event->getApplicationServices();
+		$treeManager = $applicationServices->getTreeManager();
 
 		$treeName = $event->getParam('treeName');
 		if (!$treeName || !$treeManager->hasTreeName($treeName))
@@ -88,7 +88,7 @@ class GetTreeNodeAncestors
 		$pnl = new TreeNodeLink($urlManager, $currentNode, TreeNodeLink::MODE_LINK);
 		$pnl->setRel('node');
 		$result->addLink($pnl);
-		$treeManager = $event->getDocumentServices()->getTreeManager();
+		$treeManager = $event->getApplicationServices()->getTreeManager();
 
 		foreach ($nodes as $node)
 		{

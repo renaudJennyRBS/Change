@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Price\Documents;
 
+use Change\Documents\Events\Event;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 
@@ -16,10 +17,10 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 	{
 		if ($this->getBillingArea())
 		{
-			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			$nf = new \NumberFormatter($this->getDocumentManager()->getLCID(), \NumberFormatter::CURRENCY);
 			return $nf->formatCurrency($this->getBoValue(), $this->getBillingArea()->getCurrencyCode());
 		}
-		return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.admin.admin.js.new', array('ucf', 'etc'));
+		return $this->getBoValue();
 	}
 
 	/**
@@ -49,24 +50,25 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 		return $this->getBasePrice() != null;
 	}
 
-
 	/**
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return boolean
 	 */
-	public function applyBoValues()
+	public function applyBoValues(\Rbs\Commerce\CommerceServices $commerceServices)
 	{
 		if ($this->getBoValue() !== null)
 		{
-			$this->updateValuesFromBo($this->getBoValue());
+			$this->updateValuesFromBo($this->getBoValue(), $commerceServices);
 			return true;
 		}
 		return false;
 	}
 
 	/**
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return null|\Rbs\Price\Services\TaxManager
 	 */
-	protected function getBoTaxManager()
+	protected function getBoTaxManager(\Rbs\Commerce\CommerceServices $commerceServices)
 	{
 		$ba = $this->getBillingArea();
 		$taxCategories = $this->getTaxCategories();
@@ -82,21 +84,36 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 					break;
 				}
 			}
+
 			if ($zone)
 			{
-				$cs = new \Rbs\Commerce\Services\CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
-				$cs->setBillingArea($ba)->setZone($zone);
-				return $cs->getTaxManager();
+				$commerceServices->getContext()->setBillingArea($ba)->setZone($zone);
+				return $commerceServices->getTaxManager();
 			}
 		}
 		return null;
 	}
 
-	protected function onCreate()
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
+		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
+	}
+
+	public function onDefaultCreate(Event $event)
 	{
 		if ($this->getBoValue() !== null)
 		{
-			$this->updateValuesFromBo($this->getBoValue());
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$this->updateValuesFromBo($this->getBoValue(), $commerceServices);
+			}
+			else
+			{
+				throw new \RuntimeException('Commerce services not set', 999999);
+			}
 		}
 		if ($this->getStartActivation() === null)
 		{
@@ -104,11 +121,20 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 		}
 	}
 
-	protected function onUpdate()
+	public function onDefaultUpdate(Event $event)
 	{
 		if ($this->isPropertyModified('boValue'))
 		{
-			$this->updateValuesFromBo($this->getBoValue());
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$this->updateValuesFromBo($this->getBoValue(), $commerceServices);
+			}
+			else
+			{
+				throw new \RuntimeException('Commerce services not set', 999999);
+			}
+
 		}
 
 		if ($this->getStartActivation() === null)
@@ -119,11 +145,12 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 
 	/**
 	 * @param float $boValue
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 */
-	protected function updateValuesFromBo($boValue)
+	protected function updateValuesFromBo($boValue, $commerceServices)
 	{
 		$ba = $this->getBillingArea();
-		if ($ba->getBoEditWithTax() && ($taxManager = $this->getBoTaxManager()) !== null)
+		if ($ba->getBoEditWithTax() && ($taxManager = $this->getBoTaxManager($commerceServices)) !== null)
 		{
 			$valueCallback = function ($valueWithTax, $taxCategories) use ($taxManager) {
 				$taxApplications = $taxManager->getTaxByValueWithTax($valueWithTax, $taxCategories);
@@ -147,28 +174,29 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 		$this->setDefaultValue($boValue);
 	}
 
-	protected function attachEvents($eventManager)
+	public function onDefaultUpdateRestResult(Event $event)
 	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			if ($result instanceof DocumentLink || $result instanceof DocumentResult)
-			{
-				/* @var $price \Rbs\Price\Documents\Price */
-				$price = $event->getDocument();
-				$nf = new \NumberFormatter($event->getDocument()->getDocumentServices()->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+		parent::onDefaultUpdateRestResult($event);
 
-				$result->setProperty('formattedBoValue', $nf->formatCurrency($price->getBoValue(), $price->getBillingArea()->getCurrencyCode()));
-				$basePrice = $price->getBasePrice();
-				if ($basePrice)
-				{
-					$result->setProperty('formattedBoBaseValue', $nf->formatCurrency($basePrice->getBoValue(), $basePrice->getBillingArea()->getCurrencyCode()));
-				}
-				else
-				{
-					$result->setProperty('formattedBoBaseValue', null);
-				}
+		/** @var $restResult DocumentLink|DocumentResult */
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof DocumentLink || $restResult instanceof DocumentResult)
+		{
+			/* @var $price \Rbs\Price\Documents\Price */
+			$price = $event->getDocument();
+			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+
+			$restResult->setProperty('formattedBoValue', $nf->formatCurrency($price->getBoValue(), $price->getBillingArea()->getCurrencyCode()));
+			$basePrice = $price->getBasePrice();
+			if ($basePrice)
+			{
+				$restResult->setProperty('formattedBoBaseValue', $nf->formatCurrency($basePrice->getBoValue(), $basePrice->getBillingArea()->getCurrencyCode()));
 			}
-		}, 5);
+			else
+			{
+				$restResult->setProperty('formattedBoBaseValue', null);
+			}
+		}
 	}
+
 }

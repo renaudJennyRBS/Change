@@ -1,13 +1,10 @@
 <?php
 namespace Change\Job;
 
-use Change\Documents\DocumentServices;
-use Change\Application\ApplicationServices;
-
 /**
 * @name \Change\Job\Event
 */
-class Event extends \Zend\EventManager\Event
+class Event extends \Change\Events\Event
 {
 	/**
 	 * @return JobManager
@@ -23,22 +20,6 @@ class Event extends \Zend\EventManager\Event
 	public function getJob()
 	{
 		return $this->getParam('job');
-	}
-
-	/**
-	 * @return DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->getParam('documentServices');
-	}
-
-	/**
-	 * @return ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->getJobManager()->getApplicationServices();
 	}
 
 	public function success()

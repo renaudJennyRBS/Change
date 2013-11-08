@@ -2,7 +2,6 @@
 namespace Rbs\Elasticsearch\Index;
 
 use Change\Documents\Interfaces\Publishable;
-use Change\Documents\Query\Query;
 use Change\Documents\RichtextProperty;
 use Elastica\Document;
 
@@ -22,6 +21,11 @@ class FullTextIndexer
 	protected $indexManager;
 
 	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	protected $applicationServices;
+
+	/**
 	 * @param \Rbs\Elasticsearch\Index\IndexManager $indexManager
 	 * @return $this
 	 */
@@ -34,9 +38,27 @@ class FullTextIndexer
 	/**
 	 * @return \Rbs\Elasticsearch\Index\IndexManager
 	 */
-	public function getIndexManager()
+	protected function getIndexManager()
 	{
 		return $this->indexManager;
+	}
+
+	/**
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @return $this
+	 */
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Services\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->applicationServices;
 	}
 
 	/**
@@ -44,19 +66,12 @@ class FullTextIndexer
 	 */
 	protected function setEventContext(Event $event)
 	{
+		$this->setApplicationServices($event->getApplicationServices());
 		$indexManager = $event->getIndexManager();
 		if ($indexManager)
 		{
 			$this->setIndexManager($indexManager);
 		}
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	protected function getDocumentServices()
-	{
-		return $this->getIndexManager()->getDocumentServices();
 	}
 
 	/**
@@ -71,7 +86,7 @@ class FullTextIndexer
 		$model = $event->getParam('model');
 		if ($model && $model->isPublishable())
 		{
-			/* @var $document  */
+			/* @var $document */
 			$document = $event->getParam('document');
 			if (!($document instanceof \Change\Documents\AbstractDocument))
 			{
@@ -175,7 +190,7 @@ class FullTextIndexer
 	{
 		if ($this->indexesDefinition === null)
 		{
-			$query = new Query($this->getDocumentServices(), 'Rbs_Elasticsearch_FullText');
+			$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_FullText');
 			$query->andPredicates($query->activated(), $query->eq('model', 'Rbs_Elasticsearch_FullText'));
 			$this->indexesDefinition = $query->getDocuments();
 		}
@@ -234,7 +249,7 @@ class FullTextIndexer
 	 */
 	protected function getIndexDefinitionByName($clientName, $indexName)
 	{
-		$query = new Query($this->getDocumentServices(), 'Rbs_Elasticsearch_FullText');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_FullText');
 		$query->andPredicates(
 			$query->activated(),
 			$query->eq('name', $indexName),
@@ -254,9 +269,10 @@ class FullTextIndexer
 		/* @var $fullTextIndex \Rbs\Elasticsearch\Documents\FullText */
 		foreach ($this->getIndexesDefinition() as $fullTextIndex)
 		{
-			if ($fullTextIndex->getMappingName() === $mappingName &&
-				$fullTextIndex->getAnalysisLCID() === $analysisLCID &&
-				$fullTextIndex->getWebsiteId() == $websiteId)
+			if ($fullTextIndex->getMappingName() === $mappingName
+				&& $fullTextIndex->getAnalysisLCID() === $analysisLCID
+				&& $fullTextIndex->getWebsiteId() == $websiteId
+			)
 			{
 				return $fullTextIndex;
 			}
@@ -283,16 +299,14 @@ class FullTextIndexer
 			return;
 		}
 
-
-
 		$website = $event->getParam('website');
 		if ($website instanceof \Rbs\Website\Documents\Website)
 		{
-			$websiteId =  $website->getId();
+			$websiteId = $website->getId();
 		}
 		elseif (is_numeric($website))
 		{
-			$websiteId =  intval($website);
+			$websiteId = intval($website);
 		}
 		else
 		{

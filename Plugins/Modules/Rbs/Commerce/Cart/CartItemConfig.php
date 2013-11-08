@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
-use Rbs\Commerce\Services\CommerceServices;
+use Rbs\Commerce\CommerceServices;
 
 /**
 * @name \Rbs\Commerce\Cart\CartItemConfig

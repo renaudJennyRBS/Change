@@ -5,7 +5,6 @@ use Change\Http\Event;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Actions\GetBlockCollection;
 use Change\Http\Rest\Actions\GetBlockInformation;
-use Change\Presentation\PresentationServices;
 
 /**
  * @name \Change\Http\Rest\BlocksResolver
@@ -32,7 +31,7 @@ class BlocksResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		$bm = $event->getPresentationServices()->getBlockManager();
+		$bm = $event->getApplicationServices()->getBlockManager();
 		if (!isset($namespaceParts[1]))
 		{
 			$vendors = array();

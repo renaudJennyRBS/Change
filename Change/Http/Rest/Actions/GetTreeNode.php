@@ -18,8 +18,8 @@ class GetTreeNode
 	 */
 	public function execute($event)
 	{
-		$documentServices = $event->getDocumentServices();
-		$treeManager = $documentServices->getTreeManager();
+		$applicationServices = $event->getApplicationServices();
+		$treeManager = $applicationServices->getTreeManager();
 
 		$treeName = $event->getParam('treeName');
 		if (!$treeName || !$treeManager->hasTreeName($treeName))
@@ -62,7 +62,7 @@ class GetTreeNode
 			'level' => $node->getLevel(),
 			'nodeOrder' => $node->getPosition()));
 
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($node->getDocumentId());
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($node->getDocumentId());
 		if ($document)
 		{
 			$result->setProperty('document',  new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY));

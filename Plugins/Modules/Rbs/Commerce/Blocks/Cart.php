@@ -25,12 +25,13 @@ class Cart extends Block
 		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
+		$parameters->setNoCache();
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
-			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
+			$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
 		}
 
 		if ($parameters->getParameter('cartIdentifier') !== null)
@@ -42,7 +43,7 @@ class Cart extends Block
 			}
 			elseif ($parameters->getParameter('displayPrices') === null)
 			{
-				$documentManager = $event->getDocumentServices()->getDocumentManager();
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
 				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
 				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 				{
@@ -67,7 +68,7 @@ class Cart extends Block
 		$cartIdentifier = $parameters->getParameter('cartIdentifier');
 		if ($cartIdentifier)
 		{
-			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if ($cart && !$cart->isEmpty())

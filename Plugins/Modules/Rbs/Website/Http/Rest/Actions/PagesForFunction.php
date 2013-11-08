@@ -22,29 +22,28 @@ class PagesForFunction
 		$billingArea = null;
 		if ($request->isGet())
 		{
-			$event->setResult($this->generateResult($event->getDocumentServices(), $request->getQuery('function')));
+			$event->setResult($this->generateResult($event->getApplicationServices(), $request->getQuery('function')));
 		}
 	}
 
 
 	/**
-	 * @param $documentServices \Change\Documents\DocumentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param $function string
 	 * @return \Change\Http\Rest\Result\ArrayResult
 	 */
-	protected function generateResult($documentServices, $function)
+	protected function generateResult($applicationServices, $function)
 	{
 		$result = new \Change\Http\Rest\Result\ArrayResult();
 		$pagesForFunction = array();
 
-		$query = new Query($documentServices, 'Rbs_Website_FunctionalPage');
+		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Website_FunctionalPage');
 		$query->andPredicates($query->like('allowedFunctionsCode', '"' . $function . '"'));
 		$pages = $query->getDocuments();
 
 		if (count($pages))
 		{
-			$presentationServices = new \Change\Presentation\PresentationServices($documentServices->getApplicationServices());
-			$blockManager = $presentationServices->getBlockManager();
+			$blockManager = $applicationServices->getBlockManager();
 			$allFunctions = array();
 			foreach ($blockManager->getBlockNames() as $blockName)
 			{
@@ -64,7 +63,7 @@ class PagesForFunction
 				$funcs = array();
 				foreach($page->getAllowedFunctionsCode() as $code)
 				{
-					$query = new Query($documentServices, 'Rbs_Website_SectionPageFunction');
+					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
 					$query->andPredicates($query->eq('functionCode', $code));
 					$funcs[] = array(
 						"code" => $code,

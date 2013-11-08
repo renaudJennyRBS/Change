@@ -23,23 +23,18 @@ class Install extends \Change\Plugins\InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$workflowManager = new \Change\Workflow\WorkflowManager();
-		$workflowManager->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
-		$workflowManager->setDocumentServices($documentServices);
-
+		$workflowManager = $applicationServices->getWorkflowManager();
 		if ($workflowManager->getWorkflow('publicationProcess') === null)
 		{
 			try
 			{
 				$applicationServices->getTransactionManager()->begin();
-				$publicationProcessWorkflow = new PublicationProcessWorkflow($documentServices);
+				$publicationProcessWorkflow = new PublicationProcessWorkflow($applicationServices);
 				$workflow = $publicationProcessWorkflow->install();
 				$plugin->setConfigurationEntry('publicationProcess', $workflow->getId());
 				$applicationServices->getTransactionManager()->commit();
@@ -55,9 +50,11 @@ class Install extends \Change\Plugins\InstallBase
 			try
 			{
 				$applicationServices->getTransactionManager()->begin();
-				$publicationProcessWorkflow = new CorrectionPublicationProcessWorkflow($documentServices);
+
+				$publicationProcessWorkflow = new CorrectionPublicationProcessWorkflow($applicationServices);
 				$workflow = $publicationProcessWorkflow->install();
 				$plugin->setConfigurationEntry('correctionPublicationProcess', $workflow->getId());
+
 				$applicationServices->getTransactionManager()->commit();
 			}
 			catch (\Exception $e)

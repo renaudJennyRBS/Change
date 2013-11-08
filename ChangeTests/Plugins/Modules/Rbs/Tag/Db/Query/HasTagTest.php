@@ -63,7 +63,7 @@ class HasTagTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$predicateJSON = array('tag' => 1);
 		$JSONDecoder = new \Change\Documents\Query\JSONDecoder();
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Tag_Tag');
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Tag_Tag');
 		$JSONDecoder->setDocumentQuery($query);
 		$predicateBuilder = $query->getPredicateBuilder();
 
@@ -75,13 +75,15 @@ class HasTagTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testJSONDecode()
 	{
 		$json = array('model' => 'Rbs_Generic_Folder', 'where' => array('and' => array(array('op' => 'hasTag', 'tag' => 1))));
-
-		$dbProvider = $this->getApplicationServices()->getDbProvider();
+		$applicationServices = $this->getApplicationServices();
+		$dbProvider = $applicationServices->getDbProvider();
 		$la = new \Rbs\Generic\Events\Db\Listeners();
 		$la->attach($dbProvider->getEventManager());
 
 		$JSONDecoder = new \Change\Documents\Query\JSONDecoder();
-		$JSONDecoder->setDocumentServices($this->getDocumentServices());
+		$JSONDecoder->setDocumentManager($applicationServices->getDocumentManager())
+			->setModelManager($applicationServices->getModelManager())
+			->setTreeManager($applicationServices->getTreeManager());
 		$query = $JSONDecoder->getQuery($json);
 
 		$sql= 'SELECT * FROM "rbs_generic_doc_folder" AS "_t0" WHERE ((EXISTS(SELECT * FROM "rbs_tag_document" INNER JOIN "rbs_tag_search" USING ("tag_id") WHERE ("doc_id" = "_t0"."document_id" AND "search_tag_id" = :_p1))))';
@@ -103,6 +105,4 @@ class HasTagTest extends \ChangeTests\Change\TestAssets\TestCase
 		$sql = 'SELECT "c1" FROM "table" WHERE EXISTS(SELECT * FROM "rbs_tag_document" INNER JOIN "rbs_tag_search" USING ("tag_id") WHERE ("doc_id" = "document_id" AND "search_tag_id" = 10000))';
 		$this->assertEquals($sql, $qb->query()->toSQL92String());
 	}
-
-
 }

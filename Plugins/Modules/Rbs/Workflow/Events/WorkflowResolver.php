@@ -7,19 +7,19 @@ namespace Rbs\Workflow\Events;
 class WorkflowResolver
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function examine(\Zend\EventManager\Event $event)
+	public function examine(\Change\Events\Event $event)
 	{
 		$startTask = $event->getParam('startTask');
 		$date = $event->getParam('date');
-		$documentServices = $event->getParam('documentServices');
-		if ($startTask && $date && $documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($startTask && $date && $applicationServices)
 		{
-			$workflowModel = $documentServices->getModelManager()->getModelByName('Rbs_Workflow_Workflow');
+			$workflowModel = $applicationServices->getModelManager()->getModelByName('Rbs_Workflow_Workflow');
 			if ($workflowModel)
 			{
-				$dqb = new \Change\Documents\Query\Query($documentServices, $workflowModel);
+				$dqb = $applicationServices->getDocumentManager()->getNewQuery($workflowModel);
 				$workflow = $dqb->andPredicates($dqb->activated($date), $dqb->eq('startTask', $startTask))->getFirstDocument();
 				if ($workflow)
 				{
@@ -30,19 +30,19 @@ class WorkflowResolver
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function process(\Zend\EventManager\Event $event)
+	public function process(\Change\Events\Event $event)
 	{
 		$taskId = $event->getParam('taskId');
 		$date = $event->getParam('date');
-		$documentServices = $event->getParam('documentServices');
-		if ($taskId && $date && $documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($taskId && $date && $applicationServices)
 		{
-			$taskModel = $documentServices->getModelManager()->getModelByName('Rbs_Workflow_Task');
+			$taskModel = $applicationServices->getModelManager()->getModelByName('Rbs_Workflow_Task');
 			if ($taskModel)
 			{
-				$task = $documentServices->getDocumentManager()->getDocumentInstance($taskId, $taskModel);
+				$task = $applicationServices->getDocumentManager()->getDocumentInstance($taskId, $taskModel);
 				if ($task instanceof \Rbs\Workflow\Documents\Task
 					&& $task->getStatus() == \Change\Workflow\Interfaces\WorkItem::STATUS_ENABLED
 				)

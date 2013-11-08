@@ -37,6 +37,15 @@ class Information
 	}
 
 	/**
+	 * @api
+	 * @param \Change\Events\Event $event
+	 */
+	public function onInformation(\Change\Events\Event $event)
+	{
+
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getName()

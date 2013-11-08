@@ -1,25 +1,17 @@
 <?php
 namespace Change\Presentation\Blocks;
 
-use Change\Documents\DocumentServices;
-use Change\Http\Web\UrlManager;
 use Change\Http\Web\Result\BlockResult;
-use Change\Presentation\Layout\Block;
-use Zend\EventManager\Event as ZendEvent;
+use Change\Http\Web\UrlManager;
 use Change\Permissions\PermissionsManager;
-use Change\Presentation\PresentationServices;
+use Change\Presentation\Layout\Block;
 use Change\User\AuthenticationManager;
 
 /**
  * @name \Change\Presentation\Blocks\Event
  */
-class Event extends ZendEvent
+class Event extends \Change\Events\Event
 {
-	/**
-	 * @var DocumentServices|null
-	 */
-	protected $documentServices;
-
 	/**
 	 * @var Block
 	 */
@@ -49,78 +41,6 @@ class Event extends ZendEvent
 	 * @var PermissionsManager
 	 */
 	protected $permissionsManager;
-
-	/**
-	 * @api
-	 * @param string $serviceName
-	 * @return \Zend\Stdlib\Parameters|\Zend\Di\Di|null
-	 */
-	public function getServices($serviceName = null)
-	{
-		$services = $this->getParam('services');
-		if (!($services instanceof \Zend\Stdlib\Parameters))
-		{
-			$services = new \Zend\Stdlib\Parameters();
-			$this->setServices($services);
-		}
-
-		if ($serviceName !== null)
-		{
-			return $services->get($serviceName, null);
-		}
-		return $services;
-	}
-
-	/**
-	 * @param \Zend\Stdlib\Parameters $services
-	 * @return $this
-	 */
-	public function setServices(\Zend\Stdlib\Parameters $services)
-	{
-		$this->setParam('services', $services);
-		return $this;
-	}
-
-	/**
-	 * @param PresentationServices|null $presentationServices
-	 * @return $this
-	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
-	{
-		$this->getServices()->set('presentationServices', $presentationServices);
-		return $this;
-	}
-
-	/**
-	 * @api
-	 * @return PresentationServices|null
-	 */
-	public function getPresentationServices()
-	{
-		return $this->getServices('presentationServices');
-	}
-
-	/**
-	 * @param DocumentServices|null $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @api
-	 * @throws \RuntimeException
-	 * @return DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		if ($this->documentServices === null)
-		{
-			throw new \RuntimeException('documentServices is not set', 999999);
-		}
-		return $this->documentServices;
-	}
 
 	/**
 	 * @param Block $blockLayout

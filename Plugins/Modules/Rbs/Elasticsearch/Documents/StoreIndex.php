@@ -7,15 +7,15 @@ namespace Rbs\Elasticsearch\Documents;
 class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 {
 	/**
-	 * @var \Rbs\Commerce\Services\CommerceServices
+	 * @var \Rbs\Commerce\CommerceServices
 	 */
 	protected $commerceServices;
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return $this
 	 */
-	public function setCommerceServices(\Rbs\Commerce\Services\CommerceServices $commerceServices = null)
+	public function setCommerceServices(\Rbs\Commerce\CommerceServices $commerceServices = null)
 	{
 		$this->commerceServices = $commerceServices;
 		if ($commerceServices && !$commerceServices->getWebStore())
@@ -34,7 +34,7 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices|null
+	 * @return \Rbs\Commerce\CommerceServices|null
 	 */
 	public function getCommerceServices()
 	{

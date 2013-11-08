@@ -15,17 +15,25 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
+		$callback = function (\Change\Documents\Events\Event $event)
+		{
+			(new \Rbs\Seo\Std\DocumentSeoGenerator())->onDocumentCreated($event);
+		};
+		$this->getEventManagerFactory()->getSharedEventManager()->attach('Documents', array(\Change\Documents\Events\Event::EVENT_CREATED), $callback, 5);
+	}
+
 	public function testOnDocumentCreated()
 	{
-		//declare the shared listener for this test suit
-		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/ListenerAggregateClasses/Rbs_Generic',
-			'\\Rbs\Generic\\Events\\SharedListeners');
-
 		//create a document to test if there is no document SEO auto generation
 		$this->getNewProduct('Zero');
 
 		//check there is no document seo
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
+		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Seo_DocumentSeo');
 		$documentSeos = $dqb->getDocuments();
 		$this->assertCount(0, $documentSeos);
 
@@ -85,7 +93,7 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewProduct($identifier)
 	{
-		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+		$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setLabel('product' . $identifier);
 		$product->getCurrentLocalization()->setTitle('product' . $identifier);
@@ -110,7 +118,7 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewModelConfiguration()
 	{
-		$modelConfiguration = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
+		$modelConfiguration = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
 		/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
 		$modelConfiguration->setLabel('Product');
 		$modelConfiguration->setModelName('Rbs_Catalog_Product');

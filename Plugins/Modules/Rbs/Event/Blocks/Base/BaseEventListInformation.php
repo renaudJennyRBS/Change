@@ -8,15 +8,11 @@ use Change\Documents\Property;
  */
 abstract class BaseEventListInformation extends \Change\Presentation\Blocks\Information
 {
-	/**
-	 * @param string $name
-	 * @param \Change\Presentation\Blocks\BlockManager $blockManager
-	 */
-	public function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->addInformationMeta('showTime', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-list-show-time', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)

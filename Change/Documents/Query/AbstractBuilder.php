@@ -51,6 +51,17 @@ abstract class AbstractBuilder
 	 */
 	protected $predicateBuilder;
 
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
+
 
 	/**
 	 * @param AbstractModel $model
@@ -59,6 +70,52 @@ abstract class AbstractBuilder
 	{
 		$this->setModel($model);
 		$this->setTableAliasName('_t' . $this->getQuery()->getNextAliasCounter());
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		if ($this->documentManager === null)
+		{
+			throw new \RuntimeException('DocumentManager not set', 999999);
+		}
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager(\Change\Documents\ModelManager $modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		if ($this->modelManager === null)
+		{
+			throw new \RuntimeException('ModelManager not set', 999999);
+		}
+		return $this->modelManager;
 	}
 
 	/**
@@ -131,7 +188,7 @@ abstract class AbstractBuilder
 	{
 		if ($this->LCID === null)
 		{
-			$this->LCID = $this->getDocumentServices()->getDocumentManager()->getLCID();
+			$this->LCID = $this->getDocumentManager()->getLCID();
 		}
 		return $this->LCID;
 	}
@@ -237,7 +294,7 @@ abstract class AbstractBuilder
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid document Property', 999999);
 		}
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName($property->getDocumentType());
+		$model = $this->getModelManager()->getModelByName($property->getDocumentType());
 		if ($model === null || $model->isStateless())
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid document Property', 999999);
@@ -257,7 +314,7 @@ abstract class AbstractBuilder
 	 */
 	public function getModelBuilder($modelName, $propertyName)
 	{
-		$model = (is_string($modelName)) ?  $this->getDocumentServices()->getModelManager()->getModelByName($modelName) : $modelName;
+		$model = (is_string($modelName)) ?  $this->getModelManager()->getModelByName($modelName) : $modelName;
 		if (!($model instanceof AbstractModel) || $model->isStateless())
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid document model', 999999);
@@ -290,7 +347,7 @@ abstract class AbstractBuilder
 			throw new \InvalidArgumentException('Argument 1 must be a valid Property', 999999);
 		}
 
-		$model = (is_string($modelName)) ?  $this->getDocumentServices()->getModelManager()->getModelByName($modelName) : $modelName;
+		$model = (is_string($modelName)) ?  $this->getModelManager()->getModelByName($modelName) : $modelName;
 		if (!($model instanceof AbstractModel) || $model->isStateless())
 		{
 			throw new \InvalidArgumentException('Argument 2 must be a valid document model', 999999);
@@ -342,11 +399,6 @@ abstract class AbstractBuilder
 	 * @return void
 	 */
 	abstract protected function populateQueryBuilder($qb, \ArrayObject $sysPredicate = null);
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	abstract protected function getDocumentServices();
 
 	/**
 	 * @return \Change\Db\DbProvider
@@ -700,65 +752,5 @@ abstract class AbstractBuilder
 	public function notActivated($at = null, $to = null)
 	{
 		return $this->getPredicateBuilder()->notActivated($at, $to);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::childOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function childOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->childOf($node, $propertyName);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::descendantOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function descendantOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->descendantOf($node, $propertyName);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::ancestorOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function ancestorOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->ancestorOf($node, $propertyName);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::ancestorOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function nextSiblingOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->nextSiblingOf($node, $propertyName);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::previousSiblingOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function previousSiblingOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->previousSiblingOf($node, $propertyName);
 	}
 }

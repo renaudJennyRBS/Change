@@ -1,7 +1,6 @@
 <?php
 namespace Change\Http\Rest;
 
-use Change\Documents\AbstractModel;
 use Change\Documents\Interfaces\Localizable;
 use Change\Http\Event;
 use Change\Http\Rest\Actions\CreateDocument;
@@ -43,16 +42,16 @@ class ResourcesResolver
 	{
 		if (!isset($namespaceParts[1]))
 		{
-			return $event->getDocumentServices()->getModelManager()->getVendors();
+			return $event->getApplicationServices()->getModelManager()->getVendors();
 		}
 		elseif (!isset($namespaceParts[2]))
 		{
 			$vendor = $namespaceParts[1];
-			return $event->getDocumentServices()->getModelManager()->getShortModulesNames($vendor);
+			return $event->getApplicationServices()->getModelManager()->getShortModulesNames($vendor);
 		}
 		elseif (!isset($namespaceParts[3]))
 		{
-			return $event->getDocumentServices()->getModelManager()
+			return $event->getApplicationServices()->getModelManager()
 				->getShortDocumentsNames($namespaceParts[1], $namespaceParts[2]);
 		}
 		return array();
@@ -67,8 +66,8 @@ class ResourcesResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		$relativePath = implode('/', $event->getParam('isDirectory') ? array_merge($resourceParts, array('')): $resourceParts);
-		$documentServices = $event->getDocumentServices();
+		$relativePath = implode('/', $event->getParam('isDirectory') ? array_merge($resourceParts, array('')) : $resourceParts);
+		$applicationServices = $event->getApplicationServices();
 
 		// id
 		if (preg_match('|^([0-9]+)$|', $relativePath, $matches))
@@ -102,7 +101,7 @@ class ResourcesResolver
 		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/$|', $relativePath, $matches))
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
-			$model = $documentServices->getModelManager()->getModelByName($modelName);
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
 			if (!$model)
 			{
 				return;
@@ -143,7 +142,7 @@ class ResourcesResolver
 		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)$|', $relativePath, $matches))
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
-			$model = $documentServices->getModelManager()->getModelByName($modelName);
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
 			if (!$model)
 			{
 				return;
@@ -215,11 +214,15 @@ class ResourcesResolver
 		}
 
 		// Vendor/Module/Name/Id/LCID
-		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)/([a-z]{2}_[A-Z]{2})$|', $relativePath, $matches))
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)/([a-z]{2}_[A-Z]{2})$|', $relativePath,
+			$matches)
+		)
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
-			$model = $documentServices->getModelManager()->getModelByName($modelName);
-			if (!$model || !$model->isLocalized() || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4]))
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
+			if (!$model || !$model->isLocalized()
+				|| !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($resourceParts[4])
+			)
 			{
 				return;
 			}
@@ -281,10 +284,12 @@ class ResourcesResolver
 		}
 
 		// Vendor/Module/Name/Id[/LCID]/correction
-		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)(?:/([a-z]{2}_[A-Z]{2}))?/correction$|', $relativePath, $matches))
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)(?:/([a-z]{2}_[A-Z]{2}))?/correction$|',
+			$relativePath, $matches)
+		)
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
-			$model = $documentServices->getModelManager()->getModelByName($modelName);
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
 			if (!$model || !$model->useCorrection())
 			{
 				return;
@@ -330,7 +335,7 @@ class ResourcesResolver
 	 */
 	protected function getDocumentActionById($event, $documentId)
 	{
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId);
 		if ($document === null)
 		{
 			//Document not found

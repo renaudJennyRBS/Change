@@ -36,8 +36,9 @@ class Result extends Block
 			$fulltextIndexId =  isset($fulltextIndexId['id']) ? $fulltextIndexId['id'] : null;
 		}
 
-		$fullTextIndex = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($fulltextIndexId);
-		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText)
+
+		$fullTextIndex = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($fulltextIndexId);
+		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
 		{
 			$websiteId = $fullTextIndex->getWebsiteId();
 			$allowedSectionIds = $event->getPermissionsManager()->getAllowedSectionIds($websiteId);
@@ -81,9 +82,7 @@ class Result extends Block
 		$elasticsearchServices = $event->getServices('elasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
-			$applicationServices = $event->getDocumentServices()->getApplicationServices();
-			$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $event->getDocumentServices());
-			$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+			return null;
 		}
 		return $elasticsearchServices;
 	}
@@ -96,9 +95,14 @@ class Result extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$documentServices = $event->getDocumentServices();
+		$elasticsearchServices = $this->getElasticsearchServices($event);
+		if (!$elasticsearchServices)
+		{
+			return null;
+		}
+		$applicationServices = $event->getApplicationServices();
 		$parameters = $event->getBlockParameters();
-		$fullTextIndex = $documentServices->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
+		$fullTextIndex = $applicationServices->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
 		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
 		{
 			$searchText = trim($parameters->getParameter('searchText'), '');
@@ -115,6 +119,8 @@ class Result extends Block
 				if ($index->exists())
 				{
 					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $fullTextIndex);
+					$searchQuery->setI18nManager($applicationServices->getI18nManager());
+					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
 
 					if ($searchText || (is_array($facetFilters) && count($facetFilters)))
 					{
@@ -145,7 +151,6 @@ class Result extends Block
 							}
 						}
 						$facetValues = $searchQuery->buildFacetValues($searchResult->getFacets(), $facetFilters, array('model'));
-
 					}
 					else
 					{
@@ -155,7 +160,6 @@ class Result extends Block
 						$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
 						$facetValues = $searchQuery->buildFacetValues($searchResult->getFacets(), $facetFilters, array('model'));
 					}
-
 					$attributes['facet'] = isset($facetValues['model']) ? $facetValues['model'] : array();
 				}
 			}

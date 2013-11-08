@@ -7,18 +7,17 @@ namespace Rbs\Theme\Events;
 class ThemeResolver
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Theme\Documents\Theme|null
 	 */
 	public function resolve($event)
 	{
 		$themeName = $event->getParam('themeName');
-		/* @var $documentServices \Change\Documents\DocumentServices */
-		$documentServices = $event->getParam('documentServices');
-		if ($themeName && $documentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($themeName && $applicationServices)
 		{
-			$themeModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
-			$query = new \Change\Documents\Query\Query($documentServices, $themeModel);
+			$themeModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
+			$query = $applicationServices->getDocumentManager()->getNewQuery($themeModel);
 			$query->andPredicates($query->eq('name', $themeName));
 			return $query->getFirstDocument();
 		}

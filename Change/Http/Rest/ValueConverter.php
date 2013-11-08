@@ -3,7 +3,6 @@ namespace Change\Http\Rest;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentArrayProperty;
-use Change\Documents\Interfaces\Editable;
 use Change\Documents\Property;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\Link;
@@ -80,15 +79,6 @@ class ValueConverter
 		return $this->documentManager;
 	}
 
-
-	/**
-	 * @return \Change\Documents\ModelManager
-	 */
-	public function getModelManager()
-	{
-		return $this->getDocumentManager()->getModelManager();
-	}
-
 	/**
 	 * @api
 	 * @param mixed $propertyValue
@@ -161,7 +151,6 @@ class ValueConverter
 							return $doc->getId();
 						}, $propertyValue);
 					}
-
 				}
 				elseif ($propertyValue !== null)
 				{
@@ -226,10 +215,9 @@ class ValueConverter
 					$documentManager = $this->getDocumentManager();
 					if (is_array($restValue))
 					{
-						$modelManager = $this->getModelManager();
 						if (isset($restValue['id']))
 						{
-							$model = isset($item['model']) ? $modelManager->getModelByName($item['model']) : null;
+							$model = isset($item['model']) && is_string($item['model']) ? $item['model'] : null;
 							$value = $documentManager->getDocumentInstance($restValue['id'], $model);
 						}
 					}
@@ -249,15 +237,14 @@ class ValueConverter
 				if (is_array($restValue))
 				{
 					$documentManager = $this->getDocumentManager();
-					$modelManager = $this->getModelManager();
-					$value = array_map(function ($item) use ($documentManager, $modelManager)
+					$value = array_map(function ($item) use ($documentManager)
 					{
 						$doc = null;
 						if (is_array($item))
 						{
 							if (isset($item['id']))
 							{
-								$model = isset($item['model']) ? $modelManager->getModelByName($item['model']) : null;
+								$model = isset($item['model']) && is_string($item['model']) ? $item['model'] : null;
 								$doc = $documentManager->getDocumentInstance($item['id'], $model);
 							}
 						}

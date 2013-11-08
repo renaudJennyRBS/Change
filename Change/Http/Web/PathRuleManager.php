@@ -7,42 +7,34 @@ namespace Change\Http\Web;
 class PathRuleManager
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Db\DbProvider
 	 */
-	protected $applicationServices;
+	protected $dbProvider;
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Db\DbProvider $dbProvider
 	 */
-	function __construct(\Change\Application\ApplicationServices $applicationServices)
+	function __construct(\Change\Db\DbProvider $dbProvider)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->dbProvider = $dbProvider;
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return $this
 	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->dbProvider = $dbProvider;
 		return $this;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
 	}
 
 	/**
 	 * @return \Change\Db\DbProvider
 	 */
-	public function getDbProvider()
+	protected function getDbProvider()
 	{
-		return $this->applicationServices->getDbProvider();
+		return $this->dbProvider;
 	}
 
 	/**
@@ -55,7 +47,7 @@ class PathRuleManager
 	{
 		if ($status == 404)
 		{
-			$sb = $this->applicationServices->getDbProvider()->getNewStatementBuilder();
+			$sb = $this->getDbProvider()->getNewStatementBuilder();
 			$table = $sb->getSqlMapping()->getPathRuleTable();
 			$fb = $sb->getFragmentBuilder();
 			$sb->delete($table)->where($fb->eq($fb->column('rule_id'), $fb->integerParameter('ruleId')));
@@ -65,7 +57,7 @@ class PathRuleManager
 		}
 		elseif ($status == 200 || $status == 301 || $status == 302)
 		{
-			$sb = $this->applicationServices->getDbProvider()->getNewStatementBuilder();
+			$sb = $this->getDbProvider()->getNewStatementBuilder();
 			$table = $sb->getSqlMapping()->getPathRuleTable();
 			$fb = $sb->getFragmentBuilder();
 			$sb->update($table)
@@ -80,6 +72,17 @@ class PathRuleManager
 		{
 			throw new \InvalidArgumentException('Argument 2 should be a valid status: 200, 301, 302 or 404 (to delete the rule)', 999999);
 		}
+	}
+
+	/**
+	 * @api
+	 * @see \Change\I18n\I18nManager::isValidLCID
+	 * @param string $LCID
+	 * @return boolean
+	 */
+	protected function isValidLCID($LCID)
+	{
+		return is_string($LCID) && preg_match('/^[a-z]{2}_[A-Z]{2}$/', $LCID);
 	}
 
 	/**
@@ -101,7 +104,7 @@ class PathRuleManager
 			throw new \InvalidArgumentException('Argument 1 should be a valid website id', 999999);
 		}
 
-		if (!$this->applicationServices->getI18nManager()->isValidLCID($LCID))
+		if (!$this->isValidLCID($LCID))
 		{
 			throw new \InvalidArgumentException('Argument 2 should be a valid LCID', 999999);
 		}

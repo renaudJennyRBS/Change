@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Review\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -14,7 +13,7 @@ class PostReview extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -35,19 +34,20 @@ class PostReview extends Block
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		if ($user->authenticated())
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$targetFromParameter = $documentManager->getDocumentInstance($parameters->getParameter('targetId'));
 			$target = $targetFromParameter !== null ? $targetFromParameter : $event->getParam('document');
 			$sectionFromParameter = $documentManager->getDocumentInstance($parameters->getParameter('sectionId'));
 			$section = $sectionFromParameter !== null ? $sectionFromParameter : $event->getParam('page')->getSection();
-			if ($target instanceof \Change\Documents\AbstractDocument && $section instanceof \Change\Presentation\Interfaces\Section)
+			if ($target instanceof \Change\Documents\AbstractDocument
+				&& $section instanceof \Change\Presentation\Interfaces\Section
+			)
 			{
-				$userDoc = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($user->getId());
+				$userDoc = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user->getId());
 				/* @var $userDoc \Rbs\User\Documents\User */
 				$parameters->setParameterValue('userId', $userDoc->getId());
 				//find if user has already reviewed this target in this section
-				$reviewModel = $documentManager->getModelManager()->getModelByName('Rbs_Review_Review');
-				$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), $reviewModel);
+				$dqb = $documentManager->getNewQuery('Rbs_Review_Review');
 				$dqb->andPredicates(
 					$dqb->eq('target', $target),
 					$dqb->eq('section', $section),
@@ -77,8 +77,7 @@ class PostReview extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -89,7 +88,8 @@ class PostReview extends Block
 		$attributes['notConnected'] = !$parameters->getParameter('userId');
 		if ($parameters->getParameter('alreadyReviewed'))
 		{
-			$review = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
+			$review = $event->getApplicationServices()->getDocumentManager()
+				->getDocumentInstance($parameters->getParameter('reviewId'));
 			/* @var $review \Rbs\Review\Documents\Review */
 			$attributes['review'] = $review->getInfoForTemplate($event->getUrlManager());
 			$attributes['notPublished'] = !$review->published();
@@ -97,7 +97,8 @@ class PostReview extends Block
 			if ($review->hasCorrection())
 			{
 				$attributes['correction'] = [];
-				$attributes['correction']['reviewStarRating'] = ceil($review->getCurrentCorrection()->getPropertyValue('rating')*(5/100));
+				$attributes['correction']['reviewStarRating'] = ceil($review->getCurrentCorrection()->getPropertyValue('rating')
+					* (5 / 100));
 				$newContent = $review->getCurrentCorrection()->getPropertyValue('content');
 				/* @var $newContent \Change\Documents\RichtextProperty */
 				$attributes['correction']['content'] = $newContent ? $newContent->getHtml() : null;

@@ -1,25 +1,29 @@
 <?php
 namespace Rbs\Admin\Presentation\Twig;
 
-use Rbs\Admin\Manager;
-
 /**
  * @name \Rbs\Admin\Presentation\Twig\Extension
  */
 class Extension implements \Twig_ExtensionInterface
 {
-
 	/**
 	 * @var \Rbs\Admin\Manager
 	 */
 	protected $adminManager;
 
 	/**
-	 * @param \Rbs\Admin\Manager $adminManager
+	 * @var \Change\Services\ApplicationServices
 	 */
-	function __construct(\Rbs\Admin\Manager $adminManager)
+	protected $applicationServices;
+
+	/**
+	 * @param \Rbs\Admin\Manager $adminManager
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 */
+	function __construct(\Rbs\Admin\Manager $adminManager, $applicationServices)
 	{
 		$this->adminManager = $adminManager;
+		$this->applicationServices = $applicationServices;
 	}
 
 	/**
@@ -132,7 +136,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function createLinks($modelName)
 	{
-		$modelManager = $this->adminManager->getDocumentServices()->getModelManager();
+		$modelManager = $this->applicationServices->getModelManager();
 		$model = $modelManager->getModelByName($modelName);
 		if (!$model)
 		{
@@ -145,15 +149,18 @@ class Extension implements \Twig_ExtensionInterface
 			$models[] = $modelManager->getModelByName($descendantsName);
 		}
 		$links = array();
-		$i18nManager = $this->adminManager->getApplicationServices()->getI18nManager();
+		$i18nManager = $this->applicationServices->getI18nManager();
 
 		/* @var $lm \Change\Documents\AbstractModel */
 		foreach ($models as $lm)
 		{
 			if (!$lm->isAbstract())
 			{
-				$titleKey = strtolower(implode('.', array('m', $lm->getVendorName(), $lm->getShortModuleName(), 'admin.js' , $lm->getShortName() . '-create')));
-				$link = '<a href ng-href="(= \''.$lm->getName().'\' | documentURL:\'new\' =)">'.  $i18nManager->trans($titleKey, array('html', 'ucf')) . '</a>';
+				$titleKey = strtolower(implode('.',
+					array('m', $lm->getVendorName(), $lm->getShortModuleName(), 'admin.js', $lm->getShortName() . '-create')));
+				$link =
+					'<a href ng-href="(= \'' . $lm->getName() . '\' | documentURL:\'new\' =)">' . $i18nManager->trans($titleKey,
+						array('html', 'ucf')) . '</a>';
 				$links[] = $link;
 			}
 		}
@@ -168,7 +175,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function propertyKey($modelName = null, $propertyName = null, $suffix = null)
 	{
-		$mm = $this->adminManager->getDocumentServices()->getModelManager();
+		$mm = $this->applicationServices->getModelManager();
 		if ($modelName)
 		{
 			$model = $mm->getModelByName($modelName);
@@ -188,7 +195,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function modelKey($modelName = null, $suffix = null)
 	{
-		$mm = $this->adminManager->getDocumentServices()->getModelManager();
+		$mm = $this->applicationServices->getModelManager();
 		if ($modelName)
 		{
 			$model = $mm->getModelByName($modelName);

@@ -8,15 +8,11 @@ use Change\Documents\Property;
  */
 abstract class BaseEventInformation extends \Change\Presentation\Blocks\Information
 {
-	/**
-	 * @param string $name
-	 * @param \Change\Presentation\Blocks\BlockManager $blockManager
-	 */
-	public function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
 		$this->addInformationMeta('docId', Property::TYPE_DOCUMENTID, false, null); // Label ans allowed model should be set in final class.
 		$this->addInformationMeta('showTime', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-show-time', $ucf));

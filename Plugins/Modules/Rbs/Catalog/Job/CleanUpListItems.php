@@ -9,17 +9,17 @@ class CleanUpListItems
 	public function execute(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 		$modelName = $job->getArgument('model');
-		$model = $documentServices->getModelManager()->getModelByName($modelName);
+		$model = $applicationServices->getModelManager()->getModelByName($modelName);
 		if ($model && ($model->getName() == 'Rbs_Catalog_ProductList'
 				|| in_array('Rbs_Catalog_ProductList', $model->getAncestorsNames()))
 		)
 		{
-			$dm = $documentServices->getDocumentManager();
+			$dm = $applicationServices->getDocumentManager();
 			$tm = $event->getApplicationServices()->getTransactionManager();
 
-			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_ProductListItem');
+			$dqb = $dm->getNewQuery('Rbs_Catalog_ProductListItem');
 			$pb = $dqb->getPredicateBuilder();
 			$dqb->andPredicates($pb->eq('productList', $job->getArgument('id')));
 			foreach (array_chunk($dqb->getDocuments()->ids(), 50) as $chunk)

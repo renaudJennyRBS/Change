@@ -29,7 +29,7 @@ class ExecuteTask
 			{
 				/* @var $document \Change\Documents\AbstractDocument */
 				$urlManager = $event->getParam('urlManager');
-				$query = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Workflow_Task');
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 				$LCID = $result->getProperty('LCID');
 				$query->andPredicates(
 					$query->eq('document', $document),
@@ -63,7 +63,7 @@ class ExecuteTask
 			{
 				/* @var $document \Change\Documents\AbstractDocument */
 				$urlManager = $event->getParam('urlManager');
-				$query = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Workflow_Task');
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 				$LCID = $result->getProperty('LCID');
 				$query->andPredicates(
 					$query->eq('document', $document),

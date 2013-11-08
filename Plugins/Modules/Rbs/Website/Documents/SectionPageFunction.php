@@ -14,6 +14,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 	 */
 	protected function attachEvents($eventManager)
 	{
+		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'validateUnique'), 1);
 		$eventManager->attach(array(Event::EVENT_CREATED, Event::EVENT_UPDATED), array($this, 'hideLinksOnIndexPage'), 1);
 	}
@@ -31,7 +32,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 
 		/* @var $document \Rbs\Website\Documents\SectionPageFunction */
 		$document = $event->getDocument();
-		$query = new \Change\Documents\Query\Query($document->getDocumentServices(), $document->getDocumentModel());
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($document->getDocumentModel());
 		$query->andPredicates($query->eq('section', $document->getSection()), $query->eq('functionCode', $document->getFunctionCode()));
 		if ($query->getCountDocuments())
 		{

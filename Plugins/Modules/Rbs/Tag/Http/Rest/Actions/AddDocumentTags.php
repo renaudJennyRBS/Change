@@ -3,7 +3,6 @@ namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\CollectionResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
 
 /**
  * @name \Rbs\Tag\Http\Rest\Actions\SetDocumentTags
@@ -43,8 +42,8 @@ class AddDocumentTags
 		{
 			$transactionManager->begin();
 
-			$docManager = $event->getDocumentServices()->getDocumentManager();
-			$model = $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
+			$docManager = $event->getApplicationServices()->getDocumentManager();
+			$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
 
 			$stmt = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $stmt->getFragmentBuilder();
@@ -94,5 +93,4 @@ class AddDocumentTags
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
 		}
 	}
-
 }

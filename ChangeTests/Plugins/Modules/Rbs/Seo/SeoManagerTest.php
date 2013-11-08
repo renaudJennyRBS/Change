@@ -1,8 +1,8 @@
 <?php
 
-namespace ChangeTests\Rbs\Seo\Std;
+namespace ChangeTests\Rbs\Seo;
 
-class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
+class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 
 	public static function setUpBeforeClass()
@@ -15,24 +15,31 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
+	}
+
 	public function testOnDefaultGetMetas()
 	{
 		//add listeners for the event "getMetaVariables"
 		$this->getApplication()->getConfiguration()->addVolatileEntry(
-			'Change/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners'
+			'Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners'
 		);
 
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplicationServices(), $this->getDocumentServices());
+		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
 		$seoManager = $genericServices->getSeoManager();
 		$this->assertInstanceOf('\Rbs\Seo\SeoManager', $seoManager);
 
 		//test without document SEO
-		$event = new \Zend\EventManager\Event();
+		$event = new \Change\Events\Event();
 		$event->setTarget($seoManager);
 		$page = $this->getNewFunctionalPage();
 		$document = $this->getNewProduct();
 		$paramArray = array('page' => $page, 'document' => $document);
-		$event->setParams($paramArray);
+		$event->setParams($paramArray + $this->getDefaultEventArguments());
 		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
@@ -152,6 +159,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($metas['description']);
 		$this->assertEquals('tea,dry fruits,banana,apple', $metas['keywords']);
 
+		$event->setParam('metas', null);
 		//if a field is empty on Document SEO, it's the default meta from model configuration who will be taken
 		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('a description from model configuration: {document.description}');
 		try
@@ -164,6 +172,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			throw $tm->rollBack($e);
 		}
+
 		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
@@ -235,7 +244,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewFunctionalPage()
 	{
-		$functionPage = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_FunctionalPage');
+		$functionPage = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_FunctionalPage');
 		/* @var $functionPage \Rbs\Website\Documents\FunctionalPage */
 		$functionPage->setWebsite($this->getNewWebsite());
 		$functionPage->setLabel('Product detail');
@@ -262,7 +271,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewWebsite()
 	{
-		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
+		$website = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		/* @var $website \Rbs\Website\Documents\Website */
 		$website->setLabel('website');
 		$website->getCurrentLocalization()->setTitle('website');
@@ -288,7 +297,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewPageTemplate()
 	{
-		$pageTemplate = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_PageTemplate');
+		$pageTemplate = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_PageTemplate');
 		/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
 		$pageTemplate->setLabel('template');
 		$pageTemplate->setTheme($this->getNewTheme());
@@ -313,7 +322,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewTheme()
 	{
-		$theme = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_Theme');
+		$theme = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_Theme');
 		/* @var $theme \Rbs\Theme\Documents\Theme */
 		$theme->setLabel('theme');
 		$theme->setName('testMetaComposer');
@@ -338,7 +347,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewProduct()
 	{
-		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+		$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setLabel('product');
 		$product->getCurrentLocalization()->setTitle('product');
@@ -365,7 +374,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewDocumentSeoForProduct($product)
 	{
-		$documentSeo = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+		$documentSeo = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
 		$documentSeo->setTarget($product);
 		$documentSeo->getCurrentLocalization()->setMetaTitle('Product of the year: {document.title}');
@@ -391,7 +400,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewModelConfiguration()
 	{
-		$modelConfiguration = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
+		$modelConfiguration = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
 		/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
 		$modelConfiguration->setModelName('Rbs_Catalog_Product');
 		$modelConfiguration->setLabel('Product');
@@ -420,7 +429,7 @@ class MetaComposerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewBrand()
 	{
-		$brand = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Brand_Brand');
+		$brand = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Brand_Brand');
 		/* @var $brand \Rbs\Brand\Documents\Brand */
 		$brand->setLabel('brand');
 		$brand->getCurrentLocalization()->setTitle('brand');

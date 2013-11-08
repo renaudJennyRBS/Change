@@ -21,13 +21,14 @@ class GetCollectionCodes
 			$resolver = $event->getController()->getActionResolver();
 			if ($resolver instanceof \Change\Http\Rest\Resolver)
 			{
-				$resolver->buildNotAllowedError($request->getMethod(), array(Request::METHOD_GET));
+				$result = $event->getController()->notAllowedError($request->getMethod(), array(Request::METHOD_GET));
+				$event->setResult($result);
+				return;
 			}
 			return;
 		}
 
-		$cm = new \Change\Collection\CollectionManager();
-		$cm->setDocumentServices($event->getDocumentServices());
+		$cm = $event->getApplicationServices()->getCollectionManager();
 		$codes = $cm->getCodes($request->getQuery()->toArray());
 		$event->setResult($this->generateResult($codes));
 	}

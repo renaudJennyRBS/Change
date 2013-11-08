@@ -57,18 +57,6 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
-		}
-		return $this->sharedEventManager;
-	}
-
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -81,12 +69,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->applicationServices)
-		{
-			$config = $this->applicationServices->getApplication()->getConfiguration();
-			return $config->getEntry('Rbs/Elasticsearch/Events/IndexManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Elasticsearch/Events/IndexManager');
 	}
 
 	/**
@@ -288,8 +271,8 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		$this->clientBulks = array();
 
-		$mm = $this->getDocumentServices()->getModelManager();
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$mm = $this->getApplicationServices()->getModelManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		foreach ($toIndex as $data)
 		{
 			//$data ['LCID' => string, 'id' => integer, 'model' => string , 'deleted' => boolean

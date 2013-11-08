@@ -8,10 +8,10 @@ namespace Change\Documents\Constraints;
 class ConstraintsManager
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\I18n\I18nManager
 	 */
-	protected $applicationServices;
-	
+	protected $i18nManager = null;
+
 	/**
 	 * @var array
 	 */
@@ -28,32 +28,34 @@ class ConstraintsManager
 			'publicationStatus' => '\Change\Documents\Constraints\PublicationStatus');
 	}
 
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager(\Change\I18n\I18nManager $i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		$this->registerDefaultTranslator();
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
+	}
+
 	protected function registerDefaultTranslator()
 	{
 		if (\Zend\Validator\AbstractValidator::getDefaultTranslatorTextDomain() !== 'c.constraints')
 		{
 			\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain('c.constraints');
 			$t = Translator::factory(array());
-			$t->setI18nManager($this->getApplicationServices()->getI18nManager());
+			$t->setI18nManager($this->getI18nManager());
 			\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
 		}
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-		$this->registerDefaultTranslator();
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
 	}
 
 	/**

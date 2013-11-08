@@ -17,7 +17,7 @@ class PostReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 	{
 		if ($event->getRequest()->getMethod() === 'POST')
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$data = $event->getRequest()->getPost()->toArray();
 			$userId = $data['userId'];
 			$user = $documentManager->getDocumentInstance($userId);

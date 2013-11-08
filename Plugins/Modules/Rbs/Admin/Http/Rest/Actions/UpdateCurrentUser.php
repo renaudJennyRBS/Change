@@ -15,9 +15,7 @@ class UpdateCurrentUser
 	public function execute($event)
 	{
 		$user = $event->getAuthenticationManager()->getCurrentUser();
-		$profileManager = new \Change\User\ProfileManager();
-		$profileManager->setDocumentServices($event->getDocumentServices());
-
+		$profileManager = $event->getApplicationServices()->getProfileManager();
 		$props = $event->getRequest()->getPost()->toArray();
 
 		$profile = $profileManager->loadProfile($user, 'Change_User');

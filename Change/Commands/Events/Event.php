@@ -4,7 +4,7 @@ namespace Change\Commands\Events;
 /**
 * @name \Change\Commands\Events\Event
 */
-class Event extends \Zend\EventManager\Event
+class Event extends \Change\Events\Event
 {
 
 	/**

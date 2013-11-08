@@ -7,16 +7,13 @@ namespace Rbs\Seo\Std;
 class ModelConfigurationGenerator
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @throws \Exception
 	 */
-	public function onPluginSetupSuccess(\Zend\EventManager\Event $event)
+	public function onPluginSetupSuccess(\Change\Events\Event $event)
 	{
-		$application = $event->getParam('application');
-		/* @var $application \Change\Application */
-		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$modelManager = new \Change\Documents\ModelManager();
-		$modelManager->setApplicationServices($applicationServices);
+		$applicationServices = $event->getApplicationServices();
+		$modelManager = $applicationServices->getModelManager();
 
 		$publishableModels = [];
 		$publishableModelNames = [];
@@ -32,8 +29,7 @@ class ModelConfigurationGenerator
 
 		if (count($publishableModels))
 		{
-			$documentServices = new \Change\Documents\DocumentServices($applicationServices);
-			$dqb = new \Change\Documents\Query\Query($documentServices, 'Rbs_Seo_ModelConfiguration');
+			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Seo_ModelConfiguration');
 			$qb = $dqb->dbQueryBuilder();
 			$qb->addColumn($qb->getFragmentBuilder()->getDocumentColumn('modelName'));
 			$query = $qb->query();
@@ -46,7 +42,7 @@ class ModelConfigurationGenerator
 				/* @var $model \Change\Documents\AbstractModel */
 				if (!in_array($model->getName(), $modelConfigurationNames))
 				{
-					$modelConfiguration = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
+					$modelConfiguration = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
 					/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
 					$modelConfiguration->setLabel($i18n->trans($model->getLabelKey(), array('ucf')));
 					$modelConfiguration->setModelName($model->getName());

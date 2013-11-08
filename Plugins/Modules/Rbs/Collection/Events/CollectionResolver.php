@@ -1,9 +1,7 @@
 <?php
 namespace Rbs\Collection\Events;
 
-use Change\Documents\DocumentServices;
-use Change\Documents\Query\Query;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 
 /**
  * @name \Rbs\Collection\Events\CollectionResolver
@@ -15,15 +13,16 @@ class CollectionResolver
 	 */
 	public function getCollection(Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 			$code = $event->getParam('code');
 			if ($code === 'Rbs_Collection_Collection_List')
 			{
-				return $this->getCollectionList($event);
+				$this->getCollectionList($event);
+				return;
 			}
-			$query = new Query($documentServices, 'Rbs_Collection_Collection');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
 			$collection = $query->andPredicates($query->eq('code', $code))->getFirstDocument();
 			if ($collection)
 			{
@@ -37,16 +36,17 @@ class CollectionResolver
 	 */
 	public function getCollectionList(Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$query = new Query($documentServices, 'Rbs_Collection_Collection');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
 			$qb = $query->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->addColumn($fb->alias($fb->getDocumentColumn('code'), 'code'));
 			$qb->addColumn($fb->alias($fb->getDocumentColumn('label'), 'label'));
 			$sq = $qb->query();
-			$collectionItems = $sq->getResults($sq->getRowsConverter()->addStrCol('code', 'label')->singleColumn('label')->indexBy('code'));
+			$collectionItems = $sq->getResults($sq->getRowsConverter()->addStrCol('code', 'label')->singleColumn('label')
+				->indexBy('code'));
 			$collection = new \Change\Collection\CollectionArray($event->getParam('code'), $collectionItems);
 			$event->setParam('collection', $collection);
 		}
@@ -57,8 +57,8 @@ class CollectionResolver
 	 */
 	public function getCodes(Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 			$codes = $event->getParam('codes');
 			if (!is_array($codes))
@@ -67,7 +67,7 @@ class CollectionResolver
 			}
 
 			$codes[] = 'Rbs_Collection_Collection_List';
-			$query = new Query($documentServices, 'Rbs_Collection_Collection');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
 			$qb = $query->dbQueryBuilder();
 			$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('code'), 'code'));
 			foreach ($qb->query()->getResults() as $row)

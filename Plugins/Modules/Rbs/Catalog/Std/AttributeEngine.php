@@ -9,66 +9,25 @@ use Rbs\Catalog\Documents\Attribute;
 class AttributeEngine
 {
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Services\ApplicationServices
 	 */
-	protected $documentServices;
+	protected $applicationServices;
 
 	/**
-	 * @var \Change\Collection\CollectionManager
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	protected $collectionManager;
-
-	function __construct(\Change\Documents\DocumentServices $documentServices)
+	function __construct(\Change\Services\ApplicationServices $applicationServices)
 	{
-		$this->documentServices = $documentServices;
+		$this->applicationServices = $applicationServices;
 	}
 
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-		return $this;
-	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\Services\ApplicationServices
 	 */
 	protected function getApplicationServices()
 	{
-		return $this->documentServices->getApplicationServices();
-	}
-
-	/**
-	 * @param \Change\Collection\CollectionManager $collectionManager
-	 * @return $this
-	 */
-	public function setCollectionManager($collectionManager)
-	{
-		$this->collectionManager = $collectionManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Collection\CollectionManager
-	 */
-	public function getCollectionManager()
-	{
-		if ($this->collectionManager === null)
-		{
-			$this->collectionManager = new \Change\Collection\CollectionManager($this->getDocumentServices());
-		}
-		return $this->collectionManager;
+		return $this->applicationServices->getApplicationServices();
 	}
 
 	/**
@@ -480,7 +439,7 @@ class AttributeEngine
 	{
 		if ($attribute instanceof Attribute && $attribute->getCollectionCode())
 		{
-			$collection = $this->getCollectionManager()->getCollection($attribute->getCollectionCode());
+			$collection = $this->getApplicationServices()->getCollectionManager()->getCollection($attribute->getCollectionCode());
 			if ($collection)
 			{
 				$values = array();
@@ -506,7 +465,7 @@ class AttributeEngine
 		if (is_array($attributeValues) && count($attributeValues))
 		{
 			$utcTimeZone = new \DateTimeZone('UTC');
-			$documentManager = $this->getDocumentServices()->getDocumentManager();
+			$documentManager = $this->getApplicationServices()->getDocumentManager();
 			foreach ($attributeValues as $attributeValue)
 			{
 				$id = intval($attributeValue['id']);
@@ -526,7 +485,7 @@ class AttributeEngine
 							$property = $attribute->getModelProperty();
 							if ($property)
 							{
-								$pc = new \Change\Http\Rest\PropertyConverter($product, $property);
+								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $documentManager);
 								$pc->setPropertyValue($value);
 								$value = $pc->getRestValue();
 							}
@@ -579,7 +538,7 @@ class AttributeEngine
 		$expandedAttributeValues = array();
 		if (is_array($attributeValues) && count($attributeValues))
 		{
-			$documentManager = $this->getDocumentServices()->getDocumentManager();
+			$documentManager = $this->getApplicationServices()->getDocumentManager();
 			$valueConverter = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
 			foreach ($attributeValues as  $attributeValue)
 			{
@@ -602,7 +561,7 @@ class AttributeEngine
 							$property = $attribute->getModelProperty();
 							if ($property)
 							{
-								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $urlManager);
+								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $documentManager, $urlManager);
 								$value = $pc->getRestValue();
 							}
 						}

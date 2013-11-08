@@ -14,8 +14,7 @@ class InstallPackage
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$applicationServices = $event->getApplicationServices();
 
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');

@@ -10,24 +10,19 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
 	 * @throws \RuntimeException
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeDbSchema($plugin, $schemaManager)
 	{
-		$this->initializeTables($applicationServices);
-		$this->createDefaultTags($applicationServices, $documentServices);
+		$this->initializeTables($schemaManager);
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
 	 */
-	private function initializeTables($applicationServices)
+	private function initializeTables($schemaManager)
 	{
-		$schemaManager = $applicationServices->getDbProvider()->getSchemaManager();
-
 		// Create table tag <-> doc
 		$td = $schemaManager->newTableDefinition('rbs_tag_document');
 		$tagIdField = new FieldDefinition('tag_id');
@@ -52,22 +47,28 @@ class Install extends \Change\Plugins\InstallBase
 		$searchTagIdField->setType(FieldDefinition::INTEGER);
 		$td->addField($searchTagIdField);
 		$schemaManager->createOrAlterTable($td);
-
-		$applicationServices->getDbProvider()->closeConnection();
 	}
 
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @throws \Exception
+	 */
+	public function executeServices($plugin, $applicationServices)
+	{
+		$this->createDefaultTags($applicationServices);
+	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws
 	 */
-	private function createDefaultTags($applicationServices, $documentServices)
+	private function createDefaultTags($applicationServices)
 	{
-		$tagModel = $documentServices->getModelManager()->getModelByName('Rbs_Tag_Tag');
-		$documentManager = $documentServices->getDocumentManager();
+		$tagModel = $applicationServices->getModelManager()->getModelByName('Rbs_Tag_Tag');
+		$documentManager = $applicationServices->getDocumentManager();
 
-		$query = new \Change\Documents\Query\Query($documentServices, $tagModel);
+		$query = $applicationServices->getDocumentManager()->getNewQuery($tagModel);
 		if ($query->getCountDocuments())
 		{
 			return;
@@ -101,6 +102,7 @@ class Install extends \Change\Plugins\InstallBase
 		try
 		{
 			$transactionManager->begin();
+
 			foreach ($tags as $label => $color)
 			{
 				/* @var $tag \Rbs\Tag\Documents\Tag */
@@ -109,6 +111,7 @@ class Install extends \Change\Plugins\InstallBase
 				$tag->setColor($color);
 				$tag->create();
 			}
+
 			$transactionManager->commit();
 		}
 		catch (\Exception $e)

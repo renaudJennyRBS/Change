@@ -1,12 +1,24 @@
 <?php
 namespace Rbs\Elasticsearch;
 
+use Change\Application;
+use Change\Events\EventManagerFactory;
+use Change\Services\ApplicationServices;
+
 /**
 * @name \Rbs\Elasticsearch\ElasticsearchServices
 */
 class ElasticsearchServices extends \Zend\Di\Di
 {
 	use \Change\Services\ServicesCapableTrait;
+
+	/**
+	 * @return \Change\Services\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
 
 	/**
 	 * @return array<alias => className>
@@ -18,32 +30,40 @@ class ElasticsearchServices extends \Zend\Di\Di
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param Application $application
+	 * @param EventManagerFactory $eventManagerFactory
+	 * @param ApplicationServices $applicationServices
 	 */
-	function __construct(\Change\Application\ApplicationServices $applicationServices, \Change\Documents\DocumentServices $documentServices)
+	function __construct(Application $application, EventManagerFactory $eventManagerFactory,
+		ApplicationServices $applicationServices)
 	{
+		$this->setApplication($application);
+		$this->setEventManagerFactory($eventManagerFactory);
 		$this->setApplicationServices($applicationServices);
-		$this->setDocumentServices($documentServices);
 
 		$definitionList = new \Zend\Di\DefinitionList(array());
 
+		//FacetManager : EventManagerFactory, Application, ApplicationServices
 		$facetManagerClassName = $this->getInjectedClassName('FacetManager', '\Rbs\Elasticsearch\Facet\FacetManager');
 		$classDefinition = $this->getDefaultClassDefinition($facetManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
+		//IndexManager : EventManagerFactory, Application, ApplicationServices, FacetManager
 		$indexManagerClassName = $this->getInjectedClassName('IndexManager', 'Rbs\Elasticsearch\Index\IndexManager');
 		$classDefinition = $this->getDefaultClassDefinition($indexManagerClassName);
-		$definitionList->addDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setFacetManager', true)
 			->addMethodParameter('setFacetManager', 'facetManager', array('type' => 'FacetManager', 'required' => true));
+		$definitionList->addDefinition($classDefinition);
 
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
 
-		$defaultParameters = array('applicationServices' => $this->getApplicationServices(),
-			'documentServices' => $this->getDocumentServices());
+		$defaultParameters = array('application' => $this->getApplication(),
+			'applicationServices' => $this->getApplicationServices(),
+			'eventManagerFactory' => $this->getEventManagerFactory());
 
 		$im->addAlias('FacetManager', $facetManagerClassName, $defaultParameters);
 

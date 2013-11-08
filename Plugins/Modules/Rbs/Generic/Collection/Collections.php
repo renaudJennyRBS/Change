@@ -9,14 +9,14 @@ use Change\I18n\I18nString;
 class Collections
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addSortDirections(\Zend\EventManager\Event $event)
+	public function addSortDirections(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'asc' => new I18nString($i18n, 'm.rbs.generic.ascending', array('ucf')),
 				'desc' => new I18nString($i18n, 'm.rbs.generic.descending', array('ucf'))
@@ -28,14 +28,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addPermissionRoles(\Zend\EventManager\Event $event)
+	public function addPermissionRoles(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'*' => new I18nString($i18n, 'm.rbs.generic.any-role', array('ucf')),
 				'Consumer' => new I18nString($i18n, 'm.rbs.generic.role-consumer', array('ucf')),
@@ -51,15 +51,15 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addPermissionPrivileges(\Zend\EventManager\Event $event)
+	public function addPermissionPrivileges(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
-			$modelsNames = $documentServices->getModelManager()->getModelsNames();
+			$i18n = $applicationServices->getI18nManager();
+			$modelsNames = $applicationServices->getModelManager()->getModelsNames();
 			$collection = array_combine($modelsNames, $modelsNames);
 			$collection['*'] = new I18nString($i18n, 'm.rbs.generic.any-privilege', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_PermissionPrivileges', $collection);
@@ -70,12 +70,11 @@ class Collections
 
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addTimeZones(\Zend\EventManager\Event $event)
+	public function addTimeZones(\Change\Events\Event $event)
 	{
 		$items = array();
-		$now = new \DateTime();
 		foreach (\DateTimeZone::listIdentifiers() as $timeZoneName)
 		{
 			$now = new \DateTime('now', new \DateTimeZone($timeZoneName));
@@ -89,15 +88,14 @@ class Collections
 
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addLanguages(\Zend\EventManager\Event $event)
+	public function addLanguages(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 			$items = array();
-			$applicationServices = $documentServices->getApplicationServices();
 			foreach ($applicationServices->getI18nManager()->getSupportedLCIDs() as $lcid)
 			{
 				$items[$lcid] = \Locale::getDisplayLanguage($lcid, $applicationServices->getI18nManager()->getLCID());
@@ -107,5 +105,4 @@ class Collections
 			$event->stopPropagation();
 		}
 	}
-
 }

@@ -14,7 +14,6 @@ class ManageCache
 	public function execute(Event $event)
 	{
 		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
 		$activate = $event->getParam('activate');
 		$deactivate = $event->getParam('deactivate');
 		$currentValues = $application->getConfiguration()->getEntry('Change/Cache');

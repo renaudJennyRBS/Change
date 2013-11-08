@@ -23,19 +23,13 @@ class ChildBuilderTest extends TestCase
 	{
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
 	/**
 	 * @depends testInitializeDB
 	 */
 	public function testConstruct()
 	{
 
-		$builder = new Query($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Project_Tests_Basic');
 
 
 		$childBuilder = new ChildBuilder($builder, 'Project_Tests_Localized', 'id', 'id');

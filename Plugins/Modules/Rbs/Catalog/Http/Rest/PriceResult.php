@@ -37,9 +37,9 @@ class PriceResult
 		$result->setLimit($maxResults);
 
 		/* @var $product \Rbs\Catalog\Documents\Product */
-		$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
-		$model = $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Price_Price');
-		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), $model);
+		$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
+		$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Price_Price');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($model);
 
 		$conditions = array($query->eq('sku', $product->getSku()));
 		if ($areaId)

@@ -24,7 +24,7 @@ class Avatar
 		$user = null;
 		if ($userId !== null)
 		{
-			$user = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($userId);
+			$user = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($userId);
 		}
 
 		$avatarManager = $genericServices->getAvatarManager();

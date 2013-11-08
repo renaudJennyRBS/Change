@@ -2,8 +2,6 @@
 namespace Rbs\Collection\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Documents\Query\Query;
-use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\ErrorResult;
 use Change\I18n\PreparedKey;
 use Zend\Http\Response as HttpResponse;
@@ -19,7 +17,7 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 	 */
 	public function getItemByValue($value)
 	{
-		$query = new Query($this->getDocumentServices(), 'Rbs_Collection_Item');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Collection_Item');
 		$collectionQuery = $query->getModelBuilder('Rbs_Collection_Collection', 'items');
 		$collectionQuery->andPredicates($collectionQuery->eq('id', $this->getId()), $query->eq('value', $value));
 		return $query->getFirstDocument();
@@ -31,7 +29,7 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$callback = function(Event $event)
+		$callback = function (Event $event)
 		{
 			/* @var $document Collection */
 			$document = $event->getDocument();
@@ -41,7 +39,7 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 				$values = array();
 				$duplicatedItems = null;
 				$items = $document->getItems();
-				foreach($items as $item)
+				foreach ($items as $item)
 				{
 					$value = $item->getValue();
 					if (in_array($value, $values))
@@ -102,17 +100,7 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 				{
 					throw new \RuntimeException('can not removed locked item from collection', 999999);
 				}
-				$tm = $this->getApplicationServices()->getTransactionManager();
-				try
-				{
-					$tm->begin();
-					$item->delete();
-					$tm->commit();
-				}
-				catch (\Exception $e)
-				{
-					throw $tm->rollBack($e);
-				}
+				$item->delete();
 			}
 		}
 	}

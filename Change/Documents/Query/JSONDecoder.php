@@ -1,7 +1,6 @@
 <?php
 namespace Change\Documents\Query;
 
-use Change\Documents\DocumentServices;
 use Change\Db\Query\Predicates\Like;
 
 /**
@@ -10,9 +9,19 @@ use Change\Db\Query\Predicates\Like;
 class JSONDecoder
 {
 	/**
-	 * @var DocumentServices
+	 * @var \Change\Documents\DocumentManager
 	 */
-	protected $documentServices;
+	protected $documentManager;
+
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
+
+	/**
+	 * @var \Change\Documents\TreeManager
+	 */
+	protected $treeManager;
 
 	/**
 	 * @var AbstractBuilder[]
@@ -25,24 +34,57 @@ class JSONDecoder
 	protected $query;
 
 	/**
-	 * @param DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
 	 */
-	public function setDocumentServices(DocumentServices $documentServices)
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
 	{
-		$this->documentServices = $documentServices;
+		$this->documentManager = $documentManager;
+		return $this;
 	}
 
 	/**
-	 * @throws \RuntimeException
-	 * @return DocumentServices
+	 * @return \Change\Documents\DocumentManager
 	 */
-	public function getDocumentServices()
+	protected function getDocumentManager()
 	{
-		if ($this->documentServices === null)
-		{
-			throw new \RuntimeException('DocumentServices not set');
-		}
-		return $this->documentServices;
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager(\Change\Documents\ModelManager $modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		return $this->modelManager;
+	}
+
+	/**
+	 * @param \Change\Documents\TreeManager $treeManager
+	 * @return $this
+	 */
+	public function setTreeManager($treeManager)
+	{
+		$this->treeManager = $treeManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\TreeManager
+	 */
+	protected function getTreeManager()
+	{
+		return $this->treeManager;
 	}
 
 	/**
@@ -91,7 +133,7 @@ class JSONDecoder
 
 			if (isset($jsonQuery['model']) && is_string($jsonQuery['model']))
 			{
-				$model = $this->getDocumentServices()->getModelManager()->getModelByName($jsonQuery['model']);
+				$model = $this->getModelManager()->getModelByName($jsonQuery['model']);
 			}
 			else
 			{
@@ -102,7 +144,7 @@ class JSONDecoder
 			{
 				throw new \RuntimeException('Invalid Parameter: model', 71000);
 			}
-			$this->query = new Query($this->getDocumentServices(), $model);
+			$this->query = $this->getDocumentManager()->getNewQuery($model);
 		}
 
 		$this->configureQuery($this->query, $jsonQuery);
@@ -180,14 +222,6 @@ class JSONDecoder
 	}
 
 	/**
-	 * @return \Change\Documents\TreeManager
-	 */
-	protected function getTreeManager()
-	{
-		return $this->getDocumentServices()->getTreeManager();
-	}
-
-	/**
 	 * @param AbstractBuilder $parentQuery
 	 * @param array $joinJSON
 	 * @throws \RuntimeException
@@ -210,7 +244,7 @@ class JSONDecoder
 			throw new \RuntimeException('Required Join model', 999999);
 		}
 		$modelName = $joinJSON['model'];
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
+		$model = $this->getModelManager()->getModelByName($modelName);
 		if ($model === null || $model->isStateless())
 		{
 			throw new \RuntimeException('Invalid Join model name: ' . $modelName, 999999);
@@ -686,6 +720,7 @@ class JSONDecoder
 	 */
 	protected function configureChildOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -709,6 +744,7 @@ class JSONDecoder
 	 */
 	protected function configureDescendantOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -732,6 +768,7 @@ class JSONDecoder
 	 */
 	protected function configureAncestorOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -755,6 +792,7 @@ class JSONDecoder
 	 */
 	protected function configureNextSiblingOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -778,6 +816,7 @@ class JSONDecoder
 	 */
 	protected function configurePreviousSiblingOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);

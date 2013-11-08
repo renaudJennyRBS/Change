@@ -1,10 +1,6 @@
 <?php
 namespace Change\Job;
 
-use Change\Documents\DocumentServices;
-use Change\Application\ApplicationServices;
-use Change\Services\CommonServices;
-
 /**
  * @name \Change\Job\JobManager
  */
@@ -13,93 +9,75 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'JobManager';
-
 	const EVENT_PROCESS = 'process';
 
 	/**
-	 * @var ApplicationServices
+	 * @var \Change\Db\DbProvider
 	 */
-	protected $applicationServices;
+	protected $dbProvider = null;
 
 	/**
-	 * @var DocumentServices
+	 * @var \Change\Transaction\TransactionManager
 	 */
-	protected $documentServices;
+	protected $transactionManager = null;
 
 	/**
-	 * @var CommonServices
+	 * @var \Change\Logging\Logging
 	 */
-	protected $commonServices;
+	protected $logging = null;
 
 	/**
-	 * @param ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(ApplicationServices $applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @throws \RuntimeException
-	 * @return ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		if ($this->applicationServices === null)
-		{
-			throw new \RuntimeException('ApplicationServices not set', 999999);
-		}
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param DocumentServices $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-		if ($documentServices && $this->applicationServices === null)
-		{
-			$this->setApplicationServices($documentServices->getApplicationServices());
-		}
-	}
-
-	/**
-	 * @return DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		if ($this->documentServices === null)
-		{
-			$this->documentServices = new DocumentServices($this->getApplicationServices());
-		}
-		return $this->documentServices;
-	}
-
-	/**
-	 * @param \Change\Services\CommonServices $commonServices
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return $this
 	 */
-	public function setCommonServices(CommonServices $commonServices = null)
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
 	{
-		$this->commonServices = $commonServices;
+		$this->dbProvider = $dbProvider;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Services\CommonServices
+	 * @return \Change\Db\DbProvider
 	 */
-	public function getCommonServices()
+	public function getDbProvider()
 	{
-		if ($this->commonServices === null)
-		{
-			$this->commonServices = new  CommonServices($this->getApplicationServices(), $this->getDocumentServices());
-		}
-		return $this->commonServices;
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Logging\Logging $logging
+	 * @return $this
+	 */
+	public function setLogging($logging)
+	{
+		$this->logging = $logging;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	protected function getLogging()
+	{
+		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
 	}
 
 	/**
@@ -115,9 +93,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplicationServices()->getApplication()->getConfiguration();
-		$classNames =  $config->getEntry('Change/Events/JobManager');
-		return is_array($classNames) ? $classNames : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/JobManager');
 	}
 
 	/**
@@ -148,7 +124,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		try
 		{
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array('job' => $job, 'documentServices' => $this->getDocumentServices(), 'commonServices' => $this->getCommonServices()));
+			$args = $em->prepareArgs(array('job' => $job));
 			$event = new Event(static::composeEventName(static::EVENT_PROCESS, $job->getName()), $this, $args);
 			$this->getEventManager()->trigger($event);
 			$status = $event->getParam('executionStatus', JobInterface::STATUS_SUCCESS);
@@ -168,61 +144,51 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param $name
 	 * @param array $argument
 	 * @param \DateTime $startDate
+	 * @param boolean $startTransaction
 	 * @throws \Exception
 	 * @return JobInterface
 	 */
-	public function createNewJob($name, array $argument = null, \DateTime $startDate = null)
+	public function createNewJob($name, array $argument = null, \DateTime $startDate = null, $startTransaction = true)
 	{
 		if ($startDate === null)
 		{
 			$startDate = new \DateTime();
 		}
 
-		$transactionManager = $this->getApplicationServices()->getTransactionManager();
-		try
+		$job = new Job();
+		$job->setName($name)
+			->setStartDate($startDate)
+			->setStatus(JobInterface::STATUS_WAITING);
+
+		if (is_array($argument) && count($argument))
 		{
-			$transactionManager->begin();
-			$job = new Job();
-			$job->setName($name)
-				->setStartDate($startDate)
-				->setStatus(JobInterface::STATUS_WAITING);
-			if (is_array($argument) && count($argument))
-			{
-				$job->setArguments($argument);
-			}
-			else
-			{
-				$argument = null;
-			}
-
-			$argumentJSON = ($argument !== null) ? \Zend\Json\Json::encode($argument) : null;
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$qb->insert('change_job', $fb->column('name'),
-				$fb->column('start_date'),
-				$fb->column('arguments'),
-				$fb->column('status'));
-
-			$qb->addValues($fb->parameter('name'),
-				$fb->dateTimeParameter('startDate'),
-				$fb->lobParameter('arguments'),
-				$fb->parameter('status'));
-			$iq = $qb->insertQuery();
-
-			$iq->bindParameter('name', $job->getName());
-			$iq->bindParameter('startDate', $job->getStartDate());
-			$iq->bindParameter('arguments', $argumentJSON);
-			$iq->bindParameter('status', $job->getStatus());
-			$iq->execute();
-			$job->setId(intval($iq->getDbProvider()->getLastInsertId('change_job')));
-			$this->applicationServices->getLogging()->info('New Job: ' . $job->getName(). ', ' . $job->getId() . ', '. $argumentJSON);
-			$transactionManager->commit();
+			$job->setArguments($argument);
 		}
-		catch (\Exception $e)
+		else
 		{
-			throw $transactionManager->rollBack($e);
+			$argument = array();
 		}
 
+		if ($startTransaction)
+		{
+			$transactionManager = $this->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+
+				$this->insertJob($job, $argument);
+
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
+			}
+		}
+		else
+		{
+			$this->insertJob($job, $argument);
+		}
 		return $job;
 	}
 
@@ -246,7 +212,6 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 			$lastModificationDate = new \DateTime();
 		}
 
-
 		if (is_array($arguments) && count($arguments))
 		{
 			$arguments = array_merge($job->getArguments(), $arguments);
@@ -259,21 +224,23 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		if ($status !== JobInterface::STATUS_RUNNING && $status !== JobInterface::STATUS_SUCCESS)
 		{
 			if ($status === JobInterface::STATUS_WAITING
-				&& isset($arguments['reportedAt']) && $arguments['reportedAt'] instanceof \DateTime)
+				&& isset($arguments['reportedAt'])
+				&& $arguments['reportedAt'] instanceof \DateTime
+			)
 			{
 				$this->reportJob($job, $arguments);
 				return;
 			}
 
-			$status =  JobInterface::STATUS_FAILED;
+			$status = JobInterface::STATUS_FAILED;
 		}
 
-		$transactionManager = $this->getApplicationServices()->getTransactionManager();
+		$transactionManager = $this->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
 
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update('change_job');
 			$qb->assign($fb->column('status'), $fb->parameter('status'));
@@ -282,7 +249,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$qb->assign($fb->column('arguments'), $fb->lobParameter('arguments'));
 			}
-			$qb->where($fb->eq($fb->column('id'),$fb->integerParameter('id')));
+			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('id')));
 
 			$uq = $qb->updateQuery();
 			$uq->bindParameter('status', $status);
@@ -330,21 +297,21 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		unset($arguments['reportedAt']);
 
 		$lastModificationDate = new \DateTime();
-		$status =  JobInterface::STATUS_WAITING;
+		$status = JobInterface::STATUS_WAITING;
 
-		$transactionManager = $this->getApplicationServices()->getTransactionManager();
+		$transactionManager = $this->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
 
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update('change_job');
 			$qb->assign($fb->column('status'), $fb->parameter('status'));
 			$qb->assign($fb->column('start_date'), $fb->dateTimeParameter('startDate'));
 			$qb->assign($fb->column('last_modification_date'), $fb->dateTimeParameter('lastModificationDate'));
 			$qb->assign($fb->column('arguments'), $fb->lobParameter('arguments'));
-			$qb->where($fb->eq($fb->column('id'),$fb->integerParameter('id')));
+			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('id')));
 
 			$uq = $qb->updateQuery();
 			$uq->bindParameter('status', $status);
@@ -380,14 +347,14 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		$id = intval($jobId);
 		if ($id > 0)
 		{
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('JobManager.getJob');
+			$qb = $this->getDbProvider()->getNewQueryBuilder('JobManager.getJob');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
 				$qb->select($fb->column('name'), $fb->column('start_date'), $fb->column('arguments'),
 					$fb->column('status'), $fb->column('last_modification_date'));
 				$qb->from('change_job');
-				$qb->where($fb->eq($fb->column('id'),$fb->integerParameter('id')));
+				$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('id')));
 			}
 
 			$sq = $qb->query();
@@ -420,13 +387,13 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getRunnableJobIds(\DateTime $startDate = null)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('id'))->from('change_job');
 		$qb->where(
 			$fb->logicAnd(
-				$fb->eq($fb->column('status'),$fb->parameter('status')),
-				$fb->lte($fb->column('start_date'),$fb->dateTimeParameter('startDate'))
+				$fb->eq($fb->column('status'), $fb->parameter('status')),
+				$fb->lte($fb->column('start_date'), $fb->dateTimeParameter('startDate'))
 			));
 		$qb->orderAsc($fb->column('id'));
 		$sq = $qb->query();
@@ -442,11 +409,11 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getCountJobIds($status = JobInterface::STATUS_WAITING)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->alias($fb->func('count', $fb->column('id')), 'count'))
 			->from('change_job');
-		$qb->where($fb->eq($fb->column('status'),$fb->parameter('status')));
+		$qb->where($fb->eq($fb->column('status'), $fb->parameter('status')));
 		$sq = $qb->query();
 		$sq->bindParameter('status', $status);
 		return $sq->getFirstResult($sq->getRowsConverter()->addIntCol('count'));
@@ -461,10 +428,10 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getJobIds($status = JobInterface::STATUS_WAITING, $offset = 0, $limit = 20)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('id'))->from('change_job');
-		$qb->where($fb->eq($fb->column('status'),$fb->parameter('status')));
+		$qb->where($fb->eq($fb->column('status'), $fb->parameter('status')));
 		$qb->orderDesc($fb->column('start_date'));
 		$sq = $qb->query();
 		$sq->bindParameter('status', $status);
@@ -480,15 +447,15 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function deleteJob(JobInterface $job)
 	{
-		$transactionManager = $this->getApplicationServices()->getTransactionManager();
+		$transactionManager = $this->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
 
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('JobManager.deleteJob');
+			$qb = $this->getDbProvider()->getNewStatementBuilder('JobManager.deleteJob');
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete('change_job');
-			$qb->where($fb->eq($fb->column('id'),$fb->integerParameter('id')));
+			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('id')));
 			$dq = $qb->deleteQuery();
 			$dq->bindParameter('id', $job->getId());
 			$dq->execute();
@@ -499,5 +466,34 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			throw $transactionManager->rollBack($e);
 		}
+	}
+
+	/**
+	 * @param Job $job
+	 * @param array $argument
+	 */
+	protected function insertJob($job, array $argument)
+	{
+		$argumentJSON = ($argument !== null) ? \Zend\Json\Json::encode($argument) : null;
+		$qb = $this->getDbProvider()->getNewStatementBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->insert('change_job', $fb->column('name'),
+			$fb->column('start_date'),
+			$fb->column('arguments'),
+			$fb->column('status'));
+
+		$qb->addValues($fb->parameter('name'),
+			$fb->dateTimeParameter('startDate'),
+			$fb->lobParameter('arguments'),
+			$fb->parameter('status'));
+		$iq = $qb->insertQuery();
+
+		$iq->bindParameter('name', $job->getName());
+		$iq->bindParameter('startDate', $job->getStartDate());
+		$iq->bindParameter('arguments', $argumentJSON);
+		$iq->bindParameter('status', $job->getStatus());
+		$iq->execute();
+		$job->setId(intval($iq->getDbProvider()->getLastInsertId('change_job')));
+		$this->getLogging()->info('New Job: ' . $job->getName() . ', ' . $job->getId() . ', ' . $argumentJSON);
 	}
 }

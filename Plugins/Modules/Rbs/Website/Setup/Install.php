@@ -31,15 +31,13 @@ class Install extends \Change\Plugins\InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
-		$rootNode = $documentServices->getTreeManager()->getRootNode('Rbs_Website');
+		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
+		$rootNode = $applicationServices->getTreeManager()->getRootNode('Rbs_Website');
 		if (!$rootNode)
 		{
 			$transactionManager = $applicationServices->getTransactionManager();
@@ -49,10 +47,11 @@ class Install extends \Change\Plugins\InstallBase
 				$transactionManager->begin();
 
 				/* @var $folder \Rbs\Generic\Documents\Folder */
-				$folder = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
+				$folder = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Generic_Folder');
 				$folder->setLabel('Rbs_Website');
 				$folder->create();
-				$documentServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
+				$applicationServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
+
 				$transactionManager->commit();
 			}
 			catch (\Exception $e)

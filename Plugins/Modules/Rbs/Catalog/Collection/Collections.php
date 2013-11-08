@@ -10,14 +10,14 @@ use Rbs\Catalog\Documents\Attribute;
 class Collections
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addProductSortOrders(\Zend\EventManager\Event $event)
+	public function addProductSortOrders(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'title' => new I18nString($i18n, 'm.rbs.catalog.documents.product.title', array('ucf')),
 				'label' => new I18nString($i18n, 'm.rbs.catalog.documents.product.label', array('ucf'))
@@ -29,14 +29,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addAttributeValueTypes(\Zend\EventManager\Event $event)
+	public function addAttributeValueTypes(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$types = array(Attribute::TYPE_CODE, Attribute::TYPE_INTEGER,
 				Attribute::TYPE_DOCUMENT, Attribute::TYPE_BOOLEAN, Attribute::TYPE_FLOAT, Attribute::TYPE_DATETIME,
 				Attribute::TYPE_TEXT, Attribute::TYPE_GROUP, Attribute::TYPE_PROPERTY);
@@ -54,14 +54,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addAttributeCollections(\Zend\EventManager\Event $event)
+	public function addAttributeCollections(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$docQuery = new \Change\Documents\Query\Query($documentServices, 'Rbs_Collection_Collection');
+			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$query = $qb->addColumn($fb->alias($docQuery->getColumn('code'), 'code'))
@@ -78,15 +78,15 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addAttributeSet(\Zend\EventManager\Event $event)
+	public function addAttributeSet(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 
-			$docQuery = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_Attribute');
+			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
 			$docQuery->andPredicates($docQuery->eq('valueType', \Rbs\Catalog\Documents\Attribute::TYPE_GROUP));
 			if ($event->getParam('visibility') === 'axes')
 			{
@@ -110,14 +110,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addAttributeVisibility(\Zend\EventManager\Event $event)
+	public function addAttributeVisibility(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-specifications', array('ucf')),
 				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-comparisons', array('ucf')),
@@ -130,20 +130,20 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addAttributeProductProperties(\Zend\EventManager\Event $event)
+	public function addAttributeProductProperties(\Change\Events\Event $event)
 	{
 		$excludedProperties = array('id', 'model', 'refLCID', 'LCID', 'publicationSections', 'attribute', 'attributeValues',
 			'newSkuOnCreation', 'authorId', 'documentVersion', 'publicationStatus');
 		$excludedTypes = array(\Change\Documents\Property::TYPE_XML, \Change\Documents\Property::TYPE_STORAGEURI,
 			\Change\Documents\Property::TYPE_JSON, \Change\Documents\Property::TYPE_LOB, \Change\Documents\Property::TYPE_OBJECT);
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 			$items = array();
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
-			$productModel = $documentServices->getModelManager()->getModelByName('Rbs_Catalog_Product');
+			$i18n = $applicationServices->getI18nManager();
+			$productModel = $applicationServices->getModelManager()->getModelByName('Rbs_Catalog_Product');
 			foreach ($productModel->getProperties() as $property)
 			{
 				$propertyName = $property->getName();
@@ -162,14 +162,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addCartProductChoiceStrategyCollection(\Zend\EventManager\Event $event)
+	public function addCartProductChoiceStrategyCollection(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$items = array();
 			$items[\Rbs\Catalog\Std\CrossSellingEngine::LAST_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-last-product', array('ucf'));
 			$items[\Rbs\Catalog\Std\CrossSellingEngine::RANDOM_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-random-product', array('ucf'));

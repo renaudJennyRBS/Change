@@ -2,11 +2,10 @@
 namespace ChangeTests\Change\Documents\Traits;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentManager;
 
 /**
-* @name \ChangeTests\Change\Documents\Traits\DbStorageTest
-*/
+ * @name \ChangeTests\Change\Documents\Traits\DbStorageTest
+ */
 class DbStorageTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
@@ -19,18 +18,12 @@ class DbStorageTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */
 	protected function getDocumentManager()
 	{
-		$manager = $this->getDocumentServices()->getDocumentManager();
+		$manager = $this->getApplicationServices()->getDocumentManager();
 		$manager->reset();
 		return $manager;
 	}
@@ -48,7 +41,7 @@ class DbStorageTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 		catch (\RuntimeException $e)
 		{
-			$this->assertEquals(121003, $e->getCode());
+			$this->assertEquals('No transaction started!', $e->getMessage());
 		}
 
 		try
@@ -56,11 +49,11 @@ class DbStorageTest extends \ChangeTests\Change\TestAssets\TestCase
 			$document->initialize(1, AbstractDocument::STATE_LOADED);
 			$document->setPStr('pStr2');
 			$document->update();
-			$this->fail('RuntimeException: Transaction not started');
+			$this->fail('RuntimeException: expected');
 		}
 		catch (\RuntimeException $e)
 		{
-			$this->assertEquals(121003, $e->getCode());
+			$this->assertEquals('No transaction started!', $e->getMessage());
 		}
 	}
 
@@ -88,11 +81,10 @@ class DbStorageTest extends \ChangeTests\Change\TestAssets\TestCase
 			$document->create();
 			$this->fail('RuntimeException Expected');
 		}
-		catch(\RuntimeException $e)
+		catch (\RuntimeException $e)
 		{
 			$this->assertEquals('Document is not new', $e->getMessage());
 		}
-
 
 		$definedId = $document->getId() + 10;
 		/* @var $document2 \Project\Tests\Documents\Basic */
@@ -192,11 +184,9 @@ class DbStorageTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(array($sd1->getId(), $sd2->getId()), $basic->getPDocArrIds());
 		$this->getApplicationServices()->getTransactionManager()->commit();
 
-
 		/* @var $b2 \Project\Tests\Documents\DocProps */
 		$b2 = $manager->getDocumentInstance($basic->getId());
 		$this->assertNotSame($basic, $b2);
 		$this->assertEquals(array($sd1->getId(), $sd2->getId()), $b2->getPDocArrIds());
 	}
-
 }

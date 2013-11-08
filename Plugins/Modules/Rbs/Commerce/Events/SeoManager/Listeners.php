@@ -1,10 +1,9 @@
 <?php
 namespace Rbs\Commerce\Events\SeoManager;
 
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Json\Json;
 
 /**
  * @name \Rbs\Commerce\Events\Commands\Listeners

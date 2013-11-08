@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -15,7 +14,7 @@ class Richtext extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -31,8 +30,7 @@ class Richtext extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -43,9 +41,8 @@ class Richtext extends Block
 		$richText = new \Change\Documents\RichtextProperty();
 		$richText->setRawText($event->getBlockParameters()->getParameter('content'));
 		$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
-		$attributes['htmlContent'] = $event->getPresentationServices()
+		$attributes['htmlContent'] = $event->getApplicationServices()
 			->getRichTextManager()
-			->setDocumentServices($event->getDocumentServices())
 			->render($richText, 'Website', $context);
 		return 'richtext.twig';
 	}

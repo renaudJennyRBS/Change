@@ -8,6 +8,25 @@ use Change\Documents\Events\Event as DocumentEvent;
  */
 class Task extends \Compilation\Rbs\Workflow\Documents\Task
 {
+	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	private $applicationServices;
+
+	/**
+	 * @return \Change\Services\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		$this->applicationServices = $event->getApplicationServices();
+	}
+
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
@@ -22,10 +41,8 @@ class Task extends \Compilation\Rbs\Workflow\Documents\Task
 		$task = $event->getDocument();
 		if ($task instanceof \Rbs\Workflow\Documents\Task && $task->getDeadLine())
 		{
-			$jobManager = new \Change\Job\JobManager();
-			$jobManager->setDocumentServices($task->getDocumentServices());
+			$jobManager = $event->getApplicationServices()->getJobManager();
 			$startDate = clone($task->getDeadLine());
-
 			$jobManager->createNewJob('Rbs_Workflow_ExecuteDeadLineTask',
 				array('taskId' => $task->getId(), 'deadLine' => $startDate->format('c')),
 				$startDate
@@ -41,8 +58,7 @@ class Task extends \Compilation\Rbs\Workflow\Documents\Task
 	 */
 	public function execute(array $context = array(), $userId = 0)
 	{
-		$documentServices = $this->getDocumentServices();
-		$documentManager = $documentServices->getDocumentManager();
+		$documentManager = $this->getDocumentManager();
 
 		$LCID = $this->getDocumentLCID();
 
@@ -58,7 +74,7 @@ class Task extends \Compilation\Rbs\Workflow\Documents\Task
 
 		if ($this->hasModifiedProperties())
 		{
-			$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+			$transactionManager = $this->getApplicationServices()->getTransactionManager();
 			try
 			{
 				$transactionManager->begin();
@@ -71,8 +87,7 @@ class Task extends \Compilation\Rbs\Workflow\Documents\Task
 			}
 		}
 
-		$wm = new \Change\Workflow\WorkflowManager();
-		$wm->setDocumentServices($documentServices);
+		$wm =  $this->getApplicationServices()->getWorkflowManager();
 		$workflowInstance = null;
 		try
 		{

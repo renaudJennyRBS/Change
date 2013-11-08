@@ -3,16 +3,15 @@ namespace Change\Http\Rest\OAuth;
 
 use Change\Http\Event as HttpEvent;
 use Change\Http\OAuth\OAuthDbEntry;
-use Change\Http\OAuth\OAuthManager;
+use Change\Http\Request;
 use Change\Http\Rest\Result\ArrayResult;
-use Change\Http\Rest\Result\ErrorResult;
 
+use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Header\Accept;
 use Zend\Http\Header\Authorization;
-use ZendOAuth\Http\Utility;
 use Zend\Http\Response as HttpResponse;
 use Zend\Uri\Http as HttpUri;
-use Change\Http\Request;
+use ZendOAuth\Http\Utility;
 
 /**
  * @name \Change\Http\Rest\OAuth\AuthenticationListener
@@ -75,15 +74,24 @@ class AuthenticationListener
 			}
 			if ($resourceParts[0] === static::RESOLVE_REQUEST_TOKEN)
 			{
-				$event->setAction(function($event) use($action) {$action->onRequestToken($event);});
+				$event->setAction(function ($event) use ($action)
+				{
+					$action->onRequestToken($event);
+				});
 			}
 			elseif ($resourceParts[0] === static::RESOLVE_AUTHORIZE)
 			{
-				$event->setAction(function($event) use($action) {$action->onAuthorize($event);});
+				$event->setAction(function ($event) use ($action)
+				{
+					$action->onAuthorize($event);
+				});
 			}
 			elseif ($resourceParts[0] === static::RESOLVE_ACCESS_TOKEN)
 			{
-				$event->setAction(function($event) use($action) {$action->onAccessToken($event);});
+				$event->setAction(function ($event) use ($action)
+				{
+					$action->onAccessToken($event);
+				});
 			}
 		}
 	}
@@ -138,8 +146,7 @@ class AuthenticationListener
 
 		if (count($authorization) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_consumer_key']))
 		{
-			$OAuth = new OAuthManager();
-			$OAuth->setApplicationServices($event->getApplicationServices());
+			$OAuth = $event->getApplicationServices()->getOAuthManager();
 			$consumer = $OAuth->getConsumerByKey($authorization['oauth_consumer_key']);
 			if (null === $consumer)
 			{
@@ -154,7 +161,8 @@ class AuthenticationListener
 			list($method, $url, $params) = $this->buildSignParams($authorization, $request);
 
 			$utils = new Utility();
-			$signature = $utils->sign($params , $authorization['oauth_signature_method'], $storedOAuth->getConsumerSecret(), $storedOAuth->getTokenSecret(), $method, $url);
+			$signature = $utils->sign($params, $authorization['oauth_signature_method'], $storedOAuth->getConsumerSecret(),
+				$storedOAuth->getTokenSecret(), $method, $url);
 			if ($signature === $authorization['oauth_signature'])
 			{
 				$storedOAuth->setToken($OAuth->generateTokenKey());
@@ -167,8 +175,9 @@ class AuthenticationListener
 
 				$OAuth->insertToken($storedOAuth);
 
-				$array = array('oauth_token' => $storedOAuth->getToken(), 'oauth_token_secret' => $storedOAuth->getTokenSecret(), 'oauth_callback_confirmed'=> true);
-				$result  = new ArrayResult();
+				$array = array('oauth_token' => $storedOAuth->getToken(), 'oauth_token_secret' => $storedOAuth->getTokenSecret(),
+					'oauth_callback_confirmed' => true);
+				$result = new ArrayResult();
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 				$result->setArray($array);
 				$event->setResult($result);
@@ -197,8 +206,7 @@ class AuthenticationListener
 			throw new \RuntimeException('Invalid Parameter: oauth_token', 71000);
 		}
 
-		$OAuth = new OAuthManager();
-		$OAuth->setApplicationServices($event->getApplicationServices());
+		$OAuth = $event->getApplicationServices()->getOAuthManager();
 		$storeOAuth = $OAuth->getRequestToken($token);
 		if (null === $storeOAuth || $storeOAuth->getAuthorized())
 		{
@@ -218,15 +226,16 @@ class AuthenticationListener
 				{
 					$storeOAuth->setAccessorId($user->getId());
 					$storeOAuth->setAuthorized(true);
-					$storeOAuth->setVerifier(substr(md5(uniqid()),0, 10));
+					$storeOAuth->setVerifier(substr(md5(uniqid()), 0, 10));
 					$validityDate = new \DateTime();
-					$storeOAuth->setValidityDate($validityDate->add(new \DateInterval($storeOAuth->getConsumer()->getTokenRequestValidity())));
+					$storeOAuth->setValidityDate($validityDate->add(new \DateInterval($storeOAuth->getConsumer()
+						->getTokenRequestValidity())));
 					$OAuth->updateToken($storeOAuth);
 
 					$array = array('oauth_callback' => $storeOAuth->getCallback(), 'oauth_token' => $storeOAuth->getToken(),
-						'oauth_verifier'=> $storeOAuth->getVerifier());
+						'oauth_verifier' => $storeOAuth->getVerifier());
 
-					$result  = new ArrayResult();
+					$result = new ArrayResult();
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 					$result->setArray($array);
 					$event->setResult($result);
@@ -236,9 +245,10 @@ class AuthenticationListener
 				{
 					$array = array('oauth_token' => $token, 'applicationName' => $storeOAuth->getConsumer()->getApplicationName(),
 						'realm' => $request->getPost('realm'),
-						'error' => $event->getApplicationServices()->getI18nManager()->trans('c.oauth.invalid-credentials', ['ucf']));
+						'error' => $event->getApplicationServices()->getI18nManager()
+								->trans('c.oauth.invalid-credentials', ['ucf']));
 
-					$result  = new ArrayResult();
+					$result = new ArrayResult();
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 					$result->setArray($array);
 					$event->setResult($result);
@@ -250,7 +260,7 @@ class AuthenticationListener
 
 		$array = array('oauth_token' => $storeOAuth->getToken(), 'realm' => $storeOAuth->getRealm(),
 			'applicationName' => $storeOAuth->getConsumer()->getApplicationName());
-		$result  = new ArrayResult();
+		$result = new ArrayResult();
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$result->setArray($array);
 		$event->setResult($result);
@@ -265,10 +275,11 @@ class AuthenticationListener
 		$request = $event->getRequest();
 		$authorization = $this->extractAuthorization($request);
 
-		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp']) && isset($authorization['oauth_verifier']))
+		if (count($authorization) && isset($authorization['oauth_token']) && isset($authorization['oauth_timestamp'])
+			&& isset($authorization['oauth_verifier'])
+		)
 		{
-			$OAuth = new OAuthManager();
-			$OAuth->setApplicationServices($event->getApplicationServices());
+			$OAuth = $event->getApplicationServices()->getOAuthManager();
 			$consumer = $OAuth->getConsumerByKey($authorization['oauth_consumer_key']);
 			if (!$consumer)
 			{
@@ -279,12 +290,15 @@ class AuthenticationListener
 
 			$now = new \DateTime();
 			if (null !== $storeOAuth && OAuthDbEntry::TYPE_REQUEST === $storeOAuth->getType()
-				&& $storeOAuth->getAuthorized() && $storeOAuth->getValidityDate() > $now &&
-				$storeOAuth->getVerifier() === $authorization['oauth_verifier'])
+				&& $storeOAuth->getAuthorized()
+				&& $storeOAuth->getValidityDate() > $now
+				&& $storeOAuth->getVerifier() === $authorization['oauth_verifier']
+			)
 			{
 				list($method, $url, $params) = $this->buildSignParams($authorization, $request);
 				$utils = new Utility();
-				$signature = $utils->sign($params , $authorization['oauth_signature_method'], $storeOAuth->getConsumerSecret(), $storeOAuth->getTokenSecret(), $method, $url);
+				$signature = $utils->sign($params, $authorization['oauth_signature_method'], $storeOAuth->getConsumerSecret(),
+					$storeOAuth->getTokenSecret(), $method, $url);
 
 				if ($signature === $authorization['oauth_signature'])
 				{
@@ -296,7 +310,8 @@ class AuthenticationListener
 					$finalStoreOAuth->setCallback('oob');
 
 					$validityDate = new \DateTime();
-					$finalStoreOAuth->setValidityDate($validityDate->add(new \DateInterval($finalStoreOAuth->getConsumer()->getTokenAccessValidity())));
+					$finalStoreOAuth->setValidityDate($validityDate->add(new \DateInterval($finalStoreOAuth->getConsumer()
+						->getTokenAccessValidity())));
 					$finalStoreOAuth->setToken($OAuth->generateTokenKey());
 					$finalStoreOAuth->setTokenSecret($OAuth->generateTokenSecret());
 					$OAuth->insertToken($finalStoreOAuth);
@@ -306,8 +321,9 @@ class AuthenticationListener
 						$storeOAuth->setValidityDate($now);
 						$OAuth->updateToken($storeOAuth);
 
-						$array = array('oauth_token' => $finalStoreOAuth->getToken(), 'oauth_token_secret' => $finalStoreOAuth->getTokenSecret());
-						$result  = new ArrayResult();
+						$array = array('oauth_token' => $finalStoreOAuth->getToken(),
+							'oauth_token_secret' => $finalStoreOAuth->getTokenSecret());
+						$result = new ArrayResult();
 						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 						$result->setArray($array);
 						$event->setResult($result);
@@ -350,10 +366,9 @@ class AuthenticationListener
 				throw new \RuntimeException('Invalid OAuth Token: ' . $storeOAuth->getToken(), 72004);
 			}
 
-			$oauth = new OAuthManager();
-			$oauth->setApplicationServices($event->getApplicationServices());
+			$oauth = $event->getApplicationServices()->getOAuthManager();
 			$consumer = $oauth->getConsumerByKey($authorization['oauth_consumer_key']);
-			if(!$consumer)
+			if (!$consumer)
 			{
 				throw new \RuntimeException('Invalid OAuth Consumer Key: ' . $authorization['oauth_consumer_key'], 72001);
 			}
@@ -361,11 +376,14 @@ class AuthenticationListener
 			$storeOAuth = $oauth->getStoredOAuth($authorization['oauth_token'], $authorization['oauth_consumer_key']);
 			$now = new \DateTime();
 
-			if (null !== $storeOAuth && OAuthDbEntry::TYPE_ACCESS === $storeOAuth->getType() && $storeOAuth->getValidityDate() > $now)
+			if (null !== $storeOAuth && OAuthDbEntry::TYPE_ACCESS === $storeOAuth->getType()
+				&& $storeOAuth->getValidityDate() > $now
+			)
 			{
 				list($method, $url, $params) = $this->buildSignParams($authorization, $request);
 				$utils = new Utility();
-				$signature = $utils->sign($params , $authorization['oauth_signature_method'], $storeOAuth->getConsumerSecret(), $storeOAuth->getTokenSecret(), $method, $url);
+				$signature = $utils->sign($params, $authorization['oauth_signature_method'], $storeOAuth->getConsumerSecret(),
+					$storeOAuth->getTokenSecret(), $method, $url);
 				if ($signature === $authorization['oauth_signature'])
 				{
 					$user = $event->getAuthenticationManager()->getById($storeOAuth->getAccessorId());
@@ -437,10 +455,10 @@ class AuthenticationListener
 					$name = rawurldecode(substr($part, 0, $firstEqual));
 					if (strpos($name, 'oauth_') === 0 || $name === 'realm')
 					{
-						$value = substr($part, $firstEqual+1);
-						if (strlen($value) > 1 && $value[0] == '"' && $value[strlen($value)-1] == '"')
+						$value = substr($part, $firstEqual + 1);
+						if (strlen($value) > 1 && $value[0] == '"' && $value[strlen($value) - 1] == '"')
 						{
-							$value = substr($value, 1, strlen($value)-2);
+							$value = substr($value, 1, strlen($value) - 2);
 						}
 						$headers[$name] = rawurldecode($value);
 					}
@@ -469,13 +487,12 @@ class AuthenticationListener
 			foreach ($header->getPrioritized() as $part)
 			{
 				/* @var $part \Zend\Http\Header\Accept\FieldValuePart\AcceptFieldValuePart */
-				if (strpos($part->getTypeString(), 'application/json')  === 0)
+				if (strpos($part->getTypeString(), 'application/json') === 0)
 				{
 					return;
 				}
 			}
 		}
-
 
 		if ($pathPart[1] === static::RESOLVE_REQUEST_TOKEN || $pathPart[1] === static::RESOLVE_ACCESS_TOKEN)
 		{
@@ -532,8 +549,7 @@ class AuthenticationListener
 				}
 				else
 				{
-					$manager = new OAuthManager();
-					$manager->setApplicationServices($event->getApplicationServices());
+					$manager = $event->getApplicationServices()->getOAuthManager();
 					$html = $manager->getLoginFormHtml($event, $array);
 					$response->getHeaders()->addHeaderLine('Content-Type', 'text/html');
 					$response->setContent($html);
@@ -543,7 +559,6 @@ class AuthenticationListener
 			}
 		}
 	}
-
 
 	/**
 	 * @param string $notAllowed

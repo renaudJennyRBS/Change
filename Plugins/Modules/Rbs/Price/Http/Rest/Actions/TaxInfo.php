@@ -21,7 +21,7 @@ class TaxInfo
 			$billingAreaId = $request->getQuery('id');
 			if (intval($billingAreaId) > 0)
 			{
-				$billingArea = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($billingAreaId);
+				$billingArea = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($billingAreaId);
 			}
 		}
 		$event->setResult($this->generateResult($billingArea, $event->getApplicationServices()->getI18nManager()->getLCID()));
@@ -29,6 +29,7 @@ class TaxInfo
 
 	/**
 	 * @param \Rbs\Price\Documents\BillingArea $billingArea
+	 * @param string $locale
 	 * @return \Change\Http\Rest\Result\ArrayResult
 	 */
 	protected function generateResult($billingArea, $locale)

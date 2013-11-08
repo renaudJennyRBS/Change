@@ -22,7 +22,7 @@ class PathRuleManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewPathRuleManager()
 	{
-		return new PathRuleManager($this->getApplicationServices());
+		return new PathRuleManager($this->getApplicationServices()->getDbProvider());
 	}
 
 	public function testGetNewRule()

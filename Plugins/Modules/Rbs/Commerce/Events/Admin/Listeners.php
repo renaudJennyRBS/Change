@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Commerce\Events\Admin;
 
-use Assetic\Asset\GlobAsset;
 use Rbs\Admin\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -25,8 +24,8 @@ class Listeners implements ListenerAggregateInterface
 	public function registerResources(Event $event)
 	{
 		$manager = $event->getManager();
-		$i18nManager = $manager->getApplicationServices()->getI18nManager();
-		$pm = $manager->getApplicationServices()->getPluginManager();
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		$pm = $event->getApplicationServices()->getPluginManager();
 		foreach ($pm->getInstalledPlugins() as $plugin)
 		{
 			if ($plugin->getPackage() == "ECom")

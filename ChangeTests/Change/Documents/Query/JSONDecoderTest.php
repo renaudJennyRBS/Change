@@ -24,7 +24,10 @@ class JSONDecoderTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function getObject()
 	{
 		$o = new JSONDecoder();
-		$o->setDocumentServices($this->getDocumentServices());
+		$as = $this->getApplicationServices();
+		$o->setDocumentManager($as->getDocumentManager())
+			->setModelManager($as->getModelManager())
+			->setTreeManager($as->getTreeManager());
 		return $o;
 	}
 

@@ -33,10 +33,9 @@ class DiscoverNameSpace
 		$selfLink = new Link($urlManager, $this->generatePathInfoByNamespace($namespace));
 		$result->addLink($selfLink);
 
-
 		foreach ($names as $name)
 		{
-			$ns =  ($namespace) ? $namespace .'.'. $name : $name;
+			$ns = ($namespace) ? $namespace . '.' . $name : $name;
 			$link = new Link($urlManager, $this->generatePathInfoByNamespace($ns), $ns);
 			$result->addLink($link);
 		}

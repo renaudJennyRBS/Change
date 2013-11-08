@@ -16,7 +16,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testStringPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPStr());
 		$this->assertFalse($basicDoc->isPropertyModified('pStr'));
@@ -41,7 +41,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testLocalizedStringPropertyAccessors()
 	{
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
-		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$localizedDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$this->assertFalse(method_exists($localizedDoc, 'getPLStr'));
 		$this->assertFalse(method_exists($localizedDoc, 'setPLStr'));
 		$cl = $localizedDoc->getCurrentLocalization();
@@ -71,7 +71,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testBooleanPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPBool());
 		$this->assertFalse($basicDoc->isPropertyModified('pBool'));
@@ -87,7 +87,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$this->assertFalse($basicDoc->isPropertyModified('pBool'));
 
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
-		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$localizedDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$this->assertFalse(method_exists($localizedDoc, 'getPLBool'));
 		$this->assertFalse(method_exists($localizedDoc, 'setPLBool'));
 		$cl = $localizedDoc->getCurrentLocalization();
@@ -111,7 +111,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testIntegerPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPInt());
 
@@ -125,7 +125,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testFloatPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPFloat());
 		$this->assertFalse($basicDoc->isPropertyModified('pFloat'));
@@ -143,7 +143,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testDecimalPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPDec());
 
@@ -160,7 +160,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testDateTimePropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPDaTi());
 
@@ -178,7 +178,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testDatePropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPDa());
 
@@ -196,7 +196,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testLongStringPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPText());
 
@@ -215,14 +215,14 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testStorageUriPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPStorUri());
 
 		$text = 'change://tmp/test.txt';
 		$this->assertSame($basicDoc, $basicDoc->setPStorUri($text));
 		$this->assertSame($text, $basicDoc->getPStorUri());
-		$obj = $basicDoc->getPStorUriItemInfo();
+		$obj = $basicDoc->getPStorUriItemInfo($this->getApplicationServices()->getStorageManager());
 		$this->assertInstanceOf('\Change\Storage\ItemInfo', $obj);
 		$this->assertEquals($text, $obj->getPathname());
 		$basicDoc->setPStorUri(null);
@@ -230,14 +230,14 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 
 		$basicDoc->setPStorUri('http://tmp/test.txt');
 		$l = new \Change\Documents\Events\ValidateListener();
-		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc);
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc, $this->getDefaultEventArguments());
 		$l->onValidate($event);
 		$pe = $event->getParam('propertiesErrors');
 		$this->assertArrayHasKey('pStorUri', $pe);
 		$this->assertEquals('\'http://tmp/test.txt\' doit être une URI de stockage valide.', $pe['pStorUri'][0]);
 
 		$basicDoc->setPStorUri($text);
-		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc);
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc, $this->getDefaultEventArguments());
 		$l->onValidate($event);
 		$pe = $event->getParam('propertiesErrors');
 		$this->assertArrayNotHasKey('pStorUri', $pe);
@@ -246,7 +246,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testJSONPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPJson());
 		$this->assertFalse($basicDoc->isPropertyModified('pJson'));
@@ -262,7 +262,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$this->assertNull($basicDoc->getPJson());
 
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
-		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$localizedDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$this->assertFalse(method_exists($localizedDoc, 'getPLJson'));
 		$this->assertFalse(method_exists($localizedDoc, 'setPLJson'));
 		$cl = $localizedDoc->getCurrentLocalization();
@@ -285,7 +285,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testXMLPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPXml());
 		$this->assertFalse($basicDoc->isPropertyModified('pXml'));
@@ -303,7 +303,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testRichtextPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$string = str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 1000);
 
@@ -325,7 +325,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 
 
 		/* @var $localizedDoc \Project\Tests\Documents\Localized */
-		$localizedDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$localizedDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$this->assertFalse(method_exists($localizedDoc, 'getPLRt'));
 		$this->assertFalse(method_exists($localizedDoc, 'setPLRt'));
 		$cl = $localizedDoc->getCurrentLocalization();
@@ -353,7 +353,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testLobPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPlob());
 
@@ -368,7 +368,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testObjectPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		$this->assertNull($basicDoc->getPObj());
 
@@ -385,7 +385,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testDocumentIdPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		/* @var $doc1 \Project\Tests\Documents\Localized */
 		$doc1 = $this->getNewReadonlyDocument('Project_Tests_Localized', 200);
@@ -411,7 +411,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testDocumentPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		/* @var $doc1 \Project\Tests\Documents\Localized */
 		$doc1 = $this->getNewReadonlyDocument('Project_Tests_Localized', 201);
@@ -437,7 +437,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 	public function testDocumentArrayPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 
 		/* @var $doc1 \Project\Tests\Documents\Localized */
 		$doc1 = $this->getNewReadonlyDocument('Project_Tests_Localized', 202);

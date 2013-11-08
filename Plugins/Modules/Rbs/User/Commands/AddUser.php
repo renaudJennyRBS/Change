@@ -1,9 +1,7 @@
 <?php
 namespace Rbs\User\Commands;
 
-use Change\Application\ApplicationServices;
 use Change\Commands\Events\Event;
-use Change\Documents\DocumentServices;
 
 /**
  * @name \Rbs\User\Commands\AddUser
@@ -12,20 +10,18 @@ class AddUser
 {
 	/**
 	 * @param Event $event
+	 * @throws \Exception
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$as = new ApplicationServices($application);
-		$ds = new DocumentServices($as);
 
-
+		$as = $event->getApplicationServices();
 		$login = $event->getParam('login');
 		$password = $event->getParam('password', \Change\Stdlib\String::random());
 		$email = $event->getParam('email');
 		$realms = explode(',', $event->getParam('realms', ''));
 
-		$query = new \Change\Documents\Query\Query($ds, 'Rbs_User_User');
+		$query = $as->getDocumentManager()->getNewQuery('Rbs_User_User');
 		$user = $query->andPredicates($query->eq('login', $login))->getFirstDocument();
 		if (!$user)
 		{
@@ -34,11 +30,11 @@ class AddUser
 			{
 				$transactionManager->begin();
 
-				$query = new \Change\Documents\Query\Query($ds, 'Rbs_User_Group');
+				$query = $as->getDocumentManager()->getNewQuery('Rbs_User_Group');
 				$groups = $query->andPredicates($query->in('realm', $realms))->getDocuments();
 
 				/* @var $user \Rbs\User\Documents\User */
-				$user = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
+				$user = $as->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
 				$user->setLabel($email);
 				$user->setEmail($email);
 				$user->setLogin($login);
@@ -49,8 +45,7 @@ class AddUser
 
 				if ($event->getParam('is-root') == true)
 				{
-					$pm = new \Change\Permissions\PermissionsManager();
-					$pm->setApplicationServices($as);
+					$pm = $as->getPermissionsManager();
 					if (!$pm->hasRule($user->getId()))
 					{
 						$pm->addRule($user->getId());

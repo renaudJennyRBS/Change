@@ -23,8 +23,7 @@ class SectionProductList extends \Compilation\Rbs\Catalog\Documents\SectionProdu
 		$section = $this->getSynchronizedSection();
 		if ($section)
 		{
-			$jm = new \Change\Job\JobManager();
-			$jm->setApplicationServices($this->getApplicationServices());
+			$jm = $event->getApplicationServices()->getJobManager();
 			$jm->createNewJob('Rbs_Catalog_InitializeItemsForSectionList', array('docId' => $this->getId()));
 		}
 	}

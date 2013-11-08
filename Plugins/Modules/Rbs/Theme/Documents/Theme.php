@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Theme\Documents;
 
-use Change\Presentation\Layout\Layout;
-
 /**
  * @name \Rbs\Theme\Documents\Theme
  */
@@ -17,6 +15,58 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 * @var \Change\Presentation\Themes\ThemeManager
 	 */
 	protected $themeManager;
+
+	/**
+	 * @var \Change\Application
+	 */
+	private $application;
+
+	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	private $applicationServices;
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		if ($this->application === null)
+		{
+			throw new \RuntimeException('Application not set', 999999);
+		}
+		return $this->application;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Services\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		if ($this->applicationServices === null)
+		{
+			throw new \RuntimeException('ApplicationServices not set', 999999);
+		}
+		return $this->applicationServices;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	protected function getWorkspace()
+	{
+		return $this->getApplication()->getWorkspace();
+	}
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		$this->application = $event->getApplication();
+		$this->applicationServices = $event->getApplicationServices();
+		$this->themeManager = $this->applicationServices->getThemeManager();
+	}
 
 	/**
 	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
@@ -41,14 +91,6 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
-	 * @return \Change\Workspace
-	 */
-	protected  function getWorkspace()
-	{
-		return $this->getApplicationServices()->getApplication()->getWorkspace();
-	}
-
-	/**
 	 * @var string $templateBasePath
 	 */
 	protected $templateBasePath;
@@ -63,10 +105,9 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
 			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName);
 
-			$as = $this->getApplicationServices();
-			if ($as->getApplication()->inDevelopmentMode() && $this->themeManager)
+			if ($this->getApplication()->inDevelopmentMode() && $this->themeManager)
 			{
-				$pluginManager = $as->getPluginManager();
+				$pluginManager = $this->getApplicationServices()->getPluginManager();
 				$plugin = $pluginManager->getTheme($themeVendor, $shortThemeName);
 				$this->themeManager->installPluginTemplates($plugin, $this);
 			}
@@ -95,7 +136,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 */
 	public function installTemplateContent($moduleName, $pathName, $content)
 	{
-		$path =  $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName, $pathName);
+		$path = $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName, $pathName);
 		\Change\Stdlib\File::mkdir(dirname($path));
 		file_put_contents($path, $content);
 	}
@@ -117,15 +158,14 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	public function getPageTemplate($name)
 	{
 		$pageTemplate = null;
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
-		if ($model && is_numeric($name))
+		if (is_numeric($name))
 		{
-			$pageTemplate = $this->getDocumentManager()->getDocumentInstance($name, $model);
+			$pageTemplate = $this->getDocumentManager()->getDocumentInstance($name, 'Rbs_Theme_PageTemplate');
 		}
 
 		if ($pageTemplate === null)
 		{
-			$parentTheme =  ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
+			$parentTheme = ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
 			return $parentTheme->getPageTemplate($name);
 		}
 		return $pageTemplate;
@@ -137,7 +177,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	 */
 	public function getResource($resourcePath)
 	{
-		$path =  $this->getWorkspace()->composePath($this->getAssetBasePath(),$resourcePath);
+		$path = $this->getWorkspace()->composePath($this->getAssetBasePath(), $resourcePath);
 
 		$res = null;
 		if (substr($resourcePath, -4) === '.css')
@@ -154,7 +194,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			return $res;
 		}
 
-		$parentTheme =  ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
+		$parentTheme = ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
 		return $parentTheme->getResource($resourcePath);
 	}
 

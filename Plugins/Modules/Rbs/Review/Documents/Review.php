@@ -1,34 +1,31 @@
 <?php
 namespace Rbs\Review\Documents;
 
-use Change\Presentation\PresentationServices;
+use Change\Documents\Events\Event as DocumentEvent;
 
 /**
  * @name \Rbs\Review\Documents\Review
  */
 class Review extends \Compilation\Rbs\Review\Documents\Review
 {
-	protected function updateLabel()
+	protected function attachEvents($eventManager)
 	{
-		$this->setLabel($this->getApplicationServices()->getI18nManager()->trans('m.rbs.review.documents.review.label-content', array('ucf'), array('targetLabel' => $this->getTarget()->getLabel(), 'pseudonym' => $this->getPseudonym())));
+		parent::attachEvents($eventManager);
+		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 	}
 
-	protected function onCreate()
+	public function onDefaultSave(DocumentEvent $event)
 	{
-		if ($this->isPropertyModified('content'))
+		$review = $event->getDocument();
+		if ($review instanceof Review)
 		{
-			$this->transformMarkdownToHtml();
+			if ($review->isPropertyModified('content'))
+			{
+				$event->getApplicationServices()->getRichTextManager()->render($review->getContent(), 'Admin');
+			}
+			$targetLabel = $review->getTarget() ? $review->getTarget()->getLabel() : '';
+			$review->setLabel($event->getApplicationServices()->getI18nManager()->trans('m.rbs.review.documents.review.label-content', array('ucf'), array('targetLabel' => $targetLabel, 'pseudonym' => $review->getPseudonym())));
 		}
-		$this->updateLabel();
-	}
-
-	protected function onUpdate()
-	{
-		if ($this->isPropertyModified('content'))
-		{
-			$this->transformMarkdownToHtml();
-		}
-		$this->updateLabel();
 	}
 
 	/**
@@ -42,17 +39,6 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 		}
 		return array();
 	}
-
-	/**
-	 * //TODO only markdown for now
-	 */
-	private function transformMarkdownToHtml()
-	{
-		$ps = new PresentationServices($this->getApplicationServices());
-		//set a web profile
-		$ps->getRichTextManager()->setDocumentServices($this->getDocumentServices())->render($this->getContent(), 'Admin');
-	}
-
 
 	/**
 	 * @param \Change\Http\Web\UrlManager $urlManager

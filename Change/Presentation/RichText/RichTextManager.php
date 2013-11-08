@@ -1,10 +1,6 @@
 <?php
 namespace Change\Presentation\RichText;
 
-use Change\Documents\DocumentServices;
-use Change\Presentation\PresentationServices;
-use Change\Presentation\RichText\Event;
-
 /**
  * @name \Change\Presentation\RichText\RichTextManager
  */
@@ -15,58 +11,6 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 
 	const DEFAULT_IDENTIFIER = 'Presentation.RichText';
 	const EVENT_GET_PARSER = 'GetParser';
-
-	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
-	 * @var DocumentServices|null
-	 */
-	protected $documentServices;
-
-	/**
-	 * @param PresentationServices $presentationServices
-	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
-	{
-		$this->presentationServices = $presentationServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($presentationServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return PresentationServices
-	 */
-	public function getPresentationServices()
-	{
-		return $this->presentationServices;
-	}
-
-	/**
-	 * @param DocumentServices $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices(DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-		return $this;
-	}
-
-	/**
-	 * @return DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
 
 	/**
 	 * @return null|string|string[]
@@ -81,12 +25,7 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->presentationServices)
-		{
-			$config = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/RichTextManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/RichTextManager');
 	}
 
 	/**
@@ -101,7 +40,6 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 		$event = new Event(static::EVENT_GET_PARSER, $this);
 		$event->setProfile($profile);
 		$event->setEditor($richText->getEditor());
-		$event->setDocumentServices($this->getDocumentServices());
 		$event->setContext($context);
 		$eventManager->trigger($event);
 
@@ -115,5 +53,4 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 
 		return '';
 	}
-
 }

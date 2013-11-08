@@ -7,19 +7,18 @@ namespace Rbs\Theme\Events;
 class MailTemplateResolver
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Theme\Documents\MailTemplate|null
 	 */
 	public function resolve($event)
 	{
 		$code = $event->getParam('code');
 		$theme = $event->getParam('theme');
-		/* @var $documentServices \Change\Documents\DocumentServices */
-		$documentServices = $event->getParam('documentServices');
-		if ($code && $theme && $documentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($code && $theme && $applicationServices)
 		{
-			$mailTemplateModel = $documentServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
-			$query = new \Change\Documents\Query\Query($documentServices, $mailTemplateModel);
+			$mailTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_MailTemplate');
+			$query = $applicationServices->getDocumentManager()->getNewQuery($mailTemplateModel);
 			$query->andPredicates($query->eq('code', $code), $query->eq('theme', $theme));
 			return $query->getFirstDocument();
 		}

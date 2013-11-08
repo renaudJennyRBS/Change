@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Commerce\Presentation;
 
-use \Rbs\Commerce\Services\CommerceServices;
+use Rbs\Commerce\CommerceServices;
 
 /**
  * @name \Rbs\Commerce\Presentation\TwigExtension
@@ -9,16 +9,16 @@ use \Rbs\Commerce\Services\CommerceServices;
 class TwigExtension  implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var CommerceServices
+	 * @var \Rbs\Commerce\CommerceServices
 	 */
 	protected $commerceServices;
 
 	/**
-	 * @param CommerceServices $applicationServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 */
-	function __construct(CommerceServices $applicationServices)
+	function __construct(\Rbs\Commerce\CommerceServices $commerceServices)
 	{
-		$this->commerceServices = $applicationServices;
+		$this->commerceServices = $commerceServices;
 	}
 
 	/**

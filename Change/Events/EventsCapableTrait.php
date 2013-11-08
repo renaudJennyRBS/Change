@@ -7,67 +7,104 @@ namespace Change\Events;
 trait EventsCapableTrait
 {
 	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
-
-	/**
-	 * @var \Zend\EventManager\EventManager
+	 * @var \Change\Events\EventManager
 	 */
 	protected $eventManager;
 
 	/**
-	 * @param \Change\Events\SharedEventManager $sharedEventManager
+	 * @var \Change\Events\EventManagerFactory
 	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $sharedEventManager)
+	protected $eventManagerFactory;
+
+	/**
+	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
+	 * @return $this
+	 */
+	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
 	{
-		$this->sharedEventManager = $sharedEventManager;
+		$this->eventManagerFactory = $eventManagerFactory;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Events\SharedEventManager
+	 * @return \Change\Events\EventManagerFactory
 	 */
-	public function getSharedEventManager()
+	protected function getEventManagerFactory()
 	{
-		return $this->sharedEventManager;
+		return $this->eventManagerFactory;
 	}
 
 	/**
 	 * @return null|string|string[]
 	 */
-	abstract protected function getEventManagerIdentifier();
-
-	/**
-	 * @return string[]
-	 */
-	abstract protected function getListenerAggregateClassNames();
-
-	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
-	 */
-	public function setEventManager(\Zend\EventManager\EventManager $eventManager = null)
+	protected function getEventManagerIdentifier()
 	{
-		$this->eventManager = $eventManager;
+		return null;
 	}
 
 	/**
-	 * @return \Zend\EventManager\EventManager
+	 * @return string[]|null
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	public function setEventManager(\Change\Events\EventManager $eventManager)
+	{
+		$this->clearEventManager();
+		$this->eventManager = $eventManager;
+		$classNames = $this->getListenerAggregateClassNames();
+		if (is_array($classNames) && count($classNames))
+		{
+			$this->eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
+		}
+		$this->attachEvents($this->eventManager);
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Events\EventManager
 	 */
 	public function getEventManager()
 	{
 		if ($this->eventManager === null)
 		{
-			$this->eventManager = new \Zend\EventManager\EventManager($this->getEventManagerIdentifier());
-			$this->attachEvents($this->eventManager);
+			if ($this->eventManagerFactory)
+			{
+				$this->setEventManager($this->eventManagerFactory->getNewEventManager($this->getEventManagerIdentifier()));
+			}
+			else
+			{
+				throw new \RuntimeException('EventManagerFactory not set', 999999);
+			}
 		}
 		return $this->eventManager;
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @api
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	public function clearEventManager()
 	{
-		$this->getSharedEventManager()->registerListenerAggregateClassNames($eventManager, $this->getListenerAggregateClassNames());
+		if (isset($this->eventManager))
+		{
+			foreach ($this->eventManager->getEvents() as $event)
+			{
+				$this->eventManager->clearListeners($event);
+			}
+			$this->eventManager = null;
+		}
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
 	}
 }

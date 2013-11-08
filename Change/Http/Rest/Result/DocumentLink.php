@@ -1,15 +1,6 @@
 <?php
 namespace Change\Http\Rest\Result;
 
-use Change\Documents\AbstractDocument;
-use Change\Documents\Interfaces\Activable;
-use Change\Documents\Interfaces\Correction;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\RestfulDocumentInterface;
-use Change\Http\UrlManager;
-
 /**
  * @name \Change\Http\Rest\Result\DocumentLink
  */
@@ -33,7 +24,6 @@ class DocumentLink extends Link
 	 */
 	protected $LCID;
 
-
 	/**
 	 * @var array
 	 */
@@ -43,14 +33,16 @@ class DocumentLink extends Link
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $action
+	 * @param array $extraColumns
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $action = self::MODE_LINK, $extraColumns = array())
+	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document,
+		$action = self::MODE_LINK, $extraColumns = array())
 	{
 		$this->document = $document;
 		$this->mode = $action;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$this->LCID =  $document->getRefLCID();
+			$this->LCID = $document->getRefLCID();
 		}
 		parent::__construct($urlManager, $this->buildPathInfo());
 		if ($action == self::MODE_PROPERTY)
@@ -159,7 +151,7 @@ class DocumentLink extends Link
 		{
 			if ($value === null)
 			{
-				$c = new \Change\Http\Rest\PropertyConverter($this->document, $name, $this->urlManager);
+				$c = new \Change\Http\Rest\PropertyConverter($this->document, $name, null, $this->urlManager);
 				$value = $c->getRestValue();
 			}
 			$this->setProperty($name->getName(), $value);
@@ -236,84 +228,5 @@ class DocumentLink extends Link
 			}
 		}
 		return $value;
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param UrlManager $urlManager
-	 * @param array $extraColumn
-	 * @return $this
-	 */
-	protected function addResourceItemInfos($extraColumn = array())
-	{
-		$dm = $this->document->getDocumentManager();
-		$eventManager = $this->document->getEventManager();
-		if ($this->getLCID())
-		{
-			$dm->pushLCID($this->getLCID());
-		}
-
-		$model =  $this->document->getDocumentModel();
-
-		$this->setProperty($model->getProperty('creationDate'));
-		$this->setProperty($model->getProperty('modificationDate'));
-
-		if ($this->document instanceof Editable)
-		{
-			$this->setProperty($model->getProperty('label'));
-			$this->setProperty($model->getProperty('documentVersion'));
-		}
-
-		if ($this->document instanceof Publishable)
-		{
-			$this->setProperty($model->getProperty('publicationStatus'));
-		}
-		elseif ($this->document instanceof Activable)
-		{
-			$this->setProperty($model->getProperty('active'));
-		}
-
-		if ($this->document instanceof Localizable)
-		{
-			$this->setProperty($model->getProperty('refLCID'));
-			$this->setProperty($model->getProperty('LCID'));
-		}
-
-		if ($this->document instanceof Correction)
-		{
-			/* @var $document AbstractDocument|Correction */
-			if ( $this->document->hasCorrection())
-			{
-				$l = new DocumentActionLink($this->urlManager, $this->document, 'correction');
-				$this->setProperty('actions', array($l));
-			}
-		}
-
-		if (is_array($extraColumn) && count($extraColumn))
-		{
-			foreach ($extraColumn as $propertyName)
-			{
-				$property = $model->getProperty($propertyName);
-				if ($property)
-				{
-					$this->setProperty($property);
-				}
-			}
-		}
-
-		if ($this->document instanceof RestfulDocumentInterface)
-		{
-			$this->document->populateRestDocumentLink($this, $extraColumn);
-		}
-
-		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this->document,
-			array('restResult' => $this, 'extraColumn' => $extraColumn, 'urlManager' => $this->urlManager));
-		$eventManager->trigger($documentEvent);
-
-		if ($this->getLCID())
-		{
-			$dm->popLCID();
-		}
-		return $this;
 	}
 }

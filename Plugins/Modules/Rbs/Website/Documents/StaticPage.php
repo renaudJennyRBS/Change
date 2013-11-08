@@ -2,7 +2,6 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Documents\Query\Query;
 
 /**
  * @name \Rbs\Website\Documents\StaticPage
@@ -20,7 +19,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			$page = $event->getDocument();
 			if ($page->getSection())
 			{
-				$tm = $page->getDocumentServices()->getTreeManager();
+				$tm = $event->getApplicationServices()->getTreeManager();
 				$parentNode = $tm->getNodeByDocument($page->getSection());
 				if ($parentNode)
 				{
@@ -36,7 +35,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			if (in_array('section', $event->getParam('modifiedPropertyNames', array())))
 			{
 				$page = $event->getDocument();
-				$tm = $page->getDocumentServices()->getTreeManager();
+				$tm = $event->getApplicationServices()->getTreeManager();
 				$tm->deleteDocumentNode($page);
 				if ($page->getSection())
 				{
@@ -105,25 +104,33 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 		return $this;
 	}
 
-
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
+	public function onDefaultUpdateRestResult(Event $event)
 	{
-		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		if (in_array('functions', $extraColumn)) {
-			$document = $documentLink->getDocument();
-			$query = new Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
-			$query->andPredicates(
-				$query->eq('page', $documentLink->getDocument()),
-				$query->eq('section', $document->getDocumentServices()->getTreeManager()->getNodeByDocument($document)->getParentId())
-			);
-			$functions = array();
-			$funcDocs = $query->getDocuments();
-			foreach ($funcDocs as $func)
+		parent::onDefaultUpdateRestResult($event);
+
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$documentLink = $restResult;
+			$extraColumn = $event->getParam('extraColumn');
+			if (in_array('functions', $extraColumn))
 			{
-				/* @var $func \Compilation\Change\Website\Documents\SectionPageFunction */
-				$functions[] = $func->getFunctionCode();
+				$document = $documentLink->getDocument();
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
+				$query->andPredicates(
+					$query->eq('page', $documentLink->getDocument()),
+					$query->eq('section',
+						$event->getApplicationServices()->getTreeManager()->getNodeByDocument($document)->getParentId())
+				);
+				$functions = array();
+				$funcDocs = $query->getDocuments();
+				foreach ($funcDocs as $func)
+				{
+					/* @var $func \Rbs\Website\Documents\SectionPageFunction */
+					$functions[] = $func->getFunctionCode();
+				}
+				$documentLink->setProperty('functions', $functions);
 			}
-			$documentLink->setProperty('functions',  $functions);
 		}
 	}
 }

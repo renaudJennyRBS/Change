@@ -1,9 +1,8 @@
 <?php
 namespace Rbs\User\Events;
 
-use Change\Documents\DocumentServices;
 use Change\Documents\Query\Query;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 
 /**
  * @name \Rbs\User\Events\Login
@@ -15,15 +14,15 @@ class Login
 	 */
 	public function execute(Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if (!$documentServices instanceof DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if (!$applicationServices)
 		{
 			return;
 		}
 
 		if ($event->getParam('userId'))
 		{
-			$user = $documentServices->getDocumentManager()->getDocumentInstance($event->getParam('userId'));
+			$user = $applicationServices->getDocumentManager()->getDocumentInstance($event->getParam('userId'));
 			if ($user instanceof \Rbs\User\Documents\User)
 			{
 				$event->setParam('user', new AuthenticatedUser($user));
@@ -43,7 +42,7 @@ class Login
 			return;
 		}
 
-		$query = new Query($documentServices, 'Rbs_User_User');
+		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_User');
 		$groupBuilder = $query->getPropertyBuilder('groups');
 		$or = $query->getFragmentBuilder()->logicOr($query->eq('login', $login), $query->eq('email', $login));
 		$query->andPredicates($query->activated(), $or, $groupBuilder->eq('realm', $realm));

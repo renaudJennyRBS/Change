@@ -7,11 +7,6 @@ namespace Change\Permissions;
 class PermissionsManager
 {
 	/**
-	 * @var \Change\Application\ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
 	 * @var boolean
 	 */
 	protected $allow = false;
@@ -20,6 +15,52 @@ class PermissionsManager
 	 * @var integer[]
 	 */
 	protected $accessorIds = array();
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
+	 * @var \Change\Transaction\TransactionManager
+	 */
+	protected $transactionManager;
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
+	}
 
 	/**
 	 * @param \Change\User\UserInterface $user
@@ -38,22 +79,6 @@ class PermissionsManager
 		{
 			$this->accessorIds = array();
 		}
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
 	}
 
 	/**
@@ -98,7 +123,7 @@ class PermissionsManager
 		$countPrivileges = count($privileges);
 
 		$key = 'isAllowed,' . $countAccessor . ',' . $countRoles . ',' . $countResources . ',' . $countPrivileges;
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder($key);
+		$qb = $this->getDbProvider()->getNewQueryBuilder($key);
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -158,7 +183,7 @@ class PermissionsManager
 	 */
 	public function addRule($accessor = 0, $role = '*', $resource = 0, $privilege = '*')
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('addPermissionRule');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('addPermissionRule');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -172,7 +197,7 @@ class PermissionsManager
 		$iq->bindParameter('role', trim($role));
 		$iq->bindParameter('resourceId', intval($resource));
 		$iq->bindParameter('privilege', trim($privilege));
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
@@ -194,7 +219,7 @@ class PermissionsManager
 	 */
 	public function hasRule($accessor = 0, $role = '*', $resource = 0, $privilege = '*')
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('hasPermissionRule');
+		$qb = $this->getDbProvider()->getNewQueryBuilder('hasPermissionRule');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -224,7 +249,7 @@ class PermissionsManager
 	 */
 	public function addWebRule($sectionId, $websiteId, $accessorId = 0)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('addNewPermissionRule');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('addNewPermissionRule');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -237,7 +262,7 @@ class PermissionsManager
 		$iq->bindParameter('accessorId', intval($accessorId));
 		$iq->bindParameter('sectionId', intval($sectionId));
 		$iq->bindParameter('websiteId', intval($websiteId));
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
@@ -258,7 +283,7 @@ class PermissionsManager
 	 */
 	public function hasWebRule($sectionId, $websiteId, $accessorId = 0)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('hasWebPermissionRule');
+		$qb = $this->getDbProvider()->getNewQueryBuilder('hasWebPermissionRule');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -286,7 +311,7 @@ class PermissionsManager
 	 */
 	public function getSectionAccessorIds($sectionId, $websiteId, $model = null)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('accessor_id'));
 		$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
@@ -319,7 +344,7 @@ class PermissionsManager
 
 	public function deleteWebRules($sectionId, $websiteId, $accessorIds = [])
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('hasWebPermissionRule');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('hasWebPermissionRule');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -340,7 +365,7 @@ class PermissionsManager
 		$dq = $qb->deleteQuery();
 		$dq->bindParameter('sectionId', intval($sectionId));
 		$dq->bindParameter('websiteId', intval($websiteId));
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
@@ -366,7 +391,7 @@ class PermissionsManager
 		if (!isset($this->webSectionIds[$websiteId]))
 		{
 
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+			$qb = $this->getDbProvider()->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$table =$fb->getSqlMapping()->getWebPermissionRuleTable();
 
@@ -378,7 +403,7 @@ class PermissionsManager
 
 			if (is_array($qb->query()->getFirstResult()))
 			{
-				$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+				$qb = $this->getDbProvider()->getNewQueryBuilder();
 				$fb = $qb->getFragmentBuilder();
 				$qb->select($fb->column('section_id'))->distinct();
 				$qb->from($fb->getSqlMapping()->getWebPermissionRuleTable());
@@ -410,7 +435,6 @@ class PermissionsManager
 	 */
 	public function isWebAllowed($sectionId, $websiteId)
 	{
-		$this->getApplicationServices()->getLogging()->info(__METHOD__ . ' section: ' . $sectionId . ', website: ' . $websiteId . ' User: ' . implode(', ', $this->accessorIds));
 		if ($this->hasWebPermissions($websiteId = intval($websiteId)))
 		{
 			return in_array($sectionId, $this->webSectionIds[$websiteId]);

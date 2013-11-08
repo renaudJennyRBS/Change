@@ -16,7 +16,7 @@ class DocumentCleanUp
 	public function cleanUp(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 		$documentId = $job->getArgument('id');
 		$modelName = $job->getArgument('model');
 		if (!is_numeric($documentId) || !is_string($modelName))
@@ -25,7 +25,7 @@ class DocumentCleanUp
 			return;
 		}
 
-		$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Workflow_Task');
+		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 		$query->andPredicates(
 			$query->in('status', array(WorkItem::STATUS_ENABLED, WorkItem::STATUS_IN_PROGRESS)),
 			$query->eq('document', $documentId)
@@ -40,11 +40,11 @@ class DocumentCleanUp
 		{
 			try
 			{
-				$this->cancelTask($task);
+				$this->cancelTask($task, $applicationServices);
 			}
 			catch (\Exception $e)
 			{
-				$documentServices->getApplicationServices()->getLogging()->exception($e);
+				$applicationServices->getLogging()->exception($e);
 			}
 		}
 
@@ -57,7 +57,7 @@ class DocumentCleanUp
 	public function localizedCleanUp(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 		$documentId = $job->getArgument('id');
 		$modelName = $job->getArgument('model');
 		$LCID = $job->getArgument('LCID');
@@ -68,7 +68,7 @@ class DocumentCleanUp
 			return;
 		}
 
-		$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Workflow_Task');
+		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 		$query->andPredicates(
 			$query->in('status', array(WorkItem::STATUS_ENABLED, WorkItem::STATUS_IN_PROGRESS)),
 			$query->eq('document', $documentId),
@@ -83,11 +83,11 @@ class DocumentCleanUp
 		{
 			try
 			{
-				$this->cancelTask($task);
+				$this->cancelTask($task, $applicationServices);
 			}
 			catch (\Exception $e)
 			{
-				$documentServices->getApplicationServices()->getLogging()->exception($e);
+				$applicationServices->getLogging()->exception($e);
 			}
 		}
 		$event->success();
@@ -99,21 +99,18 @@ class DocumentCleanUp
 	public function onCorrectionFiled($event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
-		$documentServices->getApplicationServices()->getLogging()->fatal(__METHOD__);
+		$applicationServices = $event->getApplicationServices();
 		$documentId = $job->getArgument('documentId');
 		$LCID = $job->getArgument('LCID');
 
-		$document = $documentServices->getDocumentManager()->getDocumentInstance($documentId);
+		$document = $applicationServices->getDocumentManager()->getDocumentInstance($documentId);
 		if (!$document)
 		{
 			$event->success();
 			return;
 		}
 
-		$documentServices->getApplicationServices()->getLogging()->fatal(__METHOD__);
-
-		$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Workflow_Task');
+		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
 			if ($LCID === \Change\Documents\Correction::NULL_LCID_KEY)
@@ -136,17 +133,17 @@ class DocumentCleanUp
 		$query->addOrder('workflowInstance');
 
 		$tasks = $query->getDocuments();
-		$documentServices->getApplicationServices()->getLogging()->fatal(var_export($tasks->ids(), true));
+		$applicationServices->getApplicationServices()->getLogging()->fatal(var_export($tasks->ids(), true));
 		/* @var $task Task */
 		foreach ($tasks as $task)
 		{
 			try
 			{
-				$this->cancelTask($task);
+				$this->cancelTask($task, $applicationServices);
 			}
 			catch (\Exception $e)
 			{
-				$documentServices->getApplicationServices()->getLogging()->exception($e);
+				$applicationServices->getLogging()->exception($e);
 			}
 		}
 
@@ -155,11 +152,10 @@ class DocumentCleanUp
 
 	/**
 	 * @param Task $task
-	 * @throws \Exception
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	protected function cancelTask(Task $task)
+	protected function cancelTask(Task $task, $applicationServices)
 	{
-		$applicationServices = $task->getDocumentServices()->getApplicationServices();
 		try
 		{
 			$applicationServices->getTransactionManager()->begin();

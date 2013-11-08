@@ -34,15 +34,16 @@ class ContextualList extends \Rbs\Event\Blocks\Base\BaseEventList
 	protected function doExecute($event, $attributes, $website, $section)
 	{
 		$parameters = $event->getBlockParameters();
-		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Event_BaseEvent');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Event_BaseEvent');
 		$query->andPredicates($query->published());
 		$subQuery1 = $query->getPropertyBuilder('publicationSections');
 		if ($parameters->getParameter('includeSubSections'))
 		{
+			$treePredicateBuilder = new \Change\Documents\Query\TreePredicateBuilder($subQuery1, $event->getApplicationServices()->getTreeManager());
 			$subQuery1->andPredicates(
 				$subQuery1->getPredicateBuilder()->logicOr(
 					$subQuery1->eq('id', $section->getId()),
-					$subQuery1->descendantOf($section)
+					$treePredicateBuilder->descendantOf($section)
 				)
 			);
 		}

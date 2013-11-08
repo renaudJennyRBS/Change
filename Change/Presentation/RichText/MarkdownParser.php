@@ -1,35 +1,28 @@
 <?php
-
 namespace Change\Presentation\RichText;
 
-use Change\Documents\DocumentServices;
-use Change\Http\Web\UrlManager;
-
 /**
- * Class MarkdownParser
- * @package Change\Presentation\Markdown
+ * @name \Change\Presentation\RichText\MarkdownParser
  */
 class MarkdownParser extends \Michelf\Markdown {
-
-
-	/**
-	 * @var DocumentServices|null
-	 */
-	protected $documentServices;
 
 	/**
 	 * @var \Rbs\Website\Documents\Website|null
 	 */
 	protected $website;
 
+	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	protected $applicationServices;
 
 	/**
-	 * @param DocumentServices|null $documentServices
+	 * @param \Change\Services\ApplicationServices|null $applicationServices
 	 */
-	public function __construct($documentServices)
+	public function __construct($applicationServices)
 	{
 		parent::__construct();
-		$this->documentServices = $documentServices;
+		$this->applicationServices = $applicationServices;
 	}
 
 
@@ -78,7 +71,7 @@ class MarkdownParser extends \Michelf\Markdown {
 		}
 
 		/* @var $image \Rbs\Media\Documents\Image */
-		$image = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
+		$image = $this->applicationServices->getDocumentManager()->getDocumentInstance($id);
 		if (!$image)
 		{
 			return $this->hashPart('<span class="label label-danger">Invalid Rbs\Media\Image: ' . $mediaId . '</span>');

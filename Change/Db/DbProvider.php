@@ -5,7 +5,6 @@ use Change\Db\Query\AbstractQuery;
 use Change\Db\Query\Builder;
 use Change\Db\Query\StatementBuilder;
 use Change\Logging\Logging;
-use Change\Transaction\TransactionManager;
 
 /**
  * @name \Change\Db\DbProvider
@@ -18,25 +17,26 @@ abstract class DbProvider
 	const EVENT_SQL_FRAGMENT_STRING = 'SQLFragmentString';
 
 	const EVENT_SQL_FRAGMENT = 'SQLFragment';
+
 	/**
 	 * @var integer
 	 */
 	protected $id;
 
 	/**
-	 * @var array
+	 * @var \ArrayObject
 	 */
 	protected $connectionInfos;
 
 	/**
-	 * @var \Change\Application
+	 * @var \Change\Workspace
 	 */
-	protected $application;
+	protected $workspace;
 
 	/**
-	 * @var TransactionManager
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $transactionManager;
+	protected $configuration;
 
 	/**
 	 * @var array
@@ -102,10 +102,10 @@ abstract class DbProvider
 		$classNames = array();
 		foreach ($this->getEventManagerIdentifier() as $identifier)
 		{
-			$entry = $this->getApplication()->getConfiguration()->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
+			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $identifier));
 			if (is_array($entry))
 			{
-				foreach($entry as $className)
+				foreach ($entry as $className)
 				{
 					if (is_string($className))
 					{
@@ -123,24 +123,37 @@ abstract class DbProvider
 	public abstract function getType();
 
 	/**
-	 * @param \Change\Application $application
+	 * @param \Change\Configuration\Configuration $configuration
 	 * @return $this
 	 */
-	public function setApplication(\Change\Application $application)
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->application = $application;
-		$this->setSharedEventManager($application->getSharedEventManager());
+		$this->configuration = $configuration;
+		if ($this->connectionInfos === null)
+		{
+			$section = $configuration->getEntry('Change/Db/use', 'default');
+			$connectionInfos = $configuration->getEntry('Change/Db/' . $section, array());
+			if (is_array($connectionInfos))
+			{
+				$this->setConnectionInfos(new \ArrayObject($connectionInfos));
+			}
+			else
+			{
+				$this->setConnectionInfos(new \ArrayObject());
+			}
+		}
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application
+	 * @param \Change\Workspace $workspace
+	 * @return $this
 	 */
-	public function getApplication()
+	public function setWorkspace(\Change\Workspace $workspace)
 	{
-		return $this->application;
+		$this->workspace = $workspace;
+		return $this;
 	}
-
 
 	public function __construct()
 	{
@@ -293,43 +306,19 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @param TransactionManager $transactionManager
-	 */
-	public function setTransactionManager(TransactionManager $transactionManager)
-	{
-		$this->transactionManager = $transactionManager;
-		if ($transactionManager->started())
-		{
-			$this->beginTransaction(null);
-		}
-		$tem = $transactionManager->getEventManager();
-		$tem->attach(TransactionManager::EVENT_BEGIN, array($this, 'beginTransaction'));
-		$tem->attach(TransactionManager::EVENT_COMMIT, array($this, 'commit'));
-		$tem->attach(TransactionManager::EVENT_ROLLBACK, array($this, 'rollBack'));
-	}
-
-	/**
-	 * @return TransactionManager
-	 */
-	public function getTransactionManager()
-	{
-		return $this->transactionManager;
-	}
-
-	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
 	public abstract function beginTransaction($event = null);
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
 	public abstract function commit($event);
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
 	public abstract function rollBack($event);
@@ -353,7 +342,7 @@ abstract class DbProvider
 	 */
 	public function buildCustomSQLFragment(Query\InterfaceSQLFragment $fragment)
 	{
-		$event = new \Zend\EventManager\Event(static::EVENT_SQL_FRAGMENT_STRING, $this, array('fragment'=> $fragment));
+		$event = new \Change\Events\Event(static::EVENT_SQL_FRAGMENT_STRING, $this, array('fragment' => $fragment));
 		$this->getEventManager()->trigger($event);
 		$sql = $event->getParam('sql');
 		if (is_string($sql))
@@ -370,7 +359,7 @@ abstract class DbProvider
 	 */
 	public function getCustomSQLFragment(array $argument = array())
 	{
-		$event = new \Zend\EventManager\Event(static::EVENT_SQL_FRAGMENT, $this, $argument);
+		$event = new \Change\Events\Event(static::EVENT_SQL_FRAGMENT, $this, $argument);
 		$this->getEventManager()->trigger($event);
 		$fragment = $event->getParam('SQLFragment');
 		if ($fragment instanceof Query\InterfaceSQLFragment)

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Generic\Events;
 
-use Change\Documents\Events\Event as DocumentEvent;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
@@ -18,58 +17,94 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			$website = $event->getDocument();
-			if ($website instanceof \Rbs\Website\Documents\Website)
+			if ($event instanceof \Change\Documents\Events\Event)
 			{
-				(new \Rbs\Website\Events\WebsiteResolver())->changed($website);
+				$website = $event->getDocument();
+				if ($website instanceof \Rbs\Website\Documents\Website)
+				{
+					(new \Rbs\Website\Events\WebsiteResolver())->changed($event->getApplication());
+				}
 			}
 		};
-		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_UPDATED);
+		$eventNames = array('documents.created', 'documents.updated');
 		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
 
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Website\Events\PageResolver())->resolve($event);
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Website\Events\PageResolver())->resolve($event);
+			}
 		};
-		$events->attach('Documents', DocumentEvent::EVENT_DISPLAY_PAGE, $callback, 5);
+		$events->attach('Documents', 'http.web.displayPage', $callback, 5);
 
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Workflow\Tasks\PublicationProcess\Start())->execute($event);
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Workflow\Tasks\PublicationProcess\Start())->execute($event);
+			}
 		};
-		$events->attach('Documents', array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_LOCALIZED_CREATED), $callback, 5);
+		$events->attach('Documents', array('documents.created', 'documents.localized.created'), $callback, 5);
 
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Workflow\Tasks\CorrectionPublicationProcess\Start())->execute($event);
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Workflow\Tasks\CorrectionPublicationProcess\Start())->execute($event);
+			}
 		};
-		$events->attach('Documents', DocumentEvent::EVENT_CORRECTION_CREATED, $callback, 5);
+		$events->attach('Documents', 'correction.created', $callback, 5);
 
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Workflow\Http\Rest\Actions\ExecuteTask())->addTasks($event);
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Workflow\Http\Rest\Actions\ExecuteTask())->addTasks($event);
+			}
 		};
 		$events->attach('Documents', 'updateRestResult', $callback, 5);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);
+			if ($event instanceof \Change\Events\Event)
+			{
+				(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);
+			}
 		};
 		$events->attach('Plugin', 'setupSuccess', $callback, 5);
 
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Seo\Std\DocumentSeoGenerator())->onDocumentCreated($event);
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Seo\Std\DocumentSeoGenerator())->onDocumentCreated($event);
+			}
 		};
-		$events->attach('Documents', array(DocumentEvent::EVENT_CREATED), $callback, 5);
+		$events->attach('Documents', 'documents.created', $callback, 5);
 
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			(new \Rbs\Seo\Http\Rest\UpdateDocumentLinks())->addLinks($event);
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Seo\Http\Rest\UpdateDocumentLinks())->addLinks($event);
+			}
 		};
 		$events->attach('Documents', 'updateRestResult', $callback, 5);
+
+		$callback = function ($event)
+		{
+			if (($event instanceof \Change\Events\Event)
+				&& ($eventManagerFactory = $event->getParam('eventManagerFactory')) instanceof \Change\Events\EventManagerFactory
+			)
+			{
+				$genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
+				$event->getServices()->set('genericServices', $genericServices);
+			}
+		};
+		$events->attach(array('Commands', 'JobManager', 'Http.Web', 'Http.Rest'), 'registerServices', $callback, 5);
 	}
 
 	/**

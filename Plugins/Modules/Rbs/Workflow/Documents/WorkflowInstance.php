@@ -26,6 +26,25 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	protected $context;
 
 	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	private $applicationServices;
+
+	/**
+	 * @return \Change\Services\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->applicationServices;
+	}
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		$this->applicationServices = $event->getApplicationServices();
+	}
+
+	/**
 	 * Return all Workflow instance Items defined
 	 * @return \Change\Workflow\Interfaces\InstanceItem[]
 	 */
@@ -238,7 +257,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	public function execute($workItem)
 	{
 		$engine = new \Change\Workflow\Engine($this);
-		return $engine->executeWorkItemTask($workItem, $this->getDocumentServices());
+		return $engine->executeWorkItemTask($workItem, $this->getEventManagerFactory());
 	}
 
 	/**
@@ -360,7 +379,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 			return;
 		}
 
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Workflow_Task');
+		$dqb = $this->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 		$qb = $dqb->andPredicates(
 			$dqb->eq('workflowInstance', $this), $dqb->eq('status', WorkItem::STATUS_ENABLED)
 		)->dbQueryBuilder();

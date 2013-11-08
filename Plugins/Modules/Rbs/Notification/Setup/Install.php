@@ -8,15 +8,12 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$jm = new \Change\Job\JobManager();
-		$jm->setApplicationServices($applicationServices);
+		$jm = $applicationServices->getJobManager();
 		$jm->createNewJob('Rbs_Notification_SendMails');
 	}
 

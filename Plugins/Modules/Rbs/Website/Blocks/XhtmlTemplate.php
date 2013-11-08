@@ -13,8 +13,7 @@ class XhtmlTemplate extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
-	 * Optional Event method: getHttpRequest
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param \Change\Presentation\Blocks\Event $event
 	 * @return \Change\Presentation\Blocks\Parameters
 	 */
@@ -30,8 +29,7 @@ class XhtmlTemplate extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null

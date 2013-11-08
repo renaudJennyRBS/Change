@@ -13,7 +13,7 @@ class DocumentArrayPropertyTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getObject()
 	{
-		return new DocumentArrayProperty($this->getDocumentServices()->getDocumentManager(), null);
+		return new DocumentArrayProperty($this->getApplicationServices()->getDocumentManager(), null);
 	}
 
 	/**

@@ -12,9 +12,21 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	/**
+	 * @var \Rbs\Commerce\CommerceServices
+	 */
+	protected $commerceServices;
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
+	}
+
 	public function testBoValue()
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		/* @var $price \Rbs\Price\Documents\Price */
 		$price = $dm->getNewDocumentInstanceByModelName('Rbs_Price_Price');
 
@@ -36,7 +48,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		// If there is no valueWithoutDiscount, get/setBaseValue() are based on the value.
 		$price->setBoValue(10.2);
-		$this->assertTrue($price->applyBoValues());
+		$this->assertTrue($price->applyBoValues($this->commerceServices));
 		$this->assertEquals(10.2, $price->getBoValue());
 
 
@@ -45,7 +57,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 
 
 		$price->setBoValue(8.5);
-		$price->applyBoValues();
+		$price->applyBoValues($this->commerceServices);
 		$this->assertEquals(8.5, $price->getBoValue());
 
 		$this->assertEquals(7.0833, $price->getValue(), '', 0.001);

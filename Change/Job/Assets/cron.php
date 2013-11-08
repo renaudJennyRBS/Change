@@ -3,17 +3,23 @@ require_once(dirname(dirname(dirname(__DIR__))) . '/Change/Application.php');
 
 $application = new \Change\Application();
 $application->start();
-$applicationServices = new \Change\Application\ApplicationServices($application);
-$documentServices = new \Change\Documents\DocumentServices($applicationServices);
-$commonServices = new \Change\Services\CommonServices($applicationServices, $documentServices);
 
-$jobManager = $commonServices->getJobManager();
-$jobManager->setCommonServices($commonServices);
+$eventManagerFactory = new \Change\Events\EventManagerFactory($application);
+
+$applicationServices = new \Change\Services\ApplicationServices($application, $eventManagerFactory);
+$eventManagerFactory->addSharedService('applicationServices', $applicationServices);
+$jobManager = $applicationServices->getJobManager();
 
 $applicationServices->getLogging()->info('Cron check runnable jobs...');
-foreach($jobManager->getRunnableJobIds() as $jobId)
+$runnableJobIds = $jobManager->getRunnableJobIds();
+if (count($runnableJobIds))
 {
-	$jobManager->getApplicationServices()->getLogging()->info('Run: ' . $jobId);
-	$job = $jobManager->getJob($jobId);
-	$jobManager->run($job);
+	$jobManager->setTransactionManager($applicationServices->getTransactionManager());
+	$jobManager->getEventManager()->trigger('registerServices', $jobManager, array('eventManagerFactory' => $eventManagerFactory));
+	foreach($jobManager->getRunnableJobIds() as $jobId)
+	{
+		$applicationServices->getLogging()->info('Run: ' . $jobId);
+		$job = $jobManager->getJob($jobId);
+		$jobManager->run($job);
+	}
 }

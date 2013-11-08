@@ -18,31 +18,18 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
 	/**
-	 * @var \Change\Permissions\PermissionsManager
+	 * @return PermissionsManager
 	 */
-	protected $permissionManager;
+	protected function getPermissionManager()
+	{
+		return $this->getApplicationServices()->getPermissionsManager();
+	}
 
 	public function testConstruct()
 	{
 		$permissionManager = $this->getPermissionManager();
 		$this->assertInstanceOf('\Change\Permissions\PermissionsManager', $permissionManager);
-	}
-
-	protected function getPermissionManager()
-	{
-		if (!$this->permissionManager)
-		{
-			$this->permissionManager = new PermissionsManager();
-			$this->permissionManager->setApplicationServices($this->getApplicationServices());
-		}
-		return $this->permissionManager;
 	}
 
 	/**
@@ -69,9 +56,7 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		//TODO draft, improve this test
 		$website = $this->getNewReadonlyDocument('Rbs_Website_Website', 90);
 		$topic1 = $this->getNewReadonlyDocument('Rbs_Website_Topic', 100);
-		$this->getNewReadonlyDocument('Rbs_Website_Topic', 101);
-		$this->getNewReadonlyDocument('Rbs_Website_Topic', 102);
-		$this->getDocumentServices()->getDocumentManager();
+
 		$users = $this->createUsers(3);
 		$groups = $this->createGroups(3);
 
@@ -90,7 +75,7 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function createUsers($number)
 	{
-		$documentManager = $this->getDocumentServices()->getDocumentManager();
+		$documentManager = $this->getApplicationServices()->getDocumentManager();
 		$users = [];
 		for ($i = 0; $i < $number; $i++)
 		{
@@ -123,7 +108,7 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function createGroups($number)
 	{
-		$documentManager = $this->getDocumentServices()->getDocumentManager();
+		$documentManager = $this->getApplicationServices()->getDocumentManager();
 		$groups = [];
 		for ($i = 0; $i < $number; $i++)
 		{

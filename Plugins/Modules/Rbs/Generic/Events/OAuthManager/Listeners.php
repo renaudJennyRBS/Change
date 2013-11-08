@@ -18,7 +18,7 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			(new \Rbs\Admin\Http\OAuth\LoginForm())->execute($event);
 		};

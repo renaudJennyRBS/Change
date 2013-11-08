@@ -2,7 +2,6 @@
 namespace Rbs\Elasticsearch\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 
 /**
@@ -10,21 +9,15 @@ use Change\Presentation\Blocks\Information;
  */
 class ResultInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-
-		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.result'));
-
+		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.result', $ucf));
 		$this->setFunctions(array(
-			'Rbs_Elasticsearch_Result' => $i18nManager->trans('m.rbs.elasticsearch.blocks.result-function'))
+				'Rbs_Elasticsearch_Result' => $i18nManager->trans('m.rbs.elasticsearch.blocks.result-function', $ucf))
 		);
 
 		$this->addInformationMeta('fulltextIndex', Property::TYPE_DOCUMENTID, true)

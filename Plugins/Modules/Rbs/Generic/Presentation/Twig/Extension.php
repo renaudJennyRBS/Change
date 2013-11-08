@@ -1,25 +1,17 @@
 <?php
 namespace Rbs\Generic\Presentation\Twig;
 
-use Change\Documents\DocumentServices;
 use Change\Http\Web\UrlManager;
-use Change\Presentation\PresentationServices;
 
 /**
  * @name \Rbs\Generic\Presentation\Twig\Extension
  */
 class Extension implements \Twig_ExtensionInterface
 {
-
 	/**
-	 * @var DocumentServices
+	 * @var \Change\Services\ApplicationServices
 	 */
-	protected $documentServices;
-
-	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
+	protected $applicationServices;
 
 	/**
 	 * @var \Rbs\Generic\GenericServices
@@ -32,16 +24,17 @@ class Extension implements \Twig_ExtensionInterface
 	protected $urlManager;
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @param \Change\Application $application
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param \Rbs\Generic\GenericServices $genericServices
 	 * @param UrlManager $urlManager
 	 */
-	function __construct(PresentationServices $presentationServices, \Rbs\Generic\GenericServices $genericServices, UrlManager $urlManager)
+	function __construct(\Change\Application $application, \Change\Services\ApplicationServices $applicationServices, \Rbs\Generic\GenericServices $genericServices, UrlManager $urlManager)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->application = $application;
+		$this->applicationServices = $applicationServices;
 		$this->urlManager = $urlManager;
 		$this->genericServices = $genericServices;
-		$this->documentServices = $genericServices->getDocumentServices();
 	}
 
 	/**
@@ -143,21 +136,39 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @param \Change\Application $application
 	 * @return $this
 	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
+	public function setApplication(\Change\Application $application)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->application = $application;
 		return $this;
 	}
 
 	/**
-	 * @return PresentationServices
+	 * @return \Change\Application
 	 */
-	public function getPresentationServices()
+	public function getApplication()
 	{
-		return $this->presentationServices;
+		return $this->application;
+	}
+
+	/**
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @return $this
+	 */
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Services\ApplicationServices
+	 */
+	public function getApplicationServices()
+	{
+		return $this->applicationServices;
 	}
 
 	/**
@@ -170,15 +181,6 @@ class Extension implements \Twig_ExtensionInterface
 		return $this;
 	}
 
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices($documentServices)
-	{
-		$this->documentServices = $documentServices;
-		return $this;
-	}
 
 	/**
 	 * @param \Rbs\Generic\GenericServices $genericServices
@@ -188,22 +190,6 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		$this->genericServices = $genericServices;
 		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->documentServices->getApplicationServices();
 	}
 
 	/**
@@ -239,7 +225,7 @@ class Extension implements \Twig_ExtensionInterface
 
 		if (is_numeric($image))
 		{
-			$image = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($image);
+			$image = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($image);
 		}
 		elseif (is_string($image))
 		{
@@ -274,7 +260,7 @@ class Extension implements \Twig_ExtensionInterface
 		{
 			if (is_numeric($website))
 			{
-				$website = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($website);
+				$website = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($website);
 			}
 			if ($website instanceof \Change\Presentation\Interfaces\Section)
 			{
@@ -302,7 +288,7 @@ class Extension implements \Twig_ExtensionInterface
 		{
 			if (is_numeric($section))
 			{
-				$section = $this->getDocumentServices()->getDocumentManager()->getDocumentInstance($section);
+				$section = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($section);
 			}
 
 			if ($section === null || $section instanceof \Change\Presentation\Interfaces\Section)
@@ -381,11 +367,11 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function resourceURL($relativePath)
 	{
-		if ($this->getApplicationServices()->getApplication()->inDevelopmentMode())
+		if ($this->getApplication()->inDevelopmentMode())
 		{
 			return $relativePath;
 		}
-		return $this->presentationServices->getThemeManager()->getAssetBaseUrl() . $relativePath;
+		return $this->getApplicationServices()->getThemeManager()->getAssetBaseUrl() . $relativePath;
 	}
 
 	/**
@@ -412,10 +398,7 @@ class Extension implements \Twig_ExtensionInterface
 		if ($richText instanceof \Change\Documents\RichtextProperty)
 		{
 			$context = array('website' => $this->getUrlManager()->getWebsite());
-			return $this->getPresentationServices()
-				->getRichTextManager()
-				->setDocumentServices($this->getDocumentServices())
-				->render($richText, "Website", $context);
+			return $this->getApplicationServices()->getRichTextManager()->render($richText, "Website", $context);
 		}
 		return htmlspecialchars(strval($richText));
 	}

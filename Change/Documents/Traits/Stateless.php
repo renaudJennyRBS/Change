@@ -2,19 +2,18 @@
 namespace Change\Documents\Traits;
 
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentManager;
 use Change\Documents\Events\Event as DocumentEvent;
 use Change\Documents\PropertiesValidationException;
 
 /**
  * @name \Change\Documents\Traits\Stateless
+ *
  * From \Change\Documents\AbstractDocument
  * @method integer getPersistentState()
  * @method integer setPersistentState($newValue)
  * @method \Change\Documents\DocumentManager getDocumentManager()
  * @method \Change\Documents\AbstractModel getDocumentModel()
- * @method \Zend\EventManager\EventManagerInterface getEventManager()
- * @method \Change\Application\ApplicationServices getApplicationServices()
+ * @method \Change\Events\EventManager getEventManager()
  * @method string[] getModifiedPropertyNames()
  */
 trait Stateless
@@ -162,7 +161,6 @@ trait Stateless
 		}
 		$event = new DocumentEvent(DocumentEvent::EVENT_DELETE, $this);
 		$this->getEventManager()->trigger($event);
-
 
 		$this->doDelete();
 		$this->setPersistentState(AbstractDocument::STATE_DELETED);

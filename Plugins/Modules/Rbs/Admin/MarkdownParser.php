@@ -18,15 +18,12 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		//replace @xxx and @+xxx by a linked user or user group if exist.
 		$rawText = preg_replace_callback('/\B(@\+?)([a-z0-9_\-]+)/i', function ($matches){
 			//                                1111  222222222222
-			if ($matches[1] === '@')
-			{
-				$model = 'Rbs_User_User';
-			}
-			else if ($matches[1] === '@+')
+			$model = 'Rbs_User_User';
+			if ($matches[1] === '@+')
 			{
 				$model = 'Rbs_User_Group';
 			}
-			$dqb = new \Change\Documents\Query\Query($this->documentServices, $model);
+			$dqb = $this->applicationServices->getDocumentManager()->getNewQuery($model);
 			$dqb->andPredicates($dqb->eq('identifier', $matches[2]));
 			if ($model === 'Rbs_User_User')
 			{
@@ -44,7 +41,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		//replace #xxx by a linked resource if exist.
 		$rawText = preg_replace_callback('/\B(#)(\d+)\b/', function ($matches){
 			//                                1  222
-			$document = $this->documentServices->getDocumentManager()->getDocumentInstance($matches[2]);
+			$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($matches[2]);
 			if ($document)
 			{
 				return '['. $matches[1] . $matches[2] . '](' . $document->getId() . ' "' . $matches[1] . $matches[2] . '")';
@@ -74,7 +71,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		$route = $params[5];
 
 		/* @var $document \Change\Documents\AbstractDocument */
-		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id);
+		$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($id);
 
 		if (!$document)
 		{

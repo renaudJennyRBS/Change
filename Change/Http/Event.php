@@ -1,17 +1,10 @@
 <?php
 namespace Change\Http;
 
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
-use Change\Permissions\PermissionsManager;
-use Change\Presentation\PresentationServices;
-use Change\Services\CommonServices;
-use Change\User\AuthenticationManager;
-
 /**
  * @name \Change\Http\Event
  */
-class Event extends \Zend\EventManager\Event
+class Event extends \Change\Events\Event
 {
 	const EVENT_REQUEST = 'http.request';
 	const EVENT_ACTION = 'http.action';
@@ -19,21 +12,6 @@ class Event extends \Zend\EventManager\Event
 	const EVENT_RESPONSE = 'http.response';
 	const EVENT_EXCEPTION = 'http.exception';
 	const EVENT_AUTHENTICATE = 'http.authenticate';
-
-	/**
-	 * @var ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
-	 * @var CommonServices
-	 */
-	protected $commonServices;
 
 	/**
 	 * @var Request
@@ -66,16 +44,6 @@ class Event extends \Zend\EventManager\Event
 	protected $response;
 
 	/**
-	 * @var AuthenticationManager
-	 */
-	protected $authenticationManager;
-
-	/**
-	 * @var PermissionsManager
-	 */
-	protected $permissionsManager;
-
-	/**
 	 * @api
 	 * @return Controller|null
 	 */
@@ -86,80 +54,6 @@ class Event extends \Zend\EventManager\Event
 			return $this->getTarget();
 		}
 		return null;
-	}
-
-	/**
-	 * @param ApplicationServices|null $applicationServices
-	 */
-	public function setApplicationServices(ApplicationServices $applicationServices = null)
-	{
-		$this->applicationServices = $applicationServices;
-	}
-
-	/**
-	 * @api
-	 * @return ApplicationServices|null
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param DocumentServices|null $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-		$this->setParam('documentServices', $documentServices);
-	}
-
-	/**
-	 * @api
-	 * @return DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Presentation\PresentationServices|null
-	 */
-	public function getPresentationServices()
-	{
-		return $this->getServices('presentationServices');
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Services\CommonServices|null
-	 */
-	public function getCommonServices()
-	{
-		return $this->getServices('commonServices');
-	}
-
-	/**
-	 * @api
-	 * @param string $serviceName
-	 * @return \Zend\Stdlib\Parameters|\Zend\Di\Di|null
-	 */
-	public function getServices($serviceName = null)
-	{
-		$services = $this->getParam('services');
-		if (!$services instanceof \Zend\Stdlib\Parameters)
-		{
-			$services = new \Zend\Stdlib\Parameters();
-			$this->setParam('services', $services);
-		}
-
-		if ($serviceName !== null)
-		{
-			return $services->get($serviceName, null);
-		}
-		return $services;
 	}
 
 	/**
@@ -197,37 +91,21 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param AuthenticationManager $authenticationManager
-	 */
-	public function setAuthenticationManager(AuthenticationManager $authenticationManager)
-	{
-		$this->authenticationManager = $authenticationManager;
-	}
-
-	/**
 	 * @api
-	 * @return AuthenticationManager
+	 * @return \Change\User\AuthenticationManager
 	 */
 	public function getAuthenticationManager()
 	{
-		return $this->authenticationManager;
-	}
-
-	/**
-	 * @param PermissionsManager $permissionsManager
-	 */
-	public function setPermissionsManager(PermissionsManager $permissionsManager)
-	{
-		$this->permissionsManager = $permissionsManager;
+		return $this->getApplicationServices()->getAuthenticationManager();
 	}
 
 	/**
 	 * @api
-	 * @return PermissionsManager
+	 * @return \Change\Permissions\PermissionsManager
 	 */
 	public function getPermissionsManager()
 	{
-		return $this->permissionsManager;
+		return $this->getApplicationServices()->getPermissionsManager();
 	}
 
 	/**

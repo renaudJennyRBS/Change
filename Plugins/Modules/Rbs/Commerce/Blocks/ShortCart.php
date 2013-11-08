@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Commerce\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -27,11 +26,11 @@ class ShortCart extends Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
-			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
+			$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
 		}
 
 		if ($parameters->getParameter('cartIdentifier') !== null)
@@ -43,7 +42,7 @@ class ShortCart extends Block
 			}
 			elseif ($parameters->getParameter('displayPrices') === null)
 			{
-				$documentManager = $event->getDocumentServices()->getDocumentManager();
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
 				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
 				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 				{
@@ -68,7 +67,7 @@ class ShortCart extends Block
 		$cartIdentifier = $parameters->getParameter('cartIdentifier');
 		if ($cartIdentifier)
 		{
-			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if ($cart && !$cart->isEmpty())

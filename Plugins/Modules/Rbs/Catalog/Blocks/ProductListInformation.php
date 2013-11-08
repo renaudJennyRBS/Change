@@ -2,7 +2,6 @@
 namespace Rbs\Catalog\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 
 /**
@@ -10,16 +9,12 @@ use Change\Presentation\Blocks\Information;
  */
 class ProductListInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-label'));
+		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-label', $ucf));
 		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Catalog_ProductList')
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-list', $ucf));

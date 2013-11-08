@@ -18,8 +18,8 @@ class GetPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function setUp()
 	{
 		//add fake permissions
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($this->getApplicationServices());
+		$pm = $this->getApplicationServices()->getPermissionsManager();
+
 		$pm->addRule(123456, 'Administrator', 123456, 'Rbs_User_User');
 		$pm->addRule(123456, 'Administrator', '*', 'Rbs_User_Group');
 		$pm->addRule(123456, 'Editor', 1234567, 'Rbs_Media_Image');
@@ -33,7 +33,7 @@ class GetPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testExecute()
 	{
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('accessorId' => 123456);
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\GetPermissionRules();

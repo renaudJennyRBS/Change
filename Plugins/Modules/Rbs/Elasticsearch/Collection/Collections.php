@@ -11,25 +11,24 @@ class Collections
 {
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Elasticsearch\ElasticsearchServices
 	 */
-	protected function getElasticsearchServices($documentServices)
+	protected function getElasticsearchServices(\Change\Events\Event $event)
 	{
-		$applicationServices = $documentServices->getApplicationServices();
-		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		$elasticsearchServices = $event->getServices('elasticsearchServices');
 		return $elasticsearchServices;
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addClients(\Zend\EventManager\Event $event)
+	public function addClients(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$indexManager = $this->getElasticsearchServices($documentServices)->getIndexManager();
+			$indexManager = $this->getElasticsearchServices($event)->getIndexManager();
 			$items = array();
 			foreach ($indexManager->getClientsName() as $clientName)
 			{
@@ -63,14 +62,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addCollectionCodes(\Zend\EventManager\Event $event)
+	public function addCollectionCodes(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$docQuery = new \Change\Documents\Query\Query($documentServices, 'Rbs_Collection_Collection');
+			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$query = $qb->addColumn($fb->alias($docQuery->getColumn('code'), 'code'))
@@ -83,14 +82,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addAttributeIds(\Zend\EventManager\Event $event)
+	public function addAttributeIds(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$docQuery = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_Attribute');
+			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->where($fb->notIn($docQuery->getColumn('valueType'), array($fb->string('Text'), $fb->string('Group'))));
@@ -106,14 +105,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addIndexes(\Zend\EventManager\Event $event)
+	public function addIndexes(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$query = new Query($documentServices, 'Rbs_Elasticsearch_FullText');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_FullText');
 			$query->andPredicates($query->activated());
 			$items = array();
 			/* @var $indexDefinition \Rbs\Elasticsearch\Documents\FullText */
@@ -128,14 +127,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addFacetTypes(\Zend\EventManager\Event $event)
+	public function addFacetTypes(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$items = array();
 			$items[FacetDefinitionInterface::TYPE_TERM] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.type-term');
 			$items[FacetDefinitionInterface::TYPE_RANGE] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.type-range');
@@ -146,14 +145,14 @@ class Collections
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addFacetValueExtractor(\Zend\EventManager\Event $event)
+	public function addFacetValueExtractor(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$items = array();
 			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-attribute');
 			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-price');

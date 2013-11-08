@@ -14,7 +14,7 @@ class GetCart
 	public function execute($event)
 	{
 		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cartIdentifier = $event->getParam('cartIdentifier');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);

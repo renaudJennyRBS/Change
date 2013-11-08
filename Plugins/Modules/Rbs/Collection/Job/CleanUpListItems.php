@@ -9,15 +9,15 @@ class CleanUpListItems
 	public function cleanUp(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
+		$applicationServices = $event->getApplicationServices();
 		$modelName = $job->getArgument('model');
-		$model = $documentServices->getModelManager()->getModelByName($modelName);
+		$model = $applicationServices->getModelManager()->getModelByName($modelName);
 		if ($model && ($model->getName() == 'Rbs_Collection_Collection'))
 		{
-			$dm = $documentServices->getDocumentManager();
+			$dm = $applicationServices->getDocumentManager();
 			$tm = $event->getApplicationServices()->getTransactionManager();
 
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Collection_Item');
+			$query = $dm->getNewQuery('Rbs_Collection_Item');
 			$dbq = $query->dbQueryBuilder();
 			$fb = $dbq->getFragmentBuilder();
 			$dbq->innerJoin($fb->alias($fb->getDocumentRelationTable('Rbs_Collection_Collection'), 'rel'),$fb->eq($fb->column('relatedid', 'rel'), $query->getColumn('id')));

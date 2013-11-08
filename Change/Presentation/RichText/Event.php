@@ -1,25 +1,11 @@
 <?php
 namespace Change\Presentation\RichText;
 
-use Change\Documents\DocumentServices;
-use Zend\EventManager\Event as ZendEvent;
-use Change\Presentation\PresentationServices;
-
 /**
  * @name \Change\Presentation\RichText\Event
  */
-class Event extends ZendEvent
+class Event extends \Change\Events\Event
 {
-	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
-	 * @var DocumentServices|null
-	 */
-	protected $documentServices;
-
 	/**
 	 * @var ParserInterface
 	 */
@@ -92,45 +78,6 @@ class Event extends ZendEvent
 	public function getProfile()
 	{
 		return $this->profile;
-	}
-
-
-	/**
-	 * @param PresentationServices|null $presentationServices
-	 * @return $this
-	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
-	{
-		$this->presentationServices = $presentationServices;
-		return $this;
-	}
-
-	/**
-	 * @api
-	 * @return PresentationServices|null
-	 */
-	public function getPresentationServices()
-	{
-		return $this->presentationServices;
-	}
-
-	/**
-	 * @param DocumentServices|null $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices(DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-		return $this;
-	}
-
-	/**
-	 * @api
-	 * @return DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
 	}
 
 	/**

@@ -46,7 +46,7 @@ class Calendar extends \Rbs\Event\Blocks\Base\BaseEventList
 	 */
 	protected function doExecute($event, $attributes, $website, $section)
 	{
-		$i18n = $event->getDocumentServices()->getApplicationServices()->getI18nManager();
+		$i18n = $event->getApplicationServices()->getI18nManager();
 		$parameters = $event->getBlockParameters();
 		$date = \DateTime::createFromFormat('Y-m-d',$event->getBlockParameters()->getParameter('date'));
 		$attributes['date'] = clone $date;
@@ -169,15 +169,17 @@ class Calendar extends \Rbs\Event\Blocks\Base\BaseEventList
 	protected function getQuery($event, $website, $section, $intervalBegin, $intervalEnd)
 	{
 		$parameters = $event->getBlockParameters();
-		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Event_BaseEvent');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Event_BaseEvent');
 		$query->andPredicates($query->published(), $query->lt('date', $intervalEnd), $query->gte('endDate', $intervalBegin));
+
 		$subQuery1 = $query->getPropertyBuilder('publicationSections');
 		if ($parameters->getParameter('includeSubSections'))
 		{
+			$treePredicateBuilder = new \Change\Documents\Query\TreePredicateBuilder($subQuery1, $event->getApplicationServices()->getTreeManager());
 			$subQuery1->andPredicates(
 				$subQuery1->getPredicateBuilder()->logicOr(
 					$subQuery1->eq('id', $section->getId()),
-					$subQuery1->descendantOf($section)
+					$treePredicateBuilder->descendantOf($section)
 				)
 			);
 		}

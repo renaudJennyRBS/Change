@@ -8,15 +8,14 @@ class DefaultCartValidation
 {
 	/**
 	 * Event Params: cart, errors, lockForOwnerId, commerceServices
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function execute(\Zend\EventManager\Event $event)
+	public function execute(\Change\Events\Event $event)
 	{
-
 		$cart = $event->getParam('cart');
 		if ($cart instanceof \Rbs\Commerce\Interfaces\Cart)
 		{
-			$i18nManager = $cart->getCommerceServices()->getApplicationServices()->getI18nManager();
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
 
 			/* @var $errors \ArrayObject */
 			$errors = $event->getParam('errors');

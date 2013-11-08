@@ -25,7 +25,10 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function getObject($baseURL = 'http://domain.net')
 	{
 		$urlManager = new \Change\Http\Web\UrlManager(new \Zend\Uri\Http($baseURL));
-		$urlManager->setApplicationServices($this->getApplicationServices());
+		$applicationServices = $this->getApplicationServices();
+		$urlManager->setDbProvider($applicationServices->getDbProvider())
+			->setTransactionManager($applicationServices->getTransactionManager())
+			->setDocumentManager($applicationServices->getDocumentManager());
 		return $urlManager;
 	}
 
@@ -193,11 +196,11 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testRewritePathRule()
 	{
-		$prm = new PathRuleManager($this->getApplicationServices());
+		$prm = new PathRuleManager($this->getApplicationServices()->getDbProvider());
 		$rule = $prm->getNewRule(1000, 'fr_FR', 'test.html', 4000, 200);
 
 		$document = $this->getNewReadonlyDocument('Project_Tests_Correction', 4000);
-		$callback = function ($event) {
+		$callback = function (\Change\Events\Event $event) {
 			$pathRule = $event->getParam('pathRule');
 			$pathRule->setRelativePath('toto.html');
 		};
@@ -223,13 +226,13 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param PathRule $pathRule
 	 */
 	protected function insertPathRule($applicationServices, $pathRule)
 	{
 		$applicationServices->getTransactionManager()->begin();
-		$prm = new PathRuleManager($applicationServices);
+		$prm = new PathRuleManager($applicationServices->getDbProvider());
 		$prm->insertPathRule($pathRule);
 		$applicationServices->getTransactionManager()->commit();
 	}

@@ -66,7 +66,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Plugins\Plugin', $plugin);
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$getParams = array(
 			'type' => $plugin->getType(),
 			'vendor' => $plugin->getVendor(),
@@ -92,7 +92,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//Our plugin is signed, so let's verify!
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($getParams)));
 		$verifyPlugin = new \Rbs\Plugins\Http\Rest\Actions\VerifyPlugin();
 		$verifyPlugin->execute($event);
@@ -120,11 +120,11 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('validTo_time_t', $arrayResult['parsing']['certificate']);
 
 		//Now we just add a fake file in the module folder to invalidate its signature
-		$path = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'imHereToInvalidateSignature.txt';
+		$path = $plugin->getAbsolutePath($event->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'imHereToInvalidateSignature.txt';
 		Change\Stdlib\File::write($path, 'Wait and see!');
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($getParams)));
 		$verifyPlugin = new \Rbs\Plugins\Http\Rest\Actions\VerifyPlugin();
 		$verifyPlugin->execute($event);
@@ -138,7 +138,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		unlink($path);
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($getParams)));
 		$verifyPlugin = new \Rbs\Plugins\Http\Rest\Actions\VerifyPlugin();
 		$verifyPlugin->execute($event);
@@ -149,13 +149,13 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $arrayResult['errors']);
 
 		//We are going to alter an existing file, just put an new end of line to the plugin config file
-		$path = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'plugin.json';
+		$path = $plugin->getAbsolutePath($event->getApplication()->getWorkspace()) . DIRECTORY_SEPARATOR . 'plugin.json';
 		$pluginConfig = Change\Stdlib\File::read($path);
 		$modifiedPluginConfig = $pluginConfig . PHP_EOL;
 		Change\Stdlib\File::write($path, $modifiedPluginConfig);
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($getParams)));
 		$verifyPlugin = new \Rbs\Plugins\Http\Rest\Actions\VerifyPlugin();
 		$verifyPlugin->execute($event);
@@ -168,7 +168,7 @@ class VerifyPluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		//undo the modification
 		Change\Stdlib\File::write($path, $pluginConfig);
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($getParams)));
 		$verifyPlugin = new \Rbs\Plugins\Http\Rest\Actions\VerifyPlugin();
 		$verifyPlugin->execute($event);

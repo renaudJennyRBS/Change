@@ -31,8 +31,8 @@ class WebsiteResolver
 
 			$hostName = $request->getUri()->getHost();
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
-			$mm = $event->getDocumentServices()->getModelManager();
-			$dm = $event->getDocumentServices()->getDocumentManager();
+			$mm = $event->getApplicationServices()->getModelManager();
+			$dm = $event->getApplicationServices()->getDocumentManager();
 
 			$currentWebsite = null;
 			foreach ($data as $row)
@@ -60,7 +60,7 @@ class WebsiteResolver
 
 			if ($currentWebsite === null)
 			{
-				$cfg = $event->getApplicationServices()->getApplication()->getConfiguration();
+				$cfg = $event->getApplication()->getConfiguration();
 				$singleWebsite = $cfg->getEntry('Rbs/Http/Web/SingleWebsite', true);
 				if ($singleWebsite)
 				{
@@ -139,12 +139,11 @@ class WebsiteResolver
 	}
 
 	/**
-	 * @param \Rbs\Website\Documents\Website $website
+	 * @param \Change\Application $application
 	 */
-	public function changed($website)
+	public function changed($application)
 	{
-		$appServices = $website->getDocumentServices()->getApplicationServices();
-		$cache = $this->getCache($appServices);
+		$cache = $this->getCache($application);
 		$cache->removeItem('WebsiteDatas');
 	}
 
@@ -154,15 +153,14 @@ class WebsiteResolver
 	 */
 	protected function getWebsiteDatas($event)
 	{
-		$applicationServices = $event->getApplicationServices();
-		$cache = $this->getCache($applicationServices);
+		$cache = $this->getCache($event->getApplication());
 		$item = $cache->getItem('WebsiteDatas');
 		if ($item !== null)
 		{
 			return unserialize($item);
 		}
 
-		$websiteModel =  $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Website_Website');
+		$websiteModel =  $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Website_Website');
 		if ($websiteModel)
 		{
 			$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
@@ -186,12 +184,12 @@ class WebsiteResolver
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Application $application
 	 * @return \Zend\Cache\Storage\StorageInterface
 	 */
-	protected function getCache($applicationServices)
+	protected function getCache($application)
 	{
-		$options = array('cacheDir' => $applicationServices->getApplication()->getWorkspace()->cachePath(),
+		$options = array('cacheDir' => $application->getWorkspace()->cachePath(),
 			'namespace' => 'Rbs_Website');
 		$cache = new \Zend\Cache\Storage\Adapter\Filesystem($options);
 		$plugin = new \Zend\Cache\Storage\Plugin\ExceptionHandler(array('throw_exceptions' => false));

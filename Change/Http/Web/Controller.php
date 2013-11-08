@@ -1,14 +1,10 @@
 <?php
 namespace Change\Http\Web;
 
-use Change\Application\ApplicationServices;
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentServices;
 use Change\Http\Request;
 use Change\Http\Result;
-use Change\Http\Web\Event;
 use Change\Presentation\Interfaces\Page;
-use Change\Presentation\PresentationServices;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
@@ -26,13 +22,26 @@ class Controller extends \Change\Http\Controller
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_RESULT, array($this, 'onDefaultResult'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
+	}
+
+	public function onDefaultRegisterServices(\Change\Http\Event $event)
+	{
+		parent::onDefaultRegisterServices($event);
+		if ($event instanceof Event)
+		{
+			$applicationServices = $event->getApplicationServices();
+			$event->getUrlManager()
+				->setDbProvider($applicationServices->getDbProvider())
+				->setTransactionManager($applicationServices->getTransactionManager())
+				->setDocumentManager($applicationServices->getDocumentManager());
+		}
 	}
 
 	/**
@@ -48,24 +57,9 @@ class Controller extends \Change\Http\Controller
 		{
 			$script = null;
 		}
-		$applicationServices = new ApplicationServices($this->getApplication());
-		$event->setApplicationServices($applicationServices);
 
 		$urlManager = new UrlManager($request->getUri(), $script);
-		$urlManager->setApplicationServices($applicationServices);
 		$event->setUrlManager($urlManager);
-
-		$event->setDocumentServices(new DocumentServices($applicationServices));
-		$urlManager->setDocumentServices($event->getDocumentServices());
-
-		$authenticationManager = new \Change\User\AuthenticationManager();
-		$authenticationManager->setDocumentServices($event->getDocumentServices());
-		$event->setAuthenticationManager($authenticationManager);
-
-		$permissionsManager = new \Change\Permissions\PermissionsManager();
-		$permissionsManager->setApplicationServices($applicationServices);
-
-		$event->setPermissionsManager($permissionsManager);
 		return $event;
 	}
 
@@ -77,21 +71,13 @@ class Controller extends \Change\Http\Controller
 		$page = $event->getParam('page');
 		if ($page instanceof Page)
 		{
-			$result = (new \Change\Presentation\Pages\PageManager())->setHttpWebEvent($event)->getPageResult($page);
+			$pageManager = $event->getApplicationServices()->getPageManager();
+			$result = $pageManager->setHttpWebEvent($event)->getPageResult($page);
 			if ($result)
 			{
 				$event->setResult($result);
 			}
 		}
-	}
-
-	/**
-	 * @param \Zend\EventManager\Event $event
-	 */
-	public function onDefaultRegisterServices(\Zend\EventManager\Event $event)
-	{
-		parent::onDefaultRegisterServices($event);
-		$event->setParam('presentationServices', new \Change\Presentation\PresentationServices($event->getParam('applicationServices')));
 	}
 
 	/**
@@ -202,6 +188,7 @@ class Controller extends \Change\Http\Controller
 				return $result;
 			}
 		}
+		return parent::forbidden($event);
 	}
 
 	/**
@@ -254,12 +241,12 @@ class Controller extends \Change\Http\Controller
 
 			if (!($page instanceof Page))
 			{
-				$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()
+				$page = new \Change\Presentation\Themes\DefaultPage($event->getApplicationServices()
 					->getThemeManager(), $functionCode);
 			}
 
 			$event->setParam('page', $page);
-			$this->doSendResult($this->getEventManager(), $event);
+			$this->doSendResult($event);
 			return $event->getResult();
 		}
 		catch (\Exception $e)

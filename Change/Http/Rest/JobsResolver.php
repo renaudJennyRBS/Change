@@ -2,11 +2,11 @@
 namespace Change\Http\Rest;
 
 use Change\Http\Event;
-use Change\Job;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\Rest\Result\Link;
 use Change\Http\Rest\Result\JobResult;
+use Change\Http\Rest\Result\Link;
+use Change\Job;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -28,8 +28,6 @@ class JobsResolver
 	{
 		$this->resolver = $resolver;
 	}
-
-
 
 	/**
 	 * @param Event $event
@@ -113,21 +111,22 @@ class JobsResolver
 	public function runJob(Event $event)
 	{
 		$jobId = $event->getParam('jobId');
-		$jobManager = new Job\JobManager();
-		$jobManager->setApplicationServices($event->getApplicationServices());
-		$jobManager->setDocumentServices($event->getDocumentServices());
-		$job  = $jobManager->getJob($jobId);
+		$jobManager = $event->getApplicationServices()->getJobManager();
+
+		$job = $jobManager->getJob($jobId);
 		if ($job)
 		{
 			if ($job->getStatus() === Job\JobInterface::STATUS_WAITING)
 			{
+				$jobManager->setTransactionManager($event->getApplicationServices()->getTransactionManager());
 				$jobManager->run($job);
 				$this->getJob($event);
 			}
 			else
 			{
 				$errorCode = 999999;
-				$errorMessage = 'Invalid job status "' . $job->getStatus(). '", "' .Job\JobInterface::STATUS_WAITING . '" expected';
+				$errorMessage =
+					'Invalid job status "' . $job->getStatus() . '", "' . Job\JobInterface::STATUS_WAITING . '" expected';
 				$httpStatusCode = HttpResponse::STATUS_CODE_409;
 				$result = new \Change\Http\Rest\Result\ErrorResult($errorCode, $errorMessage, $httpStatusCode);
 				$event->setResult($result);
@@ -138,22 +137,20 @@ class JobsResolver
 	public function deleteJob(Event $event)
 	{
 		$jobId = $event->getParam('jobId');
-		$jobManager = new Job\JobManager();
-		$jobManager->setApplicationServices($event->getApplicationServices());
-		$jobManager->setDocumentServices($event->getDocumentServices());
+		$jobManager = $event->getApplicationServices()->getJobManager();
 		$job = $jobManager->getJob($jobId);
-
 		if ($job)
 		{
 			if ($job->getStatus() === Job\JobInterface::STATUS_SUCCESS || $job->getStatus() === Job\JobInterface::STATUS_FAILED)
 			{
+				$jobManager->setTransactionManager($event->getApplicationServices()->getTransactionManager());
 				$jobManager->deleteJob($job);
 				$job = $jobManager->getJob($jobId);
 			}
 			else
 			{
 				$errorCode = 999999;
-				$errorMessage = 'Invalid job status "' . $job->getStatus(). '", "' .
+				$errorMessage = 'Invalid job status "' . $job->getStatus() . '", "' .
 					Job\JobInterface::STATUS_SUCCESS . '" or "' .
 					Job\JobInterface::STATUS_FAILED . '" expected';
 				$httpStatusCode = HttpResponse::STATUS_CODE_409;
@@ -175,10 +172,8 @@ class JobsResolver
 	{
 		$urlManager = $event->getUrlManager();
 		$jobId = $event->getParam('jobId');
-		$jobManager = new Job\JobManager();
-		$jobManager->setApplicationServices($event->getApplicationServices());
-		$jobManager->setDocumentServices($event->getDocumentServices());
-		$job  = $jobManager->getJob($jobId);
+		$jobManager = $event->getApplicationServices()->getJobManager();
+		$job = $jobManager->getJob($jobId);
 
 		if ($job)
 		{
@@ -197,7 +192,7 @@ class JobsResolver
 
 			if ($job->getStatus() === Job\JobInterface::STATUS_WAITING)
 			{
-				$result->addLink(new Link($urlManager, static::RESOLVER_NAME . '/' . $job->getId(). '/run', 'run'));
+				$result->addLink(new Link($urlManager, static::RESOLVER_NAME . '/' . $job->getId() . '/run', 'run'));
 			}
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$event->setResult($result);
@@ -207,9 +202,7 @@ class JobsResolver
 	public function getJobCollection(Event $event)
 	{
 		$status = $event->getParam('status');
-		$jobManager = new Job\JobManager();
-		$jobManager->setApplicationServices($event->getApplicationServices());
-		$jobManager->setDocumentServices($event->getDocumentServices());
+		$jobManager = $event->getApplicationServices()->getJobManager();
 
 		$count = $jobManager->getCountJobIds($status);
 
@@ -237,7 +230,7 @@ class JobsResolver
 			$ids = $jobManager->getJobIds($status, $result->getOffset(), $result->getLimit());
 			foreach ($ids as $id)
 			{
-				$job  = $jobManager->getJob($id);
+				$job = $jobManager->getJob($id);
 				if ($job)
 				{
 					$row = new JobResult($urlManager);

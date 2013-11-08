@@ -27,7 +27,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/WorkflowManager/Rbs_Generic',
 			'\Rbs\Generic\Events\WorkflowManager\Listeners');
 
-		$configuration->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Generic', '\Rbs\Generic\Events\Admin\Listeners');
+		$configuration->addPersistentEntry('Rbs/Admin/Events/Manager/Rbs_Generic', '\Rbs\Generic\Events\Admin\Listeners');
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Generic',
 			'\Rbs\Generic\Events\BlockManager\Listeners');
 
@@ -49,14 +49,12 @@ class Install extends \Change\Plugins\InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
+		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 	}
 
 	/**

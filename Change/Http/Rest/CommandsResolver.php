@@ -46,24 +46,28 @@ class CommandsResolver
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @return \Zend\EventManager\EventManager
+	 * @return \Change\Events\EventManager
 	 */
 	protected function getCommandsEventManager(\Change\Http\Event $event)
 	{
-		$changeApplication = $event->getApplicationServices()->getApplication();
-		$eventManager = new \Zend\EventManager\EventManager('Commands');
+		$changeApplication = $event->getApplication();
+		$eventManagerFactory = new \Change\Events\EventManagerFactory($changeApplication);
+		foreach ($event->getServices() as $serviceName => $service)
+		{
+			$eventManagerFactory->addSharedService($serviceName, $service);
+		}
+		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
 		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
-		$changeApplication->getSharedEventManager()->registerListenerAggregateClassNames($eventManager, $classNames);
-		$eventManager->setSharedManager($changeApplication->getSharedEventManager());
+		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
 		return $eventManager;
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 * @param \Change\Application $application
 	 * @return array
 	 */
-	protected function getCommandsConfiguration(\Zend\EventManager\EventManager $eventManager, \Change\Application $application)
+	protected function getCommandsConfiguration(\Change\Events\EventManager $eventManager, \Change\Application $application)
 	{
 		$cmdEvent = new \Change\Commands\Events\Event('config', $application, array());
 		$results = $eventManager->trigger($cmdEvent);
@@ -124,7 +128,7 @@ class CommandsResolver
 	public function executeCommand(\Change\Http\Event $event)
 	{
 		$cmd = $event->getParam('command');
-		$application = $event->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 		$eventManager = $this->getCommandsEventManager($event);
 		$commands = $this->getCommandsConfiguration($eventManager, $application);
 		if (isset($commands[$cmd]))
@@ -193,7 +197,7 @@ class CommandsResolver
 
 	public function commandsList(\Change\Http\Event $event)
 	{
-		$application = $event->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 		$eventManager = $this->getCommandsEventManager($event);
 
 		$commands = array();

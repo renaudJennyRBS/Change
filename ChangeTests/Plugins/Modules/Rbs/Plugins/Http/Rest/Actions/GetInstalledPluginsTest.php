@@ -26,9 +26,8 @@ class GetInstalledPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testExecute()
 	{
 		$pm = $this->getApplicationServices()->getPluginManager();
-
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$getInstalledPlugins = new \Rbs\Plugins\Http\Rest\Actions\GetInstalledPlugins();
 		$getInstalledPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());

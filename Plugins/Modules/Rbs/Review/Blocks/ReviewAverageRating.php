@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Review\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -14,7 +13,7 @@ class ReviewAverageRating extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -40,8 +39,7 @@ class ReviewAverageRating extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -49,9 +47,9 @@ class ReviewAverageRating extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$target = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('targetId'));
+		$target = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('targetId'));
 
-		$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Review_Review');
+		$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Review_Review');
 		$dqb->andPredicates($dqb->published(), $dqb->eq('target', $target));
 		$qb = $dqb->dbQueryBuilder();
 		$qb->addColumn($qb->getFragmentBuilder()->alias($dqb->getColumn('rating'), 'rating'));
@@ -106,7 +104,7 @@ class ReviewAverageRating extends Block
 
 	protected function averageRoundHalfUp($ratings)
 	{
-		$round = round((array_sum($ratings) * 5 / 100)/count($ratings), 1);
+		$round = round((array_sum($ratings) * 5 / 100) / count($ratings), 1);
 		$decimal = $round - floor($round);
 		if ($decimal < 0.25)
 		{

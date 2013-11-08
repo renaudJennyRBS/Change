@@ -232,12 +232,8 @@ class Workflow extends \Compilation\Rbs\Workflow\Documents\Workflow implements \
 	 */
 	public function createWorkflowInstance()
 	{
-		$workflowInstanceModel = $this->documentServices->getModelManager()
-			->getModelByName('Rbs_Workflow_WorkflowInstance');
-
 		/* @var $workflowInstance \Rbs\Workflow\Documents\WorkflowInstance */
-		$workflowInstance = $this->documentServices->getDocumentManager()
-				->getNewDocumentInstanceByModel($workflowInstanceModel);
+		$workflowInstance = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_WorkflowInstance');
 		$workflowInstance->setWorkflow($this);
 		return $workflowInstance;
 	}

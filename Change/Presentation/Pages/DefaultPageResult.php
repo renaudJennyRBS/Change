@@ -17,10 +17,11 @@ class DefaultPageResult
 		$page = $event->getPage();
 		$pageManager = $event->getPageManager();
 		$pageTemplate = $page->getPageTemplate();
+		$applicationServices = $event->getApplicationServices();
 
 		$result = $event->getPageResult();
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
-		$pageManager->getPresentationServices()->getThemeManager()->setCurrent($pageTemplate->getTheme());
+		$applicationServices->getThemeManager()->setCurrent($pageTemplate->getTheme());
 
 		$templateLayout = $pageTemplate->getContentLayout();
 
@@ -43,8 +44,7 @@ class DefaultPageResult
 
 		if (count($blocks))
 		{
-			$blockManager = $pageManager->getPresentationServices()->getBlockManager();
-			$blockManager->setDocumentServices($pageManager->getDocumentServices());
+			$blockManager = $applicationServices->getBlockManager();
 
 			$blockInputs = array();
 			foreach ($blocks as $block)
@@ -69,20 +69,20 @@ class DefaultPageResult
 			$result->setBlockResults($blockResults);
 		}
 
-		$application = $pageManager->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 		$cachePath = $application->getWorkspace()->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
 		$cacheTime = max($page->getModificationDate()->getTimestamp(), $pageTemplate->getModificationDate()->getTimestamp());
 
 		if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
 		{
-			$themeManager = $pageManager->getPresentationServices()->getThemeManager();
+			$themeManager = $applicationServices->getThemeManager();
 			$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
 			$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
 			{
 				return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
 			};
 			$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
-			$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $pageLayout, $themeManager, $pageManager->getApplicationServices()));
+			$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices, $application->inDevelopmentMode()));
 
 			$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 
@@ -90,7 +90,7 @@ class DefaultPageResult
 			touch($cachePath, $cacheTime);
 		}
 
-		$templateManager = $pageManager->getPresentationServices()->getTemplateManager();
+		$templateManager = $event->getApplicationServices()->getTemplateManager();
 		$result->setHtml($templateManager->renderTemplateFile($cachePath, array('pageResult' => $result)));
 	}
 }

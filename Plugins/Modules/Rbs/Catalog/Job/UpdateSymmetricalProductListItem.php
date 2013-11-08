@@ -9,11 +9,19 @@ class UpdateSymmetricalProductListItem
 	public function execute(\Change\Job\Event $event)
 	{
 		$job = $event->getJob();
-		$documentServices = $event->getDocumentServices();
-		$documentManager = $documentServices->getDocumentManager();
+		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
 		$list = $documentManager->getDocumentInstance($job->getArgument('listId'));
 		$product = $documentManager->getDocumentInstance($job->getArgument('productId'));
 		$action = $job->getArgument('action');
+
+		/** @var $cs \Rbs\Commerce\CommerceServices */
+		$cs = $event->getServices('commerceServices');
+		if (!($cs instanceof \Rbs\Commerce\CommerceServices))
+		{
+			$event->failed('CommerceServices not set');
+			return;
+		}
 
 		if ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList && $product instanceof \Rbs\Catalog\Documents\Product
 			&& in_array($action, array('add', 'remove')))
@@ -40,10 +48,7 @@ class UpdateSymmetricalProductListItem
 
 			if ($targetList)
 			{
-				$cs = new \Rbs\Commerce\Services\CommerceServices($documentServices->getApplicationServices(), $documentServices);
 				$cm = $cs->getCatalogManager();
-				/* @var $cm \Rbs\Catalog\Services\CatalogManager */
-
 				switch ($action)
 				{
 					case 'add':

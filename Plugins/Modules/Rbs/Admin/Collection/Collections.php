@@ -2,8 +2,7 @@
 namespace Rbs\Admin\Collection;
 
 use Change\Collection\CollectionArray;
-use Change\Documents\DocumentServices;
-use Change\Presentation\PresentationServices;
+
 
 /**
  * @name \Rbs\Admin\Collection\Collections
@@ -11,15 +10,15 @@ use Change\Presentation\PresentationServices;
 class Collections
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
 	public function addAvailablePageFunctions($event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 			$pageId = $event->getParam('pageId');
-			$page = $documentServices->getDocumentManager()->getDocumentInstance($pageId);
+			$page = $applicationServices->getDocumentManager()->getDocumentInstance($pageId);
 
 			if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
 			{
@@ -27,8 +26,7 @@ class Collections
 				$blocks = $page->getContentLayout()->getBlocks();
 				if (count($blocks))
 				{
-					$presentationServices = new PresentationServices($documentServices->getApplicationServices());
-					$blockManager = $presentationServices->getBlockManager();
+					$blockManager = $applicationServices->getBlockManager();
 					foreach ($blocks as $block)
 					{
 						$blockInfo = $blockManager->getBlockInformation($block->getName());
@@ -47,8 +45,7 @@ class Collections
 			}
 			else
 			{
-				$presentationServices = new PresentationServices($documentServices->getApplicationServices());
-				$blockManager = $presentationServices->getBlockManager();
+				$blockManager = $applicationServices->getBlockManager();
 				$parsedFunctions = array();
 				foreach ($blockManager->getBlockNames() as $blockName)
 				{

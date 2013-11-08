@@ -2,7 +2,6 @@
 namespace Rbs\Elasticsearch\Index;
 
 use Change\Documents\Interfaces\Publishable;
-use Change\Documents\Query\Query;
 use Elastica\Document;
 
 /**
@@ -16,6 +15,35 @@ class StoreIndexer extends FullTextIndexer
 	protected $indexableModelNames = null;
 
 	/**
+	 * @var \Rbs\Commerce\CommerceServices
+	 */
+	protected $commerceServices;
+
+	/**
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
+	 * @return $this
+	 */
+	public function setCommerceServices($commerceServices)
+	{
+		$this->commerceServices = $commerceServices;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\CommerceServices
+	 */
+	protected function getCommerceServices()
+	{
+		return $this->commerceServices;
+	}
+
+	protected function setEventContext(Event $event)
+	{
+		parent::setEventContext($event);
+		$this->commerceServices = $event->getServices('commerceServices');
+	}
+
+	/**
 	 * @return string[]
 	 */
 	protected function getIndexableModelNames()
@@ -24,7 +52,7 @@ class StoreIndexer extends FullTextIndexer
 		{
 			$this->indexableModelNames = $indexableModelNames = array();
 
-			$modelManager = $this->getDocumentServices()->getModelManager();
+			$modelManager = $this->getApplicationServices()->getModelManager();
 			$model = $modelManager->getModelByName('Rbs_Catalog_Product');
 			if ($model)
 			{
@@ -89,20 +117,16 @@ class StoreIndexer extends FullTextIndexer
 			if (!in_array($website->getId(), $websiteIds))
 			{
 				$websiteIds[] = $website->getId();
-				$indexManager = $this->getIndexManager();
 				foreach ($this->getIndexesDefinition() as $storeIndex)
 				{
 					if ($storeIndex->getAnalysisLCID() === $LCID && $storeIndex->getWebsiteId() == $website->getId())
 					{
 						if (!$storeIndex->getCommerceServices())
 						{
-							$commerceServices = new \Rbs\Commerce\Services\CommerceServices($indexManager->getApplicationServices(), $indexManager->getDocumentServices());
-							$storeIndex->setCommerceServices($commerceServices);
+							$storeIndex->setCommerceServices($this->getCommerceServices());
 						}
-
 						$elasticaDocument = new Document($product->getId(), array(), $storeIndex->getDefaultTypeName(), $storeIndex->getName());
 						$this->populatePublishableDocument($product, $elasticaDocument, $storeIndex);
-
 						$canonicalSection = $product->getCanonicalSection($website);
 						if ($canonicalSection)
 						{
@@ -122,7 +146,7 @@ class StoreIndexer extends FullTextIndexer
 	{
 		if ($this->indexesDefinition === null)
 		{
-			$query = new Query($this->getDocumentServices(), 'Rbs_Elasticsearch_StoreIndex');
+			$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_StoreIndex');
 			$query->andPredicates($query->activated());
 			$this->indexesDefinition = $query->getDocuments();
 		}

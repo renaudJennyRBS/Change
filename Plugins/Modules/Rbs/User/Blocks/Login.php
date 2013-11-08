@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\User\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -14,7 +13,7 @@ class Login extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -31,10 +30,16 @@ class Login extends Block
 		$request = $event->getHttpRequest();
 
 		$login = $request->getPost('login');
-		if ($login) {$parameters->setParameterValue('login', $login);}
+		if ($login)
+		{
+			$parameters->setParameterValue('login', $login);
+		}
 
 		$password = $request->getPost('password');
-		if ($password) {$parameters->setParameterValue('password', $password);}
+		if ($password)
+		{
+			$parameters->setParameterValue('password', $password);
+		}
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		if ($user->authenticated())
 		{
@@ -46,8 +51,7 @@ class Login extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null

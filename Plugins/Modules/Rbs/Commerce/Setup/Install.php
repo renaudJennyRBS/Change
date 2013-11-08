@@ -21,31 +21,41 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
+		$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Commerce', '\Rbs\Commerce\Events\SharedListeners');
+
 		$configuration->addPersistentEntry('Change/Events/Http/Rest/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Rest\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Http/Web/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Web\Listeners');
-		$configuration->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Commerce', '\Rbs\Commerce\Events\Admin\Listeners');
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Commerce', '\Rbs\Commerce\Events\CollectionManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
-		$configuration->addPersistentEntry('Change/Events/CartManager/Rbs_Commerce', '\Rbs\Commerce\Events\CartManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProfileManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Commerce', '\Rbs\Commerce\Events\JobManager\Listeners');
-		$configuration->addPersistentEntry('Change/Events/CrossSellingManager/Rbs_Commerce', '\Rbs\Commerce\Events\CrossSellingManager\Listeners');
-		$configuration->addPersistentEntry('Change/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
+
+		$configuration->addPersistentEntry('Rbs/Admin/Events/Manager/Rbs_Commerce', '\Rbs\Commerce\Events\Admin\Listeners');
+
+		$configuration->addPersistentEntry('Rbs/Commerce/Events/CartManager/Rbs_Commerce', '\Rbs\Commerce\Events\CartManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Commerce/Events/CrossSellingManager/Rbs_Commerce', '\Rbs\Commerce\Events\CrossSellingManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 	}
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @param \Change\Presentation\PresentationServices $presentationServices
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
+	 * @throws \RuntimeException
+	 */
+	public function executeDbSchema($plugin, $schemaManager)
+	{
+		$schema = new Schema($schemaManager);
+		$schema->generate();
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function executeServices($plugin, $applicationServices, $documentServices, $presentationServices)
+	public function executeServices($plugin, $applicationServices)
 	{
-		$presentationServices->getThemeManager()->installPluginTemplates($plugin);
-		$schema = new Schema($applicationServices->getDbProvider()->getSchemaManager());
-		$schema->generate();
-		$applicationServices->getDbProvider()->closeConnection();
+		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 	}
 
 	/**

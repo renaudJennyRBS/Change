@@ -1,10 +1,9 @@
 <?php
 namespace Rbs\Commerce\Events\Http\Rest;
 
-use Rbs\Commerce\Services\CommerceServices;
+use Change\Http\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Change\Http\Event;
 
 /**
  * @name \Rbs\Commerce\Events\Http\Rest\Listeners
@@ -20,11 +19,8 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			$commerceServices = new CommerceServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
-			$event->setParam('commerceServices', $commerceServices);
-
 			$controller = $event->getTarget();
 			if ($controller instanceof \Change\Http\Rest\Controller)
 			{
@@ -111,7 +107,6 @@ class Listeners implements ListenerAggregateInterface
 				{
 					(new \Rbs\Catalog\Http\Rest\VariantGroup())->getProducts($event);
 				});
-
 			}
 			else if ($relativePath === 'rbs/catalog/productlistitem/delete')
 			{

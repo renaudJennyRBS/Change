@@ -10,6 +10,25 @@ use Change\Stdlib\String;
 class User extends \Compilation\Rbs\User\Documents\User
 {
 	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	private $configuration;
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	protected function getConfiguration()
+	{
+		return $this->configuration;
+	}
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		$this->configuration = $event->getApplication()->getConfiguration();
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getLabel()
@@ -36,7 +55,7 @@ class User extends \Compilation\Rbs\User\Documents\User
 	 */
 	protected function getSaltString()
 	{
-		$cfg = $this->getDocumentServices()->getApplicationServices()->getApplication()->getConfiguration();
+		$cfg = $this->getConfiguration();
 		return $cfg->getEntry('Rbs/User/salt');
 	}
 
@@ -62,8 +81,7 @@ class User extends \Compilation\Rbs\User\Documents\User
 	protected function hashPasswordBcrypt($password)
 	{
 		$options = array();
-		$cfg = $this->getDocumentServices()->getApplicationServices()->getApplication()->getConfiguration();
-		$logging = $this->getDocumentServices()->getApplicationServices()->getLogging();
+		$cfg = $this->getConfiguration();
 		$cost = $cfg->getEntry('Rbs/User/bcrypt/cost');
 		if ($cost)
 		{
@@ -76,20 +94,17 @@ class User extends \Compilation\Rbs\User\Documents\User
 			{
 				$options['salt'] = $saltString;
 			}
-			else
-			{
-				$logging->info('salt is too short for bcrypt - using auto-generated salt instead');
-			}
 		}
 		return password_hash($password, PASSWORD_BCRYPT, $options);
 	}
 
 	/**
-	 * @param $name
-	 * @param $arguments
+	 * @param string $password
+	 * @param string $hashMethod
+	 * @throws \RuntimeException
 	 * @return string
 	 */
-    protected function hashPasswordUsingHashMethod($password, $hashMethod)
+	protected function hashPasswordUsingHashMethod($password, $hashMethod)
 	{
 		if (in_array($hashMethod, hash_algos()))
 		{
@@ -119,6 +134,7 @@ class User extends \Compilation\Rbs\User\Documents\User
 
 	/**
 	 * @param string $password
+	 * @param string $hash
 	 * @return string
 	 */
 	protected function checkPasswordBcrypt($password, $hash)
@@ -170,13 +186,15 @@ class User extends \Compilation\Rbs\User\Documents\User
 		}
 	}
 
-	/**
-	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
-	 */
-	protected function updateRestDocumentResult($documentResult)
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		parent::updateRestDocumentResult($documentResult);
-		$um = $documentResult->getUrlManager();
-		$documentResult->addLink(new Link($um, $documentResult->getBaseUrl() . '/Profiles/', 'profiles'));
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			$documentResult = $restResult;
+			$um = $documentResult->getUrlManager();
+			$documentResult->addLink(new Link($um, $documentResult->getBaseUrl() . '/Profiles/', 'profiles'));
+		}
 	}
 }

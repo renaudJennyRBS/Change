@@ -38,7 +38,7 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 	{
 		/* @var $tag \Rbs\Tag\Documents\Tag */
 		$tag = $event->getDocument();
-		$appServices = $tag->getApplicationServices();
+		$appServices = $event->getApplicationServices();
 
 		$transactionManager = $appServices->getTransactionManager();
 		try
@@ -79,7 +79,7 @@ class Tag extends \Compilation\Rbs\Tag\Documents\Tag
 
 		// TODO Check if "children" property has been modified.
 
-		$appServices = $tag->getApplicationServices();
+		$appServices = $event->getApplicationServices();
 		$transactionManager = $appServices->getTransactionManager();
 		try
 		{

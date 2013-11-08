@@ -4,13 +4,14 @@ namespace Change\Documents\Traits;
 use Change\Documents\Interfaces\Publishable;
 
 /**
+ * @name \Change\Documents\Traits\Publication
+ *
+ * From \Change\Documents\AbstractDocument
  * @method integer getId()
  * @method \Change\Documents\AbstractModel getDocumentModel()
  * @method \Change\Documents\DocumentManager getDocumentManager()
  * @method update()
- *
  * @method \Change\Presentation\Interfaces\Section[] getPublicationSections()
- * @name \Change\Documents\Traits\Publication
  */
 trait Publication
 {

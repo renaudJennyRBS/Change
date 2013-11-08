@@ -24,10 +24,12 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
-	public function setUp()
+	protected function setUp()
 	{
-		//check if Seo folder in Resource path is already created, if not, this test will create one, so delete it after the test.
+		parent::setUp();
 		$this->seoFolderAlreadyExist = is_dir($this->getAssetSeoPath());
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
 	}
 
 	public function tearDown()
@@ -43,6 +45,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			\Change\Stdlib\File::rmdir($this->getAssetSeoPath());
 		}
+		parent::tearDown();
 	}
 
 	public function testExecute()
@@ -57,8 +60,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$urlManager = $website->getUrlManager($lcid);
 		$urlManager->setAbsoluteUrl(true);
 
-		$jm = new \Change\Job\JobManager();
-		$jm->setApplicationServices($this->getApplicationServices());
+		$jm = $this->getApplicationServices()->getJobManager();
 		$job = $jm->createNewJob('Rbs_Seo_GenerateSitemap', [ 'websiteId' => $websiteId, 'LCID' => $lcid ]);
 
 		$jm->run($job);
@@ -126,11 +128,11 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	/**
 	 * @return \Rbs\Website\Documents\Website
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getNewWebsite()
 	{
-		$website = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
+		$website = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		/* @var $website \Rbs\Website\Documents\Website */
 		$website->setLabel('Website');
 		$website->getCurrentLocalization()->setTitle('Website');
@@ -153,11 +155,11 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @param $website \Rbs\Website\Documents\Website
 	 * @return \Rbs\Seo\Documents\DocumentSeo
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getNewDocumentSeo($website)
 	{
-		$documentSeo = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+		$documentSeo = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
 		$documentSeo->setTarget($this->getNewProduct());
 		$documentSeo->setSitemapChangeFrequency('monthly');
@@ -184,11 +186,11 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	/**
 	 * @return \Rbs\Catalog\Documents\Product
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getNewProduct()
 	{
-		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+		$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setLabel('Card');
 		$product->getCurrentLocalization()->setTitle('Card');

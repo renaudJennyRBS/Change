@@ -1,12 +1,11 @@
 <?php
 namespace Rbs\Geo\Presentation;
 
-use Change\Application\ApplicationServices;
 use Rbs\geo\Documents\AddressFields;
 
 /**
-* @name \Rbs\Geo\Presentation\FormDefinition
-*/
+ * @name \Rbs\Geo\Presentation\FormDefinition
+ */
 class FormDefinition
 {
 	/**
@@ -15,73 +14,34 @@ class FormDefinition
 	protected $addressFields;
 
 	/**
-	 * @var ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
 	 * @var \Change\Collection\CollectionManager
 	 */
 	protected $collectionManager;
 
-
 	function __construct(AddressFields $addressFields)
 	{
 		$this->addressFields = $addressFields;
-		$this->documentServices = $addressFields->getDocumentServices();
-		$this->applicationServices = $this->documentServices->getApplicationServices();
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Collection\CollectionManager $collectionManager
 	 * @return $this
 	 */
-	public function setApplicationServices($applicationServices)
+	public function setCollectionManager(\Change\Collection\CollectionManager $collectionManager)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->collectionManager = $collectionManager;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 * @return $this
-	 */
-	public function setDocumentServices($documentServices)
-	{
-		$this->documentServices = $documentServices;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
+	 * @throws \RuntimeException
 	 * @return \Change\Collection\CollectionManager
 	 */
-	public function getCollectionManager()
+	protected function getCollectionManager()
 	{
 		if ($this->collectionManager === null)
 		{
-			$this->collectionManager = new \Change\Collection\CollectionManager();
-			$this->collectionManager->setDocumentServices($this->documentServices);
+			throw new \RuntimeException('Collection manager not set', 999999);
 		}
 		return $this->collectionManager;
 	}

@@ -3,9 +3,7 @@ namespace Change\Presentation\Themes;
 
 use Change\Events\EventsCapableTrait;
 use Change\Presentation\Interfaces\Theme;
-use Change\Presentation\PresentationServices;
-use Zend\EventManager\Event;
-use Zend\EventManager\EventManager;
+use Change\Events\Event;
 
 /**
  * @api
@@ -13,26 +11,13 @@ use Zend\EventManager\EventManager;
  */
 class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait
-	{
-		EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait;
 
 	const DEFAULT_THEME_NAME = 'Rbs_Base';
 	const EVENT_LOADING = 'loading';
 	const EVENT_MAIL_TEMPLATE_LOADING = 'mail.template.loading';
 
 	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';
-
-	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
 
 	/**
 	 * @var Theme
@@ -50,44 +35,49 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	protected $themes = array();
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @var \Change\Configuration\Configuration
 	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
+	protected $configuration;
+
+	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->presentationServices = $presentationServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($presentationServices->getApplicationServices()->getApplication()
-				->getSharedEventManager());
-		}
+		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**
-	 * @return PresentationServices
+	 * @return \Change\Configuration\Configuration
 	 */
-	public function getPresentationServices()
+	protected function getConfiguration()
 	{
-		return $this->presentationServices;
+		return $this->configuration;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Workspace $workspace
+	 * @return $this
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function setWorkspace(\Change\Workspace $workspace)
 	{
-		$this->documentServices = $documentServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
+		$this->workspace = $workspace;
+		return $this;
 	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices|null
+	 * @return \Change\Workspace
 	 */
-	public function getDocumentServices()
+	protected function getWorkspace()
 	{
-		return $this->documentServices;
+		return $this->workspace;
 	}
 
 	/**
@@ -103,20 +93,14 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->presentationServices)
-		{
-			$config = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/ThemeManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/ThemeManager');
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
 	}
 
@@ -126,8 +110,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function dispatchLoading($themeName)
 	{
-		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName,
-			'documentServices' => $this->getDocumentServices()));
+		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName));
 		$callback = function ($result)
 		{
 			return ($result instanceof Theme);
@@ -143,7 +126,10 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($event->getParam('themeName') === static::DEFAULT_THEME_NAME)
 		{
-			$event->setParam('theme', new DefaultTheme($this->getPresentationServices()));
+			$defaultTheme = new DefaultTheme($event->getApplication());
+			$defaultTheme->setPluginManager($event->getApplicationServices()->getPluginManager())
+				->setThemeManager($this);
+			$event->setParam('theme', $defaultTheme);
 		}
 	}
 
@@ -229,7 +215,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginTemplates($plugin, $theme = null)
 	{
-		$workspace = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace();
+		$workspace = $this->getWorkspace();
 		$path = $plugin->getTwigAssetsPath($workspace);
 		if (!$path)
 		{
@@ -251,7 +237,9 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			/* @var $current \RecursiveDirectoryIterator */
 			$current = $it->current();
-			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0 && in_array($current->getExtension(), $includedExtensions))
+			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0
+				&& in_array($current->getExtension(), $includedExtensions)
+			)
 			{
 				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
 				$theme->installTemplateContent($moduleName, $current->getSubPathname(),
@@ -267,7 +255,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginAssets($plugin, $theme = null)
 	{
-		$workspace = $this->getPresentationServices()->getApplicationServices()->getApplication()->getWorkspace();
+		$workspace = $this->getWorkspace();
 		$path = $plugin->getThemeAssetsPath($workspace);
 		if (!is_dir($path))
 		{
@@ -288,10 +276,13 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			/* @var $current \RecursiveDirectoryIterator */
 			$current = $it->current();
-			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0 && !in_array($current->getExtension(), $excludedExtensions))
+			if ($current->isFile() && strpos($current->getBasename(), '.') !== 0
+				&& !in_array($current->getExtension(), $excludedExtensions)
+			)
 			{
 				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
-				$path = $workspace->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()), $moduleName, $current->getSubPathname());
+				$path = $workspace->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()),
+					$moduleName, $current->getSubPathname());
 				\Change\Stdlib\File::mkdir(dirname($path));
 				file_put_contents($path, file_get_contents($current->getPathname()));
 			}
@@ -338,14 +329,15 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getMailTemplate($code, $theme)
 	{
-		$event = new Event(static::EVENT_MAIL_TEMPLATE_LOADING, $this, array('code' => $code, 'theme' => $theme,
-			'documentServices' => $this->getDocumentServices()));
+		$event = new Event(static::EVENT_MAIL_TEMPLATE_LOADING, $this, array('code' => $code, 'theme' => $theme));
 		$callback = function ($result)
 		{
 			return ($result instanceof \Change\Presentation\Interfaces\MailTemplate);
 		};
 		$results = $this->getEventManager()->triggerUntil($event, $callback);
-		return ($results->stopped() && ($results->last() instanceof \Change\Presentation\Interfaces\MailTemplate)) ? $results->last() : $event->getParam('mailTemplate');
+		return ($results->stopped()
+			&& ($results->last() instanceof
+				\Change\Presentation\Interfaces\MailTemplate)) ? $results->last() : $event->getParam('mailTemplate');
 	}
 
 	/**
@@ -400,12 +392,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 								$name = $this->normalizeAssetName($assetUrl);
 								$am->set($name, $asset);
 							}
-						}
-						else
-						{
-							$this->getPresentationServices()->getApplicationServices()->getLogging()->warn(
-								'Assetic Manager is not complete, couldn\'t find the the theme: ' . $themeVendor . '_' . $themeShortName . '. Is it actually installed?'
-							);
 						}
 					}
 				}
@@ -467,21 +453,30 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function getAssetRootPath()
 	{
-		$app = $this->presentationServices->getApplicationServices()->getApplication();
-		$root = $app->getConfiguration()->getEntry('Change/Install/webBaseDirectory');
-		return $app->getWorkspace()->composeAbsolutePath($root, 'Assets');
+		$root = $this->getConfiguration()->getEntry('Change/Install/webBaseDirectory', false);
+		if ($root === false)
+		{
+			throw new \RuntimeException('Change/Install/webBaseDirectory not defined', 999999);
+		}
+		return $this->getWorkspace()->composeAbsolutePath($root, 'Assets');
 	}
 
 	/**
+	 * @throws \RuntimeException
 	 * @return string
 	 */
 	public function getAssetBaseUrl()
 	{
-		$webBaseURLPath = $this->presentationServices->getApplicationServices()->getApplication()->getConfiguration()->getEntry('Change/Install/webBaseURLPath');
+		$webBaseURLPath = $this->getConfiguration()->getEntry('Change/Install/webBaseURLPath', false);
+		if ($webBaseURLPath === false)
+		{
+			throw new \RuntimeException('Change/Install/webBaseURLPath not defined', 999999);
+		}
 		return $webBaseURLPath . '/Assets/';
 	}
 }
