@@ -388,8 +388,8 @@
 		$rootScope.$on('OAuth:AuthenticationSuccess', function () {
 			console.log("User:AuthenticationSuccess");
 			User.load().then(function () {
+				console.log(User.get(), $location.search()['route']);
 				$location.url($location.search()['route']);
-
 			});
 		});
 
