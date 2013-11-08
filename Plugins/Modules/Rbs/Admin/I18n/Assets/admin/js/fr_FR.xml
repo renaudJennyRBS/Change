@@ -109,4 +109,11 @@
 	<key id="confirm-update-correction">Mettre à jour la correction ?</key>
 	<key id="confirm-update-correction-message" format="html"><![CDATA[Une <strong>correction</strong> est en cours pour ce document. L'enregistrement mettra à jour la correction et le document ne sera modifié qu'après application de la correction.]]></key>
 
+	<key id="time-interval-years">années</key>
+	<key id="time-interval-months">mois</key>
+	<key id="time-interval-weeks">semaines</key>
+	<key id="time-interval-days">jours</key>
+	<key id="time-interval-hours">heures</key>
+	<key id="time-interval-minutes">minutes</key>
+	<key id="time-interval-seconds">secondes</key>
 </i18n>

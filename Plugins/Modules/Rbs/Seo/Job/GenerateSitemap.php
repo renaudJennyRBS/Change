@@ -2,6 +2,7 @@
 namespace Rbs\Seo\Job;
 
 /**
+ * @see http://www.sitemaps.org/protocol.html
  * @name \Rbs\Seo\Job\GenerateSitemap
  */
 class GenerateSitemap
@@ -13,7 +14,8 @@ class GenerateSitemap
 		$website = $applicationServices->getDocumentManager()->getDocumentInstance($event->getJob()->getArgument('websiteId'));
 
 		/* @var $website \Rbs\Website\Documents\Website */
-		$lcid = $event->getJob()->getArgument('LCID');
+		$LCID = $event->getJob()->getArgument('LCID');
+		$randomKey = $event->getJob()->getArgument('randomKey');
 		$application = $event->getApplication();
 
 		//check if Seo directory already exist, if not, create it.
@@ -22,13 +24,13 @@ class GenerateSitemap
 			\Change\Stdlib\File::mkdir($this->getRbsSeoAssetFilePath($application));
 		}
 
-		$urlManager = $website->getUrlManager($lcid);
+		$urlManager = $website->getUrlManager($LCID);
 		$urlManager->setAbsoluteUrl(true);
 
 		//TODO: work but find a better way
 		//Create a special UrlManager to manage Assets URL.
 		//Useful for the url path to robots.txt, the sitemap Index and sitemaps.
-		$assetUrlManager = $website->getUrlManager($lcid);
+		$assetUrlManager = $website->getUrlManager($LCID);
 		$assetUrlManager->setAbsoluteUrl(true);
 
 		$resourceBaseUrl = $application->getConfiguration()->getEntry('Change/Install/webBaseURLPath') . '/Assets';
@@ -36,94 +38,137 @@ class GenerateSitemap
 
 		$sitemapIndex = [];
 
-		$model = $applicationServices->getModelManager()->getModelByName('Rbs_Seo_DocumentSeo');
-		$dqb = $applicationServices->getDocumentManager()->getNewQuery($model);
-		$dqb->addOrder('id');
-		$qb = $dqb->dbQueryBuilder();
-		$qb->addColumn($qb->getFragmentBuilder()->getDocumentColumn('id'));
-		$query = $qb->query();
-		$seoDocumentIds = $query->getResults($query->getRowsConverter()->addIntCol('document_id'));
-		//create a sitemap for each 10000 urls
-		$loop = 1;
+		$modelNames = $applicationServices->getModelManager()->getModelsNames();
 
-		foreach(array_chunk($seoDocumentIds, 10000) as $seoDocumentIdsChunk)
+		foreach ($modelNames as $modelName)
 		{
-			$xml = new \DOMDocument('1.0', 'UTF-8');
-			$xml->formatOutput = true;
-			$urlset = $xml->createElement('urlset');
-			$urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-			$xml->appendChild($urlset);
+			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Seo_DocumentSeo');
+			$qb = $dqb->dbQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->addColumn($fb->column('document_id', $dqb->getTableAliasName()));
+			$qb->innerJoin($fb->getDocumentIndexTable(),
+				$fb->eq($fb->column('document_id', $fb->getDocumentIndexTable()),$fb->column('target', $dqb->getTableAliasName())));
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('document_model', $fb->getDocumentIndexTable()), $fb->parameter('modelName'))
+			));
+			$sq = $qb->query();
 
-			foreach ($seoDocumentIdsChunk as $seoDocumentId)
+			$sq->bindParameter('modelName', $modelName);
+
+			$seoDocumentIds = $sq->getResults($sq->getRowsConverter()->addIntCol('document_id'));
+
+			//create a sitemap for each 10000 urls
+			$loop = 1;
+
+			foreach(array_chunk($seoDocumentIds, 10000) as $seoDocumentIdsChunk)
 			{
-				$seo = $applicationServices->getDocumentManager()->getDocumentInstance($seoDocumentId);
-				/* @var $seo \Rbs\Seo\Documents\DocumentSeo */
-				$sitemapInfo = $seo->getSitemapGenerateForWebsites();
-				if (array_key_exists($website->getId(), $sitemapInfo) && isset($sitemapInfo[$website->getId()]['generate']) &&
-					$sitemapInfo[$website->getId()]['generate'])
+				$xml = new \DOMDocument('1.0', 'UTF-8');
+				$xml->formatOutput = true;
+				$urlset = $xml->createElement('urlset');
+				$urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+				$xml->appendChild($urlset);
+
+				foreach ($seoDocumentIdsChunk as $seoDocumentId)
 				{
-					$target = $seo->getTarget();
-					/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable */
-
-					$url = $xml->createElement('url');
-
-					$documentUrl = $urlManager->getCanonicalByDocument($target, $website);
-					//800 is the maximum number of characters composing an url because the norm fixes a file max size to 10MB.
-					//And with 10000 urls of 800 characters, the file size is approximately 10MB
-					if (strlen($documentUrl) > 800)
+					$seo = $applicationServices->getDocumentManager()->getDocumentInstance($seoDocumentId);
+					/* @var $seo \Rbs\Seo\Documents\DocumentSeo */
+					$sitemapInfo = $seo->getSitemapGenerateForWebsites();
+					if (array_key_exists($website->getId(), $sitemapInfo) && isset($sitemapInfo[$website->getId()]['generate']) &&
+						$sitemapInfo[$website->getId()]['generate'])
 					{
-						$documentUrl = $urlManager->getByPathInfoForWebsite($website, $lcid, $urlManager->getDefaultDocumentPathInfo($target, $website));
+						$target = $seo->getTarget();
+						/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable */
+
+						$url = $xml->createElement('url');
+
+						$documentUrl = $urlManager->getCanonicalByDocument($target, $website);
+						//800 is the maximum number of characters composing an url because the norm fixes a file max size to 10MB.
+						//And with 10000 urls of 800 characters, the file size is approximately 10MB
+						if (strlen($documentUrl) > 800)
+						{
+							$documentUrl = $urlManager->getByPathInfoForWebsite($website, $LCID, $urlManager->getDefaultDocumentPathInfo($target, $website));
+						}
+
+						$loc = $xml->createElement('loc', $documentUrl);
+						$url->appendChild($loc);
+
+						$targetModificationDate = $target->getDocumentModel()->getProperty('modificationDate')->getValue($target);
+						/* @var $targetModificationDate \Datetime */
+						$lastmod = $xml->createElement('lastmod', $targetModificationDate->format(\Datetime::W3C));
+						$url->appendChild($lastmod);
+
+						$changefreq = $xml->createElement('changefreq', $seo->getSitemapChangeFrequency());
+						$url->appendChild($changefreq);
+
+						$priority = $xml->createElement('priority', $seo->getSitemapPriority());
+						$url->appendChild($priority);
+
+						$urlset->appendChild($url);
 					}
-
-					$loc = $xml->createElement('loc', $documentUrl);
-					$url->appendChild($loc);
-
-					$targetModificationDate = $target->getDocumentModel()->getProperty('modificationDate')->getValue($target);
-					/* @var $targetModificationDate \Datetime */
-					$lastmod = $xml->createElement('lastmod', $targetModificationDate->format(\Datetime::W3C));
-					$url->appendChild($lastmod);
-
-					$changefreq = $xml->createElement('changefreq', $seo->getSitemapChangeFrequency());
-					$url->appendChild($changefreq);
-
-					$priority = $xml->createElement('priority', $seo->getSitemapPriority());
-					$url->appendChild($priority);
-
-					$urlset->appendChild($url);
 				}
+
+				$filename = 'sitemap.' . $website->getId() . '.' . $LCID . '.' . $modelName . '.' . $loop . '.' . $randomKey . '.xml';
+				$path = $this->getRbsSeoAssetFilePath($application, $filename);
+				$xml->save($path);
+
+				$sitemapIndex[] = [
+					'loc' => $assetUrlManager->getByPathInfo($filename)->toString(),
+					'lastmod' => (new \DateTime())->format(\DateTime::W3C)
+				];
+
+				$loop++;
 			}
-
-			$filename = 'sitemap.' . $website->getId() . '.' . $lcid . '.' . $loop . '.xml';
-			$path = $this->getRbsSeoAssetFilePath($application, $filename);
-			$xml->save($path);
-
-			$sitemapIndex[] = [
-				'loc' => $assetUrlManager->getByPathInfo($filename),
-				'lastmod' => (new \DateTime())->format(\DateTime::W3C)
-			];
-
-			$loop++;
 		}
 
 		$application = $event->getApplication();
 
 		//create the sitemap index with all sitemaps
-		$sitemapIndexFilename = $this->generateSitemapIndex($application, $sitemapIndex, $website->getId(), $lcid);
+		$sitemapIndexFilename = $this->generateSitemapIndex($application, $sitemapIndex, $website->getId(), $LCID, $randomKey);
 
 		//set robots.txt
-		$this->generateRobotsTxt($application, $assetUrlManager, $website, $sitemapIndexFilename);
+		//TODO: generate a robots.txt? RBSChange/evolutions#33
+		//$this->generateRobotsTxt($application, $assetUrlManager, $website, $sitemapIndexFilename);
 
-		$event->success();
+		$jobSitemap = null;
+		//update website document to set url for sitemap
+		$sitemaps = [];
+		foreach ($website->getSitemaps() as $sitemap)
+		{
+			if ($sitemap['LCID'] === $LCID)
+			{
+				//keep the sitemap for this job for future usage
+				$jobSitemap = $sitemap;
+				$sitemap['url'] = $assetUrlManager->getByPathInfo($sitemapIndexFilename)->toString();
+			}
+			$sitemaps[] = $sitemap;
+		}
+		$website->setSitemaps($sitemaps);
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$website->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		//reschedule the job with time interval
+		$reportDate = (new \DateTime())->add(new \DateInterval($jobSitemap['timeInterval']));
+		$event->reported($reportDate);
 	}
 
 	/**
 	 * @param \Change\Application $application
 	 * @param array $sitemapIndex
 	 * @param integer $websiteId
-	 * @param string $lcid
+	 * @param string $LCID
+	 * @param string $randomKey
 	 * @return string
 	 */
-	protected function generateSitemapIndex($application, $sitemapIndex, $websiteId, $lcid)
+	protected function generateSitemapIndex($application, $sitemapIndex, $websiteId, $LCID, $randomKey)
 	{
 		$xml = new \DOMDocument('1.0', 'UTF-8');
 		$xml->formatOutput = true;
@@ -142,7 +187,7 @@ class GenerateSitemap
 			$sitemapindex->appendChild($sitemap);
 		}
 
-		$filename = 'sitemap_index.' . $websiteId . '.' . $lcid . '.xml';
+		$filename = 'sitemap_index.' . $websiteId . '.' . $LCID . '.' . $randomKey . '.xml';
 		$path = $this->getRbsSeoAssetFilePath($application, $filename);
 		$xml->save($path);
 

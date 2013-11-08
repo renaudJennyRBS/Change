@@ -7,7 +7,7 @@
 
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
-	__change.createEditorsForLocalizedModel('Rbs_Website_Website');
+	__change.createEditorForModelTranslation('Rbs_Website_Website');
 	__change.createEditorForModelTranslation('Rbs_Website_Topic');
 
 

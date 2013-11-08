@@ -41,6 +41,7 @@
 				 */
 				this.init = function (modelName)
 				{
+					$scope.document = {};
 					if ($scope.editMode === 'translate') {
 						translation = true;
 					}

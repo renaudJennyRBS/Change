@@ -55,18 +55,44 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$website = $this->getNewWebsite();
 		$websiteId = $website->getId();
-		$lcid = $website->getCurrentLCID();
+		$LCID = $website->getCurrentLCID();
 		$documentSeo = $this->getNewDocumentSeo($website);
-		$urlManager = $website->getUrlManager($lcid);
+		$urlManager = $website->getUrlManager($LCID);
 		$urlManager->setAbsoluteUrl(true);
 
+		//we need to configure website to generate sitemap, that will create his own job, but that doesn't matter (we don't run it)
+		$website->setSitemapGeneration(true);
+		$website->setSitemaps([ ['LCID' => $website->getCurrentLCID(), 'timeInterval' => 'P0Y0M0W1DT0H0M0S'] ]);
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$website->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
 		$jm = $this->getApplicationServices()->getJobManager();
-		$job = $jm->createNewJob('Rbs_Seo_GenerateSitemap', [ 'websiteId' => $websiteId, 'LCID' => $lcid ]);
+		$randomKey = \Change\Stdlib\String::random();
+		$job = $jm->createNewJob('Rbs_Seo_GenerateSitemap', [
+			'websiteId' => $websiteId,
+			'LCID' => $LCID,
+			'timeInterval' => 'P0Y0M0W1DT0H0M0S',
+			'randomKey' => $randomKey
+		]);
 
 		$jm->run($job);
-		$this->assertEquals('success', $job->getStatus());
+		$this->assertEquals('waiting', $job->getStatus());
+		//website has been updated, so we reload it
+		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Website');
+		$website = $dqb->getFirstDocument();
+		/* @var $website \Rbs\Website\Documents\Website */
 
-		//robots.txt part
+		//robots.txt part TODO: see RBSChange/evolutions#33
+		/*
 		$robotsTxtFilePath = $this->getAssetSeoPath('robots.' . $websiteId . '.txt');
 		$this->assertFileExists($robotsTxtFilePath);
 		$this->generatedFilePaths['robotsTxt'] = $robotsTxtFilePath;
@@ -74,10 +100,23 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotEmpty($robotsTxt);
 		$this->assertRegExp('/Sitemap: *./', $robotsTxt);
 		$sitemapIndexUrl = explode(' ', $robotsTxt)[1];
+		*/
+
+		//find sitemap index URL in website sitemaps info
+		$sitemapIndexUrl = null;
+
+		foreach ($website->getSitemaps() as $sitemap)
+		{
+			if ($sitemap['LCID'] === $website->getCurrentLCID())
+			{
+				$sitemapIndexUrl = isset($sitemap['url']) ? $sitemap['url'] : null;
+			}
+		}
+		$this->assertNotNull($sitemapIndexUrl, 'sitemap index url cannot be null, this value has to be set on website sitemaps info');
 
 		//sitemapIndex part
 		$sitemapIndexFilenameInUrl = substr(strrchr($sitemapIndexUrl, '/'), 1);
-		$this->assertEquals('sitemap_index.' . $websiteId . '.' . $lcid . '.xml', $sitemapIndexFilenameInUrl);
+		$this->assertEquals('sitemap_index.' . $websiteId . '.' . $LCID . '.' . $randomKey . '.xml', $sitemapIndexFilenameInUrl);
 		$sitemapIndexPath = $this->getAssetSeoPath($sitemapIndexFilenameInUrl);
 		$this->assertFileExists($sitemapIndexPath);
 		$this->generatedFilePaths['sitemapIndex'] = $sitemapIndexPath;
@@ -102,7 +141,8 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//sitemap part
 		$sitemapFilenameInUrl = substr(strrchr($locUrl, '/'), 1);
-		$this->assertEquals('sitemap.' . $websiteId . '.' . $lcid . '.1.xml', $sitemapFilenameInUrl);
+		$this->assertEquals('sitemap.' . $websiteId . '.' . $LCID . '.Rbs_Catalog_Product' . '.1.' . $randomKey . '.xml',
+			$sitemapFilenameInUrl);
 		$sitemapPath = $this->getAssetSeoPath($sitemapFilenameInUrl);
 		$this->assertFileExists($sitemapPath);
 		$this->generatedFilePaths['sitemap'] = $sitemapPath;

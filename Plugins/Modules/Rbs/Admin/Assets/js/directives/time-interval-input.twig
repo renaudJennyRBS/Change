@@ -1,31 +1,9 @@
-<label class="control-label col-md-3">(= label =)</label>
-<div class="col-md-9">
-	<div class="input-group" ng-if="show.years">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.years', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.years" />
-	</div>
-	<div class="input-group" ng-if="show.months">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.months', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.months" />
-	</div>
-	<div class="input-group" ng-if="show.weeks">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.weeks', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.weeks" />
-	</div>
-	<div class="input-group" ng-if="show.days">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.days', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.days" />
-	</div>
-	<div class="input-group" ng-if="show.hours">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.hours', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.hours" />
-	</div>
-	<div class="input-group" ng-if="show.minutes">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.minutes', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.minutes" />
-	</div>
-	<div class="input-group" ng-if="show.seconds">
-		<span class="input-group-addon">{{ i18n('m.rbs.admin.timeinterval.seconds', ['ucf']) }}</span>
-		<input class="form-control" type="number" min="0" data-ng-model="durations.seconds" />
-	</div>
+<div class="input-group">
+	<input class="form-control" type="number" min="0" ng-model="durationInterval" ng-disabled="disable"/>
+	<span class="input-group-addon contains-input">
+		<select class="form-control" ng-model="durationType"
+			ng-options="key as value for (key, value) in durations" ng-disabled="disable">
+			<option value="">{{ i18n('m.rbs.admin.timeinterval.choose-type', ['ucf']) }}</option>
+		</select>
+	</span>
 </div>

@@ -8,4 +8,13 @@
 	<key id="indexpage">page d'accueil</key>
 	<key id="indexpage-help">La page d'accueil se sélectionne depuis l'écran des fonctions du site.</key>
 
+	<key id="sitemap">sitemap</key>
+	<key id="sitemapgeneration">génération du sitemap</key>
+	<key id="sitemap-time-interval">fréquence de générations</key>
+	<key id="sitemap-url">URL</key>
+	<key id="sitemap-lang">langue</key>
+	<key id="notify-url-creation">me notifier de la création</key>
+	<key id="sitemap-url-pending-creation">en cours de création</key>
+	<key id="sitemaps-url">URL des sitemaps</key>
+	<key id="notification-sitemap-url-creation">l'URL du sitemap du website "{website}" pour la locale "{LCID}" a été générée</key>
 </i18n>
