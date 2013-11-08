@@ -21,28 +21,27 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	const TYPE_PROPERTY = 'Property';
 
 	/**
-	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 * @param \Change\Documents\Events\Event $event
 	 */
-	protected function updateRestDocumentResult($documentResult)
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		parent::updateRestDocumentResult($documentResult);
-		$documentResult->setProperty('editorDefinition',
-			(new AttributeEngine($this->getDocumentServices()))->buildEditorDefinition($this));
-	}
-
-	/**
-	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
-	 * @param $extraColumn
-	 */
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
-	{
-		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		if (in_array('valueTypeFormatted', $extraColumn))
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			/* @var $attribute Attribute */
-			$fv = $this->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute.type-'
-				. strtolower($this->getValueType()), array('ucf'));
-			$documentLink->setProperty('valueTypeFormatted', $fv);
+			$restResult->setProperty('editorDefinition',
+				(new AttributeEngine($event->getApplicationServices()))->buildEditorDefinition($this));
+		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$extraColumn = $event->getParam('extraColumn');
+			if (in_array('valueTypeFormatted', $extraColumn))
+			{
+				/* @var $attribute Attribute */
+				$fv = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute.type-'
+					. strtolower($this->getValueType()), array('ucf'));
+				$restResult->setProperty('valueTypeFormatted', $fv);
+			}
 		}
 	}
 
@@ -126,7 +125,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 				$propertyName = $this->getProductProperty();
 			}
 
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
+			$model = $this->getDocumentManager()->getModelManager()->getModelByName($modelName);
 			if ($model)
 			{
 				return $model->getProperty($propertyName);

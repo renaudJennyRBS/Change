@@ -1,9 +1,8 @@
 <?php
 namespace Rbs\Commerce\Http\Web;
 
-use Change\Documents\Query\Query;
 use Change\Http\Web\Event;
-use Rbs\Commerce\Services\CommerceServices;
+use Rbs\Commerce\CommerceServices;
 
 /**
  * @name \Rbs\Commerce\Http\Web\Loader
@@ -11,35 +10,34 @@ use Rbs\Commerce\Services\CommerceServices;
 class Loader
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onRegisterServices(\Zend\EventManager\Event $event)
+	public function onRegisterServices(\Change\Events\Event $event)
 	{
-		$commerceServices = new CommerceServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
-		$event->setParam('commerceServices', $commerceServices);
-
-		/* @var $presentationServices \Change\Presentation\PresentationServices */
-		$presentationServices = $event->getParam('presentationServices');
-
-		if ($presentationServices)
+		$eventManagerFactory = $event->getParam('eventManagerFactory');
+		if ($eventManagerFactory instanceof \Change\Events\EventManagerFactory)
 		{
-			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
-			$presentationServices->getTemplateManager()->addExtension($extension);
-		}
+			$commerceServices = new CommerceServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
+			$eventManagerFactory->addSharedService('commerceServices', $commerceServices);
 
-		$commerceServices->getEventManager()->attach('load', array($this, 'onLoadCommerceServices'), 5);
-		$commerceServices->getEventManager()->attach('save',array($this, 'onSaveCommerceServices'), 5);
+			$applicationServices = $event->getApplicationServices();
+			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
+			$applicationServices->getTemplateManager()->addExtension($extension);
+
+			$commerceServices->getContext()->getEventManager()->attach('load', array($this, 'onLoadContext'), 5);
+			$commerceServices->getContext()->getEventManager()->attach('save', array($this, 'onSaveContext'), 5);
+		}
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onLoadCommerceServices(\Zend\EventManager\Event $event)
+	public function onLoadContext(\Change\Events\Event $event)
 	{
 		/* @var $commerceServices CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
-		$documentServices = $commerceServices->getDocumentServices();
-		$dm = $documentServices->getDocumentManager();
+		$commerceServices = $event->getServices('commerceServices');
+		$applicationServices = $event->getApplicationServices();
+		$dm = $applicationServices->getDocumentManager();
 
 		$session = new \Zend\Session\Container('Rbs_Commerce');
 
@@ -58,7 +56,7 @@ class Loader
 			$session['zone'] = null;
 			$session['billingAreaId'] = 0;
 
-			$query = new Query($documentServices, 'Rbs_Store_WebStore');
+			$query = $dm->getNewQuery('Rbs_Store_WebStore');
 			$webStores = $query->getDocuments(0, 2);
 			if ($webStores->count() == 1)
 			{
@@ -85,56 +83,57 @@ class Loader
 				}
 			}
 		}
+		$context = $commerceServices->getContext();
 		if ($session['webStoreId'])
 		{
-			$commerceServices->setWebStore($dm->getDocumentInstance($session['webStoreId']));
+			$context->setWebStore($dm->getDocumentInstance($session['webStoreId']));
 		}
 		if ($session['billingAreaId'])
 		{
-			$commerceServices->setBillingArea($dm->getDocumentInstance($session['billingAreaId']));
+			$context->setBillingArea($dm->getDocumentInstance($session['billingAreaId']));
 		}
-		$commerceServices->setZone($session['zone']);
+		$context->setZone($session['zone']);
 
-		$commerceServices->setCartIdentifier(isset($session['cartIdentifier']) ? $session['cartIdentifier']: null);
+		$context->setCartIdentifier(isset($session['cartIdentifier']) ? $session['cartIdentifier'] : null);
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onSaveCommerceServices(\Zend\EventManager\Event $event)
+	public function onSaveContext(\Change\Events\Event $event)
 	{
 		/* @var $commerceServices CommerceServices */
-		$commerceServices = $event->getParam('commerceServices');
+		$commerceServices = $event->getServices('commerceServices');
 		$session = new \Zend\Session\Container('Rbs_Commerce');
 
-		$webStore = $commerceServices->getWebStore();
+		$context = $commerceServices->getContext();
+
+		$webStore = $context->getWebStore();
 		$session['webStoreId'] = ($webStore instanceof \Rbs\Store\Documents\WebStore) ? $webStore->getId() : false;
 
-		$billingArea = $commerceServices->getBillingArea();
+		$billingArea = $context->getBillingArea();
 		$session['billingAreaId'] = ($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea->getId() : 0;
-
-		$session['zone'] = $commerceServices->getZone();
-
-		$session['cartIdentifier'] = $commerceServices->getCartIdentifier();
+		$session['zone'] = $context->getZone();
+		$session['cartIdentifier'] = $context->getCartIdentifier();
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onLoadProfile(\Zend\EventManager\Event $event)
+	public function onLoadProfile(\Change\Events\Event $event)
 	{
 		if ($event->getParam('profileName') === 'Rbs_Commerce')
 		{
-			$documentServices = $event->getParam('documentServices');
+			$applicationServices = $event->getApplicationServices();
 			$profile = new \Rbs\Commerce\Std\Profile();
 			$user = $event->getParam('user');
 
-			if ($documentServices instanceof \Change\Documents\DocumentServices && $user instanceof \Change\User\UserInterface)
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
 			{
-				$docUser = $documentServices->getDocumentManager()->getDocumentInstance($user->getId());
+				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
 				if ($docUser instanceof \Rbs\User\Documents\User)
 				{
-					$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Commerce_Profile');
+					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Commerce_Profile');
 					$query->andPredicates($query->eq('user', $docUser));
 					$documentProfile = $query->getFirstDocument();
 					if ($documentProfile instanceof \Rbs\Commerce\Documents\Profile)
@@ -152,35 +151,34 @@ class Loader
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @throws \Exception
 	 */
-	public function onSaveProfile(\Zend\EventManager\Event $event)
+	public function onSaveProfile(\Change\Events\Event $event)
 	{
 		$profile = $event->getParam('profile');
 		if ($profile instanceof \Rbs\Commerce\Std\Profile)
 		{
 			$user = $event->getParam('user');
-			/* @var $documentServices \Change\Documents\DocumentServices */
-			$documentServices = $event->getParam('documentServices');
+			$applicationServices = $event->getApplicationServices();
 			if ($user instanceof \Change\User\UserInterface)
 			{
-				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();
-					$documentManager = $documentServices->getDocumentManager();
+					$documentManager = $applicationServices->getDocumentManager();
 					$docUser = $documentManager->getDocumentInstance($user->getId());
 					if ($docUser instanceof \Rbs\User\Documents\User)
 					{
-						$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Commerce_Profile');
+						$query = $documentManager->getNewQuery('Rbs_Commerce_Profile');
 						$query->andPredicates($query->eq('user', $docUser));
 
 						/* @var $documentProfile \Rbs\Commerce\Documents\Profile */
 						$documentProfile = $query->getFirstDocument();
 						if ($documentProfile === null)
 						{
-							$documentProfile = $documentServices->getDocumentManager()
+							$documentProfile = $applicationServices->getDocumentManager()
 								->getNewDocumentInstanceByModelName('Rbs_Commerce_Profile');
 							$documentProfile->setUser($docUser);
 						}
@@ -189,10 +187,12 @@ class Loader
 						$documentProfile->setLastCartIdentifier($profile->getLastCartIdentifier());
 
 						$webStore = $documentManager->getDocumentInstance($profile->getDefaultWebStoreId());
-						$documentProfile->setDefaultWebStore(($webStore instanceof \Rbs\Store\Documents\WebStore) ? $webStore : null);
+						$documentProfile->setDefaultWebStore(($webStore instanceof
+							\Rbs\Store\Documents\WebStore) ? $webStore : null);
 
 						$billingArea = $documentManager->getDocumentInstance($profile->getDefaultBillingAreaId());
-						$documentProfile->setDefaultBillingArea(($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea : null);
+						$documentProfile->setDefaultBillingArea(($billingArea instanceof
+							\Rbs\Price\Documents\BillingArea) ? $billingArea : null);
 
 						$address = $documentManager->getDocumentInstance($profile->getDefaultAddressId());
 						$documentProfile->setDefaultAddress(($address instanceof \Rbs\Geo\Documents\Address) ? $address : null);
@@ -210,9 +210,9 @@ class Loader
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onProfiles(\Zend\EventManager\Event $event)
+	public function onProfiles(\Change\Events\Event $event)
 	{
 		$profiles = $event->getParam('profiles', []);
 		$profiles = ['Rbs_Commerce'] + $profiles;
@@ -231,10 +231,8 @@ class Loader
 			$pm = null;
 			if (!isset($session['profile']))
 			{
-				$pm = new \Change\User\ProfileManager();
-				$pm->setDocumentServices($event->getDocumentServices());
+				$pm = $event->getApplicationServices()->getProfileManager();
 				$session['profile'] = $pm->loadProfile($user, 'Rbs_Commerce');
-
 			}
 
 			$profile = $session['profile'];
@@ -244,59 +242,70 @@ class Loader
 
 				/* @var $commerceServices CommerceServices */
 				$commerceServices = $event->getServices('commerceServices');
-				if ($commerceServices->getWebStore() && !$profile->getDefaultWebStoreId())
+				$context = $commerceServices->getContext();
+				if ($context->getWebStore() && !$profile->getDefaultWebStoreId())
 				{
-					$profile->setDefaultWebStoreId($commerceServices->getWebStore()->getId());
+					$profile->setDefaultWebStoreId($context->getWebStore()->getId());
 					$saveProfile = true;
 				}
 
-				if ($commerceServices->getBillingArea() && !$profile->getDefaultBillingAreaId())
+				if ($context->getBillingArea() && !$profile->getDefaultBillingAreaId())
 				{
-					$profile->setDefaultBillingAreaId($commerceServices->getBillingArea()->getId());
-					$profile->setDefaultZone($commerceServices->getZone());
+					$profile->setDefaultBillingAreaId($context->getBillingArea()->getId());
+					$profile->setDefaultZone($context->getZone());
 					$saveProfile = true;
 				}
 
-				if ($commerceServices->getCartIdentifier())
+				if ($context->getCartIdentifier())
 				{
-					if ($profile->getLastCartIdentifier() !== $commerceServices->getCartIdentifier())
+					if ($profile->getLastCartIdentifier() !== $context->getCartIdentifier())
 					{
 						if ($profile->getLastCartIdentifier())
 						{
-							$currentCart = $commerceServices->getCartManager()->getCartByIdentifier($commerceServices->getCartIdentifier());
-							$lastCart = $commerceServices->getCartManager()->getCartByIdentifier($profile->getLastCartIdentifier());
+							$currentCart = $commerceServices->getCartManager()
+								->getCartByIdentifier($context->getCartIdentifier());
+							$lastCart = $commerceServices->getCartManager()
+								->getCartByIdentifier($profile->getLastCartIdentifier());
 							if ($lastCart && $currentCart)
 							{
 								$currentCart = $commerceServices->getCartManager()->mergeCart($currentCart, $lastCart);
 								$commerceServices->getCartManager()->saveCart($currentCart);
-								if ($commerceServices->getCartIdentifier() != $currentCart->getIdentifier())
+								if ($context->getCartIdentifier() != $currentCart->getIdentifier())
 								{
-									$commerceServices->setCartIdentifier($currentCart->getIdentifier());
-									$commerceServices->save();
+									$context->setCartIdentifier($currentCart->getIdentifier());
+									$context->save();
 								}
 							}
 						}
-						$profile->setLastCartIdentifier($commerceServices->getCartIdentifier());
+						$profile->setLastCartIdentifier($context->getCartIdentifier());
 						$saveProfile = true;
 					}
 				}
 				elseif ($profile->getLastCartIdentifier())
 				{
-					$commerceServices->setCartIdentifier($profile->getLastCartIdentifier());
-					if ($profile->getDefaultBillingAreaId() && !$commerceServices->getBillingArea())
+					$context->setCartIdentifier($profile->getLastCartIdentifier());
+					if ($profile->getDefaultBillingAreaId() && !$context->getBillingArea())
 					{
-						$commerceServices->setBillingArea($event->getDocumentServices()->getDocumentManager()->getDocumentInstance($profile->getDefaultBillingAreaId()));
-						$commerceServices->setZone($profile->getDefaultZone());
+						$billingArea = $event->getApplicationServices()->getDocumentManager()
+							->getDocumentInstance($profile->getDefaultBillingAreaId());
+						if ($billingArea instanceof \Rbs\Commerce\Interfaces\BillingArea)
+						{
+							$context->setBillingArea($billingArea);
+						}
+						else
+						{
+							$context->setBillingArea(null);
+						}
+						$context->setZone($profile->getDefaultZone());
 					}
-					$commerceServices->save();
+					$context->save();
 				}
 
 				if ($saveProfile)
 				{
 					if (!$pm)
 					{
-						$pm = new \Change\User\ProfileManager();
-						$pm->setDocumentServices($event->getDocumentServices());
+						$pm = $event->getApplicationServices()->getProfileManager();
 					}
 					$pm->saveProfile($user, $profile);
 				}

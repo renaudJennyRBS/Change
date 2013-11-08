@@ -22,9 +22,9 @@ class AttributePresentation
 	protected $attributeValues;
 
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Services\ApplicationServices
 	 */
-	protected $documentServices;
+	protected $applicationServices;
 
 	/**
 	 * @var \Change\Collection\CollectionManager
@@ -41,46 +41,34 @@ class AttributePresentation
 		{
 			$this->attribute = $product->getAttribute();
 			$this->attributeValues = $product->getAttributeValues();
-			$this->documentServices = $product->getDocumentServices();
 		}
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return $this
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
 	{
-		$this->documentServices = $documentServices;
+		$this->applicationServices = $applicationServices;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Documents\DocumentServices
+	 * @return \Change\Services\ApplicationServices
 	 */
-	public function getDocumentServices()
+	public function getApplicationServices()
 	{
-		return $this->documentServices;
+		return $this->applicationServices;
 	}
 
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->documentServices->getApplicationServices();
-	}
 
 	/**
 	 * @return \Change\Collection\CollectionManager
 	 */
 	public function getCollectionManager()
 	{
-		if ($this->collectionManager === null)
-		{
-			$this->collectionManager = new \Change\Collection\CollectionManager($this->documentServices);
-		}
-		return $this->collectionManager;
+		return $this->getApplicationServices()->getCollectionManager();
 	}
 
 	/**
@@ -172,7 +160,7 @@ class AttributePresentation
 
 		if (count($configuration['global']['items']))
 		{
-			$i18n = $this->documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $this->applicationServices->getApplicationServices()->getI18nManager();
 			$configuration['global']['title'] = $i18n->trans('m.rbs.catalog.fo.main-attributes', array('ucf'));
 		}
 		else

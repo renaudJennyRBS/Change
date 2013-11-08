@@ -2,7 +2,7 @@
 namespace Rbs\Generic\Events\CollectionManager;
 
 use Change\Collection\CollectionManager;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 

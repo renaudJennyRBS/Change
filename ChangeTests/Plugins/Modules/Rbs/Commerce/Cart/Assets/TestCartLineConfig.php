@@ -79,7 +79,7 @@ class TestCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return $this
 	 */
 	public function evaluatePrice($commerceServices)

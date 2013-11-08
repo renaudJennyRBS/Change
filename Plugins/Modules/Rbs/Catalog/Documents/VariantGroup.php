@@ -23,61 +23,18 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'));
+		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
+		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
 	}
 
-	protected function onCreate()
+	public function onDefaultCreate(Event $event)
 	{
 		if (!$this->getLabel() && $this->getRootProduct())
 		{
 			$this->setLabel($this->getRootProduct()->getLabel());
 		}
 
-		$this->initAxisInfo();
-	}
-
-	protected function onUpdate()
-	{
-		if ($this->isPropertyModified('axisAttribute'))
-		{
-			$this->initAxisInfo();
-		}
-
-		if ($this->isPropertyModified('productMatrixInfo'))
-		{
-			$tm = $this->getApplicationServices()->getTransactionManager();
-			try
-			{
-				$tm->begin();
-				$this->normalizeProductMatrix();
-				$tm->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $tm->rollBack($e);
-			}
-		}
-	}
-
-	protected function initAxisInfo()
-	{
-		$axesInfo = $this->getAxesInfo();
-		if (count($axesInfo) === 0)
-		{
-			$axesInfo = array();
-			$attrEngine = new AttributeEngine($this->getDocumentServices());
-			$axisAttributes = $attrEngine->getAxisAttributes($this->getAxisAttribute());
-			foreach ($axisAttributes as $axisAttribute)
-			{
-				$axis = array('id' => $axisAttribute->getId(), 'dv' => $attrEngine->getCollectionValues($axisAttribute));
-				if (!is_array($axis['dv']))
-				{
-					$axis['dv'] = array();
-				}
-				$axis['cat'] = $axisAttribute->isVisibleFor('productListItem');
-				$axesInfo[] = $axis;
-			}
-			$this->setAxesInfo($axesInfo);
-		}
+		$this->initAxisInfo($event->getApplicationServices());
 	}
 
 	/**
@@ -97,10 +54,56 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		}
 	}
 
+	public function onDefaultUpdate(Event $event)
+	{
+		if ($this->isPropertyModified('axisAttribute'))
+		{
+			$this->initAxisInfo($event->getApplicationServices());
+		}
+
+		if ($this->isPropertyModified('productMatrixInfo'))
+		{
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$tm->begin();
+				$this->normalizeProductMatrix();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+	}
+
+	protected function initAxisInfo(\Change\Services\ApplicationServices $applicationServices)
+	{
+		$axesInfo = $this->getAxesInfo();
+		if (count($axesInfo) === 0)
+		{
+			$axesInfo = array();
+			$attrEngine = new AttributeEngine($applicationServices);
+			$axisAttributes = $attrEngine->getAxisAttributes($this->getAxisAttribute());
+			foreach ($axisAttributes as $axisAttribute)
+			{
+				$axis = array('id' => $axisAttribute->getId(), 'dv' => $attrEngine->getCollectionValues($axisAttribute));
+				if (!is_array($axis['dv']))
+				{
+					$axis['dv'] = array();
+				}
+				$axis['cat'] = $axisAttribute->isVisibleFor('productListItem');
+				$axesInfo[] = $axis;
+			}
+			$this->setAxesInfo($axesInfo);
+		}
+	}
+
 	protected function normalizeProductMatrix()
 	{
 		$pmi = $this->getProductMatrixInfo();
-		$axesInfo = array_reduce($this->getAxesInfo(), function($r, $i) {
+		$axesInfo = array_reduce($this->getAxesInfo(), function ($r, $i)
+		{
 			$r[$i['id']] = $i;
 			return $r;
 		}, array());
@@ -137,8 +140,13 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			}
 		}
 
-		$parentIds = array_reduce($pmi, function($r, $i) {
-			if (!isset($i['removed']) && $i['id'] > 0) {$r[] = $i['id'];} return $r;
+		$parentIds = array_reduce($pmi, function ($r, $i)
+		{
+			if (!isset($i['removed']) && $i['id'] > 0)
+			{
+				$r[] = $i['id'];
+			}
+			return $r;
 		}, array($this->getRootProductId()));
 
 		for ($i = 0; $i < count($pmi); $i++)
@@ -278,21 +286,26 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		return $axesValue;
 	}
 
-	protected function updateRestDocumentResult($documentResult)
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		parent::updateRestDocumentResult($documentResult);
-		$axesDefinition = $this->buildAxesDefinition();
-		$documentResult->setProperty('axesDefinition', array_values($axesDefinition));
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			$axesDefinition = $this->buildAxesDefinition($event->getApplicationServices());
+			$restResult->setProperty('axesDefinition', array_values($axesDefinition));
+		}
 	}
 
 	/**
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return array
 	 */
-	protected function buildAxesDefinition()
+	protected function buildAxesDefinition(\Change\Services\ApplicationServices $applicationServices)
 	{
 		$axesDefinition = array();
 
-		$attrEngine = new AttributeEngine($this->getDocumentServices());
+		$attrEngine = new AttributeEngine($applicationServices);
 		foreach ($this->getAxesInfo() as $axisInfo)
 		{
 			$axisAttribute = $this->getDocumentManager()->getDocumentInstance($axisInfo['id']);

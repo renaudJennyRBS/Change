@@ -71,9 +71,11 @@ class Install extends \Change\Plugins\InstallBase
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.geo.documents.territorialunit.unit-province', array('ucf')));
 				$item->save();
+
 				$collection->getItems()->add($item);
 
 				$collection->save();
+
 				$tm->commit();
 			}
 			catch (\Exception $e)
@@ -92,7 +94,7 @@ class Install extends \Change\Plugins\InstallBase
 			$activable = array('FR', 'DE', 'CH', 'BE', 'LU', 'IT', 'ES', 'GB', 'US', 'CA', 'PT', 'NL', 'AT');
 			foreach ($countries as $countryData)
 			{
-				$query = new \Change\Documents\Query\Query('Rbs_Geo_Country', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 				$query->andPredicates($query->eq('code', $countryData['code']));
 				/* @var $country \Rbs\geo\Documents\Country */
 				$country = $query->getFirstDocument();
@@ -134,7 +136,7 @@ class Install extends \Change\Plugins\InstallBase
 				$collection->setLabel('Countries used in project');
 				$collection->setCode('Rbs_Geo_Collection_Countries');
 
-				$query = new \Change\Documents\Query\Query('Rbs_Geo_Country', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 				$query->andPredicates($query->activated());
 				$query->addOrder('code');
 
@@ -170,7 +172,7 @@ class Install extends \Change\Plugins\InstallBase
 			$tm->begin();
 			foreach ($models as $model)
 			{
-				$query = new \Change\Documents\Query\Query('Rbs_Geo_AddressFields', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_AddressFields');
 				$query->andPredicates($query->eq('label', $model['label']));
 				if (!$query->getFirstDocument())
 				{
@@ -193,7 +195,7 @@ class Install extends \Change\Plugins\InstallBase
 
 					if (isset($model['countryCode']))
 					{
-						$query = new \Change\Documents\Query\Query('Rbs_Geo_Country', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 						$query->andPredicates($query->eq('code', $model['countryCode']));
 						/* @var $country \Rbs\geo\Documents\Country */
 						$country = $query->getFirstDocument();

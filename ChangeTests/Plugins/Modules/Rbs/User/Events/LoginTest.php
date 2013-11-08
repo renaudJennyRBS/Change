@@ -2,10 +2,10 @@
 namespace ChangeTests\Rbs\User\Events;
 
 use Rbs\User\Events\Login;
-use Zend\EventManager\Event;
+use Change\Events\Event;
+
 /**
- * Class LoginTest
- * @package ChangeTests\Rbs\User\Events
+ * @name \ChangeTests\Rbs\User\Events\LoginTest
  */
 class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -34,15 +34,15 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testLogin()
 	{
-		$ds = $this->getDocumentServices();
+		$applicationServices = $this->getApplicationServices();
 		/* @var $grp \Rbs\User\Documents\Group */
-		$grp = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_Group');
+		$grp = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_Group');
 		$grp->setLabel('Test 1');
 		$grp->setRealm('test');
 		$grp->save();
 
 		/* @var $user \Rbs\User\Documents\User */
-		$user = $ds->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
+		$user = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
 		$user->setLogin('login');
 		$user->setEmail('fake@temporary.fr');
 		$user->setPassword('Un password');
@@ -51,8 +51,7 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$user->save();
 
 		$args = array('login' => 'login', 'password' => 'Un password', 'realm' => 'test');
-		$args['documentServices'] = $this->getDocumentServices();
-		$event = new Event('login', $this, $args);
+		$event = new Event('login', $this, $args + $this->getDefaultEventArguments());
 
 		$obj = new Login();
 		$obj->execute($event);
@@ -64,8 +63,7 @@ class LoginTest extends \ChangeTests\Change\TestAssets\TestCase
 
 
 		$args = array('login' => 'notfound', 'password' => 'Un password', 'realm' => 'test');
-		$args['documentServices'] = $this->getDocumentServices();
-		$event = new Event(\Change\User\AuthenticationManager::EVENT_LOGIN, $this, $args);
+		$event = new Event(\Change\User\AuthenticationManager::EVENT_LOGIN, $this, $args + $this->getDefaultEventArguments());
 
 		$obj = new Login();
 		$obj->execute($event);

@@ -19,10 +19,10 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			$genericServices = new \Rbs\Generic\GenericServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
-			$event->setParam('genericServices', $genericServices);
+			$genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $event->getParam('eventManagerFactory'), $event->getApplicationServices());
+			$event->getServices()->set('genericServices', $genericServices);
 		};
 		$events->attach('registerServices', $callback, 1);
 
@@ -35,8 +35,8 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getPresentationServices(), $event->getServices('genericServices'), $event->getUrlManager());
-			$event->getPresentationServices()->getTemplateManager()->addExtension($extension);
+			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getApplication(), $event->getApplicationServices(), $event->getServices('genericServices'), $event->getUrlManager());
+			$event->getApplicationServices()->getTemplateManager()->addExtension($extension);
 			(new \Rbs\Website\Events\WebsiteResolver())->resolve($event);
 		};
 		$events->attach(Event::EVENT_REQUEST, $callback, 5);

@@ -20,10 +20,10 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			$genericServices = new \Rbs\Generic\GenericServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
-			$event->setParam('genericServices', $genericServices);
+			$genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $event->getParam('eventManagerFactory'), $event->getApplicationServices());
+			$event->getServices()->set('genericServices', $genericServices);
 
 			$controller = $event->getTarget();
 			if ($controller instanceof \Change\Http\Rest\Controller)
@@ -38,7 +38,6 @@ class Listeners implements ListenerAggregateInterface
 			}
 		};
 		$events->attach('registerServices', $callback, 1);
-
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 5);
 	}
 
@@ -81,7 +80,7 @@ class Listeners implements ListenerAggregateInterface
 			}
 			else if (preg_match('#^resources/Rbs/Workflow/Task/([0-9]+)/execute$#', $relativePath, $matches))
 			{
-				$task = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($matches[1]);
+				$task = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($matches[1]);
 				if ($task instanceof \Rbs\Workflow\Documents\Task)
 				{
 					$event->setParam('modelName', $task->getDocumentModelName());
@@ -106,8 +105,8 @@ class Listeners implements ListenerAggregateInterface
 				{
 					$method = $event->getRequest()->getMethod();
 					$tagId = intval($matches[1]);
-					$model = $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
-					$tag = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($tagId, $model);
+					$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
+					$tag = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($tagId, $model);
 					if ($tag !== null)
 					{
 						$event->setParam('tagId', $tagId);
@@ -132,10 +131,10 @@ class Listeners implements ListenerAggregateInterface
 					$method = $event->getRequest()->getMethod();
 					$modelName = $matches[1] . '_' . $matches[2] . '_' . $matches[3];
 					$docId = intval($matches[4]);
-					$model = $event->getDocumentServices()->getModelManager()->getModelByName($modelName);
+					$model = $event->getApplicationServices()->getModelManager()->getModelByName($modelName);
 					if ($model !== null)
 					{
-						$doc = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($docId, $model);
+						$doc = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($docId, $model);
 						if ($doc !== null)
 						{
 							$event->setParam('docId', $docId);
@@ -184,43 +183,43 @@ class Listeners implements ListenerAggregateInterface
 			switch ($relativePath)
 			{
 				case 'Rbs/Website/FunctionsList' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						(new \Rbs\Website\Http\Rest\Actions\FunctionsList())->execute($event);
 					});
 					break;
 				case 'Rbs/Website/PagesForFunction' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						(new \Rbs\Website\Http\Rest\Actions\PagesForFunction())->execute($event);
 					});
 					break;
 				case 'Rbs/ModelsInfo' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						(new \Rbs\Admin\Http\Rest\Actions\ModelsInfo())->execute($event);
 					});
 					break;
 				case 'Rbs/Seo/GenerateSitemap' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						(new \Rbs\Seo\Http\Rest\Actions\GenerateSitemap())->execute($event);
 					});
 					break;
 				case 'Rbs/Seo/GetMetaVariables' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						(new \Rbs\Seo\Http\Rest\Actions\GetMetaVariables())->execute($event);
 					});
 					break;
 				case 'Rbs/Seo/CreateSeoForDocument' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						(new \Rbs\Seo\Http\Rest\Actions\CreateSeoForDocument())->execute($event);
 					});
 					break;
 				case 'Rbs/Avatar' :
-					$event->setAction(function ($event)
+					$event->setAction(function (Event $event)
 					{
 						$event->setParam('size', $event->getRequest()->getQuery('size'));
 						$event->setParam('email', $event->getRequest()->getQuery('email'));

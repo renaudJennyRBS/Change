@@ -2,7 +2,7 @@
 namespace Rbs\Generic\Events\ProfileManager;
 
 use Change\User\ProfileManager;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -44,10 +44,10 @@ class Listeners implements ListenerAggregateInterface
 		{
 			$profile = new \Rbs\Admin\Profile\Profile();
 			$user = $event->getParam('user');
-			$documentServices = $event->getParam('documentServices');
-			if ($documentServices instanceof \Change\Documents\DocumentServices && $user instanceof \Change\User\UserInterface)
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
 			{
-				$docUser = $documentServices->getDocumentManager()->getDocumentInstance($user->getId());
+				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
 				if ($docUser instanceof \Rbs\User\Documents\User)
 				{
 					$result = $docUser->getMeta('profile_Rbs_Admin');
@@ -67,13 +67,13 @@ class Listeners implements ListenerAggregateInterface
 			$profile = new \Change\User\UserProfile();
 
 			$user = $event->getParam('user');
-			$documentServices = $event->getParam('documentServices');
-			if ($documentServices instanceof \Change\Documents\DocumentServices && $user instanceof \Change\User\UserInterface)
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
 			{
-				$docUser = $documentServices->getDocumentManager()->getDocumentInstance($user->getId());
+				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
 				if ($docUser instanceof \Rbs\User\Documents\User)
 				{
-					$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_User_Profile');
+					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
 					$query->andPredicates($query->eq('user', $docUser));
 
 					$documentProfile = $query->getFirstDocument();
@@ -98,14 +98,14 @@ class Listeners implements ListenerAggregateInterface
 		if ($profile instanceof \Rbs\Admin\Profile\Profile)
 		{
 			$user = $event->getParam('user');
-			$documentServices = $event->getParam('documentServices');
-			if ($documentServices instanceof \Change\Documents\DocumentServices && $user instanceof \Change\User\UserInterface)
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
 			{
-				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();
-					$docUser = $documentServices->getDocumentManager()->getDocumentInstance($user->getId());
+					$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
 					if ($docUser instanceof \Rbs\User\Documents\User)
 					{
 						$props = array();
@@ -127,24 +127,24 @@ class Listeners implements ListenerAggregateInterface
 		else if ($profile instanceof \Change\User\UserProfile)
 		{
 			$user = $event->getParam('user');
-			$documentServices = $event->getParam('documentServices');
-			if ($documentServices instanceof \Change\Documents\DocumentServices && $user instanceof \Change\User\UserInterface)
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
 			{
-				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();
-					$docUser = $documentServices->getDocumentManager()->getDocumentInstance($user->getId());
+					$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
 					if ($docUser instanceof \Rbs\User\Documents\User)
 					{
-						$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_User_Profile');
+						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
 						$query->andPredicates($query->eq('user', $docUser));
 
 						/* @var $documentProfile \Rbs\User\Documents\Profile */
 						$documentProfile = $query->getFirstDocument();
 						if ($documentProfile === null)
 						{
-							$documentProfile = $documentServices->getDocumentManager()
+							$documentProfile = $applicationServices->getDocumentManager()
 								->getNewDocumentInstanceByModelName('Rbs_User_Profile');
 							$documentProfile->setUser($docUser);
 						}

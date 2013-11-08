@@ -2,23 +2,21 @@
 namespace Rbs\Review\Http\Web;
 
 use Change\Http\Web\Event;
-use Zend\Http\Header\SetCookie;
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\Review\Http\Web\VoteReview
-*/
+ * @name \Rbs\Review\Http\Web\VoteReview
+ */
 class VoteReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	/**
 	 * @param Event $event
-	 * @return mixed
 	 */
 	public function execute(Event $event)
 	{
 		if ($event->getRequest()->getMethod() === 'POST')
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$data = $event->getRequest()->getPost()->toArray();
 			$reviewId = $data['reviewId'];
 			$review = $documentManager->getDocumentInstance($reviewId);
@@ -51,7 +49,7 @@ class VoteReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 						$review->update();
 						$tm->commit();
 					}
-					catch(\Exception $e)
+					catch (\Exception $e)
 					{
 						throw $tm->rollBack($e);
 					}
@@ -59,7 +57,7 @@ class VoteReview extends \Change\Http\Web\Actions\AbstractAjaxAction
 			}
 			else
 			{
-				$data = [ 'error' => 'Invalid review' ];
+				$data = ['error' => 'Invalid review'];
 			}
 			$result = new \Change\Http\Web\Result\AjaxResult($data);
 			$event->setResult($result);

@@ -2,7 +2,7 @@
 namespace Rbs\Commerce\Http\Web;
 
 use Change\Http\Web\Event;
-use Rbs\Commerce\Services\CommerceServices;
+use Rbs\Commerce\CommerceServices;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -30,7 +30,7 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
 		if (isset($arguments['product']))
 		{
-			$dm = $event->getDocumentServices()->getDocumentManager();
+			$dm = $event->getApplicationServices()->getDocumentManager();
 			$product = $dm->getDocumentInstance($arguments['product']);
 			if ($product instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
 			{
@@ -38,7 +38,7 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 				if ($cartLineConfig && count($cartLineConfig->getItemConfigArray()))
 				{
 					$cartManager = $commerceServices->getCartManager();
-					$cartIdentifier = $commerceServices->getCartIdentifier();
+					$cartIdentifier = $commerceServices->getContext()->getCartIdentifier();
 					$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
 					if (!($cart instanceof \Rbs\Commerce\Interfaces\Cart))
 					{
@@ -54,7 +54,7 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 						}
 						else
 						{
-							$webStore = $commerceServices->getWebStore();
+							$webStore = $commerceServices->getContext()->getWebStore();
 						}
 
 						if (!$webStore)
@@ -67,8 +67,8 @@ class AddProductToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 						$context['ownerId'] = $event->getAuthenticationManager()->getCurrentUser()->getId();
 
 						$cart = $commerceServices->getCartManager()->getNewCart($webStore, null, null, $context);
-						$commerceServices->setCartIdentifier($cart->getIdentifier());
-						$commerceServices->save();
+						$commerceServices->getContext()->setCartIdentifier($cart->getIdentifier());
+						$commerceServices->getContext()->save();
 					}
 
 					$quantity = max(1, (isset($arguments['quantity']) ? intval($arguments['quantity']) : 1));

@@ -170,11 +170,11 @@ class DbProvider extends \Change\Db\DbProvider
 	 */
 	public function closeConnection()
 	{
-		$this->setDriver(null);
 		if ($this->schemaManager)
 		{
 			$this->schemaManager->closeConnection();
 		}
+		$this->setDriver(null);
 		$this->getLogging()->info('Close Connection: (S: ' . $this->timers['select'] . ', IUD: ' . $this->timers['exec'] . ')');
 		$this->timers['exec'] = $this->timers['select'] = 0;
 	}

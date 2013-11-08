@@ -6,16 +6,12 @@ namespace Rbs\Event\Blocks;
  */
 class EventInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 {
-	/**
-	 * @param string $name
-	 * @param \Change\Presentation\Blocks\BlockManager $blockManager
-	 */
-	public function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name, $blockManager);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.event.blocks.event-label'));
+		$this->setLabel($i18nManager->trans('m.rbs.event.blocks.event-label', $ucf));
 		$this->getParameterInformation('docId')->setAllowedModelsNames('Rbs_Event_Event')
 			->setLabel($i18nManager->trans('m.rbs.event.blocks.event-doc', $ucf));
 		$this->getParameterInformation('templateName')->setDefaultValue('event.twig');

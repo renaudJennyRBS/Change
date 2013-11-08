@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Commerce\Events\CrossSellingManager;
 
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -21,8 +21,8 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			$cs = $event->getParam('commerceServices');
-			if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$event->setParam('csProducts', (new \Rbs\Catalog\Std\CrossSellingEngine($cs))->getCrossSellingProductsByProduct($event));
 			}
@@ -31,8 +31,8 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			$cs = $event->getParam('commerceServices');
-			if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$event->setParam('csProducts', (new \Rbs\Catalog\Std\CrossSellingEngine($cs))->getCrossSellingProductsByCart($event));
 			}

@@ -1,7 +1,9 @@
 <?php
-
 namespace ChangeTests\Modules\Catalog\Services;
 
+/**
+ * @name \ChangeTests\Modules\Catalog\Services\CatalogManagerTest
+ */
 class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
@@ -22,33 +24,28 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function setUp()
 	{
 		parent::setUp();
-		$cs = new \Rbs\Commerce\Services\CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
 		$this->cm = $cs->getCatalogManager();
-	}
-
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
 	}
 
 	public function testAddProductInProductList()
 	{
 		$tm  = $this->getApplicationServices()->getTransactionManager();
 		$tm->begin();
-		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+		$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setRefLCID('fr_FR');
 		$product->setLabel('Test product');
 		$product->getCurrentLocalization()->setTitle('Test product');
 		$product->save();
 
-		$productList = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductList');
+		$productList = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductList');
 		/* @var $productList \Rbs\Catalog\Documents\ProductList */
 		$productList->setLabel('Test product list');
 		$productList->save();
 
-		$condition = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
+		$condition = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
 		/* @var $condition \Rbs\Catalog\Documents\Condition */
 		$condition->setLabel('Test condition');
 		$condition->save();
@@ -78,12 +75,12 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testHighlightProductInProductList()
 	{
 		$this->getApplicationServices()->getTransactionManager()->begin();
-		$productList = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductList');
+		$productList = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductList');
 		/* @var $productList \Rbs\Catalog\Documents\ProductList */
 		$productList->setLabel('Test product list');
 		$productList->save();
 
-		$condition = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
+		$condition = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
 		/* @var $condition \Rbs\Catalog\Documents\Condition */
 		$condition->setLabel('Test condition');
 		$condition->save();
@@ -92,7 +89,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$products = array();
 		for ($i = 0; $i < 10; $i++)
 		{
-			$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+			$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product->setRefLCID('fr_FR');
 			$product->setLabel($i);
@@ -260,12 +257,12 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testDownplayProductInProductList()
 	{
 		$this->getApplicationServices()->getTransactionManager()->begin();
-		$productList = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductList');
+		$productList = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_ProductList');
 		/* @var $productList \Rbs\Catalog\Documents\ProductList */
 		$productList->setLabel('Test product list');
 		$productList->save();
 
-		$condition = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
+		$condition = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Condition');
 		/* @var $condition \Rbs\Catalog\Documents\Condition */
 		$condition->setLabel('Test condition');
 		$condition->save();
@@ -274,7 +271,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$products = array();
 		for ($i = 0; $i < 10; $i++)
 		{
-			$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+			$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product->setRefLCID('fr_FR');
 			$product->setLabel($i);

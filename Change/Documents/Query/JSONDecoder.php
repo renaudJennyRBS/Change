@@ -720,6 +720,7 @@ class JSONDecoder
 	 */
 	protected function configureChildOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -743,6 +744,7 @@ class JSONDecoder
 	 */
 	protected function configureDescendantOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -766,6 +768,7 @@ class JSONDecoder
 	 */
 	protected function configureAncestorOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -789,6 +792,7 @@ class JSONDecoder
 	 */
 	protected function configureNextSiblingOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);
@@ -812,6 +816,7 @@ class JSONDecoder
 	 */
 	protected function configurePreviousSiblingOfPredicate($predicateBuilder, $predicateJSON)
 	{
+		$predicateBuilder = new TreePredicateBuilder($predicateBuilder->getBuilder(), $this->treeManager);
 		if (isset($predicateJSON['node']) && is_numeric($predicateJSON['node']))
 		{
 			$node = $this->getTreeManager()->getNodeById($predicateJSON['node']);

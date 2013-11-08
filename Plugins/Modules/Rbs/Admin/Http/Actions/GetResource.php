@@ -19,7 +19,7 @@ class GetResource
 		$resourcePath = $event->getParam('resourcePath');
 		$result = new Resource($resourcePath);
 
-		$filePath = $this->getFilePathByResourcePath($event->getParam('resourcePath'), $event->getApplicationServices()->getApplication()->getWorkspace());
+		$filePath = $this->getFilePathByResourcePath($event->getParam('resourcePath'), $event->getApplication()->getWorkspace());
 		if ($filePath !== null)
 		{
 			$fileResource = new \Change\Presentation\Themes\FileResource($filePath);

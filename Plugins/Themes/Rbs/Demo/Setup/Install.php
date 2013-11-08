@@ -16,7 +16,7 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$themeModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
-		$query = new \Change\Documents\Query\Query($themeModel, $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+		$query = $applicationServices->getDocumentManager()->getNewQuery($themeModel);
 		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
 		$theme = $query->getFirstDocument();
 		$themeManager = $applicationServices->getThemeManager();
@@ -32,6 +32,7 @@ class Install extends \Change\Plugins\InstallBase
 		try
 		{
 			$transactionManager->begin();
+
 			/* @var $theme \Rbs\Theme\Documents\Theme */
 			$theme = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
 			$theme->setLabel('Demo');

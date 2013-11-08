@@ -2,25 +2,19 @@
 namespace Rbs\Review\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
+
 /**
- * Class ReviewDetailInformation
- * @package Rbs\Review\Blocks
  * @name \Rbs\Review\Blocks\ReviewDetailInformation
  */
 class ReviewDetailInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-detail'));
+		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-detail', $ucf));
 		$this->addInformationMeta('reviewId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review', $ucf))
 			->setAllowedModelsNames('Rbs_Review_Review');

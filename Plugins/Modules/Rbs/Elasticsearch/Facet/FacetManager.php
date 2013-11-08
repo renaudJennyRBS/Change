@@ -7,33 +7,15 @@ namespace Rbs\Elasticsearch\Facet;
  */
 class FacetManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait {
-		\Change\Events\EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Elasticsearch_FacetManager';
-
-	/**
-	 * @var \Change\Collection\CollectionManager
-	 */
-	protected $collectionManager;
 
 	/**
 	 * @var array
 	 */
 	protected $collections = array();
 
-	/**
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
-		}
-		return $this->sharedEventManager;
-	}
 
 	/**
 	 * @return null|string|string[]
@@ -48,46 +30,17 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->applicationServices)
-		{
-			$config = $this->applicationServices->getApplication()->getConfiguration();
-			return $config->getEntry('Rbs/Elasticsearch/Events/FacetManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Elasticsearch/Events/FacetManager');
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach('getIndexerValue', array($this, 'onDefaultGetIndexerValue'), 5);
 		$eventManager->attach('getFacetMapping', array($this, 'onDefaultGetFacetMapping'), 5);
 
-	}
-
-	/**
-	 * @param \Change\Collection\CollectionManager $collectionManager
-	 * @return $this
-	 */
-	public function setCollectionManager($collectionManager)
-	{
-		$this->collectionManager = $collectionManager;
-		return $this;
-	}
-
-	/**
-	 * @throws \RuntimeException
-	 * @return \Change\Collection\CollectionManager
-	 */
-	public function getCollectionManager()
-	{
-		if ($this->collectionManager === null)
-		{
-			throw new \RuntimeException('CollectionManager not set.', 999999);
-		}
-		return $this->collectionManager;
 	}
 
 	/**
@@ -102,7 +55,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		if (!array_key_exists($collectionCode, $this->collections))
 		{
-			$this->collections[$collectionCode] = $this->getCollectionManager()->getCollection($collectionCode);
+			$this->collections[$collectionCode] = $this->getApplicationServices()->getCollectionManager()->getCollection($collectionCode);
 		}
 		return $this->collections[$collectionCode];
 	}
@@ -262,7 +215,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$parameters = array('facet' => $facet, 'document' => $document,
 			'indexDefinition' => $indexDefinition, 'values' => $values);
-		$event = new \Zend\EventManager\Event('getIndexerValue', $this, $parameters);
+		$event = new \Change\Events\Event('getIndexerValue', $this, $parameters);
 		$this->getEventManager()->trigger($event);
 		$value = $event->getParam('value');
 		return is_array($value) ? $value : null;
@@ -270,9 +223,9 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onDefaultGetIndexerValue(\Zend\EventManager\Event $event)
+	public function onDefaultGetIndexerValue(\Change\Events\Event $event)
 	{
 		/* @var $facetManager FacetManager */
 		$value = null;
@@ -298,7 +251,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					if ($sku)
 					{
 						$commerceServices = $indexDefinition->getCommerceServices();
-						$price = $commerceServices->getPriceManager()->getPriceBySku($sku, $commerceServices->getWebStore());
+						$price = $commerceServices->getPriceManager()->getPriceBySku($sku, $commerceServices->getContext()->getWebStore());
 						if ($price)
 						{
 							$value = array($facet->getFieldName() => $price->getValue(),
@@ -308,7 +261,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					break;
 				case 'SkuThreshold':
 					$sku = $document->getSku();
-					$store = $indexDefinition->getCommerceServices()->getWebStore();
+					$store = $indexDefinition->getCommerceServices()->getContext()->getWebStore();
 					if ($sku && $store)
 					{
 						$fieldName = $facet->getFieldName();
@@ -372,13 +325,12 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			elseif (($attribute = $facet->getAttributeIdInstance()) !== null)
 			{
-				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getDocumentServices());
-				$attributeEngine->setCollectionManager($this->getCollectionManager());
+				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getApplicationServices());
 				$attrDef = $attributeEngine->buildAttributeDefinition($attribute);
 				$attrType = $attrDef['type'];
 				if ($attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT || $attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY)
 				{
-					$document = $attribute->getDocumentServices()->getDocumentManager()->getDocumentInstance($facetValue->getValue());
+					$document = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($facetValue->getValue());
 					if ($document)
 					{
 						$facetValue->setValueTitle($document->getDocumentModel()->getPropertyValue($document, 'title'));
@@ -388,7 +340,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		elseif ($facet instanceof ModelFacetDefinition)
 		{
-			$model = $this->getDocumentServices()->getModelManager()->getModelByName($facetValue->getValue());
+			$model = $this->getApplicationServices()->getModelManager()->getModelByName($facetValue->getValue());
 			if ($model)
 			{
 				$facetValue->setValueTitle($this->getApplicationServices()->getI18nManager()->trans($model->getLabelKey()));

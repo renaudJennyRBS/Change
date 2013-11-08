@@ -25,10 +25,9 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		);
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($this->getApplicationServices());
-		$event->setPermissionsManager($pm);
+		$event->setParams($this->getDefaultEventArguments());
+		$pm = $event->getPermissionsManager();
+		$this->assertInstanceOf('Change\Permissions\PermissionsManager', $pm);
 		$paramArray = array('permissionRules' => $permissionRules);
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\AddPermissionRules();
@@ -37,7 +36,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//check the added permissions
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('accessorId' => 123456);
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\GetPermissionRules();
@@ -61,10 +60,8 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		//this array will create 3x3x3 (27) rules!
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($this->getApplicationServices());
-		$event->setPermissionsManager($pm);
+		$event->setParams($this->getDefaultEventArguments());
+		$pm = $event->getPermissionsManager();
 		$paramArray = array('permissionRules' => $permissionRules);
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\AddPermissionRules();
@@ -73,7 +70,8 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//check the added permissions
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
+
 		$paramArray = array('accessorId' => 123456);
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\GetPermissionRules();
@@ -98,10 +96,8 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		//this rule will make 3 older rules useless.
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($this->getApplicationServices());
-		$event->setPermissionsManager($pm);
+		$event->setParams($this->getDefaultEventArguments());
+		$pm = $event->getPermissionsManager();
 		$paramArray = array('permissionRules' => $permissionRules);
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\AddPermissionRules();
@@ -110,7 +106,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//check the added permissions
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('accessorId' => 123456);
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\GetPermissionRules();
@@ -135,10 +131,8 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		//this rule will make the 9 Editor's older rules and 7 Creator's older rules useless (total: 16).
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($this->getApplicationServices());
-		$event->setPermissionsManager($pm);
+		$event->setParams($this->getDefaultEventArguments());
+		$pm = $event->getPermissionsManager();
 		$paramArray = array('permissionRules' => $permissionRules);
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\AddPermissionRules();
@@ -147,7 +141,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//check the added permissions
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('accessorId' => 123456);
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\GetPermissionRules();
@@ -173,10 +167,8 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		//this rule will make all old rules useless!
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
-		$pm = new \Change\Permissions\PermissionsManager();
-		$pm->setApplicationServices($this->getApplicationServices());
-		$event->setPermissionsManager($pm);
+		$event->setParams($this->getDefaultEventArguments());
+		$pm = $event->getPermissionsManager();
 		$paramArray = array('permissionRules' => $permissionRules);
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\AddPermissionRules();
@@ -185,7 +177,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//check the added permissions
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('accessorId' => 123456);
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getPermissionRules = new \Rbs\User\Http\Rest\Actions\GetPermissionRules();

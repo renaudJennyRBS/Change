@@ -18,12 +18,6 @@ class LocalizedTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
 	/**
 	 * @return \Change\Documents\DocumentManager
 	 */

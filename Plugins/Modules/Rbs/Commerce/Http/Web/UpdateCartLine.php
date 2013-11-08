@@ -2,7 +2,7 @@
 namespace Rbs\Commerce\Http\Web;
 
 use Change\Http\Web\Event;
-use Rbs\Commerce\Services\CommerceServices;
+use Rbs\Commerce\CommerceServices;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -37,13 +37,13 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 
 	/**
-	 * @param CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return null|\Rbs\Commerce\Interfaces\Cart
 	 */
 	protected function getCart(CommerceServices $commerceServices)
 	{
 		$cartManager = $commerceServices->getCartManager();
-		$cartIdentifier = $commerceServices->getCartIdentifier();
+		$cartIdentifier = $commerceServices->getContext()->getCartIdentifier();
 		return ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
 	}
 
@@ -85,7 +85,7 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$cartManager = $commerceServices->getCartManager();
 					if (isset($parameters['product']))
 					{
-						$product = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters['product']);
+						$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($parameters['product']);
 						if ($product instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
 						{
 							$cartLineConfig = $product->getCartLineConfig($commerceServices, $parameters);

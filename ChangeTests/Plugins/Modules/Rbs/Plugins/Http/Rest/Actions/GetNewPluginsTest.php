@@ -29,7 +29,7 @@ class GetNewPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$pm = $this->getApplicationServices()->getPluginManager();
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$getNewPlugins = new \Rbs\Plugins\Http\Rest\Actions\GetNewPlugins();
 		$getNewPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
@@ -51,7 +51,7 @@ class GetNewPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		//Compare with the old result array
 		$this->assertNotCount(count($newPlugins), $arrayResult);
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$getNewPlugins = new \Rbs\Plugins\Http\Rest\Actions\GetNewPlugins();
 		$getNewPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());

@@ -75,6 +75,24 @@ class DocumentManager
 	protected $eventManagerFactory;
 
 	/**
+	 * @var \Change\Events\EventManager
+	 */
+	protected $eventManager;
+
+	/**
+	 * @return \Change\Events\EventManager
+	 */
+	protected function getEventManager()
+	{
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = $this->getEventManagerFactory()->getNewEventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager->attach('injection', array($this, 'onDefaultInjection'), 5);
+		}
+		return $this->eventManager;
+	}
+
+	/**
 	 * @param \Change\Logging\Logging $logging
 	 * @return $this
 	 */
@@ -175,9 +193,10 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @return \Change\Documents\ModelManager
 	 */
-	protected function getModelManager()
+	public function getModelManager()
 	{
 		return $this->modelManager;
 	}
@@ -229,6 +248,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @return bool
 	 */
 	public function inTransaction()
@@ -242,6 +262,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * Cleanup all documents instance
 	 */
 	public function reset()
@@ -319,10 +340,24 @@ class DocumentManager
 		$document->setEventManagerFactory($this->eventManagerFactory)
 			->setDocumentManager($this)
 			->setDbProvider($this->dbProvider);
+		$this->getEventManager()->trigger('injection', $this, array('document' => $document));
 		return $document;
 	}
 
 	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		$document = $event->getParam('document');
+		if ($document instanceof AbstractDocument)
+		{
+			$document->onDefaultInjection($event);
+		}
+	}
+
+	/**
+	 * @api
 	 * @param integer $documentId
 	 * @param AbstractModel|String $model
 	 * @return AbstractDocument|null
@@ -440,6 +475,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param $documentId
 	 * @return boolean
 	 */
@@ -449,6 +485,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param integer $documentId
 	 * @return AbstractDocument|null
 	 */
@@ -472,6 +509,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param string|AbstractModel $modelOrModelName
 	 * @return \Change\Documents\Query\Query
 	 * @throws \InvalidArgumentException
@@ -482,6 +520,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param AbstractDocument $document
 	 * @param array $backupData
 	 * @return integer
@@ -508,6 +547,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param integer $documentId
 	 * @return array|null
 	 */

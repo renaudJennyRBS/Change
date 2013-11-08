@@ -4,7 +4,7 @@ namespace Rbs\Elasticsearch\Index;
 /**
  * @name \Rbs\Elasticsearch\Index\Event
  */
-class Event extends \Zend\EventManager\Event
+class Event extends \Change\Events\Event
 {
 	const INDEX_DOCUMENT = 'indexDocument';
 	const POPULATE_DOCUMENT = 'populateDocument';

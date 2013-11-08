@@ -51,6 +51,7 @@ class Install extends \Change\Plugins\InstallBase
 				$folder->setLabel('Rbs_Website');
 				$folder->create();
 				$applicationServices->getTreeManager()->insertRootNode($folder, 'Rbs_Website');
+
 				$transactionManager->commit();
 			}
 			catch (\Exception $e)

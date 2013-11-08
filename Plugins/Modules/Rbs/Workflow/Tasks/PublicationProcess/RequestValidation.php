@@ -3,7 +3,7 @@ namespace Rbs\Workflow\Tasks\PublicationProcess;
 
 use Change\Documents\Interfaces\Publishable;
 use Change\Workflow\Interfaces\WorkItem;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 
 /**
 * @name \Rbs\Workflow\Tasks\PublicationProcess\RequestValidation
@@ -24,8 +24,8 @@ class RequestValidation
 			$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
 			if ($publicationStatus === Publishable::STATUS_DRAFT)
 			{
-				$documentServices = $document->getDocumentServices();
-				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				$applicationServices = $event->getApplicationServices();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();

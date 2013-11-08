@@ -2,7 +2,6 @@
 namespace Rbs\Store\Collection;
 
 use Change\Collection\CollectionArray;
-use Change\Documents\Query\Query;
 
 /**
  * @name \Rbs\Store\Collection\Collections
@@ -10,15 +9,15 @@ use Change\Documents\Query\Query;
 class Collections
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addWebStores(\Zend\EventManager\Event $event)
+	public function addWebStores(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
 			$collection = array();
-			$query = new Query($documentServices, 'Rbs_Store_WebStore');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Store_WebStore');
 			$builder = $query->dbQueryBuilder();
 			$fb = $builder->getFragmentBuilder();
 			$builder->addColumn($fb->alias($fb->getDocumentColumn('id'), 'id'));

@@ -14,7 +14,6 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$jm = $applicationServices->getJobManager();
-		$jm->setTransactionManager($applicationServices->getTransactionManager());
 		$jm->createNewJob('Rbs_Notification_SendMails');
 	}
 

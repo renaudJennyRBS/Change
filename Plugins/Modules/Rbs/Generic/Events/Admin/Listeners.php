@@ -32,16 +32,16 @@ class Listeners implements ListenerAggregateInterface
 	public function registerResources(Event $event)
 	{
 		$manager = $event->getManager();
-		$i18nManager = $manager->getApplicationServices()->getI18nManager();
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
-		$devMode = $manager->getApplicationServices()->getApplication()->inDevelopmentMode();
+		$devMode = $event->getApplication()->inDevelopmentMode();
 
-		$pm = $manager->getApplicationServices()->getPluginManager();
+		$pm = $event->getApplicationServices()->getPluginManager();
 
 		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
 		if ($plugin)
 		{
-			$pluginPath = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace());
+			$pluginPath = $plugin->getAbsolutePath($event->getApplication()->getWorkspace());
 			$jsAssets = new AssetCollection();
 			$path = $pluginPath . '/Assets/lib/moment/i18n/' . $lcid . '.js';
 			if (file_exists($path))

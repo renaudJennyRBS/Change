@@ -4,7 +4,7 @@ namespace Rbs\Admin;
 /**
  * @name \Rbs\Admin\Event
  */
-class Event extends \Zend\EventManager\Event
+class Event extends \Change\Events\Event
 {
 	const EVENT_RESOURCES = 'resources';
 	/**

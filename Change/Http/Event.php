@@ -1,12 +1,6 @@
 <?php
 namespace Change\Http;
 
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
-use Change\Permissions\PermissionsManager;
-use Change\Services\CommonServices;
-use Change\User\AuthenticationManager;
-
 /**
  * @name \Change\Http\Event
  */
@@ -48,16 +42,6 @@ class Event extends \Change\Events\Event
 	 * @var \Zend\Http\PhpEnvironment\Response
 	 */
 	protected $response;
-
-	/**
-	 * @var AuthenticationManager
-	 */
-	protected $authenticationManager;
-
-	/**
-	 * @var PermissionsManager
-	 */
-	protected $permissionsManager;
 
 	/**
 	 * @api
@@ -107,37 +91,21 @@ class Event extends \Change\Events\Event
 	}
 
 	/**
-	 * @param AuthenticationManager $authenticationManager
-	 */
-	public function setAuthenticationManager(AuthenticationManager $authenticationManager)
-	{
-		$this->authenticationManager = $authenticationManager;
-	}
-
-	/**
 	 * @api
-	 * @return AuthenticationManager
+	 * @return \Change\User\AuthenticationManager
 	 */
 	public function getAuthenticationManager()
 	{
-		return $this->authenticationManager;
-	}
-
-	/**
-	 * @param PermissionsManager $permissionsManager
-	 */
-	public function setPermissionsManager(PermissionsManager $permissionsManager)
-	{
-		$this->permissionsManager = $permissionsManager;
+		return $this->getApplicationServices()->getAuthenticationManager();
 	}
 
 	/**
 	 * @api
-	 * @return PermissionsManager
+	 * @return \Change\Permissions\PermissionsManager
 	 */
 	public function getPermissionsManager()
 	{
-		return $this->permissionsManager;
+		return $this->getApplicationServices()->getPermissionsManager();
 	}
 
 	/**

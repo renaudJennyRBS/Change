@@ -141,7 +141,6 @@ class DeleteListener
 		$applicationServices->getTreeManager()->deleteDocumentNode($document);
 
 		$jobManager = $applicationServices->getJobManager();
-		$jobManager->setTransactionManager($applicationServices->getTransactionManager());
 		$jobManager->createNewJob('Change_Document_CleanUp',
 			array('id' => $document->getId(), 'model' => $document->getDocumentModelName()));
 	}
@@ -163,10 +162,7 @@ class DeleteListener
 		}
 
 		$applicationServices = $event->getApplicationServices();
-
 		$jobManager = $applicationServices->getJobManager();
-		$jobManager->setTransactionManager($applicationServices->getTransactionManager());
-
 		$jobManager->createNewJob('Change_Document_LocalizedCleanUp',
 			array('id' => $document->getId(), 'model' => $document->getDocumentModelName(),
 				'LCID' => $applicationServices->getDocumentManager()->getLCID()));

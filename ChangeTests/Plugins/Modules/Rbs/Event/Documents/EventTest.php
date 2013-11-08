@@ -21,15 +21,14 @@ class EventTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function tearDown()
 	{
-		parent::tearDown();
 		$this->getApplicationServices()->getTransactionManager()->commit();
-		$this->closeDbConnection();
+		parent::tearDown();
 	}
 
 	public function testOnOneMinute()
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
-		$timeZone = $dm->getApplicationServices()->getI18nManager()->getTimeZone();
+		$dm = $this->getApplicationServices()->getDocumentManager();
+		$timeZone = $this->getApplicationServices()->getI18nManager()->getTimeZone();
 
 		/* @var $event \Rbs\Event\Documents\Event */
 		$event = $dm->getNewDocumentInstanceByModelName('Rbs_Event_Event');
@@ -56,8 +55,8 @@ class EventTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testOnOneDay()
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
-		$timeZone = $dm->getApplicationServices()->getI18nManager()->getTimeZone();
+		$dm = $this->getApplicationServices()->getDocumentManager();
+		$timeZone = $this->getApplicationServices()->getI18nManager()->getTimeZone();
 
 		/* @var $event \Rbs\Event\Documents\Event */
 		$event = $dm->getNewDocumentInstanceByModelName('Rbs_Event_Event');

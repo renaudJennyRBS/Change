@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -25,7 +24,7 @@ class Menu extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Event params includes all params from Http\Event (ex: pathRule and page).
 	 * @param Event $event
 	 * @return Parameters
@@ -60,15 +59,15 @@ class Menu extends Block
 	/**
 	 * @api
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout(), getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices(), getUrlManager()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
 	 */
 	protected function execute($event, $attributes)
 	{
-		$dm = $event->getDocumentServices()->getDocumentManager();
+		$this->applicationServices = $event->getApplicationServices();
+		$dm = $event->getApplicationServices()->getDocumentManager();
 		$parameters = $event->getBlockParameters();
 		$doc = $dm->getDocumentInstance($parameters->getDocumentId());
 		if ($doc !== null)
@@ -88,11 +87,24 @@ class Menu extends Block
 				$path = array();
 			}
 			$this->urlManager = $event->getUrlManager();
-			$this->i18nManager = $event->getPresentationServices()->getApplicationServices()->getI18nManager();
+			$this->i18nManager = $event->getApplicationServices()->getI18nManager();
 			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
 			$attributes['uniqueId'] = uniqid();
 		}
 		return $parameters->getTemplateName();
+	}
+
+	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	protected $applicationServices;
+
+	/**
+	 * @return \Change\Services\ApplicationServices
+	 */
+	protected function getApplicationServices()
+	{
+		return $this->applicationServices;
 	}
 
 	/**
@@ -144,13 +156,14 @@ class Menu extends Block
 		{
 			if ($doc instanceof \Rbs\Website\Documents\Section)
 			{
-				$treeManager = $doc->getDocumentServices()->getTreeManager();
+				$treeManager = $this->getApplicationServices()->getTreeManager();
 				$tn = $treeManager->getNodeByDocument($doc);
 				if ($tn)
 				{
 					foreach ($tn->setTreeManager($treeManager)->getChildren() as $child)
 					{
-						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel-1, $currentPage, $path));
+						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel - 1, $currentPage,
+							$path));
 					}
 					if (!$entry->getUrl() && !count($entry->getChildren()))
 					{
@@ -160,14 +173,14 @@ class Menu extends Block
 			}
 			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
 			{
-				foreach ($doc->getItems() as $item)
+				foreach ($doc->getCurrentLocalization()->getItems() as $item)
 				{
 					if (isset($item['documentId']))
 					{
-						$subDoc = $doc->getDocumentServices()->getDocumentManager()->getDocumentInstance($item['documentId']);
+						$subDoc = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($item['documentId']);
 						if ($subDoc)
 						{
-							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel-1, $currentPage, $path);
+							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
 							if ($subEntry !== null)
 							{
 								if (isset($item['titleKey']))

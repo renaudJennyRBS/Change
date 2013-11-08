@@ -28,14 +28,14 @@ class Listeners implements ListenerAggregateInterface
 	public function registerResources(Event $event)
 	{
 		$manager = $event->getManager();
-		$pm = $manager->getApplicationServices()->getPluginManager();
+		$pm = $event->getApplicationServices()->getPluginManager();
 
 		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Event');
 		if ($plugin && $plugin->isAvailable())
 		{
 			$manager->registerStandardPluginAssets($plugin);
 
-			$i18nManager = $manager->getApplicationServices()->getI18nManager();
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$menu = array(
 				'entries' => array(
 					array('label' => $i18nManager->trans('m.rbs.event.admin.js.module-name', array('ucf')),

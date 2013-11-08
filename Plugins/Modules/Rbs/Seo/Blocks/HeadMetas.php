@@ -13,8 +13,7 @@ class HeadMetas extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
-	 * Optional Event method: getHttpRequest
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
 	 */
@@ -39,8 +38,7 @@ class HeadMetas extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -50,7 +48,7 @@ class HeadMetas extends Block
 		$genericServices = $event->getServices('genericServices');
 		if ($genericServices instanceof \Rbs\Generic\GenericServices)
 		{
-			$document = $genericServices->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getBlockParameters()->getParameter('documentId'));
+			$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($event->getBlockParameters()->getParameter('documentId'));
 			if ($document instanceof \Change\Documents\AbstractDocument)
 			{
 				$attributes['document'] = $document;
@@ -63,5 +61,6 @@ class HeadMetas extends Block
 			}
 			return 'head-metas.twig';
 		}
+		return null;
 	}
 }

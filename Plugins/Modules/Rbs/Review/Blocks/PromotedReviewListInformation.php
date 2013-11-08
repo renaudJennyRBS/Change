@@ -2,30 +2,24 @@
 namespace Rbs\Review\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 use Change\Presentation\Blocks\ParameterInformation;
 
 /**
- * Class PromotedReviewListInformation
- * @package Rbs\Review\Blocks
  * @name \Rbs\Review\Blocks\PromotedReviewListInformation
  */
 class PromotedReviewListInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.promoted-review-list'));
+		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.promoted-review-list', $ucf));
 		$this->addInformationMeta('targetId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-target', $ucf));
-		$this->addInformationMeta('mode', ParameterInformation::TYPE_COLLECTION, true, \Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_RECENT)
+		$this->addInformationMeta('mode', ParameterInformation::TYPE_COLLECTION, true,
+			\Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_RECENT)
 			->setLabel($i18nManager->trans('m.rbs.review.blocks.promoted-review-list-mode', $ucf))
 			->setCollectionCode('Rbs_Review_Collection_PromotedReviewModes');
 		$this->addInformationMeta('reviews', ParameterInformation::TYPE_DOCUMENTIDARRAY, false, null)

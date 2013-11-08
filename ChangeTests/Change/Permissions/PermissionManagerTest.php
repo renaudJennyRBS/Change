@@ -18,12 +18,6 @@ class PermissionManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
 	/**
 	 * @return PermissionsManager
 	 */

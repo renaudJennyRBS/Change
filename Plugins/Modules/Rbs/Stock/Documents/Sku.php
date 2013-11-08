@@ -2,13 +2,14 @@
 namespace Rbs\Stock\Documents;
 
 use Change\Documents\AbstractModel;
-use Rbs\Commerce\Services\CommerceServices;
+use Change\Documents\Events\Event;
 
 /**
  * @name \Rbs\Stock\Documents\Sku
  */
 class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 {
+
 	const UNIT_MASS_G = 'g';
 	const UNIT_MASS_KG = 'kg';
 	const UNIT_MASS_LBS = 'lbs';
@@ -199,36 +200,32 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 		return $this;
 	}
 
-	/**
-	 * @throws \RuntimeException
-	 */
-	protected function checkUnicity()
+	protected function attachEvents($eventManager)
 	{
-		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
-		$sku = $cs->getStockManager()->getSkuByCode($this->getCode());
-		if (($sku instanceof \Rbs\Stock\Documents\Sku) && $this->getId() != $sku->getId())
-		{
-			throw new \RuntimeException('A SKU with the same code already exists', 999999);
-		}
+		parent::attachEvents($eventManager);
+		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 	}
 
-	/**
-	 * Check unicity
-	 */
-	public function onUpdate()
+	public function onDefaultSave(Event $event)
 	{
-		if ($this->isPropertyModified('code'))
+		/** @var $document Sku */
+		$document = $event->getDocument();
+		if ($document->isNew() || $document->isPropertyModified('code'))
 		{
-			$this->checkUnicity();
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$sku = $cs->getStockManager()->getSkuByCode($this->getCode());
+				if (($sku instanceof \Rbs\Stock\Documents\Sku) && $this->getId() != $sku->getId())
+				{
+					throw new \RuntimeException('A SKU with the same code already exists', 999999);
+				}
+			}
+			else
+			{
+				throw new \RuntimeException('Commerce Services not set', 999999);
+			}
 		}
-	}
-
-	/**
-	 * Check unicity
-	 */
-	public function onCreate()
-	{
-		$this->checkUnicity();
 	}
 
 	/**
@@ -237,22 +234,12 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	 */
 	protected function onDelete()
 	{
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Stock_InventoryEntry');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates($query->eq('sku', $this));
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
+		foreach ($query->getDocuments() as $document)
 		{
-			$tm->begin();
-			foreach ($query->getDocuments() as $document)
-			{
-				/* @var $document \Rbs\Stock\Documents\InventoryEntry */
-				$document->delete();
-			}
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
+			/* @var $document \Rbs\Stock\Documents\InventoryEntry */
+			$document->delete();
 		}
 	}
 
@@ -272,13 +259,13 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 		$this->setThresholds($this->getDefaultThresholds());
 	}
 
-	/**
-	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
-	 * @param $extraColumn
-	 */
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
+	public function onDefaultUpdateRestResult(Event $event)
 	{
-		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		$documentLink->setProperty('code', $this->getCode());
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$restResult->setProperty('code', $this->getCode());
+		}
 	}
 }

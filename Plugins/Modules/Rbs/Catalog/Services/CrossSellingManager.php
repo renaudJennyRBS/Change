@@ -9,48 +9,8 @@ class CrossSellingManager implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'CrossSellingManager';
-
-	/**
-	 * @var \Rbs\Commerce\Services\CommerceServices
-	 */
-	protected $commerceServices;
-
-	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
-	 */
-	public function setCommerceServices(\Rbs\Commerce\Services\CommerceServices $commerceServices)
-	{
-		$this->commerceServices = $commerceServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($commerceServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
-	 */
-	public function getCommerceServices()
-	{
-		return $this->commerceServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->commerceServices->getDocumentServices();
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->commerceServices->getApplicationServices();
-	}
-
+	const EVENT_GET_CROSS_SELLING_FOR_PRODUCT = 'getCrossSellingForProduct';
+	const EVENT_GET_CROSS_SELLING_FOR_CART = 'getCrossSellingForCart';
 	/**
 	 * @return string
 	 */
@@ -64,9 +24,7 @@ class CrossSellingManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplicationServices()->getApplication()->getConfiguration();
-		$classNames = $config->getEntry('Change/Events/CrossSellingManager');
-		return is_array($classNames) ? $classNames : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CrossSellingManager');
 	}
 
 	/**
@@ -78,8 +36,8 @@ class CrossSellingManager implements \Zend\EventManager\EventsCapableInterface
 	public function getCrossSellingForProduct($product, $csParameters)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('product' => $product, 'csParameters' => $csParameters, 'commerceServices' => $this->getCommerceServices()));
-		$this->getEventManager()->trigger('getCrossSellingForProduct', $this, $args);
+		$args = $em->prepareArgs(array('product' => $product, 'csParameters' => $csParameters));
+		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, $this, $args);
 		return $args['csProducts'];
 	}
 
@@ -92,8 +50,8 @@ class CrossSellingManager implements \Zend\EventManager\EventsCapableInterface
 	public function getCrossSellingForCart($cart, $csParameters)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('cart' => $cart, 'csParameters' => $csParameters, 'commerceServices' => $this->getCommerceServices()));
-		$this->getEventManager()->trigger('getCrossSellingForCart', $this, $args);
+		$args = $em->prepareArgs(array('cart' => $cart, 'csParameters' => $csParameters));
+		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_CART, $this, $args);
 		return $args['csProducts'];
 	}
 }

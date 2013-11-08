@@ -9,14 +9,14 @@ use Change\I18n\I18nString;
 class Collections
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function sectionRestrictions(\Zend\EventManager\Event $event)
+	public function sectionRestrictions(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
 		{
-			$i18n = $documentServices->getApplicationServices()->getI18nManager();
+			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'website' => new I18nString($i18n, 'm.rbs.catalog.blocks.category-section-restrictions-website', array('ucf')),
 				'section' => new I18nString($i18n, 'm.rbs.catalog.blocks.category-section-restrictions-section', array('ucf')),

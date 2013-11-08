@@ -18,7 +18,7 @@ class UpdateDocumentLinks
 		{
 			/* @var $document \Change\Documents\AbstractDocument */
 			$urlManager = $event->getParam('urlManager');
-			$query = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Seo_DocumentSeo');
 			$query->andPredicates($query->eq('target', $document));
 			$documentSeo = $query->getFirstDocument();
 			if ($documentSeo)

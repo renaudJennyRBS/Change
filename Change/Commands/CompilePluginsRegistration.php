@@ -13,8 +13,7 @@ class CompilePluginsRegistration
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$applicationServices = $event->getApplicationServices();
 		$pluginManager = $applicationServices->getPluginManager();
 		$plugins = $pluginManager->compile();
 		$nbPlugins = count($plugins);

@@ -19,13 +19,6 @@ class CreateDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
-
 	protected function getHttpEvent()
 	{
 		$event = new \Change\Http\Event();

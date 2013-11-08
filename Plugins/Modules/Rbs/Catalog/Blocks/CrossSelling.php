@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Catalog\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -40,9 +39,9 @@ class CrossSelling extends Block
 			}
 		}
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getWebStore();
+		$webStore = $commerceServices->getContext()->getWebStore();
 		if ($webStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
@@ -76,9 +75,9 @@ class CrossSelling extends Block
 
 		if ($productId && $crossSellingType)
 		{
-			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$crossSellingManager = $commerceServices->getCrossSellingManager();
 
 			$rows = array();

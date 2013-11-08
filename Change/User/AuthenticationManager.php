@@ -20,29 +20,6 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	protected $currentUser;
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
-
-	/**
 	 * @param UserInterface $currentUser
 	 */
 	public function setCurrentUser($currentUser = null)
@@ -71,7 +48,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/AuthenticationManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/AuthenticationManager');
 	}
 
 	/**

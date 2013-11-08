@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -14,7 +13,7 @@ class Thread extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices, getHttpRequest
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Event params includes all params from Http\Event (ex: pathRule and page).
 	 * @param Event $event
 	 * @return Parameters
@@ -49,8 +48,7 @@ class Thread extends Block
 	/**
 	 * @api
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout(), getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices(), getUrlManager()
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -59,7 +57,7 @@ class Thread extends Block
 	{
 		/* @var $urlManager \Change\Http\Web\UrlManager */
 		$urlManager = $event->getUrlManager();
-		$dm = $event->getDocumentServices()->getDocumentManager();
+		$dm = $event->getApplicationServices()->getDocumentManager();
 		$parameters = $event->getBlockParameters();
 		$document = $dm->getDocumentInstance($parameters->getParameter('documentId'));
 		$lastSection = null;

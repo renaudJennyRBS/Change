@@ -18,7 +18,7 @@ class GetHtmlFragment
 		$resourcePath = $event->getParam('resourcePath');
 		$result = new \Rbs\Admin\Http\Result\Renderer();
 
-		$filePath = $this->getFilePath($resourcePath, $event->getApplicationServices()->getApplication()->getWorkspace());
+		$filePath = $this->getFilePath($resourcePath, $event->getApplication()->getWorkspace());
 		if ($filePath !== null)
 		{
 

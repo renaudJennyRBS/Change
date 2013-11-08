@@ -102,7 +102,7 @@ abstract class DbProvider
 		$classNames = array();
 		foreach ($this->getEventManagerIdentifier() as $identifier)
 		{
-			$entry = $this->configuration->getEntry('Change/Events/' . str_replace('.', '/', $identifier), array());
+			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $identifier));
 			if (is_array($entry))
 			{
 				foreach ($entry as $className)

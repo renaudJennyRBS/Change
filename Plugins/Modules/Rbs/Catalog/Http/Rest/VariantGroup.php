@@ -17,7 +17,7 @@ class VariantGroup
 	 */
 	public function getProducts(Event $event)
 	{
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
 		$queryData = null;
 		if ($document instanceof \Rbs\Catalog\Documents\VariantGroup)
 		{
@@ -40,7 +40,7 @@ class VariantGroup
 
 			if (count($ids))
 			{
-				$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Catalog_Product');
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
 				$query->andPredicates($query->eq('variantGroup', $document), $query->in('id', $ids));
 				$collection = $query->getDocuments();
 				foreach ($collection as $document)

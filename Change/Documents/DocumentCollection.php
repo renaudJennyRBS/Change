@@ -149,7 +149,7 @@ class DocumentCollection implements \Iterator, \Countable, \ArrayAccess
 	 */
 	protected function convertToDocument($entry)
 	{
-		$model = isset($entry[1]) ?$this->documentManager->getModelManager()->getModelByName($entry[1]) : null;
+		$model = isset($entry[1]) ?  $entry[1] : null;
 		return $this->documentManager->getDocumentInstance($entry[0], $model);
 	}
 

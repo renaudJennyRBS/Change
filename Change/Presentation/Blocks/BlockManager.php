@@ -48,7 +48,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
-	public function getConfiguration()
+	protected function getConfiguration()
 	{
 		return $this->configuration;
 	}
@@ -75,7 +75,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/BlockManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/BlockManager');
 	}
 
 	/**
@@ -114,6 +114,10 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					$this->blocks[$name] = $infos;
 					return $infos;
+				}
+				else
+				{
+					unset($this->blocks[$name]);
 				}
 			}
 		}

@@ -35,15 +35,16 @@ class Item extends \Compilation\Rbs\Collection\Documents\Item implements \Change
 		}
 	}
 
-	/**
-	 * @param DocumentLink $documentLink
-	 * @param $extraColumn
-	 */
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		$documentLink->setProperty('locked', $this->getLocked());
-		$documentLink->setProperty('value', $this->getValue());
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			$documentLink = $restResult;
+			$documentLink->setProperty('locked', $this->getLocked());
+			$documentLink->setProperty('value', $this->getValue());
+		}
 	}
 
 	/**

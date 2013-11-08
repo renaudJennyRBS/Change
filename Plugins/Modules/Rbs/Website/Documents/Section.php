@@ -4,7 +4,6 @@ namespace Rbs\Website\Documents;
 use Change\Documents\Events\Event;
 use Change\Documents\TreeNode;
 use Change\Permissions\PermissionsManager;
-use Rbs\Website\Documents\FunctionalPage;
 
 /**
  * @name \Rbs\Website\Documents\Section
@@ -15,6 +14,39 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 * @var \Rbs\Website\Documents\Page|boolean
 	 */
 	protected $indexPage = false;
+
+	/**
+	 * @var PermissionsManager
+	 */
+	private $permissionManager;
+
+	/**
+	 * @var \Change\Documents\TreeManager
+	 */
+	private $treeManager;
+
+	/**
+	 * @return PermissionsManager|null
+	 */
+	protected function getPermissionManager()
+	{
+		return $this->permissionManager;
+	}
+
+	/**
+	 * @return \Change\Documents\TreeManager|null
+	 */
+	protected function getTreeManager()
+	{
+		return $this->treeManager;
+	}
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		$this->permissionManager = $event->getApplicationServices()->getPermissionsManager();
+		$this->treeManager = $event->getApplicationServices()->getTreeManager();
+	}
 
 	/**
 	 * @param \Rbs\Website\Documents\Page $indexPage
@@ -33,7 +65,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	{
 		if (false === $this->indexPage)
 		{
-			$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_Page');
+			$query = $this->getDocumentManager()->getNewQuery('Rbs_Website_Page');
 			$subQuery = $query->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
 			$subQuery->andPredicates($subQuery->eq('section', $this), $subQuery->eq('functionCode', 'Rbs_Website_Section'));
 			$this->indexPage = $query->getFirstDocument();
@@ -73,7 +105,9 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 			/* @var $pathRule \Change\Http\Web\PathRule */
 			$pathRule = $event->getParam("pathRule");
 			$parameters = $pathRule->getQueryParameters();
-			if (!array_key_exists('sectionPageFunction', $parameters) || $parameters['sectionPageFunction'] == 'Rbs_Website_Section')
+			if (!array_key_exists('sectionPageFunction', $parameters)
+				|| $parameters['sectionPageFunction'] == 'Rbs_Website_Section'
+			)
 			{
 				$page = $document->getIndexPage();
 				if ($page instanceof FunctionalPage)
@@ -95,13 +129,13 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		if ($section instanceof Section)
 		{
 			$functionCode = $event->getParam('functionCode');
-			$treeNode = $this->getDocumentServices()->getTreeManager()->getNodeByDocument($section);
+			$treeNode = $event->getApplicationServices()->getTreeManager()->getNodeByDocument($section);
 			if ($treeNode)
 			{
 				$sectionIds = $treeNode->getAncestorIds();
 				$sectionIds[] = $section->getId();
 
-				$q = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+				$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
 				$q->andPredicates($q->eq('functionCode', $functionCode), $q->in('section', $sectionIds));
 				$dbq = $q->dbQueryBuilder();
 				$fb = $dbq->getFragmentBuilder();
@@ -140,9 +174,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		{
 			/* @var $section \Rbs\Website\Documents\Section */
 			$section = $event->getDocument();
-			$applicationServices = $section->getDocumentServices()->getApplicationServices();
-			$permissionManager = new PermissionsManager();
-			$permissionManager->setApplicationServices($applicationServices);
+			$permissionManager = $event->getApplicationServices()->getPermissionsManager();
 
 			$accessorIds = $permissionManager->getSectionAccessorIds($node->getParentId(), $section->getWebsite()->getId());
 			if (count($accessorIds))
@@ -244,19 +276,23 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 */
 	public function getSectionPath()
 	{
-		$tm = $this->getDocumentServices()->getTreeManager();
 		$sections = array();
-		$tn = $tm->getNodeByDocument($this);
-		if ($tn)
+		$tm = $this->getTreeManager();
+		if ($tm)
 		{
-			foreach ($tm->getAncestorNodes($tn) as $node)
+			$tn = $tm->getNodeByDocument($this);
+			if ($tn)
 			{
-				$doc = $node->setTreeManager($tm)->getDocument();
-				if ($doc instanceof \Rbs\Website\Documents\Section)
+				foreach ($tm->getAncestorNodes($tn) as $node)
 				{
-					$sections[] = $doc;
+					$doc = $node->setTreeManager($tm)->getDocument();
+					if ($doc instanceof \Rbs\Website\Documents\Section)
+					{
+						$sections[] = $doc;
+					}
 				}
 			}
+
 		}
 		$sections[] = $this;
 		return $sections;
@@ -268,7 +304,8 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 */
 	public function getTitle()
 	{
-		return $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()->getTitle() : $this->getCurrentLocalization()->getTitle();
+		return $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()
+			->getTitle() : $this->getCurrentLocalization()->getTitle();
 	}
 
 	/**
@@ -319,24 +356,6 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 * @var \Rbs\User\Documents\Group[]
 	 */
 	protected $authorizedGroups = null;
-
-	/**
-	 * @var PermissionsManager
-	 */
-	protected $permissionManager;
-
-	/**
-	 * @return PermissionsManager
-	 */
-	public function getPermissionManager()
-	{
-		if (!$this->permissionManager)
-		{
-			$this->permissionManager = new PermissionsManager();
-			$this->permissionManager->setApplicationServices($this->getApplicationServices());
-		}
-		return $this->permissionManager;
-	}
 
 	/**
 	 * @return \Rbs\User\Documents\User[]|null
@@ -400,5 +419,4 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		}
 		return $accessors;
 	}
-
 }

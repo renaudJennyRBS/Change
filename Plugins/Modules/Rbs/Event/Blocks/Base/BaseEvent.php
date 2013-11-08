@@ -64,7 +64,7 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 		$docId = $parameters->getParameter('docId');
 		if ($docId)
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$document = $documentManager->getDocumentInstance($docId);
 			if ($this->checkDocumentType($document))
 			{
@@ -75,15 +75,16 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 				if ($parameters->getParameter('showCategories'))
 				{
 					$website = $documentManager->getDocumentInstance($parameters->getParameter('websiteId'));
-					$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Event_Category');
+					$query = $documentManager->getNewQuery('Rbs_Event_Category');
 					$query->andPredicates($query->published());
 					$subQuery1 = $query->getModelBuilder('Rbs_Event_BaseEvent', 'categories');
 					$subQuery1->andPredicates($subQuery1->eq('id', $document->getId()));
 					$subQuery2 = $query->getPropertyBuilder('publicationSections');
+					$treePredicateBuilder = new \Change\Documents\Query\TreePredicateBuilder($subQuery2, $event->getApplicationServices()->getTreeManager());
 					$subQuery2->andPredicates(
 						$subQuery2->getPredicateBuilder()->logicOr(
 							$subQuery2->eq('id', $website->getId()),
-							$subQuery2->descendantOf($website)
+							$treePredicateBuilder->descendantOf($website)
 						)
 					);
 					$query->addOrder('title', true);

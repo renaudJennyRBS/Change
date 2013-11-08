@@ -2,7 +2,7 @@
 namespace Rbs\Commerce\Events\ProfileManager;
 
 use Change\User\ProfileManager;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 

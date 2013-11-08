@@ -32,7 +32,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 
 		/* @var $document \Rbs\Website\Documents\SectionPageFunction */
 		$document = $event->getDocument();
-		$query = new \Change\Documents\Query\Query($document->getDocumentServices(), $document->getDocumentModel());
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($document->getDocumentModel());
 		$query->andPredicates($query->eq('section', $document->getSection()), $query->eq('functionCode', $document->getFunctionCode()));
 		if ($query->getCountDocuments())
 		{

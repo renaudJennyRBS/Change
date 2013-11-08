@@ -59,13 +59,8 @@ class SharedListeners implements SharedListenerAggregateInterface
 					if (count($toIndex))
 					{
 						/* @var $transactionManager \Change\Transaction\TransactionManager */
-						$transactionManager = $event->getTarget();
 						$jobManager = $event->getApplicationServices()->getJobManager();
-
-						//Create New Job in current transaction
-						$jobManager->setTransactionManager(null);
-						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy());
-						$jobManager->setTransactionManager($transactionManager);
+						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy(), null, false);
 					}
 					$application->getContext()->set('elasticsearch_toIndex', null);
 				}

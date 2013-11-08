@@ -15,7 +15,7 @@ class InsertCart
 	public function execute($event)
 	{
 		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$args = $event->getRequest()->getPost()->toArray();
 			if (isset($args['billingArea']))
@@ -27,10 +27,10 @@ class InsertCart
 				$billingArea = null;
 			}
 
-			$webStore = $commerceServices->getWebStore();
+			$webStore = $commerceServices->getContext()->getWebStore();
 			if (isset($args['webStoreId']))
 			{
-				$webStore = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($args['webStoreId'], 'Rbs_Store_WebStore');
+				$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($args['webStoreId'], 'Rbs_Store_WebStore');
 			}
 
 			$zone = (isset($args['zone'])) ? strval($args['zone']) : null;
@@ -56,7 +56,7 @@ class InsertCart
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param \Rbs\Commerce\Interfaces\Cart $cart
 	 * @param array $cartData
 	 */

@@ -44,7 +44,7 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 	protected function doExecute($event, $attributes, $website, $section)
 	{
 		$parameters = $event->getBlockParameters();
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
 		if (!($category instanceof \Rbs\Event\Documents\Category))
 		{
@@ -52,33 +52,34 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 		}
 		$attributes['category'] = $category;
 
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
-		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Event_BaseEvent');
+		$query = $documentManager->getNewQuery('Rbs_Event_BaseEvent');
 		$query->andPredicates($query->published(), $query->eq('categories', $category));
 		$subQuery1 = $query->getPropertyBuilder('publicationSections');
 
 		switch ($parameters->getParameter('sectionRestriction'))
 		{
 			case 'website':
+				$treePredicateBuilder = new \Change\Documents\Query\TreePredicateBuilder($subQuery1, $event->getApplicationServices()->getTreeManager());
 				$subQuery1->andPredicates(
 					$subQuery1->getPredicateBuilder()->logicOr(
 						$subQuery1->eq('id', $website->getId()),
-						$subQuery1->descendantOf($website)
+						$treePredicateBuilder->descendantOf($website)
 					)
 				);
 				break;
-
 			case 'section':
 				$subQuery1->andPredicates(
 					$subQuery1->eq('id', $section->getId())
 				);
-
+				break;
 			case 'sectionAndSubsections':
+				$treePredicateBuilder = new \Change\Documents\Query\TreePredicateBuilder($subQuery1, $event->getApplicationServices()->getTreeManager());
 				$subQuery1->andPredicates(
 					$subQuery1->getPredicateBuilder()->logicOr(
 						$subQuery1->eq('id', $section->getId()),
-						$subQuery1->descendantOf($section)
+						$treePredicateBuilder->descendantOf($section)
 					)
 				);
 		}

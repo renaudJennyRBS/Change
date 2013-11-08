@@ -19,7 +19,7 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			$predicateJSON = $event->getParam('predicateJSON');
 			if (is_array($predicateJSON) && isset($predicateJSON['op']) && ucfirst($predicateJSON['op']) === 'HasTag')
@@ -33,7 +33,7 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach(DbProvider::EVENT_SQL_FRAGMENT, $callback, 5);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			$fragment = $event->getParam('fragment');
 			if ($fragment instanceof \Rbs\Tag\Db\Query\HasTag)

@@ -31,7 +31,7 @@ class CartCrossSelling extends Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
@@ -76,7 +76,7 @@ class CartCrossSelling extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		$productChoiceStrategy = $parameters->getParameter('productChoiceStrategy');
 		$crossSellingType = $parameters->getParameter('crossSellingType');

@@ -16,7 +16,7 @@ class Resize
 		$maxWidth = $event->getRequest()->getQuery('maxWidth', 0);
 		$maxHeight = $event->getRequest()->getQuery('maxHeight', 0);
 		$documentId = $event->getParam('documentId');
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId);
 		if (!($document instanceof \Rbs\Media\Documents\Image))
 		{
 			$event->setResult(new Result(Response::STATUS_CODE_404));

@@ -534,23 +534,23 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	abstract public function delete();
 
 	/**
+	 * @api
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+	}
+
+	/**
 	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
 	 * @return $this
 	 */
 	public function populateRestDocumentResult($documentResult)
 	{
-		$this->updateRestDocumentResult($documentResult);
 		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this,
 			array('restResult' => $documentResult, 'urlManager' => $documentResult->getUrlManager()));
 		$this->getEventManager()->trigger($documentEvent);
 		return $this;
-	}
-
-	/**
-	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
-	 */
-	protected function updateRestDocumentResult($documentResult)
-	{
 	}
 
 	/**
@@ -560,20 +560,10 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	 */
 	public function populateRestDocumentLink($documentLink, $extraColumn)
 	{
-		$this->updateRestDocumentLink($documentLink, $extraColumn);
 		$documentEvent = new \Change\Documents\Events\Event('updateRestResult', $this,
 			array('restResult' => $documentLink, 'extraColumn' => $extraColumn, 'urlManager' => $documentLink->getUrlManager()));
 		$this->getEventManager()->trigger($documentEvent);
 		return $this;
-	}
-
-	/**
-	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
-	 * @param array $extraColumn
-	 */
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
-	{
-
 	}
 
 	public function onDefaultCorrectionFiled(\Change\Documents\Events\Event $event)
@@ -583,7 +573,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		if ($as && ($correction instanceof \Change\Documents\Correction))
 		{
 			$jobManager = $as->getJobManager();
-			$jobManager->setTransactionManager($as->getTransactionManager());
 			$jobManager->createNewJob('Change_Correction_Filed', array(
 				'correctionId' => $correction->getId(), 'documentId' => $correction->getDocumentId(),
 				'LCID' => $correction->getLCID()

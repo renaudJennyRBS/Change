@@ -1,7 +1,7 @@
 <?php
 namespace Rbs\Workflow\Tasks\CorrectionPublicationProcess;
 
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 

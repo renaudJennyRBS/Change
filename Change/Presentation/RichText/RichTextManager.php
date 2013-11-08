@@ -13,29 +13,6 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_GET_PARSER = 'GetParser';
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	public function getConfiguration()
-	{
-		return $this->configuration;
-	}
-
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -48,7 +25,7 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/RichTextManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/RichTextManager');
 	}
 
 	/**

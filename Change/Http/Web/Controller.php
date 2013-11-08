@@ -1,14 +1,10 @@
 <?php
 namespace Change\Http\Web;
 
-use Change\Application\ApplicationServices;
 use Change\Documents\AbstractDocument;
-use Change\Documents\DocumentServices;
 use Change\Http\Request;
 use Change\Http\Result;
-use Change\Http\Web\Event;
 use Change\Presentation\Interfaces\Page;
-use Change\Presentation\PresentationServices;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
@@ -40,7 +36,11 @@ class Controller extends \Change\Http\Controller
 		parent::onDefaultRegisterServices($event);
 		if ($event instanceof Event)
 		{
-			$event->getUrlManager()->setApplicationServices($event->getApplicationServices());
+			$applicationServices = $event->getApplicationServices();
+			$event->getUrlManager()
+				->setDbProvider($applicationServices->getDbProvider())
+				->setTransactionManager($applicationServices->getTransactionManager())
+				->setDocumentManager($applicationServices->getDocumentManager());
 		}
 	}
 
@@ -71,7 +71,8 @@ class Controller extends \Change\Http\Controller
 		$page = $event->getParam('page');
 		if ($page instanceof Page)
 		{
-			$result = (new \Change\Presentation\Pages\PageManager())->setHttpWebEvent($event)->getPageResult($page);
+			$pageManager = $event->getApplicationServices()->getPageManager();
+			$result = $pageManager->setHttpWebEvent($event)->getPageResult($page);
 			if ($result)
 			{
 				$event->setResult($result);
@@ -187,6 +188,7 @@ class Controller extends \Change\Http\Controller
 				return $result;
 			}
 		}
+		return parent::forbidden($event);
 	}
 
 	/**
@@ -239,12 +241,12 @@ class Controller extends \Change\Http\Controller
 
 			if (!($page instanceof Page))
 			{
-				$page = new \Change\Presentation\Themes\DefaultPage($event->getPresentationServices()
+				$page = new \Change\Presentation\Themes\DefaultPage($event->getApplicationServices()
 					->getThemeManager(), $functionCode);
 			}
 
 			$event->setParam('page', $page);
-			$this->doSendResult($this->getEventManager(), $event);
+			$this->doSendResult($event);
 			return $event->getResult();
 		}
 		catch (\Exception $e)

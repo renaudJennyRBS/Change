@@ -82,7 +82,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/PageManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/PageManager');
 	}
 
 	/**
@@ -274,7 +274,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 			if ($configuration->getEntry('Change/Cache/page'))
 			{
 				$eventManager = $this->getEventManager();
-				$event = new \Zend\EventManager\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
+				$event = new \Change\Events\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
 				$eventManager->trigger($event);
 				$cache = $event->getParam('cacheAdapter');
 				if ($cache instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter)

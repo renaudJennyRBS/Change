@@ -156,7 +156,7 @@ class GetTaggedDocuments
 			}
 			$sc->setMaxResults($result->getLimit());
 			$sc->setStartIndex($result->getOffset());
-			$collection = new DocumentCollection($event->getDocumentServices()->getDocumentManager(), $sc->getResults());
+			$collection = new DocumentCollection($event->getApplicationServices()->getDocumentManager(), $sc->getResults());
 			foreach ($collection as $document)
 			{
 				if ($document)

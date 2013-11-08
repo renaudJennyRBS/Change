@@ -54,14 +54,14 @@ abstract class BaseEventList extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$section = $documentManager->getDocumentInstance($parameters->getParameter('sectionId'));
 		if (!($section instanceof \Rbs\Website\Documents\Section))
 		{
 			return null;
 		}
 
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$website = $documentManager->getDocumentInstance($parameters->getParameter('websiteId'));
 		if (!($website instanceof \Rbs\Website\Documents\Website))
 		{
@@ -129,15 +129,16 @@ abstract class BaseEventList extends \Change\Presentation\Blocks\Standard\Block
 
 			if ($showCategories)
 			{
-				$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Event_Category');
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Event_Category');
 				$query->andPredicates($query->published());
 				$subQuery1 = $query->getModelBuilder('Rbs_Event_BaseEvent', 'categories');
 				$subQuery1->andPredicates($subQuery1->eq('id', $document->getId()));
 				$subQuery2 = $query->getPropertyBuilder('publicationSections');
+				$treePredicateBuilder = new \Change\Documents\Query\TreePredicateBuilder($subQuery2, $event->getApplicationServices()->getTreeManager());
 				$subQuery2->andPredicates(
 					$subQuery2->getPredicateBuilder()->logicOr(
 						$subQuery2->eq('id', $website->getId()),
-						$subQuery2->descendantOf($website)
+						$treePredicateBuilder->descendantOf($website)
 					)
 				);
 				$query->addOrder('title', true);

@@ -30,12 +30,28 @@ class EventManagerFactory
 		$this->sharedEventManager = new \Zend\EventManager\SharedEventManager();
 		$this->services = new \Zend\Stdlib\Parameters();
 		$this->attachShared($this->sharedEventManager);
-		$this->registerSharedListenerAggregateClassNames($application->getConfiguration('Change/Events/ListenerAggregateClasses'));
+		$classNames = $this->getConfiguredListenerClassNames('Change/Events/ListenerAggregateClasses');
+		$this->registerSharedListenerAggregateClassNames($classNames);
 
 		if (!\Zend\EventManager\StaticEventManager::hasInstance())
 		{
 			\Zend\EventManager\StaticEventManager::setInstance($this->sharedEventManager);
 		}
+	}
+
+	/**
+	 * @param $configurationEntryName
+	 * @return array
+	 */
+	public function getConfiguredListenerClassNames($configurationEntryName)
+	{
+		if (is_string($configurationEntryName))
+		{
+			$configuration = $this->application->getConfiguration();
+			$classNames = $configuration->getEntry($configurationEntryName);
+			return is_array($classNames) ? $classNames : array();
+		}
+		return array();
 	}
 
 	/**
@@ -112,6 +128,14 @@ class EventManagerFactory
 					if ($listenerAggregate instanceof \Zend\EventManager\ListenerAggregateInterface)
 					{
 						$listenerAggregate->attach($eventManager);
+					}
+				}
+				else
+				{
+					$applicationServices = $this->services['applicationServices'];
+					if ($applicationServices instanceof \Change\Services\ApplicationServices)
+					{
+						$applicationServices->getLogging()->error($className . ' Listener aggregate Class name not found.');
 					}
 				}
 			}

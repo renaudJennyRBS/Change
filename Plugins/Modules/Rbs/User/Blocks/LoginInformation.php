@@ -2,26 +2,19 @@
 namespace Rbs\User\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 
 /**
- * Class LoginInformation
- * @package Rbs\User\Blocks
  * @name \Rbs\User\Blocks\LoginInformation
  */
 class LoginInformation extends Information
 {
-	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
-	 */
-	function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.user.blocks.login'));
+		$this->setLabel($i18nManager->trans('m.rbs.user.blocks.login', $ucf));
 		$this->addInformationMeta('realm', Property::TYPE_STRING, true, 'web')
 			->setLabel($i18nManager->trans('m.rbs.user.blocks.login-realm', $ucf));
 		$this->setFunctions(array('Error_401' => 'Unauthorized'));

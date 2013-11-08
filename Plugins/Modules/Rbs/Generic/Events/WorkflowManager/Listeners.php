@@ -19,14 +19,14 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			$resolver = new \Rbs\Workflow\Events\WorkflowResolver();
 			$resolver->examine($event);
 		};
 		$events->attach(WorkflowManager::EVENT_EXAMINE, $callback, 5);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			$resolver = new \Rbs\Workflow\Events\WorkflowResolver();
 			$resolver->process($event);

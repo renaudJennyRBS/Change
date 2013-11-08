@@ -1,8 +1,7 @@
 <?php
 namespace Rbs\Commerce\Interfaces;
 
-use Rbs\Commerce\Services\CommerceServices;
-use Zend\EventManager\Event;
+use Rbs\Commerce\CommerceServices;
 
 /**
 * @name \Rbs\Commerce\Interfaces\CartLineConfigCapable
@@ -10,7 +9,7 @@ use Zend\EventManager\Event;
 interface CartLineConfigCapable
 {
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param array $parameters
 	 * @return \Rbs\Commerce\Interfaces\CartLineConfig
 	 */

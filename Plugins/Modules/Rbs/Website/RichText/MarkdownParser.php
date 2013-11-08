@@ -47,7 +47,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		}
 		elseif (count($params) === 2)
 		{
-			$model = $this->documentServices->getModelManager()->getModelByName($params[0]);
+			$model = $this->applicationServices->getModelManager()->getModelByName($params[0]);
 			$id = $params[1];
 		}
 
@@ -58,7 +58,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		}
 
 		/* @var $document \Change\Documents\AbstractDocument */
-		$document = $this->documentServices->getDocumentManager()->getDocumentInstance($id, $model);
+		$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($id, $model);
 
 		if (!$document)
 		{

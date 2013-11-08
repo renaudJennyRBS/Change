@@ -14,20 +14,22 @@ class CrossSellingEngine
 	 * Gets Cross Selling products for a product using parameters array
 	 * $event requires two parameters : product and csParameters
 	 * @api
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Catalog\Std\ProductItem[]
 	 */
-	public function getCrossSellingProductsByProduct(\Zend\EventManager\Event $event)
+	public function getCrossSellingProductsByProduct(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getTarget()->getDocumentServices();
-		$commerceServices = $event->getTarget()->getCommerceServices();
+		$applicationServices = $event->getApplicationServices();
+
+		/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
 		$products = array();
 		$product = $event->getParam('product');
 		$parameters = $event->getParam('csParameters');
 		if (isset($parameters['crossSellingType']))
 		{
 			//Gets CrossSellingProductList
-			$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_CrossSellingProductList');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_CrossSellingProductList');
 			$pb = $query->getPredicateBuilder();
 			$query->andPredicates($pb->eq('product', $product), $pb->eq('crossSellingType', $parameters['crossSellingType']));
 			$crossSellingList = $query->getFirstDocument();
@@ -35,8 +37,8 @@ class CrossSellingEngine
 			/* @var $crossSellingList \Rbs\Catalog\Documents\CrossSellingProductList */
 			if($crossSellingList)
 			{
-				$documentManager = $documentServices->getDocumentManager();
-				$query = new \Change\Documents\Query\Query($documentServices, 'Rbs_Catalog_Product');
+				$documentManager = $applicationServices->getDocumentManager();
+				$query = $documentManager->getNewQuery('Rbs_Catalog_Product');
 				$query->andPredicates($query->published());
 				$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
 				$subQuery->andPredicates(
@@ -50,13 +52,13 @@ class CrossSellingEngine
 				{
 					/* @var $p \Rbs\Catalog\Documents\Product */
 					$website = $p->getCanonicalSection()->getWebsite();
-					$lcid = $documentServices->getApplicationServices()->getI18nManager()->getLCID();
+					$lcid = $applicationServices->getApplicationServices()->getI18nManager()->getLCID();
 					$url = $website->getUrlManager($lcid)->getCanonicalByDocument($p)->toString();
 					$row = array('id' => $p->getId(), 'url' => $url);
 					$visual = $p->getFirstVisual();
 					$row['visual'] = $visual ? $visual->getPath() : null;
 
-					$productPresentation = $p->getPresentation($commerceServices, $commerceServices->getWebStore()->getId());
+					$productPresentation = $p->getPresentation($commerceServices, $commerceServices->getContext()->getWebStore()->getId());
 					if ($productPresentation)
 					{
 						$productPresentation->evaluate();
@@ -75,10 +77,10 @@ class CrossSellingEngine
 	 * Gets Cross Selling products for a product using parameters array
 	 * $event requires two parameters : cart and csParameters
 	 * @api
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Catalog\Std\ProductItem[]
 	 */
-	public function getCrossSellingProductsByCart(\Zend\EventManager\Event $event)
+	public function getCrossSellingProductsByCart(\Change\Events\Event $event)
 	{
 		$products = array();
 		$parameters = $event->getParam('csParameters');
@@ -96,19 +98,18 @@ class CrossSellingEngine
 	/**
 	 * Choose a product form cart according to strategy
 	 * @api
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Catalog\Documents\Product|null
 	 */
-	protected function getProductFromCart(\Zend\EventManager\Event $event)
+	protected function getProductFromCart(\Change\Events\Event $event)
 	{
 		$cart = $event->getParam('cart');
-		$csManager = $event->getTarget();
 		$parameters = $event->getParam('csParameters');
 		$strategy = $parameters['productChoiceStrategy'];
 		if ($cart instanceof \Rbs\Commerce\Cart\Cart && isset($strategy))
 		{
 			$line = null;
-			$documentManager = $csManager->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			/* Let's be optimistic : cartline key = productId */
 			switch($strategy)
 			{

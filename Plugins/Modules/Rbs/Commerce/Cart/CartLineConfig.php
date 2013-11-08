@@ -42,10 +42,10 @@ class CartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	protected $quantity;
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param array $array
 	 */
-	function __construct(\Rbs\Commerce\Services\CommerceServices $commerceServices, array $array = array())
+	function __construct(\Rbs\Commerce\CommerceServices $commerceServices, array $array = array())
 	{
 		$this->key = isset($array['key']) ? $array['key'] : null;
 		$this->quantity = isset($array['quantity']) ? $array['quantity'] : null;
@@ -119,7 +119,7 @@ class CartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @throws \LogicException
 	 * @return $this
 	 */

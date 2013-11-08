@@ -3,8 +3,8 @@ namespace Rbs\Commerce\Cart;
 
 use Change\Documents\AbstractDocument;
 use Change\Documents\DocumentWeakReference;
+use Rbs\Commerce\CommerceServices;
 use Rbs\Commerce\Interfaces\BillingArea;
-use Rbs\Commerce\Services\CommerceServices;
 
 /**
  * @name \Rbs\Commerce\Cart\CartStorage
@@ -66,9 +66,9 @@ class CartStorage
 			{
 				$webStoreId = $webStore->getId();
 			}
-			elseif ($commerceServices->getWebStore())
+			elseif ($commerceServices->getContext()->getWebStore())
 			{
-				$webStoreId = $commerceServices->getWebStore()->getId();
+				$webStoreId = $commerceServices->getContext()->getWebStore()->getId();
 			}
 			else
 			{
@@ -104,7 +104,7 @@ class CartStorage
 			}
 			else
 			{
-				$cart->setBillingArea($commerceServices->getBillingArea());
+				$cart->setBillingArea($commerceServices->getContext()->getBillingArea());
 			}
 			if (is_string($zone))
 			{
@@ -112,7 +112,7 @@ class CartStorage
 			}
 			else
 			{
-				$cart->setZone($commerceServices->getZone());
+				$cart->setZone($commerceServices->getContext()->getZone());
 			}
 			if (count($context))
 			{
@@ -416,14 +416,14 @@ class CartStorage
 
 	/**
 	 * @param mixed $value
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return array|\Change\Documents\DocumentWeakReference|mixed
 	 */
 	public function restoreSerializableValue($value, CommerceServices $commerceServices)
 	{
 		if ($value instanceof DocumentWeakReference)
 		{
-			return $value->getDocument($commerceServices->getDocumentServices()->getDocumentManager());
+			return $value->getDocument($commerceServices->getApplicationServices()->getDocumentManager());
 		}
 		elseif (is_array($value) || $value instanceof \Zend\Stdlib\Parameters)
 		{

@@ -2,7 +2,6 @@
 namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\Rest\Result\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -42,8 +41,8 @@ class SetDocumentTags
 		{
 			$transactionManager->begin();
 
-			$docManager = $event->getDocumentServices()->getDocumentManager();
-			$model = $event->getDocumentServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
+			$docManager = $event->getApplicationServices()->getDocumentManager();
+			$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Tag_Tag');
 
 			$stmt = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $stmt->getFragmentBuilder();

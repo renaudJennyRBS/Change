@@ -16,7 +16,7 @@ class DocumentSeoGenerator
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
 			/* @var $document \Change\Documents\AbstractDocument */
-			$dqb = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Seo_ModelConfiguration');
+			$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Seo_ModelConfiguration');
 			$dqb->andPredicates(
 				$dqb->eq('modelName', $document->getDocumentModel()->getName()),
 				$dqb->eq('documentSeoAutoGenerate', true)
@@ -25,13 +25,13 @@ class DocumentSeoGenerator
 			if ($modelConfiguration)
 			{
 				/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
-				$documentSeo = $document->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+				$documentSeo = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 				/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
 				$documentSeo->setTarget($document);
 				$documentSeo->setSitemapChangeFrequency($modelConfiguration->getSitemapDefaultChangeFrequency());
 				$documentSeo->setSitemapPriority($modelConfiguration->getSitemapDefaultPriority());
 
-				$dqb = new \Change\Documents\Query\Query($document->getDocumentServices(), 'Rbs_Website_Website');
+				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Website');
 				$websites = $dqb->getDocuments();
 				$sitemapGenerateForWebsites = [];
 				foreach ($websites as $website)
@@ -44,7 +44,7 @@ class DocumentSeoGenerator
 				}
 				$documentSeo->setSitemapGenerateForWebsites($sitemapGenerateForWebsites);
 
-				$tm = $document->getApplicationServices()->getTransactionManager();
+				$tm = $event->getApplicationServices()->getTransactionManager();
 				try
 				{
 					$tm->begin();

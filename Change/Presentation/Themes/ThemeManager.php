@@ -93,7 +93,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/ThemeManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/ThemeManager');
 	}
 
 	/**

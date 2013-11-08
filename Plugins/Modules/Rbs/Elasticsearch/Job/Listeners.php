@@ -20,19 +20,21 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function(\Change\Job\Event $event)
 		{
-
-			$im = new IndexManager();
-			$im->setApplicationServices($event->getApplicationServices());
-			$im->setDocumentServices($event->getDocumentServices());
-			$im->dispatchIndexationEvents($event->getJob()->getArguments());
+			$elasticsearchServices = $event->getServices('elasticsearchServices');
+			if ($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices)
+			{
+				$elasticsearchServices->getIndexManager()->dispatchIndexationEvents($event->getJob()->getArguments());
+			}
+			elseif($event->getApplicationServices())
+			{
+				$event->getApplicationServices()->getLogging()->error(__METHOD__ . ' Elasticsearch services not registered');
+			}
 		};
 		$events->attach('process_Elasticsearch_Index', $callback, 5);
-
 
 		$callback = function(\Change\Job\Event $event)
 		{
 			/* TODO Update Mapping*/
-
 		};
 		$events->attach('process_Elasticsearch_Mapping', $callback, 5);
 	}

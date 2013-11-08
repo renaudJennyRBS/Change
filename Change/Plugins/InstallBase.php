@@ -32,6 +32,14 @@ class InstallBase
 			}
 		});
 
+		$events->attach(PluginManager::EVENT_SETUP_DB_SCHEMA, function(Event $event) use ($plugin) {
+			if ($this->isValid($event, $plugin))
+			{
+				$this->executeDbSchema($plugin, $event->getApplicationServices()->getDbProvider()->getSchemaManager());
+			}
+		});
+
+
 		$events->attach(PluginManager::EVENT_SETUP_SERVICES, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
 			{
@@ -83,6 +91,16 @@ class InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
+	 * @throws \RuntimeException
+	 */
+	public function executeDbSchema($plugin, $schemaManager)
+	{
+
 	}
 
 	/**

@@ -17,29 +17,6 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_SAVE = 'save';
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
-
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -52,7 +29,7 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/ProfileManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/ProfileManager');
 	}
 
 	/**

@@ -2,16 +2,13 @@
 namespace Rbs\Admin;
 
 use Assetic\AssetManager;
-use Assetic\Factory\AssetFactory;
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
 
 /**
  * @name \Rbs\Admin\Manager
  */
 class Manager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait;
+	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
 
 	/**
 	 * @var \Assetic\AssetManager
@@ -23,17 +20,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $cssAssetManager;
 
-
-	/**
-	 * @var ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var DocumentServices
-	 */
-	protected $documentServices;
-
 	/**
 	 * @var string
 	 */
@@ -42,74 +28,12 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @var \Twig_ExtensionInterface[]
 	 */
-	protected $extensions = array();
+	protected $extensions;
 
-	/**
-	 * @param ApplicationServices $applicationServices
-	 * @param DocumentServices $documentServices
-	 */
-	function __construct($applicationServices, $documentServices)
+	public function __construct()
 	{
-		if ($applicationServices)
-		{
-			$this->setApplicationServices($applicationServices);
-		}
-		if ($documentServices)
-		{
-			$this->setDocumentServices($documentServices);
-		}
 		$this->jsAssetManager = new AssetManager();
 		$this->cssAssetManager = new AssetManager();
-
-		$this->addExtension(new \Rbs\Admin\Presentation\Twig\Extension($this));
-	}
-
-	/**
-	 * @param ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(ApplicationServices $applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param DocumentServices $documentServices
-	 */
-	public function setDocumentServices(DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-		if ($this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($documentServices->getApplicationServices()->getApplication()->getSharedEventManager());
-		}
-	}
-
-	/**
-	 * @return DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	public function getApplication()
-	{
-		return $this->applicationServices->getApplication();
 	}
 
 	/**
@@ -119,6 +43,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function addExtension(\Twig_ExtensionInterface $extension)
 	{
+		$this->getExtensions();
 		$this->extensions[$extension->getName()] = $extension;
 		return $this;
 	}
@@ -128,6 +53,11 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getExtensions()
 	{
+		if ($this->extensions === null)
+		{
+			$extension = new \Rbs\Admin\Presentation\Twig\Extension($this, $this->getApplicationServices());
+			$this->extensions = array($extension->getName() => $extension);
+		}
 		return $this->extensions;
 	}
 
@@ -152,12 +82,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->documentServices)
-		{
-			$config = $this->documentServices->getApplicationServices()->getApplication()->getConfiguration();
-			return $config->getEntry('Change/Events/Rbs/Admin', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Admin/Events/Manager');
 	}
 
 	/**
@@ -211,7 +136,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->cachePath === null)
 		{
-			$this->cachePath = $this->getApplicationServices()->getApplication()->getWorkspace()
+			$this->cachePath = $this->getApplication()->getWorkspace()
 				->cachePath('Admin', 'Templates', 'Compiled');
 			\Change\Stdlib\File::mkdir($this->cachePath);
 		}
@@ -241,7 +166,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 
 			if ($resourceDirectoryPath !== null)
 			{
-				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR,$targetPath);
+				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR, $targetPath);
 				\Change\Stdlib\File::write($fileTargetPath, $asset->dump());
 			}
 
@@ -275,7 +200,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			$targetPath = '/css/' . $name . '.css';
 			if ($resourceDirectoryPath !== null)
 			{
-				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR,$targetPath);
+				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR, $targetPath);
 				\Change\Stdlib\File::write($fileTargetPath, $asset->dump());
 			}
 
@@ -298,7 +223,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		}
 		$pm = $this->getApplicationServices()->getPluginManager();
 		$plugin = $pm->getModule('Rbs', 'Admin');
-		$srcPath = $plugin->getAbsolutePath($pm->getApplication()->getWorkspace()) . '/Assets/img';
+		$srcPath = $plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . '/Assets/img';
 		$targetPath = $resourceDirectoryPath . '/img';
 		\Change\Stdlib\File::mkdir($targetPath);
 
@@ -308,7 +233,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		foreach ($iterator as $fileInfo)
 		{
 			/* @var $fileInfo \SplFileInfo */
-			$targetPathName = str_replace($srcPath, $targetPath , $fileInfo->getPathname());
+			$targetPathName = str_replace($srcPath, $targetPath, $fileInfo->getPathname());
 			if ($fileInfo->isFile())
 			{
 				copy($fileInfo->getPathname(), $targetPathName);
@@ -331,7 +256,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 
 		// Include Twig macros for forms.
 		// Use it with: {% import "@Admin/forms.twig" as forms %}
-		$formsMacroPath = $this->getApplicationServices()->getApplication()->getWorkspace()
+		$formsMacroPath = $this->getApplication()->getWorkspace()
 			->pluginsModulesPath('Rbs', 'Admin', 'Assets');
 		$loader->addPath($formsMacroPath, 'Admin');
 
@@ -357,17 +282,19 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function registerStandardPluginAssets(\Change\Plugins\Plugin $plugin = null)
 	{
-		$devMode = $this->getApplicationServices()->getApplication()->inDevelopmentMode();
+		$devMode = $this->getApplication()->inDevelopmentMode();
 		if ($plugin && $plugin->isAvailable())
 		{
-			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace()). '/Admin/Assets/*/*.js');
+			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace())
+				. '/Admin/Assets/*/*.js');
 			if (!$devMode)
 			{
 				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
 			}
 			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
-			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . '/Admin/Assets/css/*.css');
+			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace())
+				. '/Admin/Assets/css/*.css');
 			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
 		}
 	}

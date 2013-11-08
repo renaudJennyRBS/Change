@@ -3,8 +3,6 @@ namespace ChangeTests\Modules\Commerce\Cart;
 
 use ChangeTests\Modules\Commerce\Cart\Assets\TestCartItemConfig;
 use ChangeTests\Modules\Commerce\Cart\Assets\TestCartLineConfig;
-use Rbs\Commerce\Cart\CartManager;
-use Rbs\Commerce\Services\CommerceServices;
 
 include_once(__DIR__ . '/Assets/TestCartLineConfig.php');
 include_once(__DIR__ . '/Assets/TestCartItemConfig.php');
@@ -14,10 +12,9 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public static function setUpBeforeClass()
 	{
 		$applicationServices = static::initDocumentsDb();
-
 		$schema = new \Rbs\Commerce\Setup\Schema($applicationServices->getDbProvider()->getSchemaManager());
 		$schema->generate();
-		$applicationServices->getDbProvider()->closeConnection();
+		$applicationServices->getDbProvider()->getSchemaManager()->closeConnection();
 	}
 
 	public static function tearDownAfterClass()
@@ -26,22 +23,24 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @return CommerceServices
+	 * @return \Rbs\Commerce\CommerceServices
 	 */
 	public function testGetInstance()
 	{
-		$cs = new CommerceServices($this->getApplicationServices(), $this->getDocumentServices());
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\CartManager', $cs->getCartManager());
-		return $cs->getCartManager();
+		return $cs;
 	}
 
 	/**
 	 * @depends testGetInstance
-	 * @param CartManager $cm
-	 * @return \Rbs\Commerce\Cart\CartManager
+	 * @param \Rbs\Commerce\CommerceServices $cs
+	 * @return \Rbs\Commerce\CommerceServices
 	 */
-	public function testGetNewCart(CartManager $cm)
+	public function testGetNewCart(\Rbs\Commerce\CommerceServices $cs)
 	{
+		$cm = $cs->getCartManager();
 		try
 		{
 			$cm->getNewCart();
@@ -58,33 +57,39 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$identifier = $cart->getIdentifier();
 		$this->assertNotNull($identifier);
-		$cm->getCommerceServices()->setCartIdentifier($identifier);
+		$cs->getContext()->setCartIdentifier($identifier);
 
 		$cart->getContext()->set('TEST', 'VALUE');
-		return $cm;
+
+		$cs->getApplicationServices()->getDbProvider()->closeConnection();
+		return $cs;
 	}
 
 	/**
 	 * @depends testGetNewCart
-	 * @param CartManager $cm
-	 * @return CartManager
+	 * @param \Rbs\Commerce\CommerceServices $cs
+	 * @return \Rbs\Commerce\CommerceServices
 	 */
-	public function testGetCart(CartManager $cm)
+	public function testGetCart(\Rbs\Commerce\CommerceServices $cs)
 	{
-		$identifier = $cm->getCommerceServices()->getCartIdentifier();
+		$cm = $cs->getCartManager();
+		$identifier = $cs->getContext()->getCartIdentifier();
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
 		$this->assertEquals($identifier, $cart->getIdentifier());
-		return $cm;
+		$cs->getApplicationServices()->getDbProvider()->closeConnection();
+		return $cs;
 	}
 
 	/**
 	 * @depends testGetCart
-	 * @param CartManager $cm
+	 * @param \Rbs\Commerce\CommerceServices $cs
+	 * @return \Rbs\Commerce\CommerceServices
 	 */
-	public function testSaveCart(CartManager $cm)
+	public function testSaveCart(\Rbs\Commerce\CommerceServices $cs)
 	{
-		$identifier = $cm->getCommerceServices()->getCartIdentifier();
+		$cm = $cs->getCartManager();
+		$identifier = $cs->getContext()->getCartIdentifier();
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
 		$cart->getContext()->set('TEST', 'VALUE');
@@ -95,16 +100,18 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($identifier, $cart2->getIdentifier());
 		$this->assertEquals('VALUE', $cart2->getContext()->get('TEST'));
 
-		return $cm;
+		$cs->getApplicationServices()->getDbProvider()->closeConnection();
+		return $cs;
 	}
 
 	/**
 	 * @depends testSaveCart
-	 * @param CartManager $cm
+	 * @param \Rbs\Commerce\CommerceServices $cs
 	 */
-	public function testLine(CartManager $cm)
+	public function testLine(\Rbs\Commerce\CommerceServices $cs)
 	{
-		$identifier = $cm->getCommerceServices()->getCartIdentifier();
+		$cm = $cs->getCartManager();
+		$identifier = $cs->getContext()->getCartIdentifier();
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
 		$ciconf = new TestCartItemConfig('sku1', 55, 2.5, array(), array('p2' => 2));
@@ -174,5 +181,6 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals('Cart line not found for key: k1', $e->getMessage());
 		}
+		$cs->getApplicationServices()->getDbProvider()->closeConnection();
 	}
 }

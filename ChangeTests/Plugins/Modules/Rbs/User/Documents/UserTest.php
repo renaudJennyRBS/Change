@@ -47,7 +47,7 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotNull($user->getPasswordHash());
 		$passwordHash = $user->getPasswordHash();
 		$user->setPassword('321dcba');
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{
@@ -96,7 +96,7 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewUser($save = false, $hashMethod = null)
 	{
-		$dm = $this->getDocumentServices()->getDocumentManager();
+		$dm = $this->getApplicationServices()->getDocumentManager();
 		$tm = $this->getApplicationServices()->getTransactionManager();
 
 		$newUser = $dm->getNewDocumentInstanceByModelName('Rbs_User_User');
@@ -130,7 +130,7 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function deleteNewUserIfExist()
 	{
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_User_User');
+		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_User_User');
 		$user = $dqb->andPredicates($dqb->eq('login', 'super_mario'))->getFirstDocument();
 		if ($user)
 		{

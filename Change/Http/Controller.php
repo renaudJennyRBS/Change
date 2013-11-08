@@ -60,11 +60,10 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$config = $this->getApplication()->getConfiguration();
 		$classes = array();
 		foreach ($this->getEventManagerIdentifier() as $name)
 		{
-			$entry = $config->getEntry('Change/Events/' . str_replace('.', '/', $name), array());
+			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $name));
 			if (is_array($entry))
 			{
 				foreach ($entry as $className)
@@ -77,14 +76,6 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return array_unique($classes);
-	}
-
-	/**
-	 * @param \Change\Events\EventManager $eventManager
-	 */
-	protected function attachEvents(\Change\Events\EventManager $eventManager)
-	{
-		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
 	}
 
 	/**
@@ -114,7 +105,13 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function handle(Request $request)
 	{
-		$this->eventManagerFactory = new \Change\Events\EventManagerFactory($this->application);
+		if ($this->eventManagerFactory === null)
+		{
+			$this->eventManagerFactory = new \Change\Events\EventManagerFactory($this->application);
+			$this->eventManagerFactory->addSharedService('applicationServices',
+				new \Change\Services\ApplicationServices($this->application, $this->eventManagerFactory));
+		}
+
 		$event = $this->createEvent($request);
 		try
 		{
@@ -264,6 +261,7 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function doSendRegisterServices(Event $event)
 	{
+
 		$event->setName('registerServices');
 		$event->setTarget($this);
 		$event->setParam('eventManagerFactory', $this->eventManagerFactory);
@@ -464,10 +462,17 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
+	}
+
+	/**
 	 * @param Event $event
 	 */
 	public function onDefaultRegisterServices(Event $event)
 	{
-		$event->getServices()->set('applicationServices', new ApplicationServices($this->application, $event->getParam('eventManagerFactory')));
 	}
 }

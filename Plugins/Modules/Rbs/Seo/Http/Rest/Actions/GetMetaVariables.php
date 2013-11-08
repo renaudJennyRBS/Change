@@ -17,7 +17,7 @@ class GetMetaVariables
 			$genericServices = $event->getServices('genericServices');
 			if ($genericServices instanceof \Rbs\Generic\GenericServices)
 			{
-				$modelManager = $genericServices->getDocumentServices()->getDocumentManager()->getModelManager();
+				$modelManager = $event->getApplicationServices()->getModelManager();
 				$model = $modelManager->getModelByName($modelName);
 				if ($model instanceof \Change\Documents\AbstractModel)
 				{

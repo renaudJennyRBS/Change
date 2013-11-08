@@ -12,11 +12,6 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_PROCESS = 'process';
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider = null;
@@ -30,24 +25,6 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Change\Logging\Logging
 	 */
 	protected $logging = null;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -89,22 +66,17 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Change\Transaction\TransactionManager $transactionManager
 	 * @return $this
 	 */
-	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager = null)
+	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
 	{
 		$this->transactionManager = $transactionManager;
 		return $this;
 	}
 
 	/**
-	 * @throws \RuntimeException
 	 * @return \Change\Transaction\TransactionManager
 	 */
 	protected function getTransactionManager()
 	{
-		if ($this->transactionManager === null)
-		{
-			throw new \RuntimeException('TransactionManager not set', 999999);
-		}
 		return $this->transactionManager;
 	}
 
@@ -121,8 +93,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$classNames = $this->configuration->getEntry('Change/Events/JobManager');
-		return is_array($classNames) ? $classNames : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/JobManager');
 	}
 
 	/**
@@ -173,10 +144,11 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param $name
 	 * @param array $argument
 	 * @param \DateTime $startDate
+	 * @param boolean $startTransaction
 	 * @throws \Exception
 	 * @return JobInterface
 	 */
-	public function createNewJob($name, array $argument = null, \DateTime $startDate = null)
+	public function createNewJob($name, array $argument = null, \DateTime $startDate = null, $startTransaction = true)
 	{
 		if ($startDate === null)
 		{
@@ -187,16 +159,17 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		$job->setName($name)
 			->setStartDate($startDate)
 			->setStatus(JobInterface::STATUS_WAITING);
+
 		if (is_array($argument) && count($argument))
 		{
 			$job->setArguments($argument);
 		}
 		else
 		{
-			$argument = null;
+			$argument = array();
 		}
 
-		if ($this->transactionManager)
+		if ($startTransaction)
 		{
 			$transactionManager = $this->getTransactionManager();
 			try

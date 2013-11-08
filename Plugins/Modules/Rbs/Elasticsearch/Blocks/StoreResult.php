@@ -70,9 +70,7 @@ class StoreResult extends Block
 		$elasticsearchServices = $event->getServices('elasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
-			$applicationServices = $event->getDocumentServices()->getApplicationServices();
-			$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $event->getDocumentServices());
-			$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+			return null;
 		}
 		return $elasticsearchServices;
 	}
@@ -85,8 +83,12 @@ class StoreResult extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$documentServices = $event->getDocumentServices();
-		$documentManager = $documentServices->getDocumentManager();
+		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
+
+
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
 
 		$parameters = $event->getBlockParameters();
 		$searchText = trim($parameters->getParameter('searchText'), '');
@@ -103,14 +105,7 @@ class StoreResult extends Block
 				$index = $client->getIndex($storeIndex->getName());
 				if ($index->exists())
 				{
-					/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
-					$commerceServices = $event->getServices('commerceServices');
-
-					/* @var $commonServices \Change\Services\CommonServices */
-					$commonServices = $event->getServices('commonServices');
-					$elasticsearchServices->getFacetManager()->setCollectionManager($commonServices->getCollectionManager());
 					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $storeIndex);
-
 					$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
 					$size = $parameters->getParameter('itemsPerPage');
 					$from = ($pageNumber - 1) * $size;

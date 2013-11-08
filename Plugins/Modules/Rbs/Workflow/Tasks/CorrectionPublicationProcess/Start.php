@@ -20,8 +20,7 @@ class Start
 		if ($correction instanceof Correction && $event->getDocument())
 		{
 				$document = $event->getDocument();
-				$wm = new WorkflowManager();
-				$wm->setDocumentServices($document->getDocumentServices());
+				$wm = $event->getApplicationServices()->getWorkflowManager();
 				$ctx = array(WorkItem::DOCUMENT_ID_CONTEXT_KEY => $document->getId());
 				$ctx['__CORRECTION_ID'] = $correction->getId();
 				$wm->getNewWorkflowInstance('correctionPublicationProcess', $ctx);

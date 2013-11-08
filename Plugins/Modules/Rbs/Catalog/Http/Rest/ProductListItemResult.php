@@ -3,7 +3,6 @@ namespace Rbs\Catalog\Http\Rest;
 
 use Change\Http\Rest\Actions\DocumentQuery;
 use Change\Http\Rest\Result\ArrayResult;
-use Change\Http\Rest\Result\DocumentLink;
 use Zend\Stdlib\Parameters;
 
 /**
@@ -17,7 +16,7 @@ class ProductListItemResult
 	public function moveup(\Change\Http\Event $event)
 	{
 		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
 			$cm->moveProductListItemUp($event->getParam('documentId'));
@@ -33,7 +32,7 @@ class ProductListItemResult
 	public function movedown(\Change\Http\Event $event)
 	{
 		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
 			$cm->moveProductListItemDown($event->getParam('documentId'));
@@ -49,7 +48,7 @@ class ProductListItemResult
 	public function highlighttop(\Change\Http\Event $event)
 	{
 		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
 			$cm->highlightProductListItemTop($event->getParam('documentId'));
@@ -65,7 +64,7 @@ class ProductListItemResult
 	public function highlightbottom(\Change\Http\Event $event)
 	{
 		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
 			$cm->highlightProductListItemBottom($event->getParam('documentId'));
@@ -81,7 +80,7 @@ class ProductListItemResult
 	public function highlight(\Change\Http\Event $event)
 	{
 		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
 			$cm->highlightProductListItem($event->getParam('documentId'));
@@ -97,7 +96,7 @@ class ProductListItemResult
 	public function downplay(\Change\Http\Event $event)
 	{
 		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\Services\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$cm = $cs->getCatalogManager();
 			$cm->downplayProductListItem($event->getParam('documentId'));
@@ -112,7 +111,7 @@ class ProductListItemResult
 	 */
 	public function productListItemCollection(\Change\Http\Event $event)
 	{
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($event->getParam('documentId'));
 		$queryData = null;
 		if ($document instanceof \Rbs\Catalog\Documents\ProductList)
 		{
@@ -223,10 +222,10 @@ class ProductListItemResult
 	 */
 	public function delete(\Change\Http\Event $event)
 	{
-		$dm = $event->getDocumentServices()->getDocumentManager();
+		$dm = $event->getApplicationServices()->getDocumentManager();
 		$tm = $event->getApplicationServices()->getTransactionManager();
 
-		/* @var $cs \Rbs\Commerce\Services\CommerceServices */
+		/* @var $cs \Rbs\Commerce\CommerceServices */
 		$cs = $event->getServices('commerceServices');
 		$cm = $cs->getCatalogManager();
 		$result = array();
@@ -259,9 +258,12 @@ class ProductListItemResult
 	 */
 	public function addproducts(\Change\Http\Event $event)
 	{
-		$dm = $event->getDocumentServices()->getDocumentManager();
+		$dm = $event->getApplicationServices()->getDocumentManager();
 		$tm = $event->getApplicationServices()->getTransactionManager();
+
+		/** @var $cs \Rbs\Commerce\CommerceServices */
 		$cs = $event->getServices('commerceServices');
+
 		/* @var $cm \Rbs\Catalog\Services\CatalogManager */
 		$cm = $cs->getCatalogManager();
 		$productList = $dm->getDocumentInstance($event->getRequest()->getPost('productListId'));

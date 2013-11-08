@@ -13,11 +13,9 @@ class Client
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
-		$documentServices = new \Change\Documents\DocumentServices($applicationServices);
-
-		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($applicationServices, $documentServices);
+		$applicationServices = $event->getApplicationServices();
+		$eventManagerFactory = new \Change\Events\EventManagerFactory($event->getApplication());
+		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($event->getApplication(), $eventManagerFactory, $applicationServices);
 		$indexManager = $elasticsearchServices->getIndexManager();
 
 		if (is_string($name = $event->getParam('name')))

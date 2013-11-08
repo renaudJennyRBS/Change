@@ -8,9 +8,7 @@ namespace Rbs\Media\Avatar;
 class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 {
 
-	use \Change\Services\DefaultServicesTrait, \Change\Events\EventsCapableTrait  {
-		\Change\Events\EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Services\DefaultServicesTrait, \Change\Events\EventsCapableTrait;
 
 	const AVATAR_MANAGER_IDENTIFIER = 'RbsMediaAvatarManager';
 	const AVATAR_GET_AVATAR_URL = 'getAvatarUrl';
@@ -19,18 +17,6 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Change\Http\UrlManager
 	 */
 	protected $urlManager;
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices($applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-		if ($applicationServices && $this->sharedEventManager === null)
-		{
-			$this->setSharedEventManager($applicationServices->getApplication()->getSharedEventManager());
-		}
-	}
 
 	/**
 	 * @api
@@ -83,7 +69,7 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 		$args['user'] = $user;
 		$args['size'] = $size;
 
-		$event = new \Zend\EventManager\Event(static::AVATAR_GET_AVATAR_URL, $this, $args);
+		$event = new \Change\Events\Event(static::AVATAR_GET_AVATAR_URL, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		return $event->getParam('url');
@@ -98,11 +84,10 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach(static::AVATAR_GET_AVATAR_URL, array($this, 'getGravatarUrl'), 5);
 	}
 
@@ -111,18 +96,13 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->applicationServices)
-		{
-			$config = $this->applicationServices->getApplication()->getConfiguration();
-			return $config->getEntry('Rbs/Media/AvatarManager', array());
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Media/AvatarManager');
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function getGravatarUrl(\Zend\EventManager\Event $event)
+	public function getGravatarUrl(\Change\Events\Event $event)
 	{
 		$url = null;
 

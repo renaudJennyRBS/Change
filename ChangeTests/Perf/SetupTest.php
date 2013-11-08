@@ -9,21 +9,19 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	public static function tearDownAfterClass()
-	{
-		static::clearDB();
-	}
-
 	/**
-	 * @param \Change\Application $application
-	 * @return \Zend\EventManager\EventManager
+	 * @return \Change\Events\EventManager
 	 */
-	protected function getCommandsEventManager($application)
+	protected function getCommandsEventManager()
 	{
-		$eventManager = new \Zend\EventManager\EventManager('Commands');
-		$classNames = $application->getConfiguration()->getEntry('Change/Events/Commands', array());
-		$application->getSharedEventManager()->registerListenerAggregateClassNames($eventManager, $classNames);
-		$eventManager->setSharedManager($application->getSharedEventManager());
+		$eventManagerFactory = new \Change\Events\EventManagerFactory($this->getApplication());
+		$applicationServices = $this->getApplicationServices();
+		$applicationServices->getPluginManager()->setInstallApplication($this->getApplication());
+		$eventManagerFactory->addSharedService('applicationServices', $this->getApplicationServices());
+
+		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
+		$classNames = $eventManagerFactory->getConfiguredListenerClassNames('Change/Events/Commands');
+		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
 		return $eventManager;
 	}
 
@@ -51,30 +49,26 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertGreaterThanOrEqual(1, $output->count());
 		$this->assertStringStartsWith('Web base Directory', $output[0][0]);
-		return array($application, $eventManager);
 	}
 
-	/**
-	 * @depends testSetDocumentRoot
-	 */
-	public function testGenerateDbSchema($env)
+
+	public function testGenerateDbSchema()
 	{
-		list($application, $eventManager) = $env;
+		$application = $this->getApplication();
+		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:generate-db-schema';
 		$arguments = array('with-modules' => false);
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
 		$this->assertInstanceOf('\ArrayObject', $output);
 		$this->assertEquals(1, $output->count());
 		$this->assertStringStartsWith('Change DB schema generated', $output[0][0]);
-		return array($application, $eventManager);
 	}
 
-	/**
-	 * @depends testGenerateDbSchema
-	 */
-	public function testRegisterPlugins($env)
+
+	public function testRegisterPlugins()
 	{
-		list($application, $eventManager) = $env;
+		$application = $this->getApplication();
+		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:register-plugin';
 		$arguments = array("all" => true);
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
@@ -84,16 +78,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals(0 , $msg[1]);
 		}
-
-		return array($application, $eventManager);
 	}
 
-	/**
-	 * @depends testRegisterPlugins
-	 */
-	public function testInstallCorePackage($env)
+	public function testInstallCorePackage()
 	{
-		list($application, $eventManager) = $env;
+		$application = $this->getApplication();
+		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-package';
 		$arguments = array('vendor' => 'Rbs', 'name' => 'Core');
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
@@ -103,15 +93,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals(0 , $msg[1]);
 		}
-		return array($application, $eventManager);
 	}
 
-	/**
-	 * @depends testInstallCorePackage
-	 */
-	public function testInstallEcomPackage($env)
+	public function testInstallEcomPackage()
 	{
-		list($application, $eventManager) = $env;
+		$application = $this->getApplication();
+		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-package';
 		$arguments = array('vendor' => 'Rbs', 'name' => 'ECom');
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
@@ -121,15 +108,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals(0 , $msg[1]);
 		}
-		return array($application, $eventManager);
 	}
 
-	/**
-	 * @depends testInstallEcomPackage
-	 */
-	public function testInstallDemoPlugin($env)
+	public function testInstallDemoPlugin()
 	{
-		list($application, $eventManager) = $env;
+		$application = $this->getApplication();
+		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-plugin';
 		$arguments = array('type' => 'theme', 'vendor' => 'Rbs', 'name' => 'Demo');
 		$output = $this->executeCommand($application, $eventManager, $cmd, $arguments);
@@ -139,6 +123,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertEquals(0 , $msg[1]);
 		}
-		return array($application, $eventManager);
+	}
+
+	public function testCleanUp()
+	{
+		$dbp = $this->getApplicationServices()->getDbProvider();
+		$dbp->getSchemaManager()->clearDB();
+		$dbp->closeConnection();
 	}
 }

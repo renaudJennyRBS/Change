@@ -33,7 +33,7 @@ class Install extends \Change\Plugins\InstallBase
 		try
 		{
 			$tm->begin();
-			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 			$query->andPredicates($query->eq('code', 'GST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
@@ -49,7 +49,7 @@ class Install extends \Change\Plugins\InstallBase
 				$GST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 			$query->andPredicates($query->eq('code', 'PST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
@@ -65,7 +65,7 @@ class Install extends \Change\Plugins\InstallBase
 				$PST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 			$query->andPredicates($query->eq('code', 'HST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
@@ -81,7 +81,7 @@ class Install extends \Change\Plugins\InstallBase
 				$HST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 			$query->andPredicates($query->eq('code', 'QST'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)
@@ -97,7 +97,7 @@ class Install extends \Change\Plugins\InstallBase
 				$QST->save();
 			}
 
-			$query = new \Change\Documents\Query\Query('Rbs_Price_Tax', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 			$query->andPredicates($query->eq('code', 'TVAFR'));
 			$doc = $query->getFirstDocument();
 			if (!$doc)

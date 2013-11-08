@@ -7,12 +7,12 @@ namespace Rbs\Commerce\Interfaces;
 interface Cart extends \Serializable
 {
 	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
+	 * @return \Rbs\Commerce\CommerceServices
 	 */
 	public function getCommerceServices();
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return $this
 	 */
 	public function setCommerceServices($commerceServices);

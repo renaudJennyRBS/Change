@@ -29,7 +29,7 @@ class GetRegisteredPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$pm = $this->getApplicationServices()->getPluginManager();
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$getRegisteredPlugins = new \Rbs\Plugins\Http\Rest\Actions\GetRegisteredPlugins();
 		$getRegisteredPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
@@ -50,7 +50,7 @@ class GetRegisteredPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$registeredPlugins = $pm->getRegisteredPlugins();
 		$this->assertCount(1, $registeredPlugins);
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$getRegisteredPlugins = new \Rbs\Plugins\Http\Rest\Actions\GetRegisteredPlugins();
 		$getRegisteredPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());

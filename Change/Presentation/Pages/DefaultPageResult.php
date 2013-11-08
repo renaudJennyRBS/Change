@@ -90,7 +90,7 @@ class DefaultPageResult
 			touch($cachePath, $cacheTime);
 		}
 
-		$templateManager = $pageManager->getPresentationServices()->getTemplateManager();
+		$templateManager = $event->getApplicationServices()->getTemplateManager();
 		$result->setHtml($templateManager->renderTemplateFile($cachePath, array('pageResult' => $result)));
 	}
 }

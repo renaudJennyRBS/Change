@@ -1,10 +1,10 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
+use Rbs\Commerce\CommerceServices;
 use Rbs\Commerce\Interfaces\Cart as CartInterfaces;
 use Rbs\Commerce\Interfaces\CartLine as CartLineInterfaces;
 use Rbs\Commerce\Interfaces\TaxApplication;
-use Rbs\Commerce\Services\CommerceServices;
 
 /**
  * @name \Rbs\Commerce\Cart\Cart
@@ -12,7 +12,7 @@ use Rbs\Commerce\Services\CommerceServices;
 class Cart implements CartInterfaces
 {
 	/**
-	 * @var CommerceServices
+	 * @var \Rbs\Commerce\CommerceServices
 	 */
 	protected $commerceServices;
 
@@ -73,7 +73,7 @@ class Cart implements CartInterfaces
 
 	/**
 	 * @param string $identifier
-	 * @param CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 */
 	function __construct($identifier, $commerceServices)
 	{
@@ -82,7 +82,7 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Services\CommerceServices
+	 * @return \Rbs\Commerce\CommerceServices
 	 */
 	public function getCommerceServices()
 	{
@@ -90,7 +90,7 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return $this
 	 */
 	public function setCommerceServices($commerceServices)

@@ -9,8 +9,8 @@ class InitializeItemsForSectionList
 	public function execute(\Change\Job\Event $event)
 	{
 		$logging = $event->getApplicationServices()->getLogging();
-		$ds = $event->getDocumentServices();
-		$dm = $ds->getDocumentManager();
+
+		$dm = $event->getApplicationServices()->getDocumentManager();
 		$tm = $event->getApplicationServices()->getTransactionManager();
 
 
@@ -33,7 +33,7 @@ class InitializeItemsForSectionList
 		$sectionId = $section->getId();
 		unset($section);
 
-		$dqb1 = new \Change\Documents\Query\Query($ds, 'Rbs_Catalog_Product');
+		$dqb1 = $dm->getNewQuery('Rbs_Catalog_Product');
 		$pb1 = $dqb1->getPredicateBuilder();
 		$dqb1->andPredicates($pb1->eq('publicationSections', $sectionId));
 		$logging->info($dqb1->getCountDocuments() . ' products');
@@ -48,7 +48,7 @@ class InitializeItemsForSectionList
 					$product = $dm->getDocumentInstance($productId);
 					if ($product instanceof \Rbs\Catalog\Documents\Product)
 					{
-						$dqb2 = new \Change\Documents\Query\Query($ds, 'Rbs_Catalog_ProductListItem');
+						$dqb2 = $dm->getNewQuery('Rbs_Catalog_ProductListItem');
 						$pb2 = $dqb2->getPredicateBuilder();
 						$dqb2->andPredicates($pb2->eq('productList', $listId), $pb2->eq('product', $product));
 						if ($dqb2->getCountDocuments())

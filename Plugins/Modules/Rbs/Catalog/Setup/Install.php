@@ -8,15 +8,22 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
+	 * @throws \RuntimeException
+	 */
+	public function executeDbSchema($plugin, $schemaManager)
+	{
+		$schema = new Schema($schemaManager);
+		$schema->generate();
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$schema = new Schema($applicationServices->getDbProvider()->getSchemaManager());
-		$schema->generate();
-		$applicationServices->getDbProvider()->closeConnection();
-
 		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 
 		$this->installGenericAttributes($applicationServices);
@@ -86,7 +93,6 @@ class Install extends \Change\Plugins\InstallBase
 		try
 		{
 			$transactionManager->begin();
-
 			$attributes = array();
 			$attributesData = \Zend\Json\Json::decode(file_get_contents(__DIR__ . '/Assets/attributes.json'),
 				\Zend\Json\Json::TYPE_ARRAY);
@@ -95,7 +101,7 @@ class Install extends \Change\Plugins\InstallBase
 				/** @var $attribute \Rbs\Catalog\Documents\Attribute */
 				$label = $i18nManager->trans($attributeData['title']);
 				$attributeData['title'] = $label;
-				$query = new \Change\Documents\Query\Query('Rbs_Catalog_Attribute', $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
 				$query->andPredicates($query->eq('label', $label));
 				$attribute = $query->getFirstDocument();
 				if ($attribute === null)

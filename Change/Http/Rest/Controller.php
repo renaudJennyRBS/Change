@@ -1,8 +1,6 @@
 <?php
 namespace Change\Http\Rest;
 
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
 use Change\Http\Event;
 use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;

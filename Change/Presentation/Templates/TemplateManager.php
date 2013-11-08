@@ -1,8 +1,6 @@
 <?php
 namespace Change\Presentation\Templates;
 
-use string;
-
 /**
  * @api
  * @name \Change\Presentation\Templates\TemplateManager
@@ -25,11 +23,6 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	protected $extensions;
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
 	 * @var \Change\Workspace
 	 */
 	protected $workspace;
@@ -38,24 +31,6 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Change\Presentation\Themes\ThemeManager
 	 */
 	protected $themeManager;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	public function getConfiguration()
-	{
-		return $this->configuration;
-	}
 
 	/**
 	 * @param \Change\Workspace $workspace
@@ -100,7 +75,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/TemplateManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/TemplateManager');
 	}
 
 	/**
@@ -142,6 +117,15 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $this->extensions;
+	}
+
+	/**
+	 * @param \Twig_ExtensionInterface $extension
+	 */
+	public function addExtension($extension)
+	{
+		$this->getExtensions();
+		$this->extensions[] = $extension;
 	}
 
 	/**

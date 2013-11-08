@@ -24,9 +24,7 @@ class ModelConfiguration extends \Compilation\Rbs\Seo\Documents\ModelConfigurati
 				'sitemapDefaultPriority' => $document->getSitemapDefaultPriority()
 			];
 
-			$jm = new \Change\Job\JobManager();
-			$jm->setApplicationServices($document->getApplicationServices());
-			$jm->setDocumentServices($document->getDocumentServices());
+			$jm = $event->getApplicationServices()->getJobManager();
 			$jm->createNewJob('Rbs_Seo_DocumentSeoGenerator', $modelConfigurationInfos);
 		}
 	}

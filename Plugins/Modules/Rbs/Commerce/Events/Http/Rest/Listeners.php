@@ -1,10 +1,10 @@
 <?php
 namespace Rbs\Commerce\Events\Http\Rest;
 
-use Rbs\Commerce\Services\CommerceServices;
+use Change\Http\Event;
+use Rbs\Commerce\CommerceServices;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Change\Http\Event;
 
 /**
  * @name \Rbs\Commerce\Events\Http\Rest\Listeners
@@ -20,10 +20,14 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			$commerceServices = new CommerceServices($event->getParam('applicationServices'), $event->getParam('documentServices'));
-			$event->setParam('commerceServices', $commerceServices);
+			$eventManagerFactory = $event->getParam('eventManagerFactory');
+			if ($eventManagerFactory instanceof \Change\Events\EventManagerFactory)
+			{
+				$commerceServices = new CommerceServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
+				$eventManagerFactory->addSharedService('commerceServices', $commerceServices);
+			}
 
 			$controller = $event->getTarget();
 			if ($controller instanceof \Change\Http\Rest\Controller)

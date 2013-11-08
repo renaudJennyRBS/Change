@@ -15,6 +15,13 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
+	}
+
 	public function testExecute()
 	{
 		//declare a job manager listener for this test suit
@@ -25,12 +32,11 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getNewProduct('One');
 
 		//check there is no document seo
-		$dqb = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
+		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Seo_DocumentSeo');
 		$documentSeos = $dqb->getDocuments();
 		$this->assertCount(0, $documentSeos);
 
-		$jm = new \Change\Job\JobManager();
-		$jm->setApplicationServices($this->getApplicationServices());
+		$jm =  $this->getApplicationServices()->getJobManager();
 		$job = $jm->createNewJob('Rbs_Seo_DocumentSeoGenerator', [
 			'modelName' => $modelConfiguration->getModelName(),
 			'sitemapDefaultChangeFrequency' => $modelConfiguration->getSitemapDefaultChangeFrequency(),
@@ -115,7 +121,7 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewModelConfiguration()
 	{
-		$modelConfiguration = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
+		$modelConfiguration = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
 		/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
 		$modelConfiguration->setLabel('Product');
 		$modelConfiguration->setModelName('Rbs_Catalog_Product');
@@ -144,7 +150,7 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewProduct($identifier)
 	{
-		$product = $this->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
+		$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setLabel('product' . $identifier);
 		$product->getCurrentLocalization()->setTitle('product' . $identifier);

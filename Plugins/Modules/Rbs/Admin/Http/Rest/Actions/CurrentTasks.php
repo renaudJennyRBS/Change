@@ -4,7 +4,6 @@ namespace Rbs\Admin\Http\Rest\Actions;
 use Change\Http\Rest\Result\CollectionResult;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\Link;
-
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -21,16 +20,16 @@ class CurrentTasks
 
 		$result = $this->getNewCollectionResult($event);
 		$urlManager = $event->getUrlManager();
-		$result->addLink(new Link($urlManager , 'admin/currentTasks/'));
+		$result->addLink(new Link($urlManager, 'admin/currentTasks/'));
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
-		$user = $event->getAuthenticationManager()->getCurrentUser();
 		$user = $event->getAuthenticationManager()->login('admin', 'admin', 'Rbs_Admin');
-		$query = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Workflow_Task');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 		$query->andPredicates(
 			$query->eq('showInDashboard', true),
 			$query->eq('status', 'EN'),
-			$query->getFragmentBuilder()->hasPermission($user, $query->getColumn('role'), $query->getColumn('document'), $query->getColumn('privilege'))
+			$query->getFragmentBuilder()
+				->hasPermission($user, $query->getColumn('role'), $query->getColumn('document'), $query->getColumn('privilege'))
 		);
 
 		$result->setCount($query->getCountDocuments());

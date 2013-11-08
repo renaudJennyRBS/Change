@@ -32,7 +32,7 @@ class DocumentList
 		}
 
 		/* @var $documentManager \Change\Documents\DocumentManager */
-		$documentManager = $event->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 		$extraColumn = $event->getRequest()->getQuery('column', array());
 		$urlManager = $event->getUrlManager();

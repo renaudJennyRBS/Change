@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Review\Blocks;
 
-use Change\Collection\CollectionManager;
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -15,7 +13,7 @@ class PromotedReviewList extends Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * Optional Event method: getHttpRequest
 	 * @param Event $event
 	 * @return Parameters
@@ -43,8 +41,7 @@ class PromotedReviewList extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters(), getBlockResult(),
-	 *        getPresentationServices(), getDocumentServices()
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -52,7 +49,8 @@ class PromotedReviewList extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('targetId'));
+		$document = $event->getApplicationServices()->getDocumentManager()
+			->getDocumentInstance($parameters->getParameter('targetId'));
 		$mode = $parameters->getParameter('mode');
 		$reviews = null;
 		//TODO mode should be a collection?
@@ -63,7 +61,7 @@ class PromotedReviewList extends Block
 		}
 		else
 		{
-			$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Review_Review');
+			$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Review_Review');
 			if ($mode === \Rbs\Review\Collection\Collections::PROMOTED_REVIEW_MODES_PROMOTED)
 			{
 				$dqb->andPredicates($dqb->published(), $dqb->eq('target', $document), $dqb->eq('promoted', true));

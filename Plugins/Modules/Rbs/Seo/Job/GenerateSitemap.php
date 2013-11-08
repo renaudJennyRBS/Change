@@ -8,11 +8,13 @@ class GenerateSitemap
 {
 	public function execute(\Change\Job\Event $event)
 	{
+		$applicationServices = $event->getApplicationServices();
 
-		$website = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($event->getJob()->getArgument('websiteId'));
+		$website = $applicationServices->getDocumentManager()->getDocumentInstance($event->getJob()->getArgument('websiteId'));
+
 		/* @var $website \Rbs\Website\Documents\Website */
 		$lcid = $event->getJob()->getArgument('LCID');
-		$application = $event->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 
 		//check if Seo directory already exist, if not, create it.
 		if (!is_dir($this->getRbsSeoAssetFilePath($application)))
@@ -34,8 +36,8 @@ class GenerateSitemap
 
 		$sitemapIndex = [];
 
-		$model = $event->getDocumentServices()->getDocumentManager()->getModelManager()->getModelByName('Rbs_Seo_DocumentSeo');
-		$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), $model);
+		$model = $applicationServices->getModelManager()->getModelByName('Rbs_Seo_DocumentSeo');
+		$dqb = $applicationServices->getDocumentManager()->getNewQuery($model);
 		$dqb->addOrder('id');
 		$qb = $dqb->dbQueryBuilder();
 		$qb->addColumn($qb->getFragmentBuilder()->getDocumentColumn('id'));
@@ -54,7 +56,7 @@ class GenerateSitemap
 
 			foreach ($seoDocumentIdsChunk as $seoDocumentId)
 			{
-				$seo = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($seoDocumentId);
+				$seo = $applicationServices->getDocumentManager()->getDocumentInstance($seoDocumentId);
 				/* @var $seo \Rbs\Seo\Documents\DocumentSeo */
 				$sitemapInfo = $seo->getSitemapGenerateForWebsites();
 				if (array_key_exists($website->getId(), $sitemapInfo) && isset($sitemapInfo[$website->getId()]['generate']) &&
@@ -103,7 +105,7 @@ class GenerateSitemap
 			$loop++;
 		}
 
-		$application = $event->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 
 		//create the sitemap index with all sitemaps
 		$sitemapIndexFilename = $this->generateSitemapIndex($application, $sitemapIndex, $website->getId(), $lcid);

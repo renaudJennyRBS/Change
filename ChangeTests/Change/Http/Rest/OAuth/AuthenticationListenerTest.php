@@ -28,9 +28,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	protected function tearDown()
 	{
-		parent::tearDown();
 		$this->getApplicationServices()->getTransactionManager()->commit();
-		$this->closeDbConnection();
+		parent::tearDown();
 	}
 
 	/**
@@ -194,7 +193,6 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event = new HttpEvent(null, $controller);
 		$event->setRequest($request);
 		$event->setParams($this->getDefaultEventArguments());
-		$event->setAuthenticationManager($authenticationManager);
 
 		$authenticationListener = new AuthenticationListener();
 		$authenticationListener->onAuthorize($event);

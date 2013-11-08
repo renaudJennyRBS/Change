@@ -50,9 +50,11 @@ class Install extends \Change\Plugins\InstallBase
 			try
 			{
 				$applicationServices->getTransactionManager()->begin();
+
 				$publicationProcessWorkflow = new CorrectionPublicationProcessWorkflow($applicationServices);
 				$workflow = $publicationProcessWorkflow->install();
 				$plugin->setConfigurationEntry('correctionPublicationProcess', $workflow->getId());
+
 				$applicationServices->getTransactionManager()->commit();
 			}
 			catch (\Exception $e)

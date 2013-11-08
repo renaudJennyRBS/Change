@@ -4,7 +4,7 @@ namespace Rbs\Workflow\Tasks\CorrectionPublicationProcess;
 use Change\Documents\Interfaces\Correction;
 use Change\Documents\Correction as CorrectionInstance;
 use Change\Workflow\Interfaces\WorkItem;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 
 /**
  * @name \Rbs\Workflow\Tasks\CorrectionPublicationProcess\ContentValidation
@@ -31,8 +31,8 @@ class ContentValidation
 			$correction = $document->getCurrentCorrection();
 			if ($correction && $correction->getId() == $ctx['__CORRECTION_ID'])
 			{
-				$documentServices = $document->getDocumentServices();
-				$transactionManager = $documentServices->getApplicationServices()->getTransactionManager();
+				$applicationServices = $event->getApplicationServices();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();

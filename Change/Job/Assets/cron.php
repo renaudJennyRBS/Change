@@ -16,7 +16,6 @@ if (count($runnableJobIds))
 {
 	$jobManager->setTransactionManager($applicationServices->getTransactionManager());
 	$jobManager->getEventManager()->trigger('registerServices', $jobManager, array('eventManagerFactory' => $eventManagerFactory));
-
 	foreach($jobManager->getRunnableJobIds() as $jobId)
 	{
 		$applicationServices->getLogging()->info('Run: ' . $jobId);

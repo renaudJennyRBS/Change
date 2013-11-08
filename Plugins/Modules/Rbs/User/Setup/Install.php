@@ -22,7 +22,7 @@ class Install extends \Change\Plugins\InstallBase
 
 			$groupModel = $applicationServices->getModelManager()->getModelByName('Rbs_User_Group');
 
-			$query = new \Change\Documents\Query\Query($groupModel, $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery($groupModel);
 			if ($query->andPredicates($query->eq('realm', 'Rbs_Admin'))->getCountDocuments() === 0)
 			{
 				/* @var $group \Rbs\User\Documents\Group */
@@ -33,7 +33,7 @@ class Install extends \Change\Plugins\InstallBase
 				$group->create();
 			}
 
-			$query = new \Change\Documents\Query\Query($groupModel, $applicationServices->getDocumentManager(), $applicationServices->getModelManager());
+			$query = $applicationServices->getDocumentManager()->getNewQuery($groupModel);
 			if ($query->andPredicates($query->eq('realm', 'web'))->getCountDocuments() === 0)
 			{
 				/* @var $group2 \Rbs\User\Documents\Group */

@@ -29,7 +29,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Elasticsearch',
 			'\Rbs\Elasticsearch\Blocks\Listeners');
 
-		$configuration->addPersistentEntry('Change/Events/Rbs/Admin/Rbs_Elasticsearch',
+		$configuration->addPersistentEntry('Rbs/Admin/Events/Manager/Rbs_Elasticsearch',
 			'\Rbs\Elasticsearch\Admin\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Elasticsearch',

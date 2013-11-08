@@ -10,11 +10,11 @@ class EnablePlugin
 {
 	/**
 	 * @param Event $event
+	 * @throws \Exception
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
-		$applicationServices = new \Change\Application\ApplicationServices($application);
+		$applicationServices = $event->getApplicationServices();
 		$type = $event->getParam('type');
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');

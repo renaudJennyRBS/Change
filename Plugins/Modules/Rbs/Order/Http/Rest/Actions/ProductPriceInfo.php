@@ -3,7 +3,6 @@ namespace Rbs\Order\Http\Rest\Actions;
 
 use Change\Http\Event;
 use Change\Http\Rest\Result\DocumentLink;
-use Rbs\Commerce\Services\CommerceServices;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -25,7 +24,7 @@ class ProductPriceInfo
 			$webstoreId = $request->getQuery('webStore');
 			$billingAreaId = $request->getQuery('billingArea');
 
-			$dm = $event->getDocumentServices()->getDocumentManager();
+			$dm = $event->getApplicationServices()->getDocumentManager();
 
 			/* @var $webstore \Rbs\Store\Documents\WebStore */
 			$webstore = $dm->getDocumentInstance($webstoreId);
@@ -35,18 +34,16 @@ class ProductPriceInfo
 			{
 				$products[] = $dm->getDocumentInstance($productId);
 			}
-			$commerceServices = new \Rbs\Commerce\Services\CommerceServices($event->getApplicationServices(), $event->getDocumentServices());
-			$commerceServices->setZone($request->getQuery('zone'));
+			$commerceServices = $event->getServices('commerceServices');
 			$event->setResult($this->generateResult($webstore, $billingArea, $products, $commerceServices, $event->getUrlManager()));
 		}
 	}
-
 
 	/**
 	 * @param $webStore \Rbs\Store\Documents\WebStore
 	 * @param $billingArea \Rbs\Commerce\Interfaces\BillingArea
 	 * @param $products \Rbs\Catalog\Documents\Product[]
-	 * @param $commerceServices \Rbs\Commerce\Services\CommerceServices
+	 * @param $commerceServices \Rbs\Commerce\CommerceServices
 	 * @param $urlManager \Change\Http\UrlManager
 	 * @return \Change\Http\Rest\Result\ArrayResult
 	 */
@@ -86,7 +83,6 @@ class ProductPriceInfo
 
 			$result->setArray($data);
 		}
-
 		return $result;
 	}
 }

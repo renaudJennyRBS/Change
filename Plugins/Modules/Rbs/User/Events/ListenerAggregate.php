@@ -2,7 +2,7 @@
 namespace Rbs\User\Events;
 
 use Change\User\AuthenticationManager;
-use Zend\EventManager\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 

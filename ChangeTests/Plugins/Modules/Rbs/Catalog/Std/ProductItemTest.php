@@ -15,12 +15,6 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->closeDbConnection();
-	}
-
 	public function testConstructor()
 	{
 		$o = new ProductItem();
@@ -41,7 +35,7 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product = $this->getNewReadonlyDocument('Rbs_Catalog_Product', 800);
 		$o = new ProductItem(array('id' => 800, 'test' => 'ok'));
-		$o->setDocumentManager($this->getDocumentServices()->getDocumentManager());
+		$o->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 
 		$product->getCurrentLocalization()->setTitle('title property');
 		$this->assertEquals('ok', $o->test());
@@ -70,7 +64,7 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		$product->setBrand($brand);
 
 		$o = new ProductItem(array('id' => 800));
-		$o->setDocumentManager($this->getDocumentServices()->getDocumentManager());
+		$o->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 
 		$this->assertSame($brand, $o->brand());
 
@@ -81,7 +75,7 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotSame($o, $o2);
 		$this->assertInstanceOf('Change\\Documents\\DocumentWeakReference', $o2->brand());
 
-		$o2->setDocumentManager($this->getDocumentServices()->getDocumentManager());
+		$o2->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 		$this->assertSame($brand, $o2->brand());
 	}
 }

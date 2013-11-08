@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Media\Documents;
 
+use Change\Documents\Events\Event;
 use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
@@ -17,12 +18,35 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	protected $imageSize = false;
 
 	/**
+	 * @var \Change\Storage\StorageManager;
+	 */
+	private $storageManager;
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Storage\StorageManager
+	 */
+	protected function getStorageManager()
+	{
+		if ($this->storageManager === null)
+		{
+			throw new \RuntimeException('Storage manager not set', 999999);
+		}
+		return $this->storageManager;
+	}
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		//Initialize Storage Manager (register change:// scheme)
+		$this->storageManager = $event->getApplicationServices()->getStorageManager();
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getImageSize()
 	{
-		// Load the storage manager even if not used in the function itself
-		$sm = $this->getApplicationServices()->getStorageManager();
 		if ($this->imageSize === false)
 		{
 			$this->imageSize = (new Resizer())->getImageSize($this->getPath());
@@ -31,40 +55,11 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	}
 
 	/**
-	 *
-	 */
-	public function onUpdate()
-	{
-		$this->updateImageSizeProperties();
-	}
-
-	/**
-	 *
-	 */
-	public function onCreate()
-	{
-		$this->updateImageSizeProperties();
-	}
-
-	/**
-	 *
-	 */
-	protected function updateImageSizeProperties()
-	{
-		if ($this->isPropertyModified('path'))
-		{
-			$size = $this->getImageSize();
-			$this->setHeight($size['height']);
-			$this->setWidth($size['width']);
-		}
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getMimeType()
 	{
-		return $this->getApplicationServices()->getStorageManager()->getMimeType($this->getPath());
+		return $this->getStorageManager()->getMimeType($this->getPath());
 	}
 
 	/**
@@ -84,7 +79,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	 */
 	public function getPublicURL($maxWidth = 0, $maxHeight = 0)
 	{
-		$sm = $this->getApplicationServices()->getStorageManager();
+		$sm = $this->getStorageManager();
 		$query = array();
 		if ($maxWidth !== null)
 		{
@@ -108,32 +103,48 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach('updateRestResult', function(\Change\Documents\Events\Event $event) {
-			$result = $event->getParam('restResult');
-			/* @var $document Image */
-			$document = $event->getDocument();
-			if ($result instanceof DocumentResult)
+		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
+	}
+
+	public function onDefaultSave(Event $event)
+	{
+		if ($this->isPropertyModified('path'))
+		{
+			$size = $this->getImageSize();
+			$this->setHeight($size['height']);
+			$this->setWidth($size['width']);
+		}
+	}
+
+	public function onDefaultUpdateRestResult(Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		$result = $event->getParam('restResult');
+		/* @var $document Image */
+		$document = $event->getDocument();
+		if ($result instanceof DocumentResult)
+		{
+			$link = array('rel' => 'publicurl', 'href' => $document->getPublicURL());
+			$result->addLink($link);
+			$selfLinks = $result->getRelLink('self');
+			$selfLink = array_shift($selfLinks);
+			if ($selfLink instanceof Link)
 			{
-				$link = array('rel' => 'publicurl', 'href' => $document->getPublicURL());
-				$result->addLink($link);
-				$selfLinks = $result->getRelLink('self');
-				$selfLink = array_shift($selfLinks);
-				if ($selfLink instanceof Link)
-				{
-					$pathParts = explode('/', $selfLink->getPathInfo());
-					array_pop($pathParts);
-					$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl');
-					$result->addAction($link);
-				}
-			}
-			else if ($result instanceof DocumentLink)
-			{
-				$pathParts = explode('/', $result->getPathInfo());
+				$pathParts = explode('/', $selfLink->getPathInfo());
 				array_pop($pathParts);
-				$result->setProperty('actions', array(new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl')));
-				$result->setProperty('width', $document->getWidth());
-				$result->setProperty('height', $document->getHeight());
+				$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl');
+				$result->addAction($link);
 			}
-		}, 5);
+		}
+		else if ($result instanceof DocumentLink)
+		{
+			$pathParts = explode('/', $result->getPathInfo());
+			array_pop($pathParts);
+			$result->setProperty('actions',
+				array(new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl')));
+			$result->setProperty('width', $document->getWidth());
+			$result->setProperty('height', $document->getHeight());
+		}
 	}
 }

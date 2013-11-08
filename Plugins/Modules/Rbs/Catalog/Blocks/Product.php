@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Catalog\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
@@ -38,9 +37,9 @@ class Product extends Block
 			}
 		}
 
-		/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getWebStore();
+		$webStore = $commerceServices->getContext()->getWebStore();
 		if ($webStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
@@ -72,9 +71,9 @@ class Product extends Block
 		$productId = $parameters->getParameter('productId');
 		if ($productId)
 		{
-			/* @var $commerceServices \Rbs\Commerce\Services\CommerceServices */
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product = $documentManager->getDocumentInstance($productId);

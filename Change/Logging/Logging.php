@@ -24,10 +24,12 @@ class Logging
 
 	/**
 	 * @param \Change\Workspace $workspace
+	 * @return $this
 	 */
 	public function setWorkspace(\Change\Workspace $workspace)
 	{
 		$this->workspace = $workspace;
+		return $this;
 	}
 
 	/**
@@ -40,10 +42,12 @@ class Logging
 
 	/**
 	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
 	 */
 	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
 		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**

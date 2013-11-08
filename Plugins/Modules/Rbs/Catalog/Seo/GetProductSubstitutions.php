@@ -7,9 +7,9 @@ namespace Rbs\Catalog\Seo;
 class GetProductSubstitutions
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function execute(\Zend\EventManager\Event $event)
+	public function execute(\Change\Events\Event $event)
 	{
 		$document = $event->getParam('document');
 		if ($document instanceof \Rbs\Catalog\Documents\Product)

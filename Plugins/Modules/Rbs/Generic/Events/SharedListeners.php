@@ -23,7 +23,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 			$website = $event->getDocument();
 			if ($website instanceof \Rbs\Website\Documents\Website)
 			{
-				(new \Rbs\Website\Events\WebsiteResolver())->changed($website);
+				(new \Rbs\Website\Events\WebsiteResolver())->changed($event->getApplication());
 			}
 		};
 		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_UPDATED);
@@ -53,7 +53,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 		};
 		$events->attach('Documents', 'updateRestResult', $callback, 5);
 
-		$callback = function (\Zend\EventManager\Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);
 		};

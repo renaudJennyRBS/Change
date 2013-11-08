@@ -135,7 +135,7 @@ class Unique extends \Zend\Validator\AbstractValidator
 					$fb->eq($fb->getDocumentColumn($property->getName()), $fb->parameter('value'))
 				)
 			)->query();
-		
+
 		$query->setMaxResults(1);
 		$query->bindParameter('id', $this->getDocumentId());
 		$query->bindParameter('value', $value);

@@ -50,8 +50,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->storedOAuth->setCreationDate((new \DateTime())->sub(new \DateInterval('P5D')));
 		$this->storedOAuth->setValidityDate((new \DateTime())->add(new \DateInterval('P10Y')));
 		$this->storedOAuth->setConsumerKey('consumerKeyForTests');
-		$oauth = new \Change\Http\OAuth\OAuthManager();
-		$oauth->setApplicationServices($this->getApplicationServices());
+		$oauth = $this->getApplicationServices()->getOAuthManager();
 		$oauth->insertToken($this->storedOAuth);
 
 		$this->getApplicationServices()->getTransactionManager()->commit();
@@ -63,7 +62,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//first check if token exist, use GetUserTokens to get it.
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('userId' => $this->storedOAuth->getAccessorId());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getUserTokens = new \Rbs\User\Http\Rest\Actions\GetUserTokens();
@@ -77,7 +76,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		//Revoke and test again
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('token' => $this->storedOAuth->getToken());
 		$event->setRequest((new Request())->setPost(new \Zend\Stdlib\Parameters($paramArray)));
 		$revokeToken = new \Rbs\User\Http\Rest\Actions\RevokeToken();
@@ -85,7 +84,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 
 		$event = new Event();
-		$event->setApplicationServices($this->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
 		$paramArray = array('userId' => $this->storedOAuth->getAccessorId());
 		$event->setRequest((new Request())->setQuery(new \Zend\Stdlib\Parameters($paramArray)));
 		$getUserTokens = new \Rbs\User\Http\Rest\Actions\GetUserTokens();

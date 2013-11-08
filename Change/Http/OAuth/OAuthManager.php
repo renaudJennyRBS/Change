@@ -1,8 +1,6 @@
 <?php
 namespace Change\Http\OAuth;
 
-use Zend\EventManager\Event;
-
 /**
  * @name \Change\Http\OAuth\OAuthManager
  */
@@ -13,11 +11,6 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider;
@@ -26,24 +19,6 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Change\Transaction\TransactionManager
 	 */
 	protected $transactionManager;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -95,7 +70,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/OAuthManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/OAuthManager');
 	}
 
 	/**
@@ -497,7 +472,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['httpEvent' => $event, 'data' => $data]);
-		$event = new Event('loginFormHtml', $this, $args);
+		$event = new \Change\Events\Event('loginFormHtml', $this, $args);
 		$this->getEventManager()->trigger($event);
 		$html = $event->getParam('html');
 		if (\Change\Stdlib\String::isEmpty($html))

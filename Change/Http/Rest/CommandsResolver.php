@@ -52,6 +52,10 @@ class CommandsResolver
 	{
 		$changeApplication = $event->getApplication();
 		$eventManagerFactory = new \Change\Events\EventManagerFactory($changeApplication);
+		foreach ($event->getServices() as $serviceName => $service)
+		{
+			$eventManagerFactory->addSharedService($serviceName, $service);
+		}
 		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
 		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
 		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
@@ -124,7 +128,7 @@ class CommandsResolver
 	public function executeCommand(\Change\Http\Event $event)
 	{
 		$cmd = $event->getParam('command');
-		$application = $event->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 		$eventManager = $this->getCommandsEventManager($event);
 		$commands = $this->getCommandsConfiguration($eventManager, $application);
 		if (isset($commands[$cmd]))
@@ -193,7 +197,7 @@ class CommandsResolver
 
 	public function commandsList(\Change\Http\Event $event)
 	{
-		$application = $event->getApplicationServices()->getApplication();
+		$application = $event->getApplication();
 		$eventManager = $this->getCommandsEventManager($event);
 
 		$commands = array();

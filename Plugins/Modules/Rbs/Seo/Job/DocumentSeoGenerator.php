@@ -17,7 +17,7 @@ class DocumentSeoGenerator
 		$sitemapDefaultPriority = $event->getJob()->getArgument('sitemapDefaultPriority');
 		if ($modelName && $sitemapDefaultChangeFrequency && $sitemapDefaultPriority)
 		{
-			$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Seo_DocumentSeo');
+			$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Seo_DocumentSeo');
 			$qb = $dqb->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->innerJoin($fb->getDocumentIndexTable(),
@@ -31,7 +31,7 @@ class DocumentSeoGenerator
 
 			$excludedTargetIds = $sq->getResults($sq->getRowsConverter()->addIntCol('document_id'));
 
-			$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), $modelName);
+			$dqb =$event->getApplicationServices()->getDocumentManager()->getNewQuery($modelName);
 			if (count($excludedTargetIds))
 			{
 				$dqb->andPredicates($dqb->notIn('id', $excludedTargetIds));
@@ -43,7 +43,7 @@ class DocumentSeoGenerator
 
 			if (count($targetIds))
 			{
-				$dqb = new \Change\Documents\Query\Query($event->getDocumentServices(), 'Rbs_Website_Website');
+				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Website');
 				$websites = $dqb->getDocuments();
 				$sitemapGenerateForWebsites = [];
 				foreach ($websites as $website)
@@ -57,8 +57,8 @@ class DocumentSeoGenerator
 				$tm = $event->getApplicationServices()->getTransactionManager();
 				foreach ($targetIds as $targetId)
 				{
-					$target = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($targetId);
-					$documentSeo = $event->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+					$target = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($targetId);
+					$documentSeo = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 					/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
 					$documentSeo->setTarget($target);
 					$documentSeo->setSitemapChangeFrequency($sitemapDefaultChangeFrequency);

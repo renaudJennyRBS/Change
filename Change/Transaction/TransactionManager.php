@@ -25,29 +25,6 @@ class TransactionManager implements \Zend\EventManager\EventsCapableInterface
 	protected $dirty = false;
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
-
-	/**
 	 * @return string
 	 */
 	protected function getEventManagerIdentifier()
@@ -55,15 +32,12 @@ class TransactionManager implements \Zend\EventManager\EventsCapableInterface
 		return static::EVENT_MANAGER_IDENTIFIER;
 	}
 
-
-
 	/**
 	 * @return array
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		$classNames = $this->configuration->getEntry('Change/Events/TransactionManager');
-		return is_array($classNames) ? $classNames : array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/TransactionManager');
 	}
 
 	/**

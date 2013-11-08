@@ -44,11 +44,10 @@ class ApplicationServices extends \Zend\Di\Di
 		$definitionList->addDefinition($classDefinition);
 
 
-		//TransactionManager : EventManagerFactory, Configuration
+		//TransactionManager : EventManagerFactory
 		$transactionManagerClassName = $this->getInjectedClassName('TransactionManager', 'Change\Transaction\TransactionManager');
 		$classDefinition = $this->getClassDefinition($transactionManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
 		//I18nManager : Configuration, Workspace, EventManagerFactory, Logging
@@ -60,10 +59,11 @@ class ApplicationServices extends \Zend\Di\Di
 		$definitionList->addDefinition($classDefinition);
 
 
-		//PluginManager : Configuration, Workspace, EventManagerFactory, DbProvider
+		//PluginManager : Workspace, EventManagerFactory, DbProvider
 		$pluginManagerClassName = $this->getInjectedClassName('I18nManager', 'Change\Plugins\PluginManager');
-		$classDefinition = $this->getConfigAndWorkspaceClassDefinition($pluginManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition = $this->getClassDefinition($pluginManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition)
+			->addWorkspaceClassDefinition($classDefinition);
 		$classDefinition->addMethod('setDbProvider', true)
 				->addMethodParameter('setDbProvider', 'dbProvider', array('type' => 'DbProvider', 'required' => true))
 			->addMethod('setTransactionManager', true)
@@ -87,7 +87,6 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-
 		//ModelManager : Workspace, PluginManager
 		$modelManagerClassName = $this->getInjectedClassName('ModelManager', 'Change\Documents\ModelManager');
 		$classDefinition = $this->getClassDefinition($modelManagerClassName);
@@ -95,7 +94,6 @@ class ApplicationServices extends \Zend\Di\Di
 		$classDefinition->addMethod('setPluginManager', true)
 			->addMethodParameter('setPluginManager', 'pluginManager', array('type' => 'PluginManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
-
 
 		//DocumentManager : EventManagerFactory, Configuration, ModelManager, DbProvider, I18nManager, Logging
 		$documentManagerClassName = $this->getInjectedClassName('DocumentManager', 'Change\Documents\DocumentManager');
@@ -130,21 +128,21 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethodParameter('setI18nManager', 'i18nManager', array('type' => 'I18nManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//CollectionManager : EventManagerFactory, Configuration
+		//CollectionManager : EventManagerFactory
 		$collectionManagerClassName = $this->getInjectedClassName('CollectionManager', 'Change\Collection\CollectionManager');
 		$classDefinition = $this->getClassDefinition($collectionManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//JobManager : EventManagerFactory, Configuration, DbProvider, Logging
+		//JobManager : EventManagerFactory, DbProvider, Logging
 		$jobManagerClassName = $this->getInjectedClassName('CollectionManager', 'Change\Job\JobManager');
 		$classDefinition = $this->getClassDefinition($jobManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition
 			->addMethod('setDbProvider', true)
 				->addMethodParameter('setDbProvider', 'dbProvider', array('type' => 'DbProvider', 'required' => true))
+			->addMethod('setTransactionManager', true)
+				->addMethodParameter('setTransactionManager', 'transactionManager', array('type' => 'TransactionManager', 'required' => true))
 			->addMethod('setLogging', true)
 				->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -152,15 +150,14 @@ class ApplicationServices extends \Zend\Di\Di
 		//BlockManager: EventManagerFactory, Configuration
 		$blockManagerClassName = $this->getInjectedClassName('BlockManager', 'Change\Presentation\Blocks\BlockManager');
 		$classDefinition = $this->getClassDefinition($blockManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addConfigurationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//RichTextManager : EventManagerFactory, Configuration
+		//RichTextManager : EventManagerFactory
 		$richTextManagerClassName = $this->getInjectedClassName('RichTextManager', 'Change\Presentation\RichText\RichTextManager');
 		$classDefinition = $this->getClassDefinition($richTextManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
 		//ThemeManager : EventManagerFactory, Configuration, Workspace
@@ -169,10 +166,11 @@ class ApplicationServices extends \Zend\Di\Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//TemplateManager : EventManagerFactory, Configuration, Workspace, ThemeManager
+		//TemplateManager : EventManagerFactory, Workspace, ThemeManager
 		$templateManagerClassName = $this->getInjectedClassName('TemplateManager', 'Change\Presentation\Templates\TemplateManager');
-		$classDefinition = $this->getConfigAndWorkspaceClassDefinition($templateManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition = $this->getClassDefinition($templateManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition)
+			->addWorkspaceClassDefinition($classDefinition);
 		$classDefinition->addMethod('setThemeManager', true)
 			->addMethodParameter('setThemeManager', 'themeManager', array('type' => 'ThemeManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -186,27 +184,24 @@ class ApplicationServices extends \Zend\Di\Di
 		$definitionList->addDefinition($classDefinition);
 
 
-		//WorkflowManager : EventManagerFactory, Configuration
+		//WorkflowManager : EventManagerFactory
 		$workflowManagerClassName = $this->getInjectedClassName('WorkflowManager', 'Change\Workflow\WorkflowManager');
 		$classDefinition = $this->getClassDefinition($workflowManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
 
-		//AuthenticationManager : EventManagerFactory, Configuration
+		//AuthenticationManager : EventManagerFactory
 		$authenticationManagerClassName = $this->getInjectedClassName('AuthenticationManager', 'Change\User\AuthenticationManager');
 		$classDefinition = $this->getClassDefinition($authenticationManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
 
-		//ProfileManager : EventManagerFactory, Configuration
+		//ProfileManager : EventManagerFactory
 		$profileManagerClassName = $this->getInjectedClassName('ProfileManager', 'Change\User\ProfileManager');
 		$classDefinition = $this->getClassDefinition($profileManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
 		//PermissionsManager :
@@ -219,13 +214,11 @@ class ApplicationServices extends \Zend\Di\Di
 				->addMethodParameter('setTransactionManager', 'transactionManager', array('type' => 'TransactionManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//OAuthManager : EventManagerFactory, Configuration
+		//OAuthManager : EventManagerFactory
 		$oAuthManagerClassName = $this->getInjectedClassName('OAuthManager', 'Change\Http\OAuth\OAuthManager');
 		$classDefinition = $this->getClassDefinition($oAuthManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition)
-			->addConfigurationClassDefinition($classDefinition);
-		$classDefinition
-			->addMethod('setDbProvider', true)
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDbProvider', true)
 				->addMethodParameter('setDbProvider', 'dbProvider', array('type' => 'DbProvider', 'required' => true))
 			->addMethod('setTransactionManager', true)
 				->addMethodParameter('setTransactionManager', 'transactionManager', array('type' => 'TransactionManager', 'required' => true));
@@ -243,13 +236,13 @@ class ApplicationServices extends \Zend\Di\Di
 			array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('TransactionManager', $transactionManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('I18nManager', $i18nManagerClassName,
 			array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('PluginManager', $pluginManagerClassName,
-			array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
+			array('workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('StorageManager', $storageManagerClassName,
 			array('configuration' => $configuration, 'workspace' => $workspace));
@@ -265,39 +258,39 @@ class ApplicationServices extends \Zend\Di\Di
 		$instanceManager->addAlias('ConstraintsManager', $constraintsManagerClassName, array());
 
 		$instanceManager->addAlias('CollectionManager', $collectionManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('JobManager', $jobManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('BlockManager', $blockManagerClassName,
 			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('RichTextManager', $richTextManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('ThemeManager', $themeManagerClassName,
 				array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('TemplateManager', $templateManagerClassName,
-			array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
+			array('workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('PageManager', $pageManagerClassName,
 			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('WorkflowManager', $workflowManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('AuthenticationManager', $authenticationManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('ProfileManager', $profileManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('PermissionsManager', $permissionsManagerClassName, array());
 
 		$instanceManager->addAlias('OAuthManager', $oAuthManagerClassName,
-			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+			array('eventManagerFactory' => $eventManagerFactory));
 	}
 
 	/**

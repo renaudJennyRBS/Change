@@ -126,7 +126,7 @@ class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Services\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param array $options
 	 * @return $this
 	 */

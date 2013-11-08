@@ -1,15 +1,13 @@
 <?php
 namespace Change\I18n;
 
-use Change\Events\EventsCapableTrait;
-
 /**
  * @api
  * @name \Change\I18n\I18nManager
  */
 class I18nManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use EventsCapableTrait;
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_KEY_NOT_FOUND = 'key-not-found';
 	const EVENT_FORMATTING = 'formatting';
@@ -569,13 +567,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			case 'c':
 				$collectionPath =
-					$this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathPartsOrPath, 1));
+					$this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR,
+						array_slice($pathPartsOrPath, 1));
 				break;
 			case 'm':
 			case 't':
 				if (isset($this->packageList[$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]]))
 				{
-					$packagePath = $this->packageList[$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]];
+					$packagePath = $this->packageList[
+					$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]];
 					$collectionPath =
 						$packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathPartsOrPath, 3));
 				}
@@ -668,7 +668,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->configuration->getEntry('Change/Events/I18n', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/I18n');
 	}
 
 	/**

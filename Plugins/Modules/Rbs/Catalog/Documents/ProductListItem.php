@@ -2,7 +2,6 @@
 namespace Rbs\Catalog\Documents;
 
 use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\Link;
 
 /**
@@ -18,70 +17,67 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 		return $this->getPosition() < 0;
 	}
 
-	/**
-	 * @param DocumentResult $documentResult
-	 */
-	protected function updateRestDocumentResult($documentResult)
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		parent::updateRestDocumentResult($documentResult);
-		$um = $documentResult->getUrlManager();
-		/* @var $selfLink DocumentLink */
-		$selfLink = $documentResult->getRelLink('self')[0];
-		$pathInfo = $selfLink->getPathInfo();
-		if ($this->isHighlighted())
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$documentResult->addAction(new Link($um, $pathInfo .  '/downplay', 'downplay'));
+			$documentResult = $restResult;
+			$um = $documentResult->getUrlManager();
+			/* @var $selfLink DocumentLink */
+			$selfLink = $documentResult->getRelLink('self')[0];
+			$pathInfo = $selfLink->getPathInfo();
+			if ($this->isHighlighted())
+			{
+				$documentResult->addAction(new Link($um, $pathInfo . '/downplay', 'downplay'));
+			}
+			else
+			{
+				$documentResult->addAction(new Link($um, $pathInfo . '/highlight', 'highlight'));
+			}
+			$documentResult->addAction(new Link($um, $pathInfo . '/moveup', 'moveup'));
+			$documentResult->addAction(new Link($um, $pathInfo . '/movedown', 'movedown'));
+			$documentResult->addAction(new Link($um, $pathInfo . '/highlighttop', 'highlighttop'));
+			$documentResult->addAction(new Link($um, $pathInfo . '/highlightbottom', 'highlightbottom'));
 		}
-		else
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
-			$documentResult->addAction(new Link($um, $pathInfo . '/highlight', 'highlight'));
+			//$extraColumn = $event->getParam('extraColumn');
+			$documentLink = $restResult;
+			$urlManager = $documentLink->getUrlManager();
+			$product = $this->getProduct();
+			if ($product instanceof \Rbs\Catalog\Documents\Product)
+			{
+				$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY));
+			}
+			$productList = $this->getProductList();
+			if ($productList instanceof \Rbs\Catalog\Documents\ProductList)
+			{
+				$documentLink->setProperty('productList',
+					new DocumentLink($urlManager, $productList, DocumentLink::MODE_PROPERTY));
+			}
+
+			$documentLink->setProperty('isHighlighted', $this->isHighlighted());
+			$documentLink->setProperty('position', $this->getPosition());
+
+			$pathInfo = $documentLink->getPathInfo();
+
+			if ($this->isHighlighted())
+			{
+				$actions[] = (new Link($urlManager, $pathInfo . '/downplay', 'downplay'))->toArray();
+			}
+			else
+			{
+				$actions[] = (new Link($urlManager, $pathInfo . '/highlight', 'highlight'))->toArray();
+			}
+			$actions[] = (new Link($urlManager, $pathInfo . '/moveup', 'moveup'))->toArray();
+			$actions[] = (new Link($urlManager, $pathInfo . '/movedown', 'movedown'))->toArray();
+			$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
+			$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
+			$documentLink->setProperty('actions', $actions);
 		}
-		$documentResult->addAction(new Link($um, $pathInfo . '/moveup', 'moveup'));
-		$documentResult->addAction(new Link($um, $pathInfo . '/movedown', 'movedown'));
-		$documentResult->addAction(new Link($um, $pathInfo . '/highlighttop', 'highlighttop'));
-		$documentResult->addAction(new Link($um, $pathInfo . '/highlightbottom', 'highlightbottom'));
 	}
-
-	/**
-	 * @param DocumentLink $documentLink
-	 * @param Array
-	 */
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
-	{
-		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		$urlManager = $documentLink->getUrlManager();
-		$product = $this->getProduct();
-		if ($product instanceof \Rbs\Catalog\Documents\Product)
-		{
-			$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY ));
-		}
-		$productList = $this->getProductList();
-		if ($productList instanceof \Rbs\Catalog\Documents\ProductList)
-		{
-			$documentLink->setProperty('productList', new DocumentLink($urlManager, $productList, DocumentLink::MODE_PROPERTY ));
-		}
-
-		$documentLink->setProperty('isHighlighted', $this->isHighlighted());
-		$documentLink->setProperty('position', $this->getPosition());
-
-		$pathInfo = $documentLink->getPathInfo();
-
-		if ($this->isHighlighted())
-		{
-			$actions[] = (new Link($urlManager, $pathInfo . '/downplay', 'downplay'))->toArray();
-		}
-		else
-		{
-			$actions[] = (new Link($urlManager, $pathInfo . '/highlight', 'highlight'))->toArray();
-		}
-		$actions[] = (new Link($urlManager, $pathInfo . '/moveup', 'moveup'))->toArray();
-		$actions[] = (new Link($urlManager, $pathInfo . '/movedown', 'movedown'))->toArray();
-		$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
-		$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
-		$documentLink->setProperty('actions', $actions);
-	}
-
-
 
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
@@ -110,14 +106,16 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 				$product->save();
 			}
 		}
-		elseif ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList && $product instanceof \Rbs\Catalog\Documents\Product)
+		elseif ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList
+			&& $product instanceof \Rbs\Catalog\Documents\Product
+		)
 		{
 			//CrossSellingList Symmetry
-			if($list->getSymmetrical())
+			if ($list->getSymmetrical())
 			{
-				$jm = new \Change\Job\JobManager();
-				$jm->setApplicationServices($this->getApplicationServices());
-				$jm->createNewJob('Rbs_Catalog_UpdateSymmetricalProductListItem', array('listId' =>$list->getId(), 'productId' => $product->getId(), 'action' => 'add'));
+				$jm = $event->getApplicationServices()->getJobManager();
+				$jm->createNewJob('Rbs_Catalog_UpdateSymmetricalProductListItem',
+					array('listId' => $list->getId(), 'productId' => $product->getId(), 'action' => 'add'));
 			}
 		}
 	}
@@ -139,14 +137,16 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 				$product->save();
 			}
 		}
-		elseif ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList && $product instanceof \Rbs\Catalog\Documents\Product)
+		elseif ($list instanceof \Rbs\Catalog\Documents\CrossSellingProductList
+			&& $product instanceof \Rbs\Catalog\Documents\Product
+		)
 		{
 			//CrossSellingList Symmetry
-			if($list->getSymmetrical())
+			if ($list->getSymmetrical())
 			{
-				$jm = new \Change\Job\JobManager();
-				$jm->setApplicationServices($this->getApplicationServices());
-				$jm->createNewJob('Rbs_Catalog_UpdateSymmetricalProductListItem', array('listId' =>$list->getId(), 'productId' => $product->getId(), 'action' => 'remove'));
+				$jm = $event->getApplicationServices()->getJobManager();
+				$jm->createNewJob('Rbs_Catalog_UpdateSymmetricalProductListItem',
+					array('listId' => $list->getId(), 'productId' => $product->getId(), 'action' => 'remove'));
 			}
 		}
 	}

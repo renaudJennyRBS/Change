@@ -13,29 +13,6 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_GET_CODES = 'getCodes';
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
-	
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -48,7 +25,7 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->configuration->getEntry('Change/Events/CollectionManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/CollectionManager');
 	}
 
 	/**
@@ -60,7 +37,6 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($params);
-
 		$args['code'] = $code;
 
 		$event = new \Change\Events\Event(static::EVENT_GET_COLLECTION, $this, $args);

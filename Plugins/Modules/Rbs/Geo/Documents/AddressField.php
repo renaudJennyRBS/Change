@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\geo\Documents;
 
-
 /**
  * @name \Rbs\geo\Documents\AddressField
  */
@@ -12,15 +11,18 @@ class AddressField extends \Compilation\Rbs\Geo\Documents\AddressField implement
 	 */
 	protected $propertyCodes;
 
-	/**
-	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
-	 * @param $extraColumn
-	 */
-	protected function updateRestDocumentLink($documentLink, $extraColumn)
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		parent::updateRestDocumentLink($documentLink, $extraColumn);
-		$documentLink->setProperty('locked', $this->getLocked());
-		$documentLink->setProperty('code', $this->getCode());
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		/** @var $addressField AddressField */
+		$addressField = $event->getDocument();
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$documentLink = $restResult;
+			$documentLink->setProperty('locked', $addressField->getLocked());
+			$documentLink->setProperty('code', $addressField->getCode());
+		}
 	}
 
 	/**
@@ -36,7 +38,8 @@ class AddressField extends \Compilation\Rbs\Geo\Documents\AddressField implement
 	 */
 	public function getTitle()
 	{
-		$title = $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()->getTitle() : $this->getCurrentLocalization()->getTitle();
+		$title = $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()
+			->getTitle() : $this->getCurrentLocalization()->getTitle();
 		return $title === null ? $this->getCode() : $title;
 	}
 

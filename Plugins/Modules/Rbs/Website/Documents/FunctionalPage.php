@@ -52,7 +52,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			$codes = $this->getAllowedFunctionsCode();
 			if (is_array($codes) && count($codes))
 			{
-				$page->checkDefaultSectionPageFunction();
+				$page->checkDefaultSectionPageFunction($event);
 			}
 		}
 	}
@@ -68,7 +68,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			$codes = $this->getAllowedFunctionsCode();
 			if (is_array($codes) && count($codes))
 			{
-				$page->checkDefaultSectionPageFunction();
+				$page->checkDefaultSectionPageFunction($event);
 			}
 		}
 	}
@@ -79,9 +79,9 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	 * - this page don't handle in any section
 	 * Make this page handle each function on the website that matches these two conditions.
 	 */
-	protected function checkDefaultSectionPageFunction()
+	protected function checkDefaultSectionPageFunction(Event $event)
 	{
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
 		$query->andPredicates($query->eq('page', $this));
 		$qb = $query->dbQueryBuilder();
 		$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('functionCode'), 'fc'));
@@ -89,7 +89,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		$codes = array_diff($this->getAllowedFunctionsCode(), $sq->getResults($sq->getRowsConverter()->addStrCol('fc')));
 
 		$website = $this->getWebsite();
-		$query = new \Change\Documents\Query\Query($this->getDocumentServices(), 'Rbs_Website_SectionPageFunction');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
 		$query->andPredicates($query->eq('section', $website));
 		$qb = $query->dbQueryBuilder();
 		$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('functionCode'), 'fc'));

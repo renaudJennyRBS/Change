@@ -37,7 +37,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	protected function tearDown()
 	{
 		parent::tearDown();
-		$this->getApplicationServices()->getDbProvider()->closeConnection();
+		$this->closeDbConnection();
 	}
 
 	/**
@@ -129,7 +129,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
 		$generator->generateSystemSchema();
 
-		$appServices->getDbProvider()->closeConnection();
+		$appServices->getDbProvider()->getSchemaManager()->closeConnection();
 		return $appServices;
 	}
 
@@ -182,8 +182,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		$compiler->generate();
 
 		$generator->generatePluginsSchema();
+		$appServices->getDbProvider()->getSchemaManager()->closeConnection();
 
-		$appServices->getDbProvider()->closeConnection();
 		return $appServices;
 	}
 
@@ -205,7 +205,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 		$appServices = static::getNewApplicationServices($app, $eventManagerFactory);
 		$dbp = $appServices->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
-		$dbp->closeConnection();
+		$dbp->getSchemaManager()->closeConnection();
 	}
 
 	/**

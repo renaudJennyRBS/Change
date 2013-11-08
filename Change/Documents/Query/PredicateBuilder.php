@@ -34,6 +34,14 @@ class PredicateBuilder
 	}
 
 	/**
+	 * @return \Change\Documents\Query\AbstractBuilder
+	 */
+	public function getBuilder()
+	{
+		return $this->builder;
+	}
+
+	/**
 	 * @return \Change\Db\Query\SQLFragmentBuilder
 	 */
 	protected function getFragmentBuilder()

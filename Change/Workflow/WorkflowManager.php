@@ -14,29 +14,6 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_PROCESS = 'process';
 
 	/**
-	 * @var \Change\Configuration\Configuration;
-	 */
-	protected $configuration;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Configuration\Configuration
-	 */
-	protected function getConfiguration()
-	{
-		return $this->configuration;
-	}
-
-	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -49,7 +26,7 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getConfiguration()->getEntry('Change/Events/WorkflowManager', array());
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/WorkflowManager');
 	}
 
 	/**

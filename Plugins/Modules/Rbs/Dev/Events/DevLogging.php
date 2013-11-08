@@ -19,31 +19,29 @@ class DevLogging
 		if ($this->logging === null)
 		{
 			$application = new \Change\Application();
-			$applicationServices = new \Change\Application\ApplicationServices($application);
-
-			$this->logging = $applicationServices->getLogging();
+			$this->logging = new \Change\Logging\Logging();
+			$this->logging->setWorkspace($application->getWorkspace())->setConfiguration($application->getConfiguration());
 		}
-
 		return $this->logging;
 	}
 
 	/**
 	 * @param \Zend\EventManager\Event $event
-	 * @return bool
+	 * @return boolean
 	 */
 	public function logBeginEvent(\Zend\EventManager\Event $event)
 	{
-		$this->getLogging()->debug('START of event ' . $event->getName() . ' thrown by ' . get_class($event->getTarget()));
+		$this->getLogging()->debug('START of '. get_class($event). '::'. $event->getName() . ' thrown by ' . get_class($event->getTarget()));
 		return true;
 	}
 
 	/**
 	 * @param \Zend\EventManager\Event $event
-	 * @return bool
+	 * @return boolean
 	 */
 	public function logEndEvent(\Zend\EventManager\Event $event)
 	{
-		$this->getLogging()->debug('END of event ' . $event->getName() . ' thrown by ' . get_class($event->getTarget()));
+		$this->getLogging()->debug('END of '. get_class($event). '::'. $event->getName() . ' thrown by ' . get_class($event->getTarget()));
 		return true;
 	}
 }

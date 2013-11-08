@@ -8,16 +8,12 @@ use Change\Documents\Property;
  */
 class CalendarInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformation
 {
-	/**
-	 * @param string $name
-	 * @param \Change\Presentation\Blocks\BlockManager $blockManager
-	 */
-	public function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name, $blockManager);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.event.blocks.calendar-label'));
+		$this->setLabel($i18nManager->trans('m.rbs.event.blocks.calendar-label', $ucf));
 		$this->addInformationMeta('sectionId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Website_Section')
 			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-list-section-id', $ucf));
