@@ -331,7 +331,6 @@
 
 		this.removeAside = function (key)
 		{
-			console.log("remove: ", $el.find('[data-aside-key="' + key + '"]'));
 			$el.find('[data-aside-key="' + key + '"]').remove();
 		};
 

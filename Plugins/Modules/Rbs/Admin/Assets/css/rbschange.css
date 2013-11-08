@@ -118,13 +118,12 @@ h3.panel-title {
 }
 
 .panel {
-	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
-	border-width: 1px;
+	border-width: 2px;
 	border-radius: 3px;
 }
 
 .panel.panel-default {
-	border-color: rgba(0,0,0,0.2);
+	border-color: rgba(0,0,0,0.15);
 }
 
 .panel .list-group-item:last-child,
@@ -154,19 +153,10 @@ h3.panel-title {
 .btn-toolbar .btn-group {
 	float: none;
 }
-/*
-.panel:after {
-	content: "";
-	position: absolute;
-	top: -3px;
-	left: -3px;
-	right: -3px;
-	bottom: -3px;
-	background: silver;
-	z-index: -1;
-}
-*/
 
+.input-group-addon {
+	width: auto;
+}
 
 /* Bootstrap addons */
 
@@ -179,6 +169,16 @@ h3.panel-title {
 	height: 24px;
 }
 
+
+.popover-content .list-group {
+	box-shadow: none;
+	margin: -7px -12px;
+	min-width: 150px;
+}
+
+.popover-content .list-group .list-group-item {
+	border: 0 none;
+}
 
 /* rbs-form-simple */
 

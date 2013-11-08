@@ -651,6 +651,7 @@
 								element.after('<canvas id="rbsImageContainerColorizerCanvas' + counter + '" class="' + cls + '"></canvas>');
 								canvas = $('#rbsImageContainerColorizerCanvas' + counter).get(0);
 								ColorTunes.launch(this, canvas, container);
+								element.hide();
 							});
 					});
 				}

@@ -16,23 +16,23 @@
 	 *
 	 * @example: <code><switch confirm-off="Are you sure to disable this element?" ng-model="myModel.active"/></code>
 	 */
-	app.directive('switch', ['RbsChange.Dialog', 'RbsChange.i18n', function (Dialog, i18n) {
+	app.directive('switch', ['RbsChange.Dialog', 'RbsChange.i18n', function (Dialog, i18n)
+	{
 		return {
-			restrict : 'E',
-
 			template : '<div class="switch-on-off switch">' +
 				'<div class="switch-button"></div>' +
 				'<label class="on" ng-bind-html="labelOn"></label>' +
 				'<label class="off" ng-bind-html="labelOff"></label>' +
 				'</div>',
 
-			require: 'ngModel',
+			restrict : 'E',
+			require : 'ngModel',
+			replace : true,
+			priority : -1, // Let `required=""` directive execute before this one.
+			scope : true,
 
-			replace: true,
-
-			scope: true,
-
-			link : function (scope, elm, attrs, ngModel) {
+			link : function (scope, elm, attrs, ngModel)
+			{
 				var sw = $(elm), valueOff, valueOn, acceptedValuesOn, confirmTitle;
 
 				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.admin.js.yes');
@@ -41,6 +41,9 @@
 				valueOn = attrs.valueOn || true;
 				acceptedValuesOn = attrs.acceptedValuesOn || [];
 				confirmTitle = attrs.confirmTitle || i18n.trans('m.rbs.admin.admin.js.confirmation | ucf');
+
+				// Remove all parsers that could invalidate this widget (required=true for example).
+				ngModel.$parsers.length = 0;
 
 				ngModel.$render = function () {
 					if (isON()) {
@@ -61,6 +64,7 @@
 				function toggleState () {
 					ngModel.$setViewValue(isON() ? valueOff : valueOn);
 					ngModel.$render();
+					console.log(typeof ngModel.$viewValue);
 				}
 
 				sw.click(function () {
@@ -90,7 +94,6 @@
 
 					}
 				});
-
 			}
 		};
 	}]);
