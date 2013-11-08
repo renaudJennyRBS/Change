@@ -44,7 +44,6 @@
 		'RbsChange.Breadcrumb',
 		'RbsChange.Actions',
 		'RbsChange.NotificationCenter',
-		'RbsChange.Device',
 		'RbsChange.Settings',
 		'RbsChange.EditorManager',
 		'RbsChange.Events',
@@ -55,7 +54,7 @@
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Device, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu)
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -65,31 +64,28 @@
 		 * @returns {string}
 		 */
 		function buildQuickActionsHtml (dlid, tAttrs, localActions) {
-			var	actionDivider = '<span class="divider">|</span>',
-				html,
+			var	html,
 				quickActionsHtml;
 
-			html = '<div class="quick-actions ' + (Device.isMultiTouch() ? 'quick-actions-touch' : 'quick-actions-mouse') + '">';
-
-			if (Device.isMultiTouch()) {
-				html += '<i class="icon-chevron-left handle-open"></i><i class="icon-chevron-right handle-close"></i> ';
-			}
+			html = '<div class="quick-actions clearfix">';
 
 			function buildDefault () {
-				if (__preview[dlid]) {
-					return buildPreviewAction() + actionDivider + buildDeleteAction();
-				}
 				var out = buildDeleteAction();
 				if (tAttrs.publishable === 'true') {
-					out += actionDivider + buildWorkflowAction();
+					out += buildWorkflowAction();
 				}
 				return out;
 			}
 
 			function buildDeleteAction () {
-				return	'<a href="javascript:;" class="danger" ng-click="remove(doc, $event)">' +
+				return	'<a ng-hide="deleteConfirm[$index]" href="javascript:;" ng-click="askDeleteConfirmation($index, $event)" class="danger"><i class="icon-trash"></i> ' +
 							i18n.trans('m.rbs.admin.admin.js.delete') +
-						'</a>';
+						'</a>' +
+						'<div class="quick-action danger" ng-show="deleteConfirm[$index]">' +
+							'<i class="icon-trash"></i> ?' +
+							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">oui</button>' +
+							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">non</button></span>' +
+						'</div>';
 			}
 
 			function buildEditAction () {
@@ -110,12 +106,8 @@
 						'</a>';
 			}
 
-			function buildPreviewAction () {
-				return '<a href="javascript:" ng-click="preview(doc, $event)"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-chevron-up\':hasPreview($index), \'icon-chevron-down\':!hasPreview($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.preview') + '</a>';
-			}
-
 			function buildWorkflowAction () {
-				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i ng-class="{\'icon-chevron-up\':hasWorkflow($index), \'icon-chevron-down\':!hasWorkflow($index)}"></i> ' + i18n.trans('m.rbs.admin.admin.js.workflow') + '</a>';
+				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i class="icon-ok"></i> ' + i18n.trans('m.rbs.admin.admin.js.workflow') + '</a>';
 			}
 
 			function buildForSelectSession (multiple) {
@@ -124,7 +116,7 @@
 					'</a>';
 
 				if (multiple) {
-					html += actionDivider +
+					html +=
 						'<a href="javascript:;" ng-click="selectSession.append(doc)">' +
 						i18n.trans('m.rbs.admin.admin.js.select-add') +
 						'</a>';
@@ -134,27 +126,21 @@
 			}
 
 			if (SelectSession.started()) {
-				html += buildPreviewAction() + actionDivider + buildForSelectSession(SelectSession.info().multiple);
+				html += buildForSelectSession(SelectSession.info().multiple);
 			}
 			else if (__quickActions[dlid]) {
-				if (__quickActions[dlid].divider) {
-					actionDivider = __quickActions[dlid].divider;
-				}
 				quickActionsHtml = __quickActions[dlid].contents;
 
 				if (tAttrs.publishable === 'true' && (! quickActionsHtml || (quickActionsHtml.indexOf('[action default]') === -1 && quickActionsHtml.indexOf('[action workflow]') === -1))) {
-					quickActionsHtml += actionDivider + '[action workflow]';
+					quickActionsHtml += '[action workflow]';
 				}
 
 				if (! quickActionsHtml.length) {
 					return null;
 				}
-				quickActionsHtml = quickActionsHtml.replace(/\s*\|\|\s*/g, actionDivider).replace(/\[action\s+([A-Za-z0-9_\-]+)\]/g, function (match, actionName) {
+				quickActionsHtml = quickActionsHtml.replace(/\s*\|\|\s*/g, '').replace(/\[action\s+([A-Za-z0-9_\-]+)\]/g, function (match, actionName) {
 					if (actionName === 'delete') {
 						return buildDeleteAction();
-					}
-					if (actionName === 'preview') {
-						return buildPreviewAction();
 					}
 					if (actionName === 'edit') {
 						return buildEditAction();
@@ -174,8 +160,9 @@
 					if (actionObject !== null) {
 						return buildOtherAction(actionObject);
 					}
+					return '';
 				});
-				html += quickActionsHtml;
+				html += quickActionsHtml.trim();
 			} else {
 				html += buildDefault();
 			}
@@ -282,18 +269,6 @@
 				});
 			}
 
-/*
-			// Order in tree column
-			if (tAttrs.tree) {
-				columns.push({
-					"name"  : "nodeOrder",
-					"align"  : "right",
-					"width"  : "70px",
-					"label"  : i18n.trans('m.rbs.admin.admin.js.order | ucf'),
-					"content": '(=doc.META$.treeNode.nodeOrder | number=)'
-				});
-			}
-*/
 			// Modification Date column
 			if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
 				columns.push({
@@ -482,26 +457,22 @@
 
 				// The primary column has extra links for preview, edit and delete.
 				if (column.primary) {
-					html = buildQuickActionsHtml(dlid, tAttrs, localActions);
-					if (html !== null) {
-						testerEl.html(html);
-						$td.find('.primary-cell').prepend(html);
-
-						// Compute real width so that the CSS animation can work correctly when
-						// opening this menu.
-						// (see showQuickActions() below, in the directive's linking function).
-						$td.find('.primary-cell .quick-actions').attr('data-real-width', (testerEl.outerWidth())+'px');
-						$td.find('.primary-cell').prepend('<span ng-if="doc.hasCorrection()" class="label label-success pull-right">correction</span>');
+					var previewButton = '';
+					if (__preview[dlid]) {
+						previewButton = '<button type="button" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.admin.js.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
+
+					$td.find('.primary-cell')
+						.prepend(
+							'<span class="pull-right quick-actions-buttons">' +
+								previewButton +
+								'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-collapse"></i></button>' +
+							'</span>'
+						).append(buildQuickActionsHtml(dlid, tAttrs, localActions));
 				}
 
 				$td.attr('ng-if', "isNormalCell(doc)");
 				$body.append($td);
-			}
-
-			if (Device.isMultiTouch()) {
-				$body.attr('ng-swipe-left', "showQuickActions($index)");
-				$body.attr('ng-swipe-right', "hideQuickActions($index)");
 			}
 
 			delete __columns[dlid];
@@ -601,6 +572,25 @@
 					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
+
+
+
+					scope.deleteConfirm = {};
+
+					scope.askDeleteConfirmation = function ($index, $event) {
+						scope.deleteConfirm[$index] = true;
+						$event.stopPropagation();
+					};
+
+					scope.cancelDelete = function ($index, $event) {
+						delete scope.deleteConfirm[$index];
+						$event.stopPropagation();
+					};
+
+					$('body').on('click.rbs.document.list', function () {
+						scope.hideQuickActions(currentQuickActionsIndex);
+					});
+
 
 
 					// Select session
@@ -822,7 +812,9 @@
 
 
 					scope.remove = function (doc, $event) {
-						return scope.executeAction("delete", doc, $event);
+						REST['delete'](doc).then(function () {
+							reload();
+						});
 					};
 
 
@@ -1601,6 +1593,7 @@
 							reload();
 						}
 					}
+					scope.$watch('loadQuery', watchQueryFn, true);
 
 					function watchFilterQueryFn (query) {
 						if (!elm.is('[load-query]'))
@@ -1613,36 +1606,44 @@
 							reload();
 						}
 					}
-
 					scope.$watch('filterQuery', watchFilterQueryFn, true);
-					scope.$watch('loadQuery', watchQueryFn, true);
 
-					var lastQuickActionsShown = null;
-					if (Device.isMultiTouch()) {
-						scope.showQuickActions = function ($index) {
-							if (lastQuickActionsShown) {
-								lastQuickActionsShown.removeClass('shown').css({'width':'0'});
-							}
-							var target = elm.find('.document-list tbody tr').get($index);
-							lastQuickActionsShown = $(target).find('.quick-actions-touch');
-							lastQuickActionsShown.addClass('shown').css({'width': lastQuickActionsShown.attr('data-real-width')});
-						};
 
-						scope.hideQuickActions = function ($index) {
-							var target = elm.find('.document-list tbody tr').get($index);
-							var el = $(target).find('.quick-actions-touch');
-							if (el.is('.shown')) {
-								el.removeClass('shown').css({'width':'0'});
-								lastQuickActionsShown = null;
-							}
-						};
+					var currentQuickActionsIndex = -1;
+
+					function getQuickActionsElByIndex (index) {
+						return elm.find('.document-list tbody tr:nth-child(' + (index+1) + ') .quick-actions');
 					}
+
+					scope.showQuickActions = function ($index) {
+						if (currentQuickActionsIndex > -1) {
+							getQuickActionsElByIndex(currentQuickActionsIndex).hide();
+						}
+						currentQuickActionsIndex = $index;
+						getQuickActionsElByIndex($index).show();
+					};
+
+					scope.hideQuickActions = function ($index) {
+						getQuickActionsElByIndex($index).hide();
+						currentQuickActionsIndex = -1;
+						delete scope.deleteConfirm[$index];
+					};
+
+					scope.toggleQuickActions = function ($index, $event) {
+						$event.stopPropagation();
+						var el = getQuickActionsElByIndex($index);
+						if (el.is(':visible')) {
+							scope.hideQuickActions($index, $event);
+						}
+						else {
+							scope.showQuickActions($index, $event);
+						}
+					};
 
 
 					scope.toggleRelativeDates = function (column) {
 						scope.dateDisplay[column] = scope.dateDisplay[column] === 'relative' ? '' : 'relative';
 					};
-
 
 					scope.setBusy = function () {
 						scope.busy = true;
@@ -1812,6 +1813,5 @@
 		};
 
 	}]);
-
 
 })(window.jQuery);
