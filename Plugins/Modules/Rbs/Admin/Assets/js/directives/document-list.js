@@ -83,8 +83,8 @@
 						'</a>' +
 						'<div class="quick-action danger" ng-show="deleteConfirm[$index]">' +
 							'<i class="icon-trash"></i> ?' +
-							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">oui</button>' +
-							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">non</button></span>' +
+							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">' + i18n.trans('m.rbs.admin.admin.js.yes') + '</button>' +
+							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">' + i18n.trans('m.rbs.admin.admin.js.no') + '</button></span>' +
 						'</div>';
 			}
 

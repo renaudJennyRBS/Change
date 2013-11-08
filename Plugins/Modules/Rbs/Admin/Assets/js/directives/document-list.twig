@@ -27,25 +27,30 @@
 					        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
 				</div>
 			</span>
-
-			<div class="btn-group pull-right" ng-show="gridModeAvailable" data-toggle="buttons-radio">
-				<button title="{{ i18nAttr('m.rbs.admin.lists.grid-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="viewMode = 'grid'" class="btn btn-default"><i class="icon-th-large"></i></button>
-				<button title="{{ i18nAttr('m.rbs.admin.lists.list-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn btn-default"><i class="icon-list"></i></button>
-			</div>
-
-			<div ng-if="viewMode == 'grid'" class="btn-group pull-right" title="{{ i18nAttr('m.rbs.admin.lists.sort', ['ucf']) }}">
-				<a class="btn btn-default" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
-				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-					<span class="caret"></span>
+			<div class="pull-right">
+				<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
+					<i class="icon-refresh icon-spin"></i>
 				</button>
-				<ul class="dropdown-menu">
-					<li ng-repeat="c in sortable" ng-hide="! columns[c].label"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
-				</ul>
+				<button type="button" ng-if="! busy" class="btn btn-default" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
+					<i class="icon-refresh"></i>
+				</button>
+
+				<div ng-if="viewMode == 'grid'" class="btn-group" title="{{ i18nAttr('m.rbs.admin.lists.sort', ['ucf']) }}">
+					<a class="btn btn-default" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
+					<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li ng-repeat="c in sortable" ng-hide="! columns[c].label"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
+					</ul>
+				</div>
+
+				<div class="btn-group" ng-show="gridModeAvailable">
+					<button title="{{ i18nAttr('m.rbs.admin.lists.grid-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="viewMode = 'grid'" class="btn btn-default"><i class="icon-th-large"></i></button>
+					<button title="{{ i18nAttr('m.rbs.admin.lists.list-display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn btn-default"><i class="icon-list"></i></button>
+				</div>
 			</div>
 
-			<div class="btn-group pull-right">
-				<button type="button" class="btn btn-default" ng-disabled="busy" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}"><i ng-class="{'icon-spin':busy}" class="icon-refresh"></i></button>
-			</div>
 		</div>
 
 		<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)"></div>
@@ -75,11 +80,6 @@
 						<div class="rbs-document-workflow-actions" document="doc.__document" on-close="closeWorkflow($index)"></div>
 					</div>
 				</td>
-			</tr>
-		</tbody>
-		<tbody ng-show="busy">
-			<tr class="empty-row">
-				<td data-colspan="auto"><i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.admin.lists.loading', ['ucf']) }}</td>
 			</tr>
 		</tbody>
 		<tbody ng-if="collection.length == 0 && !busy">
@@ -146,6 +146,8 @@
 						<li ng-repeat="ps in predefinedPageSizes"><a href ng-href="(= pageUrl(0, ps) =)">(= ps =) <i class="icon-ok" ng-if="pagination.limit == ps"></i></a></li>
 					</ul>
 				</div>
+
+				<strong ng-show="busy" style="margin-left:1em;"><i class="icon-spinner icon-spin icon-large"></i> {{ i18n('m.rbs.admin.lists.loading', ['ucf']) }}</strong>
 			</div>
 
 	</div>
