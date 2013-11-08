@@ -214,7 +214,7 @@ ol.bullet > li::before {
 	width: 2em;
 }
 
-.requiredsymbol {
+.required-symbol {
 	color: var(danger-text-color);
 }
 
