@@ -2,7 +2,6 @@
 namespace Rbs\Commerce\Events\Http\Rest;
 
 use Change\Http\Event;
-use Rbs\Commerce\CommerceServices;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -22,13 +21,6 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (\Change\Events\Event $event)
 		{
-			$eventManagerFactory = $event->getParam('eventManagerFactory');
-			if ($eventManagerFactory instanceof \Change\Events\EventManagerFactory)
-			{
-				$commerceServices = new CommerceServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
-				$eventManagerFactory->addSharedService('commerceServices', $commerceServices);
-			}
-
 			$controller = $event->getTarget();
 			if ($controller instanceof \Change\Http\Rest\Controller)
 			{
@@ -115,7 +107,6 @@ class Listeners implements ListenerAggregateInterface
 				{
 					(new \Rbs\Catalog\Http\Rest\VariantGroup())->getProducts($event);
 				});
-
 			}
 			else if ($relativePath === 'rbs/catalog/productlistitem/delete')
 			{

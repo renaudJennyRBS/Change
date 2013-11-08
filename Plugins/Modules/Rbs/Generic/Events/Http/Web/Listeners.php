@@ -19,13 +19,6 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Change\Events\Event $event)
-		{
-			$genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $event->getParam('eventManagerFactory'), $event->getApplicationServices());
-			$event->getServices()->set('genericServices', $genericServices);
-		};
-		$events->attach('registerServices', $callback, 1);
-
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 10);
 		$callback = function (Event $event)
 		{

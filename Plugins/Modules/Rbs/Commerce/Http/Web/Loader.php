@@ -14,18 +14,19 @@ class Loader
 	 */
 	public function onRegisterServices(\Change\Events\Event $event)
 	{
-		$eventManagerFactory = $event->getParam('eventManagerFactory');
-		if ($eventManagerFactory instanceof \Change\Events\EventManagerFactory)
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof CommerceServices)
 		{
-			$commerceServices = new CommerceServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
-			$eventManagerFactory->addSharedService('commerceServices', $commerceServices);
-
 			$applicationServices = $event->getApplicationServices();
 			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
 			$applicationServices->getTemplateManager()->addExtension($extension);
 
 			$commerceServices->getContext()->getEventManager()->attach('load', array($this, 'onLoadContext'), 5);
 			$commerceServices->getContext()->getEventManager()->attach('save', array($this, 'onSaveContext'), 5);
+		}
+		else
+		{
+			$event->getApplicationServices()->getLogging()->error('Unable to register Http Web Commerce services');
 		}
 	}
 

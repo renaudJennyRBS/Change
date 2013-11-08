@@ -119,6 +119,8 @@ class Result extends Block
 				if ($index->exists())
 				{
 					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $fullTextIndex);
+					$searchQuery->setI18nManager($applicationServices->getI18nManager());
+					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
 
 					if ($searchText || (is_array($facetFilters) && count($facetFilters)))
 					{

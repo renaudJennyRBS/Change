@@ -138,6 +138,8 @@ class Facets extends Block
 				if ($index->exists())
 				{
 					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $storeIndex);
+					$searchQuery->setI18nManager($applicationServices->getI18nManager());
+					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
 					$facetFilters = $parameters->getParameter('facetFilters');
 					$query = $searchQuery->getFacetsQuery(null, null, $facetFilters, $facets);
 					$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);

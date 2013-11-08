@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Events;
 
-use Change\Documents\Events\Event as DocumentEvent;
-use Change\Job\JobManager;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 
@@ -19,22 +17,25 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$callback = function (DocumentEvent $event)
+		$callback = function ($event)
 		{
-			$document = $event->getDocument();
-			$application = $event->getApplication();
-			$toIndex = $application->getContext()->get('elasticsearch_toIndex');
-			if ($toIndex)
+			if ($event instanceof \Change\Documents\Events\Event)
 			{
-				$deleted = ($event->getName() == DocumentEvent::EVENT_DELETED
-					|| $event->getName() == DocumentEvent::EVENT_LOCALIZED_DELETED);
-				$toIndex[] = ['LCID' => $event->getApplicationServices()->getDocumentManager()->getLCID(), 'id' => $document->getId(),
-					'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
+				$document = $event->getDocument();
+				$application = $event->getApplication();
+				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
+				if ($toIndex)
+				{
+					$deleted = ($event->getName() == 'documents.deleted' || $event->getName() == 'documents.localized.deleted');
+					$toIndex[] = ['LCID' => $event->getApplicationServices()->getDocumentManager()->getLCID(),
+						'id' => $document->getId(),
+						'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
+				}
 			}
 		};
 
-		$eventNames = array(DocumentEvent::EVENT_CREATED, DocumentEvent::EVENT_LOCALIZED_CREATED,
-			DocumentEvent::EVENT_UPDATED, DocumentEvent::EVENT_DELETED, DocumentEvent::EVENT_LOCALIZED_DELETED);
+		$eventNames = array('documents.created', 'documents.localized.created', 'documents.updated',
+			'documents.deleted', 'documents.localized.deleted');
 		$events->attach('Documents', $eventNames, $callback, 5);
 
 		$callback = function (\Change\Events\Event $event)
@@ -48,7 +49,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 
 		$callback = function (\Change\Events\Event $event)
 		{
-			if ($event->getParam('primary'))
+			if ($event instanceof \Change\Events\Event && $event->getParam('primary'))
 			{
 
 				$application = $event->getApplication();
@@ -67,6 +68,16 @@ class SharedListeners implements SharedListenerAggregateInterface
 			}
 		};
 		$events->attach('TransactionManager', 'commit', $callback, 10);
+
+		$callback = function ($event){
+			if (($event instanceof \Change\Events\Event) &&
+				($eventManagerFactory = $event->getParam('eventManagerFactory')) instanceof \Change\Events\EventManagerFactory)
+			{
+				$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
+				$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+			}
+		};
+		$events->attach(array('Commands', 'JobManager', 'Http.Web', 'Http.Rest'), 'registerServices', $callback, 1);
 	}
 
 	/**

@@ -22,9 +22,6 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (\Change\Events\Event $event)
 		{
-			$genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $event->getParam('eventManagerFactory'), $event->getApplicationServices());
-			$event->getServices()->set('genericServices', $genericServices);
-
 			$controller = $event->getTarget();
 			if ($controller instanceof \Change\Http\Rest\Controller)
 			{

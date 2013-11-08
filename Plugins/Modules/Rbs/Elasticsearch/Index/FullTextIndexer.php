@@ -66,7 +66,7 @@ class FullTextIndexer
 	 */
 	protected function setEventContext(Event $event)
 	{
-		$this->applicationServices = $event->getApplicationServices();
+		$this->setApplicationServices($event->getApplicationServices());
 		$indexManager = $event->getIndexManager();
 		if ($indexManager)
 		{

@@ -13,11 +13,13 @@ class Index
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
 		$applicationServices = $event->getApplicationServices();
-		$eventManagerFactory = new \Change\Events\EventManagerFactory($application);
-		$eventManagerFactory->addSharedService('applicationServices', $applicationServices);
-		$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($application, $eventManagerFactory, $applicationServices);
+		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		{
+			$event->addErrorMessage('Elasticsearch services not registered');
+			return;
+		}
 		$indexManager = $elasticsearchServices->getIndexManager();
 
 		$hasClient = false;

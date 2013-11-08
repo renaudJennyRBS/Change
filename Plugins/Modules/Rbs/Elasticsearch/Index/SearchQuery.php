@@ -20,6 +20,11 @@ class SearchQuery
 	protected $collectionManager;
 
 	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
 	 * @var IndexDefinitionInterface
 	 */
 	protected $indexDefinition;
@@ -80,9 +85,32 @@ class SearchQuery
 	{
 		if ($this->collectionManager === null)
 		{
-			$this->collectionManager = $this->getElasticsearchServices()->getFacetManager()->getCollectionManager();
+			throw new \RuntimeException('Collection manager not set.', 999999);
 		}
 		return $this->collectionManager;
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager(\Change\I18n\I18nManager $i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\I18n\I18nManager
+	 */
+	public function getI18nManager()
+	{
+		if ($this->i18nManager === null)
+		{
+			throw new \RuntimeException('I18n manager not set.', 999999);
+		}
+		return $this->i18nManager;
 	}
 
 	/**
@@ -470,8 +498,7 @@ class SearchQuery
 			if (!$facet->getParameters()->get(FacetDefinitionInterface::PARAM_MULTIPLE_CHOICE))
 			{
 				$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue('');
-				$i18nManager = $this->getElasticsearchServices()->getApplicationServices()->getI18nManager();
-				$facetValue->setValueTitle($i18nManager->trans('m.rbs.elasticsearch.fo.ignore-facet'));
+				$facetValue->setValueTitle($this->getI18nManager()->trans('m.rbs.elasticsearch.fo.ignore-facet'));
 				if (!$facetValueFiltered)
 				{
 					$facetValue->setFiltered(true);
