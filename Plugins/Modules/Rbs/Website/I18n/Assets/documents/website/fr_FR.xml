@@ -16,5 +16,5 @@
 	<key id="notify-url-creation">me notifier de la création</key>
 	<key id="sitemap-url-pending-creation">en cours de création</key>
 	<key id="sitemaps-url">URL des sitemaps</key>
-	<key id="notification-sitemap-url-creation">l'URL du sitemap du website "{website}" pour la locale "{LCID}" a été générée</key>
+	<key id="notification-sitemap-url-creation">l'URL du sitemap de "{website}" pour la locale "{LCID}" a été générée</key>
 </i18n>
