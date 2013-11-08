@@ -355,6 +355,8 @@ class PluginManagerTest extends TestCase
 		$tm->begin();
 
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$pluginManager->setInstallApplication(static::getNewApplication());
+
 		$plugins = $pluginManager->compile();
 		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
 		$this->assertInstanceOf('\Change\Plugins\Plugin', $module);
@@ -382,6 +384,8 @@ class PluginManagerTest extends TestCase
 		$tm->begin();
 
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
+		$pluginManager->setInstallApplication(static::getNewApplication());
+
 		$plugins = $pluginManager->compile();
 		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
 		$configuration = $theme->getConfiguration();
