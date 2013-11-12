@@ -17,4 +17,6 @@
 	<key id="sitemap-change-frequency-monthly">mensuel (monthly)</key>
 	<key id="sitemap-change-frequency-yearly">annuel (yearly)</key>
 	<key id="sitemap-change-frequency-never">jamais (never)</key>
+	<key id="list-help" format="html"><![CDATA[La création d'informations de référencement pour un document s'effectue dans l'éditeur de ce document.<br />
+	Vous pouvez aussi configurer la génération automatique des informations de référencement par modèle via <a href="Rbs/Seo/ModelConfiguration/">la configuration des modèles</a>.]]></key>
 </i18n>

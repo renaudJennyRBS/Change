@@ -11,8 +11,10 @@
 
 		<property name="scriptName" type="String" localized="true">
 			<dboptions length="64" />
-			</property>
+		</property>
 		<property name="baseurl" type="String" stateless="true" />
+		<property name="sitemapGeneration" type="Boolean" />
+		<property name="sitemaps" type="JSON" />
 	<!-- TODO UNCOMMENT THIS AFTER MEDIA MODULE IMPLEMENTATION
 	<property name="icon" type="Document" document-type="Rbs_Media_Image" />
 	-->

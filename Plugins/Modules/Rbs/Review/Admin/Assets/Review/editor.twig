@@ -13,7 +13,7 @@
 					<li data-ng-class="{'selected': document.rating > 60}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-4') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
 					<li data-ng-class="{'selected': document.rating > 80}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-5') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
 				</ol>
-				<span>(= document.rating * (5/100) =)/5</span>
+				<span>(= (document.rating || 0) * 0.05 =)/5</span>
 			</div>
 		</rbs-field>
 

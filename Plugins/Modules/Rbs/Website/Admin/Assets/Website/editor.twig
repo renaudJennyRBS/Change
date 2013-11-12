@@ -36,8 +36,6 @@
 				{{ i18n('m.rbs.website.admin.section-permission-rule-helper', ['ucf']) }}
 			</div>
 
-			<h4>{{ i18n('m.rbs.website.documents.topic.permission-restrictions', ['ucf']) }}</h4>
-
 			<rbs-field-picker-multiple property="authorizedUsers" required="false"
 				label="{{ i18nAttr('m.rbs.website.documents.topic.authorized-users', ['ucf']) }}"
 				accepted-model="Rbs_User_User"
@@ -51,6 +49,55 @@
 				selector-title="{{ i18nAttr('m.rbs.website.documents.topic.groups-picker-title', ['ucf']) }}"
 				allow-creation="false">
 			</rbs-field-picker-multiple>
+		</fieldset>
+
+		<fieldset data-ng-show="section=='sitemap'"
+			data-form-section-label="{{ i18nAttr('m.rbs.website.documents.website.sitemap', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}">
+
+			<div rbs-tip="Rbs_Website_WebsiteEditorSitemap">
+				{{ i18n('m.rbs.website.documents.website.sitemap-help') }}
+			</div>
+
+			<rbs-field-boolean property="sitemapGeneration" required="false"
+				label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
+			</rbs-field-boolean>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website.sitemap-time-interval', ['ucf']) }}" required="false">
+				<rbs-time-interval-input name="sitemapTimeInterval" show="weeks,days,hours"
+					ng-model="data.timeInterval" disabled="!document.sitemapGeneration">
+				</rbs-time-interval-input>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website.sitemaps-url', ['ucf']) }}" required="false">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>{{ i18n('m.rbs.website.documents.website.sitemap-lang', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.website.documents.website.sitemap-url', ['ucf']) }}</th>
+							<th ng-if="pendingSitemapCreations"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="sitemap in document.sitemaps">
+							<td>(= sitemap.LCID =)</td>
+							<td ng-if="!sitemap.jobId"></td>
+							<td ng-if="sitemap.jobId">
+								<a ng-if="sitemap.url" href="" ng-href="(= sitemap.url =)">(= sitemap.url =)</a>
+								<span ng-if="!sitemap.url">
+									{{ i18n('m.rbs.website.documents.website.sitemap-url-pending-creation', ['ucf']) }}
+								</span>
+							</td>
+							<td ng-if="sitemap.jobId && !sitemap.url">
+								<button type="button" class="btn btn-default" ng-click="notifyUrlCreation(sitemap)"
+									ng-disabled="disableNotifyButtons[sitemap.LCID]">
+									{{ i18n('m.rbs.website.documents.website.notify-url-creation', ['ucf']) }}
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</rbs-field>
 		</fieldset>
 	</div>
 

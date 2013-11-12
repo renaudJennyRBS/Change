@@ -18,7 +18,6 @@
 	<key id="menus">menus</key>
 	<key id="permission">permission</key>
 	<key id="permission-rule-title">règles de permission</key>
-	<key id="permission-restrictions">section en accès restreint</key>
 	<key id="authorized-users">utilisateurs autorisés</key>
 	<key id="users-picker-title">sélectionner les utilisateurs</key>
 	<key id="authorized-groups">groupes d'utilisateurs autorisés</key>

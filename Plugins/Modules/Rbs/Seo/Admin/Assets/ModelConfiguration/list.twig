@@ -9,11 +9,15 @@
 	<page-header title="{{ i18nAttr('m.rbs.seo.admin.document-seo-auto-generation', ['ucf']) }}"></page-header><br />
 	<search-filters model="Rbs_Seo_ModelConfiguration" filter-query="query" text-search="textSearch"></search-filters>
 
-	<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration" filter-query="query" modificationDate="false">
+	<div rbs-tip="Rbs_Seo_ModelConfigurationList">
+		{{ i18n('m.rbs.seo.documents.modelconfiguration.list-help') }}
+	</div>
+
+	<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration" filter-query="query" modificationDate="false" actions="">
 		<quick-actions></quick-actions>
 		<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'label'), ['ucf']) }}"></column>
 		<column name="documentSeoAutoGenerate" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}">
-			<switch data-ng-model="doc.documentSeoAutoGenerate" disabled></switch>
+			(= doc.documentSeoAutoGenerate | rbsBoolean =)
 		</column>
 		<column name="sitemapDefaultChangeFrequency" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}"></column>
 		<column name="sitemapDefaultPriority" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultPriority'), ['ucf']) }}"></column>

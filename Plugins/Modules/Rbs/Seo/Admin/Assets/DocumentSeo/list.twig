@@ -9,6 +9,10 @@
 	<page-header title="{{ i18nAttr('m.rbs.seo.documents.documentseo-list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Seo_DocumentSeo" filter-query="query" text-search="textSearch"></search-filters>
 
+	<div rbs-tip="Rbs_Seo_DocumentSeoList">
+		{{ i18n('m.rbs.seo.documents.documentseo.list-help') }}
+	</div>
+
 	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-query="query">
 		<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></column>
 		<column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo.target-model', ['ucf']) }}"></column>
