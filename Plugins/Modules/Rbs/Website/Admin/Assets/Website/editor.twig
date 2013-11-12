@@ -55,6 +55,10 @@
 			data-form-section-label="{{ i18nAttr('m.rbs.website.documents.website.sitemap', ['ucf']) }}"
 			data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}">
 
+			<div rbs-tip="Rbs_Website_WebsiteEditorSitemap">
+				{{ i18n('m.rbs.website.documents.website.sitemap-help') }}
+			</div>
+
 			<rbs-field-boolean property="sitemapGeneration" required="false"
 				label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
 			</rbs-field-boolean>
