@@ -203,7 +203,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 				//Notify user for URL creation (if he want it, 'notify' attribute is added to sitemap)
 				elseif (isset($sitemap['notify']) && isset($sitemap['url']))
 				{
-					$this->notifyUserOfSitemapURLCreation($sitemap);
+					$this->notifyUserOfSitemapURLCreation($sitemap, $event->getApplicationServices());
 					unset($sitemap['notify']);
 				}
 				$sitemaps[] = $sitemap;
@@ -244,14 +244,15 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 
 	/**
 	 * @param array $sitemap
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \Exception
 	 */
-	public function notifyUserOfSitemapURLCreation($sitemap)
+	protected function notifyUserOfSitemapURLCreation($sitemap, $applicationServices)
 	{
 		$userId = isset($sitemap['notify']) && isset($sitemap['notify']['userId']) ? $sitemap['notify']['userId'] : null;
 		if ($userId)
 		{
-			$user = $this->getDocumentManager()->getDocumentInstance($userId);
+			$user = $applicationServices->getDocumentManager()->getDocumentInstance($userId);
 			$LCID = isset($sitemap['LCID']) ? $sitemap['LCID'] : null;
 			if ($user instanceof \Rbs\User\Documents\User && $LCID)
 			{
@@ -261,31 +262,27 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 					'LCID' => $LCID
 				];
 
-				$i18nManager = $this->getApplicationServices()->getI18nManager();
-				$profileManager = new \Change\User\ProfileManager();
-				$profileManager->setDocumentServices($this->getDocumentServices());
+				$i18nManager = $applicationServices->getI18nManager();
+				$profileManager = $applicationServices->getProfileManager();
 				$userProfile = $profileManager->loadProfile($authenticatedUser, 'Change_User');
 				$userLCID = $userProfile->getPropertyValue('LCID') != null ? $userProfile->getPropertyValue('LCID') : $i18nManager->getDefaultLCID();
-				$this->getDocumentManager()->pushLCID($userLCID);
-				$notification = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Notification_Notification');
-				/* @var $notification \Rbs\Notification\Documents\Notification */
-				$notification->setUserId($user->getId());
-				$notification->setCode('website_sitemap_url_creation_' . $this->getId() . '_' . $LCID);
-				$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($userLCID, 'm.rbs.website.documents.website.notification-sitemap-url-creation', ['ucf'], $params));
-				$notification->setParams($params);
-				$tm = $this->getApplicationServices()->getTransactionManager();
 				try
 				{
-					$tm->begin();
+					$applicationServices->getDocumentManager()->pushLCID($userLCID);
+					$notification = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Notification_Notification');
+					/* @var $notification \Rbs\Notification\Documents\Notification */
+					$notification->setUserId($user->getId());
+					$notification->setCode('website_sitemap_url_creation_' . $this->getId() . '_' . $LCID);
+					$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($userLCID, 'm.rbs.website.documents.website.notification-sitemap-url-creation', ['ucf'], $params));
+					$notification->setParams($params);
 					$notification->save();
-					$tm->commit();
+					$applicationServices->getDocumentManager()->popLCID();
 				}
 				catch (\Exception $e)
 				{
-					$this->getDocumentManager()->popLCID();
-					throw $tm->rollBack($e);
+					$applicationServices->getLogging()->fatal($e);
+					$applicationServices->getDocumentManager()->popLCID();
 				}
-				$this->getDocumentManager()->popLCID();
 			}
 		}
 	}
