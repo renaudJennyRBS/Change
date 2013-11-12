@@ -29,12 +29,12 @@ class Extension implements \Twig_ExtensionInterface
 	 * @param \Rbs\Generic\GenericServices $genericServices
 	 * @param UrlManager $urlManager
 	 */
-	function __construct(\Change\Application $application, \Change\Services\ApplicationServices $applicationServices, \Rbs\Generic\GenericServices $genericServices, UrlManager $urlManager)
+	public function __construct(\Change\Application $application, \Change\Services\ApplicationServices $applicationServices, \Rbs\Generic\GenericServices $genericServices, UrlManager $urlManager)
 	{
 		$this->application = $application;
 		$this->applicationServices = $applicationServices;
-		$this->urlManager = $urlManager;
 		$this->genericServices = $genericServices;
+		$this->urlManager = $urlManager;
 	}
 
 	/**
@@ -113,7 +113,10 @@ class Extension implements \Twig_ExtensionInterface
 			new \Twig_SimpleFunction('ajaxURL', array($this, 'ajaxURL')),
 			new \Twig_SimpleFunction('functionURL', array($this, 'functionURL')),
 			new \Twig_SimpleFunction('resourceURL', array($this, 'resourceURL')),
-			new \Twig_SimpleFunction('avatarURL', array($this, 'avatarURL'))
+			new \Twig_SimpleFunction('avatarURL', array($this, 'avatarURL')),
+			new \Twig_SimpleFunction('collectionItems', array($this, 'collectionItems')),
+			new \Twig_SimpleFunction('captchaId', array($this, 'captchaId')),
+			new \Twig_SimpleFunction('captchaVisual', array($this, 'captchaVisual'), array('is_safe' => array('all')))
 		);
 	}
 
@@ -387,6 +390,34 @@ class Extension implements \Twig_ExtensionInterface
 		$avatarManager->setUrlManager($this->getUrlManager());
 
 		return $avatarManager->getAvatarUrl($size, $email, $user, $params);
+	}
+
+	/**
+	 * @param string $code
+	 * @param mixed[] $params
+	 * @return \Change\Collection\ItemInterface[]
+	 */
+	public function collectionItems($code, array $params = array())
+	{
+		$collection = $this->getApplicationServices()->getCollectionManager()->getCollection($code, $params);
+		return ($collection) ? $collection->getItems() : array();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function captchaId()
+	{
+		return $this->getGenericServices()->getSecurityManager()->getCaptchaId();
+	}
+
+	/**
+	 * @param mixed[] $params
+	 * @return \Change\Collection\ItemInterface[]
+	 */
+	public function captchaVisual(array $params = array())
+	{
+		return $this->getGenericServices()->getSecurityManager()->renderCaptcha($params);
 	}
 
 	/**

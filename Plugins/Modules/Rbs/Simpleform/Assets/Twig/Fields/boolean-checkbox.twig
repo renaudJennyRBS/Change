@@ -1,0 +1,11 @@
+<div class="form-group{{ errorClassName }}">
+	{% include 'Rbs_Simpleform/default-label.twig' %}
+	<div class="{{ rightColumnElementClass }}">
+		<div class="checkbox">
+			<input name="{{ fieldName }}" id="{{ fieldId }}" type="checkbox" name="boolean-checkbox" value="true"
+				{% if fieldInfos.value == 'true' %}checked="checked"{% endif %} />
+		</div>
+		{% include 'Rbs_Simpleform/default-error-messages.twig' %}
+		{% include 'Rbs_Simpleform/default-help-text.twig' %}
+	</div>
+</div>

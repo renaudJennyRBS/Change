@@ -1,0 +1,53 @@
+{% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
+{% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
+{% if not successURL %}{% set successURL = currentURL({('success-' ~ blockId): 'true'}) %}{% endif %}
+<form method="post" class="form-horizontal" enctype="multipart/form-data" action="{{ ajaxURL('Rbs_Simpleform', 'SubmitForm') }}">
+	<input type="hidden" name="formId" value="{{ form.id }}" />
+	<input type="hidden" name="redirectLocation" value="{{ successURL }}" />
+	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
+	<input type="hidden" name="CSRFToken" value="{{ CSRFToken }}"/>
+	<h1>{{ form.currentLocalization.title }}</h1>
+	{% if hasFieldErrors %}
+		<p class="text-danger">{{ i18n('m.rbs.simpleform.fo.not-sent-containing-errors', ['ucf']) }}</p>
+	{% endif %}
+	{% if globalErrors %}
+		{% for error in globalErrors %}
+			<p class="text-danger">{{ error }}</p>
+		{% endfor %}
+	{% endif %}
+	{% for fieldInfos in fieldsInfos %}
+		{% set parentId = form.name %}
+		{% set fieldId = parentId ~ '_' ~ fieldInfos.field.name %}
+		{% set parentName = form.name %}
+		{% set fieldName = parentName ~ '[' ~ fieldInfos.field.name ~ ']' %}
+		{% if fieldInfos.errors %}
+			{% set errorClassName = ' has-error' %}
+		{% else %}
+			{% set errorClassName = '' %}
+		{% endif %}
+		{% include fieldInfos.type.templateName %}
+	{% endfor %}
+	{% if useCaptcha %}
+		{% set fieldId = form.name ~ '_captcha' %}
+		{% set fieldName = form.name ~ '[captcha]' %}
+		<div class="form-group">
+			<label for="{{ fieldId }}" class="{{ leftColumnElementClass }} control-label">
+				<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.fo.this-field-is-required', ['ucf']) }})">*</em>
+				{{ i18n('m.rbs.simpleform.fo.captcha', ['ucf']) }}
+			</label>
+			<div class="col-sm-4 col-md-5">
+				<input class="form-control" type="text" name="{{ fieldName }}[input]" id="{{ fieldId }}_input" required=""
+					autocomplete="no" autocorrect="no" autocapitalize="none" />
+				<input type="hidden" name="{{ fieldName }}[id]" id="{{ fieldId }}_id" value="{{ captchaId() }}" />
+			</div>
+			<div class="col-sm-4 col-md-4">
+				{{ captchaVisual() }}
+			</div>
+		</div>
+	{% endif %}
+	<div class="form-group">
+		<div class="col-sm-offset-4 col-md-offset-3 {{ rightColumnElementClass }}">
+			<button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-envelope"></i> {{ i18n('m.rbs.simpleform.fo.send', ['ucf']) }}</button>
+		</div>
+	</div>
+</form>

@@ -234,7 +234,7 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$l->onValidate($event);
 		$pe = $event->getParam('propertiesErrors');
 		$this->assertArrayHasKey('pStorUri', $pe);
-		$this->assertEquals('\'http://tmp/test.txt\' doit être une URI de stockage valide.', $pe['pStorUri'][0]);
+		$this->assertEquals('\'http://tmp/test.txt\' doit être une URI de stockage valide', $pe['pStorUri'][0]);
 
 		$basicDoc->setPStorUri($text);
 		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_CREATE, $basicDoc, $this->getDefaultEventArguments());

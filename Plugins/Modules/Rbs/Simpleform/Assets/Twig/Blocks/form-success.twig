@@ -1,0 +1,3 @@
+<h1>{{ form.currentLocalization.title }}</h1>
+<div class="text-success">{{ form.currentLocalization.confirmationMessage|richText }}</div>
+<p><a href="{{ currentURL({('success-' ~ blockId): null}) }}">{{ i18n('m.rbs.simpleform.fo.back-to-form', ['ucf']) }}</a></p>

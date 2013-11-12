@@ -1,0 +1,39 @@
+<div>
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-min-size', ['ucf']) }}"
+		property="document.parameters.minSize">
+	</rbs-field-integer>
+
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-max-size', ['ucf']) }}"
+		property="document.parameters.maxSize">
+	</rbs-field-integer>
+
+	<rbs-field-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-pattern', ['ucf']) }}"
+		property="document.parameters.pattern">
+	</rbs-field-text>
+
+	<rbs-field-boolean label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-auto-complete', ['ucf']) }}"
+		property="document.parameters.autoComplete">
+		<div class="help-block">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-auto-complete-help', ['ucf']) }}</div>
+	</rbs-field-boolean>
+
+	<rbs-field-boolean label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-auto-correct', ['ucf']) }}"
+		property="document.parameters.autoCorrect">
+		<div class="help-block">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-auto-correct-help', ['ucf']) }} <span class="text-warning">{{ i18nAttr('m.rbs.simpleform.documents.field.warning-only-ios', ['ucf']) }}</span></div>
+	</rbs-field-boolean>
+
+	<rbs-field label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-auto-capitalize', ['ucf']) }}">
+		<select ng-model="document.parameters.autoCapitalize" class="form-control" ng-required="true"
+			name="document.parameters.autoCapitalize" rbs-items-from-collection="Rbs_Simpleform_AutoCapitalizeOptions">
+		</select>
+		<div class="help-block">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-auto-capitalize-help', ['ucf']) }} <span class="text-warning">{{ i18nAttr('m.rbs.simpleform.documents.field.warning-only-ios', ['ucf']) }}</span></div>
+	</rbs-field>
+
+	<rbs-field-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-place-holder', ['ucf']) }}"
+		property="document.parameters.placeHolder">
+		<div class="help-block">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-place-holder-help', ['ucf']) }}</div>
+	</rbs-field-text>
+
+	<rbs-field-rich-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.helptext', ['ucf']) }}"
+		property="document.helpText">
+	</rbs-field-rich-text>
+</div>

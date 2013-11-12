@@ -18,6 +18,12 @@
 	white-space: normal;
 }
 
+/* Inline form fields (i.e. for date picker) */
+.form-control.form-control-inline {
+	width: auto;
+	display: inline-block;
+}
+
 /**
  * New elements
  */

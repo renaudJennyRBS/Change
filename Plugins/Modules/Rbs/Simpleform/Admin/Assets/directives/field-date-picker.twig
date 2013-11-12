@@ -1,0 +1,38 @@
+<div>
+	<rbs-field label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-interval-type', ['ucf']) }}">
+		<select ng-model="document.parameters.intervalType" name="document.parameters.intervalType"
+			class="form-control">
+			<option value="relative">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-interval-type-relative', ['ucf']) }}</option>
+			<option value="absolute">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-interval-type-absolute', ['ucf']) }}</option>
+		</select>
+	</rbs-field>
+
+	<div ng-show="document.parameters.intervalType == 'relative'">
+		<rbs-field-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-minimal-date', ['ucf']) }}"
+			property="document.parameters.minimalRelativeDate">
+		</rbs-field-text>
+
+		<rbs-field-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-maximal-date', ['ucf']) }}"
+			property="document.parameters.maximalRelativeDate">
+		</rbs-field-text>
+	</div>
+
+	<div ng-show="document.parameters.intervalType == 'absolute'">
+		<rbs-field-date label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-minimal-date', ['ucf']) }}"
+			property="document.parameters.minimalDate">
+		</rbs-field-date>
+
+		<rbs-field-date label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-maximal-date', ['ucf']) }}"
+			property="document.parameters.maximalDate">
+		</rbs-field-date>
+	</div>
+
+	<rbs-field-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-place-holder', ['ucf']) }}"
+		property="document.parameters.placeHolder">
+		<div class="help-block">{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-place-holder-help', ['ucf']) }}</div>
+	</rbs-field-text>
+
+	<rbs-field-rich-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.helptext', ['ucf']) }}"
+		property="document.helpText">
+	</rbs-field-rich-text>
+</div>
