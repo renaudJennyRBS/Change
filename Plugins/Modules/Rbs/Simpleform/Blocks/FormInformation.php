@@ -2,7 +2,6 @@
 namespace Rbs\Simpleform\Blocks;
 
 use Change\Documents\Property;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Information;
 
 /**
@@ -11,15 +10,14 @@ use Change\Presentation\Blocks\Information;
 class FormInformation extends Information
 {
 	/**
-	 * @param string $name
-	 * @param BlockManager $blockManager
+	 * @param \Change\Events\Event $event
 	 */
-	public function __construct($name, $blockManager)
+	public function onInformation(\Change\Events\Event $event)
 	{
-		parent::__construct($name);
+		parent::onInformation($event);
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$i18nManager = $blockManager->getPresentationServices()->getApplicationServices()->getI18nManager();
-		$this->setLabel($i18nManager->trans('m.rbs.simpleform.blocks.form-label'));
+		$this->setLabel($i18nManager->trans('m.rbs.simpleform.blocks.form-label', $ucf));
 		$this->addInformationMeta('formId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Simpleform_Form')
 			->setLabel($i18nManager->trans('m.rbs.simpleform.blocks.form-form', $ucf));

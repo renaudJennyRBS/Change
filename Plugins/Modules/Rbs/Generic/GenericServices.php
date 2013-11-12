@@ -54,25 +54,43 @@ class GenericServices extends \Zend\Di\Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
+		//FieldManager : EventManagerFactory, ConstraintsManagerCallback
 		$fieldManagerClassName = $this->getInjectedClassName('FieldManager', 'Rbs\Simpleform\Field\FieldManager');
-		$fieldClassDefinition = $this->getDefaultClassDefinition($fieldManagerClassName);
-		$definitionList->addDefinition($fieldClassDefinition);
+		$classDefinition = $this->getClassDefinition($fieldManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition->addMethod('setConstraintsManager', true)
+			->addMethodParameter('setConstraintsManager', 'constraintsManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
 
+		//SecurityManager : EventManagerFactory
 		$securityManagerClassName = $this->getInjectedClassName('SecurityManager', 'Rbs\Simpleform\Security\SecurityManager');
-		$securityClassDefinition = $this->getDefaultClassDefinition($securityManagerClassName);
-		$definitionList->addDefinition($securityClassDefinition);
+		$classDefinition = $this->getClassDefinition($securityManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$definitionList->addDefinition($classDefinition);
 
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
-		$defaultParameters = array('application' => $this->getApplication(),
-			'applicationServices' => $this->getApplicationServices(),
-			'eventManagerFactory' => $this->getEventManagerFactory());
-
+		$defaultParameters = array(
+			'application' => $application,
+			'applicationServices' => $applicationServices,
+			'eventManagerFactory' => $eventManagerFactory
+		);
 		$im->addAlias('SeoManager', $seoManagerClassName, $defaultParameters);
 		$im->addAlias('AvatarManager', $avatarManagerClassName, $defaultParameters);
-		$im->addAlias('FieldManager', $fieldManagerClassName, $defaultParameters);
-		$im->addAlias('SecurityManager', $securityManagerClassName, $defaultParameters);
+
+		$callback = function () use ($applicationServices)
+		{
+			return $applicationServices->getConstraintsManager();
+		};
+		$im->addAlias('FieldManager', $fieldManagerClassName, array(
+			'eventManagerFactory' => $eventManagerFactory,
+			'constraintsManager' => $callback
+		));
+
+		$im->addAlias('SecurityManager', $securityManagerClassName, array(
+			'eventManagerFactory' => $eventManagerFactory
+		));
 	}
 
 	/**
@@ -94,6 +112,7 @@ class GenericServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @api
 	 * @return \Rbs\Simpleform\Field\FieldManager
 	 */
 	public function getFieldManager()
@@ -102,6 +121,7 @@ class GenericServices extends \Zend\Di\Di
 	}
 
 	/**
+	 * @api
 	 * @return \Rbs\Simpleform\Security\SecurityManager
 	 */
 	public function getSecurityManager()

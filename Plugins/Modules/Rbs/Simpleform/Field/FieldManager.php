@@ -7,32 +7,40 @@ namespace Rbs\Simpleform\Field;
  */
 class FieldManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait {
-		\Change\Events\EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Simpleform_FieldTypeManager';
 	const EVENT_GET_FIELD_TYPE = 'getFieldType';
 	const EVENT_GET_CODES = 'getCodes';
 
 	/**
-	 * @return \Change\Events\SharedEventManager
+	 * @var \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function getSharedEventManager()
+	protected $constraintsManager;
+
+	/**
+	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
+	 * @return $this
+	 */
+	public function setConstraintsManager(\Change\Documents\Constraints\ConstraintsManager $constraintsManager)
 	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
-		}
-		return $this->sharedEventManager;
+		$this->constraintsManager = $constraintsManager;
+		return $this;
 	}
 
 	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
+	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
+	protected function getConstraintsManager()
 	{
-		$this->defaultAttachEvents($eventManager);
+		return $this->constraintsManager;
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
 		$eventManager->attach(static::EVENT_GET_FIELD_TYPE, array($this, 'onDefaultGetFieldType'), 5);
 		$eventManager->attach(static::EVENT_GET_CODES, array($this, 'onDefaultGetCodes'), 5);
 	}
@@ -50,12 +58,7 @@ class FieldManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->documentServices)
-		{
-			$config = $this->getApplication()->getConfiguration('Rbs/Simpleform/Events/FieldTypeManager');
-			return is_array($config) ? $config : array();
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Simpleform/Events/FieldTypeManager');
 	}
 
 	/**
@@ -67,15 +70,14 @@ class FieldManager implements \Zend\EventManager\EventsCapableInterface
 	public function getFieldType($code, array $params = array())
 	{
 		// Instantiate constraint manager to register locales in validation.
-		// TODO: better way to do that?
-		$this->getDocumentServices()->getConstraintsManager();
+		$this->getConstraintsManager();
 
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($params);
 
 		$args['code'] = $code;
 
-		$event = new \Zend\EventManager\Event(static::EVENT_GET_FIELD_TYPE, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_GET_FIELD_TYPE, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		$fieldType = $event->getParam('fieldType');
@@ -96,7 +98,7 @@ class FieldManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($params);
 
-		$event = new \Zend\EventManager\Event(static::EVENT_GET_CODES, $this, $args);
+		$event = new \Change\Events\Event(static::EVENT_GET_CODES, $this, $args);
 		$this->getEventManager()->trigger($event);
 
 		$codes = $event->getParam('codes');
@@ -108,11 +110,11 @@ class FieldManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onDefaultGetFieldType(\Zend\EventManager\Event $event)
+	public function onDefaultGetFieldType(\Change\Events\Event $event)
 	{
-		$i18n = $event->getTarget()->getApplicationServices()->getI18nManager();
+		$i18n = $event->getApplicationServices()->getI18nManager();
 		$code = $event->getParam('code');
 		$fieldType = null;
 		switch ($code)
@@ -201,9 +203,9 @@ class FieldManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onDefaultGetCodes(\Zend\EventManager\Event $event)
+	public function onDefaultGetCodes(\Change\Events\Event $event)
 	{
 		$codes = $event->getParam('codes', array());
 		$codes = array_merge($codes, array(

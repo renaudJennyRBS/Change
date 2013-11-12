@@ -6,32 +6,17 @@ namespace Rbs\Simpleform\Security;
  */
 class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait {
-		\Change\Events\EventsCapableTrait::attachEvents as defaultAttachEvents;
-	}
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Simpleform_SecurityManager';
 	const EVENT_INSTANTIATE_CAPTCHA = 'instantiateCaptcha';
 	const EVENT_RENDER_CAPTCHA = 'renderCaptcha';
 
 	/**
-	 * @return \Change\Events\SharedEventManager
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	public function getSharedEventManager()
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = $this->getApplication()->getSharedEventManager();
-		}
-		return $this->sharedEventManager;
-	}
-
-	/**
-	 * @param \Zend\EventManager\EventManager $eventManager
-	 */
-	protected function attachEvents(\Zend\EventManager\EventManager $eventManager)
-	{
-		$this->defaultAttachEvents($eventManager);
 		$eventManager->attach(static::EVENT_INSTANTIATE_CAPTCHA, array($this, 'onDefaultInstantiateCaptcha'), 5);
 		$eventManager->attach(static::EVENT_RENDER_CAPTCHA, array($this, 'onDefaultRenderCaptcha'), 5);
 	}
@@ -49,17 +34,13 @@ class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		if ($this->documentServices)
-		{
-			$config = $this->getApplication()->getConfiguration('Rbs/Simpleform/Events/SecurityManager');
-			return is_array($config) ? $config : array();
-		}
-		return array();
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Simpleform/Events/SecurityManager');
 	}
 
 	// Cross Site Request Forgery prevention.
 
 	/**
+	 * @api
 	 * @see http://blog.ircmaxell.com/2013/02/preventing-csrf-attacks.html
 	 * @return string
 	 */
@@ -76,6 +57,7 @@ class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @see http://blog.ircmaxell.com/2013/02/preventing-csrf-attacks.html
 	 * @param string $token
 	 * @return boolean
@@ -126,23 +108,73 @@ class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 		if ($this->captcha === null)
 		{
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array());
-			$event = new \Zend\EventManager\Event(static::EVENT_INSTANTIATE_CAPTCHA, $this, $args);
-			$this->getEventManager()->trigger($event);
-			$this->captcha = $event->getParam('captcha');
+			$args = $em->prepareArgs(array('captcha' => false));
+			$em->trigger(static::EVENT_INSTANTIATE_CAPTCHA, $this, $args);
+			$this->captcha = $args['captcha'];
 		}
 		return $this->captcha;
 	}
 
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @api
+	 * @return string
 	 */
-	public function onDefaultInstantiateCaptcha(\Zend\EventManager\Event $event)
+	public function getCaptchaId()
+	{
+		$captcha = $this->getCaptcha();
+		if ($captcha && $this->captchaId === null)
+		{
+			$this->captchaId = $captcha->generate();
+		}
+		return $this->captchaId;
+	}
+
+	/**
+	 * @api
+	 * @param array $params
+	 * @return string|null
+	 */
+	public function renderCaptcha(array $params = array())
+	{
+		$captcha = $this->getCaptcha();
+		if (!$captcha)
+		{
+			return null;
+		}
+
+		if ($this->captchaId === null)
+		{
+			$this->captchaId = $captcha->generate();
+		}
+
+		$em = $this->getEventManager();
+		$params['captcha'] = $captcha;
+		$params['htmlResult'] = null;
+		$args = $em->prepareArgs($params);
+		$em->trigger(static::EVENT_RENDER_CAPTCHA, $this, $args);
+		return $args['htmlResult'];
+	}
+
+	/**
+	 * @api
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public function validateCaptcha($value)
+	{
+		$captcha = $this->getCaptcha();
+		return !$captcha || $captcha->isValid($value);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultInstantiateCaptcha(\Change\Events\Event $event)
 	{
 		if (!($event->getParam('captcha') instanceof \Zend\Captcha\AdapterInterface))
 		{
 			/* @var $application \Change\Application */
-			$application = $event->getTarget()->getApplicationServices()->getApplication();
+			$application = $event->getApplication();
 			$dirRoot = $application->getConfiguration()->getEntry('Change/Install/webBaseDirectory');
 			$urlRoot = $application->getConfiguration()->getEntry('Change/Install/webBaseURLPath');
 			$params = array(
@@ -156,49 +188,14 @@ class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 				'imgDir' => $application->getWorkspace()->projectPath($dirRoot, 'Tmp', 'Captcha'),
 				'imgUrl' => $urlRoot . '/Tmp/Captcha'
 			);
-			$event->getTarget()->getApplicationServices()->getLogging()->fatal(var_export($params, true));
 			$event->setParam('captcha', new \Zend\Captcha\Image($params));
 		}
 	}
 
 	/**
-	 * @return string
+	 * @param \Change\Events\Event $event
 	 */
-	public function getCaptchaId()
-	{
-		$captcha = $this->getCaptcha();
-		if ($this->captchaId === null)
-		{
-			$this->captchaId = $captcha->generate();
-		}
-		return $this->captchaId;
-	}
-
-	/**
-	 * @param array $params
-	 * @return string
-	 */
-	public function renderCaptcha(array $params = array())
-	{
-		$captcha = $this->getCaptcha();
-		if ($this->captchaId === null)
-		{
-			$this->captchaId = $captcha->generate();
-		}
-		$em = $this->getEventManager();
-		$params['captcha'] = $captcha;
-		$args = $em->prepareArgs($params);
-
-		$event = new \Zend\EventManager\Event(static::EVENT_RENDER_CAPTCHA, $this, $args);
-		$this->getEventManager()->trigger($event);
-
-		return $event->getParam('htmlResult');
-	}
-
-	/**
-	 * @param \Zend\EventManager\Event $event
-	 */
-	public function onDefaultRenderCaptcha(\Zend\EventManager\Event $event)
+	public function onDefaultRenderCaptcha(\Change\Events\Event $event)
 	{
 		$captcha = $event->getParam('captcha');
 		if (!$event->getParam('htmlResult') && $captcha instanceof \Zend\Captcha\Image)
@@ -208,14 +205,5 @@ class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 				src="' . $captcha->getImgUrl() . $captcha->getId() . $captcha->getSuffix() . '" />';
 			$event->setParam('htmlResult', $html);
 		}
-	}
-
-	/**
-	 * @param mixed $value
-	 * @return boolean
-	 */
-	public function validateCaptcha($value)
-	{
-		return $this->getCaptcha()->isValid($value);
 	}
 }

@@ -59,7 +59,7 @@ class Form extends Block
 		$formId = $parameters->getParameter('formId');
 		if ($formId)
 		{
-			$documentManager = $event->getDocumentServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$form = $documentManager->getDocumentInstance($formId);
 			if ($form instanceof \Rbs\Simpleform\Documents\Form && $form->published())
 			{
@@ -78,10 +78,6 @@ class Form extends Block
 				{
 					/* @var $field \Rbs\Simpleform\Field\FieldInterface */
 					$type = $fieldManager->getFieldType($field->getFieldTypeCode());
-					if (!$type)
-					{
-						var_dump($field->getLabel());
-					}
 					$fields[$field->getName()] = array('field' => $field, 'type' => $type);
 				}
 

@@ -17,17 +17,9 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 */
 	public function execute(Event $event)
 	{
-		/* @var $applicationServices \Change\Application\ApplicationServices */
-		$applicationServices = $event->getServices('applicationServices');
+		$applicationServices = $event->getApplicationServices();
 		$i18nManager = $applicationServices->getI18nManager();
-		$storageManager = $applicationServices->getStorageManager();
-
-		/* @var $presentationServices \Change\Presentation\PresentationServices */
-		$presentationServices = $event->getServices('presentationServices');
-
-		/* @var $documentServices \Change\Documents\DocumentServices */
-		$documentServices = $event->getServices('documentServices');
-		$documentManager = $documentServices->getDocumentManager();
+		$documentManager = $applicationServices->getDocumentManager();
 
 		/* @var $genericServices \Rbs\Generic\GenericServices */
 		$genericServices = $event->getServices('genericServices');
@@ -41,7 +33,7 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 			throw new \RuntimeException('No form id', 999999);
 		}
 
-		$form = $documentServices->getDocumentManager()->getDocumentInstance($arguments['formId']);
+		$form = $documentManager->getDocumentInstance($arguments['formId']);
 		if (!($form instanceof \Rbs\Simpleform\Documents\Form))
 		{
 			throw new \RuntimeException('Bad form id ' . $arguments['formId'], 999999);
@@ -58,15 +50,15 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$result = $this->getNewAjaxResult();
 		$event->setResult($result);
 
-		/*if (!$securityManager->checkCSRFToken($arguments['CSRFToken']))
+		if (!$securityManager->checkCSRFToken($arguments['CSRFToken']))
 		{
 			// Return an error.
-			$message = $applicationServices->getI18nManager()->trans('m.rbs.simpleform.fo.bad-csrf-token', array('ucf'));
+			$message = $i18nManager->trans('m.rbs.simpleform.fo.bad-csrf-token', array('ucf'));
 			$result->setEntry('errors', array('global' => array($message)));
 			$result->setEntry('inputData', $data);
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500); // TODO is it the good error code?
 			return;
-		}*/
+		}
 
 		$response = $this->parseData($form, $data, $files, $fieldManager, $documentManager, $i18nManager);
 		if ($response instanceof \Rbs\Simpleform\Converter\Validation\Errors)
@@ -83,7 +75,7 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$user = $event->getAuthenticationManager()->getCurrentUser();
 				if (!$user->authenticated() && (!isset($data['captcha']) || !$securityManager->validateCaptcha($data['captcha'])))
 				{
-					$message = $applicationServices->getI18nManager()->trans('m.rbs.simpleform.fo.bad-captcha', array('ucf'));
+					$message = $i18nManager->trans('m.rbs.simpleform.fo.bad-captcha', array('ucf'));
 					$result->setEntry('errors', array('global' => array($message)));
 					$result->setEntry('inputData', $data);
 					$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
@@ -92,11 +84,11 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 			}
 
 			// Success case, handle the response.
-			$this->handleResponse($form, $response, $storageManager);
+			$this->handleResponse($form, $response, $applicationServices);
 
 			$context = array('website' => $event->getUrlManager()->getWebsite());
 			$message = $form->getCurrentLocalization()->getConfirmationMessage();
-			$message = $presentationServices->getRichTextManager()->render($message, 'Website', $context);
+			$message = $applicationServices->getRichTextManager()->render($message, 'Website', $context);
 			$result->setEntry('successMessage', $message);
 			$result->setEntry('parsedData', $response->getFieldsInfos());
 		}
@@ -178,17 +170,18 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 	/**
 	 * @param \Rbs\Simpleform\Documents\Form $form
 	 * @param \Rbs\Simpleform\Documents\Response $response
-	 * @param \Change\Storage\StorageManager $storageManager
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws \RuntimeException
 	 */
-	protected function handleResponse($form, $response, $storageManager)
+	protected function handleResponse($form, $response, $applicationServices)
 	{
 		// Save response if needed.
 		if ($form->getSaveResponses())
 		{
+			$storageManager = $applicationServices->getStorageManager();
 			try
 			{
-				$response->getApplicationServices()->getTransactionManager()->begin();
+				$applicationServices->getTransactionManager()->begin();
 
 				$infos = $response->getFieldsInfos();
 				foreach ($infos as $index => $info)
@@ -201,11 +194,11 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$response->setFieldsInfos($infos);
 				$response->save();
 
-				$response->getApplicationServices()->getTransactionManager()->commit();
+				$applicationServices->getTransactionManager()->commit();
 			}
 			catch (\Exception $e)
 			{
-				$response->getApplicationServices()->getTransactionManager()->rollBack($e);
+				$applicationServices->getTransactionManager()->rollBack($e);
 			}
 		}
 

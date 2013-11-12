@@ -14,11 +14,6 @@ class Extension implements \Twig_ExtensionInterface
 	protected $applicationServices;
 
 	/**
-	 * @var \Change\Services\CommonServices
-	 */
-	protected $commonServices;
-
-	/**
 	 * @var \Rbs\Generic\GenericServices
 	 */
 	protected $genericServices;
@@ -31,7 +26,6 @@ class Extension implements \Twig_ExtensionInterface
 	/**
 	 * @param \Change\Application $application
 	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @param \Change\Services\CommonServices $commonServices
 	 * @param \Rbs\Generic\GenericServices $genericServices
 	 * @param UrlManager $urlManager
 	 */
@@ -39,9 +33,8 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		$this->application = $application;
 		$this->applicationServices = $applicationServices;
-		$this->commonServices = $commonServices;
-		$this->urlManager = $urlManager;
 		$this->genericServices = $genericServices;
+		$this->urlManager = $urlManager;
 	}
 
 	/**
@@ -406,7 +399,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function collectionItems($code, array $params = array())
 	{
-		$collection = $this->getCommonServices()->getCollectionManager()->getCollection($code, $params);
+		$collection = $this->getApplicationServices()->getCollectionManager()->getCollection($code, $params);
 		return ($collection) ? $collection->getItems() : array();
 	}
 
