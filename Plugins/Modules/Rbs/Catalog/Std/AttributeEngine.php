@@ -9,35 +9,98 @@ use Rbs\Catalog\Documents\Attribute;
 class AttributeEngine
 {
 	/**
-	 * @var \Change\Services\ApplicationServices
+	 * @var \Change\Collection\CollectionManager
 	 */
-	protected $applicationServices;
+	protected $collectionManager;
 
 	/**
-	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @var \Change\Documents\DocumentManager
 	 */
-	function __construct(\Change\Services\ApplicationServices $applicationServices)
+	protected $documentManager;
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @param \Change\Db\DbProvider $dbProvider
+	 */
+	function __construct(\Change\Documents\DocumentManager $documentManager = null,
+		\Change\Collection\CollectionManager $collectionManager = null,
+		\Change\Db\DbProvider $dbProvider = null)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->documentManager = $documentManager;
+		$this->collectionManager = $collectionManager;
+		$this->dbProvider = $dbProvider;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @return $this
+	 */
+	public function setCollectionManager($collectionManager)
+	{
+		$this->collectionManager = $collectionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	protected function getCollectionManager()
+	{
+		return $this->collectionManager;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider($dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
 	}
 
 
 	/**
-	 * @return \Change\Services\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->applicationServices->getApplicationServices();
-	}
-
-	/**
+	 * Use DbProvider
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @return array
 	 */
 	public function getAttributeValues($product)
 	{
 		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('attribute_id'), $fb->alias($fb->getDocumentColumn('valueType'), 'valueType'),
 			$fb->column('integer_value'), $fb->column('date_value'), $fb->column('float_value'),
@@ -88,6 +151,7 @@ class AttributeEngine
 	}
 
 	/**
+	 * Use DbProvider
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param array $values
 	 */
@@ -126,7 +190,7 @@ class AttributeEngine
 	 */
 	protected function getDefinedAttributesValues($productId)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('id'), $fb->column('attribute_id'));
 		$qb->from($fb->table('rbs_catalog_dat_attribute'));
@@ -184,7 +248,7 @@ class AttributeEngine
 		$attributeId = $value['id'];
 		list($integerValue, $floatValue, $dateValue, $stringValue, $textValue) = $this->dispatchValue($valueType,
 			$value['value']);
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('insertAttributeValue');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('insertAttributeValue');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -215,7 +279,7 @@ class AttributeEngine
 		$valueType = $value['valueType'];
 		list($integerValue, $floatValue, $dateValue, $stringValue, $textValue) = $this->dispatchValue($valueType,
 			$value['value']);
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('updateAttributeValue');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('updateAttributeValue');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -241,7 +305,7 @@ class AttributeEngine
 	 */
 	protected function deleteAttributeValue($productId, $excludeAttrIds = array())
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+		$qb = $this->getDbProvider()->getNewStatementBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->delete($fb->table('rbs_catalog_dat_attribute'));
 		if (count($excludeAttrIds))
@@ -266,6 +330,7 @@ class AttributeEngine
 	}
 
 	/**
+	 * Use CollectionManager
 	 * @param Attribute $attribute
 	 * @return array|null
 	 */
@@ -336,6 +401,7 @@ class AttributeEngine
 	}
 
 	/**
+	 * Use CollectionManager
 	 * @param Attribute $attribute
 	 * @return array|null
 	 */
@@ -432,14 +498,16 @@ class AttributeEngine
 	}
 
 	/**
+	 * Use CollectionManager
 	 * @param Attribute $attribute
 	 * @return array|null
 	 */
 	public function getCollectionValues($attribute)
 	{
-		if ($attribute instanceof Attribute && $attribute->getCollectionCode())
+		$cm = $this->getCollectionManager();
+		if ($cm && $attribute instanceof Attribute && $attribute->getCollectionCode())
 		{
-			$collection = $this->getApplicationServices()->getCollectionManager()->getCollection($attribute->getCollectionCode());
+			$collection = $cm->getCollection($attribute->getCollectionCode());
 			if ($collection)
 			{
 				$values = array();
@@ -465,7 +533,7 @@ class AttributeEngine
 		if (is_array($attributeValues) && count($attributeValues))
 		{
 			$utcTimeZone = new \DateTimeZone('UTC');
-			$documentManager = $this->getApplicationServices()->getDocumentManager();
+			$documentManager = $this->getDocumentManager();
 			foreach ($attributeValues as $attributeValue)
 			{
 				$id = intval($attributeValue['id']);
@@ -538,7 +606,7 @@ class AttributeEngine
 		$expandedAttributeValues = array();
 		if (is_array($attributeValues) && count($attributeValues))
 		{
-			$documentManager = $this->getApplicationServices()->getDocumentManager();
+			$documentManager = $this->getDocumentManager();
 			$valueConverter = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
 			foreach ($attributeValues as  $attributeValue)
 			{

@@ -14,7 +14,7 @@ class Index
 	public function execute(Event $event)
 	{
 		$applicationServices = $event->getApplicationServices();
-		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
 			$event->addErrorMessage('Elasticsearch services not registered');
@@ -69,9 +69,9 @@ class Index
 			}
 
 			$documentCount = 0;
-			foreach ($applicationServices->getModelManager()->getModelsNames() as $modelsName)
+			foreach ($applicationServices->getModelManager()->getModelsNames() as $modelName)
 			{
-				$model = $applicationServices->getModelManager()->getModelByName($modelsName);
+				$model = $applicationServices->getModelManager()->getModelByName($modelName);
 				if ($model->isAbstract() || $model->isStateless())
 				{
 					continue;
@@ -83,12 +83,19 @@ class Index
 					{
 						continue;
 					}
-					if ($specificModelName && $modelsName != $specificModelName)
+					if ($specificModelName && $modelName != $specificModelName)
 					{
 						continue;
 					}
 				}
-				$event->addInfoMessage('Schedule indexation of ' . $modelsName . ' model...');
+				if ($jobManager)
+				{
+					$event->addInfoMessage('Schedule indexation of ' . $modelName . ' model...');
+				}
+				else
+				{
+					$event->addInfoMessage('Indexing ' . $modelName . ' model...');
+				}
 
 				$LCID = $applicationServices->getDocumentManager()->getLCID();
 				$id = 0;
@@ -141,6 +148,7 @@ class Index
 					}
 				}
 			}
+
 			if ($jobManager)
 			{
 				$event->addInfoMessage('Indexation of ' . $documentCount . ' documents are scheduled.');

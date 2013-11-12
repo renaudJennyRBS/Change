@@ -12,20 +12,9 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	protected function setUp()
-	{
-		parent::setUp();
-		$this->getApplicationServices()->getTransactionManager()->begin();
-	}
-
-	protected function tearDown()
-	{
-		$this->getApplicationServices()->getTransactionManager()->commit();
-		parent::tearDown();
-	}
-
 	public function testGetItemByValue()
 	{
+		$this->getApplicationServices()->getTransactionManager()->begin();
 		$dm = $this->getApplicationServices()->getDocumentManager();
 		$item = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
 		/* @var $item \Rbs\Collection\Documents\Item */
@@ -44,24 +33,37 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Test1', $foundItem->getLabel());
 		$foundItem = $collection->getItemByValue('test0');
 		$this->assertNull($foundItem);
+
+		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
 
-	/**
-	 * @expectedException RuntimeException
-	 */
 	public function testConstraintUnique()
 	{
-		$dm = $this->getApplicationServices()->getDocumentManager();
+		$appServices = $this->getApplicationServices();
+		$this->getEventManagerFactory()->addSharedService('applicationServices', $appServices);
+		$appServices->getTransactionManager()->begin();
+
+		$dm = $appServices->getDocumentManager();
 		$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 		/* @var $collection \Rbs\Collection\Documents\Collection */
 		$collection->setCode('rbsCollectionTestForUnique');
 		$collection->setLabel('RbsCollectionTest1');
 		$collection->save();
 
-		$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
-		/* @var $collection \Rbs\Collection\Documents\Collection */
-		$collection->setCode('rbsCollectionTestForUnique');
-		$collection->setLabel('RbsCollectionTestFailed');
-		$collection->save();
+		try
+		{
+			$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+			/* @var $collection \Rbs\Collection\Documents\Collection */
+			$collection->setCode('rbsCollectionTestForUnique');
+			$collection->setLabel('RbsCollectionTestFailed');
+			$collection->save();
+			$this->fail('Exception expected');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertNotEmpty($e->getMessage());
+		}
+
+		$appServices->getTransactionManager()->commit();
 	}
 }

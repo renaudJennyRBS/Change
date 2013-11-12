@@ -6,7 +6,7 @@ namespace Rbs\Commerce\Cart;
  */
 class CartManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'CartManager';
 
@@ -24,6 +24,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Rbs\Price\Services\TaxManager
 	 */
 	protected $taxManager;
+
+	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
 
 	/**
 	 * @param \Rbs\Price\Services\PriceManager $priceManager
@@ -77,6 +82,24 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getStockManager()
 	{
 		return $this->stockManager;
+	}
+
+	/**
+	 * @param \Change\Logging\Logging $logging
+	 * @return $this
+	 */
+	public function setLogging($logging)
+	{
+		$this->logging = $logging;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	protected function getLogging()
+	{
+		return $this->logging;
 	}
 
 
@@ -222,7 +245,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			catch (\Exception $e)
 			{
-				$this->getApplicationServices()->getLogging()->exception($e);
+				$this->getLogging()->exception($e);
 			}
 		}
 		return false;

@@ -7,7 +7,7 @@ namespace Rbs\Elasticsearch\Facet;
  */
 class FacetManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Elasticsearch_FacetManager';
 
@@ -16,6 +16,74 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $collections = array();
 
+	/**
+	 * @var \Change\Collection\CollectionManager
+	 */
+	protected $collectionManager;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager($i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @return $this
+	 */
+	public function setCollectionManager($collectionManager)
+	{
+		$this->collectionManager = $collectionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	protected function getCollectionManager()
+	{
+		return $this->collectionManager;
+	}
 
 	/**
 	 * @return null|string|string[]
@@ -55,7 +123,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		if (!array_key_exists($collectionCode, $this->collections))
 		{
-			$this->collections[$collectionCode] = $this->getApplicationServices()->getCollectionManager()->getCollection($collectionCode);
+			$this->collections[$collectionCode] = $this->getCollectionManager()->getCollection($collectionCode);
 		}
 		return $this->collections[$collectionCode];
 	}
@@ -87,6 +155,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Elasticsearch\Index\IndexDefinitionInterface $indexDefinition
+	 * @return array
 	 */
 	public function getIndexMapping(\Rbs\Elasticsearch\Index\IndexDefinitionInterface $indexDefinition)
 	{
@@ -325,12 +394,12 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			elseif (($attribute = $facet->getAttributeIdInstance()) !== null)
 			{
-				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getApplicationServices());
+				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getDocumentManager(), $this->getCollectionManager());
 				$attrDef = $attributeEngine->buildAttributeDefinition($attribute);
 				$attrType = $attrDef['type'];
 				if ($attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT || $attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY)
 				{
-					$document = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($facetValue->getValue());
+					$document = $this->getDocumentManager()->getDocumentInstance($facetValue->getValue());
 					if ($document)
 					{
 						$facetValue->setValueTitle($document->getDocumentModel()->getPropertyValue($document, 'title'));
@@ -340,10 +409,10 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		elseif ($facet instanceof ModelFacetDefinition)
 		{
-			$model = $this->getApplicationServices()->getModelManager()->getModelByName($facetValue->getValue());
+			$model = $this->getDocumentManager()->getModelManager()->getModelByName($facetValue->getValue());
 			if ($model)
 			{
-				$facetValue->setValueTitle($this->getApplicationServices()->getI18nManager()->trans($model->getLabelKey()));
+				$facetValue->setValueTitle($this->getI18nManager()->trans($model->getLabelKey()));
 			}
 		}
 		return $facetValue;

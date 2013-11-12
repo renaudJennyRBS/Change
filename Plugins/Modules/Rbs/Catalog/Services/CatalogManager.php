@@ -6,8 +6,77 @@ namespace Rbs\Catalog\Services;
  */
 class CatalogManager
 {
-	use \Change\Services\DefaultServicesTrait;
+	/**
+	 * @var \Change\Transaction\TransactionManager
+	 */
+	protected $transactionManager;
 
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager($transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider($dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+	
+	
+	
 	/**
 	 * Add the product in a product list for the given condition/priority.
 	 *
@@ -20,8 +89,8 @@ class CatalogManager
 	 */
 	public function addProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
-		$documentManager = $this->getApplicationServices()->getDocumentManager();
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$documentManager = $this->getDocumentManager();
+		$tm = $this->getTransactionManager();
 		$productListItem = null;
 		try
 		{
@@ -53,7 +122,7 @@ class CatalogManager
 	 */
 	public function removeProductFromProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
@@ -82,7 +151,7 @@ class CatalogManager
 	 */
 	public function getProductListItem(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
 		$query->andPredicates($query->eq('product', $product), $query->eq('productList', $productList), $query->eq('condition', $condition));
 		return $query->getFirstDocument();
 	}
@@ -143,7 +212,7 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
@@ -151,8 +220,8 @@ class CatalogManager
 		}
 		$productList = $productListItem->getProductList();
 		$condition = $productListItem->getCondition();
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$updateQuery = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+		$tm = $this->getTransactionManager();
+		$updateQuery = $this->getDbProvider()->getNewStatementBuilder();
 		$fb = $updateQuery->getFragmentBuilder();
 		$positionColumn = $fb->getDocumentColumn('position');
 		$conditionId = ($condition) ? $condition->getId() : 0;
@@ -191,7 +260,7 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
@@ -221,7 +290,7 @@ class CatalogManager
 			return;
 		}
 		// Prepare what's needed for queries
-		$updateQuery = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+		$updateQuery = $this->getDbProvider()->getNewStatementBuilder();
 		$fb = $updateQuery->getFragmentBuilder();
 		$positionColumn = $fb->getDocumentColumn('position');
 		$conditionId = ($condition) ? $condition->getId() : 0;
@@ -231,7 +300,7 @@ class CatalogManager
 			$fb->eq($fb->getDocumentColumn('condition'), $fb->number($conditionId))
 		);
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		if ($currentPosition == 0)
 		{
 			try
@@ -290,7 +359,7 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
@@ -301,7 +370,7 @@ class CatalogManager
 			// Nothing to do
 			return;
 		}
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
 		$condition = $productListItem->getCondition();
 
 		$query->andPredicates(
@@ -316,7 +385,7 @@ class CatalogManager
 		$downCat = $query->getFirstDocument();
 		if ($downCat)
 		{
-			$tm = $this->getApplicationServices()->getTransactionManager();
+			$tm = $this->getTransactionManager();
 			try
 			{
 				$tm->begin();
@@ -345,7 +414,7 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
@@ -356,7 +425,7 @@ class CatalogManager
 			// Nothing to do
 			return;
 		}
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
 		$condition = $productListItem->getCondition();
 		$query->andPredicates(
 			$query->eq('productList', $productListItem->getProductList()),
@@ -369,7 +438,7 @@ class CatalogManager
 		$upCat = $query->getFirstDocument();
 		if ($upCat)
 		{
-			$tm = $this->getApplicationServices()->getTransactionManager();
+			$tm = $this->getTransactionManager();
 			try
 			{
 				$tm->begin();
@@ -396,13 +465,13 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
 			throw new \RuntimeException("Invalid Product List Item Identifier", 999999);
 		}
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
 		$condition = $productListItem->getCondition();
 		$query->andPredicates(
 			$query->eq('productList', $productListItem->getProductList()),
@@ -431,7 +500,7 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{
@@ -448,7 +517,7 @@ class CatalogManager
 	{
 		if (is_numeric($productListItem))
 		{
-			$productListItem = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListItem);
+			$productListItem = $this->getDocumentManager()->getDocumentInstance($productListItem);
 		}
 		if (!($productListItem instanceof \Rbs\Catalog\Documents\ProductListItem))
 		{

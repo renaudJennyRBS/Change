@@ -9,6 +9,29 @@ class ApplicationServices extends \Zend\Di\Di
 	use ServicesCapableTrait;
 
 	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+
+	/**
+	 * @param \Change\Application $application
+	 * @return $this
+	 */
+	public function setApplication(\Change\Application $application)
+	{
+		$this->application = $application;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
+
+	/**
 	 * @return array<alias => className>
 	 */
 	protected function loadInjectionClasses()
@@ -60,7 +83,7 @@ class ApplicationServices extends \Zend\Di\Di
 
 
 		//PluginManager : Workspace, EventManagerFactory, DbProvider
-		$pluginManagerClassName = $this->getInjectedClassName('I18nManager', 'Change\Plugins\PluginManager');
+		$pluginManagerClassName = $this->getInjectedClassName('PluginManager', 'Change\Plugins\PluginManager');
 		$classDefinition = $this->getClassDefinition($pluginManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition)
 			->addWorkspaceClassDefinition($classDefinition);
@@ -291,6 +314,25 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$instanceManager->addAlias('OAuthManager', $oAuthManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory));
+	}
+
+	public function shutdown()
+	{
+		$this->application = null;
+		$this->applicationServices = null;
+		$this->eventManagerFactory = null;
+		$im = $this->instanceManager;
+		foreach ($im->getAliases() as $alias => $className)
+		{
+			if ($im->hasSharedInstance($alias))
+			{
+				$instance = $im->getSharedInstance($alias);
+				if (is_callable(array($instance, 'shutdown')))
+				{
+					call_user_func(array($instance, 'shutdown'));
+				}
+			}
+		}
 	}
 
 	/**

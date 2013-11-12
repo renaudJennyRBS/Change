@@ -2,21 +2,25 @@
 namespace Change\Services;
 
 /**
-* @name \Change\Services\DefaultServicesTrait
-*/
+ * @deprecated
+ * @name \Change\Services\DefaultServicesTrait
+ */
 trait DefaultServicesTrait
 {
 	/**
+	 * @deprecated
 	 * @var \Change\Application
 	 */
 	protected $application;
 
 	/**
+	 * @deprecated
 	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
+	 * @deprecated
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @return $this
 	 */
@@ -27,6 +31,7 @@ trait DefaultServicesTrait
 	}
 
 	/**
+	 * @deprecated
 	 * @return \Change\Services\ApplicationServices
 	 */
 	protected function getApplicationServices()
@@ -35,6 +40,7 @@ trait DefaultServicesTrait
 	}
 
 	/**
+	 * @deprecated
 	 * @param \Change\Application $application
 	 * @return $this
 	 */
@@ -45,6 +51,7 @@ trait DefaultServicesTrait
 	}
 
 	/**
+	 * @deprecated
 	 * @return \Change\Application
 	 */
 	protected function getApplication()

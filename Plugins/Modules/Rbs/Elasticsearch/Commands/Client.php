@@ -15,7 +15,7 @@ class Client
 	{
 		$applicationServices = $event->getApplicationServices();
 
-		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
 			$event->addErrorMessage('Elasticsearch services not registered');

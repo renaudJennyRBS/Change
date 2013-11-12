@@ -11,7 +11,101 @@ use Rbs\Commerce\Interfaces\BillingArea;
  */
 class CartStorage
 {
+	/**
+	 * @var \Change\Transaction\TransactionManager
+	 */
+	protected $transactionManager;
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
+	 * @var \Rbs\Commerce\Std\Context
+	 */
+	protected $context;
+
 	protected $cachedCarts = array();
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager($transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider($dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Std\Context $context
+	 * @return $this
+	 */
+	public function setContext($context)
+	{
+		$this->context = $context;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Std\Context
+	 */
+	protected function getContext()
+	{
+		return $this->context;
+	}
+
+
 
 	/**
 	 * @param array $cachedCarts
@@ -32,7 +126,6 @@ class CartStorage
 	}
 
 	/**
-	 * @param CommerceServices $commerceServices
 	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @param BillingArea $billingArea
 	 * @param string $zone
@@ -40,15 +133,16 @@ class CartStorage
 	 * @throws \Exception
 	 * @return Cart
 	 */
-	public function getNewCart(CommerceServices $commerceServices, $webStore = null, $billingArea = null, $zone = null, array $context = array())
+	public function getNewCart($webStore = null, $billingArea = null, $zone = null, array $context = array())
 	{
-		$tm = $commerceServices->getApplicationServices()->getTransactionManager();
+
+		$tm = $this->getTransactionManager();
 		$cart = null;
 		try
 		{
 			$tm->begin();
 
-			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$date = new \DateTime();
 
@@ -66,9 +160,9 @@ class CartStorage
 			{
 				$webStoreId = $webStore->getId();
 			}
-			elseif ($commerceServices->getContext()->getWebStore())
+			elseif ($this->getContext()->getWebStore())
 			{
-				$webStoreId = $commerceServices->getContext()->getWebStore()->getId();
+				$webStoreId = $this->getContext()->getWebStore()->getId();
 			}
 			else
 			{
@@ -94,7 +188,7 @@ class CartStorage
 			$context['storageId'] = $id;
 
 			$identifier = sha1($id . '-' . $date->getTimestamp());
-			$cart = new Cart($identifier, $commerceServices);
+			$cart = new Cart($identifier);
 			$cart->lastUpdate($date);
 			$cart->setOwnerId($ownerId)->setWebStoreId($webStoreId);
 
@@ -104,7 +198,7 @@ class CartStorage
 			}
 			else
 			{
-				$cart->setBillingArea($commerceServices->getContext()->getBillingArea());
+				$cart->setBillingArea($this->getContext()->getBillingArea());
 			}
 			if (is_string($zone))
 			{
@@ -112,14 +206,14 @@ class CartStorage
 			}
 			else
 			{
-				$cart->setZone($commerceServices->getContext()->getZone());
+				$cart->setZone($this->getContext()->getZone());
 			}
 			if (count($context))
 			{
 				$cart->getContext()->fromArray($context);
 			}
 
-			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
 			$qb->assign($fb->column('identifier'), $fb->parameter('identifier'));
@@ -147,14 +241,13 @@ class CartStorage
 
 	/**
 	 * @param string $identifier
-	 * @param CommerceServices $commerceServices
 	 * @return Cart|null
 	 */
-	public function loadCart($identifier, CommerceServices $commerceServices)
+	public function loadCart($identifier)
 	{
 		if (!array_key_exists($identifier, $this->cachedCarts))
 		{
-			$qb = $commerceServices->getApplicationServices()->getDbProvider()->getNewQueryBuilder('loadCart');
+			$qb = $this->getDbProvider()->getNewQueryBuilder('loadCart');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -171,7 +264,6 @@ class CartStorage
 				->addIntCol('owner_id', 'store_id')
 				->addBoolCol('locked')->addDtCol('last_update'));
 
-			//$commerceServices->getApplicationServices()->getLogging()->fatal(var_export($cartInfo, true));
 			$this->cachedCarts[$identifier] = $cartInfo;
 		}
 		else
@@ -184,7 +276,6 @@ class CartStorage
 			$cart = unserialize($cartInfo['cart_data']);
 			if ($cart instanceof Cart)
 			{
-				$cart->setCommerceServices($commerceServices);
 				$cart->setOwnerId($cartInfo['owner_id'])
 					->setWebStoreId($cartInfo['store_id'])
 					->setIdentifier($identifier)
@@ -204,12 +295,11 @@ class CartStorage
 	public function saveCart(Cart $cart)
 	{
 		$cart->lastUpdate(new \DateTime());
-		$applicationServices = $cart->getCommerceServices()->getApplicationServices();
-		$tm = $applicationServices->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
@@ -263,12 +353,11 @@ class CartStorage
 			$cart->setOwnerId($ownerId);
 		}
 
-		$applicationServices = $cart->getCommerceServices()->getApplicationServices();
-		$tm = $applicationServices->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
 			$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
@@ -306,12 +395,11 @@ class CartStorage
 	 */
 	public function deleteCart(Cart $cart)
 	{
-		$applicationServices = $cart->getCommerceServices()->getApplicationServices();
-		$tm = $applicationServices->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->table('rbs_commerce_dat_cart'));
 			$qb->where(
@@ -366,17 +454,15 @@ class CartStorage
 
 	/**
 	 * @param string $identifier
-	 * @param CommerceServices $commerceServices
 	 * @throws \Exception
 	 */
-	public function purgeCart($identifier, CommerceServices $commerceServices)
+	public function purgeCart($identifier)
 	{
-		$applicationServices = $commerceServices->getApplicationServices();
-		$tm = $applicationServices->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
-			$qb = $applicationServices->getDbProvider()->getNewStatementBuilder();
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->delete($fb->table('rbs_commerce_dat_cart'));
 			$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
@@ -423,7 +509,11 @@ class CartStorage
 	{
 		if ($value instanceof DocumentWeakReference)
 		{
-			return $value->getDocument($commerceServices->getApplicationServices()->getDocumentManager());
+			if ($this->documentManager === null)
+			{
+				$this->documentManager = $commerceServices->getDocumentManager();
+			}
+			return $value->getDocument($this->getDocumentManager());
 		}
 		elseif (is_array($value) || $value instanceof \Zend\Stdlib\Parameters)
 		{

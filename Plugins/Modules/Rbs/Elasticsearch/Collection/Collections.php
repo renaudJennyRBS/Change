@@ -16,7 +16,7 @@ class Collections
 	 */
 	protected function getElasticsearchServices(\Change\Events\Event $event)
 	{
-		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 		return $elasticsearchServices;
 	}
 

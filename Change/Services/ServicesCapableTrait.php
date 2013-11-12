@@ -6,8 +6,6 @@ namespace Change\Services;
  */
 trait ServicesCapableTrait
 {
-	use DefaultServicesTrait;
-
 	/**
 	 * @var \Change\Events\EventManagerFactory
 	 */

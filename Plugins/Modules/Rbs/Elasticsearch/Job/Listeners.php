@@ -20,7 +20,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function(\Change\Job\Event $event)
 		{
-			$elasticsearchServices = $event->getServices('elasticsearchServices');
+			$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 			if ($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices)
 			{
 				$elasticsearchServices->getIndexManager()->dispatchIndexationEvents($event->getJob()->getArguments());

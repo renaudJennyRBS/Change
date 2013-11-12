@@ -1,7 +1,6 @@
 <?php
 namespace ChangeTests\Change\I18n;
 
-use Change\I18n\I18nManager;
 use Change\I18n\I18nString;
 
 class I18nStringTest extends \ChangeTests\Change\TestAssets\TestCase
@@ -45,19 +44,12 @@ class I18nStringTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(array('ucf', 'lab'), $string4->getFormatters());
 		$this->assertEquals(array('param1' => 'Value 1 bis', 'param2' => 'Value 2', 'param10' => 'Value 10'),
 			$string4->getReplacements());
-
-		return $manager;
 	}
 
-	// Methods on key.
-
-	/**
-	 * Tests the following method:
-	 * - __toString
-	 * @depends testConstructor
-	 */
-	public function testToString(I18nManager $manager)
+	public function testToString()
 	{
+		$manager = $this->getApplicationServices()->getI18nManager();
+
 		$this->assertEquals('fr_FR', $manager->getLCID());
 
 		// Key translation.

@@ -6,8 +6,6 @@ namespace Rbs\Stock\Services;
  */
 class StockManager
 {
-	use \Change\Services\DefaultServicesTrait;
-
 	const INVENTORY_UNIT_PIECE = 0;
 
 	const UNLIMITED_LEVEL = 1000000;
@@ -20,6 +18,26 @@ class StockManager
 	 * @var \Rbs\Commerce\Std\Context
 	 */
 	protected $context;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
+	 * @var \Change\Transaction\TransactionManager
+	 */
+	protected $transactionManager;
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider;
+
+	/**
+	 * @var \Change\Collection\CollectionManager
+	 */
+	protected $collectionManager;
 
 	/**
 	 * @param \Rbs\Commerce\Std\Context $context
@@ -40,13 +58,85 @@ class StockManager
 	}
 
 	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @return $this
+	 */
+	public function setTransactionManager($transactionManager)
+	{
+		$this->transactionManager = $transactionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Transaction\TransactionManager
+	 */
+	protected function getTransactionManager()
+	{
+		return $this->transactionManager;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider($dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Db\DbProvider
+	 */
+	protected function getDbProvider()
+	{
+		return $this->dbProvider;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @return $this
+	 */
+	public function setCollectionManager($collectionManager)
+	{
+		$this->collectionManager = $collectionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	protected function getCollectionManager()
+	{
+		return $this->collectionManager;
+	}
+
+	/**
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
 	 * @return \Rbs\Stock\Documents\InventoryEntry|null
 	 */
 	public function getInventoryEntry($sku, $warehouse = null)
 	{
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates(
 			$query->eq('sku', $sku),
 			$query->eq('warehouse', $warehouse)
@@ -67,10 +157,10 @@ class StockManager
 		if ($entry === null)
 		{
 			/* @var $entry \Rbs\Stock\Documents\InventoryEntry */
-			$entry = $this->getApplicationServices()->getDocumentManager()
+			$entry = $this->getDocumentManager()
 				->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
 		}
-		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm = $this->getTransactionManager();
 		try
 		{
 			$tm->begin();
@@ -98,7 +188,7 @@ class StockManager
 	 */
 	public function addInventoryMovement($amount, \Rbs\Stock\Documents\Sku $sku, $warehouse = null, $date = null)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('addInventoryIssueReceipt');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('addInventoryIssueReceipt');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -132,7 +222,7 @@ class StockManager
 			return static::UNLIMITED_LEVEL;
 		}
 
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates($query->eq('sku', $sku), $query->eq('warehouse', 0));
 		$dbQueryBuilder = $query->dbQueryBuilder();
 		$fb = $dbQueryBuilder->getFragmentBuilder();
@@ -210,7 +300,7 @@ class StockManager
 		}
 		if ($threshold)
 		{
-			$cm = $this->getApplicationServices()->getCollectionManager();
+			$cm = $this->getCollectionManager();
 			$collection = $cm->getCollection('Rbs_Stock_Collection_Threshold');
 			if ($collection)
 			{
@@ -234,7 +324,7 @@ class StockManager
 	public function setReservations($targetIdentifier, array $reservations)
 	{
 		$date = new \DateTime();
-		$transactionManager = $this->getApplicationServices()->getTransactionManager();
+		$transactionManager = $this->getTransactionManager();
 		$result = array();
 		try
 		{
@@ -299,7 +389,7 @@ class StockManager
 	 */
 	protected function getReservedQuantity($skuId, $storeId)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantity');
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantity');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -326,7 +416,7 @@ class StockManager
 	 */
 	protected function insertReservation($targetIdentifier, \Rbs\Stock\Std\Reservation $reservation, \DateTime $date)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::insertReservation');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::insertReservation');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -353,7 +443,7 @@ class StockManager
 	 */
 	protected function updateReservation(\Rbs\Stock\Std\Reservation $reservation, \DateTime $date)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::updateReservation');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::updateReservation');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -374,7 +464,7 @@ class StockManager
 	 */
 	protected function deleteReservationById($reservationId)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::deleteReservationById');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::deleteReservationById');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -392,7 +482,7 @@ class StockManager
 	 */
 	public function getReservations($targetIdentifier)
 	{
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getReservations');
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservations');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -430,11 +520,11 @@ class StockManager
 	 */
 	public function unsetReservations($targetIdentifier)
 	{
-		$transactionManager = $this->getApplicationServices()->getTransactionManager();
+		$transactionManager = $this->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-			$qb = $this->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::unsetReservations');
+			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::unsetReservations');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -470,12 +560,12 @@ class StockManager
 			$skuId = $this->skuIds[$code];
 			if (is_int($skuId))
 			{
-				return $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($skuId);
+				return $this->getDocumentManager()->getDocumentInstance($skuId);
 			}
 			return null;
 		}
 
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
 		$query->andPredicates($query->eq('code', $code));
 		$sku = $query->getFirstDocument();
 		if ($sku)

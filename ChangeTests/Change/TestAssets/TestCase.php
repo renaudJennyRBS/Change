@@ -37,7 +37,20 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	protected function tearDown()
 	{
 		parent::tearDown();
+
 		$this->closeDbConnection();
+
+		$this->application = null;
+		if ($this->eventManagerFactory)
+		{
+			$this->eventManagerFactory->shutdown();
+			$this->eventManagerFactory = null;
+		}
+
+		if ($this->applicationServices)
+		{
+			$this->applicationServices = null;
+		}
 	}
 
 	/**

@@ -74,7 +74,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 				($eventManagerFactory = $event->getParam('eventManagerFactory')) instanceof \Change\Events\EventManagerFactory)
 			{
 				$elasticsearchServices = new \Rbs\Elasticsearch\ElasticsearchServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
-				$event->getServices()->set('elasticsearchServices', $elasticsearchServices);
+				$event->getServices()->set('Rbs\Elasticsearch\ElasticsearchServices', $elasticsearchServices);
 			}
 		};
 		$events->attach(array('Commands', 'JobManager', 'Http.Web', 'Http.Rest'), 'registerServices', $callback, 1);

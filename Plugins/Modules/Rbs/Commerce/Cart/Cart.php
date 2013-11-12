@@ -75,7 +75,7 @@ class Cart implements CartInterfaces
 	 * @param string $identifier
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 */
-	function __construct($identifier, $commerceServices)
+	function __construct($identifier, $commerceServices = null)
 	{
 		$this->identifier = $identifier;
 		$this->commerceServices = $commerceServices;
