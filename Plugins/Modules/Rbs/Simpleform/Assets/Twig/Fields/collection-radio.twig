@@ -1,0 +1,16 @@
+<div class="form-group{{ errorClassName }}">
+	{% include 'Rbs_Simpleform/default-label.twig' %}
+	<div class="{{ rightColumnElementClass }}">
+		{% for item in collectionItems(fieldInfos.field.parameters.collectionCode) %}
+			<div class="radio">
+				<label>
+					<input type="radio" name="{{ fieldName }}" id="{{ fieldId }}_{{ item.value }}" value="{{ item.value }}"
+						{% if fieldInfos.value == item.value %}checked="checked"{% endif %} />
+					{{ item.title }}
+				</label>
+			</div>
+		{% endfor %}
+		{% include 'Rbs_Simpleform/default-error-messages.twig' %}
+		{% include 'Rbs_Simpleform/default-help-text.twig' %}
+	</div>
+</div>

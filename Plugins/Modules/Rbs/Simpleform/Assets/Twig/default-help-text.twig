@@ -1,0 +1,3 @@
+{% if fieldInfos.field.currentLocalization.helpText and not fieldInfos.field.currentLocalization.helpText.isEmpty() %}
+	<div class="help-block">{{ fieldInfos.field.currentLocalization.helpText|richText }}</div>
+{% endif %}

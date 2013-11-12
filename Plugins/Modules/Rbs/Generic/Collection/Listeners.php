@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Generic\Events\CollectionManager;
+namespace Rbs\Generic\Collection;
 
 use Change\Collection\CollectionManager;
 use Change\Events\Event;
@@ -60,6 +60,15 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Tag_Collection_TagModules':
 					(new \Rbs\Tag\Collection\Collections())->addTagModules($event);
 					break;
+				case 'Rbs_Simpleform_ConfirmationModes':
+					(new \Rbs\Simpleform\Collection\Collections())->addConfirmationModes($event);
+					break;
+				case 'Rbs_Simpleform_FieldTypes':
+					(new \Rbs\Simpleform\Collection\Collections())->addFieldTypes($event);
+					break;
+				case 'Rbs_Simpleform_AutoCapitalizeOptions':
+					(new \Rbs\Simpleform\Collection\Collections())->addAutoCapitalizeOptions($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -75,7 +84,10 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Generic_Collection_Languages',
 				'Rbs_Review_Collection_PromotedReviewModes',
 				'Rbs_Website_AvailablePageFunctions',
-				'Rbs_Tag_Collection_TagModules'
+				'Rbs_Tag_Collection_TagModules',
+				'Rbs_Simpleform_ConfirmationModes',
+				'Rbs_Simpleform_FieldTypes',
+				'Rbs_Simpleform_AutoCapitalizeOptions'
 			));
 			$event->setParam('codes', $codes);
 		};

@@ -1,0 +1,21 @@
+<div>
+	<rbs-field label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-collection', ['ucf']) }}" ng-required="true">
+		<select ng-model="document.parameters.collectionCode" class="form-control" ng-required="true"
+			name="document.parameters.collectionCode"
+			rbs-items-from-collection="Rbs_Collection_Collection_List">
+			<option value=""></option>
+		</select>
+	</rbs-field>
+
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-min-count', ['ucf']) }}"
+		property="document.parameters.minCount">
+	</rbs-field-integer>
+
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-max-count', ['ucf']) }}"
+		property="document.parameters.maxCount">
+	</rbs-field-integer>
+
+	<rbs-field-rich-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.helptext', ['ucf']) }}"
+		property="document.helpText">
+	</rbs-field-rich-text>
+</div>

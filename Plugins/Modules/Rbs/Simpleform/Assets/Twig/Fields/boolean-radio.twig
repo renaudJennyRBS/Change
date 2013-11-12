@@ -1,0 +1,15 @@
+<div class="form-group{{ errorClassName }}">
+	{% include 'Rbs_Simpleform/default-label.twig' %}
+	<div class="{{ rightColumnElementClass }}">
+		<label class="radio-inline">
+			<input name="{{ fieldName }}" id="{{ fieldId }}" type="radio" value="true"
+				{% if fieldInfos.value == 'true' %}checked="checked"{% endif %} /> {{ i18n('m.rbs.generic.yes') }}
+		</label>
+		<label class="radio-inline">
+			<input name="{{ fieldName }}" id="{{ fieldId }}_no" type="radio" value="false"
+				{% if fieldInfos.value == 'false' %}checked="checked"{% endif %} /> {{ i18n('m.rbs.generic.no') }}
+		</label>
+		{% include 'Rbs_Simpleform/default-error-messages.twig' %}
+		{% include 'Rbs_Simpleform/default-help-text.twig' %}
+	</div>
+</div>

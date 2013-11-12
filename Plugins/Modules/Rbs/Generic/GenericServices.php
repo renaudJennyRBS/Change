@@ -34,7 +34,7 @@ class GenericServices extends \Zend\Di\Di
 	 * @param EventManagerFactory $eventManagerFactory
 	 * @param ApplicationServices $applicationServices
 	 */
-	function __construct(Application $application, EventManagerFactory $eventManagerFactory, ApplicationServices $applicationServices)
+	public function __construct(Application $application, EventManagerFactory $eventManagerFactory, ApplicationServices $applicationServices)
 	{
 		$this->setApplication($application);
 		$this->setEventManagerFactory($eventManagerFactory);
@@ -54,6 +54,14 @@ class GenericServices extends \Zend\Di\Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
+		$fieldManagerClassName = $this->getInjectedClassName('FieldManager', 'Rbs\Simpleform\Field\FieldManager');
+		$fieldClassDefinition = $this->getDefaultClassDefinition($fieldManagerClassName);
+		$definitionList->addDefinition($fieldClassDefinition);
+
+		$securityManagerClassName = $this->getInjectedClassName('SecurityManager', 'Rbs\Simpleform\Security\SecurityManager');
+		$securityClassDefinition = $this->getDefaultClassDefinition($securityManagerClassName);
+		$definitionList->addDefinition($securityClassDefinition);
+
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
@@ -62,8 +70,9 @@ class GenericServices extends \Zend\Di\Di
 			'eventManagerFactory' => $this->getEventManagerFactory());
 
 		$im->addAlias('SeoManager', $seoManagerClassName, $defaultParameters);
-
 		$im->addAlias('AvatarManager', $avatarManagerClassName, $defaultParameters);
+		$im->addAlias('FieldManager', $fieldManagerClassName, $defaultParameters);
+		$im->addAlias('SecurityManager', $securityManagerClassName, $defaultParameters);
 	}
 
 	/**
@@ -82,5 +91,21 @@ class GenericServices extends \Zend\Di\Di
 	public function getAvatarManager()
 	{
 		return $this->get('AvatarManager');
+	}
+
+	/**
+	 * @return \Rbs\Simpleform\Field\FieldManager
+	 */
+	public function getFieldManager()
+	{
+		return $this->get('FieldManager');
+	}
+
+	/**
+	 * @return \Rbs\Simpleform\Security\SecurityManager
+	 */
+	public function getSecurityManager()
+	{
+		return $this->get('SecurityManager');
 	}
 }

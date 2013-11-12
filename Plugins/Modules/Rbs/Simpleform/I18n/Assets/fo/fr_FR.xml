@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i18n baseKey="m.rbs.simpleform.fo" lcid="fr_FR">
+	<key id="this-field-is-required">ce champ est obligatoire</key>
+	<key id="send">envoyer</key>
+	<key id="not-sent-containing-errors">Certaines des données saisies sont incorrectes.</key>
+	<key id="back-to-form">retourner au formulaire</key>
+	<key id="bad-csrf-token">Le jeton d'authentification est invalide, merci de resoumettre le formulaire.</key>
+	<key id="bad-captcha">Le code de sécurité que vous avez saisi est incorrect.</key>
+	<key id="captcha">code de sécurité</key>
+	<key id="date-picker-at">à</key>
+	<key id="date-picker-h">H</key>
+</i18n>

@@ -1,0 +1,6 @@
+<label for="{{ fieldId }}" class="{{ leftColumnElementClass }} control-label">
+	{% if fieldInfos.field.getRequired() %}
+		<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.fo.this-field-is-required', ['ucf']) }})">*</em>
+	{% endif %}
+	{{ fieldInfos.field.currentLocalization.getTitle() }}
+</label>
