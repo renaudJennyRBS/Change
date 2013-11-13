@@ -17,7 +17,7 @@
 			<span class="help-block">{{ i18n('m.rbs.website.documents.website.baseurl-help', ['ucf']) }}</span>
 		</rbs-field-url>
 
-		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'indexPage'), ['ucf']) }}">
+		<rbs-field ng-hide="document.isNew() || !document.indexPage" label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'indexPage'), ['ucf']) }}">
 			<span class="uneditable-input">(=document.indexPage.label=)</span>
 		</rbs-field>
 	</fieldset>
