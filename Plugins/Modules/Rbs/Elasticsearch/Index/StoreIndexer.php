@@ -91,7 +91,7 @@ class StoreIndexer extends FullTextIndexer
 				$this->addDeleteDocumentId($documentId);
 				return;
 			}
-			$event->getApplicationServices()->getLogging()->fatal(__METHOD__ . ' =====> ' . $document);
+
 			if ($document instanceof \Rbs\Catalog\Documents\Product)
 			{
 				$publicationStatus = $model->getPropertyValue($document, 'publicationStatus', Publishable::STATUS_FILED);
