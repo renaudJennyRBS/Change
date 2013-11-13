@@ -80,6 +80,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc->setPInt(50);
 		$basicDoc->setPFloat(0.03);
 
+		$event->setParam('propertiesErrors', null);
 		$validation->onValidate($event);
 		$errors = $event->getParam('propertiesErrors');
 		$this->assertNull($errors);
@@ -216,6 +217,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$localizedDoc->setPInt(50);
 		$localizedDoc->setPFloat(0.03);
 
+		$event->setParam('propertiesErrors', null);
 		$validation->onValidate($event);
 		$errors = $event->getParam('propertiesErrors');
 
