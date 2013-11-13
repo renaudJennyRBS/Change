@@ -48,10 +48,35 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			}
 		};
 		$eventManager->attach(Event::EVENT_UPDATED, $callback);
-
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
+
+
+		$eventManager->attach('fullTextContent', array($this, 'onDefaultFullTextContent'), 5);
 	}
 
+	public function onDefaultFullTextContent(Event $event)
+	{
+		$document = $event->getDocument();
+		if ($document instanceof StaticPage)
+		{
+			$fullTextContent = array();
+			$layout = $document->getContentLayout();
+			foreach ($layout->getBlocks() as $block)
+			{
+				$params = $block->getParameters();
+				if (isset($params['content']) && isset($params['contentType']))
+				{
+					$richText = new \Change\Documents\RichtextProperty($params['content']);
+					$richText->setEditor($params['contentType']);
+					$fullTextContent[] = $richText->getRawText();
+				}
+			}
+			if (count($fullTextContent))
+			{
+				$event->setParam('fullTextContent', $fullTextContent);
+			}
+		}
+	}
 	/**
 	 * @param Event $event
 	 */
