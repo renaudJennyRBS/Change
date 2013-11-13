@@ -50,7 +50,6 @@
 				</div>
 			</div>
 		</rbs-field>
-
 	</fieldset>
 
 	<fieldset data-ng-show="section=='urlinfo'" hide-when-create="true"
@@ -92,7 +91,7 @@
 					<td ng-if="displayConfig[locationIndex].showDetails === true" class="preview" colspan="5">
 						<div class="inner">
 							<h3>{{ i18n('m.rbs.seo.admin.publication', ['ucf']) }}</h3>
-							<ul class="unstyled">
+							<ul class="list-unstyled">
 								<li ng-repeat="condition in location.publication"><i ng-show="condition.ok" class="icon-ok text-success"></i><i ng-show="!condition.ok" class="icon-remove text-error"></i> (= condition.message =)</li>
 							</ul>
 							<h3>{{ i18n('m.rbs.seo.admin.urls', ['ucf']) }}</h3>
@@ -195,8 +194,6 @@
 				</tr>
 			</tbody>
 		</table>
-		<!--<p>(= document.rules|json =)</p>
-		<p>(= document.locations|json =)</p>-->
 	</fieldset>
 
 	<fieldset data-ng-show="section=='sitemap'"
@@ -227,7 +224,6 @@
 				</tr>
 			</tbody>
 		</table>
-
 	</fieldset>
 
 	<fieldset

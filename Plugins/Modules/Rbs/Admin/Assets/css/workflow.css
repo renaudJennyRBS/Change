@@ -53,10 +53,10 @@ rbs-document-list .rbs-document-workflow-actions {
 
 	color: white;
 	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
-	font-size: 6pt;
+	font-size: 9px;
 	font-weight: bold;
 	padding: 0;
-	line-height: 11pt;
+	line-height: 9px;
 
 	top: 6px;
 	left: 6px;
@@ -75,12 +75,10 @@ rbs-document-list .rbs-document-workflow-actions {
 }
 
 .bullet-status.small .overlay {
-	font-size: 6pt;
-	height: 11px;
+	font-size: 8px;
+	line-height: 8px;
 	left: 4px;
-	line-height: 9pt;
-	opacity: 0.85;
-	top: 6px;
+	height: 11px;
 	width: 11px;
 }
 

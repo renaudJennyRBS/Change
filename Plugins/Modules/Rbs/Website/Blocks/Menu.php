@@ -6,7 +6,6 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * TODO Sample
  * @name \Rbs\Website\Blocks\Menu
  */
 class Menu extends Block

@@ -24,14 +24,14 @@
 		                   load-query="listLoadQuery"
 		                   activable="true"
 		                   actions="default" use-properties="website">
-
 			<column name="label" primary="true">
 				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
 			</column>
 			<column name="items">
-				<span class="label" ng-repeat="item in doc.items" ng-bind-html="item.title"></span>
+				<span ng-repeat="item in doc.items">
+					<span class="label label-default" ng-bind-html="item.title"></span>
+				</span>
 			</column>
-
 		</rbs-document-list>
 	</div>
 </div>

@@ -46,8 +46,9 @@
 			</div>
 		</div>
 
-		<button ng-disabled="! selectedFunction || ! selectedPage" type="button" class="btn btn-success" ng-click="addSectionFunction(selectedFunction, selectedPage, extraFunctions)">{{ i18n('m.rbs.website.documents.sectionpagefunction.add', ['ucf']) }}</button>
-
+		<p class="btn-toolbar margin-top">
+			<button ng-disabled="! selectedFunction || ! selectedPage" type="button" class="btn btn-success" ng-click="addSectionFunction(selectedFunction, selectedPage, extraFunctions)">{{ i18n('m.rbs.website.documents.sectionpagefunction.add', ['ucf']) }}</button>
+		</p>
 	</div>
 
 
