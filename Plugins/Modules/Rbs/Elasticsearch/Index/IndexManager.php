@@ -345,7 +345,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 
 		foreach ($toIndex as $data)
 		{
-			//$data ['LCID' => string, 'id' => integer, 'model' => string , 'deleted' => boolean
+			//$data ['LCID' => string, 'id' => integer, 'model' => string , 'deleted' => boolean]
 			$LCID = $data['LCID'];
 			$id = $data['id'];
 			$modelName = $data['model'];

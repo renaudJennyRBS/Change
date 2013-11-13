@@ -73,19 +73,25 @@ class StoreIndexer extends FullTextIndexer
 	public function onIndexDocument($event)
 	{
 		$this->setEventContext($event);
+		/* @var $model \Change\Documents\AbstractModel */
+		$model = $event->getParam('model');
+		if (!$model)
+		{
+			return;
+		}
+		$documentId = $event->getParam('id');
 		$LCID = $event->getParam('LCID');
 
-		/* @var $model  \Change\Documents\AbstractModel */
-		$model = $event->getParam('model');
-		if ($model && in_array($model->getName(), $this->getIndexableModelNames()))
+		if (in_array($model->getName(), $this->getIndexableModelNames()))
 		{
+
 			$document = $event->getParam('document');
 			if (!($document instanceof \Change\Documents\AbstractDocument))
 			{
-				$this->addDeleteDocumentId($event->getParam('id'));
+				$this->addDeleteDocumentId($documentId);
 				return;
 			}
-
+			$event->getApplicationServices()->getLogging()->fatal(__METHOD__ . ' =====> ' . $document);
 			if ($document instanceof \Rbs\Catalog\Documents\Product)
 			{
 				$publicationStatus = $model->getPropertyValue($document, 'publicationStatus', Publishable::STATUS_FILED);
@@ -98,9 +104,50 @@ class StoreIndexer extends FullTextIndexer
 					Publishable::STATUS_FILED))
 				)
 				{
-					$this->addDeleteDocumentId($event->getParam('id'), $LCID);
+					$this->addDeleteDocumentId($documentId, $LCID);
 				}
 			}
+		}
+		elseif ($model->isInstanceOf('Rbs_Stock_InventoryEntry'))
+		{
+			$inventoryEntry = $event->getParam('document');
+			if ($inventoryEntry instanceof \Rbs\Stock\Documents\InventoryEntry && $inventoryEntry->getSkuId())
+			{
+				$skuId = $inventoryEntry->getSkuId();
+				$this->indexProductsBySkuId($skuId);
+			}
+		}
+		elseif ($model->isInstanceOf('Rbs_Price_Price'))
+		{
+			$price = $event->getParam('document');
+			if ($price instanceof \Rbs\Price\Documents\Price && $price->getSkuId())
+			{
+				$skuId = $price->getSkuId();
+				$this->indexProductsBySkuId($skuId);
+			}
+		}
+	}
+
+	/**
+	 * @param $skuId
+	 */
+	protected function indexProductsBySkuId($skuId)
+	{
+		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+		$query->andPredicates($query->eq('sku', $skuId));
+		$toIndex = array();
+		/** @var $product \Rbs\Catalog\Documents\Product */
+		foreach ($query->getDocuments() as $product)
+		{
+			foreach ($product->getLCIDArray() as $LCID)
+			{
+				$toIndex[] = array('LCID' => $LCID, 'id' => $product->getId(),
+					'model' => $product->getDocumentModelName(), 'deleted' => false);
+			}
+		}
+		if (count($toIndex))
+		{
+			$this->getIndexManager()->dispatchIndexationEvents($toIndex);
 		}
 	}
 
