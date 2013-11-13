@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Collection;
 
-use Change\Documents\Query\Query;
 use Rbs\Elasticsearch\Facet\FacetDefinitionInterface;
 
 /**
@@ -42,16 +41,16 @@ class Collections
 
 						if (isset($serverStatus['ok']) && $serverStatus['ok'])
 						{
-							$items[$clientName] .= ' (' . $serverStatus['name'] .', ' . $serverStatus['version']['number'] . ')';
+							$items[$clientName] .= ' (' . $serverStatus['name'] . ', ' . $serverStatus['version']['number'] . ')';
 						}
 						else
 						{
-							$items[$clientName] .= ' (' . print_r($serverStatus, true). ')';
+							$items[$clientName] .= ' (' . print_r($serverStatus, true) . ')';
 						}
 					}
 					catch (\Exception $e)
 					{
-						$items[$clientName] .= ' (' . $e->getMessage(). ')';
+						$items[$clientName] .= ' (' . $e->getMessage() . ')';
 					}
 				}
 			}
@@ -73,7 +72,7 @@ class Collections
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$query = $qb->addColumn($fb->alias($docQuery->getColumn('code'), 'code'))
-					->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))->query();
+				->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))->query();
 			$items = $query->getResults($query->getRowsConverter()->addStrCol('code', 'label')->indexBy('code'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_CollectionCodes', $items);
 			$event->setParam('collection', $collection);
@@ -95,7 +94,7 @@ class Collections
 			$qb->where($fb->notIn($docQuery->getColumn('valueType'), array($fb->string('Text'), $fb->string('Group'))));
 
 			$query = $qb->addColumn($fb->alias($docQuery->getColumn('id'), 'id'))
-					->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))
+				->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))
 				->query();
 			$items = $query->getResults($query->getRowsConverter()->addStrCol('label')->addIntCol('id')->indexBy('id'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_AttributeIds', $items);
@@ -118,7 +117,7 @@ class Collections
 			/* @var $indexDefinition \Rbs\Elasticsearch\Documents\FullText */
 			foreach ($query->getDocuments() as $indexDefinition)
 			{
-				$items[$indexDefinition->getId()] = $indexDefinition->getLabel();
+				$items[$indexDefinition->getId()] = $indexDefinition->buildLabel($applicationServices->getI18nManager());
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_Indexes', $items);
 			$event->setParam('collection', $collection);

@@ -9,29 +9,11 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 {
 
 	/**
-	 * @var \Change\I18n\I18nManager
-	 */
-	protected $i18nManager;
-
-	public function onDefaultInjection(\Change\Events\Event $event)
-	{
-		parent::onDefaultInjection($event);
-		$this->i18nManager = $event->getApplicationServices()->getI18nManager();
-
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getLabel()
 	{
-		if ($this->getWebsite())
-		{
-			return $this->i18nManager
-				->trans('m.rbs.elasticsearch.documents.fulltext.label-website', array('ucf'),
-					array('websiteLabel' => $this->getWebsite()->getLabel()));
-		}
-		return '';
+		return 'm.rbs.elasticsearch.documents.fulltext.label-website';
 	}
 
 	/**
@@ -66,6 +48,34 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	public function getDefaultTypeName()
 	{
 		return 'document';
+	}
+
+	public function buildLabel(\Change\I18n\I18nManager $i18nManager)
+	{
+		if ($this->getWebsite())
+		{
+			return $i18nManager->trans($this->getLabel(), array('ucf'),
+				array('websiteLabel' => $this->getWebsite()->getLabel()));
+		}
+		return '';
+	}
+
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+
+		/** @var $document FullText */
+		$document = $event->getDocument();
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			$restResult->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));
+		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$documentLink = $restResult;
+			$documentLink->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));
+		}
 	}
 
 	protected function onCreate()
