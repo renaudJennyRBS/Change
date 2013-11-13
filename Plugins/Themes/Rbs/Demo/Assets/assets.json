@@ -25,13 +25,11 @@
 	},
 
 	"Rbs_Review_ReviewAverageRating": {
-		"cssAssets": ["Theme/Rbs/Demo/css/review.css"],
-		"jsAssets" : []
+		"cssAssets": ["Theme/Rbs/Demo/css/review.css"]
 	},
 
 	"Rbs_Review_PostReview": {
-		"cssAssets": ["Theme/Rbs/Demo/css/review.css"],
-		"jsAssets" : []
+		"cssAssets": ["Theme/Rbs/Demo/css/review.css"]
 	},
 
 	"Rbs_Review_ReviewDetail": {
