@@ -258,11 +258,15 @@
 				}
 				else if (entry.type === 'section')
 				{
+					html += '<a class="list-group-item"';
+					if (entry.hideWhenCreate) {
+						html += ' ng-if="! document.isNew()"';
+					}
 					if (entry.url) {
-						html += '<a class="list-group-item" href="' + entry.url + '">';
+						html += ' href="' + entry.url + '">';
 					}
 					else {
-						html += '<a class="list-group-item" href="javascript:;" data-menu-section="' + entry.id + '" ng-click="__mainMenuSetSection(' + entry.id + ')">';
+						html += ' href="javascript:;" data-menu-section="' + entry.id + '" ng-click="__mainMenuSetSection(' + entry.id + ')">';
 					}
 					if (entry.fields && entry.fields.length) {
 						html += '<span class="badge"';
@@ -359,7 +363,7 @@
 				});
 
 				if (contents.length > 1) {
-					scope._i18nItems = contents;
+					scope.rbsI18nItems = contents;
 					self.addAsideTpl('i18n', 'Rbs/Admin/tpl/i18n-aside.twig', scope);
 				}
 			});
@@ -428,14 +432,14 @@
 			template :
 				'<div class="panel panel-default">' +
 					'<div class="panel-heading">' +
-						'<h3 class="panel-title"><span ng-if="_panel.icon"><i class="(=_panel.icon=)"></i> </span><span ng-bind="_panel.title"></span></h3>' +
+						'<h3 class="panel-title"><span ng-if="panel.icon"><i class="(=panel.icon=)"></i> </span><span ng-bind="panel.title"></span></h3>' +
 					'</div>' +
 					'<div class="panel-body" ng-transclude=""></div>' +
 				'</div>',
 			scope : true,
 			link : function (scope, iElement, iAttrs)
 			{
-				scope._panel = {
+				scope.panel = {
 					title : iAttrs.title,
 					icon : iAttrs.icon
 				};
@@ -454,14 +458,14 @@
 			template :
 				'<div class="panel panel-default">' +
 					'<div class="panel-heading">' +
-						'<h3 class="panel-title"><span ng-if="_panel.icon"><i class="(=_panel.icon=)"></i> </span><span ng-bind="_panel.title"></span></h3>' +
+						'<h3 class="panel-title"><span ng-if="panel.icon"><i class="(=panel.icon=)"></i> </span><span ng-bind="panel.title"></span></h3>' +
 					'</div>' +
 					'<div class="list-group" ng-transclude=""></div>' +
 				'</div>',
 			scope : true,
 			link : function (scope, iElement, iAttrs)
 			{
-				scope._panel = {
+				scope.panel = {
 					title : iAttrs.title,
 					icon : iAttrs.icon
 				};
