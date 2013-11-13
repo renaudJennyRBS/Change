@@ -94,7 +94,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 		$extensions = $event->getParam('extensions');
 		if ($extensions instanceof \ArrayObject)
 		{
-			$extensions[] = new Twig\Extension($event->getApplicationServices());
+			$extensions[] = new Twig\Extension($event->getApplicationServices()->getI18nManager());
 		}
 	}
 	/**

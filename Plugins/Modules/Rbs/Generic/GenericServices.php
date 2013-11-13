@@ -80,19 +80,24 @@ class GenericServices extends \Zend\Di\Di
 
 		$definitionList = new \Zend\Di\DefinitionList(array());
 
-		//SeoManager : EventManagerFactory, Application, ApplicationServices
+		//SeoManager : EventManagerFactory, DocumentManager, TransactionManager
 		$seoManagerClassName = $this->getInjectedClassName('SeoManager', 'Rbs\Seo\SeoManager');
-		$classDefinition = $this->getDefaultClassDefinition($seoManagerClassName);
+		$classDefinition = $this->getClassDefinition($seoManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition
+			->addMethod('setTransactionManager', true)
+				->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//AvatarManager : EventManagerFactory, Application, ApplicationServices
+		//AvatarManager : EventManagerFactory
 		$avatarManagerClassName = $this->getInjectedClassName('AvatarManager', 'Rbs\Media\Avatar\AvatarManager');
-		$classDefinition = $this->getDefaultClassDefinition($avatarManagerClassName);
+		$classDefinition = $this->getClassDefinition($avatarManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//FieldManager : EventManagerFactory, ConstraintsManagerCallback
+		//FieldManager : EventManagerFactory, ConstraintsManager
 		$fieldManagerClassName = $this->getInjectedClassName('FieldManager', 'Rbs\Simpleform\Field\FieldManager');
 		$classDefinition = $this->getClassDefinition($fieldManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
@@ -109,21 +114,21 @@ class GenericServices extends \Zend\Di\Di
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
-		$defaultParameters = array(
-			'application' => $application,
-			'applicationServices' => $applicationServices,
-			'eventManagerFactory' => $eventManagerFactory
-		);
-		$im->addAlias('SeoManager', $seoManagerClassName, $defaultParameters);
-		$im->addAlias('AvatarManager', $avatarManagerClassName, $defaultParameters);
+		$transactionManager = function() use ($applicationServices) {return $applicationServices->getTransactionManager();};
+		$documentManager = function() use ($applicationServices) {return $applicationServices->getDocumentManager();};
 
-		$callback = function () use ($applicationServices)
+		$im->addAlias('SeoManager', $seoManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory,
+				'documentManager' => $documentManager, 'transactionManager' => $transactionManager));
+
+		$im->addAlias('AvatarManager', $avatarManagerClassName,  array('eventManagerFactory' => $this->getEventManagerFactory()));
+
+		$constraintsManager = function () use ($applicationServices)
 		{
 			return $applicationServices->getConstraintsManager();
 		};
-		$im->addAlias('FieldManager', $fieldManagerClassName, array(
-			'eventManagerFactory' => $eventManagerFactory,
-			'constraintsManager' => $callback
+		$im->addAlias('FieldManager', $fieldManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory, 'constraintsManager' => $constraintsManager
 		));
 
 		$im->addAlias('SecurityManager', $securityManagerClassName, array(

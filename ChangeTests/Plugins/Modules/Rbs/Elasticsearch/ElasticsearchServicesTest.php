@@ -1,8 +1,11 @@
 <?php
-namespace ChangeTests\Rbs\Elasticsearch\ElasticsearchServices;
+namespace ChangeTests\Rbs\Elasticsearch;
 
 use Rbs\Elasticsearch\ElasticsearchServices;
 
+/**
+ * @name \ChangeTests\Rbs\Elasticsearch\ElasticsearchServicesTest
+ */
 class ElasticsearchServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
@@ -40,5 +43,9 @@ class ElasticsearchServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('Rbs\Elasticsearch\ElasticsearchServices', $this->elasticsearchServices);
 		$this->assertInstanceOf('Rbs\Elasticsearch\Index\IndexManager', $this->elasticsearchServices->getIndexManager());
 		$this->assertInstanceOf('Rbs\Elasticsearch\Facet\FacetManager', $this->elasticsearchServices->getFacetManager());
+
+		$names = $this->elasticsearchServices->getIndexManager()->getClientsName();
+		$this->assertCount(1, $names);
+		$this->assertEquals('front', $names[0]);
 	}
 }
