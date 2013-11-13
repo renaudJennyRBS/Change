@@ -14,7 +14,6 @@
 				selector-title="{{ i18nAttr('m.rbs.website.documents.menu.website-picker-title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
-
 	</fieldset>
 
 	<fieldset ng-form="" data-ng-show="section=='entries'"
@@ -30,47 +29,37 @@
 
 		<div class="well" ng-if="addItemUIShown">
 			<button type="button" class="close pull-right" ng-click="toggleAddItemUI($event)">&times;</button>
-			<h5>{{ i18n('m.rbs.website.documents.menu.add-item', ['ucf']) }}</h5>
+			<h4>{{ i18n('m.rbs.website.documents.menu.add-item', ['ucf']) }}</h4>
 			<span class="help-block">{{ i18n('m.rbs.website.documents.menu.add-item-help', ['ucf']) }}</span>
-			<div class="control-group">
-				<label class="control-label" for="items">{{ i18n('m.rbs.website.documents.menu.select-document', ['ucf']) }}</label>
-				<div class="controls">
-					<div class="document-picker-single"
-					     allow-creation="false"
-					     select-model="{publishable:'true', root:'true'}"
-					     ng-model="add.selectedDocument"
-					     selector-title="{{ i18nAttr('m.rbs.website.documents.menu.select-document-to-add-to-menu', ['ucf']) }}"
-					     ng-change="onDocumentSelected(add.selectedDocument)">
-					</div>
-				</div>
-			</div>
 
-			<div class="control-group">
-				<label class="control-label" for="title">{{ i18n('m.rbs.website.documents.menu.title', ['ucf']) }}</label>
-				<div class="controls">
-					<input type="text" class="input-xlarge" ng-required="true" ng-pattern="add.titlePattern" ng-model="add.title"/><br/>
-					<label class="checkbox">
-						<input type="checkbox" ng-model="add.titleI18nKey"/> {{ i18n('m.rbs.website.documents.menu.i18nKey', ['ucf']) }}
-					</label>
+			<rbs-field label="{{ i18n('m.rbs.website.documents.menu.select-document', ['ucf']) }}">
+				<div class="document-picker-single"
+					allow-creation="false"
+					select-model="{publishable:'true', root:'true'}"
+					ng-model="add.selectedDocument"
+					selector-title="{{ i18nAttr('m.rbs.website.documents.menu.select-document-to-add-to-menu', ['ucf']) }}"
+					ng-change="onDocumentSelected(add.selectedDocument)">
 				</div>
-			</div>
+			</rbs-field>
 
-			<div class="control-group">
-				<label class="control-label" for="title">{{ i18n('m.rbs.website.documents.menu.url') }}</label>
-				<div class="controls">
-					<input type="url" class="input-xlarge" ng-model="add.url"/>
-				</div>
-			</div>
+			<rbs-field label="{{ i18n('m.rbs.website.documents.menu.title', ['ucf']) }}">
+				<input type="text" class="form-control" ng-required="true" ng-pattern="add.titlePattern" ng-model="add.title" />
+				<label>
+					<input type="checkbox" ng-model="add.titleI18nKey"/> {{ i18n('m.rbs.website.documents.menu.i18nKey', ['ucf']) }}
+				</label>
+			</rbs-field>
 
-			<div class="control-group">
-				<div class="controls">
+			<rbs-field label="{{ i18n('m.rbs.website.documents.menu.url', ['ucf']) }}">
+				<input type="url" class="form-control" ng-model="add.url" />
+			</rbs-field>
+
+			<div class="form-group property">
+				<div class="col-lg-9 col-lg-offset-3 controls">
 					<button type="button" class="btn btn-primary" ng-click="addItem()"><i class="icon-plus"></i>
 						{{ i18n('m.rbs.website.documents.menu.add-this-element', ['ucf']) }}</button>
 				</div>
 			</div>
-
 		</div>
-
 	</fieldset>
 
 	<fieldset

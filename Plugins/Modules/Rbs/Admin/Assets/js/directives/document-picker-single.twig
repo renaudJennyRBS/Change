@@ -40,15 +40,7 @@
 
 <div class="document-picker-embedded" style="display: none;">
 	<header class="clearfix">
-		<form ng-if="allowSearchFilters" class="form-search pull-right" data-ng-submit="textSearch = search || '...'">
-			<div class="input-append">
-				<input type="text" class="input-medium search-query" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" data-ng-model="search"/>
-				<button type="submit" class="btn btn-default" title="{{ i18nAttr('m.rbs.admin.search', ['ucf']) }}">
-					<i class="icon-search"></i>
-				</button>
-			</div>
-			<button ng-click="closeSelector()" type="button" class="close" style="margin-left: 10px; margin-top: 4px;">&times;</button>
-		</form>
+		<button ng-click="closeSelector()" type="button" class="close pull-right" style="margin-left: 10px; margin-top: 4px;">&times;</button>
 		<h4>(=selectorTitle=)</h4>
 	</header>
 

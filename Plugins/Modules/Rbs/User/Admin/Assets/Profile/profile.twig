@@ -1,84 +1,65 @@
 <form class="form-horizontal" novalidate ng-submit="saveProfile()" name="form" ng-controller="Rbs_User_Profile_Controller">
-
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.personnal-info', ['ucf']) }}</legend>
 
-		<div class="form-group">
-			<label class="control-label col-md-3" for="avatar">{{ i18n('m.rbs.user.profile.avatar', ['ucf']) }}</label>
-			<div class="col-md-9">
-				{#<input type="text" id="avatar" class="form-control" name="avatar" ng-model="user.profile.avatar"/>#}
-				<p class="form-control-static" >{{ i18n('m.rbs.user.profile.gravatar-help', ['ucf']) }}</p>
-			</div>
-		</div>
+		<rbs-field label="{{ i18n('m.rbs.user.profile.avatar', ['ucf']) }}">
+			{#<input type="text" id="avatar" class="form-control" name="avatar" ng-model="user.profile.avatar"/>#}
+			<p class="form-control-static" >{{ i18n('m.rbs.user.profile.gravatar-help', ['ucf']) }}</p>
+		</rbs-field>
 	</fieldset>
 
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.internationalization', ['ucf']) }}</legend>
 
-		<div class="form-group">
-			<label class="control-label col-md-3" for="LCID">{{ i18n('m.rbs.user.profile.lcid', ['ucf']) }}</label>
-			<div class="col-md-9">
-				<select id="LCID" class="form-control" rbs-items-from-collection="Rbs_Generic_Collection_Languages" ng-model="user.profile.LCID"></select>
-				<span class="help-block">
-					<span class="label label-danger">{{ i18n('m.rbs.user.profile.warning', ['ucf']) }}</span>
-					{{ i18n('m.rbs.user.profile.change-language-warning', ['ucf']) }}
-				</span>
-			</div>
-		</div>
+		<rbs-field label="{{ i18n('m.rbs.user.profile.lcid', ['ucf']) }}">
+			<select id="LCID" class="form-control" rbs-items-from-collection="Rbs_Generic_Collection_Languages" ng-model="user.profile.LCID"></select>
+			<span class="help-block">
+				<span class="label label-danger">{{ i18n('m.rbs.user.profile.warning', ['ucf']) }}</span>
+				{{ i18n('m.rbs.user.profile.change-language-warning', ['ucf']) }}
+			</span>
+		</rbs-field>
 
-		<div class="form-group">
-			<label class="control-label col-md-3" for="timeZone">{{ i18n('m.rbs.user.profile.timezone', ['ucf']) }}</label>
-			<div class="col-md-9"><div class="rbs-form-simple-filter" filter="tzFilter" style="clear:none;"></div>
-				<select id="timeZone" class="form-control" size="10" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="user.profile.TimeZone"></select>
-			</div>
-		</div>
+		<rbs-field label="{{ i18n('m.rbs.user.profile.timezone', ['ucf']) }}">
+			<div class="rbs-form-simple-filter" filter="tzFilter" style="clear:none;"></div>
+			<select id="timeZone" class="form-control" size="10" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="user.profile.TimeZone"></select>
+		</rbs-field>
 	</fieldset>
 
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.notification', ['ucf']) }}</legend>
 
-		<div class="form-group">
-			<rbs-time-interval-input label="{{ i18nAttr("m.rbs.user.profile.notification-time-interval", ["ucf"]) }}"
-				ng-model="user.profile.notificationMailInterval" show="days,hours"></rbs-time-interval-input>
+		<rbs-field label="{{ i18nAttr("m.rbs.user.profile.notification-time-interval", ["ucf"]) }}">
+			<rbs-time-interval-input ng-model="user.profile.notificationMailInterval" show="days,hours"></rbs-time-interval-input>
 			<span class="help-block">
 				{{ i18n('m.rbs.user.profile.notification-time-interval-helper', ['ucf']) }}
 			</span>
-		</div>
+		</rbs-field>
 	</fieldset>
 
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.lists', ['ucf']) }}</legend>
 
-		<div class="form-group">
-			<label class="control-label col-md-3" for="pagingSize">{{ i18n('m.rbs.user.profile.pagingSize', ['ucf']) }}</label>
-			<div class="col-md-9">
-				<select id="pagingSize" class="form-control" ng-model="user.profile.pagingSize" ng-options="size for size in PaginationPageSizes"></select>
-			</div>
-		</div>
+		<rbs-field label="{{ i18n('m.rbs.user.profile.pagingSize', ['ucf']) }}">
+			<select id="pagingSize" class="form-control" ng-model="user.profile.pagingSize" ng-options="size for size in PaginationPageSizes"></select>
+		</rbs-field>
 
-		<div class="form-group">
-			<label class="control-label col-md-3" for="documentListViewMode">{{ i18n('m.rbs.user.profile.documentListViewMode', ['ucf']) }}</label>
-			<div class="col-md-9">
-				<div class="btn-group">
-					<button type="button" class="btn btn-default" ng-class="{'active':user.profile.documentListViewMode == 'list'}" ng-click="user.profile.documentListViewMode = 'list'"><i class="icon-list"></i> {{ i18n('m.rbs.user.profile.list', ['ucf']) }}</button>
-					<button type="button" class="btn btn-default" ng-class="{'active':user.profile.documentListViewMode == 'grid'}" ng-click="user.profile.documentListViewMode = 'grid'"><i class="icon-th-large"></i> {{ i18n('m.rbs.user.profile.grid', ['ucf']) }}</button>
-				</div>
+		<rbs-field label="{{ i18n('m.rbs.user.profile.documentListViewMode', ['ucf']) }}">
+			<div class="btn-group">
+				<button type="button" class="btn btn-default" ng-class="{'active':user.profile.documentListViewMode == 'list'}" ng-click="user.profile.documentListViewMode = 'list'"><i class="icon-list"></i> {{ i18n('m.rbs.user.profile.list', ['ucf']) }}</button>
+				<button type="button" class="btn btn-default" ng-class="{'active':user.profile.documentListViewMode == 'grid'}" ng-click="user.profile.documentListViewMode = 'grid'"><i class="icon-th-large"></i> {{ i18n('m.rbs.user.profile.grid', ['ucf']) }}</button>
 			</div>
-		</div>
+		</rbs-field>
 	</fieldset>
 
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.editors', ['ucf']) }}</legend>
 
-		<div class="form-group">
-			<label class="control-label col-md-3" for="editorActionAfterSave">{{ i18n('m.rbs.user.profile.editorActionAfterSave', ['ucf']) }}</label>
-			<div class="col-md-9">
-				<select id="editorActionAfterSave" class="form-control" ng-model="user.profile.editorActionAfterSave">
-					<option value="list">{{ i18n('m.rbs.user.profile.backtolist', ['ucf']) }}</option>
-					<option value="stay">{{ i18n('m.rbs.user.profile.stayonform', ['ucf']) }}</option>
-				</select>
-			</div>
-		</div>
+		<rbs-field label="{{ i18n('m.rbs.user.profile.editorActionAfterSave', ['ucf']) }}">
+			<select id="editorActionAfterSave" class="form-control" ng-model="user.profile.editorActionAfterSave">
+				<option value="list">{{ i18n('m.rbs.user.profile.backtolist', ['ucf']) }}</option>
+				<option value="stay">{{ i18n('m.rbs.user.profile.stayonform', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
 	</fieldset>
 
 	<div class="form-actions">

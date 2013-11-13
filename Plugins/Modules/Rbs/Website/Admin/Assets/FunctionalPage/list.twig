@@ -1,5 +1,4 @@
 <div>
-
 	<rbs-workspace-config menu="Rbs_Website">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.js.module-name', ['ucf']) }}</location>
@@ -23,7 +22,6 @@
 	                   model="Rbs_Website_FunctionalPage"
 	                   filter-query="query"
 	                   actions="default">
-
 		<column name="icon" width="30px" align="center">
 			<span class="iconoverlay">
 				<i class="icon-2x icon-file"></i>
@@ -34,12 +32,13 @@
 
 		<column name="allowedFunctionsCode">
 			<div ng-if="doc.allowedFunctionsCode">
-				<div class="label" ng-repeat="func in doc.allowedFunctionsCode">(= func =)</div>
+				<span ng-repeat="func in doc.allowedFunctionsCode">
+					<span class="label label-default">(= func =)</span>
+				</span>
 			</div>
 			<div ng-if="! doc.allowedFunctionsCode">
 				<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.documents.functionalpage.configure-functions', ['ucf']) }}</a>
 			</div>
 		</column>
-
 	</rbs-document-list>
 </div>

@@ -35,11 +35,9 @@
 
 		<quick-actions>
 			[action default]
-			<span ng-if="doc.is('Rbs_Website_Topic')">
-				|| <a href ng-href="(= doc | documentURL:'functions':true =)">
-					<i class="icon-cog"></i> {{ i18n('m.rbs.website.documents.topic.functions') }}
-				</a>
-			</span>
+			<a ng-if="doc.is('Rbs_Website_Topic')" href ng-href="(= doc | documentURL:'functions':true =)">
+				<i class="icon-cog"></i> {{ i18n('m.rbs.website.documents.topic.functions') }}
+			</a>
 		</quick-actions>
 
 		<column name="icon" width="30px" align="center">

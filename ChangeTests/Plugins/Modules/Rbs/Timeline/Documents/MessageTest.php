@@ -64,9 +64,6 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		return $newMessage;
 	}
 
-	/**
-	 * @param \Rbs\Timeline\Documents\Message $message
-	 */
 	public function testOnUpdate()
 	{
 		$dm = $this->getApplicationServices()->getDocumentManager();
@@ -90,54 +87,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('<p>Hello: <strong>Markdown bold</strong> + edited message with <em>Markdown Italic</em> :-)</p>', $trimedHtml);
 	}
 
-	public function testUpdateRestDocumentResult()
-	{
-		//declare a profile manager listener for this test
-		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/ProfileManager/Rbs_Generic', '\\Rbs\\Generic\\Events\\ProfileManager\\Listeners');
-		$dm = $this->getApplicationServices()->getDocumentManager();
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$newMessage = $dm->getDocumentInstance($this->newMessageId, $this->getApplicationServices()->getModelManager()->getModelByName('Rbs_Timeline_Message'));
-
-		$documentResult = new \Change\Http\Rest\Result\DocumentResult(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $newMessage);
-		$this->assertNotNull($documentResult);
-		$result = $documentResult->toArray();
-		$this->assertNotNull($result);
-		$this->assertArrayHasKey('properties', $result);
-		$this->assertNotNull($result['properties']);
-		$this->assertArrayHasKey('avatar', $result['properties']);
-		//avatar is not null because there is a default avatar
-		$this->assertNotNull($result['properties']['avatar']);
-		$defaultAvatar = $result['properties']['avatar'];
-
-		//Test the avatar part
-		//To do that, we create an user in database with a different avatar in his profile
-		$user = $this->createProfiledUser();
-		$newMessage = $dm->getNewDocumentInstanceByModelName('Rbs_Timeline_Message');
-		/* @var $newMessage \Rbs\Timeline\Documents\Message */
-		$newMessage->setLabel(' ');
-		$newMessage->setMessage('Message in a bottle');
-		$newMessage->setContextId(0);
-		$newMessage->setAuthorId($user->getId());
-		$newMessage->setAuthorName($user->getLabel());
-		try
-		{
-			$tm->begin();
-			$newMessage->save();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			$tm->rollBack($e);
-		}
-
-		$documentResult = new \Change\Http\Rest\Result\DocumentResult(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $newMessage);
-		$this->assertNotNull($documentResult);
-		$result = $documentResult->toArray();
-		//in our profiled user, we set a different value for the avatar
-		$this->assertNotEquals($defaultAvatar, $result['properties']['avatar']);
-	}
-
-	public function testUpdateRestDocumentLink()
+	public function testOnDefaultUpdateRestResult()
 	{
 		//declare a profile manager listener for this test
 		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/ProfileManager/Rbs_Generic', '\\Rbs\\Generic\\Events\\ProfileManager\\Listeners');
@@ -155,17 +105,12 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotNull($result['authorId']);
 		$this->assertArrayHasKey('authorName', $result);
 		$this->assertNotNull($result['authorName']);
-		$this->assertArrayHasKey('avatar', $result);
-		//avatar is not null because there is a default avatar
-		$this->assertNotNull($result['avatar']);
-		$defaultAvatar = $result['avatar'];
 		//But our message has no context, so contextModel is not defined
 		$this->assertArrayNotHasKey('contextModel', $result);
 		//And there is no identifier too (user with id 99 doesn't exist)
 		$this->assertArrayNotHasKey('authorIdentifier', $result);
 
-		//Test the avatar part
-		//To do that, we create an user in database with a different avatar in his profile
+		//To do that, we create an user in database
 		$user = $this->createProfiledUser();
 		$newMessage = $dm->getNewDocumentInstanceByModelName('Rbs_Timeline_Message');
 		/* @var $newMessage \Rbs\Timeline\Documents\Message */
@@ -190,8 +135,6 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 			$newMessage, \Change\Http\Rest\Result\DocumentLink::MODE_PROPERTY);
 		$this->assertNotNull($documentLink);
 		$result = $documentLink->toArray();
-		//in our profiled user, we set a different value for the avatar
-		$this->assertNotEquals($defaultAvatar, $result['avatar']);
 		//now because the context is set we can check the contextModel
 		$this->assertArrayHasKey('contextModel', $result);
 		$this->assertEquals('Rbs_User_User', $result['contextModel']);

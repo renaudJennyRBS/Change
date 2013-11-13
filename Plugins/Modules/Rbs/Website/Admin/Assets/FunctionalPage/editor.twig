@@ -35,6 +35,7 @@
 		</div>
 
 		<hr />
+
 		<rbs-field-boolean property="useCache"
 				label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'useCache'), ['ucf']) }}">
 		</rbs-field-boolean>
@@ -61,14 +62,12 @@
 	<fieldset ng-show="section=='functions'" hide-when-create="true"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.functions', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
-
 		<div class="control-group property">
-
 			<span class="help-block">
 				{{ i18n('m.rbs.website.documents.functionalpage.all-functions-list') }}
 			</span>
 
-			<select multiple="multiple" class="input-block-level" size="10"
+			<select multiple="multiple" class="form-control" size="10"
 			        ng-model="document.allowedFunctionsCode"
 			        ng-options="value as func.label+' ('+value+')' for (value, func) in allFunctions">
 				<option value="">-</option>

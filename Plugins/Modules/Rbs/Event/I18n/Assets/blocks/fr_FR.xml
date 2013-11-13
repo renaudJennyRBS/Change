@@ -22,8 +22,10 @@
 	<key id="base-event-list-items-per-page">nombre d'éléments par page</key>
 	<key id="base-event-list-template-name">mode d'affichage</key>
 
-	<key id="contextual-list-label">liste contextuels des actualités et événements</key>
+	<key id="contextual-list-label">liste contextuelle des actualités et événements</key>
 
 	<key id="category-label">détail d'une catégorie</key>
 	<key id="category-section-restriction">restreindre aux éléments publiés dans</key>
+
+	<key id="calendar-label">calendrier</key>
 </i18n>
