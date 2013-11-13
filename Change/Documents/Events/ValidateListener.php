@@ -18,8 +18,6 @@ class ValidateListener
 	 */
 	protected $propertiesErrors;
 
-
-
 	/**
 	 * @param DocumentEvent $event
 	 */
@@ -28,12 +26,13 @@ class ValidateListener
 		if ($event instanceof DocumentEvent)
 		{
 			$document = $event->getDocument();
-			$this->propertiesErrors = array();
-
+			$this->propertiesErrors = $event->getParam('propertiesErrors');
+			if (!is_array($this->propertiesErrors))
+			{
+				$this->propertiesErrors = array();
+			}
 			$this->updateSystemProperties($document);
-
 			$this->validateProperties($document, $event);
-
 			if ($event->getName() === DocumentEvent::EVENT_UPDATE && $document instanceof Editable)
 			{
 				/* @var $document AbstractDocument|Editable */
@@ -42,7 +41,6 @@ class ValidateListener
 					$this->addPropertyError('documentVersion', new PreparedKey('c.constraints.isinvalidfield', array('ucf')));
 				}
 			}
-
 			$event->setParam('propertiesErrors', count($this->propertiesErrors) ? $this->propertiesErrors : null);
 		}
 	}
