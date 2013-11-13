@@ -113,31 +113,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
-		{
-			$documentResult = $restResult;
-			/* @var $message \Rbs\Timeline\Documents\Message */
-			$message = $documentResult->getDocument();
-			//For avatar
-			$dm = $message->getDocumentManager();
-			$user = $dm->getDocumentInstance($message->getAuthorId(), 'Rbs_User_User');
-
-			//FIXME hardcoded value for default avatar url
-			$avatar = 'Rbs/Admin/img/user-default.png';
-			if ($user)
-			{
-				/* @var $user \Rbs\User\Documents\User */
-				$pm = $event->getApplicationServices()->getProfileManager();
-				$authenticatedUser = new AuthenticatedUser($user);
-				$profile = $pm->loadProfile($authenticatedUser, 'Rbs_Admin');
-				if ($profile && $profile->getPropertyValue('avatar'))
-				{
-					$avatar = $profile->getPropertyValue('avatar');
-				}
-			}
-			$documentResult->setProperty('avatar', $avatar);
-		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$documentLink = $restResult;
 			/* @var $message \Rbs\Timeline\Documents\Message */
@@ -154,28 +130,13 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				/* @var $contextDocument \Change\Documents\AbstractDocument */
 				$documentLink->setProperty('contextModel', $contextDocument->getDocumentModelName());
 			}
-			//For avatar & identifier
+			//Add identifier
 			$dm = $message->getDocumentManager();
 			$user = $dm->getDocumentInstance($message->getAuthorId(), 'Rbs_User_User');
-
-			//FIXME hardcoded value for default avatar url
-			$avatar = 'Rbs/Admin/img/user-default.png';
-			if ($user)
+			if ($user instanceof \Rbs\User\Documents\User && $user->getLogin())
 			{
-				/* @var $user \Rbs\User\Documents\User */
-				$pm = $event->getApplicationServices()->getProfileManager();
-				$authenticatedUser = new AuthenticatedUser($user);
-				$profile = $pm->loadProfile($authenticatedUser, 'Rbs_Admin');
-				if ($profile && $profile->getPropertyValue('avatar'))
-				{
-					$avatar = $profile->getPropertyValue('avatar');
-				}
-				if ($user->getLogin())
-				{
-					$documentLink->setProperty('authorIdentifier', $user->getLogin());
-				}
+				$documentLink->setProperty('authorIdentifier', $user->getLogin());
 			}
-			$documentLink->setProperty('avatar', $avatar);
 		}
 	}
 }
