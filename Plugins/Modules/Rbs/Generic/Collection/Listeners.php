@@ -7,7 +7,7 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Generic\Events\CollectionManager\Listeners
+ * @name \Rbs\Generic\Collection\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {

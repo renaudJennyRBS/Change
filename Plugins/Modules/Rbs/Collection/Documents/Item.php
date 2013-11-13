@@ -1,9 +1,8 @@
 <?php
 namespace Rbs\Collection\Documents;
 
-use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\ErrorResult;
+use Zend\Http\Response as HttpResponse;
 use Zend\Http\Response;
 
 /**
@@ -38,12 +37,14 @@ class Item extends \Compilation\Rbs\Collection\Documents\Item implements \Change
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
+		/** @var $document Item */
+		$document = $event->getDocument();
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$documentLink = $restResult;
-			$documentLink->setProperty('locked', $this->getLocked());
-			$documentLink->setProperty('value', $this->getValue());
+			$documentLink->setProperty('locked', $document->getLocked());
+			$documentLink->setProperty('value', $document->getValue());
 		}
 	}
 
@@ -76,7 +77,8 @@ class Item extends \Compilation\Rbs\Collection\Documents\Item implements \Change
 	 */
 	public function getTitle()
 	{
-		$title = $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()->getTitle(): $this->getCurrentLocalization()->getTitle();
+		$title = $this->getCurrentLocalization()->isNew() ? $this->getRefLocalization()
+			->getTitle() : $this->getCurrentLocalization()->getTitle();
 		return $title === null ? $this->getLabel() : $title;
 	}
 }

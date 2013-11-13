@@ -18,15 +18,15 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 	public function setCommerceServices(\Rbs\Commerce\CommerceServices $commerceServices = null)
 	{
 		$this->commerceServices = $commerceServices;
-		if ($commerceServices && !$commerceServices->getWebStore())
+		if ($commerceServices && !$commerceServices->getContext()->getWebStore())
 		{
 			$store = $this->getStore();
 			if ($store)
 			{
-				$commerceServices->setWebStore($this->getStore());
+				$commerceServices->getContext()->setWebStore($this->getStore());
 				if ($store->getBillingAreasCount())
 				{
-					$commerceServices->setBillingArea($store->getBillingAreas()[0]);
+					$commerceServices->getContext()->setBillingArea($store->getBillingAreas()[0]);
 				}
 			}
 		}
@@ -41,12 +41,9 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 		return $this->commerceServices;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getLabel()
+	public function buildLabel(\Change\I18n\I18nManager $i18nManager)
 	{
-		$label = parent::getLabel();
+		$label = parent::buildLabel($i18nManager);
 		if ($this->getStore())
 		{
 			$label .= ' - ' . $this->getStore()->getLabel();
