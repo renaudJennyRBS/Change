@@ -364,7 +364,7 @@
 				 * @param data
 				 */
 				function resolveQ (q, data) {
-					if (data === null || (data.code && data.message)) {
+					if (data === null || (data.code && data.message && !data.id)) {
 						q.reject(data);
 					} else {
 						q.resolve(data);

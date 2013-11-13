@@ -1,16 +1,16 @@
 <header class="clearfix">
 	<button ng-click="closeEmbeddedModal()" class="close pull-right" style="margin-left:30px;" type="button">×</button>
-	<h3><i class="icon-exclamation-sign"></i> Notifications</h3>
+	<h3><i class="icon-exclamation-sign"></i> {{ i18n('m.rbs.admin.dashboard.notifications', ['ucf']) }}</h3>
 </header>
 
-<div class="btn-group" data-toggle="buttons-radio">
-	<button type="button" class="btn btn-primary" data-ng-click="notificationType = 'new'">Nouvelles</button>
-	<button type="button" class="btn btn-primary" data-ng-click="notificationType = 'read'">Lues</button>
+<div class="btn-group">
+	<button type="button" class="btn btn-default" ng-class="{active: notificationType == 'new'}" data-ng-click="notificationType = 'new'">{{ i18n('m.rbs.admin.dashboard.notification-new', ['ucf']) }}</button>
+	<button type="button" class="btn btn-default" ng-class="{active: notificationType == 'read'}" data-ng-click="notificationType = 'read'">{{ i18n('m.rbs.admin.dashboard.notification-read', ['ucf']) }}</button>
 </div>
 
-<rbs-document-list data-dlid="DLRbsDashboardNewNotificationsList"
+<rbs-document-list data-dlid="DLRbsDashboardNotificationsList"
 	model="Rbs_Notification_Notification"
-	load-query="notificationsQuery"
+	load-query="notificationQuery"
 	selectable="false"
 	extend="notificationList"
 	quick-actions=""
@@ -19,8 +19,8 @@
 	<column name="message">
 		(= doc.message =)
 		<div class="pull-right">
-			<button ng-if="extend.getNotificationType() === 'new'" type="button" class="btn btn-sm btn-success" ng-click="extend.readNotification(doc)"><i class="icon-ok"></i></button>
-			<button type="button" class="btn btn-sm btn-danger" ng-click="extend.deleteNotification(doc)"><i class="icon-ban-circle"></i></button>
+			<button ng-if="extend.getNotificationType() === 'new'" type="button" class="btn btn-sm btn-success" ng-click="extend.readNotification(doc)" ng-disabled="doc.disableButton"><i class="icon-ok"></i></button>
+			<button type="button" class="btn btn-sm btn-danger" ng-click="extend.deleteNotification(doc)" ng-disabled="doc.disableButton"><i class="icon-ban-circle"></i></button>
 		</div>
 	</column>
 	<column name="creationDate" format="date"></column>

@@ -20,7 +20,7 @@
 		<rbs-avatar size='62' user-id='(= user.id =)' ></rbs-avatar>
 		<span ng-click="showNotifications($event)">
 			<i class="icon-exclamation-sign"></i>
-			<div>Notifications</div>
+			<div>{{ i18n('m.rbs.admin.dashboard.notifications', ['ucf']) }}</div>
 			<div class="value">(= newNotificationCount =)</div>
 		</span>
 		<span ng-click="showTasks($event)">

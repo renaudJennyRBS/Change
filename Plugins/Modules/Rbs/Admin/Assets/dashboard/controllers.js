@@ -193,7 +193,9 @@
 			};
 		}
 
+		//initiate with 'new' notifications
 		$scope.notificationType = 'new';
+		$scope.notificationQuery = getNotificationQuery('new');
 
 		function reloadNotificationsQuery()
 		{
@@ -203,20 +205,26 @@
 		}
 		reloadNotificationsQuery();
 
-		$scope.$watch('notificationType', function (){
-			$scope.notificationsQuery = getNotificationQuery($scope.notificationType);
+		$scope.$watch('notificationType', function (type){
+			$scope.notificationQuery = getNotificationQuery(type);
 		});
 
 		$scope.notificationList = {
 			'readNotification': function (notification) {
 				notification.status = 'read';
-				REST.save(notification);
-				reloadNotificationsQuery();
+				notification.disableButton = true;
+				REST.save(notification).then(function (){
+					reloadNotificationsQuery();
+					$scope.$broadcast('Change:DocumentList:DLRbsDashboardNotificationsList:call', { method: 'reload' });
+				});
 			},
 			'deleteNotification': function (notification) {
 				notification.status = 'deleted';
-				REST.save(notification);
-				reloadNotificationsQuery();
+				notification.disableButton = true;
+				REST.save(notification).then(function(){
+					reloadNotificationsQuery();
+					$scope.$broadcast('Change:DocumentList:DLRbsDashboardNotificationsList:call', { method: 'reload' });
+				});
 			},
 			getNotificationType: function() {
 				return $scope.notificationType;
