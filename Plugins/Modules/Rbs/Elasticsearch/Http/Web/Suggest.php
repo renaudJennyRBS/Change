@@ -43,7 +43,7 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$website = $event->getWebsite();
 				$result['LCID'] = $LCID;
 
-				$elasticsearchServices = $event->getServices('elasticsearchServices');
+				$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 				if ($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices)
 				{
 					$indexManager = $elasticsearchServices->getIndexManager();

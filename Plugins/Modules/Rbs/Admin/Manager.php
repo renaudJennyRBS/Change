@@ -8,7 +8,27 @@ use Assetic\AssetManager;
  */
 class Manager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
+	use \Change\Events\EventsCapableTrait;
+
+	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
+
+	/**
+	 * @var \Change\Plugins\PluginManager
+	 */
+	protected $pluginManager;
 
 	/**
 	 * @var \Assetic\AssetManager
@@ -37,6 +57,78 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Application $application
+	 * @return $this
+	 */
+	public function setApplication(\Change\Application $application)
+	{
+		$this->application = $application;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager($i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Plugins\PluginManager $pluginManager
+	 * @return $this
+	 */
+	public function setPluginManager($pluginManager)
+	{
+		$this->pluginManager = $pluginManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Plugins\PluginManager
+	 */
+	protected function getPluginManager()
+	{
+		return $this->pluginManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager($modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		return $this->modelManager;
+	}
+
+	/**
 	 * @api
 	 * @param \Twig_ExtensionInterface $extension
 	 * @return $this
@@ -55,7 +147,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->extensions === null)
 		{
-			$extension = new \Rbs\Admin\Presentation\Twig\Extension($this, $this->getApplicationServices());
+			$extension = new \Rbs\Admin\Presentation\Twig\Extension($this->getI18nManager(), $this->getModelManager());
 			$this->extensions = array($extension->getName() => $extension);
 		}
 		return $this->extensions;
@@ -221,7 +313,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
-		$pm = $this->getApplicationServices()->getPluginManager();
+		$pm = $this->getPluginManager();
 		$plugin = $pm->getModule('Rbs', 'Admin');
 		$srcPath = $plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . '/Assets/img';
 		$targetPath = $resourceDirectoryPath . '/img';
@@ -261,7 +353,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		$loader->addPath($formsMacroPath, 'Admin');
 
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
-		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getApplicationServices()));
+		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getI18nManager()));
 		foreach ($this->getExtensions() as $extension)
 		{
 			$twig->addExtension($extension);

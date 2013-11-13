@@ -39,6 +39,20 @@ class EventManagerFactory
 		}
 	}
 
+	public function shutdown()
+	{
+		$this->application = null;
+		$this->sharedEventManager = null;
+		foreach ($this->services as $name => $service)
+		{
+			if (is_callable(array($service, 'shutdown')))
+			{
+				call_user_func(array($service, 'shutdown'));
+			}
+		}
+		$this->services = null;
+	}
+
 	/**
 	 * @param $configurationEntryName
 	 * @return array

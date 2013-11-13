@@ -28,6 +28,12 @@ class ConstraintsManager
 			'publicationStatus' => '\Change\Documents\Constraints\PublicationStatus');
 	}
 
+	public function shutdown()
+	{
+		\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain();
+		\Zend\Validator\AbstractValidator::setDefaultTranslator();
+	}
+
 	/**
 	 * @param \Change\I18n\I18nManager $i18nManager
 	 * @return $this

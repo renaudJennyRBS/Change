@@ -6,12 +6,25 @@ namespace Rbs\Price\Services;
  */
 class TaxManager
 {
-	use \Change\Services\DefaultServicesTrait;
-
 	/**
 	 * @var \Rbs\Commerce\Std\Context
 	 */
 	protected $context;
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
+	 * @var \Change\Collection\CollectionManager
+	 */
+	protected $collectionManager;
 
 	/**
 	 * @param \Rbs\Commerce\Std\Context $context
@@ -29,6 +42,60 @@ class TaxManager
 	protected function getContext()
 	{
 		return $this->context;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager($i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @return $this
+	 */
+	public function setCollectionManager($collectionManager)
+	{
+		$this->collectionManager = $collectionManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Collection\CollectionManager
+	 */
+	protected function getCollectionManager()
+	{
+		return $this->collectionManager;
 	}
 
 	/**
@@ -174,7 +241,7 @@ class TaxManager
 	{
 		if ($rate !== null)
 		{
-			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::PERCENT);
+			$nf = new \NumberFormatter($this->getI18nManager()->getLCID(), \NumberFormatter::PERCENT);
 			$nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 3);
 			return $nf->format($rate);
 		}
@@ -199,12 +266,12 @@ class TaxManager
 			$taxCodeId = $this->taxCodeIds[$taxCode];
 			if (is_int($taxCodeId))
 			{
-				return $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($taxCodeId);
+				return $this->getDocumentManager()->getDocumentInstance($taxCodeId);
 			}
 			return null;
 		}
 
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_Tax');
 		$query->andPredicates($query->eq('code', $taxCode));
 		$tax = $query->getFirstDocument();
 		$this->taxCodeIds[$taxCode] = ($tax) ? $tax->getId() : null;
@@ -224,7 +291,7 @@ class TaxManager
 		}
 		elseif (is_numeric($tax))
 		{
-			$taxDoc = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($tax);
+			$taxDoc = $this->getDocumentManager()->getDocumentInstance($tax);
 			if ($taxDoc instanceof \Rbs\Commerce\Interfaces\Tax)
 			{
 				$taxCode = $taxDoc->getCode();
@@ -237,7 +304,7 @@ class TaxManager
 
 		if ($taxCode)
 		{
-			$cm = $this->getApplicationServices()->getCollectionManager();
+			$cm = $this->getCollectionManager();
 			$collection = $cm->getCollection('Rbs_Price_Collection_TaxTitle');
 			if ($collection)
 			{

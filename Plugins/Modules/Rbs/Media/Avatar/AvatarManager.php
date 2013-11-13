@@ -8,7 +8,7 @@ namespace Rbs\Media\Avatar;
 class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 {
 
-	use \Change\Services\DefaultServicesTrait, \Change\Events\EventsCapableTrait;
+	use \Change\Events\EventsCapableTrait;
 
 	const AVATAR_MANAGER_IDENTIFIER = 'RbsMediaAvatarManager';
 	const AVATAR_GET_AVATAR_URL = 'getAvatarUrl';

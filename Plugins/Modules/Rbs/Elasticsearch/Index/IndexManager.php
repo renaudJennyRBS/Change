@@ -9,9 +9,24 @@ use Elastica\Document;
  */
 class IndexManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Elasticsearch_IndexManager';
+
+	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
+
+	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
 
 	/**
 	 * @var \Elastica\Client[]
@@ -57,6 +72,60 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration($configuration)
+	{
+		$this->configuration = $configuration;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	protected function getConfiguration()
+	{
+		return $this->configuration;
+	}
+
+	/**
+	 * @param \Change\Logging\Logging $logging
+	 * @return $this
+	 */
+	public function setLogging($logging)
+	{
+		$this->logging = $logging;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	protected function getLogging()
+	{
+		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
 	 * @return null|string|string[]
 	 */
 	protected function getEventManagerIdentifier()
@@ -87,7 +156,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->clientsConfiguration === null)
 		{
-			$config = $this->getApplication()->getConfiguration('Rbs/Elasticsearch/clients');
+			$config = $this->getConfiguration()->getEntry('Rbs/Elasticsearch/clients');
 			if (!is_array($config))
 			{
 				$config = array();
@@ -139,7 +208,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 				catch (\Exception $e)
 				{
 					//Invalid Client configuration
-					$this->getApplicationServices()->getLogging()->exception($e);
+					$this->getLogging()->exception($e);
 				}
 			}
 			return $this->clients[$clientName];
@@ -254,7 +323,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 			catch (\Exception $e)
 			{
 				//Unable to create Index
-				$this->getApplicationServices()->getLogging()->exception($e);
+				$this->getLogging()->exception($e);
 			}
 		}
 		return $this->clientIndexes[$clientName][$indexName];
@@ -271,8 +340,9 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		$this->clientBulks = array();
 
-		$mm = $this->getApplicationServices()->getModelManager();
-		$dm = $this->getApplicationServices()->getDocumentManager();
+		$dm = $this->getDocumentManager();
+		$mm = $dm->getModelManager();
+
 		foreach ($toIndex as $data)
 		{
 			//$data ['LCID' => string, 'id' => integer, 'model' => string , 'deleted' => boolean

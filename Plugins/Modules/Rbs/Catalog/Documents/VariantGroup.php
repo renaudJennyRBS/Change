@@ -34,7 +34,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			$this->setLabel($this->getRootProduct()->getLabel());
 		}
 
-		$this->initAxisInfo($event->getApplicationServices());
+		$this->initAxisInfo($event->getApplicationServices()->getCollectionManager());
 	}
 
 	/**
@@ -58,7 +58,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	{
 		if ($this->isPropertyModified('axisAttribute'))
 		{
-			$this->initAxisInfo($event->getApplicationServices());
+			$this->initAxisInfo($event->getApplicationServices()->getCollectionManager());
 		}
 
 		if ($this->isPropertyModified('productMatrixInfo'))
@@ -77,13 +77,16 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		}
 	}
 
-	protected function initAxisInfo(\Change\Services\ApplicationServices $applicationServices)
+	/**
+	 * @param \Change\Collection\CollectionManager $collectionManager
+	 */
+	protected function initAxisInfo(\Change\Collection\CollectionManager $collectionManager)
 	{
 		$axesInfo = $this->getAxesInfo();
 		if (count($axesInfo) === 0)
 		{
 			$axesInfo = array();
-			$attrEngine = new AttributeEngine($applicationServices);
+			$attrEngine = new AttributeEngine($this->getDocumentManager(), $collectionManager, $this->getDbProvider());
 			$axisAttributes = $attrEngine->getAxisAttributes($this->getAxisAttribute());
 			foreach ($axisAttributes as $axisAttribute)
 			{
@@ -292,20 +295,20 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$axesDefinition = $this->buildAxesDefinition($event->getApplicationServices());
+			$axesDefinition = $this->buildAxesDefinition($event->getApplicationServices()->getCollectionManager());
 			$restResult->setProperty('axesDefinition', array_values($axesDefinition));
 		}
 	}
 
 	/**
-	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param \Change\Collection\CollectionManager $collectionManager
 	 * @return array
 	 */
-	protected function buildAxesDefinition(\Change\Services\ApplicationServices $applicationServices)
+	protected function buildAxesDefinition(\Change\Collection\CollectionManager $collectionManager)
 	{
 		$axesDefinition = array();
 
-		$attrEngine = new AttributeEngine($applicationServices);
+		$attrEngine = new AttributeEngine($this->getDocumentManager(),$collectionManager, $this->getDbProvider());
 		foreach ($this->getAxesInfo() as $axisInfo)
 		{
 			$axisAttribute = $this->getDocumentManager()->getDocumentInstance($axisInfo['id']);

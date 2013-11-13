@@ -7,23 +7,23 @@ namespace Rbs\Admin\Presentation\Twig;
 class Extension implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var \Rbs\Admin\Manager
+	 * @var \Change\I18n\I18nManager
 	 */
-	protected $adminManager;
+	protected $i18nManager;
 
 	/**
-	 * @var \Change\Services\ApplicationServices
+	 * @var \Change\Documents\ModelManager
 	 */
-	protected $applicationServices;
+	protected $modelManager;
 
 	/**
-	 * @param \Rbs\Admin\Manager $adminManager
-	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @param \Change\Documents\ModelManager $modelManager
 	 */
-	function __construct(\Rbs\Admin\Manager $adminManager, $applicationServices)
+	function __construct(\Change\I18n\I18nManager $i18nManager = null, \Change\Documents\ModelManager $modelManager = null)
 	{
-		$this->adminManager = $adminManager;
-		$this->applicationServices = $applicationServices;
+		$this->i18nManager = $i18nManager;
+		$this->modelManager = $modelManager;
 	}
 
 	/**
@@ -113,21 +113,39 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param \Rbs\Admin\Manager $adminManager
+	 * @param \Change\I18n\I18nManager $i18nManager
 	 * @return $this
 	 */
-	public function setAdminManager($adminManager)
+	public function setI18nManager($i18nManager)
 	{
-		$this->adminManager = $adminManager;
+		$this->i18nManager = $i18nManager;
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Admin\Manager
+	 * @return \Change\I18n\I18nManager
 	 */
-	public function getAdminManager()
+	protected function getI18nManager()
 	{
-		return $this->adminManager;
+		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager($modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		return $this->modelManager;
 	}
 
 	/**
@@ -136,7 +154,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function createLinks($modelName)
 	{
-		$modelManager = $this->applicationServices->getModelManager();
+		$modelManager = $this->getModelManager();
 		$model = $modelManager->getModelByName($modelName);
 		if (!$model)
 		{
@@ -149,7 +167,7 @@ class Extension implements \Twig_ExtensionInterface
 			$models[] = $modelManager->getModelByName($descendantsName);
 		}
 		$links = array();
-		$i18nManager = $this->applicationServices->getI18nManager();
+		$i18nManager = $this->getI18nManager();
 
 		/* @var $lm \Change\Documents\AbstractModel */
 		foreach ($models as $lm)
@@ -175,7 +193,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function propertyKey($modelName = null, $propertyName = null, $suffix = null)
 	{
-		$mm = $this->applicationServices->getModelManager();
+		$mm = $this->getModelManager();
 		if ($modelName)
 		{
 			$model = $mm->getModelByName($modelName);
@@ -195,7 +213,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function modelKey($modelName = null, $suffix = null)
 	{
-		$mm = $this->applicationServices->getModelManager();
+		$mm = $this->getModelManager();
 		if ($modelName)
 		{
 			$model = $mm->getModelByName($modelName);

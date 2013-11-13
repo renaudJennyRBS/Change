@@ -1,24 +1,22 @@
 <?php
 namespace Change\Presentation\Templates\Twig;
 
-
-
 /**
  * @name \Change\Presentation\Templates\Twig\Extension
  */
-class Extension  implements \Twig_ExtensionInterface
+class Extension implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var \Change\Services\ApplicationServices
+	 * @var \Change\I18n\I18nManager
 	 */
-	protected $applicationServices;
+	protected $i18nManager;
 
 	/**
-	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param \Change\I18n\I18nManager $i18nManager
 	 */
-	function __construct(\Change\Services\ApplicationServices $applicationServices)
+	function __construct(\Change\I18n\I18nManager $i18nManager)
 	{
-		$this->applicationServices = $applicationServices;
+		$this->i18nManager = $i18nManager;
 	}
 
 	/**
@@ -37,7 +35,6 @@ class Extension  implements \Twig_ExtensionInterface
 	 */
 	public function initRuntime(\Twig_Environment $environment)
 	{
-
 	}
 
 	/**
@@ -107,11 +104,11 @@ class Extension  implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @return \Change\Services\ApplicationServices
+	 * @return \Change\I18n\I18nManager
 	 */
-	protected function getApplicationServices()
+	protected function getI18nManager()
 	{
-		return $this->applicationServices;
+		return $this->i18nManager;
 	}
 
 	/**
@@ -127,7 +124,7 @@ class Extension  implements \Twig_ExtensionInterface
 			$replacementArray = array();
 		}
 		$formatters[] = 'html';
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
+		return $this->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 
 	/**
@@ -143,6 +140,6 @@ class Extension  implements \Twig_ExtensionInterface
 			$replacementArray = array();
 		}
 		$formatters[] = 'attr';
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
+		return $this->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 }

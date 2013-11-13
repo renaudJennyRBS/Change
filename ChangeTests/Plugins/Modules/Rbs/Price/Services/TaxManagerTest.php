@@ -2,31 +2,35 @@
 
 class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * @return \Rbs\Commerce\CommerceServices
-	 */
-	public function testGetManager()
-	{
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
 
-		$taxManager = $cs->getTaxManager();
-		$this->assertInstanceOf('\Rbs\Price\Services\TaxManager', $taxManager);
-		$cs->getContext()->setZone('FR');
+	/**
+	 * @var \Rbs\Commerce\CommerceServices;
+	 */
+	protected $commerceServices;
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
+		$this->commerceServices->getContext()->setZone('FR');
 		$ba = new TestBillingArea();
 		$ba->taxes[] = new TestTax('TVA', array('c1' => array('FR' => 0.2)));
 		$ba->taxes[] = new TestTax('TVB', array('c1' => array('FR' => 0.1)), true);
 		$ba->taxes[] = new TestTax('TVC', array('c1' => array('FR' => 0.05)));
-		$cs->getContext()->setBillingArea($ba);
-		return $cs;
+		$this->commerceServices->getContext()->setBillingArea($ba);
 	}
 
-	/**
-	 * @depends testGetManager
-	 * @param Rbs\Commerce\CommerceServices $cs
-	 * @return \Rbs\Commerce\CommerceServices
-	 */
-	public function testGetTaxByValue(\Rbs\Commerce\CommerceServices $cs)
+	public function testGetManager()
 	{
+		$cs = $this->commerceServices;
+		$taxManager = $cs->getTaxManager();
+		$this->assertInstanceOf('\Rbs\Price\Services\TaxManager', $taxManager);
+	}
+
+	public function testGetTaxByValue()
+	{
+		$cs = $this->commerceServices;
 		$taxManager = $cs->getTaxManager();
 
 		/* @var $array \Rbs\Price\Std\TaxApplication[] */
@@ -58,16 +62,11 @@ class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(20, $array[0]->getValue());
 		$this->assertEquals(12, $array[1]->getValue());
 		$this->assertEquals(5, $array[2]->getValue());
-		return $cs;
 	}
 
-	/**
-	 * @depends testGetTaxByValue
-	 * @param Rbs\Commerce\CommerceServices $cs
-	 * @return \Rbs\Commerce\CommerceServices
-	 */
-	public function testGetTaxByValueWithTax(\Rbs\Commerce\CommerceServices $cs)
+	public function testGetTaxByValueWithTax()
 	{
+		$cs = $this->commerceServices;
 		$taxManager = $cs->getTaxManager();
 		/* @var $array \Rbs\Price\Std\TaxApplication[] */
 		$array = $taxManager->getTaxByValueWithTax(120, array('TVA' => 'c1'));
@@ -87,8 +86,6 @@ class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(20, $array[0]->getValue());
 		$this->assertEquals(12, $array[1]->getValue());
 		$this->assertEquals(5, $array[2]->getValue());
-
-		return $cs;
 	}
 }
 

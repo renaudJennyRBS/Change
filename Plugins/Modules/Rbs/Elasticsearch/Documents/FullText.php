@@ -7,6 +7,19 @@ namespace Rbs\Elasticsearch\Documents;
 class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	implements \Rbs\Elasticsearch\Index\IndexDefinitionInterface
 {
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	public function onDefaultInjection(\Change\Events\Event $event)
+	{
+		parent::onDefaultInjection($event);
+		$this->i18nManager = $event->getApplicationServices()->getI18nManager();
+
+	}
+
 	/**
 	 * @return string
 	 */
@@ -14,7 +27,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	{
 		if ($this->getWebsite())
 		{
-			return $this->getApplicationServices()->getI18nManager()
+			return $this->i18nManager
 				->trans('m.rbs.elasticsearch.documents.fulltext.label-website', array('ucf'),
 					array('websiteLabel' => $this->getWebsite()->getLabel()));
 		}
@@ -124,7 +137,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	protected function getDefaultModelFacet()
 	{
 		$mf = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
-		$mf->setTitle($this->getApplicationServices()->getI18nManager()->trans('m.rbs.elasticsearch.fo.facet-model-title'));
+		$mf->setTitle($this->i18nManager->trans('m.rbs.elasticsearch.fo.facet-model-title'));
 		return $mf;
 	}
 

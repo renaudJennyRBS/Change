@@ -40,9 +40,12 @@ class Install extends \Change\Plugins\InstallBase
 	public function onSuccess(\Change\Events\Event $event)
 	{
 		$manager = new \Rbs\Admin\Manager();
+		$applicationServices = $event->getApplicationServices();
 		$manager->setApplication($event->getApplication())
 			->setEventManagerFactory($this->eventManagerFactory)
-			->setApplicationServices($event->getApplicationServices());
+			->setI18nManager($applicationServices->getI18nManager())
+			->setModelManager($applicationServices->getModelManager())
+			->setPluginManager($applicationServices->getPluginManager());
 		$manager->getResources();
 		$manager->dumpResources();
 	}

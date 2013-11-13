@@ -1,8 +1,8 @@
 <?php
 namespace Rbs\Commerce\Events\CartManager;
 
-use Rbs\Commerce\Cart\DefaultCartValidation;
 use Change\Events\Event;
+use Rbs\Commerce\Cart\DefaultCartValidation;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -27,9 +27,21 @@ class Listeners implements ListenerAggregateInterface
 			{
 				$webStore = $event->getParam('webStore', null);
 				$billingArea = $event->getParam('billingArea', null);
-				$zone =  $event->getParam('zone', null);
-				$context =  $event->getParam('context', array());
-				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->getNewCart($cs, $webStore, $billingArea, $zone, $context));
+				$zone = $event->getParam('zone', null);
+				$context = $event->getParam('context', array());
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+
+				$cart = $cartStorage->getNewCart($webStore, $billingArea, $zone, $context);
+				if ($cart)
+				{
+					$cart->setCommerceServices($cs);
+					$event->setParam('cart', $cart);
+				}
 			}
 		};
 		$events->attach('getNewCart', $callback, 5);
@@ -39,9 +51,16 @@ class Listeners implements ListenerAggregateInterface
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$cart = (new \Rbs\Commerce\Cart\CartStorage())->loadCart($event->getParam('cartIdentifier'), $cs);
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+				$cart = $cartStorage->loadCart($event->getParam('cartIdentifier'));
 				if ($cart)
 				{
+					$cart->setCommerceServices($cs);
 					$event->setParam('cart', $cart);
 				}
 			}
@@ -51,9 +70,16 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (Event $event)
 		{
 			$cart = $event->getParam('cart');
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices())
+			$cs = $event->getServices('commerceServices');
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices)
 			{
-				(new \Rbs\Commerce\Cart\CartStorage())->saveCart($cart);
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+				$cartStorage->saveCart($cart);
 			}
 		};
 		$events->attach('saveCart', $callback, 5);
@@ -62,22 +88,36 @@ class Listeners implements ListenerAggregateInterface
 		{
 			$cart = $event->getParam('cart');
 			$cartToMerge = $event->getParam('cartToMerge');
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices() && $cartToMerge instanceof \Rbs\Commerce\Interfaces\Cart )
+			$cs = $event->getServices('commerceServices');
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices
+				&& $cartToMerge instanceof \Rbs\Commerce\Interfaces\Cart
+			)
 			{
-				$event->setParam('cart', (new \Rbs\Commerce\Cart\CartStorage())->mergeCart($cart, $cartToMerge));
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+				$event->setParam('cart', $cartStorage->mergeCart($cart, $cartToMerge));
 			}
 		};
 		$events->attach('mergeCart', $callback, 5);
 
-
-
 		$callback = function (Event $event)
 		{
 			$cart = $event->getParam('cart');
-			$ownerId =  $event->getParam('ownerId', null);
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getCommerceServices())
+			$cs = $event->getServices('commerceServices');
+			$ownerId = $event->getParam('ownerId', null);
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices)
 			{
-				(new \Rbs\Commerce\Cart\CartStorage())->lockCart($cart, $ownerId);
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+				$cartStorage->lockCart($cart, $ownerId);
 			}
 		};
 		$events->attach('lockCart', $callback, 5);

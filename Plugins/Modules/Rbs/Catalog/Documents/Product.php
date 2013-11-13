@@ -49,8 +49,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 
 			if (is_array(($attributeValues = $documentResult->getProperty('attributeValues'))))
 			{
-				/* @var $product Product */
-				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($event->getApplicationServices());
+				$as = $event->getApplicationServices();
+				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
 				$expandedAttributeValues = $attributeEngine->expandAttributeValues($document, $attributeValues,
 					$documentResult->getUrlManager());
 				$documentResult->setProperty('attributeValues', $expandedAttributeValues);
@@ -130,7 +130,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	{
 		if ($this->isPropertyModified('attributeValues'))
 		{
-			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($event->getApplicationServices());
+			$as = $event->getApplicationServices();
+			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
 			$normalizedAttributeValues = $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
 			$this->setAttributeValues($normalizedAttributeValues);
 		}
@@ -174,7 +175,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	{
 		if ($this->isPropertyModified('attributeValues'))
 		{
-			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($event->getApplicationServices());
+			$as = $event->getApplicationServices();
+			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
 			$normalizedAttributeValues = $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
 
 			//DB Stat

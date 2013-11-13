@@ -37,7 +37,9 @@ class Controller extends \Change\Http\Controller
 		$manager = new \Rbs\Admin\Manager();
 		$manager->setApplication($this->getApplication())
 			->setEventManagerFactory($this->getEventManagerFactory())
-			->setApplicationServices($applicationServices);
+			->setI18nManager($applicationServices->getI18nManager())
+			->setModelManager($applicationServices->getModelManager())
+			->setPluginManager($applicationServices->getPluginManager());
 		$event->setParam('manager', $manager);
 	}
 

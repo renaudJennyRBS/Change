@@ -29,8 +29,9 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$restResult->setProperty('editorDefinition',
-				(new AttributeEngine($event->getApplicationServices()))->buildEditorDefinition($this));
+			$as = $event->getApplicationServices();
+			$attributeEngine = new AttributeEngine($as->getDocumentManager(), $as->getCollectionManager());
+			$restResult->setProperty('editorDefinition', $attributeEngine->buildEditorDefinition($this));
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{

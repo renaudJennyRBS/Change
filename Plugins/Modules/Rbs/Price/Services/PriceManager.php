@@ -9,7 +9,7 @@ use Rbs\Price\Documents\Price;
 */
 class PriceManager implements \Zend\EventManager\EventsCapableInterface
 {
-	use \Change\Events\EventsCapableTrait, \Change\Services\DefaultServicesTrait;
+	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'PriceManager';
 
@@ -19,6 +19,16 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Rbs\Commerce\Std\Context
 	 */
 	protected $context;
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
 
 	/**
 	 * @param \Rbs\Commerce\Std\Context $context
@@ -36,6 +46,42 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getContext()
 	{
 		return $this->context;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager($i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
 	}
 
 	/**
@@ -115,7 +161,7 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 			$targetIds[] = 0;
 		}
 
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_Price');
 		$and = array($query->activated(),
 			$query->eq('sku', $sku),
 			$query->eq('webStore', $webStore),
@@ -156,7 +202,7 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				$currencyCode = $billingArea->getCurrencyCode();
 			}
-			$nf = new \NumberFormatter($this->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			$nf = new \NumberFormatter($this->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			return $nf->formatCurrency($value, $currencyCode);
 		}
 		return null;
@@ -168,7 +214,7 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getBillingAreaByCode($code)
 	{
-		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_BillingArea');
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_BillingArea');
 		$query->andPredicates($query->eq('code', $code));
 		return $query->getFirstDocument();
 	}

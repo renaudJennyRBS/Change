@@ -15,11 +15,49 @@ class CommerceServices extends Di
 	use \Change\Services\ServicesCapableTrait;
 
 	/**
+	 * @var \Change\Application
+	 */
+	protected $application;
+
+	/**
+	 * @var \Change\Services\ApplicationServices
+	 */
+	protected $applicationServices;
+
+	/**
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @return $this
+	 */
+	public function setApplicationServices(\Change\Services\ApplicationServices $applicationServices)
+	{
+		$this->applicationServices = $applicationServices;
+		return $this;
+	}
+
+	/**
 	 * @return \Change\Services\ApplicationServices
 	 */
-	public function getApplicationServices()
+	protected function getApplicationServices()
 	{
 		return $this->applicationServices;
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @return $this
+	 */
+	public function setApplication(\Change\Application $application)
+	{
+		$this->application = $application;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
 	}
 
 	/**
@@ -36,8 +74,7 @@ class CommerceServices extends Di
 	 * @param EventManagerFactory $eventManagerFactory
 	 * @param ApplicationServices $applicationServices
 	 */
-	function __construct(Application $application, EventManagerFactory $eventManagerFactory,
-		ApplicationServices $applicationServices)
+	function __construct(Application $application, EventManagerFactory $eventManagerFactory, ApplicationServices $applicationServices)
 	{
 		$this->setApplication($application);
 		$this->setEventManagerFactory($eventManagerFactory);
@@ -51,71 +88,121 @@ class CommerceServices extends Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//TaxManager : Application, ApplicationServices, Context
+		//TaxManager : Context, I18nManager, DocumentManager, CollectionManager
 		$taxManagerClassName = $this->getInjectedClassName('TaxManager', 'Rbs\Price\Services\TaxManager');
-		$classDefinition = $this->getDefaultClassDefinition($taxManagerClassName);
+		$classDefinition = $this->getClassDefinition($taxManagerClassName);
 		$classDefinition->addMethod('setContext', true)
-			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
+				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
+			->addMethod('setDocumentManager', true)
+				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setI18nManager', true)
+				->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true))
+			->addMethod('setCollectionManager', true)
+				->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//PriceManager : EventManagerFactory, Application, ApplicationServices, Context
 		$priceManagerClassName = $this->getInjectedClassName('PriceManager', 'Rbs\Price\Services\PriceManager');
-		$classDefinition = $this->getDefaultClassDefinition($priceManagerClassName);
+		$classDefinition = $this->getClassDefinition($priceManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setContext', true)
-			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
+				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
+			->addMethod('setDocumentManager', true)
+				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setI18nManager', true)
+				->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 
-		//CatalogManager : Application, ApplicationServices
+		//CatalogManager : DbProvider, TransactionManager, DocumentManager
 		$catalogManagerClassName = $this->getInjectedClassName('CatalogManager', 'Rbs\Catalog\Services\CatalogManager');
-		$classDefinition = $this->getDefaultClassDefinition($catalogManagerClassName);
+		$classDefinition = $this->getClassDefinition($catalogManagerClassName);
+		$classDefinition->addMethod('setDbProvider', true)
+			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
+			->addMethod('setTransactionManager', true)
+			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 
-		//CrossSellingManager : EventManagerFactory, Application, ApplicationServices
+		//CrossSellingManager : EventManagerFactory
 		$crossSellingManagerClassName = $this->getInjectedClassName('CrossSellingManager', 'Rbs\Catalog\Services\CrossSellingManager');
 		$classDefinition = $this->getClassDefinition($crossSellingManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
 
-		//StockManager : Application, ApplicationServices, Context
+		//StockManager : Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
 		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\Services\StockManager');
-		$classDefinition = $this->getDefaultClassDefinition($stockManagerClassName);
+		$classDefinition = $this->getClassDefinition($stockManagerClassName);
 		$classDefinition->addMethod('setContext', true)
-			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
+				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
+			->addMethod('setDbProvider', true)
+				->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
+			->addMethod('setTransactionManager', true)
+				->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setCollectionManager', true)
+				->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//CartManager : EventManagerFactory, Application, ApplicationServices, Context
+		//CartManager : StockManager, PriceManager, TaxManager, EventManagerFactory, Logging
 		$cartManagerClassName = $this->getInjectedClassName('CartManager', 'Rbs\Commerce\Cart\CartManager');
-		$classDefinition = $this->getDefaultClassDefinition($cartManagerClassName);
+		$classDefinition = $this->getClassDefinition($cartManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setStockManager', true)
-				->addMethodParameter('setStockManager', 'stockManager',array('type' => 'StockManager', 'required' => true))
+				->addMethodParameter('setStockManager', 'stockManager', array('type' => 'StockManager', 'required' => true))
 			->addMethod('setPriceManager', true)
-				->addMethodParameter('setPriceManager', 'priceManager',array('type' => 'PriceManager', 'required' => true))
+				->addMethodParameter('setPriceManager', 'priceManager', array('type' => 'PriceManager', 'required' => true))
 			->addMethod('setTaxManager', true)
-				->addMethodParameter('setTaxManager', 'taxManager',array('type' => 'TaxManager', 'required' => true));
+				->addMethodParameter('setTaxManager', 'taxManager', array('type' => 'TaxManager', 'required' => true))
+			->addMethod('setLogging', true)
+				->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
 
-		$defaultParameters = array('application' => $this->getApplication(),
-			'applicationServices' => $this->getApplicationServices(),
-			'eventManagerFactory' => $this->getEventManagerFactory());
+		$dbProvider = function() use ($applicationServices) {return $applicationServices->getDbProvider();};
+		$transactionManager = function() use ($applicationServices) {return $applicationServices->getTransactionManager();};
+		$documentManager = function() use ($applicationServices) {return $applicationServices->getDocumentManager();};
+		$i18nManager = function() use ($applicationServices) {return $applicationServices->getI18nManager();};
+		$collectionManager = function() use ($applicationServices) {return $applicationServices->getCollectionManager();};
+		$logging = function() use ($applicationServices) {return $applicationServices->getLogging();};
 
-		$im->addAlias('Context', $contextClassName, array('eventManagerFactory' => $this->getEventManagerFactory()));
-		$im->addAlias('TaxManager', $taxManagerClassName, $defaultParameters);
-		$im->addAlias('PriceManager', $priceManagerClassName, $defaultParameters);
-		$im->addAlias('CatalogManager', $catalogManagerClassName, $defaultParameters);
-		$im->addAlias('CrossSellingManager', $crossSellingManagerClassName, $defaultParameters);
-		$im->addAlias('StockManager', $stockManagerClassName, $defaultParameters);
-		$im->addAlias('CartManager', $cartManagerClassName, $defaultParameters);
+		$im->addAlias('Context', $contextClassName, array('eventManagerFactory' => $eventManagerFactory));
+
+		$im->addAlias('TaxManager', $taxManagerClassName,
+			array('i18nManager' => $i18nManager, 'collectionManager' => $collectionManager, 'documentManager' => $documentManager));
+
+		$im->addAlias('PriceManager', $priceManagerClassName,
+			array('eventManagerFactory' => $this->getEventManagerFactory(), 'i18nManager' => $i18nManager, 'documentManager' => $documentManager));
+
+		$im->addAlias('CatalogManager', $catalogManagerClassName,
+			array('dbProvider' => $dbProvider, 'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
+
+		$im->addAlias('CrossSellingManager', $crossSellingManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory));
+
+		$im->addAlias('StockManager', $stockManagerClassName,
+			array('dbProvider' => $dbProvider, 'transactionManager' => $transactionManager,
+				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
+
+		$im->addAlias('CartManager', $cartManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging));
 	}
 
+	/**
+	 * Used for cart unserialize
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		return $this->getApplicationServices()->getDocumentManager();
+	}
 
 	/**
 	 * @return \Rbs\Commerce\Std\Context

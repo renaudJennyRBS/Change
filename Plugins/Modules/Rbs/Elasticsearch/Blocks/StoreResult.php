@@ -67,7 +67,7 @@ class StoreResult extends Block
 	 */
 	protected function getElasticsearchServices($event)
 	{
-		$elasticsearchServices = $event->getServices('elasticsearchServices');
+		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
 			return null;
