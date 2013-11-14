@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function Editor(REST, $routeParams, Settings)
+	function Editor(REST, $routeParams, ProductListService, Breadcrumb, i18n, UrlManager, Loading)
 	{
 		return {
 			restrict: 'EC',
@@ -15,9 +15,26 @@
 				scope.onReady = function(){
 					if ($routeParams.productId)
 					{
+						//Creation : get Product
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
 							scope.document.product = product;
 						});
+					}
+
+					if (scope.document.id > 0)
+					{
+						ProductListService.addListContent(scope);
+					}
+
+					if (scope.document.product)
+					{
+						Breadcrumb.setLocation([
+							[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+							[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(scope.document.product, 'list')],
+							[scope.document.product.label, UrlManager.getUrl(scope.document.product, 'form') ],
+							[i18n.trans('m.rbs.catalog.admin.js.cross-selling-list | ucf'), "Rbs/Catalog/Product"]],
+							[scope.document.label, UrlManager.getUrl(scope.document, 'form')]
+						);
 					}
 				};
 
@@ -26,6 +43,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Settings'];
+	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.ProductListService', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Loading'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
 })();

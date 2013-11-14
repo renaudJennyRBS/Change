@@ -5,7 +5,7 @@
 	/**
 	 * Editor for Rbs_Catalog_VariantGroup Documents.
 	 */
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', ['RbsChange.REST', '$timeout', function Editor (REST, $timeout)
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup', ['RbsChange.REST', '$timeout', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager', function Editor (REST, $timeout, $routeParams, Breadcrumb, i18n, UrlManager)
 	{
 		return {
 			restrict : 'C',
@@ -41,6 +41,30 @@
 					compileAxesInfo();
 				};
 
+				scope.postSave = function()
+				{
+					scope.$broadcast('Change:DocumentList:DLRbsCatalogVariantList:call', { 'method' : 'reload' });
+				}
+
+				scope.onReady = function(){
+					if ($routeParams.productId)
+					{
+						//Creation : get Product
+						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
+							scope.document.rootProduct = product;
+						});
+					}
+
+					if (scope.document.rootProduct)
+					{
+						Breadcrumb.setLocation([
+							[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+							[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(scope.document.rootProduct, 'list')],
+							[scope.document.rootProduct.label, UrlManager.getUrl(scope.document.rootProduct, 'form') ],
+							[i18n.trans('m.rbs.catalog.admin.js.variant-group | ucf'), "Rbs/Catalog/VariantGroup"]]
+						);
+					}
+				};
 
 				scope.toggleEditMode = function (axisIndex)
 				{
@@ -118,11 +142,13 @@
 					}
 
 					axis = scope.axesInfo[axisIndex];
-
-					for (i=0 ; i<scope.document.productMatrixInfo.length ; i++) {
-						item = scope.document.productMatrixInfo[i];
-						if (item.axisId === axis.id && item.axisValue === value && item.parentId === parentId && ! item.removed) {
-							return 'Y';
+					if (scope.document.productMatrixInfo)
+					{
+						for (i=0 ; i<scope.document.productMatrixInfo.length ; i++) {
+							item = scope.document.productMatrixInfo[i];
+							if (item.axisId === axis.id && item.axisValue === value && item.parentId === parentId && ! item.removed) {
+								return 'Y';
+							}
 						}
 					}
 
@@ -139,7 +165,15 @@
 
 				scope.removeAllVariants = function ()
 				{
-					scope.document.productMatrixInfo.length = 0;
+					var i, item;
+					if (scope.document.productMatrixInfo)
+					{
+						for (i=0 ; i<scope.document.productMatrixInfo.length ; i++) {
+							item = scope.document.productMatrixInfo[i];
+							item.removed = true;
+						}
+					}
+					//scope.document.productMatrixInfo.length = 0;
 				};
 
 
@@ -385,7 +419,7 @@
 							else {
 								i++;
 							}
-						} while (i < scope.document.productMatrixInfo);
+						} while (i < scope.document.productMatrixInfo.length);
 					}
 				}
 

@@ -13,7 +13,7 @@
 			disabled="productList">
 		</rbs-field-text>
 
-		<rbs-field-picker ng-if="!document.productList" property="document.productList"
+		<rbs-field-picker ng-controller="Rbs_Catalog_ProductList_ProductListController" ng-if="!document.productList" property="document.productList"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'productList'), ['ucf']) }}"
 			allow-edition="true"
 			allow-creation="false"

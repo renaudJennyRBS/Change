@@ -7,9 +7,10 @@
 	 * @param $http
 	 * @param Loading
 	 * @param REST
+	 * @param MainMenu
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST)
+	function Editor($timeout, $http, Loading, REST, MainMenu)
 	{
 		return {
 			restrict : 'C',
@@ -28,6 +29,14 @@
 
 				scope.onReady = function() {
 					scope.loadItems();
+					if (! scope.document.variant)
+					{
+						MainMenu.addAsideTpl('product-options', 'Rbs/Catalog/Product/product-variant-aside-menu.twig', scope);
+					}
+					if (scope.document)
+					{
+						MainMenu.addAsideTpl('product-cross-selling', 'Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
+					}
 				};
 
 				scope.attributeGroupId = null;
@@ -169,16 +178,21 @@
 							attributes[i].value = scope.getAttributeValue(attributes[i], attributeValues);
 						}
 					}
+					console.log(attributes);
 				};
 
 				scope.getAttributeValue = function (attribute, attributeValues) {
 					var v = null;
 					for (var i = 0; i < attributeValues.length; i++)
 					{
+						//console.log(i);
+
 						v = attributeValues[i];
+						//console.log(v.value);
+						//console.log(attribute);
 						if (v.id == attribute.id)
 						{
-							if (v.value === null && attribute.valueType == 'Property' && 'propertyName' in attribute)
+							if (/*v.value === null && */attribute.valueType == 'Property' && 'propertyName' in attribute)
 							{
 								v.value = scope.document[attribute.propertyName];
 							}
@@ -200,6 +214,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST'];
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.MainMenu'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
 })();

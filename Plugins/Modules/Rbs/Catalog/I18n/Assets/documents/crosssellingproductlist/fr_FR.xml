@@ -11,4 +11,5 @@
 	<key id="title">liste de produits associés</key>
 	<key id="label">nom de la liste</key>
 	<key id="list-already-exists">une liste de type {type} existe déjà pour le produit {product}</key>
+	<key id="crossselling-lists">listes de produits associés</key>
 </i18n>

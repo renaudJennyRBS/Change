@@ -18,9 +18,9 @@
 	 * @param SelectSession
 	 * @constructor
 	 */
-	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, Workspace, $routeParams, $http, SelectSession)
+	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, Workspace, $routeParams, $http, SelectSession, UrlManager)
 	{
-		Workspace.collapseLeftSidebar();
+		//Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
@@ -36,6 +36,17 @@
 			$scope.productList = productList;
 			$scope.List.isSynchronized = productList.hasOwnProperty('synchronizedSection');
 			$scope.List.isCrossSelling = productList.hasOwnProperty('crossSellingType');
+			if ($scope.List.isCrossSelling)
+			{
+				//Update Breadcrumb
+				Breadcrumb.setLocation([
+					[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
+					[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(productList.product, 'list')],
+					[productList.product.label, UrlManager.getUrl(productList.product, 'form') ],
+					[i18n.trans('m.rbs.catalog.admin.js.cross-selling-list | ucf'), "Rbs/Catalog/Product"]],
+					[productList.label, UrlManager.getUrl(productList, 'form')]
+				);
+			}
 			Loading.stop();
 		});
 
@@ -125,7 +136,7 @@
 	}
 
 	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
-		'RbsChange.Workspace', '$routeParams', '$http', 'RbsChange.SelectSession'];
+		'RbsChange.Workspace', '$routeParams', '$http', 'RbsChange.SelectSession', 'RbsChange.UrlManager'];
 	app.controller('Rbs_Catalog_ProductList_ProductsController', ProductsController);
 
 
