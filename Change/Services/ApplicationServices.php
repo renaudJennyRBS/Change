@@ -73,12 +73,14 @@ class ApplicationServices extends \Zend\Di\Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//I18nManager : Configuration, Workspace, EventManagerFactory, Logging
+		//I18nManager : Configuration, Workspace, EventManagerFactory, Logging, PluginManager
 		$i18nManagerClassName = $this->getInjectedClassName('I18nManager', 'Change\I18n\I18nManager');
 		$classDefinition = $this->getConfigAndWorkspaceClassDefinition($i18nManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setLogging', true)
 			->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
+		$classDefinition->addMethod('setPluginManager', true)
+			->addMethodParameter('setPluginManager', 'pluginManager', array('type' => 'PluginManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 

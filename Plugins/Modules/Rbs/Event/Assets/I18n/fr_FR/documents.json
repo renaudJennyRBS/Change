@@ -1,0 +1,65 @@
+{
+	"baseevent_summary":{
+		"message":"résumé"
+	},
+	"baseevent_text":{
+		"message":"contenu"
+	},
+	"baseevent_detailvisual":{
+		"message":"visuel de détail"
+	},
+	"baseevent_detailvisual_help":{
+		"message":"Visuel utilisé dans l'affichage de détail. Ce visuel n'est pas utilisé pour l'affichage en liste."
+	},
+	"baseevent_detailvisual_picker_title":{
+		"message":"sélectionnez le visuel de détail"
+	},
+	"baseevent_listvisual":{
+		"message":"visuel de liste"
+	},
+	"baseevent_listvisual_help":{
+		"message":"Visuel utilisé pour l'affichage en liste."
+	},
+	"baseevent_listvisual_picker_title":{
+		"message":"sélectionnez le visuel de liste"
+	},
+	"baseevent_categories":{
+		"message":"catégories"
+	},
+	"baseevent_categories_picker_title":{
+		"message":"sélectionnez les catégories"
+	},
+	"baseevent_allowcomments":{
+		"message":"autoriser les commentaires"
+	},
+	"baseevent_allowcomments_help":{
+		"message":"Autoriser ou non les utilisateurs à soumettre de nouveaux commentaires. Ce choix n'a aucun effet sur les commentaires existants."
+	},
+	"baseevent_excludefromrss":{
+		"message":"exclure des flux RSS"
+	},
+	"baseevent_excludefromrss_help":{
+		"message":"Exclure ou non des flux RSS. Choisissez oui si ce document est en accès restreint."
+	},
+	"category_description":{
+		"message":"description"
+	},
+	"event_date":{
+		"message":"date de début"
+	},
+	"event_enddate":{
+		"message":"date de fin"
+	},
+	"news":{
+		"message":"actualité"
+	},
+	"event":{
+		"message":"événement"
+	},
+	"category":{
+		"message":"categorie"
+	},
+	"news_date":{
+		"message":"date"
+	}
+}

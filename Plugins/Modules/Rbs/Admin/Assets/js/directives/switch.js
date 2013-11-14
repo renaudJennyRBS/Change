@@ -35,12 +35,12 @@
 			{
 				var sw = $(elm), valueOff, valueOn, acceptedValuesOn, confirmTitle;
 
-				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.admin.js.yes');
-				scope.labelOff = attrs.labelOff || i18n.trans('m.rbs.admin.admin.js.no');
+				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.adminjs.yes');
+				scope.labelOff = attrs.labelOff || i18n.trans('m.rbs.admin.adminjs.no');
 				valueOff = attrs.valueOff || false;
 				valueOn = attrs.valueOn || true;
 				acceptedValuesOn = attrs.acceptedValuesOn || [];
-				confirmTitle = attrs.confirmTitle || i18n.trans('m.rbs.admin.admin.js.confirmation | ucf');
+				confirmTitle = attrs.confirmTitle || i18n.trans('m.rbs.admin.adminjs.confirmation | ucf');
 
 				// Remove all parsers that could invalidate this widget (required=true for example).
 				ngModel.$parsers.length = 0;

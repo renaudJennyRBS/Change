@@ -75,13 +75,13 @@
 							propertyObj.name = name;
 							if (name === 'publicationStatus') {
 								propertyObj.possibleValues = [
-									{ "value" : "DRAFT", "label" : i18n.trans('m.rbs.admin.admin.js.status-draft') },
-									{ "value" : "VALIDATION", "label" : i18n.trans('m.rbs.admin.admin.js.status-validation') },
-									{ "value" : "VALIDCONTENT", "label" : i18n.trans('m.rbs.admin.admin.js.status-validcontent') },
-									{ "value" : "PUBLISHABLE", "label" : i18n.trans('m.rbs.admin.admin.js.status-publishable') },
-									{ "value" : "UNPUBLISHABLE", "label" : i18n.trans('m.rbs.admin.admin.js.status-unpublishable') },
-									{ "value" : "FROZEN", "label" : i18n.trans('m.rbs.admin.admin.js.status-frozen') },
-									{ "value" : "FILED", "label" : i18n.trans('m.rbs.admin.admin.js.status-filed') }
+									{ "value" : "DRAFT", "label" : i18n.trans('m.rbs.admin.adminjs.status-draft') },
+									{ "value" : "VALIDATION", "label" : i18n.trans('m.rbs.admin.adminjs.status-validation') },
+									{ "value" : "VALIDCONTENT", "label" : i18n.trans('m.rbs.admin.adminjs.status-validcontent') },
+									{ "value" : "PUBLISHABLE", "label" : i18n.trans('m.rbs.admin.adminjs.status-publishable') },
+									{ "value" : "UNPUBLISHABLE", "label" : i18n.trans('m.rbs.admin.adminjs.status-unpublishable') },
+									{ "value" : "FROZEN", "label" : i18n.trans('m.rbs.admin.adminjs.status-frozen') },
+									{ "value" : "FILED", "label" : i18n.trans('m.rbs.admin.adminjs.status-filed') }
 								];
 							}
 						});

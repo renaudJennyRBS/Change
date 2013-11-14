@@ -13,7 +13,7 @@
 
 			template :
 				'<button type="button" ng-click="clear()"><i class="icon-remove-circle icon-large"></i></button>' +
-				'<input class="form-control" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="' + i18n.trans('m.rbs.admin.admin.js.search | ucf | etc') + '" type="text" ng-keyup="keyup($event)" ng-keydown="keydown($event)" ng-model="internalFilter"/>',
+				'<input class="form-control" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="' + i18n.trans('m.rbs.admin.adminjs.search | ucf | etc') + '" type="text" ng-keyup="keyup($event)" ng-keydown="keydown($event)" ng-model="internalFilter"/>',
 
 			scope : {
 				'filter'   : '=',

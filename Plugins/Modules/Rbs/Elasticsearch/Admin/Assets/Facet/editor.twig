@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.documents.facet.section-indexer', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="fieldName" required="true" input-class="input-block-level"
 				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
@@ -62,8 +62,8 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

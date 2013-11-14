@@ -209,6 +209,6 @@ class Application
 	 */
 	public function inDevelopmentMode()
 	{
-		return $this->getConfiguration()->getEntry('Change/Application/development-mode', false);
+		return $this->getConfiguration()->inDevelopmentMode();
 	}
 }

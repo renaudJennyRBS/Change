@@ -3,16 +3,16 @@
 		<i ng-class="{ true: 'icon-bookmark', false: 'icon-bookmark-empty' }[values.length > 0]"></i> (= values.length =)
 	</a>
 	<ul class="dropdown-menu">
-		<li class="dropdown-header">{{ i18n('m.rbs.admin.clipboard.clipboard' , ['ucf']) }}</li>
+		<li class="dropdown-header">{{ i18n('m.rbs.admin.admin.clipboard' , ['ucf']) }}</li>
 		<li class="divider"></li>
 		<li data-ng-show="values.length > 0"><a data-ng-href="clipboard"
-		                                        title="{{ i18nAttr('m.rbs.admin.clipboard.display-clipboard-list' , ['ucf']) }}"><i
-				class="icon-eye-open"></i> {{ i18n('m.rbs.admin.clipboard.display' , ['ucf']) }}</a></li>
-		<li data-ng-show="values.length > 0"><a href="javascript:;" data-ng-click="clear()"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.clipboard.clear' , ['ucf']) }}</a></li>
-		<li data-ng-show="values.length == 0" class="disabled"><a href="javascript:;">{{ i18n('m.rbs.admin.clipboard.clipboard-empty' , ['ucf']) }}</a></li>
+		                                        title="{{ i18nAttr('m.rbs.admin.admin.display_clipboard_list' , ['ucf']) }}"><i
+				class="icon-eye-open"></i> {{ i18n('m.rbs.admin.admin.display' , ['ucf']) }}</a></li>
+		<li data-ng-show="values.length > 0"><a href="javascript:;" data-ng-click="clear()"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.admin.clear' , ['ucf']) }}</a></li>
+		<li data-ng-show="values.length == 0" class="disabled"><a href="javascript:;">{{ i18n('m.rbs.admin.admin.clipboard-empty' , ['ucf']) }}</a></li>
 		<li class="divider"></li>
 		<li><a href="modules/clipboard/help.html"
 		       help="#helpListTop"><i class="icon-question-sign"></i>
-			{{ i18n('m.rbs.admin.admin.js.help' , ['ucf']) }}</a></li>
+			{{ i18n('m.rbs.admin.adminjs.help' , ['ucf']) }}</a></li>
 	</ul>
 </li>

@@ -67,7 +67,7 @@
 	{
 		return {
 			restrict: 'EAC',
-			template: '<i class="icon-spinner icon-spin"></i> ' + i18n.trans('m.rbs.admin.admin.js.loading | ucf')
+			template: '<i class="icon-spinner icon-spin"></i> ' + i18n.trans('m.rbs.admin.adminjs.loading | ucf')
 		};
 	}]);
 

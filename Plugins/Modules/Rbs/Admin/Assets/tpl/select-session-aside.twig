@@ -1,29 +1,29 @@
 <div class="panel panel-success">
 	<div class="panel-heading">
-		<h3 class="panel-title">{{ i18n('m.rbs.admin.lists.elements-selection', ['ucf']) }}</h3>
+		<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
 	</div>
 
 	<div class="panel-body">
 		<dl>
-			<dt>{{ i18n('m.rbs.admin.lists.for-property', ['lab']) }}</dt><dd><strong ng-bind="selectSession.info.propertyLabel"></strong><span ng-if="selectSession.info.multiple"> (multiple)</span></dd>
-			<dt>{{ i18n('m.rbs.admin.lists.of', ['lab']) }}</dt><dd><strong ng-bind="selectSession.info.document.label"></strong><span> ((=selectSession.info.document.model=))</span></dd>
+			<dt>{{ i18n('m.rbs.admin.admin.for_property', ['lab']) }}</dt><dd><strong ng-bind="selectSession.info.propertyLabel"></strong><span ng-if="selectSession.info.multiple"> (multiple)</span></dd>
+			<dt>{{ i18n('m.rbs.admin.admin.of', ['lab']) }}</dt><dd><strong ng-bind="selectSession.info.document.label"></strong><span> ((=selectSession.info.document.model=))</span></dd>
 		</dl>
 		<p>
-			{{ i18n('m.rbs.admin.lists.compose-selection-message') }}
+			{{ i18n('m.rbs.admin.admin.compose_selection_message') }}
 		</p>
 		<p ng-if="selectSession.info.selection.length == 0">
-			<strong>{{ i18n('m.rbs.admin.lists.selection-is-empty-now') }}</strong>
+			<strong>{{ i18n('m.rbs.admin.admin.selection_is_empty_now') }}</strong>
 		</p>
 		<p><token-list rows="true" items="selectSession.info.selection"></token-list></p>
 
 		<div>
-			<button type="button" class="btn btn-block btn-default" ng-click="selectSession.appendSelected()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.lists.add-selected-elements', ['ucf']) }}</button>
-			<button type="button" class="btn btn-block btn-default" ng-click="selectSession.clear()" ng-disabled="selectSession.info.selection.length == 0"><i class="icon-eraser"></i> {{ i18n('m.rbs.admin.lists.clear-selection', ['ucf']) }}</button>
+			<button type="button" class="btn btn-block btn-default" ng-click="selectSession.appendSelected()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
+			<button type="button" class="btn btn-block btn-default" ng-click="selectSession.clear()" ng-disabled="selectSession.info.selection.length == 0"><i class="icon-eraser"></i> {{ i18n('m.rbs.admin.admin.clear_selection', ['ucf']) }}</button>
 		</div>
 	</div>
 
 	<div class="panel-footer">
-		<button type="button" class="btn btn-success pull-right" ng-click="selectSession.end()">{{ i18n('m.rbs.admin.lists.validate-selection', ['ucf']) }} <i class="icon-circle-arrow-right"></i></button>
-		<button type="button" class="btn btn-default" ng-click="selectSession.cancel()"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.lists.cancel-selection', ['ucf']) }}</button>
+		<button type="button" class="btn btn-success pull-right" ng-click="selectSession.end()">{{ i18n('m.rbs.admin.admin.validate_selection', ['ucf']) }} <i class="icon-circle-arrow-right"></i></button>
+		<button type="button" class="btn btn-default" ng-click="selectSession.cancel()"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}</button>
 	</div>
 </div>

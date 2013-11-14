@@ -79,7 +79,7 @@
 
 			function buildDeleteAction () {
 				return	'<a ng-hide="deleteConfirm[$index]" href="javascript:;" ng-click="askDeleteConfirmation($index, $event)" class="danger"><i class="icon-trash"></i> ' +
-							i18n.trans('m.rbs.admin.admin.js.delete') +
+							i18n.trans('m.rbs.admin.adminjs.delete') +
 						'</a>' +
 						'<div class="quick-action danger" ng-show="deleteConfirm[$index]">' +
 							'<i class="icon-trash"></i> ?' +
@@ -91,11 +91,11 @@
 			function buildEditAction () {
 				if (tAttrs.cascadeEdition) {
 					return	'<a href="javascript:;" ng-click="cascadeEdit(doc)">' +
-								i18n.trans('m.rbs.admin.admin.js.edit') +
+								i18n.trans('m.rbs.admin.adminjs.edit') +
 							'</a>';
 				} else {
 					return	'<a href ng-href="(= doc | documentURL =)">' +
-								i18n.trans('m.rbs.admin.admin.js.edit') +
+								i18n.trans('m.rbs.admin.adminjs.edit') +
 							'</a>';
 				}
 			}
@@ -107,18 +107,18 @@
 			}
 
 			function buildWorkflowAction () {
-				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i class="icon-ok"></i> ' + i18n.trans('m.rbs.admin.admin.js.workflow') + '</a>';
+				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i class="icon-ok"></i> ' + i18n.trans('m.rbs.admin.adminjs.workflow') + '</a>';
 			}
 
 			function buildForSelectSession (multiple) {
 				var html = '<a href="javascript:;" ng-click="selectSession.use(doc)">' +
-					i18n.trans('m.rbs.admin.admin.js.select') +
+					i18n.trans('m.rbs.admin.adminjs.select') +
 					'</a>';
 
 				if (multiple) {
 					html +=
 						'<a href="javascript:;" ng-click="selectSession.append(doc)">' +
-						i18n.trans('m.rbs.admin.admin.js.select-add') +
+						i18n.trans('m.rbs.admin.adminjs.select-add') +
 						'</a>';
 				}
 
@@ -244,7 +244,7 @@
 					"name"   : "publicationStatus",
 					"align"  : "center",
 					"width"  : "44px",
-					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.admin.js.status | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.status-minified | ucf') + '</abbr>',
+					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.adminjs.status | ucf') + '">' + i18n.trans('m.rbs.admin.adminjs.status-minified | ucf') + '</abbr>',
 					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><status ng-model="doc"/></a>',
 					"dummy"  : true
 				});
@@ -273,7 +273,7 @@
 			if (angular.isUndefined(tAttrs.modificationDate) || tAttrs.modificationDate === 'true') {
 				columns.push({
 					"name"   : "modificationDate",
-					"label"  : i18n.trans('m.rbs.admin.admin.js.modification-date | ucf'),
+					"label"  : i18n.trans('m.rbs.admin.adminjs.modification_date | ucf'),
 					"format" : "date"
 				});
 			}
@@ -284,7 +284,7 @@
 					"name"   : "publicationStatusSwitch",
 					"align"  : "center",
 					"width"  : "90px",
-					"label"  : i18n.trans('m.rbs.admin.admin.js.activated | ucf'),
+					"label"  : i18n.trans('m.rbs.admin.adminjs.activated | ucf'),
 					"content": '<activate-switch document="doc"/>',
 					"dummy"  : true
 				});
@@ -459,7 +459,7 @@
 				if (column.primary) {
 					var previewButton = '';
 					if (__preview[dlid]) {
-						previewButton = '<button type="button" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.admin.js.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
+						previewButton = '<button type="button" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
 
 					$td.find('.primary-cell')
@@ -898,7 +898,7 @@
 						if (cachedDoc) {
 							scope.collection.splice(index+1, 0, cachedDoc);
 						} else {
-							Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-preview | ucf'));
+							Loading.start(i18n.trans('m.rbs.admin.adminjs.loading-preview | ucf'));
 							current.__dlPreviewLoading = true;
 							if (Utils.isDocument(current)) {
 								REST.resource(current).then(function (doc) {
@@ -1355,7 +1355,7 @@
 						scope.busy = false;
 						Loading.stop();
 						if (reason) {
-							NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.loading-list-error | ucf'), reason);
+							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading-list-error | ucf'), reason);
 						} else {
 							NotificationCenter.clear();
 						}

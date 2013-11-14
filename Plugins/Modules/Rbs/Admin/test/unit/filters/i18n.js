@@ -20,7 +20,7 @@ describe('i18n', function () {
 	}]));
 
 	it('should translate a string without parameters', function () {
-		expect(filter('i18n')('m.rbs.admin.admin.js.last-modification-date')).toBe("dernière modif.");
+		expect(filter('i18n')('m.rbs.admin.adminjs.last_modification_date')).toBe("dernière modif.");
 		expect(filter('i18n')('m.rbs.website.admin.js.host-name')).toBe("nom d'hôte");
 		expect(filter('i18n')('m.rbs.admin.admin.js.unknown-key')).toBe("m.rbs.admin.admin.js.unknown-key");
 		expect(filter('i18n')('m.rbs.admin.admin.js.files-uploaded')).toBe("{files} files have been uploaded.");

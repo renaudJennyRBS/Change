@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }}"
@@ -55,10 +55,10 @@
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'editableContent'), ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<div rbs-tip="Rbs_PageEditor_Markdown">
-			{{ i18n('m.rbs.admin.tips.rbs-pageeditor-markdown') }}
+			{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
 		</div>
 
 		<structure-editor property="editableContent" name="contents" ng-model="document.editableContent"

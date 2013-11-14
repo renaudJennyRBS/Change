@@ -9,7 +9,7 @@
 				{{ i18n(propertyKey('Rbs_Catalog_ProductList', 'productSortOrder'), ['ucf', 'lab']) }}
 				(= List.sortOrders[productList.productSortOrder].label =)
 				(= List.sortDirections[productList.productSortDirection].label =)
-				(<a ng-href="(= productList | documentURL =)">{{ i18n('m.rbs.admin.admin.js.edit') }}</a>)
+				(<a ng-href="(= productList | documentURL =)">{{ i18n('m.rbs.admin.adminjs.edit') }}</a>)
 			</small>
 		</h2>
 	</div>
@@ -68,7 +68,7 @@
 						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
 							<i class="icon-step-forward icon-rotate-270"></i>
 						</button>
-						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
+						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
 							<i class="icon-play icon-rotate-270"></i>
 						</button>
 					</rbs-kb-switch>
@@ -76,7 +76,7 @@
 						<button rbs-kb-alt="" ng-disabled="doc.position ==  -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
 							<i class="icon-step-forward icon-rotate-90"></i>
 						</button>
-						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
+						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
 							<i class="icon-play icon-rotate-90"></i>
 						</button>
 					</rbs-kb-switch>
@@ -117,7 +117,7 @@
 				</div>
 
 				<div class="btn-toolbar">
-					<button type="button" class="btn btn-primary" ng-click="addProductsFromPicker()" ng-disabled="hasProductsToAdd()">{{ i18n('m.rbs.admin.add', ['ucf']) }}</button>
+					<button type="button" class="btn btn-primary" ng-click="addProductsFromPicker()" ng-disabled="hasProductsToAdd()">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
 				</div>
 			</div>
 		</div>
@@ -125,7 +125,7 @@
 
 	<div class="form-actions">
 		<button class="btn btn-headline" type="button" ng-click="goBack($event)">
-			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.forms.btnGoBack', ['ucf']) }}
+			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.admin.btnGoBack', ['ucf']) | raw }}
 		</button>
 	</div>
 </form>

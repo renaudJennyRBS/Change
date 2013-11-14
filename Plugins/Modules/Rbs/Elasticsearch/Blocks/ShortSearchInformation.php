@@ -19,6 +19,6 @@ class ShortSearchInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.shortsearch-resultsectionid', $ucf))
 			->setAllowedModelsNames(array('Rbs_Website_Topic', 'Rbs_Website_Website'));
 
-		$this->addTTL(3600, $i18nManager->trans('"m.rbs.admin.blocks.ttl', $ucf));
+		$this->addTTL(3600, $i18nManager->trans('"m.rbs.admin.admin.ttl', $ucf));
 	}
 }

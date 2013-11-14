@@ -87,8 +87,8 @@
 	</fieldset>
 
 	<div class="form-actions">
-		<button disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="revert($event)" ng-disabled="isUnchanged()"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.forms.btnRevert', ['ucf']) }}</button>
+		<button disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="revert($event)" ng-disabled="isUnchanged()"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
 		<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isUnchanged(), 'btn-danger':saveProgress.error}" type="submit"
-		        ng-disabled="form.$invalid || isUnchanged()"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.forms.btnSave', ['ucf']) }}</button>
+		        ng-disabled="form.$invalid || isUnchanged()"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}</button>
 	</div>
 </form>

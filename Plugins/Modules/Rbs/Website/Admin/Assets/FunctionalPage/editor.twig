@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-picker property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'website'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
@@ -54,14 +54,14 @@
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
 		</structure-editor>
 	</fieldset>
 
 	<fieldset ng-show="section=='functions'" hide-when-create="true"
 	          data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.functions', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<div class="control-group property">
 			<span class="help-block">
 				{{ i18n('m.rbs.website.documents.functionalpage.all-functions-list') }}

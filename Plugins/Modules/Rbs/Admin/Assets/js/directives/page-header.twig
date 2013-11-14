@@ -2,11 +2,11 @@
 
 	<form ng-show="! document" class="form-inline pull-right" ng-submit="textSearch = search || '...'" style="width: 200px;text-align: right;">
 		<div class="form-group">
-			<label class="sr-only" for="rbsPageHeaderSearchField">{{ i18n('m.rbs.admin.search', ['ucf', 'etc']) }}</label>
+			<label class="sr-only" for="rbsPageHeaderSearchField">{{ i18n('m.rbs.admin.admin.search', ['ucf', 'etc']) }}</label>
 			<div class="input-group input-group-sm">
-				<input type="text" class="form-control" id="rbsPageHeaderSearchField" placeholder="{{ i18nAttr('m.rbs.admin.search', ['ucf', 'etc']) }}" ng-model="search"/>
+				<input type="text" class="form-control" id="rbsPageHeaderSearchField" placeholder="{{ i18nAttr('m.rbs.admin.admin.search', ['ucf', 'etc']) }}" ng-model="search"/>
 				<span class="input-group-btn">
-					<button type="submit" class="btn btn-default" title="{{ i18nAttr('m.rbs.admin.search', ['ucf']) }}">
+					<button type="submit" class="btn btn-default" title="{{ i18nAttr('m.rbs.admin.admin.search', ['ucf']) }}">
 						<i class="icon-search"></i>
 					</button>
 				</span>
@@ -19,7 +19,7 @@
 			<a href="javascript:;" ng-href="(= document | rbsURL:'workflow' =)" class="btn" ng-if="document && ! document.isNew() && (document.publicationStatus || document.hasCorrection())" ng-class="{true: 'btn-success', false: 'btn-default'}[document.publicationStatus=='PUBLISHABLE']">
 				<status class="small" ng-model="document"></status>
 				<span ng-if="document.hasCorrection()">
-					{{ i18n('m.rbs.admin.correction', ['ucf']) }}
+					{{ i18n('m.rbs.admin.admin.correction', ['ucf']) }}
 					<span class="badge">(= document.META$.correction.propertiesNames.length =)</span>
 				</span>
 				<span ng-if="! document.hasCorrection()">
@@ -36,8 +36,8 @@
 
 	<div ng-show="document.META$.localCopy && localCopyMerged" class="alert alert-warning">
 		<button type="button" class="close" ng-click="localCopyMerged=false">&times;</button>
-		<h4>{{ i18n('m.rbs.admin.localcopy.document-modify-without-save-title') }}</h4>
-		{{ i18n('m.rbs.admin.localcopy.document-modify-without-save-content') }}
+		<h4>{{ i18n('m.rbs.admin.admin.document_modify_without_save_title') }}</h4>
+		{{ i18n('m.rbs.admin.admin.document_modify_without_save_content') }}
 	</div>
 
 	<div class="embedded-content"></div>

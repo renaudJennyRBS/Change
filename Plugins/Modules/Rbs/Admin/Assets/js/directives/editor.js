@@ -202,7 +202,7 @@
 							function (err) {
 								saveOperation("error");
 								console.warn("Editor: pre-save Promises error: ", err);
-								NotificationCenter.error(i18n.trans('m.rbs.admin.admin.js.save-error'), err);
+								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.save_error'), err);
 							}
 						);
 					} else {
@@ -334,7 +334,7 @@
 				{
 					saveOperation("error");
 					NotificationCenter.error(
-						i18n.trans('m.rbs.admin.admin.js.save-error'),
+						i18n.trans('m.rbs.admin.adminjs.save_error'),
 						reason,
 						{
 							$propertyInfoProvider : $scope._chgFieldsInfo
@@ -377,7 +377,7 @@
 
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
-						Breadcrumb.setResource(i18n.trans('m.rbs.admin.admin.js.new-element | ucf'));
+						Breadcrumb.setResource(i18n.trans('m.rbs.admin.adminjs.new_element | ucf'));
 					}
 					else {
 						Breadcrumb.setResource($scope.document);
@@ -877,10 +877,10 @@
 						$table.append(
 							'<tr>' +
 								'<th width="50%" class="form-inline">' +
-								i18n.trans('m.rbs.admin.admin.js.translate-in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="form-control" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
+								i18n.trans('m.rbs.admin.adminjs.translate_in | ucf | lbl') + ' <select style="margin-bottom: 0;" class="form-control" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
 								'</th>' +
 								'<th style="border-left: 5px solid #0088CC; background: rgba(0,136,255,0.05);">' +
-									i18n.trans('m.rbs.admin.admin.js.reference-language | ucf | lbl') + ' (= availableLanguages[refDocument.LCID].label =)' +
+									i18n.trans('m.rbs.admin.adminjs.reference_language | ucf | lbl') + ' (= availableLanguages[refDocument.LCID].label =)' +
 								'</th>' +
 							'</tr>'
 						);

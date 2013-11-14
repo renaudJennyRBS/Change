@@ -302,8 +302,8 @@
 				this.register({
 					name        : 'addToClipboard',
 					models      : '*',
-					description : i18n.trans('m.rbs.admin.admin.js.action-add-to-clipboard-help | ucf'),
-					label       : i18n.trans('m.rbs.admin.admin.js.action-add-to-clipboard | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_add_to_clipboard-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_add_to_clipboard | ucf'),
 					icon        : "icon-bookmark",
 					selection   : "+",
 
@@ -321,8 +321,8 @@
 				this.register({
 					name        : 'delete',
 					models      : '*',
-					description : i18n.trans('m.rbs.admin.admin.js.action-delete-help | ucf'),
-					label       : i18n.trans('m.rbs.admin.admin.js.action-delete | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_delete-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_delete | ucf'),
 					icon        : "icon-trash",
 					selection   : "+",
 					cssClass    : "btn-danger-hover",
@@ -406,8 +406,8 @@
 				this.register({
 					name        : 'freeze',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-freeze | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-freeze-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_freeze | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_freeze-help | ucf'),
 					icon        : "icon-pause",
 					selection   : "+",
 					loading     : true,
@@ -444,8 +444,8 @@
 				this.register({
 					name        : 'unfreeze',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-unfreeze | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-unfreeze-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_unfreeze | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_unfreeze-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -482,8 +482,8 @@
 				this.register({
 					name        : 'requestValidation',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-validate | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-validate-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_validate | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_validate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -520,8 +520,8 @@
 				this.register({
 					name        : 'publicationValidation',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-publish | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-publish-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_publish | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_publish-help | ucf'),
 					icon        : "icon-rss",
 					selection   : "+",
 					loading     : true,
@@ -558,8 +558,8 @@
 				this.register({
 					name        : 'contentValidation',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-contentvalidation | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-contentvalidation-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_contentvalidation | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_contentvalidation-help | ucf'),
 					icon        : "icon-rss",
 					selection   : "+",
 					loading     : true,
@@ -622,8 +622,8 @@
 				this.register({
 					name        : 'applyCorrection',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-apply-correction | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-apply-correction-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_apply_correction | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_apply_correction-help | ucf'),
 					icon        : "icon-download-alt",
 					selection   : "+",
 
@@ -687,8 +687,8 @@
 				this.register({
 					name        : 'reorder',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-reorder | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-reorder-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_reorder | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_reorder-help | ucf'),
 					icon        : "icon-reorder",
 
 					execute : ['$scope', '$embedDialog', '$target', function ($scope, $embedDialog, $target) {
@@ -721,8 +721,8 @@
 				this.register({
 					name        : 'activate',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-activate | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-activate-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_activate | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_activate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,
@@ -759,8 +759,8 @@
 				this.register({
 					name        : 'deactivate',
 					models      : '*',
-					label       : i18n.trans('m.rbs.admin.admin.js.action-deactivate | ucf'),
-					description : i18n.trans('m.rbs.admin.admin.js.action-deactivate-help | ucf'),
+					label       : i18n.trans('m.rbs.admin.adminjs.action_deactivate | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.action_deactivate-help | ucf'),
 					icon        : "icon-play",
 					selection   : "+",
 					loading     : true,

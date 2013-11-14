@@ -163,4 +163,14 @@ class Configuration
 		}
 		return $config;
 	}
+
+	/**
+	 * @api
+	 * @see project config
+	 * @return boolean
+	 */
+	public function inDevelopmentMode()
+	{
+		return $this->getEntry('Change/Application/development-mode', false);
+	}
 }

@@ -248,7 +248,7 @@
 
 
 				scope.correctionData.deleteCorrection = function () {
-					if (!window.confirm(i18n.trans('m.rbs.admin.admin.js.correction-confirm-delete'))) {
+					if (!window.confirm(i18n.trans('m.rbs.admin.adminjs.correction_confirm_delete'))) {
 						return;
 					}
 

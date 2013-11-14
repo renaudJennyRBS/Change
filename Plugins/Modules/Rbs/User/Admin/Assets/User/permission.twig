@@ -44,7 +44,7 @@
 				<label class="control-label" for="role">{{ i18n('m.rbs.user.admin.permission-roles', ['ucf']) }}</label>
 				<div class="controls">
 					<div class="btn-group">
-						<button class="btn btn-default" data-ng-class="{true:'', false:'active'}[showRoles]" data-ng-click="newPermissionRules.roles = ['*']; showRoles = false">{{ i18n('m.rbs.generic.any-role', ['ucf']) }}</button>
+						<button class="btn btn-default" data-ng-class="{true:'', false:'active'}[showRoles]" data-ng-click="newPermissionRules.roles = ['*']; showRoles = false">{{ i18n('m.rbs.generic.admin.any_role', ['ucf']) }}</button>
 						<button class="btn btn-default" data-ng-class="{true:'active', false:''}[showRoles]" data-ng-click="showRoles = true">{{ i18n('m.rbs.user.admin.customise', ['ucf']) }}</button>
 					</div>
 					<select id="role" data-ng-if="showRoles" multiple="multiple" data-ng-model="newPermissionRules.roles" data-ng-options="key as value.label for (key, value) in permissionRoles"></select>
@@ -54,7 +54,7 @@
 				<label class="control-label" for="privilege">{{ i18n('m.rbs.user.admin.permission-privileges', ['ucf']) }}</label>
 				<div class="controls">
 					<div class="btn-group">
-						<button class="btn btn-default" data-ng-class="{true:'', false:'active'}[showPrivileges]" data-ng-click="newPermissionRules.privileges = ['*']; showPrivileges = false">{{ i18n('m.rbs.generic.any-privilege', ['ucf']) }}</button>
+						<button class="btn btn-default" data-ng-class="{true:'', false:'active'}[showPrivileges]" data-ng-click="newPermissionRules.privileges = ['*']; showPrivileges = false">{{ i18n('m.rbs.generic.admin.any_privilege', ['ucf']) }}</button>
 						<button class="btn btn-default" data-ng-class="{true:'active', false:''}[showPrivileges]" data-ng-click="showPrivileges = true">{{ i18n('m.rbs.user.admin.customise', ['ucf']) }}</button>
 					</div>
 					<select data-ng-if="showPrivileges" multiple="multiple" data-ng-model="newPermissionRules.privileges" data-ng-options="key as value.label for (key, value) in permissionPrivileges"></select>

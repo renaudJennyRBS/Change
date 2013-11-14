@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="modelName" disabled label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'modelName'), ['ucf']) }}"></rbs-field-text>
 		<hr />
@@ -22,7 +22,7 @@
 
 	<fieldset data-ng-show="section=='meta'"
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.meta', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'defaultMetaTitle'), ['ucf']) }}">
 			<div class="input-group">
@@ -69,8 +69,8 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

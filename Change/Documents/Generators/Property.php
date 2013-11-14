@@ -6,14 +6,16 @@ namespace Change\Documents\Generators;
  */
 class Property
 {
-	protected static $TYPES = array('String', 'Boolean', 'Integer', 'Float', 'Decimal',
+	protected static $TYPES = ['String', 'Boolean', 'Integer', 'Float', 'Decimal',
 		'Date', 'DateTime', 'LongString', 'StorageUri', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
-		'DocumentId', 'Document', 'DocumentArray');
+		'DocumentId', 'Document', 'DocumentArray'];
 
-	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
+	protected static $RESERVED_PROPERTY_NAMES = ['id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
 		'creationdate', 'modificationdate', 'authorname', 'authorid', 'documentversion',
 		'publicationstatus', 'startpublication', 'endpublication', 'versionofid',
-		'active', 'startactivation', 'endactivation');
+		'active', 'startactivation', 'endactivation'];
+
+	protected static $COMMON_PROPERTY_NAMES = ['label', 'title', 'publicationsections', 'code'];
 
 	/**
 	 * @var \Change\Documents\Generators\Property
@@ -94,6 +96,11 @@ class Property
 	 * @var array
 	 */
 	protected $dbOptions;
+
+	/**
+	 * @var string
+	 */
+	protected $labelKey;
 
 	/**
 	 * @return string[]
@@ -663,6 +670,11 @@ class Property
 				$this->type = 'String';
 				$this->setDefaultConstraints();
 			}
+			$lcName = strtolower($this->name);
+			if ($this->labelKey === null && in_array($lcName, array_merge(static::$RESERVED_PROPERTY_NAMES, static::$COMMON_PROPERTY_NAMES)))
+			{
+				$this->setLabelKey('c.documents.' . $lcName);
+			}
 		}
 		else
 		{
@@ -810,6 +822,26 @@ class Property
 	public function setStateless($stateless)
 	{
 		$this->stateless = ($stateless === true) ? true : null;
+	}
+
+	/**
+	 * @param string $labelKey
+	 */
+	public function setLabelKey($labelKey)
+	{
+		$this->labelKey = $labelKey;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabelKey()
+	{
+		if ($this->labelKey)
+		{
+			return $this->labelKey;
+		}
+		return \Change\Stdlib\String::toLower(implode('.', ['m', $this->getModel()->getVendor(), $this->getModel()->getShortModuleName(), 'documents', $this->getModel()->getShortName() . '_' . $this->getName()]));
 	}
 
 	/**

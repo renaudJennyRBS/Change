@@ -26,8 +26,8 @@
 
 			link : function (scope, elm, attrs) {
 				var sw = $(elm);
-				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.admin.js.yes');
-				scope.labelOff = attrs.labelOff || i18n.trans('m.rbs.admin.admin.js.no');
+				scope.labelOn = attrs.labelOn || i18n.trans('m.rbs.admin.adminjs.yes');
+				scope.labelOff = attrs.labelOff || i18n.trans('m.rbs.admin.adminjs.no');
 
 				scope.$watch('document', function (doc) {
 					if (doc) {

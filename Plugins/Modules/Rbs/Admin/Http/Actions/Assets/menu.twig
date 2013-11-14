@@ -6,17 +6,17 @@
 	</div>
 
 	<ul class="nav">
-		<li><a ng-click="close()" href="./"><i class="icon-tasks"></i> {{ i18nAttr('m.rbs.admin.menu.dashboard', ['ucf']) }}</a></li>
+		<li><a ng-click="close()" href="./"><i class="icon-tasks"></i> {{ i18nAttr('m.rbs.admin.admin.dashboard', ['ucf']) }}</a></li>
 		<li class="divider"></li>
 	</ul>
 
 	<div class="nav">
-		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18nAttr('m.rbs.admin.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.close', ['ucf']) }}</a>
+		<a class="close-menu" href="javascript:;" ng-click="close()" title="{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}"><i class="icon-remove"></i> {{ i18n('m.rbs.admin.admin.close', ['ucf']) }}</a>
 		<form class="rbs-form-simple-filter" on-escape="close()" filter="filterModules" on-enter="go()"></form>
 	</div>
 
 	<div class="nav text-muted fade-animation" ng-if="filterResults.length == 1">
-		<small>{{ i18n('m.rbs.admin.menu.type-enter-to-go-to', [], {'param' : '(= filterResults[0].label =)'}) }}</small>
+		<small>{{ i18n('m.rbs.admin.admin.type_enter_to_go_to', [], {'param' : '(= filterResults[0].label =)'}) | raw }}</small>
 	</div>
 
 	<div ng-switch="chuckUrl">
@@ -30,7 +30,7 @@
 				</ul>
 			</div>
 
-			<h3>{{ i18n('m.rbs.admin.menu.other-modules', ['ucf']) }}</h3>
+			<h3>{{ i18n('m.rbs.admin.admin.other_modules', ['ucf']) }}</h3>
 			<ul class="nav" ng-if="hasOtherModules">
 				<li class="repeat-animation" ng-repeat="m in menu.entries | filter:{'section':'other'} | filter:filterModules |  orderBy:'label'">
 					<a href ng-click="close()" ng-href="(= m.url =)" ng-bind-html="m.label"></a>
@@ -40,18 +40,18 @@
 
 		<div class="nav" ng-switch-default="" style="text-align: center">
 			<a target="_blank" href="http://chucknorrisfacts.fr/"><img class="img-thumbnail" ng-src="(=chuckUrl=)"/></a>
-			<br/><small class="muted">{{ i18n('m.rbs.admin.menu.chuck') }}</small>
+			<br/><small class="muted">{{ i18n('m.rbs.admin.admin.chuck') | raw }}</small>
 		</div>
 	</div>
 
 	<div class="nav menu-help">
-		<div>{{ i18n('m.rbs.admin.menu.help-bottom', ['ucf']) }}</div>
+		<div>{{ i18n('m.rbs.admin.admin.help_bottom', ['ucf']) }}</div>
 		<div class="links">
-			<a onclick="window.open(this.href); return false;" href="http://www.rbschange.fr">{{ i18n('m.rbs.admin.menu.website') }}</a>
+			<a onclick="window.open(this.href); return false;" href="http://www.rbschange.fr">{{ i18n('m.rbs.admin.admin.website') }}</a>
 			|
-			<a onclick="window.open(this.href); return false;" href="http://www.twitter.com/RBSChange">{{ i18n('m.rbs.admin.menu.twitter') }}</a>
+			<a onclick="window.open(this.href); return false;" href="http://www.twitter.com/RBSChange">{{ i18n('m.rbs.admin.admin.twitter') }}</a>
 			|
-			<a onclick="window.open(this.href); return false;" href="https://github.com/RBSChange">{{ i18n('m.rbs.admin.menu.github') }}</a>
+			<a onclick="window.open(this.href); return false;" href="https://github.com/RBSChange">{{ i18n('m.rbs.admin.admin.github') }}</a>
 		</div>
 		<div class="about" rbs-change-version=""></div>
 	</div>

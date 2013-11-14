@@ -1,0 +1,20 @@
+{
+	"login":{
+		"message":"login or email address"
+	},
+	"password":{
+		"message":"password"
+	},
+	"authorize_application":{
+		"message":"authorize application to access your account"
+	},
+	"authorize":{
+		"message":"authorize"
+	},
+	"invalid_credentials":{
+		"message":"invalid login\/password"
+	},
+	"application_name":{
+		"message":"application"
+	}
+}

@@ -50,12 +50,12 @@
 				scope.confirmReset = function ($event) {
 					Dialog.confirmEmbed(
 						element.find('.confirmation-area'),
-						i18n.trans('m.rbs.admin.admin.js.confirm-restore | ucf'),
-						i18n.trans('m.rbs.admin.admin.js.confirm-restore-message | ucf'),
+						i18n.trans('m.rbs.admin.adminjs.confirm-restore | ucf'),
+						i18n.trans('m.rbs.admin.adminjs.confirm-restore-message | ucf'),
 						scope,
 						{
 							'pointedElement': $($event.target),
-							'primaryButtonText': i18n.trans('m.rbs.admin.admin.js.restore-data-button | ucf')
+							'primaryButtonText': i18n.trans('m.rbs.admin.adminjs.restore_data_button | ucf')
 						}
 					).then(function () {
 							scope.reset();
@@ -67,8 +67,8 @@
 					if (Utils.hasCorrection(doc)) {
 						return Dialog.confirmEmbed(
 							element.find('.confirmation-area'),
-							i18n.trans('m.rbs.admin.admin.js.confirm-update-correction | ucf'),
-							i18n.trans('m.rbs.admin.admin.js.confirm-update-correction-message | ucf'),
+							i18n.trans('m.rbs.admin.adminjs.confirm-update-correction | ucf'),
+							i18n.trans('m.rbs.admin.adminjs.confirm-update-correction-message | ucf'),
 							scope,
 							{
 								'pointedElement' : $(element).find('[data-role=save]').first()

@@ -21,7 +21,7 @@
 	 * @name Rbs_Admin_ClipboardController
 	 */
 	function ChangeAdminClipboardController ($scope, Breadcrumb, Clipboard, MainMenu, i18n) {
-		Breadcrumb.resetLocation([[i18n.trans('m.rbs.admin.admin.js.clipboard', ['ucf']), "clipboard"]]);
+		Breadcrumb.resetLocation([[i18n.trans('m.rbs.admin.adminjs.clipboard', ['ucf']), "clipboard"]]);
 
 		$scope.clipboardItems = Clipboard.values;
 

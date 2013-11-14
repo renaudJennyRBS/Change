@@ -100,7 +100,7 @@
 						Dialog.embed(
 							$(elm).find('.timeZoneSelectorContainer'),
 							{
-								"title"    : i18n.trans('m.rbs.admin.admin.js.time-zone-selector-title | ucf'),
+								"title"    : i18n.trans('m.rbs.admin.adminjs.time_zone_selector_title | ucf'),
 								"contents" : '<time-zone-selector time-zone="timeZone"></time-zone-selector>'
 							},
 							scope,

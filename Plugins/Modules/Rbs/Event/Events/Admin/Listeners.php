@@ -38,9 +38,9 @@ class Listeners implements ListenerAggregateInterface
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$menu = array(
 				'entries' => array(
-					array('label' => $i18nManager->trans('m.rbs.event.admin.js.module-name', array('ucf')),
+					array('label' => $i18nManager->trans('m.rbs.event.admin.module_name', array('ucf')),
 						'url' => 'Rbs/Event', 'section' => 'cms',
-						'keywords' => $i18nManager->trans('m.rbs.event.admin.js.module-keywords'))
+						'keywords' => $i18nManager->trans('m.rbs.event.admin.module_keywords'))
 				)
 			);
 			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));

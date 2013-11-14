@@ -11,10 +11,10 @@ class EventInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.event.blocks.event-label', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.event.admin.event_label', $ucf));
 		$this->getParameterInformation('docId')->setAllowedModelsNames('Rbs_Event_Event')
-			->setLabel($i18nManager->trans('m.rbs.event.blocks.event-doc', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.event.admin.event_doc', $ucf));
 		$this->getParameterInformation('templateName')->setDefaultValue('event.twig');
-		$this->setFunctions(array('Rbs_Event_Event' => $i18nManager->trans('m.rbs.event.blocks.event-function', $ucf)));
+		$this->setFunctions(array('Rbs_Event_Event' => $i18nManager->trans('m.rbs.event.admin.event_function', $ucf)));
 	}
 }

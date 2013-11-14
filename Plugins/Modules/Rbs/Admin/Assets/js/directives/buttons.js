@@ -40,7 +40,7 @@
 				if (element.is('[text]')) {
 					scope.text = attrs.text;
 				} else {
-					scope.text = i18n.trans('m.rbs.admin.admin.js.help | ucf');
+					scope.text = i18n.trans('m.rbs.admin.adminjs.help | ucf');
 				}
 			}
 		};

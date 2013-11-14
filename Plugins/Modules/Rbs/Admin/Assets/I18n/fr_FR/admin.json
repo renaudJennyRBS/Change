@@ -1,0 +1,854 @@
+{
+	"properties":{
+		"message":"propriétés",
+		"__force":true
+	},
+	"ttl":{
+		"message":"Durée du cache en secondes"
+	},
+	"clipboard_change":{
+		"message":"presse-papier Change"
+	},
+	"clipboard":{
+		"message":"presse-papier"
+	},
+	"remove_from_clipboard":{
+		"message":"retirer du Presse-papier"
+	},
+	"clean_clipboard":{
+		"message":"éffacer le Presse-papier"
+	},
+	"help":{
+		"message":"aide sur le Presse-papier de Change"
+	},
+	"clear":{
+		"message":"effacer"
+	},
+	"add":{
+		"message":"ajouter",
+		"__force":true
+	},
+	"replace_by":{
+		"message":"remplacer par"
+	},
+	"display_clipboard_list":{
+		"message":"Afficher les éléments du Presse-papier pour leur appliquer des actions"
+	},
+	"display":{
+		"message":"afficher",
+		"__force":true
+	},
+	"clipboard_empty":{
+		"message":"Le Presse-papier est vide"
+	},
+	"selected_element":{
+		"message":"l\\'élément sélectionné"
+	},
+	"selected_elements":{
+		"message":"les $$ éléments sélectionnés"
+	},
+	"select_elements_to_add":{
+		"message":"Vous devez sélectionner des éléments dans la liste avant de pouvoir les ajouter."
+	},
+	"add_selected_elements_to_clipboard":{
+		"message":"Ajouter les éléments sélectionnés au presse-papier"
+	},
+	"replace_by_selected_elements":{
+		"message":"Remplacer le presse-papier par les éléments sélectionnés dans la liste ci-dessous"
+	},
+	"being_validated":{
+		"message":"Cette Correction est <strong>en cours de validation<\/strong> : elle ne peut être ni modifiée, ni supprimée."
+	},
+	"modified_properties_list":{
+		"message":"Liste des propriétés modifiées dans la correction"
+	},
+	"original_value":{
+		"message":"valeur originale"
+	},
+	"in_use":{
+		"message":"en cours d'utilisation"
+	},
+	"diff":{
+		"message":"diff."
+	},
+	"property":{
+		"message":"propriété"
+	},
+	"fixed_value":{
+		"message":"valeur corrigée"
+	},
+	"displayed_in_editor":{
+		"message":"affichée dans l'éditeur"
+	},
+	"publish_correction_after_validation":{
+		"message":"appliquer la correction immédiatement après sa validation."
+	},
+	"choose_plublication_date":{
+		"message":"choisir une date d'application de la correction :"
+	},
+	"content_has_been_validated":{
+		"message":"Le contenu de cette Correction a été <strong>validé<\/strong>."
+	},
+	"correction_will_be_published_on":{
+		"message":"la Correction sera appliquée le"
+	},
+	"correction_is_about_to_be_published":{
+		"message":"Cette Correction va être appliquée : elle ne peut être modifiée, ni supprimée."
+	},
+	"correction_has_been_published":{
+		"message":"Cette Correction a été appliquée sur le document."
+	},
+	"need_help":{
+		"message":"Besoin d'aide à propos des corrections ?"
+	},
+	"correction_created_on":{
+		"message":"créée le"
+	},
+	"please_provide_reason":{
+		"message":"raison du refus"
+	},
+	"reject_correction":{
+		"message":"refuser la correction"
+	},
+	"cancel_reject":{
+		"message":"ne pas refuser maintenant"
+	},
+	"button_validate":{
+		"message":"Valider<small>la correction<\/small>"
+	},
+	"button_delete":{
+		"message":"Supprimer<small>la correction<\/small>"
+	},
+	"button_publish":{
+		"message":"Appliquer<small>la correction<\/small>"
+	},
+	"button_reject":{
+		"message":"Refuser<small>la correction<\/small>"
+	},
+	"title":{
+		"message":"rechercher des éléments"
+	},
+	"requiredConditions":{
+		"message":"conditions requises :"
+	},
+	"all":{
+		"message":"tout",
+		"__force":true
+	},
+	"allTooltip":{
+		"message":"Effectue un ET binaire"
+	},
+	"atLeastOne":{
+		"message":"au moins une"
+	},
+	"atLeastOneTooltip":{
+		"message":"Effectue un OU binaire"
+	},
+	"deleteThisFilter":{
+		"message":"supprimer ce filtre"
+	},
+	"cancelAllFilters":{
+		"message":"annuler tous les filtres"
+	},
+	"contains":{
+		"message":"contient"
+	},
+	"startsWith":{
+		"message":"commence par"
+	},
+	"equals":{
+		"message":"égale"
+	},
+	"endsWith":{
+		"message":"se termine par"
+	},
+	"is":{
+		"message":"est"
+	},
+	"isNot":{
+		"message":"n'est pas"
+	},
+	"isGreaterThanOrEquals":{
+		"message":"est supérieur(e) ou égal(e) à"
+	},
+	"isLessThanOrEquals":{
+		"message":"est inférieur(e) ou égal(e) à"
+	},
+	"isDifferentOf":{
+		"message":"est différent de"
+	},
+	"isBefore":{
+		"message":"est antérieure à"
+	},
+	"isOn":{
+		"message":"est le"
+	},
+	"isAfter":{
+		"message":"est postérieure à"
+	},
+	"saveSearch":{
+		"message":"ajouter aux recherches favorites"
+	},
+	"filter":{
+		"message":"filtrer"
+	},
+	"addFilter":{
+		"message":"ajouter un filtre"
+	},
+	"choose_existent":{
+		"message":"choisir parmi des documents existants"
+	},
+	"afterSave":{
+		"message":"après l'enregistrement :"
+	},
+	"afterSaveStay":{
+		"message":"rester sur ce formulaire"
+	},
+	"afterSaveGoList":{
+		"message":"retourner à la liste"
+	},
+	"btnGoBack":{
+		"message":"retourner<small>à la liste<\/small>"
+	},
+	"btnSave":{
+		"message":"enregistrer<small>les modifications <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+	},
+	"btnRevert":{
+		"message":"annuler<small>les modifications <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+	},
+	"titleRevert":{
+		"message":"Rétablir les dernières données enregistrées"
+	},
+	"btnCancelCascade":{
+		"message":"annuler<small>et retourner au formulaire parent<\/small>"
+	},
+	"propertiesModifiedPluralize":{
+		"message":"$'0': 'AUCUNE PROPRIéTé N\\'A éTé MODIFIéE.', 'ONE': 'UNE PROPRIéTé A éTé MODIFIéE.', 'OTHER': '$$ propriétés ont été modifiées.'}"
+	},
+	"date_selector_at":{
+		"message":"à"
+	},
+	"date_selector_format":{
+		"message":"dd\/mm\/yyyy"
+	},
+	"date_selector_hour_letter":{
+		"message":"H"
+	},
+	"date_selector_lang":{
+		"message":"fr"
+	},
+	"time_zone_selector_text":{
+		"message":"Vous pouvez choisir d'utiliser ce fuseau horaire pour le formulaire en cours uniquement ou pour toujours (enregistré dans <a href=\"Rbs\/User\/Profile\">vos paramètres de profil<\/a>)."
+	},
+	"always_use_this_timezone":{
+		"message":"toujours utiliser ce fuseau horaire"
+	},
+	"current_time_in_selected_timezone":{
+		"message":"heure actuelle dans la zone sélectionnée :"
+	},
+	"use":{
+		"message":"utiliser"
+	},
+	"always_use":{
+		"message":"utiliser toujours"
+	},
+	"picker_no_element":{
+		"message":"aucun élément"
+	},
+	"picker_edit_tooltip":{
+		"message":"éditer les propriétés du document sélectionné"
+	},
+	"picker_create":{
+		"message":"créer"
+	},
+	"picker_create_tooltip":{
+		"message":"créer un nouveau document"
+	},
+	"picker_selector":{
+		"message":"sélecteur"
+	},
+	"picker_selector_tooltip":{
+		"message":"ouvrir un sélecteur ci-dessous"
+	},
+	"picker_in_place":{
+		"message":"module"
+	},
+	"picker_in_place_tooltip":{
+		"message":"aller dans le module pour sélectionner"
+	},
+	"picker_clear":{
+		"message":"effacer"
+	},
+	"picker_clipboard":{
+		"message":"presse-papier"
+	},
+	"picker_clipboard_tooltip":{
+		"message":"prendre dans le Presse-papier"
+	},
+	"picker_choose_model_to_select":{
+		"message":"type de documents"
+	},
+	"picker_add_to_end":{
+		"message":"ajouter à la fin"
+	},
+	"picker_add_to_begin":{
+		"message":"ajouter au début"
+	},
+	"picker_help_filter":{
+		"message":"Pour bénéficier de filtres de recherches plus avancés, vous pouvez vous rendre directement dans $HTMLOPEN$le module concerné$HTMLCLOSE$."
+	},
+	"click_to_select_another_image":{
+		"message":"cliquer pour sélectionner une autre image depuis votre ordinateur"
+	},
+	"activation":{
+		"message":"activation"
+	},
+	"validation":{
+		"message":"validation"
+	},
+	"translation":{
+		"message":"traduction"
+	},
+	"translations":{
+		"message":"traductions"
+	},
+	"reference_language":{
+		"message":"langue de référence"
+	},
+	"general_properties":{
+		"message":"propriétés générales"
+	},
+	"advanced_properties":{
+		"message":"propriétés avancées"
+	},
+	"publication_properties":{
+		"message":"publication"
+	},
+	"information":{
+		"message":"informations"
+	},
+	"languages":{
+		"message":"langues"
+	},
+	"contents":{
+		"message":"contenus"
+	},
+	"status":{
+		"message":"état"
+	},
+	"administration":{
+		"message":"administration"
+	},
+	"create":{
+		"message":"créer"
+	},
+	"move_up":{
+		"message":"monter"
+	},
+	"move_down":{
+		"message":"descendre"
+	},
+	"submit":{
+		"message":"valider"
+	},
+	"cancel":{
+		"message":"annuler"
+	},
+	"yes":{
+		"message":"oui"
+	},
+	"no":{
+		"message":"non"
+	},
+	"translate":{
+		"message":"traduire"
+	},
+	"search":{
+		"message":"rechercher",
+		"__force":true
+	},
+	"this_document_exists_in_multiple_languages":{
+		"message":"ce document existe en plusieurs langues"
+	},
+	"fullscreen_toolbar":{
+		"message":"Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran."
+	},
+	"copyright":{
+		"message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.rbschange.com\">RBS Change<\/a> est un CMS e-commerce open-source edité par la société <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/www.rbs.fr\">Ready Business System<\/a>."
+	},
+	"please_wait":{
+		"message":"Merci de bien vouloir patienter<br \/>quelques secondes :)"
+	},
+	"close":{
+		"message":"fermer"
+	},
+	"select_and_close":{
+		"message":"sélectionner et fermer"
+	},
+	"replace":{
+		"message":"remplacer"
+	},
+	"options":{
+		"message":"options",
+		"__force":true
+	},
+	"correction":{
+		"message":"correction"
+	},
+	"this_document_has_a_correction_on":{
+		"message":"ce Document dispose d'une Correction portant sur"
+	},
+	"correction_editor_explanation":{
+		"message":"Les valeurs des propriétés affichées dans cet éditeur tiennent compte de la Correction (les propriétés corrigées sont affichées en couleur).<br\/>Pour voir le détail des propriétés qui ont été corrigées, ainsi que les valeurs d'origine, utilisez le bouton\t<strong>Correction<\/strong> ci-dessus."
+	},
+	"admin_section_name":{
+		"message":"administration"
+	},
+	"temporary_id":{
+		"message":"identifiant temporaire"
+	},
+	"reorderDescription":{
+		"message":"Réorganisez les éléments en faisant glisser les symboles <i class=\"icon-reorder\"><\/i> disponibles sur chaque ligne."
+	},
+	"alphabeticalSort":{
+		"message":"tri alphabétique"
+	},
+	"reverseSort":{
+		"message":"inverser"
+	},
+	"this_list_is_empty":{
+		"message":"Cette liste est vide."
+	},
+	"loading":{
+		"message":"Chargement en cours..."
+	},
+	"you_can":{
+		"message":"vous pouvez"
+	},
+	"create_elements_with_buttons":{
+		"message":"créer des éléments en utilisant les boutons ci-dessus"
+	},
+	"clear_search_filters":{
+		"message":"effacer les filtres de recherche"
+	},
+	"refresh":{
+		"message":"rafraîchir la liste"
+	},
+	"sort":{
+		"message":"tri"
+	},
+	"list_display":{
+		"message":"affichage en liste"
+	},
+	"grid_display":{
+		"message":"affichage en grille"
+	},
+	"pagination_total":{
+		"message":"$'0':'AUCUN éLéMENT', 'ONE': 'UN éLéMENT', 'OTHER':'$$ éléments'}"
+	},
+	"pagination_pages":{
+		"message":"$'ONE': 'UNE PAGE', 'OTHER': '$$ pages'}"
+	},
+	"on":{
+		"message":"sur"
+	},
+	"per_page":{
+		"message":"par page"
+	},
+	"close_preview":{
+		"message":"fermer l'aperçu"
+	},
+	"close_all_previews":{
+		"message":"fermer tous les aperçus"
+	},
+	"replace_by_this":{
+		"message":"Remplacer par cet élément"
+	},
+	"elements_selection":{
+		"message":"sélection d'éléments"
+	},
+	"for_property":{
+		"message":"pour la propriété"
+	},
+	"of":{
+		"message":"de"
+	},
+	"compose_selection_message":{
+		"message":"Composez votre sélection à l'aide de la liste ci-contre. Vous pouvez même changer de module et revenir ici pour finaliser votre sélection."
+	},
+	"selection_is_empty_now":{
+		"message":"Votre sélection est vide pour l'instant."
+	},
+	"validate_selection":{
+		"message":"Valider la sélection"
+	},
+	"cancel_selection":{
+		"message":"Annuler"
+	},
+	"add_selected_elements":{
+		"message":"Ajouter les éléments sélectionnés"
+	},
+	"clear_selection":{
+		"message":"Vider"
+	},
+	"preview_tip":{
+		"message":"Survolez les lignes dans la liste ci-dessous pour afficher des options et prévisualiser les documents.<br\/>Les aperçus de documents sont rechargés depuis le serveur si vous cliquez sur <strong>aperçu<\/strong> tout en laissant la touche <strong>[Shift]<\/strong> appuyée."
+	},
+	"display_options":{
+		"message":"options d'affichage"
+	},
+	"display_thumbnail_informations":{
+		"message":"afficher les informations sur les vignettes"
+	},
+	"display_informations":{
+		"message":"afficher les informations"
+	},
+	"published":{
+		"message":"publiés"
+	},
+	"not_published":{
+		"message":"non publiés"
+	},
+	"thumbnail":{
+		"message":"vignettes"
+	},
+	"sort_by":{
+		"message":"trier par"
+	},
+	"select":{
+		"message":"sélectionner"
+	},
+	"select_all":{
+		"message":"tous"
+	},
+	"select_neither":{
+		"message":"aucun"
+	},
+	"local_copies_message_ng_pluralize":{
+		"message":"$'0': 'AUCUNE COPIE LOCALE', 'ONE': 'UNE COPIE LOCALE', 'OTHER': '$$ copies locales'}"
+	},
+	"remove_all_local_copies":{
+		"message":"effacer les copies locales"
+	},
+	"what_are_local_copies":{
+		"message":"qu'est-ce que les copies locales ?"
+	},
+	"local_copy_indicator_title":{
+		"message":"gestion des copies locales"
+	},
+	"document_modify_without_save_title":{
+		"message":"Vous avez précédement modifié ce document, sans l'enregistrer sur le serveur."
+	},
+	"document_modify_without_save_content":{
+		"message":"Vos modifications ont été conservées et elles sont présentes dans l'éditeur ci-dessous."
+	},
+	"chuck":{
+		"message":"On ne cherche pas Chuck Norris.<br\/>C'est Chuck Norris qui vous trouve."
+	},
+	"open":{
+		"message":"ouvrir le menu principal (Ctrl+Alt+M)"
+	},
+	"about":{
+		"message":"à propos de RBS Change"
+	},
+	"profile":{
+		"message":"profil"
+	},
+	"logout":{
+		"message":"déconnexion"
+	},
+	"clear_search":{
+		"message":"effacer la recherche"
+	},
+	"other_modules":{
+		"message":"autres modules"
+	},
+	"help_bottom":{
+		"message":"Ce menu peut être ouvert avec le raccourci clavier Ctrl+Alt+M."
+	},
+	"dashboard":{
+		"message":"tableau de bord"
+	},
+	"website":{
+		"message":"Site web"
+	},
+	"twitter":{
+		"message":"Twitter"
+	},
+	"github":{
+		"message":"GitHub"
+	},
+	"go_to_fullscreen":{
+		"message":"basculer en mode plein écran"
+	},
+	"type_enter_to_go_to":{
+		"message":"Appuyez sur <strong class=\"kb\">Entrée<\/strong> pour vous rendre à<br\/><strong>$PARAM$<\/strong>."
+	},
+	"editor":{
+		"message":"éditeur"
+	},
+	"preview":{
+		"message":"aperçu"
+	},
+	"markdown_help":{
+		"message":"afficher l'aide pour le markdown"
+	},
+	"heading_level_0":{
+		"message":"supprimer"
+	},
+	"heading_level_1":{
+		"message":"niveau 1"
+	},
+	"heading_level_2":{
+		"message":"niveau 2"
+	},
+	"heading_level_3":{
+		"message":"niveau 3"
+	},
+	"heading_level_4":{
+		"message":"niveau 4"
+	},
+	"heading_level_5":{
+		"message":"niveau 5"
+	},
+	"heading_level_6":{
+		"message":"niveau 6"
+	},
+	"bold":{
+		"message":"gras"
+	},
+	"italic":{
+		"message":"italique"
+	},
+	"undo":{
+		"message":"annuler"
+	},
+	"redo":{
+		"message":"rétablir"
+	},
+	"insert_picture":{
+		"message":"insérer une image"
+	},
+	"select_picture":{
+		"message":"Sélectionner une image à insérer dans l'éditeur ci-dessous"
+	},
+	"insert_internal_link":{
+		"message":"insérer un lien interne"
+	},
+	"insert_external_link":{
+		"message":"insérer un lien externe"
+	},
+	"select_document_to_link":{
+		"message":"Sélectionner un document à lier dans l'éditeur ci-dessous"
+	},
+	"insert_user":{
+		"message":"insérer un utilisateur"
+	},
+	"select_user":{
+		"message":"Sélectionner un utilisateur à insérer dans l'éditeur ci-dessous"
+	},
+	"insert_usergroup":{
+		"message":"insérer un groupe d'utilisateurs"
+	},
+	"select_usergroup":{
+		"message":"Sélectionner un groupe d'utilisateurs à insérer dans l'éditeur ci-dessous"
+	},
+	"years":{
+		"message":"années"
+	},
+	"months":{
+		"message":"mois"
+	},
+	"weeks":{
+		"message":"semaines"
+	},
+	"days":{
+		"message":"jours"
+	},
+	"hours":{
+		"message":"heures"
+	},
+	"minutes":{
+		"message":"minutes"
+	},
+	"seconds":{
+		"message":"secondes"
+	},
+	"rbs_pageeditor_markdown":{
+		"message":"<strong>Les zones de textes riches sont éditables avec une syntaxe Markdown.<\/strong><br\/>\n\t\tBien qu'un peu moins visuelle, cette syntaxe vous permet d'avoir un meilleur contrôle sur\n\t\tla structure de vos contenus et permet de produire des contenus de qualité et correctement organisés.<br\/>\n\t\t<a href=\"http:\/\/fr.wikipedia.org\/wiki\/Markdown\" target=\"_blank\">En savoir plus sur la syntaxe Markdown...<\/a>"
+	},
+	"status_draft":{
+		"message":"brouillon"
+	},
+	"status_frozen":{
+		"message":"gelé"
+	},
+	"status_validcontent":{
+		"message":"contenu validé"
+	},
+	"status_valid":{
+		"message":"validé"
+	},
+	"status_validation":{
+		"message":"à valider"
+	},
+	"status_unpublishable":{
+		"message":"non-publiable"
+	},
+	"status_publishable":{
+		"message":"publiable"
+	},
+	"status_filed":{
+		"message":"archivé"
+	},
+	"draft_description":{
+		"message":"Ce document est à l'état de brouillon."
+	},
+	"frozen_description":{
+		"message":"Ce document a été gelé et n'est donc pas visible sur le site web."
+	},
+	"filed_description":{
+		"message":"Ce document a été archivé.<br\/>Il peut toutefois être affiché sur le site web dans les blocs qui gèrent les archives."
+	},
+	"validation_description":{
+		"message":"Le contenu de ce document doit être validé avant qu'il ne puisse être publié sur le site web."
+	},
+	"validcontent_description":{
+		"message":"Le contenu de ce document a été validé : il ne reste qu'à valider sa publication."
+	},
+	"unpublishable_description":{
+		"message":"Ce document <strong>n'est pas<\/strong> prêt pour être publié sur le site web."
+	},
+	"publishable_description":{
+		"message":"Ce document est prêt pour être publié sur le site web."
+	},
+	"request_validation":{
+		"message":"demander la validation"
+	},
+	"run_all_steps_message":{
+		"message":"Vous avez la possibilité d'exécuter toutes les étapes du processus de validation en une seule fois en cliquant sur le bouton <strong>Publier tout de suite<\/strong> ci-dessous. Cliquez sur le bouton <strong>Aide<\/strong> pour en savoir plus sur le fonctionnement du processus de validation."
+	},
+	"run_all_steps_button":{
+		"message":"publier tout de suite"
+	},
+	"request_validation_done":{
+		"message":"demande de validation effectuée"
+	},
+	"content_validated":{
+		"message":"contenu validé"
+	},
+	"publication_validated":{
+		"message":"publication validée"
+	},
+	"to_validate_content_you_can":{
+		"message":"pour valider le contenu de ce document, vous pouvez"
+	},
+	"open_document_editor":{
+		"message":"ouvrir l'éditeur du document"
+	},
+	"open_document_editor_in_new_tab":{
+		"message":"ouvrir l'éditeur du document dans un nouvel onglet"
+	},
+	"accepted":{
+		"message":"accepté"
+	},
+	"rejected":{
+		"message":"refusé"
+	},
+	"accept":{
+		"message":"accepter"
+	},
+	"reject":{
+		"message":"refuser"
+	},
+	"freeze":{
+		"message":"geler"
+	},
+	"unfreeze":{
+		"message":"dégeler"
+	},
+	"reject_reason":{
+		"message":"motif du refus"
+	},
+	"why_do_you_reject_content":{
+		"message":"pourquoi refusez-vous le contenu de ce document ?"
+	},
+	"reject_content":{
+		"message":"refuser le contenu"
+	},
+	"accept_content":{
+		"message":"valider le contenu"
+	},
+	"accept_publication":{
+		"message":"valider la publication"
+	},
+	"you_can_freeze_document":{
+		"message":"Vous pouvez geler ce document : son affichage sur le site web sera alors désactivé."
+	},
+	"freeze_document":{
+		"message":"geler le document"
+	},
+	"unfreeze_document":{
+		"message":"dégeler le document"
+	},
+	"frozen_document":{
+		"message":"document gelé"
+	},
+	"this_document_is_frozen":{
+		"message":"Ce document est gelé : son affichage sur le site web a été désactivé temporairement. Pour le rendre de nouveau visible, vous pouvez le dégeler."
+	},
+	"modified_content_correction":{
+		"message":"Contenu modifié &rarr; correction"
+	},
+	"caution":{
+		"message":"attention"
+	},
+	"document_has_been_modified_since_its_publication":{
+		"message":"Le document a été modifié depuis sa publication : les modifications ne seront pas visibles tant que la Correction n'aura pas été validée."
+	},
+	"to_validate_correction_please_go_to":{
+		"message":"pour valider la Correction, veuillez vous rendre sur"
+	},
+	"document_editor":{
+		"message":"l'éditeur du Document"
+	},
+	"to_check_modified_properties":{
+		"message":"afin de <strong>vérifier les propriétés qui ont été modifiées<\/strong>"
+	},
+	"action_has_failed":{
+		"message":"l'action a échoué"
+	},
+	"help_draft_explain":{
+		"message":"Lorsqu'un Document à l'état de <strong>brouillon<\/strong> vous semble correct, et lorsque vous souhaitez le publier sur le site web, vous pouvez faire une <strong>demande de validation<\/strong>."
+	},
+	"help_validation_explain":{
+		"message":"Le Document est ici en <strong>attente de validation<\/strong> de son contenu.<ul><li><strong>$$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}Refuser<\/strong> : $$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}le Document repassera à l'état de <strong>brouillon<\/strong> ;<\/li><li><strong>$$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}Accepter<\/strong> : $$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}il restera alors à <strong>valider la publication<\/strong> du Document.<\/li><\/ul>"
+	},
+	"help_validcontent_explain":{
+		"message":"Le contenu du Document a été validé, il faut maintenant <strong>valider sa publication<\/strong> sur le site web."
+	},
+	"help_publishable_explain":{
+		"message":"Ici, toutes les conditions requises pour l'affichage du Document sont validées.<br\/>Il est possible d'empêcher son affichage en <strong>gelant<\/strong> le Document."
+	},
+	"help_frozen_explain":{
+		"message":"Le Document a été gelé pour empêcher son affichage sur le site web.<br\/>Il est possible de réactiver son affichage en <strong>dégelant<\/strong> le Document."
+	},
+	"back_to_editor":{
+		"message":"retour à l'édition du document"
+	},
+	"menu_title":{
+		"message":"processus de validation"
+	},
+	"menu_contents":{
+		"message":"Cette interface vous permet de contrôler la validation et la publication du contenu des documents destinés à être affichés sur votre site web."
+	},
+	"richtext_title":{
+		"message":"titre"
+	},
+	"workflow_title":{
+		"message":"Processus de validation (workflow)"
+	},
+	"timeinterval_choose_type":{
+		"message":"choisissez le type de période"
+	}
+}

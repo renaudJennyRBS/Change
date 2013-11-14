@@ -320,6 +320,11 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 			$plugin->setPackage($config['package']);
 		}
 
+		if ($plugin && isset($config['defaultLCID']))
+		{
+			$plugin->setDefaultLCID($config['defaultLCID']);
+		}
+
 		return $plugin;
 	}
 
@@ -822,6 +827,11 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 
 			$generator = new \Change\Db\Schema\Generator($installApplication->getWorkspace(), $applicationServices->getDbProvider());
 			$generator->generatePluginsSchema();
+
+			foreach ($plugins as $plugin)
+			{
+				$applicationServices->getI18nManager()->compilePluginI18nFiles($plugin);
+			}
 		}
 
 		$event->setName(static::EVENT_SETUP_DB_SCHEMA);

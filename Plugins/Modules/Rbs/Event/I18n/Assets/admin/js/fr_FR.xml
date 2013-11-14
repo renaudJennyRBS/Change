@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.event.admin" lcid="fr_FR">
-	<include id="m.rbs.event.documents"/>
-	<key id="module-name">Actualités et événements</key>
-	<key id="module-keywords">actus, actualités, événements, news, calendrier</key>
-</i18n>

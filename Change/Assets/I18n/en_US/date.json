@@ -1,0 +1,8 @@
+{
+	"default_date_format" : {
+		"message":"yyyy-MM-dd"
+	},
+	"default_datetime_format" : {
+		"message":"yyyy-MM-dd hh:mm a"
+	}
+}

@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}">
 			<p class="form-control-static">
@@ -54,7 +54,7 @@
 
 	<fieldset data-ng-show="section=='urlinfo'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.urls', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<p>{{ i18n('m.rbs.seo.admin.available-languages-help') }}</p>
 		<p>{{ i18n('m.rbs.seo.admin.canonical-help') }}</p>
 		<table data-ng-show="document.locations.length > 0" class="table table-striped table-bordered">
@@ -198,7 +198,7 @@
 
 	<fieldset data-ng-show="section=='sitemap'"
 		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.sitemap', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapChangeFrequency'), ['ucf']) }}">
 			<select class="form-control" data-ng-model="document.sitemapChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
@@ -228,8 +228,8 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

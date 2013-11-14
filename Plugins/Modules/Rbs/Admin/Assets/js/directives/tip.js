@@ -27,7 +27,7 @@
 					'<button type="button" class="close" data-dismiss="alert">&times;</button>' +
 					'<div ng-transclude=""></div>' +
 					'<div class="clearfix" style="margin-top: 5px; padding-top: 5px; border-top: 1px dashed #BCE8F1;">' +
-						'<a href="javascript:;" ng-click="dismissForEver()"><i class="icon-thumbs-up-alt"></i> ' + i18n.trans('m.rbs.admin.admin.js.tip-dismiss-thank-you') + '</a>' +
+						'<a href="javascript:;" ng-click="dismissForEver()"><i class="icon-thumbs-up-alt"></i> ' + i18n.trans('m.rbs.admin.adminjs.tip_dismiss_thank_you') + '</a>' +
 					'</div>' +
 				'</div>',
 

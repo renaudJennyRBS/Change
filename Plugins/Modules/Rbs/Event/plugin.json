@@ -1,4 +1,5 @@
 {
 	"vendor":"Rbs",
-	"name":"Event"
+	"name":"Event",
+	"defaultLCID":"fr_FR"
 }

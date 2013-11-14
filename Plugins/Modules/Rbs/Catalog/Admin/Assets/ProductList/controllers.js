@@ -29,7 +29,7 @@
 
 		$scope.List = {};
 
-		Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
+		Loading.start(i18n.trans('m.rbs.admin.adminjs.loading-document | ucf'));
 		REST.resource('Rbs_Catalog_ProductList', $routeParams.id).then(function (productList)
 		{
 			$scope.productsUrl = productList.META$.links['productListItems'].href;
@@ -107,7 +107,7 @@
 				docIds.push($scope.List.productsToAdd[i].id);
 			}
 			var url = REST.getBaseUrl('rbs/catalog/productlistitem/addproducts');
-			Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
+			Loading.start(i18n.trans('m.rbs.admin.adminjs.loading-document | ucf'));
 			$http.post(url, {"productListId": $scope.productList.id , "documentIds": docIds}).success(function (data) {
 				Loading.stop();
 				$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductListProducts:call', { 'method' : 'reload' });
@@ -188,7 +188,7 @@
 				if ((operation == 'remove'))
 				{
 					var url = REST.getBaseUrl('rbs/catalog/productlistitem/delete');
-					Loading.start(i18n.trans('m.rbs.admin.admin.js.loading-document | ucf'));
+					Loading.start(i18n.trans('m.rbs.admin.adminjs.loading-document | ucf'));
 					$http.post(url, {"documentIds": ids}).success(function (data) {
 						Loading.stop();
 						$scope.refresh();
