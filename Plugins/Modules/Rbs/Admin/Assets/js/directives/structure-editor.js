@@ -171,25 +171,25 @@
 			if (item.name === RICH_TEXT_BLOCK_NAME) {
 				return this.initRichText(item, readonly);
 			} else {
-				var className = 'se-block-template';
+				var className = 'rbs-block-template';
 				return '<div class="' + className + '" data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
 			}
 		};
 
 		this.initRichText = function initRichText (item, readonly) {
-			return '<div class="se-markdown-text" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
+			return '<div class="rbs-block-markdown-text" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
 		this.initRow = function initRow (item) {
-			return '<div class="se-row" data-id="' + item.id + '" data-grid="' + item.grid + '" data-visibility="' + (item.visibility || '') + '"></div>';
+			return '<div class="rbs-row" data-id="' + item.id + '" data-grid="' + item.grid + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
 		this.initCell = function initCell (item) {
-			return '<div class="se-cell" data-id="' + item.id + '" data-size="' + item.size + '"></div>';
+			return '<div class="rbs-cell" data-id="' + item.id + '" data-size="' + item.size + '"></div>';
 		};
 
 		this.initBlockChooser = function initCell (item) {
-			return '<div class="se-block-chooser" data-id="' + item.id + '"></div>';
+			return '<div class="rbs-block-chooser" data-id="' + item.id + '"></div>';
 		};
 
 
@@ -246,7 +246,7 @@
 			gridSize = gridSize || DEFAULT_GRID_SIZE;
 
 			// Apply 'span' and 'offset' on existing columns.
-			row.children('.se-cell').each(function (index, el) {
+			row.children('.rbs-cell').each(function (index, el) {
 
 				// Find current 'span*' and 'offset*' classes and remove them.
 				// - 'span*' is from 1 to `gridSize`
@@ -295,7 +295,7 @@
 
 		this.highlightDropTarget = function highlightDropTarget (el) {
 
-			if (el.is('.se-cell')) {
+			if (el.is('.rbs-cell')) {
 				var	columnIndex = el.index();
 				this.highlightBlock(
 					el,
@@ -558,26 +558,17 @@
 				this.showBlockSettingsEditor = function showBlockSettingsEditor (blockEl, params) {
 					var	elName = null,
 						html,
-						item = this.getItemById(blockEl.data('id')),
-						shouldFocus = true;
+						item = this.getItemById(blockEl.data('id'));
 
-					if (blockEl.is('.se-markdown-text')) {
-						//elName = "se-rich-text-settings";
-						shouldFocus = false;
-					} else if (blockEl.is('.se-formatted-text')) {
-						elName = "se-formatted-text-settings";
-						shouldFocus = false;
-					} else if (blockEl.is('.se-block-document')) {
-						elName = "se-block-document-settings";
-					} else if (blockEl.is('.se-row')) {
-						elName = "se-row-settings";
-					} else if (blockEl.is('.se-block-chooser')) {
-						elName = "se-block-chooser-settings";
+					if (blockEl.is('.rbs-formatted-text')) {
+						elName = "rbs-formatted-text-settings";
+					} else if (blockEl.is('.rbs-block-document')) {
+						elName = "rbs-block-document-settings";
+					} else if (blockEl.is('.rbs-row')) {
+						elName = "rbs-row-settings";
 					}
 
-					blockEl.scope().controller = this;
-
-					html = '<div class="se-block-settings-editor" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
+					html = '<div class="rbs-block-settings-editor" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
 					if (elName) {
 						html += '><div class="' + elName + '" data-id="' + blockEl.data('id') + '"';
 					}
@@ -589,18 +580,13 @@
 						html += '</div>';
 					}
 
+					var blockScope = blockEl.isolateScope() || blockEl.scope();
+					blockScope.editorCtrl = this;
+
 					blockPropertiesPopup.html(html);
 					blockPropertiesPopup.attr('data-title', item.name === 'Rbs_Website_Richtext' ? "Texte WYSIWYG" : item.label);
-					$compile(blockPropertiesPopup)(blockEl.scope());
+					$compile(blockPropertiesPopup)(blockScope);
 					positionBlockSettingsEditor(blockEl);
-					if (shouldFocus) {
-						$timeout(function () {
-							var inputs = blockPropertiesPopup.find('input[type="text"]');
-							if (inputs.length) {
-								inputs[0].focus();
-							}
-						});
-					}
 				};
 
 
@@ -811,24 +797,24 @@
 				// Utility functions -----------------------------------------------------------------------------------
 
 				this.isInColumnLayout = function isInColumnLayout (el) {
-					return el.closest('.se-cell').length === 1;
+					return el.closest('.rbs-cell').length === 1;
 				};
 
 				this.isRichText = function isInColumnLayout (el) {
-					return el.is('.se-markdown-text');
+					return el.is('.rbs-block-markdown-text');
 				};
 
 
 				this.selectParentRow = function (block) {
 					this.selectBlock(
-						block.closest('.se-row'),
-						{ 'highlight-column': block.closest('.se-cell').index() }
+						block.closest('.rbs-row'),
+						{ 'highlight-column': block.closest('.rbs-cell').index() }
 					);
 				};
 
 
 				function isContainer (block) {
-					return block.is('.se-row') || block.is('.se-cell');
+					return block.is('.rbs-row') || block.is('.rbs-cell');
 				}
 
 
@@ -865,7 +851,7 @@
 								parseChildBlocks(blockEl, item.items);
 							}
 						} else {
-							isValid = false;
+							//isValid = false;
 						}
 					});
 				}
@@ -888,7 +874,8 @@
 					return output;
 				};
 
-				var operationIcons = {
+				var undoDataItemId = 0,
+					operationIcons = {
 					'move': 'icon-move',
 					'changeSettings': 'icon-cog',
 					'changeText': 'icon-edit',
@@ -904,6 +891,7 @@
 						var	output = $scope.generateJSON(),
 							item = self.getItemById(element.data('id'));
 						$scope.undoData.unshift({
+							'id'   : undoDataItemId++,
 							'label': (operation + ' ' + elementName),
 							'item' : item,
 							'data' : output,
@@ -1057,7 +1045,7 @@
 
 					}, '.block-container');
 
-					// Prevent drop on se-row (temporary?).
+					// Prevent drop on rbs-row (temporary?).
 
 					$($element).on({
 						'dragenter': function (e) {
@@ -1068,7 +1056,7 @@
 							e.preventDefault();
 							e.stopPropagation();
 						}
-					}, '.se-row');
+					}, '.rbs-row');
 				}
 
 			},
@@ -1272,11 +1260,11 @@
 
 	//-------------------------------------------------------------------------
 	//
-	// Row (se-row).
+	// Row (rbs-row).
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seRow', ['structureEditorService', function (structureEditorService) {
+	app.directive('rbsRow', ['structureEditorService', function (structureEditorService) {
 
 		return {
 
@@ -1304,11 +1292,11 @@
 
 	//-------------------------------------------------------------------------
 	//
-	// Row settings (se-row-settings).
+	// Row settings (rbs-row-settings).
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seRowSettings', ['structureEditorService', '$timeout', 'RbsChange.Dialog', function (structureEditorService, $timeout, Dialog) {
+	app.directive('rbsRowSettings', ['structureEditorService', '$timeout', 'RbsChange.Dialog', function (structureEditorService, $timeout, Dialog) {
 
 		return {
 
@@ -1343,7 +1331,7 @@
 				'</div>',
 
 			"link" : function seRowSettingsLinkFn (scope, elm, attrs) {
-				var	ctrl = scope.controller,
+				var	ctrl = scope.editorCtrl,
 					rowEl = ctrl.getSelectedBlock(),
 					gridSize = attrs.gridSize || DEFAULT_GRID_SIZE,
 					previouslyHighlightedColIndex = -1;
@@ -1659,22 +1647,21 @@
 
 	//-------------------------------------------------------------------------
 	//
-	// Column (se-cell).
+	// Column (rbs-cell).
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seCell', ['structureEditorService', function (structureEditorService) {
+	app.directive('rbsCell', ['structureEditorService', function (structureEditorService) {
 
 		return {
 
 			"restrict"   : 'C',
 			"template"   : '<div class="{{span}} {{offset}} block-container"></div>',
 			"replace"    : true,
-			"require"    : "^structureEditor",
 			"scope"      : {}, // isolated scope is required
 
-			"link" : function seRowLinkFn (scope, elm, attrs, ctrl) {
-				var item = ctrl.getItemById(elm.data('id'));
+			"link" : function seRowLinkFn (scope, elm, attrs) {
+				var item = scope.editorCtrl.getItemById(elm.data('id'));
 
 				scope.span = 'col-md-' + item.size;
 				if (item.offset) {
@@ -1688,7 +1675,7 @@
 					}
 				};
 
-				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
+				structureEditorService.initChildItems(scope, elm, item, scope.editorCtrl.isReadOnly());
 			}
 		};
 
@@ -1721,261 +1708,233 @@
 
 	//-------------------------------------------------------------------------
 	//
+	// Block selector.
+	//
+	//-------------------------------------------------------------------------
+
+
+	app.directive('rbsBlockSelector', ['RbsChange.REST', function (REST)
+	{
+		var blockList = [], loading = false;
+
+
+		function loadBlockList ()
+		{
+			if (! blockList.length && ! loading)
+			{
+				loading = true;
+				REST.call(REST.getBaseUrl('admin/blockList/')).then(function (blockData)
+				{
+					angular.forEach(blockData, function (pluginBlocks, pluginLabel)
+					{
+						angular.forEach(pluginBlocks, function (block)
+						{
+							block.plugin = pluginLabel;
+							blockList.push(block);
+						});
+					});
+					loading = false;
+				});
+			}
+			return blockList;
+		}
+
+
+		function getBlockByName (name)
+		{
+			for (var i=0 ; i<blockList.length ; i++) {
+				if (blockList[i].name === name) {
+					return blockList[i];
+				}
+			}
+			return null;
+		}
+
+
+		return {
+			restrict : 'E',
+			template : '<select class="form-control" ng-model="block" ng-required="required" ng-options="block.label group by block.plugin for block in blocks"></select>',
+			scope : { block : '=', selected : '@', required : '@' },
+
+			link : function (scope)
+			{
+				scope.blocks = loadBlockList();
+
+				function updateSelection () {
+					if (scope.selected && scope.blocks.length > 0 && (! scope.block || scope.block.name !== scope.selected)) {
+						scope.block = getBlockByName(scope.selected);
+					}
+				}
+
+				scope.$watchCollection('blocks', updateSelection);
+				scope.$watch('selected', updateSelection, true);
+			}
+		};
+	}]);
+
+
+	//-------------------------------------------------------------------------
+	//
 	// Block settings editor.
 	//
 	//-------------------------------------------------------------------------
 
 
-	app.directive('seBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', 'RbsChange.Dialog', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog) {
-
-		var blockPropertiesCache = {};
+	app.directive('rbsBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', 'RbsChange.Dialog', '$timeout', '$http', '$compile', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile) {
 
 		return {
-
-			"restrict"   : 'C',
+			"restrict" : 'C',
 			"transclude" : true,
-			"template"   :
-				'<div class="btn-toolbar">' +
-					'<div class="btn-group">' +
-						'<button class="btn btn-default btn-sm" disabled="disabled"><i class="icon-plus"></i></button>' +
-						'<button class="btn btn-default btn-sm" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="' + messages.InsertBlockLeft + '"><i class="icon-arrow-left"></i></button>' +
-						'<button class="btn btn-default btn-sm" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="' + messages.InsertBlockRight + '"><i class="icon-arrow-right"></i></button>' +
-						'<button class="btn btn-default btn-sm" ng-click="newBlockAfter()" title="' + messages.InsertBlockBottom + '"><i class="icon-arrow-down"></i></button>' +
-						'<button class="btn btn-default btn-sm" ng-click="newBlockBefore()" title="' + messages.InsertBlockTop + '"><i class="icon-arrow-up"></i></button>' +
-					'</div>' +
-					'<button class="btn btn-sm btn-danger pull-right" type="button" ng-click="removeBlock()" title="' + messages.DeleteBlock + '"><i class="icon-trash"></i></button>' +
-				'</div>' +
-				'<div class="btn-toolbar">' +
-					'<h6>Visibilité</h6>' +
-					'<div style="text-align: center;">' +
-						'<button class="btn btn-xs" ng-click="toggleVisibility(\'D\')" ng-class="{true: \'btn-success active\', false: \'btn-default\'}[isVisibleFor(\'D\')]">Ordinateurs</button>' +
-						'<button class="btn btn-xs" ng-click="toggleVisibility(\'T\')" ng-class="{true: \'btn-success active\', false: \'btn-default\'}[isVisibleFor(\'T\')]">Tablettes</button>' +
-						'<button class="btn btn-xs" ng-click="toggleVisibility(\'P\')" ng-class="{true: \'btn-success active\', false: \'btn-default\'}[isVisibleFor(\'P\')]">Mobiles</button>' +
-					'</div>' +
-				'</div>' +
-				'<div class="btn-toolbar" ng-show="isInColumnLayout()">' +
-					'<button class="btn btn-default btn-sm pull-right" ng-click="selectParentRow()"><i class="icon-columns"></i> Paramétrer</button>' +
-					'<h6>Colonnes</h6>' +
-				'</div>' +
-				'<form ng-submit="submit()" novalidate name="block_properties_form" class="form-(=formDirection=)">' +
-					'<div class="form-group" ng-hide="isRichText()">' +
-						'<label class="control-label" for="block_(=item.id=)_label">Libellé du bloc</label>' +
-						'<div class="controls">' +
-							'<input class="form-control" id="block_(=item.id=)_label" type="text" ng-model="item.label" placeholder="Nom du bloc"/>' +
-						'</div>' +
-					'</div>' +
-					'<div class="form-group" ng-repeat="param in blockParameters" ng-class="{true:\'required\'}[param.required]" ng-hide="isRichText()">' +
-						'<label class="control-label" for="block_(=item.id=)_param_(=param.name=)">(=param.label=)</label>' +
-						'<div ng-switch="param.type" class="controls">' +
-							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Integer" type="number" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
-							'<div ng-switch-when="Document" value-ids="true" class="document-picker-single" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<div ng-switch-when="DocumentId" value-ids="true" class="document-picker-single" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<div ng-switch-when="DocumentArray" value-ids="true" class="document-picker-multiple" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<div ng-switch-when="DocumentIdArray" value-ids="true" class="document-picker-multiple" ng-model="formValues[param.name]" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="(= param.allowedModelsNames[0] =)"></div>' +
-							'<select id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Collection" ng-model="formValues[param.name]" class="form-control" rbs-items-from-collection="(=param.collectionCode=)"></select>' +
-							'<input id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="String" type="text" required="(=param.required=)" class="form-control" ng-model="formValues[param.name]"/>' +
-							'<switch id="block_(=item.id=)_param_(=param.name=)" name="(=param.name=)" ng-switch-when="Boolean" ng-model="formValues[param.name]"/>' +
-						'</div>' +
-					'</div>' +
-					'<div ng-transclude=""></div>' +
-					'<div class="form-actions">' +
-						'<button type="button" class="btn btn-default" ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
-						'<button type="submit" class="btn btn-primary" ng-disabled="! hasChanged() || block_properties_form.$invalid" ng-click="submit()">Valider</button>' +
-					'</div>' +
-				'</form>',
 			"scope" : true,
+			"templateUrl" : 'Rbs/Admin/js/directives/structure-editor-block-settings.twig',
 
 			/**
-			 * The Scope here is the same Scope as the one of the current (selected) Block.
-			 *
 			 * @param scope
 			 * @param element
-			 * @param attrs
 			 */
-			"link" : function (scope, element, attrs) {
+			"link" : function (scope, element)
+			{
+				var ctrl = scope.editorCtrl;
 
 				structureEditorService.highlightBlock(null);
 
 				scope.formValues = {};
 				scope.formDirection = blockPropertiesPopup.is('.pinned') ? 'vertical' : 'horizontal';
 
-				scope.originalItem = scope.controller.getItemById(element.data('id'));
-				if ( ! scope.originalItem.parameters ) {
-					scope.originalItem.parameters = {};
+				scope.block = ctrl.getItemById(element.data('id'));
+				if ( ! scope.block.parameters ) {
+					scope.block.parameters = {};
+				}
+				scope.blockParameters = scope.block.parameters;
+
+
+				function replaceItem (item) {
+					var block = ctrl.getSelectedBlock(),
+						createdEl = ctrl.createBlock(block.parent(), item, block.index());
+					ctrl.removeBlock(block);
+					return createdEl;
 				}
 
-				var itemName = scope.originalItem.name;
 
-
-				// Put default values in the block's parameters
-				function fillDefaultValues (parameters) {
-					scope.blockParameters = angular.copy(parameters);
-					forEach(parameters, function (param) {
-						if (angular.isUndefined(scope.originalItem.parameters[param.name])) {
-							if (angular.isDefined(param.defaultValue) && param.defaultValue !== null) {
-								scope.originalItem.parameters[param.name] = param.defaultValue;
-							}
-						}
-					});
-					scope.item = angular.copy(scope.originalItem);
-					scope.formValues = scope.item.parameters;
-				}
-
-				if (itemName && itemName !== 'row' && itemName !== 'cell') {
-					// Load block's parameters and store them
-					if (itemName in blockPropertiesCache) {
-						fillDefaultValues(blockPropertiesCache[itemName]);
-					} else {
-						// Load block properties.
-						REST.blockInfo(itemName).then(function (blockInfo) {
-							forEach(blockInfo.parameters, function (param) {
-								param.label = param.label || param.name;
+				scope.$watch('blockType', function (blockType, old)
+				{
+					if (blockType && blockType !== old)
+					{
+						$http.get(blockType.template).success(function (html)
+						{
+							$compile(html)(scope, function (clone) {
+								element.find('[data-role="blockParametersContainer"]').append(clone);
+								if ( ! scope.block.name)
+								{
+									var block = replaceItem({
+										'type': 'block',
+										'name': blockType.name
+									});
+									ctrl.notifyChange("create", blockType.label, block);
+									$timeout(function () { ctrl.selectBlock(block); } );
+								}
 							});
-							blockPropertiesCache[itemName] = blockInfo.parameters;
-							fillDefaultValues(blockPropertiesCache[itemName]);
 						});
 					}
-				}
+				}, true);
 
 
 				// Block visibility options -----------------------------------
 
 
 				scope.isVisibleFor = function (device) {
-					return scope.item && (! scope.item.visibility || scope.item.visibility.indexOf(device) !== -1);
+					return scope.block && (! scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
 				};
 
 				scope.toggleVisibility = function (device) {
 					var	value = ! scope.isVisibleFor(device),
 						splat,
 						block,
-						originalValue = ''+scope.item.visibility;
+						originalValue = ''+scope.block.visibility;
 
-					if (scope.item.visibility) {
+					if (scope.block.visibility) {
 
-						if (scope.item.visibility.length > 3) {
-							scope.item.visibility = scope.item.visibility.substr(0, 3);
+						if (scope.block.visibility.length > 3) {
+							scope.block.visibility = scope.block.visibility.substr(0, 3);
 						}
-						splat = scope.item.visibility.split('');
+						splat = scope.block.visibility.split('');
 						if (ArrayUtils.inArray(device, splat) !== -1 && ! value) {
 							ArrayUtils.removeValue(splat, device);
 						} else if (ArrayUtils.inArray(device, splat) === -1 && value) {
 							splat.push(device);
 						}
 						splat.sort();
-						scope.item.visibility = splat.join('');
+						scope.block.visibility = splat.join('');
 					} else {
 						if (value) {
-							scope.item.visibility = device;
+							scope.block.visibility = device;
 						} else {
 							switch (device) {
 							case 'P' :
-								scope.item.visibility = 'DT';
+								scope.block.visibility = 'DT';
 								break;
 							case 'T' :
-								scope.item.visibility = 'DP';
+								scope.block.visibility = 'DP';
 								break;
 							case 'D' :
-								scope.item.visibility = 'PT';
+								scope.block.visibility = 'PT';
 								break;
 							}
 						}
 					}
 
-					block = scope.controller.getSelectedBlock();
-					block.attr('data-visibility', scope.item.visibility);
-					scope.controller.notifyChange("visibility", "block", block, {'from': originalValue, 'to': scope.item.visibility});
+					block = ctrl.getSelectedBlock();
+					block.attr('data-visibility', scope.block.visibility);
+					ctrl.notifyChange("visibility", "block", block, {'from': originalValue, 'to': scope.block.visibility});
 				};
 
 				scope.canInsertSideways = function () {
-					var block = scope.controller.getSelectedBlock();
-					return ! block.is('.se-row') && ! scope.controller.isInColumnLayout(block);
+					var block = ctrl.getSelectedBlock();
+					return ! block.is('.rbs-row') && ! ctrl.isInColumnLayout(block);
 				};
 
 				scope.isInColumnLayout = function () {
-					var block = scope.controller.getSelectedBlock();
-					return scope.controller.isInColumnLayout(block);
+					var block = ctrl.getSelectedBlock();
+					return ctrl.isInColumnLayout(block);
 				};
 
 				scope.isRichText = function () {
-					var block = scope.controller.getSelectedBlock();
-					return scope.controller.isRichText(block);
+					var block = ctrl.getSelectedBlock();
+					return ctrl.isRichText(block);
 				};
 
 				scope.selectParentRow = function () {
-					var block = scope.controller.getSelectedBlock();
-					scope.controller.selectParentRow(block);
+					var block = ctrl.getSelectedBlock();
+					ctrl.selectParentRow(block);
 				};
 
 				scope.newBlockBefore = function () {
-					scope.controller.newBlockBefore();
+					ctrl.newBlockBefore();
 				};
 
 				scope.newBlockAfter = function () {
-					scope.controller.newBlockAfter();
+					ctrl.newBlockAfter();
 				};
 
 				scope.newBlockLeft = function () {
-					scope.controller.newBlockSideways('left');
+					ctrl.newBlockSideways('left');
 				};
 
 				scope.newBlockRight = function () {
-					scope.controller.newBlockSideways('right');
+					ctrl.newBlockSideways('right');
 				};
 
 				scope.removeBlock = function () {
-					var block = scope.controller.getSelectedBlock();
+					var block = ctrl.getSelectedBlock();
 					Dialog.confirmLocal(
 						block,
 						"Supprimer le bloc ?",
 						"<strong>Vous êtes sur le point de supprimer le bloc ci-dessous.</strong>",
 						{"placement": "top"}
 					).then(function () {
-						scope.controller.removeBlock(block);
-						scope.controller.notifyChange("remove", "block", block);
+						ctrl.removeBlock(block);
+						ctrl.notifyChange("remove", "block", block);
 					});
-				};
-
-				scope.$watch('formValues', function (values) {
-					if (values) {
-						dumpFormValues();
-					}
-				}, true);
-
-				scope.hasChanged = function () {
-					dumpFormValues();
-					return ! angular.equals(scope.item, scope.originalItem);
-				};
-
-
-				function dumpFormValues () {
-					if (scope.item) {
-						angular.extend(scope.item.parameters, scope.formValues);
-					}
-				}
-
-
-				scope.revert = function () {
-					dumpFormValues();
-					scope.item = angular.copy(scope.originalItem);
-					scope.formValues = scope.item.parameters;
-					var block = scope.controller.getSelectedBlock();
-					block.attr('data-visibility', scope.item.visibility);
-				};
-
-				scope.submit = function () {
-					dumpFormValues();
-					angular.extend(scope.originalItem, scope.item);
-
-					// Remove empty values.
-					angular.forEach(scope.originalItem.parameters, function (value, name) {
-						if (scope.item.parameters[name] === null || angular.isUndefined(scope.item.parameters[name])) {
-							delete scope.originalItem.parameters[name];
-						}
-					});
-
-					scope.item = angular.copy(scope.originalItem);
-					scope.controller.notifyChange("changeSettings", "block", element);
 				};
 
 				$rootScope.$on('Change:Workspace:Pinned', function (event, el) {
@@ -1983,6 +1942,7 @@
 						scope.formDirection = 'vertical';
 					}
 				});
+
 				$rootScope.$on('Change:Workspace:Unpinned', function (event, el) {
 					if (el.is('#structure-editor-block-properties-popup')) {
 						scope.formDirection = 'horizontal';
@@ -1996,14 +1956,13 @@
 	}]);
 
 
-
 	//-------------------------------------------------------------------------
 	//
 	// Block template.
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seBlockTemplate', [ function () {
+	app.directive('rbsBlockTemplate', [ function () {
 
 		return {
 
@@ -2014,7 +1973,7 @@
 
 			"template" :
 				'<div draggable="true" class="block btn btn-block btn-settings" ng-click="selectBlock($event)">' +
-					'<i class="icon-th-large"></i> <span ng-bind-html="item.label | niceBlockName"></span>' +
+					'<i class="icon-th-large"></i> <span ng-bind-html="item.label | niceBlockName"></span><div><small>(= item.parameters | json =)</small></div>' +
 				'</div>',
 
 			"link" : function seBlockTemplateLinkFn (scope, element, attrs, ctrl) {
@@ -2032,6 +1991,39 @@
 	}]);
 
 
+	//-------------------------------------------------------------------------
+	//
+	// Block Document.
+	//
+	//-------------------------------------------------------------------------
+
+	app.directive('rbsBlockDocument', [ function () {
+
+		return {
+
+			"restrict" : 'C',
+			"scope"    : {}, // isolated scope is required
+			"require"  : '^structureEditor',
+			"replace"  : true,
+
+			"template" :
+				'<div draggable="true" class="block btn btn-block btn-settings" block-label="(= item.label =)" block-type="document" ng-click="selectBlock($event)">' +
+					'<i class="icon-file"></i> <span ng-bind-html="item.label | niceBlockName"></span><div><small>(= item.parameters | json =)</small></div>' +
+					'</div>',
+
+			"link" : function seBlockDocumentLinkFn (scope, element, attrs, ctrl) {
+				scope.item = ctrl.getItemById(element.data('id'));
+
+				scope.selectBlock = function ($event) {
+					$event.stopPropagation();
+					ctrl.selectBlock(element);
+				};
+			}
+
+		};
+
+	}]);
+
 
 	//-------------------------------------------------------------------------
 	//
@@ -2039,7 +2031,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seBlockChooser', [ function () {
+	app.directive('rbsBlockChooser', [ function () {
 
 		return {
 
@@ -2056,121 +2048,6 @@
 			"link" : function seBlockChooserLinkFn (scope, element, attrs, ctrl) {
 
 				element.attr('data-label', "Nouveau bloc");
-
-				scope.selectBlock = function ($event) {
-					$event.stopPropagation();
-					ctrl.selectBlock(element);
-				};
-
-			}
-
-		};
-
-	}]);
-
-
-
-	//-------------------------------------------------------------------------
-	//
-	// Block chooser settings.
-	//
-	//-------------------------------------------------------------------------
-
-
-	app.directive('seBlockChooserSettings', ['RbsChange.REST', 'RbsChange.ArrayUtils', function (REST, ArrayUtils) {
-
-		var loadedModules, loadedBlocks;
-
-		return {
-
-			"restrict" : 'C',
-			"template" :
-				'<header>Choisissez le type de bloc à ajouter :</header>' +
-
-				'<select ng-options="mod for mod in modules" ng-model="selectedModule" class="form-control"></select>' +
-				'<button class="btn btn-default btn-sm btn-block" type="button" ng-click="makeBlock($event, block)" ng-repeat="block in blocks[selectedModule]">' +
-					'<i class="{{block.name}} icon-large"></i> {{block.label}}' +
-				'</button>',
-
-			"link" : function seBlockChooserSettingsLinkFn (scope, element, attrs) {
-				var	ctrl = scope.controller,
-					blockEl = ctrl.getSelectedBlock();
-
-				scope.allowColumns = ! ctrl.isInColumnLayout(blockEl);
-
-				if (loadedModules) {
-
-					scope.modules = loadedModules;
-					scope.blocks = loadedBlocks;
-					scope.selectedModule = scope.modules[0];
-
-				} else {
-
-					REST.blocks().then(function (allBlocks) {
-						var blocks = {}, modules = [];
-
-						forEach(allBlocks, function (block, name) {
-							var splat = name.split('_'),
-								module = splat[0] + ' ' + splat[1];
-							if (ArrayUtils.inArray(module, modules) === -1) {
-								modules.push(module);
-								blocks[module] = [];
-							}
-							blocks[module].push(block);
-						});
-
-						scope.selectedModule = modules[0];
-						scope.modules = loadedModules = modules;
-						scope.blocks = loadedBlocks = blocks;
-					});
-
-				}
-
-				function replaceItem (item) {
-					var createdEl = ctrl.createBlock(blockEl.parent(), item, blockEl.index());
-					ctrl.removeBlock(blockEl);
-					return createdEl;
-				}
-
-				scope.makeBlock = function ($event, blockDef) {
-					$event.stopPropagation();
-					var block = ctrl.selectBlock(replaceItem({
-						'type' : 'block',
-						'name' : blockDef.name
-					}));
-					ctrl.notifyChange("create", blockDef.label, block);
-				};
-			}
-
-		};
-
-	}]);
-
-
-
-	//-------------------------------------------------------------------------
-	//
-	// Block Document.
-	//
-	//-------------------------------------------------------------------------
-
-	app.directive('seBlockDocument', [ function () {
-
-		return {
-
-			"restrict" : 'C',
-			"scope"    : {}, // isolated scope is required
-			"require"  : '^structureEditor',
-			"replace"  : true,
-
-			"template" :
-				'<div draggable="true" class="block btn btn-block btn-settings" block-label="{{item.label}}" block-type="document" ng-click="selectBlock($event)">' +
-					'<i class="icon-file"></i> <span ng-bind-html="item.label | niceBlockName"></span>' +
-				'</div>',
-
-			"link" : function seBlockDocumentLinkFn (scope, element, attrs, ctrl) {
-				scope.item = ctrl.getItemById(element.data('id'));
-
 				scope.selectBlock = function ($event) {
 					$event.stopPropagation();
 					ctrl.selectBlock(element);
@@ -2180,6 +2057,7 @@
 		};
 
 	}]);
+
 
 
 	app.filter('niceBlockName', function () {
@@ -2189,7 +2067,7 @@
 	});
 
 
-	app.directive('seBlockDocumentSettings', [ function () {
+	app.directive('rbsBlockDocumentSettings', [ function () {
 
 		return {
 
@@ -2208,8 +2086,8 @@
 					'</div>' +
 				'</form>',
 
-			"link" : function seBlockDocumentLinkFn (scope, element, attrs) {
-				var originalItem = scope.controller.getItemById(element.data('id'));
+			"link" : function seBlockDocumentLinkFn (scope, element) {
+				var originalItem = scope.editorCtrl.getItemById(element.data('id'));
 				scope.block = angular.copy(originalItem);
 
 				scope.hasChanged = function () {
@@ -2222,7 +2100,7 @@
 
 				scope.submit = function () {
 					angular.extend(originalItem, scope.block);
-					scope.controller.notifyChange("changeSettings", "block", element);
+					scope.editorCtrl.notifyChange("changeSettings", "block", element);
 				};
 			}
 
@@ -2237,7 +2115,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('seMarkdownText', [ function () {
+	app.directive('rbsBlockMarkdownText', [ function () {
 
 		return {
 

@@ -77,6 +77,7 @@
 		// or an array of IDs for a multiple picker.
 		if (attrs.valueIds === 'true') {
 			ngModel.$parsers.unshift(function (value) {
+				console.log("value=", Utils.toIds(value));
 				return Utils.toIds(value);
 			});
 		}
@@ -270,7 +271,6 @@
 				{
 					documentList = dlScope;
 				});
-
 			}).error(function (data) {
 				$('#document-picker-backdrop').show();
 				$pickerContents.html('<div class="alert alert-danger">' + i18n.trans('m.rbs.admin.admin.js.picker-template-not-loaded | ucf', {'url' : url}) + '</div>');
@@ -412,6 +412,8 @@
 			};
 
 			scope.selectDocument = function (doc) {
+				console.log("selectDocument=", doc);
+				console.log("ngModel=", attrs.ngModel);
 				ngModel.$setViewValue(doc);
 				ngModel.$render();
 				scope.closeSelector();

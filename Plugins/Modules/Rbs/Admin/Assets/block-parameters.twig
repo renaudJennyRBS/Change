@@ -1,12 +1,30 @@
 <div>
 {% for param in information.parametersInformation %}
-	{% set paramArray = param.toArray() %}
-	<div class="form-group" data-info="{{ paramArray | json_encode}}">
-		<label class="control-label" for="{{ information.name }}_{{ paramArray.name }}">{{ paramArray.label }}</label>
+	{% set inputId = information.name ~ "_" ~ param.name %}
+	<div class="form-group">
+		<label class="control-label" for="{{ inputId }}">{{ param.label }}</label>
 		<div class="controls">
-			<input id="{{ information.name }}_{{ paramArray.name }}" name="{{ paramArray.name }}"
-					class="form-control"
-					type="text" ng-model="parameters.{{ paramArray.name }}" />
+			{% if param.type == 'Integer' %}
+				<input type="number" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'String' %}
+				<input type="text" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'Email' %}
+				<input type="email" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'Url' %}
+				<input type="url" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'Boolean' %}
+				<switch id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'LongString' %}
+				<textarea class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}"></textarea>
+			{% elseif param.type == 'RichText' %}
+				<rbs-rich-text-input{% if param.required %} required="required"{% endif %} id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}"></rbs-rich-text-input>
+			{% elseif param.type == 'Collection' %}
+				<select id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" class="form-control" rbs-items-from-collection="{{ param.collectionCode }}"></select>
+			{% elseif param.type == 'Document' or param.type == 'DocumentId' %}
+				<div value-ids="true" class="document-picker-single" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="{{ param.acceptedModelNames }}"></div>
+			{% elseif param.type == 'DocumentArray' or param.type == 'DocumentIdArray' %}
+				<div value-ids="true" class="document-picker-multiple" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false" accepted-model="{{ param.acceptedModelNames }}"></div>
+			{% endif %}
 		</div>
 	</div>
 {% endfor %}
