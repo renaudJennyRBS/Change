@@ -1,0 +1,13 @@
+<div>
+{% for param in information.parametersInformation %}
+	{% set paramArray = param.toArray() %}
+	<div class="form-group" data-info="{{ paramArray | json_encode}}">
+		<label class="control-label" for="{{ information.name }}_{{ paramArray.name }}">{{ paramArray.label }}</label>
+		<div class="controls">
+			<input id="{{ information.name }}_{{ paramArray.name }}" name="{{ paramArray.name }}"
+					class="form-control"
+					type="text" ng-model="parameters.{{ paramArray.name }}" />
+		</div>
+	</div>
+{% endfor %}
+</div>

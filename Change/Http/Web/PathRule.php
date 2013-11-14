@@ -147,7 +147,7 @@ class PathRule
 		if ($pathInfo)
 		{
 			$this->relativePath = $pathInfo;
-			return $this->setHash(sha1($pathInfo));
+			return $this->setHash(sha1(\Change\Stdlib\String::toLower($pathInfo)));
 		}
 		$this->relativePath = null;
 		return $this->setHash(null);
