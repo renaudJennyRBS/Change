@@ -557,7 +557,7 @@
 						ArrayUtils.clear($scope.changes);
 						angular.forEach($scope.document, function (value, name) {
 							var original = angular.isDefined($scope.original[name]) ? $scope.original[name] : '';
-							if (name !== 'META$' && ! angular.equals(original, value)) {
+							if (name !== 'META$' && ! angular.equals(original, value) && $scope.changes.indexOf(name) === -1) {
 								$scope.changes.push(name);
 							}
 						});
@@ -572,7 +572,7 @@
 
 
 				/**
-				 * Call `scope.initSection(sectionName)` once per section to do some initiallization for the given
+				 * Call `scope.initSection(sectionName)` once per section to do some initialization for the given
 				 * section.
 				 *
 				 * Implement the `initSection()` in your Editor's Scope to initialize the section given as argument.

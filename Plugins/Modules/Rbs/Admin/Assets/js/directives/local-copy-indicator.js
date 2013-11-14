@@ -12,9 +12,9 @@
 
 			link : function (scope)
 			{
-				scope.__copies = EditorManager.getLocalCopies();
+				scope.rbsLocalCopies = EditorManager.getLocalCopies();
 
-				scope.$watchCollection('__copies', function (copies) {
+				scope.$watchCollection('rbsLocalCopies', function (copies) {
 					scope.localCopies = [];
 					angular.forEach(copies, function (copy) {
 						scope.localCopies.push(copy);

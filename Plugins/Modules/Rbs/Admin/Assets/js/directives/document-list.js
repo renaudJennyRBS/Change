@@ -537,8 +537,8 @@
 			 * Directive's compile function:
 			 * collect columns definition and templates for columns, grid items and preview.
 			 */
-			compile : function (tElement, tAttrs) {
-
+			compile : function (tElement, tAttrs)
+			{
 				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columnResult, localActions;
 
 				dlid = tElement.data('dlid');
@@ -555,9 +555,11 @@
 				/**
 				 * Directive's link function.
 				 */
-				return function linkFn (scope, elm, attrs) {
+				return function linkFn (scope, elm, attrs)
+				{
 					var queryObject, search, columnNames, currentPath, previewCache, filterQuery, self = this;
 
+					scope.$emit('Change:DocumentList:' + dlid + ':Ready', scope);
 					scope.collection = [];
 
 					scope.gridModeAvailable = gridModeAvailable;

@@ -27,6 +27,8 @@
 	 * @param SelectSession
 	 * @param $templateCache
 	 * @param Utils
+	 * @param i18n
+	 * @param $timeout
 	 *
 	 * @attribute value-ids
 	 * @attribute allow-in-place-selection
@@ -40,7 +42,7 @@
 	 * @attribute select-model
 	 * @attribute embed-in
 	 */
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n)
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout)
 	{
 		var	$el = $(iElement),
 			documentList,
@@ -229,7 +231,8 @@
 				embedded = true;
 			}
 
-			$http.get(url).success(function (html) {
+			$http.get(url).success(function (html)
+			{
 				var $html = $(html), $dl;
 
 				if ($html.is('rbs-document-list')) {
@@ -237,16 +240,14 @@
 				} else {
 					$dl = $html.find('rbs-document-list').first();
 				}
-
 				$dl.attr('actions', '');
 				$dl.attr('selectable', multiple);
 
-				if ($dl.find('quick-actions').length) {
+				if ($html.find('quick-actions').length) {
 					$html.find('quick-actions').empty();
 				} else {
 					if (multiple) {
 						$dl.append(
-							// TODO Localize
 							'<quick-actions>' +
 								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-replace-all-by-item | ucf') + '</a>' +
 							'</quick-actions>'
@@ -256,12 +257,19 @@
 					}
 				}
 
+				// Append, compile and display picker contents.
 				$pickerContents.empty().append($html);
-				$compile($html)(scope);
-				$('#document-picker-backdrop').show();
+				$compile($pickerContents)(scope);
 				$picker.show();
+				$('#document-picker-backdrop').show();
 
-				documentList = angular.element($dl).scope();
+				// Migration to Angular 1.2.0:
+				// We wait for the <rbs-document-list/> of the picker to tell us when it is ready,
+				// via an event.
+				scope.$on('Change:DocumentList:' + $dl.data('dlid') + ':Ready', function (event, dlScope)
+				{
+					documentList = dlScope;
+				});
 
 			}).error(function (data) {
 				$('#document-picker-backdrop').show();
@@ -417,7 +425,7 @@
 	}
 
 
-	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n)
+	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', '$timeout', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, $timeout)
 	{
 		return {
 
@@ -427,14 +435,14 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout);
 			}
 
 		};
 	}]);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n)
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', '$timeout', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, $timeout)
 	{
 		return {
 
@@ -444,7 +452,7 @@
 			scope       : true,
 
 			link : function (scope, iElement, attrs, ngModel) {
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout);
 			}
 
 		};
