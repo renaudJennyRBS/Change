@@ -17,10 +17,10 @@
 	<key id="function-bookmark-page">ajouter la page aux favoris</key>
 	<key id="items">entrées de menu</key>
 	<key id="add-items">ajouter des entrées</key>
-	<key id="add-item">ajouter une entrée de menu</key>
-	<key id="add-item-help" format="html"><![CDATA[<strong>Vous pouvez sélectionner un Document publiable ou saisir les informations de l'entrée de menu manuellement.</strong><br/>
-	Après avoir choisi un document, il est possible de modifier certains paramètres comme le titre à afficher
-	dans le menu.]]></key>
+	<key id="add-document-item">ajouter une entrée pointant vers un document</key>
+	<key id="add-document-item-help">Vous pouvez sélectionner un document publiable. Après avoir choisi un document, il est possible de modifier le titre à afficher dans le menu.</key>
+	<key id="add-url-item">ajouter une entrée pointant vers une URL</key>
+	<key id="add-url-item-help" format="html">Utilisez ce mode pour inclure des liens vers des pages externes au site. Pour un lien vers URL interne, privilégiez plutôt le formulaire ci-dessus.</key>
 	<key id="select-document-to-add-to-menu">sélectionner un document à ajouter au menu</key>
 	<key id="add-this-element">ajouter cet élément au menu</key>
 	<key id="menus-are-grouped-by-website" format="html"><![CDATA[<strong>Les menus sont classés par site web.</strong><br/>Choisissez un site web pour accéder aux menus qui lui sont rattachés.]]></key>

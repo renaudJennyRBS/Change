@@ -27,36 +27,60 @@
 				{{ i18n('m.rbs.website.documents.menu.add-items', ['ucf']) }}</a>
 		</rbs-field>
 
-		<div class="well" ng-if="addItemUIShown">
-			<button type="button" class="close pull-right" ng-click="toggleAddItemUI($event)">&times;</button>
-			<h4>{{ i18n('m.rbs.website.documents.menu.add-item', ['ucf']) }}</h4>
-			<span class="help-block">{{ i18n('m.rbs.website.documents.menu.add-item-help', ['ucf']) }}</span>
+		<div class="panel panel-default" ng-if="addItemUIShown">
+			<div class="panel-heading">
+				<button type="button" class="close pull-right" ng-click="toggleAddItemUI($event)">&times;</button>
+				{{ i18n('m.rbs.website.documents.menu.add-document-item', ['ucf']) }}
+			</div>
+			<div class="panel-body">
+				<p class="help-block">{{ i18n('m.rbs.website.documents.menu.add-document-item-help', ['ucf']) }}</p>
 
-			<rbs-field label="{{ i18n('m.rbs.website.documents.menu.select-document', ['ucf']) }}">
-				<div class="document-picker-single"
-					allow-creation="false"
-					select-model="{publishable:'true', root:'true'}"
-					ng-model="add.selectedDocument"
-					selector-title="{{ i18nAttr('m.rbs.website.documents.menu.select-document-to-add-to-menu', ['ucf']) }}"
-					ng-change="onDocumentSelected(add.selectedDocument)">
+				<rbs-field label="{{ i18n('m.rbs.website.documents.menu.select-document', ['ucf']) }}">
+					<div class="document-picker-single"
+						allow-creation="false"
+						select-model="{publishable:'true', root:'true'}"
+						ng-model="add.document.selected"
+						selector-title="{{ i18nAttr('m.rbs.website.documents.menu.select-document-to-add-to-menu', ['ucf']) }}"
+						ng-change="onDocumentSelected(add.document.selected)">
+					</div>
+				</rbs-field>
+
+				<rbs-field label="{{ i18n('m.rbs.website.documents.menu.title', ['ucf']) }}">
+					<input type="text" class="form-control" ng-pattern="add.titlePattern" ng-model="add.document.title" />
+					<label>
+						<input type="checkbox" ng-model="add.document.titleI18nKey"/> {{ i18n('m.rbs.website.documents.menu.i18nKey', ['ucf']) }}
+					</label>
+				</rbs-field>
+
+				<div class="form-group property">
+					<div class="col-lg-9 col-lg-offset-3 controls">
+						<button type="button" class="btn btn-primary" ng-disabled="!add.document.title || !add.document.selected" ng-click="addDocument()"><i class="icon-plus"></i>
+							{{ i18n('m.rbs.website.documents.menu.add-this-element', ['ucf']) }}</button>
+					</div>
 				</div>
-			</rbs-field>
+			</div>
+			<div class="panel-heading">
+				{{ i18n('m.rbs.website.documents.menu.add-url-item', ['ucf']) }}
+			</div>
+			<div class="panel-body">
+				<p class="help-block">{{ i18n('m.rbs.website.documents.menu.add-url-item-help', ['ucf']) }}</p>
 
-			<rbs-field label="{{ i18n('m.rbs.website.documents.menu.title', ['ucf']) }}">
-				<input type="text" class="form-control" ng-required="true" ng-pattern="add.titlePattern" ng-model="add.title" />
-				<label>
-					<input type="checkbox" ng-model="add.titleI18nKey"/> {{ i18n('m.rbs.website.documents.menu.i18nKey', ['ucf']) }}
-				</label>
-			</rbs-field>
+				<rbs-field label="{{ i18n('m.rbs.website.documents.menu.url', ['ucf']) }}">
+					<input type="url" class="form-control" ng-model="add.url.selected" />
+				</rbs-field>
 
-			<rbs-field label="{{ i18n('m.rbs.website.documents.menu.url', ['ucf']) }}">
-				<input type="url" class="form-control" ng-model="add.url" />
-			</rbs-field>
+				<rbs-field label="{{ i18n('m.rbs.website.documents.menu.title', ['ucf']) }}">
+					<input type="text" class="form-control" ng-pattern="add.titlePattern" ng-model="add.url.title" />
+					<label>
+						<input type="checkbox" ng-model="add.url.titleI18nKey"/> {{ i18n('m.rbs.website.documents.menu.i18nKey', ['ucf']) }}
+					</label>
+				</rbs-field>
 
-			<div class="form-group property">
-				<div class="col-lg-9 col-lg-offset-3 controls">
-					<button type="button" class="btn btn-primary" ng-click="addItem()"><i class="icon-plus"></i>
-						{{ i18n('m.rbs.website.documents.menu.add-this-element', ['ucf']) }}</button>
+				<div class="form-group property">
+					<div class="col-lg-9 col-lg-offset-3 controls">
+						<button type="button" class="btn btn-primary" ng-disabled="!add.url.title || !add.url.selected" ng-click="addUrl()"><i class="icon-plus"></i>
+							{{ i18n('m.rbs.website.documents.menu.add-this-element', ['ucf']) }}</button>
+					</div>
 				</div>
 			</div>
 		</div>
