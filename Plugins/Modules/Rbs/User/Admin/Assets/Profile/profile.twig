@@ -27,13 +27,37 @@
 
 	<fieldset>
 		<legend>{{ i18n('m.rbs.user.profile.notification', ['ucf']) }}</legend>
-
-		<rbs-field label="{{ i18nAttr("m.rbs.user.profile.notification-time-interval", ["ucf"]) }}">
-			<rbs-time-interval-input ng-model="user.profile.notificationMailInterval" show="days,hours"></rbs-time-interval-input>
-			<span class="help-block">
-				{{ i18n('m.rbs.user.profile.notification-time-interval-helper', ['ucf']) }}
-			</span>
+		<span class="help-block">
+			{{ i18n('m.rbs.user.profile.notification-helper', ['ucf']) }}
+		</span>
+		<rbs-field label="{{ i18nAttr('m.rbs.user.profile.notification-sending-management', ['ucf']) }}">
+			<div class="btn-group">
+				<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'no'}"
+					data-ng-click="setNotificationMailMode('no')">
+					{{ i18n('m.rbs.user.profile.notification-no-email', ['ucf']) }}
+				</button>
+				<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'immediately'}"
+					data-ng-click="setNotificationMailMode('immediately')">
+					{{ i18n('m.rbs.user.profile.notification-immediately', ['ucf']) }}
+				</button>
+				<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'timeInterval'}"
+					data-ng-click="setNotificationMailMode('timeInterval')">
+					{{ i18n('m.rbs.user.profile.notification-with-time-interval', ['ucf']) }}
+				</button>
+			</div>
 		</rbs-field>
+		<rbs-field label="{{ i18nAttr('m.rbs.user.profile.notification-time-interval', ['ucf']) }}">
+			<rbs-time-interval-input id="notificationmailinterval" label="{{ i18nAttr("m.rbs.user.profile.notification-time-interval", ["ucf"]) }}"
+				ng-model="user.profile.notificationMailInterval" show="days,hours" disabled="notificationMailMode != 'timeInterval'">
+			</rbs-time-interval-input>
+		</rbs-field>
+		<rbs-field label="{{ i18nAttr('m.rbs.user.profile.notification-time-interval-at', ['ucf']) }}">
+			<input class="form-control" type="time" ng-model="user.profile.notificationMailAt"
+				ng-pattern="/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/" ng-disabled="notificationMailMode != 'timeInterval'"/>
+		</rbs-field>
+		<span class="help-block">
+			{{ i18n('m.rbs.user.profile.notification-time-interval-helper', ['ucf']) }}
+		</span>
 	</fieldset>
 
 	<fieldset>

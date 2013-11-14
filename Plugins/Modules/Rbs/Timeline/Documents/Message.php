@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Timeline\Documents;
 
-use Rbs\User\Events\AuthenticatedUser;
 use Change\Documents\Events\Event;
 
 	/**
@@ -16,6 +15,9 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 	}
 
+	/**
+	 * @param Event $event
+	 */
 	public function onDefaultSave(Event $event)
 	{
 		/** @var $document Message */
@@ -50,7 +52,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		foreach ($userIdentifiers as $userIdentifier)
 		{
 			$dqb = $documentManager->getNewQuery('Rbs_User_User');
-			$user = $dqb->andPredicates($dqb->eq('identifier', $userIdentifier))->getFirstDocument();
+			$user = $dqb->andPredicates($dqb->eq('login', $userIdentifier))->getFirstDocument();
 			if ($user)
 			{
 				$authenticatedUser = new \Rbs\User\Events\AuthenticatedUser($user);

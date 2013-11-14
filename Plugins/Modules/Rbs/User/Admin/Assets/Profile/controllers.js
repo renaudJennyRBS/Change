@@ -46,6 +46,44 @@
 		$scope.isUnchanged = function () {
 			return angular.equals(User.get(), $scope.user);
 		};
+
+		//find notification mail mode
+		if ($scope.user.profile.notificationMailInterval)
+		{
+			$scope.notificationMailMode = 'timeInterval';
+		}
+		else
+		{
+			$scope.notificationMailMode = $scope.user.profile.sendNotificationMailImmediately ? 'immediately' : 'no';
+		}
+
+		$scope.setNotificationMailMode = function (mode){
+			switch (mode)
+			{
+				case 'no':
+					$scope.user.profile.notificationMailInterval = '';
+					$scope.notificationMailMode = 'no';
+					$scope.user.profile.sendNotificationMailImmediately = false;
+					break;
+				case 'immediately':
+					$scope.user.profile.notificationMailInterval = '';
+					$scope.notificationMailMode = 'immediately';
+					$scope.user.profile.sendNotificationMailImmediately = true;
+					break;
+				case 'timeInterval':
+					if(!$scope.user.profile.notificationMailInterval)
+					{
+						$scope.user.profile.notificationMailInterval = 'P0Y0M0W1DT0H0M0S';
+						$scope.user.profile.notificationMailAt = '12:00';
+					}
+					$scope.notificationMailMode = 'timeInterval';
+					$scope.user.profile.sendNotificationMailImmediately = false;
+					break;
+				default:
+					console.error('Error: undefined mode for Notification mail mode');
+					break;
+			}
+		};
 	}
 
 	RbsUserProfileController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.MainMenu', '$http', 'RbsChange.i18n', 'RbsChange.User', 'RbsChange.PaginationPageSizes'];
