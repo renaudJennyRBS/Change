@@ -2,4 +2,5 @@
 <i18n baseKey="m.rbs.user.blocks" lcid="fr_FR">
 	<key id="login">Bloc d'identification</key>
 	<key id="login-realm">realm</key>
+	<key id="function-error-401">autorisation nécessaire</key>
 </i18n>
