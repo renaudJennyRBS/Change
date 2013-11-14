@@ -27,7 +27,7 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Review_ReviewDetail', true, $events);
 		new RegisterByBlockName('Rbs_Review_EditReview', true, $events);
 
-		new  RegisterByBlockName('Rbs_Seo_HeadMetas', true, $events);
+		new  RegisterByBlockName('Rbs_Seo_HeadMetas', false, $events);
 
 		new  RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
 
