@@ -13,7 +13,9 @@
 		<a href ng-href="(= 'Rbs_Catalog_Product' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.documents.product-create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" filter-query="query">
+	(= productsQuery =)
+	<div ng-controller="Rbs_Catalog_Product_ProductsController">
+	<rbs-document-list  data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" load-query="productsQuery" filter-query="query">
 		<column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
 			label="{{ i18nAttr('m.rbs.catalog.documents.product.visual', ['ucf']) }}"></column>
 		<column name="label" primary="true"></column>
@@ -47,4 +49,5 @@
 			</div>
 		</grid-item>
 	</rbs-document-list>
+	</div>
 </div>

@@ -4,6 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
+
 	function PricesController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager)
 	{
 		Workspace.collapseLeftSidebar();
@@ -121,7 +122,7 @@
 
 	function CrossSellingController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
 	{
-		Workspace.collapseLeftSidebar();
+		//Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],

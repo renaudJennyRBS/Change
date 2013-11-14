@@ -7,9 +7,10 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="title" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'title'), ['ucf']) }}">
-			<div class="help-block">{{ i18n('m.rbs.catalog.documents.attribute.title-help', ['ucf']) }}</div>
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.catalog.documents.attribute.synchronize-title-label', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'title'), ['ucf']) }}"
+			input-class="form-control">
 		</rbs-field-text>
 
 		<rbs-field-rich-text property="description"
@@ -18,12 +19,12 @@
 		</rbs-field-rich-text>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'visibility'), ['ucf']) }}">
-			<rbs-collection-multiple-item-selector ng-model="document.visibility" class="form-control"
+			<rbs-collection-multiple-item-selector ng-model="document.visibility"
 				collection-code="Rbs_Catalog_Collection_AttributeVisibility" />
 		</rbs-field>
 
 		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}">
-			<select ng-model="document.valueType" required="required"
+			<select ng-model="document.valueType" class="form-control" required="required"
 				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes">
 				<option value=""></option>
 				</select>

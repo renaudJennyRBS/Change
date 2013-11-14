@@ -74,41 +74,25 @@ class Install extends \Change\Plugins\InstallBase
 			return;
 		}
 
-		$lcid = $applicationServices->getI18nManager()->getLCID();
+		//$lcid = $applicationServices->getI18nManager()->getLCID();
+		$i18nManager = $applicationServices->getI18nManager();
 
-		// TODO Move hard-coded text elsewhere.
-		if ($lcid === 'fr_FR')
-		{
-			$tags = array(
-				// Media
-				'grande image'  => 'grey',
-				'moyenne image' => 'grey',
-				// Other...
-				'à traduire' => 'red'
-			);
-		}
-		else
-		{
-			$tags = array(
-				// Media
-				'large picture'  => 'grey',
-				'medium picture' => 'grey',
-				// Other...
-				'to translate' => 'red'
-			);
-		}
+		//Default tags
+		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup-large-picture', array('ucf')), 'color' => 'gray', 'module' => 'Rbs_Media');
+		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup-medium-picture', array('ucf')), 'color' => 'gray', 'module' => 'Rbs_Media');
+		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup-to-translate', array('ucf')), 'color' => 'red', 'module' => NULL);
 
 		$transactionManager = $applicationServices->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-
-			foreach ($tags as $label => $color)
+			foreach ($tags as $defaultTag)
 			{
 				/* @var $tag \Rbs\Tag\Documents\Tag */
 				$tag = $documentManager->getNewDocumentInstanceByModel($tagModel);
-				$tag->setLabel($label);
-				$tag->setColor($color);
+				$tag->setLabel($defaultTag['label']);
+				$tag->setColor($defaultTag['color']);
+				$tag->setModule($defaultTag['module']);
 				$tag->create();
 			}
 

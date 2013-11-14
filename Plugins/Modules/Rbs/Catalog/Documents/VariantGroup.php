@@ -164,6 +164,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 				$product->setLabel($this->getLabel() . ' - ' . $this->buildProductLabel($entry, $pmi, $axesInfo, 'label'));
 				$product->getCurrentLocalization()->setTitle($product->getLabel());
 				$product->setVariantGroup($this);
+				$product->setVariant(true);
 				$product->setAttribute($this->getAxisAttribute());
 				$product->setAttributeValues($axesValues);
 				$product->setCategorizable(($axesInfo[$entry['axisId']]['cat'] == true));

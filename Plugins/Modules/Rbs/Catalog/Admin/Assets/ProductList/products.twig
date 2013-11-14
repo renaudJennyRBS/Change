@@ -1,10 +1,10 @@
 <form novalidate="" ng-controller="Rbs_Catalog_ProductList_ProductsController" class="form-horizontal">
 	<div class="page-header">
 		<h2 class="ng-binding">
-			(= productList.label =)
 			<span ng-if="List.isCrossSelling">
-				(<a href="(= productList.product | documentURL =)">(= productList.product.label =)</a>)
+				<a href="(= productList.product | documentURL =)">(= productList.product.label =)</a> /
 			</span>
+			(= productList.label =)
 			<small>
 				{{ i18n(propertyKey('Rbs_Catalog_ProductList', 'productSortOrder'), ['ucf', 'lab']) }}
 				(= List.sortOrders[productList.productSortOrder].label =)

@@ -17,7 +17,7 @@
 		<hr />
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_SectionProductList', 'productSortOrder'), ['ucf']) }}">
-			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder"
+			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder" class="form-control"
 				rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
 			</select>
 			<span class="help-block">{{ i18n('m.rbs.catalog.documents.sectionproductlist.productsortorder-help') }} </span>

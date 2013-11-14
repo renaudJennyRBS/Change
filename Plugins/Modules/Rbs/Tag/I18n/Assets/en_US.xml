@@ -2,4 +2,7 @@
 <i18n baseKey="m.rbs.tag" lcid="en_US">
 	<key id="no-tags">none</key>
 	<key id="tags">tags</key>
+	<key id="setup-large-picture">large picture</key>
+	<key id="setup-medium-picture">medium picture</key>
+	<key id="setup-to-translate">to translate</key>
 </i18n>

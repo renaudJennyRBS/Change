@@ -3,15 +3,15 @@
 	<include id="m.rbs.generic.document"/>
 	<key id="rootproduct">produit à decliner</key>
 	<key id="rootproduct-picker-title">sélectionner le produit à décliner</key>
-	<key id="products-section">liste des déclinaisons</key>
+	<key id="products-section">liste des variantes</key>
 	<key id="axisattribute">jeu d'attributs</key>
-	<key id="newskuoncreation">Créer un nouveau SKU par déclinaison</key>
+	<key id="newskuoncreation">Créer un nouveau SKU par variante</key>
 
 	<key id="axis-head">axe</key>
 	<key id="visibility-head">visible dans les listes</key>
 	<key id="values-head">valeurs</key>
-	<key id="generate-all-action">Générer tout</key>
-	<key id="remove-all-action">Supprimer tout</key>
+	<key id="generate-all-action">Sélectionner toutes les combinaisons</key>
+	<key id="remove-all-action">Désélectionner toutes les combinaisons</key>
 	<key id="edit-product-head">Fiche Produit</key>
 	<key id="edit-axis-head">axe de déclinaison</key>
 	<key id="add-axis">ajouter l'axe déclinaison</key>
@@ -30,7 +30,7 @@
 		<strong>Enregistrer</strong> ci-dessous.]]></key>
 	<key id="existing-products-of">fiches existantes sur</key>
 	<key id="possible-products">fiches possibles</key>
-	<key id="products-will-be-created-when-this-form-is-submitted">Les fiches produits ne seront réellement créées qu'après l'enregistrement de ce formulaire.</key>
+	<key id="products-will-be-created-when-this-form-is-submitted">Les fiches produits correspondant aux combinaisons sélectionnées ne seront réellement créées qu'après l'enregistrement de ce formulaire.</key>
 	<key id="no-visuals">aucun visuel</key>
 	<key id="help-tip" format="html"><![CDATA[
 		<p>
@@ -41,7 +41,7 @@
 
 		<h4>Que faire ici ?</h4>
 
-		<h5>Ajouter des déclinaisons pour le produit</h5>
+		<h5>Ajouter des variante pour le produit</h5>
 		<p>
 			Cliquez sur <button type="button" class="btn btn-default btn-xs"><i class="icon-plus"></i></button> pour sélectionner
 			cette valeur et ainsi créer les fiches produits correspondantes.
