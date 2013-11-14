@@ -16,7 +16,7 @@
 	<rbs-document-list data-dlid="DLRbsOrderOrder"
 			model="Rbs_Order_Order" filter-query="query" use-properties="shippingStatus processingStatus paymentStatus" extend="extend">
 		<column name="code" primary="true"></column>
-		<column name="status" align="center">
+		<column name="status" align="center" label="{{ i18nAttr('m.rbs.order.documents.order.statuses', ['ucf']) }}">
 			<span rbs-order-status-indicators="" order="doc"></span>
 		</column>
 		<column name="amountWithTax"></column>
