@@ -14,7 +14,9 @@ class Profile extends \Change\User\AbstractProfile
 			'pagingSize' => 10,
 			'documentListViewMode' => 'list',
 			'editorActionAfterSave' => 'stay',
+			'sendNotificationMailImmediately' => false,
 			'notificationMailInterval' => '',
+			'notificationMailAt' => '',
 			'dateOfLastNotificationMailSent' => 0
 		);
 	}
@@ -33,6 +35,6 @@ class Profile extends \Change\User\AbstractProfile
 	public function getPropertyNames()
 	{
 		return array('avatar', 'pagingSize', 'documentListViewMode', 'editorActionAfterSave', 'dashboard',
-			'notificationMailInterval', 'dateOfLastNotificationMailSent');
+			'sendNotificationMailImmediately', 'notificationMailInterval', 'notificationMailAt', 'dateOfLastNotificationMailSent');
 	}
 }
