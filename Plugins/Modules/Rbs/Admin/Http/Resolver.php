@@ -58,6 +58,18 @@ class Resolver extends BaseResolver
 			$event->setAction($action);
 			return;
 		}
+		elseif (preg_match('/^Block\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/parameters\.twig$/', $relativePath, $matches))
+		{
+			list(,$vendor, $shortModuleName, $shortBlockName) = $matches;
+			$event->setParam('vendor', $vendor);
+			$event->setParam('shortModuleName', $shortModuleName);
+			$event->setParam('shortBlockName', $shortBlockName);
+			$action = function($event) {
+				(new \Rbs\Admin\Http\Actions\GetHtmlBlockParameters())->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
 		elseif (preg_match('/^([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.([a-z]+)$/', $relativePath, $matches))
 		{
 			$event->setParam('resourcePath', $relativePath);

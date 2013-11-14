@@ -16,6 +16,11 @@ class Information
 	/**
 	 * @var string
 	 */
+	protected $section;
+
+	/**
+	 * @var string
+	 */
 	protected $label;
 
 	/**
@@ -34,6 +39,8 @@ class Information
 	function __construct($name)
 	{
 		$this->name = $name;
+		list($vendor, $shortModuleName,) = explode('_', $name);
+		$this->section = $vendor . '_' . $shortModuleName;
 	}
 
 	/**
@@ -43,6 +50,24 @@ class Information
 	public function onInformation(\Change\Events\Event $event)
 	{
 
+	}
+
+	/**
+	 * @param string $section
+	 * @return $this
+	 */
+	public function setSection($section)
+	{
+		$this->section = $section;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSection()
+	{
+		return $this->section;
 	}
 
 	/**

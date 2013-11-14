@@ -4,6 +4,7 @@ namespace Rbs\Admin\Http\Rest;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
+use Rbs\Admin\Http\Rest\Actions\BlockList;
 use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
 use Rbs\Admin\Http\Rest\Actions\TagsInfo;
@@ -36,7 +37,7 @@ class AdminResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList');
+		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList', 'blockList');
 	}
 
 	/**
@@ -107,6 +108,13 @@ class AdminResolver
 					(new DocumentList())->execute($event);
 				});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+
+			elseif ($actionName === 'blockList')
+			{
+				$event->setAction(function($event) {
+					(new BlockList())->execute($event);
+				});
 			}
 		}
 	}
