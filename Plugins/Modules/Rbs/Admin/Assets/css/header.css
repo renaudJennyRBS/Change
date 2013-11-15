@@ -48,7 +48,10 @@
 	top: 3px;
 }
 
-body > .navbar {
+body > .navbar,
+#rbs-change-menu > .navbar {
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(0, 0, 0, 0.4);
 	border-bottom: 5px solid #B1CA27;
+	border-left: 0;
+	border-right: 0;
 }

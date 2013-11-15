@@ -111,6 +111,9 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 		//TODO: do the same things for user group
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
