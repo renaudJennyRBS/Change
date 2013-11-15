@@ -38,7 +38,7 @@
 				<rbs-field label="{{ i18n('m.rbs.website.documents.menu.select-document', ['ucf']) }}">
 					<div class="document-picker-single"
 						allow-creation="false"
-						select-model="{publishable:'true', root:'true'}"
+						select-model="{publishable:'true', abstract:'false'}"
 						ng-model="add.document.selected"
 						selector-title="{{ i18nAttr('m.rbs.website.documents.menu.select-document-to-add-to-menu', ['ucf']) }}"
 						ng-change="onDocumentSelected(add.document.selected)">
