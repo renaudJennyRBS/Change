@@ -746,7 +746,9 @@
 							if (angular.isArray(propertiesList)) {
 								if (Utils.hasCorrection(resource)) {
 									angular.forEach(resource.META$.correction.propertiesNames, function (propName) {
-										propertiesList.push(propName);
+										if (propertiesList.indexOf(propName) === -1) {
+											propertiesList.push(propName);
+										}
 									});
 								}
 								var toSave = {};

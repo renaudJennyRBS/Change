@@ -250,12 +250,12 @@
 					var deferred = $q.defer(),
 					    self = this;
 
-					scope.__dialog_confirmEmbed_confirm = function () {
+					scope.rbsChangeDialogConfirmEmbed_confirm = function () {
 						self.closeEmbedded();
 						deferred.resolve();
 					};
 
-					scope.__dialog_confirmEmbed_cancel = function () {
+					scope.rbsChangeDialogConfirmEmbed_cancel = function () {
 						self.closeEmbedded();
 						deferred.reject();
 					};
@@ -272,7 +272,7 @@
 						'<p>' + text + '</p>' +
 						'<p><strong>' + i18n.trans('m.rbs.admin.admin.js.do-you-want-to-continue | ucf') + '</strong></p>' +
 						'<div class="form-actions">' +
-						'<button class="btn btn-primary ' + options.primaryButtonClass + '" type="button" data-ng-click="__dialog_confirmEmbed_confirm()">';
+						'<button class="btn btn-primary ' + options.primaryButtonClass + '" type="button" data-ng-click="rbsChangeDialogConfirmEmbed_confirm()">';
 
 					if (!options.primaryButtonIcon && options.pointedElement) {
 						var icon = options.pointedElement.find('i[class^="icon-"]').first();
@@ -298,14 +298,14 @@
 						contents += i18n.trans('m.rbs.admin.admin.js.yes | ucf');
 					}
 					contents += '</button>';
-					contents += ' <button type="button" class="btn btn-default" data-ng-click="__dialog_confirmEmbed_cancel()">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button></div>';
+					contents += ' <button type="button" class="btn btn-default" data-ng-click="rbsChangeDialogConfirmEmbed_cancel()">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button></div>';
 
 					this.embed(
 							$el,
 							{
 								contents           : contents,
 								title              : title,
-								closeButtonNgClick : '__dialog_confirmEmbed_cancel()'
+								closeButtonNgClick : 'rbsChangeDialogConfirmEmbed_cancel()'
 							},
 							scope,
 							options

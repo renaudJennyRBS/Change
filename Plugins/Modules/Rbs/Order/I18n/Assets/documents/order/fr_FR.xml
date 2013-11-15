@@ -64,4 +64,6 @@
 	<key id="action-mark-as-finalized">finalisée</key>
 	<key id="action-mark-as-prepared">préparée</key>
 	<key id="action-cancel">annuler</key>
+	<key id="statuses">état</key>
+
 </i18n>

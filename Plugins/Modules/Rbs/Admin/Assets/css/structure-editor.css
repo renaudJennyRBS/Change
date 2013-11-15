@@ -46,8 +46,8 @@
 /* ----- Block Rich Text --------------------------------------------------- */
 
 
-.structure-editor .se-rich-text.block,
-.structure-editor .se-formatted-text.block {
+.structure-editor .rbs-rich-text.block,
+.structure-editor .rbs-formatted-text.block {
 	cursor: pointer;
 	padding: 4px;
 	background: white;
@@ -57,8 +57,8 @@
 	/*background: #FFFFF8 url(../img/icons/text-edit.png) center right no-repeat;*/
 	outline: 0;
 }
-.structure-editor .se-rich-text.block.active,
-.structure-editor .se-formatted-text.block.active {
+.structure-editor .rbs-rich-text.block.active,
+.structure-editor .rbs-formatted-text.block.active {
 	border: 3px solid rgb(243,197,27);
 	padding: 2px;
 	background: #FFFFF8;
@@ -66,11 +66,11 @@
 }
 
 
-.structure-editor .se-markdown-text.block {
+.structure-editor .rbs-markdown-text.block {
 	border: 3px solid rgba(0, 0, 0, 0.2);
 	border-radius: 4px;
 }
-.structure-editor .se-markdown-text.block.active {
+.structure-editor .rbs-markdown-text.block.active {
 	border: 3px solid rgb(243,197,27);
 	cursor: default;
 }
@@ -81,12 +81,12 @@
 }
 
 
-.structure-editor .se-rich-text.block > *:first-child,
-.structure-editor .se-formatted-text.block > *:first-child{
+.structure-editor .rbs-rich-text.block > *:first-child,
+.structure-editor .rbs-formatted-text.block > *:first-child{
 	margin-top: 0;
 }
-.structure-editor .se-rich-text.block > *:last-child,
-.structure-editor .se-formatted-text.block > *:last-child{
+.structure-editor .rbs-rich-text.block > *:last-child,
+.structure-editor .rbs-formatted-text.block > *:last-child{
 	margin-bottom: 0;
 }
 
@@ -119,22 +119,22 @@
 /* ----- Rows (se-row) ----------------------------------------------------- */
 
 
-.structure-editor .se-row {
+.structure-editor .rbs-row {
 	background: url("../img/columns-bg.png") repeat scroll 0 0 transparent;
 	border: 1px solid rgba(0, 87, 141, 0.7);
 	border-radius: 4px 4px 4px 4px;
 	cursor: pointer;
 	padding: 2px 4px;
 }
-.structure-editor .se-row.active {
+.structure-editor .rbs-row.active {
 	background: url("../img/columns-selected-bg.png") repeat scroll 0 0 transparent;
 }
 
-.structure-editor .se-row .se-row {
+.structure-editor .rbs-row .rbs-row {
 	background: rgba(0, 0, 0, 0.2);
 	padding: 2px 2px;
 }
-.structure-editor .se-row .se-row.active {
+.structure-editor .rbs-row .rbs-row.active {
 	border: 3px solid rgb(243,197,27);
 	padding: 0px;
 }
@@ -144,7 +144,7 @@
 /* ----- Row settings ------------------------------------------------------ */
 
 
-.se-row-settings .column-info {
+.rbs-row-settings .column-info {
 	border-radius: 4px 4px 4px 4px;
 	box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 	margin: 10px 10px 5px 10px;
@@ -153,32 +153,32 @@
 	display: inline-block;
 }
 
-.se-row-settings .column-info.active {
+.rbs-row-settings .column-info.active {
 	box-shadow: 0 0 2px 2px #0088CC;
 }
 
-.se-row-settings .column-info + .btn-block {
+.rbs-row-settings .column-info + .btn-block {
 	margin-top: 10px;
 }
 
-.se-row-settings .column-info h5 {
+.rbs-row-settings .column-info h5 {
 	margin: 3px 0;
 }
 
-.se-row-settings .column-info .param {
+.rbs-row-settings .column-info .param {
 	margin: 3px 0;
 	background: #EEE;
 	border-radius: 4px;
 }
 
-.se-row-settings .column-info .param .text {
+.rbs-row-settings .column-info .param .text {
 	padding: 3px 6px;
 	white-space: nowrap;
 	display: inline-block;
 	width: 6em;
 }
 
-.se-row-settings .column-info .param .btn {
+.rbs-row-settings .column-info .param .btn {
 	width: 36px;
 }
 
@@ -250,7 +250,7 @@
 /* ----- Block chooser ----------------------------------------------------- */
 
 
-.se-block-chooser {
+.rbs-block-chooser {
 	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.3);
 	border: 1px dashed white;
 	border-radius: 4px 4px 4px 4px;
@@ -260,18 +260,18 @@
 	text-shadow: 0 1px 1px black;
 }
 
-.se-block-chooser.active {
+.rbs-block-chooser.active {
 	border: 3px solid rgb(243,197,27);
 	padding: 8px 4px;
 }
 
-.se-block-chooser-settings .btn.btn-block {
+.rbs-block-chooser-settings .btn.btn-block {
 	padding-left: 10px;
 	padding-right: 10px;
 	text-align: left;
 }
 
-.se-block-chooser-settings header {
+.rbs-block-chooser-settings header {
 	margin-bottom: 10px;
 }
 
@@ -316,7 +316,7 @@
 /* ----- Columns (se-cell) ------------------------------------------------- */
 
 
-.se-cell {
+.rbs-cell {
 	position: relative;
 }
 
@@ -325,12 +325,12 @@
 /* ----- Property grid ----------------------------------------------------- */
 
 
-.se-block-settings-editor .rich-text-toolbar {
+.rbs-block-settings-editor .rich-text-toolbar {
 	background: none;
 	border: none;
 }
 
-.se-block-settings-editor > .btn-toolbar {
+.rbs-block-settings-editor > .btn-toolbar {
 	background: none;
 	border-bottom: 1px solid #D0D0D0;
 	margin-left: -15px;
@@ -339,17 +339,17 @@
 	padding: 7px;
 }
 
-.se-block-settings-editor > .btn-toolbar h6 {
+.rbs-block-settings-editor > .btn-toolbar h6 {
 	margin: 0 0 3px 0;
 }
 
-.se-block-settings-editor .form-actions {
+.rbs-block-settings-editor .form-actions {
 	margin: 10px -15px -15px -15px;
 	padding: 7px;
 	text-align: center;
 }
 
-.se-block-settings-editor form {
+.rbs-block-settings-editor form {
 	margin: 0;
 }
 
@@ -412,16 +412,16 @@
 	letter-spacing: 5px;
 }
 
-.structure-editor .se-rich-text.active[data-visibility *= "D"]:after,
-.structure-editor .se-rich-text.active[data-visibility *= "P"]:after,
-.structure-editor .se-rich-text.active[data-visibility *= "T"]:after {
+.structure-editor .rbs-rich-text.active[data-visibility *= "D"]:after,
+.structure-editor .rbs-rich-text.active[data-visibility *= "P"]:after,
+.structure-editor .rbs-rich-text.active[data-visibility *= "T"]:after {
 	right: 1px;
 	top: 1px;
 }
 
-.structure-editor .block.se-markdown-text[data-visibility *= "D"]:after,
-.structure-editor .block.se-markdown-text[data-visibility *= "P"]:after,
-.structure-editor .block.se-markdown-text[data-visibility *= "T"]:after {
+.structure-editor .block.rbs-markdown-text[data-visibility *= "D"]:after,
+.structure-editor .block.rbs-markdown-text[data-visibility *= "P"]:after,
+.structure-editor .block.rbs-markdown-text[data-visibility *= "T"]:after {
 	top: 40px;
 }
 

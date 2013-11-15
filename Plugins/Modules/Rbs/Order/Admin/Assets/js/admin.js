@@ -38,7 +38,6 @@
 				promises.push(REST.save(order));
 			});
 			return $q.all(promises);
-
 		}
 
 		$scope.extend =

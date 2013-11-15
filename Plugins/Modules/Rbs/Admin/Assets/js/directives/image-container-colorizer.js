@@ -639,19 +639,19 @@
 				if (! element.is('img')) {
 					throw new Error("Directive 'rbsImageContainerColorizer' can only be applied to <img/> elements.");
 				}
-				element.hide();
 				var container = element.closest(attrs.rbsImageContainerColorizer);
 				if (container.length) {
 					counter++;
+					element.hide();
+					element.after('<canvas id="rbsImageContainerColorizerCanvas' + counter + '" class="' + element.attr('class') + '"></canvas>');
+					var	canvas;
+					canvas = $('#rbsImageContainerColorizerCanvas' + counter).get(0);
 					element.on('load', function () {
+						console.log(element, element.attr("src"), counter);
 						// Get image size
 						$("<img/>").attr("src", element.attr("src"))
 							.load(function() {
-								var	canvas, cls = element.attr('class');
-								element.after('<canvas id="rbsImageContainerColorizerCanvas' + counter + '" class="' + cls + '"></canvas>');
-								canvas = $('#rbsImageContainerColorizerCanvas' + counter).get(0);
 								ColorTunes.launch(this, canvas, container);
-								element.hide();
 							});
 					});
 				}

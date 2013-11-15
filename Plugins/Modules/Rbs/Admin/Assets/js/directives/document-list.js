@@ -83,8 +83,8 @@
 						'</a>' +
 						'<div class="quick-action danger" ng-show="deleteConfirm[$index]">' +
 							'<i class="icon-trash"></i> ?' +
-							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">oui</button>' +
-							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">non</button></span>' +
+							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">' + i18n.trans('m.rbs.admin.admin.js.yes') + '</button>' +
+							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">' + i18n.trans('m.rbs.admin.admin.js.no') + '</button></span>' +
 						'</div>';
 			}
 
@@ -537,8 +537,8 @@
 			 * Directive's compile function:
 			 * collect columns definition and templates for columns, grid items and preview.
 			 */
-			compile : function (tElement, tAttrs) {
-
+			compile : function (tElement, tAttrs)
+			{
 				var	dlid, undefinedColumnLabels = [], gridModeAvailable, columnResult, localActions;
 
 				dlid = tElement.data('dlid');
@@ -555,9 +555,11 @@
 				/**
 				 * Directive's link function.
 				 */
-				return function linkFn (scope, elm, attrs) {
+				return function linkFn (scope, elm, attrs)
+				{
 					var queryObject, search, columnNames, currentPath, previewCache, filterQuery, self = this;
 
+					scope.$emit('Change:DocumentList:' + dlid + ':Ready', scope);
 					scope.collection = [];
 
 					scope.gridModeAvailable = gridModeAvailable;

@@ -4,7 +4,7 @@
 
 	function KeyboardService($rootScope)
 	{
-		$rootScope.__changeKeyboardStatus = {
+		$rootScope.rbsChangeKeyboardStatus = {
 			'shift': false,
 			'ctrl': false,
 			'alt': false,
@@ -15,19 +15,19 @@
 		{
 			if (event.shiftKey)
 			{
-				$rootScope.__changeKeyboardStatus.shift = true;
+				$rootScope.rbsChangeKeyboardStatus.shift = true;
 			}
 			if (event.ctrlKey)
 			{
-				$rootScope.__changeKeyboardStatus.ctrl = true;
+				$rootScope.rbsChangeKeyboardStatus.ctrl = true;
 			}
 			if (event.altKey)
 			{
-				$rootScope.__changeKeyboardStatus.alt = true;
+				$rootScope.rbsChangeKeyboardStatus.alt = true;
 			}
 			if (event.metaKey)
 			{
-				$rootScope.__changeKeyboardStatus.meta = true;
+				$rootScope.rbsChangeKeyboardStatus.meta = true;
 			}
 			$rootScope.$digest();
 		}
@@ -36,27 +36,27 @@
 		{
 			if (!event.shiftKey)
 			{
-				$rootScope.__changeKeyboardStatus.shift = false;
+				$rootScope.rbsChangeKeyboardStatus.shift = false;
 			}
 			if (!event.ctrlKey)
 			{
-				$rootScope.__changeKeyboardStatus.ctrl = false;
+				$rootScope.rbsChangeKeyboardStatus.ctrl = false;
 			}
 			if (!event.altKey)
 			{
-				$rootScope.__changeKeyboardStatus.alt = false;
+				$rootScope.rbsChangeKeyboardStatus.alt = false;
 			}
 			if (!event.metaKey)
 			{
-				$rootScope.__changeKeyboardStatus.meta = false;
+				$rootScope.rbsChangeKeyboardStatus.meta = false;
 			}
 			$rootScope.$digest();
 		}
 
 		this.watch = function (scope, key, callback)
 		{
-			var expr = '__changeKeyboardStatus.' +
-				key.replace(/\+/g, ' && __changeKeyboardStatus.').replace(/\-/g, ' && !__changeKeyboardStatus.');
+			var expr = 'rbsChangeKeyboardStatus.' +
+				key.replace(/\+/g, ' && rbsChangeKeyboardStatus.').replace(/\-/g, ' && !rbsChangeKeyboardStatus.');
 			var deregistrationFunc = $rootScope.$watch(expr, function (value, oldValue)
 			{
 				if (value === true || (value === false))

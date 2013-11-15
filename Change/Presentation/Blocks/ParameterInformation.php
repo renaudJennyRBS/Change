@@ -119,4 +119,23 @@ class ParameterInformation
 		$this->attributes['collectionCode'] = $collectionCode;
 		return $this;
 	}
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function __get($name)
+	{
+		return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
+	}
+
+	/**
+	 * @param $name
+	 * @return bool
+	 */
+	public function __isset($name)
+	{
+		return array_key_exists($name, $this->attributes);
+	}
+
 }
