@@ -47,8 +47,12 @@
 	<search-filters ng-if="allowSearchFilters" model="(= acceptedModel || dp.selectedModel.name =)" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="well well-small" ng-show="! acceptedModel">
-		<label style="display: inline-block" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
-		<rbs-model-selector filter="(= selectModel =)" class="input-xlarge" id="DpSelectModel" model="dp.selectedModel"></rbs-model-selector>
+		<div class="row">
+			<label class="col-lg-3 control-label" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
+			<div class="col-lg-9">
+				<rbs-model-selector filter="(= selectModel =)" class="form-control" id="DpSelectModel" model="dp.selectedModel"></rbs-model-selector>
+			</div>
+		</div>
 	</div>
 
 	<div>
@@ -57,7 +61,9 @@
 
 	<div data-role="picker-contents"></div>
 
+	<hr />
+
 	<div class="btn-toolbar clearfix">
-		<button ng-click="closeSelector()" type="button" class="btn btn-success pull-right">{{ i18n('m.rbs.admin.close', ['ucf']) }}</button>
+		<button ng-click="closeSelector()" type="button" class="btn btn-default pull-right">{{ i18n('m.rbs.admin.close', ['ucf']) }}</button>
 	</div>
 </div>
