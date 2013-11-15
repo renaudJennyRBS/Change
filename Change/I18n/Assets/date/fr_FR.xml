@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="c.date" lcid="fr_FR">
-	<key id="default-date-format">dd/MM/yyyy</key>
-	<key id="default-datetime-format">dd/MM/yyyy HH:mm</key>
-</i18n>
