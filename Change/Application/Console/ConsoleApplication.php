@@ -2,6 +2,7 @@
 namespace Change\Application\Console;
 
 use Change\Application\Console\ChangeCommand as Command;
+use Change\Commands\Events\ConsoleCommandResponse;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -174,26 +175,16 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 			{
 				$args = $eventManager->prepareArgs(array_merge($input->getOptions(), $input->getArguments()));
 				$args['outputMessages'] = new \ArrayObject();
+
 				$event = new \Change\Commands\Events\Event($command->getName(), $changeApplication, $args);
+
+				$response = new \Change\Commands\Events\ConsoleCommandResponse();
+				$response->setOutput($output);
+				$event->setCommandResponse($response);
+
 				$eventManager->trigger($event);
-				$hasErrors = false;
-				foreach ($event->getOutputMessages() as $message)
-				{
-					list($string, $level) = $message;
-					switch ($level)
-					{
-						case 1:
-							$output->writeln('<comment>' . $string . '</comment>');
-							break;
-						case 2:
-							$hasErrors = true;
-							$output->writeln('<error>' . $string . '</error>');
-							break;
-						default:
-							$output->writeln('<info>' . $string . '</info>');
-							break;
-					}
-				}
+				$hasErrors = $response->hasError();
+
 				return $hasErrors ? 1 : 0;
 			});
 			$command->setChangeApplication($changeApplication);

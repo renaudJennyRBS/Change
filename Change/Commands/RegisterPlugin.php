@@ -17,6 +17,8 @@ class RegisterPlugin
 	{
 		$applicationServices = $event->getApplicationServices();
 
+		$response = $event->getCommandResponse();
+
 		$pluginManager = $applicationServices->getPluginManager();
 
 		if ($event->getParam('all'))
@@ -30,26 +32,26 @@ class RegisterPlugin
 				foreach ($plugins as $plugin)
 				{
 					$pluginManager->register($plugin);
-					$event->addInfoMessage($plugin . ' registered');
+					$response->addInfoMessage($plugin . ' registered');
 				}
 				$tm->commit();
 			}
 			catch(\Exception $e)
 			{
-				$event->addErrorMessage("Error registering plugins");
+				$response->addErrorMessage("Error registering plugins");
 				$applicationServices->getLogging()->exception($e);
 				throw $e;
 			}
 			$nbPlugins = count($plugins);
-			$event->addInfoMessage($nbPlugins. ' new plugins registered');
+			$response->addInfoMessage($nbPlugins. ' new plugins registered');
 
 			$plugins = $pluginManager->compile();
 			$nbPlugins = count($plugins);
-			$event->addInfoMessage($nbPlugins. ' plugins registered.');
+			$response->addInfoMessage($nbPlugins. ' plugins registered.');
 		}
 		else if (!$event->getParam('name'))
 		{
-			$event->addErrorMessage("You must at least specify a plugin name");
+			$response->addErrorMessage("You must at least specify a plugin name");
 		}
 		else
 		{
@@ -72,16 +74,16 @@ class RegisterPlugin
 					}
 					catch(\Exception $e)
 					{
-						$event->addErrorMessage("Error registering plugin");
+						$response->addErrorMessage("Error registering plugin");
 						$applicationServices->getLogging()->exception($e);
 						throw $e;
 					}
-					$event->addMessage("Done!");
+					$response->addInfoMessage("Done!");
 				}
 			}
 			if (!$found)
 			{
-				$event->addErrorMessage("No such unregistered plugin!");
+				$response->addErrorMessage("No such unregistered plugin!");
 			}
 		}
 	}

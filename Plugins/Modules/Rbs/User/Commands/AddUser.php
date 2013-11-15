@@ -15,6 +15,8 @@ class AddUser
 	public function execute(Event $event)
 	{
 
+		$response = $event->getCommandResponse();
+
 		$as = $event->getApplicationServices();
 		$login = $event->getParam('login');
 		$password = $event->getParam('password', \Change\Stdlib\String::random());
@@ -58,13 +60,13 @@ class AddUser
 			{
 				throw $transactionManager->rollBack($e);
 			}
-			$event->addInfoMessage('User successfuly created');
-			$event->addCommentMessage('login: ' . $login);
-			$event->addCommentMessage('password: ' . $password);
+			$response->addInfoMessage('User successfuly created');
+			$response->addCommentMessage('login: ' . $login);
+			$response->addCommentMessage('password: ' . $password);
 		}
 		else
 		{
-			$event->addErrorMessage('User ' . $login . ' already exists');
+			$response->addErrorMessage('User ' . $login . ' already exists');
 		}
 	}
 }

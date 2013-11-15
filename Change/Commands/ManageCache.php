@@ -18,6 +18,8 @@ class ManageCache
 		$deactivate = $event->getParam('deactivate');
 		$currentValues = $application->getConfiguration()->getEntry('Change/Cache');
 
+		$response = $event->getCommandResponse();
+
 		if ($activate || $deactivate)
 		{
 			$updated = false;
@@ -33,7 +35,7 @@ class ManageCache
 				if (!$currentValues[$name])
 				{
 					$editConfig->addPersistentEntry('Change/Cache/'. $name, true, \Change\Configuration\Configuration::PROJECT);
-					$event->addInfoMessage('Cache "'.$name.'": activated');
+					$response->addInfoMessage('Cache "'.$name.'": activated');
 					$updated = true;
 				}
 			}
@@ -47,7 +49,7 @@ class ManageCache
 				if ($currentValues[$name])
 				{
 					$editConfig->addPersistentEntry('Change/Cache/'. $name, false, \Change\Configuration\Configuration::PROJECT);
-					$event->addInfoMessage('Cache "'.$name.'": deactivated');
+					$response->addInfoMessage('Cache "'.$name.'": deactivated');
 					$updated = true;
 				}
 			}
@@ -55,15 +57,15 @@ class ManageCache
 			if ($updated)
 			{
 				$editConfig->save();
-				$event->addInfoMessage('Configuration saved');
+				$response->addInfoMessage('Configuration saved');
 			}
 		}
 		else
 		{
-			$event->addInfoMessage('Resume:');
+			$response->addInfoMessage('Resume:');
 			foreach ($currentValues as $name => $state)
 			{
-				$event->addInfoMessage(' - Cache "'.$name.'": ' .($state ? 'activated' : 'deactivated'));
+				$response->addInfoMessage(' - Cache "'.$name.'": ' .($state ? 'activated' : 'deactivated'));
 			}
 		}
 	}

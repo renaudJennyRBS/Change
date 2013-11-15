@@ -3,7 +3,6 @@ namespace Rbs\Admin\Collection;
 
 use Change\Collection\CollectionArray;
 
-
 /**
  * @name \Rbs\Admin\Collection\Collections
  */
@@ -18,23 +17,29 @@ class Collections
 		if ($applicationServices)
 		{
 			$pageId = $event->getParam('pageId');
-			$page = $applicationServices->getDocumentManager()->getDocumentInstance($pageId);
 
-			if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
+			if (!\Change\Stdlib\String::isEmpty($pageId))
 			{
+				$page = $applicationServices->getDocumentManager()->getDocumentInstance($pageId);
+
 				$parsedFunctions = array();
-				$blocks = $page->getContentLayout()->getBlocks();
-				if (count($blocks))
+
+				if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
 				{
-					$blockManager = $applicationServices->getBlockManager();
-					foreach ($blocks as $block)
+
+					$blocks = $page->getContentLayout()->getBlocks();
+					if (count($blocks))
 					{
-						$blockInfo = $blockManager->getBlockInformation($block->getName());
-						if ($blockInfo)
+						$blockManager = $applicationServices->getBlockManager();
+						foreach ($blocks as $block)
 						{
-							foreach ($blockInfo->getFunctions() as $name => $label)
+							$blockInfo = $blockManager->getBlockInformation($block->getName());
+							if ($blockInfo)
 							{
-								$parsedFunctions[$name] = $label;
+								foreach ($blockInfo->getFunctions() as $name => $label)
+								{
+									$parsedFunctions[$name] = $label;
+								}
 							}
 						}
 					}

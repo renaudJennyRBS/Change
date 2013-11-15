@@ -19,6 +19,7 @@ class EnablePlugin
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');
 
+		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();
 
@@ -37,21 +38,21 @@ class EnablePlugin
 				}
 				catch(\Exception $e)
 				{
-					$event->addErrorMessage("Error disabling plugin");
+					$response->addErrorMessage("Error disabling plugin");
 					$applicationServices->getLogging()->exception($e);
 					throw $e;
 				}
 				$pluginManager->compile();
-				$event->addInfoMessage('Done.');
+				$response->addInfoMessage('Done.');
 			}
 			else
 			{
-				$event->addErrorMessage('Only configured plugins can be enabled');
+				$response->addErrorMessage('Only configured plugins can be enabled');
 			}
 		}
 		else
 		{
-			$event->addInfoMessage('Nothing to do');
+			$response->addInfoMessage('Nothing to do');
 		}
 	}
 }

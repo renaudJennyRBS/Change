@@ -14,6 +14,6 @@
 	<key id="error">erreur</key>
 	<key id="error-codehttp">code d'erreur http</key>
 	<key id="function-error-404">Page non trouvée</key>
-	<key id="function-error-403">Acces refusé</key>
+	<key id="function-error-403">Accès refusé</key>
 	<key id="function-error-500">Erreur interne de l'application</key>
 </i18n>

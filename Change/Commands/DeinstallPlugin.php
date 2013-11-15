@@ -19,6 +19,7 @@ class DeinstallPlugin
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');
 
+		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();
 
@@ -35,14 +36,14 @@ class DeinstallPlugin
 			}
 			catch(\Exception $e)
 			{
-				$event->addErrorMessage("Error deregistering plugin");
+				$response->addErrorMessage("Error deinstall plugin");
 				$applicationServices->getLogging()->exception($e);
 				throw $e;
 			}
 		}
 		else
 		{
-			$event->addInfoMessage('Nothing to do');
+			$response->addInfoMessage('Nothing to do');
 		}
 	}
 }

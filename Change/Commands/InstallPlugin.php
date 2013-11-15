@@ -20,6 +20,8 @@ class InstallPlugin
 		$vendor = $event->getParam('vendor');
 		$shortName = $event->getParam('name');
 
+		$response = $event->getCommandResponse();
+
 		$pluginManager = $applicationServices->getPluginManager();
 
 		$toInstall = $pluginManager->getPlugin($type, $vendor, $shortName);
@@ -33,18 +35,18 @@ class InstallPlugin
 			{
 				foreach ($plugins as $plugin)
 				{
-					$event->addInfoMessage($plugin . ' installed');
+					$response->addInfoMessage($plugin . ' installed');
 				}
-				$event->addInfoMessage(count($plugins) . ' plugin(s) installed.');
+				$response->addInfoMessage(count($plugins) . ' plugin(s) installed.');
 			}
 			else
 			{
-				$event->addInfoMessage('Nothing installed');
+				$response->addInfoMessage('Nothing installed');
 			}
 		}
 		else
 		{
-			$event->addErrorMessage("Plugin does not exist");
+			$response->addErrorMessage("Plugin does not exist");
 		}
 
 

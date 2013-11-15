@@ -17,6 +17,8 @@ class SetDocumentRoot
 		$webBaseDirectory = $event->getParam('webBaseDirectory');
 		$webBaseURLPath = rtrim($event->getParam('webBaseURLPath'), '/');
 
+		$response = $event->getCommandResponse();
+
 		if ($webBaseDirectory === '.')
 		{
 			$webBaseDirectory = '';
@@ -24,18 +26,18 @@ class SetDocumentRoot
 		$realPath = $application->getWorkspace()->composeAbsolutePath($webBaseDirectory);
 		if (!is_dir($realPath))
 		{
-			$event->addErrorMessage('Path: "' . $realPath . '" not found');
+			$response->addErrorMessage('Path: "' . $realPath . '" not found');
 			return;
 		}
 		if (!is_writable($realPath))
 		{
-			$event->addErrorMessage('Path: "' . $realPath . '" is not writable');
+			$response->addErrorMessage('Path: "' . $realPath . '" is not writable');
 			return;
 		}
 
 		$cmd = new \Change\Http\InitHttpFiles($application);
 		$cmd->initializeControllers($webBaseDirectory, $webBaseURLPath);
-		$event->addInfoMessage('Web base Directory: "' . $webBaseDirectory . '" is now set.');
-		$event->addInfoMessage('Web base URL Path: "' . $webBaseURLPath . '" is now set.');
+		$response->addInfoMessage('Web base Directory: "' . $webBaseDirectory . '" is now set.');
+		$response->addInfoMessage('Web base URL Path: "' . $webBaseURLPath . '" is now set.');
 	}
 }

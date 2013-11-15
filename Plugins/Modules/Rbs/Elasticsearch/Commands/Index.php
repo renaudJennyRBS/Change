@@ -13,11 +13,13 @@ class Index
 	 */
 	public function execute(Event $event)
 	{
+		$response = $event->getCommandResponse();
+
 		$applicationServices = $event->getApplicationServices();
 		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
 		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
 		{
-			$event->addErrorMessage('Elasticsearch services not registered');
+			$response->addErrorMessage('Elasticsearch services not registered');
 			return;
 		}
 		$indexManager = $elasticsearchServices->getIndexManager();
@@ -33,7 +35,7 @@ class Index
 
 		if (!$all && !$publishable && !$specificModelName)
 		{
-			$event->addCommentMessage('No model specified.');
+			$response->addCommentMessage('No model specified.');
 			return;
 		}
 		foreach ($indexManager->getClientsName() as $clientName)
@@ -90,11 +92,11 @@ class Index
 				}
 				if ($jobManager)
 				{
-					$event->addInfoMessage('Schedule indexation of ' . $modelName . ' model...');
+					$response->addInfoMessage('Schedule indexation of ' . $modelName . ' model...');
 				}
 				else
 				{
-					$event->addInfoMessage('Indexing ' . $modelName . ' model...');
+					$response->addInfoMessage('Indexing ' . $modelName . ' model...');
 				}
 
 				$LCID = $applicationServices->getDocumentManager()->getLCID();
@@ -151,16 +153,16 @@ class Index
 
 			if ($jobManager)
 			{
-				$event->addInfoMessage('Indexation of ' . $documentCount . ' documents are scheduled.');
+				$response->addInfoMessage('Indexation of ' . $documentCount . ' documents are scheduled.');
 			}
 			else
 			{
-				$event->addInfoMessage($documentCount . ' documents are indexed.');
+				$response->addInfoMessage($documentCount . ' documents are indexed.');
 			}
 		}
 		else
 		{
-			$event->addErrorMessage('No active client detected.');
+			$response->addErrorMessage('No active client detected.');
 		}
 	}
 }

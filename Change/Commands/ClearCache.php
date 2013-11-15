@@ -15,6 +15,8 @@ class ClearCache
 	{
 		$application = $event->getApplication();
 		\Change\Stdlib\File::rmdir($application->getWorkspace()->cachePath(), true);
-		$event->addInfoMessage('Done.');
+
+		$response = $event->getCommandResponse();
+		$response->addInfoMessage('Done.');
 	}
 }
