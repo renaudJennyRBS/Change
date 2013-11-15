@@ -35,14 +35,10 @@ class SendMails
 				$notificationMailInterval = $adminProfile->getPropertyValue('notificationMailInterval');
 				$notificationMailAt = $adminProfile->getPropertyValue('notificationMailAt');
 				$lastNotificationMailSentTimestamp = $adminProfile->getPropertyValue('dateOfLastNotificationMailSent');
-				$now = new \DateTime();
-				if (!$adminProfile->getPropertyValue('dateOfLastNotificationMailSent'))
-				{
-					$lastNotificationMailSentTimestamp = $now->getTimestamp();
-				}
 				if ($notificationMailInterval && $notificationMailAt)
 				{
 					$interval = new \DateInterval($adminProfile->getPropertyValue('notificationMailInterval'));
+					$now = new \DateTime();
 
 					list($hour, $minute) = explode(':', $notificationMailAt);
 					$nextSend = (new \DateTime())->setTimestamp($lastNotificationMailSentTimestamp)->add($interval);

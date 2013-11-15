@@ -16,7 +16,7 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'pathPart'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field ng-hide="document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'indexPage'), ['ucf']) }}">
+		<rbs-field ng-hide="document.isNew() || !document.indexPage" label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'indexPage'), ['ucf']) }}">
 			<span class="uneditable-input">(=document.indexPage.label=)</span>
 		</rbs-field>
 
@@ -44,8 +44,6 @@
 			<div rbs-tip="RbsWebsiteSectionPermissionRules" class="margin-top">
 				{{ i18n('m.rbs.website.admin.section-permission-rule-helper', ['ucf']) }}
 			</div>
-
-			<h4>{{ i18n('m.rbs.website.documents.topic.permission-restrictions', ['ucf']) }}</h4>
 
 			<rbs-field-picker-multiple property="authorizedUsers" required="false"
 				label="{{ i18nAttr('m.rbs.website.documents.topic.authorized-users', ['ucf']) }}"
