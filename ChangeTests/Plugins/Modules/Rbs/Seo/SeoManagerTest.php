@@ -238,6 +238,36 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('product,brand,Product detail', $metas['keywords']);
 	}
 
+	public function testCreateSeoDocument()
+	{
+		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$seoManager = $genericServices->getSeoManager();
+		$this->assertInstanceOf('\Rbs\Seo\SeoManager', $seoManager);
+
+		$website = $this->getNewWebsite();
+
+		$product = $this->getNewProduct();
+		$this->assertInstanceOf('\Change\Documents\AbstractDocument', $product);
+		$this->assertInstanceOf('\Change\Documents\Interfaces\Publishable', $product);
+
+		//document seo will be saved and returned by this function
+		$documentSeo = $seoManager->createSeoDocument($product);
+		$this->assertInstanceOf('\Rbs\Seo\Documents\DocumentSeo', $documentSeo);
+
+		//check if document Seo is actually saved
+		$documentSeo = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentSeo->getId());
+		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
+
+		$this->assertEquals($product->getId(), $documentSeo->getTarget()->getId());
+		$sitemapGenerateForWebsites = $documentSeo->getSitemapGenerateForWebsites();
+		$websiteId = $website->getId();
+		$this->assertArrayHasKey($websiteId, $sitemapGenerateForWebsites);
+		$this->assertArrayHasKey('label', $sitemapGenerateForWebsites[$websiteId]);
+		$this->assertEquals($website->getLabel(), $sitemapGenerateForWebsites[$websiteId]['label']);
+		$this->assertArrayHasKey('generate', $sitemapGenerateForWebsites[$websiteId]);
+		$this->assertTrue($sitemapGenerateForWebsites[$websiteId]['generate']);
+	}
+
 	/**
 	 * @return \Rbs\Website\Documents\FunctionalPage
 	 * @throws \Exception

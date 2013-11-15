@@ -371,9 +371,9 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($document instanceof \Change\Documents\Interfaces\Publishable)
 		{
-			$seo = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
+			$seo = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 			/* @var $seo \Rbs\Seo\Documents\DocumentSeo */
-			$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Website');
+			$dqb = $this->getDocumentManager()->getNewQuery('Rbs_Website_Website');
 			$websites = $dqb->getDocuments();
 			$sitemapGenerateForWebsites = [];
 			foreach ($websites as $website)
@@ -386,7 +386,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			$seo->setSitemapGenerateForWebsites($sitemapGenerateForWebsites);
 			$seo->setTarget($document);
-			$tm = $this->getApplicationServices()->getTransactionManager();
+			$tm = $this->getTransactionManager();
 			try
 			{
 				$tm->begin();
