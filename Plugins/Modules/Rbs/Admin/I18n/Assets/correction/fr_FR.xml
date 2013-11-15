@@ -16,7 +16,7 @@
 	<key id="correction-has-been-published" format="html"><![CDATA[Cette Correction a été appliquée sur le document.]]></key>
 	<key id="need-help" format="html">Besoin d'aide à propos des corrections ?</key>
 	<key id="correction-created-on">créée le</key>
-	<key id="please-provide-reason">veuillez préciser en quelques mots la raison du refus :</key>
+	<key id="please-provide-reason">raison du refus</key>
 	<key id="reject-correction">refuser la correction</key>
 	<key id="cancel-reject">ne pas refuser maintenant</key>
 

@@ -40,17 +40,26 @@
 
 <div class="document-picker-embedded" style="display: none;">
 	<header class="clearfix">
+		<button ng-click="closeSelector()" type="button" class="close pull-right" style="margin-left: 10px; margin-top: 4px;">&times;</button>
 		<h4>(= selectorTitle =)</h4>
 	</header>
 
 	<div class="well well-small" ng-show="! acceptedModel">
-		<label style="display: inline-block" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
-		<rbs-model-selector filter="{{'{{selectModel}}'}}" class="input-xlarge" id="DpSelectModel" model="dp.selectedModel"></rbs-model-selector>
+		<div class="row">
+			<label class="col-lg-3 control-label" for="DpSelectModel">{{ i18n('m.rbs.admin.forms.picker-choose-model-to-select', ['ucf']) }}</label>
+			<div class="col-lg-9">
+				<rbs-model-selector filter="(= selectModel =)" class="form-control" id="DpSelectModel" model="dp.selectedModel"></rbs-model-selector>
+			</div>
+		</div>
+	</div>
+
+	<div>
+		{{ i18n('m.rbs.admin.forms.picker-help-filter', [], {'htmlOpen':'<a href="javascript:;" ng-click="beginSelectSession()">', 'htmlClose':'</a>'}) }}
 	</div>
 
 	<div data-role="picker-contents"></div>
 
-	<hr/>
+	<hr />
 	<div class="btn-toolbar clearfix">
 		<span class="pull-right">
 			<div class="btn-group">

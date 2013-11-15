@@ -45,57 +45,47 @@ rbs-document-list .table thead > tr > th {
 
 
 rbs-document-list tr .quick-actions-buttons {
-	opacity: 0.15;
-	transition: opacity 0.25s ease;
+	position: relative;
 }
 
-rbs-document-list tr .quick-actions-buttons button {
+rbs-document-list tr .quick-actions-buttons > button {
 	border: 0 none;
 	background: transparent;
 	padding: 0;
 	margin-left: 6px;
+	opacity: 0.15;
+	transition: opacity 0.25s ease;
+}
+
+rbs-document-list tr:hover .quick-actions-buttons > button {
+	opacity: 1;
 }
 
 rbs-document-list tr .quick-actions-buttons button i {
 	font-size: 1.3333em;
 }
 
-rbs-document-list tr:hover .quick-actions-buttons {
-	opacity: 1;
-}
-
 rbs-document-list tr .quick-actions {
-	display: none;
-	position: absolute;
-	right: -110px;
-	top: -4px;
+	top: -9px;
+	left: 26px;
 	width: 150px;
-	z-index: 100;
-	border-radius: 4px;
 	background: #333333;
 }
-
-rbs-document-list tr .quick-actions:after,
-rbs-document-list tr .quick-actions:before {
-	left: -15px;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
-	z-index: 100;
-}
-
-rbs-document-list tr .quick-actions:after {
+rbs-document-list tr .popover.right.quick-actions .arrow {
+	background: transparent;
+	top: 18px;
 	border-color: transparent;
+}
+rbs-document-list tr .popover.right.quick-actions .arrow:after {
 	border-right-color: #333333;
-	border-width: 8px;
-	top: 7px;
 }
 
-rbs-document-list tr .quick-actions > a,
-rbs-document-list tr .quick-actions .quick-action {
+rbs-document-list tr .quick-actions > .popover-content {
+	padding: 0;
+}
+
+rbs-document-list tr .quick-actions > .popover-content > a,
+rbs-document-list tr .quick-actions > .popover-content .quick-action {
 	font-size: 90%;
 	text-transform: lowercase;
 	padding: 3px 10px;
@@ -109,14 +99,13 @@ rbs-document-list tr .quick-actions .quick-action {
 	line-height: 22px;
 }
 
-
-rbs-document-list tr .quick-actions i {
+rbs-document-list tr .quick-actions > .popover-content i {
 	font-size: 1.5em;
 	top: 1px;
 	position: relative;
 }
 
-rbs-document-list tr .quick-actions > a i {
+rbs-document-list tr .quick-actions > .popover-content > a i {
 	float: right;
 	margin-left: 10px;
 	-webkit-transition: -webkit-transform 0.05s ease-in;
@@ -124,20 +113,20 @@ rbs-document-list tr .quick-actions > a i {
 	transition: transform 0.05s ease-in;
 }
 
-rbs-document-list tr .quick-actions a:hover > i {
+rbs-document-list tr .quick-actions > .popover-content a:hover > i {
 	-webkit-transform: scale(1.4);
 	-moz-transform: scale(1.4);
 	transform: scale(1.4);
 }
 
-rbs-document-list tr .quick-actions a:hover,
-rbs-document-list tr .quick-actions .quick-action:hover {
+rbs-document-list tr .quick-actions > .popover-content a:hover,
+rbs-document-list tr .quick-actions > .popover-content .quick-action:hover {
 	text-decoration: none;
 	background: #888888;
 }
 
-rbs-document-list tr .quick-actions a.danger:hover,
-rbs-document-list tr .quick-actions .quick-action.danger:hover {
+rbs-document-list tr .quick-actions > .popover-content a.danger:hover,
+rbs-document-list tr .quick-actions > .popover-content .quick-action.danger:hover {
 	background: #FB645C;
 }
 

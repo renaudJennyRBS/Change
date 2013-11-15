@@ -67,7 +67,7 @@
 			var	html,
 				quickActionsHtml;
 
-			html = '<div class="quick-actions clearfix">';
+			html = '<div class="quick-actions popover right"><div class="arrow"></div><div class="popover-content clearfix">';
 
 			function buildDefault () {
 				var out = buildDeleteAction();
@@ -167,7 +167,7 @@
 				html += buildDefault();
 			}
 
-			html += '</div>';
+			html += '</div></div>';
 
 			return html;
 		}
@@ -467,8 +467,9 @@
 							'<span class="pull-right quick-actions-buttons">' +
 								previewButton +
 								'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-collapse"></i></button>' +
+								buildQuickActionsHtml(dlid, tAttrs, localActions) +
 							'</span>'
-						).append(buildQuickActionsHtml(dlid, tAttrs, localActions));
+						);
 				}
 
 				$td.attr('ng-if', "isNormalCell(doc)");

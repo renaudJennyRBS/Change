@@ -38,7 +38,7 @@
 					};
 
 					scope.onDocumentSelected = function (doc) {
-						scope.add.title = doc.title || doc.label;
+						scope.add.document.title = doc.title || doc.label;
 					};
 
 					scope.$watch('add.titleI18nKey', function (i18nKey, old) {
@@ -47,26 +47,30 @@
 						}
 					}, true);
 
-					scope.addItem = function () {
+					scope.addDocument = function () {
 						var item = {};
-						item[scope.add.titleI18nKey ? 'titleKey' : 'title'] = scope.add.title;
-
-						if (scope.add.selectedDocument) {
-							item.documentId = scope.add.selectedDocument.id;
-						}
-						else {
-							item.url = scope.add.url;
-						}
+						item[scope.add.document.titleI18nKey ? 'titleKey' : 'title'] = scope.add.document.title;
+						item.documentId = scope.add.document.selected.id;
 						if (! scope.document.items) {
 							scope.document.items = [];
 						}
 						scope.document.items.push(item);
-
-						scope.add.selectedDocument = null;
+						scope.add.document.selected = null;
+						scope.add.document.title = null;
 					};
 
+					scope.addUrl = function () {
+						var item = {};
+						item[scope.add.url.titleI18nKey ? 'titleKey' : 'title'] = scope.add.url.title;
+						item.url = scope.add.url.selected;
+						if (! scope.document.items) {
+							scope.document.items = [];
+						}
+						scope.document.items.push(item);
+						scope.add.url.selected = null;
+						scope.add.url.title = null;
+					};
 				};
-
 
 				scope.initDocument = function () {
 					// Edition ('id' is present): let the Editor does his job and load the Document!

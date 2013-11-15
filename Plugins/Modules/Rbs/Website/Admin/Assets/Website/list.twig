@@ -20,6 +20,12 @@
 	               filter-query="query"
 	               actions="default"
 	               use-properties="baseurl">
+		<quick-actions>
+			[action default]
+			<a href="" ng-href="(= doc | documentURL:'functions':true =)">
+				<i class="icon-cog"></i> {{ i18n('m.rbs.website.documents.topic.functions') }}
+			</a>
+		</quick-actions>
 		<column name="label" primary="true">
 			<strong><a href ng-href="(= doc|documentURL:'form'=)">(= doc.label =)</a></strong>
 			<br><small><a href ng-href="(= doc.baseurl =)" target="_blank">(= doc.baseurl =) <i class="icon-external-link-sign"></i></a></small>

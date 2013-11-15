@@ -23,4 +23,20 @@ class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate impleme
 	{
 		return $this->getId();
 	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$documentLink = $restResult;
+			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+			$pageTemplate = $documentLink->getDocument();
+			$documentLink->setProperty('label', $pageTemplate->getTheme()->getLabel() . ' > ' . $pageTemplate->getLabel());
+		}
+	}
 }

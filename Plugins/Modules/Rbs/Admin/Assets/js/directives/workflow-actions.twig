@@ -29,7 +29,7 @@
 		</span>
 	</h5>
 
-	<form name="wfForm" ng-submit="submit()" ng-switch="data.action">
+	<form name="wfForm" ng-submit="submit()" ng-switch="data.action" class="form-horizontal">
 
 		<div ng-switch-when="requestValidation">
 			<div class="control-group">
@@ -269,11 +269,16 @@
 					<div ng-switch-when="VALIDATION">
 						<button type="button" class="btn btn-primary btn-headline" ng-disabled="correctionData.reject" ng-click="correctionData.contentValidation()"><i class="icon-ok"></i>{{ i18n('m.rbs.admin.correction.button-validate') }}</button>
 						<button type="button" class="btn btn-danger btn-headline" ng-class="{'active': correctionData.reject}" ng-click="correctionData.reject = ! correctionData.reject"><i class="icon-ban-circle"></i>{{ i18n('m.rbs.admin.correction.button-reject') }}</button>
-						<div ng-if="correctionData.reject" ng-form="" name="rejectForm" class="margin-top">
-							{{ i18n('m.rbs.admin.correction.please-provide-reason', ['ucf']) }}
-							<input type="text" auto-focus="true" class="input-block-level" ng-required="true" ng-model="correctionData.rejectMessage"/>
-							<button type="button" class="btn btn-danger" ng-disabled="rejectForm.$invalid" ng-click="correctionData.rejectContentValidation(correctionData.rejectMessage)"><i class="icon-ban-circle"></i> {{ i18n('m.rbs.admin.correction.reject-correction', ['ucf']) }}</button>
-							<button type="button" class="btn btn-default" ng-click="correctionData.reject = false">{{ i18n('m.rbs.admin.correction.cancel-reject', ['ucf']) }}</button>
+						<div ng-if="correctionData.reject" ng-form="" name="rejectForm" class="well well-sm margin-top clearfix">
+							<rbs-field label="{{ i18n('m.rbs.admin.correction.please-provide-reason', ['ucf']) }}" required="true">
+								<input type="text" auto-focus="true" class="form-control" ng-required="true" ng-model="correctionData.rejectMessage"/>
+							</rbs-field>
+							<div class="form-group">
+								<div class="col-lg-9 col-lg-offset-3">
+									<button type="button" class="btn btn-danger" ng-disabled="rejectForm.$invalid" ng-click="correctionData.rejectContentValidation(correctionData.rejectMessage)"><i class="icon-ban-circle"></i> {{ i18n('m.rbs.admin.correction.reject-correction', ['ucf']) }}</button>
+									<button type="button" class="btn btn-default" ng-click="correctionData.reject = false">{{ i18n('m.rbs.admin.correction.cancel-reject', ['ucf']) }}</button>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -282,10 +287,6 @@
 					</div>
 
 				</div>
-
-				<!-- -->
-
-
 			</div>
 		</div>
 

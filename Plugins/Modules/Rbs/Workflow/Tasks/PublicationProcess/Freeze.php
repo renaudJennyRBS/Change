@@ -25,7 +25,7 @@ class Freeze
 			if ($publicationStatus === Publishable::STATUS_PUBLISHABLE)
 			{
 				$applicationServices = $event->getApplicationServices();
-				$transactionManager = $applicationServices->getApplicationServices()->getTransactionManager();
+				$transactionManager = $applicationServices->getTransactionManager();
 				try
 				{
 					$transactionManager->begin();
@@ -33,7 +33,6 @@ class Freeze
 					$document->updatePublicationStatus(Publishable::STATUS_FROZEN);
 
 					$transactionManager->commit();
-
 				}
 				catch (\Exception $e)
 				{

@@ -4,7 +4,9 @@
 	<key id="usecaptcha">utiliser un CAPTCHA</key>
 	<key id="usecaptcha-help">Demander au utilisateur non-enregistrés de saisir un code de sécurité.</key>
 	<key id="receiverusers">utilisateurs destinataires</key>
+	<key id="receiverusers-picker-title">sélection des utilisateurs destinataires</key>
 	<key id="receivergroups">groupes destinataires</key>
+	<key id="receivergroups-picker-title">sélection des groupes destinataires</key>
 	<key id="receiveremails">adresses e-mail destinataires</key>
 	<key id="confirmationmode">mode de confirmation</key>
 	<key id="confirmationmode-message">message dans la page</key>

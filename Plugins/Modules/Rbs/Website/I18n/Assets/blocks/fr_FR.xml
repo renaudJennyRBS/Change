@@ -16,4 +16,5 @@
 	<key id="function-error-404">Page non trouvée</key>
 	<key id="function-error-403">Accès refusé</key>
 	<key id="function-error-500">Erreur interne de l'application</key>
+	<key id="xhtml-template">gabarit XHTML</key>
 </i18n>

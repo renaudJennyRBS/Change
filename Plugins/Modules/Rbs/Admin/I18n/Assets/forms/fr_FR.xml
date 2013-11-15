@@ -33,7 +33,7 @@
 	<key id="picker-clear">effacer</key>
 	<key id="picker-clipboard">presse-papier</key>
 	<key id="picker-clipboard-tooltip">prendre dans le Presse-papier</key>
-	<key id="picker-choose-model-to-select">type de documents à sélectionner :</key>
+	<key id="picker-choose-model-to-select">type de document</key>
 
 	<key id="picker-add-to-end">ajouter à la fin</key>
 	<key id="picker-add-to-begin">ajouter au début</key>
