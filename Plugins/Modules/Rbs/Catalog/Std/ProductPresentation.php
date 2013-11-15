@@ -214,4 +214,38 @@ class ProductPresentation
 	{
 		return $this->prices['ecoTax'];
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getVariants()
+	{
+		$variants = array();
+		if ($this->product->hasVariants())
+		{
+			$dm = $this->commerceServices->getDocumentManager();
+			$query = $dm->getNewQuery('Rbs_Catalog_Product');
+			$pb = $query->getPredicateBuilder();
+			$query->andPredicates(
+				$pb->eq('variantGroup', $this->product->getVariantGroupId()),
+				$pb->eq('variant', true),
+				$pb->neq('sku', 0),
+				$pb->published()
+			);
+			foreach($query->getDocuments() as $doc)
+			{
+				/* @var $doc \Rbs\Catalog\Documents\Product */
+				$row = array('id' => $doc->getId());
+				$productPresentation = $doc->getPresentation($this->commerceServices, $this->webStoreId);
+				if ($productPresentation)
+				{
+					$productPresentation->evaluate();
+					$row['productPresentation'] = $productPresentation;
+				}
+				$variants[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($dm);
+
+			}
+		}
+		return $variants;
+	}
 }

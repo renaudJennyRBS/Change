@@ -304,4 +304,12 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		$query->andPredicates($query->eq('product', $this->getId()), $query->eq('crossSellingType', $crossSellingType));
 		return $query->getFirstDocument();
 	}
+
+	/**
+	 * @return Boolean
+	 */
+	public function hasVariants()
+	{
+		return !($this->getVariant()) && $this->getVariantGroup();
+	}
 }

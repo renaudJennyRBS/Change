@@ -52,7 +52,7 @@ class CrossSellingEngine
 				{
 					/* @var $p \Rbs\Catalog\Documents\Product */
 					$website = $p->getCanonicalSection()->getWebsite();
-					$lcid = $applicationServices->getApplicationServices()->getI18nManager()->getLCID();
+					$lcid = $applicationServices->getI18nManager()->getLCID();
 					$url = $website->getUrlManager($lcid)->getCanonicalByDocument($p)->toString();
 					$row = array('id' => $p->getId(), 'url' => $url);
 					$visual = $p->getFirstVisual();

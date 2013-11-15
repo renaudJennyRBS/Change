@@ -36,68 +36,7 @@
 					<ul class="grid-list grid-list-{{ itemsPerSlide }} grid-list-bordered product-list">
 					{% spaceless %}
 					{%  for row in rows|slice(slideNumber * itemsPerSlide, itemsPerSlide) %}
-						<li>
-							<ul class="grid-list-cell">
-								<!-- TODO: favorites and comparisons -->
-								<!--<li>
-									<label for="list_product_{{ row.id }}">
-										<input type="checkbox" id="list_product_{{ row.id }}" name="selected_product[]"
-											value="{{ row.id }}" />
-										{{ i18n('m.rbs.catalog.fo.select', ['ucf']) }}
-									</label>
-								</li>-->
-								<li class="product-visual">
-									<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
-										href="{{ row.url }}">
-										<img alt="" src="{{ catalogMacros.listThumbnailURL(row.visual) }}" /></a>
-									<div class="pictograms-container">
-									</div>
-								</li>
-								<li class="product-label">
-									<a title="{{ i18nAttr('m.rbs.catalog.fo.view-product-details', ['ucf'], {product: row.title}) }}"
-										href="{{ row.url }}">{{ row.title }}</a>
-								</li>
-								<li class="product-availability">
-									{{ row.productPresentation.stock.thresholdTitle }}
-								</li>
-								<!-- TODO: handle rating -->
-								<!--<li class="product-rating">
-									5 étoile(s)
-								</li>-->
-								{% if parameters.webStoreId %}
-									{% block prices %}
-										{% if parameters.displayPrices %}
-											<li class="product-price price">
-												{{ formatPrice(row.productPresentation.priceValue) }}
-												<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
-												{% if row.productPresentation.priceValueWithoutDiscount %}
-													<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-														{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
-													</del>
-												{% endif %}
-											</li>
-										{% endif %}
-										{% if parameters.displayPricesWithTax %}
-											<li class="product-price price">
-												{{ formatPrice(row.productPresentation.priceValueWithTax) }}
-												<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
-												{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
-													<del title="{{ i18nAttr('m.rbs.catalog.fo.old-price') }}">
-														{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
-													</del>
-												{% endif %}
-											</li>
-										{% endif %}
-									{% endblock %}
-									<li class="product-add">
-										<button name="product" type="submit" class="btn btn-primary btn-small" value="{{ row.id }}">
-											<i class="glyphicon glyphicon-shopping-cart"></i>
-											{{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
-										</button>
-									</li>
-								{% endif %}
-							</ul>
-						</li>
+						{% include 'Rbs_Catalog/Blocks/product-list-item.twig' %}
 					{% endfor %}
 					{% endspaceless %}</ul>
 				</div>
