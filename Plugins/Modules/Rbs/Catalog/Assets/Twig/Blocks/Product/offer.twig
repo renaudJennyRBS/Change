@@ -95,9 +95,10 @@
 		{% endblock %}
 
 		<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
-			<fieldset>
-				<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
-				<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
+		<fieldset>
+			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
+			<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
+			{% if productPresentation.getStock.level %}
 				<div class="form-group">
 					<label for="product-quantity">Quantité</label>
 					<input class="form-control" name="quantity" value="1" type="number" />
@@ -106,8 +107,15 @@
 					onclick="script{{ blockId }}.offer.addProduct(this)">
 					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
 				</button>
-			</fieldset>
+			{% else %}
+				<button name="product" type="button" class="btn btn-primary btn-lg btn-disabled" value="{{ parameters.productId }}"
+					onclick="script{{ blockId }}.offer.addProduct(this)" disabled>
+					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
+				</button>
+			{% endif %}
+		</fieldset>
 		</form>
+
 	</div>
 {% endif %}
 
