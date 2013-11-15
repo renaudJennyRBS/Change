@@ -1,0 +1,20 @@
+{
+	"toto":{
+		"message":"toto fr a"
+	},
+	"titi":{
+		"message":"titi fr a"
+	},
+	"withparams":{
+		"message":"withparams $PARAM1$ $PARAM2$ fr a"
+	},
+	"plop":{
+		"message":"plop fr a.aa"
+	},
+	"plip":{
+		"message":"plip fr b"
+	},
+	"empty":{
+		"message":""
+	}
+}
