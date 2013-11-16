@@ -20,9 +20,8 @@ class CompileI18n
 			if ($plugin->isAvailable())
 			{
 				$event->getApplicationServices()->getI18nManager()->compilePluginI18nFiles($plugin);
-				$event->addInfoMessage($plugin->getName());
 			}
 		}
-		$event->addInfoMessage('Done.');
+		$event->getCommandResponse()->addInfoMessage('Done.');
 	}
 }

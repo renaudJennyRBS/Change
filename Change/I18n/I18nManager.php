@@ -1018,7 +1018,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					if (isset($data['message']))
 					{
-						$output[$packageName][$key] = $data['message'];
+						$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
 					}
 				}
 			}
@@ -1033,7 +1033,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 					{
 						if (isset($data['message']))
 						{
-							$output[$packageName][$key] = $data['message'];
+							$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
 						}
 					}
 				}
@@ -1061,7 +1061,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					if (isset($data['message']))
 					{
-						$output[$packageName][$key] = $data['message'];
+						$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
 					}
 				}
 			}
@@ -1076,7 +1076,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 					{
 						if (isset($data['message']))
 						{
-							$output[$packageName][$key] = $data['message'];
+							$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
 						}
 					}
 				}
