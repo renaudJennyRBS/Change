@@ -32,15 +32,15 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.Status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 
 	<div ng-if="!document.isNew()">
 		<fieldset data-ng-show="section=='permission'"
 			data-form-section-label="{{ i18nAttr('m.rbs.website.documents.topic_permission', ['ucf']) }}"
-			data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}">
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}">
 			<div rbs-tip="RbsWebsiteSectionPermissionRules" class="margin-top">
 				{{ i18n('m.rbs.website.admin.section_permission_rule_helper', ['ucf']) }}
 			</div>
