@@ -347,7 +347,7 @@
 					if (lcid === doc.refLCID) {
 						contents.push({
 							'url' : doc.refUrl(),
-							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.admin.js.reference-language | ucf') + '">' + i18n.trans('m.rbs.admin.admin.js.ref-lang-abbr') + '</abbr>)',
+							'text' : item.label + ' (<abbr title="' + i18n.trans('m.rbs.admin.adminjs.reference_language | ucf') + '">' + i18n.trans('m.rbs.admin.adminjs.ref_lang_abbr') + '</abbr>)',
 							'icon' : 'icon-book'
 						});
 					}

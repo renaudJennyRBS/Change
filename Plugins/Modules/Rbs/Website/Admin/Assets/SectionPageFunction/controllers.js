@@ -13,7 +13,7 @@
 	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter) {
 
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
+			[i18n.trans('m.rbs.website.admin.module_name | ucf'), "Rbs/Website"]
 		]);
 
 		var functions = [];

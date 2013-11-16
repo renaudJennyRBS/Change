@@ -70,7 +70,7 @@
 					$el = $($el);
 					$el.popover('destroy');
 					options = options || {};
-					options.question = options.question || i18n.trans('m.rbs.admin.admin.js.do-you-want-to-continue | ucf');
+					options.question = options.question || i18n.trans('m.rbs.admin.adminjs.do_you_want_to_continue | ucf');
 					options.container = 'body';
 
 					var deferred = $q.defer();
@@ -87,8 +87,8 @@
 					message += '<hr/>' +
 						options.question +
 						'<div class="btn-toolbar confirm-dialogbox">' +
-						'<button class="btn btn-warning" type="button" id="' + uidOK + '">' + i18n.trans('m.rbs.admin.admin.js.yes | ucf') + '</button>' +
-						'<button type="button" class="btn btn-default" id="'+uidCancel+'">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button>' +
+						'<button class="btn btn-warning" type="button" id="' + uidOK + '">' + i18n.trans('m.rbs.admin.adminjs.yes | ucf') + '</button>' +
+						'<button type="button" class="btn btn-default" id="'+uidCancel+'">' + i18n.trans('m.rbs.admin.adminjs.no | ucf') + '</button>' +
 						'</div>';
 					var opt = $.extend({}, { 'title': title, 'content': $filter('BBcode')(message) }, this.confirmPopoverOptions, options);
 					$el.popover(opt).popover('show');
@@ -270,7 +270,7 @@
 
 					var contents =
 						'<p>' + text + '</p>' +
-						'<p><strong>' + i18n.trans('m.rbs.admin.admin.js.do-you-want-to-continue | ucf') + '</strong></p>' +
+						'<p><strong>' + i18n.trans('m.rbs.admin.adminjs.do_you_want_to_continue | ucf') + '</strong></p>' +
 						'<div class="form-actions">' +
 						'<button class="btn btn-primary ' + options.primaryButtonClass + '" type="button" data-ng-click="rbsChangeDialogConfirmEmbed_confirm()">';
 
@@ -293,13 +293,12 @@
 					}
 
 					if (options.primaryButtonText) {
-						contents += i18n.trans('m.rbs.admin.admin.js.yes | ucf') + '<small>, ' + options.primaryButtonText+'</small>';
+						contents += i18n.trans('m.rbs.admin.adminjs.yes | ucf') + '<small>, ' + options.primaryButtonText+'</small>';
 					} else {
-						contents += i18n.trans('m.rbs.admin.admin.js.yes | ucf');
+						contents += i18n.trans('m.rbs.admin.adminjs.yes | ucf');
 					}
 					contents += '</button>';
-					contents += ' <button type="button" class="btn btn-default" data-ng-click="rbsChangeDialogConfirmEmbed_cancel()">' + i18n.trans('m.rbs.admin.admin.js.no | ucf') + '</button></div>';
-
+					contents += ' <button type="button" class="btn btn-default" data-ng-click="rbsChangeDialogConfirmEmbed_cancel()">' + i18n.trans('m.rbs.admin.adminjs.no | ucf') + '</button></div>';
 					this.embed(
 							$el,
 							{

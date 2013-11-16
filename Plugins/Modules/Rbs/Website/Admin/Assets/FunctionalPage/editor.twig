@@ -1,13 +1,13 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-picker property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'website'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage.website-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage_website-picker-title', ['ucf']) }}"
 			allow-edition="true">
-			<span class="help-block">{{ i18n('m.rbs.website.documents.functionalpage.website-picker-title', ['ucf']) }}</span>
+			<span class="help-block">{{ i18n('m.rbs.website.documents.functionalpage_website-picker-title', ['ucf']) }}</span>
 		</rbs-field-picker>
 
 		<hr />
@@ -31,7 +31,7 @@
 		</rbs-field-picker>
 
 		<div rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
-			{{ i18n('m.rbs.website.documents.functionalpage.functional-page-editor-help') }}
+			{{ i18n('m.rbs.website.admin.functional_page_editor_help') | raw }}
 		</div>
 
 		<hr />
@@ -54,17 +54,17 @@
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
 		</structure-editor>
 	</fieldset>
 
 	<fieldset ng-show="section=='functions'" hide-when-create="true"
-	          data-form-section-label="{{ i18nAttr('m.rbs.website.documents.functionalpage.functions', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+	          data-form-section-label="{{ i18nAttr('m.rbs.website.admin.functionalpage_functions', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<div class="control-group property">
 			<span class="help-block">
-				{{ i18n('m.rbs.website.documents.functionalpage.all-functions-list') }}
+				{{ i18n('m.rbs.website.admin.all_functions_list') | raw}}
 			</span>
 
 			<select multiple="multiple" class="form-control" size="10"
@@ -74,26 +74,26 @@
 			</select>
 
 			<div ng-if="hasAvailableFunctions()">
-				{{ i18n('m.rbs.website.documents.functionalpage.page-contains-blocks-for-following-functions') }}
+				{{ i18n('m.rbs.website.admin.page_contains_blocks_for_following_functions') }}
 				<ul>
 					<li ng-repeat="(value, func) in availableFunctions">(= func.label =)<em class="muted"> ((= value =))</em></li>
 				</ul>
 			</div>
 			<div class="alert" ng-if="! hasAvailableFunctions() && ! warningFunctions">
-				{{ i18n('m.rbs.website.documents.functionalpage.page-contains-no-function') }}
+				{{ i18n('m.rbs.website.admin.page_contains_no_function') | raw }}
 			</div>
 
 			<div ng-if="document.allowedFunctionsCode">
 				<div ng-if="!warningFunctions" class="alert alert-success">
-					{{ i18n('m.rbs.website.documents.functionalpage.page-contains-required-blocks') }}
+					{{ i18n('m.rbs.website.admin.page_contains_required_blocks') }}
 				</div>
 
 				<div ng-if="warningFunctions" class="alert">
-					{{ i18n('m.rbs.website.documents.functionalpage.following-functions-cannot-be-supported-correctly') }}
+					{{ i18n('m.rbs.website.admin.following_functions_cannot_be_supported_correctly') }}
 					<ul>
 						<li ng-repeat="(value, func) in warningFunctions">(= func.label =)<em class="muted"> ((= value =))</em></li>
 					</ul>
-					{{ i18n('m.rbs.website.documents.functionalpage.edit-page-contents-to-fix-this') }}
+					{{ i18n('m.rbs.website.admin.edit_page_contents_to_fix_this') | raw }}
 				</div>
 			</div>
 		</div>

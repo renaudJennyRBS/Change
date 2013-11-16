@@ -1,0 +1,137 @@
+{
+	"function_index_page":{
+		"message":"index page"
+	},
+	"website_baseurl_help":{
+		"message":"URL of the homepage of this website in its reference language."
+	},
+	"topic_website_help":{
+		"message":"The website this topic belongs to."
+	},
+	"topic_pathpart_help":{
+		"message":"\n\t\tPath used in the URL for this topic.\n\t"
+	},
+	"page_open_page_editor":{
+		"message":"open page editor"
+	},
+	"module_name":{
+		"message":"websites & pages"
+	},
+	"module_keywords":{
+		"message":"websites,pages,templates,topics,blocks,menus,text,sitemap"
+	},
+	"host_name":{
+		"message":"hostname"
+	},
+	"open_page_editor_warning":{
+		"message":"<strong>This form contains unsaved changes.<\/strong>\n\t\t<ul>\n\t\t\t<li>By clicking <strong>Yes<\/strong>,changes will be  <strong>saved<\/strong> and you will be redirected to the page editor.<\/li>\n\t\t\t<li>By clicking <strong>No<\/strong>, this <strong>popup will be dismissed<\/strong> and no harm will be done :)<\/li>\n\t\t<\/ul>\n\t\n\t"
+	},
+	"section_name":{
+		"message":"CMS"
+	},
+	"richtext":{
+		"message":"richtext block"
+	},
+	"menu":{
+		"message":"menu block"
+	},
+	"menu_templatename":{
+		"message":"rendering template"
+	},
+	"menu_documentid":{
+		"message":"root document"
+	},
+	"menu_maxlevel":{
+		"message":"maximum depth"
+	},
+	"menu_showtitle":{
+		"message":"display title"
+	},
+	"sitemap":{
+		"message":"sitemap"
+	},
+	"menu_list":{
+		"message":"navigation menus"
+	},
+	"menu_create":{
+		"message":"add navigation menu"
+	},
+	"staticpage_list":{
+		"message":"pages"
+	},
+	"staticpage_create":{
+		"message":"add content page"
+	},
+	"functionalpage_list":{
+		"message":"fonctional pages list"
+	},
+	"functionalpage_create":{
+		"message":"add functional page"
+	},
+	"topic_list":{
+		"message":"topics"
+	},
+	"topic_create":{
+		"message":"add topic"
+	},
+	"website_list":{
+		"message":"websites"
+	},
+	"website_create":{
+		"message":"add website"
+	},
+	"sectionpagefunction_list":{
+		"message":"functions"
+	},
+	"sectionpagefunction_create":{
+		"message":"associate a function to a section"
+	},
+	"menu_website_picker_title":{
+		"message":"select the website of the menu"
+	},
+	"menu_this_menu_is_empty":{
+		"message":"This menu is empty"
+	},
+	"menu_function_print_page":{
+		"message":"print page"
+	},
+	"menu_function_go_to_content":{
+		"message":"go to content"
+	},
+	"menu_function_bookmark_page":{
+		"message":"bookmark page"
+	},
+	"functionalpage_website_help":{
+		"message":"The website this page belongs to."
+	},
+	"functionalpage_website_picker_title":{
+		"message":"select the website for this page"
+	},
+	"functionalpage_functions":{
+		"message":"functions"
+	},
+	"functional_page_editor_help":{
+		"message":"This page is a <strong>functional page<\/strong>: it is used to display other contents in the website.<br\/>To configure the functions this page supports, click on <em>Functions<\/em> in the menu on the left."
+	},
+	"functional_page_list_help":{
+		"message":"The <strong>functional pages<\/strong> are used to display contents coming from different modules, such as news or products."
+	},
+	"all_functions_list":{
+		"message":"<strong>Here is the list of all available functions.<\/strong><br\/>Functions already supported by this page are selected in the list below. Select the functions you want to associate to this page."
+	},
+	"page_contains_blocks_for_following_functions":{
+		"message":"This page currently holds the required blocks to support the following functions:"
+	},
+	"page_contains_no_function":{
+		"message":"<h4>This page supports no functions.<\/h4>To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+	},
+	"page_contains_required_blocks":{
+		"message":"This page holds all the required blocks to support the selected functions."
+	},
+	"following_functions_cannot_be_supported_correctly":{
+		"message":"The following functions won't work correctly because the page does not hold the required blocks:"
+	},
+	"edit_page_contents_to_fix_this":{
+		"message":"To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+	}
+}

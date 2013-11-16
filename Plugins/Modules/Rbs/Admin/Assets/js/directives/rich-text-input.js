@@ -505,10 +505,10 @@
 				};
 
 				scope.insertExternalLink = function () {
-					var	href = prompt(i18n.trans('m.rbs.admin.admin.js.richtext-enter-external-link'));
+					var	href = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link'));
 
 					if (href != null && href != '') {
-						var title = prompt(i18n.trans('m.rbs.admin.admin.js.richtext-enter-external-link-title'));
+						var title = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link-title'));
 
 						scope.mdInsertText(buildMdLinkTag(href, title || href));
 					}

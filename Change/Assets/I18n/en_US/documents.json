@@ -1,0 +1,59 @@
+{
+	"id":{
+		"message":"identifier"
+	},
+	"model":{
+		"message":"model"
+	},
+	"creationdate":{
+		"message":"date created"
+	},
+	"modificationdate":{
+		"message":"date modified"
+	},
+	"reflcid":{
+		"message":"reference language"
+	},
+	"lcid":{
+		"message":"language"
+	},
+	"publicationstatus":{
+		"message":"publication status"
+	},
+	"startpublication":{
+		"message":"date published"
+	},
+	"endpublication":{
+		"message":"date unpublished"
+	},
+	"active":{
+		"message":"active"
+	},
+	"startactivation":{
+		"message":"sart activation date"
+	},
+	"endactivation":{
+		"message":"end activation date"
+	},
+	"treename":{
+		"message":"tree"
+	},
+	"label":{
+		"message":"label"
+	},
+	"authorname":{
+		"message":"author name"
+	},
+	"authorid":{
+		"message":"author id"
+	},
+	"documentversion":{
+		"message":"version"
+	},
+	"title":{
+		"message":"title used for navigation items"
+	},
+	"code":{
+		"message":"code"
+	}
+}

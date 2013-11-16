@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.website.documents.page" lcid="en_US">
-	<include id="m.rbs.generic.document"/>
-	<key id="pagetemplate">page template</key>
-	<key id="editablecontent">page content</key>
-	<key id="open-page-editor">open page editor</key>
-	<key id="content-zones">content zones</key>
-</i18n>

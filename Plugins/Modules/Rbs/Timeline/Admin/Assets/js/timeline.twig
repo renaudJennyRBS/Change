@@ -1,11 +1,11 @@
 <div>
 	<div class="leave-message">
 		<div rbs-tip="RbsTimelineMentionUsers" class="margin-top">
-			{{ i18n('m.rbs.timeline.admin.leave-a-message-helper', ['ucf']) }}
+			{{ i18n('m.rbs.timeline.admin.leave_a_message_helper', ['ucf']) | raw }}
 		</div>
 		<rbs-rich-text-input ng-model="data.newMessage" class="input-block-level" profile="Admin"></rbs-rich-text-input>
 		<p class="btn-toolbar margin-top">
-			<button type="button" ng-click="sendMessage()" class="btn btn-primary"><i class="icon-ok"></i> {{ i18n('m.rbs.timeline.admin.leave-a-message-submit', ['ucf']) }}</button>
+			<button type="button" ng-click="sendMessage()" class="btn btn-primary"><i class="icon-ok"></i> {{ i18n('m.rbs.timeline.admin.leave_a_message_submit', ['ucf']) }}</button>
 		</p>
 	</div>
 	<hr/>

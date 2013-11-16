@@ -1,5 +1,5 @@
 <div data-ng-controller="Rbs_User_User_PublicProfileController">
-	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public-profile-sub-title', ['ucf']) }}"></page-header>
+	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></page-header>
 	<div class="media-body">
 		<h4 class="media-heading">(= document.label =) <small ng-if="document.login">@(= document.login =)</small></h4>
 		<div class="well">
@@ -13,7 +13,7 @@
 				<dd>(= document.active | rbsBoolean =)</dd>
 			</dl>
 		</div>
-		<h4>{{ i18n('m.rbs.user.documents.group-list', ['ucf']) }}</h4>
+		<h4>{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</h4>
 		<rbs-document-list data-dlid="DLGroup1"
 			model="Rbs_User_Group"
 			modification-date="false"

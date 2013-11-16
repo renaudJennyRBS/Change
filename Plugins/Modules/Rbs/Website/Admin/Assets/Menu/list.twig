@@ -1,5 +1,5 @@
 <div data-ng-controller="Rbs_Website_Menu_ListController">
-	<page-header title="{{ i18nAttr('m.rbs.website.documents.menu-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}"></page-header>
 
 	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
@@ -10,12 +10,12 @@
 
 	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
 		<i class="icon-arrow-up icon-3x pull-left"></i>
-		{{ i18n('m.rbs.website.documents.menu.menus-are-grouped-by-website') }}
+		{{ i18n('m.rbs.website.admin.menu_menus_are_grouped_by_website') }}
 	</div>
 
 	<div ng-show="selectedWebsite">
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.documents.menu-create', ['ucf']) }}</a>
+			<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsWebsiteMenu"

@@ -1,8 +1,8 @@
-<rbs-field label="{{ i18nAttr('m.rbs.generic.document.id',['ucf']) }}">
-	<p class="form-control-static">(= document.id =)<span class="text-muted" ng-if="document.id < 0"> {{ i18n('m.rbs.admin.temporary-id',['ucf']) }}</span></p>
+<rbs-field label="{{ i18nAttr('c.documents.id',['ucf']) }}">
+	<p class="form-control-static">(= document.id =)<span class="text-muted" ng-if="document.id < 0"> {{ i18n('m.rbs.admin.admin.temporary_id',['ucf']) }}</span></p>
 </rbs-field>
 
-<rbs-field label="{{ i18nAttr('m.rbs.generic.document.model',['ucf']) }}">
+<rbs-field label="{{ i18nAttr('c.documents.model',['ucf']) }}">
 	<p class="form-control-static">(= document.model =)</p>
 </rbs-field>
 
@@ -10,13 +10,13 @@
 
 <div ng-if="modelInfo.metas.localized">
 	<hr/>
-	<h4>{{ i18n('m.rbs.admin.forms.translation',['ucf']) }}</h4>
+	<h4>{{ i18n('m.rbs.admin.admin.translation',['ucf']) }}</h4>
 
-	<rbs-field label="{{ i18nAttr('m.rbs.admin.forms.reference-language',['ucf']) }}">
+	<rbs-field label="{{ i18nAttr('m.rbs.admin.admin.reference_language',['ucf']) }}">
 		<p class="form-control-static"><i class="icon-book"></i> (= availableLanguages[document.refLCID].label =)</p>
 	</rbs-field>
 
-	<rbs-field label="{{ i18nAttr('m.rbs.admin.forms.translations',['ucf']) }}">
+	<rbs-field label="{{ i18nAttr('m.rbs.admin.admin.translations',['ucf']) }}">
 		<p class="form-control-static">
 			<span ng-repeat="l in document.META$.locales" ng-show="l.id != document.refLCID">
 				<a href ng-href="(= document.translateUrl(l.id) =)">(= availableLanguages[l.id].label =)</a>
@@ -29,19 +29,19 @@
 
 <div ng-if="modelInfo.metas.publishable">
 	<hr/>
-	<h4>{{ i18n('m.rbs.admin.forms.validation',['ucf']) }}</h4>
+	<h4>{{ i18n('m.rbs.admin.admin.validation',['ucf']) }}</h4>
 
-	<rbs-field label="{{ i18nAttr('m.rbs.generic.document.publicationstatus',['ucf']) }}">
+	<rbs-field label="{{ i18nAttr('c.documents.publicationstatus',['ucf']) }}">
 		<p class="form-control-static"><status ng-model="document" class="small"></status> (= document.publicationStatus | statusLabel =)</p>
 	</rbs-field>
 
 	<rbs-field-date
-			label="{{ i18nAttr('m.rbs.generic.document.startpublication',['ucf']) }}"
+			label="{{ i18nAttr('c.documents.startpublication',['ucf']) }}"
 			property="startPublication">
 	</rbs-field-date>
 
 	<rbs-field-date
-			label="{{ i18nAttr('m.rbs.generic.document.endpublication',['ucf']) }}"
+			label="{{ i18nAttr('c.documents.endpublication',['ucf']) }}"
 			property="endPublication">
 	</rbs-field-date>
 </div>
@@ -50,19 +50,19 @@
 
 <div ng-if="modelInfo.metas.activable">
 	<hr/>
-	<h4>{{ i18n('m.rbs.admin.forms.activation',['ucf']) }}</h4>
+	<h4>{{ i18n('m.rbs.admin.admin.activation',['ucf']) }}</h4>
 	<rbs-field-boolean
 			property="active"
-			label="{{ i18nAttr('m.rbs.generic.document.active', ['ucf']) }}">
+			label="{{ i18nAttr('c.documents.active', ['ucf']) }}">
 	</rbs-field-boolean>
 
 	<rbs-field-date
-			label="{{ i18nAttr('m.rbs.generic.document.startactivation',['ucf']) }}"
+			label="{{ i18nAttr('c.documents.startactivation',['ucf']) }}"
 			property="startActivation">
 	</rbs-field-date>
 
 	<rbs-field-date
-			label="{{ i18nAttr('m.rbs.generic.document.endactivation',['ucf']) }}"
+			label="{{ i18nAttr('c.documents.endactivation',['ucf']) }}"
 			property="endActivation">
 	</rbs-field-date>
 </div>

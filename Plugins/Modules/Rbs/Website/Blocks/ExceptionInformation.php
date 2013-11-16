@@ -14,9 +14,9 @@ class ExceptionInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.exception', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.website.admin.exception', $ucf));
 		$this->addInformationMeta('showStackTrace', Property::TYPE_BOOLEAN, true, true)
-			->setLabel($i18nManager->trans('m.rbs.website.blocks.exception-show-stack-trace', $ucf));
-		$this->setFunctions(array('Error_500' => $i18nManager->trans('m.rbs.website.blocks.function-error-500', $ucf)));
+			->setLabel($i18nManager->trans('m.rbs.website.admin.exception-show-stack-trace', $ucf));
+		$this->setFunctions(array('Error_500' => $i18nManager->trans('m.rbs.website.admin.function_error_500', $ucf)));
 	}
 }

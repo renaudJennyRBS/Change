@@ -18,3 +18,15 @@ $pluginManager = new \Change\Plugins\PluginManager();
 $pluginManager->setWorkspace($application->getWorkspace());
 $pluginManager->compile(false);
 $application->registerPluginsAutoload();
+$i18nManager = new \Change\I18n\I18nManager();
+$i18nManager->setWorkspace($application->getWorkspace());
+$i18nManager->setConfiguration($application->getConfiguration());
+$i18nManager->compileCoreI18nFiles();
+foreach ($pluginManager->getPlugins() as $plugin)
+{
+	if ($plugin->isAvailable())
+	{
+		$i18nManager->compilePluginI18nFiles($plugin);
+	}
+}
+

@@ -4,7 +4,7 @@
 		(= localCopies.length =)
 	</a>
 	<ul class="dropdown-menu">
-		<li class="dropdown-header" ng-pluralize="" count="localCopies.length" when="{{ i18nAttr('m.rbs.admin.localcopy.local-copies-message-ng-pluralize') }}"></li>
+		<li class="dropdown-header" ng-pluralize="" count="localCopies.length" when="{{ i18nAttr('m.rbs.admin.admin.local_copies_message_ng_pluralize') }}"></li>
 		<li class="divider" ng-if="localCopies.length > 0"></li>
 
 		<li ng-repeat="copy in localCopies track by localizedId(copy)"><a href ng-href="(= copy | rbsURL =)">
@@ -16,10 +16,10 @@
 
 		<li class="divider"></li>
 		<li ng-if="localCopies.length > 0"><a href="javascript:;" ng-click="clearLocalCopies()">
-			<i class="icon-trash"></i> {{ i18n('m.rbs.admin.localcopy.remove-all-local-copies', ['ucf']) }}
+			<i class="icon-trash"></i> {{ i18n('m.rbs.admin.admin.remove_all_local_copies', ['ucf']) }}
 		</a></li>
 		<li><a href="javascript:;">
-			<i class="icon-info-sign"></i> {{ i18n('m.rbs.admin.localcopy.what-are-local-copies', ['ucf']) }}
+			<i class="icon-info-sign"></i> {{ i18n('m.rbs.admin.admin.what_are_local_copies', ['ucf']) }}
 		</a></li>
 	</ul>
 </li>

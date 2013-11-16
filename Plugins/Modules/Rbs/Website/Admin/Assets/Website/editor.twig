@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'label'), ['ucf']) }}">
@@ -14,7 +14,7 @@
 
 		<rbs-field-url property="baseurl" required="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'baseurl'), ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.website.documents.website.baseurl-help', ['ucf']) }}</span>
+			<span class="help-block">{{ i18n('m.rbs.website.admin.website_baseurl_help', ['ucf']) }}</span>
 		</rbs-field-url>
 
 		<rbs-field ng-hide="document.isNew() || !document.indexPage" label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'indexPage'), ['ucf']) }}">
@@ -29,51 +29,51 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='permission'" hide-when-create="true"
-		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.topic.permission', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.topic_permission', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}">
 		<div rbs-tip="RbsWebsiteSectionPermissionRules" class="margin-top">
-			{{ i18n('m.rbs.website.admin.section-permission-rule-helper', ['ucf']) }}
+			{{ i18n('m.rbs.website.admin.section_permission_rule_helper', ['ucf']) }}
 		</div>
 
 		<rbs-field-picker-multiple property="authorizedUsers" required="false"
-			label="{{ i18nAttr('m.rbs.website.documents.topic.authorized-users', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.topic_authorized_users', ['ucf']) }}"
 			accepted-model="Rbs_User_User"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.topic.users-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.admin.topic_users_picker_title', ['ucf']) }}"
 			allow-creation="false">
 		</rbs-field-picker-multiple>
 
 		<rbs-field-picker-multiple property="authorizedGroups" required="false"
-			label="{{ i18nAttr('m.rbs.website.documents.topic.authorized-groups', ['ucf']) }}"
+			label="{{ i18nAttr('m.rbs.website.documents.topic_authorized_groups', ['ucf']) }}"
 			accepted-model="Rbs_User_Group"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.topic.groups-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.admin.topic_groups_picker_title', ['ucf']) }}"
 			allow-creation="false">
 		</rbs-field-picker-multiple>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='sitemap'" hide-when-create="true"
-		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.website.sitemap', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.website.documents.website_sitemap', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.Information', ['ucf']) }}">
 
 		<div rbs-tip="Rbs_Website_WebsiteEditorSitemap">
-			{{ i18n('m.rbs.website.documents.website.sitemap-help') }}
+			{{ i18n('m.rbs.website.admin.website_sitemap_help') | raw }}
 		</div>
 
 		<rbs-field-boolean property="sitemapGeneration" required="false"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
 		</rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website.sitemap-time-interval', ['ucf']) }}" required="false">
+		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemap-time-interval', ['ucf']) }}" required="false">
 			<rbs-time-interval-input name="sitemapTimeInterval" show="weeks,days,hours"
 				ng-model="data.timeInterval" disabled="!document.sitemapGeneration">
 			</rbs-time-interval-input>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website.sitemaps-url', ['ucf']) }}" required="false">
+		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemaps-url', ['ucf']) }}" required="false">
 			<table class="table">
 				<thead>
 					<tr>
-						<th>{{ i18n('m.rbs.website.documents.website.sitemap-lang', ['ucf']) }}</th>
-						<th>{{ i18n('m.rbs.website.documents.website.sitemap-url', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.website.documents.website_sitemap-lang', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.website.documents.website_sitemap-url', ['ucf']) }}</th>
 						<th ng-if="pendingSitemapCreations"></th>
 					</tr>
 				</thead>
@@ -84,13 +84,13 @@
 						<td ng-if="sitemap.jobId">
 							<a ng-if="sitemap.url" href="" ng-href="(= sitemap.url =)">(= sitemap.url =)</a>
 							<span ng-if="!sitemap.url">
-								{{ i18n('m.rbs.website.documents.website.sitemap-url-pending-creation', ['ucf']) }}
+								{{ i18n('m.rbs.website.admin.website_sitemap_url_pending_creation', ['ucf']) }}
 							</span>
 						</td>
 						<td ng-if="sitemap.jobId && !sitemap.url">
 							<button type="button" class="btn btn-default" ng-click="notifyUrlCreation(sitemap)"
 								ng-disabled="disableNotifyButtons[sitemap.LCID]">
-								{{ i18n('m.rbs.website.documents.website.notify-url-creation', ['ucf']) }}
+								{{ i18n('m.rbs.website.admin.website_notify_url_creation', ['ucf']) }}
 							</button>
 						</td>
 					</tr>

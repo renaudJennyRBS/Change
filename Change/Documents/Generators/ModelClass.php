@@ -172,6 +172,7 @@ use Change\Documents\InverseProperty;
 			else
 			{
 				$code .= '		$p = new Property('.$this->escapePHPValue($property->getName()).', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+				$code .= '		$p->setLabelKey('.$this->escapePHPValue($property->getLabelKey()).');'. PHP_EOL;
 				$code .= '		$this->properties['.$this->escapePHPValue($property->getName()).'] = $p;'. PHP_EOL;
 			}
 			 

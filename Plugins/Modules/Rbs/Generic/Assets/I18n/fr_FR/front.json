@@ -1,0 +1,29 @@
+{
+	"ascending":{
+		"message":"croissant"
+	},
+	"descending":{
+		"message":"décroissant"
+	},
+	"yes":{
+		"message":"oui"
+	},
+	"no":{
+		"message":"non"
+	},
+	"first_page":{
+		"message":"première page"
+	},
+	"last_page":{
+		"message":"dernière page"
+	},
+	"previous_page":{
+		"message":"page précédente"
+	},
+	"next_page":{
+		"message":"page suivante"
+	},
+	"page_x_of_y":{
+		"message":"page $PAGENUMBER$ sur $PAGECOUNT$"
+	}
+}

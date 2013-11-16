@@ -314,11 +314,12 @@ abstract class AbstractModel
 		$this->properties = array();
 
 		$p = new Property('id', 'Integer');
+		$p->setLabelKey('c.documents.id');
 		$this->properties['id'] = $p->setRequired(true);
 
 		$p =  new Property('model', 'String');
+		$p->setLabelKey('c.documents.model');
 		$this->properties['model'] = $p->setRequired(true)->setDefaultValue($this->getName());
-
 	}
 
 	/**
@@ -555,9 +556,9 @@ abstract class AbstractModel
 	 */
 	public function getPropertyLabelKey($name)
 	{
-		return strtolower(
-			'm.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.documents.' . $this->getShortName() . '.'
-				. strtolower($name));
+		$property = $this->getProperty($name);
+		return $property ? $property->getLabelKey() : $name;
+
 	}
 
 	/**

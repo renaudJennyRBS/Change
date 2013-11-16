@@ -23,6 +23,6 @@ class ProductInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-attributes-display-mode', $ucf));
 		$this->setFunctions(array('Rbs_Catalog_Product' => $i18nManager->trans('m.rbs.catalog.blocks.product-function', $ucf)));
 
-		$this->addTTL(60)->setLabel($i18nManager->trans('m.rbs.admin.blocks.ttl', $ucf));
+		$this->addTTL(60)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}
 }

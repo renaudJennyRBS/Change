@@ -160,11 +160,11 @@
 		}
 
 		function getCreateLabel () {
-			return (scope.document.label || '<em>' + i18n.trans('m.rbs.admin.admin.js.picker-no-title | ucf') + '</em>') + ' <i class="icon-caret-right margin-h"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-create-title', {'property' : attrs.propertyLabel});
+			return (scope.document.label || '<em>' + i18n.trans('m.rbs.admin.adminjs.picker_no_title | ucf') + '</em>') + ' <i class="icon-caret-right margin-h"></i> ' + i18n.trans('m.rbs.admin.adminjs.picker_create_title', {'property' : attrs.propertyLabel});
 		}
 
 		function getEditLabel () {
-			return (scope.document.label || '<em>' + i18n.trans('m.rbs.admin.admin.js.picker-no-title | ucf') + '</em>') + ' <i class="icon-caret-right margin-h"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-edit-title', {'property' : attrs.propertyLabel, 'item' : ngModel.$viewValue.label}) ;
+			return (scope.document.label || '<em>' + i18n.trans('m.rbs.admin.adminjs.picker_no_title | ucf') + '</em>') + ' <i class="icon-caret-right margin-h"></i> ' + i18n.trans('m.rbs.admin.adminjs.picker_edit_title', {'property' : attrs.propertyLabel, 'item' : ngModel.$viewValue.label}) ;
 		}
 
 
@@ -250,7 +250,7 @@
 					if (multiple) {
 						$dl.append(
 							'<quick-actions>' +
-								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> ' + i18n.trans('m.rbs.admin.admin.js.picker-replace-all-by-item | ucf') + '</a>' +
+								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> ' + i18n.trans('m.rbs.admin.adminjs.picker_replace_all_by_item | ucf') + '</a>' +
 							'</quick-actions>'
 						);
 					} else {
@@ -273,7 +273,7 @@
 				});
 			}).error(function (data) {
 				$('#document-picker-backdrop').show();
-				$pickerContents.html('<div class="alert alert-danger">' + i18n.trans('m.rbs.admin.admin.js.picker-template-not-loaded | ucf', {'url' : url}) + '</div>');
+				$pickerContents.html('<div class="alert alert-danger">' + i18n.trans('m.rbs.admin.adminjs.picker_template_not_loaded | ucf', {'url' : url}) + '</div>');
 				$picker.show();
 			});
 		};

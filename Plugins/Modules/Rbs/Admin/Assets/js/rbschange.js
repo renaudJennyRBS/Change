@@ -360,7 +360,7 @@
 		return {
 			'restrict'   : 'E',
 			'transclude' : true,
-			'template'   : '<div class="advanced-mode"><div class="separator"></div><div class="inner"><h4>' + i18n.trans('m.rbs.admin.admin.js.advanced-mode') + '</h4><div ng-transclude=""></div></div></div>',
+			'template'   : '<div class="advanced-mode"><div class="separator"></div><div class="inner"><h4>' + i18n.trans('m.rbs.admin.adminjs.advanced_mode') + '</h4><div ng-transclude=""></div></div></div>',
 			'replace'    : true
 		};
 	}]);

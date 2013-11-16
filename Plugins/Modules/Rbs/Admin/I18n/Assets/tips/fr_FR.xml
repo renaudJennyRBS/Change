@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.admin.tips" lcid="fr_FR">
-	<key id="rbs-pageeditor-markdown" format="html"><![CDATA[<strong>Les zones de textes riches sont éditables avec une syntaxe Markdown.</strong><br/>
-		Bien qu'un peu moins visuelle, cette syntaxe vous permet d'avoir un meilleur contrôle sur
-		la structure de vos contenus et permet de produire des contenus de qualité et correctement organisés.<br/>
-		<a href="http://fr.wikipedia.org/wiki/Markdown" target="_blank">En savoir plus sur la syntaxe Markdown...</a>]]></key>
-</i18n>

@@ -13,9 +13,9 @@ class CategoryInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformatio
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.event.blocks.category-label', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.event.admin.category_label', $ucf));
 		$this->addInformationMeta('sectionRestriction', Property::TYPE_STRING, true, 'website')
-			->setLabel($i18nManager->trans('m.rbs.event.blocks.category-section-restriction', $ucf))
+			->setLabel($i18nManager->trans('m.rbs.event.admin.category_section_restriction', $ucf))
 			->setCollectionCode('Rbs_Event_Collection_SectionRestrictions');
 		$this->getParameterInformation('templateName')->setDefaultValue('category.twig');
 	}

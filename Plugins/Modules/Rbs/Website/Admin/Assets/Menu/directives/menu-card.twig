@@ -5,21 +5,21 @@
 		<i class="icon-trash icon-white"></i>
 	</button>
 	<button class="btn btn-xs" disabled="disabled" type="button">
-		{{ i18n('m.rbs.admin.admin.js.activated', ['ucf', 'lab']) }}
+		{{ i18n('m.rbs.admin.adminjs.activated', ['ucf', 'lab']) }}
 	</button>
 	<status-switch document="document"/>
 </div>
 
 <div data-ng-switch="document.items.length" style="height: 200px; overflow-y: auto">
 	<div data-ng-switch-when="0">
-		<strong>{{ i18n('m.rbs.website.documents.menu.this-menu-is-empty') }}</strong><br />
-		{{ i18n('m.rbs.website.documents.menu.this-menu-is-empty-help') }}
+		<strong>{{ i18n('m.rbs.website.admin.menu_this_menu_is_empty') }}</strong><br />
+		{{ i18n('m.rbs.website.admin.menu_this_menu_is_empty-help') }}
 	</div>
 	<token-list data-switch-default="" class="rows" items="document.items"></token-list>
 </div>
 
 <div class="btn-toolbar clearfix">
 	<button class="btn btn-primary btn-sm pull-right" type="button">
-		<i class="icon-ok icon-white"></i> {{ i18n('m.rbs.admin.submit', ['ucf']) }}
+		<i class="icon-ok icon-white"></i> {{ i18n('m.rbs.admin.admin.submit', ['ucf']) }}
 	</button>
 </div>

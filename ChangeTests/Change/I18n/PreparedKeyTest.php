@@ -63,20 +63,23 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 	{
 		$key = new \Change\I18n\PreparedKey('');
 
-		// Minimum 3 parts.
+		// Minimum 4 parts.
 		$key->setKey('m');
 		$this->assertFalse($key->isValid());
 		$key->setKey('m.website');
 		$this->assertFalse($key->isValid());
 		$key->setKey('m.website.test');
-		$this->assertTrue($key->isValid());
+		$this->assertFalse($key->isValid());
 		$key->setKey('m.website.fo.test');
+		$this->assertFalse($key->isValid());
+		$key->setKey('m.website.fo.test.titi');
 		$this->assertTrue($key->isValid());
 
-		// For the first path, only 'f', 'm' or 't' are valid.
+
+		// For the first path, only 'c', 'm' or 't' are valid.
 		$key->setKey('toto.website.test');
 		$this->assertFalse($key->isValid());
-		$key->setKey('t.website.test');
+		$key->setKey('t.website.test.tutu.titi');
 		$this->assertTrue($key->isValid());
 		$key->setKey('c.website.test');
 		$this->assertTrue($key->isValid());
@@ -89,16 +92,16 @@ class PreparedKeyTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetPathGetId()
 	{
-		$key = new \Change\I18n\PreparedKey('m.website.fo.test');
-		$this->assertEquals('m.website.fo.test', $key->getKey());
+		$key = new \Change\I18n\PreparedKey('m.website.fo.test.tutu');
+		$this->assertEquals('m.website.fo.test.tutu', $key->getKey());
 		$this->assertTrue($key->isValid());
-		$this->assertEquals('m.website.fo', $key->getPath());
-		$this->assertEquals('test', $key->getId());
+		$this->assertEquals('m.website.fo.test', $key->getPath());
+		$this->assertEquals('tutu', $key->getId());
 
-		$key->setKey('t.default.templates.a.test.toto.tpl1');
-		$this->assertEquals('t.default.templates.a.test.toto.tpl1', $key->getKey());
+		$key->setKey('t.default.templates.a.tpl1');
+		$this->assertEquals('t.default.templates.a.tpl1', $key->getKey());
 		$this->assertTrue($key->isValid());
-		$this->assertEquals('t.default.templates.a.test.toto', $key->getPath());
+		$this->assertEquals('t.default.templates.a', $key->getPath());
 		$this->assertEquals('tpl1', $key->getId());
 
 		$key->setKey('t.default');

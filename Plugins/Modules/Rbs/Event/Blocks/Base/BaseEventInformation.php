@@ -15,12 +15,12 @@ abstract class BaseEventInformation extends \Change\Presentation\Blocks\Informat
 		$ucf = array('ucf');
 		$this->addInformationMeta('docId', Property::TYPE_DOCUMENTID, false, null); // Label ans allowed model should be set in final class.
 		$this->addInformationMeta('showTime', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-show-time', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_show_time', $ucf));
 		$this->addInformationMeta('showCategories', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-show-categories', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_show_categories', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-contextual-urls', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_contextual_urls', $ucf));
 		$this->addInformationMeta('templateName', Property::TYPE_STRING, false) // Default value should be set in final class.
-			->setLabel($i18nManager->trans('m.rbs.event.blocks.base-event-template-name', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_template_name', $ucf));
 	}
 }

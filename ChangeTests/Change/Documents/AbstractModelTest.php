@@ -88,7 +88,8 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertEquals('test', $modelBasic->getIcon());
 		$this->assertEquals('m.project.tests.documents.basic', $modelBasic->getLabelKey());
-		$this->assertEquals('m.project.tests.documents.basic.prop', $modelBasic->getPropertyLabelKey('prop'));
+		$this->assertEquals('undefined', $modelBasic->getPropertyLabelKey('undefined'));
+		$this->assertEquals('m.project.tests.documents.basic_pstr', $modelBasic->getPropertyLabelKey('pStr'));
 		$this->assertEquals('Project_Tests_Basic', strval($modelBasic));
 		return $modelManager;
 	}

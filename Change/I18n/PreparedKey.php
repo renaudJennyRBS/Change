@@ -7,7 +7,8 @@ namespace Change\I18n;
  */
 class PreparedKey
 {
-	const KEY_REGEXP = '/^(c|m|t)\.[a-z0-9]+(\.[a-z0-9-]+)+$/';
+	const KEY_REGEXP = '/^(m|t)(\.[a-z0-9]+){3}(\.[a-z0-9_@]+)$|^(c)(\.[a-z0-9]+)(\.[a-z0-9_@]+)$/';
+
 
 	/**
 	 * @var string
@@ -95,8 +96,8 @@ class PreparedKey
 			if (preg_match(static::KEY_REGEXP, $key))
 			{
 				$parts = explode('.', $key);
-				$this->path = implode('.', array_slice($parts, 0, -1));
-				$this->id = end($parts);
+				$this->id = array_pop($parts);
+				$this->path = implode('.', $parts);
 			}
 			else
 			{

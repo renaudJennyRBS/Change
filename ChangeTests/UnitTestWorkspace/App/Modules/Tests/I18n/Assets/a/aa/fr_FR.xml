@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.project.tests.a.aa" lcid="fr_FR">
-	<include id="m.project.tests.b" />
-	<key id="plop">plop fr a.aa</key>
-	<key id="plap">plap fr a.aa</key>
-</i18n>

@@ -344,7 +344,7 @@
 			if (!input) {
 				return '';
 			}
-			return i18n.trans('m.rbs.admin.admin.js.status-' + angular.lowercase(input) + '|ucf');
+			return i18n.trans('m.rbs.admin.adminjs.status-' + angular.lowercase(input) + '|ucf');
 		};
 	}]);
 
@@ -389,7 +389,7 @@
 
 	app.filter('rbsBoolean', ['RbsChange.i18n', function (i18n) {
 		return function (input) {
-			return i18n.trans(input ? 'm.rbs.admin.admin.js.yes' : 'm.rbs.admin.admin.js.no');
+			return i18n.trans(input ? 'm.rbs.admin.adminjs.yes' : 'm.rbs.admin.adminjs.no');
 		};
 	}]);
 
@@ -410,7 +410,7 @@
 					} else if (angular.isObject(value)) {
 						value = JSON.stringify(value);
 					} else if (value === null) {
-						value = '<em class="muted">' + i18n.trans('m.rbs.admin.admin.js.not-defined') + '</em>';
+						value = '<em class="muted">' + i18n.trans('m.rbs.admin.adminjs.not_defined') + '</em>';
 					}
 					if (modelInfo && modelInfo.properties[name]) {
 						name = modelInfo.properties[name].label;

@@ -21,6 +21,6 @@ class FacetsInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.facets-facetgroups', $ucf))
 			->setAllowedModelsNames(array('Rbs_Elasticsearch_FacetGroup'));
 
-		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.blocks.ttl', $ucf));
+		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}
 }

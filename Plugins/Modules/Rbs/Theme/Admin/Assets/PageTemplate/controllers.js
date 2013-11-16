@@ -17,7 +17,7 @@
 	function ListController($routeParams, Breadcrumb, MainMenu, i18n, REST)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.theme.admin.js.module-name | ucf'), "Rbs/Theme"]
+			[i18n.trans('m.rbs.theme.admin.module_name | ucf'), "Rbs/Theme"]
 		]);
 
 		if ($routeParams.id)
@@ -49,7 +49,7 @@
 	function FormController ($scope, Breadcrumb, FormsManager, i18n, REST, Utils) {
 
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.theme.admin.js.module-name | ucf'), "Rbs/Theme"]
+			[i18n.trans('m.rbs.theme.admin.module_name | ucf'), "Rbs/Theme"]
 		]);
 		FormsManager.initResource($scope, 'Rbs_Theme_PageTemplate').then(function (pageTemplate) {
 			if ( ! Utils.isNew(pageTemplate) ) {

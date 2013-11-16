@@ -1,0 +1,482 @@
+{
+	"title":{
+		"message":"search"
+	},
+	"requiredConditions":{
+		"message":"Matching: "
+	},
+	"all":{
+		"message":"every filter"
+	},
+	"allTooltip":{
+		"message":"logical AND"
+	},
+	"atLeastOne":{
+		"message":"at least one filter"
+	},
+	"atLeastOneTooltip":{
+		"message":"logical OR"
+	},
+	"deleteThisFilter":{
+		"message":"delete filter"
+	},
+	"cancelAllFilters":{
+		"message":"clear filters"
+	},
+	"contains":{
+		"message":"contains"
+	},
+	"startsWith":{
+		"message":"starts with"
+	},
+	"equals":{
+		"message":"equals"
+	},
+	"endsWith":{
+		"message":"ends with"
+	},
+	"is":{
+		"message":"is"
+	},
+	"isNot":{
+		"message":"is not"
+	},
+	"isGreaterThanOrEquals":{
+		"message":"is greater than or equal"
+	},
+	"isLessThanOrEquals":{
+		"message":"is les than or equal"
+	},
+	"isDifferentOf":{
+		"message":"is different of"
+	},
+	"isBefore":{
+		"message":"is before"
+	},
+	"isOn":{
+		"message":"is"
+	},
+	"isAfter":{
+		"message":"is after"
+	},
+	"saveSearch":{
+		"message":"save search"
+	},
+	"filter":{
+		"message":"filter"
+	},
+	"addFilter":{
+		"message":"add filter"
+	},
+	"choose_existent":{
+		"message":"choose among existing documents"
+	},
+	"afterSave":{
+		"message":"upon saving :"
+	},
+	"afterSaveStay":{
+		"message":"stay on this form"
+	},
+	"afterSaveGoList":{
+		"message":"go back to list"
+	},
+	"btnGoBack":{
+		"message":"go back <small>to list<\/small>"
+	},
+	"btnSave":{
+		"message":"save<small>changes <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+	},
+	"btnRevert":{
+		"message":"Revert<small>changes <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+	},
+	"titleRevert":{
+		"message":"Revert to the last saved data"
+	},
+	"btnCancelCascade":{
+		"message":"cancel <small>and go back to previous form<\/small>"
+	},
+	"propertiesModifiedPluralize":{
+		"message":"{'0': 'No property was changed.', 'one': 'One property was changed.', 'other': '{} properties were changed.'}"
+	},
+	"date_selector_at":{
+		"message":"at"
+	},
+	"date_selector_format":{
+		"message":"mm\/dd\/yyyy"
+	},
+	"date_selector_hour_letter":{
+		"message":":"
+	},
+	"date_selector_lang":{
+		"message":"en"
+	},
+	"time_zone_selector_text":{
+		"message":"You can select a timezone just for this form, until you log out or permanently as your default timezone."
+	},
+	"always_use_this_timezone":{
+		"message":"always use this timezone"
+	},
+	"current_time_in_selected_timezone":{
+		"message":"current time in selected timezone:"
+	},
+	"use":{
+		"message":"use"
+	},
+	"always_use":{
+		"message":"always use"
+	},
+	"picker_no_element":{
+		"message":"no element"
+	},
+	"picker_edit_tooltip":{
+		"message":"edit selection"
+	},
+	"picker_create":{
+		"message":"create"
+	},
+	"picker_create_tooltip":{
+		"message":"create a new document"
+	},
+	"picker_selector":{
+		"message":"selector"
+	},
+	"picker_selector_tooltip":{
+		"message":"open selector above"
+	},
+	"picker_in_place":{
+		"message":"module"
+	},
+	"picker_in_place_tooltip":{
+		"message":"go to the module to select documents"
+	},
+	"picker_clear":{
+		"message":"clear"
+	},
+	"picker_clipboard":{
+		"message":"clipboard"
+	},
+	"picker_clipboard_tooltip":{
+		"message":"fill using Clipboard"
+	},
+	"picker_choose_model_to_select":{
+		"message":"document types"
+	},
+	"click_to_select_another_image":{
+		"message":"click to select another image from your computer"
+	},
+	"activation":{
+		"message":"activation"
+	},
+	"validation":{
+		"message":"validation"
+	},
+	"translation":{
+		"message":"translation"
+	},
+	"translations":{
+		"message":"translations"
+	},
+	"reference_language":{
+		"message":"reference language"
+	},
+	"general_properties":{
+		"message":"general properties"
+	},
+	"advanced_properties":{
+		"message":"advanced properties"
+	},
+	"publication_properties":{
+		"message":"publication"
+	},
+	"information":{
+		"message":"information"
+	},
+	"languages":{
+		"message":"languages"
+	},
+	"contents":{
+		"message":"contents"
+	},
+	"status":{
+		"message":"state"
+	},
+	"submit":{
+		"message":"submit"
+	},
+	"cancel":{
+		"message":"cancel"
+	},
+	"yes":{
+		"message":"yes"
+	},
+	"no":{
+		"message":"no"
+	},
+	"translate":{
+		"message":"translate"
+	},
+	"search":{
+		"message":"search"
+	},
+	"this_document_exists_in_multiple_languages":{
+		"message":"this Document has multiple languages"
+	},
+	"correction":{
+		"message":"correction"
+	},
+	"this_document_has_a_correction_on":{
+		"message":"this Document has a Correction on"
+	},
+	"correction_editor_explanation":{
+		"message":"The values diplayed in this editor are the values of the Correction, and the concerned properties are displayed with a color.<br\/>To see more information about the modified properties, and the original values, use the <strong>Correction<\/strong> button below."
+	},
+	"admin_section_name":{
+		"message":"administration"
+	},
+	"temporary_id":{
+		"message":"temporary ID"
+	},
+	"reorderDescription":{
+		"message":"Reorder the items by dragging the <i class=\"icon-reorder\"><\/i> icons on each line."
+	},
+	"alphabeticalSort":{
+		"message":"sort alphabetically"
+	},
+	"reverseSort":{
+		"message":"reverse"
+	},
+	"this_list_is_empty":{
+		"message":"This list is empty!"
+	},
+	"loading":{
+		"message":"Loading..."
+	},
+	"you_can":{
+		"message":"you can"
+	},
+	"create_elements_with_buttons":{
+		"message":"create new elements using the commands above"
+	},
+	"clear_search_filters":{
+		"message":"clear search filters"
+	},
+	"refresh":{
+		"message":"refresh list"
+	},
+	"sort":{
+		"message":"sort"
+	},
+	"list_display":{
+		"message":"display as list"
+	},
+	"grid_display":{
+		"message":"display as grid"
+	},
+	"pagination_total":{
+		"message":"{'0':'No element', 'one': 'One element', 'other':'{} elements'}"
+	},
+	"pagination_pages":{
+		"message":"{'one': 'one page', 'other': '{} pages'}"
+	},
+	"on":{
+		"message":"on"
+	},
+	"per_page":{
+		"message":"per page"
+	},
+	"close_preview":{
+		"message":"close preview"
+	},
+	"close_all_previews":{
+		"message":"close all previews"
+	},
+	"local_copies_message_ng_pluralize":{
+		"message":"{'0': 'No local copy', 'one': 'You have one local copy of an unsaved document.', 'other': 'You have {} local copies of unsaved documents.'}"
+	},
+	"remove_all_local_copies":{
+		"message":"remove local copies"
+	},
+	"what_are_local_copies":{
+		"message":"what are local copies?"
+	},
+	"open":{
+		"message":"open main menu (Ctrl+Alt+M)"
+	},
+	"about":{
+		"message":"about RBS Change"
+	},
+	"profile":{
+		"message":"profile"
+	},
+	"logout":{
+		"message":"log out"
+	},
+	"clear_search":{
+		"message":"clear search"
+	},
+	"other_modules":{
+		"message":"other modules"
+	},
+	"help_bottom":{
+		"message":"This menu can be open with Ctrl+Alt+M."
+	},
+	"dashboard":{
+		"message":"dashboard"
+	},
+	"website":{
+		"message":"Web site"
+	},
+	"twitter":{
+		"message":"Twitter"
+	},
+	"github":{
+		"message":"GitHub"
+	},
+	"status_draft":{
+		"message":"draft"
+	},
+	"status_frozen":{
+		"message":"frozen"
+	},
+	"status_validcontent":{
+		"message":"validated content"
+	},
+	"status_valid":{
+		"message":"validated"
+	},
+	"status_validation":{
+		"message":"to validate"
+	},
+	"status_unpublishable":{
+		"message":"unpublishable"
+	},
+	"status_publishable":{
+		"message":"publishable"
+	},
+	"status_filed":{
+		"message":"filed"
+	},
+	"draft_description":{
+		"message":"This document is draft."
+	},
+	"frozen_description":{
+		"message":"This document has been frozen and is not visible on the website."
+	},
+	"filed_description":{
+		"message":"This document has been filed.<br\/>It can be displayed on the website with blocks that take filed content into account."
+	},
+	"validation_description":{
+		"message":"The content of this document must be validated before the document can be published on the website."
+	},
+	"validcontent_description":{
+		"message":"The content of this document has been validated: the last step is too validate its publication."
+	},
+	"unpublishable_description":{
+		"message":"This document <strong>is not<\/strong> ready to be published on the website."
+	},
+	"publishable_description":{
+		"message":"This document is ready to be published on the website."
+	},
+	"request_validation":{
+		"message":"request validation"
+	},
+	"run_all_steps_message":{
+		"message":"You can execute all the steps of the validation process here by clicking the <strong>Publish now<\/strong> button below. Click <strong>Help<\/strong> to know more about the validation process."
+	},
+	"run_all_steps_button":{
+		"message":"publish now"
+	},
+	"request_validation_done":{
+		"message":"validation requested"
+	},
+	"content_validated":{
+		"message":"content validated"
+	},
+	"publication_validated":{
+		"message":"publication validated"
+	},
+	"to_validate_content_you_can":{
+		"message":"to validate the content of this document you can"
+	},
+	"open_document_editor":{
+		"message":"open the document editor"
+	},
+	"open_document_editor_in_new_tab":{
+		"message":"open the document editor in a new tab"
+	},
+	"accepted":{
+		"message":"accepted"
+	},
+	"rejected":{
+		"message":"rejected"
+	},
+	"accept":{
+		"message":"accept"
+	},
+	"reject":{
+		"message":"reject"
+	},
+	"freeze":{
+		"message":"freeze"
+	},
+	"unfreeze":{
+		"message":"unfreeze"
+	},
+	"reject_reason":{
+		"message":"reject reason"
+	},
+	"why_do_you_reject_content":{
+		"message":"why do you reject the content of this document?"
+	},
+	"reject_content":{
+		"message":"reject content"
+	},
+	"accept_content":{
+		"message":"validate content"
+	},
+	"accept_publication":{
+		"message":"validate publication"
+	},
+	"you_can_freeze_document":{
+		"message":"You can freeze this document: it won't be visible on the website."
+	},
+	"freeze_document":{
+		"message":"freeze document"
+	},
+	"unfreeze_document":{
+		"message":"unfreeze document"
+	},
+	"frozen_document":{
+		"message":"document frozen"
+	},
+	"this_document_is_frozen":{
+		"message":"This document is frozen: it is not visible on the website. To make it visible again, you can unfreeze it."
+	},
+	"modified_content_correction":{
+		"message":"Content modified &rarr; correction"
+	},
+	"caution":{
+		"message":"warning"
+	},
+	"document_has_been_modified_since_its_publication":{
+		"message":"This document has been modified since its publication: the modifications won't be visible until the Correction is validated."
+	},
+	"to_validate_correction_please_go_to":{
+		"message":"to validate the Correction, please go to"
+	},
+	"document_editor":{
+		"message":"the Document editor"
+	},
+	"to_check_modified_properties":{
+		"message":"so that you can <strong>check the modified properties<\/strong>"
+	},
+	"action_has_failed":{
+		"message":"action failed"
+	},
+	"properties":{
+		"message":"properties"
+	},
+	"workflow_title":{
+		"message":"Workflow"
+	}
+}

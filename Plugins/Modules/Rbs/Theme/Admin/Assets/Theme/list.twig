@@ -2,15 +2,15 @@
 
 	<rbs-workspace-config menu="Rbs_Theme">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.theme.documents.theme-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.theme.admin.theme_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Theme_Theme" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Theme_Theme' | documentURL:'new' =)">{{ i18n('m.rbs.theme.documents.theme-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Theme_Theme' | documentURL:'new' =)">{{ i18n('m.rbs.theme.admin.theme_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLTheme1"
@@ -18,8 +18,8 @@
 	               activable="true"
 	               filter-query="query">
 		<column name="label" primary="true"></column>
-		<column name="themes" label="{{ i18nAttr('m.rbs.theme.documents.pagetemplate-list', ['ucf']) }}">
-			<a href ng-href="(= doc | documentURL:'tree' =)">{{ i18n('m.rbs.theme.documents.theme-list-pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+		<column name="themes" label="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}">
+			<a href ng-href="(= doc | documentURL:'tree' =)">{{ i18n('m.rbs.theme.admin.theme_list_pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
 		</column>
 	</rbs-document-list>
 

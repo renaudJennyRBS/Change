@@ -17,7 +17,7 @@
 	function ListController($scope, Breadcrumb, MainMenu, i18n, Query, $routeParams, $location, REST, Utils)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"],
+			[i18n.trans('m.rbs.website.admin.module_name | ucf'), "Rbs/Website"],
 			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu/"]
 		]);
 

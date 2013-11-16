@@ -51,6 +51,11 @@ class Plugin
 	protected $configuration = array();
 
 	/**
+	 * @var string
+	 */
+	protected $defaultLCID;
+
+	/**
 	 * @param string $type
 	 * @param string $vendor
 	 * @param string $shortName
@@ -409,6 +414,22 @@ class Plugin
 	{
 		$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets', 'Twig');
 		return is_dir($path) ? $path : null ;
+	}
+
+	/**
+	 * @param string $defaultLCID
+	 */
+	public function setDefaultLCID($defaultLCID)
+	{
+		$this->defaultLCID = $defaultLCID;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDefaultLCID()
+	{
+		return $this->defaultLCID;
 	}
 
 	function __toString()

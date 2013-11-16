@@ -2,16 +2,16 @@
 
 	<rbs-workspace-config menu="Rbs_Website">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.documents.staticpage-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.admin.staticpage_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.website.documents.staticpage-list', ['ucf']) }}" filter-query="query"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.website.admin.staticpage_list', ['ucf']) }}" filter-query="query"></page-header>
 	<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.documents.staticpage-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsWebsiteStaticPage"

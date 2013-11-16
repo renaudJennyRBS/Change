@@ -23,6 +23,6 @@ class ResultInformation extends Information
 		$this->addInformationMeta('fulltextIndex', Property::TYPE_DOCUMENTID, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.result-fulltextindex', $ucf))
 			->setAllowedModelsNames(array('Rbs_Elasticsearch_FullText'));
-		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.blocks.ttl', $ucf));
+		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}
 }

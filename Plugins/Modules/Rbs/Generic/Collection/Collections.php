@@ -18,8 +18,8 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
-				'asc' => new I18nString($i18n, 'm.rbs.generic.ascending', array('ucf')),
-				'desc' => new I18nString($i18n, 'm.rbs.generic.descending', array('ucf'))
+				'asc' => new I18nString($i18n, 'm.rbs.generic.front.ascending', array('ucf')),
+				'desc' => new I18nString($i18n, 'm.rbs.generic.front.descending', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_SortDirections', $collection);
 			$event->setParam('collection', $collection);
@@ -37,12 +37,12 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
-				'*' => new I18nString($i18n, 'm.rbs.generic.any-role', array('ucf')),
-				'Consumer' => new I18nString($i18n, 'm.rbs.generic.role-consumer', array('ucf')),
-				'Creator' => new I18nString($i18n, 'm.rbs.generic.role-creator', array('ucf')),
-				'Editor' => new I18nString($i18n, 'm.rbs.generic.role-editor', array('ucf')),
-				'Publisher' => new I18nString($i18n, 'm.rbs.generic.role-publisher', array('ucf')),
-				'Administrator' => new I18nString($i18n, 'm.rbs.generic.role-administrator', array('ucf'))
+				'*' => new I18nString($i18n, 'm.rbs.generic.admin.any_role', array('ucf')),
+				'Consumer' => new I18nString($i18n, 'm.rbs.generic.admin.role_consumer', array('ucf')),
+				'Creator' => new I18nString($i18n, 'm.rbs.generic.admin.role_creator', array('ucf')),
+				'Editor' => new I18nString($i18n, 'm.rbs.generic.admin.role_editor', array('ucf')),
+				'Publisher' => new I18nString($i18n, 'm.rbs.generic.admin.role_publisher', array('ucf')),
+				'Administrator' => new I18nString($i18n, 'm.rbs.generic.admin.role_administrator', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_PermissionRoles', $collection);
 			$event->setParam('collection', $collection);
@@ -61,7 +61,7 @@ class Collections
 			$i18n = $applicationServices->getI18nManager();
 			$modelsNames = $applicationServices->getModelManager()->getModelsNames();
 			$collection = array_combine($modelsNames, $modelsNames);
-			$collection['*'] = new I18nString($i18n, 'm.rbs.generic.any-privilege', array('ucf'));
+			$collection['*'] = new I18nString($i18n, 'm.rbs.generic.admin.any_privilege', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Generic_Collection_PermissionPrivileges', $collection);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-	          data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+	          data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<div data-ng-if="document.isNew()">
 			<rbs-field property="rootProduct"
@@ -157,7 +157,7 @@
 
 	<fieldset data-ng-show="section=='product'"
 	          data-form-section-label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.products-section', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<div data-ng-controller="Rbs_Catalog_VariantGroup_VariantListController">
 			<rbs-document-list data-dlid="DLRbsCatalogVariantList" model="Rbs_Catalog_Product"
@@ -173,8 +173,8 @@
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+	          data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 	          data-document-system-info-section>
 	</fieldset>
 

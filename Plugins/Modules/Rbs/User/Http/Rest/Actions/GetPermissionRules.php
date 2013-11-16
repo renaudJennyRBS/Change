@@ -52,29 +52,29 @@ class GetPermissionRules
 			switch ($row['role'])
 			{
 				case '*':
-					$row['role'] = $i18n->trans('m.rbs.generic.any-role', array('ucf'));
+					$row['role'] = $i18n->trans('m.rbs.generic.admin.any_role', array('ucf'));
 					break;
 				case 'Consumer':
-					$row['role'] = $i18n->trans('m.rbs.generic.role-consumer', array('ucf'));
+					$row['role'] = $i18n->trans('m.rbs.generic.admin.role_consumer', array('ucf'));
 					break;
 				case 'Creator':
-					$row['role'] = $i18n->trans('m.rbs.generic.role-creator', array('ucf'));
+					$row['role'] = $i18n->trans('m.rbs.generic.admin.role_creator', array('ucf'));
 					break;
 				case 'Editor':
-					$row['role'] = $i18n->trans('m.rbs.generic.role-editor', array('ucf'));
+					$row['role'] = $i18n->trans('m.rbs.generic.admin.role_editor', array('ucf'));
 					break;
 				case 'Publisher':
-					$row['role'] = $i18n->trans('m.rbs.generic.role-publisher', array('ucf'));
+					$row['role'] = $i18n->trans('m.rbs.generic.admin.role_publisher', array('ucf'));
 					break;
 				case 'Administrator':
-					$row['role'] = $i18n->trans('m.rbs.generic.role-administrator', array('ucf'));
+					$row['role'] = $i18n->trans('m.rbs.generic.admin.role_administrator', array('ucf'));
 					break;
 			}
 
 			switch ($row['privilege'])
 			{
 				case '*':
-					$row['privilege'] = $i18n->trans('m.rbs.generic.any-privilege', array('ucf'));
+					$row['privilege'] = $i18n->trans('m.rbs.generic.admin.any_privilege', array('ucf'));
 					break;
 			}
 			$array[] = $row;

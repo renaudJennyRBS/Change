@@ -1,7 +1,7 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_StoreIndex', 'clientName'), ['ucf']) }}" required="true">
 			<select ng-model="document.clientName" class="form-control" required="true"
@@ -32,7 +32,7 @@
 
 	<fieldset data-ng-show="section=='facets'" hide-when-create="true"
 			data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.documents.storeindex.section-facets', ['ucf']) }}"
-			data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<div class="add-elements-bar">
 			<a href ng-click="cascadeCreateItem()">{{ i18n('m.rbs.elasticsearch.admin.js.facet-create', ['ucf']) }}</a>
 		</div>
@@ -49,11 +49,11 @@
 					<td><a class="btn-link" ng-click="cascadeEditItem($index)">(= facet.label =)</a></td>
 					<td style="width:100px;text-align: right">
 						<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.js.edit', ['ucf']) }}" type="button">
+								title="{{ i18nAttr('m.rbs.admin.adminjs.edit', ['ucf']) }}" type="button">
 							<i class="icon-pencil"></i>
 						</button>
 						<button style="width:36px" class="btn btn-danger btn-sm" type="button" ng-click="remove($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.js.delete', ['ucf']) }}">
+								title="{{ i18nAttr('m.rbs.admin.adminjs.delete', ['ucf']) }}">
 							<i class="icon-remove"></i>
 						</button>
 					</td>
@@ -64,8 +64,8 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.information', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
 

@@ -53,14 +53,14 @@ class I18nStringTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('fr_FR', $manager->getLCID());
 
 		// Key translation.
-		$this->assertEquals('plip fr b', strval(new I18nString($manager, 'm.project.tests.a.aa.plip')));
+		$this->assertEquals('plip fr b', strval(new I18nString($manager, 'm.project.tests.a.plip')));
 
 		// Converters.
-		$this->assertEquals('Plop fr a.aa', strval(new I18nString($manager, 'm.project.tests.a.aa.plop', array('ucf'))));
-		$this->assertEquals('PLOP FR A.AA :', strval(new I18nString($manager, 'm.project.tests.a.aa.plop', array('uc', 'lab'))));
+		$this->assertEquals('Plop fr a.aa', strval(new I18nString($manager, 'm.project.tests.a.plop', array('ucf'))));
+		$this->assertEquals('PLOP FR A.AA :', strval(new I18nString($manager, 'm.project.tests.a.plop', array('uc', 'lab'))));
 
 		// Substitutions.
-		$this->assertEquals('Withparams test {param2} fr a',
+		$this->assertEquals('Withparams test $PARAM2$ fr a',
 			strval(new I18nString($manager, 'm.project.tests.a.withparams', array('ucf'), array('param1' => 'test'))));
 		$this->assertEquals('withparams test youpi fr a',
 			strval(new I18nString($manager, 'm.project.tests.a.withparams', array(), array('param1' => 'test',

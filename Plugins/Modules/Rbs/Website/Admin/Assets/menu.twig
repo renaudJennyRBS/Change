@@ -2,20 +2,20 @@
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3 class="panel-title">{{ i18n('m.rbs.admin.contents', ['ucf']) }}</h3>
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.contents', ['ucf']) }}</h3>
 		</div>
 		<div class="list-group">
 			<a class="list-group-item" href="Rbs/Website/Website/">
-				<i class="icon-home"></i> {{ i18n('m.rbs.website.documents.website-list', ['ucf']) }}
+				<i class="icon-home"></i> {{ i18n('m.rbs.website.admin.website_list', ['ucf']) }}
 			</a>
 			<a class="list-group-item" href="Rbs/Website/StaticPage/">
-				<i class="icon-file-text"></i> {{ i18n('m.rbs.website.documents.staticpage-list', ['ucf']) }}
+				<i class="icon-file-text"></i> {{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}
 			</a>
 			<a class="list-group-item" href="Rbs/Website/FunctionalPage/">
-				<i class="icon-file"></i> {{ i18n('m.rbs.website.documents.functionalpage-list', ['ucf']) }}
+				<i class="icon-file"></i> {{ i18n('m.rbs.website.admin.functionalpage_list', ['ucf']) }}
 			</a>
 			<a class="list-group-item" href="Rbs/Website/Menu/">
-				<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.menu-list', ['ucf']) }}
+				<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}
 			</a>
 		</div>
 	</div>
@@ -25,9 +25,9 @@
 		<div class="panel-heading">
 			<h3 class="panel-title">
 				<span class="pull-right">
-					<a title="{{ i18nAttr('m.rbs.website.admin.edit-website-properties', ['ucf']) }}" class="btn btn-xs" ng-class="{true: 'btn-primary', false: 'btn-default'}[currentWebsiteId == website.id]" ng-href="(= website | rbsURL =)"><i class="icon-pencil"></i></a>
+					<a title="{{ i18nAttr('m.rbs.website.admin.edit_website_properties', ['ucf']) }}" class="btn btn-xs" ng-class="{true: 'btn-primary', false: 'btn-default'}[currentWebsiteId == website.id]" ng-href="(= website | rbsURL =)"><i class="icon-pencil"></i></a>
 				</span>
-				<a ng-href="(= website | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate-in-website', ['ucf']) }}"><i class="icon-home"></i> (=website.label=)</a>
+				<a ng-href="(= website | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate_in_website', ['ucf']) }}"><i class="icon-home"></i> (=website.label=)</a>
 			</h3>
 		</div>
 

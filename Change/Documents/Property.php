@@ -95,6 +95,11 @@ class Property
 	 * @var string
 	 */
 	protected $indexed = 'none'; //none, property, description
+
+	/**
+	 * @var string
+	 */
+	protected $labelKey;
 	
 	/**
 	 * @param string $name
@@ -597,6 +602,24 @@ class Property
 				call_user_func(array($document, $setter), $value);
 			}
 		}
+	}
+
+	/**
+	 * @param string $labelKey
+	 * @return $this
+	 */
+	public function setLabelKey($labelKey)
+	{
+		$this->labelKey = $labelKey;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabelKey()
+	{
+		return $this->labelKey;
 	}
 
 	/**

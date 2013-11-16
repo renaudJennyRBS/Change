@@ -1,0 +1,305 @@
+{
+	"function_index_page":{
+		"message":"page d'index"
+	},
+	"website_baseurl_help":{
+		"message":"URL de la page d'accueil du site dans sa langue de référence."
+	},
+	"website_indexpage_help":{
+		"message":"La page d'accueil se sélectionne depuis l'écran des fonctions du site."
+	},
+	"website_notify_url_creation":{
+		"message":"me notifier de la création"
+	},
+	"website_sitemap_url_pending_creation":{
+		"message":"en cours de création"
+	},
+	"website_notification_sitemap_url_creation":{
+		"message":"l'URL du sitemap de \"$WEBSITE$\" pour la locale \"$LCID$\" a été générée"
+	},
+	"website_sitemap_help":{
+		"message":"Si vous activez la génération du sitemap, un fichier d'index sera généré automatiquement pour chaque langue du site, en utilisant les informations de référencement des documents (configurez-les via le <a href=\"Rbs\/Seo\/DocumentSeo\/\">module SEO<\/a>)."
+	},
+	"topic_website_help":{
+		"message":"Le site web dans lequel se trouve cette rubrique."
+	},
+	"topic_website_picker_title":{
+		"message":"Sélectionner le site web parent"
+	},
+	"topic_indexpage_help":{
+		"message":"La page d'index se sélectionne depuis l'écran des fonctions de la rubrique."
+	},
+	"topic_pathpart_help":{
+		"message":"\n\t\tNom utilisé dans l'URL\n\t"
+	},
+	"topic_section_functions":{
+		"message":"$'0':'AUCUNE FONCTION N\\'EST CONFIGURéE POUR CETTE SECTION.','ONE':'CETTE SECTION DISPOSE DE LA FONCTION SUIVANTE :','OTHER':'CETTE SECTION DISPOSE DES $$ fonctions suivantes :'}"
+	},
+	"topic_configure_section_functions_link":{
+		"message":"configurer les fonctions de cette section"
+	},
+	"topic_function_via_page":{
+		"message":"<em>via<\/em> la page"
+	},
+	"topic_functions":{
+		"message":"fonctions"
+	},
+	"topic_permission_rule_title":{
+		"message":"règles de permission"
+	},
+	"topic_users_picker_title":{
+		"message":"sélectionner les utilisateurs"
+	},
+	"topic_groups_picker_title":{
+		"message":"sélectionner les groupes d'utilisateurs"
+	},
+	"page_pagetemplate_picker_title":{
+		"message":"sélectionner le modèle de page"
+	},
+	"page_open_page_editor":{
+		"message":"ouvrir l'éditeur de page"
+	},
+	"page_full_screen":{
+		"message":"plein écran"
+	},
+	"page_ttl_help":{
+		"message":"Indiquer une durée en secondes, ou 0 pour désactiver le cache"
+	},
+	"section_functions_list_tip":{
+		"message":"<strong>La liste ci-dessous affiche les fonctions attribuées à cette section<\/strong>.<br\/>Pour ajouter une fonction à une section, vous devez d'abord choisir une <strong>page fonctionnelle<\/strong>, puis choisir des fonctions parmi celles supportées par la page choisie."
+	},
+	"sectionpagefunction_error_not_unique":{
+		"message":"La fonction $CODE$ est remplie par une autre page dans cette section."
+	},
+	"sectionpagefunction_back_to":{
+		"message":"retourner à"
+	},
+	"add_functions_to_this_section":{
+		"message":"ajouter des fonctions à cette section"
+	},
+	"select_function":{
+		"message":"sélectionner une fonction"
+	},
+	"function_is_already_used_in_section":{
+		"message":"cette fonction est déjà remplie dans cette section."
+	},
+	"no_page_use_selected_function":{
+		"message":"aucune page ne remplit la fonction sélectionnée."
+	},
+	"pages_for_choosen_function":{
+		"message":"liste des pages remplissant la fonction choisie"
+	},
+	"page_can_also_use_these_functions":{
+		"message":"la page peut aussi remplir les fonctions suivantes"
+	},
+	"sectionpagefunction_add":{
+		"message":"ajouter"
+	},
+	"sectionpagefunction_define":{
+		"message":"définir"
+	},
+	"sectionpagefunction_no_page_defined":{
+		"message":"aucune page définie"
+	},
+	"staticpage_section_help":{
+		"message":"La rubrique ou le site web contenant la page."
+	},
+	"staticpage_section_picker_title":{
+		"message":"sélectionner la section"
+	},
+	"module_name":{
+		"message":"sites et pages"
+	},
+	"module_keywords":{
+		"message":"sites,pages,gabarits,modèles,templates,rubriques,blocs,menus,navigation,texte,arborescence,plan"
+	},
+	"host_name":{
+		"message":"nom d'hôte"
+	},
+	"open_page_editor_warning":{
+		"message":"<strong>Ce formulaire contient des données qui ne sont pas encore enregistrées.<\/strong>\n\t\t<ul>\n\t\t\t<li>Si vous choisissez <strong>Oui<\/strong>, les données de ce formulaire seront enregistrées puis vous serez redirigé vers l'éditeur de page.<\/li><li>Si vous choisissez <strong>Non<\/strong>, cette fenêtre sera fermée et... il ne se passera rien :)<\/li>\n\t\t<\/ul>\n\t\n\t"
+	},
+	"section_name":{
+		"message":"CMS"
+	},
+	"section_permission_rule_helper":{
+		"message":"choisissez de restreindre l'accès de cette section à des utilisateurs ou des groupes d'utilisateurs. Si il n'y a aucun utilisateur ou groupe sélectionné, l'accès est considéré comme public"
+	},
+	"edit_website_properties":{
+		"message":"éditer les propriétés du site web"
+	},
+	"navigate_in_website":{
+		"message":"naviguer dans le site web"
+	},
+	"richtext":{
+		"message":"Bloc de texte"
+	},
+	"menu":{
+		"message":"Bloc de menu"
+	},
+	"menu_templatename":{
+		"message":"mode de rendu"
+	},
+	"menu_documentid":{
+		"message":"document racine"
+	},
+	"menu_maxlevel":{
+		"message":"profondeur maximale"
+	},
+	"menu_showtitle":{
+		"message":"afficher le titre"
+	},
+	"sitemap":{
+		"message":"plan du site"
+	},
+	"exception":{
+		"message":"exception"
+	},
+	"exception_show_stack_trace":{
+		"message":"afficher la stack trace"
+	},
+	"error":{
+		"message":"erreur"
+	},
+	"error_codehttp":{
+		"message":"code d'erreur http"
+	},
+	"function_error_404":{
+		"message":"Page non trouvée"
+	},
+	"function_error_403":{
+		"message":"Accès refusé"
+	},
+	"function_error_500":{
+		"message":"Erreur interne de l'application"
+	},
+	"xhtml_template":{
+		"message":"gabarit XHTML"
+	},
+	"menu_list":{
+		"message":"menus de navigation"
+	},
+	"menu_create":{
+		"message":"ajouter un menu de navigation"
+	},
+	"staticpage_list":{
+		"message":"pages de contenu"
+	},
+	"staticpage_create":{
+		"message":"ajouter une page de contenu"
+	},
+	"functionalpage_list":{
+		"message":"pages fonctionnelles"
+	},
+	"functionalpage_create":{
+		"message":"ajouter une page fonctionnelle"
+	},
+	"topic_list":{
+		"message":"rubriques"
+	},
+	"topic_create":{
+		"message":"ajouter une rubrique"
+	},
+	"website_list":{
+		"message":"sites web"
+	},
+	"website_create":{
+		"message":"ajouter un site web"
+	},
+	"sectionpagefunction_list":{
+		"message":"fonctions"
+	},
+	"sectionpagefunction_create":{
+		"message":"associer une fonction à une section"
+	},
+	"menu_website_picker_title":{
+		"message":"sélectionner le site web associé au menu"
+	},
+	"menu_section_items":{
+		"message":"Entrées du menu"
+	},
+	"menu_select_document":{
+		"message":"Document"
+	},
+	"menu_url":{
+		"message":"URL"
+	},
+	"menu_i18nKey":{
+		"message":"clé de traduction"
+	},
+	"menu_this_menu_is_empty":{
+		"message":"Ce menu est vide."
+	},
+	"menu_this_menu_is_empty_help":{
+		"message":"\n\t\tUtiliser la liste <em>Ajouter<\/em> ci-dessous pour ajouter des entrées à ce menu.\n\t"
+	},
+	"menu_function_print_page":{
+		"message":"imprimer la page"
+	},
+	"menu_function_go_to_content":{
+		"message":"aller au contenu"
+	},
+	"menu_function_bookmark_page":{
+		"message":"ajouter la page aux favoris"
+	},
+	"menu_add_items":{
+		"message":"ajouter des entrées"
+	},
+	"menu_add_document_item":{
+		"message":"ajouter une entrée pointant vers un document"
+	},
+	"menu_add_document_item_help":{
+		"message":"Vous pouvez sélectionner un document publiable. Après avoir choisi un document, il est possible de modifier le titre à afficher dans le menu."
+	},
+	"menu_add_url_item":{
+		"message":"ajouter une entrée pointant vers une URL"
+	},
+	"menu_add_url_item_help":{
+		"message":"Utilisez ce mode pour inclure des liens vers des pages externes au site. Pour un lien vers une URL interne, privilégiez plutôt le formulaire ci-dessus."
+	},
+	"menu_select_document_to_add_to_menu":{
+		"message":"sélectionner un document à ajouter au menu"
+	},
+	"menu_add_this_element":{
+		"message":"ajouter cet élément au menu"
+	},
+	"menu_menus_are_grouped_by_website":{
+		"message":"<strong>Les menus sont classés par site web.<\/strong><br\/>Choisissez un site web pour accéder aux menus qui lui sont rattachés."
+	},
+	"functionalpage_website_help":{
+		"message":"Le site web contenant la page."
+	},
+	"functionalpage_website_picker_title":{
+		"message":"sélectionner un site web"
+	},
+	"functionalpage_functions":{
+		"message":"fonctions"
+	},
+	"functional_page_editor_help":{
+		"message":"Cette page est une <strong>page fonctionnelle<\/strong> : elle permet d'afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits.<br\/>Pour configurer les fonctions de cette page, rendez-vous dans la section <em>Fonctions<\/em> du menu à gauche."
+	},
+	"functional_page_list_help":{
+		"message":"Les <strong>pages fonctionnelles<\/strong> sont des pages destinées à afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits."
+	},
+	"all_functions_list":{
+		"message":"<strong>Voici la liste de toutes les fonctions disponibles.<\/strong><br\/>Les fonctions déjà supportées par la page sont sélectionnées. Sélectionnez les fonctions que vous désirez attribuer à cette page."
+	},
+	"page_contains_blocks_for_following_functions":{
+		"message":"Pour information, la page dispose actuellement des blocs nécessaires pour remplir les fonctions suivantes :"
+	},
+	"page_contains_no_function":{
+		"message":"<h4>Cette page ne dispose d'aucune fonction.<\/h4>Pour corriger cela, vous pouvez <a href ng-href=\"(= doc | documentURL:'editor' =)\">éditer le contenu de la page<\/a>."
+	},
+	"page_contains_required_blocks":{
+		"message":"La page dispose de tous les blocs nécessaires pour supporter correctement les fonctions choisies."
+	},
+	"following_functions_cannot_be_supported_correctly":{
+		"message":"Les fonctions suivantes ne pourront pas être supportées correctement car la page ne dispose pas des blocs nécessaires à ces fonctions :"
+	},
+	"edit_page_contents_to_fix_this":{
+		"message":"Pour corriger cela, vous pouvez <a href ng-href=\"(= doc | documentURL:'editor' =)\">éditer le contenu de la page<\/a>."
+	},
+	"configure_functions":{
+		"message":"configurer"
+	}
+}

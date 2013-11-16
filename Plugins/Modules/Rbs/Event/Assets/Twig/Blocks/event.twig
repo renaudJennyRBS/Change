@@ -20,7 +20,7 @@
 	{% if categories|length %}
 		<footer>
 			<dl class="list-inline list-divided">
-				<dt>{{ i18n('m.rbs.event.fo.categories', ['ucf']) }}</dt>
+				<dt>{{ i18n('m.rbs.event.documents.front_categories', ['ucf']) }}</dt>
 				{% for category in categories %}
 					<dd><a href="{{ category.url }}">{{ category.doc.currentLocalization.title }}</a></dd>
 				{% endfor %}

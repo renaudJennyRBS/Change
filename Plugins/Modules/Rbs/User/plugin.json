@@ -1,6 +1,7 @@
 {
 	"type":"module",
-	"vendor": "Rbs",
-	"name": "User",
-	"package": "Core"
+	"vendor":"Rbs",
+	"name":"User",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }

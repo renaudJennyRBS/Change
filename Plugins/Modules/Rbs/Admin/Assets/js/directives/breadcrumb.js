@@ -72,7 +72,7 @@
 				function update (breadcrumbData) {
 					var html, i;
 					html = getEntryHtml(
-						[i18n.trans('m.rbs.admin.admin.js.home | ucf'), ""],
+						[i18n.trans('m.rbs.admin.adminjs.home | ucf'), ""],
 						breadcrumbData.disabled,
 						// Last element?
 						breadcrumbData.location.length === 0 && breadcrumbData.path.length === 0 && ! breadcrumbData.resource,

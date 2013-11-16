@@ -80,7 +80,7 @@ class Extension implements \Twig_ExtensionInterface
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('i18n', array($this, 'i18n'), array('is_safe' => array('html'))),
+			new \Twig_SimpleFunction('i18n', array($this, 'i18n')),
 			new \Twig_SimpleFunction('i18nAttr', array($this, 'i18nAttr'), array('is_safe' => array('html', 'html_attr'))),
 		);
 	}
@@ -123,7 +123,6 @@ class Extension implements \Twig_ExtensionInterface
 		{
 			$replacementArray = array();
 		}
-		$formatters[] = 'html';
 		return $this->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 

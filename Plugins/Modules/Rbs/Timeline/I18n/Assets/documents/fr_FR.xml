@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.timeline.documents" lcid="fr_FR">
-	<key id="message-list">Timeline des messages</key>
-	<key id="users">utilisateurs</key>
-	<key id="groups">groupe d'utilisateurs</key>
-	<key id="context-unavailable">Le document n'est plus disponible</key>
-</i18n>

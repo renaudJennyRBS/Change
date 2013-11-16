@@ -1,0 +1,233 @@
+{
+	"submit":{
+		"message":"valider"
+	},
+	"cancel":{
+		"message":"annuler"
+	},
+	"confirm":{
+		"message":"confirmation"
+	},
+	"home":{
+		"message":"accueil"
+	},
+	"loading":{
+		"message":"chargement..."
+	},
+	"loading_document":{
+		"message":"chargement du document..."
+	},
+	"document_is_already_being_edited":{
+		"message":"ce document est déjà en cours d'édition."
+	},
+	"new_element":{
+		"message":"nouvel élément"
+	},
+	"not_defined":{
+		"message":"non défini"
+	},
+	"loading_list":{
+		"message":"chargement de la liste..."
+	},
+	"loading_list_error":{
+		"message":"le chargement de la liste a échoué."
+	},
+	"loading_preview":{
+		"message":"chargement de l'aperçu du document..."
+	},
+	"time_zone_selector_title":{
+		"message":"sélection d'un fuseau horaire"
+	},
+	"last_modification_date":{
+		"message":"dernière modif."
+	},
+	"modification_date":{
+		"message":"dernière modif."
+	},
+	"activated":{
+		"message":"activé"
+	},
+	"status":{
+		"message":"état"
+	},
+	"status_minified":{
+		"message":"ét."
+	},
+	"order":{
+		"message":"ordre"
+	},
+	"preview":{
+		"message":"aperçu"
+	},
+	"workflow":{
+		"message":"validation"
+	},
+	"edit":{
+		"message":"éditer"
+	},
+	"delete":{
+		"message":"supprimer"
+	},
+	"search":{
+		"message":"rechercher"
+	},
+	"use_this_value_in":{
+		"message":"utiliser cette valeur en $LANG$"
+	},
+	"clipboard":{
+		"message":"presse-papier"
+	},
+	"action_validate":{
+		"message":"valider"
+	},
+	"action_validate_help":{
+		"message":"activer les documents sélectionnés"
+	},
+	"action_unfreeze":{
+		"message":"dégeler"
+	},
+	"action_unfreeze_help":{
+		"message":"dégeler les documents sélectionnés"
+	},
+	"action_freeze":{
+		"message":"geler"
+	},
+	"action_freeze_help":{
+		"message":"geler les documents sélectionnés"
+	},
+	"action_publish":{
+		"message":"publier"
+	},
+	"action_publish_help":{
+		"message":"publier les documents sélectionnés"
+	},
+	"action_contentvalidation":{
+		"message":"valider contenu"
+	},
+	"action_contentvalidation_help":{
+		"message":"valider le contenu des documents sélectionnés"
+	},
+	"action_delete":{
+		"message":"supprimer"
+	},
+	"action_delete_help":{
+		"message":"supprimer les documents sélectionnés"
+	},
+	"action_reorder":{
+		"message":"réorganiser"
+	},
+	"action_reorder_help":{
+		"message":"réorganiser les documents de la liste ci-dessous"
+	},
+	"action_apply_correction":{
+		"message":"appliquer la correction"
+	},
+	"action_apply_correction_help":{
+		"message":"appliquer la correction sur les documents sélectionnés"
+	},
+	"action_add_to_clipboard":{
+		"message":"ajouter au Presse-papier"
+	},
+	"action_add_to_clipboard_help":{
+		"message":"ajouter les documents sélectionnés au Presse-papier"
+	},
+	"action_activate":{
+		"message":"activer"
+	},
+	"action_deactivate":{
+		"message":"désactiver"
+	},
+	"action_devalidate_help":{
+		"message":"désactiver les documents sélectionnés"
+	},
+	"save_error":{
+		"message":"L'enregistrement a échoué"
+	},
+	"tip_dismiss_thank_you":{
+		"message":"Merci, ne plus afficher ce message !"
+	},
+	"correction_confirm_delete":{
+		"message":"Souhaitez-vous réellement supprimer la Correction ?"
+	},
+	"yes":{
+		"message":"oui"
+	},
+	"no":{
+		"message":"non"
+	},
+	"confirmation":{
+		"message":"confirmation"
+	},
+	"help":{
+		"message":"aide"
+	},
+	"advanced_mode":{
+		"message":"mode avancé"
+	},
+	"move_up":{
+		"message":"déplacer vers le haut"
+	},
+	"move_down":{
+		"message":"déplacer vers le bas"
+	},
+	"translations":{
+		"message":"traductions"
+	},
+	"other_actions":{
+		"message":"autres actions"
+	},
+	"ref_lang_abbr":{
+		"message":"réf."
+	},
+	"reference_language":{
+		"message":"langue de référence"
+	},
+	"translate_in":{
+		"message":"traduire en"
+	},
+	"select":{
+		"message":"sélectionner"
+	},
+	"select_add":{
+		"message":"ajouter à la sélection"
+	},
+	"richtext_enter_external_link":{
+		"message":"Veuillez saisir l'adresse de la page à lier"
+	},
+	"richtext_enter_external_link_title":{
+		"message":"Veuillez saisir le titre du lien (optionnel)"
+	},
+	"picker_create_title":{
+		"message":"$PROPERTY$ : création d'un nouvel élément"
+	},
+	"picker_edit_title":{
+		"message":"$PROPERTY$ : édition de $ITEM$"
+	},
+	"picker_no_title":{
+		"message":"sans titre"
+	},
+	"picker_replace_all_by_item":{
+		"message":"tout remplacer par cet élément"
+	},
+	"picker_template_not_loaded":{
+		"message":"impossible de charger le template $URL$"
+	},
+	"do_you_want_to_continue":{
+		"message":"Souhaitez-vous continuer ?"
+	},
+	"confirm_restore":{
+		"message":"rétablir ?"
+	},
+	"confirm_restore_message":{
+		"message":"Vous êtes sur le point de rétablir les dernières données qui ont été enregistrées dans ce formulaire."
+	},
+	"restore_data_button":{
+		"message":"rétablir les données"
+	},
+	"confirm_update_correction":{
+		"message":"Mettre à jour la correction ?"
+	},
+	"confirm_update_correction_message":{
+		"message":"Une <strong>correction<\/strong> est en cours pour ce document. L'enregistrement mettra à jour la correction et le document ne sera modifié qu'après application de la correction."
+	}
+}

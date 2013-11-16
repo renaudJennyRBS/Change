@@ -23,16 +23,17 @@ class GetI18nPackage
 		{
 			foreach ($modules as $module)
 			{
-				$pathParts = array('m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'admin', 'js');
-				$keys = $i18nManager->getDefinitionKeys($LCID, $pathParts);
-				if (count($keys))
+				$packageName = implode('.', ['m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'adminjs']);
+
+				$keys = $i18nManager->getTranslationsForPackage($packageName, $LCID);
+				if (is_array($keys))
 				{
 					$package = array();
-					foreach ($keys as $key)
+					foreach ($keys as $key => $value)
 					{
-						$package[$key->getId()] = $key->getText();
+						$package[$key] = $value;
 					}
-					$packages[implode('.', $pathParts)] = $package;
+					$packages[$packageName] = $package;
 				}
 			}
 		}

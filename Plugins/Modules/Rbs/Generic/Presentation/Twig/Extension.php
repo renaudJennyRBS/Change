@@ -495,11 +495,11 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		if ($boolean === true)
 		{
-			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.yes', array('ucf'));
+			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.front.yes', array('ucf'));
 		}
 		elseif ($boolean === false)
 		{
-			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.no', array('ucf'));
+			return $this->getApplicationServices()->getI18nManager()->trans('m.rbs.generic.front.no', array('ucf'));
 		}
 		return htmlspecialchars(strval($boolean));
 	}

@@ -1,6 +1,9 @@
 <?php
 namespace Change\I18n;
 
+use Zend\Stdlib\ErrorHandler;
+use Zend\Stdlib\Glob;
+
 /**
  * @api
  * @name \Change\I18n\I18nManager
@@ -17,11 +20,6 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var array
 	 */
 	protected $langMap = null;
-
-	/**
-	 * @var array
-	 */
-	protected $ignoreTransform;
 
 	/**
 	 * @var string ex: "fr_FR"
@@ -74,21 +72,19 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	protected $logging;
 
 	/**
+	 * @var \Change\Plugins\PluginManager
+	 */
+	protected $pluginManager;
+
+	/**
 	 * @var array<string, string>
 	 */
 	protected $packageList;
 
 	/**
-	 * @var \Change\I18n\DefinitionCollection[]
+	 * @var array
 	 */
-	protected $definitionCollections = array();
-
-	/**
-	 */
-	public function __construct()
-	{
-		$this->ignoreTransform = array(DefinitionKey::TEXT => 'raw', DefinitionKey::HTML => 'html');
-	}
+	protected $loadedPackages = [];
 
 	/**
 	 * @param \Change\Configuration\Configuration $configuration
@@ -141,6 +137,22 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	public function getLogging()
 	{
 		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Plugins\PluginManager $pluginManager
+	 */
+	public function setPluginManager(\Change\Plugins\PluginManager $pluginManager)
+	{
+		$this->pluginManager = $pluginManager;
+	}
+
+	/**
+	 * @return \Change\Plugins\PluginManager
+	 */
+	public function getPluginManager()
+	{
+		return $this->pluginManager;
 	}
 
 	/**
@@ -348,12 +360,30 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		if ($preparedKey->isValid())
 		{
 			$parts = explode('.', $textKey);
-			$definitionKey = $this->getDefinitionKey($LCID, array_slice($parts, 0, -1), end($parts));
-			if ($definitionKey)
+			$id = array_pop($parts);
+			$packageName = implode('.', $parts);
+
+			$translations = $this->getTranslationsForPackage($packageName, $LCID);
+
+			if ($translations === false)
 			{
-				$content = strval($definitionKey->getText());
-				$format = $definitionKey->getFormat();
-				return $this->formatText($LCID, $content, $format, $preparedKey->getFormatters(),
+				$synchro = $this->getI18nSynchro();
+				if (isset($synchro[$LCID]))
+				{
+					foreach ($synchro[$LCID] as $referenceLCID)
+					{
+						$translations = $this->getTranslationsForPackage($packageName, $referenceLCID);
+						if ($translations !== false)
+						{
+							break;
+						}
+					}
+				}
+			}
+
+			if (is_array($translations) && isset($translations[$id]))
+			{
+				return $this->formatText($LCID, $translations[$id], $preparedKey->getFormatters(),
 					$preparedKey->getReplacements());
 			}
 			return $this->dispatchKeyNotFound($preparedKey, $LCID);
@@ -362,228 +392,31 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param string $LCID
-	 * @param string[] $pathParts
-	 * @param string $id
-	 * @return \Change\I18n\DefinitionKey | null
+	 * @param string $packageName
+	 * @return array
 	 */
-	public function getDefinitionKey($LCID, $pathParts, $id)
+	public function getTranslationsForPackage($packageName, $LCID)
 	{
-		$key = $this->doGetDefinitionKey($LCID, $pathParts, $id);
-		if ($key)
+		if (!isset($this->loadedPackages[$LCID][$packageName]))
 		{
-			return $key;
-		}
 
-		if ($this->hasI18nSynchro())
-		{
-			$synchro = $this->getI18nSynchro();
-			if (isset($synchro[$LCID]))
+			// Load the  package for the corresponding LCID
+			$compiledPackagePath = $this->getWorkspace()->compilationPath('I18n', $LCID, $packageName . '.ser');
+			if ($this->getConfiguration()->inDevelopmentMode())
 			{
-				foreach ($synchro[$LCID] as $referenceLCID)
-				{
-					$key = $this->doGetDefinitionKey($referenceLCID, $pathParts, $id);
-					if ($key)
-					{
-						return $key;
-					}
-				}
+				$this->recompileIfNeeded($packageName, $LCID);
+			}
+
+			if (file_exists($compiledPackagePath))
+			{
+				$this->loadedPackages[$LCID][$packageName] = unserialize(file_get_contents($compiledPackagePath));
+			}
+			else
+			{
+				$this->loadedPackages[$LCID][$packageName] = false;
 			}
 		}
-		return null;
-	}
-
-	/**
-	 * @param string $LCID
-	 * @param string[] $pathParts
-	 * @param string $id
-	 * @return \Change\I18n\DefinitionKey | null
-	 */
-	protected function doGetDefinitionKey($LCID, $pathParts, $id)
-	{
-		$definitionCollection = $this->getDefinitionCollection($LCID, $pathParts);
-		if ($definitionCollection === null)
-		{
-			return null;
-		}
-
-		$definitionCollection->load();
-		if ($definitionCollection->hasDefinitionKey($id))
-		{
-			return $definitionCollection->getDefinitionKey($id);
-		}
-		else
-		{
-			foreach (array_reverse($definitionCollection->getIncludesPaths()) as $includePath)
-			{
-				$includeParts = explode('.', $includePath);
-				$definitionKey = $this->getDefinitionKey($LCID, $includeParts, $id);
-				if ($definitionKey !== null)
-				{
-					return $definitionKey;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Get all definition keys for a paths.
-	 * @param string $LCID
-	 * @param string[] $pathParts
-	 * @return \Change\I18n\DefinitionKey[]
-	 */
-	public function getDefinitionKeys($LCID, $pathParts)
-	{
-		$keys = $this->doGetDefinitionKeys($LCID, $pathParts, array());
-		if ($this->hasI18nSynchro())
-		{
-			$synchro = $this->getI18nSynchro();
-			if (isset($synchro[$LCID]))
-			{
-				foreach ($synchro[$LCID] as $referenceLCID)
-				{
-					$keys = $this->doGetDefinitionKeys($referenceLCID, $pathParts, $keys);
-				}
-			}
-		}
-		return array_values($keys);
-	}
-
-	/**
-	 * @param string $LCID
-	 * @param string[] $pathParts
-	 * @param \Change\I18n\DefinitionKey[] $keys
-	 * @return \Change\I18n\DefinitionKey[]
-	 */
-	protected function doGetDefinitionKeys($LCID, $pathParts, $keys)
-	{
-		$defKeys = $this->getDefinitionCollection($LCID, $pathParts);
-		if ($defKeys)
-		{
-			$defKeys->load();
-			foreach ($defKeys->getDefinitionKeys() as $defKey)
-			{
-				if (!isset($keys[$defKey->getId()]))
-				{
-					$keys[$defKey->getId()] = $defKey;
-				}
-			}
-			foreach (array_reverse($defKeys->getIncludesPaths()) as $includePath)
-			{
-				$includeParts = explode('.', $includePath);
-				$keys = $this->doGetDefinitionKeys($LCID, $includeParts, $keys);
-			}
-		}
-		return $keys;
-	}
-
-	/**
-	 * @param string $LCID
-	 * @param string| string[] $pathPartsOrPath
-	 * @return \Change\I18n\DefinitionCollection | null
-	 */
-	public function getDefinitionCollection($LCID, $pathPartsOrPath)
-	{
-		if (!is_array($pathPartsOrPath))
-		{
-			$pathPartsOrPath = explode('.', $pathPartsOrPath);
-		}
-		$collectionPath = $this->getCollectionPath($pathPartsOrPath);
-		if ($collectionPath === null)
-		{
-			return null;
-		}
-		if (!file_exists($collectionPath))
-		{
-			return null;
-		}
-
-		$code = implode('.', $pathPartsOrPath) . '-' . $LCID;
-		if (!array_key_exists($code, $this->definitionCollections))
-		{
-			$this->definitionCollections[$code] = new \Change\I18n\DefinitionCollection($LCID, $collectionPath);
-		}
-		return $this->definitionCollections[$code];
-	}
-
-	/**
-	 * @param string | string[]
-	 * @return string
-	 */
-	public function getCollectionPath($pathPartsOrPath)
-	{
-		if (!is_array($pathPartsOrPath))
-		{
-			$pathPartsOrPath = explode('.', $pathPartsOrPath);
-		}
-		if ($this->packageList === null)
-		{
-			$workspace = $this->getWorkspace();
-			$this->packageList = array();
-
-			// Core.
-			$this->packageList['c'] = $this->workspace->changePath('I18n', 'Assets');
-
-			// Modules.
-			if (is_dir($workspace->pluginsModulesPath()))
-			{
-				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'I18n', 'Assets'));
-				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as
-						 $path)
-				{
-					$parts = explode(DIRECTORY_SEPARATOR, $path);
-					$count = count($parts);
-					$this->packageList[strtolower('m.' . $parts[$count - 4] . '.' . $parts[$count - 3])] = $path;
-				}
-			}
-			if (is_dir($workspace->projectModulesPath()))
-			{
-				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', 'I18n', 'Assets'));
-				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as
-						 $path)
-				{
-					$parts = explode(DIRECTORY_SEPARATOR, $path);
-					$count = count($parts);
-					$this->packageList[strtolower('m.project.' . $parts[$count - 3])] = $path;
-				}
-			}
-			// Themes.
-			if (is_dir($workspace->pluginsThemesPath()))
-			{
-				$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsThemesPath(), '*', '*', 'I18n', 'Assets'));
-				foreach (\Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT) as
-						 $path)
-				{
-					$parts = explode(DIRECTORY_SEPARATOR, $path);
-					$count = count($parts);
-					$this->packageList[strtolower('t.' . $parts[$count - 4] . '.' . $parts[$count - 3])] = $path;
-				}
-			}
-		}
-
-		$collectionPath = null;
-		switch ($pathPartsOrPath[0])
-		{
-			case 'c':
-				$collectionPath =
-					$this->packageList['c'] . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR,
-						array_slice($pathPartsOrPath, 1));
-				break;
-			case 'm':
-			case 't':
-				if (isset($this->packageList[$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]]))
-				{
-					$packagePath = $this->packageList[
-					$pathPartsOrPath[0] . '.' . $pathPartsOrPath[1] . '.' . $pathPartsOrPath[2]];
-					$collectionPath =
-						$packagePath . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, array_slice($pathPartsOrPath, 3));
-				}
-				break;
-			case 'default':
-				break;
-		}
-		return $collectionPath;
+		return $this->loadedPackages[$LCID][$packageName];
 	}
 
 	/**
@@ -591,12 +424,11 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param string $LCID
 	 * @param string $text
-	 * @param string $format 'TEXT' or 'HTML'
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
-	 * @param array $replacements
+	 * @param array $replacements * @internal param string $format 'TEXT' or 'HTML'
 	 * @return string
 	 */
-	public function formatText($LCID, $text, $format = DefinitionKey::TEXT, $formatters = array(), $replacements = array())
+	public function formatText($LCID, $text, $formatters = array(), $replacements = array())
 	{
 		if (count($replacements))
 		{
@@ -604,15 +436,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 			$replace = array();
 			foreach ($replacements as $key => $value)
 			{
-				$search[] = '{' . $key . '}';
+				$search[] = '$' . $key . '$';
 				$replace[] = $value;
 			}
-			$text = str_replace($search, $replace, $text);
+			$text = str_ireplace($search, $replace, $text);
 		}
 
 		if (count($formatters))
 		{
-			$text = $this->dispatchFormatting($text, $format, $formatters, $LCID);
+			$text = $this->dispatchFormatting($text, $formatters, $LCID);
 		}
 		return $text;
 	}
@@ -710,14 +542,14 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param string $text
-	 * @param string $textFormat
 	 * @param string[] $formatters
 	 * @param string $LCID
+	 * @internal param string $textFormat
 	 * @return string
 	 */
-	protected function dispatchFormatting($text, $textFormat, $formatters, $LCID)
+	protected function dispatchFormatting($text, $formatters, $LCID)
 	{
-		$args = array('text' => $text, 'textFormat' => $textFormat, 'formatters' => $formatters, 'LCID' => $LCID);
+		$args = array('text' => $text, 'formatters' => $formatters, 'LCID' => $LCID);
 		$event = new \Change\Events\Event(static::EVENT_FORMATTING, $this, $args);
 		$callback = function ($result)
 		{
@@ -733,14 +565,9 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	public function onFormatting($event)
 	{
 		$text = $event->getParam('text');
-		$format = $event->getParam('textFormat');
 		$LCID = $event->getParam('LCID');
 		foreach ($event->getParam('formatters') as $formatter)
 		{
-			if ($formatter === 'raw' || $formatter === $this->ignoreTransform[$format])
-			{
-				continue;
-			}
 			$callable = array($this, 'transform' . ucfirst($formatter));
 			if (is_callable($callable))
 			{
@@ -767,7 +594,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return $this->uiDateFormat;
 		}
-		return $this->transForLCID($LCID, 'c.date.default-date-format');
+		return $this->transForLCID($LCID, 'c.date.default_date_format');
 	}
 
 	/**
@@ -790,7 +617,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return $this->uiDateTimeFormat;
 		}
-		return $this->transForLCID($LCID, 'c.date.default-datetime-format');
+		return $this->transForLCID($LCID, 'c.date.default_datetime_format');
 	}
 
 	/**
@@ -1033,5 +860,281 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	public function transformEtc($text, $LCID)
 	{
 		return $text . '...';
+	}
+
+	public function removeCompiledCoreI18nFiles()
+	{
+		$localeFilePattern = $this->getWorkspace()->compilationPath('I18n', '*', 'c.*.ser');
+		foreach(Glob::glob($localeFilePattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT) as $fileName)
+		{
+			ErrorHandler::start();
+			unlink($fileName);
+			ErrorHandler::stop();
+		}
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function removeCompiledPluginI18nFiles(\Change\Plugins\Plugin $plugin)
+	{
+		$baseName = implode('.', [
+			$plugin->getType() == \Change\Plugins\Plugin::TYPE_MODULE ? 'm' : 't',
+			\Change\Stdlib\String::toLower($plugin->getVendor()),
+			\Change\Stdlib\String::toLower($plugin->getShortName()), '*.ser']);
+		$localeFilePattern = $this->getWorkspace()->compilationPath('I18n', '*', $baseName);
+		foreach(Glob::glob($localeFilePattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT) as $fileName)
+		{
+			ErrorHandler::start();
+			unlink($fileName);
+			ErrorHandler::stop();
+		}
+	}
+
+	public function compileCoreI18nFiles()
+	{
+		$this->removeCompiledCoreI18nFiles();
+
+		// Compile the default localization
+		$defaultLCID = 'fr_FR';
+		$defaultI18n = [];
+
+		if ($defaultLCID)
+		{
+			$this->processCoreI18nFilesForLCID($defaultLCID, $defaultI18n);
+		}
+
+		$allI18n = [];
+		foreach ($this->getSupportedLCIDs() as $LCID)
+		{
+			$allI18n[$LCID] = $defaultI18n;
+
+			if ($LCID !== $defaultLCID)
+			{
+				$this->processCoreI18nFilesForLCID($LCID, $allI18n[$LCID]);
+			}
+		}
+
+		if ($defaultLCID)
+		{
+			$allI18n[$defaultLCID] = $defaultI18n;
+		}
+
+		foreach ($allI18n as $LCID => $package)
+		{
+			foreach ($package as $name => $content)
+			{
+				$serializedFileName = $name . '.ser';
+				\Change\Stdlib\File::write($this->getWorkspace()->compilationPath('I18n', $LCID, $serializedFileName), serialize($content));
+			}
+		}
+
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function compilePluginI18nFiles(\Change\Plugins\Plugin $plugin)
+	{
+		$this->removeCompiledPluginI18nFiles($plugin);
+
+		// Compile the default localization
+		$defaultLCID = $plugin->getDefaultLCID();
+		$defaultI18n = [];
+
+		if ($defaultLCID)
+		{
+			$this->processPluginI18nFilesForLCID($plugin, $defaultLCID, $defaultI18n);
+		}
+
+		$allI18n = [];
+		foreach ($this->getSupportedLCIDs() as $LCID)
+		{
+			$allI18n[$LCID] = $defaultI18n;
+
+			if ($LCID !== $defaultLCID)
+			{
+				$this->processPluginI18nFilesForLCID($plugin, $LCID, $allI18n[$LCID]);
+			}
+		}
+
+		if ($defaultLCID)
+		{
+			$allI18n[$defaultLCID] = $defaultI18n;
+		}
+
+		foreach ($allI18n as $LCID => $package)
+		{
+			foreach ($package as $name => $content)
+			{
+				$serializedFileName = $name . '.ser';
+				\Change\Stdlib\File::write($this->getWorkspace()->compilationPath('I18n', $LCID, $serializedFileName), serialize($content));
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param string $locale
+	 * @return array
+	 */
+	protected function getI18nFilePathsForPlugin(\Change\Plugins\Plugin $plugin, $locale)
+	{
+		$localeFilePattern = implode(DIRECTORY_SEPARATOR, [$plugin->getAbsolutePath($this->getWorkspace()), 'Assets', 'I18n', $locale, '*.json']);
+		return Glob::glob($localeFilePattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT);
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param string $locale
+	 * @return string
+	 */
+	protected function getPluginI18nPackageNameByFilename(\Change\Plugins\Plugin $plugin, $fileName)
+	{
+		$fInfo = new \SplFileInfo($fileName);
+		return implode('.', [
+			$plugin->getType() == \Change\Plugins\Plugin::TYPE_MODULE ? 'm' : 't',
+			\Change\Stdlib\String::toLower($plugin->getVendor()),
+			\Change\Stdlib\String::toLower($plugin->getShortName()),
+			substr(\Change\Stdlib\String::toLower($fInfo->getFilename()), 0, -5)
+				]);
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param string $LCID
+	 * @param array $output
+	 */
+	protected function processPluginI18nFilesForLCID(\Change\Plugins\Plugin $plugin, $LCID, &$output)
+	{
+		foreach ($this->getI18nFilePathsForPlugin($plugin, $LCID) as $filePath)
+		{
+			$fInfo = new \SplFileInfo($filePath);
+			$packageName = $this->getPluginI18nPackageNameByFilename($plugin, $fInfo->getFilename());
+			$decoded = \Zend\Json\Json::decode(file_get_contents($filePath), \Zend\Json\Json::TYPE_ARRAY);
+			if (is_array($decoded))
+			{
+				foreach ($decoded as $key => $data)
+				{
+					if (isset($data['message']))
+					{
+						$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
+					}
+				}
+			}
+
+			$overrideFilePath = $this->getWorkspace()->appPath('Override', 'I18n', $LCID, $packageName . '.json');
+			if (file_exists($overrideFilePath))
+			{
+				$decoded = \Zend\Json\Json::decode(file_get_contents($overrideFilePath), \Zend\Json\Json::TYPE_ARRAY);
+				if (is_array($decoded))
+				{
+					foreach ($decoded as $key => $data)
+					{
+						if (isset($data['message']))
+						{
+							$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param string $LCID
+	 * @param array $output
+	 */
+	protected function processCoreI18nFilesForLCID($LCID, &$output)
+	{
+		$localeFilePattern = $this->getWorkspace()->changePath('Assets', 'I18n', $LCID, '*.json');
+		foreach (Glob::glob($localeFilePattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT) as $filePath)
+		{
+			$fInfo = new \SplFileInfo($filePath);
+			$packageName = 'c.' . substr($fInfo->getFilename(), 0, -5);
+			$decoded = \Zend\Json\Json::decode(file_get_contents($filePath), \Zend\Json\Json::TYPE_ARRAY);
+			if (is_array($decoded))
+			{
+				foreach ($decoded as $key => $data)
+				{
+					if (isset($data['message']))
+					{
+						$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
+					}
+				}
+			}
+
+			$overrideFilePath = $this->getWorkspace()->appPath('Override', 'I18n', $LCID, $packageName . '.json');
+			if (file_exists($overrideFilePath))
+			{
+				$decoded = \Zend\Json\Json::decode(file_get_contents($overrideFilePath), \Zend\Json\Json::TYPE_ARRAY);
+				if (is_array($decoded))
+				{
+					foreach ($decoded as $key => $data)
+					{
+						if (isset($data['message']))
+						{
+							$output[$packageName][\Change\Stdlib\String::toLower($key)] = $data['message'];
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param $packageName
+	 * @param $LCID
+	 */
+	protected function recompileIfNeeded($packageName, $LCID)
+	{
+		$plugin = null;
+		$compileTime = 0;
+		$compiledPackagePath = $this->getWorkspace()->compilationPath('I18n', $LCID, $packageName . '.ser');
+		if (file_exists($compiledPackagePath))
+		{
+			$compileTime = filemtime($compiledPackagePath);
+		}
+		$overrideTime = $compileTime;
+		$originalTime = $compileTime;
+		$overridePackagePath = $this->getWorkspace()->appPath('Override', 'I18n', $LCID, $packageName . '.json');
+		if (file_exists($overridePackagePath))
+		{
+			$overrideTime = filemtime($overridePackagePath);
+		}
+		$parts = explode('.', $packageName);
+		if ($parts[0] === 'c')
+		{
+			$originalFilePath = $this->getWorkspace()->changePath('Assets', 'I18n', $LCID, $parts[1] . '.json');
+			if (file_exists($originalFilePath))
+			{
+				$originalTime = filemtime($originalFilePath);
+			}
+		}
+		else
+		{
+			$plugin = $this->getPluginManager()->getPlugin($parts[0] === 'm' ? \Change\Plugins\Plugin::TYPE_MODULE : \Change\Plugins\Plugin::TYPE_THEME, $parts[1], $parts[2]);
+			if ($plugin)
+			{
+				$originalFilePath = implode(DIRECTORY_SEPARATOR, [$plugin->getAbsolutePath($this->getWorkspace()), 'Assets', 'I18n', $LCID, $parts[3] . '.json']);
+				if (file_exists($originalFilePath))
+				{
+					$originalTime = filemtime($originalFilePath);
+				}
+			}
+		}
+		if ($compileTime < $originalTime || $compileTime < $overrideTime)
+		{
+			if ($plugin)
+			{
+				$this->compilePluginI18nFiles($plugin);
+			}
+			else if ($plugin === null)
+			{
+				$this->compileCoreI18nFiles();
+			}
+		}
 	}
 }

@@ -102,6 +102,12 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 			(new \Change\Commands\ManageCache())->execute($event);
 		};
 		$events->attach('change:manage-cache', $callback, 5);
+
+		$callback = function ($event)
+		{
+			(new \Change\Commands\CompileI18n())->execute($event);
+		};
+		$events->attach('change:compile-i18n', $callback, 5);
 	}
 
 	/**

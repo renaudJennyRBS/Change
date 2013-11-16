@@ -1,6 +1,6 @@
 <div class="navbar navbar-inverse" id="rbs-change-navbar" ng-swipe-right="menu.open()" ng-swipe-left="menu.close()">
 
-	<a class="navbar-brand" href="javascript:;" ng-mouseenter="menu.open()" ng-click="menu.open()" title="{{ i18nAttr('m.rbs.admin.menu.open', ['ucf']) }}"><img
+	<a class="navbar-brand" href="javascript:;" ng-mouseenter="menu.open()" ng-click="menu.open()" title="{{ i18nAttr('m.rbs.admin.admin.open', ['ucf']) }}"><img
 				src="Rbs/Admin/img/logo-change@2x.png" style="width:26px; height:26px; margin:-3px 0;" alt="Logo RBS Change"/>
 		<i class="icon-caret-right" style="vertical-align: middle;"></i>
 	</a>
@@ -9,19 +9,19 @@
 		<li class="dropdown" ng-cloak=""><a data-toggle="dropdown"
 		                        class="dropdown-toggle" href="javascript:;"><i class="icon-user"></i> (= user.pseudonym =) <b class="caret"></b></a>
 			<ul class="dropdown-menu">
-				<li><a href ng-href="Rbs/User/Profile"><i class="icon-user"></i> {{ i18n('m.rbs.admin.menu.profile', ['ucf']) }}</a></li>
-				<li><a href="./"><i class="icon-tasks"></i> {{ i18n('m.rbs.admin.menu.dashboard', ['ucf']) }}</a></li>
+				<li><a href ng-href="Rbs/User/Profile"><i class="icon-user"></i> {{ i18n('m.rbs.admin.admin.profile', ['ucf']) }}</a></li>
+				<li><a href="./"><i class="icon-tasks"></i> {{ i18n('m.rbs.admin.admin.dashboard', ['ucf']) }}</a></li>
 				<li class="divider"></li>
-				<li><a href="javascript:;" data-ng-click="logout()"><i class="icon-signout"></i> {{ i18n('m.rbs.admin.menu.logout', ['ucf']) }}</a></li>
+				<li><a href="javascript:;" data-ng-click="logout()"><i class="icon-signout"></i> {{ i18n('m.rbs.admin.admin.logout', ['ucf']) }}</a></li>
 			</ul>
 		</li>
 	</ul>
 
 	<ul class="nav navbar-nav navbar-right navbar-indicators">
 		<li><a href="javascript:;"><i rbs-loading-indicator=""></i></a></li>
-		<li rbs-clipboard-indicator="" title="{{ i18nAttr('m.rbs.admin.clipboard.clipboard', ['ucf']) }}"></li>
-		<li rbs-local-copy-indicator="" title="{{ i18nAttr('m.rbs.admin.localcopy.local-copy-indicator-title', ['ucf']) }}"></li>
-		<li><a href="javascript:;" rbs-fullscreen-toggle="" title="{{ i18nAttr('m.rbs.admin.menu.go-to-fullscreen', ['ucf']) }}"></a></li>
+		<li rbs-clipboard-indicator="" title="{{ i18nAttr('m.rbs.admin.admin.clipboard', ['ucf']) }}"></li>
+		<li rbs-local-copy-indicator="" title="{{ i18nAttr('m.rbs.admin.admin.local_copy_indicator_title', ['ucf']) }}"></li>
+		<li><a href="javascript:;" rbs-fullscreen-toggle="" title="{{ i18nAttr('m.rbs.admin.admin.go_to_fullscreen', ['ucf']) }}"></a></li>
 	</ul>
 
 </div>

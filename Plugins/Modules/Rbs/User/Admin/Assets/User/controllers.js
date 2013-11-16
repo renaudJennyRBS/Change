@@ -34,7 +34,7 @@
 		$scope.reloadTokens();
 
 		$scope.revokeToken = function(token){
-			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-revoke-token | ucf', { 'token': token.token })))
+			if (confirm(i18n.trans('m.rbs.user.admin.confirm_revoke_token | ucf', { 'token': token.token })))
 			{
 				var url = REST.getBaseUrl('user/revokeToken/');
 				$http.post(url, { 'token': token.token }).success(function (){
@@ -107,7 +107,7 @@
 		$scope.removePermissionRule = function (permissionRuleToRemove){
 			if (permissionRuleToRemove.rule_id)
 			{
-				if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-permission-rule | ucf', permissionRuleToRemove)))
+				if (confirm(i18n.trans('m.rbs.user.admin.confirm_remove_permission_rule | ucf', permissionRuleToRemove)))
 				{
 					var url = REST.getBaseUrl('user/removePermissionRule/');
 					$http.post(url, { 'rule_id': permissionRuleToRemove.rule_id }).success(function (){
@@ -119,7 +119,7 @@
 		};
 
 		$scope.removeAllPermissionRules = function () {
-			if (confirm(i18n.trans('m.rbs.user.admin.js.confirm-remove-all-permission-rules | ucf', { 'user': $scope.document.label})))
+			if (confirm(i18n.trans('m.rbs.user.admin.confirm_remove_all_permission_rules | ucf', { 'user': $scope.document.label})))
 			{
 				var url = REST.getBaseUrl('user/removePermissionRule/');
 				var promises = [];
@@ -178,7 +178,7 @@
 		Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"]
+			[i18n.trans('m.rbs.user.admin.module_name | ucf'), "Rbs/User"]
 		]);
 
 		$scope.$on('$destroy', function () {
