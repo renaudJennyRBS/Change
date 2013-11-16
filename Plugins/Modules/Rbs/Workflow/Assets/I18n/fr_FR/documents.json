@@ -1,0 +1,14 @@
+{
+	"status":{
+		"message":"état"
+	},
+	"label":{
+		"message":"libellé"
+	},
+	"document":{
+		"message":"document"
+	},
+	"taskcode":{
+		"message":"code"
+	}
+}
