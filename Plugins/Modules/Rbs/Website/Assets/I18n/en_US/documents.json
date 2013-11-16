@@ -1,0 +1,62 @@
+{
+	"website_baseurl":{
+		"message":"base URL"
+	},
+	"website_indexpage":{
+		"message":"homepage"
+	},
+	"topic_website":{
+		"message":"website"
+	},
+	"topic_indexpage":{
+		"message":"front-page"
+	},
+	"topic_pathpart":{
+		"message":"path"
+	},
+	"page_pagetemplate":{
+		"message":"page template"
+	},
+	"page_editablecontent":{
+		"message":"page content"
+	},
+	"page_content_zones":{
+		"message":"content zones"
+	},
+	"sectionpagefunction_functionCode":{
+		"message":"function"
+	},
+	"sectionpagefunction_section":{
+		"message":"section"
+	},
+	"sectionpagefunction_page":{
+		"message":"page"
+	},
+	"menu":{
+		"message":"menu"
+	},
+	"staticpage":{
+		"message":"page"
+	},
+	"functionalpage":{
+		"message":"fonctional page"
+	},
+	"topic":{
+		"message":"topic"
+	},
+	"website":{
+		"message":"website"
+	},
+	"menu_website":{
+		"message":"website"
+	},
+	"menu_items":{
+		"message":"menu entries"
+	},
+	"functionalpage_website":{
+		"message":"website"
+	},
+	"functionalpage_allowedFunctionsCode":{
+		"message":"supported functions"
+	}
+}

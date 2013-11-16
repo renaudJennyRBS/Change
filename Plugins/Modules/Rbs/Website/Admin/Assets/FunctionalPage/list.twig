@@ -1,21 +1,21 @@
 <div>
 	<rbs-workspace-config menu="Rbs_Website">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.documents.functionalpage-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.admin.functionalpage_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.website.documents.functionalpage-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.website.admin.functionalpage_list', ['ucf']) }}"></page-header>
 
 	<div rbs-tip="Rbs_Website_FunctionalPageListHeader">
-		{{ i18n('m.rbs.website.documents.functionalpage.functional-page-list-help') }}
+		{{ i18n('m.rbs.website.admin.functional_page_list_help') | raw }}
 	</div>
 
 	<search-filters model="Rbs_Website_FunctionalPage" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Website_FunctionalPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.documents.functionalpage-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_FunctionalPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsWebsiteFunctionalPage"
@@ -37,7 +37,7 @@
 				</span>
 			</div>
 			<div ng-if="! doc.allowedFunctionsCode">
-				<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.documents.functionalpage.configure-functions', ['ucf']) }}</a>
+				<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.configure_functions', ['ucf']) }}</a>
 			</div>
 		</column>
 	</rbs-document-list>

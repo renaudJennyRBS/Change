@@ -273,7 +273,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 					/* @var $notification \Rbs\Notification\Documents\Notification */
 					$notification->setUserId($user->getId());
 					$notification->setCode('website_sitemap_url_creation_' . $this->getId() . '_' . $LCID);
-					$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($userLCID, 'm.rbs.website.documents.website.notification-sitemap-url-creation', ['ucf'], $params));
+					$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($userLCID, 'm.rbs.website.admin.website_notification_sitemap_url_creation', ['ucf'], $params));
 					$notification->setParams($params);
 					$notification->save();
 					$applicationServices->getDocumentManager()->popLCID();

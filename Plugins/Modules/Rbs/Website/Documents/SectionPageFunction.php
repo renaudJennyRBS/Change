@@ -36,7 +36,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 		$query->andPredicates($query->eq('section', $document->getSection()), $query->eq('functionCode', $document->getFunctionCode()));
 		if ($query->getCountDocuments())
 		{
-			$event->setParam('propertiesErrors', array('functionCode' => array(new \Change\I18n\PreparedKey('m.rbs.website.documents.sectionpagefunction.error-not-unique', array(), array("code" => $document->getFunctionCode())))));
+			$event->setParam('propertiesErrors', array('functionCode' => array(new \Change\I18n\PreparedKey('m.rbs.website.admin.sectionpagefunction_error_not_unique', array(), array("code" => $document->getFunctionCode())))));
 		}
 	}
 

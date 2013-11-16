@@ -93,7 +93,7 @@ class Listeners implements ListenerAggregateInterface
 
 		$menu = array(
 			'sections' => array(
-				array('code' => 'cms', 'label' => $i18nManager->trans('m.rbs.website.admin.section-name', array('ucf'))),
+				array('code' => 'cms', 'label' => $i18nManager->trans('m.rbs.website.admin.section_name', array('ucf'))),
 				array('code' => 'admin', 'label' => $i18nManager->trans('m.rbs.admin.admin.admin_section_name', array('ucf')))
 			),
 			'entries' => array(
@@ -126,9 +126,9 @@ class Listeners implements ListenerAggregateInterface
 				array('label' => $i18nManager->trans('m.rbs.user.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/User', 'section' => 'admin',
 					'keywords' => $i18nManager->trans('m.rbs.user.admin.js.module-keywords')),
-				array('label' => $i18nManager->trans('m.rbs.website.admin.js.module-name', array('ucf')),
+				array('label' => $i18nManager->trans('m.rbs.website.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Website', 'section' => 'cms',
-					'keywords' => $i18nManager->trans('m.rbs.website.admin.js.module-keywords'))
+					'keywords' => $i18nManager->trans('m.rbs.website.admin.module_keywords'))
 			)
 		);
 

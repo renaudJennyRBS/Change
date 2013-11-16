@@ -21,7 +21,7 @@
 	function ListController($scope, $q, $location, Breadcrumb, MainMenu, i18n, REST, Query, Loading, NotificationCenter, Utils)
 	{
 		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.website.admin.js.module-name | ucf'), "Rbs/Website"]
+			[i18n.trans('m.rbs.website.admin.module_name | ucf'), "Rbs/Website"]
 		]);
 
 		function initCurrentSection (section) {

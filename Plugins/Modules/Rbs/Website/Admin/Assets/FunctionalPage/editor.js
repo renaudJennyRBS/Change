@@ -91,7 +91,7 @@
 						Dialog.confirmEmbed(
 							element.find('[data-role="edit-page-contents-confirmation"]'),
 							i18n.trans('m.rbs.admin.adminjs.confirm | ucf'),
-							i18n.trans('m.rbs.website.admin.js.open-page-editor-warning'),
+							i18n.trans('m.rbs.website.admin.open_page_editor_warning'),
 							scope,
 							{
 								"pointedElement" : $event.target

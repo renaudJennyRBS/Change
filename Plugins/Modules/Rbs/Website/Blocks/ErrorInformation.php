@@ -15,11 +15,11 @@ class ErrorInformation extends Information
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 
-		$this->setLabel($i18nManager->trans('m.rbs.website.blocks.error', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.website.admin.error', $ucf));
 		$this->addInformationMeta('codeHttp', Property::TYPE_INTEGER, true, 404)
-			->setLabel($i18nManager->trans('m.rbs.website.blocks.error-codehttp', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.website.admin.error-codehttp', $ucf));
 		$this->setFunctions(array(
-			'Error_404' => $i18nManager->trans('m.rbs.website.blocks.function-error-404', $ucf),
-			'Error_403' => $i18nManager->trans('m.rbs.website.blocks.function-error-403', $ucf)));
+			'Error_404' => $i18nManager->trans('m.rbs.website.admin.function_error_404', $ucf),
+			'Error_403' => $i18nManager->trans('m.rbs.website.admin.function_error_403', $ucf)));
 	}
 }
