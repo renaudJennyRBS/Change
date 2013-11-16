@@ -18,7 +18,7 @@
 	function RbsUserProfileController($scope, Breadcrumb, REST, MainMenu, $http, i18n, User, PaginationPageSizes)
 	{
 		Breadcrumb.resetLocation([]);
-		Breadcrumb.setResource(i18n.trans('m.rbs.user.admin.js.profile | ucf'));
+		Breadcrumb.setResource(i18n.trans('m.rbs.user.admin.profile | ucf'));
 
 		MainMenu.loadModuleMenu('Rbs_User_Profile');
 

@@ -1,0 +1,41 @@
+{
+	"group_label":{
+		"message":"nom du groupe"
+	},
+	"group_realm":{
+		"message":"realm"
+	},
+	"group_identifier":{
+		"message":"identifiant de l'interface d'administration"
+	},
+	"user":{
+		"message":"utilisateur"
+	},
+	"group":{
+		"message":"groupe"
+	},
+	"user_login":{
+		"message":"identifiant de connexion"
+	},
+	"user_email":{
+		"message":"adresse e-mail"
+	},
+	"user_pseudonym":{
+		"message":"pseudonyme"
+	},
+	"user_label":{
+		"message":"nom complet"
+	},
+	"user_hashMethod":{
+		"message":"méthode de cryptage du mot de passe"
+	},
+	"user_security":{
+		"message":"sécurité"
+	},
+	"user_password":{
+		"message":"mot de passe"
+	},
+	"user_identifier":{
+		"message":"identifiant de l'interface d'administration"
+	}
+}

@@ -1,0 +1,204 @@
+{
+	"module_name":{
+		"message":"utilisateurs"
+	},
+	"module_keywords":{
+		"message":"groupes,sécurité,mot de passe,password,login,comptes,authentification"
+	},
+	"confirm_revoke_token":{
+		"message":"confirmer la révocation du token : $TOKEN$ ?"
+	},
+	"group":{
+		"message":"groupe"
+	},
+	"group_list":{
+		"message":"groupes",
+		"__force":true
+	},
+	"confirm_remove_permission_rule":{
+		"message":"confirmer la suppression de la règle de permission $ROLE$ pour le privilège $PRIVILEGE$ sur la ressource $RESOURCE_ID$ ?"
+	},
+	"confirm_remove_all_permission_rules":{
+		"message":"confirmer la suppresion de toutes les règles de permissions pour l'utilisateur $USER$ ?"
+	},
+	"profile":{
+		"message":"profil utilisateur"
+	},
+	"token":{
+		"message":"jeton"
+	},
+	"application":{
+		"message":"application"
+	},
+	"realm":{
+		"message":"realm"
+	},
+	"creation_date":{
+		"message":"date de création"
+	},
+	"validity_date":{
+		"message":"date de validité"
+	},
+	"revoke_token":{
+		"message":"révoquer"
+	},
+	"applications_list_sub_title":{
+		"message":"applications"
+	},
+	"applications":{
+		"message":"applications"
+	},
+	"current_password":{
+		"message":"mot de passe actuel"
+	},
+	"new_password":{
+		"message":"nouveau mot de passe"
+	},
+	"permission":{
+		"message":"permission"
+	},
+	"permission_rule":{
+		"message":"règle de permission"
+	},
+	"permission_rules_sub_title":{
+		"message":"règles de permission"
+	},
+	"permission_roles":{
+		"message":"rôles"
+	},
+	"permission_privileges":{
+		"message":"privilèges"
+	},
+	"permission_role":{
+		"message":"rôle"
+	},
+	"permission_resource":{
+		"message":"ressource"
+	},
+	"permission_resources":{
+		"message":"ressources"
+	},
+	"permission_privilege":{
+		"message":"privilège"
+	},
+	"new_permission_rules":{
+		"message":"nouvelles règles de permission"
+	},
+	"remove_permission_rule":{
+		"message":"retirer"
+	},
+	"remove_all_permission_rules":{
+		"message":"retirer toutes les règles"
+	},
+	"customise":{
+		"message":"personnaliser"
+	},
+	"add":{
+		"message":"ajouter"
+	},
+	"public_profile_sub_title":{
+		"message":"profil public"
+	},
+	"login":{
+		"message":"Bloc d'identification"
+	},
+	"login_realm":{
+		"message":"realm"
+	},
+	"function_error_401":{
+		"message":"autorisation nécessaire"
+	},
+	"group_picker_title":{
+		"message":">sélectionner les groupes"
+	},
+	"user_list":{
+		"message":"utilisateurs"
+	},
+	"user_create":{
+		"message":"ajouter un utilisateur"
+	},
+	"group_create":{
+		"message":"ajouter un groupe d'utilisateurs"
+	},
+	"users_in_group":{
+		"message":"utilisateurs du groupe"
+	},
+	"profile_lcid":{
+		"message":"langue"
+	},
+	"profile_timezone":{
+		"message":"fuseau horraire"
+	},
+	"profile_avatar":{
+		"message":"avatar"
+	},
+	"profile_pagingsize":{
+		"message":"taille des pages de résultats"
+	},
+	"profile_documentlistviewmode":{
+		"message":"vue par défaut des listes"
+	},
+	"profile_list":{
+		"message":"liste"
+	},
+	"profile_grid":{
+		"message":"grille"
+	},
+	"profile_editoractionaftersave":{
+		"message":"après l'enregistrement"
+	},
+	"profile_backtolist":{
+		"message":"retourner à la liste"
+	},
+	"profile_stayonform":{
+		"message":"rester sur le formulaire"
+	},
+	"profile_internationalization":{
+		"message":"internationalisation"
+	},
+	"profile_lists":{
+		"message":"affichage des listes"
+	},
+	"profile_editors":{
+		"message":"éditeurs"
+	},
+	"profile_personnal_info":{
+		"message":"informations personnelles"
+	},
+	"profile_warning":{
+		"message":"attention !"
+	},
+	"profile_change_language_warning":{
+		"message":"après avoir changé de langue, vous devrez vider les caches de votre navigateur et recharger la page."
+	},
+	"profile_notification":{
+		"message":"notification"
+	},
+	"profile_notification_helper":{
+		"message":"configurez la fréquence d'envoi des e-mails concernant les notifications non lues."
+	},
+	"profile_notification_sending_management":{
+		"message":"gestion de l'envoi"
+	},
+	"profile_notification_no_email":{
+		"message":"aucun envoi"
+	},
+	"profile_notification_immediately":{
+		"message":"immédiatement"
+	},
+	"profile_notification_with_time_interval":{
+		"message":"regrouper dans un seul e-mail"
+	},
+	"profile_notification_time_interval":{
+		"message":"fréquence d'envoi"
+	},
+	"profile_notification_time_interval_at":{
+		"message":"à"
+	},
+	"profile_notification_time_interval_helper":{
+		"message":"si vous sélectionnez <strong>fréquence d'envoi 1 jours<\/strong> et <strong>à 12:00<\/strong> vous recevrez un e-mail tous les jours entre 12h et 12h05.<br\/>\n\tSi vous sélectionnez <strong>fréquence d'envoi 2 heures<\/strong> et <strong>à 13:15<\/strong>, seul les minutes seront prises en compte, (le prochain e-mail reçu sera donc entre 15h15 et 15h20, puis entre 17h15 et 17h20...)"
+	},
+	"profile_gravatar_help":{
+		"message":"Pour utiliser un avatar, créer un compte sur le site <a href=\"http:\/\/fr.gravatar.com\" target=\"_blank\">http:\/\/fr.gravatar.com<\/a>"
+	}
+}

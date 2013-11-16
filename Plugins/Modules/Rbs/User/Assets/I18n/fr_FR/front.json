@@ -1,0 +1,29 @@
+{
+	"you_are_authentified_as":{
+		"message":"vous êtes authentifié en tant que $NAME$"
+	},
+	"please_log_in":{
+		"message":"connectez-vous"
+	},
+	"login":{
+		"message":"identifiant de connexion"
+	},
+	"login_placeholder":{
+		"message":"identifiant ou adresse e-mail"
+	},
+	"password":{
+		"message":"mot de passe"
+	},
+	"password_placeholder":{
+		"message":"abc123"
+	},
+	"remember_me":{
+		"message":"rester connecté"
+	},
+	"log_in":{
+		"message":"connexion"
+	},
+	"log_out":{
+		"message":"déconnexion"
+	}
+}

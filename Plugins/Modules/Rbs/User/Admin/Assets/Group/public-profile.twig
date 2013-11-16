@@ -1,5 +1,5 @@
 <div data-ng-controller="Rbs_User_Group_PublicProfileController">
-	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public-profile-sub-title', ['ucf']) }}"></page-header>
+	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></page-header>
 	<div class="media-body well well-small">
 		<h4 class="media-heading">(= document.label =) <small ng-if="document.identifier">@+(= document.identifier =)</small></h4>
 		<div class="well">
@@ -11,7 +11,7 @@
 			</dl>
 		</div>
 		<div>
-			<h4>{{ i18n('m.rbs.user.documents.user-list', ['ucf']) }}</h4>
+			<h4>{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</h4>
 			<rbs-document-list data-dlid="DLUser1"
 				model="Rbs_User_User"
 				modification-date="false"

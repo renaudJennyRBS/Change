@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.user.blocks" lcid="en_US">
-	<key id="login">Login block</key>
-	<key id="login-realm">realm</key>
-	<key id="function-error-401">Unauthorized</key>
-</i18n>

@@ -20,7 +20,7 @@
 		Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.user.admin.js.module-name | ucf'), "Rbs/User"]
+			[i18n.trans('m.rbs.user.admin.module_name | ucf'), "Rbs/User"]
 		]);
 
 		$scope.$on('$destroy', function () {
