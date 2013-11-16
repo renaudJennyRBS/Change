@@ -10,20 +10,20 @@
 		<div ng-if="message.authorId === user.id" class="pull-right">
 			<button class="btn btn-default" type="button" data-ng-click="editMessage(message)">
 				<i class="icon-edit"></i>
-				{{ i18n('m.rbs.timeline.admin.edit-message', ['ucf']) }}
+				{{ i18n('m.rbs.timeline.admin.edit_message', ['ucf']) }}
 			</button>
-			<button class="btn btn-danger" type="button" data-ng-click="removeMessage(message)" title="{{ i18nAttr('m.rbs.timeline.admin.remove-message', ['ucf']) }}">
+			<button class="btn btn-danger" type="button" data-ng-click="removeMessage(message)" title="{{ i18nAttr('m.rbs.timeline.admin.remove_message', ['ucf']) }}">
 				<i class="icon-trash"></i>
 			</button>
 		</div>
 		<div class="message-content"></div>
 		<div ng-if="!message.editMode && message.creationDate !== message.modificationDate">
-			<small class="text-muted">{{ i18n('m.rbs.timeline.admin.edited-message', ['ucf']) }} <time display="both" datetime="(= message.modificationDate =)"></time></small>
+			<small class="text-muted">{{ i18n('m.rbs.timeline.admin.edited_message', ['ucf']) }} <time display="both" datetime="(= message.modificationDate =)"></time></small>
 		</div>
 		<div ng-if="message.editMode">
 			<rbs-rich-text-input data-ng-model="message.message" class="input-block-level" profile="Admin"></rbs-rich-text-input>
 			<div class="btn-toolbar margin-top">
-				<button type="button" data-ng-click="updateMessage(message)" class="btn btn-primary"><i class="icon-ok"></i> {{ i18n('m.rbs.timeline.admin.leave-a-message-update', ['ucf']) }}</button>
+				<button type="button" data-ng-click="updateMessage(message)" class="btn btn-primary"><i class="icon-ok"></i> {{ i18n('m.rbs.timeline.admin.leave_a_message_update', ['ucf']) }}</button>
 			</div>
 		</div>
 	</div>

@@ -1,0 +1,8 @@
+{
+	"message_contextId":{
+		"message":"context identifier"
+	},
+	"message":{
+		"message":"message"
+	}
+}

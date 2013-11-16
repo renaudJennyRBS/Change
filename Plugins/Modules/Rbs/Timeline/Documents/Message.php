@@ -81,7 +81,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 					$notification->setUserId($user->getId());
 					$notification->setCode('timeline_mention');
 					$notification->getCurrentLocalization()->setMessage($i18nManager->transForLCID($lcid,
-						'm.rbs.timeline.documents.message.notification-mention-message', ['ucf'], $params));
+						'm.rbs.timeline.admin.notification_mention_message', ['ucf'], $params));
 					$notification->setParams($params);
 					$notification->save();
 

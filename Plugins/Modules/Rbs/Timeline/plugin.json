@@ -1,6 +1,7 @@
 {
 	"type":"module",
-	"vendor": "Rbs",
-	"name": "Timeline",
-	"package": "Core"
+	"vendor":"Rbs",
+	"name":"Timeline",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }
