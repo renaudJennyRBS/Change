@@ -23,9 +23,9 @@
 			<div style="margin-left: 290px;">
 				<h4>(= doc.label =)</h4>
 				<dl class="dl-horizontal">
-					<dt>{{ i18n('m.rbs.tag.tags', ['ucf','lbl']) }}</dt>
+					<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
 					<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.no-tags', ['ucf']) }}</dd>
+					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
 				</dl>
 			</div>
 		</preview>

@@ -1,0 +1,85 @@
+{
+	"module_name":{
+		"message":"étiquettes"
+	},
+	"module_keywords":{
+		"message":"étiquettes,tags"
+	},
+	"tags":{
+		"message":"étiquettes",
+		"__force":true
+	},
+	"show_hide_all_tags":{
+		"message":"afficher\/masquer toutes les étiquettes (Ctrl+&darr; \/ Ctrl+&uarr;)"
+	},
+	"available_tags_pluralize":{
+		"message":"$'0':'AUCUNE éTIQUETTE DISPONIBLE','ONE':'UNE éTIQUETTE DISPONIBLE :','OTHER':'$$ étiquettes disponibles :'}"
+	},
+	"tag_not_saved":{
+		"message":"cette étiquette sera réellement créée lors de la validation du formulaire"
+	},
+	"enter_selects_first_tag":{
+		"message":"[Entrée] pour sélectionner la première étiquette"
+	},
+	"usertag_text":{
+		"message":"cette étiquette est personnelle et ne peut être utilisée que par vous"
+	},
+	"applying_tags":{
+		"message":"assignation des étiquettes"
+	},
+	"manage_tags":{
+		"message":"gérer les étiquettes",
+		"__force":true
+	},
+	"tag_list":{
+		"message":"liste des étiquettes"
+	},
+	"mytags_list":{
+		"message":"liste de mes étiquettes"
+	},
+	"tag_create":{
+		"message":"ajouter une étiquette"
+	},
+	"tag_color_help":{
+		"message":"Les couleurs permettent de mieux différencier visuellement les différentes étiquettes.<br\/>Choisissez des couleurs différentes pour vos étiquettes : vous verrez, c'est joli ! <i class=\"icon-smile\"><\/i>"
+	},
+	"tag_module_help":{
+		"message":"\n\t\tIl est possible de restreindre l'utilisation d'une étiquette à un module. Mais c'est assez rare.<br\/>Si vous ne comprenez pas, laissez ce champ vide ! <i class=\"icon-smile\"><\/i>\n\t"
+	},
+	"tag_children_help":{
+		"message":"\n\t\t<strong>Les sous-étiquettes vous permettent d'organiser vos étiquettes de manière hiérarchique\n\t\tet simplifient ainsi la catégorisation de vos documents.<\/strong><br\/>\n\t\tPar exemple, si vous créez une étiquette <strong><em>lac<\/em><\/strong> sous une étiquette <strong><em>paysage<\/em><\/strong>,\n\t\ttous les documents étiquetés avec <strong><em>lac<\/em><\/strong> sont automatiquement et implicitement étiquetés avec <strong><em>paysage<\/em><\/strong>.\n\t\tLors d'une recherche sur l'étiquette <strong><em>paysage<\/em><\/strong>, les documents étiquetés <strong><em>lac<\/em><\/strong>\n\t\tseront présents dans les résultats."
+	},
+	"tag_children_selector_title":{
+		"message":"Sélectionner des sous-étiquettes"
+	},
+	"tag_usertag_help":{
+		"message":"\n\t\t<strong>Les étiquettes personnelles ne peuvent être utilisées que par leur créateur.<\/strong><br\/>\n\t\tVous pouvez créer autant d'étiquettes personnelles que vous voulez afin d'organiser les différents contenus\n\t\tde vos sites. Vos étiquettes personnelles ne seront visibles que par vous.<br\/>\n\t\t<span class=\"label label-danger\">Attention !<\/span> Une fois l'étiquette créée, il n'est plus possible de modifier cette propriété.\n\t"
+	},
+	"tag_usertag_cannot_be_modified":{
+		"message":"Cette information ne peut être définie qu'à la création d'une étiquette.\n\t"
+	},
+	"tag_child_tags_count":{
+		"message":"$'0':'AUCUNE SOUS-éTIQUETTE.', 'ONE':'UNE SOUS-éTIQUETTE :', 'OTHER':'$$ sous-étiquettes :'}"
+	},
+	"no_tags":{
+		"message":"aucune"
+	},
+	"all_tags":{
+		"message":"toutes les étiquettes"
+	},
+	"find":{
+		"message":"trouver par étiquettes"
+	},
+	"clear_selection":{
+		"message":"effacer"
+	},
+	"selected_tags":{
+		"message":"étiquettes sélectionnées"
+	},
+	"selected_tags_message":{
+		"message":"les étiquettes sélectionnées ici servent à filter la liste des éléments présente à droite"
+	},
+	"my_tags":{
+		"message":"mes étiquettes"
+	}
+}

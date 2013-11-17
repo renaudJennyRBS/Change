@@ -78,9 +78,9 @@ class Install extends \Change\Plugins\InstallBase
 		$i18nManager = $applicationServices->getI18nManager();
 
 		//Default tags
-		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup-large-picture', array('ucf')), 'color' => 'gray', 'module' => 'Rbs_Media');
-		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup-medium-picture', array('ucf')), 'color' => 'gray', 'module' => 'Rbs_Media');
-		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup-to-translate', array('ucf')), 'color' => 'red', 'module' => NULL);
+		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup.setup_large_picture', array('ucf')), 'color' => 'gray', 'module' => 'Rbs_Media');
+		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup.setup_medium_picture', array('ucf')), 'color' => 'gray', 'module' => 'Rbs_Media');
+		$tags[] = array('label' => $i18nManager->trans('m.rbs.tag.setup.setup_to_translate', array('ucf')), 'color' => 'red', 'module' => NULL);
 
 		$transactionManager = $applicationServices->getTransactionManager();
 		try

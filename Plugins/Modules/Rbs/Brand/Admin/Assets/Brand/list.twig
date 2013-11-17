@@ -29,9 +29,9 @@
 					<dt>{{ i18n(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf','lbl']) }}</dt>
 					<dd ng-if="doc.websiteUrl"><a href ng-href="(= doc.websiteUrl =)" target="_blank">(= doc.websiteUrl =)</a></dd>
 					<dd ng-if="! doc.websiteUrl">-</dd>
-					<dt>{{ i18n('m.rbs.tag.tags', ['ucf','lbl']) }}</dt>
+					<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
 					<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.no-tags', ['ucf']) }}</dd>
+					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
 				</dl>
 				<p ng-bind-html="doc.description.h"></p>
 			</div>

@@ -1,0 +1,17 @@
+{
+	"tag":{
+		"message":"étiquette"
+	},
+	"tag_color":{
+		"message":"couleur"
+	},
+	"tag_module":{
+		"message":"module"
+	},
+	"tag_children":{
+		"message":"sous-étiquettes"
+	},
+	"tag_usertag":{
+		"message":"étiquette personnelle"
+	}
+}
