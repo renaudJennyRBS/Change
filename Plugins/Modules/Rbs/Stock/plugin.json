@@ -2,5 +2,6 @@
 	"type":"module",
 	"vendor":"Rbs",
 	"name":"Stock",
-	"package": "ECom"
+	"package":"ECom",
+	"defaultLCID":"fr_FR"
 }

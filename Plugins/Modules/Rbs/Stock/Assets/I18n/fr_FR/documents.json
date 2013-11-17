@@ -1,0 +1,8 @@
+{
+	"sku":{
+		"message":"SKU"
+	},
+	"inventoryentry":{
+		"message":"stock"
+	}
+}

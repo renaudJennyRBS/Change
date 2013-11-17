@@ -1,0 +1,32 @@
+{
+	"physicalproperties":{
+		"message":"données physiques"
+	},
+	"unit":{
+		"message":"unité"
+	},
+	"unit_piece":{
+		"message":"pièce"
+	},
+	"quantityincrement":{
+		"message":"incrément de quantité"
+	},
+	"minquantity":{
+		"message":"quantité minimum"
+	},
+	"maxquantity":{
+		"message":"quantité maximum"
+	},
+	"unlimitedinventory":{
+		"message":"stock \"infini\""
+	},
+	"allowbackorders":{
+		"message":"Commandes sur réassort"
+	},
+	"allowquantitysplit":{
+		"message":"Livraison fractionnée"
+	},
+	"virtual":{
+		"message":"virtuel"
+	}
+}
