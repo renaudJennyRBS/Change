@@ -438,7 +438,7 @@
 		"message":"affichage en grille"
 	},
 	"pagination_total":{
-		"message":"{'0':'aucun élément', 'one': 'one élément', 'other':'{} éléments'}"
+		"message":"{'0':'aucun élément', 'one': 'un élément', 'other':'{} éléments'}"
 	},
 	"pagination_pages":{
 		"message":"{'0':'aucun élément', 'one': 'une page', 'other': '{} pages'}"
