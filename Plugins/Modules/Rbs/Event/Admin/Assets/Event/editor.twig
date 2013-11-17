@@ -10,7 +10,7 @@
 		<rbs-field-text property="title" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'title'), ['ucf']) }}"
 			rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.event.documents.event.synchronize-title-label', ['ucf']) }}">
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-date property="date" required="true"
@@ -35,14 +35,14 @@
 
 		<rbs-field-picker property="detailVisual" label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'detailVisual'), ['ucf']) }}"
 			accepted-model="Rbs_Media_Image" allow-creation="true" allow-edition="true"
-			selector-title="{{ i18nAttr('m.rbs.event.documents.event.detailvisual-picker-title', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.event.documents.event.detailvisual-help', ['ucf']) }}</span>
+			selector-title="{{ i18nAttr('m.rbs.event.admin.event_detailvisual_picker_title', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.event.admin.event_detailvisual_help', ['ucf']) }}</span>
 		</rbs-field-picker>
 
 		<rbs-field-picker property="listVisual" label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'listVisual'), ['ucf']) }}"
 			accepted-model="Rbs_Media_Image" allow-creation="true" allow-edition="true"
-			selector-title="{{ i18nAttr('m.rbs.event.documents.event.listvisual-picker-title', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.event.documents.event.listvisual-help', ['ucf']) }}</span>
+			selector-title="{{ i18nAttr('m.rbs.event.admin.event_listvisual-picker-title', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.event.admin.event_listvisual_help', ['ucf']) }}</span>
 		</rbs-field-picker>
 
 		<hr />
@@ -50,7 +50,7 @@
 		<rbs-field-picker-multiple property="categories"
 			label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'categories'), ['ucf']) }}"
 			accepted-model="Rbs_Event_Category" allow-creation="true" allow-edition="true"
-			selector-title="{{ i18nAttr('m.rbs.event.documents.event.categories-picker-title', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.event.admin.event_categories_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 	</fieldset>
 
@@ -61,8 +61,8 @@
 		<rbs-field-picker-multiple property="publicationSections"
 			label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'publicationSections'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Section" allow-creation="true" allow-edition="true"
-			selector-title="{{ i18nAttr('m.rbs.event.documents.event.publicationsections-picker-title', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.event.documents.event.publicationsections-help', ['ucf']) }}</span>
+			selector-title="{{ i18nAttr('m.rbs.event.admin.event_publicationsections_picker_title', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.event.admon.event_publicationsections_help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-date property="startPublication"

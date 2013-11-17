@@ -12,8 +12,7 @@
 		"message":"groupe"
 	},
 	"group_list":{
-		"message":"groupes",
-		"__force":true
+		"message":"groupes"
 	},
 	"confirm_remove_permission_rule":{
 		"message":"confirmer la suppression de la règle de permission $ROLE$ pour le privilège $PRIVILEGE$ sur la ressource $RESOURCE_ID$ ?"

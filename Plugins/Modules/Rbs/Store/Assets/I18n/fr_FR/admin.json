@@ -1,0 +1,26 @@
+{
+	"module_name":{
+		"message":"Boutiques"
+	},
+	"module_keywords":{
+		"message":"boutiques,magasins"
+	},
+	"select_webstore":{
+		"message":"sélectionner une boutique"
+	},
+	"webstore_list_loading":{
+		"message":"Chargement de la liste des boutiques..."
+	},
+	"webstore_list":{
+		"message":"boutiques"
+	},
+	"webstore_create":{
+		"message":"ajouter une boutique"
+	},
+	"store_billingareas_picker_title":{
+		"message":"sélectionner les zones de tarification"
+	},
+	"store_select_orderprocess":{
+		"message":"selectionner un processus de commande"
+	}
+}

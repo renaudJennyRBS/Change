@@ -244,7 +244,7 @@
 					"name"   : "publicationStatus",
 					"align"  : "center",
 					"width"  : "44px",
-					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.adminjs.status | ucf') + '">' + i18n.trans('m.rbs.admin.adminjs.status-minified | ucf') + '</abbr>',
+					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.adminjs.status | ucf') + '">' + i18n.trans('m.rbs.admin.adminjs.status_minified | ucf') + '</abbr>',
 					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><status ng-model="doc"/></a>',
 					"dummy"  : true
 				});

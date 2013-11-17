@@ -62,18 +62,18 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
 		</rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemap-time-interval', ['ucf']) }}" required="false">
+		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemap_time_interval', ['ucf']) }}" required="false">
 			<rbs-time-interval-input name="sitemapTimeInterval" show="weeks,days,hours"
 				ng-model="data.timeInterval" disabled="!document.sitemapGeneration">
 			</rbs-time-interval-input>
 		</rbs-field>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemaps-url', ['ucf']) }}" required="false">
+		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemaps_url', ['ucf']) }}" required="false">
 			<table class="table">
 				<thead>
 					<tr>
-						<th>{{ i18n('m.rbs.website.documents.website_sitemap-lang', ['ucf']) }}</th>
-						<th>{{ i18n('m.rbs.website.documents.website_sitemap-url', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.website.documents.website_sitemap_lang', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.website.documents.website_sitemap_url', ['ucf']) }}</th>
 						<th ng-if="pendingSitemapCreations"></th>
 					</tr>
 				</thead>

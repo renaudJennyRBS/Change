@@ -229,5 +229,29 @@
 	},
 	"confirm_update_correction_message":{
 		"message":"Une <strong>correction<\/strong> est en cours pour ce document. L'enregistrement mettra à jour la correction et le document ne sera modifié qu'après application de la correction."
+	},
+	"status_draft":{
+		"message":"brouillon"
+	},
+	"status_frozen":{
+		"message":"gelé"
+	},
+	"status_validcontent":{
+		"message":"contenu validé"
+	},
+	"status_valid":{
+		"message":"validé"
+	},
+	"status_validation":{
+		"message":"à valider"
+	},
+	"status_unpublishable":{
+		"message":"non-publiable"
+	},
+	"status_publishable":{
+		"message":"publiable"
+	},
+	"status_filed":{
+		"message":"archivé"
 	}
 }

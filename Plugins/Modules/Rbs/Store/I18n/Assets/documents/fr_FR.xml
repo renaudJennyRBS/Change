@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.catalog.documents" lcid="fr_FR">
-	<key id="webstore">boutique</key>
-	<key id="webstore-list">boutiques</key>
-	<key id="webstore-create">ajouter une boutique</key>
-</i18n>

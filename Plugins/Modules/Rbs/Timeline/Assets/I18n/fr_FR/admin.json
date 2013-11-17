@@ -1,7 +1,6 @@
 {
 	"message_list":{
-		"message":"Timeline des messages",
-		"__force":true
+		"message":"Timeline des messages"
 	},
 	"leave_a_message_helper":{
 		"message":"<h4>Mentionner des utilisateurs<\/h4>\n\tUtilisez le caractère <strong>@<\/strong> pour désigner une personne\n\tou <strong>@+<\/strong> pour désigner un groupe de personnes.<br\/>Les personnes ainsi mentionnées seront averties du nouveau message."

@@ -1,7 +1,6 @@
 {
 	"properties":{
-		"message":"propriétés",
-		"__force":true
+		"message":"propriétés"
 	},
 	"ttl":{
 		"message":"Durée du cache en secondes"
@@ -25,8 +24,7 @@
 		"message":"effacer"
 	},
 	"add":{
-		"message":"ajouter",
-		"__force":true
+		"message":"ajouter"
 	},
 	"replace_by":{
 		"message":"remplacer par"
@@ -35,8 +33,7 @@
 		"message":"Afficher les éléments du Presse-papier pour leur appliquer des actions"
 	},
 	"display":{
-		"message":"afficher",
-		"__force":true
+		"message":"afficher"
 	},
 	"clipboard_empty":{
 		"message":"Le Presse-papier est vide"
@@ -132,8 +129,7 @@
 		"message":"conditions requises :"
 	},
 	"all":{
-		"message":"tout",
-		"__force":true
+		"message":"tout"
 	},
 	"allTooltip":{
 		"message":"Effectue un ET binaire"
@@ -223,7 +219,7 @@
 		"message":"annuler<small>et retourner au formulaire parent<\/small>"
 	},
 	"propertiesModifiedPluralize":{
-		"message":"$'0': 'AUCUNE PROPRIéTé N\\'A éTé MODIFIéE.', 'ONE': 'UNE PROPRIéTé A éTé MODIFIéE.', 'OTHER': '$$ propriétés ont été modifiées.'}"
+		"message":"{'0': 'Aucune propriété n\\'a été modifiée.', 'one': 'Une propriété a été modifiée.', 'other': '{} propriétés ont été modifiées.'}"
 	},
 	"date_selector_at":{
 		"message":"à"
@@ -364,8 +360,7 @@
 		"message":"traduire"
 	},
 	"search":{
-		"message":"rechercher",
-		"__force":true
+		"message":"rechercher"
 	},
 	"this_document_exists_in_multiple_languages":{
 		"message":"ce document existe en plusieurs langues"
@@ -389,8 +384,7 @@
 		"message":"remplacer"
 	},
 	"options":{
-		"message":"options",
-		"__force":true
+		"message":"options"
 	},
 	"correction":{
 		"message":"correction"
@@ -444,10 +438,10 @@
 		"message":"affichage en grille"
 	},
 	"pagination_total":{
-		"message":"$'0':'AUCUN éLéMENT', 'ONE': 'UN éLéMENT', 'OTHER':'$$ éléments'}"
+		"message":"{'0':'aucun élément', 'one': 'one élément', 'other':'{} éléments'}"
 	},
 	"pagination_pages":{
-		"message":"$'ONE': 'UNE PAGE', 'OTHER': '$$ pages'}"
+		"message":"{'0':'aucun élément', 'one': 'une page', 'other': '{} pages'}"
 	},
 	"on":{
 		"message":"sur"
@@ -525,7 +519,7 @@
 		"message":"aucun"
 	},
 	"local_copies_message_ng_pluralize":{
-		"message":"$'0': 'AUCUNE COPIE LOCALE', 'ONE': 'UNE COPIE LOCALE', 'OTHER': '$$ copies locales'}"
+		"message":"{'0': 'Aucune copie locale', 'one': 'Une copie locale', 'other': '{} copies locales'}"
 	},
 	"remove_all_local_copies":{
 		"message":"effacer les copies locales"
@@ -677,30 +671,6 @@
 	"rbs_pageeditor_markdown":{
 		"message":"<strong>Les zones de textes riches sont éditables avec une syntaxe Markdown.<\/strong><br\/>\n\t\tBien qu'un peu moins visuelle, cette syntaxe vous permet d'avoir un meilleur contrôle sur\n\t\tla structure de vos contenus et permet de produire des contenus de qualité et correctement organisés.<br\/>\n\t\t<a href=\"http:\/\/fr.wikipedia.org\/wiki\/Markdown\" target=\"_blank\">En savoir plus sur la syntaxe Markdown...<\/a>"
 	},
-	"status_draft":{
-		"message":"brouillon"
-	},
-	"status_frozen":{
-		"message":"gelé"
-	},
-	"status_validcontent":{
-		"message":"contenu validé"
-	},
-	"status_valid":{
-		"message":"validé"
-	},
-	"status_validation":{
-		"message":"à valider"
-	},
-	"status_unpublishable":{
-		"message":"non-publiable"
-	},
-	"status_publishable":{
-		"message":"publiable"
-	},
-	"status_filed":{
-		"message":"archivé"
-	},
 	"draft_description":{
 		"message":"Ce document est à l'état de brouillon."
 	},
@@ -849,6 +819,6 @@
 		"message":"Processus de validation (workflow)"
 	},
 	"timeinterval_choose_type":{
-		"message":"choisissez le type de période"
+		"message":"choisissez la période"
 	}
 }

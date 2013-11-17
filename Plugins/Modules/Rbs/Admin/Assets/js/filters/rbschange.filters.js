@@ -344,7 +344,7 @@
 			if (!input) {
 				return '';
 			}
-			return i18n.trans('m.rbs.admin.adminjs.status-' + angular.lowercase(input) + '|ucf');
+			return i18n.trans('m.rbs.admin.adminjs.status_' + angular.lowercase(input) + '|ucf');
 		};
 	}]);
 

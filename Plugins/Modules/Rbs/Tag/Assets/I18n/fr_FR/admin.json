@@ -6,8 +6,7 @@
 		"message":"étiquettes,tags"
 	},
 	"tags":{
-		"message":"étiquettes",
-		"__force":true
+		"message":"étiquettes"
 	},
 	"show_hide_all_tags":{
 		"message":"afficher\/masquer toutes les étiquettes (Ctrl+&darr; \/ Ctrl+&uarr;)"
@@ -28,8 +27,7 @@
 		"message":"assignation des étiquettes"
 	},
 	"manage_tags":{
-		"message":"gérer les étiquettes",
-		"__force":true
+		"message":"gérer les étiquettes"
 	},
 	"tag_list":{
 		"message":"liste des étiquettes"
