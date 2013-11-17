@@ -1011,7 +1011,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$fInfo = new \SplFileInfo($filePath);
 			$packageName = $this->getPluginI18nPackageNameByFilename($plugin, $fInfo->getFilename());
-			$decoded = \Zend\Json\Json::decode(file_get_contents($filePath), \Zend\Json\Json::TYPE_ARRAY);
+			try
+			{
+				$decoded = \Zend\Json\Json::decode(file_get_contents($filePath), \Zend\Json\Json::TYPE_ARRAY);
+			}
+			catch (\Zend\Json\Exception\RuntimeException $e)
+			{
+				$this->getLogging()->error('Decoding failed ' . $filePath);
+				$decoded = null;
+			}
 			if (is_array($decoded))
 			{
 				foreach ($decoded as $key => $data)
@@ -1026,7 +1034,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 			$overrideFilePath = $this->getWorkspace()->appPath('Override', 'I18n', $LCID, $packageName . '.json');
 			if (file_exists($overrideFilePath))
 			{
-				$decoded = \Zend\Json\Json::decode(file_get_contents($overrideFilePath), \Zend\Json\Json::TYPE_ARRAY);
+				try
+				{
+					$decoded = \Zend\Json\Json::decode(file_get_contents($overrideFilePath), \Zend\Json\Json::TYPE_ARRAY);
+				}
+				catch (\Zend\Json\Exception\RuntimeException $e)
+				{
+					$this->getLogging()->error('Decoding failed ' . $overrideFilePath);
+					$decoded = null;
+				}
 				if (is_array($decoded))
 				{
 					foreach ($decoded as $key => $data)
@@ -1054,7 +1070,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$fInfo = new \SplFileInfo($filePath);
 			$packageName = 'c.' . substr($fInfo->getFilename(), 0, -5);
-			$decoded = \Zend\Json\Json::decode(file_get_contents($filePath), \Zend\Json\Json::TYPE_ARRAY);
+			try
+			{
+				$decoded = \Zend\Json\Json::decode(file_get_contents($filePath), \Zend\Json\Json::TYPE_ARRAY);
+			}
+			catch (\Zend\Json\Exception\RuntimeException $e)
+			{
+				$this->getLogging()->error('Decoding failed ' . $filePath);
+				$decoded = null;
+			}
 			if (is_array($decoded))
 			{
 				foreach ($decoded as $key => $data)
@@ -1069,7 +1093,15 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 			$overrideFilePath = $this->getWorkspace()->appPath('Override', 'I18n', $LCID, $packageName . '.json');
 			if (file_exists($overrideFilePath))
 			{
-				$decoded = \Zend\Json\Json::decode(file_get_contents($overrideFilePath), \Zend\Json\Json::TYPE_ARRAY);
+				try
+				{
+					$decoded = \Zend\Json\Json::decode(file_get_contents($overrideFilePath), \Zend\Json\Json::TYPE_ARRAY);
+				}
+				catch (\Zend\Json\Exception\RuntimeException $e)
+				{
+					$this->getLogging()->error('Decoding failed ' . $overrideFilePath);
+					$decoded = null;
+				}
 				if (is_array($decoded))
 				{
 					foreach ($decoded as $key => $data)

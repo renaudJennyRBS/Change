@@ -1,4 +1,10 @@
 {
+	"baseevent_date":{
+		"message":"date"
+	},
+	"baseevent_enddate":{
+		"message":"date de fin"
+	},
 	"baseevent_summary":{
 		"message":"résumé"
 	},

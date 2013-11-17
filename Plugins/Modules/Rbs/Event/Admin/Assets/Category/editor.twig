@@ -10,7 +10,7 @@
 		<rbs-field-text property="title" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'title'), ['ucf']) }}"
 			rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.event.documents.category.synchronize-title-label', ['ucf']) }}">
+			sync-title="{{ i18nAttr('m.rbs.event.documents.category_synchronize_title_label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<hr />
@@ -27,8 +27,8 @@
 		<rbs-field-picker-multiple property="publicationSections"
 			label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'publicationSections'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Section" allow-creation="true" allow-edition="true"
-			selector-title="{{ i18nAttr('m.rbs.event.documents.category.publicationsections-picker-title', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.event.documents.category.publicationsections-help', ['ucf']) }}</span>
+			selector-title="{{ i18nAttr('m.rbs.event.documents.category_publicationsections_picker_title', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.event.documents.category_publicationsections_help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-date property="startPublication"

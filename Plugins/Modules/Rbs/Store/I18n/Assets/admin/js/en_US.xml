@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.store.admin.js" lcid="en_US">
-	<include id="m.rbs.store.documents"/>
-	<key id="module-name">Stores</key>
-	<key id="module-keywords">stores,shops,webstores</key>
-	<key id="select-webstore">select a store...</key>
-	<key id="webstore-list-loading">loading stores list</key>
-</i18n>

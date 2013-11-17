@@ -332,30 +332,6 @@
 	"github":{
 		"message":"GitHub"
 	},
-	"status_draft":{
-		"message":"draft"
-	},
-	"status_frozen":{
-		"message":"frozen"
-	},
-	"status_validcontent":{
-		"message":"validated content"
-	},
-	"status_valid":{
-		"message":"validated"
-	},
-	"status_validation":{
-		"message":"to validate"
-	},
-	"status_unpublishable":{
-		"message":"unpublishable"
-	},
-	"status_publishable":{
-		"message":"publishable"
-	},
-	"status_filed":{
-		"message":"filed"
-	},
 	"draft_description":{
 		"message":"This document is draft."
 	},

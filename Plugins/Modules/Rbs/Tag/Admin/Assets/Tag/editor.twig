@@ -16,17 +16,17 @@
 		<rbs-field property="color" required="true" label="{{ i18nAttr(propertyKey('Rbs_Tag_Tag', 'color'), ['ucf']) }}">
 			<rbs-tag-color-selector ng-model="document.color" icon-size="icon-2x"></rbs-tag-color-selector>
 				<span class="help-block">
-					{{ i18n('m.rbs.tag.documents.tag.color-help') }}
+					{{ i18n('m.rbs.tag.admin.tag_color_help') | raw }}
 				</span>
 		</rbs-field>
 
 		<rbs-field property="userTag" required="true" label="{{ i18nAttr(propertyKey('Rbs_Tag_Tag', 'userTag'), ['ucf']) }}">
 			<switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
 			<span class="help-block">
-				{{ i18n('m.rbs.tag.documents.tag.usertag-help') }}
+				{{ i18n('m.rbs.tag.admin.tag_usertag_help') | raw }}
 			</span>
 			<span class="help-block" ng-if="! document.isNew()">
-				{{ i18n('m.rbs.tag.documents.tag.usertag-cannot-be-modified') }}
+				{{ i18n('m.rbs.tag.admin.tag_usertag_cannot_be_modified') }}
 			</span>
 		</rbs-field>
 
@@ -37,11 +37,11 @@
 		<rbs-field-picker-multiple
 				property="children" label="{{ i18nAttr(propertyKey('Rbs_Tag_Tag', 'children'), ['ucf']) }}"
 				accepted-model="Rbs_Tag_Tag"
-				selector-title="{{ i18nAttr('m.rbs.tag.documents.tag.children-selector-title', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.tag.admin.tag_children_selector_title', ['ucf']) }}"
 				allow-creation="true"
 				picker="model">
 				<span class="help-block">
-					{{ i18n('m.rbs.tag.documents.tag.children-help') }}
+					{{ i18n('m.rbs.tag.admin.tag_children_help') | raw }}
 				</span>
 		</rbs-field-picker-multiple>
 
