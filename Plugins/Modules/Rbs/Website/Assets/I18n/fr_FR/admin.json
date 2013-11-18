@@ -33,7 +33,7 @@
 		"message":"\n\t\tNom utilisé dans l'URL\n\t"
 	},
 	"topic_section_functions":{
-		"message":"$'0':'AUCUNE FONCTION N\\'EST CONFIGURéE POUR CETTE SECTION.','ONE':'CETTE SECTION DISPOSE DE LA FONCTION SUIVANTE :','OTHER':'CETTE SECTION DISPOSE DES $$ fonctions suivantes :'}"
+		"message":"{'0':'AUCUNE FONCTION N\\'EST CONFIGURéE POUR CETTE SECTION.','ONE':'CETTE SECTION DISPOSE DE LA FONCTION SUIVANTE :','OTHER':'CETTE SECTION DISPOSE DES $$ fonctions suivantes :'}"
 	},
 	"topic_configure_section_functions_link":{
 		"message":"configurer les fonctions de cette section"

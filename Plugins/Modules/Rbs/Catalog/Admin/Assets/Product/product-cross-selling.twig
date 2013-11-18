@@ -3,14 +3,14 @@
 		<h2 class="ng-binding">
 			<a href="(= product | documentURL:'form' =)">(= product.label =)</a>
 			<small>
-				{{ i18n('m.rbs.catalog.admin.js.product-cross-selling-list', ['ucf']) }}
+				{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}
 			</small>
 		</h2>
 	</div>
 	<fieldset>
 		<div class="add-elements-bar">
 			<a href="Rbs/Catalog/CrossSellingProductList/new?productId=(=product.id=)" ng-click="cascadeCreateCrossSellingProductList()">
-				{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.crosssellingproductlist-create', ['ucf']) }}
+				{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crosssellingproductlist_create', ['ucf']) }}
 			</a>
 		</div>
 

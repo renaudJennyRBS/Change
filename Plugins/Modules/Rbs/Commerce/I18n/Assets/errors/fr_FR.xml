@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.commerce.errors" lcid="fr_FR">
-	<key id="cart-without-webstore">le panier n'est pas relié à une boutique</key>
-	<key id="line-without-quantity">la ligne {number} ne contient pas une quantité valide</key>
-	<key id="line-without-sku">la ligne {number} ne possede pas d'article valide</key>
-	<key id="line-without-price">la ligne {number} ne possede pas un prix valide</key>
-	<key id="cart-reservation-error">impossible de reserver certain produit</key>
-</i18n>

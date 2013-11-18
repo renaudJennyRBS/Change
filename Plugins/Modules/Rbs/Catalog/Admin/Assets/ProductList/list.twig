@@ -1,23 +1,23 @@
 <div ng-controller="Rbs_Catalog_ProductList_ProductListController">
 	<rbs-workspace-config menu="Rbs_Catalog">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_ProductList'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.documents.productlist-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_ProductList'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.productlist_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.documents.productlist-list', ['ucf']) }}"></page-header>
+	<page-header sub-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Catalog_ProductList" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Catalog_ProductList' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.documents.productlist-create', ['ucf']) }}</a>
-		<a href ng-href="(= 'Rbs_Catalog_SectionProductList' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.documents.sectionproductlist-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Catalog_ProductList' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.admin.productlist_create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Catalog_SectionProductList' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.admin.sectionproductlist_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsCatalogProductList" model="Rbs_Catalog_ProductList" activable="true"
 		filter-query="query" modification-date="false" load-query="loadQuery">
 		<quick-actions>
-			<a href="(= doc | documentURL:'productListItems' =)">{{ i18nAttr('m.rbs.catalog.documents.productlist.products') }}</a>
+			<a href="(= doc | documentURL:'productListItems' =)">{{ i18nAttr('m.rbs.catalog.documents.productlist_products') }}</a>
 			|| [action default]
 		</quick-actions>
 

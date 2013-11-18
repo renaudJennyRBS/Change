@@ -29,10 +29,10 @@
 					if (scope.document.product)
 					{
 						Breadcrumb.setLocation([
-							[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-							[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(scope.document.product, 'list')],
+							[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
+							[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(scope.document.product, 'list')],
 							[scope.document.product.label, UrlManager.getUrl(scope.document.product, 'form') ],
-							[i18n.trans('m.rbs.catalog.admin.js.cross-selling-list | ucf'), "Rbs/Catalog/Product"]],
+							[i18n.trans('m.rbs.catalog.adminjs.cross_selling_list | ucf'), "Rbs/Catalog/Product"]],
 							[scope.document.label, UrlManager.getUrl(scope.document, 'form')]
 						);
 					}

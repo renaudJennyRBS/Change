@@ -10,8 +10,8 @@
 		Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), "Rbs/Catalog/Product"]
+			[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
+			[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), "Rbs/Catalog/Product"]
 		]);
 
 		$scope.$on('$destroy', function () {
@@ -35,10 +35,10 @@
 			REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function(product){
 				Loading.stop();
 				Breadcrumb.setLocation([
-					[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-					[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(product, 'list')],
+					[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
+					[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(product, 'list')],
 					[product.label, UrlManager.getUrl(product, 'form') ],
-					[i18n.trans('m.rbs.price.admin.js.price-list | ucf'), "Rbs/Catalog/Product"]]
+					[i18n.trans('m.rbs.price.adminjs.price_list | ucf'), "Rbs/Catalog/Product"]]
 				);
 				$scope.product = product;
 				updatePricesURL();
@@ -125,8 +125,8 @@
 		//Workspace.collapseLeftSidebar();
 
 		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), "Rbs/Catalog/Product"]
+			[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
+			[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), "Rbs/Catalog/Product"]
 		]);
 
 		$scope.$on('$destroy', function () {
@@ -141,10 +141,10 @@
 			REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function(product){
 				Loading.stop();
 				Breadcrumb.setLocation([
-					[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-					[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(product, 'list')],
+					[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
+					[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(product, 'list')],
 					[product.label, UrlManager.getUrl(product, 'form') ],
-					[i18n.trans('m.rbs.catalog.admin.js.cross-selling-list | ucf'), "Rbs/Catalog/Product"]]
+					[i18n.trans('m.rbs.catalog.adminjs.cross_selling_list | ucf'), "Rbs/Catalog/Product"]]
 				);
 				$scope.product = product;
 				$scope.loadQuery = Query.simpleQuery('Rbs_Catalog_CrossSellingProductList', 'product', product.id);
@@ -163,8 +163,8 @@
 			Actions.register({
 				name: 'Rbs_Catalog_RemoveProductFromProductLists',
 				models: '*',
-				description: i18n.trans('m.rbs.catalog.admin.js.remove-product-from-lists'),
-				label: i18n.trans('m.rbs.catalog.admin.js.remove'),
+				description: i18n.trans('m.rbs.catalog.adminjs.remove_products_from_list'),
+				label: i18n.trans('m.rbs.catalog.adminjs.remove'),
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
 					var productListIds = [];

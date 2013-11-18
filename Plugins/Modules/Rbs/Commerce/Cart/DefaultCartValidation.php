@@ -22,7 +22,7 @@ class DefaultCartValidation
 
 			if (!$cart->getWebStoreId())
 			{
-				$message = $i18nManager->trans('m.rbs.commerce.errors.cart-without-webstore', array('ucf'));
+				$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_webstore', array('ucf'));
 				$err = new CartError($message, null);
 				$errors[] = $err;
 				return;
@@ -32,19 +32,19 @@ class DefaultCartValidation
 			{
 				if (!$line->getQuantity())
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.errors.line-without-quantity', array('ucf'), array('number' => $line->getNumber()));
+					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_quantity', array('ucf'), array('number' => $line->getNumber()));
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
 				elseif (count($line->getItems()) === 0)
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.errors.line-without-sku', array('ucf'), array('number' => $line->getNumber()));
+					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_sku', array('ucf'), array('number' => $line->getNumber()));
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
 				elseif ($line->getUnitPriceValue() === null)
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.errors.line-without-price', array('ucf'), array('number' => $line->getNumber()));
+					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_price', array('ucf'), array('number' => $line->getNumber()));
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
@@ -56,7 +56,7 @@ class DefaultCartValidation
 				$unreserved = $cart->getCommerceServices()->getStockManager()->setReservations($cart->getIdentifier(), $reservations);
 				if (count($unreserved))
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.errors.cart-reservation-error', array('ucf'));
+					$message = $i18nManager->trans('m.rbs.commerce.front.cart_reservation_error', array('ucf'));
 					$err = new CartError($message);
 					$errors[] = $err;
 				}

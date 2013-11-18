@@ -1,0 +1,74 @@
+{
+	"cart_without_webstore":{
+		"message":"le panier n'est pas relié à une boutique"
+	},
+	"line_without_quantity":{
+		"message":"la ligne $NUMBER$ ne contient pas une quantité valide"
+	},
+	"line_without_sku":{
+		"message":"la ligne $NUMBER$ ne possède pas d'article valide"
+	},
+	"line_without_price":{
+		"message":"la ligne $NUMBER$ ne possède pas un prix valide"
+	},
+	"cart_reservation_error":{
+		"message":"impossible de réserver certains produits"
+	},
+	"add_to_cart":{
+		"message":"ajouter au panier"
+	},
+	"view_my_cart":{
+		"message":"voir mon panier"
+	},
+	"my_cart":{
+		"message":"mon panier"
+	},
+	"empty":{
+		"message":"vide"
+	},
+	"empty_cart":{
+		"message":"Votre panier est vide."
+	},
+	"article":{
+		"message":"article"
+	},
+	"articles":{
+		"message":"articles"
+	},
+	"excluding_fees":{
+		"message":"hors frais de port"
+	},
+	"update":{
+		"message":"mettre à jour"
+	},
+	"remove":{
+		"message":"supprimer"
+	},
+	"designation":{
+		"message":"désignation"
+	},
+	"unit_price":{
+		"message":"prix unitaire"
+	},
+	"quantity":{
+		"message":"quantité"
+	},
+	"total_price":{
+		"message":"prix total"
+	},
+	"taxes_amount":{
+		"message":"montant des taxes"
+	},
+	"amount_without_tax":{
+		"message":"montant HT"
+	},
+	"amount_with_tax":{
+		"message":"montant TTC"
+	},
+	"cart_contents":{
+		"message":"contenu du panier"
+	},
+	"actions":{
+		"message":"actions"
+	}
+}
