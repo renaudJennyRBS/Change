@@ -1,0 +1,20 @@
+{
+	"collection_items":{
+		"message":"éléments"
+	},
+	"collection_locked":{
+		"message":"vérrouillée"
+	},
+	"item_value":{
+		"message":"valeur"
+	},
+	"item_locked":{
+		"message":"vérrouillé"
+	},
+	"collection":{
+		"message":"collection"
+	},
+	"item":{
+		"message":"élément"
+	}
+}

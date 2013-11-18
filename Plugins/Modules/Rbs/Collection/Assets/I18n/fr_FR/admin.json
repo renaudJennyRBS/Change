@@ -1,0 +1,29 @@
+{
+	"module_name":{
+		"message":"collections"
+	},
+	"module_keywords":{
+		"message":"listes,collections"
+	},
+	"collection_error_duplicated_item_value":{
+		"message":"la valeur d'un élément doit être unique au sein d'une même collection. Les éléments $ITEM1LABEL$ et $ITEM2LABEL$ ont la même valeur $VALUE$."
+	},
+	"collection_locked_warning":{
+		"message":"\n\t\t<span class=\"label label-danger\">Attention!<\/span> Cette collection est vérouillée car elle est utilisée par l'un des plugins de votre installation.\n\t\t\tVous ne pourrez donc pas la supprimer, ni changer son code.\n\t"
+	},
+	"item_locked_warning":{
+		"message":"\n\t\t<span class=\"label label-danger\">Attention!<\/span> Cet élément est vérouillé car il est utilisé par l'un des plugins de votre installation.\n\t\t\tVous ne pourrez donc pas le supprimer, ni changer sa valeur.\n\t"
+	},
+	"collection_list":{
+		"message":"collections"
+	},
+	"collection_create":{
+		"message":"ajouter une collection"
+	},
+	"item_list":{
+		"message":"éléments"
+	},
+	"item_create":{
+		"message":"ajouter un élément"
+	}
+}
