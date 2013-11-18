@@ -18,9 +18,9 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
-				'message' => new I18nString($i18n, 'm.rbs.simpleform.documents.form.confirmationmode-message', array('ucf')),
-				'popin' => new I18nString($i18n, 'm.rbs.simpleform.documents.form.confirmationmode-popin', array('ucf')),
-				'page' => new I18nString($i18n, 'm.rbs.simpleform.documents.form.confirmationmode-page', array('ucf'))
+				'message' => new I18nString($i18n, 'm.rbs.simpleform.admin.form_confirmationmode_message', array('ucf')),
+				'popin' => new I18nString($i18n, 'm.rbs.simpleform.admin.form_confirmationmode_popin', array('ucf')),
+				'page' => new I18nString($i18n, 'm.rbs.simpleform.admin.form_confirmationmode_page', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Simpleform_ConfirmationModes', $collection);
 			$event->setParam('collection', $collection);
@@ -63,10 +63,10 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = new \Change\Collection\CollectionArray('Rbs_Simpleform_AutoCapitalizeOptions', array(
-				'none' => new I18nString($i18n, 'm.rbs.simpleform.documents.field.parameters-auto-capitalize-none', array('ucf')),
-				'sentences' => new I18nString($i18n, 'm.rbs.simpleform.documents.field.parameters-auto-capitalize-sentences', array('ucf')),
-				'words' => new I18nString($i18n, 'm.rbs.simpleform.documents.field.parameters-auto-capitalize-words', array('ucf')),
-				'characters' => new I18nString($i18n, 'm.rbs.simpleform.documents.field.parameters-auto-capitalize-characters', array('ucf'))
+				'none' => new I18nString($i18n, 'm.rbs.simpleform.admin.field_parameters_auto_capitalize_none', array('ucf')),
+				'sentences' => new I18nString($i18n, 'm.rbs.simpleform.admin.field_parameters_auto_capitalize_sentences', array('ucf')),
+				'words' => new I18nString($i18n, 'm.rbs.simpleform.admin.field_parameters_auto_capitalize_words', array('ucf')),
+				'characters' => new I18nString($i18n, 'm.rbs.simpleform.admin.field_parameters_auto_capitalize_characters', array('ucf'))
 			));
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

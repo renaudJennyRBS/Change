@@ -1,20 +1,20 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" label="{{ i18nAttr('m.rbs.simpleform.documents.form.label', ['ucf']) }}">
+		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.title', ['ucf']) }}"
-			sync-title="{{ i18nAttr('m.rbs.simpleform.documents.form.synchronize-title-label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'title'), ['ucf']) }}"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<hr />
 
 		<rbs-field property="confirmationMode" required="true"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationmode', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationMode'), ['ucf']) }}">
 			<select class="form-control" ng-required="true" ng-model="document.confirmationMode"
 				rbs-items-from-collection="Rbs_Simpleform_ConfirmationModes">
 			</select>
@@ -22,13 +22,13 @@
 
 		<div ng-hide="document.confirmationMode == 'page'">
 			<rbs-field-rich-text property="confirmationMessage" profile="Website"
-				label="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationmessage', ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationMessage'), ['ucf']) }}">
 			</rbs-field-rich-text>
 		</div>
 		<div ng-show="document.confirmationMode == 'page'">
 			<rbs-field-picker property="confirmationPage" accepted-model="Rbs_Website_StaticPage"
 				allow-creation="true" allow-edition="true"
-				label="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationpage', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationPage'), ['ucf']) }}"
 				selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationpage-picker-title', ['ucf']) }}">
 			</rbs-field-picker>
 		</div>
@@ -36,56 +36,54 @@
 		<hr />
 
 		<rbs-field-picker-multiple property="receiverUsers" accepted-model="Rbs_User_User" allow-creation="true"
-			allow-edition="true" label="{{ i18nAttr('m.rbs.simpleform.documents.form.receiverusers', ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.receiverusers-picker-title', ['ucf']) }}">
+			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverUsers'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.simpleform.admin.form_receiverusers_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
-		<rbs-field-picker-multiple property="receiverUsers" accepted-model="Rbs_User_Group" allow-creation="true"
-			allow-edition="true" label="{{ i18nAttr('m.rbs.simpleform.documents.form.receivergroups', ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.receivergroups-picker-title', ['ucf']) }}">
+		<rbs-field-picker-multiple property="receiverGroups" accepted-model="Rbs_User_Group" allow-creation="true"
+			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverGroups'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.simpleform.admin.form_receivergroups_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
 		<rbs-field-text property="receiverEmails"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.receiveremails', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverEmails'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<hr />
 
-		<rbs-field-boolean property="useCaptcha" label="{{ i18nAttr('m.rbs.simpleform.documents.form.usecaptcha', ['ucf']) }}">
 		</rbs-field-boolean>
 		<rbs-field-boolean property="sendAcknowledgment"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.sendacknowledgment', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'sendAcknowledgment'), ['ucf']) }}">
 		</rbs-field-boolean>
 		<rbs-field-boolean property="saveResponses"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.saveresponses', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'saveResponses'), ['ucf']) }}">
 		</rbs-field-boolean>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='publication'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.publication-properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
-			allow-edition="true" label="{{ i18nAttr('m.rbs.simpleform.documents.form.publicationsections', ['ucf']) }}"
+			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'publicationSections'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.publicationsections-picker-title', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.simpleform.documents.form.publicationsections-help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-date property="startPublication"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.startPublication', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'startPublication'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date property="endPublication"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.form.endPublication', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'endPublication'), ['ucf']) }}">
 		</rbs-field-date>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='fields'"
-		data-form-section-label="{{ i18nAttr('m.rbs.simpleform.documents.field-list', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.simpleform.admin.field_list', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<div class="add-elements-bar">
 			<a href="javascript:;" ng-click="fieldManager.cascadeCreate()">
-				{{ i18n('m.rbs.simpleform.admin.js.field-create', ['ucf']) }}
+				{{ i18n('m.rbs.simpleform.admin.field_create', ['ucf']) }}
 			</a>
 		</div>
 
@@ -124,7 +122,7 @@
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.js.status', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>

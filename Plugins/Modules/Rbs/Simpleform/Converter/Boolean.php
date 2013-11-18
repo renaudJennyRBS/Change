@@ -21,7 +21,7 @@ class Boolean extends \Rbs\Simpleform\Converter\Trim
 		{
 			return false;
 		}
-		$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-boolean', array('ucf'));
+		$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_boolean', array('ucf'));
 		return new Validation\Error(array($message));
 	}
 

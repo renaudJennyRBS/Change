@@ -15,18 +15,18 @@ class DateTime extends \Rbs\Simpleform\Converter\AbstractConverter
 	{
 		if (!is_array($value))
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-array', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_array', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 
 		if (!isset($value['date']) || trim($value['date']) === '')
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.must-select-date-and-time', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.must_select_date_and_time', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 		elseif (!isset($value['time']) || trim($value['time']) === '')
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.must-select-date-and-time', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.must_select_date_and_time', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 

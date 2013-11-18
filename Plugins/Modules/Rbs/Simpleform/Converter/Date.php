@@ -16,7 +16,7 @@ class Date extends \Rbs\Simpleform\Converter\AbstractConverter
 		$value = trim($value);
 		if (!is_string($value))
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-string', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_string', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 

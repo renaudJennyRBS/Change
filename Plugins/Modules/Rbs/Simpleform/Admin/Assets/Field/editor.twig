@@ -3,23 +3,23 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.general-properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" label="{{ i18nAttr('m.rbs.simpleform.documents.field.label', ['ucf']) }}">
+		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.field.title', ['ucf']) }}"
-			sync-title="{{ i18nAttr('m.rbs.simpleform.documents.field.synchronize-title-label', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'title'), ['ucf']) }}"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field property="fieldTypeCode" required="true"
-			label="{{ i18nAttr('m.rbs.simpleform.documents.field.fieldTypeCode', ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'fieldTypeCode'), ['ucf']) }}">
 			<select class="form-control" ng-required="true" ng-model="document.fieldTypeCode" ng-change="fieldTypeUpdated()"
 				rbs-items-from-collection="Rbs_Simpleform_FieldTypes">
 				<option value=""></option>
 			</select>
 		</rbs-field>
 
-		<rbs-field-boolean property="required" label="{{ i18nAttr('m.rbs.simpleform.documents.field.required', ['ucf']) }}">
+		<rbs-field-boolean property="required" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'required'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<hr />

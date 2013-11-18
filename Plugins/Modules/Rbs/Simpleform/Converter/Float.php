@@ -19,7 +19,7 @@ class Float extends \Rbs\Simpleform\Converter\Trim
 		}
 		elseif (!$this->i18nManager)
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-float', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_float', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 		else
@@ -29,7 +29,7 @@ class Float extends \Rbs\Simpleform\Converter\Trim
 			$parsed = $formatter->parse($value, \NumberFormatter::TYPE_DOUBLE, $position);
 			if ($parsed === false || $position != strlen($value))
 			{
-				$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-float', array('ucf'));
+				$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_float', array('ucf'));
 				return new Validation\Error(array($message));
 			}
 		}
