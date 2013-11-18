@@ -2,5 +2,6 @@
 	"type":"module",
 	"vendor":"Rbs",
 	"name":"Collection",
-	"package": "Core"
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }

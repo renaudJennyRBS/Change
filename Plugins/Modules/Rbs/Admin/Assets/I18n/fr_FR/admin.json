@@ -26,6 +26,12 @@
 	"add":{
 		"message":"ajouter"
 	},
+	"delete":{
+		"message":"supprimer"
+	},
+	"edit":{
+		"message":"éditer"
+	},
 	"replace_by":{
 		"message":"remplacer par"
 	},
@@ -207,10 +213,10 @@
 		"message":"retourner<small>à la liste<\/small>"
 	},
 	"btnSave":{
-		"message":"enregistrer<small>les modifications <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+		"message":"enregistrer<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
 	"btnRevert":{
-		"message":"annuler<small>les modifications <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+		"message":"annuler<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
 	"titleRevert":{
 		"message":"Rétablir les dernières données enregistrées"
@@ -341,8 +347,14 @@
 	"move_up":{
 		"message":"monter"
 	},
+	"move_top":{
+		"message":"monter au début"
+	},
 	"move_down":{
 		"message":"descendre"
+	},
+	"move_bottom":{
+		"message":"descendre à la fin"
 	},
 	"submit":{
 		"message":"valider"

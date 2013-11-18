@@ -84,10 +84,10 @@
 		"message":"go back <small>to list<\/small>"
 	},
 	"btnSave":{
-		"message":"save<small>changes <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+		"message":"save<small>changes <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
 	"btnRevert":{
-		"message":"Revert<small>changes <span ng-if=\"changes.length\">((=changes.length=))<\/span><\/small>"
+		"message":"Revert<small>changes <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
 	"titleRevert":{
 		"message":"Revert to the last saved data"

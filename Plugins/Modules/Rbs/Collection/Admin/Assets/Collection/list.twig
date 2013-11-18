@@ -1,15 +1,15 @@
 <div>
 	<rbs-workspace-config menu="Rbs_Collection">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Collection'|rbsURL:'home' =)">{{ i18n('m.rbs.collection.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Collection'|rbsURL:'home' =)">{{ i18n('m.rbs.collection.admin.module_name', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.collection.documents.collection-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.collection.admin.collection_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Collection_Collection" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Collection_Collection' | documentURL:'new' =)">{{ i18n('m.rbs.collection.documents.collection-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Collection_Collection' | documentURL:'new' =)">{{ i18n('m.rbs.collection.admin.collection_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Collection_Collection" filter-query="query">

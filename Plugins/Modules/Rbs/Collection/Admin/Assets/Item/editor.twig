@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.collection.documents.item.item-locked-warning') }}</p>
+		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.collection.admin.item_locked_warning') | raw }}</p>
 
 		<rbs-field-text
 			property="label" required="true"
@@ -13,7 +13,7 @@
 
 		<rbs-field-text
 			property="title" required="true"
-			rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.collection.documents.item.synchronize-title-label', ['ucf']) }}"
+			rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
 			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'title'), ['ucf']) }}"
 			input-class="input-block-level">
 		</rbs-field-text>

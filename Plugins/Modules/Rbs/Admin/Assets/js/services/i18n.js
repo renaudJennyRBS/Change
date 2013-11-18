@@ -28,7 +28,7 @@
 				string = __change.i18n[path][key];
 				// Replace parameters (if any).
 				angular.forEach(params, function (value, key) {
-					string = string.replace(new RegExp('\\{' + key + '\\}', 'g'), value);
+					string = string.replace(new RegExp('\\$' + key + '\\$', 'gi'), value);
 				});
 			}
 
