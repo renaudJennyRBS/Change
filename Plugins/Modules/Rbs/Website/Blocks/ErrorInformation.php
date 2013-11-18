@@ -14,7 +14,7 @@ class ErrorInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-
+		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.error', $ucf));
 		$this->addInformationMeta('codeHttp', Property::TYPE_INTEGER, true, 404)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.error-codehttp', $ucf));

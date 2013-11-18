@@ -33,6 +33,7 @@ class Menu extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('templateName', 'menu-vertical.twig');
 		$parameters->addParameterMeta('showTitle', false);
+		$parameters->addParameterMeta('contextual', false);
 		$parameters->addParameterMeta('documentId');
 		$parameters->addParameterMeta('maxLevel', 1);
 		$parameters->addParameterMeta('pageId');
@@ -48,7 +49,7 @@ class Menu extends Block
 			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
 
-		if ($parameters->getParameter('documentId') === null)
+		if (!$parameters->getParameter('documentId') && $parameters->getParameter('contextual'))
 		{
 			$parameters->setParameterValue('documentId', $parameters->getParameter('sectionId'));
 		}
@@ -89,8 +90,9 @@ class Menu extends Block
 			$this->i18nManager = $event->getApplicationServices()->getI18nManager();
 			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
 			$attributes['uniqueId'] = uniqid();
+			return $parameters->getTemplateName();
 		}
-		return $parameters->getTemplateName();
+		return null;
 	}
 
 	/**

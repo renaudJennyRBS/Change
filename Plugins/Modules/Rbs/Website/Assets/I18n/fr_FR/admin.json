@@ -140,6 +140,9 @@
 	"menu_templatename":{
 		"message":"mode de rendu"
 	},
+	"menu_contextual":{
+		"message":"contextuel à la rubrique"
+	},
 	"menu_documentid":{
 		"message":"document racine"
 	},
@@ -301,5 +304,20 @@
 	},
 	"configure_functions":{
 		"message":"configurer"
+	},
+	"richtext_content":{
+		"message":"texte"
+	},
+	"thread":{
+		"message":"fil d'ariane"
+	},
+	"thread_separator":{
+		"message":"séparateur de lien"
+	},
+	"block_module_name":{
+		"message":"module source du fichier twig"
+	},
+	"block_template_name":{
+		"message":"fichier twig"
 	}
 }
