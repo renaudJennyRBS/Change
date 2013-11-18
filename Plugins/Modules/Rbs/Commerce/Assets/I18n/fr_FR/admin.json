@@ -1,0 +1,11 @@
+{
+	"cart_label":{
+		"message":"détail du panier"
+	},
+	"cart_function":{
+		"message":"détail du panier"
+	},
+	"shortcart_label":{
+		"message":"résumé du panier"
+	}
+}

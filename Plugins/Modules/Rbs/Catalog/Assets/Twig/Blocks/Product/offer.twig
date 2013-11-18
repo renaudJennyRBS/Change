@@ -105,12 +105,12 @@
 				</div>
 				<button name="product" type="button" class="btn btn-primary btn-lg" value="{{ parameters.productId }}"
 					onclick="script{{ blockId }}.offer.addProduct(this)">
-					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
+					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 				</button>
 			{% else %}
 				<button name="product" type="button" class="btn btn-primary btn-lg btn-disabled" value="{{ parameters.productId }}"
 					onclick="script{{ blockId }}.offer.addProduct(this)" disabled>
-					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.tpl.add-to-cart', ['ucf']) }}
+					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 				</button>
 			{% endif %}
 		</fieldset>

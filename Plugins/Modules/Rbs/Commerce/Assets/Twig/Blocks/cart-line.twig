@@ -31,11 +31,11 @@
 	<td>
 		<button type="button" class="btn btn-default btn-sm" onclick="script{{ blockId }}.updateLine(this)"
 			value="{{ cartLine.key }}" data-quantity="{{ cartLine.quantity }}"
-			title="{{ i18nAttr('m.rbs.commerce.tpl.update', ['ucf']) }}">
+			title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
 			<i class="glyphicon glyphicon-refresh"></i>
 		</button>
 		<button type="button" class="btn btn-default btn-sm" onclick="script{{ blockId }}.deleteLine(this)"
-			value="{{ cartLine.key }}" title="{{ i18nAttr('m.rbs.commerce.tpl.remove', ['ucf']) }}">
+			value="{{ cartLine.key }}" title="{{ i18nAttr('m.rbs.commerce.front.remove', ['ucf']) }}">
 			<i class="glyphicon glyphicon-remove"></i>
 		</button>
 	</td>
