@@ -13,7 +13,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 1,
 			"templateName" : "menu-inline.twig"
 		}
@@ -57,7 +57,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 2,
 			"templateName" : "menu-scroll-inverse.twig"
 		}
@@ -97,7 +97,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 1,
 			"templateName" : "menu-vertical.twig",
 			"showTitle" : true
@@ -108,7 +108,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 1,
 			"templateName" : "menu-vertical.twig",
 			"showTitle" : false
@@ -119,7 +119,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 2,
 			"templateName" : "menu-vertical.twig",
 			"showTitle" : true
@@ -130,7 +130,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 3,
 			"templateName" : "menu-vertical.twig",
 			"showTitle" : true
@@ -141,7 +141,7 @@
 		"type" : "block",
 		"name" : "Rbs_Website_Menu",
 		"parameters" : {
-			"documentId" : 100019,
+			"documentId" : null,
 			"maxLevel" : 1,
 			"templateName" : "menu-inline.twig"
 		}

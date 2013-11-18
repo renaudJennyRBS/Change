@@ -25,9 +25,10 @@ interface PageTemplate
 	public function getHtml();
 
 	/**
+	 * @param integer $websiteId
 	 * @return \Change\Presentation\Layout\Layout
 	 */
-	public function getContentLayout();
+	public function getContentLayout($websiteId = null);
 
 	/**
 	 * @return \Datetime

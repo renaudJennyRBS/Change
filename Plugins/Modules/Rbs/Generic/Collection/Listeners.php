@@ -69,6 +69,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Simpleform_AutoCapitalizeOptions':
 					(new \Rbs\Simpleform\Collection\Collections())->addAutoCapitalizeOptions($event);
 					break;
+				case 'Rbs_Theme_WebsiteIds':
+					(new \Rbs\Theme\Collection\Collections())->addWebsiteIds($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -87,7 +90,8 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Tag_Collection_TagModules',
 				'Rbs_Simpleform_ConfirmationModes',
 				'Rbs_Simpleform_FieldTypes',
-				'Rbs_Simpleform_AutoCapitalizeOptions'
+				'Rbs_Simpleform_AutoCapitalizeOptions',
+				'Rbs_Theme_WebsiteIds'
 			));
 			$event->setParam('codes', $codes);
 		};

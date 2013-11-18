@@ -22,8 +22,9 @@ class DefaultPageResult
 		$result = $event->getPageResult();
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 		$applicationServices->getThemeManager()->setCurrent($pageTemplate->getTheme());
-
-		$templateLayout = $pageTemplate->getContentLayout();
+		$section = $page->getSection();
+		$websiteId =  ($section && $section->getWebsite()) ? $section->getWebsite()->getId() : null;
+		$templateLayout = $pageTemplate->getContentLayout($websiteId);
 
 		$pageLayout = $page->getContentLayout();
 		$containers = array();
