@@ -1,0 +1,20 @@
+{
+	"brand":{
+		"message":"marque"
+	},
+	"brand_list":{
+		"message":"marques"
+	},
+	"brand_create":{
+		"message":"ajouter une marque"
+	},
+	"module_name":{
+		"message":"marques"
+	},
+	"module_keywords":{
+		"message":"marques"
+	},
+	"select_visual":{
+		"message":"sélectionner le visuel"
+	}
+}
