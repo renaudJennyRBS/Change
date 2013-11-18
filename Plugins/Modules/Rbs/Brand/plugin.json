@@ -1,6 +1,7 @@
 {
 	"type":"module",
-	"vendor": "Rbs",
-	"name": "Brand",
-	"package": "ECom"
+	"vendor":"Rbs",
+	"name":"Brand",
+	"package":"ECom",
+	"defaultLCID":"fr_FR"
 }

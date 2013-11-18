@@ -1,0 +1,14 @@
+{
+	"brand":{
+		"message":"marque"
+	},
+	"brand_description":{
+		"message":"description"
+	},
+	"brand_visual":{
+		"message":"visuel"
+	},
+	"brand_websiteurl":{
+		"message":"URL du site web"
+	}
+}

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.brand.documents.brand" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="description">description</key>
-	<key id="visual">visuel</key>
-	<key id="select-visual">sélectionner le visuel</key>
-	<key id="websiteurl">URL du site web</key>
-</i18n>

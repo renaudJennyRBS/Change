@@ -2,15 +2,15 @@
 
 	<rbs-workspace-config menu="Rbs_Brand">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.brand.admin.js.module-name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.brand.admin.module_name', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.brand.documents.brand-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.brand.admin.brand_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Brand_Brand" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Brand_Brand' | documentURL:'new' =)">{{ i18n('m.rbs.brand.documents.brand-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Brand_Brand' | documentURL:'new' =)">{{ i18n('m.rbs.brand.admin.brand_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsBrandBrand"

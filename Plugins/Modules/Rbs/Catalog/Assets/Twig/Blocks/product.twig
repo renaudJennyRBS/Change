@@ -13,7 +13,11 @@
 			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
 		</div>
 		<div class="col-sm-6 col-md-4">
+			{% if product.hasVariants %}
+			{% include 'Rbs_Catalog/Blocks/Product/variant-offer.twig' %}
+			{% else %}
 			{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
+			{% endif %}
 
 			<!-- TODO: handle reviews and rating -->
 			<!--<p class="rating">

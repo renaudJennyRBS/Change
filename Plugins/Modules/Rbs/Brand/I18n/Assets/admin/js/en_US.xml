@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.brand.admin.js" lcid="en_US">
-	<include id="m.rbs.brand.documents"/>
-	<key id="module-name">brands</key>
-	<key id="module-keywords">brands</key>
-</i18n>

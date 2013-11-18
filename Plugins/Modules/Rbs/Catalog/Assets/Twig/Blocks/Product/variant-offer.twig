@@ -21,6 +21,10 @@
 					console.log(JSON.parse(jqXHR.responseText), textStatus, errorThrown);
 				}
 			})
+		},
+		updateVariant: function(select)
+		{
+			var variantId = select.options[select.selectedIndex].value;
 		}
 	}
 </script>
@@ -94,6 +98,22 @@
 			{% endif %}
 		{% endblock %}
 
+		{% block variants %}
+			{% if productPresentation.getVariants %}
+			<p>J'ai des variantes !</p>
+				<div class="form-group">
+					<label for="product-variant">Variantes</label>
+					<select class="form-control" name="product-variant">
+					{% for variant in productPresentation.getVariants %}
+					<option value="{{ variant.id }}">{{ variant.title }}</option>
+					{% endfor %}
+					</select>
+				</div>
+			{% else %}
+			<p>J'ai pas de variante !</p>
+			{% endif %}
+		{% endblock%}
+
 		<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
 		<fieldset>
 			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
@@ -101,7 +121,7 @@
 			{% if productPresentation.getStock.level %}
 				<div class="form-group">
 					<label for="product-quantity">Quantité</label>
-					<input class="form-control" name="quantity" value="1" type="number" min="1" max="{{ productPresentation.getStock.level }}"/>
+					<input class="form-control" name="quantity" value="1" type="number" />
 				</div>
 				<button name="product" type="button" class="btn btn-primary btn-lg" value="{{ parameters.productId }}"
 					onclick="script{{ blockId }}.offer.addProduct(this)">
