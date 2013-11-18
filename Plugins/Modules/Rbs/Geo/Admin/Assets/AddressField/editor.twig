@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.documents.addressfield.locked-warning') }}</p>
+		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.admin.addressfield_locked_warning') | raw }}</p>
 
 		<rbs-field-text
 				property="code" required="true" ng-disabled="document.locked"
@@ -27,8 +27,8 @@
 		</rbs-field-text>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'collectionCode'), ['ucf']) }}">
-			<select data-ng-model="document.collectionCode" rbs-items-from-collection="Rbs_Collection_Collection_List">
-				<option value=""> {{ i18n('m.rbs.geo.documents.addressfield.select-collectioncode', ['ucf']) }}</option>
+			<select data-ng-model="document.collectionCode" rbs-items-from-collection="Rbs_Collection_Collection_List" class="form-control">
+				<option value=""> {{ i18n('m.rbs.geo.admin.addressfield_select_collectioncode', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 

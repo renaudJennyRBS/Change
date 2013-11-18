@@ -1,0 +1,68 @@
+{
+	"zone":{
+		"message":"zone"
+	},
+	"country":{
+		"message":"pays"
+	},
+	"territorialunit":{
+		"message":"unité territoriale"
+	},
+	"addressfields":{
+		"message":"modèle d'adresse"
+	},
+	"addressfield":{
+		"message":"champ d'adresse"
+	},
+	"zone_country":{
+		"message":"pays"
+	},
+	"zone_title":{
+		"message":"titre"
+	},
+	"addressfield_required":{
+		"message":"requis"
+	},
+	"addressfield_match":{
+		"message":"expression régulière de validation"
+	},
+	"addressfield_locked":{
+		"message":"code vérouillé"
+	},
+	"addressfield_collectioncode":{
+		"message":"valeur de la collection"
+	},
+	"territorialunit_unittype":{
+		"message":"type"
+	},
+	"territorialunit_country":{
+		"message":"pays"
+	},
+	"territorialunit_unitparent":{
+		"message":"unité parente"
+	},
+	"territorialunit_unit_state":{
+		"message":"état"
+	},
+	"territorialunit_unit_departement":{
+		"message":"département"
+	},
+	"territorialunit_unit_region":{
+		"message":"région"
+	},
+	"territorialunit_unit_county":{
+		"message":"comté"
+	},
+	"territorialunit_unit_province":{
+		"message":"province"
+	},
+	"addressfields_fields":{
+		"message":"champs"
+	},
+	"addressfields_fieldsLayoutData":{
+		"message":"mise en page"
+	},
+	"country_addressfields":{
+		"message":"modèle d'adresse"
+	}
+}

@@ -15,16 +15,10 @@
 				input-class="input-block-level">
 		</rbs-field-text>
 
-		<rbs-field-text
-				property="title"
-				label="{{ i18nAttr('m.rbs.geo.documents.zone.title', ['ucf']) }}"
-				input-class="input-block-level">
-		</rbs-field-text>
-
 		<rbs-field-picker
 				property="country" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'country'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_Country"
-				selector-title="{{ i18nAttr('m.rbs.geo.documents.zone.country-picker-title', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.geo.admin.zone_country_picker_title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
 

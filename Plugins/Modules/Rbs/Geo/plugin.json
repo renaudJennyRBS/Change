@@ -2,5 +2,6 @@
 	"type":"module",
 	"vendor":"Rbs",
 	"name":"Geo",
-	"package": "Core"
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }
