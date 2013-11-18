@@ -1,6 +1,7 @@
 {
 	"type":"theme",
-	"vendor": "Rbs",
-	"name": "Base",
-	"package": "Core"
+	"vendor":"Rbs",
+	"name":"Base",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }
