@@ -315,14 +315,14 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 		{
 			$location['publication'][] = array(
 				'ok' => true,
-				'message' => $i18n->trans('m.rbs.seo.admin.document-published-in-lang')
+				'message' => $i18n->trans('m.rbs.seo.admin.document_published_in_lang')
 			);
 		}
 		else
 		{
 			$location['publication'][] = array(
 				'ok' => false,
-				'message' => $i18n->trans('m.rbs.seo.admin.document-not-published-in-lang')
+				'message' => $i18n->trans('m.rbs.seo.admin.document_not_published_in_lang')
 			);
 		}
 
@@ -330,14 +330,14 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 		{
 			$location['publication'][] = array(
 				'ok' => true,
-				'message' => $i18n->trans('m.rbs.seo.admin.section-published-in-lang')
+				'message' => $i18n->trans('m.rbs.seo.admin.section_published_in_lang')
 			);
 		}
 		else
 		{
 			$location['publication'][] = array(
 				'ok' => false,
-				'message' => $i18n->trans('m.rbs.seo.admin.section-not-published-in-lang')
+				'message' => $i18n->trans('m.rbs.seo.admin.section_not_published_in_lang')
 			);
 		}
 
@@ -355,14 +355,14 @@ class DocumentSeo extends \Compilation\Rbs\Seo\Documents\DocumentSeo
 			{
 				$location['publication'][] = array(
 					'ok' => true,
-					'message' => $i18n->trans('m.rbs.seo.admin.detail-function-provided-in-lang')
+					'message' => $i18n->trans('m.rbs.seo.admin.detail_function_provided_in_lang')
 				);
 			}
 			else
 			{
 				$location['publication'][] = array(
 					'ok' => false,
-					'message' => $i18n->trans('m.rbs.seo.admin.detail-function-not-provided-in-lang')
+					'message' => $i18n->trans('m.rbs.seo.admin.detail_function_not_provided_in_lang')
 				);
 			}
 		}

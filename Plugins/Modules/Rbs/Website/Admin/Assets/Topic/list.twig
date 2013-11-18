@@ -18,7 +18,9 @@
 
 	<div ng-if="sectionFunctions && showFunctions" class="well well-small">
 		<button class="close pull-right" type="button" ng-click="toggleFunctions($event, false)">&times;</button>
-		<h5 ng-show="! loadingFunctions" ng-pluralize count="sectionFunctions.length" when="{{ i18nAttr('m.rbs.website.admin.topic_section_functions', ['ucf']) }}"></h5>
+		<h5 ng-show="! loadingFunctions" ng-pluralize count="sectionFunctions.length" when="{0: '{{ i18nAttr('m.rbs.website.admin.topic_section_no_function') }}',
+							one: '{{ i18nAttr('m.rbs.website.admin.topic_section_function') }}',
+							other: '{{ i18nAttr('m.rbs.website.admin.topic_section_functions') }}'}"></h5>
 		<ul>
 			<li ng-repeat="f in sectionFunctions"><strong>(= f.functionLabel =)</strong> <span class="muted">((= f.functionCode =))</span><br/>{{ i18n('m.rbs.website.admin.topic_function_via_page') | raw}} <a href ng-href="(= f.page | documentURL =)">(= f.page.label =)</a></li>
 		</ul>

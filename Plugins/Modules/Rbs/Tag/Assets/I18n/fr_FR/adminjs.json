@@ -1,5 +1,14 @@
 {
 	"tags":{
 		"message":"étiquettes"
+	},
+	"no_available_tag":{
+		"message":"aucune étiquette disponible"
+	},
+	"available_tag":{
+		"message":"une étiquette disponible"
+	},
+	"available_tags":{
+		"message":"{} étiquettes disponibles :"
 	}
 }

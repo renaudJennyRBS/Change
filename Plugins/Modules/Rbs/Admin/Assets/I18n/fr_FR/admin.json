@@ -218,8 +218,14 @@
 	"btnCancelCascade":{
 		"message":"annuler<small>et retourner au formulaire parent<\/small>"
 	},
-	"propertiesModifiedPluralize":{
-		"message":"{'0': 'Aucune propriété n\\'a été modifiée.', 'one': 'Une propriété a été modifiée.', 'other': '{} propriétés ont été modifiées.'}"
+	"no_propertie_modified":{
+		"message": "Aucune propriété n\\'a été modifiée."
+	},
+	"propertie_modified":{
+		"message": "Une propriété a été modifiée."
+	},
+	"properties_modified":{
+		"message": "{} propriétés ont été modifiées."
 	},
 	"date_selector_at":{
 		"message":"à"
@@ -437,11 +443,23 @@
 	"grid_display":{
 		"message":"affichage en grille"
 	},
-	"pagination_total":{
-		"message":"{'0':'aucun élément', 'one': 'un élément', 'other':'{} éléments'}"
+	"pagination_total_no":{
+		"message":"aucun élément"
+	},
+	"pagination_total_one":{
+		"message":"un élément"
+	},
+	"pagination_total_other":{
+		"message":"{} éléments"
+	},
+	"pagination_no_page":{
+		"message":"aucun élément"
+	},
+	"pagination_page":{
+		"message":"une page"
 	},
 	"pagination_pages":{
-		"message":"{'0':'aucun élément', 'one': 'une page', 'other': '{} pages'}"
+		"message":"{} pages"
 	},
 	"on":{
 		"message":"sur"
@@ -518,8 +536,14 @@
 	"select_neither":{
 		"message":"aucun"
 	},
-	"local_copies_message_ng_pluralize":{
-		"message":"{'0': 'Aucune copie locale', 'one': 'Une copie locale', 'other': '{} copies locales'}"
+	"local_copies_message_no":{
+		"message":"Aucune copie locale"
+	},
+	"local_copies_message_one":{
+		"message":"Une copie locale"
+	},
+	"local_copies_message_other":{
+		"message":"{} copies locales"
 	},
 	"remove_all_local_copies":{
 		"message":"effacer les copies locales"

@@ -36,7 +36,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('always');
 				$item->setLabel('always');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-always', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_always', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -45,7 +45,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('hourly');
 				$item->setLabel('hourly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-hourly', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_hourly', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -54,7 +54,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('daily');
 				$item->setLabel('daily');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-daily', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_daily', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -63,7 +63,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('weekly');
 				$item->setLabel('weekly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-weekly', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_weekly', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -72,7 +72,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('monthly');
 				$item->setLabel('monthly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-monthly', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_monthly', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -81,7 +81,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('yearly');
 				$item->setLabel('yearly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-yearly', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_yearly', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 
@@ -90,7 +90,7 @@ class Install extends \Change\Plugins\InstallBase
 				$item->setValue('never');
 				$item->setLabel('never');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
-					->trans('m.rbs.seo.documents.documentseo.sitemap-change-frequency-never', array('ucf')));
+					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_never', array('ucf')));
 				$item->save();
 				$collection->getItems()->add($item);
 

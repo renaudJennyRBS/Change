@@ -308,7 +308,10 @@
 					'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
 					'</span>' +
 					'<div class="all-tags clearfix" ng-show="showAll">' +
-					'<h6 ng-pluralize count="availTags.length" when="' + i18n.trans('m.rbs.tag.admin.available_tags_pluralize') + '"></h6>' +
+					'<h6 ng-pluralize count="availTags.length" when="{0: \'' + i18n.trans('m.rbs.tag.adminjs.no_available_tag') + '\', ' +
+						'one: \'' + i18n.trans('m.rbs.tag.adminjs.available_tag') + '\', ' +
+						'other: \'' + i18n.trans('m.rbs.tag.adminjs.available_tags') + '\'}">' +
+					'</h6>' +
 					'<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span rbs-tag="tag"></span></a>' +
 					'</div>' +
 				'</div>',

@@ -132,10 +132,14 @@
 
 			<div class="pagination-info">
 				<strong ng-pluralize data-count="pagination.total"
-				        data-when="{{ i18nAttr('m.rbs.admin.admin.pagination_total') }}"></strong>
+				        data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_no') }}',
+							one: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_one') }}',
+							other: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_other') }}'}"></strong>
 					<span class="text-muted" ng-show="pages.length > 0">
 						{{ i18n('m.rbs.admin.admin.on') }}
-						<span ng-pluralize data-count="pages.length" data-when="{{ i18nAttr('m.rbs.admin.admin.pagination_pages') }}"></span>
+						<span ng-pluralize data-count="pages.length" data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.pagination_no_page') }}',
+							one: '{{ i18nAttr('m.rbs.admin.admin.pagination_page') }}',
+							other: '{{ i18nAttr('m.rbs.admin.admin.pagination_pages') }}'}"></span>
 					</span>
 				<div class="btn-group dropup">
 					<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">

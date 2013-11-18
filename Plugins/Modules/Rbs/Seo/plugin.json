@@ -2,5 +2,6 @@
 	"type":"module",
 	"vendor":"Rbs",
 	"name":"Seo",
-	"package":"Core"
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }

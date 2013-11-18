@@ -145,10 +145,10 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			$variables = ($event->getParam('variables')) ? $event->getParam('variables') : [];
 			$i18nManager = $applicationServices->getI18nManager();
 			$event->setParam('variables', array_merge($variables, [
-				'document.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-document-title', ['ucf']),
-				'page.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-page-title', ['ucf']),
-				'page.website.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-website-title', ['ucf']),
-				'page.section.title' => $i18nManager->trans('m.rbs.seo.services.seomanager.variable-section-title', ['ucf'])
+				'document.title' => $i18nManager->trans('m.rbs.seo.admin.meta_variable_document_title', ['ucf']),
+				'page.title' => $i18nManager->trans('m.rbs.seo.admin.meta_variable_page_title', ['ucf']),
+				'page.website.title' => $i18nManager->trans('m.rbs.seo.admin.meta_variable_website_title', ['ucf']),
+				'page.section.title' => $i18nManager->trans('m.rbs.seo.admin.meta_variable_section_title', ['ucf'])
 			]));
 		}
 	}
