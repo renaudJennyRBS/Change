@@ -83,7 +83,7 @@ class Install extends \Change\Plugins\InstallBase
 				$mailTemplate->setTheme($theme);
 				$mailTemplate->setLabel('Timeline mention');
 				$mailTemplate->setCode('timeline_mention');
-				$mailTemplate->getCurrentLocalization()->setSubject($i18nManager->trans('t.rbs.demo.setup.timeline-message-mail-subject'));
+				$mailTemplate->getCurrentLocalization()->setSubject($i18nManager->trans('t.rbs.demo.setup.timeline_message_mail_subject'));
 				$html = file_get_contents($templatePath);
 				$mailTemplate->getCurrentLocalization()->setContent($html);
 				$mailTemplate->getCurrentLocalization()->setActive(true);
@@ -105,7 +105,7 @@ class Install extends \Change\Plugins\InstallBase
 				{
 					$applicationServices->getDocumentManager()->pushLCID($lcid);
 					$currentLocalization = $mailTemplate->getCurrentLocalization();
-					$currentLocalization->setSubject($i18nManager->transForLCID($lcid, 't.rbs.demo.setup.notification-mail-subject'));
+					$currentLocalization->setSubject($i18nManager->transForLCID($lcid, 't.rbs.demo.setup.notification_mail_subject'));
 					$html = file_get_contents($templatePath);
 					$currentLocalization->setContent($html);
 					$currentLocalization->setActive(true);
