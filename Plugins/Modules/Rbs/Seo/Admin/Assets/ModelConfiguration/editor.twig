@@ -10,7 +10,7 @@
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}">
 			<select class="form-control" data-ng-model="document.sitemapDefaultChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
-				<option value=""> {{ i18n('m.rbs.seo.documents.documentseo.sitemap-change-frequency-option', ['ucf']) }}</option>
+				<option value=""> {{ i18n('m.rbs.seo.documents.documentseo_sitemap_change_frequency_option', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
@@ -28,7 +28,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.defaultMetaTitle" />
 				<div class="input-group-btn">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
 					<ul class="dropdown-menu pull-right">
 						<li data-ng-repeat="(key, variable) in metaVariables">
 							<a href="" data-ng-click="addMetaVariable('defaultMetaTitle', key)">(= variable =)</a>
@@ -42,7 +42,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.defaultMetaDescription" />
 				<div class="input-group-btn">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
 					<ul class="dropdown-menu pull-right">
 						<li data-ng-repeat="(key, variable) in metaVariables">
 							<a href="" data-ng-click="addMetaVariable('defaultMetaDescription', key)">(= variable =)</a>
@@ -56,7 +56,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" data-ng-model="document.defaultMetaKeywords" />
 				<div class="input-group-btn">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta-variables', ['ucf']) }} <span class="caret"></span></button>
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
 					<ul class="dropdown-menu pull-right">
 						<li data-ng-repeat="(key, variable) in metaVariables">
 							<a href="" data-ng-click="addMetaVariable('defaultMetaKeywords', key)">(= variable =)</a>

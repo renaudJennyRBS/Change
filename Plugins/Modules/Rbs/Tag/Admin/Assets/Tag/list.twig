@@ -32,7 +32,9 @@
 		<column name="module" converter-params="modules" converter="collection"></column>
 
 		<preview>
-			<span ng-pluralize="" count="doc.children.length" when="{{ i18nAttr('m.rbs.tag.admin.tag_child_tags_count') }}"></span>
+			<span ng-pluralize="" count="doc.children.length" when="{0: '{{ i18nAttr('m.rbs.tag.admin.tag_no_child_tag') }}',
+				one: '{{ i18nAttr('m.rbs.tag.admin.tag_child_tag') }}',
+				other: '{{ i18nAttr('m.rbs.tag.admin.tag_child_tags') }}'}"></span>
 			<span ng-repeat="tag in doc.children"><a href ng-href="(= tag | documentURL:'tree' =)"><span rbs-tag="tag"></span></a></span>
 		</preview>
 

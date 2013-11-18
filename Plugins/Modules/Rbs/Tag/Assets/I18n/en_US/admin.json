@@ -11,9 +11,6 @@
 	"show_hide_all_tags":{
 		"message":"show\/hide all tags"
 	},
-	"available_tags_pluralize":{
-		"message":"{'0':'No tag available','one':'One tag available:','other':'{} tags available:'}"
-	},
 	"tag_not_saved":{
 		"message":"this tag will be created when this form is saved"
 	},
@@ -53,8 +50,14 @@
 	"tag_usertag_cannot_be_modified":{
 		"message":"This property can only be defined when creating the tag.\n\t"
 	},
-	"tag_child_tags_count":{
-		"message":"{'0':'No child tags.', 'one':'One child tag:', 'other':'{} child tags:'}"
+	"tag_no_child_tag":{
+		"message":"No child tags."
+	},
+	"tag_child_tag":{
+		"message":"'One child tag:"
+	},
+	"tag_child_tags":{
+		"message":"{} child tags:"
 	},
 	"no_tags":{
 		"message":"none"

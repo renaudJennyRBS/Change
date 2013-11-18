@@ -3,8 +3,11 @@
 	<div style="margin-bottom: 10px;"
 		data-ng-class="{true: 'text-muted'}[changes.length == 0]">
 		<span data-ng-pluralize
-		data-count="changes.length"
-		data-when="{{ i18nAttr('m.rbs.admin.admin.propertiesModifiedPluralize') }}"></span>
+			data-count="changes.length"
+			data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.no_propertie_modified') }}',
+				one: '{{ i18nAttr('m.rbs.admin.admin.propertie_modified') }}',
+				other: '{{ i18nAttr('m.rbs.admin.admin.properties_modified') }}'}">
+		</span>
 		<i ng-show="changes.length" ng-class="{'icon-chevron-sign-left': showChanges, 'icon-chevron-sign-right': !showChanges}" ng-click="showChanges = !showChanges"></i>
 		<span ng-show="showChanges"><span class="label label-default" ng-repeat="change in changes">(= change =)</span></span>
 	</div>

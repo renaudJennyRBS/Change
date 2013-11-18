@@ -1,0 +1,155 @@
+{
+	"module_name":{
+		"message":"SEO"
+	},
+	"module_keywords":{
+		"message":"SEO, référencement, moteurs de recherche, optimisation"
+	},
+	"urls":{
+		"message":"URLs"
+	},
+	"url":{
+		"message":"URL"
+	},
+	"section":{
+		"message":"section"
+	},
+	"website":{
+		"message":"site web"
+	},
+	"lcid":{
+		"message":"langue"
+	},
+	"canonical_location":{
+		"message":"implantation canonique pour ce site"
+	},
+	"publication":{
+		"message":"publication"
+	},
+	"published":{
+		"message":"publié"
+	},
+	"not_published":{
+		"message":"non publié"
+	},
+	"redirects":{
+		"message":"redirections"
+	},
+	"permanent":{
+		"message":"permanente"
+	},
+	"query":{
+		"message":"requête"
+	},
+	"document_published_in_lang":{
+		"message":"Le document est publié dans cette langue."
+	},
+	"document_not_published_in_lang":{
+		"message":"Le document n'est pas publié dans cette langue."
+	},
+	"section_published_in_lang":{
+		"message":"Cette section est publiée dans cette langue."
+	},
+	"section_not_published_in_lang":{
+		"message":"Cette section n'est pas publiée dans cette langue."
+	},
+	"detail_function_provided_in_lang":{
+		"message":"La fonction détail est assurée dans cette section pour cette langue."
+	},
+	"detail_function_not_provided_in_lang":{
+		"message":"La fonction détail n'est pas assurée dans cette section pour cette langue."
+	},
+	"available_languages_help":{
+		"message":"Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit et les sections dans lesquelles il est implanté."
+	},
+	"canonical_help":{
+		"message":"Les lignes marquées d'une <i class=\"icon-star text-info\"><\/i> représentent les implantations canoniques de document dans un site et une langue donnés."
+	},
+	"edit_url":{
+		"message":"modifier cette URL"
+	},
+	"restore_default_url":{
+		"message":"revenir à l'URL par défaut"
+	},
+	"validate_url":{
+		"message":"valider les modifications"
+	},
+	"undo_edit_url":{
+		"message":"annuler les modifications"
+	},
+	"edit_redirect":{
+		"message":"modifier cette redirection"
+	},
+	"remove_redirect":{
+		"message":"supprimer cette redirection"
+	},
+	"validate_redirect":{
+		"message":"valider les modifications"
+	},
+	"undo_edit_redirect":{
+		"message":"annuler les modifications"
+	},
+	"add_new_redirect":{
+		"message":"ajouter cette redirection"
+	},
+	"clear_new_redirect":{
+		"message":"réinitialiser cette redirection"
+	},
+	"make_current_url":{
+		"message":"utiliser comme URL courante"
+	},
+	"sitemap":{
+		"message":"sitemap"
+	},
+	"add_on_website_sitemap":{
+		"message":"ajouter ce référencement dans le sitemap"
+	},
+	"meta_variables":{
+		"message":"variables"
+	},
+	"document_model":{
+		"message":"modèle de document"
+	},
+	"generate_seo_document_for_model":{
+		"message":"générer le document SEO pour ce modèle"
+	},
+	"document_seo_auto_generation":{
+		"message":"génération automatique des documents SEO"
+	},
+	"meta":{
+		"message":"métas"
+	},
+	"aside_title":{
+		"message":"Référencement"
+	},
+	"aside_document_has_seo_info":{
+		"message":"Ce document dispose d'informations pour le référencement."
+	},
+	"aside_document_has_no_seo_info":{
+		"message":"Ce document ne dispose pas d'information pour le référencement."
+	},
+	"aside_create_seo_info":{
+		"message":"Créer"
+	},
+	"aside_edit_seo_info":{
+		"message":"Éditer les informations de référencement du document"
+	},
+	"documentseo_list_help":{
+		"message":"La création d'informations de référencement pour un document s'effectue dans l'éditeur de ce document.<br \/>\n\tVous pouvez aussi configurer la génération automatique des informations de référencement par modèle via <a href=\"Rbs\/Seo\/ModelConfiguration\/\">la configuration des modèles<\/a>."
+	},
+	"modelconfiguration_list_help":{
+		"message":"Si la création automatique est activée pour un modèle, les documents de ce modèle, anciens comme nouveaux, généreront automatiquement leurs <strong>informations de référencement<\/strong> (document SEO).<br \/>\n\tLes informations utiles au sitemap comme la fréquence (changefreq) ou la priorité (priority) par défaut sont configurables par modèle"
+	},
+	"meta_variable_document_title":{
+		"message":"titre du document"
+	},
+	"meta_variable_page_title":{
+		"message":"titre de la page"
+	},
+	"meta_variable_website_title":{
+		"message":"titre du site web"
+	},
+	"meta_variable_section_title":{
+		"message":"titre de la section"
+	}
+}

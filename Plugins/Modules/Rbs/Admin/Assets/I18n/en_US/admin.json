@@ -95,8 +95,14 @@
 	"btnCancelCascade":{
 		"message":"cancel <small>and go back to previous form<\/small>"
 	},
-	"propertiesModifiedPluralize":{
-		"message":"{'0': 'No property was changed.', 'one': 'One property was changed.', 'other': '{} properties were changed.'}"
+	"no_propertie_modified":{
+		"message": "No property was changed."
+	},
+	"propertie_modified":{
+		"message": "One property was changed."
+	},
+	"properties_modified":{
+		"message": "{} properties were changed."
 	},
 	"date_selector_at":{
 		"message":"at"
@@ -272,11 +278,20 @@
 	"grid_display":{
 		"message":"display as grid"
 	},
-	"pagination_total":{
-		"message":"{'0':'No element', 'one': 'One element', 'other':'{} elements'}"
+	"pagination_total_no":{
+		"message":"No element"
+	},
+	"pagination_total_one":{
+		"message":"One element"
+	},
+	"pagination_total_other":{
+		"message":"{} elements"
+	},
+	"pagination_page":{
+		"message":"one page"
 	},
 	"pagination_pages":{
-		"message":"{'one': 'one page', 'other': '{} pages'}"
+		"message":"{} pages"
 	},
 	"on":{
 		"message":"on"
@@ -290,8 +305,14 @@
 	"close_all_previews":{
 		"message":"close all previews"
 	},
-	"local_copies_message_ng_pluralize":{
-		"message":"{'0': 'No local copy', 'one': 'You have one local copy of an unsaved document.', 'other': 'You have {} local copies of unsaved documents.'}"
+	"local_copies_message_no":{
+		"message":"No local copy"
+	},
+	"local_copies_message_one":{
+		"message":"You have one local copy of an unsaved document."
+	},
+	"local_copies_message_other":{
+		"message":"You have {} local copies of unsaved documents"
 	},
 	"remove_all_local_copies":{
 		"message":"remove local copies"

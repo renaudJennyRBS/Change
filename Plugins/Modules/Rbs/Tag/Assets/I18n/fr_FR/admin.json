@@ -11,9 +11,6 @@
 	"show_hide_all_tags":{
 		"message":"afficher\/masquer toutes les étiquettes (Ctrl+&darr; \/ Ctrl+&uarr;)"
 	},
-	"available_tags_pluralize":{
-		"message":"$'0':'AUCUNE éTIQUETTE DISPONIBLE','ONE':'UNE éTIQUETTE DISPONIBLE :','OTHER':'$$ étiquettes disponibles :'}"
-	},
 	"tag_not_saved":{
 		"message":"cette étiquette sera réellement créée lors de la validation du formulaire"
 	},
@@ -56,8 +53,14 @@
 	"tag_usertag_cannot_be_modified":{
 		"message":"Cette information ne peut être définie qu'à la création d'une étiquette.\n\t"
 	},
-	"tag_child_tags_count":{
-		"message":"$'0':'AUCUNE SOUS-éTIQUETTE.', 'ONE':'UNE SOUS-éTIQUETTE :', 'OTHER':'$$ sous-étiquettes :'}"
+	"tag_no_child_tag":{
+		"message":"aucune sous-étiquette"
+	},
+	"tag_child_tag":{
+		"message":"une sous-étiquette :"
+	},
+	"tag_child_tags":{
+		"message":"{} sous-étiquettes :"
 	},
 	"no_tags":{
 		"message":"aucune"
