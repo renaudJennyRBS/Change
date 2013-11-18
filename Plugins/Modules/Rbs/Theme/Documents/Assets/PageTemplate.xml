@@ -7,5 +7,6 @@
 		<property name="htmlForBackoffice" type="LongString" has-correction="true" />
 		<property name="editableContent" type="JSON" has-correction="true"/>
 		<property name="theme" type="Document" document-type="Rbs_Theme_Theme" />
+		<property name="contentByWebsite" type="JSON" has-correction="true"/>
 	</properties>
 </document>

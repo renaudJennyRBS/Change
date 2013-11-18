@@ -1,44 +1,68 @@
-<form name="form" data-ng-submit="submit()" novalidate>
+<form name="form" data-ng-submit="submit()" novalidate class="form-horizontal">
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text
-				property="label" required="true"
+		<rbs-field-text property="label" required="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Theme_PageTemplate', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-picker ng-show="document.isNew()"
-				property="theme" required="true" label="{{ i18nAttr(propertyKey('Rbs_Theme_PageTemplate', 'theme'), ['ucf']) }}"
-				accepted-model="Rbs_Theme_Theme"
-				selector-title="{{ i18nAttr('m.rbs.theme.documents.pagetemplate_theme-picker-title', ['ucf']) }}"
-				allow-creation="false">
-		</rbs-field-picker>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Theme_PageTemplate', 'contentByWebsite'), ['ucf']) }}">
+			<select class="form-control" ng-model="websiteId" rbs-items-from-collection="Rbs_Theme_WebsiteIds">
+				<option value=""></option>
+			</select>
+		</rbs-field>
 
-		<ul class="nav nav-tabs" id="contentsTab">
-			<li class="active"><a href="javascript:;" data-target="#html" data-toggle="tab">
-				{{ i18n(propertyKey('Rbs_Theme_PageTemplate', 'html'), ['ucf']) }}
-			</a></li>
-			<li><a href="javascript:;" data-target="#htmlForBackoffice" data-toggle="tab">
-				{{ i18n(propertyKey('Rbs_Theme_PageTemplate', 'htmlForBackoffice'), ['ucf']) }}
-			</a></li>
-			<li><a href="javascript:;" data-target="#editableContent" data-toggle="tab">
-				{{ i18n(propertyKey('Rbs_Theme_PageTemplate', 'editableContent'), ['ucf']) }}
-			</a></li>
-		</ul>
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>{{ i18n('m.rbs.theme.admin.pagetemplates_zone_id', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.theme.admin.pagetemplates_block', ['ucf']) }}</th>
+				<th></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr data-ng-repeat="row in blockList">
+				<td ng-if="isEditorRow(row)" colspan="3">
+					<form ng-submit="submit()" novalidate name="block_properties_form" class="form-horizontal">
+						<div ng-include="row.template"></div>
+					</form>
+					<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}</button>
+				</td>
+				<td ng-if="!isEditorRow(row)" style="width:20%">(= row.id =)</td>
+				<td ng-if="!isEditorRow(row)" style="width:50%">
+					<span data-ng-show="!canChangeBlocName(row)">
+						<strong data-ng-show="row.id == block.id">(= row.block.label || row.name =)</strong>
+						<span data-ng-show="row.id != block.id">(= row.block.label || row.name =)</span>
+					</span>
+					<div data-ng-show="canChangeBlocName(row)">
+						<rbs-block-selector block="row.block" selected="(= row.name =)"></rbs-block-selector>
+					</div>
 
-		<div class="tab-content">
-			<div class="tab-pane active" id="html">
-				<ace-editor data-ng-model="document.html"></ace-editor>
-			</div>
-			<div class="tab-pane" id="htmlForBackoffice">
-				<ace-editor data-ng-model="document.htmlForBackoffice"></ace-editor>
-			</div>
-			<div class="tab-pane" id="editableContent">
-				<rbs-todo>Champ de type JSON à éditer en texte.</rbs-todo>
-				<ace-editor data-ng-model="document.editableContent" mode="javascript"></ace-editor>
-			</div>
-		</div>
+				</td>
+				<td data-ng-if="!isEditorRow(row)" style="width:30%">
+					<div data-ng-if="!inEditMode()">
+						<button class="btn btn-sm" type="button"
+								data-ng-click="addBlockOverride(row)" data-ng-show="canOverrideBlock(row)">
+							{{ i18n('m.rbs.theme.admin.pagetemplates_override', ['ucf']) }}
+						</button>
+						<button class="btn btn-sm" type="button"
+								data-ng-click="removeBlockOverride(row)" data-ng-show="canRemoveOverrideBlock(row)">
+							{{ i18n('m.rbs.theme.admin.pagetemplates_removeoverride', ['ucf']) }}
+						</button>
+						<button class="btn btn-default btn-sm" type="button"
+								data-ng-click="parametrizeBlock($index)" data-ng-show="canParametrizeBlock(row)">
+							{{ i18n('m.rbs.theme.admin.pagetemplates_parametrize', ['ucf']) }}
+						</button>
+						<button class="btn btn-sm" type="button"
+								data-ng-click="emptyBlock(row)" data-ng-show="canEmptyBlock(row)">
+							{{ i18n('m.rbs.theme.admin.pagetemplates_clear', ['ucf']) }}
+						</button>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
 	</fieldset>
 
 	<fieldset
@@ -47,6 +71,5 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>
 	</fieldset>
-
 	<form-button-bar></form-button-bar>
 </form>

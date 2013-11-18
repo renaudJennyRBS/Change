@@ -75,9 +75,10 @@ class DefaultPageTemplate implements PageTemplate
 
 	/**
 	 * @throws \RuntimeException
+	 * @param integer $websiteId
 	 * @return \Change\Presentation\Layout\Layout
 	 */
-	public function getContentLayout()
+	public function getContentLayout($websiteId = null)
 	{
 		$res = $this->getTheme()->getAssetResource('Layout/PageTemplate/' . $this->getName() . '.json');
 		if (!$res->isValid())

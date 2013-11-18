@@ -14,6 +14,9 @@
 	"pagetemplate_editablecontent":{
 		"message":"zones de contenu"
 	},
+	"pagetemplate_contentbywebsite":{
+		"message":"Contenu par site web"
+	},
 	"pagetemplate_theme":{
 		"message":"thème"
 	},

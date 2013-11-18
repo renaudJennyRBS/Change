@@ -9,11 +9,21 @@ use Change\Presentation\Layout\Layout;
 class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate implements \Change\Presentation\Interfaces\PageTemplate
 {
 	/**
-	 * @return Layout
+	 * @param integer $websiteId
+	 * @return \Change\Presentation\Layout\Layout
 	 */
-	public function getContentLayout()
+	public function getContentLayout($websiteId = null)
 	{
-		return new Layout($this->getEditableContent());
+		$editableContent = $this->getEditableContent();
+		if ($websiteId)
+		{
+			$contentByWebsite = $this->getContentByWebsite();
+			if (is_array($contentByWebsite) && isset($contentByWebsite[$websiteId]) && is_array($contentByWebsite[$websiteId]))
+			{
+				$editableContent = array_merge($editableContent, $contentByWebsite[$websiteId]);
+			}
+		}
+		return new Layout($editableContent);
 	}
 
 	/**
@@ -36,7 +46,11 @@ class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate impleme
 			$documentLink = $restResult;
 			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
 			$pageTemplate = $documentLink->getDocument();
-			$documentLink->setProperty('label', $pageTemplate->getTheme()->getLabel() . ' > ' . $pageTemplate->getLabel());
+			$theme = $pageTemplate->getTheme();
+			if ($theme)
+			{
+				$documentLink->setProperty('label', $theme->getLabel() . ' > ' . $pageTemplate->getLabel());
+			}
 		}
 	}
 }

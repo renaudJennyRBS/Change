@@ -38,8 +38,7 @@ class Richtext extends Block
 	protected function execute($event, $attributes)
 	{
 		$context = array('website' => $event->getUrlManager()->getWebsite());
-		$richText = new \Change\Documents\RichtextProperty();
-		$richText->setRawText($event->getBlockParameters()->getParameter('content'));
+		$richText = new \Change\Documents\RichtextProperty($event->getBlockParameters()->getParameter('content'));
 		$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
 		$attributes['htmlContent'] = $event->getApplicationServices()
 			->getRichTextManager()
