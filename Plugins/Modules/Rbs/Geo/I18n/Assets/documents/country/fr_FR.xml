@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.geo.documents.country" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="addressfields">modèle d'adresse</key>
-	<key id="select-addressfields">sélectionner le modèle d'adresse</key>
-</i18n>

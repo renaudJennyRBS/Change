@@ -26,8 +26,8 @@
 				property="unitType" required="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitType'), ['ucf']) }}"
 				input-class="input-block-level">
-			<select ng-required="true" data-ng-model="document.unitType" rbs-items-from-collection="Rbs_Geo_Collection_UnitType">
-				<option value=""> {{ i18n('m.rbs.geo.admin.js.select-unittype', ['ucf']) }}</option>
+			<select ng-required="true" data-ng-model="document.unitType" rbs-items-from-collection="Rbs_Geo_Collection_UnitType" class="form-control">
+				<option value=""> {{ i18n('m.rbs.geo.admin.select_unittype', ['ucf']) }}</option>
 			</select>
 
 		</rbs-field>
@@ -35,14 +35,14 @@
 		<rbs-field-picker
 				property="country" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'country'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_Country"
-				selector-title="{{ i18nAttr('m.rbs.geo.documents.territorialunit.country-picker-title', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_country_picker_title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
 
 		<rbs-field-picker
 				property="unitParent" label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitParent'), ['ucf']) }}"
 				accepted-model="Rbs_Geo_TerritorialUnit"
-				selector-title="{{ i18nAttr('m.rbs.geo.documents.territorialunit.unitparent-picker-title', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_unitparent_picker_title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
 

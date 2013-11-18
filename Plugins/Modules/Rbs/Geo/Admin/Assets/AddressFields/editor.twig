@@ -27,25 +27,25 @@
 					</td>
 					<td style="width:180px" class="text-right">
 						<rbs-kb-switch>
-							<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-top', ['ucf']) }}">
+							<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
 								<i class="icon-step-forward icon-rotate-270"></i>
 							</button>
-							<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveUp($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.move_up', ['ucf']) }}">
+							<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
 								<i class="icon-play icon-rotate-270"></i>
 							</button>
 						</rbs-kb-switch>
 						<rbs-kb-switch>
-							<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-bottom', ['ucf']) }}">
+							<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
 								<i class="icon-step-forward icon-rotate-90"></i>
 							</button>
-							<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveDown($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.move_down', ['ucf']) }}">
+							<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
 								<i class="icon-play icon-rotate-90"></i>
 							</button>
 						</rbs-kb-switch>
-						<button class="btn btn-default btn-icon" type="button" ng-click="cascadeEditField($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.edit', ['ucf']) }}">
+						<button class="btn btn-default btn-icon" type="button" ng-click="cascadeEditField($index)" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}">
 							<i class="icon-pencil"></i>
 						</button>
-						<button ng-hide="field.locked" class="btn btn-danger btn-icon" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.delete', ['ucf']) }}">
+						<button ng-hide="field.locked" class="btn btn-danger btn-icon" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
 							<i class="icon-remove"></i>
 						</button>
 						<button ng-show="field.locked" disabled="true" title="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'locked'), ['ucf']) }}" class="btn btn-info btn-icon" type="button">
@@ -55,7 +55,7 @@
 				</tr>
 				</tbody>
 			</table>
-			<a href="javascript:;" ng-click="cascadeCreateField()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.geo.admin.js.addressfield-create', ['ucf']) }}</a>
+			<a href="javascript:;" ng-click="cascadeCreateField()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.geo.admin.addressfield_create', ['ucf']) }}</a>
 		</div>
 	</fieldset>
 	<fieldset data-ng-show="section=='systeminfo'"
