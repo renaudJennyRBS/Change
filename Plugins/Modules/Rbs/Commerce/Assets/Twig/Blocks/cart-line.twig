@@ -5,12 +5,12 @@
 		<td class="price">
 			{% if parameters.displayPrices %}
 				{{ formatPrice(cartLine.unitPriceValue) }}
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 			{% endif %}
 			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
 			{% if parameters.displayPricesWithTax %}
 				{{ formatPrice(cartLine.unitPriceValueWithTax) }}
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
 			{% endif %}
 		</td>
 	{% endif %}
@@ -19,12 +19,12 @@
 		<td class="price">
 			{% if parameters.displayPrices %}
 				{{ formatPrice(cartLine.priceValue) }}
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 			{% endif %}
 			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
 			{% if parameters.displayPricesWithTax %}
 				{{ formatPrice(cartLine.priceValueWithTax) }}
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
 			{% endif %}
 		</td>
 	{% endif %}

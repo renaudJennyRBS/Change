@@ -14,15 +14,15 @@ class ProductListInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-label', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_label', $ucf));
 		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Catalog_ProductList')
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-list', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-contextual-urls', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_contextual_urls', $ucf));
 		$this->addInformationMeta('itemsPerLine', Property::TYPE_INTEGER, true, 3)
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-items-per-line', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_line', $ucf));
 		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 9)
-			->setLabel($i18nManager->trans('m.rbs.catalog.blocks.product-list-items-per-page', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_page', $ucf));
 	}
 }

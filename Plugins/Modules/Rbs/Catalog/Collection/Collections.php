@@ -19,8 +19,8 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
-				'title' => new I18nString($i18n, 'm.rbs.catalog.documents.product.title', array('ucf')),
-				'label' => new I18nString($i18n, 'm.rbs.catalog.documents.product.label', array('ucf'))
+				'title' => new I18nString($i18n, 'm.rbs.catalog.documents.product_title', array('ucf')),
+				'label' => new I18nString($i18n, 'm.rbs.catalog.documents.product_label', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_ProductSortOrders', $collection);
 			$event->setParam('collection', $collection);
@@ -119,9 +119,9 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
-				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-specifications', array('ucf')),
-				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-comparisons', array('ucf')),
-				'axes' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute.visibility-axes', array('ucf'))
+				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_specifications', array('ucf')),
+				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_comparisons', array('ucf')),
+				'axes' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_axes', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);
@@ -171,9 +171,9 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$items = array();
-			$items[\Rbs\Catalog\Std\CrossSellingEngine::LAST_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-last-product', array('ucf'));
-			$items[\Rbs\Catalog\Std\CrossSellingEngine::RANDOM_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-random-product', array('ucf'));
-			$items[\Rbs\Catalog\Std\CrossSellingEngine::MOST_EXPENSIVE_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.blocks.cross-selling-product-choice-most-expensive-product', array('ucf'));
+			$items[\Rbs\Catalog\Std\CrossSellingEngine::LAST_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_last_product', array('ucf'));
+			$items[\Rbs\Catalog\Std\CrossSellingEngine::RANDOM_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_random_product', array('ucf'));
+			$items[\Rbs\Catalog\Std\CrossSellingEngine::MOST_EXPENSIVE_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_most_expensive_product', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_CrossSelling_CartProductChoiceStrategy', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

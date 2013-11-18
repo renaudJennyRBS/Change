@@ -20,13 +20,13 @@
 				{% if parameters.displayPrices %}
 					<li class="dropdown-text price">
 						{{ formatPrice(cart.priceValue) }}
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.without-tax') }}">{{ i18n('m.rbs.catalog.fo.without-tax-abbr') }}</abbr>
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 					</li>
 				{% endif %}
 				{% if parameters.displayPricesWithTax %}
 					<li class="dropdown-text price">
 						{{ formatPrice(cart.priceValueWithTax) }}
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.fo.with-tax') }}">{{ i18n('m.rbs.catalog.fo.with-tax-abbr') }}</abbr>
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
 					</li>
 				{% endif %}
 				<li class="dropdown-text">{{ i18n('m.rbs.commerce.front.excluding_fees') }}</li>

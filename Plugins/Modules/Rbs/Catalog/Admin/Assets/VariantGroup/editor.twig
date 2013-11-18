@@ -14,7 +14,7 @@
 			           label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axisAttribute'), ['ucf']) }}">
 				<select ng-required="true" ng-model="document.axisAttribute" class="form-control"
 				        rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
-					<option value="">{{ i18n('m.rbs.catalog.documents.variantgroup.axisattribute-select', ['ucf']) }}</option>
+					<option value="">{{ i18n('m.rbs.catalog.admin.variantgroup_axisattribute_select', ['ucf']) }}</option>
 				</select>
 			</rbs-field>
 		</div>
@@ -35,7 +35,7 @@
 
 		<div data-ng-if="! document.isNew()">
 			<div rbs-tip="rbsVariantGroupEditorHelp">
-				{{ i18n('m.rbs.catalog.documents.variantgroup.help-tip', ['ucf']) }}
+				{{ i18n('m.rbs.catalog.admin.variantgroup_help_tip', ['ucf']) | raw}}
 			</div>
 
 			<ul class="breadcrumb variant-group-editor">
@@ -65,19 +65,19 @@
 								<div class="checkbox">
 									<label>
 										<input type="checkbox" ng-model="document.axesInfo[axis.index].cat"/>
-										{{ i18n('m.rbs.catalog.documents.variantgroup.visibility-head', ['ucf']) }}
+										{{ i18n('m.rbs.catalog.admin.variantgroup_visibility_head', ['ucf']) }}
 									</label>
 								</div>
 							</p>
-							<p>{{ i18n('m.rbs.catalog.documents.variantgroup.add-axis-value', ['ucf']) }}</p>
+							<p>{{ i18n('m.rbs.catalog.admin.variantgroup_add_axis_value', ['ucf']) }}</p>
 							<p>
 								<input rbs-variant-group-editor-new-axis-value-validator="" axis-index="(= axis.index =)"
 								       auto-focus="" autocapitalize="off" type="text" class="form-control" required="required"
 								       name="axisValueToAdd" ng-model="axisValueToAdd[axis.index]" ng-keypress="addValueOnEnter(axis.index, $event)"/>
-							<p class="text-danger" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.value-already-exists', ['ucf']) }}</p>
+							<p class="text-danger" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_value_already_exists', ['ucf']) }}</p>
 							<div class="btn-toolbar">
-								<button class="btn btn-default" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.cancel', ['ucf']) }}</button>
-								<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.documents.variantgroup.add', ['ucf']) }}</button>
+								<button class="btn btn-default" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_cancel', ['ucf']) }}</button>
+								<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_add', ['ucf']) }}</button>
 							</div>
 							</p>
 						</div>
@@ -112,7 +112,7 @@
 						<div class="axis-value" style="cursor: default" ng-switch="finalProductSaved()">
 							<div ng-switch-when="true" ng-switch="loadingFinalProduct">
 								<div ng-switch-when="true">
-									<i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.catalog.documents.variantgroup.loading-product-info', ['ucf']) }}
+									<i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_loading_product_info', ['ucf']) }}
 								</div>
 								<div ng-switch-when="false">
 									<h4 ng-bind="finalProduct.label"></h4>
@@ -120,15 +120,15 @@
 										<img ng-repeat="visual in finalProduct.visuals" rbs-storage-image="visual.id" thumbnail="XS" class="img-polaroid margin-right pull-left"/>
 									</p>
 									<p ng-if="! finalProduct.visuals.length">
-										<em class="muted">{{ i18n('m.rbs.catalog.documents.variantgroup.no-visuals', ['ucf']) }}</em>
+										<em class="muted">{{ i18n('m.rbs.catalog.admin.variantgroup_no_visuals', ['ucf']) }}</em>
 									</p>
 									<p>
-										<a href="javascript:;" ng-href="(= getFinalProductUrl() =)">{{ i18n('m.rbs.catalog.documents.variantgroup.go-to-product', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+										<a href="javascript:;" ng-href="(= getFinalProductUrl() =)">{{ i18n('m.rbs.catalog.admin.variantgroup_go_to_product', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
 									</p>
 								</div>
 							</div>
 							<div ng-switch-when="false" class="alert alert-warning">
-								{{ i18n('m.rbs.catalog.documents.variantgroup.product-does-not-exist-yet') }}
+								{{ i18n('m.rbs.catalog.admin.variantgroup_product_does_not_exist_yet') | raw }}
 							</div>
 						</div>
 					</div>
@@ -138,17 +138,17 @@
 
 			<div class="well" style="margin-top: 20px;">
 				<span class="pull-right">
-					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.documents.variantgroup.generate-all-action', ['ucf']) }}</button>
-					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.documents.variantgroup.remove-all-action', ['ucf']) }}</button>
+					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_generate_all_action', ['ucf']) }}</button>
+					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_remove_all_action', ['ucf']) }}</button>
 				</span>
 				<h4>
 					<span ng-bind="document.productMatrixInfo | rbsVariantGroupEditorValidProductsCount"></span>
-					{{ i18n('m.rbs.catalog.documents.variantgroup.existing-products-of') }}
+					{{ i18n('m.rbs.catalog.admin.variantgroup_existing_products_of') }}
 					<span ng-bind="possibleVariantsCount"></span>
-					{{ i18n('m.rbs.catalog.documents.variantgroup.possible-products') }}
+					{{ i18n('m.rbs.catalog.admin.variantgroup_possible_products') }}
 				</h4>
 				<p><span class="label label-info">Info</span>
-					{{ i18n('m.rbs.catalog.documents.variantgroup.products-will-be-created-when-this-form-is-submitted', ['ucf']) }}
+					{{ i18n('m.rbs.catalog.admin.variantgroup_products_will_be_created_when_this_form_is_submitted', ['ucf']) }}
 				</p>
 			</div>
 		</div>
@@ -156,7 +156,7 @@
 
 
 	<fieldset data-ng-show="section=='product'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.catalog.documents.variantgroup.products-section', ['ucf']) }}"
+	          data-form-section-label="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_products_section', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<div data-ng-controller="Rbs_Catalog_VariantGroup_VariantListController">

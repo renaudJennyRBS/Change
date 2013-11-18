@@ -4,11 +4,11 @@
 	{% if product.sku %}<meta itemprop="sku" content="{{ product.sku.code }}" />{% endif %}
 	<dl class="list-inline list-divided">
 		{% if (product.code) %}
-		<dt>{{ i18n('m.rbs.catalog.fo.reference', ['ucf']) }}</dt>
+		<dt>{{ i18n('m.rbs.catalog.front.reference', ['ucf']) }}</dt>
 		<dd>{{ product.code }}</dd>
 		{% endif %}
 		{% if product.brand %}
-		<dt>{{ i18n('m.rbs.catalog.fo.brand', ['ucf']) }}</dt>
+		<dt>{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
 		<dd><a itemprop="brand" href="{{ canonicalURL(product.brand) }}">{{ product.brand.currentLocalization.title }}</a></dd>
 		{% endif %}
 	</dl>

@@ -1,0 +1,47 @@
+{
+	"select":{
+		"message":"sélectionner"
+	},
+	"view_product_details":{
+		"message":"voir la fiche $PRODUCT$"
+	},
+	"with_tax":{
+		"message":"toutes taxes comprises"
+	},
+	"with_tax_abbr":{
+		"message":"TTC"
+	},
+	"without_tax":{
+		"message":"hors taxes"
+	},
+	"without_tax_abbr":{
+		"message":"HT"
+	},
+	"reference":{
+		"message":"référence"
+	},
+	"brand":{
+		"message":"marque"
+	},
+	"old_price":{
+		"message":"ancien prix"
+	},
+	"including":{
+		"message":"dont"
+	},
+	"ecotax":{
+		"message":"éco-participation"
+	},
+	"click_to_show_image":{
+		"message":"cliquer ici pour agrandir l'image"
+	},
+	"full_description":{
+		"message":"description complète"
+	},
+	"attributes":{
+		"message":"caractéristiques"
+	},
+	"main_attributes":{
+		"message":"caractéristiques générales"
+	}
+}

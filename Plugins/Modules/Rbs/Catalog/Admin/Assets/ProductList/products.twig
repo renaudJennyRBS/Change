@@ -16,15 +16,15 @@
 
 	<div ng-if="List.isSynchronized">
 		<p>{{ i18n(propertyKey('Rbs_Catalog_SectionProductList', 'synchronizedSection'), ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | documentURL =)">(= productList.synchronizedSection.label =)</a></p>
-		<p>{{ i18n('m.rbs.catalog.documents.sectionproductlist.synchronizedsection-help', ['ucf']) }}</p>
+		<p>{{ i18n('m.rbs.catalog.admin.sectionproductlist_synchronizedsection_help', ['ucf']) }}</p>
 	</div>
 
 	<div ng-if="List.conditions.length > 1">
-		<p>{{ i18n('m.rbs.catalog.documents.productlist.condition-help', ['ucf']) }}</p>
+		<p>{{ i18n('m.rbs.catalog.admin.productlistitem_condition_help', ['ucf']) }}</p>
 
 		<div class="control-group" >
 			<label class="control-label" data-not-a-property="" for="selectCondition">
-				{{ i18n('m.rbs.catalog.documents.productlist.condition', ['ucf']) }}
+				{{ i18n('m.rbs.catalog.documents.productlistitem_condition', ['ucf']) }}
 			</label>
 
 			<div class="controls">
@@ -58,11 +58,11 @@
 			collection-url="(=productsUrl=)"
 			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromProductList Rbs_Catalog_HighlightProductsInProductList Rbs_Catalog_RemoveHighlightProductsInProductList"
 			use-properties="title">
-			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.documents.productlistitem.productvisual', ['ucf']) }}"></column>
-			<column name="productLabel" primary="true">
+			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_productvisual', ['ucf']) }}"></column>
+			<column name="productLabel" label="{{ i18nAttr('m.rbs.catalog.documents.product_label', ['ucf']) }}" primary="true">
 				<strong><a href ng-href="(= doc | documentURL =)">(= doc.product.label =)</a></strong>
 			</column>
-			<column name="_priority" label="{{ i18nAttr('m.rbs.catalog.documents.productlist.sort-order', ['ucf']) }}" align="center" width="110px">
+			<column name="priority" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_sort_order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">
 					<rbs-kb-switch>
 						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
@@ -82,13 +82,13 @@
 					</rbs-kb-switch>
 				</span>
 			</column>
-			<column name="_highlight" label="{{ i18nAttr('m.rbs.catalog.documents.productlist.highlight', ['ucf']) }}" align="center" width="90px">
+			<column name="highlight" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_highlight', ['ucf']) }}" align="center" width="90px">
 				<switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></switch>
 			</column>
 
 			<quick-actions>
 				[action edit]
-				|| <a href="(= doc.product | documentURL =)">{{ i18nAttr('m.rbs.catalog.documents.productlist.edit-product', ['ucf']) }}</a>
+				|| <a href="(= doc.product | documentURL =)">{{ i18nAttr('m.rbs.catalog.admin.productlist_edit_product', ['ucf']) }}</a>
 				|| [action Rbs_Catalog_RemoveProductsFromProductList]
 			</quick-actions>
 
@@ -100,15 +100,15 @@
 			</grid-item>
 		</rbs-document-list>
 
-		<h4>{{ i18n('m.rbs.catalog.documents.productlist.add-products', ['ucf']) }}</h4>
+		<h4>{{ i18n('m.rbs.catalog.admin.productlist_add_products', ['ucf']) }}</h4>
 
 		<div class="control-group property">
-			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.documents.productlist.products', ['ucf']) }}</label>
+			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.documents.productlist_products', ['ucf']) }}</label>
 			<div class="controls">
 				<div class="document-picker-multiple" ng-model="List.productsToAdd"
 					accepted-model="Rbs_Catalog_Product"
-					property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist.products', ['ucf']) }}"
-					selector-title="{{ i18nAttr('m.rbs.catalog.documents.productlist.products-picker-title', ['ucf']) }}"
+					property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_products_picker_title', ['ucf']) }}"
 					master-label="(= document.label =)"
 					allow-edition="false"
 					allow-creation="false"

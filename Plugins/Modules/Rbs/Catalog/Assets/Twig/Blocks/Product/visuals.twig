@@ -48,7 +48,7 @@
 			<ul class="list-inline thumbnail-visuals">
 				{% for visual in product.visuals %}
 					<li class="thumbnail" id="thumbnail-visual-{{ blockId }}-{{ visual.id }}"
-						title="{{ i18nAttr('m.rbs.catalog.fo.click-to-show-image', ['ucf']) }}">
+						title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
 						<img src="{{ catalogMacros.detailThumbnailURL(visual) }}" alt=""
 							onclick="script{{ blockId }}.visuals.showVisual({{ visual.id }})" />
 					</li>

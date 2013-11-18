@@ -58,10 +58,10 @@
 					if (scope.document.rootProduct)
 					{
 						Breadcrumb.setLocation([
-							[i18n.trans('m.rbs.catalog.admin.js.module-name | ucf'), "Rbs/Catalog"],
-							[i18n.trans('m.rbs.catalog.admin.js.product-list | ucf'), UrlManager.getUrl(scope.document.rootProduct, 'list')],
+							[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
+							[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(scope.document.rootProduct, 'list')],
 							[scope.document.rootProduct.label, UrlManager.getUrl(scope.document.rootProduct, 'form') ],
-							[i18n.trans('m.rbs.catalog.admin.js.variant-group | ucf'), "Rbs/Catalog/VariantGroup"]]
+							[i18n.trans('m.rbs.catalog.adminjs.variant_group | ucf'), "Rbs/Catalog/VariantGroup"]]
 						);
 					}
 				};

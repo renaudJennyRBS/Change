@@ -20,9 +20,9 @@ class GetProductVariables
 				$variables = ($event->getParam('variables')) ? $event->getParam('variables') : [];
 				$i18nManager = $applicationServices->getI18nManager();
 				$event->setParam('variables', array_merge($variables, [
-					'document.title' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-title', ['ucf']),
-					'document.brand' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-brand', ['ucf']),
-					'document.description' => $i18nManager->trans('m.rbs.catalog.documents.product.seo-description', ['ucf'])
+					'document.title' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_title', ['ucf']),
+					'document.brand' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_brand', ['ucf']),
+					'document.description' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_description', ['ucf'])
 				]));
 			}
 		}

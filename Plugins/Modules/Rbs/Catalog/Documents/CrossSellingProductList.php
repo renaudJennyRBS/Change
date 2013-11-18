@@ -42,7 +42,7 @@ class CrossSellingProductList extends \Compilation\Rbs\Catalog\Documents\CrossSe
 			{
 				$event->getApplicationServices()->getLogging()->debug("Type already exists");
 				$errors = $event->getParam('propertiesErrors', array());
-				$errors['crossSellingType'][] = new PreparedKey('m.rbs.catalog.documents.crosssellingproductlist.list-already-exists',
+				$errors['crossSellingType'][] = new PreparedKey('m.rbs.catalog.admin.crosssellingproductlist_list_already_exists',
 					array('ucf'),
 					array('type' => $newType, 'product' => $document->getProduct()->getLabel()));
 				$event->setParam('propertiesErrors', $errors);
