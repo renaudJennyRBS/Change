@@ -2,16 +2,16 @@
 
 	<rbs-workspace-config menu="Rbs_Stock">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Stock'|rbsURL:'home' =)">{{ i18n('m.rbs.stock.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Stock_InventoryEntry'|rbsURL:'list' =)">{{ i18n('m.rbs.stock.admin.js.inventoryentry-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Stock'|rbsURL:'home' =)">{{ i18n('m.rbs.stock.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Stock_InventoryEntry'|rbsURL:'list' =)">{{ i18n('m.rbs.stock.admin.inventoryentry_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.stock.admin.js.inventoryentry-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.stock.admin.inventoryentry_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Stock_InventoryEntry" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Stock_InventoryEntry' | documentURL:'new' =)">{{ i18n('m.rbs.stock.admin.js.inventoryentry-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Stock_InventoryEntry' | documentURL:'new' =)">{{ i18n('m.rbs.stock.admin.inventoryentry_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsStockInventoryEntry"

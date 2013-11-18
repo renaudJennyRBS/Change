@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.simpleform.admin.js" lcid="fr_FR">
-	<include id="m.rbs.simpleform.documents"/>
-	<key id="module-name">formulaires simples</key>
-	<key id="module-keywords">formulaire,champ,destinataire,email,réponse,contact</key>
-</i18n>

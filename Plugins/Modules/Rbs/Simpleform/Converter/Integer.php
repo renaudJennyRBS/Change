@@ -19,7 +19,7 @@ class Integer extends \Rbs\Simpleform\Converter\Trim
 		}
 		elseif (!$this->i18nManager)
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-integer', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_integer', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 		else
@@ -29,7 +29,7 @@ class Integer extends \Rbs\Simpleform\Converter\Trim
 			$parsed = $formatter->parse($value, \NumberFormatter::TYPE_INT32, $position);
 			if ($parsed === false || $position != strlen($value))
 			{
-				$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-integer', array('ucf'));
+				$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_integer', array('ucf'));
 				return new Validation\Error(array($message));
 			}
 		}

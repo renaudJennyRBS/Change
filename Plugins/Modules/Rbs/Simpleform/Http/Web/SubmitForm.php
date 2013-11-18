@@ -53,7 +53,7 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 		if (!$securityManager->checkCSRFToken($arguments['CSRFToken']))
 		{
 			// Return an error.
-			$message = $i18nManager->trans('m.rbs.simpleform.fo.bad-csrf-token', array('ucf'));
+			$message = $i18nManager->trans('m.rbs.simpleform.front.bad_csrf_token', array('ucf'));
 			$result->setEntry('errors', array('global' => array($message)));
 			$result->setEntry('inputData', $data);
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500); // TODO is it the good error code?
@@ -75,7 +75,7 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$user = $event->getAuthenticationManager()->getCurrentUser();
 				if (!$user->authenticated() && (!isset($data['captcha']) || !$securityManager->validateCaptcha($data['captcha'])))
 				{
-					$message = $i18nManager->trans('m.rbs.simpleform.fo.bad-captcha', array('ucf'));
+					$message = $i18nManager->trans('m.rbs.simpleform.front.bad_captcha', array('ucf'));
 					$result->setEntry('errors', array('global' => array($message)));
 					$result->setEntry('inputData', $data);
 					$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
@@ -154,7 +154,7 @@ class SubmitForm extends \Change\Http\Web\Actions\AbstractAjaxAction
 			}
 			else
 			{
-				$message = $i18n->trans('m.rbs.simpleform.constraints.field-required', array('ucf'));
+				$message = $i18n->trans('m.rbs.simpleform.front.field_required', array('ucf'));
 				$errors[] = new \Rbs\Simpleform\Converter\Validation\Error(array($message), $field);
 			}
 		}

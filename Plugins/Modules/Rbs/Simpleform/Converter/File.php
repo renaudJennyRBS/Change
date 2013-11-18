@@ -16,7 +16,7 @@ class File extends \Rbs\Simpleform\Converter\AbstractConverter
 		$file = new \Rbs\Simpleform\Converter\File\TmpFile($value);
 		if ($file->getError() !== 0)
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-file', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_file', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 		return $file;

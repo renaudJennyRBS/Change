@@ -15,7 +15,7 @@ class TrimArray extends \Rbs\Simpleform\Converter\AbstractConverter
 	{
 		if (!is_array($value))
 		{
-			$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-array', array('ucf'));
+			$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_array', array('ucf'));
 			return new Validation\Error(array($message));
 		}
 		$parsed = array();
@@ -23,7 +23,7 @@ class TrimArray extends \Rbs\Simpleform\Converter\AbstractConverter
 		{
 			if (!is_string($singleValue))
 			{
-				$message = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.invalid-array', array('ucf'));
+				$message = $this->getI18nManager()->trans('m.rbs.simpleform.front.invalid_array', array('ucf'));
 				return new Validation\Error(array($message));
 			}
 			$singleValue = trim($singleValue);
@@ -48,7 +48,7 @@ class TrimArray extends \Rbs\Simpleform\Converter\AbstractConverter
 					$max = intval($param);
 					if (count($parsed) > $max)
 					{
-						$errorMessages[] = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.not-more-than-values',
+						$errorMessages[] = $this->getI18nManager()->trans('m.rbs.simpleform.front.not_more_than_values',
 							array('ucf'), array('max' => $max));
 					}
 					break;
@@ -57,7 +57,7 @@ class TrimArray extends \Rbs\Simpleform\Converter\AbstractConverter
 					$min = intval($param);
 					if (count($parsed) < $min)
 					{
-						$errorMessages[] = $this->getI18nManager()->trans('m.rbs.simpleform.constraints.not-less-than-values',
+						$errorMessages[] = $this->getI18nManager()->trans('m.rbs.simpleform.front.not_less_than_values',
 							array('ucf'), array('min' => $min));
 					}
 					break;

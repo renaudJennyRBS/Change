@@ -1,5 +1,5 @@
 <div>
-	<rbs-field label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-collection', ['ucf']) }}" ng-required="true">
+	<rbs-field label="{{ i18nAttr('m.rbs.simpleform.admin.field_parameters_collection', ['ucf']) }}" ng-required="true">
 		<select ng-model="document.parameters.collectionCode" class="form-control" ng-required="true"
 			name="document.parameters.collectionCode"
 			rbs-items-from-collection="Rbs_Collection_Collection_List">
@@ -7,19 +7,19 @@
 		</select>
 	</rbs-field>
 
-	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-line-count', ['ucf']) }}"
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.admin.field_parameters_line_count', ['ucf']) }}"
 		ng-required="true" property="document.parameters.lineCount">
 	</rbs-field-integer>
 
-	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-min-count', ['ucf']) }}"
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.admin.field_parameters_min_count', ['ucf']) }}"
 		property="document.parameters.minCount">
 	</rbs-field-integer>
 
-	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.documents.field.parameters-max-count', ['ucf']) }}"
+	<rbs-field-integer label="{{ i18nAttr('m.rbs.simpleform.admin.field_parameters_max_count', ['ucf']) }}"
 		property="document.parameters.maxCount">
 	</rbs-field-integer>
 
-	<rbs-field-rich-text label="{{ i18nAttr('m.rbs.simpleform.documents.field.helptext', ['ucf']) }}"
+	<rbs-field-rich-text label="{{ i18nAttr('m.rbs.simpleform.documents.field_helptext', ['ucf']) }}"
 		property="document.helpText">
 	</rbs-field-rich-text>
 </div>
