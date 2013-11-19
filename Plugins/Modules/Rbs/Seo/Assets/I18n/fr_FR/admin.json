@@ -151,5 +151,8 @@
 	},
 	"meta_variable_section_title":{
 		"message":"titre de la section"
+	},
+	"head_metas":{
+		"message":"métas d'en-têtes de la page"
 	}
 }

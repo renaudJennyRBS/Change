@@ -13,6 +13,7 @@ class HeadMetasInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.seo.blocks.head-metas', $ucf));
+		$this->setSection($i18nManager->trans('m.rbs.seo.admin.module_name', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.seo.admin.head_metas', $ucf));
 	}
 }

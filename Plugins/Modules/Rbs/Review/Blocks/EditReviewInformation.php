@@ -14,6 +14,7 @@ class EditReviewInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
+		$this->setSection($i18nManager->trans('m.rbs.review.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.review.front.edit_review', $ucf));
 		$this->addInformationMeta('reviewId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.front.review', $ucf))
