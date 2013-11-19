@@ -1,0 +1,11 @@
+{
+	"notification_message":{
+		"message":"message"
+	},
+	"notification_status":{
+		"message":"statut"
+	},
+	"notification_creationDate":{
+		"message":"date de création"
+	}
+}

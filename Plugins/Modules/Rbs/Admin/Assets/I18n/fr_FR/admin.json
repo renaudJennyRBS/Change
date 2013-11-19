@@ -856,5 +856,14 @@
 	},
 	"timeinterval_choose_type":{
 		"message":"choisissez la période"
+	},
+	"dashboard_notifications": {
+		"message":"notifications"
+	},
+	"dashboard_notification_new": {
+		"message":"nouvelles"
+	},
+	"dashboard_notification_read": {
+		"message":"lues"
 	}
 }

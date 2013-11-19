@@ -1,11 +1,11 @@
 <header class="clearfix">
 	<button ng-click="closeEmbeddedModal()" class="close pull-right" style="margin-left:30px;" type="button">×</button>
-	<h3><i class="icon-exclamation-sign"></i> {{ i18n('m.rbs.admin.dashboard.notifications', ['ucf']) }}</h3>
+	<h3><i class="icon-exclamation-sign"></i> {{ i18n('m.rbs.admin.admin.dashboard_notifications', ['ucf']) }}</h3>
 </header>
 
 <div class="btn-group">
-	<button type="button" class="btn btn-default" ng-class="{active: notificationType == 'new'}" data-ng-click="notificationType = 'new'">{{ i18n('m.rbs.admin.dashboard.notification-new', ['ucf']) }}</button>
-	<button type="button" class="btn btn-default" ng-class="{active: notificationType == 'read'}" data-ng-click="notificationType = 'read'">{{ i18n('m.rbs.admin.dashboard.notification-read', ['ucf']) }}</button>
+	<button type="button" class="btn btn-default" ng-class="{active: notificationType == 'new'}" data-ng-click="notificationType = 'new'">{{ i18n('m.rbs.admin.admin.dashboard_notification_new', ['ucf']) }}</button>
+	<button type="button" class="btn btn-default" ng-class="{active: notificationType == 'read'}" data-ng-click="notificationType = 'read'">{{ i18n('m.rbs.admin.admin.dashboard_notification_read', ['ucf']) }}</button>
 </div>
 
 <rbs-document-list data-dlid="DLRbsDashboardNotificationsList"

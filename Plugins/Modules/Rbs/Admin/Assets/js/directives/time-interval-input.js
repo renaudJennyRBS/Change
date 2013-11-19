@@ -26,13 +26,13 @@
 				}
 
 				var durationTranslations = {
-					years: i18n.trans('m.rbs.admin.admin.js.time-interval-years'),
-					months: i18n.trans('m.rbs.admin.admin.js.time-interval-months'),
-					weeks: i18n.trans('m.rbs.admin.admin.js.time-interval-weeks'),
-					days: i18n.trans('m.rbs.admin.admin.js.time-interval-days'),
-					hours: i18n.trans('m.rbs.admin.admin.js.time-interval-hours'),
-					minutes: i18n.trans('m.rbs.admin.admin.js.time-interval-minutes'),
-					seconds: i18n.trans('m.rbs.admin.admin.js.time-interval-seconds')
+					years: i18n.trans('m.rbs.admin.adminjs.timeinterval_years'),
+					months: i18n.trans('m.rbs.admin.adminjs.timeinterval_months'),
+					weeks: i18n.trans('m.rbs.admin.adminjs.timeinterval_weeks'),
+					days: i18n.trans('m.rbs.admin.adminjs.timeinterval_days'),
+					hours: i18n.trans('m.rbs.admin.adminjs.timeinterval_hours'),
+					minutes: i18n.trans('m.rbs.admin.adminjs.timeinterval_minutes'),
+					seconds: i18n.trans('m.rbs.admin.adminjs.timeinterval_seconds')
 				};
 				var durationTypes = Object.keys(durationTranslations);
 				scope.durations = {};

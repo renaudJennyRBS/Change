@@ -112,7 +112,7 @@ class Listeners implements ListenerAggregateInterface
 				array('label' => $i18nManager->trans('m.rbs.plugins.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Plugins', 'section' => 'admin',
 					'keywords' => $i18nManager->trans('m.rbs.plugins.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.seo.admin.js.module-name', array('ucf')),
+				array('label' => $i18nManager->trans('m.rbs.seo.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Seo', 'section' => 'cms',
 					'keywords' => $i18nManager->trans('m.rbs.seo.admin.module_keywords')),
 				array('label' => $i18nManager->trans('m.rbs.simpleform.admin.module_name', array('ucf')),
