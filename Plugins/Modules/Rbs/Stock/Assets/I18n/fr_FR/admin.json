@@ -74,9 +74,6 @@
 	"sku_allowquantitysplit_help":{
 		"message":"Lorsque cette option est activée, les lignes de commandes correspondant à ce SKU pourront être livrées en plusieurs colis."
 	},
-	"sku_thresholds":{
-		"message":"Seuils"
-	},
 	"sku_threshold_less_or_equals":{
 		"message":"Inférieur ou égale à"
 	},
@@ -88,15 +85,6 @@
 	},
 	"sku_threshold_remove":{
 		"message":"Supprimer"
-	},
-	"sku_threshold_available":{
-		"message":"en stock"
-	},
-	"sku_threshold_low":{
-		"message":"peu de stock"
-	},
-	"sku_threshold_unavailable":{
-		"message":"en rupture"
 	},
 	"sku_virtual_help":{
 		"message":"Ne possede pas de propriétés physique, et ne necéssite pas de livraison."
