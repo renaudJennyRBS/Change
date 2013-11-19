@@ -57,10 +57,12 @@ class Autoloader extends StandardAutoloader
 		{
 			$workspace = $this->workspace;
 			$namespaces = array();
-			$pluginsDatas = unserialize(file_get_contents($compiledPluginsPath));
-			foreach ($pluginsDatas as $pluginDatas)
+			$plugins = unserialize(file_get_contents($compiledPluginsPath));
+			foreach ($plugins as $plugin)
 			{
-				$namespaces[$pluginDatas['namespace']] = $this->buildNamespacePath($pluginDatas, $workspace);
+				/** @var $plugin Plugin */
+				$plugin->setWorkspace($workspace);
+				$namespaces[$plugin->getNamespace() . '\\'] = $plugin->getAbsolutePath();
 			}
 			$content = serialize($namespaces);
 			\Change\Stdlib\File::write($cachePath, $content);

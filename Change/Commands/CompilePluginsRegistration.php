@@ -4,7 +4,7 @@ namespace Change\Commands;
 use Change\Commands\Events\Event;
 
 /**
- * @name \Change\Commands\CompileDocuments
+ * @name \Change\Commands\CompilePluginsRegistration
  */
 class CompilePluginsRegistration
 {

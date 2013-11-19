@@ -116,8 +116,6 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 			'configured' => false,
 			'activated' => false,
 			'configuration' =>array (),
-			'className' => 'Change\\Plugins\\Plugin',
-			'namespace' => 'Change\\Tests\\',
 			'defaultLCID' => null
 		);
 		$this->assertEquals($expected, $plugin->toArray());

@@ -63,9 +63,15 @@ class ListenerAggregate implements \Zend\EventManager\ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
+			(new \Change\Commands\CompilePluginsRegistration())->execute($event);
+		};
+		$events->attach('change:compile-plugins-registration', $callback, 5);
+
+		$callback = function ($event)
+		{
 			(new \Change\Commands\InstallPlugin())->execute($event);
 		};
-		$events->attach('change:install-plugin', $callback);
+		$events->attach('change:install-plugin', $callback, 5);
 
 		$callback = function ($event)
 		{

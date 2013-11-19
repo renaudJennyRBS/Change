@@ -337,12 +337,11 @@ class Compiler
 	{
 		$nbModels = 0;
 		$plugins = $this->applicationServices->getPluginManager()->getModules();
-		$workspace = $this->application->getWorkspace();
 		foreach($plugins as $plugin)
 		{
 			$vendor = $plugin->getVendor();
 			$moduleName = $plugin->getShortName();
-			foreach ($plugin->getDocumentDefinitionPaths($workspace) as $documentName => $definitionPath)
+			foreach ($plugin->getDocumentDefinitionPaths() as $documentName => $definitionPath)
 			{
 				$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
 				$nbModels++;

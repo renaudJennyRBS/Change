@@ -208,6 +208,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	public function compile($checkRegistered = true)
 	{
 		$plugins = $this->scanPlugins();
+
 		if ($checkRegistered)
 		{
 			$plugins = $this->loadRegistration($plugins);
@@ -226,13 +227,8 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		$this->plugins = $plugins;
 		$autoloader = new Autoloader();
 		$autoloader->setWorkspace($this->getWorkspace());
-		$datas = array();
-		foreach ($plugins as $plugin)
-		{
-			$datas[] = $plugin->toArray();
-		}
 
-		\Change\Stdlib\File::write($this->getCompiledPluginsPath(), serialize($datas));
+		\Change\Stdlib\File::write($this->getCompiledPluginsPath(), serialize($plugins));
 		$autoloader->reset();
 		return $plugins;
 	}
@@ -294,33 +290,15 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 			return null;
 		}
 
-		$basePath = dirname($filePath);
-		$plugin = null;
+		$plugin = new Plugin($type, $vendor, $shortName);
+		$plugin->setWorkspace($this->getWorkspace());
 
-		if (is_readable($basePath . DIRECTORY_SEPARATOR . 'Plugin.php'))
-		{
-			$className = ($type === Plugin::TYPE_THEME ? '\\Theme\\' : '\\') . $vendor . '\\' . $shortName . '\\Plugin';
-			require_once $basePath . DIRECTORY_SEPARATOR . 'Plugin.php';
-			if (class_exists($className, false))
-			{
-				$plugin = new $className($type, $vendor, $shortName);
-				if (!($plugin instanceof Plugin))
-				{
-					$plugin = null;
-				}
-			}
-		}
-		else
-		{
-			$plugin = new Plugin($type, $vendor, $shortName);
-		}
-
-		if ($plugin && isset($config['package']))
+		if (isset($config['package']))
 		{
 			$plugin->setPackage($config['package']);
 		}
 
-		if ($plugin && isset($config['defaultLCID']))
+		if (isset($config['defaultLCID']))
 		{
 			$plugin->setDefaultLCID($config['defaultLCID']);
 		}
@@ -339,36 +317,11 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 			$compiledPluginsPath = $this->getCompiledPluginsPath();
 			if (is_readable($compiledPluginsPath))
 			{
-				$pluginsDatas = unserialize(file_get_contents($compiledPluginsPath));
-				foreach ($pluginsDatas as $pluginData)
+				$plugins = unserialize(file_get_contents($compiledPluginsPath));
+				foreach ($plugins as $plugin)
 				{
-					$type = $pluginData['type'];
-					$vendor = $pluginData['vendor'];
-					$shortName = $pluginData['shortName'];
-					$className = $pluginData['className'];
-
-					/* @var $plugin Plugin */
-					$plugin = new $className($type, $vendor, $shortName);
-					if (array_key_exists('registrationDate', $pluginData))
-					{
-						$plugin->setRegistrationDate($pluginData['registrationDate']);
-					}
-					if (isset($pluginData['package']))
-					{
-						$plugin->setPackage($pluginData['package']);
-					}
-					if (isset($pluginData['activated']))
-					{
-						$plugin->setActivated($pluginData['activated']);
-					}
-					if (isset($pluginData['configured']))
-					{
-						$plugin->setConfigured($pluginData['configured']);
-					}
-					if (isset($pluginData['configuration']))
-					{
-						$plugin->setConfiguration($pluginData['configuration']);
-					}
+					/** @var $plugin Plugin */
+					$plugin->setWorkspace($this->getWorkspace());
 					$this->plugins[] = $plugin;
 				}
 			}
@@ -493,6 +446,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function load($plugin)
 	{
+		$plugin->setWorkspace($this->getWorkspace());
 		$sqb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $sqb->getFragmentBuilder('PluginManager::load');
 		$sqb->select('package', 'registration_date', 'configured', 'activated', 'config_datas')
@@ -801,6 +755,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($result instanceof Plugin)
 			{
+				$result->setWorkspace($installApplication->getWorkspace());
 				$result->setActivated(true);
 				$result->setConfigurationEntry('installDate', $date->format('c'));
 				$plugins[] = $result;

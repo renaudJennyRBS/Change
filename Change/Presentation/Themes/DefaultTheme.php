@@ -132,7 +132,7 @@ class DefaultTheme implements Theme
 				$plugins = $pluginManager->getModules();
 				foreach ($plugins as $plugin)
 				{
-					if ($plugin->isAvailable() && is_dir($plugin->getTwigAssetsPath($this->getWorkspace())))
+					if ($plugin->isAvailable() && $plugin->getTwigAssetsPath())
 					{
 						$this->getThemeManager()->installPluginTemplates($plugin);
 					}
@@ -221,7 +221,7 @@ class DefaultTheme implements Theme
 			$module = $pm->getModule($vendor, $moduleShortName);
 			if ($module && $module->isAvailable())
 			{
-				$path =  $this->getWorkspace()->composePath($module->getThemeAssetsPath($this->getWorkspace()), $resourceModulePath);
+				$path =  $this->getWorkspace()->composePath($module->getThemeAssetsPath(), $resourceModulePath);
 				if (file_exists($path))
 				{
 					return $path;
@@ -257,7 +257,7 @@ class DefaultTheme implements Theme
 		{
 			if ($plugin->isModule() && $plugin->isAvailable())
 			{
-				$configurationPath = $this->getWorkspace()->composePath($plugin->getThemeAssetsPath($this->getWorkspace()), 'assets.json');
+				$configurationPath = $this->getWorkspace()->composePath($plugin->getThemeAssetsPath(), 'assets.json');
 				if (file_exists($configurationPath))
 				{
 					$blockConfigurations = [];

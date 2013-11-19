@@ -315,7 +315,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		}
 		$pm = $this->getPluginManager();
 		$plugin = $pm->getModule('Rbs', 'Admin');
-		$srcPath = $plugin->getAbsolutePath($this->getApplication()->getWorkspace()) . '/Assets/img';
+		$srcPath = $plugin->getAssetsPath() . '/img';
 		$targetPath = $resourceDirectoryPath . '/img';
 		\Change\Stdlib\File::mkdir($targetPath);
 
@@ -377,7 +377,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		$devMode = $this->getApplication()->inDevelopmentMode();
 		if ($plugin && $plugin->isAvailable())
 		{
-			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace())
+			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath()
 				. '/Admin/Assets/*/*.js');
 			if (!$devMode)
 			{
@@ -385,7 +385,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			}
 			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
-			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath($this->getApplication()->getWorkspace())
+			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath()
 				. '/Admin/Assets/css/*.css');
 			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
 		}
