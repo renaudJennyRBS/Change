@@ -13,6 +13,7 @@ abstract class BaseEventListInformation extends \Change\Presentation\Blocks\Info
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
+		$this->setSection($i18nManager->trans('m.rbs.event.admin.module_name', $ucf));
 		$this->addInformationMeta('showTime', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_show_time', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)

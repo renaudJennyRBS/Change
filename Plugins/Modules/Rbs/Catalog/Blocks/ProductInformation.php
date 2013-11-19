@@ -14,6 +14,7 @@ class ProductInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
+		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_label', $ucf));
 		$this->addInformationMeta('productId', Property::TYPE_DOCUMENT, false, null)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_product', $ucf));
