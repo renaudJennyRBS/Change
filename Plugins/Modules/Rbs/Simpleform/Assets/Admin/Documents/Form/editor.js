@@ -9,7 +9,7 @@ Z	 * @constructor
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Simpleform/Form/editor.twig',
+			templateUrl : 'Document/Rbs/Simpleform/Form/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 

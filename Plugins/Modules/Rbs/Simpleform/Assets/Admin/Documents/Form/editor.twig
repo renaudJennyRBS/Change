@@ -29,7 +29,7 @@
 			<rbs-field-picker property="confirmationPage" accepted-model="Rbs_Website_StaticPage"
 				allow-creation="true" allow-edition="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationPage'), ['ucf']) }}"
-				selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationpage-picker-title', ['ucf']) }}">
+				selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationpage_picker_title', ['ucf']) }}">
 			</rbs-field-picker>
 		</div>
 
@@ -66,7 +66,7 @@
 
 		<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
 			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'publicationSections'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.publicationsections-picker-title', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.publicationsections_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
 		<rbs-field-date property="startPublication"
@@ -92,31 +92,24 @@
 			<column name="label" primary="true">
 				<a href="javascript:;" ng-click="extend.cascadeEdit($index)">(= doc.label =)</a>
 			</column>
-			<column name="actions" width="168">
+			<column name="actions" width="88" label="{{ i18nAttr('m.rbs.simpleform.admin.sort_order', ['ucf']) }}">
 				<rbs-kb-switch>
-					<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-top', ['ucf']) }}">
+					<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.move_top', ['ucf']) }}">
 						<i class="icon-step-forward icon-rotate-270"></i>
 					</button>
-					<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-up', ['ucf']) }}">
+					<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
 						<i class="icon-play icon-rotate-270"></i>
 					</button>
 				</rbs-kb-switch>
 				<rbs-kb-switch>
-					<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-bottom', ['ucf']) }}">
+					<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
 						<i class="icon-step-forward icon-rotate-90"></i>
 					</button>
-					<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.move-down', ['ucf']) }}">
+					<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
 						<i class="icon-play icon-rotate-90"></i>
 					</button>
 				</rbs-kb-switch>
-				<button class="btn btn-default btn-icon" type="button" ng-click="extend.cascadeEdit($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.edit', ['ucf']) }}">
-					<i class="icon-pencil"></i>
-				</button>
-				<button class="btn btn-danger btn-icon" type="button" ng-click="extend.remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.js.delete', ['ucf']) }}">
-					<i class="icon-remove"></i>
-				</button>
 			</column>
-			<quick-actions></quick-actions>
 		</rbs-document-list>
 	</fieldset>
 
