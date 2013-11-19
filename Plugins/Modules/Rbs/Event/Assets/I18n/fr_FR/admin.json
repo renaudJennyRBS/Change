@@ -85,5 +85,26 @@
 	},
 	"category_create":{
 		"message":"ajouter une categorie"
+	},
+	"baseevent_detailvisual_help":{
+		"message":"Visuel utilisé dans l'affichage de détail. Ce visuel n'est pas utilisé pour l'affichage en liste."
+	},
+	"baseevent_detailvisual_picker_title":{
+		"message":"sélectionnez le visuel de détail"
+	},
+	"baseevent_listvisual_help":{
+		"message":"Visuel utilisé pour l'affichage en liste."
+	},
+	"baseevent_listvisual_picker_title":{
+		"message":"sélectionnez le visuel de liste"
+	},
+	"baseevent_categories_picker_title":{
+		"message":"sélectionnez les catégories"
+	},
+	"baseevent_allowcomments_help":{
+		"message":"Autoriser ou non les utilisateurs à soumettre de nouveaux commentaires. Ce choix n'a aucun effet sur les commentaires existants."
+	},
+	"baseevent_excludefromrss_help":{
+		"message":"Exclure ou non des flux RSS. Choisissez oui si ce document est en accès restreint."
 	}
 }

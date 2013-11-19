@@ -1,4 +1,7 @@
 {
+	"sort_order":{
+		"message":"ordre"
+	},
 	"form_usecaptcha_help":{
 		"message":"Demander au utilisateur non-enregistrés de saisir un code de sécurité."
 	},

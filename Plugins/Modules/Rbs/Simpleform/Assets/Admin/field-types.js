@@ -29,7 +29,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-text-input.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-text-input.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -58,7 +58,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-text-area.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-text-area.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -86,7 +86,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-text-email.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-text-email.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -106,7 +106,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-text-integer.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-text-integer.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -122,7 +122,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-text-float.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-text-float.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -140,7 +140,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-collection.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-collection.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -157,7 +157,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-collection-multiple.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-collection-multiple.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -178,7 +178,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-collection-checkbox.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-collection-checkbox.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -196,7 +196,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-date-picker.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-date-picker.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -217,7 +217,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-date-time-picker.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-date-time-picker.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -244,7 +244,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-default-help-text-placeholder.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-default-help-text-placeholder.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)
@@ -263,7 +263,7 @@
 	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Rbs/Simpleform/directives/field-default-help-text.twig',
+			templateUrl: 'Rbs/Simpleform/FieldTypes/field-default-help-text.twig',
 			replace: false,
 			scope: true,
 			link: function (scope)

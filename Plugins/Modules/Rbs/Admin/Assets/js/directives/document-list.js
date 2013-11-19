@@ -1355,7 +1355,7 @@
 						scope.busy = false;
 						Loading.stop();
 						if (reason) {
-							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading-list-error | ucf'), reason);
+							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading_list_error | ucf'), reason);
 						} else {
 							NotificationCenter.clear();
 						}

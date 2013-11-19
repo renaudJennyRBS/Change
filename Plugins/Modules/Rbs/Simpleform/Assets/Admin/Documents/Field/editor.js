@@ -9,7 +9,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Simpleform/Field/editor.twig',
+			templateUrl : 'Document/Rbs/Simpleform/Field/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
