@@ -9,7 +9,7 @@
 
 		return {
 			restrict    : 'EC',
-			templateUrl : 'Rbs/Website/Menu/editor.twig',
+			templateUrl : 'Document/Rbs/Website/Menu/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',
 

@@ -73,14 +73,14 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model('Rbs_Website_Website')
-				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Rbs/Website/Topic/list.twig')
-				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Rbs/Website/SectionPageFunction/list.twig')
-				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Rbs/Website/Menu/list.twig')
+				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/list.twig')
+				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
+				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Document/Rbs/Website/Menu/list.twig')
 			;
 
 			$delegate.model('Rbs_Website_Topic')
-				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Rbs/Website/Topic/list.twig')
-				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Rbs/Website/SectionPageFunction/list.twig')
+				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/list.twig')
+				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
 			;
 
 			$delegate.model('Rbs_Website')
@@ -96,8 +96,8 @@
 			]);
 
 			$delegate.model('Rbs_Website_Menu')
-				.route('new', 'Rbs/Website/Website/:website/Menus/new', 'Rbs/Website/Menu/form.twig')
-				.route('form', 'Rbs/Website/Website/:website/Menus/:id/:LCID', 'Rbs/Website/Menu/form.twig')
+				.route('new', 'Rbs/Website/Website/:website/Menus/new', 'Document/Rbs/Website/Menu/form.twig')
+				.route('form', 'Rbs/Website/Website/:website/Menus/:id/:LCID', 'Document/Rbs/Website/Menu/form.twig')
 			;
 
 			return $delegate;

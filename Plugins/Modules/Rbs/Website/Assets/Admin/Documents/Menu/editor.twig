@@ -33,14 +33,14 @@
 				{{ i18n('m.rbs.website.admin.menu_add_document_item', ['ucf']) }}
 			</div>
 			<div class="panel-body">
-				<p class="help-block">{{ i18n('m.rbs.website.admin.menu_add_document_item-help', ['ucf']) }}</p>
+				<p class="help-block">{{ i18n('m.rbs.website.admin.menu_add_document_item_help', ['ucf']) }}</p>
 
 				<rbs-field label="{{ i18n('m.rbs.website.admin.menu_select_document', ['ucf']) }}">
 					<div class="document-picker-single"
 						allow-creation="false"
 						select-model="{publishable:'true', abstract:'false'}"
 						ng-model="add.document.selected"
-						selector-title="{{ i18nAttr('m.rbs.website.admin.menu_select_document-to-add-to-menu', ['ucf']) }}"
+						selector-title="{{ i18nAttr('m.rbs.website.admin.menu_select_document_to_add_to_menu', ['ucf']) }}"
 						ng-change="onDocumentSelected(add.document.selected)">
 					</div>
 				</rbs-field>
@@ -63,7 +63,7 @@
 				{{ i18n('m.rbs.website.admin.menu_add_url_item', ['ucf']) }}
 			</div>
 			<div class="panel-body">
-				<p class="help-block">{{ i18n('m.rbs.website.admin.menu_add_url_item-help', ['ucf']) }}</p>
+				<p class="help-block">{{ i18n('m.rbs.website.admin.menu_add_url_item_help', ['ucf']) }}</p>
 
 				<rbs-field label="{{ i18n('m.rbs.website.admin.menu_url', ['ucf']) }}">
 					<input type="url" class="form-control" ng-model="add.url.selected" />

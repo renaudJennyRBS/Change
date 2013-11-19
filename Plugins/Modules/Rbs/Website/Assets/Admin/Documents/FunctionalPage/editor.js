@@ -6,7 +6,7 @@
 
 		return {
 			restrict    : 'C',
-			templateUrl : 'Rbs/Website/FunctionalPage/editor.twig',
+			templateUrl : 'Document/Rbs/Website/FunctionalPage/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',
 
@@ -134,7 +134,7 @@
 	{
 		return {
 			restrict    : 'C',
-			templateUrl : 'Rbs/Website/FunctionalPage/editor-translate.twig',
+			templateUrl : 'Document/Rbs/Website/FunctionalPage/editor-translate.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',
 
