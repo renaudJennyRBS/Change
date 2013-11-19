@@ -828,7 +828,7 @@
 		"message":"Lorsqu'un Document à l'état de <strong>brouillon<\/strong> vous semble correct, et lorsque vous souhaitez le publier sur le site web, vous pouvez faire une <strong>demande de validation<\/strong>."
 	},
 	"help_validation_explain":{
-		"message":"Le Document est ici en <strong>attente de validation<\/strong> de son contenu.<ul><li><strong>$$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}Refuser<\/strong> : $$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}le Document repassera à l'état de <strong>brouillon<\/strong> ;<\/li><li><strong>$$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}Accepter<\/strong> : $$ I18N('M.RBS.ADMIN.WORKFLOW.', ['UCF']) $}il restera alors à <strong>valider la publication<\/strong> du Document.<\/li><\/ul>"
+		"message":"Le Document est ici en <strong>attente de validation<\/strong> de son contenu.<ul><li><strong>Refuser :<\/strong> le Document repassera à l'état de <strong>brouillon<\/strong> ;<\/li><li><strong>Accepter :<\/strong> il restera alors à <strong>valider la publication<\/strong> du Document.<\/li><\/ul>"
 	},
 	"help_validcontent_explain":{
 		"message":"Le contenu du Document a été validé, il faut maintenant <strong>valider sa publication<\/strong> sur le site web."

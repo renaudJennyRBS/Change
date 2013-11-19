@@ -15,8 +15,8 @@
 	</form>
 
 	<div class="clearfix">
-		<div class="pull-right">
-			<a href="javascript:;" ng-href="(= document | rbsURL:'workflow' =)" class="btn" ng-if="document && ! document.isNew() && (document.publicationStatus || document.hasCorrection())" ng-class="{true: 'btn-success', false: 'btn-default'}[document.publicationStatus=='PUBLISHABLE']">
+		<div class="pull-right" ng-if="document !== null && ! document.isNew() && (document.publicationStatus !== null || document.hasCorrection())">
+			<a href="javascript:;" ng-href="(= document | rbsURL:'workflow' =)" class="btn" ng-class="{true: 'btn-success', false: 'btn-default'}[document.publicationStatus=='PUBLISHABLE']">
 				<status class="small" ng-model="document"></status>
 				<span ng-if="document.hasCorrection()">
 					{{ i18n('m.rbs.admin.admin.correction', ['ucf']) }}
@@ -41,5 +41,4 @@
 	</div>
 
 	<div class="embedded-content"></div>
-
 </div>

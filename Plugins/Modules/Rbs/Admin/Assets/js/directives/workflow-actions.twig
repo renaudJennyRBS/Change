@@ -52,7 +52,7 @@
 				<div class="control-group">
 					<div class="controls">
 						<p>
-							<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation-done', ['ucf']) }}</div>
+							<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</div>
 						</p>
 						<p>
 							{{ i18n('m.rbs.admin.admin.to_validate_content_you_can', ['ucf']) }}
@@ -75,7 +75,7 @@
 
 			<div ng-if="data.contentAction == 'reject'">
 				<div class="control-group required">
-					<label class="control-label" for="rejectContentField">{{ i18n('m.rbs.admin.admin.reject-reason', ['ucf']) }}</label>
+					<label class="control-label" for="rejectContentField">{{ i18n('m.rbs.admin.admin.reject_reason', ['ucf']) }}</label>
 					<div class="controls">
 						<input type="text" auto-focus="" placeholder="{{ i18nAttr('m.rbs.admin.admin.why_do_you_reject_content', ['ucf']) }}" id="rejectContentField" required="required" class="input-block-level" ng-model="data.rejectReason"/>
 					</div>
@@ -83,7 +83,7 @@
 				<div class="control-group">
 					<div class="controls">
 						<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-						<button type="submit" ng-disabled="wfForm.$invalid" class="btn btn-danger">{{ i18n('m.rbs.admin.admin.reject-content', ['ucf']) }}</button>
+						<button type="submit" ng-disabled="wfForm.$invalid" class="btn btn-danger">{{ i18n('m.rbs.admin.admin.reject_content', ['ucf']) }}</button>
 					</div>
 				</div>
 			</div>
@@ -92,7 +92,7 @@
 				<div class="control-group">
 					<div class="controls">
 						<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-						<button type="submit" class="btn btn-success">{{ i18n('m.rbs.admin.admin.accept-content', ['ucf']) }}</button>
+						<button type="submit" class="btn btn-success">{{ i18n('m.rbs.admin.admin.accept_content', ['ucf']) }}</button>
 					</div>
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 			<div class="control-group">
 				<div class="controls">
 					<p>
-						<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation-done', ['ucf']) }}</div>
+						<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</div>
 						<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</div>
 					</p>
 				</div>
@@ -123,7 +123,7 @@
 			<div class="control-group">
 				<div class="controls">
 					<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-					<button type="submit" class="btn btn-success">{{ i18n('m.rbs.admin.admin.accept-publication', ['ucf']) }}</button>
+					<button type="submit" class="btn btn-success">{{ i18n('m.rbs.admin.admin.accept_publication', ['ucf']) }}</button>
 				</div>
 			</div>
 		</div>
@@ -131,34 +131,34 @@
 		<div class="control-group" ng-switch-when="freeze">
 			<div class="controls">
 				<p>
-					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation-done', ['ucf']) }}</div>
+					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</div>
 					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</div>
 					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</div>
 				</p>
 				<p>{{ i18n('m.rbs.admin.admin.you_can_freeze_document') }}</p>
 				<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-				<button type="submit" class="btn btn-warning"><i class="icon-pause"></i> {{ i18n('m.rbs.admin.admin.freeze-document', ['ucf']) }}</button>
+				<button type="submit" class="btn btn-warning"><i class="icon-pause"></i> {{ i18n('m.rbs.admin.admin.freeze_document', ['ucf']) }}</button>
 			</div>
 		</div>
 
 		<div class="control-group" ng-switch-when="unfreeze">
 			<div class="controls">
 				<p>
-					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation-done', ['ucf']) }}</div>
+					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</div>
 					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</div>
 					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</div>
 					<div style="color: darkred"><i class="icon-pause"></i> {{ i18n('m.rbs.admin.admin.frozen_document', ['ucf']) }}</div>
 				</p>
 				<p>{{ i18n('m.rbs.admin.admin.this_document_is_frozen') }}</p>
 				<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
-				<button type="submit" class="btn btn-success"><i class="icon-play"></i> {{ i18n('m.rbs.admin.admin.unfreeze-document', ['ucf']) }}</button>
+				<button type="submit" class="btn btn-success"><i class="icon-play"></i> {{ i18n('m.rbs.admin.admin.unfreeze_document', ['ucf']) }}</button>
 			</div>
 		</div>
 
 		<div class="control-group" ng-switch-when="correction">
 			<div class="controls">
 				<p>
-					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation-done', ['ucf']) }}</div>
+					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</div>
 					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</div>
 					<div style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</div>
 					<div style="color: darkred"><i class="icon-pencil"></i> {{ i18n('m.rbs.admin.admin.modified_content_correction') }}</div>
@@ -305,12 +305,12 @@
 	<div ng-if="data.helpShown" class="workflow-help">
 		<div class="step" ng-class="{'current': data.action=='requestValidation'}">
 			<div class="block">
-				<h5><div class="bullet-status DRAFT"></div>{{ i18n('m.rbs.admin.admin.status_draft', ['ucf']) }}</h5>
+				<h5><div class="bullet-status DRAFT"></div> {{ i18n('m.rbs.admin.adminjs.status_draft', ['ucf']) }}</h5>
 				<div class="action"><i class="icon-angle-down"></i> {{ i18n('m.rbs.admin.admin.request_validation', ['ucf']) }}</div>
 				<div class="action"><i class="icon-double-angle-down"></i> {{ i18n('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}</div>
 			</div>
 			<div class="explain">
-				{{ i18n('m.rbs.admin.admin.help_draft_explain') }}
+				{{ i18n('m.rbs.admin.admin.help_draft_explain')|raw }}
 			</div>
 		</div>
 		<div class="arrow">
@@ -318,12 +318,12 @@
 		</div>
 		<div class="step" ng-class="{'current': data.action=='contentValidation'}">
 			<div class="block">
-				<h5><div class="bullet-status VALIDATION"></div>{{ i18n('m.rbs.admin.admin.status_validation', ['ucf']) }}</h5>
+				<h5><div class="bullet-status VALIDATION"></div> {{ i18n('m.rbs.admin.adminjs.status_validation', ['ucf']) }}</h5>
 				<div class="action reject"><i class="icon-angle-up"></i> {{ i18n('m.rbs.admin.admin.reject', ['ucf']) }}</div>
 				<div class="action accept"><i class="icon-angle-down"></i> {{ i18n('m.rbs.admin.admin.accept', ['ucf']) }}</div>
 			</div>
 			<div class="explain">
-				{{ i18n('m.rbs.admin.admin.help_validation_explain') | raw }}
+				{{ i18n('m.rbs.admin.admin.help_validation_explain')|raw }}
 			</div>
 		</div>
 		<div class="arrow">
@@ -331,11 +331,11 @@
 		</div>
 		<div class="step" ng-class="{'current': data.action=='publicationValidation'}">
 			<div class="block">
-				<h5><div class="bullet-status VALIDCONTENT"></div> {{ i18n('m.rbs.admin.admin.status_validcontent', ['ucf']) }}</h5>
+				<h5><div class="bullet-status VALIDCONTENT"></div> {{ i18n('m.rbs.admin.adminjs.status_validcontent', ['ucf']) }}</h5>
 				<div class="action"><i class="icon-angle-down"></i> {{ i18n('m.rbs.admin.admin.accept_publication', ['ucf']) }}</div>
 			</div>
 			<div class="explain">
-				{{ i18n('m.rbs.admin.admin.help_validcontent_explain') | raw }}
+				{{ i18n('m.rbs.admin.admin.help_validcontent_explain')|raw }}
 			</div>
 		</div>
 		<div class="arrow">
@@ -343,11 +343,11 @@
 		</div>
 		<div class="step" ng-class="{'current': data.action=='freeze'}">
 			<div class="block">
-				<h5><div class="bullet-status PUBLISHABLE"></div>{{ i18n('m.rbs.admin.admin.status_publishable', ['ucf']) }}</h5>
+				<h5><div class="bullet-status PUBLISHABLE"></div>{{ i18n('m.rbs.admin.adminjs.status_publishable', ['ucf']) }}</h5>
 				<div class="action reject"><i class="icon-angle-down"></i> {{ i18n('m.rbs.admin.admin.freeze', ['ucf']) }}</div>
 			</div>
 			<div class="explain">
-				{{ i18n('m.rbs.admin.admin.help_publishable_explain') | raw }}
+				{{ i18n('m.rbs.admin.admin.help_publishable_explain')|raw }}
 			</div>
 		</div>
 		<div class="arrow">
@@ -355,11 +355,11 @@
 		</div>
 		<div class="step" ng-class="{'current': data.action=='unfreeze'}">
 			<div class="block">
-				<h5><div class="bullet-status FROZEN"></div>{{ i18n('m.rbs.admin.admin.status_frozen', ['ucf']) }}</h5>
+				<h5><div class="bullet-status FROZEN"></div>{{ i18n('m.rbs.admin.adminjs.status_frozen', ['ucf']) }}</h5>
 				<div class="action accept"><i class="icon-angle-up"></i> {{ i18n('m.rbs.admin.admin.unfreeze', ['ucf']) }}</div>
 			</div>
 			<div class="explain">
-				{{ i18n('m.rbs.admin.admin.help_frozen_explain') | raw }}
+				{{ i18n('m.rbs.admin.admin.help_frozen_explain')|raw }}
 			</div>
 		</div>
 	</div>
