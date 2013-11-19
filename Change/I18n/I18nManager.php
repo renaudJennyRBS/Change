@@ -980,7 +980,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getI18nFilePathsForPlugin(\Change\Plugins\Plugin $plugin, $locale)
 	{
-		$localeFilePattern = implode(DIRECTORY_SEPARATOR, [$plugin->getAbsolutePath($this->getWorkspace()), 'Assets', 'I18n', $locale, '*.json']);
+		$localeFilePattern = implode(DIRECTORY_SEPARATOR, [$plugin->getAssetsPath(), 'I18n', $locale, '*.json']);
 		return Glob::glob($localeFilePattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT);
 	}
 
@@ -1150,7 +1150,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 			$plugin = $this->getPluginManager()->getPlugin($parts[0] === 'm' ? \Change\Plugins\Plugin::TYPE_MODULE : \Change\Plugins\Plugin::TYPE_THEME, $parts[1], $parts[2]);
 			if ($plugin)
 			{
-				$originalFilePath = implode(DIRECTORY_SEPARATOR, [$plugin->getAbsolutePath($this->getWorkspace()), 'Assets', 'I18n', $LCID, $parts[3] . '.json']);
+				$originalFilePath = implode(DIRECTORY_SEPARATOR, [$plugin->getAssetsPath(), 'I18n', $LCID, $parts[3] . '.json']);
 				if (file_exists($originalFilePath))
 				{
 					$originalTime = filemtime($originalFilePath);

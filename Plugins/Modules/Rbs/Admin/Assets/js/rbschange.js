@@ -117,7 +117,7 @@
 	function baseEditorDirective (modelName, linkFn) {
 		return {
 			restrict : 'C',
-			templateUrl : modelName.replace(/_/g, '/') + '/editor.twig',
+			templateUrl : 'Document/' + modelName.replace(/_/g, '/') + '/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
@@ -144,7 +144,7 @@
 		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, '') + 'Translate', function ()
 		{
 			var directive = baseEditorDirective(modelName, linkFn);
-			directive.templateUrl = modelName.replace(/_/g, '/') + '/editor-translate.twig';
+			directive.templateUrl = 'Document/' + modelName.replace(/_/g, '/') + '/editor-translate.twig';
 			return directive;
 		});
 	};

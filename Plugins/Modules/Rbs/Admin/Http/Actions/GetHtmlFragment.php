@@ -18,7 +18,7 @@ class GetHtmlFragment
 		$resourcePath = $event->getParam('resourcePath');
 		$result = new \Rbs\Admin\Http\Result\Renderer();
 
-		$filePath = $this->getFilePath($resourcePath, $event->getApplication()->getWorkspace());
+		$filePath = $this->getFilePath($resourcePath, $event->getApplicationServices()->getPluginManager());
 		if ($filePath !== null)
 		{
 
@@ -66,24 +66,28 @@ class GetHtmlFragment
 
 	/**
 	 * @param string $resourcePath
-	 * @param \Change\Workspace $workspace
+	 * @param \Change\Plugins\PluginManager $pluginManager
 	 * @return string
 	 */
-	protected function getFilePath($resourcePath, $workspace)
+	protected function getFilePath($resourcePath, $pluginManager)
 	{
 		$parts = explode('/', $resourcePath);
 		if (count($parts) > 2)
 		{
 			$vendor = array_shift($parts);
 			$shortModuleName = array_shift($parts);
-			if ($vendor === 'Rbs' && $shortModuleName === 'Admin')
+			$plugin = $pluginManager->getModule($vendor, $shortModuleName);
+			if ($plugin && $plugin->isAvailable())
 			{
-				return $workspace->pluginsModulesPath($vendor, $shortModuleName, 'Assets', implode(DIRECTORY_SEPARATOR, $parts));
-			}
-			else
-			{
-				return $workspace->pluginsModulesPath($vendor, $shortModuleName, 'Admin', 'Assets',
-					implode(DIRECTORY_SEPARATOR, $parts));
+				if ($vendor === 'Rbs' && $shortModuleName === 'Admin')
+				{
+					return $plugin->getAssetsPath() . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $parts);
+				}
+				else
+				{
+					return $plugin->getAssetsPath() . DIRECTORY_SEPARATOR . 'Admin' . DIRECTORY_SEPARATOR .
+						implode(DIRECTORY_SEPARATOR, $parts);
+				}
 			}
 		}
 		return null;

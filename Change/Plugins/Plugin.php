@@ -11,6 +11,11 @@ class Plugin
 	const TYPE_THEME = 'theme';
 
 	/**
+	 * @var \Change\Workspace
+	 */
+	private $workspace;
+
+	/**
 	 * @var string
 	 */
 	protected $type;
@@ -71,6 +76,24 @@ class Plugin
 		$this->type = $type;
 		$this->vendor = $vendor;
 		$this->shortName = $shortName;
+	}
+
+	/**
+	 * @param \Change\Workspace $workspace
+	 * @return $this
+	 */
+	public function setWorkspace($workspace)
+	{
+		$this->workspace = $workspace;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Workspace
+	 */
+	protected function getWorkspace()
+	{
+		return $this->workspace;
 	}
 
 	/**
@@ -329,8 +352,7 @@ class Plugin
 	public function toArray()
 	{
 		$array = get_object_vars($this);
-		$array['className'] = get_class($this);
-		$array['namespace'] = $this->getNamespace() .'\\';
+		unset($array['workspace']);
 		return $array;
 	}
 
@@ -346,37 +368,36 @@ class Plugin
 
 	/**
 	 * @api
-	 * @param \Change\Workspace $workspace
 	 * @return string
 	 */
-	public function getAbsolutePath(\Change\Workspace $workspace)
+	public function getAbsolutePath()
 	{
 		if (!$this->isProjectPath())
 		{
 			if ($this->isModule())
 			{
-				return $workspace->pluginsModulesPath($this->vendor, $this->shortName);
+				return $this->getWorkspace()->pluginsModulesPath($this->vendor, $this->shortName);
 			}
-			return $workspace->pluginsThemesPath($this->vendor, $this->shortName);
+			return $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName);
 		}
 		if ($this->isModule())
 		{
-			return $workspace->projectModulesPath($this->shortName);
+			return $this->getWorkspace()->projectModulesPath($this->shortName);
 		}
-		return $workspace->projectThemesPath($this->shortName);
+		return $this->getWorkspace()->projectThemesPath($this->shortName);
 	}
 
 	/**
 	 * @api
-	 * @param \Change\Workspace $workspace
 	 * @return array
 	 */
-	public function getDocumentDefinitionPaths($workspace)
+	public function getDocumentDefinitionPaths()
 	{
 		$paths = array();
 		if ($this->isModule())
 		{
-			$pattern = $workspace->composePath($this->getAbsolutePath($workspace), 'Documents', 'Assets', '*.xml');
+			$pattern = $this->getAbsolutePath() . DIRECTORY_SEPARATOR . 'Documents' .
+				DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . '*.xml';
 			$result = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
 			foreach ($result as $definitionPath)
 			{
@@ -389,30 +410,34 @@ class Plugin
 
 	/**
 	 * @api
-	 * @param \Change\Workspace $workspace
+	 * @return string
+	 */
+	public function getAssetsPath()
+	{
+		return $this->getAbsolutePath() . DIRECTORY_SEPARATOR . 'Assets';
+	}
+
+	/**
+	 * @api
 	 * @return string|null
 	 */
-	public function getThemeAssetsPath($workspace)
+	public function getThemeAssetsPath()
 	{
+		$path = $this->getAssetsPath();
 		if ($this->isModule())
 		{
-			$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets', 'Theme');
-		}
-		else
-		{
-			$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets');
+			$path .= DIRECTORY_SEPARATOR . 'Theme';
 		}
 		return is_dir($path) ? $path : null ;
 	}
 
 	/**
 	 * @api
-	 * @param \Change\Workspace $workspace
 	 * @return string|null
 	 */
-	public function getTwigAssetsPath($workspace)
+	public function getTwigAssetsPath()
 	{
-		$path = $workspace->composePath($this->getAbsolutePath($workspace), 'Assets', 'Twig');
+		$path = $this->getAssetsPath() . DIRECTORY_SEPARATOR . 'Twig';
 		return is_dir($path) ? $path : null ;
 	}
 
@@ -430,6 +455,15 @@ class Plugin
 	public function getDefaultLCID()
 	{
 		return $this->defaultLCID;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function __sleep()
+	{
+		return array('type', 'vendor', 'shortName', 'package', 'registrationDate',
+			'configured', 'activated', 'configuration', 'defaultLCID');
 	}
 
 	function __toString()

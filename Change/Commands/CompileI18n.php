@@ -13,7 +13,6 @@ class CompileI18n
 	 */
 	public function execute(Event $event)
 	{
-		$application = $event->getApplication();
 		$event->getApplicationServices()->getI18nManager()->compileCoreI18nFiles();
 		foreach($event->getApplicationServices()->getPluginManager()->getInstalledPlugins() as $plugin)
 		{

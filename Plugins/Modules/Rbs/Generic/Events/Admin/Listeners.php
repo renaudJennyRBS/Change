@@ -41,7 +41,7 @@ class Listeners implements ListenerAggregateInterface
 		$plugin = $pm->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Admin');
 		if ($plugin)
 		{
-			$pluginPath = $plugin->getAbsolutePath($event->getApplication()->getWorkspace());
+			$pluginPath = $plugin->getAbsolutePath();
 			$jsAssets = new AssetCollection();
 			$path = $pluginPath . '/Assets/lib/moment/i18n/' . $lcid . '.js';
 			if (file_exists($path))

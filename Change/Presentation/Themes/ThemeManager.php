@@ -215,8 +215,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginTemplates($plugin, $theme = null)
 	{
-		$workspace = $this->getWorkspace();
-		$path = $plugin->getTwigAssetsPath($workspace);
+		$path = $plugin->getTwigAssetsPath();
 		if (!$path)
 		{
 			return;
@@ -256,7 +255,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function installPluginAssets($plugin, $theme = null)
 	{
 		$workspace = $this->getWorkspace();
-		$path = $plugin->getThemeAssetsPath($workspace);
+		$path = $plugin->getThemeAssetsPath();
 		if (!is_dir($path))
 		{
 			return;

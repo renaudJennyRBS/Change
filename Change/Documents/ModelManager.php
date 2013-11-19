@@ -201,7 +201,7 @@ class ModelManager
 			throw new \InvalidArgumentException('Module ' . $vendorName  . '_' . $moduleName . ' does not exist', 999999);
 		}
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
-		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath($this->getWorkspace()), 'Documents', 'Assets', $normalizedShortModelName . '.xml'));
+		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath(), 'Documents', 'Assets', $normalizedShortModelName . '.xml'));
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Model file already exists at path ' . $docPath, 999999);
@@ -229,7 +229,7 @@ class ModelManager
 		$normalizedVendorName = $module->getVendor();
 		$normalizedModuleName = $module->getShortName();
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
-		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath($this->getWorkspace()), 'Documents', $normalizedShortModelName . '.php'));
+		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath(), 'Documents', $normalizedShortModelName . '.php'));
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Final PHP Document file already exists at path ' . $docPath, 999999);

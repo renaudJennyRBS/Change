@@ -70,6 +70,19 @@ class Resolver extends BaseResolver
 			$event->setAction($action);
 			return;
 		}
+		elseif (preg_match('/^Document\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.twig$/', $relativePath, $matches))
+		{
+			list( ,$vendor, $shortModuleName, $shortDocumentName, $baseFileName) = $matches;
+			$event->setParam('resourcePath', implode('/', [$vendor, $shortModuleName, 'Documents' , $shortDocumentName , $baseFileName . '.twig']));
+			$event->setParam('vendor', $vendor);
+			$event->setParam('shortModuleName', $shortModuleName);
+			$action = function($event) {
+				$action = new \Rbs\Admin\Http\Actions\GetHtmlFragment();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
 		elseif (preg_match('/^([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.([a-z]+)$/', $relativePath, $matches))
 		{
 			$event->setParam('resourcePath', $relativePath);
@@ -88,8 +101,6 @@ class Resolver extends BaseResolver
 				$event->setAction($action);
 				return;
 			}
-
-
 			$action = function($event) {
 				$action = new \Rbs\Admin\Http\Actions\GetResource();
 				$action->execute($event);
