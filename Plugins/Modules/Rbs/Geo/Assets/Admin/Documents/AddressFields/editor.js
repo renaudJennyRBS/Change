@@ -7,7 +7,7 @@
 		return {
 
 			restrict : 'EC',
-			templateUrl : 'Rbs/Geo/AddressFields/editor.twig',
+			templateUrl : 'Document/Rbs/Geo/AddressFields/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
