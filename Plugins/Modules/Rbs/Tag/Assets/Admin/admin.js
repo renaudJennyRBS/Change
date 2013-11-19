@@ -14,7 +14,7 @@
 		{
 			$delegate.model('Rbs_Tag')
 				.route('home', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'})
-				.route('myTags', 'Rbs/Tag/MyTags/', { 'templateUrl': 'Rbs/Tag/Tag/myTags-list.twig'});
+				.route('myTags', 'Rbs/Tag/MyTags/', { 'templateUrl': 'Document/Rbs/Tag/Tag/myTags-list.twig'});
 			$delegate.routesForModels(['Rbs_Tag_Tag']);
 			return $delegate;
 		}]);
