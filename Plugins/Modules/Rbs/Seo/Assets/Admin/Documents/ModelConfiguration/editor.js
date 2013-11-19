@@ -12,7 +12,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Seo/ModelConfiguration/editor.twig',
+			templateUrl : 'Document/Rbs/Seo/ModelConfiguration/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
