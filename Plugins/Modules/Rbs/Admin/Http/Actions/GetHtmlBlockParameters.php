@@ -29,7 +29,7 @@ class GetHtmlBlockParameters
 			if ($plugin && $plugin->isAvailable())
 			{
 				$workspace =  $event->getApplication()->getWorkspace();
-				$filePath = $workspace->composePath($plugin->getAbsolutePath(), 'Admin', 'Assets', 'Blocks', $shortBlockName . '.twig');
+				$filePath = $workspace->composePath($plugin->getAssetsPath(), 'Admin', 'Blocks', $shortBlockName . '.twig');
 				if (!is_readable($filePath))
 				{
 					$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets', 'block-parameters.twig');

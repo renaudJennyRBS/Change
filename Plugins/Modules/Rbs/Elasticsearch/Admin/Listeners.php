@@ -27,17 +27,20 @@ class Listeners implements ListenerAggregateInterface
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 
 		$pm = $event->getApplicationServices()->getPluginManager();
-		$manager->registerStandardPluginAssets($pm->getModule('Rbs', 'Elasticsearch'));
+		$plugin = $pm->getModule('Rbs', 'Elasticsearch');
+		if ($plugin && $plugin->isAvailable())
+		{
+			$manager->registerStandardPluginAssets($plugin);
+			$menu = array(
+				'entries' => array(
+					array('label' => $i18nManager->trans('m.rbs.elasticsearch.admin.js.module-name', array('ucf')),
+						'url' => 'Rbs/Elasticsearch', 'section' => 'admin',
+						'keywords' => $i18nManager->trans('m.rbs.elasticsearch.admin.js.module-keywords'))
+				)
+			);
 
-		$menu = array(
-			'entries' => array(
-				array('label' => $i18nManager->trans('m.rbs.elasticsearch.admin.js.module-name', array('ucf')),
-					'url' => 'Rbs/Elasticsearch', 'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.elasticsearch.admin.js.module-keywords'))
-			)
-		);
-
-		$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
+			$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
+		}
 	}
 
 	/**

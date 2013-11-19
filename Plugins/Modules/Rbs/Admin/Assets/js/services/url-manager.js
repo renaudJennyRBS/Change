@@ -192,12 +192,12 @@
 						angular.forEach(modelNames, function (model) {
 							var baseRouteTpl = model.replace(/_/g, '/');
 							self.model(model)
-								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
-								.route('form', baseRouteTpl + '/:id', baseRouteTpl + '/form.twig')
-								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
+								.route('list', baseRouteTpl + '/', 'Document/' + baseRouteTpl + '/list.twig')
+								.route('form', baseRouteTpl + '/:id', 'Document/' + baseRouteTpl + '/form.twig')
+								.route('new' , baseRouteTpl + '/new', 'Document/' + baseRouteTpl + '/form.twig')
 								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
 								// TODO move this into Rbs_Timeline plugin
-								.route('timeline', baseRouteTpl + '/:id/timeline', { 'templateUrl': 'Rbs/Timeline/tpl/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
+								.route('timeline', baseRouteTpl + '/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
 							;
 						});
 						return this;
@@ -208,13 +208,13 @@
 						angular.forEach(modelNames, function (model) {
 							var baseRouteTpl = model.replace(/_/g, '/');
 							self.model(model)
-								.route('list', baseRouteTpl + '/', baseRouteTpl + '/list.twig')
-								.route('form', baseRouteTpl + '/:id/:LCID', baseRouteTpl + '/form.twig')
-								.route('new' , baseRouteTpl + '/new', baseRouteTpl + '/form.twig')
-								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
+								.route('list', baseRouteTpl + '/', 'Document/' + baseRouteTpl + '/list.twig')
+								.route('form', baseRouteTpl + '/:id/:LCID', 'Document/' + baseRouteTpl + '/form.twig')
+								.route('new' , baseRouteTpl + '/new', 'Document/' + baseRouteTpl + '/form.twig')
+								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': 'Document/' + baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
 								.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
 								// TODO move this into Rbs_Timeline plugin
-								.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', { 'templateUrl': 'Rbs/Timeline/tpl/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
+								.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
 							;
 						});
 						return this;

@@ -513,15 +513,15 @@
 							REST.call(seoLink, null, REST.resourceTransformer()).then(function (seoDocument)
 							{
 								$scope.seoDocument = seoDocument;
-								MainMenu.addAsideTpl('seo', 'Rbs/Seo/tpl/aside.twig', $scope);
+								MainMenu.addAsideTpl('seo', 'Rbs/Seo/aside.twig', $scope);
 							});
 						}
 						else if ($scope.document.isActionAvailable('addSeo'))
 						{
-							MainMenu.addAsideTpl('seo', 'Rbs/Seo/tpl/aside.twig', $scope);
+							MainMenu.addAsideTpl('seo', 'Rbs/Seo/aside.twig', $scope);
 						}
 
-						MainMenu.addAsideTpl('timeline', 'Rbs/Timeline/tpl/aside.twig', $scope);
+						MainMenu.addAsideTpl('timeline', 'Rbs/Timeline/aside.twig', $scope);
 					}
 
 
@@ -1060,7 +1060,7 @@
 					$form.slideUp('fast');
 
 					// Load and insert the new cascaded form.
-					formUrl = doc.model.replace(/_/g, '/') + '/form.twig';
+					formUrl = 'Document/' + doc.model.replace(/_/g, '/') + '/form.twig';
 					$http.get(formUrl)
 						.success(function (html) {
 							// Create a new isolated scope for the new form.

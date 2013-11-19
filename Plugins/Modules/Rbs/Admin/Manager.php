@@ -255,7 +255,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 			$targetPath = '/js/' . $name . '.js';
-
 			if ($resourceDirectoryPath !== null)
 			{
 				$fileTargetPath = $resourceDirectoryPath . str_replace('/', DIRECTORY_SEPARATOR, $targetPath);
@@ -345,13 +344,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	public function renderTemplateFile($pathName, array $attributes)
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
-
-		// Include Twig macros for forms.
-		// Use it with: {% import "@Admin/forms.twig" as forms %}
-		$formsMacroPath = $this->getApplication()->getWorkspace()
-			->pluginsModulesPath('Rbs', 'Admin', 'Assets');
-		$loader->addPath($formsMacroPath, 'Admin');
-
 		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
 		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getI18nManager()));
 		foreach ($this->getExtensions() as $extension)
@@ -377,16 +369,13 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		$devMode = $this->getApplication()->inDevelopmentMode();
 		if ($plugin && $plugin->isAvailable())
 		{
-			$jsAssets = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath()
-				. '/Admin/Assets/*/*.js');
-			if (!$devMode)
-			{
-				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
-			}
+			$globs = [$plugin->getAssetsPath() . '/Admin/*.js', $plugin->getAssetsPath() . '/Admin/Documents/*/*.js'];
+			$filters = $devMode ? [new \Assetic\Filter\JSMinFilter()] : [];
+			$jsAssets = new \Assetic\Asset\GlobAsset($globs, $filters);
 			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
 
-			$cssAsset = new \Assetic\Asset\GlobAsset($plugin->getAbsolutePath()
-				. '/Admin/Assets/css/*.css');
+			$globs = [$plugin->getAssetsPath() . '/Admin/*.css'];
+			$cssAsset = new \Assetic\Asset\GlobAsset($globs);
 			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
 		}
 	}
