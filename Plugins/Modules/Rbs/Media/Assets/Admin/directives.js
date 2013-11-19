@@ -10,7 +10,7 @@
 
 		return {
 			restrict : 'E',
-			templateUrl : 'Rbs/Media/js/avatar.twig',
+			templateUrl : 'Rbs/Media/avatar.twig',
 			replace: 'true',
 			scope: {'size' : '@', 'email' : '@', 'userId' : '@'},
 			// Create isolated scope
