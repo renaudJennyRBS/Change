@@ -253,5 +253,26 @@
 	},
 	"status_filed":{
 		"message":"archivé"
+	},
+	"timeinterval_years":{
+		"message":"années"
+	},
+	"timeinterval_months":{
+		"message":"mois"
+	},
+	"timeinterval_weeks":{
+		"message":"semaines"
+	},
+	"timeinterval_days":{
+		"message":"jours"
+	},
+	"timeinterval_hours":{
+		"message":"heures"
+	},
+	"timeinterval_minutes":{
+		"message":"minutes"
+	},
+	"timeinterval_seconds":{
+		"message":"secondes"
 	}
 }
