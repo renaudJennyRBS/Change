@@ -8,7 +8,7 @@
 	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Rbs/Order/js/order-status-indicators.twig',
+			templateUrl : 'Rbs/Order/order-status-indicators.twig',
 			scope : {
 				order : '='
 			}
@@ -19,7 +19,7 @@
 	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Rbs/Order/js/order-status-indicators-text.twig',
+			templateUrl : 'Rbs/Order/order-status-indicators-text.twig',
 			scope : {
 				order : '='
 			}
