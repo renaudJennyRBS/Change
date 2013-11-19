@@ -29,14 +29,14 @@ class Collections
 
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addProcessingStatuses(Event $event)
+	public function addProcessingStatuses(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices instanceof \Change\Services\ApplicationServices)
 		{
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$statuses = array(
 				static::PROCESSING_STATUS_INITIATED,
 				static::PROCESSING_STATUS_IN_PROGRESS,
@@ -46,7 +46,7 @@ class Collections
 			$items = array();
 			foreach ($statuses as $s)
 			{
-				$items[$s] = $i18nManager->trans('m.rbs.order.collection.processing-status-' . str_replace('_', '-', $s));
+				$items[$s] = $i18nManager->trans('m.rbs.order.admin.processing_status_' . str_replace('-', '_', $s), array('ucf'));
 			}
 			$event->setParam('collection', new CollectionArray('Rbs_Order_Collection_ProcessingStatus', $items));
 			$event->stopPropagation();
@@ -54,14 +54,14 @@ class Collections
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addShippingStatuses(Event $event)
+	public function addShippingStatuses(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices instanceof \Change\Services\ApplicationServices)
 		{
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$statuses = array(
 				static::SHIPPING_STATUS_INITIATED,
 				static::SHIPPING_STATUS_PREPARED,
@@ -73,7 +73,7 @@ class Collections
 			$items = array();
 			foreach ($statuses as $s)
 			{
-				$items[$s] = $i18nManager->trans('m.rbs.order.collection.shipping-status-' . str_replace('_', '-', $s));
+				$items[$s] = $i18nManager->trans('m.rbs.order.admin.shipping_status_' . str_replace('-', '_', $s), array('ucf'));
 			}
 			$event->setParam('collection', new CollectionArray('Rbs_Order_Collection_ShippingStatus', $items));
 			$event->stopPropagation();
@@ -81,14 +81,14 @@ class Collections
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addPaymentStatuses(Event $event)
+	public function addPaymentStatuses(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices instanceof \Change\Services\ApplicationServices)
 		{
-			$i18nManager = $documentServices->getApplicationServices()->getI18nManager();
+			$i18nManager = $applicationServices->getI18nManager();
 			$statuses = array(
 				static::PAYMENT_STATUS_INITIATED,
 				static::PAYMENT_STATUS_UNCONFIRMED,
@@ -99,7 +99,7 @@ class Collections
 			$items = array();
 			foreach ($statuses as $s)
 			{
-				$items[$s] = $i18nManager->trans('m.rbs.order.collection.payment-status-' . str_replace('_', '-', $s));
+				$items[$s] = $i18nManager->trans('m.rbs.order.admin.payment_status_' . str_replace('-', '_', $s), array('ucf'));
 			}
 			$event->setParam('collection', new CollectionArray('Rbs_Order_Collection_PaymentStatus', $items));
 			$event->stopPropagation();

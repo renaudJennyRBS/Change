@@ -1,12 +1,12 @@
 <div>
 	<rbs-workspace-config menu="Rbs_Shipping">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Shipping'|rbsURL:'home' =)">{{ i18n('m.rbs.shipping.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Shipping_Mode'|rbsURL:'list' =)">{{ i18n('m.rbs.shipping.admin.js.mode-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Shipping'|rbsURL:'home' =)">{{ i18n('m.rbs.shipping.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Shipping_Mode'|rbsURL:'list' =)">{{ i18n('m.rbs.shipping.admin.mode_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.shipping.admin.js.mode-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.shipping.admin.mode_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Shipping_Mode" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">

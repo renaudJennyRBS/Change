@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.shipping.documents.mode" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="visual">visuel</key>
-	<key id="select-visual">sélectionner un visuel</key>
-</i18n>

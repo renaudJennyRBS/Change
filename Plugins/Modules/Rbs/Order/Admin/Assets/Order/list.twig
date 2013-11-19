@@ -1,22 +1,22 @@
 <div ng-controller="Rbs_Order_Order_ListController">
 	<rbs-workspace-config menu="Rbs_Order">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Order_Order'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.js.order-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Order_Order'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.order_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.order.admin.js.order-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.order.admin.order_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Order_Order" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Order_Order' | documentURL:'new' =)">{{ i18n('m.rbs.order.admin.js.order-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Order_Order' | documentURL:'new' =)">{{ i18n('m.rbs.order.admin.order_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsOrderOrder"
 			model="Rbs_Order_Order" filter-query="query" use-properties="shippingStatus processingStatus paymentStatus" extend="extend">
 		<column name="code" primary="true"></column>
-		<column name="status" align="center" label="{{ i18nAttr('m.rbs.order.documents.order.statuses', ['ucf']) }}">
+		<column name="status" align="center" label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">
 			<span rbs-order-status-indicators="" order="doc"></span>
 		</column>
 		<column name="amountWithTax"></column>
@@ -27,11 +27,11 @@
 			<div rbs-order-status-indicators-text="" order="doc.__document"></div>
 		</preview>
 
-		<action name="markAsPayed" loading="true" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-payed', ['ucf']) }}" selection="+"></action>
-		<action name="markAsShipped" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-shipped', ['ucf']) }}" selection="+"></action>
-		<action name="markAsDelivered" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-delivered', ['ucf']) }}" selection="+"></action>
-		<action name="markAsPrepared" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-prepared', ['ucf']) }}" selection="+"></action>
-		<action name="markAsFinalized" label="{{ i18nAttr('m.rbs.order.documents.order.action-mark-as-finalized', ['ucf']) }}" selection="+"></action>
-		<action name="cancel" label="{{ i18nAttr('m.rbs.order.documents.order.action-cancel', ['ucf']) }}" selection="+"></action>
+		<action name="markAsPayed" loading="true" label="{{ i18nAttr('m.rbs.order.admin.order_action_mark_as_payed', ['ucf']) }}" selection="+"></action>
+		<action name="markAsShipped" label="{{ i18nAttr('m.rbs.order.admin.order_action_mark_as_shipped', ['ucf']) }}" selection="+"></action>
+		<action name="markAsDelivered" label="{{ i18nAttr('m.rbs.order.admin.order_action_mark_as_delivered', ['ucf']) }}" selection="+"></action>
+		<action name="markAsPrepared" label="{{ i18nAttr('m.rbs.order.admin.order_action_mark_as_prepared', ['ucf']) }}" selection="+"></action>
+		<action name="markAsFinalized" label="{{ i18nAttr('m.rbs.order.admin.order_action_mark_as_finalized', ['ucf']) }}" selection="+"></action>
+		<action name="cancel" label="{{ i18nAttr('m.rbs.order.admin.order_action_cancel', ['ucf']) }}" selection="+"></action>
 	</rbs-document-list>
 </div>
