@@ -12,16 +12,16 @@
 
 		<rbs-field-picker property="order" label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'order'), ['ucf']) }}"
 			accepted-model="Rbs_Order_Order" allow-edition="true"
-			selector-title="{{ i18nAttr('m.rbs.order.documents.invoice.select-order', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.order.admin.invoice_select_order', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field-picker property="transaction" label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'transaction'), ['ucf']) }}"
 				accepted-model="Rbs_Payment_Transaction" allow-edition="true"
-				selector-title="{{ i18nAttr('m.rbs.order.documents.invoice.select-transaction', ['ucf']) }}">
+				selector-title="{{ i18nAttr('m.rbs.order.admin.invoice_select_transaction', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'currencyCode'), ['ucf']) }}">
-			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
+			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217" class="form-control"></select>
 		</rbs-field>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'amount'), ['ucf']) }}">

@@ -1,0 +1,56 @@
+{
+	"order_ownerid":{
+		"message":"propriétaire"
+	},
+	"order_webstoreid":{
+		"message":"boutique"
+	},
+	"order_contextdata":{
+		"message":"information générales"
+	},
+	"order_linesdata":{
+		"message":"lignes"
+	},
+	"order_amount":{
+		"message":"montant"
+	},
+	"order_amountwithtax":{
+		"message":"montant TTC"
+	},
+	"order_currencycode":{
+		"message":"devise"
+	},
+	"order_processingstatus":{
+		"message":"état"
+	},
+	"order_shippingstatus":{
+		"message":"état de livraison"
+	},
+	"order_paymentstatus":{
+		"message":"état de facturation"
+	},
+	"order":{
+		"message":"commande"
+	},
+	"invoice":{
+		"message":"facture"
+	},
+	"process":{
+		"message":"processus de commande"
+	},
+	"invoice_order":{
+		"message":"commande"
+	},
+	"invoice_transaction":{
+		"message":"transaction bancaire"
+	},
+	"invoice_amount":{
+		"message":"montant"
+	},
+	"invoice_amountwithtax":{
+		"message":"montant TTC"
+	},
+	"invoice_currencycode":{
+		"message":"devise"
+	}
+}

@@ -8,7 +8,7 @@
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n('m.rbs.order.documents.order.parameters', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n('m.rbs.order.admin.order_parameters', ['ucf']) }}</h3>
 					</div>
 					<div class="panel-body">
 						<rbs-field-date property="creationDate"
@@ -25,7 +25,7 @@
 								required="true"
 								label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'webStoreId'), ['ucf']) }}"
 								rbs-items-from-collection="Rbs_Store_Collection_WebStores"
-								empty-value-label="{{ i18nAttr('m.rbs.order.documents.order.select-webstore', ['ucf']) }}">
+								empty-value-label="{{ i18nAttr('m.rbs.order.admin.order_select_webstore', ['ucf']) }}">
 						</rbs-field-select-from-collection>
 
 						<rbs-field-select-from-collection
@@ -39,13 +39,13 @@
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.documents.order.customer', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.admin.order_customer', ['ucf']) }}</h3>
 					</div>
 					<div class="panel-body">
 						<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
 						                  accepted-model="Rbs_User_User" allow-edition="true"
 						                  value-ids="true"
-						                  selector-title="{{ i18nAttr('m.rbs.order.documents.order.select-ownerid', ['ucf']) }}">
+						                  selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_ownerid', ['ucf']) }}">
 						</rbs-field-picker>
 					</div>
 				</div>
@@ -93,35 +93,35 @@
 
 		<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.linesData.length > 0]">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.documents.order.lines', ['ucf', 'lab']) }} (= document.linesData.length =) &mdash; {{ i18n('m.rbs.order.documents.order.articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
+				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.linesData.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
 			</div>
 			<div class="panel-body">
 				<p class="text-warning" ng-show="document.linesData.length == 0">
-					<strong>{{ i18n('m.rbs.order.documents.order.no-lines', ['ucf']) }}</strong>
+					<strong>{{ i18n('m.rbs.order.admin.order_no_lines', ['ucf']) }}</strong>
 				</p>
 				<p ng-show="document.linesData.length == 0">
-					{{ i18n('m.rbs.order.documents.order.no-lines-help', ['ucf']) }}
+					{{ i18n('m.rbs.order.admin.order_no_lines_help', ['ucf']) | raw }}
 				</p>
 
 				<div ng-show="document.webStoreId">
 					<p>
-						<a href="javascript:;" ng-click="extend.showNewLineUI = !extend.showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showNewLineUI]"></i> {{ i18n('m.rbs.order.documents.order.add-lines', ['ucf']) }}</a>
+						<a href="javascript:;" ng-click="extend.showNewLineUI = !extend.showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showNewLineUI]"></i> {{ i18n('m.rbs.order.admin.order_add_lines', ['ucf']) }}</a>
 					</p>
 					<div class="well well-sm" ng-show="extend.showNewLineUI">
-						<h4>{{ i18n('m.rbs.order.documents.order.new-line', ['ucf']) }}</h4>
-						<p>{{ i18n('m.rbs.order.documents.order.article-choice-help', ['ucf']) }}</p>
+						<h4>{{ i18n('m.rbs.order.admin.order_new_line', ['ucf']) }}</h4>
+						<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
 
 						<p>
 							<rbs-field-select-from-collection
 									property="billingAreaId"
-									label="{{ i18nAttr('m.rbs.order.documents.order.billing-area', ['ucf']) }}"
+									label="{{ i18nAttr('m.rbs.order.admin.order_billing_area', ['ucf']) }}"
 									rbs-items-collection-params="webStoreId:(=document.webStoreId=)"
 									rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
-									empty-value-label="{{ i18nAttr('m.rbs.order.documents.order.select-billingarea', ['ucf']) }}">
+									empty-value-label="{{ i18nAttr('m.rbs.order.admin.order_select_billingarea', ['ucf']) }}">
 							</rbs-field-select-from-collection>
 							<rbs-field-text
 									property="taxZone"
-									label="{{ i18nAttr('m.rbs.order.documents.order.tax-zone', ['ucf']) }}">
+									label="{{ i18nAttr('m.rbs.order.admin.order_tax_zone', ['ucf']) }}">
 							</rbs-field-text>
 						</p>
 
@@ -130,18 +130,18 @@
 								<div class="document-picker-multiple"
 							         accepted-model="Rbs_Catalog_Product"
 							         allow-edition="false" allow-creation="false" allow-in-place-selection="true"
-							         selector-title="{{ i18nAttr('m.rbs.order.documents.order.article-selector-title', ['ucf']) }}" ng-model="document.newLineProducts">
+							         selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
 						         </div>
 							</p>
 							<p>
 								<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
-									<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.documents.order.add-line', ['ucf']) }}
+									<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
 								</button>
 							</p>
 						</div>
 						<p ng-hide="document.billingAreaId && document.taxZone">
 							<span class="label label-info">Info</span>
-							{{ i18n('m.rbs.order.documents.order.choose-billingarea-and-taxzone-first', ['ucf']) }}
+							{{ i18n('m.rbs.order.admin.order_choose_billingarea_and_taxzone_first', ['ucf']) | raw }}
 						</p>
 					</div>
 				</div>
@@ -154,7 +154,7 @@
 							extend="extend"
 							actions="">
 
-						<column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.documents.order.line-number', ['ucf']) }}" format="number" width="60px">
+						<column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
 
 						</column>
 
@@ -162,27 +162,27 @@
 						        label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}">
 				        </column>
 
-						<column name="designation" label="{{ i18nAttr('m.rbs.order.documents.order.designation', ['ucf']) }}">
+						<column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}">
 							<input type="text" required="true" class="form-control" ng-model="doc.designation"/>
 						</column>
 
-						<column name="sku" label="{{ i18nAttr('m.rbs.order.documents.order.sku', ['ucf']) }}">
+						<column name="sku" label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}">
 							<input type="text" required="true" class="form-control" ng-model="doc.items[0].codeSKU"/>
 						</column>
 
-						<column name="unitPrice" label="{{ i18nAttr('m.rbs.order.documents.order.unit-price', ['ucf']) }}" format="number" width="100px">
+						<column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
 							<input type="text" smart-float="" required="true" class="form-control" ng-model="doc.items[0].priceValue"/>
 						</column>
 
-						<column name="quantity" label="{{ i18nAttr('m.rbs.order.documents.order.quantity', ['ucf']) }}" format="number" width="100px">
+						<column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
 							<input type="number" min="1" required="true" ng-model="doc.quantity" class="form-control"/>
 						</column>
 
-						<column name="totalPrice" label="{{ i18nAttr('m.rbs.order.documents.order.line-total-price', ['ucf']) }}" format="number" width="100px">
+						<column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
 							(= doc.items[0].priceValue * doc.quantity | currency =)
 						</column>
 
-						<action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.documents.order.remove-lines', ['ucf']) }}"
+						<action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
 								selection="+"></action>
 
 					</rbs-document-list>
@@ -192,13 +192,13 @@
 
 		<div class="panel panel-danger" ng-show="extend.removedLines.length > 0">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-trash"></i> {{ i18n('m.rbs.order.documents.order.removed-lines', ['ucf']) }}</h3>
+				<h3 class="panel-title"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.order_removed_lines', ['ucf']) }}</h3>
 			</div>
 			<div class="list-group">
 				<div ng-repeat="line in extend.removedLines" class="list-group-item" style="line-height: 30px;">
 					<span class="pull-right">
-						<button class="btn btn-default btn-sm" ng-click="extend.restoreRemovedLine($index)">{{ i18n('m.rbs.order.documents.order.put-back-in-order', ['ucf']) }}</button>
-						<button class="btn btn-danger btn-sm" ng-click="extend.trashRemovedLine($index)" title="{{ i18nAttr('m.rbs.order.documents.order.remove-permanently', ['ucf']) }}"><i class="icon-trash"></i></button>
+						<button class="btn btn-default btn-sm" ng-click="extend.restoreRemovedLine($index)">{{ i18n('m.rbs.order.admin.order_put_back_in_order', ['ucf']) }}</button>
+						<button class="btn btn-danger btn-sm" ng-click="extend.trashRemovedLine($index)" title="{{ i18nAttr('m.rbs.order.admin.order_remove_permanently', ['ucf']) }}"><i class="icon-trash"></i></button>
 					</span>
 					(= line.quantity =) &times; (= line.designation =)
 				</div>
@@ -209,7 +209,7 @@
 			<div class="col-md-6 col-md-offset-6">
 				<div class="panel panel-info">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.documents.order.total', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
 					</div>
 					<div class="panel-body">
 						<strong>(= document.amountWithTax | currency =)</strong>
