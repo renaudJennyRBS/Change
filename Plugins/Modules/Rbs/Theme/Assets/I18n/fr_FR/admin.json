@@ -40,5 +40,20 @@
 	},
 	"pagetemplates_clear":{
 		"message":"vider"
+	},
+	"pagetemplates_visibility":{
+		"message":"Visibilité"
+	},
+	"pagetemplates_visibility_raw":{
+		"message":"Sans enveloppe"
+	},
+	"pagetemplates_visibility_d":{
+		"message":"Ordinateurs"
+	},
+	"pagetemplates_visibility_t":{
+		"message":"Tablettes"
+	},
+	"pagetemplates_visibility_p":{
+		"message":"Mobiles"
 	}
 }
