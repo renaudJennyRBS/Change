@@ -1,0 +1,38 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" required="true" input-class="input-block-level"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+				input-class="input-block-level"
+				sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'title'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'indexId'), ['ucf']) }}" required="true">
+			<select ng-model="document.indexId" class="form-control" required="true"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_Indexes">
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.indexid_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field-picker-multiple required="true" property="facets"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'facets'), ['ucf']) }}"
+				accepted-model="Rbs_Elasticsearch_Facet" allow-creation="false" allow-edition="false"
+				selector-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facetgroup_facets_picker_title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

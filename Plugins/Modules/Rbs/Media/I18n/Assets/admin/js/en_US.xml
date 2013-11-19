@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.media.admin.js" lcid="en_US">
-	<include id="m.rbs.media.documents"/>
-	<key id="module-name">media</key>
-	<key id="module-keywords">images,photos,photographs,videos,documents,icons,visuals,albums,galeries</key>
-</i18n>

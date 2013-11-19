@@ -1,0 +1,14 @@
+{
+	"module_name":{
+		"message":"media"
+	},
+	"module_keywords":{
+		"message":"images,photos,photographs,videos,documents,icons,visuals,albums,galeries"
+	},
+	"image_list":{
+		"message":"images"
+	},
+	"image_create":{
+		"message":"add image"
+	}
+}

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.elasticsearch.documents.storeindex" lcid="fr_FR">
-	<include id="m.rbs.elasticsearch.documents.fulltext"/>
-	<key id="label-store">index du magasin {websiteLabel}</key>
-	<key id="store">boutique</key>
-	<key id="section-facets">facettes</key>
-	<key id="store-picker-title">sélectionner un magasin</key>
-</i18n>

@@ -1,0 +1,73 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_StoreIndex', 'clientName'), ['ucf']) }}" required="true">
+			<select ng-model="document.clientName" class="form-control" required="true"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_Clients">
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.clientname_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_StoreIndex', 'analysisLCID'), ['ucf']) }}" required="true">
+			<select ng-model="document.analysisLCID" class="form-control" required="true"
+					rbs-items-from-collection="Rbs_Generic_Collection_Languages">
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.analysislcid_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field-picker required="true" property="website"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_StoreIndex', 'website'), ['ucf']) }}"
+				accepted-model="Rbs_Website_Website" allow-creation="false" allow-edition="true"
+				selector-title="{{ i18nAttr('m.rbs.elasticsearch.admin.website_picker_title', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-picker required="true" property="store"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_StoreIndex', 'store'), ['ucf']) }}"
+				accepted-model="Rbs_Store_WebStore" allow-creation="false" allow-edition="true"
+				selector-title="{{ i18nAttr('m.rbs.elasticsearch.admin.store_picker_title', ['ucf']) }}">
+		</rbs-field-picker>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='facets'" hide-when-create="true"
+			data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.admin.storeindex_section_facets', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+		<div class="add-elements-bar">
+			<a href ng-click="cascadeCreateItem()">{{ i18n('m.rbs.elasticsearch.admin.facet_create', ['ucf']) }}</a>
+		</div>
+		
+		<table data-ng-show="document.facets.length > 0" class="table table-striped">
+			<thead>
+				<tr>
+					<th>{{ i18n(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}</th>
+					<th> </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="facet in document.facets">
+					<td><a class="btn-link" ng-click="cascadeEditItem($index)">(= facet.label =)</a></td>
+					<td style="width:100px;text-align: right">
+						<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem($index)"
+								title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}" type="button">
+							<i class="icon-pencil"></i>
+						</button>
+						<button style="width:36px" class="btn btn-danger btn-sm" type="button" ng-click="remove($index)"
+								title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
+							<i class="icon-remove"></i>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

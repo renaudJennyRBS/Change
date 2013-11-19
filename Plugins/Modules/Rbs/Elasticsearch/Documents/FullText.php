@@ -13,7 +13,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	 */
 	public function getLabel()
 	{
-		return 'm.rbs.elasticsearch.documents.fulltext.label-website';
+		return 'm.rbs.elasticsearch.documents.fulltext_label_website';
 	}
 
 	/**

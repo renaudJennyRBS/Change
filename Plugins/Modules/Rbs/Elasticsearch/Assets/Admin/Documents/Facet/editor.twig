@@ -1,0 +1,71 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_section_indexer', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="fieldName" required="true" input-class="input-block-level"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'indexId'), ['ucf']) }}" required="true">
+			<select ng-model="document.indexId" required="true" class="form-control"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_Indexes">
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.facet_indexid_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'attributeId'), ['ucf']) }}">
+			<select ng-model="document.attributeId" class="form-control"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_AttributeIds" >
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.facet_attributeid_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field input-class="input-block-level"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'valuesExtractorName'), ['ucf']) }}">
+			<select ng-model="document.valuesExtractorName" class="form-control"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_FacetValueExtractor" >
+			</select>
+		</rbs-field>
+
+		<hr />
+
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.fieldName"
+				input-class="input-block-level"
+				sync-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_synchronize_title_fieldname', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'title'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-boolean property="multipleChoice"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'multipleChoice'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'facetType'), ['ucf']) }}" required="true">
+			<select ng-model="document.facetType" required="true" class="form-control"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_FacetTypes" >
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.facet_facettype_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'collectionCode'), ['ucf']) }}">
+			<select ng-model="document.collectionCode" class="form-control"
+					rbs-items-from-collection="Rbs_Elasticsearch_Collection_CollectionCodes" >
+				<option value="">{{ i18n('m.rbs.elasticsearch.admin.facet_collectioncode_choose', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field-boolean property="showEmptyItem" data-ng-show="document.collectionCode"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'showEmptyItem'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

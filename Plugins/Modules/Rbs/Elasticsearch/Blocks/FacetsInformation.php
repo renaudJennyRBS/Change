@@ -14,11 +14,11 @@ class FacetsInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-
-		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.facets', $ucf));
+		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
 
 		$this->addInformationMeta('facetGroups', ParameterInformation::TYPE_DOCUMENTIDARRAY, true)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.blocks.facets-facetgroups', $ucf))
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets_facetgroups', $ucf))
 			->setAllowedModelsNames(array('Rbs_Elasticsearch_FacetGroup'));
 
 		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));

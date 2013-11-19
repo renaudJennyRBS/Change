@@ -15,7 +15,7 @@
 		{% endfor %}
 	<div>
 </form>
-<h4>{{ i18n('m.rbs.elasticsearch.fo.total-result-count', ['ucf', 'lab']) }} {{ totalCount }}</h4>
+<h4>{{ i18n('m.rbs.elasticsearch.front.total_result_count', ['ucf', 'lab']) }} {{ totalCount }}</h4>
 <ul>
 	{% for item in items %}
 		<li>{{ item.score }} <a href="{{ canonicalURL(item.id) }}">{{ item.title }}</a> </li>

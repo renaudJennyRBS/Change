@@ -32,6 +32,7 @@
 	/**
 	 * Controller for tag-based menu.
 	 */
+	// TODO Still needed ?
 	app.controller('Rbs_Media_Menu_Controller', ['$q', '$scope', '$location', '$filter', 'RbsChange.TagService', 'RbsChange.ArrayUtils', function ($q, $scope, $location, $filter, TagService, ArrayUtils) {
 
 		var tagsLoadedDefered = $q.defer();
