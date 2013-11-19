@@ -804,7 +804,7 @@
 		"message":"Ce document est gelé : son affichage sur le site web a été désactivé temporairement. Pour le rendre de nouveau visible, vous pouvez le dégeler."
 	},
 	"modified_content_correction":{
-		"message":"Contenu modifié &rarr; correction"
+		"message":"Contenu modifié → correction"
 	},
 	"caution":{
 		"message":"attention"

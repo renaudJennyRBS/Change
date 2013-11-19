@@ -10,7 +10,7 @@
 
 	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
 		<i class="icon-arrow-up icon-3x pull-left"></i>
-		{{ i18n('m.rbs.website.admin.menu_menus_are_grouped_by_website') }}
+		{{ i18n('m.rbs.website.admin.menu_menus_are_grouped_by_website')|raw }}
 	</div>
 
 	<div ng-show="selectedWebsite">
