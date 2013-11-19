@@ -908,7 +908,7 @@
 								$refProp.attr('ng-model', ngModel.replace('document.', 'refDocument.'));
 							}
 							$rcell.append($refProp);
-							$rcell.append('<button type="button" class="btn btn-default btn-sm copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> ' + i18n.trans("m.rbs.admin.js.use-this-value-in", {"lang": "(= availableLanguages[document.LCID].label =)"}) + '</button>');
+							$rcell.append('<button type="button" class="btn btn-default btn-sm copy-reference-value" ng-click="document.' + propertyName + '=refDocument.' + propertyName + '"><i class="icon-level-down icon-rotate-90"></i> ' + i18n.trans("m.rbs.admin.adminjs.use_this_value_in", {"lang": "(= availableLanguages[document.LCID].label =)"}) + '</button>');
 						});
 
 						$form.prepend($table);

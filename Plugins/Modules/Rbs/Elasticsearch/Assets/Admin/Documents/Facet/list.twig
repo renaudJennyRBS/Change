@@ -1,0 +1,17 @@
+<div>
+	<rbs-workspace-config menu="Rbs_Elasticsearch">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Elasticsearch'|rbsURL:'home' =)">{{ i18n('m.rbs.elasticsearch.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Elasticsearch_Facet'|rbsURL:'list' =)">{{ i18n('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}"></page-header>
+	<search-filters model="Rbs_Elasticsearch_Facet" filter-query="query" text-search="textSearch"></search-filters>
+
+	<rbs-document-list data-dlid="DLRbsElasticsearchFacet" model="Rbs_Elasticsearch_Facet" filter-query="query">
+		<column name="label" primary="true"></column>
+		<column name="fieldName"></column>
+		<column name="facetType"></column>
+	</rbs-document-list>
+</div>

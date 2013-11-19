@@ -135,8 +135,8 @@ class Collections
 		{
 			$i18nManager = $applicationServices->getI18nManager();
 			$items = array();
-			$items[FacetDefinitionInterface::TYPE_TERM] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.type-term');
-			$items[FacetDefinitionInterface::TYPE_RANGE] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.type-range');
+			$items[FacetDefinitionInterface::TYPE_TERM] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_type_term');
+			$items[FacetDefinitionInterface::TYPE_RANGE] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_type_range');
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetTypes', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();
@@ -153,9 +153,9 @@ class Collections
 		{
 			$i18nManager = $applicationServices->getI18nManager();
 			$items = array();
-			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-attribute');
-			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-price');
-			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet.value-extractor-sku-threshold');
+			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_attribute');
+			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_price');
+			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_sku_threshold');
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetValueExtractor', $items);
 			$event->setParam('collection', $collection);
 		}

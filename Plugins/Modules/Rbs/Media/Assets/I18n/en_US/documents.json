@@ -1,0 +1,32 @@
+{
+	"image_alt":{
+		"message":"alternate text"
+	},
+	"image_path":{
+		"message":"file"
+	},
+	"image_width":{
+		"message":"width"
+	},
+	"image_height":{
+		"message":"height"
+	},
+	"image_mimetype":{
+		"message":"MIME type"
+	},
+	"image_file_informations":{
+		"message":"file information"
+	},
+	"image_dimensions":{
+		"message":"dimensions"
+	},
+	"image_megapixels":{
+		"message":"megapixels"
+	},
+	"image_file":{
+		"message":"file"
+	},
+	"image":{
+		"message":"image"
+	}
+}

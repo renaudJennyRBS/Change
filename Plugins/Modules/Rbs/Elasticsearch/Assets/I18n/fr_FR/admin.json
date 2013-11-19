@@ -1,0 +1,101 @@
+{
+	"module_name":{
+		"message":"Elasticsearch"
+	},
+	"module_keywords":{
+		"message":""
+	},
+	"shortsearch":{
+		"message":"Champ de recherche"
+	},
+	"shortsearch_resultsectionid":{
+		"message":"Section d'affichage des résultats"
+	},
+	"result":{
+		"message":"Résultat d'une recherche"
+	},
+	"result_function":{
+		"message":"Résultat de la recherche"
+	},
+	"result_fulltextindex":{
+		"message":"Index de recherche"
+	},
+	"facets":{
+		"message":"Facettes"
+	},
+	"facets_facetgroups":{
+		"message":"Groupe de facette"
+	},
+	"storeresult":{
+		"message":"Résultat d'une recherche magasin"
+	},
+	"storeresult_function":{
+		"message":"Résultat de recherche magasin"
+	},
+	"storeresult_storeindex":{
+		"message":"Index magasin"
+	},
+	"facetgroup_facets_picker_title":{
+		"message":"sélectionner les facettes du groupe"
+	},
+	"fulltext_name_help":{
+		"message":"Le nom sera généré automatiquement si ce champ n'est pas rempli."
+	},
+	"fulltext_list":{
+		"message":"liste des index"
+	},
+	"fulltext_create":{
+		"message":"ajouter un index de recherche web"
+	},
+	"storeindex_create":{
+		"message":"ajouter un index de recherche produits"
+	},
+	"facetgroup_list":{
+		"message":"liste des groupes de facettes"
+	},
+	"facetgroup_create":{
+		"message":"ajouter un groupe de facettes"
+	},
+	"facet_list":{
+		"message":"liste des facettes"
+	},
+	"facet_create":{
+		"message":"ajouter une facette"
+	},
+	"storeindex_section_facets":{
+		"message":"facettes"
+	},
+	"facet_synchronize_title_fieldname":{
+		"message":"synchronisé avec l'identifiant"
+	},
+	"facet_section_indexer":{
+		"message":"indexation"
+	},
+	"facet_section_filter":{
+		"message":"filtre et recherche"
+	},
+	"facettype_choose":{
+		"message":"sélectionner un type de facette"
+	},
+	"attributeid_choose":{
+		"message":"sélectionner un attribut"
+	},
+	"collectioncode_choose":{
+		"message":"sélectionner une liste"
+	},
+	"indexid_choose":{
+		"message":"sélectionner un index"
+	},
+	"clientname_choose":{
+		"message":"sélectionner un client"
+	},
+	"analysislcid_choose":{
+		"message":"sélectionner une langue"
+	},
+	"website_picker_title":{
+		"message":"sélectionner un site web"
+	},
+	"store_picker_title":{
+		"message":"sélectionner un magasin"
+	}
+}

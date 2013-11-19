@@ -33,9 +33,9 @@ class Listeners implements ListenerAggregateInterface
 			$manager->registerStandardPluginAssets($plugin);
 			$menu = array(
 				'entries' => array(
-					array('label' => $i18nManager->trans('m.rbs.elasticsearch.admin.js.module-name', array('ucf')),
+					array('label' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_name', array('ucf')),
 						'url' => 'Rbs/Elasticsearch', 'section' => 'admin',
-						'keywords' => $i18nManager->trans('m.rbs.elasticsearch.admin.js.module-keywords'))
+						'keywords' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_keywords'))
 				)
 			);
 

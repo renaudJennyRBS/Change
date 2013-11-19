@@ -1,0 +1,11 @@
+{
+	"total_result_count":{
+		"message":"Nombre total de résultats"
+	},
+	"ignore_facet":{
+		"message":"Ignorer"
+	},
+	"facets_filter":{
+		"message":"Filtrer"
+	}
+}

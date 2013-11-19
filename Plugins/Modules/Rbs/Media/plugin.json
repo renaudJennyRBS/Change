@@ -1,6 +1,7 @@
 {
 	"type":"module",
-	"vendor": "Rbs",
-	"name": "Media",
-	"package": "Core"
+	"vendor":"Rbs",
+	"name":"Media",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
 }
