@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function editorRbsThemePageTemplate(Breadcrumb)
+	function editorRbsThemePageTemplate(ArrayUtils)
 	{
 		return {
 			restrict : 'C',
@@ -180,11 +180,66 @@
 					row.block = {};
 					row.name = block.name;
 					row.override = false;
-				}
+				};
+
+				scope.isVisibleFor = function (device) {
+					if (device == 'raw') {
+						return scope.block.visibility == 'raw';
+					} else if (scope.block.visibility == 'raw') {
+						return false;
+					}
+					return (!scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
+				};
+
+				scope.toggleVisibility = function (device) {
+					var value = !scope.isVisibleFor(device), splat;
+
+					if (device == 'raw') {
+						if (value)
+						{
+							scope.block.visibility = device;
+						} else {
+							delete scope.block.visibility;
+						}
+						return;
+					}
+
+					if (scope.block.visibility) {
+						splat = scope.block.visibility.split('');
+						if (ArrayUtils.inArray(device, splat) !== -1 && ! value) {
+							ArrayUtils.removeValue(splat, device);
+						} else if (ArrayUtils.inArray(device, splat) === -1 && value) {
+							splat.push(device);
+						}
+						splat.sort();
+						if (splat.join('') == '')
+						{
+							delete scope.block.visibility;
+						} else {
+							scope.block.visibility = splat.join('');
+						}
+					} else {
+						if (value) {
+							scope.block.visibility = device;
+						} else {
+							switch (device) {
+								case 'P' :
+									scope.block.visibility = 'DT';
+									break;
+								case 'T' :
+									scope.block.visibility = 'DP';
+									break;
+								case 'D' :
+									scope.block.visibility = 'PT';
+									break;
+							}
+						}
+					}
+				};
 			}
 		};
 	}
 
-	editorRbsThemePageTemplate.$inject = ['RbsChange.Breadcrumb'];
+	editorRbsThemePageTemplate.$inject = ['RbsChange.ArrayUtils'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemePageTemplate', editorRbsThemePageTemplate);
 })();

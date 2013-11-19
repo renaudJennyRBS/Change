@@ -25,6 +25,15 @@
 			<tr data-ng-repeat="row in blockList">
 				<td ng-if="isEditorRow(row)" colspan="3">
 					<form ng-submit="submit()" novalidate name="block_properties_form" class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility', ['ucf']) }}</label>
+							<div class="controls">
+								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('raw')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('raw')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_raw', ['ucf']) }}</button>
+								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('D')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('D')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_d', ['ucf']) }}</button>
+								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('T')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('T')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_t', ['ucf']) }}</button>
+								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('P')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('P')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_p', ['ucf']) }}</button>
+							</div>
+						</div>
 						<div ng-include="row.template"></div>
 					</form>
 					<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}</button>
