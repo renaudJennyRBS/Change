@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Price/Tax/editor.twig',
+			templateUrl : 'Document/Rbs/Price/Tax/editor.twig',
 			require : 'rbsDocumentEditor',
 
 			link : function (scope, element, attrs, editorCtrl)

@@ -14,7 +14,7 @@
 
 		return {
 			restrict : 'E',
-			templateUrl : 'Rbs/Price/js/price-input.twig',
+			templateUrl : 'Rbs/Price/price-input.twig',
 			require: 'ng-model',
 			replace: 'true',
 			scope:    {
