@@ -14,10 +14,10 @@ class ReviewAverageRatingInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-average-rating', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.review.front.review_average_rating', $ucf));
 		$this->addInformationMeta('targetId', Property::TYPE_DOCUMENTID, false, null)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-target', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.front.review_target', $ucf));
 		$this->addInformationMeta('showChart', Property::TYPE_BOOLEAN, true, true)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-show-average-rating', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.front.review_list_show_average_rating', $ucf));
 	}
 }

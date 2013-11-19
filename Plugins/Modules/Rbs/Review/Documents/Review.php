@@ -24,7 +24,7 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 				$event->getApplicationServices()->getRichTextManager()->render($review->getContent(), 'Admin');
 			}
 			$targetLabel = $review->getTarget() ? $review->getTarget()->getLabel() : '';
-			$review->setLabel($event->getApplicationServices()->getI18nManager()->trans('m.rbs.review.documents.review.label-content', array('ucf'), array('targetLabel' => $targetLabel, 'pseudonym' => $review->getPseudonym())));
+			$review->setLabel($event->getApplicationServices()->getI18nManager()->trans('m.rbs.review.admin.review_label_content', array('ucf'), array('targetLabel' => $targetLabel, 'pseudonym' => $review->getPseudonym())));
 		}
 	}
 

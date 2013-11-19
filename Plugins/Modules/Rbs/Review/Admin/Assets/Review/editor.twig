@@ -7,11 +7,11 @@
 			<div class="form-control-static">
 				<ol class="list-inline star-rating">
 					<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-0') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="0" class="sr-only" /><span class="glyphicon glyphicon-star-empty"></span></label></li> |
-					<li data-ng-class="{'selected': document.rating > 0}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-1') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="20" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
-					<li data-ng-class="{'selected': document.rating > 20}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-2') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="40" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
-					<li data-ng-class="{'selected': document.rating > 40}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-3') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="60" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
-					<li data-ng-class="{'selected': document.rating > 60}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-4') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
-					<li data-ng-class="{'selected': document.rating > 80}"><label title="{{ i18n('m.rbs.review.blocks.star-rating-5') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 0}"><label title="{{ i18n('m.rbs.review.front.star_rating_1') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="20" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 20}"><label title="{{ i18n('m.rbs.review.front.star_rating_2') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="40" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 40}"><label title="{{ i18n('m.rbs.review.front.star_rating_3') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="60" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 60}"><label title="{{ i18n('m.rbs.review.front.star_rating_4') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+					<li data-ng-class="{'selected': document.rating > 80}"><label title="{{ i18n('m.rbs.review.front.star_rating_5') }}"><input type="radio" name="rating" data-ng-model="document.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
 				</ol>
 				<span>(= (document.rating || 0) * 0.05 =)/5</span>
 			</div>
@@ -27,13 +27,13 @@
 
 		<rbs-field-picker property="target" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'target'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.review.documents.review.select-target', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.review.admin.review_select_target', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field-picker property="section" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'section'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Section"
-			selector-title="{{ i18nAttr('m.rbs.review.documents.review.select-section', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.review.admin.review_select_section', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field-date property="reviewDate" required="true"

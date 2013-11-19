@@ -23,9 +23,9 @@ class Collections
 		{
 			$i18nManager = $applicationServices->getI18nManager();
 			$collection = new CollectionArray('Rbs_Review_Collection_PromotedReviewModes', array(
-				static::PROMOTED_REVIEW_MODES_MANUAL => $i18nManager->trans('m.rbs.review.collection.promotedreviewmodes.manual'),
-				static::PROMOTED_REVIEW_MODES_PROMOTED => $i18nManager->trans('m.rbs.review.collection.promotedreviewmodes.promoted'),
-				static::PROMOTED_REVIEW_MODES_RECENT => $i18nManager->trans('m.rbs.review.collection.promotedreviewmodes.recent')
+				static::PROMOTED_REVIEW_MODES_MANUAL => $i18nManager->trans('m.rbs.review.admin.promoted_review_modes_manual'),
+				static::PROMOTED_REVIEW_MODES_PROMOTED => $i18nManager->trans('m.rbs.review.admin.promoted_review_modes_promoted'),
+				static::PROMOTED_REVIEW_MODES_RECENT => $i18nManager->trans('m.rbs.review.admin.promoted_review_modes_recent')
 			));
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

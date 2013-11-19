@@ -1,0 +1,35 @@
+{
+	"module_name":{
+		"message":"avis"
+	},
+	"module_keywords":{
+		"message":"avis,produit,note,commentaire"
+	},
+	"promoted_review_modes_manual":{
+		"message":"sélectionnés (manuellement)"
+	},
+	"promoted_review_modes_promoted":{
+		"message":"promus (ordonnés par les mieux notés)"
+	},
+	"promoted_review_modes_recent":{
+		"message":"les plus récents"
+	},
+	"review_list":{
+		"message":"avis"
+	},
+	"review_create":{
+		"message":"ajouter un avis"
+	},
+	"review_label_content":{
+		"message":"avis sur $TARGETLABEL$ par $PSEUDONYM$"
+	},
+	"review_select_target":{
+		"message":"sélectionner un document"
+	},
+	"review_select_section":{
+		"message":"sélectionner une section"
+	},
+	"review_star_rating":{
+		"message":"étoile(s) sur $BESTRATING$"
+	}
+}

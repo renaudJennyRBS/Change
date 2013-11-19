@@ -1,0 +1,155 @@
+{
+	"review":{
+		"message":"avis"
+	},
+	"review_target":{
+		"message":"document"
+	},
+	"review_list":{
+		"message":"Tous les avis"
+	},
+	"review_list_show_average_rating":{
+		"message":"afficher la moyenne des notes"
+	},
+	"review_list_items_per_page":{
+		"message":"avis par page"
+	},
+	"average_rating":{
+		"message":"note moyenne : $AVERAGERATING$"
+	},
+	"average_rating_stars":{
+		"message":"$STARS$ étoiles : $COUNT$"
+	},
+	"review_average_rating":{
+		"message":"moyenne des notes"
+	},
+	"average_no_rating":{
+		"message":"la moyenne des notes est indisponible"
+	},
+	"review_rating":{
+		"message":"note : $RATINGVALUE$ sur $BESTRATING$"
+	},
+	"review_about":{
+		"message":"À propos de $TARGET$"
+	},
+	"review_post":{
+		"message":"donnez votre avis"
+	},
+	"review_post_review":{
+		"message":"formulaire de soumission d'avis"
+	},
+	"review_edit":{
+		"message":"éditez votre avis"
+	},
+	"review_post_pseudonym":{
+		"message":"pseudonyme"
+	},
+	"review_post_rating":{
+		"message":"note"
+	},
+	"review_post_content":{
+		"message":"avis"
+	},
+	"review_post_submit":{
+		"message":"poster cet avis"
+	},
+	"review_post_not_connected":{
+		"message":"vous devez vous connecter pour donner votre avis"
+	},
+	"review_post_section":{
+		"message":"section"
+	},
+	"already_reviewed":{
+		"message":"vous avez déjà donné votre avis"
+	},
+	"your_review":{
+		"message":"votre avis"
+	},
+	"pending_publication":{
+		"message":"votre avis est en cours de validation par notre équipe"
+	},
+	"review_pending_correction":{
+		"message":"la correction apportée à votre avis est en cours de validation"
+	},
+	"review_pending_correction_new_note":{
+		"message":"nouvelle note"
+	},
+	"review_pending_correction_new_content":{
+		"message":"nouveau contenu"
+	},
+	"promoted_review_list":{
+		"message":"liste des avis mis en avant"
+	},
+	"promoted_review_list_mode":{
+		"message":"mode de mise en avant"
+	},
+	"promoted_review_list_max_reviews":{
+		"message":"nombre maximum d'avis affichés"
+	},
+	"promoted_review_list_reviews":{
+		"message":"sélection manuel des avis (si mode manuel sélectionné)"
+	},
+	"promoted_review_list_title_promoted":{
+		"message":"avis promus"
+	},
+	"promoted_review_list_title_most_recent":{
+		"message":"avis les plus récents"
+	},
+	"promoted_review_list_title_default_manual":{
+		"message":"avis sélectionnés"
+	},
+	"review_detail":{
+		"message":"détail d'un avis"
+	},
+	"can_edit_review":{
+		"message":"permettre de rééditer l'avis"
+	},
+	"current_star_rating":{
+		"message":"$RATING$ étoile(s)"
+	},
+	"star_rating_1":{
+		"message":"1 étoile"
+	},
+	"star_rating_2":{
+		"message":"2 étoiles"
+	},
+	"star_rating_3":{
+		"message":"3 étoiles"
+	},
+	"star_rating_4":{
+		"message":"4 étoiles"
+	},
+	"star_rating_5":{
+		"message":"5 étoiles"
+	},
+	"review_detail_promoted":{
+		"message":"cette avis à été mis en avant, si vous l'éditez, il repassera par la phase de validation et risque de perdre son statut."
+	},
+	"review_vote":{
+		"message":"appréciez-vous cet avis ?"
+	},
+	"review_upvote":{
+		"message":"oui"
+	},
+	"review_downvote":{
+		"message":"non"
+	},
+	"review_novote":{
+		"message":"soyez le premier à évaluer ce commentaire."
+	},
+	"review_voted":{
+		"message":"votre vote a été enregistré."
+	},
+	"review_function":{
+		"message":"détail d'un avis"
+	},
+	"edit_review":{
+		"message":"édition de l'avis"
+	},
+	"edit_review_function":{
+		"message":"édition d'un avis"
+	},
+	"review_note_distribution":{
+		"message":"répartition des notes"
+	}
+}

@@ -14,10 +14,10 @@ class ReviewListInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.review.front.review_list', $ucf));
 		$this->addInformationMeta('targetId', Property::TYPE_DOCUMENTID, false, null)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-target', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.front.review_target', $ucf));
 		$this->addInformationMeta('reviewsPerPage', Property::TYPE_INTEGER, true, 10)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review-list-items-per-page', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.front.review_list_items_per_page', $ucf));
 	}
 }
