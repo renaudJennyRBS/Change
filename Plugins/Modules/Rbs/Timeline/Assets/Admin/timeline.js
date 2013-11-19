@@ -8,7 +8,7 @@
 	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Rbs/Timeline/js/timeline.twig',
+			templateUrl : 'Rbs/Timeline/directive-timeline.twig',
 			require : 'rbsTimeline',
 
 			controller : ['$scope', function ($scope)
@@ -72,7 +72,7 @@
 		return {
 			restrict: 'E',
 
-			templateUrl: 'Rbs/Timeline/js/timeline-message.twig',
+			templateUrl: 'Rbs/Timeline/directive-timeline-message.twig',
 			scope: {
 				message: '='
 			},
