@@ -1,0 +1,53 @@
+{
+	"deferredconnector_instructions":{
+		"message":"instruction de paiement"
+	},
+	"connector":{
+		"message":"connecteur bancaire"
+	},
+	"transaction":{
+		"message":"transaction bancaire"
+	},
+	"deferredconnector":{
+		"message":"connecteur à paiement différé"
+	},
+	"transaction_connector":{
+		"message":"connecteur bancaire"
+	},
+	"transaction_targetidentifier":{
+		"message":"origine de la transaction"
+	},
+	"transaction_contextdata":{
+		"message":"Information supplémentaire"
+	},
+	"transaction_amount":{
+		"message":"montant"
+	},
+	"transaction_currencycode":{
+		"message":"devise"
+	},
+	"transaction_processingstatus":{
+		"message":"état"
+	},
+	"transaction_processingidentifier":{
+		"message":"identifiant bancaire"
+	},
+	"transaction_processingdate":{
+		"message":"date de réalisation"
+	},
+	"transaction_processingdata":{
+		"message":"données techniques de la transaction"
+	},
+	"connector_visual":{
+		"message":"visuel"
+	},
+	"connector_minamount":{
+		"message":"Montant minimum"
+	},
+	"connector_maxamount":{
+		"message":"Montant maximum"
+	},
+	"connector_allowedcurrencycodes":{
+		"message":"codes devise autorisés"
+	}
+}

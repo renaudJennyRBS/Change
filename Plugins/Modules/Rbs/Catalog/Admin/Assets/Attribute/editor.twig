@@ -8,7 +8,7 @@
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.catalog.documents.attribute.synchronize-title-label', ['ucf']) }}"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'title'), ['ucf']) }}"
 			input-class="form-control">
 		</rbs-field-text>
@@ -77,7 +77,7 @@
 		<div data-ng-show="document.valueType == 'Group'">
 			<rbs-field-picker-multiple property="attributes" accepted-model="Rbs_Catalog_Attribute" allow-creation="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'attributes'), ['ucf']) }}"
-				selector-title="{{ i18nAttr('m.rbs.catalog.admin.js.attribute-picker-title', ['ucf']) }}">
+				selector-title="{{ i18nAttr('m.rbs.catalog.admin.attribute_picker_title', ['ucf']) }}">
 			</rbs-field-picker-multiple>
 		</div>
 	</fieldset>

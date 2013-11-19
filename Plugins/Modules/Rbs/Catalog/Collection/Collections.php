@@ -44,7 +44,7 @@ class Collections
 			$items = array();
 			foreach ($types as $type)
 			{
-				$items[$type] = new I18nString($i18n, 'm.rbs.catalog.documents.attribute.type-' . strtolower($type), array('ucf'));
+				$items[$type] = new I18nString($i18n, 'm.rbs.catalog.documents.attribute_type_' . strtolower($type), array('ucf'));
 			}
 
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeValueTypes', $items);

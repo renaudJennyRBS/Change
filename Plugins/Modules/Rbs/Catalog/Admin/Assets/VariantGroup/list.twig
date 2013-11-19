@@ -6,11 +6,11 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.catalog.admin.js.variantgroup-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Catalog_VariantGroup" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Catalog_VariantGroup' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.admin.js.variantgroup-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Catalog_VariantGroup' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.admin.variantgroup_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsCatalogVariantGroup" model="Rbs_Catalog_VariantGroup" filter-query="query">

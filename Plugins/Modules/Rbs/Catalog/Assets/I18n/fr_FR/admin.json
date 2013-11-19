@@ -260,6 +260,12 @@
 	"product_pictograms_picker_title":{
 		"message":"sélectionner les pictogrammes"
 	},
+	"product_sku_picker_title":{
+		"message":"sélectionner le sku"
+	},
+	"product_publicationsections_picker_title":{
+		"message":"sélectionner les sections de publication"
+	},
 	"product_brand_picker_title":{
 		"message":"sélectionner la marque"
 	},

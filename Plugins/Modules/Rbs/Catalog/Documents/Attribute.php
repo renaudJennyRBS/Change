@@ -39,7 +39,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 			if (in_array('valueTypeFormatted', $extraColumn))
 			{
 				/* @var $attribute Attribute */
-				$fv = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute.type-'
+				$fv = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute_type_'
 					. strtolower($this->getValueType()), array('ucf'));
 				$restResult->setProperty('valueTypeFormatted', $fv);
 			}
