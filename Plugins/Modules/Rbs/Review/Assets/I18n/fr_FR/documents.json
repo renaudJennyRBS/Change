@@ -1,0 +1,26 @@
+{
+	"review":{
+		"message":"avis"
+	},
+	"review_content":{
+		"message":"message"
+	},
+	"review_pseudonym":{
+		"message":"pseudonyme"
+	},
+	"review_rating":{
+		"message":"note"
+	},
+	"review_target":{
+		"message":"document"
+	},
+	"review_promoted":{
+		"message":"mis en avant"
+	},
+	"review_reviewDate":{
+		"message":"date de l'avis"
+	},
+	"review_section":{
+		"message":"section"
+	}
+}

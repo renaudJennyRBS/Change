@@ -14,11 +14,11 @@ class EditReviewInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setLabel($i18nManager->trans('m.rbs.review.blocks.edit-review', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.review.front.edit_review', $ucf));
 		$this->addInformationMeta('reviewId', Property::TYPE_DOCUMENTID, false, null)
-			->setLabel($i18nManager->trans('m.rbs.review.blocks.review', $ucf))
+			->setLabel($i18nManager->trans('m.rbs.review.front.review', $ucf))
 			->setAllowedModelsNames('Rbs_Review_Review');
-		$this->setFunctions(array('Rbs_Review_EditReview' => $i18nManager->trans('m.rbs.review.blocks.edit-review-function',
+		$this->setFunctions(array('Rbs_Review_EditReview' => $i18nManager->trans('m.rbs.review.front.edit_review_function',
 				$ucf)));
 	}
 }
