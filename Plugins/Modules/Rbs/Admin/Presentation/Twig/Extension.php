@@ -175,7 +175,7 @@ class Extension implements \Twig_ExtensionInterface
 			if (!$lm->isAbstract())
 			{
 				$titleKey = strtolower(implode('.',
-					array('m', $lm->getVendorName(), $lm->getShortModuleName(), 'adminjs', $lm->getShortName() . '_create')));
+					array('m', $lm->getVendorName(), $lm->getShortModuleName(), 'admin', $lm->getShortName() . '_create')));
 				$link =
 					'<a href ng-href="(= \'' . $lm->getName() . '\' | documentURL:\'new\' =)">' . $i18nManager->trans($titleKey,
 						array('html', 'ucf')) . '</a>';

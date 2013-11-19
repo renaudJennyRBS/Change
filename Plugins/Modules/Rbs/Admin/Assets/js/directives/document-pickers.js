@@ -217,7 +217,7 @@
 
 			var url, model = iElement.attr('accepted-model');
 			if (pickerTpl && model) {
-				url = model.replace(/_/g, '/') + '/' + pickerTpl + '?counter=' + (counter++) + '&model=' + model;
+				url = 'Document/' + model.replace(/_/g, '/') + '/' + pickerTpl + '?counter=' + (counter++) + '&model=' + model;
 			} else {
 				url = 'Rbs/Admin/document-picker-list.twig?counter=' + (counter++) + '&model=' + (model || '');
 			}

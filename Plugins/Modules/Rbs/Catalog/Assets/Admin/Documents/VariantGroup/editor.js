@@ -9,7 +9,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Catalog/VariantGroup/editor.twig',
+			templateUrl : 'Document/Rbs/Catalog/VariantGroup/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 

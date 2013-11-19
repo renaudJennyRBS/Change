@@ -14,7 +14,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Catalog/Product/editor.twig',
+			templateUrl : 'Document/Rbs/Catalog/Product/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
@@ -31,11 +31,11 @@
 					scope.loadItems();
 					if (! scope.document.variant)
 					{
-						MainMenu.addAsideTpl('product-options', 'Rbs/Catalog/Product/product-variant-aside-menu.twig', scope);
+						MainMenu.addAsideTpl('product-options', 'Document/Rbs/Catalog/Product/product-variant-aside-menu.twig', scope);
 					}
 					if (scope.document)
 					{
-						MainMenu.addAsideTpl('product-cross-selling', 'Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
+						MainMenu.addAsideTpl('product-cross-selling', 'Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
 					}
 				};
 
