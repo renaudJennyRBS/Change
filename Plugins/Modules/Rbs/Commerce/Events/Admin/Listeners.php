@@ -62,9 +62,9 @@ class Listeners implements ListenerAggregateInterface
 				array('label' => $i18nManager->trans('m.rbs.payment.admin.js.module-name', array('ucf')),
 					'url' => 'Rbs/Payment', 'section' => 'ecommerce',
 					'keywords' => $i18nManager->trans('m.rbs.payment.admin.js.module-keywords')),
-				array('label' => $i18nManager->trans('m.rbs.shipping.admin.js.module-name', array('ucf')),
+				array('label' => $i18nManager->trans('m.rbs.shipping.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Shipping', 'section' => 'ecommerce',
-					'keywords' => $i18nManager->trans('m.rbs.shipping.admin.js.module-keywords'))
+					'keywords' => $i18nManager->trans('m.rbs.shipping.admin.module_keywords'))
 			)
 		);
 
