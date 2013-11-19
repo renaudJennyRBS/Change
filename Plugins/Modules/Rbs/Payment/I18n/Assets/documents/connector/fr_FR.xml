@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.payment.documents.connector" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="visual">visuel</key>
-	<key id="select-visual">selectionner un visuel</key>
-	<key id="minamount">Montant minimum</key>
-	<key id="maxamount">Montant maximum</key>
-	<key id="allowedcurrencycodes">codes devise autorisés</key>
-</i18n>

@@ -1,16 +1,16 @@
 <div>
 	<rbs-workspace-config menu="Rbs_Payment">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Payment'|rbsURL:'home' =)">{{ i18n('m.rbs.payment.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Payment_Transaction'|rbsURL:'list' =)">{{ i18n('m.rbs.payment.admin.js.transaction-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Payment'|rbsURL:'home' =)">{{ i18n('m.rbs.payment.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Payment_Transaction'|rbsURL:'list' =)">{{ i18n('m.rbs.payment.admin.transaction_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.payment.admin.js.transaction-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Payment_Transaction" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Payment_Transaction' | documentURL:'new' =)">{{ i18n('m.rbs.payment.admin.js.transaction-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Payment_Transaction' | documentURL:'new' =)">{{ i18n('m.rbs.payment.admin.transaction_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsPaymentTransaction"

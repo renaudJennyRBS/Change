@@ -1,0 +1,17 @@
+{
+	"gst":{
+		"message":"Goods and Services Tax"
+	},
+	"pst":{
+		"message":"Provincial Sales Taxes"
+	},
+	"hst":{
+		"message":"Harmonized Sales Tax"
+	},
+	"qst":{
+		"message":"Quebec Sales Tax"
+	},
+	"tvafr":{
+		"message":"TVA"
+	}
+}

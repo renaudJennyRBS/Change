@@ -21,7 +21,7 @@
 
 		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'sku'), ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
-			selector-title="{{ i18nAttr('m.rbs.catalog.documents.product.sku-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_sku_picker_title', ['ucf']) }}"
 			allow-creation="true"
 			allow-edition="true"
 			ng-hide="document.newSkuOnCreation && document.id <= 0">
@@ -29,7 +29,7 @@
 
 		<rbs-field-picker-multiple ng-hide="document.variant" property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.catalog.documents.product.publicationsections-picker-title', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_picker_title', ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 	</fieldset>

@@ -5,7 +5,7 @@
 
 		<rbs-field-picker property="connector" label="{{ i18nAttr(propertyKey('Rbs_Payment_Transaction', 'connector'), ['ucf']) }}"
 				accepted-model="Rbs_Payment_Connector" allow-creation="false" allow-edition="true"
-				selector-title="{{ i18nAttr('m.rbs.payment.documents.transaction.select-connector', ['ucf']) }}">
+				selector-title="{{ i18nAttr('m.rbs.payment.admin.transaction_select_connector', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field-text property="targetIdentifier" required="true" input-class="input-block-level"
@@ -13,7 +13,7 @@
 		</rbs-field-text>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Payment_Transaction', 'currencyCode'), ['ucf']) }}">
-			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
+			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217" class="form-control"></select>
 		</rbs-field>
 
 		<rbs-field-float

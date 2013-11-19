@@ -46,9 +46,9 @@ class Collections
 		{
 			$i18nManager = $applicationServices->getI18nManager();
 			$collection = new CollectionArray('Rbs_Price_Collection_TaxRoundingStrategy', array(
-				'u' => $i18nManager->trans('m.rbs.price.collection.taxroundingstrategy.on-unit-value'),
-				'l' => $i18nManager->trans('m.rbs.price.collection.taxroundingstrategy.on-line-value'),
-				't' => $i18nManager->trans('m.rbs.price.collection.taxroundingstrategy.on-total-value')
+				'u' => $i18nManager->trans('m.rbs.price.admin.collection_taxroundingstrategy_on_unit_value'),
+				'l' => $i18nManager->trans('m.rbs.price.admin.collection_taxroundingstrategy_on_line_value'),
+				't' => $i18nManager->trans('m.rbs.price.admin.collection_taxroundingstrategy_on_total_value')
 			));
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

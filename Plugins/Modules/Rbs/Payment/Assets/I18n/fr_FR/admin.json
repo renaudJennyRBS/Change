@@ -1,0 +1,26 @@
+{
+	"connector_list":{
+		"message":"connecteurs bancaires"
+	},
+	"transaction_list":{
+		"message":"transactions bancaires"
+	},
+	"transaction_create":{
+		"message":"ajouter une transaction bancaire"
+	},
+	"deferredconnector_create":{
+		"message":"ajouter un connecteur à paiement différé"
+	},
+	"transaction_select_connector":{
+		"message":"selectionner un connecteur bancaire"
+	},
+	"connector_select_visual":{
+		"message":"selectionner un visuel"
+	},
+	"module_name":{
+		"message":"paiements"
+	},
+	"module_keywords":{
+		"message":"paiements,transactions"
+	}
+}
