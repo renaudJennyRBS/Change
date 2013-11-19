@@ -2,16 +2,16 @@
 
 	<rbs-workspace-config menu="Rbs_Price">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Price'|rbsURL:'home' =)">{{ i18n('m.rbs.price.admin.js.module-name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Price_Price'|rbsURL:'list' =)">{{ i18n('m.rbs.price.admin.js.price-list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Price'|rbsURL:'home' =)">{{ i18n('m.rbs.price.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Price_Price'|rbsURL:'list' =)">{{ i18n('m.rbs.price.admin.price_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.price.admin.js.price-list', ['ucf']) }}"></page-header>
+	<page-header title="{{ i18nAttr('m.rbs.price.admin.price_list', ['ucf']) }}"></page-header>
 	<search-filters model="Rbs_Price_Price" filter-query="query" text-search="textSearch"></search-filters>
 
 	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Price_Price' | documentURL:'new' =)">{{ i18n('m.rbs.price.admin.js.price-create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Price_Price' | documentURL:'new' =)">{{ i18n('m.rbs.price.admin.price_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-query="query" actions="default" activable="true">

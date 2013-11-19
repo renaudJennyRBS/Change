@@ -1,0 +1,83 @@
+{
+	"billingarea":{
+		"message":"zone de tarification"
+	},
+	"tax":{
+		"message":"taxe"
+	},
+	"price":{
+		"message":"prix"
+	},
+	"tax_code":{
+		"message":"code"
+	},
+	"tax_cascading":{
+		"message":"application en cascade"
+	},
+	"tax_rounding":{
+		"message":"arrondi"
+	},
+	"tax_data":{
+		"message":"taux de taxes (catégories et zones)"
+	},
+	"tax_category":{
+		"message":"catégorie"
+	},
+	"tax_not_applicable":{
+		"message":"Non Applicable"
+	},
+	"billingarea_currencyCode":{
+		"message":"code ISO devise"
+	},
+	"billingarea_boeditwithtax":{
+		"message":"saisie TTC des prix"
+	},
+	"billingarea_taxes":{
+		"message":"taxes"
+	},
+	"price_sku":{
+		"message":"SKU"
+	},
+	"price_webstore":{
+		"message":"boutique"
+	},
+	"price_billingarea":{
+		"message":"zone de tarification"
+	},
+	"price_taxcategories":{
+		"message":"Catégories de taxes"
+	},
+	"price_basevalue":{
+		"message":"montant"
+	},
+	"price_taxcategory":{
+		"message":"catégorie de TVA"
+	},
+	"price_ecotax":{
+		"message":"éco-participation"
+	},
+	"price_discount":{
+		"message":"prix promotion"
+	},
+	"price_discountdetail":{
+		"message":"libellé de la promotion"
+	},
+	"price_finalvalue":{
+		"message":"prix final"
+	},
+	"price_priority":{
+		"message":"priorité"
+	},
+	"price_bovalue":{
+		"message":"prix"
+	},
+	"price_bodiscountvalue":{
+		"message":"prix promotion"
+	},
+	"price_value":{
+		"message":"prix"
+	},
+	"price_baseprice":{
+		"message":"prix barré"
+	}
+}

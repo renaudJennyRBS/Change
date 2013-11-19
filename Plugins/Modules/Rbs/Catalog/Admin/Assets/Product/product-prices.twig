@@ -27,7 +27,7 @@
 			<div class="col-md-9 controls">
 				<select ng-model="params.areaId" class="form-control" ng-disabled="!params.webStoreId" rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
 					rbs-items-collection-params="webStoreId:(=params.webStoreId=)" ng-change="changeArea(params.areaId)">
-					<option value="">{{ i18n('m.rbs.price.admin.js.select-billingarea', ['ucf']) }}</option>
+					<option value="">{{ i18n('m.rbs.price.admin.select_billingarea', ['ucf']) }}</option>
 				</select>
 			</div>
 		</div>
@@ -51,7 +51,7 @@
 		</div>
 		<div class="add-elements-bar">
 			<a href="Rbs/Price/Price/new?productId=(=product.id=)" ng-click="cascadeCreatePrice()">
-				{{ i18nAttr('m.rbs.price.admin.js.price-create', ['ucf']) }}
+				{{ i18nAttr('m.rbs.price.admin.price_create', ['ucf']) }}
 			</a>
 		</div>
 

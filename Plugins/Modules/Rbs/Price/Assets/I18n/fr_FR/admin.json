@@ -1,0 +1,140 @@
+{
+	"directives_round_down":{
+		"message":"arrondi inférieur"
+	},
+	"directives_round_down_tencents":{
+		"message":"à la dizaine de centimes inférieure"
+	},
+	"directives_round_down_unit":{
+		"message":"à l'entier inférieur"
+	},
+	"directives_round_up":{
+		"message":"arrondi supérieur"
+	},
+	"directives_round_up_tencent":{
+		"message":"à la dizaine de centimes supérieure"
+	},
+	"directives_round_up_99cents":{
+		"message":"à 99 centimes"
+	},
+	"directives_round_up_unit":{
+		"message":"à l'entier supérieur"
+	},
+	"directives_with_tax_abbr":{
+		"message":"TTC"
+	},
+	"directives_without_tax_abbr":{
+		"message":"HT"
+	},
+	"collection_taxroundingstrategy_on_unit_value":{
+		"message":"sur la valeur unitaire"
+	},
+	"collection_taxroundingstrategy_on_line_value":{
+		"message":"sur la valeur ligne"
+	},
+	"collection_taxroundingstrategy_on_total_value":{
+		"message":"sur la valeur totale"
+	},
+	"tax_cascading_help":{
+		"message":"Lorsque cette option est activée, le calcul de la taxe se fait sur la valeur hors-taxe plus les taxes calculées précédemment."
+	},
+	"tax_rounding_help":{
+		"message":"Détermine quand le montant des taxes doit être arrondi (sur les paniers, commandes, factures...)"
+	},
+	"price_sku_picker_title":{
+		"message":"Séléctionner un SKU"
+	},
+	"price_discount_section_help":{
+		"message":"\n\t\tPour appliquer une <label class=\"in-text\" for=\"discount\">promotion<\/label> sur le montant indiqué ci-dessus, saisissez la valeur de la promotion ainsi que le type de promotion&nbsp;: pourcentage, prix barré ou valeur à déduire.\n\t"
+	},
+	"price_publication_section_help":{
+		"message":"\n\t\tVous pouvez indiquer une <strong>période de validité<\/strong> pour ce prix.<br \/>\n\t\t\t<span class=\"label label-danger\">Important<\/span> Si vous définissez un prix promotionnel, il est recommandé d'indiquer une <label class=\"in-text\" for=\"endPublication\">date de fin<\/label>.\n\t"
+	},
+	"price_create_discount_from_price":{
+		"message":"créer un prix promotionnel à partir de ce prix"
+	},
+	"price_select_baseprice":{
+		"message":"sélectionner le prix barré"
+	},
+	"module_name":{
+		"message":"prix et taxes"
+	},
+	"module_keywords":{
+		"message":"prix,taxes,tarification,tarifs,zones,promotions"
+	},
+	"price_list":{
+		"message":"prix"
+	},
+	"price_create":{
+		"message":"ajouter un prix"
+	},
+	"tax_list":{
+		"message":"taxes"
+	},
+	"tax_create":{
+		"message":"ajouter une taxe"
+	},
+	"billingarea_list":{
+		"message":"zones de tarification"
+	},
+	"billingarea_create":{
+		"message":"ajouter une zone de tarification"
+	},
+	"billingarea_taxes_picker_title":{
+		"message":"zone de tarification"
+	},
+	"tax_delete_zone":{
+		"message":"supprimer"
+	},
+	"tax_delete_category":{
+		"message":"supprimer"
+	},
+	"tax_make_default_zone":{
+		"message":"zone par défaut"
+	},
+	"tax_add_zone":{
+		"message":"ajouter une zone"
+	},
+	"tax_add_category":{
+		"message":"ajouter une catégorie"
+	},
+	"add":{
+		"message":"ajouter"
+	},
+	"category_exists":{
+		"message":"il existe déjà une catégorie avec ce code"
+	},
+	"zone_exists":{
+		"message":"il existe déjà une zone avec ce code"
+	},
+	"select_billingarea":{
+		"message":"sélectionner une zone de tarification"
+	},
+	"now":{
+		"message":"maintenant"
+	},
+	"tomorrow":{
+		"message":"demain"
+	},
+	"nextmonday":{
+		"message":"lundi prochain"
+	},
+	"nextmonth":{
+		"message":"mois prochain"
+	},
+	"add_one_week":{
+		"message":"+1 semaine"
+	},
+	"add_two_weeks":{
+		"message":"+2 semaines"
+	},
+	"add_one_month":{
+		"message":"+1 mois"
+	},
+	"end_of_week":{
+		"message":"fin de la semaine"
+	},
+	"end_of_month":{
+		"message":"fin du mois"
+	}
+}
