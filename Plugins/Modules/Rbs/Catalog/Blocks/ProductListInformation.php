@@ -14,6 +14,7 @@ class ProductListInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
+		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_label', $ucf));
 		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Catalog_ProductList')

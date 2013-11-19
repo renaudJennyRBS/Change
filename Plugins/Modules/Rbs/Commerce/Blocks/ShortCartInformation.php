@@ -13,6 +13,7 @@ class ShortCartInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
+		$this->setSection($i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.commerce.admin.shortcart_label', $ucf));
 		$this->setFunctions(array('Rbs_Commerce_Cart' => $i18nManager->trans('m.rbs.commerce.admin.cart_function', $ucf)));
 	}

@@ -1,4 +1,7 @@
 {
+	"module_name":{
+		"message":"E-commerce"
+	},
 	"cart_label":{
 		"message":"détail du panier"
 	},

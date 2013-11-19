@@ -15,6 +15,7 @@ class CrossSellingInformation extends Information
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
+		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_label', $ucf));
 		$this->addInformationMeta('title', Property::TYPE_STRING, false, null)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_title', $ucf));
