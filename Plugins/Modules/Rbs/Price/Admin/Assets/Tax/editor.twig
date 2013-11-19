@@ -16,13 +16,13 @@
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Tax', 'rounding'), ['ucf']) }}">
 			<select name="rounding" class="form-control" ng-model="document.rounding" rbs-items-from-collection="Rbs_Price_Collection_TaxRoundingStrategy">
 			</select>
-			<span class="help-block">{{ i18n('m.rbs.price.documents.tax.rounding-help') }}</span>
+			<span class="help-block">{{ i18n('m.rbs.price.admin.tax_rounding_help') }}</span>
 		</rbs-field>
 
 		<rbs-field-boolean
 			property="cascading"
 			label="{{ i18nAttr(propertyKey('Rbs_Price_Tax', 'cascading'), ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.price.documents.tax.cascading-help') }}</span>
+			<span class="help-block">{{ i18n('m.rbs.price.admin.tax_cascading_help') }}</span>
 		</rbs-field-boolean>
 
 		<h3>{{ i18n(propertyKey('Rbs_Price_Tax', 'data'), ['ucf']) }}</h3>
@@ -32,7 +32,7 @@
 			<th data-ng-repeat="cat in document.data.c">
 				(= cat =)
 				<br/>
-				<small><a ng-click="deleteCategory($index)">{{ i18n('m.rbs.price.admin.js.tax-delete-category') }}</a></small>
+				<small><a ng-click="deleteCategory($index)">{{ i18n('m.rbs.price.admin.tax_delete_category') }}</a></small>
 			</th>
 			</thead>
 			<tbody>
@@ -40,9 +40,9 @@
 				<td>(= zone =)
 					<br/>
 					<small data-ng-show="$index"><a
-							ng-click="makeDefaultZone($index)">{{ i18n('m.rbs.price.admin.js.tax-make-default-zone') }}</a> |
+							ng-click="makeDefaultZone($index)">{{ i18n('m.rbs.price.admin.tax_make_default_zone') }}</a> |
 					</small>
-					<small><a ng-click="deleteZone($index)">{{ i18n('m.rbs.price.admin.js.tax-delete-zone') }}</a></small>
+					<small><a ng-click="deleteZone($index)">{{ i18n('m.rbs.price.admin.tax_delete_zone') }}</a></small>
 
 				</td>
 				<td data-ng-repeat="cat in document.data.c track by $index">
@@ -56,28 +56,28 @@
 		</table>
 		<div class="input-group">
 			<small>
-				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-zone', ['ucf']) }}
+				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.tax_add_zone', ['ucf']) }}
 				<br />
 				<div class="input-group">
 					<input name="newZoneName" class="form-control" size="20" type="text" ng-model="newZoneName" />
 					<span class="input-group-btn">
-						<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+						<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.add', ['ucf']) }}</button>
 					</span>
 				</div>
-				<p class="text-danger" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.js.zone-exists', ['ucf']) }}</p>
+				<p class="text-danger" ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.zone_exists', ['ucf']) }}</p>
 			</small>
 		</div>
 		<div class="input-group">
 			<small>
-				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.js.tax-add-category', ['ucf']) }}
+				<i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.tax_add_category', ['ucf']) }}
 				<br />
 				<div class="input-group">
 					<input name="newCategoryName" class="form-control" size="20" type="text" ng-model="newCategoryName" />
 					<span class="input-group-btn">
-						<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.js.add', ['ucf']) }}</button>
+						<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.add', ['ucf']) }}</button>
 					</span>
 				</div>
-				<p class="text-danger" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.js.category-exists', ['ucf']) }}</p>
+				<p class="text-danger" ng-show="form.newCategoryName.$error.categoryExists">{{ i18n('m.rbs.price.admin.category_exists', ['ucf']) }}</p>
 			</small>
 		</div>
 	</fieldset>

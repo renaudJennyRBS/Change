@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.price.documents.billingarea" lcid="en_US">
-	<include id="m.rbs.generic.document"/>
-	<key id="currencyCode">ISO currency code</key>
-	<key id="boeditwithtax">edit tax-included prices</key>
-	<key id="taxes">taxes</key>
-</i18n>

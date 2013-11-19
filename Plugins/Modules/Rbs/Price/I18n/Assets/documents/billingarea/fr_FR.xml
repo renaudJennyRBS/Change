@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.rbs.price.documents.billingarea" lcid="fr_FR">
-	<include id="m.rbs.generic.document"/>
-	<key id="currencyCode">code ISO devise</key>
-	<key id="boeditwithtax">saisie TTC des prix</key>
-	<key id="taxes">taxes</key>
-</i18n>
