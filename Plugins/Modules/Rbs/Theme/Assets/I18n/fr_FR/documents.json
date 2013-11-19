@@ -23,7 +23,7 @@
 	"theme_name":{
 		"message":"nom (code)"
 	},
-	"theme_parent_theme":{
+	"theme_parenttheme":{
 		"message":"thème parent"
 	}
 }
