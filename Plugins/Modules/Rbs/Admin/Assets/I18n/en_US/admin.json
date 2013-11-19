@@ -475,5 +475,14 @@
 	},
 	"workflow_title":{
 		"message":"Workflow"
+	},
+	"dashboard_notifications": {
+		"message":"notifications"
+	},
+	"dashboard_notification_new": {
+		"message":"new"
+	},
+	"dashboard_notification_read": {
+		"message":"read"
 	}
 }
