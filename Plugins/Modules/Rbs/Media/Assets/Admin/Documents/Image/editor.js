@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Media/Image/editor.twig',
+			templateUrl : 'Document/Rbs/Media/Image/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
