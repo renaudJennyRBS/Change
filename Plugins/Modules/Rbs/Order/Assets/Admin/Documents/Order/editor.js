@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict : 'C',
-			templateUrl : 'Rbs/Order/Order/editor.twig',
+			templateUrl : 'Document/Rbs/Order/Order/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 

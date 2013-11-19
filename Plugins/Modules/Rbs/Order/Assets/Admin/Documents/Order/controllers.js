@@ -10,7 +10,7 @@
 		return {
 			restrict : 'E',
 			scope : {linesData: "="},
-			templateUrl : "Rbs/Order/Order/linesEditor.twig",
+			templateUrl : "Document/Rbs/Order/Order/linesEditor.twig",
 
 			link : function (scope, elm, attrs) {
 
