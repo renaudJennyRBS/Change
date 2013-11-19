@@ -10,7 +10,7 @@
 		return {
 			restrict : 'E',
 			scope : {thresholdsValues: "="},
-			templateUrl : "Rbs/Stock/Sku/thresholdsEditor.twig",
+			templateUrl : 'Document/Rbs/Stock/Sku/thresholdsEditor.twig',
 
 			link : function (scope, elm, attrs) {
 				scope.$watch('thresholdsValues', function (value) {

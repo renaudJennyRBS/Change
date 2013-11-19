@@ -10,7 +10,7 @@
 
 		return {
 			restrict : 'E',
-			templateUrl : 'Rbs/Stock/js/physical-dimensions.twig',
+			templateUrl : 'Rbs/Stock/physical-dimensions.twig',
 			require: 'ng-model',
 			replace: 'true',
 			scope: {},

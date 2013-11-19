@@ -110,7 +110,7 @@
 
 		return {
 			restrict : 'E',
-			templateUrl : 'Rbs/Tag/js/tag-filter.twig',
+			templateUrl : 'Rbs/Tag/tag-filter.twig',
 			replace: 'true',
 			scope: false,
 			// Create isolated scope
@@ -203,7 +203,7 @@
 
 		return {
 			restrict : 'E',
-			templateUrl : 'Rbs/Tag/js/tag-filter-panel.twig',
+			templateUrl : 'Rbs/Tag/tag-filter-panel.twig',
 			replace: 'true',
 			scope: false,
 			// Create isolated scope

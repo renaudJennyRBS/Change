@@ -4,5 +4,41 @@
 	},
 	"inventoryentry":{
 		"message":"stock"
+	},
+	"inventoryentry_sku":{
+		"message":"SKU"
+	},
+	"inventoryentry_level":{
+		"message":"niveau"
+	},
+	"sku_physicalproperties":{
+		"message":"données physiques"
+	},
+	"sku_unit":{
+		"message":"unité"
+	},
+	"sku_quantityincrement":{
+		"message":"incrément de quantité"
+	},
+	"sku_minquantity":{
+		"message":"quantité minimum"
+	},
+	"sku_maxquantity":{
+		"message":"quantité maximum"
+	},
+	"sku_unlimitedinventory":{
+		"message":"stock \"infini\""
+	},
+	"sku_allowbackorders":{
+		"message":"Commandes sur réassort"
+	},
+	"sku_allowquantitysplit":{
+		"message":"Livraison fractionnée"
+	},
+	"sku_virtual":{
+		"message":"virtuel"
+	},
+	"sku_thresholds":{
+		"message":"Seuils"
 	}
 }
