@@ -8,6 +8,9 @@
 	"territorialunit":{
 		"message":"unité territoriale"
 	},
+	"address":{
+		"message":"adresse"
+	},
 	"addressfields":{
 		"message":"modèle d'adresse"
 	},

@@ -10,5 +10,14 @@
 	},
 	"taskcode":{
 		"message":"code"
+	},
+	"task":{
+		"message":"tâche"
+	},
+	"workflowinstance":{
+		"message":"instance de workflow"
+	},
+	"workflow":{
+		"message":"workflow"
 	}
 }

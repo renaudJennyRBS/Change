@@ -22,7 +22,7 @@
 		<rbs-field-picker property="pageTemplate" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"
 			accepted-model="Rbs_Theme_PageTemplate"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.staticpage.pagetemplate-picker-title', ['ucf']) }}">
+			selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_pagetemplate_picker_title', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<hr />
@@ -30,9 +30,9 @@
 		<rbs-field-picker property="section" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'section'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Section"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.staticpage_section-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_section_picker_title', ['ucf']) }}"
 			allow-creation="false">
-			<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage_section-help', ['ucf']) }}</span>
+			<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_section_help', ['ucf']) }}</span>
 		</rbs-field-picker>
 
 		<hr />
@@ -44,7 +44,7 @@
 		<div data-ng-show="document.useCache">
 			<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'TTL'), ['ucf']) }}">
 				<input class="form-control" size="7" smart-float="" ng-model="document.TTL" min="0" type="number" />
-				<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage.ttl-help') }}</span>
+				<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_ttl_help') }}</span>
 			</rbs-field>
 		</div>
 
