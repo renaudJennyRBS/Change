@@ -31,5 +31,23 @@
 	},
 	"review_star_rating":{
 		"message":"étoile(s) sur $BESTRATING$"
+	},
+	"star_rating_0":{
+		"message":"0 étoile"
+	},
+	"star_rating_1":{
+		"message":"1 étoile"
+	},
+	"star_rating_2":{
+		"message":"2 étoiles"
+	},
+	"star_rating_3":{
+		"message":"3 étoiles"
+	},
+	"star_rating_4":{
+		"message":"4 étoiles"
+	},
+	"star_rating_5":{
+		"message":"5 étoiles"
 	}
 }

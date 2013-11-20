@@ -38,12 +38,12 @@
 								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> {{ i18n('m.rbs.admin.admin.display_informations', ['ucf']) }}</a>
 							</li>
 							<li class="divider"></li>
-							<li class="nav-header">{{ i18n('m.rbs.admin.admin.sort-by', ['ucf']) }}</li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.admin.sort_by', ['ucf']) }}</li>
 							<li ng-repeat="column in DL.columns" ng-show="column.sortable"><a ng-href="(=DL.headerUrl(column.id)=)"><i ng-class="{true:'icon-chevron-down', false:'icon-chevron-up'}[DL.sort.descending]" ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
 							<li class="divider"></li>
 							<li class="nav-header">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</li>
-							<li><a href="javascript:;" ng-click="DL.selectAll()">{{ i18n('m.rbs.admin.admin.select-all', ['ucf']) }}</a></li>
-							<li><a href="javascript:;" ng-click="DL.selectNone()">{{ i18n('m.rbs.admin.admin.select-neither', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.selectAll()">{{ i18n('m.rbs.admin.admin.select_all', ['ucf']) }}</a></li>
+							<li><a href="javascript:;" ng-click="DL.selectNone()">{{ i18n('m.rbs.admin.admin.select_neither', ['ucf']) }}</a></li>
 						</ul>
 					</div>
 				</div>
@@ -66,7 +66,7 @@
 								<a href="javascript:;" ng-click="DL.thumbnailsInfo = ! DL.thumbnailsInfo"><i class="icon-circle" ng-show="DL.thumbnailsInfo && DL.isThumbnailsView()"></i> {{ i18n('m.rbs.admin.admin.display_informations', ['ucf']) }}</a>
 							</li>
 							<li class="divider"></li>
-							<li class="nav-header">{{ i18n('m.rbs.admin.admin.sort-by', ['ucf']) }}</li>
+							<li class="nav-header">{{ i18n('m.rbs.admin.admin.sort_by', ['ucf']) }}</li>
 							<li ng-repeat="column in DL.columns" ng-show="column.sortable"><a ng-href="(=DL.headerUrl(column.id)=)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[DL.sort.descending]" ng-show="DL.sort.column==column.id"></i> (=column.label=)</a></li>
 						</ul>
 					</div>
