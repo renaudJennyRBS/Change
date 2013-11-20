@@ -1,4 +1,7 @@
 {
+	"notification":{
+		"message":"notification"
+	},
 	"notification_message":{
 		"message":"message"
 	},

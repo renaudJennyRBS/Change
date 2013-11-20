@@ -37,5 +37,8 @@
 	},
 	"user_identifier":{
 		"message":"identifiant de l'interface d'administration"
+	},
+	"profile":{
+		"message":"profile"
 	}
 }

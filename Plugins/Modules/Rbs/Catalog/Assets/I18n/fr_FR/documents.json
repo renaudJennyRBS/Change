@@ -23,6 +23,9 @@
 	"productlistitem_condition":{
 		"message":"condition"
 	},
+	"condition":{
+		"message":"condition"
+	},
 	"product":{
 		"message":"produit"
 	},
@@ -40,6 +43,9 @@
 	},
 	"variantgroup":{
 		"message":"groupe de variantes"
+	},
+	"crosssellingproductlist":{
+		"message":"liste de produits associés"
 	},
 	"crosssellingproductlist_accessories":{
 		"message":"accessoires"

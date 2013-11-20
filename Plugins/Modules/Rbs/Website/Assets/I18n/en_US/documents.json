@@ -5,6 +5,9 @@
 	"website_indexpage":{
 		"message":"homepage"
 	},
+	"section_pathpart":{
+		"message":"path"
+	},
 	"topic_website":{
 		"message":"website"
 	},
@@ -22,6 +25,9 @@
 	},
 	"page_content_zones":{
 		"message":"content zones"
+	},
+	"sectionpagefunction":{
+		"message":"section page function"
 	},
 	"sectionpagefunction_functionCode":{
 		"message":"function"
@@ -58,5 +64,8 @@
 	},
 	"functionalpage_allowedFunctionsCode":{
 		"message":"supported functions"
+	},
+	"text":{
+		"message":"text"
 	}
 }

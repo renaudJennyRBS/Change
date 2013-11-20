@@ -62,6 +62,12 @@
 	"staticpage_create":{
 		"message":"add content page"
 	},
+	"staticpage_pagetemplate_picker_title":{
+		"message":"select the page template"
+	},
+	"staticpage_section_picker_title":{
+		"message":"select the section"
+	},
 	"functionalpage_list":{
 		"message":"fonctional pages list"
 	},

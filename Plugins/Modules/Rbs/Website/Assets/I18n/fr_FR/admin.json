@@ -113,6 +113,9 @@
 	"staticpage_section_picker_title":{
 		"message":"sélectionner la section"
 	},
+	"staticpage_pagetemplate_picker_title":{
+		"message":"sélectionner le modèle de page"
+	},
 	"module_name":{
 		"message":"sites et pages"
 	},

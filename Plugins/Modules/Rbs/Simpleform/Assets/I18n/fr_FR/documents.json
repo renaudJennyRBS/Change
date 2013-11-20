@@ -43,5 +43,8 @@
 	},
 	"field_helptext":{
 		"message":"texte d'aide"
+	},
+	"response":{
+		"message":"réponse"
 	}
 }

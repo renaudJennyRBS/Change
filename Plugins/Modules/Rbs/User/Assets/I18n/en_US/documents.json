@@ -31,5 +31,8 @@
 	},
 	"user_password":{
 		"message":"password"
+	},
+	"profile":{
+		"message":"profile"
 	}
 }

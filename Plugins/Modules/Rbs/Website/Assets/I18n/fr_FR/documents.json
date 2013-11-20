@@ -29,7 +29,7 @@
 	"topic_indexpage":{
 		"message":"page d'index"
 	},
-	"topic_pathpart":{
+	"section_pathpart":{
 		"message":"chemin"
 	},
 	"topic_properties":{
@@ -64,6 +64,9 @@
 	},
 	"page_https":{
 		"message":"activer https"
+	},
+	"sectionpagefunction":{
+		"message":"fonction de la page de la section"
 	},
 	"sectionpagefunction_functionCode":{
 		"message":"fonction"
@@ -118,5 +121,8 @@
 	},
 	"functionalpage_allowedFunctionsCode":{
 		"message":"fonctions supportées"
+	},
+	"text":{
+		"message":"texte"
 	}
 }
