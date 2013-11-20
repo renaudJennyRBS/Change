@@ -6,22 +6,12 @@
 
 	/**
 	 * @param $scope
-	 * @param Breadcrumb
-	 * @param REST
-	 * @param MainMenu
-	 * @param $http
-	 * @param i18n
 	 * @param User
 	 * @param PaginationPageSizes
 	 * @constructor
 	 */
-	function RbsUserProfileController($scope, Breadcrumb, REST, MainMenu, $http, i18n, User, PaginationPageSizes)
+	function RbsUserProfileController($scope, User, PaginationPageSizes)
 	{
-		Breadcrumb.resetLocation([]);
-		Breadcrumb.setResource(i18n.trans('m.rbs.user.admin.profile | ucf'));
-
-		MainMenu.loadModuleMenu('Rbs_User_Profile');
-
 		function initUser() {
 			$scope.user = angular.copy(User.get());
 			$scope.form.$setPristine();
@@ -86,7 +76,7 @@
 		};
 	}
 
-	RbsUserProfileController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.MainMenu', '$http', 'RbsChange.i18n', 'RbsChange.User', 'RbsChange.PaginationPageSizes'];
+	RbsUserProfileController.$inject = ['$scope', 'RbsChange.User', 'RbsChange.PaginationPageSizes'];
 	app.controller('Rbs_User_Profile_Controller', RbsUserProfileController);
 
 })();
