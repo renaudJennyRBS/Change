@@ -13,7 +13,7 @@
 			<p class="text-error">{{ error }}</p>
 			<form method="POST" class="form-horizontal">
 				<fieldset>
-					<legend>{{ i18n('c.oauth.authorize-application', ['ucf']) }}</legend>
+					<legend>{{ i18n('c.oauth.authorize_application', ['ucf']) }}</legend>
 				<input type="hidden" name="realm" value="{{ realm }}" />
 				<input type="hidden" name="oauth_token" value="{{  oauth_token }}" />
 				<div class="form-group">
@@ -29,7 +29,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label col-md-3" for="authenticate">{{ i18n('c.oauth.application-name', ['ucf', 'lab']) }}</label>
+					<label class="control-label col-md-3" for="authenticate">{{ i18n('c.oauth.application_name', ['ucf', 'lab']) }}</label>
 					<div class="col-md-9">
 						<button type="submit" class="btn btn-default" id="authenticate" name="authenticate" value="authenticate">{{ i18n('c.oauth.authorize', ['ucf']) }}</button>
 						<strong>{{ applicationName }}</strong>
