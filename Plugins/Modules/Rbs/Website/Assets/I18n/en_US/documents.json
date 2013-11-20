@@ -1,21 +1,21 @@
 {
-	"website_baseurl":{
-		"message":"base URL"
-	},
-	"website_indexpage":{
+	"section_indexpage":{
 		"message":"homepage"
 	},
 	"section_pathpart":{
 		"message":"path"
 	},
-	"topic_website":{
+	"website":{
 		"message":"website"
 	},
-	"topic_indexpage":{
-		"message":"front-page"
+	"website_baseurl":{
+		"message":"base URL"
 	},
-	"topic_pathpart":{
-		"message":"path"
+	"topic":{
+		"message":"topic"
+	},
+	"topic_website":{
+		"message":"website"
 	},
 	"page_pagetemplate":{
 		"message":"page template"
@@ -25,6 +25,18 @@
 	},
 	"page_content_zones":{
 		"message":"content zones"
+	},
+	"staticpage":{
+		"message":"page"
+	},
+	"functionalpage":{
+		"message":"fonctional page"
+	},
+	"functionalpage_website":{
+		"message":"website"
+	},
+	"functionalpage_allowedFunctionsCode":{
+		"message":"supported functions"
 	},
 	"sectionpagefunction":{
 		"message":"section page function"
@@ -41,29 +53,11 @@
 	"menu":{
 		"message":"menu"
 	},
-	"staticpage":{
-		"message":"page"
-	},
-	"functionalpage":{
-		"message":"fonctional page"
-	},
-	"topic":{
-		"message":"topic"
-	},
-	"website":{
-		"message":"website"
-	},
 	"menu_website":{
 		"message":"website"
 	},
 	"menu_items":{
 		"message":"menu entries"
-	},
-	"functionalpage_website":{
-		"message":"website"
-	},
-	"functionalpage_allowedFunctionsCode":{
-		"message":"supported functions"
 	},
 	"text":{
 		"message":"text"

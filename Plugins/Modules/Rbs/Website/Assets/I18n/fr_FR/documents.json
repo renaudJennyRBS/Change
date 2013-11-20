@@ -1,9 +1,18 @@
 {
+	"section":{
+		"message":"section"
+	},
+	"section_indexpage":{
+		"message":"page d'index"
+	},
+	"section_pathpart":{
+		"message":"chemin"
+	},
+	"website":{
+		"message":"site web"
+	},
 	"website_baseurl":{
 		"message":"URL de base"
-	},
-	"website_indexpage":{
-		"message":"page d'accueil"
 	},
 	"website_sitemap":{
 		"message":"sitemap"
@@ -23,14 +32,11 @@
 	"website_sitemaps_url":{
 		"message":"URL des sitemaps"
 	},
+	"topic":{
+		"message":"rubrique"
+	},
 	"topic_website":{
 		"message":"site web"
-	},
-	"topic_indexpage":{
-		"message":"page d'index"
-	},
-	"section_pathpart":{
-		"message":"chemin"
 	},
 	"topic_properties":{
 		"message":"propriétés"
@@ -46,6 +52,9 @@
 	},
 	"topic_authorized_groups":{
 		"message":"groupes d'utilisateurs autorisés"
+	},
+	"page":{
+		"message":"page"
 	},
 	"page_pagetemplate":{
 		"message":"modèle de page"
@@ -65,6 +74,24 @@
 	"page_https":{
 		"message":"activer https"
 	},
+	"staticpage":{
+		"message":"page de contenu"
+	},
+	"staticpage_section":{
+		"message":"section"
+	},
+	"staticpage_hidelinks":{
+		"message":"masquer les liens"
+	},
+	"functionalpage":{
+		"message":"page fonctionnelle"
+	},
+	"functionalpage_website":{
+		"message":"site web"
+	},
+	"functionalpage_allowedFunctionsCode":{
+		"message":"fonctions supportées"
+	},
 	"sectionpagefunction":{
 		"message":"fonction de la page de la section"
 	},
@@ -80,32 +107,8 @@
 	"sectionpagefunction_index_page":{
 		"message":"page d'index"
 	},
-	"staticpage_section":{
-		"message":"section"
-	},
-	"staticpage_hidelinks":{
-		"message":"masquer les liens"
-	},
 	"menu":{
 		"message":"menu"
-	},
-	"page":{
-		"message":"page"
-	},
-	"section":{
-		"message":"section"
-	},
-	"staticpage":{
-		"message":"page de contenu"
-	},
-	"functionalpage":{
-		"message":"page fonctionnelle"
-	},
-	"topic":{
-		"message":"rubrique"
-	},
-	"website":{
-		"message":"site web"
 	},
 	"menu_website":{
 		"message":"site web"
@@ -115,12 +118,6 @@
 	},
 	"menu_items":{
 		"message":"entrées de menu"
-	},
-	"functionalpage_website":{
-		"message":"site web"
-	},
-	"functionalpage_allowedFunctionsCode":{
-		"message":"fonctions supportées"
 	},
 	"text":{
 		"message":"texte"
