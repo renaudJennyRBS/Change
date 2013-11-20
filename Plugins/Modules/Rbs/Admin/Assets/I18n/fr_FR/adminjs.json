@@ -17,6 +17,9 @@
 	"loading_document":{
 		"message":"chargement du document..."
 	},
+	"saving_document":{
+		"message":"enregistrement du document..."
+	},
 	"document_is_already_being_edited":{
 		"message":"ce document est déjà en cours d'édition."
 	},
@@ -134,10 +137,13 @@
 	"action_activate":{
 		"message":"activer"
 	},
+	"action_activate_help":{
+		"message":"activer les documents sélectionnés"
+	},
 	"action_deactivate":{
 		"message":"désactiver"
 	},
-	"action_devalidate_help":{
+	"action_deactivate_help":{
 		"message":"désactiver les documents sélectionnés"
 	},
 	"save_error":{

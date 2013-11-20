@@ -287,6 +287,9 @@
 	"picker_clear":{
 		"message":"effacer"
 	},
+	"picker_clear_tooltip":{
+		"message":"effacer la sélection"
+	},
 	"picker_clipboard":{
 		"message":"presse-papier"
 	},

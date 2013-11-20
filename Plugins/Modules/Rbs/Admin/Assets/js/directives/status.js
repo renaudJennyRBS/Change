@@ -36,7 +36,7 @@
 
 						if (scope.publicationStatus)
 						{
-							scope.tooltip = i18n.trans('m.rbs.admin.adminjs.status-' + angular.lowercase(scope.publicationStatus));
+							scope.tooltip = i18n.trans('m.rbs.admin.adminjs.status_' + angular.lowercase(scope.publicationStatus));
 							scope.correction = Utils.hasCorrection(doc);
 							if (scope.correction) {
 								scope.tooltip += ' (avec correction)';

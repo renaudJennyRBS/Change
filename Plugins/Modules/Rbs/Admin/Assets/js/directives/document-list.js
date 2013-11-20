@@ -118,7 +118,7 @@
 				if (multiple) {
 					html +=
 						'<a href="javascript:;" ng-click="selectSession.append(doc)">' +
-						i18n.trans('m.rbs.admin.adminjs.select-add') +
+						i18n.trans('m.rbs.admin.adminjs.select_add') +
 						'</a>';
 				}
 
@@ -898,7 +898,7 @@
 						if (cachedDoc) {
 							scope.collection.splice(index+1, 0, cachedDoc);
 						} else {
-							Loading.start(i18n.trans('m.rbs.admin.adminjs.loading-preview | ucf'));
+							Loading.start(i18n.trans('m.rbs.admin.adminjs.loading_preview | ucf'));
 							current.__dlPreviewLoading = true;
 							if (Utils.isDocument(current)) {
 								REST.resource(current).then(function (doc) {
@@ -1002,7 +1002,7 @@
 					 * @param doc
 					 */
 					scope.save = function (doc) {
-						Loading.start(i18n.trans('m.rbs.admin.admin.js.saving-document | ucf'));
+						Loading.start(i18n.trans('m.rbs.admin.adminjs.saving_document | ucf'));
 						REST.save(doc).then(function (savedDoc) {
 							angular.extend(doc, savedDoc);
 							Loading.stop();

@@ -183,7 +183,7 @@
 		"message":"Erreur interne de l'application"
 	},
 	"xhtml_template":{
-		"message":"gabarit XHTML"
+		"message":"gabarit HTML"
 	},
 	"menu_list":{
 		"message":"menus de navigation"
