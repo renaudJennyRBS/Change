@@ -47,7 +47,7 @@ class ModelsInfo
 				'abstract' => $model->isAbstract(),
 				'publishable' => $model->isPublishable(),
 				'plugin' => $i18n->trans('m.' . $model->getVendorName() . '.' . $model->getShortModuleName()
-						. '.admin.js.module-name', array('ucf'))
+						. '.admin.module_name', array('ucf'))
 			);
 		}
 
