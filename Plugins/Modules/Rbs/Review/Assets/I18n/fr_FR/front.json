@@ -107,6 +107,9 @@
 	"current_star_rating":{
 		"message":"$RATING$ étoile(s)"
 	},
+	"star_rating_0":{
+		"message":"0 étoile"
+	},
 	"star_rating_1":{
 		"message":"1 étoile"
 	},
