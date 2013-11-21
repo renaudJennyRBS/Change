@@ -1,0 +1,16 @@
+<div class="dropdown switch-language">
+	{% if langsCount > 1 %}
+	<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+		<i class="glyphicon glyphicon-comment"></i> {{ currentLang }} <b class="caret"></b>
+	</a>
+	<ul class="dropdown-menu">
+		{% for key, lang in langs %}
+			<li><a href="{{ contextualURL(currentDocument, NULL, currentQuery, key) }}">{{ lang }}</a></li>
+		{% endfor %}
+	</ul>
+	{% else %}
+		<i class="glyphicon glyphicon-comment"></i> {{ currentLang }} </b>
+	{% endif %}
+</div>
+
+
