@@ -71,14 +71,29 @@
 	"page_ttl_help":{
 		"message":"Indiquer une durée en secondes, ou 0 pour désactiver le cache"
 	},
-	"section_functions_list_tip":{
-		"message":"<strong>La liste ci-dessous affiche les fonctions attribuées à cette section<\/strong>.<br\/>Pour ajouter une fonction à une section, vous devez d'abord choisir une <strong>page fonctionnelle<\/strong>, puis choisir des fonctions parmi celles supportées par la page choisie."
+	"sectionpagefunction_list":{
+		"message":"fonctions"
+	},
+	"sectionpagefunction_create":{
+		"message":"associer une fonction à une section"
 	},
 	"sectionpagefunction_error_not_unique":{
 		"message":"La fonction $CODE$ est remplie par une autre page dans cette section."
 	},
 	"sectionpagefunction_back_to":{
 		"message":"retourner à"
+	},
+	"sectionpagefunction_add":{
+		"message":"ajouter"
+	},
+	"sectionpagefunction_define":{
+		"message":"définir"
+	},
+	"sectionpagefunction_no_page_defined":{
+		"message":"aucune page définie"
+	},
+	"section_functions_list_tip":{
+		"message":"<strong>La liste ci-dessous affiche les fonctions attribuées à cette section</strong>.<br/>Pour ajouter une fonction à une section, vous devez d'abord choisir une <strong>page fonctionnelle</strong>, puis choisir des fonctions parmi celles supportées par la page choisie."
 	},
 	"add_functions_to_this_section":{
 		"message":"ajouter des fonctions à cette section"
@@ -97,15 +112,6 @@
 	},
 	"page_can_also_use_these_functions":{
 		"message":"la page peut aussi remplir les fonctions suivantes"
-	},
-	"sectionpagefunction_add":{
-		"message":"ajouter"
-	},
-	"sectionpagefunction_define":{
-		"message":"définir"
-	},
-	"sectionpagefunction_no_page_defined":{
-		"message":"aucune page définie"
 	},
 	"staticpage_section_help":{
 		"message":"La rubrique ou le site web contenant la page."
@@ -220,12 +226,6 @@
 	},
 	"website_create":{
 		"message":"ajouter un site web"
-	},
-	"sectionpagefunction_list":{
-		"message":"fonctions"
-	},
-	"sectionpagefunction_create":{
-		"message":"associer une fonction à une section"
 	},
 	"menu_website_picker_title":{
 		"message":"sélectionner le site web associé au menu"

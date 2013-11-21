@@ -5,7 +5,7 @@
 
 		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
-			selector-title="{{ i18nAttr('m.rbs.price.documents.price.sku-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.price.admin.price_sku_picker_title', ['ucf']) }}"
 			allow-edition="true"
 			allow-creation="false"
 			required="true"
@@ -60,7 +60,7 @@
 
 		<rbs-field-picker property="basePrice" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}"
 				accepted-model="Rbs_Price_Price" picker="model"
-				selector-title="{{ i18nAttr('m.rbs.price.documents.price.select-baseprice', ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.price.admin.price_select_baseprice', ['ucf']) }}"
 				allow-edition="true" allow-creation="true">
 		</rbs-field-picker>
 
@@ -72,7 +72,7 @@
 
 		<hr/>
 		<span class="help-block">
-			{{ i18n('m.rbs.price.documents.price.publication-section-help', ['ucf']) }}
+			{{ i18n('m.rbs.price.admin.price_publication_section_help', ['ucf']) | raw }}
 		</span>
 
 		<div class="form-group property">

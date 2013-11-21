@@ -11,6 +11,9 @@
 	"inventoryentry_create":{
 		"message":"définir un stock"
 	},
+	"inventoryentry_sku_picker_title":{
+		"message":"sélectionner un SKU"
+	},
 	"sku_list":{
 		"message":"SKU"
 	},
