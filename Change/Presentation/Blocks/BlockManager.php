@@ -181,7 +181,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		if ($cacheAdapter && ($ttl = $parameters->getTTL()) > 0)
 		{
 			$cacheAdapter->getOptions()->setTtl($ttl);
-			$key = md5(serialize($parameters));
+			$key = md5(serialize($parameters) . ($httpEvent ? $httpEvent->getUrlManager()->getLCID() : ''));
 			if ($cacheAdapter->hasItem($key))
 			{
 				$result = $cacheAdapter->getItem($key);

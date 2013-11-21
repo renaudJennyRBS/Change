@@ -218,6 +218,7 @@ class UrlManager extends \Change\Http\UrlManager
 		if (!isset($this->webUrlManagers[$key]))
 		{
 			$this->webUrlManagers[$key] = $website->getUrlManager($LCID);
+			$this->webUrlManagers[$key]->setAbsoluteUrl(true);
 		}
 		return $this->webUrlManagers[$key];
 	}
@@ -327,7 +328,7 @@ class UrlManager extends \Change\Http\UrlManager
 
 		if (null === $LCID)
 		{
-			$LCID = $this->getLCID();;
+			$LCID = $this->getLCID();
 		}
 
 		if ($section instanceof \Change\Presentation\Interfaces\Website)
