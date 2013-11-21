@@ -249,16 +249,14 @@
 		toIds : function (value)
 		{
 			var i, newVal;
-			if (angular.isObject(value) && angular.isDefined(value.id)) {
-				newVal = value.id;
-			}
-			else if (angular.isArray(value)) {
+			if (angular.isArray(value)) {
 				newVal = [];
-				for (i=0 ; i<value.length ; i++) {
+				for (i=0 ; i < value.length ; i++) {
 					newVal[i] = this.toIds(value[i]);
 				}
-			}
-			else {
+			} else if (angular.isObject(value) && value.hasOwnProperty('id')) {
+				newVal = value.id;
+			} else {
 				newVal = value;
 			}
 			return newVal;

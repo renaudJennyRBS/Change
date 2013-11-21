@@ -3,15 +3,16 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	localized="true" editable="true" publishable="true" >
 	<properties>
+		<property name="title" has-correction="true" />
 		<property name="publicationSections" type="DocumentArray" document-type="Rbs_Website_Section" />
-		<property name="description" type="RichText" localized="true" />
-		<property name="visuals" type="DocumentArray" document-type="Rbs_Media_Image" />
-		<property name="pictograms" type="DocumentArray" document-type="Rbs_Media_Image" />
-		<property name="brand" type="Document" document-type="Rbs_Brand_Brand" />
-		<property name="code" type="String" />
-		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" />
+		<property name="description" type="RichText" localized="true" has-correction="true" />
+		<property name="visuals" type="DocumentArray" document-type="Rbs_Media_Image" has-correction="true" />
+		<property name="pictograms" type="DocumentArray" document-type="Rbs_Media_Image" has-correction="true" />
+		<property name="brand" type="Document" document-type="Rbs_Brand_Brand" has-correction="true" />
+		<property name="code" type="String"  has-correction="true" />
+		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" has-correction="true"/>
 		<property name="attribute" type="Document" document-type="Rbs_Catalog_Attribute" />
-		<property name="attributeValues" type="JSON" />
+		<property name="attributeValues" localized="true" type="JSON" has-correction="true" />
 		<property name="categorizable" type="Boolean" default-value="true" />
 		<property name="variant" type="Boolean" default-value="false" />
 		<property name="variantGroup" type="Document" document-type="Rbs_Catalog_VariantGroup" />

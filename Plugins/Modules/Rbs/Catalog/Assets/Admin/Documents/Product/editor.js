@@ -20,13 +20,6 @@
 
 			link: function (scope, elm, attrs, editorCtrl)
 			{
-				scope.onLoad = function() {
-					if (!angular.isArray(scope.document.attributeValues))
-					{
-						scope.document.attributeValues = [];
-					}
-				};
-
 				scope.onReady = function() {
 					scope.loadItems();
 					if (! scope.document.variant)
@@ -38,10 +31,6 @@
 						MainMenu.addAsideTpl('product-cross-selling', 'Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
 					}
 				};
-
-				scope.attributeGroupId = null;
-
-				scope.attributesDef = [];
 
 				scope.loadItems = function() {
 					if (scope.document.META$.links.hasOwnProperty('productListItems')) {
@@ -98,7 +87,10 @@
 					});
 				};
 
-				editorCtrl.init('Rbs_Catalog_Product');
+				scope.attributeGroupId = null;
+
+				scope.attributesDef = [];
+				scope.propAttr = {};
 
 				scope.$watch('document.attribute', function(newValue){
 					var attrGrpId = null;
@@ -125,14 +117,20 @@
 					}
 				});
 
-				scope.$watch('document.attributeValues', function(newValue){
-					if (angular.isArray(newValue))
+				scope.$watch('document.attributeValues', function(newValue) {
+
+					if (newValue === null)
 					{
-						scope.assocValues(scope.attributesDef, newValue);
+						scope.document.attributeValues = [];
+					}
+
+					if (newValue !== undefined)
+					{
+						scope.assocValues(scope.attributesDef);
 					}
 				});
 
-				scope.$watch('attributeGroupId', function(newValue){
+				scope.$watch('attributeGroupId', function(newValue) {
 					if (newValue)
 					{
 						REST.resource('Rbs_Catalog_Attribute', newValue).then(scope.generateAttributesEditor);
@@ -141,6 +139,7 @@
 
 				scope.clearAttributesEditor = function (){
 					scope.attributesDef = [];
+					scope.propAttr = {};
 					$timeout(function () {
 						scope.$emit('Change:Editor:UpdateMenu');
 					});
@@ -150,15 +149,13 @@
 					var editorDefinition = attribute.editorDefinition;
 					if (angular.isObject(editorDefinition))
 					{
+						if (!angular.isArray(scope.document.attributeValues))
+						{
+							scope.document.attributeValues = [];
+						}
+
 						scope.attributesDef = editorDefinition.attributes;
-						if (angular.isArray(scope.document.attributeValues))
-						{
-							scope.assocValues(scope.attributesDef, scope.document.attributeValues);
-						}
-						else
-						{
-							scope.assocValues(scope.attributesDef, []);
-						}
+						scope.assocValues(scope.attributesDef);
 					}
 
 					$timeout(function () {
@@ -166,50 +163,82 @@
 					});
 				};
 
-				scope.assocValues = function (attributes, attributeValues) {
+				scope.assocValues = function (attributes) {
+					var attributeValues = scope.document.attributeValues;
 					for (var i = 0; i < attributes.length; i++)
 					{
 						if (attributes[i].attributes)
 						{
-							scope.assocValues(attributes[i].attributes, attributeValues)
+							scope.assocValues(attributes[i].attributes)
 						}
 						else
 						{
-							attributes[i].value = scope.getAttributeValue(attributes[i], attributeValues);
+							scope.setAttributeValue(attributes[i], attributeValues);
 						}
 					}
-					console.log(attributes);
 				};
 
-				scope.getAttributeValue = function (attribute, attributeValues) {
-					var v = null;
-					for (var i = 0; i < attributeValues.length; i++)
-					{
-						//console.log(i);
-
+				scope.getAttributeValueById = function (id, attributeValues) {
+					var v, i;
+					for (i = 0; i < attributeValues.length; i++) {
 						v = attributeValues[i];
-						//console.log(v.value);
-						//console.log(attribute);
-						if (v.id == attribute.id)
-						{
-							if (/*v.value === null && */attribute.valueType == 'Property' && 'propertyName' in attribute)
-							{
-								v.value = scope.document[attribute.propertyName];
-							}
+						if (v.id == id) {
 							return v;
 						}
 					}
-
-					var defaultValue = attribute.defaultValue;
-					if (attribute.valueType == 'Property' && 'propertyName' in attribute)
-					{
-						defaultValue = scope.document[attribute.propertyName];
-					}
-
-					v = {id: attribute.id, valueType: attribute.valueType, value: defaultValue};
-					attributeValues.push(v);
-					return v;
+					return null;
 				};
+
+				scope.setAttributeValue = function (attribute, attributeValues) {
+					var v = {value: attribute.defaultValue};
+					var valIndex = scope.getAttributeValueById(attribute.id, attributeValues);
+
+					if (attribute.valueType == 'Property') {
+						var av = scope.document[attribute.propertyName];
+						if (valIndex == null)
+						{
+							valIndex = {id: attribute.id, valueType:attribute.valueType};
+							attributeValues.push(valIndex);
+							if (av !== null)
+							{
+								v.value = av;
+							}
+						}
+						else
+						{
+							v.value = av;
+						}
+						scope.propAttr[attribute.propertyName] = v;
+					}
+					else
+					{
+						if (valIndex == null)
+						{
+							v.id = attribute.id;
+							v.valueType = attribute.valueType;
+							attributeValues.push(v);
+						}
+						else
+						{
+							v = valIndex;
+						}
+					}
+					attribute.value = v;
+				};
+
+				scope.$watch('propAttr', function(newValue) {
+					if (newValue)
+					{
+						angular.forEach(scope.propAttr, function(value, key) {
+							if (scope.document.hasOwnProperty(key))
+							{
+								scope.document[key] = value.value;
+							}
+						})
+					}
+				}, true);
+
+				editorCtrl.init('Rbs_Catalog_Product');
 			}
 		};
 	}

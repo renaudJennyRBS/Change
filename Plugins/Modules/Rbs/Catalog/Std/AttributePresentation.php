@@ -40,7 +40,7 @@ class AttributePresentation
 		if ($product)
 		{
 			$this->attribute = $product->getAttribute();
-			$this->attributeValues = $product->getAttributeValues();
+			$this->attributeValues = $product->getCurrentLocalization()->getAttributeValues();
 		}
 	}
 
@@ -160,7 +160,7 @@ class AttributePresentation
 
 		if (count($configuration['global']['items']))
 		{
-			$i18n = $this->applicationServices->getApplicationServices()->getI18nManager();
+			$i18n = $this->getApplicationServices()->getI18nManager();
 			$configuration['global']['title'] = $i18n->trans('m.rbs.catalog.front.main_attributes', array('ucf'));
 		}
 		else
@@ -231,7 +231,7 @@ class AttributePresentation
 				}
 				break;
 
-			case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT:
+			case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID:
 				if ($value !== null)
 				{
 					$value = $attribute->getDocumentManager()->getDocumentInstance($value);
@@ -279,7 +279,7 @@ class AttributePresentation
 
 		switch ($item['valueType'])
 		{
-			case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT:
+			case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID:
 				if (!$this->isValidDocument($value))
 				{
 					return null;
@@ -287,7 +287,7 @@ class AttributePresentation
 				$item['template'] = 'Rbs_Catalog/Blocks/Attribute/document.twig';
 				break;
 
-			case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY:
+			case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY:
 				foreach ($value as $index => $document)
 				{
 					if (!$this->isValidDocument($document))
@@ -375,9 +375,9 @@ class AttributePresentation
 		{
 			case \Change\Documents\Property::TYPE_DOCUMENT :
 			case \Change\Documents\Property::TYPE_DOCUMENTID :
-				return \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT;
+				return \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID;
 			case \Change\Documents\Property::TYPE_DOCUMENTARRAY :
-				return \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY;
+				return \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY;
 			case \Change\Documents\Property::TYPE_STRING :
 				return \Rbs\Catalog\Documents\Attribute::TYPE_CODE;
 			case \Change\Documents\Property::TYPE_BOOLEAN :

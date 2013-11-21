@@ -6,7 +6,7 @@
 		<property name="title" type="String" localized="true" />
 		<property name="description" type="RichText" localized="true" />
 		<property name="valueType" type="String" default-value="Code" required="true">
-			<dboptions length="10" />
+			<dboptions length="16" />
 			<constraint name="enum" fromList="Rbs_Catalog_Collection_AttributeValueTypes" />
 		</property>
 		<property name="requiredValue" type="Boolean" default-value="false" />

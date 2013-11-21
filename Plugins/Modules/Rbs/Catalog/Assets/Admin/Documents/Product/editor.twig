@@ -65,14 +65,24 @@
 								<div class="document-picker-single" data-ng-switch-when="Document"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
-										allow-edition="false" allow-creation="false" allow-in-place-selection="false" picker="model">
+										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
+								</div>
+								<div class="document-picker-single" data-ng-switch-when="DocumentId" value-ids="true"
+										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 								</div>
 								<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
-										allow-edition="false" allow-creation="false" allow-in-place-selection="false" picker="model">
+										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 								</div>
-								<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
+								<div class="document-picker-multiple" data-ng-switch-when="DocumentIdArray" value-ids="true"
+										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
+								</div>
+								<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
 							</div>
 						</div>
 					</rbs-field>
@@ -96,20 +106,29 @@
 							<div class="document-picker-single" data-ng-switch-when="Document"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
-									allow-edition="false" allow-creation="false" allow-in-place-selection="false" picker="model">
+									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
+							</div>
+							<div class="document-picker-single" data-ng-switch-when="DocumentId" value-ids="true"
+									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 							</div>
 							<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
-									allow-edition="false" allow-creation="false" allow-in-place-selection="false" picker="model">
+									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 							</div>
-							<rbs-rich-text-input data-ng-switch-when="Text" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>
+							<div class="document-picker-multiple" data-ng-switch-when="DocumentIdArray" value-ids="true"
+									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
+							</div>
+							<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>
 						</div>
 					</div>
 				</rbs-field>
 			</div>
 		</div>
-
 	</fieldset>
 
 	<fieldset data-ng-show="section=='publication'"

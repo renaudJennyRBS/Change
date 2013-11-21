@@ -71,16 +71,15 @@
 
 
 		// Initialize ngModel
-
-
 		// If attribute "value-ids" is set to true, the value (ng-model) of the picker will be an ID
 		// or an array of IDs for a multiple picker.
-		if (attrs.valueIds === 'true') {
-			ngModel.$parsers.unshift(function (value) {
-				console.log("value=", Utils.toIds(value));
-				return Utils.toIds(value);
-			});
-		}
+		ngModel.$parsers.unshift(function (value) {
+
+			if (attrs.valueIds === 'true') {
+				value =  Utils.toIds(value);
+			}
+			return value;
+		});
 
 		// Pickers allow ID (or Array of IDs) as value.
 		// In that case, the following formatter will load the identified documents so that ngModel.$render()
@@ -94,37 +93,47 @@
 					}
 				});
 				if (arrayOfIds) {
-					return REST.getResources(value);
+					scope.documents = REST.getResources(value);
+				}
+				else
+				{
+					scope.documents = value;
 				}
 			}
 			else if (/\d+/.test(''+value)) {
-				return REST.getResources([value])[0];
+				scope.item = REST.getResources([value])[0];
 			}
-
+			else
+			{
+				scope.item = value;
+			}
 			return value;
 		});
 
-
-		if (multiple) {
-			ngModel.$render = function() {
-				scope.documents = ngModel.$viewValue;
-			};
-		}
-		else {
-			ngModel.$render = function() {
-				scope.item = ngModel.$viewValue;
-			};
+		function setValue(value)
+		{
+			ngModel.$setViewValue(value);
+			if (multiple)
+			{
+				scope.documents = value;
+			}
+			else
+			{
+				scope.item = value;
+			}
+			//TODO
+			ngModel.$render();
 		}
 
 		ngModel.$render();
 
 
 		// Watch from changes coming from the <token-list/> which is bound to `scope.documents`.
-		scope.$watchCollection('documents', function (documents, old) {
+		scope.$watch('documents', function (documents, old) {
 			if (documents !== old) {
 				ngModel.$setViewValue(documents);
 			}
-		});
+		}, true);
 
 
 		scope.getItemTemplateName = function (item) {
@@ -290,9 +299,11 @@
 		};
 
 		scope.clear = function () {
-			ngModel.$setViewValue(null);
-			ngModel.$render();
+			setValue(null);
+
 		};
+
+
 
 		scope.isEmpty = function () {
 			return ! ngModel.$viewValue || (angular.isArray(ngModel.$viewValue) && ngModel.$viewValue.length === 0);
@@ -324,8 +335,7 @@
 		if (multiple) {
 
 			scope.getFromClipboard = function () {
-				ngModel.$setViewValue(Clipboard.getItems(true));
-				ngModel.$render();
+				setValue(Clipboard.getItems(true));
 			};
 
 			scope.selectDocument = function (doc) {
@@ -338,8 +348,7 @@
 				} else {
 					value = [doc];
 				}
-				ngModel.$setViewValue(value);
-				ngModel.$render();
+				setValue(value);
 			};
 
 			scope.appendSelected = function () {
@@ -351,11 +360,10 @@
 							value.push(doc);
 						}
 					});
-					ngModel.$setViewValue(value);
+					setValue(value);
 				} else {
-					ngModel.$setViewValue(docs);
+					setValue(docs);
 				}
-				ngModel.$render();
 			};
 
 			scope.prependSelected = function () {
@@ -367,16 +375,14 @@
 							value.unshift(doc);
 						}
 					});
-					ngModel.$setViewValue(value);
+					setValue(value);
 				} else {
-					ngModel.$setViewValue(docs);
+					setValue(docs);
 				}
-				ngModel.$render();
 			};
 
 			scope.replaceWithSelected = function () {
-				ngModel.$setViewValue(documentList.selectedDocuments);
-				ngModel.$render();
+				setValue(documentList.selectedDocuments);
 			};
 
 			scope.selectAndClose = function () {
@@ -386,8 +392,7 @@
 
 			scope.picker = {
 				"replaceWithDocument" : function (doc) {
-					ngModel.$setViewValue([doc]);
-					ngModel.$render();
+					setValue([doc]);
 				},
 				"selectDocument" : function (doc) {
 					if (doc.selected === undefined) {
@@ -412,10 +417,7 @@
 			};
 
 			scope.selectDocument = function (doc) {
-				console.log("selectDocument=", doc);
-				console.log("ngModel=", attrs.ngModel);
-				ngModel.$setViewValue(doc);
-				ngModel.$render();
+				setValue(doc);
 				scope.closeSelector();
 			};
 
