@@ -46,8 +46,7 @@
 /* ----- Block Rich Text --------------------------------------------------- */
 
 
-.structure-editor .rbs-rich-text.block,
-.structure-editor .rbs-formatted-text.block {
+.structure-editor .rbs-rich-text.block {
 	cursor: pointer;
 	padding: 4px;
 	background: white;
@@ -57,8 +56,7 @@
 	/*background: #FFFFF8 url(../img/icons/text-edit.png) center right no-repeat;*/
 	outline: 0;
 }
-.structure-editor .rbs-rich-text.block.active,
-.structure-editor .rbs-formatted-text.block.active {
+.structure-editor .rbs-rich-text.block.active {
 	border: 3px solid rgb(243,197,27);
 	padding: 2px;
 	background: #FFFFF8;
@@ -81,12 +79,10 @@
 }
 
 
-.structure-editor .rbs-rich-text.block > *:first-child,
-.structure-editor .rbs-formatted-text.block > *:first-child{
+.structure-editor .rbs-rich-text.block > *:first-child{
 	margin-top: 0;
 }
-.structure-editor .rbs-rich-text.block > *:last-child,
-.structure-editor .rbs-formatted-text.block > *:last-child{
+.structure-editor .rbs-rich-text.block > *:last-child{
 	margin-bottom: 0;
 }
 
@@ -172,10 +168,11 @@
 }
 
 .rbs-row-settings .column-info .param .text {
-	padding: 3px 6px;
+	padding: 3px 0;
 	white-space: nowrap;
 	display: inline-block;
 	width: 6em;
+	font-size: 0.8em;
 }
 
 .rbs-row-settings .column-info .param .btn {
@@ -332,7 +329,6 @@
 
 .rbs-block-settings-editor > .btn-toolbar {
 	background: none;
-
 	margin-top: 0;
 	padding: 7px;
 }
@@ -347,7 +343,8 @@
 	margin: 0;
 }
 
-.rbs-block-settings-editor hr {
+.rbs-block-settings-editor hr,
+.rbs-row-settings hr {
 	border: none;
 	border-bottom: 1px solid #D0D0D0;
 	margin: 15px -15px;

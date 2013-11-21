@@ -1,0 +1,40 @@
+<div class="btn-toolbar">
+	<div class="btn-group">
+		<button class="btn btn-default btn-sm btn-icon" disabled="disabled"><i class="icon-plus"></i></button>
+		<button class="btn btn-default btn-sm btn-icon" ng-click="newBlockAfter()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_bottom', ['ucf']) }}"><i class="icon-arrow-down"></i></button>
+		<button class="btn btn-default btn-sm btn-icon" ng-click="newBlockBefore()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_top', ['ucf']) }}"><i class="icon-arrow-up"></i></button>
+	</div>
+	<button class="btn btn-danger btn-sm btn-icon pull-right" type="button" ng-click="removeBlock()" title="{{ i18nAttr('m.rbs.admin.admin.delete_block_group', ['ucf']) }}"><i class="icon-trash"></i></button>
+</div>
+
+<hr />
+
+<button type="button" ng-click="setEqualColumns()" class="btn btn-default btn-sm btn-block" ng-disabled="columns.length < 2 || ! equalSize">
+	{{ i18n('m.rbs.admin.admin.equitable_distribution', ['ucf']) }}
+	<span ng-show="equalSize"> ((= gridSize/equalSize =) x (= equalSize =))</span>
+</button>
+<div ng-repeat="col in columns" style="display:inline-block">
+	<div class="column-info" ng-class="{'active': highlightedColIndex == $index}" ng-click="highlightColumn($index)">
+		<div class="btn-group pull-right">
+			<button type="button" class="btn btn-default btn-sm" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>
+		</div>
+		<h5>{{ i18n('m.rbs.admin.admin.column', ['ucf']) }} (= $index+1 =)</h5>
+		<div class="btn-group">
+			<button type="button" class="btn btn-default btn-xs" disabled="disabled" ng-pluralize count="col.childCount" when="{'0':'{{ i18nAttr('m.rbs.admin.admin.no_block', ['ucf']) }}', 'one': '{{ i18nAttr('m.rbs.admin.admin.one_block', ['ucf']) }}', 'other': '{{ i18nAttr('m.rbs.admin.admin.n_blocks', ['ucf']) }}'}"></button>
+			<button type="button" class="btn btn-default btn-xs" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>
+		</div>
+		<div class="param clearfix">
+			<button type="button" class="btn btn-default btn-sm" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="{{ i18nAttr('m.rbs.admin.admin.width_reduce', ['ucf']) }}"><i class="icon-minus"></i></button>
+			<div class="text">{{ i18n('m.rbs.admin.admin.width', ['ucf']) }} = (= col.span =)</div>
+			<button type="button" class="btn btn-default btn-sm" ng-click="expandColumn($index, $event)" ng-disabled="! canExpandColumn($index)" title="{{ i18nAttr('m.rbs.admin.admin.width_enlarge', ['ucf']) }}"><i class="icon-plus"></i></button>
+		</div>
+		<div class="param clearfix">
+			<button type="button" class="btn btn-default btn-sm" ng-click="moveColumnLeft($index, $event)" title="{{ i18nAttr('m.rbs.admin.admin.shift_left', ['ucf']) }}" ng-disabled="col.offset == 0"><i class="icon-arrow-left"></i></button>
+			<div class="text">{{ i18n('m.rbs.admin.admin.shift', ['ucf']) }} = (= col.offset =)</div>
+			<button type="button" class="btn btn-default btn-sm" ng-click="moveColumnRight($index, $event)" title="{{ i18nAttr('m.rbs.admin.admin.shift_right', ['ucf']) }}" ng-disabled="! canMoveColumnRight($index)"><i class="icon-arrow-right"></i></button>
+		</div>
+	</div>
+	<button type="button" class="btn btn-default btn-sm" ng-click="insertColumn($index, $event)" ng-mouseover="highlightNewColumn($index)" ng-mouseout="unhighlightNewColumn()" ng-disabled="! canInsertColumn($index)">
+		<i class="icon-plus-sign"></i>
+	</button>
+</div>

@@ -15,7 +15,6 @@
 
 		DEFAULT_GRID_SIZE = 12,
 		RICH_TEXT_BLOCK_NAME = 'Rbs_Website_Richtext',
-		ADVANCED_TEXT_BLOCK_NAME = 'Rbs_Website_FormattedText',
 
 		highlightMargin = 2,
 		highlightBorder = 5;
@@ -556,29 +555,19 @@
 				 * @param params
 				 */
 				this.showBlockSettingsEditor = function showBlockSettingsEditor (blockEl, params) {
-					var	elName = null,
-						html,
-						item = this.getItemById(blockEl.data('id'));
+					var	html;
+					var item = this.getItemById(blockEl.data('id'));
 
-					if (blockEl.is('.rbs-formatted-text')) {
-						elName = "rbs-formatted-text-settings";
-					} else if (blockEl.is('.rbs-block-document')) {
-						elName = "rbs-block-document-settings";
-					} else if (blockEl.is('.rbs-row')) {
-						elName = "rbs-row-settings";
+					if (blockEl.is('.rbs-row')) {
+						html = '<div class="rbs-row-settings" data-id="' + blockEl.data('id') + '"';
 					}
-
+					else {
 					html = '<div class="rbs-block-settings-editor" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
-					if (elName) {
-						html += '><div class="' + elName + '" data-id="' + blockEl.data('id') + '"';
 					}
 					forEach(params, function (value, name) {
 						html += ' data-' + name + '="' + value + '"';
 					});
 					html += '></div>';
-					if (elName) {
-						html += '</div>';
-					}
 
 					var blockScope = blockEl.isolateScope() || blockEl.scope();
 					blockScope.editorCtrl = this;
@@ -1302,33 +1291,7 @@
 
 			"restrict" : 'C',
 			"scope"    : true,
-			"template" :
-				'<button type="button" ng-click="setEqualColumns()" class="btn btn-default btn-sm btn-block" ng-disabled="columns.length < 2 || ! equalSize">Répartir équitablement<span ng-show="equalSize"> ({{gridSize/equalSize}} x {{equalSize}})</span></button>' +
-				'<div ng-repeat="col in columns" style="display:inline-block">' +
-					'<div class="column-info" ng-class="{\'active\': highlightedColIndex == $index}" ng-click="highlightColumn($index)">' +
-						'<div class="btn-group pull-right">' +
-							'<button type="button" class="btn btn-default btn-sm" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>' +
-						'</div>' +
-						'<h5>Colonne {{$index+1}}</h5>' +
-						'<div class="btn-group">' +
-							'<button type="button" class="btn btn-default btn-xs" disabled="disabled" ng-pluralize count="col.childCount" when="{\'0\':\'Aucun bloc\', \'one\': \'Un bloc\', \'other\': \'{} blocs\'}"></button>' +
-							'<button type="button" class="btn btn-default btn-xs" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>' +
-						'</div>' +
-						'<div class="param clearfix">' +
-							'<button type="button" class="btn btn-default btn-sm" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="Réduire"><i class="icon-minus"></i></button>' +
-							'<div class="text">Largeur={{col.span}}</div>' +
-							'<button type="button" class="btn btn-default btn-sm" ng-click="expandColumn($index, $event)" ng-disabled="! canExpandColumn($index)" title="Agrandir"><i class="icon-plus"></i></button>' +
-						'</div>' +
-						'<div class="param clearfix">' +
-							'<button type="button" class="btn btn-default btn-sm" ng-click="moveColumnLeft($index, $event)" title="Décaler à gauche" ng-disabled="col.offset == 0"><i class="icon-arrow-left"></i></button>' +
-							'<div class="text">Décalage={{col.offset}}</div>' +
-							'<button type="button" class="btn btn-default btn-sm" ng-click="moveColumnRight($index, $event)" title="Décaler à droite" ng-disabled="! canMoveColumnRight($index)"><i class="icon-arrow-right"></i></button>' +
-						'</div>' +
-					'</div>' +
-					'<button type="button" class="btn btn-default btn-sm" ng-click="insertColumn($index, $event)" ng-mouseover="highlightNewColumn($index)" ng-mouseout="unhighlightNewColumn()" ng-disabled="! canInsertColumn($index)">' +
-						'<i class="icon-plus-sign"></i>' +
-					'</button>' +
-				'</div>',
+			templateUrl : 'Rbs/Admin/js/directives/structure-editor-row-settings.twig',
 
 			"link" : function seRowSettingsLinkFn (scope, elm, attrs) {
 				var	ctrl = scope.editorCtrl,
@@ -1633,16 +1596,34 @@
 					true
 				);
 
+				// New blocks.
+				scope.newBlockBefore = function () {
+					ctrl.newBlockBefore();
+				};
+
+				scope.newBlockAfter = function () {
+					ctrl.newBlockAfter();
+				};
+
+				scope.removeBlock = function () {
+					var block = ctrl.getSelectedBlock();
+					Dialog.confirmLocal(
+						block,
+						"Supprimer le groupe de blocs ?",
+						"<strong>Vous êtes sur le point de supprimer le groupe de blocs ci-dessous.</strong>",
+						{"placement": "top"}
+					).then(function () {
+							ctrl.removeBlock(block);
+							ctrl.notifyChange("remove", "block", block);
+						});
+				};
+
 				$timeout(function () {
 					scope.columns = structureEditorService.getColumnsInfo(rowEl);
 				});
-
 			}
-
 		};
-
 	}]);
-
 
 
 	//-------------------------------------------------------------------------
@@ -1659,9 +1640,9 @@
 			"template"   : '<div class="{{span}} {{offset}} block-container"></div>',
 			"replace"    : true,
 			"scope"      : {}, // isolated scope is required
-			"require"    : "^structureEditor",
+			"require"    : '^structureEditor',
 
-			"link" : function seCellLinkFn (scope, elm, attrs, ctrl) {
+			"link" : function seRowLinkFn (scope, elm, attrs, ctrl) {
 				var item = ctrl.getItemById(elm.data('id'));
 
 				scope.span = 'col-md-' + item.size;
@@ -2042,40 +2023,6 @@
 
 	//-------------------------------------------------------------------------
 	//
-	// Block Document.
-	//
-	//-------------------------------------------------------------------------
-
-	app.directive('rbsBlockDocument', [ function () {
-
-		return {
-
-			"restrict" : 'C',
-			"scope"    : {}, // isolated scope is required
-			"require"  : '^structureEditor',
-			"replace"  : true,
-
-			"template" :
-				'<div draggable="true" class="block btn btn-block btn-settings" block-label="(= item.label =)" block-type="document" ng-click="selectBlock($event)">' +
-					'<i class="icon-file"></i> <span ng-bind-html="item.label | niceBlockName"></span><div><small>(= item.parameters | json =)</small></div>' +
-					'</div>',
-
-			"link" : function seBlockDocumentLinkFn (scope, element, attrs, ctrl) {
-				scope.item = ctrl.getItemById(element.data('id'));
-
-				scope.selectBlock = function ($event) {
-					$event.stopPropagation();
-					ctrl.selectBlock(element);
-				};
-			}
-
-		};
-
-	}]);
-
-
-	//-------------------------------------------------------------------------
-	//
 	// Block chooser.
 	//
 	//-------------------------------------------------------------------------
@@ -2114,48 +2061,6 @@
 			return input.replace(/_/g, '<span style="font-size:0;display:inline-block;"> </span>_');
 		};
 	});
-
-
-	app.directive('rbsBlockDocumentSettings', [ function () {
-
-		return {
-
-			"restrict" : 'C',
-			"replace"  : true,
-			"scope"    : true,
-
-			"template" :
-				'<form ng-submit="submit()">' +
-					'<label for ="block_{{block}}_label">Libellé du bloc</label>' +
-					'<input class="form-control" id="block_{{block}}_label" type="text" ng-model="block.label" placeholder="Nom du bloc"/>' +
-					'<div class="parameters"></div>'+
-					'<div class="form-actions">' +
-						'<button type="button" class="btn btn-default" ng-disabled="! hasChanged()" ng-click="revert()">Annuler</button> ' +
-						'<button type="submit" class="btn btn-primary" ng-disabled="! hasChanged()" ng-click="submit()">Valider</button>' +
-					'</div>' +
-				'</form>',
-
-			"link" : function seBlockDocumentLinkFn (scope, element) {
-				var originalItem = scope.editorCtrl.getItemById(element.data('id'));
-				scope.block = angular.copy(originalItem);
-
-				scope.hasChanged = function () {
-					return ! angular.equals(scope.block, originalItem);
-				};
-
-				scope.revert = function () {
-					scope.block = angular.copy(originalItem);
-				};
-
-				scope.submit = function () {
-					angular.extend(originalItem, scope.block);
-					scope.editorCtrl.notifyChange("changeSettings", "block", element);
-				};
-			}
-
-		};
-
-	}]);
 
 
 	//-------------------------------------------------------------------------
