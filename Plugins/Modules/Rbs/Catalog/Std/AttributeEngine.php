@@ -124,7 +124,7 @@ class AttributeEngine
 					$val['value'] = $row['integer_value'] != 0;
 					break;
 				case Attribute::TYPE_INTEGER:
-				case Attribute::TYPE_DOCUMENT:
+				case Attribute::TYPE_DOCUMENTID:
 					$val['value'] = $row['integer_value'];
 					break;
 				case Attribute::TYPE_DATETIME:
@@ -217,7 +217,7 @@ class AttributeEngine
 					$result[0] = $value ? 1 : 0;
 					break;
 				case Attribute::TYPE_INTEGER:
-				case Attribute::TYPE_DOCUMENT:
+				case Attribute::TYPE_DOCUMENTID:
 					$result[0] = is_array($value) ? intval($value['id']) : intval($value);
 					break;
 				case Attribute::TYPE_FLOAT:
@@ -426,11 +426,8 @@ class AttributeEngine
 			{
 				case \Change\Documents\Property::TYPE_DOCUMENT :
 				case \Change\Documents\Property::TYPE_DOCUMENTID :
-					$definition['type'] = Attribute::TYPE_DOCUMENT;
-					$definition['documentType'] = ($property->getDocumentType()) ? $property->getDocumentType() : '';
-					break;
 				case \Change\Documents\Property::TYPE_DOCUMENTARRAY :
-					$definition['type'] = Attribute::TYPE_DOCUMENTARRAY;
+					$definition['type'] = $property->getType();
 					$definition['documentType'] = ($property->getDocumentType()) ? $property->getDocumentType() : '';
 					break;
 				case \Change\Documents\Property::TYPE_STRING :
@@ -457,7 +454,7 @@ class AttributeEngine
 					return null;
 			}
 		}
-		elseif (Attribute::TYPE_DOCUMENT == $vt)
+		elseif (Attribute::TYPE_DOCUMENTID == $vt || Attribute::TYPE_DOCUMENTIDARRAY == $vt)
 		{
 			$definition['documentType'] = ($attribute->getDocumentType()) ? $attribute->getDocumentType() : '';
 		}
@@ -486,7 +483,7 @@ class AttributeEngine
 			}
 		}
 
-		if (in_array($vt, array(Attribute::TYPE_INTEGER, Attribute::TYPE_CODE, Attribute::TYPE_DOCUMENT)) && $attribute->getCollectionCode())
+		if (in_array($vt, array(Attribute::TYPE_INTEGER, Attribute::TYPE_CODE, Attribute::TYPE_DOCUMENTID)) && $attribute->getCollectionCode())
 		{
 			$definition['values'] = $this->getCollectionValues($attribute);
 			if (is_array($definition['values']))
@@ -527,7 +524,7 @@ class AttributeEngine
 	 * @return null
 	 * @return array
 	 */
-	public function normalizeAttributeValues(\Rbs\Catalog\Documents\Product $product, $attributeValues)
+	public function normalizeRestAttributeValues(\Rbs\Catalog\Documents\Product $product, $attributeValues)
 	{
 		$normalizedValues = array();
 		if (is_array($attributeValues) && count($attributeValues))
@@ -543,30 +540,55 @@ class AttributeEngine
 					continue;
 				}
 				$valueType = $attribute->getValueType();
+				if ($valueType === Attribute::TYPE_PROPERTY)
+				{
+					//Property Attribute has no value
+					$normalizedValues[] = array('id' => $id, 'valueType' => $valueType);
+					continue;
+				}
+
 				$value = isset($attributeValue['value']) ? $attributeValue['value'] : null;
+				if ($value === null)
+				{
+					//null value no need conversion
+					$normalizedValues[] = array('id' => $id, 'valueType' => $valueType, 'value' => $value);
+					continue;
+				}
+
 				switch ($valueType)
 				{
-					case Attribute::TYPE_PROPERTY:
-						$attribute = $documentManager->getDocumentInstance($id);
-						if ($attribute instanceof Attribute)
-						{
-							$property = $attribute->getModelProperty();
-							if ($property)
-							{
-								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $documentManager);
-								$pc->setPropertyValue($value);
-								$value = $pc->getRestValue();
-							}
-						}
-						break;
-					case Attribute::TYPE_DOCUMENT:
+					case Attribute::TYPE_DOCUMENTID:
 						if (is_array($value) && isset($value['id']))
 						{
 							$value = $value['id'];
 						}
-						elseif (is_numeric($value))
+
+						if (is_numeric($value) && $value > 0)
 						{
 							$value = intval($value);
+						}
+						else
+						{
+							$value = null;
+						}
+						break;
+					case Attribute::TYPE_DOCUMENTIDARRAY:
+						if (is_array($value))
+						{
+							$ids = array();
+							foreach ($value as $docId)
+							{
+								if (is_array($docId) && isset($docId['id']))
+								{
+									$docId = $docId['id'];
+								}
+
+								if (is_numeric($docId) && $docId > 0)
+								{
+									$ids[] = intval($docId);
+								}
+							}
+							$value = count($ids) ? $ids : null;
 						}
 						else
 						{
@@ -585,7 +607,6 @@ class AttributeEngine
 		}
 		if (count($normalizedValues))
 		{
-
 			return $normalizedValues;
 		}
 		else
@@ -635,7 +656,7 @@ class AttributeEngine
 						}
 						break;
 
-					case Attribute::TYPE_DOCUMENT:
+					case Attribute::TYPE_DOCUMENTID:
 						if ($value !== null)
 						{
 							$document = $documentManager->getDocumentInstance($value);

@@ -46,15 +46,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 					$documentResult->addLink(array('href' => $image->getPublicURL(512, 512), 'rel' => 'adminthumbnail'));
 				}
 			}
-
-			if (is_array(($attributeValues = $documentResult->getProperty('attributeValues'))))
-			{
-				$as = $event->getApplicationServices();
-				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
-				$expandedAttributeValues = $attributeEngine->expandAttributeValues($document, $attributeValues,
-					$documentResult->getUrlManager());
-				$documentResult->setProperty('attributeValues', $expandedAttributeValues);
-			}
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
@@ -128,21 +119,23 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	 */
 	public function onDefaultCreate(Event $event)
 	{
-		if ($this->isPropertyModified('attributeValues'))
+		/** @var $product Product */
+		$product = $event->getDocument();
+		if ($product->isPropertyModified('attributeValues'))
 		{
 			$as = $event->getApplicationServices();
 			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
-			$normalizedAttributeValues = $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
-			$this->setAttributeValues($normalizedAttributeValues);
+			$normalizedAttributeValues = $attributeEngine->normalizeRestAttributeValues($product, $product->getCurrentLocalization()->getAttributeValues());
+			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
 		}
 
-		if ($this->getNewSkuOnCreation())
+		if ($product->getNewSkuOnCreation())
 		{
 			/* @var $sku \Rbs\Stock\Documents\Sku */
-			$sku = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
-			$sku->setCode($this->buildSkuCodeFromLabel($event->getServices('commerceServices')));
+			$sku = $product->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
+			$sku->setCode($product->buildSkuCodeFromLabel($event->getServices('commerceServices')));
 			$sku->save();
-			$this->setSku($sku);
+			$product->setSku($sku);
 		}
 	}
 
@@ -173,22 +166,24 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	 */
 	public function onDefaultUpdate(Event $event)
 	{
-		if ($this->isPropertyModified('attributeValues'))
+		/** @var $product Product */
+		$product = $event->getDocument();
+		if ($product->isPropertyModified('attributeValues'))
 		{
+			$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
 			$as = $event->getApplicationServices();
 			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
-			$normalizedAttributeValues = $attributeEngine->normalizeAttributeValues($this, $this->getAttributeValues());
+			$normalizedAttributeValues = $attributeEngine->normalizeRestAttributeValues($product, $attributeValues);
+			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
 
 			//DB Stat
-			$attributeEngine->setAttributeValues($this, $normalizedAttributeValues);
-
-			$this->setAttributeValues($normalizedAttributeValues);
+			$attributeEngine->setAttributeValues($product, $normalizedAttributeValues);
 		}
 
 		// Section product list synchronization.
-		if ($this->isPropertyModified('publicationSections'))
+		if ($product->isPropertyModified('publicationSections'))
 		{
-			$this->synchronizeSectionDocumentLists();
+			$product->synchronizeSectionDocumentLists();
 		}
 	}
 

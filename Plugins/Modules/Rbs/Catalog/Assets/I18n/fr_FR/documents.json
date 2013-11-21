@@ -170,8 +170,11 @@
 	"attribute_type_integer":{
 		"message":"nombre entier"
 	},
-	"attribute_type_document":{
+	"attribute_type_documentid":{
 		"message":"document"
+	},
+	"attribute_type_documentidarray":{
+		"message":"liste de documents"
 	},
 	"attribute_type_float":{
 		"message":"numérique"

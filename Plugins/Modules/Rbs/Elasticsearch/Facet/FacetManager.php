@@ -251,8 +251,8 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 								$mapping = array($fieldName => array('type' => 'double'));
 								break;
 							case \Rbs\Catalog\Documents\Attribute::TYPE_INTEGER:
-							case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT:
-							case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY:
+							case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID:
+							case \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY:
 							case \Change\Documents\Property::TYPE_INTEGER:
 							case \Change\Documents\Property::TYPE_DOCUMENTID:
 							case \Change\Documents\Property::TYPE_DOCUMENT:
@@ -359,7 +359,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 						{
 							$value = array($fieldName => $attributeValue->format(\DateTime::ISO8601));
 						}
-						elseif (is_string($attributeValue) || is_bool($attributeValue) || is_numeric($attributeValue))
+						elseif (is_string($attributeValue) || is_bool($attributeValue) || is_numeric($attributeValue) || is_array($attributeValue))
 						{
 							$value = array($fieldName => $attributeValue);
 						}
@@ -397,7 +397,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getDocumentManager(), $this->getCollectionManager());
 				$attrDef = $attributeEngine->buildAttributeDefinition($attribute);
 				$attrType = $attrDef['type'];
-				if ($attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENT || $attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTARRAY)
+				if ($attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID || $attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY)
 				{
 					$document = $this->getDocumentManager()->getDocumentInstance($facetValue->getValue());
 					if ($document)

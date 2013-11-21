@@ -11,12 +11,14 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 {
 	const TYPE_BOOLEAN = 'Boolean';
 	const TYPE_INTEGER = 'Integer';
-	const TYPE_DOCUMENT = 'Document';
-	const TYPE_DOCUMENTARRAY = 'DocumentArray';
+	const TYPE_DOCUMENTID = 'DocumentId';
+	const TYPE_DOCUMENTIDARRAY = 'DocumentIdArray';
 	const TYPE_FLOAT = 'Float';
 	const TYPE_DATETIME = 'DateTime';
 	const TYPE_CODE = 'Code';
 	const TYPE_TEXT = 'Text';
+
+	//Special type
 	const TYPE_GROUP = 'Group';
 	const TYPE_PROPERTY = 'Property';
 
@@ -64,27 +66,56 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		}
 		else
 		{
-			$values = $product->getAttributeValues();
+			$values = $product->getCurrentLocalization()->getAttributeValues();
 			if (is_array($values) && count($values))
 			{
 				foreach ($values as $value)
 				{
-					if ($value['id'] === $this->getId())
+					if ($value['id'] != $this->getId())
 					{
-						$value = $value['value'];
-						if ($value !== null)
-						{
-							if ($vt === static::TYPE_DATETIME)
-							{
-								return new \DateTime($value);
-							}
-							elseif ($vt === static::TYPE_DOCUMENT)
-							{
-								return $this->getDocumentManager()->getDocumentInstance($vt);
-							}
-						}
-						return $value;
+						continue;
 					}
+					$value = $value['value'];
+					if ($value !== null)
+					{
+						if ($vt === static::TYPE_DATETIME)
+						{
+							return new \DateTime($value);
+						}
+						elseif ($vt === static::TYPE_DOCUMENTID)
+						{
+							if (is_numeric($value) && $value > 0)
+							{
+								return $value;
+							}
+							elseif (is_array($value) && isset($value['id']))
+							{
+								return $value['id'];
+							}
+							$value = null;
+						}
+						elseif ($vt === static::TYPE_DOCUMENTIDARRAY)
+						{
+							if (is_array($value))
+							{
+								$ids = array();
+								foreach($value as $id)
+								{
+									if (is_numeric($id) && $id > 0)
+									{
+										$ids[] = $id;
+									}
+									elseif (is_array($id) && isset($id['id']))
+									{
+										$ids[] = $id['id'];
+									}
+								}
+								return count($ids) ? $ids : null;
+							}
+							$value = null;
+						}
+					}
+					return $value;
 				}
 			}
 		}

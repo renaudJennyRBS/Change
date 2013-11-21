@@ -37,13 +37,13 @@
 				</rbs-field-boolean>
 			</div>
 
-			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'Document' || document.valueType == 'Property'">
+			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'DocumentId' || document.valueType == 'DocumentIdArray' || document.valueType == 'Property'">
 				<rbs-field-text property="defaultValue"
 					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'defaultValue'), ['ucf']) }}">
 				</rbs-field-text>
 			</div>
 
-			<div data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'Document'">
+			<div data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'DocumentId'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'collectionCode'), ['ucf']) }}">
 					<select ng-model="document.collectionCode" class="form-control"
 							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">
@@ -61,13 +61,7 @@
 				</rbs-field>
 			</div>
 
-			<div data-ng-show="document.valueType == 'Text'">
-				<rbs-field-boolean property="localizedValue"
-					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'localizedValue'), ['ucf']) }}">
-				</rbs-field-boolean>
-			</div>
-
-			<div data-ng-show="document.valueType == 'Document'">
+			<div data-ng-show="document.valueType == 'DocumentId' || document.valueType == 'DocumentIdArray'">
 				<rbs-field-text property="documentType"
 					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'documentType'), ['ucf']) }}">
 				</rbs-field-text>
