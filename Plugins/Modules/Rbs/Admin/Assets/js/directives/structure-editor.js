@@ -1659,9 +1659,10 @@
 			"template"   : '<div class="{{span}} {{offset}} block-container"></div>',
 			"replace"    : true,
 			"scope"      : {}, // isolated scope is required
+			"require"    : "^structureEditor",
 
-			"link" : function seRowLinkFn (scope, elm, attrs) {
-				var item = scope.editorCtrl.getItemById(elm.data('id'));
+			"link" : function seCellLinkFn (scope, elm, attrs, ctrl) {
+				var item = ctrl.getItemById(elm.data('id'));
 
 				scope.span = 'col-md-' + item.size;
 				if (item.offset) {
@@ -1675,7 +1676,7 @@
 					}
 				};
 
-				structureEditorService.initChildItems(scope, elm, item, scope.editorCtrl.isReadOnly());
+				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
 			}
 		};
 
