@@ -1766,8 +1766,13 @@
 					}
 				}
 
+				function onSelectBlock() {
+					scope.$emit('blockSelected', {name: (scope.block ? scope.block.name : '')});
+				}
+
 				scope.$watchCollection('blocks', updateSelection);
 				scope.$watch('selected', updateSelection, true);
+				scope.$watch('block', onSelectBlock, true);
 			}
 		};
 	}]);
@@ -1800,13 +1805,33 @@
 
 				scope.formValues = {};
 				scope.formDirection = blockPropertiesPopup.is('.pinned') ? 'vertical' : 'horizontal';
+				scope.blockParametersLoading = false;
 
 				scope.block = ctrl.getItemById(element.data('id'));
-				if ( ! scope.block.parameters ) {
+				if (!scope.block.parameters) {
 					scope.block.parameters = {};
+					// If there is a block, load default parameters and open parameterize panel.
+					if (scope.block.name) {
+						scope.blockParametersLoading = true;
+						REST.blockInfo(scope.block.name).then(function (blockInfo) {
+							angular.forEach(blockInfo.parameters, function(parameter) {
+								if (parameter.hasOwnProperty('defaultValue')) {
+									scope.block.parameters[parameter.name] = parameter.defaultValue;
+								}
+							});
+							scope.blockParametersLoading = false;
+							finalizeParameters();
+						});
+					}
 				}
-				scope.blockParameters = scope.block.parameters;
+				finalizeParameters()
 
+				function finalizeParameters() {
+					scope.blockParameters = scope.block.parameters;
+					if (!scope.blockParameters.hasOwnProperty('TTL')) {
+						scope.blockParameters.TTL = 60;
+					}
+				}
 
 				function replaceItem (item) {
 					var block = ctrl.getSelectedBlock(),
@@ -1831,19 +1856,36 @@
 										'name': blockType.name
 									});
 									ctrl.notifyChange("create", blockType.label, block);
-									$timeout(function () { ctrl.selectBlock(block); } );
+									$timeout(function () { ctrl.selectBlock(block); });
 								}
 							});
 						});
 					}
 				}, true);
 
+				// Block TTL options ------------------------------------------
+
+				scope.hasTTL = function(seconds) {
+					return scope.blockParameters.TTL == seconds;
+				};
+
+				scope.setTTL = function(seconds) {
+					scope.blockParameters.TTL = seconds;
+				};
+
 
 				// Block visibility options -----------------------------------
 
-
 				scope.isVisibleFor = function (device) {
-					return scope.block && (! scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
+					if (!scope.block) {
+						return false;
+					}
+					if (device == 'raw') {
+						return (scope.block.visibility == 'raw');
+					} else if (scope.block.visibility == 'raw') {
+						return false;
+					}
+					return (! scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
 				};
 
 				scope.toggleVisibility = function (device) {
@@ -1852,33 +1894,42 @@
 						block,
 						originalValue = ''+scope.block.visibility;
 
-					if (scope.block.visibility) {
-
-						if (scope.block.visibility.length > 3) {
-							scope.block.visibility = scope.block.visibility.substr(0, 3);
-						}
-						splat = scope.block.visibility.split('');
-						if (ArrayUtils.inArray(device, splat) !== -1 && ! value) {
-							ArrayUtils.removeValue(splat, device);
-						} else if (ArrayUtils.inArray(device, splat) === -1 && value) {
-							splat.push(device);
-						}
-						splat.sort();
-						scope.block.visibility = splat.join('');
-					} else {
+					if (device == 'raw') {
 						if (value) {
 							scope.block.visibility = device;
 						} else {
-							switch (device) {
-							case 'P' :
-								scope.block.visibility = 'DT';
-								break;
-							case 'T' :
-								scope.block.visibility = 'DP';
-								break;
-							case 'D' :
-								scope.block.visibility = 'PT';
-								break;
+							delete scope.block.visibility;
+						}
+					} else if (scope.block.visibility == 'raw') {
+						delete scope.block.visibility;
+					} else {
+						if (scope.block.visibility) {
+							splat = scope.block.visibility.split('');
+							if (ArrayUtils.inArray(device, splat) !== -1 && ! value) {
+								ArrayUtils.removeValue(splat, device);
+							} else if (ArrayUtils.inArray(device, splat) === -1 && value) {
+								splat.push(device);
+							}
+							splat.sort();
+							scope.block.visibility = splat.join('');
+						} else {
+							if (value) {
+								scope.block.visibility = device;
+							} else {
+								switch (device) {
+									case 'X' :
+										scope.block.visibility = 'SML';
+										break;
+									case 'S' :
+										scope.block.visibility = 'XML';
+										break;
+									case 'M' :
+										scope.block.visibility = 'XSL';
+										break;
+									case 'L' :
+										scope.block.visibility = 'XSM';
+										break;
+								}
 							}
 						}
 					}
@@ -1948,11 +1999,8 @@
 						scope.formDirection = 'horizontal';
 					}
 				});
-
 			}
-
 		};
-
 	}]);
 
 

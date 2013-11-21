@@ -16,56 +16,83 @@
 		<table class="table table-striped">
 			<thead>
 			<tr>
-				<th>{{ i18n('m.rbs.theme.admin.pagetemplates_zone_id', ['ucf']) }}</th>
-				<th>{{ i18n('m.rbs.theme.admin.pagetemplates_block', ['ucf']) }}</th>
-				<th></th>
+				<th style="width:20%">{{ i18n('m.rbs.theme.admin.pagetemplates_zone_id', ['ucf']) }}</th>
+				<th style="width:50%">{{ i18n('m.rbs.theme.admin.pagetemplates_block', ['ucf']) }}</th>
+				<th style="width:30%"></th>
 			</tr>
 			</thead>
 			<tbody>
 			<tr data-ng-repeat="row in blockList">
-				<td ng-if="isEditorRow(row)" colspan="3">
-					<form ng-submit="submit()" novalidate name="block_properties_form" class="form-horizontal">
-						<div class="form-group">
-							<label class="control-label">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility', ['ucf']) }}</label>
-							<div class="controls">
-								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('raw')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('raw')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_raw', ['ucf']) }}</button>
-								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('D')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('D')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_d', ['ucf']) }}</button>
-								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('T')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('T')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_t', ['ucf']) }}</button>
-								<button type="button" class="btn btn-xs" ng-click="toggleVisibility('P')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('P')]">{{ i18n('m.rbs.theme.admin.pagetemplates_visibility_p', ['ucf']) }}</button>
+				<td ng-if="isEditorRow(row)" colspan="3" ng-init="labelClass = 'col-lg-3'; controlsClass = 'col-lg-9'">
+					<div class="form-group">
+						<label class="control-label col-lg-3">{{ i18nAttr('m.rbs.theme.admin.block_visibility', ['ucf']) }}</label>
+						<div class="controls col-lg-9">
+							<div class="btn-toolbar" role="toolbar">
+								<div class="btn-group">
+									<button type="button" class="btn btn-sm" ng-click="toggleVisibility('X')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('X')]">{{ i18n('m.rbs.theme.admin.block_visibility_x', ['ucf']) }}</button>
+									<button type="button" class="btn btn-sm" ng-click="toggleVisibility('S')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('S')]">{{ i18n('m.rbs.theme.admin.block_visibility_s', ['ucf']) }}</button>
+									<button type="button" class="btn btn-sm" ng-click="toggleVisibility('M')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('M')]">{{ i18n('m.rbs.theme.admin.block_visibility_m', ['ucf']) }}</button>
+									<button type="button" class="btn btn-sm" ng-click="toggleVisibility('L')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('L')]">{{ i18n('m.rbs.theme.admin.block_visibility_l', ['ucf']) }}</button>
+								</div>
+								<button type="button" class="btn btn-sm" ng-click="toggleVisibility('raw')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('raw')]">{{ i18n('m.rbs.theme.admin.block_visibility_raw', ['ucf']) }}</button>
 							</div>
 						</div>
-						<div ng-include="row.template"></div>
-					</form>
-					<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}</button>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-lg-3">{{ i18nAttr('m.rbs.theme.admin.block_ttl', ['ucf']) }}</label>
+						<div class="controls col-lg-9">
+							<div class="form-inline">
+								<div class="btn-group">
+									<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(0)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(0)]">{{ i18n('m.rbs.theme.admin.block_ttl_none', ['ucf']) }}</button>
+									<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(60)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(60)]" title="{{ i18nAttr('m.rbs.theme.admin.block_ttl_1minute', ['ucf']) }}">{{ i18n('m.rbs.theme.admin.block_ttl_1m', ['ucf']) }}</button>
+									<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(600)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(600)]" title="{{ i18nAttr('m.rbs.theme.admin.block_ttl_10minutes', ['ucf']) }}">{{ i18n('m.rbs.theme.admin.block_ttl_10m', ['ucf']) }}</button>
+									<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(3600)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(3600)]" title="{{ i18nAttr('m.rbs.theme.admin.block_ttl_1hour', ['ucf']) }}">{{ i18n('m.rbs.theme.admin.block_ttl_1h', ['ucf']) }}</button>
+								</div>
+								<input type="integer" class="form-control input-sm" ng-model="blockParameters.TTL" size="4" />
+							</div>
+						</div>
+					</div>
+					<div ng-include="row.template"></div>
+					<div class="form-group">
+						<div class="col-lg-offset-3 col-lg-9">
+							<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}</button>
+						</div>
+					</div>
 				</td>
-				<td ng-if="!isEditorRow(row)" style="width:20%">(= row.id =)</td>
-				<td ng-if="!isEditorRow(row)" style="width:50%">
+				<td ng-if="!isEditorRow(row)"><div class="form-control-static">(= row.id =)</div></td>
+				<td ng-if="!isEditorRow(row)">
 					<span data-ng-show="!canChangeBlocName(row)">
-						<strong data-ng-show="row.id == block.id">(= row.block.label || row.name =)</strong>
-						<span data-ng-show="row.id != block.id">(= row.block.label || row.name =)</span>
+						<div class="form-control-static">
+							<strong data-ng-show="row.id == block.id">(= row.block.label || row.name =)</strong>
+							<span data-ng-show="row.id != block.id">(= row.block.label || row.name =)</span>
+						</div>
 					</span>
 					<div data-ng-show="canChangeBlocName(row)">
 						<rbs-block-selector block="row.block" selected="(= row.name =)"></rbs-block-selector>
 					</div>
-
 				</td>
-				<td data-ng-if="!isEditorRow(row)" style="width:30%">
+				<td data-ng-if="!isEditorRow(row)">
 					<div data-ng-if="!inEditMode()">
-						<button class="btn btn-sm" type="button"
+						<button class="btn btn-default" type="button"
 								data-ng-click="addBlockOverride(row)" data-ng-show="canOverrideBlock(row)">
 							{{ i18n('m.rbs.theme.admin.pagetemplates_override', ['ucf']) }}
 						</button>
-						<button class="btn btn-sm" type="button"
+						<button class="btn btn-default" type="button"
 								data-ng-click="removeBlockOverride(row)" data-ng-show="canRemoveOverrideBlock(row)">
 							{{ i18n('m.rbs.theme.admin.pagetemplates_removeoverride', ['ucf']) }}
 						</button>
-						<button class="btn btn-default btn-sm" type="button"
+						<button class="btn btn-default" type="button"
 								data-ng-click="parametrizeBlock($index)" data-ng-show="canParametrizeBlock(row)">
 							{{ i18n('m.rbs.theme.admin.pagetemplates_parametrize', ['ucf']) }}
 						</button>
-						<button class="btn btn-sm" type="button"
+						<button class="btn btn-default" type="button"
 								data-ng-click="emptyBlock(row)" data-ng-show="canEmptyBlock(row)">
 							{{ i18n('m.rbs.theme.admin.pagetemplates_clear', ['ucf']) }}
+						</button>
+					</div>
+					<div data-ng-if="inEditMode() && block.id == row.id">
+						<button data-ng-click="closeBlock($index+1)" class="btn btn-default" type="button">
+							{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}
 						</button>
 					</div>
 				</td>
