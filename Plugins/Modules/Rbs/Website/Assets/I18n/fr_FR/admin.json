@@ -206,6 +206,9 @@
 	"functionalpage_create":{
 		"message":"ajouter une page fonctionnelle"
 	},
+	"functionalpage_pagetemplate_picker_title":{
+		"message":"sélectionner un modèle de page"
+	},
 	"topic_list":{
 		"message":"rubriques"
 	},
@@ -300,7 +303,7 @@
 		"message":"Pour information, la page dispose actuellement des blocs nécessaires pour remplir les fonctions suivantes :"
 	},
 	"page_contains_no_function":{
-		"message":"<h4>Cette page ne dispose d'aucune fonction.<\/h4>Pour corriger cela, vous pouvez <a href ng-href=\"(= doc | documentURL:'editor' =)\">éditer le contenu de la page<\/a>."
+		"message":"cette page ne dispose d'aucune fonction."
 	},
 	"page_contains_required_blocks":{
 		"message":"La page dispose de tous les blocs nécessaires pour supporter correctement les fonctions choisies."
@@ -309,7 +312,7 @@
 		"message":"Les fonctions suivantes ne pourront pas être supportées correctement car la page ne dispose pas des blocs nécessaires à ces fonctions :"
 	},
 	"edit_page_contents_to_fix_this":{
-		"message":"Pour corriger cela, vous pouvez <a href ng-href=\"(= doc | documentURL:'editor' =)\">éditer le contenu de la page<\/a>."
+		"message":"Pour corriger cela, vous pouvez <a href ng-href=\"(= document | rbsURL =)?section=content\">éditer le contenu de la page<\/a>"
 	},
 	"configure_functions":{
 		"message":"configurer"

@@ -5,9 +5,9 @@
 
 		<rbs-field-picker property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'website'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage_website-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.admin.functionalpage_website_picker_title', ['ucf']) }}"
 			allow-edition="true">
-			<span class="help-block">{{ i18n('m.rbs.website.documents.functionalpage_website-picker-title', ['ucf']) }}</span>
+			<span class="help-block">{{ i18n('m.rbs.website.admin.functionalpage_website_picker_title', ['ucf']) }}</span>
 		</rbs-field-picker>
 
 		<hr />
@@ -26,7 +26,7 @@
 
 		<rbs-field-picker property="pageTemplate" required="true" accepted-model="Rbs_Theme_PageTemplate"
 				label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'pageTemplate'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.website.documents.functionalpage.pagetemplate-picker-title', ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.website.admin.functionalpage_pagetemplate_picker_title', ['ucf']) }}"
 			allow-edition="true">
 		</rbs-field-picker>
 
@@ -43,7 +43,7 @@
 		<div data-ng-show="document.useCache">
 			<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'TTL'), ['ucf']) }}">
 				<input class="form-control" size="7" smart-float="" ng-model="document.TTL" min="0" type="number" />
-				<span class="help-block">{{ i18n('m.rbs.website.documents.staticpage.ttl-help') }}</span>
+				<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_ttl_help') }}</span>
 			</rbs-field>
 		</div>
 
@@ -80,7 +80,8 @@
 				</ul>
 			</div>
 			<div class="alert" ng-if="! hasAvailableFunctions() && ! warningFunctions">
-				{{ i18n('m.rbs.website.admin.page_contains_no_function') | raw }}
+				<h4>{{ i18n('m.rbs.website.admin.page_contains_no_function') | raw }}</h4>
+				{{ i18n('m.rbs.website.admin.edit_page_contents_to_fix_this') | raw }}
 			</div>
 
 			<div ng-if="document.allowedFunctionsCode">
