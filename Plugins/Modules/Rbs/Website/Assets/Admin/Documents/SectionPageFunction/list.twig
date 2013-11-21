@@ -6,7 +6,7 @@
 	</div>
 
 	<div rbs-tip="Rbs_Website_SectionFunctionsList">
-		{{ i18n('m.rbs.website.documents.sectionpagefunction_section-functions-list-tip', ['ucf']) }}
+		{{ i18n('m.rbs.website.admin.section_functions_list_tip', ['ucf']) | raw }}
 	</div>
 
 	<div class="well well-small">
@@ -29,13 +29,13 @@
 				</div>
 
 				<div ng-show="pagesForFunction.length">
-					<h5>{{ i18n('m.rbs.website.documents.sectionpagefunction_pages-for-choosen-function', ['ucf','lbl']) }}</h5>
+					<h5>{{ i18n('m.rbs.website.admin.pages_for_choosen_function', ['ucf','lbl']) }}</h5>
 					<select class="form-control" size="10"
 					        ng-model="selectedPage"
 					        ng-options="page.label+' ('+page.website+')' for page in pagesForFunction">
 					</select>
 					<div>
-						{{ i18n('m.rbs.website.documents.sectionpagefunction_page-can-also-use-these-functions', ['ucf','lbl']) }}
+						{{ i18n('m.rbs.website.admin.page_can_also_use_these_functions', ['ucf','lbl']) }}
 						<select class="form-control" size="10"
 						        multiple="multiple"
 						        ng-model="extraFunctions"

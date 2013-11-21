@@ -160,7 +160,7 @@ class AttributePresentation
 
 		if (count($configuration['global']['items']))
 		{
-			$i18n = $this->applicationServices->getApplicationServices()->getI18nManager();
+			$i18n = $this->getApplicationServices()->getI18nManager();
 			$configuration['global']['title'] = $i18n->trans('m.rbs.catalog.front.main_attributes', array('ucf'));
 		}
 		else
