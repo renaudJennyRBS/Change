@@ -41,19 +41,46 @@
 	"pagetemplates_clear":{
 		"message":"vider"
 	},
-	"pagetemplates_visibility":{
+	"block_visibility":{
 		"message":"Visibilité"
 	},
-	"pagetemplates_visibility_raw":{
+	"block_visibility_raw":{
 		"message":"Sans enveloppe"
 	},
-	"pagetemplates_visibility_d":{
-		"message":"Ordinateurs"
+	"block_visibility_x":{
+		"message":"< 768px"
 	},
-	"pagetemplates_visibility_t":{
-		"message":"Tablettes"
+	"block_visibility_s":{
+		"message":"≥ 768px"
 	},
-	"pagetemplates_visibility_p":{
-		"message":"Mobiles"
+	"block_visibility_m":{
+		"message":"≥ 992px"
+	},
+	"block_visibility_l":{
+		"message":"≥ 1200px"
+	},
+	"block_ttl":{
+		"message":"durée du cache (secondes)"
+	},
+	"block_ttl_none":{
+		"message":"aucun"
+	},
+	"block_ttl_1m":{
+		"message":"1m"
+	},
+	"block_ttl_1minute":{
+		"message":"1 minute"
+	},
+	"block_ttl_10m":{
+		"message":"10m"
+	},
+	"block_ttl_10minutes":{
+		"message":"10 minutes"
+	},
+	"block_ttl_1h":{
+		"message":"1h"
+	},
+	"block_ttl_1hour":{
+		"message":"1 heure"
 	}
 }

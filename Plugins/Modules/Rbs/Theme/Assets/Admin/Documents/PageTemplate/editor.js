@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function editorRbsThemePageTemplate(ArrayUtils)
+	function editorRbsThemePageTemplate(ArrayUtils, REST)
 	{
 		return {
 			restrict : 'C',
@@ -20,13 +20,35 @@
 
 				scope.blockParameters = null;
 
+				scope.$on('blockSelected', function(event, args) {
+					angular.forEach(scope.blockList, function(value, key) {
+						if (value.block && value.block.name === args.name && value.name != args.name) {
+							// If there is a block, load default parameters and open parameterize panel.
+							if (value.block.name) {
+								REST.blockInfo(args.name).then(function (blockInfo) {
+									scope.blockList[key].name = args.name;
+									var parameters = {};
+									angular.forEach(blockInfo.parameters, function(parameter) {
+										if (parameter.hasOwnProperty('defaultValue')) {
+											parameters[parameter.name] = parameter.defaultValue;
+										}
+									});
+									var block = scope.getBlockById(value.id);
+									block.parameters = parameters;
+									if (scope.canParametrizeBlock(value)) {
+										scope.parametrizeBlock(key);
+									}
+								});
+							}
+						}
+					});
+				});
+
 				scope.onLoad = function () {
-					if (!angular.isObject(scope.document.editableContent) || angular.isArray(scope.document.editableContent))
-					{
+					if (!angular.isObject(scope.document.editableContent) || angular.isArray(scope.document.editableContent)) {
 						scope.document.editableContent = {}
 					}
-					if (!angular.isObject(scope.document.contentByWebsite) || angular.isArray(scope.document.contentByWebsite))
-					{
+					if (!angular.isObject(scope.document.contentByWebsite) || angular.isArray(scope.document.contentByWebsite)) {
 						scope.document.contentByWebsite = {}
 					}
 				};
@@ -48,8 +70,7 @@
 					}
 
 					angular.forEach(editableContent, function(value, key) {
-						if (value.type == 'block')
-						{
+						if (value.type == 'block') {
 							row = {id: value.id, name: value.name, override: false, block: {name: ''}};
 							if (webBlocks.hasOwnProperty(key)) {
 								row.name = webBlocks[key].name;
@@ -80,7 +101,6 @@
 				};
 
 				scope.closeBlock = function(index) {
-					var row = scope.blockList[index];
 					scope.block = null;
 					scope.blockParameters = null;
 					scope.blockList.splice(index, 1);
@@ -88,19 +108,15 @@
 
 				scope.getBlockById = function(id) {
 					var blockList;
-					if (scope.websiteId)
-					{
-						if (scope.document.contentByWebsite.hasOwnProperty(scope.websiteId))
-						{
+					if (scope.websiteId) {
+						if (scope.document.contentByWebsite.hasOwnProperty(scope.websiteId)) {
 							blockList = scope.document.contentByWebsite[scope.websiteId];
 						}
 					}
-					else
-					{
+					else {
 						blockList = scope.document.editableContent;
 					}
-					if (blockList && blockList.hasOwnProperty(id))
-					{
+					if (blockList && blockList.hasOwnProperty(id)) {
 						return blockList[id];
 					}
 					return null;
@@ -113,23 +129,22 @@
 				scope.parametrizeBlock = function(index) {
 					var row = scope.blockList[index];
 					scope.block = scope.getBlockById(row.id);
-
-					if (row.block && row.block.hasOwnProperty('name'))
-					{
-						if (row.name != row.block.name)
-						{
+					if (row.block && row.block.hasOwnProperty('name')) {
+						if (row.name != row.block.name) {
 							row.name = row.block.name;
 							scope.block.parameters = {};
 						}
 					}
 
 					scope.block.name = row.name;
-					if (!angular.isObject(scope.block.parameters) || angular.isArray(scope.block.parameters))
-					{
+					if (!angular.isObject(scope.block.parameters) || angular.isArray(scope.block.parameters)) {
 						scope.block.parameters = {};
 					}
 
 					scope.blockParameters = scope.block.parameters;
+					if (!scope.blockParameters.hasOwnProperty('TTL')) {
+						scope.blockParameters.TTL = 60;
+					}
 					scope.blockList.splice(index + 1, 0, {parameters: row.id, template: row.block.template});
 				};
 
@@ -146,8 +161,7 @@
 				};
 
 				scope.canOverrideBlock = function(row) {
-					if (scope.websiteId)
-					{
+					if (scope.websiteId) {
 						return !row.override;
 					}
 					return false;
@@ -157,8 +171,7 @@
 					var block = {};
 					angular.copy(scope.document.editableContent[row.id], block);
 					var contentByWebsite = scope.document.contentByWebsite;
-					if (!contentByWebsite.hasOwnProperty(scope.websiteId))
-					{
+					if (!contentByWebsite.hasOwnProperty(scope.websiteId)) {
 						contentByWebsite[scope.websiteId] = {};
 					}
 					contentByWebsite[scope.websiteId][row.id] = block;
@@ -166,8 +179,7 @@
 				};
 
 				scope.canRemoveOverrideBlock = function(row) {
-					if (scope.websiteId)
-					{
+					if (scope.websiteId) {
 						return row.override;
 					}
 					return false;
@@ -180,6 +192,16 @@
 					row.block = {};
 					row.name = block.name;
 					row.override = false;
+				};
+
+				scope.hasTTL = function(seconds)
+				{
+					return scope.blockParameters.TTL == seconds;
+				};
+
+				scope.setTTL = function(seconds)
+				{
+					scope.blockParameters.TTL = seconds;
 				};
 
 				scope.isVisibleFor = function (device) {
@@ -195,13 +217,15 @@
 					var value = !scope.isVisibleFor(device), splat;
 
 					if (device == 'raw') {
-						if (value)
-						{
+						if (value) {
 							scope.block.visibility = device;
 						} else {
 							delete scope.block.visibility;
 						}
 						return;
+					}
+					else if (scope.block.visibility == 'raw') {
+						delete scope.block.visibility;
 					}
 
 					if (scope.block.visibility) {
@@ -212,8 +236,7 @@
 							splat.push(device);
 						}
 						splat.sort();
-						if (splat.join('') == '')
-						{
+						if (splat.join('') == '') {
 							delete scope.block.visibility;
 						} else {
 							scope.block.visibility = splat.join('');
@@ -223,14 +246,17 @@
 							scope.block.visibility = device;
 						} else {
 							switch (device) {
-								case 'P' :
-									scope.block.visibility = 'DT';
+								case 'X' :
+									scope.block.visibility = 'SML';
 									break;
-								case 'T' :
-									scope.block.visibility = 'DP';
+								case 'S' :
+									scope.block.visibility = 'XML';
 									break;
-								case 'D' :
-									scope.block.visibility = 'PT';
+								case 'M' :
+									scope.block.visibility = 'XSL';
+									break;
+								case 'L' :
+									scope.block.visibility = 'XSM';
 									break;
 							}
 						}
@@ -240,6 +266,6 @@
 		};
 	}
 
-	editorRbsThemePageTemplate.$inject = ['RbsChange.ArrayUtils'];
+	editorRbsThemePageTemplate.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemePageTemplate', editorRbsThemePageTemplate);
 })();

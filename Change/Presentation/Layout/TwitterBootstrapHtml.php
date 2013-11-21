@@ -60,10 +60,10 @@ class TwitterBootstrapHtml
 			{
 				switch ($vi[$i])
 				{
-					// TODO handle Bootstrap 3 classes...
-					case 'D' : $classes[] = 'visible-lg'; break;
-					case 'P' : $classes[] = 'visible-sm'; break;
-					case 'T' : $classes[] = 'visible-md'; break;
+					case 'X' : $classes[] = 'visible-xs'; break;
+					case 'S' : $classes[] = 'visible-sm'; break;
+					case 'M' : $classes[] = 'visible-md'; break;
+					case 'L' : $classes[] = 'visible-lg'; break;
 				}
 			}
 			if (count($classes))
