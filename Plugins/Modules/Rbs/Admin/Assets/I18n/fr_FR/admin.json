@@ -982,5 +982,8 @@
 	},
 	"dashboard_task_to_execute": {
 		"message":"à exécuter"
+	},
+	"main_menu": {
+		"message":"menu principal"
 	}
 }

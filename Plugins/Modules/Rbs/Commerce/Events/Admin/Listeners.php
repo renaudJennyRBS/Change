@@ -37,6 +37,7 @@ class Listeners implements ListenerAggregateInterface
 		$menu = array(
 			'sections' => array(
 				array('code' => 'ecommerce',
+					'icon' => 'icon-shopping-cart',
 					'label' => $i18nManager->trans('m.rbs.catalog.admin.section_name', array('ucf'))),
 			),
 			'entries' => array(
