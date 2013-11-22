@@ -54,13 +54,13 @@
 		"message":"liste de valeurs"
 	},
 	"facet_showemptyitem":{
-		"message":"voir les facettes vide"
+		"message":"voir les facettes vides"
 	},
 	"facet_attributeid":{
 		"message":"attribut"
 	},
 	"facet_valuesextractorname":{
-		"message":"récuperation de la valeur d'indexation"
+		"message":"récupération de la valeur d'indexation"
 	},
 	"facet_type_term":{
 		"message":"Ensemble de valeurs"

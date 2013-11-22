@@ -18,19 +18,19 @@
 		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide."
 	},
 	"emailsaddressinvalid":{
-		"message":"le champ \"$FIELD$\" contient des adresses (%value%) e-mail invalide."
+		"message":"le champ \"$FIELD$\" contient des adresses (%value%) e-mails invalides."
 	},
 	"emailaddressinvalidformat":{
 		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide."
 	},
 	"emailaddressinvalidhostname":{
-		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas un nom d'hôte valide pour l'adresse email '%value%')."
+		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas un nom d'hôte valide pour l'adresse e-mail '%value%')."
 	},
 	"emailaddressinvalidmxrecord":{
-		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' ne semble pas avoir d'enregistrement MX valide pour l'adresse email '%value%')."
+		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' ne semble pas avoir d'enregistrement MX valide pour l'adresse e-mail '%value%')."
 	},
 	"emailaddressinvalidsegment":{
-		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas dans un segment réseau routable. L'adresse email '%value%' ne devrait pas être résolue depuis un réseau public)."
+		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas dans un segment réseau routable. L'adresse e-mail '%value%' ne devrait pas être résolue depuis un réseau public)."
 	},
 	"emailaddressdotatom":{
 		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%localPart%' ne correspond pas au format dot-atom)."
@@ -39,7 +39,7 @@
 		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%localPart%' ne correspond pas au format quoted-string)."
 	},
 	"emailaddressinvalidlocalpart":{
-		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%localPart%' n'est pas une partie locale valide pour l'adresse email '%value%')."
+		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%localPart%' n'est pas une partie locale valide pour l'adresse e-mail '%value%')."
 	},
 	"emailaddresslengthexceeded":{
 		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%value%' excède la taille autorisée)."
