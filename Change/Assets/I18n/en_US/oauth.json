@@ -1,18 +1,18 @@
 {
   "login":{
-    "message":"login or email address"
+    "message":"login or e-mail address"
   },
   "password":{
     "message":"password"
   },
   "authorize_application":{
-    "message":"authorize application to access your account"
+    "message":"authorize application to bind to your account"
   },
   "authorize":{
     "message":"authorize"
   },
   "invalid_credentials":{
-    "message":"invalid login\/password"
+    "message":"your login details are incorrect!"
   },
   "application_name":{
     "message":"application"
