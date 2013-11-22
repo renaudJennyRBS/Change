@@ -11,12 +11,12 @@ class Collections
 
 	/**
 	 * @param \Change\Events\Event $event
-	 * @return \Rbs\Elasticsearch\ElasticsearchServices
+	 * @return \Rbs\Generic\GenericServices
 	 */
-	protected function getElasticsearchServices(\Change\Events\Event $event)
+	protected function getGenericServices(\Change\Events\Event $event)
 	{
-		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
-		return $elasticsearchServices;
+		$genericServices = $event->getServices('genericServices');
+		return $genericServices;
 	}
 
 	/**
@@ -27,7 +27,7 @@ class Collections
 		$applicationServices = $event->getApplicationServices();
 		if ($applicationServices)
 		{
-			$indexManager = $this->getElasticsearchServices($event)->getIndexManager();
+			$indexManager = $this->getGenericServices($event)->getIndexManager();
 			$items = array();
 			foreach ($indexManager->getClientsName() as $clientName)
 			{
@@ -38,7 +38,6 @@ class Collections
 					try
 					{
 						$serverStatus = $client->getStatus()->getServerStatus();
-
 						if (isset($serverStatus['ok']) && $serverStatus['ok'])
 						{
 							$items[$clientName] .= ' (' . $serverStatus['name'] . ', ' . $serverStatus['version']['number'] . ')';
@@ -54,6 +53,7 @@ class Collections
 					}
 				}
 			}
+
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_Clients', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

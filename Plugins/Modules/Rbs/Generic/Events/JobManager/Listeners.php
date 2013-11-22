@@ -67,6 +67,26 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Seo\Job\DocumentSeoGenerator())->execute($event);
 		};
 		$events->attach('process_Rbs_Seo_DocumentSeoGenerator', $callBack, 5);
+
+		$callback = function (\Change\Job\Event $event)
+		{
+			$genericServices = $event->getServices('genericServices');
+			if ($genericServices instanceof \Rbs\Generic\GenericServices)
+			{
+				$genericServices->getIndexManager()->dispatchIndexationEvents($event->getJob()->getArguments());
+			}
+			elseif ($event->getApplicationServices())
+			{
+				$event->getApplicationServices()->getLogging()->error(__METHOD__ . ' Elasticsearch services not registered');
+			}
+		};
+		$events->attach('process_Elasticsearch_Index', $callback, 5);
+
+		$callback = function (\Change\Job\Event $event)
+		{
+			/* TODO Update Mapping*/
+		};
+		$events->attach('process_Elasticsearch_Mapping', $callback, 5);
 	}
 
 	/**

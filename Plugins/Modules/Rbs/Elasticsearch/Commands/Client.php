@@ -17,14 +17,14 @@ class Client
 
 		$response = $event->getCommandResponse();
 
-		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
-		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		$genericServices = $event->getServices('genericServices');
+		if (!($genericServices instanceof \Rbs\Generic\GenericServices))
 		{
-			$response->addErrorMessage('Elasticsearch services not registered');
+			$response->addErrorMessage('Generic services not registered');
 			return;
 		}
 
-		$indexManager = $elasticsearchServices->getIndexManager();
+		$indexManager = $genericServices->getIndexManager();
 		if (is_string($name = $event->getParam('name')))
 		{
 			$client = $indexManager->getClient($name);
@@ -84,7 +84,7 @@ class Client
 
 								if ($event->getParam('facet-mapping') || $event->getParam('create'))
 								{
-									$mapping = $elasticsearchServices->getFacetManager()->getIndexMapping($indexDef);
+									$mapping = $genericServices->getFacetManager()->getIndexMapping($indexDef);
 									if (count($mapping))
 									{
 										$indexManager->setFacetMapping($indexDef, $mapping);

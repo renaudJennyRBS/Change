@@ -75,16 +75,16 @@ class Result extends Block
 
 	/**
 	 * @param Event $event
-	 * @return \Rbs\Elasticsearch\ElasticsearchServices
+	 * @return \Rbs\Generic\GenericServices
 	 */
-	protected function getElasticsearchServices($event)
+	protected function getGenericServices($event)
 	{
-		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
-		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		$genericServices = $event->getServices('genericServices');
+		if (!($genericServices instanceof \Rbs\Generic\GenericServices))
 		{
 			return null;
 		}
-		return $elasticsearchServices;
+		return $genericServices;
 	}
 
 	/**
@@ -95,8 +95,8 @@ class Result extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$elasticsearchServices = $this->getElasticsearchServices($event);
-		if (!$elasticsearchServices)
+		$genericServices = $this->getGenericServices($event);
+		if (!$genericServices)
 		{
 			return null;
 		}
@@ -109,8 +109,8 @@ class Result extends Block
 			$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
 			$facetFilters = $parameters->getParameter('facetFilters');
 
-			$elasticsearchServices = $this->getElasticsearchServices($event);
-			$indexManager = $elasticsearchServices->getIndexManager();
+			$genericServices = $this->getGenericServices($event);
+			$indexManager = $genericServices->getIndexManager();
 
 			$client = $indexManager->getClient($fullTextIndex->getClientName());
 			if ($client)
@@ -118,7 +118,8 @@ class Result extends Block
 				$index = $client->getIndex($fullTextIndex->getName());
 				if ($index->exists())
 				{
-					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($elasticsearchServices, $fullTextIndex);
+					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($fullTextIndex);
+					$searchQuery->setFacetManager($genericServices->getFacetManager());
 					$searchQuery->setI18nManager($applicationServices->getI18nManager());
 					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
 

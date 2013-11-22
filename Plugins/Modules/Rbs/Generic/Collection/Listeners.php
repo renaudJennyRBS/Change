@@ -72,6 +72,24 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Theme_WebsiteIds':
 					(new \Rbs\Theme\Collection\Collections())->addWebsiteIds($event);
 					break;
+				case 'Rbs_Elasticsearch_Collection_Clients':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addClients($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_Indexes':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addIndexes($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_CollectionCodes':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addCollectionCodes($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_AttributeIds':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addAttributeIds($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_FacetTypes':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetTypes($event);
+					break;
+				case 'Rbs_Elasticsearch_Collection_FacetValueExtractor':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetValueExtractor($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -91,7 +109,13 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Simpleform_ConfirmationModes',
 				'Rbs_Simpleform_FieldTypes',
 				'Rbs_Simpleform_AutoCapitalizeOptions',
-				'Rbs_Theme_WebsiteIds'
+				'Rbs_Theme_WebsiteIds',
+				'Rbs_Elasticsearch_Collection_Clients',
+				'Rbs_Elasticsearch_Collection_Indexes',
+				'Rbs_Elasticsearch_Collection_CollectionCodes',
+				'Rbs_Elasticsearch_Collection_AttributeIds',
+				'Rbs_Elasticsearch_Collection_FacetTypes',
+				'Rbs_Elasticsearch_Collection_FacetValueExtractor'
 			));
 			$event->setParam('codes', $codes);
 		};
