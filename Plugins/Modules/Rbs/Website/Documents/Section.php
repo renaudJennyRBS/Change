@@ -153,12 +153,28 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 							$page = $this->getDocumentManager()->getDocumentInstance($pageBySections[$sectionId]);
 							/* @var $section \Change\Presentation\Interfaces\Section */
 							$section = $this->getDocumentManager()->getDocumentInstance($sectionId);
-							$event->setParam('page', $page);
-							$event->setParam('section', $section);
-							if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
+
+							if ($page instanceof \Rbs\Website\Documents\Page)
 							{
-								$page->setSection($section);
+
+								if (!$page->getCurrentLocalization()->isNew())
+								{
+
+									if ($page instanceof \Rbs\Website\Documents\StaticPage && !$page->published())
+									{
+										return;
+									}
+
+									if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
+									{
+										$page->setSection($section);
+									}
+
+									$event->setParam('page', $page);
+									$event->setParam('section', $section);
+								}
 							}
+
 							return;
 						}
 					}
@@ -292,7 +308,6 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 					}
 				}
 			}
-
 		}
 		$sections[] = $this;
 		return $sections;

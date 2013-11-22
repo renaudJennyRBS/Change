@@ -23,13 +23,14 @@ class Listeners implements ListenerAggregateInterface
 		new  RegisterByBlockName('Rbs_Website_Menu', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Thread', true, $events);
 		new  RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
+		new  RegisterByBlockName('Rbs_Website_SwitchLang', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Richtext', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Exception', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Error', true, $events);
 		new  RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
-		new  RegisterByBlockName('Rbs_Website_SwitchLang', true, $events);
 
 		new  RegisterByBlockName('Rbs_User_Login', true, $events);
+		new  RegisterByBlockName('Rbs_User_AccountShort', true, $events);
 
 		new  RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
 
@@ -46,8 +47,6 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Elasticsearch_Result', true, $events);
 		new RegisterByBlockName('Rbs_Elasticsearch_StoreResult', true, $events);
 		new RegisterByBlockName('Rbs_Elasticsearch_Facets', true, $events);
-
-
 
 		$callback = function($event)
 		{
