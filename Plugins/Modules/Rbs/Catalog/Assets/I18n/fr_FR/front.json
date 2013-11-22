@@ -43,5 +43,11 @@
 	},
 	"main_attributes":{
 		"message":"caractéristiques générales"
+	},
+	"variants":{
+		"message":"variantes"
+	},
+	"select_variant":{
+		"message":"choisissez une variante"
 	}
 }

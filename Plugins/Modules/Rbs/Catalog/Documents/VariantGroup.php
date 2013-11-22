@@ -346,4 +346,41 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		}
 		return $axesDefinition;
 	}
+
+	/**
+	 * @param integer $parentId
+	 * @return array
+	 */
+	public function getAxesValuesByParentId($parentId)
+	{
+		$pmi = $this->getProductMatrixInfo();
+		$axesValues = array();
+		foreach($pmi as $matrixElement)
+		{
+			if ($matrixElement['parentId'] == $parentId)
+			{
+				$axesValues[] = $matrixElement;
+			}
+		}
+		return $axesValues;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getAxesNames()
+	{
+		$axesInfo = $this->getAxesInfo();
+		$axesNames = array();
+		foreach($axesInfo as $axe)
+		{
+			$axeAttribute = $this->getDocumentManager()->getDocumentInstance($axe['id']);
+			if ($axeAttribute)
+			{
+				/* @var $axeAttribute \Rbs\Catalog\Documents\Attribute */
+				$axesNames[] = $axeAttribute->getCurrentLocalization()->getTitle();
+			}
+		}
+		return $axesNames;
+	}
 }

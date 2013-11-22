@@ -82,6 +82,14 @@ class ProductPresentation
 		return $this->stock;
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getPrices()
+	{
+		return $this->prices;
+	}
+
 	protected function resetPrice()
 	{
 		$this->prices['price'] = null;
@@ -93,10 +101,13 @@ class ProductPresentation
 
 	protected function resetStock()
 	{
-		$this->prices['level'] = null;
-		$this->prices['threshold'] = null;
-		$this->prices['thresholdClass'] = null;
-		$this->prices['thresholdTitle'] = null;
+		$this->stock['level'] = null;
+		$this->stock['threshold'] = null;
+		$this->stock['thresholdClass'] = null;
+		$this->stock['thresholdTitle'] = null;
+		$this->stock['minQuantity'] = null;
+		$this->stock['maxQuantity'] = null;
+		$this->stock['quantityIncrement'] = null;
 	}
 
 	/**
@@ -128,6 +139,9 @@ class ProductPresentation
 						break;
 				}
 				$this->stock['thresholdTitle'] = $stm->getInventoryThresholdTitle($sku, $this->webStoreId, $threshold);
+				$this->stock['minQuantity'] = $sku->getMinQuantity();
+				$this->stock['maxQuantity'] = $sku->getMaxQuantity() ? min($sku->getMaxQuantity(), $level) : $level;
+				$this->stock['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
 
 				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $this->webStoreId);
 				if ($price)
@@ -234,7 +248,10 @@ class ProductPresentation
 			foreach($query->getDocuments() as $doc)
 			{
 				/* @var $doc \Rbs\Catalog\Documents\Product */
-				$row = array('id' => $doc->getId());
+				$website = $doc->getCanonicalSection()->getWebsite();
+				$lcid = $website->getLCID();
+				$url = $website->getUrlManager($lcid)->getCanonicalByDocument($doc)->toString();
+				$row = array('id' => $doc->getId(), 'url' => $url);
 				$productPresentation = $doc->getPresentation($this->commerceServices, $this->webStoreId);
 				if ($productPresentation)
 				{

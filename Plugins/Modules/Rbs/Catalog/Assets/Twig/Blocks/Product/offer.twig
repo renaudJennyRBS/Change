@@ -25,22 +25,6 @@
 	}
 </script>
 
-<!-- TODO: handle variants -->
-<!--<form method="post" action="http://site36.intportgchange.fr/fr/catalog/classic-1989,13450.html">
-	<fieldset>
-		<div class="form-group">
-			<label for="variant-selector-">Déclinaisons</label>
-			<select class="form-control" id="variant-selector-" name="catalogParam[variantId]" onchange="jQuery(this).parents('form').get(0).submit();">
-				<option value="13450" selected="selected">Game boy classic (1989)</option>
-				<option value="13453">Game boy pocket (1996)</option>
-				<option value="13456">Game boy transparente (1998)</option>
-			</select>
-		</div>
-		<input name="productId" value="13450" type="hidden" />
-		<button type="submit" class="btn btn-primary btn-sm nojs">Recharger</button>
-	</fieldset>
-</form>-->
-
 {% if parameters.webStoreId %}
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block availability %}
@@ -48,14 +32,6 @@
 				<div class="alert availability text-center {{ productPresentation.stock.thresholdClass }}">
 					<h4 itemprop="availability">{{ productPresentation.stock.thresholdTitle }}</h4>
 				</div>
-				<!-- TODO: handle stock levels and delivery delay -->
-				<!--<div class="alert alert-success availability text-center">
-					<h4 itemprop="availability">En stock</h4>
-					<p itemprop="deliveryLeadTime">Expédié sous 48 heures</p>
-				</div>
-				<div class="alert alert-danger availability text-center">
-					<h4 itemprop="availability">En rupture</h4>
-				</div>-->
 			{% endif %}
 		{% endblock %}
 
@@ -101,7 +77,7 @@
 			{% if productPresentation.getStock.level %}
 				<div class="form-group">
 					<label for="product-quantity">Quantité</label>
-					<input class="form-control" name="quantity" value="1" type="number" min="1" max="{{ productPresentation.getStock.level }}"/>
+					<input class="form-control" name="quantity" value="1" type="number" min="{{ productPresentation.getStock.minQuantity }}" max="{{ productPresentation.getStock.maxQuantity }}" step="{{ productPresentation.getStock.quantityIncrement }}"/>
 				</div>
 				<button name="product" type="button" class="btn btn-primary btn-lg" value="{{ parameters.productId }}"
 					onclick="script{{ blockId }}.offer.addProduct(this)">

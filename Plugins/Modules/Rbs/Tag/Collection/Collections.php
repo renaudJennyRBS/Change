@@ -9,15 +9,15 @@ use Change\Collection\CollectionArray;
 class Collections
 {
 	/**
-	 * @param \Zend\EventManager\Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function addTagModules(\Zend\EventManager\Event $event)
+	public function addTagModules(\Change\Events\Event $event)
 	{
-		$documentServices = $event->getParam('documentServices');
-		if ($documentServices instanceof \Change\Documents\DocumentServices)
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices instanceof \Change\Services\ApplicationServices)
 		{
 			$collection = array();
-			$pluginManager = $documentServices->getApplicationServices()->getPluginManager();
+			$pluginManager = $applicationServices->getPluginManager();
 			$modules = $pluginManager->getModules();
 			$collection[''] = '';
 			foreach($modules as $module)
