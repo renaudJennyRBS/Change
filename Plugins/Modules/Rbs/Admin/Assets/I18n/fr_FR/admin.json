@@ -868,5 +868,107 @@
 	},
 	"dashboard_notification_read": {
 		"message":"lues"
+	},
+	"insert_block_left": {
+		"message": "ajouter un bloc à gauche"
+	},
+	"insert_block_right": {
+		"message": "ajouter un bloc à droite"
+	},
+	"insert_block_bottom": {
+		"message": "ajouter un bloc au dessous"
+	},
+	"insert_block_top": {
+		"message": "ajouter un bloc au dessus"
+	},
+	"delete_block": {
+		"message": "supprimer le bloc"
+	},
+	"delete_block_group": {
+		"message": "supprimer le groupe de blocs"
+	},
+	"parameterize_columns": {
+		"message": "paramétrer les colonnes"
+	},
+	"block_type": {
+		"message": "type de bloc"
+	},
+	"block_label": {
+		"message": "libellé du bloc"
+	},
+	"block_visibility":{
+		"message":"visibilité"
+	},
+	"block_visibility_raw":{
+		"message":"sans enveloppe"
+	},
+	"block_visibility_x":{
+		"message":"< 768px"
+	},
+	"block_visibility_s":{
+		"message":"≥ 768px"
+	},
+	"block_visibility_m":{
+		"message":"≥ 992px"
+	},
+	"block_visibility_l":{
+		"message":"≥ 1200px"
+	},
+	"block_ttl":{
+		"message":"durée du cache (secondes)"
+	},
+	"block_ttl_none":{
+		"message":"aucun"
+	},
+	"block_ttl_1m":{
+		"message":"1m"
+	},
+	"block_ttl_1minute":{
+		"message":"1 minute"
+	},
+	"block_ttl_10m":{
+		"message":"10m"
+	},
+	"block_ttl_10minutes":{
+		"message":"10 minutes"
+	},
+	"block_ttl_1h":{
+		"message":"1h"
+	},
+	"block_ttl_1hour":{
+		"message":"1 heure"
+	},
+	"equitable_distribution":{
+		"message":"répartir équitablement"
+	},
+	"column":{
+		"message":"colonne"
+	},
+	"no_block":{
+		"message":"aucun bloc"
+	},
+	"one_block":{
+		"message":"un bloc"
+	},
+	"n_blocks":{
+		"message":"{} blocs"
+	},
+	"width":{
+		"message":"largeur"
+	},
+	"width_reduce":{
+		"message":"réduire"
+	},
+	"width_enlarge":{
+		"message":"agrandir"
+	},
+	"shift":{
+		"message":"décallage"
+	},
+	"shift_left":{
+		"message":"décaler à gauche"
+	},
+	"shift_right":{
+		"message":"décaler à droite"
 	}
 }
