@@ -1,0 +1,20 @@
+<script type="text/javascript">
+	var script{{ blockId }} = {};
+</script>
+
+{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+<article itemscope="" itemtype="http://schema.org/Product" class="product-details">
+	<header>
+		{% include 'Rbs_Catalog/Blocks/Product/header.twig' %}
+	</header>
+
+	<div class="row">
+		<div class="col-sm-6 col-md-8">
+			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
+		</div>
+		<div class="col-sm-6 col-md-4">
+			{% include 'Rbs_Catalog/Blocks/Product/offer-variant.twig' %}
+		</div>
+	</div>
+	{% include 'Rbs_Catalog/Blocks/Product/description.twig' %}
+</article>

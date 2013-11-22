@@ -153,3 +153,8 @@
 .grid-list-bordered .grid-list-cell {
 	border: 1px solid #ddd;
 }
+
+/* ng-cloak support */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none !important;
+}

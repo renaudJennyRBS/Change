@@ -632,6 +632,18 @@ class AttributeManager
 	public function expandAttributeValues($product, $attributeValues, $urlManager)
 	{
 		$expandedAttributeValues = array();
+		if ($product->getVariant())
+		{
+			$variantGroup = $product->getVariantGroup();
+			if ($variantGroup instanceof \Rbs\Catalog\Documents\VariantGroup)
+			{
+				$rootProduct = $variantGroup->getRootProduct();
+				if ($rootProduct instanceof \Rbs\Catalog\Documents\Product)
+				{
+					$attributeValues = $this->updateVariantAttributeValues($attributeValues, $rootProduct->getAttributeValues());
+				}
+			}
+		}
 		if (is_array($attributeValues) && count($attributeValues))
 		{
 			$documentManager = $this->getDocumentManager();
@@ -651,7 +663,7 @@ class AttributeManager
 				switch ($valueType)
 				{
 					case Attribute::TYPE_PROPERTY:
-						$attribute = $documentManager->getDocumentInstance($id);
+						//$attribute = $documentManager->getDocumentInstance($id);
 						if ($attribute instanceof Attribute)
 						{
 							$property = $attribute->getModelProperty();
@@ -659,6 +671,11 @@ class AttributeManager
 							{
 								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $documentManager, $urlManager);
 								$value = $pc->getRestValue();
+								if (empty($value) && isset($rootProduct) && $rootProduct !== null)
+								{
+									$pc = new \Change\Http\Rest\PropertyConverter($rootProduct, $property, $documentManager, $urlManager);
+									$value = $pc->getRestValue();
+								}
 							}
 						}
 						break;
@@ -1035,4 +1052,36 @@ class AttributeManager
 		return false;
 	}
 
+	/*
+	 * @param array $attributeValues
+	 * @param array $rootProductAttributeValues
+	 * @return array
+	 */
+	public function updateVariantAttributeValues($attributeValues, $rootProductAttributeValues)
+	{
+		$updatedValues = array_merge($rootProductAttributeValues, $attributeValues);
+		array_walk($updatedValues, array($this, 'updateAttributeValueWithVariant'), $attributeValues);
+		return array_unique($updatedValues, SORT_REGULAR);
+	}
+
+	/**
+	 * @param array $item
+	 * @param integer $key
+	 * @param array $array
+	 */
+	protected function updateAttributeValueWithVariant(&$item, $key, $array)
+	{
+		if (is_array($item))
+		{
+			foreach($array as $replacement)
+			{
+				if ($replacement['id'] == $item['id'] && $replacement['valueType'] == $item['valueType'])
+				{
+					$item = $replacement;
+					break;
+				}
+			}
+		}
+	}
 }
+

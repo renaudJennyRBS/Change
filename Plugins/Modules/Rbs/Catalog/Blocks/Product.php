@@ -89,10 +89,21 @@ class Product extends Block
 					$productPresentation->evaluate();
 					$attributes['productPresentation'] = $productPresentation;
 				}
-
 				$attributes['attributesConfig'] = $commerceServices->getAttributeManager()->getProductAttributesConfiguration('specifications', $product);
 
-				return 'product.twig';
+				if ($product->getVariantGroup())
+				{
+					$axesValues = $product->getVariantGroup()->getAxesValuesByParentId($product->getId());
+					$attributes['axesValues'] = \Zend\Json\Json::encode($axesValues);
+					$axesNames = $product->getVariantGroup()->getAxesNames();
+					$attributes['axesNames'] = \Zend\Json\Json::encode($axesNames);
+					$attributes['axesCount'] = count($product->getVariantGroup()->getAxesInfo());
+					return 'product-variant.twig';
+				}
+				else
+				{
+					return 'product.twig';
+				}
 			}
 		}
 		return null;
