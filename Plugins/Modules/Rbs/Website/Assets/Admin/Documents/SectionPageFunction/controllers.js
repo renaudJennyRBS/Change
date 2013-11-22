@@ -8,6 +8,13 @@
 	/**
 	 *
 	 * @param $scope
+	 * @param $routeParams
+	 * @param $q
+	 * @param Breadcrumb
+	 * @param REST
+	 * @param i18n
+	 * @param Query
+	 * @param NotificationCenter
 	 * @constructor
 	 */
 	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter) {
@@ -20,7 +27,7 @@
 
 		$scope.sectionPageFunctionList = [];
 		$scope.indexFunctionExists = false;
-		$scope.toto = {
+		$scope.sectionPage = {
 			'indexPage' : null
 		};
 

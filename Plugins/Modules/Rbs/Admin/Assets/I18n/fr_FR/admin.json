@@ -970,5 +970,17 @@
 	},
 	"shift_right":{
 		"message":"décaler à droite"
+	},
+	"dashboard_task_tasks": {
+		"message":"tâches"
+	},
+	"dashboard_task_tasks_in_progress": {
+		"message":"tâches en cours"
+	},
+	"dashboard_task_end": {
+		"message":"terminé"
+	},
+	"dashboard_task_to_execute": {
+		"message":"à exécuter"
 	}
 }

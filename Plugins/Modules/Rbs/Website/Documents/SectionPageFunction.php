@@ -10,6 +10,23 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 {
 
 	/**
+	 * @return string
+	 */
+	public function getLabel()
+	{
+		return $this->getFunctionCode();
+	}
+
+	/**
+	 * @param string $label
+	 * @return $this
+	 */
+	public function setLabel($label)
+	{
+		return $this;
+	}
+
+	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
 	protected function attachEvents($eventManager)
@@ -55,5 +72,17 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 				$page->update();
 			}
 		}
+	}
+
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+
+		/* @var $document SectionPageFunction */
+		$document = $event->getDocument();
+
+		/* @var $restResult \Change\Http\Rest\Result\DocumentLink|\Change\Http\Rest\Result\DocumentResult */
+		$restResult->setProperty('label', $document->getLabel());
 	}
 }
