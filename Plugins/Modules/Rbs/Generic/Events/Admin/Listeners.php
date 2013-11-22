@@ -85,7 +85,7 @@ class Listeners implements ListenerAggregateInterface
 
 		foreach ($pm->getInstalledPlugins() as $plugin)
 		{
-			if ($plugin->getPackage() == "Core" && $plugin->getShortName() != "Admin")
+			if ($plugin->isAvailable() && $plugin->getPackage() == "Core" && $plugin->getShortName() != "Admin")
 			{
 				$manager->registerStandardPluginAssets($plugin);
 			}
@@ -128,9 +128,12 @@ class Listeners implements ListenerAggregateInterface
 					'keywords' => $i18nManager->trans('m.rbs.user.admin.module_keywords')),
 				array('label' => $i18nManager->trans('m.rbs.website.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Website', 'section' => 'cms',
-					'keywords' => $i18nManager->trans('m.rbs.website.admin.module_keywords'))
-			)
-		);
+					'keywords' => $i18nManager->trans('m.rbs.website.admin.module_keywords')),
+				array('label' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_name', array('ucf')),
+					'url' => 'Rbs/Elasticsearch', 'section' => 'admin',
+					'keywords' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_keywords'))
+				)
+			);
 
 		$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));
 	}

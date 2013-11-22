@@ -16,13 +16,13 @@ class Index
 		$response = $event->getCommandResponse();
 
 		$applicationServices = $event->getApplicationServices();
-		$elasticsearchServices = $event->getServices('Rbs\Elasticsearch\ElasticsearchServices');
-		if (!($elasticsearchServices instanceof \Rbs\Elasticsearch\ElasticsearchServices))
+		$genericServices = $event->getServices('genericServices');
+		if (!($genericServices instanceof \Rbs\Generic\GenericServices))
 		{
-			$response->addErrorMessage('Elasticsearch services not registered');
+			$response->addErrorMessage('Generic services not registered');
 			return;
 		}
-		$indexManager = $elasticsearchServices->getIndexManager();
+		$indexManager = $genericServices->getIndexManager();
 
 		$hasClient = false;
 		$all = $event->getParam('all') == true;

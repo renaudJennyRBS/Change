@@ -374,7 +374,6 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
-
 	/**
 	 * @param \Rbs\Elasticsearch\Facet\FacetValue $facetValue
 	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet

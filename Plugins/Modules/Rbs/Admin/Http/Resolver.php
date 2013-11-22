@@ -37,10 +37,22 @@ class Resolver extends BaseResolver
 			return;
 		}
 
-
 		$relativePath = $this->getRelativePath($path);
 		if ($relativePath === 'Rbs/Admin/i18n.js')
 		{
+			$action = function($event) {
+				$action = new \Rbs\Admin\Http\Actions\GetI18nPackage();
+				$action->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif (preg_match('/^I18nPackage\/([a-z]{2}_[A-Z]{2})\/(((m|t)(\.[a-z0-9]+){3})|((c)(\.[a-z0-9]+)))\.json$/', $relativePath, $matches))
+		{
+			$lcid = $matches[1];
+			$package = $matches[2];
+			$event->setParam('LCID', $lcid);
+			$event->setParam('package', $package);
 			$action = function($event) {
 				$action = new \Rbs\Admin\Http\Actions\GetI18nPackage();
 				$action->execute($event);

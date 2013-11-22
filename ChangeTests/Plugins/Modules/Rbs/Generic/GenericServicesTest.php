@@ -20,5 +20,7 @@ class GenericServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('Rbs\Media\Avatar\AvatarManager', $genericServices->getAvatarManager());
 		$this->assertInstanceOf('Rbs\Simpleform\Field\FieldManager', $genericServices->getFieldManager());
 		$this->assertInstanceOf('Rbs\Simpleform\Security\SecurityManager', $genericServices->getSecurityManager());
+		$this->assertInstanceOf('Rbs\Elasticsearch\Index\IndexManager', $genericServices->getIndexManager());
+		$this->assertInstanceOf('Rbs\Elasticsearch\Facet\FacetManager', $genericServices->getFacetManager());
 	}
 } 

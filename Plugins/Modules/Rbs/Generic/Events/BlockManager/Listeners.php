@@ -20,6 +20,19 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
+		new  RegisterByBlockName('Rbs_Website_Menu', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Thread', true, $events);
+		new  RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Richtext', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Exception', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Error', true, $events);
+		new  RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
+		new  RegisterByBlockName('Rbs_Website_SwitchLang', true, $events);
+
+		new  RegisterByBlockName('Rbs_User_Login', true, $events);
+
+		new  RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
+
 		new RegisterByBlockName('Rbs_Review_ReviewList', true, $events);
 		new RegisterByBlockName('Rbs_Review_PostReview', true, $events);
 		new RegisterByBlockName('Rbs_Review_PromotedReviewList', true, $events);
@@ -29,18 +42,12 @@ class Listeners implements ListenerAggregateInterface
 
 		new  RegisterByBlockName('Rbs_Seo_HeadMetas', true, $events);
 
-		new  RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_ShortSearch', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_Result', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_StoreResult', true, $events);
+		new RegisterByBlockName('Rbs_Elasticsearch_Facets', true, $events);
 
-		new  RegisterByBlockName('Rbs_User_Login', true, $events);
 
-		new  RegisterByBlockName('Rbs_Website_Menu', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Thread', true, $events);
-		new  RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Richtext', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Exception', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Error', true, $events);
-		new  RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
-		new  RegisterByBlockName('Rbs_Website_SwitchLang', true, $events);
 
 		$callback = function($event)
 		{

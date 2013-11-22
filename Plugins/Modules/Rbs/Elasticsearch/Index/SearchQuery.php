@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Index;
 
-use Rbs\Elasticsearch\ElasticsearchServices;
 use Rbs\Elasticsearch\Facet\FacetDefinitionInterface;
 
 /**
@@ -10,9 +9,9 @@ use Rbs\Elasticsearch\Facet\FacetDefinitionInterface;
 class SearchQuery
 {
 	/**
-	 * @var ElasticsearchServices
+	 * @var \Rbs\Elasticsearch\Facet\FacetManager
 	 */
-	protected $elasticsearchServices;
+	protected $facetManager;
 
 	/**
 	 * @var \Change\Collection\CollectionManager
@@ -40,31 +39,29 @@ class SearchQuery
 	protected $collections = array();
 
 	/**
-	 * @param ElasticsearchServices $elasticsearchServices
 	 * @param IndexDefinitionInterface $indexDefinition
 	 */
-	function __construct(ElasticsearchServices $elasticsearchServices, IndexDefinitionInterface $indexDefinition)
+	function __construct(IndexDefinitionInterface $indexDefinition)
 	{
-		$this->elasticsearchServices = $elasticsearchServices;
 		$this->indexDefinition = $indexDefinition;
 	}
 
 	/**
-	 * @param ElasticsearchServices $elasticsearchServices
+	 * @param \Rbs\Elasticsearch\Facet\FacetManager $facetManager
 	 * @return $this
 	 */
-	public function setElasticsearchServices(ElasticsearchServices $elasticsearchServices)
+	public function setFacetManager(\Rbs\Elasticsearch\Facet\FacetManager $facetManager)
 	{
-		$this->elasticsearchServices = $elasticsearchServices;
+		$this->facetManager = $facetManager;
 		return $this;
 	}
 
 	/**
-	 * @return ElasticsearchServices
+	 * @return \Rbs\Elasticsearch\Facet\FacetManager
 	 */
-	public function getElasticsearchServices()
+	protected function getFacetManager()
 	{
-		return $this->elasticsearchServices;
+		return $this->facetManager;
 	}
 
 	/**
@@ -140,7 +137,8 @@ class SearchQuery
 	 * @param array $fields
 	 * @return \Elastica\Query
 	 */
-	public function getSearchQuery($searchText, $allowedSectionIds = null, $facetFilters = null, $from = 0, $size = 50, $fields = null)
+	public function getSearchQuery($searchText, $allowedSectionIds = null, $facetFilters = null, $from = 0, $size = 50,
+		$fields = null)
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
 		if ($searchText)
@@ -251,7 +249,7 @@ class SearchQuery
 			$must = array();
 			foreach ($facetFilters as $facetName => $facetFilter)
 			{
-				if (is_string($facetFilter) &&  empty($facetFilter))
+				if (is_string($facetFilter) && empty($facetFilter))
 				{
 					continue;
 				}
@@ -271,10 +269,12 @@ class SearchQuery
 						if (count($fromTo) === 2)
 						{
 							$args = array();
-							if ($fromTo[0]){
+							if ($fromTo[0])
+							{
 								$args['from'] = $fromTo[0];
 							}
-							if ($fromTo[1]){
+							if ($fromTo[1])
+							{
 								$args['to'] = $fromTo[1];
 							}
 							$must[] = new \Elastica\Filter\Range($facetName, $args);
@@ -337,7 +337,8 @@ class SearchQuery
 	 */
 	public function getFacet($facetOrFacetName)
 	{
-		$facetName = ($facetOrFacetName instanceof FacetDefinitionInterface) ? $facetOrFacetName->getFieldName() : strval($facetOrFacetName);
+		$facetName = ($facetOrFacetName instanceof
+			FacetDefinitionInterface) ? $facetOrFacetName->getFieldName() : strval($facetOrFacetName);
 
 		if ($facetName)
 		{
@@ -356,7 +357,9 @@ class SearchQuery
 			return null;
 		}
 
-		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_RANGE && ($facet instanceof \Rbs\Elasticsearch\Documents\Facet))
+		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_RANGE
+			&& ($facet instanceof\Rbs\Elasticsearch\Documents\Facet)
+		)
 		{
 			$collection = $this->getCollectionByCode($facet->getCollectionCode());
 			if (!$collection)
@@ -384,7 +387,6 @@ class SearchQuery
 				return $queryFacet;
 			}
 		}
-
 
 		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_TERM)
 		{
@@ -422,7 +424,7 @@ class SearchQuery
 	 */
 	public function buildFacetValues(array $facetResults, array $facetFilters, array $facets = null)
 	{
-		$facetManager = $this->getElasticsearchServices()->getFacetManager();
+		$facetManager = $this->getFacetManager();
 		if ($facets === null)
 		{
 			$facets = array_keys($facetResults);

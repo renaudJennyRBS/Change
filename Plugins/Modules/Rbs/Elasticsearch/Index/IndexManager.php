@@ -142,6 +142,24 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$ws = new FullTextIndexer();
+		$eventManager->attach(Event::INDEX_DOCUMENT, array($ws, 'onIndexDocument'), 5);
+		$eventManager->attach(Event::POPULATE_DOCUMENT, array($ws, 'onPopulateDocument'), 5);
+		$eventManager->attach(Event::FIND_INDEX_DEFINITION, array($ws, 'onFindIndexDefinition'), 5);
+		$eventManager->attach(Event::GET_INDEXES_DEFINITION, array($ws, 'onGetIndexesDefinition'), 5);
+
+		$si = new StoreIndexer();
+		$eventManager->attach(Event::INDEX_DOCUMENT, array($si, 'onIndexDocument'), 1);
+		$eventManager->attach(Event::POPULATE_DOCUMENT, array($si, 'onPopulateDocument'), 1);
+		$eventManager->attach(Event::FIND_INDEX_DEFINITION, array($si, 'onFindIndexDefinition'), 1);
+		$eventManager->attach(Event::GET_INDEXES_DEFINITION, array($si, 'onGetIndexesDefinition'), 1);
+	}
+
+	/**
 	 * @param array $clientsConfiguration
 	 */
 	public function loadConfiguration(array $clientsConfiguration)

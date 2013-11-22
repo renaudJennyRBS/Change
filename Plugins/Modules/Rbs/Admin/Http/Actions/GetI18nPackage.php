@@ -15,42 +15,65 @@ class GetI18nPackage
 	public function execute($event)
 	{
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$modules = $event->getApplicationServices()->getPluginManager()->getModules();
-		$LCID = $event->getRequest()->getQuery('LCID');
-		$packages = array();
+		$LCID = $event->getParam('LCID', $event->getRequest()->getQuery('LCID'));
 
 		if ($i18nManager->isSupportedLCID($LCID))
 		{
-			foreach ($modules as $module)
+			$result = null;
+			$packageName = $event->getParam('package');
+			$packages = array();
+			if ($packageName)
 			{
-				$packageName = implode('.', ['m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'adminjs']);
-
 				$keys = $i18nManager->getTranslationsForPackage($packageName, $LCID);
+				$package = array();
 				if (is_array($keys))
 				{
-					$package = array();
 					foreach ($keys as $key => $value)
 					{
 						$package[$key] = $value;
 					}
-					$packages[$packageName] = $package;
 				}
-			}
-		}
+				$packages[$packageName] = $package;
 
-		$renderer = new \Rbs\Admin\Http\Result\Renderer();
-		$renderer->setHeaderContentType('application/javascript');
-		$renderer->setRenderer(function() use ($packages)
-		{
-			if (count($packages))
-			{
-				return '__change.i18n = ' . json_encode($packages) . ';' . PHP_EOL;
+				$result = new \Change\Http\Rest\Result\ArrayResult();
+				$result->setArray($packages);
 			}
 			else
 			{
-				return '__change.i18n = {};' . PHP_EOL;
+				$modules = $event->getApplicationServices()->getPluginManager()->getModules();
+				foreach ($modules as $module)
+				{
+					if ($module->isAvailable())
+					{
+						$packageName = implode('.', ['m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'adminjs']);
+						$keys = $i18nManager->getTranslationsForPackage($packageName, $LCID);
+						if (is_array($keys))
+						{
+							$package = array();
+							foreach ($keys as $key => $value)
+							{
+								$package[$key] = $value;
+							}
+							$packages[$packageName] = $package;
+						}
+					}
+				}
+
+				$result = new \Rbs\Admin\Http\Result\Renderer();
+				$result->setHeaderContentType('application/javascript');
+				$result->setRenderer(function() use ($packages)
+				{
+					if (count($packages))
+					{
+						return '__change.i18n = ' . json_encode($packages) . ';' . PHP_EOL;
+					}
+					else
+					{
+						return '__change.i18n = {};' . PHP_EOL;
+					}
+				});
 			}
-		});
-		$event->setResult($renderer);
+			$event->setResult($result);
+		}
 	}
 }

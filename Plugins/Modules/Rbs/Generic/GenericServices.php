@@ -111,11 +111,42 @@ class GenericServices extends \Zend\Di\Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
+		//FacetManager : EventManagerFactory, DocumentManager, I18nManager, CollectionManager
+		$facetManagerClassName = $this->getInjectedClassName('FacetManager', '\Rbs\Elasticsearch\Facet\FacetManager');
+		$classDefinition = $this->getClassDefinition($facetManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setI18nManager', true)
+			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true))
+			->addMethod('setCollectionManager', true)
+			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
+		//IndexManager : FacetManager, EventManagerFactory, Configuration, DocumentManager, Logging
+		$indexManagerClassName = $this->getInjectedClassName('IndexManager', 'Rbs\Elasticsearch\Index\IndexManager');
+		$classDefinition = $this->getClassDefinition($indexManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addConfigurationClassDefinition($classDefinition);
+		$classDefinition
+			->addMethod('setFacetManager', true)
+			->addMethodParameter('setFacetManager', 'facetManager', array('type' => 'FacetManager', 'required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setLogging', true)
+			->addMethodParameter('setLogging', 'logging', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
 		$transactionManager = function() use ($applicationServices) {return $applicationServices->getTransactionManager();};
 		$documentManager = function() use ($applicationServices) {return $applicationServices->getDocumentManager();};
+		$i18nManager = function() use ($applicationServices) {return $applicationServices->getI18nManager();};
+		$collectionManager = function() use ($applicationServices) {return $applicationServices->getCollectionManager();};
+		$logging = function() use ($applicationServices) {return $applicationServices->getLogging();};
+		$configuration = $application->getConfiguration();
 
 		$im->addAlias('SeoManager', $seoManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory,
@@ -134,6 +165,14 @@ class GenericServices extends \Zend\Di\Di
 		$im->addAlias('SecurityManager', $securityManagerClassName, array(
 			'eventManagerFactory' => $eventManagerFactory
 		));
+
+		$im->addAlias('FacetManager', $facetManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory, 'documentManager' => $documentManager,
+				'collectionManager' => $collectionManager, 'i18nManager' => $i18nManager));
+
+		$im->addAlias('IndexManager', $indexManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory, 'configuration' => $configuration,
+				'documentManager' => $documentManager, 'logging' => $logging));
 	}
 
 	/**
@@ -170,5 +209,23 @@ class GenericServices extends \Zend\Di\Di
 	public function getSecurityManager()
 	{
 		return $this->get('SecurityManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Elasticsearch\Index\IndexManager
+	 */
+	public function getIndexManager()
+	{
+		return $this->get('IndexManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Elasticsearch\Facet\FacetManager
+	 */
+	public function getFacetManager()
+	{
+		return $this->get('FacetManager');
 	}
 }

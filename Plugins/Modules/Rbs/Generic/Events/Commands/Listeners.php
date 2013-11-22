@@ -24,40 +24,45 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (Event $event)
 		{
 			$commandConfigPath = __DIR__ . '/Assets/config.json';
-			if (is_file($commandConfigPath))
-			{
-				return Json::decode(file_get_contents($commandConfigPath), Json::TYPE_ARRAY);
-			}
+			return Json::decode(file_get_contents($commandConfigPath), Json::TYPE_ARRAY);
 		};
 		$events->attach('config', $callback);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Rbs\Plugins\Commands\Sign();
-			$cmd->execute($event);
+			(new \Rbs\Plugins\Commands\Sign())->execute($event);
 		};
 		$events->attach('rbs_plugins:sign', $callback);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Rbs\Plugins\Commands\Verify();
-			$cmd->execute($event);
+			(new \Rbs\Plugins\Commands\Verify())->execute($event);
 		};
 		$events->attach('rbs_plugins:verify', $callback);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Rbs\Website\Commands\AddDefaultWebsite();
-			$cmd->execute($event);
+			(new \Rbs\Website\Commands\AddDefaultWebsite())->execute($event);
 		};
 		$events->attach('rbs_website:add-default-website', $callback);
 
 		$callback = function ($event)
 		{
-			$cmd = new \Rbs\User\Commands\AddUser();
-			$cmd->execute($event);
+			(new \Rbs\User\Commands\AddUser())->execute($event);
 		};
 		$events->attach('rbs_user:add-user', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Elasticsearch\Commands\Client())->execute($event);
+		};
+		$events->attach('rbs_elasticsearch:client', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Elasticsearch\Commands\Index())->execute($event);
+		};
+		$events->attach('rbs_elasticsearch:index', $callback);
 	}
 
 	/**
