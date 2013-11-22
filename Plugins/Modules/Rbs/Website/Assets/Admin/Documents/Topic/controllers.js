@@ -57,7 +57,7 @@
 					$scope.loadingFunctions = false;
 					$scope.sectionFunctions = results[1].resources;
 					$scope.allFunctions = results[0].items;
-					$scope.allFunctions['Rbs_Website_Section'] = {"label": i18n.trans('m.rbs.website.admin.js.index-page | ucf')};
+					$scope.allFunctions['Rbs_Website_Section'] = {"label": i18n.trans('m.rbs.website.adminjs.function_index_page | ucf')};
 					angular.forEach($scope.sectionFunctions, function (func) {
 						if ($scope.allFunctions.hasOwnProperty(func.functionCode)) {
 							func.functionLabel = $scope.allFunctions[func.functionCode].label;
