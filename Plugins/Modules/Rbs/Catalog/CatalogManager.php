@@ -1,8 +1,8 @@
 <?php
-namespace Rbs\Catalog\Services;
+namespace Rbs\Catalog;
 
 /**
- * @name \Rbs\Catalog\Services\CatalogManager
+ * @name \Rbs\Catalog\CatalogManager
  */
 class CatalogManager
 {

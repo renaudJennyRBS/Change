@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 /**
 * @name \Rbs\Catalog\Std\VariantNodeCollection
@@ -12,7 +12,7 @@ class VariantNodeCollection
 	protected $tmpId = 0;
 
 	/**
-	 * @var \Rbs\Catalog\Std\VariantNode[]
+	 * @var \Rbs\Catalog\Product\VariantNode[]
 	 */
 	protected $nodes = array();
 
@@ -52,7 +52,7 @@ class VariantNodeCollection
 	}
 
 	/**
-	 * @return \Rbs\Catalog\Std\VariantNode[]
+	 * @return \Rbs\Catalog\Product\VariantNode[]
 	 */
 	public function getNodes()
 	{
@@ -61,7 +61,7 @@ class VariantNodeCollection
 
 	/**
 	 * @param integer $id
-	 * @return \Rbs\Catalog\Std\VariantNode|null
+	 * @return \Rbs\Catalog\Product\VariantNode|null
 	 */
 	public function getNodeById($id)
 	{

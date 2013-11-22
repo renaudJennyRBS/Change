@@ -121,11 +121,11 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	{
 		/** @var $product Product */
 		$product = $event->getDocument();
-		if ($product->isPropertyModified('attributeValues'))
+		$cs = $event->getServices('commerceServices');
+
+		if ($product->isPropertyModified('attributeValues') && $cs instanceof \Rbs\Commerce\CommerceServices)
 		{
-			$as = $event->getApplicationServices();
-			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
-			$normalizedAttributeValues = $attributeEngine->normalizeRestAttributeValues($product, $product->getCurrentLocalization()->getAttributeValues());
+			$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($product, $product->getCurrentLocalization()->getAttributeValues());
 			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
 		}
 
@@ -133,7 +133,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		{
 			/* @var $sku \Rbs\Stock\Documents\Sku */
 			$sku = $product->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
-			$sku->setCode($product->buildSkuCodeFromLabel($event->getServices('commerceServices')));
+			$sku->setCode($product->buildSkuCodeFromLabel($cs));
 			$sku->save();
 			$product->setSku($sku);
 		}
@@ -170,14 +170,14 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 		$product = $event->getDocument();
 		if ($product->isPropertyModified('attributeValues'))
 		{
-			$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
-			$as = $event->getApplicationServices();
-			$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($as->getDocumentManager(), $as->getCollectionManager(), $as->getDbProvider());
-			$normalizedAttributeValues = $attributeEngine->normalizeRestAttributeValues($product, $attributeValues);
-			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
-
-			//DB Stat
-			$attributeEngine->setAttributeValues($product, $normalizedAttributeValues);
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
+				$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($product, $attributeValues);
+				$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
+				$cs->getAttributeManager()->setAttributeValues($product, $normalizedAttributeValues);
+			}
 		}
 
 		// Section product list synchronization.
@@ -263,11 +263,11 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param array $parameters
-	 * @return \Rbs\Catalog\Std\ProductCartLineConfig
+	 * @return \Rbs\Catalog\Product\ProductCartLineConfig
 	 */
 	public function getCartLineConfig(\Rbs\Commerce\CommerceServices $commerceServices, array $parameters)
 	{
-		$cartLineConfig = new \Rbs\Catalog\Std\ProductCartLineConfig($this);
+		$cartLineConfig = new \Rbs\Catalog\Product\ProductCartLineConfig($this);
 		$options = isset($parameters['options']) ? $parameters['options'] : array();
 		if (is_array($options))
 		{
@@ -282,11 +282,11 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param integer $webStoreId
-	 * @return \Rbs\Catalog\Std\ProductPresentation
+	 * @return \Rbs\Catalog\Product\ProductPresentation
 	 */
 	public function getPresentation(\Rbs\Commerce\CommerceServices $commerceServices, $webStoreId)
 	{
-		return new \Rbs\Catalog\Std\ProductPresentation($commerceServices, $this, $webStoreId);
+		return new \Rbs\Catalog\Product\ProductPresentation($commerceServices, $this, $webStoreId);
 	}
 
 	/**

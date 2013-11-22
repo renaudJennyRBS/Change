@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 /**
  * @name \Rbs\Catalog\Std\ProductItem

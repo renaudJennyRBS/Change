@@ -147,7 +147,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	protected function getDefaultModelFacet()
 	{
 		$mf = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
-		$mf->setTitle($this->i18nManager->trans('m.rbs.elasticsearch.fo.facet-model-title'));
+		$mf->setTitle(new \Change\I18n\PreparedKey('m.rbs.elasticsearch.fo.facet-model-title'));
 		return $mf;
 	}
 

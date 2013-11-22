@@ -3,6 +3,7 @@ namespace Rbs\Catalog\Collection;
 
 use Change\I18n\I18nString;
 use Rbs\Catalog\Documents\Attribute;
+use Rbs\Catalog\Product\ProductManager;
 
 /**
  * @name \Rbs\Catalog\Collection\Collections
@@ -172,9 +173,9 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$items = array();
-			$items[\Rbs\Catalog\Std\CrossSellingEngine::LAST_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_last_product', array('ucf'));
-			$items[\Rbs\Catalog\Std\CrossSellingEngine::RANDOM_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_random_product', array('ucf'));
-			$items[\Rbs\Catalog\Std\CrossSellingEngine::MOST_EXPENSIVE_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_most_expensive_product', array('ucf'));
+			$items[ProductManager::LAST_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_last_product', array('ucf'));
+			$items[ProductManager::RANDOM_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_random_product', array('ucf'));
+			$items[ProductManager::MOST_EXPENSIVE_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_most_expensive_product', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_CrossSelling_CartProductChoiceStrategy', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();

@@ -1,13 +1,13 @@
 <?php
-namespace ChangeTests\Modules\Catalog\Services;
+namespace ChangeTests\Modules\Catalog;
 
 /**
- * @name \ChangeTests\Modules\Catalog\Services\CatalogManagerTest
+ * @name \ChangeTests\Modules\Catalog\CatalogManagerTest
  */
 class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
-	 * @var \Rbs\Catalog\Services\CatalogManager
+	 * @var \Rbs\Catalog\CatalogManager
 	 */
 	protected $cm;
 

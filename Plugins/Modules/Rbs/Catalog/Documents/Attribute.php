@@ -1,9 +1,6 @@
 <?php
 namespace Rbs\Catalog\Documents;
 
-use Change\Documents\AbstractModel;
-use Rbs\Catalog\Std\AttributeEngine;
-
 /**
  * @name \Rbs\Catalog\Documents\Attribute
  */
@@ -31,9 +28,13 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$as = $event->getApplicationServices();
-			$attributeEngine = new AttributeEngine($as->getDocumentManager(), $as->getCollectionManager());
-			$restResult->setProperty('editorDefinition', $attributeEngine->buildEditorDefinition($this));
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				/** @var $attribute Attribute */
+				$attribute = $event->getDocument();
+				$restResult->setProperty('editorDefinition', $cs->getAttributeManager()->buildEditorDefinition($attribute));
+			}
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
@@ -123,9 +124,9 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	}
 
 	/**
-	 * @param AbstractModel $documentModel
+	 * @param \Change\Documents\AbstractModel $documentModel
 	 */
-	public function setDefaultValues(AbstractModel $documentModel)
+	public function setDefaultValues(\Change\Documents\AbstractModel $documentModel)
 	{
 		parent::setDefaultValues($documentModel);
 		$this->setAttributes(array('specifications', 'comparisons'));
