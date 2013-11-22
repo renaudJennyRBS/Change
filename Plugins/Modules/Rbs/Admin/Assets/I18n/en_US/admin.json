@@ -958,5 +958,17 @@
   },
   "shift_right":{
     "message":"offset right"
+  },
+  "dashboard_task_tasks":{
+    "message":"tasks"
+  },
+  "dashboard_task_tasks_in_progress":{
+    "message":"current tasks"
+  },
+  "dashboard_task_end":{
+    "message":"completed"
+  },
+  "dashboard_task_to_execute":{
+    "message":"left"
   }
 }

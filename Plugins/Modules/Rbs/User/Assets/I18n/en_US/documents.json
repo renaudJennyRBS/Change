@@ -1,38 +1,32 @@
 {
-	"group_label":{
-		"message":"group name"
-	},
-	"group_realm":{
-		"message":"realm"
-	},
-	"user":{
-		"message":"user"
-	},
-	"group":{
-		"message":"group"
-	},
-	"user_login":{
-		"message":"login"
-	},
-	"user_email":{
-		"message":"e-mail address"
-	},
-	"user_pseudonym":{
-		"message":"pseudonym"
-	},
-	"user_label":{
-		"message":"full name"
-	},
-	"user_hashMethod":{
-		"message":"password encryption method"
-	},
-	"user_security":{
-		"message":"security"
-	},
-	"user_password":{
-		"message":"password"
-	},
-	"profile":{
-		"message":"profile"
-	}
+  "group_label":{
+    "message":"group name"
+  },
+  "user":{
+    "message":"user"
+  },
+  "group":{
+    "message":"group"
+  },
+  "user_login":{
+    "message":"login"
+  },
+  "user_email":{
+    "message":"e-mail address"
+  },
+  "user_pseudonym":{
+    "message":"pseudonym"
+  },
+  "user_label":{
+    "message":"full name"
+  },
+  "user_hashMethod":{
+    "message":"password encryption method"
+  },
+  "user_security":{
+    "message":"security"
+  },
+  "user_password":{
+    "message":"password"
+  }
 }

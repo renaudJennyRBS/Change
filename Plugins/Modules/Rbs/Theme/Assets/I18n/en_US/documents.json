@@ -1,29 +1,23 @@
 {
-	"pagetemplate":{
-		"message":"page template"
-	},
-	"theme":{
-		"message":"theme"
-	},
-	"pagetemplate_html":{
-		"message":"HTML"
-	},
-	"pagetemplate_htmlforbackoffice":{
-		"message":"backoffice HTML"
-	},
-	"pagetemplate_editablecontent":{
-		"message":"content zones"
-	},
-	"pagetemplate_theme":{
-		"message":"themes"
-	},
-	"theme_name":{
-		"message":"name (code)"
-	},
-	"theme_parent_theme":{
-		"message":"parent theme"
-	},
-	"mailtemplate":{
-		"message":"e-mail template"
-	}
+  "pagetemplate":{
+    "message":"page template"
+  },
+  "theme":{
+    "message":"theme"
+  },
+  "pagetemplate_htmlforbackoffice":{
+    "message":"backoffice HTML"
+  },
+  "pagetemplate_editablecontent":{
+    "message":"content zones"
+  },
+  "pagetemplate_theme":{
+    "message":"themes"
+  },
+  "theme_name":{
+    "message":"name (code)"
+  },
+  "mailtemplate":{
+    "message":"e-mail template"
+  }
 }

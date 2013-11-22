@@ -1,26 +1,26 @@
 {
-	"module_name":{
-		"message":"Stores"
-	},
-	"module_keywords":{
-		"message":"stores,shops,webstores"
-	},
-	"select_webstore":{
-		"message":"select a store..."
-	},
-	"webstore_list_loading":{
-		"message":"loading stores list"
-	},
-	"webstore_list":{
-		"message":"e-commerce stores"
-	},
-	"webstore_create":{
-		"message":"add a new e-commerce store"
-	},
-	"store_billingareas_picker_title":{
-		"message":"select pricing zones"
-	},
-	"store_select_orderprocess":{
-		"message":"select a checkout process"
-	}
+  "module_name":{
+    "message":"Stores"
+  },
+  "module_keywords":{
+    "message":"stores,shops,webstores"
+  },
+  "select_webstore":{
+    "message":"select a store..."
+  },
+  "webstore_list_loading":{
+    "message":"loading stores list"
+  },
+  "webstore_list":{
+    "message":"e-commerce stores"
+  },
+  "webstore_create":{
+    "message":"add a new e-commerce store"
+  },
+  "store_billingareas_picker_title":{
+    "message":"select pricing zones"
+  },
+  "store_select_orderprocess":{
+    "message":"select a checkout process"
+  }
 }

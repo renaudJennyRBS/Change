@@ -1,14 +1,11 @@
 {
-	"brand":{
-		"message":"brand"
-	},
-	"brand_description":{
-		"message":"description"
-	},
-	"brand_visual":{
-		"message":"visual"
-	},
-	"brand_websiteurl":{
-		"message":"website URL"
-	}
+  "brand":{
+    "message":"brand"
+  },
+  "brand_visual":{
+    "message":"visual"
+  },
+  "brand_websiteurl":{
+    "message":"website URL"
+  }
 }

@@ -1,8 +1,38 @@
 {
-	"module_name":{
-		"message":"catalog"
-	},
-	"section_name":{
-		"message":"E-commerce"
-	}
+  "sectionproductlist_synchronizedsection_help":{
+    "message":"The products published in this section will be automatically added to this list and vice versa."
+  },
+  "sectionproductlist_synchronizedsection_picker_title":{
+    "message":"Select the section to be synchronized with"
+  },
+  "macros_with_tax_abbr":{
+    "message":"Incl. VAT"
+  },
+  "macros_without_tax_abbr":{
+    "message":"Excl. VAT"
+  },
+  "variantgroup_visibility_head":{
+    "message":"visible in lists"
+  },
+  "variantgroup_generate_all_action":{
+    "message":"Select all combinations"
+  },
+  "variantgroup_remove_all_action":{
+    "message":"Deselect all combinations"
+  },
+  "variantgroup_delete_action":{
+    "message":"delete"
+  },
+  "variantgroup_add":{
+    "message":"add"
+  },
+  "variantgroup_cancel":{
+    "message":"cancel"
+  },
+  "variantgroup_loading_product_info":{
+    "message":"Loading product information..."
+  },
+  "module_name":{
+    "message":"catalog"
+  }
 }
