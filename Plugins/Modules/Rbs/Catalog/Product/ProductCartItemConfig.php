@@ -1,8 +1,8 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 /**
- * @name \Rbs\Catalog\Std\ProductCartItemConfig
+ * @name \Rbs\Catalog\Product\ProductCartItemConfig
  */
 class ProductCartItemConfig implements \Rbs\Commerce\Interfaces\CartItemConfig
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 use Rbs\Commerce\Interfaces\TaxApplication;
 
@@ -37,7 +37,6 @@ class ProductPresentation
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param integer $webStoreId
-	 * @return \Rbs\Catalog\Std\ProductPresentation
 	 */
 	public function __construct(\Rbs\Commerce\CommerceServices $commerceServices, \Rbs\Catalog\Documents\Product $product, $webStoreId)
 	{
@@ -242,7 +241,7 @@ class ProductPresentation
 					$productPresentation->evaluate();
 					$row['productPresentation'] = $productPresentation;
 				}
-				$variants[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($dm);
+				$variants[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($dm);
 
 			}
 		}

@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 use Rbs\Commerce\Interfaces\TaxApplication;
 
 /**
-* @name \Rbs\Catalog\Std\ProductCartLineConfig
-*/
+ * @name \Rbs\Catalog\Product\ProductCartLineConfig
+ */
 class ProductCartLineConfig implements \Rbs\Commerce\Interfaces\CartLineConfig
 {
 	/**

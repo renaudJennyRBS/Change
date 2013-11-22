@@ -113,9 +113,8 @@ class CommerceServices extends Di
 				->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-
 		//CatalogManager : DbProvider, TransactionManager, DocumentManager
-		$catalogManagerClassName = $this->getInjectedClassName('CatalogManager', 'Rbs\Catalog\Services\CatalogManager');
+		$catalogManagerClassName = $this->getInjectedClassName('CatalogManager', 'Rbs\Catalog\CatalogManager');
 		$classDefinition = $this->getClassDefinition($catalogManagerClassName);
 		$classDefinition->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
@@ -126,9 +125,9 @@ class CommerceServices extends Di
 		$definitionList->addDefinition($classDefinition);
 
 
-		//CrossSellingManager : EventManagerFactory
-		$crossSellingManagerClassName = $this->getInjectedClassName('CrossSellingManager', 'Rbs\Catalog\Services\CrossSellingManager');
-		$classDefinition = $this->getClassDefinition($crossSellingManagerClassName);
+		//ProductManager : EventManagerFactory
+		$productManagerClassName = $this->getInjectedClassName('ProductManager', 'Rbs\Catalog\Product\ProductManager');
+		$classDefinition = $this->getClassDefinition($productManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
@@ -162,6 +161,20 @@ class CommerceServices extends Di
 				->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+
+		//AttributeManager : DocumentManager, CollectionManager, DbProvider, I18nManager
+		$attributeManagerClassName = $this->getInjectedClassName('AttributeManager', 'Rbs\Catalog\Attribute\AttributeManager');
+		$classDefinition = $this->getClassDefinition($attributeManagerClassName);
+		$classDefinition->addMethod('setDbProvider', true)
+			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setCollectionManager', true)
+			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true))
+			->addMethod('setI18nManager', true)
+			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -184,7 +197,7 @@ class CommerceServices extends Di
 		$im->addAlias('CatalogManager', $catalogManagerClassName,
 			array('dbProvider' => $dbProvider, 'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
 
-		$im->addAlias('CrossSellingManager', $crossSellingManagerClassName,
+		$im->addAlias('ProductManager', $productManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory));
 
 		$im->addAlias('StockManager', $stockManagerClassName,
@@ -193,6 +206,10 @@ class CommerceServices extends Di
 
 		$im->addAlias('CartManager', $cartManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging));
+
+		$im->addAlias('AttributeManager', $attributeManagerClassName,
+			array('dbProvider' => $dbProvider, 'i18nManager' => $i18nManager,
+				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
 	}
 
 	/**
@@ -229,7 +246,7 @@ class CommerceServices extends Di
 	}
 
 	/**
-	 * @return \Rbs\Catalog\Services\CatalogManager
+	 * @return \Rbs\Catalog\CatalogManager
 	 */
 	public function getCatalogManager()
 	{
@@ -237,11 +254,11 @@ class CommerceServices extends Di
 	}
 
 	/**
-	 * @return \Rbs\Catalog\Services\CrossSellingManager
+	 * @return \Rbs\Catalog\Product\ProductManager
 	 */
-	public function getCrossSellingManager()
+	public function getProductManager()
 	{
-		return $this->get('CrossSellingManager');
+		return $this->get('ProductManager');
 	}
 
 	/**
@@ -258,5 +275,13 @@ class CommerceServices extends Di
 	public function getCartManager()
 	{
 		return $this->get('CartManager');
+	}
+
+	/**
+	 * @return \Rbs\Catalog\Attribute\AttributeManager
+	 */
+	public function getAttributeManager()
+	{
+		return $this->get('AttributeManager');
 	}
 }

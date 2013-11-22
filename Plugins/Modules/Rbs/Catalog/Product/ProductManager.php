@@ -1,23 +1,82 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 /**
- * @name \Rbs\Catalog\Std\CrossSellingEngine
+ * @name \Rbs\Catalog\Product\ProductManager
  */
-class CrossSellingEngine
+class ProductManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
+	const EVENT_MANAGER_IDENTIFIER = 'ProductManager';
+	const EVENT_GET_CROSS_SELLING_FOR_PRODUCT = 'getCrossSellingForProduct';
+	const EVENT_GET_CROSS_SELLING_FOR_CART = 'getCrossSellingForCart';
+
 	const LAST_PRODUCT = 'LAST_PRODUCT';
 	const RANDOM_PRODUCT = 'RANDOM_PRODUCT';
 	const MOST_EXPENSIVE_PRODUCT = 'MOST_EXPENSIVE_PRODUCT';
+
+	/**
+	 * @return string
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/ProductManager');
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, [$this, 'onDefaultGetCrossSellingProductsByProduct'], 5);
+		$eventManager->attach(static::EVENT_GET_CROSS_SELLING_FOR_CART, [$this, 'onDefaultCrossSellingProductsByCart'], 5);
+	}
+
+	/**
+	 * Gets Cross Selling info for a product using parameters array
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param array $csParameters
+	 * @return \Rbs\Catalog\Product\ProductItem[]
+	 */
+	public function getCrossSellingForProduct($product, $csParameters)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('product' => $product, 'csParameters' => $csParameters));
+		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, $this, $args);
+		return $args['csProducts'];
+	}
+
+	/**
+	 * Gets Cross Selling info for a cart using parameters array
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param array $csParameters
+	 * @return \Rbs\Catalog\Product\ProductItem[]
+	 */
+	public function getCrossSellingForCart($cart, $csParameters)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('cart' => $cart, 'csParameters' => $csParameters));
+		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_CART, $this, $args);
+		return $args['csProducts'];
+	}
 
 	/**
 	 * Gets Cross Selling products for a product using parameters array
 	 * $event requires two parameters : product and csParameters
 	 * @api
 	 * @param \Change\Events\Event $event
-	 * @return \Rbs\Catalog\Std\ProductItem[]
+	 * @return \Rbs\Catalog\Product\ProductItem[]
 	 */
-	public function getCrossSellingProductsByProduct(\Change\Events\Event $event)
+	public function onDefaultGetCrossSellingProductsByProduct(\Change\Events\Event $event)
 	{
 		$applicationServices = $event->getApplicationServices();
 
@@ -65,7 +124,7 @@ class CrossSellingEngine
 						$row['productPresentation'] = $productPresentation;
 					}
 
-					$products[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);
+					$products[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
 				}
 			}
 		}
@@ -78,9 +137,9 @@ class CrossSellingEngine
 	 * $event requires two parameters : cart and csParameters
 	 * @api
 	 * @param \Change\Events\Event $event
-	 * @return \Rbs\Catalog\Std\ProductItem[]
+	 * @return \Rbs\Catalog\Product\ProductItem[]
 	 */
-	public function getCrossSellingProductsByCart(\Change\Events\Event $event)
+	public function onDefaultCrossSellingProductsByCart(\Change\Events\Event $event)
 	{
 		$products = array();
 		$parameters = $event->getParam('csParameters');
@@ -89,7 +148,7 @@ class CrossSellingEngine
 		if ($product && isset($parameters['crossSellingType']))
 		{
 			$event->setParam('product', $product);
-			$products = $this->getCrossSellingProductsByProduct($event);
+			$products = $this->onDefaultGetCrossSellingProductsByProduct($event);
 		}
 
 		return $products;
@@ -113,21 +172,21 @@ class CrossSellingEngine
 			/* Let's be optimistic : cartline key = productId */
 			switch($strategy)
 			{
-				case self::LAST_PRODUCT:
+				case ProductManager::LAST_PRODUCT:
 					$lineCount = count($cart->getLines());
 					if ($lineCount)
 					{
 						$line = $cart->getLineByNumber($lineCount);
 					}
 					break;
-				case self::RANDOM_PRODUCT:
+				case ProductManager::RANDOM_PRODUCT:
 					$lineCount = count($cart->getLines());
 					if ($lineCount)
 					{
 						$line = $cart->getLineByNumber(rand(1, $lineCount));
 					}
 					break;
-				case self::MOST_EXPENSIVE_PRODUCT:
+				case ProductManager::MOST_EXPENSIVE_PRODUCT:
 					$lines = $cart->getLines();
 					usort($lines, array($this, "mostExpensiveUnitPrice"));
 					$line = $lines[0];
@@ -150,7 +209,7 @@ class CrossSellingEngine
 	 * @param \Rbs\Commerce\Cart\CartLine $line2
 	 * @return \Rbs\Catalog\Documents\Product
 	 */
-	function mostExpensiveUnitPrice($line1, $line2)
+	protected function mostExpensiveUnitPrice($line1, $line2)
 	{
 		$price1 = $line1->getUnitPriceValueWithTax();
 		$price2 = $line2->getUnitPriceValueWithTax();
@@ -160,4 +219,3 @@ class CrossSellingEngine
 		return ($price1 > $price2) ? -1 : 1;
 	}
 }
-

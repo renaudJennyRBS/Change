@@ -1,5 +1,5 @@
 <?php
-namespace Rbs\Catalog\Std;
+namespace Rbs\Catalog\Product;
 
 /**
 * @name \Rbs\Catalog\Std\VariantNode
@@ -118,7 +118,7 @@ class VariantNode
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Std\VariantNode[] $children
+	 * @param VariantNode[] $children
 	 * @return $this
 	 */
 	public function setChildren($children)
@@ -128,7 +128,7 @@ class VariantNode
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Std\VariantNode $child
+	 * @param VariantNode $child
 	 * @return $this
 	 */
 	public function addChild($child)
@@ -141,7 +141,7 @@ class VariantNode
 	}
 
 	/**
-	 * @return \Rbs\Catalog\Std\VariantNode[]
+	 * @return VariantNode[]
 	 */
 	public function getChildren()
 	{

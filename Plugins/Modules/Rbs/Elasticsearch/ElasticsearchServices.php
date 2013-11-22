@@ -71,8 +71,7 @@ class ElasticsearchServices extends \Zend\Di\Di
 	 * @param EventManagerFactory $eventManagerFactory
 	 * @param ApplicationServices $applicationServices
 	 */
-	function __construct(Application $application, EventManagerFactory $eventManagerFactory,
-		ApplicationServices $applicationServices)
+	function __construct(Application $application, EventManagerFactory $eventManagerFactory, ApplicationServices $applicationServices)
 	{
 		$this->setApplication($application);
 		$this->setEventManagerFactory($eventManagerFactory);

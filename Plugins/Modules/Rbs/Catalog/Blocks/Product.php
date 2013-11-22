@@ -90,10 +90,7 @@ class Product extends Block
 					$attributes['productPresentation'] = $productPresentation;
 				}
 
-				// Attributes.
-				$attributePresentation = new \Rbs\Catalog\Std\AttributePresentation($product);
-				$attributePresentation->setApplicationServices($event->getApplicationServices());
-				$attributes['attributesConfig'] = $attributePresentation->getConfiguration('specifications');
+				$attributes['attributesConfig'] = $commerceServices->getAttributeManager()->getProductAttributesConfiguration('specifications', $product);
 
 				return 'product.twig';
 			}

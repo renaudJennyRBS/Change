@@ -1,8 +1,9 @@
 <?php
-namespace ChangeTests\Modules\Catalog\Std;
+namespace ChangeTests\Modules\Catalog\Product;
 
-use  Rbs\Catalog\Std\ProductItem;
-
+/**
+ * @name \ChangeTests\Modules\Catalog\Product\ProductItemTest
+ */
 class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
@@ -17,16 +18,16 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testConstructor()
 	{
-		$o = new ProductItem();
+		$o = new \Rbs\Catalog\Product\ProductItem();
 		$this->assertFalse($o->hasData());
 
-		$o = new ProductItem(array('test' => 'ok'));
+		$o = new \Rbs\Catalog\Product\ProductItem(array('test' => 'ok'));
 		$this->assertTrue($o->hasData());
 	}
 
 	public function testCall()
 	{
-		$o = new ProductItem(array('test' => 'ok'));
+		$o = new \Rbs\Catalog\Product\ProductItem(array('test' => 'ok'));
 		$this->assertEquals('ok', $o->test());
 		$this->assertNull($o->id());
 
@@ -34,7 +35,7 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product = $this->getNewReadonlyDocument('Rbs_Catalog_Product', 800);
-		$o = new ProductItem(array('id' => 800, 'test' => 'ok'));
+		$o = new \Rbs\Catalog\Product\ProductItem(array('id' => 800, 'test' => 'ok'));
 		$o->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 
 		$product->getCurrentLocalization()->setTitle('title property');
@@ -63,13 +64,13 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$product->setBrand($brand);
 
-		$o = new ProductItem(array('id' => 800));
+		$o = new \Rbs\Catalog\Product\ProductItem(array('id' => 800));
 		$o->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 
 		$this->assertSame($brand, $o->brand());
 
 		$data = serialize($o);
-		$this->assertEquals('C:27:"Rbs\\Catalog\\Std\\ProductItem":103:{a:2:{s:2:"id";i:800;s:5:"brand";C:38:"Change\\Documents\\DocumentWeakReference":19:{201 Rbs_Brand_Brand}}}', $data);
+		$this->assertEquals('C:31:"Rbs\\Catalog\\Product\\ProductItem":103:{a:2:{s:2:"id";i:800;s:5:"brand";C:38:"Change\\Documents\\DocumentWeakReference":19:{201 Rbs_Brand_Brand}}}', $data);
 
 		$o2 = unserialize($data);
 		$this->assertNotSame($o, $o2);

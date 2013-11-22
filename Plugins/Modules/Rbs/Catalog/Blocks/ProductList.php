@@ -140,7 +140,7 @@ class ProductList extends Block
 						$row['productPresentation'] = $productPresentation;
 					}
 
-					$rows[] = (new \Rbs\Catalog\Std\ProductItem($row))->setDocumentManager($documentManager);
+					$rows[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
 				}
 			}
 			$attributes['rows'] = $rows;

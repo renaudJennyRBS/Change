@@ -35,7 +35,7 @@ class CartCrossSelling extends Block
 		$commerceServices = $event->getServices('commerceServices');
 		if ($parameters->getParameter('cartIdentifier') === null)
 		{
-			$parameters->setParameterValue('cartIdentifier', $commerceServices->getCartIdentifier());
+			$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
 		}
 
 		if ($parameters->getParameter('cartIdentifier') !== null)
@@ -47,7 +47,7 @@ class CartCrossSelling extends Block
 			}
 		}
 
-		$webStore = $commerceServices->getWebStore();
+		$webStore = $commerceServices->getContext()->getWebStore();
 		if ($webStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
@@ -83,7 +83,7 @@ class CartCrossSelling extends Block
 		$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
 		if ($cart && $productChoiceStrategy && $crossSellingType)
 		{
-			$crossSellingManager = $commerceServices->getCrossSellingManager();
+			$productManager = $commerceServices->getProductManager();
 
 			$rows = array();
 			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
@@ -91,7 +91,7 @@ class CartCrossSelling extends Block
 				$csParameters = array();
 				$csParameters['crossSellingType'] = $crossSellingType;
 				$csParameters['productChoiceStrategy'] = $productChoiceStrategy;
-				$rows = $crossSellingManager->getCrossSellingForCart($cart, $csParameters);
+				$rows = $productManager->getCrossSellingForCart($cart, $csParameters);
 			}
 
 			$attributes['rows'] = $rows;

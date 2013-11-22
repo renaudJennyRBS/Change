@@ -3,7 +3,6 @@ namespace Rbs\Catalog\Documents;
 
 use Change\Documents\AbstractModel;
 use Change\Documents\Events\Event;
-use Rbs\Catalog\Std\AttributeEngine;
 
 /**
  * @name \Rbs\Catalog\Documents\VariantGroup
@@ -34,7 +33,15 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			$this->setLabel($this->getRootProduct()->getLabel());
 		}
 
-		$this->initAxisInfo($event->getApplicationServices()->getCollectionManager());
+		$cs = $event->getServices('commerceServices');
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
+		{
+			$this->initAxisInfo($cs->getAttributeManager());
+		}
+		else
+		{
+			throw new \RuntimeException('CommerceServices not set', 999999);
+		}
 	}
 
 	/**
@@ -58,7 +65,15 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	{
 		if ($this->isPropertyModified('axisAttribute'))
 		{
-			$this->initAxisInfo($event->getApplicationServices()->getCollectionManager());
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$this->initAxisInfo($cs->getAttributeManager());
+			}
+			else
+			{
+				throw new \RuntimeException('CommerceServices not set', 999999);
+			}
 		}
 
 		if ($this->isPropertyModified('productMatrixInfo'))
@@ -78,19 +93,18 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	}
 
 	/**
-	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @param \Rbs\Catalog\Attribute\AttributeManager $attributeManager
 	 */
-	protected function initAxisInfo(\Change\Collection\CollectionManager $collectionManager)
+	protected function initAxisInfo(\Rbs\Catalog\Attribute\AttributeManager $attributeManager)
 	{
 		$axesInfo = $this->getAxesInfo();
 		if (count($axesInfo) === 0)
 		{
 			$axesInfo = array();
-			$attrEngine = new AttributeEngine($this->getDocumentManager(), $collectionManager, $this->getDbProvider());
-			$axisAttributes = $attrEngine->getAxisAttributes($this->getAxisAttribute());
+			$axisAttributes = $attributeManager->getAxisAttributes($this->getAxisAttribute());
 			foreach ($axisAttributes as $axisAttribute)
 			{
-				$axis = array('id' => $axisAttribute->getId(), 'dv' => $attrEngine->getCollectionValues($axisAttribute));
+				$axis = array('id' => $axisAttribute->getId(), 'dv' => $attributeManager->getCollectionValues($axisAttribute));
 				if (!is_array($axis['dv']))
 				{
 					$axis['dv'] = array();
@@ -166,7 +180,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 				$product->setVariantGroup($this);
 				$product->setVariant(true);
 				$product->setAttribute($this->getAxisAttribute());
-				$product->setAttributeValues($axesValues);
+				$product->getCurrentLocalization()->setAttributeValues($axesValues);
 				$product->setCategorizable(($axesInfo[$entry['axisId']]['cat'] == true));
 				$product->setNewSkuOnCreation($this->getNewSkuOnCreation() && !$entry['variant']);
 				$product->create();
@@ -296,20 +310,26 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$axesDefinition = $this->buildAxesDefinition($event->getApplicationServices()->getCollectionManager());
-			$restResult->setProperty('axesDefinition', array_values($axesDefinition));
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$axesDefinition = $this->buildAxesDefinition($cs->getAttributeManager());
+				$restResult->setProperty('axesDefinition', array_values($axesDefinition));
+			}
+			else
+			{
+				throw new \RuntimeException('CommerceServices not set', 999999);
+			}
 		}
 	}
 
 	/**
-	 * @param \Change\Collection\CollectionManager $collectionManager
+	 * @param \Rbs\Catalog\Attribute\AttributeManager $attributeManager
 	 * @return array
 	 */
-	protected function buildAxesDefinition(\Change\Collection\CollectionManager $collectionManager)
+	protected function buildAxesDefinition(\Rbs\Catalog\Attribute\AttributeManager $attributeManager)
 	{
 		$axesDefinition = array();
-
-		$attrEngine = new AttributeEngine($this->getDocumentManager(),$collectionManager, $this->getDbProvider());
 		foreach ($this->getAxesInfo() as $axisInfo)
 		{
 			$axisAttribute = $this->getDocumentManager()->getDocumentInstance($axisInfo['id']);
@@ -317,7 +337,8 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			{
 				continue;
 			}
-			$def = $attrEngine->buildAttributeDefinition($axisAttribute);
+
+			$def = $attributeManager->buildAttributeDefinition($axisAttribute);
 			if ($def)
 			{
 				$axesDefinition[$axisInfo['id']] = $def;

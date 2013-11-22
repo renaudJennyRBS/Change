@@ -78,16 +78,16 @@ class CrossSelling extends Block
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$crossSellingManager = $commerceServices->getCrossSellingManager();
+			$productManager = $commerceServices->getProductManager();
 
 			$rows = array();
 			$product = $documentManager->getDocumentInstance($productId, 'Rbs_Catalog_Product');
 
-			if ($product)
+			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
 				$csParameters = array();
 				$csParameters['crossSellingType'] = $crossSellingType;
-				$rows = $crossSellingManager->getCrossSellingForProduct($product, $csParameters);
+				$rows = $productManager->getCrossSellingForProduct($product, $csParameters);
 			}
 
 			$attributes['rows'] = $rows;

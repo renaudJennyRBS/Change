@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Elasticsearch\Facet;
 
+use Change\Documents\Property;
 
 /**
  * @name \Rbs\Elasticsearch\Facet\FacetManager
@@ -394,15 +395,25 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			elseif (($attribute = $facet->getAttributeIdInstance()) !== null)
 			{
-				$attributeEngine = new \Rbs\Catalog\Std\AttributeEngine($this->getDocumentManager(), $this->getCollectionManager());
-				$attrDef = $attributeEngine->buildAttributeDefinition($attribute);
-				$attrType = $attrDef['type'];
-				if ($attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID || $attrType == \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY)
+				$attrType = $attribute->getValueType();
+				if ($attrType == \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
+				{
+					$p = $attribute->getModelProperty();
+					if ($p && in_array($p->getType(), [Property::TYPE_DOCUMENTID, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTARRAY]))
+					{
+						$attrType = \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID;
+					}
+				}
+				if (in_array($attrType, [\Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID, \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY]))
 				{
 					$document = $this->getDocumentManager()->getDocumentInstance($facetValue->getValue());
 					if ($document)
 					{
-						$facetValue->setValueTitle($document->getDocumentModel()->getPropertyValue($document, 'title'));
+						$valueTitle = $document->getDocumentModel()->getPropertyValue($document, 'title');
+						if ($valueTitle !== null)
+						{
+							$facetValue->setValueTitle($valueTitle);
+						}
 					}
 				}
 			}

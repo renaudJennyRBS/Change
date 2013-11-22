@@ -264,7 +264,7 @@ class ProductListItemResult
 		/** @var $cs \Rbs\Commerce\CommerceServices */
 		$cs = $event->getServices('commerceServices');
 
-		/* @var $cm \Rbs\Catalog\Services\CatalogManager */
+		/* @var $cm \Rbs\Catalog\CatalogManager */
 		$cm = $cs->getCatalogManager();
 		$productList = $dm->getDocumentInstance($event->getRequest()->getPost('productListId'));
 		$condition = $dm->getDocumentInstance($event->getRequest()->getPost('conditionId'));
