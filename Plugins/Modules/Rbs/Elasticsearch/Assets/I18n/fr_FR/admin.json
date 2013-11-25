@@ -74,24 +74,6 @@
 	"facet_section_filter":{
 		"message":"filtre et recherche"
 	},
-	"facettype_choose":{
-		"message":"sélectionner un type de facette"
-	},
-	"attributeid_choose":{
-		"message":"sélectionner un attribut"
-	},
-	"collectioncode_choose":{
-		"message":"sélectionner une liste"
-	},
-	"indexid_choose":{
-		"message":"sélectionner un index"
-	},
-	"clientname_choose":{
-		"message":"sélectionner un client"
-	},
-	"analysislcid_choose":{
-		"message":"sélectionner une langue"
-	},
 	"website_picker_title":{
 		"message":"sélectionner un site web"
 	},
