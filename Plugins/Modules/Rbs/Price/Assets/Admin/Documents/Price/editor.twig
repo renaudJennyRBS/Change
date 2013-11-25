@@ -47,13 +47,13 @@
 		<hr/>
 
 		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'boValue'), ['ucf']) }}">
-			<rbs-price-input ng-model="document.boValue" data-currency-code="(=billingArea.currencyCode=)"
-				data-price-with-tax="(=billingArea.boEditWithTax=)" />
+			<rbs-price-input ng-model="document.boValue" data-currency-code="billingArea.currencyCode"
+				data-price-with-tax="billingArea.boEditWithTax" required="true"></rbs-price-input>
 		</rbs-field>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'ecoTax'), ['ucf']) }}">
-			<rbs-price-input ng-model="document.ecoTax" data-currency-code="(=billingArea.currencyCode=)"
-				data-price-with-tax="(=billingArea.boEditWithTax=)" />
+			<rbs-price-input ng-model="document.ecoTax" data-currency-code="billingArea.currencyCode"
+				data-price-with-tax="billingArea.boEditWithTax"></rbs-price-input>
 		</rbs-field>
 
 		<hr/>

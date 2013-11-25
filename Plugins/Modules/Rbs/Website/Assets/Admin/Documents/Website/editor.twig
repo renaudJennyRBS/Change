@@ -64,7 +64,7 @@
 
 		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemap_time_interval', ['ucf']) }}" required="false">
 			<rbs-time-interval-input name="sitemapTimeInterval" show="weeks,days,hours"
-				ng-model="data.timeInterval" disabled="!document.sitemapGeneration">
+				ng-model="data.timeInterval" disabled="(= !document.sitemapGeneration =)">
 			</rbs-time-interval-input>
 		</rbs-field>
 

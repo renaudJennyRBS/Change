@@ -1,21 +1,12 @@
 <div>
-
-<!--
 	<div class="input-group">
-		<span class="input-group-addon">@</span>
-		<input type="text" class="form-control" placeholder="Username">
-	</div>
--->
-
-	<div class="input-group">
-		<input type="text" ng-disabled="disabled" smart-float="" class="form-control" size="6" ng-model="value"/>
+		<input type="text" ng-disabled="disabled" smart-float="" class="form-control" size="6" ng-model="value" ng-required="required"/>
 		<span class="input-group-addon" ng-show="currencyCode">(= currencyCode =)</span>
 		<span class="input-group-addon">
 			<span ng-show="priceWithTax">{{ i18n('m.rbs.price.admin.directives_with_tax_abbr') }}</span>
-			<span ng-hide="priceWithTax" ng-cloak="">{{ i18n('m.rbs.price.admin.directives_without_tax_abbr') }}
+			<span ng-hide="priceWithTax" ng-cloak="">{{ i18n('m.rbs.price.admin.directives_without_tax_abbr') }}</span>
 		</span>
 	</div>
-
 	<div ng-shows="hasRounding" class="btn-toolbar price-round-options has-captions" ng-cloak="">
 		<div class="btn-group">
 			<button class="btn btn-default btn-sm" disabled="disabled" type="button">{{ i18n('m.rbs.catalog.admin.macros_round_down', ['ucf']) }} <i class="icon-long-arrow-down"></i></button>
