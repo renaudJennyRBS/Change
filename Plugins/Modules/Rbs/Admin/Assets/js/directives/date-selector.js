@@ -196,6 +196,10 @@
 						Dialog.closeEmbedded();
 					}
 				};
+
+				scope.cancel = function (){
+					Dialog.closeEmbedded();
+				}
 			}
 		};
 	}]);
