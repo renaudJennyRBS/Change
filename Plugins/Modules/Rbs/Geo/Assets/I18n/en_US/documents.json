@@ -1,53 +1,44 @@
 {
-	"zone":{
-		"message":"zone"
-	},
-	"country":{
-		"message":"country"
-	},
-	"territorialunit":{
-		"message":"territorial unit"
-	},
-	"address":{
-		"message":"address"
-	},
-	"addressfields":{
-		"message":"address format"
-	},
-	"addressfield":{
-		"message":"address field"
-	},
-	"zone_country":{
-		"message":"country"
-	},
-	"territorialunit_unittype":{
-		"message":"type"
-	},
-	"territorialunit_country":{
-		"message":"country"
-	},
-	"territorialunit_unitparent":{
-		"message":"parent unit"
-	},
-	"territorialunit_unit_state":{
-		"message":"state"
-	},
-	"territorialunit_unit_departement":{
-		"message":"department"
-	},
-	"territorialunit_unit_region":{
-		"message":"region"
-	},
-	"territorialunit_unit_county":{
-		"message":"county"
-	},
-	"territorialunit_unit_province":{
-		"message":"province"
-	},
-	"addressfields_fields":{
-		"message":"fields"
-	},
-	"addressfields_fieldsLayoutData":{
-		"message":"fields layout"
-	}
+  "country":{
+    "message":"country"
+  },
+  "territorialunit":{
+    "message":"territorial unit"
+  },
+  "address":{
+    "message":"address"
+  },
+  "addressfields":{
+    "message":"address format"
+  },
+  "addressfield":{
+    "message":"address field"
+  },
+  "zone_country":{
+    "message":"country"
+  },
+  "territorialunit_country":{
+    "message":"country"
+  },
+  "territorialunit_unitparent":{
+    "message":"parent unit"
+  },
+  "territorialunit_unit_state":{
+    "message":"state"
+  },
+  "territorialunit_unit_departement":{
+    "message":"department"
+  },
+  "territorialunit_unit_region":{
+    "message":"region"
+  },
+  "territorialunit_unit_county":{
+    "message":"county"
+  },
+  "addressfields_fields":{
+    "message":"fields"
+  },
+  "addressfields_fieldsLayoutData":{
+    "message":"fields layout"
+  }
 }

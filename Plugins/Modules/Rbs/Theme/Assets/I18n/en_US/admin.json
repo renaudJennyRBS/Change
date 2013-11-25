@@ -1,23 +1,44 @@
 {
-	"module_name":{
-		"message":"Themes"
-	},
-	"pagetemplate_list":{
-		"message":"page templates"
-	},
-	"pagetemplate_create":{
-		"message":"add a new page template"
-	},
-	"theme_list_pagetemplates":{
-		"message":"list"
-	},
-	"theme_list":{
-		"message":"themes"
-	},
-	"theme_create":{
-		"message":"add a new theme"
-	},
-	"theme_name_help":{
-		"message":"<strong>The name can only contain letters and underscores.<\/strong><br\/><span class='label label-danger'>Attention !<\/span> This name refers is used to retrieve files on the server hosting your website - changing its value might break your websites."
-	}
+  "module_name":{
+    "message":"Themes"
+  },
+  "pagetemplate_list":{
+    "message":"page templates"
+  },
+  "pagetemplate_create":{
+    "message":"add a new page template"
+  },
+  "theme_list_pagetemplates":{
+    "message":"list"
+  },
+  "theme_list":{
+    "message":"themes"
+  },
+  "theme_create":{
+    "message":"add a new theme"
+  },
+  "theme_name_help":{
+    "message":"<strong>The name can only contain letters and underscores.<\/strong><br\/><span class='label label-danger'>Attention !<\/span> This name refers is used to retrieve files on the server hosting your website - changing its value might break your websites."
+  },
+  "pagetemplates_close":{
+    "message":"Close"
+  },
+  "pagetemplates_zone_id":{
+    "message":"template zone"
+  },
+  "pagetemplates_block":{
+    "message":"block"
+  },
+  "pagetemplates_override":{
+    "message":"override"
+  },
+  "pagetemplates_removeoverride":{
+    "message":"restore"
+  },
+  "pagetemplates_parametrize":{
+    "message":"configure"
+  },
+  "pagetemplates_clear":{
+    "message":"clear all"
+  }
 }

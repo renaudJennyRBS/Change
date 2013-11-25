@@ -1,17 +1,20 @@
 {
-	"brand":{
-		"message":"brand"
-	},
-	"brand_list":{
-		"message":"brands"
-	},
-	"brand_create":{
-		"message":"add a brand"
-	},
-	"module_name":{
-		"message":"brands"
-	},
-	"module_keywords":{
-		"message":"brands"
-	}
+  "brand":{
+    "message":"brand"
+  },
+  "brand_list":{
+    "message":"brands"
+  },
+  "brand_create":{
+    "message":"add a brand"
+  },
+  "module_name":{
+    "message":"brands"
+  },
+  "module_keywords":{
+    "message":"brands"
+  },
+  "select_visual":{
+    "message":"Select a picture"
+  }
 }

@@ -54,7 +54,7 @@
 		"message":"Désélectionner toutes les combinaisons"
 	},
 	"variantgroup_edit_product_head":{
-		"message":"Fiche Produit"
+		"message":"Produit"
 	},
 	"variantgroup_edit_axis_head":{
 		"message":"axe de déclinaison"
@@ -69,7 +69,7 @@
 		"message":"supprimer"
 	},
 	"variantgroup_edit_action":{
-		"message":"editer"
+		"message":"éditer"
 	},
 	"variantgroup_add_axis_value":{
 		"message":"Ajouter une valeur à cet axe :"
@@ -87,19 +87,19 @@
 		"message":"Chargement des informations du produit..."
 	},
 	"variantgroup_go_to_product":{
-		"message":"Aller sur la fiche produit"
+		"message":"Afficher le produit"
 	},
 	"variantgroup_product_does_not_exist_yet":{
-		"message":"<h4>Cette fiche produit n'existe pas encore.<\/h4>\n\t\tElle sera créée après avoir enregistré les modifications grâce au bouton\n\t\t<strong>Enregistrer<\/strong> ci-dessous."
+		"message":"<h4>Ce produit n'existe pas encore.<\/h4>\n\t\n Il sera créé après avoir enregistré les modifications grâce au bouton\n\t\t<strong>Enregistrer<\/strong> ci-dessous."
 	},
 	"variantgroup_existing_products_of":{
-		"message":"fiches existantes sur"
+		"message":"variantes existantes"
 	},
 	"variantgroup_possible_products":{
-		"message":"fiches possibles"
+		"message":"variantes possibles"
 	},
 	"variantgroup_products_will_be_created_when_this_form_is_submitted":{
-		"message":"Les fiches produits correspondant aux combinaisons sélectionnées ne seront réellement créées qu'après l'enregistrement de ce formulaire."
+		"message":"Les variantes correspondantes aux combinaisons sélectionnées ne seront réellement créées qu'après l'enregistrement de ce formulaire."
 	},
 	"variantgroup_no_visuals":{
 		"message":"aucun visuel"

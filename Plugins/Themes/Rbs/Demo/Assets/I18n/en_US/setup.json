@@ -1,8 +1,8 @@
 {
-	"timeline_message_mail_subject":{
-		"message":"A message mentionning you"
-	},
-	"notification_mail_subject":{
-		"message":"New notifications"
-	}
+  "timeline_message_mail_subject":{
+    "message":"A message mentioned you"
+  },
+  "notification_mail_subject":{
+    "message":"New notifications"
+  }
 }

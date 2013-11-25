@@ -18,19 +18,19 @@
     "message":"the field \"$FIELD$\" must contain a valid e-mail address."
   },
   "emailsaddressinvalid":{
-    "message":"the field ' $FIELD$ ' contains invalid email addresses (%value%)."
+    "message":"the field ' $FIELD$ ' contains invalid e-mail addresses (%value%)."
   },
   "emailaddressinvalidformat":{
     "message":"the field \"$FIELD$\" must contain a valid e-mail address."
   },
   "emailaddressinvalidhostname":{
-    "message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas un nom d'hôte valide pour l'adresse e-mail '%value%')."
+    "message":"the field \"$FIELD$\" must contain a valid e-mail address ('%hostname%' is not a valid hostname for e-mail '%value%')."
   },
   "emailaddressinvalidmxrecord":{
-    "message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' ne semble pas avoir d'enregistrement MX valide pour l'adresse e-mail '%value%')."
+    "message":"the field \"$FIELD$\" must contain a valid e-mail address ('%hostname%' does not appear to have a valid MX record for e-mail address '%value%')."
   },
   "emailaddressinvalidsegment":{
-    "message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas dans un segment réseau routable. L'adresse e-mail '%value%' ne devrait pas être résolue depuis un réseau public)."
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%hostname%' is not in a routable network segment. The e-mail address '%value%' should not be resolved from public network)."
   },
   "emailaddressdotatom":{
     "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' can not be matched against dot-atom format)."
@@ -39,7 +39,7 @@
     "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' can not be matched against quoted-string format)."
   },
   "emailaddressinvalidlocalpart":{
-    "message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide\n\t\t('%localPart%' n'est pas une partie locale valide pour l'adresse e-mail '%value%')."
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' is no valid local part for e-mail address '%value%')."
   },
   "emailaddresslengthexceeded":{
     "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%value%' exceeds the allowed length)."
@@ -48,13 +48,13 @@
     "message":"the field \"$FIELD$\" must have a maximum size of %max% characters."
   },
   "stringlengthinvalid":{
-    "message":"the field \"$FIELD$\" must be a String"
+    "message":"the field \"$FIELD$\" must be a string"
   },
   "stringlengthtooshort":{
     "message":"the field \"$FIELD$\" must have a minimum size of %max% characters."
   },
   "notunique":{
-    "message":"the field \"$FIELD$\" must be have a unique value."
+    "message":"the value of field \"$FIELD$\" must be unique."
   },
   "notmatch":{
     "message":"the field \"$FIELD$\" must match the following format: %pattern%."

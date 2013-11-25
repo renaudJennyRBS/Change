@@ -1,167 +1,146 @@
 {
-	"module_name":{
-		"message":"users"
-	},
-	"module_keywords":{
-		"message":"groups,security,password,login,account,authentication"
-	},
-	"confirm_revoke_token":{
-		"message":"confirm token revocation: {token} ?"
-	},
-	"group":{
-		"message":"group"
-	},
-	"group_list":{
-		"message":"groups"
-	},
-	"profile":{
-		"message":"user profile"
-	},
-	"token":{
-		"message":"token"
-	},
-	"application":{
-		"message":"application"
-	},
-	"realm":{
-		"message":"realm"
-	},
-	"creation_date":{
-		"message":"creation date"
-	},
-	"validity_date":{
-		"message":"validity date"
-	},
-	"revoke_token":{
-		"message":"revoke"
-	},
-	"applications_list_sub_title":{
-		"message":"applications"
-	},
-	"applications":{
-		"message":"applications"
-	},
-	"current_password":{
-		"message":"current password"
-	},
-	"new_password":{
-		"message":"new password"
-	},
-	"permission":{
-		"message":"permission"
-	},
-	"permission_rule":{
-		"message":"permission rule"
-	},
-	"permission_rules_sub_title":{
-		"message":"permission rules"
-	},
-	"permission_roles":{
-		"message":"roles"
-	},
-	"permission_privileges":{
-		"message":"privileges"
-	},
-	"permission_role":{
-		"message":"role"
-	},
-	"permission_resource":{
-		"message":"resource"
-	},
-	"permission_resources":{
-		"message":"resources"
-	},
-	"permission_privilege":{
-		"message":"privilege"
-	},
-	"new_permission_rules":{
-		"message":"new permission rules"
-	},
-	"remove_permission_rule":{
-		"message":"remove"
-	},
-	"remove_all_permission_rules":{
-		"message":"remove all rules"
-	},
-	"customise":{
-		"message":"customize"
-	},
-	"add":{
-		"message":"add"
-	},
-	"login":{
-		"message":"Login block"
-	},
-	"login_realm":{
-		"message":"realm"
-	},
-	"function_error_401":{
-		"message":"Unauthorized"
-	},
-	"group_picker_title":{
-		"message":">select groups"
-	},
-	"user_list":{
-		"message":"users"
-	},
-	"user_create":{
-		"message":"add user"
-	},
-	"group_create":{
-		"message":"add user group"
-	},
-	"users_in_group":{
-		"message":"group users"
-	},
-	"profile_lcid":{
-		"message":"language"
-	},
-	"profile_timezone":{
-		"message":"time zone"
-	},
-	"profile_avatar":{
-		"message":"avatar"
-	},
-	"profile_pagingsize":{
-		"message":"results page size"
-	},
-	"profile_documentlistviewmode":{
-		"message":"lists display mode"
-	},
-	"profile_list":{
-		"message":"list"
-	},
-	"profile_grid":{
-		"message":"grid"
-	},
-	"profile_editoractionaftersave":{
-		"message":"after save"
-	},
-	"profile_backtolist":{
-		"message":"go back to list"
-	},
-	"profile_stayonform":{
-		"message":"stay on the form"
-	},
-	"profile_internationalization":{
-		"message":"internationalization"
-	},
-	"profile_lists":{
-		"message":"list display"
-	},
-	"profile_editors":{
-		"message":"editors"
-	},
-	"profile_personnal_info":{
-		"message":"personnal information"
-	},
-	"profile_warning":{
-		"message":"caution!"
-	},
-	"profile_change_language_warning":{
-		"message":"after changing the language, you will need to clear your browser's cache and reload the page."
-	},
-	"profile_gravatar_help":{
-		"message":"To use an avatar, create an account on <a href=\"http:\/\/en.gravatar.com\" target=\"_blank\">http:\/\/en.gravatar.com<\/a>"
-	}
+  "module_name":{
+    "message":"users"
+  },
+  "module_keywords":{
+    "message":"groups,security,password,login,account,authentication"
+  },
+  "confirm_revoke_token":{
+    "message":"confirm token revocation: {token} ?"
+  },
+  "group":{
+    "message":"group"
+  },
+  "group_list":{
+    "message":"groups"
+  },
+  "profile":{
+    "message":"user profile"
+  },
+  "token":{
+    "message":"token"
+  },
+  "creation_date":{
+    "message":"creation date"
+  },
+  "validity_date":{
+    "message":"validity date"
+  },
+  "revoke_token":{
+    "message":"revoke"
+  },
+  "current_password":{
+    "message":"current password"
+  },
+  "new_password":{
+    "message":"new password"
+  },
+  "permission_rule":{
+    "message":"permission rule"
+  },
+  "permission_rules_sub_title":{
+    "message":"permission rules"
+  },
+  "permission_roles":{
+    "message":"roles"
+  },
+  "permission_privileges":{
+    "message":"privileges"
+  },
+  "permission_role":{
+    "message":"role"
+  },
+  "permission_resource":{
+    "message":"resource"
+  },
+  "permission_resources":{
+    "message":"resources"
+  },
+  "permission_privilege":{
+    "message":"privilege"
+  },
+  "new_permission_rules":{
+    "message":"new permission rules"
+  },
+  "remove_permission_rule":{
+    "message":"remove"
+  },
+  "remove_all_permission_rules":{
+    "message":"remove all rules"
+  },
+  "customise":{
+    "message":"customize"
+  },
+  "add":{
+    "message":"add"
+  },
+  "login":{
+    "message":"Login block"
+  },
+  "function_error_401":{
+    "message":"Unauthorized"
+  },
+  "group_picker_title":{
+    "message":">select groups"
+  },
+  "user_list":{
+    "message":"users"
+  },
+  "user_create":{
+    "message":"add user"
+  },
+  "group_create":{
+    "message":"add user group"
+  },
+  "users_in_group":{
+    "message":"group users"
+  },
+  "profile_lcid":{
+    "message":"language"
+  },
+  "profile_timezone":{
+    "message":"time zone"
+  },
+  "profile_pagingsize":{
+    "message":"results page size"
+  },
+  "profile_documentlistviewmode":{
+    "message":"lists display mode"
+  },
+  "profile_list":{
+    "message":"list"
+  },
+  "profile_grid":{
+    "message":"grid"
+  },
+  "profile_editoractionaftersave":{
+    "message":"after save"
+  },
+  "profile_backtolist":{
+    "message":"go back to list"
+  },
+  "profile_stayonform":{
+    "message":"stay on the form"
+  },
+  "profile_internationalization":{
+    "message":"internationalization"
+  },
+  "profile_lists":{
+    "message":"list display"
+  },
+  "profile_editors":{
+    "message":"editors"
+  },
+  "profile_personnal_info":{
+    "message":"personnal information"
+  },
+  "profile_warning":{
+    "message":"caution!"
+  },
+  "profile_change_language_warning":{
+    "message":"after changing the language, you will need to clear your browser's cache and reload the page."
+  },
+  "profile_gravatar_help":{
+    "message":"To use an avatar, create an account on <a href=\"http:\/\/en.gravatar.com\" target=\"_blank\">http:\/\/en.gravatar.com<\/a>"
+  }
 }

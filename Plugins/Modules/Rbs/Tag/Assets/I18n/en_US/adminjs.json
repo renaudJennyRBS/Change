@@ -1,11 +1,11 @@
 {
-	"no_available_tag":{
-		"message":"No tag available"
-	},
-	"available_tag":{
-		"message":"One tag available:"
-	},
-	"available_tags":{
-		"message":"{} tags available:"
-	}
+  "no_available_tag":{
+    "message":"No tag available"
+  },
+  "available_tag":{
+    "message":"One tag available:"
+  },
+  "available_tags":{
+    "message":"{} tags available:"
+  }
 }

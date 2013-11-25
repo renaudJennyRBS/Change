@@ -1,224 +1,284 @@
 {
-	"submit":{
-		"message":"submit"
-	},
-	"cancel":{
-		"message":"cancel"
-	},
-	"confirm":{
-		"message":"confirm"
-	},
-	"home":{
-		"message":"home"
-	},
-	"loading":{
-		"message":"loading..."
-	},
-	"loading_document":{
-		"message":"loading document..."
-	},
-	"document_is_already_being_edited":{
-		"message":"this document is already being edited."
-	},
-	"new_element":{
-		"message":"new item"
-	},
-	"not_defined":{
-		"message":"undefined"
-	},
-	"loading_list":{
-		"message":"loading list..."
-	},
-	"loading_list_error":{
-		"message":"there was an error loading the list."
-	},
-	"loading_preview":{
-		"message":"loading document preview..."
-	},
-	"time_zone_selector_title":{
-		"message":"timezone selection"
-	},
-	"last_modification_date":{
-		"message":"date modified"
-	},
-	"modification_date":{
-		"message":"date modified"
-	},
-	"activated":{
-		"message":"activated"
-	},
-	"status":{
-		"message":"state"
-	},
-	"status_minified":{
-		"message":"st."
-	},
-	"order":{
-		"message":"order"
-	},
-	"preview":{
-		"message":"preview"
-	},
-	"workflow":{
-		"message":"validation"
-	},
-	"edit":{
-		"message":"edit"
-	},
-	"delete":{
-		"message":"delete"
-	},
-	"search":{
-		"message":"search"
-	},
-	"action_validate":{
-		"message":"validate"
-	},
-	"action_validate_help":{
-		"message":"validate selected documents"
-	},
-	"action_unfreeze":{
-		"message":"freeze"
-	},
-	"action_unfreeze_help":{
-		"message":"freeze selected documents"
-	},
-	"action_freeze":{
-		"message":"unfreeze"
-	},
-	"action_freeze_help":{
-		"message":"unfreeze selected documents"
-	},
-	"action_publish":{
-		"message":"publish"
-	},
-	"action_publish_help":{
-		"message":"publish selected documents"
-	},
-	"action_contentvalidation":{
-		"message":"validate content"
-	},
-	"action_contentvalidation_help":{
-		"message":"validate the content of the selected documents"
-	},
-	"action_delete":{
-		"message":"delete"
-	},
-	"action_delete_help":{
-		"message":"delete selected documents"
-	},
-	"action_reorder":{
-		"message":"reorder"
-	},
-	"action_reorder_help":{
-		"message":"reorder documents in the list above"
-	},
-	"action_apply_correction":{
-		"message":"apply correction"
-	},
-	"action_apply_correction_help":{
-		"message":"apply correction on selected documents"
-	},
-	"action_add_to_clipboard":{
-		"message":"add to Clipboard"
-	},
-	"action_add_to_clipboard_help":{
-		"message":"add selected documents to Clipboard"
-	},
-	"action_activate":{
-		"message":"activate"
-	},
-	"action_deactivate":{
-		"message":"deactivate"
-	},
-	"save_error":{
-		"message":"Save has failed."
-	},
-	"tip_dismiss_thank_you":{
-		"message":"Thanks, do not display this message anymore!"
-	},
-	"correction_confirm_delete":{
-		"message":"Do you really want to delete the Correction?"
-	},
-	"yes":{
-		"message":"yes"
-	},
-	"no":{
-		"message":"no"
-	},
-	"confirmation":{
-		"message":"confirmation"
-	},
-	"help":{
-		"message":"help"
-	},
-	"advanced_mode":{
-		"message":"advanced mode"
-	},
-	"move_up":{
-		"message":"move up"
-	},
-	"move_down":{
-		"message":"move down"
-	},
-	"translations":{
-		"message":"translations"
-	},
-	"other_actions":{
-		"message":"other actions"
-	},
-	"ref_lang_abbr":{
-		"message":"ref."
-	},
-	"reference_language":{
-		"message":"reference language"
-	},
-	"translate_in":{
-		"message":"translate in"
-	},
-	"select":{
-		"message":"select"
-	},
-	"select_add":{
-		"message":"add to the selection"
-	},
-	"picker_create_title":{
-		"message":"{property}: create a new item"
-	},
-	"picker_edit_title":{
-		"message":"{property}: edit {item}"
-	},
-	"picker_no_title":{
-		"message":"no title"
-	},
-	"picker_replace_all_by_item":{
-		"message":"replace all by the selected item"
-	},
-	"picker_template_not_loaded":{
-		"message":"Could not load picker template at {url}"
-	},
-	"status_draft":{
-		"message":"draft"
-	},
-	"status_frozen":{
-		"message":"frozen"
-	},
-	"status_validcontent":{
-		"message":"validated content"
-	},
-	"status_valid":{
-		"message":"validated"
-	},
-	"status_validation":{
-		"message":"to validate"
-	},
-	"status_unpublishable":{
-		"message":"unpublishable"
-	},
-	"status_publishable":{
-		"message":"publishable"
-	},
-	"status_filed":{
-		"message":"filed"
-	}
+  "submit":{
+    "message":"submit"
+  },
+  "cancel":{
+    "message":"cancel"
+  },
+  "confirm":{
+    "message":"confirm"
+  },
+  "home":{
+    "message":"home"
+  },
+  "loading":{
+    "message":"loading..."
+  },
+  "loading_document":{
+    "message":"loading document..."
+  },
+  "saving_document":{
+    "message":"document is being saved..."
+  },
+  "document_is_already_being_edited":{
+    "message":"this document is already being edited."
+  },
+  "new_element":{
+    "message":"new item"
+  },
+  "not_defined":{
+    "message":"undefined"
+  },
+  "loading_list":{
+    "message":"loading list..."
+  },
+  "loading_list_error":{
+    "message":"there was an error loading the list."
+  },
+  "loading_preview":{
+    "message":"loading document preview..."
+  },
+  "time_zone_selector_title":{
+    "message":"timezone selection"
+  },
+  "last_modification_date":{
+    "message":"date modified"
+  },
+  "modification_date":{
+    "message":"date modified"
+  },
+  "activated":{
+    "message":"activated"
+  },
+  "status":{
+    "message":"state"
+  },
+  "status_minified":{
+    "message":"st."
+  },
+  "order":{
+    "message":"order"
+  },
+  "preview":{
+    "message":"preview"
+  },
+  "workflow":{
+    "message":"validation"
+  },
+  "edit":{
+    "message":"edit"
+  },
+  "delete":{
+    "message":"delete"
+  },
+  "search":{
+    "message":"search"
+  },
+  "use_this_value_in":{
+    "message":"Copy this value in $LANG$"
+  },
+  "clipboard":{
+    "message":"clipboard"
+  },
+  "action_validate":{
+    "message":"validate"
+  },
+  "action_validate_help":{
+    "message":"validate selected documents"
+  },
+  "action_unfreeze":{
+    "message":"freeze"
+  },
+  "action_unfreeze_help":{
+    "message":"freeze selected documents"
+  },
+  "action_freeze":{
+    "message":"unfreeze"
+  },
+  "action_freeze_help":{
+    "message":"unfreeze selected documents"
+  },
+  "action_publish":{
+    "message":"publish"
+  },
+  "action_publish_help":{
+    "message":"publish selected documents"
+  },
+  "action_contentvalidation":{
+    "message":"validate content"
+  },
+  "action_contentvalidation_help":{
+    "message":"validate the content of the selected documents"
+  },
+  "action_delete":{
+    "message":"delete"
+  },
+  "action_delete_help":{
+    "message":"delete selected documents"
+  },
+  "action_reorder":{
+    "message":"reorder"
+  },
+  "action_reorder_help":{
+    "message":"reorder documents in the list above"
+  },
+  "action_apply_correction":{
+    "message":"apply correction"
+  },
+  "action_apply_correction_help":{
+    "message":"apply correction on selected documents"
+  },
+  "action_add_to_clipboard":{
+    "message":"add to Clipboard"
+  },
+  "action_add_to_clipboard_help":{
+    "message":"add selected documents to Clipboard"
+  },
+  "action_activate":{
+    "message":"activate"
+  },
+  "action_activate_help":{
+    "message":"activate selected documents"
+  },
+  "action_deactivate":{
+    "message":"deactivate"
+  },
+  "action_deactivate_help":{
+    "message":"deactivate selected documents"
+  },
+  "save_error":{
+    "message":"Save has failed."
+  },
+  "tip_dismiss_thank_you":{
+    "message":"Thanks, do not display this message anymore!"
+  },
+  "correction_confirm_delete":{
+    "message":"Do you really want to delete the Correction?"
+  },
+  "yes":{
+    "message":"yes"
+  },
+  "no":{
+    "message":"no"
+  },
+  "confirmation":{
+    "message":"confirm"
+  },
+  "help":{
+    "message":"help"
+  },
+  "advanced_mode":{
+    "message":"advanced mode"
+  },
+  "move_up":{
+    "message":"move up"
+  },
+  "move_down":{
+    "message":"move down"
+  },
+  "translations":{
+    "message":"translations"
+  },
+  "other_actions":{
+    "message":"other actions"
+  },
+  "ref_lang_abbr":{
+    "message":"ref."
+  },
+  "reference_language":{
+    "message":"reference language"
+  },
+  "translate_in":{
+    "message":"translate in"
+  },
+  "select":{
+    "message":"select"
+  },
+  "select_add":{
+    "message":"add to the selection"
+  },
+  "richtext_enter_external_link":{
+    "message":"Please enter the URL of the page you want to link to"
+  },
+  "richtext_enter_external_link_title":{
+    "message":"Please enter the title of the link (optional)"
+  },
+  "picker_create_title":{
+    "message":"{property}: create a new item"
+  },
+  "picker_edit_title":{
+    "message":"{property}: edit {item}"
+  },
+  "picker_no_title":{
+    "message":"no title"
+  },
+  "picker_replace_all_by_item":{
+    "message":"replace all by the selected item"
+  },
+  "picker_template_not_loaded":{
+    "message":"Could not load picker template at {url}"
+  },
+  "do_you_want_to_continue":{
+    "message":"Do you want to continue?"
+  },
+  "confirm_restore":{
+    "message":"restore ?"
+  },
+  "confirm_restore_message":{
+    "message":"You are about to restore the latest saved."
+  },
+  "restore_data_button":{
+    "message":"restore data"
+  },
+  "confirm_update_correction":{
+    "message":"Update correction?"
+  },
+  "confirm_update_correction_message":{
+    "message":"A <strong>correction<\/strong> is underway for this document. Saving will update the correction and the document will be only modified once the correction has been applied."
+  },
+  "status_draft":{
+    "message":"draft"
+  },
+  "status_frozen":{
+    "message":"frozen"
+  },
+  "status_validcontent":{
+    "message":"validated content"
+  },
+  "status_valid":{
+    "message":"validated"
+  },
+  "status_validation":{
+    "message":"to validate"
+  },
+  "status_unpublishable":{
+    "message":"unpublishable"
+  },
+  "status_publishable":{
+    "message":"publishable"
+  },
+  "status_filed":{
+    "message":"filed"
+  },
+  "timeinterval_years":{
+    "message":"years"
+  },
+  "timeinterval_months":{
+    "message":"months"
+  },
+  "timeinterval_weeks":{
+    "message":"weeks"
+  },
+  "timeinterval_days":{
+    "message":"days"
+  },
+  "timeinterval_hours":{
+    "message":"hours"
+  },
+  "timeinterval_minutes":{
+    "message":"minutes"
+  },
+  "timeinterval_seconds":{
+    "message":"seconds"
+  }
 }
