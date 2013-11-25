@@ -185,6 +185,9 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 			if ($cacheAdapter->hasItem($key))
 			{
 				$result = $cacheAdapter->getItem($key);
+				if ($result instanceof BlockResult){
+					$result->setId($blockLayout->getId());
+				}
 			}
 			else
 			{

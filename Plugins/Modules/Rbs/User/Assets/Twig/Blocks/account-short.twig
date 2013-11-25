@@ -1,0 +1,16 @@
+<div class="dropdown">
+	<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+		<i class="glyphicon glyphicon-user"></i> {{ i18n('m.rbs.user.front.my_account', ['ucf']) }} <b class="caret"></b>
+	</a>
+	{% if parameters.accessorId != null %}
+	<ul class="dropdown-menu">
+		<li><a href="#">{{ parameters.accessorName }}</a></li>
+		<li class="divider"></li>
+		<li><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></li>
+	</ul>
+	{% else %}
+	<ul class="dropdown-menu">
+		<li><a href="{{ functionURL('Error_401') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
+	</ul>
+	{% endif %}
+</div>

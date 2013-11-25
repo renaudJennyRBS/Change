@@ -104,6 +104,9 @@
 	"login_realm":{
 		"message":"realm"
 	},
+	"account_short":{
+		"message":"Compte utilisateur réduit"
+	},
 	"function_error_401":{
 		"message":"autorisation nécessaire"
 	},

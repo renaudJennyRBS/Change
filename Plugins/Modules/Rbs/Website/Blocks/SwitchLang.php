@@ -21,7 +21,6 @@ class SwitchLang extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->setNoCache();
 
 		// Get current document Id
 		$document = $event->getParam('document');

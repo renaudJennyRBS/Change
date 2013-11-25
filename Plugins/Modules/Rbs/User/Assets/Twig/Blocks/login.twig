@@ -1,6 +1,6 @@
 {% if parameters.accessorId != null %}
 	<p>{{ i18n('m.rbs.user.front.you_are_authentified_as', ['ucf'], { 'name': parameters.accessorName }) }}</p>
-	<p><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18nAttr('m.rbs.user.front.log_out', ['ucf']) }}</a></p>
+	<p><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></p>
 {% else %}
 	<form method="post" id="Login" action="Action/Rbs/User/Login">
 		<input type="hidden" name="realm" value="{{ parameters.realm }}">

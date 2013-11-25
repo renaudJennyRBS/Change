@@ -21,10 +21,8 @@
 	"headerTop2" : {
 		"id" : "headerTop2",
 		"type" : "block",
-		"name" : "Rbs_Website_XhtmlTemplate",
+		"name" : "Rbs_User_AccountShort",
 		"parameters" : {
-			"moduleName" : "Rbs_Demo",
-			"templateName" : "xhtml-user.twig"
 		}
 	},
 	"headerTop3" : {

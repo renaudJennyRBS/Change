@@ -18,12 +18,15 @@
 		"message":"abc123"
 	},
 	"remember_me":{
-		"message":"rester connecté"
+		"message":"cochez pour rester connecté"
 	},
 	"log_in":{
 		"message":"connexion"
 	},
 	"log_out":{
 		"message":"déconnexion"
+	},
+	"my_account":{
+		"message":"mon compte"
 	}
 }
