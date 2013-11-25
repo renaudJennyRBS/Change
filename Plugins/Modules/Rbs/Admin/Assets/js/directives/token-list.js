@@ -1,5 +1,4 @@
 (function ($) {
-
 	"use strict";
 
 	var	app = angular.module('RbsChange');
@@ -18,16 +17,7 @@
 		return {
 			restrict : 'E',
 			replace  : true,
-			template :
-				'<ul class="token-list list-unstyled">' +
-					'<li draggable="true" ng-repeat="item in items" data-id="{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">' +
-						'<span class="pull-right actions">' +
-							'<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering" title="Glisser pour réorganiser"></i>' +
-							'<a ng-hide="readonly" href="javascript:;" ng-click="remove($index)"><i class="icon-remove icon-large"></i></a>' +
-						'</span>' +
-						'<span ng-include="getItemTemplateName(item)"></span>' +
-					'</li>' +
-				'</ul>',
+			templateUrl : 'Rbs/Admin/js/directives/token-list.twig',
 
 			// Create isolated scope.
 			scope : {
@@ -113,9 +103,7 @@
 
 
 					// Enable drag and drop to reorder the items.
-
 					if ( ! scope.disableReordering ) {
-
 						$(elm).on({
 							'mousedown': function() {
 								isHandle = true;
@@ -185,9 +173,7 @@
 								placeholder.after(dragging);
 							}
 						}, 'li[data-id], li.sortable-placeholder');
-
 					}
-
 
 					if ( ! scope.readonly ) {
 						$el.on('keydown', 'li a.delete', function (event) {
@@ -222,14 +208,8 @@
 							}
 						});
 					}
-
 				}; // End of link function
-
 			} // End of compile function
-
 		}; // End of Directive object
-
 	}]);
-
-
 })(window.jQuery);

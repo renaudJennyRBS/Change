@@ -985,5 +985,8 @@
 	},
 	"main_menu": {
 		"message":"menu principal"
+	},
+	"drag_to_reorder": {
+		"message":"glisser pour réordonner"
 	}
 }

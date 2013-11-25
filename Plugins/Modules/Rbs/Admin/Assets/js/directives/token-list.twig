@@ -1,0 +1,9 @@
+<ul class="token-list list-unstyled">
+	<li draggable="true" ng-repeat="item in items" data-id="{{item.id}}" ng-click="itemClicked($index, $event)" ng-class="{selected: item.$selected}">
+		<span class="pull-right actions">
+			<i class="pull-right icon-reorder icon-large" ng-hide="disableReordering" title="{{ i18n('m.rbs.admin.admin.drag_to_reorder', ['ucf']) }}"></i>
+			<a ng-hide="readonly" href="javascript:;" ng-click="remove($index)"><i class="icon-remove icon-large"></i></a>
+		</span>
+		<span ng-include="getItemTemplateName(item)"></span>
+	</li>
+</ul>
