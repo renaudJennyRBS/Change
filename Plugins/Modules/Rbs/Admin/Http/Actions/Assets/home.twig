@@ -23,6 +23,8 @@
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet" />
 
+	<link href="Rbs/Admin/lib/MultiLevelPushMenu/mlpushmenu.css" rel="stylesheet" />
+
 	<style type="text/css">
 		#chg_loading_mask {
 			position: absolute;
@@ -75,39 +77,55 @@
 		<i class="icon"></i>{{ i18n('m.rbs.admin.admin.fullscreen_toolbar') }}
 	</div>
 
-	{% include 'header.twig' %}
-	{% include 'menu.twig' %}
+	<div class="mp-container">
+		<!-- Push Wrapper -->
+		<div class="mp-pusher" id="mp-pusher">
 
-	<div id="main-content">
+			{% include 'menu.twig' %}
 
-		<div class="row clearfix" id="mainToolbar">
-			<div class="col-md-12">
-				<breadcrumb></breadcrumb>
-			</div>
-		</div>
+			<div class="scroller"><!-- this is for emulating position fixed of the nav -->
+				<div class="scroller-inner">
 
-		<div class="row">
-			<div class="col-md-3" id="leftContainer" ng-swipe-right="menu.open()">
-				<div id="rbs-left-menu"></div>
-				<div id="dockables"></div>
-			</div>
-			<div class="col-md-9" id="mainContainer">
-				<notification-center></notification-center>
-				<div id="helpListTop"></div>
-				<div id="workspace" class="ng-view"></div>
-				<div id="helpListBottom"></div>
-			</div>
-		</div>
-	</div>
+					{% include 'header.twig' %}
 
-	<footer>
-		<div class="row">
-			<span class="col-md-3"></span>
-			<span class="col-md-9">
-				{{ i18n('m.rbs.admin.admin.copyright') | raw }}
-			</span>
-		</div>
-	</footer>
+
+					<div id="main-content" class="content clearfix">
+
+						<div class="row clearfix" id="mainToolbar">
+							<div class="col-md-12">
+								<breadcrumb></breadcrumb>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-3" id="leftContainer" ng-swipe-right="menu.open()">
+								<div id="rbs-left-menu"></div>
+								<div id="dockables"></div>
+							</div>
+							<div class="col-md-9" id="mainContainer">
+								<notification-center></notification-center>
+								<div id="helpListTop"></div>
+								<div id="workspace" class="ng-view"></div>
+								<div id="helpListBottom"></div>
+							</div>
+						</div>
+					</div>
+
+					<footer>
+						<div class="row">
+							<span class="col-md-3"></span>
+							<span class="col-md-9">
+								{{ i18n('m.rbs.admin.admin.copyright') | raw }}
+							</span>
+						</div>
+					</footer>
+
+
+				</div><!-- /scroller-inner -->
+			</div><!-- /scroller -->
+
+		</div><!-- /pusher -->
+	</div><!-- /container -->
 
 	<script type="text/javascript" src="Rbs/Admin/lib/script.min.js"></script>
 
@@ -134,6 +152,10 @@
 	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment-timezone.min.js"></script>
 
 	<script type="text/javascript" src="Rbs/Admin/i18n.js?LCID={{ LCID }}"></script>
+
+	<script src="Rbs/Admin/lib/MultiLevelPushMenu/classie.js"></script>
+	<script src="Rbs/Admin/lib/MultiLevelPushMenu/mlpushmenu.js"></script>
+	<script src="Rbs/Admin/lib/MultiLevelPushMenu/modernizr.custom.js"></script>
 
 	<!-- modules -->
 	{% for src in scripts %}
