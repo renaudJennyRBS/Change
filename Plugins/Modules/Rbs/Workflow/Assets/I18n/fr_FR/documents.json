@@ -1,23 +1,20 @@
 {
-	"status":{
+	"task_status":{
 		"message":"état"
 	},
-	"label":{
-		"message":"libellé"
-	},
-	"document":{
+	"task_document":{
 		"message":"document"
 	},
-	"taskcode":{
+	"task_taskcode":{
 		"message":"code"
 	},
 	"task":{
 		"message":"tâche"
 	},
-	"workflowinstance":{
+	"task_workflowinstance":{
 		"message":"instance de workflow"
 	},
-	"workflow":{
+	"task_workflow":{
 		"message":"workflow"
 	}
 }
