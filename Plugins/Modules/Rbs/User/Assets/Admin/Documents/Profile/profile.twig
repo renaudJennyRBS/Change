@@ -54,7 +54,7 @@
 		</rbs-field>
 		<rbs-field label="{{ i18nAttr('m.rbs.user.admin.profile_notification_time_interval', ['ucf']) }}">
 			<rbs-time-interval-input id="notificationmailinterval" label="{{ i18nAttr("m.rbs.user.admin.profile_notification_time_interval", ["ucf"]) }}"
-				ng-model="user.profile.notificationMailInterval" show="days,hours" disabled="notificationMailMode != 'timeInterval'">
+				ng-model="user.profile.notificationMailInterval" show="days,hours" disabled="(= notificationMailMode != 'timeInterval' =)">
 			</rbs-time-interval-input>
 		</rbs-field>
 		<rbs-field label="{{ i18nAttr('m.rbs.user.admin.profile_notification_time_interval_at', ['ucf']) }}">

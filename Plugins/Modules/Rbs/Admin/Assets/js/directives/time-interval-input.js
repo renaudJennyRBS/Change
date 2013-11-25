@@ -4,10 +4,6 @@
 
 	var	app = angular.module('RbsChange');
 
-	/**
-	 * TODO: this directive is only use for notification time interval (on user admin profile).
-	 * refactor this directive to use it with anything need time-interval-input
-	 */
 	app.directive('rbsTimeIntervalInput', ['RbsChange.i18n', function (i18n) {
 
 		return {
@@ -18,12 +14,14 @@
 			templateUrl: 'Rbs/Admin/js/directives/time-interval-input.twig',
 
 			link : function(scope, elm, attrs, ngModel) {
-				if (angular.isDefined(attrs.disabled))
-				{
-					scope.$watch(attrs.disabled, function (value){
-						scope.disable = value;
-					}, true);
-				}
+
+				attrs.$observe('disabled', function(value){
+					scope.disabled = angular.isDefined(value) && value != "false";
+				});
+
+				attrs.$observe('required', function(value){
+					scope.required = angular.isDefined(value) && value != "false";
+				});
 
 				var durationTranslations = {
 					years: i18n.trans('m.rbs.admin.adminjs.timeinterval_years'),

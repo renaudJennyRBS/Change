@@ -1263,9 +1263,14 @@
 					if (angular.isNumber(viewValue)) {
 						return viewValue;
 					}
-					else if (viewValue == '' || FLOAT_REGEXP.test(viewValue)) {
+					else if (FLOAT_REGEXP.test(viewValue)) {
 						ctrl.$setValidity('float', true);
 						return parseFloat(viewValue.replace(',', '.'));
+					}
+					else if (viewValue == '')
+					{
+						ctrl.$setValidity('float', true);
+						return undefined;
 					}
 					else {
 						ctrl.$setValidity('float', false);

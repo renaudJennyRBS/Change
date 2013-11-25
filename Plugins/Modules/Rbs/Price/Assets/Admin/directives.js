@@ -15,16 +15,9 @@
 		return {
 			restrict : 'E',
 			templateUrl : 'Rbs/Price/price-input.twig',
-			require: 'ng-model',
+			require: 'ngModel',
 			replace: 'true',
-			scope:    {
-				value: '=ngModel',
-				currencyCode: '@currencyCode',
-				priceWithTax: '@priceWithTax',
-				disabled: '=ngDisabled'
-			},
-
-			// Create isolated scope
+			scope: true,
 
 			link : function (scope, elm, attrs, ngModel) {
 
@@ -37,31 +30,64 @@
 					elm.removeAttr('input-id');
 				}
 
+				attrs.$observe('disabled', function(value){
+					scope.disabled = angular.isDefined(value) && value != "false";
+				});
+
+				attrs.$observe('required', function(value){
+					scope.required = angular.isDefined(value) && value != "false";
+				});
+
+				if (angular.isDefined(attrs.currencyCode))
+				{
+					scope.$watch(attrs.currencyCode, function (value){
+						scope.currencyCode = value;
+					}, true);
+				}
+
+				if (angular.isDefined(attrs.priceWithTax))
+				{
+					scope.$watch(attrs.priceWithTax, function (value){
+						scope.priceWithTax = value;
+					}, true);
+				}
+
+				ngModel.$render = function () {
+					scope.value = ngModel.$viewValue;
+				};
+
+				scope.$watch('value', function (value){
+					ngModel.$setViewValue(value);
+				});
+
 				scope.round10CentsDown = function(){
 					var num = Math.floor(scope.value * 10) / 10;
 					num.toFixed(2);
-					scope.value =  num;
-					ngModel.$viewValue = num.toLocaleString("fr-FR");
+					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$render();
 				};
 
 				scope.roundIntDown = function(){
 					var num = Math.floor(scope.value);
 					num.toFixed(2);
-					scope.value = num.toLocaleString() ;
+					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$render();
 				};
 
 				scope.round10CentsUp = function(){
 					var num = Math.ceil(scope.value * 10) / 10;
 					num.toFixed(2);
-					scope.value = num;
+					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$render();
 				};
 
 				scope.roundIntUp = function(){
 					var num = Math.ceil(scope.value);
 					num.toFixed(2);
-					scope.value = num;
+					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$render();
 				};
 			}
 		}
-	};
+	}
 })(window.jQuery);
