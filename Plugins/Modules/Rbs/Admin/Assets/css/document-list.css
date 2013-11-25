@@ -67,7 +67,8 @@ rbs-document-list tr .quick-actions-buttons button i {
 
 rbs-document-list tr .quick-actions {
 	top: -9px;
-	left: 26px;
+	left: auto;
+	right: -158px;
 	width: 150px;
 	background: #333333;
 }
