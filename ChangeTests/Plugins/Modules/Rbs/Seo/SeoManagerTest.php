@@ -161,7 +161,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$event->setParam('metas', null);
 		//if a field is empty on Document SEO, it's the default meta from model configuration who will be taken
-		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('a description from model configuration: {document.description}');
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('a description from model configuration: the description!');
 		try
 		{
 			$tm->begin();
@@ -177,13 +177,13 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
 		$this->assertEquals('Product of the year: product', $metas['title']);
-		$this->assertEquals('a description from model configuration: the product description', $metas['description']);
+		$this->assertEquals('a description from model configuration: the description!', $metas['description']);
 
 		//add some things on product
 		$document->setBrand($this->getNewBrand());
 
 		//test with all meta set on document SEO
-		$documentSeo->getCurrentLocalization()->setMetaDescription('a description: {document.description}');
+		$documentSeo->getCurrentLocalization()->setMetaDescription('a description: document description');
 		$documentSeo->getCurrentLocalization()->setMetaKeywords('keywords: {document.title},{document.brand},{page.title}');
 		try
 		{
@@ -200,7 +200,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotNull($metas);
 		$this->assertEquals('Product of the year: product', $metas['title']);
 		$this->assertArrayHasKey('description', $metas);
-		$this->assertEquals('a description: the product description', $metas['description']);
+		$this->assertEquals('a description: document description', $metas['description']);
 		$this->assertArrayHasKey('keywords', $metas);
 		$this->assertEquals('keywords: product,brand,Product detail', $metas['keywords']);
 
@@ -216,7 +216,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			throw $tm->rollBack($e);
 		}
 		$modelConfiguration->getCurrentLocalization()->setDefaultMetaTitle('product: {document.title} of {document.brand}');
-		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('description: {document.description}');
+		$modelConfiguration->getCurrentLocalization()->setDefaultMetaDescription('description: the description');
 		$modelConfiguration->getCurrentLocalization()->setDefaultMetaKeywords('{document.title},{document.brand},{page.title}');
 		try
 		{
@@ -233,7 +233,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotNull($metas);
 		$this->assertEquals('product: product of brand', $metas['title']);
 		$this->assertArrayHasKey('description', $metas);
-		$this->assertEquals('description: the product description', $metas['description']);
+		$this->assertEquals('description: the description', $metas['description']);
 		$this->assertArrayHasKey('keywords', $metas);
 		$this->assertEquals('product,brand,Product detail', $metas['keywords']);
 	}

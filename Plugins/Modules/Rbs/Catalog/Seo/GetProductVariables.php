@@ -21,8 +21,7 @@ class GetProductVariables
 				$i18nManager = $applicationServices->getI18nManager();
 				$event->setParam('variables', array_merge($variables, [
 					'document.title' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_title', ['ucf']),
-					'document.brand' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_brand', ['ucf']),
-					'document.description' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_description', ['ucf'])
+					'document.brand' => $i18nManager->trans('m.rbs.catalog.admin.product_seo_brand', ['ucf'])
 				]));
 			}
 		}
