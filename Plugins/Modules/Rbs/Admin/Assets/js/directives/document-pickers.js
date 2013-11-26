@@ -280,6 +280,10 @@
 				{
 					documentList = dlScope;
 				});
+
+				scope.$on('Change:DocumentList:' + $dl.data('dlid') + ':CollectionChanged', function (event, collection){
+					scope.disableSelectionButtons = documentList.selectedDocuments.length < 1;
+				})
 			}).error(function (data) {
 				$('#document-picker-backdrop').show();
 				$pickerContents.html('<div class="alert alert-danger">' + i18n.trans('m.rbs.admin.adminjs.picker_template_not_loaded | ucf', {'url' : url}) + '</div>');
@@ -341,7 +345,7 @@
 			scope.selectDocument = function (doc) {
 				var value;
 				if (angular.isArray(ngModel.$viewValue)) {
-					if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+					if (!ArrayUtils.documentInArray(doc, ngModel.$viewValue)) {
 						value = ngModel.$viewValue;
 						value.push(doc);
 					}
@@ -356,7 +360,7 @@
 				if (angular.isArray(ngModel.$viewValue)) {
 					value = ngModel.$viewValue;
 					angular.forEach(docs, function (doc) {
-						if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+						if (!ArrayUtils.documentInArray(doc, ngModel.$viewValue)) {
 							value.push(doc);
 						}
 					});
@@ -371,7 +375,7 @@
 				if (angular.isArray(ngModel.$viewValue)) {
 					value = ngModel.$viewValue;
 					angular.forEach(docs, function (doc) {
-						if (ArrayUtils.inArray(doc, ngModel.$viewValue) === -1) {
+						if (!ArrayUtils.documentInArray(doc, ngModel.$viewValue)) {
 							value.unshift(doc);
 						}
 					});

@@ -63,6 +63,16 @@
 				return jQuery.inArray(value, arr);
 			},
 
+			documentInArray: function (document, array) {
+				var isDocumentInArray = false;
+				angular.forEach(array, function (inArrayDoc) {
+					if (inArrayDoc.id == document.id) {
+						isDocumentInArray = true;
+					}
+				});
+				return isDocumentInArray;
+			},
+
 			append: function (dst, src) {
 				angular.forEach(src, function (item) {
 					dst.push(item);
