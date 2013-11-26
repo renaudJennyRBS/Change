@@ -24,7 +24,6 @@ class SwitchLang extends \Change\Presentation\Blocks\Standard\Block
 
 		// Get current document Id
 		$document = $event->getParam('document');
-
 		if ($document instanceof \Change\Documents\AbstractDocument)
 		{
 			$parameters->setParameterValue('documentId', $document->getId());
@@ -43,6 +42,14 @@ class SwitchLang extends \Change\Presentation\Blocks\Standard\Block
 		return $parameters;
 	}
 
+	/**
+	 * @api
+	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
+	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
+	 * @param Event $event
+	 * @param \ArrayObject $attributes
+	 * @return string|null
+	 */
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
@@ -54,11 +61,11 @@ class SwitchLang extends \Change\Presentation\Blocks\Standard\Block
 
 		/* @var $page \Rbs\Website\Documents\Page */
 		$page = $dm->getDocumentInstance($parameters->getPageId());
-		$pageLCID = $page->getLCIDArray();
+		$pageLCID = $page ? $page->getLCIDArray() : array();
 
 		/* @var $doc \Change\Documents\AbstractDocument */
 		$doc = $dm->getDocumentInstance($parameters->getDocumentId());
-		$docLCID = $doc->getLCIDArray();
+		$docLCID = $doc ? $doc->getLCIDArray() : $pageLCID;
 
 		$LCID = array_intersect($websiteLCID, $pageLCID, $docLCID);
 
