@@ -230,7 +230,7 @@ class StoreIndexer extends FullTextIndexer
 	 * @param integer $storeId
 	 * @return \Rbs\Elasticsearch\Documents\StoreIndex|null
 	 */
-	protected function getIndexDefinitionByMapping($mappingName, $analysisLCID, $websiteId, $storeId)
+	protected function getIndexDefinitionByMapping($mappingName, $analysisLCID, $websiteId, $storeId = null)
 	{
 		/* @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
 		foreach ($this->getIndexesDefinition() as $storeIndex)
