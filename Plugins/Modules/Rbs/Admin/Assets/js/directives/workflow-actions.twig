@@ -282,7 +282,9 @@
 		</div>
 
 		<div class="progress" ng-if="hasProgressInfo()">
-			<div class="bar" style="width: (= data.progress =)%;"></div>
+			<div class="progress-bar" role="progressbar" aria-valuenow="(= data.progress =)" aria-valuemin="0" aria-valuemax="100"
+				ng-style="{width: data.progress + '%'}"></div>
+			<span class="sr-only">(= data.progress =)%</span>
 		</div>
 
 		<div class="alert alert-danger" ng-if="data.error">

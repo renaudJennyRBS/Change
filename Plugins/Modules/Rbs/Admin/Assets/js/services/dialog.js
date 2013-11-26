@@ -227,7 +227,7 @@
 						self.$embeddedEl.fadeOut('fast', function () {
 							// Remove any <rbs-document-list/> elements.
 							self.$embeddedEl.find('rbs-document-list').each(function () {
-								angular.element($(this)).scope().$destroy();
+								angular.element($(this)).isolateScope().$destroy();
 							});
 							self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule);
 							self.$embeddedEl = null;
@@ -323,7 +323,7 @@
 						$embeddedModalBackdrop.hide();
 						// Remove any <rbs-document-list/> elements.
 						self.$embeddedEl.find('rbs-document-list').each(function () {
-							angular.element($(this)).scope().$destroy();
+							angular.element($(this)).isolateScope().$destroy();
 						});
 						self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule);
 						self.$embeddedEl.hide();
