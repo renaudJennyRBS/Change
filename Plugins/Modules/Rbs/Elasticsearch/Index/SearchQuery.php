@@ -500,7 +500,7 @@ class SearchQuery
 			if (!$facet->getParameters()->get(FacetDefinitionInterface::PARAM_MULTIPLE_CHOICE))
 			{
 				$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue('');
-				$facetValue->setValueTitle($this->getI18nManager()->trans('m.rbs.elasticsearch.front.ignore_facet'));
+				$facetValue->setValueTitle($this->getI18nManager()->trans('m.rbs.elasticsearch.front.ignore_facet', ['ucf']));
 				if (!$facetValueFiltered)
 				{
 					$facetValue->setFiltered(true);
