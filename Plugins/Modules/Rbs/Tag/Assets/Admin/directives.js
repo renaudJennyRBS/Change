@@ -198,6 +198,7 @@
 	 * <rbs-tag-filter-panel/>
 	 */
 	app.directive('rbsTagFilterPanel', rbsTagFilterPanel);
+	app.directive('rbsAsideTagFilter', rbsTagFilterPanel);
 
 	function rbsTagFilterPanel () {
 
@@ -214,6 +215,7 @@
 		};
 
 	}
+
 
 	/**
 	 * <input class="rbs-auto-size-input" ... />

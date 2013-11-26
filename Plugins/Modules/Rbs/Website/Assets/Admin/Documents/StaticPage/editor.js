@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
 
 	"use strict";
 
@@ -12,13 +12,15 @@
 
 			link : function (scope, element, attrs, editorCtrl) {
 
-				scope.onReady = function () {
+				scope.onReady = function ()
+				{
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
 						scope.document.section = Breadcrumb.getCurrentNode();
 					}
 				};
 
-				scope.initSection = function (sectionName) {
+				scope.initSection = function (sectionName)
+				{
 					if (sectionName === 'content') {
 						if (scope.document.pageTemplate)
 						{
@@ -27,6 +29,24 @@
 								scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
 							});
 						}
+					}
+				};
+
+
+				scope.leaveSection = function (section)
+				{
+					if (section === 'content') {
+						$('#rbsWebsitePageDefaultAsides').show();
+						$('#rbsWebsitePageBlockPropertiesAside').hide();
+					}
+
+				};
+
+				scope.enterSection = function (section)
+				{
+					if (section === 'content') {
+						$('#rbsWebsitePageDefaultAsides').hide();
+						$('#rbsWebsitePageBlockPropertiesAside').show();
 					}
 				};
 
@@ -94,4 +114,4 @@
 
 	app.directive('rbsDocumentEditorRbsWebsiteStaticpageTranslate', changeEditorWebsitePageTranslate);
 
-})();
+})(window.jQuery);

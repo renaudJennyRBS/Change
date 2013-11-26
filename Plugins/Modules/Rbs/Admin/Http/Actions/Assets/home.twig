@@ -94,36 +94,46 @@
 						<div class="row clearfix" id="mainToolbar">
 							<div class="col-md-12">
 								<breadcrumb></breadcrumb>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-3" id="leftContainer" ng-swipe-right="menu.open()">
-								<div id="rbs-left-menu"></div>
-								<div id="dockables"></div>
-							</div>
-							<div class="col-md-9" id="mainContainer">
 								<notification-center></notification-center>
 								<div id="helpListTop"></div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
 								<div id="workspace" class="ng-view"></div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
 								<div id="helpListBottom"></div>
 							</div>
 						</div>
-					</div>
 
-					<footer>
-						<div class="row">
-							<span class="col-md-3"></span>
-							<span class="col-md-9">
+						<footer class="row">
+							<div class="col-md-12">
 								{{ i18n('m.rbs.admin.admin.copyright') | raw }}
-							</span>
-						</div>
-					</footer>
+							</div>
+						</footer>
+
+						<!--
+												<div class="row">
+													<div class="col-md-3" id="leftContainer">
+														<div id="rbs-left-menu"></div>
+														<div id="dockables"></div>
+													</div>
+													<div class="col-md-9" id="mainContainer">
+														<notification-center></notification-center>
+														<div id="helpListTop"></div>
+														<div id="workspace" class="ng-view"></div>
+														<div id="helpListBottom"></div>
+													</div>
+												</div>
+						-->
+					</div>
 
 
 				</div><!-- /scroller-inner -->
 			</div><!-- /scroller -->
-
 		</div><!-- /pusher -->
 	</div><!-- /container -->
 

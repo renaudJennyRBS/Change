@@ -19,18 +19,40 @@
 	/**
 	 * @name Rbs_Website_MainMenuController
 	 */
-	function ChangeWebsiteMainMenuController ($scope, $location, REST) {
-
+	function ChangeWebsiteMainMenuController ($scope, $location, REST)
+	{
 		var unregisterUserLoginListener = null;
 
-		$scope.currentWebsiteId = parseInt($location.search()['tn'], 10);
 
-		function loadSuccessFn (root) {
-			REST.treeChildren(root.resources[0]).then(function (websites) {
-				$scope.websites = websites.resources;
-				if (!$scope.currentWebsiteId && $scope.websites && $scope.websites.length) {
-					$scope.currentWebsiteId = $scope.websites[0].id;
+		function updateSelection (currentWebsiteId)
+		{
+			if ($scope.websites)
+			{
+				if (currentWebsiteId)
+				{
+					angular.forEach($scope.websites, function (ws) {
+						if (ws.id === currentWebsiteId) {
+							$scope.website = ws;
+						}
+					});
 				}
+				if (! $scope.website && $scope.websites && $scope.websites.length)
+				{
+					$scope.website = $scope.websites[0];
+				}
+			}
+		}
+
+		$scope.$on('$routeUpdate', function () {
+			updateSelection(parseInt($location.search()['tn'], 10));
+		});
+
+		function loadSuccessFn (root)
+		{
+			REST.treeChildren(root.resources[0]).then(function (websites)
+			{
+				$scope.websites = websites.resources;
+				updateSelection(parseInt($location.search()['tn'], 10));
 				if (unregisterUserLoginListener) {
 					unregisterUserLoginListener();
 				}
@@ -38,7 +60,10 @@
 		}
 
 		$scope.$on('Change:TreePathChanged', function (event, bcData) {
-			$scope.currentWebsiteId = bcData.website ? bcData.website.id : 0;
+			$scope.website = bcData.website ? bcData.website : null;
+			if ($scope.website) {
+				updateSelection($scope.website.id);
+			}
 		});
 
 		function loadErrorFn () {
@@ -73,13 +98,13 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model('Rbs_Website_Website')
-				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/list.twig')
+				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/browse.twig')
 				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
 				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Document/Rbs/Website/Menu/list.twig')
 			;
 
 			$delegate.model('Rbs_Website_Topic')
-				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/list.twig')
+				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/browse.twig')
 				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
 			;
 

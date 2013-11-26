@@ -71,30 +71,6 @@
 		};
 
 
-		this.getCurrentSectionLabel = function () {
-			var absUrl = $location.absUrl(),
-			    currentUrl = $location.url(),
-			    currentPath = $location.path(),
-			    currentLabel = '';
-
-			if (currentUrl.charAt(0) === '/') {
-				currentUrl = currentUrl.substring(1);
-			}
-			if (currentPath.charAt(0) === '/') {
-				currentPath = currentPath.substring(1);
-			}
-
-			$el.find(".aside.main a[href]").each(function () {
-				var href = $(this).attr('href');
-				if (href === currentUrl || href === currentPath || href === absUrl) {
-					$(this).parent().addClass("active");
-					currentLabel = $(this).text();
-				}
-			});
-
-			return currentLabel;
-		};
-
 
 		this.freeze = function () {
 			this.frozen = true;
@@ -199,7 +175,7 @@
 				return null;
 			}
 
-			this.hide().clear();
+			this.clear();
 
 			var self = this,
 			    html;
@@ -228,7 +204,7 @@
 				$el.prepend(clone);
 
 				$timeout(function () {
-					$el.show();
+					//$el.show();
 					self.updateLinks();
 				});
 
@@ -487,6 +463,7 @@
 			}
 		};
 	});
+
 
 
 })( window.jQuery );

@@ -1,14 +1,22 @@
-<div class="document-form">
+<div class="row">
+
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Topic'), ['ucf']) }}"></page-header>
-
-	<div ng-switch="editMode">
-		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-website-topic-translate"></div>
-		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-website-topic"></div>
+	<div rbs-aside-column>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<rbs-aside-translation document="document"></rbs-aside-translation>
 	</div>
+
+	<div class="document-form" rbs-main-column>
+		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Topic'), ['ucf']) }}"></page-header>
+		<div ng-switch="editMode">
+			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-website-topic-translate"></div>
+			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-website-topic"></div>
+		</div>
+	</div>
+
 </div>

@@ -540,9 +540,16 @@
 					});
 
 					// Watch for section changes to initialize them if needed.
-					$scope.$watch('section', function (section) {
+					$scope.$watch('section', function (section, previousSection) {
 						if (section !== undefined && section !== null) {
 							initSectionOnce(section);
+						}
+
+						if (angular.isDefined(previousSection) && previousSection !== section && angular.isFunction($scope.leaveSection)) {
+							$scope.leaveSection(previousSection);
+						}
+						if (angular.isDefined(section) && angular.isFunction($scope.enterSection)) {
+							$scope.enterSection(section);
 						}
 					});
 
@@ -684,7 +691,12 @@
 					if (menu.length) {
 						$scope._chgFieldsInfo = fields;
 						$scope._chgMenu = menu;
-						MainMenu.build($scope._chgMenu, $scope);
+						//MainMenu.build($scope._chgMenu, $scope);
+						console.log("update menu ---");
+						$scope.$emit('Change:UpdateEditorMenu', {
+							'scope' : $scope,
+							'entries' : menu
+						});
 					}
 				}
 

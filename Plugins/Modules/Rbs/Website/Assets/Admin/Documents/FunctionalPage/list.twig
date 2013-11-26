@@ -1,44 +1,53 @@
-<div>
-	<rbs-workspace-config menu="Rbs_Website">
+<div class="row">
+
+	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.admin.functionalpage_list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.functionalpage_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.website.admin.functionalpage_list', ['ucf']) }}"></page-header>
-
-	<div rbs-tip="Rbs_Website_FunctionalPageListHeader">
-		{{ i18n('m.rbs.website.admin.functional_page_list_help') | raw }}
+	<div rbs-aside-column>
+		<rbs-aside-plugin-menu plugin="Rbs_Website"></rbs-aside-plugin-menu>
+		<rbs-aside-tag-filter></rbs-aside-tag-filter>
 	</div>
 
-	<search-filters model="Rbs_Website_FunctionalPage" filter-query="query" text-search="textSearch"></search-filters>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.website.admin.functionalpage_list', ['ucf']) }}"></page-header>
 
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Website_FunctionalPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
-	</div>
+		<div rbs-tip="Rbs_Website_FunctionalPageListHeader">
+			{{ i18n('m.rbs.website.admin.functional_page_list_help') | raw }}
+		</div>
 
-	<rbs-document-list data-dlid="DLRbsWebsiteFunctionalPage"
-	                   model="Rbs_Website_FunctionalPage"
-	                   filter-query="query"
-	                   actions="default">
-		<column name="icon" width="30px" align="center">
-			<span class="iconoverlay">
-				<i class="icon-2x icon-file"></i>
-			</span>
-		</column>
+		<search-filters model="Rbs_Website_FunctionalPage" filter-query="query" text-search="textSearch"></search-filters>
 
-		<column name="label" primary="true"></column>
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Website_FunctionalPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
+		</div>
 
-		<column name="allowedFunctionsCode">
-			<div ng-if="doc.allowedFunctionsCode">
-				<span ng-repeat="func in doc.allowedFunctionsCode">
-					<span class="label label-default">(= func =)</span>
+		<rbs-document-list data-dlid="DLRbsWebsiteFunctionalPage"
+		                   model="Rbs_Website_FunctionalPage"
+		                   filter-query="query"
+		                   actions="default">
+			<column name="icon" width="30px" align="center">
+				<span class="iconoverlay">
+					<i class="icon-2x icon-file"></i>
 				</span>
-			</div>
-			<div ng-if="! doc.allowedFunctionsCode">
-				<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.configure_functions', ['ucf']) }}</a>
-			</div>
-		</column>
-	</rbs-document-list>
+			</column>
+
+			<column name="label" primary="true"></column>
+
+			<column name="allowedFunctionsCode">
+				<div ng-if="doc.allowedFunctionsCode">
+					<span ng-repeat="func in doc.allowedFunctionsCode">
+						<span class="label label-default">(= func =)</span>
+					</span>
+				</div>
+				<div ng-if="! doc.allowedFunctionsCode">
+					<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.configure_functions', ['ucf']) }}</a>
+				</div>
+			</column>
+		</rbs-document-list>
+	</div>
+
 </div>
