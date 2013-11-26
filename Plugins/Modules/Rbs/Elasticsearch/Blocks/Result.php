@@ -131,6 +131,14 @@ class Result extends Block
 						$from = ($pageNumber - 1) * $size;
 
 						$query = $searchQuery->getSearchQuery($searchText, $allowedSectionIds, null, $from, $size, array('model', 'title'));
+						$query->addHighlight(['tags_schema' => 'styled', 'fields' => [
+							'title' => ['number_of_fragments' => 0],
+							'content' => [
+								'fragment_size' => 150,
+								'number_of_fragments' => 3,
+								'no_match_size' => 150
+							]
+						]]);
 						$searchQuery->addFacets($query, array('model'));
 						$bool = $searchQuery->getFacetFilters($facetFilters);
 						if ($bool)
@@ -144,11 +152,33 @@ class Result extends Block
 						{
 							$maxScore = $searchResult->getMaxScore();
 							$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
+							$documentManager = $applicationServices->getDocumentManager();
+							$i18nManager = $applicationServices->getI18nManager();
+
 							/* @var $result \Elastica\Result */
 							foreach ($searchResult->getResults() as $result)
 							{
 								$score = ceil(($result->getScore() / $maxScore) * 100);
-								$attributes['items'][] = array('id' => $result->getId(), 'score' => $score, 'title' => $result->title);
+								$document = $documentManager->getDocumentInstance($result->getId());
+								if ($document instanceof \Change\Documents\Interfaces\Publishable && $document->published())
+								{
+									$highlights = $result->getHighlights();
+									if (isset($highlights['title']))
+									{
+										$title = $highlights['title'][0];
+									}
+									else
+									{
+										$title = $i18nManager->transformHtml($result->title, $i18nManager->getLCID());
+									}
+									$attributes['items'][] = array(
+										'id' => $result->getId(),
+										'score' => $score,
+										'title' => $title,
+										'content' => isset($highlights['content']) ? $highlights['content'] : array(),
+										'document' => $document
+									);
+								}
 							}
 						}
 						$facetValues = $searchQuery->buildFacetValues($searchResult->getFacets(), $facetFilters, array('model'));

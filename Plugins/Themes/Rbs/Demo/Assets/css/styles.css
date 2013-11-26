@@ -232,9 +232,12 @@ ol.bullet > li::before {
 	background: var(alternate-even-color);
 }
 
-.highlight {
+/* Highlight */
+.highlight, .hlt1 {
 	color: var(highlight-text-color);
 	background: var(highlight-background-color);
+	font-weight: bold;
+	padding: 1px 4px;
 }
 
 /* Contextual menu */

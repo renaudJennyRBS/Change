@@ -135,7 +135,7 @@ class StoreResult extends Block
 						foreach ($searchResult->getResults() as $result)
 						{
 							$product = $documentManager->getDocumentInstance($result->getId());
-							if (!($product instanceof \Rbs\Catalog\Documents\Product))
+							if (!($product instanceof \Rbs\Catalog\Documents\Product) || !$product->published())
 							{
 								continue;
 							}

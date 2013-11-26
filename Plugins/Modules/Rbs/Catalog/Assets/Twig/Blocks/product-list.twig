@@ -1,63 +1,19 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+
 <h1 id="product-list-title">{{ title }}</h1>
-<!-- TODO: product filters -->
-<!--<div class="normal product-list-options">
-	<form class="form-horizontal" action="TODO:search">
-		<div class="form-group">
-			<label class="col-sm-4 col-lg-3 control-label" for="f_ecomextended_terms">Votre recherche</label>
-			<div class="col-sm-8 col-lg-9 controls">
-				<div class="row">
-					<div class="col-sm-6 col-lg-8">
-						<input class="form-control" name="terms" type="text" id="f_ecomextended_productterms" title="" value="" size="35"/>
-					</div>
-					<div class="col-sm-6 col-lg-4">
-						<select class="form-control" name="op" nopreamble="true">
-							<option value="AND" selected="selected">Tous les mots</option>
-							<option value="OR">Un des mots</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-4 col-lg-3 control-label" for="f_ecomextended_sort">Trier par</label>
-			<div class="col-sm-8 col-lg-9 controls">
-				<select class="form-control" name="sort" id="f_ecomextended_sort">
-					<option value="position_vol_int_asc" selected="selected"></option>
-					<option value="sortable_date_idx_dt">Nouveautés</option>
-					<option value="f_13738_vol_float">Note</option>
-					<option value="f_price_13203_vol_float">+ cher au - cher</option>
-					<option value="f_price_13203_vol_float_asc">- cher au + cher</option>
-				</select>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-sm-8 col-sm-offset-4 col-lg-9 col-lg-offset-3">
-				<input type="submit" class="btn btn-primary" value="Rechercher"/>
-				<input type="hidden" name="key" value="ecomextended_BlockProductList"/>
-			</div>
-		</div>
-	</form>
-</div>-->
 
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
 	<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}" />
 	<input type="hidden" name="quantity" value="1" />
 	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
 	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">{% spaceless %}
-		{% for row in rows %}
-			{% include 'Rbs_Catalog/Blocks/product-list-item.twig' %}
-		{% endfor %}
-	{% endspaceless %}</ul>
-
-	<!-- TODO: favorites and comparisons -->
-	<!--<p class="buttons">
-		Actions sur la sélection :
-		<button type="submit" name="add" class="btn btn-primary" value="selected"><i class="icon-shopping-cart"></i> Ajouter au panier</button>
-		<input class="btn btn-default" name="catalogParam[addToFavorite]" type="submit" value="Ajouter aux favoris"/>
-		<input class="btn btn-default" name="catalogParam[addToComparison]" type="submit" value="Ajouter aux comparaisons"/>
-	</p>-->
+	{% spaceless %}
+		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
+			{% for row in rows %}
+				{% include 'Rbs_Catalog/product-list-item.twig' %}
+			{% endfor %}
+		</ul>
+	{% endspaceless %}
 </form>
 
 {% include 'Rbs_Generic/pagination.twig' %}

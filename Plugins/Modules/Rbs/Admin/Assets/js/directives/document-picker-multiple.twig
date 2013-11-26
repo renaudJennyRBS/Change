@@ -1,5 +1,6 @@
 <div ng-show="documents.length > 0">
-	<token-list items="documents" rows="true"></token-list>
+	<token-list ng-if="disableReordering" items="documents" rows="true" disable-reordering="true"></token-list>
+	<token-list ng-if="!disableReordering" items="documents" rows="true"></token-list>
 </div>
 
 <p class="form-control form-control-static text-muted" style="margin-bottom: 0;" ng-show="! documents || documents.length == 0">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</p>

@@ -41,6 +41,7 @@
 	 * @attribute selector-title
 	 * @attribute select-model
 	 * @attribute embed-in
+	 * @attribute disable-reordering
 	 */
 	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout)
 	{
@@ -64,6 +65,7 @@
 		scope.allowInPlaceSelection = attrs.allowInPlaceSelection !== 'false';
 		scope.showButtonsLabel = $el.closest('.dockable.pinned').length === 0;
 		scope.inputCssClass = attrs.inputCssClass;
+		scope.disableReordering = attrs.disableReordering == 'true';
 
 		scope.$on('$routeChangeStart', function () {
 			scope.closeSelector();
@@ -424,7 +426,6 @@
 			scope.picker = {
 				"selectDocument" : scope.selectDocument
 			};
-
 		}
 	}
 
@@ -432,7 +433,6 @@
 	app.directive('documentPickerSingle', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', '$timeout', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, $timeout)
 	{
 		return {
-
 			restrict    : 'EAC',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-single.twig',
 			require     : 'ngModel',
@@ -449,7 +449,6 @@
 	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', '$timeout', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, $timeout)
 	{
 		return {
-
 			restrict    : 'EAC',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-multiple.twig',
 			require     : 'ngModel',
@@ -481,7 +480,6 @@
 		reset();
 
 		return {
-
 			started : function ()
 			{
 				return angular.isObject(selectDoc);
@@ -577,9 +575,6 @@
 				MainMenu.removeAside('rbsSelectSession');
 				$location.url(redirect);
 			}
-
 		};
 	}]);
-
-
 })(window.jQuery);

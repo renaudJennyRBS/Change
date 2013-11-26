@@ -1,13 +1,5 @@
 <li>
 	<ul class="grid-list-cell">
-		<!-- TODO: favorites and comparisons -->
-		<!--<li>
-						<label for="list_product_{{ row.id }}">
-							<input type="checkbox" id="list_product_{{ row.id }}" name="selected_product[]"
-								value="{{ row.id }}" />
-							{{ i18n('m.rbs.catalog.front.select', ['ucf']) }}
-						</label>
-					</li>-->
 		<li class="product-visual">
 			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.title}) }}"
 				href="{{ row.url }}">
@@ -22,10 +14,6 @@
 		<li class="product-availability">
 			{{ row.productPresentation.stock.thresholdTitle }}
 		</li>
-		<!-- TODO: handle rating -->
-		<!--<li class="product-rating">
-			5 étoile(s)
-		</li>-->
 		{% if parameters.webStoreId %}
 			{% block prices %}
 				{% if row.productPresentation.getPriceValue %}
@@ -71,7 +59,6 @@
 					</li>
 				{% endif %}
 			{% endblock %}
-
 		{% endif %}
 	</ul>
 </li>

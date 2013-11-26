@@ -118,16 +118,13 @@ class Menu extends Block
 	 */
 	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path)
 	{
-		if ($doc instanceof \Rbs\Website\Documents\StaticPage && $doc->getHideLinks())
+		if (!$this->shouldBeDisplayed($doc))
 		{
 			return null;
 		}
 
 		$entry = new \Rbs\Website\Menu\MenuEntry();
-		if ($doc instanceof \Change\Documents\Interfaces\Publishable)
-		{
-			$entry->setTitle($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
-		}
+		$entry->setTitle($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
 		if ($doc instanceof \Rbs\Website\Documents\Section)
 		{
 			if ($doc->getIndexPageId())
@@ -179,21 +176,18 @@ class Menu extends Block
 					if (isset($item['documentId']))
 					{
 						$subDoc = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($item['documentId']);
-						if ($subDoc)
+						$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
+						if ($subEntry !== null)
 						{
-							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
-							if ($subEntry !== null)
+							if (isset($item['titleKey']))
 							{
-								if (isset($item['titleKey']))
-								{
-									$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
-								}
-								elseif (isset($item['title']))
-								{
-									$subEntry->setTitle($item['title']);
-								}
-								$entry->addChild($subEntry);
+								$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
 							}
+							elseif (isset($item['title']))
+							{
+								$subEntry->setTitle($item['title']);
+							}
+							$entry->addChild($subEntry);
 						}
 					}
 					elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
@@ -214,5 +208,26 @@ class Menu extends Block
 			}
 		}
 		return $entry;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $doc
+	 * @return boolean
+	 */
+	protected function shouldBeDisplayed($doc)
+	{
+		if ($doc instanceof \Rbs\Website\Documents\Menu)
+		{
+			return true;
+		}
+		if (!($doc instanceof \Change\Documents\Interfaces\Publishable) || !$doc->published())
+		{
+			return false;
+		}
+		if ($doc instanceof \Rbs\Website\Documents\StaticPage && $doc->getHideLinks())
+		{
+			return false;
+		}
+		return true;
 	}
 }
