@@ -6,11 +6,13 @@ use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
 use Rbs\Admin\Http\Rest\Actions\BlockList;
 use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
+use Rbs\Admin\Http\Rest\Actions\GetConnectionInfo;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
 use Rbs\Admin\Http\Rest\Actions\TagsInfo;
 use Rbs\Admin\Http\Rest\Actions\DocumentPreview;
 use Rbs\Admin\Http\Rest\Actions\DocumentList;
 use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
+use Rbs\Admin\Http\Rest\Actions\UpdateConnectionInfo;
 
 /**
  * @name \Rbs\Admin\Http\Rest\AdminResolver
@@ -37,7 +39,7 @@ class AdminResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList', 'blockList');
+		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList', 'blockList', 'connectionInfo');
 	}
 
 	/**
@@ -115,6 +117,22 @@ class AdminResolver
 				$event->setAction(function($event) {
 					(new BlockList())->execute($event);
 				});
+			}
+
+			elseif ($actionName === 'connectionInfo')
+			{
+				if ($method === Request::METHOD_GET)
+				{
+					$action = new GetConnectionInfo();
+					$event->setAction(function($event) use($action) {$action->execute($event);});
+					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				}
+				elseif ($method === Request::METHOD_PUT)
+				{
+					$action = new UpdateConnectionInfo();
+					$event->setAction(function($event) use($action) {$action->execute($event);});
+					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				}
 			}
 		}
 	}
