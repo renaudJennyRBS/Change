@@ -1,4 +1,7 @@
 {
+	"toggle_navigation":{
+		"message":"basculer la navigation"
+	},
 	"properties":{
 		"message":"propriétés"
 	},

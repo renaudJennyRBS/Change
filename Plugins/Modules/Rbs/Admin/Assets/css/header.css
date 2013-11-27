@@ -1,57 +1,70 @@
 @CHARSET "UTF-8";
 
+/* top navbar */
+#rbs-change-navbar a.navbar-brand {
+	position: relative;
+	top: -2px;
+}
+
 .navbar-indicators > li {
 	border-left: 1px solid black;
 	background: rgba(255,255,255,0.1);
 }
-
 .navbar-indicators > li.on > a {
 	background: rgba(255,255,255,0.25);
 	color: white;
 }
-
 .navbar-indicators > li > a {
 	font-size: 1.33333em;
-	min-width: 40px;
+	min-width: 70px;
 	text-align: center;
 }
-
 .navbar-indicators > li:last-child {
 	border-right: 1px solid black;
 }
 
+#rbs-change-navbar-collapse {
+	padding: 0;
+}
+#rbs-change-navbar-collapse .navbar-nav.navbar-right:last-child {
+	margin: 0;
+}
+
+@media (max-width: 768px) {
+	.navbar-indicators > li,
+	.navbar-indicators > li.on > a {
+		background: inherit;
+	}
+	.navbar-indicators > li > a {
+		font-size: 14px;
+	}
+
+	#rbs-change-navbar-collapse .navbar-nav {
+		margin: 0;
+	}
+	#rbs-change-navbar-collapse .navbar-indicators > li > a {
+		text-align: left;
+		content: " "attr(title);
+	}
+
+	#rbs-change-navbar-collapse .dropdown-menu {
+		background: #191919;
+	}
+	#rbs-change-navbar-collapse .dropdown-menu > li.disabled > a {
+		color: #555;
+	}
+	#rbs-change-navbar-collapse .divider {
+		background: #444;
+	}
+}
+
+@media (min-width: 768px) {
+	.navbar-indicators .indicator-title {
+		display: none;
+	}
+}
+
+/* TODO remove this style when fullScreenBar will be removed */
 #fullScreenBar {
-	cursor: pointer;
-	display: block;
-	padding: 4px 20px;
-	text-shadow: 0 0 1px rgba(0, 0, 0, 0.7);
-	font-size: 9pt;
-	font-weight: bold;
-	border-bottom: 1px solid #888888;
-	color: white;
 	display: none;
-	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(0, 0, 0, 0.4);
-
-	background-image: linear-gradient(to top, rgb(107,161,0) 0%, rgb(176,199,4) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgb(107,161,0) 0%, rgb(176,199,4) 100%);
-
-	margin-bottom: 20px;
-}
-
-#fullScreenBar .icon {
-	background: url(../img/icons/icon-rbschange.png) no-repeat top left;
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	margin-right: 5px;
-	position: relative;
-	top: 3px;
-}
-
-body > .navbar,
-#rbs-change-menu > .navbar {
-	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(0, 0, 0, 0.4);
-	border-bottom: 5px solid #B1CA27;
-	border-left: 0;
-	border-right: 0;
 }

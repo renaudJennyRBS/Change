@@ -339,21 +339,6 @@ h4.list-group-item:first-child {
 	margin-bottom: 0;
 }
 
-
-/* top navbar */
-
-.navbar-indicators > li > a {
-	font-size: 1.33333em;
-	min-width: 70px;
-	text-align: center;
-}
-
-#rbs-change-navbar a.navbar-brand {
-	position: relative;
-	top: -2px;
-}
-
-
 /* footer */
 
 body > footer {

@@ -1,6 +1,8 @@
-<li class="dropdown" ng-class="{'on': values.length > 0}">
+<li class="dropdown" ng-class="{'on': values.length > 0}" title="{{ i18nAttr('m.rbs.admin.admin.clipboard', ['ucf']) }}">
 	<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-		<i ng-class="{ true: 'icon-bookmark', false: 'icon-bookmark-empty' }[values.length > 0]"></i> (= values.length =)
+		<i ng-class="{ true: 'icon-bookmark', false: 'icon-bookmark-empty' }[values.length > 0]"></i>
+		(= values.length =)
+		<span class="indicator-title">{{ i18nAttr('m.rbs.admin.admin.clipboard', ['ucf']) }}</span>
 	</a>
 	<ul class="dropdown-menu">
 		<li class="dropdown-header">{{ i18n('m.rbs.admin.admin.clipboard' , ['ucf']) }}</li>
