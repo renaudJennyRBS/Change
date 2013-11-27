@@ -1,17 +1,15 @@
 <form name="form" ng-submit="submit()" novalidate="">
-
-	<rbs-field-text property="title" required="true" input-class="input-block-level"
+	<rbs-field-text property="title" required="true"
 		label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
 	</rbs-field-text>
 
-	<rbs-field-rich-text property="description" required="false" input-class="input-block-level"
+	<rbs-field-rich-text property="description" required="false"
 		label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
 	</rbs-field-rich-text>
 
-	<rbs-field-url property="websiteUrl" required="false" input-class="input-block-level"
+	<rbs-field-url property="websiteUrl" required="false"
 		label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
 	</rbs-field-url>
 
 	<form-button-bar></form-button-bar>
-
 </form>
