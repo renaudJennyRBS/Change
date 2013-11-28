@@ -9,10 +9,10 @@
 		"message":"le champ \"$FIELD$\" n'est pas valide : count='$COUNT$' min-occurs='$MINOCCURS$', max-occurs='$MAXOCCURS$'"
 	},
 	"maxoccurs":{
-		"message":"le champ \"$FIELD$\" doit contenir au plus $MAXOCCURS$ elements"
+		"message":"le champ \"$FIELD$\" doit contenir au plus $MAXOCCURS$ éléments"
 	},
 	"minoccurs":{
-		"message":"le champ \"$FIELD$\" doit contenir au moins $MAXOCCURS$ elements"
+		"message":"le champ \"$FIELD$\" doit contenir au moins $MAXOCCURS$ éléments"
 	},
 	"emailaddressinvalid":{
 		"message":"le champ \"$FIELD$\" doit contenir une adresse e-mail valide."

@@ -3,7 +3,7 @@
 		"message":"ordre"
 	},
 	"form_usecaptcha_help":{
-		"message":"Demander au utilisateur non-enregistrés de saisir un code de sécurité."
+		"message":"Demander aux utilisateurs non-enregistrés de saisir un code de sécurité."
 	},
 	"form_receiverusers_picker_title":{
 		"message":"sélection des utilisateurs destinataires"
@@ -147,13 +147,13 @@
 		"message":"mise en majuscule"
 	},
 	"field_parameters_auto_capitalize_help":{
-		"message":"Configuration la mise en majuscule automatique."
+		"message":"Configuration de la mise en majuscule automatique."
 	},
 	"field_parameters_auto_capitalize_none":{
 		"message":"désactivée"
 	},
 	"field_parameters_auto_capitalize_sentences":{
-		"message":"en début de phase"
+		"message":"en début de phrase"
 	},
 	"field_parameters_auto_capitalize_words":{
 		"message":"en début de mot"

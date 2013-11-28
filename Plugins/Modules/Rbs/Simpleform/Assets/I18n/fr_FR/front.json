@@ -33,7 +33,7 @@
 		"message":"La valeur saisie n'est pas un tableau valide"
 	},
 	"invalid_string":{
-		"message":"La valeur saisie n'est doit être une chaine de caractères"
+		"message":"La valeur saisie doit être une chaine de caractères"
 	},
 	"invalid_boolean":{
 		"message":"La valeur saisie doit être 'true' ou 'false'"

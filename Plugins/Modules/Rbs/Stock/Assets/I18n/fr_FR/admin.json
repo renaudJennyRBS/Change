@@ -72,7 +72,7 @@
 		"message":"Lorsque cette option est activée, le produit sera toujours considéré en stock"
 	},
 	"sku_allowbackorders_help":{
-		"message":"Lorsque cette option est activée, le produit peut être commandé même lorsqu'il est en rupture en prévision d'un réassort futur."
+		"message":"Lorsque cette option est activée, le produit peut être commandé même lorsqu'il est en rupture, en prévision d'un réassort futur."
 	},
 	"sku_allowquantitysplit_help":{
 		"message":"Lorsque cette option est activée, les lignes de commandes correspondant à ce SKU pourront être livrées en plusieurs colis."
@@ -90,6 +90,6 @@
 		"message":"Supprimer"
 	},
 	"sku_virtual_help":{
-		"message":"Ne possede pas de propriétés physique, et ne necéssite pas de livraison."
+		"message":"Ne possède pas de propriétés physiques, et ne nécessite pas de livraison."
 	}
 }

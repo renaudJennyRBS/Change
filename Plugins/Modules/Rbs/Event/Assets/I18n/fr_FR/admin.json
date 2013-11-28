@@ -84,7 +84,7 @@
 		"message":"catégories"
 	},
 	"category_create":{
-		"message":"ajouter une categorie"
+		"message":"ajouter une catégorie"
 	},
 	"baseevent_detailvisual_help":{
 		"message":"Visuel utilisé dans l'affichage de détail. Ce visuel n'est pas utilisé pour l'affichage en liste."

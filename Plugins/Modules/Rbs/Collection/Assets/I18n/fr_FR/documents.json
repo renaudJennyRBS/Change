@@ -3,13 +3,13 @@
 		"message":"éléments"
 	},
 	"collection_locked":{
-		"message":"vérrouillée"
+		"message":"verrouillée"
 	},
 	"item_value":{
 		"message":"valeur"
 	},
 	"item_locked":{
-		"message":"vérrouillé"
+		"message":"verrouillée"
 	},
 	"collection":{
 		"message":"collection"

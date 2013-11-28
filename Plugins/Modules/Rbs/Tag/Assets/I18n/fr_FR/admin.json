@@ -78,7 +78,7 @@
 		"message":"étiquettes sélectionnées"
 	},
 	"selected_tags_message":{
-		"message":"les étiquettes sélectionnées ici servent à filter la liste des éléments présente à droite"
+		"message":"les étiquettes sélectionnées ici servent à filtrer la liste des éléments présente à droite"
 	},
 	"my_tags":{
 		"message":"mes étiquettes"

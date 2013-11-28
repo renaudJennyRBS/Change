@@ -75,10 +75,10 @@
 		"message":"chercher par code SKU"
 	},
 	"order_select_billingarea":{
-		"message":"sélectionnez une zone de facturation..."
+		"message":"séléctionnez une zone de facturation..."
 	},
 	"order_select_webstore":{
-		"message":"sélectionnez une boutique..."
+		"message":"séléctionnez une boutique..."
 	},
 	"order_remove_lines":{
 		"message":"supprimer les lignes"
@@ -192,9 +192,9 @@
 		"message":"commandes,factures"
 	},
 	"invoice_select_order":{
-		"message":"séléctionner une commande"
+		"message":"sélectionner une commande"
 	},
 	"invoice_select_transaction":{
-		"message":"séléctionner une transaction bancaire"
+		"message":"sélectionner une transaction bancaire"
 	}
 }

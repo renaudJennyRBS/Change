@@ -111,7 +111,7 @@
 		"message":"autorisation nécessaire"
 	},
 	"group_picker_title":{
-		"message":">sélectionner les groupes"
+		"message":"sélectionner les groupes"
 	},
 	"user_list":{
 		"message":"utilisateurs"
@@ -198,7 +198,7 @@
 		"message":"à"
 	},
 	"profile_notification_time_interval_helper":{
-		"message":"si vous sélectionnez <strong>fréquence d'envoi 1 jours<\/strong> et <strong>à 12:00<\/strong> vous recevrez un e-mail tous les jours entre 12h et 12h05.<br\/>\n\tSi vous sélectionnez <strong>fréquence d'envoi 2 heures<\/strong> et <strong>à 13:15<\/strong>, seul les minutes seront prises en compte, (le prochain e-mail reçu sera donc entre 15h15 et 15h20, puis entre 17h15 et 17h20...)"
+		"message":"si vous sélectionnez <strong>fréquence d'envoi 1 jours<\/strong> et <strong>à 12:00<\/strong> vous recevrez un e-mail tous les jours entre 12h et 12h05.<br\/>\n\tSi vous sélectionnez <strong>fréquence d'envoi 2 heures<\/strong> et <strong>à 13:15<\/strong>, seules les minutes seront prises en compte, (le prochain e-mail reçu sera donc entre 15h15 et 15h20, puis entre 17h15 et 17h20...)"
 	},
 	"profile_gravatar_help":{
 		"message":"Pour utiliser un avatar, créer un compte sur le site <a href=\"http:\/\/fr.gravatar.com\" target=\"_blank\">http:\/\/fr.gravatar.com<\/a>"

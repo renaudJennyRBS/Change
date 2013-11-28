@@ -12,10 +12,10 @@
 		"message":"ajouter un connecteur à paiement différé"
 	},
 	"transaction_select_connector":{
-		"message":"selectionner un connecteur bancaire"
+		"message":"sélectionner un connecteur bancaire"
 	},
 	"connector_select_visual":{
-		"message":"selectionner un visuel"
+		"message":"sélectionner un visuel"
 	},
 	"module_name":{
 		"message":"paiements"
