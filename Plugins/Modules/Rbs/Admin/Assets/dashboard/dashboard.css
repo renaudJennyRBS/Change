@@ -21,6 +21,7 @@
 	font-weight: bold;
 	vertical-align: top;
 	cursor: pointer;
+	height: 62px;
 }
 .dashboard .small-indicators span:after {
 	content: "";

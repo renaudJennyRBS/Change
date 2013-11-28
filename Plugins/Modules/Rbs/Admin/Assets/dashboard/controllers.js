@@ -23,31 +23,6 @@
 	{
 		Breadcrumb.resetLocation();
 
-		$scope.indicators = [
-			{
-				"label"  : "Commandes passées ce mois",
-				"message": "Ne vous inquiétez pas, ça viendra ! <i class='icon-smile'></i>",
-				"style"  : "red",
-				"value"  : 0,
-				"link"   : ""
-			},
-			{
-				"label"  : "Visites uniques aujourd'hui",
-				"message": "C'est votre meilleur nombre de visites, bravo !",
-				"style"  : "blue",
-				"value"  : 348,
-				"link"   : ""
-			},
-			{
-				"label"  : "Commentaires sur les articles du blog",
-				"message": "Votre site semble vivant, continuez !",
-				"style"  : "green",
-				"value"  : 15122,
-				"link"   : ""
-			}
-		];
-
-
 		var $embedContainer = $('#chgDashboardEmbedContainer');
 
 		//
