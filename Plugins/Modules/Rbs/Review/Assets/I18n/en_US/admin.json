@@ -1,3 +1,11 @@
-[
-  
-]
+{
+  "module_name":{
+    "message":"review"
+  },
+  "review_list":{
+    "message":"review"
+  },
+  "review_create":{
+    "message":"add a review"
+  }
+}

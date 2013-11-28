@@ -1,3 +1,20 @@
-[
-  
-]
+{
+  "review":{
+    "message":"review"
+  },
+  "review_content":{
+    "message":"message"
+  },
+  "review_pseudonym":{
+    "message":"nickname"
+  },
+  "review_target":{
+    "message":"document"
+  },
+  "review_promoted":{
+    "message":"highlighted"
+  },
+  "review_section":{
+    "message":"section"
+  }
+}

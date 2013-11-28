@@ -1,4 +1,7 @@
 {
+  "zone":{
+    "message":"zone"
+  },
   "country":{
     "message":"country"
   },
@@ -16,6 +19,24 @@
   },
   "zone_country":{
     "message":"country"
+  },
+  "zone_title":{
+    "message":"title"
+  },
+  "addressfield_required":{
+    "message":"required"
+  },
+  "addressfield_match":{
+    "message":"validation regular expression"
+  },
+  "addressfield_locked":{
+    "message":"locked code"
+  },
+  "addressfield_collectioncode":{
+    "message":"collection value"
+  },
+  "territorialunit_unittype":{
+    "message":"type"
   },
   "territorialunit_country":{
     "message":"country"
@@ -35,10 +56,16 @@
   "territorialunit_unit_county":{
     "message":"county"
   },
+  "territorialunit_unit_province":{
+    "message":"province"
+  },
   "addressfields_fields":{
     "message":"fields"
   },
   "addressfields_fieldsLayoutData":{
     "message":"fields layout"
+  },
+  "country_addressfields":{
+    "message":"address template"
   }
 }

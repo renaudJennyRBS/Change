@@ -1,3 +1,5 @@
-[
-  
-]
+{
+  "this_field_is_required":{
+    "message":"This field is mandatory"
+  }
+}

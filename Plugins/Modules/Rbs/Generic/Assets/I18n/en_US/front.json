@@ -4,5 +4,26 @@
   },
   "descending":{
     "message":"descending"
+  },
+  "yes":{
+    "message":"yes"
+  },
+  "no":{
+    "message":"no"
+  },
+  "first_page":{
+    "message":"first Page"
+  },
+  "last_page":{
+    "message":"last Page"
+  },
+  "previous_page":{
+    "message":"previous page"
+  },
+  "next_page":{
+    "message":"next page"
+  },
+  "page_x_of_y":{
+    "message":"page $PAGENUMBER$ on $PAGECOUNT$"
   }
 }

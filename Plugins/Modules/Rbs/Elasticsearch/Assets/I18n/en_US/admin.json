@@ -1,3 +1,20 @@
-[
-  
-]
+{
+  "module_name":{
+    "message":"Elasticsearch"
+  },
+  "result":{
+    "message":"Search result"
+  },
+  "result_function":{
+    "message":"Search Result"
+  },
+  "result_fulltextindex":{
+    "message":"Search index"
+  },
+  "website_picker_title":{
+    "message":"select a website"
+  },
+  "store_picker_title":{
+    "message":"select a store"
+  }
+}

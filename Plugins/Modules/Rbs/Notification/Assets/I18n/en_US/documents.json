@@ -1,3 +1,14 @@
-[
-  
-]
+{
+  "notification":{
+    "message":"notification"
+  },
+  "notification_message":{
+    "message":"message"
+  },
+  "notification_status":{
+    "message":"status"
+  },
+  "notification_creationDate":{
+    "message":"creation date"
+  }
+}

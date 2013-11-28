@@ -1,3 +1,188 @@
-[
-  
-]
+{
+  "sectionproductlist_synchronizedsection":{
+    "message":"synchronized section"
+  },
+  "variantgroup_rootproduct":{
+    "message":"original product"
+  },
+  "variantgroup_newskuoncreation":{
+    "message":"Create a new SKU for each variant"
+  },
+  "productlist_productsortorder":{
+    "message":"products order"
+  },
+  "productlist_productsortdirection":{
+    "message":"sorting order"
+  },
+  "productlist_products":{
+    "message":"products"
+  },
+  "productlistitem_condition":{
+    "message":"condition"
+  },
+  "condition":{
+    "message":"condition"
+  },
+  "product":{
+    "message":"product"
+  },
+  "productlist":{
+    "message":"products list"
+  },
+  "sectionproductlist":{
+    "message":"products list synchronized with a section"
+  },
+  "productlistitem":{
+    "message":"belonging to a list"
+  },
+  "attribute":{
+    "message":"attribute"
+  },
+  "variantgroup":{
+    "message":"variants group"
+  },
+  "crosssellingproductlist":{
+    "message":"list of related products"
+  },
+  "crosssellingproductlist_accessories":{
+    "message":"accessories"
+  },
+  "crosssellingproductlist_similar":{
+    "message":"similar products"
+  },
+  "crosssellingproductlist_higher_range":{
+    "message":"up-selling products"
+  },
+  "crosssellingproductlist_product":{
+    "message":"product"
+  },
+  "crosssellingproductlist_crossSellingType":{
+    "message":"link type"
+  },
+  "crosssellingproductlist_symmetrical":{
+    "message":"symmetric relation"
+  },
+  "crosssellingproductlist_label":{
+    "message":"list name"
+  },
+  "productlistitem_product":{
+    "message":"product"
+  },
+  "productlistitem_productlist":{
+    "message":"list"
+  },
+  "product_label":{
+    "message":"label"
+  },
+  "product_title":{
+    "message":"title"
+  },
+  "product_description":{
+    "message":"description"
+  },
+  "product_categorizable":{
+    "message":"categorizable"
+  },
+  "product_visual":{
+    "message":"visual"
+  },
+  "product_visuals":{
+    "message":"visuals"
+  },
+  "product_pictograms":{
+    "message":"pictograms"
+  },
+  "product_brand":{
+    "message":"brand"
+  },
+  "product_shippedin":{
+    "message":"shipping time"
+  },
+  "product_newskuoncreation":{
+    "message":"Create a new SKU"
+  },
+  "product_sku":{
+    "message":"SKY"
+  },
+  "product_minorderquantity":{
+    "message":"minimum quantity"
+  },
+  "product_maxorderquantity":{
+    "message":"maximum quantity"
+  },
+  "product_publicationsections":{
+    "message":"publication sections"
+  },
+  "product_attribute":{
+    "message":"attribute set"
+  },
+  "attribute_title":{
+    "message":"title"
+  },
+  "attribute_valuetype":{
+    "message":"attribute value type"
+  },
+  "attribute_defaultvalue":{
+    "message":"default attribute value"
+  },
+  "attribute_requiredvalue":{
+    "message":"required attribute"
+  },
+  "attribute_localizedvalue":{
+    "message":"localized value"
+  },
+  "attribute_description":{
+    "message":"description"
+  },
+  "attribute_documenttype":{
+    "message":"document template"
+  },
+  "attribute_collectioncode":{
+    "message":"value within the collection"
+  },
+  "attribute_productproperty":{
+    "message":"product property"
+  },
+  "attribute_attributes":{
+    "message":"group attributes"
+  },
+  "attribute_visibility":{
+    "message":"visibility"
+  },
+  "attribute_visibility_comparisons":{
+    "message":"comparisons"
+  },
+  "attribute_visibility_specifications":{
+    "message":"features"
+  },
+  "attribute_type_boolean":{
+    "message":"yes \/ no"
+  },
+  "attribute_type_integer":{
+    "message":"integer"
+  },
+  "attribute_type_documentid":{
+    "message":"document"
+  },
+  "attribute_type_documentidarray":{
+    "message":"documents list"
+  },
+  "attribute_type_float":{
+    "message":"numeric"
+  },
+  "attribute_type_datetime":{
+    "message":"date"
+  },
+  "attribute_type_code":{
+    "message":"code or reference"
+  },
+  "attribute_type_text":{
+    "message":"text"
+  },
+  "attribute_type_group":{
+    "message":"attributes group"
+  },
+  "attribute_type_property":{
+    "message":"product property"
+  }
+}

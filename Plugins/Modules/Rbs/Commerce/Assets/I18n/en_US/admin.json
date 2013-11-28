@@ -1,3 +1,14 @@
-[
-  
-]
+{
+  "module_name":{
+    "message":"E-commerce"
+  },
+  "cart_label":{
+    "message":"shopping cart contents"
+  },
+  "cart_function":{
+    "message":"shopping cart contents"
+  },
+  "shortcart_label":{
+    "message":"shopping cart summary"
+  }
+}

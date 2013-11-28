@@ -14,11 +14,23 @@
   "group_list":{
     "message":"groups"
   },
+  "confirm_remove_permission_rule":{
+    "message":"confirm the deletion of $ROLE$ permission rule for $PRIVILEGE$ privilege on $RESOURCE_ID$ resource?"
+  },
+  "confirm_remove_all_permission_rules":{
+    "message":"confirm the deletion of all the permissions rules for user $USER$?"
+  },
   "profile":{
     "message":"user profile"
   },
   "token":{
     "message":"token"
+  },
+  "application":{
+    "message":"application"
+  },
+  "realm":{
+    "message":"realm"
   },
   "creation_date":{
     "message":"creation date"
@@ -29,11 +41,20 @@
   "revoke_token":{
     "message":"revoke"
   },
+  "applications_list_sub_title":{
+    "message":"applications"
+  },
+  "applications":{
+    "message":"applications"
+  },
   "current_password":{
     "message":"current password"
   },
   "new_password":{
     "message":"new password"
+  },
+  "permission":{
+    "message":"permission"
   },
   "permission_rule":{
     "message":"permission rule"
@@ -74,14 +95,17 @@
   "add":{
     "message":"add"
   },
+  "public_profile_sub_title":{
+    "message":"public profile"
+  },
   "login":{
     "message":"Login block"
   },
+  "login_realm":{
+    "message":"realm"
+  },
   "function_error_401":{
     "message":"Unauthorized"
-  },
-  "group_picker_title":{
-    "message":">select groups"
   },
   "user_list":{
     "message":"users"
@@ -100,6 +124,9 @@
   },
   "profile_timezone":{
     "message":"time zone"
+  },
+  "profile_avatar":{
+    "message":"avatar"
   },
   "profile_pagingsize":{
     "message":"results page size"
@@ -139,6 +166,30 @@
   },
   "profile_change_language_warning":{
     "message":"after changing the language, you will need to clear your browser's cache and reload the page."
+  },
+  "profile_notification":{
+    "message":"notification"
+  },
+  "profile_notification_helper":{
+    "message":"configure unread notifications email's sending frequency."
+  },
+  "profile_notification_sending_management":{
+    "message":"sending management"
+  },
+  "profile_notification_no_email":{
+    "message":"no sending"
+  },
+  "profile_notification_immediately":{
+    "message":"immediately"
+  },
+  "profile_notification_with_time_interval":{
+    "message":"aggregate in a single email"
+  },
+  "profile_notification_time_interval":{
+    "message":"sending frequency"
+  },
+  "profile_notification_time_interval_at":{
+    "message":"to"
   },
   "profile_gravatar_help":{
     "message":"To use an avatar, create an account on <a href=\"http:\/\/en.gravatar.com\" target=\"_blank\">http:\/\/en.gravatar.com<\/a>"

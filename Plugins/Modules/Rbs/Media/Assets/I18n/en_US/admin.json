@@ -5,7 +5,13 @@
   "module_keywords":{
     "message":"images,photos,photographs,videos,documents,icons,visuals,albums,galeries"
   },
+  "image_list":{
+    "message":"images"
+  },
   "image_create":{
     "message":"add image"
+  },
+  "find_images":{
+    "message":"find images"
   }
 }

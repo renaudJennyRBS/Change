@@ -8,12 +8,6 @@
   "notbetweendocumentarray":{
     "message":"the field \"$FIELD$\" is not valid: count='$COUNT$' min-occurs='$MINOCCURS$', max-occurs='$MAXOCCURS$'"
   },
-  "maxoccurs":{
-    "message":"the field \"$FIELD$\" must contain no more than $MAXOCCURS$ elements"
-  },
-  "minoccurs":{
-    "message":"the field \"$FIELD$\" must contain at least $MAXOCCURS$ elements"
-  },
   "emailaddressinvalid":{
     "message":"the field \"$FIELD$\" must contain a valid e-mail address."
   },

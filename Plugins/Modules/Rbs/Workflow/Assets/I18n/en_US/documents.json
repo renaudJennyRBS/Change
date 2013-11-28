@@ -1,23 +1,5 @@
 {
-  "status":{
-    "message":"state"
-  },
-  "label":{
-    "message":"label"
-  },
-  "document":{
-    "message":"document"
-  },
-  "taskcode":{
-    "message":"code"
-  },
   "task":{
     "message":"task"
-  },
-  "workflowinstance":{
-    "message":"workflow instance"
-  },
-  "workflow":{
-    "message":"workflow"
   }
 }

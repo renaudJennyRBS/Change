@@ -1,4 +1,7 @@
 {
+  "module_name":{
+    "message":"collections"
+  },
   "module_keywords":{
     "message":"lists,collections,options"
   },
@@ -11,8 +14,11 @@
   "item_locked_warning":{
     "message":"\n\t\t<span class=\"label label-danger\">Warning!<\/span> This item has been locked by a plugin. You will not be able to change its value or delete it.\n\t"
   },
+  "collection_list":{
+    "message":"collections"
+  },
   "collection_create":{
-    "message":"add a new  collection"
+    "message":"add a new collection"
   },
   "item_list":{
     "message":"items"

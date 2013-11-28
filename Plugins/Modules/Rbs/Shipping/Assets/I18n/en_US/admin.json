@@ -1,3 +1,17 @@
-[
-  
-]
+{
+  "mode_list":{
+    "message":"shipping methods"
+  },
+  "mode_create":{
+    "message":"add a shipping method"
+  },
+  "mode_select_visual":{
+    "message":"select a visual"
+  },
+  "module_name":{
+    "message":"shipping"
+  },
+  "module_keywords":{
+    "message":"shipping, delivery, carrier, delivery method"
+  }
+}

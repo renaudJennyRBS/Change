@@ -1,3 +1,68 @@
-[
-  
-]
+{
+  "module_name":{
+    "message":"stocks"
+  },
+  "inventoryentry_list":{
+    "message":"inventory"
+  },
+  "inventoryentry_create":{
+    "message":"define a stock"
+  },
+  "inventoryentry_sku_picker_title":{
+    "message":"select a SKU"
+  },
+  "sku_list":{
+    "message":"SKU"
+  },
+  "sku_create":{
+    "message":"add a SKU"
+  },
+  "mass_abbr":{
+    "message":"m"
+  },
+  "length_abbr":{
+    "message":"L"
+  },
+  "width_abbr":{
+    "message":"l"
+  },
+  "height_abbr":{
+    "message":"h"
+  },
+  "mass":{
+    "message":"weight"
+  },
+  "length":{
+    "message":"length"
+  },
+  "width":{
+    "message":"width"
+  },
+  "height":{
+    "message":"height"
+  },
+  "g_abbr":{
+    "message":"g"
+  },
+  "kg_abbr":{
+    "message":"kg"
+  },
+  "lbs_abbr":{
+    "message":"lbs"
+  },
+  "cm_abbr":{
+    "message":"cm"
+  },
+  "m_abbr":{
+    "message":"m"
+  },
+  "in_abbr":{
+    "message":"in"
+  },
+  "sku_threshold_use":{
+    "message":"use"
+  },
+  "sku_threshold_remove":{
+    "message":"Delete"
+  }
+}

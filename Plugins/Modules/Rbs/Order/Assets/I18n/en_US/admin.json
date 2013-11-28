@@ -1,3 +1,155 @@
-[
-  
-]
+{
+  "order_select_ownerid":{
+    "message":"Select the owner"
+  },
+  "order_select_webstoreid":{
+    "message":"select a store"
+  },
+  "order_section_lines":{
+    "message":"lines"
+  },
+  "order_add_product":{
+    "message":"add a product"
+  },
+  "order_add_product_quantity":{
+    "message":"quantity"
+  },
+  "order_add":{
+    "message":"add"
+  },
+  "order_line_number":{
+    "message":"line"
+  },
+  "order_quantity":{
+    "message":"quantity"
+  },
+  "order_unit_price":{
+    "message":"unit price"
+  },
+  "order_line_total_price":{
+    "message":"total"
+  },
+  "order_designation":{
+    "message":"designation"
+  },
+  "order_sku":{
+    "message":"SKU code"
+  },
+  "order_lines":{
+    "message":"lines"
+  },
+  "order_articles":{
+    "message":"items"
+  },
+  "order_new_line":{
+    "message":"new line"
+  },
+  "order_parameters":{
+    "message":"parameters"
+  },
+  "order_customer":{
+    "message":"customer"
+  },
+  "order_add_line":{
+    "message":"add items"
+  },
+  "order_total":{
+    "message":"total"
+  },
+  "order_billing_area":{
+    "message":"billing area"
+  },
+  "order_search_by_sku":{
+    "message":"Search by SKU code"
+  },
+  "order_remove_lines":{
+    "message":"delete lines"
+  },
+  "order_removed_lines":{
+    "message":"recently deleted rows"
+  },
+  "order_remove_permanently":{
+    "message":"permanently delete"
+  },
+  "order_add_lines":{
+    "message":"Add lines"
+  },
+  "order_action_mark_as_payed":{
+    "message":"paid"
+  },
+  "order_action_mark_as_shipped":{
+    "message":"shipped"
+  },
+  "order_action_mark_as_delivered":{
+    "message":"delivered"
+  },
+  "order_action_mark_as_finalized":{
+    "message":"finalized"
+  },
+  "order_action_mark_as_prepared":{
+    "message":"prepared"
+  },
+  "order_action_cancel":{
+    "message":"cancel"
+  },
+  "order_statuses":{
+    "message":"state"
+  },
+  "order_list":{
+    "message":"orders"
+  },
+  "order_create":{
+    "message":"add an order"
+  },
+  "invoice_list":{
+    "message":"invoices"
+  },
+  "invoice_create":{
+    "message":"add an invoice"
+  },
+  "process_list":{
+    "message":"checkout process"
+  },
+  "process_create":{
+    "message":"add a checkout process"
+  },
+  "processing_status_in_progress":{
+    "message":"in progress"
+  },
+  "processing_status_canceled":{
+    "message":"cancelled"
+  },
+  "shipping_status_prepared":{
+    "message":"prepared"
+  },
+  "shipping_status_partially_shipped":{
+    "message":"partially sent"
+  },
+  "shipping_status_shipped":{
+    "message":"sent"
+  },
+  "shipping_status_partially_delivered":{
+    "message":"partially delivered"
+  },
+  "shipping_status_delivered":{
+    "message":"delivered"
+  },
+  "payment_status_unconfirmed":{
+    "message":"non-confirmed"
+  },
+  "payment_status_partially_payed":{
+    "message":"partially paid"
+  },
+  "payment_status_payed":{
+    "message":"paid"
+  },
+  "payment_status_canceled":{
+    "message":"cancelled"
+  },
+  "module_name":{
+    "message":"orders"
+  },
+  "module_keywords":{
+    "message":"orders, invoices"
+  }
+}

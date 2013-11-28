@@ -1,4 +1,7 @@
 {
+  "tags":{
+    "message":"tags"
+  },
   "no_available_tag":{
     "message":"No tag available"
   },

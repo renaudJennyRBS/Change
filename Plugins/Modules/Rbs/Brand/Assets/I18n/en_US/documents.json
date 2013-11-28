@@ -2,6 +2,9 @@
   "brand":{
     "message":"brand"
   },
+  "brand_description":{
+    "message":"description"
+  },
   "brand_visual":{
     "message":"visual"
   },

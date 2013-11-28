@@ -1,21 +1,21 @@
 {
   "module_name":{
-    "message":"Stores"
+    "message":"Web stores"
   },
   "module_keywords":{
     "message":"stores,shops,webstores"
   },
   "select_webstore":{
-    "message":"select a store..."
+    "message":"select a web store"
   },
   "webstore_list_loading":{
-    "message":"loading stores list"
+    "message":"loading web stores list..."
   },
   "webstore_list":{
-    "message":"e-commerce stores"
+    "message":"web stores"
   },
   "webstore_create":{
-    "message":"add a new e-commerce store"
+    "message":"add a new web store"
   },
   "store_billingareas_picker_title":{
     "message":"select pricing zones"

@@ -1,5 +1,26 @@
 {
   "synchronize_title_label":{
     "message":"synchronize title with label"
+  },
+  "any_role":{
+    "message":"all"
+  },
+  "role_consumer":{
+    "message":"reader"
+  },
+  "role_creator":{
+    "message":"creator"
+  },
+  "role_editor":{
+    "message":"validator"
+  },
+  "role_publisher":{
+    "message":"publisher"
+  },
+  "role_administrator":{
+    "message":"administrator"
+  },
+  "any_privilege":{
+    "message":"all"
   }
 }

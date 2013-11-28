@@ -1,3 +1,38 @@
-[
-  
-]
+{
+  "module_name":{
+    "message":"catalog"
+  },
+  "product_list":{
+    "message":"products"
+  },
+  "cross_selling_list":{
+    "message":"related products lists"
+  },
+  "price_list":{
+    "message":"product prices list"
+  },
+  "remove":{
+    "message":"remove"
+  },
+  "remove_products_from_list":{
+    "message":"Remove selected products from the list."
+  },
+  "productlist_list":{
+    "message":"products lists"
+  },
+  "highlight":{
+    "message":"highlight"
+  },
+  "highlight_products":{
+    "message":"Highlight the selected products."
+  },
+  "remove_highlight":{
+    "message":"no longer highlight"
+  },
+  "remove_highlight_products":{
+    "message":"No longer highlight the selected products."
+  },
+  "variant_group":{
+    "message":"variants group"
+  }
+}

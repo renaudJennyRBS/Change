@@ -11,14 +11,38 @@
   "topic_pathpart_help":{
     "message":"\n\t\tPath used in the URL for this topic.\n\t"
   },
+  "topic_functions":{
+    "message":"functions"
+  },
+  "topic_permission_rule_title":{
+    "message":"permission rules"
+  },
+  "topic_users_picker_title":{
+    "message":"select users"
+  },
+  "topic_groups_picker_title":{
+    "message":"select user groups"
+  },
   "page_open_page_editor":{
     "message":"open page editor"
+  },
+  "page_full_screen":{
+    "message":"full screen"
   },
   "sectionpagefunction_list":{
     "message":"functions"
   },
   "sectionpagefunction_create":{
     "message":"associate a function to a section"
+  },
+  "sectionpagefunction_back_to":{
+    "message":"return to"
+  },
+  "sectionpagefunction_add":{
+    "message":"add"
+  },
+  "sectionpagefunction_define":{
+    "message":"set"
   },
   "staticpage_section_picker_title":{
     "message":"select the section"
@@ -37,6 +61,9 @@
   },
   "open_page_editor_warning":{
     "message":"<strong>This form contains unsaved changes.<\/strong>\n\t\t<ul>\n\t\t\t<li>By clicking <strong>Yes<\/strong>,changes will be  <strong>saved<\/strong> and you will be redirected to the page editor.<\/li>\n\t\t\t<li>By clicking <strong>No<\/strong>, this <strong>popup will be dismissed<\/strong> and no harm will be done :)<\/li>\n\t\t<\/ul>\n\t\n\t"
+  },
+  "section_name":{
+    "message":"CMS"
   },
   "richtext":{
     "message":"richtext block"
@@ -59,6 +86,30 @@
   "sitemap":{
     "message":"sitemap"
   },
+  "exception":{
+    "message":"exception"
+  },
+  "exception_show_stack_trace":{
+    "message":"display stack trace"
+  },
+  "error":{
+    "message":"error"
+  },
+  "error_codehttp":{
+    "message":"http error code"
+  },
+  "function_error_404":{
+    "message":"Page not found"
+  },
+  "function_error_403":{
+    "message":"Access denied"
+  },
+  "function_error_500":{
+    "message":"Application internal error"
+  },
+  "xhtml_template":{
+    "message":"HTML template"
+  },
   "menu_list":{
     "message":"navigation menus"
   },
@@ -77,6 +128,9 @@
   "functionalpage_create":{
     "message":"add functional page"
   },
+  "functionalpage_pagetemplate_picker_title":{
+    "message":"select a page template"
+  },
   "topic_list":{
     "message":"topics"
   },
@@ -91,6 +145,18 @@
   },
   "menu_website_picker_title":{
     "message":"select the website of the menu"
+  },
+  "menu_section_items":{
+    "message":"Menu entries"
+  },
+  "menu_select_document":{
+    "message":"Document"
+  },
+  "menu_url":{
+    "message":"URL"
+  },
+  "menu_i18nKey":{
+    "message":"key translation"
   },
   "menu_this_menu_is_empty":{
     "message":"This menu is empty"
@@ -136,5 +202,17 @@
   },
   "edit_page_contents_to_fix_this":{
     "message":"To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+  },
+  "richtext_content":{
+    "message":"text"
+  },
+  "thread":{
+    "message":"breadcrumb"
+  },
+  "thread_separator":{
+    "message":"link separator"
+  },
+  "block_template_name":{
+    "message":"twig file"
   }
 }

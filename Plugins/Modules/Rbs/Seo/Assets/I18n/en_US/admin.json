@@ -1,3 +1,113 @@
-[
-  
-]
+{
+  "module_name":{
+    "message":"SEO"
+  },
+  "module_keywords":{
+    "message":"SEO, search engines, optimization"
+  },
+  "urls":{
+    "message":"URLs"
+  },
+  "url":{
+    "message":"URL"
+  },
+  "section":{
+    "message":"section"
+  },
+  "website":{
+    "message":"website"
+  },
+  "lcid":{
+    "message":"language"
+  },
+  "canonical_location":{
+    "message":"canonical implementation for this web site"
+  },
+  "publication":{
+    "message":"publication"
+  },
+  "published":{
+    "message":"Published"
+  },
+  "not_published":{
+    "message":"Unpublished"
+  },
+  "redirects":{
+    "message":"redirects"
+  },
+  "permanent":{
+    "message":"Permanent"
+  },
+  "query":{
+    "message":"request"
+  },
+  "document_published_in_lang":{
+    "message":"The document is published in this language."
+  },
+  "document_not_published_in_lang":{
+    "message":"The document is not published in this language."
+  },
+  "section_published_in_lang":{
+    "message":"This section is published in this language."
+  },
+  "section_not_published_in_lang":{
+    "message":"This section is not published in this language."
+  },
+  "detail_function_provided_in_lang":{
+    "message":"The detail function is provided in this section for this language."
+  },
+  "detail_function_not_provided_in_lang":{
+    "message":"The detail function is not provided in this section for this language."
+  },
+  "available_languages_help":{
+    "message":"Below table shows only languages in which this document is translated and the sections in which it sets up."
+  },
+  "canonical_help":{
+    "message":"The marked lines of a <i class=\"icon-star text-info\"><\/i> represent the document canonical implementations in a web site and a given language."
+  },
+  "edit_url":{
+    "message":"modify this URL"
+  },
+  "restore_default_url":{
+    "message":"back to the default URL"
+  },
+  "edit_redirect":{
+    "message":"modify this redirection"
+  },
+  "remove_redirect":{
+    "message":"delete this redirection"
+  },
+  "add_new_redirect":{
+    "message":"add this redirection"
+  },
+  "clear_new_redirect":{
+    "message":"reset this redirection"
+  },
+  "sitemap":{
+    "message":"sitemap"
+  },
+  "meta":{
+    "message":"metas"
+  },
+  "aside_title":{
+    "message":"SEO"
+  },
+  "aside_create_seo_info":{
+    "message":"Create"
+  },
+  "meta_variable_document_title":{
+    "message":"document title"
+  },
+  "meta_variable_page_title":{
+    "message":"page title"
+  },
+  "meta_variable_website_title":{
+    "message":"web site title"
+  },
+  "meta_variable_section_title":{
+    "message":"section title"
+  },
+  "head_metas":{
+    "message":"page headers metas"
+  }
+}

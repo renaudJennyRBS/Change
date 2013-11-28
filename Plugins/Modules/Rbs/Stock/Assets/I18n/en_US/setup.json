@@ -1,3 +1,14 @@
-[
-  
-]
+{
+  "unit_piece":{
+    "message":"piece"
+  },
+  "sku_threshold_available":{
+    "message":"in stock"
+  },
+  "sku_threshold_low":{
+    "message":"low stock"
+  },
+  "sku_threshold_unavailable":{
+    "message":"out of stock"
+  }
+}

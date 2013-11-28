@@ -1,3 +1,74 @@
-[
-  
-]
+{
+  "cart_without_webstore":{
+    "message":"the shopping cart is not linked to a store"
+  },
+  "line_without_quantity":{
+    "message":"the line $NUMBER$ does not contain a valid quantity"
+  },
+  "line_without_sku":{
+    "message":"the line $NUMBER$ does not contain a valid article"
+  },
+  "line_without_price":{
+    "message":"the line $NUMBER$ does not have a valid price"
+  },
+  "cart_reservation_error":{
+    "message":"unable to book some products"
+  },
+  "add_to_cart":{
+    "message":"add to cart"
+  },
+  "view_my_cart":{
+    "message":"view cart"
+  },
+  "my_cart":{
+    "message":"my cart"
+  },
+  "empty":{
+    "message":"empty"
+  },
+  "empty_cart":{
+    "message":"your shopping cart is empty."
+  },
+  "article":{
+    "message":"item"
+  },
+  "articles":{
+    "message":"items"
+  },
+  "excluding_fees":{
+    "message":"shipping fee excluded"
+  },
+  "update":{
+    "message":"update"
+  },
+  "remove":{
+    "message":"delete"
+  },
+  "designation":{
+    "message":"designation"
+  },
+  "unit_price":{
+    "message":"unit price"
+  },
+  "quantity":{
+    "message":"quantity"
+  },
+  "total_price":{
+    "message":"total price"
+  },
+  "taxes_amount":{
+    "message":"tax"
+  },
+  "amount_without_tax":{
+    "message":"amount Excl. VAT"
+  },
+  "amount_with_tax":{
+    "message":"amount incl. VAT"
+  },
+  "cart_contents":{
+    "message":"cart content"
+  },
+  "actions":{
+    "message":"actions"
+  }
+}

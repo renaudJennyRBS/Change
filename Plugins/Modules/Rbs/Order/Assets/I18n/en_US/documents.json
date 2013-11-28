@@ -1,3 +1,56 @@
-[
-  
-]
+{
+  "order_ownerid":{
+    "message":"owner"
+  },
+  "order_webstoreid":{
+    "message":"web store"
+  },
+  "order_contextdata":{
+    "message":"general informations"
+  },
+  "order_linesdata":{
+    "message":"lines"
+  },
+  "order_amount":{
+    "message":"amount"
+  },
+  "order_amountwithtax":{
+    "message":"amount incl. VAT"
+  },
+  "order_currencycode":{
+    "message":"currency"
+  },
+  "order_processingstatus":{
+    "message":"status"
+  },
+  "order_shippingstatus":{
+    "message":"delivery status"
+  },
+  "order_paymentstatus":{
+    "message":"billing status"
+  },
+  "order":{
+    "message":"order"
+  },
+  "invoice":{
+    "message":"invoice"
+  },
+  "process":{
+    "message":"checkout process"
+  },
+  "invoice_order":{
+    "message":"order"
+  },
+  "invoice_transaction":{
+    "message":"paiement transaction"
+  },
+  "invoice_amount":{
+    "message":"amount"
+  },
+  "invoice_amountwithtax":{
+    "message":"amount incl. VAT"
+  },
+  "invoice_currencycode":{
+    "message":"currency"
+  }
+}
