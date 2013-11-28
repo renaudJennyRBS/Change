@@ -25,6 +25,8 @@ class ReviewList extends Block
 		$parameters->addParameterMeta('averageRatingPartsCount', 5);
 		$parameters->addParameterMeta('reviewsPerPage', 10);
 		$parameters->addParameterMeta('targetId');
+		$parameters->addParameterMeta('sectionId');
+		$parameters->addParameterMeta('websiteId');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();
@@ -39,6 +41,19 @@ class ReviewList extends Block
 				$parameters->setParameterValue('targetId', $target->getId());
 			}
 		}
+
+		/* @var $page \Rbs\Website\Documents\Page */
+		$page = $event->getParam('page');
+		$section = $page->getSection();
+		if ($section instanceof \Rbs\Website\Documents\Section)
+		{
+			$parameters->setParameterValue('websiteId', $section->getWebsite()->getId());
+			if ($parameters->getParameter('sectionId') === null)
+			{
+				$parameters->setParameterValue('sectionId', $section->getId());
+			}
+		}
+
 		return $parameters;
 	}
 
@@ -76,11 +91,45 @@ class ReviewList extends Block
 			$attributes['totalCount'] = $totalCount;
 			$attributes['pageCount'] = $pageCount;
 
+			/* @var $section \Rbs\Website\Documents\Section */
+			$section = $event->getApplicationServices()->getDocumentManager()
+				->getDocumentInstance($parameters->getParameterValue('sectionId'));
+
+			$reviewFunctionalPageExist = false;
+
+			if ($section instanceof \Rbs\Website\Documents\Section)
+			{
+				//search the function Rbs_Review_Review in section and his section path
+				foreach ($section->getSectionPath() as $sectionFromPath)
+				{
+					$dqb2 = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
+					$dqb2->andPredicates($dqb2->eq('section', $sectionFromPath), $dqb2->eq('functionCode', 'Rbs_Review_Review'));
+					if ($dqb2->getCountDocuments())
+					{
+						$reviewFunctionalPageExist = true;
+						break;
+					}
+				}
+			}
+
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			foreach ($dqb->getDocuments(($pageNumber - 1) * $reviewsPerPage, $reviewsPerPage) as $review)
 			{
 				/* @var $review \Rbs\Review\Documents\Review */
-				$rows[] = $review->getInfoForTemplate($urlManager);
+
+				$url = null;
+				if ($reviewFunctionalPageExist)
+				{
+					$url = $urlManager->getCanonicalByDocument($review, $review->getSection()->getWebsite());
+				}
+				else
+				{
+					$url = $urlManager->getSelf()->setQuery(['pageNumber-' . $attributes['blockId'] => $pageNumber])
+						->setFragment('review-' . $review->getId());
+				}
+				$infoForTemplate = $review->getInfoForTemplate($urlManager);
+				$infoForTemplate['url'] = $url;
+				$rows[] = $infoForTemplate;
 			}
 		}
 

@@ -24,6 +24,8 @@
 
 			$delegate.model('Rbs_User').route('home', 'Rbs/User', { 'redirectTo': 'Rbs/User/User/'});
 			$delegate.model(null).route('userProfile', 'Rbs/User/Profile', 'Document/Rbs/User/Profile/profile.twig');
+			$delegate.model(null).route('userConnectionInfo', 'Rbs/User/ConnectionInfo', 'Document/Rbs/User/Profile/connection-info.twig');
+			$delegate.model(null).route('userChangePassword', 'Rbs/User/ChangePassword', 'Document/Rbs/User/Profile/change-password.twig');
 
 			$delegate.routesForModels([
 				'Rbs_User_User',

@@ -202,5 +202,20 @@
 	},
 	"profile_gravatar_help":{
 		"message":"Pour utiliser un avatar, créer un compte sur le site <a href=\"http:\/\/fr.gravatar.com\" target=\"_blank\">http:\/\/fr.gravatar.com<\/a>"
+	},
+	"profile_connection_info":{
+		"message":"informations de connexion"
+	},
+	"profile_connection_info_wrong_password":{
+		"message":"le mot de passe actuel ne correspond pas à votre login"
+	},
+	"profile_connection_info_invalid_login":{
+		"message":"l'identifiant de connexion est invalide. Veuillez en choisir un différent"
+	},
+	"profile_change_password":{
+		"message":"changement du mot de passe"
+	},
+	"profile_change_password_confirm_password":{
+		"message":"confirmer le nouveau mot de passe"
 	}
 }
