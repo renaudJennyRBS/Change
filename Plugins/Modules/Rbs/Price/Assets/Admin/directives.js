@@ -63,28 +63,35 @@
 				scope.round10CentsDown = function(){
 					var num = Math.floor(scope.value * 10) / 10;
 					num.toFixed(2);
-					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$setViewValue(num);
 					ngModel.$render();
 				};
 
 				scope.roundIntDown = function(){
 					var num = Math.floor(scope.value);
 					num.toFixed(2);
-					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$setViewValue(num);
 					ngModel.$render();
 				};
 
 				scope.round10CentsUp = function(){
 					var num = Math.ceil(scope.value * 10) / 10;
 					num.toFixed(2);
-					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$setViewValue(num);
+					ngModel.$render();
+				};
+
+				scope.round99CentsUp = function(){
+					var num = Math.ceil(scope.value) - 0.01;
+					num.toFixed(2);
+					ngModel.$setViewValue(num);
 					ngModel.$render();
 				};
 
 				scope.roundIntUp = function(){
 					var num = Math.ceil(scope.value);
 					num.toFixed(2);
-					ngModel.$setViewValue(num.toLocaleString());
+					ngModel.$setViewValue(num);
 					ngModel.$render();
 				};
 			}
