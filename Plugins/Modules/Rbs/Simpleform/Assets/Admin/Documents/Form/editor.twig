@@ -90,7 +90,7 @@
 		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Field" collection="document.fields" extend="fieldManager"
 			toolbar="false" selectable="false">
 			<column name="label" primary="true">
-				<a href="javascript:;" ng-click="extend.cascadeEdit($index)">(= doc.label =)</a>
+				<a href="javascript:;" ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
 			</column>
 			<column name="actions" width="88" label="{{ i18nAttr('m.rbs.simpleform.admin.sort_order', ['ucf']) }}">
 				<rbs-kb-switch>

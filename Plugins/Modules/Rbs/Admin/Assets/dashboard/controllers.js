@@ -19,38 +19,9 @@
 	 * @param User
 	 * @constructor
 	 */
-	function DashboardController($scope, Workspace, Breadcrumb, MainMenu, i18n, REST, Dialog, Settings, UrlManager, User)
+	function DashboardController($scope, Breadcrumb, REST, Dialog, Settings, User)
 	{
 		Breadcrumb.resetLocation();
-
-		Workspace.collapseLeftSidebar();
-		Workspace.hideBreadcrumb();
-		MainMenu.hide();
-
-		$scope.indicators = [
-			{
-				"label"  : "Commandes passées ce mois",
-				"message": "Ne vous inquiétez pas, ça viendra ! <i class='icon-smile'></i>",
-				"style"  : "red",
-				"value"  : 0,
-				"link"   : ""
-			},
-			{
-				"label"  : "Visites uniques aujourd'hui",
-				"message": "C'est votre meilleur nombre de visites, bravo !",
-				"style"  : "blue",
-				"value"  : 348,
-				"link"   : ""
-			},
-			{
-				"label"  : "Commentaires sur les articles du blog",
-				"message": "Votre site semble vivant, continuez !",
-				"style"  : "green",
-				"value"  : 15122,
-				"link"   : ""
-			}
-		];
-
 
 		var $embedContainer = $('#chgDashboardEmbedContainer');
 
@@ -230,23 +201,14 @@
 				return $scope.notificationType;
 			}
 		};
-
-		$scope.$on('$destroy', function () {
-			Workspace.restore();
-			MainMenu.show();
-		});
 	}
 
 	DashboardController.$inject = [
 		'$scope',
-		'RbsChange.Workspace',
 		'RbsChange.Breadcrumb',
-		'RbsChange.MainMenu',
-		'RbsChange.i18n',
 		'RbsChange.REST',
 		'RbsChange.Dialog',
 		'RbsChange.Settings',
-		'RbsChange.UrlManager',
 		'RbsChange.User'
 	];
 	app.controller('Rbs_Admin_DashboardController', DashboardController);

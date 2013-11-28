@@ -169,21 +169,14 @@
 	 * @param REST
 	 * @param i18n
 	 * @param $http
-	 * @param Workspace
 	 * @param Breadcrumb
 	 * @constructor
 	 */
-	function PublicProfileController($scope, $routeParams, REST, i18n, $http, Workspace, Breadcrumb)
+	function PublicProfileController($scope, $routeParams, REST, i18n, $http, Breadcrumb)
 	{
-		Workspace.collapseLeftSidebar();
-
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.user.admin.module_name | ucf'), "Rbs/User"]
 		]);
-
-		$scope.$on('$destroy', function () {
-			Workspace.restore();
-		});
 
 		REST.resource($routeParams.id).then(function (user){
 			$scope.document = user;
@@ -220,7 +213,7 @@
 		});
 	}
 
-	PublicProfileController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.Workspace', 'RbsChange.Breadcrumb'];
+	PublicProfileController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', '$http', 'RbsChange.Breadcrumb'];
 	app.controller('Rbs_User_User_PublicProfileController', PublicProfileController);
 
 	/**

@@ -20,20 +20,20 @@
 		highlightBorder = 5;
 
 	$('body').append(
-		'<div id="structure-editor-block-properties-popup" class="dockable" style="display:none;"></div>' +
 		'<div id="structure-editor-dropzone-indicator"><span class="content"></span><i class="icon-arrow-right"></i></div>'
 	);
 	dropZoneIndicator = $('#structure-editor-dropzone-indicator');
 
-	blockPropertiesPopup = $('#structure-editor-block-properties-popup');
+	blockPropertiesPopup = $('#rbsStructureEditorBlockPropertiesPopup');
+
 
 	/**
 	 * Set the position of the editor for the settings of the selected block.
 	 *
 	 * @param blockEl
 	 */
-	function positionBlockSettingsEditor (blockEl) {
-
+	function positionBlockSettingsEditor (blockEl)
+	{
 		if (blockEl === null && lastSelectedBlock !== null) {
 			blockEl = lastSelectedBlock;
 		}
@@ -43,13 +43,15 @@
 		}
 
 		blockPropertiesPopup.show();
+		console.log(blockPropertiesPopup);
 		blockPropertiesPopupShown = true;
 
 		lastSelectedBlock = blockEl;
 	}
 
 
-	function closeBlockSettingsEditor () {
+	function closeBlockSettingsEditor ()
+	{
 		blockPropertiesPopup.hide();
 		blockPropertiesPopupShown = false;
 	}
@@ -572,6 +574,7 @@
 					var blockScope = blockEl.isolateScope() || blockEl.scope();
 					blockScope.editorCtrl = this;
 
+					blockPropertiesPopup = $('#rbsStructureEditorBlockPropertiesPopup');
 					blockPropertiesPopup.html(html);
 					blockPropertiesPopup.attr('data-title', item.name === 'Rbs_Website_Richtext' ? "Texte WYSIWYG" : item.label);
 					$compile(blockPropertiesPopup)(blockScope);
@@ -1205,7 +1208,6 @@
 							ctrl.reselectBlock();
 
 							resizeHandler();
-							Workspace.pin(blockPropertiesPopup);
 						}
 
 					};
@@ -1229,9 +1231,6 @@
 				}
 
 				Workspace.addResizeHandler("StructureEditor", resizeHandler);
-
-				scope.$on('Change:FullScreen:On', resizeHandler);
-				scope.$on('Change:FullScreen:Off', resizeHandler);
 
 				resizeHandler();
 
@@ -1786,7 +1785,7 @@
 				structureEditorService.highlightBlock(null);
 
 				scope.formValues = {};
-				scope.formDirection = blockPropertiesPopup.is('.pinned') ? 'vertical' : 'horizontal';
+				scope.formDirection = 'vertical';
 				scope.blockParametersLoading = false;
 
 				scope.block = ctrl.getItemById(element.data('id'));
@@ -1825,8 +1824,9 @@
 
 				scope.$watch('blockType', function (blockType, old)
 				{
-					if (blockType && blockType !== old)
+					if (blockType && blockType !== old) // && blockType.name !== 'rbs-block-markdown-text')
 					{
+						console.log(blockType);
 						$http.get(blockType.template).success(function (html)
 						{
 							$compile(html)(scope, function (clone) {
@@ -2096,7 +2096,7 @@
 
 				var item = ctrl.getItemById(element.data('id'));
 				if (! item.parameters) {
-					scope.initItem();
+					scope.initItem(item);
 				}
 				scope.input = {text: item.parameters.content};
 

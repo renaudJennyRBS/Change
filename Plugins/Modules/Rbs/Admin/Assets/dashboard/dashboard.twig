@@ -1,21 +1,5 @@
 <div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
 
-	<div class="row indicators">
-		<div ng-repeat="ind in indicators" class="col-md-(= 12/indicators.length =)">
-			<div class="indicator indicator-(= ind.style =)">
-				<div class="indicator-inner">
-					<div class="value pull-left">(= ind.value | number =)</div>
-					<div class="title">
-						<div ng-bind-html="ind.label"></div>
-						<div class="message" ng-bind-html="ind.message"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<hr/>
-
 	<div class="small-indicators">
 		<rbs-avatar size='62' user-id='(= user.id =)' ></rbs-avatar>
 		<span ng-click="showNotifications($event)">
@@ -26,7 +10,7 @@
 		<span ng-click="showTasks($event)">
 			<i class="icon-tasks"></i>
 			<div>{{ i18n('m.rbs.admin.admin.dashboard_task_tasks', ['ucf']) }}</div>
-			<div class="value"><i class="icon-spinner icon-spin" ng-if="! tasks"></i>(= tasks.pagination.count =)</div>
+			<div class="value"><i class="icon-spinner icon-spin" ng-hide="tasks"></i>(= tasks.pagination.count =)</div>
 		</span>
 
 		<span ng-repeat="tag in dashboardSettings.tags" style="border-bottom: 3px solid #0088cc;" ng-click="showTaggedDocuments(tag, $event)">
@@ -40,5 +24,23 @@
 		</span>
 	</div>
 	<div id="chgDashboardEmbedContainer"></div>
+
+	<div class="jumbotron">
+		<h1>Welcome to RBS Change 4!</h1>
+		<p>
+			The RBS team is really proud to show you this first beta version of its nextgen
+			open source CMS & e-commerce platform!
+		</p>
+		<p>
+			This beta version is still under active development and is <strong>not suitable for production websites</strong>.
+		</p>
+		<p>
+			Thank you very much for giving it a try!
+			Don't hesitate to tell us what you find great, and what troubles you encounter. This will help us to improve RBS Change!
+		</p>
+		<p class="text-muted">
+			For more information, please visit the <a href="https://github.com/RBSChange/Change" target="_blank">project's home on GitHub</a>.
+		</p>
+	</div>
 
 </div>

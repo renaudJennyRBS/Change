@@ -75,11 +75,6 @@
 							[i18n.trans('m.rbs.catalog.adminjs.variant_group | ucf'), "Rbs/Catalog/VariantGroup"]]
 						);
 					}
-
-					if (!scope.document.isNew())
-					{
-						MainMenu.addAsideTpl('variant-group-aside', 'Document/Rbs/Catalog/VariantGroup/aside.twig', scope);
-					}
 				};
 
 				scope.$watchCollection('Attributes.axesToAdd', function(newValue) {
@@ -179,7 +174,7 @@
 						initAxesConfiguration();
 					}
 				};
-				
+
 				editorCtrl.init('Rbs_Catalog_VariantGroup');
 			}
 		};

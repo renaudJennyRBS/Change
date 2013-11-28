@@ -191,17 +191,13 @@
 	});
 
 
-	app.directive('rbsWorkspaceConfig', ['RbsChange.Workspace', 'RbsChange.MainMenu', function (Workspace, MainMenu) {
+	app.directive('rbsWorkspaceConfig', [ function () {
 		return {
 			restrict : 'E',
 			scope : true,
 			controller : ['$scope', '$attrs', function ($scope, $attrs) {
-				if ($attrs.menu) {
-					MainMenu.loadModuleMenu($attrs.menu);
-				}
 			}]
 		};
-
 	}]);
 
 })();

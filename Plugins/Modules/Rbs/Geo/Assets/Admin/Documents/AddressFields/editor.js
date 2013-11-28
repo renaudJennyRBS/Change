@@ -42,21 +42,14 @@
 					scope.document.fields.splice(index, 1);
 				};
 
-				scope.cascadeCreateField = function(){
-					EditorManager.cascade(REST.newResource('Rbs_Geo_AddressField'), scope.document.label, function(doc){scope.document.fields.push(doc);});
-				};
 
-				scope.cascadeEditField = function(index){
-					REST.resource(scope.document.fields[index]).then(
-						function(doc) {
-							scope.cascadeEdit(doc, scope.document.label, function(doc){scope.document.fields[index] = doc;});
-						}
-					);
-				};
+				scope.cascadeCreateField = editorCtrl.registerCreateCascade('fields', 'Rbs_Geo_AddressField');
+				scope.cascadeEditField = editorCtrl.registerEditCascade('fields');
 			}
 		};
 	}
 
 	editorRbsGeoAddressFields.$inject = ['RbsChange.EditorManager', 'RbsChange.REST', 'RbsChange.ArrayUtils'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsGeoAddressFields', editorRbsGeoAddressFields);
+
 })();

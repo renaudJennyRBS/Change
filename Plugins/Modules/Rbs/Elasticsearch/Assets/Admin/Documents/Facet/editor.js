@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function RbsElasticsearchFacetEditor(REST, $routeParams, Settings)
+	function RbsElasticsearchFacetEditor(REST, $routeParams, Settings, Navigation)
 	{
 		return {
 			restrict: 'EC',
@@ -13,17 +13,18 @@
 			link : function (scope, elm, attrs, editorCtrl)
 			{
 				scope.onReady = function(){
-					if (scope.document.isNew() && scope.parentDocument &&
-						(scope.parentDocument.model == 'Rbs_Elasticsearch_FullText' ||
-							scope.parentDocument.model == 'Rbs_Elasticsearch_StoreIndex'))
+					var navCtx = Navigation.getCurrentContext();
+					if (scope.document.isNew() && navCtx && navCtx.parentDocument &&
+						(navCtx.parentDocument.model === 'Rbs_Elasticsearch_FullText' ||
+							navCtx.parentDocument.model === 'Rbs_Elasticsearch_StoreIndex'))
 					{
-						scope.document.indexId = scope.parentDocument.id;
+						scope.document.indexId = navCtx.parentDocument.id;
 					}
 				};
 				editorCtrl.init('Rbs_Elasticsearch_Facet');
 			}
 		};
 	}
-	RbsElasticsearchFacetEditor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Settings'];
+	RbsElasticsearchFacetEditor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Settings', 'RbsChange.Navigation'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsElasticsearchFacet', RbsElasticsearchFacetEditor);
 })();

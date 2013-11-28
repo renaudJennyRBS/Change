@@ -5,40 +5,68 @@
 			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.contents', ['ucf']) }}</h3>
 		</div>
 		<div class="list-group">
-			<a class="list-group-item" href="Rbs/Website/Website/">
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/Website/">
 				<i class="icon-home"></i> {{ i18n('m.rbs.website.admin.website_list', ['ucf']) }}
 			</a>
-			<a class="list-group-item" href="Rbs/Website/StaticPage/">
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/Topic/">
+				<i class="icon-folder-close"></i> {{ i18n('m.rbs.website.admin.topic_list', ['ucf']) }}
+			</a>
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/StaticPage/">
 				<i class="icon-file-text"></i> {{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}
 			</a>
-			<a class="list-group-item" href="Rbs/Website/FunctionalPage/">
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/FunctionalPage/">
 				<i class="icon-file"></i> {{ i18n('m.rbs.website.admin.functionalpage_list', ['ucf']) }}
 			</a>
-			<a class="list-group-item" href="Rbs/Website/Menu/">
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/Menu/">
 				<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}
 			</a>
 		</div>
 	</div>
 
-	<div class="panel" ng-repeat="website in websites" ng-class="{true: 'panel-primary', false: 'panel-default'}[currentWebsiteId == website.id]">
-
-		<div class="panel-heading">
-			<h3 class="panel-title">
-				<span class="pull-right">
-					<a title="{{ i18nAttr('m.rbs.website.admin.edit_website_properties', ['ucf']) }}" class="btn btn-xs" ng-class="{true: 'btn-primary', false: 'btn-default'}[currentWebsiteId == website.id]" ng-href="(= website | rbsURL =)"><i class="icon-pencil"></i></a>
-				</span>
-				<a ng-href="(= website | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate_in_website', ['ucf']) }}"><i class="icon-home"></i> (=website.label=)</a>
-			</h3>
-		</div>
-
-		<div class="panel-body">
-			<div tree-view="Rbs/Website"
-			     root-node-url="(=website.META$.treeNode.url=)"
-			     allowed-models="Rbs_Website_Website Rbs_Website_Topic"
-			     url-template="Rbs/Website/nav/?tn=:id">
+	<div ng-show="websites.length > 1">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<select ng-model="website" ng-options="w.label for w in websites" class="form-control"></select>
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div>
+					<span class="pull-right">
+						<a title="{{ i18nAttr('m.rbs.website.admin.edit_website_properties', ['ucf']) }}" class="btn btn-xs" ng-href="(= website | rbsURL =)"><i class="icon-pencil"></i></a>
+					</span>
+					<strong><a ng-href="(= website | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate_in_website', ['ucf']) }}"><i class="icon-home"></i> Root</a></strong>
+				</div>
+				<div tree-view="Rbs/Website"
+				     root-node-url="(=website.META$.treeNode.url=)"
+				     allowed-models="Rbs_Website_Website Rbs_Website_Topic"
+				     url-template="Rbs/Website/nav/?tn=:id">
+				</div>
 			</div>
 		</div>
+	</div>
 
+	<div ng-show="websites.length == 1">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="icon-home"></i> (= websites[0].label =)
+				</h3>
+			</div>
+			<div class="panel-body">
+				<div>
+					<span class="pull-right">
+						<a title="{{ i18nAttr('m.rbs.website.admin.edit_website_properties', ['ucf']) }}" class="btn btn-xs" ng-href="(= website | rbsURL =)"><i class="icon-pencil"></i></a>
+					</span>
+					<strong><a ng-href="(= website | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate_in_website', ['ucf']) }}">(= website.label =)</a></strong>
+				</div>
+				<div tree-view="Rbs/Website"
+				     root-node-url="(=websites[0].META$.treeNode.url=)"
+				     allowed-models="Rbs_Website_Website Rbs_Website_Topic"
+				     url-template="Rbs/Website/nav/?tn=:id">
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>

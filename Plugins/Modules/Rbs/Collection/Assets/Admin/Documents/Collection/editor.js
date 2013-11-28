@@ -56,17 +56,9 @@
 					}
 				};
 
-				scope.cascadeCreateItem = function(){
-					EditorManager.cascade(REST.newResource('Rbs_Collection_Item'), scope.document.label, function(doc){scope.document.items.push(doc);});
-				};
 
-				scope.cascadeEditItem = function(index){
-					REST.resource(scope.document.items[index]).then(
-						function(doc) {
-							scope.cascadeEdit(doc, scope.document.label, function(doc){scope.document.items[index] = doc;});
-						}
-					)
-				};
+				scope.cascadeCreateItem = editorCtrl.registerCreateCascade('items', 'Rbs_Collection_Item');
+				scope.cascadeEditItem = editorCtrl.registerEditCascade('items');
 			}
 		};
 

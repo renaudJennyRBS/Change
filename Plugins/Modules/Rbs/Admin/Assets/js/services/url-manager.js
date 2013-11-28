@@ -8,7 +8,7 @@
 	app.config(['$provide', function ($provide) {
 		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider) {
 
-			this.$get = function() {
+			this.$get = function ($location) {
 				var urls = {};
 
 				var register = function (modelName, url) {
@@ -109,7 +109,16 @@
 					if (url.charAt(0) === '/') {
 						url = url.slice(1);
 					}
-					return url;
+
+					var search = $location.search(),
+						params = {};
+					if (search.hasOwnProperty('np')) {
+						params['np'] = search['np'];
+					}
+					if (search.hasOwnProperty('nf')) {
+						params['nf'] = search['nf'];
+					}
+					return Utils.makeUrl(url, params);
 				};
 
 

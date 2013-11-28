@@ -1,37 +1,52 @@
-<div data-ng-controller="Rbs_Website_Menu_ListController">
-	<page-header title="{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}"></page-header>
+<div class="row" ng-controller="Rbs_Website_Menu_ListController">
 
-	<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website_Menu'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
 
-	<p class="form-inline">
-		{{ i18n(propertyKey('Rbs_Website_Menu', 'website'), ['ucf', 'lab']) }}
-		<select class="form-control" ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
-	</p>
-
-	<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
-		<i class="icon-arrow-up icon-3x pull-left"></i>
-		{{ i18n('m.rbs.website.admin.menu_menus_are_grouped_by_website')|raw }}
+	<div rbs-aside-column>
+		<rbs-aside-plugin-menu plugin="Rbs_Website"></rbs-aside-plugin-menu>
 	</div>
 
-	<div ng-show="selectedWebsite">
-		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}"></page-header>
+
+		<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
+
+		<p class="form-inline">
+			{{ i18n(propertyKey('Rbs_Website_Menu', 'website'), ['ucf', 'lab']) }}
+			<select class="form-control" ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
+		</p>
+
+		<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
+			<i class="icon-arrow-up icon-3x pull-left"></i>
+			{{ i18n('m.rbs.website.admin.menu_menus_are_grouped_by_website')|raw }}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsWebsiteMenu"
-		                   model="Rbs_Website_Menu"
-		                   filter-query="query"
-		                   load-query="listLoadQuery"
-		                   activable="true"
-		                   actions="default" use-properties="website">
-			<column name="label" primary="true">
-				<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
-			</column>
-			<column name="items">
-				<span ng-repeat="item in doc.items">
-					<span class="label label-default" ng-bind-html="item.title"></span>
-				</span>
-			</column>
-		</rbs-document-list>
+		<div ng-show="selectedWebsite">
+			<div class="add-elements-bar">
+				<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
+			</div>
+
+			<rbs-document-list data-dlid="DLRbsWebsiteMenu"
+			                   model="Rbs_Website_Menu"
+			                   filter-query="query"
+			                   load-query="listLoadQuery"
+			                   activable="true"
+			                   actions="default" use-properties="website">
+				<column name="label" primary="true">
+					<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
+				</column>
+				<column name="items">
+					<span ng-repeat="item in doc.items">
+						<span class="label label-default" ng-bind-html="item.title"></span>
+					</span>
+				</column>
+			</rbs-document-list>
+		</div>
 	</div>
+
 </div>

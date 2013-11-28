@@ -1,6 +1,6 @@
-<div class="panel panel-default">
+<div>
 
-	<div class="panel-heading">
+	<p>
 		<div ng-show="previewAvailable" rbs-tip="RbsDocumentListGeneralWithPreview">
 			{{ i18n('m.rbs.admin.admin.preview_tip') | raw }}
 		</div>
@@ -53,7 +53,7 @@
 		</div>
 
 		<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)"></div>
-	</div>
+	</p>
 
 
 	<table ng-if="viewMode=='list'" class="document-list table table-condensed table-bordered table-striped table-hover">
@@ -88,7 +88,7 @@
 		</tbody>
 	</table>
 
-	<div class="panel-body" ng-if="viewMode=='grid'">
+	<div ng-if="viewMode=='grid'">
 		<div ng-if="collection.length == 0 && !busy" class="empty-row">{{ i18n('m.rbs.admin.admin.this_list_is_empty', ['ucf']) }}</div>
 		<ul class="thumbnail-grid clearfix list-unstyled">
 			<li ng-repeat="doc in collection"
@@ -102,7 +102,7 @@
 		</ul>
 	</div>
 
-	<div class="panel-footer" ng-hide="(! collection.length && ! busy) || disablePagination">
+	<div ng-hide="(! collection.length && ! busy) || disablePagination">
 
 			<div class="pull-right">
 				<ul class="pagination pagination-sm" style="margin-top:0">

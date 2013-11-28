@@ -26,17 +26,8 @@
 					}
 				};
 
-				scope.cascadeCreateItem = function(){
-					EditorManager.cascade(REST.newResource('Rbs_Elasticsearch_Facet'), scope.document.label, function(doc){scope.document.facets.push(doc);});
-				};
-
-				scope.cascadeEditItem = function(index){
-					REST.resource(scope.document.facets[index]).then(
-						function(doc) {
-							scope.cascadeEdit(doc, scope.document.label, function(doc){scope.document.facets[index] = doc;});
-						}
-					)
-				};
+				scope.cascadeCreateItem = editorCtrl.registerCreateCascade('facets', 'Rbs_Elasticsearch_Facet');
+				scope.cascadeEditItem = editorCtrl.registerEditCascade('facets');
 			}
 		};
 

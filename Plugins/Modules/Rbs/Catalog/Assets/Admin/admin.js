@@ -5,7 +5,7 @@
 
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
-	__change.createEditorForModel('Rbs_Catalog_ProductListItem');
+	//__change.createEditorForModel('Rbs_Catalog_ProductListItem');
 
 	__change.createEditorsForLocalizedModel('Rbs_Catalog_Attribute');
 
@@ -48,7 +48,7 @@
 
 			$delegate.model('Rbs_Catalog_VariantGroup')
 				.route('variantList', 'Rbs/Catalog/VariantGroup/:id/VariantList/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
-				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig')
+				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig');
 			return $delegate;
 		}]);
 	}]);

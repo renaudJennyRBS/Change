@@ -1,4 +1,5 @@
-<div>
+<div class="row">
+
 	<rbs-workspace-config menu="Rbs_User">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.module_name', ['ucf']) }}</location>
@@ -6,20 +7,27 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_User_User" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_User_User' | documentURL:'new' =)">{{ i18n('m.rbs.user.admin.user_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLUser1" activable="true" model="Rbs_User_User" modification-date="false" filter-query="query">
-		<quick-actions>
-			[action default] ||
-			<a href="(= doc | documentURL : 'applications' =)">{{ i18nAttr('m.rbs.user.admin.applications') }}</a> ||
-			<a href="(= doc | documentURL : 'permission' =)">{{ i18nAttr('m.rbs.user.admin.permission') }}</a>
-		</quick-actions>
-		<column name="email" primary="true"></column>
-		<column name="login"></column>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_User_User" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_User_User' | documentURL:'new' =)">{{ i18n('m.rbs.user.admin.user_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLUser1" activable="true" model="Rbs_User_User" modification-date="false" filter-query="query">
+			<quick-actions>
+				[action default] ||
+				<a href="(= doc | documentURL : 'applications' =)">{{ i18nAttr('m.rbs.user.admin.applications') }}</a> ||
+				<a href="(= doc | documentURL : 'permission' =)">{{ i18nAttr('m.rbs.user.admin.permission') }}</a>
+			</quick-actions>
+			<column name="email" primary="true"></column>
+			<column name="login"></column>
+		</rbs-document-list>
+	</div>
+
 </div>

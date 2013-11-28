@@ -1,20 +1,28 @@
-<div>
+<div class="row">
+
 	<rbs-workspace-config menu="Rbs_Seo">
 		<rbs-breadcrumb-config>
-			<location
-				href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18n('m.rbs.seo.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18n('m.rbs.seo.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Seo_DocumentSeo'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Seo_DocumentSeo" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div rbs-tip="Rbs_Seo_DocumentSeoList">
-		{{ i18n('m.rbs.seo.admin.documentseo_list_help') | raw }}
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-query="query">
-		<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></column>
-		<column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo_target_model', ['ucf']) }}"></column>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Seo_DocumentSeo" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div rbs-tip="Rbs_Seo_DocumentSeoList">
+			{{ i18n('m.rbs.seo.admin.documentseo_list_help') | raw }}
+		</div>
+
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-query="query">
+			<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></column>
+			<column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo_target_model', ['ucf']) }}"></column>
+		</rbs-document-list>
+	</div>
+
 </div>

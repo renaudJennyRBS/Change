@@ -1,0 +1,81 @@
+<div class="row" ng-controller="Rbs_Website_Topic_ListController">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div rbs-aside-column>
+		<rbs-aside-plugin-menu plugin="Rbs_Website"></rbs-aside-plugin-menu>
+	</div>
+
+	<div rbs-main-column>
+
+		<page-header sub-title="{{ i18nAttr('m.rbs.website.admin.topic_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new'=)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+			<a href ng-href="(= 'Rbs_Website_Topic' | documentURL:'new'=)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
+		</div>
+
+		<div class="clearfix">
+			<span class="pull-right">
+				<span ng-if="currentFolder.is('Rbs_Website_Website')"><a href ng-href="(= currentFolder | documentURL:'menus':true =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.topic_menus', ['ucf']) }}</a> |</span>
+				<a href ng-click="toggleFunctions($event)"><i ng-class="{'icon-spinner icon-spin':loadingFunctions, 'icon-chevron-up':showFunctions, 'icon-chevron-down':! showFunctions}"></i> {{ i18n('m.rbs.website.admin.topic_functions', ['ucf']) }}</a> |
+				<a href ng-href="(= currentFolder | documentURL:'form' =)"><i class="icon-pencil"></i> {{ i18n('m.rbs.website.documents.topic_properties', ['ucf']) }}</a>
+			</span>
+		</div>
+
+		<div ng-if="sectionFunctions && showFunctions" class="well well-small">
+			<button class="close pull-right" type="button" ng-click="toggleFunctions($event, false)">&times;</button>
+			<h5 ng-show="! loadingFunctions" ng-pluralize count="sectionFunctions.length" when="{0: '{{ i18nAttr('m.rbs.website.admin.topic_section_no_function') }}',
+								one: '{{ i18nAttr('m.rbs.website.admin.topic_section_function') }}',
+								other: '{{ i18nAttr('m.rbs.website.admin.topic_section_functions') }}'}"></h5>
+			<ul>
+				<li ng-repeat="f in sectionFunctions"><strong>(= f.functionLabel =)</strong> <span class="muted">((= f.functionCode =))</span><br/>{{ i18n('m.rbs.website.admin.topic_function_via_page') | raw}} <a href ng-href="(= f.page | documentURL =)">(= f.page.label =)</a></li>
+			</ul>
+			<div>
+				<a href ng-href="(= currentSection | documentURL:'functions':true =)"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.topic_configure_section_functions_link', ['ucf']) }}</a>
+			</div>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsWebsiteTopicList"
+		               publishable="true"
+		               tree="Rbs_Website"
+		               extend="listExtend"
+		               filter-query="query">
+
+			<quick-actions>
+				[action default]
+				<a ng-if="doc.is('Rbs_Website_Topic')" href="" ng-href="(= doc | documentURL:'functions':true =)">
+					<i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.topic_functions') }}
+				</a>
+			</quick-actions>
+
+			<column name="icon" width="30px" align="center">
+				<span ng-if="doc.is('Rbs_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
+					<i class="icon-2x icon-folder-close"></i>
+					<label>(=doc.nodeChildrenCount() | maxNumber=)</label>
+				</span>
+				<i ng-if="doc.is('Rbs_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
+				<span ng-if="doc.is('Rbs_Website_StaticPage')" class="iconoverlay">
+					<i class="icon-2x icon-file"></i>
+				</span>
+			</column>
+
+			<column name="label" label="Libellé" primary="true"></column>
+
+			<column name="functions" width="40px" label="Index" align="center">
+				<button type="button" class="discrete-button" ng-disabled="busy" ng-if="doc.is('Rbs_Website_StaticPage')" ng-click="extend.setIndexPage(doc); extend.busyIndex=$index;" ng-switch="busy && $index == extend.busyIndex">
+					<i ng-switch-default="" ng-class="{true: 'icon-circle icon-large', false: 'icon-circle-blank half-opacity'}[extend.isIndexPage(doc)]"></i>
+					<i ng-switch-when="true" class="icon-spin icon-spinner icon-large"></i>
+				</button>
+			</column>
+
+		</rbs-document-list>
+
+	</div>
+
+</div>

@@ -1,4 +1,4 @@
-<div>
+<div class="row">
 
 	<rbs-workspace-config menu="Rbs_Brand">
 		<rbs-breadcrumb-config>
@@ -6,37 +6,44 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.brand.admin.brand_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Brand_Brand" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Brand_Brand' | documentURL:'new' =)">{{ i18n('m.rbs.brand.admin.brand_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsBrandBrand"
-	               model="Rbs_Brand_Brand"
-	               publishable="true"
-	               filter-query="query">
-		<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
-		<column name="label" primary="true"></column>
-		<column name="websiteUrl"></column>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.brand.admin.brand_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Brand_Brand" filter-query="query" text-search="textSearch"></search-filters>
 
-		<preview style="min-height: 200px">
-			<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
-			<div style="margin-left: 290px;">
-				<h4>(= doc.label =)</h4>
-				<dl class="dl-horizontal">
-					<dt>{{ i18n(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf','lbl']) }}</dt>
-					<dd ng-if="doc.websiteUrl"><a href ng-href="(= doc.websiteUrl =)" target="_blank">(= doc.websiteUrl =)</a></dd>
-					<dd ng-if="! doc.websiteUrl">-</dd>
-					<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
-					<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
-				</dl>
-				<p ng-bind-html="doc.description.h"></p>
-			</div>
-		</preview>
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Brand_Brand' | documentURL:'new' =)">{{ i18n('m.rbs.brand.admin.brand_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsBrandBrand"
+		               model="Rbs_Brand_Brand"
+		               publishable="true"
+		               filter-query="query">
+			<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
+			<column name="label" primary="true"></column>
+			<column name="websiteUrl"></column>
+
+			<preview style="min-height: 200px">
+				<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
+				<div style="margin-left: 290px;">
+					<h4>(= doc.label =)</h4>
+					<dl class="dl-horizontal">
+						<dt>{{ i18n(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf','lbl']) }}</dt>
+						<dd ng-if="doc.websiteUrl"><a href ng-href="(= doc.websiteUrl =)" target="_blank">(= doc.websiteUrl =)</a></dd>
+						<dd ng-if="! doc.websiteUrl">-</dd>
+						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
+						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
+						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
+					</dl>
+					<p ng-bind-html="doc.description.h"></p>
+				</div>
+			</preview>
 
 
-	</rbs-document-list>
+		</rbs-document-list>
+	</div>
+
 </div>

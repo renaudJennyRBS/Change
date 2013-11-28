@@ -1,15 +1,40 @@
-<div class="document-form">
-	<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></page-header>
+<div class="row">
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.admin.functionalpage_list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Website_FunctionalPage'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.functionalpage_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
 	<div ng-switch="editMode">
-		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-website-functionalpage-translate"></div>
-		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-website-functionalpage"></div>
+
+		<div ng-switch-when="translate">
+			<div class="document-form" rbs-full-width>
+				<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></page-header>
+				<div class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-website-functionalpage-translate"></div>
+			</div>
+		</div>
+
+		<div ng-switch-default="">
+			<div rbs-aside-column>
+				<rbs-default-asides-for-editor id="rbsWebsitePageDefaultAsides"></rbs-default-asides-for-editor>
+				<div class="panel panel-default" id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
+					<div class="panel-heading">
+						<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+					</div>
+					<div class="panel-body">
+						<a href="javascript:;" ng-href="(= document | rbsURL =)"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.website.admin.back_to_general_page_properties', ['ucf']) }}</a>
+						<hr style="margin: 15px -15px;"/>
+						<div id="rbsStructureEditorBlockPropertiesPopup"></div>
+					</div>
+				</div>
+			</div>
+			<div class="document-form" rbs-main-column>
+				<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></page-header>
+				<div class="rbs-document-editor rbs-document-editor-rbs-website-functionalpage"></div>
+			</div>
+		</div>
 	</div>
+
 </div>

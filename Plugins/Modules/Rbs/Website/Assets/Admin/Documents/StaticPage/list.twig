@@ -1,30 +1,38 @@
-<div>
-	<rbs-workspace-config menu="Rbs_Website">
+<div class="row">
+
+	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
 			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.website.admin.staticpage_list', ['ucf']) }}" filter-query="query"></page-header>
-	<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsWebsiteStaticPage"
-	                   publishable="true"
-	                   model="Rbs_Website_StaticPage"
-	                   filter-query="query"
-	                   actions="default">
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.website.admin.staticpage_list', ['ucf']) }}" filter-query="query"></page-header>
+		<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
 
-		<column name="icon" width="30px" align="center">
-			<span class="iconoverlay">
-				<i class="icon-2x icon-file-text"></i>
-			</span>
-		</column>
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+		</div>
 
-		<column name="label" primary="true"></column>
-	</rbs-document-list>
+		<rbs-document-list data-dlid="DLRbsWebsiteStaticPage"
+		                   publishable="true"
+		                   model="Rbs_Website_StaticPage"
+		                   filter-query="query"
+		                   actions="default">
+
+			<column name="icon" width="30px" align="center">
+				<span class="iconoverlay">
+					<i class="icon-2x icon-file-text"></i>
+				</span>
+			</column>
+
+			<column name="label" primary="true"></column>
+		</rbs-document-list>
+	</div>
+
 </div>

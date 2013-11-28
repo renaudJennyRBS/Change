@@ -1,8 +1,27 @@
-<div data-ng-controller="Rbs_Catalog_VariantGroup_VariantListController">
-	<rbs-document-list data-dlid="DLRbsCatalogVariantList" model="Rbs_Catalog_Product"
-			activable="true" publishable="true" load-query="loadQuery">
-		<column name="label" primary="true"></column>
-		<quick-actions>[action edit] || [action delete]</quick-actions>
-		<column name="sku">(= doc.sku.label =)</column>
-	</rbs-document-list>
+<div class="row" ng-controller="Rbs_Catalog_VariantGroup_VariantListController">
+
+	<rbs-workspace-config menu="Rbs_Catalog">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_VariantGroup'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.variantgroup_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div rbs-aside-column>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="list-group-item" href="(= document | documentURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
+		</rbs-links-panel>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-aside template="Document/Rbs/Catalog/VariantGroup/aside.twig"></rbs-aside>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-document-list data-dlid="DLRbsCatalogVariantList" model="Rbs_Catalog_Product"
+				activable="true" publishable="true" load-query="loadQuery">
+			<column name="label" primary="true"></column>
+			<quick-actions>[action edit] || [action delete]</quick-actions>
+			<column name="sku">(= doc.sku.label =)</column>
+		</rbs-document-list>
+	</div>
+
 </div>

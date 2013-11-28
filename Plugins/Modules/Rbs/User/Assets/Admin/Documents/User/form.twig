@@ -1,5 +1,4 @@
-<div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_User_User'), ['ucf']) }}"></page-header>
+<div class="row">
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
@@ -8,5 +7,17 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<div class="rbs-document-editor rbs-document-editor-rbs-user-user"></div>
+	<div rbs-aside-column>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="rbs-panel-link" href ng-href="(= document|documentURL:'applications' =)">{{ i18n('m.rbs.user.admin.applications', ['ucf']) }}</a>
+			<a rbs-active-route="" class="rbs-panel-link" href ng-href="(= document|documentURL:'permission' =)">{{ i18n('m.rbs.user.admin.permissions', ['ucf']) }}</a>
+		</rbs-links-panel>
+	</div>
+
+	<div class="document-form" rbs-main-column>
+		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_User_User'), ['ucf']) }}"></page-header>
+		<div class="rbs-document-editor rbs-document-editor-rbs-user-user"></div>
+	</div>
+
 </div>

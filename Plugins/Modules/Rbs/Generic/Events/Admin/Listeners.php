@@ -97,54 +97,78 @@ class Listeners implements ListenerAggregateInterface
 				array('code' => 'admin', 'index' => 100, 'icon' => 'icon-wrench', 'label' => $i18nManager->trans('m.rbs.admin.admin.admin_section_name', array('ucf')))
 			),
 			'entries' => array(
-				array('label' => $i18nManager->trans('m.rbs.website.admin.module_name', array('ucf')),
+				array(
+					'label' => $i18nManager->trans('m.rbs.website.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Website',
 					'section' => 'cms',
-					'keywords' => $i18nManager->trans('m.rbs.website.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.media.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.website.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.media.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Media',
 					'section' => 'cms',
-					'keywords' => $i18nManager->trans('m.rbs.media.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.simpleform.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.media.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.simpleform.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Simpleform',
 					'section' => 'cms',
-					'keywords' => $i18nManager->trans('m.rbs.simpleform.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.theme.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.simpleform.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.theme.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Theme',
-					'section' => 'cms'),
-				array('label' => $i18nManager->trans('m.rbs.seo.admin.module_name', array('ucf')),
+					'section' => 'cms'
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.seo.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Seo',
 					'section' => 'cms',
-					'keywords' => $i18nManager->trans('m.rbs.seo.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.collection.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.seo.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.collection.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Collection',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.collection.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.tag.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.collection.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.tag.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Tag',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.tag.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.review.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.tag.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.review.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Review',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.review.admin.js.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.user.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.review.admin.js.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.user.admin.module_name', array('ucf')),
 					'url' => 'Rbs/User',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.user.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.user.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Elasticsearch',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.elasticsearch.admin.module_keywords'))),
-				array('label' => $i18nManager->trans('m.rbs.geo.admin.module_name', array('ucf')),
+					'keywords' => "toto ".$i18nManager->trans('m.rbs.elasticsearch.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.geo.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Geo',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.geo.admin.module_keywords')),
-				array('label' => $i18nManager->trans('m.rbs.plugins.admin.module_name', array('ucf')),
+					'keywords' => $i18nManager->trans('m.rbs.geo.admin.module_keywords')
+				),
+				array(
+					'label' => $i18nManager->trans('m.rbs.plugins.admin.module_name', array('ucf')),
 					'url' => 'Rbs/Plugins',
 					'section' => 'admin',
-					'keywords' => $i18nManager->trans('m.rbs.plugins.admin.module_keywords'))
-		);
+					'keywords' => $i18nManager->trans('m.rbs.plugins.admin.module_keywords')
+				)
+		));
 
 
 		$event->setParam('menu', \Zend\Stdlib\ArrayUtils::merge($event->getParam('menu', array()), $menu));

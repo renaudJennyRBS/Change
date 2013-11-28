@@ -43,7 +43,7 @@
 				<tbody>
 					<tr data-ng-repeat="item in document.items">
 						<td>
-							<a class="btn-link" ng-click="cascadeEditItem($index)">(= item.label =)</a>
+							<a class="btn-link" href ng-click="cascadeEditItem(item)">(= item.label =)</a>
 						</td>
 						<td>
 							(= item.value =)
@@ -65,7 +65,7 @@
 									<i class="icon-play icon-rotate-90"></i>
 								</button>
 							</rbs-kb-switch>
-							<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem($index)" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}" type="button">
+							<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem(item)" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}" type="button">
 								<i class="icon-pencil"></i>
 							</button>
 							<button style="width:36px" ng-hide="item.locked" class="btn btn-danger btn-sm" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">

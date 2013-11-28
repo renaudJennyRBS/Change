@@ -596,7 +596,6 @@
 					});
 
 
-
 					// Select session
 					scope.selectSession = {
 						info : SelectSession.info(),
@@ -613,20 +612,6 @@
 							SelectSession.append(doc).end();
 						}
 					};
-
-
-					function addSelectSessionAside() {
-						scope.selectSession.info = SelectSession.info();
-						if (scope.selectSession.info !== null) {
-							MainMenu.addAsideTpl('rbsSelectSession', 'Rbs/Admin/tpl/select-session-aside.twig', scope);
-						}
-					}
-
-					// Update SelectSession information everytime it changes.
-					$rootScope.$on('Change:SelectSessionUpdate', function () {
-						addSelectSessionAside();
-					});
-					addSelectSessionAside();
 
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
@@ -690,17 +675,6 @@
 							scope.cascadeEdition
 						);
 					};
-
-					scope.cascadeDuplicate = function (doc) {
-						REST.resource(doc).then(function (fullDoc) {
-								EditorManager.cascadeEditor(
-									Utils.duplicateDocument(fullDoc),
-									scope.cascadeEdition
-								);
-							}
-						);
-					};
-
 
 					scope.hasColumn = function (columnName) {
 						return angular.isObject(scope.columns[columnName]);

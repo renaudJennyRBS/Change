@@ -73,11 +73,6 @@
 						} else {
 							elm.removeClass('new');
 						}
-						if (value.used) {
-							elm.addClass('opacity-half');
-						} else {
-							elm.removeClass('opacity-half');
-						}
 					}
 				}, true);
 
@@ -198,6 +193,7 @@
 	 * <rbs-tag-filter-panel/>
 	 */
 	app.directive('rbsTagFilterPanel', rbsTagFilterPanel);
+	app.directive('rbsAsideTagFilter', rbsTagFilterPanel);
 
 	function rbsTagFilterPanel () {
 
@@ -214,6 +210,7 @@
 		};
 
 	}
+
 
 	/**
 	 * <input class="rbs-auto-size-input" ... />

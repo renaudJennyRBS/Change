@@ -17,14 +17,22 @@
 			{
 				scope.fieldTypeUpdated = function ()
 				{
-					var callback = function (element)
-					{
-						elm.find('[data-role="fieldTypeConfig"]').replaceWith(element);
-					};
 					var directiveName = scope.document.fieldTypeCode;
-					directiveName = directiveName.replace(/_/g, '-').replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase();
-					var html = '<div data-role="fieldTypeConfig"><div ' + directiveName + '=""></div></div>';
-					$compile(html)(scope, callback);
+
+					if (! directiveName)
+					{
+						elm.find('[data-role="fieldTypeConfig"]').empty();
+					}
+					else
+					{
+						var callback = function (element)
+						{
+							elm.find('[data-role="fieldTypeConfig"]').replaceWith(element);
+						};
+						directiveName = directiveName.replace(/_/g, '-').replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase();
+						var html = '<div data-role="fieldTypeConfig"><div ' + directiveName + '=""></div></div>';
+						$compile(html)(scope, callback);
+					}
 				};
 
 				scope.onLoad = function() {
@@ -38,7 +46,7 @@
 					scope.fieldTypeUpdated();
 				};
 
-				editorCtrl.init('Rbs_Simpleform_Form');
+				editorCtrl.init('Rbs_Simpleform_Field');
 			}
 		};
 	}

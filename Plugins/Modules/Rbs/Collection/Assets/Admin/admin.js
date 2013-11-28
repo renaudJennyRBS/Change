@@ -7,7 +7,7 @@
 
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
-	__change.createEditorForModel('Rbs_Collection_Item');
+	__change.createEditorsForLocalizedModel('Rbs_Collection_Item');
 
 
 	/**
@@ -22,6 +22,9 @@
 
 			$delegate.routesForModels([
 				'Rbs_Collection_Collection'
+			]);
+			$delegate.routesForLocalizedModels([
+				'Rbs_Collection_Item'
 			]);
 			return $delegate;
 		}]);

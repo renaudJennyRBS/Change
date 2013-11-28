@@ -991,5 +991,8 @@
 	},
 	"drag_to_reorder": {
 		"message":"glisser pour réordonner"
+	},
+	"about": {
+		"message":"à propos"
 	}
 }

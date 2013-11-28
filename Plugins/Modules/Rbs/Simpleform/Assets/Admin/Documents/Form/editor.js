@@ -16,21 +16,9 @@ Z	 * @constructor
 			link: function (scope, elm, attrs, editorCtrl)
 			{
 				scope.fieldManager = {};
-				scope.fieldManager.cascadeCreate = function()
-				{
-					var callback = function(doc) { scope.document.fields.push(doc); };
-					EditorManager.cascade(REST.newResource('Rbs_Simpleform_Field'), scope.document.label, callback);
-				};
 
-				scope.fieldManager.cascadeEdit = function(index)
-				{
-					var callback = function(doc) { scope.document.fields[index] = doc; };
-					REST.resource(scope.document.fields[index]).then(
-						function(doc) {
-							scope.cascadeEdit(doc, scope.document.label, callback);
-						}
-					);
-				};
+				scope.fieldManager.cascadeCreate = editorCtrl.registerCreateCascade('fields', 'Rbs_Simpleform_Field');
+				scope.fieldManager.cascadeEdit = editorCtrl.registerEditCascade('fields');
 
 				scope.fieldManager.moveTop = function(index){
 					ArrayUtils.move(scope.document.fields, index, 0);

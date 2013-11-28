@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditor (Utils, REST, Workspace)
+	function rbsOrderOrderEditor (Utils, REST)
 	{
 		return {
 			restrict : 'C',
@@ -12,9 +12,6 @@
 
 			link : function (scope, element, attrs, editorCtrl)
 			{
-				Workspace.collapseLeftSidebar();
-				scope.$on('$destroy', Workspace.restore);
-
 				var extend = {
 
 					articleCount : 0,
@@ -134,7 +131,7 @@
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.Workspace' ];
+	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
 
 })();
