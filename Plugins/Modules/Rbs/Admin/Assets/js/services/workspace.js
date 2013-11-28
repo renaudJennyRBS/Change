@@ -162,6 +162,7 @@
 		return {
 			restrict : 'E',
 			template :
+				'<rbs-aside-select-session></rbs-aside-select-session>' +
 				'<rbs-aside-plugin-menu></rbs-aside-plugin-menu>' +
 				'<rbs-aside-tag-filter></rbs-aside-tag-filter>'
 		};
@@ -415,6 +416,59 @@
 		return {
 			restrict : 'E',
 			templateUrl : 'Rbs/Timeline/aside.twig'
+		};
+	}]);
+
+
+	/**
+	 * Directive: rbsAsideSelectSession
+	 * Usage    : as element: <rbs-aside-select-session></rbs-aside-select-session>
+	 */
+	app.directive('rbsAsideSelectSession', ['$rootScope', 'RbsChange.SelectSession', function ($rootScope, SelectSession)
+	{
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Admin/tpl/select-session-aside.twig',
+			scope : {},
+
+			link : function (scope, iElement)
+			{
+				iElement.hide();
+
+				// Select session
+				scope.selectSession = {
+					info : SelectSession.info(),
+					end : SelectSession.end,
+					cancel : SelectSession.rollback,
+					clear : SelectSession.clear,
+					append : SelectSession.append,
+
+					appendSelected : function () {
+						SelectSession.append(angular.element($('#workspace rbs-document-list').first()).isolateScope().selectedDocuments);
+						// FIXME deselectAll();
+						return this;
+					},
+
+					use : function (doc) {
+						SelectSession.append(doc).end();
+					}
+				};
+
+				function addSelectSessionAside() {
+					scope.selectSession.info = SelectSession.info();
+					if (scope.selectSession.info === null) {
+						iElement.hide();
+					} else {
+						iElement.show();
+					}
+				}
+
+				// Update SelectSession information everytime it changes.
+				$rootScope.$on('Change:SelectSessionUpdate', function () {
+					addSelectSessionAside();
+				});
+				addSelectSessionAside();
+			}
 		};
 	}]);
 
