@@ -1,5 +1,28 @@
 <div ng-controller="Rbs_Website_MainMenuController">
 
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.contents', ['ucf']) }}</h3>
+		</div>
+		<div class="list-group">
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/Website/">
+				<i class="icon-home"></i> {{ i18n('m.rbs.website.admin.website_list', ['ucf']) }}
+			</a>
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/Topic/">
+				<i class="icon-folder-close"></i> {{ i18n('m.rbs.website.admin.topic_list', ['ucf']) }}
+			</a>
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/StaticPage/">
+				<i class="icon-file-text"></i> {{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}
+			</a>
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/FunctionalPage/">
+				<i class="icon-file"></i> {{ i18n('m.rbs.website.admin.functionalpage_list', ['ucf']) }}
+			</a>
+			<a rbs-active-route class="list-group-item" href="Rbs/Website/Menu/">
+				<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}
+			</a>
+		</div>
+	</div>
+
 	<div ng-show="websites.length > 1">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -27,7 +50,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					<a ng-href="(= websites[0] | rbsURL:'tree' =)" title="{{ i18nAttr('m.rbs.website.admin.navigate_in_website', ['ucf']) }}"><i class="icon-home"></i> Root</a>
+					<i class="icon-home"></i> (= websites[0].label =)
 				</h3>
 			</div>
 			<div class="panel-body">
@@ -43,30 +66,6 @@
 				     url-template="Rbs/Website/nav/?tn=:id">
 				</div>
 			</div>
-		</div>
-	</div>
-
-
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.contents', ['ucf']) }}</h3>
-		</div>
-		<div class="list-group">
-			<a rbs-active-route class="list-group-item" href="Rbs/Website/Website/">
-				<i class="icon-home"></i> {{ i18n('m.rbs.website.admin.website_list', ['ucf']) }}
-			</a>
-			<a rbs-active-route class="list-group-item" href="Rbs/Website/Topic/">
-				<i class="icon-folder-close"></i> {{ i18n('m.rbs.website.admin.topic_list', ['ucf']) }}
-			</a>
-			<a rbs-active-route class="list-group-item" href="Rbs/Website/StaticPage/">
-				<i class="icon-file-text"></i> {{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}
-			</a>
-			<a rbs-active-route class="list-group-item" href="Rbs/Website/FunctionalPage/">
-				<i class="icon-file"></i> {{ i18n('m.rbs.website.admin.functionalpage_list', ['ucf']) }}
-			</a>
-			<a rbs-active-route class="list-group-item" href="Rbs/Website/Menu/">
-				<i class="icon-list-alt"></i> {{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}
-			</a>
 		</div>
 	</div>
 
