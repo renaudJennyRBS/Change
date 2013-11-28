@@ -1,9 +1,12 @@
 {% for document in item.value %}
+	{% set model = document.getDocumentModel() %}
 	{% if document.getDocumentModelName() == 'Rbs_Media_Image' %}
 		<img src="{{ catalogMacros.attributeThumbnailURL(document) }}" alt="{{ document.alt }}" />
-	{% elseif document.getDocumentModel().isPublishable() %}
-		<a href="{{ canonicalURL(item.value) }}">{{ document.title }}</a>
-	{% elseif document.getDocumentModel().hasProperty('title') %}
-		{{ document.title }}
+	{% elseif model.isPublishable() %}
+		<a href="{{ canonicalURL(item.value) }}">{% spaceless %}
+			{% if model.isLocalized() %}{{ document.currentLocalization.title }}{% else %}{{ document.title }}{% endif %}
+		{% endspaceless %}</a>
+	{% elseif model.hasProperty('title') %}
+		{% if model.isLocalized() %}{{ document.currentLocalization.title }}{% else %}{{ document.title }}{% endif %}
 	{% endif %}
 {% endfor %}

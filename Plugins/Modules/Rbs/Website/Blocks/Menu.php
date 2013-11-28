@@ -218,7 +218,7 @@ class Menu extends Block
 	{
 		if ($doc instanceof \Rbs\Website\Documents\Menu)
 		{
-			return true;
+			return $doc->activated();
 		}
 		if (!($doc instanceof \Change\Documents\Interfaces\Publishable) || !$doc->published())
 		{

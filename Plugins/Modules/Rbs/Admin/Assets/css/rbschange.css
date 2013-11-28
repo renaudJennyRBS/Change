@@ -158,6 +158,11 @@ h3.panel-title {
 	width: auto;
 }
 
+.input-group + .btn-toolbar,
+.form-inline + .btn-toolbar {
+	margin-top: 3px;
+}
+
 /* Bootstrap addons */
 
 .input-group-addon.contains-input {

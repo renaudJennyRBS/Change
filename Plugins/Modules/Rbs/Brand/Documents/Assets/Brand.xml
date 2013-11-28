@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
-	icon="folder" localized="true" editable="true" publishable="true">
+	localized="true" editable="true" publishable="true">
 	<properties>
 		<property name="description" type="RichText" localized="true" />
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" />

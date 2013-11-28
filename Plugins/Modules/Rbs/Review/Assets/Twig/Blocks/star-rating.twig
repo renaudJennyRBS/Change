@@ -7,7 +7,7 @@
 		<li data-ng-class="{'selected': review.rating > 40}"><label title="{{ i18n('m.rbs.review.front.star_rating_3') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="60" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
 		<li data-ng-class="{'selected': review.rating > 60}"><label title="{{ i18n('m.rbs.review.front.star_rating_4') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
 		<li data-ng-class="{'selected': review.rating > 80}"><label title="{{ i18n('m.rbs.review.front.star_rating_5') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
-		<li>(= review.rating * (5/100) =)/5</li>
+		<li><span class="ng-cloak">(= review.rating * (5/100) =)</span>/5</li>
 	</ol>
 </div>
 {% else %}

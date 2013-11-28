@@ -3,15 +3,16 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" input-class="input-block-level"
+		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="title" required="true" input-class="input-block-level"
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-rich-text property="description" required="false" input-class="input-block-level"
+		<rbs-field-rich-text property="description" required="false"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
 		</rbs-field-rich-text>
 
@@ -20,7 +21,7 @@
 			selector-title="{{ i18nAttr('m.rbs.brand.admin.select_visual', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field-url property="websiteUrl" required="false" input-class="input-block-level"
+		<rbs-field-url property="websiteUrl" required="false"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
 		</rbs-field-url>
 
