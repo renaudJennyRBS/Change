@@ -47,6 +47,8 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 	public function getInfoForTemplate($urlManager)
 	{
 		$author = $this->getDocumentManager()->getDocumentInstance($this->getAuthorId());
+		$email = null;
+		/* @var $author \Rbs\User\Documents\User */
 		if ($author)
 		{
 			$email = $author->getEmail();
@@ -61,7 +63,6 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 			'reviewDate' => $this->getReviewDate(),
 			'content' => $this->getContent()->getHtml(),
 			'promoted' => $this->getPromoted(),
-			'url' => $urlManager->getCanonicalByDocument($this, $this->getSection()->getWebsite()),
 			'upvote' => $this->getUpvote(),
 			'downvote' => $this->getDownvote(),
 			//TODO: getLabel for target is not a good thing, find another way

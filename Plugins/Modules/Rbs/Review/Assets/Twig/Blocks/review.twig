@@ -1,9 +1,11 @@
 <article id="review-{{ review.id }}" class="panel{{ validationClass }}" itemscope="" itemtype="http://schema.org/Review">
 	<img alt="" src="{{ avatarURL(80, review.email, review.author) }}" class="avatar img-thumbnail pull-right" />
 	<header class="panel-heading">
-		<a itemprop="url" rel="nofollow" href="{{ review.url }}">{{ loop.index }}.</a>
-		<span class="divider"> - </span>
-		<time itemprop="dateCreated" datetime="{{ review.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ review.reviewDate | date }}</time>
+		{% if loop and review.url %}
+			<a itemprop="url" rel="nofollow" href="{{ review.url }}">{{ loop.index }}.</a>
+			<span class="divider"> - </span>
+		{% endif %}
+		<time itemprop="dateCreated" datetime="{{ review.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ review.reviewDate | transDateTime }}</time>
 		<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
 			<meta itemprop="worstRating" content="0" />
 			{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': review.reviewStarRating } %}

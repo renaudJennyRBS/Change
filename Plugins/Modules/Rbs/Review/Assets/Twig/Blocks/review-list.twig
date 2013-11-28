@@ -1,10 +1,12 @@
-<h2 class="comment-toolbar-title">{{ i18n('m.rbs.review.front.review_list', ['ucf'], { 'count': rows | length , 'totalCount': totalReviews}) }}</h2>
+{% if totalReviews > 0 %}
+	<h2 class="comment-toolbar-title">{{ i18n('m.rbs.review.front.review_list', ['ucf'], { 'count': rows | length , 'totalCount': totalReviews}) }}</h2>
 
-<ul class="list-unstyled comment-list">
-	{% for row in rows %}
-		<li>
-			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': row } %}
-		</li>
-	{% endfor %}
-</ul>
+	<ul class="list-unstyled comment-list">
+		{% for row in rows %}
+			<li>
+				{% include 'Rbs_Review/Blocks/review.twig' with { 'review': row } %}
+			</li>
+		{% endfor %}
+	</ul>
 {% include 'Rbs_Generic/pagination.twig' %}
+{% endif %}

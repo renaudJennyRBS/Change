@@ -23,9 +23,6 @@
 	"review_average_rating":{
 		"message":"moyenne des notes"
 	},
-	"average_no_rating":{
-		"message":"la moyenne des notes est indisponible"
-	},
 	"review_rating":{
 		"message":"note : $RATINGVALUE$ sur $BESTRATING$"
 	},
