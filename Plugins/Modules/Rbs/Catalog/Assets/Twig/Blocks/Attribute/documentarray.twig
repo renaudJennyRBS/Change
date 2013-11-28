@@ -3,9 +3,9 @@
 	{% if document.getDocumentModelName() == 'Rbs_Media_Image' %}
 		<img src="{{ catalogMacros.attributeThumbnailURL(document) }}" alt="{{ document.alt }}" />
 	{% elseif model.isPublishable() %}
-		<a href="{{ canonicalURL(item.value) }}">
+		<a href="{{ canonicalURL(item.value) }}">{% spaceless %}
 			{% if model.isLocalized() %}{{ document.currentLocalization.title }}{% else %}{{ document.title }}{% endif %}
-		</a>
+		{% endspaceless %}</a>
 	{% elseif model.hasProperty('title') %}
 		{% if model.isLocalized() %}{{ document.currentLocalization.title }}{% else %}{{ document.title }}{% endif %}
 	{% endif %}
