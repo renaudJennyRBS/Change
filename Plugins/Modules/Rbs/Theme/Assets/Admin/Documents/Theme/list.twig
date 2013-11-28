@@ -14,7 +14,7 @@
 		<page-header title="{{ i18nAttr('m.rbs.theme.admin.theme_list', ['ucf']) }}"></page-header>
 		<search-filters model="Rbs_Theme_Theme" filter-query="query" text-search="textSearch"></search-filters>
 
-		<rbs-document-list data-dlid="DLTheme1" model="Rbs_Theme_Theme" activable="true" filter-query="query">
+		<rbs-document-list data-dlid="DLRbsThemeList" model="Rbs_Theme_Theme" activable="true" filter-query="query">
 			<column name="label" primary="true"></column>
 			<column name="themes" label="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}">
 				<a href ng-href="(= doc | documentURL:'tree' =)">{{ i18n('m.rbs.theme.admin.theme_list_pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
