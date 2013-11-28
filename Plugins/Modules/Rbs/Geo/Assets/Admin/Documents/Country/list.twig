@@ -1,21 +1,28 @@
-<div>
+<div class="row">
 
-	<rbs-workspace-config menu="Rbs_Geo">
+	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Geo'|rbsURL:'home' =)">{{ i18n('m.rbs.geo.admin.module_name', ['ucf']) }}</location>
 			<location href="(= 'Rbs_Geo_Country'|rbsURL:'list' =)">{{ i18n('m.rbs.geo.admin.country_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.geo.admin.country_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Geo_Country" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Geo_Country' | documentURL:'new' =)">{{ i18n('m.rbs.geo.admin.country_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLGeoCountry" model="Rbs_Geo_Country" filter-query="query" activable="true">
-		<column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}" primary="true"></column>
-		<column name="code" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}"></column>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.geo.admin.country_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Geo_Country" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Geo_Country' | rbsURL:'new' =)">{{ i18n('m.rbs.geo.admin.country_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLGeoCountry" model="Rbs_Geo_Country" filter-query="query" activable="true">
+			<column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}" primary="true"></column>
+			<column name="code" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}"></column>
+		</rbs-document-list>
+	</div>
+
 </div>

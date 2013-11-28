@@ -73,11 +73,6 @@
 						} else {
 							elm.removeClass('new');
 						}
-						if (value.used) {
-							elm.addClass('opacity-half');
-						} else {
-							elm.removeClass('opacity-half');
-						}
 					}
 				}, true);
 

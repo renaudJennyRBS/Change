@@ -1,4 +1,5 @@
-<form class="form-horizontal">
+<div class="row">
+
 	<rbs-workspace-config menu="Rbs_Seo">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.seo.admin.module_name', ['ucf']) }}</location>
@@ -6,16 +7,23 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.seo.documents.sitemapconfiguration_list', ['ucf']) }}"></page-header><br />
-	<search-filters model="Rbs_Website_Website" filter-query="query" text-search="textSearch"></search-filters>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
 
-	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Website_Website" filter-query="query" actions="">
-		<quick-actions></quick-actions>
-		<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Website_Website', 'label'), ['ucf']) }}">
-			<strong><a href="" ng-href="(= doc | rbsURL =)?section=sitemap">(= doc.label =)</a></strong>
-		</column>
-		<column name="sitemapGeneration" label="{{ i18n(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
-			(= doc.sitemapGeneration | rbsBoolean =)
-		</column>
-	</rbs-document-list>
-</form>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.seo.documents.sitemapconfiguration_list', ['ucf']) }}"></page-header><br />
+		<search-filters model="Rbs_Website_Website" filter-query="query" text-search="textSearch"></search-filters>
+
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Website_Website" filter-query="query" actions="">
+			<quick-actions></quick-actions>
+			<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Website_Website', 'label'), ['ucf']) }}">
+				<strong><a href="" ng-href="(= doc | rbsURL =)?section=sitemap">(= doc.label =)</a></strong>
+			</column>
+			<column name="sitemapGeneration" label="{{ i18n(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
+				(= doc.sitemapGeneration | rbsBoolean =)
+			</column>
+		</rbs-document-list>
+	</div>
+
+</div>

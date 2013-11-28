@@ -13,10 +13,25 @@
 					<h2><i class="icon (= s.icon =)"></i> (= s.label =)</h2>
 					<a class="mp-back" href="javascript:;">{{ i18n('m.rbs.admin.admin.main_menu', ['ucf']) }} <i class="icon icon-chevron-right"></i></a>
 					<ul>
-						<li class="repeat-animation" ng-repeat="m in menu.entries | filter:{'section':s.code} | filter:filterModules"><a href ng-href="(= m.url =)" ng-bind-html="m.label"></a></li>
+						<li ng-repeat="m in menu.entries | filter:{'section':s.code} | filter:filterModules"><a href ng-href="(= m.url =)" ng-bind-html="m.label"></a></li>
 					</ul>
 				</div>
 			</li>
+
+			<li>
+				<a href="javascript:;" class="category"><i class="pull-right icon-large icon icon-info-sign"></i><i class="icon icon-chevron-left"></i> {{ i18n('m.rbs.admin.admin.about', ['ucf']) }}</a>
+				<div class="mp-level">
+					<h2><i class="icon icon-info-sign"></i> {{ i18n('m.rbs.admin.admin.about', ['ucf']) }}</h2>
+					<a class="mp-back" href="javascript:;">{{ i18n('m.rbs.admin.admin.main_menu', ['ucf']) }} <i class="icon icon-chevron-right"></i></a>
+					<ul>
+						<li><a onclick="window.open(this.href); return false;" href="http://www.rbschange.fr">{{ i18n('m.rbs.admin.admin.website') }}</a></li>
+						<li><a onclick="window.open(this.href); return false;" href="http://www.twitter.com/RBSChange/Change"><i class="pull-right icon-large icon-twitter"></i>{{ i18n('m.rbs.admin.admin.twitter') }}</a></li>
+						<li><a onclick="window.open(this.href); return false;" href="https://github.com/RBSChange"><i class="pull-right icon-large icon-github"></i>{{ i18n('m.rbs.admin.admin.github') }}</a></li>
+						<li style="padding: 0.7em 1em 0.7em 1.8em; text-align: center;" class="text-muted" rbs-change-version=""></li>
+					</ul>
+				</div>
+			</li>
+
 		</ul>
 	</div>
 </nav>

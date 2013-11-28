@@ -18,8 +18,17 @@
 
 		<div ng-switch-default="">
 			<div rbs-aside-column>
-				<rbs-aside-editor-menu></rbs-aside-editor-menu>
-				<rbs-aside-translation document="document"></rbs-aside-translation>
+				<rbs-default-asides-for-editor id="rbsWebsitePageDefaultAsides"></rbs-default-asides-for-editor>
+				<div class="panel panel-default" id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
+					<div class="panel-heading">
+						<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+					</div>
+					<div class="panel-body">
+						<a href="javascript:;" ng-href="(= document | rbsURL =)"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.website.admin.back_to_general_page_properties', ['ucf']) }}</a>
+						<hr style="margin: 15px -15px;"/>
+						<div id="rbsStructureEditorBlockPropertiesPopup"></div>
+					</div>
+				</div>
 			</div>
 			<div class="document-form" rbs-main-column>
 				<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></page-header>

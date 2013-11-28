@@ -5,8 +5,8 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, UrlManager, ErrorFormatter) {
-
+	function editorDirective ($rootScope, $routeParams, $q, $location, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter)
+	{
 		var CORRECTION_CSS_CLASS = 'correction';
 
 
@@ -49,21 +49,7 @@
 
 					var document, documentId = 0, promise, defered, ctx;
 
-					if (EditorManager.isCascading()) {
-						ctx = EditorManager.getCurrentContext();
-						if (ctx.document) {
-							if (Utils.isDocument(ctx.document)) {
-								document = ctx.document;
-							}
-							else {
-								documentId = ctx.document.id;
-							}
-						}
-						else if (angular.isObject(ctx.queryParam)) {
-							documentId = ctx.queryParam.id;
-						}
-					}
-					else if (! angular.isFunction ($scope.initDocument) || ! (promise = $scope.initDocument())) {
+					if (! angular.isFunction ($scope.initDocument) || ! (promise = $scope.initDocument())) {
 						if ($routeParams.hasOwnProperty('id')) {
 							documentId = parseInt($routeParams.id, 10);
 						}
@@ -78,6 +64,9 @@
 							promise = defered.promise;
 							if (! document) {
 								document = REST.newResource(modelName, Settings.get('LCID'));
+								if (! isNaN(documentId) && documentId < 0) {
+									document.id = documentId;
+								}
 							}
 							defered.resolve(document);
 						}
@@ -87,6 +76,30 @@
 						prepareEditor(doc);
 					});
 				};
+
+
+				this.registerCreateCascade = function (propertyName, model, title)
+				{
+					$scope.$on('Change:NavigationFinalize', function (event, navCtx)
+					{
+						if (navCtx && navCtx.context && navCtx.context.type === 'setProperty' && navCtx.context.property === propertyName) {
+							$scope.document[propertyName].push(navCtx.result);
+						}
+					});
+
+					return function () {
+						EditorManager.cascade(model, title || '<i class="icon-pencil"></i> ' + $scope.document.label, propertyName);
+					};
+				};
+
+
+				this.registerEditCascade = function (propertyName, title)
+				{
+					return function (childDocument) {
+						EditorManager.cascade(childDocument, title || '<i class="icon-pencil"></i> ' + $scope.document.label, propertyName);
+					};
+				};
+
 
 
 				$scope.saveProgress = {
@@ -299,26 +312,29 @@
 
 					function terminateSave () {
 						saveOperation("success");
-						if (EditorManager.isCascading()) {
-							EditorManager.uncascade(doc);
-						} else {
-							$rootScope.$broadcast('Change:DocumentSaved', doc);
+						$rootScope.$broadcast('Change:DocumentSaved', doc);
 
-							// If a Document has been created, we redirect to the URL of the new Document.
-							if ($scope._isNew) {
-								EditorManager.removeCreationLocalCopy(doc);
+						// If a Document has been created, we redirect to the URL of the new Document.
+						if ($scope._isNew) {
+							EditorManager.removeCreationLocalCopy(doc, $scope._isNewId);
+
+							var navCtx = Navigation.getCurrentContext();
+							if (navCtx) {
+								Navigation.commit(doc);
+							}
+							else {
 								$location.path(doc.url());
 							}
+						}
 
-							if (angular.isFunction($scope.onReload)) {
-								$scope.onReload($scope.document);
-							}
+						if (angular.isFunction($scope.onReload)) {
+							$scope.onReload($scope.document);
+						}
 
-							updateWrappingForm();
+						updateWrappingForm();
 
-							if ($scope.modelInfo.metas.localized) {
-								MainMenu.addTranslationsAside($scope.document, $scope);
-							}
+						if ($scope.modelInfo.metas.localized) {
+							MainMenu.addTranslationsAside($scope.document, $scope);
 						}
 					}
 
@@ -377,13 +393,14 @@
 
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
+						$scope._isNewId = $scope.document.id;
+						console.log("NEW DOC: id=", $scope._isNewId);
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.adminjs.new_element | ucf'));
 					}
 					else {
+						$scope._isNewId = null;
 						Breadcrumb.setResource($scope.document);
 					}
-
-					EditorManager.startEditSession($scope.document);
 
 					var promises = [
 						Breadcrumb.ready(),
@@ -405,7 +422,7 @@
 
 					// Editor will be considered ready when:
 					// - Breadcrumb is ready,
-					// - Information about the Documen's Model have been loaded.
+					// - Information about the Document's Model have been loaded.
 					$q.all(promises).then(function (promisesResults)
 					{
 						$scope.modelInfo = promisesResults[1];
@@ -469,6 +486,7 @@
 
 
 				function mergeLocalCopy (doc) {
+					console.log("merge local copy: ", doc);
 					var localCopy = EditorManager.getLocalCopy(doc);
 					if (localCopy)
 					{
@@ -485,45 +503,23 @@
 				 */
 				function initReferenceDocument ()
 				{
-					var seoLink;
-
 					$scope.original = angular.copy($scope.document);
 
 					initCorrection();
 					initMenu();
 
-					if (mergeLocalCopy($scope.document)) {
+					// Are we in a Navigation session?
+					var navCtx = Navigation.finalize();
+					if (mergeLocalCopy($scope.document) && ! navCtx) {
 						$scope.$emit('Change:Editor:LocalCopyMerged');
+					}
+					if (navCtx) {
+						$scope.$broadcast('Change:NavigationFinalize', navCtx);
 					}
 
 					if (SelectSession.hasSelectSession($scope.document)) {
 						SelectSession.commit($scope.document);
 					}
-
-					if (! EditorManager.isCascading() && ! $scope.document.isNew())
-					{
-						// Add "Translations" menu on the left if the document is localizable.
-						if ($scope.modelInfo.metas.localized) {
-							MainMenu.addTranslationsAside($scope.document, $scope);
-						}
-
-						seoLink = $scope.document.getLink('seo');
-						if (seoLink)
-						{
-							REST.call(seoLink, null, REST.resourceTransformer()).then(function (seoDocument)
-							{
-								$scope.seoDocument = seoDocument;
-								MainMenu.addAsideTpl('seo', 'Rbs/Seo/aside.twig', $scope);
-							});
-						}
-						else if ($scope.document.isActionAvailable('addSeo'))
-						{
-							MainMenu.addAsideTpl('seo', 'Rbs/Seo/aside.twig', $scope);
-						}
-
-						MainMenu.addAsideTpl('timeline', 'Rbs/Timeline/aside.twig', $scope);
-					}
-
 
 					$element.css('display', 'block');
 
@@ -600,7 +596,7 @@
 				 * @returns {string}
 				 */
 				function getCurrentSection () {
-					return EditorManager.isCascading() ? '' : ($routeParams.section || $location.search()['section'] || '');
+					return $routeParams.section || $location.search()['section'] || '';
 				}
 
 
@@ -650,12 +646,10 @@
 							'hideWhenCreate' : $fs.attr('hide-when-create') === 'true'
 						};
 
-						if ( ! EditorManager.isCascading() ) {
-							if (section && section.length) {
-								entry.url = Utils.makeUrl($location.absUrl(), { 'section': section });
-							} else {
-								entry.url = Utils.makeUrl($location.absUrl(), { 'section': null });
-							}
+						if (section && section.length) {
+							entry.url = Utils.makeUrl($location.absUrl(), { 'section': section });
+						} else {
+							entry.url = Utils.makeUrl($location.absUrl(), { 'section': null });
 						}
 
 						menu.push(entry);
@@ -691,8 +685,6 @@
 					if (menu.length) {
 						$scope._chgFieldsInfo = fields;
 						$scope._chgMenu = menu;
-						//MainMenu.build($scope._chgMenu, $scope);
-						console.log("update menu ---");
 						$scope.$emit('Change:UpdateEditorMenu', {
 							'scope' : $scope,
 							'entries' : menu
@@ -712,11 +704,6 @@
 				 */
 				return function linkFn (scope, element, attrs, CTRL)
 				{
-					scope.$on('$destroy', function () {
-						EditorManager.stopEditSession();
-					});
-
-
 					scope.$on(Events.EditorUpdateDocumentProperties, function onUpdateDocumentPropertiesFn (event, properties) {
 						angular.extend(scope.document, properties);
 						CTRL.submit();
@@ -752,46 +739,18 @@
 
 
 					scope.canCancelCascade = function canCancelCascadeFn () {
-						return EditorManager.isCascading();
+
+						//FIXME
+
+						return false;//EditorManager.isCascading();
 					};
 
 
 					scope.cancelCascade = function cancelCascadeFn () {
-						if (EditorManager.isCascading()) {
-							EditorManager.uncascade(null); // null -> do NOT call saveCallback.
-						}
-					};
 
+						//FIXME
 
-					/**
-					 * Cascade a new Editor with the given Document or Model name (doc).
-					 * @param doc
-					 * @param collapsedTitle
-					 * @param callback
-					 */
-					scope.cascade = function (doc, collapsedTitle, callback) {
-						if (angular.isString(doc)) {
-							doc = REST.newResource(doc, scope.language || Settings.get('LCID'));
-						}
-						EditorManager.cascade(doc, collapsedTitle || scope.document.label, callback);
-					};
-
-
-					/**
-					 * @deprecated
-					 */
-					scope.cascadeCreate = scope.cascade;
-					scope.cascadeEdit = scope.cascade;
-
-
-					/**
-					 * Duplicate then edit the given doc in a cascaded Editor.
-					 * @param doc
-					 * @param collapsedTitle
-					 * @param callback
-					 */
-					scope.cascadeDuplicate = function (doc, collapsedTitle, callback) {
-						EditorManager.cascade(Utils.duplicateDocument(doc), collapsedTitle || scope.document.label, callback);
+						EditorManager.uncascade(null); // null -> do NOT call saveCallback.
 					};
 
 
@@ -827,11 +786,6 @@
 					};
 
 
-					scope.isCascading = function isCascadingFn () {
-						return EditorManager.isCascading();
-					};
-
-
 					scope.onCancel = function onCancelFn () {
 						Breadcrumb.goParent();
 					};
@@ -845,7 +799,7 @@
 
 	editorDirective.$inject = [
 		'$rootScope', '$routeParams', '$q',
-		'$location', '$timeout',
+		'$location',
 		'RbsChange.Loading',
 		'RbsChange.EditorManager',
 		'RbsChange.Utils',
@@ -858,7 +812,7 @@
 		'RbsChange.NotificationCenter',
 		'RbsChange.MainMenu',
 		'RbsChange.SelectSession',
-		'RbsChange.UrlManager',
+		'RbsChange.Navigation',
 		'RbsChange.ErrorFormatter'
 	];
 
@@ -948,12 +902,9 @@
 
 	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
 	{
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings)
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', 'RbsChange.UrlManager', 'RbsChange.Navigation', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings, UrlManager, Navigation)
 		{
-			var	$ws = $('#workspace'),
-				cascadeContextStack = [],
-				idStack = [],
-				localCopyRepo;
+			var	localCopyRepo;
 
 			localCopyRepo = localStorageService.get("localCopy");
 
@@ -966,138 +917,50 @@
 				commitLocalCopyRepository();
 			}
 
-			/**
-			 * When the route changes, we need to clean up any cascading process.
-			 */
-			$rootScope.$on('$routeChangeSuccess', function () {
-				cascadeContextStack.length = 0;
-				idStack.length = 0;
-			});
-
-			$rootScope.$on('$routeChangeStart', function () {
-				Breadcrumb.unfreeze();
-			});
-
-
-			function updateCollapsedForms () {
-				// "Shrink" older forms.
-				var collapsed = $ws.find('.cascading-forms-collapsed');
-				collapsed.each(function (i) {
-					$(this).removeClass('cascading-forms-last').css({
-						margin    : '0 ' + ((collapsed.length - i)*15)+'px',
-						opacity   : (0.7 + ((i+1)/collapsed.length*0.3)),
-						zIndex    : i + 1,
-						fontSize  : ((1 + ((i+1)/collapsed.length*0.2))*100)+'%',
-						lineHeight: ((1 + ((i+1)/collapsed.length*0.2))*100)+'%'
-					});
-				});
-				if (isCascadingFn()) {
-					$ws.children('.document-form').last().addClass('cascading-forms-last');
-				}
-			}
-
-
-			function isCascadingFn () {
-				return cascadeContextStack.length > 0;
-			}
-
-
 			// Local copy methods.
 
 			function commitLocalCopyRepository () {
 				localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
 			}
 
-			function makeLocalCopyKey (doc) {
-				var key = doc.model + '-' + (doc.isNew() ? 'NEW' : doc.id);
+			function makeLocalCopyKey (doc, tempId) {
+				var key = doc.model + '-' + (tempId || doc.id);
 				if (doc.LCID) {
 					key += '-' + doc.LCID;
 				}
 				return key;
 			}
 
-			function makeCreationLocalCopyKey (model, LCID) {
-				var key = model + '-' + 'NEW';
-				if (LCID) {
-					key += '-' + LCID;
-				}
-				return key;
-			}
-
-
 			return {
 
-				/**
-				 * Returns true if we are in a cascading process, false otherwise.
-				 *
-				 * @returns {Boolean}
-				 */
-				'isCascading' : function () {
-					return isCascadingFn();
-				},
-
-				'getCurrentContext' : function () {
-					return cascadeContextStack.length ? cascadeContextStack[cascadeContextStack.length-1] : null;
-				},
-
-				'cascade' : function (doc, collapsedTitle, saveCallback) {
-					var $form, formUrl;
-
+				'cascade' : function (doc, collapsedTitle, contextOrProperty)
+				{
 					if (Utils.isModelName(doc)) {
-						doc = REST.newResource(doc);
+						doc = REST.newResource(doc, Settings.get('LCID'));
 					}
 
 					if (!doc || !Utils.isDocument(doc)) {
 						throw new Error("Please provide a valid Document.");
 					}
 
-					// Check circular cascade:
-					if (ArrayUtils.inArray(doc.id, idStack) !== -1) {
-						throw new Error("Circular cascade error: Document " + doc.id + " is already being edited in a cascaded Editor.");
+					// TODO Check circular cascade?
+
+					console.log("cascade: doc=", doc, ", url=", UrlManager.getFormUrl(doc));
+
+					// Create Navigation context.
+					var ctx = null;
+					if (angular.isString(contextOrProperty)) {
+						ctx = {
+							'type' : 'setProperty',
+							'property' : contextOrProperty,
+							'parentDocument' : angular.element($('#workspace .document-form').last()).scope().document
+						};
+					}
+					else if (angular.isObject(contextOrProperty)) {
+						ctx = contextOrProperty;
 					}
 
-					// Freeze the Breadcrumb to prevent any other controller from modifying it.
-					Breadcrumb.freeze();
-
-					// Create cascade context.
-					cascadeContextStack.push({
-						'saveCallback' : saveCallback,
-						'document'     : doc
-					});
-					this.startEditSession(doc);
-
-					$ws = $('#workspace'); // Please keep this here even if it is declared above.
-
-					// Slides up the current form.
-					$form = $ws.children('.document-form').last();
-					$form.slideUp('fast');
-
-					// Load and insert the new cascaded form.
-					formUrl = 'Document/' + doc.model.replace(/_/g, '/') + '/form.twig';
-					$http.get(formUrl)
-						.success(function (html) {
-							// Create a new isolated scope for the new form.
-							var scope = $rootScope.$new(true);
-							if (doc.LCID) {
-								scope.language = doc.LCID;
-							}
-							scope.section = '';
-
-							scope.parentDocument = angular.element($form).scope().document;
-
-							$ws.append('<div class="cascading-forms-collapsed">' + collapsedTitle + '</div>');
-
-							$compile(html)(scope, function (cloneEl) {
-								$ws.append(cloneEl);
-							});
-							MainMenu.pushContents();
-
-							updateCollapsedForms();
-							$ws.find(':input').first().focus();
-						}
-					);
-
-					return null;
+					Navigation.push(UrlManager.getUrl(doc), collapsedTitle, ctx);
 				},
 
 
@@ -1105,43 +968,9 @@
 				 * Uncascade (cancel) the current form and go back to the previous form,
 				 * without any changes on it.
 				 */
-				'uncascade' : function (doc) {
-					var	ctx = cascadeContextStack.pop(),
-						$form;
-
-					if (ctx && doc !== null && angular.isFunction(ctx.saveCallback)) {
-						ctx.saveCallback(doc);
-					}
-
-					idStack.pop();
-
-					// Remove the last from and destroy its associated scope.
-					$form = $ws.children('.document-form').last();
-					angular.element($form).scope().$destroy();
-					$form.remove();
-					$ws.children('.cascading-forms-collapsed').last().remove();
-
-					// Display the last form.
-					$form = $ws.children('.document-form').last();
-					$form.fadeIn('fast');
-
-					// Restore previous menu.
-					MainMenu.popContents();
-
-					// If all cascades are finished, unfreeze the Breadcrumb to allow modifications on it.
-					if (cascadeContextStack.length === 0) {
-						Breadcrumb.unfreeze();
-					}
-
-					updateCollapsedForms();
-				},
-
-				'startEditSession' : function (doc) {
-					idStack.push(doc.id);
-				},
-
-				'stopEditSession' : function () {
-					idStack.pop();
+				'uncascade' : function ()
+				{
+					Navigation.rollback();
 				},
 
 
@@ -1177,8 +1006,8 @@
 					}
 				},
 
-				'removeCreationLocalCopy' : function (doc) {
-					var	key = makeCreationLocalCopyKey(doc.model, doc.LCID || Settings.get('LCID'));
+				'removeCreationLocalCopy' : function (doc, tempId) {
+					var	key = makeLocalCopyKey(doc, tempId);
 					if (localCopyRepo.hasOwnProperty(key)) {
 						delete localCopyRepo[key];
 						delete doc.META$.localCopy;
@@ -1187,9 +1016,10 @@
 				},
 
 				'removeAllLocalCopies' : function () {
-					// No need to check 'hasOwnProperty()' since 'delete' does not remove properties of the Prototype.
 					for (var key in localCopyRepo) {
-						delete localCopyRepo[key];
+						if (localCopyRepo.hasOwnProperty(key)) {
+							delete localCopyRepo[key];
+						}
 					}
 					commitLocalCopyRepository();
 				},

@@ -1,19 +1,28 @@
-<div class="document-form">
-	<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Theme_PageTemplate'), ['ucf']) }}"></page-header>
+<div class="row">
 
-	<rbs-workspace-config>
-		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Theme_PageTemplate'|rbsURL:'list' =)">{{ i18n('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}</location>
-		</rbs-breadcrumb-config>
-	</rbs-workspace-config>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor id="rbsWebsitePageDefaultAsides"></rbs-default-asides-for-editor>
+	</div>
+	<div rbs-main-column>
+		<div class="document-form">
+			<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Theme_PageTemplate'), ['ucf']) }}"></page-header>
 
-	<div class="document-editor editor-rbs-theme-page-template"
-		document="document"
-		section="section"
-		on-save="onSave(document)"
-		on-cancel="onCancel()">
+			<rbs-workspace-config>
+				<rbs-breadcrumb-config>
+					<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</location>
+					<location href="(= 'Rbs_Theme_PageTemplate'|rbsURL:'list' =)">{{ i18n('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}</location>
+				</rbs-breadcrumb-config>
+			</rbs-workspace-config>
+
+			<div class="document-editor editor-rbs-theme-page-template"
+				document="document"
+				section="section"
+				on-save="onSave(document)"
+				on-cancel="onCancel()">
+			</div>
+
+			<div class="rbs-document-editor rbs-document-editor-rbs-theme-page-template"></div>
+		</div>
 	</div>
 
-	<div class="rbs-document-editor rbs-document-editor-rbs-theme-page-template"></div>
 </div>

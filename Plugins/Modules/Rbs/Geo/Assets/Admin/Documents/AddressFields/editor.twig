@@ -23,7 +23,7 @@
 				<tbody>
 				<tr data-ng-repeat="field in document.fields">
 					<td>
-						<a class="btn-link" ng-click="cascadeEditField($index)">(= field.code =)</a>
+						<a class="btn-link" ng-click="cascadeEditField(field)">(= field.code =)</a>
 					</td>
 					<td style="width:180px" class="text-right">
 						<rbs-kb-switch>
@@ -42,7 +42,7 @@
 								<i class="icon-play icon-rotate-90"></i>
 							</button>
 						</rbs-kb-switch>
-						<button class="btn btn-default btn-icon" type="button" ng-click="cascadeEditField($index)" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}">
+						<button class="btn btn-default btn-icon" type="button" ng-click="cascadeEditField(field)" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}">
 							<i class="icon-pencil"></i>
 						</button>
 						<button ng-hide="field.locked" class="btn btn-danger btn-icon" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">

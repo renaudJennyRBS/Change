@@ -43,7 +43,7 @@
 	 * @attribute embed-in
 	 * @attribute disable-reordering
 	 */
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout)
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation)
 	{
 		var	$el = $(iElement),
 			documentList,
@@ -196,9 +196,7 @@
 			EditorManager.cascade(
 				getFormModel(),
 				getCreateLabel(),
-				function (doc) {
-					scope.selectDocument(doc);
-				}
+				attrs.name
 			);
 		};
 
@@ -431,10 +429,20 @@
 				"selectDocument" : scope.selectDocument
 			};
 		}
+
+
+		scope.$on('Change:NavigationFinalize', function (event, navCtx)
+		{
+			console.log("PICKER: navCtx=", navCtx);
+			if (navCtx && navCtx.context && navCtx.context.type === 'setProperty' && navCtx.context.property === attrs.name)
+			{
+				scope.selectDocument(navCtx.result);
+			}
+		});
 	}
 
 
-	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', '$timeout', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, $timeout)
+	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
 	{
 		return {
 			restrict    : 'EAC',
@@ -444,7 +452,7 @@
 
 			link : function (scope, iElement, attrs, ngModel)
 			{
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation);
 			}
 		};
 	}];
@@ -452,7 +460,7 @@
 	app.directive('rbsWoodyWoodpicker', singlePicker);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', '$timeout', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, $timeout)
+	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
 	{
 		return {
 			restrict    : 'EAC',
@@ -462,7 +470,7 @@
 
 			link : function (scope, iElement, attrs, ngModel)
 			{
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, $timeout);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation);
 			}
 		};
 	}]);

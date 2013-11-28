@@ -82,13 +82,3 @@ select.ng-dirty.ng-invalid {
 	transition: font-size 0.2s ease, margin 0.2s ease;
 	position: relative;
 }
-
-.cascading-forms-last {
-	border-top: 2px solid #EEEEEE;
-	padding-top: 5px;
-}
-
-.cascading-forms-collapsed ~ .cascading-forms-collapsed {
-	margin-top: -4px;
-}
-

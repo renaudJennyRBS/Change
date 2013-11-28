@@ -34,6 +34,23 @@
 					}
 				};
 
+				scope.leaveSection = function (section)
+				{
+					if (section === 'content') {
+						$('#rbsWebsitePageDefaultAsides').show();
+						$('#rbsWebsitePageBlockPropertiesAside').hide();
+					}
+
+				};
+
+				scope.enterSection = function (section)
+				{
+					if (section === 'content') {
+						$('#rbsWebsitePageDefaultAsides').hide();
+						$('#rbsWebsitePageBlockPropertiesAside').show();
+					}
+				};
+
 				editorCtrl.init('Rbs_Website_FunctionalPage');
 
 				// This is for the "undo" dropdown menu:

@@ -3,13 +3,6 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<div class="clearfix">
-			<span class="pull-right">
-				<a href ng-href="(= document|documentURL:'applications' =)">Applications</a> |
-				<a href ng-href="(= document|documentURL:'permission' =)">Permissions</a>
-			</span>
-		</div>
-
 		<rbs-field-text
 			property="email" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'email'), ['ucf']) }}">

@@ -1,8 +1,15 @@
-<div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Geo_AddressField'), ['ucf']) }}"></page-header>
+<div class="row">
 
-	<div ng-switch="editMode">
-		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-geo-address-field-translate"></div>
-		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-geo-address-field"></div>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
 	</div>
+
+	<div class="document-form" rbs-main-column>
+		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Geo_AddressField'), ['ucf']) }}"></page-header>
+		<div ng-switch="editMode">
+			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-geo-address-field-translate"></div>
+			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-geo-address-field"></div>
+		</div>
+	</div>
+
 </div>

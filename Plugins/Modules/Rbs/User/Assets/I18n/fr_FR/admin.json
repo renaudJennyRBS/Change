@@ -47,6 +47,9 @@
 	"applications":{
 		"message":"applications"
 	},
+	"permissions":{
+		"message":"permissions"
+	},
 	"current_password":{
 		"message":"mot de passe actuel"
 	},

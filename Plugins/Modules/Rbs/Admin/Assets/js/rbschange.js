@@ -16,7 +16,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.constant('RbsChange.Version', '4.0.0');
+	app.constant('RbsChange.Version', '4.0 beta1');
 
 
 	app.constant('RbsChange.Device', {
@@ -167,7 +167,7 @@
 		return {
 			'restrict'   : 'A',
 			link : function (scope, elm) {
-				elm.html('RBS Change version ' + version + '<small style="display: block;">AngularJS ' + angular.version.full + ' | jQuery ' + $.fn.jquery + '</small>');
+				elm.html('RBS Change version ' + version + '<small style="display: block;">AngularJS ' + angular.version.full + ' &mdash; jQuery ' + $.fn.jquery + '</small>');
 			}
 		};
 	}]);

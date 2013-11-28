@@ -36,84 +36,6 @@
 	//
 
 
-	app.directive('rbsAsideColumn', function ()
-	{
-		return {
-			restrict : 'A',
-
-			link : function (scope, iElement)
-			{
-				iElement.addClass('col-md-3');
-			}
-		};
-	});
-
-
-	app.directive('rbsMainColumn', function ()
-	{
-		return {
-			restrict : 'A',
-
-			link : function (scope, iElement)
-			{
-				iElement.addClass('col-md-9');
-			}
-		};
-	});
-
-
-	app.directive('rbsFullWidth', function ()
-	{
-		return {
-			restrict : 'A',
-
-			link : function (scope, iElement)
-			{
-				iElement.addClass('col-md-12');
-			}
-		};
-	});
-
-
-	app.directive('rbsAsidePluginMenu', ['$rootScope', function ($rootScope)
-	{
-		return {
-			restrict : 'E',
-			replace : true,
-			template : '<div ng-include="menuUrl"></div>',
-			scope : true,
-
-			link : function (scope, iElement, iAttrs)
-			{
-				var plugin = iAttrs['plugin'] || $rootScope.rbsCurrentPluginName;
-				scope.menuUrl = plugin.replace(/_/, '/') + '/menu.twig';
-			}
-		};
-	}]);
-
-
-	app.directive('rbsDefaultAsidesForList', function ()
-	{
-		return {
-			restrict : 'E',
-			template :
-				'<rbs-aside-plugin-menu></rbs-aside-plugin-menu>' +
-				'<rbs-aside-tag-filter></rbs-aside-tag-filter>'
-		};
-	});
-
-
-	app.directive('rbsDefaultAsidesForEditor', function ()
-	{
-		return {
-			restrict : 'E',
-			template :
-				'<rbs-aside-editor-menu></rbs-aside-editor-menu>' +
-				'<rbs-aside-translation ng-if="document.refLCID" document="document"></rbs-aside-translation>'
-		};
-	});
-
-
 	/**
 	 * Directive: rbsActiveRoute
 	 * Usage    : as attribute: <a href="..." rbs-active-route>...</a>
@@ -124,6 +46,7 @@
 	{
 		return {
 			restrict : 'A',
+			priority : -100,
 
 			link : function (scope, iElement, iAttrs)
 			{
@@ -151,6 +74,114 @@
 			}
 		};
 	}]);
+
+
+	/**
+	 * Directive: rbsAsideColumn
+	 * Usage : <div rbs-aside-column>...</div>
+	 *
+	 * Shortcut to set the default CSS class name for a standard left column.
+	 */
+	app.directive('rbsAsideColumn', function ()
+	{
+		return {
+			restrict : 'A',
+			link : function (scope, iElement)
+			{
+				iElement.addClass('col-md-3');
+			}
+		};
+	});
+
+
+	/**
+	 * Directive: rbsAsideColumn
+	 * Usage : <div rbs-main-column>...</div>
+	 *
+	 * Shortcut to set the default CSS class name for a standard main view with a left column.
+	 */
+	app.directive('rbsMainColumn', function ()
+	{
+		return {
+			restrict : 'A',
+			link : function (scope, iElement)
+			{
+				iElement.addClass('col-md-9');
+			}
+		};
+	});
+
+
+	/**
+	 * Directive: rbsFullWidth
+	 * Usage : <div rbs-full-width>...</div>
+	 *
+	 * Shortcut to set the default CSS class name for a full width view.
+	 */
+	app.directive('rbsFullWidth', function ()
+	{
+		return {
+			restrict : 'A',
+			link : function (scope, iElement)
+			{
+				iElement.addClass('col-md-12');
+			}
+		};
+	});
+
+
+	/**
+	 * Directive: rbsAsidePluginMenu
+	 * Usage    : as element: <rbs-aside-plugin-menu[ plugin="Vendor_Plugin"]></rbs-aside-plugin-menu>
+	 *
+	 * Displays the menu of the given plugin.
+	 * If `plugin` attribute is not set, this Directive will look for the current plugin based on the current route.
+	 */
+	app.directive('rbsAsidePluginMenu', ['$rootScope', function ($rootScope)
+	{
+		return {
+			restrict : 'E',
+			replace : true,
+			template : '<div ng-include="menuUrl"></div>',
+			scope : true,
+
+			link : function (scope, iElement, iAttrs)
+			{
+				var plugin = iAttrs['plugin'] || $rootScope.rbsCurrentPluginName;
+				scope.menuUrl = plugin.replace(/_/, '/') + '/menu.twig';
+			}
+		};
+	}]);
+
+
+	/**
+	 * Default Asides for a list view.
+	 */
+	app.directive('rbsDefaultAsidesForList', function ()
+	{
+		return {
+			restrict : 'E',
+			template :
+				'<rbs-aside-plugin-menu></rbs-aside-plugin-menu>' +
+				'<rbs-aside-tag-filter></rbs-aside-tag-filter>'
+		};
+	});
+
+
+	/**
+	 * Default Asides for an editor view.
+	 */
+	app.directive('rbsDefaultAsidesForEditor', function ()
+	{
+		return {
+			restrict : 'E',
+			template :
+				'<rbs-aside-editor-menu></rbs-aside-editor-menu>' +
+				'<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>' +
+				'<rbs-aside-timeline ng-hide="document.isNew()"></rbs-aside-timeline>' +
+				'<rbs-aside-seo ng-hide="document.isNew()" document="document"></rbs-aside-seo>'
+		};
+	});
 
 
 	/**
@@ -272,27 +303,32 @@
 	});
 
 
-
-	app.directive('rbsAsideTranslation', ['RbsChange.REST', 'RbsChange.i18n', '$q', function (REST, i18n, $q)
+	/**
+	 * Directive: rbsAsideTranslation
+	 * Usage    : as element: <rbs-aside-translation document="document"></rbs-aside-translation>
+	 *
+	 * Displays the languages list to translate the given document.
+	 */
+	app.directive('rbsAsideTranslation', ['RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n', '$q', function (Utils, REST, i18n, $q)
 	{
 		return {
 			restrict : 'E',
-			replace : true,
-			template : '<div ng-include="\'Rbs/Admin/tpl/i18n-aside.twig\'"></div>',
+			templateUrl : 'Rbs/Admin/tpl/i18n-aside.twig',
 			scope : {
 				document : '='
 			},
 
-			link : function (scope)
+			link : function (scope, iElement)
 			{
+				iElement.hide();
 				var docPromise = $q.defer();
 
 				scope.$watch('document', function (doc)
 				{
-					if (doc && doc.id) {
+					if (Utils.isDocument(doc) && doc.refLCID) {
 						docPromise.resolve(doc);
 					}
-				}, true);
+				});
 
 				$q.all([docPromise.promise, REST.getAvailableLanguages()]).then(function (results)
 				{
@@ -319,11 +355,66 @@
 						}
 					});
 
+					iElement.show();
+
 					if (contents.length > 1) {
 						scope.rbsI18nItems = contents;
 					}
 				});
 			}
+		};
+	}]);
+
+
+	/**
+	 * Directive: rbsAsideSeo
+	 * Usage    : as element: <rbs-aside-seo document="document"></rbs-aside-seo>
+	 *
+	 * Displays the link to edit the SEO information of the given document.
+	 */
+	app.directive('rbsAsideSeo', ['RbsChange.Utils', 'RbsChange.REST', function (Utils, REST)
+	{
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Seo/aside.twig',
+			scope : {
+				document : '='
+			},
+
+			link : function (scope, iElement)
+			{
+				iElement.hide();
+				scope.$watch('document', function (doc)
+				{
+					if (Utils.isDocument(doc))
+					{
+						var seoLink = doc.getLink('seo');
+						if (seoLink)
+						{
+							iElement.show();
+							REST.call(seoLink, null, REST.resourceTransformer()).then(function (seoDocument)
+							{
+								scope.seoDocument = seoDocument;
+							});
+						}
+					}
+				});
+			}
+		};
+	}]);
+
+
+	/**
+	 * Directive: rbsAsideTimeline
+	 * Usage    : as element: <rbs-aside-timeline></rbs-aside-timeline>
+	 *
+	 * Displays the link that points to the given document's timeline.
+	 */
+	app.directive('rbsAsideTimeline', [ function ()
+	{
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Timeline/aside.twig'
 		};
 	}]);
 

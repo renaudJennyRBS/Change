@@ -1,7 +1,11 @@
-(function () {
+(function ()
+{
 	"use strict";
 
 	var app = angular.module('RbsChange');
+
+	__change.createEditorForModelTranslation('Rbs_Simpleform_Form');
+	__change.createEditorForModelTranslation('Rbs_Simpleform_Field');
 
 	/**
 	 * Routes and URL definitions.
@@ -15,4 +19,5 @@
 			return $delegate;
 		}]);
 	}]);
+
 })();

@@ -1,4 +1,5 @@
-<div>
+<div class="row">
+
 	<rbs-workspace-config menu="Rbs_Payment">
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Payment'|rbsURL:'home' =)">{{ i18n('m.rbs.payment.admin.module_name', ['ucf']) }}</location>
@@ -6,30 +7,37 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Payment_Transaction" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Payment_Transaction' | documentURL:'new' =)">{{ i18n('m.rbs.payment.admin.transaction_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsPaymentTransaction"
-			model="Rbs_Payment_Transaction" filter-query="query" publishable="false">
-		<column name="amount" primary="true"></column>
-		<column name="currencyCode"></column>
-		<column name="processingStatus"></column>
-		<column name="processingDate"></column>
-		<column name="processingIdentifier"></column>
-		<preview style="min-height: 200px">
-			<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
-			<div style="margin-left: 290px;">
-				<h4>(= doc.label =)</h4>
-				<dl class="dl-horizontal">
-					<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
-					<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-					<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
-				</dl>
-			</div>
-		</preview>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Payment_Transaction" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Payment_Transaction' | documentURL:'new' =)">{{ i18n('m.rbs.payment.admin.transaction_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsPaymentTransaction"
+				model="Rbs_Payment_Transaction" filter-query="query" publishable="false">
+			<column name="amount" primary="true"></column>
+			<column name="currencyCode"></column>
+			<column name="processingStatus"></column>
+			<column name="processingDate"></column>
+			<column name="processingIdentifier"></column>
+			<preview style="min-height: 200px">
+				<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
+				<div style="margin-left: 290px;">
+					<h4>(= doc.label =)</h4>
+					<dl class="dl-horizontal">
+						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
+						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
+						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
+					</dl>
+				</div>
+			</preview>
+		</rbs-document-list>
+	</div>
+
 </div>

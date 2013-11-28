@@ -1,4 +1,11 @@
-<div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Address'), ['ucf']) }}"></page-header>
-	<div class="rbs-document-editor rbs-document-editor-rbs-geo-address"></div>
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+	</div>
+
+	<div class="document-form" rbs-main-column>
+		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Address'), ['ucf']) }}"></page-header>
+		<div class="rbs-document-editor rbs-document-editor-rbs-geo-address"></div>
+	</div>
 </div>

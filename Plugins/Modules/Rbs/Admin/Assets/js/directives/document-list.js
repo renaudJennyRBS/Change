@@ -691,17 +691,6 @@
 						);
 					};
 
-					scope.cascadeDuplicate = function (doc) {
-						REST.resource(doc).then(function (fullDoc) {
-								EditorManager.cascadeEditor(
-									Utils.duplicateDocument(fullDoc),
-									scope.cascadeEdition
-								);
-							}
-						);
-					};
-
-
 					scope.hasColumn = function (columnName) {
 						return angular.isObject(scope.columns[columnName]);
 					};

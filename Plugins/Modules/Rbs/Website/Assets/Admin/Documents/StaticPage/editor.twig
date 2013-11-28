@@ -25,6 +25,13 @@
 			selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_pagetemplate_picker_title', ['ucf']) }}">
 		</rbs-field-picker>
 
+		<rbs-field-picker property="childPage" required="true"
+		                  label="Child page"
+		                  accepted-model="Rbs_Website_StaticPage"
+		                  selector-title="Select child page">
+		</rbs-field-picker>
+
+
 		<hr />
 
 		<rbs-field-picker property="section" required="true"

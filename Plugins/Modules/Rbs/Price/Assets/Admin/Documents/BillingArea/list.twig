@@ -1,4 +1,4 @@
-<div>
+<div class="row">
 
 	<rbs-workspace-config menu="Rbs_Price">
 		<rbs-breadcrumb-config>
@@ -7,17 +7,24 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.price.admin.billingarea_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Price_BillingArea" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Price_BillingArea' | documentURL:'new' =)">{{ i18n('m.rbs.price.admin.billingarea_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsPriceBillingArea"
-	               model="Rbs_Price_BillingArea"
-	               filter-query="query">
-		<column name="label" primary="true"></column>
-		<column name="currencyCode">(= doc.currencyCode =)</column>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.price.admin.billingarea_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Price_BillingArea" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Price_BillingArea' | documentURL:'new' =)">{{ i18n('m.rbs.price.admin.billingarea_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsPriceBillingArea"
+		               model="Rbs_Price_BillingArea"
+		               filter-query="query">
+			<column name="label" primary="true"></column>
+			<column name="currencyCode">(= doc.currencyCode =)</column>
+		</rbs-document-list>
+	</div>
+
 </div>

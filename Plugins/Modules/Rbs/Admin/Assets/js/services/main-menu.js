@@ -407,7 +407,7 @@
 			replace : true,
 			template :
 				'<div class="panel panel-default">' +
-					'<div class="panel-heading">' +
+					'<div ng-if="panel.title" class="panel-heading">' +
 						'<h3 class="panel-title"><span ng-if="panel.icon"><i class="(=panel.icon=)"></i> </span><span ng-bind="panel.title"></span></h3>' +
 					'</div>' +
 					'<div class="panel-body" ng-transclude=""></div>' +
@@ -433,7 +433,7 @@
 			replace : true,
 			template :
 				'<div class="panel panel-default">' +
-					'<div class="panel-heading">' +
+					'<div ng-if="panel.title" class="panel-heading">' +
 						'<h3 class="panel-title"><span ng-if="panel.icon"><i class="(=panel.icon=)"></i> </span><span ng-bind="panel.title"></span></h3>' +
 					'</div>' +
 					'<div class="list-group" ng-transclude=""></div>' +
