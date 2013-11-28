@@ -50,11 +50,12 @@
 		'RbsChange.PaginationPageSizes',
 		'RbsChange.SelectSession',
 		'RbsChange.MainMenu',
+		'RbsChange.ErrorFormatter',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu)
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu, ErrorFormatter)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -1355,7 +1356,7 @@
 						scope.busy = false;
 						Loading.stop();
 						if (reason) {
-							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading_list_error | ucf'), reason);
+							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading_list_error | ucf'), ErrorFormatter.format(reason));
 						} else {
 							NotificationCenter.clear();
 						}

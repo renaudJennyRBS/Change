@@ -401,6 +401,9 @@
 	"close":{
 		"message":"fermer"
 	},
+	"close_all":{
+		"message":"tout fermer"
+	},
 	"select_and_close":{
 		"message":"sélectionner et fermer"
 	},

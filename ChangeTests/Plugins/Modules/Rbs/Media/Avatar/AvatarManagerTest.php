@@ -45,7 +45,7 @@ class AvatarManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNotEquals('test@test.com', $url);
 
 		$this->getApplication()->getConfiguration()
-			->addVolatileEntry('Rbs/Media/AvatarManager/Test', 'ChangeTests\Rbs\Media\Avatar\Listener_354651321');
+			->addVolatileEntry('Rbs/Media/Events/AvatarManager/Test', 'ChangeTests\Rbs\Media\Avatar\Listener_354651321');
 		$avatarManager->clearEventManager();
 
 		$url = $avatarManager->getAvatarUrl(90, 'test@test.com');

@@ -17,7 +17,7 @@
 	 * @param NotificationCenter
 	 * @constructor
 	 */
-	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter) {
+	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter, ErrorFormatter) {
 
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.module_name | ucf'), "Rbs/Website"]
@@ -125,7 +125,7 @@
 						$scope.reload();
 						//$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload", "promises": promises});
 						$q.all(promises).then(function () {
-							NotificationCenter.error("L'enregistrement a échoué", error);
+							NotificationCenter.error("L'enregistrement a échoué", ErrorFormatter.format(error));
 						});
 					}
 				);
@@ -155,14 +155,14 @@
 					$scope.reload();
 				},
 				function (error) {
-					NotificationCenter.error("L'enregistrement a échoué", error);
+					NotificationCenter.error("L'enregistrement a échoué", ErrorFormatter.format(error));
 				}
 			);
 		};
 
 	}
 
-	SectionFunctionsController.$inject = ['$scope', '$routeParams', '$q', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query', 'RbsChange.NotificationCenter'];
+	SectionFunctionsController.$inject = ['$scope', '$routeParams', '$q', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query', 'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter'];
 	app.controller('Rbs_Website_SectionFunctionsController', SectionFunctionsController);
 
 })();

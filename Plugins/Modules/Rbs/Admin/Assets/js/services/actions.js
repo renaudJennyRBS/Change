@@ -9,7 +9,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n, ErrorFormatter) {
 			function Actions () {
 
 				this.reset = function () {
@@ -63,14 +63,14 @@
 							}, function actionErrback(reason) {
 								Loading.stop();
 								// FIXME Localization
-								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
+								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", ErrorFormatter.format(reason), null, paramsObj);
 							});
 						} else {
 							promise.then(function actionCallback () {
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
 								// FIXME Localization
-								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
+								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", ErrorFormatter.format(reason), null, paramsObj);
 							});
 						}
 
