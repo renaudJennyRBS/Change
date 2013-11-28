@@ -18,12 +18,9 @@
 			<br/><small class="muted"><time display="both" datetime="(= copy.META$.localCopy.saveDate =)"></time></small>
 		</a></li>
 
-		<li class="divider"></li>
+		<li ng-if="localCopies.length > 0" class="divider"></li>
 		<li ng-if="localCopies.length > 0"><a href="javascript:;" ng-click="clearLocalCopies()">
 			<i class="icon-trash"></i> {{ i18n('m.rbs.admin.admin.remove_all_local_copies', ['ucf']) }}
-		</a></li>
-		<li><a href="javascript:;">
-			<i class="icon-info-sign"></i> {{ i18n('m.rbs.admin.admin.what_are_local_copies', ['ucf']) }}
 		</a></li>
 	</ul>
 </li>

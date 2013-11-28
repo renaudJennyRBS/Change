@@ -566,9 +566,6 @@
 	"remove_all_local_copies":{
 		"message":"effacer les copies locales"
 	},
-	"what_are_local_copies":{
-		"message":"qu'est-ce que les copies locales ?"
-	},
 	"local_copy_indicator_title":{
 		"message":"gestion des copies locales"
 	},
