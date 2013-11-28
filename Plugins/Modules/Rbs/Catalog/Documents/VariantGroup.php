@@ -3,6 +3,9 @@ namespace Rbs\Catalog\Documents;
 
 use Change\Documents\AbstractModel;
 use Change\Documents\Events\Event;
+use Change\Http\Rest\Result\ErrorResult;
+use Rbs\Catalog\Product\AxisConfiguration;
+use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Rbs\Catalog\Documents\VariantGroup
@@ -10,18 +13,24 @@ use Change\Documents\Events\Event;
 class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 {
 	/**
+	 * @var
+	 */
+	protected $variantConfiguration;
+
+	/**
 	 * @param AbstractModel $documentModel
 	 */
 	public function setDefaultValues(AbstractModel $documentModel)
 	{
 		parent::setDefaultValues($documentModel);
-		$this->setAxesInfo(array());
+		$this->setAxesAttributes(array());
+		$this->setAxesAttributes(array());
 	}
 
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'));
+		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onDefaultCreated'));
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
 		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
 	}
@@ -32,22 +41,13 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		{
 			$this->setLabel($this->getRootProduct()->getLabel());
 		}
-
-		$cs = $event->getServices('commerceServices');
-		if ($cs instanceof \Rbs\Commerce\CommerceServices)
-		{
-			$this->initAxisInfo($cs->getAttributeManager());
-		}
-		else
-		{
-			throw new \RuntimeException('CommerceServices not set', 999999);
-		}
+		$this->normalizeAxesProperties();
 	}
 
 	/**
 	 * @param Event $event
 	 */
-	public function onCreated(Event $event)
+	public function onDefaultCreated(Event $event)
 	{
 		/** @var $variantGroup VariantGroup */
 		$variantGroup = $event->getDocument();
@@ -59,249 +59,93 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			$product->setVariantGroup($variantGroup);
 			$product->update();
 		}
+
+		if (is_array($this->variantConfiguration))
+		{
+			$arguments = $this->variantConfiguration;
+			$arguments['variantGroupId'] = $this->getId();
+			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Catalog_VariantConfiguration', $arguments);
+			$this->setMeta('Job_VariantConfiguration', $job->getId());
+			$this->saveMetas();
+		}
 	}
 
 	public function onDefaultUpdate(Event $event)
 	{
-		if ($this->isPropertyModified('axisAttribute'))
+		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('axesConfiguration'))
 		{
-			$cs = $event->getServices('commerceServices');
-			if ($cs instanceof \Rbs\Commerce\CommerceServices)
-			{
-				$this->initAxisInfo($cs->getAttributeManager());
-			}
-			else
-			{
-				throw new \RuntimeException('CommerceServices not set', 999999);
-			}
+			$this->normalizeAxesProperties();
 		}
 
-		if ($this->isPropertyModified('productMatrixInfo'))
+		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('othersAttributes') || $this->isPropertyModified('axesConfiguration'))
 		{
-			$tm = $event->getApplicationServices()->getTransactionManager();
-			try
-			{
-				$tm->begin();
-				$this->normalizeProductMatrix();
-				$tm->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $tm->rollBack($e);
-			}
+			$arguments = ['variantGroupId' => $this->getId()];
+			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Catalog_AxesConfiguration', $arguments);
+			$this->setMeta('Job_AxesConfiguration', $job->getId());
 		}
+
+		if (is_array($this->variantConfiguration))
+		{
+			$arguments = $this->variantConfiguration;
+			$arguments['variantGroupId'] = $this->getId();
+			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Catalog_VariantConfiguration', $arguments);
+			$this->setMeta('Job_VariantConfiguration', $job->getId());
+		}
+		$this->saveMetas();
 	}
 
-	/**
-	 * @param \Rbs\Catalog\Attribute\AttributeManager $attributeManager
-	 */
-	protected function initAxisInfo(\Rbs\Catalog\Attribute\AttributeManager $attributeManager)
+	protected function normalizeAxesProperties()
 	{
-		$axesInfo = $this->getAxesInfo();
-		if (count($axesInfo) === 0)
+		$attributes = [];
+		$oldConfiguration = $this->getAxesConfiguration();
+		if (!is_array($oldConfiguration)) {$oldConfiguration = array();}
+
+		foreach ($this->getAxesAttributes() as $attribute)
 		{
-			$axesInfo = array();
-			$axisAttributes = $attributeManager->getAxisAttributes($this->getAxisAttribute());
-			foreach ($axisAttributes as $axisAttribute)
+			if ($attribute->getAxis())
 			{
-				$axis = array('id' => $axisAttribute->getId(), 'dv' => $attributeManager->getCollectionValues($axisAttribute));
-				if (!is_array($axis['dv']))
+				$hasConf = false;
+				$attributes[$attribute->getId()] = $attribute;
+				foreach ($oldConfiguration as $conf)
 				{
-					$axis['dv'] = array();
-				}
-				$axis['cat'] = $axisAttribute->isVisibleFor('productListItem');
-				$axesInfo[] = $axis;
-			}
-			$this->setAxesInfo($axesInfo);
-		}
-	}
-
-	protected function normalizeProductMatrix()
-	{
-		$pmi = $this->getProductMatrixInfo();
-		$axesInfo = array_reduce($this->getAxesInfo(), function ($r, $i)
-		{
-			$r[$i['id']] = $i;
-			return $r;
-		}, array());
-
-		$added = array();
-		$pmiCount = count($pmi);
-
-		//fix removed tree
-		$addRemoved = 1;
-		$removed = array();
-		while ($addRemoved)
-		{
-			--$addRemoved;
-			for ($i = 0; $i < $pmiCount; $i++)
-			{
-				if (isset($pmi[$i]['removed']))
-				{
-					if (!isset($removed[$pmi[$i]['id']]))
+					if ($conf['id'] == $attribute->getId())
 					{
-						$removed[$pmi[$i]['id']] = $pmi[$i]['id'];
-						++$addRemoved;
+						$hasConf = true;
+						break;
 					}
 				}
-				elseif (isset($removed[$pmi[$i]['parentId']]))
+
+				if (!$hasConf)
 				{
-					$pmi[$i]['removed'] = true;
-					++$addRemoved;
-				}
-				elseif (!isset($axesInfo[$pmi[$i]['axisId']]))
-				{
-					$pmi[$i]['removed'] = true;
-					++$addRemoved;
+					$conf = new AxisConfiguration($attribute->getId());
+					$oldConfiguration[] = $conf->toArray();
 				}
 			}
 		}
+		$this->getAxesAttributes()->fromArray(array_values($attributes));
 
-		$parentIds = array_reduce($pmi, function ($r, $i)
+		$nbAttributes = count($attributes);
+		if ($nbAttributes)
 		{
-			if (!isset($i['removed']) && $i['id'] > 0)
+			$configuration = [];
+			foreach ($oldConfiguration as $confArray)
 			{
-				$r[] = $i['id'];
-			}
-			return $r;
-		}, array($this->getRootProductId()));
-
-		for ($i = 0; $i < count($pmi); $i++)
-		{
-			$entry = $pmi[$i];
-			if ($entry['id'] < 0)
-			{
-				/* @var $product Product */
-				$axesValues = $this->buildAxesValues($entry, $pmi);
-
-				$product = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
-				$product->setLabel($this->getLabel() . ' - ' . $this->buildProductLabel($entry, $pmi, $axesInfo, 'label'));
-				$product->getCurrentLocalization()->setTitle($product->getLabel());
-				$product->setVariantGroup($this);
-				$product->setVariant(true);
-				$product->setAttribute($this->getAxisAttribute());
-				$product->getCurrentLocalization()->setAttributeValues($axesValues);
-				$product->setCategorizable(($axesInfo[$entry['axisId']]['cat'] == true));
-				$product->setNewSkuOnCreation($this->getNewSkuOnCreation() && !$entry['variant']);
-				$product->create();
-				$added[$entry['id']] = $product->getId();
-			}
-			elseif ($entry['id'] > 0)
-			{
-				if (isset($entry['removed']) || !in_array($entry['id'], $parentIds))
+				$conf = (new AxisConfiguration())->fromArray($confArray);
+				if (isset($attributes[$conf->getId()]))
 				{
-					$product = $this->getDocumentManager()->getDocumentInstance($entry['id']);
-					if ($product instanceof Product)
+					$configuration[] = $conf;
+					if (count($configuration) == $nbAttributes)
 					{
-						$product->delete();
+						$conf->setUrl(true);
 					}
 				}
 			}
-		}
-
-		$productMatrixInfo = array();
-
-		foreach ($pmi as $entry)
-		{
-			if ($entry['id'] == 0 || !isset($axesInfo[$entry['axisId']]) || isset($entry['removed']))
-			{
-				continue;
-			}
-
-			if ($entry['id'] < 0)
-			{
-				if (!isset($added[$entry['id']]))
-				{
-					continue;
-				}
-				$entry['id'] = $added[$entry['id']];
-			}
-
-			if ($entry['parentId'] < 0)
-			{
-				if (!isset($added[$entry['parentId']]))
-				{
-					continue;
-				}
-				$entry['parentId'] = $added[$entry['parentId']];
-			}
-			else if (!in_array($entry['parentId'], $parentIds))
-			{
-				continue;
-			}
-			$productMatrixInfo[] = $entry;
-		}
-
-		$this->setProductMatrixInfo($productMatrixInfo);
-	}
-
-	/**
-	 * @param array $entry
-	 * @param array $productMatrixInfo
-	 * @param array $axesInfo
-	 * @param string $type title|label|value
-	 * @return string
-	 */
-	protected function buildProductLabel($entry, $productMatrixInfo, $axesInfo, $type = 'label')
-	{
-		$pe = $this->getProductMatrixEntryById($entry['parentId'], $productMatrixInfo);
-		if ($pe)
-		{
-			$label = $this->buildProductLabel($pe, $productMatrixInfo, $axesInfo, $type) . ' - ';
+			$this->setAxesConfiguration(array_map(function (AxisConfiguration $conf) {return $conf->toArray();}, $configuration));
 		}
 		else
 		{
-			$label = '';
+			$this->setAxesConfiguration(null);
 		}
-
-		$av = $entry['axisValue'];
-		if ($type != 'value' && isset($axesInfo[$entry['axisId']]))
-		{
-			$ai = $axesInfo[$entry['axisId']];
-			foreach ($ai['dv'] as $dv)
-			{
-				if ($dv['value'] == $av)
-				{
-					$av = $dv[$type];
-					break;
-				}
-			}
-		}
-		return $label . $av;
-	}
-
-	/**
-	 * @param integer $id
-	 * @param array $productMatrixInfo
-	 * @return array|null
-	 */
-	protected function getProductMatrixEntryById($id, $productMatrixInfo)
-	{
-		foreach ($productMatrixInfo as $entry)
-		{
-			if ($entry['id'] == $id)
-			{
-				return $entry;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @param array $entry
-	 * @param array $productMatrixInfo
-	 * @return array
-	 */
-	protected function buildAxesValues($entry, $productMatrixInfo)
-	{
-		$axesValue = array();
-		$axesValue[] = array('id' => $entry['axisId'], 'value' => $entry['axisValue']);
-		$parentEntry = $this->getProductMatrixEntryById($entry['parentId'], $productMatrixInfo);
-		if ($parentEntry)
-		{
-			$axesValue = array_merge($this->buildAxesValues($parentEntry, $productMatrixInfo), $axesValue);
-		}
-		return $axesValue;
 	}
 
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
@@ -310,11 +154,26 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
+			/** @var $document VariantGroup */
+			$document = $event->getDocument();
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$axesDefinition = $this->buildAxesDefinition($cs->getAttributeManager());
-				$restResult->setProperty('axesDefinition', array_values($axesDefinition));
+				$restResult->setProperty('variantConfiguration', $cs->getAttributeManager()->buildVariantConfiguration($document));
+
+				$jobs = array();
+				$aJobId = $document->getMeta('Job_AxesConfiguration');
+				if ($aJobId)
+				{
+					$jobs[] = ['id' => $aJobId, 'name' => 'Rbs_Catalog_AxesConfiguration'];
+				}
+
+				$vJobId = $document->getMeta('Job_VariantConfiguration');
+				if ($vJobId)
+				{
+					$jobs[] = ['id' => $vJobId, 'name' => 'Rbs_Catalog_VariantConfiguration'];
+				}
+				$restResult->setProperty('jobs', $jobs);
 			}
 			else
 			{
@@ -324,63 +183,36 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Attribute\AttributeManager $attributeManager
-	 * @return array
+	 * Process the incoming REST data $name and set it to $value
+	 * @param $name
+	 * @param $value
+	 * @param $event
+	 * @return bool
 	 */
-	protected function buildAxesDefinition(\Rbs\Catalog\Attribute\AttributeManager $attributeManager)
+	protected function processRestData($name, $value, \Change\Http\Event $event)
 	{
-		$axesDefinition = array();
-		foreach ($this->getAxesInfo() as $axisInfo)
+		if ($name === 'variantConfiguration')
 		{
-			$axisAttribute = $this->getDocumentManager()->getDocumentInstance($axisInfo['id']);
-			if (!($axisAttribute instanceof Attribute))
+			if (is_array($value))
 			{
-				continue;
+				$this->variantConfiguration = $value;
+				return true;
 			}
 
-			$def = $attributeManager->buildAttributeDefinition($axisAttribute);
-			if ($def)
-			{
-				$axesDefinition[$axisInfo['id']] = $def;
-			}
+			$result = new ErrorResult('INVALID-VARIANT-CONFIGURATION', 'Invalid products variants configuration', HttpResponse::STATUS_CODE_409);
+			$event->setResult($result);
+			return false;
 		}
-		return $axesDefinition;
+		return parent::processRestData($name, $value, $event);
 	}
 
 	/**
-	 * @param integer $parentId
-	 * @return array
+	 * @return Product[]
 	 */
-	public function getAxesValuesByParentId($parentId)
+	public function getVariantProducts()
 	{
-		$pmi = $this->getProductMatrixInfo();
-		$axesValues = array();
-		foreach($pmi as $matrixElement)
-		{
-			if ($matrixElement['parentId'] == $parentId)
-			{
-				$axesValues[] = $matrixElement;
-			}
-		}
-		return $axesValues;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getAxesNames()
-	{
-		$axesInfo = $this->getAxesInfo();
-		$axesNames = array();
-		foreach($axesInfo as $axe)
-		{
-			$axeAttribute = $this->getDocumentManager()->getDocumentInstance($axe['id']);
-			if ($axeAttribute)
-			{
-				/* @var $axeAttribute \Rbs\Catalog\Documents\Attribute */
-				$axesNames[] = $axeAttribute->getCurrentLocalization()->getTitle();
-			}
-		}
-		return $axesNames;
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+		$query->andPredicates($query->eq('variantGroup', $this), $query->neq('id', $this->getRootProductId()));
+		return $query->getDocuments()->toArray();
 	}
 }

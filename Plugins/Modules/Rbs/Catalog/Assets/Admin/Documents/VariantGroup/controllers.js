@@ -4,10 +4,10 @@
 
 	var app = angular.module('RbsChange');
 
-	function VariantListController($scope, $routeParams)
+	function VariantListController(scope, routeParams)
 	{
-		console.log($scope);
-		$scope.loadQuery = {
+		console.log('VariantListController', scope, routeParams);
+		scope.loadQuery = {
 			"model": "Rbs_Catalog_Product",
 			"where": {
 				"and" : [
@@ -26,14 +26,13 @@
 							"property" : "variantGroup"
 						},
 						"rexp" : {
-							"value": $routeParams.id
+							"value": routeParams.id
 						}
 					}
 				]
 			}
 		}
 	}
-
 	VariantListController.$inject = ['$scope', '$routeParams'];
 	app.controller('Rbs_Catalog_VariantGroup_VariantListController', VariantListController);
 

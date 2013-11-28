@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Catalog\Documents;
 
+use Change\Documents\Property;
+
 /**
  * @name \Rbs\Catalog\Documents\Attribute
  */
@@ -167,19 +169,64 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		return null;
 	}
 
-	protected function onCreate()
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultCreate(\Change\Documents\Events\Event $event)
 	{
 		if ($this->getValueType() === static::TYPE_GROUP)
 		{
 			$this->setAxisGroupVisibility();
 		}
+		elseif ($this->getAxis())
+		{
+			if (!$this->isAxisValidType())
+			{
+				$propertiesErrors = $event->getParam('propertiesErrors');
+				if (!is_array($propertiesErrors))
+				{
+					$propertiesErrors = array();
+				}
+				$propertiesErrors['valueType'][] = 'Invalid value type for axis attribute';
+				$event->setParam('propertiesErrors', $propertiesErrors);
+			}
+		}
 	}
 
-	protected function onUpdate()
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdate(\Change\Documents\Events\Event $event)
 	{
-		if ($this->getValueType() === static::TYPE_GROUP && $this->isPropertyModified('attributes'))
+		if ($this->getValueType() === static::TYPE_GROUP)
 		{
-			$this->setAxisGroupVisibility();
+			if ($this->isPropertyModified('attributes'))
+			{
+				$this->setAxisGroupVisibility();
+			}
+		}
+		elseif ($this->getAxis())
+		{
+			if (!$this->isAxisValidType())
+			{
+				$propertiesErrors = $event->getParam('propertiesErrors');
+				if (!is_array($propertiesErrors))
+				{
+					$propertiesErrors = array();
+				}
+				$propertiesErrors['valueType'][] = 'Invalid value type for axis attribute';
+				$event->setParam('propertiesErrors', $propertiesErrors);
+			}
 		}
 	}
 
@@ -188,34 +235,35 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 		$axisVisibility = false;
 		foreach ($this->getAttributes() as $attribute)
 		{
-			if ($attribute->isVisibleFor('axes'))
+			if ($attribute->getAxis())
 			{
 				$axisVisibility = true;
 				break;
 			}
 		}
+		$this->setAxis($axisVisibility);
+	}
 
-		$visibility = $this->getVisibility();
-		if (!is_array($visibility))
+	/**
+	 * @return boolean
+	 */
+	protected function isAxisValidType()
+	{
+		if ($this->getValueType() === static::TYPE_PROPERTY)
 		{
-			$visibility = array();
-		}
-
-		if ($axisVisibility)
-		{
-			if (!in_array('axes', $visibility))
+			$property = $this->getModelProperty();
+			if ($property && !$property->getLocalized())
 			{
-				$visibility[] = 'axes';
+				if (in_array($property->getType(), [Property::TYPE_INTEGER, Property::TYPE_DOCUMENTID, Property::TYPE_STRING, Property::TYPE_DOCUMENT]))
+				{
+					return true;
+				}
 			}
 		}
-		else
+		elseif (in_array($this->getValueType(), [static::TYPE_GROUP, static::TYPE_DOCUMENTID, static::TYPE_CODE, static::TYPE_INTEGER]))
 		{
-			$index = array_search('axes', $visibility, true);
-			if ($index !== false)
-			{
-				unset($visibility[$index]);
-			}
+			return true;
 		}
-		$this->setVisibility(count($visibility) ? $visibility : null);
+		return false;
 	}
 }

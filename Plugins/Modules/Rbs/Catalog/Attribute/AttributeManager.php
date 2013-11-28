@@ -359,7 +359,7 @@ class AttributeManager
 						$definition['attributes'][] = $defGroup;
 					}
 				}
-				else
+				elseif (!$childAttribute->getAxis())
 				{
 					$def = $this->buildAttributeDefinition($childAttribute);
 					if ($def)
@@ -395,7 +395,7 @@ class AttributeManager
 					$groupDef = $this->buildGroupDefinition($childAttribute, $ids);
 					$definition['attributes'] = array_merge($definition['attributes'], $groupDef['attributes']);
 				}
-				else
+				elseif (!$childAttribute->getAxis())
 				{
 					$def = $this->buildAttributeDefinition($childAttribute);
 					if ($def)
@@ -640,7 +640,7 @@ class AttributeManager
 				$rootProduct = $variantGroup->getRootProduct();
 				if ($rootProduct instanceof \Rbs\Catalog\Documents\Product)
 				{
-					$attributeValues = $this->updateVariantAttributeValues($attributeValues, $rootProduct->getAttributeValues());
+					$attributeValues = $this->updateVariantAttributeValues($attributeValues, $rootProduct->getCurrentLocalization()->getAttributeValues());
 				}
 			}
 		}
@@ -715,7 +715,7 @@ class AttributeManager
 				{
 					$axeAttributes = array_merge($axeAttributes, $this->getAxisAttributes($axeAttribute));
 				}
-				elseif ($axeAttribute->isVisibleFor('axes'))
+				elseif ($axeAttribute->getAxis())
 				{
 					$axeAttributes[] = $axeAttribute;
 				}
@@ -1079,6 +1079,205 @@ class AttributeManager
 				{
 					$item = $replacement;
 					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
+	 * @return array
+	 */
+	public function buildVariantConfiguration($variantGroup)
+	{
+		$configuration = ['axesValues' => [], 'products' => []];
+		if ($variantGroup->getAxesAttributesCount())
+		{
+			foreach ($variantGroup->getAxesAttributes() as $axisAttribute)
+			{
+				if ($axisAttribute->getAxis())
+				{
+					$info = ['id' => $axisAttribute->getId(), 'values' => []];
+					$defaultValues = $this->getCollectionValues($axisAttribute);
+					$info['defaultValues'] =  ($defaultValues) ? $defaultValues : [];
+					$configuration['axesValues'][] = $info;
+				}
+			}
+		}
+
+		/** @var $axesAttributes \Rbs\Catalog\Documents\Attribute[] */
+		$axesAttributes = $variantGroup->getAxesAttributes()->toArray();
+		$products = $variantGroup->getVariantProducts();
+		foreach ($products as $product)
+		{
+			$info = ['id' => $product->getId()];
+			$info['values'] = $values = $this->getProductAxesValue($product, $axesAttributes);
+			foreach ($values as $value)
+			{
+				$aId = $value['id'];
+				$aVa = $value['value'];
+				if (!is_null($aVa))
+				{
+					foreach ($configuration['axesValues'] as $axisIndex => $data)
+					{
+						if ($data['id'] == $aId)
+						{
+							if (!in_array($aVa, $configuration['axesValues'][$axisIndex]['values']))
+							{
+								$configuration['axesValues'][$axisIndex]['values'][] = $aVa;
+							}
+							break;
+						}
+					}
+				}
+			}
+			$configuration['products'][] = $info;
+		}
+		return $configuration;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product|null $product
+	 * @param \Rbs\Catalog\Documents\Attribute|\Rbs\Catalog\Documents\Attribute[] $axesAttributes
+	 * @return array
+	 */
+	public function getProductAxesValue($product, $axesAttributes)
+	{
+		$values = [];
+		if ($axesAttributes instanceof \Rbs\Catalog\Documents\Attribute)
+		{
+			$axesAttributes = [$axesAttributes];
+		}
+		elseif (!is_array($axesAttributes) || count($axesAttributes) === 0)
+		{
+			return $values;
+		}
+
+		foreach ($axesAttributes as $axisAttribute)
+		{
+			if ($axisAttribute instanceof \Rbs\Catalog\Documents\Attribute && $axisAttribute->getAxis())
+			{
+				$attributeId = $axisAttribute->getId();
+				if ($axisAttribute->getValueType() === \Rbs\Catalog\Documents\Attribute::TYPE_GROUP)
+				{
+					/** @var $subAttr \Rbs\Catalog\Documents\Attribute[] */
+					$subAttr = $axisAttribute->getAttributes()->toArray();
+					$values = array_merge($values, $this->getProductAxesValue($product, $subAttr));
+				}
+				elseif ($axisAttribute->getValueType() === \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
+				{
+					$property = $axisAttribute->getModelProperty();
+					$value = ($product && $property) ? $property->getValue($product) : null;
+					if ($value instanceof \Change\Documents\AbstractDocument)
+					{
+						$value = $value->getId();
+					}
+					$values[] = ['id' => $attributeId, 'value' => $value];
+				}
+				else
+				{
+					$value = null;
+					$attrValues = $product ? $product->getRefLocalization()->getAttributeValues() : null;
+					if (is_array($attrValues))
+					{
+						foreach ($attrValues as $attrValue)
+						{
+							if (isset($attrValue['id']) && $attrValue['id'] == $attributeId)
+							{
+								$value = isset($attrValue['value']) ? $attrValue['value'] : null;
+								break;
+							}
+						}
+					}
+					$values[] = ['id' => $attributeId, 'value' => $value];
+				}
+			}
+		}
+		return $values;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\Documents\Attribute|\Rbs\Catalog\Documents\Attribute[] $axesAttributes
+	 * @param array $axesValues
+	 */
+	public function setProductAxesValue($product, $axesAttributes, $axesValues)
+	{
+		if ($axesAttributes instanceof \Rbs\Catalog\Documents\Attribute)
+		{
+			$axesAttributes = [$axesAttributes];
+		}
+		elseif (!is_array($axesAttributes) || count($axesAttributes) === 0)
+		{
+			return;
+		}
+
+		$valuesById = array();
+
+		if (is_array($axesValues))
+		{
+			foreach ($axesValues as $value)
+			{
+				if (isset($value['id']) && $value['value'])
+				{
+					$valuesById[$value['id']] = $value['value'];
+				}
+			}
+		}
+
+		foreach ($axesAttributes as $axisAttribute)
+		{
+			if ($axisAttribute instanceof \Rbs\Catalog\Documents\Attribute && $axisAttribute->getAxis())
+			{
+				$attributeId = $axisAttribute->getId();
+				$value = isset($valuesById[$attributeId]) ? $valuesById[$attributeId] : null;
+
+				if ($axisAttribute->getValueType() === \Rbs\Catalog\Documents\Attribute::TYPE_GROUP)
+				{
+					/** @var $subAttr \Rbs\Catalog\Documents\Attribute[] */
+					$subAttr = $axisAttribute->getAttributes()->toArray();
+					$this->setProductAxesValue($product, $subAttr, $axesValues);
+				}
+				elseif ($axisAttribute->getValueType() === \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
+				{
+					$property = $axisAttribute->getModelProperty();
+					if ($property)
+					{
+						if (is_numeric($value) && $property->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
+						{
+							$value = $this->getDocumentManager()->getDocumentInstance($value);
+						}
+						$property->setValue($product, $value);
+					}
+				}
+				else
+				{
+					$attrValues = $product->getRefLocalization()->getAttributeValues();
+
+					if (!is_array($attrValues))
+					{
+						$attrValues = [];
+					}
+
+					$attrKey = null;
+					foreach ($attrValues as $key => $attrValue)
+					{
+						if (isset($attrValue['id']) && $attrValue['id'] == $attributeId)
+						{
+							$attrKey = $key;
+							break;
+						}
+					}
+
+					if ($attrKey === null)
+					{
+						$attrValues[] = ['id' => $attributeId, 'valueType' => $axisAttribute->getValueType(), 'value' => $value];
+					}
+					else
+					{
+						$attrValues[$attrKey] = ['id' => $attributeId, 'valueType' => $axisAttribute->getValueType(), 'value' => $value];
+					}
+					$product->getRefLocalization()->setAttributeValues($attrValues);
 				}
 			}
 		}

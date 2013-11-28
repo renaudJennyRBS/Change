@@ -19,5 +19,6 @@
 		<property name="attributes" type="DocumentArray" document-type="Rbs_Catalog_Attribute" />
 		<property name="visibility" type="JSON" />
 		<property name="documentType" type="String" />
+		<property name="axis" type="Boolean" default-value="false" />
 	</properties>
 </document>

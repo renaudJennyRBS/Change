@@ -8,16 +8,6 @@
 		"productProperty":"description",
 		"visibility":["specifications"]
 	},
-	"visuals" : {
-		"title":"m.rbs.catalog.setup.attr_visuals",
-		"valueType":"Property",
-		"requiredValue":false,
-		"localizedValue":false,
-		"collectionCode":null,
-		"productProperty":"visuals",
-		"visibility":["specifications"],
-		"documentType":"Rbs_Media_Image"
-	},
 	"pictograms" : {
 		"title":"m.rbs.catalog.setup.attr_pictograms",
 		"valueType":"Property",
@@ -57,6 +47,6 @@
 		"productProperty":"code",
 		"visibility":["specifications", "comparisons"],
 		"documentType":"",
-		"attributes":["visuals", "description", "brand", "pictograms", "code"]
+		"attributes":["description", "brand", "pictograms", "code"]
 	}
 }

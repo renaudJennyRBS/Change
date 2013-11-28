@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Commerce\Events\JobManager;
 
-use Change\Job\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -24,16 +23,30 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Catalog\Job\InitializeItemsForSectionList())->execute($event);
 		};
 		$events->attach('process_Rbs_Catalog_InitializeItemsForSectionList', $callBack, 5);
+
 		$callBack = function ($event)
 		{
 			(new \Rbs\Catalog\Job\CleanUpListItems())->execute($event);
 		};
 		$events->attach('process_Change_Document_CleanUp', $callBack, 10);
+
 		$callBack = function ($event)
 		{
 			(new \Rbs\Catalog\Job\UpdateSymmetricalProductListItem())->execute($event);
 		};
 		$events->attach('process_Rbs_Catalog_UpdateSymmetricalProductListItem', $callBack, 15);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Catalog\Job\VariantConfiguration())->execute($event);
+		};
+		$events->attach('process_Rbs_Catalog_VariantConfiguration', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Catalog\Job\AxesConfiguration())->execute($event);
+		};
+		$events->attach('process_Rbs_Catalog_AxesConfiguration', $callBack, 5);
 	}
 
 	/**
