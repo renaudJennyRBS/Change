@@ -1,5 +1,4 @@
-<div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></page-header>
+<div class="row">
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
@@ -8,8 +7,18 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<div ng-switch="editMode">
-		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-catalog-product-translate"></div>
-		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-catalog-product"></div>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-aside ng-if="! document.variant" template="Document/Rbs/Catalog/Product/product-variant-aside-menu.twig"></rbs-aside>
+		<rbs-aside template="Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig"></rbs-aside>
 	</div>
+
+	<div class="document-form" rbs-main-column>
+		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></page-header>
+		<div ng-switch="editMode">
+			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-catalog-product-translate"></div>
+			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-catalog-product"></div>
+		</div>
+	</div>
+
 </div>

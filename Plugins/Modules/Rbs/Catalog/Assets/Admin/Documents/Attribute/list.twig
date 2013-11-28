@@ -1,20 +1,28 @@
-<div>
-	<rbs-workspace-config menu="Rbs_Catalog">
+<div class="row">
+
+	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
 			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.attribute_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.catalog.admin.attribute_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Catalog_Attribute" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		<a href ng-href="(= 'Rbs_Catalog_Attribute' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.admin.attribute_create', ['ucf']) }}</a>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-query="query">
-		<column name="label" primary="true"></column>
-		<column name="valueTypeFormatted" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}"></column>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.catalog.admin.attribute_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Catalog_Attribute" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Catalog_Attribute' | documentURL:'new' =)">{{ i18n('m.rbs.catalog.admin.attribute_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-query="query">
+			<column name="label" primary="true"></column>
+			<column name="valueTypeFormatted" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}"></column>
+		</rbs-document-list>
+	</div>
+
 </div>

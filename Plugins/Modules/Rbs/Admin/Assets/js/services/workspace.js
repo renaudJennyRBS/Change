@@ -46,18 +46,23 @@
 	{
 		return {
 			restrict : 'A',
-			priority : -100,
 
 			link : function (scope, iElement, iAttrs)
 			{
 				// Get parent element on which the 'active' class should be set
 				var activeEl = iAttrs.rbsActiveRoute ? iElement.closest(iAttrs.rbsActiveRoute) : iElement,
-					href = iAttrs.href;
+					href;
 
-				if (href.substr(0, 5) !== 'http:' && href.substr(0, 6) !== 'https:' && href.charAt(0) !== '/')
+				function setHref (h)
 				{
-					href = '/' + href;
+					href = h;
+					if (href.substr(0, 5) !== 'http:' && href.substr(0, 6) !== 'https:' && href.charAt(0) !== '/')
+					{
+						href = '/' + href;
+					}
 				}
+
+				href = setHref(iAttrs.href);
 
 				function isSameURL () {
 					return href === $location.absUrl() || href === $location.path();
@@ -71,6 +76,13 @@
 				$rootScope.$on('$routeChangeSuccess', updateStyle);
 				$rootScope.$on('$routeUpdate', updateStyle);
 				updateStyle();
+
+				iAttrs.$observe('href', function (h)
+				{
+					setHref(h);
+					console.log("href=", href);
+					updateStyle();
+				});
 			}
 		};
 	}]);
@@ -224,7 +236,7 @@
 					}
 
 					$compile(html)(menuScope, function attachFn(clone) {
-						iElement.append(clone);
+						iElement.empty().append(clone);
 					});
 				});
 

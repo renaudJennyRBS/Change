@@ -446,13 +446,17 @@
 							});
 						}
 
+						var loadedPromises = [];
+
 						// Call `$scope.onLoad()` if present.
 						if (angular.isFunction($scope.onLoad)) {
-							$scope.onLoad();
+							var p = $scope.onLoad();
+							if (p && angular.isFunction(p.then)) {
+								loadedPromises.push(p);
+							}
 						}
 
 						// Trigger `Events.EditorLoaded`.
-						var loadedPromises = [];
 						$rootScope.$broadcast(Events.EditorLoaded, {
 							"scope"    : $scope,
 							"document" : $scope.document,
@@ -935,6 +939,16 @@
 
 				'cascade' : function (doc, collapsedTitle, contextOrProperty)
 				{
+					var urlParams,
+						ctx = null;
+
+					console.log("cascade: doc=", angular.copy(doc));
+
+					if (angular.isObject(doc) && doc.hasOwnProperty('model') && doc.hasOwnProperty('values')) {
+						urlParams = doc.values;
+						doc = doc.model;
+					}
+
 					if (Utils.isModelName(doc)) {
 						doc = REST.newResource(doc, Settings.get('LCID'));
 					}
@@ -945,10 +959,9 @@
 
 					// TODO Check circular cascade?
 
-					console.log("cascade: doc=", doc, ", url=", UrlManager.getFormUrl(doc));
+					console.log("cascade: doc=", doc, ", url=", Utils.makeUrl(UrlManager.getUrl(doc), urlParams));
 
 					// Create Navigation context.
-					var ctx = null;
 					if (angular.isString(contextOrProperty)) {
 						ctx = {
 							'type' : 'setProperty',
@@ -960,7 +973,7 @@
 						ctx = contextOrProperty;
 					}
 
-					Navigation.push(UrlManager.getUrl(doc), collapsedTitle, ctx);
+					Navigation.push(Utils.makeUrl(UrlManager.getUrl(doc), urlParams), collapsedTitle, ctx);
 				},
 
 

@@ -29,7 +29,7 @@
 				stack.entries.push(new NavigationEntry(id, $location.url(), label, context || {}));
 				stack.pointer = id;
 				console.log("NAV: push entry=", stack.entries[id], stack.entries);
-				$location.url(Utils.makeUrl(url, { 'np': id }));
+				$location.url(Utils.makeUrl(url, { 'np': id, 'nf': null }));
 			}
 
 

@@ -1,22 +1,30 @@
-<div>
-	<rbs-workspace-config menu="Rbs_Elasticsearch">
+<div class="row">
+
+	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Elasticsearch'|rbsURL:'home' =)">{{ i18n('m.rbs.elasticsearch.admin.module_name', ['ucf']) }}</location>
 			<location href="(= 'Rbs_Elasticsearch_FullText'|rbsURL:'list' =)">{{ i18n('m.rbs.elasticsearch.admin.fulltext_list', ['ucf']) }}</location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.fulltext_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Elasticsearch_FullText" filter-query="query" text-search="textSearch"></search-filters>
-
-	<div class="add-elements-bar">
-		{{ createLinks('Rbs_Elasticsearch_FullText') }}
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<rbs-document-list data-dlid="DLRbsElasticsearchFullText"
-			model="Rbs_Elasticsearch_FullText" filter-query="query" activable="true">
-		<column name="name" primary="true"></column>
-		<column name="website.label"></column>
-		<column name="analysisLCID"></column>
-	</rbs-document-list>
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.fulltext_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Elasticsearch_FullText" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			{{ createLinks('Rbs_Elasticsearch_FullText') }}
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsElasticsearchFullText"
+				model="Rbs_Elasticsearch_FullText" filter-query="query" activable="true">
+			<column name="name" primary="true"></column>
+			<column name="website.label"></column>
+			<column name="analysisLCID"></column>
+		</rbs-document-list>
+	</div>
+
 </div>

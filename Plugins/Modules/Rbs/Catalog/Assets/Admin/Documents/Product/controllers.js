@@ -5,133 +5,8 @@
 	var app = angular.module('RbsChange');
 
 
-	function PricesController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager)
+	function CrossSellingController($scope, $routeParams, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
 	{
-		Workspace.collapseLeftSidebar();
-
-		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), "Rbs/Catalog/Product"]
-		]);
-
-		$scope.$on('$destroy', function () {
-			Workspace.restore();
-		});
-		$scope.params = {};
-		$scope.params.webStoreId = $routeParams.webStoreId;
-		$scope.params.areaId = $routeParams.areaId;
-		$scope.List = {};
-		if ($routeParams.startActivation){
-			$scope.params.startActivation = moment($routeParams.startActivation).toDate();
-		}
-
-		if ($routeParams.endActivation){
-			$scope.params.endActivation = moment($routeParams.endActivation).toDate();
-		}
-
-		if (!$scope.product)
-		{
-			Loading.start();
-			REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function(product){
-				Loading.stop();
-				Breadcrumb.setLocation([
-					[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
-					[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(product, 'list')],
-					[product.label, UrlManager.getUrl(product, 'form') ],
-					[i18n.trans('m.rbs.price.adminjs.price_list | ucf'), "Rbs/Catalog/Product"]]
-				);
-				$scope.product = product;
-				updatePricesURL();
-			});
-		}
-
-		/*var updateLocation = function (newDocId, oldDocId){
-			var regexp = new RegExp('/' + oldDocId + '/');
-			var path = $location.path();
-			if (regexp.test(path))
-			{
-				var replace = newDocId ? '/' + newDocId + '/' : '/';
-				$location.path(path.replace(regexp, replace));
-			}
-			else
-			{
-				if (newDocId > 0)
-				{
-					$location.path(path +  newDocId + '/');
-				}
-			}
-		};*/
-
-		var updatePricesURL = function(){
-			var params = { 	'areaId': $scope.params.areaId == '' ? null :  $scope.params.areaId ,
-							'webStoreId': $scope.params.webStoreId == '' ? null : $scope.params.webStoreId ,
-							'startActivation': $scope.params.startActivation ? moment($scope.params.startActivation).format() : null,
-							'endActivation':  $scope.params.endActivation ? moment($scope.params.endActivation).format() : null
-			};
-			if ($scope.product)
-			{
-				$scope.pricesURL = Utils.makeUrl($scope.product.META$.links['prices'].href, params);
-			}
-		};
-
-		$scope.changeWebStore = function(webStoreId){
-			if (webStoreId == ''){
-				webStoreId = null;
-				$scope.params.areaId = null;
-			}
-			$location.search('webStoreId', webStoreId);
-			updatePricesURL();
-		};
-
-		$scope.changeArea = function(areaId){
-			if (areaId == ''){
-				areaId = null;
-			}
-			$location.search('areaId', areaId);
-			updatePricesURL();
-		};
-
-		$scope.changeStartActivation = function(date){
-			if (date)
-			{
-				$location.search('startActivation', moment(date).format());
-			}
-			else
-			{
-				$location.search('startActivation', null);
-			}
-			updatePricesURL();
-		};
-
-		$scope.changeEndActivation = function(date){
-			if (date)
-			{
-				$location.search('endActivation', moment(date).format());
-			}
-			else
-			{
-				$location.search('endActivation', null);
-			}
-			updatePricesURL();
-		};
-	}
-
-	PricesController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager'];
-	app.controller('Rbs_Catalog_Product_PricesController', PricesController);
-
-
-	function CrossSellingController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
-	{
-		//Workspace.collapseLeftSidebar();
-
-		Breadcrumb.setLocation([
-			[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
-			[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), "Rbs/Catalog/Product"]
-		]);
-
-		$scope.$on('$destroy', function () {
-			Workspace.restore();
-		});
 		$scope.params = {};
 		$scope.List = {};
 
@@ -152,7 +27,7 @@
 		}
 	}
 
-	CrossSellingController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
+	CrossSellingController.$inject = ['$scope', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
 	app.controller('Rbs_Catalog_Product_CrossSellingController', CrossSellingController);
 
 	/**

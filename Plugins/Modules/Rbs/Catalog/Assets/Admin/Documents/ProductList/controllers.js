@@ -12,16 +12,13 @@
 	 * @param i18n
 	 * @param REST
 	 * @param Loading
-	 * @param Workspace
 	 * @param $routeParams
 	 * @param $http
 	 * @param SelectSession
 	 * @constructor
 	 */
-	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, Workspace, $routeParams, $http, SelectSession, UrlManager)
+	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, $routeParams, $http, SelectSession, UrlManager)
 	{
-		//Workspace.collapseLeftSidebar();
-
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
 			[i18n.trans('m.rbs.catalog.adminjs.productlist_list | ucf'), "Rbs/Catalog/ProductList"]
@@ -74,10 +71,6 @@
 			}
 			callActionUrlAndReload(url);
 		};
-
-		$scope.$on('$destroy', function () {
-			Workspace.restore();
-		});
 
 		$scope.List.moveTop = function (doc) {
 			callActionUrlAndReload(doc.META$.actions['highlighttop'].href);
@@ -136,7 +129,7 @@
 	}
 
 	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
-		'RbsChange.Workspace', '$routeParams', '$http', 'RbsChange.SelectSession', 'RbsChange.UrlManager'];
+		'$routeParams', '$http', 'RbsChange.SelectSession', 'RbsChange.UrlManager'];
 	app.controller('Rbs_Catalog_ProductList_ProductsController', ProductsController);
 
 

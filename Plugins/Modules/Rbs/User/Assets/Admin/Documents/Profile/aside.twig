@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title" ng-bind="user.pseudonym"></h3>
+	</div>
+	<div class="panel-body">
+		<rbs-avatar size='80' user-id='(= user.id =)'></rbs-avatar>
+	</div>
+</div>
+
+<rbs-links-panel>
+	<a rbs-active-route="" href="Rbs/User/Profile" class="rbs-panel-link" icon="icon-user">{{ i18n('m.rbs.user.admin.profile', ['ucf']) }}</a>
+	<a rbs-active-route="" href="Rbs/User/ConnectionInfo" class="rbs-panel-link" icon="icon-cogs">{{ i18n('m.rbs.user.admin.profile_connection_info', ['ucf']) }}</a>
+	<a rbs-active-route="" href="Rbs/User/ChangePassword" class="rbs-panel-link" icon="icon-lock">{{ i18n('m.rbs.user.admin.profile_change_password', ['ucf']) }}</a>
+</rbs-links-panel>

@@ -37,15 +37,14 @@
 	}]);
 
 
-	function ChangeUserUserLoginController($scope, Workspace, OAuthService, NotificationCenter, ErrorFormatter) {
-		Workspace.hideMenus();
-
+	function ChangeUserUserLoginController($scope, OAuthService, NotificationCenter, ErrorFormatter)
+	{
 		$scope.login = function () {
 			OAuthService.authenticate($scope.username, $scope.password).then(
 
 				// Success
 				function () {
-					Workspace.restore();
+					// Nothing to do here for the moment.
 				},
 
 				// Failure
@@ -59,7 +58,6 @@
 
 	ChangeUserUserLoginController.$inject = [
 		'$scope',
-		'RbsChange.Workspace',
 		'OAuthService',
 		'RbsChange.NotificationCenter',
 		'RbsChange.ErrorFormatter'

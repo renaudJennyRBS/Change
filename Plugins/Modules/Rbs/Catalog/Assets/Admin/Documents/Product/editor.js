@@ -7,10 +7,10 @@
 	 * @param $http
 	 * @param Loading
 	 * @param REST
-	 * @param MainMenu
+	 * @param EditorManager
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST, MainMenu)
+	function Editor($timeout, $http, Loading, REST, EditorManager)
 	{
 		return {
 			restrict : 'C',
@@ -22,11 +22,6 @@
 			{
 				scope.onReady = function() {
 					scope.loadItems();
-					if (!scope.document.variant)
-					{
-						MainMenu.addAsideTpl('product-options', 'Document/Rbs/Catalog/Product/product-variant-aside-menu.twig', scope);
-					}
-					MainMenu.addAsideTpl('product-cross-selling', 'Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
 				};
 
 				scope.loadItems = function() {
@@ -43,14 +38,24 @@
 					}
 				};
 
-				scope.cascadeEditProductListItem = function(cat){
-					scope.cascade(cat, scope.document.label, function(doc){scope.loadItems();});
-				};
 
-				scope.cascadeCreateProductListItem = function(doc){
-					var newCat = REST.newResource('Rbs_Catalog_ProductListItem');
-					newCat.product = scope.document;
-					scope.cascade(newCat, scope.document.label, function(doc){scope.loadItems()});
+
+				scope.cascadeEditProductListItem = editorCtrl.registerEditCascade('items');
+
+
+
+				scope.cascadeCreateProductListItem = function ()
+				{
+					EditorManager.cascade(
+						{
+							'model' : 'Rbs_Catalog_ProductListItem',
+							'values' : {
+								'product': scope.document.id,
+								'active' : true,
+							}
+						},
+						'<i class="icon-pencil"></i> ' + scope.document.label
+					);
 				};
 
 				scope.toggleHighlight = function(doc){
@@ -106,7 +111,7 @@
 							}
 						}
 					}
-					
+
 					if (attrGrpId != scope.attributeGroupId)
 					{
 						scope.clearAttributesEditor();
@@ -240,6 +245,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.MainMenu'];
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.EditorManager'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
 })();

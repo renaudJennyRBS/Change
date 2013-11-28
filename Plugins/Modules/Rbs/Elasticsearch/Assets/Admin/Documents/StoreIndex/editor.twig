@@ -36,7 +36,7 @@
 		<div class="add-elements-bar">
 			<a href ng-click="cascadeCreateItem()">{{ i18n('m.rbs.elasticsearch.admin.facet_create', ['ucf']) }}</a>
 		</div>
-		
+
 		<table data-ng-show="document.facets.length > 0" class="table table-striped">
 			<thead>
 				<tr>
@@ -46,9 +46,9 @@
 			</thead>
 			<tbody>
 				<tr data-ng-repeat="facet in document.facets">
-					<td><a class="btn-link" ng-click="cascadeEditItem($index)">(= facet.label =)</a></td>
+					<td><a class="btn-link" ng-click="cascadeEditItem(facet)">(= facet.label =)</a></td>
 					<td style="width:100px;text-align: right">
-						<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem($index)"
+						<button style="width:36px" class="btn btn-default btn-sm" ng-click="cascadeEditItem(facet)"
 								title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}" type="button">
 							<i class="icon-pencil"></i>
 						</button>

@@ -1,13 +1,33 @@
-<form novalidate="" data-ng-controller="Rbs_Catalog_Product_CrossSellingController" class="form-horizontal">
-	<div class="page-header">
-		<h2 class="ng-binding">
-			<a href="(= product | documentURL:'form' =)">(= product.label =)</a>
-			<small>
-				{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}
-			</small>
-		</h2>
+<div class="row" ng-controller="Rbs_Catalog_Product_CrossSellingController">
+
+	<rbs-workspace-config menu="Rbs_Catalog">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Catalog_Product'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.product_list', ['ucf']) }}</location>
+			<path href="(= product | rbsURL =)">(= product.label =)</path>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div rbs-aside-column>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="list-group-item" href="(= product | documentURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
+		</rbs-links-panel>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="list-group-item" href="(= product | rbsURL:'cross-selling-lists' =)">{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists', ['ucf']) }}</a>
+		</rbs-links-panel>
 	</div>
-	<fieldset>
+
+	<div rbs-main-column>
+		<div class="page-header">
+			<h2>
+				(= product.label =)
+				<small>
+					{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}
+				</small>
+			</h2>
+		</div>
+
 		<div class="add-elements-bar">
 			<a href="Rbs/Catalog/CrossSellingProductList/new?productId=(=product.id=)" ng-click="cascadeCreateCrossSellingProductList()">
 				{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crosssellingproductlist_create', ['ucf']) }}
@@ -25,5 +45,6 @@
 			productListItems
 			<column name="crossSellingType"></column>
 		</rbs-document-list>
-	</fieldset>
-</form>
+	</div>
+
+</div>
