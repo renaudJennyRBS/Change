@@ -1,27 +1,36 @@
 <div class="navbar navbar-inverse" id="rbs-change-navbar">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#rbs-change-navbar-collapse">
+			<span class="sr-only">{{ i18nAttr('m.rbs.admin.admin.toggle_navigation', ['ucf']) }}</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
 
-	<a class="navbar-brand" id="mp-menu-trigger" href="javascript:;" title="{{ i18nAttr('m.rbs.admin.admin.main_menu', ['ucf']) }}"><img
-				src="Rbs/Admin/img/logo-rbs-change@2x.png" style="height:26px; margin:-3px 0;" alt="Logo RBS Change"/>
-		<i class="icon-caret-right" style="vertical-align: middle;"></i>
-	</a>
+		<a class="navbar-brand" id="mp-menu-trigger" href="javascript:;" title="{{ i18nAttr('m.rbs.admin.admin.main_menu', ['ucf']) }}">
+			<img src="Rbs/Admin/img/logo-rbs-change@2x.png" style="height:26px; margin:-3px 0;" alt="Logo RBS Change" />
+			<i class="icon-caret-right" style="vertical-align: middle;"></i>
+		</a>
+	</div>
 
-	<ul class="nav navbar-nav navbar-right">
-		<li class="dropdown" ng-cloak=""><a data-toggle="dropdown"
-		                        class="dropdown-toggle" href="javascript:;"><i class="icon-user"></i> (= user.pseudonym =) <b class="caret"></b></a>
-			<ul class="dropdown-menu">
-				<li><a href ng-href="Rbs/User/Profile"><i class="icon-user"></i> {{ i18n('m.rbs.admin.admin.profile', ['ucf']) }}</a></li>
-				<li><a href="./"><i class="icon-tasks"></i> {{ i18n('m.rbs.admin.admin.dashboard', ['ucf']) }}</a></li>
-				<li class="divider"></li>
-				<li><a href="javascript:;" data-ng-click="logout()"><i class="icon-signout"></i> {{ i18n('m.rbs.admin.admin.logout', ['ucf']) }}</a></li>
-			</ul>
-		</li>
-	</ul>
+	<div class="collapse navbar-collapse" id="rbs-change-navbar-collapse">
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown" ng-cloak="">
+				<a data-toggle="dropdown" class="dropdown-toggle" href="javascript:;">
+					<i class="icon-user"></i> (= user.pseudonym =) <b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a href ng-href="Rbs/User/Profile"><i class="icon-user"></i> {{ i18n('m.rbs.admin.admin.profile', ['ucf']) }}</a></li>
+					<li><a href="./"><i class="icon-tasks"></i> {{ i18n('m.rbs.admin.admin.dashboard', ['ucf']) }}</a></li>
+					<li class="divider"></li>
+					<li><a href="javascript:;" data-ng-click="logout()"><i class="icon-signout"></i> {{ i18n('m.rbs.admin.admin.logout', ['ucf']) }}</a></li>
+				</ul>
+			</li>
+		</ul>
 
-	<ul class="nav navbar-nav navbar-right navbar-indicators">
-		<li><a href="javascript:;"><i rbs-loading-indicator=""></i></a></li>
-		<li rbs-clipboard-indicator="" title="{{ i18nAttr('m.rbs.admin.admin.clipboard', ['ucf']) }}"></li>
-		<li rbs-local-copy-indicator="" title="{{ i18nAttr('m.rbs.admin.admin.local_copy_indicator_title', ['ucf']) }}"></li>
-		<li><a href="javascript:;" rbs-fullscreen-toggle="" title="{{ i18nAttr('m.rbs.admin.admin.go_to_fullscreen', ['ucf']) }}"></a></li>
-	</ul>
-
+		<ul class="nav navbar-nav navbar-right navbar-indicators">
+			<li rbs-clipboard-indicator=""></li>
+			<li rbs-local-copy-indicator=""></li>
+		</ul>
+	</div>
 </div>

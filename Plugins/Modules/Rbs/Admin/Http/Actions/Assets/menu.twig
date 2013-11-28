@@ -1,6 +1,9 @@
 <nav id="mp-menu" class="mp-menu" ng-controller="Rbs_MainMenu_Controller">
 	<div class="mp-level">
-		<h2>{{ i18n('m.rbs.admin.admin.main_menu', ['ucf']) }}</h2>
+		<h2>
+			<img src="Rbs/Admin/img/default-image.png" style="height:24px; margin-top: -5px; border-radius: 3px" alt="" />
+			{{ i18n('m.rbs.admin.admin.main_menu', ['ucf']) }}
+		</h2>
 		<a class="mp-back" href="javascript:;">{{ i18n('m.rbs.admin.admin.close') }} <i class="icon icon-remove"></i></a>
 		<ul>
 			<li><a href="./"><i class="pull-right icon icon-large icon-tasks"></i> {{ i18n('m.rbs.admin.admin.dashboard', ['ucf']) }}</a></li>
@@ -15,6 +18,5 @@
 				</div>
 			</li>
 		</ul>
-
 	</div>
 </nav>

@@ -95,7 +95,8 @@
 			// if type == "cover" these will serve as hooks to move back to the previous level
 			this.levelBack = Array.prototype.slice.call( this.el.querySelectorAll( '.' + this.options.backClass ) );
 			// event type (if mobile use touch events)
-			this.eventtype = mobilecheck() ? 'touchstart' : 'click';
+			//this.eventtype = mobilecheck() ? 'touchstart' : 'click';
+			this.eventtype = 'click';
 			// add the class mp-overlap or mp-cover to the main element depending on options.type
 			classie.add( this.el, 'mp-' + this.options.type );
 			// initialize / bind the necessary events
