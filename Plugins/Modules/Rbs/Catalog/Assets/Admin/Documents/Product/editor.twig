@@ -27,6 +27,14 @@
 			ng-hide="document.newSkuOnCreation && document.id <= 0">
 		</rbs-field-picker>
 
+		<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'visuals'), ['ucf']) }}"
+				accepted-model="Rbs_Media_Image"
+				selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}"
+				allow-creation="true"
+				allow-edition="true">
+			<span class="help-block">{{ i18n('m.rbs.catalog.admin.product_visuals_help', ['ucf']) }}</span>
+		</rbs-field-picker-multiple>
+
 		<rbs-field-picker-multiple ng-hide="document.variant" property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_picker_title', ['ucf']) }}">

@@ -5,8 +5,17 @@
 	"variantgroup_rootproduct":{
 		"message":"produit à decliner"
 	},
-	"variantgroup_axisattribute":{
+	"variantgroup_groupattribute":{
 		"message":"jeu d'attributs"
+	},
+	"variantgroup_axesattributes":{
+		"message":"Attributs à utiliser pour les axes"
+	},
+	"variantgroup_othersattributes":{
+		"message":"Autres attributs"
+	},
+	"variantgroup_axesconfiguration":{
+		"message":"Configuration des axes"
 	},
 	"variantgroup_newskuoncreation":{
 		"message":"Créer un nouveau SKU par variante"
@@ -152,14 +161,14 @@
 	"attribute_visibility":{
 		"message":"visibilité"
 	},
+	"attribute_axis":{
+		"message":"axe de déclinaison"
+	},
 	"attribute_visibility_comparisons":{
 		"message":"comparaisons"
 	},
 	"attribute_visibility_specifications":{
 		"message":"caractéristiques"
-	},
-	"attribute_visibility_axes":{
-		"message":"axes de déclinaison"
 	},
 	"attribute_visibility_list_item":{
 		"message":"utilisable dans le listes"

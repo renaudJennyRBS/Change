@@ -22,14 +22,11 @@
 			{
 				scope.onReady = function() {
 					scope.loadItems();
-					if (! scope.document.variant)
+					if (!scope.document.variant)
 					{
 						MainMenu.addAsideTpl('product-options', 'Document/Rbs/Catalog/Product/product-variant-aside-menu.twig', scope);
 					}
-					if (scope.document)
-					{
-						MainMenu.addAsideTpl('product-cross-selling', 'Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
-					}
+					MainMenu.addAsideTpl('product-cross-selling', 'Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig', scope);
 				};
 
 				scope.loadItems = function() {

@@ -4,9 +4,10 @@
 	editable="true">
 	<properties>
 		<property name="rootProduct" type="Document" document-type="Rbs_Catalog_Product" />
-		<property name="axisAttribute" type="Document" document-type="Rbs_Catalog_Attribute" />
-		<property name="axesInfo" type="JSON" />
-		<property name="productMatrixInfo" type="JSON" />
-		<property name="newSkuOnCreation" type="Boolean" default-value="true"/>
+		<property name="groupAttribute" type="Document" document-type="Rbs_Catalog_Attribute"/>
+		<property name="axesAttributes" type="DocumentArray" document-type="Rbs_Catalog_Attribute"/>
+		<property name="axesConfiguration" type="JSON" />
+		<property name="othersAttributes" type="DocumentArray" document-type="Rbs_Catalog_Attribute"/>
+		<property name="newSkuOnCreation" type="Boolean" default-value="true" />
 	</properties>
 </document>

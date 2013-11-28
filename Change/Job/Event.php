@@ -30,13 +30,21 @@ class Event extends \Change\Events\Event
 	public function reported(\DateTime $reportedAt)
 	{
 		$this->setParam('executionStatus', JobInterface::STATUS_WAITING);
+		$this->setResultArgument('reportedAt', $reportedAt);
+	}
 
+	/**
+	 * @param string $name
+	 * @param string $value
+	 */
+	public function setResultArgument($name, $value)
+	{
 		$arguments = $this->getParam('arguments');
 		if (!is_array($arguments))
 		{
 			$arguments = array();
 		}
-		$arguments['reportedAt'] = $reportedAt;
+		$arguments[$name] = $value;
 		$this->setParam('arguments', $arguments);
 	}
 
@@ -57,7 +65,6 @@ class Event extends \Change\Events\Event
 
 			$this->setParam('arguments', $arguments);
 		}
-
 		$this->setParam('executionStatus', JobInterface::STATUS_FAILED);
 	}
 }

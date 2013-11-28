@@ -45,6 +45,10 @@
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
 			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
 				'Rbs_Catalog_ProductListItem', 'Rbs_Catalog_VariantGroup' ]);
+
+			$delegate.model('Rbs_Catalog_VariantGroup')
+				.route('variantList', 'Rbs/Catalog/VariantGroup/:id/VariantList/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
+				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig')
 			return $delegate;
 		}]);
 	}]);
@@ -138,4 +142,34 @@
 			}
 		};
 	}
+
+	app.controller('rbsAxisAttributesSelector', function ($scope) {
+		$scope.axisAttributesQuery= { "model": "Rbs_Catalog_Attribute",
+			"where": {
+				"and" : [
+					{"op" : "eq",
+						"lexp" : {"property" : "axis"},
+						"rexp" : {"value": true}
+					},
+					{"op" : "in",
+						"lexp" : {"property" : "valueType"},
+						"rexp" : ["Property", "Integer", "DocumentId", "Float", "DateTime", "Code"]
+					}
+				]
+			}
+		};
+	});
+
+	app.controller('rbsOtherAttributesSelector', function ($scope) {
+		$scope.otherAttributesQuery= { "model": "Rbs_Catalog_Attribute",
+			"where": {
+				"and" : [
+					{"op" : "eq",
+						"lexp" : {"property" : "axis"},
+						"rexp" : {"value": false}
+					}
+				]
+			}
+		};
+	});
 })();

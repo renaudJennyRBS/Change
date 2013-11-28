@@ -90,9 +90,9 @@ class Collections
 
 			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
 			$docQuery->andPredicates($docQuery->eq('valueType', \Rbs\Catalog\Documents\Attribute::TYPE_GROUP));
-			if ($event->getParam('visibility') === 'axes')
+			if ($event->getParam('axis'))
 			{
-				$docQuery->andPredicates($docQuery->like('visibility', '"axes"'));
+				$docQuery->andPredicates($docQuery->eq('axis', true));
 			}
 
 			$qb = $docQuery->dbQueryBuilder();
@@ -123,7 +123,6 @@ class Collections
 			$collection = array(
 				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_specifications', array('ucf')),
 				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_comparisons', array('ucf')),
-				'axes' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_axes', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);

@@ -32,14 +32,32 @@
 	"macros_without_tax_abbr":{
 		"message":"HT"
 	},
-	"variantgroup_rootproduct_picker_title":{
-		"message":"sélectionner le produit à décliner"
-	},
 	"variantgroup_products_section":{
 		"message":"liste des variantes"
 	},
 	"variantgroup_axis_head":{
 		"message":"axe"
+	},
+	"variantgroup_axesattributes_picker_title":{
+		"message":"Sélectionner des attributs de type 'axe'"
+	},
+	"variantgroup_othersattributes_picker_title":{
+		"message":"Sélectionner des attributs de présentation"
+	},
+	"axis_url":{
+		"message":"Fiche produit par valeur"
+	},
+	"axis_categorizable":{
+		"message":"Fiche produit visible dans les listes"
+	},
+	"variantgroup_variant":{
+		"message":"variantes"
+	},
+	"variantgroup_variantlist":{
+		"message":"liste des variantes"
+	},
+	"variantgroup_edit":{
+		"message":"configuration des variantes"
 	},
 	"variantgroup_visibility_head":{
 		"message":"visible dans les listes"
@@ -83,6 +101,18 @@
 	"variantgroup_cancel":{
 		"message":"annuler"
 	},
+	"variantgroup_axe_no_url":{
+		"message":"Ne possède pas de fiche produit"
+	},
+	"variantgroup_axe_has_url":{
+		"message":"Possède une fiche produit par valeur de l'axe"
+	},
+	"variantgroup_axe_no_categorizable":{
+		"message":"Non visible dans les listes"
+	},
+	"variantgroup_axe_categorizable":{
+		"message":"Visible dans les listes"
+	},
 	"variantgroup_loading_product_info":{
 		"message":"Chargement des informations du produit..."
 	},
@@ -107,8 +137,8 @@
 	"variantgroup_help_tip":{
 		"message":"\n\t\t<p>\n\t\t\tChaque axe de déclinaison est présenté dans une colonne et affiche toutes les valeurs possibles.\n\t\t\tLes valeurs sélectionnées, c'est-à-dire pour lesquelles des fiches produits sont générées, apparaissent en vert.\n\t\t\tVous ne pouvez naviguer dans les axes suivants que lorsqu'une valeur est sélectionnée dans un axe.\n\t\t<\/p>\n\n\t\t<h4>Que faire ici ?<\/h4>\n\n\t\t<h5>Ajouter des variante pour le produit<\/h5>\n\t\t<p>\n\t\t\tCliquez sur <button type=\"button\" class=\"btn btn-default btn-xs\"><i class=\"icon-plus\"><\/i><\/button> pour sélectionner\n\t\t\tcette valeur et ainsi créer les fiches produits correspondantes.\n\t\t<\/p>\n\n\t\t<h5>Supprimer des déclinaisons pour le produit<\/h5>\n\t\t<p>\n\t\t\tCliquez sur <button type=\"button\" class=\"btn btn-xs btn-success\"><i class=\"icon-minus\"><\/i><\/button> pour\n\t\t\tsupprimer cette valeur et ainsi supprimer les fiches produits correspondantes.\n\t\t<\/p>\n\n\t\t<h5>Ajouter\/supprimer des valeurs possibles dans les axes<\/h5>\n\t\t<p>\n\t\t\tCliquez sur <button type=\"button\" class=\"btn btn-default btn-xs\"><i class=\"icon-cog\"><\/i><\/button> dans l'entête\n\t\t\tde chaque axe pour le configurer : vous pourrez alors supprimer des valeurs grâce au bouton\n\t\t\t<button type=\"button\" class=\"btn btn-xs btn-danger\"><i class=\"icon-trash\"><\/i><\/button> et en ajouter\n\t\t\tgrâce au champ de saisie en bas de la colonne correspondant à l'axe.\n\t\t<\/p>"
 	},
-	"variantgroup_axisattribute_select":{
-		"message":"choisissez un jeu d'attributs"
+	"variantgroup_jobs_infos":{
+		"message":"La configuration des variantes n'est pas accessible pour le moment. Merci de patienter quelques minutes."
 	},
 	"productlist_productsortorder_help":{
 		"message":"Ordre de tri des produits qui ne sont pas mis en avant."
@@ -253,6 +283,9 @@
 	},
 	"product_visuals_picker_title":{
 		"message":"sélectionner les visuels"
+	},
+	"product_visuals_help":{
+		"message":"Le 1er visuel de la liste sera considéré comme le visuel principale de la fiche."
 	},
 	"product_no_visual":{
 		"message":"aucun visuel défini"

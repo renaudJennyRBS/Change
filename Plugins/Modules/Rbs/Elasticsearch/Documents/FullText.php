@@ -70,6 +70,31 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
 			$restResult->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));
+			$genericServices = $event->getServices('genericServices');
+			if ($genericServices instanceof \Rbs\Generic\GenericServices)
+			{
+				$indexManager = $genericServices->getIndexManager();
+				$client = $indexManager->getClient($document->getClientName());
+				if ($client)
+				{
+					try
+					{
+						$status = $client->getStatus();
+						$server = ['status' => $status->getServerStatus()];
+						$index = $client->getIndex($document->getName());
+						if ($index->exists())
+						{
+							$status = $index->getStatus();
+							$server['index'] = ['doc' => $status->get('docs'), 'index' => $status->get('index')];
+						}
+					}
+					catch (\Exception $e)
+					{
+						$server = ['error' => $e->getMessage()];
+					}
+					$restResult->setProperty('server', $server);
+				}
+			}
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{

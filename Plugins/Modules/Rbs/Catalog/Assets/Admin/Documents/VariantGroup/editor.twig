@@ -4,21 +4,11 @@
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<div data-ng-if="document.isNew()">
-			<rbs-field property="rootProduct"
-				label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}"
-				required="true">
+			<rbs-field property="rootProduct" required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}">
 				<p class="form-control-static">(= document.rootProduct.label =)</p>
 			</rbs-field>
-
-			<rbs-field required="true" property="axisAttribute"
-			           label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axisAttribute'), ['ucf']) }}">
-				<select ng-required="true" ng-model="document.axisAttribute" class="form-control"
-				        rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="visibility:axes">
-					<option value="">{{ i18n('m.rbs.catalog.admin.variantgroup_axisattribute_select', ['ucf']) }}</option>
-				</select>
-			</rbs-field>
 		</div>
-
 
 		<div class="form-group property" ng-hide="document.isNew()">
 			<label class="col-lg-3 control-label">{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}</label>
@@ -29,153 +19,94 @@
 			</div>
 		</div>
 
-		<rbs-field-boolean property="newSkuOnCreation"
-		                   label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'newSkuOnCreation'), ['ucf']) }}">
-		</rbs-field-boolean>
+		<h3>
+			{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}
+			<input type="hidden" data-ng-model="document.axesAttributes" name="axesAttributesLength">
+		</h3>
+		<table data-ng-show="document.axesConfiguration.length > 0" class="table table-striped">
+			<thead>
+			<tr>
+				<th>
+					{{ i18n(propertyKey('Rbs_Catalog_Attribute', 'label'), ['ucf']) }}
 
-		<div data-ng-if="! document.isNew()">
-			<div rbs-tip="rbsVariantGroupEditorHelp">
-				{{ i18n('m.rbs.catalog.admin.variantgroup_help_tip', ['ucf']) | raw}}
-			</div>
+				</th>
+				<th>
+					{{ i18n('m.rbs.catalog.admin.axis_url', ['ucf']) }}
+				</th>
+				<th>
+					{{ i18n('m.rbs.catalog.admin.axis_categorizable', ['ucf']) }}
+				</th>
+				<th>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr data-ng-repeat="axisConfiguration in document.axesConfiguration">
+				<td>(= getAxisLabel($index) =)</td>
+				<td><switch ng-model="axisConfiguration.url"></switch></td>
+				<td><switch ng-model="axisConfiguration.categorizable" ng-disabled="axisConfiguration.url == false"></switch></td>
+				<td style="width:180px">
+					<rbs-kb-switch>
+						<button style="width:36px" ng-disabled="$first" rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}" ng-click="moveTop($index)">
+							<i class="icon-step-forward icon-rotate-270"></i>
+						</button>
+						<button style="width:36px" ng-disabled="$first" rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}" ng-click="moveUp($index)">
+							<i class="icon-play icon-rotate-270"></i>
+						</button>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button style="width:36px" ng-disabled="$last" rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}" ng-click="moveBottom($index)">
+							<i class="icon-step-forward icon-rotate-90"></i>
+						</button>
+						<button style="width:36px" ng-disabled="$last" rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}" ng-click="moveDown($index)">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+					<button style="width:36px" class="btn btn-danger btn-sm" type="button" ng-click="remove($index)"
+							title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
+						<i class="icon-remove"></i>
+					</button>
+				</td>
+			</tr>
+			</tbody>
+		</table>
 
-			<ul class="breadcrumb variant-group-editor">
-				<li class="active"><span ng-bind="document.label"></span></li><li ng-repeat="item in path" class="active"><span ng-bind="item.value.title"></span></li>
-			</ul>
-
-			<div class="axes-columns-nav">
-
-				<div class="axis-column" ng-repeat="axis in axesInfo" ng-style="getColumnWidthStyle()">
-
-					<div class="axis-header">
-						<span class="pull-right">
-							<button type="button" class="btn btn-default btn-sm" ng-class="{'active': inEditMode(axis.index)}" ng-click="toggleEditMode(axis.index)">
-								<i class="icon-cog"></i>
-							</button>
-						</span>
-						<h4>
-							<span ng-switch="document.axesInfo[$index].cat">
-								<i ng-switch-when="false" class="icon-eye-close muted" title="Non visible dans les listes"></i>
-								<i ng-switch-when="true" class="icon-eye-open" title="Visible dans les listes"></i>
-							</span>
-							<span ng-bind="axis.label"></span> (<span ng-bind="axis.dv.length"></span>)
-						</h4>
-
-						<div ng-form="" ng-if="inEditMode(axis.index)">
-							<p>
-								<div class="checkbox">
-									<label>
-										<input type="checkbox" ng-model="document.axesInfo[axis.index].cat"/>
-										{{ i18n('m.rbs.catalog.admin.variantgroup_visibility_head', ['ucf']) }}
-									</label>
-								</div>
-							</p>
-							<p>{{ i18n('m.rbs.catalog.admin.variantgroup_add_axis_value', ['ucf']) }}</p>
-							<p>
-								<input rbs-variant-group-editor-new-axis-value-validator="" axis-index="(= axis.index =)"
-								       auto-focus="" autocapitalize="off" type="text" class="form-control" required="required"
-								       name="axisValueToAdd" ng-model="axisValueToAdd[axis.index]" ng-keypress="addValueOnEnter(axis.index, $event)"/>
-							<p class="text-danger" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_value_already_exists', ['ucf']) }}</p>
-							<div class="btn-toolbar">
-								<button class="btn btn-default" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_cancel', ['ucf']) }}</button>
-								<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_add', ['ucf']) }}</button>
-							</div>
-							</p>
-						</div>
-					</div>
-
-					<div class="axis-values">
-						<div ng-repeat="value in axis.dv" class="axis-value" ng-class="{'odd': $odd, 'selected': inNavPath(axis.index, value), 'between-selection': isBetween(axis.index, $index), 'unused': (used = isVariantSelected(axis.index, value.value)) != 'Y'}" ng-click="navigate(axis.index, value, $index)">
-							<span ng-switch="inEditMode(axis.index)">
-								<button ng-switch-when="true" type="button" ng-click="removeAxisValue(axis.index, $index)" class="btn btn-xs btn-danger"><i class="icon-trash"></i></button>
-								<span ng-switch-when="false" ng-switch="used">
-									<button ng-switch-when="Y" type="button" class="btn btn-xs btn-success" ng-click="unselectVariant(axis.index, value.value, $event)"><i class="icon-minus"></i></button>
-									<button ng-switch-when="N" type="button" class="btn btn-xs btn-default" ng-click="selectVariant(axis.index, value.value, $event)"><i class="icon-plus"></i></button>
-									<button ng-switch-when="U" type="button" class="btn btn-xs btn-default" disabled="disabled"><i class="icon-question"></i></button>
-								</span>
-							</span>
-							<span ng-bind="value.title"></span>
-						</div>
-						<div ng-if="$index > 0" class="indicator"></div>
-					</div>
-
+		<div class="control-group property">
+			<div class="controls">
+				<div class="document-picker-multiple" ng-model="Attributes.axesToAdd" name="axesToAdd"
+						accepted-model="Rbs_Catalog_Attribute"
+						property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}"
+						selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axesattributes_picker_title', ['ucf']) }}"
+						master-label="(= document.label =)"
+						allow-edition="false" allow-creation="false" disable-reordering="true"
+						picker-template="picker-axis.twig">
 				</div>
-
-				<div class="axis-column" ng-if="navigationEnd">
-					<div class="axis-header">
-						<h4>
-							<span ng-repeat="item in path">
-								<span ng-bind="item.value.title"></span>
-							</span>
-						</h4>
-					</div>
-					<div class="axis-values">
-						<div class="axis-value" style="cursor: default" ng-switch="finalProductSaved()">
-							<div ng-switch-when="true" ng-switch="loadingFinalProduct">
-								<div ng-switch-when="true">
-									<i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_loading_product_info', ['ucf']) }}
-								</div>
-								<div ng-switch-when="false">
-									<h4 ng-bind="finalProduct.label"></h4>
-									<p class="clearfix" ng-if="finalProduct.visuals.length">
-										<img ng-repeat="visual in finalProduct.visuals" rbs-storage-image="visual.id" thumbnail="XS" class="img-polaroid margin-right pull-left"/>
-									</p>
-									<p ng-if="! finalProduct.visuals.length">
-										<em class="muted">{{ i18n('m.rbs.catalog.admin.variantgroup_no_visuals', ['ucf']) }}</em>
-									</p>
-									<p>
-										<a href="javascript:;" ng-href="(= getFinalProductUrl() =)">{{ i18n('m.rbs.catalog.admin.variantgroup_go_to_product', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
-									</p>
-								</div>
-							</div>
-							<div ng-switch-when="false" class="alert alert-warning">
-								{{ i18n('m.rbs.catalog.admin.variantgroup_product_does_not_exist_yet') | raw }}
-							</div>
-						</div>
-					</div>
+				<div class="btn-toolbar">
+					<button type="button" class="btn btn-primary" ng-click="addAxisAttributesFromPicker()" data-ng-disabled="Attributes.axesToAdd.length == 0">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
 				</div>
-
-			</div>
-
-			<div class="well" style="margin-top: 20px;">
-				<span class="pull-right">
-					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_generate_all_action', ['ucf']) }}</button>
-					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_remove_all_action', ['ucf']) }}</button>
-				</span>
-				<h4>
-					<span ng-bind="document.productMatrixInfo | rbsVariantGroupEditorValidProductsCount"></span>
-					{{ i18n('m.rbs.catalog.admin.variantgroup_existing_products_of') }}
-					<span ng-bind="possibleVariantsCount"></span>
-					{{ i18n('m.rbs.catalog.admin.variantgroup_possible_products') }}
-				</h4>
-				<p><span class="label label-info">Info</span>
-					{{ i18n('m.rbs.catalog.admin.variantgroup_products_will_be_created_when_this_form_is_submitted', ['ucf']) }}
-				</p>
 			</div>
 		</div>
-	</fieldset>
 
+		<hr />
 
-	<fieldset data-ng-show="section=='product'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_products_section', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-
-		<div data-ng-controller="Rbs_Catalog_VariantGroup_VariantListController">
-			<rbs-document-list data-dlid="DLRbsCatalogVariantList" model="Rbs_Catalog_Product"
-				activable="true" publishable="true" load-query="loadQuery">
-				<column name="label" primary="true"></column>
-				<quick-actions>
-					[action edit]
-					|| [action delete]
-				</quick-actions>
-				<column name="sku">(= doc.sku.label =)</column>
-			</rbs-document-list>
-		</div>
+		<rbs-field-picker-multiple property="othersAttributes"
+				label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'othersAttributes'), ['ucf']) }}"
+				accepted-model="Rbs_Catalog_Attribute"
+				selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_othersAttributes_picker_title', ['ucf']) }}"
+				allow-creation="true"
+				allow-edition="true"
+				picker-template="picker-other.twig">
+		</rbs-field-picker-multiple>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-	          data-document-system-info-section>
+			data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+	 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+			data-document-system-info-section>
 	</fieldset>
 
 	<form-button-bar></form-button-bar>
