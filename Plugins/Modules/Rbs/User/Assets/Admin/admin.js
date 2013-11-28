@@ -37,7 +37,7 @@
 	}]);
 
 
-	function ChangeUserUserLoginController($scope, Workspace, OAuthService, NotificationCenter) {
+	function ChangeUserUserLoginController($scope, Workspace, OAuthService, NotificationCenter, ErrorFormatter) {
 		Workspace.hideMenus();
 
 		$scope.login = function () {
@@ -50,7 +50,7 @@
 
 				// Failure
 				function (failure) {
-					NotificationCenter.error("Unable to authenticate", failure);
+					NotificationCenter.error("Unable to authenticate", ErrorFormatter.format(failure));
 				}
 			);
 		};
@@ -61,7 +61,8 @@
 		'$scope',
 		'RbsChange.Workspace',
 		'OAuthService',
-		'RbsChange.NotificationCenter'
+		'RbsChange.NotificationCenter',
+		'RbsChange.ErrorFormatter'
 	];
 	app.controller('Rbs_User_User_LoginController', ChangeUserUserLoginController);
 

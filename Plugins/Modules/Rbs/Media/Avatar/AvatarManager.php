@@ -88,7 +88,7 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach(static::AVATAR_GET_AVATAR_URL, array($this, 'getGravatarUrl'), 5);
+		$eventManager->attach(static::AVATAR_GET_AVATAR_URL, array($this, 'onDefaultGetGravatarUrl'), 5);
 	}
 
 	/**
@@ -96,13 +96,13 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Media/AvatarManager');
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Media/Events/AvatarManager');
 	}
 
 	/**
 	 * @param \Change\Events\Event $event
 	 */
-	public function getGravatarUrl(\Change\Events\Event $event)
+	public function onDefaultGetGravatarUrl(\Change\Events\Event $event)
 	{
 		$url = null;
 

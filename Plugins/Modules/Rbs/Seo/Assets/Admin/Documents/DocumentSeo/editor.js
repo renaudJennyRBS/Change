@@ -9,7 +9,7 @@
 	 * @param Utils
 	 * @constructor
 	 */
-	function Editor($http, REST, NotificationCenter, Utils)
+	function Editor($http, REST, NotificationCenter, Utils, ErrorFormatter)
 	{
 		return {
 			restrict : 'C',
@@ -280,7 +280,7 @@
 							}
 							else
 							{
-								NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
+								NotificationCenter.error('Invalid URL', ErrorFormatter.format({message: 'This URL is already used!', code: 999999}));
 							}
 						});
 					}
@@ -342,7 +342,7 @@
 						}
 						else
 						{
-							NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
+							NotificationCenter.error('Invalid URL', ErrorFormatter.format({message: 'This URL is already used!', code: 999999}));
 						}
 					});
 				};
@@ -397,7 +397,7 @@
 						}
 						else
 						{
-							NotificationCenter.error('Invalid URL', {message: 'This URL is already used!', code: 999999});
+							NotificationCenter.error('Invalid URL', ErrorFormatter.format({message: 'This URL is already used!', code: 999999}));
 						}
 					});
 				};
@@ -413,6 +413,6 @@
 		};
 	}
 
-	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils'];
+	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils', 'RbsChange.ErrorFormatter'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeo', Editor);
 })();

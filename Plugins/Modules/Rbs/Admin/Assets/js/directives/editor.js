@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, UrlManager) {
+	function editorDirective ($rootScope, $routeParams, $q, $location, $timeout, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, UrlManager, ErrorFormatter) {
 
 		var CORRECTION_CSS_CLASS = 'correction';
 
@@ -202,7 +202,7 @@
 							function (err) {
 								saveOperation("error");
 								console.warn("Editor: pre-save Promises error: ", err);
-								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.save_error'), err);
+								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.save_error'), ErrorFormatter.format(err));
 							}
 						);
 					} else {
@@ -335,7 +335,7 @@
 					saveOperation("error");
 					NotificationCenter.error(
 						i18n.trans('m.rbs.admin.adminjs.save_error'),
-						reason,
+						ErrorFormatter.format(reason),
 						{
 							$propertyInfoProvider : $scope._chgFieldsInfo
 						});
@@ -846,7 +846,8 @@
 		'RbsChange.NotificationCenter',
 		'RbsChange.MainMenu',
 		'RbsChange.SelectSession',
-		'RbsChange.UrlManager'
+		'RbsChange.UrlManager',
+		'RbsChange.ErrorFormatter'
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);

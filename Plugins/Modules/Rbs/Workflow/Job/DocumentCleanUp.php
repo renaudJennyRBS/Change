@@ -133,7 +133,7 @@ class DocumentCleanUp
 		$query->addOrder('workflowInstance');
 
 		$tasks = $query->getDocuments();
-		$applicationServices->getApplicationServices()->getLogging()->fatal(var_export($tasks->ids(), true));
+		$applicationServices->getLogging()->fatal(var_export($tasks->ids(), true));
 		/* @var $task Task */
 		foreach ($tasks as $task)
 		{
@@ -153,6 +153,7 @@ class DocumentCleanUp
 	/**
 	 * @param Task $task
 	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @throws \Exception
 	 */
 	protected function cancelTask(Task $task, $applicationServices)
 	{

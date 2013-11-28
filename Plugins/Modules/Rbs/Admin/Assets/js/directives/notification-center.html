@@ -1,7 +1,0 @@
-<div class="notification-center" ng-show="notifications.length">
-	<div ng-repeat="notification in notifications" class="alert" ng-class="{'info': 'alert-info', 'error': 'alert-danger', 'warning': 'alert-warning'}[notification.level]">
-		<button type="button" class="close" ng-click="remove($index)">&times;</button>
-		<h4 ng-show="notification.title" ng-bind-html="notification.title"></h4>
-		<p ng-bind-html="formatErrorMessage(notification)"></p>
-	</div>
-</div>
