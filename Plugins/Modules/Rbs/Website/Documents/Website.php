@@ -51,6 +51,10 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	{
 		$currentLocalisation = $this->getCurrentLocalization();
 		$url = new Http($url);
+		if ($url->getScheme() === "https")
+		{
+			$currentLocalisation->setHttps(true);
+		}
 		$currentLocalisation->setHostName($url->getHost());
 		$currentLocalisation->setPort($url->getPort());
 		$fullPath = $url->getPath();
@@ -88,7 +92,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$this->getDocumentManager()->pushLCID($LCID);
 
 		$url = new Http();
-		$url->setScheme("http");
+		$url->setScheme($this->getHttps() ? "https" : "http");
 		$url->setHost($this->getHostName());
 		$url->setPort($this->getPort());
 		$url->setPath('/');
@@ -143,6 +147,14 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	public function getLCID()
 	{
 		return $this->getCurrentLCID();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHttps()
+	{
+		return $this->getCurrentLocalization()->getHttps();
 	}
 
 	/**
