@@ -1,5 +1,4 @@
 <div class="row">
-
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
@@ -25,10 +24,8 @@
 			<a href ng-href="(= 'Rbs_Website_FunctionalPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsWebsiteFunctionalPage"
-		                   model="Rbs_Website_FunctionalPage"
-		                   filter-query="query"
-		                   actions="default">
+		<rbs-document-list data-dlid="DLRbsWebsiteFunctionalPage" model="Rbs_Website_FunctionalPage" filter-query="query"
+			actions="default" correction="true">
 			<column name="icon" width="30px" align="center">
 				<span class="iconoverlay">
 					<i class="icon-2x icon-file"></i>
@@ -49,5 +46,4 @@
 			</column>
 		</rbs-document-list>
 	</div>
-
 </div>

@@ -5,10 +5,7 @@
 	/**
 	 * @name status
 	 * @description Display the status of a document.
-	 *
-	 * @attribute code
-	 *
-	 * @example: <code><status ng-model="document"/></code>
+	 * @example <code><status ng-model="document"/></code>
 	 */
 	angular.module('RbsChange').directive('status', ['RbsChange.Utils', 'RbsChange.i18n', function (Utils, i18n)
 	{
@@ -53,5 +50,4 @@
 			}
 		};
 	}]);
-
 })();

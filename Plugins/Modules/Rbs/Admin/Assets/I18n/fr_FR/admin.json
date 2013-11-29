@@ -584,9 +584,6 @@
 	"open":{
 		"message":"ouvrir le menu principal (Ctrl+Alt+M)"
 	},
-	"about":{
-		"message":"à propos de RBS Change"
-	},
 	"profile":{
 		"message":"profil"
 	},
@@ -994,5 +991,8 @@
 	},
 	"about": {
 		"message":"à propos"
+	},
+	"has_current_correction": {
+		"message":"une correction est en cours"
 	}
 }
