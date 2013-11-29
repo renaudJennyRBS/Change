@@ -32,6 +32,12 @@ class Listeners implements ListenerAggregateInterface
 			$resolver->process($event);
 		};
 		$events->attach(WorkflowManager::EVENT_PROCESS, $callback, 5);
+
+		$callback = function (\Change\Events\Event $event)
+		{
+			(new \Rbs\Workflow\Http\Rest\Actions\ExecuteTask())->executeAll($event);
+		};
+		$events->attach(WorkflowManager::EVENT_EXECUTE_ALL, $callback, 5);
 	}
 
 	/**

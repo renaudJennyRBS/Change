@@ -12,6 +12,7 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_EXAMINE = 'examine';
 	const EVENT_PROCESS = 'process';
+	const EVENT_EXECUTE_ALL = 'executeAll';
 
 	/**
 	 * @return null|string|string[]
