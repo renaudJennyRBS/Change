@@ -5,13 +5,13 @@
 	app.provider('RbsChange.ErrorFormatter', function RbsChangeErrorFormatterProvider() {
 
 
-		this.$get = ['$location', 'RbsChange.Utils', function ($location, Utils) {
+		this.$get = ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
 
 			var errorHandlers = {
 
 				'VALIDATION-ERROR' :
 					function (data, context) {
-						var message = 'Les propriétés suivantes ne sont pas valides :<dl>';
+						var message = i18n.trans('m.admin.adminjs.error_formatter_properties_not_valid | ucf') + '<dl>';
 						angular.forEach(data.data['properties-errors'], function (messages, property) {
 							if (context && context.$propertyInfoProvider && context.$propertyInfoProvider[property]) {
 								var section = context.$propertyInfoProvider[property].section.id || null;
@@ -37,7 +37,7 @@
 						if (context && context.$propertyInfoProvider && context.$propertyInfoProvider[property]) {
 							property = context.$propertyInfoProvider[property];
 						}
-						return "La propriété '" + property + "' n'a pas le type attendu ('" + data.data.type + "').";
+						return i18n.trans('m.rbs.admin.adminjs.error_formatter_property_not_expected | ucf', {PROPERTY: property, DATATYPE: data.data.type});
 					},
 
 				'INVALID-LCID' :
@@ -52,7 +52,7 @@
 
 				'EXCEPTION-72002' :
 				  function (data) {
-					  return "Vous devez vous reconnecter avec votre nom d'utilisateur et votre mot de passe. (Code de l'erreur : 72002)";
+					  return i18n.trans('m.rbs.admin.adminjs.error_formatter_exception_72002 | ucf');
 				  },
 
 				"default" :

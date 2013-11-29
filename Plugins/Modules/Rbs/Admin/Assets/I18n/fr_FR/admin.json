@@ -23,6 +23,9 @@
 	"help":{
 		"message":"aide sur le Presse-papier de Change"
 	},
+	"save":{
+		"message":"enregistrer"
+	},
 	"clear":{
 		"message":"effacer"
 	},
@@ -401,9 +404,6 @@
 	"close":{
 		"message":"fermer"
 	},
-	"close_all":{
-		"message":"tout fermer"
-	},
 	"select_and_close":{
 		"message":"sélectionner et fermer"
 	},
@@ -598,9 +598,6 @@
 	},
 	"help_bottom":{
 		"message":"Ce menu peut être ouvert avec le raccourci clavier Ctrl+Alt+M."
-	},
-	"dashboard":{
-		"message":"tableau de bord"
 	},
 	"website":{
 		"message":"Site web"
@@ -857,17 +854,11 @@
 	"workflow_title":{
 		"message":"Processus de validation (workflow)"
 	},
+	"show_changes":{
+		"message":"afficher les changements"
+	},
 	"timeinterval_choose_type":{
 		"message":"choisissez la période"
-	},
-	"dashboard_notifications": {
-		"message":"notifications"
-	},
-	"dashboard_notification_new": {
-		"message":"nouvelles"
-	},
-	"dashboard_notification_read": {
-		"message":"lues"
 	},
 	"insert_block_left": {
 		"message": "ajouter un bloc à gauche"
@@ -889,6 +880,9 @@
 	},
 	"parameterize_columns": {
 		"message": "paramétrer les colonnes"
+	},
+	"block_name":{
+		"message":"nom du bloc"
 	},
 	"block_type": {
 		"message": "type de bloc"
@@ -971,22 +965,40 @@
 	"shift_right":{
 		"message":"décaler à droite"
 	},
+	"dashboard":{
+		"message":"tableau de bord"
+	},
+	"dashboard_notifications":{
+		"message":"notifications"
+	},
+	"dashboard_notification_new":{
+		"message":"nouvelles"
+	},
+	"dashboard_notification_read":{
+		"message":"lues"
+	},
 	"dashboard_task_tasks": {
 		"message":"tâches"
 	},
-	"dashboard_task_tasks_in_progress": {
+	"dashboard_task_tasks_in_progress":{
 		"message":"tâches en cours"
 	},
-	"dashboard_task_end": {
+	"dashboard_task_end":{
 		"message":"terminé"
 	},
-	"dashboard_task_to_execute": {
+	"dashboard_task_to_execute":{
 		"message":"à exécuter"
 	},
-	"main_menu": {
+	"dashboard_settings":{
+		"message":"configuration du tableau de bord"
+	},
+	"dashboard_settings_tags":{
+		"message":"étiquettes"
+	},
+	"main_menu":{
 		"message":"menu principal"
 	},
-	"drag_to_reorder": {
+	"drag_to_reorder":{
 		"message":"glisser pour réordonner"
 	},
 	"about": {

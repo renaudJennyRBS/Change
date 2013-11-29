@@ -1,5 +1,8 @@
 {
 	"function_index_page":{
 		"message":"page d'index"
+	},
+	"index_page_error":{
+		"message":"erreur page d'index"
 	}
 }

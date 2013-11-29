@@ -30,7 +30,7 @@
 					var deferred = $q.defer(),
 					    self = this;
 
-					title = title || "Demande de confirmation";
+					title = title || i18n.trans('m.rbs.admin.adminjs.confirmation_request | ucf');
 					if (this.btnStyle && this.btnStyle !== style) {
 						this.$modal.find('.modal-footer .btn-primary').removeClass('btn-' + this.btnStyle);
 					}

@@ -72,7 +72,7 @@
 	}]);
 
 
-	app.directive('loadingIndicatorText', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading) {
+	app.directive('loadingIndicatorText', ['$rootScope', 'RbsChange.Loading', 'RbsChange.i18n', function ($rootScope, Loading, i18n) {
 
 		return {
 
@@ -83,13 +83,13 @@
 			link : function (scope, elm, attrs) {
 
 				$rootScope.$on('Change:LoadingStart', function (event, message) {
-					elm.html(message+'<br/><small>Merci de bien vouloir patienter :)');
+					elm.html(message + '<br/><small>' + i18n.trans('m.rbs.admin.adminjs.please_wait | ucf') + '</small>');
 					elm.show();
 				});
 
 				$rootScope.$on('Change:LoadingStop', function (event, message) {
 					if (Loading.isLoading()) {
-						elm.html(message+'<br/><small>Merci de bien vouloir patienter :)');
+						elm.html(message+ '<br/><small>' + i18n.trans('m.rbs.admin.adminjs.please_wait | ucf') + '</small>');
 					} else {
 						elm.hide();
 					}
@@ -101,7 +101,7 @@
 	}]);
 
 
-	app.directive('loadingIndicatorButton', ['$rootScope', 'RbsChange.Loading', function ($rootScope, Loading) {
+	app.directive('loadingIndicatorButton', ['$rootScope', 'RbsChange.Loading', 'RbsChange.i18n', function ($rootScope, Loading, i18n) {
 
 		return {
 
@@ -129,7 +129,7 @@
 						elm.removeClass('btn-primary');
 						icon.removeClass('icon-spin');
 						elm.attr('disabled', 'disabled');
-						elm.attr('title', "Aucun chargement en cours");
+						elm.attr('title', i18n.trans('m.rbs.admin.adminjs.loading_not | ucf'));
 					}
 				});
 			}

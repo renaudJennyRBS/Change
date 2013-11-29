@@ -173,13 +173,13 @@
 	}]);
 
 
-	app.directive('rbsTodo', function () {
+	app.directive('rbsTodo', ['RbsChange.i18n', function (i18n) {
 		return {
 			'restrict'   : 'E',
 			'transclude' : true,
-			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">en cours de développement... </span></div>'
+			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">' + i18n.trans('m.admin.adminjs.todo') + '</span></div>'
 		};
-	});
+	}]);
 
 
 	/**

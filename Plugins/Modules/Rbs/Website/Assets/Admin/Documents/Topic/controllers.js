@@ -18,7 +18,7 @@
 	 * @param Utils
 	 * @constructor
 	 */
-	function ListController($scope, $q, $location, Breadcrumb, MainMenu, i18n, REST, Query, Loading, NotificationCenter, Utils, ErrorFormatter)
+	function ListController($scope, $q, $location, Breadcrumb, MainMenu, i18n, REST, Query, Loading, NotificationCenter, Utils)
 	{
 		function initCurrentSection (section) {
 			$scope.currentSection = section;
@@ -143,7 +143,7 @@
 							{
 								setListBusy(false);
 								Loading.stop();
-								NotificationCenter.error("Erreur page d'index", ErrorFormatter.format(error));
+								NotificationCenter.error(i18n.trans('m.rbs.website.adminjs.index_page_error | ucf'), error);
 							}
 						);
 					},
@@ -152,7 +152,7 @@
 					{
 						setListBusy(false);
 						Loading.stop();
-						NotificationCenter.error("Erreur page d'index", ErrorFormatter.format(error));
+						NotificationCenter.error(i18n.trans('m.rbs.website.adminjs.index_page_error | ucf'), error);
 					}
 				);
 			},
@@ -182,7 +182,7 @@
 	ListController.$inject = [
 		'$scope', '$q', '$location',
 		'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Query',
-		'RbsChange.Loading', 'RbsChange.NotificationCenter', 'RbsChange.Utils', 'RbsChange.ErrorFormatter'
+		'RbsChange.Loading', 'RbsChange.NotificationCenter', 'RbsChange.Utils'
 	];
 	app.controller('Rbs_Website_Topic_ListController', ListController);
 
