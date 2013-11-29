@@ -29,11 +29,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProfileManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Commerce', '\Rbs\Commerce\Events\JobManager\Listeners');
-
-		$configuration->addPersistentEntry('Rbs/Admin/Events/Manager/Rbs_Commerce', '\Rbs\Commerce\Events\Admin\Listeners');
-
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/CartManager/Rbs_Commerce', '\Rbs\Commerce\Events\CartManager\Listeners');
-
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 	}
 

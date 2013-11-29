@@ -24,18 +24,18 @@ class GetHome
 
 		/* @var $manager \Rbs\Admin\Manager */
 		$manager = $event->getParam('manager');
-		$attributes['resources'] = $manager->getResources();
+
 
 		$OAuth = $event->getApplicationServices()->getOAuthManager();
 		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
 		$attributes['OAuth']['Consumer'] = $consumer ? array_merge($consumer->toArray(), array('realm' => 'Rbs_Admin')) : array();
-		if (!isset($attributes['resources']['menu']))
-		{
-			$attributes['resources']['menu'] = array("sections" => array(), "entries" => array());
-		}
+		$attributes['mainMenu'] = $manager->getMainMenu();
+
+		$manager->getResources();
 		$devMode = $event->getApplication()->inDevelopmentMode();
 		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
 		{
+
 			$resourceDirectoryPath = $devMode ? $manager->getResourceDirectoryPath() : null;
 			$resourceBaseUrl = $manager->getResourceBaseUrl();
 

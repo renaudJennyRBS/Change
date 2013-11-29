@@ -26,7 +26,6 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/WorkflowManager/Rbs_Generic',
 			'\Rbs\Generic\Events\WorkflowManager\Listeners');
 
-		$configuration->addPersistentEntry('Rbs/Admin/Events/Manager/Rbs_Generic', '\Rbs\Generic\Events\Admin\Listeners');
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Generic',
 			'\Rbs\Generic\Events\BlockManager\Listeners');
 

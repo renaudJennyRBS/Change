@@ -182,10 +182,146 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getResources()
 	{
+		$devMode = $this->getApplication()->inDevelopmentMode();
+
+		$this->registerAdminResources($devMode);
+
+		$pm = $this->getPluginManager();
+		foreach ($pm->getInstalledPlugins() as $plugin)
+		{
+			if ($plugin->isModule())
+			{
+				$this->registerStandardPluginAssets($plugin, $devMode);
+			}
+		}
+
 		$params = new \ArrayObject(array('header' => array(), 'body' => array()));
 		$event = new Event(Event::EVENT_RESOURCES, $this, $params);
 		$this->getEventManager()->trigger($event);
 		return $params->getArrayCopy();
+	}
+
+	/**
+	 * @param boolean $devMode
+	 */
+	protected function registerAdminResources($devMode)
+	{
+		$i18nManager = $this->getI18nManager();
+		$lcid = strtolower(str_replace('_', '-', $i18nManager->getLCID()));
+
+		$pluginPath = __DIR__ . '/Assets';
+		$jsAssets = new \Assetic\Asset\AssetCollection();
+		$path = $pluginPath . '/lib/moment/i18n/' . $lcid . '.js';
+		if (file_exists($path))
+		{
+			$jsAssets->add(new \Assetic\Asset\FileAsset($path));
+		}
+		$path = $pluginPath . '/lib/angular/i18n/angular-locale_' . $lcid . '.js';
+		if (file_exists($path))
+		{
+			$jsAssets->add(new \Assetic\Asset\FileAsset($path));
+		}
+
+		if (count($jsAssets->all()))
+		{
+			$this->getJsAssetManager()->set('i18n_' . $i18nManager->getLCID(), $jsAssets);
+		}
+
+		$jsAssets = new \Assetic\Asset\AssetCollection();
+		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/js/rbschange.js'));
+
+		$jsAssets->add(new \Assetic\Asset\GlobAsset($pluginPath . '/js/*/*.js'));
+		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/menu/menu.js'));
+		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/clipboard/controllers.js'));
+		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/dashboard/controllers.js'));
+
+		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/js/help.js'));
+		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/js/routes.js'));
+		if (!$devMode)
+		{
+			$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+		}
+
+		$this->getJsAssetManager()->set('Rbs_Admin', $jsAssets);
+
+		$cssAsset = new \Assetic\Asset\AssetCollection();
+		$cssAsset->add(new \Assetic\Asset\GlobAsset($pluginPath . '/css/*.css'));
+		$cssAsset->add(new \Assetic\Asset\FileAsset($pluginPath . '/menu/menu.css'));
+		$cssAsset->add(new \Assetic\Asset\FileAsset($pluginPath . '/dashboard/dashboard.css'));
+
+		$this->getCssAssetManager()->set('Rbs_Admin', $cssAsset);
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param $devMode
+	 */
+	protected function registerStandardPluginAssets(\Change\Plugins\Plugin $plugin = null, $devMode)
+	{
+		$adminAssetsPath = $plugin->getAssetsPath() . '/Admin';
+		if (is_dir($adminAssetsPath))
+		{
+			$globs = [$adminAssetsPath . '/*.js', $adminAssetsPath . '/Documents/*/*.js'];
+			$jsAssets = new \Assetic\Asset\GlobAsset($globs);
+			if (!$devMode)
+			{
+				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+			}
+			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
+
+			$globs = [$adminAssetsPath . '/*.css'];
+			$cssAsset = new \Assetic\Asset\GlobAsset($globs);
+			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
+		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getMainMenu()
+	{
+		$mainMenu = ['sections' => [], 'entries' => []];
+		$pm = $this->getPluginManager();
+		$i18nManager = $this->getI18nManager();
+		foreach ($pm->getInstalledPlugins() as $plugin)
+		{
+			$mainMenuPath = $plugin->getAssetsPath() . '/Admin/main-menu.json';
+			if (is_readable($mainMenuPath))
+			{
+				$menuJson = json_decode(file_get_contents($mainMenuPath), true);
+				if (is_array($menuJson))
+				{
+					if (isset($menuJson['sections']) && is_array($menuJson['sections']))
+					{
+						foreach ($menuJson['sections'] as $jsonSection)
+						{
+							if (isset($jsonSection['label']) && is_string($jsonSection['label']))
+							{
+								$jsonSection['label'] = $i18nManager->trans($jsonSection['label'], ['ucf']);
+							}
+							$mainMenu['sections'][] = $jsonSection;
+						}
+					}
+					if (isset($menuJson['entries']) && is_array($menuJson['entries']))
+					{
+						foreach ($menuJson['entries'] as $jsonEntry)
+						{
+							if (isset($jsonEntry['label']) && is_string($jsonEntry['label']))
+							{
+								$jsonEntry['label'] = $i18nManager->trans($jsonEntry['label'], ['ucf']);
+							}
+							if (isset($jsonEntry['keywords']) && is_string($jsonEntry['keywords']))
+							{
+								$jsonEntry['keywords'] = $i18nManager->trans($jsonEntry['keywords'], ['ucf']);
+							}
+							$mainMenu['entries'][] = $jsonEntry;
+						}
+					}
+				}
+			}
+
+		}
+		return $mainMenu;
 	}
 
 	/**
@@ -359,24 +495,5 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	public function getJsAssetManager()
 	{
 		return $this->jsAssetManager;
-	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 */
-	public function registerStandardPluginAssets(\Change\Plugins\Plugin $plugin = null)
-	{
-		$devMode = $this->getApplication()->inDevelopmentMode();
-		if ($plugin && $plugin->isAvailable())
-		{
-			$globs = [$plugin->getAssetsPath() . '/Admin/*.js', $plugin->getAssetsPath() . '/Admin/Documents/*/*.js'];
-			$filters = $devMode ? [new \Assetic\Filter\JSMinFilter()] : [];
-			$jsAssets = new \Assetic\Asset\GlobAsset($globs, $filters);
-			$this->getJsAssetManager()->set($plugin->getName(), $jsAssets);
-
-			$globs = [$plugin->getAssetsPath() . '/Admin/*.css'];
-			$cssAsset = new \Assetic\Asset\GlobAsset($globs);
-			$this->getCssAssetManager()->set($plugin->getName(), $cssAsset);
-		}
 	}
 }
