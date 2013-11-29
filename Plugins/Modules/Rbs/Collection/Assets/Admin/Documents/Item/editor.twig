@@ -5,23 +5,17 @@
 
 		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.collection.admin.item_locked_warning') | raw }}</p>
 
-		<rbs-field-text
-			property="label" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'label'), ['ucf']) }}"
-			input-class="input-block-level">
+		<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text
-			property="title" required="true"
-			rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'title'), ['ucf']) }}"
-			input-class="input-block-level">
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text
-			property="value" data-ng-disabled="document.locked" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'value'), ['ucf']) }}"
-			input-class="input-block-level">
+		<rbs-field-text property="value" data-ng-disabled="document.locked" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'value'), ['ucf']) }}">
 		</rbs-field-text>
 
 	</fieldset>

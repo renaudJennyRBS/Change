@@ -1,18 +1,13 @@
 <form name="form" ng-submit="submit()" novalidate="">
-
-	<rbs-field-text
-			property="title" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}"
-			input-class="input-block-level">
+	<rbs-field-text property="title" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
 	</rbs-field-text>
 
-	<structure-editor name="contents"
-	                  property="editableContent"
-	                  ng-model="document.editableContent"
-	                  template="(=pageTemplate=)">
-		<button type="button" class="btn btn-default" rbs-fullscreen-toggle=""><i class="icon-resize-full"></i>  {{ i18nAttr('m.rbs.website.admin.page_full_screen', ['ucf']) }}</button>
+	<structure-editor name="contents" property="editableContent" ng-model="document.editableContent" template="(=pageTemplate=)">
+		<button type="button" class="btn btn-default" rbs-fullscreen-toggle="">
+			<i class="icon-resize-full"></i> {{ i18nAttr('m.rbs.website.admin.page_full_screen', ['ucf']) }}
+		</button>
 	</structure-editor>
 
 	<form-button-bar></form-button-bar>
-
 </form>

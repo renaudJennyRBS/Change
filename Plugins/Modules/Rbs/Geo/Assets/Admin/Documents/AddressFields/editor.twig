@@ -2,10 +2,8 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-		<rbs-field-text
-				property="label" required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressFields', 'label'), ['ucf']) }}"
-				input-class="input-block-level">
+		<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressFields', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<div ng-show="document.id > 0">
