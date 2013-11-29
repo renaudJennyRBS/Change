@@ -352,6 +352,7 @@
 					NotificationCenter.error(
 						i18n.trans('m.rbs.admin.adminjs.save_error'),
 						ErrorFormatter.format(reason),
+						null,
 						{
 							$propertyInfoProvider : $scope._chgFieldsInfo
 						});
