@@ -1,11 +1,11 @@
 <form name="form" ng-submit="submit()" novalidate="">
 
-	<rbs-field-text property="title" required="true" input-class="input-block-level"
+	<rbs-field-text property="title" required="true"
 		label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'title'), ['ucf']) }}">
 		<div class="help-block">{{ i18n('m.rbs.catalog.admin.attribute_title_help', ['ucf']) }}</div>
 	</rbs-field-text>
 
-	<rbs-field-rich-text property="description" input-class="input-block-level"
+	<rbs-field-rich-text property="description"
 		label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'description'), ['ucf']) }}">
 		<div class="help-block">{{ i18n('m.rbs.catalog.admin.attribute_description_help', ['ucf']) }}</div>
 	</rbs-field-rich-text>

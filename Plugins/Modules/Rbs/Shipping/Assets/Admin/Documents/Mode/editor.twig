@@ -3,11 +3,11 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" input-class="input-block-level"
+		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="code" required="true" input-class="input-block-level"
+		<rbs-field-text property="code" required="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
@@ -17,8 +17,7 @@
 		</rbs-field-picker>
 	</fieldset>
 
-	<fieldset
-		data-ng-show="section=='systeminfo'"
+	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-document-system-info-section>

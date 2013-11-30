@@ -1,8 +1,6 @@
 <form name="form" ng-submit="submit()" novalidate="">
-	<rbs-field-text
-		property="title" required="true"
-		label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}"
-		input-class="input-block-level">
+	<rbs-field-text property="title" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}">
 	</rbs-field-text>
 
 	<form-button-bar></form-button-bar>

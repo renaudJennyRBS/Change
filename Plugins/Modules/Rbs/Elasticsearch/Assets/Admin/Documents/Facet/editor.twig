@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_section_indexer', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="fieldName" required="true" input-class="input-block-level"
+		<rbs-field-text property="fieldName" required="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
 		</rbs-field-text>
 
@@ -21,8 +21,7 @@
 			</select>
 		</rbs-field>
 
-		<rbs-field input-class="input-block-level"
-				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'valuesExtractorName'), ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'valuesExtractorName'), ['ucf']) }}">
 			<select ng-model="document.valuesExtractorName" class="form-control"
 					rbs-items-from-collection="Rbs_Elasticsearch_Collection_FacetValueExtractor">
 				<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
@@ -32,7 +31,6 @@
 		<hr />
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.fieldName"
-				input-class="input-block-level"
 				sync-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_synchronize_title_fieldname', ['ucf']) }}"
 				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'title'), ['ucf']) }}">
 		</rbs-field-text>

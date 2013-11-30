@@ -4,19 +4,16 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }}"
-			input-class="input-block-level">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}"
-			input-class="input-block-level">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-boolean property="hideLinks"
-			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'hideLinks'), ['ucf']) }}"
-			input-class="input-block-level">
+			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'hideLinks'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<rbs-field-picker property="pageTemplate" required="true"
@@ -60,8 +57,6 @@
 		<div rbs-tip="Rbs_PageEditor_Markdown">
 			{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
 		</div>
-
-
 
 		<structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
 			template="(=pageTemplate=)">

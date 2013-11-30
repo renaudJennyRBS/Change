@@ -665,6 +665,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				{
 					$l = new DocumentActionLink($documentLink->getUrlManager(), $document, 'correction');
 					$documentLink->setProperty('actions', array($l));
+					$documentLink->setProperty('correction', true);
 				}
 			}
 

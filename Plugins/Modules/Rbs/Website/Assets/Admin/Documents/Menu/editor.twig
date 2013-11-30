@@ -14,11 +14,6 @@
 				selector-title="{{ i18nAttr('m.rbs.website.documents.menu_website-picker-title', ['ucf']) }}"
 				allow-creation="false">
 		</rbs-field-picker>
-	</fieldset>
-
-	<fieldset ng-form="" data-ng-show="section=='entries'"
-	          data-form-section-label="{{ i18nAttr('m.rbs.website.admin.menu_section_items', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field property="items" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'items'), ['ucf']) }}">
 			<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>

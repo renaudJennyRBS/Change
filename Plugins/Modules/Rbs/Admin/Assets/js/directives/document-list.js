@@ -246,7 +246,19 @@
 					"align"  : "center",
 					"width"  : "44px",
 					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.adminjs.status | ucf') + '">' + i18n.trans('m.rbs.admin.adminjs.status_minified | ucf') + '</abbr>',
-					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><status ng-model="doc"/></a>',
+					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><status ng-model="doc" /></a>',
+					"dummy"  : true
+				});
+			}
+
+			// Correction column
+			if (tAttrs.correction === 'true') {
+				columns.unshift({
+					"name"   : "correction",
+					"align"  : "center",
+					"width"  : "44px",
+					"label"  : '<abbr title="' + i18n.trans('m.rbs.admin.adminjs.correction | ucf') + '">' + i18n.trans('m.rbs.admin.adminjs.correction_minified | ucf') + '</abbr>',
+					"content": '<a href="javascript:;" ng-click="showWorkflow($index)"><rbs-bullet-correction ng-model="doc" /></a>',
 					"dummy"  : true
 				});
 			}

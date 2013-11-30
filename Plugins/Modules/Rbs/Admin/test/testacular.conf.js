@@ -15,7 +15,7 @@ files = [
   JASMINE_ADAPTER,
 
   // jQuery
-  'Assets/lib/jquery.min.js',
+  'Assets/lib/jquery-1.10.2.min.js',
 
   // AngularJS
   'Assets/lib/angular/angular.js',
@@ -33,7 +33,7 @@ files = [
   'Assets/lib/jstree/jquery.jstree.js',
 
   // Twitter Bootstrap
-  'Assets/lib/bootstrap/js/bootstrap.js',
+  'Assets/lib/bootstrap3/js/bootstrap.js',
 
   'Assets/lib/angular-local-storage/localStorageModule.js',
 
