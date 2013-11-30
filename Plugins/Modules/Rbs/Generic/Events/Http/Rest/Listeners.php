@@ -75,14 +75,14 @@ class Listeners implements ListenerAggregateInterface
 				});
 				return;
 			}
-			else if (preg_match('#^resources/Rbs/Workflow/Task/([0-9]+)/execute$#', $relativePath, $matches))
+			else if (preg_match('#^resources/Rbs/Workflow/Task/([0-9]+)/(execute|executeAll)$#', $relativePath, $matches))
 			{
 				$task = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($matches[1]);
 				if ($task instanceof \Rbs\Workflow\Documents\Task)
 				{
 					$event->setParam('modelName', $task->getDocumentModelName());
 					$event->setParam('documentId', $task->getId());
-
+					$event->setParam('executeAll', ($matches[2] == 'executeAll'));
 					$event->setParam('task', $task);
 					$event->setAction(function ($event)
 					{

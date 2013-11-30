@@ -1,0 +1,89 @@
+{
+	"sections": [
+		{
+			"code": "cms",
+			"index": 0,
+			"icon": "icon-file-text",
+			"label": "m.rbs.website.admin.section_name"
+		},
+		{
+			"code": "admin",
+			"index": 100,
+			"icon": "icon-wrench",
+			"label": "m.rbs.admin.admin.admin_section_name"
+		}
+	],
+	"entries": [
+		{
+			"label": "m.rbs.website.admin.module_name",
+			"url": "Rbs/Website",
+			"section": "cms",
+			"keywords": "m.rbs.website.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.media.admin.module_name",
+			"url": "Rbs/Media",
+			"section": "cms",
+			"keywords": "m.rbs.media.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.simpleform.admin.module_name",
+			"url": "Rbs/Simpleform",
+			"section": "cms",
+			"keywords": "m.rbs.simpleform.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.theme.admin.module_name",
+			"url": "Rbs/Theme",
+			"section": "cms"
+		},
+		{
+			"label": "m.rbs.seo.admin.module_name",
+			"url": "Rbs/Seo",
+			"section": "cms",
+			"keywords": "m.rbs.seo.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.collection.admin.module_name",
+			"url": "Rbs/Collection",
+			"section": "admin",
+			"keywords": "m.rbs.collection.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.tag.admin.module_name",
+			"url": "Rbs/Tag",
+			"section": "admin",
+			"keywords": "m.rbs.tag.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.review.admin.module_name",
+			"url": "Rbs/Review",
+			"section": "admin",
+			"keywords": "m.rbs.review.admin.js.module_keywords"
+		},
+		{
+			"label": "m.rbs.user.admin.module_name",
+			"url": "Rbs/User",
+			"section": "admin",
+			"keywords": "m.rbs.user.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.elasticsearch.admin.module_name",
+			"url": "Rbs/Elasticsearch",
+			"section": "admin",
+			"keywords": "m.rbs.elasticsearch.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.geo.admin.module_name",
+			"url": "Rbs/Geo",
+			"section": "admin",
+			"keywords": "m.rbs.geo.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.plugins.admin.module_name",
+			"url": "Rbs/Plugins",
+			"section": "admin",
+			"keywords": "m.rbs.plugins.admin.module_keywords"
+		}
+	]
+}
