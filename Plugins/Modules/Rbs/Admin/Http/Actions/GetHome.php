@@ -29,9 +29,14 @@ class GetHome
 		$OAuth = $event->getApplicationServices()->getOAuthManager();
 		$consumer = $OAuth->getConsumerByApplication('Rbs_Admin');
 		$attributes['OAuth']['Consumer'] = $consumer ? array_merge($consumer->toArray(), array('realm' => 'Rbs_Admin')) : array();
-		$attributes['mainMenu'] = $manager->getMainMenu();
 
+		$attributes['mainMenu'] = $manager->getMainMenu();
 		$manager->getResources();
+
+		usort($attributes['mainMenu']['entries'], function($a, $b){
+			return strcmp(\Change\Stdlib\String::stripAccents($a['label']), \Change\Stdlib\String::stripAccents($b['label']));
+		});
+
 		$devMode = $event->getApplication()->inDevelopmentMode();
 		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
 		{

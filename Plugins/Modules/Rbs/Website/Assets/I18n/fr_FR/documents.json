@@ -66,7 +66,7 @@
 		"message":"zones de contenu"
 	},
 	"page_usecache":{
-		"message":"cache de page complete"
+		"message":"mettre la page en cache"
 	},
 	"page_ttl":{
 		"message":"durée du cache"
