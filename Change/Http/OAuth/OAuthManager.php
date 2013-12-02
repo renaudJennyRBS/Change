@@ -232,8 +232,8 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('token_id'), $fb->column('token_secret'), $fb->column('realm'), $fb->column('token_type'),
-				$fb->column('creation_date'),
+			$qb->select($fb->column('token_id'), $fb->column('token_secret'), $fb->column('realm'), $fb->column('device'),
+				$fb->column('token_type'), $fb->column('creation_date'),
 				$fb->column('validity_date'), $fb->column('callback'), $fb->column('verifier'), $fb->column('authorized'),
 				$fb->column('accessor_id'), $fb->column('application_id'))
 				->from($fb->table($qb->getSqlMapping()->getOAuthTable()))
@@ -248,7 +248,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 			$qs->bindParameter('validity_date', $now);
 
 			$storedOAuthInfo = $qs->getFirstResult($qs->getRowsConverter()->addStrCol('token_id', 'token_secret',
-				'realm', 'token_type', 'creation_date', 'callback', 'verifier', 'accessor_id')
+				'realm', 'device', 'token_type', 'creation_date', 'callback', 'verifier', 'accessor_id')
 				->addIntCol('token_id', 'application_id')->addDtCol('validity_date')->addBoolCol('authorized'));
 			if ($storedOAuthInfo)
 			{
@@ -321,11 +321,11 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 
 			$iq = $qb->insert($qb->getSqlMapping()->getOAuthTable())
 				->addColumns($fb->column('token'), $fb->column('token_secret'),
-				$fb->column('application_id'), $fb->column('realm'),
+				$fb->column('application_id'), $fb->column('realm'), $fb->column('device'),
 				$fb->column('token_type'), $fb->column('creation_date'), $fb->column('validity_date'),
 				$fb->column('callback'), $fb->column('verifier'), $fb->column('authorized'), $fb->column('accessor_id'))
 				->addValues($fb->parameter('token'), $fb->parameter('token_secret'),
-					$fb->integerParameter('application_id'), $fb->parameter('realm'),
+					$fb->integerParameter('application_id'), $fb->parameter('realm'), $fb->parameter('device'),
 					$fb->parameter('token_type'), $fb->dateTimeParameter('creation_date'),
 					$fb->dateTimeParameter('validity_date'),
 					$fb->parameter('callback'), $fb->parameter('verifier'), $fb->booleanParameter('authorized'),
@@ -336,6 +336,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 			$iq->bindParameter('token_secret', $storedOAuth->getTokenSecret());
 			$iq->bindParameter('application_id', $applicationId);
 			$iq->bindParameter('realm', $storedOAuth->getRealm());
+			$iq->bindParameter('device', $storedOAuth->getDevice());
 			$iq->bindParameter('token_type', $storedOAuth->getType());
 			$iq->bindParameter('creation_date', $storedOAuth->getCreationDate());
 			$iq->bindParameter('validity_date', $storedOAuth->getValidityDate());

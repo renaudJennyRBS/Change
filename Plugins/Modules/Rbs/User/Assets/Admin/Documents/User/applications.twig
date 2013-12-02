@@ -30,6 +30,13 @@
 					<i data-ng-if="!isSortedOn('realm')" class="column-sort-indicator icon-sort"></i>
 					<i data-ng-if="isSortedOn('realm')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
 				</th>
+				<th data-ng-class="{'sorted':isSortedOn('device')}">
+					<a href="" data-ng-click="predicate = 'device'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.device', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('device')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('device')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
 				<th data-ng-class="{'sorted':isSortedOn('creation_date')}">
 					<a href="" data-ng-click="predicate = 'creation_date'; reverse=!reverse">
 						{{ i18n('m.rbs.user.admin.creation_date', ['ucf']) }}
@@ -54,6 +61,7 @@
 				</td>
 				<td>(= token.application =)</td>
 				<td>(= token.realm =)</td>
+				<td>(= token.device =)</td>
 				<td>(= token.creation_date | date:'medium' =)</td>
 				<td>(= token.validity_date | date:'medium' =)</td>
 				<td><button class="btn btn-danger btn-sm" data-ng-click="revokeToken(token)">{{ i18nAttr('m.rbs.user.admin.revoke_token', ['ucf']) }}</button></td>

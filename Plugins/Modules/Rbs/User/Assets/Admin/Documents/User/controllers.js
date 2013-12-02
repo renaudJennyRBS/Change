@@ -34,7 +34,7 @@
 		$scope.reloadTokens();
 
 		$scope.revokeToken = function(token){
-			if (confirm(i18n.trans('m.rbs.user.admin.confirm_revoke_token | ucf', { 'token': token.token })))
+			if (confirm(i18n.trans('m.rbs.user.adminjs.confirm_revoke_token | ucf', { 'token': token.token })))
 			{
 				var url = REST.getBaseUrl('user/revokeToken/');
 				$http.post(url, { 'token': token.token }).success(function (){

@@ -5,9 +5,6 @@
 	"module_keywords":{
 		"message":"groupes,sécurité,mot de passe,password,login,comptes,authentification"
 	},
-	"confirm_revoke_token":{
-		"message":"confirmer la révocation du token : $TOKEN$ ?"
-	},
 	"group":{
 		"message":"groupe"
 	},
@@ -34,6 +31,9 @@
 	},
 	"realm":{
 		"message":"realm"
+	},
+	"device":{
+		"message":"appareil"
 	},
 	"creation_date":{
 		"message":"date de création"
