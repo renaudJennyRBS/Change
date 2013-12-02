@@ -1,0 +1,47 @@
+<div class="panel panel-success">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<a class="pull-right" href="javascript:;" ng-click="showTagsHelp = !showTagsHelp" href="Rbs/Tag">
+				<i class="icon-question-sign"></i>
+			</a>
+			{{ i18n('m.rbs.tag.adminjs.tags', ['ucf']) }}
+			<span ng-if="tags">((= tags.length-1 | number =))</span>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p ng-if="showTagsHelp" class="fade-animation">{{ i18n('m.rbs.tag.admin.why_use_tags', ['ucf']) | raw }}</p>
+
+		<div class="tag-selector" ng-mousedown="focus($event)" ng-swipe-left="moveLeft()" ng-swipe-right="moveRight()">
+			<div>
+				<span ng-repeat="tag in tags">
+					<span ng-if="! tag.input" rbs-tag="tag" on-remove="removeTag($index)"></span>
+					<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>
+				</span>
+			</div>
+			<div class="all-tags clearfix" ng-show="showAll">
+				<h6 ng-pluralize
+				    count="availTags.length"
+				    when="{0: '{{ i18nAttr('m.rbs.tag.adminjs.no_available_tag') }}', 'one': '{{ i18nAttr('m.rbs.tag.adminjs.available_tag') }}', 'other': '{{ i18nAttr('m.rbs.tag.adminjs.available_tags') }} '}">
+				</h6>
+				<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span rbs-tag="tag"></span></a>
+			</div>
+		</div>
+
+		<div class="rbs-panel-busy fade-animation" ng-if="busy">
+			<table width="100%" height="100%" border="0">
+				<tr><td align="center" valign="middle">
+						<i class="icon-spinner icon-spin icon-3x"></i><br/>
+						{{ i18n('m.rbs.admin.admin.saving', ['ucf']) }}...
+					</td></tr>
+			</table>
+		</div>
+
+	</div>
+	<div class="panel-footer">
+		<button class="btn btn-xs btn-default" ng-class="{'active': showAll}" type="button" title="{{ i18nAttr('m.rbs.tag.admin.show_hide_all_tags', ['ucf']) }}" ng-click="toggleShowAll($event)">
+			<i class="icon-tags"></i>
+		</button>
+
+		<a href="Rbs/Tag" class="pull-right">{{ i18n('m.rbs.tag.admin.manage_tags', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+	</div>
+</div>

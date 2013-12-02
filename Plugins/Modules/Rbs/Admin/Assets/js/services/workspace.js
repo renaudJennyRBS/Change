@@ -192,6 +192,7 @@
 			restrict : 'E',
 			template :
 				'<rbs-aside-editor-menu></rbs-aside-editor-menu>' +
+				'<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>' +
 				'<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>' +
 				'<rbs-aside-timeline ng-hide="document.isNew()"></rbs-aside-timeline>' +
 				'<rbs-aside-seo ng-hide="document.isNew()" document="document"></rbs-aside-seo>'

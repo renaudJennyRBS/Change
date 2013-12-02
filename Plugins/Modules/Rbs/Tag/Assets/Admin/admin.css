@@ -31,17 +31,18 @@ a:link > i:before {
 
 span.tag {
 	display: inline-block;
-	border: 1px solid rgba(0,0,0,0.3);
+	border: 1px solid rgba(0,0,0,0.2);
 	background: white;
-	padding: 2px 5px;
+	padding: 3px 6px;
+	line-height: 1.1em;
 	margin: 0 2px 2px 0;
 	font-size: 80%;
-	height: 19px;
-	line-height: 14px;
-	border-radius: 3px;
+	font-weight: bold;
+	border-radius: 2px;
+	text-transform: lowercase;
 	color: white;
-	text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-	text-transform: uppercase;
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.75);
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12);
 }
 
 span.tag.new {
@@ -64,28 +65,18 @@ button.tag span.count {
 }
 
 span.tag { /* gray */
-	background: #cecece;
-	background: -moz-linear-gradient(top, #cecece 0%, #a9a9a9 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cecece), color-stop(100%,#a9a9a9));
-	background: -webkit-linear-gradient(top, #cecece 0%,#a9a9a9 100%);
-	background: -ms-linear-gradient(top, #cecece 0%,#a9a9a9 100%);
-	background: linear-gradient(to bottom, #cecece 0%,#a9a9a9 100%);
+	background: #A9A9A9;
 }
 .tag-color-setter { /* gray */
-	color: #a9a9a9;
+	color: #A9A9A9;
 }
 button.tag {
-	border-color: #a9a9a9;
-	color: #a9a9a9;
+	border-color: #A9A9A9;
+	color: #A9A9A9;
 }
 
 span.tag.red {
-	background: #fda29a;
-	background: -moz-linear-gradient(top, #fda29a 0%, #fb645c 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fda29a), color-stop(100%,#fb645c));
-	background: -webkit-linear-gradient(top, #fda29a 0%,#fb645c 100%);
-	background: -ms-linear-gradient(top, #fda29a 0%,#fb645c 100%);
-	background: linear-gradient(to bottom, #fda29a 0%,#fb645c 100%);
+	background: #fb645c;
 }
 .tag-color-setter.red {
 	color: #fb645c;
@@ -96,12 +87,7 @@ button.tag.red {
 }
 
 span.tag.blue {
-	background: #a7d1ff;
-	background: -moz-linear-gradient(top, #a7d1ff 0%, #5aa3fe 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a7d1ff), color-stop(100%,#5aa3fe));
-	background: -webkit-linear-gradient(top, #a7d1ff 0%,#5aa3fe 100%);
-	background: -ms-linear-gradient(top, #a7d1ff 0%,#5aa3fe 100%);
-	background: linear-gradient(to bottom, #a7d1ff 0%,#5aa3fe 100%);
+	background: #5aa3fe;
 }
 .tag-color-setter.blue {
 	color: #5aa3fe;
@@ -112,12 +98,7 @@ button.tag.blue {
 }
 
 span.tag.green {
-	background: #d5ea98;
-	background: -moz-linear-gradient(top, #c9de8f 0%, #a4c644 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c9de8f), color-stop(100%,#a4c644));
-	background: -webkit-linear-gradient(top, #c9de8f 0%,#a4c644 100%);
-	background: -ms-linear-gradient(top, #c9de8f 0%,#a4c644 100%);
-	background: linear-gradient(to bottom, #c9de8f 0%,#a4c644 100%);
+	background: #a4c644;
 }
 .tag-color-setter.green {
 	color: #a4c644;
@@ -128,12 +109,7 @@ button.tag.green {
 }
 
 span.tag.orange {
-	background: #f9cd8f;
-	background: -moz-linear-gradient(top, #f9cd8f 0%, #f7aa47 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f9cd8f), color-stop(100%,#f7aa47));
-	background: -webkit-linear-gradient(top, #f9cd8f 0%,#f7aa47 100%);
-	background: -ms-linear-gradient(top, #f9cd8f 0%,#f7aa47 100%);
-	background: linear-gradient(to bottom, #f9cd8f 0%,#f7aa47 100%);
+	background: #f7aa47;
 }
 .tag-color-setter.orange {
 	color: #f7aa47;
@@ -144,12 +120,7 @@ button.tag.orange {
 }
 
 span.tag.purple {
-	background: #e6cced;
-	background: -moz-linear-gradient(top, #e6cced 0%, #c08dd8 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6cced), color-stop(100%,#c08dd8));
-	background: -webkit-linear-gradient(top, #e6cced 0%,#c08dd8 100%);
-	background: -ms-linear-gradient(top, #e6cced 0%,#c08dd8 100%);
-	background: linear-gradient(to bottom, #e6cced 0%,#c08dd8 100%);
+	background: #c08dd8;
 }
 .tag-color-setter.purple {
 	color: #c08dd8;
@@ -160,12 +131,7 @@ button.tag.purple {
 }
 
 span.tag.yellow {
-	background: #faf297;
-	background: -moz-linear-gradient(top, #faf297 0%, #efdb47 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#faf297), color-stop(100%,#efdb47));
-	background: -webkit-linear-gradient(top, #faf297 0%,#efdb47 100%);
-	background: -ms-linear-gradient(top, #faf297 0%,#efdb47 100%);
-	background: linear-gradient(to bottom, #faf297 0%,#efdb47 100%);
+	background: #efdb47;
 }
 .tag-color-setter.yellow {
 	color: #efdb47;
@@ -178,20 +144,13 @@ button.tag.yellow {
 
 /* Tag selector */
 .tag-selector {
-	padding: 5px;
-	background: #444;
-	border: 1px solid #CCCCCC;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-	border-radius: 4px;
-	margin-bottom: 5px;
-	color: white;
-	min-height: 24px;
+	color: #444;
+	min-height: 26px;
 }
 
 .tag-selector input[type=text],
 .tag-selector .tag {
 	margin: 2px;
-	box-shadow: none;
 	vertical-align: middle;
 	display: inline-block;
 }
@@ -206,9 +165,8 @@ button.tag.yellow {
 
 .tag-selector input[type=text] {
 	border: 0;
-	color: white;
 	background: white;
-	height: 18px;
+	height: 20px;
 
 	margin: 2px 10px 2px 5px;
 	background: none;
@@ -221,9 +179,9 @@ button.tag.yellow {
 }
 
 .tag-selector .all-tags {
-	margin-top: 4px;
+	margin-top: 10px;
 	padding-top: 4px;
-	border-top: 1px #777777 dashed;
+	border-top: 1px #DDDDDD dashed;
 }
 
 .tag-selector .all-tags h6 {

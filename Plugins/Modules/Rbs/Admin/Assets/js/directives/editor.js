@@ -733,8 +733,27 @@
 					 * @return Boolean
 					 */
 					scope.isUnchanged = function isUnchangedFn () {
-						// TODO Only checks for ID (or IDs) for sub-documents.
-						return angular.equals(scope.document, scope.original);
+						var p, dv, ov;
+						for (p in scope.document)
+						{
+							if (p !== 'META$' && scope.document.hasOwnProperty(p))
+							{
+								dv = scope.document[p];
+								ov = scope.original ? scope.original[p] : undefined;
+								// For sub-documents, we only need to check the ID.
+								if (Utils.isDocument(dv) && Utils.isDocument(ov)) {
+									if (dv.id !== ov.id) {
+										return false;
+									}
+								}
+								else {
+									if (! angular.equals(dv, ov)) {
+										return false;
+									}
+								}
+							}
+						}
+						return true;
 					};
 
 

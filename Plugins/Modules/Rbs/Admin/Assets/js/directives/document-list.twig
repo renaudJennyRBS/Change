@@ -102,7 +102,7 @@
 		</ul>
 	</div>
 
-	<div ng-hide="(! collection.length && ! busy) || disablePagination">
+	<footer ng-hide="(! collection.length && ! busy) || disablePagination">
 
 			<div class="pull-right">
 				<ul class="pagination pagination-sm" style="margin-top:0">
@@ -153,6 +153,6 @@
 				<strong ng-show="busy" style="margin-left:1em;"><i class="icon-spinner icon-spin icon-large"></i> {{ i18n('m.rbs.admin.admin.loading', ['ucf']) }}</strong>
 			</div>
 
-	</div>
+	</footer>
 
 </div>

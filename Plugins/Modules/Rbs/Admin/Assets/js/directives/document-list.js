@@ -68,7 +68,7 @@
 			var	html,
 				quickActionsHtml;
 
-			html = '<div class="quick-actions popover right"><div class="arrow"></div><div class="popover-content clearfix">';
+			html = '<div class="quick-actions popover bottom"><div class="arrow"></div><div class="popover-content clearfix">';
 
 			function buildDefault () {
 				var out = buildDeleteAction();
@@ -84,8 +84,8 @@
 						'</a>' +
 						'<div class="quick-action danger" ng-show="deleteConfirm[$index]">' +
 							'<i class="icon-trash"></i> ?' +
-							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">' + i18n.trans('m.rbs.admin.admin.js.yes') + '</button>' +
-							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">' + i18n.trans('m.rbs.admin.admin.js.no') + '</button></span>' +
+							'<span class="pull-right"><button type="button" class="btn btn-danger btn-xs" ng-click="remove(doc, $event)">' + i18n.trans('m.rbs.admin.adminjs.yes') + '</button>' +
+							' <button type="button" class="btn btn-default btn-xs" ng-click="cancelDelete($index, $event)">' + i18n.trans('m.rbs.admin.adminjs.no') + '</button></span>' +
 						'</div>';
 			}
 
@@ -477,12 +477,12 @@
 
 					//if quickActions markup is not present, default quick actions are taken
 					//but if it present and empty, don't add the quick actions button
-					if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].length > 0) {
+					if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].contents.length > 0) {
 						$td.find('.primary-cell')
 							.prepend(
 								'<span class="pull-right quick-actions-buttons">' +
 									previewButton +
-									'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-collapse"></i></button>' +
+									'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-ellipsis-horizontal"></i></button>' +
 									buildQuickActionsHtml(dlid, tAttrs, localActions) +
 									'</span>'
 							);

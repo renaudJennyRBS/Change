@@ -60,10 +60,10 @@
 .fade-animation.ng-enter,
 .fade-animation.ng-leave,
 .fade-animation.ng-move {
-	-webkit-transition: 0.3s ease-in all;
-	-moz-transition: 0.3s ease-in all;
-	-o-transition: 0.3s ease-in all;
-	transition: 0.3s ease-in all;
+	-webkit-transition: 0.2s ease-in all;
+	-moz-transition: 0.2s ease-in all;
+	-o-transition: 0.2s ease-in all;
+	transition: 0.2s ease-in all;
 }
 
 .fade-animation.ng-enter {
