@@ -173,15 +173,6 @@
 	}]);
 
 
-	app.directive('rbsTodo', ['RbsChange.i18n', function (i18n) {
-		return {
-			'restrict'   : 'E',
-			'transclude' : true,
-			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">' + i18n.trans('m.rbs.admin.adminjs.todo') + '</span></div>'
-		};
-	}]);
-
-
 	/**
 	 * Directive that automatically gives the focus to an element when it is created/displayed.
 	 */
