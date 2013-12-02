@@ -475,14 +475,18 @@
 						previewButton = '<button type="button" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
 
-					$td.find('.primary-cell')
-						.prepend(
-							'<span class="pull-right quick-actions-buttons">' +
-								previewButton +
-								'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-collapse"></i></button>' +
-								buildQuickActionsHtml(dlid, tAttrs, localActions) +
-							'</span>'
-						);
+					//if quickActions markup is not present, default quick actions are taken
+					//but if it present and empty, don't add the quick actions button
+					if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].length > 0) {
+						$td.find('.primary-cell')
+							.prepend(
+								'<span class="pull-right quick-actions-buttons">' +
+									previewButton +
+									'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-collapse"></i></button>' +
+									buildQuickActionsHtml(dlid, tAttrs, localActions) +
+									'</span>'
+							);
+					}
 				}
 
 				$td.attr('ng-if', "isNormalCell(doc)");
@@ -1343,8 +1347,6 @@
 						Loading.stop();
 						if (reason) {
 							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading_list_error | ucf'), ErrorFormatter.format(reason));
-						} else {
-							NotificationCenter.clear();
 						}
 					}
 

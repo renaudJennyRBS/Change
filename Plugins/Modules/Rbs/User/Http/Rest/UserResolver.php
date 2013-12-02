@@ -6,11 +6,13 @@ use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
 use Rbs\User\Http\Rest\Actions\AddPermission;
 use Rbs\User\Http\Rest\Actions\AddPermissionRules;
+use Rbs\User\Http\Rest\Actions\AddUsersInGroup;
 use Rbs\User\Http\Rest\Actions\GetPermission;
 use Rbs\User\Http\Rest\Actions\GetPermissionRules;
 use Rbs\User\Http\Rest\Actions\RemovePermission;
 use Rbs\User\Http\Rest\Actions\GetUserTokens;
 use Rbs\User\Http\Rest\Actions\RemovePermissionRule;
+use Rbs\User\Http\Rest\Actions\RemoveUsersFromGroup;
 use Rbs\User\Http\Rest\Actions\RevokeToken;
 
 /**
@@ -110,6 +112,26 @@ class UserResolver
 			else if ($actionName === 'removePermissionRule')
 			{
 				$action = new RemovePermissionRule();
+				$event->setAction(function($event) use ($action) {$action->execute($event);});
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Administrator', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
+			}
+			else if ($actionName === 'removeUsersFromGroup')
+			{
+				$action = new RemoveUsersFromGroup();
+				$event->setAction(function($event) use ($action) {$action->execute($event);});
+				$authorisation = function() use ($event)
+				{
+					return $event->getPermissionsManager()->isAllowed('Administrator', $event->getAuthenticationManager()->getCurrentUser()->getId());
+				};
+				$event->setAuthorization($authorisation);
+			}
+			else if ($actionName === 'addUsersInGroup')
+			{
+				$action = new AddUsersInGroup();
 				$event->setAction(function($event) use ($action) {$action->execute($event);});
 				$authorisation = function() use ($event)
 				{

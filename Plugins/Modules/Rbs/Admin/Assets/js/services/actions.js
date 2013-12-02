@@ -9,7 +9,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n, ErrorFormatter) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n) {
 			function Actions () {
 
 				this.reset = function () {
@@ -63,14 +63,14 @@
 							}, function actionErrback(reason) {
 								Loading.stop();
 								// FIXME Localization
-								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", ErrorFormatter.format(reason), null, paramsObj);
+								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
 							});
 						} else {
 							promise.then(function actionCallback () {
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
 								// FIXME Localization
-								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", ErrorFormatter.format(reason), null, paramsObj);
+								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
 							});
 						}
 
@@ -345,9 +345,9 @@
 						// If there are corrections and/or localizations, ask the user what should be deleted.
 
 						// FIXME Localization
-						message = "Vous êtes sur le point de supprimer " + $filter('documentListSummary')($docs) + ".";
+						message = i18n.trans('m.rbs.admin.adminjs.action_delete_message | ucf', {DOCUMENTLISTSUMMARY: $filter('documentListSummary')($docs)});
 						if (correction) {
-							message += "<p>Certains documents ont des corrections en cours : seules les corrections seront supprimées.</p>";
+							message += "<p>" + i18n.trans('m.rbs.admin.adminjs.action_delete_with_correction_message | ucf') + "</p>";
 						}
 						confirmMessage = confirmMessage || null;
 
@@ -596,8 +596,8 @@
 				this.register({
 					name        : 'save',
 					models      : '*',
-					label       : "Enregistrer",
-					description : "Enregistrer les documents sélectionnés",
+					label       : i18n.trans('m.rbs.admin.adminjs.save | ucf'),
+					description : i18n.trans('m.rbs.admin.adminjs.save_description | ucf'),
 					icon        : "icon-ok",
 					selection   : "+",
 					loading     : true,
@@ -638,7 +638,7 @@
 							$embedDialog,
 							{
 								'contents': "<div class='apply-correction-options'/>",
-								'title': "Appliquer la correction ?"
+								'title': i18n.trans('m.rbs.admin.adminjs.action_apply_correction_ask | ucf')
 							},
 							$scope,
 							{
@@ -697,7 +697,7 @@
 							$embedDialog,
 							{
 								'contents' : '<reorder-panel documents="collection"></reorder-panel>',
-								'title'    : "<i class=\"" + this.icon + "\"></i> Réorganisation des éléments"
+								'title'    : "<i class=\"" + this.icon + "\"></i> " + i18n.trans('m.rbs.admin.adminjs.action_apply_correction_ask | ucf')
 							},
 							$scope,
 							{

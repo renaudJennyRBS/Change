@@ -1,8 +1,18 @@
 <div data-ng-controller="Rbs_User_Group_PublicProfileController">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></page-header>
-	<div class="media-body well well-small">
-		<h4 class="media-heading">(= document.label =) <small ng-if="document.identifier">@+(= document.identifier =)</small></h4>
-		<div class="well">
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>(= document.label =) <small ng-if="document.identifier">@+(= document.identifier =)</small></h4>
+		</div>
+		<div>
 			<dl class="dl-horizontal">
 				<dt>{{ i18n(propertyKey('Rbs_User_Group', 'label'), ['ucf']) }}</dt>
 				<dd>(= document.label =)</dd>
@@ -10,18 +20,16 @@
 				<dd>(= document.realm =)</dd>
 			</dl>
 		</div>
-		<div>
-			<h4>{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</h4>
-			<rbs-document-list data-dlid="DLUser1"
-				model="Rbs_User_User"
-				modification-date="false"
-				load-query="query">
-				<column name="pseudonym" primary="true"></column>
-				<column name="login"></column>
-				<column name="email"></column>
-				<quick-actions></quick-actions>
-			</rbs-document-list>
-		</div>
 	</div>
+	<h4>{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</h4>
+	<rbs-document-list data-dlid="DLUser1"
+		model="Rbs_User_User"
+		modification-date="false"
+		load-query="query"
+		actions="">
+		<column name="login" primary="true"></column>
+		<column name="email"></column>
+		<quick-actions></quick-actions>
+	</rbs-document-list>
 
 </div>

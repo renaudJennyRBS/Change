@@ -62,6 +62,9 @@
 	"variantgroup_visibility_head":{
 		"message":"visible dans les listes"
 	},
+	"variantgroup_visibility_not":{
+		"message":"non visible dans les listes"
+	},
 	"variantgroup_values_head":{
 		"message":"valeurs"
 	},

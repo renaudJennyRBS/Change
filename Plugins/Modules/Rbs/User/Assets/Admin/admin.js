@@ -20,6 +20,7 @@
 			$delegate.model('Rbs_User_Group')
 				.route('permission'  , 'Rbs/User/Group/:id/Permissions/', 'Document/Rbs/User/User/permission.twig')
 				.route('public-profile', 'Rbs/User/Group/:id/PublicProfile', 'Document/Rbs/User/Group/public-profile.twig')
+				.route('groupUsers', 'Rbs/User/Group/:id/GroupUsers', 'Document/Rbs/User/Group/group-users.twig')
 			;
 
 			$delegate.model('Rbs_User').route('home', 'Rbs/User', { 'redirectTo': 'Rbs/User/User/'});

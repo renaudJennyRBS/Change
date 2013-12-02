@@ -1284,7 +1284,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('rbsRowSettings', ['structureEditorService', '$timeout', 'RbsChange.Dialog', function (structureEditorService, $timeout, Dialog) {
+	app.directive('rbsRowSettings', ['structureEditorService', '$timeout', 'RbsChange.Dialog', 'RbsChange.i18n', function (structureEditorService, $timeout, Dialog, i18n) {
 
 		return {
 
@@ -1554,8 +1554,8 @@
 
 					Dialog.confirmLocal(
 						rowEl.children().get(index),
-						"Supprimer la colonne ?",
-						"<strong>Vous êtes sur le point de supprimer la colonne ci-dessous.</strong><br/><br/>Tous les blocs qu'elle contient (" + scope.columns[index].childCount + ") seront également supprimés de la page.",
+						i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_column | ucf'),
+						i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_column_confirm | ucf', {CHILDCOUNT: scope.columns[index].childCount}),
 						{"placement": "top"}
 					).then(function () {
 						if (index === scope.highlightedColIndex) {
@@ -1608,8 +1608,8 @@
 					var block = ctrl.getSelectedBlock();
 					Dialog.confirmLocal(
 						block,
-						"Supprimer le groupe de blocs ?",
-						"<strong>Vous êtes sur le point de supprimer le groupe de blocs ci-dessous.</strong>",
+						i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_group | ucf'),
+						"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_group_confirm | ucf') + "</strong>",
 						{"placement": "top"}
 					).then(function () {
 							ctrl.removeBlock(block);
@@ -1661,30 +1661,6 @@
 		};
 
 	}]);
-
-
-
-	var messages = {
-		NewBlock: "Nouveau bloc",
-		Text: "Ajouter une zone de texte",
-		Block: "Ajouter un bloc",
-		Document: "Ajouter un contenu",
-		Columns2Tooltip: "Ajouter une zone divisée en 2 colonnes",
-		Columns3Tooltip: "Ajouter une zone divisée en 3 colonnes",
-		columns: "colonnes",
-		DeleteBlock: "Supprimer le bloc",
-		DeleteColumns: "Supprimer la zone divisée en colonnes",
-		MoveBlock: "Déplacer le bloc",
-		InsertBlockLeft: "Insérer un bloc à gauche",
-		InsertBlockRight: "Insérer un bloc à droite",
-		InsertBlockTop: "Insérer un bloc au-dessus",
-		InsertBlockBottom: "Insérer un bloc en-dessous",
-		ThisBlockHasNoParameters: "<em class=\"muted\">Ce bloc n'a pas de paramètre.</em>",
-		UneditableBlockSuffix: " (bloc non modifiable)",
-		InsertBlockLabel: "Insérer un bloc",
-		InsertBlockAboveColumns: "Insérer un bloc au-dessus de la zone divisée en colonnes",
-		InsertBlockBelowColumns: "Insérer un bloc en-dessous de la zone divisée en colonnes"
-	};
 
 
 	//-------------------------------------------------------------------------
@@ -1766,7 +1742,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.directive('rbsBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', 'RbsChange.Dialog', '$timeout', '$http', '$compile', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile) {
+	app.directive('rbsBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', 'RbsChange.Dialog', '$timeout', '$http', '$compile', 'RbsChange.i18n', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile, i18n) {
 
 		return {
 			"restrict" : 'C',
@@ -1961,8 +1937,8 @@
 					var block = ctrl.getSelectedBlock();
 					Dialog.confirmLocal(
 						block,
-						"Supprimer le bloc ?",
-						"<strong>Vous êtes sur le point de supprimer le bloc ci-dessous.</strong>",
+						i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
+						"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') + "</strong>",
 						{"placement": "top"}
 					).then(function () {
 						ctrl.removeBlock(block);
@@ -2027,7 +2003,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('rbsBlockChooser', [ function () {
+	app.directive('rbsBlockChooser', ['RbsChange.i18n', function (i18n) {
 
 		return {
 
@@ -2038,12 +2014,12 @@
 
 			"template" :
 				'<div draggable="true" class="block" ng-click="selectBlock($event)">' +
-					'<i class="icon-question-sign"></i> Nouv. bloc' +
+					'<i class="icon-question-sign"></i>' + i18n.trans('m.rbs.admin.adminjs.structure_editor_new_block_shortened | ucf') +
 				'</div>',
 
 			"link" : function seBlockChooserLinkFn (scope, element, attrs, ctrl) {
 
-				element.attr('data-label', "Nouveau bloc");
+				element.attr('data-label', i18n.trans('m.rbs.admin.adminjs.structure_editor_new_block | ucf'));
 				scope.selectBlock = function ($event) {
 					$event.stopPropagation();
 					ctrl.selectBlock(element);

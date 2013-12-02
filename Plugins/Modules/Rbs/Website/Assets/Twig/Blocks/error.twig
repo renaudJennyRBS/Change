@@ -1,5 +1,5 @@
 {% if parameters.codeHttp == 404 %}
-<h4>Oups!, cette page n'est pas disponible.</h4>
+<h4>{{ i18n('m.rbs.website.front.error_404', ['ucf']) }}</h4>
 {% elseif parameters.codeHttp == 403 %}
-<h4>Oups!, vous n'avez pas les droits nécéssaires.</h4>
+<h4>{{ i18n('m.rbs.website.front.error_403', ['ucf']) }}</h4>
 {% endif %}

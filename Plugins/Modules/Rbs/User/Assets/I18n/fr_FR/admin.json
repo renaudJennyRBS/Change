@@ -14,6 +14,9 @@
 	"group_list":{
 		"message":"groupes"
 	},
+	"group_users_remove_from_group":{
+		"message":"retirer du groupe"
+	},
 	"confirm_remove_permission_rule":{
 		"message":"confirmer la suppression de la règle de permission $ROLE$ pour le privilège $PRIVILEGE$ sur la ressource $RESOURCE_ID$ ?"
 	},
@@ -127,6 +130,12 @@
 	},
 	"users_in_group":{
 		"message":"utilisateurs du groupe"
+	},
+	"add_users_in_group":{
+		"message":"ajouter des utilisateurs au groupe"
+	},
+	"users_in_group_picker_title":{
+		"message":"sélectionner les utilisateurs à ajouter au groupe"
 	},
 	"profile_lcid":{
 		"message":"langue"

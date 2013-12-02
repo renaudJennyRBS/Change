@@ -1,0 +1,61 @@
+<div data-ng-controller="Rbs_User_Group_GroupUsersController">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
+			<location href="(= 'Rbs_User_Group'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div rbs-aside-column>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="list-group-item" href="(= document | documentURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
+		</rbs-links-panel>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="list-group-item" href="(= document | documentURL:'productListItems' =)">{{ i18nAttr('m.rbs.user.admin.users_in_group', ['ucf']) }}</a>
+		</rbs-links-panel>
+	</div>
+
+	<div rbs-main-column>
+		<form novalidate="" class="form-horizontal">
+			<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></page-header>
+
+			<rbs-document-list data-dlid="DLGroupUsers"
+				model="Rbs_User_User"
+				load-query="groupUsersQuery"
+				extend="groupUsersList"
+				actions=""
+				reload="refresh()">
+				<quick-actions></quick-actions>
+				<action name="removeFromGroup" label="{{ i18nAttr('m.rbs.user.admin.group_users_remove_from_group', ['ucf']) }}"></action>
+				<column name="login" primary="true"></column>
+				<column name="email"></column>
+			</rbs-document-list>
+
+			<hr />
+
+			<h4>{{ i18n('m.rbs.user.admin.add_users_in_group', ['ucf']) }}</h4>
+
+			<div class="control-group property">
+				<label class="control-label">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</label>
+				<div class="controls">
+					<div class="document-picker-multiple" ng-model="data.usersToAdd"
+						accepted-model="Rbs_User_User"
+						property-label="{{ i18nAttr('m.rbs.user.admin.users_in_group', ['ucf']) }}"
+						selector-title="{{ i18nAttr('m.rbs.user.admin.users_in_group_picker_title', ['ucf']) }}"
+						master-label="(= document.label =)"
+						allow-edition="false"
+						allow-creation="false"
+						disable-reordering="true">
+					</div>
+
+					<div class="btn-toolbar">
+						<button type="button" class="btn btn-primary" ng-click="addUsersFromPicker()" ng-disabled="disableAdd">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+</div>

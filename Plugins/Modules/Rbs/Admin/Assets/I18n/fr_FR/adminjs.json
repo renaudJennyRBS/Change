@@ -14,6 +14,12 @@
 	"loading":{
 		"message":"chargement..."
 	},
+	"loading_not":{
+		"message":"aucun chargement en cours"
+	},
+	"please_wait":{
+		"message":"merci de bien vouloir patienter :)"
+	},
 	"loading_document":{
 		"message":"chargement du document..."
 	},
@@ -122,8 +128,17 @@
 	"action_delete_help":{
 		"message":"supprimer les documents sélectionnés"
 	},
+	"action_delete_message":{
+		"message":"Vous êtes sur le point de supprimer $DOCUMENTLISTSUMMARY$."
+	},
+	"action_delete_with_correction_message":{
+		"message":"certains documents ont des corrections en cours : seules les corrections seront supprimées."
+	},
 	"action_reorder":{
 		"message":"réorganiser"
+	},
+	"action_reorder_title":{
+		"message":"réorganisation des éléments"
 	},
 	"action_reorder_help":{
 		"message":"réorganiser les documents de la liste ci-dessous"
@@ -133,6 +148,9 @@
 	},
 	"action_apply_correction_help":{
 		"message":"appliquer la correction sur les documents sélectionnés"
+	},
+	"action_apply_correction_ask":{
+		"message":"appliquer la correction ?"
 	},
 	"action_add_to_clipboard":{
 		"message":"ajouter au Presse-papier"
@@ -152,6 +170,12 @@
 	"action_deactivate_help":{
 		"message":"désactiver les documents sélectionnés"
 	},
+	"save":{
+		"message":"enregistrer"
+	},
+	"save_description":{
+		"message":"enregistrer les documents sélectionnés"
+	},
 	"save_error":{
 		"message":"L'enregistrement a échoué"
 	},
@@ -169,6 +193,9 @@
 	},
 	"confirmation":{
 		"message":"confirmation"
+	},
+	"confirmation_request":{
+		"message":"demande de confirmation"
 	},
 	"help":{
 		"message":"aide"
@@ -286,5 +313,41 @@
 	},
 	"timeinterval_seconds":{
 		"message":"secondes"
+	},
+	"todo":{
+		"message":"en cours de développement..."
+	},
+	"structure_editor_remove_block":{
+		"message":"supprimer le bloc ?"
+	},
+	"structure_editor_remove_block_confirm":{
+		"message":"vous êtes sur le point de supprimer le kbloc ci-dessous."
+	},
+	"structure_editor_remove_block_group":{
+		"message":"supprimer le groupe de blocs ?"
+	},
+	"structure_editor_remove_block_group_confirm":{
+		"message":"vous êtes sur le point de supprimer le groupe de blocs ci-dessous."
+	},
+	"structure_editor_remove_column":{
+		"message":"supprimer la colonne ?"
+	},
+	"structure_editor_remove_column_confirm":{
+		"message":"<strong>Vous êtes sur le point de supprimer la colonne ci-dessous.</strong><br/><br/>Tous les blocs qu'elle contient ($CHILDCOUNT$) seront également supprimés de la page."
+	},
+	"structure_editor_new_block":{
+		"message":"Nouveau bloc"
+	},
+	"structure_editor_new_block_shortened":{
+		"message":"Nouv. bloc"
+	},
+	"error_formatter_properties_not_valid":{
+		"message":"les propriétés suivantes ne sont pas valides :"
+	},
+	"error_formatter_property_not_expected":{
+		"message":"la propriété '$PROPERTY$' n'a pas le type attendu ('$DATATYPE$')."
+	},
+	"error_formatter_exception_72002":{
+		"message":"vous devez vous reconnecter avec votre nom d'utilisateur et votre mot de passe. (Code de l'erreur : 72002)"
 	}
 }

@@ -186,7 +186,7 @@
 							</th>
 							<th scope="col">
 								<button type="button" class="btn btn-xs btn-info pull-right"
-								        title="Afficher les changements"
+								        title="{{ i18nAttr('m.rbs.admin.admin.show_changes', ['ucf']) }}"
 								        ng-click="correctionData.advancedDiffs = ! correctionData.advancedDiffs"
 								        ng-class="{'active': correctionData.advancedDiffs}"><i class="icon-lightbulb"></i> {{ i18n('m.rbs.admin.admin.diff', ['ucf']) }}</button>
 								{{ i18n('m.rbs.admin.admin.fixed_value', ['ucf']) }}<br/>
