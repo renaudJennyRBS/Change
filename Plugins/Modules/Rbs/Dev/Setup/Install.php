@@ -15,7 +15,6 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
-		$configuration->addPersistentEntry('Rbs/Admin/Events/Manager/Rbs_Dev', '\Rbs\Dev\Admin\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Dev',
 			'\Rbs\Dev\Events\SharedListeners');
 
