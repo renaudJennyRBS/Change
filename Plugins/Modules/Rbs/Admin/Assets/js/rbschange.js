@@ -177,7 +177,7 @@
 		return {
 			'restrict'   : 'E',
 			'transclude' : true,
-			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">' + i18n.trans('m.admin.adminjs.todo') + '</span></div>'
+			'template'   : '<div class="alert alert-danger">TODO <span ng-transclude="">' + i18n.trans('m.rbs.admin.adminjs.todo') + '</span></div>'
 		};
 	}]);
 

@@ -1,9 +1,18 @@
 <div data-ng-controller="Rbs_User_User_PublicProfileController">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
 	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></page-header>
-	<div class="media-body">
-		<h4 class="media-heading">(= document.label =) <small ng-if="document.login">@(= document.login =)</small></h4>
-		<div class="well">
-			<rbs-avatar ng-if="document.id" size="128" user-id="(= document.id =)"></rbs-avatar>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<rbs-avatar ng-if="document.id" size="128" user-id="(= document.id =)"></rbs-avatar><h4>(= document.label =) <small ng-if="document.login">@(= document.login =)</small></h4>
+		</div>
+		<div>
 			<dl class="dl-horizontal">
 				<dt>{{ i18n(propertyKey('Rbs_User_User', 'label'), ['ucf']) }}</dt>
 				<dd>(= document.label =)</dd>
@@ -13,16 +22,16 @@
 				<dd>(= document.active | rbsBoolean =)</dd>
 			</dl>
 		</div>
-		<h4>{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</h4>
-		<rbs-document-list data-dlid="DLGroup1"
-			model="Rbs_User_Group"
-			modification-date="false"
-			load-query="query"
-			actions="">
-			<column name="label" primary="true"></column>
-			<column name="realm"></column>
-			<quick-actions></quick-actions>
-		</rbs-document-list>
 	</div>
+	<h4>{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</h4>
+	<rbs-document-list data-dlid="DLGroup1"
+		model="Rbs_User_Group"
+		modification-date="false"
+		load-query="query"
+		actions="">
+		<column name="label" primary="true"></column>
+		<column name="realm"></column>
+		<quick-actions></quick-actions>
+	</rbs-document-list>
 
 </div>

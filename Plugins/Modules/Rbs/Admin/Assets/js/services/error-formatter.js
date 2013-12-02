@@ -11,7 +11,9 @@
 
 				'VALIDATION-ERROR' :
 					function (data, context) {
-						var message = i18n.trans('m.admin.adminjs.error_formatter_properties_not_valid | ucf') + '<dl>';
+						console.log('data:', data);
+						console.log('context', context);
+						var message = i18n.trans('m.rbs.admin.adminjs.error_formatter_properties_not_valid | ucf') + '<dl>';
 						angular.forEach(data.data['properties-errors'], function (messages, property) {
 							if (context && context.$propertyInfoProvider && context.$propertyInfoProvider[property]) {
 								var section = context.$propertyInfoProvider[property].section.id || null;
