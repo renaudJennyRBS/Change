@@ -26,7 +26,7 @@ class StorageUri extends \Zend\Validator\AbstractValidator
 			$this->error(self::INVALID);
 			return false;
 		}
-		if (!preg_match('/^change:\/\/([A-Za-z0-9]+)\/(.+)$/', $value))
+		if (!preg_match('/^change:\/\/([A-Za-z0-9_]+)\/(.+)$/', $value))
 		{
 			$this->setValue($value);
 			$this->error(self::INVALID);

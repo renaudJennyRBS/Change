@@ -176,14 +176,14 @@
 
 					// Check for files to upload...
 					if ($element) {
-						$element.find('image-uploader,[image-uploader],.image-uploader').each(function () {
+						$element.find('rbs-uploader,[rbs-uploader],.rbs-uploader').each(function () {
 							var scope = angular.element($(this)).scope();
 							if (angular.isFunction(scope.upload)) {
 								if (isPromise(promise = scope.upload())) {
 									preSavePromises.push(promise);
 								}
 							} else {
-								throw new Error("Could not find 'upload()' method in imageUploader's scope.");
+								throw new Error("Could not find 'upload()' method in rbsUploader's scope.");
 							}
 						});
 					}
