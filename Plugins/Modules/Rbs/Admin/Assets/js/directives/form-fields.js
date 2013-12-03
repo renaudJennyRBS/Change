@@ -17,7 +17,8 @@
 	registerFieldDirective('PickerMultiple', '<div class="document-picker-multiple"></div>', '.document-picker-multiple');
 	registerFieldDirective('Date', '<date-selector></date-selector>', 'date-selector');
 	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
-	registerFieldDirective('Image', '<div class="image-uploader" storage-name="images"></div>', '.image-uploader');
+	registerFieldDirective('Image', '<div class="rbs-uploader image-uploader" storage-name="images" file-accept="image/*"></div>', '.image-uploader');
+	registerFieldDirective('File', '<div class="rbs-uploader file-uploader" storage-name="files" file-accept="*"></div>', '.file-uploader');
 	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
 
 
