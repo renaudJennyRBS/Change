@@ -13,33 +13,17 @@
 			input-class="form-control">
 		</rbs-field-text>
 
-		<rbs-field-rich-text property="description"
-			label="{{ i18nAttr(propertyKey("Rbs_Catalog_Attribute", "description"), ['ucf']) }}">
-			<div class="help-block">{{ i18n('m.rbs.catalog.admin.attribute_description_help', ['ucf']) }}</div>
-		</rbs-field-rich-text>
-
-		<rbs-field-boolean property="axis"
-				label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'axis'), ['ucf']) }}">
-		</rbs-field-boolean>
-
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'visibility'), ['ucf']) }}">
-			<rbs-collection-multiple-item-selector ng-model="document.visibility"
-				collection-code="Rbs_Catalog_Collection_AttributeVisibility" />
-		</rbs-field>
+		<hr />
 
 		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}">
 			<select ng-model="document.valueType" class="form-control" required="required"
 				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes">
 				<option value=""></option>
-				</select>
+			</select>
 		</rbs-field>
 
+
 		<div data-ng-hide="document.valueType == 'Group'">
-			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'Boolean'">
-				<rbs-field-boolean property="requiredValue"
-					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'requiredValue'), ['ucf']) }}">
-				</rbs-field-boolean>
-			</div>
 
 			<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'DocumentId' || document.valueType == 'DocumentIdArray' || document.valueType == 'Property'">
 				<rbs-field-text property="defaultValue"
@@ -50,7 +34,7 @@
 			<div data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'DocumentId'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'collectionCode'), ['ucf']) }}">
 					<select ng-model="document.collectionCode" class="form-control"
-							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">
+						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">
 						<option value=""></option>
 					</select>
 				</rbs-field>
@@ -59,7 +43,7 @@
 			<div data-ng-show="document.valueType == 'Property'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'productProperty'), ['ucf']) }}">
 					<select ng-model="document.productProperty" class="form-control"
-							rbs-items-from-collection="Rbs_Catalog_Collection_AttributeProductProperties">
+						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeProductProperties">
 						<option value=""></option>
 					</select>
 				</rbs-field>
@@ -78,6 +62,26 @@
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.attribute_picker_title', ['ucf']) }}">
 			</rbs-field-picker-multiple>
 		</div>
+		<hr />
+
+		<rbs-field-boolean data-ng-disable="document.valueType == 'Text' || document.valueType == 'Boolean'" property="requiredValue"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'requiredValue'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field-boolean property="axis"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'axis'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'visibility'), ['ucf']) }}">
+			<rbs-collection-multiple-item-selector ng-model="document.visibility"
+				collection-code="Rbs_Catalog_Collection_AttributeVisibility" />
+		</rbs-field>
+
+		<rbs-field-rich-text property="description"
+			label="{{ i18nAttr(propertyKey("Rbs_Catalog_Attribute", "description"), ['ucf']) }}">
+			<div class="help-block">{{ i18n('m.rbs.catalog.admin.attribute_description_help', ['ucf']) }}</div>
+		</rbs-field-rich-text>
+
 	</fieldset>
 
 	<fieldset

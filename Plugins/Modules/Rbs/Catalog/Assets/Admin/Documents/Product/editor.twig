@@ -55,6 +55,7 @@
 		<div data-ng-repeat="attributeDef in attributesDef">
 			<div ng-if="attributeDef.attributes">
 				<h4>(= attributeDef.label | capitalize =)</h4>
+				<hr />
 				<div data-ng-repeat="attributeItemDef in attributeDef.attributes">
 
 					<rbs-field label="(= attributeItemDef.label | capitalize =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
@@ -68,8 +69,16 @@
 								<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
 								<switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></switch>
 								<date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></date-selector>
-								<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
-								<input type="text" data-ng-switch-when="Float" smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<div class="row" data-ng-switch-when="Integer">
+									<div class="col-xs-2">
+										<input type="number" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+									</div>
+								</div>
+								<div class="row" data-ng-switch-when="Float">
+									<div class="col-xs-2">
+										<input type="text"  smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+									</div>
+								</div>
 								<div class="document-picker-single" data-ng-switch-when="Document"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
