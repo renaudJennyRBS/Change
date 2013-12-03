@@ -48,8 +48,8 @@
 			replace  : true,
 			template :
 				'<span draggable="true" class="tag (= rbsTag.color =)">' +
-					'<i class="icon-user" ng-if="rbsTag.userTag" title="' + i18n.trans('m.rbs.tag.admin.js.usertag-text | ucf') + '" style="border-right:1px dotted white; padding-right:4px"></i> ' +
-					'<i class="icon-exclamation-sign" ng-if="rbsTag.unsaved" title="' + i18n.trans('m.rbs.tag.admin.js.tag-not-saved | ucf') + '" style="border-right:1px dotted white; padding-right:4px"></i> ' +
+					'<i class="icon-user" ng-if="rbsTag.userTag" title="' + i18n.trans('m.rbs.tag.adminjs.usertag_text | ucf') + '"></i> ' +
+					'<i class="icon-exclamation-sign" ng-if="rbsTag.unsaved" title="' + i18n.trans('m.rbs.tag.adminjs.tag_not_saved | ucf') + '"></i> ' +
 					'(= rbsTag.label =)' +
 					'<a ng-if="canBeRemoved" href tabindex="-1" class="tag-delete" ng-click="remove()"><i class="icon-remove"></i></a>' +
 				'</span>',
@@ -118,7 +118,6 @@
 
 				function updateFilter () {
 					scope.filteredTags = $filter('filter')(scope.tags, {'label': scope.filterTags});
-					//scope.filteredTags = $filter('orderBy')($filter('filter')(scope.tags, {'label': scope.filterTags}), 'label');
 				}
 
 				scope.$watch('filterTags', updateFilter, true);
@@ -260,17 +259,17 @@
 
 
 	/**
-	 * <rbs-tag-selector ng-model="document.tags"></rbs-tag-selector>
+	 * <rbs-tag-selector document="document"></rbs-tag-selector>
 	 */
 	app.directive(
-		'rbsTagSelector',
+		'rbsAsideTagSelector',
 		[
-			'$timeout', '$compile', 'RbsChange.ArrayUtils', 'RbsChange.TagService', 'RbsChange.i18n',
+			'$timeout', '$q', '$compile', 'RbsChange.ArrayUtils', 'RbsChange.TagService', 'RbsChange.i18n',
 			rbsTagSelectorFn
 		]
 	);
 
-	function rbsTagSelectorFn ($timeout, $compile, ArrayUtils, TagService, i18n) {
+	function rbsTagSelectorFn ($timeout, $q, $compile, ArrayUtils, TagService, i18n) {
 
 		var	autocompleteEl;
 
@@ -288,49 +287,32 @@
 		return {
 			restrict : 'E',
 			replace  : true,
-			require  : 'ngModel',
-			scope    : true,
-			template :
-				'<div class="tag-selector" ng-mousedown="focus($event)" ng-swipe-left="moveLeft()" ng-swipe-right="moveRight()">' +
-					'<span class="btn-toolbar pull-right">' +
-					'<a target="_blank" class="btn btn-xs btn-default" title="' + i18n.trans('m.rbs.tag.admin.js.manage-tags | ucf') + '" type="button" href="Rbs/Tag">' +
-					'<i class="icon-cog"></i>' +
-					'</a>' +
-					'<button class="btn btn-xs btn-default" title="' + i18n.trans('m.rbs.tag.admin.js.show-hide-all-tags | ucf') + '" type="button" ng-click="toggleShowAll($event)">' +
-					'<i ng-class="{true:\'icon-chevron-up\',false:\'icon-chevron-down\'}[showAll]"></i>' +
-					'</button>' +
-					'</span>' +
-					'<span ng-repeat="tag in tags">' +
-					'<span ng-if="! tag.input" rbs-tag="tag" on-remove="removeTag($index)"></span>' +
-					'<input autocapitalize="off" autocomplete="off" autocorrect="off" type="text" rbs-auto-size-input="" ng-if="tag.input" ng-keyup="autocomplete()" ng-keydown="keydown($event, $index)"></span>' +
-					'</span>' +
-					'<div class="all-tags clearfix" ng-show="showAll">' +
-					'<h6 ng-pluralize count="availTags.length" when="{0: \'' + i18n.trans('m.rbs.tag.adminjs.no_available_tag') + '\', ' +
-						'one: \'' + i18n.trans('m.rbs.tag.adminjs.available_tag') + '\', ' +
-						'other: \'' + i18n.trans('m.rbs.tag.adminjs.available_tags') + '\'}">' +
-					'</h6>' +
-					'<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span rbs-tag="tag"></span></a>' +
-					'</div>' +
-				'</div>',
+			scope    : {'document': '='},
+			templateUrl : 'Rbs/Tag/rbs-aside-tag-selector.twig',
 
 
 			link : function (scope, elm, attrs, ngModel) {
 
-				var inputIndex = -1, tempTagCounter = 0;
+				var inputIndex = -1,
+					tempTagCounter = 0;
 
-				ngModel.$render = function ngModelRenderFn () {
-					if (angular.isArray(ngModel.$viewValue)) {
-						scope.tags = angular.copy(ngModel.$viewValue);
-					} else {
-						scope.tags = [];
-					}
-					if (inputIndex === -1) {
-						scope.tags.push({'input': true});
-					} else {
-						scope.tags.splice(inputIndex, 0, {'input': true});
-					}
-				};
+				scope.tags = [{'input': true}];
+				scope.unsavedTags = [];
 
+				scope.$watch('document', function (doc)
+				{
+					if (doc && doc.id && doc.model)
+					{
+						doc.loadTags().then(function(tags) {
+							scope.tags = tags;
+							if (inputIndex === -1) {
+								scope.tags.push({'input': true});
+							} else {
+								scope.tags.splice(inputIndex, 0, {'input': true});
+							}
+						});
+					}
+				});
 
 				scope.availTags = loadAvailTags();
 				scope.showAll = false;
@@ -342,21 +324,56 @@
 					}
 				};
 
+
 				function getInput() {
 					return elm.find('input[type=text]');
 				}
 
-				function update () {
-					var value = [];
+
+				function update ()
+				{
+					var tags = [],
+						unsavedPromises = [];
+
+					scope.busy = true;
+
 					angular.forEach(scope.tags, function (tag, i) {
 						if (tag.input) {
 							inputIndex = i;
+						} else if (tag.unsaved) {
+							unsavedPromises.push(TagService.create(tag));
 						} else {
-							value.push(tag);
+							tags.push(tag);
 						}
 					});
-					ngModel.$setViewValue(value.length === 0 ? undefined : value);
+
+					function save () {
+						TagService.setDocumentTags(scope.document, tags).then(
+							function () {
+								scope.busy = false;
+							},
+							function () {
+								scope.busy = false;
+							}
+						);
+					}
+
+					if (unsavedPromises.length) {
+						$q.all(unsavedPromises).then(function () {
+							tags = [];
+							angular.forEach(scope.tags, function (tag) {
+								if (! tag.input && ! tag.unsaved) {
+									tags.push(tag);
+								}
+							});
+							save();
+						});
+					}
+					else {
+						save();
+					}
 				}
+
 
 				function backspace () {
 					if (scope.tags.length > 1) {
@@ -365,6 +382,7 @@
 						update();
 					}
 				}
+
 
 				function findTag (label) {
 					var i;
@@ -376,6 +394,7 @@
 					return null;
 				}
 
+
 				function add (value) {
 					var tag = findTag(value);
 					if (!tag) {
@@ -383,6 +402,7 @@
 					}
 					appendTag(tag);
 				}
+
 
 				function createTemporaryTag (value) {
 					return {
@@ -393,6 +413,7 @@
 					};
 				}
 
+
 				function appendTag (tag) {
 					if (!scope.isUsed(tag)) {
 						scope.tags.splice(inputIndex, 0, tag);
@@ -401,6 +422,7 @@
 					}
 				}
 				scope.appendTag = appendTag;
+
 
 				function moveInput (value, offset) {
 					if (value.length === 0 && (inputIndex+offset) < (scope.tags.length)) {
@@ -563,7 +585,7 @@
 					scope.suggestions = suggestions;
 
 					function buildSuggestionsList () {
-						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span rbs-tag="tag"></span></a><br/><small><em>' + i18n.trans('m.rbs.tag.admin.js.enter-selects-first-tag | ucf') + '</em></small>';
+						return '<a href ng-repeat="tag in suggestions" ng-click="autocompleteAdd(tag)"><span rbs-tag="tag"></span></a><br/><small><em>' + i18n.trans('m.rbs.tag.adminjs.enter_selects_first_tag | ucf') + '</em></small>';
 					}
 
 					if (suggestions.length) {

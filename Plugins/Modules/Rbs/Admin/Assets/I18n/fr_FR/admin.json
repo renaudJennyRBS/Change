@@ -1006,5 +1006,8 @@
 	},
 	"has_current_correction": {
 		"message":"une correction est en cours"
+	},
+	"saving": {
+		"message":"enregistrement"
 	}
 }

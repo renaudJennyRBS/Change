@@ -162,6 +162,7 @@
 .embedded-modal .form-actions {
 	margin: 10px -15px -10px -15px;
 	border-radius: 0 0 5px 5px;
+	padding: 10px 15px;
 }
 
 document-picker-single .input-append,

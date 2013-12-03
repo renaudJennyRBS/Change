@@ -49,8 +49,7 @@
 
 			link : function (scope, iElement, iAttrs)
 			{
-				// Get parent element on which the 'active' class should be set
-				var activeEl = iAttrs.rbsActiveRoute ? iElement.closest(iAttrs.rbsActiveRoute) : iElement,
+				var activeEl,
 					href;
 
 				function setHref (h)
@@ -62,15 +61,19 @@
 					}
 				}
 
-				href = setHref(iAttrs.href);
-
-				function isSameURL () {
+				function isSameURL ()
+				{
 					return href === $location.absUrl() || href === $location.path();
 				}
 
-				function updateStyle () {
+				function updateStyle ()
+				{
 					activeEl[isSameURL() ? 'addClass' : 'removeClass']('active');
 				}
+
+				// Get parent element on which the 'active' class should be set
+				activeEl = iAttrs.rbsActiveRoute ? iElement.closest(iAttrs.rbsActiveRoute) : iElement;
+				href = setHref(iAttrs.href);
 
 				// React to every route change and add/remove 'active' on parent element
 				$rootScope.$on('$routeChangeSuccess', updateStyle);
@@ -80,7 +83,6 @@
 				iAttrs.$observe('href', function (h)
 				{
 					setHref(h);
-					console.log("href=", href);
 					updateStyle();
 				});
 			}
@@ -190,6 +192,7 @@
 			restrict : 'E',
 			template :
 				'<rbs-aside-editor-menu></rbs-aside-editor-menu>' +
+				'<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>' +
 				'<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>' +
 				'<rbs-aside-timeline ng-hide="document.isNew()"></rbs-aside-timeline>' +
 				'<rbs-aside-seo ng-hide="document.isNew()" document="document"></rbs-aside-seo>'

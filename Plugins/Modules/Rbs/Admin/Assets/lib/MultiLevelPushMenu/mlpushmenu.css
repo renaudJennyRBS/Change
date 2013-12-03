@@ -201,6 +201,7 @@ html, body, .mp-container, .scroller {
 	color: #A2C200;
 	padding: 0 10px;
 	font-size: 1.7em;
+	font-weight: lighter;
 }
 
 .mp-menu.mp-overlap h2::before {
@@ -238,7 +239,7 @@ html, body, .mp-container, .scroller {
 
 .mp-menu ul li > a {
 	display: block;
-	padding: 0.5em 1em 0.5em 1.8em;
+	padding: 0.8em 1em 0.8em 1.8em;
 	outline: none;
 	box-shadow: inset 0 -1px rgba(0,0,0,0.2);
 	text-shadow: 0 0 1px rgba(255,255,255,0.1);
@@ -307,6 +308,7 @@ html, body, .mp-container, .scroller {
 .mp-menu .icon-chevron-left {
 	color: rgba(0, 0, 0, 0.1);
 	margin-left: -1em;
+	margin-right: 5px;
 	font-size:1.3em;
 	vertical-align: middle;
 }

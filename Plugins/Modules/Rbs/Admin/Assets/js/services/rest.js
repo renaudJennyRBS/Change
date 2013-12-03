@@ -146,22 +146,28 @@
 				};
 
 				ChangeDocument.prototype.loadTags = function () {
-					if (this.META$.tags === null) {
+					var q = $q.defer(),
+						doc = this,
+						p;
+
+					if (! this.META$.tags) {
 						this.META$.tags = [];
-						var doc = this, p;
 
 						if (doc.getTagsUrl() !== null) {
 							p = $http.get(doc.getTagsUrl(), getHttpConfig(transformResponseCollectionFn));
 							p.success(function (result) {
+								doc.META$.tags.length = 0;
 								angular.forEach(result.resources, function (r) {
 									doc.META$.tags.push(r);
 								});
+								q.resolve(result.resources);
 							});
-							return p;
 						}
 					}
-					var q = $q.defer();
-					q.resolve();
+					else {
+						q.resolve(doc.META$.tags);
+					}
+
 					return q.promise;
 				};
 

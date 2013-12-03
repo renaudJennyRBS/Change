@@ -65,7 +65,11 @@ textarea.ng-dirty.ng-invalid,
 select.ng-dirty.ng-invalid {
 	color: #b94a48;
 	border-color: #b94a48;
-	box-shadow: 0 0 6px #F8B9B7;
+	box-shadow: 0 0 0 2px #F8B9B7;
+}
+
+.form-control {
+	border-radius: 3px;
 }
 
 
@@ -81,4 +85,9 @@ select.ng-dirty.ng-invalid {
 	background-image: -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
 	transition: font-size 0.2s ease, margin 0.2s ease;
 	position: relative;
+}
+
+
+.form-control:focus {
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 0 2px rgba(102, 175, 233, 0.3);
 }

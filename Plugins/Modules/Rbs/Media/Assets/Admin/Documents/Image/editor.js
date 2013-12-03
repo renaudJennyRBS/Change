@@ -26,6 +26,10 @@
 					);
 				};
 
+				scope.preSave = function () {
+
+				};
+
 				scope.$watch('document.path', function (path) {
 					if (path && ! scope.document.label) {
 						var fileName = angular.element(element.find('.image-uploader').first()).scope().fileName;

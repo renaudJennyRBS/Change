@@ -117,24 +117,10 @@ h3.panel-title {
 	font-weight: bold;
 }
 
-.panel {
-	border-width: 2px;
-	border-radius: 3px;
-}
-
-.panel.panel-default {
-	border-color: rgba(0,0,0,0.15);
-}
 
 .panel .list-group-item:last-child,
 .panel .form-actions {
-	border-bottom-left-radius: 3px;
-	border-bottom-right-radius: 3px;
-}
-
-.panel .panel-heading {
-	border-top-left-radius: 3px;
-	border-top-right-radius: 3px;
+	border-radius: 0;
 }
 
 .panel-heading .close {
@@ -149,6 +135,63 @@ h3.panel-title {
 .panel-primary .panel-heading .close:hover {
 	opacity: 1;
 }
+
+
+.panel {
+	border-radius: 0;
+}
+
+.panel .panel-heading h3.panel-title {
+	font-size: 14pt;
+	font-variant: normal;
+	font-weight: lighter;
+	text-shadow: none;
+	text-transform: none;
+}
+
+
+.panel.panel-default {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border: 1px solid #BBBBBB;
+	box-shadow: 0 0 0 3px #EEEEEE;
+}
+
+.panel.panel-default .panel-heading {
+	background: #f0f0f0;
+}
+
+.panel.panel-default .panel-heading h3.panel-title {
+	color: #777777;
+	font-size: 14pt;
+	font-variant: normal;
+	font-weight: lighter;
+	text-shadow: none;
+	text-transform: none;
+}
+
+.panel.panel-success {
+	border-color: #A2C200;
+	box-shadow: 0 0 0 3px #f0f8dd;
+}
+
+.panel.panel-success .panel-heading {
+	background: #f0f8dd;
+}
+
+.panel.panel-success .panel-heading h3.panel-title {
+	color: #A2C200;
+}
+
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+	border-color: #EEEEEE;
+}
+
+
 
 .btn-toolbar .btn-group {
 	float: none;
@@ -184,6 +227,14 @@ h3.panel-title {
 .popover-content .list-group .list-group-item {
 	border: 0 none;
 }
+
+.dropdown-menu i[class^="icon-"],
+.dropdown-menu i[class*=" icon-"] {
+	display: inline-block;
+	text-align: center;
+	width: 16px;
+}
+
 
 /* rbs-form-simple */
 
@@ -248,6 +299,7 @@ h4.list-group-item:first-child {
 
 #workspace .page-header {
 	margin-top: 0;
+	margin-bottom: 8px;
 }
 
 #workspace .page-header h2 {
@@ -406,4 +458,28 @@ rbs-todo {
 /** JSTree fixes */
 .panel .jstree a {
 	height: auto;
+}
+
+
+.rbs-panel-busy {
+	background: rgba(0,0,0,0.6);
+	color: white;
+	position: absolute;
+	font-size: 20pt;
+	text-align: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	font-weight: lighter;
+}
+
+.panel-success .rbs-panel-busy {
+	background: rgba(162, 194, 0, 0.8);
+	text-shadow: 0 0 3px black;
+}
+
+.panel {
+	position: relative;
 }
