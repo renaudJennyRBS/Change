@@ -373,7 +373,9 @@
 	app.controller('Change.RootController', ['$rootScope', 'RbsChange.User', '$location', function ($rootScope, User, $location) {
 
 		if ($location.path() !== '/authenticate') {
-			User.init();
+			if (User.init()) {
+				$('#chg_loading_mask').hide();
+			}
 		}
 
 		$rootScope.$on('OAuth:AuthenticationSuccess', function () {
@@ -381,21 +383,19 @@
 			User.load().then(function () {
 				console.log(User.get(), $location.search()['route']);
 				$location.url($location.search()['route']);
+				$('#chg_loading_mask').hide();
 			});
 		});
 
 		$rootScope.logout = function () {
 			User.logout();
 		};
-
 	}]);
 
 
 	/**
 	 * Remove main loading mask.
 	 */
-	app.run(function () {
-		$('#chg_loading_mask').remove();
-	});
+	app.run(function () { });
 
 })( window.jQuery );

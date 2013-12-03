@@ -147,9 +147,11 @@
 			$rootScope.user = this.get();
 			if (OAuthService.hasOAuthData()) {
 				this.load();
+				return true;
 			}
 			else {
 				this.startAuthentication();
+				return false;
 			}
 		};
 
