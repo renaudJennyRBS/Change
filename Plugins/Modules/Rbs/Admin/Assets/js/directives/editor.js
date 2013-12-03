@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, Loading, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter)
+	function editorDirective ($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter)
 	{
 		var CORRECTION_CSS_CLASS = 'correction';
 
@@ -45,7 +45,6 @@
 					if ($scope.editMode === 'translate') {
 						translation = true;
 					}
-					Loading.start(i18n.trans('m.rbs.admin.admin.js | ucf'));
 
 					var document, documentId = 0, promise, defered, ctx;
 
@@ -528,8 +527,6 @@
 
 					$element.css('display', 'block');
 
-					Loading.stop();
-
 					// Call `$scope.onReady()` if present.
 					if (angular.isFunction($scope.onReady)) {
 						$scope.onReady();
@@ -824,7 +821,6 @@
 	editorDirective.$inject = [
 		'$rootScope', '$routeParams', '$q',
 		'$location',
-		'RbsChange.Loading',
 		'RbsChange.EditorManager',
 		'RbsChange.Utils',
 		'RbsChange.ArrayUtils',
@@ -926,7 +922,7 @@
 
 	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
 	{
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', 'RbsChange.UrlManager', 'RbsChange.Navigation', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, Loading, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings, UrlManager, Navigation)
+		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', 'RbsChange.UrlManager', 'RbsChange.Navigation', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings, UrlManager, Navigation)
 		{
 			var	localCopyRepo;
 

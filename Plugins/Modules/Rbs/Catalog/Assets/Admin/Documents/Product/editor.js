@@ -5,12 +5,11 @@
 	/**
 	 * @param $timeout
 	 * @param $http
-	 * @param Loading
 	 * @param REST
 	 * @param EditorManager
 	 * @constructor
 	 */
-	function Editor($timeout, $http, Loading, REST, EditorManager)
+	function Editor($timeout, $http, REST, EditorManager)
 	{
 		return {
 			restrict : 'C',
@@ -70,14 +69,9 @@
 					}
 					if (url)
 					{
-						Loading.start();
 						$http.get(url)
 							.success(function (data) {
 								scope.loadItems();
-								Loading.stop();
-							})
-							.error(function errorCallback(data, status) {
-								Loading.stop();
 							}
 						);
 					}
@@ -245,6 +239,6 @@
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.EditorManager'];
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.REST', 'RbsChange.EditorManager'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
 })();

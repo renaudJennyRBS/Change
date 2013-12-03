@@ -9,16 +9,18 @@
 	 * Controller for list.
 	 *
 	 * @param $scope
+	 * @param $q
+	 * @param $location
 	 * @param Breadcrumb
 	 * @param MainMenu
 	 * @param i18n
+	 * @param REST
 	 * @param Query
-	 * @param Loading
 	 * @param NotificationCenter
 	 * @param Utils
 	 * @constructor
 	 */
-	function ListController($scope, $q, $location, Breadcrumb, MainMenu, i18n, REST, Query, Loading, NotificationCenter, Utils)
+	function ListController($scope, $q, $location, Breadcrumb, MainMenu, i18n, REST, Query, NotificationCenter, Utils)
 	{
 		function initCurrentSection (section) {
 			$scope.currentSection = section;
@@ -48,7 +50,6 @@
 			$scope.loadingFunctions = true;
 			$scope.sectionFunctions = [];
 			$scope.allFunctions = [];
-			Loading.start();
 			$q.all([
 				REST.action('collectionItems', { 'code': 'Rbs_Website_AvailablePageFunctions' }),
 				REST.query(Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $scope.currentSection.id), {'column': ['page', 'section', 'functionCode']})
@@ -63,12 +64,10 @@
 							func.functionLabel = $scope.allFunctions[func.functionCode].label;
 						}
 					});
-					Loading.stop();
 				},
 				function (error) {
 					$scope.loadingFunctions = false;
 					NotificationCenter.error("Fonctions", ErrorFormatter.format(error));
-					Loading.stop();
 				}
 			);
 		}
@@ -106,7 +105,6 @@
 				}
 
 				setListBusy(true);
-				Loading.start();
 				// Retrieve "index" SectionPageFunction for the current section (if any).
 				REST.query(Query.simpleQuery('Rbs_Website_SectionPageFunction', {
 					'section' : $scope.currentSection.id,
@@ -120,7 +118,6 @@
 							spf = spf.resources[0];
 							// Nothing to do it the index page is the same.
 							if (spf.page && spf.page.id === page.id) {
-								Loading.stop();
 								return;
 							}
 						}
@@ -136,13 +133,11 @@
 							function () {
 								setListBusy(false);
 								reloadList();
-								Loading.stop();
 							},
 							// Error
 							function (error)
 							{
 								setListBusy(false);
-								Loading.stop();
 								NotificationCenter.error(i18n.trans('m.rbs.website.adminjs.index_page_error | ucf'), error);
 							}
 						);
@@ -151,7 +146,6 @@
 					function (error)
 					{
 						setListBusy(false);
-						Loading.stop();
 						NotificationCenter.error(i18n.trans('m.rbs.website.adminjs.index_page_error | ucf'), error);
 					}
 				);
@@ -182,7 +176,7 @@
 	ListController.$inject = [
 		'$scope', '$q', '$location',
 		'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Query',
-		'RbsChange.Loading', 'RbsChange.NotificationCenter', 'RbsChange.Utils'
+		'RbsChange.NotificationCenter', 'RbsChange.Utils'
 	];
 	app.controller('Rbs_Website_Topic_ListController', ListController);
 

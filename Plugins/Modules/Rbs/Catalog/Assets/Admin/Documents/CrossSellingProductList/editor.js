@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function Editor(REST, $routeParams, ProductListService, Breadcrumb, i18n, UrlManager, Loading)
+	function Editor(REST, $routeParams, ProductListService, Breadcrumb, i18n, UrlManager)
 	{
 		return {
 			restrict: 'EC',
@@ -43,6 +43,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.ProductListService', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Loading'];
+	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.ProductListService', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
 })();

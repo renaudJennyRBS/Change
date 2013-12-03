@@ -11,13 +11,13 @@
 	 * @param Breadcrumb
 	 * @param i18n
 	 * @param REST
-	 * @param Loading
 	 * @param $routeParams
 	 * @param $http
 	 * @param SelectSession
+	 * @param UrlManager
 	 * @constructor
 	 */
-	function ProductsController($scope, Breadcrumb, i18n, REST, Loading, $routeParams, $http, SelectSession, UrlManager)
+	function ProductsController($scope, Breadcrumb, i18n, REST, $routeParams, $http, SelectSession, UrlManager)
 	{
 		Breadcrumb.setLocation([
 			[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
@@ -26,7 +26,6 @@
 
 		$scope.List = {};
 
-		Loading.start(i18n.trans('m.rbs.admin.adminjs.loading_document | ucf'));
 		REST.resource('Rbs_Catalog_ProductList', $routeParams.id).then(function (productList)
 		{
 			$scope.productsUrl = productList.META$.links['productListItems'].href;
@@ -44,7 +43,6 @@
 					[productList.label, UrlManager.getUrl(productList, 'form')]
 				);
 			}
-			Loading.stop();
 		});
 
 		REST.action('collectionItems', { code: 'Rbs_Catalog_Collection_ProductSortOrders' }).then(function (data) {
@@ -100,14 +98,11 @@
 				docIds.push($scope.List.productsToAdd[i].id);
 			}
 			var url = REST.getBaseUrl('rbs/catalog/productlistitem/addproducts');
-			Loading.start(i18n.trans('m.rbs.admin.adminjs.loading_document | ucf'));
 			$http.post(url, {"productListId": $scope.productList.id , "documentIds": docIds}).success(function (data) {
-				Loading.stop();
 				$scope.$broadcast('Change:DocumentList:DLRbsCatalogProductListProducts:call', { 'method' : 'reload' });
 
 			}).error(function errorCallback (data, status) {
 					data.httpStatus = status;
-					Loading.stop();
 			});
 			$scope.List.productsToAdd = [];
 		};
@@ -128,13 +123,13 @@
 		}
 	}
 
-	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST', 'RbsChange.Loading',
+	ProductsController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.REST',
 		'$routeParams', '$http', 'RbsChange.SelectSession', 'RbsChange.UrlManager'];
 	app.controller('Rbs_Catalog_ProductList_ProductsController', ProductsController);
 
 
 
-	function ProductListController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
+	function ProductListController($scope, $routeParams, $location, Utils, Workspace, Breadcrumb, REST, i18n, UrlManager, Query)
 	{
 		$scope.params = {};
 		$scope.List = {};
@@ -167,7 +162,7 @@
 		}
 	}
 
-	ProductListController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
+	ProductListController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
 	app.controller('Rbs_Catalog_ProductList_ProductListController', ProductListController);
 
 
@@ -175,21 +170,18 @@
 	 * List actions.
 	 */
 	app.config(['$provide', function ($provide) {
-		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', 'RbsChange.Loading', function (Actions, REST, $http, i18n, Loading) {
+		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', function (Actions, REST, $http, i18n) {
 			var action = function (ids, $scope, operation, priorities)
 			{
 				if ((operation == 'remove'))
 				{
 					var url = REST.getBaseUrl('rbs/catalog/productlistitem/delete');
-					Loading.start(i18n.trans('m.rbs.admin.adminjs.loading_document | ucf'));
 					$http.post(url, {"documentIds": ids}).success(function (data) {
-						Loading.stop();
 						$scope.refresh();
 
 					})
 					.error(function errorCallback (data, status) {
 							data.httpStatus = status;
-							Loading.stop();
 							$scope.refresh();
 					});
 				}

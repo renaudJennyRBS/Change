@@ -39,7 +39,7 @@
 	 * - affect tags in a Document's Editor (post-save).
 	 * - build predicates for "filter:hasTag" in <rbs-document-list/>.
 	 */
-	app.run(['RbsChange.TagService', 'RbsChange.Loading', 'RbsChange.Events', 'RbsChange.i18n', '$rootScope', '$q', '$timeout', function (TagService, Loading, Events, i18n, $rootScope, $q, $timeout)
+	app.run(['RbsChange.TagService', 'RbsChange.Events', 'RbsChange.i18n', '$rootScope', '$q', '$timeout', function (TagService, Events, i18n, $rootScope, $q, $timeout)
 	{
 		// Filter 'hasTag' for <rbs-document-list/>.
 		$rootScope.$on(Events.DocumentListApplyFilter, function (event, args) {
@@ -96,14 +96,9 @@
 					documents = $(this).isolateScope().selectedDocuments;
 				if (tag && documents && documents.length) {
 					$timeout(function () {
-						Loading.start(i18n.trans('m.rbs.tag.admin.js.applying-tags | ucf | etc'));
-						affectTagToDocuments(JSON.parse(tag), documents).then(
-							function () {
-								Loading.stop();
-							},
+						affectTagToDocuments(JSON.parse(tag), documents).catch(
 							function () {
 								// TODO Notify user.
-								Loading.stop();
 							}
 						);
 					});

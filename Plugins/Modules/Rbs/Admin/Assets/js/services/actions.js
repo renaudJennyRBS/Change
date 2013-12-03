@@ -9,7 +9,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n, ErrorFormatter) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, i18n, ErrorFormatter) {
 			function Actions () {
 
 				this.reset = function () {
@@ -38,10 +38,6 @@
 						// Call the action with the correct parameters provided in the 'paramsObj' object.
 						actionObject = this.actions[method];
 
-						if (actionObject.loading) {
-							Loading.start("Action " + (actionObject.label || actionName));
-						}
-
 						if (actionObject.__execFn) {
 							promise = this.actions[method].__execFn.apply(
 									this.actions[method],
@@ -58,10 +54,8 @@
 
 						if (actionObject.loading) {
 							promise.then(function actionCallback () {
-								Loading.stop();
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
-								Loading.stop();
 								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.action_error | ucf', {ACTION: (actionObject.label || actionName)}), reason, paramsObj);
 							});
 						} else {
