@@ -84,9 +84,11 @@
 	 * @param User
 	 * @param REST
 	 * @param $http
+	 * @param i18n
+	 * @param NotificationCenter
 	 * @constructor
 	 */
-	function RbsUserConnectionInfoController($scope, User, REST, $http)
+	function RbsUserConnectionInfoController($scope, User, REST, $http, i18n, NotificationCenter)
 	{
 		var originalUser;
 		$scope.currentPassword = '';
@@ -97,8 +99,7 @@
 					$scope.user = angular.copy(user);
 				}
 			);
-			$scope.wrongPassword = false;
-			$scope.invalidLogin = false;
+			NotificationCenter.clear();
 			$scope.form.$setPristine();
 		}
 
@@ -107,18 +108,26 @@
 		});
 
 		$scope.saveConnectionInfo = function () {
-			$http.put(REST.getBaseUrl('admin/connectionInfo'), {user: $scope.user, password: $scope.currentPassword}).success(function (){
-				initUser();
-			}).error(function (dataError){
-					if (dataError.message == 'wrong password given') {
-						$scope.wrongPassword = true;
-					}
-					else if (dataError.message == 'Invalid document properties. (login)') {
-						$scope.invalidLogin = true;
-					}
-					console.error(dataError);
-				});
-			$scope.currentPassword = '';
+			if ($scope.currentPassword != '') {
+				$http.put(REST.getBaseUrl('admin/connectionInfo'), {user: $scope.user, password: $scope.currentPassword}).success(function (){
+					initUser();
+				}).error(function (dataError){
+						if (dataError.message == 'wrong password given') {
+							NotificationCenter.error(null, i18n.trans('m.rbs.user.adminjs.profile_wrong_password_given | ucf'));
+						}
+						else if (dataError.message == 'Invalid document properties. (login)') {
+							NotificationCenter.error(null, i18n.trans('m.rbs.user.adminjs.profile_invalid_login | ucf'));
+						}
+						else if (dataError.message == 'Invalid document properties. (email)') {
+							NotificationCenter.error(null, i18n.trans('m.rbs.user.adminjs.profile_invalid_email | ucf'));
+						}
+						console.error(dataError);
+					});
+				$scope.currentPassword = '';
+			}
+			else {
+				NotificationCenter.error(null, i18n.trans('m.rbs.user.adminjs.profile_no_password_given | ucf'));
+			}
 		};
 
 		$scope.revert = function () {
@@ -131,7 +140,7 @@
 
 	}
 
-	RbsUserConnectionInfoController.$inject = ['$scope', 'RbsChange.User', 'RbsChange.REST', '$http'];
+	RbsUserConnectionInfoController.$inject = ['$scope', 'RbsChange.User', 'RbsChange.REST', '$http', 'RbsChange.i18n', 'RbsChange.NotificationCenter'];
 	app.controller('Rbs_User_ConnectionInfo_Controller', RbsUserConnectionInfoController);
 
 	/**
@@ -139,9 +148,11 @@
 	 * @param User
 	 * @param REST
 	 * @param $http
+	 * @param i18n
+	 * @param NotificationCenter
 	 * @constructor
 	 */
-	function RbsUserChangePasswordController($scope, User, REST, $http)
+	function RbsUserChangePasswordController($scope, User, REST, $http, i18n, NotificationCenter)
 	{
 		$scope.currentPassword = '';
 
@@ -150,9 +161,9 @@
 					$scope.user = angular.copy(user);
 				}
 			);
-			$scope.wrongPassword = false;
 			$scope.confirmPassword = '';
 			$scope.form.$setPristine();
+			NotificationCenter.clear();
 		}
 
 		User.ready().then(function () {
@@ -164,7 +175,7 @@
 				initUser();
 			}).error(function (dataError){
 					if (dataError.message == 'wrong password given') {
-						$scope.wrongPassword = true;
+						NotificationCenter.error(null, i18n.trans('m.rbs.user.adminjs.profile_wrong_password_given | ucf'));
 					}
 					console.error(dataError);
 				});
@@ -191,7 +202,7 @@
 
 	}
 
-	RbsUserChangePasswordController.$inject = ['$scope', 'RbsChange.User', 'RbsChange.REST', '$http'];
+	RbsUserChangePasswordController.$inject = ['$scope', 'RbsChange.User', 'RbsChange.REST', '$http', 'RbsChange.i18n', 'RbsChange.NotificationCenter'];
 	app.controller('Rbs_User_ChangePassword_Controller', RbsUserChangePasswordController);
 
 })();

@@ -13,19 +13,14 @@
 	<div rbs-main-column>
 		<form class="form-horizontal" novalidate ng-submit="saveConnectionInfo()" name="form" ng-controller="Rbs_User_ConnectionInfo_Controller">
 			<fieldset>
-				<div class="alert alert-danger" data-ng-if="wrongPassword">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-					{{ i18n('m.rbs.user.admin.profile_connection_info_wrong_password', ['ucf']) }}
-				</div>
-				<div class="alert alert-danger" data-ng-if="invalidLogin">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-					{{ i18n('m.rbs.user.admin.profile_connection_info_invalid_login', ['ucf']) }}
-				</div>
 
 				<legend>{{ i18n('m.rbs.user.admin.profile_connection_info', ['ucf']) }}</legend>
 
 				<rbs-field label="{{ i18nAttr('m.rbs.user.admin.current_password', ['ucf']) }}" required="true">
 					<input class="form-control" type="password" ng-model="currentPassword" />
+					<span class="help-block">
+						{{ i18n('m.rbs.user.admin.profile_password_helper', ['ucf']) }}
+					</span>
 				</rbs-field>
 
 				<hr />
