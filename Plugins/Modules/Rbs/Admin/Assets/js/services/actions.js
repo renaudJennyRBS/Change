@@ -9,7 +9,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n, ErrorFormatter) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, i18n, ErrorFormatter) {
 			function Actions () {
 
 				this.reset = function () {
@@ -38,10 +38,6 @@
 						// Call the action with the correct parameters provided in the 'paramsObj' object.
 						actionObject = this.actions[method];
 
-						if (actionObject.loading) {
-							Loading.start("Action " + (actionObject.label || actionName));
-						}
-
 						if (actionObject.__execFn) {
 							promise = this.actions[method].__execFn.apply(
 									this.actions[method],
@@ -58,10 +54,8 @@
 
 						if (actionObject.loading) {
 							promise.then(function actionCallback () {
-								Loading.stop();
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
-								Loading.stop();
 								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.action_error | ucf', {ACTION: (actionObject.label || actionName)}), reason, paramsObj);
 							});
 						} else {
@@ -613,71 +607,6 @@
 
 					}]
 
-				});
-
-
-				/**
-				 * Action: applyCorrection
-				 */
-				this.register({
-					name        : 'applyCorrection',
-					models      : '*',
-					label       : i18n.trans('m.rbs.admin.adminjs.action_apply_correction | ucf'),
-					description : i18n.trans('m.rbs.admin.adminjs.action_apply_correction_help | ucf'),
-					icon        : "icon-download-alt",
-					selection   : "+",
-
-					execute : ['$docs', '$scope', '$embedDialog', '$target', function ($docs, $scope, $embedDialog, $target) {
-
-						var doc = $docs[0];
-
-						// TODO
-						var q = $q.defer();
-
-						Dialog.embed(
-							$embedDialog,
-							{
-								'contents': "<div class='apply-correction-options'/>",
-								'title': i18n.trans('m.rbs.admin.adminjs.action_apply_correction_ask | ucf')
-							},
-							$scope,
-							{
-								'pointedElement': $target
-							}
-						).then(function (when) {
-							// FIXME
-							// Corrections on documents in the list have not been loaded.
-							// Well, this is a problem here because we don't have any information about the correction,
-							// and thus we don't know what to do (which action to call).
-
-							// First, load the Correction into the Document.
-							REST.loadCorrection(doc).then(function (doc) {
-
-								if (doc.META$.correction.status === 'DRAFT') {
-									REST.resourceAction('startCorrectionValidation', doc).then(function (result) {
-										doc.META$.correction.status = result.data['correction-status'];
-										q.resolve(doc);
-									});
-								} else {
-									REST.resourceAction('startCorrectionPublication', doc, {'publishImmediately': true}).then(function (result) {
-										doc.META$.correction.status = result.data['correction-status'];
-										if (doc.META$.correction.status === 'FILED') {
-											delete doc.META$.correction;
-										}
-										q.resolve(doc);
-									});
-								}
-
-							});
-
-						});
-
-						return q.promise;
-					}],
-
-					isEnabled : function ($docs) {
-						return $docs.length === 1 && Utils.hasCorrection($docs[0]);
-					}
 				});
 
 

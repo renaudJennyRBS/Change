@@ -5,16 +5,14 @@
 	var app = angular.module('RbsChange');
 
 
-	function CrossSellingController($scope, $routeParams, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
+	function CrossSellingController($scope, $routeParams, Breadcrumb, REST, i18n, UrlManager, Query)
 	{
 		$scope.params = {};
 		$scope.List = {};
 
 		if (!$scope.product)
 		{
-			Loading.start();
 			REST.resource('Rbs_Catalog_Product', $routeParams.id).then(function(product){
-				Loading.stop();
 				Breadcrumb.setLocation([
 					[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
 					[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(product, 'list')],
@@ -27,7 +25,7 @@
 		}
 	}
 
-	CrossSellingController.$inject = ['$scope', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.Loading', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
+	CrossSellingController.$inject = ['$scope', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];
 	app.controller('Rbs_Catalog_Product_CrossSellingController', CrossSellingController);
 
 	/**

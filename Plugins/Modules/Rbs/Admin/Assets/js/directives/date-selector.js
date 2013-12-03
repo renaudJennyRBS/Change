@@ -155,7 +155,7 @@
 	/**
 	 * @name timeZoneSelector
 	 */
-	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', 'RbsChange.Loading', 'RbsChange.Settings', '$q', function ($rootScope, Dialog, Loading, Settings, $q) {
+	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', 'RbsChange.Settings', '$q', function ($rootScope, Dialog, Settings, $q) {
 		return {
 			restrict    : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/time-zone-selector.twig',

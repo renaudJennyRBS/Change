@@ -38,7 +38,6 @@
 		'$cacheFactory',
 		'RbsChange.i18n',
 		'RbsChange.REST',
-		'RbsChange.Loading',
 		'RbsChange.Utils',
 		'RbsChange.ArrayUtils',
 		'RbsChange.Breadcrumb',
@@ -55,7 +54,7 @@
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Loading, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu, ErrorFormatter)
+	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu, ErrorFormatter)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -848,7 +847,6 @@
 
 						function terminatePreview () {
 							scope.collection.splice(index+1, 0, newItem);
-							Loading.stop();
 						}
 
 						if (previewPromises.length) {
@@ -889,7 +887,6 @@
 						if (cachedDoc) {
 							scope.collection.splice(index+1, 0, cachedDoc);
 						} else {
-							Loading.start(i18n.trans('m.rbs.admin.adminjs.loading_preview | ucf'));
 							current.__dlPreviewLoading = true;
 							if (Utils.isDocument(current)) {
 								REST.resource(current).then(function (doc) {
@@ -993,12 +990,9 @@
 					 * @param doc
 					 */
 					scope.save = function (doc) {
-						Loading.start(i18n.trans('m.rbs.admin.adminjs.saving_document | ucf'));
 						REST.save(doc).then(function (savedDoc) {
 							angular.extend(doc, savedDoc);
-							Loading.stop();
 						}, function () {
-							Loading.stop();
 							// FIXME Display error message
 						});
 					};
@@ -1271,10 +1265,8 @@
 
 						// TODO Reorganize this to use a query for tree and/or tag
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
-							Loading.start();
 							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
 						} else if (attrs.tree) {
-							Loading.start();
 							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						} else {
 							if (attrs.childrenProperty) {
@@ -1288,7 +1280,6 @@
 										}
 									});
 								} else {
-									Loading.start();
 									if (elm.is('[collection-url]')) {
 										if (attrs.collectionUrl) {
 											promise = REST.collection(scope.collectionUrl, params);
@@ -1298,7 +1289,6 @@
 									}
 								}
 							} else if (! attrs.parentProperty) {
-								Loading.start();
 								if (scope.currentFilter) {
 									var query = {
 										"model" : attrs.model,
@@ -1344,7 +1334,6 @@
 
 					function stopLoading (reason) {
 						scope.busy = false;
-						Loading.stop();
 						if (reason) {
 							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.loading_list_error | ucf'), ErrorFormatter.format(reason));
 						}
@@ -1425,7 +1414,6 @@
 
 
 					function initializeConverters () {
-						Loading.start("Initializing converters...");
 						var promises = [];
 						scope.convertersValues = {};
 
@@ -1463,7 +1451,6 @@
 						}
 
 						function successFn () {
-							Loading.stop();
 
 							if (elm.is('[model]')) {
 								// No model value yet?
