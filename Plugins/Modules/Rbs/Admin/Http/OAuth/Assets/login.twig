@@ -7,6 +7,7 @@
 	<meta charset="UTF-8" />
 </head>
 <body>
+<span class="hidden" id="on-device">{{ i18n('c.oauth.on_device') }}</span>
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
@@ -29,6 +30,12 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label class="control-label col-md-3" for="device">{{ i18n('c.oauth.device', ['ucf', 'lab']) }} </label>
+					<div class="col-md-9">
+						<input type="text" class="form-control" name="device" id="device" />
+					</div>
+				</div>
+				<div class="form-group">
 					<label class="control-label col-md-3" for="authenticate">{{ i18n('c.oauth.application_name', ['ucf', 'lab']) }}</label>
 					<div class="col-md-9">
 						<button type="submit" class="btn btn-default" id="authenticate" name="authenticate" value="authenticate">{{ i18n('c.oauth.authorize', ['ucf']) }}</button>
@@ -42,3 +49,30 @@
 	</div>
 </body>
 </html>
+<script type="text/javascript">
+	var userAgent = window.navigator.userAgent;
+
+	var system =
+		userAgent.match(/windows/i) ? 'Windows' :
+		userAgent.match(/kindle/i) ? 'Kindle' :
+		userAgent.match(/android/i) ? 'Android' :
+		userAgent.match(/ipad/i) ? 'iPad' :
+		userAgent.match(/iphone/i) ? 'iPhone' :
+		userAgent.match(/ipod/i) ? 'iPod' :
+		userAgent.match(/mac/i) ? 'OS X' :
+		userAgent.match(/(linux|x11)/i) ? 'Linux' :
+		'unknown system';
+
+	var webBrowser =
+		userAgent.match(/firefox/i) && !userAgent.match(/seamonkey/i) ? 'Firefox' :
+		userAgent.match(/seamonkey/i) ? 'Seamonkey' :
+		userAgent.match(/chrome/i) && !userAgent.match(/chromium/i) ? 'Chrome' :
+		userAgent.match(/chromium/i) ? 'Chromium' :
+		userAgent.match(/safari/i) && !userAgent.match(/chrome/i) && !userAgent.match(/chromium/i) ? 'Safari' :
+		userAgent.match(/msie/i) ? 'Internet Explorer' :
+		'unknown web browser';
+
+	var on = window.document.getElementById('on-device').textContent;
+	window.document.getElementById('device').value = webBrowser + ' ' + on + ' ' + system;
+
+</script>

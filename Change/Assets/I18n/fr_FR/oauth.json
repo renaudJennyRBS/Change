@@ -16,5 +16,12 @@
 	},
 	"application_name":{
 		"message":"application"
+	},
+	"device":{
+		"message":"appareil"
+	},
+	"on_device":{
+		"message":"sur",
+		"description":"Used to say \"web browser on the system\", like Firefox on Windows"
 	}
 }

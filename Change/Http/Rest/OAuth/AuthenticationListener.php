@@ -173,8 +173,6 @@ class AuthenticationListener
 					$storedOAuth->setRealm('rest');
 				}
 
-				$userAgent = $event->getRequest()->getHeader('User-Agent');
-				$storedOAuth->setDevice($this->getBrowserNameByUserAgent($userAgent));
 				$OAuth->insertToken($storedOAuth);
 
 				$array = array('oauth_token' => $storedOAuth->getToken(), 'oauth_token_secret' => $storedOAuth->getTokenSecret(),
@@ -220,6 +218,7 @@ class AuthenticationListener
 			$login = $request->getPost('login');
 			$password = $request->getPost('password');
 			$realm = $request->getPost('realm');
+			$device = $request->getPost('device');
 			if ($realm && $login && $password)
 			{
 				$am = $event->getAuthenticationManager();
@@ -232,6 +231,7 @@ class AuthenticationListener
 					$validityDate = new \DateTime();
 					$storeOAuth->setValidityDate($validityDate->add(new \DateInterval($storeOAuth->getConsumer()
 						->getTokenRequestValidity())));
+					$storeOAuth->setDevice($device);
 					$OAuth->updateToken($storeOAuth);
 
 					$array = array('oauth_callback' => $storeOAuth->getCallback(), 'oauth_token' => $storeOAuth->getToken(),
@@ -577,89 +577,4 @@ class AuthenticationListener
 		return $result;
 	}
 
-	/**
-	 * @see https://developer.mozilla.org/en-US/docs/Browser_detection_using_the_user_agent
-	 * @param \Zend\Http\Header\UserAgent $userAgent
-	 * @return string
-	 */
-	protected function getBrowserNameByUserAgent($userAgent)
-	{
-		if ($userAgent instanceof \Zend\Http\Header\UserAgent)
-		{
-			$lowerStrUserAgent = strtolower($userAgent->getFieldValue());
-			$system = 'unknow system';
-			if (strpos($lowerStrUserAgent, 'windows'))
-			{
-				//Windows
-				$system = 'Windows';
-			}
-			elseif (strpos($lowerStrUserAgent, 'android'))
-			{
-				//Android
-				$system = 'Android';
-			}
-			elseif (strpos($lowerStrUserAgent, 'ipad'))
-			{
-				//iPad
-				$system = 'iPad';
-			}
-			elseif (strpos($lowerStrUserAgent, 'iphone'))
-			{
-				//iPhone
-				$system = 'iPhone';
-			}
-			elseif (strpos($lowerStrUserAgent, 'ipod'))
-			{
-				//iPod
-				$system = 'iPod';
-			}
-			elseif (strpos($lowerStrUserAgent, 'mac'))
-			{
-				//OSX
-				$system = 'OS X';
-			}
-			elseif (strpos($lowerStrUserAgent, 'linux') || strpos($lowerStrUserAgent, 'x11'))
-			{
-				//Linux
-				$system = 'Linux';
-			}
-
-			if (strpos($lowerStrUserAgent, 'firefox') && !strpos($lowerStrUserAgent, 'seamonkey'))
-			{
-				//Firefox
-				return 'Firefox on ' . $system;
-			}
-			elseif (strpos($lowerStrUserAgent, 'seamonkey'))
-			{
-				//Seamonkey
-				return 'Seamonkey on ' . $system;
-			}
-			elseif (strpos($lowerStrUserAgent, 'chrome') && !strpos($lowerStrUserAgent, 'chromium'))
-			{
-				//Chrome
-				return 'Chrome on ' . $system;
-			}
-			elseif (strpos($lowerStrUserAgent, 'chromium'))
-			{
-				//Chromium
-				return 'Chromium on ' . $system;
-			}
-			elseif (strpos($lowerStrUserAgent, 'safari') && !strpos($lowerStrUserAgent, 'chrome') && !strpos($lowerStrUserAgent, 'chromium'))
-			{
-				//Safari
-				return 'Safari on ' . $system;
-			}
-			elseif (strpos($lowerStrUserAgent, 'opera'))
-			{
-				//Opera
-				return 'Opera on ' . $system;
-			}
-			elseif (strpos($lowerStrUserAgent, 'msie'))
-			{
-				//Microsoft Internet Explorer
-				return 'Microsoft Internet Explorer on ' . $system;
-			}
-		}
-		return 'undetectable device';
-	}
 }
