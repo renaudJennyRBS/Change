@@ -9,7 +9,7 @@
 	var app = angular.module('RbsChange');
 
 	app.provider('RbsChange.Actions', function RbsChangeActionsProvider() {
-		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n) {
+		this.$get = ['$http', '$filter', '$q', '$rootScope', 'RbsChange.Dialog', 'RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Loading', 'RbsChange.i18n', 'RbsChange.ErrorFormatter', function ($http, $filter, $q, $rootScope, Dialog, Clipboard, Utils, ArrayUtils, REST, NotificationCenter, Loading, i18n, ErrorFormatter) {
 			function Actions () {
 
 				this.reset = function () {
@@ -62,15 +62,13 @@
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
 								Loading.stop();
-								// FIXME Localization
-								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
+								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.action_error | ucf', {ACTION: (actionObject.label || actionName)}), reason, paramsObj);
 							});
 						} else {
 							promise.then(function actionCallback () {
 								NotificationCenter.clear();
 							}, function actionErrback(reason) {
-								// FIXME Localization
-								NotificationCenter.error("L'action \"" + (actionObject.label || actionName) + "\" a échoué.", reason, paramsObj);
+								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.action_error | ucf', {ACTION: (actionObject.label || actionName)}), reason, paramsObj);
 							});
 						}
 
@@ -344,7 +342,6 @@
 						// TODO
 						// If there are corrections and/or localizations, ask the user what should be deleted.
 
-						// FIXME Localization
 						message = i18n.trans('m.rbs.admin.adminjs.action_delete_message | ucf', {DOCUMENTLISTSUMMARY: $filter('documentListSummary')($docs)});
 						if (correction) {
 							message += "<p>" + i18n.trans('m.rbs.admin.adminjs.action_delete_with_correction_message | ucf') + "</p>";
@@ -355,20 +352,20 @@
 						if ($embedDialog) {
 							promise = Dialog.confirmEmbed(
 								$embedDialog,
-								"Supprimer ?",
+								i18n.trans('m.rbs.admin.adminjs.ask_for_delete | ucf'),
 								message,
 								$scope,
 								{
 									'pointedElement'    : $target,
 									'primaryButtonClass': 'btn-danger',
-									'primaryButtonText' : 'supprimer'
+									'primaryButtonText' : i18n.trans('m.rbs.admin.adminjs.delete')
 								}
 							);
 						} else if ($target) {
 							// ($el, title, message, options) {
 							promise = Dialog.confirmLocal(
 								$target,
-								"Supprimer ?",
+								i18n.trans('m.rbs.admin.adminjs.ask_for_delete | ucf'),
 								message,
 								{
 									"placement": "bottom"
@@ -376,7 +373,7 @@
 							);
 						} else {
 							promise = Dialog.confirm(
-								"Supprimer ?",
+								i18n.trans('m.rbs.admin.adminjs.ask_for_delete | ucf'),
 								message,
 								"danger",
 								confirmMessage
@@ -391,8 +388,11 @@
 							});
 							if ($scope && angular.isFunction($scope.reload)) {
 								// Refresh the list when all the requests have completed.
+								// Notify user if there is an exception during deleting
 								$q.all(promises).then(function () {
 									$scope.reload();
+								}, function (reason){
+									NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.error_on_delete | ucf'), ErrorFormatter.format(reason));
 								});
 							}
 						});

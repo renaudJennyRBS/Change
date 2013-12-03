@@ -64,6 +64,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newVarCharFieldDefinition('token_secret', array('length' => 64))->setNullable(false))
 				->addField($schemaManager->newIntegerFieldDefinition('application_id')->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('realm', array('length' => 128))->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('device', array('length' => 255)))
 				->addField($schemaManager->newEnumFieldDefinition('token_type', array('VALUES' => array('request', 'access')))->setNullable(false)->setDefaultValue('request'))
 				->addField($schemaManager->newTimeStampFieldDefinition('creation_date'))
 				->addField($schemaManager->newDateFieldDefinition('validity_date'))

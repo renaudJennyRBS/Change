@@ -74,6 +74,11 @@ class OAuthDbEntry
 	protected $accessorId;
 
 	/**
+	 * @var string
+	 */
+	protected $device;
+
+	/**
 	 * @param int $accessorId
 	 */
 	public function setAccessorId($accessorId)
@@ -317,6 +322,22 @@ class OAuthDbEntry
 	}
 
 	/**
+	 * @param string $device
+	 */
+	public function setDevice($device)
+	{
+		$this->device = $device;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDevice()
+	{
+		return $this->device;
+	}
+
+	/**
 	 * @param array $array
 	 */
 	public function importFromArray(array $array)
@@ -405,6 +426,9 @@ class OAuthDbEntry
 					break;
 				case 'accessor_id':
 					$this->accessorId = $v;
+					break;
+				case 'device':
+					$this->device = $v;
 					break;
 			}
 		}

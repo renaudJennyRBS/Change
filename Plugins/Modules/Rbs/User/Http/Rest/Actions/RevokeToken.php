@@ -17,20 +17,30 @@ class RevokeToken
 	{
 		if ($event->getRequest()->getPost('token'))
 		{
-			$token = $event->getRequest()->getPost('token');
-			$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
-			$fb = $qb->getFragmentBuilder();
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$tm->begin();
+				$token = $event->getRequest()->getPost('token');
+				$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
 
-			$qb->update($fb->table($qb->getSqlMapping()->getOAuthTable()))
-				->assign($fb->column('validity_date'), $fb->dateTimeParameter('validity_date'))
-				->where($fb->eq($fb->column('token'), $fb->parameter('token')));
-			$uq = $qb->updateQuery();
+				$qb->update($fb->table($qb->getSqlMapping()->getOAuthTable()))
+					->assign($fb->column('validity_date'), $fb->dateTimeParameter('validity_date'))
+					->where($fb->eq($fb->column('token'), $fb->parameter('token')));
+				$uq = $qb->updateQuery();
 
-			$now = new \DateTime();
-			$uq->bindParameter('validity_date', $now);
-			$uq->bindParameter('token', $token);
+				$now = new \DateTime();
+				$uq->bindParameter('validity_date', $now);
+				$uq->bindParameter('token', $token);
 
-			$uq->execute();
+				$uq->execute();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
 		}
 
 		$result = new ArrayResult();

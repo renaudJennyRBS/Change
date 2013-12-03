@@ -21,7 +21,7 @@ class GetUserTokens
 		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 
-		$qb->select($fb->column('token'), $fb->column('realm'), $fb->column('application'),
+		$qb->select($fb->column('token'), $fb->column('realm'), $fb->column('device'), $fb->column('application'),
 			$fb->column('creation_date'), $fb->column('validity_date'))
 			->from($fb->table($qb->getSqlMapping()->getOAuthTable()))
 			->innerJoin($fb->table($qb->getSqlMapping()->getOAuthApplicationTable()), $fb->column('application_id'))
@@ -38,7 +38,7 @@ class GetUserTokens
 		$sq->bindParameter('validity_date', $now);
 
 		$rowAssoc = $sq->getResults($sq->getRowsConverter()
-			->addStrCol('token', 'realm', 'application')->addDtCol('creation_date' ,'validity_date')
+			->addStrCol('token', 'realm', 'device', 'application')->addDtCol('creation_date' ,'validity_date')
 		);
 
 		$array = array();
