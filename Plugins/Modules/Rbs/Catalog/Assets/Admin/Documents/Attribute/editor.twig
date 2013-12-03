@@ -50,9 +50,9 @@
 			</div>
 
 			<div data-ng-show="document.valueType == 'DocumentId' || document.valueType == 'DocumentIdArray'">
-				<rbs-field-text property="documentType"
-					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'documentType'), ['ucf']) }}">
-				</rbs-field-text>
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'documentType'), ['ucf']) }}">
+					<rbs-model-selector filter="{abstract: false, editable: true}" class="form-control" model="document.documentType"></rbs-model-selector>
+				</rbs-field>
 			</div>
 		</div>
 
