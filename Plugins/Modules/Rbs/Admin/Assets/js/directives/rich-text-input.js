@@ -505,7 +505,7 @@
 				};
 
 				scope.insertExternalLink = function () {
-					var	href = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link'));
+					var	href = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link'), 'http://');
 
 					if (href != null && href != '') {
 						var title = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link_title'));
