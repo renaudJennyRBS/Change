@@ -395,6 +395,14 @@ body > footer a:visited:hover {
 	text-decoration: underline;
 }
 
+/**
+ * rbs-todo
+ * hidden by default, directive in module Rbs_Dev
+ */
+rbs-todo {
+	display: none;
+}
+
 /** JSTree fixes */
 .panel .jstree a {
 	height: auto;
