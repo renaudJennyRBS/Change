@@ -34,19 +34,6 @@
 				});
 
 
-				scope.confirmApplyCorrection = function ($event) {
-					Actions.execute(
-						'applyCorrection',
-						{
-							'$docs'       : [ scope.document ],
-							'$embedDialog': element.find('.confirmation-area'),
-							'$target'     : $($event.target),
-							'$scope'      : scope
-						}
-					);
-				};
-
-
 				scope.confirmReset = function ($event) {
 					Dialog.confirmEmbed(
 						element.find('.confirmation-area'),
