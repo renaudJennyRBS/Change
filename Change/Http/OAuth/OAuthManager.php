@@ -376,6 +376,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 				->assign($fb->column('verifier'), $fb->parameter('verifier'))
 				->assign($fb->column('authorized'), $fb->booleanParameter('authorized'))
 				->assign($fb->column('accessor_id'), $fb->integerParameter('accessor_id'))
+				->assign($fb->column('device'), $fb->parameter('device'))
 				->where($fb->eq($fb->column('token_id'), $fb->integerParameter('id')));
 			$uq = $qb->updateQuery();
 
@@ -383,6 +384,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 			$uq->bindParameter('verifier', $storedOAuth->getVerifier());
 			$uq->bindParameter('authorized', $storedOAuth->getAuthorized());
 			$uq->bindParameter('accessor_id', $storedOAuth->getAccessorId());
+			$uq->bindParameter('device', $storedOAuth->getDevice());
 			$uq->bindParameter('id', $storedOAuth->getId());
 			$uq->execute();
 
