@@ -2,10 +2,52 @@
   "module_name":{
     "message":"review"
   },
+  "module_keywords":{
+    "message":"review,product,rating,comment"
+  },
+  "promoted_review_modes_manual":{
+    "message":"selected (manually)"
+  },
+  "promoted_review_modes_promoted":{
+    "message":"promoted (ordered by best rated)"
+  },
+  "promoted_review_modes_recent":{
+    "message":"most recent"
+  },
   "review_list":{
     "message":"review"
   },
   "review_create":{
     "message":"add a review"
+  },
+  "review_label_content":{
+    "message":"review on $TARGETLABEL$ by $PSEUDONYM$"
+  },
+  "review_select_target":{
+    "message":"select a document"
+  },
+  "review_select_section":{
+    "message":"Select a section"
+  },
+  "review_star_rating":{
+    "message":"star(s) on $BESTRATING$"
+  },
+  "star_rating_0":{
+    "message":"0 star"
+  },
+  "star_rating_1":{
+    "message":"1 star"
+  },
+  "star_rating_2":{
+    "message":"2 stars"
+  },
+  "star_rating_3":{
+    "message":"3 stars"
+  },
+  "star_rating_4":{
+    "message":"4 stars"
+  },
+  "star_rating_5":{
+    "message":"5 stars"
   }
 }

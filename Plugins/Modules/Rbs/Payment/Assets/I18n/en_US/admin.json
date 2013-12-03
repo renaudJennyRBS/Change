@@ -11,6 +11,12 @@
   "deferredconnector_create":{
     "message":"add a deferred payment gateway"
   },
+  "transaction_select_connector":{
+    "message":"select a paiement gateway"
+  },
+  "connector_select_visual":{
+    "message":"select a visual"
+  },
   "module_name":{
     "message":"payments"
   },

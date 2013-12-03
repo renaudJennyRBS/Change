@@ -1,5 +1,20 @@
 {
+  "task_status":{
+    "message":"status"
+  },
+  "task_document":{
+    "message":"document"
+  },
+  "task_taskcode":{
+    "message":"code"
+  },
   "task":{
     "message":"task"
+  },
+  "task_workflowinstance":{
+    "message":"workflow instance"
+  },
+  "task_workflow":{
+    "message":"workflow"
   }
 }

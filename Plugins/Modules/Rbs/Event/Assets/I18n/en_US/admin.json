@@ -83,6 +83,9 @@
   "category_list":{
     "message":"categories"
   },
+  "category_create":{
+    "message":"add a category"
+  },
   "baseevent_detailvisual_help":{
     "message":"Visual used in detail view. This visual is not used for display in list."
   },

@@ -17,10 +17,16 @@
   "password_placeholder":{
     "message":"abc123"
   },
+  "remember_me":{
+    "message":"check to stay logged in"
+  },
   "log_in":{
     "message":"log in"
   },
   "log_out":{
     "message":"log out"
+  },
+  "my_account":{
+    "message":"my account"
   }
 }

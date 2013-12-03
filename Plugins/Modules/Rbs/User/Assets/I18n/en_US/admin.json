@@ -5,14 +5,14 @@
   "module_keywords":{
     "message":"groups,security,password,login,account,authentication"
   },
-  "confirm_revoke_token":{
-    "message":"confirm token revocation: {token} ?"
-  },
   "group":{
     "message":"group"
   },
   "group_list":{
     "message":"groups"
+  },
+  "group_users_remove_from_group":{
+    "message":"retirer du groupe"
   },
   "confirm_remove_permission_rule":{
     "message":"confirm the deletion of $ROLE$ permission rule for $PRIVILEGE$ privilege on $RESOURCE_ID$ resource?"
@@ -32,6 +32,9 @@
   "realm":{
     "message":"realm"
   },
+  "device":{
+    "message":"appareil"
+  },
   "creation_date":{
     "message":"creation date"
   },
@@ -46,6 +49,9 @@
   },
   "applications":{
     "message":"applications"
+  },
+  "permissions":{
+    "message":"permissions"
   },
   "current_password":{
     "message":"current password"
@@ -104,8 +110,14 @@
   "login_realm":{
     "message":"realm"
   },
+  "account_short":{
+    "message":"Reduced user account"
+  },
   "function_error_401":{
     "message":"Unauthorized"
+  },
+  "group_picker_title":{
+    "message":"select groups"
   },
   "user_list":{
     "message":"users"
@@ -118,6 +130,12 @@
   },
   "users_in_group":{
     "message":"group users"
+  },
+  "add_users_in_group":{
+    "message":"ajouter des utilisateurs au groupe"
+  },
+  "users_in_group_picker_title":{
+    "message":"sélectionner les utilisateurs à ajouter au groupe"
   },
   "profile_lcid":{
     "message":"language"
@@ -191,7 +209,25 @@
   "profile_notification_time_interval_at":{
     "message":"to"
   },
+  "profile_notification_time_interval_helper":{
+    "message":"If you select <strong>frequency of sending 1 days<\/strong> and <strong>12:00<\/strong> you will receive an e-mail every day between 12:00 and 12:05. <br\/>  If you select <strong>frequency 2 hours<\/strong> and <strong>1:15<\/strong>, only minutes will be taken into account, (the next email received will be between 3:15 and 3:20, and then between 5:15 and 5:20...)"
+  },
   "profile_gravatar_help":{
     "message":"To use an avatar, create an account on <a href=\"http:\/\/en.gravatar.com\" target=\"_blank\">http:\/\/en.gravatar.com<\/a>"
+  },
+  "profile_connection_info":{
+    "message":"connection informations"
+  },
+  "profile_connection_info_wrong_password":{
+    "message":"the current password does not match your login"
+  },
+  "profile_connection_info_invalid_login":{
+    "message":"login is not valid. Please choose a different"
+  },
+  "profile_change_password":{
+    "message":"password change"
+  },
+  "profile_change_password_confirm_password":{
+    "message":"confirm new password"
   }
 }

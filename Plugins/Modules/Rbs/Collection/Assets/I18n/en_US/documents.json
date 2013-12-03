@@ -2,8 +2,14 @@
   "collection_items":{
     "message":"items"
   },
+  "collection_locked":{
+    "message":"locked"
+  },
   "item_value":{
     "message":"value"
+  },
+  "item_locked":{
+    "message":"locked"
   },
   "collection":{
     "message":"collection"

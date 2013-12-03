@@ -5,6 +5,27 @@
   "sectionproductlist_synchronizedsection_picker_title":{
     "message":"Select the section to be synchronized with"
   },
+  "macros_round_down":{
+    "message":"arrondi inférieur"
+  },
+  "macros_round_down_tencents":{
+    "message":"à la dizaine de centimes inférieure"
+  },
+  "macros_round_down_unit":{
+    "message":"à l'entier inférieur"
+  },
+  "macros_round_up":{
+    "message":"arrondi supérieur"
+  },
+  "macros_round_up_tencent":{
+    "message":"à la dizaine de centimes supérieure"
+  },
+  "macros_round_up_99cents":{
+    "message":"à 99 centimes"
+  },
+  "macros_round_up_unit":{
+    "message":"à l'entier supérieur"
+  },
   "macros_with_tax_abbr":{
     "message":"Incl. VAT"
   },
@@ -17,8 +38,32 @@
   "variantgroup_axis_head":{
     "message":"axis"
   },
+  "variantgroup_axesattributes_picker_title":{
+    "message":"Sélectionner des attributs de type 'axe'"
+  },
+  "variantgroup_othersattributes_picker_title":{
+    "message":"Sélectionner des attributs de présentation"
+  },
+  "axis_url":{
+    "message":"Fiche produit par valeur"
+  },
+  "axis_categorizable":{
+    "message":"Fiche produit visible dans les listes"
+  },
+  "variantgroup_variant":{
+    "message":"variants"
+  },
+  "variantgroup_variantlist":{
+    "message":"variants list"
+  },
+  "variantgroup_edit":{
+    "message":"variants configuration"
+  },
   "variantgroup_visibility_head":{
     "message":"visible in lists"
+  },
+  "variantgroup_visibility_not":{
+    "message":"non visible dans les listes"
   },
   "variantgroup_values_head":{
     "message":"values"
@@ -35,6 +80,9 @@
   "variantgroup_edit_axis_head":{
     "message":"declination axis"
   },
+  "variantgroup_add_axis":{
+    "message":"ajouter l'axe déclinaison"
+  },
   "variantgroup_restore_axis":{
     "message":"restore declination axis"
   },
@@ -43,6 +91,9 @@
   },
   "variantgroup_edit_action":{
     "message":"edit"
+  },
+  "variantgroup_add_axis_value":{
+    "message":"Ajouter une valeur à cet axe :"
   },
   "variantgroup_value_already_exists":{
     "message":"Value already in use."
@@ -53,11 +104,26 @@
   "variantgroup_cancel":{
     "message":"cancel"
   },
+  "variantgroup_axe_no_url":{
+    "message":"Ne possède pas de fiche produit"
+  },
+  "variantgroup_axe_has_url":{
+    "message":"Possède une fiche produit par valeur de l'axe"
+  },
+  "variantgroup_axe_no_categorizable":{
+    "message":"Non visible dans les listes"
+  },
+  "variantgroup_axe_categorizable":{
+    "message":"Visible dans les listes"
+  },
   "variantgroup_loading_product_info":{
     "message":"Loading product information..."
   },
   "variantgroup_go_to_product":{
     "message":"View product"
+  },
+  "variantgroup_product_does_not_exist_yet":{
+    "message":"<h4>Ce produit n'existe pas encore.<\/h4>\n\t\n Il sera créé après avoir enregistré les modifications grâce au bouton\n\t\t<strong>Enregistrer<\/strong> ci-dessous."
   },
   "variantgroup_existing_products_of":{
     "message":"existing variants"
@@ -65,11 +131,32 @@
   "variantgroup_possible_products":{
     "message":"possible variants"
   },
+  "variantgroup_products_will_be_created_when_this_form_is_submitted":{
+    "message":"Les variantes correspondantes aux combinaisons sélectionnées ne seront réellement créées qu'après l'enregistrement de ce formulaire."
+  },
   "variantgroup_no_visuals":{
     "message":"no visual"
   },
+  "variantgroup_help_tip":{
+    "message":"\n\t\t<p>\n\t\t\tChaque axe de déclinaison est présenté dans une colonne et affiche toutes les valeurs possibles.\n\t\t\tLes valeurs sélectionnées, c'est-à-dire pour lesquelles des fiches produits sont générées, apparaissent en vert.\n\t\t\tVous ne pouvez naviguer dans les axes suivants que lorsqu'une valeur est sélectionnée dans un axe.\n\t\t<\/p>\n\n\t\t<h4>Que faire ici ?<\/h4>\n\n\t\t<h5>Ajouter des variante pour le produit<\/h5>\n\t\t<p>\n\t\t\tCliquez sur <button type=\"button\" class=\"btn btn-default btn-xs\"><i class=\"icon-plus\"><\/i><\/button> pour sélectionner\n\t\t\tcette valeur et ainsi créer les fiches produits correspondantes.\n\t\t<\/p>\n\n\t\t<h5>Supprimer des déclinaisons pour le produit<\/h5>\n\t\t<p>\n\t\t\tCliquez sur <button type=\"button\" class=\"btn btn-xs btn-success\"><i class=\"icon-minus\"><\/i><\/button> pour\n\t\t\tsupprimer cette valeur et ainsi supprimer les fiches produits correspondantes.\n\t\t<\/p>\n\n\t\t<h5>Ajouter\/supprimer des valeurs possibles dans les axes<\/h5>\n\t\t<p>\n\t\t\tCliquez sur <button type=\"button\" class=\"btn btn-default btn-xs\"><i class=\"icon-cog\"><\/i><\/button> dans l'entête\n\t\t\tde chaque axe pour le configurer : vous pourrez alors supprimer des valeurs grâce au bouton\n\t\t\t<button type=\"button\" class=\"btn btn-xs btn-danger\"><i class=\"icon-trash\"><\/i><\/button> et en ajouter\n\t\t\tgrâce au champ de saisie en bas de la colonne correspondant à l'axe.\n\t\t<\/p>"
+  },
+  "variantgroup_jobs_infos":{
+    "message":"La configuration des variantes n'est pas accessible pour le moment. Merci de patienter quelques minutes."
+  },
+  "productlist_productsortorder_help":{
+    "message":"Ordre de tri des produits qui ne sont pas mis en avant."
+  },
+  "productlist_productsortdirection_help":{
+    "message":"Sens de tri des produits qui ne sont pas mis en avant."
+  },
+  "productlist_products_picker_title":{
+    "message":"sélectionner les produits à ajouter à la catégorie"
+  },
   "productlist_add_products":{
     "message":"add products"
+  },
+  "productlistitem_condition_help":{
+    "message":"Commencez par choisir une condition pour afficher et gérer la liste des produits."
   },
   "productlist_highlight":{
     "message":"highlighted"
@@ -104,6 +191,9 @@
   "attribute_list":{
     "message":"attributes"
   },
+  "attribute_picker_title":{
+    "message":"selectionner les attributs du groupe"
+  },
   "variantgroup_create":{
     "message":"add a variants group"
   },
@@ -115,6 +205,9 @@
   },
   "product_list_list":{
     "message":"products list"
+  },
+  "product_list_contextual_urls":{
+    "message":"détail des produits dans la section courante"
   },
   "product_list_items_per_line":{
     "message":"products per line"
@@ -146,6 +239,9 @@
   "cross_selling_type":{
     "message":"type of products"
   },
+  "cross_selling_product_choice_strategy":{
+    "message":"choix du produit dans le panier"
+  },
   "cross_selling_items_per_slide":{
     "message":"products per slide"
   },
@@ -161,11 +257,20 @@
   "cross_selling_product_choice_most_expensive_product":{
     "message":"most expensive product in cart"
   },
+  "crosssellingproductlist_crosssellingproductlist_create":{
+    "message":"ajouter une liste de produits associés"
+  },
   "crosssellingproductlist_title":{
     "message":"list of related products"
   },
+  "crosssellingproductlist_list_already_exists":{
+    "message":"une liste de type $TYPE$ existe déjà pour le produit $PRODUCT$"
+  },
   "crosssellingproductlist_crossselling_lists":{
     "message":"list of related products"
+  },
+  "productlist_productlist_picker_title":{
+    "message":"choisissez la liste où ajouter le produit"
   },
   "productlist_productlistitem":{
     "message":"belonging to a list"
@@ -178,6 +283,9 @@
   },
   "product_visuals_picker_title":{
     "message":"select the visuals"
+  },
+  "product_visuals_help":{
+    "message":"Le 1er visuel de la liste sera considéré comme le visuel principale de la fiche."
   },
   "product_no_visual":{
     "message":"no visual defined"
@@ -194,6 +302,15 @@
   "product_brand_picker_title":{
     "message":"select the brand"
   },
+  "product_shippedin_help":{
+    "message":"Délai d'expédition affiché sur le site."
+  },
+  "product_minorderquantity_help":{
+    "message":"Quantité minimum de ce produit que l'on peut commander."
+  },
+  "product_maxorderquantity_help":{
+    "message":"Quantité maximum de ce produit que l'on peut commander."
+  },
   "product_condition_help":{
     "message":"Choose a condition first to dispaly and manage categories list."
   },
@@ -203,11 +320,20 @@
   "product_cross_selling":{
     "message":"cross-selling"
   },
+  "product_publicationsections_help":{
+    "message":"Le produit doit être publié dans au moins une section par site où il est affiché. S'il est publié dans plusieurs sections d'un même site, sa section canonique pour ce site sera la première. Pour pouvoir spécialiser l'URL d'un produit dans une section donnée, vous devez le publier explicitement dans cette section."
+  },
   "product_attribute_select":{
     "message":"choose an attribute set"
   },
   "product_section_attributes":{
     "message":"Extended attributes"
+  },
+  "product_price_section_help":{
+    "message":"\n\t\t<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.<\/strong> Un même produit qui apparaît dans plusieurs boutiques et\/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.<\/p>\n\t\t<p>Commencez par <strong>choisir une boutique et une zone de tarification<\/strong> pour afficher et gérer les prix.<\/p>\n\t"
+  },
+  "product_product_list_section_help":{
+    "message":"\n\t\t<p>Les listes permettent de publier les produits dans les sections du site.<\/p>\n\t"
   },
   "product_section_variant":{
     "message":"variants"
@@ -236,11 +362,26 @@
   "section_name":{
     "message":"E-commerce"
   },
+  "billingarea_list_loading":{
+    "message":"Chargement de la liste des zones de tarification..."
+  },
+  "price_list_loading":{
+    "message":"Chargement de la liste des prix..."
+  },
+  "condition_list_loading":{
+    "message":"Chargement de la liste des conditions..."
+  },
   "no_condition":{
     "message":"none"
   },
   "remove":{
     "message":"remove"
+  },
+  "remove_products_from_list":{
+    "message":"Retirer les produits sélectionnés de la liste."
+  },
+  "remove_product_from_list":{
+    "message":"Retirer ce produit des listes sélectionnées."
   },
   "add_product_in_list":{
     "message":"add this product to a list"
@@ -260,6 +401,12 @@
   "product_price_list":{
     "message":"product prices list"
   },
+  "filter_product_prices":{
+    "message":"Filtrer la liste des prix"
+  },
+  "cross_selling_list_loading":{
+    "message":"Chargement des listes de Cross Selling..."
+  },
   "product_cross_selling_list":{
     "message":"List of products related to this product"
   },
@@ -271,5 +418,8 @@
   },
   "attribute_title_help":{
     "message":"Title displayed on the website."
+  },
+  "attribute_description_help":{
+    "message":"Description de l'attribut affiché sur le site web."
   }
 }

@@ -1,3 +1,30 @@
-[
-  
-]
+{
+  "total_result_count":{
+    "message":"yotal number of results"
+  },
+  "ignore_facet":{
+    "message":"ignore"
+  },
+  "facets_filter":{
+    "message":"filter"
+  },
+  "terms":{
+    "message":"terms"
+  },
+  "type":{
+    "message":"type"
+  },
+  "types":{
+    "message":"types"
+  },
+  "search":{
+    "message":"search"
+  },
+  "score":{
+    "message":"relevance"
+  },
+  "fragment_separator":{
+    "message":" [...] ",
+    "description":"Used to separate the different fragments of the result description."
+  }
+}

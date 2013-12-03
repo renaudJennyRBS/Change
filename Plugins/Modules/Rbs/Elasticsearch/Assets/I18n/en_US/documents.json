@@ -11,11 +11,20 @@
   "fulltext_name":{
     "message":"index name"
   },
+  "fulltext_clientname":{
+    "message":"client configuration"
+  },
   "fulltext_analysislcid":{
     "message":"index language"
   },
   "fulltext_website":{
     "message":"web site"
+  },
+  "fulltext":{
+    "message":"web search index"
+  },
+  "storeindex":{
+    "message":"products search index"
   },
   "facetgroup":{
     "message":"facet group"
@@ -23,8 +32,14 @@
   "facet":{
     "message":"facet"
   },
+  "storeindex_label_store":{
+    "message":"index of the store $WEBSITELABEL$"
+  },
   "storeindex_store":{
     "message":"web store"
+  },
+  "facet_fieldname":{
+    "message":"index facette ID"
   },
   "facet_facettype":{
     "message":"facet type"

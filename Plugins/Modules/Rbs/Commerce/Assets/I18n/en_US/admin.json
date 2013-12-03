@@ -8,6 +8,9 @@
   "cart_function":{
     "message":"shopping cart contents"
   },
+  "cart_undefined":{
+    "message":"pas de panier"
+  },
   "shortcart_label":{
     "message":"shopping cart summary"
   }

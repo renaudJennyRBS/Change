@@ -1,5 +1,59 @@
 {
   "this_field_is_required":{
     "message":"This field is mandatory"
+  },
+  "send":{
+    "message":"send"
+  },
+  "not_sent_containing_errors":{
+    "message":"Certaines des données saisies sont incorrectes."
+  },
+  "back_to_form":{
+    "message":"back to form"
+  },
+  "bad_csrf_token":{
+    "message":"Le jeton d'authentification est invalide, merci de resoumettre le formulaire."
+  },
+  "bad_captcha":{
+    "message":"Le code de sécurité que vous avez saisi est incorrect."
+  },
+  "captcha":{
+    "message":"security code"
+  },
+  "date_picker_at":{
+    "message":"à"
+  },
+  "date_picker_h":{
+    "message":"H"
+  },
+  "field_required":{
+    "message":"Ce champ est obligatoire"
+  },
+  "invalid_array":{
+    "message":"La valeur saisie n'est pas un tableau valide"
+  },
+  "invalid_string":{
+    "message":"La valeur saisie doit être une chaine de caractères"
+  },
+  "invalid_boolean":{
+    "message":"La valeur saisie doit être 'true' ou 'false'"
+  },
+  "invalid_integer":{
+    "message":"La valeur saisie doit être un nombre entier"
+  },
+  "invalid_float":{
+    "message":"La valeur saisie doit être un nombre décimal"
+  },
+  "invalid_file":{
+    "message":"Le fichier choisi n'a pas pu être chargé correctement"
+  },
+  "not_less_than_values":{
+    "message":"Vous devez sélectionner au moins $MIN$ valeurs"
+  },
+  "not_more_than_values":{
+    "message":"Vous devez sélectionner au maximum $MAX$ valeurs"
+  },
+  "must_select_date_and_time":{
+    "message":"Vous devez spécifier à la fois une date et une heure"
   }
 }

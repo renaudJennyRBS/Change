@@ -1,69 +1,75 @@
 {
   "isinvalidfield":{
-    "message":"the field \"$FIELD$\" is not valid: "
+    "message":"ce champ est invalide : "
   },
   "isempty":{
     "message":"This value is mandatory and cannot be empty."
   },
   "notbetweendocumentarray":{
-    "message":"the field \"$FIELD$\" is not valid: count='$COUNT$' min-occurs='$MINOCCURS$', max-occurs='$MAXOCCURS$'"
+    "message":"ce champ n'est pas valide : count='$COUNT$' min-occurs='$MINOCCURS$', max-occurs='$MAXOCCURS$'"
+  },
+  "maxoccurs":{
+    "message":"ce champ doit contenir au plus $MAXOCCURS$ éléments"
+  },
+  "minoccurs":{
+    "message":"ce champ doit contenir au moins $MAXOCCURS$ éléments"
   },
   "emailaddressinvalid":{
-    "message":"the field \"$FIELD$\" must contain a valid e-mail address."
+    "message":"ce champ doit contenir une adresse e-mail valide."
   },
   "emailsaddressinvalid":{
-    "message":"the field ' $FIELD$ ' contains invalid e-mail addresses (%value%)."
+    "message":"ce champ contient des adresses (%value%) e-mails invalides."
   },
   "emailaddressinvalidformat":{
-    "message":"the field \"$FIELD$\" must contain a valid e-mail address."
+    "message":"ce champ doit contenir une adresse e-mail valide."
   },
   "emailaddressinvalidhostname":{
-    "message":"the field \"$FIELD$\" must contain a valid e-mail address ('%hostname%' is not a valid hostname for e-mail '%value%')."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas un nom d'hôte valide pour l'adresse e-mail '%value%')."
   },
   "emailaddressinvalidmxrecord":{
-    "message":"the field \"$FIELD$\" must contain a valid e-mail address ('%hostname%' does not appear to have a valid MX record for e-mail address '%value%')."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%hostname%' ne semble pas avoir d'enregistrement MX valide pour l'adresse e-mail '%value%')."
   },
   "emailaddressinvalidsegment":{
-    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%hostname%' is not in a routable network segment. The e-mail address '%value%' should not be resolved from public network)."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%hostname%' n'est pas dans un segment réseau routable. L'adresse e-mail '%value%' ne devrait pas être résolue depuis un réseau public)."
   },
   "emailaddressdotatom":{
-    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' can not be matched against dot-atom format)."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%localPart%' ne correspond pas au format dot-atom)."
   },
   "emailaddressquotedstring":{
-    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' can not be matched against quoted-string format)."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%localPart%' ne correspond pas au format quoted-string)."
   },
   "emailaddressinvalidlocalpart":{
-    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' is no valid local part for e-mail address '%value%')."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%localPart%' n'est pas une partie locale valide pour l'adresse e-mail '%value%')."
   },
   "emailaddresslengthexceeded":{
-    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%value%' exceeds the allowed length)."
+    "message":"ce champ doit contenir une adresse e-mail valide\n\t\t('%value%' excède la taille autorisée)."
   },
   "stringlengthtoolong":{
-    "message":"the field \"$FIELD$\" must have a maximum size of %max% characters."
+    "message":"ce champ doit avoir une taille maximale de %max% caractères."
   },
   "stringlengthinvalid":{
-    "message":"the field \"$FIELD$\" must be a string"
+    "message":"ce champ doit être de type chaîne"
   },
   "stringlengthtooshort":{
-    "message":"the field \"$FIELD$\" must have a minimum size of %max% characters."
+    "message":"ce champ doit avoir une taille minimal de %min% caractères."
   },
   "notunique":{
     "message":"the value of field \"$FIELD$\" must be unique."
   },
   "notmatch":{
-    "message":"the field \"$FIELD$\" must match the following format: %pattern%."
+    "message":"ce champ doit respecter le format suivant : %pattern%."
   },
   "notgreaterthan":{
-    "message":"the field \"$FIELD$\" must have a minimum value of %min%."
+    "message":"ce champ doit avoir une valeur minimale de %min%."
   },
   "notlessthan":{
-    "message":"the field \"$FIELD$\" must have a maximum value of %max%."
+    "message":"ce champ doit avoir une valeur maximale de %max%."
   },
   "notbetween":{
-    "message":"the field \"$FIELD$\" must have a value between %min% and %max%."
+    "message":"ce champ doit avoir une valeur comprise entre %min% et %max%."
   },
   "notbetweenstrict":{
-    "message":"the field \"$FIELD$\" must have a value strictly between %min% and %max%."
+    "message":"ce champ doit avoir une valeur strictement comprise entre %min% et %max%."
   },
   "hostnamecannotdecodepunycode":{
     "message":"'%value%' appears to be a DNS hostname but the given punycode notation cannot be decoded"

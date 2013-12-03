@@ -20,6 +20,12 @@
   "modelconfiguration_defaultmetakeywords":{
     "message":"default meta keywords"
   },
+  "documentseo":{
+    "message":"document's SEO"
+  },
+  "documentseo_list":{
+    "message":"documents' SEO"
+  },
   "modelconfiguration_list":{
     "message":"models configuration"
   },

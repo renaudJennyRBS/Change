@@ -5,6 +5,18 @@
   "variantgroup_rootproduct":{
     "message":"original product"
   },
+  "variantgroup_groupattribute":{
+    "message":"attributes set"
+  },
+  "variantgroup_axesattributes":{
+    "message":"Attributes to be used for the axis"
+  },
+  "variantgroup_othersattributes":{
+    "message":"Other attributes"
+  },
+  "variantgroup_axesconfiguration":{
+    "message":"Axis configuration"
+  },
   "variantgroup_newskuoncreation":{
     "message":"Create a new SKU for each variant"
   },
@@ -120,7 +132,7 @@
     "message":"title"
   },
   "attribute_valuetype":{
-    "message":"attribute value type"
+    "message":"type d'attribut"
   },
   "attribute_defaultvalue":{
     "message":"default attribute value"
@@ -138,7 +150,7 @@
     "message":"document template"
   },
   "attribute_collectioncode":{
-    "message":"value within the collection"
+    "message":"valeurs comprises dans la collection"
   },
   "attribute_productproperty":{
     "message":"product property"
@@ -149,11 +161,17 @@
   "attribute_visibility":{
     "message":"visibility"
   },
+  "attribute_axis":{
+    "message":"declination axis"
+  },
   "attribute_visibility_comparisons":{
     "message":"comparisons"
   },
   "attribute_visibility_specifications":{
     "message":"features"
+  },
+  "attribute_visibility_list_item":{
+    "message":"can be used in lists"
   },
   "attribute_type_boolean":{
     "message":"yes \/ no"
@@ -174,7 +192,7 @@
     "message":"date"
   },
   "attribute_type_code":{
-    "message":"code or reference"
+    "message":"chaîne de caractères"
   },
   "attribute_type_text":{
     "message":"text"

@@ -41,6 +41,12 @@
   "order_articles":{
     "message":"items"
   },
+  "order_no_lines":{
+    "message":"La commande ne contient aucune ligne pour l'instant."
+  },
+  "order_no_lines_help":{
+    "message":"Utilisez la zone <strong>Nouvelle ligne<\/strong> : choisissez des articles (par code SKU ou <em>via<\/em> le sélecteur) puis ajoutez-les à la commande avec le bouton <strong>Ajouter les produits<\/strong>."
+  },
   "order_new_line":{
     "message":"new line"
   },
@@ -59,8 +65,20 @@
   "order_billing_area":{
     "message":"billing area"
   },
+  "order_tax_zone":{
+    "message":"code zone pour le calcul des taxes"
+  },
+  "order_article_choice_help":{
+    "message":"Sélectionnez des articles grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter les articles<\/strong>."
+  },
   "order_search_by_sku":{
     "message":"Search by SKU code"
+  },
+  "order_select_billingarea":{
+    "message":"séléctionnez une zone de facturation..."
+  },
+  "order_select_webstore":{
+    "message":"séléctionnez une boutique..."
   },
   "order_remove_lines":{
     "message":"delete lines"
@@ -68,8 +86,17 @@
   "order_removed_lines":{
     "message":"recently deleted rows"
   },
+  "order_put_back_in_order":{
+    "message":"remettre dans la commande"
+  },
   "order_remove_permanently":{
     "message":"permanently delete"
+  },
+  "order_choose_billingarea_and_taxzone_first":{
+    "message":"Vous devez choisir une <strong>Zone de facturation<\/strong> ainsi qu'un <strong>Code zone pour le calcul des taxes<\/strong> avant de pouvoir choisir des articles."
+  },
+  "order_article_selector_title":{
+    "message":"Sélectionnez des articles à ajouter à la commande"
   },
   "order_add_lines":{
     "message":"Add lines"
@@ -113,11 +140,20 @@
   "process_create":{
     "message":"add a checkout process"
   },
+  "processing_status_initiated":{
+    "message":"initié"
+  },
   "processing_status_in_progress":{
     "message":"in progress"
   },
+  "processing_status_finalized":{
+    "message":"finalisé"
+  },
   "processing_status_canceled":{
     "message":"cancelled"
+  },
+  "shipping_status_initiated":{
+    "message":"initié"
   },
   "shipping_status_prepared":{
     "message":"prepared"
@@ -133,6 +169,9 @@
   },
   "shipping_status_delivered":{
     "message":"delivered"
+  },
+  "payment_status_initiated":{
+    "message":"initié"
   },
   "payment_status_unconfirmed":{
     "message":"non-confirmed"
@@ -151,5 +190,11 @@
   },
   "module_keywords":{
     "message":"orders, invoices"
+  },
+  "invoice_select_order":{
+    "message":"select an order"
+  },
+  "invoice_select_transaction":{
+    "message":"sélectionner une transaction bancaire"
   }
 }

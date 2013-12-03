@@ -2,6 +2,9 @@
   "module_name":{
     "message":"stocks"
   },
+  "module_keywords":{
+    "message":""
+  },
   "inventoryentry_list":{
     "message":"inventory"
   },
@@ -59,10 +62,34 @@
   "in_abbr":{
     "message":"in"
   },
+  "sku_minquantity_help":{
+    "message":"Minimum quantity of this product that can be ordered."
+  },
+  "sku_maxquantity_help":{
+    "message":"Maximum quantity of this product that can be ordered."
+  },
+  "sku_unlimitedinventory_help":{
+    "message":"When this option is enabled, the product will still be considered in stock"
+  },
+  "sku_allowbackorders_help":{
+    "message":"When this option is enabled, the product can be ordered even when it is out, anticipation of a future replenishment."
+  },
+  "sku_allowquantitysplit_help":{
+    "message":"When this option is enabled, the order lines corresponding to this SKU can be delivered in several packages."
+  },
+  "sku_threshold_less_or_equals":{
+    "message":"Less or equal to"
+  },
   "sku_threshold_use":{
     "message":"use"
   },
+  "sku_threshold_add":{
+    "message":"Add a threshold"
+  },
   "sku_threshold_remove":{
     "message":"Delete"
+  },
+  "sku_virtual_help":{
+    "message":"Has no physical properties, and requires no delivery."
   }
 }

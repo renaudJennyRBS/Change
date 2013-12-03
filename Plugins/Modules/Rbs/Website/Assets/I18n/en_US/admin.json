@@ -5,11 +5,50 @@
   "website_baseurl_help":{
     "message":"URL of the homepage of this website in its reference language."
   },
+  "website_indexpage_help":{
+    "message":"The home page is selected from the web site's functions screen."
+  },
+  "website_notify_url_creation":{
+    "message":"Notify me of the creation"
+  },
+  "website_sitemap_url_pending_creation":{
+    "message":"in creation"
+  },
+  "website_notification_sitemap_url_creation":{
+    "message":"\"$WEBSITE$\" sitemap URL for \"$LCID$\" local was generated"
+  },
+  "website_sitemap_help":{
+    "message":"If you enable the sitemap generation, an index file will be automatically generated for each language of the web site, by using documents SEO informations (configure them via <a href=\"Rbs\/Seo\/DocumentSeo\/\"> module SEO<\/a>)."
+  },
+  "website_go_to_tree":{
+    "message":"naviguer vers l'arborescence"
+  },
   "topic_website_help":{
     "message":"The website this topic belongs to."
   },
+  "topic_website_picker_title":{
+    "message":"Select the parent web site"
+  },
+  "topic_indexpage_help":{
+    "message":"The index page is selected from the web site's functions screen."
+  },
   "topic_pathpart_help":{
     "message":"\n\t\tPath used in the URL for this topic.\n\t"
+  },
+  "topic_section_no_function":{
+    "message":"no function is configured for this section."
+  },
+  "topic_section_function":{
+    "message":"This section has the following function:"
+  },
+  "topic_section_functions":{
+    "message":"This section has the {} following functions:"
+  },
+  "topic_configure_section_functions_link":{
+    "message":"configure this section's functions"
+  },
+  "topic_function_via_page":{
+    "message":"<em>via<\/em> page"
   },
   "topic_functions":{
     "message":"functions"
@@ -23,17 +62,26 @@
   "topic_groups_picker_title":{
     "message":"select user groups"
   },
+  "page_pagetemplate_picker_title":{
+    "message":"select the page template"
+  },
   "page_open_page_editor":{
     "message":"open page editor"
   },
   "page_full_screen":{
     "message":"full screen"
   },
+  "page_ttl_help":{
+    "message":"Specify a duration in seconds, or 0 to disable the cache"
+  },
   "sectionpagefunction_list":{
     "message":"functions"
   },
   "sectionpagefunction_create":{
     "message":"associate a function to a section"
+  },
+  "sectionpagefunction_error_not_unique":{
+    "message":"$CODE$ function is performed by another page in this section."
   },
   "sectionpagefunction_back_to":{
     "message":"return to"
@@ -43,6 +91,33 @@
   },
   "sectionpagefunction_define":{
     "message":"set"
+  },
+  "sectionpagefunction_no_page_defined":{
+    "message":"no page set"
+  },
+  "section_functions_list_tip":{
+    "message":"<strong>The list below displays the functions assigned to this section<\/strong>. <br\/>To add a function to a section, you must first choose a <strong>functional page<\/strong>, and then choose functions among those supported by the selected page."
+  },
+  "add_functions_to_this_section":{
+    "message":"add functions to this section"
+  },
+  "select_function":{
+    "message":"select a function"
+  },
+  "function_is_already_used_in_section":{
+    "message":"this function is already performed in this section."
+  },
+  "no_page_use_selected_function":{
+    "message":"no page performs the selected function."
+  },
+  "pages_for_choosen_function":{
+    "message":"list of pages performing the selected function"
+  },
+  "page_can_also_use_these_functions":{
+    "message":"the page can also perform the following functions"
+  },
+  "staticpage_section_help":{
+    "message":"The topic or web site that contains the page."
   },
   "staticpage_section_picker_title":{
     "message":"select the section"
@@ -65,6 +140,15 @@
   "section_name":{
     "message":"CMS"
   },
+  "section_permission_rule_helper":{
+    "message":"choose to restrict access in this section to users or groups of users. If there is no selected group or user, access is considered to be public"
+  },
+  "edit_website_properties":{
+    "message":"edit web site properties"
+  },
+  "navigate_in_website":{
+    "message":"navigate the web site"
+  },
   "richtext":{
     "message":"richtext block"
   },
@@ -73,6 +157,9 @@
   },
   "menu_templatename":{
     "message":"rendering template"
+  },
+  "menu_contextual":{
+    "message":"contextual to the topic"
   },
   "menu_documentid":{
     "message":"root document"
@@ -161,6 +248,9 @@
   "menu_this_menu_is_empty":{
     "message":"This menu is empty"
   },
+  "menu_this_menu_is_empty_help":{
+    "message":"\n  Use the <em>Add<\/em> list below to add entries to this menu."
+  },
   "menu_function_print_page":{
     "message":"print page"
   },
@@ -169,6 +259,30 @@
   },
   "menu_function_bookmark_page":{
     "message":"bookmark page"
+  },
+  "menu_add_items":{
+    "message":"add entries"
+  },
+  "menu_add_document_item":{
+    "message":"add an entry pointing to a document"
+  },
+  "menu_add_document_item_help":{
+    "message":"You can select a publishable document. After choosing a document, it is possible to change the title to display in the menu."
+  },
+  "menu_add_url_item":{
+    "message":"add an entry pointing to a URL"
+  },
+  "menu_add_url_item_help":{
+    "message":"Use this mode to include links to external pages to the web site. For a link to an internal URL, use the form above."
+  },
+  "menu_select_document_to_add_to_menu":{
+    "message":"select a document to add to the menu"
+  },
+  "menu_add_this_element":{
+    "message":"add this item to the menu"
+  },
+  "menu_menus_are_grouped_by_website":{
+    "message":"<strong>Menus are classified by web site.<\/strong> <br\/>Choose a web site to access the menus attached to him."
   },
   "functionalpage_website_help":{
     "message":"The website this page belongs to."
@@ -203,6 +317,9 @@
   "edit_page_contents_to_fix_this":{
     "message":"To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
   },
+  "configure_functions":{
+    "message":"configure"
+  },
   "richtext_content":{
     "message":"text"
   },
@@ -212,7 +329,20 @@
   "thread_separator":{
     "message":"link separator"
   },
+  "block_module_name":{
+    "message":"twig file source module"
+  },
   "block_template_name":{
     "message":"twig file"
+  },
+  "switchlang":{
+    "message":"language change"
+  },
+  "block_properties":{
+    "message":"Propriétés du bloc",
+    "description":"Used as title in the block properties box in the page editor (left column)."
+  },
+  "back_to_general_page_properties":{
+    "message":"Propriétés générales de la page"
   }
 }

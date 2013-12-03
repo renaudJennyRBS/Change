@@ -71,11 +71,23 @@
   "restore_default_url":{
     "message":"back to the default URL"
   },
+  "validate_url":{
+    "message":"submit changes"
+  },
+  "undo_edit_url":{
+    "message":"cancel changes"
+  },
   "edit_redirect":{
     "message":"modify this redirection"
   },
   "remove_redirect":{
     "message":"delete this redirection"
+  },
+  "validate_redirect":{
+    "message":"submit changes"
+  },
+  "undo_edit_redirect":{
+    "message":"cancel changes"
   },
   "add_new_redirect":{
     "message":"add this redirection"
@@ -83,8 +95,26 @@
   "clear_new_redirect":{
     "message":"reset this redirection"
   },
+  "make_current_url":{
+    "message":"use as current URL"
+  },
   "sitemap":{
     "message":"sitemap"
+  },
+  "add_on_website_sitemap":{
+    "message":"add this SEO in the sitemap"
+  },
+  "meta_variables":{
+    "message":"variables"
+  },
+  "document_model":{
+    "message":"document model"
+  },
+  "generate_seo_document_for_model":{
+    "message":"generate SEO document for this model"
+  },
+  "document_seo_auto_generation":{
+    "message":"automatic generation of SEO documents"
   },
   "meta":{
     "message":"metas"
@@ -92,8 +122,23 @@
   "aside_title":{
     "message":"SEO"
   },
+  "aside_document_has_seo_info":{
+    "message":"This document has no SEO informations."
+  },
+  "aside_document_has_no_seo_info":{
+    "message":"This document has no SEO informations."
+  },
   "aside_create_seo_info":{
     "message":"Create"
+  },
+  "aside_edit_seo_info":{
+    "message":"Edit SEO informations for this document"
+  },
+  "documentseo_list_help":{
+    "message":"SEO information for a document is created in the document's editor of this document's editor.<br \/>\nYou can also configure automatic SEO information generation by model via <a href=\"Rbs\/Seo\/ModelConfiguration\/\">models configuration<\/a>."
+  },
+  "modelconfiguration_list_help":{
+    "message":"If automatic creation is enabled for a model, this model documents, old as new, will automatically generate their <strong>SEO information<\/strong> (SEO document).<br \/>\nSitemap useful informations, as changefreq or default priority, are configurable by model"
   },
   "meta_variable_document_title":{
     "message":"document title"

@@ -8,11 +8,17 @@
   "review_pseudonym":{
     "message":"nickname"
   },
+  "review_rating":{
+    "message":"note"
+  },
   "review_target":{
     "message":"document"
   },
   "review_promoted":{
     "message":"highlighted"
+  },
+  "review_reviewDate":{
+    "message":"review date"
   },
   "review_section":{
     "message":"section"

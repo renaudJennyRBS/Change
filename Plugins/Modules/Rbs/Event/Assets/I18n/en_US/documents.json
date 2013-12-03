@@ -34,5 +34,8 @@
   },
   "event":{
     "message":"event"
+  },
+  "category":{
+    "message":"category"
   }
 }

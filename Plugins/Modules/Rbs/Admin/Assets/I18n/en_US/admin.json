@@ -1,4 +1,7 @@
 {
+  "toggle_navigation":{
+    "message":"toggle navigation"
+  },
   "properties":{
     "message":"properties"
   },
@@ -19,6 +22,9 @@
   },
   "help":{
     "message":"clipboard help"
+  },
+  "save":{
+    "message":"enregistrer"
   },
   "clear":{
     "message":"clear"
@@ -578,9 +584,6 @@
   "open":{
     "message":"open main menu (Ctrl+Alt+M)"
   },
-  "about":{
-    "message":"about RBS Change"
-  },
   "profile":{
     "message":"profile"
   },
@@ -595,9 +598,6 @@
   },
   "help_bottom":{
     "message":"This menu can be open with Ctrl+Alt+M."
-  },
-  "dashboard":{
-    "message":"dashboard"
   },
   "website":{
     "message":"Web site"
@@ -854,17 +854,11 @@
   "workflow_title":{
     "message":"Workflow"
   },
+  "show_changes":{
+    "message":"afficher les changements"
+  },
   "timeinterval_choose_type":{
     "message":"choose a time period"
-  },
-  "dashboard_notifications":{
-    "message":"notifications"
-  },
-  "dashboard_notification_new":{
-    "message":"new"
-  },
-  "dashboard_notification_read":{
-    "message":"read"
   },
   "insert_block_left":{
     "message":"add a block to the left"
@@ -887,6 +881,9 @@
   "parameterize_columns":{
     "message":"set up columns"
   },
+  "block_name":{
+    "message":"nom du bloc"
+  },
   "block_type":{
     "message":"block type"
   },
@@ -898,6 +895,18 @@
   },
   "block_visibility_raw":{
     "message":"without envelope"
+  },
+  "block_visibility_x":{
+    "message":"< 768px"
+  },
+  "block_visibility_s":{
+    "message":"≥ 768px"
+  },
+  "block_visibility_m":{
+    "message":"≥ 992px"
+  },
+  "block_visibility_l":{
+    "message":"≥ 1200px"
   },
   "block_ttl":{
     "message":"Cache expiration time in seconds"
@@ -956,6 +965,18 @@
   "shift_right":{
     "message":"offset right"
   },
+  "dashboard":{
+    "message":"dashboard"
+  },
+  "dashboard_notifications":{
+    "message":"notifications"
+  },
+  "dashboard_notification_new":{
+    "message":"new"
+  },
+  "dashboard_notification_read":{
+    "message":"read"
+  },
   "dashboard_task_tasks":{
     "message":"tasks"
   },
@@ -967,5 +988,26 @@
   },
   "dashboard_task_to_execute":{
     "message":"left"
+  },
+  "dashboard_settings":{
+    "message":"configuration du tableau de bord"
+  },
+  "dashboard_settings_tags":{
+    "message":"étiquettes"
+  },
+  "main_menu":{
+    "message":"main menu"
+  },
+  "drag_to_reorder":{
+    "message":"drag to reorder"
+  },
+  "about":{
+    "message":"à propos"
+  },
+  "has_current_correction":{
+    "message":"une correction est en cours"
+  },
+  "saving":{
+    "message":"enregistrement"
   }
 }

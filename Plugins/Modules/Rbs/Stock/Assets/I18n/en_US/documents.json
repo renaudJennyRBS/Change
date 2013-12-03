@@ -29,6 +29,9 @@
   "sku_unlimitedinventory":{
     "message":"no stock management"
   },
+  "sku_allowbackorders":{
+    "message":"Replenishment orders"
+  },
   "sku_allowquantitysplit":{
     "message":"Splited delivery"
   },
