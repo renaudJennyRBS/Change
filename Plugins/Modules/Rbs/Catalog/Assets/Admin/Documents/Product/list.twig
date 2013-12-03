@@ -26,9 +26,9 @@
 					label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></column>
 				<column name="label" primary="true"></column>
 				<quick-actions>
-					|| <a href="(= doc | documentURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
-					|| <a href="(= doc | documentURL:'cross-selling-lists' =)">{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}</a>
-					|| [action delete]
+					<a href="(= doc | documentURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
+					<a href="(= doc | documentURL:'cross-selling-lists' =)">{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}</a>
+					[action default]
 				</quick-actions>
 				<column name="sku" sort="sku.code"><small>(= doc.sku.code =)</small></column>
 
