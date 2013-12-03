@@ -20,6 +20,9 @@
 	"website_sitemap_help":{
 		"message":"Si vous activez la génération du sitemap, un fichier d'index sera généré automatiquement pour chaque langue du site, en utilisant les informations de référencement des documents (configurez-les via le <a href=\"Rbs\/Seo\/DocumentSeo\/\">module SEO<\/a>)."
 	},
+	"website_go_to_tree":{
+		"message":"naviguer vers l'arborescence"
+	},
 	"topic_website_help":{
 		"message":"Le site web dans lequel se trouve cette rubrique."
 	},

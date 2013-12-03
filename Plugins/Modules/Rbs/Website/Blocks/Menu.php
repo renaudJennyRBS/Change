@@ -125,28 +125,32 @@ class Menu extends Block
 
 		$entry = new \Rbs\Website\Menu\MenuEntry();
 		$entry->setTitle($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
-		if ($doc instanceof \Rbs\Website\Documents\Section)
+
+		if (!$doc instanceof \Rbs\Website\Documents\Menu)
 		{
-			if ($doc->getIndexPageId())
+			if ($doc instanceof \Rbs\Website\Documents\Section)
+			{
+				if ($doc->getIndexPageId())
+				{
+					$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
+				}
+				elseif ($maxLevel < 1)
+				{
+					return null; // Hide empty topics.
+				}
+				if (count($path) && in_array($doc, $path))
+				{
+					$entry->setInPath(true);
+				}
+			}
+			else
 			{
 				$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
-			}
-			elseif ($maxLevel < 1)
-			{
-				return null; // Hide empty topics.
-			}
-			if (count($path) && in_array($doc, $path))
-			{
-				$entry->setInPath(true);
-			}
-		}
-		else
-		{
-			$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
-			if ($currentPage === $doc)
-			{
-				$entry->setCurrent(true);
-				$entry->setInPath(true);
+				if ($currentPage === $doc)
+				{
+					$entry->setCurrent(true);
+					$entry->setInPath(true);
+				}
 			}
 		}
 

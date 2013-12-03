@@ -7,8 +7,10 @@
 	</rbs-workspace-config>
 
 	<div rbs-aside-column>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
-		<rbs-aside-translation document="document"></rbs-aside-translation>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="rbs-panel-link" href ng-href="(= document | documentURL:'tree' =)">{{ i18nAttr('m.rbs.website.admin.website_go_to_tree', ['ucf']) }}</a>
+		</rbs-links-panel>
 	</div>
 
 	<div class="document-form" rbs-main-column>

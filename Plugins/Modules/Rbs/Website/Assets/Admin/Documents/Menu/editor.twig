@@ -8,6 +8,12 @@
 				label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
+		<rbs-field-text
+				property="title" required="true" rbs-sync-value="document.label"
+				sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'title'), ['ucf']) }}">
+		</rbs-field-text>
+
 		<rbs-field-picker
 				property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'website'), ['ucf']) }}"
 				accepted-model="Rbs_Website_Website"
