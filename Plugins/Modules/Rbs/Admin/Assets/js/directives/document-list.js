@@ -71,7 +71,7 @@
 
 			function buildDefault () {
 				var out = buildDeleteAction();
-				if (tAttrs.publishable === 'true') {
+				if (tAttrs.publishable === 'true' || tAttrs.correction === 'true') {
 					out += buildWorkflowAction();
 				}
 				return out;
@@ -107,7 +107,7 @@
 			}
 
 			function buildWorkflowAction () {
-				return '<a href="javascript:" ng-click="showWorkflow($index, $event)"><i class="icon-ok"></i> ' + i18n.trans('m.rbs.admin.adminjs.workflow') + '</a>';
+				return '<a href="javascript:;" ng-click="showWorkflow($index, $event)"><i class="icon-ok"></i> ' + i18n.trans('m.rbs.admin.adminjs.workflow') + '</a>';
 			}
 
 			function buildForSelectSession (multiple) {
@@ -131,7 +131,7 @@
 			else if (__quickActions[dlid]) {
 				quickActionsHtml = __quickActions[dlid].contents;
 
-				if (tAttrs.publishable === 'true' && (! quickActionsHtml || (quickActionsHtml.indexOf('[action default]') === -1 && quickActionsHtml.indexOf('[action workflow]') === -1))) {
+				if ((tAttrs.publishable === 'true' || tAttrs.correction === 'true') && (! quickActionsHtml || (quickActionsHtml.indexOf('[action default]') === -1 && quickActionsHtml.indexOf('[action workflow]') === -1))) {
 					quickActionsHtml += '[action workflow]';
 				}
 

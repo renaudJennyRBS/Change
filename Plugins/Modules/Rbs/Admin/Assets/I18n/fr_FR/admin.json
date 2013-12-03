@@ -1009,5 +1009,8 @@
 	},
 	"saving": {
 		"message":"enregistrement"
+	},
+	"no_action_to_execute": {
+		"message":"Vous n'avez aucune action à effectuer."
 	}
 }
