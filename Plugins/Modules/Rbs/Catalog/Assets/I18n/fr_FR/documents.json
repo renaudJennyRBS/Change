@@ -132,7 +132,7 @@
 		"message":"titre"
 	},
 	"attribute_valuetype":{
-		"message":"type de la valeur de l'attribut"
+		"message":"type d'attribut"
 	},
 	"attribute_defaultvalue":{
 		"message":"valeur par défaut de l'attribut"
@@ -150,7 +150,7 @@
 		"message":"modèle de document"
 	},
 	"attribute_collectioncode":{
-		"message":"valeur comprise dans la collection"
+		"message":"valeurs comprises dans la collection"
 	},
 	"attribute_productproperty":{
 		"message":"propriété du produit"
@@ -192,7 +192,7 @@
 		"message":"date"
 	},
 	"attribute_type_code":{
-		"message":"code ou référence"
+		"message":"chaîne de caractères"
 	},
 	"attribute_type_text":{
 		"message":"texte"

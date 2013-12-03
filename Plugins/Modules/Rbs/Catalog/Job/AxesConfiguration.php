@@ -70,12 +70,10 @@ class AxesConfiguration
 		$attributes = array();
 		foreach ($variantGroup->getAxesAttributes() as $attribute)
 		{
-			echo $attribute->getLabel(), PHP_EOL;
 			$attributes[] = $attribute;
 		}
 		foreach ($variantGroup->getOthersAttributes() as $attribute)
 		{
-			echo $attribute->getLabel(), PHP_EOL;
 			$attributes[] = $attribute;
 		}
 
