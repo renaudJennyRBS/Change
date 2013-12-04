@@ -281,6 +281,10 @@
 			</div>
 		</div>
 
+		<div ng-switch-default="">
+			{{ i18n('m.rbs.admin.admin.no_action_to_execute', ['ucf']) }}
+		</div>
+
 		<div class="progress" ng-if="hasProgressInfo()">
 			<div class="progress-bar" role="progressbar" aria-valuenow="(= data.progress =)" aria-valuemin="0" aria-valuemax="100"
 				ng-style="{width: data.progress + '%'}"></div>

@@ -46,6 +46,7 @@ class ModelsInfo
 				'root' => !$model->hasParent(),
 				'abstract' => $model->isAbstract(),
 				'publishable' => $model->isPublishable(),
+				'editable' => $model->isEditable(),
 				'plugin' => $i18n->trans('m.' . $model->getVendorName() . '.' . $model->getShortModuleName()
 						. '.admin.module_name', array('ucf'))
 			);

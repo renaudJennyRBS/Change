@@ -17,7 +17,7 @@
 				'onClose' : '&'
 			},
 
-			link : function (scope, element) {
+			link : function (scope, element, attrs) {
 
 				var	lastUpdatedDoc = null,
 					oldCssClass = null;
@@ -111,7 +111,7 @@
 									scope.data.action = action;
 								}
 							});
-							if (scope.data.action == null) {
+							if (scope.data.action == null && attrs.standalone == 'true') {
 								$location.path(doc.url());
 								return;
 							}
