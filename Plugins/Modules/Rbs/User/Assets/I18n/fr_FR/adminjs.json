@@ -1,17 +1,5 @@
 {
 	"confirm_revoke_token":{
 		"message":"confirmer la révocation du token : $TOKEN$ ?"
-	},
-	"profile_no_password_given":{
-		"message":"vous devez saisir à nouveau votre mot de passe actuel pour pouvoir modifier les données de votre profil."
-	},
-	"profile_wrong_password_given":{
-		"message":"le mot de passe actuel ne correspond pas à votre compte"
-	},
-	"profile_invalid_login":{
-		"message":"l'identifiant de connexion est invalide. Veuillez en choisir un différent (il doit être unique, contenir moins de 50 caractères, et ne doit pas contenir d'espace, '@' ou '+')."
-	},
-	"profile_invalid_email":{
-		"message":"l'email est invalide."
 	}
 }
