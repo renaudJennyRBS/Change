@@ -58,5 +58,8 @@
 	},
 	"address_create":{
 		"message":"ajouter une adresse"
+	},
+	"address_fields_select":{
+		"message":"sélectionner le modèle d'adresse"
 	}
 }

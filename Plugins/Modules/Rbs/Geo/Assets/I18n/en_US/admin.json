@@ -58,5 +58,8 @@
   },
     "address_create":{
     "message":"add a new address"
+  },
+  "address_fields_select":{
+    "message":"select the adress format"
   }
 }
