@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\Commerce\Interfaces;
+namespace Rbs\Price\Tax;
 
 /**
-* @name \Rbs\Commerce\Interfaces\Tax
-*/
-interface Tax
+ * @nae \Rbs\Price\Tax\TaxInterface
+ */
+interface TaxInterface
 {
 	/**
 	 * @return string

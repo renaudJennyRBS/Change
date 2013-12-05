@@ -6,7 +6,7 @@
 			jQuery.ajax({
 				type: "POST",
 				url: "Action/Rbs/Commerce/UpdateCartLine",
-				data: {lineKey: lineKey, delete: true},
+				data: {lineKey: lineKey, quantity: 0},
 				dataType: 'json',
 				success: function(data, textStatus, jqXHR) {
 					window.location.reload();

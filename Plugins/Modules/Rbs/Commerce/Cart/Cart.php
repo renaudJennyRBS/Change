@@ -1,20 +1,20 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
-use Rbs\Commerce\CommerceServices;
-use Rbs\Commerce\Interfaces\Cart as CartInterfaces;
-use Rbs\Commerce\Interfaces\CartLine as CartLineInterfaces;
-use Rbs\Commerce\Interfaces\TaxApplication;
-
 /**
  * @name \Rbs\Commerce\Cart\Cart
  */
-class Cart implements CartInterfaces
+class Cart implements \Serializable
 {
 	/**
-	 * @var \Rbs\Commerce\CommerceServices
+	 * @var \Rbs\Commerce\Cart\CartManager
 	 */
-	protected $commerceServices;
+	protected $cartManager;
+
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
 
 	/**
 	 * @var string
@@ -22,7 +22,7 @@ class Cart implements CartInterfaces
 	protected $identifier;
 
 	/**
-	 * @var \Rbs\Commerce\Interfaces\BillingArea|null
+	 * @var \Rbs\Price\Tax\BillingAreaInterface|null
 	 */
 	protected $billingArea;
 
@@ -31,10 +31,7 @@ class Cart implements CartInterfaces
 	 */
 	protected $zone;
 
-	/**
-	 * @var integer
-	 */
-	protected $ownerId = 0;
+
 
 	/**
 	 * @var integer
@@ -42,9 +39,29 @@ class Cart implements CartInterfaces
 	protected $webStoreId = 0;
 
 	/**
+	 * @var integer
+	 */
+	protected $userId = 0;
+
+	/**
+	 * @var integer
+	 */
+	protected $ownerId = 0;
+
+	/**
 	 * @var boolean
 	 */
 	protected $locked = false;
+
+	/**
+	 * @var integer
+	 */
+	protected $transactionId = 0;
+
+	/**
+	 * @var boolean
+	 */
+	protected $ordered = false;
 
 	/**
 	 * @var \DateTime
@@ -67,39 +84,78 @@ class Cart implements CartInterfaces
 	protected $lines = array();
 
 	/**
+	 * @var \Rbs\Commerce\Cart\CartLine[]
+	 */
+	protected $fees = array();
+
+	/**
+	 * @var \Rbs\Commerce\Cart\CartLine[]
+	 */
+	protected $discounts = array();
+
+	/**
+	 * @var array [[id => code =>, title =>, address =>], ...]
+	 */
+	protected $shippingModes = array();
+
+	/**
+	 * @var \Rbs\Geo\Interfaces\Address
+	 */
+	protected $address;
+
+	/**
 	 * @var array|null
 	 */
 	protected $serializedData;
 
 	/**
 	 * @param string $identifier
-	 * @param \Rbs\Commerce\CommerceServices $commerceServices
+	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
 	 */
-	function __construct($identifier, $commerceServices = null)
+	function __construct($identifier, \Rbs\Commerce\Cart\CartManager $cartManager = null)
 	{
 		$this->identifier = $identifier;
-		$this->commerceServices = $commerceServices;
+		$this->cartManager = $cartManager;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\CommerceServices
-	 */
-	public function getCommerceServices()
-	{
-		return $this->commerceServices;
-	}
-
-	/**
-	 * @param \Rbs\Commerce\CommerceServices $commerceServices
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return $this
 	 */
-	public function setCommerceServices($commerceServices)
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager = null)
 	{
-		$this->commerceServices = $commerceServices;
-		if ($commerceServices && $this->serializedData)
+		$this->documentManager = $documentManager;
+		if ($documentManager && $this->serializedData)
 		{
 			$this->restoreSerializedData();
 		}
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Cart\CartManager
+	 */
+	public function getCartManager()
+	{
+		return $this->cartManager;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
+	 * @return $this
+	 */
+	public function setCartManager($cartManager)
+	{
+		$this->cartManager = $cartManager;
+
 		return $this;
 	}
 
@@ -122,24 +178,6 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param integer $ownerId
-	 * @return $this
-	 */
-	public function setOwnerId($ownerId)
-	{
-		$this->ownerId = intval($ownerId);
-		return $this;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function getOwnerId()
-	{
-		return $this->ownerId;
-	}
-
-	/**
 	 * @param integer $webStoreId
 	 * @return $this
 	 */
@@ -158,25 +196,7 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param boolean $locked
-	 * @return $this
-	 */
-	public function setLocked($locked)
-	{
-		$this->locked = ($locked == true);
-		return $this;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isLocked()
-	{
-		return $this->locked;
-	}
-
-	/**
-	 * @param \Rbs\Commerce\Interfaces\BillingArea|null $billingArea
+	 * @param \Rbs\Price\Tax\BillingAreaInterface|null $billingArea
 	 * @return $this
 	 */
 	public function setBillingArea($billingArea)
@@ -186,7 +206,7 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\BillingArea|null
+	 * @return \Rbs\Price\Tax\BillingAreaInterface|null
 	 */
 	public function getBillingArea()
 	{
@@ -217,6 +237,96 @@ class Cart implements CartInterfaces
 	public function getZone()
 	{
 		return $this->zone;
+	}
+
+	/**
+	 * @param integer $userId
+	 * @return $this
+	 */
+	public function setUserId($userId)
+	{
+		$this->userId = $userId;
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getUserId()
+	{
+		return $this->userId;
+	}
+
+	/**
+	 * @param integer $ownerId
+	 * @return $this
+	 */
+	public function setOwnerId($ownerId)
+	{
+		$this->ownerId = intval($ownerId);
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getOwnerId()
+	{
+		return $this->ownerId;
+	}
+
+	/**
+	 * @param boolean $locked
+	 * @return $this
+	 */
+	public function setLocked($locked)
+	{
+		$this->locked = ($locked == true);
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isLocked()
+	{
+		return $this->locked;
+	}
+
+	/**
+	 * @param integer $transactionId
+	 * @return $this
+	 */
+	public function setTransactionId($transactionId)
+	{
+		$this->transactionId = $transactionId;
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getTransactionId()
+	{
+		return $this->transactionId;
+	}
+
+	/**
+	 * @param boolean $ordered
+	 * @return $this
+	 */
+	public function setOrdered($ordered)
+	{
+		$this->ordered = $ordered;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getOrdered()
+	{
+		return $this->ordered;
 	}
 
 	/**
@@ -270,7 +380,6 @@ class Cart implements CartInterfaces
 	{
 		return count($this->errors) > 0;
 	}
-
 
 	/**
 	 * @param \DateTime|null $lastUpdate
@@ -332,50 +441,27 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig
-	 * @param integer $quantity
+	 * @param array $parameters
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
-	public function getNewLine(\Rbs\Commerce\Interfaces\CartLineConfig $cartLineConfig, $quantity)
+	public function getNewLine($parameters)
 	{
-		$line = new CartLine($cartLineConfig->getKey());
-		$line->setDesignation($cartLineConfig->getDesignation());
-		$line->setQuantity($quantity);
-		if (is_array($cartLineConfig->getOptions()))
-		{
-			$line->getOptions()->fromArray($cartLineConfig->getOptions());
-		}
-		$itemConfig = $cartLineConfig->getItemConfigArray();
-		if ($itemConfig instanceof \Rbs\Commerce\Interfaces\CartItemConfig)
-		{
-			$line->appendItem($this->getNewItem($itemConfig));
-		}
-		elseif (is_array($itemConfig))
-		{
-			foreach ($itemConfig as $ic)
-			{
-				if ($ic instanceof \Rbs\Commerce\Interfaces\CartItemConfig)
-				{
-					$line->appendItem($this->getNewItem($ic));
-				}
-			}
-		}
-		return $line;
+		return new CartLine($parameters);
 	}
 
 	/**
-	 * @param CartLineInterfaces $line
-	 * @param integer $lineNumber
+	 * @param CartLine $line
+	 * @param integer $lineIndex
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
-	public function insertLineAt(CartLineInterfaces $line, $lineNumber = 1)
+	public function insertLineAt(CartLine $line, $lineIndex = 0)
 	{
 		if ($line instanceof CartLine)
 		{
-			$lastLineNumber = count($this->lines);
-			if ($lineNumber < 1 || $lineNumber > $lastLineNumber)
+			$countLines = count($this->lines);
+			if ($lineIndex < 0 || $lineIndex >= $countLines)
 			{
 				return $this->appendLine($line);
 			}
@@ -383,13 +469,10 @@ class Cart implements CartInterfaces
 			{
 				throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
 			}
-			$idx = $lineNumber - 1;
-			$this->lines = array_merge(array_slice($this->lines, 0, $idx), array($line), array_slice($this->lines, $idx));
-			for (; $idx <= $lastLineNumber; $idx++)
+			array_splice($this->lines, $lineIndex, 0, array($line));
+			foreach ($this->lines as $idx => $line)
 			{
-				/* @var $l CartLine */
-				$l = $this->lines[$idx];
-				$l->setNumber($idx + 1);
+				$line->setIndex($idx);
 			}
 			return $line;
 		}
@@ -400,51 +483,40 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @param CartLineInterfaces $line
+	 * @param CartLine $line
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
-	public function appendLine(CartLineInterfaces $line)
+	public function appendLine(CartLine $line)
 	{
-		if ($line instanceof CartLine)
+		if ($this->getLineByKey($line->getKey()))
 		{
-			if ($this->getLineByKey($line->getKey()))
-			{
-				throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
-			}
-			$this->lines[] = $line;
-			$line->setNumber(count($this->lines));
-			return $line;
+			throw new \RuntimeException('Duplicate line key: ' . $line->getKey(), 999999);
 		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 1 should be a CartLine', 999999);
-		}
+		$index = count($this->lines);
+		$this->lines[] = $line;
+		$line->setIndex($index);
+		return $line;
 	}
 
 	/**
-	 * @param integer $lineNumber
+	 * @param integer $index
 	 * @return \Rbs\Commerce\Cart\CartLine|null
 	 */
-	public function removeLineByNumber($lineNumber)
+	public function removeLineAt($index)
 	{
-		$lastLineNumber = count($this->lines);
-		if ($lineNumber < 1 || $lineNumber > $lastLineNumber)
+		if (!isset($this->lines[$index]))
 		{
 			return null;
 		}
-		$idx = $lineNumber - 1;
-		$line = $this->lines[$idx];
-		$this->lines = array_merge(array_slice($this->lines, 0, $idx), array_slice($this->lines, $idx + 1));
-		$lastLineNumber--;
-		for (; $idx < $lastLineNumber; $idx++)
+		$removedLine = $this->lines[$index];
+		array_splice($this->lines, $index, 1);
+		foreach ($this->lines as $idx => $line)
 		{
-			/* @var $l CartLine */
-			$l = $this->lines[$idx];
-			$l->setNumber($idx + 1);
+			$line->setIndex($idx);
 		}
-		return $line;
+		return $removedLine;
 	}
 
 	/**
@@ -456,13 +528,13 @@ class Cart implements CartInterfaces
 		$line = $this->getLineByKey($lineKey);
 		if ($line)
 		{
-			return $this->removeLineByNumber($line->getNumber());
+			return $this->removeLineAt($line->getIndex());
 		}
 		return $line;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\CartLine[]
+	 * @return \Rbs\Commerce\Cart\CartLine[]
 	 */
 	public function removeAllLines()
 	{
@@ -484,95 +556,6 @@ class Cart implements CartInterfaces
 			return $line->setQuantity(intval($newQuantity));
 		}
 		return $line;
-	}
-
-	/**
-	 * @param \Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig
-	 * @return CartItem
-	 */
-	public function getNewItem(\Rbs\Commerce\Interfaces\CartItemConfig $cartItemConfig)
-	{
-		$item = new CartItem($cartItemConfig->getCodeSKU());
-		if (is_array($cartItemConfig->getOptions()))
-		{
-			$item->getOptions()->fromArray($cartItemConfig->getOptions());
-		}
-		$item->setReservationQuantity($cartItemConfig->getReservationQuantity());
-
-		if ($cartItemConfig->getPriceValue() !== null)
-		{
-			$item->getOptions()->set('lockedPrice', $item->getOptions()->get('lockedPrice', true));
-
-			$item->setPriceValue($cartItemConfig->getPriceValue());
-
-			$taxApplication = $cartItemConfig->getTaxApplication();
-			if ($taxApplication instanceof TaxApplication)
-			{
-				$cartTax = new CartTax();
-				$cartTax->fromTaxApplication($taxApplication);
-				$item->appendCartTaxes($cartTax);
-			}
-			elseif (is_array($taxApplication))
-			{
-				foreach ($taxApplication as $taxApp)
-				{
-					if ($taxApp instanceof TaxApplication)
-					{
-						$cartTax = new CartTax();
-						$cartTax->fromTaxApplication($taxApp);
-						$item->appendCartTaxes($cartTax);
-					}
-				}
-			}
-		}
-
-		return $item;
-	}
-
-	/**
-	 * @param \Rbs\Commerce\Interfaces\CartItem $item
-	 * @param float $priceValue
-	 * @throws \InvalidArgumentException
-	 * @return \Rbs\Commerce\Interfaces\CartItem
-	 */
-	public function updateItemPrice($item, $priceValue)
-	{
-		if ($item instanceof CartItem)
-		{
-			$item->setPriceValue($priceValue);
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 1 should be a CartItem', 999999);
-		}
-	}
-
-	/**
-	 * @param \Rbs\Commerce\Interfaces\CartItem $item
-	 * @param TaxApplication[] $taxApplicationArray
-	 * @throws \InvalidArgumentException
-	 * @return \Rbs\Commerce\Interfaces\CartItem
-	 */
-	public function updateItemTaxes($item, $taxApplicationArray)
-	{
-		if ($item instanceof CartItem)
-		{
-			$cartTaxes = array();
-			foreach ($taxApplicationArray as $taxApplication)
-			{
-				if ($taxApplication instanceof TaxApplication)
-				{
-					$cartTax = new CartTax();
-					$cartTax->fromTaxApplication($taxApplication);
-					$cartTaxes[] = $cartTax;
-				}
-			}
-			$item->setCartTaxes($cartTaxes);
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 1 should be a CartItem', 999999);
-		}
 	}
 
 	/**
@@ -599,11 +582,11 @@ class Cart implements CartInterfaces
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
+	 * @return \Rbs\Price\Tax\TaxApplication[]
 	 */
 	public function getTaxes()
 	{
-		/* @var $taxes \Rbs\Price\Std\TaxApplication[] */
+		/* @var $taxes \Rbs\Price\Tax\TaxApplication[] */
 		$taxes = array();
 		foreach ($this->lines as $line)
 		{
@@ -616,10 +599,10 @@ class Cart implements CartInterfaces
 					{
 						foreach ($item->getCartTaxes() as $cartTax)
 						{
-							$key = ($cartTax->getTax() ? $cartTax->getTax()->getCode() : '') . '/' . $cartTax->getCategory();
+							$key = $cartTax->getTaxKey();
 							if (!isset($taxes[$key]))
 							{
-								$tax = new \Rbs\Price\Std\TaxApplication($cartTax->getTax(), $cartTax->getCategory(), $cartTax->getZone(), $cartTax->getRate());
+								$tax = new \Rbs\Price\Tax\TaxApplication($cartTax->getTaxCode(), $cartTax->getCategory(), $cartTax->getZone(), $cartTax->getRate());
 								$tax->setValue($cartTax->getValue() * $lineQuantity);
 								$taxes[$key] = $tax;
 							}
@@ -644,7 +627,17 @@ class Cart implements CartInterfaces
 		$price = $this->getPriceValue();
 		if ($price !== null)
 		{
-			return $this->commerceServices->getTaxManager()->getValueWithTax($price, $this->getTaxes());
+			$valueWithTax = $price;
+			$taxApplications = $this->getTaxes();
+			if (count($taxApplications))
+			{
+				/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
+				foreach ($taxApplications as $taxApplication)
+				{
+					$valueWithTax += $taxApplication->getValue();
+				}
+			}
+			return $valueWithTax;
 		}
 		return null;
 	}
@@ -659,10 +652,14 @@ class Cart implements CartInterfaces
 		$serializedData = array('identifier' => $this->identifier,
 			'billingArea' => $this->billingArea,
 			'zone' => $this->zone,
-			'ownerId' => $this->ownerId,
 			'context' => $this->context,
 			'lines' => $this->lines,
-			'errors' => $this->errors);
+			'errors' => $this->errors,
+			'address' => $this->address,
+			'fees' => $this->fees,
+			'discounts' => $this->discounts,
+			'shippingModes' => $this->shippingModes,
+		);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
 	}
 
@@ -678,19 +675,23 @@ class Cart implements CartInterfaces
 
 	protected function restoreSerializedData()
 	{
-		$serializedData = (new CartStorage())->restoreSerializableValue($this->serializedData, $this->getCommerceServices());
+		$serializedData = (new CartStorage())->setDocumentManager($this->getDocumentManager())
+			->restoreSerializableValue($this->serializedData);
 		$this->serializedData = null;
 		$this->identifier = $serializedData['identifier'];
 		$this->billingArea = $serializedData['billingArea'];
 		$this->zone = $serializedData['zone'];
-		$this->ownerId = $serializedData['ownerId'];
 		$this->context = $serializedData['context'];
 		$this->lines = $serializedData['lines'];
 		$this->errors = $serializedData['errors'];
+		$this->address = $serializedData['address'];
+		$this->fees = $serializedData['fees'];
+		$this->discounts = $serializedData['discounts'];
+		$this->shippingModes = $serializedData['shippingModes'];
 		foreach ($this->lines as $line)
 		{
 			/* @var $line CartLine */
-			$line->setCart($this);
+			$line->setDocumentManager($this->getDocumentManager());
 		}
 	}
 
@@ -705,7 +706,10 @@ class Cart implements CartInterfaces
 			'zone' => $this->zone,
 			'locked' => $this->locked,
 			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
+			'userId' => $this->userId,
 			'ownerId' => $this->ownerId,
+			'transactionId' => $this->transactionId,
+			'ordered' => $this->ordered,
 			'webStoreId' => $this->webStoreId,
 			'context' => $this->getContext()->toArray(),
 			'errors' => array(),

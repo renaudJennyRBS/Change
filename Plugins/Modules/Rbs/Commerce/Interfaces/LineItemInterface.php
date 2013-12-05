@@ -2,9 +2,9 @@
 namespace Rbs\Commerce\Interfaces;
 
 /**
-* @name \Rbs\Commerce\Interfaces\CartItem
+* @name \Rbs\Commerce\Interfaces\LineItemInterface
 */
-interface CartItem extends \Serializable
+interface LineItemInterface
 {
 	/**
 	 * @return string
@@ -17,14 +17,9 @@ interface CartItem extends \Serializable
 	public function getReservationQuantity();
 
 	/**
-	 * @return float|null
+	 * @return \Rbs\Price\PriceInterface|null
 	 */
-	public function getPriceValue();
-
-	/**
-	 * @return CartTax[]
-	 */
-	public function getCartTaxes();
+	public function getPrice();
 
 	/**
 	 * @return \Zend\Stdlib\Parameters

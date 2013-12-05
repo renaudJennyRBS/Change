@@ -289,7 +289,7 @@ class Loader
 					{
 						$billingArea = $event->getApplicationServices()->getDocumentManager()
 							->getDocumentInstance($profile->getDefaultBillingAreaId());
-						if ($billingArea instanceof \Rbs\Commerce\Interfaces\BillingArea)
+						if ($billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
 						{
 							$context->setBillingArea($billingArea);
 						}

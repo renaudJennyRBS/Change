@@ -1,8 +1,8 @@
 <?php
+namespace ChangeTests\Rbs\Price\Tax\TaxManager;
 
 class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-
 	/**
 	 * @var \Rbs\Commerce\CommerceServices;
 	 */
@@ -25,7 +25,7 @@ class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$cs = $this->commerceServices;
 		$taxManager = $cs->getTaxManager();
-		$this->assertInstanceOf('\Rbs\Price\Services\TaxManager', $taxManager);
+		$this->assertInstanceOf('\Rbs\Price\Tax\TaxManager', $taxManager);
 	}
 
 	public function testGetTaxByValue()
@@ -33,18 +33,18 @@ class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cs = $this->commerceServices;
 		$taxManager = $cs->getTaxManager();
 
-		/* @var $array \Rbs\Price\Std\TaxApplication[] */
+		/* @var $array \Rbs\Price\Tax\TaxApplication[] */
 		$array = $taxManager->getTaxByValue(100, array('TVA' => 'c1'));
 		$this->assertCount(1, $array);
 		$taxApplication =  $array[0];
-		$this->assertInstanceOf('\Rbs\Price\Std\TaxApplication', $taxApplication);
+		$this->assertInstanceOf('\Rbs\Price\Tax\TaxApplication', $taxApplication);
 		$this->assertEquals(20, $taxApplication->getValue());
 
 
 		$array = $taxManager->getTaxByValue(100, array('TVA' => 'c2'));
 		$this->assertCount(1, $array);
 		$taxApplication =  $array[0];
-		$this->assertInstanceOf('\Rbs\Price\Std\TaxApplication', $taxApplication);
+		$this->assertInstanceOf('\Rbs\Price\Tax\TaxApplication', $taxApplication);
 		$this->assertEquals(0, $taxApplication->getValue());
 
 		$array = $taxManager->getTaxByValue(100, array('TVA' => 'c1', 'TVB' => 'c1'));
@@ -68,11 +68,11 @@ class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$cs = $this->commerceServices;
 		$taxManager = $cs->getTaxManager();
-		/* @var $array \Rbs\Price\Std\TaxApplication[] */
+		/* @var $array \Rbs\Price\Tax\TaxApplication[] */
 		$array = $taxManager->getTaxByValueWithTax(120, array('TVA' => 'c1'));
 		$this->assertCount(1, $array);
 		$taxApplication =  $array[0];
-		$this->assertInstanceOf('\Rbs\Price\Std\TaxApplication', $taxApplication);
+		$this->assertInstanceOf('\Rbs\Price\Tax\TaxApplication', $taxApplication);
 		$this->assertEquals(20, $taxApplication->getValue());
 
 
@@ -90,7 +90,7 @@ class TaxManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 }
 
 
-class TestTax implements \Rbs\Commerce\Interfaces\Tax
+class TestTax implements \Rbs\Price\Tax\TaxInterface
 {
 
 	public $code;
@@ -151,7 +151,7 @@ class TestTax implements \Rbs\Commerce\Interfaces\Tax
 	}
 }
 
-class TestBillingArea implements \Rbs\Commerce\Interfaces\BillingArea
+class TestBillingArea implements \Rbs\Price\Tax\BillingAreaInterface
 {
 	/**
 	 * @var string

@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Order\Http\Rest\Actions;
 
+use Change\Documents\AbstractDocument;
 use Change\Http\Event;
 use Change\Http\Rest\Result\DocumentLink;
 use Zend\Http\Response as HttpResponse;
@@ -41,7 +42,7 @@ class ProductPriceInfo
 
 	/**
 	 * @param $webStore \Rbs\Store\Documents\WebStore
-	 * @param $billingArea \Rbs\Commerce\Interfaces\BillingArea
+	 * @param $billingArea \Rbs\Price\Tax\BillingAreaInterface
 	 * @param $products \Rbs\Catalog\Documents\Product[]
 	 * @param $commerceServices \Rbs\Commerce\CommerceServices
 	 * @param $urlManager \Change\Http\UrlManager
@@ -70,7 +71,15 @@ class ProductPriceInfo
 				if ($sku)
 				{
 					$productInfo['boInfo']['sku'] = (new DocumentLink($urlManager, $sku, DocumentLink::MODE_PROPERTY))->toArray();
-					$productInfo['boInfo']['price'] = (new DocumentLink($urlManager, $pm->getPriceBySku($sku, $webStore, $billingArea), DocumentLink::MODE_PROPERTY, $priceProperties))->toArray();
+					$price = $pm->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
+					if ($price instanceof AbstractDocument)
+					{
+						$productInfo['boInfo']['price'] = (new DocumentLink($urlManager, $price, DocumentLink::MODE_PROPERTY, $priceProperties))->toArray();
+					}
+					else
+					{
+						$productInfo['boInfo']['price'] = null;
+					}
 				}
 				else
 				{

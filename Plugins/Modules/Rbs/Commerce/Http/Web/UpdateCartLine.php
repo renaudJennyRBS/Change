@@ -38,7 +38,7 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @return null|\Rbs\Commerce\Interfaces\Cart
+	 * @return null|\Rbs\Commerce\Cart\Cart
 	 */
 	protected function getCart(CommerceServices $commerceServices)
 	{
@@ -78,35 +78,26 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$cart = $this->getCart($commerceServices);
 			if ($cart)
 			{
+
 				$cartLine = $cart->getLineByKey($lineKey);
 				if ($cartLine)
 				{
 					$parameters = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
-					$cartManager = $commerceServices->getCartManager();
-					if (isset($parameters['product']))
-					{
-						$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($parameters['product']);
-						if ($product instanceof \Rbs\Commerce\Interfaces\CartLineConfigCapable)
-						{
-							$cartLineConfig = $product->getCartLineConfig($commerceServices, $parameters);
-							if (($oldLine = $cart->getLineByKey($cartLineConfig->getKey())) !== null)
-							{
-								$e = new \RuntimeException('Duplicate Line: ' . $oldLine->getNumber() , 999999);
-								$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
-								throw $e;
-							}
-
-							$cartLine = $cartManager->updateLineByKey($cart, $lineKey, $cartLineConfig);
-							$lineKey = $cartLine->getKey();
-						}
-					}
-
 					if (isset($parameters['quantity']))
 					{
-						$cartManager->updateLineQuantityByKey($cart, $lineKey, intval($parameters['quantity']));
+						$quantity = intval($parameters['quantity']);
+						$cartManager = $commerceServices->getCartManager();
+						if ($quantity > 0)
+						{
+							$cartManager->updateLineQuantityByKey($cart, $lineKey, $quantity);
+						}
+						else
+						{
+							$cart->removeLineByKey($lineKey);
+						}
+						$cartManager->saveCart($cart);
 					}
 
-					$cartManager->saveCart($cart);
 					$result = $this->getNewAjaxResult(array('cart' => $cart->toArray()));
 					$event->setResult($result);
 				}

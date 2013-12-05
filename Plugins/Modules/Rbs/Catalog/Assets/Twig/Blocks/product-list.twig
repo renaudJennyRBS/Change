@@ -1,12 +1,34 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 
 <h1 id="product-list-title">{{ title }}</h1>
+<script type="text/javascript">
+	var script{{ blockId }} = {};
+	script{{ blockId }}.offer = {
+		cartURL: "{{ functionURL('Rbs_Commerce_Cart') }}",
+		addProduct: function(button) {
+			var url = button.form.action;
+			var key = button.value;
+			var sku = button.getAttribute('data-sku');
+			var designation = button.getAttribute('data-designation');
+			var cartURL = this.cartURL;
+			var quantity =  button.getAttribute('data-quantity');
 
-<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="post">
-	<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}" />
-	<input type="hidden" name="quantity" value="1" />
-	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
+			jQuery.ajax({
+				type: "POST",
+				url: url,
+				data: {key: key, designation: designation, quantity: quantity, items: [{codeSKU: sku}] },
+				dataType: 'json',
+				success: function(data, textStatus, jqXHR) {
+					window.location.href = cartURL;
+				},
+				error: function(jqXHR, textStatus, errorThrown ) {
+					console.log(JSON.parse(jqXHR.responseText), textStatus, errorThrown);
+				}
+			})
+		}
+	}
+</script>
+<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
 			{% for row in rows %}
@@ -15,5 +37,4 @@
 		</ul>
 	{% endspaceless %}
 </form>
-
 {% include 'Rbs_Generic/pagination.twig' %}

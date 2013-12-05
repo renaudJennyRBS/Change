@@ -25,14 +25,14 @@ class ContextTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 			, 5);
 
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\BillingArea', $context->getBillingArea());
+		$this->assertInstanceOf('Rbs\Price\Tax\BillingAreaInterface', $context->getBillingArea());
 		$this->assertEquals('FAK', $context->getBillingArea()->getCurrencyCode());
 		$this->assertEquals('FZO', $context->getZone());
 		$this->assertEquals('FAKECartIdentifier', $context->getCartIdentifier());
 	}
 }
 
-class FakeBillingArea_451235 implements \Rbs\Commerce\Interfaces\BillingArea
+class FakeBillingArea_451235 implements \Rbs\Price\Tax\BillingAreaInterface
 {
 	/**
 	 * @return string
@@ -43,7 +43,7 @@ class FakeBillingArea_451235 implements \Rbs\Commerce\Interfaces\BillingArea
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\Tax[]
+	 * @return \Rbs\Price\Tax\TaxInterface[]
 	 */
 	public function getTaxes()
 	{

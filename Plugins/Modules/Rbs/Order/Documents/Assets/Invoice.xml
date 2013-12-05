@@ -10,5 +10,6 @@
 		<property name="currencyCode" type="String">
 			<dboptions length="3" />
 		</property>
+		<property name="file" type="StorageUri" />
 	</properties>
 </document>

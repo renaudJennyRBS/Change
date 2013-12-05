@@ -9,9 +9,9 @@ class CommerceServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertInstanceOf('Rbs\Commerce\Std\Context', $cs->getContext());
 
-		$this->assertInstanceOf('Rbs\Price\Services\TaxManager', $cs->getTaxManager());
+		$this->assertInstanceOf('Rbs\Price\Tax\TaxManager', $cs->getTaxManager());
 
-		$this->assertInstanceOf('Rbs\Price\Services\PriceManager', $cs->getPriceManager());
+		$this->assertInstanceOf('Rbs\Price\PriceManager', $cs->getPriceManager());
 
 		$this->assertInstanceOf('Rbs\Catalog\CatalogManager', $cs->getCatalogManager());
 

@@ -3,6 +3,7 @@
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	editable="true" activable="true">
 	<properties>
-
+		<property name="paymentConnectors" type="DocumentArray" document-type="Rbs_Payment_Connector" />
+		<property name="shippingModes" type="DocumentArray" document-type="Rbs_Shipping_Mode" />
 	</properties>
 </document>

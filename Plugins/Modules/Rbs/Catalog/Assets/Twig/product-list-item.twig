@@ -43,16 +43,20 @@
 			{% endblock %}
 
 			{% block addToCart %}
-				{% if row.productPresentation.getStock.level %}
+				{% if row.productPresentation.stock.level %}
 					<li class="product-add">
-						<button name="product" type="submit" class="btn btn-primary btn-sm" value="{{ row.id }}">
+						<button name="key" type="button" class="btn btn-primary btn-sm" value="{{ row.id }}"
+								data-quantity="{{ row.productPresentation.stock.minQuantity }}" data-sku="{{ row.productPresentation.codeSKU }}"
+								data-designation="{{ row.productPresentation.designation }}"
+								onclick="script{{ blockId }}.offer.addProduct(this)">
 							<i class="glyphicon glyphicon-shopping-cart"></i>
 							{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 						</button>
 					</li>
 				{% else %}
 					<li class="product-add">
-						<button name="product" type="submit" class="btn btn-primary btn-sm btn-disabled" value="{{ row.id }}" disabled>
+						<button name="key" type="button" class="btn btn-primary btn-sm btn-disabled"
+								value="{{ row.id }}" disabled="disabled">
 							<i class="glyphicon glyphicon-shopping-cart"></i>
 							{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 						</button>

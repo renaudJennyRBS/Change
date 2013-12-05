@@ -1,12 +1,12 @@
 <?php
-namespace Rbs\Price\Services;
+namespace Rbs\Price;
 
-use Rbs\Commerce\Interfaces\BillingArea;
 use Rbs\Price\Documents\Price;
+use Rbs\Price\Tax\BillingAreaInterface;
 
 /**
-* @name \Rbs\Price\Services\PriceManager
-*/
+ * @name \Rbs\Price\PriceManager
+ */
 class PriceManager implements \Zend\EventManager\EventsCapableInterface
 {
 	use \Change\Events\EventsCapableTrait;
@@ -101,86 +101,60 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * Standard Options : quantity,
-	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
-	 * @param BillingArea $billingArea
-	 * @param integer[] $targetIds
-	 * @return null|Price
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	public function getPriceBySku($sku, $webStore, BillingArea $billingArea = null, array $targetIds = array())
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		if ($billingArea === null)
-		{
-			$billingArea = $this->getContext()->getBillingArea();
-		}
-
-		$price = $this->triggerGetPriceBySku($sku, $webStore, $billingArea, $targetIds);
-		if ($price === false && $sku && $billingArea)
-		{
-			return $this->getDefaultPriceBySku($sku, $webStore, $billingArea, $targetIds);
-		}
-		return $price;
+		$eventManager->attach(static::EVENT_GET_PRICE_BY_SKU, [$this, 'onDefaultGetPriceBySku'], 5);
 	}
 
 	/**
+	 * Standard options : webStore, billingArea, targetIds
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
-	 * @param BillingArea $billingArea
-	 * @param integer[] $targetIds
-	 * @return null|Price|boolean
+	 * @param array $options
+	 * @return null|\Rbs\Price\PriceInterface
 	 */
-	protected function triggerGetPriceBySku($sku, $webStore, $billingArea, $targetIds)
+	public function getPriceBySku($sku, array $options = array())
 	{
 		$ev = $this->getEventManager();
-		$arguments = $ev->prepareArgs(array('price' => false));
-		$arguments['targetIds'] = $targetIds;
+		$arguments = $ev->prepareArgs($options);
 		$arguments['sku'] = $sku;
-		$arguments['billingArea'] = $billingArea;
-		$arguments['webStore'] = $webStore;
+		$arguments['price'] = null;
 		$ev->trigger(static::EVENT_GET_PRICE_BY_SKU, $this, $arguments);
-		return $arguments['price'];
+		return ($arguments['price'] instanceof \Rbs\Price\PriceInterface) ? $arguments['price'] : null;
 	}
 
 	/**
-	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
-	 * @param BillingArea $billingArea
-	 * @param integer[] $targetIds
-	 * @return null|Price
+	 * @param \Change\Events\Event $event
 	 */
-	protected function getDefaultPriceBySku($sku, $webStore, $billingArea, $targetIds)
+	public function onDefaultGetPriceBySku(\Change\Events\Event $event)
 	{
-		if ($billingArea === null || $webStore === null || $sku === null)
+		$sku = $event->getParam('sku');
+		if ($sku)
 		{
-			return null;
-		}
+			$context = $this->getContext();
+			$webStore = $event->getParam('webStore', $context->getWebStore());
+			$billingArea = $event->getParam('billingArea', $context->getBillingArea());
+			$targetIds = $event->getParam('targetIds', [0]);
+			if ($webStore && $billingArea && is_array($targetIds))
+			{
+				if (count($targetIds) === 0)
+				{
+					$targetIds[] = 0;
+				}
 
-		if (count($targetIds) === 0)
-		{
-			$targetIds[] = 0;
-		}
+				$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_Price');
+				$query->andPredicates($query->activated(),
+					$query->eq('sku', $sku),
+					$query->eq('webStore', $webStore),
+					$query->eq('billingArea', $billingArea),
+					$query->in('targetId', $targetIds));
 
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_Price');
-		$and = array($query->activated(),
-			$query->eq('sku', $sku),
-			$query->eq('webStore', $webStore),
-			$query->eq('billingArea', $billingArea),
-			$query->in('targetId', $targetIds));
+				$query->addOrder('priority', false);
+				$query->addOrder('startActivation', false);
 
-		$query->andPredicates($and);
-		$query->addOrder('priority', false);
-		$query->addOrder('startActivation', false);
-
-		/* @var $prices Price[] */
-		$prices = $query->getDocuments()->toArray();
-		if (count($prices) === 0)
-		{
-			return null;
-		}
-		else
-		{
-			return $prices[0];
+				$event->setParam('price', $query->getFirstDocument());
+			}
 		}
 	}
 

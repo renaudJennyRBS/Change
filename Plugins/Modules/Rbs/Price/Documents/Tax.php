@@ -4,7 +4,7 @@ namespace Rbs\Price\Documents;
 /**
  * @name \Rbs\Price\Documents\Tax
  */
-class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Commerce\Interfaces\Tax
+class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Price\Tax\TaxInterface
 {
 	const CATEGORIES_KEY = 'c';
 	const ZONES_KEY = 'z';

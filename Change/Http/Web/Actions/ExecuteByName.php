@@ -81,7 +81,7 @@ class ExecuteByName
 		if ($e instanceof \Exception)
 		{
 			$exceptionInfos = array('code' => $e->getCode(), 'message' => $e->getMessage());
-			if ($event->getApplicationServices()->getApplication()->inDevelopmentMode())
+			if ($event->getApplication()->inDevelopmentMode())
 			{
 				$exceptionInfos['trace'] = $e->getTraceAsString();
 			}

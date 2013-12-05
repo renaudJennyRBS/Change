@@ -143,7 +143,7 @@ class TwigExtension  implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax
+	 * @param string|integer|\Rbs\Price\Tax\TaxInterface $tax
 	 * @return string
 	 */
 	public function taxTitle($tax)

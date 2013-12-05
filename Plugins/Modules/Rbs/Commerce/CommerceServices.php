@@ -89,7 +89,7 @@ class CommerceServices extends Di
 		$definitionList->addDefinition($classDefinition);
 
 		//TaxManager : Context, I18nManager, DocumentManager, CollectionManager
-		$taxManagerClassName = $this->getInjectedClassName('TaxManager', 'Rbs\Price\Services\TaxManager');
+		$taxManagerClassName = $this->getInjectedClassName('TaxManager', 'Rbs\Price\Tax\TaxManager');
 		$classDefinition = $this->getClassDefinition($taxManagerClassName);
 		$classDefinition->addMethod('setContext', true)
 				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
@@ -102,7 +102,7 @@ class CommerceServices extends Di
 		$definitionList->addDefinition($classDefinition);
 
 		//PriceManager : EventManagerFactory, Application, ApplicationServices, Context
-		$priceManagerClassName = $this->getInjectedClassName('PriceManager', 'Rbs\Price\Services\PriceManager');
+		$priceManagerClassName = $this->getInjectedClassName('PriceManager', 'Rbs\Price\PriceManager');
 		$classDefinition = $this->getClassDefinition($priceManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setContext', true)
@@ -230,7 +230,7 @@ class CommerceServices extends Di
 	}
 
 	/**
-	 * @return \Rbs\Price\Services\TaxManager
+	 * @return \Rbs\Price\Tax\TaxManager
 	 */
 	public function getTaxManager()
 	{
@@ -238,7 +238,7 @@ class CommerceServices extends Di
 	}
 
 	/**
-	 * @return \Rbs\Price\Services\PriceManager
+	 * @return \Rbs\Price\PriceManager
 	 */
 	public function getPriceManager()
 	{

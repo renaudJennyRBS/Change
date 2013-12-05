@@ -18,11 +18,12 @@
 			<dboptions length="3" />
 		</property>
 
-		<property name="processingStatus" type="String" default-value="initiated">
+		<property name="processingStatus" type="String" default-value="in_progress">
 			<dboptions length="10" />
-			<constraint name="enum" values="initiated,in_progress,finalized,canceled" />
+			<constraint name="enum" values="in_progress,finalized,canceled" />
 		</property>
 
+		<!--
 		<property name="shippingStatus" type="String" default-value="initiated">
 			<dboptions length="25" />
 			<constraint name="enum" values="initiated,prepared,partially_shipped,shipped,partially_delivered,delivered" />
@@ -32,5 +33,6 @@
 			<dboptions length="20" />
 			<constraint name="enum" values="initiated,unconfirmed,partially_payed,payed,canceled" />
 		</property>
+			-->
 	</properties>
 </document>

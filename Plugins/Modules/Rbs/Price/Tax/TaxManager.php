@@ -1,8 +1,8 @@
 <?php
-namespace Rbs\Price\Services;
+namespace Rbs\Price\Tax;
 
 /**
- * @name \Rbs\Price\Services\TaxManager
+ * @name \Rbs\Price\Tax\TaxManager
  */
 class TaxManager
 {
@@ -99,14 +99,14 @@ class TaxManager
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Interfaces\TaxApplication[] $taxApplicationArray
+	 * @param \Rbs\Price\Tax\TaxApplication[] $taxApplicationArray
 	 * @return float
 	 */
 	protected function getEffectiveRate($taxApplicationArray)
 	{
 		$effectiveRate = 0.0;
 		array_walk($taxApplicationArray,
-			function (\Rbs\Commerce\Interfaces\TaxApplication $taxApplication, $key) use (&$effectiveRate)
+			function (\Rbs\Price\Tax\TaxApplication $taxApplication, $key) use (&$effectiveRate)
 			{
 				$effectiveRate += $taxApplication->getRate();
 			});
@@ -115,13 +115,13 @@ class TaxManager
 
 	/**
 	 * @param array <taxCode => category> $taxCategories
-	 * @param \Rbs\Commerce\Interfaces\Tax[] $taxes
+	 * @param \Rbs\Price\Tax\TaxInterface[] $taxes
 	 * @param string $zone
-	 * @return \Rbs\Price\Std\TaxApplication[]
+	 * @return \Rbs\Price\Tax\TaxApplication[]
 	 */
 	protected function getTaxRates($taxCategories, $taxes, $zone)
 	{
-		/* @var $taxRates \Rbs\Commerce\Interfaces\TaxApplication[] */
+		/* @var $taxRates \Rbs\Price\Tax\TaxApplication[] */
 		$taxRates = array();
 		foreach ($taxes as $tax)
 		{
@@ -129,7 +129,7 @@ class TaxManager
 			{
 				$category = $taxCategories[$tax->getCode()];
 				$taxRate = floatval($tax->getRate($category, $zone));
-				$taxApplication = new \Rbs\Price\Std\TaxApplication($tax, $category, $zone, $taxRate);
+				$taxApplication = new \Rbs\Price\Tax\TaxApplication($tax, $category, $zone, $taxRate);
 				if ($tax->getCascading() && $taxRate > 0.0)
 				{
 					$previousEffectiveRate = $this->getEffectiveRate($taxRates);
@@ -144,10 +144,10 @@ class TaxManager
 	/**
 	 * @param float $value
 	 * @param $taxCategories
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @param string $zone
 	 * @param array <taxCode => category> $taxCategories
-	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
+	 * @return \Rbs\Price\Tax\TaxApplication[]
 	 */
 	public function getTaxByValue($value, $taxCategories, $billingArea = null, $zone = null)
 	{
@@ -179,9 +179,9 @@ class TaxManager
 	/**
 	 * @param float $valueWithTax
 	 * @param array <taxCode => category> $taxCategories
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @param string $zone
-	 * @return \Rbs\Commerce\Interfaces\TaxApplication[]
+	 * @return \Rbs\Price\Tax\TaxApplication[]
 	 */
 	public function getTaxByValueWithTax($valueWithTax, $taxCategories, $billingArea = null, $zone = null)
 	{
@@ -206,7 +206,7 @@ class TaxManager
 		$taxRates = $this->getTaxRates($taxCategories, $billingArea->getTaxes(), $zone);
 		$value = $valueWithTax / (1 + $this->getEffectiveRate($taxRates));
 
-		/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
+		/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
 		foreach ($taxRates as $taxApplication)
 		{
 			$taxApplication->setValue($taxApplication->getRate() * $value);
@@ -216,7 +216,7 @@ class TaxManager
 
 	/**
 	 * @param float $value
-	 * @param \Rbs\Commerce\Interfaces\TaxApplication[] $taxApplications
+	 * @param \Rbs\Price\Tax\TaxApplication[] $taxApplications
 	 * @return float
 	 */
 	public function getValueWithTax($value, $taxApplications)
@@ -224,7 +224,7 @@ class TaxManager
 		$valueWithTax = $value;
 		if (is_array($taxApplications) && count($taxApplications))
 		{
-			/* @var $taxApplication \Rbs\Commerce\Interfaces\TaxApplication */
+			/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
 			foreach ($taxApplications as $taxApplication)
 			{
 				$valueWithTax += $taxApplication->getValue();
@@ -252,7 +252,7 @@ class TaxManager
 
 	/**
 	 * @param string $taxCode
-	 * @return \Rbs\Commerce\Interfaces\Tax|null
+	 * @return \Rbs\Price\Tax\TaxInterface|null
 	 */
 	public function getTaxByCode($taxCode)
 	{
@@ -279,20 +279,20 @@ class TaxManager
 	}
 
 	/**
-	 * @param string|integer|\Rbs\Commerce\Interfaces\Tax $tax $tax
+	 * @param string|integer|\Rbs\Price\Tax\TaxInterface $tax $tax
 	 * @return string
 	 */
 	public function taxTitle($tax)
 	{
 		$taxCode = null;
-		if ($tax instanceof \Rbs\Commerce\Interfaces\Tax)
+		if ($tax instanceof \Rbs\Price\Tax\TaxInterface)
 		{
 			$taxCode = $tax->getCode();
 		}
 		elseif (is_numeric($tax))
 		{
 			$taxDoc = $this->getDocumentManager()->getDocumentInstance($tax);
-			if ($taxDoc instanceof \Rbs\Commerce\Interfaces\Tax)
+			if ($taxDoc instanceof \Rbs\Price\Tax\TaxInterface)
 			{
 				$taxCode = $taxDoc->getCode();
 			}
