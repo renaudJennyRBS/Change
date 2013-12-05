@@ -18,14 +18,16 @@
 	/**
 	 * @example: <code><img rbs-storage-image="myMedia.path" thumbnail="xs"/></code>
 	 */
-	app.directive('rbsStorageImage', ['RbsChange.REST', 'rbsThumbnailSizes', function (REST, sizes) {
+	app.directive('rbsStorageImage', ['RbsChange.REST', 'rbsThumbnailSizes', function (REST, sizes)
+	{
 		return {
 			restrict : 'A',
-			scope: {
-				rbsStorageImage: "="
+			scope : {
+				rbsStorageImage : "="
 			},
 
-			link : function (scope, elm, attrs) {
+			link : function (scope, elm, attrs)
+			{
 				var	$el = $(elm),
 					maxWidth = MAX_WIDTH, maxHeight = MAX_HEIGHT,
 					dim;
@@ -34,11 +36,13 @@
 				if (!$el.is('img')) {
 					throw new Error("Directive 'rbs-storage-image' must be used on <img/> elements only.");
 				}
-				scope.$watch('rbsStorageImage', function (value) {
+
+				scope.$watch('rbsStorageImage', function (value)
+				{
 					var width = parseInt(dim[0], 10);
 					var height = parseInt(dim[1], 10);
 					if (value) {
-						if (/^\d+$/.test(value)) {
+						if (/^\d+$/.test(value+'')) {
 							REST.resource(parseInt(value, 10)).then(function (image) {
 								elm.attr('src', image.META$.actions['resizeurl'].href + '?maxWidth=' + width + '&maxHeight=' + height);
 								elm.show();
@@ -56,12 +60,16 @@
 							elm.remove();
 						}
 					}
-					else {
+					else if (angular.isDefined()) {
 						elm.remove();
+					}
+					else {
+						elm.hide();
 					}
 				});
 
-				if (attrs.thumbnail) {
+				if (attrs.thumbnail)
+				{
 					attrs.thumbnail = angular.lowercase(attrs.thumbnail);
 					if (sizes.hasOwnProperty(attrs.thumbnail)) {
 						attrs.thumbnail = sizes[attrs.thumbnail];
@@ -75,6 +83,9 @@
 						'max-width'  : maxWidth+'px',
 						'max-height' : maxHeight+'px'
 					});
+				}
+				else {
+					throw new Error("Attribute 'thumbnail' is required for Directive 'rbs-storage-image'.");
 				}
 
 			}
