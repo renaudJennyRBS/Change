@@ -16,6 +16,12 @@
 		<search-filters model="Rbs_Website_StaticPage" filter-query="query" text-search="textSearch"></search-filters>
 
 		<div class="add-elements-bar">
+			<span ng-if="currentFolder.is('Rbs_Website_Website')">
+				<a href ng-href="(= currentFolder | documentURL:'' =)">{{ i18n('m.rbs.website.admin.website_edit_current', ['ucf']) }}</a>
+			</span>
+			<span ng-if="currentFolder.is('Rbs_Website_Topic')">
+				<a href ng-href="(= currentFolder | documentURL:'' =)">{{ i18n('m.rbs.website.admin.topic_edit_current', ['ucf']) }}</a>
+			</span>
 			<a href ng-href="(= 'Rbs_Website_StaticPage' | documentURL:'new'=)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
 			<a href ng-href="(= 'Rbs_Website_Topic' | documentURL:'new'=)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
 		</div>
