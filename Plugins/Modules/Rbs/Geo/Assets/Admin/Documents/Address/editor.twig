@@ -3,6 +3,29 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
+		<rbs-field-text property="name" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'name'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'addressFields'), ['ucf']) }}">
+			<select class="form-control" ng-model="document.addressFields" rbs-items-from-collection="Rbs_Geo_Collection_AddressFields">
+				<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<div data-ng-repeat="fieldDef in fieldsDef">
+			<rbs-field label="(= fieldDef.title | capitalize =)" data-ng-class="{'required': fieldDef.required}" property="field_(= fieldDef.code =)">
+				<div ng-if="fieldDef.collectionCode">
+					<select ng-model="document.fieldValues[fieldDef.code]" class="form-control" rbs-items-from-collection="(= fieldDef.collectionCode =)">
+						<option value=""></option>
+					</select>
+				</div>
+				<div ng-if="!fieldDef.collectionCode">
+					<input type="text" class="form-control" ng-required="fieldDef.required" id="fieldInput_(= fieldDef.code =)" ng-model="document.fieldValues[fieldDef.code]" />
+				</div>
+			</rbs-field>
+		</div>
+
 	</fieldset>
+
 	<form-button-bar></form-button-bar>
 </form>

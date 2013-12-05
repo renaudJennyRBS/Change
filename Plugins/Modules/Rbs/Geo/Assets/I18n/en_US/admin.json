@@ -52,5 +52,14 @@
   },
   "country_select_addressfields":{
     "message":"select the adress format"
+  },
+  "address_list":{
+    "message":"addresses"
+  },
+    "address_create":{
+    "message":"add a new address"
+  },
+  "address_fields_select":{
+    "message":"select the adress format"
   }
 }

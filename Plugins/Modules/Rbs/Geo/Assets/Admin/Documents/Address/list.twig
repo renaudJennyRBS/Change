@@ -1,0 +1,27 @@
+<div class="row">
+
+	<rbs-workspace-config>
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Geo'|rbsURL:'home' =)">{{ i18n('m.rbs.geo.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Geo_Address'|rbsURL:'list' =)">{{ i18n('m.rbs.geo.admin.address_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.geo.admin.address_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Geo_Address" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Geo_Address' | rbsURL:'new' =)">{{ i18n('m.rbs.geo.admin.address_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLGeoAddress" model="Rbs_Geo_Address" filter-query="query" activable="true">
+			<column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'label'), ['ucf']) }}" primary="true"></column>
+		</rbs-document-list>
+	</div>
+
+</div>
