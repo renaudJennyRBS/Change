@@ -1,25 +1,4 @@
 {
-	"directives_round_down":{
-		"message":"arrondi inférieur"
-	},
-	"directives_round_down_tencents":{
-		"message":"à la dizaine de centimes inférieure"
-	},
-	"directives_round_down_unit":{
-		"message":"à l'entier inférieur"
-	},
-	"directives_round_up":{
-		"message":"arrondi supérieur"
-	},
-	"directives_round_up_tencent":{
-		"message":"à la dizaine de centimes supérieure"
-	},
-	"directives_round_up_99cents":{
-		"message":"à 99 centimes"
-	},
-	"directives_round_up_unit":{
-		"message":"à l'entier supérieur"
-	},
 	"directives_with_tax_abbr":{
 		"message":"TTC"
 	},
