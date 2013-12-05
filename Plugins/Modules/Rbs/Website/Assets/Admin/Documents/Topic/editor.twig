@@ -14,6 +14,7 @@
 
 		<rbs-field-text property="pathPart"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'pathPart'), ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.website.admin.topic_pathPart_help', ['ucf']) }}</span>
 		</rbs-field-text>
 
 		<rbs-field ng-hide="document.isNew() || !document.indexPage" label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'indexPage'), ['ucf']) }}">

@@ -23,6 +23,9 @@
 	"website_go_to_tree":{
 		"message":"naviguer vers l'arborescence"
 	},
+	"website_edit_current":{
+		"message":"éditer le site courant"
+	},
 	"topic_website_help":{
 		"message":"Le site web dans lequel se trouve cette rubrique."
 	},
@@ -61,6 +64,9 @@
 	},
 	"topic_groups_picker_title":{
 		"message":"sélectionner les groupes d'utilisateurs"
+	},
+	"topic_edit_current":{
+		"message":"éditer la section courante"
 	},
 	"page_pagetemplate_picker_title":{
 		"message":"sélectionner le modèle de page"
@@ -118,6 +124,9 @@
 	},
 	"staticpage_section_help":{
 		"message":"La rubrique ou le site web contenant la page."
+	},
+	"staticpage_hideLinks_help":{
+		"message":"En activant cette option, la page n'apparaîtra pas dans les éléments de navigation tel que les menus. Principalement utilisé pour les pages d'index de rubrique."
 	},
 	"staticpage_section_picker_title":{
 		"message":"sélectionner la section"

@@ -1,7 +1,7 @@
 <div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
 
 	<div class="small-indicators">
-		<rbs-avatar size='62' user-id='(= user.id =)' ></rbs-avatar>
+		<rbs-avatar size='62' user-id='(= user.id =)' ng-click="goToUserProfile()"></rbs-avatar>
 		<span ng-click="showNotifications($event)">
 			<i class="icon-exclamation-sign"></i>
 			<div>{{ i18n('m.rbs.admin.admin.dashboard_notifications', ['ucf']) }}</div>

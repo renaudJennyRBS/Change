@@ -19,7 +19,7 @@
 	 * @param User
 	 * @constructor
 	 */
-	function DashboardController($scope, Breadcrumb, REST, Dialog, Settings, User)
+	function DashboardController($scope, Breadcrumb, REST, Dialog, Settings, User, $location)
 	{
 		Breadcrumb.resetLocation();
 
@@ -68,6 +68,10 @@
 			});
 		};
 
+		$scope.goToUserProfile = function()
+		{
+			$location.path('/Rbs/User/Profile');
+		}
 
 		//
 		// Tags
@@ -209,7 +213,8 @@
 		'RbsChange.REST',
 		'RbsChange.Dialog',
 		'RbsChange.Settings',
-		'RbsChange.User'
+		'RbsChange.User',
+		'$location'
 	];
 	app.controller('Rbs_Admin_DashboardController', DashboardController);
 
