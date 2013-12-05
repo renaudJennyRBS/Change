@@ -10,7 +10,6 @@
 	__change.createEditorForModel('Rbs_Geo_TerritorialUnit');
 	__change.createEditorForModel('Rbs_Geo_Zone');
 	__change.createEditorsForLocalizedModel('Rbs_Geo_AddressField');
-	__change.createEditorForModel('Rbs_Geo_Address');
 
 	/**
 	 * Routes and URL definitions.

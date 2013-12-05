@@ -13,7 +13,7 @@
 	{
 		return {
 			restrict : 'C',
-//			templateUrl : 'Document/Rbs/Geo/Address/editor.twig',
+			templateUrl : 'Document/Rbs/Geo/Address/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
