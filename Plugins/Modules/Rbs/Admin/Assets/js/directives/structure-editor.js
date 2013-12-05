@@ -2,9 +2,7 @@
 
 	"use strict";
 
-	var	//blockPropertiesLink,
-		//blockPropertiesLinkBorder,
-		dropZoneIndicator,
+	var	dropZoneIndicator,
 		blockPropertiesPopup,
 		blockPropertiesPopupShown = false,
 		lastSelectedBlock = null,
@@ -83,7 +81,7 @@
 		 * @param zoneEl The element in which the editable content should be created.
 		 * @param zoneObj The zone object definition.
 		 */
-		this.initEditableZone = function initEditableZone (scope, zoneEl, zoneObj, readonly) {
+		this.initEditableZone = function (scope, zoneEl, zoneObj, readonly) {
 			zoneEl.html('');
 
 			zoneEl.addClass('editable-zone');
@@ -110,7 +108,7 @@
 		};
 
 
-		this.getEditableZone = function getEditableZone (el) {
+		this.getEditableZone = function (el) {
 			return el.closest('.editable-zone');
 		};
 
@@ -127,7 +125,7 @@
 		};
 
 
-		this.initItem = function initItem (scope, container, item, atIndex, readonly) {
+		this.initItem = function (scope, container, item, atIndex, readonly) {
 			var html = null, newEl;
 
 			switch (item.type) {
@@ -165,7 +163,7 @@
 		};
 
 
-		this.initBlock = function initBlock (item, readonly) {
+		this.initBlock = function (item, readonly) {
 			if (!item.label) {
 				item.label = item.name;
 			}
@@ -177,24 +175,24 @@
 			}
 		};
 
-		this.initRichText = function initRichText (item, readonly) {
+		this.initRichText = function (item, readonly) {
 			return '<div class="rbs-block-markdown-text" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
-		this.initRow = function initRow (item) {
+		this.initRow = function (item) {
 			return '<div class="rbs-row" data-id="' + item.id + '" data-grid="' + item.grid + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
-		this.initCell = function initCell (item) {
+		this.initCell = function (item) {
 			return '<div class="rbs-cell" data-id="' + item.id + '" data-size="' + item.size + '"></div>';
 		};
 
-		this.initBlockChooser = function initCell (item) {
+		this.initBlockChooser = function (item) {
 			return '<div class="rbs-block-chooser" data-id="' + item.id + '"></div>';
 		};
 
 
-		this.getColumnsInfo = function getColumnsInfo (row, gridSize) {
+		this.getColumnsInfo = function (row, gridSize) {
 			var cols = [];
 			gridSize = gridSize || DEFAULT_GRID_SIZE;
 			row.children().each(function (index, el) {
@@ -221,7 +219,7 @@
 		};
 
 
-		this.getColumnWidth = function getColumnWidth (seCell) {
+		this.getColumnWidth = function (seCell) {
 			var i, gridSize;
 
 			gridSize = this.getEditableZone(seCell).data('grid');
@@ -239,7 +237,7 @@
 		};
 
 
-		this.applyColumnsWidth = function applyColumnsWidth (row, columns, gridSize) {
+		this.applyColumnsWidth = function (row, columns, gridSize) {
 			if (row.children().length !== columns.length) {
 				throw new Error("Bad columns count: given " + columns.length + " columns but " + row.children().length + " columns exist in the row.");
 			}
@@ -459,25 +457,7 @@
 			"require"    : ['ngModel', 'structureEditor'],
 			"scope"      : true,
 			"transclude" : true,
-			"template"   :
-				'<div class="btn-toolbar">' +
-					'<div class="btn-group" ng-if="! readOnly">' +
-						'<button type="button" ng-disabled="!undoData.length" class="btn btn-default" ng-click="undo(0)"><i class="icon-undo"></i> Défaire</button>' +
-						'<button type="button" ng-disabled="!undoData.length" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
-							'<span class="caret"></span>' +
-						'</button>' +
-						'<ul class="dropdown-menu" data-role="undo-menu">' +
-							'<li data-ng-repeat="entry in undoData"><a href="javascript:;" ng-click="undo($index)"><span class="text-muted">{{entry.date | date:\'mediumTime\'}}</span> <i class="{{entry.icon}}"></i> {{entry.label}} {{entry.item.label}}</a></li>' +
-						'</ul>' +
-					'</div>' +
-					'<button ng-if="readOnly" type="button" disabled="disabled" class="btn btn-default">Lecture seule</button>' +
-					'<div class="btn-group" ng-transclude></div>' +
-					'<button type="button" class="btn btn-default pull-right">{{editorWidth}} &times; {{editorHeight}}</button>' +
-				'</div>' +
-				'<div class="rich-text-input-selectors-container"></div>' +
-				'<div id="se-picker-container"></div>' +
-				'<div class="structure-editor"></div>',
-
+			"templateUrl": 'Rbs/Admin/js/directives/structure-editor.twig',
 
 			/**
 			 * structureEditor.controller
@@ -556,15 +536,23 @@
 				 * @param blockEl
 				 * @param params
 				 */
-				this.showBlockSettingsEditor = function showBlockSettingsEditor (blockEl, params) {
+				this.showBlockSettingsEditor = function (blockEl, params) {
 					var	html;
 					var item = this.getItemById(blockEl.data('id'));
+
+					if (item === null) {
+						blockPropertiesPopup = $('#rbsStructureEditorBlockPropertiesPopup');
+						blockPropertiesPopup.html(blockPropertiesPopup.attr('data-no-block-text'));
+						blockPropertiesPopup.attr('data-title', '');
+						positionBlockSettingsEditor(blockEl);
+						return;
+					}
 
 					if (blockEl.is('.rbs-row')) {
 						html = '<div class="rbs-row-settings" data-id="' + blockEl.data('id') + '"';
 					}
 					else {
-					html = '<div class="rbs-block-settings-editor" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
+						html = '<div class="rbs-block-settings-editor" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
 					}
 					forEach(params, function (value, name) {
 						html += ' data-' + name + '="' + value + '"';
@@ -576,7 +564,7 @@
 
 					blockPropertiesPopup = $('#rbsStructureEditorBlockPropertiesPopup');
 					blockPropertiesPopup.html(html);
-					blockPropertiesPopup.attr('data-title', item.name === 'Rbs_Website_Richtext' ? "Texte WYSIWYG" : item.label);
+					blockPropertiesPopup.attr('data-title', item.name === 'Rbs_Website_Richtext' ? '' : item.label);
 					$compile(blockPropertiesPopup)(blockScope);
 					positionBlockSettingsEditor(blockEl);
 				};
@@ -648,7 +636,7 @@
 				/**
 				 * Creates a new block after the selected one.
 				 */
-				this.newBlockAfter = function newBlockAfter () {
+				this.newBlockAfter = function () {
 					this.selectBlock(this.createBlock(selectedBlock.parent(), null, -1));
 				};
 
@@ -656,7 +644,7 @@
 				/**
 				 * Creates a new block before the selected one.
 				 */
-				this.newBlockBefore = function newBlockAfter () {
+				this.newBlockBefore = function () {
 					this.selectBlock(
 						this.createBlock(
 							selectedBlock.parent(),
@@ -700,7 +688,7 @@
 				 *
 				 * @param where "left" or "right"
 				 */
-				this.newBlockSideways = function newBlockLeft (where) {
+				this.newBlockSideways = function (where) {
 					var	block = this.getSelectedBlock(),
 						item = $scope.items[block.data('id')],
 						newLeftCellItem, newRightCellItem, newBlockChooserItem;
@@ -755,7 +743,7 @@
 				 *
 				 * @param item
 				 */
-				this.removeItem = function removeItem (item) {
+				this.removeItem = function (item) {
 					this.removeBlock($element.find('[data-id="' + item.id + '"]'));
 				};
 
@@ -765,7 +753,7 @@
 				 *
 				 * @param block
 				 */
-				this.removeBlock = function removeBlock (block) {
+				this.removeBlock = function (block) {
 					var	id = block.data('id'),
 						wasSelected = (block === selectedBlock),
 						parent = block.parent();
@@ -788,11 +776,11 @@
 
 				// Utility functions -----------------------------------------------------------------------------------
 
-				this.isInColumnLayout = function isInColumnLayout (el) {
+				this.isInColumnLayout = function (el) {
 					return el.closest('.rbs-cell').length === 1;
 				};
 
-				this.isRichText = function isInColumnLayout (el) {
+				this.isRichText = function (el) {
 					return el.is('.rbs-block-markdown-text');
 				};
 
@@ -1781,7 +1769,7 @@
 						});
 					}
 				}
-				finalizeParameters()
+				finalizeParameters();
 
 				function finalizeParameters() {
 					scope.blockParameters = scope.block.parameters;
@@ -1800,14 +1788,14 @@
 
 				scope.$watch('blockType', function (blockType, old)
 				{
-					if (blockType && blockType !== old) // && blockType.name !== 'rbs-block-markdown-text')
+					if (blockType && blockType !== old && scope.block.name != 'Rbs_Website_Richtext')
 					{
 						console.log(blockType);
 						$http.get(blockType.template).success(function (html)
 						{
 							$compile(html)(scope, function (clone) {
 								element.find('[data-role="blockParametersContainer"]').append(clone);
-								if ( ! scope.block.name)
+								if (!scope.block.name)
 								{
 									var block = replaceItem({
 										'type': 'block',

@@ -1030,5 +1030,7 @@
 	},
 	"for":{
 		"message":"pour"
-	}
-}
+	},	"read_only": {
+		"message":"lecture seule",
+		"description":"Used in structure editor."
+	}}

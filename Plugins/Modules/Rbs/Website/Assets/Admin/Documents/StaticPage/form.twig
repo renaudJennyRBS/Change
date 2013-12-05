@@ -19,14 +19,24 @@
 		<div ng-switch-default="">
 			<div rbs-aside-column>
 				<rbs-default-asides-for-editor id="rbsWebsitePageDefaultAsides"></rbs-default-asides-for-editor>
-				<div class="panel panel-default" id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
-					<div class="panel-heading">
-						<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+				<div  id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<a href="javascript:;" ng-href="(= document | rbsURL =)"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.website.admin.back_to_general_page_properties', ['ucf']) }}</a>
+						</div>
 					</div>
-					<div class="panel-body">
-						<a href="javascript:;" ng-href="(= document | rbsURL =)"><i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.website.admin.back_to_general_page_properties', ['ucf']) }}</a>
-						<hr style="margin: 15px -15px;"/>
-						<div id="rbsStructureEditorBlockPropertiesPopup"></div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+						</div>
+						<div class="panel-body">
+							<div id="rbsStructureEditorBlockPropertiesPopup"
+								data-no-block-text="{{ i18nAttr('m.rbs.website.admin.no_block_selected', ['ucf']) }}"
+								data-edit-in-content="{{ i18nAttr('m.rbs.website.admin.edit_in_content', ['ucf']) }}">
+								{{ i18n('m.rbs.website.admin.no_block_selected', ['ucf']) }}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

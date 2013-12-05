@@ -1,0 +1,28 @@
+<div class="btn-toolbar">
+	<div class="btn-group" ng-if="! readOnly">
+		<button type="button" ng-disabled="!undoData.length" class="btn btn-default" ng-click="undo(0)">
+			<i class="icon-undo"></i>
+			{{ i18n('m.rbs.admin.admin.undo', ['ucf']) }}
+		</button>
+		<button type="button" ng-disabled="!undoData.length" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" data-role="undo-menu">
+			<li data-ng-repeat="entry in undoData">
+				<a href="javascript:;" ng-click="undo($index)">
+					<span class="text-muted">(= entry.date | date:'mediumTime' =)</span>
+				<iclass="(= entry.icon =)"></i>
+				(= entry.label =) (= entry.item.label =)
+				</a>
+			</li>
+		</ul>
+	</div>
+	<button ng-if="readOnly" type="button" disabled="disabled" class="btn btn-default">
+		{{ i18n('m.rbs.admin.admin.read_only', ['ucf']) }}
+	</button>
+	<div class="btn-group" ng-transclude></div>
+	<button type="button" class="btn btn-default pull-right">(= editorWidth =) &times; (= editorHeight =)</button>
+</div>
+<div class="rich-text-input-selectors-container"></div>
+<div id="se-picker-container"></div>
+<div class="structure-editor"></div>
