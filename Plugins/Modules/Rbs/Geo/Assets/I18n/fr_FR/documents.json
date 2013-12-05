@@ -67,5 +67,11 @@
 	},
 	"country_addressfields":{
 		"message":"modèle d'adresse"
+	},
+	"address_name":{
+		"message":"nom d'adresse"
+	},
+	"address_addressFields":{
+		"message":"modèle"
 	}
 }

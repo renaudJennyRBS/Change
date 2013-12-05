@@ -52,5 +52,11 @@
 	},
 	"country_select_addressfields":{
 		"message":"sélectionner le modèle d'adresse"
+	},
+	"address_list":{
+		"message":"adresses"
+	},
+	"address_create":{
+		"message":"ajouter une adresse"
 	}
 }
