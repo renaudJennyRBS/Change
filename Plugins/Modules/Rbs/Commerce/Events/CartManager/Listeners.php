@@ -2,7 +2,6 @@
 namespace Rbs\Commerce\Events\CartManager;
 
 use Change\Events\Event;
-use Rbs\Commerce\Cart\DefaultCartValidation;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -121,17 +120,12 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
-			(new DefaultCartValidation())->execute($event);
-		};
-		$events->attach('validCart', $callback, 5);
-
-
-		$callback = function (Event $event)
-		{
 			$cart = $event->getParam('cart');
 			$transactionId = $event->getParam('transactionId');
 			$cs = $event->getServices('commerceServices');
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices && is_numeric($transactionId))
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices
+				&& is_numeric($transactionId)
+			)
 			{
 				$as = $event->getApplicationServices();
 				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
