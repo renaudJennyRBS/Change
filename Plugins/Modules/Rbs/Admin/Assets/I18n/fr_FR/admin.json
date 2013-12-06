@@ -1030,7 +1030,13 @@
 	},
 	"for":{
 		"message":"pour"
-	},	"read_only": {
+	},
+	"read_only": {
 		"message":"lecture seule",
 		"description":"Used in structure editor."
-	}}
+	},
+	"drag_block": {
+		"message":"déplacer le bloc par glisser/déposer",
+		"description":"Title of the button to drag & drop a richtext blocks in the page editor."
+	}
+}
