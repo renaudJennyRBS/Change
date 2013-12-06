@@ -6,11 +6,10 @@
 		MIN_HEIGHT = 150,
 		editorIdCounter = 0;
 
-	/**
+	 /**
 	 * RichText input field.
 	 */
 	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', 'RbsChange.i18n', function ($timeout, REST, Utils, Device, $compile, i18n) {
-
 		return {
 			restrict : 'EC',
 			require  : '?ngModel',
@@ -18,7 +17,6 @@
 			templateUrl : 'Rbs/Admin/js/directives/rich-text-input.twig',
 
 			link : function (scope, element, attrs, ngModel) {
-
 				var	editor,
 					session,
 					$textarea,
@@ -29,6 +27,7 @@
 					$selectors;
 
 				scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
+				scope.draggable = attrs.draggable === 'true';
 
 				// Init available selectors.
 				scope.availableSelectors = {
@@ -68,17 +67,17 @@
 
 				scope.editorId = ++editorIdCounter;
 
-				id = "rbsInputMarkdownAceEditor" + scope.editorId;
+				id = 'rbsInputMarkdownAceEditor' + scope.editorId;
 				element.find('[data-role="ace-editor"]').attr('id', id);
 
 				// Initialize ACE editor when the scope has been completely applied.
 				function initWithAceEditor () {
 					editor = ace.edit(id);
 					session = editor.getSession();
-					session.setMode("ace/mode/markdown");
+					session.setMode('ace/mode/markdown');
 					session.setUseWrapMode(true);
 					session.setWrapLimitRange(null, null);
-					session.setFoldStyle("manual");
+					session.setFoldStyle('manual');
 					editor.setShowFoldWidgets(true);
 					editor.renderer.setShowGutter(false);
 
@@ -145,7 +144,6 @@
 
 				// Initialize Textarea-based editor.
 				function initWithTextarea () {
-
 					$textarea = $('<textarea></textarea>');
 					$('#' + id).append($textarea);
 
@@ -538,7 +536,7 @@
 			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-media-selector.twig',
 
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputMediaSelector" + (++editorIdCounter));
 			}
 		};
 	}]);
@@ -554,7 +552,7 @@
 			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-link-selector.twig',
 
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputLinkSelector" + (++editorIdCounter));
 			}
 		};
 	}]);
@@ -570,7 +568,7 @@
 
 			//TODO filter the user, include only activated user.
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUserSelector" + (++editorIdCounter));
 			}
 		};
 	}]);
@@ -585,7 +583,7 @@
 			templateUrl : 'Rbs/Admin/js/directives/rich-text-input-usergroup-selector.twig',
 
 			compile : function (tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputPicker" + (++editorIdCounter));
+				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupSelector" + (++editorIdCounter));
 			}
 		};
 	}]);

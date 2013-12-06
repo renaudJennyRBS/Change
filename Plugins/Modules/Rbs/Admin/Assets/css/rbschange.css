@@ -293,6 +293,12 @@ h4.list-group-item:first-child {
 
 /* buttons containing only an icon */
 
+.btn-icon {
+	padding-left: 0;
+	padding-right: 0;
+	text-align: center;
+}
+
 .btn-icon.btn-lg {
 	width: 48px;
 }
@@ -430,6 +436,13 @@ body > footer a:hover,
 body > footer a:visited:hover {
 	color: #0088CC;
 	text-decoration: underline;
+}
+
+/** word wrapping */
+.break-word {
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
 }
 
 /**

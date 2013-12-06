@@ -6,11 +6,11 @@
 	<div class="tab-content">
 		<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">
 			<div class="btn-toolbar" ng-if="! readOnly">
-
 				<span class="pull-right">
-									<button type="button" class="btn btn-sm btn-info" title="{{ i18nAttr('m.rbs.admin.admin.markdown_help', ['ucf']) }}" ng-click="openHelp()"><i class="icon-info-sign"></i></button>
-									<button ng-if="!useTabs" type="button" class="btn btn-default btn-sm" ng-click="preview()"><i class="icon-eye-open"></i></button>
-								</span>
+					<button type="button" class="btn btn-sm btn-info btn-icon" title="{{ i18nAttr('m.rbs.admin.admin.markdown_help', ['ucf']) }}" ng-click="openHelp()"><i class="icon-info-sign"></i></button>
+					<button ng-if="!useTabs" type="button" class="btn btn-default btn-sm btn-icon" ng-click="preview()" title="{{ i18nAttr('m.rbs.admin.admin.preview', ['ucf']) }}"><i class="icon-eye-open"></i></button>
+					<div ng-if="draggable" draggable="true" class="btn btn-default btn-sm btn-icon block-handle" title="{{ i18nAttr('m.rbs.admin.admin.markdown_help', ['ucf']) }}"><i class="icon-move"></i></div>
+				</span>
 
 				<div class="btn-group">
 					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.admin.admin.richtext_title', ['ucf']) }} <span class="caret"></span></button>
@@ -25,44 +25,43 @@
 					</ul>
 				</div>
 				<div class="btn-group">
-					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.bold', ['ucf']) }}" class="btn btn-default btn-sm" ng-click="mdBold()"><i class="icon-bold"></i></button>
-					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.italic', ['ucf']) }}" class="btn btn-default btn-sm" ng-click="mdItalic()"><i class="icon-italic"></i></button>
+					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.bold', ['ucf']) }}" class="btn btn-default btn-sm btn-icon" ng-click="mdBold()"><i class="icon-bold"></i></button>
+					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.italic', ['ucf']) }}" class="btn btn-default btn-sm btn-icon" ng-click="mdItalic()"><i class="icon-italic"></i></button>
 				</div>
 
 				<div class="btn-group">
-					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.undo', ['ucf']) }}" class="btn btn-default btn-sm" ng-click="mdUndo()"><i class="icon-undo"></i></button>
-					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.redo', ['ucf']) }}" class="btn btn-default btn-sm" ng-click="mdRedo()"><i class="icon-repeat"></i></button>
+					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.undo', ['ucf']) }}" class="btn btn-default btn-sm btn-icon" ng-click="mdUndo()"><i class="icon-undo"></i></button>
+					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.redo', ['ucf']) }}" class="btn btn-default btn-sm btn-icon" ng-click="mdRedo()"><i class="icon-repeat"></i></button>
 				</div>
 
 				<div class="btn-group" ng-if="availableSelectors.media">
-					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.insert_picture', ['ucf']) }}" class="btn btn-default btn-sm" ng-class="{active:currentSelector=='media'}" ng-click="toggleSelector('media')"><i class="icon-picture"></i></button>
+					<button type="button" ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.insert_picture', ['ucf']) }}" class="btn btn-default btn-sm btn-icon" ng-class="{active:currentSelector=='media'}" ng-click="toggleSelector('media')"><i class="icon-picture"></i></button>
 				</div>
 
 				<div class="btn-group" ng-if="availableSelectors.links">
-					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.insert_internal_link', ['ucf']) }}" ng-disabled="useTextarea" class="btn btn-default btn-sm" ng-class="{active:currentSelector=='link'}" ng-click="toggleSelector('link')"><i class="icon-link"></i></button>
-					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.insert_external_link', ['ucf']) }}" ng-disabled="useTextarea" class="btn btn-default btn-sm" ng-click="insertExternalLink()"><i class="icon-external-link"></i></button>
+					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.insert_internal_link', ['ucf']) }}" ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon" ng-class="{active:currentSelector=='link'}" ng-click="toggleSelector('link')"><i class="icon-link"></i></button>
+					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.insert_external_link', ['ucf']) }}" ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon" ng-click="insertExternalLink()"><i class="icon-external-link"></i></button>
 				</div>
 
 				<div class="btn-group" ng-if="availableSelectors.users">
-					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" title="{{ i18nAttr('m.rbs.admin.admin.insert_user', ['ucf']) }}" ng-class="{active:currentSelector=='user'}" ng-click="toggleSelector('user')"><i class="icon-user"></i></button>
+					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon" title="{{ i18nAttr('m.rbs.admin.admin.insert_user', ['ucf']) }}" ng-class="{active:currentSelector=='user'}" ng-click="toggleSelector('user')"><i class="icon-user"></i></button>
 				</div>
 
 				<div class="btn-group" ng-if="availableSelectors.usergroups" >
-					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm" title="{{ i18nAttr('m.rbs.admin.admin.insert_usergroup', ['ucf']) }}" ng-class="{active:currentSelector=='usergroup'}" ng-click="toggleSelector('usergroup')"><i class="icon-group"></i></button>
+					<button type="button" ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon" title="{{ i18nAttr('m.rbs.admin.admin.insert_usergroup', ['ucf']) }}" ng-class="{active:currentSelector=='usergroup'}" ng-click="toggleSelector('usergroup')"><i class="icon-group"></i></button>
 				</div>
-
 			</div>
 
-		<div class="media-picker"></div>
-		<div class="link-picker"></div>
-		<div class="user-picker"></div>
-		<div class="usergroup-picker"></div>
+			<div class="media-picker"></div>
+			<div class="link-picker"></div>
+			<div class="user-picker"></div>
+			<div class="usergroup-picker"></div>
 
-		<div data-role="ace-editor"></div>
-	</div>
-	<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview" style="background:white;">
-		<button ng-if="!useTabs" type="button" class="btn btn-default btn-sm pull-right active" ng-click="closePreview()" style="margin:5px;"><i class="icon-eye-open"></i></button>
-		<div class="preview-content"></div>
+			<div data-role="ace-editor"></div>
+		</div>
+		<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview" style="background:white;">
+			<button ng-if="!useTabs" type="button" class="btn btn-default btn-sm pull-right active" ng-click="closePreview()" style="margin:5px;"><i class="icon-eye-open"></i></button>
+			<div class="preview-content"></div>
 		</div>
 	</div>
 </div>
