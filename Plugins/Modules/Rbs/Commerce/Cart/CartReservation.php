@@ -2,8 +2,8 @@
 namespace Rbs\Commerce\Cart;
 
 /**
-* @name \Rbs\Commerce\Cart\CartReservation
-*/
+ * @name \Rbs\Commerce\Cart\CartReservation
+ */
 class CartReservation implements \Rbs\Stock\Interfaces\Reservation
 {
 	/**

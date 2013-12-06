@@ -78,16 +78,15 @@
 			{% endif %}
 		{% endblock %}
 
-		<form action="{{ ajaxURL('Rbs_Commerce', 'AddProductToCart') }}" method="POST" id="{{ blockId }}_add_form">
+		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" id="{{ blockId }}_add_form">
 		<fieldset>
 			<div ng-if="canBeAddedToCart">
 				<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
-				<input type="hidden" name="options[webStoreId]" value="{{ parameters.webStoreId }}">
 				<div class="form-group">
 					<label for="product-quantity">Quantité</label>
 					<input class="form-control" name="quantity" value="1" type="number" min="(= productPresentation.stock.minQuantity =)" max="(= productPresentation.stock.maxQuantity =)" step="(= productPresentation.stock.quantityIncrement =)"/>
 				</div>
-				<button name="product" type="button" class="btn btn-primary btn-lg" value="(= currentProductId =)"
+				<button name="key" type="button" class="btn btn-primary btn-lg" value="(= currentProductId =)"
 					onclick="script{{ blockId }}.offer.addProduct(this)">
 					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 				</button>

@@ -1,12 +1,6 @@
 <?php
 namespace ChangeTests\Modules\Commerce\Cart;
 
-use ChangeTests\Modules\Commerce\Cart\Assets\TestCartItemConfig;
-use ChangeTests\Modules\Commerce\Cart\Assets\TestCartLineConfig;
-
-include_once(__DIR__ . '/Assets/TestCartLineConfig.php');
-include_once(__DIR__ . '/Assets/TestCartItemConfig.php');
-
 class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
@@ -55,7 +49,7 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 
 		$cart = $cm->getNewCart();
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
+		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 
 		$identifier = $cart->getIdentifier();
 		$this->assertNotNull($identifier);
@@ -77,7 +71,7 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cm = $cs->getCartManager();
 		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 		$cart = $cm->getCartByIdentifier($identifier);
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
+		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 		$this->assertEquals($identifier, $cart->getIdentifier());
 		return $identifier;
 	}
@@ -93,7 +87,7 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cm = $cs->getCartManager();
 		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 		$cart = $cm->getCartByIdentifier($identifier);
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
+		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 		$cart->getContext()->set('TEST', 'VALUE');
 		$cm->saveCart($cart);
 
@@ -114,13 +108,18 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cm = $cs->getCartManager();
 		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 		$cart = $cm->getCartByIdentifier($identifier);
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\Cart', $cart);
-		$ciconf = new TestCartItemConfig('sku1', 55, 2.5, array(), array('p2' => 2));
+		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 
-		$clconf = new TestCartLineConfig('k1', 'designation', array($ciconf), array('p1' => 1));
-		$line = $cm->addLine($cart, $clconf, 53);
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\CartLine', $line);
-		$this->assertEquals(1, $line->getNumber());
+		$itemParameters = ['codeSKU' => 'sku1', 'reservationQuantity' => 55, 'priceValue' => 2.5,
+			'cartTaxes' => [], 'options' => ['p2' => 2]];
+
+		$lineParameters = ['key' => 'k1', 'designation' => 'designation', 'quantity' => 53,
+			'items' => [$itemParameters], 'options' => ['p1' => 1]];
+
+		$line = $cm->addLine($cart, $lineParameters);
+		$this->assertInstanceOf('\Rbs\Commerce\Cart\CartLine', $line);
+		$this->assertEquals(0, $line->getIndex());
+		$this->assertEquals('k1', $line->getKey());
 		$this->assertSame($line, $cart->getLineByKey('k1'));
 		$this->assertEquals('designation', $line->getDesignation());
 		$this->assertEquals(53, $line->getQuantity());
@@ -128,14 +127,14 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertNull($line->getItemByCodeSKU('sku2'));
 		$item = $line->getItemByCodeSKU('sku1');
-		$this->assertInstanceOf('\Rbs\Commerce\Interfaces\CartItem', $item);
+		$this->assertInstanceOf('\Rbs\Commerce\Cart\CartLineItem', $item);
 		$this->assertEquals(55, $item->getReservationQuantity());
 		$this->assertEquals(2.5, $item->getPriceValue());
 		$this->assertEquals(2, $item->getOptions()->get('p2'));
 
 		try
 		{
-			$cm->addLine($cart, $clconf, 1);
+			$cm->addLine($cart, $lineParameters);
 			$this->fail('RuntimeException expected');
 		}
 		catch (\RuntimeException $e)
@@ -145,12 +144,12 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		try
 		{
-			$cm->addLine($cart, 'k1', 1);
+			$cm->addLine($cart, array());
 			$this->fail('InvalidArgumentException expected');
 		}
 		catch (\InvalidArgumentException $e)
 		{
-			$this->assertEquals('Argument 2 should be a CartLineConfig', $e->getMessage());
+			$this->assertEquals('Argument 2 should be a valid parameters list', $e->getMessage());
 		}
 
 		$this->assertSame($line, $cm->getLineByKey($cart, 'k1'));

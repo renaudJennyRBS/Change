@@ -8,7 +8,7 @@ use Change\Http\Rest\Result\DocumentResult;
 /**
  * @name \Rbs\Price\Documents\Price
  */
-class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Commerce\Interfaces\Price
+class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price\PriceInterface
 {
 	/**
 	 * @return string
@@ -34,10 +34,9 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 	}
 
 	/**
-	 * @param array $arguments
-	 * @return float
+	 * @return float|null
 	 */
-	public function getValue(array $arguments = null)
+	public function getValue()
 	{
 		return $this->getDefaultValue();
 	}
@@ -47,7 +46,15 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 	 */
 	public function isDiscount()
 	{
-		return $this->getBasePrice() != null;
+		return $this->getBasePrice() != null  && $this->getBasePrice()->activated();
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getBasePriceValue()
+	{
+		return ($this->isDiscount()) ? $this->getBasePrice()->getValue() : null;
 	}
 
 	/**
@@ -66,7 +73,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @return null|\Rbs\Price\Services\TaxManager
+	 * @return null|\Rbs\Price\Tax\TaxManager
 	 */
 	protected function getBoTaxManager(\Rbs\Commerce\CommerceServices $commerceServices)
 	{
@@ -156,7 +163,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Comme
 				$taxApplications = $taxManager->getTaxByValueWithTax($valueWithTax, $taxCategories);
 				foreach ($taxApplications as $taxApplication)
 				{
-					/* @var $taxApplication \Rbs\Price\Std\TaxApplication */
+					/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
 					$valueWithTax -= $taxApplication->getValue();
 				}
 				return $valueWithTax;

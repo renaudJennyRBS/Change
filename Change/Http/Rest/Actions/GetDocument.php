@@ -54,6 +54,35 @@ class GetDocument
 	}
 
 	/**
+	 * Use Required Event Params: documentId, modelName
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 */
+	public function getNewDocument($event)
+	{
+		$documentId = intval($event->getParam('documentId'));
+		$modelName = $event->getParam('modelName');
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
+		if (!$model || $documentId >= 0)
+		{
+			return;
+		}
+		elseif ($model->isLocalized())
+		{
+			$event->setParam('LCID', $event->getApplicationServices()->getDocumentManager()->getLCID());
+			$getLocalizedDocument = new GetLocalizedDocument();
+			$getLocalizedDocument->getNewLocalizedDocument($event);
+		}
+		else
+		{
+			$document = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+			$document->initialize($documentId);
+			$model->setPropertyValue($document, 'modificationDate', null);
+			$this->generateResult($event, $document);
+		}
+	}
+
+	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return DocumentResult

@@ -8,7 +8,7 @@ use Change\Stdlib\String;
 /**
  * @name \Rbs\Catalog\Documents\Product
  */
-class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs\Commerce\Interfaces\CartLineConfigCapable
+class Product extends \Compilation\Rbs\Catalog\Documents\Product
 {
 	/**
 	 * @return \Rbs\Media\Documents\Image|null
@@ -258,25 +258,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product implements \Rbs
 	{
 		$this->newSkuOnCreation = $newSkuOnCreation;
 		return $this;
-	}
-
-	/**
-	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @param array $parameters
-	 * @return \Rbs\Catalog\Product\ProductCartLineConfig
-	 */
-	public function getCartLineConfig(\Rbs\Commerce\CommerceServices $commerceServices, array $parameters)
-	{
-		$cartLineConfig = new \Rbs\Catalog\Product\ProductCartLineConfig($this);
-		$options = isset($parameters['options']) ? $parameters['options'] : array();
-		if (is_array($options))
-		{
-			foreach ($options as $optName => $optValue)
-			{
-				$cartLineConfig->setOption($optName, $optValue);
-			}
-		}
-		return $cartLineConfig;
 	}
 
 	/**

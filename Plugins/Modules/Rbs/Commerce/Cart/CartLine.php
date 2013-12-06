@@ -1,17 +1,17 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
-use Rbs\Commerce\Interfaces\CartLine as CartLineInterfaces;
+use Rbs\Commerce\Interfaces\LineInterface;
 
 /**
  * @name \Rbs\Commerce\Cart\CartLine
  */
-class CartLine implements CartLineInterfaces
+class CartLine implements LineInterface, \Serializable
 {
 	/**
 	 * @var integer
 	 */
-	protected $number;
+	protected $index;
 
 	/**
 	 * @var string
@@ -29,7 +29,7 @@ class CartLine implements CartLineInterfaces
 	protected $designation;
 
 	/**
-	 * @var CartItem[]
+	 * @var CartLineItem[]
 	 */
 	protected $items = array();
 
@@ -44,42 +44,49 @@ class CartLine implements CartLineInterfaces
 	protected $serializedData;
 
 	/**
-	 * @param string $key
+	 * @param string|array $key
 	 */
 	function __construct($key)
 	{
-		$this->key = $key;
+		if (is_array($key))
+		{
+			$this->fromArray($key);
+		}
+		else
+		{
+			$this->key = $key;
+		}
 	}
 
 	/**
-	 * @param Cart $cart
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return $this
 	 */
-	public function setCart(Cart $cart)
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
 	{
 		if ($this->serializedData)
 		{
-			$this->restoreSerializedData($cart);
+			$this->restoreSerializedData($documentManager);
 		}
 		return $this;
 	}
 
 	/**
-	 * @param int $number
+	 * @param int $index
 	 * @return $this
 	 */
-	public function setNumber($number)
+	public function setIndex($index)
 	{
-		$this->number = $number;
+		$this->index = $index;
 		return $this;
 	}
 
 	/**
 	 * @return integer
 	 */
-	public function getNumber()
+	public function getIndex()
 	{
-		return $this->number;
+		return $this->index;
 	}
 
 	/**
@@ -137,7 +144,7 @@ class CartLine implements CartLineInterfaces
 	}
 
 	/**
-	 * @return CartItem[]
+	 * @return CartLineItem[]
 	 */
 	public function getItems()
 	{
@@ -146,7 +153,7 @@ class CartLine implements CartLineInterfaces
 
 	/**
 	 * @param $codeSKU
-	 * @return \Rbs\Commerce\Cart\CartItem|null
+	 * @return \Rbs\Commerce\Cart\CartLineItem|null
 	 */
 	public function getItemByCodeSKU($codeSKU)
 	{
@@ -161,14 +168,14 @@ class CartLine implements CartLineInterfaces
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Cart\CartItem $item
+	 * @param \Rbs\Commerce\Cart\CartLineItem $item
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
-	 * @return \Rbs\Commerce\Cart\CartItem
+	 * @return \Rbs\Commerce\Cart\CartLineItem
 	 */
 	public function appendItem($item)
 	{
-		if ($item instanceof CartItem)
+		if ($item instanceof CartLineItem)
 		{
 			if ($this->getItemByCodeSKU($item->getCodeSKU()))
 			{
@@ -185,11 +192,11 @@ class CartLine implements CartLineInterfaces
 
 	/**
 	 * @param string $codeSKU
-	 * @return \Rbs\Commerce\Cart\CartItem|null
+	 * @return \Rbs\Commerce\Cart\CartLineItem|null
 	 */
 	public function removeItemByCodeSKU($codeSKU)
 	{
-		/* @var $result CartItem */
+		/* @var $result CartLineItem */
 		$result = null;
 		$items = array();
 		foreach ($this->items as $item)
@@ -225,7 +232,7 @@ class CartLine implements CartLineInterfaces
 	 */
 	public function serialize()
 	{
-		$serializedData = array('number' => $this->number,
+		$serializedData = array('index' => $this->index,
 			'key' => $this->key,
 			'quantity' => $this->quantity,
 			'designation' => $this->designation,
@@ -244,11 +251,12 @@ class CartLine implements CartLineInterfaces
 		$this->serializedData = unserialize($serialized);
 	}
 
-	protected function restoreSerializedData(Cart $cart)
+	protected function restoreSerializedData(\Change\Documents\DocumentManager $documentManager)
 	{
-		$serializedData = (new CartStorage())->restoreSerializableValue($this->serializedData, $cart->getCommerceServices());
+		$serializedData = (new CartStorage())->setDocumentManager($documentManager)
+			->restoreSerializableValue($this->serializedData);
 		$this->serializedData = null;
-		$this->number = $serializedData['number'];
+		$this->index = $serializedData['index'];
 		$this->key = $serializedData['key'];
 		$this->quantity = $serializedData['quantity'];
 		$this->designation = $serializedData['designation'];
@@ -256,9 +264,62 @@ class CartLine implements CartLineInterfaces
 		$this->options = $serializedData['options'];
 		foreach ($this->items as $item)
 		{
-			/* @var $item CartItem */
-			$item->setCart($cart);
+			/* @var $item CartLineItem */
+			$item->setDocumentManager($documentManager);
 		}
+	}
+
+	/**
+	 * @param array $array
+	 * @return $this
+	 */
+	public function fromArray(array $array)
+	{
+		foreach ($array as $name => $value)
+		{
+			switch ($name)
+			{
+				case 'index':
+					$this->setIndex(intval($value));
+					break;
+				case 'key':
+					$this->setKey(strval($value));
+					break;
+				case 'quantity':
+					$this->setQuantity(intval($value));
+					break;
+				case 'designation':
+					$this->setDesignation($value);
+					break;
+				case 'options':
+					if (is_array($value))
+					{
+						foreach ($value as $optName => $optValue)
+						{
+							$this->getOptions()->set($optName, $optValue);
+						}
+					}
+					break;
+				case 'items':
+					if (is_array($value))
+					{
+						foreach ($value as $itemArray)
+						{
+							$item = new CartLineItem($itemArray);
+							if ($item->getCodeSKU())
+							{
+								$this->appendItem($item);
+							}
+						}
+					}
+					break;
+			}
+			if ($this->quantity === null)
+			{
+				$this->quantity = 1;
+			}
+		}
+		return $this;
 	}
 
 	/**
@@ -266,7 +327,7 @@ class CartLine implements CartLineInterfaces
 	 */
 	public function toArray()
 	{
-		$array = array('number' => $this->number,
+		$array = array('index' => $this->index,
 			'key' => $this->key,
 			'quantity' => $this->quantity,
 			'designation' => $this->designation,
@@ -281,7 +342,7 @@ class CartLine implements CartLineInterfaces
 
 	public function __toString()
 	{
-		return $this->number . ') ' . $this->designation . ' [' . $this->key . ']';
+		return $this->index . ') ' . $this->designation . ' [' . $this->key . ']';
 	}
 
 	/**
@@ -289,7 +350,7 @@ class CartLine implements CartLineInterfaces
 	 */
 	public function getUnitPriceValue()
 	{
-		return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item)
+		return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartLineItem $item)
 		{
 			if ($item->getPriceValue() !== null)
 			{
@@ -304,11 +365,11 @@ class CartLine implements CartLineInterfaces
 	 */
 	public function getUnitPriceValueWithTax()
 	{
-		return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item)
+		return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartLineItem $item)
 		{
 			if ($item->getPriceValue() !== null)
 			{
-				$tax = array_reduce($item->getCartTaxes(), function ($result, \Rbs\Commerce\Cart\CartTax $cartTax)
+				$tax = array_reduce($item->getCartTaxes(), function ($result, \Rbs\Price\Tax\TaxApplication $cartTax)
 				{
 					return $result + $cartTax->getValue();
 				}, 0.0);
@@ -326,7 +387,7 @@ class CartLine implements CartLineInterfaces
 		$quantity = $this->getQuantity();
 		if ($quantity)
 		{
-			return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item) use ($quantity)
+			return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartLineItem $item) use ($quantity)
 			{
 				if ($item->getPriceValue() !== null)
 				{
@@ -346,14 +407,15 @@ class CartLine implements CartLineInterfaces
 		$quantity = $this->getQuantity();
 		if ($quantity)
 		{
-			return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartItem $item) use ($quantity)
+			return array_reduce($this->items, function ($result, \Rbs\Commerce\Cart\CartLineItem $item) use ($quantity)
 			{
 				if ($item->getPriceValue() !== null)
 				{
-					$tax = array_reduce($item->getCartTaxes(), function ($result, \Rbs\Commerce\Cart\CartTax $cartTax) use ($quantity)
-					{
-						return $result + $cartTax->getValue() * $quantity;
-					}, 0.0);
+					$tax = array_reduce($item->getCartTaxes(),
+						function ($result, \Rbs\Price\Tax\TaxApplication $cartTax) use ($quantity)
+						{
+							return $result + $cartTax->getValue() * $quantity;
+						}, 0.0);
 					return $result + ($item->getPriceValue() * $quantity) + $tax;
 				}
 				return $result;

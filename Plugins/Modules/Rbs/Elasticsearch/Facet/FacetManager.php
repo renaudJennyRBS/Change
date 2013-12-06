@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Elasticsearch\Facet;
 
+use Change\Documents\AbstractDocument;
 use Change\Documents\Property;
 
 /**
@@ -321,11 +322,11 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					if ($sku)
 					{
 						$commerceServices = $indexDefinition->getCommerceServices();
-						$price = $commerceServices->getPriceManager()->getPriceBySku($sku, $commerceServices->getContext()->getWebStore());
+						$price = $commerceServices->getPriceManager()->getPriceBySku($sku);
 						if ($price)
 						{
 							$value = array($facet->getFieldName() => $price->getValue(),
-								'price_id' => $price->getId());
+								'price_id' => ($price instanceof AbstractDocument) ? $price->getId() : null);
 						}
 					}
 					break;

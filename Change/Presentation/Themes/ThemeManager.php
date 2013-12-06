@@ -407,14 +407,18 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function getJsAssetNames($configuration, $blockNames)
 	{
 		$names = [];
-		foreach ($configuration['*']['jsAssets'] as $themeJsAsset)
+		if (isset($configuration['*']['jsAssets']) && is_array($configuration['*']['jsAssets']))
 		{
-			$names[] = $this->normalizeAssetName($themeJsAsset);
+			foreach ($configuration['*']['jsAssets'] as $themeJsAsset)
+			{
+				$names[] = $this->normalizeAssetName($themeJsAsset);
+			}
 		}
+
 
 		foreach (array_keys($blockNames) as $blockName)
 		{
-			if (isset($configuration[$blockName]))
+			if (isset($configuration[$blockName]['jsAssets']) && is_array($configuration[$blockName]['jsAssets']))
 			{
 				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
 				{
@@ -433,18 +437,25 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function getCssAssetNames($configuration, $blockNames)
 	{
 		$names = [];
-		foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
+		if (isset($configuration['*']['cssAssets']) && is_array($configuration['*']['cssAssets']))
 		{
-			$names[] = $this->normalizeAssetName($themeCssAsset);
+			foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
+			{
+				$names[] = $this->normalizeAssetName($themeCssAsset);
+			}
 		}
+
 
 		foreach (array_keys($blockNames) as $blockName)
 		{
 			if (isset($configuration[$blockName]))
 			{
-				foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
+				if (isset($configuration[$blockName]['cssAssets']) && is_array($configuration[$blockName]['cssAssets']))
 				{
-					$names[] = $this->normalizeAssetName($blockCssAsset);
+					foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
+					{
+						$names[] = $this->normalizeAssetName($blockCssAsset);
+					}
 				}
 			}
 		}

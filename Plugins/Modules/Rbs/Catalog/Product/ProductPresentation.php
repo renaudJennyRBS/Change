@@ -1,11 +1,11 @@
 <?php
 namespace Rbs\Catalog\Product;
 
-use Rbs\Commerce\Interfaces\TaxApplication;
+use Rbs\Price\Tax\TaxApplication;
 
 /**
-* @name \Rbs\Catalog\Std\ProductPresentation
-*/
+ * @name \Rbs\Catalog\Product\ProductPresentation
+ */
 class ProductPresentation
 {
 	/**
@@ -143,7 +143,7 @@ class ProductPresentation
 				$this->stock['maxQuantity'] = $sku->getMaxQuantity() ? min($sku->getMaxQuantity(), $level) : $level;
 				$this->stock['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
 
-				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, $this->webStoreId);
+				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, ['webStore' => $this->webStoreId]);
 				if ($price)
 				{
 					$priceValue = $price->getValue();
@@ -161,8 +161,7 @@ class ProductPresentation
 							$this->prices['priceWithTax'] += ($priceValue * $quantity) + $tax;
 						}
 
-						$basePrice = $price->getBasePrice();
-						$oldValue = ($basePrice && $basePrice->activated()) ? $basePrice->getValue() : null;
+						$oldValue = $price->getBasePriceValue();
 						if ($oldValue !== null)
 						{
 							$this->prices['priceWithoutDiscount'] += ($oldValue * $quantity);
@@ -177,9 +176,12 @@ class ProductPresentation
 							}
 						}
 
-						if ($price->getEcoTax() !== null)
+						if ($price instanceof \Rbs\Price\Documents\Price)
 						{
-							$this->prices['ecoTax'] += ($price->getEcoTax() * $quantity);
+							if ($price->getEcoTax() !== null)
+							{
+								$this->prices['ecoTax'] += ($price->getEcoTax() * $quantity);
+							}
 						}
 					}
 				}
@@ -226,6 +228,32 @@ class ProductPresentation
 	public function getEcoTaxValue()
 	{
 		return $this->prices['ecoTax'];
+	}
+
+	/**
+ * @return string|null
+ */
+	public function getDesignation()
+	{
+		return $this->product->getCurrentLocalization()->getTitle();
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getCodeSKU()
+	{
+		$sku = $this->product->getSku();
+		return $sku ? $sku->getCode() : null;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getMinQuantity()
+	{
+		$sku = $this->product->getSku();
+		return $sku ? $sku->getMinQuantity() : null;
 	}
 
 	/**

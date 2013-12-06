@@ -26,7 +26,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newDateFieldDefinition('creation_date')->setNullable(false))
 				->addField($schemaManager->newTimeStampFieldDefinition('last_update')->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('identifier', array('length' => 40))->setNullable(true))
-				->addField($schemaManager->newIntegerFieldDefinition('owner_id')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newIntegerFieldDefinition('user_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newIntegerFieldDefinition('store_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newNumericFieldDefinition('price_value')->setNullable(true))
 				->addField($schemaManager->newNumericFieldDefinition('price_value_with_tax')->setNullable(true))
@@ -34,6 +34,9 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('line_count')->setNullable(true)->setDefaultValue('0'))
 				->addField($schemaManager->newLobFieldDefinition('cart_data')->setNullable(true))
 				->addField($schemaManager->newBooleanFieldDefinition('locked')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newIntegerFieldDefinition('owner_id')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newIntegerFieldDefinition('transaction_id')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newBooleanFieldDefinition('ordered')->setNullable(false)->setDefaultValue('0'))
 				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
 				->addKey($this->newUniqueKey()->setName('identifier')->addField($td->getField('identifier')))
 				->setOption('AUTONUMBER', 1);

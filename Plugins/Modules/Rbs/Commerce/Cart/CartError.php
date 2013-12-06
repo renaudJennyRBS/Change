@@ -2,9 +2,9 @@
 namespace Rbs\Commerce\Cart;
 
 /**
-* @name \Rbs\Commerce\Cart\CartError
-*/
-class CartError implements \Rbs\Commerce\Interfaces\CartError
+ * @name \Rbs\Commerce\Cart\CartError
+ */
+class CartError
 {
 	/**
 	 * @var string

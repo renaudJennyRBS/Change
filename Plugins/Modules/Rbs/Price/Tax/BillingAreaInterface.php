@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\Commerce\Interfaces;
+namespace Rbs\Price\Tax;
 
 /**
 * @name \Rbs\Commerce\Interfaces\BillingArea
 */
-interface BillingArea
+interface BillingAreaInterface
 {
 	/**
 	 * @return string
@@ -17,7 +17,7 @@ interface BillingArea
 	public function getCurrencyCode();
 
 	/**
-	 * @return Tax[]
+	 * @return \Rbs\Price\Tax\TaxInterface []
 	 */
 	public function getTaxes();
 }

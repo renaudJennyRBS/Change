@@ -14,7 +14,7 @@ class Context implements \Zend\EventManager\EventsCapableInterface
 	protected $webStore;
 
 	/**
-	 * @var \Rbs\Commerce\Interfaces\BillingArea
+	 * @var \Rbs\Price\Tax\BillingAreaInterface
 	 */
 	protected $billingArea;
 
@@ -86,17 +86,17 @@ class Context implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Interfaces\BillingArea $billingArea
+	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @return $this
 	 */
-	public function setBillingArea(\Rbs\Commerce\Interfaces\BillingArea $billingArea)
+	public function setBillingArea(\Rbs\Price\Tax\BillingAreaInterface $billingArea)
 	{
 		$this->billingArea = $billingArea;
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Interfaces\BillingArea
+	 * @return \Rbs\Price\Tax\BillingAreaInterface
 	 */
 	public function getBillingArea()
 	{

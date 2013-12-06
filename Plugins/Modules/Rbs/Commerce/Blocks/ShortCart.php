@@ -6,7 +6,7 @@ use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
- * @name \Rbs\Commerce\Blocks\Cart
+ * @name \Rbs\Commerce\Blocks\ShortCart
  */
 class ShortCart extends Block
 {

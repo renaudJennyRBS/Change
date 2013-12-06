@@ -4,9 +4,7 @@ namespace Rbs\Commerce\Http\Rest;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
-use Rbs\Commerce\Http\Rest\Action\GetCart;
-use Rbs\Commerce\Http\Rest\Action\InsertCart;
-use Rbs\Commerce\Http\Rest\Action\UpdateCart;
+use Rbs\Commerce\Http\Rest\Action\Cart;
 
 /**
  * @name \Rbs\Commerce\Http\Rest\CommerceResolver
@@ -66,23 +64,28 @@ class CommerceResolver
 			{
 				if ($method === Request::METHOD_POST)
 				{
-					$event->setAction(function($event) {(new InsertCart())->execute($event);});
+					$event->setAction(function($event) {(new Cart())->insertCart($event);});
 					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 				}
 			}
 		}
-		elseif ($nbParts == 2 && $resourceParts[0] = 'cart')
+		elseif ($nbParts == 2 && $resourceParts[0] == 'cart')
 		{
 			$cartIdentifier = $resourceParts[1];
 			$event->setParam('cartIdentifier', $cartIdentifier);
 			if ($method === Request::METHOD_GET)
 			{
-				$event->setAction(function($event) {(new GetCart())->execute($event);});
+				$event->setAction(function($event) {(new Cart())->getCart($event);});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 			elseif ($method === Request::METHOD_PUT)
 			{
-				$event->setAction(function($event) {(new UpdateCart())->execute($event);});
+				$event->setAction(function($event) {(new Cart())->updateCart($event);});
+				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+			}
+			elseif ($method === Request::METHOD_DELETE)
+			{
+				$event->setAction(function($event) {(new Cart())->deleteCart($event);});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}
