@@ -77,6 +77,44 @@ class GetLocalizedDocument
 	}
 
 	/**
+	 * Use Required Event Params: documentId, modelName, LCID
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 */
+	public function getNewLocalizedDocument($event)
+	{
+		$documentId = intval($event->getParam('documentId'));
+		$modelName = $event->getParam('modelName');
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
+		if (!$model || !$model->isLocalized() || $documentId >= 0)
+		{
+			return;
+		}
+
+		$LCID = $event->getParam('LCID');
+		if (!$LCID || !$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
+		{
+			throw new \RuntimeException('Invalid Parameter: LCID', 71000);
+		}
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		try
+		{
+			$documentManager->pushLCID($LCID);
+			$document = $documentManager->getNewDocumentInstanceByModel($model);
+			$document->initialize($event->getParam('documentId'));
+			$model->setPropertyValue($document, 'refLCID', $LCID);
+			$model->setPropertyValue($document, 'modificationDate', null);
+			$this->generateResult($event, $document, $LCID);
+			$documentManager->popLCID();
+		}
+		catch (\Exception $e)
+		{
+			$documentManager->popLCID($e);
+		}
+	}
+
+	/**
 	 * @param \Change\Http\Event $event
 	 * @param AbstractDocument $document
 	 * @param string $LCID

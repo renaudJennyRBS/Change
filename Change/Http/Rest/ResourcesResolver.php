@@ -139,7 +139,7 @@ class ResourcesResolver
 		}
 
 		// Vendor/Module/Name/Id
-		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)$|', $relativePath, $matches))
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(-?[0-9]+)$|', $relativePath, $matches))
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
 			$model = $applicationServices->getModelManager()->getModelByName($modelName);
@@ -150,6 +150,27 @@ class ResourcesResolver
 			$event->setParam('modelName', $modelName);
 			$documentId = intval($resourceParts[3]);
 			$event->setParam('documentId', $documentId);
+
+			if ($documentId < 0)
+			{
+				if ($method === Request::METHOD_GET)
+				{
+					$this->resolver->setAuthorization($event, 'Creator', null, $modelName);
+					$action = function ($event)
+					{
+						$action = new GetDocument();
+						$action->getNewDocument($event);
+					};
+					$event->setAction($action);
+					return;
+				}
+				else
+				{
+					$event->setResult($event->getController()->notAllowedError($method, [Request::METHOD_GET]));
+					return;
+				}
+			}
+
 			if ($method === Request::METHOD_GET)
 			{
 				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
@@ -214,7 +235,7 @@ class ResourcesResolver
 		}
 
 		// Vendor/Module/Name/Id/LCID
-		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)/([a-z]{2}_[A-Z]{2})$|', $relativePath,
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(-?[0-9]+)/([a-z]{2}_[A-Z]{2})$|', $relativePath,
 			$matches)
 		)
 		{
@@ -230,6 +251,27 @@ class ResourcesResolver
 			$documentId = intval($resourceParts[3]);
 			$event->setParam('documentId', $documentId);
 			$event->setParam('LCID', $resourceParts[4]);
+
+			if ($documentId < 0)
+			{
+				if ($method === Request::METHOD_GET)
+				{
+					$this->resolver->setAuthorization($event, 'Creator', null, $modelName);
+					$action = function ($event)
+					{
+						$action = new GetLocalizedDocument();
+						$action->getNewLocalizedDocument($event);
+					};
+					$event->setAction($action);
+					return;
+				}
+				else
+				{
+					$event->setResult($event->getController()->notAllowedError($method, [Request::METHOD_GET]));
+					return;
+				}
+			}
+
 			if ($method === Request::METHOD_GET)
 			{
 				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
