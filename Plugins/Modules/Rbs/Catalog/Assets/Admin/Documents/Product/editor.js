@@ -50,7 +50,7 @@
 							'model' : 'Rbs_Catalog_ProductListItem',
 							'values' : {
 								'product': scope.document.id,
-								'active' : true,
+								'active' : true
 							}
 						},
 						'<i class="icon-pencil"></i> ' + scope.document.label
@@ -88,52 +88,41 @@
 				scope.attributesDef = [];
 				scope.propAttr = {};
 
-				scope.$watch('document.attribute', function(newValue){
+				scope.$watch('document.attribute', function(newValue) {
 					var attrGrpId = null;
-					if (newValue)
-					{
-						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
-						{
+					if (newValue) {
+						if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
 							attrGrpId = newValue.id;
-						}
-						else
-						{
+						} else {
 							attrGrpId = parseInt(newValue, 10);
-							if (isNaN(attrGrpId))
-							{
+							if (isNaN(attrGrpId)) {
 								attrGrpId = null;
 							}
 						}
 					}
 
-					if (attrGrpId != scope.attributeGroupId)
-					{
+					if (attrGrpId != scope.attributeGroupId) {
 						scope.clearAttributesEditor();
 						scope.attributeGroupId = attrGrpId;
 					}
 				});
 
 				scope.$watch('document.attributeValues', function(newValue) {
-
-					if (newValue === null)
-					{
+					if (newValue === null) {
 						scope.document.attributeValues = [];
 					}
-
-					if (newValue !== undefined)
-					{
+					if (newValue !== undefined) {
 						scope.assocValues(scope.attributesDef);
 					}
 				});
 
 				scope.$watch('attributeGroupId', function(newValue) {
-					if (newValue)
-					{
+					if (newValue) {
 						REST.resource('Rbs_Catalog_Attribute', newValue).then(scope.generateAttributesEditor);
 					}
 				});
 
-				scope.clearAttributesEditor = function (){
+				scope.clearAttributesEditor = function () {
 					scope.attributesDef = [];
 					scope.propAttr = {};
 					$timeout(function () {
@@ -143,17 +132,13 @@
 
 				scope.generateAttributesEditor = function (attribute) {
 					var editorDefinition = attribute.editorDefinition;
-					if (angular.isObject(editorDefinition))
-					{
-						if (!angular.isArray(scope.document.attributeValues))
-						{
+					if (angular.isObject(editorDefinition)) {
+						if (!angular.isArray(scope.document.attributeValues)) {
 							scope.document.attributeValues = [];
 						}
-
 						scope.attributesDef = editorDefinition.attributes;
 						scope.assocValues(scope.attributesDef);
 					}
-
 					$timeout(function () {
 						scope.$emit('Change:Editor:UpdateMenu');
 					});
@@ -161,14 +146,10 @@
 
 				scope.assocValues = function (attributes) {
 					var attributeValues = scope.document.attributeValues;
-					for (var i = 0; i < attributes.length; i++)
-					{
-						if (attributes[i].attributes)
-						{
+					for (var i = 0; i < attributes.length; i++) {
+						if (attributes[i].attributes) {
 							scope.assocValues(attributes[i].attributes)
-						}
-						else
-						{
+						} else {
 							scope.setAttributeValue(attributes[i], attributeValues);
 						}
 					}
@@ -190,32 +171,27 @@
 					var valIndex = scope.getAttributeValueById(attribute.id, attributeValues);
 
 					if (attribute.valueType == 'Property') {
-						var av = scope.document[attribute.propertyName];
-						if (valIndex == null)
+						if (!scope.document.hasOwnProperty(attribute.propertyName))
 						{
+							scope.document[attribute.propertyName] = null;
+						}
+						var av = scope.document[attribute.propertyName];
+						if (valIndex == null) {
 							valIndex = {id: attribute.id, valueType:attribute.valueType};
 							attributeValues.push(valIndex);
-							if (av !== null)
-							{
+							if (av !== null) {
 								v.value = av;
 							}
-						}
-						else
-						{
+						} else {
 							v.value = av;
 						}
 						scope.propAttr[attribute.propertyName] = v;
-					}
-					else
-					{
-						if (valIndex == null)
-						{
+					} else {
+						if (valIndex == null) {
 							v.id = attribute.id;
 							v.valueType = attribute.valueType;
 							attributeValues.push(v);
-						}
-						else
-						{
+						} else {
 							v = valIndex;
 						}
 					}
@@ -223,8 +199,7 @@
 				};
 
 				scope.$watch('propAttr', function(newValue) {
-					if (newValue)
-					{
+					if (newValue) {
 						angular.forEach(scope.propAttr, function(value, key) {
 							if (scope.document.hasOwnProperty(key))
 							{
