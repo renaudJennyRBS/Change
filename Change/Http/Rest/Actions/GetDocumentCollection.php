@@ -50,39 +50,6 @@ class GetDocumentCollection
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractModel $model
-	 * @param \Change\Http\Rest\Result\CollectionResult $result
-	 * @param \Change\Documents\ModelManager $mm
-	 * @param bool $includeDoc
-	 */
-	protected function addSortablePropertiesForModel($model, $result, $mm, $parentName = null)
-	{
-		if ($model instanceof \Change\Documents\AbstractModel)
-		{
-			foreach ($model->getProperties() as $property)
-			{
-				if (!$property->getStateless())
-				{
-					if (in_array($property->getType(), $this->sortablePropertyTypes))
-					{
-						if (!$property->getLocalized() || $parentName === null)
-						{
-							// Localized properties are not sortable on sub model
-							$name = $parentName ?  $parentName . '.' . $property->getName() : $property->getName();
-							$result->addAvailableSort($name);
-						}
-					}
-					else if (!$parentName && $property->getType() === Property::TYPE_DOCUMENT)
-					{
-						$this->addSortablePropertiesForModel($mm->getModelByName($property->getDocumentType()), $result, $mm, $property->getName());
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\AbstractModel $model
 	 * @return \Change\Http\Rest\Result\CollectionResult
@@ -108,9 +75,6 @@ class GetDocumentCollection
 		{
 			$result->setDesc($desc);
 		}
-
-
-		$this->addSortablePropertiesForModel($model, $result,  $event->getApplicationServices()->getModelManager());
 
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));

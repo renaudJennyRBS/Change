@@ -25,6 +25,16 @@ class ModelResult extends Result
 	protected $metas;
 
 	/**
+ 	 * @var array
+ 	 */
+	protected $sortableBy = [];
+
+	/**
+	 * @var array
+	 */
+	protected $filterableBy = [];
+
+	/**
 	 * @param UrlManager $urlManager
 	 */
 	public function __construct(UrlManager $urlManager)
@@ -108,6 +118,36 @@ class ModelResult extends Result
 		$array['links'] = $links->toArray();
 		$array['metas'] = $this->metas;
 		$array['properties'] = $this->properties;
+		$array['collections'] = [
+			'sortableBy' => array_keys($this->sortableBy)
+		];
 		return $array;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setSortableBy($value)
+	{
+		$this->sortableBy[$value] = true;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function unsetSortableBy($value)
+	{
+		if (isset($this->sortableBy[$value]))
+		{
+			unset($this->sortableBy[$value]);
+		}
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function isSortableBy($value)
+	{
+		return isset($this->sortableBy[$value]);
 	}
 }

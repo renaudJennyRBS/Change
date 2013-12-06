@@ -18,10 +18,9 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.model(null)
-				.route('home', 'Rbs/Stock', { 'redirectTo': 'Rbs/Stock/Sku/'});
+				.route('home', 'Rbs/Stock', { 'redirectTo': 'Rbs/Stock/InventoryEntry/'});
 
 			$delegate.routesForModels([
-				'Rbs_Stock_Sku',
 				'Rbs_Stock_InventoryEntry'
 			]);
 

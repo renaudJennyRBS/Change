@@ -644,6 +644,7 @@
 					// Load Model's information and update the columns' header with the correct property label.
 					if (undefinedColumnLabels.length && attrs.model) {
 						REST.modelInfo(attrs.model).then(function (modelInfo) {
+							scope.sortable = modelInfo.collections['sortableBy'];
 							angular.forEach(undefinedColumnLabels, function (columnName) {
 								if (columnName in modelInfo.properties) {
 									scope.columns[columnName].label = modelInfo.properties[columnName].label;
@@ -1230,8 +1231,6 @@
 						// no end-resource to display.
 						Breadcrumb.setResource(null);
 
-						// Available sortable columns
-						scope.sortable = response.pagination.availableSort || [];
 						if (scope.hasColumn('nodeOrder')) {
 							scope.sortable.push('nodeOrder');
 						}

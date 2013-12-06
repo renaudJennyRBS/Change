@@ -42,6 +42,12 @@
 			$delegate.model('Rbs_Catalog')
 				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 
+			$delegate.model('Rbs_Stock_Sku')
+				.route('list', 'Rbs/Catalog/Sku/', 'Document/Rbs/Stock/Sku/list.twig')
+				.route('form', 'Rbs/Catalog/Sku/:id', 'Document/Rbs/Stock/Sku/form.twig')
+				.route('new' , 'Rbs/Catalog/Sku/new', 'Document/Rbs/Stock/Sku/form.twig')
+				.route('timeline', 'Rbs/Catalog/Sku/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model=Rbs_Stock_Sku', 'controller': 'RbsChangeTimelineController' })
+
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
 			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
 				'Rbs_Catalog_ProductListItem', 'Rbs_Catalog_VariantGroup' ]);
