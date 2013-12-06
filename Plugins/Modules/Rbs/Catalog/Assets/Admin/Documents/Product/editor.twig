@@ -1,7 +1,6 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'label'), ['ucf']) }}"
@@ -35,16 +34,22 @@
 			<span class="help-block">{{ i18n('m.rbs.catalog.admin.product_visuals_help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
-		<rbs-field-picker-multiple ng-hide="document.variant" property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_picker_title', ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}</span>
-		</rbs-field-picker-multiple>
+		<rbs-field-boolean property="categorizable"
+		                   label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'categorizable'), ['ucf']) }}">
+			<span class="help-block">
+				<div>{{ i18n('m.rbs.catalog.admin.product_categorizable_help', ['ucf']) }}</div>
+				<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" >{{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }} <i class="icon-circle-arrow-right"></i></a>
+			</span>
+		</rbs-field-boolean>
+
+		<p>
+			{{ i18n('m.rbs.catalog.documents.product_publication_help', ['ucf'], {'linkStart':'<a href="(= document|rbsURL =)?section=publication">', 'linkEnd':'</a>'}) | raw }}
+		</p>
+
 	</fieldset>
 
 	<fieldset data-ng-show="section=='attributes'"
-		data-form-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+		data-form-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}">
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
 			<select class="form-control" ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet">
@@ -152,6 +157,17 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
+		<rbs-field-picker-multiple ng-hide="document.variant" property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
+		                           label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}"
+		                           selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_picker_title', ['ucf']) }}">
+			<span class="help-block">
+				{{ i18n('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}
+			</span>
+			<span class="help-block" ng-if="document.publicationSections.length > 0">
+				<a class="go-to-link" href="(= document|rbsURL:'urls' =)">{{ i18n('m.rbs.admin.admin.configure_url_and_redirections', ['ucf']) | raw }}</a>
+			</span>
+		</rbs-field-picker-multiple>
+
 		<rbs-field-date
 			property="startPublication"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'startPublication'), ['ucf']) }}">
@@ -161,54 +177,9 @@
 			property="endPublication"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'endPublication'), ['ucf']) }}">
 		</rbs-field-date>
-	</fieldset>
-
-
-	<fieldset data-ng-show="section=='productListItem'"
-		data-form-section-label="{{ i18nAttr('m.rbs.catalog.admin.productlistitem_list', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}">
-
-		<rbs-field-boolean property="categorizable"
-				label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'categorizable'), ['ucf']) }}">
-		</rbs-field-boolean>
-
-		<table data-ng-show="productListItems.length > 0" class="table table-striped">
-			<thead>
-			<tr>
-				<th>
-					{{ i18n(propertyKey('Rbs_Catalog_ProductListItem', 'productList'), ['ucf']) }}
-				</th>
-				<th>
-					{{ i18n('m.rbs.catalog.admin.productlist_highlight', ['ucf']) }}
-				</th>
-				<th>
-				</th>
-			</tr>
-			</thead>
-			<tbody>
-				<tr data-ng-repeat="item in productListItems">
-					<td>
-						<a class="btn-link" ng-click="cascadeEditProductListItem(item)">(= item.productList.label =)</a>
-					</td>
-					<td>
-						<switch ng-model="item.isHighlighted" ng-change="toggleHighlight(item)"></switch>
-					</td>
-					<td style="width:160px; text-align: right">
-						<button style="width:36px" class="btn btn-default" ng-click="cascadeEditProductListItem(item)" type="button">
-							<i class="icon-pencil"></i>
-						</button>
-						<button style="width:36px" class="btn btn-danger" type="button" ng-click="deleteProductListItem(item)">
-							<i class="icon-remove"></i>
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<a href data-ng-show="document.categorizable"
-				data-ng-click="cascadeCreateProductListItem()"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.catalog.admin.add_product_in_list', ['ucf']) }}</a>
 
 	</fieldset>
+
 
 	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"

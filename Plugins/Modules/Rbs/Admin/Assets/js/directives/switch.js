@@ -64,7 +64,6 @@
 				function toggleState () {
 					ngModel.$setViewValue(isON() ? valueOff : valueOn);
 					ngModel.$render();
-					console.log(typeof ngModel.$viewValue);
 				}
 
 				sw.click(function () {

@@ -171,21 +171,20 @@
 	 */
 	app.config(['$provide', function ($provide) {
 		$provide.decorator('RbsChange.Actions', ['$delegate', 'RbsChange.REST', '$http', 'RbsChange.i18n', function (Actions, REST, $http, i18n) {
-			var action = function (ids, $scope, operation, priorities)
+			var action = function (ids, $scope, operation)
 			{
-				if ((operation == 'remove'))
+				if (operation === 'remove')
 				{
 					var url = REST.getBaseUrl('rbs/catalog/productlistitem/delete');
 					$http.post(url, {"documentIds": ids}).success(function (data) {
 						$scope.refresh();
-
 					})
 					.error(function errorCallback (data, status) {
 							data.httpStatus = status;
 							$scope.refresh();
 					});
 				}
-			}
+			};
 
 			Actions.register({
 				name: 'Rbs_Catalog_RemoveProductsFromProductList',
@@ -195,52 +194,13 @@
 				selection: "+",
 				execute: ['$docs', '$scope', function ($docs, $scope) {
 					var ids = [];
-					for (var i in $docs)
-					{
-						ids.push($docs[i].id);
-					}
-					action(ids, $scope, 'remove', 0);
+					angular.forEach($docs, function (doc) {
+						ids.push(doc.id);
+					});
+					action(ids, $scope, 'remove');
 				}]
 			});
 
-			Actions.register({
-				name: 'Rbs_Catalog_HighlightProductsInProductList',
-				models: '*',
-				description: i18n.trans('m.rbs.catalog.adminjs.highlight_products'),
-				label: i18n.trans('m.rbs.catalog.adminjs.highlight|ucf'),
-				selection: "+",
-				execute: ['$docs', '$scope', function ($docs, $scope) {
-					var ids = [];
-					for (var i in $docs)
-					{
-						if (!$docs[i]._highlight)
-						{
-							ids.push($docs[i].id);
-						}
-					}
-					$scope.deleteProductListItems($docs);
-					//action(ids, $scope, 'add', 1);
-				}]
-			});
-
-			Actions.register({
-				name: 'Rbs_Catalog_RemoveHighlightProductsInProductList',
-				models: '*',
-				description: i18n.trans('m.rbs.catalog.adminjs.remove_highlight_products'),
-				label: i18n.trans('m.rbs.catalog.adminjs.remove_highlight|ucf'),
-				selection: "+",
-				execute: ['$docs', '$scope', function ($docs, $scope) {
-					var ids = [];
-					for (var i in $docs)
-					{
-						if ($docs[i]._highlight)
-						{
-							ids.push($docs[i].id);
-						}
-					}
-					action(ids, $scope, 'add', 0);
-				}]
-			});
 			return Actions;
 		}]);
 	}]);

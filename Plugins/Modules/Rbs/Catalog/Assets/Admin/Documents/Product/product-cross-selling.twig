@@ -8,24 +8,27 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
+
 	<div rbs-aside-column>
-		<rbs-links-panel>
-			<a rbs-active-route="" class="list-group-item" href="(= product | documentURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
-		</rbs-links-panel>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-		<rbs-links-panel>
-			<a rbs-active-route="" class="list-group-item" href="(= product | rbsURL:'cross-selling-lists' =)">{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists', ['ucf']) }}</a>
-		</rbs-links-panel>
+
+		<div class="rbs-aside-block">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="product"></rbs-document-preview>
+		</div>
+
 	</div>
 
 	<div rbs-main-column>
+
+		<p>
+			<a href="(= product | rbsURL =)" class="back-to-link">
+				{{ i18n('m.rbs.catalog.admin.product_back_to_product', ['ucf']) }}
+				<strong>(= product.label =)</strong>
+			</a>
+		</p>
+
 		<div class="page-header">
-			<h2>
-				(= product.label =)
-				<small>
-					{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}
-				</small>
-			</h2>
+			<h2>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}</h2>
 		</div>
 
 		<div class="add-elements-bar">
@@ -33,6 +36,8 @@
 				{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crosssellingproductlist_create', ['ucf']) }}
 			</a>
 		</div>
+
+		<p>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list_help') | raw }}</p>
 
 		<rbs-document-list data-dlid="DLRbsCatalogCrossSellingProductList" model="Rbs_Catalog_CrossSellingProductList"
 			activable="true" load-query="loadQuery">

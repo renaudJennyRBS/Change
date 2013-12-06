@@ -285,7 +285,7 @@
     "message":"select the visuals"
   },
   "product_visuals_help":{
-    "message":"Le 1er visuel de la liste sera considéré comme le visuel principale de la fiche."
+    "message":"Le 1er visuel de la liste sera considéré comme le visuel principal de la fiche."
   },
   "product_no_visual":{
     "message":"no visual defined"

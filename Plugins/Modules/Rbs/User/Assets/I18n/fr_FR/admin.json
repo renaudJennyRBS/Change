@@ -50,8 +50,14 @@
 	"applications":{
 		"message":"applications"
 	},
+	"applications_aside_link":{
+		"message":"configurer l'<strong>accès aux applications</strong>"
+	},
 	"permissions":{
 		"message":"permissions"
+	},
+	"permissions_aside_link":{
+		"message":"configurer les <strong>permissions</strong>"
 	},
 	"current_password":{
 		"message":"mot de passe actuel"
@@ -130,6 +136,9 @@
 	},
 	"users_in_group":{
 		"message":"utilisateurs du groupe"
+	},
+	"users_in_group_aside_link":{
+		"message":"gérer les <strong>utilisateurs du groupe</strong>"
 	},
 	"add_users_in_group":{
 		"message":"ajouter des utilisateurs au groupe"

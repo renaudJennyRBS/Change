@@ -182,8 +182,11 @@
 	"sectionproductlist_create":{
 		"message":"ajouter une liste de produits synchronisée avec une section"
 	},
-	"productlistitem_list":{
-		"message":"appartenance à des listes"
+	"productlistitem_list_aside_link":{
+		"message":"configurer les <strong>listes de produits</strong>"
+	},
+	"product_prices_aside_link":{
+		"message":"configurer les <strong>prix</strong>"
 	},
 	"attribute_create":{
 		"message":"ajouter un attribut"
@@ -272,6 +275,12 @@
 	"crosssellingproductlist_crossselling_lists":{
 		"message":"listes de produits associés"
 	},
+	"crosssellingproductlist_crossselling_lists_aside_link":{
+		"message":"configurer les <strong>produits associés</strong>"
+	},
+	"variantgroup_aside_link":{
+		"message":"configurer les <strong>variantes</strong>"
+	},
 	"productlist_productlist_picker_title":{
 		"message":"choisissez la liste où ajouter le produit"
 	},
@@ -288,7 +297,7 @@
 		"message":"sélectionner les visuels"
 	},
 	"product_visuals_help":{
-		"message":"Le 1er visuel de la liste sera considéré comme le visuel principale de la fiche."
+		"message":"Le 1er visuel de la liste sera considéré comme le visuel principal de la fiche."
 	},
 	"product_no_visual":{
 		"message":"aucun visuel défini"
@@ -337,6 +346,9 @@
 	},
 	"product_product_list_section_help":{
 		"message":"\n\t\t<p>Les listes permettent de publier les produits dans les sections du site.<\/p>\n\t"
+	},
+	"product_categorizable_help":{
+		"message":"Cette propriété permet d'indiquer si ce produit peut être affiché dans des listes de produits ou non."
 	},
 	"product_section_variant":{
 		"message":"variantes"
@@ -411,10 +423,22 @@
 		"message":"Chargement des listes de Cross Selling..."
 	},
 	"product_cross_selling_list":{
-		"message":"Listes de produits associés à ce produit"
+		"message":"Listes de produits associés"
 	},
 	"cross_selling_list":{
 		"message":"Listes de produits associés"
+	},
+	"product_productlists":{
+		"message":"Affichage dans des listes de produits"
+	},
+	"product_choose_lists":{
+		"message":"Ajouter dans des listes de produits"
+	},
+	"product_productlists_picker_title":{
+		"message":"Sélectionner des listes de produits"
+	},
+	"product_add_to_selected_lists":{
+		"message":"Ajouter le produit <strong>$PRODUCT$</strong> aux listes sélectionnées"
 	},
 	"variant_group":{
 		"message":"Groupe de variantes"
@@ -424,5 +448,35 @@
 	},
 	"attribute_description_help":{
 		"message":"Description de l'attribut affiché sur le site web."
+	},
+	"product_is_available_in_following_lists":{
+		"message":"Le produit $PRODUCTLINK$ est disponible dans les listes de produits ci-dessous."
+	},
+	"product_is_available_in_no_lists":{
+		"message":"Le produit $PRODUCTLINK$ n'est actuellement disponible dans aucune liste."
+	},
+	"product_productlists_explanation":{
+		"message":"Si vous souhaitez que ce produit soit mis en avant dans une liste, positionnez l'indicateur <strong class=\"ui\">Mis en avant</strong> sur <strong>oui</strong>. Les produits mis en avant seront listés en début de liste et vous pourrez choisir leur ordre d'affichage, tandis que les autres produits (non mis en avant) seront listés par ordre alphabétique, après les produits mis en avant."
+	},
+	"product_back_to_product":{
+		"message":"Retourner sur le produit"
+	},
+	"product_choose_lists_message":{
+		"message":"Sélectionnez des listes de produits grâce au sélecteur ci-dessous."
+	},
+	"product_concerned_product":{
+		"message":"Produit concerné"
+	},
+	"productlist_products_aside_link":{
+		"message":"configurer les <strong>produits</strong>"
+	},
+	"productlist_reorder_items":{
+		"message":"Gérer et réordonner les produits de cette liste"
+	},
+	"product_cross_selling_list_help":{
+		"message":"Vous pouvez gérer ici des listes de produits associés. Par exemple, vous pouvez créer une liste d'<strong>accessoires</strong>, ainsi qu'une liste de <strong>produits de gamme supérieure</strong>, qui indiqueront à vos clients des produits susceptibles de les intéresser."
+	},
+	"productlist_edit_properties":{
+		"message":"éditer les propriétés de la liste de produits"
 	}
 }

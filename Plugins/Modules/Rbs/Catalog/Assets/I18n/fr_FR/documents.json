@@ -128,6 +128,9 @@
 	"product_attribute":{
 		"message":"jeu d'attributs"
 	},
+	"product_publication_help":{
+		"message":"Pour définir les <strong>propriétés de publication</strong> de ce produit, comme son emplacement ou ses dates de publication, veuillez vous rendre dans la section $LINKSTART$Publication$LINKEND$, disponible dans le menu à gauche."
+	},
 	"attribute_title":{
 		"message":"titre"
 	},
@@ -202,5 +205,8 @@
 	},
 	"attribute_type_property":{
 		"message":"propriété d'un produit"
+	},
+	"productlist_configure_products":{
+		"message":"configurer"
 	}
 }

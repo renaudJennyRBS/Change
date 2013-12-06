@@ -842,6 +842,9 @@
 	"back_to_editor":{
 		"message":"retour à l'édition du document"
 	},
+	"back_to_document":{
+		"message":"retourner à <strong>$LABEL$</strong>"
+	},
 	"menu_title":{
 		"message":"processus de validation"
 	},
@@ -1012,5 +1015,20 @@
 	},
 	"no_action_to_execute": {
 		"message":"Vous n'avez aucune action à effectuer."
+	},
+	"concerned_document": {
+		"message":"document concerné"
+	},
+	"configure_url_and_redirections":{
+		"message":"Gérer les <strong>URL et redirections</strong>"
+	},
+	"view_timeline":{
+		"message":"Consulter la <strong>Timeline</strong>"
+	},
+	"other_operations":{
+		"message":"autres opérations"
+	},
+	"for":{
+		"message":"pour"
 	}
 }

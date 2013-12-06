@@ -9,7 +9,13 @@
 
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-		<rbs-aside template="Document/Rbs/Catalog/ProductList/productlist-content-aside-menu.twig"></rbs-aside>
+
+		<div class="rbs-aside-block" ng-show="document.product">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.product"></rbs-document-preview>
+		</div>
+
+		<a rbs-aside-other-link href="" ng-href="(= document | documentURL:'productListItems' =)">{{ i18n('m.rbs.catalog.admin.productlist_products_aside_link', ['ucf']) | raw }}</a>
 	</div>
 
 	<div class="document-form" rbs-main-column>

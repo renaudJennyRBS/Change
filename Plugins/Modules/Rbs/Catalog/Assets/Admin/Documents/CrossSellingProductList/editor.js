@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function Editor(REST, $routeParams, ProductListService, Breadcrumb, i18n, UrlManager)
+	function Editor(REST, $routeParams, Breadcrumb, i18n, UrlManager)
 	{
 		return {
 			restrict: 'EC',
@@ -12,6 +12,7 @@
 
 			link : function (scope, elm, attrs, editorCtrl)
 			{
+				console.log($routeParams);
 				scope.onReady = function(){
 					if ($routeParams.productId)
 					{
@@ -19,11 +20,6 @@
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
 							scope.document.product = product;
 						});
-					}
-
-					if (scope.document.id > 0)
-					{
-						ProductListService.addListContent(scope);
 					}
 
 					if (scope.document.product)
@@ -43,6 +39,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.ProductListService', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager'];
+	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
 })();

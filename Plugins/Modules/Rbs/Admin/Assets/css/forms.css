@@ -1,13 +1,16 @@
 @CHARSET "UTF-8";
 
-.form-group.required .control-label:before {
-	content: " *";
+.form-group.required .control-label:before,
+.form-vertical .form-group.required .control-label:after {
+	content: "*";
 	color: #b94a48;
-	font-size: 14pt;
 	font-family: Courier New, Courier;
-	position: relative;
-	top: 3px;
 	margin-right: 3px;
+}
+
+.form-group.required .control-label,
+.form-vertical .form-group.required .control-label {
+	color: #b94a48;
 }
 
 .form-actions {
@@ -39,16 +42,6 @@ form-button-bar > .confirmation-area {
 
 .form-vertical .form-group .control-label {
 	text-align: left;
-}
-
-.form-vertical .form-group.required .control-label:after {
-	color: #B94A48;
-	content: "*";
-	font-family: Courier New,Courier;
-	font-size: 14pt;
-	margin-left: 3px;
-	position: relative;
-	top: 3px;
 }
 
 
