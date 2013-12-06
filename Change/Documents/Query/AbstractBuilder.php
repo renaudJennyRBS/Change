@@ -182,14 +182,10 @@ abstract class AbstractBuilder
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getLCID()
 	{
-		if ($this->LCID === null)
-		{
-			$this->LCID = $this->getDocumentManager()->getLCID();
-		}
 		return $this->LCID;
 	}
 
@@ -496,7 +492,15 @@ abstract class AbstractBuilder
 		$localizedIdentifier = $fb->identifier($this->getLocalizedTableAliasName());
 
 		$id =  $pb->eq('id', $fb->getDocumentColumn('id', $localizedIdentifier));
-		$LCID = $fb->eq($fb->getDocumentColumn('LCID', $localizedIdentifier), $fb->string($this->getLCID()));
+		if ($this->getLCID())
+		{
+			$LCIDValue = $fb->string($this->getLCID());
+		}
+		else
+		{
+			$LCIDValue = $fb->getDocumentColumn('refLCID', $fb->identifier($this->getTableAliasName()));
+		}
+		$LCID = $fb->eq($fb->getDocumentColumn('LCID', $localizedIdentifier), $LCIDValue);
 
 		$joinCondition = new \Change\Db\Query\Predicates\Conjunction($id, $LCID);
 		$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');

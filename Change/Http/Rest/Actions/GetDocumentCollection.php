@@ -14,11 +14,6 @@ use Zend\Http\Response as HttpResponse;
 class GetDocumentCollection
 {
 	/**
-	 * @var string[]
-	 */
-	protected $sortablePropertyTypes = array(Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING);
-
-	/**
 	 * Use Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
@@ -159,7 +154,8 @@ class GetDocumentCollection
 					$orderColumn = null;
 					if (count($sortInfo) && $property->getType() === Property::TYPE_DOCUMENT)
 					{
-						$sortModel = $event->getApplicationServices()->getModelManager()->getModelByName($property->getDocumentType());
+						$sortModel = $event->getApplicationServices()->getModelManager()
+							->getModelByName($property->getDocumentType());
 						$sortPropertyName = array_shift($sortInfo);
 						if ($sortModel && $sortModel->isEditable() && $sortModel->hasProperty($sortPropertyName))
 						{
@@ -180,13 +176,13 @@ class GetDocumentCollection
 					{
 						if ($property->getLocalized())
 						{
-							$LCID = $event->getRequest()->getLCID();
+							$refLCID = $fb->getDocumentColumn('refLCID', $table);
 							$i18nTable = $fb->getDocumentI18nTable($model->getRootName());
 
-							$qb->leftJoin($i18nTable,
+							$qb->innerJoin($i18nTable,
 								$fb->logicAnd(
 									$fb->eq($fb->getDocumentColumn('id', $table), $fb->getDocumentColumn('id', $i18nTable)),
-									$fb->eq($fb->getDocumentColumn('LCID', $i18nTable), $fb->string($LCID))
+									$fb->eq($fb->getDocumentColumn('LCID', $i18nTable), $refLCID)
 								)
 							);
 						}
@@ -201,7 +197,6 @@ class GetDocumentCollection
 						}
 					}
 
-
 					if ($orderColumn)
 					{
 						if ($result->getDesc())
@@ -213,11 +208,9 @@ class GetDocumentCollection
 							$qb->orderAsc($orderColumn);
 						}
 					}
-
 				}
-
-
 			}
+
 			$extraColumn = $event->getRequest()->getQuery('column', array());
 			$sc = $qb->query();
 			$sc->setMaxResults($result->getLimit());

@@ -64,4 +64,14 @@ class JSONDecoderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$expected = 'SELECT * FROM "project_tests_doc_correction" AS "_t0" INNER JOIN "project_tests_doc_correction_i18n" AS "_t0L" ON ("_t0"."document_id" = "_t0L"."document_id" AND "_t0L"."lcid" = \'fr_FR\') WHERE ("_t0"."document_model" IN (\'Project_Tests_Correction\', \'Project_Tests_CorrectionExt\') AND (("_t0L"."publicationstatus" = :_p1 AND ("_t0L"."startpublication" IS NULL OR "_t0L"."startpublication" <= :_p2) AND ("_t0L"."endpublication" IS NULL OR "_t0L"."endpublication" > :_p3))))';
 		$this->assertEquals($expected, $sq->toSQL92String());
 	}
+
+	public function testLocalizedQuery()
+	{
+		$o = $this->getObject();
+		$json = file_get_contents(__DIR__ . '/TestAssets/json4.json');
+		$query = $o->getQuery($json);
+		$sq = $query->dbQueryBuilder()->query();
+		$expected = 'SELECT * FROM "project_tests_doc_localized" AS "_t0" INNER JOIN "project_tests_doc_localized_i18n" AS "_t0L" ON ("_t0"."document_id" = "_t0L"."document_id" AND "_t0L"."lcid" = \'fr_FR\') INNER JOIN "project_tests_doc_localized" AS "_t1" ON "_t1"."document_id" = "_t0"."pdocid" INNER JOIN "project_tests_doc_localized_i18n" AS "_t1L" ON ("_t1"."document_id" = "_t1L"."document_id" AND "_t1L"."lcid" = \'en_US\') INNER JOIN "project_tests_doc_localized" AS "_t2" ON "_t2"."document_id" = "_t1"."pdocid" INNER JOIN "project_tests_doc_localized_i18n" AS "_t2L" ON ("_t2"."document_id" = "_t2L"."document_id" AND "_t2L"."lcid" = "_t2"."reflcid") WHERE (("_t1L"."plstr" = :_p3)) ORDER BY "_t2L"."plstr" ASC, "_t0L"."plstr" ASC';
+		$this->assertEquals($expected, $sq->toSQL92String());
+	}
 }

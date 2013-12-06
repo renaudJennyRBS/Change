@@ -12,6 +12,8 @@ use Zend\Http\Response as HttpResponse;
  */
 class GetModelInformation
 {
+	protected $sortablePropertyTypes = array(Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING);
+
 	/**
 	 * Use Required Event Params: documentId, modelName
 	 * @param \Change\Http\Event $event
@@ -138,14 +140,11 @@ class GetModelInformation
 		}
 	}
 
-	protected $sortablePropertyTypes = array(Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING);
-
-
 	/**
 	 * @param \Change\Documents\AbstractModel $model
 	 * @param \Change\Http\Rest\Result\ModelResult $result
 	 * @param \Change\Documents\ModelManager $mm
-	 * @param bool $includeDoc
+	 * @param string $parentName
 	 */
 	protected function addSortablePropertiesForModel($model, $result, $mm, $parentName = null)
 	{

@@ -210,9 +210,9 @@ class BuilderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$LCID = $this->getApplicationServices()->getDocumentManager()->getLCID();
 		$model = $this->getApplicationServices()->getModelManager()->getModelByName('Project_Tests_Basic');
 		$builder =  $this->getNewQuery($model);
+		$this->assertNull($builder->getLCID());
+		$builder->setLCID($LCID);
 		$this->assertEquals($LCID, $builder->getLCID());
-		$builder->setLCID('xx_XX');
-		$this->assertEquals('xx_XX', $builder->getLCID());
 	}
 
 	/**

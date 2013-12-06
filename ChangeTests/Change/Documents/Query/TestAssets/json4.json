@@ -1,0 +1,46 @@
+{
+	"model": "Project_Tests_Localized",
+	"LCID" : "fr_FR",
+	"join" : [
+		{
+			"model": "Project_Tests_Localized",
+			"LCID" : "en_US",
+			"name": "j0",
+			"property": "id",
+			"parentProperty": "pDocId",
+			"join" : [
+				{
+					"name": "j1",
+					"model": "Project_Tests_Localized",
+					"property": "id",
+					"parentProperty": "pDocId"
+				}
+			]
+		}
+	],
+	"where": {
+		"and": [
+			{
+				"op": "eq",
+				"lexp": {
+					"property": "pLStr",
+					"join": "j0"
+				},
+				"rexp": {
+					"value": "10"
+				}
+			}
+		]
+	},
+	"order": [
+		{
+			"property": "pLStr",
+			"join": "j1",
+			"order": "asc"
+		},
+		{
+			"property": "pLStr",
+			"order": "asc"
+		}
+	]
+}

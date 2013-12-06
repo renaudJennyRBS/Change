@@ -88,6 +88,10 @@ class DocumentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$manager = $this->getObject();
 		$query = $manager->getNewQuery('Project_Tests_Basic');
 		$this->assertInstanceOf('Change\Documents\Query\Query', $query);
+		$this->assertNull($query->getLCID());
+
+		$query = $manager->getNewQuery('Project_Tests_Basic', 'xx_XX');
+		$this->assertEquals('xx_XX', $query->getLCID());
 	}
 
 	/**
