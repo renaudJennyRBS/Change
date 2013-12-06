@@ -511,12 +511,17 @@ class DocumentManager
 	/**
 	 * @api
 	 * @param string|AbstractModel $modelOrModelName
+	 * @param string $LCID if null use refLCID of document
 	 * @return \Change\Documents\Query\Query
-	 * @throws \InvalidArgumentException
 	 */
-	public function getNewQuery($modelOrModelName)
+	public function getNewQuery($modelOrModelName, $LCID = null)
 	{
-		return new \Change\Documents\Query\Query($modelOrModelName, $this, $this->getModelManager(), $this->getDbProvider());
+		$query = new \Change\Documents\Query\Query($modelOrModelName, $this, $this->getModelManager(), $this->getDbProvider());
+		if ($LCID)
+		{
+			$query->setLCID($LCID);
+		}
+		return $query;
 	}
 
 	/**

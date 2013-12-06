@@ -144,7 +144,8 @@ class JSONDecoder
 			{
 				throw new \RuntimeException('Invalid Parameter: model', 71000);
 			}
-			$this->query = $this->getDocumentManager()->getNewQuery($model);
+			$LCID = isset($jsonQuery['LCID']) ? $jsonQuery['LCID'] : null;
+			$this->query = $this->getDocumentManager()->getNewQuery($model, $LCID);
 		}
 
 		$this->configureQuery($this->query, $jsonQuery);
@@ -267,8 +268,11 @@ class JSONDecoder
 			throw new \RuntimeException('Invalid Join parentProperty: '. $parentPropertyName, 999999);
 		}
 		$childBuilder = $parentQuery->getPropertyModelBuilder($parentProperty, $model, $property);
+		if (isset($joinJSON['LCID']))
+		{
+			$childBuilder->setLCID($joinJSON['LCID']);
+		}
 		$this->joins[$joinName] = $childBuilder;
-
 		if (isset($joinJSON['join']) && is_array($joinJSON['join']))
 		{
 			foreach($joinJSON['join'] as $childJoinJSON)
