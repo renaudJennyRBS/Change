@@ -1,15 +1,12 @@
 <div class="row">
 
 	<div rbs-aside-column>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}</h3>
-			</div>
-			<div class="panel-body" style="text-align: center;">
-				<rbs-document-preview document="document.target"></rbs-document-preview>
-			</div>
+		<div class="rbs-aside-block" ng-show="document.target">
+			<h3 class="panel-title">{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}</h3>
+			<rbs-document-preview document="document.target"></rbs-document-preview>
 		</div>
+
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
 	</div>
 
 	<div class="document-form" rbs-main-column>

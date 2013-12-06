@@ -10,7 +10,7 @@
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
 
-		<div class="rbs-aside-block">
+		<div class="rbs-aside-block" ng-show="document.product">
 			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
 			<rbs-document-preview document="document.product"></rbs-document-preview>
 		</div>

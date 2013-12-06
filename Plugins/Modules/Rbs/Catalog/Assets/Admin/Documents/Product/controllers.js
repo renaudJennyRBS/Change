@@ -97,7 +97,7 @@
 
 
 
-	function CrossSellingController($scope, $routeParams, Breadcrumb, Loading, REST, i18n, UrlManager, Query)
+	function CrossSellingController($scope, $routeParams, Breadcrumb, REST, i18n, UrlManager, Query)
 	{
 		$scope.params = {};
 		$scope.List = {};

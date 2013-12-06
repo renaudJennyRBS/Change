@@ -15,6 +15,12 @@
 
 		<hr />
 
+		<div class="form-group" ng-hide="document.isNew()">
+			<div class="col-lg-9 col-lg-offset-3">
+				<a href="" ng-href="(= document | documentURL:'productListItems' =)">{{ i18n('m.rbs.catalog.admin.productlist_products_aside_link', ['ucf']) | raw }}</a>
+			</div>
+		</div>
+
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'productSortOrder'), ['ucf']) }}">
 			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder" class="form-control"
 				rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
