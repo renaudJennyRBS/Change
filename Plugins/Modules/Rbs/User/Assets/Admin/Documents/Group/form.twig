@@ -8,8 +8,8 @@
 	</rbs-workspace-config>
 
 	<div rbs-aside-column>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
-		<rbs-aside template="Document/Rbs/User/Group/group-users-aside-menu.twig"></rbs-aside>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<a rbs-aside-other-link rbs-active-route="" href="javascript:;" ng-href="(= document | documentURL:'groupUsers' =)">{{ i18n('m.rbs.user.admin.users_in_group_aside_link', ['ucf']) | raw }}</a>
 	</div>
 
 	<div class="document-form" rbs-main-column>

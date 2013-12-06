@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function Editor(ProductListService)
+	function Editor()
 	{
 		return {
 			restrict: 'EC',
@@ -12,18 +12,11 @@
 
 			link : function (scope, elm, attrs, editorCtrl)
 			{
-				scope.onReady = function(){
-					if (scope.document.id > 0)
-					{
-						ProductListService.addListContent(scope);
-					}
-				};
-
 				editorCtrl.init('Rbs_Catalog_ProductList');
 			}
 		};
 	}
 
-	Editor.$inject = ['RbsChange.ProductListService'];
+	Editor.$inject = [];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProductList', Editor);
 })();

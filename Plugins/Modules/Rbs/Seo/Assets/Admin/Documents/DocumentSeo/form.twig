@@ -1,15 +1,25 @@
-<div class="document-form">
-	<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Seo_DocumentSeo'), ['ucf']) }}"></page-header>
+<div class="row">
 
-	<rbs-workspace-config>
-		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.seo.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Seo_DocumentSeo'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}</location>
-		</rbs-breadcrumb-config>
-	</rbs-workspace-config>
-
-	<div ng-switch="editMode">
-		<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-seo-document-seo-translate"></div>
-		<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-seo-document-seo"></div>
+	<div rbs-aside-column>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}</h3>
+			</div>
+			<div class="panel-body" style="text-align: center;">
+				<rbs-document-preview document="document.target"></rbs-document-preview>
+			</div>
+		</div>
 	</div>
+
+	<div class="document-form" rbs-main-column>
+
+		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Seo_DocumentSeo'), ['ucf']) }}"></page-header>
+
+		<div ng-switch="editMode">
+			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-seo-document-seo-translate"></div>
+			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-seo-document-seo"></div>
+		</div>
+	</div>
+
 </div>

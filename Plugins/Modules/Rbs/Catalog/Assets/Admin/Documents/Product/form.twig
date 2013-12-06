@@ -9,8 +9,14 @@
 
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-		<rbs-aside ng-if="! document.variant" template="Document/Rbs/Catalog/Product/product-variant-aside-menu.twig"></rbs-aside>
-		<rbs-aside template="Document/Rbs/Catalog/Product/product-cross-selling-aside-menu.twig"></rbs-aside>
+
+		<a ng-show="! document.variant && document.variantGroup" rbs-aside-other-link href="Rbs/Catalog/VariantGroup/(= document.variantGroup.id =)">{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+		<a ng-show="! document.variant && ! document.variantGroup" rbs-aside-other-link href="Rbs/Catalog/VariantGroup/new?productId=(= document.id =)">{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+
+		<a rbs-aside-other-link href="(= document | rbsURL:'cross-selling-lists' =)" >{{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
+		<a rbs-aside-other-link ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" >{{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
+
+		<a rbs-aside-other-link href="(= document | rbsURL:'prices' =)">{{ i18n('m.rbs.catalog.admin.product_prices_aside_link', ['ucf']) | raw }}</a>
 	</div>
 
 	<div class="document-form" rbs-main-column>

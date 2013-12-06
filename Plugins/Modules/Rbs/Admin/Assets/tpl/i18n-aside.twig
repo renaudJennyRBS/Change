@@ -1,6 +1,0 @@
-<rbs-links-panel title="{{ i18nAttr('m.rbs.admin.adminjs.translations', ['ucf']) }}">
-	<a ng-repeat="item in rbsI18nItems" class="list-group-item" url-match-class="" href="javascript:;" ng-href="(= item.url =)" class="(= item.cssClass =)">
-		<span ng-if="item.badge" class="badge pull-right" ng-bind="item/badge"></span>
-		<i ng-if="item.icon" class="(= item.icon =)"></i> <span ng-bind-html="item.text"></span>
-	</a>
-</rbs-links-panel>

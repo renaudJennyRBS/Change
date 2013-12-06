@@ -30,14 +30,15 @@
 			$delegate.model('Rbs_Catalog_Product')
 				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Document/Rbs/Catalog/Product/product-prices.twig')
 				.route('cross-selling-lists', 'Rbs/Catalog/Product/:id/CrossSellingProductLists/', 'Document/Rbs/Catalog/Product/product-cross-selling.twig')
+				.route('product-lists', 'Rbs/Catalog/Product/:id/ProductLists/', 'Document/Rbs/Catalog/Product/product-lists.twig')
 				.route('variant-group', 'Rbs/Catalog/Product/:id/VariantGroup/', 'Document/Rbs/Catalog/VariantGroup/list.twig');
 
 			$delegate.model('Rbs_Catalog_ProductList')
-				.route('productListItems', 'Rbs/Catalog/ProductList/:id/ProductListItem/', 'Document/Rbs/Catalog/ProductList/products.twig');
+				.route('productListItems', 'Rbs/Catalog/ProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
 			$delegate.model('Rbs_Catalog_SectionProductList')
-				.route('productListItems', 'Rbs/Catalog/SectionProductList/:id/ProductListItem/', 'Document/Rbs/Catalog/ProductList/products.twig');
+				.route('productListItems', 'Rbs/Catalog/SectionProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
 			$delegate.model('Rbs_Catalog_CrossSellingProductList')
-				.route('productListItems', 'Rbs/Catalog/CrossSellingProductList/:id/ProductListItem/', 'Document/Rbs/Catalog/ProductList/products.twig');
+				.route('productListItems', 'Rbs/Catalog/CrossSellingProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
 
 			$delegate.model('Rbs_Catalog')
 				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
@@ -57,15 +58,6 @@
 				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig');
 			return $delegate;
 		}]);
-	}]);
-
-	app.service('RbsChange.ProductListService', ['RbsChange.MainMenu', function (MainMenu) {
-		return {
-			'addListContent' : function (scope) {
-				MainMenu.addAsideTpl('productlist-content', 'Document/Rbs/Catalog/ProductList/productlist-content-aside-menu.twig', scope);
-				return MainMenu;
-			}
-		};
 	}]);
 
 	app.controller('rbsProductCategorizableSelector', function ($scope) {

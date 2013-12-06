@@ -16,7 +16,7 @@
 	"entries": [
 		{
 			"label": "m.rbs.website.admin.module_name",
-			"url": "Rbs/Website",
+			"url": "Rbs/Website/nav/",
 			"section": "cms",
 			"keywords": "m.rbs.website.admin.module_keywords"
 		},
@@ -78,6 +78,12 @@
 			"url": "Rbs/Geo",
 			"section": "admin",
 			"keywords": "m.rbs.geo.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.website.admin.website_list",
+			"url": "Rbs/Website/Website/",
+			"section": "admin",
+			"keywords": "m.rbs.website.admin.module_keywords"
 		},
 		{
 			"label": "m.rbs.plugins.admin.module_name",

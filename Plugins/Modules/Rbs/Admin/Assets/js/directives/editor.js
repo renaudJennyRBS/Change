@@ -331,10 +331,6 @@
 						}
 
 						updateWrappingForm();
-
-						if ($scope.modelInfo.metas.localized) {
-							MainMenu.addTranslationsAside($scope.document, $scope);
-						}
 					}
 
 					if (postSavePromises.length) {
@@ -387,7 +383,6 @@
 					$scope.parentId = $routeParams.parentId || null;
 
 					$scope.$on('Change:Editor:UpdateMenu', function () {
-						console.log('Change:Editor:UpdateMenu');
 						initMenu();
 					});
 
@@ -609,7 +604,6 @@
 				{
 					var menu = [],
 						fields = {},
-						groups = {},
 						matches;
 
 					$element.find('fieldset').each(function (index, fieldset) {
@@ -617,14 +611,6 @@
 							fsData = $fs.data(),
 							section,
 							entry;
-
-						if (angular.isDefined(fsData.formSectionGroup) && angular.isUndefined(groups[fsData.formSectionGroup])) {
-							groups[fsData.formSectionGroup] = true;
-							menu.push({
-								'label': fsData.formSectionGroup,
-								'type' : 'group'
-							});
-						}
 
 						section = fsData.ngShow || $fs.attr('ng-show') || $fs.attr('x-ng-show');
 						if (section) {
@@ -638,7 +624,6 @@
 						}
 
 						entry = {
-							'type'     : 'section',
 							'id'       : section || '',
 							'label'    : fsData.formSectionLabel,
 							'fields'   : [],
@@ -687,10 +672,7 @@
 					if (menu.length) {
 						$scope._chgFieldsInfo = fields;
 						$scope._chgMenu = menu;
-						$scope.$emit('Change:UpdateEditorMenu', {
-							'scope' : $scope,
-							'entries' : menu
-						});
+						$scope.$emit('Change:UpdateEditorMenu', menu);
 					}
 				}
 
@@ -1071,7 +1053,7 @@
 	}]);
 
 
-	app.controller('RbsChangeWorkflowController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.Utils', 'RbsChange.MainMenu', function (REST, $scope, $filter, $routeParams, Breadcrumb, i18n, Utils, MainMenu) {
+	app.controller('RbsChangeWorkflowController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.Utils', function (REST, $scope, $filter, $routeParams, Breadcrumb, i18n, Utils) {
 		$scope.$watch('model', function (model) {
 			if (model) {
 				REST.resource(model, $routeParams.id, $routeParams.LCID).then(function (doc) {
@@ -1079,21 +1061,30 @@
 
 					var	mi = Utils.modelInfo(model),
 						location = [
-						[
-							i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module) + '.admin.js.module-name | ucf'),
-							$filter('rbsURL')(mi.vendor + '_' + mi.module, 'home')
-						],
-						[
-							i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module + '.admin.js.' + mi.document) + '-list | ucf'),
-							$filter('rbsURL')(model, 'list')
-						]
-					];
+							[
+								i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module) + '.admin.js.module-name | ucf'),
+								$filter('rbsURL')(mi.vendor + '_' + mi.module, 'home')
+							],
+							[
+								i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module + '.admin.js.' + mi.document) + '-list | ucf'),
+								$filter('rbsURL')(model, 'list')
+							]
+						];
 
 					Breadcrumb.setLocation(location);
 					Breadcrumb.setResource(doc, 'Workflow');
-					MainMenu.load('Rbs/Admin/workflow/menu.twig', $scope);
 				});
 			}
+		});
+	}]);
+
+
+	/**
+	 * Default controller for Document-based views.
+	 */
+	app.controller('RbsChangeSimpleDocumentController', ['RbsChange.REST', '$scope', '$routeParams', function (REST, $scope, $routeParams) {
+		REST.resource($routeParams.id).then(function (doc) {
+			$scope.document = doc;
 		});
 	}]);
 
