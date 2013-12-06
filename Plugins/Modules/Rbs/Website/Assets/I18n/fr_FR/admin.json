@@ -351,6 +351,10 @@
 		"message":"Propriétés du bloc",
 		"description":"Used as title in the block properties box in the page editor (left column)."
 	},
+	"no_block_selected":{
+		"message":"Aucun bloc sélectionné.",
+		"description":"Used as default content in the block properties box in the page editor (left column)."
+	},
 	"back_to_general_page_properties":{
 		"message":"Propriétés générales de la page"
 	}

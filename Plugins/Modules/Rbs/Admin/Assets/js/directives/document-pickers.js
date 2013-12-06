@@ -63,7 +63,7 @@
 
 		scope.allowSearchFilters = $el.closest('form.search-filters').length === 0;
 		scope.allowInPlaceSelection = attrs.allowInPlaceSelection !== 'false';
-		scope.showButtonsLabel = $el.closest('.dockable.pinned').length === 0;
+		scope.showButtonsLabel = $el.closest('.dockable.pinned').length === 0; // TODO: detect block properties editor in page editor...
 		scope.inputCssClass = attrs.inputCssClass;
 		scope.disableReordering = attrs.disableReordering == 'true';
 

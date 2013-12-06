@@ -41,6 +41,9 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		return $this->treeManager;
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onDefaultInjection(\Change\Events\Event $event)
 	{
 		parent::onDefaultInjection($event);
@@ -88,7 +91,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
-		$eventManager->attach('getPageByFunction', array($this, 'getPageByFunction'), 10);
+		$eventManager->attach('getPageByFunction', array($this, 'onGetPageByFunction'), 10);
 		$eventManager->attach(Event::EVENT_NODE_UPDATED, array($this, 'onNodeUpdated'), 10);
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 10);
 		$eventManager->attach('selectPathRule', array($this, 'onSelectPathRule'), 10);
@@ -110,6 +113,10 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 			)
 			{
 				$page = $document->getIndexPage();
+				if ($page instanceof \Change\Documents\Interfaces\Publishable && !$page->published())
+				{
+					return;
+				}
 				if ($page instanceof FunctionalPage)
 				{
 					$page->setSection($document);
@@ -123,7 +130,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */
-	public function getPageByFunction(Event $event)
+	public function onGetPageByFunction(Event $event)
 	{
 		$section = $event->getDocument();
 		if ($section instanceof Section)
@@ -156,16 +163,13 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 
 							if ($page instanceof \Rbs\Website\Documents\Page)
 							{
-
 								if (!$page->getCurrentLocalization()->isNew())
 								{
-
 									if ($page instanceof \Rbs\Website\Documents\StaticPage && !$page->published())
 									{
 										return;
 									}
-
-									if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
+									elseif ($page instanceof \Rbs\Website\Documents\FunctionalPage)
 									{
 										$page->setSection($section);
 									}
@@ -174,7 +178,6 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 									$event->setParam('section', $section);
 								}
 							}
-
 							return;
 						}
 					}

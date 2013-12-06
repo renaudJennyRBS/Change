@@ -130,7 +130,8 @@ class Menu extends Block
 		{
 			if ($doc instanceof \Rbs\Website\Documents\Section)
 			{
-				if ($doc->getIndexPageId())
+				$indexPage = $doc->getIndexPage();
+				if ($indexPage instanceof \Change\Documents\Interfaces\Publishable && $indexPage->published())
 				{
 					$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
 				}
