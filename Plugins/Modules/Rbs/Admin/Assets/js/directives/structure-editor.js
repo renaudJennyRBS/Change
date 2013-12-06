@@ -55,7 +55,6 @@
 	}
 
 
-
 	//-------------------------------------------------------------------------
 	//
 	// Structure editor service.
@@ -162,21 +161,12 @@
 			return newEl;
 		};
 
-
 		this.initBlock = function (item, readonly) {
 			if (!item.label) {
 				item.label = item.name;
 			}
-			if (item.name === RICH_TEXT_BLOCK_NAME) {
-				return this.initRichText(item, readonly);
-			} else {
-				var className = 'rbs-block-template';
-				return '<div class="' + className + '" data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
-			}
-		};
-
-		this.initRichText = function (item, readonly) {
-			return '<div class="rbs-block-markdown-text" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-visibility="' + (item.visibility || '') + '"></div>';
+			var className = (item.name === RICH_TEXT_BLOCK_NAME) ? 'rbs-block-markdown-text' : 'rbs-block-template';
+			return '<div class="' + className + '" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
 		};
 
 		this.initRow = function (item) {
@@ -190,7 +180,6 @@
 		this.initBlockChooser = function (item) {
 			return '<div class="rbs-block-chooser" data-id="' + item.id + '"></div>';
 		};
-
 
 		this.getColumnsInfo = function (row, gridSize) {
 			var cols = [];
@@ -218,7 +207,6 @@
 			return cols;
 		};
 
-
 		this.getColumnWidth = function (seCell) {
 			var i, gridSize;
 
@@ -235,7 +223,6 @@
 
 			throw new Error("Could not determine column size (missing 'col-md-*' class?) in grid of size " + gridSize);
 		};
-
 
 		this.applyColumnsWidth = function (row, columns, gridSize) {
 			if (row.children().length !== columns.length) {
@@ -275,7 +262,6 @@
 			});
 		};
 
-
 		$('body').append(
 			'<div id="structure-editor-highlighter-top"></div>' +
 			'<div id="structure-editor-highlighter-right"></div>' +
@@ -293,7 +279,6 @@
 		};
 
 		this.highlightDropTarget = function highlightDropTarget (el) {
-
 			if (el.is('.rbs-cell')) {
 				var	columnIndex = el.index();
 				this.highlightBlock(
@@ -306,7 +291,6 @@
 				this.highlightBlock(el, el.data('editable-zone-id'));
 				dropTarget = el;
 			}
-
 		};
 
 
@@ -394,9 +378,8 @@
 			return unhighlightTimer;
 		};
 
-
 		this.highlightZone = function highlightZone (x, y, w, h, text) {
-			var	x1, y1, x2, y2, ww, hh;
+			var x1, y1, x2, y2, ww, hh;
 
 			x1 = x - highlightMargin - highlightBorder;
 			y1 = y - highlightMargin - highlightBorder + 1;
@@ -438,9 +421,7 @@
 				highlighter.text.hide();
 			}
 		};
-
 	}]);
-
 
 
 	//-------------------------------------------------------------------------
@@ -450,9 +431,7 @@
 	//-------------------------------------------------------------------------
 
 	app.directive('structureEditor', ['$timeout', '$compile', 'RbsChange.Workspace', 'RbsChange.MainMenu', 'structureEditorService', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.NotificationCenter', function ($timeout, $compile, Workspace, MainMenu, structureEditorService, ArrayUtils, Utils, NotificationCenter) {
-
 		return {
-
 			"restrict"   : 'E',
 			"require"    : ['ngModel', 'structureEditor'],
 			"scope"      : true,
@@ -476,7 +455,6 @@
 					draggedEl, containerOfDraggedEl,
 					dropTarget, dropPosition = -1,
 					lastIndicatorY = 0;
-
 
 				this.isReadOnly = function () {
 					return $attrs.readonly === 'true';
@@ -547,7 +525,6 @@
 						positionBlockSettingsEditor(blockEl);
 						return;
 					}
-
 					if (blockEl.is('.rbs-row')) {
 						html = '<div class="rbs-row-settings" data-id="' + blockEl.data('id') + '"';
 					}
@@ -840,7 +817,6 @@
 				// Changes detection and notification ------------------------------------------------------------------
 				var isValid = true;
 				$scope.generateJSON = function () {
-
 					var output = {};
 
 					isValid = true;
@@ -1022,11 +998,9 @@
 								structureEditorService.highlightBlock(null);
 							}
 						}
-
 					}, '.block-container');
 
 					// Prevent drop on rbs-row (temporary?).
-
 					$($element).on({
 						'dragenter': function (e) {
 							e.preventDefault();
@@ -1038,7 +1012,6 @@
 						}
 					}, '.rbs-row');
 				}
-
 			},
 
 
@@ -1048,10 +1021,9 @@
 			 * @param scope
 			 * @param elm
 			 * @param attrs
-			 * @param ngModel
+			 * @param ctrls
 			 */
 			"link" : function seLinkFn (scope, elm, attrs, ctrls) {
-
 				var	ngModel = ctrls[0],
 					ctrl = ctrls[1];
 
@@ -1102,7 +1074,6 @@
 
 
 				if (ngModel) {
-
 					scope.undo = function (index) {
 						closeBlockSettingsEditor();
 						ngModel.$setViewValue(index < (scope.undoData.length-1) ? scope.undoData[index+1].data : originalValue);
@@ -1112,7 +1083,6 @@
 
 					// Specify how UI should be updated
 					ngModel.$render = function() {
-
 						var	pageContent,
 							newZones = [];
 
@@ -1160,7 +1130,6 @@
 										NotificationCenter.error("Bad template configuration", "Could not find editable zone '" + zone.id + "' in page template.");
 									}
 								} else {
-
 									if (tplZone.type === 'container') {
 										// Store the zones that are not found in the page to add them later.
 										newZones.push(angular.copy(tplZone));
@@ -1170,9 +1139,7 @@
 							});
 
 
-
 							forEach(newZones, function (zone) {
-
 								var editableZone = $(elm).find('[data-editable-zone-id="' + zone.id + '"]');
 
 								if (editableZone.length) {
@@ -1190,21 +1157,17 @@
 										ctrl.isReadOnly()
 									);
 								}
-
 							});
 
 							ctrl.reselectBlock();
-
 							resizeHandler();
 						}
-
 					};
 
 					scope.contentChanged = function (newContent, isValid) {
 						ngModel.$setViewValue(newContent);
 						ngModel.$setValidity("content", isValid);
 					};
-
 				}
 
 				// Resize handler --------------------------------------------------------------------------------------
@@ -1241,9 +1204,7 @@
 	//-------------------------------------------------------------------------
 
 	app.directive('rbsRow', ['structureEditorService', function (structureEditorService) {
-
 		return {
-
 			"restrict"   : 'C',
 			"require"    : "^structureEditor",
 			"scope"      : {}, // isolated scope is required
@@ -1261,9 +1222,7 @@
 				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
 			}
 		};
-
 	}]);
-
 
 
 	//-------------------------------------------------------------------------
@@ -1785,27 +1744,30 @@
 					return createdEl;
 				}
 
-
-				scope.$watch('blockType', function (blockType, old)
-				{
-					if (blockType && blockType !== old && scope.block.name != 'Rbs_Website_Richtext')
-					{
-						console.log(blockType);
-						$http.get(blockType.template).success(function (html)
-						{
-							$compile(html)(scope, function (clone) {
-								element.find('[data-role="blockParametersContainer"]').append(clone);
-								if (!scope.block.name)
-								{
-									var block = replaceItem({
-										'type': 'block',
-										'name': blockType.name
-									});
-									ctrl.notifyChange("create", blockType.label, block);
-									$timeout(function () { ctrl.selectBlock(block); });
-								}
-							});
+				function onBlockTypeChanged(blockType) {
+					if (!scope.block.name) {
+						var block = replaceItem({
+							'type': 'block',
+							'name': blockType.name
 						});
+						ctrl.notifyChange("create", blockType.label, block);
+						$timeout(function () { ctrl.selectBlock(block); });
+					}
+				}
+
+				scope.$watch('blockType', function (blockType, old) {
+					if (blockType && blockType !== old) {
+						if (blockType.name == 'Rbs_Website_Richtext') {
+							onBlockTypeChanged(blockType);
+						}
+						else {
+							$http.get(blockType.template).success(function (html) {
+								$compile(html)(scope, function (clone) {
+									element.find('[data-role="blockParametersContainer"]').append(clone);
+									onBlockTypeChanged(blockType);
+								});
+							});
+						}
 					}
 				}, true);
 
@@ -1933,18 +1895,6 @@
 						ctrl.notifyChange("remove", "block", block);
 					});
 				};
-
-				$rootScope.$on('Change:Workspace:Pinned', function (event, el) {
-					if (el.is('#structure-editor-block-properties-popup')) {
-						scope.formDirection = 'vertical';
-					}
-				});
-
-				$rootScope.$on('Change:Workspace:Unpinned', function (event, el) {
-					if (el.is('#structure-editor-block-properties-popup')) {
-						scope.formDirection = 'horizontal';
-					}
-				});
 			}
 		};
 	}]);
@@ -2034,9 +1984,7 @@
 	//-------------------------------------------------------------------------
 
 	app.directive('rbsBlockMarkdownText', [ function () {
-
 		return {
-
 			"restrict"   : 'C',
 			"scope"      : {
 				// isolated scope is required
@@ -2075,16 +2023,13 @@
 					ctrl.selectBlock(element);
 				};
 
-
 				scope.saveItem = function (item) {
 					if (item) {
 						angular.extend(item.parameters, {content: scope.input.text});
 					}
 				};
 			}
-
 		};
-
 	}]);
 
 
