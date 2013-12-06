@@ -1,6 +1,7 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
+use Change\Documents\Property;
 use Change\Http\Rest\Result\Link;
 use Change\Http\Rest\Result\ModelLink;
 use Change\Http\Rest\Result\ModelResult;
@@ -130,8 +131,47 @@ class GetModelInformation
 				$result->setProperty($property->getName(), $infos);
 			}
 
+			$this->addSortablePropertiesForModel($model, $result, $mm);
+
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$event->setResult($result);
 		}
 	}
+
+	protected $sortablePropertyTypes = array(Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING);
+
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param \Change\Http\Rest\Result\ModelResult $result
+	 * @param \Change\Documents\ModelManager $mm
+	 * @param bool $includeDoc
+	 */
+	protected function addSortablePropertiesForModel($model, $result, $mm, $parentName = null)
+	{
+		if ($model instanceof \Change\Documents\AbstractModel)
+		{
+			foreach ($model->getProperties() as $property)
+			{
+				if (!$property->getStateless())
+				{
+					if (in_array($property->getType(), $this->sortablePropertyTypes))
+					{
+						if (!$property->getLocalized() || $parentName === null)
+						{
+							// Localized properties are not sortable on sub model
+							$name = $parentName ?  $parentName . '.' . $property->getName() : $property->getName();
+							$result->setSortableBy($name);
+						}
+					}
+					else if (!$parentName && $property->getType() === Property::TYPE_DOCUMENT)
+					{
+						$this->addSortablePropertiesForModel($mm->getModelByName($property->getDocumentType()), $result, $mm, $property->getName());
+					}
+				}
+			}
+		}
+
+	}
+
 }

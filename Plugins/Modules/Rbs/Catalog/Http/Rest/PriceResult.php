@@ -89,7 +89,6 @@ class PriceResult
 				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));
 			}
 		}
-		$result->setAvailableSorts(array('boValue', 'boDiscountValue', 'thresholdMin', 'priority', 'startActivation', 'endActivation', 'modificationDate', 'webStore', 'billingArea'));
 		$result->setHttpStatusCode(Response::STATUS_CODE_200);
 		$event->setResult($result);
 	}

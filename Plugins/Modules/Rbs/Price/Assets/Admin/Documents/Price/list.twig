@@ -19,7 +19,7 @@
 			<a href ng-href="(= 'Rbs_Price_Price' | documentURL:'new' =)">{{ i18n('m.rbs.price.admin.price_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-query="query" actions="default" activable="true">
+		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-query="query" actions="default" activable="false">
 			<column name="boValue" align="right" width="90px"><a href ng-href="(=doc|documentURL=)">(=doc.formattedBoValue=)</a>
 			<del ng-show="doc.formattedBoBaseValue">(=doc.formattedBoBaseValue=)</del>
 			</column>
