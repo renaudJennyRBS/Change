@@ -333,10 +333,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function ajaxURL($module, $action, $query = array())
 	{
-		$module = is_array($module) ? $module : explode('_', $module);
-		$action = is_array($action) ? $action : array($action);
-		$pathInfo = array_merge(array('Action'), $module, $action);
-		return $this->getUrlManager()->getByPathInfo($pathInfo, $query)->normalize()->toString();
+		return $this->getUrlManager()->getAjaxURL($module, $action, $query);
 	}
 
 	/**

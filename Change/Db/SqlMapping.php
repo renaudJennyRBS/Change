@@ -209,4 +209,13 @@ class SqlMapping
 	{
 		return 'change_web_permission_rule';
 	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getUserAccountRequestTable()
+	{
+		return 'change_user_account_request';
+	}
 }

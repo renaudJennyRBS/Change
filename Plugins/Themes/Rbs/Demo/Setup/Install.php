@@ -114,6 +114,28 @@ class Install extends \Change\Plugins\InstallBase
 				}
 			}
 
+			//mail template for user account settings
+			/* @var $mailTemplate \Rbs\Theme\Documents\MailTemplate */
+			$mailTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($mailTemplateModel);
+			$mailTemplate->setTheme($theme);
+			$mailTemplate->setLabel('Create account request');
+			$mailTemplate->setCode('createAccountRequest');
+			foreach ($availableLCID as $lcid)
+			{
+				$templatePath = __DIR__ . '/Assets/create-account-request-mail-' . $lcid . '.twig';
+				if (file_exists($templatePath))
+				{
+					$applicationServices->getDocumentManager()->pushLCID($lcid);
+					$currentLocalization = $mailTemplate->getCurrentLocalization();
+					$currentLocalization->setSubject($i18nManager->transForLCID($lcid, 't.rbs.demo.setup.create_account_request_mail_subject'));
+					$html = file_get_contents($templatePath);
+					$currentLocalization->setContent($html);
+					$currentLocalization->setActive(true);
+					$mailTemplate->save();
+					$applicationServices->getDocumentManager()->popLCID();
+				}
+			}
+
 			$transactionManager->commit();
 		}
 		catch (\Exception $e)

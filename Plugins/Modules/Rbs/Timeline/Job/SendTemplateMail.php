@@ -18,7 +18,7 @@ class SendTemplateMail
 		$template = $themeManager->getMailTemplate($job->getArgument('templateCode'), $theme);
 		if ($template)
 		{
-			$mm = $applicationServices->getApplicationServices()->getMailManager();
+			$mm = $applicationServices->getMailManager();
 			$message = $mm->composeTemplateMessage($template, $job->getArgument('params'), null,
 				['noreply@change4.fr'], $job->getArgument('to'));
 			$mm->send($message);

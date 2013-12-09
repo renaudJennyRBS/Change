@@ -4,5 +4,8 @@
 	},
 	"notification_mail_subject":{
 		"message":"Nouvelles notifications"
+	},
+	"create_account_request_mail_subject":{
+		"message":"Demande de création de compte"
 	}
 }

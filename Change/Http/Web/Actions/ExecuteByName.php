@@ -46,7 +46,7 @@ class ExecuteByName
 			}
 			elseif ($result->getHttpStatusCode() !== HttpResponse::STATUS_CODE_200)
 			{
-				$this->setErrorResult($event, null, $defaultErrorLocation);
+				$this->setErrorResult($event, null, $event->getParam('errorLocation', $defaultErrorLocation));
 			}
 			else
 			{
@@ -61,7 +61,7 @@ class ExecuteByName
 		}
 		catch (\Exception $e)
 		{
-			$this->setErrorResult($event, $e, $defaultErrorLocation);
+			$this->setErrorResult($event, $e, $event->getParam('errorLocation', $defaultErrorLocation));
 		}
 	}
 

@@ -600,4 +600,18 @@ class UrlManager extends \Change\Http\UrlManager
 	{
 		return $this->absoluteUrl;
 	}
+
+	/**
+	 * @param string $module
+	 * @param string $action
+	 * @param array $query
+	 * @return string
+	 */
+	public function getAjaxURL($module, $action, $query = array())
+	{
+		$module = is_array($module) ? $module : explode('_', $module);
+		$action = is_array($action) ? $action : array($action);
+		$pathInfo = array_merge(array('Action'), $module, $action);
+		return $this->getByPathInfo($pathInfo, $query)->normalize()->toString();
+	}
 }
