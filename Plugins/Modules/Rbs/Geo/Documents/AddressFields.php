@@ -65,6 +65,7 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 			/** @var $addressFields AddressFields */
 			$addressFields = $event->getDocument();
 			$restResult->setProperty('editorDefinition', $this->buildEditorDefinition($addressFields));
+			$restResult->setProperty('fieldsLayout', $this->getFieldsLayoutData());
 		}
 	}
 

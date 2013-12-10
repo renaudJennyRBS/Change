@@ -56,6 +56,18 @@
 	"order_customer":{
 		"message":"client"
 	},
+	"order_billing_address":{
+		"message":"adresse de facturation"
+	},
+	"order_address_document":{
+		"message":"adresse existante"
+	},
+	"order_select_address":{
+		"message":"sélectionner une adresse"
+	},
+	"order_address_fields":{
+		"message":"modèle d'adresse"
+	},
 	"order_add_line":{
 		"message":"ajouter les articles"
 	},

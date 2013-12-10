@@ -20,6 +20,7 @@
 	registerFieldDirective('Image', '<div class="rbs-uploader image-uploader" storage-name="images" file-accept="image/*"></div>', '.image-uploader');
 	registerFieldDirective('File', '<div class="rbs-uploader file-uploader" storage-name="files" file-accept="*"></div>', '.file-uploader');
 	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
+	registerFieldDirective('Address', '<div class="rbs-address-fields"></div>', '.rbs-address-fields', true);
 
 
 	/**
@@ -60,8 +61,11 @@
 	});
 
 
-	function fieldTemplate (contents)
+	function fieldTemplate (contents, omitLabel)
 	{
+		if(omitLabel) {
+			return '<div class="form-group property"><div class="col-lg-12 controls">' + contents + '</div></div>';
+		}
 		return '<div class="form-group property">' +
 				'<label class="col-lg-3 control-label"></label>' +
 				'<div class="col-lg-9 controls">' + contents + '</div>' +
@@ -69,7 +73,7 @@
 	}
 
 
-	function registerFieldDirective (name, tpl, selector)
+	function registerFieldDirective (name, tpl, selector, omitLabel)
 	{
 		app.directive('rbsField' + name, ['RbsChange.Utils', function (Utils)
 		{
@@ -77,7 +81,7 @@
 				restrict   : 'E',
 				replace    : true,
 				transclude : true,
-				template   : fieldTemplate(tpl + '<div ng-transclude=""></div>'),
+				template   : fieldTemplate(tpl + '<div ng-transclude=""></div>', omitLabel),
 
 				compile : function (tElement, tAttrs) {
 					rbsFieldCompile(tElement, tAttrs, selector, Utils);

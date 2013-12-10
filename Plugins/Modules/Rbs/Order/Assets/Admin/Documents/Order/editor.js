@@ -125,6 +125,31 @@
 					}
 				}, true);
 
+				scope.address = {};
+
+				// This watches for modifications in the address doc in order to fill the address form
+				scope.$watch('address.doc', function (addressDoc, old) {
+					if(angular.isObject(addressDoc)){
+						// must reset addressField in order to trigger fieldValues generation
+						if(angular.isObject(scope.document.contextData)){
+							scope.document.contextData.addressFields = null;
+						}
+						REST.resource(addressDoc.model, addressDoc.id).then(scope.populateAddressFields);
+					}
+				}, true);
+
+				scope.populateAddressFields = function(addressDoc) {
+					if(angular.isObject(addressDoc)){
+						var addressFields = addressDoc.addressFields;
+						if(angular.isObject(addressFields)){
+							if(!angular.isObject(scope.document.contextData)){
+								scope.document.contextData = {};
+							}
+							scope.document.contextData.addressFields = addressFields.id;
+							scope.document.addressData = addressDoc.fieldValues;
+						}
+					}
+				};
 
 				editorCtrl.init('Rbs_Order_Order');
 			}
