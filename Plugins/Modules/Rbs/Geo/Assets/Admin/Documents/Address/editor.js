@@ -1,5 +1,4 @@
-(function ()
-{
+(function () {
 	"use strict";
 
 	/**
@@ -9,16 +8,14 @@
 	 * @param EditorManager
 	 * @constructor
 	 */
-	function Editor($timeout, $http, REST, EditorManager)
-	{
+	function Editor($timeout, $http, REST, EditorManager) {
 		return {
 			restrict : 'C',
 			templateUrl : 'Document/Rbs/Geo/Address/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
-			link: function (scope, elm, attrs, editorCtrl)
-			{
+			link: function (scope, elm, attrs, editorCtrl) {
 
 				scope.addressFieldsId = null;
 
@@ -26,45 +23,37 @@
 
 				scope.$watch('document.addressFields', function(newValue){
 					var fieldsId = null;
-					if (newValue)
-					{
-						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
-						{
+					if (newValue) {
+						if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
 							fieldsId = newValue.id;
 						}
-						else
-						{
+						else {
 							fieldsId = parseInt(newValue, 10);
-							if (isNaN(fieldsId))
-							{
+							if (isNaN(fieldsId)) {
 								fieldsId = null;
 							}
 						}
 					}
 
-					if (fieldsId != scope.addressFieldsId)
-					{
+					if (fieldsId != scope.addressFieldsId) {
 						scope.clearFieldsEditor();
 						scope.addressFieldsId = fieldsId;
 					}
 				});
 
 				scope.$watch('document.fieldValues', function(newValue) {
-					if (newValue === null)
-					{
+					if (newValue === null) {
 						scope.document.fieldValues = {};
 					}
 
-					if (newValue !== undefined)
-					{
+					if (newValue !== undefined) {
 						scope.assocValues(scope.fieldsDef);
 					}
 				});
 
 
 				scope.$watch('addressFieldsId', function(newValue) {
-					if (newValue)
-					{
+					if (newValue) {
 						REST.resource('Rbs_Geo_AddressFields', newValue).then(scope.generateFieldsEditor);
 					}
 				});
@@ -78,10 +67,8 @@
 
 				scope.generateFieldsEditor = function (addressFields) {
 					var editorDefinition = addressFields.editorDefinition;
-					if (angular.isObject(editorDefinition))
-					{
-						if (!angular.isObject(scope.document.fieldValues))
-						{
+					if (angular.isObject(editorDefinition)) {
+						if (!angular.isObject(scope.document.fieldValues)) {
 							scope.document.fieldValues = {};
 						}
 
@@ -97,8 +84,7 @@
 				scope.assocValues = function (fields) {
 					var fieldValues = scope.document.fieldValues;
 					var field;
-					for (var i = 0; i < fields.length; i++)
-					{
+					for (var i = 0; i < fields.length; i++) {
 						field = fields[i];
 						var v = null;
 						if(fieldValues.hasOwnProperty(field.code)) {

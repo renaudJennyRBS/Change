@@ -6,18 +6,6 @@ namespace Rbs\Geo\Setup;
  */
 class Install extends \Change\Plugins\InstallBase
 {
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Application $application
-	 * @param \Change\Configuration\EditableConfiguration $configuration
-	 * @throws \RuntimeException
-	 */
-	public function executeApplication($plugin, $application, $configuration)
-	{
-		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Geo', '\Rbs\Geo\Events\CollectionManager\Listeners');
-	}
-
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Services\ApplicationServices $applicationServices

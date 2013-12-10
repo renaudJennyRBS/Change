@@ -7,7 +7,7 @@
 		</rbs-field-text>
 
 		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'addressFields'), ['ucf']) }}">
-			<select class="form-control" ng-model="document.addressFields" rbs-items-from-collection="Rbs_Geo_Collection_AddressFields">
+			<select class="form-control" ng-model="document.addressFields" rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
 				<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
