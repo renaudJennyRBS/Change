@@ -1,0 +1,13 @@
+<div data-ng-repeat="fieldDef in fieldsDef">
+	<rbs-field label="(= fieldDef.title | capitalize =)" data-ng-class="{'required': fieldDef.required}" >
+		<div ng-if="fieldDef.collectionCode">
+			<select ng-model="fieldValues[fieldDef.code]" class="form-control" rbs-items-from-collection="(= fieldDef.collectionCode =)">
+				<option value=""></option>
+			</select>
+		</div>
+		<div ng-if="!fieldDef.collectionCode">
+			<input type="text" class="form-control" ng-required="fieldDef.required" id="fieldInput_(= fieldDef.code =)" ng-model="fieldValues[fieldDef.code]" />
+		</div>
+	</rbs-field>
+</div>
+

@@ -50,6 +50,29 @@
 					</div>
 				</div>
 			</div>
+			<div class="col-md-6 form-vertical">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }}</h3>
+					</div>
+					<div class="panel-body">
+						<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
+							<div class="document-picker-single"
+								ng-model="address.doc"
+								accepted-model="Rbs_Geo_Address" allow-edition="true"
+								selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}">
+							</div>
+						</rbs-field>
+						<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_address_fields', ['ucf']) }}">
+							<select class="form-control" ng-model="document.contextData.addressFields" rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
+								<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
+							</select>
+						</rbs-field>
+						<rbs-field-address property="addressData" address-fields="document.contextData.addressFields"/>
+						</rbs-field>
+					</div>
+				</div>
+			</div>
 		</div>
 
 
