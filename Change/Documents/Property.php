@@ -590,17 +590,27 @@ class Property
 	 */
 	public function setValue(\Change\Documents\AbstractDocument $document, $value)
 	{
-		if ($this->name !== 'id' && $this->name !== 'model')
+		if ($this->getLocalized())
+		{
+			$this->setLocalizedValue($document->getCurrentLocalization(), $value);
+		}
+		elseif ($this->name !== 'id' && $this->name !== 'model')
 		{
 			$setter = 'set' . ucfirst($this->name);
-			if ($this->getLocalized() && $document instanceof \Change\Documents\Interfaces\Localizable)
-			{
-				call_user_func(array($document->getCurrentLocalization(), $setter), $value);
-			}
-			else
-			{
-				call_user_func(array($document, $setter), $value);
-			}
+			call_user_func(array($document, $setter), $value);
+		}
+	}
+
+	/**
+	 * @param AbstractLocalizedDocument $localizedDocument
+	 * @param mixed $value
+	 */
+	public function setLocalizedValue(\Change\Documents\AbstractLocalizedDocument $localizedDocument, $value)
+	{
+		if ($this->getLocalized() && $this->name !== 'id' && $this->name !== 'model')
+		{
+			$setter = 'set' . ucfirst($this->name);
+			call_user_func(array($localizedDocument, $setter), $value);
 		}
 	}
 

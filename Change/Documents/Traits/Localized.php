@@ -155,7 +155,7 @@ trait Localized
 				if (($property = $model->getProperty($propertyName)) !== null)
 				{
 					$propVal = $dbp->dbToPhp($dbValue, $sqlMapping->getDbScalarType($property->getType()));
-					$property->setValue($this, $propVal);
+					$property->setLocalizedValue($currentLocalizedPart, $propVal);
 				}
 			}
 			$currentLocalizedPart->setPersistentState(AbstractDocument::STATE_LOADED);
