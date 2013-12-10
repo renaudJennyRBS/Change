@@ -1177,7 +1177,8 @@ class AttributeManager
 				else
 				{
 					$value = null;
-					$attrValues = $product ? $product->getRefLocalization()->getAttributeValues() : null;
+					$refLocalization = $product ? $product->getRefLocalization() : null;
+					$attrValues = $refLocalization ? $refLocalization->getAttributeValues() : null;
 					if (is_array($attrValues))
 					{
 						foreach ($attrValues as $attrValue)

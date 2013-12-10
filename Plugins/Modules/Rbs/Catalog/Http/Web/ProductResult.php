@@ -31,33 +31,25 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$productId = $data['productId'];
 
 		$product = $dm->getDocumentInstance($productId);
-		$responseData = null;
 
 		if ($product instanceof \Rbs\Catalog\Documents\Product)
 		{
 			$commerceServices = $event->getServices('commerceServices');
-			if ($commerceServices)
+
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$presentation = $product->getPresentation($commerceServices, $commerceServices->getContext()->getWebstore()->getId());
-				if ($presentation)
-				{
-					$presentation->evaluate();
+				$responseData['productId'] = $product->getId();
+				$responseData['key'] = $product->getId();
+				$responseData['designation'] = $product->getCurrentLocalization()->getTitle();
+				$responseData['codeSKU'] = $presentation->getCodeSKU();
 
-					$responseData['prices'] = $presentation->getPrices();
-					foreach($presentation->getPrices() as $key => $value)
-					{
-						$responseData['formattedPrices'][$key] = $commerceServices->getPriceManager()->formatValue($value, null);
-					}
-					$responseData['stock'] = $presentation->getStock();
-				}
+				$presentation->evaluate();
+				$responseData = $presentation->toArray();
+				$result = new \Change\Http\Web\Result\AjaxResult($responseData);
+				$event->setResult($result);
+				return;
 			}
 		}
-		else
-		{
-			$responseData['error'] = '$variantGroupId is not a Variant Group !';
-		}
-
-		$result = new \Change\Http\Web\Result\AjaxResult($responseData);
-		$event->setResult($result);
 	}
 }

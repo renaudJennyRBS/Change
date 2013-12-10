@@ -4,6 +4,7 @@ namespace Rbs\Catalog\Blocks;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
+use Rbs\Catalog\Product\AxisConfiguration;
 
 /**
  * @name \Rbs\Catalog\Blocks\Product
@@ -26,6 +27,7 @@ class Product extends Block
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
+		$parameters->addParameterMeta('redirectUrl');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		if ($parameters->getParameter('productId') === null)
@@ -56,6 +58,14 @@ class Product extends Block
 			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
 
+		if (!$parameters->getParameter('redirectUrl'))
+		{
+			$urlManager = $event->getUrlManager();
+			$oldValue = $urlManager->getAbsoluteUrl();
+			$urlManager->setAbsoluteUrl(true);
+			$parameters->setParameterValue('redirectUrl', $urlManager->getByFunction('Rbs_Commerce_Cart')->normalize()->toString());
+			$urlManager->setAbsoluteUrl($oldValue);
+		}
 		return $parameters;
 	}
 
@@ -93,11 +103,11 @@ class Product extends Block
 
 				if ($product->getVariantGroup())
 				{
-					$axesValues = $product->getVariantGroup()->getAxesValuesByParentId($product->getId());
-					$attributes['axesValues'] = \Zend\Json\Json::encode($axesValues);
-					$axesNames = $product->getVariantGroup()->getAxesNames();
-					$attributes['axesNames'] = \Zend\Json\Json::encode($axesNames);
-					$attributes['axesCount'] = count($product->getVariantGroup()->getAxesInfo());
+					$variantConfiguration = $commerceServices->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup());
+					$attributes['axes'] = $variantConfiguration;
+					$axesNames = $this->getAxesNames($product->getVariantGroup(), $documentManager);
+					$attributes['axesNames'] = $axesNames;
+					$attributes['variantGroup'] = $product->getVariantGroup();
 					return 'product-variant.twig';
 				}
 				else
@@ -107,5 +117,30 @@ class Product extends Block
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return array
+	 */
+	public function getAxesNames($variantGroup, $documentManager)
+	{
+		$axesNames = array();
+		$configuration = $variantGroup->getAxesConfiguration();
+		if (is_array($configuration) && count($configuration))
+		{
+			foreach ($configuration as $confArray)
+			{
+				$conf = (new AxisConfiguration())->fromArray($confArray);
+				/* @var $axeAttribute \Rbs\Catalog\Documents\Attribute */
+				$axeAttribute = $documentManager->getDocumentInstance($conf->getId());
+				if ($axeAttribute)
+				{
+					$axesNames[] = $axeAttribute->getCurrentLocalization()->getTitle();
+				}
+			}
+		}
+		return $axesNames;
 	}
 }

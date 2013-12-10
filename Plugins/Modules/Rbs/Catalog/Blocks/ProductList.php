@@ -30,6 +30,8 @@ class ProductList extends Block
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
 
+		$parameters->addParameterMeta('redirectUrl');
+
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -61,6 +63,15 @@ class ProductList extends Block
 			$parameters->setParameterValue('webStoreId', 0);
 			$parameters->setParameterValue('displayPrices', false);
 			$parameters->setParameterValue('displayPricesWithTax', false);
+		}
+
+		if (!$parameters->getParameter('redirectUrl'))
+		{
+			$urlManager = $event->getUrlManager();
+			$oldValue = $urlManager->getAbsoluteUrl();
+			$urlManager->setAbsoluteUrl(true);
+			$parameters->setParameterValue('redirectUrl', $urlManager->getByFunction('Rbs_Commerce_Cart')->normalize()->toString());
+			$urlManager->setAbsoluteUrl($oldValue);
 		}
 
 		return $parameters;

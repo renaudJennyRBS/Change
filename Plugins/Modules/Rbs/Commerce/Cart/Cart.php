@@ -84,6 +84,16 @@ class Cart implements \Serializable
 	protected $lines = array();
 
 	/**
+	 * @var \Rbs\Geo\Interfaces\Address
+	 */
+	protected $address;
+
+	/**
+	 * @var array [[id => code =>, title =>, address =>], ...]
+	 */
+	protected $shippingModes = array();
+
+	/**
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
 	protected $fees = array();
@@ -93,15 +103,9 @@ class Cart implements \Serializable
 	 */
 	protected $discounts = array();
 
-	/**
-	 * @var array [[id => code =>, title =>, address =>], ...]
-	 */
-	protected $shippingModes = array();
 
-	/**
-	 * @var \Rbs\Geo\Interfaces\Address
-	 */
-	protected $address;
+
+
 
 	/**
 	 * @var array|null
