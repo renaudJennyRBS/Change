@@ -50,6 +50,9 @@ class Install extends \Change\Plugins\InstallBase
 		{
 			throw $transactionManager->rollBack($e);
 		}
+
+		$jobManager = $applicationServices->getJobManager();
+		$jobManager->createNewJob('Rbs_User_CleanAccountRequestTable');
 	}
 
 	/**
