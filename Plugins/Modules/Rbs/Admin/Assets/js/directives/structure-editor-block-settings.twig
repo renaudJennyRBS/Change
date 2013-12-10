@@ -1,11 +1,23 @@
 <div class="btn-toolbar">
-	<div class="btn-group">
-		<button class="btn btn-default btn-sm btn-icon" disabled="disabled"><i class="icon-plus"></i></button>
-		<button class="btn btn-default btn-sm btn-icon" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_left', ['ucf']) }}"><i class="icon-arrow-left"></i></button>
-		<button class="btn btn-default btn-sm btn-icon" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_right', ['ucf']) }}"><i class="icon-arrow-right"></i></button>
-		<button class="btn btn-default btn-sm btn-icon" ng-click="newBlockAfter()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_bottom', ['ucf']) }}"><i class="icon-arrow-down"></i></button>
-		<button class="btn btn-default btn-sm btn-icon" ng-click="newBlockBefore()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_top', ['ucf']) }}"><i class="icon-arrow-up"></i></button>
-	</div>
+	<rbs-kb-switch>
+		<div class="btn-group">
+			<button class="btn btn-default btn-sm btn-icon" disabled="disabled"><i class="icon-plus"></i></button>
+			<button class="btn btn-default btn-sm btn-icon" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_left', ['ucf']) }}"><i class="icon-arrow-left"></i></button>
+			<button class="btn btn-default btn-sm btn-icon" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_right', ['ucf']) }}"><i class="icon-arrow-right"></i></button>
+			<button rbs-kb-when="alt" class="btn btn-default btn-sm btn-icon" ng-click="newBlockTop()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_top', ['ucf']) }}">
+				<i class="icon-double-angle-up"></i>
+			</button>
+			<button rbs-kb-default="" class="btn btn-default btn-sm btn-icon" ng-click="newBlockBefore()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_before', ['ucf']) }}">
+				<i class="icon-arrow-up"></i>
+			</button>
+			<button rbs-kb-when="alt" class="btn btn-default btn-sm btn-icon" ng-click="newBlockBottom()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_bottom', ['ucf']) }}">
+				<i class="icon-double-angle-down"></i>
+			</button>
+			<button rbs-kb-default="" class="btn btn-default btn-sm btn-icon" ng-click="newBlockAfter()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_after', ['ucf']) }}">
+				<i class="icon-arrow-down"></i>
+			</button>
+		</div>
+	</rbs-kb-switch>
 	<div class="btn-group">
 		<button ng-if="isInColumnLayout()" class="btn btn-default btn-sm btn-icon" ng-click="selectParentRow()" title="{{ i18nAttr('m.rbs.admin.admin.parameterize_columns', ['ucf']) }}"><i class="icon-columns"></i></button>
 	</div>

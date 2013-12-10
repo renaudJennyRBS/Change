@@ -869,11 +869,17 @@
 	"insert_block_right": {
 		"message": "ajouter un bloc à droite"
 	},
+	"insert_block_after": {
+		"message": "ajouter un bloc au dessous du bloc sélectionné"
+	},
 	"insert_block_bottom": {
-		"message": "ajouter un bloc au dessous"
+		"message": "ajouter un bloc au bas de la zone"
+	},
+	"insert_block_before": {
+		"message": "ajouter un bloc au dessus du block sélectionné"
 	},
 	"insert_block_top": {
-		"message": "ajouter un bloc au dessus"
+		"message": "ajouter un bloc en haut de la zone"
 	},
 	"delete_block": {
 		"message": "supprimer le bloc"
