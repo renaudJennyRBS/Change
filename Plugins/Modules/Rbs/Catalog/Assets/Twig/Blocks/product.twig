@@ -1,13 +1,12 @@
 <script type="text/javascript">
 	var script{{ blockId }} = {};
 </script>
-
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
-<article itemscope="" itemtype="http://schema.org/Product" class="product-details">
+
+<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-ng-controller="RbsCatalogProductController">
 	<header>
 		{% include 'Rbs_Catalog/Blocks/Product/header.twig' %}
 	</header>
-
 	<div class="row">
 		<div class="col-sm-6 col-md-8">
 			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
@@ -16,6 +15,5 @@
 			{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
 		</div>
 	</div>
-
 	{% include 'Rbs_Catalog/Blocks/Product/description.twig' %}
 </article>

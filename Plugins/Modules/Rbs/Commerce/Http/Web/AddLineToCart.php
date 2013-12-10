@@ -29,29 +29,43 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$request = $event->getRequest();
 		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
 
+		$webStore = $commerceServices->getContext()->getWebStore();
+		if (!$webStore)
+		{
+			$e = new \RuntimeException('Web Store is not defined.', 999999);
+			$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
+			throw $e;
+		}
 		$cartManager = $commerceServices->getCartManager();
 		$cartIdentifier = $commerceServices->getContext()->getCartIdentifier();
 		$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
-		if (!($cart instanceof \Rbs\Commerce\Cart\Cart))
+		if (!($cart instanceof \Rbs\Commerce\Cart\Cart) || $cart->isLocked())
 		{
-			$webStore = $commerceServices->getContext()->getWebStore();
-			if (!$webStore)
-			{
-				$e = new \RuntimeException('Web Store is not defined.', 999999);
-				$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
-				throw $e;
-			}
 			$billingArea = $commerceServices->getContext()->getBillingArea();
 			$zone = $commerceServices->getContext()->getZone();
 
-			$context['userId'] = $event->getAuthenticationManager()->getCurrentUser()->getId();
-			$cart = $commerceServices->getCartManager()->getNewCart($webStore, $billingArea, $zone, $context);
+			$cart = $commerceServices->getCartManager()->getNewCart($webStore, $billingArea, $zone);
 			$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
 			$cart->setUserId($currentUser->getId());
 			$cart->getContext()->set('userName', $currentUser->getName());
 
 			$commerceServices->getContext()->setCartIdentifier($cart->getIdentifier());
 			$commerceServices->getContext()->save();
+		}
+		else
+		{
+			if ($cart->getWebStoreId() != $webStore->getId())
+			{
+				if (!$cart->isEmpty())
+				{
+					$e = new \RuntimeException('Invalid webstore.', 999999);
+					$e->httpStatusCode = HttpResponse::STATUS_CODE_409;
+					throw $e;
+				}
+				$cart->setWebStoreId($webStore->getId());
+				$cart->setBillingArea($commerceServices->getContext()->getBillingArea());
+				$cart->setZone($commerceServices->getContext()->getZone());
+			}
 		}
 
 		$line = $cart->getNewLine($arguments);

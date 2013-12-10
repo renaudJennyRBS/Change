@@ -59,10 +59,8 @@
 		                   extend="List" collection-url="(=pricesURL=)">
 			<column name="webStore">(=doc.webStore.label=)</column>
 			<column name="billingArea">(=doc.billingArea.label=)</column>
-			<column name="boValue" primary="true">(=doc.formattedBoValue=)</column>
-			<column name="boDiscountValue">(=doc.formattedBoDiscountValue=)</column>
+			<column name="boValue" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedBoValue=)</a></column>
 			<column name="priority">(=doc.priority=)</column>
-			<column name="thresholdMin">(=doc.thresholdMin=)</column>
 			<column name="startActivation">(=doc.startActivation | rbsDateTime=)</column>
 			<column name="endActivation">(=doc.endActivation | rbsDateTime =)</column>
 		</rbs-document-list>

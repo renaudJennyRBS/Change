@@ -1,33 +1,12 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 
 <h1 id="product-list-title">{{ title }}</h1>
-<script type="text/javascript">
-	var script{{ blockId }} = {};
-	script{{ blockId }}.offer = {
-		cartURL: "{{ functionURL('Rbs_Commerce_Cart') }}",
-		addProduct: function(button) {
-			var url = button.form.action;
-			var key = button.value;
-			var sku = button.getAttribute('data-sku');
-			var designation = button.getAttribute('data-designation');
-			var cartURL = this.cartURL;
-			var quantity =  button.getAttribute('data-quantity');
-
-			jQuery.ajax({
-				type: "POST",
-				url: url,
-				data: {key: key, designation: designation, quantity: quantity, items: [{codeSKU: sku}] },
-				dataType: 'json',
-				success: function(data, textStatus, jqXHR) {
-					window.location.href = cartURL;
-				},
-				error: function(jqXHR, textStatus, errorThrown ) {
-					console.log(JSON.parse(jqXHR.responseText), textStatus, errorThrown);
-				}
-			})
-		}
-	}
+<script type="text/ng-template" id="/addLineToCart.tpl">
+	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()" data-ng-disabled="quantity <= 0">
+		<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+	</button>
 </script>
+
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">

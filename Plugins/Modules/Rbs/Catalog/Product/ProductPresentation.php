@@ -92,15 +92,22 @@ class ProductPresentation
 
 	protected function resetPrice()
 	{
+		$this->prices['currencyCode'] = null;
 		$this->prices['price'] = null;
+		$this->prices['formattedPrice'] = null;
 		$this->prices['priceWithTax'] = null;
+		$this->prices['formattedPriceWithTax'] = null;
 		$this->prices['priceWithoutDiscount'] = null;
+		$this->prices['formattedPriceWithoutDiscount'] = null;
 		$this->prices['priceWithoutDiscountWithTax'] = null;
+		$this->prices['formattedPriceWithoutDiscountWithTax'] = null;
 		$this->prices['ecoTax'] = null;
+		$this->prices['formattedEcoTax'] = null;
 	}
 
 	protected function resetStock()
 	{
+		$this->stock['sku'] = null;
 		$this->stock['level'] = null;
 		$this->stock['threshold'] = null;
 		$this->stock['thresholdClass'] = null;
@@ -118,7 +125,8 @@ class ProductPresentation
 	{
 		$this->resetPrice();
 		$this->resetStock();
-		if ($this->product !== null && $quantity && $this->webStoreId)
+
+		if ($quantity && $this->webStoreId)
 		{
 			$sku = $this->product->getSku();
 			if ($sku)
@@ -126,6 +134,7 @@ class ProductPresentation
 				$stm = $this->commerceServices->getStockManager();
 				$level = $stm->getInventoryLevel($sku, $this->webStoreId);
 				$threshold = $stm->getInventoryThreshold($sku, $this->webStoreId, $level);
+				$this->stock['sku'] = $sku->getCode();
 				$this->stock['level'] = $level;
 				$this->stock['threshold'] = $threshold;
 				$this->stock['thresholdClass'] = 'stock-' . \Change\Stdlib\String::toLower($threshold);
@@ -140,39 +149,46 @@ class ProductPresentation
 				}
 				$this->stock['thresholdTitle'] = $stm->getInventoryThresholdTitle($sku, $this->webStoreId, $threshold);
 				$this->stock['minQuantity'] = $sku->getMinQuantity();
-				$this->stock['maxQuantity'] = $sku->getMaxQuantity() ? min($sku->getMaxQuantity(), $level) : $level;
+				$this->stock['maxQuantity'] = $sku->getMaxQuantity()  ? min(max($sku->getMinQuantity(), $sku->getMaxQuantity()), $level) : $level;
 				$this->stock['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
 
-				$price = $this->commerceServices->getPriceManager()->getPriceBySku($sku, ['webStore' => $this->webStoreId]);
-				if ($price)
+				$billingArea = $this->commerceServices->getContext()->getBillingArea();
+				if ($billingArea)
 				{
-					$priceValue = $price->getValue();
-					if ($priceValue !== null)
+					$priceManager = $this->commerceServices->getPriceManager();
+					$price = $priceManager->getPriceBySku($sku, ['webStore' => $this->webStoreId, 'billingArea' => $billingArea]);
+					if ($price && ($priceValue = $price->getValue()) !== null)
 					{
-						$tam = $this->commerceServices->getTaxManager();
-						$this->prices['price'] += ($priceValue * $quantity);
-						$taxApplication = $tam->getTaxByValue($priceValue, $price->getTaxCategories());
+						$this->prices['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
+						$taxManager = $this->commerceServices->getTaxManager();
+						$this->prices['price'] = ($priceValue * $quantity);
+						$this->prices['formattedPrice'] = $priceManager->formatValue($this->prices['price'], $currencyCode);
+
+						$taxApplication = $taxManager->getTaxByValue($priceValue, $price->getTaxCategories());
 						if (count($taxApplication))
 						{
 							$tax = array_reduce($taxApplication, function ($result, TaxApplication $cartTax) use ($quantity)
 							{
 								return $result + $cartTax->getValue() * $quantity;
 							}, 0.0);
-							$this->prices['priceWithTax'] += ($priceValue * $quantity) + $tax;
+							$this->prices['priceWithTax'] = ($priceValue * $quantity) + $tax;
+							$this->prices['formattedPriceWithTax'] = $priceManager->formatValue($this->prices['priceWithTax'], $currencyCode);
 						}
 
 						$oldValue = $price->getBasePriceValue();
 						if ($oldValue !== null)
 						{
-							$this->prices['priceWithoutDiscount'] += ($oldValue * $quantity);
-							$taxApplication = $tam->getTaxByValue($oldValue, $price->getTaxCategories());
+							$this->prices['priceWithoutDiscount'] = ($oldValue * $quantity);
+							$this->prices['formattedPriceWithoutDiscount'] = $priceManager->formatValue($this->prices['priceWithoutDiscount'], $currencyCode);
+							$taxApplication = $taxManager->getTaxByValue($oldValue, $price->getTaxCategories());
 							if (count($taxApplication))
 							{
 								$tax = array_reduce($taxApplication, function ($result, TaxApplication $cartTax) use ($quantity)
 								{
 									return $result + $cartTax->getValue() * $quantity;
 								}, 0.0);
-								$this->prices['priceWithoutDiscountWithTax'] += ($oldValue * $quantity) + $tax;
+								$this->prices['priceWithoutDiscountWithTax'] = ($oldValue * $quantity) + $tax;
+								$this->prices['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($this->prices['priceWithoutDiscountWithTax'], $currencyCode);
 							}
 						}
 
@@ -180,7 +196,8 @@ class ProductPresentation
 						{
 							if ($price->getEcoTax() !== null)
 							{
-								$this->prices['ecoTax'] += ($price->getEcoTax() * $quantity);
+								$this->prices['ecoTax'] = ($price->getEcoTax() * $quantity);
+								$this->prices['formattedEcoTax'] = $priceManager->formatValue($this->prices['ecoTax'], $currencyCode);
 							}
 						}
 					}
@@ -256,40 +273,24 @@ class ProductPresentation
 		return $sku ? $sku->getMinQuantity() : null;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getVariants()
+	public function toArray()
 	{
-		$variants = array();
-		if ($this->product->hasVariants())
-		{
-			$dm = $this->commerceServices->getDocumentManager();
-			$query = $dm->getNewQuery('Rbs_Catalog_Product');
-			$pb = $query->getPredicateBuilder();
-			$query->andPredicates(
-				$pb->eq('variantGroup', $this->product->getVariantGroupId()),
-				$pb->eq('variant', true),
-				$pb->neq('sku', 0),
-				$pb->published()
-			);
-			foreach($query->getDocuments() as $doc)
-			{
-				/* @var $doc \Rbs\Catalog\Documents\Product */
-				$website = $doc->getCanonicalSection()->getWebsite();
-				$lcid = $website->getLCID();
-				$url = $website->getUrlManager($lcid)->getCanonicalByDocument($doc)->toString();
-				$row = array('id' => $doc->getId(), 'url' => $url);
-				$productPresentation = $doc->getPresentation($this->commerceServices, $this->webStoreId);
-				if ($productPresentation)
-				{
-					$productPresentation->evaluate();
-					$row['productPresentation'] = $productPresentation;
-				}
-				$variants[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($dm);
+		$array = [];
+		$array['productId'] = $this->product->getId();
+		$array['key'] = $array['productId'];
+		$array['designation'] = $this->getDesignation();
 
-			}
+		if (!is_array($this->stock))
+		{
+			$this->resetStock();
 		}
-		return $variants;
+		$array['stock'] = $this->stock;
+
+		if (!is_array($this->prices))
+		{
+			$this->resetPrice();
+		}
+		$array['prices'] = $this->prices;
+		return $array;
 	}
 }

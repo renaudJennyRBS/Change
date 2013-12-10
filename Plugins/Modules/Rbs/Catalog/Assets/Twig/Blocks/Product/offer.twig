@@ -1,33 +1,19 @@
-<script type="text/javascript">
-	script{{ blockId }}.offer = {
-		webStoreId: {{ parameters.webStoreId }},
-		cartURL: "{{ functionURL('Rbs_Commerce_Cart') }}",
-		addProduct: function(button) {
-			var url = button.form.action;
-			var key = button.value;
-			var sku = button.getAttribute('data-sku');
-			var designation = button.getAttribute('data-designation');
-			var cartURL = this.cartURL;
-			var webStoreId = this.webStoreId;
-			var quantity =  button.form.elements.namedItem("quantity").value;
-
-			jQuery.ajax({
-				type: "POST",
-				url: url,
-				data: {key: key, designation: designation, quantity: quantity, items: [{codeSKU: sku}] },
-				dataType: 'json',
-				success: function(data, textStatus, jqXHR) {
-					window.location.href = cartURL;
-				},
-				error: function(jqXHR, textStatus, errorThrown ) {
-					console.log(JSON.parse(jqXHR.responseText), textStatus, errorThrown);
-				}
-			})
-		}
-	}
-</script>
-
 {% if parameters.webStoreId %}
+	<script type="text/ng-template" id="/addLineToCart.tpl">
+		<div class="form-group" data-ng-show="stockLevel > 0">
+			<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
+			<input class="form-control" type="number" data-ng-model="quantity" id="product-quantity" name="quantity"
+					max="{{ productPresentation.stock.maxQuantity }}"
+					min="{{ productPresentation.stock.minQuantity }}"
+					step="{{ productPresentation.stock.quantityIncrement }}" />
+		</div>
+
+		<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()" data-ng-disabled="quantity <= 0">
+			<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+		</button>
+
+	</script>
+
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block availability %}
 			{% if productPresentation.stock.thresholdTitle %}
@@ -72,40 +58,19 @@
 			{% endif %}
 		{% endblock %}
 
-		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" id="{{ blockId }}_add_form">
-		<fieldset>
+		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
 			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
-			{% if productPresentation.stock.level %}
-				<div class="form-group">
-					<label for="product-quantity">Quantité</label>
-					<input class="form-control" name="quantity" value="1" type="number"
-							min="{{ productPresentation.stock.minQuantity }}"
-							max="{{ productPresentation.stock.maxQuantity }}"
-							step="{{ productPresentation.stock.quantityIncrement }}"/>
-				</div>
-				<button name="key" type="button" class="btn btn-primary btn-lg" value="{{ parameters.productId }}"
-					data-sku="{{ productPresentation.codeSKU }}"
-					data-designation="{{ productPresentation.designation }}"
-					onclick="script{{ blockId }}.offer.addProduct(this)">
-					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-				</button>
-			{% else %}
-				<button name="key" type="button" class="btn btn-primary btn-lg btn-disabled"
-						value="{{ parameters.productId }}" disabled="disabled">
-					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-				</button>
-			{% endif %}
-		</fieldset>
+			<fieldset>
+				<div class="rbs-catalog-product-data" data-ng-model="productConfig"
+						data-key="{{ parameters.productId }}" data-product-id="{{ parameters.productId }}"
+						data-sku="{{ productPresentation.codeSKU }}"
+						data-redirect-url="{{ parameters.redirectUrl }}"
+						data-designation="{{ productPresentation.designation }}"
+						data-stock-level ="{{ productPresentation.stock.level }}"
+						data-stock-min ="{{ productPresentation.stock.minQuantity }}"
+						data-stock-max ="{{ productPresentation.stock.maxQuantity }}"
+						data-stock-step ="{{ productPresentation.stock.quantityIncrement }}" ></div>
+			</fieldset>
 		</form>
 	</div>
 {% endif %}
-
-<!-- TODO: handle favorites and comparisons -->
-<!--<ul class="list-unstyled">
-	<li>
-		<a href="#TODO:AddToFavorites">Ajouter aux favoris</a>
-	</li>
-	<li>
-		<a href="#TODO:AddToComparisons">Ajouter aux comparaisons</a>
-	</li>
-</ul>-->
