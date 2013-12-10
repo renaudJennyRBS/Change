@@ -13,7 +13,10 @@
 
 	<div class="document-form" rbs-main-column>
 		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Shipping_Mode'), ['ucf']) }}"></page-header>
-		<div class="rbs-document-editor rbs-document-editor-rbs-shipping-mode"></div>
+		<div ng-switch="editMode">
+			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-shipping-mode-translate"></div>
+			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-shipping-mode"></div>
+		</div>
 	</div>
 
 </div>

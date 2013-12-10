@@ -11,6 +11,16 @@
 				label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'title'), ['ucf']) }}"
+			input-class="form-control">
+		</rbs-field-text>
+
+		<rbs-field-rich-text property="description" required="false"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'description'), ['ucf']) }}">
+		</rbs-field-rich-text>
+
 		<rbs-field-picker property="visual" label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'visual'), ['ucf']) }}"
 				accepted-model="Rbs_Media_Image" allow-creation="true" allow-edition="true"
 				selector-title="{{ i18nAttr('m.rbs.payment.admin.connector_select_visual', ['ucf']) }}">

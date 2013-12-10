@@ -49,5 +49,8 @@
 	},
 	"connector_allowedcurrencycodes":{
 		"message":"codes devise autorisés"
+	},
+	"connector_description":{
+		"message":"description"
 	}
 }

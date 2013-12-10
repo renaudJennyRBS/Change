@@ -8,12 +8,15 @@
 	</rbs-workspace-config>
 
 	<div rbs-aside-column>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
 	</div>
 
 	<div class="document-form" rbs-main-column>
 		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Payment_DeferredConnector'), ['ucf']) }}"></page-header>
-		<div class="rbs-document-editor rbs-document-editor-rbs-payment-deferred-connector"></div>
+		<div ng-switch="editMode">
+			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-payment-deferred-connector-translate"></div>
+			<div class="rbs-document-editor rbs-document-editor-rbs-payment-deferred-connector"></div>
+		</div>
 	</div>
 
 </div>
