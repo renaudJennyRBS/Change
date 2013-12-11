@@ -15,7 +15,7 @@
 		"message":"mot de passe"
 	},
 	"password_placeholder":{
-		"message":"abc123"
+		"message":"votre mot de passe"
 	},
 	"remember_me":{
 		"message":"cochez pour rester connecté"

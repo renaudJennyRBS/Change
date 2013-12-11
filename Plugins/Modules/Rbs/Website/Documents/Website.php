@@ -55,6 +55,10 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		{
 			$currentLocalisation->setHttps(true);
 		}
+		else
+		{
+			$currentLocalisation->setHttps(false);
+		}
 		$currentLocalisation->setHostName($url->getHost());
 		$currentLocalisation->setPort($url->getPort());
 		$fullPath = $url->getPath();
