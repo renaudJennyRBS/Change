@@ -71,9 +71,6 @@
   "page_ttl":{
     "message":"cache expiration time (in seconds)"
   },
-  "page_https":{
-    "message":"enable https"
-  },
   "staticpage":{
     "message":"page"
   },

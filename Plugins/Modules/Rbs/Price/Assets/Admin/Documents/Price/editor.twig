@@ -3,7 +3,7 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}"
+		<rbs-field-picker ng-hide="discount || !document.isNew()" property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
 			selector-title="{{ i18nAttr('m.rbs.price.admin.price_sku_picker_title', ['ucf']) }}"
 			allow-edition="true"
@@ -11,19 +11,26 @@
 			required="true"
 			ng-hide="hideSku">
 		</rbs-field-picker>
+		<rbs-field ng-show="discount || !document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}">
+			<p class="form-control-static"><a href="(= document.sku | rbsURL:'' =)">(= document.sku.label =)</a></p>
+		</rbs-field>
 
-		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
+		<rbs-field ng-hide="discount || !document.isNew()" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
 			<select class="form-control" ng-required="true" ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
 				<option value=""> {{ i18n('m.rbs.store.admin.select_webstore', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
+		<rbs-field ng-show="discount || !document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
+			<p class="form-control-static"><a href="(= document.webStore | rbsURL:'' =)">(= document.webStore.label =)</a></p>
+		</rbs-field>
 
-		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
-			<select class="form-control" ng-required="true" ng-model="document.billingArea" ng-disabled="!webStoreId"
+		<rbs-field ng-hide="discount || document.hasJobToUpdateTax" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
+			<select ng-hide="!document.isNew()" class="form-control" ng-required="true" ng-model="document.billingArea" ng-disabled="!webStoreId"
 				rbs-items-collection-params="webStoreId:(=webStoreId=)"
 				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
 				<option value=""> {{ i18n('m.rbs.price.admin.select_billingarea', ['ucf']) }}</option>
 			</select>
+			<p ng-show="!document.isNew()" class="form-control-static"><a href="(= document.billingArea | rbsURL:'' =)">(= document.billingArea.label =)</a></p>
 			<table ng-show="taxInfo" class="table table-striped">
 				<thead>
 				<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
@@ -43,6 +50,29 @@
 				</tbody>
 			</table>
 		</rbs-field>
+		<rbs-field ng-show="discount || document.hasJobToUpdateTax" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
+			<p class="form-control-static"><a href="(= document.billingArea | rbsURL:'' =)">(= document.billingArea.label =)</a></p>
+
+			<table ng-show="taxInfo" class="table table-striped">
+				<thead>
+				<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.price.documents.tax_category', ['ucf']) }}</th>
+				</thead>
+				<tbody>
+				<tr ng-repeat="tax in taxInfo">
+					<td>(=tax.code=)<br/>
+						<small>(=tax.label=)</small>
+					</td>
+					<td>
+						<span ng-repeat="c in tax.categories" ng-if="c.code == document.taxCategories[tax.code]">
+								<p  class="form-control-static">(= c.formattedRate =) ( (= c.code =) )</p>
+								<p ng-show="document.hasJobToUpdateTax || document.basePrice.hasJobToUpdateTax" class="form-control-static icon-warning-sign"> {{ i18n('m.rbs.price.admin.tax_update_in_progress', ['ucf']) }}</p>
+						</span>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</rbs-field>
 
 		<hr/>
 
@@ -56,17 +86,17 @@
 				data-price-with-tax="billingArea.boEditWithTax"></rbs-price-input>
 		</rbs-field>
 
-		<hr/>
+		<span ng-show="discount">
+			<hr/>
 
-		<rbs-field-picker property="basePrice" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}"
-				accepted-model="Rbs_Price_Price" picker="model"
-				selector-title="{{ i18nAttr('m.rbs.price.admin.price_select_baseprice', ['ucf']) }}"
-				allow-edition="true" allow-creation="true">
-		</rbs-field-picker>
+			<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}">
+				<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'' =)">(= document.basePrice.formattedBoValue =)</a></p>
+			</rbs-field>
 
-		<rbs-field-text ng-show="document.basePrice" property="discountDetail"
-			label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'discountDetail'), ['ucf']) }}">
-		</rbs-field-text>
+			<rbs-field-text property="discountDetail"
+				label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'discountDetail'), ['ucf']) }}">
+			</rbs-field-text>
+		</span>
 
 		<hr/>
 		<span class="help-block">

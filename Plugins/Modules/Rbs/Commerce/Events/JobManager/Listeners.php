@@ -47,6 +47,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Catalog\Job\AxesConfiguration())->execute($event);
 		};
 		$events->attach('process_Rbs_Catalog_AxesConfiguration', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Price\Job\UpdateTax())->execute($event);
+		};
+		$events->attach('process_Rbs_Price_UpdateTax', $callBack, 5);
 	}
 
 	/**

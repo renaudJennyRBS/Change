@@ -78,6 +78,6 @@
 		"message":"prix"
 	},
 	"price_baseprice":{
-		"message":"prix barré"
+		"message":"prix de référence"
 	}
 }

@@ -54,7 +54,7 @@
 		"message":"l\\'élément sélectionné"
 	},
 	"selected_elements":{
-		"message":"les $$ éléments sélectionnés"
+		"message":"les $COUNT$ éléments sélectionnés"
 	},
 	"select_elements_to_add":{
 		"message":"Vous devez sélectionner des éléments dans la liste avant de pouvoir les ajouter."

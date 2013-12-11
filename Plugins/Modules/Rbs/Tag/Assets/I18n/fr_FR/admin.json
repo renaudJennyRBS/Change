@@ -8,6 +8,9 @@
 	"tags":{
 		"message":"étiquettes"
 	},
+	"all_tags":{
+		"message":"toutes les étiquettes"
+	},
 	"show_hide_all_tags":{
 		"message":"afficher\/masquer toutes les étiquettes"
 	},

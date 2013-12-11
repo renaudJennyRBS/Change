@@ -15,7 +15,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 	 */
 	public function getLabel()
 	{
-		if ($this->getBillingArea())
+		if ($this->getBillingArea() &&  $this->getBillingArea()->getCurrencyCode())
 		{
 			$nf = new \NumberFormatter($this->getDocumentManager()->getLCID(), \NumberFormatter::CURRENCY);
 			return $nf->formatCurrency($this->getBoValue(), $this->getBillingArea()->getCurrencyCode());
@@ -148,6 +148,18 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		{
 			$this->setStartActivation(new \DateTime());
 		}
+
+		// Check if property taxCategories is modified and price has associated discount prices
+		if ($this->isPropertyModified('taxCategories') && $this->countPricesBasedOn() > 0)
+		{
+			$arguments = ['basePriceId' => $this->getId()];
+			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Price_UpdateTax', $arguments);
+
+			// Save meta on price
+			$this->setMeta('Job_UpdateTax', $job->getId());
+			$this->saveMetas();
+		}
+
 	}
 
 	/**
@@ -203,7 +215,46 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 			{
 				$restResult->setProperty('formattedBoBaseValue', null);
 			}
+
+			if ($this->getMeta('Job_UpdateTax') !== null)
+			{
+				$restResult->setProperty('hasJobToUpdateTax', true);
+			}
+
+			if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+			{
+				$extraColumn = $event->getParam('extraColumn');
+				if (in_array('basePrice', $extraColumn))
+				{
+					if ($price->getBasePrice() !== null)
+					{
+						$restResult->setProperty('basePrice', ['id' => $price->getBasePrice()->getId(), 'model' => $price->getDocumentModelName()]);
+					}
+				}
+			}
 		}
+	}
+
+	/**
+	 * Return the number of discount prices based on current price
+	 * @return int
+	 */
+	public function countPricesBasedOn()
+	{
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_Price');
+		$query->andPredicates($query->eq('basePrice', $this));
+		return $query->getCountDocuments();
+	}
+
+	/**
+	 * Return the lists of discount prices based on current price
+	 * @return \Change\Documents\DocumentCollection
+	 */
+	public function getPricesBasedOn()
+	{
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Price_Price');
+		$query->andPredicates($query->eq('basePrice', $this));
+		return $query->getDocuments();
 	}
 
 }
