@@ -13,6 +13,13 @@
 
 			link : function (scope, elm, attrs, editorCtrl)
 			{
+				scope.onLoad = function(){
+					if (angular.isArray(scope.document.taxCategories) || !angular.isObject(scope.document.taxCategories))
+					{
+						scope.document.taxCategories = {};
+					}
+				};
+
 				scope.onReady = function(){
 
 					if (!scope.document.product && $routeParams.productId)
@@ -22,17 +29,29 @@
 						});
 					}
 
-					if (scope.document.isNew() && scope.parentDocument && scope.parentDocument.model == 'Rbs_Price_Price')
+					scope.discount = false;
+
+					if (scope.document.isNew() && $routeParams.basePriceId)
 					{
-						scope.document.sku = scope.parentDocument.sku;
-						scope.document.webStore = scope.parentDocument.webStore;
-						scope.document.billingArea = scope.parentDocument.billingArea;
-						scope.document.taxCategories = scope.parentDocument.taxCategories;
+						REST.resource('Rbs_Price_Price', $routeParams.basePriceId).then(function(price){
+
+							scope.document.sku = price.sku;
+							scope.document.webStore = price.webStore;
+							scope.document.billingArea = price.billingArea;
+							scope.document.taxCategories = price.taxCategories;
+							scope.document.basePrice = price;
+							scope.discount = true;
+
+							REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:price.billingArea.id}).then(function(res){
+								scope.taxInfo = res;
+							});
+
+						});
 					}
 
-					if (!scope.document.taxCategories)
+					if (scope.document.basePrice)
 					{
-						scope.document.taxCategories = {};
+						scope.discount = true;
 					}
 
 					if (scope.document.webStore)
@@ -103,6 +122,11 @@
 				scope.$watch('document.billingArea', function(newValue, oldValue){
 					if (newValue)
 					{
+						if (!scope.document.taxCategories)
+						{
+							scope.document.taxCategories = {};
+						}
+
 						var billingAreaId = (angular.isObject(newValue)) ? newValue.id : newValue;
 						REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(res){
 							scope.billingArea = res;

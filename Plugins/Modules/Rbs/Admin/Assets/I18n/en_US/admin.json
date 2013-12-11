@@ -54,7 +54,7 @@
     "message":"the selected item"
   },
   "selected_elements":{
-    "message":"the $$ selected items"
+    "message":"the $COUNT$ selected items"
   },
   "select_elements_to_add":{
     "message":"You must select items in the list before you can add them."

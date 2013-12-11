@@ -20,6 +20,9 @@
 			$delegate.model('Rbs_Price')
 				.route('home', 'Rbs/Price', { 'redirectTo': 'Rbs/Price/Price/'});
 
+			$delegate.model('Rbs_Price_Price')
+				.route('discount', 'Rbs/Price/Discount/new', "Document/Rbs/Price/Price/form.twig");
+
 			$delegate.routesForModels([
 				'Rbs_Price_Tax',
 				'Rbs_Price_Price',

@@ -144,10 +144,10 @@
 		"message":"La configuration des variantes n'est pas accessible pour le moment. Merci de patienter quelques minutes."
 	},
 	"productlist_productsortorder_help":{
-		"message":"Ordre de tri des produits qui ne sont pas mis en avant."
+		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."
 	},
 	"productlist_productsortdirection_help":{
-		"message":"Sens de tri des produits qui ne sont pas mis en avant."
+		"message":"Sens de tri des produits"
 	},
 	"productlist_products_picker_title":{
 		"message":"sélectionner les produits à ajouter à la catégorie"
@@ -382,6 +382,9 @@
 	},
 	"price_list_loading":{
 		"message":"Chargement de la liste des prix..."
+	},
+	"price_create_discount":{
+		"message":"Créer une promotion"
 	},
 	"condition_list_loading":{
 		"message":"Chargement de la liste des conditions..."

@@ -21,10 +21,11 @@
 		"message":"Créer un nouveau SKU par variante"
 	},
 	"productlist_productsortorder":{
-		"message":"ordre des produits"
+		"message":"propriété pour le tri",
+		"description":"Use on product list editor to define the property to sort the product in the list"
 	},
 	"productlist_productsortdirection":{
-		"message":"sens du tri des produits"
+		"message":"sens de tri"
 	},
 	"productlist_products":{
 		"message":"produits"

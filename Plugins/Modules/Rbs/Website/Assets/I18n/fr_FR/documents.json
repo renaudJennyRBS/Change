@@ -71,9 +71,6 @@
 	"page_ttl":{
 		"message":"durée du cache"
 	},
-	"page_https":{
-		"message":"activer https"
-	},
 	"staticpage":{
 		"message":"page de contenu"
 	},

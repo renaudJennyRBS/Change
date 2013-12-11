@@ -303,7 +303,7 @@
 		"message":"fonctions"
 	},
 	"functional_page_editor_help":{
-		"message":"Cette page est une <strong>page fonctionnelle<\/strong> : elle permet d'afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits.<br\/>Pour configurer les fonctions de cette page, rendez-vous dans la section <em>Fonctions<\/em> du menu à gauche."
+		"message":"Cette page est une <strong>page fonctionnelle<\/strong> : elle permet d'afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits.<br\/>Pour configurer les fonctions de cette page, après enregistrement, rendez-vous dans la section <em>Fonctions<\/em> du menu à gauche."
 	},
 	"functional_page_list_help":{
 		"message":"Les <strong>pages fonctionnelles<\/strong> sont des pages destinées à afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits."

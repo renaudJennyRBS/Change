@@ -115,5 +115,11 @@
 	},
 	"end_of_month":{
 		"message":"fin du mois"
+	},
+	"tax_update_in_progress":{
+		"message":"mise à jour des taxes en cours"
+	},
+	"tax_update_in_progress_help":{
+		"message":"Une mise à jour des taxes du prix est en cours. La modification sera de nouveau accessible après application."
 	}
 }

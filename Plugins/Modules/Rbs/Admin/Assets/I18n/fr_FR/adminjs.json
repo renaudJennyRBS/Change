@@ -357,6 +357,6 @@
 		"message":"vous devez vous reconnecter avec votre nom d'utilisateur et votre mot de passe. (Code de l'erreur : 72002)"
 	},
 	"error_on_delete":{
-		"message":"une erreur s'est produite pendant le suppression de l'élément"
+		"message":"une erreur s'est produite pendant la suppression de l'élément"
 	}
 }
