@@ -76,14 +76,19 @@
 
 				function makeOrderLine (number, product, quantity)
 				{
+					var item = {
+						codeSKU : product.boInfo.sku.code,
+						quantity : quantity || 1,
+						priceValue : null
+					};
+					if(angular.isObject(product.boInfo.price)) {
+						item.priceValue = product.boInfo.price.boValue;
+					}
+
 					return {
 						designation : product.label,
 						quantity : quantity || 1,
-						items : [{
-							codeSKU : product.boInfo.sku.code,
-							quantity : quantity || 1,
-							priceValue : product.boInfo.price.boValue
-						}],
+						items : [item],
 						options : {
 							lineNumber : number,
 							visual : product.adminthumbnail

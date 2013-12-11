@@ -75,45 +75,6 @@
 			</div>
 		</div>
 
-
-		<div class="row">
-			<div class="col-md-4 form-vertical">
-				<div class="panel" ng-class="{'in_progress':'panel-info', 'finalized':'panel-success', 'canceled':'panel-danger', 'initiated':'panel-default'}[document.processingStatus]">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'processingStatus'), ['ucf']) }}</h3>
-					</div>
-					<div class="panel-body">
-						<select class="form-control" ng-model="document.processingStatus" rbs-items-from-collection="Rbs_Order_Collection_ProcessingStatus">
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-4 form-vertical">
-				<div class="panel" ng-class="{'payed':'panel-success', 'partially_payed':'panel-warning', 'canceled':'panel-danger', 'unconfirmed':'panel-warning', 'initiated':'panel-default'}[document.paymentStatus]">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-money"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'paymentStatus'), ['ucf']) }}</h3>
-					</div>
-					<div class="panel-body">
-						<select class="form-control" ng-model="document.paymentStatus" rbs-items-from-collection="Rbs_Order_Collection_PaymentStatus">
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-4 form-vertical">
-				<div class="panel" ng-class="{'prepared':'panel-info', 'partially_shipped':'panel-warning', 'shipped':'panel-success', 'delivered':'panel-success', 'partially_delivered':'panel-success', 'initiated':'panel-default'}[document.shippingStatus]">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-truck"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'shippingStatus'), ['ucf']) }}</h3>
-					</div>
-					<div class="panel-body">
-						<select class="form-control" ng-model="document.shippingStatus" rbs-items-from-collection="Rbs_Order_Collection_ShippingStatus">
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.linesData.length > 0]">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.linesData.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
@@ -150,16 +111,18 @@
 
 						<div ng-show="document.billingAreaId && document.taxZone">
 							<p>
+								<div>
+								<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
 								<div class="document-picker-multiple"
 							         accepted-model="Rbs_Catalog_Product"
 							         allow-edition="false" allow-creation="false" allow-in-place-selection="true"
 							         selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
 						         </div>
-							</p>
-							<p>
 								<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
 									<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
 								</button>
+								</rbs-field>
+								</div>
 							</p>
 						</div>
 						<p ng-hide="document.billingAreaId && document.taxZone">
