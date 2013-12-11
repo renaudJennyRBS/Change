@@ -490,6 +490,25 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param string $moduleName
+	 * @param string $pathName
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function renderModuleTemplateFile($moduleName, $pathName, array $attributes)
+	{
+		$overridePath = $this->getApplication()->getWorkspace()->appPath('AdminOverrides');
+		$loader = new \Rbs\Admin\Presentation\Twig\Loader($overridePath, $this->getPluginManager());
+		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
+		$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getI18nManager()));
+		foreach ($this->getExtensions() as $extension)
+		{
+			$twig->addExtension($extension);
+		}
+		return $twig->render('@'.$moduleName.'/'.$pathName, $attributes);
+	}
+
+	/**
 	 * @return \Assetic\AssetManager
 	 */
 	public function getJsAssetManager()

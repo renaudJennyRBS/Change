@@ -7,11 +7,11 @@ namespace Change\Presentation\Templates;
  */
 class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 {
-
 	use \Change\Events\EventsCapableTrait;
 
 	const DEFAULT_IDENTIFIER = 'TemplateManager';
 	const EVENT_REGISTER_EXTENSIONS = 'registerExtensions';
+
 	/**
 	 * @var string
 	 */
@@ -68,11 +68,17 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->themeManager;
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function getEventManagerIdentifier()
 	{
 		return static::DEFAULT_IDENTIFIER;
 	}
 
+	/**
+	 * @return string[]
+	 */
 	protected function getListenerAggregateClassNames()
 	{
 		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/TemplateManager');
@@ -97,6 +103,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 			$extensions[] = new Twig\Extension($event->getApplicationServices()->getI18nManager());
 		}
 	}
+
 	/**
 	 * @return \Twig_ExtensionInterface[]
 	 */

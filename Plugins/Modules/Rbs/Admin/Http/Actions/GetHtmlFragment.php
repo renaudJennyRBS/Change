@@ -21,14 +21,13 @@ class GetHtmlFragment
 		$filePath = $this->getFilePath($resourcePath, $event->getApplicationServices()->getPluginManager());
 		if ($filePath !== null)
 		{
-
 			$fileResource = new \Change\Presentation\Themes\FileResource($filePath);
 			if ($fileResource->isValid())
 			{
 				$md = $fileResource->getModificationDate();
 				$result->setHeaderLastModified($md);
 				$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
-				if ($ifModifiedSince && $ifModifiedSince == $md)
+				if (!$event->getApplication()->inDevelopmentMode() && $ifModifiedSince && $ifModifiedSince == $md)
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_304);
 					$result->setRenderer(function ()
@@ -44,9 +43,10 @@ class GetHtmlFragment
 					$manager = $event->getParam('manager');
 
 					$attributes = array('query' => $event->getRequest()->getQuery()->toArray());
-					$renderer = function () use ($filePath, $manager, $attributes)
+					list($moduleName, $path) = $this->explodePath($resourcePath);
+					$renderer = function () use ($moduleName, $path, $manager, $attributes)
 					{
-						return $manager->renderTemplateFile($filePath, $attributes);
+						return $manager->renderModuleTemplateFile($moduleName, $path, $attributes);
 					};
 					$result->setRenderer($renderer);
 				}
@@ -91,5 +91,21 @@ class GetHtmlFragment
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param string $resourcePath
+	 * @return array
+	 */
+	protected function explodePath($resourcePath)
+	{
+		$parts = explode('/', $resourcePath);
+		if (count($parts) > 2)
+		{
+			$vendor = array_shift($parts);
+			$shortModuleName = array_shift($parts);
+			return array($vendor . '_' . $shortModuleName, implode('/', $parts));
+		}
+		return array(null, null);
 	}
 }
