@@ -52,7 +52,11 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('product' => $product, 'csParameters' => $csParameters));
 		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, $this, $args);
-		return $args['csProducts'];
+		if (isset($args['csProducts']))
+		{
+			return $args['csProducts'];
+		}
+		return array();
 	}
 
 	/**
@@ -66,7 +70,11 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('cart' => $cart, 'csParameters' => $csParameters));
 		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_CART, $this, $args);
-		return $args['csProducts'];
+		if (isset($args['csProducts']))
+		{
+			return $args['csProducts'];
+		}
+		return array();
 	}
 
 	/**
