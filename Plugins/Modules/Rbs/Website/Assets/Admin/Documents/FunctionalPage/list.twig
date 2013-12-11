@@ -21,7 +21,7 @@
 		<search-filters model="Rbs_Website_FunctionalPage" filter-query="query" text-search="textSearch"></search-filters>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Website_FunctionalPage' | documentURL:'new' =)">{{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
+			<a href ng-href="(= 'Rbs_Website_FunctionalPage' | rbsURL:'new' =)">{{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsWebsiteFunctionalPage" model="Rbs_Website_FunctionalPage" filter-query="query"
@@ -41,7 +41,7 @@
 					</span>
 				</div>
 				<div ng-if="! doc.allowedFunctionsCode">
-					<a href ng-href="(= doc|documentURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.configure_functions', ['ucf']) }}</a>
+					<a href ng-href="(= doc|rbsURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.configure_functions', ['ucf']) }}</a>
 				</div>
 			</column>
 		</rbs-document-list>

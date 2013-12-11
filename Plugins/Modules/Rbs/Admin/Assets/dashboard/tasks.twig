@@ -24,7 +24,7 @@
 		<span class="label" ng-if="doc.status=='EN'">{{ i18n('m.rbs.admin.admin.dashboard_task_to_execute') }}</span>
 	</column>
 	<column name="document">
-		<a href ng-href="(= doc.document | documentURL =)">(= doc.document.label =)</a>
+		<a href ng-href="(= doc.document | rbsURL =)">(= doc.document.label =)</a>
 		<i class="icon-rbs-navigate-to"></i>
 	</column>
 </rbs-document-list>

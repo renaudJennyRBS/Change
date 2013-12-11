@@ -28,13 +28,13 @@
 
 		<div ng-show="selectedWebsite">
 			<div class="add-elements-bar">
-				<a href ng-href="(= 'Rbs_Website_Menu' | documentURLParams:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
+				<a href ng-href="(= 'Rbs_Website_Menu' | rbsURL:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
 			</div>
 
 			<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
 				load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
 				<column name="label" primary="true">
-					<strong><a href ng-href="(= doc | documentURL =)">(= doc.label =)</a></strong>
+					<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
 				</column>
 				<column name="items">
 					<span ng-repeat="item in doc.items">

@@ -15,7 +15,7 @@
 		<page-header title="{{ i18nAttr('m.rbs.event.admin.event_list', ['ucf']) }}"></page-header>
 		<search-filters model="Rbs_Event_Event" filter-query="query" text-search="textSearch"></search-filters>
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Event_Event' | documentURL:'new' =)">
+			<a href ng-href="(= 'Rbs_Event_Event' | rbsURL:'new' =)">
 				{{ i18n('m.rbs.event.admin.event_create', ['ucf']) }}
 			</a>
 		</div>

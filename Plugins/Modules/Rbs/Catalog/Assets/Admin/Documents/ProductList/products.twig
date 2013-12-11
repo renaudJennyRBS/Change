@@ -24,7 +24,7 @@
 		</div>
 
 		<div ng-if="List.isSynchronized">
-			<p>{{ i18n(propertyKey('Rbs_Catalog_SectionProductList', 'synchronizedSection'), ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | documentURL =)">(= productList.synchronizedSection.label =)</a></p>
+			<p>{{ i18n(propertyKey('Rbs_Catalog_SectionProductList', 'synchronizedSection'), ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | rbsURL =)">(= productList.synchronizedSection.label =)</a></p>
 			<p>{{ i18n('m.rbs.catalog.admin.sectionproductlist_synchronizedsection_help', ['ucf']) }}</p>
 		</div>
 
@@ -32,7 +32,7 @@
 			{{ i18n(propertyKey('Rbs_Catalog_ProductList', 'productSortOrder'), ['ucf', 'lab']) }}
 			(= List.sortOrders[productList.productSortOrder].label =)
 			(= List.sortDirections[productList.productSortDirection].label =)
-			<br/><a href="(= productList | documentURL =)">{{ i18n('m.rbs.catalog.admin.productlist_edit_properties', ['ucf']) }}</a>
+			<br/><a href="(= productList | rbsURL =)">{{ i18n('m.rbs.catalog.admin.productlist_edit_properties', ['ucf']) }}</a>
 		</p>
 
 
@@ -77,7 +77,7 @@
 			use-properties="title">
 			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_productvisual', ['ucf']) }}"></column>
 			<column name="productLabel" label="{{ i18nAttr('m.rbs.catalog.documents.product_label', ['ucf']) }}" primary="true">
-				<strong><a href ng-href="(= doc | documentURL =)">(= doc.product.label =)</a></strong>
+				<strong><a href ng-href="(= doc | rbsURL =)">(= doc.product.label =)</a></strong>
 			</column>
 			<column name="priority" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_sort_order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">
@@ -105,14 +105,14 @@
 
 			<quick-actions>
 				[action edit]
-				|| <a href="(= doc.product | documentURL =)">{{ i18nAttr('m.rbs.catalog.admin.productlist_edit_product', ['ucf']) }}</a>
+				|| <a href="(= doc.product | rbsURL =)">{{ i18nAttr('m.rbs.catalog.admin.productlist_edit_product', ['ucf']) }}</a>
 				|| [action Rbs_Catalog_RemoveProductsFromProductList]
 			</quick-actions>
 
 			<grid-item>
 				<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
 				<div class="caption">
-					<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+					<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
 				</div>
 			</grid-item>
 		</rbs-document-list>

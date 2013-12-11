@@ -94,7 +94,7 @@
 								i18n.trans('m.rbs.admin.adminjs.edit') +
 							'</a>';
 				} else {
-					return	'<a href ng-href="(= doc | documentURL =)">' +
+					return	'<a href ng-href="(= doc | rbsURL =)">' +
 								i18n.trans('m.rbs.admin.adminjs.edit') +
 							'</a>';
 				}
@@ -339,7 +339,7 @@
 
 				if (column.name === 'navigation')
 				{
-					column.content = '<a ng-if="doc.hasUrl(\'tree\')" href ng-href="(= doc|documentURL:\'tree\'=)"><i class="icon-circle-arrow-right icon-large"></i></a>';
+					column.content = '<a ng-if="doc.hasUrl(\'tree\')" href ng-href="(= doc|rbsURL:\'tree\'=)"><i class="icon-circle-arrow-right icon-large"></i></a>';
 					column.width = "40px";
 					column.label = "Nav."; // TODO
 					column.align = 'center';
@@ -453,7 +453,7 @@
 						if (tAttrs.cascadeEdition) {
 							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
 						} else {
-							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | documentURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | rbsURL =)"><strong>' + column.content + '</strong></a></div></td>');
 						}
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');
