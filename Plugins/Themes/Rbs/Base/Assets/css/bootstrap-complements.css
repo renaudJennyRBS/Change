@@ -43,6 +43,11 @@
 	font-size: 85%;
 }
 
+/* No bottom margin */
+.no-bottom-margin {
+	margin-bottom: 0;
+}
+
 /* Small complementary text in dt */
 .dl-horizontal dt small,
 .dl-horizontal dt .small {
