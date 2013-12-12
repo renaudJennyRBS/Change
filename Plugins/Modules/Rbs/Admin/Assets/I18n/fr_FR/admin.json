@@ -1044,5 +1044,8 @@
 	"drag_block": {
 		"message":"déplacer le bloc par glisser/déposer",
 		"description":"Title of the button to drag & drop a richtext blocks in the page editor."
+	},
+	"structure_editor_new_block": {
+		"message":"nouveau bloc"
 	}
 }
