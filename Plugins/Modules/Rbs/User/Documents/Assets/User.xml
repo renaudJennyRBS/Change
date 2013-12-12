@@ -18,7 +18,7 @@
 
 		<property name="passwordHash" type="String" indexed="none" />
 
-		<property name="hashMethod" type="String" indexed="none">
+		<property name="hashMethod" type="String" indexed="none" default-value="bcrypt">
 			<dboptions length="20" />
 		</property>
 

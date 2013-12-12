@@ -9,7 +9,10 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
 	{
-		static::initDocumentsDb();
+		$appServices = static::initDocumentsDb();
+		$schema = new \Rbs\User\Setup\Schema($appServices->getDbProvider()->getSchemaManager());
+		$schema->generate();
+		$appServices->getDbProvider()->closeConnection();
 	}
 
 	public static function tearDownAfterClass()
@@ -21,7 +24,8 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$requestParams = new \Zend\Stdlib\Parameters([
 			'email' => 'test@test.com',
-			'password' => 'abcd123'
+			'password' => 'abcd123',
+			'confirmpassword' => 'abcd123'
 		]);
 
 		$website = $this->getNewWebsite();
@@ -54,8 +58,8 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		//there is only one request at this step.
 		$this->assertCount(1, $accountRequests, 'there is more thant one account request in database');
 		$accountRequest = $accountRequests[0];
-		$this->assertEquals((new \DateTime())->add(new \DateInterval('PT24H'))->getTimestamp(), $accountRequest['validity_date']->getTimestamp(),
-			'validity date must be 24 hours after the request (with 10s delta)', 10);
+		$this->assertEquals((new \DateTime())->getTimestamp(), $accountRequest['request_date']->getTimestamp(),
+			'request date must be now (with 10s delta)', 10);
 		//check if the job has been created
 		$jobs = $jobManager->getJobIds();
 		$this->assertCount(1, $jobs);
@@ -87,8 +91,8 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('request_id'), $fb->column('email'), $fb->column('validity_date'));
-		$qb->from($fb->table($fb->getSqlMapping()->getUserAccountRequestTable()));
+		$qb->select($fb->column('request_id'), $fb->column('email'), $fb->column('request_date'));
+		$qb->from($fb->table('rbs_user_account_request'));
 		$qb->where($fb->logicAnd(
 			$fb->eq($fb->column('email'), $fb->parameter('email'))
 		));
@@ -98,7 +102,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$sq->bindParameter('email', $email);
 		$sq->bindParameter('now', (new \DateTime()));
 		return $sq->getResults($sq->getRowsConverter()
-			->addIntCol('request_id')->addDtCol('validity_date')->addStrCol('email'));
+			->addIntCol('request_id')->addDtCol('request_date')->addStrCol('email'));
 	}
 
 	/**

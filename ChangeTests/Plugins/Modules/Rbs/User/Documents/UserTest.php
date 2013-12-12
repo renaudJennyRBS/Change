@@ -24,10 +24,9 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testOnCreate()
 	{
 		$user = $this->getNewUser(false);
-		$this->assertNull($user->getHashMethod());
-		$user = $this->getNewUser(true);
 		$this->assertNotNull($user->getHashMethod());
 		$this->assertEquals('bcrypt', $user->getHashMethod());
+		$user = $this->getNewUser(true);
 		$this->assertNotNull($user->getPasswordHash());
 		$bcryptHash = $user->getPasswordHash();
 		$this->assertNotEquals('abcd123', $bcryptHash);

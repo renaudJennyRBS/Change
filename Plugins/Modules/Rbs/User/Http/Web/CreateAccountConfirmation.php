@@ -20,7 +20,7 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			$data = $event->getRequest()->getQuery()->toArray();
 			$urlManager = $event->getUrlManager();
 			$urlManager->setAbsoluteUrl(true);
-			$redirectURL = $urlManager->getByFunction('Rbs_User_AccountSettings', null, ['context' => 'accountSuccess']);
+			$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', null, ['context' => 'create']);
 			$event->setParam('redirectLocation', $redirectURL);
 			$event->setParam('errorLocation', $redirectURL);
 
@@ -30,25 +30,17 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			$params = isset($requestParameters['params']) ? $requestParameters['params'] : null;
 			if ($params && count($requestParameters['errors']) === 0)
 			{
-				$user = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_User_User');
-				/* @var $user \Rbs\User\Documents\User */
-				$user->setEmail($email);
-				//TODO security issue?
-				$user->setPassword($params['password']);
-				$groupIds = isset($params['groupIds']) && $params['groupIds'] ? json_decode($params['groupIds']) : null;
-				if (is_array($groupIds))
+				$user = $this->getNewUserFromParams($email, $params, $event->getApplicationServices()->getDocumentManager());
+				//TODO: RBSChange/evolutions#70 : allow groups configuration in backoffice
+				//at the moment, just give web access to the user by put him in "web" realm group.
+				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_User_Group');
+				$dqb->andPredicates($dqb->eq('realm', 'web'));
+				$group = $dqb->getFirstDocument();
+				if (!$group)
 				{
-					$groups = [];
-					foreach ($groupIds as $groupId)
-					{
-						$group = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($groupId);
-						if ($group instanceof \Rbs\User\Documents\Group)
-						{
-							$groups[] = $group;
-						}
-					}
-					$user->setGroups($groups);
+					throw new \Exception('Group with realm "web" doesn\'t exist', 999999);
 				}
+				$user->getGroups()->add($group);
 
 				$tm = $event->getApplicationServices()->getTransactionManager();
 				try
@@ -103,17 +95,19 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->column('config_parameters'));
-			$qb->from($fb->table($fb->getSqlMapping()->getUserAccountRequestTable()));
+			$qb->from($fb->table('rbs_user_account_request'));
 			$qb->where($fb->logicAnd(
 				$fb->eq($fb->column('request_id'), $fb->integerParameter('requestId')),
 				$fb->eq($fb->column('email'), $fb->parameter('email')),
-				$fb->gt($fb->column('validity_date'), $fb->dateTimeParameter('now'))
+				$fb->gt($fb->column('request_date'), $fb->dateTimeParameter('validityDate'))
 			));
 			$sq = $qb->query();
 
 			$sq->bindParameter('requestId', $requestId);
 			$sq->bindParameter('email', $email);
-			$sq->bindParameter('now', (new \DateTime()));
+			//check the validity of the request by comparing date (delta of 24h after the request)
+			$now = new \DateTime();
+			$sq->bindParameter('validityDate', $now->sub(new \DateInterval('PT24H')));
 			$requestParameters = $sq->getFirstResult($sq->getRowsConverter()->addTxtCol('config_parameters'));
 
 			if (!$requestParameters)
@@ -134,9 +128,9 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 				}
 				else
 				{
-					if (!isset($params['password']) || !$params['password'])
+					if (!isset($params['passwordHash']) || !$params['passwordHash'])
 					{
-						$result['errors'][] = $i18nManager->trans('m.rbs.user.front.error_empty_password', ['ucf']);
+						$result['errors'][] = $i18nManager->trans('m.rbs.user.front.error_empty_password_hash', ['ucf']);
 					}
 					else
 					{
@@ -146,5 +140,21 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * @param string $email
+	 * @param array $params
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return \Rbs\User\Documents\User
+	 */
+	protected function getNewUserFromParams($email, $params, $documentManager)
+	{
+		$user = $documentManager->getNewDocumentInstanceByModelName('Rbs_User_User');
+		/* @var $user \Rbs\User\Documents\User */
+		$user->setEmail($email);
+		$user->setHashMethod($params['hashMethod']);
+		$user->setPasswordHash($params['passwordHash']);
+		return $user;
 	}
 }

@@ -123,16 +123,15 @@
 		"message":"creation d'un compte utilisateur",
 		"description":"account creation block name (backoffice use)"
 	},
-	"create_account_groups":{
-		"message":"placer l'utilisateur dans ces groupes",
-		"description":"for account creation block (backoffice use): select groups which user will be automatically added after validate the account creation"
+	"create_account_hash_method":{
+		"message":"méthode de hash pour le mot de passe"
 	},
 	"account_settings":{
 		"message":"configuration du compte",
 		"description":"account settings block name (backoffice use)"
 	},
-	"function_account_settings":{
-		"message":"configuration du compte utilisateur"
+	"function_create_account":{
+		"message":"création du compte utilisateur"
 	},
 	"function_error_401":{
 		"message":"autorisation nécessaire"

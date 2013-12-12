@@ -1,22 +1,65 @@
-<form method="post" id="CreateAccount" action="Action/Rbs/User/CreateAccountRequest">
-	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_User_AccountSettings', null, {'context': 'accountRequest'}) }}" />
-	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-	<input type="hidden" name="groupIds" value="{{ groupIds }}" />
-	<fieldset>
-		<legend>{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</legend>
+{% if authenticated %}
+	{# display nothing #}
+{% elseif context == 'success' %}
+	<div class="text-center">
+		<h1>{{ i18n('m.rbs.user.front.account_creation_request_title', ['ucf']) }}</h1>
+		<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_request_success', ['ucf']) }}</p>
+		<p>{{ i18n('m.rbs.user.front.account_creation_request_description', ['ucf']) }}</p>
+	</div>
+{% elseif context == 'create' %}
+	<div class="text-center">
+		<h1>{{ i18n('m.rbs.user.front.account_creation_title', ['ucf']) }}</h1>
 		{% for error in errors %}
 			<p class="text-danger">{{ error }}</p>
+		{% else %}
+			<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_success', ['ucf']) }}</p>
+			<p>{{ i18n('m.rbs.user.front.account_creation_description', ['ucf']) }}</p>
+			<a href="{{ functionURL('Error_401') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
 		{% endfor %}
-		<div class="form-group">
-			<label for="rbs-user-create-account-email">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
-			<input id="rbs-user-create-account-email" type="text" name="email" class="form-control"
-				placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
-		</div>
-		<div class="form-group">
-			<label for="rbs-user-create-account-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
-			<input id="rbs-user-create-account-password" type="password" name="password" class="form-control"
-				placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-		</div>
-		<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.user.front.submit_account_creation', ['ucf']) }}</button>
-	</fieldset>
-</form>
+	</div>
+{% else %}
+	<form method="post" class="form-horizontal" action="Action/Rbs/User/CreateAccountRequest">
+		<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_User_CreateAccount', null, {'context': 'success'}) }}" />
+		<input type="hidden" name="errorLocation" value="{{ functionURL('Rbs_User_CreateAccount') }}" />
+		<fieldset>
+			<legend>{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</legend>
+			{% for error in errors %}
+				<p class="text-danger">{{ error }}</p>
+			{% endfor %}
+			<div class="form-group">
+				<label for="rbs-user-create-account-email" class="col-sm-4 col-md-3">
+					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+					{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
+				<div class="col-sm-8 col-md-9">
+					<input id="rbs-user-create-account-email" type="text" name="email" class="form-control"
+						placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="rbs-user-create-account-password" class="col-sm-4 col-md-3">
+					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+					{{ i18n('m.rbs.user.front.password', ['ucf']) }}
+				</label>
+				<div class="col-sm-8 col-md-9">
+					<input id="rbs-user-create-account-password" type="password" name="password" class="form-control"
+						placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="rbs-user-create-account-confirm-password" class="col-sm-4 col-md-3">
+					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+					{{ i18n('m.rbs.user.front.confirm_password', ['ucf']) }}
+				</label>
+				<div class="col-sm-8 col-md-9">
+					<input id="rbs-user-create-account-confirm-password" type="password" name="confirmpassword" class="form-control"
+						placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
+					<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.user.front.submit_account_creation', ['ucf']) }}</button>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+{% endif %}
