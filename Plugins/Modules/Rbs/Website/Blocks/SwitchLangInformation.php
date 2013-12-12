@@ -13,6 +13,5 @@ class SwitchLangInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.switchlang', $ucf));
-		$this->setFunctions(array('Rbs_Website_Website_SwitchLang' => $i18nManager->trans('m.rbs.website.admin.switchlang', $ucf)));
 	}
 }

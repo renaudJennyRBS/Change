@@ -541,7 +541,7 @@
 				'filterQuery' : '=',
 				'loadQuery' : '=',
 				'onPreview' : '&',
-				'onReload' : '&',
+				'onReload' : '=',
 				'cascadeEdition' : '@',
 				'collectionUrl' : '@',
 				'externalCollection' : '=collection',
@@ -1246,7 +1246,7 @@
 					function reload ()
 					{
 						if (useExternalCollection) {
-							scope.onReload();
+							scope.onReload(scope.sort.column, scope.isSortDescending());
 							return;
 						}
 
