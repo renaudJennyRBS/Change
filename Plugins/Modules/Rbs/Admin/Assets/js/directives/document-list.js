@@ -197,9 +197,9 @@
 					selection   : action.selection,
 					loading     : action.loading === 'true',
 
-					execute : ['$extend', '$docs', function ($extend, $docs) {
+					execute : ['$extend', '$docs', '$embedDialog', '$target', function ($extend, $docs, $embedDialog, $target) {
 						if (angular.isFunction($extend[action.name])) {
-							return $extend[action.name]($docs);
+							return $extend[action.name]($docs, $embedDialog, $target);
 						}
 						else {
 							throw new Error("Method '" + this.name + "' is not defined in '$extend'.");
@@ -588,7 +588,7 @@
 					scope.columns = columnResult.columns;
 					scope.dateDisplay = {};
 					scope.previewAvailable = columnResult.preview;
-					scope.embeddedActionsOptionsContainerId = 'embeddedActionsOptionsContainerId';
+					scope.embeddedActionsOptionsContainerId = 'EAOC_'+dlid;
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
 
@@ -1218,7 +1218,7 @@
 							if (collection !== oldCollection || ! scope.collection || ! scope.collection.length) {
 								setExternalCollection (collection);
 							}
-						}, true);
+						});
 					}
 
 					function replaceCollection (collection) {
