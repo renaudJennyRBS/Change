@@ -17,9 +17,12 @@
 					articleCount : 0,
 					showNewLineUI : false,
 					showAddressUI : false,
+					showShippingUI : false,
 					loadingProductInfo : false,
 					removedLines : [],
+					address : {},
 					currentShippingMode : "",
+					shippingDetails: {},
 
 					addNewLines : function ()
 					{
@@ -65,6 +68,19 @@
 					trashRemovedLine : function (lineIndex)
 					{
 						extend.removedLines.splice(lineIndex, 1);
+					},
+
+					populateAddressFields: function(addressDoc) {
+						if(angular.isObject(addressDoc)){
+							var addressFields = addressDoc.addressFields;
+							if(angular.isObject(addressFields)){
+								if(!angular.isObject(scope.document.contextData)){
+									scope.document.contextData = {};
+								}
+								scope.document.contextData.addressFields = addressFields.id;
+								scope.document.addressData = addressDoc.fieldValues;
+							}
+						}
 					},
 
 					setShippingMode : function (lines, embedDialog, target)
@@ -118,9 +134,15 @@
 						}
 
 						promise.then(function () {
+							var modified = false;
 							angular.forEach(lines, function (line) {
-								scope.extend.setLineShippingMode(line);
+								modified = scope.extend.setLineShippingMode(line) || modified;
 							});
+
+							if(modified){
+								scope.extend.refreshShippingModes();
+								scope.extend.showShippingUI = true;
+							}
 						});
 
 					},
@@ -128,15 +150,50 @@
 					setLineShippingMode : function(line)
 					{
 						var options = line.options;
+						var modified = false;
 						if(scope.extend.currentShippingMode){
+							modified = options.shippingMode != scope.extend.currentShippingMode;
 							options.shippingMode = scope.extend.currentShippingMode;
 						}
 						else if (options.shippingMode != undefined)
 						{
+							modified = true;
 							options.shippingMode = undefined;
 						}
-						console.log(line);
-						console.log(scope.document.linesData);
+						return modified;
+					},
+
+					refreshShippingModes : function()
+					{
+						if(!angular.isObject(scope.document.shippingData)){
+							scope.document.shippingData = [];
+						}
+						var shippingModes = scope.document.shippingData;
+						angular.forEach(shippingModes, function (shippingMode) {
+							shippingMode.lines = [];
+						});
+						angular.forEach(scope.document.linesData, function (line) {
+							var shippingModeId = line.options.shippingMode;
+							if(shippingModeId){
+								var matchingShippingModes = $filter('filter')(shippingModes, {'id': shippingModeId});
+								if(matchingShippingModes.length){
+									angular.forEach(matchingShippingModes, function (shippingMode) {
+										shippingMode.lines.push(line.options.lineNumber);
+									});
+								}
+								else{
+									shippingModes.push({'id': shippingModeId, lines: [line.options.lineNumber]});
+								}
+							}
+						});
+					},
+
+					populateShippingDetails: function(response) {
+						var shippingDetails = {};
+						angular.forEach(response.resources, function (shippingDoc) {
+							shippingDetails[shippingDoc.id] = shippingDoc;
+						});
+						scope.extend.shippingDetails = shippingDetails;
 					}
 
 			};
@@ -202,27 +259,19 @@
 					}
 				}, true);
 
-				scope.address = {};
-
 				// This watches for modifications in the address doc in order to fill the address form
-				scope.$watch('address.doc', function (addressDoc, old) {
+				scope.$watch('extend.address.doc', function (addressDoc, old) {
 					if(angular.isObject(addressDoc)){
-						REST.resource(addressDoc.model, addressDoc.id).then(scope.populateAddressFields);
+						REST.resource(addressDoc.model, addressDoc.id).then(scope.extend.populateAddressFields);
 					}
 				}, true);
 
-				scope.populateAddressFields = function(addressDoc) {
-					if(angular.isObject(addressDoc)){
-						var addressFields = addressDoc.addressFields;
-						if(angular.isObject(addressFields)){
-							if(!angular.isObject(scope.document.contextData)){
-								scope.document.contextData = {};
-							}
-							scope.document.contextData.addressFields = addressFields.id;
-							scope.document.addressData = addressDoc.fieldValues;
-						}
+				// This watches for modifications in the address doc in order to fill the address form
+				scope.$watch('document.shippingData', function (shippingData, old) {
+					if(angular.isObject(shippingData) && !angular.isObject(old)){
+						REST.collection('Rbs_Shipping_Mode').then(scope.extend.populateShippingDetails);
 					}
-				};
+				}, true);
 
 				editorCtrl.init('Rbs_Order_Order');
 			}

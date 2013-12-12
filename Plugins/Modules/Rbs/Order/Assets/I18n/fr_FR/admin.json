@@ -119,6 +119,15 @@
 	"order_select_shipping_mode":{
 		"message":"sélectionnez le mode de livraison"
 	},
+	"order_shipping":{
+		"message":"livraison"
+	},
+	"order_shipping_mode":{
+		"message":"mode"
+	},
+	"order_shipping_lines":{
+		"message":"lignes"
+	},
 	"order_action_mark_as_payed":{
 		"message":"payée"
 	},

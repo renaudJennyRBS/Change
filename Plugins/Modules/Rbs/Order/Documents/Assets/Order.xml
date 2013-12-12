@@ -12,6 +12,7 @@
 
 		<property name="linesData" type="JSON" />
 		<property name="addressData" type="JSON" />
+		<property name="shippingData" type="JSON" />
 
 		<property name="amount" type="Decimal" />
 		<property name="amountWithTax" type="Decimal" />

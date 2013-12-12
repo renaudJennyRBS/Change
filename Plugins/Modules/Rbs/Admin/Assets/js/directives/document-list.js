@@ -1235,8 +1235,7 @@
 					}
 
 					function replaceCollection (collection) {
-						ArrayUtils.clear(scope.collection);
-						ArrayUtils.append(scope.collection, collection);
+						scope.collection = collection;
 					}
 
 					function documentCollectionLoadedCallback (response) {

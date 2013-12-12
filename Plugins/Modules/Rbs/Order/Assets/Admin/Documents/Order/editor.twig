@@ -53,13 +53,13 @@
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-user"></i><a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI"> {{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
+						<h3 class="panel-title"><i class="icon-user"></i> <a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
 						</h3>
 					</div>
 					<div class="panel-body" ng-show="extend.showAddressUI">
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
 							<div class="document-picker-single"
-								ng-model="address.doc"
+								ng-model="extend.address.doc"
 								accepted-model="Rbs_Geo_Address" allow-edition="true"
 								selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}">
 							</div>
@@ -71,6 +71,26 @@
 						</rbs-field>
 						<rbs-field-address property="addressData" address-fields="document.contextData.addressFields"/>
 						</rbs-field>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 form-vertical">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="extend.showShippingUI = !extend.showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showShippingUI]"></i></a>
+						</h3>
+					</div>
+					<div class="panel-body" ng-show="extend.showShippingUI">
+						<table class="table table-bordered table-condensed table-striped">
+							<tr>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
+							</tr>
+							<tr ng-repeat="shipping in document.shippingData" ng-show="shipping.lines.length > 0">
+								<td>(=extend.shippingDetails[shipping.id].label=)</td>
+								<td>(=shipping.lines.join(', ')=)</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 			</div>
