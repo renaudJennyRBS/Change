@@ -327,7 +327,7 @@
 		"message":"supprimer le bloc ?"
 	},
 	"structure_editor_remove_block_confirm":{
-		"message":"vous êtes sur le point de supprimer le kbloc ci-dessous."
+		"message":"vous êtes sur le point de supprimer le bloc ci-dessous."
 	},
 	"structure_editor_remove_block_group":{
 		"message":"supprimer le groupe de blocs ?"

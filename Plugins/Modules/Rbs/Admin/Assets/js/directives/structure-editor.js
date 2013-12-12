@@ -1877,15 +1877,22 @@
 
 				scope.removeBlock = function () {
 					var block = ctrl.getSelectedBlock();
-					Dialog.confirmLocal(
-						block,
-						i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
-						"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') + "</strong>",
-						{"placement": "top"}
-					).then(function () {
+					console.log(block);
+					if (block.hasClass('rbs-block-chooser')) {
 						ctrl.removeBlock(block);
 						ctrl.notifyChange("remove", "block", block);
-					});
+					}
+					else {
+						Dialog.confirmLocal(
+							block,
+							i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
+							"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') + "</strong>",
+							{"placement": "top"}
+						).then(function () {
+							ctrl.removeBlock(block);
+							ctrl.notifyChange("remove", "block", block);
+						});
+					}
 				};
 			}
 		};
