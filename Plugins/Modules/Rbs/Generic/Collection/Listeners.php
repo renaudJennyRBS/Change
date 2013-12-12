@@ -54,6 +54,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Generic_Collection_AddressFields':
 					(new \Rbs\Generic\Collection\Collections())->addAddressFields($event);
 					break;
+				case 'Rbs_Generic_Collection_ShippingModes':
+					(new \Rbs\Generic\Collection\Collections())->addShippingModes($event);
+					break;
 				case 'Rbs_Review_Collection_PromotedReviewModes':
 					(new \Rbs\Review\Collection\Collections())->addPromotedReviewModes($event);
 					break;

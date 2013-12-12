@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditor (Utils, REST)
+	function rbsOrderOrderEditor (Utils, REST, Dialog, i18n, $filter, $q)
 	{
 		return {
 			restrict : 'C',
@@ -18,6 +18,7 @@
 					showNewLineUI : false,
 					loadingProductInfo : false,
 					removedLines : [],
+					currentShippingMode : "",
 
 					addNewLines : function ()
 					{
@@ -63,9 +64,81 @@
 					trashRemovedLine : function (lineIndex)
 					{
 						extend.removedLines.splice(lineIndex, 1);
+					},
+
+					setShippingMode : function (lines, embedDialog, target)
+					{
+						// choose default shipping mode for the lines selected
+						var foundShippingMode = null;
+						var multipleShippingModes = false;
+						angular.forEach(lines, function (line) {
+							if(!multipleShippingModes && line.options.shippingMode){
+								if(foundShippingMode && line.options.shippingMode != foundShippingMode){
+									multipleShippingModes = true;
+								}
+								else{
+									foundShippingMode = line.options.shippingMode;
+								}
+							}
+						});
+						if(multipleShippingModes){
+							scope.extend.currentShippingMode = "";
+						}
+						else if (foundShippingMode){
+							scope.extend.currentShippingMode = foundShippingMode;
+						}
+						else {
+							scope.extend.currentShippingMode = "";
+						}
+
+						var promise;
+						var message = '<select class="form-control" ng-model="extend.currentShippingMode" rbs-items-from-collection="Rbs_Generic_Collection_ShippingModes"><option value="">'+i18n.trans('m.rbs.order.adminjs.order_select_shipping_mode | ucf')+'</option></select>';
+
+						if (embedDialog) {
+							promise = Dialog.confirmEmbed(
+								embedDialog,
+								i18n.trans('m.rbs.order.adminjs.order_set_shipping_mode | ucf'),
+								message,
+								scope,
+								{
+									'pointedElement'    : target
+								}
+							);
+						} else if (target) {
+							// ($el, title, message, options) {
+							promise = Dialog.confirmLocal(
+								target,
+								i18n.trans('m.rbs.order.adminjs.order_set_shipping_mode | ucf'),
+								message,
+								{
+									"placement": "bottom"
+								}
+							);
+						}
+
+						promise.then(function () {
+							angular.forEach(lines, function (line) {
+								scope.extend.setLineShippingMode(line);
+							});
+						});
+
+					},
+
+					setLineShippingMode : function(line)
+					{
+						var options = line.options;
+						if(scope.extend.currentShippingMode){
+							options.shippingMode = scope.extend.currentShippingMode;
+						}
+						else if (options.shippingMode != undefined)
+						{
+							options.shippingMode = undefined;
+						}
+						console.log(line);
+						console.log(scope.document.linesData);
 					}
 
-				};
+			};
 
 				scope.getProductsBySku = function (query)
 				{
@@ -108,7 +181,6 @@
 
 				scope.extend = extend;
 
-
 				scope.onReady = function ()
 				{
 					extend.showNewLineUI = scope.document.isNew();
@@ -117,8 +189,7 @@
 					}
 				};
 
-
-				// This watches for modifications in the lines, made by the user, such as quantity for each line.
+					// This watches for modifications in the lines, made by the user, such as quantity for each line.
 				scope.$watch('document.linesData', function (lines, old) {
 					if (scope.document && lines !== old) {
 						scope.document.amountWithTax = 0;
@@ -135,10 +206,6 @@
 				// This watches for modifications in the address doc in order to fill the address form
 				scope.$watch('address.doc', function (addressDoc, old) {
 					if(angular.isObject(addressDoc)){
-						// must reset addressField in order to trigger fieldValues generation
-						if(angular.isObject(scope.document.contextData)){
-							scope.document.contextData.addressFields = null;
-						}
 						REST.resource(addressDoc.model, addressDoc.id).then(scope.populateAddressFields);
 					}
 				}, true);
@@ -161,7 +228,7 @@
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST' ];
+	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.Dialog', 'RbsChange.i18n', '$filter', '$q' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
 
 })();

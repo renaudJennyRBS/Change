@@ -131,7 +131,6 @@
 						</p>
 					</div>
 				</div>
-
 				<div ng-show="document.linesData.length > 0">
 					<rbs-document-list
 							collection="document.linesData"
@@ -170,6 +169,9 @@
 
 						<action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
 								selection="+"></action>
+
+						<action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
+							selection="+"></action>
 
 					</rbs-document-list>
 				</div>

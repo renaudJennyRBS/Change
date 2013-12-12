@@ -56,8 +56,8 @@
 	font-size: 14px;
 }
 
-.form-horizontal .document-picker-embedded,
-.form-horizontal .embedded-modal {
+.form-horizontal .col-lg-9 .document-picker-embedded,
+.form-horizontal .col-lg-9 .embedded-modal {
 	margin-left: -180px;
 }
 
