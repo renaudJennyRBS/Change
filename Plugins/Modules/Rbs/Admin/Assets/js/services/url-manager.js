@@ -290,12 +290,6 @@
 
 	app.filter('rbsURL', urlFilter);
 
-	/**
-	 * @deprecated
-	 */
-	app.filter('documentURL', urlFilter);
-
-
 	app.filter('documentURLParams', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
 		return function (doc, urlName, params) {

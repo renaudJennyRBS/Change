@@ -406,7 +406,7 @@
 					} else if (DATE_REGEXP.test(value)) {
 						value = $filter('date')(new Date(value));
 					} else if (Utils.isDocument(value)) {
-						value = '<a target="_blank" href="' + $filter('documentURL')(angular.extend(REST.newResource(value.model), value)) + '">' + value.id + ' (' + value.model + ')</a>';
+						value = '<a target="_blank" href="' + $filter('rbsURL')(angular.extend(REST.newResource(value.model), value)) + '">' + value.id + ' (' + value.model + ')</a>';
 					} else if (angular.isObject(value)) {
 						value = JSON.stringify(value);
 					} else if (value === null) {

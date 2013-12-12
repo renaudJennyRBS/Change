@@ -95,7 +95,7 @@
 			    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
 				<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
 					<div class="caption">
-						<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | documentURL =)">(=doc.label=)</a></h4>
+						<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
 					</div>
 				</div>
 			</li>

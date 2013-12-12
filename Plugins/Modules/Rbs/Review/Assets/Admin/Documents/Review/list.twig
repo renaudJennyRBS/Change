@@ -15,7 +15,7 @@
 		<search-filters model="Rbs_Review_Review" filter-query="query" text-search="textSearch"></search-filters>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Review_Review' | documentURL:'new' =)">{{ i18n('m.rbs.review.admin.review_create', ['ucf']) }}</a>
+			<a href ng-href="(= 'Rbs_Review_Review' | rbsURL:'new' =)">{{ i18n('m.rbs.review.admin.review_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsReviewReview"
@@ -23,7 +23,7 @@
 		               publishable="true"
 		               filter-query="query">
 			<column name="target" primary="true">
-				<a href ng-href="(=doc|documentURL=)">(= doc.target.label =)</a>
+				<a href ng-href="(=doc|rbsURL=)">(= doc.target.label =)</a>
 			</column>
 			<column name="pseudonym"></column>
 			<column name="promoted">

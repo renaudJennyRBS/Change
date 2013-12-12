@@ -16,7 +16,7 @@
 		<search-filters model="Rbs_Order_Order" filter-query="query" text-search="textSearch"></search-filters>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Order_Order' | documentURL:'new' =)">{{ i18n('m.rbs.order.admin.order_create', ['ucf']) }}</a>
+			<a href ng-href="(= 'Rbs_Order_Order' | rbsURL:'new' =)">{{ i18n('m.rbs.order.admin.order_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsOrderOrder"

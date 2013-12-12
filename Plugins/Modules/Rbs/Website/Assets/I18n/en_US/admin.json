@@ -306,7 +306,7 @@
     "message":"This page currently holds the required blocks to support the following functions:"
   },
   "page_contains_no_function":{
-    "message":"<h4>This page supports no functions.<\/h4>To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+    "message":"<h4>This page supports no functions.<\/h4>To fix this, you can <a href ng-href=\"(= doc | rbsURL:'editor' =)\">edit the page contents<\/a>."
   },
   "page_contains_required_blocks":{
     "message":"This page holds all the required blocks to support the selected functions."
@@ -315,7 +315,7 @@
     "message":"The following functions won't work correctly because the page does not hold the required blocks:"
   },
   "edit_page_contents_to_fix_this":{
-    "message":"To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+    "message":"To fix this, you can <a href ng-href=\"(= doc | rbsURL:'editor' =)\">edit the page contents<\/a>."
   },
   "configure_functions":{
     "message":"configure"
