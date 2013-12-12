@@ -52,15 +52,19 @@
 		// Load current Section (Website or Topic).
 		//
 
-		$scope.reload = function () {
+		$scope.reload = function (sortColumn, sortDesc) {
 			// Load the list of SectionPageFunction Documents
-			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $scope.section.id);
-			REST.query(query, {"limit": 100, "offset": 0, "column": ['functionCode', 'page']}).then(function (result) {
-				initExistingFunctions($scope.sectionPageFunctionList = result.resources);
+			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $routeParams.id);
+			query.limit = 500;
+			query.offset = 0;
+			query.order = [{ 'property': sortColumn, 'order': sortDesc ? 'desc' : 'asc' }];
+			REST.query(query, {"column": ['functionCode', 'page']}).then(function (result) {
+				$scope.sectionPageFunctionList = result.resources;
+				initExistingFunctions(result.resources);
 			});
 		};
 
-		function ready (section) {
+		REST.resource($routeParams.id).then(function (section) {
 			$scope.document = $scope.section = section;
 			Breadcrumb.setResource(null);
 			Breadcrumb.setPath([
@@ -68,8 +72,7 @@
 				['Fonctions'] // FIXME
 			]);
 			$scope.reload();
-		}
-		REST.resource($routeParams.id).then(ready);
+		});
 
 
 		$scope.isFunctionAlreadyUsed = function (func) {

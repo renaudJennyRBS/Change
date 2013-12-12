@@ -606,21 +606,28 @@
 				 * Creates a new block after the selected one.
 				 */
 				this.newBlockAfter = function () {
-					this.selectBlock(this.createBlock(selectedBlock.parent(), null, -1));
+					this.selectBlock(this.createBlock(selectedBlock.parent(), null, selectedBlock.index()+1));
 				};
 
+				/**
+				 * Creates a new block after each other.
+				 */
+				this.newBlockBottom = function () {
+					this.selectBlock(this.createBlock(selectedBlock.parent(), null, -1));
+				};
 
 				/**
 				 * Creates a new block before the selected one.
 				 */
 				this.newBlockBefore = function () {
-					this.selectBlock(
-						this.createBlock(
-							selectedBlock.parent(),
-							null,
-							selectedBlock.index()
-						)
-					);
+					this.selectBlock(this.createBlock(selectedBlock.parent(), null, selectedBlock.index()));
+				};
+
+				/**
+				 * Creates a new block before each other.
+				 */
+				this.newBlockTop = function () {
+					this.selectBlock(this.createBlock(selectedBlock.parent(), null, 0));
 				};
 
 
@@ -1843,6 +1850,14 @@
 
 				scope.newBlockAfter = function () {
 					ctrl.newBlockAfter();
+				};
+
+				scope.newBlockTop = function () {
+					ctrl.newBlockTop();
+				};
+
+				scope.newBlockBottom = function () {
+					ctrl.newBlockBottom();
 				};
 
 				scope.newBlockLeft = function () {
