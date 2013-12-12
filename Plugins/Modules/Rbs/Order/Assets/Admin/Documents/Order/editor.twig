@@ -53,9 +53,10 @@
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-user"></i><a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI"> {{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
+						</h3>
 					</div>
-					<div class="panel-body">
+					<div class="panel-body" ng-show="extend.showAddressUI">
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
 							<div class="document-picker-single"
 								ng-model="address.doc"

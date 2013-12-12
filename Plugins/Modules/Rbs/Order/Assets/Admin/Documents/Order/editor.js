@@ -16,6 +16,7 @@
 
 					articleCount : 0,
 					showNewLineUI : false,
+					showAddressUI : false,
 					loadingProductInfo : false,
 					removedLines : [],
 					currentShippingMode : "",
