@@ -269,7 +269,7 @@
 					"align"  : "center",
 					"width"  : "30px",
 					"label"  : '<input type="checkbox" ng-click="$event.stopPropagation()" ng-model="allSelected.cb"/>',
-					"content": '<input type="checkbox" ng-click="$event.stopPropagation()" ng-model="doc.selected"/>',
+					"content": '<input type="checkbox" ng-click="$event.stopPropagation()" ng-model="selected[$index].cb"/>',
 					"dummy"  : true
 				});
 			}
@@ -416,7 +416,7 @@
 				if (column.content) {
 
 					if (column.name === 'selectable') {
-						html = '<td ng-click="doc.selected = ! doc.selected" style="cursor:pointer;">' + column.content + '</td>';
+						html = '<td ng-click="selected[$index].cb = ! selected[$index].cb" style="cursor:pointer;">' + column.content + '</td>';
 						$td = $(html);
 					}
 					else {
@@ -705,7 +705,18 @@
 					scope.selectionEnabled = scope.hasColumn('selectable');
 
 					function updateSelectedDocuments () {
-						scope.selectedDocuments = $filter('filter')(scope.collection, {'selected': true});
+						var selectedDocuments = [];
+						var selected = [];
+						angular.forEach(scope.collection, function (doc, index) {
+							var cb = false;
+							if(index < scope.selected.length && scope.selected[index].cb){
+								selectedDocuments.push(doc);
+								cb = true;
+							}
+							selected.push({'cb': cb});
+						});
+						scope.selected = selected;
+						scope.selectedDocuments = selectedDocuments;
 						scope.$emit('Change:DocumentList:' + dlid + ':CollectionChanged', scope.collection);
 					}
 
@@ -714,22 +725,24 @@
 						scope.allSelected = {
 							'cb' : false
 						};
+						scope.selected = [];
+
 						scope.$watch('allSelected', function () {
-							angular.forEach(scope.collection, function (doc) {
-								doc.selected = scope.allSelected.cb;
+							angular.forEach(scope.selected, function (selected) {
+								selected.cb = scope.allSelected.cb;
 							});
 						}, true);
 
-						scope.$watch('collection', updateSelectedDocuments, true);
-						updateSelectedDocuments();
+						scope.$watchCollection('collection', updateSelectedDocuments);
+						scope.$watch('selected', updateSelectedDocuments, true);
 					}
 
 
 					function deselectAll () {
 						scope.allSelected.cb = false;
-						angular.forEach(scope.collection, function (doc) {
-							if (doc.selected) {
-								doc.selected = false;
+						angular.forEach(scope.selected, function (selected) {
+							if(selected.cb){
+								selected.cb = false;
 							}
 						});
 					}
