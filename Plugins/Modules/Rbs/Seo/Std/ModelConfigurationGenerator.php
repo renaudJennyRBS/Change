@@ -46,7 +46,7 @@ class ModelConfigurationGenerator
 					/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
 					$modelConfiguration->setLabel($i18n->trans($model->getLabelKey(), array('ucf')));
 					$modelConfiguration->setModelName($model->getName());
-					$modelConfiguration->setDocumentSeoAutoGenerate(false);
+					$modelConfiguration->setDocumentSeoAutoGenerate(true);
 					$modelConfiguration->setSitemapDefaultChangeFrequency('daily');
 					$modelConfiguration->setSitemapDefaultPriority(0.5);
 					try

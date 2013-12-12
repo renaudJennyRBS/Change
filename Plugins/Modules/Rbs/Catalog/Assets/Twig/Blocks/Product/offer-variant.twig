@@ -44,7 +44,7 @@
 				{% for axisName in axesNames %}
 					{% set i = loop.index0 %}
 					<label for="selectedVariant{{ i }}">{{ axisName }}</label>
-					<select id="selectedVariant{{ i }}" ng-model="selectedAxesValues[{{ i }}]" ng-options="var.title for var in axesValues[{{ i }}]"
+					<select id="selectedVariant{{ i }}" {%if i > 0 %} ng-disabled="!selectedAxesValues[{{ i - 1}}]" {%endif%} ng-model="selectedAxesValues[{{ i }}]" ng-options="var.title for var in axesValues[{{ i }}]"
 						ng-change="variantChanged({{ i }})" class="form-control">
 					</select>
 				{% endfor %}

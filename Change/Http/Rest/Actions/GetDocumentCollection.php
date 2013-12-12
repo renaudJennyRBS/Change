@@ -164,11 +164,21 @@ class GetDocumentCollection
 							{
 								// Join on model table
 								$modelTable = $fb->getDocumentTable($sortModel->getRootName());
-								$qb->innerJoin($modelTable, $fb->eq(
-									$fb->getDocumentColumn($property->getName(), $table),
-									$fb->getDocumentColumn('id', $modelTable)
-								));
-								$orderColumn = $fb->getDocumentColumn($sortPropertyName, $modelTable);
+								if ($property->getRequired())
+								{
+									$qb->innerJoin($fb->alias($modelTable, $property->getName()), $fb->eq(
+										$fb->getDocumentColumn($property->getName(), $table),
+										$fb->getDocumentColumn('id', $property->getName())
+									));
+								}
+								else
+								{
+									$qb->leftJoin($fb->alias($modelTable, $property->getName()), $fb->eq(
+										$fb->getDocumentColumn($property->getName(), $table),
+										$fb->getDocumentColumn('id', $property->getName())
+									));
+								}
+								$orderColumn = $fb->getDocumentColumn($sortPropertyName, $property->getName());
 							}
 						}
 					}

@@ -49,7 +49,7 @@ class ModelConfigurationGeneratorTest extends \ChangeTests\Change\TestAssets\Tes
 		$this->assertNotNull($modelConfiguration->getDocumentModel());
 		$this->assertNotNull($modelConfiguration->getSitemapDefaultChangeFrequency());
 		$this->assertNotNull($modelConfiguration->getSitemapDefaultPriority());
-		$this->assertEquals(false, $modelConfiguration->getDocumentSeoAutoGenerate());
+		$this->assertTrue($modelConfiguration->getDocumentSeoAutoGenerate());
 
 		//try again, nothing should change
 		(new \Rbs\Seo\Std\ModelConfigurationGenerator())->onPluginSetupSuccess($event);

@@ -136,11 +136,12 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 
 	/**
 	 * @param string $visibility
-	 * @return string
+	 * @return bool
 	 */
 	public function isVisibleFor($visibility)
 	{
-		return in_array($visibility, $this->getVisibility());
+		$vis = $this->getVisibility();
+		return is_array($vis) ? in_array($visibility, $vis) : false;
 	}
 
 	/**

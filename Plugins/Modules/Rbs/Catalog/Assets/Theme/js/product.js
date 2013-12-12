@@ -51,7 +51,7 @@
 			templateUrl : '/productAvailability.tpl',
 			replace : false,
 			require : 'ngModel',
-			scope: true,
+			scope: false,
 
 			link : function (scope, elm, attrs, ngModel) {
 				scope.level = (attrs.hasOwnProperty('level')) ? parseInt(attrs.level, 10) : null;
@@ -223,6 +223,11 @@
 				scope.stockMin = data.stock.minQuantity;
 				scope.stockMax = data.stock.maxQuantity;
 				scope.stockStep = data.stock.quantityIncrement;
+
+				scope.threshold = data.stock.threshold;
+				scope.thresholdTitle = data.stock.thresholdTitle;
+				scope.thresholdClass = data.stock.thresholdClass;
+
 				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
 				scope.productAvailability = data.stock;
 				scope.prices = data.prices;
@@ -239,6 +244,9 @@
 				scope.stockMin = 0;
 				scope.stockMax = 0;
 				scope.stockStep = 0;
+				scope.threshold = null;
+				scope.thresholdTitle = null;
+				scope.thresholdClass = null;
 				scope.quantity = 0;
 			}
 		}
