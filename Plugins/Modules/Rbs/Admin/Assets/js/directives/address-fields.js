@@ -42,15 +42,6 @@
 					}
 				});
 
-				scope.$watch('document.attributeValues', function(newValue) {
-					if (newValue === null) {
-						scope.document.attributeValues = [];
-					}
-					if (newValue !== undefined) {
-						scope.assocValues(scope.attributesDef);
-					}
-				});
-
 				ngModel.$render = function ngModelRenderFn () {
 					scope.fieldValues = ngModel.$viewValue;
 				};
