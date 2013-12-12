@@ -149,6 +149,14 @@ class TestTax implements \Rbs\Price\Tax\TaxInterface
 	{
 		return $this->rounding;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		return [];
+	}
 }
 
 class TestBillingArea implements \Rbs\Price\Tax\BillingAreaInterface

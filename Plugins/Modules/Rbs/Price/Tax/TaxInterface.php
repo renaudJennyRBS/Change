@@ -28,4 +28,9 @@ interface TaxInterface
 	 * @return string
 	 */
 	public function getRounding();
+
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }
