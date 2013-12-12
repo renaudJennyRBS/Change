@@ -42,14 +42,27 @@
 					}
 				});
 
+				scope.$watch('document.attributeValues', function(newValue) {
+					if (newValue === null) {
+						scope.document.attributeValues = [];
+					}
+					if (newValue !== undefined) {
+						scope.assocValues(scope.attributesDef);
+					}
+				});
+
+				ngModel.$render = function ngModelRenderFn () {
+					scope.fieldValues = ngModel.$viewValue;
+				};
+
 				scope.generateFieldsEditor = function (addressFields) {
 					var editorDefinition = addressFields.editorDefinition;
 					if (angular.isObject(editorDefinition)) {
-						if (!angular.isObject(ngModel.$modelValue)) {
+						if (!angular.isObject(ngModel.$viewValue)) {
 							ngModel.$setViewValue({});
 						}
 						scope.fieldsDef = editorDefinition.fields;
-						var fieldValues = ngModel.$modelValue;
+						var fieldValues = ngModel.$viewValue;
 						var fields = scope.fieldsDef;
 						var field;
 						for (var i = 0; i < fields.length; i++) {
@@ -68,9 +81,8 @@
 							fieldValues.__layout = addressFields.fieldsLayout;
 						}
 						else {
-							unset(fieldValues.__layout);
+							fieldValues.__layout = undefined;
 						}
-						scope.fieldValues = fieldValues;
 					}
 				};
 			}
