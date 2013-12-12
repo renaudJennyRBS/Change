@@ -32,7 +32,6 @@ class Listeners implements ListenerAggregateInterface
 		new  RegisterByBlockName('Rbs_User_Login', true, $events);
 		new  RegisterByBlockName('Rbs_User_AccountShort', true, $events);
 		new  RegisterByBlockName('Rbs_User_CreateAccount', true, $events);
-		new  RegisterByBlockName('Rbs_User_AccountSettings', true, $events);
 
 		new  RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
 

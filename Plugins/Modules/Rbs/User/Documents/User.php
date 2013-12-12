@@ -162,28 +162,8 @@ class User extends \Compilation\Rbs\User\Documents\User
 	public function setPassword($password)
 	{
 		$this->password = $password;
+		$this->setPasswordHash($this->hashPassword($this->password));
 		return $this;
-	}
-
-	protected function onCreate()
-	{
-		if (!$this->getHashMethod())
-		{
-			$this->setHashMethod('bcrypt');
-		}
-
-		if ($this->password)
-		{
-			$this->setPasswordHash($this->hashPassword($this->password));
-		}
-	}
-
-	protected function onUpdate()
-	{
-		if ($this->password)
-		{
-			$this->setPasswordHash($this->hashPassword($this->password));
-		}
 	}
 
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)

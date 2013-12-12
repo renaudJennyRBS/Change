@@ -20,12 +20,12 @@ class CleanAccountRequestTable
 			$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 
-			$qb->delete($fb->table($fb->getSqlMapping()->getUserAccountRequestTable()));
-			$qb->where($fb->logicAnd($fb->lt($fb->column('validity_date'), $fb->dateTimeParameter('now'))));
+			$qb->delete($fb->table('rbs_user_account_request'));
+			$qb->where($fb->logicAnd($fb->lt($fb->column('request_date'), $fb->dateTimeParameter('now'))));
 			$iq = $qb->deleteQuery();
 
 			$now = new \DateTime();
-			$iq->bindParameter('now', $now);
+			$iq->bindParameter('now', $now->sub(new \DateInterval('PT24H')));
 			$iq->execute();
 
 			$tm->commit();
@@ -35,7 +35,7 @@ class CleanAccountRequestTable
 		}
 
 		//Reschedule the job in 24h
-		$now->add(new \DateInterval('PT24H'));
-		$event->reported($now);
+		$now = new \DateTime();
+		$event->reported($now->add(new \DateInterval('PT24H')));
 	}
 }

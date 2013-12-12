@@ -21,11 +21,9 @@ class CreateAccount extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('email');
-		$parameters->addParameterMeta('password');
-		$parameters->addParameterMeta('groupIds');
 		$parameters->addParameterMeta('authenticated', false);
 		$parameters->addParameterMeta('errId');
+		$parameters->addParameterMeta('context');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();
@@ -37,20 +35,9 @@ class CreateAccount extends Block
 		{
 			$parameters->setParameterValue('authenticated', true);
 		}
-		else
-		{
-			$login = $request->getPost('email');
-			if ($login)
-			{
-				$parameters->setParameterValue('email', $login);
-			}
 
-			$password = $request->getPost('password');
-			if ($password)
-			{
-				$parameters->setParameterValue('password', $password);
-			}
-		}
+		$parameters->setParameterValue('context', $event->getHttpRequest()->getQuery('context'));
+
 		return $parameters;
 	}
 
@@ -77,11 +64,8 @@ class CreateAccount extends Block
 			}
 		}
 
-		if (!$parameters->getParameterValue('authenticated'))
-		{
-			$attributes['groupIds'] = json_encode($parameters->getParameterValue('groupIds'));
-			return 'create-account.twig';
-		}
-		return null;
+		$attributes['context'] = $parameters->getParameterValue('context');
+		$attributes['authenticated'] = $parameters->getParameter('authenticated');
+		return 'create-account.twig';
 	}
 }

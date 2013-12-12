@@ -14,6 +14,9 @@
 	"password":{
 		"message":"mot de passe"
 	},
+	"confirm_password":{
+		"message":"confirmer le mot de passe"
+	},
 	"password_placeholder":{
 		"message":"votre mot de passe"
 	},
@@ -65,11 +68,17 @@
 	"error_empty_email":{
 		"message":"l'adresse e-mail est vide."
 	},
+	"error_email_invalid":{
+		"message":"l'adresse e-mail $EMAIL$ n'est pas valide."
+	},
 	"error_empty_password":{
 		"message":"le mot de passe est vide."
 	},
 	"error_password_exceeds_max_characters":{
 		"message":"le mot de passe dépasse le nombre maximum de caractères autorisé (50)."
+	},
+	"error_password_not_match_confirm_password":{
+		"message":"le mot de passe et sa confirmation ne correspondent pas."
 	},
 	"error_user_already_exist":{
 		"message":"l'adresse e-mail $EMAIL$ est déjà dans notre base de données utilisateur, si vous avez oublié votre mot de passe, utilisez le formulaire de changement de mot de passe."
@@ -82,5 +91,8 @@
 	},
 	"error_request_expired":{
 		"message":"la demande de création de compte a expirée."
+	},
+	"error_empty_hash_method":{
+		"message":"la méthode de hash du password est vide."
 	}
 }

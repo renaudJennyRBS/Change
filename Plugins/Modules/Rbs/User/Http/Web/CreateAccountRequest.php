@@ -20,39 +20,44 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 			// Instantiate constraint manager to register locales in validation.
 			$event->getApplicationServices()->getConstraintsManager();
 			$data = $event->getRequest()->getPost()->toArray();
-			$email = $data['email'];
-			$password = $data['password'];
 			$parametersErrors = $this->getParametersErrors($event);
 
 			if (count($parametersErrors) === 0)
 			{
+				$email = $data['email'];
+				$password = $data['password'];
+
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
+				//create an unsaved user to get the password hash and the hash method
+				/* @var $user \Rbs\User\Documents\User */
+				$user = $documentManager->getNewDocumentInstanceByModelName('Rbs_User_User');
+				$user->setPassword($password);
+
+				$parameters = [
+					'passwordHash' => $user->getPasswordHash(),
+					'hashMethod' => $user->getHashMethod()
+				];
+
 				$tm = $event->getApplicationServices()->getTransactionManager();
 				try
 				{
 					$tm->begin();
 
-					//TODO security issue?
-					$parameters = [
-						'password' => $password,
-						'groupIds' => isset($data['groupIds']) && $data['groupIds'] ? $data['groupIds'] : '[]'
-					];
 					$dbProvider = $event->getApplicationServices()->getDbProvider();
 					$qb = $dbProvider->getNewStatementBuilder();
 					$fb = $qb->getFragmentBuilder();
 
-					$qb->insert($fb->table($fb->getSqlMapping()->getUserAccountRequestTable()));
-					$qb->addColumns($fb->column('email'), $fb->column('config_parameters'), $fb->column('validity_date'));
-					$qb->addValues($fb->parameter('email'), $fb->parameter('configParameters'), $fb->dateTimeParameter('validityDate'));
+					$qb->insert($fb->table('rbs_user_account_request'));
+					$qb->addColumns($fb->column('email'), $fb->column('config_parameters'), $fb->column('request_date'));
+					$qb->addValues($fb->parameter('email'), $fb->parameter('configParameters'), $fb->dateTimeParameter('requestDate'));
 					$iq = $qb->insertQuery();
 
 					$iq->bindParameter('email', $email);
 					$iq->bindParameter('configParameters', json_encode($parameters));
-					$validityDate = new \DateTime();
-					$validityDate->add(new \DateInterval('PT24H'));
-					$iq->bindParameter('validityDate', $validityDate);
+					$iq->bindParameter('requestDate', new \DateTime());
 					$iq->execute();
 
-					$requestId = intval($dbProvider->getLastInsertId($dbProvider->getSqlMapping()->getUserAccountRequestTable()));
+					$requestId = intval($dbProvider->getLastInsertId('rbs_user_account_request'));
 
 					$tm->commit();
 				}
@@ -65,7 +70,7 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 				//Send a mail to confirm email
 				try
 				{
-					$event->getApplicationServices()->getDocumentManager()->pushLCID($LCID);
+					$documentManager->pushLCID($LCID);
 					$urlManager = $event->getUrlManager();
 					$urlManager->setAbsoluteUrl(true);
 
@@ -86,15 +91,14 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 						'email' => $email
 					];
 					$jobManager->createNewJob('Rbs_User_SendMail', $arguments);
-					$event->getApplicationServices()->getDocumentManager()->popLCID();
+					$documentManager->popLCID();
 
-					//Redirect the user to a confirmation page
 					$result = new \Change\Http\Web\Result\AjaxResult($data);
 					$event->setResult($result);
 				}
 				catch (\Exception $e)
 				{
-					$event->getApplicationServices()->getDocumentManager()->popLCID();
+					$documentManager->popLCID();
 					throw $e;
 				}
 			}
@@ -120,6 +124,7 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$data = $event->getRequest()->getPost()->toArray();
 		$email = $data['email'];
 		$password = $data['password'];
+		$confirmPassword = $data['confirmpassword'];
 
 		if (!$email)
 		{
@@ -130,7 +135,8 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$validator = new \Zend\Validator\EmailAddress();
 			if (!$validator->isValid($email))
 			{
-				$errors[] = implode(', ', $validator->getMessages());
+				//We cannot use validator messages, they are too complicated for front office
+				$errors[] = $i18nManager->trans('m.rbs.user.front.error_email_invalid', ['ucf'], ['EMAIL' => $email]);
 			}
 			else
 			{
@@ -144,7 +150,10 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 				else
 				{
 					$accountRequest = $this->getAccountRequestFromEmail($email, $event->getApplicationServices()->getDbProvider());
-					if ($accountRequest && $accountRequest['validity_date']->getTimestamp() > (new \DateTime())->getTimestamp())
+					$now = new \DateTime();
+					//check if request date is not too close (delta of 24h after the request)
+					$now->sub(new \DateInterval('PT24H'));
+					if ($accountRequest && $accountRequest['request_date']->getTimestamp() > $now->getTimestamp())
 					{
 						$errors[] = $i18nManager->trans('m.rbs.user.front.error_request_already_done', ['ucf'], ['EMAIL' => $email]);
 					}
@@ -161,6 +170,10 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 			{
 				$errors[] = $i18nManager->trans('m.rbs.user.front.error_password_exceeds_max_characters', ['ucf']);
 			}
+			if ($password !== $confirmPassword)
+			{
+				$errors[] = $i18nManager->trans('m.rbs.user.front.error_password_not_match_confirm_password', ['ucf']);
+			}
 		}
 
 		return $errors;
@@ -175,8 +188,8 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 	{
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('request_id'), $fb->column('validity_date'));
-		$qb->from($fb->table($fb->getSqlMapping()->getUserAccountRequestTable()));
+		$qb->select($fb->column('request_id'), $fb->column('request_date'));
+		$qb->from($fb->table('rbs_user_account_request'));
 		$qb->where($fb->logicAnd(
 			$fb->eq($fb->column('email'), $fb->parameter('email'))
 		));
@@ -184,7 +197,6 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$sq = $qb->query();
 
 		$sq->bindParameter('email', $email);
-		$sq->bindParameter('now', (new \DateTime()));
-		return $sq->getFirstResult($sq->getRowsConverter()->addIntCol('request_id')->addDtCol('validity_date'));
+		return $sq->getFirstResult($sq->getRowsConverter()->addIntCol('request_id')->addDtCol('request_date'));
 	}
 }

@@ -166,15 +166,6 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('website_id')->setNullable(false)->setDefaultValue(0))
 				->addKey($this->newPrimaryKey()->addField($td->getField('rule_id')))
 				->setOption('AUTONUMBER', 1);
-
-			$this->tables['change_user_account_request'] = $td = $schemaManager->newTableDefinition('change_user_account_request');
-			$requestId = $schemaManager->newIntegerFieldDefinition('request_id')->setNullable(false)->setAutoNumber(true);
-			$td->addField($requestId)
-				->addField($schemaManager->newVarCharFieldDefinition('email', array('length' => 255))->setNullable(false))
-				->addField($schemaManager->newTextFieldDefinition('config_parameters')->setNullable(false))
-				->addField($schemaManager->newDateFieldDefinition('validity_date')->setNullable(false))
-				->addKey($this->newPrimaryKey()->addField($requestId))
-				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}
