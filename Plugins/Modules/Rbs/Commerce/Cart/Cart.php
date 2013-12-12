@@ -707,6 +707,8 @@ class Cart implements \Serializable
 		$array = array(
 			'identifier' => $this->identifier,
 			'billingArea' => $this->billingArea ? $this->billingArea->getCode() : null,
+			'currencyCode' => $this->billingArea ? $this->billingArea->getCurrencyCode() : null,
+			'taxes' => [],
 			'zone' => $this->zone,
 			'locked' => $this->locked,
 			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
@@ -718,6 +720,14 @@ class Cart implements \Serializable
 			'context' => $this->getContext()->toArray(),
 			'errors' => array(),
 			'lines' => array());
+
+		if ($this->billingArea)
+		{
+			foreach ($this->billingArea->getTaxes() as $tax)
+			{
+				$array['taxes'][] = $tax->toArray();
+			}
+		}
 
 		foreach ($this->lines as $line)
 		{

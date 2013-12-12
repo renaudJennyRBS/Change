@@ -15,6 +15,9 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Price\Tax
 	 */
 	protected $ratesCache = array();
 
+
+
+
 	/**
 	 * @param string $category
 	 * @param string $zone
@@ -47,8 +50,7 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Price\Tax
 	public function getCategoryCodes()
 	{
 		$data = $this->getData();
-		return
-			isset($data[self::CATEGORIES_KEY]) && is_array($data[self::CATEGORIES_KEY]) ? $data[self::CATEGORIES_KEY] : array();
+		return isset($data[self::CATEGORIES_KEY]) && is_array($data[self::CATEGORIES_KEY]) ? $data[self::CATEGORIES_KEY] : array();
 	}
 
 	/**
@@ -77,5 +79,30 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Price\Tax
 	public function setDefaultZone($defaultZone)
 	{
 		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = ['id' => $this->getId(), 'code' => $this->getCode(), 'rounding' => $this->getRounding(), 'cascading' => $this->getCascading(), 'rates'=> []];
+		$data = $this->getData();
+		if (isset($data[self::RATES_KEY]))
+		{
+			foreach ($data[self::RATES_KEY] as $ci => $zir)
+			{
+				foreach($zir as $zi => $rate)
+				{
+					$zone = (isset($data[self::ZONES_KEY][$zi])) ? $data[self::ZONES_KEY][$zi] : null;
+					$category  = (isset($data[self::CATEGORIES_KEY][$ci])) ? $data[self::CATEGORIES_KEY][$ci] : null;
+					if ($zone && $category)
+					{
+						$array['rates'][$category][$zone] = 0.01 * floatval($rate);
+					}
+				}
+			}
+		}
+		return $array;
 	}
 }
