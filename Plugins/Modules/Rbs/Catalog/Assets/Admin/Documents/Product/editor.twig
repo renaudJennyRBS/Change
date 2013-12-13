@@ -59,11 +59,11 @@
 
 		<div data-ng-repeat="attributeDef in attributesDef">
 			<div ng-if="attributeDef.attributes">
-				<h4>(= attributeDef.label | capitalize =)</h4>
+				<h4>(= attributeDef.label | rbsCapitalize =)</h4>
 				<hr />
 				<div data-ng-repeat="attributeItemDef in attributeDef.attributes">
 
-					<rbs-field label="(= attributeItemDef.label | capitalize =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
+					<rbs-field label="(= attributeItemDef.label | rbsCapitalize =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
 						<div ng-if="attributeItemDef.collectionCode">
 							<select ng-model="attributeItemDef.value.value" class="form-control" rbs-items-from-collection="(= attributeItemDef.collectionCode =)">
 								<option value=""></option>
@@ -86,22 +86,22 @@
 								</div>
 								<div class="document-picker-single" data-ng-switch-when="Document"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 								</div>
 								<div class="document-picker-single" data-ng-switch-when="DocumentId" value-ids="true"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 								</div>
 								<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 								</div>
 								<div class="document-picker-multiple" data-ng-switch-when="DocumentIdArray" value-ids="true"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-										property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
+										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 								</div>
 								<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
@@ -112,7 +112,7 @@
 			</div>
 
 			<div ng-if="!attributeDef.attributes">
-				<rbs-field label="(= attributeDef.label | capitalize =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
+				<rbs-field label="(= attributeDef.label | rbsCapitalize =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
 					<div ng-if="attributeDef.collectionCode">
 						<select ng-model="attributeDef.value.value" class="form-control" rbs-items-from-collection="(= attributeDef.collectionCode =)">
 							<option value=""></option>
@@ -127,22 +127,22 @@
 							<input type="text" data-ng-switch-when="Float" smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 							<div class="document-picker-single" data-ng-switch-when="Document"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 							</div>
 							<div class="document-picker-single" data-ng-switch-when="DocumentId" value-ids="true"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 							</div>
 							<div class="document-picker-multiple" data-ng-switch-when="DocumentArray"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 							</div>
 							<div class="document-picker-multiple" data-ng-switch-when="DocumentIdArray" value-ids="true"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-									property-label="(= attributeDef.label | capitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
+									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
 							</div>
 							<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>

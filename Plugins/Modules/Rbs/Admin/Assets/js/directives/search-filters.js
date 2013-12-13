@@ -390,7 +390,7 @@
 
 
 				scope.addToFavorites = function () {
-					var label = prompt("Donnez un nom à votre recherche");
+					var label = prompt(i18n.trans('m.rbs.admin.adminjs.search_set_name'));
 					if (label && label.trim()) {
 						SavedSearches.save(label, scope.query);
 					}

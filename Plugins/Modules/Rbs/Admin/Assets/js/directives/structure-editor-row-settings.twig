@@ -16,12 +16,12 @@
 <div ng-repeat="col in columns" style="display:inline-block">
 	<div class="column-info" ng-class="{'active': highlightedColIndex == $index}" ng-click="highlightColumn($index)">
 		<div class="btn-group pull-right">
-			<button type="button" class="btn btn-default btn-sm" ng-click="deleteColumn($index, $event)" title="Supprimer"><i class="icon-trash"></i></button>
+			<button type="button" class="btn btn-default btn-sm" ng-click="deleteColumn($index, $event)" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"><i class="icon-trash"></i></button>
 		</div>
 		<h5>{{ i18n('m.rbs.admin.admin.column', ['ucf']) }} (= $index+1 =)</h5>
 		<div class="btn-group">
 			<button type="button" class="btn btn-default btn-xs" disabled="disabled" ng-pluralize count="col.childCount" when="{'0':'{{ i18nAttr('m.rbs.admin.admin.no_block', ['ucf']) }}', 'one': '{{ i18nAttr('m.rbs.admin.admin.one_block', ['ucf']) }}', 'other': '{{ i18nAttr('m.rbs.admin.admin.n_blocks', ['ucf']) }}'}"></button>
-			<button type="button" class="btn btn-default btn-xs" ng-click="addBlockInColumn($index, $event)" title="Ajouter un bloc dans cette colonne"><i class="icon-plus"></i></button>
+			<button type="button" class="btn btn-default btn-xs" ng-click="addBlockInColumn($index, $event)" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_into_column', ['ucf']) }}"><i class="icon-plus"></i></button>
 		</div>
 		<div class="param clearfix">
 			<button type="button" class="btn btn-default btn-sm" ng-click="reduceColumn($index, $event)" ng-disabled="col.span == 1" title="{{ i18nAttr('m.rbs.admin.admin.width_reduce', ['ucf']) }}"><i class="icon-minus"></i></button>

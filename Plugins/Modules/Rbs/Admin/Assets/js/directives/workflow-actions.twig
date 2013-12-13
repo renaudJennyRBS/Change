@@ -107,13 +107,13 @@
 				</div>
 			</div>
 			<div class="control-group" style="margin:0;">
-				<label class="control-label">Début</label>
+				<label class="control-label">{{ i18n('c.documents.startpublication', ['ucf']) }}</label>
 				<div class="controls">
 					<date-selector ng-model="data.startPublication"></date-selector>
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label">Fin</label>
+				<label class="control-label">{{ i18n('c.documents.endpublication', ['ucf']) }}</label>
 				<div class="controls">
 					<date-selector ng-model="data.endPublication"></date-selector>
 				</div>
@@ -167,7 +167,7 @@
 				</p>
 
 				<div>
-					<strong>(= correctionData.correctionInfo.status | statusLabel =)</strong>
+					<strong>(= correctionData.correctionInfo.status | rbsStatusLabel =)</strong>
 					| <i class="icon-time"></i> {{ i18n('m.rbs.admin.admin.correction_created_on', ['ucf']) }}
 					<time datetime="(= correctionData.correctionInfo.creationDate =)" display="both"></time>
 				</div>
@@ -201,7 +201,7 @@
 							<tr>
 								<td style="vertical-align: top">(= line.original =)</td>
 								<td style="vertical-align: top" ng-switch="correctionData.advancedDiffs">
-									<div ng-switch-when="true" class="diffs" ng-bind-html="line.current | diff:line.original"></div>
+									<div ng-switch-when="true" class="diffs" ng-bind-html="line.current | rbsDiff:line.original"></div>
 									<div ng-switch-when="false">(= line.current =)</div>
 								</td>
 							</tr>

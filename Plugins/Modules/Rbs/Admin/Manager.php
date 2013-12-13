@@ -235,7 +235,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/clipboard/controllers.js'));
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/dashboard/controllers.js'));
 
-		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/js/help.js'));
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/js/routes.js'));
 		if (!$devMode)
 		{

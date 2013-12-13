@@ -63,7 +63,7 @@
 			<column name="icon" width="30px" align="center">
 				<span ng-if="doc.is('Rbs_Website_Topic') && doc.nodeHasChildren()" class="iconoverlay" title="Éléments dans cette rubrique : (=doc.nodeChildrenCount()=)">
 					<i class="icon-2x icon-folder-close"></i>
-					<label>(=doc.nodeChildrenCount() | maxNumber=)</label>
+					<label>(=doc.nodeChildrenCount() | rbsMaxNumber=)</label>
 				</span>
 				<i ng-if="doc.is('Rbs_Website_Topic') && ! doc.nodeHasChildren()" class="icon-2x icon-folder-close-alt"></i>
 				<span ng-if="doc.is('Rbs_Website_StaticPage')" class="iconoverlay">

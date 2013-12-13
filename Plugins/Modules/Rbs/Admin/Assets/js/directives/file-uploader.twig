@@ -3,7 +3,7 @@
 	<div>
 		<button ng-show="loading" type="button" class="btn btn-default" disabled="disabled"><i class="icon-spinner icon-spin"></i> Lecture...</button>
 		<span ng-show="fileSize && fileName">
-			(= fileName =) &mdash; (= fileType =) &mdash; <span ng-bind-html="fileSize | fileSize"></span>
+			(= fileName =) &mdash; (= fileType =) &mdash; <span ng-bind-html="fileSize | rbsFileSize"></span>
 		</span>
 	</div>
 </div>

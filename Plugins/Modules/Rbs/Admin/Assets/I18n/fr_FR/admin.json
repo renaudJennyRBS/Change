@@ -881,6 +881,9 @@
 	"insert_block_top": {
 		"message": "ajouter un bloc en haut de la zone"
 	},
+	"insert_block_into_column": {
+		"message": "ajouter un bloc dans cette colonne"
+	},
 	"delete_block": {
 		"message": "supprimer le bloc"
 	},

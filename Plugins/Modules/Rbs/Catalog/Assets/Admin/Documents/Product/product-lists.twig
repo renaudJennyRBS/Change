@@ -60,7 +60,7 @@
 						        ng-disabled="isRemoveBusy(item)"
 						        ng-click="deleteProductListItem(item)">
 							<i ng-class="{true:'icon-spin icon-spinner', false:'icon-remove'}[isRemoveBusy(item)]"></i>
-							Retirer de la liste
+							{{ i18n('m.rbs.catalog.admin.remove_from_list', ['ucf']) }}
 						</button>
 					</td>
 				</tr>

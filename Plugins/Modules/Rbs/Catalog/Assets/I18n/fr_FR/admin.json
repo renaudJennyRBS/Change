@@ -460,5 +460,8 @@
 	},
 	"productlist_edit_properties":{
 		"message":"éditer les propriétés de la liste de produits"
+	},
+	"remove_from_list":{
+		"message":"retirer de la liste"
 	}
 }

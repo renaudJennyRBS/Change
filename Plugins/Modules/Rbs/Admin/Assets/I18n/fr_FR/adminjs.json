@@ -83,11 +83,20 @@
 	"delete":{
 		"message":"supprimer"
 	},
+	"deleted":{
+		"message":"supprimé"
+	},
+	"added":{
+		"message":"ajouté"
+	},
 	"ask_for_delete":{
 		"message":"supprimer ?"
 	},
 	"search":{
 		"message":"rechercher"
+	},
+	"search_set_name":{
+		"message":"Donnez un nom à votre recherche"
 	},
 	"use_this_value_in":{
 		"message":"utiliser cette valeur en $LANG$"
@@ -358,5 +367,28 @@
 	},
 	"error_on_delete":{
 		"message":"une erreur s'est produite pendant la suppression de l'élément"
+	},
+	"bytes":{
+		"message":"octets"
+	},
+	"kilobytes":{
+		"message":"kilo-octets"
+	},
+	"megabytes":{
+		"message":"méga-octets"
+	},
+	"gigabytes":{
+		"message":"giga-octets"
+	},
+	"terabytes":{
+		"message":"tera-octets"
+	},
+	"filter_document_list_summary_more_three":{
+		"message":"<strong>$count$ éléments</strong> dont <strong class=\"element\">$element1$</strong>, <strong class=\"element\">$element2$</strong> et <strong class=\"element\">$element3$</strong>",
+		"description":"Use in document list to display a confirmation message when you execute an action, like delete, to remember the items selected when your are selected more than three"
+	},
+	"filter_document_list_summary_less_three":{
+		"message":"les <strong>$count$ éléments</strong> suivants : <strong class=\"element\">$elementsAsHtml$</strong> et <strong class=\"element\">$lastElement$</strong>",
+		"description":"Use in document list to display a confirmation message when you execute an action, like delete, to remember the items selected"
 	}
 }

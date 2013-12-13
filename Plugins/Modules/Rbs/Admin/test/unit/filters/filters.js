@@ -9,13 +9,13 @@ describe('filters', function () {
 
 	beforeEach(module('RbsChange'));
 
-	beforeEach(inject(function (stripHtmlTagsFilter, BBcodeFilter, ellipsisFilter, fileSizeFilter, highlightFilter, emptyLabelFilter) {
-		stripHtmlTags = stripHtmlTagsFilter;
-		BBcode = BBcodeFilter;
-		ellipsis = ellipsisFilter;
-		fileSize = fileSizeFilter;
-		highlight = highlightFilter;
-		emptyLabel = emptyLabelFilter;
+	beforeEach(inject(function (rbsStripHtmlTagsFilter, rbsBBcodeFilter, rbsEllipsisFilter, rbsFileSizeFilter, rbsHighlightFilter, rbsEmptyLabelFilter) {
+		stripHtmlTags = rbsStripHtmlTagsFilter;
+		BBcode = rbsBBcodeFilter;
+		ellipsis = rbsEllipsisFilter;
+		fileSize = rbsFileSizeFilter;
+		highlight = rbsHighlightFilter;
+		emptyLabel = rbsEmptyLabelFilter;
 	}));
 
 	it('should strip HTML tags', function () {
