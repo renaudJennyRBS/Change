@@ -53,12 +53,13 @@
 			<div class="col-md-6 form-vertical">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-user"></i> <a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
+						</h3>
 					</div>
-					<div class="panel-body">
+					<div class="panel-body" ng-show="extend.showAddressUI">
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
 							<div class="document-picker-single"
-								ng-model="address.doc"
+								ng-model="extend.address.doc"
 								accepted-model="Rbs_Geo_Address" allow-edition="true"
 								selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}">
 							</div>
@@ -73,42 +74,23 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-
-		<div class="row">
-			<div class="col-md-4 form-vertical">
-				<div class="panel" ng-class="{'in_progress':'panel-info', 'finalized':'panel-success', 'canceled':'panel-danger', 'initiated':'panel-default'}[document.processingStatus]">
+			<div class="col-md-6 form-vertical">
+				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'processingStatus'), ['ucf']) }}</h3>
+						<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="extend.showShippingUI = !extend.showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showShippingUI]"></i></a>
+						</h3>
 					</div>
-					<div class="panel-body">
-						<select class="form-control" ng-model="document.processingStatus" rbs-items-from-collection="Rbs_Order_Collection_ProcessingStatus">
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-4 form-vertical">
-				<div class="panel" ng-class="{'payed':'panel-success', 'partially_payed':'panel-warning', 'canceled':'panel-danger', 'unconfirmed':'panel-warning', 'initiated':'panel-default'}[document.paymentStatus]">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-money"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'paymentStatus'), ['ucf']) }}</h3>
-					</div>
-					<div class="panel-body">
-						<select class="form-control" ng-model="document.paymentStatus" rbs-items-from-collection="Rbs_Order_Collection_PaymentStatus">
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-4 form-vertical">
-				<div class="panel" ng-class="{'prepared':'panel-info', 'partially_shipped':'panel-warning', 'shipped':'panel-success', 'delivered':'panel-success', 'partially_delivered':'panel-success', 'initiated':'panel-default'}[document.shippingStatus]">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-truck"></i> {{ i18n(propertyKey('Rbs_Order_Order', 'shippingStatus'), ['ucf']) }}</h3>
-					</div>
-					<div class="panel-body">
-						<select class="form-control" ng-model="document.shippingStatus" rbs-items-from-collection="Rbs_Order_Collection_ShippingStatus">
-						</select>
+					<div class="panel-body" ng-show="extend.showShippingUI">
+						<table class="table table-bordered table-condensed table-striped">
+							<tr>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
+							</tr>
+							<tr ng-repeat="shipping in document.shippingData" ng-show="shipping.lines.length > 0">
+								<td>(=extend.shippingDetails[shipping.id].label=)</td>
+								<td>(=shipping.lines.join(', ')=)</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 			</div>
@@ -150,16 +132,18 @@
 
 						<div ng-show="document.billingAreaId && document.taxZone">
 							<p>
+								<div>
+								<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
 								<div class="document-picker-multiple"
 							         accepted-model="Rbs_Catalog_Product"
 							         allow-edition="false" allow-creation="false" allow-in-place-selection="true"
 							         selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
 						         </div>
-							</p>
-							<p>
 								<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
 									<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
 								</button>
+								</rbs-field>
+								</div>
 							</p>
 						</div>
 						<p ng-hide="document.billingAreaId && document.taxZone">
@@ -168,7 +152,6 @@
 						</p>
 					</div>
 				</div>
-
 				<div ng-show="document.linesData.length > 0">
 					<rbs-document-list
 							collection="document.linesData"
@@ -207,6 +190,9 @@
 
 						<action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
 								selection="+"></action>
+
+						<action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
+							selection="+"></action>
 
 					</rbs-document-list>
 				</div>

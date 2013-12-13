@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditor (Utils, REST)
+	function rbsOrderOrderEditor (Utils, REST, Dialog, i18n, $filter, $q)
 	{
 		return {
 			restrict : 'C',
@@ -16,8 +16,13 @@
 
 					articleCount : 0,
 					showNewLineUI : false,
+					showAddressUI : false,
+					showShippingUI : false,
 					loadingProductInfo : false,
 					removedLines : [],
+					address : {},
+					currentShippingMode : "",
+					shippingDetails: {},
 
 					addNewLines : function ()
 					{
@@ -63,9 +68,135 @@
 					trashRemovedLine : function (lineIndex)
 					{
 						extend.removedLines.splice(lineIndex, 1);
+					},
+
+					populateAddressFields: function(addressDoc) {
+						if(angular.isObject(addressDoc)){
+							var addressFields = addressDoc.addressFields;
+							if(angular.isObject(addressFields)){
+								if(!angular.isObject(scope.document.contextData)){
+									scope.document.contextData = {};
+								}
+								scope.document.contextData.addressFields = addressFields.id;
+								scope.document.addressData = addressDoc.fieldValues;
+							}
+						}
+					},
+
+					setShippingMode : function (lines, embedDialog, target)
+					{
+						// choose default shipping mode for the lines selected
+						var foundShippingMode = null;
+						var multipleShippingModes = false;
+						angular.forEach(lines, function (line) {
+							if(!multipleShippingModes && line.options.shippingMode){
+								if(foundShippingMode && line.options.shippingMode != foundShippingMode){
+									multipleShippingModes = true;
+								}
+								else{
+									foundShippingMode = line.options.shippingMode;
+								}
+							}
+						});
+						if(multipleShippingModes){
+							scope.extend.currentShippingMode = "";
+						}
+						else if (foundShippingMode){
+							scope.extend.currentShippingMode = foundShippingMode;
+						}
+						else {
+							scope.extend.currentShippingMode = "";
+						}
+
+						var promise;
+						var message = '<select class="form-control" ng-model="extend.currentShippingMode" rbs-items-from-collection="Rbs_Generic_Collection_ShippingModes"><option value="">'+i18n.trans('m.rbs.order.adminjs.order_select_shipping_mode | ucf')+'</option></select>';
+
+						if (embedDialog) {
+							promise = Dialog.confirmEmbed(
+								embedDialog,
+								i18n.trans('m.rbs.order.adminjs.order_set_shipping_mode | ucf'),
+								message,
+								scope,
+								{
+									'pointedElement'    : target
+								}
+							);
+						} else if (target) {
+							// ($el, title, message, options) {
+							promise = Dialog.confirmLocal(
+								target,
+								i18n.trans('m.rbs.order.adminjs.order_set_shipping_mode | ucf'),
+								message,
+								{
+									"placement": "bottom"
+								}
+							);
+						}
+
+						promise.then(function () {
+							var modified = false;
+							angular.forEach(lines, function (line) {
+								modified = scope.extend.setLineShippingMode(line) || modified;
+							});
+
+							if(modified){
+								scope.extend.refreshShippingModes();
+								scope.extend.showShippingUI = true;
+							}
+						});
+
+					},
+
+					setLineShippingMode : function(line)
+					{
+						var options = line.options;
+						var modified = false;
+						if(scope.extend.currentShippingMode){
+							modified = options.shippingMode != scope.extend.currentShippingMode;
+							options.shippingMode = scope.extend.currentShippingMode;
+						}
+						else if (options.shippingMode != undefined)
+						{
+							modified = true;
+							options.shippingMode = undefined;
+						}
+						return modified;
+					},
+
+					refreshShippingModes : function()
+					{
+						if(!angular.isObject(scope.document.shippingData)){
+							scope.document.shippingData = [];
+						}
+						var shippingModes = scope.document.shippingData;
+						angular.forEach(shippingModes, function (shippingMode) {
+							shippingMode.lines = [];
+						});
+						angular.forEach(scope.document.linesData, function (line) {
+							var shippingModeId = line.options.shippingMode;
+							if(shippingModeId){
+								var matchingShippingModes = $filter('filter')(shippingModes, {'id': shippingModeId});
+								if(matchingShippingModes.length){
+									angular.forEach(matchingShippingModes, function (shippingMode) {
+										shippingMode.lines.push(line.options.lineNumber);
+									});
+								}
+								else{
+									shippingModes.push({'id': shippingModeId, lines: [line.options.lineNumber]});
+								}
+							}
+						});
+					},
+
+					populateShippingDetails: function(response) {
+						var shippingDetails = {};
+						angular.forEach(response.resources, function (shippingDoc) {
+							shippingDetails[shippingDoc.id] = shippingDoc;
+						});
+						scope.extend.shippingDetails = shippingDetails;
 					}
 
-				};
+			};
 
 				scope.getProductsBySku = function (query)
 				{
@@ -76,14 +207,19 @@
 
 				function makeOrderLine (number, product, quantity)
 				{
+					var item = {
+						codeSKU : product.boInfo.sku.code,
+						quantity : quantity || 1,
+						priceValue : null
+					};
+					if(angular.isObject(product.boInfo.price)) {
+						item.priceValue = product.boInfo.price.boValue;
+					}
+
 					return {
 						designation : product.label,
 						quantity : quantity || 1,
-						items : [{
-							codeSKU : product.boInfo.sku.code,
-							quantity : quantity || 1,
-							priceValue : product.boInfo.price.boValue
-						}],
+						items : [item],
 						options : {
 							lineNumber : number,
 							visual : product.adminthumbnail
@@ -103,7 +239,6 @@
 
 				scope.extend = extend;
 
-
 				scope.onReady = function ()
 				{
 					extend.showNewLineUI = scope.document.isNew();
@@ -112,8 +247,7 @@
 					}
 				};
 
-
-				// This watches for modifications in the lines, made by the user, such as quantity for each line.
+					// This watches for modifications in the lines, made by the user, such as quantity for each line.
 				scope.$watch('document.linesData', function (lines, old) {
 					if (scope.document && lines !== old) {
 						scope.document.amountWithTax = 0;
@@ -125,38 +259,26 @@
 					}
 				}, true);
 
-				scope.address = {};
-
 				// This watches for modifications in the address doc in order to fill the address form
-				scope.$watch('address.doc', function (addressDoc, old) {
+				scope.$watch('extend.address.doc', function (addressDoc, old) {
 					if(angular.isObject(addressDoc)){
-						// must reset addressField in order to trigger fieldValues generation
-						if(angular.isObject(scope.document.contextData)){
-							scope.document.contextData.addressFields = null;
-						}
-						REST.resource(addressDoc.model, addressDoc.id).then(scope.populateAddressFields);
+						REST.resource(addressDoc.model, addressDoc.id).then(scope.extend.populateAddressFields);
 					}
 				}, true);
 
-				scope.populateAddressFields = function(addressDoc) {
-					if(angular.isObject(addressDoc)){
-						var addressFields = addressDoc.addressFields;
-						if(angular.isObject(addressFields)){
-							if(!angular.isObject(scope.document.contextData)){
-								scope.document.contextData = {};
-							}
-							scope.document.contextData.addressFields = addressFields.id;
-							scope.document.addressData = addressDoc.fieldValues;
-						}
+				// This watches for modifications in the address doc in order to fill the address form
+				scope.$watch('document.shippingData', function (shippingData, old) {
+					if(angular.isObject(shippingData) && !angular.isObject(old)){
+						REST.collection('Rbs_Shipping_Mode').then(scope.extend.populateShippingDetails);
 					}
-				};
+				}, true);
 
 				editorCtrl.init('Rbs_Order_Order');
 			}
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST' ];
+	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.Dialog', 'RbsChange.i18n', '$filter', '$q' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
 
 })();

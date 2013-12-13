@@ -1,0 +1,8 @@
+{
+	"order_set_shipping_mode":{
+		"message":"définir le mode de livraison"
+	},
+	"order_select_shipping_mode":{
+		"message":"sélectionnez le mode de livraison"
+	}
+}
