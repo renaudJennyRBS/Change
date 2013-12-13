@@ -35,7 +35,6 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 		throw new \RuntimeException('Unable to get CommerceServices', 999999);
 	}
 
-
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @return null|\Rbs\Commerce\Cart\Cart
@@ -47,6 +46,10 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 		return ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
 	}
 
+	/**
+	 * @param CommerceServices $commerceServices
+	 * @param Event $event
+	 */
 	public function delete(CommerceServices $commerceServices, Event $event)
 	{
 		$request = $event->getRequest();
@@ -62,13 +65,17 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$cartManager = $commerceServices->getCartManager();
 					$cart->removeLineByKey($lineKey);
 					$cartManager->saveCart($cart);
-					$result = $this->getNewAjaxResult(array('cart' => $cart->toArray()));
-					$event->setResult($result);
+
+					(new GetCurrentCart())->execute($event);
 				}
 			}
 		}
 	}
 
+	/**
+	 * @param CommerceServices $commerceServices
+	 * @param Event $event
+	 */
 	public function update(CommerceServices $commerceServices, Event $event)
 	{
 		$request = $event->getRequest();
@@ -78,7 +85,6 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$cart = $this->getCart($commerceServices);
 			if ($cart)
 			{
-
 				$cartLine = $cart->getLineByKey($lineKey);
 				if ($cartLine)
 				{
@@ -98,8 +104,7 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 						$cartManager->saveCart($cart);
 					}
 
-					$result = $this->getNewAjaxResult(array('cart' => $cart->toArray()));
-					$event->setResult($result);
+					(new GetCurrentCart())->execute($event);
 				}
 			}
 		}
