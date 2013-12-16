@@ -336,7 +336,7 @@
 						// TODO
 						// If there are corrections and/or localizations, ask the user what should be deleted.
 
-						message = i18n.trans('m.rbs.admin.adminjs.action_delete_message | ucf', {DOCUMENTLISTSUMMARY: $filter('documentListSummary')($docs)});
+						message = i18n.trans('m.rbs.admin.adminjs.action_delete_message | ucf', {DOCUMENTLISTSUMMARY: $filter('rbsDocumentListSummary')($docs)});
 						if (correction) {
 							message += "<p>" + i18n.trans('m.rbs.admin.adminjs.action_delete_with_correction_message | ucf') + "</p>";
 						}

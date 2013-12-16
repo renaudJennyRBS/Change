@@ -57,7 +57,7 @@
 		<tbody>
 			<tr data-ng-repeat="token in tokens | orderBy:predicate:reverse" class="normal-row">
 				<td>
-					<a href data-ng-click="displayToken(token)">(= token.token | ellipsis:20:'center' =)</a>
+					<a href data-ng-click="displayToken(token)">(= token.token | rbsEllipsis:20:'center' =)</a>
 				</td>
 				<td>(= token.application =)</td>
 				<td>(= token.realm =)</td>

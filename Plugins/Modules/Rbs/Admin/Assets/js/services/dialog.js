@@ -37,7 +37,7 @@
 					this.btnStyle = style || 'warning';
 					this.$modal.find('.modal-footer .btn-primary').addClass('btn-' + this.btnStyle);
 					this.$modal.find('.modal-header h3').html(title);
-					this.$modal.find('.modal-body').html($filter('BBcode')(message));
+					this.$modal.find('.modal-body').html($filter('rbsBBcode')(message));
 					if (warningMessage) {
 						this.$modal.find('.message').html(warningMessage);
 					} else {
@@ -90,7 +90,7 @@
 						'<button class="btn btn-warning" type="button" id="' + uidOK + '">' + i18n.trans('m.rbs.admin.adminjs.yes | ucf') + '</button>' +
 						'<button type="button" class="btn btn-default" id="'+uidCancel+'">' + i18n.trans('m.rbs.admin.adminjs.no | ucf') + '</button>' +
 						'</div>';
-					var opt = $.extend({}, { 'title': title, 'content': $filter('BBcode')(message) }, this.confirmPopoverOptions, options);
+					var opt = $.extend({}, { 'title': title, 'content': $filter('rbsBBcode')(message) }, this.confirmPopoverOptions, options);
 					$el.popover(opt).popover('show');
 
 					$('#'+uidOK)

@@ -3,7 +3,7 @@
 	<div>
 		<button ng-show="loading" type="button" class="btn btn-default" disabled="disabled"><i class="icon-spinner icon-spin"></i> Lecture...</button>
 		<span ng-show="fileSize && fileName">
-			(= fileName =) &mdash; (= imageWidth =) &times; (= imageHeight =) &mdash; <span ng-bind-html="fileSize | fileSize"></span>
+			(= fileName =) &mdash; (= imageWidth =) &times; (= imageHeight =) &mdash; <span ng-bind-html="fileSize | rbsFileSize"></span>
 		</span>
 	</div>
 	<input type="file" accept="(= fileAccept =)" name="file" style="text-indent: -3000px;opacity: 0; visibility: hidden; position: absolute;"/>

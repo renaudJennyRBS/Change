@@ -136,7 +136,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 
 	/**
 	 * @param string $visibility
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isVisibleFor($visibility)
 	{
