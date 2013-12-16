@@ -111,7 +111,7 @@
 									scope.data.action = action;
 								}
 							});
-							if (scope.data.action == null && attrs.standalone == 'true') {
+							if (scope.data.action === null && attrs.standalone === 'true') {
 								$location.path(doc.url());
 								return;
 							}
@@ -158,56 +158,24 @@
 				};
 
 
-				scope.runWholeWorkflow = function () {
+				scope.runDirectPublication = function ()
+				{
 					freezeUI();
 					var defer = $q.defer();
-					scope.data.progress = 0;
 					lastUpdatedDoc = null;
-					REST.executeTaskByCodeOnDocument('requestValidation', scope.document).then(
 
-						// Success
-						function (doc) {
-							lastUpdatedDoc = doc;
-							scope.data.progress = 33.33;
-							REST.executeTaskByCodeOnDocument('contentValidation', doc).then(
-
-								// Success
-								function (doc) {
-									lastUpdatedDoc = doc;
-									scope.data.progress = 66.66;
-									REST.executeTaskByCodeOnDocument('publicationValidation', doc).then(
-
-										// Success
-										function (doc) {
-											lastUpdatedDoc = doc;
-											scope.data.progress = 100;
-											$timeout(function () {
-												scope.data.progress = undefined;
-												unfreezeUI();
-												defer.resolve();
-											}, 100);
-										},
-
-										// publicationValidation error
-										unfreezeUI
-									);
-								},
-
-								// contentValidation error
-								unfreezeUI
-							);
-						},
-
-						// requestValidation error
-						unfreezeUI
-					);
+					if (scope.document.META$.actions && scope.document.META$.actions.hasOwnProperty('directPublication'))
+					{
+						REST.call(scope.document.META$.actions['directPublication'].href).then(function (task)
+						{
+							angular.extend(scope.document, REST.transformObjectToChangeDocument(task.properties.document));
+							lastUpdatedDoc = scope.document;
+							unfreezeUI();
+							defer.resolve();
+						});
+					}
 
 					return defer.promise;
-				};
-
-
-				scope.hasProgressInfo = function () {
-					return scope.data.progress !== undefined;
 				};
 
 
@@ -223,8 +191,6 @@
 					scope.correctionData.correctionInfo = angular.copy(doc.META$.correction);
 					scope.correctionData.diff = [];
 					scope.correctionData.advancedDiffs = true;
-
-					console.log("scope.correctionData=", scope.correctionData);
 
 					scope.correctionData.params = {
 						'applyCorrectionWhen' : scope.correctionData.correctionInfo.publicationDate ? 'planned' : 'now',

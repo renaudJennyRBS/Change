@@ -1,7 +1,6 @@
 <div>
 	<rbs-button-close ng-show="closable" ng-click="closeWorkflow()"></rbs-button-close>
 
-	<i class="icon-time icon-4x"></i>
 	<h3>{{ i18n('m.rbs.admin.admin.workflow_title', ['ucf']) }}</h3>
 	<h5>
 		<span ng-switch="document.publicationStatus">
@@ -42,7 +41,7 @@
 			</div>
 			<rbs-advanced-mode>
 				<p>{{ i18n('m.rbs.admin.admin.run_all_steps_message') | raw }}</p>
-				<p><button type="button" class="btn btn-danger" ng-click="runWholeWorkflow()"><i class="icon-fast-forward"></i> {{ i18n('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}</button></p>
+				<p><button type="button" class="btn btn-danger" ng-click="runDirectPublication()"><i class="icon-fast-forward"></i> {{ i18n('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}</button></p>
 			</rbs-advanced-mode>
 		</div>
 
@@ -283,12 +282,6 @@
 
 		<div ng-switch-default="">
 			{{ i18n('m.rbs.admin.admin.no_action_to_execute', ['ucf']) }}
-		</div>
-
-		<div class="progress" ng-if="hasProgressInfo()">
-			<div class="progress-bar" role="progressbar" aria-valuenow="(= data.progress =)" aria-valuemin="0" aria-valuemax="100"
-				ng-style="{width: data.progress + '%'}"></div>
-			<span class="sr-only">(= data.progress =)%</span>
 		</div>
 
 		<div class="alert alert-danger" ng-if="data.error">
