@@ -76,6 +76,7 @@
 		 * @param scope
 		 * @param zoneEl The element in which the editable content should be created.
 		 * @param zoneObj The zone object definition.
+		 * @param readonly
 		 */
 		this.initEditableZone = function (scope, zoneEl, zoneObj, readonly) {
 			zoneEl.html('');
@@ -922,7 +923,6 @@
 
 								// Loop through all the children of the hovered element to determine
 								// between which blocks the dragged block should be inserted.
-
 								for (i=0 ; i<dropTarget.children().length && dropPosition === -1 ; i++) {
 									childEl = $(dropTarget.children()[i]);
 									midY = childEl.offset().top + (childEl.outerHeight() / 2);
@@ -1116,6 +1116,13 @@
 								if (zone) {
 									editableZone = $(elm).find('[data-editable-zone-id="' + tplZone.id + '"]');
 									if (editableZone.length) {
+										if (!zone.hasOwnProperty('items') || zone.items.length == 0) {
+											zone.items = [{
+												"id"   : scope.getNextBlockId(),
+												"type" : "block-chooser"
+											}];
+										}
+
 										registerItems(zone);
 										editableZone.addClass('block-container');
 										structureEditorService.initEditableZone(
@@ -1870,15 +1877,22 @@
 
 				scope.removeBlock = function () {
 					var block = ctrl.getSelectedBlock();
-					Dialog.confirmLocal(
-						block,
-						i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
-						"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') + "</strong>",
-						{"placement": "top"}
-					).then(function () {
+					console.log(block);
+					if (block.hasClass('rbs-block-chooser')) {
 						ctrl.removeBlock(block);
 						ctrl.notifyChange("remove", "block", block);
-					});
+					}
+					else {
+						Dialog.confirmLocal(
+							block,
+							i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
+							"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') + "</strong>",
+							{"placement": "top"}
+						).then(function () {
+							ctrl.removeBlock(block);
+							ctrl.notifyChange("remove", "block", block);
+						});
+					}
 				};
 			}
 		};
@@ -1920,19 +1934,15 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('rbsBlockChooser', ['RbsChange.i18n', function (i18n) {
+	app.directive('rbsBlockChooser', [ function () {
 		return {
 			"restrict" : 'C',
 			"scope"    : true,
 			"require"  : '^structureEditor',
 			"replace"  : true,
-			"template" :
-				'<div draggable="true" class="block" ng-click="selectBlock($event)">' +
-					'<i class="icon-question-sign"></i>' + i18n.trans('m.rbs.admin.adminjs.structure_editor_new_block_shortened | ucf') +
-				'</div>',
+			"templateUrl" : 'Rbs/Admin/js/directives/structure-editor-block-chooser.twig',
 
 			"link" : function seBlockChooserLinkFn (scope, element, attrs, ctrl) {
-				element.attr('data-label', i18n.trans('m.rbs.admin.adminjs.structure_editor_new_block | ucf'));
 				scope.selectBlock = function ($event) {
 					$event.stopPropagation();
 					ctrl.selectBlock(element);

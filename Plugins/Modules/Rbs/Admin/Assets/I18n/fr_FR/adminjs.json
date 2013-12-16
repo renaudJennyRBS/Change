@@ -336,7 +336,7 @@
 		"message":"supprimer le bloc ?"
 	},
 	"structure_editor_remove_block_confirm":{
-		"message":"vous êtes sur le point de supprimer le kbloc ci-dessous."
+		"message":"vous êtes sur le point de supprimer le bloc ci-dessous."
 	},
 	"structure_editor_remove_block_group":{
 		"message":"supprimer le groupe de blocs ?"
@@ -349,12 +349,6 @@
 	},
 	"structure_editor_remove_column_confirm":{
 		"message":"<strong>Vous êtes sur le point de supprimer la colonne ci-dessous.</strong><br/><br/>Tous les blocs qu'elle contient ($CHILDCOUNT$) seront également supprimés de la page."
-	},
-	"structure_editor_new_block":{
-		"message":"Nouveau bloc"
-	},
-	"structure_editor_new_block_shortened":{
-		"message":"Nouv. bloc"
 	},
 	"error_formatter_properties_not_valid":{
 		"message":"les propriétés suivantes ne sont pas valides :"

@@ -28,11 +28,15 @@
 	},
 	"empty_cart":{
 		"message":"Votre panier est vide.",
-		"description": "Use in cart detail block"
+		"description": "Used in cart detail block"
 	},
 	"empty_cart_message":{
 		"message":"Vous n'avez pas ajouté d'article dans votre panier.",
-		"description": "Use in cart detail block"
+		"description": "Used in cart detail block"
+	},
+	"please_wait_loading_cart":{
+		"message":"panier en cours de chargement",
+		"description": "Used in cart detail block, during loading"
 	},
 	"article":{
 		"message":"article"
