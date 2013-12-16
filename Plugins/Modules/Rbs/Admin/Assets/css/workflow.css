@@ -102,7 +102,7 @@ rbs-document-list .rbs-document-workflow-actions {
 
 .bullet-status.PUBLISHABLE {
 	border-radius: 10px;
-	background: #B1EA37;
+	background: #A1DA37;
 }
 
 .bullet-status.VALIDCONTENT {
@@ -142,12 +142,10 @@ rbs-document-list .document-list tbody td.workflow > .inner {
 
 rbs-document-list td.workflow .workflow-indicator {
 	position: absolute;
-	top: -6px;
+	top: -5px;
 	left: 57px;
 	width: 10px;
 	height: 10px;
-	border-top: 1px solid #dddddd;
-	border-right: 1px solid #dddddd;
 	background: #bbbdcc;/*#eef0ff;*/
 	-webkit-transform: rotate(-45deg);
 	-moz-transform: rotate(-45deg);
@@ -156,35 +154,38 @@ rbs-document-list td.workflow .workflow-indicator {
 }
 
 
+.rbs-document-workflow-actions h3,
+.rbs-document-workflow-actions h3 {
+	text-shadow: 0 0 2px rgba(0,0,0,0.2);
+}
+
+
 /* Colors for each status */
 
 rbs-document-list .rbs-document-workflow-actions.PUBLISHABLE,
 rbs-document-list .rbs-document-workflow-actions.VALIDCONTENT {
 	background: #eefff0;
-	border-color: #88BB88;
+	border-color: #A1DA37;
 }
 rbs-document-list td.workflow .workflow-indicator.PUBLISHABLE,
 rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
-	background: #88BB88;
+	background: #A1DA37;
 }
 .rbs-document-workflow-actions.PUBLISHABLE h3,
-.rbs-document-workflow-actions.PUBLISHABLE > i,
-.rbs-document-workflow-actions.VALIDCONTENT h3,
-.rbs-document-workflow-actions.VALIDCONTENT > i {
-	color: #88BB88;
+.rbs-document-workflow-actions.VALIDCONTENT h3 {
+	color: #A1DA37;
 }
 
 
 rbs-document-list .rbs-document-workflow-actions.VALIDATION {
 	background: #faf5f0;
-	border-color: #CCBB88;
+	border-color: #EFA700;
 }
 rbs-document-list td.workflow .workflow-indicator.VALIDATION {
-	background: #CCBB88;
+	background: #EFA700;
 }
-.rbs-document-workflow-actions.VALIDATION h3,
-.rbs-document-workflow-actions.VALIDATION > i {
-	color: #CCBB88;
+.rbs-document-workflow-actions.VALIDATION h3 {
+	color: #EFA700;
 }
 
 
@@ -195,22 +196,20 @@ rbs-document-list .rbs-document-workflow-actions.UNPUBLISHABLE {
 rbs-document-list td.workflow .workflow-indicator.UNPUBLISHABLE {
 	background: #CC8888;
 }
-.rbs-document-workflow-actions.UNPUBLISHABLE h3,
-.rbs-document-workflow-actions.UNPUBLISHABLE > i {
-	color: #CC8888;
+.rbs-document-workflow-actions.UNPUBLISHABLE h3 {
+	color: #EFA700;
 }
 
 
 rbs-document-list .rbs-document-workflow-actions.FROZEN {
 	background: #e0f0ff;
-	border-color: #66aacc;
+	border-color: #33BBFF;
 }
 rbs-document-list td.workflow .workflow-indicator.FROZEN {
-	background: #66aacc;
+	background: #33BBFF;
 }
-.rbs-document-workflow-actions.FROZEN h3,
-.rbs-document-workflow-actions.FROZEN > i {
-	color: #66aacc;
+.rbs-document-workflow-actions.FROZEN h3 {
+	color: #33BBFF;
 }
 
 .workflow-help {
