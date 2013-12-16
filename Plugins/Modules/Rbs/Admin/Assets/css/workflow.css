@@ -1,5 +1,5 @@
 .rbs-document-workflow-actions {
-	padding: 10px 10px 10px 70px;
+	padding: 10px;
 	position: relative;
 }
 
@@ -7,21 +7,16 @@
 rbs-document-list .rbs-document-workflow-actions {
 	background: #F5F5F5;
 	border: 5px solid #bbbbbb;
-}
-
-.rbs-document-workflow-actions > i {
-	position: absolute;
-	left: 10px;
-	top: 5px;
-	color: #bbbbbb;
+	border-radius: 5px;
 }
 
 .rbs-document-workflow-actions h3 {
 	text-transform: uppercase;
 	color: #bbbbbb;
-	font-size: 18px;
-	line-height: 18px;
+	font-size: 20pt;
+	line-height: 20pt;
 	margin-top: 0;
+	font-weight: lighter;
 }
 
 .rbs-document-workflow-actions form {
@@ -136,18 +131,19 @@ rbs-document-list .rbs-document-workflow-actions {
 	background: #efa700;
 }
 
-.table-striped.document-list tbody td.workflow {
+rbs-document-list .document-list tbody td.workflow {
 	padding: 0;
 }
 
-.table-striped.document-list tbody td.workflow .inner {
+rbs-document-list .document-list tbody td.workflow > .inner {
 	position: relative;
+	margin: 0 -10px;
 }
 
 rbs-document-list td.workflow .workflow-indicator {
 	position: absolute;
 	top: -6px;
-	left: 280px;
+	left: 57px;
 	width: 10px;
 	height: 10px;
 	border-top: 1px solid #dddddd;
@@ -219,7 +215,7 @@ rbs-document-list td.workflow .workflow-indicator.FROZEN {
 
 .workflow-help {
 	border-top: 4px dotted rgba(0,0,0,0.1);
-	margin: 10px -10px 0 -70px;
+	margin: 10px -10px 0 -10px;
 	padding: 10px;
 }
 
@@ -303,7 +299,7 @@ rbs-document-list td.workflow .workflow-indicator.FROZEN {
 
 
 .rbs-document-workflow-actions .advanced-mode {
-	margin: 10px -10px -10px -70px;
+	margin: 10px -10px -10px -10px;
 	padding: 0px;
 	background: #FFF0F0;
 }
