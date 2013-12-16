@@ -50,51 +50,72 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-md-6 form-vertical">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-user"></i> <a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
-						</h3>
-					</div>
-					<div class="panel-body" ng-show="extend.showAddressUI">
-						<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
-							<div class="document-picker-single"
-								ng-model="extend.address.doc"
-								accepted-model="Rbs_Geo_Address" allow-edition="true"
-								selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}">
-							</div>
-						</rbs-field>
-						<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_address_fields', ['ucf']) }}">
-							<select class="form-control" ng-model="document.contextData.addressFields" rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
-								<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
-							</select>
-						</rbs-field>
-						<rbs-field-address property="addressData" address-fields="document.contextData.addressFields"/>
-						</rbs-field>
-					</div>
-				</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
+				</h3>
 			</div>
-			<div class="col-md-6 form-vertical">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="extend.showShippingUI = !extend.showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showShippingUI]"></i></a>
-						</h3>
+			<div class="panel-body" ng-show="extend.showAddressUI">
+				<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
+					<div class="document-picker-single"
+						ng-model="extend.address.doc"
+						accepted-model="Rbs_Geo_Address" allow-edition="true"
+						selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}">
 					</div>
-					<div class="panel-body" ng-show="extend.showShippingUI">
-						<table class="table table-bordered table-condensed table-striped">
-							<tr>
-								<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
-								<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
-							</tr>
-							<tr ng-repeat="shipping in document.shippingData" ng-show="shipping.lines.length > 0">
-								<td>(=extend.shippingDetails[shipping.id].label=)</td>
-								<td>(=shipping.lines.join(', ')=)</td>
-							</tr>
-						</table>
+				</rbs-field>
+				<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_address_fields', ['ucf']) }}">
+					<select class="form-control" ng-model="document.contextData.addressFields" rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
+						<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
+					</select>
+				</rbs-field>
+				<rbs-field-address property="addressData" address-fields="document.contextData.addressFields"/>
+				</rbs-field>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="extend.showShippingUI = !extend.showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showShippingUI]"></i></a>
+				</h3>
+			</div>
+			<div class="panel-body" ng-show="extend.showShippingUI">
+				<table class="table table-bordered table-condensed table-striped">
+					<tr>
+						<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
+						<th>&nbsp;</th>
+					</tr>
+					<tr ng-repeat="shipping in document.shippingData" ng-show="shipping.lines.length > 0">
+						<td>(=extend.shippingDetails[shipping.id].label=)</td>
+						<td>(=shipping.lines.join(', ')=)</td>
+						<td><a class="icon-envelope" title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="extend.editShippingAddress(shipping.id)"></a></td>
+					</tr>
+				</table>
+				<div ng-show="extend.showShippingAddressUI">
+					<h4><a href="javascript:;" ng-click="extend.showShippingAddressUI = !extend.showShippingAddressUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showShippingAddressUI]"></i> {{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf', 'lab']) }} (=extend.shippingDetails[extend.editedShippingMode.id].label=)</a></h4>
+					<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
+						<div class="document-picker-single"
+							ng-model="extend.shippingAddress.doc"
+							accepted-model="Rbs_Geo_Address" allow-edition="true"
+							selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}">
+						</div>
+					</rbs-field>
+					<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_address_fields', ['ucf']) }}">
+						<select class="form-control" ng-model="extend.editedShippingMode.addressFields" rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
+							<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
+						</select>
+					</rbs-field>
+					<div class="form-group">
+						<div class="col-lg-12">
+							<div class="rbs-address-fields" ng-model="extend.editedShippingMode.address" address-fields="extend.editedShippingMode.addressFields"/>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+
 
 		<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.linesData.length > 0]">
 			<div class="panel-heading">

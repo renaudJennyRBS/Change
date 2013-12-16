@@ -18,10 +18,13 @@
 					showNewLineUI : false,
 					showAddressUI : false,
 					showShippingUI : false,
+					showShippingAddressUI : false,
 					loadingProductInfo : false,
 					removedLines : [],
 					address : {},
-					currentShippingMode : "",
+					shippingAddress : {},
+					currentLineShippingMode : "",
+					editedShippingMode : {},
 					shippingDetails: {},
 
 					addNewLines : function ()
@@ -99,17 +102,17 @@
 							}
 						});
 						if(multipleShippingModes){
-							scope.extend.currentShippingMode = "";
+							scope.extend.currentLineShippingMode = "";
 						}
 						else if (foundShippingMode){
-							scope.extend.currentShippingMode = foundShippingMode;
+							scope.extend.currentLineShippingMode = foundShippingMode;
 						}
 						else {
-							scope.extend.currentShippingMode = "";
+							scope.extend.currentLineShippingMode = "";
 						}
 
 						var promise;
-						var message = '<select class="form-control" ng-model="extend.currentShippingMode" rbs-items-from-collection="Rbs_Generic_Collection_ShippingModes"><option value="">'+i18n.trans('m.rbs.order.adminjs.order_select_shipping_mode | ucf')+'</option></select>';
+						var message = '<select class="form-control" ng-model="extend.currentLineShippingMode" rbs-items-from-collection="Rbs_Generic_Collection_ShippingModes"><option value="">'+i18n.trans('m.rbs.order.adminjs.order_select_shipping_mode | ucf')+'</option></select>';
 
 						if (embedDialog) {
 							promise = Dialog.confirmEmbed(
@@ -151,9 +154,9 @@
 					{
 						var options = line.options;
 						var modified = false;
-						if(scope.extend.currentShippingMode){
-							modified = options.shippingMode != scope.extend.currentShippingMode;
-							options.shippingMode = scope.extend.currentShippingMode;
+						if(scope.extend.currentLineShippingMode){
+							modified = options.shippingMode != scope.extend.currentLineShippingMode;
+							options.shippingMode = scope.extend.currentLineShippingMode;
 						}
 						else if (options.shippingMode != undefined)
 						{
@@ -194,8 +197,31 @@
 							shippingDetails[shippingDoc.id] = shippingDoc;
 						});
 						scope.extend.shippingDetails = shippingDetails;
-					}
+					},
 
+					editShippingAddress: function (shippingId) {
+						angular.forEach(scope.document.shippingData, function (shipping){
+							if(shipping.id == shippingId){
+								console.log(shipping);
+								if(!angular.isObject(shipping.address))
+								{
+									shipping.address = {};
+								}
+								scope.extend.editedShippingMode = shipping;
+							}
+						});
+						scope.extend.showShippingAddressUI = true;
+					},
+
+					populateShippingAddressFields: function(addressDoc) {
+						if(angular.isObject(addressDoc)){
+							var addressFields = addressDoc.addressFields;
+							if(angular.isObject(addressFields)){
+								scope.extend.editedShippingMode.addressFields = addressFields.id;
+								scope.extend.editedShippingMode.address = addressDoc.fieldValues;
+							}
+						}
+					}
 			};
 
 				scope.getProductsBySku = function (query)
@@ -263,6 +289,13 @@
 				scope.$watch('extend.address.doc', function (addressDoc, old) {
 					if(angular.isObject(addressDoc)){
 						REST.resource(addressDoc.model, addressDoc.id).then(scope.extend.populateAddressFields);
+					}
+				}, true);
+
+				// This watches for modifications in the shipping address doc in order to fill the address form
+				scope.$watch('extend.shippingAddress.doc', function (addressDoc, old) {
+					if(angular.isObject(addressDoc)){
+						REST.resource(addressDoc.model, addressDoc.id).then(scope.extend.populateShippingAddressFields);
 					}
 				}, true);
 
