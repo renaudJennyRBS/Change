@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditor (Utils, REST, Dialog, i18n, $filter, $q)
+	function rbsOrderOrderEditor (Utils, REST, Dialog, i18n, $filter)
 	{
 		return {
 			restrict : 'C',
@@ -20,9 +20,8 @@
 					showShippingUI : false,
 					loadingProductInfo : false,
 					removedLines : [],
-					address : {},
-					currentShippingMode : "",
-					shippingDetails: {},
+					userAddresses : [],
+					currentLineShippingMode : "",
 
 					addNewLines : function ()
 					{
@@ -70,17 +69,34 @@
 						extend.removedLines.splice(lineIndex, 1);
 					},
 
-					populateAddressFields: function(addressDoc) {
-						if(angular.isObject(addressDoc)){
-							var addressFields = addressDoc.addressFields;
-							if(angular.isObject(addressFields)){
-								if(!angular.isObject(scope.document.contextData)){
-									scope.document.contextData = {};
-								}
-								scope.document.contextData.addressFields = addressFields.id;
-								scope.document.addressData = addressDoc.fieldValues;
-							}
+					populateAddressList : function(ownerId)
+					{
+						if(!ownerId)
+						{
+							scope.extend.userAddresses = [];
+							return;
 						}
+
+						var query = {
+							'model': 'Rbs_Geo_Address',
+							'where': {
+								'and': [
+									{
+										'op': 'eq',
+										'lexp': {
+											'property': 'ownerId'
+										},
+										'rexp': {
+											'value': ownerId
+										}
+									}
+								]
+							}
+						};
+
+						REST.query(query, {'column': ['label', 'addressFields', 'fieldValues']}).then(function (data){
+							scope.extend.userAddresses = data.resources;
+						});
 					},
 
 					setShippingMode : function (lines, embedDialog, target)
@@ -99,17 +115,17 @@
 							}
 						});
 						if(multipleShippingModes){
-							scope.extend.currentShippingMode = "";
+							scope.extend.currentLineShippingMode = "";
 						}
 						else if (foundShippingMode){
-							scope.extend.currentShippingMode = foundShippingMode;
+							scope.extend.currentLineShippingMode = foundShippingMode;
 						}
 						else {
-							scope.extend.currentShippingMode = "";
+							scope.extend.currentLineShippingMode = "";
 						}
 
 						var promise;
-						var message = '<select class="form-control" ng-model="extend.currentShippingMode" rbs-items-from-collection="Rbs_Generic_Collection_ShippingModes"><option value="">'+i18n.trans('m.rbs.order.adminjs.order_select_shipping_mode | ucf')+'</option></select>';
+						var message = '<select class="form-control" ng-model="extend.currentLineShippingMode" rbs-items-from-collection="Rbs_Generic_Collection_ShippingModes"><option value="">'+i18n.trans('m.rbs.order.adminjs.order_select_shipping_mode | ucf')+'</option></select>';
 
 						if (embedDialog) {
 							promise = Dialog.confirmEmbed(
@@ -140,7 +156,7 @@
 							});
 
 							if(modified){
-								scope.extend.refreshShippingModes();
+								scope.$broadcast('shippingModesUpdated');
 								scope.extend.showShippingUI = true;
 							}
 						});
@@ -151,9 +167,9 @@
 					{
 						var options = line.options;
 						var modified = false;
-						if(scope.extend.currentShippingMode){
-							modified = options.shippingMode != scope.extend.currentShippingMode;
-							options.shippingMode = scope.extend.currentShippingMode;
+						if(scope.extend.currentLineShippingMode){
+							modified = options.shippingMode != scope.extend.currentLineShippingMode;
+							options.shippingMode = scope.extend.currentLineShippingMode;
 						}
 						else if (options.shippingMode != undefined)
 						{
@@ -161,39 +177,6 @@
 							options.shippingMode = undefined;
 						}
 						return modified;
-					},
-
-					refreshShippingModes : function()
-					{
-						if(!angular.isObject(scope.document.shippingData)){
-							scope.document.shippingData = [];
-						}
-						var shippingModes = scope.document.shippingData;
-						angular.forEach(shippingModes, function (shippingMode) {
-							shippingMode.lines = [];
-						});
-						angular.forEach(scope.document.linesData, function (line) {
-							var shippingModeId = line.options.shippingMode;
-							if(shippingModeId){
-								var matchingShippingModes = $filter('filter')(shippingModes, {'id': shippingModeId});
-								if(matchingShippingModes.length){
-									angular.forEach(matchingShippingModes, function (shippingMode) {
-										shippingMode.lines.push(line.options.lineNumber);
-									});
-								}
-								else{
-									shippingModes.push({'id': shippingModeId, lines: [line.options.lineNumber]});
-								}
-							}
-						});
-					},
-
-					populateShippingDetails: function(response) {
-						var shippingDetails = {};
-						angular.forEach(response.resources, function (shippingDoc) {
-							shippingDetails[shippingDoc.id] = shippingDoc;
-						});
-						scope.extend.shippingDetails = shippingDetails;
 					}
 
 			};
@@ -259,18 +242,9 @@
 					}
 				}, true);
 
-				// This watches for modifications in the address doc in order to fill the address form
-				scope.$watch('extend.address.doc', function (addressDoc, old) {
-					if(angular.isObject(addressDoc)){
-						REST.resource(addressDoc.model, addressDoc.id).then(scope.extend.populateAddressFields);
-					}
-				}, true);
-
-				// This watches for modifications in the address doc in order to fill the address form
-				scope.$watch('document.shippingData', function (shippingData, old) {
-					if(angular.isObject(shippingData) && !angular.isObject(old)){
-						REST.collection('Rbs_Shipping_Mode').then(scope.extend.populateShippingDetails);
-					}
+				// This watches for modifications in the user doc in order to fill the address list
+				scope.$watch('document.ownerId', function (ownerId, old) {
+					scope.extend.populateAddressList(ownerId);
 				}, true);
 
 				editorCtrl.init('Rbs_Order_Order');
@@ -278,7 +252,7 @@
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.Dialog', 'RbsChange.i18n', '$filter', '$q' ];
+	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.Dialog', 'RbsChange.i18n' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
 
 })();

@@ -1258,7 +1258,9 @@
 					function reload ()
 					{
 						if (useExternalCollection) {
-							scope.onReload(scope.sort.column, scope.isSortDescending());
+							if (angular.isFunction(scope.onReload)) {
+								scope.onReload(scope.sort.column, scope.isSortDescending());
+							}
 							return;
 						}
 
