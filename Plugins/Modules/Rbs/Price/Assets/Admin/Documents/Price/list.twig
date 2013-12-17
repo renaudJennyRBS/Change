@@ -23,12 +23,14 @@
 			<column name="boValue" align="right" width="90px">
 				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedBoValue=)</a>
 			</column>
-			<column name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
+			<column sort="basePrice.boValue" name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
 				<del ng-if="doc.formattedBoBaseValue"><a ng-href="(= doc.basePrice|rbsURL =)">(=doc.formattedBoBaseValue=)</a></del>
 				<a ng-if="!doc.formattedBoBaseValue" href="(= doc | rbsURL:'discount' =)?basePriceId=(=doc.id=)" class="btn btn-default btn-xs">{{ i18nAttr('m.rbs.catalog.admin.price_create_discount') }}</a>
 			</column>
-			<column name="sku" sort="sku.code">(=doc.sku.code=)</column>
+			<column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></column>
 			<column name="webStore" sort="webStore.label">(=doc.webStore.label=)</column>
+			<column name="startActivation">(= doc.startActivation | rbsDateTime =)</column>
+			<column name="endActivation">(= doc.endActivation | rbsDateTime =)</column>
 		</rbs-document-list>
 	</div>
 

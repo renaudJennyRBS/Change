@@ -19,7 +19,7 @@
 		"php": ">=5.4.0",
 		"zendframework/zendframework": "2.2.5",
 		"zendframework/zendoauth": "2.0.2",
-		"twig/twig": "1.*",
+		"twig/twig": "1.15.*",
 		"ruflin/Elastica": "v0.90.1.0",
 		"ircmaxell/password-compat": "v1.0.3",
 		"michelf/php-markdown": "1.3",

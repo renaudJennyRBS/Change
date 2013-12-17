@@ -70,7 +70,11 @@ class ProductList extends Block
 			$urlManager = $event->getUrlManager();
 			$oldValue = $urlManager->getAbsoluteUrl();
 			$urlManager->setAbsoluteUrl(true);
-			$parameters->setParameterValue('redirectUrl', $urlManager->getByFunction('Rbs_Commerce_Cart')->normalize()->toString());
+			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
+			if ($uri)
+			{
+				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
+			}
 			$urlManager->setAbsoluteUrl($oldValue);
 		}
 

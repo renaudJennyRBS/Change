@@ -3,8 +3,24 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'code'), ['ucf']) }}" max-length="80">
+		<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'code'), ['ucf']) }}" max-length="80" required="true">
 		</rbs-field-text>
+
+		<rbs-field-text property="ean13" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'ean13'), ['ucf']) }}" max-length="13">
+		</rbs-field-text>
+
+		<rbs-field-text property="jan" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'jan'), ['ucf']) }}" max-length="13">
+		</rbs-field-text>
+
+		<rbs-field-text property="upc" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'upc'), ['ucf']) }}" max-length="12">
+		</rbs-field-text>
+
+		<rbs-field-text property="isbn" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'isbn'), ['ucf']) }}" max-length="12">
+		</rbs-field-text>
+
+		<rbs-field-text property="partNumber" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'partNumber'), ['ucf']) }}">
+		</rbs-field-text>
+
 
 		<rbs-field-boolean
 				property="virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'virtual'), ['ucf']) }}">
