@@ -1,32 +1,10 @@
 <div>
-
 	<p>
 		<div ng-show="previewAvailable" rbs-tip="RbsDocumentListGeneralWithPreview">
 			{{ i18n('m.rbs.admin.admin.preview_tip') | raw }}
 		</div>
 
 		<div class="btn-toolbar" ng-show="useToolBar">
-			<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
-				<a class="btn btn-default" href go-up-in-tree></a>
-			</div>
-
-			<clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></clipboard-add-widget>
-
-			<span ng-repeat="item in actions" ng-switch="item.type">
-				<button ng-switch-when="single" class="btn btn-default" type="button"
-				        rbs-bind-action="(= item.name =)"
-				        collection="collection"
-				        selection="selectedDocuments"
-				        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
-				<div ng-switch-when="group" class="btn-group">
-					<button ng-repeat="action in item.actions"
-					        class="btn btn-default" type="button"
-					        rbs-bind-action="(= action =)"
-					        collection="collection"
-					        selection="selectedDocuments"
-					        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
-				</div>
-			</span>
 			<div class="pull-right">
 				<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
 					<i class="icon-refresh icon-spin"></i>
@@ -50,11 +28,32 @@
 					<button title="{{ i18nAttr('m.rbs.admin.admin.list_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn btn-default"><i class="icon-list"></i></button>
 				</div>
 			</div>
+
+			<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
+				<a class="btn btn-default" href go-up-in-tree=""></a>
+			</div>
+
+			<clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></clipboard-add-widget>
+
+			<span ng-repeat="item in actions" ng-switch="item.type">
+				<button ng-switch-when="single" class="btn btn-default" type="button"
+				        rbs-bind-action="(= item.name =)"
+				        collection="collection"
+				        selection="selectedDocuments"
+				        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
+				<div ng-switch-when="group" class="btn-group">
+					<button ng-repeat="action in item.actions"
+					        class="btn btn-default" type="button"
+					        rbs-bind-action="(= action =)"
+					        collection="collection"
+					        selection="selectedDocuments"
+					        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
+				</div>
+			</span>
 		</div>
 
 		<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)"></div>
 	</p>
-
 
 	<table ng-if="viewMode=='list'" class="document-list table table-condensed table-bordered table-striped table-hover">
 		<thead>
@@ -103,7 +102,6 @@
 	</div>
 
 	<footer ng-hide="(! collection.length && ! busy) || disablePagination">
-
 			<div class="pull-right">
 				<ul class="pagination pagination-sm" style="margin-top:0">
 					<li ng-class="{disabled: isFirstPage()}">
@@ -152,7 +150,5 @@
 
 				<strong ng-show="busy" style="margin-left:1em;"><i class="icon-spinner icon-spin icon-large"></i> {{ i18n('m.rbs.admin.admin.loading', ['ucf']) }}</strong>
 			</div>
-
 	</footer>
-
 </div>

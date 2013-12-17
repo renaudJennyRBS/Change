@@ -525,3 +525,9 @@ a.go-to-link:after {
 	text-align: right;
 	padding: 10px 14px 10px 0;
 }
+
+/** Field size */
+[size="2"],
+[size="2"].form-control {
+	max-width: 5em;
+}
