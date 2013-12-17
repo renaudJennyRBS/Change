@@ -123,8 +123,16 @@
 							<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 							<switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></switch>
 							<date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></date-selector>
-							<input type="number" data-ng-switch-when="Integer" class="input-mini" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
-							<input type="text" data-ng-switch-when="Float" smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<div class="row" data-ng-switch-when="Integer">
+								<div class="col-xs-2">
+									<input type="number" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+								</div>
+							</div>
+							<div class="row" data-ng-switch-when="Float">
+								<div class="col-xs-2">
+									<input type="text" smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+								</div>
+							</div>
 							<div class="document-picker-single" data-ng-switch-when="Document"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"

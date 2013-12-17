@@ -168,10 +168,10 @@
 		"message":"configurer les <strong>prix</strong>"
 	},
 	"attribute_create":{
-		"message":"ajouter un attribut"
+		"message":"ajouter un attribut produit"
 	},
 	"attribute_list":{
-		"message":"attributs"
+		"message":"attributs produits"
 	},
 	"attribute_picker_title":{
 		"message":"selectionner les attributs du groupe"
@@ -463,5 +463,8 @@
 	},
 	"remove_from_list":{
 		"message":"retirer de la liste"
+	},
+	"merchandizing":{
+		"message":"merchandising"
 	}
 }
