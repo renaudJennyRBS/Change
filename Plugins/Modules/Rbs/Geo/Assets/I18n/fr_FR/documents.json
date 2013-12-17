@@ -73,5 +73,8 @@
 	},
 	"address_addressFields":{
 		"message":"modèle"
+	},
+	"address_ownerId":{
+		"message":"propriétaire"
 	}
 }

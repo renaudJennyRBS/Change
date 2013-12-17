@@ -61,5 +61,8 @@
 	},
 	"address_fields_select":{
 		"message":"sélectionner le modèle d'adresse"
+	},
+	"address_owner_select":{
+		"message":"sélectionner le propriétaire d'adresse"
 	}
 }
