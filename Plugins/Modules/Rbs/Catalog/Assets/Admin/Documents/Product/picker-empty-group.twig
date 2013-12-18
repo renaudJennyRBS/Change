@@ -2,9 +2,9 @@
 	<rbs-document-list data-dlid="DLDocumentProductEmptyGroupSelector"
 				   model="{{ query.model }}" load-query="productEmptyGroupQuery"
 				   filter-query="query" extend="picker" actions="">
-		<column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
-				label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></column>
-		<column name="label" primary="true">
+		<rbs-column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
+				label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></rbs-column>
+		<rbs-column name="label" primary="true">
 			{% if (query.multiple) %}
 			<span class="pull-right">
 				<button type="button" class="btn btn-xs" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"
@@ -12,7 +12,7 @@
 			</span>
 			{% endif %}
 			<a href="javascript:;" ng-click="extend.selectDocument(doc)">(=doc.label=)</a>
-		</column>
-		<column name="sku" sort="sku.code">(= doc.sku.code =)</column>
+		</rbs-column>
+		<rbs-column name="sku" sort="sku.code">(= doc.sku.code =)</rbs-column>
 	</rbs-document-list>
 </div>

@@ -37,7 +37,7 @@
 			       for="startActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'startActivation'), ['ucf']) }}
 			</label>
 			<div class="col-md-9 controls">
-				<date-selector data-ng-model="params.startActivation" name="startActivation"  ng-change="changeStartActivation(params.startActivation)"></date-selector>
+				<rbs-date-selector data-ng-model="params.startActivation" name="startActivation"  ng-change="changeStartActivation(params.startActivation)"></rbs-date-selector>
 			</div>
 		</div>
 
@@ -46,7 +46,7 @@
 			       for="endActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'endActivation'), ['ucf']) }}
 			</label>
 			<div class="col-md-9 controls">
-				<date-selector data-ng-model="params.endActivation" name="endActivation"  ng-change="changeEndActivation(params.endActivation)"></date-selector>
+				<rbs-date-selector data-ng-model="params.endActivation" name="endActivation"  ng-change="changeEndActivation(params.endActivation)"></rbs-date-selector>
 			</div>
 		</div>
 		<div class="add-elements-bar">
@@ -57,12 +57,12 @@
 
 		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price"
 		                   extend="List" collection-url="(=pricesURL=)">
-			<column name="webStore">(=doc.webStore.label=)</column>
-			<column name="billingArea">(=doc.billingArea.label=)</column>
-			<column name="boValue" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedBoValue=)</a></column>
-			<column name="priority">(=doc.priority=)</column>
-			<column name="startActivation">(=doc.startActivation | rbsDateTime=)</column>
-			<column name="endActivation">(=doc.endActivation | rbsDateTime =)</column>
+			<rbs-column name="webStore">(=doc.webStore.label=)</rbs-column>
+			<rbs-column name="billingArea">(=doc.billingArea.label=)</rbs-column>
+			<rbs-column name="boValue" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedBoValue=)</a></rbs-column>
+			<rbs-column name="priority">(=doc.priority=)</rbs-column>
+			<rbs-column name="startActivation">(=doc.startActivation | rbsDateTime=)</rbs-column>
+			<rbs-column name="endActivation">(=doc.endActivation | rbsDateTime =)</rbs-column>
 		</rbs-document-list>
 
 	</fieldset>

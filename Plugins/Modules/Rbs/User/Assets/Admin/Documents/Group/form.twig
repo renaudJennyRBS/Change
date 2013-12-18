@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
-			<location href="(= 'Rbs_User_Group'|rbsURL:'list' =)">{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_User_Group'|rbsURL:'list' =)">{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -13,7 +13,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_User_Group'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_User_Group'), ['ucf']) }}"></rbs-page-header>
 		<div class="rbs-document-editor rbs-document-editor-rbs-user-group"></div>
 	</div>
 

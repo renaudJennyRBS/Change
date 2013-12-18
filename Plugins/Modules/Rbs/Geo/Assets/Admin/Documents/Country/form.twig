@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Geo'|rbsURL:'home' =)">{{ i18n('m.rbs.geo.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Geo_Country'|rbsURL:'list' =)">{{ i18n('m.rbs.geo.admin.country_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Geo'|rbsURL:'home' =)">{{ i18n('m.rbs.geo.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Geo_Country'|rbsURL:'list' =)">{{ i18n('m.rbs.geo.admin.country_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Country'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Country'), ['ucf']) }}"></rbs-page-header>
 		<div ng-switch="editMode">
 			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-geo-country-translate"></div>
 			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-geo-country"></div>

@@ -42,7 +42,7 @@
 
 		<div data-ng-show="document.useCache">
 			<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'TTL'), ['ucf']) }}">
-				<input class="form-control" size="7" smart-float="" ng-model="document.TTL" min="0" type="number" />
+				<input class="form-control" size="7" rbs-smart-float="" ng-model="document.TTL" min="0" type="number" />
 				<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_ttl_help') }}</span>
 			</rbs-field>
 		</div>
@@ -52,8 +52,8 @@
 	<fieldset ng-show="section=='content'" hide-when-create="true"
 		data-form-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-		<structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
-		</structure-editor>
+		<rbs-structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
+		</rbs-structure-editor>
 	</fieldset>
 
 	<fieldset ng-show="section=='functions'" hide-when-create="true"
@@ -103,5 +103,5 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

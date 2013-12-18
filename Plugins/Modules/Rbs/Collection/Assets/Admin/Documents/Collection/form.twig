@@ -2,7 +2,7 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Collection'|rbsURL:'home' =)">{{ i18n('m.rbs.collection.admin.module_name', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Collection'|rbsURL:'home' =)">{{ i18n('m.rbs.collection.admin.module_name', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -11,7 +11,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Collection_Collection'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Collection_Collection'), ['ucf']) }}"></rbs-page-header>
 		<div class="rbs-document-editor rbs-document-editor-rbs-collection-collection"></div>
 	</div>
 

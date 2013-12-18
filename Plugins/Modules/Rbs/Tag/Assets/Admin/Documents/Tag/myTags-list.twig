@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Tag'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.tag.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Tag'|rbsURL:'mytags' =)">{{ i18nAttr('m.rbs.tag.admin.mytags_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Tag'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.tag.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Tag'|rbsURL:'mytags' =)">{{ i18nAttr('m.rbs.tag.admin.mytags_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.tag.admin.mytags_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.tag.admin.mytags_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Tag_Tag" filter="filter" ></rbs-document-filter-panel>
 
@@ -24,23 +24,23 @@
 				model="Rbs_Tag_Tag" children-property="children"
 				use-properties="children userTag" filter-collection="filter">
 
-			<column name="label" primary="true">
+			<rbs-column name="label" primary="true">
 				<a href ng-href="(= doc | rbsURL:'form' =)"><span rbs-tag="doc"></span></a>
 				<span ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
-			</column>
+			</rbs-column>
 
-			<column name="color" align="center" width="160px">
+			<rbs-column name="color" align="center" width="160px">
 				<rbs-tag-color-selector ng-model="doc.color" ng-change="save(doc)"></rbs-tag-color-selector>
-			</column>
+			</rbs-column>
 
-			<column name="module" converter-params="modules" converter="collection"></column>
+			<rbs-column name="module" converter-params="modules" converter="collection"></rbs-column>
 
-			<preview>
+			<rbs-preview>
 				<span ng-pluralize="" count="doc.children.length" when="{0: '{{ i18nAttr('m.rbs.tag.admin.tag_no_child_tag') }}',
 					one: '{{ i18nAttr('m.rbs.tag.admin.tag_child_tag') }}',
 					other: '{{ i18nAttr('m.rbs.tag.admin.tag_child_tags') }}'}"></span>
 				<span ng-repeat="tag in doc.children"><a href ng-href="(= tag | rbsURL:'tree' =)"><span rbs-tag="tag"></span></a></span>
-			</preview>
+			</rbs-preview>
 
 		</rbs-document-list>
 	</div>

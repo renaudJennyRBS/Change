@@ -7,7 +7,7 @@
 			//'Rbs_Website_Website' : 'icon-home'
 		};
 
-	app.directive('breadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
+	app.directive('rbsBreadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
 
 		return {
 			restrict : 'E',
@@ -124,7 +124,7 @@
 	}]);
 
 
-	app.directive('location', function () {
+	app.directive('rbsLocation', function () {
 		return {
 			restrict : 'E',
 			require : '?^rbsBreadcrumbConfig',
@@ -166,8 +166,8 @@
 				tElement.hide();
 				return function linkFn (scope, element) {
 					scope.counts = {
-						'Location' : element.find('location').length,
-						'Path' : element.find('path').length
+						'Location' : element.find('rbs-location').length,
+						'Path' : element.find('rbs-path').length
 					};
 				};
 			}
@@ -176,14 +176,14 @@
 	}]);
 
 
-	app.directive('path', function () {
+	app.directive('rbsPath', function () {
 		return {
 			restrict : 'E',
 			require : '?^rbsBreadcrumbConfig',
 			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
 				if (rbsBreadcrumbConfig) {
 					attrs.$observe('href', function (href) {
-						rbsBreadcrumbConfig.add('Path', element.index()-element.prevAll('location').length, element.text(), href);
+						rbsBreadcrumbConfig.add('Path', element.index()-element.prevAll('rbs-location').length, element.text(), href);
 					});
 				}
 			}

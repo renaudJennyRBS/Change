@@ -2,11 +2,11 @@
 	<button type="button" class="close pull-right" ng-click="closeSelector('usergroup')">&times;</button>
 	<h4>{{ i18n("m.rbs.admin.admin.select_usergroup") }}</h4>
 	<rbs-document-list model="Rbs_User_Group" toolbar="false" extend="picker">
-		<column name="identifier">
+		<rbs-column name="identifier">
 			<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, 'usergroup')">@+(= doc.identifier =)</a>
-			</column>
-		<column name="label">
+		</rbs-column>
+		<rbs-column name="label">
 			<a href="javascript:;" ng-click="extend.insertIdentifier(doc, $event, 'usergroup')">(= doc.label =)</a>
-		</column>
+		</rbs-column>
 	</rbs-document-list>
 </div>'

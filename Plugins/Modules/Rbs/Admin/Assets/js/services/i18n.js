@@ -94,49 +94,4 @@
 
 	});
 
-
-	/**
-	 * The following directive should be placed on an input field to validate that its value is a valid locale name.
-	 */
-	app.directive('localeId', ['RbsChange.Utils', function (Utils) {
-
-		return {
-
-			require : 'ngModel',
-
-			link : function localeIdLinkFn (scope, elm, attrs, ctrl) {
-				ctrl.$parsers.unshift(function (viewValue) {
-					if (Utils.isValidLCID(viewValue)) {
-						ctrl.$setValidity('locale', true);
-					} else {
-						ctrl.$setValidity('locale', false);
-					}
-					return viewValue;
-				});
-
-				ctrl.$formatters.push(function (value) {
-					if (ctrl.$valid) {
-						if (value.length === 2) {
-							return angular.lowercase(value);
-						} else if (value.length === 5) {
-							return angular.lowercase(value.substring(0, 2)) + '_' + angular.uppercase(value.substring(3, 5));
-						}
-					}
-					return value;
-				});
-
-				elm.bind('blur', function () {
-					var viewValue = ctrl.$modelValue, i;
-					for (i in ctrl.$formatters) {
-						if (ctrl.$formatters.hasOwnProperty(i)) {
-							viewValue = ctrl.$formatters[i](viewValue);
-						}
-					}
-					ctrl.$viewValue = viewValue;
-					ctrl.$render();
-				});
-			}
-		};
-	}]);
-
 })();

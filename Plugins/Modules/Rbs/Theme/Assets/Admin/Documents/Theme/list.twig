@@ -2,7 +2,7 @@
 
 	<rbs-workspace-config menu="Rbs_Theme">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -11,15 +11,15 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.theme.admin.theme_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.theme.admin.theme_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Theme_Theme" filter="filter" ></rbs-document-filter-panel>
 
 		<rbs-document-list data-dlid="DLRbsThemeList" model="Rbs_Theme_Theme" activable="true" filter-collection="filter">
-			<column name="label" primary="true"></column>
-			<column name="themes" label="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="themes" label="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}">
 				<a href ng-href="(= doc | rbsURL:'tree' =)">{{ i18n('m.rbs.theme.admin.theme_list_pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
-			</column>
+			</rbs-column>
 		</rbs-document-list>
 	</div>
 

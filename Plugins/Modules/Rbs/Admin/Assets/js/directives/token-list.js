@@ -12,7 +12,7 @@
 	}]);
 
 
-	app.directive('tokenList', ['RbsChange.ArrayUtils', '$filter', '$templateCache', function (ArrayUtils, $filter, $templateCache)
+	app.directive('rbsTokenList', ['RbsChange.ArrayUtils', '$filter', '$templateCache', function (ArrayUtils, $filter, $templateCache)
 	{
 		return {
 			restrict : 'E',

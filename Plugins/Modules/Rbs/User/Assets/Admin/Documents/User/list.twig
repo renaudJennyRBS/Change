@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config menu="Rbs_User">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_User_User'|rbsURL:'list' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_User_User'|rbsURL:'list' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_User_User" filter="filter" ></rbs-document-filter-panel>
 
@@ -22,13 +22,13 @@
 
 		<rbs-document-list data-dlid="DLUser1" activable="true" model="Rbs_User_User"
 				modification-date="false" filter-collection="filter">
-			<quick-actions>
+			<rbs-quick-actions>
 				[action default] ||
 				<a href="(= doc | rbsURL : 'applications' =)">{{ i18nAttr('m.rbs.user.admin.applications') }}</a> ||
 				<a href="(= doc | rbsURL : 'permission' =)">{{ i18nAttr('m.rbs.user.admin.permission') }}</a>
-			</quick-actions>
-			<column name="email" primary="true"></column>
-			<column name="login"></column>
+			</rbs-quick-actions>
+			<rbs-column name="email" primary="true"></rbs-column>
+			<rbs-column name="login"></rbs-column>
 		</rbs-document-list>
 	</div>
 

@@ -32,7 +32,7 @@
 	/**
 	 * @name dateSelector
 	 */
-	app.directive('dateSelector', ['RbsChange.Dialog', '$rootScope', 'RbsChange.i18n', 'RbsChange.Settings', '$q', function (Dialog, $rootScope, i18n, Settings, $q) {
+	app.directive('rbsDateSelector', ['RbsChange.Dialog', '$rootScope', 'RbsChange.i18n', 'RbsChange.Settings', '$q', function (Dialog, $rootScope, i18n, Settings, $q) {
 
 		return {
 			restrict    : 'E',
@@ -101,7 +101,7 @@
 							$(elm).find('.timeZoneSelectorContainer'),
 							{
 								"title"    : i18n.trans('m.rbs.admin.adminjs.time_zone_selector_title | ucf'),
-								"contents" : '<time-zone-selector time-zone="timeZone"></time-zone-selector>'
+								"contents" : '<rbs-time-zone-selector time-zone="timeZone"></rbs-time-zone-selector>'
 							},
 							scope,
 							{
@@ -155,7 +155,7 @@
 	/**
 	 * @name timeZoneSelector
 	 */
-	app.directive('timeZoneSelector', ['$rootScope', 'RbsChange.Dialog', 'RbsChange.Settings', '$q', function ($rootScope, Dialog, Settings, $q) {
+	app.directive('rbsTimeZoneSelector', ['$rootScope', 'RbsChange.Dialog', 'RbsChange.Settings', '$q', function ($rootScope, Dialog, Settings, $q) {
 		return {
 			restrict    : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/time-zone-selector.twig',

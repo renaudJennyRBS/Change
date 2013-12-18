@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Order_Process'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.process_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Order_Process'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.process_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.order.admin.process_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.order.admin.process_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Order_Process" filter="filter" ></rbs-document-filter-panel>
 
@@ -21,9 +21,9 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsOrderProcess"
-				model="Rbs_Order_Process" filter-collection="filter" activable="true">
-			<column name="label" primary="true"></column>
-			<preview style="min-height: 200px">
+			model="Rbs_Order_Process" filter-collection="filter" activable="true">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-preview style="min-height: 200px">
 				<div style="margin-left: 290px;">
 					<h4>(= doc.label =)</h4>
 					<dl class="dl-horizontal">
@@ -32,7 +32,7 @@
 						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
 					</dl>
 				</div>
-			</preview>
+			</rbs-preview>
 		</rbs-document-list>
 	</div>
 

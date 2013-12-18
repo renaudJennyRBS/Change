@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config menu="Rbs_Stock">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Stock'|rbsURL:'home' =)">{{ i18n('m.rbs.stock.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Stock_Sku'|rbsURL:'list' =)">{{ i18n('m.rbs.stock.admin.sku_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Stock'|rbsURL:'home' =)">{{ i18n('m.rbs.stock.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Stock_Sku'|rbsURL:'list' =)">{{ i18n('m.rbs.stock.admin.sku_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.stock.admin.sku_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.stock.admin.sku_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Stock_Sku" filter="filter" ></rbs-document-filter-panel>
 
@@ -22,7 +22,7 @@
 
 		<rbs-document-list data-dlid="DLRbsStockInventoryEntry"
 				odel="Rbs_Stock_Sku" activable="true" filter-collection="filter">
-			<column name="code" primary="true"></column>
+			<rbs-column name="code" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
 

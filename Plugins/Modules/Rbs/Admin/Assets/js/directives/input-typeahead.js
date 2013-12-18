@@ -302,7 +302,7 @@
 
 	/**
 	 */
-	app.directive('inputTypeahead', ['RbsChange.REST', function (REST) {
+	app.directive('rbsInputTypeahead', ['RbsChange.REST', function (REST) {
 		return {
 			restrict : 'E',
 			require  : 'ng-model',

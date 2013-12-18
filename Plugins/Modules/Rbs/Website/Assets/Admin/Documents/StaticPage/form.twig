@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Website_StaticPage'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.staticpage_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -11,7 +11,7 @@
 
 		<div ng-switch-when="translate">
 			<div class="document-form" rbs-full-width>
-				<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></page-header>
+				<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></rbs-page-header>
 				<div class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-website-staticpage-translate"></div>
 			</div>
 		</div>
@@ -42,7 +42,7 @@
 			</div>
 			<div rbs-main-column>
 				<div class="document-form">
-					<page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></page-header>
+					<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></rbs-page-header>
 					<div class="rbs-document-editor rbs-document-editor-rbs-website-staticpage"></div>
 				</div>
 			</div>

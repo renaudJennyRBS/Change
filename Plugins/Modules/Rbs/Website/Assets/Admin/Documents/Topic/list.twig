@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_Topic'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.topic_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Website_Topic'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.topic_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.website.admin.topic_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.website.admin.topic_list', ['ucf']) }}"></rbs-page-header>
 		<search-filters model="Rbs_Website_Topic" filter-query="query" text-search="textSearch"></search-filters>
 
 		<div class="add-elements-bar">
@@ -24,13 +24,13 @@
 		                   publishable="true"
 		                   filter-query="query"
 		                   actions="default">
-			<quick-actions>
+			<rbs-quick-actions>
 				[action default]
 				<a href="" ng-href="(= doc | rbsURL:'functions':true =)">
 					<i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.topic_functions') }}
 				</a>
-			</quick-actions>
-			<column name="label" primary="true"></column>
+			</rbs-quick-actions>
+			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
 

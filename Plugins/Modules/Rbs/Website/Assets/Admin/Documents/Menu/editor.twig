@@ -23,7 +23,7 @@
 
 		<rbs-field property="items" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'items'), ['ucf']) }}">
 			<div class="rbs-website-menu-items-selector" ng-model="document.items"></div>
-			<token-list rows="true" items="document.items" item-template="picker-item-Rbs_Menu_Item.html"></token-list>
+			<rbs-token-list rows="true" items="document.items" item-template="picker-item-Rbs_Menu_Item.html"></rbs-token-list>
 			<div class="form-control-static">
 				<a href="javascript:;" ng-click="toggleAddItemUI($event)">
 					<i ng-class="{true:'icon-chevron-up', false:'icon-chevron-down'}[addItemUIShown]"></i>
@@ -41,7 +41,7 @@
 				<p class="help-block">{{ i18n('m.rbs.website.admin.menu_add_document_item_help', ['ucf']) }}</p>
 
 				<rbs-field label="{{ i18n('m.rbs.website.admin.menu_select_document', ['ucf']) }}">
-					<div class="document-picker-single"
+					<div class="rbs-document-picker-single"
 						allow-creation="false"
 						select-model="{publishable:true, abstract:false}"
 						ng-model="add.document.selected"
@@ -98,5 +98,5 @@
 			data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

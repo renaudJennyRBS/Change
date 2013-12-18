@@ -75,7 +75,7 @@
 				<div class="control-group required">
 					<label class="control-label" for="rejectContentField">{{ i18n('m.rbs.admin.admin.reject_reason', ['ucf']) }}</label>
 					<div class="controls">
-						<input type="text" auto-focus="" placeholder="{{ i18nAttr('m.rbs.admin.admin.why_do_you_reject_content', ['ucf']) }}" id="rejectContentField" required="required" class="input-block-level" ng-model="data.rejectReason"/>
+						<input type="text" rbs-auto-focus="" placeholder="{{ i18nAttr('m.rbs.admin.admin.why_do_you_reject_content', ['ucf']) }}" id="rejectContentField" required="required" class="input-block-level" ng-model="data.rejectReason"/>
 					</div>
 				</div>
 				<div class="control-group">
@@ -108,13 +108,13 @@
 			<div class="control-group" style="margin:0;">
 				<label class="control-label">{{ i18n('c.documents.startpublication', ['ucf']) }}</label>
 				<div class="controls">
-					<date-selector ng-model="data.startPublication"></date-selector>
+					<rbs-date-selector ng-model="data.startPublication"></rbs-date-selector>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">{{ i18n('c.documents.endpublication', ['ucf']) }}</label>
 				<div class="controls">
-					<date-selector ng-model="data.endPublication"></date-selector>
+					<rbs-date-selector ng-model="data.endPublication"></rbs-date-selector>
 				</div>
 			</div>
 			<div class="control-group">
@@ -217,7 +217,7 @@
 						<input type="radio" name="applyCorrectionWhenOption" ng-model="correctionData.params.applyCorrectionWhen" value="planned"/>
 						{{ i18n('m.rbs.admin.admin.choose_plublication_date', ['ucf']) }}
 					</label>
-					<date-selector ng-show="correctionData.params.applyCorrectionWhen == 'planned'" ng-model="correctionData.params.plannedCorrectionDate" name="plannedCorrectionDate"></date-selector>
+					<rbs-date-selector ng-show="correctionData.params.applyCorrectionWhen == 'planned'" ng-model="correctionData.params.plannedCorrectionDate" name="plannedCorrectionDate"></rbs-date-selector>
 				</div>
 
 				<div ng-if="correctionData.correctionInfo.status == 'VALIDCONTENT'">
@@ -262,7 +262,7 @@
 						<button type="button" class="btn btn-danger btn-headline" ng-class="{'active': correctionData.reject}" ng-click="correctionData.reject = ! correctionData.reject"><i class="icon-ban-circle"></i>{{ i18n('m.rbs.admin.admin.reject_correction', ['ucf']) }}</button>
 						<div ng-if="correctionData.reject" ng-form="" name="rejectForm" class="well well-sm margin-top clearfix">
 							<rbs-field label="{{ i18n('m.rbs.admin.admin.please_provide_reason', ['ucf']) }}" required="true">
-								<input type="text" auto-focus="true" class="form-control" ng-required="true" ng-model="correctionData.rejectMessage"/>
+								<input type="text" rbs-auto-focus="true" class="form-control" ng-required="true" ng-model="correctionData.rejectMessage"/>
 							</rbs-field>
 							<div class="form-group">
 								<div class="col-lg-9 col-lg-offset-3">

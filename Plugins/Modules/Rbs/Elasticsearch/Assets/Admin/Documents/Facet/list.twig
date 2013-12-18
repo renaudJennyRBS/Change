@@ -1,19 +1,19 @@
 <div>
 	<rbs-workspace-config menu="Rbs_Elasticsearch">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Elasticsearch'|rbsURL:'home' =)">{{ i18n('m.rbs.elasticsearch.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Elasticsearch_Facet'|rbsURL:'list' =)">{{ i18n('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Elasticsearch'|rbsURL:'home' =)">{{ i18n('m.rbs.elasticsearch.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Elasticsearch_Facet'|rbsURL:'list' =)">{{ i18n('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}"></page-header>
+	<rbs-page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}"></rbs-page-header>
 
 	<rbs-document-filter-panel open-by-default="false"
 			model="Rbs_Elasticsearch_Facet" filter="filter" ></rbs-document-filter-panel>
 
 	<rbs-document-list data-dlid="DLRbsElasticsearchFacet" model="Rbs_Elasticsearch_Facet" filter-collection="filter">
-		<column name="label" primary="true"></column>
-		<column name="fieldName"></column>
-		<column name="facetType"></column>
+		<rbs-column name="label" primary="true"></rbs-column>
+		<rbs-column name="fieldName"></rbs-column>
+		<rbs-column name="facetType"></rbs-column>
 	</rbs-document-list>
 </div>

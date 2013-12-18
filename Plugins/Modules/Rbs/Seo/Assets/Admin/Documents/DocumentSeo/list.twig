@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config menu="Rbs_Seo">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18n('m.rbs.seo.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Seo_DocumentSeo'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Seo'|rbsURL:'home' =)">{{ i18n('m.rbs.seo.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Seo_DocumentSeo'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Seo_DocumentSeo" filter="filter" ></rbs-document-filter-panel>
 
@@ -21,8 +21,8 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-collection="filter">
-			<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></column>
-			<column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo_target_model', ['ucf']) }}"></column>
+			<rbs-column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></rbs-column>
+			<rbs-column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo_target_model', ['ucf']) }}"></rbs-column>
 		</rbs-document-list>
 	</div>
 

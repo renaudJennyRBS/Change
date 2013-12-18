@@ -32,7 +32,7 @@
 					<p>{{ i18n('m.rbs.catalog.admin.variantgroup_add_axis_value', ['ucf']) }}</p>
 					<p>
 						<input rbs-variant-group-editor-new-axis-value-validator="" axis-index="(= axis.index =)"
-								auto-focus="" autocapitalize="off" type="text" class="form-control" required="required"
+								rbs-auto-focus="" autocapitalize="off" type="text" class="form-control" required="required"
 								name="axisValueToAdd" ng-model="axisValueToAdd[axis.index]" ng-keypress="addValueOnEnter(axis.index, $event)"/>
 					<p class="text-danger" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_value_already_exists', ['ucf']) }}</p>
 					<div class="btn-toolbar">
@@ -119,5 +119,5 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'newSkuOnCreation'), ['ucf']) }}">
 	</rbs-field-boolean>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

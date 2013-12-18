@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_VariantGroup'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.variantgroup_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Catalog_VariantGroup'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.variantgroup_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -16,7 +16,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></rbs-page-header>
 		<div class="rbs-document-editor rbs-document-editor-rbs-catalog-variant-group-editor"></div>
 	</div>
 

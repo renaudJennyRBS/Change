@@ -14,7 +14,7 @@
 				{% elseif param.type == 'Url' %}
 					<input type="url" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
 				{% elseif param.type == 'Boolean' %}
-					<switch id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}" />
+					<rbs-switch id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}" />
 				{% elseif param.type == 'LongString' %}
 					<textarea class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}"></textarea>
 				{% elseif param.type == 'RichText' %}
@@ -22,12 +22,12 @@
 				{% elseif param.type == 'Collection' %}
 					<select id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" class="form-control" rbs-items-from-collection="{{ param.collectionCode }}"></select>
 				{% elseif param.type == 'Document' or param.type == 'DocumentId' %}
-					<div value-ids="true" class="document-picker-single" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false"
+					<div value-ids="true" class="rbs-document-picker-single" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false"
 						{% if param.allowedModelsNames is defined %}
 							{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
 						{% endif %}></div>
 				{% elseif param.type == 'DocumentArray' or param.type == 'DocumentIdArray' %}
-					<div value-ids="true" class="document-picker-multiple" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false"
+					<div value-ids="true" class="rbs-document-picker-multiple" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false" allow-in-place-selection="false"
 						{% if param.allowedModelsNames is defined %}
 							{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
 						{% endif %}></div>

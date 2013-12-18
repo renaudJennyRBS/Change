@@ -20,7 +20,7 @@
 		</rbs-field>
 
 		<rbs-field property="userTag" required="true" label="{{ i18nAttr(propertyKey('Rbs_Tag_Tag', 'userTag'), ['ucf']) }}">
-			<switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
+			<rbs-switch ng-disabled="! document.isNew()" ng-model="document.userTag" />
 			<span class="help-block">
 				{{ i18n('m.rbs.tag.admin.tag_usertag_help') | raw }}
 			</span>
@@ -52,5 +52,5 @@
 	          data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

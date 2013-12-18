@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Website_Menu'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18n('m.rbs.website.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Website_Menu'|rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.menu_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}"></rbs-page-header>
 
 		<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
@@ -33,14 +33,14 @@
 
 			<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
 				load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
-				<column name="label" primary="true">
+				<rbs-column name="label" primary="true">
 					<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
-				</column>
-				<column name="items">
+				</rbs-column>
+				<rbs-column name="items">
 					<span ng-repeat="item in doc.items">
 						<span class="label label-default" ng-bind-html="item.title"></span>
 					</span>
-				</column>
+				</rbs-column>
 			</rbs-document-list>
 		</div>
 	</div>

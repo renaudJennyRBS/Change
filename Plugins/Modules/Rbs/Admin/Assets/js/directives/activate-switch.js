@@ -5,9 +5,9 @@
 	/**
 	 * @name activateSwitch
 	 *
-	 * @example: <code><switch confirm-off="Are you sure to disable this element?" document="myDocument"/></code>
+	 * @example: <code><rbs-switch confirm-off="Are you sure to disable this element?" document="myDocument"/></code>
 	 */
-	app.directive('activateSwitch', ['$q', 'RbsChange.Dialog', 'RbsChange.Actions', 'RbsChange.i18n', function ($q, Dialog, Actions, i18n) {
+	app.directive('rbsActivateSwitch', ['$q', 'RbsChange.Dialog', 'RbsChange.Actions', 'RbsChange.i18n', function ($q, Dialog, Actions, i18n) {
 		return {
 			restrict : 'E',
 
@@ -71,6 +71,7 @@
 
 					if (attrs.confirmOff && isON()) {
 
+						// TODO localize
 						Dialog.confirmLocal(
 								sw,
 								"<strong>Confirmation</strong>",

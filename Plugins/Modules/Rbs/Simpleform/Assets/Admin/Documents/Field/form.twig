@@ -2,9 +2,9 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Simpleform'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.simpleform.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Simpleform_Form'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}</location>
-			<location>{{ i18nAttr('m.rbs.simpleform.admin.field_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Simpleform'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.simpleform.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Simpleform_Form'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}</rbs-location>
+			<rbs-location>{{ i18nAttr('m.rbs.simpleform.admin.field_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -13,7 +13,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Simpleform_Field'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Simpleform_Field'), ['ucf']) }}"></rbs-page-header>
 		<div ng-switch="editMode">
 			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-simpleform-field-translate"></div>
 			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-simpleform-field"></div>

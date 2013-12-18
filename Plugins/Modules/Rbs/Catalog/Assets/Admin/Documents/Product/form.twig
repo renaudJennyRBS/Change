@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_Product'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.product_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Catalog_Product'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.product_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -20,7 +20,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></rbs-page-header>
 		<div ng-switch="editMode">
 			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-catalog-product-translate"></div>
 			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-catalog-product"></div>

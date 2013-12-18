@@ -128,7 +128,7 @@
 						$scope.reload();
 						//$scope.$broadcast('Change:DocumentList:DLRbsWebsiteSectionFunctions:call', {"method": "reload", "promises": promises});
 						$q.all(promises).then(function () {
-							NotificationCenter.error("L'enregistrement a échoué", ErrorFormatter.format(error));
+							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.save_error | ucf'), ErrorFormatter.format(error));
 						});
 					}
 				);
@@ -158,7 +158,7 @@
 					$scope.reload();
 				},
 				function (error) {
-					NotificationCenter.error("L'enregistrement a échoué", ErrorFormatter.format(error));
+					NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.save_error | ucf'), ErrorFormatter.format(error));
 				}
 			);
 		};

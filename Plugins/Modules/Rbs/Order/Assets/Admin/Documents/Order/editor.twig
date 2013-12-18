@@ -117,7 +117,7 @@
 							<p>
 								<div>
 								<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
-								<div class="document-picker-multiple"
+								<div class="rbs-document-picker-multiple"
 							         accepted-model="Rbs_Catalog_Product"
 							         allow-edition="false" allow-creation="false" allow-in-place-selection="true"
 							         selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
@@ -143,39 +143,39 @@
 							extend="extend"
 							actions="">
 
-						<column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
+						<rbs-column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
 
-						</column>
+						</rbs-column>
 
-						<column name="visuals" thumbnail="XS" thumbnail-path="doc.options.visual"
+						<rbs-column name="visuals" thumbnail="XS" thumbnail-path="doc.options.visual"
 						        label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}">
-				        </column>
+				        </rbs-column>
 
-						<column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}">
+						<rbs-column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}">
 							<input type="text" required="true" class="form-control" ng-model="doc.designation"/>
-						</column>
+						</rbs-column>
 
-						<column name="sku" label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}">
+						<rbs-column name="sku" label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}">
 							<input type="text" required="true" class="form-control" ng-model="doc.items[0].codeSKU"/>
-						</column>
+						</rbs-column>
 
-						<column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
-							<input type="text" smart-float="" required="true" class="form-control" ng-model="doc.items[0].priceValue"/>
-						</column>
+						<rbs-column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
+							<input type="text" rbs-smart-float="" required="true" class="form-control" ng-model="doc.items[0].priceValue"/>
+						</rbs-column>
 
-						<column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
+						<rbs-column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
 							<input type="number" min="1" required="true" ng-model="doc.quantity" class="form-control"/>
-						</column>
+						</rbs-column>
 
-						<column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
+						<rbs-column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
 							(= doc.items[0].priceValue * doc.quantity | currency =)
-						</column>
+						</rbs-column>
 
-						<action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
-								selection="+"></action>
+						<rbs-action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
+								selection="+"></rbs-action>
 
-						<action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
-							selection="+"></action>
+						<rbs-action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
+							selection="+"></rbs-action>
 
 					</rbs-document-list>
 				</div>
@@ -243,5 +243,5 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

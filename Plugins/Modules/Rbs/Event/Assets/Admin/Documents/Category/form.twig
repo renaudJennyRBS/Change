@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Event'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.event.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Event_Category'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.event.admin.category_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Event'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.event.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Event_Category'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.event.admin.category_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Event_Category'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Event_Category'), ['ucf']) }}"></rbs-page-header>
 		<div ng-switch="editMode">
 			<div ng-switch-when="translate" class="rbs-document-editor rbs-document-editor-translate rbs-document-editor-rbs-event-category-translate"></div>
 			<div ng-switch-default="" class="rbs-document-editor rbs-document-editor-rbs-event-category"></div>

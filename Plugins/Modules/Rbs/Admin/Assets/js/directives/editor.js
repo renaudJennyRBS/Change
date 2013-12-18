@@ -137,7 +137,7 @@
 				 */
 				this.submit = function submitFn () {
 
-					// "preSubmitCorrectionCheck" is not meant to be overwritten: it is implemented in the "form-button-bar"
+					// "preSubmitCorrectionCheck" is not meant to be overwritten: it is implemented in the "rbs-form-button-bar"
 					// directive to ask the user what to do when the edited document has a correction.
 					var promise;
 					if (angular.isFunction($scope.preSubmitCorrectionCheck)) {
@@ -1093,7 +1093,7 @@
 	// Validators directives.
 
 	var INTEGER_REGEXP = /^\-?\d*$/;
-	app.directive('integer', function () {
+	app.directive('rbsInteger', function () {
 		return {
 			require : 'ngModel',
 			link : function (scope, elm, attrs, ctrl) {
@@ -1118,7 +1118,7 @@
 
 
 	var FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/;
-	app.directive('smartFloat', function () {
+	app.directive('rbsSmartFloat', function () {
 		return {
 			require : 'ngModel',
 			link : function (scope, elm, attrs, ctrl) {

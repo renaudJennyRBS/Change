@@ -3,10 +3,10 @@
 		label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'title'), ['ucf']) }}">
 	</rbs-field-text>
 
-	<structure-editor name="contents" property="editableContent" ng-model="document.editableContent"
+	<rbs-structure-editor name="contents" property="editableContent" ng-model="document.editableContent"
 		template="(=pageTemplate=)">
 		<button type="button" class="btn btn-default" rbs-fullscreen-toggle=""><i class="icon-resize-full"></i> {{ i18nAttr('m.rbs.website.documents.functionalpage.full-screen', ['ucf']) }}</button>
-	</structure-editor>
+	</rbs-structure-editor>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

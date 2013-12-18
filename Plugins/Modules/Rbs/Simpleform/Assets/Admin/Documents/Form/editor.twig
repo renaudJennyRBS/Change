@@ -88,10 +88,10 @@
 
 		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Field" collection="document.fields" extend="fieldManager"
 			toolbar="false" selectable="false">
-			<column name="label" primary="true">
+			<rbs-column name="label" primary="true">
 				<a href="javascript:;" ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
-			</column>
-			<column name="actions" width="88" label="{{ i18nAttr('m.rbs.simpleform.admin.sort_order', ['ucf']) }}">
+			</rbs-column>
+			<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.simpleform.admin.sort_order', ['ucf']) }}">
 				<rbs-kb-switch>
 					<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.move_top', ['ucf']) }}">
 						<i class="icon-step-forward icon-rotate-270"></i>
@@ -108,7 +108,7 @@
 						<i class="icon-play icon-rotate-90"></i>
 					</button>
 				</rbs-kb-switch>
-			</column>
+			</rbs-column>
 		</rbs-document-list>
 	</fieldset>
 
@@ -119,5 +119,5 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>
