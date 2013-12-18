@@ -13,13 +13,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.media.admin.image_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Media_Image" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Media_Image" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href="(= 'Rbs_Media_Image' | rbsURL:'new' =)">{{ i18n('m.rbs.media.admin.image_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsMediaImage" model="Rbs_Media_Image" filter-query="query" use-properties="width height alt" activable="true">
+		<rbs-document-list data-dlid="DLRbsMediaImage" model="Rbs_Media_Image" filter-collection="filter"
+				use-properties="width height alt" activable="true">
 
 			<column name="path" thumbnail="XS" thumbnail-path="doc"></column>
 			<column name="label" primary="true">

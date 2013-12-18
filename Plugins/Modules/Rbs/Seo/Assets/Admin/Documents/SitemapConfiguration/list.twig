@@ -13,9 +13,10 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.seo.documents.sitemapconfiguration_list', ['ucf']) }}"></page-header><br />
-		<search-filters model="Rbs_Website_Website" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Website_Website" filter="filter" ></rbs-document-filter-panel>
 
-		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Website_Website" filter-query="query" actions="">
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Website_Website" filter-collection="filter" actions="">
 			<quick-actions></quick-actions>
 			<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Website_Website', 'label'), ['ucf']) }}">
 				<strong><a href="" ng-href="(= doc | rbsURL =)?section=sitemap">(= doc.label =)</a></strong>

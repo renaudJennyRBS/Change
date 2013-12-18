@@ -220,6 +220,11 @@ class JSONDecoder
 				}
 			}
 		}
+
+		if (isset($jsonQuery['filter']) && is_array($jsonQuery['filter']))
+		{
+			$this->getModelManager()->applyDocumentFilter($query, $jsonQuery['filter']);
+		}
 	}
 
 	/**

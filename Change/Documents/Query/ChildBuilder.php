@@ -204,7 +204,7 @@ class ChildBuilder extends AbstractBuilder
 	/**
 	 * @return InterfacePredicate|null
 	 */
-	protected function getPredicate()
+	public function getPredicate()
 	{
 		return $this->parent->getPredicate();
 	}
@@ -212,7 +212,7 @@ class ChildBuilder extends AbstractBuilder
 	/**
 	 * @param InterfacePredicate $predicate
 	 */
-	protected function setPredicate(InterfacePredicate $predicate)
+	public function setPredicate(InterfacePredicate $predicate)
 	{
 		$this->parent->setPredicate($predicate);
 	}

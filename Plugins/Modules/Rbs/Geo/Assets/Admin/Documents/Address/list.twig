@@ -13,13 +13,14 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.geo.admin.address_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Geo_Address" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Geo_Address" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Geo_Address' | rbsURL:'new' =)">{{ i18n('m.rbs.geo.admin.address_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLGeoAddress" model="Rbs_Geo_Address" filter-query="query" activable="true">
+		<rbs-document-list data-dlid="DLGeoAddress" model="Rbs_Geo_Address" filter-collection="filter" activable="true">
 			<column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'label'), ['ucf']) }}" primary="true"></column>
 		</rbs-document-list>
 	</div>

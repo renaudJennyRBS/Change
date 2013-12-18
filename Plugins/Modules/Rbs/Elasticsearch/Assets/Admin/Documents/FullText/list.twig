@@ -13,14 +13,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.fulltext_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Elasticsearch_FullText" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Elasticsearch_FullText" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			{{ createLinks('Rbs_Elasticsearch_FullText') }}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsElasticsearchFullText"
-				model="Rbs_Elasticsearch_FullText" filter-query="query" activable="true">
+				model="Rbs_Elasticsearch_FullText" filter-collection="filter" activable="true">
 			<column name="name" primary="true"></column>
 			<column name="website.label"></column>
 			<column name="analysisLCID"></column>

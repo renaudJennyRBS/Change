@@ -538,7 +538,7 @@
 			templateUrl : 'Rbs/Admin/js/directives/document-list.twig',
 
 			scope : {
-				'filterQuery' : '=',
+				'filterCollection' : '=',
 				'loadQuery' : '=',
 				'onPreview' : '&',
 				'onReload' : '=',
@@ -574,7 +574,7 @@
 				 */
 				return function linkFn (scope, elm, attrs)
 				{
-					var queryObject, search, columnNames, currentPath, previewCache, filterQuery, self = this;
+					var queryObject, search, columnNames, currentPath, previewCache, self = this;
 
 					scope.$emit('Change:DocumentList:' + dlid + ':Ready', scope);
 					scope.collection = [];
@@ -1298,6 +1298,7 @@
 											promise = REST.collection(scope.collectionUrl, params);
 										}
 									} else if (attrs.model && ! attrs.loadQuery) {
+										params.filter = scope.filterCollection;
 										promise = REST.collection(attrs.model, params);
 									}
 								}
@@ -1320,6 +1321,7 @@
 											promise = REST.collection(scope.collectionUrl, params);
 										}
 									} else if (attrs.model && ! attrs.loadQuery) {
+										params.filter = scope.filterCollection;
 										promise = REST.collection(attrs.model, params);
 									}
 								}
@@ -1563,21 +1565,13 @@
 						if (attrs.model) {
 							query.model = attrs.model;
 						}
-						if (filterQuery && filterQuery.where && query.where.and)
-						{
-							if (filterQuery.where.and)
-							{
-								ArrayUtils.append(query.where.and, filterQuery.where.and);
-							}
-							if (filterQuery.where.or)
-							{
-								query.where.and.push({"or": filterQuery.where.or});
-							}
-						}
 
+						if (scope.filterCollection &&
+							scope.filterCollection.filters && scope.filterCollection.filters.length > 0) {
+							query.filter = angular.copy(scope.filterCollection);
+						}
 						return query;
 					}
-
 
 					function watchQueryFn (query) {
 						if (! angular.equals(query, queryObject)) {
@@ -1587,18 +1581,19 @@
 					}
 					scope.$watch('loadQuery', watchQueryFn, true);
 
-					function watchFilterQueryFn (query) {
-						if (!elm.is('[load-query]'))
+					scope.$watch('filterCollection.parameters', function(value, oldvalue) {
+						if (value)
 						{
-							queryObject = query;
-							reload();
+							if (value.search > 0 || (value.configured > 0))
+							{
+								reload();
+							}
+							else if (oldvalue && (oldvalue.search > 0 || (oldvalue.configured > 0)))
+							{
+								reload();
+							}
 						}
-						else if (! angular.equals(query, filterQuery)) {
-							filterQuery = angular.copy(query);
-							reload();
-						}
-					}
-					scope.$watch('filterQuery', watchFilterQueryFn, true);
+					}, true);
 
 
 					var currentQuickActionsIndex = -1;
@@ -1632,7 +1627,6 @@
 						}
 					};
 
-
 					scope.toggleRelativeDates = function (column) {
 						scope.dateDisplay[column] = scope.dateDisplay[column] === 'relative' ? '' : 'relative';
 					};
@@ -1650,13 +1644,9 @@
 							&& angular.isFunction(scope.extend.getDocumentErrors)
 							&& scope.extend.getDocumentErrors(doc) !== null;
 					};
-
 				};
-
 			}
-
 		};
-
 	}
 
 

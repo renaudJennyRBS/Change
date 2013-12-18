@@ -1,18 +1,4 @@
 <div class="page-header">
-	<form ng-show="! document" class="form-inline pull-right" ng-submit="textSearch = search || '...'" style="width: 200px;text-align: right;">
-		<div class="form-group">
-			<label class="sr-only" for="rbsPageHeaderSearchField">{{ i18n('m.rbs.admin.admin.search', ['ucf', 'etc']) }}</label>
-			<div class="input-group input-group-sm">
-				<input type="text" class="form-control" id="rbsPageHeaderSearchField" placeholder="{{ i18nAttr('m.rbs.admin.admin.search', ['ucf', 'etc']) }}" ng-model="search"/>
-				<span class="input-group-btn">
-					<button type="submit" class="btn btn-default" title="{{ i18nAttr('m.rbs.admin.admin.search', ['ucf']) }}">
-						<i class="icon-search"></i>
-					</button>
-				</span>
-			</div>
-		</div>
-	</form>
-
 	<div class="clearfix">
 		<div class="pull-right" ng-if="document !== null && ! document.isNew() && (document.publicationStatus !== undefined || document.hasCorrection())">
 			<a href="javascript:;" ng-href="(= document | rbsURL:'workflow' =)" class="btn" ng-class="{true: 'btn-success', false: 'btn-default'}[document.publicationStatus=='PUBLISHABLE']">

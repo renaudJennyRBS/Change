@@ -13,14 +13,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.shipping.admin.mode_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Shipping_Mode" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Shipping_Mode" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			{{ createLinks('Rbs_Shipping_Mode') }}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsShippingMode"
-				model="Rbs_Shipping_Mode" filter-query="query" activable="true">
+				model="Rbs_Shipping_Mode" filter-collection="filter" activable="true">
 			<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 			<column name="label" primary="true"></column>
 			<column name="code"></column>

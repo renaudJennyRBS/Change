@@ -156,7 +156,7 @@ class Query extends AbstractBuilder
 	/**
 	 * @return InterfacePredicate|null
 	 */
-	protected function getPredicate()
+	public function getPredicate()
 	{
 		return $this->predicate;
 	}
@@ -164,7 +164,7 @@ class Query extends AbstractBuilder
 	/**
 	 * @param InterfacePredicate $predicate
 	 */
-	protected function setPredicate(InterfacePredicate $predicate)
+	public function setPredicate(InterfacePredicate $predicate)
 	{
 		$this->predicate = $predicate;
 	}

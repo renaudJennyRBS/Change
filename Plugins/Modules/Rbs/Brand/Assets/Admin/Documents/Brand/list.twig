@@ -12,16 +12,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.brand.admin.brand_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Brand_Brand" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Brand_Brand" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Brand_Brand' | rbsURL:'new' =)">{{ i18n('m.rbs.brand.admin.brand_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsBrandBrand"
-		               model="Rbs_Brand_Brand"
-		               publishable="true"
-		               filter-query="query">
+			model="Rbs_Brand_Brand" publishable="true" filter-collection="filter">
 			<column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></column>
 			<column name="label" primary="true"></column>
 			<column name="websiteUrl"></column>

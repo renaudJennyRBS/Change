@@ -96,30 +96,6 @@
 		};
 	});
 
-	function ProductsController($scope)
-	{
-		$scope.productsQuery =
-		{
-			"model": "Rbs_Catalog_Product",
-			"where" : {
-				"and" : [
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "variant"
-						},
-						"rexp" : {
-							"value" : false
-						}
-					}
-				]
-			}
-		};
-	}
-
-	ProductsController.$inject = ['$scope'];
-	app.controller('Rbs_Catalog_Product_ProductsController', ProductsController);
-
 	function ProductListsPickerController($scope)
 	{
 		$scope.productListsPickerQuery =
@@ -167,6 +143,42 @@
 						"rexp" : {"value": false}
 					}
 				]
+			}
+		};
+	});
+
+	app.directive('rbsCatalogAttributeDefaultFilter', function() {
+		return {
+			restrict: 'C',
+			link: function(scope) {
+				scope.filter = {name: "group", operator: "AND", parameters : {},
+					filters: [
+						{
+							name: "valueType",
+							parameters: {
+								propertyName: "valueType", operator: "eq", value: "Group"
+							}
+						}
+					]
+				}
+			}
+		};
+	});
+
+	app.directive('rbsCatalogProductDefaultFilter', function() {
+		return {
+			restrict: 'C',
+			link: function(scope) {
+				scope.filter = {name: "group", operator: "AND", parameters : {},
+					filters: [
+						{
+							name: "variant",
+							parameters: {
+								propertyName: "variant", operator: "eq", value: false
+							}
+						}
+					]
+				}
 			}
 		};
 	});

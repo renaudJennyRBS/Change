@@ -30,6 +30,21 @@ class GetDocumentCollection
 	}
 
 	/**
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 */
+	public function executeFiltered($event)
+	{
+		$modelName = $event->getParam('modelName');
+		$model = $event->getApplicationServices()->getModelManager()->getModelByName($modelName);
+		if (!$model)
+		{
+			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
+		}
+		$this->generateResult($event, $model);
+	}
+
+	/**
 	 * @param CollectionResult $result
 	 * @return array
 	 */
@@ -52,24 +67,9 @@ class GetDocumentCollection
 	protected function generateResult($event, $model)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new CollectionResult();
-		if (($offset = $event->getRequest()->getQuery('offset')) !== null)
-		{
-			$result->setOffset(intval($offset));
-		}
-		if (($limit = $event->getRequest()->getQuery('limit')) !== null)
-		{
-			$result->setLimit(intval($limit));
-		}
-		if (($sort = $event->getRequest()->getQuery('sort')) !== null)
-		{
-			$result->setSort($sort);
-		}
-
-		if (($desc = $event->getRequest()->getQuery('desc')) !== null)
-		{
-			$result->setDesc($desc);
-		}
+		$request = $event->getRequest();
+		$params = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
+		$result = $this->getNewResult($params);
 
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));
@@ -82,30 +82,12 @@ class GetDocumentCollection
 			return $result;
 		}
 
-		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
-		$fb = $qb->getFragmentBuilder();
-
-		$table = $fb->getDocumentTable($model->getRootName());
-
-		$qb->select()->addColumn($fb->alias($fb->func('count', $fb->getDocumentColumn('id')), 'count'))
-			->from($table);
-
-		if ($model->hasDescendants())
+		$docQuery = $event->getApplicationServices()->getDocumentManager()->getNewQuery($model);
+		if (isset($params['filter']) && is_array($params['filter']))
 		{
-			$qb->where($fb->in($fb->getDocumentColumn('model'), $model->getName(), $model->getDescendantsNames()));
+			$event->getApplicationServices()->getModelManager()->applyDocumentFilter($docQuery, $params['filter']);
 		}
-		else
-		{
-			$qb->where($fb->eq($fb->getDocumentColumn('model'), $fb->string($model->getName())));
-		}
-
-		$sc = $qb->query();
-
-		$row = $sc->getFirstResult();
-		if ($row && $row['count'])
-		{
-			$result->setCount(intval($row['count']));
-		}
+		$result->setCount($docQuery->getCountDocuments());
 
 		if ($result->getOffset())
 		{
@@ -131,97 +113,48 @@ class GetDocumentCollection
 				$result->addLink($nextLink);
 			}
 
-			$qb->select()
-				->addColumn($fb->alias($fb->getDocumentColumn('id', $table), 'id'))
-				->addColumn($fb->alias($fb->getDocumentColumn('model', $table), 'model'))
-				->from($table);
-
-			if ($model->hasDescendants())
-			{
-				$qb->where($fb->in($fb->getDocumentColumn('model', $table), $model->getName(), $model->getDescendantsNames()));
-			}
-			else
-			{
-				$qb->where($fb->eq($fb->getDocumentColumn('model', $table), $fb->string($model->getName())));
-			}
-
 			$sortInfo = explode('.', $result->getSort());
 			if (count($sortInfo))
 			{
+				$childBuilder = null;
 				$property = $model->getProperty(array_shift($sortInfo));
-				if ($property)
+				if ($property && !$property->getStateless())
 				{
 					$orderColumn = null;
+					$sortProperty = null;
 					if (count($sortInfo) && $property->getType() === Property::TYPE_DOCUMENT)
 					{
-						$sortModel = $event->getApplicationServices()->getModelManager()
-							->getModelByName($property->getDocumentType());
+						$childBuilder = $docQuery->getPropertyBuilder($property);
+						$sortModel = $childBuilder->getModel();
 						$sortPropertyName = array_shift($sortInfo);
-						if ($sortModel && $sortModel->isEditable() && $sortModel->hasProperty($sortPropertyName))
+						if ($sortModel && !$sortModel->isStateless() && $sortModel->hasProperty($sortPropertyName))
 						{
 							$sortProperty = $sortModel->getProperty($sortPropertyName);
-							if (!$sortProperty->getLocalized())
+							if ($sortProperty->getStateless())
 							{
-								// Join on model table
-								$modelTable = $fb->getDocumentTable($sortModel->getRootName());
-								if ($property->getRequired())
-								{
-									$qb->innerJoin($fb->alias($modelTable, $property->getName()), $fb->eq(
-										$fb->getDocumentColumn($property->getName(), $table),
-										$fb->getDocumentColumn('id', $property->getName())
-									));
-								}
-								else
-								{
-									$qb->leftJoin($fb->alias($modelTable, $property->getName()), $fb->eq(
-										$fb->getDocumentColumn($property->getName(), $table),
-										$fb->getDocumentColumn('id', $property->getName())
-									));
-								}
-								$orderColumn = $fb->getDocumentColumn($sortPropertyName, $property->getName());
+								$sortProperty = null;
 							}
 						}
 					}
 					else
 					{
-						if ($property->getLocalized())
-						{
-							$refLCID = $fb->getDocumentColumn('refLCID', $table);
-							$i18nTable = $fb->getDocumentI18nTable($model->getRootName());
-
-							$qb->innerJoin($i18nTable,
-								$fb->logicAnd(
-									$fb->eq($fb->getDocumentColumn('id', $table), $fb->getDocumentColumn('id', $i18nTable)),
-									$fb->eq($fb->getDocumentColumn('LCID', $i18nTable), $refLCID)
-								)
-							);
-						}
-
-						if ($property->getName() == 'id' || $property->getName() == 'model')
-						{
-							$orderColumn = $fb->column($property->getName());
-						}
-						else
-						{
-							$orderColumn = $fb->getDocumentColumn($property->getName());
-						}
+						$sortProperty = $property;
 					}
 
-					if ($orderColumn)
+					if ($sortProperty)
 					{
-						if ($result->getDesc())
-						{
-							$qb->orderDesc($orderColumn);
-						}
-						else
-						{
-							$qb->orderAsc($orderColumn);
-						}
+						$docQuery->addOrder($property->getName(), !$result->getDesc(), $childBuilder);
 					}
 				}
 			}
 
-			$extraColumn = $event->getRequest()->getQuery('column', array());
+			$qb = $docQuery->dbQueryBuilder();
+
+			$fb = $qb->getFragmentBuilder();
+			$qb->addColumn($fb->alias($fb->getDocumentColumn('id', $docQuery->getTableAliasName()), 'id'))
+				->addColumn($fb->alias($fb->getDocumentColumn('model', $docQuery->getTableAliasName()), 'model'));
+
+			$extraColumn =$request->getPost('column', $request->getQuery('column', array()));
 			$sc = $qb->query();
 			$sc->setMaxResults($result->getLimit());
 			$sc->setStartIndex($result->getOffset());
@@ -234,6 +167,35 @@ class GetDocumentCollection
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$event->setResult($result);
+		return $result;
+	}
+
+	/**
+	 * @param array $params
+	 * @return CollectionResult
+	 */
+	protected function getNewResult($params)
+	{
+		$result = new CollectionResult();
+		if (isset($params['offset']) && (($offset = intval($params['offset'])) >= 0))
+		{
+			$result->setOffset($offset);
+		}
+		if (isset($params['limit']) && (($limit = intval($params['limit'])) > 0))
+		{
+			$result->setLimit($limit);
+		}
+
+		if (isset($params['sort']))
+		{
+			$result->setSort($params['sort']);
+		}
+
+		if (isset($params['desc']))
+		{
+			$result->setDesc($params['desc']);
+			return $result;
+		}
 		return $result;
 	}
 }

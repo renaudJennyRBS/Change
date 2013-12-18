@@ -1,0 +1,16 @@
+<ol class="list-inline">
+	<li>
+		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
+	</li>
+	<li>(= filterDefinition.config.label =)</li>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.operator">
+			<option value="lte">{{ i18n('m.rbs.admin.admin.isbefore') }}</option>
+			<option value="eq">{{ i18n('m.rbs.admin.admin.ison') }}</option>
+			<option value="gte">{{ i18n('m.rbs.admin.admin.isafter') }}</option>
+		</select>
+	</li>
+	<li>
+		<date-selector style="display:inline" data-ng-model="filter.parameters.value"></date-selector>
+	</li>
+</ol>

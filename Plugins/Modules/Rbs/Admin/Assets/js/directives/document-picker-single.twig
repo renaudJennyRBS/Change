@@ -44,8 +44,6 @@
 		<h4>(=selectorTitle=)</h4>
 	</header>
 
-	<search-filters ng-if="allowSearchFilters" model="(= acceptedModel || dp.selectedModel.name =)" filter-query="query" text-search="textSearch"></search-filters>
-
 	<div class="well well-small" ng-show="! acceptedModel">
 		<div class="row">
 			<label class="col-lg-3 control-label" for="DpSelectModel">{{ i18n('m.rbs.admin.admin.picker_choose_model_to_select', ['ucf']) }}</label>

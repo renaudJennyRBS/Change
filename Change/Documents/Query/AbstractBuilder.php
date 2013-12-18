@@ -370,12 +370,12 @@ abstract class AbstractBuilder
 	/**
 	 * @return InterfacePredicate|null
 	 */
-	abstract protected function getPredicate();
+	abstract public function getPredicate();
 
 	/**
 	 * @param InterfacePredicate $predicate
 	 */
-	abstract protected function setPredicate(InterfacePredicate $predicate);
+	abstract public function setPredicate(InterfacePredicate $predicate);
 
 	/**
 	 * @api
@@ -432,7 +432,6 @@ abstract class AbstractBuilder
 			$predicate->addArgument($pp);
 		}
 		$this->addJunctionArgs($predicate, func_get_args());
-
 		$this->setPredicate($predicate);
 		return $this;
 	}

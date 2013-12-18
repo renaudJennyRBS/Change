@@ -112,10 +112,11 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//ModelManager : Workspace, PluginManager
+		//ModelManager : EventManagerFactory, Workspace, PluginManager
 		$modelManagerClassName = $this->getInjectedClassName('ModelManager', 'Change\Documents\ModelManager');
 		$classDefinition = $this->getClassDefinition($modelManagerClassName);
 		$this->addWorkspaceClassDefinition($classDefinition);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setPluginManager', true)
 			->addMethodParameter('setPluginManager', 'pluginManager', array('type' => 'PluginManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -274,7 +275,7 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$instanceManager->addAlias('MailManager', $mailManagerClassName, array('configuration' => $configuration));
 
-		$instanceManager->addAlias('ModelManager', $modelManagerClassName, array('workspace' => $workspace));
+		$instanceManager->addAlias('ModelManager', $modelManagerClassName, array('eventManagerFactory' => $eventManagerFactory, 'workspace' => $workspace));
 
 		$instanceManager->addAlias('DocumentManager', $documentManagerClassName, array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
 

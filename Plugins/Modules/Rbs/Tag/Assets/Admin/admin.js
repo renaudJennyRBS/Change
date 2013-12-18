@@ -248,49 +248,35 @@
 	}]);
 
 	app.controller('Rbs_Tag_Tag_MyTagsController', ['$rootScope', '$scope', function ($rootScope, $scope) {
-		$scope.myTagsQuery = {
-			"model": "Rbs_Tag_Tag",
-			"where": {
-				"and" : [
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "authorId"
-						},
-						"rexp" : {
-							"value": $rootScope.user.id
-						}
-					},
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "userTag"
-						},
-						"rexp" : {
-							"value": true
-						}
+		$scope.filter = {name: "group", operator: "AND", parameters : {},
+			filters: [
+				{
+					name: "userTag",
+					parameters: {
+						propertyName: "userTag", operator: "eq", value: true
 					}
-				]
-			}
+				},
+				{
+					name: "authorId",
+					parameters: {
+						propertyName: "authorId", operator: "eq", value: $rootScope.user.id
+					}
+				}
+			]
 		};
 	}]);
 
 	app.controller('Rbs_Tag_Tag_TagsController', ['$rootScope', '$scope', function ($rootScope, $scope) {
-		$scope.tagsQuery = {
-			"model": "Rbs_Tag_Tag",
-			"where": {
-				"and" : [
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "userTag"
-						},
-						"rexp" : {
-							"value": false
-						}
+
+		$scope.filter = {name: "group", operator: "AND", parameters : {},
+			filters: [
+				{
+					name: "userTag",
+					parameters: {
+						propertyName: "userTag", operator: "eq", value: false
 					}
-				]
-			}
+				}
+			]
 		};
 	}]);
 

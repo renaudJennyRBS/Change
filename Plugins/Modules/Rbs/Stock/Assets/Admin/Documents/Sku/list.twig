@@ -13,16 +13,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.stock.admin.sku_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Stock_Sku" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Stock_Sku" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Stock_Sku' | rbsURL:'new' =)">{{ i18n('m.rbs.stock.admin.sku_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsStockInventoryEntry"
-		               model="Rbs_Stock_Sku"
-		               activable="true"
-		               filter-query="query">
+				odel="Rbs_Stock_Sku" activable="true" filter-collection="filter">
 			<column name="code" primary="true"></column>
 		</rbs-document-list>
 	</div>

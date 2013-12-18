@@ -13,13 +13,14 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.user.admin.group_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_User_Group" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_User_Group" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_User_Group' | rbsURL:'new' =)">{{ i18n('m.rbs.user.admin.group_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLGroup1" model="Rbs_User_Group" modification-date="false" filter-query="query">
+		<rbs-document-list data-dlid="DLGroup1" model="Rbs_User_Group" modification-date="false" filter-collection="filter">
 			<quick-actions>
 				[action default] ||
 				<a href="(= doc | rbsURL : 'permission' =)">{{ i18nAttr('m.rbs.user.admin.permission') }}</a>

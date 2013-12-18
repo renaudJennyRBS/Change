@@ -11,10 +11,11 @@
 
 	<div rbs-main-column>
 		<page-header sub-title="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}"></page-header>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Theme_PageTemplate" filter="filter" ></rbs-document-filter-panel>
 
-		<search-filters model="Rbs_Theme_PageTemplate" filter-query="query" text-search="textSearch"></search-filters>
 		<rbs-document-list data-dlid="DLThemePageTemplate1" model="Rbs_Theme_PageTemplate"
-			activable="true" correction="true" filter-query="query" parent-property="theme">
+			activable="true" correction="true" filter-collection="filter" parent-property="theme">
 			<column name="label" primary="true"></column>
 		</rbs-document-list>
 	</div>

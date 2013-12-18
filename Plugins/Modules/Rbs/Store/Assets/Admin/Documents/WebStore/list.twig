@@ -12,13 +12,14 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.store.admin.webstore_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Store_WebStore" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Store_WebStore" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Store_WebStore' | rbsURL:'new' =)">{{ i18n('m.rbs.store.admin.webstore_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsStoreWebStore" model="Rbs_Store_WebStore" filter-query="query">
+		<rbs-document-list data-dlid="DLRbsStoreWebStore" model="Rbs_Store_WebStore" filter-collection="filter">
 			<column name="label" primary="true"></column>
 			<column name="billingAreas">
 				<span class="label" ng-repeat="ba in doc.billingAreas">
