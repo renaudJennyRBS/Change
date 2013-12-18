@@ -1,0 +1,22 @@
+<ol class="list-inline">
+	<li>
+		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
+	</li>
+	<li>(= filterDefinition.config.label =)</li>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.operator">
+			<option value="eq">{{ i18n('m.rbs.admin.admin.equals') }}</option>
+			<option value="neq">{{ i18n('m.rbs.admin.admin.isdifferentof') }}</option>
+			<option value="lte">{{ i18n('m.rbs.admin.admin.islessthanorequals') }}</option>
+			<option value="gte">{{ i18n('m.rbs.admin.admin.isgreaterthanorequals') }}</option>
+		</select>
+	</li>
+	<li>
+		<input class="form-control" type="number" data-ng-model="filter.parameters.value">
+	</li>
+	<li ng-show="filterDefinition.config.possibleValues">
+		<select class="form-control" ng-model="filter.parameters.value"
+				data-role="filter-value"
+				ng-options="o.value as o.label for o in filterDefinition.config.possibleValues"></select>
+	</li>
+</ol>

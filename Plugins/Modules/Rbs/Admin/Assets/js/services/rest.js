@@ -666,27 +666,49 @@
 					 *                 The Promise is resolved with the whole response as argument.
 					 */
 					'collection' : function (model, params) {
-						var	q = $q.defer(),
-							url;
-
-						if (Utils.isModelName(model)) {
-							url = this.getCollectionUrl(model, params);
-						} else {
-							if (model.charAt(0) === '/') {
-								url = Utils.makeUrl(REST_BASE_URL + model.substr(1), params);
+						var q = $q.defer(), url;
+						if (angular.isObject(params) && angular.isObject(params.filter))
+						{
+							if (Utils.isModelName(model)) {
+								url = this.getCollectionUrl(model, {});
 							} else {
-								url = Utils.makeUrl(model, params);
+								if (model.charAt(0) === '/') {
+									url = Utils.makeUrl(REST_BASE_URL + model.substr(1), {});
+								} else {
+									url = Utils.makeUrl(model, {});
+								}
 							}
+							$http.post(
+									url + 'filtered/', params,
+									getHttpConfig(transformResponseCollectionFn)
+								).success(function (data) {
+									resolveQ(q, data);
+								})
+								.error(function (data) {
+									rejectQ(q, data);
+								});
 						}
-						$http.get(
-								url,
-								getHttpConfig(transformResponseCollectionFn)
-							).success(function (data) {
-								resolveQ(q, data);
-							})
-							.error(function (data) {
-								rejectQ(q, data);
-							});
+						else
+						{
+							if (Utils.isModelName(model)) {
+								url = this.getCollectionUrl(model, params);
+							} else {
+								if (model.charAt(0) === '/') {
+									url = Utils.makeUrl(REST_BASE_URL + model.substr(1), params);
+								} else {
+									url = Utils.makeUrl(model, params);
+								}
+							}
+							$http.get(
+									url,
+									getHttpConfig(transformResponseCollectionFn)
+								).success(function (data) {
+									resolveQ(q, data);
+								})
+								.error(function (data) {
+									rejectQ(q, data);
+								});
+						}
 						return q.promise;
 					},
 

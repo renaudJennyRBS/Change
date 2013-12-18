@@ -1,0 +1,27 @@
+<ol class="list-inline">
+	<li>
+		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
+	</li>
+	<li>(= filterDefinition.config.label =)</li>
+	<li>
+		<button class="btn btn-xs btn-default" ng-class="{'active': showAll}" type="button" title="{{ i18nAttr('m.rbs.tag.admin.show_hide_all_tags', ['ucf']) }}" ng-click="toggleShowAll($event)">
+			<i class="icon-tags"></i>
+		</button>
+	</li>
+	<li>
+		<div class="tag-selector">
+			<div>
+				<span ng-repeat="tag in tags">
+					<span rbs-tag="tag" on-remove="removeTag($index)"></span>
+				</span>
+			</div>
+		</div>
+	</li>
+</ol>
+<div class="all-tags clearfix" ng-show="showAll">
+	<h6 ng-pluralize
+			count="availTags.length"
+			when="{0: '{{ i18nAttr('m.rbs.tag.adminjs.no_available_tag') }}', 'one': '{{ i18nAttr('m.rbs.tag.adminjs.available_tag') }}', 'other': '{{ i18nAttr('m.rbs.tag.adminjs.available_tags') }} '}">
+	</h6>
+	<a href ng-repeat="tag in availTags" ng-click="appendTag(tag)"><span rbs-tag="tag"></span></a>
+</div>

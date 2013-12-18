@@ -1,0 +1,24 @@
+<h4>
+	<span data-ng-show="isAnd()">{{ i18n('m.rbs.admin.admin.filter_group_and_title') }}</span>
+	<span data-ng-hide="isAnd()">{{ i18n('m.rbs.admin.admin.filter_group_or_title') }}</span>
+	<span class="badge" ng-bind="countAllFilters()">0</span>
+	<button type="button" class="btn btn-default btn-xs" data-ng-click="swapOperator()"> <span class="glyphicon glyphicon-transfer"></span>
+		<span data-ng-show="isAnd()">{{ i18n('m.rbs.admin.admin.filter_group_or_toggle') }}</span>
+		<span data-ng-hide="isAnd()">{{ i18n('m.rbs.admin.admin.filter_group_and_toggle') }}</span>
+	</button>
+</h4>
+<ul class="list-group">
+	<li class="list-group-item">
+		<ol class="list-inline">
+			<li>
+				<select class="form-control" ng-options="d.config.listLabel group by d.config.group for d in sortedDefinitions" ng-model="definitionToAdd"></select>
+			</li>
+			<li>
+				<button type="button" data-ng-click="addFilter()" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span>
+					{{ i18n('m.rbs.admin.admin.filter_add') }}
+				</button>
+			</li>
+		</ol>
+	</li>
+</ul>
+<div ng-transclude ng-hide="true"></div>

@@ -7,13 +7,14 @@
 	</rbs-workspace-config>
 
 	<page-header title="{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}"></page-header>
-	<search-filters model="Rbs_Simpleform_Form" filter-query="query" text-search="textSearch"></search-filters>
+	<rbs-document-filter-panel open-by-default="false"
+			model="Rbs_Simpleform_Form" filter="filter" ></rbs-document-filter-panel>
 
 	<div class="add-elements-bar">
 		<a href ng-href="(= 'Rbs_Simpleform_Form' | rbsURL:'new' =)">{{ i18n('m.rbs.simpleform.admin.form_create', ['ucf']) }}</a>
 	</div>
 
-	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Form" filter-query="query">
+	<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Form" filter-collection="filter">
 		<column name="label" primary="true"></column>
 	</rbs-document-list>
 </div>

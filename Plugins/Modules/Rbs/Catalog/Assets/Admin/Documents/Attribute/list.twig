@@ -13,16 +13,17 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.catalog.admin.attribute_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Catalog_Attribute" filter-query="query" text-search="textSearch"></search-filters>
+
+		<rbs-document-filter-panel class="rbs-catalog-attribute-default-filter" open-by-default="false"
+				model="Rbs_Catalog_Attribute" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Catalog_Attribute' | rbsURL:'new' =)">{{ i18n('m.rbs.catalog.admin.attribute_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-query="query">
+		<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-collection="filter" >
 			<column name="label" primary="true"></column>
 			<column name="valueTypeFormatted" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}"></column>
 		</rbs-document-list>
 	</div>
-
 </div>

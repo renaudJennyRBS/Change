@@ -159,7 +159,7 @@
 					}
 				]
 			}
-		}
+		};
 	}
 
 	ProductListController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.Workspace', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.Query'];

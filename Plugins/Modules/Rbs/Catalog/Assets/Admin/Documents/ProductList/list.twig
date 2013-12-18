@@ -13,7 +13,9 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.catalog.admin.productlist_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Catalog_ProductList" filter-query="query" text-search="textSearch"></search-filters>
+
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Catalog_ProductList" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Catalog_ProductList' | rbsURL:'new' =)">{{ i18n('m.rbs.catalog.admin.productlist_create', ['ucf']) }}</a>
@@ -21,7 +23,7 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsCatalogProductList" model="Rbs_Catalog_ProductList" activable="true"
-			filter-query="query" modification-date="false" load-query="loadQuery">
+				filter-collection="filter" modification-date="false" load-query="loadQuery">
 			<column name="label" primary="true"></column>
 			<column name="products" width="150px" label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}" align="center">
 				<a href="(= doc | rbsURL:'productListItems' =)">{{ i18n('m.rbs.catalog.documents.productlist_configure_products', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>

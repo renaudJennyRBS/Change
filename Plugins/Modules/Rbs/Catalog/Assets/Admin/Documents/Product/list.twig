@@ -13,48 +13,47 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.catalog.admin.product_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Catalog_Product" filter-query="query" text-search="textSearch"></search-filters>
+
+		<rbs-document-filter-panel class="rbs-catalog-product-default-filter" open-by-default="false"
+				model="Rbs_Catalog_Product" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'new' =)">{{ i18n('m.rbs.catalog.admin.product_create', ['ucf']) }}</a>
 		</div>
 
-		(= productsQuery =)
-		<div ng-controller="Rbs_Catalog_Product_ProductsController">
-			<rbs-document-list  data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" load-query="productsQuery" filter-query="query">
-				<column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
-					label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></column>
-				<column name="label" primary="true"></column>
-				<quick-actions>
-					<a href="(= doc | rbsURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
-					<a href="(= doc | rbsURL:'cross-selling-lists' =)">{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}</a>
-					[action default]
-				</quick-actions>
-				<column name="sku" sort="sku.code"><small>(= doc.sku.code =)</small></column>
+		<rbs-document-list  data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" filter-collection="filter">
+			<column name="visuals" thumbnail="XS" thumbnail-path="doc.adminthumbnail"
+				label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></column>
+			<column name="label" primary="true"></column>
+			<quick-actions>
+				<a href="(= doc | rbsURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
+				<a href="(= doc | rbsURL:'cross-selling-lists' =)">{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}</a>
+				[action default]
+			</quick-actions>
+			<column name="sku" sort="sku.code"><small>(= doc.sku.code =)</small></column>
 
-				<preview style="min-height: 200px">
-					<img rbs-storage-image="doc.visuals[0].id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
-					<div style="margin-left: 290px;">
-						<h4>(= doc.label =)</h4>
-						<dl>
-							<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
-							<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-							<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
-						</dl>
-						<p ng-bind-html="doc.description.h"></p>
-						<div class="clearfix">
-							<img ng-repeat="visual in doc.visuals" rbs-storage-image="visual.id" thumbnail="XS" class="img-polaroid margin-right pull-left"/>
-						</div>
+			<preview style="min-height: 200px">
+				<img rbs-storage-image="doc.visuals[0].id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
+				<div style="margin-left: 290px;">
+					<h4>(= doc.label =)</h4>
+					<dl>
+						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
+						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
+						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
+					</dl>
+					<p ng-bind-html="doc.description.h"></p>
+					<div class="clearfix">
+						<img ng-repeat="visual in doc.visuals" rbs-storage-image="visual.id" thumbnail="XS" class="img-polaroid margin-right pull-left"/>
 					</div>
-				</preview>
+				</div>
+			</preview>
 
-				<grid-item>
-					<img rbs-storage-image="doc.adminthumbnail" thumbnail="L"/>
-					<div class="caption">
-						<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
-					</div>
-				</grid-item>
-			</rbs-document-list>
-		</div>
+			<grid-item>
+				<img rbs-storage-image="doc.adminthumbnail" thumbnail="L"/>
+				<div class="caption">
+					<h4><status data-ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
+				</div>
+			</grid-item>
+		</rbs-document-list>
 	</div>
 </div>

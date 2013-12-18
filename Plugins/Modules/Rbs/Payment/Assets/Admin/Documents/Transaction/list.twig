@@ -13,14 +13,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Payment_Transaction" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Payment_Transaction" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Payment_Transaction' | rbsURL:'new' =)">{{ i18n('m.rbs.payment.admin.transaction_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsPaymentTransaction"
-				model="Rbs_Payment_Transaction" filter-query="query" publishable="false">
+				model="Rbs_Payment_Transaction" filter-collection="filter" publishable="false">
 			<column name="amount" primary="true"></column>
 			<column name="currencyCode"></column>
 			<column name="processingStatus"></column>

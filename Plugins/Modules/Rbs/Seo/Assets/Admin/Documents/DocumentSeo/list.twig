@@ -13,13 +13,14 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.seo.documents.documentseo_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Seo_DocumentSeo" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Seo_DocumentSeo" filter="filter" ></rbs-document-filter-panel>
 
 		<div rbs-tip="Rbs_Seo_DocumentSeoList">
 			{{ i18n('m.rbs.seo.admin.documentseo_list_help') | raw }}
 		</div>
 
-		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-query="query">
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-collection="filter">
 			<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></column>
 			<column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo_target_model', ['ucf']) }}"></column>
 		</rbs-document-list>

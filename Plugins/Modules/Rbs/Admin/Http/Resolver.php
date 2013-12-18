@@ -82,6 +82,18 @@ class Resolver extends BaseResolver
 			$event->setAction($action);
 			return;
 		}
+		elseif (preg_match('/^Collection\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/filter-panel\.twig$/', $relativePath, $matches))
+		{
+			list(,$vendor, $shortModuleName, $shortDocumentName) = $matches;
+			$event->setParam('vendor', $vendor);
+			$event->setParam('shortModuleName', $shortModuleName);
+			$event->setParam('shortDocumentName', $shortDocumentName);
+			$action = function($event) {
+				(new \Rbs\Admin\Http\Actions\GetHtmlCollectionFilterPanel())->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
 		elseif (preg_match('/^Document\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)\.twig$/', $relativePath, $matches))
 		{
 			list( ,$vendor, $shortModuleName, $shortDocumentName, $baseFileName) = $matches;

@@ -13,14 +13,15 @@
 
 	<div rbs-main-column ng-controller="Rbs_Order_Order_ListController">
 		<page-header title="{{ i18nAttr('m.rbs.order.admin.order_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Order_Order" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Order_Order" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Order_Order' | rbsURL:'new' =)">{{ i18n('m.rbs.order.admin.order_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsOrderOrder"
-				model="Rbs_Order_Order" filter-query="query" use-properties="shippingStatus processingStatus paymentStatus" extend="extend">
+				model="Rbs_Order_Order" filter-collection="filter" use-properties="shippingStatus processingStatus paymentStatus" extend="extend">
 			<column name="code" primary="true"></column>
 			<column name="status" align="center" label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">
 				<span rbs-order-status-indicators="" order="doc"></span>

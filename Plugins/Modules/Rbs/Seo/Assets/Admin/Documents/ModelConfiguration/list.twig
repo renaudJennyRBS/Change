@@ -13,13 +13,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.seo.admin.document_seo_auto_generation', ['ucf']) }}"></page-header><br />
-		<search-filters model="Rbs_Seo_ModelConfiguration" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Seo_ModelConfiguration" filter="filter" ></rbs-document-filter-panel>
 
 		<div rbs-tip="Rbs_Seo_ModelConfigurationList">
 			{{ i18n('m.rbs.seo.admin.modelconfiguration_list_help') | raw }}
 		</div>
 
-		<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration" filter-query="query" modificationDate="false" actions="">
+		<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration"
+				filter-collection="filter" modificationDate="false" actions="">
 			<quick-actions></quick-actions>
 			<column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'label'), ['ucf']) }}"></column>
 			<column name="documentSeoAutoGenerate" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}">

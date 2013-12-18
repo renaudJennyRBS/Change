@@ -146,8 +146,7 @@
 			restrict : 'E',
 			template :
 				'<rbs-aside-select-session></rbs-aside-select-session>' +
-				'<rbs-aside-plugin-menu></rbs-aside-plugin-menu>' +
-				'<rbs-aside-tag-filter></rbs-aside-tag-filter>'
+				'<rbs-aside-plugin-menu></rbs-aside-plugin-menu>'
 		};
 	});
 

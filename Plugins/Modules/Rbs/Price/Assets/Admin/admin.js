@@ -4,7 +4,6 @@
 
 	var app = angular.module('RbsChange');
 
-
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Price_BillingArea');
@@ -25,6 +24,7 @@
 
 			$delegate.routesForModels([
 				'Rbs_Price_Tax',
+				'Rbs_Price_Fee',
 				'Rbs_Price_Price',
 				'Rbs_Price_BillingArea'
 			]);

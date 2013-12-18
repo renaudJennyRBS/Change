@@ -138,6 +138,29 @@ class ResourcesResolver
 			}
 		}
 
+		// Vendor/Module/Name/
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/filtered/$|', $relativePath, $matches))
+		{
+			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
+			if (!$model)
+			{
+				return;
+			}
+			$event->setParam('modelName', $modelName);
+			if ($method === Request::METHOD_POST)
+			{
+				$this->resolver->setAuthorization($event, 'Consumer', null, $modelName);
+				$action = function ($event)
+				{
+					$action = new GetDocumentCollection();
+					$action->executeFiltered($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+		}
+
 		// Vendor/Module/Name/Id
 		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(-?[0-9]+)$|', $relativePath, $matches))
 		{

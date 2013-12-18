@@ -12,16 +12,15 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.review.admin.review_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Review_Review" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Review_Review" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Review_Review' | rbsURL:'new' =)">{{ i18n('m.rbs.review.admin.review_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsReviewReview"
-		               model="Rbs_Review_Review"
-		               publishable="true"
-		               filter-query="query">
+				model="Rbs_Review_Review" publishable="true" filter-collection="filter">
 			<column name="target" primary="true">
 				<a href ng-href="(=doc|rbsURL=)">(= doc.target.label =)</a>
 			</column>

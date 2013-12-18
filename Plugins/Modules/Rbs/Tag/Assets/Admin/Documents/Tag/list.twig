@@ -13,18 +13,17 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.tag.admin.tag_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Tag_Tag" filter-query="query" text-search="textSearch"></search-filters>
+
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Tag_Tag" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Tag_Tag' | rbsURL:'new' =)">{{ i18n('m.rbs.tag.admin.tag_create', ['ucf']) }}</a>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsTag1"
-				   model="Rbs_Tag_Tag"
-		                   children-property="children"
-		                   use-properties="children userTag"
-		                   load-query="tagsQuery"
-		                   filter-query="query">
+				model="Rbs_Tag_Tag" children-property="children" use-properties="children userTag"
+				filter-collection="filter">
 
 			<column name="label" primary="true">
 				<a href ng-href="(= doc | rbsURL:'form' =)"><span rbs-tag="doc"></span></a>

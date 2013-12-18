@@ -13,14 +13,16 @@
 
 	<div rbs-main-column>
 		<page-header title="{{ i18nAttr('m.rbs.event.admin.category_list', ['ucf']) }}"></page-header>
-		<search-filters model="Rbs_Event_Category" filter-query="query" text-search="textSearch"></search-filters>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Event_Category" filter="filter" ></rbs-document-filter-panel>
+
 		<div class="add-elements-bar">
 			<a href ng-href="(= 'Rbs_Event_Category' | rbsURL:'new' =)">
 				{{ i18n('m.rbs.event.admin.category_create', ['ucf']) }}
 			</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Event_Category" filter-query="query" publishable="true">
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Event_Category" filter-collection="filter" publishable="true">
 			<column name="label" primary="true"></column>
 		</rbs-document-list>
 	</div>

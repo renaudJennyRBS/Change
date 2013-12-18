@@ -5,6 +5,9 @@
 	"properties":{
 		"message":"propriétés"
 	},
+	"system_properties":{
+		"message":"propriétés système"
+	},
 	"ttl":{
 		"message":"Durée du cache en secondes"
 	},
@@ -1050,5 +1053,35 @@
 	},
 	"structure_editor_new_block": {
 		"message":"nouveau bloc"
+	},
+	"filter_group_and_title": {
+		"message":"Verifie tous les critères"
+	},
+	"filter_group_and_toggle": {
+		"message":"Tous"
+	},
+	"filter_group_or_title": {
+		"message":"Verifie au moins un des critères"
+	},
+	"filter_group_or_toggle": {
+		"message":"Au moins un"
+	},
+	"filter_add": {
+		"message":"Ajouter"
+	},
+	"reset_filter": {
+		"message":"Effacer tous les critères"
+	},
+	"close_filter": {
+		"message":"Masquer la recherche"
+	},
+	"group_filter": {
+		"message":"Groupe de filtres"
+	},
+	"common_filter_group": {
+		"message":"Commun"
+	},
+	"unknown_filter": {
+		"message":"critère inconnu"
 	}
 }
