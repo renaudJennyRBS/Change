@@ -32,7 +32,7 @@
 				<div class="form-group" style="margin:0;">
 					<div class="input-group">
 						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.mass_abbr') }}</span>
-						<input class="form-control" size="7" ng-model="document.physicalProperties.mass.value" smart-float="" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.mass') }}">
+						<input class="form-control" size="7" ng-model="document.physicalProperties.mass.value" rbs-smart-float="" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.mass') }}">
 						<span class="input-group-addon contains-input">
 							<select class="form-control" ng-model="document.physicalProperties.mass.unit">
 								<option value="kg">{{ i18n('m.rbs.stock.admin.kg_abbr') }}</option>
@@ -48,7 +48,7 @@
 				<div class="form-group" style="margin:0;">
 					<div class="input-group">
 						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.length_abbr') }}</span>
-						<input class="form-control" size="7" smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.length') }}"/>
+						<input class="form-control" size="7" rbs-smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.length') }}"/>
 						<span class="input-group-addon contains-input">
 							<select class="form-control" ng-model="document.physicalProperties.length.unit">
 								<option value="cm">{{ i18n('m.rbs.stock.admin.cm_abbr') }}</option>
@@ -62,7 +62,7 @@
 				<div class="form-group" style="margin:0;">
 					<div class="input-group">
 						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.width_abbr') }}</span>
-						<input class="form-control" size="7" smart-float="" ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.width') }}"/>
+						<input class="form-control" size="7" rbs-smart-float="" ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.width') }}"/>
 						<span class="input-group-addon contains-input">
 							<select class="form-control" ng-model="document.physicalProperties.width.unit">
 								<option value="cm">{{ i18n('m.rbs.stock.admin.cm_abbr') }}</option>
@@ -76,7 +76,7 @@
 				<div class="form-group" style="margin:0;">
 					<div class="input-group">
 						<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.height_abbr') }}</span>
-						<input class="form-control" size="7" smart-float="" ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.height') }}"/>
+						<input class="form-control" size="7" rbs-smart-float="" ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.height') }}"/>
 						<span class="input-group-addon contains-input">
 							<select class="form-control" ng-model="document.physicalProperties.height.unit">
 								<option value="cm">{{ i18n('m.rbs.stock.admin.cm_abbr') }}</option>
@@ -147,5 +147,5 @@
 		data-document-system-info-section="">
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

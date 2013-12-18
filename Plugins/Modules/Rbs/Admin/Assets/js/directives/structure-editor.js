@@ -423,10 +423,10 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('structureEditor', ['$timeout', '$compile', 'RbsChange.Workspace', 'RbsChange.MainMenu', 'structureEditorService', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.NotificationCenter', function ($timeout, $compile, Workspace, MainMenu, structureEditorService, ArrayUtils, Utils, NotificationCenter) {
+	app.directive('rbsStructureEditor', ['$timeout', '$compile', 'RbsChange.Workspace', 'RbsChange.MainMenu', 'structureEditorService', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.NotificationCenter', function ($timeout, $compile, Workspace, MainMenu, structureEditorService, ArrayUtils, Utils, NotificationCenter) {
 		return {
 			"restrict"   : 'E',
-			"require"    : ['ngModel', 'structureEditor'],
+			"require"    : ['ngModel', 'rbsStructureEditor'],
 			"scope"      : true,
 			"transclude" : true,
 			"templateUrl": 'Rbs/Admin/js/directives/structure-editor.twig',
@@ -1208,7 +1208,7 @@
 	app.directive('rbsRow', ['structureEditorService', function (structureEditorService) {
 		return {
 			"restrict"   : 'C',
-			"require"    : "^structureEditor",
+			"require"    : "^rbsStructureEditor",
 			"scope"      : {}, // isolated scope is required
 
 			"link" : function seRowLinkFn (scope, elm, attrs, ctrl) {
@@ -1584,7 +1584,7 @@
 			"template"   : '<div class="{{span}} {{offset}} block-container"></div>',
 			"replace"    : true,
 			"scope"      : {}, // isolated scope is required
-			"require"    : '^structureEditor',
+			"require"    : '^rbsStructureEditor',
 
 			"link" : function seRowLinkFn (scope, elm, attrs, ctrl) {
 				var item = ctrl.getItemById(elm.data('id'));
@@ -1909,7 +1909,7 @@
 		return {
 			"restrict" : 'C',
 			"scope"    : {}, // isolated scope is required
-			"require"  : '^structureEditor',
+			"require"  : '^rbsStructureEditor',
 			"replace"  : true,
 			"template" :
 				'<div draggable="true" class="block btn btn-block btn-settings break-word block-draggable block-handle" ng-click="selectBlock($event)">' +
@@ -1938,7 +1938,7 @@
 		return {
 			"restrict" : 'C',
 			"scope"    : true,
-			"require"  : '^structureEditor',
+			"require"  : '^rbsStructureEditor',
 			"replace"  : true,
 			"templateUrl" : 'Rbs/Admin/js/directives/structure-editor-block-chooser.twig',
 
@@ -1965,7 +1965,7 @@
 				// isolated scope is required
 				readonly: '@'
 			},
-			"require"    : '^structureEditor',
+			"require"    : '^rbsStructureEditor',
 			"transclude" : true,
 			"replace"    : true,
 			"template"   : '<div class="block block-draggable" ng-click="selectBlock($event)"><rbs-rich-text-input data-draggable="true" ng-readonly="readonly" use-tabs="false" ng-model="input.text" profile="Website"></rbs-rich-text-input></div>',

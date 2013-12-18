@@ -14,9 +14,9 @@
 	 * @attribute confirm-off Confirmation message when switching from "on" to "off"
 	 * @attribute confirm-title Title in the confirmation dialog box (requires "confirm-on" and/or "confirm-off")
 	 *
-	 * @example: <code><switch confirm-off="Are you sure to disable this element?" ng-model="myModel.active"/></code>
+	 * @example: <code><rbs-switch confirm-off="Are you sure to disable this element?" ng-model="myModel.active"/></code>
 	 */
-	app.directive('switch', ['RbsChange.Dialog', 'RbsChange.i18n', function (Dialog, i18n)
+	app.directive('rbsSwitch', ['RbsChange.Dialog', 'RbsChange.i18n', function (Dialog, i18n)
 	{
 		return {
 			template : '<div class="switch-on-off switch">' +

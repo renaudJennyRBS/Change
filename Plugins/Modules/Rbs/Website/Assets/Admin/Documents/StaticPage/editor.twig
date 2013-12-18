@@ -41,7 +41,7 @@
 
 		<div data-ng-show="document.useCache">
 			<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'TTL'), ['ucf']) }}">
-				<input class="form-control" size="7" smart-float="" ng-model="document.TTL" min="0" type="number" />
+				<input class="form-control" size="7" rbs-smart-float="" ng-model="document.TTL" min="0" type="number" />
 				<span class="help-block">{{ i18n('m.rbs.website.admin.page_ttl_help') }}</span>
 			</rbs-field>
 		</div>
@@ -56,9 +56,9 @@
 			{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
 		</div>
 
-		<structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
+		<rbs-structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
 			template="(=pageTemplate=)">
-		</structure-editor>
+		</rbs-structure-editor>
 	</fieldset>
 
 	<fieldset ng-show="section=='systeminfo'"
@@ -67,5 +67,5 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

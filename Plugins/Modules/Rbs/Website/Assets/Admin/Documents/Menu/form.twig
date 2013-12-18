@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Simpleform'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.simpleform.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Simpleform_Form'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Simpleform'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.simpleform.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Simpleform_Form'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,12 +12,12 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Menu'), ['ucf']) }}"></page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Menu'), ['ucf']) }}"></rbs-page-header>
 
 		<rbs-workspace-config>
 			<rbs-breadcrumb-config>
-				<location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.module_name', ['ucf']) }}</location>
-				<location href="(= 'Rbs_Website_Menu'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}</location>
+				<rbs-location href="(= 'Rbs_Website'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.website.admin.module_name', ['ucf']) }}</rbs-location>
+				<rbs-location href="(= 'Rbs_Website_Menu'|rbsURL:'list' =)">{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}</rbs-location>
 			</rbs-breadcrumb-config>
 		</rbs-workspace-config>
 

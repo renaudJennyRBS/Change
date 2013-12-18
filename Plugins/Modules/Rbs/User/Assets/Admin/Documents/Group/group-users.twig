@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
-			<location href="(= 'Rbs_User_Group'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_User_Group'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -19,7 +19,7 @@
 
 	<div rbs-main-column>
 		<form novalidate="" class="form-horizontal">
-			<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></page-header>
+			<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></rbs-page-header>
 
 			<rbs-document-list data-dlid="DLGroupUsers"
 				model="Rbs_User_User"
@@ -27,10 +27,10 @@
 				extend="groupUsersList"
 				actions=""
 				reload="refresh()">
-				<quick-actions></quick-actions>
-				<action name="removeFromGroup" label="{{ i18nAttr('m.rbs.user.admin.group_users_remove_from_group', ['ucf']) }}"></action>
-				<column name="login" primary="true"></column>
-				<column name="email"></column>
+				<rbs-quick-actions></rbs-quick-actions>
+				<rbs-action name="removeFromGroup" label="{{ i18nAttr('m.rbs.user.admin.group_users_remove_from_group', ['ucf']) }}"></rbs-action>
+				<rbs-column name="login" primary="true"></rbs-column>
+				<rbs-column name="email"></rbs-column>
 			</rbs-document-list>
 
 			<hr />
@@ -40,7 +40,7 @@
 			<div class="control-group property">
 				<label class="control-label">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</label>
 				<div class="controls">
-					<div class="document-picker-multiple" ng-model="data.usersToAdd"
+					<div class="rbs-document-picker-multiple" ng-model="data.usersToAdd"
 						accepted-model="Rbs_User_User"
 						property-label="{{ i18nAttr('m.rbs.user.admin.users_in_group', ['ucf']) }}"
 						selector-title="{{ i18nAttr('m.rbs.user.admin.users_in_group_picker_title', ['ucf']) }}"

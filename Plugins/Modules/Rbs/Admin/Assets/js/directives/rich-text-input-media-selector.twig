@@ -2,10 +2,10 @@
 	<button type="button" class="close pull-right" ng-click="closeSelector('media')">&times;</button>
 	<h4>{{ i18n("m.rbs.admin.admin.select_picture") }}</h4>
 	<rbs-document-list class="grid-small" model="Rbs_Media_Image" display="grid" toolbar="false" extend="picker">
-		<column name="path" thumbnail="XS"></column>
-		<grid-item>
+		<rbs-column name="path" thumbnail="XS"></rbs-column>
+		<rbs-grid-item>
 			<img rbs-storage-image="doc" thumbnail="XS"/>
 			<a style="display:block" href="javascript:;" ng-click="extend.insertMedia(doc, $event)">(= doc.label =)</a>
-		</grid-item>
+		</rbs-grid-item>
 	</rbs-document-list>
 </div>

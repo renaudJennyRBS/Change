@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.attribute_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Catalog_Attribute'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.attribute_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.catalog.admin.attribute_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.catalog.admin.attribute_list', ['ucf']) }}"></rbs-page-header>
 
 		<rbs-document-filter-panel class="rbs-catalog-attribute-default-filter" open-by-default="false"
 				model="Rbs_Catalog_Attribute" filter="filter" ></rbs-document-filter-panel>
@@ -22,8 +22,8 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-collection="filter" >
-			<column name="label" primary="true"></column>
-			<column name="valueTypeFormatted" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}"></column>
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="valueTypeFormatted" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}"></rbs-column>
 		</rbs-document-list>
 	</div>
 </div>

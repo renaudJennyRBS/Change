@@ -297,7 +297,7 @@
 					"align"  : "center",
 					"width"  : "90px",
 					"label"  : i18n.trans('m.rbs.admin.adminjs.activated | ucf'),
-					"content": '<activate-switch document="doc"/>',
+					"content": '<rbs-activate-switch document="doc"/>',
 					"dummy"  : true
 				});
 			}
@@ -1650,7 +1650,7 @@
 	}
 
 
-	app.directive('column', ['rbsThumbnailSizes', function (sizes) {
+	app.directive('rbsColumn', ['rbsThumbnailSizes', function (sizes) {
 
 		return {
 			restrict : 'E',
@@ -1703,7 +1703,7 @@
 	}]);
 
 
-	app.directive('gridItem', [function () {
+	app.directive('rbsGridItem', [function () {
 
 		return {
 			restrict : 'E',
@@ -1727,7 +1727,7 @@
 	}]);
 
 
-	app.directive('preview', [function () {
+	app.directive('rbsPreview', [function () {
 
 		return {
 			restrict : 'E',
@@ -1749,7 +1749,7 @@
 	}]);
 
 
-	app.directive('quickActions', [function () {
+	app.directive('rbsQuickActions', [function () {
 
 		return {
 			restrict : 'E',
@@ -1772,7 +1772,7 @@
 
 
 
-	app.directive('action', [function () {
+	app.directive('rbsAction', [function () {
 
 		return {
 			restrict : 'E',

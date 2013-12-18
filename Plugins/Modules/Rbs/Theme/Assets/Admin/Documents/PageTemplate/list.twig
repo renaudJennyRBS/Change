@@ -1,7 +1,7 @@
 <div class="row" ng-controller="Rbs_Theme_PageTemplate_ListController">
 	<rbs-workspace-config menu="Rbs_Theme">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Theme'|rbsURL:'home' =)">{{ i18n('m.rbs.theme.admin.module_name', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -10,13 +10,13 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header sub-title="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}"></page-header>
+		<rbs-page-header sub-title="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Theme_PageTemplate" filter="filter" ></rbs-document-filter-panel>
 
 		<rbs-document-list data-dlid="DLThemePageTemplate1" model="Rbs_Theme_PageTemplate"
 			activable="true" correction="true" filter-collection="filter" parent-property="theme">
-			<column name="label" primary="true"></column>
+			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
 </div>

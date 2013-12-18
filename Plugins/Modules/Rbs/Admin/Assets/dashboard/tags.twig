@@ -4,14 +4,14 @@
 </header>
 
 <rbs-document-list data-dlid="DLRbsDashboardTaggedDocumentsList"
-                   collection-url="(= taggedDocumentsUrl =)"
-                   selectable="true"
-                   extend="taggedDocumentsList"
-                   on-reload="reloadTaggedDocuments"
-                   quick-actions=""
-                   actions="">
+	collection-url="(= taggedDocumentsUrl =)"
+	selectable="true"
+	extend="taggedDocumentsList"
+	on-reload="reloadTaggedDocuments"
+	rbs-quick-actions=""
+	actions="">
 
-	<column name="path" thumbnail="XS" thumbnail-path="doc" label="<i class='icon-picture'></i>"></column>
-	<column name="label" primary="true" label="Document"></column>
+	<rbs-column name="path" thumbnail="XS" thumbnail-path="doc" label="<i class='icon-picture'></i>"></rbs-column>
+	<rbs-column name="label" primary="true" label="Document"></rbs-column>
 
 </rbs-document-list>

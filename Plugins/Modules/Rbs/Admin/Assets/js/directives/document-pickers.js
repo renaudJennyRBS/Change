@@ -130,7 +130,7 @@
 		ngModel.$render();
 
 
-		// Watch from changes coming from the <token-list/> which is bound to `scope.documents`.
+		// Watch from changes coming from the <rbs-token-list/> which is bound to `scope.documents`.
 		scope.$watch('documents', function (documents, old) {
 			if (documents !== old) {
 				ngModel.$setViewValue(documents);
@@ -253,17 +253,17 @@
 				$dl.attr('actions', '');
 				$dl.attr('selectable', multiple);
 
-				if ($html.find('quick-actions').length) {
-					$html.find('quick-actions').empty();
+				if ($html.find('rbs-quick-actions').length) {
+					$html.find('rbs-quick-actions').empty();
 				} else {
 					if (multiple) {
 						$dl.append(
-							'<quick-actions>' +
+							'<rbs-quick-actions>' +
 								'<a href="javascript:;" ng-click="extend.replaceWithDocument(doc)"><i class="icon-arrow-right"></i> ' + i18n.trans('m.rbs.admin.adminjs.picker_replace_all_by_item | ucf') + '</a>' +
-							'</quick-actions>'
+							'</rbs-quick-actions>'
 						);
 					} else {
-						$dl.append('<quick-actions></quick-actions>');
+						$dl.append('<rbs-quick-actions></rbs-quick-actions>');
 					}
 				}
 
@@ -456,11 +456,11 @@
 			}
 		};
 	}];
-	app.directive('documentPickerSingle', singlePicker);
+	app.directive('rbsDocumentPickerSingle', singlePicker);
 	app.directive('rbsWoodyWoodpicker', singlePicker);
 
 
-	app.directive('documentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
+	app.directive('rbsDocumentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
 	{
 		return {
 			restrict    : 'EAC',

@@ -53,7 +53,7 @@
 						<a href="(= item.productList | rbsURL =)">(= item.productList.label =)</a>
 					</td>
 					<td style="vertical-align: middle;">
-						<switch ng-class="{'busy': isHighlightBusy(item)}" ng-model="item.isHighlighted" ng-change="toggleHighlight(item)"></switch>
+						<rbs-switch ng-class="{'busy': isHighlightBusy(item)}" ng-model="item.isHighlighted" ng-change="toggleHighlight(item)"></rbs-switch>
 					</td>
 					<td style="text-align: right; vertical-align: middle;">
 						<button class="btn btn-sm btn-danger" type="button"
@@ -74,7 +74,7 @@
 
 		<h4>{{ i18n('m.rbs.catalog.admin.product_choose_lists', ['ucf']) }}</h4>
 		<p>{{ i18n('m.rbs.catalog.admin.product_choose_lists_message', ['ucf']) }}</p>
-		<div class="document-picker-multiple" ng-model="DATA.selectedLists"
+		<div class="rbs-document-picker-multiple" ng-model="DATA.selectedLists"
 		     accepted-model="Rbs_Catalog_ProductList"
 		     property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}"
 		     selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_productlists_picker_title', ['ucf']) }}"

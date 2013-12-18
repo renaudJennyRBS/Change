@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Catalog_ProductList'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.productlist_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Catalog'|rbsURL:'home' =)">{{ i18n('m.rbs.catalog.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Catalog_ProductList'|rbsURL:'list' =)">{{ i18n('m.rbs.catalog.admin.productlist_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -75,11 +75,11 @@
 			collection-url="(=productsUrl=)"
 			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromProductList"
 			use-properties="title">
-			<column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_productvisual', ['ucf']) }}"></column>
-			<column name="productLabel" label="{{ i18nAttr('m.rbs.catalog.documents.product_label', ['ucf']) }}" primary="true">
+			<rbs-column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_productvisual', ['ucf']) }}"></rbs-column>
+			<rbs-column name="productLabel" label="{{ i18nAttr('m.rbs.catalog.documents.product_label', ['ucf']) }}" primary="true">
 				<strong><a href ng-href="(= doc | rbsURL =)">(= doc.product.label =)</a></strong>
-			</column>
-			<column name="priority" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_sort_order', ['ucf']) }}" align="center" width="110px">
+			</rbs-column>
+			<rbs-column name="priority" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_sort_order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">
 					<rbs-kb-switch>
 						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
@@ -98,23 +98,23 @@
 						</button>
 					</rbs-kb-switch>
 				</span>
-			</column>
-			<column name="highlight" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_highlight', ['ucf']) }}" align="center" width="90px">
-				<switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></switch>
-			</column>
+			</rbs-column>
+			<rbs-column name="highlight" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_highlight', ['ucf']) }}" align="center" width="90px">
+				<rbs-switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></rbs-switch>
+			</rbs-column>
 
-			<quick-actions>
+			<rbs-quick-actions>
 				[action edit]
 				|| <a href="(= doc.product | rbsURL =)">{{ i18nAttr('m.rbs.catalog.admin.productlist_edit_product', ['ucf']) }}</a>
 				|| [action Rbs_Catalog_RemoveProductsFromProductList]
-			</quick-actions>
+			</rbs-quick-actions>
 
-			<grid-item>
+			<rbs-grid-item>
 				<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
 				<div class="caption">
 					<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
 				</div>
-			</grid-item>
+			</rbs-grid-item>
 		</rbs-document-list>
 
 		<h4>{{ i18n('m.rbs.catalog.admin.productlist_add_products', ['ucf']) }}</h4>
@@ -122,7 +122,7 @@
 		<div class="control-group property">
 			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.documents.productlist_products', ['ucf']) }}</label>
 			<div class="controls">
-				<div class="document-picker-multiple" ng-model="List.productsToAdd"
+				<div class="rbs-document-picker-multiple" ng-model="List.productsToAdd"
 					accepted-model="Rbs_Catalog_Product"
 					property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}"
 					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_products_picker_title', ['ucf']) }}"

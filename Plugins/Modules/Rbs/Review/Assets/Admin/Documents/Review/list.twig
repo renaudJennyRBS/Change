@@ -2,7 +2,7 @@
 
 	<rbs-workspace-config menu="Rbs_Review">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Review'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.review.admin.review_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Review'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.review.admin.review_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -11,7 +11,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.review.admin.review_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.review.admin.review_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Review_Review" filter="filter" ></rbs-document-filter-panel>
 
@@ -21,15 +21,15 @@
 
 		<rbs-document-list data-dlid="DLRbsReviewReview"
 				model="Rbs_Review_Review" publishable="true" filter-collection="filter">
-			<column name="target" primary="true">
+			<rbs-column name="target" primary="true">
 				<a href ng-href="(=doc|rbsURL=)">(= doc.target.label =)</a>
-			</column>
-			<column name="pseudonym"></column>
-			<column name="promoted">
+			</rbs-column>
+			<rbs-column name="pseudonym"></rbs-column>
+			<rbs-column name="promoted">
 				(= doc.promoted | rbsBoolean =)
-			</column>
-			<column name="reviewDate" format="date"></column>
-			<preview style="min-height: 200px">
+			</rbs-column>
+			<rbs-column name="reviewDate" format="date"></rbs-column>
+			<rbs-preview style="min-height: 200px">
 				<div>
 					<h4>(= doc.pseudonym =)</h4>
 					<p>{{ i18n(propertyKey('Rbs_Review_Review', 'rating'), ['ucf', 'lab']) }} (= doc.rating =)/100</p>
@@ -39,7 +39,7 @@
 					</div>
 					<p ng-bind-html="doc.content.h"></p>
 				</div>
-			</preview>
+			</rbs-preview>
 		</rbs-document-list>
 	</div>
 

@@ -69,7 +69,7 @@
 			<tbody data-ng-repeat="(websiteId, sitemapWebsiteInfo) in document.sitemapGenerateForWebsites">
 				<tr>
 					<td>(= sitemapWebsiteInfo.label =)</td>
-					<td><switch ng-model="sitemapWebsiteInfo.generate"></switch></td>
+					<td><rbs-switch ng-model="sitemapWebsiteInfo.generate"></rbs-switch></td>
 				</tr>
 			</tbody>
 		</table>
@@ -81,5 +81,5 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('formButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.i18n', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, i18n) {
+	app.directive('rbsFormButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.i18n', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, i18n) {
 
 		return {
 			restrict: 'E',

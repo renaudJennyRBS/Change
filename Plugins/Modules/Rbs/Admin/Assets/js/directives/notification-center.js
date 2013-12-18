@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('notificationCenter', ['$filter', '$compile', 'RbsChange.NotificationCenter', function ($filter, $compile, NotificationCenter) {
+	app.directive('rbsNotificationCenter', ['$filter', '$compile', 'RbsChange.NotificationCenter', function ($filter, $compile, NotificationCenter) {
 
 		return {
 			restrict    : 'E',

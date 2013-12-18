@@ -109,7 +109,7 @@
 			</label>
 
 			<div class="col-md-9 controls">
-				<date-selector ng-model="document.startActivation" name="startActivation"></date-selector>
+				<rbs-date-selector ng-model="document.startActivation" name="startActivation"></rbs-date-selector>
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<button ng-click="activationNow()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.now') }}</button>
@@ -127,7 +127,7 @@
 			</label>
 
 			<div class="col-md-9 controls">
-				<date-selector ng-model="document.endActivation" name="endActivation"></date-selector>
+				<rbs-date-selector ng-model="document.endActivation" name="endActivation"></rbs-date-selector>
 				<div class="btn-toolbar">
 					<div class="btn-group">
 						<button ng-click="endActivationOneWeek(true)" ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['1w']" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.add_one_week') }}</button>
@@ -151,5 +151,5 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

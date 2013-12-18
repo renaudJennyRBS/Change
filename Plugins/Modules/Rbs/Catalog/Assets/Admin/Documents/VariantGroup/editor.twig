@@ -43,8 +43,8 @@
 			<tbody>
 			<tr data-ng-repeat="axisConfiguration in document.axesConfiguration">
 				<td>(= getAxisLabel($index) =)</td>
-				<td><switch ng-model="axisConfiguration.url"></switch></td>
-				<td><switch ng-model="axisConfiguration.categorizable" ng-disabled="axisConfiguration.url == false"></switch></td>
+				<td><rbs-switch ng-model="axisConfiguration.url"></rbs-switch></td>
+				<td><rbs-switch ng-model="axisConfiguration.categorizable" ng-disabled="axisConfiguration.url == false"></rbs-switch></td>
 				<td style="width:180px">
 					<rbs-kb-switch>
 						<button style="width:36px" ng-disabled="$first" rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-sm"
@@ -77,7 +77,7 @@
 
 		<div class="control-group property">
 			<div class="controls">
-				<div class="document-picker-multiple" ng-model="Attributes.axesToAdd" name="axesToAdd"
+				<div class="rbs-document-picker-multiple" ng-model="Attributes.axesToAdd" name="axesToAdd"
 						accepted-model="Rbs_Catalog_Attribute"
 						property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}"
 						selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axesattributes_picker_title', ['ucf']) }}"
@@ -109,5 +109,5 @@
 			data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

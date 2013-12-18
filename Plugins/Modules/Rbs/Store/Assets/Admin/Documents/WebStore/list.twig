@@ -2,7 +2,7 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Store'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.store.admin.webstore_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Store'|rbsURL:'home' =)">{{ i18nAttr('m.rbs.store.admin.webstore_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -11,7 +11,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.store.admin.webstore_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.store.admin.webstore_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Store_WebStore" filter="filter" ></rbs-document-filter-panel>
 
@@ -20,12 +20,12 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsStoreWebStore" model="Rbs_Store_WebStore" filter-collection="filter">
-			<column name="label" primary="true"></column>
-			<column name="billingAreas">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="billingAreas">
 				<span class="label" ng-repeat="ba in doc.billingAreas">
 					<a href ng-href="(= ba | rbsURL =)">(= ba.label =)</a>
 				</span>
-			</column>
+			</rbs-column>
 		</rbs-document-list>
 	</div>
 

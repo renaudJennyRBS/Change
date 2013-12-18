@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Geo'|rbsURL:'home' =)">{{ i18n('m.rbs.geo.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Geo_TerritorialUnit'|rbsURL:'list' =)">{{ i18n('m.rbs.geo.admin.territorialunit_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_Geo'|rbsURL:'home' =)">{{ i18n('m.rbs.geo.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Geo_TerritorialUnit'|rbsURL:'list' =)">{{ i18n('m.rbs.geo.admin.territorialunit_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Geo_TerritorialUnit" filter="filter" ></rbs-document-filter-panel>
 
@@ -21,7 +21,7 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLGeoTerritorialUnit" model="Rbs_Geo_TerritorialUnit" filter-collection="filter">
-			<column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'label'), ['ucf']) }}" primary="true"></column>
+			<rbs-column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'label'), ['ucf']) }}" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
 

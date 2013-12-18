@@ -10,12 +10,12 @@
 	registerFieldDirective('Email', '<input type="email" class="form-control"/>', 'input');
 	registerFieldDirective('Url', '<input type="url" class="form-control"/>', 'input');
 	registerFieldDirective('Integer', '<input type="number" class="form-control" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
-	registerFieldDirective('Float', '<input type="text" class="form-control" smart-float=""/>', 'input');
-	registerFieldDirective('Boolean', '<switch></switch>', 'switch');
+	registerFieldDirective('Float', '<input type="text" class="form-control" rbs-smart-float=""/>', 'input');
+	registerFieldDirective('Boolean', '<rbs-switch></rbs-switch>', 'rbs-switch');
 	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
-	registerFieldDirective('Picker', '<div class="document-picker-single"></div>', '.document-picker-single');
-	registerFieldDirective('PickerMultiple', '<div class="document-picker-multiple"></div>', '.document-picker-multiple');
-	registerFieldDirective('Date', '<date-selector></date-selector>', 'date-selector');
+	registerFieldDirective('Picker', '<div class="rbs-document-picker-single"></div>', '.rbs-document-picker-single');
+	registerFieldDirective('PickerMultiple', '<div class="rbs-document-picker-multiple"></div>', '.rbs-document-picker-multiple');
+	registerFieldDirective('Date', '<rbs-date-selector></rbs-date-selector>', 'rbs-date-selector');
 	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
 	registerFieldDirective('Image', '<div class="rbs-uploader image-uploader" storage-name="images" file-accept="image/*"></div>', '.image-uploader');
 	registerFieldDirective('File', '<div class="rbs-uploader file-uploader" storage-name="files" file-accept="*"></div>', '.file-uploader');

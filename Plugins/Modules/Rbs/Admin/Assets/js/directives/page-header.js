@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('pageHeader', ['RbsChange.Dialog', 'RbsChange.Breadcrumb', function (Dialog, Breadcrumb) {
+	app.directive('rbsPageHeader', ['RbsChange.Dialog', 'RbsChange.Breadcrumb', function (Dialog, Breadcrumb) {
 		return {
 
 			restrict    : 'E',

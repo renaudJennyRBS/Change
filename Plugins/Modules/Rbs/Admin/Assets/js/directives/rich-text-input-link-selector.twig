@@ -3,8 +3,8 @@
 	<h4>{{ i18n("m.rbs.admin.admin.select_document_to_link") }}</h4>
 	<rbs-model-selector filter="{publishable:true, abstract:false}" model="selectedModel"></rbs-model-selector>
 	<rbs-document-list display="list" model="(= selectedModel.name =)" toolbar="false" extend="picker">
-		<column name="label" label="{{ i18nAttr('c.documents.label', ['ucf']) }}" >
+		<rbs-column name="label" label="{{ i18nAttr('c.documents.label', ['ucf']) }}" >
 			<a href="javascript:;" ng-click="extend.insertDocumentLink(doc, $event)">(= doc.label =)</a>
-		</column>
+		</rbs-column>
 	</rbs-document-list>
 </div>

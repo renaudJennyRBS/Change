@@ -105,7 +105,7 @@
 								<span ng-hide="displayConfig[locationIndex].redirects[index].edit">(= redirect.relativePath =)</span>
 								<input ng-show="displayConfig[locationIndex].redirects[index].edit" ng-model="redirect.relativePath" type="text" class="form-control" style="width: 90%;" />
 							</td>
-							<td><switch ng-model="redirect.permanent" ng-disabled="!displayConfig[locationIndex].redirects[index].edit"></switch></td>
+							<td><rbs-switch ng-model="redirect.permanent" ng-disabled="!displayConfig[locationIndex].redirects[index].edit"></rbs-switch></td>
 							<td>(= redirect.query =)</td>
 							<td style="white-space: nowrap; text-align: right;">
 								<button ng-disabled="displayConfig[locationIndex].redirects[index].edit" type="button" class="btn btn-default btn-icon"
@@ -127,7 +127,7 @@
 						</tr>
 						<tr>
 							<td><input ng-model="newRedirect[locationIndex].relativePath" type="text" class="form-control" style="width: 90%;" /></td>
-							<td><switch ng-model="newRedirect[locationIndex].permanent"></switch></td>
+							<td><rbs-switch ng-model="newRedirect[locationIndex].permanent"></rbs-switch></td>
 							<td><input ng-model="newRedirect[locationIndex].query" type="text" class="form-control" /></td>
 							<td style="white-space: nowrap; text-align: right;">
 								<button type="button" class="btn btn-info" ng-disabled="!newRedirect[locationIndex].relativePath"

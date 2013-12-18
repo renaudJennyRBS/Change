@@ -2,8 +2,10 @@
 
 	<rbs-workspace-config menu="Rbs_Elasticsearch">
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_Elasticsearch'|rbsURL:'home' =)">{{ i18n('m.rbs.elasticsearch.admin.module_name', ['ucf']) }}</location>
-			<location href="(= 'Rbs_Elasticsearch_FacetGroup'|rbsURL:'list' =)">{{ i18n('m.rbs.elasticsearch.admin.facetgroup_list', ['ucf']) }}</location>
+			<rbs-location
+				href="(= 'Rbs_Elasticsearch'|rbsURL:'home' =)">{{ i18n('m.rbs.elasticsearch.admin.module_name', ['ucf']) }}</rbs-location>
+			<rbs-location
+				href="(= 'Rbs_Elasticsearch_FacetGroup'|rbsURL:'list' =)">{{ i18n('m.rbs.elasticsearch.admin.facetgroup_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,17 +14,17 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facetgroup_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facetgroup_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Elasticsearch_FacetGroup" filter="filter" ></rbs-document-filter-panel>
+			model="Rbs_Elasticsearch_FacetGroup" filter="filter"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			{{ createLinks('Rbs_Elasticsearch_FacetGroup') }}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsElasticsearchFacetGroup" model="Rbs_Elasticsearch_FacetGroup"
-				filter-collection="filter" activable="true">
-			<column name="label" primary="true"></column>
+			filter-collection="filter" activable="true">
+			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
 

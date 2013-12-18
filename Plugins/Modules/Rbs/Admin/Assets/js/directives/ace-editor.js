@@ -11,7 +11,7 @@
 	//=========================================================================
 
 
-	app.directive('aceEditor', ['$timeout', function ($timeout) {
+	app.directive('rbsAceEditor', ['$timeout', function ($timeout) {
 
 		var aceEditorIdCounter = 0;
 

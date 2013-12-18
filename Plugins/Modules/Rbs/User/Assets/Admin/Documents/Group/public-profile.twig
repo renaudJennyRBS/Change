@@ -2,11 +2,11 @@
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
-			<location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</location>
+			<rbs-location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></page-header>
+	<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></rbs-page-header>
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -27,9 +27,9 @@
 		modification-date="false"
 		load-query="query"
 		actions="">
-		<column name="login" primary="true"></column>
-		<column name="email"></column>
-		<quick-actions></quick-actions>
+		<rbs-column name="login" primary="true"></rbs-column>
+		<rbs-column name="email"></rbs-column>
+		<rbs-quick-actions></rbs-quick-actions>
 	</rbs-document-list>
 
 </div>

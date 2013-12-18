@@ -68,7 +68,7 @@
 				scope.editorId = ++editorIdCounter;
 
 				id = 'rbsInputMarkdownAceEditor' + scope.editorId;
-				element.find('[data-role="ace-editor"]').attr('id', id);
+				element.find('[data-role="rbs-ace-editor"]').attr('id', id);
 
 				// Initialize ACE editor when the scope has been completely applied.
 				function initWithAceEditor () {

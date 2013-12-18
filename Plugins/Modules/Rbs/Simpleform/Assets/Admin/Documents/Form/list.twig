@@ -2,8 +2,8 @@
 
 	<rbs-workspace-config menu="Rbs_Simpleform">
 		<rbs-breadcrumb-config>
-			<location
-					href="(= 'Rbs_Simpleform'|rbsURL:'home' =)">{{ i18n('m.rbs.simpleform.admin.module_name', ['ucf']) }}</location>
+			<rbs-location
+					href="(= 'Rbs_Simpleform'|rbsURL:'home' =)">{{ i18n('m.rbs.simpleform.admin.module_name', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,7 +12,7 @@
 	</div>
 
 	<div rbs-main-column>
-		<page-header title="{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}"></page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Simpleform_Form" filter="filter" ></rbs-document-filter-panel>
 
@@ -21,7 +21,7 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Form" filter-collection="filter">
-			<column name="label" primary="true"></column>
+			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
 

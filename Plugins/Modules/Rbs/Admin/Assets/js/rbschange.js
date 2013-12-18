@@ -51,7 +51,7 @@
 		// - promises: array of promises that should be resolved before the edit process is terminated.
 		'EditorPostSave'                 : 'Change:Editor.RegisterPostSavePromises',
 
-		// Raised from the <form-button-bar/> directive to build the contents displayed before the buttons.
+		// Raised from the <rbs-form-button-bar/> directive to build the contents displayed before the buttons.
 		// Single argument is a hash object with:
 		// - document: the document being edited in the Editor
 		// - contents: array of HTML Strings (Angular code is allowed as it will be compiled :))
@@ -176,7 +176,7 @@
 	/**
 	 * Directive that automatically gives the focus to an element when it is created/displayed.
 	 */
-	app.directive('autoFocus', function () {
+	app.directive('rbsAutoFocus', function () {
 		var timer = null;
 
 		return function (scope, elm, attr) {
@@ -191,7 +191,7 @@
 		};
 	});
 
-
+ // TODO to be deleted ?
 	app.directive('focusOnShow', ['$timeout', function ($timeout) {
 		return function (scope, element, attr) {
 			if (attr.ngShow) {
@@ -265,6 +265,7 @@
 	}]);
 
 
+	// This directive cannot be prefix by rbs because she is applied on html tag time
 	app.directive('time', ['$timeout', '$filter', function ($timeout, $filter) {
 
 		var DEFAULT_INTERVAL = 60;
