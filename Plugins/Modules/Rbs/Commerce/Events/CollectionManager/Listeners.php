@@ -42,18 +42,6 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Catalog_Collection_AttributeProductProperties':
 					(new \Rbs\Catalog\Collection\Collections())->addAttributeProductProperties($event);
 					break;
-				case 'Rbs_Price_Collection_BillingAreasForWebStore':
-					(new \Rbs\Price\Collection\Collections())->addBillingAreasForWebStore($event);
-					break;
-				case 'Rbs_Price_Collection_Iso4217':
-					(new \Rbs\Price\Collection\Collections())->addIso4217Collection($event);
-					break;
-				case 'Rbs_Price_Collection_TaxRoundingStrategy':
-					(new \Rbs\Price\Collection\Collections())->addTaxRoundingStrategyCollection($event);
-					break;
-				case 'Rbs_Store_Collection_WebStores':
-					(new \Rbs\Store\Collection\Collections())->addWebStores($event);
-					break;
 				case 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy':
 					(new \Rbs\Catalog\Collection\Collections())->addCartProductChoiceStrategyCollection($event);
 					break;
@@ -65,6 +53,21 @@ class Listeners implements ListenerAggregateInterface
 					break;
 				case 'Rbs_Order_Collection_PaymentStatus':
 					(new \Rbs\Order\Collection\Collections())->addPaymentStatuses($event);
+					break;
+				case 'Rbs_Price_Collection_BillingAreasForWebStore':
+					(new \Rbs\Price\Collection\Collections())->addBillingAreasForWebStore($event);
+					break;
+				case 'Rbs_Price_Collection_Iso4217':
+					(new \Rbs\Price\Collection\Collections())->addIso4217Collection($event);
+					break;
+				case 'Rbs_Price_Collection_TaxRoundingStrategy':
+					(new \Rbs\Price\Collection\Collections())->addTaxRoundingStrategyCollection($event);
+					break;
+				case 'Rbs_Shipping_Collection_ShippingModes':
+					(new \Rbs\Shipping\Collection\Collections())->addShippingModes($event);
+					break;
+				case 'Rbs_Store_Collection_WebStores':
+					(new \Rbs\Store\Collection\Collections())->addWebStores($event);
 					break;
 			}
 		};
