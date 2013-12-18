@@ -458,7 +458,7 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 		if (isset($filter['parameters']) && is_array($filter['parameters']))
 		{
 			$parameters = $filter['parameters'];
-			if (isset($parameters['propertyName']) && isset($parameters['operator']) &&  array_key_exists('value', $parameters))
+			if (isset($parameters['propertyName']) && isset($parameters['operator']))
 			{
 				$property = $documentQuery->getModel()->getProperty($parameters['propertyName']);
 				if ($property) {
@@ -487,6 +487,16 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 							case 'endsWith':
 								return $predicateBuilder->like($property, $parameters['value'],
 									\Change\Db\Query\Predicates\Like::END);
+						}
+					}
+					else
+					{
+						switch($parameters['operator'])
+						{
+							case 'isNull':
+								return $predicateBuilder->isNull($property);
+							case 'isNotNull':
+								return $predicateBuilder->isNotNull($property);
 						}
 					}
 				}

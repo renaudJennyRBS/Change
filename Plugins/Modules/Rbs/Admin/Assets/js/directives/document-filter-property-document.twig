@@ -7,9 +7,10 @@
 		<select class="form-control" data-ng-model="filter.parameters.operator">
 			<option value="eq">{{ i18n('m.rbs.admin.admin.equals') }}</option>
 			<option value="neq">{{ i18n('m.rbs.admin.admin.isdifferentof') }}</option>
+			<option value="isNull">{{ i18n('m.rbs.admin.admin.isnull') }}</option>
 		</select>
 	</li>
-	<li>
+	<li ng-show="filter.parameters.operator != 'isNull'">
 		<div class="document-picker-single"
 				ng-model="filter.parameters.value" value-ids="true"
 				accepted-model="(= filterDefinition.config.documentType =)"
@@ -17,7 +18,7 @@
 				input-css-class="input-small" allow-creation="false" allow-edition="false"></div>
 		<div id="searchFiltersDocumentPickerEmbedContainer(=filter.name=)"></div>
 	</li>
-	<li ng-show="filterDefinition.config.possibleValues">
+	<li ng-show="filterDefinition.config.possibleValues && filter.parameters.operator != 'isNull'">
 		<select class="form-control" ng-model="filter.parameters.value"
 				data-role="filter-value"
 				ng-options="o.value as o.label for o in filterDefinition.config.possibleValues"></select>

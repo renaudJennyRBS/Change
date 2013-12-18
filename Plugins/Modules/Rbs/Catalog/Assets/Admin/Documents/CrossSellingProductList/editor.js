@@ -12,7 +12,6 @@
 
 			link : function (scope, elm, attrs, editorCtrl)
 			{
-				console.log($routeParams);
 				scope.onReady = function(){
 					if ($routeParams.productId)
 					{

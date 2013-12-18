@@ -420,7 +420,8 @@
 			},
 			controller: ['$scope', function(scope) {
 				scope.isConfigured = function() {
-					return scope.filter.parameters.operator && scope.filter.parameters.value;
+					var op = scope.filter.parameters.operator;
+					return op && (op == 'isNull' || scope.filter.parameters.value);
 				};
 
 				scope.$on('countAllFilters', function(event, args) {
@@ -448,7 +449,8 @@
 			},
 			controller: ['$scope', function(scope) {
 				scope.isConfigured = function() {
-					return scope.filter.parameters.operator && scope.filter.parameters.value;
+					var op = scope.filter.parameters.operator;
+					return op && (op == 'isNull' || scope.filter.parameters.value);
 				};
 
 				scope.$on('countAllFilters', function(event, args) {
@@ -475,7 +477,8 @@
 			},
 			controller: ['$scope', function(scope) {
 				scope.isConfigured = function() {
-					return scope.filter.parameters.operator && scope.filter.parameters.value;
+					var op = scope.filter.parameters.operator;
+					return op && (op == 'isNull' || scope.filter.parameters.value);
 				};
 
 				scope.$on('countAllFilters', function(event, args) {
@@ -502,7 +505,8 @@
 			},
 			controller: ['$scope', function(scope) {
 				scope.isConfigured = function() {
-					return scope.filter.parameters.operator && scope.filter.parameters.value;
+					var op = scope.filter.parameters.operator;
+					return op && (op == 'isNull' || scope.filter.parameters.value);
 				};
 
 				scope.$on('countAllFilters', function(event, args) {

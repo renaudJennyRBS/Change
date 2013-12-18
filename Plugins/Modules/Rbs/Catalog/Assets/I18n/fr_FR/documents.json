@@ -115,7 +115,7 @@
 		"message":"Créer un nouveau SKU"
 	},
 	"product_sku":{
-		"message":"code SKU"
+		"message":"SKU"
 	},
 	"product_variant":{
 		"message": "variante"

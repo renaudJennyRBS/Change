@@ -36,7 +36,7 @@ class JSONDecoderTest extends \ChangeTests\Change\TestAssets\TestCase
 		$o = $this->getObject();
 		$json = file_get_contents(__DIR__ . '/TestAssets/json1.json');
 		$query = $o->getQuery($json);
-		$expected = 'SELECT * FROM "project_tests_doc_basic" AS "_t0" INNER JOIN "project_tests_rel_basic" AS "_r1R" ON ("_t0"."document_id" = "_r1R"."document_id" AND "_r1R"."relname" = \'pDocArr\') WHERE (("_r1R"."relatedid" = :_p2)) ORDER BY "_t0"."pstr" ASC';
+		$expected = 'SELECT * FROM "project_tests_doc_basic" AS "_t0" WHERE ((EXISTS(SELECT * FROM "project_tests_rel_basic" WHERE ("project_tests_rel_basic"."document_id" = "_t0"."document_id" AND "project_tests_rel_basic"."relname" = \'pDocArr\' AND "project_tests_rel_basic"."relatedid" = :_p1)))) ORDER BY "_t0"."pstr" ASC';
 		$this->assertEquals($expected, $query->dbQueryBuilder()->query()->toSQL92String());
 	}
 

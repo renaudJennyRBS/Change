@@ -8,9 +8,10 @@
 			<option value="lte">{{ i18n('m.rbs.admin.admin.isbefore') }}</option>
 			<option value="eq">{{ i18n('m.rbs.admin.admin.ison') }}</option>
 			<option value="gte">{{ i18n('m.rbs.admin.admin.isafter') }}</option>
+			<option value="isNull">{{ i18n('m.rbs.admin.admin.isnull') }}</option>
 		</select>
 	</li>
-	<li>
+	<li ng-show="filter.parameters.operator != 'isNull'">
 		<date-selector style="display:inline" data-ng-model="filter.parameters.value"></date-selector>
 	</li>
 </ol>

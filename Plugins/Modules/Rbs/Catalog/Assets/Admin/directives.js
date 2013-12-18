@@ -19,4 +19,35 @@
 		};
 	});
 
+	app.directive('rbsDocumentFilterStockInventory', function() {
+		return {
+			restrict: 'C',
+			require: '^rbsDocumentFilterContainer',
+			templateUrl : 'Rbs/Catalog/rbs-document-filter-stock-inventory.twig',
+			scope: {
+				filter : '='
+			},
+			controller: ['$scope', function(scope) {
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = null;
+				}
+
+				scope.isConfigured = function() {
+					var op = scope.filter.parameters.operator;
+					return op && (op == 'isNull' || scope.filter.parameters.hasOwnProperty('level'));
+				};
+
+				scope.$on('countAllFilters', function(event, args) {
+					args.all++;
+					if (scope.isConfigured()) {
+						args.configured++;
+					}
+				});
+			}],
+
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+			}
+		};
+	});
 })();

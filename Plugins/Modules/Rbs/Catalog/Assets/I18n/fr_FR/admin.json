@@ -463,5 +463,14 @@
 	},
 	"merchandizing":{
 		"message":"merchandising"
+	},
+	"find_stock_inventory":{
+		"message":"Par stock physique"
+	},
+	"filter_stock_inventory":{
+		"message":"Produit dont le stock physique"
+	},
+	"filter_stock_undefined":{
+		"message":"n'est pas défini"
 	}
 }

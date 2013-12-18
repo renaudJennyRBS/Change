@@ -1,0 +1,16 @@
+<ol class="list-inline">
+	<li>
+		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
+	</li>
+	<li>{{ i18n('m.rbs.catalog.admin.filter_stock_inventory') }}</li>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.operator">
+			<option value="lte">{{ i18n('m.rbs.admin.admin.islessthanorequals') }}</option>
+			<option value="gte">{{ i18n('m.rbs.admin.admin.isgreaterthanorequals') }}</option>
+			<option value="isNull">{{ i18n('m.rbs.catalog.admin.filter_stock_undefined') }}</option>
+		</select>
+	</li>
+	<li data-ng-show="filter.parameters.operator != 'isNull'">
+		<input class="form-control" type="number" data-ng-model="filter.parameters.level">
+	</li>
+</ol>
