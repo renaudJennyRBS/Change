@@ -16,7 +16,9 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public static function setUpBeforeClass()
 	{
-		static::initDocumentsDb();
+		$appServices = static::initDocumentsDb();
+		$schema = new \Rbs\Catalog\Setup\Schema($appServices->getDbProvider()->getSchemaManager());
+		$schema->generate();
 	}
 
 	public static function tearDownAfterClass()
