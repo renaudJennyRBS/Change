@@ -1,0 +1,132 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'orderId'), ['ucf']) }}" ng-disabled="true">
+			<p class="form-control-static">(= data.order =)</p>
+		</rbs-field>
+
+		<rbs-field-text property="parcelCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'parcelCode'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="trackingCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'trackingCode'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'carrierStatus'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<!-- TODO render this field uneditable after being prepared -->
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'shippingModeCode'), ['ucf']) }}">
+			<document-picker-single
+				ng-model="data.carrier"
+				accepted-model="Rbs_Shipping_Mode" allow-edition="true"
+				selector-title="{{ i18nAttr('m.rbs.order.admin.expedition_select_shippingMode', ['ucf']) }}">
+			</document-picker-single>
+		</rbs-field>
+
+		<!-- TODO render this field uneditable after the expedition be prepared -->
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.expedition_articles', ['ucf', 'lab']) }} (= data.lines.length =)</h3>
+			</div>
+			<div class="panel-body">
+				<span ng-show="data.expeditionLines.length == 0">{{ i18n('m.rbs.order.admin.expedition_articles', ['ucf', 'lab']) }}</span>
+
+				<div class="btn-toolbar">
+					<button class="btn btn-default" type="button" ng-click="removeLines()" ng-disabled="data.removeLinesDisabled"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.expedition_remove_lines', ['ucf']) }}</button>
+				</div>
+
+				<table class="document-list table table-condensed table-bordered table-striped table-hover">
+					<thead>
+						<tr>
+							<th style="cursor: pointer; text-align: center; width: 30px;">
+								<input type="checkbox" ng-model="selectAllExpeditionLines">
+							</th>
+							<th>{{ i18n('m.rbs.order.admin.expedition_line_number', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.order.admin.expedition_designation', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.order.admin.expedition_sku', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.order.admin.expedition_remainder', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.order.admin.expedition_quantity', ['ucf']) }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="expeditionLine in data.expeditionLines" class="normal-row"
+							ng-class="{warning: expeditionLine.newLine, danger: expeditionLine.quantity && expeditionLine.quantityToShip > expeditionLine.quantity}">
+							<td style="cursor: pointer; text-align: center;">
+								<input type="checkbox" ng-model="expeditionLine.selected">
+							</td>
+							<td><p class="form-control-static">(= expeditionLine.lineNumber =)</p></td>
+							<td><p class="form-control-static">(= expeditionLine.designation =)</p></td>
+							<td><p class="form-control-static">(= expeditionLine.codeSKU =)</p></td>
+							<td><p class="form-control-static">(= expeditionLine.quantity =)</p></td>
+							<td style="width: 100px;">
+								<div ng-if="expeditionLine.allowQuantitySplit" ng-class="{'has-warning': expeditionLine.quantity && expeditionLine.quantityToShip > expeditionLine.quantity}">
+									<input type="number" min="1" ng-init="expeditionLine.quantityToShip = expeditionLine.quantityToShip || expeditionLine.quantity || 1"
+										ng-model="expeditionLine.quantityToShip" class="form-control"/>
+								</div>
+								<div ng-if="!expeditionLine.allowQuantitySplit">
+									<input type="text" class="form-control" ng-init="expeditionLine.quantityToShip = expeditionLine.quantity" disabled
+										value="(= expeditionLine.quantityToShip =)" />
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div ng-if="data.quantityToShipExceeded" class="text-danger">
+					<i class="icon-warning-sign icon-large"></i>
+					{{ i18n('m.rbs.order.admin.expedition_quantity_to_ship_exceeded', ['ucf']) }}
+				</div>
+
+				<div ng-if="data.hasNewLines" class="text-warning">
+					<i class="icon-warning-sign icon-large"></i>
+					{{ i18n('m.rbs.order.admin.expedition_warning_new_lines', ['ucf']) }}
+				</div>
+
+				<div ng-show="data.remainderLines.length > 0">
+					<span class="help-block">{{ i18n('m.rbs.order.admin.expedition_remainder_help', ['ucf', 'lab']) }}</span>
+					<ul class="token-list list-unstyled rows">
+						<li ng-repeat="remainderLine in data.remainderLines" ng-click="moveToExpeditionLines(remainderLine)">
+							<span class="pull-right">(= remainderLine.quantity =) <i class="icon-circle-arrow-up icon-large"></i></span>
+							(= remainderLine.designation =)
+						</li>
+					</ul>
+				</div>
+
+				<hr />
+
+				<p ng-init="showNewLineUI = false">
+					<a href="javascript:;" ng-click="showNewLineUI = !showNewLineUI">
+						<i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showNewLineUI]"></i>
+						{{ i18n('m.rbs.order.admin.expedition_add_another_articles', ['ucf']) }}
+					</a>
+				</p>
+
+				<div class="well well-sm" ng-show="showNewLineUI">
+					<div class="document-picker-multiple"
+						accepted-model="Rbs_Catalog_Product"
+						allow-edition="false" allow-creation="false" allow-in-place-selection="true"
+						selector-title="{{ i18nAttr('m.rbs.order.admin.expedition_article_selector_title', ['ucf']) }}" ng-model="data.newLines">
+					</div>
+
+					<button type="button" ng-disabled="!data.newLines.length" class="btn btn-primary" ng-click="addNewLines()">
+						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[data.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.expedition_add_articles', ['ucf']) }}
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<pre>(= document.data =)</pre>
+
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-document-system-info-section>
+	</fieldset>
+
+	<form-button-bar></form-button-bar>
+</form>

@@ -49,5 +49,32 @@
 	},
 	"invoice_currencycode":{
 		"message":"devise"
+	},
+	"expedition":{
+		"message":"expédition"
+	},
+	"expedition_orderid":{
+		"message":"commande associée"
+	},
+	"expedition_prepared":{
+		"message":"préparé"
+	},
+	"expedition_parcelcode":{
+		"message":"code colis"
+	},
+	"expedition_shippingmodecode":{
+		"message":"mode de livraison"
+	},
+	"expedition_trackingcode":{
+		"message":"code de tracking"
+	},
+	"expedition_carrierstatus":{
+		"message":"statut d'expedition (transporteur)"
+	},
+	"expedition_itemcount":{
+		"message":"nombre d'éléments"
+	},
+	"expedition_line_number":{
+		"message":"numéro de ligne"
 	}
 }

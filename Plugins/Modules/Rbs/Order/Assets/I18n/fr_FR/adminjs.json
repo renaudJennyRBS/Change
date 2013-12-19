@@ -7,5 +7,41 @@
 	},
 	"order_add_line":{
 		"message":"ajouter une ligne"
+	},
+	"expedition_shipping_mode_not_found_title":{
+		"message":"le mode de livraison est introuvable"
+	},
+	"expedition_shipping_mode_not_found":{
+		"message":"le mode de livraison $CODE$ est introuvable"
+	},
+	"expedition_invalid_query_shipping_mode":{
+		"message":"la requête pour récupérer le mode de livraison est invalide"
+	},
+	"expedition_sku_not_found_title":{
+		"message":"le SKU est introuvable"
+	},
+	"expedition_sku_not_found":{
+		"message":"le SKU $SKU$ est introuvable"
+	},
+	"expedition_invalid_query_sku":{
+		"message":"la requête pour récupérer le SKU est invalide"
+	},
+	"expedition_invalid_query_products":{
+		"message":"au moins l'une des requetes pour récupérer les produits a échoué"
+	},
+	"expedition_invalid_query_order":{
+		"message":"la requête pour récupérer la commande est invalide"
+	},
+	"expedition_product_not_found_title":{
+		"message":"le produit est introuvable"
+	},
+	"expedition_product_not_found":{
+		"message":"le produit dont l'idantifiant est $PRODUCTID$ est introuvable"
+	},
+	"expedition_invalid_query_sku_from_product_id":{
+		"message":"la requête pour récupérer le SKU par l'idenfiant de produit a échoué"
+	},
+	"expedition_no_sku_to_compare":{
+		"message":"un problème est survenu lors de la comparaison entre SKU. L'un des éléments est invalide."
 	}
 }

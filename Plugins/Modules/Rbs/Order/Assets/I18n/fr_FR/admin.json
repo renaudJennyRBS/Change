@@ -223,5 +223,53 @@
 	},
 	"invoice_select_transaction":{
 		"message":"sélectionner une transaction bancaire"
+	},
+	"expedition_list":{
+		"message":"expéditions"
+	},
+	"expedition_create":{
+		"message":"ajouter une expédition"
+	},
+	"expedition_select_shippingmode":{
+		"message":"sélectionner le mode de livraison"
+	},
+	"expedition_articles":{
+		"message":"articles"
+	},
+	"expedition_add_another_articles":{
+		"message":"ajouter d'autres articles"
+	},
+	"expedition_article_selector_title":{
+		"message":"sélectionnez des articles à ajouter à l'expédition"
+	},
+	"expedition_add_articles":{
+		"message":"ajouter les articles"
+	},
+	"expedition_designation":{
+		"message":"désignation"
+	},
+	"expedition_sku":{
+		"message":"SKU"
+	},
+	"expedition_remainder":{
+		"message":"reliquat"
+	},
+	"expedition_quantity":{
+		"message":"quantité"
+	},
+	"expedition_line_number":{
+		"message":"numéro de ligne"
+	},
+	"expedition_remove_lines":{
+		"message":"retirer de l'expédition"
+	},
+	"expedition_remainder_help":{
+		"message":"lignes non présentes dans l'expédition mais présentes dans le reliquat"
+	},
+	"expedition_warning_new_lines":{
+		"message":"nouvelles lignes d'expédition non présentes dans le reliquat"
+	},
+	"expedition_quantity_to_ship_exceeded":{
+		"message":"attention, l'une des quantités à expédier excède celle du reliquat. Êtes-vous sur de vouloir envoyer une quantité supérieur à celle indiquer par le reliquat ?"
 	}
 }
