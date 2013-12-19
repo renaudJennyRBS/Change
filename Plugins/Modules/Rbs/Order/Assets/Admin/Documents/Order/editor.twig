@@ -29,10 +29,26 @@
 						</rbs-field-select-from-collection>
 
 						<rbs-field-select-from-collection
+							property="billingAreaId"
+							label="{{ i18nAttr('m.rbs.order.admin.order_billing_area', ['ucf']) }}"
+							rbs-items-collection-params="webStoreId:(=document.webStoreId=)"
+							rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
+							empty-value-label="{{ i18nAttr('m.rbs.order.admin.order_select_billingarea', ['ucf']) }}">
+						</rbs-field-select-from-collection>
+
+						<rbs-field-select-from-collection
 								property="currencyCode"
 								label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'currencyCode'), ['ucf']) }}"
 								rbs-items-from-collection="Rbs_Price_Collection_Iso4217">
 						</rbs-field-select-from-collection>
+
+						<rbs-field label="{{ i18n('m.rbs.order.admin.order_tax_zone', ['ucf']) }}">
+							<select class="form-control" ng-model="document.contextData.taxZone">
+								<option value="">{{ i18nAttr('m.rbs.order.admin.order_select_taxzone', ['ucf']) }}</option>
+								<option ng-repeat="zone in priceInfo.zones" ng-value="(=zone=)">(=zone=)</option>
+							</select>
+						</rbs-field>
+
 					</div>
 				</div>
 			</div>
@@ -54,12 +70,12 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="extend.showAddressUI = !extend.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showAddressUI]"></i></a>
+				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="showAddressUI = !showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showAddressUI]"></i></a>
 				</h3>
 			</div>
 			<div class="panel-body rbs-order-address"
-				ng-show="extend.showAddressUI"
-				address-documents="extend.userAddresses"
+				ng-show="showAddressUI"
+				address-documents="userAddresses"
 				address-fields="document.contextData.addressFields"
 				address="document.addressData">
 			</div>
@@ -67,148 +83,18 @@
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="extend.showShippingUI = !extend.showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showShippingUI]"></i></a>
+				<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="showShippingUI = !showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showShippingUI]"></i></a>
 				</h3>
 			</div>
 			<div class="panel-body rbs-order-shipping-modes"
-				ng-show="extend.showShippingUI"
+				ng-show="showShippingUI"
 				shipping-data="document.shippingData"
 				lines-data="document.linesData"
-				address-documents="extend.userAddresses">
+				address-documents="userAddresses">
 			</div>
 		</div>
 
-
-		<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.linesData.length > 0]">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.linesData.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
-			</div>
-			<div class="panel-body">
-				<p class="text-warning" ng-show="document.linesData.length == 0">
-					<strong>{{ i18n('m.rbs.order.admin.order_no_lines', ['ucf']) }}</strong>
-				</p>
-				<p ng-show="document.linesData.length == 0">
-					{{ i18n('m.rbs.order.admin.order_no_lines_help', ['ucf']) | raw }}
-				</p>
-
-				<div ng-show="document.webStoreId">
-					<p>
-						<a href="javascript:;" ng-click="extend.showNewLineUI = !extend.showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[extend.showNewLineUI]"></i> {{ i18n('m.rbs.order.admin.order_add_lines', ['ucf']) }}</a>
-					</p>
-					<div class="well well-sm" ng-show="extend.showNewLineUI">
-						<h4>{{ i18n('m.rbs.order.admin.order_new_line', ['ucf']) }}</h4>
-						<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
-
-						<p>
-							<rbs-field-select-from-collection
-									property="billingAreaId"
-									label="{{ i18nAttr('m.rbs.order.admin.order_billing_area', ['ucf']) }}"
-									rbs-items-collection-params="webStoreId:(=document.webStoreId=)"
-									rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
-									empty-value-label="{{ i18nAttr('m.rbs.order.admin.order_select_billingarea', ['ucf']) }}">
-							</rbs-field-select-from-collection>
-							<rbs-field-text
-									property="taxZone"
-									label="{{ i18nAttr('m.rbs.order.admin.order_tax_zone', ['ucf']) }}">
-							</rbs-field-text>
-						</p>
-
-						<div ng-show="document.billingAreaId && document.taxZone">
-							<p>
-								<div>
-								<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
-								<div class="rbs-document-picker-multiple"
-							         accepted-model="Rbs_Catalog_Product"
-							         allow-edition="false" allow-creation="false" allow-in-place-selection="true"
-							         selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
-						         </div>
-								<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
-									<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
-								</button>
-								</rbs-field>
-								</div>
-							</p>
-						</div>
-						<p ng-hide="document.billingAreaId && document.taxZone">
-							<span class="label label-info">Info</span>
-							{{ i18n('m.rbs.order.admin.order_choose_billingarea_and_taxzone_first', ['ucf']) | raw }}
-						</p>
-					</div>
-				</div>
-				<div ng-show="document.linesData.length > 0">
-					<rbs-document-list
-							collection="document.linesData"
-							data-dlid="RbsOrderOrderEditorLinesList"
-							modification-date="false"
-							extend="extend"
-							actions="">
-
-						<rbs-column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
-
-						</rbs-column>
-
-						<rbs-column name="visuals" thumbnail="XS" thumbnail-path="doc.options.visual"
-						        label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}">
-				        </rbs-column>
-
-						<rbs-column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}">
-							<input type="text" required="true" class="form-control" ng-model="doc.designation"/>
-						</rbs-column>
-
-						<rbs-column name="sku" label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}">
-							<input type="text" required="true" class="form-control" ng-model="doc.items[0].codeSKU"/>
-						</rbs-column>
-
-						<rbs-column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
-							<input type="text" rbs-smart-float="" required="true" class="form-control" ng-model="doc.items[0].priceValue"/>
-						</rbs-column>
-
-						<rbs-column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
-							<input type="number" min="1" required="true" ng-model="doc.quantity" class="form-control"/>
-						</rbs-column>
-
-						<rbs-column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
-							(= doc.items[0].priceValue * doc.quantity | currency =)
-						</rbs-column>
-
-						<rbs-action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
-								selection="+"></rbs-action>
-
-						<rbs-action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
-							selection="+"></rbs-action>
-
-					</rbs-document-list>
-				</div>
-			</div>
-		</div>
-
-		<div class="panel panel-danger" ng-show="extend.removedLines.length > 0">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.order_removed_lines', ['ucf']) }}</h3>
-			</div>
-			<div class="list-group">
-				<div ng-repeat="line in extend.removedLines" class="list-group-item" style="line-height: 30px;">
-					<span class="pull-right">
-						<button class="btn btn-default btn-sm" ng-click="extend.restoreRemovedLine($index)">{{ i18n('m.rbs.order.admin.order_put_back_in_order', ['ucf']) }}</button>
-						<button class="btn btn-danger btn-sm" ng-click="extend.trashRemovedLine($index)" title="{{ i18nAttr('m.rbs.order.admin.order_remove_permanently', ['ucf']) }}"><i class="icon-trash"></i></button>
-					</span>
-					(= line.quantity =) &times; (= line.designation =)
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-md-6 col-md-offset-6">
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
-					</div>
-					<div class="panel-body">
-						<strong>(= document.amountWithTax | currency =)</strong>
-					</div>
-				</div>
-			</div>
-		</div>
+		<rbs-order-lines/>
 
 			<!--
 		<div ng-if="! document.isNew()">

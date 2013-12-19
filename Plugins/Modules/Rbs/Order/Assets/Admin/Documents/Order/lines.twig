@@ -1,0 +1,124 @@
+<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.linesData.length > 0]">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.linesData.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
+	</div>
+	<div class="panel-body">
+		<p class="text-warning" ng-show="document.linesData.length == 0">
+			<strong>{{ i18n('m.rbs.order.admin.order_no_lines', ['ucf']) }}</strong>
+		</p>
+		<p ng-show="document.linesData.length == 0">
+			{{ i18n('m.rbs.order.admin.order_no_lines_help', ['ucf']) | raw }}
+		</p>
+
+		<div ng-show="document.webStoreId">
+			<p>
+				<a href="javascript:;" ng-click="showNewLineUI = !showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showNewLineUI]"></i> {{ i18n('m.rbs.order.admin.order_add_lines', ['ucf']) }}</a>
+			</p>
+			<div class="well well-sm" ng-show="showNewLineUI">
+				<h4>{{ i18n('m.rbs.order.admin.order_new_line', ['ucf']) }}</h4>
+				<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
+
+				<div ng-show="document.billingAreaId && document.contextData.taxZone">
+					<p>
+						<div>
+						<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
+						<div class="rbs-document-picker-multiple"
+							 accepted-model="Rbs_Catalog_Product"
+							 allow-edition="false" allow-creation="false" allow-in-place-selection="true"
+							 selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
+						 </div>
+						<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
+							<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
+						</button>
+						</rbs-field>
+						</div>
+					</p>
+				</div>
+				<p ng-hide="document.billingAreaId && document.contextData.taxZone">
+					<span class="label label-info">Info</span>
+					{{ i18n('m.rbs.order.admin.order_choose_billingarea_and_taxzone_first', ['ucf']) | raw }}
+				</p>
+			</div>
+		</div>
+		<div ng-show="document.linesData.length > 0">
+			<rbs-document-list
+					collection="listLines"
+					data-dlid="RbsOrderOrderEditorLinesList"
+					modification-date="false"
+					extend="extend"
+					actions="">
+
+				<rbs-column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
+
+				</rbs-column>
+
+				<rbs-column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}" primary="true">
+					(=doc.designation=)
+				</rbs-column>
+
+				<rbs-column name="sku" label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}">
+					(=doc.items[0].codeSKU=)
+				</rbs-column>
+
+				<rbs-column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
+					(=doc.items[0].priceValue | currency =)
+				</rbs-column>
+
+				<rbs-column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
+					<input type="number" min="1" required="true" ng-model="doc.quantity" class="form-control"/>
+				</rbs-column>
+
+				<rbs-column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
+					(= doc.items[0].priceValue * doc.quantity | currency =)
+				</rbs-column>
+
+				<rbs-action name="addLine" icon="icon-plus" label="{{ i18nAttr('m.rbs.order.admin.order_add_line', ['ucf']) }}"
+					selection="0,0"></rbs-action>
+
+				<rbs-action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
+					selection="+"></rbs-action>
+
+				<rbs-action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
+					selection="+"></rbs-action>
+
+				<rbs-quick-actions>
+					<a href="javascript:;" ng-click="extend.removeLines([doc])" class="danger"><i class="icon-trash"></i>{{ i18n('m.rbs.admin.adminjs.delete') }}</a>
+				</rbs-quick-actions>
+
+				<rbs-preview>
+					<div class="clearfix"/>
+					<rbs-order-line-editor ng-model="doc.__document" price-info="extend.priceInfo"/>
+				</rbs-preview>
+
+			</rbs-document-list>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-danger" ng-show="extend.removedLines.length > 0">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.order_removed_lines', ['ucf']) }}</h3>
+	</div>
+	<div class="list-group">
+		<div ng-repeat="line in extend.removedLines" class="list-group-item" style="line-height: 30px;">
+			<span class="pull-right">
+				<button class="btn btn-default btn-sm" ng-click="extend.restoreRemovedLine($index)">{{ i18n('m.rbs.order.admin.order_put_back_in_order', ['ucf']) }}</button>
+				<button class="btn btn-danger btn-sm" ng-click="extend.trashRemovedLine($index)" title="{{ i18nAttr('m.rbs.order.admin.order_remove_permanently', ['ucf']) }}"><i class="icon-trash"></i></button>
+			</span>
+			(= line.quantity =) &times; (= line.designation =)
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6 col-md-offset-6">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
+			</div>
+			<div class="panel-body">
+				<strong>(= document.amountWithTax | currency =)</strong>
+			</div>
+		</div>
+	</div>
+</div>

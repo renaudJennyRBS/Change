@@ -61,7 +61,7 @@ class ProductPriceInfo
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$data = array();
 			$pm = $commerceServices->getPriceManager();
-			$priceProperties = array('boValue');
+			$priceProperties = array('boValue', 'taxCategories');
 
 			foreach ($products as $product)
 			{
