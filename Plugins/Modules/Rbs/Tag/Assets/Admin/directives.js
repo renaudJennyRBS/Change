@@ -35,7 +35,6 @@
 				};
 			}
 		};
-
 	});
 
 
@@ -494,7 +493,6 @@
 	}
 
 	app.directive('rbsDocumentFilterTags', ['RbsChange.TagService', function(TagService) {
-
 		return {
 			restrict: 'C',
 			require: '^rbsDocumentFilterContainer',
@@ -505,12 +503,45 @@
 			controller: ['$scope', function(scope) {
 				scope.tags = null;
 				scope.availTags = null;
-
 				if (!scope.filter.parameters.hasOwnProperty('tagIds')) {
 					scope.filter.parameters.tagIds = [];
 				}
 
 				scope.showAll = scope.filter.parameters.tagIds.length == 0;
+			}],
+
+			link: function(scope, element, attrs, containerController) {
+
+				containerController.linkNode(scope);
+
+				scope.isConfigured = function() {
+					return (scope.filter.parameters.tagIds && scope.filter.parameters.tagIds.length > 0);
+				};
+
+				scope.$on('countAllFilters', function(event, args) {
+					args.all++;
+					if (scope.isConfigured()) {
+						args.configured++;
+					}
+				});
+
+				scope.$watchCollection('tags', function(value) {
+					if (angular.isArray(value)){
+						scope.filter.parameters.tagIds = [];
+						angular.forEach(value, function(tagDoc) {
+							if (tagDoc && tagDoc.id) {
+								scope.filter.parameters.tagIds.push(tagDoc.id);
+							}
+						})
+					}
+				});
+
+				if (!scope.filterDefinition)
+				{
+					scope.availTags = [];
+					scope.showAll = false;
+					return;
+				}
 
 				function initializeAvailTags(availTags) {
 					var tags = [], i;
@@ -526,21 +557,18 @@
 					scope.tags = tags;
 				}
 
-				TagService.getList({resolve: initializeAvailTags});
+				if (scope.filterDefinition.hasOwnProperty('availTags')) {
+					initializeAvailTags(scope.filterDefinition.availTags);
+				} else {
+					scope.filterDefinition.availTags = TagService.getList({resolve: initializeAvailTags});
+				}
 
-
-
-				scope.isConfigured = function() {
-					return (scope.filter.parameters.tagIds && scope.filter.parameters.tagIds.length > 0);
-				};
-
-				scope.$on('countAllFilters', function(event, args) {
-					args.all++;
-					if (scope.isConfigured()) {
-						args.configured++;
+				scope.toggleShowAll = function ($event) {
+					scope.showAll = ! scope.showAll;
+					if (scope.showAll && $event.shiftKey) {
+						scope.filterDefinition.availTags = scope.availTags = TagService.getList();
 					}
-				});
-
+				};
 
 				scope.isUsed = function (tag) {
 					var i;
@@ -556,37 +584,15 @@
 					if (!scope.isUsed(tag)) {
 						scope.tags.push(tag);
 						tag.used = true;
-						scope.applyFilter();
+						containerController.applyFilter();
 					}
 				};
 
 				scope.removeTag = function (index) {
 					scope.tags[index].used = false;
 					scope.tags.splice(index, 1);
-					scope.applyFilter();
+					containerController.applyFilter();
 				};
-
-				scope.toggleShowAll = function ($event) {
-					scope.showAll = ! scope.showAll;
-					if (scope.showAll && $event.shiftKey) {
-						scope.availTags = TagService.getList();
-					}
-				};
-
-				scope.$watchCollection('tags', function(value) {
-					if (angular.isArray(value)){
-						scope.filter.parameters.tagIds = [];
-						angular.forEach(value, function(tagDoc) {
-							if (tagDoc && tagDoc.id) {
-								scope.filter.parameters.tagIds.push(tagDoc.id);
-							}
-						})
-					}
-				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	}]);

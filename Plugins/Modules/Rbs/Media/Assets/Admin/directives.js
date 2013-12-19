@@ -30,8 +30,6 @@
 					}
 				}
 
-				console.log(options);
-
 				var params = {
 					'size' : scope.size,
 					'email' : scope.email,

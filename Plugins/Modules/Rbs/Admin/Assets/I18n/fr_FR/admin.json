@@ -194,6 +194,9 @@
 	"isOn":{
 		"message":"est le"
 	},
+	"isNull":{
+		"message":"est vide"
+	},
 	"isAfter":{
 		"message":"est postérieure à"
 	},

@@ -10,12 +10,13 @@
 			<option value="contains">{{ i18n('m.rbs.admin.admin.contains') }}</option>
 			<option value="beginsWith">{{ i18n('m.rbs.admin.admin.startswith') }}</option>
 			<option value="endsWith">{{ i18n('m.rbs.admin.admin.endswith') }}</option>
+			<option value="isNull">{{ i18n('m.rbs.admin.admin.isnull') }}</option>
 		</select>
 	</li>
-	<li>
+	<li ng-show="filter.parameters.operator != 'isNull'">
 		<input class="form-control" data-ng-model="filter.parameters.value">
 	</li>
-	<li ng-show="filterDefinition.config.possibleValues">
+	<li ng-show="filterDefinition.config.possibleValues && filter.parameters.operator != 'isNull'">
 		<select class="form-control" ng-model="filter.parameters.value"
 				data-role="filter-value"
 				ng-options="o.value as o.label for o in filterDefinition.config.possibleValues"></select>

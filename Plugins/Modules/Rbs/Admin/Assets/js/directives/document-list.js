@@ -1581,19 +1581,11 @@
 					}
 					scope.$watch('loadQuery', watchQueryFn, true);
 
-					scope.$watch('filterCollection.parameters', function(value, oldvalue) {
-						if (value)
-						{
-							if (value.search > 0 || (value.configured > 0))
-							{
-								reload();
-							}
-							else if (oldvalue && (oldvalue.search > 0 || (oldvalue.configured > 0)))
-							{
-								reload();
-							}
+					scope.$watch('filterCollection.search', function(value, oldValue) {
+						if (value !== oldValue) {
+							reload();
 						}
-					}, true);
+					});
 
 
 					var currentQuickActionsIndex = -1;

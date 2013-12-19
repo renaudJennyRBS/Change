@@ -1,10 +1,11 @@
-<div class="panel panel-primary">
+<div class="panel" data-ng-class="{'panel-primary':filter.parameters.configured,'panel-default':!filter.parameters.configured}">
 	<div class="panel-heading" ng-click="toggleFilterPanel()" style="cursor: pointer;">
 		<button type="button" class="btn btn-default pull-right btn-icon btn-xs">
 			<span data-ng-hide="showFilter" class="glyphicon glyphicon-plus"></span>
 			<span data-ng-show="showFilter" class="glyphicon glyphicon-minus"></span>
 		</button>
-		<h3 class="panel-title"><i class="icon-search"></i> <span>{{ i18n('m.rbs.admin.admin.title', ['ucf']) }}</span></h3>
+		<h3 class="panel-title"><i class="icon-search"></i> <span>{{ i18n('m.rbs.admin.admin.title', ['ucf']) }}</span>
+		</h3>
 	</div>
 	<form class="search-filters" data-ng-show="showFilter" ng-submit="applyFilter()">
 		<div class="panel-body" ng-include="model | collectionFilterTemplateURL">

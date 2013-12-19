@@ -200,18 +200,21 @@ class PredicateBuilder
 		if ($property && $property->getType() === Property::TYPE_DOCUMENTARRAY)
 		{
 			$abstractBuilder = $this->builder;
-			$relTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
-			$relTableIdentifier = '_r' . $this->builder->getQuery()->getNextAliasCounter() . 'R';
+			$sq = new \Change\Db\Query\SelectQuery();
+			$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+			$fromClause = new \Change\Db\Query\Clauses\FromClause();
+			$fromTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
+			$fromClause->setTableExpression($fromTable);
+			$sq->setFromClause($fromClause);
 
-			$idPredicate = $fb->eq($abstractBuilder->getColumn('id'), $fb->getDocumentColumn('id', $relTableIdentifier));
-			$relnamePredicate = $fb->eq($fb->column('relname', $relTableIdentifier), $fb->string($property->getName()));
+			$docEq = $fb->eq($fb->getDocumentColumn('id', $fromTable), $abstractBuilder->getColumn('id'));
+			$relnamePredicate = $fb->eq($fb->column('relname', $fromTable), $fb->string($property->getName()));
+			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable), $abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
 
-			$joinCondition = new \Change\Db\Query\Predicates\Conjunction($idPredicate, $relnamePredicate);
-			$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');
-			$join = new Join($fb->alias($relTable, $relTableIdentifier), Join::INNER_JOIN, $joinExpr);
-			$this->builder->addJoin($relTableIdentifier, $join);
-			return $fb->eq($fb->column('relatedid', $relTableIdentifier),
-				$this->builder->getValueAsParameter($value, Property::TYPE_INTEGER));
+			$and = new \Change\Db\Query\Predicates\Conjunction($docEq, $relnamePredicate, $idPredicate);
+			$where = new \Change\Db\Query\Clauses\WhereClause($and);
+			$sq->setWhereClause($where);
+			return new \Change\Db\Query\Predicates\Exists(new \Change\Db\Query\Expressions\SubQuery($sq));
 		}
 		list($lhs, $rhs) = $this->convertPropertyValueArgument($propertyName, $value);
 		return $fb->eq($lhs, $rhs);
@@ -225,8 +228,29 @@ class PredicateBuilder
 	 */
 	public function neq($propertyName, $value)
 	{
+		$fb = $this->getFragmentBuilder();
+		$property = $this->builder->getValidProperty($propertyName);
+		if ($property && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		{
+			$abstractBuilder = $this->builder;
+			$sq = new \Change\Db\Query\SelectQuery();
+			$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+			$fromClause = new \Change\Db\Query\Clauses\FromClause();
+			$fromTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
+			$fromClause->setTableExpression($fromTable);
+			$sq->setFromClause($fromClause);
+
+			$docEq = $fb->eq($fb->getDocumentColumn('id', $fromTable), $abstractBuilder->getColumn('id'));
+			$relnamePredicate = $fb->eq($fb->column('relname', $fromTable), $fb->string($property->getName()));
+			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable), $abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
+
+			$and = new \Change\Db\Query\Predicates\Conjunction($docEq, $relnamePredicate, $idPredicate);
+			$where = new \Change\Db\Query\Clauses\WhereClause($and);
+			$sq->setWhereClause($where);
+			return new \Change\Db\Query\Predicates\Exists(new \Change\Db\Query\Expressions\SubQuery($sq), true);
+		}
 		list($lhs, $rhs) = $this->convertPropertyValueArgument($propertyName, $value);
-		return $this->getFragmentBuilder()->neq($lhs, $rhs);
+		return $fb->neq($lhs, $rhs);
 	}
 
 	/**
