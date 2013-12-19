@@ -82,6 +82,10 @@
 					if (! scope.document.linesData) {
 						scope.document.linesData = [];
 					}
+					if(!angular.isObject(scope.document.addressData) || scope.document.addressData instanceof Array)
+					{
+						scope.document.addressData = {};
+					}
 				};
 
 				// This watches for modifications in the user doc in order to fill the address list
@@ -96,6 +100,12 @@
 				scope.$watch('document.contextData.taxZone', function (taxZone, old) {
 					scope.priceInfo.taxZone = taxZone;
 				}, true);
+
+				// This refreshes shippingDataObject to be synchronized with order editor
+				scope.$on('shippingModesUpdatedFromLines', function (event) {
+					scope.$broadcast('shippingModesUpdated');
+					scope.showShippingUI = true;
+				});
 
 				editorCtrl.init('Rbs_Order_Order');
 			}

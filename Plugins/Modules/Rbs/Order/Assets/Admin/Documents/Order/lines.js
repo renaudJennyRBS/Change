@@ -154,8 +154,7 @@
 							});
 
 							if(modified){
-								scope.$broadcast('shippingModesUpdated');
-								scope.showShippingUI = true;
+								scope.$emit('shippingModesUpdatedFromLines');
 							}
 						});
 
