@@ -322,7 +322,7 @@
 				if (__preview[dlid]['style']) {
 					inner.attr('style', __preview[dlid]['style']);
 				}
-				inner.find('[data-role="preview-contents"]').replaceWith(__preview[dlid].contents || '<div ng-include="doc | adminTemplateURL:\'preview-list\'"></div>');
+				inner.find('[data-role="preview-contents"]').replaceWith(__preview[dlid].contents || '<div ng-include="doc | rbsAdminTemplateURL:\'preview-list\'"></div>');
 				result.preview = true;
 			}
 

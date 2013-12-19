@@ -290,44 +290,7 @@
 
 	app.filter('rbsURL', urlFilter);
 
-	app.filter('documentURLParams', ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
-
-		return function (doc, urlName, params) {
-			var	url;
-
-			if (Utils.isDocument(doc)) {
-				url = doc.url(urlName);
-			} else if (Utils.isModelName(doc)) {
-				url = UrlManager.getUrl(doc, angular.extend({'id': 'new'}, params), urlName || 'form');
-			} else {
-				return 'javascript:;';
-			}
-
-			return url;
-		};
-
-	}]);
-
-
-	app.filter('documentTranslateURL', ['RbsChange.UrlManager', '$log', function documentTranslateURLFilter (UrlManager, $log) {
-
-		return function (doc, LCID, fromLCID) {
-			// This filter may be called while the `doc` is not loaded/instanciated yet.
-			if (!doc || !doc.id) {
-				return 'javascript:;';
-			}
-			try {
-				return UrlManager.getTranslateUrl(doc, LCID);
-			} catch (e) {
-				$log.error("Error while getting URL for: ", doc, LCID, fromLCID, e);
-				return 'javascript:;';
-			}
-		};
-
-	}]);
-
-
-	app.filter('adminTemplateURL', function () {
+	app.filter('rbsAdminTemplateURL', function () {
 		return function (doc, tplName) {
 			return doc && doc.model ? doc.model.replace(/_/g, '/') + '/' + tplName + '.twig' : '';
 		};

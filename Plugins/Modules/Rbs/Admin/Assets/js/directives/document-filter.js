@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.filter('collectionFilterTemplateURL', function () {
+	app.filter('rbsCollectionFilterTemplateURL', function () {
 		return function (modelName) {
 			return 'Collection/'  + modelName.replace(/_/g, '/') + '/filter-panel.twig';
 		};
