@@ -494,7 +494,6 @@
 	}
 
 	app.directive('rbsDocumentFilterTags', ['RbsChange.TagService', function(TagService) {
-
 		return {
 			restrict: 'C',
 			require: '^rbsDocumentFilterContainer',
@@ -511,24 +510,6 @@
 				}
 
 				scope.showAll = scope.filter.parameters.tagIds.length == 0;
-
-				function initializeAvailTags(availTags) {
-					var tags = [], i;
-					scope.availTags = availTags;
-					angular.forEach(scope.filter.parameters.tagIds, function(id) {
-						for (i = 0; i < availTags.length; i++) {
-							if (availTags[i].id == id) {
-								tags.push(availTags[i]);
-								break;
-							}
-						}
-					});
-					scope.tags = tags;
-				}
-
-				TagService.getList({resolve: initializeAvailTags});
-
-
 
 				scope.isConfigured = function() {
 					return (scope.filter.parameters.tagIds && scope.filter.parameters.tagIds.length > 0);
@@ -566,12 +547,7 @@
 					scope.applyFilter();
 				};
 
-				scope.toggleShowAll = function ($event) {
-					scope.showAll = ! scope.showAll;
-					if (scope.showAll && $event.shiftKey) {
-						scope.availTags = TagService.getList();
-					}
-				};
+
 
 				scope.$watchCollection('tags', function(value) {
 					if (angular.isArray(value)){
@@ -587,6 +563,38 @@
 
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
+				if (!scope.filterDefinition)
+				{
+					scope.availTags = [];
+					scope.showAll = false;
+					return;
+				}
+
+				function initializeAvailTags(availTags) {
+					var tags = [], i;
+					scope.availTags = availTags;
+					angular.forEach(scope.filter.parameters.tagIds, function(id) {
+						for (i = 0; i < availTags.length; i++) {
+							if (availTags[i].id == id) {
+								tags.push(availTags[i]);
+								break;
+							}
+						}
+					});
+					scope.tags = tags;
+				}
+				if (scope.filterDefinition.hasOwnProperty('availTags')) {
+					initializeAvailTags(scope.filterDefinition.availTags);
+				} else {
+					scope.filterDefinition.availTags = TagService.getList({resolve: initializeAvailTags});
+				}
+
+				scope.toggleShowAll = function ($event) {
+					scope.showAll = ! scope.showAll;
+					if (scope.showAll && $event.shiftKey) {
+						scope.filterDefinition.availTags = scope.availTags = TagService.getList();
+					}
+				};
 			}
 		};
 	}]);

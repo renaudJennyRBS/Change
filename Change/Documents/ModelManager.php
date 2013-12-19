@@ -307,7 +307,7 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 			$group = $i18nManager->trans('m.rbs.admin.admin.properties', ['ucf']);
 			$systemGroup = $i18nManager->trans('m.rbs.admin.admin.system_properties', ['ucf']);
 			$systemPropertiesName = ['id', 'model', 'documentVersion', 'publicationSections', 'publicationStatus', 'active',
-				'authorId', 'authorName', 'creationDate', 'modificationDate'];
+				'authorId', 'authorName', 'creationDate', 'modificationDate', 'refLCID', 'LCID'];
 			foreach ($model->getProperties() as $property)
 			{
 				if ($property->getStateless() || isset($filtersDefinition[$property->getName()]))

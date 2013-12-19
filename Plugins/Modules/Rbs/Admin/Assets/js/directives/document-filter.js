@@ -25,7 +25,7 @@
 				}
 
 				if (attrs.hasOwnProperty('openByDefault')) {
-					scope.showFilter = (scope.openByDefault == 'true');
+					scope.showFilter = (attrs.openByDefault == 'true');
 				} else {
 					scope.showFilter = false;
 				}
@@ -47,7 +47,7 @@
 				};
 
 				scope.resetFilter = function() {
-					scope.filter = {name: 'group', parameters:{search:0,all:0,configured:0}, operator: 'AND', filters:[]};
+					scope.$broadcast('resetFilter', {});
 				};
 
 				scope.applyFilter = function() {
@@ -59,7 +59,7 @@
 				};
 
 				if (!angular.isObject(scope.filter)){
-					scope.resetFilter();
+					scope.filter = {};
 				}
 			}
 		}
@@ -177,25 +177,44 @@
 		};
 	});
 
-	app.directive('rbsDocumentFilterContainer', ['$compile', function($compile) {
+	app.directive('rbsDocumentFilterContainer', ['$compile', 'localStorageService',  function($compile, localStorageService) {
 		return {
 			restrict: 'C',
 			transclude: true,
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-container.twig',
-			scope: {filter : '='},
+			scope: {filter : '=', model: '@'},
 			controller: ['$scope', function(scope) {
-				if (!angular.isObject(scope.filter)) {
-					scope.filter = {name: 'group', parameters:{search:0, all:0, configured:0}, operator: 'AND', filters:[]}
-				} else if (!scope.filter.hasOwnProperty('name')) {
+
+				function resetFilter() {
+					console.log('resetFilter');
+					if (!angular.isObject(scope.filter)) {
+						scope.filter = {};
+					}
 					scope.filter.name = 'group';
-					scope.filter.parameters = {search:0, all:0, configured:0};
+					scope.filter.parameters = {search:0,all:0,configured:0};
 					scope.filter.operator = 'AND';
 					scope.filter.filters = [];
 				}
+
+				if (!angular.isObject(scope.filter) || !scope.filter.hasOwnProperty('name') || scope.filter.name !== 'group') {
+					resetFilter();
+				} else {
+					scope.defaultFilter = angular.copy(scope.filter);
+					console.log('rbsDocumentFilterContainer controller', scope.filter);
+				}
+
 				var filterDefinitions = scope.filterDefinitions = {};
 
 				scope.definitionToAdd = null;
 				scope.sortedDefinitions = [];
+
+				scope.$on('resetFilter', function(event, args) {
+					if (scope.defaultFilter) {
+						scope.filter = angular.copy(scope.defaultFilter);
+					} else {
+						resetFilter();
+					}
+				});
 
 				this.addFilterDefinition = function(filterDefinition) {
 					if (filterDefinitions.hasOwnProperty(filterDefinition.name)){
@@ -230,14 +249,13 @@
 							scope.filter.parameters.search++;
 						}
 					}
-				}
+				};
 
 				this.linkNode = function(nodeScope) {
 					nodeScope.delFilter = function () {
 						delFilter(nodeScope.filter);
 					};
-					if (nodeScope.filter.name && scope.filterDefinitions.hasOwnProperty(nodeScope.filter.name))
-					{
+					if (nodeScope.filter.name && scope.filterDefinitions.hasOwnProperty(nodeScope.filter.name)) {
 						nodeScope.filterDefinition = scope.filterDefinitions[nodeScope.filter.name];
 					}
 
@@ -266,7 +284,6 @@
 			}],
 
 			link: function(scope, element) {
-
 				scope.swapOperator = function() {
 					var rc = function (pOperator, filters) {
 						for (var i = 0; i < filters.length; i++) {

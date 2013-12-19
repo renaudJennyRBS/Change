@@ -1,4 +1,4 @@
-<div class="rbs-document-filter-container" filter="filter">
+<div class="rbs-document-filter-container" filter="filter" model="{{ model.name }}">
 {% if definitions %}
 	<div class="rbs-document-filter-definitions" definitions="{{ definitions | json_encode }}"></div>
 {% endif %}
