@@ -1,9 +1,8 @@
 <div class="row">
-
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
 			<rbs-location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.module_name', ['ucf']) }}</rbs-location>
-			<rbs-location href="(= 'Rbs_Order_Process'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.process_list', ['ucf']) }}</rbs-location>
+			<rbs-location href="(= 'Rbs_Commerce_Process'|rbsURL:'list' =)">{{ i18n('m.rbs.commerce.admin.process_list', ['ucf']) }}</rbs-location>
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
@@ -12,8 +11,7 @@
 	</div>
 
 	<div class="document-form" rbs-main-column>
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Order_Process'), ['ucf']) }}"></rbs-page-header>
-		<div class="rbs-document-editor rbs-document-editor-rbs-order-process"></div>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Commerce_Process'), ['ucf']) }}"></rbs-page-header>
+		<div class="rbs-document-editor rbs-document-editor-rbs-commerce-process"></div>
 	</div>
-
 </div>

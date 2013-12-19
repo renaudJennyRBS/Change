@@ -167,12 +167,6 @@
 	"invoice_create":{
 		"message":"ajouter une facture"
 	},
-	"process_list":{
-		"message":"processus de commande"
-	},
-	"process_create":{
-		"message":"ajouter un processus de commande"
-	},
 	"processing_status_initiated":{
 		"message":"initié"
 	},

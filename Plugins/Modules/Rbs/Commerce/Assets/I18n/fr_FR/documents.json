@@ -1,5 +1,8 @@
 {
 	"profile":{
 		"message":"profile"
+	},
+	"process":{
+		"message":"processus de commande"
 	}
 }
