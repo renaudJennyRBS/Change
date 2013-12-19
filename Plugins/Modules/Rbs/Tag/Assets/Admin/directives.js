@@ -35,7 +35,6 @@
 				};
 			}
 		};
-
 	});
 
 
@@ -504,12 +503,16 @@
 			controller: ['$scope', function(scope) {
 				scope.tags = null;
 				scope.availTags = null;
-
 				if (!scope.filter.parameters.hasOwnProperty('tagIds')) {
 					scope.filter.parameters.tagIds = [];
 				}
 
 				scope.showAll = scope.filter.parameters.tagIds.length == 0;
+			}],
+
+			link: function(scope, element, attrs, containerController) {
+
+				containerController.linkNode(scope);
 
 				scope.isConfigured = function() {
 					return (scope.filter.parameters.tagIds && scope.filter.parameters.tagIds.length > 0);
@@ -522,33 +525,6 @@
 					}
 				});
 
-
-				scope.isUsed = function (tag) {
-					var i;
-					for (i=0 ; i < scope.tags.length ; i++) {
-						if (!scope.tags[i].id === tag.id) {
-							return true;
-						}
-					}
-					return false;
-				};
-
-				scope.appendTag = function(tag) {
-					if (!scope.isUsed(tag)) {
-						scope.tags.push(tag);
-						tag.used = true;
-						scope.applyFilter();
-					}
-				};
-
-				scope.removeTag = function (index) {
-					scope.tags[index].used = false;
-					scope.tags.splice(index, 1);
-					scope.applyFilter();
-				};
-
-
-
 				scope.$watchCollection('tags', function(value) {
 					if (angular.isArray(value)){
 						scope.filter.parameters.tagIds = [];
@@ -559,10 +535,7 @@
 						})
 					}
 				});
-			}],
 
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 				if (!scope.filterDefinition)
 				{
 					scope.availTags = [];
@@ -583,6 +556,7 @@
 					});
 					scope.tags = tags;
 				}
+
 				if (scope.filterDefinition.hasOwnProperty('availTags')) {
 					initializeAvailTags(scope.filterDefinition.availTags);
 				} else {
@@ -594,6 +568,30 @@
 					if (scope.showAll && $event.shiftKey) {
 						scope.filterDefinition.availTags = scope.availTags = TagService.getList();
 					}
+				};
+
+				scope.isUsed = function (tag) {
+					var i;
+					for (i=0 ; i < scope.tags.length ; i++) {
+						if (!scope.tags[i].id === tag.id) {
+							return true;
+						}
+					}
+					return false;
+				};
+
+				scope.appendTag = function(tag) {
+					if (!scope.isUsed(tag)) {
+						scope.tags.push(tag);
+						tag.used = true;
+						containerController.applyFilter();
+					}
+				};
+
+				scope.removeTag = function (index) {
+					scope.tags[index].used = false;
+					scope.tags.splice(index, 1);
+					containerController.applyFilter();
 				};
 			}
 		};
