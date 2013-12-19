@@ -66,6 +66,10 @@ body {
 
 /* Bootstrap overrides */
 
+.list-inline > li {
+	vertical-align: middle;
+}
+
 .navbar {
 	border-radius: 0;
 }
@@ -82,14 +86,6 @@ body {
 	display: block;
 	padding: 3px 20px;
 	line-height: 20px;
-}
-
-.panel > .list-group:not(:last-child) {
-	border-radius: 0;
-}
-
-.panel > .list-group:not(:last-child) > .list-group-item:last-child {
-	border-radius: 0;
 }
 
 .form-inline .form-control {
@@ -111,12 +107,6 @@ h3.panel-title {
 	font-weight: bold;
 }
 
-
-.panel .list-group-item:last-child,
-.panel .form-actions {
-	border-radius: 0;
-}
-
 .panel-heading .close {
 	position: relative;
 	top: -5px;
@@ -130,8 +120,13 @@ h3.panel-title {
 	opacity: 1;
 }
 
-
-.panel {
+.panel,
+.panel-heading,
+.panel-footer
+.panel > .list-group:not(:last-child),
+.panel > .list-group:not(:last-child) > .list-group-item:last-child,
+.panel .list-group-item:last-child,
+.panel .form-actions {
 	border-radius: 0;
 }
 
