@@ -50,4 +50,41 @@
 			}
 		};
 	});
+
+	app.directive('rbsDocumentFilterProductCodes', function() {
+		return {
+			restrict: 'C',
+			require: '^rbsDocumentFilterContainer',
+			templateUrl : 'Rbs/Catalog/rbs-document-filter-product-codes.twig',
+			scope: {
+				filter : '='
+			},
+			controller: ['$scope', function(scope) {
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = null;
+				}
+
+				if (!scope.filter.parameters.codeName) {
+					scope.filter.parameters.codeName = 'code';
+				}
+
+				scope.isConfigured = function() {
+					var op = scope.filter.parameters.operator;
+					var codeName = scope.filter.parameters.codeName;
+					return codeName && op && (op == 'isNull' || scope.filter.parameters.value);
+				};
+
+				scope.$on('countAllFilters', function(event, args) {
+					args.all++;
+					if (scope.isConfigured()) {
+						args.configured++;
+					}
+				});
+			}],
+
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+			}
+		};
+	});
 })();

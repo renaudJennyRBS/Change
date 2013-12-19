@@ -19,6 +19,14 @@
 
 			link: function (scope, elm, attrs, editorCtrl)
 			{
+				scope.onLoad = function() {
+					console.log('scope.onLoad');
+					if (!angular.isArray(scope.document.attributeValues))
+					{
+						scope.document.attributeValues = [];
+					}
+				};
+
 				scope.onReady = function() {
 					scope.loadItems();
 				};
@@ -36,12 +44,7 @@
 						scope.productListItems = [];
 					}
 				};
-
-
-
 				scope.cascadeEditProductListItem = editorCtrl.registerEditCascade('items');
-
-
 
 				scope.cascadeCreateProductListItem = function ()
 				{
@@ -175,16 +178,7 @@
 						{
 							scope.document[attribute.propertyName] = null;
 						}
-						var av = scope.document[attribute.propertyName];
-						if (valIndex == null) {
-							valIndex = {id: attribute.id, valueType:attribute.valueType};
-							attributeValues.push(valIndex);
-							if (av !== null) {
-								v.value = av;
-							}
-						} else {
-							v.value = av;
-						}
+						v.value = scope.document[attribute.propertyName];
 						scope.propAttr[attribute.propertyName] = v;
 					} else {
 						if (valIndex == null) {
