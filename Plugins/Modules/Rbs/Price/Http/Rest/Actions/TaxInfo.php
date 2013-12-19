@@ -47,7 +47,7 @@ class TaxInfo
 			$nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 3);
 			foreach ($billingArea->getTaxes() as $tax)
 			{
-				$taxInfo = array('label' => $tax->getLabel(), 'code' => $tax->getCode(), 'categories' => array());
+				$taxInfo = array('label' => $tax->getLabel(), 'code' => $tax->getCode(), 'zones' => $tax->getZoneCodes(), 'categories' => array());
 				foreach ($tax->getCategoryCodes() as $catCode)
 				{
 					$rate = $tax->getRate($catCode, $tax->getDefaultZone());

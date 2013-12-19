@@ -8,6 +8,7 @@
 
 		<property name="code" type="String" />
 		<property name="webStoreId" type="DocumentId" document-type="Rbs_Store_WebStore"/>
+		<property name="billingAreaId" type="DocumentId" document-type="Rbs_Price_BillingArea"/>
 		<property name="contextData" type="JSON" />
 
 		<property name="linesData" type="JSON" />

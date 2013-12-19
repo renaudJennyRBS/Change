@@ -89,6 +89,9 @@
 	"order_select_billingarea":{
 		"message":"séléctionnez une zone de facturation..."
 	},
+	"order_select_taxzone":{
+		"message":"séléctionnez un code de zone..."
+	},
 	"order_select_webstore":{
 		"message":"séléctionnez une boutique..."
 	},

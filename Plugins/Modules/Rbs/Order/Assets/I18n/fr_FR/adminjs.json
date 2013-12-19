@@ -4,5 +4,8 @@
 	},
 	"order_select_shipping_mode":{
 		"message":"sélectionnez le mode de livraison"
+	},
+	"order_add_line":{
+		"message":"ajouter une ligne"
 	}
 }

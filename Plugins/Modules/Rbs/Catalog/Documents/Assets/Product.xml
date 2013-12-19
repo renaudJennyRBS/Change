@@ -9,7 +9,6 @@
 		<property name="visuals" type="DocumentArray" document-type="Rbs_Media_Image" has-correction="true" />
 		<property name="pictograms" type="DocumentArray" document-type="Rbs_Media_Image" has-correction="true" />
 		<property name="brand" type="Document" document-type="Rbs_Brand_Brand" has-correction="true" />
-		<property name="code" type="String"  has-correction="true" />
 		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" has-correction="true"/>
 		<property name="attribute" type="Document" document-type="Rbs_Catalog_Attribute" />
 		<property name="attributeValues" localized="true" type="JSON" has-correction="true" />

@@ -27,6 +27,11 @@ interface LineInterface
 	public function getOptions();
 
 	/**
+	 * @return \Rbs\Commerce\Interfaces\LineItemInterface[]
+	 */
+	public function getItems();
+
+	/**
 	 * @return array
 	 */
 	public function toArray();
