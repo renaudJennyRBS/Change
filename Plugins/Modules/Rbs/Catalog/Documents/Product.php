@@ -66,7 +66,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
-		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'), 5);
+		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onDefaultCreated'), 5);
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
 		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
 	}
@@ -105,28 +105,18 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	/**
 	 * @param Event $event
 	 */
-	public function onCreated(Event $event)
-	{
-		// Section product list synchronization.
-		if ($this->getPublicationSections()->count())
-		{
-			$this->synchronizeSectionDocumentLists();
-		}
-	}
-
-	/**
-	 * @param Event $event
-	 */
 	public function onDefaultCreate(Event $event)
 	{
 		/** @var $product Product */
 		$product = $event->getDocument();
 		$cs = $event->getServices('commerceServices');
 
-		if ($product->isPropertyModified('attributeValues') && $cs instanceof \Rbs\Commerce\CommerceServices)
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
-			$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($product, $product->getCurrentLocalization()->getAttributeValues());
+			$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
+			$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues);
 			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
+			$cs->getAttributeManager()->setAttributeValues($product, $normalizedAttributeValues);
 		}
 
 		if ($product->getNewSkuOnCreation())
@@ -136,6 +126,29 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			$sku->setCode($product->buildSkuCodeFromLabel($cs));
 			$sku->save();
 			$product->setSku($sku);
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultCreated(Event $event)
+	{
+		$product = $event->getDocument();
+		if ($product instanceof Product)
+		{
+			// Section product list synchronization.
+			if ($product->getPublicationSections()->count())
+			{
+				$product->synchronizeSectionDocumentLists();
+			}
+
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$normalizedAttributeValues = $product->getCurrentLocalization()->getAttributeValues();
+				$cs->getAttributeManager()->setAttributeValues($product, $normalizedAttributeValues);
+			}
 		}
 	}
 
@@ -174,7 +187,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
-				$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($product, $attributeValues);
+				$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues);
 				$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
 				$cs->getAttributeManager()->setAttributeValues($product, $normalizedAttributeValues);
 			}

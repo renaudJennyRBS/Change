@@ -467,8 +467,14 @@
 	"find_stock_inventory":{
 		"message":"Par stock physique"
 	},
+	"find_product_codes":{
+		"message":"Par code"
+	},
 	"filter_stock_inventory":{
 		"message":"Produit dont le stock physique"
+	},
+	"filter_product_code":{
+		"message":"Dont le code"
 	},
 	"filter_stock_undefined":{
 		"message":"n'est pas défini"

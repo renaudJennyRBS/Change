@@ -167,7 +167,7 @@ class AttributeManager
 	public function setAttributeValues($product, $values)
 	{
 		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
-		if (is_array($values))
+		if (is_array($values) && count($values))
 		{
 			$defined = $this->getDefinedAttributesValues($productId);
 			foreach ($values as $value)
@@ -526,12 +526,10 @@ class AttributeManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $attributeValues
-	 * @return null
-	 * @return array
+	 * @return array|null
 	 */
-	public function normalizeRestAttributeValues(\Rbs\Catalog\Documents\Product $product, $attributeValues)
+	public function normalizeRestAttributeValues($attributeValues)
 	{
 		$normalizedValues = array();
 		if (is_array($attributeValues) && count($attributeValues))
@@ -546,11 +544,11 @@ class AttributeManager
 				{
 					continue;
 				}
+
 				$valueType = $attribute->getValueType();
 				if ($valueType === Attribute::TYPE_PROPERTY)
 				{
 					//Property Attribute has no value
-					$normalizedValues[] = array('id' => $id, 'valueType' => $valueType);
 					continue;
 				}
 
@@ -616,88 +614,7 @@ class AttributeManager
 		{
 			return $normalizedValues;
 		}
-		else
-		{
-			$this->deleteAttributeValue($product->getId());
-			return null;
-		}
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param array $attributeValues
-	 * @param \Change\Http\UrlManager $urlManager
-	 * @return array
-	 */
-	public function expandAttributeValues($product, $attributeValues, $urlManager)
-	{
-		$expandedAttributeValues = array();
-		if ($product->getVariant())
-		{
-			$variantGroup = $product->getVariantGroup();
-			if ($variantGroup instanceof \Rbs\Catalog\Documents\VariantGroup)
-			{
-				$rootProduct = $variantGroup->getRootProduct();
-				if ($rootProduct instanceof \Rbs\Catalog\Documents\Product)
-				{
-					$attributeValues = $this->updateVariantAttributeValues($attributeValues, $rootProduct->getCurrentLocalization()->getAttributeValues());
-				}
-			}
-		}
-		if (is_array($attributeValues) && count($attributeValues))
-		{
-			$documentManager = $this->getDocumentManager();
-			$valueConverter = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
-			foreach ($attributeValues as  $attributeValue)
-			{
-				$id = intval($attributeValue['id']);
-				$attribute = $documentManager->getDocumentInstance($id);
-				if (!$attribute instanceof Attribute)
-				{
-					continue;
-				}
-
-				$valueType = $attribute->getValueType();
-				$value = $attributeValue['value'];
-
-				switch ($valueType)
-				{
-					case Attribute::TYPE_PROPERTY:
-						//$attribute = $documentManager->getDocumentInstance($id);
-						if ($attribute instanceof Attribute)
-						{
-							$property = $attribute->getModelProperty();
-							if ($property)
-							{
-								$pc = new \Change\Http\Rest\PropertyConverter($product, $property, $documentManager, $urlManager);
-								$value = $pc->getRestValue();
-								if (empty($value) && isset($rootProduct) && $rootProduct !== null)
-								{
-									$pc = new \Change\Http\Rest\PropertyConverter($rootProduct, $property, $documentManager, $urlManager);
-									$value = $pc->getRestValue();
-								}
-							}
-						}
-						break;
-
-					case Attribute::TYPE_DOCUMENTID:
-						if ($value !== null)
-						{
-							$document = $documentManager->getDocumentInstance($value);
-							$value = $valueConverter->toRestValue($document, \Change\Documents\Property::TYPE_DOCUMENT);
-						}
-						break;
-					case Attribute::TYPE_DATETIME:
-						if ($value !== null)
-						{
-							$value = $valueConverter->toRestValue(new \DateTime($value), \Change\Documents\Property::TYPE_DATETIME);
-						}
-						break;
-				}
-				$expandedAttributeValues[] = array('id' => $id, 'valueType' => $valueType, 'value' => $value);
-			}
-		}
-		return count($expandedAttributeValues) ? $expandedAttributeValues : null;
+		return null;
 	}
 
 	/**
