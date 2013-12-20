@@ -116,7 +116,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
 			$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues);
 			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
-			$cs->getAttributeManager()->setAttributeValues($product, $normalizedAttributeValues);
 		}
 
 		if ($product->getNewSkuOnCreation())

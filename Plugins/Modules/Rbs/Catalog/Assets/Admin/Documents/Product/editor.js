@@ -20,7 +20,6 @@
 			link: function (scope, elm, attrs, editorCtrl)
 			{
 				scope.onLoad = function() {
-					console.log('scope.onLoad');
 					if (!angular.isArray(scope.document.attributeValues))
 					{
 						scope.document.attributeValues = [];

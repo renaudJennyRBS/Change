@@ -1,4 +1,4 @@
-<ol class="list-inline">
+<ol class="list-inline form-inline">
 	<li>
 		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
 	</li>
@@ -14,11 +14,14 @@
 		</select>
 	</li>
 	<li ng-show="filter.parameters.operator != 'isNull'">
-		<input class="form-control" data-ng-model="filter.parameters.value">
-	</li>
-	<li ng-show="filterDefinition.config.possibleValues && filter.parameters.operator != 'isNull'">
-		<select class="form-control" ng-model="filter.parameters.value"
-				data-role="filter-value"
-				ng-options="o.value as o.label for o in filterDefinition.config.possibleValues"></select>
+		<input type="text" class="form-control" data-ng-model="filter.parameters.value">
+		<div class="btn-group" ng-show="filterDefinition.config.possibleValues">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.admin.admin.possible_values') }} <span class="caret"></span></button></button>
+			<ul class="dropdown-menu pull-right">
+				<li data-ng-repeat="opt in filterDefinition.config.possibleValues">
+					<a href ng-bind="opt.label" data-ng-click="filter.parameters.value = opt.value"></a>
+				</li>
+			</ul>
+		</div>
 	</li>
 </ol>
