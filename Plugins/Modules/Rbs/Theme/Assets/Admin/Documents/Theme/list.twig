@@ -6,11 +6,7 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
-	</div>
-
-	<div rbs-main-column>
+	<div rbs-full-width>
 		<rbs-page-header title="{{ i18nAttr('m.rbs.theme.admin.theme_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Theme_Theme" filter="filter" ></rbs-document-filter-panel>
@@ -22,5 +18,4 @@
 			</rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

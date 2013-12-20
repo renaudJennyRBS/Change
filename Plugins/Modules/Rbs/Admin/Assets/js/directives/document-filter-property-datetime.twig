@@ -13,5 +13,13 @@
 	</li>
 	<li ng-show="filter.parameters.operator != 'isNull'">
 		<rbs-date-selector style="display:inline" data-ng-model="filter.parameters.value" />
+		<div class="btn-group" ng-show="filterDefinition.config.possibleValues">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.admin.admin.possible_values') }} <span class="caret"></span></button></button>
+			<ul class="dropdown-menu pull-right">
+				<li data-ng-repeat="opt in filterDefinition.config.possibleValues">
+					<a href ng-bind="opt.label" data-ng-click="filter.parameters.value = opt.value"></a>
+				</li>
+			</ul>
+		</div>
 	</li>
 </ol>

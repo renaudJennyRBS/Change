@@ -1086,5 +1086,8 @@
 	},
 	"unknown_filter": {
 		"message":"critère inconnu"
+	},
+	"possible_values": {
+		"message":"valeur prédéfinie"
 	}
 }
