@@ -114,9 +114,7 @@ class Collections
 		$applicationServices = $event->getApplicationServices();
 		if ($applicationServices)
 		{
-
 			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_AddressFields');
-
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$query = $qb->addColumn($fb->alias($docQuery->getColumn('id'), 'id'))
