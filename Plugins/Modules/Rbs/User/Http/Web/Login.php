@@ -48,7 +48,8 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 				}
 				else
 				{
-					$data['error'] = 'Unable to Authenticate';
+					$data['error'] = $event->getApplicationServices()->getI18nManager()
+						->trans('m.rbs.user.front.error_login_password_not_match', array('ucf'));
 				}
 			}
 			else
