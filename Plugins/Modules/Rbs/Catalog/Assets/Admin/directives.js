@@ -21,7 +21,7 @@
 
 	app.directive('rbsDocumentFilterStockInventory', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Catalog/rbs-document-filter-stock-inventory.twig',
 			scope: {
@@ -53,7 +53,7 @@
 
 	app.directive('rbsDocumentFilterProductCodes', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Catalog/rbs-document-filter-product-codes.twig',
 			scope: {

@@ -15,7 +15,7 @@
 			// We do not need to create a new scope here:
 			// Editors are generally alone in the ngView, which creates a new Scope for the loaded template.
 
-			restrict : 'C',
+			restrict : 'EA',
 			priority : -2,
 
 			controller : ['$scope', '$element', function ($scope, $element)
@@ -175,7 +175,7 @@
 
 					// Check for files to upload...
 					if ($element) {
-						$element.find('rbs-uploader,[rbs-uploader],.rbs-uploader').each(function () {
+						$element.find('rbs-uploader,[rbs-uploader]').each(function () {
 							var scope = angular.element($(this)).scope();
 							if (angular.isFunction(scope.upload)) {
 								if (isPromise(promise = scope.upload())) {
@@ -827,7 +827,7 @@
 
 		return {
 
-			restrict : 'C',
+			restrict : 'A',
 			// This Directive must be compiled:
 			// - before the 'rbsDocumentEditor' Directive (priority: -2) to do some template transformations
 			// - after the 'rbsDocumentEditor*' Directive, specialized for each Model (default priority: 0).

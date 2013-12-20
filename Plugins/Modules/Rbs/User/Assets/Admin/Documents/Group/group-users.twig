@@ -40,7 +40,7 @@
 			<div class="control-group property">
 				<label class="control-label">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</label>
 				<div class="controls">
-					<div class="rbs-document-picker-multiple" ng-model="data.usersToAdd"
+					<rbs-document-picker-multiple ng-model="data.usersToAdd"
 						accepted-model="Rbs_User_User"
 						property-label="{{ i18nAttr('m.rbs.user.admin.users_in_group', ['ucf']) }}"
 						selector-title="{{ i18nAttr('m.rbs.user.admin.users_in_group_picker_title', ['ucf']) }}"
@@ -48,7 +48,7 @@
 						allow-edition="false"
 						allow-creation="false"
 						disable-reordering="true">
-					</div>
+					</rbs-document-picker-multiple>
 
 					<div class="btn-toolbar">
 						<button type="button" class="btn btn-primary" ng-click="addUsersFromPicker()" ng-disabled="disableAdd">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>

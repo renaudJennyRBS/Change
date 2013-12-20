@@ -38,7 +38,7 @@
 
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block variants %}
-			<div class="rbs-catalog-variant-data" data-ng-model="variantConfig"
+			<div rbs-catalog-variant-data="" data-ng-model="variantConfig"
 					data-variant-group-id="{{ variantGroup.id }}" data-axes="{{ axes | json_encode }}"></div>
 			<div class="form-group">
 				{% for axisName in axesNames %}
@@ -52,7 +52,7 @@
 		{% endblock%}
 
 		{% block availability %}
-			<div class="rbs-catalog-product-availability" data-ng-model="productAvailability"
+			<div rbs-catalog-product-availability="" data-ng-model="productAvailability"
 					data-level="{{ productPresentation.stock.level }}"
 					data-threshold="{{ productPresentation.stock.threshold }}"
 					data-threshold-class="{{ productPresentation.stock.thresholdClass }}"
@@ -66,7 +66,7 @@
 		{% endblock %}
 
 		{% block prices %}
-			<div class="rbs-catalog-product-price" data-ng-model="pricesConfig"
+			<div rbs-catalog-product-price="" data-ng-model="pricesConfig"
 					data-display="{{ parameters.displayPrices }}"
 					data-display-with-tax="{{ parameters.displayPricesWithTax }}"
 					data-prices="{{ productPresentation.prices | json_encode }}">
@@ -103,7 +103,7 @@
 		{% endblock %}
 
 		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" name="addLineToCart">
-			<div class="rbs-catalog-product-data" data-ng-model="productConfig"
+			<div rbs-catalog-product-data="" data-ng-model="productConfig"
 					data-key="{{ parameters.productId }}" data-product-id="{{ parameters.productId }}"
 					data-sku="{{ productPresentation.codeSKU }}"
 					data-redirect-url="{{ parameters.redirectUrl }}"

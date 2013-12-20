@@ -159,20 +159,20 @@
 			if (!item.label) {
 				item.label = item.name;
 			}
-			var className = (item.name === RICH_TEXT_BLOCK_NAME) ? 'rbs-block-markdown-text' : 'rbs-block-template';
-			return '<div class="' + className + '" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
+			var attrName = (item.name === RICH_TEXT_BLOCK_NAME) ? 'rbs-block-markdown-text' : 'rbs-block-template';
+			return '<div ' + attrName + '="" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
 		};
 
 		this.initRow = function (item) {
-			return '<div class="rbs-row" data-id="' + item.id + '" data-grid="' + item.grid + '" data-visibility="' + (item.visibility || '') + '"></div>';
+			return '<div rbs-row="" data-id="' + item.id + '" data-grid="' + item.grid + '" data-visibility="' + (item.visibility || '') + '"></div>';
 		};
 
 		this.initCell = function (item) {
-			return '<div class="rbs-cell" data-id="' + item.id + '" data-size="' + item.size + '"></div>';
+			return '<div rbs-cell="" data-id="' + item.id + '" data-size="' + item.size + '"></div>';
 		};
 
 		this.initBlockChooser = function (item) {
-			return '<div class="rbs-block-chooser" data-id="' + item.id + '"></div>';
+			return '<div rbs-block-chooser="" data-id="' + item.id + '"></div>';
 		};
 
 		this.getColumnsInfo = function (row, gridSize) {
@@ -226,7 +226,7 @@
 			gridSize = gridSize || DEFAULT_GRID_SIZE;
 
 			// Apply 'span' and 'offset' on existing columns.
-			row.children('.rbs-cell').each(function (index, el) {
+			row.children('[rbs-cell]').each(function (index, el) {
 
 				// Find current 'span*' and 'offset*' classes and remove them.
 				// - 'span*' is from 1 to `gridSize`
@@ -273,7 +273,7 @@
 		};
 
 		this.highlightDropTarget = function highlightDropTarget (el) {
-			if (el.is('.rbs-cell')) {
+			if (el.is('[rbs-cell]')) {
 				var	columnIndex = el.index();
 				this.highlightBlock(
 					el,
@@ -518,11 +518,11 @@
 						positionBlockSettingsEditor(blockEl);
 						return;
 					}
-					if (blockEl.is('.rbs-row')) {
-						html = '<div class="rbs-row-settings" data-id="' + blockEl.data('id') + '"';
+					if (blockEl.is('[rbs-row]')) {
+						html = '<div rbs-row-settings="" data-id="' + blockEl.data('id') + '"';
 					}
 					else {
-						html = '<div class="rbs-block-settings-editor" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
+						html = '<div rbs-block-settings-editor="" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
 					}
 					forEach(params, function (value, name) {
 						html += ' data-' + name + '="' + value + '"';
@@ -754,24 +754,24 @@
 				// Utility functions -----------------------------------------------------------------------------------
 
 				this.isInColumnLayout = function (el) {
-					return el.closest('.rbs-cell').length === 1;
+					return el.closest('[rbs-cell]').length === 1;
 				};
 
 				this.isRichText = function (el) {
-					return el.is('.rbs-block-markdown-text');
+					return el.is('[rbs-block-markdown-text]');
 				};
 
 
 				this.selectParentRow = function (block) {
 					this.selectBlock(
-						block.closest('.rbs-row'),
-						{ 'highlight-column': block.closest('.rbs-cell').index() }
+						block.closest('[rbs-row]'),
+						{ 'highlight-column': block.closest('[rbs-cell]').index() }
 					);
 				};
 
 
 				function isContainer (block) {
-					return block.is('.rbs-row') || block.is('.rbs-cell');
+					return block.is('[rbs-row]') || block.is('[rbs-cell]');
 				}
 
 
@@ -1008,7 +1008,7 @@
 							e.preventDefault();
 							e.stopPropagation();
 						}
-					}, '.rbs-row');
+					}, '[rbs-row]');
 				}
 			},
 
@@ -1207,7 +1207,7 @@
 
 	app.directive('rbsRow', ['structureEditorService', function (structureEditorService) {
 		return {
-			"restrict"   : 'C',
+			"restrict"   : 'A',
 			"require"    : "^rbsStructureEditor",
 			"scope"      : {}, // isolated scope is required
 
@@ -1235,7 +1235,7 @@
 
 	app.directive('rbsRowSettings', ['structureEditorService', '$timeout', 'RbsChange.Dialog', 'RbsChange.i18n', function (structureEditorService, $timeout, Dialog, i18n) {
 		return {
-			"restrict" : 'C',
+			"restrict" : 'A',
 			"scope"    : true,
 			templateUrl : 'Rbs/Admin/js/directives/structure-editor-row-settings.twig',
 
@@ -1580,7 +1580,7 @@
 
 	app.directive('rbsCell', ['structureEditorService', function (structureEditorService) {
 		return {
-			"restrict"   : 'C',
+			"restrict"   : 'A',
 			"template"   : '<div class="{{span}} {{offset}} block-container"></div>',
 			"replace"    : true,
 			"scope"      : {}, // isolated scope is required
@@ -1681,7 +1681,7 @@
 
 	app.directive('rbsBlockSettingsEditor', ['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST', '$rootScope', 'RbsChange.Dialog', '$timeout', '$http', '$compile', 'RbsChange.i18n', function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile, i18n) {
 		return {
-			"restrict" : 'C',
+			"restrict" : 'A',
 			"transclude" : true,
 			"scope" : true,
 			"templateUrl" : 'Rbs/Admin/js/directives/structure-editor-block-settings.twig',
@@ -1833,7 +1833,7 @@
 
 				scope.canInsertSideways = function () {
 					var block = ctrl.getSelectedBlock();
-					return ! block.is('.rbs-row') && ! ctrl.isInColumnLayout(block);
+					return ! block.is('[rbs-row]') && ! ctrl.isInColumnLayout(block);
 				};
 
 				scope.isInColumnLayout = function () {
@@ -1878,7 +1878,7 @@
 				scope.removeBlock = function () {
 					var block = ctrl.getSelectedBlock();
 					console.log(block);
-					if (block.hasClass('rbs-block-chooser')) {
+					if (block.hasAttribute('rbs-block-chooser')) {
 						ctrl.removeBlock(block);
 						ctrl.notifyChange("remove", "block", block);
 					}
@@ -1907,7 +1907,7 @@
 
 	app.directive('rbsBlockTemplate', [ function () {
 		return {
-			"restrict" : 'C',
+			"restrict" : 'A',
 			"scope"    : {}, // isolated scope is required
 			"require"  : '^rbsStructureEditor',
 			"replace"  : true,
@@ -1936,7 +1936,7 @@
 
 	app.directive('rbsBlockChooser', [ function () {
 		return {
-			"restrict" : 'C',
+			"restrict" : 'A',
 			"scope"    : true,
 			"require"  : '^rbsStructureEditor',
 			"replace"  : true,
@@ -1960,7 +1960,7 @@
 
 	app.directive('rbsBlockMarkdownText', [ function () {
 		return {
-			"restrict"   : 'C',
+			"restrict"   : 'A',
 			"scope"      : {
 				// isolated scope is required
 				readonly: '@'

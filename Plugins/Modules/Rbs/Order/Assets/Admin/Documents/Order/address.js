@@ -5,7 +5,7 @@
 	function rbsOrderOrderEditorAddress ()
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Order/Order/address.twig',
 			scope : {
 				'addressDocuments' : "=",

@@ -8,7 +8,7 @@
 	function Editor($compile)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Simpleform/Field/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

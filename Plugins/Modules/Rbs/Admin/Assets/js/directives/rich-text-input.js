@@ -11,7 +11,7 @@
 	 */
 	app.directive('rbsRichTextInput', ['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', 'RbsChange.i18n', function ($timeout, REST, Utils, Device, $compile, i18n) {
 		return {
-			restrict : 'EC',
+			restrict : 'E',
 			require  : '?ngModel',
 			scope : true,
 			templateUrl : 'Rbs/Admin/js/directives/rich-text-input.twig',

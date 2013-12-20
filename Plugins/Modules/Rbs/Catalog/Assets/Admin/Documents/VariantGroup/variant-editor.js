@@ -8,7 +8,7 @@
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroupEditor', ['RbsChange.REST', '$timeout', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager', function Editor (REST, $timeout, $routeParams, Breadcrumb, i18n, UrlManager)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Catalog/VariantGroup/variant-editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

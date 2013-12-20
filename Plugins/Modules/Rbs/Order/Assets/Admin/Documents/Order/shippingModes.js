@@ -5,7 +5,7 @@
 	function rbsOrderOrderEditorShippingModes ( REST, $filter)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Order/Order/shippingModes.twig',
 			scope : {
 				'addressDocuments' : "=",

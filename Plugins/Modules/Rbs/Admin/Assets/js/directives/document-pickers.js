@@ -445,7 +445,7 @@
 	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
 	{
 		return {
-			restrict    : 'EAC',
+			restrict    : 'EA',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-single.twig',
 			require     : 'ngModel',
 			scope       : true,
@@ -463,7 +463,7 @@
 	app.directive('rbsDocumentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
 	{
 		return {
-			restrict    : 'EAC',
+			restrict    : 'EA',
 			templateUrl : 'Rbs/Admin/js/directives/document-picker-multiple.twig',
 			require     : 'ngModel',
 			scope       : true,

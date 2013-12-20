@@ -54,7 +54,7 @@
 
 	<div class="well well-small" ng-hide="indexFunctionExists">
 		{{ i18n('m.rbs.website.documents.sectionpagefunction_index_page', ['ucf','lbl']) }}
-		<div class="rbs-document-picker-single" ng-model="sectionPage.indexPage" accepted-model="Rbs_Website_Page"></div>
+		<rbs-document-picker-single ng-model="sectionPage.indexPage" accepted-model="Rbs_Website_Page"></rbs-document-picker-single>
 		<button ng-disabled="! sectionPage.indexPage" type="button" class="btn btn-success" ng-click="setIndexPage(sectionPage.indexPage)">{{ i18n('m.rbs.website.admin.sectionpagefunction_define', ['ucf']) }}</button>
 	</div>
 

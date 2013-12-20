@@ -149,7 +149,7 @@
 
 	app.directive('rbsCatalogAttributeDefaultFilter', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			link: function(scope) {
 				scope.filter = {name: "group", operator: "AND", parameters : {},
 					filters: [
@@ -167,7 +167,7 @@
 
 	app.directive('rbsCatalogProductDefaultFilter', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			link: function(scope) {
 				scope.filter = {name: "group", operator: "AND", parameters : {},
 					filters: [

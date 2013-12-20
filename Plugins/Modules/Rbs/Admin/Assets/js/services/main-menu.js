@@ -453,7 +453,7 @@
 	app.directive('rbsPanelLink', function ()
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			link : function (scope, iElement, iAttrs)
 			{
 				iElement.addClass('list-group-item');

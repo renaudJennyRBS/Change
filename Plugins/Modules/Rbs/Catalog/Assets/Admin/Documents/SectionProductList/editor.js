@@ -5,7 +5,7 @@
 	function Editor()
 	{
 		return {
-			restrict: 'EC',
+			restrict: 'EA',
 			templateUrl: 'Document/Rbs/Catalog/SectionProductList/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

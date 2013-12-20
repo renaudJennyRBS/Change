@@ -1,16 +1,16 @@
-.rbs-document-workflow-actions {
+[rbs-document-workflow-actions] {
 	padding: 10px;
 	position: relative;
 }
 
 
-rbs-document-list .rbs-document-workflow-actions {
+rbs-document-list [rbs-document-workflow-actions] {
 	background: #F5F5F5;
 	border: 5px solid #bbbbbb;
 	border-radius: 5px;
 }
 
-.rbs-document-workflow-actions h3 {
+[rbs-document-workflow-actions] h3 {
 	text-transform: uppercase;
 	color: #bbbbbb;
 	font-size: 20pt;
@@ -19,11 +19,11 @@ rbs-document-list .rbs-document-workflow-actions {
 	font-weight: lighter;
 }
 
-.rbs-document-workflow-actions form {
+[rbs-document-workflow-actions] form {
 	margin: 0;
 }
 
-.rbs-document-workflow-actions form .control-group:last-child {
+[rbs-document-workflow-actions] form .control-group:last-child {
 	margin-bottom: 0;
 }
 
@@ -154,16 +154,15 @@ rbs-document-list td.workflow .workflow-indicator {
 }
 
 
-.rbs-document-workflow-actions h3,
-.rbs-document-workflow-actions h3 {
+[rbs-document-workflow-actions] h3 {
 	text-shadow: 0 0 2px rgba(0,0,0,0.2);
 }
 
 
 /* Colors for each status */
 
-rbs-document-list .rbs-document-workflow-actions.PUBLISHABLE,
-rbs-document-list .rbs-document-workflow-actions.VALIDCONTENT {
+rbs-document-list [rbs-document-workflow-actions].PUBLISHABLE,
+rbs-document-list [rbs-document-workflow-actions].VALIDCONTENT {
 	background: #eefff0;
 	border-color: #A1DA37;
 }
@@ -171,44 +170,44 @@ rbs-document-list td.workflow .workflow-indicator.PUBLISHABLE,
 rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
 	background: #A1DA37;
 }
-.rbs-document-workflow-actions.PUBLISHABLE h3,
-.rbs-document-workflow-actions.VALIDCONTENT h3 {
+[rbs-document-workflow-actions].PUBLISHABLE h3,
+[rbs-document-workflow-actions].VALIDCONTENT h3 {
 	color: #A1DA37;
 }
 
 
-rbs-document-list .rbs-document-workflow-actions.VALIDATION {
+rbs-document-list [rbs-document-workflow-actions].VALIDATION {
 	background: #faf5f0;
 	border-color: #EFA700;
 }
 rbs-document-list td.workflow .workflow-indicator.VALIDATION {
 	background: #EFA700;
 }
-.rbs-document-workflow-actions.VALIDATION h3 {
+[rbs-document-workflow-actions].VALIDATION h3 {
 	color: #EFA700;
 }
 
 
-rbs-document-list .rbs-document-workflow-actions.UNPUBLISHABLE {
+rbs-document-list [rbs-document-workflow-actions].UNPUBLISHABLE {
 	background: #faf0f0;
 	border-color: #CC8888;
 }
 rbs-document-list td.workflow .workflow-indicator.UNPUBLISHABLE {
 	background: #CC8888;
 }
-.rbs-document-workflow-actions.UNPUBLISHABLE h3 {
+[rbs-document-workflow-actions].UNPUBLISHABLE h3 {
 	color: #EFA700;
 }
 
 
-rbs-document-list .rbs-document-workflow-actions.FROZEN {
+rbs-document-list [rbs-document-workflow-actions].FROZEN {
 	background: #e0f0ff;
 	border-color: #33BBFF;
 }
 rbs-document-list td.workflow .workflow-indicator.FROZEN {
 	background: #33BBFF;
 }
-.rbs-document-workflow-actions.FROZEN h3 {
+[rbs-document-workflow-actions].FROZEN h3 {
 	color: #33BBFF;
 }
 
@@ -297,12 +296,12 @@ rbs-document-list td.workflow .workflow-indicator.FROZEN {
 }
 
 
-.rbs-document-workflow-actions .advanced-mode {
+[rbs-document-workflow-actions] .advanced-mode {
 	margin: 10px -10px -10px -10px;
 	padding: 0px;
 	background: #FFF0F0;
 }
 
-.rbs-document-workflow-actions .advanced-mode .inner {
+[rbs-document-workflow-actions] .advanced-mode .inner {
 	padding: 10px;
 }

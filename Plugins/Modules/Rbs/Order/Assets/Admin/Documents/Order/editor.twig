@@ -73,7 +73,7 @@
 				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="showAddressUI = !showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showAddressUI]"></i></a>
 				</h3>
 			</div>
-			<div class="panel-body rbs-order-address"
+			<div rbs-order-address="" class="panel-body"
 				ng-show="showAddressUI"
 				address-documents="userAddresses"
 				address-fields="document.contextData.addressFields"
@@ -86,7 +86,7 @@
 				<h3 class="panel-title"><i class="icon-truck"></i> <a href="javascript:;" ng-click="showShippingUI = !showShippingUI">{{ i18n('m.rbs.order.admin.order_shipping', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showShippingUI]"></i></a>
 				</h3>
 			</div>
-			<div class="panel-body rbs-order-shipping-modes"
+			<div rbs-order-shipping-modes="" class="panel-body"
 				ng-show="showShippingUI"
 				shipping-data="document.shippingData"
 				lines-data="document.linesData"
@@ -94,9 +94,9 @@
 			</div>
 		</div>
 
-		<rbs-order-lines/>
+		<rbs-order-lines></rbs-order-lines>
 
-			<!--
+		<!--
 		<div ng-if="! document.isNew()">
 			<div class="control-group">
 				<label class="control-label">{{ i18n(propertyKey('Rbs_Order_Order', 'processingStatus'),['ucf']) }}</label>

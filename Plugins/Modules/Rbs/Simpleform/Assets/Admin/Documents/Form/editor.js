@@ -8,7 +8,7 @@ Z	 * @constructor
 	function Editor(REST, EditorManager, ArrayUtils)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Simpleform/Form/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

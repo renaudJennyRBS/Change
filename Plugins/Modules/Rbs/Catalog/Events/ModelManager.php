@@ -17,7 +17,7 @@ class ModelManager
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$f = ['ucf'];
 			$definition = ['name' => 'stockInventory',
-				'directiveClass' => 'rbs-document-filter-stock-inventory',
+				'directiveName' => 'rbs-document-filter-stock-inventory',
 				'parameters' => ['restriction' => 'stockInventory'],
 				'config' => [
 					'listLabel' => $i18nManager->trans('m.rbs.catalog.admin.find_stock_inventory', $f),

@@ -5,7 +5,7 @@
 	function rbsOrderOrderEditor (Utils, REST)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Order/Order/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

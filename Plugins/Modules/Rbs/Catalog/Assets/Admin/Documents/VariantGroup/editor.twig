@@ -77,14 +77,14 @@
 
 		<div class="control-group property">
 			<div class="controls">
-				<div class="rbs-document-picker-multiple" ng-model="Attributes.axesToAdd" name="axesToAdd"
+				<rbs-document-picker-multiple ng-model="Attributes.axesToAdd" name="axesToAdd"
 						accepted-model="Rbs_Catalog_Attribute"
 						property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}"
 						selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axesattributes_picker_title', ['ucf']) }}"
 						master-label="(= document.label =)"
 						allow-edition="false" allow-creation="false" disable-reordering="true"
 						picker-template="picker-axis.twig">
-				</div>
+				</rbs-document-picker-multiple>
 				<div class="btn-toolbar">
 					<button type="button" class="btn btn-primary" ng-click="addAxisAttributesFromPicker()" data-ng-disabled="Attributes.axesToAdd.length == 0">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
 				</div>

@@ -5,7 +5,7 @@
 
 	function rbsCatalogProductData() {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : '/addLineToCart.tpl',
 			replace : false,
 			require : 'ngModel',
@@ -47,7 +47,7 @@
 
 	function rbsCatalogProductAvailability() {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : '/productAvailability.tpl',
 			replace : false,
 			require : 'ngModel',
@@ -68,7 +68,7 @@
 
 	function rbsCatalogProductPrice() {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : '/productPrice.tpl',
 			replace : false,
 			require : 'ngModel',
@@ -87,7 +87,7 @@
 
 	function rbsCatalogVariantData() {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			template : '<div></div>',
 			replace : true,
 			require : 'ngModel',

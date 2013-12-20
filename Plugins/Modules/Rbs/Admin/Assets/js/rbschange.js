@@ -116,7 +116,7 @@
 
 	function baseEditorDirective (modelName, linkFn) {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/' + modelName.replace(/_/g, '/') + '/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

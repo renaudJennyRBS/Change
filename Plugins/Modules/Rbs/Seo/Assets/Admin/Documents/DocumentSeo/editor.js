@@ -12,7 +12,7 @@
 	function Editor($http, REST, NotificationCenter, Utils, ErrorFormatter)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Seo/DocumentSeo/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

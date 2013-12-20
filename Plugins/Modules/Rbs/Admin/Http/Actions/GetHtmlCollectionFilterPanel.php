@@ -43,36 +43,36 @@ class GetHtmlCollectionFilterPanel
 				{
 					foreach ($definitions as $key => $definition)
 					{
-						if (!isset($definition['directiveClass']) && isset($definition['config']['propertyType']))
+						if (!isset($definition['directiveName']) && isset($definition['config']['propertyType']))
 						{
 							switch($definition['config']['propertyType'])
 							{
 								case Property::TYPE_FLOAT:
 								case Property::TYPE_DECIMAL:
 								case Property::TYPE_INTEGER:
-									$definitions[$key]['directiveClass']= 'rbsDocumentFilterPropertyNumber';
+									$definitions[$key]['directiveName']= 'rbs-document-filter-property-number';
 									break;
 								case Property::TYPE_STRING:
-									$definitions[$key]['directiveClass']= 'rbsDocumentFilterPropertyString';
+									$definitions[$key]['directiveName']= 'rbs-document-filter-property-string';
 									break;
 								case Property::TYPE_BOOLEAN:
-									$definitions[$key]['directiveClass']= 'rbsDocumentFilterPropertyBoolean';
+									$definitions[$key]['directiveName']= 'rbs-document-filter-property-boolean';
 									break;
 								case Property::TYPE_DATETIME:
 								case Property::TYPE_DATE:
-									$definitions[$key]['directiveClass']= 'rbsDocumentFilterPropertyDatetime';
+									$definitions[$key]['directiveName']= 'rbs-document-filter-property-datetime';
 									break;
 								case Property::TYPE_DOCUMENT:
 								case Property::TYPE_DOCUMENTID:
 								case Property::TYPE_DOCUMENTARRAY:
-									$definitions[$key]['directiveClass']= 'rbsDocumentFilterPropertyDocument';
+									$definitions[$key]['directiveName']= 'rbs-document-filter-property-document';
 									break;
 							}
 						}
 					}
 
 					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					array_unshift($definitions, ['name' => 'group', 'directiveClass' => 'rbs-document-filter-group',
+					array_unshift($definitions, ['name' => 'group', 'directiveName' => 'rbs-document-filter-group',
 						'config' => ['listLabel' => $i18nManager->trans('m.rbs.admin.admin.group_filter', ['ucf'])]]);
 
 					usort($definitions, function($a , $b) {

@@ -11,7 +11,7 @@
 	function Editor($http, REST, Utils)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Seo/ModelConfiguration/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

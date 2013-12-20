@@ -218,14 +218,14 @@ h3.panel-title {
 
 /* rbs-form-simple */
 
-.rbs-form-simple-filter {
+[rbs-form-simple-filter] {
 	display: block;
 	clear: both;
 	position: relative;
 	margin: 5px 0;
 }
 
-.rbs-form-simple-filter input {
+[rbs-form-simple-filter] input {
 	display: block;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -234,7 +234,7 @@ h3.panel-title {
 	height: 32px;
 }
 
-.rbs-form-simple-filter button {
+[rbs-form-simple-filter] button {
 	position: absolute;
 	right: 2px;
 	top: 3px;

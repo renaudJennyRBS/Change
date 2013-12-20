@@ -5,7 +5,7 @@
 	function RbsElasticsearchFacetEditor(REST, $routeParams, Settings, Navigation)
 	{
 		return {
-			restrict: 'EC',
+			restrict: 'EA',
 			templateUrl: 'Document/Rbs/Elasticsearch/Facet/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

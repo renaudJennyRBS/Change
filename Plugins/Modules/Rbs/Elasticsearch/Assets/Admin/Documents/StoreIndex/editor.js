@@ -4,7 +4,7 @@
 
 	function editorRbsElasticsearchStoreIndex (EditorManager, REST, ArrayUtils) {
 		return {
-			restrict : 'EC',
+			restrict : 'EA',
 			templateUrl : 'Document/Rbs/Elasticsearch/StoreIndex/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

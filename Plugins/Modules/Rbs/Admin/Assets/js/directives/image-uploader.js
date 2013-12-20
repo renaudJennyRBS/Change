@@ -2,12 +2,12 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('imageUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
+	angular.module('RbsChange').directive('rbsImageUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
 
 		var MAX_PREVIEW_HEIGHT = 100;
 
 		return {
-			restrict    : 'EAC',
+			restrict    : 'EA',
 			templateUrl : 'Rbs/Admin/js/directives/image-uploader.twig',
 			scope       : true,
 

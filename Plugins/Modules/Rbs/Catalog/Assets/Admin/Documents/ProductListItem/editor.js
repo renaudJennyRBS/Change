@@ -11,7 +11,7 @@
 	function Editor(REST, $q, $location)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Catalog/ProductListItem/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

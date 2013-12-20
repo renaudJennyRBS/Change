@@ -15,7 +15,7 @@ class ModelManager
 		{
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$f = ['ucf'];
-			$definition = ['name' => 'hasTag', 'directiveClass' => 'rbs-document-filter-tags',
+			$definition = ['name' => 'hasTag', 'directiveName' => 'rbs-document-filter-tags',
 				'parameters' => ['restriction' => 'hasTag'],
 				'config' => [
 					'label' => $i18nManager->trans('m.rbs.tag.admin.tags', $f),

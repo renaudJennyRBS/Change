@@ -9,7 +9,7 @@
 	 */
 	app.directive('rbsFormSimpleFilter', ['RbsChange.i18n', '$timeout', function (i18n, $timeout) {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 
 			template :
 				'<button type="button" ng-click="clear()"><i class="icon-remove-circle icon-large"></i></button>' +

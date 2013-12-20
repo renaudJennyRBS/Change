@@ -5,7 +5,7 @@
 	function changeEditorWebsitePage ($rootScope, REST, Breadcrumb, MainMenu)
 	{
 		return {
-			restrict    : 'C',
+			restrict    : 'A',
 			templateUrl : 'Document/Rbs/Website/StaticPage/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',
@@ -88,7 +88,7 @@
 	function changeEditorWebsitePageTranslate (REST)
 	{
 		return {
-			restrict    : 'C',
+			restrict    : 'A',
 			templateUrl : 'Document/Rbs/Website/StaticPage/editor-translate.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',

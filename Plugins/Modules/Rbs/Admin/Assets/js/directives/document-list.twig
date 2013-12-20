@@ -64,10 +64,10 @@
 			<tr ng-repeat="doc in collection|orderBy:localSortColumn" class="normal-row" ng-class="{'preview': isPreview(doc), 'has-preview': hasPreview(doc), 'error': hasErrors(doc), 'selected': doc.selected}">
 				<td class="preview" data-colspan="auto" ng-if="isPreview(doc)">
 					<div class="inner">
-						<div class="rbs-kb-switch pull-right">
+						<rbs-kb-switch class="pull-right">
 							<button rbs-kb-default="" type="button" class="btn btn-default btn-xs" ng-click="preview(doc, $event)">{{ i18n('m.rbs.admin.admin.close_preview') }}</button>
 							<button rbs-kb-when="alt" type="button" class="btn btn-default btn-xs" ng-click="closeAllPreviews()">{{ i18n('m.rbs.admin.admin.close_all_previews') }}</button>
-						</div>
+						</rbs-kb-switch>
 						<div class="preview-indicator"></div>
 						<div data-role="preview-contents"></div>
 					</div>
@@ -75,7 +75,7 @@
 				<td class="workflow" data-colspan="auto" ng-if="isWorkflow(doc)">
 					<div class="inner">
 						<div class="workflow-indicator"></div>
-						<div class="rbs-document-workflow-actions" document="doc.__document" on-close="closeWorkflow($index)" standalone="false"></div>
+						<div rbs-document-workflow-actions="" document="doc.__document" on-close="closeWorkflow($index)" standalone="false"></div>
 					</div>
 				</td>
 			</tr>

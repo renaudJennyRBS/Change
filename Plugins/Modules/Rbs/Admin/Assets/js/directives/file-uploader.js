@@ -2,10 +2,10 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('fileUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
+	angular.module('RbsChange').directive('rbsFileUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
 
 		return {
-			restrict    : 'EAC',
+			restrict    : 'EA',
 			templateUrl : 'Rbs/Admin/js/directives/file-uploader.twig',
 			scope       : true
 		};
