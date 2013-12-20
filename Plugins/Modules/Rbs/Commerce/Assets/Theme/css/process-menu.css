@@ -1,0 +1,15 @@
+.process-sidebar.affix {
+	top: 15px;
+}
+
+.process-sidebar.affix-bottom {
+	position: relative;
+	bottom: 0;
+}
+
+@media (max-width: 768px) {
+	.process-sidebar.affix,
+	.process-sidebar.affix-bottom {
+		position: static;
+	}
+}

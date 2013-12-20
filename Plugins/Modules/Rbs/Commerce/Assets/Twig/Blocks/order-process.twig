@@ -1,0 +1,80 @@
+<script type="text/ng-template" id="/menu.static.tpl">
+	<ol class="nav nav-stacked nav-pills">
+		<li>
+			<a href="{{ currentURL(null, 'cart') }}" data-target="#cart">
+				<span data-ng-cloak="" class="badge pull-right"><span class="glyphicon glyphicon-ok"></span></span>
+				{{ i18n('m.rbs.commerce.front.process_step_cart', ['ucf']) }}
+			</a>
+		</li>
+		<li>
+			<a href="{{ currentURL(null, 'information') }}" data-target="#information">
+				<span data-ng-cloak="" data-ng-show="isStepChecked('information')" class="badge pull-right">
+					<span class="glyphicon glyphicon-ok"></span>
+				</span>
+				{{ i18n('m.rbs.commerce.front.process_step_personal_information', ['ucf']) }}
+			</a>
+		</li>
+		<li data-ng-class="{'disabled': !isStepEnabled('shipping')}">
+			<a href="{{ currentURL(null, 'shipping') }}" data-target="#shipping">
+				<span data-ng-cloak="" data-ng-show="isStepChecked('shipping')" class="badge pull-right">
+					<span class="glyphicon glyphicon-ok"></span>
+				</span>
+				{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}
+			</a>
+		</li>
+		<li data-ng-class="{'disabled': !isStepEnabled('payment')}">
+			<a href="{{ currentURL(null, 'confirmation') }}" data-target="#payment">
+				{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}
+			</a>
+		</li>
+		<li class="disabled">
+			<a href="">{{ i18n('m.rbs.commerce.front.process_step_confirmation', ['ucf']) }}</a>
+		</li>
+	</ol>
+</script>
+
+<div class="row" data-ng-controller="rbsCommerceOrderProcessController" data-ng-init="accessorId = '{{ parameters.accessorId }}'">
+	<div class="col-sm-3 process-sidebar-container">
+		<div class="process-sidebar" data-rbs-commerce-process-menu="" data-steps="steps" data-current-step="currentStep"></div>
+	</div>
+
+	<div class="col-sm-9">
+		<div id="cart" class="clearfix">
+			<h2>{{ i18n('m.rbs.commerce.front.process_step_cart', ['ucf']) }}</h2>
+			{% include 'Rbs_Commerce/Blocks/order-process/cart.twig' %}
+		</div>
+
+		<div class="vertical-show-hide-animation" data-ng-cloak="" data-ng-show="cart">
+			<div class="vertical-show-hide-animation-content">
+				<hr />
+
+				<div id="information" class="clearfix">
+					<h2>{{ i18n('m.rbs.commerce.front.process_step_personal_information', ['ucf']) }}</h2>
+					{% include 'Rbs_Commerce/Blocks/order-process/information.twig' %}
+				</div>
+			</div>
+		</div>
+
+		<div class="vertical-if-animation" data-ng-if="isStepEnabled('shipping')" data-ng-cloak="">
+			<div class="vertical-if-animation-content">
+				<hr />
+
+				<div id="shipping" class="clearfix">
+					<h2>{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}</h2>
+					{% include 'Rbs_Commerce/Blocks/order-process/shipping.twig' %}
+				</div>
+			</div>
+		</div>
+
+		<div class="vertical-if-animation" data-ng-if="isStepEnabled('payment')" data-ng-cloak="">
+			<div class="vertical-if-animation-content">
+				<hr />
+
+				<div id="payment" class="clearfix">
+					<h2>{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}</h2>
+					{% include 'Rbs_Commerce/Blocks/order-process/payment.twig' %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

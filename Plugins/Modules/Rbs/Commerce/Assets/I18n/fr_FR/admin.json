@@ -22,5 +22,11 @@
 	},
 	"process_create":{
 		"message":"ajouter un processus de commande"
+	},
+	"process_shippingmodes_picker_title":{
+		"message":"sélectionnez les modes de livraison autorisés"
+	},
+	"process_paymentconnectors_picker_title":{
+		"message":"sélectionnez les modes de paiement autorisés"
 	}
 }

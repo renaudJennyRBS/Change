@@ -316,7 +316,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @return bool
+	 * @return boolean
 	 */
 	public function lockCart(\Rbs\Commerce\Cart\Cart $cart)
 	{
@@ -510,7 +510,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param Cart $cart
+	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 */
 	public function normalize(\Rbs\Commerce\Cart\Cart $cart)
 	{
@@ -535,6 +535,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Rbs\Commerce\Cart\CartLine $line
+	 */
 	protected function refreshCartLine(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Commerce\Cart\CartLine $line)
 	{
 		$webStoreId = $cart->getWebStoreId();

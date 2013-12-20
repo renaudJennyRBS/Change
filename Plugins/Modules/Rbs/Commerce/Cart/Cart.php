@@ -31,8 +31,6 @@ class Cart implements \Serializable
 	 */
 	protected $zone;
 
-
-
 	/**
 	 * @var integer
 	 */
@@ -102,10 +100,6 @@ class Cart implements \Serializable
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
 	protected $discounts = array();
-
-
-
-
 
 	/**
 	 * @var array|null
