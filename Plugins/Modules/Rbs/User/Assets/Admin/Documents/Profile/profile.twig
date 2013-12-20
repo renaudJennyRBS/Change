@@ -34,7 +34,7 @@
 				</rbs-field>
 
 				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_timezone', ['ucf']) }}">
-					<div class="rbs-form-simple-filter" filter="tzFilter" style="clear:none;"></div>
+					<div rbs-form-simple-filter="" filter="tzFilter" style="clear:none;"></div>
 					<select id="timeZone" class="form-control" size="10" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="user.profile.TimeZone"></select>
 				</rbs-field>
 			</fieldset>

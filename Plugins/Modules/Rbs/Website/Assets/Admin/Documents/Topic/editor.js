@@ -5,7 +5,7 @@
 	function changeEditorWebsiteTopic (Breadcrumb) {
 
 		return {
-			restrict    : 'EC',
+			restrict    : 'EA',
 			templateUrl : 'Document/Rbs/Website/Topic/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',

@@ -5,7 +5,7 @@
 	function Editor(REST, $routeParams, Breadcrumb, i18n, UrlManager)
 	{
 		return {
-			restrict: 'EC',
+			restrict: 'EA',
 			templateUrl: 'Document/Rbs/Catalog/CrossSellingProductList/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

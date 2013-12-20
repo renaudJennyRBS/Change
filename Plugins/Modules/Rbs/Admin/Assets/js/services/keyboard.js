@@ -84,7 +84,7 @@
 	function rbsKbSwitch(Keyboard)
 	{
 		return {
-			restrict : 'EAC',
+			restrict : 'EA',
 			link : function (scope, elm)
 			{
 				var when, whenCounter, def;

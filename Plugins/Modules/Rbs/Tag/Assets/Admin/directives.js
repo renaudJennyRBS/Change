@@ -96,7 +96,7 @@
 	}]);
 
 	/**
-	 * <input class="rbs-auto-size-input" ... />
+	 * <input rbs-auto-size-input="" ... />
 	 *
 	 * Used in <rbs-tag-selector/>
 	 */
@@ -108,7 +108,7 @@
 		};
 
 		return {
-			restrict : 'AC',
+			restrict : 'A',
 
 			link : function (scope, elm) {
 
@@ -494,7 +494,7 @@
 
 	app.directive('rbsDocumentFilterTags', ['RbsChange.TagService', function(TagService) {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Tag/document-filter-tags.twig',
 			scope: {

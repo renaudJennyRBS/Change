@@ -5,7 +5,7 @@
 	function Editor ()
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Price/Tax/editor.twig',
 			require : 'rbsDocumentEditor',
 

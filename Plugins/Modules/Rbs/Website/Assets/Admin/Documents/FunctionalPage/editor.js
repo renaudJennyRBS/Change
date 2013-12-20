@@ -5,7 +5,7 @@
 	function changeEditorWebsiteFunctionalPage ($rootScope, $location, Dialog, UrlManager, Breadcrumb, i18n, structureEditorService, REST, $q) {
 
 		return {
-			restrict    : 'C',
+			restrict    : 'A',
 			templateUrl : 'Document/Rbs/Website/FunctionalPage/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',
@@ -150,7 +150,7 @@
 	function changeEditorWebsitePageTranslate (REST)
 	{
 		return {
-			restrict    : 'C',
+			restrict    : 'A',
 			templateUrl : 'Document/Rbs/Website/FunctionalPage/editor-translate.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',

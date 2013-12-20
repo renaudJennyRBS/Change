@@ -98,13 +98,13 @@
 		});
 		collection.remove();
 
-		var html = '', directiveClass;
+		var html = '', directiveName;
 		angular.forEach(filters, function(filter, idx){
 			if (scope.filterDefinitions.hasOwnProperty(filter.name)) {
-				directiveClass = scope.filterDefinitions[filter.name].directiveClass;
-				html += '<li class="list-group-item '+ directiveClass + '" filter="filter.filters['+ idx + ']" parent-operator="filter.operator"></li>';
+				directiveName = scope.filterDefinitions[filter.name].directiveName;
+				html += '<li class="list-group-item" '+ directiveName+ '="" filter="filter.filters['+ idx + ']" parent-operator="filter.operator"></li>';
 			} else {
-				html += '<li class="list-group-item rbs-document-filter-unknown" filter="filter.filters['+ idx + ']" parent-operator="filter.operator"></li>';
+				html += '<li class="list-group-item" rbs-document-filter-unknown="" filter="filter.filters['+ idx + ']" parent-operator="filter.operator"></li>';
 			}
 		});
 
@@ -116,13 +116,13 @@
 
 	app.directive('rbsDocumentFilterDefinition', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			template : '<div></div>',
 			replace: true,
 			scope: {
 				label: '@', group: '@',
-				name: '@', directiveClass: '@'
+				name: '@', directiveName: '@'
 			},
 			link: function(scope, element, attrs, filterContainerCtrl) {
 				scope.parameters = {};
@@ -176,7 +176,7 @@
 
 	app.directive('rbsDocumentFilterDefinitions', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			template : '<div></div>',
 			replace: true,
@@ -187,7 +187,7 @@
 					var definitions = angular.fromJson(attrs.definitions);
 					angular.forEach(definitions, function(definition) {
 						if (definition.hasOwnProperty('name') &&
-							definition.hasOwnProperty('directiveClass') &&
+							definition.hasOwnProperty('directiveName') &&
 							definition.hasOwnProperty('config')) {
 							if (!definition.hasOwnProperty('parameters'))
 							{
@@ -206,7 +206,7 @@
 	app.directive('rbsDocumentFilterContainer', ['$compile', 'localStorageService', function($compile, localStorageService) {
 		var searchIndex = 0;
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			transclude: true,
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-container.twig',
 			scope: {filter : '=', model: '@'},
@@ -350,7 +350,7 @@
 
 	app.directive('rbsDocumentFilterGroup', ['$compile', function($compile) {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-group.twig',
 			scope: {
@@ -406,7 +406,7 @@
 
 	app.directive('rbsDocumentFilterUnknown', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-unknown.twig',
 			scope: {
@@ -432,7 +432,7 @@
 
 	app.directive('rbsDocumentFilterPropertyBoolean', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-boolean.twig',
 			scope: {
@@ -463,7 +463,7 @@
 
 	app.directive('rbsDocumentFilterPropertyDatetime', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-datetime.twig',
 			scope: {
@@ -492,7 +492,7 @@
 	app.directive('rbsDocumentFilterPropertyDocument', function() {
 
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-document.twig',
 			scope: {
@@ -520,7 +520,7 @@
 
 	app.directive('rbsDocumentFilterPropertyNumber', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-number.twig',
 			scope: {
@@ -548,7 +548,7 @@
 
 	app.directive('rbsDocumentFilterPropertyString', function() {
 		return {
-			restrict: 'C',
+			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-string.twig',
 			scope: {

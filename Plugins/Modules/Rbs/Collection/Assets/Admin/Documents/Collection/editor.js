@@ -6,7 +6,7 @@
 
 		return {
 
-			restrict : 'EC',
+			restrict : 'EA',
 			templateUrl : 'Document/Rbs/Collection/Collection/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

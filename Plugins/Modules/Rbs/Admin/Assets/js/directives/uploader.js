@@ -5,7 +5,7 @@
 	angular.module('RbsChange').directive('rbsUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
 
 		return {
-			restrict    : 'EAC',
+			restrict    : 'EA',
 			require     : 'ngModel',
 			scope       : true,
 			priority    : -1,

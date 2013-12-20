@@ -11,11 +11,11 @@
 		</select>
 	</li>
 	<li ng-show="filter.parameters.operator != 'isNull'">
-		<div class="rbs-document-picker-single"
+		<rbs-document-picker-single
 				ng-model="filter.parameters.value" value-ids="true"
 				accepted-model="(= filterDefinition.config.documentType =)"
 				embed-in="#searchFiltersDocumentPickerEmbedContainer(=filter.name=)"
-				input-css-class="input-small" allow-creation="false" allow-edition="false"></div>
+				input-css-class="input-small" allow-creation="false" allow-edition="false"></rbs-document-picker-single>
 		<div id="searchFiltersDocumentPickerEmbedContainer(=filter.name=)"></div>
 		<div class="btn-group" ng-show="filterDefinition.config.possibleValues">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.admin.admin.possible_values') }} <span class="caret"></span></button></button>

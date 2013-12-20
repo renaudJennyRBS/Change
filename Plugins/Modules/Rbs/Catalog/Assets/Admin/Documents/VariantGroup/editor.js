@@ -12,7 +12,7 @@
 				UrlManager, ArrayUtils, MainMenu)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Catalog/VariantGroup/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

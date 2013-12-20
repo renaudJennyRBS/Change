@@ -22,11 +22,11 @@
 					<p>
 						<div>
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
-						<div class="rbs-document-picker-multiple"
+						<rbs-document-picker-multiple
 							 accepted-model="Rbs_Catalog_Product"
 							 allow-edition="false" allow-creation="false" allow-in-place-selection="true"
 							 selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
-						 </div>
+						 </rbs-document-picker-multiple>
 						<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
 							<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
 						</button>

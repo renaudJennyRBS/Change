@@ -8,7 +8,7 @@
 			ALL_REGEXP = /^.+$/;
 
 		return {
-			restrict    : 'EC',
+			restrict    : 'EA',
 			templateUrl : 'Document/Rbs/Website/Menu/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',

@@ -61,7 +61,7 @@
 		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
 			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
 			<fieldset>
-				<div class="rbs-catalog-product-data" data-ng-model="productConfig"
+				<div rbs-catalog-product-data="" data-ng-model="productConfig"
 						data-key="{{ parameters.productId }}" data-product-id="{{ parameters.productId }}"
 						data-sku="{{ productPresentation.codeSKU }}"
 						data-redirect-url="{{ parameters.redirectUrl }}"

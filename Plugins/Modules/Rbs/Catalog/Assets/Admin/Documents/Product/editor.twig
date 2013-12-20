@@ -84,26 +84,26 @@
 										<input type="text"  rbs-smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
 									</div>
 								</div>
-								<div class="rbs-document-picker-single" data-ng-switch-when="Document"
+								<rbs-document-picker-single data-ng-switch-when="Document"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-								</div>
-								<div class="rbs-document-picker-single" data-ng-switch-when="DocumentId" value-ids="true"
+								</rbs-document-picker-single>
+								<rbs-document-picker-single data-ng-switch-when="DocumentId" value-ids="true"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-								</div>
-								<div class="rbs-document-picker-multiple" data-ng-switch-when="DocumentArray"
+								</rbs-document-picker-single>
+								<rbs-document-picker-multiple data-ng-switch-when="DocumentArray"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-								</div>
-								<div class="rbs-document-picker-multiple" data-ng-switch-when="DocumentIdArray" value-ids="true"
+								</rbs-document-picker-multiple>
+								<rbs-document-picker-multiple data-ng-switch-when="DocumentIdArray" value-ids="true"
 										ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
 										property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)"
 										allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-								</div>
+								</rbs-document-picker-multiple>
 								<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
 							</div>
 						</div>
@@ -133,26 +133,26 @@
 									<input type="text" rbs-smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 								</div>
 							</div>
-							<div class="rbs-document-picker-single" data-ng-switch-when="Document"
+							<rbs-document-picker-single data-ng-switch-when="Document"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-							</div>
-							<div class="rbs-document-picker-single" data-ng-switch-when="DocumentId" value-ids="true"
+							</rbs-document-picker-single>
+							<rbs-document-picker-single data-ng-switch-when="DocumentId" value-ids="true"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-							</div>
-							<div class="rbs-document-picker-multiple" data-ng-switch-when="DocumentArray"
+							</rbs-document-picker-single>
+							<rbs-document-picker-multiple data-ng-switch-when="DocumentArray"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-							</div>
-							<div class="rbs-document-picker-multiple" data-ng-switch-when="DocumentIdArray" value-ids="true"
+							</rbs-document-picker-multiple>
+							<rbs-document-picker-multiple data-ng-switch-when="DocumentIdArray" value-ids="true"
 									ng-model="attributeDef.value.value" ng-required="attributeDef.required"
 									property-label="(= attributeDef.label | rbsCapitalize =)" selector-title="" accepted-model="(= attributeDef.documentType =)"
 									allow-edition="false" allow-creation="false" allow-in-place-selection="false">
-							</div>
+							</rbs-document-picker-multiple>
 							<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>
 						</div>
 					</div>

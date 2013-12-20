@@ -1,7 +1,7 @@
 <div>
 	<p>{{ i18n('m.rbs.admin.admin.time_zone_selector_text') | raw }}</p>
 
-	<form class="rbs-form-simple-filter" filter="tzFilter"></form>
+	<form rbs-form-simple-filter="" filter="tzFilter"></form>
 	<select class="input-block-level" size="7" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="selectedTimeZone"></select>
 	<div class="well well-small margin-top">
 		<i class="icon-time icon-4x pull-left"></i>

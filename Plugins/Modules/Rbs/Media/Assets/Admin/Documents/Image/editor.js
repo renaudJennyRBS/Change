@@ -5,7 +5,7 @@
 	function rbsMediaImageEditor (REST)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Media/Image/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
@@ -32,7 +32,7 @@
 
 				scope.$watch('document.path', function (path) {
 					if (path && ! scope.document.label) {
-						var fileName = angular.element(element.find('.image-uploader').first()).scope().fileName;
+						var fileName = angular.element(element.find('[rbs-image-uploader]').first()).scope().fileName;
 						scope.document.label = fileName.replace(/(\.png|\.gif|\.jpg|\.jpeg)$/i, '');
 					}
 				});

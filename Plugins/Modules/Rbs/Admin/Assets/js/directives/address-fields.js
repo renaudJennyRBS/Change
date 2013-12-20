@@ -5,7 +5,7 @@
 	angular.module('RbsChange').directive('rbsAddressFields', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
 
 		return {
-			restrict    : 'EAC',
+			restrict    : 'EA',
 			require     : 'ngModel',
 			scope       : true,
 			templateUrl : 'Rbs/Admin/js/directives/address-fields.twig',

@@ -5,7 +5,7 @@
 	function Editor(REST, $routeParams, Settings)
 	{
 		return {
-			restrict: 'EC',
+			restrict: 'EA',
 			templateUrl: 'Document/Rbs/Price/Price/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

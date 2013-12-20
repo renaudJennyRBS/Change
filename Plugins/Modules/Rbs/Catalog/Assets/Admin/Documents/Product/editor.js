@@ -12,7 +12,7 @@
 	function Editor($timeout, $http, REST, EditorManager)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Catalog/Product/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

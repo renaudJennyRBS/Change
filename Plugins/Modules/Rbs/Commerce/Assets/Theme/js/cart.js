@@ -4,7 +4,7 @@
 
 	function rbsCommerceCartData() {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			template : '<div></div>',
 			replace : true,
 			require : 'ngModel',

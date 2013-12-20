@@ -5,7 +5,7 @@
 	function editorRbsThemePageTemplate(ArrayUtils, REST)
 	{
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Theme/PageTemplate/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

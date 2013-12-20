@@ -122,7 +122,7 @@
 		<div class="control-group property">
 			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.documents.productlist_products', ['ucf']) }}</label>
 			<div class="controls">
-				<div class="rbs-document-picker-multiple" ng-model="List.productsToAdd"
+				<rbs-document-picker-multiple ng-model="List.productsToAdd"
 					accepted-model="Rbs_Catalog_Product"
 					property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}"
 					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_products_picker_title', ['ucf']) }}"
@@ -131,7 +131,7 @@
 					allow-creation="false"
 					disable-reordering="true"
 					picker-template="picker-categorizable.twig">
-				</div>
+				</rbs-document-picker-multiple>
 
 				<div class="btn-toolbar">
 					<button type="button" class="btn btn-primary" ng-click="addProductsFromPicker()" ng-disabled="hasProductsToAdd()">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>

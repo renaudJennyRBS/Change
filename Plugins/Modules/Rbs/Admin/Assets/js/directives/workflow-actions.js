@@ -7,7 +7,7 @@
 	app.directive('rbsDocumentWorkflowActions', ['$timeout', '$q', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', '$location', function ($timeout, $q, REST, Utils, i18n, $location) {
 
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			replace  : true,
 			templateUrl : 'Rbs/Admin/js/directives/workflow-actions.twig',
 

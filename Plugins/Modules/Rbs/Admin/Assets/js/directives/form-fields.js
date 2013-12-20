@@ -13,14 +13,14 @@
 	registerFieldDirective('Float', '<input type="text" class="form-control" rbs-smart-float=""/>', 'input');
 	registerFieldDirective('Boolean', '<rbs-switch></rbs-switch>', 'rbs-switch');
 	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
-	registerFieldDirective('Picker', '<div class="rbs-document-picker-single"></div>', '.rbs-document-picker-single');
-	registerFieldDirective('PickerMultiple', '<div class="rbs-document-picker-multiple"></div>', '.rbs-document-picker-multiple');
+	registerFieldDirective('Picker', '<rbs-document-picker-single></rbs-document-picker-single>', 'rbs-document-picker-single');
+	registerFieldDirective('PickerMultiple', '<rbs-document-picker-multiple></rbs-document-picker-multiple>', 'rbs-document-picker-multiple');
 	registerFieldDirective('Date', '<rbs-date-selector></rbs-date-selector>', 'rbs-date-selector');
 	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
-	registerFieldDirective('Image', '<div class="rbs-uploader image-uploader" storage-name="images" file-accept="image/*"></div>', '.image-uploader');
-	registerFieldDirective('File', '<div class="rbs-uploader file-uploader" storage-name="files" file-accept="*"></div>', '.file-uploader');
+	registerFieldDirective('Image', '<rbs-uploader rbs-image-uploader="" storage-name="images" file-accept="image/*"></div>', '[rbs-image-uploader]');
+	registerFieldDirective('File', '<rbs-uploader rbs-file-uploader="" storage-name="files" file-accept="*"></div>', '[rbs-file-uploader]');
 	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
-	registerFieldDirective('Address', '<div class="rbs-address-fields"></div>', '.rbs-address-fields', true);
+	registerFieldDirective('Address', '<rbs-address-fields></rbs-address-fields>', 'rbs-address-fields', true);
 
 
 	/**

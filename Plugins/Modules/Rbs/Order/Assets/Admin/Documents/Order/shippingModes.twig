@@ -12,7 +12,7 @@
 </table>
 <div ng-show="showShippingAddressUI">
 	<h4><a href="javascript:;" ng-click="showShippingAddressUI = !showShippingAddressUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showShippingAddressUI]"></i> {{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf', 'lab']) }} (=shippingDetails[editedShippingMode.id].label=)</a></h4>
-	<div class="rbs-order-address"
+	<div rbs-order-address=""
 		address-documents="addressDocuments"
 		address-fields="editedShippingMode.addressFields"
 		address="editedShippingMode.address">

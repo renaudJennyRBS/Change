@@ -4,7 +4,7 @@
 
 	function Editor () {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			templateUrl : 'Document/Rbs/Stock/Sku/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',

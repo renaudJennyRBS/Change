@@ -17,7 +17,7 @@
 
 		return {
 
-			restrict : 'EC',
+			restrict : 'E',
 			require  : '?ngModel',
 
 			link : function (scope, element, attrs, ngModel) {

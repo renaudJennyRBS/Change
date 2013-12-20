@@ -5,7 +5,7 @@
 	function changeEditorWebsiteWebsite (REST, User) {
 
 		return {
-			restrict    : 'EC',
+			restrict    : 'EA',
 			templateUrl : 'Document/Rbs/Website/Website/editor.twig',
 			replace     : false,
 			require     : 'rbsDocumentEditor',

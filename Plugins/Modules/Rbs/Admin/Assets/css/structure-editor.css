@@ -115,22 +115,22 @@
 /* ----- Rows (se-row) ----------------------------------------------------- */
 
 
-.structure-editor .rbs-row {
+.structure-editor [rbs-row] {
 	background: url("../img/columns-bg.png") repeat scroll 0 0 transparent;
 	border: 1px solid rgba(0, 87, 141, 0.7);
 	border-radius: 4px 4px 4px 4px;
 	cursor: pointer;
 	padding: 2px 4px;
 }
-.structure-editor .rbs-row.active {
+.structure-editor [rbs-row].active {
 	background: url("../img/columns-selected-bg.png") repeat scroll 0 0 transparent;
 }
 
-.structure-editor .rbs-row .rbs-row {
+.structure-editor [rbs-row] [rbs-row] {
 	background: rgba(0, 0, 0, 0.2);
 	padding: 2px 2px;
 }
-.structure-editor .rbs-row .rbs-row.active {
+.structure-editor [rbs-row] [rbs-row].active {
 	border: 3px solid rgb(243,197,27);
 	padding: 0px;
 }
@@ -140,7 +140,7 @@
 /* ----- Row settings ------------------------------------------------------ */
 
 
-.rbs-row-settings .column-info {
+[rbs-row-settings] .column-info {
 	border-radius: 4px 4px 4px 4px;
 	box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 	margin: 10px 10px 5px 10px;
@@ -149,25 +149,25 @@
 	display: inline-block;
 }
 
-.rbs-row-settings .column-info.active {
+[rbs-row-settings] .column-info.active {
 	box-shadow: 0 0 2px 2px #0088CC;
 }
 
-.rbs-row-settings .column-info + .btn-block {
+[rbs-row-settings] .column-info + .btn-block {
 	margin-top: 10px;
 }
 
-.rbs-row-settings .column-info h5 {
+[rbs-row-settings] .column-info h5 {
 	margin: 3px 0;
 }
 
-.rbs-row-settings .column-info .param {
+[rbs-row-settings] .column-info .param {
 	margin: 3px 0;
 	background: #EEE;
 	border-radius: 4px;
 }
 
-.rbs-row-settings .column-info .param .text {
+[rbs-row-settings] .column-info .param .text {
 	padding: 3px 0;
 	white-space: nowrap;
 	display: inline-block;
@@ -175,7 +175,7 @@
 	font-size: 0.8em;
 }
 
-.rbs-row-settings .column-info .param .btn {
+[rbs-row-settings] .column-info .param .btn {
 	width: 36px;
 }
 
@@ -247,7 +247,7 @@
 /* ----- Block chooser ----------------------------------------------------- */
 
 
-.rbs-block-chooser {
+[rbs-block-chooser] {
 	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.3);
 	border: 1px dashed white;
 	border-radius: 4px 4px 4px 4px;
@@ -257,7 +257,7 @@
 	text-shadow: 0 1px 1px black;
 }
 
-.rbs-block-chooser.active {
+[rbs-block-chooser].active {
 	border: 3px solid rgb(243,197,27);
 	padding: 8px 4px;
 }
@@ -313,7 +313,7 @@
 /* ----- Columns (se-cell) ------------------------------------------------- */
 
 
-.rbs-cell {
+[rbs-cell] {
 	position: relative;
 }
 
@@ -322,29 +322,29 @@
 /* ----- Property grid ----------------------------------------------------- */
 
 
-.rbs-block-settings-editor .rich-text-toolbar {
+[rbs-block-settings-editor] .rich-text-toolbar {
 	background: none;
 	border: none;
 }
 
-.rbs-block-settings-editor > .btn-toolbar {
+[rbs-block-settings-editor] > .btn-toolbar {
 	background: none;
 	margin-top: 0;
 	padding: 7px;
 }
 
-.rbs-block-settings-editor .form-actions {
+[rbs-block-settings-editor] .form-actions {
 	margin: 10px -15px -15px -15px;
 	padding: 7px;
 	text-align: center;
 }
 
-.rbs-block-settings-editor form {
+[rbs-block-settings-editor] form {
 	margin: 0;
 }
 
-.rbs-block-settings-editor hr,
-.rbs-row-settings hr {
+[rbs-block-settings-editor] hr,
+[rbs-row-settings] hr {
 	border: none;
 	border-bottom: 1px solid #D0D0D0;
 	margin: 15px -15px;

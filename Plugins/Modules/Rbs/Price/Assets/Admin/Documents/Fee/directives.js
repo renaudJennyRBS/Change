@@ -8,7 +8,7 @@
 
 	function rbsFilterNode () {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			priority : 10,
 			scope: true,
 			link : function (scope, elm, attrs) {
@@ -22,7 +22,7 @@
 
 	function rbsFiltersGroup () {
 		return {
-			restrict : 'C',
+			restrict : 'A',
 			template : '<div></div>',
 			priority : 100,
 			scope: true,
