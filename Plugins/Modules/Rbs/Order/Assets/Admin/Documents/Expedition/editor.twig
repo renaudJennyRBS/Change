@@ -3,9 +3,34 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'orderId'), ['ucf']) }}" ng-disabled="true">
-			<p class="form-control-static">(= data.order =)</p>
+		<div rbs-tip="Rbs_Order_ExpeditionEditorNewFromScratch" ng-if="document.isNew()">
+			{{ i18n('m.rbs.order.admin.expedition_new_from_scratch_helper', ['ucf']) }}
+		</div>
+
+		<rbs-field ng-if="document.isNew() || !document.orderId" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'orderId'), ['ucf']) }}">
+			<rbs-document-picker-single
+				ng-model="data.order"
+				accepted-model="Rbs_Order_Order"
+				selector-title="{{ i18nAttr('m.rbs.order.admin.expedition_select_order', ['ucf']) }}">
+			</rbs-document-picker-single>
 		</rbs-field>
+		<rbs-field ng-if="!document.isNew() && document.shippingModeCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'orderId'), ['ucf']) }}" ng-disabled="true">
+			<p class="form-control-static">(= data.order.label =)</p>
+		</rbs-field>
+
+		<rbs-field ng-if="document.isNew() || !document.shippingModeCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'shippingModeCode'), ['ucf']) }}">
+			<rbs-document-picker-single
+				ng-model="data.carrier"
+				accepted-model="Rbs_Shipping_Mode"
+				selector-title="{{ i18nAttr('m.rbs.order.admin.expedition_select_shippingMode', ['ucf']) }}">
+			</rbs-document-picker-single>
+		</rbs-field>
+		<rbs-field ng-if="!document.isNew() && document.shippingModeCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'shippingModeCode'), ['ucf']) }}" ng-disabled="true">
+			<p class="form-control-static">(= document.shippingModeCode =)</p>
+		</rbs-field>
+
+		<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'code'), ['ucf']) }}">
+		</rbs-field-text>
 
 		<rbs-field-text property="parcelCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'parcelCode'), ['ucf']) }}">
 		</rbs-field-text>
@@ -16,80 +41,71 @@
 		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'carrierStatus'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<!-- TODO render this field uneditable after being prepared -->
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Expedition', 'shippingModeCode'), ['ucf']) }}">
-			<document-picker-single
-				ng-model="data.carrier"
-				accepted-model="Rbs_Shipping_Mode" allow-edition="true"
-				selector-title="{{ i18nAttr('m.rbs.order.admin.expedition_select_shippingMode', ['ucf']) }}">
-			</document-picker-single>
-		</rbs-field>
-
-		<!-- TODO render this field uneditable after the expedition be prepared -->
-		<div class="panel panel-default">
+		<div class="panel panel-default" ng-if="!document.prepared">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.expedition_articles', ['ucf', 'lab']) }} (= data.lines.length =)</h3>
 			</div>
 			<div class="panel-body">
-				<span ng-show="data.expeditionLines.length == 0">{{ i18n('m.rbs.order.admin.expedition_articles', ['ucf', 'lab']) }}</span>
 
-				<div class="btn-toolbar">
-					<button class="btn btn-default" type="button" ng-click="removeLines()" ng-disabled="data.removeLinesDisabled"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.expedition_remove_lines', ['ucf']) }}</button>
+				<div ng-show="data.expeditionLines.length > 0">
+					<div class="btn-toolbar">
+						<button class="btn btn-default" type="button" ng-click="removeLines()" ng-disabled="data.removeLinesDisabled"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.expedition_remove_lines', ['ucf']) }}</button>
+					</div>
+
+					<table class="document-list table table-condensed table-bordered table-striped table-hover">
+						<thead>
+							<tr>
+								<th style="cursor: pointer; text-align: center; width: 30px;">
+									<input type="checkbox" ng-model="selectAllExpeditionLines">
+								</th>
+								<th>{{ i18n('m.rbs.order.admin.expedition_line_number', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.expedition_designation', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.expedition_sku', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.expedition_remainder', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.expedition_quantity', ['ucf']) }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="expeditionLine in data.expeditionLines" class="normal-row"
+								ng-class="{warning: expeditionLine.newLine, danger: expeditionLine.quantity && expeditionLine.quantityToShip > expeditionLine.quantity}">
+								<td style="cursor: pointer; text-align: center;">
+									<input type="checkbox" ng-model="expeditionLine.selected">
+								</td>
+								<td><p class="form-control-static">(= expeditionLine.lineNumber =)</p></td>
+								<td><p class="form-control-static">(= expeditionLine.designation =)</p></td>
+								<td><p class="form-control-static">(= expeditionLine.codeSKU =)</p></td>
+								<td><p class="form-control-static">(= expeditionLine.quantity =)</p></td>
+								<td style="width: 100px;">
+									<div ng-if="expeditionLine.allowQuantitySplit" ng-class="{'has-warning': expeditionLine.quantity && expeditionLine.quantityToShip > expeditionLine.quantity}">
+										<input type="number" min="1" ng-init="expeditionLine.quantityToShip = expeditionLine.quantityToShip || expeditionLine.quantity || 1"
+											ng-model="expeditionLine.quantityToShip" class="form-control"/>
+									</div>
+									<div ng-if="!expeditionLine.allowQuantitySplit">
+										<input type="text" class="form-control" ng-init="expeditionLine.quantityToShip = expeditionLine.quantity" disabled
+											value="(= expeditionLine.quantityToShip =)" />
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div ng-if="data.quantityToShipExceeded" class="text-danger">
+						<i class="icon-warning-sign icon-large"></i>
+						{{ i18n('m.rbs.order.admin.expedition_quantity_to_ship_exceeded', ['ucf']) }}
+					</div>
+
+					<div ng-if="data.hasNewLines" class="text-warning">
+						<i class="icon-warning-sign icon-large"></i>
+						{{ i18n('m.rbs.order.admin.expedition_warning_new_lines', ['ucf']) }}
+					</div>
 				</div>
 
-				<table class="document-list table table-condensed table-bordered table-striped table-hover">
-					<thead>
-						<tr>
-							<th style="cursor: pointer; text-align: center; width: 30px;">
-								<input type="checkbox" ng-model="selectAllExpeditionLines">
-							</th>
-							<th>{{ i18n('m.rbs.order.admin.expedition_line_number', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.order.admin.expedition_designation', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.order.admin.expedition_sku', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.order.admin.expedition_remainder', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.order.admin.expedition_quantity', ['ucf']) }}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="expeditionLine in data.expeditionLines" class="normal-row"
-							ng-class="{warning: expeditionLine.newLine, danger: expeditionLine.quantity && expeditionLine.quantityToShip > expeditionLine.quantity}">
-							<td style="cursor: pointer; text-align: center;">
-								<input type="checkbox" ng-model="expeditionLine.selected">
-							</td>
-							<td><p class="form-control-static">(= expeditionLine.lineNumber =)</p></td>
-							<td><p class="form-control-static">(= expeditionLine.designation =)</p></td>
-							<td><p class="form-control-static">(= expeditionLine.codeSKU =)</p></td>
-							<td><p class="form-control-static">(= expeditionLine.quantity =)</p></td>
-							<td style="width: 100px;">
-								<div ng-if="expeditionLine.allowQuantitySplit" ng-class="{'has-warning': expeditionLine.quantity && expeditionLine.quantityToShip > expeditionLine.quantity}">
-									<input type="number" min="1" ng-init="expeditionLine.quantityToShip = expeditionLine.quantityToShip || expeditionLine.quantity || 1"
-										ng-model="expeditionLine.quantityToShip" class="form-control"/>
-								</div>
-								<div ng-if="!expeditionLine.allowQuantitySplit">
-									<input type="text" class="form-control" ng-init="expeditionLine.quantityToShip = expeditionLine.quantity" disabled
-										value="(= expeditionLine.quantityToShip =)" />
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
-				<div ng-if="data.quantityToShipExceeded" class="text-danger">
-					<i class="icon-warning-sign icon-large"></i>
-					{{ i18n('m.rbs.order.admin.expedition_quantity_to_ship_exceeded', ['ucf']) }}
-				</div>
-
-				<div ng-if="data.hasNewLines" class="text-warning">
-					<i class="icon-warning-sign icon-large"></i>
-					{{ i18n('m.rbs.order.admin.expedition_warning_new_lines', ['ucf']) }}
-				</div>
-
-				<div ng-show="data.remainderLines.length > 0">
+				<div ng-show="data.asideLines.length > 0">
 					<span class="help-block">{{ i18n('m.rbs.order.admin.expedition_remainder_help', ['ucf', 'lab']) }}</span>
 					<ul class="token-list list-unstyled rows">
-						<li ng-repeat="remainderLine in data.remainderLines" ng-click="moveToExpeditionLines(remainderLine)">
-							<span class="pull-right">(= remainderLine.quantity =) <i class="icon-circle-arrow-up icon-large"></i></span>
-							(= remainderLine.designation =)
+						<li ng-repeat="asideLine in data.asideLines" ng-click="moveToExpeditionLines(asideLine)">
+							<span class="pull-right">(= asideLine.quantity =) <i class="icon-circle-arrow-up icon-large"></i></span>
+							(= asideLine.designation =)
 						</li>
 					</ul>
 				</div>
@@ -104,11 +120,11 @@
 				</p>
 
 				<div class="well well-sm" ng-show="showNewLineUI">
-					<div class="document-picker-multiple"
+					<rbs-document-picker-multiple
 						accepted-model="Rbs_Catalog_Product"
 						allow-edition="false" allow-creation="false" allow-in-place-selection="true"
 						selector-title="{{ i18nAttr('m.rbs.order.admin.expedition_article_selector_title', ['ucf']) }}" ng-model="data.newLines">
-					</div>
+					</rbs-document-picker-multiple>
 
 					<button type="button" ng-disabled="!data.newLines.length" class="btn btn-primary" ng-click="addNewLines()">
 						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[data.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.expedition_add_articles', ['ucf']) }}
@@ -117,7 +133,24 @@
 			</div>
 		</div>
 
-		<pre>(= document.data =)</pre>
+		<table ng-if="document.prepared && data.preparedLines.length > 0" class="document-list table table-condensed table-bordered table-striped table-hover">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.order.admin.expedition_line_number', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.admin.expedition_designation', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.admin.expedition_sku', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.admin.expedition_quantity', ['ucf']) }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="expeditionLine in data.preparedLines" class="normal-row">
+					<td>(= expeditionLine.lineNumber =)</td>
+					<td>(= expeditionLine.label =)</td>
+					<td>(= expeditionLine.codeSKU =)</td>
+					<td>(= expeditionLine.quantity =)</td>
+				</tr>
+			</tbody>
+		</table>
 
 	</fieldset>
 
@@ -128,5 +161,10 @@
 		data-document-system-info-section>
 	</fieldset>
 
-	<form-button-bar></form-button-bar>
+	<rbs-form-button-bar>
+		<button type="button" ng-if="!document.prepared" ng-click="validatePreparation($event)" class="btn btn-headline btn-success"
+			ng-disabled="document.data.length === 0 || !isUnchanged()">
+			<i class="icon-archive"></i>{{ i18n('m.rbs.order.admin.expedition_prepare_button', ['ucf']) | raw }}
+		</button>
+	</rbs-form-button-bar>
 </form>

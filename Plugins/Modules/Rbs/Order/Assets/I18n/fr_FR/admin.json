@@ -233,6 +233,9 @@
 	"expedition_select_shippingmode":{
 		"message":"sélectionner le mode de livraison"
 	},
+	"expedition_select_order":{
+		"message":"sélectionner une commande associée"
+	},
 	"expedition_articles":{
 		"message":"articles"
 	},
@@ -271,5 +274,11 @@
 	},
 	"expedition_quantity_to_ship_exceeded":{
 		"message":"attention, l'une des quantités à expédier excède celle du reliquat. Êtes-vous sur de vouloir envoyer une quantité supérieur à celle indiquer par le reliquat ?"
+	},
+	"expedition_new_from_scratch_helper":{
+		"message":"l'expédition que vous voulez créer n'a ni commande associée ni mode de livraison. Il n'est donc pas possible de calculer un reliquat. Les articles en reliquat s'afficheront une fois que la commande associée et le mode de livraison seront enregistrés"
+	},
+	"expedition_prepare_button":{
+		"message":"Valider la préparation<small>de l'expédition</small>"
 	}
 }

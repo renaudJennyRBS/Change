@@ -11,13 +11,11 @@ class Expedition extends \Compilation\Rbs\Order\Documents\Expedition
 	 */
 	public function getLabel()
 	{
-		$order = $this->getOrderIdInstance();
-		if ($order)
+		if ($this->getCode())
 		{
-			return 'E-' . $order->getLabel();
+			return $this->getCode();
 		}
-		//TODO what do we do?
-		return 'E-NO_ORDER_DEFINED';
+		return 'NO-CODE-DEFINED';
 	}
 
 	/**

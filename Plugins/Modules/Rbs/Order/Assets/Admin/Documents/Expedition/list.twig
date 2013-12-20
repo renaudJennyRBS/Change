@@ -21,14 +21,14 @@
 
 		<rbs-document-list data-dlid="DLRbsOrderExpedition"
 				model="Rbs_Order_Expedition" filter-query="query">
-			<column name="label" primary="true"></column>
-			<column name="prepared">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="prepared">
 				(= doc.prepared | rbsBoolean =)
-			</column>
-			<column name="shippingModeCode"></column>
-			<column name="trackingCode"></column>
-			<column name="carrierStatus"></column>
-			<column name="itemCount"></column>
+			</rbs-column>
+			<rbs-column name="shippingModeCode"></rbs-column>
+			<rbs-column name="trackingCode"></rbs-column>
+			<rbs-column name="carrierStatus"></rbs-column>
+			<rbs-column name="itemCount"></rbs-column>
 		</rbs-document-list>
 	</div>
 

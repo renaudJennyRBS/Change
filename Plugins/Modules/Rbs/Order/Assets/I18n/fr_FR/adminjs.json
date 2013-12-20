@@ -43,5 +43,14 @@
 	},
 	"expedition_no_sku_to_compare":{
 		"message":"un problème est survenu lors de la comparaison entre SKU. L'un des éléments est invalide."
+	},
+	"expedition_confirm_validate_preparation_title":{
+		"message":"valider la préparation ?"
+	},
+	"expedition_confirm_validate_preparation":{
+		"message":"une fois la préparation validée, il sera impossible de modifier les lignes d'expéditions"
+	},
+	"expedition_invalid_request_remainder":{
+		"message":"la requête d'obtention du reliquat est invalide"
 	}
 }

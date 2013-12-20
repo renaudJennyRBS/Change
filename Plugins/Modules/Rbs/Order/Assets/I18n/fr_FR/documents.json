@@ -59,6 +59,9 @@
 	"expedition_prepared":{
 		"message":"préparé"
 	},
+	"expedition_code":{
+		"message":"code d'expédition"
+	},
 	"expedition_parcelcode":{
 		"message":"code colis"
 	},

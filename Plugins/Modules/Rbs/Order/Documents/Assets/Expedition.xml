@@ -3,6 +3,7 @@
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
 	<properties>
 		<property name="label" type="String" stateless="true" />
+		<property name="code" type="String" />
 		<property name="orderId" type="DocumentId" document-type="Rbs_Order_Order"/>
 		<property name="prepared" type="Boolean" default-value="false" required="true"/>
 		<property name="parcelCode" type="String"/>

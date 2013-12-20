@@ -140,6 +140,13 @@ class Listeners implements ListenerAggregateInterface
 					(new \Rbs\Order\Http\Rest\Actions\ProductPriceInfo())->execute($event);
 				});
 			}
+			else if ($relativePath === 'rbs/order/orderRemainder')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Order\Http\Rest\Actions\OrderRemainder())->execute($event);
+				});
+			}
 		}
 	}
 }
