@@ -16,11 +16,12 @@ class GenericServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetInstance()
 	{
 		$genericServices = $this->getGenericServices();
-		$this->assertInstanceOf('Rbs\Seo\SeoManager', $genericServices->getSeoManager());
-		$this->assertInstanceOf('Rbs\Media\Avatar\AvatarManager', $genericServices->getAvatarManager());
-		$this->assertInstanceOf('Rbs\Simpleform\Field\FieldManager', $genericServices->getFieldManager());
-		$this->assertInstanceOf('Rbs\Simpleform\Security\SecurityManager', $genericServices->getSecurityManager());
 		$this->assertInstanceOf('Rbs\Elasticsearch\Index\IndexManager', $genericServices->getIndexManager());
 		$this->assertInstanceOf('Rbs\Elasticsearch\Facet\FacetManager', $genericServices->getFacetManager());
+		$this->assertInstanceOf('Rbs\Geo\GeoManager', $genericServices->getGeoManager());
+		$this->assertInstanceOf('Rbs\Media\Avatar\AvatarManager', $genericServices->getAvatarManager());
+		$this->assertInstanceOf('Rbs\Seo\SeoManager', $genericServices->getSeoManager());
+		$this->assertInstanceOf('Rbs\Simpleform\Field\FieldManager', $genericServices->getFieldManager());
+		$this->assertInstanceOf('Rbs\Simpleform\Security\SecurityManager', $genericServices->getSecurityManager());
 	}
 } 
