@@ -69,7 +69,7 @@
 						<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(600)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(600)]" title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_10minutes', ['ucf']) }}">{{ i18n('m.rbs.admin.admin.block_ttl_10m', ['ucf']) }}</button>
 						<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(3600)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(3600)]" title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1hour', ['ucf']) }}">{{ i18n('m.rbs.admin.admin.block_ttl_1h', ['ucf']) }}</button>
 					</div>
-					<input type="integer" class="form-control input-sm" ng-model="blockParameters.TTL" size="4" />
+					<input type="number" rbs-integer="" class="form-control input-sm" ng-model="blockParameters.TTL" size="4" />
 				</div>
 			</div>
 		</div>
