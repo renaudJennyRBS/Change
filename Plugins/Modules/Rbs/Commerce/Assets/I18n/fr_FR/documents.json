@@ -1,5 +1,14 @@
 {
 	"profile":{
 		"message":"profile"
+	},
+	"process":{
+		"message":"processus de commande"
+	},
+	"process_shippingmodes":{
+		"message":"modes de livraison"
+	},
+	"process_paymentconnectors":{
+		"message":"modes de paiement"
 	}
 }

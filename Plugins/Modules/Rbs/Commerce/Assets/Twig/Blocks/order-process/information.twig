@@ -1,0 +1,174 @@
+<script type="text/ng-template" id="/address-fields.static.tpl">
+	<div class="form-group" data-ng-repeat="fieldDef in fieldsDef">
+		<div data-ng-if="fieldDef.name != 'countryCode'">
+			<label for="(= fieldDef.id =)" class="(= leftColumnElementClass =) control-label">
+				<em data-ng-if="fieldDef.required" class="required-symbol"
+					title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+				(= fieldDef.title =)
+			</label>
+			<div class="(= rightColumnElementClass =)" data-ng-if="fieldDef.values">
+				<select data-ng-hide="readonly" id="(= fieldDef.id =)" class="form-control" data-ng-required="fieldDef.required"
+					data-ng-model="fieldValues[fieldDef.name]" data-ng-options="key as v.title for (key, v) in fieldDef.values">
+				</select>
+				<div data-ng-show="readonly" class="form-control-static">(= fieldDef.values[fieldValues[fieldDef.name]].title =)</div>
+			</div>
+			<div class="(= rightColumnElementClass =)" data-ng-if="!fieldDef.values">
+				<input data-ng-hide="readonly" id="(= fieldDef.id =)" class="form-control" data-ng-required="fieldDef.required"
+					data-ng-model="fieldValues[fieldDef.name]" type="text" />
+				<div data-ng-show="readonly" class="form-control-static">(= fieldValues[fieldDef.name] =)</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<div class="vertical-if-animation" data-ng-if="!isAuthenticated()" data-ng-init="information.realm = '{{ parameters.realm }}'">
+	{% if user %}
+		<div class="vertical-if-animation-content" class="row">
+			<ul class="text-danger" data-ng-if="errors.length">
+				<li data-ng-repeat="error in errors">(= error =)</li>
+			</ul>
+			<div class="col-sm-6" data-ng-init="information.login = '{{ user.login }}'">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						{{ i18n('m.rbs.commerce.front.are_you_really', ['ucf'], { 'NAME': "<strong>#{user.login}</strong>" })|raw }}
+					</div>
+					<div class="panel-body">
+						<p>{{ i18n('m.rbs.commerce.front.please_log_in_again', ['ucf']) }}</p>
+						<div class="form-group">
+							<label for="rbs-order-process-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
+							<input id="rbs-order-process-password" type="password" data-ng-model="information.password"
+								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+						</div>
+						<button class="btn btn-primary" data-ng-disabled="!canAuthenticate()" data-ng-click="authenticate()">
+							{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						{{ i18n('m.rbs.commerce.front.not_you', ['ucf'], { 'NAME': "<strong>#{user.login}</strong>" })|raw }}
+					</div>
+					<div class="panel-body">
+						<p>{{ i18n('m.rbs.commerce.front.please_log_out', ['ucf']) }}</p>
+						<a class="btn btn-primary" href="{{ ajaxURL('Rbs_User', 'Logout') }}?redirectLocation={{ currentURL()|url_encode }}">
+							{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% else %}
+		<div class="vertical-if-animation-content" class="row">
+			<ul class="text-danger" data-ng-if="errors.length">
+				<li data-ng-repeat="error in errors">(= error =)</li>
+			</ul>
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.already_customer', ['ucf']) }}</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label for="rbs-order-process-login">{{ i18n('m.rbs.user.front.login', ['ucf']) }}</label>
+							<input id="rbs-order-process-login" type="text" data-ng-model="information.login"
+								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" />
+						</div>
+						<div class="form-group">
+							<label for="rbs-order-process-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
+							<input id="rbs-order-process-password" type="password" data-ng-model="information.password"
+								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+						</div>
+						<button class="btn btn-primary" data-ng-disabled="!canAuthenticate()" data-ng-click="authenticate()">
+							{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.new_customer', ['ucf']) }}</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label for="rbs-order-process-email">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
+							<input id="rbs-order-process-email" type="text" data-ng-model="information.email"
+								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+						</div>
+						<div class="form-group">
+							<label for="rbs-order-process-confirm-email">{{ i18n('m.rbs.user.front.confirm_email', ['ucf']) }}</label>
+							<input id="rbs-order-process-confirm-email" type="text" data-ng-model="information.confirmEmail"
+								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+						</div>
+						<button class="btn btn-primary" data-ng-disabled="!canSetEmail()" data-ng-click="setEmail()">
+							{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+</div>
+
+<div class="vertical-if-animation" data-ng-if="isAuthenticated()" data-ng-cloak="">
+	<div class="vertical-if-animation-content">
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</div>
+			<div class="panel-body">
+				(= cart.email =)
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.mailing_address', ['ucf']) }}</div>
+			<div class="panel-body">
+				<div class="form-horizontal">
+					{% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
+					{% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
+					<div class="form-group">
+						<label for="rbs-order-process-country" class="{{ leftColumnElementClass }} control-label">
+							{{ i18n('m.rbs.commerce.front.country', ['ucf']) }}
+						</label>
+						<div class="{{ rightColumnElementClass }}">
+							{% if compatibleCountries|length == 1 %}
+								{% set country = compatibleCountries[0] %}
+								<div class="form-control-static" data-ng-init="information.country = '{{ country.code }}'">
+									{{ country.title }}
+								</div>
+							{% elseif compatibleCountries|length > 1 %}
+								<select id="rbs-order-process-country" data-ng-model="information.country" class="form-control">
+									{% for country in compatibleCountries %}
+										<option value="{{ country.code }}">
+											{{ country.title }}
+										</option>
+									{% endfor %}
+								</select>
+							{% else %}
+								<div class="form-control-static text-danger">ERROR: no country!</div>
+							{% endif %}
+						</div>
+					</div>
+					<div data-rbs-address-fields="" data-ng-model="information.address" data-country-code="(= information.country =)"
+						data-readonly="(= isStepChecked('information') =)"
+						data-left-column-element-class="{{ leftColumnElementClass }}"
+						data-right-column-element-class="{{ rightColumnElementClass }}">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div data-ng-show="isCurrentStep('information')" class="clearfix">
+			<p>
+				<button class="btn btn-primary btn-lg pull-right" data-ng-click="setCurrentStep('shipping')"
+					data-ng-disabled="!isInformationStepComplete()">
+					{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
+				</button>
+			</p>
+		</div>
+		<div data-ng-show="!isCurrentStep('information')" class="clearfix">
+			<p>
+				<button class="btn btn-default pull-right" data-ng-click="setCurrentStep('information')">
+					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+				</button>
+			</p>
+		</div>
+	</div>
+</div>

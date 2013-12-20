@@ -8,10 +8,25 @@
 	"cart_function":{
 		"message":"détail du panier"
 	},
+	"order_process_function":{
+		"message":"processus de commande"
+	},
 	"cart_undefined":{
 		"message":"pas de panier"
 	},
 	"shortcart_label":{
 		"message":"résumé du panier"
+	},
+	"process_list":{
+		"message":"processus de commande"
+	},
+	"process_create":{
+		"message":"ajouter un processus de commande"
+	},
+	"process_shippingmodes_picker_title":{
+		"message":"sélectionnez les modes de livraison autorisés"
+	},
+	"process_paymentconnectors_picker_title":{
+		"message":"sélectionnez les modes de paiement autorisés"
 	}
 }

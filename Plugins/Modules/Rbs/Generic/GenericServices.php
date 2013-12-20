@@ -111,6 +111,12 @@ class GenericServices extends \Zend\Di\Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
+		//GeoManager : EventManagerFactory
+		$geoManagerClassName = $this->getInjectedClassName('GeoManager', 'Rbs\Geo\GeoManager');
+		$classDefinition = $this->getClassDefinition($geoManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$definitionList->addDefinition($classDefinition);
+
 		//FacetManager : EventManagerFactory, DocumentManager, I18nManager, CollectionManager
 		$facetManagerClassName = $this->getInjectedClassName('FacetManager', '\Rbs\Elasticsearch\Facet\FacetManager');
 		$classDefinition = $this->getClassDefinition($facetManagerClassName);
@@ -163,6 +169,10 @@ class GenericServices extends \Zend\Di\Di
 		));
 
 		$im->addAlias('SecurityManager', $securityManagerClassName, array(
+			'eventManagerFactory' => $eventManagerFactory
+		));
+
+		$im->addAlias('GeoManager', $geoManagerClassName, array(
 			'eventManagerFactory' => $eventManagerFactory
 		));
 
@@ -227,5 +237,14 @@ class GenericServices extends \Zend\Di\Di
 	public function getFacetManager()
 	{
 		return $this->get('FacetManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Geo\GeoManager
+	 */
+	public function getGeoManager()
+	{
+		return $this->get('GeoManager');
 	}
 }

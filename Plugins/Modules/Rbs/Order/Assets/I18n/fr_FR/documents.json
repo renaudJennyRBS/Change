@@ -35,9 +35,6 @@
 	"invoice":{
 		"message":"facture"
 	},
-	"process":{
-		"message":"processus de commande"
-	},
 	"invoice_order":{
 		"message":"commande"
 	},

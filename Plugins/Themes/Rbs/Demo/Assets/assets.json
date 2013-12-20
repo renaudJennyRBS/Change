@@ -7,9 +7,13 @@
 			"Theme/Rbs/Demo/css/styles.css"
 		],
 		"jsAssets" : [
-			"Theme/Rbs/Base/js/jquery-1.10.2.min.js", "Theme/Rbs/Base/js/bootstrap.min.js",
-			"Theme/Rbs/Base/js/bootstrap-complements.js", "Theme/Rbs/Demo/js/default.js",
-			"Theme/Rbs/Base/js/angular-1.2.4/angular.min.js", "Theme/Rbs/Base/js/angular-1.2.4/angular-cookies.min.js",
+			"Theme/Rbs/Base/js/jquery-1.10.2.min.js",
+			"Theme/Rbs/Base/js/bootstrap.min.js",
+			"Theme/Rbs/Base/js/bootstrap-complements.js",
+			"Theme/Rbs/Demo/js/default.js",
+			"Theme/Rbs/Base/js/angular-1.2.4/angular.min.js",
+			"Theme/Rbs/Base/js/angular-1.2.4/angular-cookies.min.js",
+			"Theme/Rbs/Base/js/angular-1.2.4/angular-animate.min.js",
 			"Theme/Rbs/Base/js/rbschangeapp.js"
 		]
 	},

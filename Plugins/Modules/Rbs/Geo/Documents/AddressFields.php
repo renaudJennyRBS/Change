@@ -6,12 +6,10 @@ namespace Rbs\geo\Documents;
  */
 class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 {
-
 	/**
 	 * @var array|null
 	 */
 	protected $fieldsName = null;
-
 
 	protected function loadFieldsName()
 	{
@@ -50,7 +48,6 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 			$this->loadFieldsName();
 		}
 		return array_keys($this->fieldsName);
-
 	}
 
 	/**
@@ -70,7 +67,7 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 	}
 
 	/**
-	 * @param Attribute $attribute
+	 * @param AddressFields $addressFields
 	 * @return array|null
 	 */
 	protected function buildEditorDefinition(AddressFields $addressFields)
@@ -95,5 +92,4 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 		}
 		return null;
 	}
-
 }
