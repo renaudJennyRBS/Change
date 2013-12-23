@@ -500,7 +500,9 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				scope.tags = null;
 				scope.availTags = null;
 				if (!scope.filter.parameters.hasOwnProperty('tagIds')) {
@@ -508,11 +510,6 @@
 				}
 
 				scope.showAll = scope.filter.parameters.tagIds.length == 0;
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-
-				containerController.linkNode(scope);
 
 				scope.isConfigured = function() {
 					return (scope.filter.parameters.tagIds && scope.filter.parameters.tagIds.length > 0);
@@ -584,14 +581,12 @@
 					if (!scope.isUsed(tag)) {
 						scope.tags.push(tag);
 						tag.used = true;
-						containerController.applyFilter();
 					}
 				};
 
 				scope.removeTag = function (index) {
 					scope.tags[index].used = false;
 					scope.tags.splice(index, 1);
-					containerController.applyFilter();
 				};
 			}
 		};

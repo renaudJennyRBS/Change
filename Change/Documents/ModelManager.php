@@ -90,8 +90,6 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->workspace;
 	}
 
-
-
 	/**
 	 * @param string $modelName
 	 * @return \Change\Documents\AbstractModel|null
@@ -357,6 +355,16 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 						];
 						$definition['config']['possibleValues'] = $possibleValues;
 					}
+					elseif ($definition['name'] === 'LCID' || $definition['name'] === 'refLCID')
+					{
+						$possibleValues = [];
+						foreach ($i18nManager->getSupportedLCIDs() as $LCID)
+						{
+							$possibleValues[] = ['value' => $LCID, "label"  => $LCID];
+						}
+						$definition['config']['possibleValues'] = $possibleValues;
+					}
+
 					if (!isset($definition['config']['group']))
 					{
 						if (in_array($definition['name'], $systemPropertiesName))
@@ -461,7 +469,17 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 			if (isset($parameters['propertyName']) && isset($parameters['operator']))
 			{
 				$property = $documentQuery->getModel()->getProperty($parameters['propertyName']);
-				if ($property) {
+				if ($property)
+				{
+					if ($property->getName() === 'LCID')
+					{
+						if (isset($parameters['value']))
+						{
+							$documentQuery->setLCID($parameters['value']);
+							return $predicateBuilder->eq($property, $parameters['value']);
+						}
+						return null;
+					}
 					if (isset($parameters['value']))
 					{
 						switch($parameters['operator'])

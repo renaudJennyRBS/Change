@@ -204,8 +204,9 @@ class Query extends AbstractBuilder
 		{
 			$column = $this->getColumn($propertyName);
 		}
-
 		$this->orderArray[] = array($column, $asc);
+
+		return $this;
 	}
 
 

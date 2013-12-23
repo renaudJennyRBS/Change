@@ -159,6 +159,35 @@ class AttributeManager
 		return $values;
 	}
 
+	protected $cachedAttrWithValue = [];
+
+	/**
+	 * @param Attribute $groupAttribute
+	 * @return array
+	 */
+	protected function getAttributesWithValues(\Rbs\Catalog\Documents\Attribute $groupAttribute)
+	{
+		if (!isset($this->cachedAttrWithValue[$groupAttribute->getId()]))
+		{
+			$attributesWithValues = [];
+			foreach ($groupAttribute->getAttributes() as $attribute)
+			{
+				$vt = $attribute->getValueType();
+				if ($vt == Attribute::TYPE_GROUP)
+				{
+					$attributesWithValues = array_merge($attributesWithValues, $this->getAttributesWithValues($attribute));
+				}
+				elseif ($vt != Attribute::TYPE_PROPERTY)
+				{
+					$attributesWithValues[] = ['id' => $attribute->getId(), 'valueType' => $vt,
+						'value' => $attribute->getDefaultValue()];
+				}
+			}
+			$this->cachedAttrWithValue[$groupAttribute->getId()] = $attributesWithValues;
+		}
+		return $this->cachedAttrWithValue[$groupAttribute->getId()];
+	}
+
 	/**
 	 * Use DbProvider
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
@@ -167,29 +196,46 @@ class AttributeManager
 	public function setAttributeValues($product, $values)
 	{
 		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
-		if (is_array($values) && count($values))
-		{
-			$defined = $this->getDefinedAttributesValues($productId);
-			foreach ($values as $value)
-			{
-				if ($value['valueType'] === Attribute::TYPE_PROPERTY)
-				{
-					continue;
-				}
-
-				if (isset($defined[$value['id']]))
-				{
-					$this->updateAttributeValue($defined[$value['id']], $value);
-				}
-				else
-				{
-					$defined[$value['id']] = $this->insertAttributeValue($productId, $value);
-				}
-			}
-		}
-		else
+		$groupAttribute = $product->getAttribute();
+		if (!$groupAttribute)
 		{
 			$this->deleteAttributeValue($productId);
+			return;
+		}
+		$attributesWithValues = $this->getAttributesWithValues($groupAttribute);
+		if (count($attributesWithValues) == 0)
+		{
+			$this->deleteAttributeValue($productId);
+			return;
+		}
+
+		if (!is_array($values))
+		{
+			$values = [];
+		}
+
+		$defined = $this->getDefinedAttributesValues($productId);
+		foreach ($attributesWithValues as $attrWithValue)
+		{
+			$value = $attrWithValue;
+			$id = $attrWithValue['id'];
+			foreach ($values as $v)
+			{
+				if ($v['id'] == $id)
+				{
+					$value = $v;
+					break;
+				}
+			}
+
+			if (isset($defined[$id]))
+			{
+				$this->updateAttributeValue($defined[$id], $value);
+			}
+			else
+			{
+				$defined[$id] = $this->insertAttributeValue($productId, $value);
+			}
 		}
 	}
 
@@ -218,7 +264,7 @@ class AttributeManager
 	{
 		//integer_value, float_value, date_value, string_value, text_value
 		$result = array(null, null, null, null, null);
-		if ($value !== null)
+		if ($value !== null && $value !== '')
 		{
 			switch ($valueType)
 			{

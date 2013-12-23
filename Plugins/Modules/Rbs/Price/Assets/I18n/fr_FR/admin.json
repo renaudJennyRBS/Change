@@ -121,5 +121,11 @@
 	},
 	"tax_update_in_progress_help":{
 		"message":"Une mise à jour des taxes du prix est en cours. La modification sera de nouveau accessible après application."
+	},
+	"fee_list":{
+		"message":"frais"
+	},
+	"fee_create":{
+		"message":"ajouter un frais"
 	}
 }

@@ -220,8 +220,20 @@
 	ProductListsController.$inject = ['$scope', '$routeParams', '$http', '$q', 'RbsChange.REST', 'RbsChange.NotificationCenter'];
 	app.controller('Rbs_Catalog_Product_ProductListsController', ProductListsController);
 
-
-
+	function ProductListController(scope) {
+		scope.defaultFilter = {name: "group", operator: "AND", parameters : {},
+			filters: [
+				{
+					name: "variant",
+					parameters: {
+						propertyName: "variant", operator: "eq", value: false
+					}
+				}
+			]
+		};
+	}
+	ProductListController.$inject = ['$scope'];
+	app.controller('Rbs_Catalog_Product_ListController', ProductListController);
 
 	/**
 	 * List actions.

@@ -478,5 +478,11 @@
 	},
 	"filter_stock_undefined":{
 		"message":"n'est pas défini"
+	},
+	"filter_attribute_list":{
+		"message":"par l'attribut \"$ATTRIBUTENAME$\""
+	},
+	"filter_attribute_label":{
+		"message":"produit dont l'attribut \"$ATTRIBUTENAME$\""
 	}
 }

@@ -2,6 +2,8 @@
 namespace Rbs\Catalog\Events;
 
 use Change\Db\Query;
+use Change\Documents\Property;
+use Rbs\Catalog\Documents\Attribute;
 
 /**
 * @name \Rbs\Catalog\Events\ModelManager
@@ -25,15 +27,70 @@ class ModelManager
 			$filtersDefinition[] = $definition;
 
 			$definition = ['name' => 'productCodes',
-				'directiveClass' => 'rbs-document-filter-product-codes',
+				'directiveName' => 'rbs-document-filter-product-codes',
 				'parameters' => ['restriction' => 'productCodes'],
 				'config' => [
 					'listLabel' => $i18nManager->trans('m.rbs.catalog.admin.find_product_codes', $f),
 					'group' => $i18nManager->trans('m.rbs.admin.admin.common_filter_group', $f)]];
 			$filtersDefinition[] = $definition;
 
+			$filtersDefinition = array_merge($filtersDefinition, $this->getAttributeFilterDefinition($event));
+
 			$event->setParam('filtersDefinition', $filtersDefinition);
 		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @return array
+	 */
+	protected function getAttributeFilterDefinition(\Change\Events\Event $event)
+	{
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
+		$query->andPredicates($query->in('valueType', [Attribute::TYPE_BOOLEAN, Attribute::TYPE_INTEGER,
+			Attribute::TYPE_FLOAT, Attribute::TYPE_DATETIME, Attribute::TYPE_DATETIME, Attribute::TYPE_CODE]));
+		$attributes = $query->addOrder('label')->getDocuments();
+
+		$attributeDefinitions = array();
+		if (count($attributes))
+		{
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+			$f = ['ucf'];
+
+			/** @var $attribute Attribute */
+			foreach ($attributes as $attribute)
+			{
+				$definition = ['name' => 'attribute' . $attribute->getId(),
+					'directiveName' => 'rbs-document-filter-product-attribute',
+					'parameters' => ['restriction' => 'attributeValue', 'attributeId' => $attribute->getId()],
+					'config' => [
+						'listLabel' => $i18nManager->trans('m.rbs.catalog.admin.filter_attribute_list', $f, ['ATTRIBUTENAME' => $attribute->getLabel()]),
+						'group' => $i18nManager->trans('m.rbs.admin.admin.common_filter_group', $f),
+						'valueType' => $attribute->getValueType(),
+						'label' => $i18nManager->trans('m.rbs.catalog.admin.filter_attribute_label', $f, ['ATTRIBUTENAME' => $attribute->getLabel()]),
+					]
+				];
+
+				if ($attribute->getCollectionCode())
+				{
+					$collection = $event->getApplicationServices()->getCollectionManager()->getCollection($attribute->getCollectionCode());
+					if ($collection)
+					{
+						$values = array();
+						foreach($collection->getItems() as $item)
+						{
+							$values[] = array('value' => $item->getValue(), 'label' => $item->getLabel());
+						}
+						if (count($values))
+						{
+							$definition['config']['possibleValues'] = $values;
+						}
+					}
+				}
+				$attributeDefinitions[] = $definition;
+			}
+		}
+		return $attributeDefinitions;
 	}
 
 	public function getRestriction(\Change\Events\Event $event)
@@ -74,12 +131,36 @@ class ModelManager
 					$documentQuery = $event->getParam('documentQuery');
 					$fragmentBuilder = $documentQuery->getFragmentBuilder();
 
-					$hasSKU = $fragmentBuilder->neq($documentQuery->getColumn('sku'), $documentQuery->getValueAsParameter(0, \Change\Documents\Property::TYPE_INTEGER));
+					$hasSKU = $fragmentBuilder->neq($documentQuery->getColumn('sku'), $documentQuery->getValueAsParameter(0, Property::TYPE_INTEGER));
 					$codeRestriction = $this->buildCodePredicate($documentQuery, $fragmentBuilder, $codeName, $operator, $value);
 
 					$restriction = $fragmentBuilder->logicAnd($hasSKU, $codeRestriction);
 					$event->setParam('restriction', $restriction);
 					$event->stopPropagation();
+				}
+			}
+			elseif ($restriction === 'attributeValue')
+			{
+				$parameters = $parameters + ['attributeId' => null, 'operator' => null, 'value' => null];
+				$attributeId = $parameters['attributeId'];
+				$attribute = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($attributeId);
+				$operator = $parameters['operator'];
+				$value = $parameters['value'];
+
+				if (($attribute instanceof Attribute) && ($operator === 'isNull' || (isset($value) && is_string($operator))))
+				{
+					/** @var $documentQuery \Change\Documents\Query\Query */
+					$documentQuery = $event->getParam('documentQuery');
+					$fragmentBuilder = $documentQuery->getFragmentBuilder();
+
+					$hasAttribute = $fragmentBuilder->neq($documentQuery->getColumn('attribute'), $documentQuery->getValueAsParameter(0, Property::TYPE_INTEGER));
+					$attributeRestriction = $this->buildAttributePredicate($documentQuery, $fragmentBuilder, $attribute, $operator, $value);
+					if ($attributeRestriction)
+					{
+						$restriction = $fragmentBuilder->logicAnd($hasAttribute, $attributeRestriction);
+						$event->setParam('restriction', $restriction);
+						$event->stopPropagation();
+					}
 				}
 			}
 		}
@@ -127,7 +208,7 @@ class ModelManager
 	 * @param \Change\Documents\Query\Query $documentQuery
 	 * @param \Change\Db\Query\SQLFragmentBuilder $fragmentBuilder
 	 * @param string $codeName
-	 * @param string$operator
+	 * @param string $operator
 	 * @param string|null $value
 	 * @return Query\Predicates\Exists
 	 */
@@ -145,21 +226,21 @@ class ModelManager
 		switch ($operator)
 		{
 			case 'eq':
-				$codeRestriction = $fragmentBuilder->eq($codeColumn, $documentQuery->getValueAsParameter($value, \Change\Documents\Property::TYPE_STRING));
+				$codeRestriction = $fragmentBuilder->eq($codeColumn, $documentQuery->getValueAsParameter($value, Property::TYPE_STRING));
 				break;
 			case 'neq':
-				$codeRestriction = $fragmentBuilder->neq($codeColumn, $documentQuery->getValueAsParameter($value, \Change\Documents\Property::TYPE_STRING));
+				$codeRestriction = $fragmentBuilder->neq($codeColumn, $documentQuery->getValueAsParameter($value, Property::TYPE_STRING));
 				break;
 			case 'contains':
-				$codeRestriction = $fragmentBuilder->like($codeColumn, $documentQuery->getValueAsParameter($value, \Change\Documents\Property::TYPE_STRING),
+				$codeRestriction = $fragmentBuilder->like($codeColumn, $documentQuery->getValueAsParameter($value, Property::TYPE_STRING),
 					\Change\Db\Query\Predicates\Like::ANYWHERE);
 				break;
 			case 'beginsWith':
-				$codeRestriction = $fragmentBuilder->like($codeColumn, $documentQuery->getValueAsParameter($value, \Change\Documents\Property::TYPE_STRING),
+				$codeRestriction = $fragmentBuilder->like($codeColumn, $documentQuery->getValueAsParameter($value, Property::TYPE_STRING),
 					\Change\Db\Query\Predicates\Like::BEGIN);
 				break;
 			case 'endsWith':
-				$codeRestriction = $fragmentBuilder->like($codeColumn, $documentQuery->getValueAsParameter($value, \Change\Documents\Property::TYPE_STRING),
+				$codeRestriction = $fragmentBuilder->like($codeColumn, $documentQuery->getValueAsParameter($value, Property::TYPE_STRING),
 					\Change\Db\Query\Predicates\Like::END);
 				break;
 			default:
@@ -167,6 +248,89 @@ class ModelManager
 				break;
 		}
 		$where = new \Change\Db\Query\Clauses\WhereClause($fragmentBuilder->logicAnd($docEq, $codeRestriction));
+		$sq->setWhereClause($where);
+		return $fragmentBuilder->exists($sq);
+	}
+
+	/**
+	 * @param \Change\Documents\Query\Query $documentQuery
+	 * @param \Change\Db\Query\SQLFragmentBuilder $fragmentBuilder
+	 * @param Attribute $attribute
+	 * @param string $operator
+	 * @param string|null $value
+	 * @return Query\Predicates\Exists|null
+	 */
+	protected function buildAttributePredicate($documentQuery, $fragmentBuilder, $attribute, $operator, $value)
+	{
+		$valueType = $attribute->getValueType();
+		$attributeTable = $fragmentBuilder->table('rbs_catalog_dat_attribute');
+
+		switch ($valueType)
+		{
+			case Attribute::TYPE_BOOLEAN:
+				$valueColumn = $fragmentBuilder->column('integer_value', $attributeTable);
+				$paramType = Property::TYPE_BOOLEAN;
+				break;
+			case Attribute::TYPE_INTEGER:
+				$valueColumn = $fragmentBuilder->column('integer_value', $attributeTable);
+				$paramType = Property::TYPE_INTEGER;
+				break;
+			case Attribute::TYPE_FLOAT:
+				$valueColumn = $fragmentBuilder->column('float_value', $attributeTable);
+				$paramType = Property::TYPE_FLOAT;
+				break;
+			case Attribute::TYPE_DATETIME:
+				$valueColumn = $fragmentBuilder->column('date_value', $attributeTable);
+				$paramType = Property::TYPE_DATETIME;
+				break;
+			case Attribute::TYPE_CODE:
+				$valueColumn = $fragmentBuilder->column('string_value', $attributeTable);
+				$paramType = Property::TYPE_STRING;
+				break;
+			default:
+				return null;
+		}
+
+		switch ($operator)
+		{
+			case 'eq':
+				$valueRestriction = $fragmentBuilder->eq($valueColumn, $documentQuery->getValueAsParameter($value, $paramType));
+				break;
+			case 'neq':
+				$valueRestriction = $fragmentBuilder->neq($valueColumn, $documentQuery->getValueAsParameter($value, $paramType));
+				break;
+			case 'contains':
+				$valueRestriction = $fragmentBuilder->like($valueColumn, $documentQuery->getValueAsParameter($value, $paramType),
+					\Change\Db\Query\Predicates\Like::ANYWHERE);
+				break;
+			case 'beginsWith':
+				$valueRestriction = $fragmentBuilder->like($valueColumn, $documentQuery->getValueAsParameter($value, $paramType),
+					\Change\Db\Query\Predicates\Like::BEGIN);
+				break;
+			case 'endsWith':
+				$valueRestriction = $fragmentBuilder->like($valueColumn, $documentQuery->getValueAsParameter($value, $paramType),
+					\Change\Db\Query\Predicates\Like::END);
+				break;
+			case 'gte':
+				$valueRestriction = $fragmentBuilder->gte($valueColumn, $documentQuery->getValueAsParameter($value, $paramType));
+				break;
+			case 'lte':
+				$valueRestriction = $fragmentBuilder->lte($valueColumn, $documentQuery->getValueAsParameter($value, $paramType));
+				break;
+			case 'isNull':
+				$valueRestriction = $fragmentBuilder->isNull($valueColumn);
+				break;
+			default:
+				return null;
+		}
+
+		$sq = new \Change\Db\Query\SelectQuery();
+		$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+		$sq->setFromClause(new \Change\Db\Query\Clauses\FromClause($attributeTable));
+
+		$docEq = $fragmentBuilder->eq($documentQuery->getColumn('id'), $fragmentBuilder->column('product_id', $attributeTable));
+		$attrEq = $fragmentBuilder->eq($fragmentBuilder->column('attribute_id', $attributeTable), $documentQuery->getValueAsParameter($attribute->getId(), Property::TYPE_INTEGER));
+		$where = new \Change\Db\Query\Clauses\WhereClause($fragmentBuilder->logicAnd($docEq, $attrEq, $valueRestriction));
 		$sq->setWhereClause($where);
 		return $fragmentBuilder->exists($sq);
 	}

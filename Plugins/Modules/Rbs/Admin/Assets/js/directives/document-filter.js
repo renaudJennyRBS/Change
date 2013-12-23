@@ -10,48 +10,58 @@
 		};
 	});
 
-	function loadStoredFilter(localStorageService, model, filter) {
-		var local = localStorageService.get('filter_' + model);
-		if (local) {
-			local = angular.fromJson(local);
-			if (local && local.name === 'group')
-			{
-				angular.copy(local, filter);
-			}
-		}
-	}
-
-	function removeStoredFilter(localStorageService, model) {
-		localStorageService.remove('filter_' + model);
-	}
-
-	function saveStoredFilter(localStorageService, model, filter) {
-		if (filter.filters.length === 0) {
-			removeStoredFilter(localStorageService, model);
-		} else {
-			var local = angular.copy(filter);
-			localStorageService.add('filter_' + model, angular.toJson(local));
-		}
-	}
-
 	app.directive('rbsDocumentFilterPanel', ['localStorageService', function(localStorageService) {
+		var searchIndex = 0;
 		return {
 			restrict: 'E',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-panel.twig',
-			link: function(scope, element, attrs) {
 
-				if (attrs.hasOwnProperty('model')) {
-					scope.model = attrs.model;
-				} else {
+			link: function(scope, element, attrs) {
+				var model = attrs.model;
+
+				if (!model) {
 					console.log('rbsDocumentFilterPanel directive require "model" attribute');
 					scope.model ='Rbs_Invalid_Model';
 					element.hide();
 				}
 
-				if (attrs.hasOwnProperty('openByDefault')) {
+				function getStoredFilter() {
+					var local = localStorageService.get('filter_' + model);
+					if (local) {
+						return angular.fromJson(local);
+					}
+					return null;
+				}
+
+				function removeStoredFilter() {
+					localStorageService.remove('filter_' + model);
+				}
+
+				function saveStoredFilter(filter) {
+					if (!filter || !filter.filters ||  filter.filters.length === 0) {
+						removeStoredFilter();
+					} else {
+						localStorageService.add('filter_' + model, angular.toJson(filter));
+					}
+				}
+
+				function initializeFilter()
+				{
+					scope.model = attrs.model;
+
+					if (!angular.isObject(scope.filter)){
+						scope.filter = {};
+					}
+
+					var loadedFilter = getStoredFilter();
+					if (loadedFilter && loadedFilter.name == 'group') {
+						angular.copy(loadedFilter, scope.filter);
+					} else if (scope.defaultFilter && scope.defaultFilter.name == 'group') {
+						angular.copy(scope.defaultFilter, scope.filter);
+					}
 					scope.showFilter = (attrs.openByDefault == 'true');
-				} else {
-					scope.showFilter = false;
+
+					scope.filter.search = searchIndex++;
 				}
 
 				scope.closeFilterPanel = function() {
@@ -71,22 +81,26 @@
 				};
 
 				scope.resetFilter = function() {
-					scope.$broadcast('resetFilter', {});
-					removeStoredFilter(localStorageService, scope.model);
+					if (scope.defaultFilter && scope.defaultFilter.name == 'group') {
+						angular.copy(scope.defaultFilter, scope.filter);
+					} else {
+						scope.$broadcast('resetFilter', {});
+					}
+					removeStoredFilter();
+					scope.filter.search = searchIndex++;
 				};
 
 				scope.applyFilter = function() {
-					if (scope.filter.hasOwnProperty('search')) {
-						scope.filter.search ++;
-					} else {
-						scope.filter.search = 1;
-					}
-					saveStoredFilter(localStorageService, scope.model, scope.filter);
+					saveStoredFilter(scope.filter);
+					scope.filter.search = searchIndex++;
 				};
 
-				if (!angular.isObject(scope.filter)){
-					scope.filter = {};
-				}
+				scope.$on('applyFilter', function(event) {
+					scope.applyFilter();
+					event.stopPropagation();
+				});
+
+				initializeFilter();
 			}
 		}
 	}]);
@@ -203,22 +217,22 @@
 		};
 	});
 
-	app.directive('rbsDocumentFilterContainer', ['$compile', 'localStorageService', function($compile, localStorageService) {
-		var searchIndex = 0;
+	app.directive('rbsDocumentFilterContainer', ['$compile', function($compile) {
 		return {
 			restrict: 'A',
 			transclude: true,
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-container.twig',
 			scope: {filter : '=', model: '@'},
 			controller: ['$scope', function(scope) {
+				if (!angular.isObject(scope.filter))
+				{
+					console.log('scope.filter is not defined!');
+					return;
+				}
 
-				function resetFilter() {
-					if (!angular.isObject(scope.filter)) {
-						scope.filter = {};
-					}
+				function initFilter() {
 					scope.filter.name = 'group';
-					scope.filter.search = searchIndex++;
-					scope.filter.parameters = {all:0, configured:0};
+					scope.filter.parameters = {all: 0, configured: 0};
 					scope.filter.operator = 'AND';
 					scope.filter.filters = [];
 				}
@@ -241,10 +255,8 @@
 					removeFilter(filter, scope.filter.filters);
 				}
 
-				if (!angular.isObject(scope.filter) || !scope.filter.hasOwnProperty('name') || scope.filter.name !== 'group') {
-					resetFilter();
-				} else {
-					scope.defaultFilter = angular.copy(scope.filter);
+				if (scope.filter.name !== 'group') {
+					initFilter();
 				}
 
 				var filterDefinitions = scope.filterDefinitions = {};
@@ -252,13 +264,8 @@
 				scope.definitionToAdd = null;
 				scope.sortedDefinitions = [];
 
-				scope.$on('resetFilter', function(event, args) {
-					if (scope.defaultFilter) {
-						angular.copy(scope.defaultFilter, scope.filter);
-						scope.filter.search = searchIndex++;
-					} else {
-						resetFilter();
-					}
+				scope.$on('resetFilter', function() {
+					initFilter();
 				});
 
 				this.addFilterDefinition = function(filterDefinition) {
@@ -282,26 +289,18 @@
 				};
 
 				scope.countAllFilters = function() {
+					if (!angular.isObject(scope.filter.parameters))
+					{
+						scope.filter.parameters = {};
+					}
 					var args = scope.filter.parameters;
-					var oldConfigured = args.configured, oldAll = args.all;
 					args.all = args.configured = 0;
 					scope.$broadcast('countAllFilters', args);
-					if (args.configured != oldConfigured || args.all != oldAll)
-					{
-						saveStoredFilter(localStorageService, scope.model, scope.filter);
-					}
 					return args.configured + ' / ' + args.all;
 				};
 
 				scope.applyFilter = function() {
-//					if (scope.filter.parameters.configured > 0) {
-//						scope.filter.search = searchIndex++;
-//					}
-					saveStoredFilter(localStorageService, scope.model, scope.filter);
-				};
-
-				this.applyFilter = function() {
-					scope.applyFilter();
+					scope.$broadcast('applyFilter');
 				};
 
 				this.linkNode = function(nodeScope) {
@@ -309,12 +308,11 @@
 						delFilter(nodeScope.filter);
 						scope.applyFilter();
 					};
+
 					if (nodeScope.filter.name && scope.filterDefinitions.hasOwnProperty(nodeScope.filter.name)) {
 						nodeScope.filterDefinition = scope.filterDefinitions[nodeScope.filter.name];
 					}
 				};
-				loadStoredFilter(localStorageService, scope.model, scope.filter);
-				scope.filter.search = searchIndex++;
 			}],
 
 			link: function(scope, element) {
@@ -357,33 +355,24 @@
 				filter : '=',
 				parentOperator : '='
 			},
-			controller: ['$scope', function(scope) {
-				var operator = scope.parentOperator == 'AND' ? 'OR' : 'AND';
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+				scope.definitionToAdd = null;
 
-				if (scope.filter === undefined) {
-					scope.filter = {name: 'group', operator: operator, filters:[], parameters:{}};
-				} else {
-					scope.filter.operator = operator;
-					if (!angular.isArray(scope.filter.filters))
-					{
-						scope.filter.filters = [];
-					}
+				scope.filter.operator = scope.parentOperator == 'AND' ? 'OR' : 'AND';
+				scope.filter.name = 'group';
+				if (!angular.isArray(scope.filter.filters))
+				{
+					scope.filter.filters = [];
+				}
+				if (!angular.isObject(scope.filter.parameters))
+				{
+					scope.filter.parameters = {};
 				}
 
 				scope.isAnd = function() {
 					return scope.filter.operator == 'AND';
 				};
-
-				scope.countAllFilters = function() {
-					var args = {all: 0, configured: 0};
-					scope.$broadcast('countAllFilters', args);
-					return args.configured + ' / ' + args.all;
-				};
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				scope.definitionToAdd = null;
-				containerController.linkNode(scope);
 
 				scope.sortedDefinitions = containerController.getSortedDefinitions();
 				scope.filterDefinitions = containerController.getFilterDefinitions();
@@ -403,7 +392,6 @@
 		};
 	}]);
 
-
 	app.directive('rbsDocumentFilterUnknown', function() {
 		return {
 			restrict: 'A',
@@ -412,20 +400,19 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				scope.isConfigured = function() {
 					return false;
 				};
+
 				scope.$on('countAllFilters', function(event, args) {
 					args.all++;
 					if (scope.isConfigured()) {
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
@@ -438,11 +425,15 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				scope.filter.parameters.operator = 'eq';
+
 				if (!scope.filter.parameters.hasOwnProperty('value')){
 					scope.filter.parameters.value = false;
 				}
+
 				scope.isConfigured = function() {
 					return scope.filter.parameters.operator && scope.filter.parameters.hasOwnProperty('value');
 				};
@@ -453,10 +444,6 @@
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
@@ -469,7 +456,9 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -481,10 +470,6 @@
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
@@ -498,7 +483,9 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -510,10 +497,6 @@
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
@@ -526,7 +509,8 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -538,10 +522,6 @@
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
@@ -554,7 +534,8 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -566,10 +547,6 @@
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
