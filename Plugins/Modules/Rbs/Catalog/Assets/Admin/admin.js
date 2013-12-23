@@ -146,40 +146,4 @@
 			}
 		};
 	});
-
-	app.directive('rbsCatalogAttributeDefaultFilter', function() {
-		return {
-			restrict: 'A',
-			link: function(scope) {
-				scope.filter = {name: "group", operator: "AND", parameters : {},
-					filters: [
-						{
-							name: "valueType",
-							parameters: {
-								propertyName: "valueType", operator: "eq", value: "Group"
-							}
-						}
-					]
-				}
-			}
-		};
-	});
-
-	app.directive('rbsCatalogProductDefaultFilter', function() {
-		return {
-			restrict: 'A',
-			link: function(scope) {
-				scope.filter = {name: "group", operator: "AND", parameters : {},
-					filters: [
-						{
-							name: "variant",
-							parameters: {
-								propertyName: "variant", operator: "eq", value: false
-							}
-						}
-					]
-				}
-			}
-		};
-	});
 })();

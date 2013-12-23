@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" data-ng-controller="Rbs_Catalog_Product_ListController">
 
 	<rbs-workspace-config>
 		<rbs-breadcrumb-config>
@@ -13,7 +13,7 @@
 
 	<div rbs-main-column>
 		<rbs-page-header title="{{ i18nAttr('m.rbs.catalog.admin.product_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel rbs-catalog-product-default-filter="" open-by-default="false"
+		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Catalog_Product" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">

@@ -27,7 +27,9 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				if (!scope.filter.parameters.hasOwnProperty('operator')) {
 					scope.filter.parameters.operator = null;
 				}
@@ -43,10 +45,6 @@
 						args.configured++;
 					}
 				});
-			}],
-
-			link: function(scope, element, attrs, containerController) {
-				containerController.linkNode(scope);
 			}
 		};
 	});
@@ -59,7 +57,9 @@
 			scope: {
 				filter : '='
 			},
-			controller: ['$scope', function(scope) {
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
 				if (!scope.filter.parameters.hasOwnProperty('operator')) {
 					scope.filter.parameters.operator = null;
 				}
@@ -80,10 +80,47 @@
 						args.configured++;
 					}
 				});
-			}],
+			}
+		};
+	});
 
+	app.directive('rbsDocumentFilterProductAttribute', function() {
+		return {
+			restrict: 'A',
+			require: '^rbsDocumentFilterContainer',
+			templateUrl : 'Rbs/Catalog/rbs-document-filter-product-attribute.twig',
+			scope: {
+				filter : '='
+			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
+
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = null;
+				}
+
+				if (!scope.filter.parameters.codeName) {
+					scope.filter.parameters.codeName = 'code';
+				}
+
+				scope.isConfigured = function() {
+					var op = scope.filter.parameters.operator;
+					var codeName = scope.filter.parameters.codeName;
+					return codeName && op && (op == 'isNull' || scope.filter.parameters.value);
+				};
+
+				scope.isBoolean = function() {
+					var op = scope.filter.parameters.operator;
+					var codeName = scope.filter.parameters.codeName;
+					return codeName && op && (op == 'isNull' || scope.filter.parameters.value);
+				};
+
+				scope.$on('countAllFilters', function(event, args) {
+					args.all++;
+					if (scope.isConfigured()) {
+						args.configured++;
+					}
+				});
 			}
 		};
 	});
