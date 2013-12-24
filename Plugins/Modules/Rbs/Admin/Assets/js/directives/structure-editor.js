@@ -1878,7 +1878,7 @@
 				scope.removeBlock = function () {
 					var block = ctrl.getSelectedBlock();
 					console.log(block);
-					if (block.hasAttribute('rbs-block-chooser')) {
+					if (block.attr('rbs-block-chooser')) {
 						ctrl.removeBlock(block);
 						ctrl.notifyChange("remove", "block", block);
 					}
