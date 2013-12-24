@@ -161,37 +161,6 @@ class EventManagerFactory
 	 */
 	public function attachShared(\Zend\EventManager\SharedEventManagerInterface $events)
 	{
-		$identifiers = array('Documents');
-
-		$callBack = function ($event)
-		{
-			(new \Change\Documents\Events\ValidateListener())->onValidate($event);
-		};
-		$events->attach($identifiers, array(\Change\Documents\Events\Event::EVENT_CREATE, \Change\Documents\Events\Event::EVENT_UPDATE), $callBack, 5);
-
-		$callBack = function ($event)
-		{
-			(new \Change\Documents\Events\DeleteListener())->onDelete($event);
-		};
-		$events->attach($identifiers, \Change\Documents\Events\Event::EVENT_DELETE, $callBack, 5);
-
-		$callBack = function ($event)
-		{
-			(new \Change\Documents\Events\DeleteListener())->onDeleted($event);
-		};
-		$events->attach($identifiers, \Change\Documents\Events\Event::EVENT_DELETED, $callBack, 5);
-
-		$callBack = function ($event)
-		{
-			(new \Change\Documents\Events\DeleteListener())->onLocalizedDeleted($event);
-		};
-		$events->attach($identifiers, \Change\Documents\Events\Event::EVENT_LOCALIZED_DELETED, $callBack, 5);
-
-		$callBack = function ($event)
-		{
-			(new \Change\Documents\Events\DeleteListener())->onCleanUp($event);
-		};
-		$events->attach('JobManager', 'process_Change_Document_CleanUp', $callBack, 5);
 
 	}
 }
