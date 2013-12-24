@@ -1,6 +1,7 @@
 <?php
 namespace Rbs\Commerce\Blocks;
 
+use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
 
 /**

@@ -6,14 +6,14 @@
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FullText', 'clientName'), ['ucf']) }}" required="true">
 			<select ng-model="document.clientName" class="form-control" required="true"
 					rbs-items-from-collection="Rbs_Elasticsearch_Collection_Clients">
-				<option value="">{{ i18n('m.rbs.elasticsearch.admin.clientname_choose', ['ucf']) }}</option>
+				<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FullText', 'analysisLCID'), ['ucf']) }}" required="true">
 			<select ng-model="document.analysisLCID" class="form-control" required="true"
 					rbs-items-from-collection="Rbs_Generic_Collection_Languages">
-				<option value="">{{ i18n('m.rbs.elasticsearch.admin.analysislcid_choose', ['ucf']) }}</option>
+				<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
 			</select>
 		</rbs-field>
 

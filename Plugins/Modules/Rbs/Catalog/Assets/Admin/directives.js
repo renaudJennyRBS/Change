@@ -99,14 +99,10 @@
 					scope.filter.parameters.operator = null;
 				}
 
-				if (!scope.filter.parameters.codeName) {
-					scope.filter.parameters.codeName = 'code';
-				}
-
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
-					var codeName = scope.filter.parameters.codeName;
-					return codeName && op && (op == 'isNull' || scope.filter.parameters.value);
+					var attributeId = scope.filter.parameters.attributeId;
+					return attributeId && op && (op == 'isNull' || scope.filter.parameters.value);
 				};
 
 				scope.isBoolean = function() {

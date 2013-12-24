@@ -23,6 +23,7 @@ class Facets extends Block
 		$parameters->addParameterMeta('facetGroups');
 		$parameters->addParameterMeta('facetFilters', null);
 		$parameters->addParameterMeta('formAction', null);
+		$parameters->addParameterMeta('productListId');
 		$parameters->setNoCache();
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -93,6 +94,15 @@ class Facets extends Block
 	protected function execute($event, $attributes)
 	{
 		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
+
+		$genericServices = $this->getGenericServices($event);
+		if ($genericServices == null)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': genericServices not defined');
+			return null;
+		}
+
 		$parameters = $event->getBlockParameters();
 
 		$facetGroupIds = $parameters->getParameter('facetGroups');
@@ -101,7 +111,7 @@ class Facets extends Block
 		$facets = array();
 		foreach ($facetGroupIds as $facetGroupId)
 		{
-			$group = $applicationServices->getDocumentManager()->getDocumentInstance($facetGroupId);
+			$group = $documentManager->getDocumentInstance($facetGroupId);
 			if ($group instanceof \Rbs\Elasticsearch\Documents\FacetGroup)
 			{
 				if ($storeIndexId == null)
@@ -122,34 +132,51 @@ class Facets extends Block
 			}
 		}
 
-		$storeIndex = $applicationServices->getDocumentManager()->getDocumentInstance($storeIndexId);
-		if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
+		$attributes['facetGroups'] = $facetGroups;
+
+		$storeIndex = $documentManager->getDocumentInstance($storeIndexId);
+		if (!($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex))
 		{
-			$attributes['facetGroups'] = $facetGroups;
-			$genericServices = $this->getGenericServices($event);
-			if (!$genericServices)
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index');
+			return null;
+		}
+
+		$productListId = $parameters->getParameter('productListId');
+		$productList = null;
+		if ($productListId !== null)
+		{
+			/** @var $productList \Rbs\Catalog\Documents\ProductList|null */
+			$productList = $documentManager->getDocumentInstance($productListId);
+			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
+				$applicationServices->getLogging()->warn(__METHOD__ . ': invalid product list');
 				return null;
 			}
-			$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
-			if ($client)
-			{
-				$index = $client->getIndex($storeIndex->getName());
-				if ($index->exists())
-				{
-					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($storeIndex);
-					$searchQuery->setFacetManager($genericServices->getFacetManager());
-					$searchQuery->setI18nManager($applicationServices->getI18nManager());
-					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
-					$facetFilters = $parameters->getParameter('facetFilters');
-					$query = $searchQuery->getFacetsQuery(null, null, $facetFilters, $facets);
-					$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
-					$attributes['facetValues'] = $searchQuery->buildFacetValues($result->getFacets(),
-						$facetFilters, $facets);
-					return 'facets.twig';
-				}
-			}
 		}
-		return null;
+
+		$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
+		if (!$client)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid client ' . $storeIndex->getClientName());
+			return null;
+		}
+
+		$index = $client->getIndex($storeIndex->getName());
+		if (!$index->exists())
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': index not exist ' . $storeIndex->getName());
+			return null;
+		}
+
+		$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($storeIndex);
+		$searchQuery->setFacetManager($genericServices->getFacetManager());
+		$searchQuery->setI18nManager($applicationServices->getI18nManager());
+		$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
+		$facetFilters = $parameters->getParameter('facetFilters');
+		$query = $searchQuery->getListFacetsQuery($productList, $facetFilters, $facets);
+
+		$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
+		$attributes['facetValues'] = $searchQuery->buildFacetValues($result->getFacets(), $facetFilters, $facets);
+		return 'facets.twig';
 	}
 }

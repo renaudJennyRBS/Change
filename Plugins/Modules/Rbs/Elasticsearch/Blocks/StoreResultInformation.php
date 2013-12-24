@@ -25,6 +25,22 @@ class StoreResultInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.storeresult_storeindex', $ucf))
 			->setAllowedModelsNames(array('Rbs_Elasticsearch_StoreIndex'));
 
+		$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Catalog_ProductList');
+		$allowedModelsNames = $model->getDescendantsNames();
+		array_unshift($allowedModelsNames, $model->getName());
+		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
+			->setAllowedModelsNames($allowedModelsNames)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
+
 		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
+
+		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_contextual_urls', $ucf));
+
+		$this->addInformationMeta('itemsPerLine', Property::TYPE_INTEGER, true, 3)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_line', $ucf));
+
+		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 9)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_page', $ucf));
 	}
 }

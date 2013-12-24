@@ -11,9 +11,6 @@
 	"attr_brand":{
 		"message":"marque"
 	},
-	"attr_code":{
-		"message":"code"
-	},
 	"attr_genericattributes":{
 		"message":"Attributs généraux"
 	},

@@ -6,7 +6,8 @@
 					"type":"multi_field",
 					"fields":{
 						"title": {"type": "string", "boost": 4, "analyzer": "text_analyzer"},
-						"autocomplete":{"analyzer":"autocomplete", "type":"string"}
+						"autocomplete":{"analyzer":"autocomplete", "type":"string"},
+						"untouched": {"include_in_all": false, "index": "not_analyzed", "type": "string"}
 					}
 				},
 				"content": {"type": "string", "boost": 2, "analyzer": "text_analyzer"},
@@ -14,7 +15,15 @@
 				"canonicalSectionId": { "type": "integer", "index": "not_analyzed"},
 				"startPublication": {"type": "date", "index": "not_analyzed"},
 				"endPublication": {"type": "date", "index": "not_analyzed"},
-				"skuId" : {"type": "integer", "index": "not_analyzed"}
+				"skuId" : {"type": "integer", "index": "not_analyzed"},
+				"listItems" : {
+					"properties": {
+						"position": {"type": "long"},
+						"listId": {"type": "long"},
+						"itemId": {"type": "long"}
+					},
+					"type": "nested"
+				}
 			}
 		}
 	},

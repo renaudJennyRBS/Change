@@ -175,25 +175,63 @@ class SearchQuery
 	}
 
 	/**
-	 * @param string $searchText
-	 * @param string $allowedSectionIds
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
+	 * @param array $facetFilters
+	 * @param integer $from
+	 * @param integer $size
+	 * @param array $fields
+	 * @return \Elastica\Query
+	 */
+	public function getListSearchQuery($productList = null, $facetFilters = null, $from = 0, $size = 50, $fields = null)
+	{
+		$now = (new \DateTime())->format(\DateTime::ISO8601);
+		$multiMatch = new \Elastica\Query\MatchAll();
+		$bool = $this->getFacetFilters($facetFilters);
+		if (!$bool)
+		{
+			$bool = new \Elastica\Filter\Bool();
+		}
+		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
+		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
+		if ($productList)
+		{
+			$nested = new \Elastica\Filter\Nested();
+			$nested->setPath('listItems');
+			$nestedBool = new \Elastica\Query\Bool();
+			$nestedBool->addMust(new \Elastica\Query\Term(['listId' => $productList->getId()]));
+			$nested->setQuery($nestedBool);
+			$bool->addMust($nested);
+		}
+
+		$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);
+		$query = new \Elastica\Query($filtered);
+		if (is_array($fields))
+		{
+			$query->setFields($fields);
+		}
+		$query->setFrom($from)->setSize($size);
+		if ($productList)
+		{
+			$sort = ['position' => ['order' => 'asc', 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $productList->getId()]]]];
+			if ($productList->getProductSortOrder() == 'title')
+			{
+				$sort['title.untouched'] = ['order' => ($productList->getProductSortDirection() == 'asc' ? 'asc' : 'desc')];
+			}
+			$query->setSort($sort);
+		}
+		return $query;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param array $facetFilters
 	 * @param array $facets
 	 * @return \Elastica\Query
 	 */
-	public function getFacetsQuery($searchText, $allowedSectionIds = null, $facetFilters = null, $facets = null)
+	public function getListFacetsQuery($productList = null, $facetFilters = null, $facets = null)
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
-		if ($searchText)
-		{
-			$multiMatch = new \Elastica\Query\MultiMatch();
-			$multiMatch->setQuery($searchText);
-			$multiMatch->setFields(array('title', 'content'));
-		}
-		else
-		{
-			$multiMatch = new \Elastica\Query\MatchAll();
-		}
+		$multiMatch = new \Elastica\Query\MatchAll();
 
 		$bool = $this->getFacetFilters($facetFilters);
 		if (!$bool)
@@ -202,10 +240,14 @@ class SearchQuery
 		}
 		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
 		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
-
-		if (is_array($allowedSectionIds))
+		if ($productList)
 		{
-			$bool->addMust(new \Elastica\Filter\Terms('canonicalSectionId', $allowedSectionIds));
+			$nested = new \Elastica\Filter\Nested();
+			$nested->setPath('listItems');
+			$nestedBool = new \Elastica\Query\Bool();
+			$nestedBool->addMust(new \Elastica\Query\Term(['listId' => $productList->getId()]));
+			$nested->setQuery($nestedBool);
+			$bool->addMust($nested);
 		}
 
 		$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);

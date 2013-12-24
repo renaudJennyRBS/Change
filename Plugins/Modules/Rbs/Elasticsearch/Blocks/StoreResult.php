@@ -21,8 +21,8 @@ class StoreResult extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('facetFilters', null);
-		$parameters->addParameterMeta('searchText');
 		$parameters->addParameterMeta('storeIndex');
+		$parameters->addParameterMeta('contextualUrls', true);
 		$parameters->addParameterMeta('itemsPerPage', 10);
 		$parameters->addParameterMeta('pageNumber', 1);
 		$parameters->addParameterMeta('webStoreId', null);
@@ -34,21 +34,21 @@ class StoreResult extends Block
 		$parameters->addParameterMeta('displayPrices', true);
 		$parameters->addParameterMeta('displayPricesWithTax', true);
 
+		$parameters->addParameterMeta('productListId');
+		$parameters->addParameterMeta('redirectUrl');
+
 		$parameters->setNoCache();
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$request = $event->getHttpRequest();
-		$searchText = $request->getQuery('searchText');
-		if ($searchText && is_string($searchText))
-		{
-			$parameters->setParameterValue('searchText', $searchText);
-		}
-		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
+		$parameters->setParameterValue('pageNumber',
+			intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
 		$queryFilters = $request->getQuery('facetFilters', null);
 		$facetFilters = array();
-		if (is_array($queryFilters)) {
+		if (is_array($queryFilters))
+		{
 			foreach ($queryFilters as $fieldName => $rawValue)
 			{
 				if (is_string($fieldName) && $rawValue)
@@ -58,12 +58,26 @@ class StoreResult extends Block
 			}
 		}
 		$parameters->setParameterValue('facetFilters', $facetFilters);
+
+		if (!$parameters->getParameter('redirectUrl'))
+		{
+			$urlManager = $event->getUrlManager();
+			$oldValue = $urlManager->getAbsoluteUrl();
+			$urlManager->setAbsoluteUrl(true);
+			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
+			if ($uri)
+			{
+				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
+			}
+			$urlManager->setAbsoluteUrl($oldValue);
+		}
+
 		return $parameters;
 	}
 
 	/**
 	 * @param Event $event
-	 * @return \Rbs\Generic\GenericServices
+	 * @return \Rbs\Generic\GenericServices | null
 	 */
 	protected function getGenericServices($event)
 	{
@@ -73,6 +87,20 @@ class StoreResult extends Block
 			return null;
 		}
 		return $genericServices;
+	}
+
+	/**
+	 * @param Event $event
+	 * @return \Rbs\Commerce\CommerceServices
+	 */
+	protected function getCommerceServices($event)
+	{
+		$commerceServices = $event->getServices('commerceServices');
+		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+		{
+			return null;
+		}
+		return $commerceServices;
 	}
 
 	/**
@@ -86,81 +114,116 @@ class StoreResult extends Block
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
 
-
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
+		$commerceServices = $this->getCommerceServices($event);
+		$genericServices = $this->getGenericServices($event);
+		if ($commerceServices == null || $genericServices == null)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': commerceServices or genericServices not defined');
+			return null;
+		}
 
 		$parameters = $event->getBlockParameters();
-		$searchText = trim($parameters->getParameter('searchText'), '');
-		$facetFilters = $parameters->getParameter('facetFilters');
-
-		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
-		if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
+		$productListId = $parameters->getParameter('productListId');
+		$productList = null;
+		if ($productListId !== null)
 		{
-			$parameters->setParameterValue('webStoreId', $storeIndex->getStoreId());
-			$genericServices = $this->getGenericServices($event);
-			$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
-			if ($client)
+			/** @var $productList \Rbs\Catalog\Documents\ProductList|null */
+			$productList = $documentManager->getDocumentInstance($productListId);
+			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
-				$index = $client->getIndex($storeIndex->getName());
-				if ($index->exists())
-				{
-					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($storeIndex);
-					$searchQuery->setFacetManager($genericServices->getFacetManager());
-					$searchQuery->setI18nManager($applicationServices->getI18nManager());
-					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
-
-					$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
-					$size = $parameters->getParameter('itemsPerPage');
-					$from = ($pageNumber - 1) * $size;
-					$query = $searchQuery->getSearchQuery($searchText, null, $facetFilters, $from, $size, array('title'));
-
-					$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
-					$attributes['totalCount'] = $totalCount =  $searchResult->getTotalHits();
-
-					$rows = array();
-					if ($totalCount)
-					{
-						$itemsPerPage = $parameters->getParameter('itemsPerPage');
-						$pageCount = ceil($totalCount / $itemsPerPage);
-						$pageNumber = $this->fixPageNumber($parameters->getParameter('pageNumber'), $pageCount);
-
-						$attributes['pageNumber'] = $pageNumber;
-						$attributes['totalCount'] = $totalCount;
-						$attributes['pageCount'] = $pageCount;
-
-						$webStoreId = $storeIndex->getStoreId();
-
-						/* @var $result \Elastica\Result */
-						foreach ($searchResult->getResults() as $result)
-						{
-							$product = $documentManager->getDocumentInstance($result->getId());
-							if (!($product instanceof \Rbs\Catalog\Documents\Product) || !$product->published())
-							{
-								continue;
-							}
-							$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
-
-							$row = array('id' => $product->getId(), 'url' => $url);
-							$visual = $product->getFirstVisual();
-							$row['visual'] = $visual ? $visual->getPath() : null;
-
-							$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
-							if ($productPresentation)
-							{
-								$productPresentation->evaluate();
-								$row['productPresentation'] = $productPresentation;
-							}
-
-							$rows[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
-						}
-					}
-					$attributes['rows'] = $rows;
-				}
+				$applicationServices->getLogging()->warn(__METHOD__ . ': invalid product list');
+				return null;
 			}
-			$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
-			return 'store-result.twig';
 		}
-		return null;
+
+		$facetFilters = $parameters->getParameter('facetFilters');
+		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
+		if (!($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex))
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index');
+			return null;
+		}
+
+		$parameters->setParameterValue('webStoreId', $storeIndex->getStoreId());
+
+		$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
+		if (!$client)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid client ' . $storeIndex->getClientName());
+			return null;
+		}
+
+		$index = $client->getIndex($storeIndex->getName());
+		if (!$index->exists())
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': index not exist ' . $storeIndex->getName());
+			return null;
+		}
+
+		$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($storeIndex);
+		$searchQuery->setFacetManager($genericServices->getFacetManager());
+		$searchQuery->setI18nManager($applicationServices->getI18nManager());
+		$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
+
+		$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
+		$size = $parameters->getParameter('itemsPerPage');
+		$from = ($pageNumber - 1) * $size;
+		$query = $searchQuery->getListSearchQuery($productList, $facetFilters, $from, $size, []);
+
+		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
+		$attributes['totalCount'] = $totalCount = $searchResult->getTotalHits();
+
+		$rows = array();
+		if ($totalCount)
+		{
+			/* @var $page \Change\Presentation\Interfaces\Page */
+			$page = $event->getParam('page');
+			$section = $page->getSection();
+
+			$itemsPerPage = $parameters->getParameter('itemsPerPage');
+			$pageCount = ceil($totalCount / $itemsPerPage);
+			$pageNumber = $this->fixPageNumber($parameters->getParameter('pageNumber'), $pageCount);
+
+			$attributes['pageNumber'] = $pageNumber;
+			$attributes['totalCount'] = $totalCount;
+			$attributes['pageCount'] = $pageCount;
+
+			$webStoreId = $storeIndex->getStoreId();
+			$contextualUrls = $parameters->getParameter('contextualUrls');
+
+			/* @var $result \Elastica\Result */
+			foreach ($searchResult->getResults() as $result)
+			{
+				$product = $documentManager->getDocumentInstance($result->getId());
+				if (!($product instanceof \Rbs\Catalog\Documents\Product) || !$product->published())
+				{
+					continue;
+				}
+				if ($contextualUrls)
+				{
+					$url = $event->getUrlManager()->getByDocument($product, $section)->toString();
+				}
+				else
+				{
+					$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
+				}
+
+				$row = array('id' => $product->getId(), 'url' => $url);
+				$visual = $product->getFirstVisual();
+				$row['visual'] = $visual ? $visual->getPath() : null;
+
+				$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
+				if ($productPresentation)
+				{
+					$productPresentation->evaluate();
+					$row['productPresentation'] = $productPresentation;
+				}
+				$rows[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
+			}
+		}
+		$attributes['rows'] = $rows;
+
+		$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
+		return 'store-result.twig';
 	}
 }
