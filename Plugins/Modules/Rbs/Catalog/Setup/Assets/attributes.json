@@ -28,15 +28,6 @@
 		"visibility":["specifications", "comparisons"],
 		"documentType":"Rbs_Brand_Brand"
 	},
-	"code" : {
-		"title":"m.rbs.catalog.setup.attr_code",
-		"valueType":"Property",
-		"requiredValue":false,
-		"localizedValue":false,
-		"collectionCode":null,
-		"productProperty":"code",
-		"visibility":["specifications", "comparisons"]
-	},
 	"genericAttributes" : {
 		"title":"m.rbs.catalog.setup.attr_genericattributes",
 		"valueType":"Group",
@@ -44,9 +35,8 @@
 		"defaultValue":"",
 		"localizedValue":false,
 		"collectionCode":null,
-		"productProperty":"code",
 		"visibility":["specifications", "comparisons"],
 		"documentType":"",
-		"attributes":["description", "brand", "pictograms", "code"]
+		"attributes":["description", "brand", "pictograms"]
 	}
 }
