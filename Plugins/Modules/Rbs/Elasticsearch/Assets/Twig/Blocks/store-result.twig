@@ -1,8 +1,11 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+<script type="text/ng-template" id="/addLineToCart.tpl">
+	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()" data-ng-disabled="quantity <= 0">
+		<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+	</button>
+</script>
+
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
-	<input type="hidden" name="quantity" value="1" />
-	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
 			{% for row in rows %}

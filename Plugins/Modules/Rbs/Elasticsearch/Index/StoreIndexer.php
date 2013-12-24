@@ -44,30 +44,6 @@ class StoreIndexer extends FullTextIndexer
 	}
 
 	/**
-	 * @return string[]
-	 */
-	protected function getIndexableModelNames()
-	{
-		if ($this->indexableModelNames === null)
-		{
-			$this->indexableModelNames = $indexableModelNames = array();
-
-			$modelManager = $this->getApplicationServices()->getModelManager();
-			$model = $modelManager->getModelByName('Rbs_Catalog_Product');
-			if ($model)
-			{
-				$indexableModelNames = array_merge(array($model->getName()), $model->getDescendantsNames(), $indexableModelNames);
-			}
-			else
-			{
-				return $this->indexableModelNames;
-			}
-			$this->indexableModelNames = $indexableModelNames;
-		}
-		return $this->indexableModelNames;
-	}
-
-	/**
 	 * @param Event $event
 	 */
 	public function onIndexDocument($event)
@@ -82,9 +58,8 @@ class StoreIndexer extends FullTextIndexer
 		$documentId = $event->getParam('id');
 		$LCID = $event->getParam('LCID');
 
-		if (in_array($model->getName(), $this->getIndexableModelNames()))
+		if ($model->isInstanceOf('Rbs_Catalog_Product'))
 		{
-
 			$document = $event->getParam('document');
 			if (!($document instanceof \Change\Documents\AbstractDocument))
 			{
@@ -126,6 +101,100 @@ class StoreIndexer extends FullTextIndexer
 				$this->indexProductsBySkuId($skuId);
 			}
 		}
+		elseif ($model->isInstanceOf('Rbs_Catalog_ProductListItem'))
+		{
+			$document = $event->getParam('document');
+			$indexedItem = $this->getIndexedListItemInfo($documentId);
+			if ($document instanceof \Rbs\Catalog\Documents\ProductListItem)
+			{
+				if ($indexedItem)
+				{
+					list($itemId, $listId, $productId, $position) = $indexedItem;
+					if ($document->getPosition() != $position)
+					{
+						$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+						$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
+						$subQuery->andPredicates($subQuery->eq('productList', $listId));
+						$products = $query->getDocuments();
+						$this->indexProducts($products);
+					}
+					elseif ($document->getProduct())
+					{
+						$this->indexProducts([$document->getProduct()]);
+					}
+				}
+				elseif ($document->getProduct())
+				{
+					$this->indexProducts([$document->getProduct()]);
+				}
+			}
+			else
+			{
+				if ($indexedItem)
+				{
+					list($itemId, $listId, $productId, $position) = $indexedItem;
+					$product = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
+					if ($product instanceof \Rbs\Catalog\Documents\Product)
+					{
+						$this->indexProducts([$product]);
+					}
+
+					if ($position < 0)
+					{
+						$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+						$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
+						$subQuery->andPredicates($subQuery->eq('productList', $listId));
+						$products = $query->getDocuments();
+						$this->indexProducts($products);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param integer $itemId
+	 * @return array|null
+	 */
+	protected function getIndexedListItemInfo($itemId)
+	{
+		$indexManager = $this->getIndexManager();
+		foreach ($this->getIndexesDefinition() as $storeIndex)
+		{
+			$client = $indexManager->getClient($storeIndex->getClientName());
+			if (!$client){continue;}
+			$index = $client->getIndex($storeIndex->getName());
+			if ($index->exists())
+			{
+				$nested = new \Elastica\Query\Nested();
+				$nested->setPath('listItems');
+				$nestedBool = new \Elastica\Query\Bool();
+				$nestedBool->addMust(new \Elastica\Query\Term(['itemId' => $itemId]));
+				$nested->setQuery($nestedBool);
+				$query = new \Elastica\Query($nested);
+				$query->setSize(1);
+				$query->setFields(['listItems']);
+
+				$results = $index->getType($storeIndex->getDefaultTypeName())->search($query)->getResults();
+				if (count($results))
+				{
+					/** @var $result \Elastica\Result */
+					$result = $results[0];
+					$productId = intval($result->getId());
+					foreach ($result->getFields()['listItems'] as $listItem)
+					{
+						if ($listItem['itemId'] == $itemId)
+						{
+							$listId = $listItem['listId'];
+							$position = $listItem['position'];
+							$found = [$itemId, $listId, $productId, $position];
+							return $found;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -135,9 +204,18 @@ class StoreIndexer extends FullTextIndexer
 	{
 		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
 		$query->andPredicates($query->eq('sku', $skuId));
+		$this->indexProducts($query->getDocuments());
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product[]|\Change\Documents\DocumentCollection $products
+	 */
+	protected function indexProducts($products)
+	{
 		$toIndex = array();
+
 		/** @var $product \Rbs\Catalog\Documents\Product */
-		foreach ($query->getDocuments() as $product)
+		foreach ($products as $product)
 		{
 			foreach ($product->getLCIDArray() as $LCID)
 			{
@@ -174,6 +252,7 @@ class StoreIndexer extends FullTextIndexer
 						}
 						$elasticaDocument = new Document($product->getId(), array(), $storeIndex->getDefaultTypeName(), $storeIndex->getName());
 						$this->populatePublishableDocument($product, $elasticaDocument, $storeIndex);
+
 						$canonicalSection = $product->getCanonicalSection($website);
 						if ($canonicalSection)
 						{
@@ -219,9 +298,24 @@ class StoreIndexer extends FullTextIndexer
 				{
 					$elasticaDocument->set($fieldName, $value);
 				}
+
+				if ($document instanceof \Rbs\Catalog\Documents\Product)
+				{
+					$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
+					$q->andPredicates($q->activated(), $q->eq('product', $document));
+					$qb = $q->dbQueryBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$qb->addColumn($fb->alias($q->getColumn('id'), 'itemId'));
+					$qb->addColumn($fb->alias($q->getColumn('productList'), 'listId'));
+					$qb->addColumn($fb->alias($q->getColumn('position'), 'position'));
+					$select = $qb->query();
+					$listItems = $select->getResults($select->getRowsConverter()->addIntCol('itemId', 'listId', 'position'));
+					$elasticaDocument->set('listItems', $listItems);
+				}
 			}
 		}
 	}
+
 
 	/**
 	 * @param string $mappingName

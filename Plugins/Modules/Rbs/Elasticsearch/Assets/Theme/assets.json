@@ -6,5 +6,8 @@
 	"Result" : {
 		"cssAssets" : ["Theme/Rbs/Base/css/typeahead.js-bootstrap.css"],
 		"jsAssets" : ["Theme/Rbs/Base/js/typeahead.min.js", "Theme/Rbs/Base/Rbs_Elasticsearch/js/suggest.js"]
+	},
+	"StoreResult" : {
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Catalog/js/product.js"]
 	}
 }
