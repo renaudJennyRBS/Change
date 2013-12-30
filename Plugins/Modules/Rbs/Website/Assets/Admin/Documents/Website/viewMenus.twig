@@ -6,14 +6,14 @@
 
 	<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
 	                   load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
-		<column name="label" primary="true">
+		<rbs-column name="label" primary="true">
 			<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
-		</column>
-		<column name="items">
+		</rbs-column>
+		<rbs-column name="items">
 				<span ng-repeat="item in doc.items">
 					<span class="label label-default" ng-bind-html="item.title"></span>
 				</span>
-		</column>
+		</rbs-column>
 	</rbs-document-list>
 
 </div>
