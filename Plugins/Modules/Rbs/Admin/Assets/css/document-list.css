@@ -43,16 +43,11 @@ rbs-document-list .table thead > tr > th {
 	box-shadow: 0 -2px 0 #0088CC;
 }
 
-
 rbs-document-list tr .quick-actions-buttons {
 	position: relative;
 }
-
+/*
 rbs-document-list tr .quick-actions-buttons > button {
-	border: 0 none;
-	background: transparent;
-	padding: 0;
-	margin-left: 6px;
 	opacity: 0.15;
 	transition: opacity 0.25s ease;
 }
@@ -60,15 +55,11 @@ rbs-document-list tr .quick-actions-buttons > button {
 rbs-document-list tr:hover .quick-actions-buttons > button {
 	opacity: 1;
 }
-
-rbs-document-list tr .quick-actions-buttons button i {
-	font-size: 1.3333em;
-}
-
+*/
 rbs-document-list tr .quick-actions {
-	top: 14px;
+	top: 18px;
 	left: auto;
-	right: -16px;
+	right: -11px;
 	width: 150px;
 	background: #333333;
 }
@@ -545,3 +536,41 @@ rbs-document-list .table-bordered > thead > tr > td {
 	border-bottom-width: 5px;
 	border-color: #E0E0E0;
 }
+
+
+.children-count {
+	background: none repeat scroll 0 0 rgba(240, 240, 240, 0.9);
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	border-radius: 3px;
+	color: #B0B0B0;
+	margin-left: 4px;
+	padding: 1px 5px;
+}
+
+.tree-level-separator {
+	border-left: 2px dotted #C0C0C0;
+	display: inline-block;
+	height: 32px;
+	line-height: 1;
+	margin: -5px 0 -11px 9px;
+	padding: 0;
+	width: 9px;
+}
+
+rbs-document-list td i.tree-icon:before {
+	width: 20px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+
+rbs-document-list td .lead {
+	font-size: 12pt;
+}
+
+rbs-document-list td .lead i.tree-icon:before {
+	width: 25px;
+}
+
+
+

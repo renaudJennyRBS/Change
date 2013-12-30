@@ -7,6 +7,7 @@
 			entries : [],
 			pointer : 0
 		};
+	var activeContextes = [];
 
 
 	app.provider('RbsChange.Navigation', function ()
@@ -20,8 +21,9 @@
 		}
 
 
-		this.$get = ['$rootScope', '$location', 'RbsChange.Utils', function ($rootScope, $location, Utils)
+		this.$get = ['$rootScope', '$location', 'RbsChange.Utils', '$q', function ($rootScope, $location, Utils, $q)
 		{
+/*
 			function push (url, label, context)
 			{
 				var id = stack.entries.length;
@@ -115,23 +117,200 @@
 			}
 
 
-
 			$rootScope.$on('$routeChangeSuccess', updateOnRouteChange);
 			$rootScope.$on('$routeUpdate', updateOnRouteChange);
+*/
+
+
+
+			var lastContext;
+
+			function NavigationContext (id, data)
+			{
+				// Update context info.
+				if (Utils.isDocument(id)) {
+					this.id = id.model;
+					this.document = id;
+					this.label = this.document.label || this.document.title;
+				}
+				else {
+					this.id = id;
+				}
+				this.data = data;
+				this.url = $location.absUrl();
+				this.path = $location.path();
+
+				this.getParam = function (name)
+				{
+					return angular.isObject(this.params) ? this.params[name] : undefined;
+				};
+
+				this.isSelection = function (model)
+				{
+					var result = this.getParam('selector');
+					if (result)
+					{
+						if (angular.isString(model))
+						{
+							return this.getParam('model') === model.trim();
+						}
+						else if (angular.isArray(model))
+						{
+							angular.forEach(model.split(/\s+/), function (modelName) {
+								if (modelName === model) {
+									return true;
+								}
+							});
+							return false;
+						}
+					}
+					return result;
+				};
+			}
+
+
+			function getActiveContextById (id)
+			{
+				for (var i=0 ; i<activeContextes.length ; i++) {
+					if (activeContextes[i].id === id) {
+						return activeContextes[i];
+					}
+				}
+				return null;
+			}
+
+
+			function finalizeActiveContext (id, defer)
+			{
+				var context = getActiveContextById(id);
+				// Search for a context with the same ID and remove it.
+				if (context) {
+					if (context.status === 'committed') {
+						defer.resolve(context);
+					} else {
+						defer.reject(context);
+					}
+
+					for (var i=0 ; i<activeContextes.length ; i++) {
+						if (activeContextes[i].id === id) {
+							activeContextes.splice(i, 1);
+						}
+					}
+				}
+			}
+
+
+			function setContext (scope, id, data)
+			{
+				var defer = $q.defer();
+
+				finalizeActiveContext(id, defer);
+
+				lastContext = new NavigationContext(id, data);
+
+				scope.$on('$destroy', function ()
+				{
+					lastContext = null;
+				});
+
+				return defer.promise;
+			}
+
+
+			function start (params)
+			{
+				if (! lastContext) {
+					console.log("No context.");
+					return;
+				}
+				lastContext.params = params;
+				lastContext.label = params.document ? params.document.label : lastContext.id;
+				activeContextes.push(lastContext);
+				lastContext = null;
+			}
+
+
+			function resolve (result, redirect)
+			{
+				var ctx = activeContextes[activeContextes.length-1];
+				ctx.status = 'committed';
+				ctx.result = result;
+
+				if (redirect !== false) {
+					$location.path(ctx.path);
+				}
+			}
+
+
+			function reject (reason)
+			{
+				var ctx = activeContextes[activeContextes.length-1];
+				ctx.status = 'rejected';
+				ctx.result = reason;
+				$location.path(ctx.path);
+			}
+
+
+			function isActive ()
+			{
+				return activeContextes.length > 0;
+			}
+
+
+			function getActiveContext ()
+			{
+				return isActive() ? activeContextes[activeContextes.length-1] : null;
+			}
 
 
 			// Public API
 
-			return {
+			return {/*
 				push : push,
 				getCurrentContext : getCurrentContext,
 				finalize : finalize,
 				commit : commit,
-				rollback : rollback
+				rollback : rollback,
+*/
+				// New API
+
+				setContext : setContext,
+				start : start,
+				resolve : resolve,
+				reject : reject,
+				isActive : isActive,
+				getActiveContext : getActiveContext
 			};
 		}];
 
 	});
+
+
+
+
+	app.directive('rbsStartNavigation', ['RbsChange.Navigation', function (NS)
+	{
+		return {
+			restrict : 'A',
+
+			link : function (scope, iElement, iAttrs)
+			{
+				iElement.click(function ()
+				{
+					var params = {};
+					angular.forEach(iElement.data(), function (v, n)
+					{
+						if (n.substr(0, 10) === 'navigation') {
+							params[angular.lowercase(n.substr(10, 1)) + n.substr(11)] = v;
+						}
+					});
+					NS.start(params, iAttrs.rbsStartNavigation);
+				});
+			}
+		};
+	}]);
+
+
 
 
 	/**
@@ -140,6 +319,44 @@
 	 */
 	app.directive('rbsNavigationHistory', ['RbsChange.Navigation', function (NS)
 	{
+		return {
+			restrict : 'E',
+			template :
+				'<div ng-repeat="c in activeContextes">' +
+					'<div class="cascading-forms-collapsed" ng-style="getStyle($index)">' +
+						'<span class="pull-right" ng-bind-html="c.id"></span>' +
+						'<a href ng-href="(= c.url =)"><i class="icon-circle-arrow-left"></i> (= c.label =)</a>' +
+						'<span ng-if="c.isSelection()"> &mdash; select elements for property <strong ng-bind="c.params.label"></strong></span>' +
+					'</div>' +
+				'</div>',
+			scope : {},
+
+			link : function (scope, iElement)
+			{
+				scope.activeContextes = activeContextes;
+				scope.$watchCollection('activeContextes', function ()
+				{
+					if (scope.activeContextes.length > 0) {
+						iElement.show();
+					} else {
+						iElement.hide();
+					}
+				});
+
+				scope.getStyle = function (index)
+				{
+					var count = scope.activeContextes.length;
+					return {
+						margin    : '0 ' + ((count - index)*15)+'px',
+						opacity   : (0.7 + ((index+1)/count * 0.3)),
+						fontSize  : ((1 + ((index+1)/count * 0.2))*100)+'%'
+					};
+				};
+			}
+		};
+
+
+		/*
 		return {
 			restrict : 'E',
 			template :
@@ -172,6 +389,7 @@
 				};
 			}
 		};
+		*/
 	}]);
 
 })();

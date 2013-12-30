@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter)
+	function editorDirective ($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter, UrlManager)
 	{
 		var CORRECTION_CSS_CLASS = 'correction';
 
@@ -62,9 +62,18 @@
 							defered = $q.defer();
 							promise = defered.promise;
 							if (! document) {
-								document = REST.newResource(modelName, Settings.get('LCID'));
-								if (! isNaN(documentId) && documentId < 0) {
-									document.id = documentId;
+
+								// Check if we are coming back here following a selection process.
+								// In that case, we need to get the attached document instead of creating a new one.
+								var navCtx = Navigation.getActiveContext();
+								if (navCtx && navCtx.isSelection() && Utils.isDocument(navCtx.params.document) && navCtx.params.document.model === modelName && navCtx.params.document.id < 0) {
+									document = navCtx.params.document;
+								}
+								else {
+									document = REST.newResource(modelName, Settings.get('LCID'));
+									if (! isNaN(documentId) && documentId < 0) {
+										document.id = documentId;
+									}
 								}
 							}
 							defered.resolve(document);
@@ -79,15 +88,15 @@
 
 				this.registerCreateCascade = function (propertyName, model, title)
 				{
-					$scope.$on('Change:NavigationFinalize', function (event, navCtx)
-					{
-						if (navCtx && navCtx.context && navCtx.context.type === 'setProperty' && navCtx.context.property === propertyName) {
-							$scope.document[propertyName].push(navCtx.result);
-						}
-					});
-
 					return function () {
-						EditorManager.cascade(model, title || '<i class="icon-pencil"></i> ' + $scope.document.label, propertyName);
+						Navigation.start({
+							selector : true,
+							property : propertyName,
+							model : model,
+							label : title,
+							document : $scope.document
+						});
+						$location.url(UrlManager.getUrl(model, null, 'new'));
 					};
 				};
 
@@ -95,7 +104,12 @@
 				this.registerEditCascade = function (propertyName, title)
 				{
 					return function (childDocument) {
-						EditorManager.cascade(childDocument, title || '<i class="icon-pencil"></i> ' + $scope.document.label, propertyName);
+						Navigation.start({
+							property : propertyName,
+							label : title,
+							document : $scope.document
+						});
+						$location.url(UrlManager.getUrl(childDocument));
 					};
 				};
 
@@ -317,12 +331,11 @@
 						if ($scope._isNew) {
 							EditorManager.removeCreationLocalCopy(doc, $scope._isNewId);
 
-							var navCtx = Navigation.getCurrentContext();
-							if (navCtx) {
-								Navigation.commit(doc);
+							if (Navigation.isActive()) {
+								Navigation.resolve(doc);
 							}
 							else {
-								$location.path(doc.url());
+								$location.path(doc.url()).replace();
 							}
 						}
 
@@ -485,7 +498,6 @@
 
 
 				function mergeLocalCopy (doc) {
-					console.log("merge local copy: ", doc);
 					var localCopy = EditorManager.getLocalCopy(doc);
 					if (localCopy)
 					{
@@ -507,18 +519,47 @@
 					initCorrection();
 					initMenu();
 
-					// Are we in a Navigation session?
-					var navCtx = Navigation.finalize();
-					if (mergeLocalCopy($scope.document) && ! navCtx) {
-						$scope.$emit('Change:Editor:LocalCopyMerged');
-					}
-					if (navCtx) {
-						$scope.$broadcast('Change:NavigationFinalize', navCtx);
+					console.log("initReferenceDocument: ", $scope.original);
+
+					// --- selection process BEGIN
+
+					var navCtxId, navCtx;
+					if ($scope.original.id < 0) {
+						navCtxId = 'Editor:' + $scope.original.model + ':new';
+					} else {
+						navCtxId = 'Editor:' + $scope.original.model + ':' + $scope.original.id;
 					}
 
-					if (SelectSession.hasSelectSession($scope.document)) {
-						SelectSession.commit($scope.document);
+					console.log("navCtxId: ", navCtxId);
+
+					navCtx = Navigation.getActiveContext();
+					if (mergeLocalCopy($scope.document)) {
+						// If local copy has been merged after a selection process,
+						// do not notify about this merge.
+						if (! navCtx || navCtx.id !== navCtxId || ! navCtx.isSelection()) {
+							$scope.$emit('Change:Editor:LocalCopyMerged');
+						}
 					}
+
+					// Define current context and what has to be done when it is resolved.
+					Navigation.setContext($scope, navCtxId).then(function (context)
+					{
+						if (context.isSelection())
+						{
+							if (angular.isArray($scope.document[context.params.property])) {
+								ArrayUtils.append($scope.document[context.params.property], context.result);
+							}
+							else {
+								$scope.document[context.params.property] = context.result;
+							}
+						}
+						if (angular.isFunction($scope.finalizeNavigationContext)) {
+							$scope.finalizeNavigationContext(context);
+						}
+					});
+
+					// --- selection process END
+
 
 					$element.css('display', 'block');
 
@@ -790,7 +831,13 @@
 
 
 					scope.onCancel = function onCancelFn () {
-						Breadcrumb.goParent();
+						var navCtx = Navigation.getActiveContext();
+						if (navCtx) {
+							Navigation.reject();
+						}
+						else {
+							Breadcrumb.goParent();
+						}
 					};
 
 				};
@@ -815,7 +862,8 @@
 		'RbsChange.MainMenu',
 		'RbsChange.SelectSession',
 		'RbsChange.Navigation',
-		'RbsChange.ErrorFormatter'
+		'RbsChange.ErrorFormatter',
+		'RbsChange.UrlManager'
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);
@@ -988,6 +1036,9 @@
 				// Local copy public API
 
 				'saveLocalCopy' : function (doc) {
+
+					console.log("saving local copy for ", doc.id);
+
 					var	key = makeLocalCopyKey(doc);
 					doc.META$.localCopy = {
 						saveDate : (new Date()).toString(),
@@ -1003,6 +1054,9 @@
 				},
 
 				'getLocalCopy' : function (doc) {
+
+					console.log("getting local copy for ", doc.id);
+
 					var	key = makeLocalCopyKey(doc),
 						rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
 					return rawCopy;

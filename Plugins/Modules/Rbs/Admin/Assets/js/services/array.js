@@ -8,7 +8,7 @@
 				arr.length = from < 0 ? arr.length + from : from;
 				return arr.push.apply(arr, rest);
 			},
-			
+
 			removeValue: function (arr, value) {
 				for (var i=0 ; i<arr.length ; i++) {
 					if (angular.equals(arr[i], value)) {
@@ -18,7 +18,7 @@
 				}
 				return -1;
 			},
-			
+
 			removeArray: function (arr, elementsToRemove) {
 				for (var i=0 ; i<elementsToRemove.length ; i++) {
 					this.removeValue(arr, elementsToRemove[i]);
@@ -74,9 +74,13 @@
 			},
 
 			append: function (dst, src) {
-				angular.forEach(src, function (item) {
-					dst.push(item);
-				});
+				if (angular.isArray(src)) {
+					angular.forEach(src, function (item) {
+						dst.push(item);
+					});
+				} else {
+					dst.push(src);
+				}
 				return dst;
 			}
 		};

@@ -152,8 +152,11 @@
 	"section_permission_rule_helper":{
 		"message":"choisissez de restreindre l'accès de cette section à des utilisateurs ou des groupes d'utilisateurs. Si il n'y a aucun utilisateur ou groupe sélectionné, l'accès est considéré comme public"
 	},
-	"edit_website_properties":{
-		"message":"éditer les propriétés du site web"
+	"website_properties":{
+		"message":"propriétés"
+	},
+	"website_structure":{
+		"message":"structure"
 	},
 	"navigate_in_website":{
 		"message":"naviguer dans le site web"
@@ -357,5 +360,8 @@
 	},
 	"back_to_general_page_properties":{
 		"message":"Propriétés générales de la page"
+	},
+	"manage_websites":{
+		"message":"Gérer les sites web"
 	}
 }

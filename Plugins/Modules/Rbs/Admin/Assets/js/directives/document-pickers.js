@@ -43,7 +43,7 @@
 	 * @attribute embed-in
 	 * @attribute disable-reordering
 	 */
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation)
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation, $location, UrlManager)
 	{
 		var	$el = $(iElement),
 			documentList,
@@ -313,7 +313,8 @@
 			return ! ngModel.$viewValue || (angular.isArray(ngModel.$viewValue) && ngModel.$viewValue.length === 0);
 		};
 
-		scope.beginSelectSession = function () {
+		scope.beginSelectSession = function ()
+		{
 			var	p = attrs.ngModel.indexOf('.'),
 				doc, property, propertyLabel, selectModel;
 			if (p === -1) {
@@ -328,8 +329,17 @@
 				propertyLabel = property;
 			}
 			selectModel = getFormModel();
-			if (selectModel) {
-				SelectSession.start(doc, { name : property, label : propertyLabel }, selectModel, multiple);
+			if (selectModel)
+			{
+				Navigation.start({
+					selector : true,
+					property : property,
+					model : selectModel,
+					label : propertyLabel,
+					multiple : multiple,
+					document : doc
+				});
+				$location.url(UrlManager.getListUrl(selectModel));
 			}
 		};
 
@@ -430,19 +440,10 @@
 			};
 		}
 
-
-		scope.$on('Change:NavigationFinalize', function (event, navCtx)
-		{
-			console.log("PICKER: navCtx=", navCtx);
-			if (navCtx && navCtx.context && navCtx.context.type === 'setProperty' && navCtx.context.property === attrs.name)
-			{
-				scope.selectDocument(navCtx.result);
-			}
-		});
 	}
 
 
-	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
+	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation, $location, UrlManager)
 	{
 		return {
 			restrict    : 'EA',
@@ -452,7 +453,7 @@
 
 			link : function (scope, iElement, attrs, ngModel)
 			{
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation, $location, UrlManager);
 			}
 		};
 	}];
@@ -460,7 +461,7 @@
 	app.directive('rbsWoodyWoodpicker', singlePicker);
 
 
-	app.directive('rbsDocumentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation)
+	app.directive('rbsDocumentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation, $location, UrlManager)
 	{
 		return {
 			restrict    : 'EA',
@@ -470,7 +471,7 @@
 
 			link : function (scope, iElement, attrs, ngModel)
 			{
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation, $location, UrlManager);
 			}
 		};
 	}]);

@@ -32,7 +32,6 @@
 
 	app.directive('rbsDocumentList', [
 		'$q',
-		'$filter',
 		'$rootScope',
 		'$location',
 		'$cacheFactory',
@@ -48,13 +47,13 @@
 		'RbsChange.Events',
 		'RbsChange.PaginationPageSizes',
 		'RbsChange.SelectSession',
-		'RbsChange.MainMenu',
+		'RbsChange.Navigation',
 		'RbsChange.ErrorFormatter',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $filter, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, MainMenu, ErrorFormatter)
+	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, Navigation, ErrorFormatter)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -110,25 +109,7 @@
 				return '<a href="javascript:;" ng-click="showWorkflow($index, $event)"><i class="icon-ok"></i> ' + i18n.trans('m.rbs.admin.adminjs.workflow') + '</a>';
 			}
 
-			function buildForSelectSession (multiple) {
-				var html = '<a href="javascript:;" ng-click="selectSession.use(doc)">' +
-					i18n.trans('m.rbs.admin.adminjs.select') +
-					'</a>';
-
-				if (multiple) {
-					html +=
-						'<a href="javascript:;" ng-click="selectSession.append(doc)">' +
-						i18n.trans('m.rbs.admin.adminjs.select_add') +
-						'</a>';
-				}
-
-				return html;
-			}
-
-			if (SelectSession.started()) {
-				html += buildForSelectSession(SelectSession.info().multiple);
-			}
-			else if (__quickActions[dlid]) {
+			if (__quickActions[dlid]) {
 				quickActionsHtml = __quickActions[dlid].contents;
 
 				if ((tAttrs.publishable === 'true' || tAttrs.correction === 'true') && (! quickActionsHtml || (quickActionsHtml.indexOf('[action default]') === -1 && quickActionsHtml.indexOf('[action workflow]') === -1))) {
@@ -378,7 +359,7 @@
 
 				// Create header cell
 				if (column.name === 'selectable') {
-					$th = $('<th ng-click="allSelected.cb = ! allSelected.cb" style="cursor:pointer;">' + column.label + '</th>');
+					$th = $('<th ng-if="selectionEnabled" ng-click="allSelected.cb = ! allSelected.cb" style="cursor:pointer;">' + column.label + '</th>');
 				} else {
 					var toggleDateBtn, htmlTh;
 
@@ -416,7 +397,7 @@
 				if (column.content) {
 
 					if (column.name === 'selectable') {
-						html = '<td ng-click="selected[$index].cb = ! selected[$index].cb" style="cursor:pointer;">' + column.content + '</td>';
+						html = '<td ng-if="selectionEnabled" ng-click="selected[$index].cb = ! selected[$index].cb" style="cursor:pointer;">' + column.content + '</td>';
 						$td = $(html);
 					}
 					else {
@@ -471,24 +452,48 @@
 				if (column.primary) {
 					var previewButton = '';
 					if (__preview[dlid]) {
-						previewButton = '<button type="button" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
+						previewButton = '<button type="button" class="btn-flat" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
 
-					//if quickActions markup is not present, default quick actions are taken
-					//but if it present and empty, don't add the quick actions button
-					if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].contents.length > 0) {
+					var navCtx = Navigation.getActiveContext();
+					if (navCtx && navCtx.isSelection(tAttrs.model))
+					{
+						var selectHtml = '';
+
+						if (navCtx.getParam('multiple')) {
+							selectHtml +=
+								'<button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc)">' +
+								' <i class="icon-plus"></i></button>';
+						}
+
+						selectHtml += ' <button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc, true)">' +
+							i18n.trans('m.rbs.admin.adminjs.select') +
+							' <i class="icon-circle-arrow-right"></i></button>';
+
+
+						$td.find('.primary-cell').prepend('<span ng-if="isModelCompatibleWithSelection(doc)" class="pull-right quick-actions-buttons">' + previewButton + selectHtml + '</span>');
+
+					}
+					else if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].contents.length > 0) {
+						// if quickActions markup is not present, default quick actions are taken
+						// but if it present and empty, don't add the quick actions button
 						$td.find('.primary-cell')
 							.prepend(
 								'<span class="pull-right quick-actions-buttons">' +
 									previewButton +
-									'<button type="button" ng-click="toggleQuickActions($index, $event)"><i class="icon-ellipsis-horizontal"></i></button>' +
+									'<button type="button" class="btn-flat" ng-click="toggleQuickActions($index, $event)"><i class="icon-ellipsis-horizontal"></i></button>' +
 									buildQuickActionsHtml(dlid, tAttrs, localActions) +
 									'</span>'
 							);
 					}
 				}
 
-				$td.attr('ng-if', "isNormalCell(doc)");
+				if ($td.attr('ng-if')) {
+					$td.attr('ng-if', $td.attr('ng-if') + " && isNormalCell(doc)");
+				}
+				else {
+					$td.attr('ng-if', "isNormalCell(doc)");
+				}
 				$body.append($td);
 			}
 
@@ -576,6 +581,10 @@
 				{
 					var queryObject, search, columnNames, currentPath, previewCache, self = this;
 
+					scope.stripedRows = attrs.stripedRows !== 'false';
+					scope.hoverRows = attrs.hoverRows !== 'false';
+					scope.animationClass = attrs.animationClass;
+
 					scope.$emit('Change:DocumentList:' + dlid + ':Ready', scope);
 					scope.collection = [];
 
@@ -611,23 +620,68 @@
 					});
 
 
-					// Select session
-					scope.selectSession = {
-						info : SelectSession.info(),
-						end : SelectSession.end,
-						cancel : SelectSession.rollback,
-						clear : SelectSession.clear,
-						append : SelectSession.append,
-						appendSelected : function () {
-							SelectSession.append(scope.selectedDocuments);
-							deselectAll();
-							return this;
-						},
-						use : function (doc) {
-							SelectSession.append(doc).end();
-						}
+					//
+					// Selection of Document(s) from a DocumentPicker
+					//
+
+					scope.selectionContext = null;
+					scope.selectionContextDocuments = [];
+					var navCtx = Navigation.getActiveContext();
+					if (navCtx && navCtx.isSelection(attrs.model))
+					{
+						scope.selectionContext = navCtx;
+
+						scope.selectionContextAppend = function (doc, commit)
+						{
+							var docs = doc ? [doc] : scope.selectedDocuments;
+							if (scope.selectionContext.params.multiple) {
+								angular.forEach(docs, function (doc) {
+									if (!ArrayUtils.documentInArray(doc, scope.selectionContextDocuments)) {
+										scope.selectionContextDocuments.push(doc);
+									}
+								});
+							} else {
+								scope.selectionContextDocuments.length = 1;
+								scope.selectionContextDocuments[0] = docs[0];
+							}
+
+							if (commit) {
+								scope.selectionContextResolve();
+							}
+						};
+
+						scope.selectionContextClear = function ()
+						{
+							scope.selectionContextDocuments.length = 0;
+						};
+
+						scope.selectionContextResolve = function ()
+						{
+							if (scope.selectionContext.params.multiple) {
+								Navigation.resolve(scope.selectionContextDocuments);
+							} else {
+								Navigation.resolve(scope.selectionContextDocuments.length ? scope.selectionContextDocuments[0] : null);
+							}
+						};
+
+						scope.selectionContextReject = function ()
+						{
+							Navigation.reject();
+						};
+					}
+
+
+					// Checks whether the given Document is suitable for the current selection process (if any).
+					scope.isModelCompatibleWithSelection = function (doc)
+					{
+						return navCtx && navCtx.isSelection(doc.model);
 					};
 
+
+
+					//
+					// data-* attributes
+					//
 
 					// Watch for changes on 'data-*' attributes, and transpose them into the 'data' object of the scope.
 					scope.data = {};
@@ -702,7 +756,7 @@
 					// Document selection.
 					//
 
-					scope.selectionEnabled = scope.hasColumn('selectable');
+					scope.selectionEnabled = scope.hasColumn('selectable') && (! scope.selectionContext || ! scope.selectionContext.isSelection() || scope.selectionContext.getParam('multiple'));
 
 					function updateSelectedDocuments () {
 						var selectedDocuments = [];

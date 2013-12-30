@@ -16,7 +16,7 @@
 	"entries": [
 		{
 			"label": "m.rbs.website.admin.module_name",
-			"url": "Rbs/Website/nav/",
+			"url": "Rbs/Website/Browse/?view=Structure",
 			"section": "cms",
 			"keywords": "m.rbs.website.admin.module_keywords"
 		},

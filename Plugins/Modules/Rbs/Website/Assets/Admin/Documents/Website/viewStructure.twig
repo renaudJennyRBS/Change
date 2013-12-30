@@ -1,0 +1,67 @@
+<div ng-controller="Rbs_Website_StructureController">
+
+	<div class="add-elements-bar">
+		<a href ng-href="(= 'Rbs_Website_Topic' | rbsURL:'new':{tn:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+	</div>
+
+	<rbs-document-list data-dlid="DLRbsWebsiteBrowser"
+                   publishable="true"
+                   model="Rbs_Website_Topic"
+                   collection="browseCollection"
+                   striped-rows="false"
+                   extend="browser"
+                   use-properties="functions title">
+
+		<quick-actions>
+			[action default]
+			<a ng-if="doc.is('Rbs_Website_Topic')" href="" ng-href="(= doc | rbsURL:'functions':true =)">
+				<i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.topic_functions') }}
+			</a>
+		</quick-actions>
+
+		<column name="label" label="Libellé" primary="true">
+			<span class="tree-level-separator" rbs-repeat-count="(= extend.getNodeInfo(doc).level-1 =)"></span>
+
+			<span class="pull-right" style="margin-right: 4px;">
+				<button ng-if="extend.isPage(doc) && ! extend.isIndexPage(doc)" type="button" class="btn-flat" ng-disabled="busy" ng-click="extend.setIndexPage(doc, $index); extend.busyIndex=$index;" ng-switch="busy && $index == extend.busyIndex">
+					index
+				</button>
+				<a ng-if="extend.isTopic(doc)" rbs-start-navigation="" data-navigation-node="(=doc.id=)" ng-href="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn: doc.id} =)" class="btn-flat"><strong>+ <i class="icon-file-alt"></i></strong></a>
+				<a ng-if="extend.isTopic(doc)" rbs-start-navigation="" data-navigation-node="(=doc.id=)" ng-href="(= 'Rbs_Website_Topic' | rbsURL:'new':{tn: doc.id} =)" class="btn-flat"><strong>+ <i class="icon-folder-close-alt"></i></strong></a>
+				<a ng-if="! extend.isFunction(doc)" ng-href="(= doc | rbsURL:'form' =)" class="btn-flat"><i class="icon-pencil"></i></a>
+			</span>
+
+			<span ng-class="{'lead': extend.getNodeInfo(doc).level == 1}">
+
+				<span ng-if="extend.isTopic(doc)">
+					<i ng-if="doc.nodeHasChildren()" ng-click="extend.toggleNode(doc)" class="tree-icon opacity-half icon-large" ng-class="{'icon-folder-open': extend.isNodeOpen(doc), 'icon-folder-close': ! extend.isNodeOpen(doc)}"></i>
+					<i ng-if="! doc.nodeHasChildren()" class="tree-icon opacity-half icon-large icon-folder-close-alt"></i>
+					<strong><a href="javascript:;" ng-click="extend.toggleNode(doc)" ng-bind="doc.label"></a></strong>
+					<span class="children-count">(= doc.nodeChildrenCount() | maxNumber =)</span>
+					<small ng-if="doc.label != doc.title" class="text-muted" ng-bind="doc.title"></small>
+				</span>
+
+				<span ng-if="extend.isPage(doc)">
+					<i class="tree-icon opacity-half icon-large icon-file-alt"></i>
+					<a href="(= doc | rbsURL =)" ng-bind="doc.label"></a>
+					<small ng-if="doc.label != doc.title" class="text-muted" ng-bind="doc.title"></small>
+				</span>
+
+				<span ng-if="extend.isFunction(doc)">
+					<i class="tree-icon opacity-half icon-large icon-cog" ng-click="extend.showFunctions[doc.id] = ! extend.showFunctions[doc.id]"></i>
+					<strong><a href="javascript:;" ng-click="extend.showFunctions[doc.id] = ! extend.showFunctions[doc.id]" ng-bind="doc.label"></a></strong>
+					<span class="children-count">(= doc.functions.length | maxNumber =)</span>
+				</span>
+
+				<span class="label label-info" ng-if="extend.isIndexPage(doc)">index</span>
+			</span>
+
+			<ul ng-if="extend.showFunctions[doc.id]" class="fade-animation">
+				<li ng-repeat="f in doc.functions"><small><a href ng-href="(= f.page | rbsURL =)" ng-bind="f.page.label"></a></small></li>
+			</ul>
+
+		</column>
+
+	</rbs-document-list>
+</div>

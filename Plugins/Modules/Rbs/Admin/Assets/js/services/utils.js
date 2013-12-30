@@ -324,7 +324,7 @@
 							}
 							queryString += key + '['+i+']=' + encodeURIComponent(v);
 							p=1;
-						})
+						});
 					} else {
 						if (angular.isDate(value)) {
 							value = moment(value).format();

@@ -11,12 +11,11 @@ rbs-document-list [rbs-document-workflow-actions] {
 }
 
 [rbs-document-workflow-actions] h3 {
-	text-transform: uppercase;
 	color: #bbbbbb;
 	font-size: 20pt;
 	line-height: 20pt;
 	margin-top: 0;
-	font-weight: lighter;
+	font-weight: normal;
 }
 
 [rbs-document-workflow-actions] form {
@@ -44,8 +43,6 @@ rbs-document-list [rbs-document-workflow-actions] {
 	position: relative;
 	width: 18px;
 	height: 18px;
-	/*box-shadow: inset 0 0 4px rgba(0,0,0,0.4), inset 0 -5px 0 rgba(0,0,0,0.07);*/
-	border: 1px solid rgba(0,0,0,0.3);
 	border-radius: 2px;
 	-webkit-transition: background 0.2s ease;
 	-moz-transition: background 0.2s ease;
@@ -53,6 +50,9 @@ rbs-document-list [rbs-document-workflow-actions] {
 	-o-transition: background 0.2s ease;
 	transition: background 0.2s ease;
 	cursor: pointer;
+	top: 2px;
+	background: white;
+	z-index: 1;
 }
 
 .bullet-status .overlay {
@@ -102,7 +102,7 @@ rbs-document-list [rbs-document-workflow-actions] {
 
 .bullet-status.PUBLISHABLE {
 	border-radius: 10px;
-	background: #A1DA37;
+	background: #A2C200;
 }
 
 .bullet-status.VALIDCONTENT {
@@ -110,7 +110,7 @@ rbs-document-list [rbs-document-workflow-actions] {
 }
 
 .bullet-status.DRAFT {
-	background: white;
+	border: 4px solid #BBBBBB;
 }
 
 .bullet-status.UNPUBLISHABLE {
@@ -142,20 +142,11 @@ rbs-document-list .document-list tbody td.workflow > .inner {
 
 rbs-document-list td.workflow .workflow-indicator {
 	position: absolute;
-	top: -5px;
-	left: 57px;
-	width: 10px;
-	height: 10px;
+	top: -24px;
+	left: 59px;
+	width: 6px;
+	height: 32px;
 	background: #bbbdcc;/*#eef0ff;*/
-	-webkit-transform: rotate(-45deg);
-	-moz-transform: rotate(-45deg);
-	-o-transform: rotate(-45deg);
-	transform: rotate(-45deg);
-}
-
-
-[rbs-document-workflow-actions] h3 {
-	text-shadow: 0 0 2px rgba(0,0,0,0.2);
 }
 
 
@@ -163,21 +154,22 @@ rbs-document-list td.workflow .workflow-indicator {
 
 rbs-document-list [rbs-document-workflow-actions].PUBLISHABLE,
 rbs-document-list [rbs-document-workflow-actions].VALIDCONTENT {
-	background: #eefff0;
-	border-color: #A1DA37;
+	background: #F0F8DD;
+	border-color: #A2C200;
 }
 rbs-document-list td.workflow .workflow-indicator.PUBLISHABLE,
 rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
-	background: #A1DA37;
+	background: #A2C200;
 }
+
 [rbs-document-workflow-actions].PUBLISHABLE h3,
 [rbs-document-workflow-actions].VALIDCONTENT h3 {
-	color: #A1DA37;
+	color: #A2C200;
 }
 
 
-rbs-document-list [rbs-document-workflow-actions].VALIDATION {
-	background: #faf5f0;
+rbs-document-list .rbs-document-workflow-actions.VALIDATION {
+	background: #fff8f0;
 	border-color: #EFA700;
 }
 rbs-document-list td.workflow .workflow-indicator.VALIDATION {
@@ -201,7 +193,7 @@ rbs-document-list td.workflow .workflow-indicator.UNPUBLISHABLE {
 
 
 rbs-document-list [rbs-document-workflow-actions].FROZEN {
-	background: #e0f0ff;
+	background: #F0F8FF;
 	border-color: #33BBFF;
 }
 rbs-document-list td.workflow .workflow-indicator.FROZEN {

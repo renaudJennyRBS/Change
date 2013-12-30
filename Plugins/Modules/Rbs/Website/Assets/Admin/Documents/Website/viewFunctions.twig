@@ -1,0 +1,70 @@
+<div ng-controller="Rbs_Website_SectionFunctionsController">
+
+	<div rbs-tip="Rbs_Website_SectionFunctionsList">
+		{{ i18n('m.rbs.website.admin.section_functions_list_tip', ['ucf']) | raw }}
+	</div>
+
+	<h4>{{ i18n('m.rbs.website.admin.add_functions_to_this_section', ['ucf']) }}</h4>
+
+	<select class="form-control" size="10"
+	        ng-model="selectedFunction"
+	        ng-options="func.code as func.label+' ('+func.code+') ('+func.usage+')' for func in allFunctions">
+		<option value="">{{ i18n('m.rbs.website.admin.select_function', ['ucf','etc']) }}</option>
+	</select>
+
+	<div ng-show="selectedFunction">
+		<div class="alert alert-danger margin-top" ng-show="isFunctionAlreadyUsed(selectedFunction)">
+			{{ i18n('m.rbs.website.admin.function_is_already_used_in_section', ['ucf']) }}
+		</div>
+
+		<div ng-hide="isFunctionAlreadyUsed(selectedFunction)">
+			<div class="alert alert-danger margin-top" ng-show="pagesForFunction.length == 0">
+				{{ i18n('m.rbs.website.admin.no_page_use_selected_function', ['ucf']) }}
+			</div>
+
+			<div ng-show="pagesForFunction.length">
+				<h5>{{ i18n('m.rbs.website.admin.pages_for_choosen_function', ['ucf','lbl']) }}</h5>
+				<select class="form-control" size="10"
+				        ng-model="selectedPage"
+				        ng-options="page.label+' ('+page.website+')' for page in pagesForFunction">
+				</select>
+				<div>
+					{{ i18n('m.rbs.website.admin.page_can_also_use_these_functions', ['ucf','lbl']) }}
+					<select class="form-control" size="10"
+					        multiple="multiple"
+					        ng-model="extraFunctions"
+					        ng-options="func.code as func.label+' ('+func.code+') ('+func.usage+')' for func in selectedPage.functions">
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<p class="btn-toolbar margin-top">
+		<button ng-disabled="! selectedFunction || ! selectedPage" type="button" class="btn btn-success" ng-click="addSectionFunction(selectedFunction, selectedPage, extraFunctions)">{{ i18n('m.rbs.website.admin.sectionpagefunction_add', ['ucf']) }}</button>
+	</p>
+
+
+	<div class="well well-small" ng-hide="indexFunctionExists">
+		{{ i18n('m.rbs.website.documents.sectionpagefunction_index_page', ['ucf','lbl']) }}
+		<div class="document-picker-single" ng-model="sectionPage.indexPage" accepted-model="Rbs_Website_Page"></div>
+		<button ng-disabled="! sectionPage.indexPage" type="button" class="btn btn-success" ng-click="setIndexPage(sectionPage.indexPage)">{{ i18n('m.rbs.website.admin.sectionpagefunction_define', ['ucf']) }}</button>
+	</div>
+
+	<rbs-document-list data-dlid="DLRbsWebsiteSectionFunctions" model="Rbs_Website_SectionPageFunction"
+	                   filter-query="query" collection="sectionPageFunctionList" disable-pagination="true"
+	                   actions="delete" on-reload="reload">
+
+		<quick-actions>[action delete]</quick-actions>
+
+		<column name="functionCode" primary="true" converter-params="Rbs_Website_AvailablePageFunctions" converter="collection">
+			<strong ng-if="doc.functionCode == 'Rbs_Website_Section'">{{ i18n('m.rbs.website.admin.function_index_page', ['ucf']) }}</strong>
+			<strong ng-if="doc.functionCode != 'Rbs_Website_Section'">(= converted(doc.functionCode) =)</strong><br/>
+			<em class="muted">(= doc.functionCode =)</em>
+		</column>
+		<column name="page.label">
+			<span ng-if="doc.page">(= doc.page.label =)</span>
+			<span ng-if="! doc.page"><i class="icon-warning-sign"></i> {{ i18n('m.rbs.website.admin.sectionpagefunction_no_page_defined', ['ucf']) }}</span>
+		</column>
+	</rbs-document-list>
+</div>

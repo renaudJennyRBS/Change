@@ -7,42 +7,47 @@
 		</rbs-breadcrumb-config>
 	</rbs-workspace-config>
 
-	<div rbs-aside-column>
-		<rbs-aside-plugin-menu plugin="Rbs_Website"></rbs-aside-plugin-menu>
-	</div>
+	<div rbs-full-width>
 
-	<div rbs-main-column>
+		<nav class="navbar navbar-default" role="navigation">
+			<form class="navbar-form navbar-left">
+				<div class="form-group">
+					<select ng-model="selectWebsite" ng-change="changeWebsite(selectWebsite)" ng-options="w.label for w in websites" class="form-control"></select>
+				</div>
+			</form>
+			<ul class="nav navbar-nav">
+				<li><a href ng-href="(= selectWebsite | rbsURL:'tree' =)">{{ i18n('m.rbs.website.admin.website_structure', ['ucf']) }}</a></li>
+				<li><a href ng-click="toggleFunctions($event)">{{ i18n('m.rbs.website.admin.topic_functions', ['ucf']) }}</a></li>
+				<li class="active"><a href ng-href="(= selectWebsite | rbsURL:'menus' =)">{{ i18n('m.rbs.website.documents.topic_menus', ['ucf']) }}</a></li>
+				<li><a href ng-href="(= selectWebsite | rbsURL =)">{{ i18n('m.rbs.website.admin.website_properties', ['ucf']) }}</a></li>
+			</ul>
+			<form class="navbar-form navbar-right">
+				<button type="button" class="btn btn-default"><i class="icon-search"></i></button>
+				<a class="btn btn-default" href="(= 'Rbs_Website_Website' | rbsURL:'list' =)">{{ i18n('m.rbs.website.admin.manage_websites') }}</a>
+			</form>
+		</nav>
+
+
 		<rbs-page-header title="{{ i18nAttr('m.rbs.website.admin.menu_list', ['ucf']) }}"></rbs-page-header>
 
 		<search-filters model="Rbs_Website_Menu" filter-query="query" text-search="textSearch"></search-filters>
 
-		<p class="form-inline">
-			{{ i18n(propertyKey('Rbs_Website_Menu', 'website'), ['ucf', 'lab']) }}
-			<select class="form-control" ng-model="selectedWebsite" ng-options="ws.label for ws in websites"></select>
-		</p>
-
-		<div class="alert alert-info" ng-show="! selectedWebsite && websites.length > 1">
-			<i class="icon-arrow-up icon-3x pull-left"></i>
-			{{ i18n('m.rbs.website.admin.menu_menus_are_grouped_by_website')|raw }}
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Website_Menu' | rbsURL:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
 		</div>
 
-		<div ng-show="selectedWebsite">
-			<div class="add-elements-bar">
-				<a href ng-href="(= 'Rbs_Website_Menu' | rbsURL:'form':{'website':selectedWebsite} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
-			</div>
+		<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
+			load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
+			<rbs-column name="label" primary="true">
+				<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
+			</rbs-column>
+			<rbs-column name="items">
+				<span ng-repeat="item in doc.items">
+					<span class="label label-default" ng-bind-html="item.title"></span>
+				</span>
+			</rbs-column>
+		</rbs-document-list>
 
-			<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
-				load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
-				<rbs-column name="label" primary="true">
-					<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
-				</rbs-column>
-				<rbs-column name="items">
-					<span ng-repeat="item in doc.items">
-						<span class="label label-default" ng-bind-html="item.title"></span>
-					</span>
-				</rbs-column>
-			</rbs-document-list>
-		</div>
 	</div>
 
 </div>

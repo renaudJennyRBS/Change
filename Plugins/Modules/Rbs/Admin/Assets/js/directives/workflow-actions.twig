@@ -50,7 +50,7 @@
 				<div class="control-group">
 					<div class="controls">
 						<ul class="list-unstyled">
-							<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
+							<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
 						</ul>
 						<p>
 							{{ i18n('m.rbs.admin.admin.to_validate_content_you_can', ['ucf']) }}
@@ -100,8 +100,8 @@
 			<div class="control-group">
 				<div class="controls">
 					<ul class="list-unstyled">
-						<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
-						<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
+						<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
+						<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
 					</ul>
 				</div>
 			</div>
@@ -128,9 +128,9 @@
 		<div class="control-group" ng-switch-when="freeze">
 			<div class="controls">
 				<ul class="list-unstyled">
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</li>
 				</ul>
 				<p>{{ i18n('m.rbs.admin.admin.you_can_freeze_document') }}</p>
 				<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
@@ -141,10 +141,10 @@
 		<div class="control-group" ng-switch-when="unfreeze">
 			<div class="controls">
 				<ul class="list-unstyled">
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</li>
-					<li style="color: darkred"><i class="icon-pause"></i> {{ i18n('m.rbs.admin.admin.frozen_document', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</li>
+					<li class="text-danger"><i class="icon-pause"></i> {{ i18n('m.rbs.admin.admin.frozen_document', ['ucf']) }}</li>
 				</ul>
 				<p>{{ i18n('m.rbs.admin.admin.this_document_is_frozen') }}</p>
 				<rbs-button-help-toggle class="pull-right" value="data.helpShown"></rbs-button-help-toggle>
@@ -155,10 +155,10 @@
 		<div class="control-group" ng-switch-when="correction">
 			<div class="controls">
 				<ul class="list-unstyled">
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
-					<li style="color: #88BB88"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</li>
-					<li style="color: darkred"><i class="icon-pencil"></i> {{ i18n('m.rbs.admin.admin.modified_content_correction', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.request_validation_done', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.content_validated', ['ucf']) }}</li>
+					<li class="text-success"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.publication_validated', ['ucf']) }}</li>
+					<li class="text-danger"><i class="icon-pencil"></i> {{ i18n('m.rbs.admin.admin.modified_content_correction', ['ucf']) }}</li>
 				</ul>
 				<p>
 					<span class="label label-danger">{{ i18n('m.rbs.admin.admin.caution', ['ucf']) }}</span>

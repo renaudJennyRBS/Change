@@ -166,6 +166,7 @@ h3.panel-title {
 
 .panel.panel-success .panel-heading {
 	background: #f0f8dd;
+	color: #A2C200;
 }
 
 .panel.panel-success .panel-heading h3.panel-title {
@@ -521,8 +522,51 @@ a.go-to-link:after {
 	padding: 10px 14px 10px 0;
 }
 
+
 /** Field size */
 [size="2"],
 [size="2"].form-control {
 	max-width: 5em;
+}
+
+
+.btn-flat {
+	background: none repeat scroll 0 0 #F0F5F8;
+	border-radius: 2px;
+	box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.2) inset;
+	color: #6688AA;
+	display: inline-block;
+	font-size: 12px;
+	line-height: 1.5;
+	padding: 2px 8px;
+	text-decoration: none;
+	text-transform: uppercase;
+	-webkit-transition: color 0.1s ease-in, background-color 0.1s ease-in;
+	-moz-transition: color 0.1s ease-in, background-color 0.1s ease-in;
+	transition: color 0.1s ease-in, background-color 0.1s ease-in;
+	border: 0 none;
+	vertical-align: middle;
+}
+
+.btn-flat:hover {
+	background: none repeat scroll 0 0 #6688AA;
+	color: #F0F5F8;
+	text-decoration: none;
+}
+
+.btn-flat + .btn-flat {
+	margin-left: 4px;
+}
+
+.btn-flat + .btn {
+	margin-left: 4px;
+}
+
+.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+	background-color: rgba(0,0,0,0.05);
+}
+
+rbs-navigation-history {
+	display: block;
+	border-bottom: 1px solid #E5E5E5;
 }

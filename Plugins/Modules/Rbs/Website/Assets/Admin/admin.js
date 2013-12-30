@@ -97,10 +97,16 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Website_Website')
+			/*$delegate.model('Rbs_Website_Website')
 				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/browse.twig')
 				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
 				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Document/Rbs/Website/Menu/list.twig')
+			;*/
+			$delegate.model('Rbs_Website_Website')
+				.route('tree', 'Rbs/Website/Browse/?website=:id&view=Structure', 'Document/Rbs/Website/Website/browse.twig')
+				.route('functions', 'Rbs/Website/Browse/?website=:id&view=Functions', 'Document/Rbs/Website/Website/browse.twig')
+				.route('menus', 'Rbs/Website/Browse/?website=:id&view=Menus', 'Document/Rbs/Website/Website/browse.twig')
+				.route('properties', 'Rbs/Website/Browse/?website=:id&view=Properties', 'Document/Rbs/Website/Website/browse.twig')
 			;
 
 			$delegate.model('Rbs_Website_Topic')

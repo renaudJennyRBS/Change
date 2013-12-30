@@ -4,13 +4,14 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsFormButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.i18n', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, i18n) {
+	app.directive('rbsFormButtonBar', ['$rootScope', '$compile', 'RbsChange.Dialog', 'RbsChange.Utils', 'RbsChange.Actions', 'RbsChange.Breadcrumb', 'RbsChange.Settings', 'RbsChange.Events', 'RbsChange.i18n', 'RbsChange.Navigation', function ($rootScope, $compile, Dialog, Utils, Actions, Breadcrumb, Settings, Events, i18n, Navigation) {
 
 		return {
 			restrict: 'E',
 
-			templateUrl: 'Rbs/Admin/js/directives/form-button-bar.twig',
+			templateUrl : 'Rbs/Admin/js/directives/form-button-bar.twig',
 			require : '^rbsDocumentEditor',
+			scope : true,
 
 			link : function (scope, element, attrs, editorCtrl) {
 
@@ -31,6 +32,13 @@
 							element.find('[data-role="preContents"]').empty().append($compile(contents.join(''))(scope));
 						}
 					}
+
+					scope.navigationContext = Navigation.getActiveContext();
+
+					scope.rejectNavigationContext = function ()
+					{
+						Navigation.reject();
+					};
 				});
 
 

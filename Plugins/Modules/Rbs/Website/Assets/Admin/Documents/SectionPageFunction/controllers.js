@@ -54,7 +54,7 @@
 
 		$scope.reload = function (sortColumn, sortDesc) {
 			// Load the list of SectionPageFunction Documents
-			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $routeParams.id);
+			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $scope.currentWebsite.id);
 			query.limit = 500;
 			query.offset = 0;
 			query.order = [{ 'property': sortColumn, 'order': sortDesc ? 'desc' : 'asc' }];
@@ -63,16 +63,6 @@
 				initExistingFunctions(result.resources);
 			});
 		};
-
-		REST.resource($routeParams.id).then(function (section) {
-			$scope.document = $scope.section = section;
-			Breadcrumb.setResource(null);
-			Breadcrumb.setPath([
-				[section.label, section.url('tree')],
-				['Fonctions'] // FIXME
-			]);
-			$scope.reload();
-		});
 
 
 		$scope.isFunctionAlreadyUsed = function (func) {

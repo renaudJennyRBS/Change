@@ -34,7 +34,6 @@
 				});
 
 				scope.$on('Change:Editor:LocalCopyMerged', function () {
-					console.log("Local copy has been merged!");
 					scope.localCopyMerged = true;
 				});
 
