@@ -65,7 +65,7 @@
 		scope.allowInPlaceSelection = attrs.allowInPlaceSelection !== 'false';
 		scope.showButtonsLabel = $el.closest('.dockable.pinned').length === 0; // TODO: detect block properties editor in page editor...
 		scope.inputCssClass = attrs.inputCssClass;
-		scope.disableReordering = attrs.disableReordering == 'true';
+		scope.disableReordering = attrs.disableReordering === 'true';
 
 		scope.$on('$routeChangeStart', function () {
 			scope.closeSelector();
@@ -85,7 +85,7 @@
 
 		// Pickers allow ID (or Array of IDs) as value.
 		// In that case, the following formatter will load the identified documents so that ngModel.$render()
-		// alwayds deals with objects (documents).
+		// always deals with objects (documents).
 		ngModel.$formatters.unshift(function (value) {
 			if (angular.isArray(value)) {
 				var arrayOfIds = false;
@@ -291,6 +291,7 @@
 			});
 		};
 
+
 		scope.closeSelector = function () {
 			Breadcrumb.unfreeze();
 			MainMenu.unfreeze();
@@ -302,43 +303,43 @@
 			$('#document-picker-backdrop').hide();
 		};
 
+
 		scope.clear = function () {
 			setValue(null);
-
 		};
-
 
 
 		scope.isEmpty = function () {
 			return ! ngModel.$viewValue || (angular.isArray(ngModel.$viewValue) && ngModel.$viewValue.length === 0);
 		};
 
+
 		scope.beginSelectSession = function ()
 		{
 			var	p = attrs.ngModel.indexOf('.'),
-				doc, property, propertyLabel, selectModel;
+				doc, property, selectModel, navParams;
+
 			if (p === -1) {
 				throw new Error("Invalid 'ng-model' attribute on DocumentPicker Directive.");
 			}
-			doc = scope[attrs.ngModel.substr(0, p)];
-			property = attrs.ngModel.substr(p+1);
-			if (scope.modelInfo && scope.modelInfo.properties && scope.modelInfo.properties[property]) {
-				propertyLabel = scope.modelInfo.properties[property].label;
-			}
-			else {
-				propertyLabel = property;
-			}
+
 			selectModel = getFormModel();
 			if (selectModel)
 			{
-				Navigation.start({
+				doc = scope[attrs.ngModel.substr(0, p)];
+				property = attrs.ngModel.substr(p+1);
+				navParams = {
 					selector : true,
 					property : property,
 					model : selectModel,
-					label : propertyLabel,
 					multiple : multiple,
-					document : doc
-				});
+					document : doc || scope.document,
+					ngModel : attrs.ngModel
+				};
+				if (scope.modelInfo && scope.modelInfo.properties && scope.modelInfo.properties[property]) {
+					navParams.label = scope.modelInfo.properties[property].label;
+				}
+				Navigation.start(iElement, navParams);
 				$location.url(UrlManager.getListUrl(selectModel));
 			}
 		};

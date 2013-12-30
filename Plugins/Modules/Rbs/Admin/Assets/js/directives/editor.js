@@ -402,7 +402,6 @@
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						$scope._isNewId = $scope.document.id;
-						console.log("NEW DOC: id=", $scope._isNewId);
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.adminjs.new_element | ucf'));
 					}
 					else {
@@ -519,8 +518,6 @@
 					initCorrection();
 					initMenu();
 
-					console.log("initReferenceDocument: ", $scope.original);
-
 					// --- selection process BEGIN
 
 					var navCtxId, navCtx;
@@ -529,8 +526,6 @@
 					} else {
 						navCtxId = 'Editor:' + $scope.original.model + ':' + $scope.original.id;
 					}
-
-					console.log("navCtxId: ", navCtxId);
 
 					navCtx = Navigation.getActiveContext();
 					if (mergeLocalCopy($scope.document)) {
@@ -542,9 +537,9 @@
 					}
 
 					// Define current context and what has to be done when it is resolved.
-					Navigation.setContext($scope, navCtxId).then(function (context)
+					Navigation.setContext($scope, navCtxId, $scope.original.label).then(function (context)
 					{
-						if (context.isSelection())
+						if (context.isSelection() && context.isForDocumentProperty())
 						{
 							if (angular.isArray($scope.document[context.params.property])) {
 								ArrayUtils.append($scope.document[context.params.property], context.result);
@@ -1036,9 +1031,6 @@
 				// Local copy public API
 
 				'saveLocalCopy' : function (doc) {
-
-					console.log("saving local copy for ", doc.id);
-
 					var	key = makeLocalCopyKey(doc);
 					doc.META$.localCopy = {
 						saveDate : (new Date()).toString(),
@@ -1054,9 +1046,6 @@
 				},
 
 				'getLocalCopy' : function (doc) {
-
-					console.log("getting local copy for ", doc.id);
-
 					var	key = makeLocalCopyKey(doc),
 						rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
 					return rawCopy;

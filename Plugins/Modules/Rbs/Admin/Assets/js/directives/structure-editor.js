@@ -40,7 +40,6 @@
 		}
 
 		blockPropertiesPopup.show();
-		console.log(blockPropertiesPopup);
 		blockPropertiesPopupShown = true;
 
 		lastSelectedBlock = blockEl;
@@ -807,8 +806,6 @@
 								item.items = [];
 								parseChildBlocks(blockEl, item.items);
 							}
-						} else {
-							//isValid = false;
 						}
 					});
 				}
@@ -867,7 +864,6 @@
 					$($element).on({
 						'dragstart': function (e) {
 							draggedEl = $(this).closest('.block-draggable');
-							console.log(draggedEl);
 							draggedEl.addClass('dragged');
 							containerOfDraggedEl = draggedEl.parent();
 
@@ -1023,7 +1019,8 @@
 			 */
 			"link" : function seLinkFn (scope, elm, attrs, ctrls) {
 				var	ngModel = ctrls[0],
-					ctrl = ctrls[1];
+					ctrl = ctrls[1],
+					contentReady = false;
 
 				function getDefaultEmptyContent () {
 					var content = {}, blockId = 0;
@@ -1067,6 +1064,41 @@
 						templateData = tpl.data;
 						elm.find('.structure-editor').html(tpl.html);
 						ngModel.$render();
+					}
+				});
+
+
+				var pendingBlockPropertySetter = null;
+
+				function setBlockProperty (blockId, propertyName, value)
+				{
+					var item = ctrl.getItemById(blockId);
+					if (item) {
+						item.parameters[propertyName] = Utils.isDocument(value) ? value.id : value;
+						ctrl.selectBlock(ctrl.getBlockByItem(item));
+					}
+				}
+
+				function consumePendingBlockPropertySetter ()
+				{
+					if (pendingBlockPropertySetter) {
+						setBlockProperty(pendingBlockPropertySetter.blockId, pendingBlockPropertySetter.property, pendingBlockPropertySetter.value);
+						pendingBlockPropertySetter = null;
+					}
+				}
+
+
+				// Respond to 'Change:StructureEditor.setBlockParameter' event to set a property on a block.
+				scope.$on('Change:StructureEditor.setBlockParameter', function (event, args)
+				{
+					// If content is ready, set the block property now.
+					if (contentReady) {
+						setBlockProperty(args.blockId, args.property, args.value);
+					}
+					// Otherwise, keep these information to apply them later, when content is ready
+					// (see end of ngModel.$render() method below).
+					else {
+						pendingBlockPropertySetter = angular.copy(args);
 					}
 				});
 
@@ -1163,6 +1195,9 @@
 									);
 								}
 							});
+
+							contentReady = true;
+							consumePendingBlockPropertySetter();
 
 							ctrl.reselectBlock();
 							resizeHandler();
@@ -1746,6 +1781,13 @@
 						}
 						else {
 							$http.get(blockType.template).success(function (html) {
+								html = $(html);
+								html.find('rbs-document-picker-single')
+									.attr('data-navigation-block-id', scope.block.id)
+									.each(function () {
+										var el = $(this);
+										el.attr('data-navigation-label', el.attr('data-navigation-label') + ' (' + scope.block.label + ')');
+									});
 								$compile(html)(scope, function (clone) {
 									element.find('[data-role="blockParametersContainer"]').append(clone);
 									onBlockTypeChanged(blockType);
@@ -1877,7 +1919,6 @@
 
 				scope.removeBlock = function () {
 					var block = ctrl.getSelectedBlock();
-					console.log(block);
 					if (block.attr('rbs-block-chooser')) {
 						ctrl.removeBlock(block);
 						ctrl.notifyChange("remove", "block", block);
