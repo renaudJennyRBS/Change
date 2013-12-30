@@ -168,7 +168,7 @@ rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
 }
 
 
-rbs-document-list .rbs-document-workflow-actions.VALIDATION {
+rbs-document-list [rbs-document-workflow-actions].VALIDATION {
 	background: #fff8f0;
 	border-color: #EFA700;
 }
