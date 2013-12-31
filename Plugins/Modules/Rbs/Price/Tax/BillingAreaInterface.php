@@ -7,6 +7,11 @@ namespace Rbs\Price\Tax;
 interface BillingAreaInterface
 {
 	/**
+	 * @return integer
+	 */
+	public function getId();
+
+	/**
 	 * @return string
 	 */
 	public function getCode();

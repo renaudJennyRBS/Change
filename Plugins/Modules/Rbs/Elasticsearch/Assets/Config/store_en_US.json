@@ -34,8 +34,7 @@
 						"startActivation": {"type": "date", "index": "not_analyzed"},
 						"endActivation": {"type": "date", "index": "not_analyzed"}
 					},
-					"type": "nested",
-					"include_in_root": true
+					"type": "nested"
 				}
 			}
 		}
@@ -50,7 +49,7 @@
 					}
 				},
 				"filter": {
-					"text_snowball": {"type": "snowball", "name": "French"}
+					"text_snowball": {"type": "snowball", "name": "English"}
 				}
 			}
 		}

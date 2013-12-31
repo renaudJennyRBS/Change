@@ -170,6 +170,7 @@ class TestBillingArea implements \Rbs\Price\Tax\BillingAreaInterface
 	 * @var TestTax[];
 	 */
 	public $taxes = array();
+
 	/**
 	 * @return string
 	 */
@@ -192,5 +193,13 @@ class TestBillingArea implements \Rbs\Price\Tax\BillingAreaInterface
 	public function getCode()
 	{
 		return 'BA';
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+		return 0;
 	}
 }

@@ -21,7 +21,8 @@ class Collections
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'title' => new I18nString($i18n, 'm.rbs.catalog.documents.product_title', array('ucf')),
-				'label' => new I18nString($i18n, 'm.rbs.catalog.documents.product_label', array('ucf'))
+				'price' => new I18nString($i18n, 'm.rbs.price.documents.price', array('ucf')),
+				'dateAdded' => new I18nString($i18n, 'm.rbs.catalog.admin.date_added', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_ProductSortOrders', $collection);
 			$event->setParam('collection', $collection);

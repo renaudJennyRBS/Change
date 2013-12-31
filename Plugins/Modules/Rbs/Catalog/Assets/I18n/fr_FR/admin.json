@@ -484,5 +484,11 @@
 	},
 	"filter_attribute_label":{
 		"message":"produit dont l'attribut \"$ATTRIBUTENAME$\""
+	},
+	"date_added":{
+		"message":"date d'ajout"
+	},
+	"product_list_show_ordering":{
+		"message": "Afficher le choix du tri"
 	}
 }

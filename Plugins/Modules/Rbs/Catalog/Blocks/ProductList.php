@@ -11,6 +11,11 @@ use Change\Presentation\Blocks\Standard\Block;
 class ProductList extends Block
 {
 	/**
+	 * @var array
+	 */
+	protected $validSortBy = ['title.asc', 'price.asc', 'price.desc', 'price.desc', 'dateAdded.desc'];
+
+	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
 	 * Set Block Parameters on $event
@@ -27,14 +32,17 @@ class ProductList extends Block
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
 		$parameters->addParameterMeta('pageNumber', 1);
+		$parameters->addParameterMeta('showOrdering', true);
+		$parameters->addParameterMeta('sortBy', null);
+
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$parameters->addParameterMeta('redirectUrl');
+		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
-		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		if ($parameters->getParameter('productListId') !== null)
 		{
@@ -43,6 +51,16 @@ class ProductList extends Block
 			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
 				$parameters->setParameterValue('productListId', null);
+			}
+		}
+
+		if ($parameters->getParameter('showOrdering'))
+		{
+			$sortBy = $request->getQuery('sortBy');
+			if ($sortBy && in_array($sortBy, $this->validSortBy))
+			{
+				$request->getQuery()->set('sortBy', $sortBy);
+				$parameters->setParameterValue('sortBy', $sortBy);
 			}
 		}
 
@@ -99,10 +117,16 @@ class ProductList extends Block
 
 			/* @var $productList \Rbs\Catalog\Documents\ProductList */
 			$productList = $documentManager->getDocumentInstance($productListId);
+			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) ||
+				!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+			{
+				return null;
+			}
+
 			$attributes['productList'] = $productList;
 
 			$conditionId = $parameters->getParameter('conditionId');
-			$query = $documentManager->getNewQuery('Rbs_Catalog_Product');
+			$query = $documentManager->getNewQuery('Rbs_Catalog_Product', $documentManager->getLCID());
 			$query->andPredicates($query->published());
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
 			$subQuery->andPredicates(
@@ -110,8 +134,7 @@ class ProductList extends Block
 				$subQuery->eq('condition', $conditionId ? $conditionId : 0),
 				$subQuery->activated()
 			);
-			$subQuery->addOrder('position', true);
-			$query->addOrder($productList->getProductSortOrder(), $productList->getProductSortDirection());
+			$this->addSort($parameters->getParameter('sortBy'), $productList, $query, $subQuery,$commerceServices->getContext());
 
 			$rows = array();
 			$totalCount = $query->getCountDocuments();
@@ -164,5 +187,49 @@ class ProductList extends Block
 			return 'product-list.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param string|null $sortBy
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
+	 * @param \Change\Documents\Query\Query $query
+	 * @param \Change\Documents\Query\ChildBuilder $subQuery
+	 * @param \Rbs\Commerce\Std\Context $context
+	 */
+	protected function addSort($sortBy, $productList, $query, $subQuery, $context)
+	{
+		if ($sortBy == null)
+		{
+			$subQuery->addOrder('position', true);
+			$sortBy = $productList->getProductSortOrder() . '.' . $productList->getProductSortDirection();
+		}
+
+		if ($sortBy)
+		{
+			list($sortName, $sortDir) = explode('.', $sortBy);
+			if ($sortName && ($sortDir == 'asc' || $sortDir == 'desc'))
+			{
+				switch ($sortName) {
+					case 'title' :
+						$query->addOrder('title', $sortDir == 'asc');
+						break;
+					case 'dateAdded' :
+						$subQuery->addOrder('creationDate', $sortDir == 'asc');
+						break;
+					case 'price' :
+						$ba = $context->getBillingArea();
+						$webStore = $context->getWebStore();
+						if ($ba && $webStore)
+						{
+							$priceQuery = $query->getPropertyModelBuilder('sku', 'Rbs_Price_Price', 'sku');
+							$priceQuery->andPredicates($priceQuery->activated(), $priceQuery->eq('billingArea', $ba),
+								$priceQuery->eq('webStore', $webStore), $priceQuery->eq('targetId', 0)
+							);
+							$priceQuery->addOrder('defaultValue', $sortDir == 'asc');
+						}
+						break;
+				}
+			}
+		}
 	}
 }

@@ -110,6 +110,9 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('getIndexerValue', array($this, 'onDefaultGetIndexerValue'), 5);
 		$eventManager->attach('getFacetMapping', array($this, 'onDefaultGetFacetMapping'), 5);
+		$eventManager->attach('getFacetQuery', array($this, 'onDefaultGetFacetQuery'), 5);
+		$eventManager->attach('getFilterQuery', array($this, 'onDefaultGetFilterQuery'), 5);
+
 
 	}
 
@@ -216,8 +219,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			switch ($facet->getValuesExtractorName())
 			{
 				case 'Price':
-					$mapping = array($fieldName => array('type' => 'double'),
-						'price_id' => array('type' => 'long'));
+					//Mapping included in store index mapping 'prices'
 					break;
 				case 'SkuThreshold':
 					$mapping = array($fieldName => array('type' => 'string', 'index' => 'not_analyzed'),
@@ -290,7 +292,6 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		$this->getEventManager()->trigger($event);
 		$value = $event->getParam('value');
 		return is_array($value) ? $value : null;
-
 	}
 
 	/**
@@ -318,17 +319,81 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			switch ($facet->getValuesExtractorName())
 			{
 				case 'Price':
-					$sku = $document->getSku();
-					if ($sku)
+					if (isset($values['prices']))
 					{
-						$commerceServices = $indexDefinition->getCommerceServices();
-						$price = $commerceServices->getPriceManager()->getPriceBySku($sku);
-						if ($price)
+						break;
+					}
+
+					$sku = $document->getSku();
+					$store = $indexDefinition->getStore();
+					$commerceServices = $indexDefinition->getCommerceServices();
+					$prices = [];
+					if ($sku && $store && $commerceServices)
+					{
+						$taxManager = $commerceServices->getTaxManager();
+						$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
+						$q->andPredicates($q->eq('active', true), $q->eq('sku', $sku), $q->eq('webStore', $store), $q->eq('targetId', 0));
+						$q->addOrder('billingArea');
+						$q->addOrder('priority', false);
+						$q->addOrder('startActivation', false);
+
+						$billingAreaId = null;
+						$startActivation = null;
+						$zones = null;
+						$now = new \DateTime();
+
+						/** @var $price \Rbs\Price\Documents\Price */
+						foreach ($q->getDocuments() as $price)
 						{
-							$value = array($facet->getFieldName() => $price->getValue(),
-								'price_id' => ($price instanceof AbstractDocument) ? $price->getId() : null);
+							$billingArea = $price->getBillingArea();
+							if (!$billingArea || !$price->getStartActivation()) {
+								continue;
+							}
+
+							if ($billingAreaId != $price->getBillingAreaId())
+							{
+								$billingAreaId = $price->getBillingAreaId();
+								$endActivation = $price->getEndActivation();
+								if (!($endActivation instanceof \DateTime))
+								{
+									$endActivation = (new \DateTime())->add(new \DateInterval('P10Y'));
+								}
+
+								$zones = [];
+								foreach ($billingArea->getTaxes() as $tax)
+								{
+									$zones = array_merge($zones, $tax->getZoneCodes());
+								}
+								$zones = array_unique($zones);
+							}
+							else
+							{
+								$endActivation = $startActivation;
+							}
+
+							if ($endActivation < $now)
+							{
+								continue;
+							}
+							$startActivation = $price->getStartActivation();
+
+							$priceData = ['priceId' => $price->getId(), 'billingAreaId' => $billingAreaId,
+								'startActivation' => $startActivation->format(\DateTime::ISO8601),
+								'endActivation' => $endActivation->format(\DateTime::ISO8601),
+								'zone' => '', 'value' => $price->getValue()];
+							$prices[] = $priceData;
+
+							foreach ($zones as $zone)
+							{
+								$taxes = $taxManager->getTaxByValue($price->getValue(), $price->getTaxCategories(), $billingArea, $zone);
+								$priceZone = $priceData;
+								$priceZone['zone'] = $zone;
+								$priceZone['valueWithTax'] = $taxManager->getValueWithTax($price->getValue(), $taxes);
+								$prices[] = $priceZone;
+							}
 						}
 					}
+					$value = ['prices' => $prices];
 					break;
 				case 'SkuThreshold':
 					$sku = $document->getSku();
@@ -427,5 +492,185 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $facetValue;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet
+	 * @return \Elastica\Facet\Terms|\Elastica\Facet\Range|null
+	 */
+	public function getFacetQuery($facet)
+	{
+		$parameters = array('facet' => $facet);
+		$event = new \Change\Events\Event('getFacetQuery', $this, $parameters);
+		$this->getEventManager()->trigger($event);
+		return $event->getParam('facetQuery');
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetFacetQuery(\Change\Events\Event $event)
+	{
+		/** @var $facet \Rbs\Elasticsearch\Facet\FacetDefinitionInterface|\Rbs\Elasticsearch\Documents\Facet */
+		$facet = $event->getParam('facet');
+		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_RANGE &&
+			($facet instanceof \Rbs\Elasticsearch\Documents\Facet))
+		{
+			$extractorName = $facet->getValuesExtractorName();
+			$collection = $this->getCollectionByCode($facet->getCollectionCode());
+			if (!$collection)
+			{
+				return;
+			}
+
+			$ranges = array();
+			foreach ($collection->getItems() as $item)
+			{
+				$fromTo = explode('::', $item->getValue());
+				if (count($fromTo) == 2)
+				{
+					$ranges[] = $fromTo;
+				}
+			}
+
+			if (count($ranges))
+			{
+				$queryFacet = new \Elastica\Facet\Range($facet->getFieldName());
+				if ($extractorName == 'Price')
+				{
+					$cs = $event->getServices('commerceServices');
+					if ($cs instanceof \Rbs\Commerce\CommerceServices && $cs->getContext()->getBillingArea())
+					{
+						$billingArea = $cs->getContext()->getBillingArea();
+						$zone = $cs->getContext()->getZone();
+						$now = (new \DateTime())->format(\DateTime::ISO8601);
+
+						$queryFacet->setNested('prices');
+						$queryFacet->setField($zone ? 'prices.valueWithTax' : 'prices.value');
+						$bool = new \Elastica\Filter\Bool();
+						$bool->addMust(new \Elastica\Filter\Term(['prices.billingAreaId' => $billingArea->getId()]));
+						$bool->addMust(new \Elastica\Filter\Term(['prices.zone' => $zone ? $zone : '']));
+						$bool->addMust(new \Elastica\Filter\Range('prices.startActivation', array('lte' => $now)));
+						$bool->addMust(new \Elastica\Filter\Range('prices.endActivation', array('gt' => $now)));
+						$queryFacet->setFilter($bool);
+					}
+					else
+					{
+						return;
+					}
+				}
+				else
+				{
+					$queryFacet->setField($facet->getFieldName());
+				}
+
+				foreach ($ranges as $fromTo)
+				{
+					$queryFacet->addRange($fromTo[0] == '' ? null : $fromTo[0], $fromTo[1] == '' ? null : $fromTo[1]);
+				}
+				$event->setParam('facetQuery', $queryFacet);
+				return;
+			}
+		}
+
+		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_TERM)
+		{
+			$queryFacet = new \Elastica\Facet\Terms($facet->getFieldName());
+			$queryFacet->setField($facet->getFieldName());
+			$event->setParam('facetQuery', $queryFacet);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet
+	 * @param mixed $facetFilter
+	 * @return \Elastica\Filter\AbstractFilter|null
+	 */
+	public function getFilterQuery($facet, $facetFilter)
+	{
+		$parameters = array('facet' => $facet, 'facetFilter' => $facetFilter);
+		$event = new \Change\Events\Event('getFilterQuery', $this, $parameters);
+		$this->getEventManager()->trigger($event);
+		return $event->getParam('filterQuery');
+	}
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetFilterQuery(\Change\Events\Event $event)
+	{
+		/** @var $facet \Rbs\Elasticsearch\Facet\FacetDefinitionInterface|\Rbs\Elasticsearch\Documents\Facet */
+		$facet = $event->getParam('facet');
+		$facetFilter = $event->getParam('facetFilter');
+		$facetName = $facet->getFieldName();
+		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_TERM)
+		{
+			$filterQuery = new \Elastica\Filter\Terms($facetName, is_array($facetFilter) ? $facetFilter : array($facetFilter));
+			$event->setParam('filterQuery', $filterQuery);
+		}
+		elseif ($facet->getFacetType() === FacetDefinitionInterface::TYPE_RANGE)
+		{
+			if (!is_array($facetFilter)) {
+				$facetFilter = [$facetFilter];
+			}
+
+			$ranges = [];
+			foreach ($facetFilter as $data)
+			{
+				$fromTo = explode('::', $data);
+				if (count($fromTo) === 2)
+				{
+					$args = array();
+					if ($fromTo[0])
+					{
+						$args['from'] = $fromTo[0];
+					}
+					if ($fromTo[1])
+					{
+						$args['to'] = $fromTo[1];
+					}
+					$ranges[] = $args;
+				}
+			}
+
+			if (count($ranges))
+			{
+				if ($facet instanceof \Rbs\Elasticsearch\Documents\Facet && $facet->getValuesExtractorName() == 'Price')
+				{
+					$cs = $event->getServices('commerceServices');
+					if ($cs instanceof \Rbs\Commerce\CommerceServices && $cs->getContext()->getBillingArea())
+					{
+						$billingArea = $cs->getContext()->getBillingArea();
+						$zone = $cs->getContext()->getZone();
+						$now = (new \DateTime())->format(\DateTime::ISO8601);
+
+						$filterQuery = new \Elastica\Filter\Nested();
+						$filterQuery->setPath('prices');
+						$nestedBool = new \Elastica\Query\Bool();
+						$nestedBool->addMust(new \Elastica\Query\Term(['prices.billingAreaId' => $billingArea->getId()]));
+						$nestedBool->addMust(new \Elastica\Query\Term(['prices.zone' => $zone ? $zone : '']));
+						$nestedBool->addMust(new \Elastica\Query\Range('prices.startActivation', array('lte' => $now)));
+						$nestedBool->addMust(new \Elastica\Query\Range('prices.endActivation', array('gt' => $now)));
+
+						foreach ($ranges as $args)
+						{
+							$nestedBool->addShould(new \Elastica\Query\Range($zone ? 'prices.valueWithTax' : 'prices.value', $args));
+						}
+
+						$nestedBool->setMinimumNumberShouldMatch(1);
+						$filterQuery->setQuery($nestedBool);
+						$event->setParam('filterQuery', $filterQuery);
+					}
+				}
+				else
+				{
+					$filterQuery = new \Elastica\Filter\Bool();
+					foreach ($ranges as $args)
+					{
+						$filterQuery->addShould(new \Elastica\Filter\Range($facetName, $args));
+					}
+					$event->setParam('filterQuery', $filterQuery);
+				}
+			}
+		}
 	}
 }

@@ -94,11 +94,26 @@ class StoreIndexer extends FullTextIndexer
 		}
 		elseif ($model->isInstanceOf('Rbs_Price_Price'))
 		{
+			$products = $this->getIndexedProductByPrice($documentId);
 			$price = $event->getParam('document');
 			if ($price instanceof \Rbs\Price\Documents\Price && $price->getSkuId())
 			{
 				$skuId = $price->getSkuId();
-				$this->indexProductsBySkuId($skuId);
+				$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+				$query->andPredicates($query->eq('sku', $skuId));
+
+				/** @var $product \Rbs\Catalog\Documents\Product */
+				foreach ($query->getDocuments() as $product)
+				{
+					if (!isset($products[$product->getId()]))
+					{
+						$products[$product->getId()] = $product;
+					}
+				}
+			}
+			if (count($products))
+			{
+				$this->indexProducts($products);
 			}
 		}
 		elseif ($model->isInstanceOf('Rbs_Catalog_ProductListItem'))
@@ -152,6 +167,44 @@ class StoreIndexer extends FullTextIndexer
 		}
 	}
 
+	/**
+	 * @param integer $priceId
+	 * @return array
+	 */
+	protected function getIndexedProductByPrice($priceId)
+	{
+		$products = [];
+		$indexManager = $this->getIndexManager();
+		$documentManager = $this->getApplicationServices()->getDocumentManager();
+		foreach ($this->getIndexesDefinition() as $storeIndex)
+		{
+			$client = $indexManager->getClient($storeIndex->getClientName());
+			if (!$client){continue;}
+			$index = $client->getIndex($storeIndex->getName());
+			if ($index->exists())
+			{
+				$nested = new \Elastica\Query\Nested();
+				$nested->setPath('prices');
+				$nestedBool = new \Elastica\Query\Bool();
+				$nestedBool->addMust(new \Elastica\Query\Term(['priceId' => $priceId]));
+				$nested->setQuery($nestedBool);
+				$query = new \Elastica\Query($nested);
+				$query->setFields([]);
+				$results = $index->getType($storeIndex->getDefaultTypeName())->search($query)->getResults();
+				foreach ($results as $result)
+				{
+					/** @var $result \Elastica\Result */
+					$productId = intval($result->getId());
+					$product = $documentManager->getDocumentInstance($productId);
+					if ($product instanceof \Rbs\Catalog\Documents\Product)
+					{
+						$products[$product->getId()] = $product;
+					}
+				}
+			}
+		}
+		return $products;
+	}
 	/**
 	 * @param integer $itemId
 	 * @return array|null
@@ -301,6 +354,11 @@ class StoreIndexer extends FullTextIndexer
 
 				if ($document instanceof \Rbs\Catalog\Documents\Product)
 				{
+					$creationDate = $document->getCurrentLocalization()->getCreationDate();
+					if ($creationDate) {
+						$elasticaDocument->set('creationDate', $creationDate->format(\DateTime::ISO8601));
+					}
+
 					$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
 					$q->andPredicates($q->activated(), $q->eq('product', $document));
 					$qb = $q->dbQueryBuilder();
@@ -308,8 +366,16 @@ class StoreIndexer extends FullTextIndexer
 					$qb->addColumn($fb->alias($q->getColumn('id'), 'itemId'));
 					$qb->addColumn($fb->alias($q->getColumn('productList'), 'listId'));
 					$qb->addColumn($fb->alias($q->getColumn('position'), 'position'));
+					$qb->addColumn($fb->alias($q->getColumn('creationDate'), 'creationDate'));
 					$select = $qb->query();
-					$listItems = $select->getResults($select->getRowsConverter()->addIntCol('itemId', 'listId', 'position'));
+					$listItems = $select->getResults($select->getRowsConverter()->addIntCol('itemId', 'listId', 'position')->addDtCol('creationDate'));
+					foreach ($listItems as $key => $listItem)
+					{
+						if ($listItem['creationDate'] instanceof \DateTime)
+						{
+							$listItems[$key]['creationDate'] = $listItem['creationDate']->format(\DateTime::ISO8601);
+						}
+					}
 					$elasticaDocument->set('listItems', $listItems);
 				}
 			}

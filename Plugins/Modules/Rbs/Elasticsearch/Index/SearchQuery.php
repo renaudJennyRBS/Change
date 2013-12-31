@@ -152,11 +152,7 @@ class SearchQuery
 			$multiMatch = new \Elastica\Query\MatchAll();
 		}
 
-		$bool = $this->getFacetFilters($facetFilters);
-		if (!$bool)
-		{
-			$bool = new \Elastica\Filter\Bool();
-		}
+		$bool = new \Elastica\Filter\Bool();
 		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
 		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
 
@@ -166,6 +162,13 @@ class SearchQuery
 		}
 		$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);
 		$query = new \Elastica\Query($filtered);
+
+		$facetFilters = $this->getFacetFilters($facetFilters);
+		if ($facetFilters)
+		{
+			$query->setFilter($facetFilters);
+		}
+
 		if (is_array($fields))
 		{
 			$query->setFields($fields);
@@ -186,11 +189,7 @@ class SearchQuery
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
 		$multiMatch = new \Elastica\Query\MatchAll();
-		$bool = $this->getFacetFilters($facetFilters);
-		if (!$bool)
-		{
-			$bool = new \Elastica\Filter\Bool();
-		}
+		$bool = new \Elastica\Filter\Bool();
 		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
 		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
 		if ($productList)
@@ -209,35 +208,28 @@ class SearchQuery
 		{
 			$query->setFields($fields);
 		}
-		$query->setFrom($from)->setSize($size);
-		if ($productList)
+
+		$facetFilters = $this->getFacetFilters($facetFilters);
+		if ($facetFilters)
 		{
-			$sort = ['position' => ['order' => 'asc', 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $productList->getId()]]]];
-			if ($productList->getProductSortOrder() == 'title')
-			{
-				$sort['title.untouched'] = ['order' => ($productList->getProductSortDirection() == 'asc' ? 'asc' : 'desc')];
-			}
-			$query->setSort($sort);
+			$query->setFilter($facetFilters);
 		}
+		$query->setFrom($from)->setSize($size);
 		return $query;
 	}
 
 	/**
 	 * @param \Rbs\Catalog\Documents\ProductList $productList
-	 * @param array $facetFilters
 	 * @param array $facets
 	 * @return \Elastica\Query
 	 */
-	public function getListFacetsQuery($productList = null, $facetFilters = null, $facets = null)
+	public function getListFacetsQuery($productList = null, $facets = null)
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
 		$multiMatch = new \Elastica\Query\MatchAll();
 
-		$bool = $this->getFacetFilters($facetFilters);
-		if (!$bool)
-		{
-			$bool = new \Elastica\Filter\Bool();
-		}
+		$bool = new \Elastica\Filter\Bool();
+
 		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
 		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
 		if ($productList)
@@ -258,7 +250,57 @@ class SearchQuery
 		{
 			$this->addFacets($query, $facets);
 		}
+
 		return $query;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\ProductList $productList
+	 * @param FacetDefinitionInterface|string $facet
+	 * @param array $facetFilters
+	 * @return \Elastica\Query|null
+	 */
+	public function getListFacetQuery($productList = null, $facet, $facetFilters = null)
+	{
+		$facetQuery = $this->getFacet($facet);
+		if ($facetQuery)
+		{
+			$now = (new \DateTime())->format(\DateTime::ISO8601);
+			$multiMatch = new \Elastica\Query\MatchAll();
+
+			$bool = new \Elastica\Filter\Bool();
+			$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
+			$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));
+			if ($productList)
+			{
+				$nested = new \Elastica\Filter\Nested();
+				$nested->setPath('listItems');
+				$nestedBool = new \Elastica\Query\Bool();
+				$nestedBool->addMust(new \Elastica\Query\Term(['listId' => $productList->getId()]));
+				$nested->setQuery($nestedBool);
+				$bool->addMust($nested);
+			}
+
+			$otherFacetFilters = $this->getOtherFacetFilters($facetQuery->getName(), $facetFilters);
+			if ($otherFacetFilters)
+			{
+				foreach ($otherFacetFilters as $otherFacetFilter)
+				{
+					$filter = $this->getFacetManager()->getFilterQuery($otherFacetFilter['facet'], $otherFacetFilter['facetFilter']);
+					if ($filter)
+					{
+						$bool->addMust($filter);
+					}
+				}
+			}
+
+			$filtered = new \Elastica\Query\Filtered($multiMatch, $bool);
+			$query = new \Elastica\Query($filtered);
+			$query->addFacet($facetQuery);
+			$query->setSize(0);
+			return $query;
+		}
+		return null;
 	}
 
 	/**
@@ -301,26 +343,11 @@ class SearchQuery
 					{
 						continue;
 					}
-					if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_TERM)
+
+					$filter = $this->getFacetManager()->getFilterQuery($facet, $facetFilter);
+					if ($filter)
 					{
-						$must[] = new \Elastica\Filter\Terms($facetName, is_array($facetFilter) ? $facetFilter : array($facetFilter));
-					}
-					elseif (is_string($facetFilter))
-					{
-						$fromTo = explode('::', $facetFilter);
-						if (count($fromTo) === 2)
-						{
-							$args = array();
-							if ($fromTo[0])
-							{
-								$args['from'] = $fromTo[0];
-							}
-							if ($fromTo[1])
-							{
-								$args['to'] = $fromTo[1];
-							}
-							$must[] = new \Elastica\Filter\Range($facetName, $args);
-						}
+						$must[] = $filter;
 					}
 				}
 			}
@@ -374,6 +401,37 @@ class SearchQuery
 	}
 
 	/**
+	 * @param string $facetName
+	 * @param array $facetFilters
+	 * @return array|null
+	 */
+	protected function getOtherFacetFilters($facetName, $facetFilters)
+	{
+		if (!is_array($facetFilters) || count($facetFilters) == 0)
+		{
+			return null;
+		}
+
+		$otherFacetFilters = [];
+		$validFacets = $this->getValidFacets();
+		if (isset($validFacets[$facetName]))
+		{
+			foreach ($facetFilters as $facetFilterName => $facetFilter)
+			{
+				if ($facetFilterName == $facetName ||
+					!isset($validFacets[$facetFilterName]) ||
+					(is_string($facetFilter) && empty($facetFilter)))
+				{
+					continue;
+				}
+				$otherFacetFilters[$facetFilterName] =  ['facet' => $validFacets[$facetFilterName], 'facetFilter' => $facetFilter];
+			}
+
+		}
+		return count($otherFacetFilters) ? $otherFacetFilters : null;
+	}
+
+	/**
 	 * @param FacetDefinitionInterface|string $facetOrFacetName
 	 * @return \Elastica\Facet\Terms|\Elastica\Facet\Range|null
 	 */
@@ -387,56 +445,9 @@ class SearchQuery
 			$validFacets = $this->getValidFacets();
 			if (isset($validFacets[$facetName]))
 			{
-				$facet = $validFacets[$facetName];
-			}
-			else
-			{
-				return null;
+				return $this->getFacetManager()->getFacetQuery($validFacets[$facetName], []);
 			}
 		}
-		else
-		{
-			return null;
-		}
-
-		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_RANGE
-			&& ($facet instanceof\Rbs\Elasticsearch\Documents\Facet)
-		)
-		{
-			$collection = $this->getCollectionByCode($facet->getCollectionCode());
-			if (!$collection)
-			{
-				return null;
-			}
-
-			$ranges = array();
-			foreach ($collection->getItems() as $item)
-			{
-				$fromTo = explode('::', $item->getValue());
-				if (count($fromTo) == 2)
-				{
-					$ranges[] = $fromTo;
-				}
-			}
-			if (count($ranges))
-			{
-				$queryFacet = new \Elastica\Facet\Range($facet->getFieldName());
-				$queryFacet->setField($facet->getFieldName());
-				foreach ($ranges as $fromTo)
-				{
-					$queryFacet->addRange($fromTo[0] == '' ? null : $fromTo[0], $fromTo[1] == '' ? null : $fromTo[1]);
-				}
-				return $queryFacet;
-			}
-		}
-
-		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_TERM)
-		{
-			$queryFacet = new \Elastica\Facet\Terms($facet->getFieldName());
-			$queryFacet->setField($facet->getFieldName());
-			return $queryFacet;
-		}
-
 		return null;
 	}
 

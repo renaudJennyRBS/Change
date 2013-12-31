@@ -42,5 +42,8 @@ class StoreResultInformation extends Information
 
 		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 9)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_page', $ucf));
+
+		$this->addInformationMeta('showOrdering', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_ordering', $ucf));
 	}
 }

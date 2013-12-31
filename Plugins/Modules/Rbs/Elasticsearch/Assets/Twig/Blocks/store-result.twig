@@ -5,6 +5,16 @@
 	</button>
 </script>
 
+{% if parameters.showOrdering %}
+	<ul class="nav nav-pills">
+		<li {% if parameters.sortBy == null %}class="active"{% endif %}><a href="{{ currentURL({'sortBy': null}) }}">{{ i18n('m.rbs.catalog.front.sort_default', ['ucf']) }}</a></li>
+		<li {% if parameters.sortBy == 'price.asc' %}class="active"{% endif %}><a href="{{ currentURL({'sortBy':'price.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_asc', ['ucf']) }}</a></li>
+		<li {% if parameters.sortBy == 'price.desc' %}class="active"{% endif %}><a href="{{ currentURL({'sortBy':'price.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_desc', ['ucf']) }}</a></li>
+		<li {% if parameters.sortBy == 'dateAdded.desc' %}class="active"{% endif %}><a href="{{ currentURL({'sortBy':'dateAdded.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_date_added_desc', ['ucf']) }}</a></li>
+		<li {% if parameters.sortBy == 'title.asc' %}class="active"{% endif %}><a href="{{ currentURL({'sortBy':'title.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_date_title_asc', ['ucf']) }}</a></li>
+	</ul>
+{% endif %}
+
 <form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
