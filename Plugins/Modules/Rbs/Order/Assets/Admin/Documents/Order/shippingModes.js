@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditorShippingModes ( REST, $filter)
+	function rbsOrderOrderEditorShippingModes ( REST, $filter, i18n, NotificationCenter, ErrorFormatter)
 	{
 		return {
 			restrict : 'A',
@@ -10,7 +10,8 @@
 			scope : {
 				'addressDocuments' : "=",
 				'shippingData' : "=",
-				'linesData' : "="
+				'linesData' : "=",
+				'orderId' : "@"
 			},
 
 			link : function (scope, element, attrs)
@@ -49,7 +50,17 @@
 				scope.populateShippingDetails = function(response) {
 					var shippingDetails = {};
 					angular.forEach(response.resources, function (shippingDoc) {
-						shippingDetails[shippingDoc.id] = shippingDoc;
+						REST.call(REST.getBaseUrl('rbs/order/orderRemainder'),{
+							orderId: scope.orderId,
+							shippingModeId: shippingDoc.id
+						}).then(function (data){
+								shippingDoc.status = data.status;
+								shippingDetails[shippingDoc.id] = shippingDoc;
+							}, function (error){
+								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_request_remainder | ucf'),
+								ErrorFormatter.format(error));
+						console.error(error);
+						});
 					});
 					scope.shippingDetails = shippingDetails;
 				};
@@ -91,7 +102,8 @@
 		};
 	}
 
-	rbsOrderOrderEditorShippingModes.$inject = [ 'RbsChange.REST', '$filter' ];
+	rbsOrderOrderEditorShippingModes.$inject = [ 'RbsChange.REST', '$filter', 'RbsChange.i18n',
+		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter' ];
 	angular.module('RbsChange').directive('rbsOrderShippingModes', rbsOrderOrderEditorShippingModes);
 
 })();

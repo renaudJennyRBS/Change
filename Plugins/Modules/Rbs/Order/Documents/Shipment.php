@@ -2,9 +2,9 @@
 namespace Rbs\Order\Documents;
 
 /**
- * @name \Rbs\Order\Documents\Expedition
+ * @name \Rbs\Order\Documents\Shipment
  */
-class Expedition extends \Compilation\Rbs\Order\Documents\Expedition
+class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 {
 	/**
 	 * @return string

@@ -134,6 +134,12 @@
 	"order_shipping_address":{
 		"message":"adresse de livraison"
 	},
+	"order_shipping_status":{
+		"message":"statut"
+	},
+	"order_shipping_actions":{
+		"message":"actions"
+	},
 	"order_action_mark_as_payed":{
 		"message":"payée"
 	},
@@ -224,61 +230,79 @@
 	"invoice_select_transaction":{
 		"message":"sélectionner une transaction bancaire"
 	},
-	"expedition_list":{
+	"shipment_list":{
 		"message":"expéditions"
 	},
-	"expedition_create":{
+	"shipment_create":{
 		"message":"ajouter une expédition"
 	},
-	"expedition_select_shippingmode":{
+	"shipment_select_shippingmode":{
 		"message":"sélectionner le mode de livraison"
 	},
-	"expedition_select_order":{
+	"shipment_select_order":{
 		"message":"sélectionner une commande associée"
 	},
-	"expedition_articles":{
+	"shipment_articles":{
 		"message":"articles"
 	},
-	"expedition_add_another_articles":{
+	"shipment_add_another_articles":{
 		"message":"ajouter d'autres articles"
 	},
-	"expedition_article_selector_title":{
+	"shipment_article_selector_title":{
 		"message":"sélectionnez des articles à ajouter à l'expédition"
 	},
-	"expedition_add_articles":{
+	"shipment_add_articles":{
 		"message":"ajouter les articles"
 	},
-	"expedition_designation":{
+	"shipment_designation":{
 		"message":"désignation"
 	},
-	"expedition_sku":{
+	"shipment_sku":{
 		"message":"SKU"
 	},
-	"expedition_remainder":{
+	"shipment_remainder":{
 		"message":"reliquat"
 	},
-	"expedition_quantity":{
+	"shipment_quantity":{
 		"message":"quantité"
 	},
-	"expedition_line_number":{
+	"shipment_line_number":{
 		"message":"numéro de ligne"
 	},
-	"expedition_remove_lines":{
+	"shipment_remove_lines":{
 		"message":"retirer de l'expédition"
 	},
-	"expedition_remainder_help":{
+	"shipment_remainder_help":{
 		"message":"lignes non présentes dans l'expédition mais présentes dans le reliquat"
 	},
-	"expedition_warning_new_lines":{
+	"shipment_warning_new_lines":{
 		"message":"nouvelles lignes d'expédition non présentes dans le reliquat"
 	},
-	"expedition_quantity_to_ship_exceeded":{
+	"shipment_quantity_to_ship_exceeded":{
 		"message":"attention, l'une des quantités à expédier excède celle du reliquat. Êtes-vous sur de vouloir envoyer une quantité supérieur à celle indiquer par le reliquat ?"
 	},
-	"expedition_new_from_scratch_helper":{
+	"shipment_new_from_scratch_helper":{
 		"message":"l'expédition que vous voulez créer n'a ni commande associée ni mode de livraison. Il n'est donc pas possible de calculer un reliquat. Les articles en reliquat s'afficheront une fois que la commande associée et le mode de livraison seront enregistrés"
 	},
-	"expedition_prepare_button":{
+	"shipment_prepare_button":{
 		"message":"Valider la préparation<small>de l'expédition</small>"
+	},
+	"order_send":{
+		"message":"expédier"
+	},
+	"order_send_the_remain":{
+		"message":"expédier le reliquat"
+	},
+	"order_shipment":{
+		"message":"expédition"
+	},
+	"order_no_shipment":{
+		"message":"non-expédié"
+	},
+	"order_partially_sent":{
+		"message":"partiellement expédié"
+	},
+	"order_sent":{
+		"message":"expédié"
 	}
 }

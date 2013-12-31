@@ -2,12 +2,28 @@
 	<tr>
 		<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
 		<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
-		<th>&nbsp;</th>
+		<th>{{ i18n('m.rbs.order.admin.order_shipping_status', ['ucf']) }}</th>
+		<th>{{ i18n('m.rbs.order.admin.order_shipping_actions', ['ucf']) }}</th>
 	</tr>
 	<tr ng-repeat="shipping in shippingData" ng-show="shipping.lines.length > 0">
 		<td>(=shippingDetails[shipping.id].label=)</td>
 		<td>(=shipping.lines.join(', ')=)</td>
-		<td><a class="icon-envelope" title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="editShippingAddress(shipping.id)"></a></td>
+		<td ng-switch="shippingDetails[shipping.id].status">
+			<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_no_shipment', ['ucf']) }}</span>
+			<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_partially_sent', ['ucf']) }}</span>
+			<span ng-switch-when="sent">{{ i18n('m.rbs.order.admin.order_sent', ['ucf']) }}</span>
+			<span ng-switch-default=""></span>
+		</td>
+		<td>
+			<a class="icon-archive" ng-if="shippingDetails[shipping.id].status != 'sent'" title="{{ i18nAttr('m.rbs.order.admin.order_shipment_form', ['ucf']) }}" href="" ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)" ng-if="orderId > 0">
+				<span ng-switch="shippingDetails[shipping.id].status">
+					<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_send', ['ucf']) }},</span>
+					<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_send_the_remain', ['ucf']) }},</span>
+					<span ng-switch-default=""></span>
+				</span>
+			</a>
+			<a class="icon-envelope" title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="editShippingAddress(shipping.id)"> {{ i18n('m.rbs.order.admin.order_shipping_address', ['ucf']) }}</a>
+		</td>
 	</tr>
 </table>
 <div ng-show="showShippingAddressUI">

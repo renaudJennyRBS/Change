@@ -20,7 +20,7 @@
 			$delegate.routesForModels([
 				'Rbs_Order_Order',
 				'Rbs_Order_Invoice',
-				'Rbs_Order_Expedition'
+				'Rbs_Order_Shipment'
 			]);
 
 			return $delegate;

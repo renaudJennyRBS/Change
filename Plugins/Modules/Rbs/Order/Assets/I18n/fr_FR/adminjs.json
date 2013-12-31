@@ -8,49 +8,52 @@
 	"order_add_line":{
 		"message":"ajouter une ligne"
 	},
-	"expedition_shipping_mode_not_found_title":{
+	"shipment_shipping_mode_not_found_title":{
 		"message":"le mode de livraison est introuvable"
 	},
-	"expedition_shipping_mode_not_found":{
+	"shipment_shipping_mode_not_found":{
 		"message":"le mode de livraison $CODE$ est introuvable"
 	},
-	"expedition_invalid_query_shipping_mode":{
+	"shipment_invalid_query_shipping_mode":{
 		"message":"la requête pour récupérer le mode de livraison est invalide"
 	},
-	"expedition_sku_not_found_title":{
+	"shipment_sku_not_found_title":{
 		"message":"le SKU est introuvable"
 	},
-	"expedition_sku_not_found":{
+	"shipment_sku_not_found":{
 		"message":"le SKU $SKU$ est introuvable"
 	},
-	"expedition_invalid_query_sku":{
+	"shipment_invalid_query_sku":{
 		"message":"la requête pour récupérer le SKU est invalide"
 	},
-	"expedition_invalid_query_products":{
+	"shipment_invalid_query_products":{
 		"message":"au moins l'une des requetes pour récupérer les produits a échoué"
 	},
-	"expedition_invalid_query_order":{
+	"shipment_invalid_query_order":{
 		"message":"la requête pour récupérer la commande est invalide"
 	},
-	"expedition_product_not_found_title":{
+	"shipment_product_not_found_title":{
 		"message":"le produit est introuvable"
 	},
-	"expedition_product_not_found":{
+	"shipment_product_not_found":{
 		"message":"le produit dont l'idantifiant est $PRODUCTID$ est introuvable"
 	},
-	"expedition_invalid_query_sku_from_product_id":{
+	"shipment_invalid_query_sku_from_product_id":{
 		"message":"la requête pour récupérer le SKU par l'idenfiant de produit a échoué"
 	},
-	"expedition_no_sku_to_compare":{
+	"shipment_no_sku_to_compare":{
 		"message":"un problème est survenu lors de la comparaison entre SKU. L'un des éléments est invalide."
 	},
-	"expedition_confirm_validate_preparation_title":{
+	"shipment_confirm_validate_preparation_title":{
 		"message":"valider la préparation ?"
 	},
-	"expedition_confirm_validate_preparation":{
+	"shipment_confirm_validate_preparation":{
 		"message":"une fois la préparation validée, il sera impossible de modifier les lignes d'expéditions"
 	},
-	"expedition_invalid_request_remainder":{
+	"shipment_invalid_request_remainder":{
 		"message":"la requête d'obtention du reliquat est invalide"
+	},
+	"order_invalid_query_order_shipments":{
+		"message":"la requête d'obtention des expéditions de la commande est invalide"
 	}
 }
