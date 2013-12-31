@@ -85,7 +85,6 @@
 	 *
 	 * @param $scope
 	 * @param $q
-	 * @param $location
 	 * @param ErrorFormatter
 	 * @param i18n
 	 * @param REST
@@ -102,35 +101,47 @@
 			cache,
 			treeDb;
 
-		function selectWebsite (website)
+
+		function initCache (website, reset)
 		{
-			Navigation.setContext($scope, 'RbsWebsiteStructure').then(function (context)
-			{
-				$scope.reloadNode(context.params['node']);
-			});
-
-
 			var cacheKey = cacheKeyPrefix + website.id,
-				shouldLoad;
+				shouldLoad = false;
 
 			cache = $cacheFactory.get(cacheKey);
-
-			shouldLoad = angular.isUndefined(cache);
-			if (shouldLoad)
-			{
+			if (angular.isUndefined(cache)) {
 				cache = $cacheFactory(cacheKey);
 				cache.put('collection', []);
 				cache.put('tree', {});
+				shouldLoad = true;
+			} else if (reset) {
+				cache.removeAll();
+				cache.put('collection', []);
+				cache.put('tree', {});
+				shouldLoad = true;
 			}
-
 			treeDb = cache.get('tree');
 			$scope.browseCollection = cache.get('collection');
+			return shouldLoad;
+		}
 
-			if (shouldLoad)
+
+		function selectWebsite (website)
+		{
+			if (initCache(website, false))
 			{
 				toggleNode(getNodeInfo($scope.currentWebsite));
 			}
 
+			Navigation.setContext($scope, 'RbsWebsiteStructure', website.label).then(function (context)
+			{
+				if (context.params['node']) {
+					$scope.reloadNode(context.params['node']);
+				}
+				else {
+					initCache(website, true);
+					toggleNode(getNodeInfo($scope.currentWebsite));
+				}
+			});
 		}
 
 
@@ -146,7 +157,6 @@
 				}
 			});
 		});
-
 
 
 		function getNodeIndex (nodeInfo)
@@ -166,7 +176,6 @@
 
 		function loadNode (nodeInfo)
 		{
-			console.log(nodeInfo.id);
 			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', nodeInfo.id);
 			query.offset = 0;
 			query.limit = 100; // FIXME ?
@@ -218,7 +227,6 @@
 				}
 			);
 		}
-
 
 
 		function expandNode (nodeInfo, index)
@@ -353,6 +361,18 @@
 			isFunction : function (doc)
 			{
 				return doc.model === 'Functions';
+			},
+
+			hasChildren : function (doc)
+			{
+				var nodeInfo = getNodeInfo(doc);
+				return angular.isArray(nodeInfo.children) ? (nodeInfo.children.length > 0) : doc.nodeHasChildren();
+			},
+
+			childrenCount : function (doc)
+			{
+				var nodeInfo = getNodeInfo(doc);
+				return angular.isArray(nodeInfo.children) ? nodeInfo.children.length : doc.nodeChildrenCount();
 			},
 
 			showFunctions : {},
