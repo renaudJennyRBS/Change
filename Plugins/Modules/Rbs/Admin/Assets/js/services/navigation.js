@@ -252,9 +252,9 @@
 				{
 					var count = scope.activeContextes.length;
 					return {
-						margin    : '0 ' + ((count - index) * 15)+'px',
-						opacity   : (0.7 + ((index+1)/count * 0.3)),
-						fontSize  : ((1 + ((index+1)/count * 0.2))*100)+'%'
+						margin   : '0 ' + ((count - index) * 15) + 'px',
+						opacity  : (0.7 + ((index+1)/count * 0.3)),
+						fontSize : ((1  + ((index+1)/count * 0.2))*100) + '%'
 					};
 				};
 			}

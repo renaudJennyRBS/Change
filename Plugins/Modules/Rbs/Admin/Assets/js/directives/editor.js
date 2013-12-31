@@ -94,7 +94,8 @@
 							property : propertyName,
 							model : model,
 							label : title,
-							document : $scope.document
+							document : $scope.document,
+							ngModel : 'document.' + propertyName
 						});
 						$location.url(UrlManager.getUrl(model, null, 'new'));
 					};
@@ -107,7 +108,8 @@
 						Navigation.start({
 							property : propertyName,
 							label : title,
-							document : $scope.document
+							document : $scope.document,
+							ngModel : 'document.' + propertyName
 						});
 						$location.url(UrlManager.getUrl(childDocument));
 					};

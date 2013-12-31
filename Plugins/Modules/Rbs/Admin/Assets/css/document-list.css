@@ -545,6 +545,7 @@ rbs-document-list .table-bordered > thead > tr > td {
 	color: #B0B0B0;
 	margin-left: 4px;
 	padding: 1px 5px;
+	text-shadow: 1px 1px 0 #FFFFFF;
 }
 
 .tree-level-separator {
