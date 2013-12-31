@@ -24,6 +24,7 @@ class Facets extends Block
 		$parameters->addParameterMeta('facetFilters', null);
 		$parameters->addParameterMeta('formAction', null);
 		$parameters->addParameterMeta('productListId');
+		$parameters->addParameterMeta('sortBy');
 		$parameters->setNoCache();
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -43,6 +44,12 @@ class Facets extends Block
 			}
 		}
 		$parameters->setParameterValue('facetFilters', $facetFilters);
+
+		$sortBy = $request->getQuery('sortBy');
+		if ($sortBy)
+		{
+			$parameters->setParameterValue('sortBy', $sortBy);
+		}
 
 		$query = $uri->getQueryAsArray();
 		unset($query['facetFilters']);
@@ -173,10 +180,26 @@ class Facets extends Block
 		$searchQuery->setI18nManager($applicationServices->getI18nManager());
 		$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
 		$facetFilters = $parameters->getParameter('facetFilters');
-		$query = $searchQuery->getListFacetsQuery($productList, $facetFilters, $facets);
-
-		$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
-		$attributes['facetValues'] = $searchQuery->buildFacetValues($result->getFacets(), $facetFilters, $facets);
+		if (is_array($facetFilters) && count($facetFilters))
+		{
+			$type = $index->getType($storeIndex->getDefaultTypeName());
+			$facetResults = array();
+			foreach ($facets as $facet)
+			{
+				$query = $searchQuery->getListFacetQuery($productList, $facet, $facetFilters);
+				if ($query)
+				{
+					$facetResults = array_merge($facetResults, $type->search($query)->getFacets());
+				}
+			}
+			$attributes['facetValues'] = $searchQuery->buildFacetValues($facetResults, $facetFilters, $facets);
+		}
+		else
+		{
+			$query = $searchQuery->getListFacetsQuery($productList, $facets);
+			$facetResults = $index->getType($storeIndex->getDefaultTypeName())->search($query)->getFacets();
+			$attributes['facetValues'] = $searchQuery->buildFacetValues($facetResults, $facetFilters, $facets);
+		}
 		return 'facets.twig';
 	}
 }

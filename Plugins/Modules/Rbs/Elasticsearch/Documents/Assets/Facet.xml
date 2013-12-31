@@ -3,9 +3,9 @@
 		xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	editable="true" localized="true">
 	<properties>
-		<property name="label" stateless="true" />
 		<property name="title" type="String" localized="true" />
-		<property name="fieldName" type="String" />
+		<property name="mappingName" type="String" />
+		<property name="fieldName" type="String" stateless="true" />
 		<property name="indexId" type="DocumentId" />
 
 		<property name="multipleChoice" type="Boolean" stateless="true" />

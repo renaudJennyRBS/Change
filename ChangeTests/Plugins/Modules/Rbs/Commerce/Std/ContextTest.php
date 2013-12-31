@@ -35,6 +35,14 @@ class ContextTest extends \ChangeTests\Change\TestAssets\TestCase
 class FakeBillingArea_451235 implements \Rbs\Price\Tax\BillingAreaInterface
 {
 	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+		return 0;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getCurrencyCode()

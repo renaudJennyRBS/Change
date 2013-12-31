@@ -65,8 +65,8 @@
 	"storeindex_section_facets":{
 		"message":"facettes"
 	},
-	"facet_synchronize_title_fieldname":{
-		"message":"synchronisé avec l'identifiant"
+	"facet_synchronize_title_label":{
+		"message":"synchronisé avec le libellé"
 	},
 	"facet_section_indexer":{
 		"message":"indexation"

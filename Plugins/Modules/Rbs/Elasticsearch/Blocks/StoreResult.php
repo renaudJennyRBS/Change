@@ -10,6 +10,9 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class StoreResult extends Block
 {
+
+	protected $validSortBy = ['title.asc', 'price.asc', 'price.desc', 'price.desc', 'dateAdded.desc'];
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -23,13 +26,13 @@ class StoreResult extends Block
 		$parameters->addParameterMeta('facetFilters', null);
 		$parameters->addParameterMeta('storeIndex');
 		$parameters->addParameterMeta('contextualUrls', true);
-		$parameters->addParameterMeta('itemsPerPage', 10);
-		$parameters->addParameterMeta('pageNumber', 1);
 		$parameters->addParameterMeta('webStoreId', null);
 
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
 		$parameters->addParameterMeta('pageNumber', 1);
+		$parameters->addParameterMeta('showOrdering', true);
+		$parameters->addParameterMeta('sortBy', null);
 
 		$parameters->addParameterMeta('displayPrices', true);
 		$parameters->addParameterMeta('displayPricesWithTax', true);
@@ -44,6 +47,15 @@ class StoreResult extends Block
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber',
 			intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
+
+		if ($parameters->getParameter('showOrdering'))
+		{
+			$sortBy = $request->getQuery('sortBy');
+			if ($sortBy && in_array($sortBy, $this->validSortBy))
+			{
+				$parameters->setParameterValue('sortBy', $sortBy);
+			}
+		}
 
 		$queryFilters = $request->getQuery('facetFilters', null);
 		$facetFilters = array();
@@ -169,6 +181,11 @@ class StoreResult extends Block
 		$size = $parameters->getParameter('itemsPerPage');
 		$from = ($pageNumber - 1) * $size;
 		$query = $searchQuery->getListSearchQuery($productList, $facetFilters, $from, $size, []);
+		$sortArgs = $this->getSortArgs($parameters->getParameter('sortBy'), $productList, $commerceServices->getContext());
+		if ($sortArgs)
+		{
+			$query->setSort($sortArgs);
+		}
 
 		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 		$attributes['totalCount'] = $totalCount = $searchResult->getTotalHits();
@@ -225,5 +242,62 @@ class StoreResult extends Block
 
 		$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
 		return 'store-result.twig';
+	}
+
+	/**
+	 * @param string $sortBy
+	 * @param \Rbs\Catalog\Documents\ProductList|null $productList
+	 * @param \Rbs\Commerce\Std\Context $context
+	 * @return array | null
+	 */
+	protected function getSortArgs($sortBy, $productList, $context)
+	{
+		$sort = [];
+		if ($productList && $sortBy == null)
+		{
+			$sort['position'] = ['order' => 'asc', 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $productList->getId()]]];
+			$sortBy = $productList->getProductSortOrder() . '.' . $productList->getProductSortDirection();
+		}
+
+		if ($sortBy)
+		{
+			list($sortName, $sortDir) = explode('.', $sortBy);
+			if ($sortName && ($sortDir == 'asc' || $sortDir == 'desc'))
+			{
+				switch ($sortName) {
+					case 'title' :
+						$sort['title.untouched'] = ['order' => $sortDir];
+						break;
+					case 'dateAdded' :
+						if ($productList)
+						{
+							$sort['creationDate'] = ['order' => $sortDir, 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $productList->getId()]]];
+						}
+						else
+						{
+							$sort['creationDate'] = ['order' => $sortDir];
+						}
+						break;
+					case 'price' :
+						$ba = $context->getBillingArea();
+						if ($ba)
+						{
+							$baId = $ba->getId();
+							$zone = $context->getZone();
+							$now = (new \DateTime())->format(\DateTime::ISO8601);
+							$sortKey = $zone ? 'valueWithTax' : 'value';
+							$bool = new \Elastica\Filter\Bool();
+							$bool->addMust(new \Elastica\Filter\Term(['billingAreaId' => $baId]));
+							$bool->addMust(new \Elastica\Filter\Term(['zone' => $zone ? $zone : '']));
+							$bool->addMust(new \Elastica\Filter\Range('startActivation', array('lte' => $now)));
+							$bool->addMust(new \Elastica\Filter\Range('endActivation', array('gt' => $now)));
+							$sort[$sortKey] = ['order' => $sortDir, 'nested_path' => 'prices', 'nested_filter' => $bool->toArray()];
+						}
+						break;
+				}
+			}
+		}
+
+		return  (count($sort)) ? $sort : null;
 	}
 }

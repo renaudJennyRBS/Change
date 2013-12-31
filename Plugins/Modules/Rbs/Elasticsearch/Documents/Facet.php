@@ -13,21 +13,22 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet implements Fa
 	 */
 	protected $parameters;
 
+
 	/**
-	 * @return string
+	 * @param string $fieldName
+	 * @return $this
 	 */
-	public function getLabel()
+	public function setFieldName($fieldName)
 	{
-		return $this->getFieldName();
+		return $this;
 	}
 
 	/**
-	 * @param string $label
-	 * @return $this
+	 * @return string
 	 */
-	public function setLabel($label)
+	public function getFieldName()
 	{
-		return $this;
+		return ($this->getMappingName()) ? $this->getMappingName() : 'f_' . $this->getId();
 	}
 
 	/**

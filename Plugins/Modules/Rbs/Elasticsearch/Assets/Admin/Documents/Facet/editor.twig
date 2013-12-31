@@ -3,8 +3,8 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_section_indexer', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="fieldName" required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
+		<rbs-field-text property="label" required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'indexId'), ['ucf']) }}" required="true">
@@ -28,10 +28,14 @@
 			</select>
 		</rbs-field>
 
+		<rbs-field-text property="mappingName"
+				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
+		</rbs-field-text>
+
 		<hr />
 
-		<rbs-field-text property="title" required="true" rbs-sync-value="document.fieldName"
-				sync-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_synchronize_title_fieldname', ['ucf']) }}"
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+				sync-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_synchronize_title_label', ['ucf']) }}"
 				label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 

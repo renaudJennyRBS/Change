@@ -1,4 +1,7 @@
 <form class="form-inline" method="GET" action="{{ parameters.formAction }}">
+{% if parameters.sortBy %}
+	<input type="hidden" name="sortBy" value="{{ parameters.sortBy }}">
+{% endif %}
 	{% for group in facetGroups %}
 		<h3>{{ group.currentLocalization.title }}</h3>
 		{% for facet in group.facets %}
