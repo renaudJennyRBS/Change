@@ -46,14 +46,13 @@
 		'RbsChange.EditorManager',
 		'RbsChange.Events',
 		'RbsChange.PaginationPageSizes',
-		'RbsChange.SelectSession',
 		'RbsChange.Navigation',
 		'RbsChange.ErrorFormatter',
 		documentListDirectiveFn
 	]);
 
 
-	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, SelectSession, Navigation, ErrorFormatter)
+	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, Navigation, ErrorFormatter)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -407,7 +406,7 @@
 
 						html = '<td ng-class="{' + (column.primary ? '\'preview\':hasPreview(doc),' : '') + '\'sorted\':isSortedOn(\'' + column.name + '\')}">';
 						if (column.primary) {
-							html += '<div class="primary-cell">' + column.content + '</div>';
+							html += '<div class="primary-cell" ng-style="extend.getPrimaryCellStyle(doc)">' + column.content + '</div>';
 						} else {
 							html += column.content;
 						}
@@ -432,9 +431,9 @@
 					}
 					if (column.primary) {
 						if (tAttrs.cascadeEdition) {
-							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
+							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell" ng-style="extend.getPrimaryCellStyle(doc)"><a href="javascript:;" ng-click="cascadeEdit(doc)"><strong>' + column.content + '</strong></a></div></td>');
 						} else {
-							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell"><a href ng-href="(= doc | rbsURL =)"><strong>' + column.content + '</strong></a></div></td>');
+							$td = $('<td ng-class="{\'preview\':hasPreview(doc),\'sorted\':isSortedOn(\'' + column.name + '\')}"><div class="primary-cell" ng-style="extend.getPrimaryCellStyle(doc)"><a href ng-href="(= doc | rbsURL =)"><strong>' + column.content + '</strong></a></div></td>');
 						}
 					} else {
 						$td = $('<td ng-class="{\'sorted\':isSortedOn(\'' + column.name + '\')}">' + column.content + '</td>');

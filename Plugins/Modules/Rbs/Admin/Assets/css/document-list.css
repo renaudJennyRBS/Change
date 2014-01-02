@@ -130,6 +130,9 @@ rbs-document-list tr .quick-actions > .popover-content .quick-action.danger:hove
 rbs-document-list .table td .primary-cell {
 	position: relative;
 	min-width: 120px;
+	margin: -5px;
+	padding: 5px;
+	min-height: 34px;
 }
 
 rbs-document-list > .btn-toolbar {
@@ -549,13 +552,15 @@ rbs-document-list .table-bordered > thead > tr > td {
 }
 
 .tree-level-separator {
-	border-left: 2px dotted #C0C0C0;
+	background: none repeat scroll 0 0 rgba(0,0,0,0.15);
+	border-radius: 4px;
 	display: inline-block;
-	height: 32px;
-	line-height: 1;
-	margin: -5px 0 -11px 9px;
+	height: 2px;
+	margin: 0 11px;
 	padding: 0;
-	width: 9px;
+	position: relative;
+	top: -2px;
+	width: 4px;
 }
 
 rbs-document-list td i.tree-icon:before {
