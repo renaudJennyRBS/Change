@@ -136,6 +136,18 @@ class ApplicationServices extends \Zend\Di\Di
 				->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+
+		//DocumentCodeManager : DbProvider, DocumentManager, TransactionManager
+		$documentCodeManagerClassName = $this->getInjectedClassName('DocumentCodeManager', 'Change\Documents\DocumentCodeManager');
+		$classDefinition = $this->getClassDefinition($documentCodeManagerClassName);
+		$classDefinition->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('type' => 'DocumentManager', 'required' => true))
+			->addMethod('setDbProvider', true)
+			->addMethodParameter('setDbProvider', 'dbProvider', array('type' => 'DbProvider', 'required' => true))
+			->addMethod('setTransactionManager', true)
+			->addMethodParameter('setTransactionManager', 'transactionManager', array('type' => 'TransactionManager', 'required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		//TreeManager : ModelManager, DocumentManager, DbProvider
 		$treeManagerClassName = $this->getInjectedClassName('TreeManager', 'Change\Documents\TreeManager');
 		$classDefinition = $this->getClassDefinition($treeManagerClassName);
@@ -279,6 +291,8 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$instanceManager->addAlias('DocumentManager', $documentManagerClassName, array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
 
+		$instanceManager->addAlias('DocumentCodeManager', $documentCodeManagerClassName, array());
+
 		$instanceManager->addAlias('TreeManager', $treeManagerClassName, array());
 
 		$instanceManager->addAlias('ConstraintsManager', $constraintsManagerClassName, array());
@@ -417,6 +431,15 @@ class ApplicationServices extends \Zend\Di\Di
 	public function getDocumentManager()
 	{
 		return $this->get('DocumentManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Documents\DocumentCodeManager
+	 */
+	public function getDocumentCodeManager()
+	{
+		return $this->get('DocumentCodeManager');
 	}
 
 	/**
