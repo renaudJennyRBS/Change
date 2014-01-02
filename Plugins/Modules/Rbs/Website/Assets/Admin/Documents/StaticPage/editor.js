@@ -12,7 +12,7 @@
 
 			link : function (scope, element, attrs, editorCtrl) {
 
-				scope.onReady = function ()
+				scope.onLoad = function ()
 				{
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
 						scope.document.section = Breadcrumb.getCurrentNode();
