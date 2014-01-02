@@ -12,7 +12,8 @@
 
 		var forEach = angular.forEach,
 			REST_BASE_URL,
-			HTTP_STATUS_CREATED = 201;
+			HTTP_STATUS_CREATED = 201,
+			temporaryId;
 
 		this.setBaseUrl = function (url) {
 			REST_BASE_URL = url;
@@ -23,17 +24,27 @@
 			'RbsChange.Utils',
 			'RbsChange.ArrayUtils',
 			'RbsChange.UrlManager',
-			'RbsChange.i18n',
+			'localStorageService',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, i18n) {
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService) {
+
+				var absoluteUrl,
+				    language = 'fr_FR',
+				    lastCreatedDocument = null,
+				    REST;
+
+				temporaryId = localStorageService.get("temporaryId");
+				if (temporaryId === null) {
+					temporaryId = 0;
+				} else {
+					temporaryId = parseInt(temporaryId, 10);
+				}
 
 				if ( ! REST_BASE_URL ) {
-					var absoluteUrl = $location.absUrl();
+					absoluteUrl = $location.absUrl();
 					absoluteUrl = absoluteUrl.replace(/admin\.php.*/, 'rest.php/');
 					REST_BASE_URL = absoluteUrl;
 				}
-
-				var language = 'fr_FR';
 
 
 				function ChangeDocument () {
@@ -406,9 +417,6 @@
 				}
 
 
-				var lastCreatedDocument = null, REST;
-
-
 				// Public API of the REST service.
 
 				REST = {
@@ -522,6 +530,17 @@
 
 
 					/**
+					 * Returns unique ID for newly created resources.
+					 * These IDs are negative integers.
+					 */
+					'getTemporaryId' : function () {
+						temporaryId--;
+						localStorageService.add("temporaryId", temporaryId);
+						return temporaryId;
+					},
+
+
+					/**
 					 * Creates a new, unsaved resource of the given `model` in the given locale (`lcid`).
 					 *
 					 * @param model Model name.
@@ -531,7 +550,7 @@
 					 */
 					'newResource' : function (model, lcid) {
 						var props = {
-							'id'    : Utils.getTemporaryId(),
+							'id'    : REST.getTemporaryId(),
 							'model' : model,
 							'publicationStatus' : 'DRAFT'
 						};

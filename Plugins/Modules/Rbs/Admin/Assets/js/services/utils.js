@@ -2,10 +2,7 @@
 
 	"use strict";
 
-	var forEach = angular.forEach,
-	    temporaryId;
-
-	temporaryId = -1;
+	var forEach = angular.forEach;
 
 	/**
 	 * Global utility methods.
@@ -185,15 +182,6 @@
 		 */
 		isNew : function (resource) {
 			return this.isDocument(resource) && resource.id < 0;
-		},
-
-
-		/**
-		 * Returns unique ID for newly created resources.
-		 * These IDs are negative integers.
-		 */
-		getTemporaryId : function () {
-			return temporaryId--;
 		},
 
 

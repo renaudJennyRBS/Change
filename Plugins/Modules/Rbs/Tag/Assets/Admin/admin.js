@@ -204,7 +204,7 @@
 
 			'create' : function (tag) {
 				tag.model = 'Rbs_Tag_Tag';
-				tag.id = Utils.getTemporaryId();
+				tag.id = REST.getTemporaryId();
 				var promise = REST.save(tag);
 				promise.then(function (created) {
 					angular.extend(tag, created);
