@@ -166,6 +166,22 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('website_id')->setNullable(false)->setDefaultValue(0))
 				->addKey($this->newPrimaryKey()->addField($td->getField('rule_id')))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_document_code'] = $td = $schemaManager->newTableDefinition('change_document_code');
+			$td->addField($schemaManager->newIntegerFieldDefinition('id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newIntegerFieldDefinition('context_id')->setNullable(false)->setDefaultValue(0))
+				->addField($schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('code', array('length' => 100))->setNullable(false))
+				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
+				->addKey($this->newIndexKey()
+					->addField($td->getField('context_id'))
+					->addField($td->getField('document_id'))
+					->setName('document'))
+				->addKey($this->newIndexKey()
+					->addField($td->getField('context_id'))
+					->addField($td->getField('code'))
+					->setName('code'))
+				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}

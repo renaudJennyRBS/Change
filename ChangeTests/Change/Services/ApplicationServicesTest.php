@@ -33,6 +33,8 @@ class ApplicationServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertInstanceOf('Change\Documents\DocumentManager', $applicationServices->getDocumentManager());
 
+		$this->assertInstanceOf('Change\Documents\DocumentCodeManager', $applicationServices->getDocumentCodeManager());
+
 		$this->assertInstanceOf('Change\Documents\TreeManager', $applicationServices->getTreeManager());
 
 		$this->assertInstanceOf('Change\Documents\Constraints\ConstraintsManager', $applicationServices->getConstraintsManager());
