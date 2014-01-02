@@ -36,11 +36,11 @@
 							var matchingShippingModes = $filter('filter')(shippingModes, {'id': shippingModeId});
 							if(matchingShippingModes.length){
 								angular.forEach(matchingShippingModes, function (shippingMode) {
-									shippingMode.lines.push(line.options.lineNumber);
+									shippingMode.lines.push(line.index);
 								});
 							}
 							else{
-								shippingModes.push({'id': shippingModeId, lines: [line.options.lineNumber]});
+								shippingModes.push({'id': shippingModeId, lines: [line.index]});
 							}
 						}
 					});

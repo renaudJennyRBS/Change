@@ -48,7 +48,7 @@
 					extend="extend"
 					actions="">
 
-				<rbs-column name="options.lineNumber" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
+				<rbs-column name="index" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
 
 				</rbs-column>
 
@@ -61,7 +61,7 @@
 				</rbs-column>
 
 				<rbs-column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
-					(=doc.items[0].priceValue | currency =)
+					(=doc.items[0].options.boPriceValue | currency =)
 				</rbs-column>
 
 				<rbs-column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
@@ -69,7 +69,7 @@
 				</rbs-column>
 
 				<rbs-column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
-					(= doc.items[0].priceValue * doc.quantity | currency =)
+					(= doc.items[0].options.boPriceValue * doc.quantity | currency =)
 				</rbs-column>
 
 				<rbs-action name="addLine" icon="icon-plus" label="{{ i18nAttr('m.rbs.order.admin.order_add_line', ['ucf']) }}"
@@ -117,7 +117,7 @@
 				<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
 			</div>
 			<div class="panel-body">
-				<strong>(= document.amountWithTax | currency =)</strong>
+				<strong>(= extend.boAmount | currency =)</strong>
 			</div>
 		</div>
 	</div>

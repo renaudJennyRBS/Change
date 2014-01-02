@@ -556,7 +556,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					{
 						$priceValue = $price->getValue();
 						$item->setPrice($price);
-						$item->setCartTaxes($this->getTaxManager()
+						$item->setTaxes($this->getTaxManager()
 							->getTaxByValue($priceValue, $price->getTaxCategories(), $cart->getBillingArea(), $cart->getZone()));
 					}
 				}

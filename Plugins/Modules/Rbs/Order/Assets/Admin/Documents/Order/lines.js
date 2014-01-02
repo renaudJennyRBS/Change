@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditorLines (Utils, REST, Dialog, i18n)
+	function rbsOrderOrderEditorLines (Utils, REST, $http, $q, $timeout, Events, Dialog, i18n)
 	{
 		return {
 			restrict : 'E',
@@ -14,6 +14,7 @@
 				var extend = {
 
 					articleCount : 0,
+					boAmount : null,
 					loadingProductInfo : false,
 					removedLines : [],
 					editedLine : {},
@@ -52,7 +53,7 @@
 						}
 
 						promise.then(function () {
-							scope.extend.editedLine.options.lineNumber = scope.document.linesData.length + 1;
+							scope.extend.editedLine.index = scope.document.linesData.length + 1;
 							scope.document.linesData.push(scope.extend.editedLine);
 						});
 
@@ -61,25 +62,28 @@
 					addNewLines : function ()
 					{
 						extend.loadingProductInfo = true;
-						REST.call(
-							REST.getBaseUrl('rbs/order/productPriceInfo'),
-							{
-								'products' : Utils.toIds(scope.document.newLineProducts),
-								'webStore' : scope.document.webStoreId,
-								'billingArea' : scope.document.billingAreaId,
-								'zone' : scope.document.contextData.taxZone
-							}
-						).then(function (products) {
-								extend.loadingProductInfo = false;
-								angular.forEach(products, function (product) {
-									scope.document.linesData.push(makeOrderLine(
-										scope.document.linesData.length + 1,
-										product,
-										1
-									));
-								});
-								scope.document.newLineProducts = undefined;
-							});
+						var ids = Utils.toIds(scope.document.newLineProducts);
+						angular.forEach(ids, function(id){
+							var line = {items:[{options:{productId:id}}]};
+							$http.post(
+								REST.getBaseUrl('rbs/order/lineNormalize'),
+								{
+									'line' : line,
+									'webStore' : scope.document.webStoreId,
+									'billingArea' : scope.document.billingAreaId,
+									'zone' : scope.document.contextData.taxZone
+								},
+								REST.getHttpConfig()
+							).success(function (result) {
+									extend.loadingProductInfo = false;
+									var line = result.line;
+									line.index = scope.document.linesData.length + 1;
+									scope.document.linesData.push(line);
+									console.log(line);
+									scope.document.newLineProducts = undefined;
+								})
+							.error(function (result){extend.loadingProductInfo = false});
+						});
 					},
 
 					removeLines : function (lines)
@@ -178,41 +182,11 @@
 
 			};
 
-				scope.getProductsBySku = function (query)
-				{
-					console.log(query);
-					return ['toto'];
-				};
-
-
-				function makeOrderLine (number, product, quantity)
-				{
-					var item = {
-						codeSKU : product.boInfo.sku.code,
-						quantity : quantity || 1,
-						priceValue : null
-					};
-					if(angular.isObject(product.boInfo.price)) {
-						item.priceValue = product.boInfo.price.boValue;
-						item.taxCategories = product.boInfo.price.taxCategories;
-					}
-
-					return {
-						designation : product.label,
-						quantity : quantity || 1,
-						items : [item],
-						options : {
-							lineNumber : number,
-							visual : product.adminthumbnail
-						}
-					};
-				}
-
 				function updateLines ()
 				{
 					extend.articleCount = 0;
 					for (var i=0 ; i < scope.document.linesData.length ; i++) {
-						scope.document.linesData[i].number = i + 1;
+						scope.document.linesData[i].index = i + 1;
 						extend.articleCount += scope.document.linesData[i].quantity;
 					}
 				}
@@ -233,18 +207,52 @@
 				// This watches for modifications in the lines, made by the user, such as quantity for each line.
 				scope.$watch('document.linesData', function (lines, old) {
 					if (scope.document && lines !== old) {
-						scope.document.amountWithTax = 0;
+						scope.extend.boAmount = 0;
 						extend.articleCount = 0;
 						for (var i=0 ; i < lines.length ; i++) {
 							extend.articleCount += lines[i].quantity;
-							scope.document.amountWithTax += lines[i].quantity * lines[i].items[0].priceValue;
+							var options = lines[i].items[0].options;
+							if(options){
+								scope.extend.boAmount += lines[i].quantity * options.boPriceValue;
+							}
 						}
 					}
 				}, true);
 
+				scope.$on(Events.EditorPreSave, function(event, args){
+					var promises = args['promises'];
+					var document = args['document'];
+
+					var orderPromises = [];
+					scope.$broadcast('OrderPreSave', {document: document, promises: orderPromises});
+
+					var q = $q.defer();
+
+					if (orderPromises.length) {
+						var promise = $q.all(orderPromises);
+						promise.then(function(){
+							scope.updateAmount(document);
+							$timeout(function(){q.resolve()});
+						});
+					}
+					else{
+						scope.updateAmount(document);
+						$timeout(function(){q.resolve()})
+					}
+					promises.push(q.promise);
+				});
+
+				scope.updateAmount = function(document){
+					var lines = document.linesData;
+					document.amount = 0;
+					for (var i=0 ; i < lines.length ; i++) {
+						document.amount += lines[i].quantity * lines[i].items[0].priceValue;
+					}
+				};
+
 			}
 		};
 	}
-	rbsOrderOrderEditorLines.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.Dialog', 'RbsChange.i18n' ];
+	rbsOrderOrderEditorLines.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', '$http', '$q', '$timeout', 'RbsChange.Events', 'RbsChange.Dialog', 'RbsChange.i18n' ];
 	angular.module('RbsChange').directive('rbsOrderLines', rbsOrderOrderEditorLines);
 })();
