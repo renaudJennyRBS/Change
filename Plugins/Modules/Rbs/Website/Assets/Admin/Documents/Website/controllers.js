@@ -49,10 +49,9 @@
 	 * @param $routeParams
 	 * @param $location
 	 * @param REST
-	 * @param Utils
 	 * @constructor
 	 */
-	function HeaderController ($scope, $routeParams, REST, Utils)
+	function HeaderController ($scope, $routeParams, $location, REST)
 	{
 		$scope.currentWebsite = null;
 		$scope.viewUrl = null;
@@ -62,8 +61,20 @@
 			REST.treeChildren(root.resources[0], {column:['baseurl']}).then(function (websites)
 			{
 				$scope.websites = websites.resources;
+
 				if (! $scope.currentWebsite) {
-					$scope.currentWebsite = websites.resources[0];
+					var i,
+					    wsid = parseInt($location.search()['website'], 10);
+					if (! isNaN(wsid)) {
+						for (i=0 ; i<websites.resources.length && ! $scope.currentWebsite ; i++) {
+							if (websites.resources[i].id === wsid) {
+								$scope.currentWebsite = websites.resources[i];
+							}
+						}
+					}
+					if (! $scope.currentWebsite) {
+						$scope.currentWebsite = websites.resources[0];
+					}
 				}
 
 				$scope.$watch(function () { return $routeParams.view; }, function (view)
@@ -75,8 +86,16 @@
 
 			});
 		});
+
+		$scope.$watch('currentWebsite', function (website)
+		{
+			if (website) {
+				$location.search('website', website.id);
+			}
+		});
 	}
-	HeaderController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.Utils'];
+
+	HeaderController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST'];
 	app.controller('Rbs_Website_HeaderController', HeaderController);
 
 
@@ -143,7 +162,6 @@
 				}
 			});
 		}
-
 
 		REST.action('collectionItems', { 'code': 'Rbs_Website_AvailablePageFunctions' }).then(function (result)
 		{
@@ -384,12 +402,13 @@
 				return getNodeInfo(doc).open === true;
 			},
 
-			getRowStyle : function (doc) {
+			getPrimaryCellStyle : function (doc) {
 				var lvl = getNodeInfo(doc).level-1;
 				if (lvl === 0) {
 					return {};
 				}
-				return { backgroundColor: 'rgb('+(249-lvl*6)+','+(252-lvl*5)+','+(255-lvl*4)+')' };
+				//return { borderLeft: (lvl*25) + 'px solid rgb('+Math.max(0, 249-lvl*10)+','+Math.max(0, 252-lvl*7)+','+Math.max(0, 255-lvl*4)+')' };
+				return { paddingLeft: (lvl*25) + 'px', background: 'linear-gradient(to right, rgb('+Math.max(0, 249-lvl*10)+','+Math.max(0, 252-lvl*7)+','+Math.max(0, 255-lvl*4)+'), white ' + (lvl*25) + 'px)' };
 			},
 
 			isIndexPage : function (page)

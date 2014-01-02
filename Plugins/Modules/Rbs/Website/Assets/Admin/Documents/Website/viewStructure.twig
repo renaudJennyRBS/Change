@@ -21,7 +21,7 @@
 		</rbs-quick-actions>
 
 		<rbs-column name="label" label="Libellé" primary="true">
-			<span class="tree-level-separator" rbs-repeat-count="(= extend.getNodeInfo(doc).level-1 =)"></span>
+			<!--span class="tree-level-separator" rbs-repeat-count="(= extend.getNodeInfo(doc).level-1 =)"></span-->
 
 			<span class="pull-right" style="margin-right: 4px;">
 				<button ng-if="extend.isPage(doc) && ! extend.isIndexPage(doc)" type="button" class="btn-flat" ng-disabled="busy" ng-click="extend.setIndexPage(doc, $index); extend.busyIndex=$index;" ng-switch="busy && $index == extend.busyIndex">
