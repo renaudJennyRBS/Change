@@ -8,20 +8,14 @@
 	/**
 	 *
 	 * @param $scope
-	 * @param $routeParams
 	 * @param $q
-	 * @param Breadcrumb
 	 * @param REST
 	 * @param i18n
 	 * @param Query
 	 * @param NotificationCenter
 	 * @constructor
 	 */
-	function SectionFunctionsController($scope, $routeParams, $q, Breadcrumb, REST, i18n, Query, NotificationCenter, ErrorFormatter) {
-
-		Breadcrumb.resetLocation([
-			[i18n.trans('m.rbs.website.admin.module_name | ucf'), "Rbs/Website"]
-		]);
+	function SectionFunctionsController($scope, $q, REST, i18n, Query, NotificationCenter, ErrorFormatter) {
 
 		var functions = [];
 
@@ -155,7 +149,7 @@
 
 	}
 
-	SectionFunctionsController.$inject = ['$scope', '$routeParams', '$q', 'RbsChange.Breadcrumb', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query', 'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter'];
+	SectionFunctionsController.$inject = ['$scope', '$q', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Query', 'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter'];
 	app.controller('Rbs_Website_SectionFunctionsController', SectionFunctionsController);
 
 })();
