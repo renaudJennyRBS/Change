@@ -83,7 +83,7 @@
 
 				scope.preSave = function(document){
 					var q = $q.defer();
-					if (angular.isObject(document.address.address)) {
+					if (angular.isObject(document.address.address) && !isObjectEmpty(document.address.address)) {
 						$http.post(REST.getBaseUrl('Rbs/Geo/AddressLines'),{
 							address: document.address.address,
 							addressFieldsId: document.address.addressFields
@@ -368,7 +368,7 @@
 
 				scope.validatePreparation = function ($event){
 					var message = i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation | ucf');
-					if (!angular.isObject(scope.document.address.address)){
+					if (!scope.document.address.address || isObjectEmpty(scope.document.address.address)){
 						message += '<br><strong>' +
 							i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation_empty_address | ucf') +
 							'</strong>';
@@ -456,6 +456,16 @@
 						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_no_sku_to_compare | ucf'));
 					}
 					return lineIsInArray;
+				}
+
+				function isObjectEmpty(object){
+					if (angular.isArray(object)){
+						return object.length === 0;
+					}
+					if (angular.isObject(object)){
+						return Object.getOwnPropertyNames(object).length === 0;
+					}
+					return false;
 				}
 
 				editorCtrl.init('Rbs_Order_Shipment');
