@@ -492,74 +492,11 @@ class SearchQuery
 				continue;
 			}
 			$facetName = $facet->getFieldName();
-			if (!isset($facetResults[$facetName]))
-			{
-				continue;
-			}
-			$facetValueFiltered = false;
+			$facetResult = isset($facetResults[$facetName]) ? $facetResults[$facetName] : null;
+			$facetFilter = isset($facetFilters[$facetName]) ? $facetFilters[$facetName] : null;
+			$values = $facetManager->buildFacetValues($facet, $facetResult, $facetFilter);
 
-			$facetData = $facetResults[$facetName];
-			if ($facetData['_type'] == 'terms')
-			{
-				foreach ($facetData['terms'] as $term)
-				{
-					if (($count = intval($term['count'])) == 0 && !$facet->getShowEmptyItem())
-					{
-						continue;
-					}
-					$value = $term['term'];
-					$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue($value);
-					$facetValue->setCount($count);
-					if (is_array($facetFilters) && isset($facetFilters[$facetName]))
-					{
-						$facetFilter = $facetFilters[$facetName];
-						if ((is_array($facetFilter) && in_array($value, $facetFilter))
-							|| (is_string($facetFilter) && $facetFilter == $value)
-						)
-						{
-							$facetValue->setFiltered(true);
-							$facetValueFiltered = true;
-						}
-					}
-					$facetValues[$facetName][] = $facetManager->updateFacetValueTitle($facetValue, $facet);
-				}
-			}
-			else
-			{
-				foreach ($facetData['ranges'] as $range)
-				{
-					if (($count = intval($range['count'])) == 0 && !$facet->getShowEmptyItem())
-					{
-						continue;
-					}
-					$value = (isset($range['from']) ? $range['from'] : '') . '::' . (isset($range['to']) ? $range['to'] : '');
-					$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue($value);
-					$facetValue->setCount(intval($range['count']));
-					if (is_array($facetFilters) && isset($facetFilters[$facetName]))
-					{
-						$facetFilter = $facetFilters[$facetName];
-						if ((is_array($facetFilter) && in_array($value, $facetFilter))
-							|| (is_string($facetFilter) && $facetFilter == $value)
-						)
-						{
-							$facetValue->setFiltered(true);
-							$facetValueFiltered = true;
-						}
-					}
-					$facetValues[$facetName][] = $facetManager->updateFacetValueTitle($facetValue, $facet);
-				}
-			}
-
-			if (!$facet->getParameters()->get(FacetDefinitionInterface::PARAM_MULTIPLE_CHOICE))
-			{
-				$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue('');
-				$facetValue->setValueTitle($this->getI18nManager()->trans('m.rbs.elasticsearch.front.ignore_facet', ['ucf']));
-				if (!$facetValueFiltered)
-				{
-					$facetValue->setFiltered(true);
-				}
-				$facetValues[$facetName][] = $facetValue;
-			}
+			$facetValues[$facetName] = $values;
 		}
 		return $facetValues;
 	}

@@ -441,11 +441,109 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet
+	 * @param array|null $facetResult
+	 * @param array|null $facetFilter
+	 * @return \Rbs\Elasticsearch\Facet\FacetValue[]
+	 */
+	public function buildFacetValues($facet, $facetResult, $facetFilter)
+	{
+		$facetValues = [];
+		$facetValueFiltered = false;
+		$showEmptyItem = $facet->getShowEmptyItem();
+		if ($facet->getFacetType() === FacetDefinitionInterface::TYPE_TERM)
+		{
+			$terms = (is_array($facetResult) && isset($facetResult['terms'])) ? $facetResult['terms'] : [];
+			if ($showEmptyItem)
+			{
+				if ($facet instanceof \Rbs\Elasticsearch\Documents\Facet)
+				{
+					$collection = $this->getCollectionByCode($facet->getCollectionCode());
+					if ($collection)
+					{
+						foreach ($collection->getItems() as $item)
+						{
+							$itemValue = $item->getValue();
+							$add = true;
+							foreach ($terms as $term)
+							{
+								if ($term['term'] == $itemValue) {
+									$add = false;
+									break;
+								}
+							}
+							if ($add) {
+								$terms[] = ['term' => $itemValue, 'count' => 0];
+							}
+						}
+					}
+				}
+			}
+
+			foreach ($terms as $term)
+			{
+				$count = intval($term['count']);
+				$value = $term['term'];
+				$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue($value);
+				$facetValue->setCount($count);
+				if ($facetFilter !== null)
+				{
+					if ((is_array($facetFilter) && in_array($value, $facetFilter))
+						|| (is_string($facetFilter) && $facetFilter == $value)
+					)
+					{
+						$facetValue->setFiltered(true);
+						$facetValueFiltered = true;
+					}
+				}
+				$facetValues[] = $this->updateFacetValueTitle($facetValue, $facet);
+			}
+		}
+		elseif($facetResult)
+		{
+			foreach ($facetResult['ranges'] as $range)
+			{
+				if (($count = intval($range['count'])) == 0 && !$showEmptyItem)
+				{
+					continue;
+				}
+
+				$value = (isset($range['from']) ? $range['from'] : '') . '::' . (isset($range['to']) ? $range['to'] : '');
+				$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue($value);
+				$facetValue->setCount(intval($range['count']));
+				if ($facetFilter !== null)
+				{
+					if ((is_array($facetFilter) && in_array($value, $facetFilter))
+						|| (is_string($facetFilter) && $facetFilter == $value)
+					)
+					{
+						$facetValue->setFiltered(true);
+						$facetValueFiltered = true;
+					}
+				}
+				$facetValues[] = $this->updateFacetValueTitle($facetValue, $facet);
+			}
+		}
+
+		if (!$facet->getParameters()->get(FacetDefinitionInterface::PARAM_MULTIPLE_CHOICE))
+		{
+			$facetValue = new \Rbs\Elasticsearch\Facet\FacetValue('');
+			$facetValue->setValueTitle($this->getI18nManager()->trans('m.rbs.elasticsearch.front.ignore_facet', ['ucf']));
+			if (!$facetValueFiltered)
+			{
+				$facetValue->setFiltered(true);
+			}
+			$facetValues[] = $facetValue;
+		}
+		return $facetValues;
+	}
+
+	/**
 	 * @param \Rbs\Elasticsearch\Facet\FacetValue $facetValue
 	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface $facet
 	 * @return \Rbs\Elasticsearch\Facet\FacetValue
 	 */
-	public function updateFacetValueTitle($facetValue, $facet)
+	protected function updateFacetValueTitle($facetValue, $facet)
 	{
 		if ($facet instanceof \Rbs\Elasticsearch\Documents\Facet)
 		{
@@ -469,6 +567,18 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 						$attrType = \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID;
 					}
 				}
+
+				$collection = $this->getCollectionByCode($attribute->getCollectionCode());
+				if ($collection)
+				{
+					$item = $collection->getItemByValue($facetValue->getValue());
+					if ($item)
+					{
+						$facetValue->setValueTitle($item->getTitle());
+						return $facetValue;
+					}
+				}
+
 				if (in_array($attrType, [\Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTID, \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY]))
 				{
 					$document = $this->getDocumentManager()->getDocumentInstance($facetValue->getValue());

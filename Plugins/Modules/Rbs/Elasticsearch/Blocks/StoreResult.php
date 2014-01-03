@@ -26,7 +26,7 @@ class StoreResult extends Block
 		$parameters->addParameterMeta('facetFilters', null);
 		$parameters->addParameterMeta('storeIndex');
 		$parameters->addParameterMeta('contextualUrls', true);
-		$parameters->addParameterMeta('webStoreId', null);
+		$parameters->addParameterMeta('webStoreId');
 
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
@@ -34,8 +34,8 @@ class StoreResult extends Block
 		$parameters->addParameterMeta('showOrdering', true);
 		$parameters->addParameterMeta('sortBy', null);
 
-		$parameters->addParameterMeta('displayPrices', true);
-		$parameters->addParameterMeta('displayPricesWithTax', true);
+		$parameters->addParameterMeta('displayPrices');
+		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$parameters->addParameterMeta('productListId');
 		$parameters->addParameterMeta('redirectUrl');
@@ -83,6 +83,26 @@ class StoreResult extends Block
 			}
 			$urlManager->setAbsoluteUrl($oldValue);
 		}
+
+		if ($parameters->getParameter('displayPrices') === null)
+		{
+			$parameters->setParameterValue('displayPrices', false);
+			$parameters->setParameterValue('displayPricesWithTax', false);
+
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
+			if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
+			{
+				$webStore = $storeIndex->getStore();
+				if ($webStore)
+				{
+					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+				}
+			}
+		}
+
+
 
 		return $parameters;
 	}
