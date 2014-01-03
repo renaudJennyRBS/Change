@@ -363,5 +363,11 @@
 	},
 	"manage_websites":{
 		"message":"Gérer les sites web"
+	},
+	"index":{
+		"message":"index"
+	},
+	"structure":{
+		"message":"structure"
 	}
 }
