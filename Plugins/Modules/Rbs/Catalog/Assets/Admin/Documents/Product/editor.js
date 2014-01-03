@@ -19,13 +19,6 @@
 
 			link: function (scope, elm, attrs, editorCtrl)
 			{
-				scope.onLoad = function() {
-					if (!angular.isArray(scope.document.attributeValues))
-					{
-						scope.document.attributeValues = [];
-					}
-				};
-
 				scope.onReady = function() {
 					scope.loadItems();
 				};
@@ -110,9 +103,6 @@
 				});
 
 				scope.$watch('document.attributeValues', function(newValue) {
-					if (newValue === null) {
-						scope.document.attributeValues = [];
-					}
 					if (newValue !== undefined) {
 						scope.assocValues(scope.attributesDef);
 					}
@@ -135,9 +125,6 @@
 				scope.generateAttributesEditor = function (attribute) {
 					var editorDefinition = attribute.editorDefinition;
 					if (angular.isObject(editorDefinition)) {
-						if (!angular.isArray(scope.document.attributeValues)) {
-							scope.document.attributeValues = [];
-						}
 						scope.attributesDef = editorDefinition.attributes;
 						scope.assocValues(scope.attributesDef);
 					}
@@ -147,30 +134,31 @@
 				};
 
 				scope.assocValues = function (attributes) {
-					var attributeValues = scope.document.attributeValues;
 					for (var i = 0; i < attributes.length; i++) {
 						if (attributes[i].attributes) {
 							scope.assocValues(attributes[i].attributes)
 						} else {
-							scope.setAttributeValue(attributes[i], attributeValues);
+							scope.setAttributeValue(attributes[i]);
 						}
 					}
 				};
 
-				scope.getAttributeValueById = function (id, attributeValues) {
-					var v, i;
-					for (i = 0; i < attributeValues.length; i++) {
-						v = attributeValues[i];
-						if (v.id == id) {
-							return v;
+				scope.getAttributeValueById = function (id) {
+					var v, i, attributeValues = scope.document.attributeValues;
+					if (angular.isArray(attributeValues)) {
+						for (i = 0; i < attributeValues.length; i++) {
+							v = attributeValues[i];
+							if (v.id == id) {
+								return v;
+							}
 						}
 					}
 					return null;
 				};
 
-				scope.setAttributeValue = function (attribute, attributeValues) {
+				scope.setAttributeValue = function (attribute) {
 					var v = {value: attribute.defaultValue};
-					var valIndex = scope.getAttributeValueById(attribute.id, attributeValues);
+					var valIndex = scope.getAttributeValueById(attribute.id);
 
 					if (attribute.valueType == 'Property') {
 						if (!scope.document.hasOwnProperty(attribute.propertyName))
@@ -183,7 +171,12 @@
 						if (valIndex == null) {
 							v.id = attribute.id;
 							v.valueType = attribute.valueType;
-							attributeValues.push(v);
+							if (angular.isArray(scope.document.attributeValues)) {
+								scope.document.attributeValues.push(v);
+							} else {
+								scope.document.attributeValues = [v];
+							}
+
 						} else {
 							v = valIndex;
 						}

@@ -181,7 +181,7 @@ class DocumentCodeManager
 		$array = $this->getCodes($documentId, $contextId);
 		if (count($array))
 		{
-			return array_unique(array_values($array));
+			return array_values(array_unique($array));
 		}
 		return $codes;
 	}

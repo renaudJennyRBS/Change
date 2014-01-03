@@ -1,0 +1,26 @@
+{
+	"rbs_catalog:export-attributes": {
+		"description": "Export Attributes",
+		"options": {
+		},
+		"arguments": {
+			"fileName": {
+				"description": "json file path",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_catalog:import-attributes": {
+		"description": "Import Attributes",
+		"options": {
+		},
+		"arguments": {
+			"fileName": {
+				"description": "json file path",
+				"required": true,
+				"default": null
+			}
+		}
+	}
+}
