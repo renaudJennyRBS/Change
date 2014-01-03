@@ -529,7 +529,6 @@ a.go-to-link:after {
 	max-width: 5em;
 }
 
-
 .btn-flat {
 	background: none repeat scroll 0 0 #F0F5F8;
 	border-radius: 2px;
@@ -570,3 +569,34 @@ rbs-navigation-history {
 	display: block;
 	border-bottom: 1px solid #E5E5E5;
 }
+
+/** list option panel **/
+.rbs-list-option-panel {
+	padding: 10px;
+	position: relative;
+}
+
+.rbs-list-option-panel {
+	background: #F5F5F5;
+	border: 5px solid #bbbbbb;
+	border-radius: 5px;
+}
+
+.rbs-list-option-panel h3 {
+	text-transform: uppercase;
+	color: #bbbbbb;
+	font-size: 20pt;
+	line-height: 20pt;
+	margin-top: 0;
+	font-weight: lighter;
+	text-shadow: 0 0 2px rgba(0,0,0,0.2);
+}
+
+.rbs-list-option-panel form {
+	margin: 0;
+}
+
+.rbs-list-option-panel form .control-group:last-child {
+	margin-bottom: 0;
+}
+
