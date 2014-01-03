@@ -6,7 +6,7 @@
 		"localizedValue":false,
 		"collectionCode":null,
 		"productProperty":"description",
-		"visibility":["specifications"]
+		"visibility":[]
 	},
 	"pictograms" : {
 		"title":"m.rbs.catalog.setup.attr_pictograms",

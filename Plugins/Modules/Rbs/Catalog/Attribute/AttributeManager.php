@@ -788,7 +788,7 @@ class AttributeManager
 	{
 		$attributeId = $attribute->getId();
 		$value = array_reduce($attributeValues, function($result, $attrVal) use ($attributeId) {
-			return $attributeId == $attrVal['id'] ? (isset($attrVal['value']) && $attrVal['value']) : $result;
+			return $attributeId == $attrVal['id'] ? (isset($attrVal['value']) ? $attrVal['value'] : null) : $result;
 		});
 
 		$valueType = $attribute->getValueType();
