@@ -6,7 +6,7 @@ use Change\Documents\Events\Event as DocumentEvent;
 /**
  * @name \Rbs\geo\Documents\Address
  */
-class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo\Interfaces\Address
+class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo\Address\AddressInterface
 {
 
 	/**
@@ -163,6 +163,15 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		}
 
 		$event->setParam('propertiesErrors', count($propertiesErrors) ? $propertiesErrors : null);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getFields()
+	{
+		$fields = $this->getFieldsData();
+		return is_array($fields) ? $fields : [];
 	}
 
 	public function getLabel()

@@ -3,7 +3,6 @@ namespace Rbs\Commerce\Blocks;
 
 use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
-use Change\Documents\Property;
 
 /**
  * @name \Rbs\Commerce\Blocks\OrderProcessInformation

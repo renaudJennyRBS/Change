@@ -41,6 +41,23 @@
 		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'carrierStatus'), ['ucf']) }}">
 		</rbs-field-text>
 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-envelope"></i>
+					{{ i18n('m.rbs.order.admin.shipment_shipping_address', ['ucf']) }}
+				</h3>
+			</div>
+			<div ng-if="document && !document.prepared">
+				<div rbs-order-address="" class="panel-body"
+					address-fields="document.address.addressFields"
+					address="document.address.address">
+				</div>
+			</div>
+			<address ng-if="document.prepared && document.address.lines" class="panel-body">
+				<span ng-repeat="addressLine in document.address.lines">(= addressLine =)<br></span>
+			</address>
+		</div>
+
 		<div class="panel panel-default" ng-if="!document.prepared">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.shipment_articles', ['ucf', 'lab']) }} (= data.lines.length =)</h3>

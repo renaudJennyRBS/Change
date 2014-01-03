@@ -29,7 +29,7 @@ class OrderRemainder
 
 				/* @var $order \Rbs\Order\Documents\Order */
 				$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($orderId);
-				$skuQuantity = [];
+				$skuData = [];
 				$skuOrderQuantity = []; //keep original quantity information to seek if a shipment is already done
 				foreach ($order->getLines() as $line)
 				{
@@ -37,14 +37,26 @@ class OrderRemainder
 					$lineShippingModeId = isset($options['shippingMode']) ? $options['shippingMode'] : null;
 					foreach ($line->getItems() as $item)
 					{
-						$skuQuantity[$item->getCodeSKU()] = [
+						$skuData[$item->getCodeSKU()] = [
 							'quantity' => $item->getQuantity() * $line->getQuantity(),
 							'designation' => $line->getDesignation()
 						];
 						$skuOrderQuantity[$item->getCodeSKU()] = $item->getQuantity() * $line->getQuantity();
 						if ($lineShippingModeId)
 						{
-							$skuQuantity[$item->getCodeSKU()]['shippingModeId'] = $lineShippingModeId;
+							$skuData[$item->getCodeSKU()]['shippingModeId'] = $lineShippingModeId;
+							//search shipping address
+							foreach ($order->getShippingData() as $shippingData)
+							{
+								if (in_array($options['lineNumber'], $shippingData['lines']))
+								{
+									$skuData[$item->getCodeSKU()]['address'] =  [
+										'address' => isset($shippingData['address']) ? $shippingData['address'] : new \stdClass(),
+										'addressFields' => isset($shippingData['addressFields']) ? $shippingData['addressFields'] : 0
+									];
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -60,12 +72,13 @@ class OrderRemainder
 					{
 						/* @var $sku \Rbs\Stock\Documents\Sku */
 						$sku = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($shipmentLine['SKU']);
-						$skuQuantity[$sku->getCode()]['quantity'] -= $shipmentLine['quantity'];
+						$skuData[$sku->getCode()]['quantity'] -= $shipmentLine['quantity'];
 					}
 				}
 
+				$address = ['address' => new \stdClass(), 'addressFields' => 0];
 				$remainLines = [];
-				foreach ($skuQuantity as $codeSku => $skuLine)
+				foreach ($skuData as $codeSku => $skuLine)
 				{
 					if ($skuLine['shippingModeId'] === $shippingModeId)
 					{
@@ -86,6 +99,7 @@ class OrderRemainder
 								'SKU' => $sku->getId()
 							];
 						}
+						$address = isset($skuLine['address']) ? $skuLine['address'] : $address;
 					}
 				}
 
@@ -95,7 +109,7 @@ class OrderRemainder
 				}
 
 				$result = new \Change\Http\Rest\Result\ArrayResult();
-				$result->setArray(['status' => $status, 'remainLines' => $remainLines]);
+				$result->setArray(['status' => $status, 'remainLines' => $remainLines, 'address' => $address]);
 				$event->setResult($result);
 			}
 			else

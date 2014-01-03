@@ -48,7 +48,10 @@
 		"message":"valider la préparation ?"
 	},
 	"shipment_confirm_validate_preparation":{
-		"message":"une fois la préparation validée, il sera impossible de modifier les lignes d'expéditions"
+		"message":"une fois la préparation validée, il sera impossible de modifier les lignes d'expéditions ou l'adresse de livraison"
+	},
+	"shipment_confirm_validate_preparation_empty_address":{
+		"message":"attention, l'adresse de livraison est vide ! Une fois l'expédition préparée vous ne pourrez plus saisir d'adresse"
 	},
 	"shipment_invalid_request_remainder":{
 		"message":"la requête d'obtention du reliquat est invalide"

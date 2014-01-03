@@ -287,6 +287,9 @@
 	"shipment_prepare_button":{
 		"message":"Valider la préparation<small>de l'expédition</small>"
 	},
+	"shipment_shipping_address":{
+		"message":"adresse"
+	},
 	"order_send":{
 		"message":"expédier"
 	},
@@ -304,5 +307,14 @@
 	},
 	"order_sent":{
 		"message":"expédié"
+	},
+	"order_shipping_mode_list":{
+		"message":"mode de livraison"
+	},
+	"order_specify_shipping_address":{
+		"message":"définir l'adresse de livraison"
+	},
+	"order_modify_shipping_address":{
+		"message":"modifier l'adresse de livraison"
 	}
 }

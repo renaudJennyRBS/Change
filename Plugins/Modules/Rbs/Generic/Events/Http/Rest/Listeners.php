@@ -220,6 +220,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Media\Http\Rest\Actions\Avatar())->execute($event);
 					});
 					break;
+				case 'Rbs/Geo/AddressLines' :
+					$event->setAction(function (Event $event)
+					{
+						(new \Rbs\Geo\Http\Rest\AddressLines())->execute($event);
+					});
+					break;
 			}
 		}
 	}

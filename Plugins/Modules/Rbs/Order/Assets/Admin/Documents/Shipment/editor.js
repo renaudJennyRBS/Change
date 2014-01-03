@@ -12,9 +12,10 @@
 	 * @param ErrorFormatter
 	 * @param Dialog
 	 * @param $timeout
+	 * @param $http
 	 * @constructor
 	 */
-	function Editor(REST, ArrayUtils, $q, Query, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout)
+	function Editor(REST, ArrayUtils, $q, Query, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout, $http)
 	{
 		return {
 			restrict : 'A',
@@ -77,15 +78,26 @@
 					//load order if the document is not new and if an order id is defined and not null
 					if (!scope.isNew() && scope.document.orderId){
 						setOrderByOrderId(scope.document.orderId);
-						/*
-						REST.resource('Rbs_Order_Order', scope.document.orderId).then(function (data){
-							scope.data.order = data;
-						}, function (error){
-							NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_order | ucf'),
-								ErrorFormatter.format(error));
-							console.error(error);
-						});*/
 					}
+				};
+
+				scope.preSave = function(document){
+					var q = $q.defer();
+					if (angular.isObject(document.address.address)) {
+						$http.post(REST.getBaseUrl('Rbs/Geo/AddressLines'),{
+							address: document.address.address,
+							addressFieldsId: document.address.addressFields
+						}).success(function (data){
+								document.address.lines = data;
+								q.resolve(data);
+							}).error(function (dataError){
+								q.reject(dataError);
+							});
+					}
+					else {
+						q.resolve();
+					}
+					return q.promise;
 				};
 
 				function setOrderByOrderId(orderId){
@@ -134,7 +146,7 @@
 				function refreshOrderRemainder(){
 					//because this is an asynchronous function containing another asynchronous function,
 					//it needs a lock to prevent another call during processing
-					if (!refreshOrderRemainderLocked)
+					if (!refreshOrderRemainderLocked && !scope.document.prepared)
 					{
 						refreshOrderRemainderLocked = true;
 						scope.data.remainLines = [];
@@ -160,6 +172,13 @@
 								}
 								else {
 									sortShipmentLinesFromDocumentData();
+								}
+								if (!scope.document.address || !scope.document.address.address || !scope.document.address.addressFields)
+								{
+									scope.document.address = {
+										address: data.address.address,
+										addressFields: data.address.addressFields
+									}
 								}
 							}, function (error){
 								refreshOrderRemainderLocked = false;
@@ -348,9 +367,15 @@
 				}, true);
 
 				scope.validatePreparation = function ($event){
+					var message = i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation | ucf');
+					if (!angular.isObject(scope.document.address.address)){
+						message += '<br><strong>' +
+							i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation_empty_address | ucf') +
+							'</strong>';
+					}
 					Dialog.confirmLocal($event.target,
 						i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation_title | ucf'),
-						i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation | ucf'),
+						message,
 						{placement: 'top'}
 					).then(function (){
 							//OK
@@ -439,6 +464,6 @@
 	}
 
 	Editor.$inject = ['RbsChange.REST', 'RbsChange.ArrayUtils', '$q', 'RbsChange.Query', 'RbsChange.i18n',
-		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', 'RbsChange.Dialog', '$timeout'];
+		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', 'RbsChange.Dialog', '$timeout', '$http'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderShipment', Editor);
 })();

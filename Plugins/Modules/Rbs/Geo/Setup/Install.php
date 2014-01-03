@@ -141,6 +141,10 @@ class Install extends \Change\Plugins\InstallBase
 
 						$fields->getFields()->add($field);
 					}
+					if (isset($model['fieldsLayoutData']))
+					{
+						$fields->setFieldsLayoutData($model['fieldsLayoutData']);
+					}
 					$fields->create();
 
 					if (isset($model['countryCode']))

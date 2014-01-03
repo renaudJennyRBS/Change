@@ -15,14 +15,20 @@
 			<span ng-switch-default=""></span>
 		</td>
 		<td>
-			<a class="icon-archive" ng-if="shippingDetails[shipping.id].status != 'sent'" title="{{ i18nAttr('m.rbs.order.admin.order_shipment_form', ['ucf']) }}" href="" ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)" ng-if="orderId > 0">
+			<a ng-if="shippingDetails[shipping.id].status && shippingDetails[shipping.id].status != 'sent'"
+				href="" ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)" ng-if="orderId > 0">
+				<i class="icon-archive"></i>
 				<span ng-switch="shippingDetails[shipping.id].status">
 					<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_send', ['ucf']) }},</span>
 					<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_send_the_remain', ['ucf']) }},</span>
 					<span ng-switch-default=""></span>
 				</span>
 			</a>
-			<a class="icon-envelope" title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="editShippingAddress(shipping.id)"> {{ i18n('m.rbs.order.admin.order_shipping_address', ['ucf']) }}</a>
+			<a title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="editShippingAddress(shipping.id)">
+				<i class="icon-envelope"></i>
+				<span ng-if="!addressDefined[shipping.id]">{{ i18n('m.rbs.order.admin.order_specify_shipping_address', ['ucf']) }}</span>
+				<span ng-if="addressDefined[shipping.id]">{{ i18n('m.rbs.order.admin.order_modify_shipping_address', ['ucf']) }}</span>
+			</a>
 		</td>
 	</tr>
 </table>

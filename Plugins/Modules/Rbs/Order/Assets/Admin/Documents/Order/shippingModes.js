@@ -21,6 +21,7 @@
 				scope.shippingAddress = {};
 				scope.editedShippingMode = {};
 				scope.shippingDetails = {};
+				scope.addressDefined = {};
 
 				scope.refreshShippingModes = function()
 				{
@@ -50,17 +51,22 @@
 				scope.populateShippingDetails = function(response) {
 					var shippingDetails = {};
 					angular.forEach(response.resources, function (shippingDoc) {
-						REST.call(REST.getBaseUrl('rbs/order/orderRemainder'),{
-							orderId: scope.orderId,
-							shippingModeId: shippingDoc.id
-						}).then(function (data){
-								shippingDoc.status = data.status;
-								shippingDetails[shippingDoc.id] = shippingDoc;
-							}, function (error){
-								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_request_remainder | ucf'),
-								ErrorFormatter.format(error));
-						console.error(error);
-						});
+						if (scope.orderId > 0){
+							REST.call(REST.getBaseUrl('rbs/order/orderRemainder'),{
+								orderId: scope.orderId,
+								shippingModeId: shippingDoc.id
+							}).then(function (data){
+									shippingDoc.status = data.status;
+									shippingDetails[shippingDoc.id] = shippingDoc;
+								}, function (error){
+									NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_request_remainder | ucf'),
+										ErrorFormatter.format(error));
+									console.error(error);
+								});
+						}
+						else {
+							shippingDetails[shippingDoc.id] = shippingDoc;
+						}
 					});
 					scope.shippingDetails = shippingDetails;
 				};
@@ -82,6 +88,11 @@
 				scope.$watch('shippingData', function (shippingData, old) {
 					if(angular.isObject(shippingData) && !angular.isObject(old)){
 						REST.collection('Rbs_Shipping_Mode').then(scope.populateShippingDetails);
+						angular.forEach(scope.shippingData, function (shipping){
+							if(shipping.id){
+								scope.addressDefined[shipping.id] = angular.isObject(shipping.address);
+							}
+						});
 					}
 				}, true);
 

@@ -12,5 +12,6 @@
 		<property name="carrierStatus" type="String"/>
 		<property name="itemCount" type="Integer"/>
 		<property name="data" type="JSON" />
+		<property name="address" type="JSON" />
 	</properties>
 </document>
