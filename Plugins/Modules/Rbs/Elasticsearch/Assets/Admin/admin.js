@@ -26,5 +26,9 @@
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Elasticsearch_FullText');
+	__change.createEditorForModel('Rbs_Elasticsearch_StoreIndex');
+
 	__change.createEditorsForLocalizedModel('Rbs_Elasticsearch_FacetGroup');
+	__change.createEditorsForLocalizedModel('Rbs_Elasticsearch_Facet');
+
 })();

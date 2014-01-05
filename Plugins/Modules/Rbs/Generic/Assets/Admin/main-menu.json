@@ -40,7 +40,7 @@
 		{
 			"label": "m.rbs.seo.admin.module_name",
 			"url": "Rbs/Seo",
-			"section": "cms",
+			"section": "admin",
 			"keywords": "m.rbs.seo.admin.module_keywords"
 		},
 		{

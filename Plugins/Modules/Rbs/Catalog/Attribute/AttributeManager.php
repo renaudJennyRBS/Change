@@ -787,10 +787,10 @@ class AttributeManager
 	protected function generateItem(\Rbs\Catalog\Documents\Attribute $attribute, $product, $attributeValues)
 	{
 		$attributeId = $attribute->getId();
+
 		$value = array_reduce($attributeValues, function($result, $attrVal) use ($attributeId) {
 			return $attributeId == $attrVal['id'] ? (isset($attrVal['value']) ? $attrVal['value'] : null) : $result;
 		});
-
 		$valueType = $attribute->getValueType();
 		switch ($valueType)
 		{
@@ -1247,4 +1247,3 @@ class AttributeManager
 		}
 	}
 }
-

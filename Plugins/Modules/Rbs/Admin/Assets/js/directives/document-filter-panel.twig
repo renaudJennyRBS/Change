@@ -1,9 +1,9 @@
-<div class="panel" data-ng-class="{'panel-primary':filter.filters.length,'panel-default':!filter.filters.length}">
+<div class="panel panel-primary">
 	<div class="panel-heading" ng-click="toggleFilterPanel()" style="cursor: pointer;">
-		<button type="button" class="btn btn-default pull-right btn-icon btn-xs">
-			<span data-ng-hide="showFilter" class="glyphicon glyphicon-plus"></span>
-			<span data-ng-show="showFilter" class="glyphicon glyphicon-minus"></span>
-		</button>
+		<span class="pull-right">
+			<i data-ng-hide="showFilter" class="icon-chevron-down"></i>
+			<i data-ng-show="showFilter" class="icon-chevron-up"></i>
+		</span>
 		<h3 class="panel-title"><i class="icon-search"></i> <span>{{ i18n('m.rbs.admin.admin.title', ['ucf']) }}</span>
 		</h3>
 	</div>

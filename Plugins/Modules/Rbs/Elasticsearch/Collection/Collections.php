@@ -153,9 +153,9 @@ class Collections
 		{
 			$i18nManager = $applicationServices->getI18nManager();
 			$items = array();
-			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_attribute');
-			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_price');
-			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_sku_threshold');
+			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_attribute', array('ucf'));
+			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_price', array('ucf'));
+			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_sku_threshold', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetValueExtractor', $items);
 			$event->setParam('collection', $collection);
 		}

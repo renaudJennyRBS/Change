@@ -1058,13 +1058,13 @@
 		"message":"nouveau bloc"
 	},
 	"filter_group_and_title": {
-		"message":"Verifie tous les critères"
+		"message":"Vérifie tous les critères"
 	},
 	"filter_group_and_toggle": {
 		"message":"Tous"
 	},
 	"filter_group_or_title": {
-		"message":"Verifie au moins un des critères"
+		"message":"Vérifie au moins un des critères"
 	},
 	"filter_group_or_toggle": {
 		"message":"Au moins un"
