@@ -29,8 +29,8 @@ class BaseItem implements ItemInterface
 		}
 		elseif (\Zend\Stdlib\ArrayUtils::isHashTable($label))
 		{
-			$title = $label['title'];
-			$label = $label['label'];
+			$label = isset($label['label']) ? $label['label'] : null;
+			$title = isset($label['title']) ? $label['title'] : null;
 		}
 		$this->label = $label === null ? $this->value : $label;
 		$this->title = $title === null ? $this->label : $title;

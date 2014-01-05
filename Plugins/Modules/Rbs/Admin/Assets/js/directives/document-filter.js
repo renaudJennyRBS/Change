@@ -45,6 +45,17 @@
 					}
 				}
 
+				scope.countAllFilters = function() {
+					if (!angular.isObject(scope.filter.parameters))
+					{
+						scope.filter.parameters = {};
+					}
+					var args = scope.filter.parameters;
+					args.all = args.configured = 0;
+					scope.$broadcast('countAllFilters', args);
+					return args.all;
+				};
+
 				function initializeFilter()
 				{
 					scope.model = attrs.model;
@@ -59,8 +70,7 @@
 					} else if (scope.defaultFilter && scope.defaultFilter.name == 'group') {
 						angular.copy(scope.defaultFilter, scope.filter);
 					}
-					scope.showFilter = (attrs.openByDefault == 'true');
-
+					scope.showFilter = (attrs.openByDefault == 'true' || (scope.filter && scope.filter.filters && scope.filter.filters.length));
 					scope.filter.search = searchIndex++;
 				}
 
