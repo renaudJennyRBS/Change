@@ -56,7 +56,7 @@ class ExportAttributes
 		};
 		$export->getOptions()->set('buildDocumentCode', $buildDocumentCode);
 
-		file_put_contents($filePath, json_encode($export->toArray(), JSON_PRETTY_PRINT));
+		file_put_contents($filePath, json_encode($export->toArray(), JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
 		$response->addInfoMessage('Attributes exported in file: ' . $filePath);
 	}
 }
