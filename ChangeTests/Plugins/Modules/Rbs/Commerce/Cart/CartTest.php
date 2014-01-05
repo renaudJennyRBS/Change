@@ -46,7 +46,7 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cart->setBillingArea($ba);
 
 		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'priceValue' => 5.3,
-			'cartTaxes' => [$taxApplication->toArray()], 'options' => ['iOpt' => 'testIOpt']];
+			'taxes' => [$taxApplication->toArray()], 'options' => ['iOpt' => 'testIOpt']];
 
 		$lineParameters = ['key' => 'k1', 'designation' => 'designation', 'quantity' => 3,
 			'items' => [$itemParameters], 'options' => ['opt' => 'testOpt']];
@@ -87,10 +87,10 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(2, $item->getReservationQuantity());
 		$this->assertEquals('testIOpt', $item->getOptions()->get('iOpt'));
 
-		$this->assertCount(1, $item->getCartTaxes());
+		$this->assertCount(1, $item->getTaxes());
 
 		/* @var $cartTax \Rbs\Price\Tax\TaxApplication */
-		$cartTax = $item->getCartTaxes()[0];
+		$cartTax = $item->getTaxes()[0];
 		$this->assertInstanceOf('Rbs\Price\Tax\TaxApplication', $cartTax);
 		$this->assertEquals('cat', $cartTax->getCategory());
 		$this->assertEquals('ZTEST', $cartTax->getZone());
