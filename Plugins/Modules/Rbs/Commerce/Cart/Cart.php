@@ -595,7 +595,7 @@ class Cart implements \Serializable
 				{
 					if ($item->getPriceValue() !== null)
 					{
-						foreach ($item->getCartTaxes() as $cartTax)
+						foreach ($item->getTaxes() as $cartTax)
 						{
 							$key = $cartTax->getTaxKey();
 							if (!isset($taxes[$key]))

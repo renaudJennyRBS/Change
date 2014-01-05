@@ -126,7 +126,14 @@ class Listeners implements ListenerAggregateInterface
 					$cr->addproducts($event);
 				});
 			}
-			if ($relativePath === 'rbs/order/productPriceInfo')
+			else if ($relativePath === 'rbs/order/lineNormalize')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Order\Http\Rest\Actions\LineNormalize())->execute($event);
+				});
+			}
+			else if ($relativePath === 'rbs/order/productPriceInfo')
 			{
 				$event->setAction(function ($event)
 				{

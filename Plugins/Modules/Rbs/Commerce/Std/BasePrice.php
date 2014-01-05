@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Commerce\Cart;
+namespace Rbs\Commerce\Std;
 
 
 /**
-* @name \Rbs\Commerce\Cart\CartPrice
+* @name \Rbs\Commerce\Std\BasePrice
 */
-class CartPrice implements \Rbs\Price\PriceInterface
+class BasePrice implements \Rbs\Price\PriceInterface
 {
 
 	/**
