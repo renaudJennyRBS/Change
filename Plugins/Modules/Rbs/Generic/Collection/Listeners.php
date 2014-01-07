@@ -93,6 +93,12 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Elasticsearch_Collection_FacetValueExtractor':
 					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetValueExtractor($event);
 					break;
+				case 'Rbs_Geo_All_Countries_Codes':
+					(new \Rbs\Geo\Collection\Collections())->addAllCountriesCodes($event);
+					break;
+				case 'Rbs_Geo_Collection_Countries':
+					(new \Rbs\Geo\Collection\Collections())->addCountries($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -119,7 +125,9 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Elasticsearch_Collection_CollectionCodes',
 				'Rbs_Elasticsearch_Collection_AttributeIds',
 				'Rbs_Elasticsearch_Collection_FacetTypes',
-				'Rbs_Elasticsearch_Collection_FacetValueExtractor'
+				'Rbs_Elasticsearch_Collection_FacetValueExtractor',
+				'Rbs_Geo_All_Countries_Codes',
+				'Rbs_Geo_Collection_Countries'
 			));
 			$event->setParam('codes', $codes);
 		};
