@@ -101,6 +101,7 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 						{
 							$cart->removeLineByKey($lineKey);
 						}
+						$cartManager->normalize($cart);
 						$cartManager->saveCart($cart);
 					}
 

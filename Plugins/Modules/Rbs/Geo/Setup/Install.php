@@ -84,85 +84,35 @@ class Install extends \Change\Plugins\InstallBase
 			}
 		}
 
-		$countries = \Zend\Json\Json::decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR
-		. 'countries.json'), \Zend\Json\Json::TYPE_ARRAY);
-
 		$tm = $applicationServices->getTransactionManager();
 		try
 		{
 			$tm->begin();
+			$path = dirname(__DIR__). '/Collection/Assets/countries.json';
+
+			$allCountries = json_decode(file_get_contents($path), true);
 			$activable = array('FR', 'DE', 'CH', 'BE', 'LU', 'IT', 'ES', 'GB', 'US', 'CA', 'PT', 'NL', 'AT');
-			foreach ($countries as $countryData)
+
+			foreach ($activable as $code)
 			{
 				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
-				$query->andPredicates($query->eq('code', $countryData['code']));
+				$query->andPredicates($query->eq('code', $code));
 				/* @var $country \Rbs\geo\Documents\Country */
 				$country = $query->getFirstDocument();
 				if ($country === null)
 				{
+					$item = $allCountries[$code];
 					$country = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
-					$country->setCode($countryData['code']);
+					$country->setCode($code);
+					$country->setLabel($item['label']);
+					$country->save();
 				}
-
-				if (in_array($country->getCode(), $activable))
-				{
-					$country->getCurrentLocalization()->setActive(true);
-				}
-				else
-				{
-					$country->getCurrentLocalization()->setActive(false);
-				}
-
-				$country->setLabel($countryData['label']);
-				$country->save();
 			}
 			$tm->commit();
 		}
 		catch (\Exception $e)
 		{
 			throw $tm->rollBack($e);
-		}
-
-		if ($cm->getCollection('Rbs_Geo_Collection_Countries') === null)
-		{
-			$tm = $applicationServices->getTransactionManager();
-			try
-			{
-				$tm->begin();
-
-				/* @var $collection \Rbs\Collection\Documents\Collection */
-				$collection = $applicationServices->getDocumentManager()
-					->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
-				$collection->setLabel('Countries used in project');
-				$collection->setCode('Rbs_Geo_Collection_Countries');
-
-				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
-				$query->andPredicates($query->activated());
-				$query->addOrder('code');
-
-				/* @var $country \Rbs\geo\Documents\Country */
-				foreach ($query->getDocuments() as $country)
-				{
-					if ($collection->getItemByValue($country->getCode()))
-					{
-						continue;
-					}
-
-					/* @var $item \Rbs\Collection\Documents\Item */
-					$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
-					$item->setValue($country->getCode());
-					$item->setLabel($country->getLabel());
-					$item->getCurrentLocalization()->setTitle($country->getTitle());
-					$item->save();
-					$collection->getItems()->add($item);
-				}
-				$collection->save();
-				$tm->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $tm->rollBack($e);
-			}
 		}
 
 		$models = \Zend\Json\Json::decode(file_get_contents(__DIR__ . '/Assets/addressFields.json'), \Zend\Json\Json::TYPE_ARRAY);

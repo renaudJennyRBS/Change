@@ -160,11 +160,10 @@ class ProductPresentation
 					if ($price && ($priceValue = $price->getValue()) !== null)
 					{
 						$this->prices['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
-						$taxManager = $this->commerceServices->getTaxManager();
 						$this->prices['price'] = ($priceValue * $quantity);
 						$this->prices['formattedPrice'] = $priceManager->formatValue($this->prices['price'], $currencyCode);
 
-						$taxApplication = $taxManager->getTaxByValue($priceValue, $price->getTaxCategories());
+						$taxApplication = $priceManager->getTaxByValue($priceValue, $price->getTaxCategories());
 						if (count($taxApplication))
 						{
 							$tax = array_reduce($taxApplication, function ($result, TaxApplication $cartTax) use ($quantity)
@@ -180,7 +179,7 @@ class ProductPresentation
 						{
 							$this->prices['priceWithoutDiscount'] = ($oldValue * $quantity);
 							$this->prices['formattedPriceWithoutDiscount'] = $priceManager->formatValue($this->prices['priceWithoutDiscount'], $currencyCode);
-							$taxApplication = $taxManager->getTaxByValue($oldValue, $price->getTaxCategories());
+							$taxApplication = $priceManager->getTaxByValue($oldValue, $price->getTaxCategories());
 							if (count($taxApplication))
 							{
 								$tax = array_reduce($taxApplication, function ($result, TaxApplication $cartTax) use ($quantity)

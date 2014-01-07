@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Elasticsearch\Facet;
 
-use Change\Documents\AbstractDocument;
 use Change\Documents\Property;
 
 /**
@@ -330,7 +329,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					$prices = [];
 					if ($sku && $store && $commerceServices)
 					{
-						$taxManager = $commerceServices->getTaxManager();
+						$priceManager = $commerceServices->getPriceManager();
 						$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
 						$q->andPredicates($q->eq('active', true), $q->eq('sku', $sku), $q->eq('webStore', $store), $q->eq('targetId', 0));
 						$q->addOrder('billingArea');
@@ -385,10 +384,10 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 
 							foreach ($zones as $zone)
 							{
-								$taxes = $taxManager->getTaxByValue($price->getValue(), $price->getTaxCategories(), $billingArea, $zone);
+								$taxes = $priceManager->getTaxByValue($price->getValue(), $price->getTaxCategories(), $billingArea, $zone);
 								$priceZone = $priceData;
 								$priceZone['zone'] = $zone;
-								$priceZone['valueWithTax'] = $taxManager->getValueWithTax($price->getValue(), $taxes);
+								$priceZone['valueWithTax'] = $priceManager->getValueWithTax($price->getValue(), $taxes);
 								$prices[] = $priceZone;
 							}
 						}

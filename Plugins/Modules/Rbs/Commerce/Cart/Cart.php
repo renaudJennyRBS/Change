@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
+use Zend\Validator\IsInstanceOf;
+
 /**
  * @name \Rbs\Commerce\Cart\Cart
  */
@@ -100,6 +102,12 @@ class Cart implements \Serializable
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
 	protected $discounts = array();
+
+
+	/**
+	 * @var \Rbs\Price\Tax\TaxApplication[]
+	 */
+	protected $taxesValues = array();
 
 	/**
 	 * @var array|null
@@ -580,41 +588,34 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 * @return \Rbs\Price\Tax\TaxInterface[]
 	 */
 	public function getTaxes()
 	{
-		/* @var $taxes \Rbs\Price\Tax\TaxApplication[] */
-		$taxes = array();
-		foreach ($this->lines as $line)
+		$taxes = $this->billingArea ?  $this->billingArea->getTaxes() : [];
+		if ($taxes instanceof \Change\Documents\DocumentArrayProperty)
 		{
-			$lineQuantity = $line->getQuantity();
-			if ($lineQuantity)
-			{
-				foreach ($line->getItems() as $item)
-				{
-					if ($item->getPriceValue() !== null)
-					{
-						foreach ($item->getTaxes() as $cartTax)
-						{
-							$key = $cartTax->getTaxKey();
-							if (!isset($taxes[$key]))
-							{
-								$tax = new \Rbs\Price\Tax\TaxApplication($cartTax->getTaxCode(), $cartTax->getCategory(), $cartTax->getZone(), $cartTax->getRate());
-								$tax->setValue($cartTax->getValue() * $lineQuantity);
-								$taxes[$key] = $tax;
-							}
-							else
-							{
-								$tax = $taxes[$key];
-								$tax->addValue($cartTax->getValue() * $lineQuantity);
-							}
-						}
-					}
-				}
-			}
+			$taxes = $taxes->toArray();
 		}
-		return array_values($taxes);
+		return $taxes ;
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\TaxApplication[] $taxesValues
+	 * @return $this
+	 */
+	public function setTaxesValues($taxesValues)
+	{
+		$this->taxesValues = $taxesValues;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 */
+	public function getTaxesValues()
+	{
+		return $this->taxesValues;
 	}
 
 	/**
@@ -626,7 +627,7 @@ class Cart implements \Serializable
 		if ($price !== null)
 		{
 			$valueWithTax = $price;
-			$taxApplications = $this->getTaxes();
+			$taxApplications = $this->getTaxesValues();
 			if (count($taxApplications))
 			{
 				/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
@@ -657,6 +658,7 @@ class Cart implements \Serializable
 			'fees' => $this->fees,
 			'discounts' => $this->discounts,
 			'shippingModes' => $this->shippingModes,
+			'taxesValues' => $this->taxesValues,
 		);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
 	}
@@ -686,6 +688,7 @@ class Cart implements \Serializable
 		$this->fees = $serializedData['fees'];
 		$this->discounts = $serializedData['discounts'];
 		$this->shippingModes = $serializedData['shippingModes'];
+		$this->taxesValues = $serializedData['taxesValues'];
 		foreach ($this->lines as $line)
 		{
 			/* @var $line CartLine */
@@ -703,6 +706,7 @@ class Cart implements \Serializable
 			'billingArea' => $this->billingArea ? $this->billingArea->getCode() : null,
 			'currencyCode' => $this->billingArea ? $this->billingArea->getCurrencyCode() : null,
 			'taxes' => [],
+			'taxesValues' => [],
 			'zone' => $this->zone,
 			'locked' => $this->locked,
 			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
@@ -715,12 +719,14 @@ class Cart implements \Serializable
 			'errors' => array(),
 			'lines' => array());
 
-		if ($this->billingArea)
+		foreach ($this->getTaxes() as $tax)
 		{
-			foreach ($this->billingArea->getTaxes() as $tax)
-			{
-				$array['taxes'][] = $tax->toArray();
-			}
+			$array['taxes'][] = $tax->toArray();
+		}
+
+		foreach ($this->getTaxesValues() as $taxApplication)
+		{
+			$array['taxesValues'][] = $taxApplication->toArray();
 		}
 
 		foreach ($this->lines as $line)

@@ -80,6 +80,7 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			{
 				$cartManager->addLine($cart, $line);
 			}
+			$cartManager->normalize($cart);
 			$cartManager->saveCart($cart);
 		}
 		else

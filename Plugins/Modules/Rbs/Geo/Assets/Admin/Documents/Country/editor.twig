@@ -6,11 +6,12 @@
 		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="code" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}">
-		</rbs-field-text>
-
-		<rbs-field-text property="title" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'title'), ['ucf']) }}">
-		</rbs-field-text>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}" required="true">
+			<select ng-model="document.code" required="true" class="form-control"
+					rbs-items-from-collection="Rbs_Geo_All_Countries_Codes" >
+				<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
+			</select>
+		</rbs-field>
 
 		<rbs-field-picker
 				property="addressFields" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'addressFields'), ['ucf']) }}"

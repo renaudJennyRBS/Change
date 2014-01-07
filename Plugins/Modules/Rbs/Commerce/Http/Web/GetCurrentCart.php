@@ -27,17 +27,15 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			}
 
 			$pm = $commerceServices->getPriceManager();
-			$tm = $commerceServices->getTaxManager();
-
 			$currency = $cart->getCurrencyCode();
 			if ($currency)
 			{
 				$taxes = array();
-				foreach ($cart->getTaxes() as $tax)
+				foreach ($cart->getTaxesValues() as $tax)
 				{
 					$taxInfos = $tax->toArray();
-					$taxInfos['title'] = $tm->taxTitle($tax->getTaxCode());
-					$taxInfos['formattedRate'] = $tm->formatRate($taxInfos['rate']);
+					$taxInfos['title'] = $pm->taxTitle($tax);
+					$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
 					$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
 					$taxes[] = $taxInfos;
 				}
