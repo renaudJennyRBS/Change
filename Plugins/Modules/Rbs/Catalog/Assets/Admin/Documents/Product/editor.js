@@ -36,6 +36,7 @@
 						scope.productListItems = [];
 					}
 				};
+/*
 				scope.cascadeEditProductListItem = editorCtrl.registerEditCascade('items');
 
 				scope.cascadeCreateProductListItem = function ()
@@ -51,7 +52,7 @@
 						'<i class="icon-pencil"></i> ' + scope.document.label
 					);
 				};
-
+*/
 				scope.toggleHighlight = function(doc){
 					var url = null;
 					if (!doc.isHighlighted)

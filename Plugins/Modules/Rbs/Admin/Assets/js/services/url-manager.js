@@ -91,16 +91,28 @@
 				};
 
 
-				var replaceParams = function (urlTpl, paramsObj) {
-					angular.forEach(urlTpl.match(/:(\w+)/g), function (match) {
-						var value = paramsObj[match.slice(1)] || '';
-						if (Utils.isDocument(value)) {
-							value = value.id;
+				var replaceParams = function (urlTpl, routeParams, queryStringParams)
+				{
+					queryStringParams = angular.extend({}, queryStringParams);
+
+					angular.forEach(routeParams, function (v, k)
+					{
+						if (angular.isObject(v) && v.id) {
+							v = v.id;
 						}
-						urlTpl = urlTpl.replace(new RegExp(match, 'g'), value);
+						// Is this a parameter in the route?
+						if (urlTpl.indexOf(':' + k) !== -1) {
+							urlTpl = urlTpl.replace(new RegExp(':'+k, 'g'), v);
+							// Do NOT set a parameter in the query string if it has already been used in the route.
+							if (queryStringParams.hasOwnProperty(k)) {
+								delete queryStringParams[k];
+							}
+						}
 					});
-					// Replace multiple '/' by only one '/'.
-					return urlTpl.replace(/\/+/g, '/');
+
+					urlTpl = urlTpl.replace(/\/+/g, '/');
+
+					return Utils.makeUrl(urlTpl, queryStringParams);
 				};
 
 
@@ -172,9 +184,9 @@
 					// If `doc` is a Document object, we try to replace the parameters in the `url` with
 					// the corresponding properties of the Document.
 					if (angular.isString(doc)) {
-						url = replaceParams(url, params);
+						url = replaceParams(url, params, params);
 					} else {
-						url = replaceParams(url, angular.extend({}, doc, params));
+						url = replaceParams(url, angular.extend({}, doc, params), params);
 					}
 
 					return fixUrl(url);
@@ -265,24 +277,29 @@
 
 	var urlFilter = ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
-		return function (doc, urlName, clearParams) {
-			var	url,
+		return function (doc, urlName, params) {
+			var	url, node;
+
+			if (params === 'tree') {
 				node = Breadcrumb.getCurrentNode();
+				if (node) {
+					params = { 'tn' : node.id };
+				} else {
+					params = null;
+				}
+			}
 
 			if (Utils.isDocument(doc)) {
 				if (! urlName && doc.refLCID && doc.LCID !== doc.refLCID) {
 					urlName = 'translate';
 				}
-				url = UrlManager.getUrl(doc, { 'LCID': doc.LCID }, urlName);
+				url = UrlManager.getUrl(doc, angular.extend({ 'LCID': doc.LCID }, params), urlName);
 			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
-				url = UrlManager.getUrl(doc, null, urlName);
+				url = UrlManager.getUrl(doc, params || null, urlName);
 			} else {
 				return 'javascript:;';
 			}
 
-			if (urlName !== 'tree' && Utils.isDocument(node) && ! clearParams) {
-				url += '?tn=' + node.id;
-			}
 			return url;
 		};
 

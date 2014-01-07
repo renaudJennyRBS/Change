@@ -21,7 +21,9 @@
 					});
 
 					//take the first sitemap as reference for time interval and other stuff
-					scope.data.timeInterval = scope.document.sitemaps[0].timeInterval;
+					if (angular.isArray(scope.document.sitemaps) && scope.document.sitemaps.length) {
+						scope.data.timeInterval = scope.document.sitemaps[0].timeInterval;
+					}
 					scope.$watch('data.timeInterval', function (value){
 						angular.forEach(scope.document.sitemaps, function (sitemap){
 							sitemap.timeInterval = value;

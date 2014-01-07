@@ -17,90 +17,22 @@
 
 
 	/**
-	 * @name Rbs_Website_MainMenuController
-	 */
-	function ChangeWebsiteMainMenuController ($scope, $location, REST)
-	{
-		var unregisterUserLoginListener = null;
-
-
-		function updateSelection (currentWebsiteId)
-		{
-			if ($scope.websites)
-			{
-				if (currentWebsiteId)
-				{
-					angular.forEach($scope.websites, function (ws) {
-						if (ws.id === currentWebsiteId) {
-							$scope.website = ws;
-						}
-					});
-				}
-				if (! $scope.website && $scope.websites && $scope.websites.length)
-				{
-					$scope.website = $scope.websites[0];
-				}
-			}
-		}
-
-		$scope.$on('$routeUpdate', function () {
-			updateSelection(parseInt($location.search()['tn'], 10));
-		});
-
-		function loadSuccessFn (root)
-		{
-			REST.treeChildren(root.resources[0]).then(function (websites)
-			{
-				$scope.websites = websites.resources;
-				updateSelection(parseInt($location.search()['tn'], 10));
-				if (unregisterUserLoginListener) {
-					unregisterUserLoginListener();
-				}
-			});
-		}
-
-		$scope.$on('Change:TreePathChanged', function (event, bcData) {
-			$scope.website = bcData.website ? bcData.website : null;
-			if ($scope.website) {
-				updateSelection($scope.website.id);
-			}
-		});
-
-		function loadErrorFn () {
-			installUserLoginListener();
-		}
-
-		function installUserLoginListener () {
-			unregisterUserLoginListener = $scope.$on('OAuth:UserLoginSuccess', reload);
-		}
-
-		function reload () {
-			REST.treeChildren('Rbs/Website').then(loadSuccessFn, loadErrorFn);
-		}
-
-		reload();
-
-	}
-
-	ChangeWebsiteMainMenuController.$inject = [
-		'$scope',
-		'$location',
-		'RbsChange.REST'
-	];
-	app.controller('Rbs_Website_MainMenuController', ChangeWebsiteMainMenuController);
-
-
-	/**
 	 * Routes and URL definitions.
 	 */
 	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Website_Website')
+			/*$delegate.model('Rbs_Website_Website')
 				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/browse.twig')
 				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
 				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Document/Rbs/Website/Menu/list.twig')
+			;*/
+			$delegate.model('Rbs_Website_Website')
+				.route('tree', 'Rbs/Website/Browse/?website=:id&view=Structure', 'Document/Rbs/Website/Website/browse.twig')
+				.route('functions', 'Rbs/Website/Browse/?website=:id&view=Functions', 'Document/Rbs/Website/Website/browse.twig')
+				.route('menus', 'Rbs/Website/Browse/?website=:id&view=Menus', 'Document/Rbs/Website/Website/browse.twig')
+				.route('properties', 'Rbs/Website/Browse/?website=:id&view=Properties', 'Document/Rbs/Website/Website/browse.twig')
 			;
 
 			$delegate.model('Rbs_Website_Topic')

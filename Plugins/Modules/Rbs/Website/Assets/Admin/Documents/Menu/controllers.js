@@ -55,8 +55,6 @@
 				}
 			}, true);
 		}
-
-		MainMenu.loadModuleMenu('Rbs_Website');
 	}
 
 	ListController.$inject = ['$scope', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.i18n', 'RbsChange.Query', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.Utils'];

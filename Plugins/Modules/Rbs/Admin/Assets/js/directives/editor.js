@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter)
+	function editorDirective ($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter, UrlManager)
 	{
 		var CORRECTION_CSS_CLASS = 'correction';
 
@@ -62,9 +62,18 @@
 							defered = $q.defer();
 							promise = defered.promise;
 							if (! document) {
-								document = REST.newResource(modelName, Settings.get('LCID'));
-								if (! isNaN(documentId) && documentId < 0) {
-									document.id = documentId;
+
+								// Check if we are coming back here following a selection process.
+								// In that case, we need to get the attached document instead of creating a new one.
+								var navCtx = Navigation.getActiveContext();
+								if (navCtx && navCtx.isSelection() && Utils.isDocument(navCtx.params.document) && navCtx.params.document.model === modelName && navCtx.params.document.id < 0) {
+									document = navCtx.params.document;
+								}
+								else {
+									document = REST.newResource(modelName, Settings.get('LCID'));
+									if (! isNaN(documentId) && documentId < 0) {
+										document.id = documentId;
+									}
 								}
 							}
 							defered.resolve(document);
@@ -79,15 +88,16 @@
 
 				this.registerCreateCascade = function (propertyName, model, title)
 				{
-					$scope.$on('Change:NavigationFinalize', function (event, navCtx)
-					{
-						if (navCtx && navCtx.context && navCtx.context.type === 'setProperty' && navCtx.context.property === propertyName) {
-							$scope.document[propertyName].push(navCtx.result);
-						}
-					});
-
 					return function () {
-						EditorManager.cascade(model, title || '<i class="icon-pencil"></i> ' + $scope.document.label, propertyName);
+						Navigation.start({
+							selector : true,
+							property : propertyName,
+							model : model,
+							label : title,
+							document : $scope.document,
+							ngModel : 'document.' + propertyName
+						});
+						$location.url(UrlManager.getUrl(model, null, 'new'));
 					};
 				};
 
@@ -95,7 +105,13 @@
 				this.registerEditCascade = function (propertyName, title)
 				{
 					return function (childDocument) {
-						EditorManager.cascade(childDocument, title || '<i class="icon-pencil"></i> ' + $scope.document.label, propertyName);
+						Navigation.start({
+							property : propertyName,
+							label : title,
+							document : $scope.document,
+							ngModel : 'document.' + propertyName
+						});
+						$location.url(UrlManager.getUrl(childDocument));
 					};
 				};
 
@@ -317,12 +333,11 @@
 						if ($scope._isNew) {
 							EditorManager.removeCreationLocalCopy(doc, $scope._isNewId);
 
-							var navCtx = Navigation.getCurrentContext();
-							if (navCtx) {
-								Navigation.commit(doc);
+							if (Navigation.isActive()) {
+								Navigation.resolve(doc);
 							}
 							else {
-								$location.path(doc.url());
+								$location.path(doc.url()).replace();
 							}
 						}
 
@@ -389,7 +404,6 @@
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						$scope._isNewId = $scope.document.id;
-						console.log("NEW DOC: id=", $scope._isNewId);
 						Breadcrumb.setResource(i18n.trans('m.rbs.admin.adminjs.new_element | ucf'));
 					}
 					else {
@@ -485,7 +499,6 @@
 
 
 				function mergeLocalCopy (doc) {
-					console.log("merge local copy: ", doc);
 					var localCopy = EditorManager.getLocalCopy(doc);
 					if (localCopy)
 					{
@@ -507,18 +520,43 @@
 					initCorrection();
 					initMenu();
 
-					// Are we in a Navigation session?
-					var navCtx = Navigation.finalize();
-					if (mergeLocalCopy($scope.document) && ! navCtx) {
-						$scope.$emit('Change:Editor:LocalCopyMerged');
-					}
-					if (navCtx) {
-						$scope.$broadcast('Change:NavigationFinalize', navCtx);
+					// --- selection process BEGIN
+
+					var navCtxId, navCtx;
+					if ($scope.original.id < 0) {
+						navCtxId = 'Editor:' + $scope.original.model + ':new';
+					} else {
+						navCtxId = 'Editor:' + $scope.original.model + ':' + $scope.original.id;
 					}
 
-					if (SelectSession.hasSelectSession($scope.document)) {
-						SelectSession.commit($scope.document);
+					navCtx = Navigation.getActiveContext();
+					if (mergeLocalCopy($scope.document)) {
+						// If local copy has been merged after a selection process,
+						// do not notify about this merge.
+						if (! navCtx || navCtx.id !== navCtxId || ! navCtx.isSelection()) {
+							$scope.$emit('Change:Editor:LocalCopyMerged');
+						}
 					}
+
+					// Define current context and what has to be done when it is resolved.
+					Navigation.setContext($scope, navCtxId, $scope.original.label).then(function (context)
+					{
+						if (context.isSelection() && context.isForDocumentProperty())
+						{
+							if (angular.isArray($scope.document[context.params.property])) {
+								ArrayUtils.append($scope.document[context.params.property], context.result);
+							}
+							else {
+								$scope.document[context.params.property] = context.result;
+							}
+						}
+						if (angular.isFunction($scope.finalizeNavigationContext)) {
+							$scope.finalizeNavigationContext(context);
+						}
+					});
+
+					// --- selection process END
+
 
 					$element.css('display', 'block');
 
@@ -790,7 +828,13 @@
 
 
 					scope.onCancel = function onCancelFn () {
-						Breadcrumb.goParent();
+						var navCtx = Navigation.getActiveContext();
+						if (navCtx) {
+							Navigation.reject();
+						}
+						else {
+							Breadcrumb.goParent();
+						}
 					};
 
 				};
@@ -815,7 +859,8 @@
 		'RbsChange.MainMenu',
 		'RbsChange.SelectSession',
 		'RbsChange.Navigation',
-		'RbsChange.ErrorFormatter'
+		'RbsChange.ErrorFormatter',
+		'RbsChange.UrlManager'
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);
@@ -902,148 +947,145 @@
 	//
 
 
-	app.provider('RbsChange.EditorManager', function RbsChangeEditorManager ()
+	app.factory('RbsChange.EditorManager', ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', 'RbsChange.UrlManager', 'RbsChange.Navigation', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings, UrlManager, Navigation)
 	{
-		this.$get = ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', 'RbsChange.UrlManager', 'RbsChange.Navigation', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings, UrlManager, Navigation)
-		{
-			var	localCopyRepo;
+		var	localCopyRepo;
 
-			localCopyRepo = localStorageService.get("localCopy");
+		localCopyRepo = localStorageService.get("localCopy");
 
-			if (localCopyRepo) {
-				localCopyRepo = JSON.parse(localCopyRepo);
+		if (localCopyRepo) {
+			localCopyRepo = JSON.parse(localCopyRepo);
+		}
+
+		if (! angular.isObject(localCopyRepo)) {
+			localCopyRepo = {};
+			commitLocalCopyRepository();
+		}
+
+		// Local copy methods.
+
+		function commitLocalCopyRepository () {
+			localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
+		}
+
+		function makeLocalCopyKey (doc, tempId) {
+			var key = doc.model + '-' + (tempId || doc.id);
+			if (doc.LCID) {
+				key += '-' + doc.LCID;
 			}
+			return key;
+		}
 
-			if (! angular.isObject(localCopyRepo)) {
-				localCopyRepo = {};
-				commitLocalCopyRepository();
-			}
+		return {
 
-			// Local copy methods.
+			'cascade' : function (doc, collapsedTitle, contextOrProperty)
+			{
+				var urlParams,
+					ctx = null;
 
-			function commitLocalCopyRepository () {
-				localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
-			}
+				console.log("cascade: doc=", angular.copy(doc));
 
-			function makeLocalCopyKey (doc, tempId) {
-				var key = doc.model + '-' + (tempId || doc.id);
-				if (doc.LCID) {
-					key += '-' + doc.LCID;
+				if (angular.isObject(doc) && doc.hasOwnProperty('model') && doc.hasOwnProperty('values')) {
+					urlParams = doc.values;
+					doc = doc.model;
 				}
-				return key;
-			}
 
-			return {
+				if (Utils.isModelName(doc)) {
+					doc = REST.newResource(doc, Settings.get('LCID'));
+				}
 
-				'cascade' : function (doc, collapsedTitle, contextOrProperty)
-				{
-					var urlParams,
-						ctx = null;
+				if (!doc || !Utils.isDocument(doc)) {
+					throw new Error("Please provide a valid Document.");
+				}
 
-					console.log("cascade: doc=", angular.copy(doc));
+				// TODO Check circular cascade?
 
-					if (angular.isObject(doc) && doc.hasOwnProperty('model') && doc.hasOwnProperty('values')) {
-						urlParams = doc.values;
-						doc = doc.model;
-					}
+				console.log("cascade: doc=", doc, ", url=", Utils.makeUrl(UrlManager.getUrl(doc), urlParams));
 
-					if (Utils.isModelName(doc)) {
-						doc = REST.newResource(doc, Settings.get('LCID'));
-					}
-
-					if (!doc || !Utils.isDocument(doc)) {
-						throw new Error("Please provide a valid Document.");
-					}
-
-					// TODO Check circular cascade?
-
-					console.log("cascade: doc=", doc, ", url=", Utils.makeUrl(UrlManager.getUrl(doc), urlParams));
-
-					// Create Navigation context.
-					if (angular.isString(contextOrProperty)) {
-						ctx = {
-							'type' : 'setProperty',
-							'property' : contextOrProperty,
-							'parentDocument' : angular.element($('#workspace .document-form').last()).scope().document
-						};
-					}
-					else if (angular.isObject(contextOrProperty)) {
-						ctx = contextOrProperty;
-					}
-
-					Navigation.push(Utils.makeUrl(UrlManager.getUrl(doc), urlParams), collapsedTitle, ctx);
-				},
-
-
-				/**
-				 * Uncascade (cancel) the current form and go back to the previous form,
-				 * without any changes on it.
-				 */
-				'uncascade' : function ()
-				{
-					Navigation.rollback();
-				},
-
-
-				// Local copy public API
-
-				'saveLocalCopy' : function (doc) {
-					var	key = makeLocalCopyKey(doc);
-					doc.META$.localCopy = {
-						saveDate : (new Date()).toString(),
-						documentVersion : doc.documentVersion,
-						modificationDate : doc.modificationDate,
-						publicationStatus : doc.publicationStatus
+				// Create Navigation context.
+				if (angular.isString(contextOrProperty)) {
+					ctx = {
+						'type' : 'setProperty',
+						'property' : contextOrProperty,
+						'parentDocument' : angular.element($('#workspace .document-form').last()).scope().document
 					};
-					delete doc.documentVersion;
-					delete doc.modificationDate;
-					delete doc.publicationStatus;
-					localCopyRepo[key] = doc;
-					commitLocalCopyRepository();
-				},
-
-				'getLocalCopy' : function (doc) {
-					var	key = makeLocalCopyKey(doc),
-						rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
-					return rawCopy;
-				},
-
-				'removeLocalCopy' : function (doc) {
-					var	key = makeLocalCopyKey(doc);
-					if (localCopyRepo.hasOwnProperty(key)) {
-						delete localCopyRepo[key];
-						delete doc.META$.localCopy;
-						commitLocalCopyRepository();
-					}
-				},
-
-				'removeCreationLocalCopy' : function (doc, tempId) {
-					var	key = makeLocalCopyKey(doc, tempId);
-					if (localCopyRepo.hasOwnProperty(key)) {
-						delete localCopyRepo[key];
-						delete doc.META$.localCopy;
-						commitLocalCopyRepository();
-					}
-				},
-
-				'removeAllLocalCopies' : function () {
-					for (var key in localCopyRepo) {
-						if (localCopyRepo.hasOwnProperty(key)) {
-							delete localCopyRepo[key];
-						}
-					}
-					commitLocalCopyRepository();
-				},
-
-				'getLocalCopies' : function () {
-					return localCopyRepo;
+				}
+				else if (angular.isObject(contextOrProperty)) {
+					ctx = contextOrProperty;
 				}
 
-			};
+				Navigation.push(Utils.makeUrl(UrlManager.getUrl(doc), urlParams), collapsedTitle, ctx);
+			},
 
-		}];
 
-	});
+			/**
+			 * Uncascade (cancel) the current form and go back to the previous form,
+			 * without any changes on it.
+			 */
+			'uncascade' : function ()
+			{
+				Navigation.rollback();
+			},
+
+
+			// Local copy public API
+
+			'saveLocalCopy' : function (doc) {
+				var	key = makeLocalCopyKey(doc);
+				doc.META$.localCopy = {
+					saveDate : (new Date()).toString(),
+					documentVersion : doc.documentVersion,
+					modificationDate : doc.modificationDate,
+					publicationStatus : doc.publicationStatus
+				};
+				delete doc.documentVersion;
+				delete doc.modificationDate;
+				delete doc.publicationStatus;
+				localCopyRepo[key] = doc;
+				commitLocalCopyRepository();
+			},
+
+			'getLocalCopy' : function (doc) {
+				var	key = makeLocalCopyKey(doc),
+					rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
+				return rawCopy;
+			},
+
+			'removeLocalCopy' : function (doc) {
+				var	key = makeLocalCopyKey(doc);
+				if (localCopyRepo.hasOwnProperty(key)) {
+					delete localCopyRepo[key];
+					delete doc.META$.localCopy;
+					commitLocalCopyRepository();
+				}
+			},
+
+			'removeCreationLocalCopy' : function (doc, tempId) {
+				var	key = makeLocalCopyKey(doc, tempId);
+				if (localCopyRepo.hasOwnProperty(key)) {
+					delete localCopyRepo[key];
+					delete doc.META$.localCopy;
+					commitLocalCopyRepository();
+				}
+			},
+
+			'removeAllLocalCopies' : function () {
+				for (var key in localCopyRepo) {
+					if (localCopyRepo.hasOwnProperty(key)) {
+						delete localCopyRepo[key];
+					}
+				}
+				localStorageService.remove("temporaryId");
+				commitLocalCopyRepository();
+			},
+
+			'getLocalCopies' : function () {
+				return localCopyRepo;
+			}
+
+		};
+
+	}]);
 
 
 	app.controller('RbsChangeTranslateEditorController', ['$scope', 'RbsChange.MainMenu', function ($scope, MainMenu) {

@@ -224,6 +224,10 @@
 	"btnGoBack":{
 		"message":"retourner<small>à la liste<\/small>"
 	},
+	"btn_back_to":{
+		"message":"retourner à<small>$LABEL$<\/small>",
+		"description":"Used in the button bar in editors"
+	},
 	"btnSave":{
 		"message":"enregistrer<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
@@ -513,7 +517,7 @@
 		"message":"de"
 	},
 	"compose_selection_message":{
-		"message":"Composez votre sélection à l'aide de la liste ci-contre. Vous pouvez même changer de module et revenir ici pour finaliser votre sélection."
+		"message":"Composez votre sélection à l'aide de la liste ci-dessous."
 	},
 	"selection_is_empty_now":{
 		"message":"Votre sélection est vide pour l'instant."
@@ -522,7 +526,7 @@
 		"message":"Valider la sélection"
 	},
 	"cancel_selection":{
-		"message":"Annuler"
+		"message":"Annuler la sélection"
 	},
 	"add_selected_elements":{
 		"message":"Ajouter les éléments sélectionnés"

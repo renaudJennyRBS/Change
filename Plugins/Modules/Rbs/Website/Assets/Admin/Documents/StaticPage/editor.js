@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function changeEditorWebsitePage ($rootScope, REST, Breadcrumb, MainMenu)
+	function changeEditorWebsitePage ($rootScope, REST, Breadcrumb)
 	{
 		return {
 			restrict    : 'A',
@@ -12,7 +12,7 @@
 
 			link : function (scope, element, attrs, editorCtrl) {
 
-				scope.onReady = function ()
+				scope.onLoad = function ()
 				{
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
 						scope.document.section = Breadcrumb.getCurrentNode();
@@ -50,6 +50,22 @@
 					}
 				};
 
+				scope.finalizeNavigationContext = function (context)
+				{
+					if (context.params.blockId)
+					{
+						scope.$broadcast(
+							'Change:StructureEditor.setBlockParameter',
+							{
+								blockId : context.params.blockId,
+								property : context.params.property,
+								value : context.result
+							}
+						);
+					}
+				};
+
+
 				editorCtrl.init('Rbs_Website_StaticPage');
 
 				// This is for the "undo" dropdown menu:
@@ -76,8 +92,7 @@
 	changeEditorWebsitePage.$inject = [
 		'$rootScope',
 		'RbsChange.REST',
-		'RbsChange.Breadcrumb',
-		'RbsChange.MainMenu'
+		'RbsChange.Breadcrumb'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteStaticpage', changeEditorWebsitePage);
 

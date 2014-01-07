@@ -2,10 +2,7 @@
 
 	"use strict";
 
-	var forEach = angular.forEach,
-	    temporaryId;
-
-	temporaryId = -1;
+	var forEach = angular.forEach;
 
 	/**
 	 * Global utility methods.
@@ -189,15 +186,6 @@
 
 
 		/**
-		 * Returns unique ID for newly created resources.
-		 * These IDs are negative integers.
-		 */
-		getTemporaryId : function () {
-			return temporaryId--;
-		},
-
-
-		/**
 		 * Duplicates the given `doc` and returns a new copy ready to be saved.
 		 * @param doc
 		 */
@@ -324,7 +312,7 @@
 							}
 							queryString += key + '['+i+']=' + encodeURIComponent(v);
 							p=1;
-						})
+						});
 					} else {
 						if (angular.isDate(value)) {
 							value = moment(value).format();

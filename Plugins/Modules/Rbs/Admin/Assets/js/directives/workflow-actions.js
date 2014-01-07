@@ -101,6 +101,13 @@
 				scope.$watch('document', function documentChanged (doc) {
 					if (Utils.isDocument(doc))
 					{
+						if (oldCssClass) {
+							element.prev('.workflow-indicator').addBack().removeClass(oldCssClass);
+						}
+						element.prev('.workflow-indicator').addBack().addClass(doc.publicationStatus);
+						oldCssClass = doc.publicationStatus;
+
+
 						if (Utils.hasCorrection(doc)) {
 							scope.data.action = 'correction';
 						}
@@ -124,12 +131,6 @@
 
 							scope.data.startPublication = doc.startPublication;
 							scope.data.endPublication = doc.endPublication;
-
-							if (oldCssClass) {
-								element.prev('.workflow-indicator').addBack().removeClass(oldCssClass);
-							}
-							element.prev('.workflow-indicator').addBack().addClass(doc.publicationStatus);
-							oldCssClass = doc.publicationStatus;
 						});
 					}
 				}, true);
