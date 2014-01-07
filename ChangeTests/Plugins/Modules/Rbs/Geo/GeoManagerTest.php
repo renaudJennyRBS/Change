@@ -30,21 +30,21 @@ class GeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		/** @var \Rbs\Geo\Documents\Country $FR */
 		$FR = $documentManager->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
 		$FR->setCode('FR');
-		$FR->getCurrentLocalization()->setActive(true);
+		$FR->setActive(true);
 		$FR->setLabel('France');
 		$FR->save();
 
 		/** @var \Rbs\Geo\Documents\Country $DE */
 		$DE = $documentManager->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
 		$DE->setCode('DE');
-		$DE->getCurrentLocalization()->setActive(false);
+		$DE->setActive(false);
 		$DE->setLabel('Germany');
 		$DE->save();
 
 		/** @var \Rbs\Geo\Documents\Country $IT */
 		$IT = $documentManager->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
 		$IT->setCode('IT');
-		$IT->getCurrentLocalization()->setActive(true);
+		$IT->setActive(true);
 		$IT->setLabel('Italy');
 		$IT->save();
 
@@ -61,13 +61,13 @@ class GeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		/** @var \Rbs\Geo\Documents\Country $BE */
 		$BE = $documentManager->getNewDocumentInstanceByModelName('Rbs_Geo_Country');
 		$BE->setCode('BE');
-		$BE->getCurrentLocalization()->setActive(false);
+		$BE->setActive(false);
 		$BE->setLabel('Belgium');
 		$BE->save();
 
 		$this->assertCount(0, $geoManager->getCountriesByZoneCode('BE'));
 
-		$BE->getCurrentLocalization()->setActive(true);
+		$BE->setActive(true);
 		$BE->save();
 
 		$countries = $geoManager->getCountriesByZoneCode('BE');
@@ -88,7 +88,7 @@ class GeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(1, $countries);
 		$this->assertContains($FR, $countries);
 
-		$FR->getCurrentLocalization()->setActive(false);
+		$FR->setActive(false);
 		$FR->save();
 
 		$this->assertCount(0, $geoManager->getCountriesByZoneCode('FR-CONTINENTAL'));
