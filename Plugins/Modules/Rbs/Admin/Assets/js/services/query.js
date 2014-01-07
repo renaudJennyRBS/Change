@@ -18,7 +18,8 @@
 			 * @param value
 			 * @returns {{model: *, where: {and: Array}}}
 			 */
-			function simpleQuery (model, property, value) {
+			function simpleQuery (model, property, value)
+			{
 				var and = [];
 				if (angular.isObject(property) && angular.isUndefined(value)) {
 					angular.forEach(property, function (value, name) {
@@ -53,8 +54,43 @@
 				};
 			}
 
+
+			function treeChildrenQuery (model, parentId)
+			{
+				return {
+					'model' : model,
+					'where' : {
+						'and' : [
+							{
+								"op" : "childOf",
+								"node" : parentId
+							}
+						]
+					}
+				};
+
+			}
+
+
+			function treeDescendantsQuery (model, parentId)
+			{
+				return {
+					'model' : model,
+					'where' : {
+						'and' : [
+							{
+								"op" : "descendantOf",
+								"node" : parentId
+							}
+						]
+					}
+				};
+			}
+
 			return {
-				'simpleQuery' : simpleQuery
+				'simpleQuery' : simpleQuery,
+				'treeChildrenQuery' : treeChildrenQuery,
+				'treeDescendantsQuery' : treeDescendantsQuery
 			};
 
 		};

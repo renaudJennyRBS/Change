@@ -80,47 +80,59 @@
 	"page_ttl_help":{
 		"message":"Indiquer une durée en secondes, ou 0 pour désactiver le cache"
 	},
-	"sectionpagefunction_list":{
-		"message":"fonctions"
+	"manage_functions":{
+		"message":"gestion des fonctions"
 	},
-	"sectionpagefunction_create":{
-		"message":"associer une fonction à une section"
+	"show_functions_code":{
+		"message":"afficher le code des fonctions"
 	},
-	"sectionpagefunction_error_not_unique":{
-		"message":"La fonction $CODE$ est remplie par une autre page dans cette section."
+	"implemented_functions":{
+		"message":"fonctions implémentées"
 	},
-	"sectionpagefunction_back_to":{
-		"message":"retourner à"
+	"via_static_page":{
+		"message":"via la page de contenu"
 	},
-	"sectionpagefunction_add":{
-		"message":"ajouter"
+	"via_functional_page":{
+		"message":"via la page fonctionnelle"
 	},
-	"sectionpagefunction_define":{
-		"message":"définir"
+	"select_page_for_function":{
+		"message":"sélectionnez une page pour l'implémentation de la fonction"
 	},
-	"sectionpagefunction_no_page_defined":{
-		"message":"aucune page définie"
+	"function":{
+		"message":"fonction"
 	},
-	"section_functions_list_tip":{
-		"message":"<strong>La liste ci-dessous affiche les fonctions attribuées à cette section</strong>.<br/>Pour ajouter une fonction à une section, vous devez d'abord choisir une <strong>page fonctionnelle</strong>, puis choisir des fonctions parmi celles supportées par la page choisie."
+	"show_not_ready_pages":{
+		"message":"afficher les pages qui ne disposent pas des blocs nécessaires à la fonction"
 	},
-	"add_functions_to_this_section":{
-		"message":"ajouter des fonctions à cette section"
+	"not_ready_pages_warning":{
+		"message":"attention : les pages suivantes ne disposent pas des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$</strong>"
 	},
-	"select_function":{
-		"message":"sélectionner une fonction"
+	"already_used":{
+		"message":"déjà utilisée"
 	},
-	"function_is_already_used_in_section":{
-		"message":"cette fonction est déjà remplie dans cette section."
+	"filter_functions":{
+		"message":"filter la liste des fonctions"
 	},
-	"no_page_use_selected_function":{
-		"message":"aucune page ne remplit la fonction sélectionnée."
+	"filter_pages":{
+		"message":"filter la liste des pages"
 	},
-	"pages_for_choosen_function":{
-		"message":"liste des pages remplissant la fonction choisie"
+	"available_functions":{
+		"message":"fonctions disponibles"
 	},
-	"page_can_also_use_these_functions":{
-		"message":"la page peut aussi remplir les fonctions suivantes"
+	"change_page_for_function":{
+		"message":"changer de page pour cette fonction"
+	},
+	"function_usage":{
+		"message":"utilisations"
+	},
+	"index_page":{
+		"message":"page d'index"
+	},
+	"remove_function_in_section":{
+		"message":"retirer la fonction de la section"
+	},
+	"implement_function_in_section":{
+		"message":"implémenter la fonction dans la section"
 	},
 	"staticpage_section_help":{
 		"message":"La rubrique ou le site web contenant la page."

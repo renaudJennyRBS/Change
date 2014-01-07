@@ -114,11 +114,25 @@
 	 * @param Navigation
 	 * @constructor
 	 */
-	function StructureController($scope, $q, ErrorFormatter, i18n, REST, Query, NotificationCenter, Utils, $cacheFactory, Navigation)
+	function StructureController ($scope, $q, ErrorFormatter, i18n, REST, Query, NotificationCenter, Utils, $cacheFactory, Navigation)
 	{
 		var cacheKeyPrefix = 'RbsWebsiteStructureData',
 			cache,
 			treeDb;
+
+
+		REST.action('collectionItems', { 'code': 'Rbs_Website_AvailablePageFunctions' }).then(function (result)
+		{
+			$scope.allFunctions = result.items;
+			$scope.allFunctions['Rbs_Website_Section'] = { "label": i18n.trans('m.rbs.website.adminjs.function_index_page | ucf') };
+
+			$scope.$watch('currentWebsite', function (website)
+			{
+				if (website) {
+					selectWebsite(website);
+				}
+			});
+		});
 
 
 		function initCache (website, reset)
@@ -163,19 +177,6 @@
 			});
 		}
 
-		REST.action('collectionItems', { 'code': 'Rbs_Website_AvailablePageFunctions' }).then(function (result)
-		{
-			$scope.allFunctions = result.items;
-			$scope.allFunctions['Rbs_Website_Section'] = { "label": i18n.trans('m.rbs.website.adminjs.function_index_page | ucf') };
-
-			$scope.$watch('currentWebsite', function (website)
-			{
-				if (website) {
-					selectWebsite(website);
-				}
-			});
-		});
-
 
 		function getNodeIndex (nodeInfo)
 		{
@@ -194,44 +195,12 @@
 
 		function loadNode (nodeInfo)
 		{
-			var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', nodeInfo.id);
-			query.offset = 0;
-			query.limit = 100; // FIXME ?
-
-			$q.all([
-					REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title']}),
-					REST.query(query, {column: ['page', 'section', 'functionCode']})
-				]).then(
-
+			REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title']}).then(
 				// Success
 				function (results)
 				{
 					// Children in tree
-					nodeInfo.children = results[0].resources;
-
-					var functionsRow = {
-						'model' : 'Functions',
-						'id' : 'FunctionsFor:' + nodeInfo.id,
-						'label' : 'Functions',
-						'functions' : []
-					};
-
-					// Functions
-					angular.forEach(results[1].resources, function (func)
-					{
-						if ($scope.allFunctions.hasOwnProperty(func.functionCode)) {
-							func.functionLabel = $scope.allFunctions[func.functionCode].label;
-						}
-						if (func.page && func.page.model === "Rbs_Website_FunctionalPage")
-						{
-							functionsRow.functions.push(func);
-						}
-					});
-
-					if (functionsRow.functions.length) {
-						nodeInfo.children.push(functionsRow);
-					}
-
+					nodeInfo.children = results.resources;
 					angular.forEach(nodeInfo.children, function (c) {
 						getNodeInfo(c).level = nodeInfo.level + 1;
 					});
@@ -353,9 +322,19 @@
 		}
 
 
-		function setListBusy (value) {
+		function setListBusy (value)
+		{
 			$scope.$broadcast('Change:DocumentList:DLRbsWebsiteBrowser:call', {'method':value?'setBusy':'setNotBusy'});
 		}
+
+
+		$scope.reloadNode = function (doc)
+		{
+			var node = getNodeInfo(doc);
+			collapseNode(node);
+			node.children = null;
+			toggleNode(node);
+		};
 
 
 		// This object is exposed in the <rbs-document-list/> ('extend' attribute).
@@ -505,15 +484,6 @@
 				}
 				return null;
 			}
-		};
-
-
-		$scope.reloadNode = function (doc)
-		{
-			var node = getNodeInfo(doc);
-			collapseNode(node);
-			node.children = null;
-			toggleNode(node);
 		};
 
 	}

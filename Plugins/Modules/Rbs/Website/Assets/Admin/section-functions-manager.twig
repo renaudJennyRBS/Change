@@ -1,0 +1,145 @@
+<div>
+
+	<div class="checkbox">
+		<label>
+			<input ng-model="showFunctionsCode" type="checkbox" value="true">
+			{{ i18n('m.rbs.website.admin.show_functions_code', ['ucf']) }}
+		</label>
+	</div>
+
+	<div class="row">
+
+		<!-- left column: list of available and not implemented functions -->
+		<div class="col-md-6">
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">{{ i18n('m.rbs.website.admin.implemented_functions', ['ucf', 'lab']) }} (= sectionPageFunctionList.length | number =)</h3>
+				</div>
+
+				<div class="panel-body">
+					<div class="input-group">
+						<input type="search" class="form-control" placeholder="{{ i18nAttr('m.rbs.website.admin.filter_functions', ['ucf']) }}" ng-model="implFunctionsFilter"/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="implFunctionsFilter = null"><i class="icon-remove-circle"></i></button>
+						</span>
+					</div>
+				</div>
+
+				<div class="list-group">
+					<div class="list-group-item repeat-animation" ng-repeat="spf in sectionPageFunctionList | filter:implFunctionsFilter">
+						<h5 class="list-group-item-heading">
+							<button type="button" title="{{ i18nAttr('m.rbs.website.admin.change_page_for_function', ['ucf']) }}" class="btn btn-default btn-xs pull-right" style="margin-left: 15px;" ng-click="changePage(spf)"><i class="icon-pencil"></i></button>
+							<span ng-if="spf.functionCode === 'Rbs_Website_Section'"><i class="icon-home"></i> {{ i18n('m.rbs.website.admin.function_index_page', ['ucf']) }}</span>
+							<span ng-if="spf.functionCode !== 'Rbs_Website_Section'" ng-bind="getFunctionLabel(spf.functionCode)"></span>
+							<span class="text-muted" ng-if="showFunctionsCode"> ((= spf.functionCode=))</span>
+							<button type="button" title="{{ i18nAttr('m.rbs.website.admin.remove_function_in_section', ['ucf']) }}" class="btn btn-warning btn-xs pull-left" ng-click="removeFunction(spf)" style="margin-right: 15px;"><i class="icon-minus"></i></button>
+						</h5>
+						<p class="list-group-item-text">
+							<span ng-if="spf.page.model === 'Rbs_Website_StaticPage'">{{ i18n('m.rbs.website.admin.via_static_page') }}</span>
+							<span ng-if="spf.page.model === 'Rbs_Website_FunctionalPage'">{{ i18n('m.rbs.website.admin.via_functional_page') }}</span>
+							<a href ng-href="(= spf.page | rbsURL =)" ng-bind="spf.page.label"></a>
+						</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- right column: list of already implemented functions -->
+		<div class="col-md-6" ng-switch="newFunction !== null">
+
+			<div ng-switch-when="true" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">{{ i18n('m.rbs.website.admin.function', ['ucf']) }} : (= newFunction.label =)</h3>
+				</div>
+				<div class="panel-body">
+					{{ i18n('m.rbs.website.admin.select_page_for_function', ['ucf']) }} <strong ng-bind="newFunction.label"></strong>.
+				</div>
+				<div class="panel-body">
+					<div class="input-group">
+						<input type="search" class="form-control" placeholder="{{ i18nAttr('m.rbs.website.admin.filter_pages', ['ucf']) }}" ng-model="pagesFilter"/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="pagesFilter = null"><i class="icon-remove-circle"></i></button>
+						</span>
+					</div>
+				</div>
+
+
+				<div class="list-group">
+					<div ng-repeat="p in allPages | filter:{'readyForFunction':true,'label':pagesFilter}" class="list-group-item repeat-animation">
+						<button type="button" class="btn btn-xs btn-success pull-right" ng-if="newFunction.page.id !== p.id" ng-click="selectPage(p)"><i class="icon-ok"></i></button>
+						<button type="button" class="btn btn-xs btn-success pull-right" disabled="disabled" ng-if="newFunction.page.id === p.id">{{ i18n('m.rbs.website.admin.already_used') }}</button>
+						<h5 class="list-group-item-heading">
+							<a href ng-href="(= p | rbsURL =)">
+								<i ng-if="p.model === 'Rbs_Website_StaticPage'" class="pull-left icon-file-text-alt" title="{{ i18nAttr('m.rbs.website.documents.staticpage', ['ucf']) }}"></i>
+								<i ng-if="p.model === 'Rbs_Website_FunctionalPage'" class="pull-left icon-file-alt" title="{{ i18nAttr('m.rbs.website.documents.functionalpage', ['ucf']) }}"></i>
+								(= p.label =)
+							</a>
+						</h5>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<div class="checkbox" style="margin: 0;">
+						<label>
+							<input ng-model="showAllPages" type="checkbox" value="true">
+							{{ i18n('m.rbs.website.admin.show_not_ready_pages', ['ucf']) }}
+						</label>
+					</div>
+					<div class="text-warning" ng-if="showAllPages">
+						{{ i18n('m.rbs.website.admin.not_ready_pages_warning', ['ucf'], {'function': '(= newFunction.label =)'}) | raw }}
+					</div>
+				</div>
+
+				<div class="list-group" ng-if="showAllPages">
+					<div ng-repeat="p in allPages | filter:{'readyForFunction':false,'label':pagesFilter}" class="list-group-item repeat-animation">
+						<button type="button" class="btn btn-xs btn-warning pull-right" ng-if="newFunction.page.id !== p.id" ng-click="selectPage(p)"><i class="icon-ok"></i></button>
+						<button type="button" class="btn btn-xs btn-warning pull-right" disabled="disabled" ng-if="newFunction.page.id === p.id">{{ i18n('m.rbs.website.admin.already_used') }}</button>
+						<h5 class="list-group-item-heading">
+							<a href ng-href="(= p | rbsURL =)">
+								<i ng-if="p.model === 'Rbs_Website_StaticPage'" class="pull-left icon-file-text-alt" title="{{ i18nAttr('m.rbs.website.documents.staticpage', ['ucf']) }}"></i>
+								<i ng-if="p.model === 'Rbs_Website_FunctionalPage'" class="pull-left icon-file-alt" title="{{ i18nAttr('m.rbs.website.documents.functionalpage', ['ucf']) }}"></i>
+								(= p.label =)
+							</a>
+						</h5>
+					</div>
+				</div>
+
+				<div class="panel-footer">
+					<button type="button" class="btn btn-default btn-block" ng-click="closePageSelection()">{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}</button>
+				</div>
+			</div>
+
+
+			<div ng-switch-default="" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">{{ i18n('m.rbs.website.admin.available_functions', ['ucf', 'lab']) }} (= unimplementedFunctions.length | number =)</h3>
+				</div>
+
+				<div class="panel-body">
+					<div class="input-group">
+						<input type="search" class="form-control" placeholder="{{ i18nAttr('m.rbs.website.admin.filter_pages', ['ucf']) }}" ng-model="availFunctionsFilter"/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="availFunctionsFilter = null"><i class="icon-remove-circle"></i></button>
+						</span>
+					</div>
+				</div>
+
+				<div class="list-group">
+					<div class="list-group-item repeat-animation" ng-repeat="f in unimplementedFunctions | filter:availFunctionsFilter">
+						<button type="button" title="{{ i18nAttr('m.rbs.website.admin.implement_function_in_section', ['ucf']) }}" ng-click="implementFunction(f)" class="btn btn-primary btn-xs pull-right" style="margin-left: 15px;"><i class="icon-plus"></i></button>
+						<h5 class="list-group-item-heading">
+							<span ng-if="f.code === 'Rbs_Website_Section'"><i class="icon-home"></i> {{ i18n('m.rbs.website.admin.index_page', ['ucf']) }}</span>
+							<span ng-if="f.code !== 'Rbs_Website_Section'">(= f.label =)</span>
+							<span class="text-muted" ng-if="showFunctionsCode"> ((= f.code =))</span>
+							((= f.usage =))
+						</h5>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</div>
