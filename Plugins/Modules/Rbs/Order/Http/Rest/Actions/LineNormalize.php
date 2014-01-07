@@ -30,7 +30,7 @@ class LineNormalize
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$pm = $commerceServices->getPriceManager();
-			$tm = $commerceServices->getTaxManager();
+
 
 			/* @var $webstore \Rbs\Store\Documents\WebStore */
 			$webstore = $dm->getDocumentInstance($webstoreId);
@@ -40,7 +40,7 @@ class LineNormalize
 
 			$orderLine = new \Rbs\Order\OrderLine($line);
 			$items = $orderLine->getItems();
-			$products = array();
+
 			$designations = array();
 			foreach($items as $item)
 			{
@@ -64,7 +64,7 @@ class LineNormalize
 							if ($price instanceof AbstractDocument)
 							{
 								$item->setPrice($price);
-								$item->setTaxes($tm->getTaxByValue($item->getPriceValue(), $price->getTaxCategories(), $billingArea, $zone));
+								$item->setTaxes($pm->getTaxByValue($item->getPriceValue(), $price->getTaxCategories(), $billingArea, $zone));
 								$item->getOptions()->set('boPriceValue', $price->getBoValue());
 								$item->getOptions()->set('boPriceEditWithTax', $price->getBoEditWithTax());
 							}
@@ -77,13 +77,13 @@ class LineNormalize
 				{
 					if(!$tax->getRate())
 					{
-						$taxDoc = $tm->getTaxByCode($tax->getTaxCode());
+						$taxDoc = $pm->getTaxByCode($tax->getTaxCode());
 						$rate = $taxDoc->getRate($tax->getCategory(), $tax->getZone());
 						$tax->setRate($rate);
 					}
 				}
 
-				if(!$item->getPriceValue() && $item->getOptions()->get('boPriceValue'))
+				if (!$item->getPriceValue() && $item->getOptions()->get('boPriceValue'))
 				{
 					$boValue = $item->getOptions()->get('boPriceValue');
 					$boEditWithTax = $item->getOptions()->get('boPriceEditWithTax', $billingArea->getBoEditWithTax());

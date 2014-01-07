@@ -21,11 +21,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected $priceManager;
 
 	/**
-	 * @var \Rbs\Price\Tax\TaxManager
-	 */
-	protected $taxManager;
-
-	/**
 	 * @var \Change\Logging\Logging
 	 */
 	protected $logging;
@@ -46,24 +41,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getPriceManager()
 	{
 		return $this->priceManager;
-	}
-
-	/**
-	 * @param \Rbs\Price\Tax\TaxManager $taxManager
-	 * @return $this
-	 */
-	public function setTaxManager(\Rbs\Price\Tax\TaxManager $taxManager)
-	{
-		$this->taxManager = $taxManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Rbs\Price\Tax\TaxManager
-	 */
-	protected function getTaxManager()
-	{
-		return $this->taxManager;
 	}
 
 	/**
@@ -532,6 +509,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$line->setIndex($index);
 				$this->refreshCartLine($cart, $line);
 			}
+			$this->refreshTaxesValues($cart);
 		}
 	}
 
@@ -552,18 +530,53 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					$price = $this->getPriceManager()->getPriceBySku($sku,
 						['webStore' => $webStoreId, 'billingArea' => $billingArea, 'cart' => $cart, 'cartLine' => $line]);
-					if ($price)
-					{
-						$priceValue = $price->getValue();
-						$item->setPrice($price);
-						$item->setTaxes($this->getTaxManager()
-							->getTaxByValue($priceValue, $price->getTaxCategories(), $cart->getBillingArea(), $cart->getZone()));
-					}
+					$item->setPrice($price);
 				}
 			}
 		}
 	}
 
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 */
+	protected function refreshTaxesValues($cart)
+	{
+		$priceManager = $this->getPriceManager();
+		/* @var $taxesValues \Rbs\Price\Tax\TaxApplication[] */
+
+		$taxesValues = [];
+		$billingArea = $cart->getBillingArea();
+		$zone = $cart->getZone();
+		if ($billingArea && $zone)
+		{
+			$currencyCode = $billingArea->getCurrencyCode();
+			$taxes = $cart->getTaxes();
+			if (count($taxes))
+			{
+				foreach ($cart->getLines() as $line)
+				{
+					$lineQuantity = $line->getQuantity();
+					if ($lineQuantity)
+					{
+						foreach ($line->getItems() as $item)
+						{
+							$price = $item->getPrice();
+							if ($price)
+							{
+								$item->setTaxes($priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode));
+								$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
+								if (count($taxArray))
+								{
+									$taxesValues = $priceManager->addTaxesApplication($taxesValues, $taxArray);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		$cart->setTaxesValues($taxesValues);
+	}
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @return \Rbs\Commerce\Cart\CartReservation[]

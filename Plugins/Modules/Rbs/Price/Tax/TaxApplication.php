@@ -175,6 +175,7 @@ class TaxApplication
 			$this->addValue($taxApplication->getValue());
 		}
 	}
+
 	/**
 	 * @return string
 	 */
@@ -189,7 +190,7 @@ class TaxApplication
 	 */
 	public function isSameTax($taxApplication)
 	{
-		return ($taxApplication instanceof TaxApplication && $this->getTaxKey() ==  $taxApplication->getTaxKey());
+		return ($taxApplication instanceof TaxApplication && $this->getTaxKey() === $taxApplication->getTaxKey());
 	}
 
 	public function toArray()

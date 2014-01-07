@@ -139,15 +139,15 @@ class TwigExtension  implements \Twig_ExtensionInterface
 		{
 			return '';
 		}
-		return $this->getCommerceServices()->getTaxManager()->formatRate($rate);
+		return $this->getCommerceServices()->getPriceManager()->formatRate($rate);
 	}
 
 	/**
-	 * @param string|integer|\Rbs\Price\Tax\TaxInterface $tax
+	 * @param string|\Rbs\Price\Tax\TaxInterface $tax
 	 * @return string
 	 */
 	public function taxTitle($tax)
 	{
-		return $this->getCommerceServices()->getTaxManager()->taxTitle($tax);
+		return $this->getCommerceServices()->getPriceManager()->taxTitle($tax);
 	}
 }

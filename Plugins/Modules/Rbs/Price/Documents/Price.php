@@ -73,9 +73,9 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @return null|\Rbs\Price\Tax\TaxManager
+	 * @return null|\Rbs\Price\PriceManager
 	 */
-	protected function getBoTaxManager(\Rbs\Commerce\CommerceServices $commerceServices)
+	protected function getBoPriceManager(\Rbs\Commerce\CommerceServices $commerceServices)
 	{
 		$ba = $this->getBillingArea();
 		$taxCategories = $this->getTaxCategories();
@@ -95,7 +95,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 			if ($zone)
 			{
 				$commerceServices->getContext()->setBillingArea($ba)->setZone($zone);
-				return $commerceServices->getTaxManager();
+				return $commerceServices->getPriceManager();
 			}
 		}
 		return null;
@@ -169,10 +169,10 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 	protected function updateValuesFromBo($boValue, $commerceServices)
 	{
 		$ba = $this->getBillingArea();
-		if ($ba->getBoEditWithTax() && ($taxManager = $this->getBoTaxManager($commerceServices)) !== null)
+		if ($ba->getBoEditWithTax() && ($priceManager = $this->getBoPriceManager($commerceServices)) !== null)
 		{
-			$valueCallback = function ($valueWithTax, $taxCategories) use ($taxManager) {
-				$taxApplications = $taxManager->getTaxByValueWithTax($valueWithTax, $taxCategories);
+			$valueCallback = function ($valueWithTax, $taxCategories) use ($priceManager) {
+				$taxApplications = $priceManager->getTaxByValueWithTax($valueWithTax, $taxCategories);
 				foreach ($taxApplications as $taxApplication)
 				{
 					/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */

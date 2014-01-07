@@ -6,6 +6,10 @@ namespace Rbs\Price\Tax;
  */
 interface TaxInterface
 {
+	const ROUNDING_TOTAL = 't';
+	const ROUNDING_ROW = 'r';
+	const ROUNDING_UNIT = 'u';
+
 	/**
 	 * @return string
 	 */

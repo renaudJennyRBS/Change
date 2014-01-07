@@ -88,29 +88,12 @@ class CommerceServices extends Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//TaxManager : Context, I18nManager, DocumentManager, CollectionManager
-		$taxManagerClassName = $this->getInjectedClassName('TaxManager', 'Rbs\Price\Tax\TaxManager');
-		$classDefinition = $this->getClassDefinition($taxManagerClassName);
-		$classDefinition->addMethod('setContext', true)
-				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
-			->addMethod('setDocumentManager', true)
-				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
-			->addMethod('setI18nManager', true)
-				->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true))
-			->addMethod('setCollectionManager', true)
-				->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
-		$definitionList->addDefinition($classDefinition);
-
 		//PriceManager : EventManagerFactory, Application, ApplicationServices, Context
 		$priceManagerClassName = $this->getInjectedClassName('PriceManager', 'Rbs\Price\PriceManager');
 		$classDefinition = $this->getClassDefinition($priceManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setContext', true)
-				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
-			->addMethod('setDocumentManager', true)
-				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
-			->addMethod('setI18nManager', true)
-				->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
+				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//CatalogManager : DbProvider, TransactionManager, DocumentManager
@@ -147,7 +130,7 @@ class CommerceServices extends Di
 				->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//CartManager : StockManager, PriceManager, TaxManager, EventManagerFactory, Logging
+		//CartManager : StockManager, PriceManager, EventManagerFactory, Logging
 		$cartManagerClassName = $this->getInjectedClassName('CartManager', 'Rbs\Commerce\Cart\CartManager');
 		$classDefinition = $this->getClassDefinition($cartManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
@@ -155,8 +138,6 @@ class CommerceServices extends Di
 				->addMethodParameter('setStockManager', 'stockManager', array('type' => 'StockManager', 'required' => true))
 			->addMethod('setPriceManager', true)
 				->addMethodParameter('setPriceManager', 'priceManager', array('type' => 'PriceManager', 'required' => true))
-			->addMethod('setTaxManager', true)
-				->addMethodParameter('setTaxManager', 'taxManager', array('type' => 'TaxManager', 'required' => true))
 			->addMethod('setLogging', true)
 				->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -187,9 +168,6 @@ class CommerceServices extends Di
 		$logging = function() use ($applicationServices) {return $applicationServices->getLogging();};
 
 		$im->addAlias('Context', $contextClassName, array('eventManagerFactory' => $eventManagerFactory));
-
-		$im->addAlias('TaxManager', $taxManagerClassName,
-			array('i18nManager' => $i18nManager, 'collectionManager' => $collectionManager, 'documentManager' => $documentManager));
 
 		$im->addAlias('PriceManager', $priceManagerClassName,
 			array('eventManagerFactory' => $this->getEventManagerFactory(), 'i18nManager' => $i18nManager, 'documentManager' => $documentManager));
@@ -227,14 +205,6 @@ class CommerceServices extends Di
 	public function getContext()
 	{
 		return $this->get('Context');
-	}
-
-	/**
-	 * @return \Rbs\Price\Tax\TaxManager
-	 */
-	public function getTaxManager()
-	{
-		return $this->get('TaxManager');
 	}
 
 	/**

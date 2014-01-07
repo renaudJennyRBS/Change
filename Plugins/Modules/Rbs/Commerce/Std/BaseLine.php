@@ -305,7 +305,7 @@ class BaseLine implements LineInterface
 		$quantity = $this->getQuantity();
 		if ($quantity)
 		{
-			return array_reduce($this->items, function ($result, \Rbs\Commerce\Std\BaseLineIte $item) use ($quantity)
+			return array_reduce($this->items, function ($result, \Rbs\Commerce\Std\BaseLineItem $item) use ($quantity)
 			{
 				if ($item->getPriceValue() !== null)
 				{
