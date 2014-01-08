@@ -1,7 +1,6 @@
 <p>
 	<span data-ng-show="isAnd()">{{ i18n('m.rbs.admin.admin.filter_group_and_title') }}</span>
 	<span data-ng-hide="isAnd()">{{ i18n('m.rbs.admin.admin.filter_group_or_title') }}</span>
-	<span class="badge" ng-bind="countAllFilters()">0</span>
 	<span class="pull-right">
 		<button type="button" class="btn btn-default btn-xs" data-ng-click="swapOperator()"><span
 				class="glyphicon glyphicon-transfer"></span>

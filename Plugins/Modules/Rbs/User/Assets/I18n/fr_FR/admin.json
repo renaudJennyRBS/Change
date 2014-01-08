@@ -170,10 +170,10 @@
 		"message":"avatar"
 	},
 	"profile_pagingsize":{
-		"message":"taille des pages de résultats"
+		"message":"nombre d'éléments par page"
 	},
 	"profile_documentlistviewmode":{
-		"message":"vue par défaut des listes"
+		"message":"Affichage des listes"
 	},
 	"profile_list":{
 		"message":"liste"
@@ -191,13 +191,13 @@
 		"message":"rester sur le formulaire"
 	},
 	"profile_internationalization":{
-		"message":"internationalisation"
+		"message":"langues et région"
 	},
 	"profile_lists":{
 		"message":"affichage des listes"
 	},
 	"profile_editors":{
-		"message":"éditeurs"
+		"message":"formulaires d'édition"
 	},
 	"profile_personnal_info":{
 		"message":"informations personnelles"
@@ -209,22 +209,22 @@
 		"message":"après avoir changé de langue, vous devrez vider les caches de votre navigateur et recharger la page."
 	},
 	"profile_notification":{
-		"message":"notification"
+		"message":"notifications"
 	},
 	"profile_notification_helper":{
 		"message":"configurez la fréquence d'envoi des e-mails concernant les notifications non lues."
 	},
 	"profile_notification_sending_management":{
-		"message":"gestion de l'envoi"
+		"message":"notifications par e-mail"
 	},
 	"profile_notification_no_email":{
-		"message":"aucun envoi"
+		"message":"ne rien envoyer"
 	},
 	"profile_notification_immediately":{
-		"message":"immédiatement"
+		"message":"envoyer immédiatement"
 	},
 	"profile_notification_with_time_interval":{
-		"message":"regrouper dans un seul e-mail"
+		"message":"envoyer à intervalles réguliers"
 	},
 	"profile_notification_time_interval":{
 		"message":"fréquence d'envoi"

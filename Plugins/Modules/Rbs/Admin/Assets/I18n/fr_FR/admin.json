@@ -138,7 +138,7 @@
 		"message":"Refuser<small>la correction<\/small>"
 	},
 	"title":{
-		"message":"rechercher des éléments"
+		"message":"rechercher des éléments ..."
 	},
 	"requiredConditions":{
 		"message":"conditions requises :"
@@ -204,10 +204,10 @@
 		"message":"ajouter aux recherches favorites"
 	},
 	"filter":{
-		"message":"filtrer"
+		"message":"Rechercher"
 	},
 	"addFilter":{
-		"message":"ajouter un filtre"
+		"message":"ajouter une condition"
 	},
 	"choose_existent":{
 		"message":"choisir parmi des documents existants"
@@ -1065,13 +1065,13 @@
 		"message":"nouveau bloc"
 	},
 	"filter_group_and_title": {
-		"message":"Vérifie tous les critères"
+		"message":"qui vérifient toutes les conditions suivantes :"
 	},
 	"filter_group_and_toggle": {
 		"message":"Tous"
 	},
 	"filter_group_or_title": {
-		"message":"Vérifie au moins un des critères"
+		"message":"qui vérifient au moins l'une des conditions suivantes :"
 	},
 	"filter_group_or_toggle": {
 		"message":"Au moins un"
@@ -1080,19 +1080,16 @@
 		"message":"Ajouter"
 	},
 	"reset_filter": {
-		"message":"Effacer tous les critères"
-	},
-	"close_filter": {
-		"message":"Masquer la recherche"
+		"message":"Effacer toutes les conditions"
 	},
 	"group_filter": {
-		"message":"Groupe de filtres"
+		"message":"Groupe de conditions"
 	},
 	"common_filter_group": {
 		"message":"Commun"
 	},
 	"unknown_filter": {
-		"message":"critère inconnu"
+		"message":"condition inconnue"
 	},
 	"possible_values": {
 		"message":"valeur prédéfinie"
