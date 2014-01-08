@@ -133,7 +133,7 @@
     "message":"attribute set"
   },
   "product_publication_help":{
-    "message":"To set the <strong>publication properties<\/strong> of this product, such as its location and its publication dates, please go to section $LINKSTART$ Publication$ LINKEND$, available in the left menu."
+    "message":"To set the <strong>publication properties<\/strong> of this product, such as its location and its publication dates, please go to section $LINKSTART$Publication$LINKEND$, available in the left menu."
   },
   "attribute_title":{
     "message":"title"
