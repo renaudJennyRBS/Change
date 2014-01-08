@@ -12,7 +12,7 @@
 		return {
 
 			restrict : 'E',
-			template : '<div title="(=tooltip=)" class="bullet-status (=publicationStatus=)"><div class="overlay correction" ng-if="correction">C</div></div>',
+			template : '<div title="(=tooltip=)" ng-show="publicationStatus" class="bullet-status (=publicationStatus=)"><div class="overlay correction" ng-if="correction">C</div></div>',
 			require: '?ngModel',
 			replace: true,
 			scope : {

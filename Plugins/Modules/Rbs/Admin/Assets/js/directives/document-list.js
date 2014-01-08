@@ -335,7 +335,7 @@
 
 					case 'date' :
 						if (!column.width) {
-							column.width = "160px";
+							column.width = "180px";
 						}
 						column.content = '<time data-column="' + column.name + '" display="(= dateDisplay.' + column.name + ' =)" datetime="(=doc.' + column.valuePath + '=)"></time>';
 						break;
