@@ -279,6 +279,9 @@
 	"picker_no_element":{
 		"message":"aucun élément"
 	},
+	"picker_open":{
+		"message":"ouvrir"
+	},
 	"picker_edit_tooltip":{
 		"message":"éditer les propriétés du document sélectionné"
 	},

@@ -36,23 +36,7 @@
 						scope.productListItems = [];
 					}
 				};
-/*
-				scope.cascadeEditProductListItem = editorCtrl.registerEditCascade('items');
 
-				scope.cascadeCreateProductListItem = function ()
-				{
-					EditorManager.cascade(
-						{
-							'model' : 'Rbs_Catalog_ProductListItem',
-							'values' : {
-								'product': scope.document.id,
-								'active' : true
-							}
-						},
-						'<i class="icon-pencil"></i> ' + scope.document.label
-					);
-				};
-*/
 				scope.toggleHighlight = function(doc){
 					var url = null;
 					if (!doc.isHighlighted)

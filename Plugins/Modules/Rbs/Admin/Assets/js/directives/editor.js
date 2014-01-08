@@ -940,8 +940,6 @@
 	app.directive('rbsDocumentEditorTranslate', editorDirectiveTranslate);
 
 
-
-
 	//
 	//
 	//
@@ -977,56 +975,6 @@
 		}
 
 		return {
-
-			'cascade' : function (doc, collapsedTitle, contextOrProperty)
-			{
-				var urlParams,
-					ctx = null;
-
-				console.log("cascade: doc=", angular.copy(doc));
-
-				if (angular.isObject(doc) && doc.hasOwnProperty('model') && doc.hasOwnProperty('values')) {
-					urlParams = doc.values;
-					doc = doc.model;
-				}
-
-				if (Utils.isModelName(doc)) {
-					doc = REST.newResource(doc, Settings.get('LCID'));
-				}
-
-				if (!doc || !Utils.isDocument(doc)) {
-					throw new Error("Please provide a valid Document.");
-				}
-
-				// TODO Check circular cascade?
-
-				console.log("cascade: doc=", doc, ", url=", Utils.makeUrl(UrlManager.getUrl(doc), urlParams));
-
-				// Create Navigation context.
-				if (angular.isString(contextOrProperty)) {
-					ctx = {
-						'type' : 'setProperty',
-						'property' : contextOrProperty,
-						'parentDocument' : angular.element($('#workspace .document-form').last()).scope().document
-					};
-				}
-				else if (angular.isObject(contextOrProperty)) {
-					ctx = contextOrProperty;
-				}
-
-				Navigation.push(Utils.makeUrl(UrlManager.getUrl(doc), urlParams), collapsedTitle, ctx);
-			},
-
-
-			/**
-			 * Uncascade (cancel) the current form and go back to the previous form,
-			 * without any changes on it.
-			 */
-			'uncascade' : function ()
-			{
-				Navigation.rollback();
-			},
-
 
 			// Local copy public API
 

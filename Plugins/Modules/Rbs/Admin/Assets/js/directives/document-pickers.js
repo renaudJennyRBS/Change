@@ -24,11 +24,12 @@
 	 * @param $http
 	 * @param $compile
 	 * @param REST
-	 * @param SelectSession
 	 * @param $templateCache
 	 * @param Utils
 	 * @param i18n
-	 * @param $timeout
+	 * @param Navigation
+	 * @param $location
+	 * @param UrlManager
 	 *
 	 * @attribute value-ids
 	 * @attribute allow-in-place-selection
@@ -43,7 +44,7 @@
 	 * @attribute embed-in
 	 * @attribute disable-reordering
 	 */
-	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation, $location, UrlManager)
+	function documentPickerLinkFunction (scope, iElement, attrs, ngModel, multiple, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, $templateCache, Utils, i18n, Navigation, $location, UrlManager)
 	{
 		var	$el = $(iElement),
 			documentList,
@@ -192,29 +193,65 @@
 
 		// Edit or create
 
-		scope.createDocument = function () {
-			EditorManager.cascade(
-				getFormModel(),
-				getCreateLabel(),
-				attrs.name
-			);
+		scope.createDocument = function ()
+		{
+			var	p = attrs.ngModel.indexOf('.'),
+				doc, property, selectModel, navParams;
+
+			if (p === -1) {
+				throw new Error("Invalid 'ng-model' attribute on DocumentPicker Directive.");
+			}
+
+			selectModel = getFormModel();
+			if (selectModel)
+			{
+				doc = scope[attrs.ngModel.substr(0, p)];
+				property = attrs.ngModel.substr(p+1);
+				navParams = {
+					selector : true,
+					property : property,
+					model : selectModel,
+					multiple : multiple,
+					document : doc || scope.document,
+					ngModel : attrs.ngModel
+				};
+				if (scope.modelInfo && scope.modelInfo.properties && scope.modelInfo.properties[property]) {
+					navParams.label = scope.modelInfo.properties[property].label;
+				}
+				Navigation.start(iElement, navParams);
+				$location.url(UrlManager.getFormUrl(selectModel));
+			}
 		};
 
-		scope.editSelectedDocument = function () {
-			var srcDoc = ngModel.$viewValue;
-			REST.resource(srcDoc).then(
-				function(doc) {
-					EditorManager.cascade(
-						doc,
-						getEditLabel(),
-						function (editedDoc) {
-							if (!angular.equals(srcDoc, editedDoc)) {
-								scope.selectDocument(editedDoc);
-							}
-						}
-					);
+
+		scope.editSelectedDocument = function ()
+		{
+			var	p = attrs.ngModel.indexOf('.'),
+				doc, property, navParams,
+				srcDoc = ngModel.$viewValue;
+
+			if (p === -1) {
+				throw new Error("Invalid 'ng-model' attribute on DocumentPicker Directive.");
+			}
+
+			if (srcDoc)
+			{
+				doc = scope[attrs.ngModel.substr(0, p)];
+				property = attrs.ngModel.substr(p+1);
+				navParams = {
+					selector : true,
+					property : property,
+					model : srcDoc.model,
+					multiple : multiple,
+					document : doc || scope.document,
+					ngModel : attrs.ngModel
+				};
+				if (scope.modelInfo && scope.modelInfo.properties && scope.modelInfo.properties[property]) {
+					navParams.label = scope.modelInfo.properties[property].label;
 				}
-			)
+				Navigation.start(iElement, navParams);
+				$location.url(UrlManager.getFormUrl(srcDoc));
+			}
 		};
 
 		// Selection
@@ -273,9 +310,7 @@
 				$picker.show();
 				$('#document-picker-backdrop').show();
 
-				// Migration to Angular 1.2.0:
-				// We wait for the <rbs-document-list/> of the picker to tell us when it is ready,
-				// via an event.
+				// We wait for the <rbs-document-list/> of the picker to tell us when it is ready, via an event.
 				scope.$on('Change:DocumentList:' + $dl.data('dlid') + ':Ready', function (event, dlScope)
 				{
 					documentList = dlScope;
@@ -283,7 +318,7 @@
 
 				scope.$on('Change:DocumentList:' + $dl.data('dlid') + ':CollectionChanged', function (event, collection){
 					scope.disableSelectionButtons = documentList.selectedDocuments.length < 1;
-				})
+				});
 			}).error(function (data) {
 				$('#document-picker-backdrop').show();
 				$pickerContents.html('<div class="alert alert-danger">' + i18n.trans('m.rbs.admin.adminjs.picker_template_not_loaded | ucf', {'url' : url}) + '</div>');
@@ -444,7 +479,7 @@
 	}
 
 
-	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation, $location, UrlManager)
+	var singlePicker = ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, $templateCache, i18n, Navigation, $location, UrlManager)
 	{
 		return {
 			restrict    : 'EA',
@@ -454,15 +489,15 @@
 
 			link : function (scope, iElement, attrs, ngModel)
 			{
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation, $location, UrlManager);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, $templateCache, Utils, i18n, Navigation, $location, UrlManager);
 			}
 		};
 	}];
 	app.directive('rbsDocumentPickerSingle', singlePicker);
-	app.directive('rbsWoodyWoodpicker', singlePicker);
+	app.directive('rbsWoodyWoodpicker', singlePicker); // Ha ha.
 
 
-	app.directive('rbsDocumentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', 'RbsChange.SelectSession', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, SelectSession, $templateCache, i18n, Navigation, $location, UrlManager)
+	app.directive('rbsDocumentPickerMultiple', ['RbsChange.Clipboard', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.EditorManager', '$http', '$compile', 'RbsChange.REST', '$templateCache', 'RbsChange.i18n', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', function (Clipboard, Utils, ArrayUtils, Breadcrumb, MainMenu, EditorManager, $http, $compile, REST, $templateCache, i18n, Navigation, $location, UrlManager)
 	{
 		return {
 			restrict    : 'EA',
@@ -472,10 +507,11 @@
 
 			link : function (scope, iElement, attrs, ngModel)
 			{
-				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, SelectSession, $templateCache, Utils, i18n, Navigation, $location, UrlManager);
+				documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, EditorManager, ArrayUtils, MainMenu, Breadcrumb, Clipboard, $http, $compile, REST, $templateCache, Utils, i18n, Navigation, $location, UrlManager);
 			}
 		};
 	}]);
+
 
 
 	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', '$rootScope', 'RbsChange.MainMenu', function ($location, UrlManager, $rootScope, MainMenu)
@@ -593,4 +629,5 @@
 			}
 		};
 	}]);
+
 })(window.jQuery);
