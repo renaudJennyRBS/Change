@@ -7,10 +7,6 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="code" required="false"
-			label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'code'), ['ucf']) }}">
-		</rbs-field-text>
-
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'currencyCode'), ['ucf']) }}">
 			<select class="form-control" ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217"></select>
 		</rbs-field>

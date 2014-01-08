@@ -72,17 +72,6 @@ class PriceManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$listener = $priceManager->getEventManager()
 			->attach(PriceManager::EVENT_GET_BILLING_AREA, function (\Change\Events\Event $event)
 			{
-				$this->assertEquals('BA', $event->getParam('code'));
-				$event->setParam('billingArea', new TestBillingArea());
-				$event->stopPropagation();
-			}, 10);
-		$ba = $priceManager->getBillingAreaByCode('BA');
-		$this->assertInstanceOf('ChangeTests\Rbs\Price\TestBillingArea', $ba);
-		$priceManager->getEventManager()->detach($listener);
-
-		$listener = $priceManager->getEventManager()
-			->attach(PriceManager::EVENT_GET_BILLING_AREA, function (\Change\Events\Event $event)
-			{
 				$this->assertEquals(1010, $event->getParam('billingAreaId'));
 				$event->setParam('billingArea', new TestBillingArea());
 				$event->stopPropagation();
@@ -320,14 +309,6 @@ class TestBillingArea implements \Rbs\Price\Tax\BillingAreaInterface
 	public function getTaxes()
 	{
 		return $this->taxes;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCode()
-	{
-		return 'BA';
 	}
 
 	/**

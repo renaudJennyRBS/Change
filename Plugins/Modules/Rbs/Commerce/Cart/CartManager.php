@@ -102,6 +102,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('validCart', [$this, 'onDefaultValidCart'], 5);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
+		$eventManager->attach('getFiltersDefinition', [$this, 'onDefaultGetFiltersDefinition'], 5);
+		$eventManager->attach('isValidFilter', [$this, 'onDefaultIsValidFilter'], 5);
+
 	}
 
 	/**
@@ -255,19 +258,22 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				if (!$line->getQuantity())
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_quantity', array('ucf'), array('number' => $line->getIndex() + 1));
+					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_quantity', array('ucf'),
+						array('number' => $line->getIndex() + 1));
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
 				elseif (count($line->getItems()) === 0)
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_sku', array('ucf'), array('number' => $line->getIndex() + 1));
+					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_sku', array('ucf'),
+						array('number' => $line->getIndex() + 1));
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
 				elseif ($line->getUnitPriceValue() === null)
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_price', array('ucf'), array('number' => $line->getIndex() + 1));
+					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_price', array('ucf'),
+						array('number' => $line->getIndex() + 1));
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
@@ -564,7 +570,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							if ($price)
 							{
 								$item->setTaxes($priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode));
-								$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
+								$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode,
+									$lineQuantity);
 								if (count($taxArray))
 								{
 									$taxesValues = $priceManager->addTaxesApplication($taxesValues, $taxArray);
@@ -577,6 +584,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		$cart->setTaxesValues($taxesValues);
 	}
+
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @return \Rbs\Commerce\Cart\CartReservation[]
@@ -617,5 +625,129 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $cartReservations;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getFiltersDefinition()
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['filtersDefinition' => []]);
+		$em->trigger('getFiltersDefinition', $this, $args);
+		return isset($args['filtersDefinition'])
+		&& is_array($args['filtersDefinition']) ? array_values($args['filtersDefinition']) : [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetFiltersDefinition($event)
+	{
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		$group = $i18nManager->trans('m.rbs.admin.admin.properties', ['ucf']);
+		$filtersDefinition = $event->getParam('filtersDefinition');
+		$definition = ['name' => 'linesPriceValue', 'parameters' => ['propertyName' => 'linesPriceValue']];
+		$definition['config']['listLabel'] = $i18nManager->trans('m.rbs.commerce.admin.lines_price_value_filter', ['ucf']);
+		$definition['config']['group'] = $group;
+		$definition['config']['label'] = $i18nManager->trans('m.rbs.commerce.admin.lines_price_value', ['ucf']);
+		$definition['directiveName'] = 'rbs-document-filter-property-number';
+		$filtersDefinition[] = $definition;
+		$event->setParam('filtersDefinition', $filtersDefinition);
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param array $filter
+	 * @return boolean
+	 */
+	public function isValidFilter(\Rbs\Commerce\Cart\Cart $cart, $filter)
+	{
+		if (is_array($filter) && isset($filter['name']))
+		{
+			$name = $filter['name'];
+			if ($name === 'group')
+			{
+				if (isset($filter['operator']) && isset($filter['filters']) && is_array($filter['filters']))
+				{
+					return $this->isValidGroupFilters($cart, $filter['operator'], $filter['filters']);
+				}
+			}
+			else
+			{
+				$em = $this->getEventManager();
+				$args = $em->prepareArgs(['cart' => $cart, 'name' => $name, 'filter' => $filter]);
+				$em->trigger('isValidFilter', $this, $args);
+				if (isset($args['valid']))
+				{
+					return ($args['valid'] == true);
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultIsValidFilter($event)
+	{
+		$name = $event->getParam('name');
+		if ($name === 'linesPriceValue')
+		{
+			$filter = $event->getParam('filter');
+			if (isset($filter['parameters']['value']) && isset($filter['parameters']['operator']))
+			{
+				/** @var $cart \Rbs\Commerce\Cart\Cart */
+				$cart = $event->getParam('cart');
+				$value = $filter['parameters']['value'];
+				$operator = $filter['parameters']['operator'];
+
+				if ($operator == 'gte')
+				{
+					$event->setParam('valid', $cart->getPriceValue() >= $value);
+				}
+				else
+				{
+					$event->setParam('valid', $cart->getPriceValue() <= $value);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param string $operator
+	 * @param array $filters
+	 * @return boolean
+	 */
+	protected function isValidGroupFilters($cart, $operator, $filters)
+	{
+		if (!count($filters))
+		{
+			return true;
+		}
+		if ($operator === 'OR')
+		{
+			foreach ($filters as $filter)
+			{
+				if ($this->isValidFilter($cart, $filter))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		else
+		{
+			foreach ($filters as $filter)
+			{
+				if (!$this->isValidFilter($cart, $filter))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 }

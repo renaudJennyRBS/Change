@@ -156,6 +156,16 @@ class CommerceServices extends Di
 			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//ProcessManager: CartManager, EventManagerFactory, Logging
+		$processManagerClassName = $this->getInjectedClassName('ProcessManager', 'Rbs\Commerce\Process\ProcessManager');
+		$classDefinition = $this->getClassDefinition($processManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition->addMethod('setCartManager', true)
+			->addMethodParameter('setCartManager', 'cartManager', array('type' => 'CartManager', 'required' => true))
+			->addMethod('setLogging', true)
+			->addMethodParameter('setLogging', 'logging', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -188,6 +198,9 @@ class CommerceServices extends Di
 		$im->addAlias('AttributeManager', $attributeManagerClassName,
 			array('dbProvider' => $dbProvider, 'i18nManager' => $i18nManager,
 				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
+
+		$im->addAlias('ProcessManager', $processManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging));
 	}
 
 	/**
@@ -253,5 +266,13 @@ class CommerceServices extends Di
 	public function getAttributeManager()
 	{
 		return $this->get('AttributeManager');
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Process\ProcessManager
+	 */
+	public function getProcessManager()
+	{
+		return $this->get('ProcessManager');
 	}
 }

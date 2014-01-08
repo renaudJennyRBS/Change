@@ -13,7 +13,6 @@
 			{
 				scope.onLoad = function(){
 					if (angular.isArray(scope.document.cartFilterData) || !angular.isObject(scope.document.cartFilterData)) {
-						console.log('Fix document.cartFilterData');
 						scope.document.cartFilterData = {};
 					}
 				};

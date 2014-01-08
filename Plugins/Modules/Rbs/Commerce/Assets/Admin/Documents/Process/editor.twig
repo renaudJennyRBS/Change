@@ -17,6 +17,13 @@
 			selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_paymentconnectors_picker_title', ['ucf']) }}"
 			allow-creation="true" allow-edition="true">
 		</rbs-field-picker-multiple>
+
+
+		<rbs-field-picker-multiple property="fees" accepted-model="Rbs_Price_Fee"
+				label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'fees'), ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_fees_picker_title', ['ucf']) }}"
+				allow-creation="true" allow-edition="true">
+		</rbs-field-picker-multiple>
 	</fieldset>
 
 	<fieldset

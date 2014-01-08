@@ -31,7 +31,7 @@ class CommerceResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('cart');
+		return array('cart', 'cartFiltersDefinition');
 	}
 
 	/**
@@ -66,6 +66,13 @@ class CommerceResolver
 				{
 					$event->setAction(function($event) {(new Cart())->insertCart($event);});
 					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				}
+			}
+			elseif ($actionName === 'cartFiltersDefinition')
+			{
+				if ($method === Request::METHOD_GET)
+				{
+					$event->setAction(function($event) {(new Cart())->getFiltersDefinition($event);});
 				}
 			}
 		}

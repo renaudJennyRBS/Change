@@ -182,4 +182,54 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->assertEquals('Cart line not found for key: k1', $e->getMessage());
 		}
 	}
+
+	public function testIsValidFilter()
+	{
+		$cs = $this->commerceServices;
+		$cartManager = $cs->getCartManager();
+
+		$cart = new \Rbs\Commerce\Cart\Cart('idt', $cartManager);
+
+		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'priceValue' => 5.3, 'options' => []];
+
+		$lineParameters = ['key' => 'k1', 'designation' => 'designation', 'quantity' => 3,
+			'items' => [$itemParameters], 'options' => []];
+
+		$cart->appendLine($cart->getNewLine($lineParameters));
+
+
+		$itemParameters = ['codeSKU' => 'skTEST2', 'reservationQuantity' => 2, 'priceValue' => 12, 'options' => []];
+
+		$lineParameters = ['key' => 'k2', 'designation' => 'designation', 'quantity' => 2,
+			'items' => [$itemParameters], 'options' => []];
+
+		$cart->appendLine($cart->getNewLine($lineParameters));
+
+		$v = 5.3 * 3 + 12 * 2; //39.9
+		$this->assertEquals($v, $cart->getPriceValue());
+
+		$this->assertTrue($cartManager->isValidFilter($cart, []));
+
+		$filter = ['name' => 'group', 'operator' => 'AND', 'filters' => [
+			['name' => 'linesPriceValue', 'parameters' => ['propertyName' => 'linesPriceValue', 'operator' => 'gte', 'value' => 40]]
+		]];
+
+		$this->assertFalse($cartManager->isValidFilter($cart, $filter));
+
+		$filter['filters'][0]['parameters']['operator'] = 'lte';
+
+		$this->assertTrue($cartManager->isValidFilter($cart, $filter));
+
+		$filter['filters'][1] = ['name' => 'linesPriceValue', 'parameters' => ['propertyName' => 'linesPriceValue', 'operator' => 'gte', 'value' => 35]];
+		$this->assertTrue($cartManager->isValidFilter($cart, $filter));
+
+		$filter['filters'][1]['parameters']['operator'] = 'lte';
+		$this->assertFalse($cartManager->isValidFilter($cart, $filter));
+
+		$filter['operator'] = 'OR';
+		$this->assertTrue($cartManager->isValidFilter($cart, $filter));
+
+		$filter['filters'][0]['parameters']['operator'] = 'gte';
+		$this->assertFalse($cartManager->isValidFilter($cart, $filter));
+	}
 }
