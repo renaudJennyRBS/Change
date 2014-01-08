@@ -28,5 +28,14 @@
 	},
 	"process_paymentconnectors_picker_title":{
 		"message":"sélectionnez les modes de paiement autorisés"
+	},
+	"process_fees_picker_title":{
+		"message":"sélectionnez les frais autorisés"
+	},
+	"lines_price_value_filter":{
+		"message":"Montant hors taxe des lignes"
+	},
+	"lines_price_value":{
+		"message":"Le montant hors taxe des lignes"
 	}
 }

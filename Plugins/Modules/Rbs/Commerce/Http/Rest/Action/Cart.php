@@ -10,7 +10,44 @@ use Zend\Http\Response as HttpResponse;
 */
 class Cart
 {
+	/**
+	 * @param \Change\Http\Event $event
+	 */
+	public function getFiltersDefinition($event)
+	{
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+		{
+			$definitions = $commerceServices->getCartManager()->getFiltersDefinition();
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
 
+			$groupLabel = $i18nManager->trans('m.rbs.admin.admin.group_filter', ['ucf']);
+			$groupDefinition = ['name' => 'group', 'directiveName' => 'rbs-document-filter-group',
+				'config' => ['listLabel' => $groupLabel, 'label' => $groupLabel]];
+
+			array_unshift($definitions, $groupDefinition);
+
+			usort($definitions, function($a , $b) {
+				$grpA = isset($a['config']['group']) ? $a['config']['group'] : '';
+				$grpB = isset($b['config']['group']) ? $b['config']['group'] : '';
+				if ($grpA == $grpB)
+				{
+					$labA =  isset($a['config']['listLabel']) ? $a['config']['listLabel'] : '';
+					$labB =  isset($b['config']['listLabel']) ? $b['config']['listLabel'] : '';
+					if ($labA == $labB)
+					{
+						return 0;
+					}
+					return strcmp($labA, $labB);
+				}
+				return strcmp($grpA, $grpB);
+			});
+
+			$result = new \Change\Http\Rest\Result\ArrayResult();
+			$result->setArray($definitions);
+			$event->setResult($result);
+		}
+	}
 	/**
 	 * @param \Change\Http\Event $event
 	 */
@@ -115,9 +152,9 @@ class Cart
 	 */
 	protected function populateCart($commerceServices, $cart, $cartData)
 	{
-		if (isset($cartData['billingArea']))
+		if (isset($cartData['billingAreaId']))
 		{
-			$cart->setBillingArea($commerceServices->getPriceManager()->getBillingAreaByCode($cartData['billingArea']));
+			$cart->setBillingArea($commerceServices->getPriceManager()->getBillingAreaById($cartData['billingAreaId']));
 		}
 		else
 		{

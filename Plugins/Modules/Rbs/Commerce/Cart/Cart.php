@@ -703,7 +703,7 @@ class Cart implements \Serializable
 	{
 		$array = array(
 			'identifier' => $this->identifier,
-			'billingArea' => $this->billingArea ? $this->billingArea->getCode() : null,
+			'billingAreaId' => $this->billingArea ? $this->billingArea->getId() : null,
 			'currencyCode' => $this->billingArea ? $this->billingArea->getCurrencyCode() : null,
 			'taxes' => [],
 			'taxesValues' => [],

@@ -4,6 +4,7 @@
 		  editable="true" activable="true">
 	<properties>
 		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" required="true" />
+		<property name="shippingMode" type="Document" document-type="Rbs_Shipping_Mode" />
 		<property name="cartFilterData" type="JSON" />
 	</properties>
 </document>

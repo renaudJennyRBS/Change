@@ -234,17 +234,25 @@
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-container.twig',
 			scope: {filter : '=', model: '@'},
 			controller: ['$scope', function(scope) {
-				if (!angular.isObject(scope.filter))
-				{
-					console.log('scope.filter is not defined!');
-					return;
-				}
 
 				function initFilter() {
 					scope.filter.name = 'group';
 					scope.filter.parameters = {all: 0, configured: 0};
 					scope.filter.operator = 'AND';
 					scope.filter.filters = [];
+				}
+
+				if (!angular.isObject(scope.filter)) {
+					scope.$watch('filter', function(filter, oldFilter) {
+						if (filter === undefined) {
+							scope.filter = {};
+							initFilter();
+						} else if (angular.isObject(scope.filter) && scope.filter.name !== 'group') {
+							initFilter()
+						}
+					});
+				} else if (scope.filter.name !== 'group') {
+					initFilter();
 				}
 
 				function delFilter(filter) {
@@ -265,9 +273,7 @@
 					removeFilter(filter, scope.filter.filters);
 				}
 
-				if (scope.filter.name !== 'group') {
-					initFilter();
-				}
+
 
 				var filterDefinitions = scope.filterDefinitions = {};
 

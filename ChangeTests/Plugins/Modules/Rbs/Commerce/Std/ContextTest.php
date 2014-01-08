@@ -7,8 +7,6 @@ namespace ChangeTests\Modules\Commerce\Std;
  */
 class ContextTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-
-
 	public function testLoad()
 	{
 		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
@@ -56,14 +54,6 @@ class FakeBillingArea_451235 implements \Rbs\Price\Tax\BillingAreaInterface
 	public function getTaxes()
 	{
 		return array();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCode()
-	{
-		return 'BA';
 	}
 }
 

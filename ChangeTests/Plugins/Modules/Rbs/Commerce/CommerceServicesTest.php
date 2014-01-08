@@ -20,6 +20,8 @@ class CommerceServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('Rbs\Catalog\Attribute\AttributeManager', $cs->getAttributeManager());
 
 		$this->assertInstanceOf('Rbs\Catalog\Product\ProductManager', $cs->getProductManager());
+
+		$this->assertInstanceOf('Rbs\Commerce\Process\ProcessManager', $cs->getProcessManager());
 	}
 }
 

@@ -171,19 +171,6 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
-	 * @param string $code
-	 * @return \Rbs\Price\Tax\BillingAreaInterface|null
-	 */
-	public function getBillingAreaByCode($code)
-	{
-		$ev = $this->getEventManager();
-		$arguments = $ev->prepareArgs(['code' => $code, 'billingArea']);
-		$ev->trigger(static::EVENT_GET_BILLING_AREA, $this, $arguments);
-		return ($arguments['billingArea'] instanceof \Rbs\Price\Tax\BillingAreaInterface) ? $arguments['billingArea'] : null;
-	}
-
-	/**
-	 * @api
 	 * @param integer $billingAreaId
 	 * @return \Rbs\Price\Tax\BillingAreaInterface|null
 	 */
