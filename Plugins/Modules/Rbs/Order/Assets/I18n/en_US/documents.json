@@ -35,9 +35,6 @@
   "invoice":{
     "message":"invoice"
   },
-  "process":{
-    "message":"checkout process"
-  },
   "invoice_order":{
     "message":"order"
   },

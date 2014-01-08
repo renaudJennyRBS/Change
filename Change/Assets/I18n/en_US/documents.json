@@ -45,7 +45,7 @@
     "message":"author name"
   },
   "authorid":{
-    "message":"author ID"
+    "message":"identifiant de l'auteur"
   },
   "documentversion":{
     "message":"version"

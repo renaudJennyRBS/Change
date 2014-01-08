@@ -1,25 +1,4 @@
 {
-  "directives_round_down":{
-    "message":"round down"
-  },
-  "directives_round_down_tencents":{
-    "message":"à la dizaine de centimes inférieure"
-  },
-  "directives_round_down_unit":{
-    "message":"à l'entier inférieur"
-  },
-  "directives_round_up":{
-    "message":"arrondi supérieur"
-  },
-  "directives_round_up_tencent":{
-    "message":"à la dizaine de centimes supérieure"
-  },
-  "directives_round_up_99cents":{
-    "message":"à 99 centimes"
-  },
-  "directives_round_up_unit":{
-    "message":"à l'entier supérieur"
-  },
   "directives_with_tax_abbr":{
     "message":"Incl. VAT"
   },
@@ -27,40 +6,40 @@
     "message":"Excl. VAT"
   },
   "collection_taxroundingstrategy_on_unit_value":{
-    "message":"sur la valeur unitaire"
+    "message":"on unitary value"
   },
   "collection_taxroundingstrategy_on_line_value":{
-    "message":"sur la valeur ligne"
+    "message":"on line value"
   },
   "collection_taxroundingstrategy_on_total_value":{
-    "message":"sur la valeur totale"
+    "message":"on total value"
   },
   "tax_cascading_help":{
-    "message":"Lorsque cette option est activée, le calcul de la taxe se fait sur la valeur hors-taxe plus les taxes calculées précédemment."
+    "message":"When this option is enabled, the tax calculation is done on the Excl. VAT value plus previously calculated taxes."
   },
   "tax_rounding_help":{
-    "message":"Détermine quand le montant des taxes doit être arrondi (sur les paniers, commandes, factures...)"
+    "message":"Determines when the tax amount shall be rounded (on the shopping carts, orders, invoices...)"
   },
   "price_sku_picker_title":{
     "message":"Select a SKU"
   },
   "price_discount_section_help":{
-    "message":"\n\t\tPour appliquer une <label class=\"in-text\" for=\"discount\">promotion<\/label> sur le montant indiqué ci-dessus, saisissez la valeur de la promotion ainsi que le type de promotion&nbsp;: pourcentage, prix barré ou valeur à déduire.\n\t"
+    "message":"\n  To apply a <label class=\"in-text\" for=\"discount\"> promotion<\/label> on the amount indicated above, enter the promotion value as well as the promotion type: percentage, promotional price or value to be deducted."
   },
   "price_publication_section_help":{
-    "message":"\n\t\tVous pouvez indiquer une <strong>période de validité<\/strong> pour ce prix.<br \/>\n\t\t\t<span class=\"label label-danger\">Important<\/span> Si vous définissez un prix promotionnel, il est recommandé d'indiquer une <label class=\"in-text\" for=\"endPublication\">date de fin<\/label>.\n\t"
+    "message":"\n  You can specify a <strong>validity period<\/strong> for this price. <br \/><span class=\"label label-danger\"> Important<\/span> if you define a promotional price, it is recommended to specify an <label class=\"in-text\" for=\"endPublication\"> end date<\/label>."
   },
   "price_create_discount_from_price":{
-    "message":"créer un prix promotionnel à partir de ce prix"
+    "message":"create a promotional price from this price"
   },
   "price_select_baseprice":{
-    "message":"sélectionner le prix barré"
+    "message":"select the promotional price"
   },
   "module_name":{
     "message":"prices and taxes"
   },
   "module_keywords":{
-    "message":"prix,taxes,tarification,tarifs,zones,promotions"
+    "message":"price,taxes,price list,zone,promotional price"
   },
   "price_list":{
     "message":"price"
@@ -75,13 +54,13 @@
     "message":"add a tax"
   },
   "billingarea_list":{
-    "message":"zones de tarification"
+    "message":"pricing zone"
   },
   "billingarea_create":{
-    "message":"ajouter une zone de tarification"
+    "message":"add a pricing zone"
   },
   "billingarea_taxes_picker_title":{
-    "message":"zone de tarification"
+    "message":"pricing zone"
   },
   "tax_delete_zone":{
     "message":"delete"
@@ -90,25 +69,25 @@
     "message":"delete"
   },
   "tax_make_default_zone":{
-    "message":"zone par défaut"
+    "message":"default zone"
   },
   "tax_add_zone":{
-    "message":"ajouter une zone"
+    "message":"add a new zone"
   },
   "tax_add_category":{
-    "message":"ajouter une catégorie"
+    "message":"add a category"
   },
   "add":{
     "message":"add"
   },
   "category_exists":{
-    "message":"il existe déjà une catégorie avec ce code"
+    "message":"there is already a category with this code"
   },
   "zone_exists":{
-    "message":"il existe déjà une zone avec ce code"
+    "message":"there is already an area with this code"
   },
   "select_billingarea":{
-    "message":"sélectionner une zone de tarification"
+    "message":"select a pricing area"
   },
   "now":{
     "message":"now"
@@ -132,9 +111,21 @@
     "message":"+ 1 month"
   },
   "end_of_week":{
-    "message":"fin de la semaine"
+    "message":"end of the week"
   },
   "end_of_month":{
-    "message":"fin du mois"
+    "message":"end of the month"
+  },
+  "tax_update_in_progress":{
+    "message":"taxes update in progress"
+  },
+  "tax_update_in_progress_help":{
+    "message":"Taxes update is in progress. Setup will be available again after update."
+  },
+  "fee_list":{
+    "message":"fee"
+  },
+  "fee_create":{
+    "message":"add a fee"
   }
 }

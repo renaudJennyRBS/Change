@@ -21,7 +21,10 @@
     "message":"If you enable the sitemap generation, an index file will be automatically generated for each language of the web site, by using documents SEO informations (configure them via <a href=\"Rbs\/Seo\/DocumentSeo\/\"> module SEO<\/a>)."
   },
   "website_go_to_tree":{
-    "message":"naviguer vers l'arborescence"
+    "message":"navigate down the tree"
+  },
+  "website_edit_current":{
+    "message":"edit the current web site"
   },
   "topic_website_help":{
     "message":"The website this topic belongs to."
@@ -61,6 +64,9 @@
   },
   "topic_groups_picker_title":{
     "message":"select user groups"
+  },
+  "topic_edit_current":{
+    "message":"edit current section"
   },
   "page_pagetemplate_picker_title":{
     "message":"select the page template"
@@ -118,6 +124,9 @@
   },
   "staticpage_section_help":{
     "message":"The topic or web site that contains the page."
+  },
+  "staticpage_hideLinks_help":{
+    "message":"By activating this option, the page will not appear in the elements of navigation such as menus. Mainly used for the index by topic pages."
   },
   "staticpage_section_picker_title":{
     "message":"select the section"
@@ -294,7 +303,7 @@
     "message":"functions"
   },
   "functional_page_editor_help":{
-    "message":"This page is a <strong>functional page<\/strong>: it is used to display other contents in the website.<br\/>To configure the functions this page supports, click on <em>Functions<\/em> in the menu on the left."
+    "message":"This page is a <strong>functional page<\/strong>: it is used to display contents from other modules, such as news or products.<br\/>To configure this page functions, after saving it, go to the <em>Functions<\/em> in the menu on the left."
   },
   "functional_page_list_help":{
     "message":"The <strong>functional pages<\/strong> are used to display contents coming from different modules, such as news or products."
@@ -306,7 +315,7 @@
     "message":"This page currently holds the required blocks to support the following functions:"
   },
   "page_contains_no_function":{
-    "message":"<h4>This page supports no functions.<\/h4>To fix this, you can <a href ng-href=\"(= doc | rbsURL:'editor' =)\">edit the page contents<\/a>."
+    "message":"<h4>This page supports no functions.<\/h4>To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
   },
   "page_contains_required_blocks":{
     "message":"This page holds all the required blocks to support the selected functions."
@@ -315,7 +324,7 @@
     "message":"The following functions won't work correctly because the page does not hold the required blocks:"
   },
   "edit_page_contents_to_fix_this":{
-    "message":"To fix this, you can <a href ng-href=\"(= doc | rbsURL:'editor' =)\">edit the page contents<\/a>."
+    "message":"To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
   },
   "configure_functions":{
     "message":"configure"
@@ -339,10 +348,14 @@
     "message":"language change"
   },
   "block_properties":{
-    "message":"Propriétés du bloc",
+    "message":"Block properties",
     "description":"Used as title in the block properties box in the page editor (left column)."
   },
+  "no_block_selected":{
+    "message":"No selected block.",
+    "description":"Used as default content in the block properties box in the page editor (left column)."
+  },
   "back_to_general_page_properties":{
-    "message":"Propriétés générales de la page"
+    "message":"Page general properties"
   }
 }

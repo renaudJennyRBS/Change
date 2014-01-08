@@ -40,5 +40,20 @@
   },
   "sku_thresholds":{
     "message":"Thresholds"
+  },
+  "sku_ean13":{
+    "message":"EAN13"
+  },
+  "sku_upc":{
+    "message":"UPC"
+  },
+  "sku_jan":{
+    "message":"JAN"
+  },
+  "sku_isbn":{
+    "message":"ISBN"
+  },
+  "sku_partNumber":{
+    "message":"Manufacturer reference (part number)"
   }
 }

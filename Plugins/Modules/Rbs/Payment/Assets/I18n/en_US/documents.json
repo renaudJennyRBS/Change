@@ -49,5 +49,8 @@
   },
   "connector_allowedcurrencycodes":{
     "message":"currency codes allowed"
+  },
+  "connector_description":{
+    "message":"description"
   }
 }

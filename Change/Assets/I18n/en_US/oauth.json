@@ -18,10 +18,10 @@
     "message":"application"
   },
   "device":{
-    "message":"appareil"
+    "message":"device"
   },
   "on_device":{
-    "message":"sur",
+    "message":"on",
     "description":"Used to say \"web browser on the system\", like Firefox on Windows"
   }
 }

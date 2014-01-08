@@ -27,7 +27,16 @@
     "message":"empty"
   },
   "empty_cart":{
-    "message":"your shopping cart is empty."
+    "message":"your shopping cart is empty.",
+    "description":"Used in cart detail block"
+  },
+  "empty_cart_message":{
+    "message":"You have not added item in your shopping cart.",
+    "description":"Used in cart detail block"
+  },
+  "please_wait_loading_cart":{
+    "message":"shopping cart loading",
+    "description":"Used in cart detail block, during loading"
   },
   "article":{
     "message":"item"
@@ -70,5 +79,68 @@
   },
   "actions":{
     "message":"actions"
+  },
+  "accept_terms_and_conditions":{
+    "message":"Avant de passer ma commande, je reconnais avoir lu et compris les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$."
+  },
+  "proceed_to_checkout":{
+    "message":"passer commande"
+  },
+  "process_step_cart":{
+    "message":"shopping cart"
+  },
+  "process_step_personal_information":{
+    "message":"informations personnelles"
+  },
+  "process_step_shipping":{
+    "message":"delivery"
+  },
+  "process_step_payment":{
+    "message":"payment"
+  },
+  "process_step_confirmation":{
+    "message":"confirmation"
+  },
+  "already_customer":{
+    "message":"vous êtes déjà client"
+  },
+  "new_customer":{
+    "message":"you are new customer"
+  },
+  "are_you_really":{
+    "message":"êtes-vous bien $NAME$ ?"
+  },
+  "please_log_in_again":{
+    "message":"Pour des raisons de sécurité, merci de vous ré-authentifier."
+  },
+  "not_you":{
+    "message":"vous n'êtes pas $NAME$ ?"
+  },
+  "please_log_out":{
+    "message":"Merci de vous déconnecter."
+  },
+  "continue":{
+    "message":"continue"
+  },
+  "modify":{
+    "message":"edit"
+  },
+  "country":{
+    "message":"countries"
+  },
+  "mailing_address":{
+    "message":"adresse postale"
+  },
+  "shipping_mode":{
+    "message":"shipping method"
+  },
+  "select_shipping_mode":{
+    "message":"Parmi la liste ci-dessous, veuillez sélectionner le mode de livraison pour votre commande."
+  },
+  "delivery_n":{
+    "message":"livraison $NUMBER$"
+  },
+  "lines_included":{
+    "message":"lignes concernées"
   }
 }

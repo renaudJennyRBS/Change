@@ -21,10 +21,11 @@
     "message":"Create a new SKU for each variant"
   },
   "productlist_productsortorder":{
-    "message":"products order"
+    "message":"sorting property",
+    "description":"Use on product list editor to define the property to sort the product in the list"
   },
   "productlist_productsortdirection":{
-    "message":"sorting order"
+    "message":"sort direction"
   },
   "productlist_products":{
     "message":"products"
@@ -48,7 +49,7 @@
     "message":"belonging to a list"
   },
   "attribute":{
-    "message":"attribute"
+    "message":"product attribute"
   },
   "variantgroup":{
     "message":"variants group"
@@ -114,7 +115,10 @@
     "message":"Create a new SKU"
   },
   "product_sku":{
-    "message":"SKY"
+    "message":"SKU"
+  },
+  "product_variant":{
+    "message":"variante"
   },
   "product_minorderquantity":{
     "message":"minimum quantity"
@@ -128,11 +132,14 @@
   "product_attribute":{
     "message":"attribute set"
   },
+  "product_publication_help":{
+    "message":"To set the <strong>publication properties<\/strong> of this product, such as its location and its publication dates, please go to section $LINKSTART$ Publication$ LINKEND$, available in the left menu."
+  },
   "attribute_title":{
     "message":"title"
   },
   "attribute_valuetype":{
-    "message":"type d'attribut"
+    "message":"attribute type"
   },
   "attribute_defaultvalue":{
     "message":"default attribute value"
@@ -150,7 +157,7 @@
     "message":"document template"
   },
   "attribute_collectioncode":{
-    "message":"valeurs comprises dans la collection"
+    "message":"value within the collection"
   },
   "attribute_productproperty":{
     "message":"product property"
@@ -192,7 +199,7 @@
     "message":"date"
   },
   "attribute_type_code":{
-    "message":"chaîne de caractères"
+    "message":"character string"
   },
   "attribute_type_text":{
     "message":"text"
@@ -202,5 +209,8 @@
   },
   "attribute_type_property":{
     "message":"product property"
+  },
+  "productlist_configure_products":{
+    "message":"configure"
   }
 }

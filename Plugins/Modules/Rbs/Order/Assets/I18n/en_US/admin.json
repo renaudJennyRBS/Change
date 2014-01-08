@@ -6,7 +6,7 @@
     "message":"select a store"
   },
   "order_section_lines":{
-    "message":"lines"
+    "message":"rows"
   },
   "order_add_product":{
     "message":"add a product"
@@ -18,7 +18,7 @@
     "message":"add"
   },
   "order_line_number":{
-    "message":"line"
+    "message":"row"
   },
   "order_quantity":{
     "message":"quantity"
@@ -36,25 +36,37 @@
     "message":"SKU code"
   },
   "order_lines":{
-    "message":"lines"
+    "message":"rows"
   },
   "order_articles":{
     "message":"items"
   },
   "order_no_lines":{
-    "message":"La commande ne contient aucune ligne pour l'instant."
+    "message":"This order contains no items for the moment."
   },
   "order_no_lines_help":{
-    "message":"Utilisez la zone <strong>Nouvelle ligne<\/strong> : choisissez des articles (par code SKU ou <em>via<\/em> le sélecteur) puis ajoutez-les à la commande avec le bouton <strong>Ajouter les produits<\/strong>."
+    "message":"Use the area <strong>new row<\/strong>: choose items (by SKU or <em>via<\/em> selector) and then add them to the order with the <strong>Add products<\/strong> button."
   },
   "order_new_line":{
-    "message":"new line"
+    "message":"new row"
   },
   "order_parameters":{
     "message":"parameters"
   },
   "order_customer":{
     "message":"customer"
+  },
+  "order_billing_address":{
+    "message":"billing address"
+  },
+  "order_address_document":{
+    "message":"existing address"
+  },
+  "order_select_address":{
+    "message":"select an address"
+  },
+  "order_address_fields":{
+    "message":"address format"
   },
   "order_add_line":{
     "message":"add items"
@@ -66,40 +78,61 @@
     "message":"billing area"
   },
   "order_tax_zone":{
-    "message":"code zone pour le calcul des taxes"
+    "message":"area code for tax calculation"
   },
   "order_article_choice_help":{
-    "message":"Sélectionnez des articles grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter les articles<\/strong>."
+    "message":"Select items using the selector below and then click <strong>Add items<\/strong>."
   },
   "order_search_by_sku":{
     "message":"Search by SKU code"
   },
   "order_select_billingarea":{
-    "message":"séléctionnez une zone de facturation..."
+    "message":"select a billing area..."
+  },
+  "order_select_taxzone":{
+    "message":"séléctionnez un code de zone..."
   },
   "order_select_webstore":{
-    "message":"séléctionnez une boutique..."
+    "message":"select a web shop..."
   },
   "order_remove_lines":{
-    "message":"delete lines"
+    "message":"delete rows"
   },
   "order_removed_lines":{
     "message":"recently deleted rows"
   },
   "order_put_back_in_order":{
-    "message":"remettre dans la commande"
+    "message":"put back into order"
   },
   "order_remove_permanently":{
     "message":"permanently delete"
   },
   "order_choose_billingarea_and_taxzone_first":{
-    "message":"Vous devez choisir une <strong>Zone de facturation<\/strong> ainsi qu'un <strong>Code zone pour le calcul des taxes<\/strong> avant de pouvoir choisir des articles."
+    "message":"You must choose a <strong>billing area<\/strong> and an <strong>Area Code for tax calculation<\/strong> before you can choose items."
   },
   "order_article_selector_title":{
-    "message":"Sélectionnez des articles à ajouter à la commande"
+    "message":"Select items to add to the order"
   },
   "order_add_lines":{
-    "message":"Add lines"
+    "message":"Add rows"
+  },
+  "order_set_shipping_mode":{
+    "message":"set the delivery mode"
+  },
+  "order_select_shipping_mode":{
+    "message":"select the delivery mode"
+  },
+  "order_shipping":{
+    "message":"delivery"
+  },
+  "order_shipping_mode":{
+    "message":"mode"
+  },
+  "order_shipping_lines":{
+    "message":"lines"
+  },
+  "order_shipping_address":{
+    "message":"delivery address"
   },
   "order_action_mark_as_payed":{
     "message":"paid"
@@ -134,26 +167,20 @@
   "invoice_create":{
     "message":"add an invoice"
   },
-  "process_list":{
-    "message":"checkout process"
-  },
-  "process_create":{
-    "message":"add a checkout process"
-  },
   "processing_status_initiated":{
-    "message":"initié"
+    "message":"created"
   },
   "processing_status_in_progress":{
     "message":"in progress"
   },
   "processing_status_finalized":{
-    "message":"finalisé"
+    "message":"completed"
   },
   "processing_status_canceled":{
     "message":"cancelled"
   },
   "shipping_status_initiated":{
-    "message":"initié"
+    "message":"created"
   },
   "shipping_status_prepared":{
     "message":"prepared"
@@ -171,7 +198,7 @@
     "message":"delivered"
   },
   "payment_status_initiated":{
-    "message":"initié"
+    "message":"created"
   },
   "payment_status_unconfirmed":{
     "message":"non-confirmed"
@@ -195,6 +222,6 @@
     "message":"select an order"
   },
   "invoice_select_transaction":{
-    "message":"sélectionner une transaction bancaire"
+    "message":"select a bank transaction"
   }
 }

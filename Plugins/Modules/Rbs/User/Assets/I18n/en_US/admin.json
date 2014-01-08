@@ -12,7 +12,7 @@
     "message":"groups"
   },
   "group_users_remove_from_group":{
-    "message":"retirer du groupe"
+    "message":"remove from the group"
   },
   "confirm_remove_permission_rule":{
     "message":"confirm the deletion of $ROLE$ permission rule for $PRIVILEGE$ privilege on $RESOURCE_ID$ resource?"
@@ -33,7 +33,7 @@
     "message":"realm"
   },
   "device":{
-    "message":"appareil"
+    "message":"device"
   },
   "creation_date":{
     "message":"creation date"
@@ -50,8 +50,14 @@
   "applications":{
     "message":"applications"
   },
+  "applications_aside_link":{
+    "message":"configure <strong>access to applications<\/strong>"
+  },
   "permissions":{
     "message":"permissions"
+  },
+  "permissions_aside_link":{
+    "message":"configure <strong>permissions<\/strong>"
   },
   "current_password":{
     "message":"current password"
@@ -113,6 +119,20 @@
   "account_short":{
     "message":"Reduced user account"
   },
+  "create_account":{
+    "message":"user account creation",
+    "description":"account creation block name (backoffice use)"
+  },
+  "create_account_hash_method":{
+    "message":"password's hash method"
+  },
+  "account_settings":{
+    "message":"account setup",
+    "description":"account settings block name (backoffice use)"
+  },
+  "function_create_account":{
+    "message":"user account creation"
+  },
   "function_error_401":{
     "message":"Unauthorized"
   },
@@ -131,11 +151,14 @@
   "users_in_group":{
     "message":"group users"
   },
+  "users_in_group_aside_link":{
+    "message":"manage <strong>group users<\/strong>"
+  },
   "add_users_in_group":{
-    "message":"ajouter des utilisateurs au groupe"
+    "message":"add users to the group"
   },
   "users_in_group_picker_title":{
-    "message":"sélectionner les utilisateurs à ajouter au groupe"
+    "message":"select users to add to the group"
   },
   "profile_lcid":{
     "message":"language"
@@ -214,20 +237,5 @@
   },
   "profile_gravatar_help":{
     "message":"To use an avatar, create an account on <a href=\"http:\/\/en.gravatar.com\" target=\"_blank\">http:\/\/en.gravatar.com<\/a>"
-  },
-  "profile_connection_info":{
-    "message":"connection informations"
-  },
-  "profile_connection_info_wrong_password":{
-    "message":"the current password does not match your login"
-  },
-  "profile_connection_info_invalid_login":{
-    "message":"login is not valid. Please choose a different"
-  },
-  "profile_change_password":{
-    "message":"password change"
-  },
-  "profile_change_password_confirm_password":{
-    "message":"confirm new password"
   }
 }

@@ -9,10 +9,10 @@
     "message":"the value of an item has to be unique within the same collection. Items {item1Label} and {item2Label} share the same value {value}."
   },
   "collection_locked_warning":{
-    "message":"\n\t\t<span class=\"label label-danger\">Warning!<\/span> This collection has been locked by a plugin. You will not be able to change its code or delete it.\n\t"
+    "message":"<span class=\"label label-danger\">Warning!<\/span> This collection is locked because it is used by one of the plugins of your installation. Therefore, you cannot remove it."
   },
   "item_locked_warning":{
-    "message":"\n\t\t<span class=\"label label-danger\">Warning!<\/span> This item has been locked by a plugin. You will not be able to change its value or delete it.\n\t"
+    "message":"<span class=\"label label-danger\">Warning!<\/span> This item has been locked by a plugin. You will not be able to change its value or delete it.\n\t."
   },
   "collection_list":{
     "message":"collections"

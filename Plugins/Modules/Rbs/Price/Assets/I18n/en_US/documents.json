@@ -12,10 +12,10 @@
     "message":"code"
   },
   "tax_cascading":{
-    "message":"application en cascade"
+    "message":"cascade application"
   },
   "tax_rounding":{
-    "message":"arrondi"
+    "message":"rounding"
   },
   "tax_data":{
     "message":"tax rates (categories and areas)"
@@ -24,13 +24,13 @@
     "message":"category"
   },
   "tax_not_applicable":{
-    "message":"Non Applicable"
+    "message":"Not Applicable"
   },
   "billingarea_currencyCode":{
     "message":"currency ISO code"
   },
   "billingarea_boeditwithtax":{
-    "message":"saisie TTC des prix"
+    "message":"VAT incl. price entry"
   },
   "billingarea_taxes":{
     "message":"taxes"
@@ -42,7 +42,7 @@
     "message":"web store"
   },
   "price_billingarea":{
-    "message":"zone de tarification"
+    "message":"pricing zone"
   },
   "price_taxcategories":{
     "message":"taxes categories"
@@ -54,7 +54,7 @@
     "message":"VAT category"
   },
   "price_ecotax":{
-    "message":"éco-participation"
+    "message":"WEEE"
   },
   "price_discount":{
     "message":"promotion price"
@@ -78,6 +78,6 @@
     "message":"price"
   },
   "price_baseprice":{
-    "message":"prix barré"
+    "message":"reference price"
   }
 }

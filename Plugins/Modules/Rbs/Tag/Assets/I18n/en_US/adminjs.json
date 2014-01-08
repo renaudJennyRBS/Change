@@ -12,12 +12,12 @@
     "message":"{} tags available:"
   },
   "tag_not_saved":{
-    "message":"cette étiquette sera réellement créée lors de la validation du formulaire"
+    "message":"this tag will be created when this form is saved"
   },
   "enter_selects_first_tag":{
-    "message":"[Entrée] pour sélectionner la première étiquette"
+    "message":"[Enter] to select first tag"
   },
   "usertag_text":{
-    "message":"cette étiquette est personnelle et ne peut être utilisée que par vous"
+    "message":"this tag is personal and can only be used by you"
   }
 }

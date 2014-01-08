@@ -3,9 +3,9 @@
     "message":"home"
   },
   "error_404":{
-    "message":"oups!, cette page n'est pas disponible."
+    "message":"Oops! This page is not available."
   },
   "error_403":{
-    "message":"oups!, vous n'avez pas les droits nécéssaires."
+    "message":"Oops! You do not have the necessary rights."
   }
 }

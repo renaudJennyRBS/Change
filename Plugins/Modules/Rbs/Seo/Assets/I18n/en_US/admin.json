@@ -6,7 +6,7 @@
     "message":"SEO, search engines, optimization"
   },
   "urls":{
-    "message":"URLs"
+    "message":"URLs rewriting and redirects"
   },
   "url":{
     "message":"URL"
@@ -122,9 +122,6 @@
   "aside_title":{
     "message":"SEO"
   },
-  "aside_document_has_seo_info":{
-    "message":"This document has no SEO informations."
-  },
   "aside_document_has_no_seo_info":{
     "message":"This document has no SEO informations."
   },
@@ -154,5 +151,11 @@
   },
   "head_metas":{
     "message":"page headers metas"
+  },
+  "document_is_not_published":{
+    "message":"This document is published nowhere on the web site."
+  },
+  "document_is_not_published_message":{
+    "message":"In order to configure this document URLs, you need to first have $LINKSTART$set sections$LINKEND$ in which this document should appear on the web site."
   }
 }

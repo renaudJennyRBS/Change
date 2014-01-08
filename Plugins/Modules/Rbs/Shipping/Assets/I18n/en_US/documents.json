@@ -4,5 +4,8 @@
   },
   "mode_visual":{
     "message":"visual"
+  },
+  "mode_description":{
+    "message":"description"
   }
 }
