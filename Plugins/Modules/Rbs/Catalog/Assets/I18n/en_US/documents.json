@@ -118,7 +118,7 @@
     "message":"SKU"
   },
   "product_variant":{
-    "message":"variante"
+    "message":"variant"
   },
   "product_minorderquantity":{
     "message":"minimum quantity"

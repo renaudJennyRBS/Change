@@ -183,7 +183,7 @@
     "message":"is greater than or equal"
   },
   "isLessThanOrEquals":{
-    "message":"is les than or equal"
+    "message":"is less than or equal"
   },
   "isDifferentOf":{
     "message":"is different of"
