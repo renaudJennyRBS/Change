@@ -56,10 +56,13 @@
   "address_list":{
     "message":"addresses"
   },
-    "address_create":{
-    "message":"add a new address"
+  "address_create":{
+    "message":"add an address"
   },
   "address_fields_select":{
     "message":"select the adress format"
+  },
+  "address_owner_select":{
+    "message":"sélectionner le propriétaire d'adresse"
   }
 }

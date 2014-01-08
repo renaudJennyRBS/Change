@@ -5,6 +5,9 @@
   "properties":{
     "message":"properties"
   },
+  "system_properties":{
+    "message":"system properties"
+  },
   "ttl":{
     "message":"Cache expiration time in seconds"
   },
@@ -24,7 +27,7 @@
     "message":"clipboard help"
   },
   "save":{
-    "message":"enregistrer"
+    "message":"save"
   },
   "clear":{
     "message":"clear"
@@ -190,6 +193,9 @@
   },
   "isOn":{
     "message":"is"
+  },
+  "isNull":{
+    "message":"is empty"
   },
   "isAfter":{
     "message":"is after"
@@ -842,6 +848,9 @@
   "back_to_editor":{
     "message":"back to the edition of the document"
   },
+  "back_to_document":{
+    "message":"back to <strong>$LABEL$<\/strong>"
+  },
   "menu_title":{
     "message":"validation process"
   },
@@ -855,7 +864,7 @@
     "message":"Workflow"
   },
   "show_changes":{
-    "message":"afficher les changements"
+    "message":"display changes"
   },
   "timeinterval_choose_type":{
     "message":"choose a time period"
@@ -866,11 +875,20 @@
   "insert_block_right":{
     "message":"add a block to the right"
   },
+  "insert_block_after":{
+    "message":"add a block below the selected block"
+  },
   "insert_block_bottom":{
-    "message":"add a block below"
+    "message":"add a block at the bottom of the box"
+  },
+  "insert_block_before":{
+    "message":"add a block above the selected block"
   },
   "insert_block_top":{
-    "message":"add a block at the top"
+    "message":"add a block at the top of area"
+  },
+  "insert_block_into_column":{
+    "message":"add a block in this column"
   },
   "delete_block":{
     "message":"delete block"
@@ -882,7 +900,7 @@
     "message":"set up columns"
   },
   "block_name":{
-    "message":"nom du bloc"
+    "message":"block name"
   },
   "block_type":{
     "message":"block type"
@@ -990,10 +1008,10 @@
     "message":"left"
   },
   "dashboard_settings":{
-    "message":"configuration du tableau de bord"
+    "message":"dashboard configuration"
   },
   "dashboard_settings_tags":{
-    "message":"étiquettes"
+    "message":"tags"
   },
   "main_menu":{
     "message":"main menu"
@@ -1002,12 +1020,74 @@
     "message":"drag to reorder"
   },
   "about":{
-    "message":"à propos"
+    "message":"about"
   },
   "has_current_correction":{
-    "message":"une correction est en cours"
+    "message":"a correction is pending"
   },
   "saving":{
-    "message":"enregistrement"
+    "message":"saving"
+  },
+  "no_action_to_execute":{
+    "message":"You have no action to take."
+  },
+  "concerned_document":{
+    "message":"concerned document"
+  },
+  "configure_url_and_redirections":{
+    "message":"Manage <strong>URLs and redirects<\/strong>"
+  },
+  "view_timeline":{
+    "message":"See <strong>Timeline<\/strong>"
+  },
+  "other_operations":{
+    "message":"other operations"
+  },
+  "for":{
+    "message":"for"
+  },
+  "read_only":{
+    "message":"read only",
+    "description":"Used in structure editor."
+  },
+  "drag_block":{
+    "message":"move the block by drag n drop",
+    "description":"Title of the button to drag & drop a richtext blocks in the page editor."
+  },
+  "structure_editor_new_block":{
+    "message":"new block"
+  },
+  "filter_group_and_title":{
+    "message":"Check all the criteria"
+  },
+  "filter_group_and_toggle":{
+    "message":"All"
+  },
+  "filter_group_or_title":{
+    "message":"Check at least one of the criteria"
+  },
+  "filter_group_or_toggle":{
+    "message":"At least one"
+  },
+  "filter_add":{
+    "message":"Add"
+  },
+  "reset_filter":{
+    "message":"Clear all criteria"
+  },
+  "close_filter":{
+    "message":"Hide search toolbar"
+  },
+  "group_filter":{
+    "message":"Filters group"
+  },
+  "common_filter_group":{
+    "message":"Common"
+  },
+  "unknown_filter":{
+    "message":"unknown criteria"
+  },
+  "possible_values":{
+    "message":"predefined value"
   }
 }

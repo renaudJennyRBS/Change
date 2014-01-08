@@ -6,13 +6,13 @@
     "message":"recipients user"
   },
   "form_receivergroups":{
-    "message":"groupes destinataires"
+    "message":"recipients groups"
   },
   "form_receiveremails":{
-    "message":"adresses e-mail destinataires"
+    "message":"recipient email addresses"
   },
   "form_confirmationmessage":{
-    "message":"message de confirmation"
+    "message":"confirmation message"
   },
   "form_confirmationmode":{
     "message":"confirmation mode"
@@ -24,10 +24,10 @@
     "message":"confirmation page"
   },
   "form_sendacknowledgment":{
-    "message":"envoyer un accusé de réception"
+    "message":"send an acknowledgement of receipt"
   },
   "form_saveresponses":{
-    "message":"enregistrer les réponses"
+    "message":"save replies"
   },
   "form":{
     "message":"form"
@@ -36,7 +36,7 @@
     "message":"field"
   },
   "field_required":{
-    "message":"requis"
+    "message":"required"
   },
   "field_fieldtypecode":{
     "message":"field type"
@@ -45,6 +45,6 @@
     "message":"help text"
   },
   "response":{
-    "message":"réponse"
+    "message":"reply"
   }
 }

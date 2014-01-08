@@ -49,5 +49,20 @@
   },
   "select_variant":{
     "message":"Pick a variant"
+  },
+  "sort_default":{
+    "message":"By default"
+  },
+  "sort_price_asc":{
+    "message":"Du - au + chers"
+  },
+  "sort_price_desc":{
+    "message":"Du + au - chers"
+  },
+  "sort_date_added_desc":{
+    "message":"Par nouveauté"
+  },
+  "sort_date_title_asc":{
+    "message":"Alphabetical order"
   }
 }

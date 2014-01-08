@@ -69,9 +69,12 @@
     "message":"address template"
   },
   "address_name":{
-    "message":"address name"
+    "message":"adress name"
   },
   "address_addressFields":{
-    "message":"template"
+    "message":"model"
+  },
+  "address_ownerId":{
+    "message":"owner"
   }
 }

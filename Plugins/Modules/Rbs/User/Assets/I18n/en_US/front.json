@@ -14,8 +14,11 @@
   "password":{
     "message":"password"
   },
+  "confirm_password":{
+    "message":"confirm password"
+  },
   "password_placeholder":{
-    "message":"abc123"
+    "message":"your password"
   },
   "remember_me":{
     "message":"check to stay logged in"
@@ -28,5 +31,74 @@
   },
   "my_account":{
     "message":"my account"
+  },
+  "create_your_account":{
+    "message":"create your account"
+  },
+  "email":{
+    "message":"e-mail address"
+  },
+  "confirm_email":{
+    "message":"confirm e-mail address"
+  },
+  "email_placeholder":{
+    "message":"your e-mail address"
+  },
+  "submit_account_creation":{
+    "message":"create my account"
+  },
+  "account_creation_request_title":{
+    "message":"account creation request"
+  },
+  "account_creation_request_success":{
+    "message":"your account creation request has been registered."
+  },
+  "account_creation_request_description":{
+    "message":"You will receive a confirmation email, click the link provides therein to complete the creation of your account."
+  },
+  "account_creation_title":{
+    "message":"account creation"
+  },
+  "account_creation_success":{
+    "message":"your account was created."
+  },
+  "account_creation_description":{
+    "message":"you can now log in with your e-mail address and your password."
+  },
+  "account_creation_log_in":{
+    "message":"follow this link to access the login form."
+  },
+  "error_empty_email":{
+    "message":"e-mail address is empty."
+  },
+  "error_email_invalid":{
+    "message":"email adress $EMAIL$ is not valid."
+  },
+  "error_empty_password":{
+    "message":"password is empty."
+  },
+  "error_password_exceeds_max_characters":{
+    "message":"password exceeds the maximum number of characters allowed (50)."
+  },
+  "error_password_not_match_confirm_password":{
+    "message":"password and confirmation do not match."
+  },
+  "error_user_already_exist":{
+    "message":"email $EMAIL$ is already in our user database, if you have forgotten your password, use the password change form."
+  },
+  "error_request_already_done":{
+    "message":"an account creation request for e-mail $EMAIL$ is already in progress."
+  },
+  "error_empty_request_id":{
+    "message":"there is no account login."
+  },
+  "error_request_expired":{
+    "message":"the account creation request has expired."
+  },
+  "error_empty_hash_method":{
+    "message":"password's hash method is empty."
+  },
+  "error_login_password_not_match":{
+    "message":"L'identifiant et le mot de passe ne correspondent pas."
   }
 }

@@ -8,8 +8,11 @@
   "tags":{
     "message":"tags"
   },
+  "all_tags":{
+    "message":"all tags"
+  },
   "show_hide_all_tags":{
-    "message":"afficher\/masquer toutes les étiquettes"
+    "message":"show\/hide all tags"
   },
   "applying_tags":{
     "message":"applying tags"
@@ -18,10 +21,10 @@
     "message":"manage tags"
   },
   "tag_list":{
-    "message":"étiquettes communes"
+    "message":"common tags"
   },
   "mytags_list":{
-    "message":"étiquettes personnelles"
+    "message":"personal tags"
   },
   "tag_create":{
     "message":"add tag"
@@ -57,7 +60,7 @@
     "message":"none"
   },
   "common_tags":{
-    "message":"étiquettes communes"
+    "message":"common tags"
   },
   "find":{
     "message":"find by tags"
@@ -65,16 +68,10 @@
   "clear_selection":{
     "message":"clear"
   },
-  "selected_tags":{
-    "message":"selected tags"
-  },
-  "selected_tags_message":{
-    "message":"selected tags are used to filter the list of items"
-  },
   "my_tags":{
-    "message":"étiquettes personnelles"
+    "message":"personal tags"
   },
   "why_use_tags":{
-    "message":"Les étiquettes vous servent à <strong>organiser vos contenus<\/strong> pour les classer et les retrouver plus facilement."
+    "message":"Tags allow you to <strong>organize your content<\/strong> to classify them and find them more easily."
   }
 }

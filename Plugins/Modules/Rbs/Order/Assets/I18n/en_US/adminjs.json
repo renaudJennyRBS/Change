@@ -1,0 +1,11 @@
+{
+  "order_set_shipping_mode":{
+    "message":"set the delivery mode"
+  },
+  "order_select_shipping_mode":{
+    "message":"select the delivery mode"
+  },
+  "order_add_line":{
+    "message":"add a line"
+  }
+}

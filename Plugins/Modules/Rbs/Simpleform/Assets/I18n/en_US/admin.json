@@ -3,16 +3,16 @@
     "message":"order"
   },
   "form_usecaptcha_help":{
-    "message":"Demander aux utilisateurs non-enregistrés de saisir un code de sécurité."
+    "message":"Ask unregistered users to enter a security code."
   },
   "form_receiverusers_picker_title":{
-    "message":"sélection des utilisateurs destinataires"
+    "message":"users recipients selection"
   },
   "form_receivergroups_picker_title":{
-    "message":"sélection des groupes destinataires"
+    "message":"recipient groups selection"
   },
   "form_confirmationmode_message":{
-    "message":"message dans la page"
+    "message":"message on the page"
   },
   "form_confirmationmode_popin":{
     "message":"message in a popin"
@@ -24,7 +24,7 @@
     "message":"forms"
   },
   "form_create":{
-    "message":"ajouter un formulaire"
+    "message":"add a form"
   },
   "field_list":{
     "message":"fields"
@@ -36,7 +36,7 @@
     "message":"simple forms"
   },
   "module_keywords":{
-    "message":"formulaire,champ,destinataire,email,réponse,contact"
+    "message":"form,field,recipient,email,reply,contact"
   },
   "type_hidden":{
     "message":"hidden field"
@@ -45,22 +45,22 @@
     "message":"short text"
   },
   "type_text_area":{
-    "message":"texte long"
+    "message":"long text"
   },
   "type_text_email":{
     "message":"e-mail address"
   },
   "type_text_emails":{
-    "message":"adresses e-mail séparées par des virgules"
+    "message":"email addresses separated by commas"
   },
   "type_text_url":{
     "message":"URL"
   },
   "type_text_integer":{
-    "message":"nombre entier"
+    "message":"integer"
   },
   "type_text_float":{
-    "message":"nombre décimal"
+    "message":"decimal number"
   },
   "type_boolean_radio":{
     "message":"yes\/no (radio buttons)"
@@ -69,79 +69,79 @@
     "message":"yes\/no (check box)"
   },
   "type_collection_select":{
-    "message":"liste déroulante"
+    "message":"drop-down liste"
   },
   "type_collection_select_multiple":{
-    "message":"liste à choix multiples"
+    "message":"multiple choice list"
   },
   "type_collection_radio":{
-    "message":"liste de boutons radio"
+    "message":"radio buttons list"
   },
   "type_collection_checkbox":{
-    "message":"liste de cases à cocher"
+    "message":"checkbox list"
   },
   "type_date_picker":{
     "message":"date"
   },
   "type_date_time_picker":{
-    "message":"date et heure"
+    "message":"date and time"
   },
   "type_file":{
     "message":"attachment"
   },
   "block_form_label":{
-    "message":"détail d'un formulaire"
+    "message":"form detail"
   },
   "block_form_function":{
-    "message":"détail d'un formulaire"
+    "message":"form detail"
   },
   "block_form_form":{
     "message":"form to display"
   },
   "field_warning_only_ios":{
-    "message":"Pris en compte uniquement sur iOS."
+    "message":"Taken into account only on iOS."
   },
   "field_parameters_collection":{
-    "message":"collection des valeurs possibles"
+    "message":"possible values collection"
   },
   "field_parameters_acknowledgment_receiver":{
-    "message":"destinataire de l'accusé de réception"
+    "message":"acknowledgement of receipt recipient"
   },
   "field_parameters_line_count":{
-    "message":"nombre de lignes"
+    "message":"number of rows"
   },
   "field_parameters_interval_type":{
-    "message":"type d'intervalle"
+    "message":"interval type"
   },
   "field_parameters_interval_type_relative":{
-    "message":"dates relatives à la date courante"
+    "message":"dates relating to the current date"
   },
   "field_parameters_interval_type_absolute":{
-    "message":"dates fixes"
+    "message":"fixed dates"
   },
   "field_parameters_minimal_date":{
-    "message":"date minimale"
+    "message":"minimum date"
   },
   "field_parameters_maximal_date":{
-    "message":"date maximale"
+    "message":"maximum date"
   },
   "field_parameters_place_holder":{
     "message":"placeholder"
   },
   "field_parameters_place_holder_help":{
-    "message":"Texte d'exemple, affiché dans le champs lorsqu'il est vide."
+    "message":"Sample text, displayed when the field is empty."
   },
   "field_parameters_time_place_holder":{
-    "message":"placeholder de l'heure"
+    "message":"time placeholder"
   },
   "field_parameters_time_place_holder_help":{
-    "message":"Texte d'exemple, affiché dans le champ permettant de saisir l'heure lorsqu'il est vide."
+    "message":"Sample text, displayed in the time field when it is empty."
   },
   "field_parameters_auto_complete":{
-    "message":"auto-complétion"
+    "message":"auto-complete"
   },
   "field_parameters_auto_complete_help":{
-    "message":"Activer ou non l'auto-complétion par le navigateur."
+    "message":"Enable or not browser auto-complete."
   },
   "field_parameters_auto_capitalize":{
     "message":"capitalization"
@@ -150,31 +150,31 @@
     "message":"Automatic capitalization set up."
   },
   "field_parameters_auto_capitalize_none":{
-    "message":"désactivée"
+    "message":"disabled"
   },
   "field_parameters_auto_capitalize_sentences":{
-    "message":"en début de phrase"
+    "message":"beginning of a sentence"
   },
   "field_parameters_auto_capitalize_words":{
-    "message":"en début de mot"
+    "message":"beginning of a word"
   },
   "field_parameters_auto_capitalize_characters":{
-    "message":"chaque caractère"
+    "message":"each character"
   },
   "field_parameters_auto_correct":{
     "message":"auto-correction"
   },
   "field_parameters_auto_correct_help":{
-    "message":"Activer ou non la correction automatique."
+    "message":"Activate or not  automatic correction."
   },
   "field_parameters_validators":{
     "message":"validators"
   },
   "field_parameters_min":{
-    "message":"valeur minimale"
+    "message":"minimum value"
   },
   "field_parameters_max":{
-    "message":"valeur maximale"
+    "message":"maximum value"
   },
   "field_parameters_min_size":{
     "message":"minimum length"
@@ -183,10 +183,10 @@
     "message":"maximum length"
   },
   "field_parameters_min_count":{
-    "message":"nombre minimum de valeurs"
+    "message":"values minimum number"
   },
   "field_parameters_max_count":{
-    "message":"nombre maximum de valeurs"
+    "message":"values maximum number"
   },
   "field_parameters_none":{
     "message":"none"
@@ -195,16 +195,16 @@
     "message":"e-mail address"
   },
   "field_parameters_emails":{
-    "message":"adresses e-mail séparées par des virgules"
+    "message":"email addresses separated by commas"
   },
   "field_parameters_url":{
     "message":"URL"
   },
   "field_parameters_integer":{
-    "message":"nombre entier"
+    "message":"integer"
   },
   "field_parameters_decimal":{
-    "message":"nombre décimal"
+    "message":"decimal Number"
   },
   "field_parameters_pattern":{
     "message":"rational expression"

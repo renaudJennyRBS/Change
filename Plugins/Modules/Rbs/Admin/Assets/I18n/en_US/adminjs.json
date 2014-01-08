@@ -15,10 +15,10 @@
     "message":"loading..."
   },
   "loading_not":{
-    "message":"aucun chargement en cours"
+    "message":"no loading in progress"
   },
   "please_wait":{
-    "message":"merci de bien vouloir patienter :)"
+    "message":"please wait :)"
   },
   "loading_document":{
     "message":"loading document..."
@@ -83,11 +83,20 @@
   "delete":{
     "message":"delete"
   },
+  "deleted":{
+    "message":"deleted"
+  },
+  "added":{
+    "message":"added"
+  },
   "ask_for_delete":{
-    "message":"supprimer ?"
+    "message":"delete?"
   },
   "search":{
     "message":"search"
+  },
+  "search_set_name":{
+    "message":"enter a name for your search"
   },
   "use_this_value_in":{
     "message":"Copy this value in $LANG$"
@@ -132,16 +141,16 @@
     "message":"delete selected documents"
   },
   "action_delete_message":{
-    "message":"Vous êtes sur le point de supprimer $DOCUMENTLISTSUMMARY$."
+    "message":"You are about to delete $DOCUMENTLISTSUMMARY$."
   },
   "action_delete_with_correction_message":{
-    "message":"certains documents ont des corrections en cours : seules les corrections seront supprimées."
+    "message":"some documents have pending corrections: only corrections will be deleted."
   },
   "action_reorder":{
     "message":"reorder"
   },
   "action_reorder_title":{
-    "message":"réorganisation des éléments"
+    "message":"item reordering"
   },
   "action_reorder_help":{
     "message":"reorder documents in the list above"
@@ -153,7 +162,7 @@
     "message":"apply correction on selected documents"
   },
   "action_apply_correction_ask":{
-    "message":"appliquer la correction ?"
+    "message":"apply correction ?"
   },
   "action_add_to_clipboard":{
     "message":"add to Clipboard"
@@ -174,13 +183,13 @@
     "message":"deactivate selected documents"
   },
   "action_error":{
-    "message":"l'action \"$ACTION$\" a échoué."
+    "message":"\"$ACTION$\" action has failed."
   },
   "save":{
-    "message":"enregistrer"
+    "message":"save"
   },
   "save_description":{
-    "message":"enregistrer les documents sélectionnés"
+    "message":"save selected documents"
   },
   "save_error":{
     "message":"Save has failed."
@@ -201,7 +210,7 @@
     "message":"confirm"
   },
   "confirmation_request":{
-    "message":"demande de confirmation"
+    "message":"confirmation request"
   },
   "help":{
     "message":"help"
@@ -321,42 +330,59 @@
     "message":"seconds"
   },
   "todo":{
-    "message":"en cours de développement..."
+    "message":"under development..."
   },
   "structure_editor_remove_block":{
-    "message":"supprimer le bloc ?"
+    "message":"delete block?"
   },
   "structure_editor_remove_block_confirm":{
-    "message":"vous êtes sur le point de supprimer le kbloc ci-dessous."
+    "message":"you are about to delete the block below."
   },
   "structure_editor_remove_block_group":{
-    "message":"supprimer le groupe de blocs ?"
+    "message":"delete group of blocks ?"
   },
   "structure_editor_remove_block_group_confirm":{
-    "message":"vous êtes sur le point de supprimer le groupe de blocs ci-dessous."
+    "message":"you are about to delete the blocks group below."
   },
   "structure_editor_remove_column":{
-    "message":"supprimer la colonne ?"
+    "message":"delete column?"
   },
   "structure_editor_remove_column_confirm":{
-    "message":"<strong>Vous êtes sur le point de supprimer la colonne ci-dessous.<\/strong><br\/><br\/>Tous les blocs qu'elle contient ($CHILDCOUNT$) seront également supprimés de la page."
-  },
-  "structure_editor_new_block":{
-    "message":"Nouveau bloc"
-  },
-  "structure_editor_new_block_shortened":{
-    "message":"Nouv. bloc"
+    "message":"<strong>You are about to delete the column below.<\/strong> <br\/> <br\/>All the blocks that it contains ($CHILDCOUNT$) will also be deleted from the page."
   },
   "error_formatter_properties_not_valid":{
-    "message":"les propriétés suivantes ne sont pas valides :"
+    "message":"following properties are not valid:"
   },
   "error_formatter_property_not_expected":{
-    "message":"la propriété '$PROPERTY$' n'a pas le type attendu ('$DATATYPE$')."
+    "message":"property ' $PROPERTY$ ' is not the expected type (' $DATATYPE$ ')."
   },
   "error_formatter_exception_72002":{
-    "message":"vous devez vous reconnecter avec votre nom d'utilisateur et votre mot de passe. (Code de l'erreur : 72002)"
+    "message":"you must reconnect with your user name and your password. (Error code: 72002)"
   },
   "error_on_delete":{
-    "message":"une erreur s'est produite pendant le suppression de l'élément"
+    "message":"an error occurred during item deleting"
+  },
+  "bytes":{
+    "message":"bytes"
+  },
+  "kilobytes":{
+    "message":"kilobytes"
+  },
+  "megabytes":{
+    "message":"megabytes"
+  },
+  "gigabytes":{
+    "message":"gigabytes"
+  },
+  "terabytes":{
+    "message":"terabytes"
+  },
+  "filter_document_list_summary_more_three":{
+    "message":"<strong>$count$ elements<\/strong> whose <strong class=\"element\"> $element1$<\/strong>, <strong class=\"element\"> $element2$<\/strong> and <strong class=\"element\"> $element3$<\/strong>",
+    "description":"Use in document list to display a confirmation message when you execute an action, like delete, to remember the items selected when your are selected more than three"
+  },
+  "filter_document_list_summary_less_three":{
+    "message":"the <strong>$count$ elements<\/strong> following: <strong class=\"element\"> $elementsAsHtml$<\/strong> and <strong class=\"element\"> $lastElement$<\/strong>",
+    "description":"Use in document list to display a confirmation message when you execute an action, like delete, to remember the items selected"
   }
 }
