@@ -7,16 +7,14 @@
 
 	/**
 	 *
-	 * @param scope
 	 * @param $q
 	 * @param REST
 	 * @param Query
 	 * @param ArrayUtils
-	 * @param NotificationCenter
-	 * @param ErrorFormatter
+	 * @param Navigation
 	 * @constructor
 	 */
-	function SectionFunctionsManagerDirective($q, REST, Query, ArrayUtils, NotificationCenter, ErrorFormatter)
+	function SectionFunctionsManagerDirective($q, REST, Query, ArrayUtils, Navigation)
 	{
 		return {
 			restrict    : 'E',
@@ -41,7 +39,7 @@
 					var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', section.id),
 						p;
 
-					query.limit = 500;
+					query.limit = 500; // TODO
 					query.offset = 0;
 					if (sortColumn) {
 						query.order = [{ 'property': sortColumn, 'order': sortDesc ? 'desc' : 'asc' }];
@@ -81,6 +79,8 @@
 
 					// Load StaticPages
 					query = Query.treeChildrenQuery('Rbs_Website_StaticPage', section.id);
+					query.limit = 500; // TODO
+					query.offset = 0;
 					query.sort = [{
 						'property' : 'label'
 					}];
@@ -93,6 +93,8 @@
 
 					// Load FunctionalPages
 					query = Query.simpleQuery('Rbs_Website_FunctionalPage', 'website', section.model === "Rbs_Website_Website" ? section.id : section.website.id);
+					query.limit = 500; // TODO
+					query.offset = 0;
 					query.sort = [{
 						'property' : 'label'
 					}];
@@ -175,7 +177,7 @@
 
 
 				/**
-				 * Retrieve a Function from its code.
+				 * Retrieves a Function from its code.
 				 *
 				 * @param functionCode
 				 * @returns {*}
@@ -197,16 +199,23 @@
 					var p = REST.call(REST.getBaseUrl('Rbs/Website/PagesForFunction'), {"function": functionCode});
 					p.then(function (pages)
 					{
+						scope.readyForFunctionPages = [];
+						scope.notReadyForFunctionPages = [];
+
 						function setReadyForFunctionFlag (pages, readyPages)
 						{
 							angular.forEach(pages, function (p)
 							{
-								var i;
-								p.readyForFunction = false;
+								var i, found = false;
 								for (i=0 ; i<readyPages.length ; i++) {
 									if (readyPages[i].id === p.id) {
-										p.readyForFunction = true;
+										scope.readyForFunctionPages.push(p);
+										found = true;
+										break;
 									}
+								}
+								if (! found) {
+									scope.notReadyForFunctionPages.push(p);
 								}
 							});
 						}
@@ -216,6 +225,55 @@
 					});
 
 					return p;
+				}
+
+
+				function initNavigationContext (section)
+				{
+					Navigation.setContext(scope, 'rbsWebsiteFunctions_' + section.id, "Fonctions pour " + section.label).then(
+
+						// When context is resolved, we need to update/create the appropriate SectionPageFunction.
+						// Context's result is the newly created page.
+						// Function code is found in the context's params.
+						function(context)
+						{
+							var page = context.result,
+								spf = getSectionPageFunctionByCode(context.params['function']);
+
+							if (! spf) {
+								spf = REST.newResource('Rbs_Website_SectionPageFunction');
+								spf.section = section.id;
+								spf.functionCode = context.params['function'];
+							}
+
+							spf.section = section.id;
+							spf.page = page.id;
+							REST.save(spf).then(
+								// Success
+								function () {
+									scope.closePageSelection();
+									loadSectionPageFunctions(section).then(initUnimplementedFunctions);
+								},
+								// Error
+								function (error) {
+									console.log("error: ", error);
+								}
+							);
+						}
+					);
+				}
+
+
+				function getSectionPageFunctionByCode (functionCode)
+				{
+					var i;
+					for (i=0 ; i<scope.sectionPageFunctionList.length ; i++)
+					{
+						if (scope.sectionPageFunctionList[i].functionCode === functionCode) {
+							return scope.sectionPageFunctionList[i];
+						}
+					}
+					return null;
 				}
 
 
@@ -313,7 +371,10 @@
 							$q.all([
 								loadPages(section),
 								loadSectionPageFunctions(section)
-							]).then(initUnimplementedFunctions);
+							]).then(function () {
+								initUnimplementedFunctions();
+								initNavigationContext(section);
+							});
 						});
 					}
 				});
@@ -329,8 +390,7 @@
 			'RbsChange.REST',
 			'RbsChange.Query',
 			'RbsChange.ArrayUtils',
-			'RbsChange.NotificationCenter',
-			'RbsChange.ErrorFormatter',
+			'RbsChange.Navigation',
 			SectionFunctionsManagerDirective
 		]
 	);
