@@ -1,5 +1,8 @@
 <div ng-hide="isEmpty()">
-	<p class="form-control form-control-static" style="height: auto;"><ng-include src="getItemTemplateName(item)"></ng-include></p>
+	<p class="form-control form-control-static" style="height: auto;">
+		<a href ng-href="(= item | rbsURL =)" rbs-start-navigation="" class="pull-right">{{ i18n('m.rbs.admin.admin.picker_open', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+		<ng-include src="getItemTemplateName(item)"></ng-include>
+	</p>
 </div>
 
 <p class="form-control form-control-static text-muted" style="margin-bottom: 0;" ng-show="isEmpty()">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</p>

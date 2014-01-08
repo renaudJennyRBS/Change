@@ -1,7 +1,5 @@
 (function ($) {
 
-	$.jstree._themes = 'Rbs/Admin/lib/jstree/themes/';
-
 	// Convenient hack to reverse jQuery collections.
 	$.fn.reverse = [].reverse;
 
