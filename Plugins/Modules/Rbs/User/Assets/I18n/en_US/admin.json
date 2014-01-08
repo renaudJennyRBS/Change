@@ -170,10 +170,10 @@
     "message":"avatar"
   },
   "profile_pagingsize":{
-    "message":"results page size"
+    "message":"number of items per page"
   },
   "profile_documentlistviewmode":{
-    "message":"lists display mode"
+    "message":"Lists display mode"
   },
   "profile_list":{
     "message":"list"
@@ -191,13 +191,13 @@
     "message":"stay on the form"
   },
   "profile_internationalization":{
-    "message":"internationalization"
+    "message":"language & region"
   },
   "profile_lists":{
     "message":"list display"
   },
   "profile_editors":{
-    "message":"editors"
+    "message":"editing forms"
   },
   "profile_personnal_info":{
     "message":"personnal information"
@@ -209,22 +209,22 @@
     "message":"after changing the language, you will need to clear your browser's cache and reload the page."
   },
   "profile_notification":{
-    "message":"notification"
+    "message":"notifications"
   },
   "profile_notification_helper":{
     "message":"configure unread notifications email's sending frequency."
   },
   "profile_notification_sending_management":{
-    "message":"sending management"
+    "message":"e-mail notifications"
   },
   "profile_notification_no_email":{
-    "message":"no sending"
+    "message":"do not send anything"
   },
   "profile_notification_immediately":{
-    "message":"immediately"
+    "message":"send immediately"
   },
   "profile_notification_with_time_interval":{
-    "message":"aggregate in a single email"
+    "message":"send at regular time intervals"
   },
   "profile_notification_time_interval":{
     "message":"sending frequency"

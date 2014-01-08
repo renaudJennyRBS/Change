@@ -141,6 +141,6 @@
     "message":"livraison $NUMBER$"
   },
   "lines_included":{
-    "message":"lignes concernées"
+    "message":"affected rows"
   }
 }

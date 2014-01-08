@@ -465,30 +465,30 @@
     "message":"merchandising"
   },
   "find_stock_inventory":{
-    "message":"Par stock physique"
+    "message":"By inventory"
   },
   "find_product_codes":{
-    "message":"Par code"
+    "message":"By code"
   },
   "filter_stock_inventory":{
-    "message":"Produit dont le stock physique"
+    "message":"Product whose inventory"
   },
   "filter_product_code":{
-    "message":"Dont le code"
+    "message":"Whose code"
   },
   "filter_stock_undefined":{
-    "message":"n'est pas défini"
+    "message":"is not defined"
   },
   "filter_attribute_list":{
-    "message":"par l'attribut \"$ATTRIBUTENAME$\""
+    "message":"by product attribute \"$ATTRIBUTENAME$\""
   },
   "filter_attribute_label":{
-    "message":"produit dont l'attribut \"$ATTRIBUTENAME$\""
+    "message":"product whose attribute \"$ATTRIBUTENAME$\""
   },
   "date_added":{
-    "message":"date d'ajout"
+    "message":"date added"
   },
   "product_list_show_ordering":{
-    "message":"Afficher le choix du tri"
+    "message":"Display sort options"
   }
 }

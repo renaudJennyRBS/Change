@@ -79,5 +79,17 @@
   },
   "price_baseprice":{
     "message":"reference price"
+  },
+  "fee":{
+    "message":"frais"
+  },
+  "fee_sku":{
+    "message":"SKU"
+  },
+  "fee_cartfilterdata":{
+    "message":"Critères d'application"
+  },
+  "fee_shippingmode":{
+    "message":"Mode de livraison"
   }
 }

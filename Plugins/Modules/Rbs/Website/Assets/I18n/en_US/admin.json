@@ -80,47 +80,59 @@
   "page_ttl_help":{
     "message":"Specify a duration in seconds, or 0 to disable the cache"
   },
-  "sectionpagefunction_list":{
-    "message":"functions"
+  "manage_functions":{
+    "message":"gestion des fonctions"
   },
-  "sectionpagefunction_create":{
-    "message":"associate a function to a section"
+  "show_functions_code":{
+    "message":"afficher le code des fonctions"
   },
-  "sectionpagefunction_error_not_unique":{
-    "message":"$CODE$ function is performed by another page in this section."
+  "implemented_functions":{
+    "message":"fonctions implémentées"
   },
-  "sectionpagefunction_back_to":{
-    "message":"return to"
+  "via_static_page":{
+    "message":"via la page de contenu"
   },
-  "sectionpagefunction_add":{
-    "message":"add"
+  "via_functional_page":{
+    "message":"via la page fonctionnelle"
   },
-  "sectionpagefunction_define":{
-    "message":"set"
+  "select_page_for_function":{
+    "message":"sélectionnez une page pour l'implémentation de la fonction"
   },
-  "sectionpagefunction_no_page_defined":{
-    "message":"no page set"
+  "function":{
+    "message":"fonction"
   },
-  "section_functions_list_tip":{
-    "message":"<strong>The list below displays the functions assigned to this section<\/strong>. <br\/>To add a function to a section, you must first choose a <strong>functional page<\/strong>, and then choose functions among those supported by the selected page."
+  "show_not_ready_pages":{
+    "message":"afficher les pages qui ne disposent pas des blocs nécessaires à la fonction"
   },
-  "add_functions_to_this_section":{
-    "message":"add functions to this section"
+  "not_ready_pages_warning":{
+    "message":"attention : les pages suivantes ne disposent pas des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>"
   },
-  "select_function":{
-    "message":"select a function"
+  "already_used":{
+    "message":"déjà utilisée"
   },
-  "function_is_already_used_in_section":{
-    "message":"this function is already performed in this section."
+  "filter_functions":{
+    "message":"filter la liste des fonctions"
   },
-  "no_page_use_selected_function":{
-    "message":"no page performs the selected function."
+  "filter_pages":{
+    "message":"filter la liste des pages"
   },
-  "pages_for_choosen_function":{
-    "message":"list of pages performing the selected function"
+  "available_functions":{
+    "message":"fonctions disponibles"
   },
-  "page_can_also_use_these_functions":{
-    "message":"the page can also perform the following functions"
+  "change_page_for_function":{
+    "message":"changer de page pour cette fonction"
+  },
+  "function_usage":{
+    "message":"utilisations"
+  },
+  "index_page":{
+    "message":"page d'index"
+  },
+  "remove_function_in_section":{
+    "message":"retirer la fonction de la section"
+  },
+  "implement_function_in_section":{
+    "message":"implémenter la fonction dans la section"
   },
   "staticpage_section_help":{
     "message":"The topic or web site that contains the page."
@@ -152,8 +164,11 @@
   "section_permission_rule_helper":{
     "message":"choose to restrict access in this section to users or groups of users. If there is no selected group or user, access is considered to be public"
   },
-  "edit_website_properties":{
-    "message":"edit web site properties"
+  "website_properties":{
+    "message":"properties"
+  },
+  "website_structure":{
+    "message":"structure"
   },
   "navigate_in_website":{
     "message":"navigate the web site"
@@ -357,5 +372,14 @@
   },
   "back_to_general_page_properties":{
     "message":"Page general properties"
+  },
+  "manage_websites":{
+    "message":"Manage websites"
+  },
+  "index":{
+    "message":"Section home"
+  },
+  "structure":{
+    "message":"structure"
   }
 }

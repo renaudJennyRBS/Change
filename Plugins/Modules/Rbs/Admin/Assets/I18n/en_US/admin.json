@@ -138,7 +138,7 @@
     "message":"Refuse <small>correction<\/small>"
   },
   "title":{
-    "message":"search"
+    "message":"search for items..."
   },
   "requiredConditions":{
     "message":"Matching: "
@@ -204,10 +204,10 @@
     "message":"save search"
   },
   "filter":{
-    "message":"filter"
+    "message":"Search"
   },
   "addFilter":{
-    "message":"add filter"
+    "message":"add a condition"
   },
   "choose_existent":{
     "message":"choose among existing documents"
@@ -223,6 +223,10 @@
   },
   "btnGoBack":{
     "message":"go back <small>to list<\/small>"
+  },
+  "btn_back_to":{
+    "message":"go back to <small>$LABEL$<\/small>",
+    "description":"Used in the button bar in editors"
   },
   "btnSave":{
     "message":"save<small>changes <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
@@ -274,6 +278,9 @@
   },
   "picker_no_element":{
     "message":"no element"
+  },
+  "picker_open":{
+    "message":"open"
   },
   "picker_edit_tooltip":{
     "message":"edit selection"
@@ -513,7 +520,7 @@
     "message":"from"
   },
   "compose_selection_message":{
-    "message":"Select items from the list below. You can switch module and come back here to complete your selection later on."
+    "message":"Select items from the list below."
   },
   "selection_is_empty_now":{
     "message":"Your selection is empty for the moment."
@@ -522,7 +529,7 @@
     "message":"Confirm selection"
   },
   "cancel_selection":{
-    "message":"Cancel"
+    "message":"Cancel selection"
   },
   "add_selected_elements":{
     "message":"Add selected items"
@@ -1058,13 +1065,13 @@
     "message":"new block"
   },
   "filter_group_and_title":{
-    "message":"Check all the criteria"
+    "message":"matching all the following conditions:"
   },
   "filter_group_and_toggle":{
     "message":"All"
   },
   "filter_group_or_title":{
-    "message":"Check at least one of the criteria"
+    "message":"matching at least one of the following conditions:"
   },
   "filter_group_or_toggle":{
     "message":"At least one"
@@ -1073,19 +1080,16 @@
     "message":"Add"
   },
   "reset_filter":{
-    "message":"Clear all criteria"
-  },
-  "close_filter":{
-    "message":"Hide search toolbar"
+    "message":"Clear all conditions"
   },
   "group_filter":{
-    "message":"Filters group"
+    "message":"Conditions group"
   },
   "common_filter_group":{
     "message":"Common"
   },
   "unknown_filter":{
-    "message":"unknown criteria"
+    "message":"unknown condition"
   },
   "possible_values":{
     "message":"predefined value"
