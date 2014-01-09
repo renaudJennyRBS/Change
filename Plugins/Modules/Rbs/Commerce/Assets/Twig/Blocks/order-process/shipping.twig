@@ -1,16 +1,17 @@
-<script type="text/ng-template" id="/shipping-mode-selector.static.tpl">
+<script type="text/ng-template" id="/shipping-mode-selector.static.tpl" xmlns="http://www.w3.org/1999/html">
 	<div>
-		<div class="panel panel-default" data-ng-if="modes.length > 1">
+		<div class="panel panel-default" data-ng-if="modes.length > 1 && !display.readonly">
 			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_mode', ['ucf']) }}</div>
 			<div class="panel-body">
 				{{ i18n('m.rbs.commerce.front.select_shipping_mode', ['ucf']) }}
 			</div>
 			<div class="list-group">
-				<a data-ng-repeat="(index, mode) in modes" href="javascript:" class="list-group-item" data-ng-class="{active: mode.id == selectedId}" data-ng-click="selectMode(index)">
+				<a data-ng-repeat="(index, mode) in modes" href="javascript:" class="list-group-item"
+					data-ng-class="{active: mode.id == delivery.modeId}" data-ng-click="selectMode(index)">
 					<div class="row">
 						<div class="col-sm-5 col-md-6 col-lg-7">
 							(= mode.title =)<br />
-							<div class="small">(= mode.description.h =)</div>
+							<div class="small" data-ng-bind-html="trustHtml(mode.description)"></div>
 						</div>
 						<div class="col-sm-2 price">
 							(= mode.feesValue =)
@@ -22,19 +23,19 @@
 				</a>
 			</div>
 		</div>
-		<div class="panel panel-default" data-ng-if="modes.length == 1">
+		<div class="panel panel-default" data-ng-if="modes.length == 1 || display.readonly">
 			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_mode', ['ucf']) }}</div>
-			<div class="panel-body" data-ng-init="mode = modes[0]">
+			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-5 col-md-6 col-lg-7">
-						(= mode.title =)<br />
-						<div class="small">(= mode.description.h =)</div>
+						(= currentMode.title =)<br />
+						<div class="small" data-ng-bind-html="trustHtml(currentMode.description)"></div>
 					</div>
 					<div class="col-sm-2 price">
-						(= mode.feesValue =)
+						(= currentMode.feesValue =)
 					</div>
 					<div class="col-sm-5 col-md-4 col-lg-3">
-						<img data-ng-if="mode.visualUrl" data-ng-src="(= mode.visualUrl =)" />
+						<img data-ng-if="currentMode.visualUrl" data-ng-src="(= currentMode.visualUrl =)" />
 					</div>
 				</div>
 			</div>
@@ -45,25 +46,32 @@
 </script>
 
 <script type="text/ng-template" id="/shipping-mode-configuration-home.static.tpl">
-	TODO
 	<div class="panel panel-default">
-		<div class="panel-heading">Adresse de livraison</div>
+		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_address', ['ucf']) }}</div>
 		<div class="panel-body">
 			<ol>
-				<li class="radio">
+				<li class="radio" data-ng-if="!display.readonly">
 					<label>
-						<input type="radio" checked="checked" name="orderParam[shipping-usesameaddress]" value="1">
-						Utiliser l'adresse de facturation comme adresse de livraison
+						<input type="radio" data-ng-model="delivery.usePostalAddress" value="1">
+						{{ i18n('m.rbs.commerce.front.use_postal_address') }}
 					</label>
 				</li>
-				<li class="radio">
+				<li class="radio" data-ng-if="display.readonly && delivery.usePostalAddress == 1">
+					{{ i18n('m.rbs.commerce.front.use_postal_address') }}
+				</li>
+				<li class="radio" data-ng-if="!display.readonly">
 					<label>
-						<input type="radio" name="orderParam[shipping-usesameaddress]" value="2">
-						Choisir une autre adresse
+						<input type="radio" data-ng-model="delivery.usePostalAddress" value="2">
+						{{ i18n('m.rbs.commerce.front.use_another_address') }}
 					</label>
 				</li>
 			</ol>
-			-- Saisie de l'adresse si autre adresse --
+
+			<div data-ng-if="delivery.usePostalAddress == 2">
+				<div data-rbs-address-form="" data-ng-model="delivery.address"
+					data-zone-code="(= zoneCode =)" data-readonly="(= display.readonly =)">
+				</div>
+			</div>
 		</div>
 	</div>
 </script>
@@ -93,7 +101,8 @@
 		</div>
 	</div>
 
-	<div data-rbs-commerce-shipping-mode-selector="" data-ng-model="expedition"></div>
+	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="cart.zone"
+		data-readonly="(= !isCurrentStep('shipping') =)"></div>
 </div>
 
 <div data-ng-show="isCurrentStep('shipping')" class="clearfix">

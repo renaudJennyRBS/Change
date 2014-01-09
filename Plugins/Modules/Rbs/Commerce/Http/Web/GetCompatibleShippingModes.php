@@ -23,6 +23,9 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 		$shippingModes = $query->getDocuments();
 		if (count($shippingModes))
 		{
+			$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
+			$richTextManager = $event->getApplicationServices()->getRichTextManager();
+
 			$modesInfos = array();
 			foreach ($shippingModes as $index => $shippingMode)
 			{
@@ -30,7 +33,7 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 				$modeInfos = array(
 					'id' => $shippingMode->getId(),
 					'title' => $shippingMode->getCurrentLocalization()->getTitle(),
-					'description' => $shippingMode->getCurrentLocalization()->getDescription()->toArray() // TODO: richtext...
+					'description' => $richTextManager->render($shippingMode->getCurrentLocalization()->getDescription(), "Website", $richTextContext)
 				);
 
 				$visual = $shippingMode->getVisual();

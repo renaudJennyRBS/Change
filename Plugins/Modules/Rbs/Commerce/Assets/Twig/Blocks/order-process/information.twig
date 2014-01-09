@@ -1,29 +1,6 @@
-<script type="text/ng-template" id="/address-fields.static.tpl">
-	<div class="form-group" data-ng-repeat="fieldDef in fieldsDef">
-		<div data-ng-if="fieldDef.name != 'countryCode'">
-			<label for="(= fieldDef.id =)" class="(= leftColumnElementClass =) control-label">
-				<em data-ng-if="fieldDef.required" class="required-symbol"
-					title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-				(= fieldDef.title =)
-			</label>
-			<div class="(= rightColumnElementClass =)" data-ng-if="fieldDef.values">
-				<select data-ng-hide="readonly" id="(= fieldDef.id =)" class="form-control" data-ng-required="fieldDef.required"
-					data-ng-model="fieldValues[fieldDef.name]" data-ng-options="key as v.title for (key, v) in fieldDef.values">
-				</select>
-				<div data-ng-show="readonly" class="form-control-static">(= fieldDef.values[fieldValues[fieldDef.name]].title =)</div>
-			</div>
-			<div class="(= rightColumnElementClass =)" data-ng-if="!fieldDef.values">
-				<input data-ng-hide="readonly" id="(= fieldDef.id =)" class="form-control" data-ng-required="fieldDef.required"
-					data-ng-model="fieldValues[fieldDef.name]" type="text" />
-				<div data-ng-show="readonly" class="form-control-static">(= fieldValues[fieldDef.name] =)</div>
-			</div>
-		</div>
-	</div>
-</script>
-
 <div class="vertical-if-animation" data-ng-if="!isAuthenticated()" data-ng-init="information.realm = '{{ parameters.realm }}'">
 	{% if user %}
-		<div class="vertical-if-animation-content" class="row">
+		<div class="vertical-if-animation-content row">
 			<ul class="text-danger" data-ng-if="errors.length">
 				<li data-ng-repeat="error in errors">(= error =)</li>
 			</ul>
@@ -60,7 +37,7 @@
 			</div>
 		</div>
 	{% else %}
-		<div class="vertical-if-animation-content" class="row">
+		<div class="vertical-if-animation-content row">
 			<ul class="text-danger" data-ng-if="errors.length">
 				<li data-ng-repeat="error in errors">(= error =)</li>
 			</ul>
@@ -120,37 +97,8 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.mailing_address', ['ucf']) }}</div>
 			<div class="panel-body">
-				<div class="form-horizontal">
-					{% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
-					{% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
-					<div class="form-group">
-						<label for="rbs-order-process-country" class="{{ leftColumnElementClass }} control-label">
-							{{ i18n('m.rbs.commerce.front.country', ['ucf']) }}
-						</label>
-						<div class="{{ rightColumnElementClass }}">
-							{% if compatibleCountries|length == 1 %}
-								{% set country = compatibleCountries[0] %}
-								<div class="form-control-static" data-ng-init="information.country = '{{ country.code }}'">
-									{{ country.title }}
-								</div>
-							{% elseif compatibleCountries|length > 1 %}
-								<select id="rbs-order-process-country" data-ng-model="information.country" class="form-control">
-									{% for country in compatibleCountries %}
-										<option value="{{ country.code }}">
-											{{ country.title }}
-										</option>
-									{% endfor %}
-								</select>
-							{% else %}
-								<div class="form-control-static text-danger">ERROR: no country!</div>
-							{% endif %}
-						</div>
-					</div>
-					<div data-rbs-address-fields="" data-ng-model="information.address" data-country-code="(= information.country =)"
-						data-readonly="(= isStepChecked('information') =)"
-						data-left-column-element-class="{{ leftColumnElementClass }}"
-						data-right-column-element-class="{{ rightColumnElementClass }}">
-					</div>
+				<div data-rbs-address-form="" data-ng-model="information.address"
+					data-zone-code="(= cart.zone =)" data-readonly="(= !isCurrentStep('information') =)">
 				</div>
 			</div>
 		</div>

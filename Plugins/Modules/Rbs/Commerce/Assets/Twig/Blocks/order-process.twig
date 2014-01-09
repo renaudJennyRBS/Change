@@ -23,7 +23,7 @@
 			</a>
 		</li>
 		<li data-ng-class="{'disabled': !isStepEnabled('payment')}">
-			<a href="{{ currentURL(null, 'confirmation') }}" data-target="#payment">
+			<a href="{{ currentURL(null, 'payment') }}" data-target="#payment">
 				{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}
 			</a>
 		</li>
@@ -32,6 +32,8 @@
 		</li>
 	</ol>
 </script>
+
+{% include 'Rbs_Commerce/Blocks/order-process/address-form.twig' %}
 
 <div class="row" data-ng-controller="rbsCommerceOrderProcessController" data-ng-init="accessorId = '{{ parameters.accessorId }}'">
 	<div class="col-sm-3 process-sidebar-container">

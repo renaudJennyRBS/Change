@@ -17,6 +17,4 @@
 			}
 		}
 	});
-
-	jQuery('body').scrollspy({ target: '.process-sidebar' });
 })();
