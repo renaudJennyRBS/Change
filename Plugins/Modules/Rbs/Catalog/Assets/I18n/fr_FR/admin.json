@@ -361,6 +361,7 @@
 	},
 	"price_create_discount":{
 		"message":"Créer une promotion"
+		"message":"Créer une promotion"
 	},
 	"condition_list_loading":{
 		"message":"Chargement de la liste des conditions..."
@@ -421,12 +422,6 @@
 	},
 	"variant_group":{
 		"message":"Groupe de variantes"
-	},
-	"attribute_title_help":{
-		"message":"Titre affiché sur le site web."
-	},
-	"attribute_description_help":{
-		"message":"Description de l'attribut affiché sur le site web."
 	},
 	"product_is_available_in_following_lists":{
 		"message":"Le produit $PRODUCTLINK$ est disponible dans les listes de produits ci-dessous."
