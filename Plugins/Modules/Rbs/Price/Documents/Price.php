@@ -122,6 +122,11 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 				throw new \RuntimeException('Commerce services not set', 999999);
 			}
 		}
+
+		if ($this->getPriority() === null)
+		{
+			$this->setPriority(intval($this->getDocumentModel()->getProperty('priority')->getDefaultValue()));
+		}
 		if ($this->getStartActivation() === null)
 		{
 			$this->setStartActivation(new \DateTime());
@@ -141,9 +146,12 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 			{
 				throw new \RuntimeException('Commerce services not set', 999999);
 			}
-
 		}
 
+		if ($this->getPriority() === null)
+		{
+			$this->setPriority(intval($this->getDocumentModel()->getProperty('priority')->getDefaultValue()));
+		}
 		if ($this->getStartActivation() === null)
 		{
 			$this->setStartActivation(new \DateTime());
