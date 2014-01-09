@@ -116,7 +116,6 @@
 				};
 
 
-
 				$scope.saveProgress = {
 					"running"   : false,
 					"error"     : false,
