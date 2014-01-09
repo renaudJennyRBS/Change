@@ -254,7 +254,7 @@ class Compiler
 	/**
 	 * @param Model $model
 	 * @param boolean $excludeInjected
-	 * @return Model
+	 * @return Model[]
 	 */
 	public function getDescendants($model, $excludeInjected = false)
 	{

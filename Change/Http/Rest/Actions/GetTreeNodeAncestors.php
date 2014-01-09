@@ -3,7 +3,6 @@ namespace Change\Http\Rest\Actions;
 
 use Change\Http\Rest\Result\CollectionResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
 use Change\Http\Rest\Result\TreeNodeLink;
 use Change\Http\Rest\Result\Link;
 /**

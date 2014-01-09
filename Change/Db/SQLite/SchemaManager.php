@@ -3,7 +3,6 @@ namespace Change\Db\SQLite;
 
 use Change\Db\Schema\TableDefinition;
 use Change\Db\Schema\FieldDefinition;
-use Change\Db\Schema\KeyDefinition;
 
 /**
  * @name \Change\Db\SQLite\SchemaManager

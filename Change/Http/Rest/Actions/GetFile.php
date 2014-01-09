@@ -137,5 +137,6 @@ class GetFile
 			}
 			return $response;
 		}
+		return null;
 	}
 }

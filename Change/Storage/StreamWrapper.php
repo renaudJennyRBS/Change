@@ -186,6 +186,7 @@ class StreamWrapper
 		else
 		{
 			trigger_error('Storage not found for: ' . $storageURI, E_USER_WARNING);
+			return 0;
 		}
 	}
 

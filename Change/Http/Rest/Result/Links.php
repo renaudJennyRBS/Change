@@ -18,7 +18,7 @@ class Links extends \ArrayObject
 		}
 		else
 		{
-			parent::offsetExists($index);
+			return parent::offsetExists($index);
 		}
 	}
 
@@ -34,7 +34,7 @@ class Links extends \ArrayObject
 		}
 		else
 		{
-			parent::offsetGet($index);
+			return parent::offsetGet($index);
 		}
 	}
 

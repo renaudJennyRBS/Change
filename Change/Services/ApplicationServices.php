@@ -336,7 +336,6 @@ class ApplicationServices extends \Zend\Di\Di
 	public function shutdown()
 	{
 		$this->application = null;
-		$this->applicationServices = null;
 		$this->eventManagerFactory = null;
 		$im = $this->instanceManager;
 		foreach ($im->getAliases() as $alias => $className)

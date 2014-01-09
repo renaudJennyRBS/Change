@@ -123,7 +123,7 @@ class Autoloader extends StandardAutoloader
 		$cachePath = $this->getPsr0CachePath();
 		if (is_readable($cachePath))
 		{
-			return unlink($cachePath);
+			unlink($cachePath);
 		}
 	}
 }

@@ -1,8 +1,6 @@
 <?php
 namespace Change\Presentation\Blocks;
 
-use Change\Documents\Property;
-
 /**
  * @name \Change\Presentation\Blocks\ParameterMeta
  */

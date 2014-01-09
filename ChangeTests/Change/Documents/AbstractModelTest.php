@@ -56,7 +56,6 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $modelBasic->getLocalizedPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getNonLocalizedPropertiesWithCorrection());
 
-		$this->assertCount(0, $modelBasic->getIndexedProperties());
 		$this->assertTrue($modelBasic->hasProperty('pStr'));
 		$this->assertTrue($modelBasic->hasProperty('id'));
 		$this->assertTrue($modelBasic->hasProperty('model'));
@@ -71,8 +70,6 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertContains('model', $names);
 		$this->assertContains('creationDate', $names);
 		$this->assertContains('modificationDate', $names);
-
-		$this->assertFalse($modelBasic->hasCascadeDelete());
 
 		$inverseProperties = $modelBasic->getInverseProperties();
 		$this->assertArrayHasKey('ProjectTestsLocalizedPDocInst', $inverseProperties);

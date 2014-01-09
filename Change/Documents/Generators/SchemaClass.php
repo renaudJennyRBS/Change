@@ -128,7 +128,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		$schemaManager = $this->schemaManager;
 		$sqlMapping = $this->sqlMapping;
 
-		foreach ($model->getProperties() as $propertyName => $property)
+		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
 			if ($property->getDbOptions() !== null)
@@ -141,7 +141,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 
 		foreach($descendants as $model)
 		{
-			foreach ($model->getProperties() as $propertyName => $property)
+			foreach ($model->getProperties() as $property)
 			{
 				/* @var $property \Change\Documents\Generators\Property */
 				if ($property->getDbOptions() !== null)

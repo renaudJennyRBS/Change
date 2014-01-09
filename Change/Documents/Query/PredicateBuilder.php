@@ -3,7 +3,6 @@ namespace Change\Documents\Query;
 
 use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\ExpressionList;
-use Change\Db\Query\Expressions\Join;
 use Change\Db\Query\Expressions\Subquery;
 use Change\Db\Query\InterfaceSQLFragment;
 use Change\Db\Query\Predicates\HasPermission;

@@ -3,8 +3,7 @@ namespace Change\Http\Rest\Actions;
 
 use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\TreeNodeLink;
+
 /**
  * @name \Change\Http\Rest\Actions\DeleteTreeNode
  */

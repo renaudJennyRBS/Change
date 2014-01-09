@@ -17,7 +17,8 @@ class Value extends AbstractExpression
 	protected $scalarType;
 	
 	/**
-	 * @return integer \Change\Db\ScalarType::*
+	 * return \Change\Db\ScalarType::* constant value
+	 * @return integer
 	 */
 	public function getScalarType()
 	{

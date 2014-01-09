@@ -1,7 +1,6 @@
 <?php
 namespace Change\Db\Query\Predicates;
 
-use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\BinaryOperation;
 
 /**

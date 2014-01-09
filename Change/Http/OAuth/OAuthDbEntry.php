@@ -1,12 +1,8 @@
 <?php
 namespace Change\Http\OAuth;
 
-use Change\Http\OAuth\Consumer;
-
 /**
- * Class StoredOAuth
- * @package Change\Http\Rest\OAuth
- * @name \Change\Http\Rest\OAuth\StoredOAuth
+ * @name \Change\Http\OAuth\OAuthDbEntry
  */
 class OAuthDbEntry
 {

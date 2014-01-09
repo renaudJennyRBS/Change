@@ -4,7 +4,6 @@ namespace Change\Http\Rest;
 use Change\Http\BaseResolver;
 use Change\Http\Event;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
-use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response;
 
 /**
@@ -41,7 +40,7 @@ class Resolver extends BaseResolver
 
 	/**
 	 * @param string $name
-	 * @return ResourcesActionsResolver|ResourcesResolver|ResourcesTreeResolver|BlocksResolver|ModelsResolver|null
+	 * @return ActionsResolver|ResourcesResolver|ResourcesTreeResolver|BlocksResolver|ModelsResolver|null
 	 */
 	public function getResolverByName($name)
 	{

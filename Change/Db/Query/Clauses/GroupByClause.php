@@ -1,8 +1,6 @@
 <?php
 namespace Change\Db\Query\Clauses;
 
-use Change\Db\Query\Clauses\AbstractClause;
-
 /**
  * @name \Change\Db\Query\Clauses\GroupByClause
  * @api
@@ -10,7 +8,7 @@ use Change\Db\Query\Clauses\AbstractClause;
 class GroupByClause extends AbstractClause
 {
 	/**
-	 * @var Change\Db\Query\Expressions\ExpressionList
+	 * @var \Change\Db\Query\Expressions\ExpressionList
 	 */
 	protected $expressionList;
 	

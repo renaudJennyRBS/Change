@@ -17,8 +17,8 @@ class BaseItem implements ItemInterface
 
 	/**
 	 * @param string $value
-	 * @param string|array|I18nString $label
-	 * @param string|I18nString $title
+	 * @param string|array|\Change\I18n\I18nString $label
+	 * @param string|\Change\I18n\I18nString $title
 	 */
 	function __construct($value, $label = null, $title = null)
 	{

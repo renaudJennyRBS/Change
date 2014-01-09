@@ -331,7 +331,7 @@ class LocalStorage extends AbstractStorage
 	{
 		$filename = $this->basePath .  str_replace('/', DIRECTORY_SEPARATOR, $this->parsedURL['path']);
 		//TODO Recursive ?
-		$recursive = (STREAM_MKDIR_RECURSIVE & $options) === STREAM_MKDIR_RECURSIVE;
+		//$recursive = (STREAM_MKDIR_RECURSIVE & $options) === STREAM_MKDIR_RECURSIVE;
 		return @rmdir($filename);
 	}
 

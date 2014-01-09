@@ -1,8 +1,6 @@
 <?php
 namespace Change\Http\Rest;
 
-use Change\Commands\Events\RestCommandResponse;
-
 /**
  * @name \Change\Http\Rest\CommandsResolver
  */
@@ -140,7 +138,7 @@ class CommandsResolver
 			$errorParameters = array();
 			foreach ($commands[$cmd] as $name => $conf)
 			{
-				if (array_key_exists($name, $arguments))
+				if (array_key_exists($name, $args))
 				{
 					if ($conf['mode'] === 'Trigger')
 					{
