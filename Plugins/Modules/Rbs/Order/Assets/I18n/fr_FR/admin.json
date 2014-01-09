@@ -279,10 +279,10 @@
 		"message":"nouvelles lignes d'expédition non présentes dans le reliquat"
 	},
 	"shipment_quantity_to_ship_exceeded":{
-		"message":"attention, l'une des quantités à expédier excède celle du reliquat. Êtes-vous sur de vouloir envoyer une quantité supérieur à celle indiquer par le reliquat ?"
+		"message":"attention, l'une des quantités à expédier excède celle du reliquat. Êtes-vous sûr de vouloir envoyer une quantité supérieure à celle indiquer par le reliquat ?"
 	},
 	"shipment_new_from_scratch_helper":{
-		"message":"l'expédition que vous voulez créer n'a ni commande associée ni mode de livraison. Il n'est donc pas possible de calculer un reliquat. Les articles en reliquat s'afficheront une fois que la commande associée et le mode de livraison seront enregistrés"
+		"message":"l'expédition que vous voulez créer n'a pas de commande associée ou de mode de livraison. Il n'est donc pas possible de calculer un reliquat. Les articles en reliquat s'afficheront une fois que la commande associée et le mode de livraison seront définis"
 	},
 	"shipment_prepare_button":{
 		"message":"Valider la préparation<small>de l'expédition</small>"
@@ -308,6 +308,9 @@
 	"order_sent":{
 		"message":"expédié"
 	},
+	"order_unavailable_shipment_status":{
+		"message":"non disponible"
+	},
 	"order_shipping_mode_list":{
 		"message":"mode de livraison"
 	},
@@ -316,5 +319,8 @@
 	},
 	"order_modify_shipping_address":{
 		"message":"modifier l'adresse de livraison"
+	},
+	"order_add_shipment":{
+		"message":"ajouter une expédition"
 	}
 }

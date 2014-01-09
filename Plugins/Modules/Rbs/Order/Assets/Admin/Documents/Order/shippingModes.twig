@@ -12,11 +12,12 @@
 			<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_no_shipment', ['ucf']) }}</span>
 			<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_partially_sent', ['ucf']) }}</span>
 			<span ng-switch-when="sent">{{ i18n('m.rbs.order.admin.order_sent', ['ucf']) }}</span>
-			<span ng-switch-default=""></span>
+			<span ng-switch-default="">{{ i18n('m.rbs.order.admin.order_unavailable_shipment_status', ['ucf']) }}</span>
 		</td>
 		<td>
-			<a ng-if="shippingDetails[shipping.id].status && shippingDetails[shipping.id].status != 'sent'"
-				href="" ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)" ng-if="orderId > 0">
+			<a ng-if="orderId > 0 && shippingDetails[shipping.id].status &&
+				(shippingDetails[shipping.id].status == 'noShipment' || shippingDetails[shipping.id].status == 'remain') "
+				href="" ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)">
 				<i class="icon-archive"></i>
 				<span ng-switch="shippingDetails[shipping.id].status">
 					<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_send', ['ucf']) }},</span>

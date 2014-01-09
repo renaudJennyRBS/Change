@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditorShippingModes ( REST, $filter, i18n, NotificationCenter, ErrorFormatter)
+	function rbsOrderOrderEditorShippingModes ( REST, $filter, i18n, NotificationCenter, ErrorFormatter, Events)
 	{
 		return {
 			restrict : 'A',
@@ -31,6 +31,10 @@
 					var shippingModes = scope.shippingData;
 					angular.forEach(shippingModes, function (shippingMode) {
 						shippingMode.lines = [];
+						//set the status to 'unavailable' because we can be clear with shipment status
+						if (scope.shippingDetails[shippingMode.id]){
+							scope.shippingDetails[shippingMode.id].status = 'unavailable';
+						}
 					});
 					angular.forEach(scope.linesData, function (line) {
 						var shippingModeId = line.options.shippingMode;
@@ -109,12 +113,22 @@
 					scope.refreshShippingModes();
 				});
 
+				scope.$on(Events.EditorPostSave, function (){
+					if(angular.isObject(scope.shippingData)){
+						REST.collection('Rbs_Shipping_Mode').then(scope.populateShippingDetails);
+						angular.forEach(scope.shippingData, function (shipping){
+							if(shipping.id){
+								scope.addressDefined[shipping.id] = angular.isObject(shipping.address);
+							}
+						});
+					}
+				});
 			}
 		};
 	}
 
 	rbsOrderOrderEditorShippingModes.$inject = [ 'RbsChange.REST', '$filter', 'RbsChange.i18n',
-		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter' ];
+		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', 'RbsChange.Events' ];
 	angular.module('RbsChange').directive('rbsOrderShippingModes', rbsOrderOrderEditorShippingModes);
 
 })();

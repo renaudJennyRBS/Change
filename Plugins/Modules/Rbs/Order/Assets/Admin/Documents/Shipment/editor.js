@@ -27,6 +27,8 @@
 			{
 				scope.data = {};
 				scope.orderRemainderAlreadyDefined = false;
+				scope.userAddresses = [];
+				scope.canEdit = {order: true, carrier: true};
 				var refreshOrderRemainderLocked = false;
 
 				//In remainLines, we mean lines to remain from the order
@@ -43,43 +45,93 @@
 					if (scope.isNew()){
 						//pre fill fields if there is data in query url
 						var query = window.location.search;
-						var queryRegExp = /\?orderId=([0-9]*)\&shippingModeId=([0-9]*)/;
+						var queryRegExp = /\?orderId=([0-9]*)(\&shippingModeId=([0-9]*))?/;
+						//                            111111   22222222222222222333333
 						if (queryRegExp.test(query)){
 							var test = queryRegExp.exec(query);
 							var orderId = test[1];
-							var shippingModeId = test[2];
+							var shippingModeId = test[3];
 							setOrderByOrderId(orderId);
-							REST.resource('Rbs_Shipping_Mode', shippingModeId).then(function (data){
-								scope.data.carrier = data;
+							if (shippingModeId){
+								REST.resource('Rbs_Shipping_Mode', shippingModeId).then(function (data){
+									scope.data.carrier = data;
+									scope.canEdit.carrier = false;
+								}, function (error){
+									NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_shipping_mode | ucf'),
+										ErrorFormatter.format(error));
+									console.error(error);
+								});
+							}
+						}
+					}
+				};
+
+				scope.onLoad = function (){
+					setShipmentPromises();
+				};
+
+				function setOrderWatch(){
+					scope.$watch('data.order', function (order){
+						if (order){
+							scope.document.orderId = order.id;
+						}
+						else {
+							scope.document.orderId = 0;
+						}
+						refreshOrderInformation();
+					});
+				}
+
+				function setShippingModeWatch(){
+					scope.$watch('data.carrier', function (carrier){
+						if (carrier){
+							REST.ensureLoaded(carrier).then(function (data){
+								scope.document.shippingModeCode = data.code;
+								refreshOrderInformation();
 							}, function (error){
 								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_shipping_mode | ucf'),
 									ErrorFormatter.format(error));
 								console.error(error);
 							});
 						}
+						else {
+							scope.document.shippingModeCode = '';
+							refreshOrderInformation();
+						}
+					});
+				}
+
+				function refreshOrderInformation(){
+					resetLinesInformation();
+					dispatchDocumentDataLines().then(function (){
+						if (scope.data.order && scope.data.carrier){
+							refreshCode();
+							refreshOrderRemainder();
+						}
+					});
+				}
+
+				function setShipmentPromises(){
+					var promises = [];
+
+					if (scope.document.shippingModeCode){
+						promises.push(setCarrierByShippingModeCode(scope.document.shippingModeCode));
 					}
-					//load shipping mode if the document is not new and if a shipping mode code is defined and not null
-					if (!scope.isNew() && scope.document.shippingModeCode) {
-						REST.query(Query.simpleQuery('Rbs_Shipping_Mode', 'code', scope.document.shippingModeCode))
-							.then(function (data){
-								if (data.resources.length === 1) {
-									scope.data.carrier = data.resources[0];
-								}
-								else {
-									NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_shipping_mode_not_found_title | ucf'),
-										i18n.trans('m.rbs.order.adminjs.shipment_shipping_mode_not_found | ucf', {CODE: scope.document.shippingModeCode}));
-								}
-							}, function (error){
-								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_shipping_mode | ucf'),
-									ErrorFormatter.format(error));
-								console.error(error);
-							});
+					else {
+						setShippingModeWatch();
 					}
-					//load order if the document is not new and if an order id is defined and not null
-					if (!scope.isNew() && scope.document.orderId){
-						setOrderByOrderId(scope.document.orderId);
+
+					if (scope.document.orderId){
+						promises.push(setOrderByOrderId(scope.document.orderId));
 					}
-				};
+					else {
+						setOrderWatch();
+					}
+
+					if (promises.length === 2){
+						$q.all(promises).then(refreshOrderInformation);
+					}
+				}
 
 				scope.preSave = function(document){
 					var q = $q.defer();
@@ -95,50 +147,53 @@
 							});
 					}
 					else {
+						//set empty address
+						document.address = {address: {}, addressFields: 0};
 						q.resolve();
 					}
 					return q.promise;
 				};
 
-				function setOrderByOrderId(orderId){
-					REST.resource('Rbs_Order_Order', orderId).then(function (data){
-						scope.data.order = data;
+				function setCarrierByShippingModeCode(shippingModeCode){
+					var p = REST.query(Query.simpleQuery('Rbs_Shipping_Mode', 'code', shippingModeCode));
+					p.then(function (data){
+						if (data.resources.length === 1) {
+							scope.data.carrier = data.resources[0];
+							scope.canEdit.carrier = false;
+						}
+						else {
+							NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_shipping_mode_not_found_title | ucf'),
+								i18n.trans('m.rbs.order.adminjs.shipment_shipping_mode_not_found | ucf', {CODE: shippingModeCode}));
+						}
 					}, function (error){
-						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_order | ucf'),
+						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_shipping_mode | ucf'),
 							ErrorFormatter.format(error));
 						console.error(error);
 					});
 				}
 
-				scope.$watch('data.carrier', function (carrier){
-					if (angular.isDefined(carrier)){
-						REST.resource(carrier.model, carrier.id, carrier.LCID).then(function (data){
-							scope.document.shippingModeCode = data.code;
-							if (scope.document.orderId){
-								refreshCode();
-								refreshOrderRemainder();
-							}
-						}, function (error){
-							NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_shipping_mode | ucf'),
-								ErrorFormatter.format(error));
-							console.error(error);
-						});
-					}
-				});
+				function setOrderByOrderId(orderId){
+					var p = REST.resource('Rbs_Order_Order', orderId);
+					p.then(function (data){
+						scope.data.order = data;
+						populateAddressList(data.ownerId);
+						scope.canEdit.order = false;
+					}, function (error){
+						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_order | ucf'),
+							ErrorFormatter.format(error));
+						console.error(error);
+					});
+					return p;
+				}
 
-				scope.$watch('data.order', function (order){
-					if (angular.isDefined(order)){
-						scope.data.order = order;
-						scope.document.orderId = order.id;
-						if (angular.isDefined(scope.data.carrier) && scope.data.carrier.id){
-							refreshOrderRemainder();
-							refreshCode();
-						}
-					}
-				});
+				function resetLinesInformation(){
+					scope.data.remainLines = [];
+					scope.data.shipmentLines = [];
+					scope.data.asideLines = [];
+				}
 
 				function refreshCode(){
-					if (!scope.document.code && scope.data.order && scope.document.shippingModeCode){
+					if (!scope.document.code && scope.data.order && scope.data.carrier){
 						scope.document.code = 'E-' + scope.data.order.label + '-' + scope.document.shippingModeCode + '-?';
 					}
 				}
@@ -146,47 +201,56 @@
 				function refreshOrderRemainder(){
 					//because this is an asynchronous function containing another asynchronous function,
 					//it needs a lock to prevent another call during processing
-					if (!refreshOrderRemainderLocked && !scope.document.prepared)
-					{
+					//TODO prevent the user from choosing another carrier or order during processing instead of using lock
+					if (!refreshOrderRemainderLocked && !scope.document.prepared){
 						refreshOrderRemainderLocked = true;
-						scope.data.remainLines = [];
-						scope.data.shipmentLines = [];
-						scope.data.asideLines = [];
-						//if we already have orderId and shipping mode code, load the order remainder
-						REST.call(REST.getBaseUrl('rbs/order/orderRemainder'),{
-							orderId: scope.document.orderId,
-							shippingModeId: scope.data.carrier.id
-						}).then(function (data){
-								scope.data.remainLines = data.remainLines;
-								if (angular.isUndefined(scope.document.data) || scope.document.data.length === 0){
-									angular.forEach(data.remainLines, function (remainderLine){
-										scope.data.shipmentLines.push({
-											designation: remainderLine.designation,
-											quantity: remainderLine.quantity,
-											codeSKU: remainderLine.codeSKU,
-											allowQuantitySplit: remainderLine.allowQuantitySplit,
-											SKU: remainderLine.SKU
-										});
-									});
-									refreshOrderRemainderLocked = false;
-								}
-								else {
-									sortShipmentLinesFromDocumentData();
-								}
-								if (!scope.document.address || !scope.document.address.address || !scope.document.address.addressFields)
-								{
-									scope.document.address = {
-										address: data.address.address,
-										addressFields: data.address.addressFields
-									}
-								}
-							}, function (error){
-								refreshOrderRemainderLocked = false;
-								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_request_remainder | ucf'),
-									ErrorFormatter.format(error));
-								console.error(error);
-							});
+						getOrderRemainder();
 					}
+				}
+
+				function getOrderRemainder(){
+					var p = REST.call(REST.getBaseUrl('rbs/order/orderRemainder'),{
+						orderId: scope.document.orderId,
+						shippingModeId: scope.data.carrier.id
+					});
+
+					p.then(function (data){
+						scope.data.remainLines = data.remainLines;
+						if (!scope.document.data || scope.document.data.length === 0){
+							resetLinesInformation();
+							setShipmentLines(data.remainLines);
+						}
+						else {
+							sortShipmentLinesFromDocumentData();
+						}
+						if (!scope.document.address || !scope.document.address.address || !scope.document.address.addressFields)
+						{
+							scope.document.address = {
+								address: data.address.address,
+								addressFields: data.address.addressFields
+							}
+						}
+					}, function (error){
+						refreshOrderRemainderLocked = false;
+						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_request_remainder | ucf'),
+							ErrorFormatter.format(error));
+						console.error(error);
+					});
+
+					return p;
+				}
+
+				function setShipmentLines(remainLines){
+					angular.forEach(remainLines, function (remainderLine){
+						scope.data.shipmentLines.push({
+							designation: remainderLine.designation,
+							quantity: remainderLine.quantity,
+							codeSKU: remainderLine.codeSKU,
+							allowQuantitySplit: remainderLine.allowQuantitySplit,
+							SKU: remainderLine.SKU
+						});
+					});
+					refreshOrderRemainderLocked = false;
 				}
 
 				function sortShipmentLinesFromDocumentData(){
@@ -196,59 +260,69 @@
 					//  aside lines : line not in shipment but in order remainder
 					//  new lines : line in shipment but not in order remainder (that mean new lines)
 
-					//first take them from order lines
+					dispatchOrderLines();
+				}
+
+				function dispatchOrderLines(){
 					angular.forEach(scope.data.remainLines, function (remainderLine){
-						var remainderLineInDocumentData = false;
-						angular.forEach(scope.document.data, function (documentLine){
-							if (documentLine.SKU == remainderLine.SKU){
-								remainderLineInDocumentData = true;
-								remainderLine.quantityToShip = documentLine.quantity;
-								//push it in shipment lines
-								scope.data.shipmentLines.push(remainderLine);
-							}
-						});
-						if (!remainderLineInDocumentData){
+						var line = getShipmentLineFromSKU(remainderLine.SKU);
+						if (line){
+							//FIXME += or = ?
+							line.quantity = remainderLine.quantity;
+							line.newLine = false;
+						}
+						else {
 							//push it in aside lines
 							scope.data.asideLines.push(remainderLine);
 						}
 					});
-					//and find new shipment lines
-					if (scope.data.shipmentLines.length < scope.document.data.length) {
-						angular.forEach(scope.document.data, function (documentLine){
-							if (!lineIsInArray(documentLine, scope.data.remainLines)){
-								//get product from SKU
-								REST.query(getProductFromSKUId(documentLine.SKU), {column: ['code']})
-									.then(function (data){
-										if (data.resources.length === 1) {
-											//push new line in shipment lines
-											scope.data.shipmentLines.push({
-												designation: data.resources[0].label,
-												codeSKU: data.resources[0].code,
-												quantity: '',
-												allowQuantitySplit: true,
-												quantityToShip: documentLine.quantity,
-												SKU: documentLine.SKU,
-												newLine: true
-											});
-											refreshOrderRemainderLocked = false;
-										}
-										else {
-											refreshOrderRemainderLocked = false;
-											NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_sku_not_found_title | ucf'),
-												i18n.trans('m.rbs.order.adminjs.shipment_sku_not_found | ucf', {SKU:  documentLine.codeSKU}));
-										}
-									}, function (error){
-										refreshOrderRemainderLocked = false;
-										NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_sku | ucf'),
-											ErrorFormatter.format(error));
-									})
-							}
-						});
-					}
-					else {
-						refreshOrderRemainderLocked = false;
-					}
+				}
 
+
+
+				function dispatchDocumentDataLines(){
+					var promises = [];
+
+					angular.forEach(scope.document.data, function (documentLine){
+						if (!skuIsInArray(documentLine.SKU, scope.data.remainLines)){
+							//get product from SKU
+							promises.push(loadProductFromSKU(documentLine.SKU, documentLine.quantity));
+						}
+					});
+
+					return $q.all(promises);
+				}
+
+				function loadProductFromSKU(sku, quantity){
+					var p = REST.query(getProductFromSKUId(sku), {column: ['sku']});
+
+					p.then(function (data){
+						if (!skuIsInArray(sku, scope.data.shipmentLines)){
+							if (data.resources.length === 1) {
+								//push new line in shipment lines
+								scope.data.shipmentLines.push({
+									designation: data.resources[0].label,
+									codeSKU: data.resources[0].sku.code,
+									allowQuantitySplit: true,
+									quantity: quantity,
+									SKU: sku,
+									newLine: true
+								});
+								refreshOrderRemainderLocked = false;
+							}
+							else {
+								refreshOrderRemainderLocked = false;
+								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_sku_not_found_title | ucf'),
+									i18n.trans('m.rbs.order.adminjs.shipment_sku_not_found | ucf', {SKU:  documentLine.codeSKU}));
+							}
+						}
+					}, function (error){
+						refreshOrderRemainderLocked = false;
+						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_sku | ucf'),
+							ErrorFormatter.format(error));
+					});
+
+					return p;
 				}
 
 				scope.$watch('document.prepared', function (prepared){
@@ -290,7 +364,7 @@
 								//in this cases, don't add the article
 								//because article is not properly a line, we have to made it (the compare function only need SKU id)
 								var line = {SKU: data.resources[0].id};
-								if (!lineIsInArray(line, scope.data.remainLines) && !lineIsInArray(line, scope.data.shipmentLines)){
+								if (!skuIsInArray(line.SKU, scope.data.remainLines) && !skuIsInArray(line.SKU, scope.data.shipmentLines)){
 									scope.data.shipmentLines.push({
 										designation: article.label,
 										codeSKU: data.resources[0].code,
@@ -313,7 +387,7 @@
 					});
 				};
 
-				scope.$watch('selectAllShipmentLines', function (value){
+				scope.$watch('data.selectAllShipmentLines', function (value){
 					angular.forEach(scope.data.shipmentLines, function (shipmentLine){
 						shipmentLine.selected = value;
 					});
@@ -333,6 +407,12 @@
 				};
 
 				scope.$watch('data.shipmentLines', function (shipmentLines){
+					if (angular.isDefined(shipmentLines)){
+						dispatchShipmentLinesInDocumentData(shipmentLines);
+					}
+				}, true);
+
+				function dispatchShipmentLinesInDocumentData(shipmentLines){
 					scope.data.removeLinesDisabled = true;
 					scope.data.quantityToShipExceeded = false;
 					scope.data.hasNewLines = false;
@@ -358,13 +438,10 @@
 						if (shipmentLine.selected){
 							scope.removeLinesDisabled = false;
 						}
-						else {
-							scope.selectAllShipmentLines = false;
-						}
 						itemCount += shipmentLine.quantityToShip;
 					});
 					scope.document.itemCount = itemCount;
-				}, true);
+				}
 
 				scope.validatePreparation = function ($event){
 					var message = i18n.trans('m.rbs.order.adminjs.shipment_confirm_validate_preparation | ucf');
@@ -388,6 +465,34 @@
 							//NOK
 					});
 				};
+
+				function populateAddressList(ownerId){
+					if(!ownerId){
+						scope.userAddresses = [];
+						return;
+					}
+
+					var query = {
+						'model': 'Rbs_Geo_Address',
+						'where': {
+							'and': [
+								{
+									'op': 'eq',
+									'lexp': {
+										'property': 'ownerId'
+									},
+									'rexp': {
+										'value': ownerId
+									}
+								}
+							]
+						}
+					};
+
+					REST.query(query, {'column': ['label', 'addressFields', 'fieldValues']}).then(function (data){
+						scope.userAddresses = data.resources;
+					});
+				}
 
 				function getSKUFromProductIdQuery(productId){
 					return {
@@ -438,12 +543,12 @@
 					};
 				}
 
-				function lineIsInArray(line, array){
+				function skuIsInArray(sku, array){
 					var lineIsInArray = false;
-					if (angular.isDefined(line.SKU) && line.SKU){
+					if (sku){
 						angular.forEach(array, function (arrayLine){
-							if (angular.isDefined(line.SKU) && line.SKU){
-								if (arrayLine.SKU == line.SKU){
+							if (arrayLine.SKU){
+								if (arrayLine.SKU == sku){
 									lineIsInArray = true;
 								}
 							}
@@ -456,6 +561,19 @@
 						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_no_sku_to_compare | ucf'));
 					}
 					return lineIsInArray;
+				}
+
+				function getShipmentLineFromSKU(sku){
+					var i;
+					if (!angular.isArray(scope.data.shipmentLines)){
+						return null;
+					}
+					for (i = 0; i < scope.data.shipmentLines.length; i++){
+						if (scope.data.shipmentLines[i].SKU === sku){
+							return scope.data.shipmentLines[i];
+						}
+					}
+					return null;
 				}
 
 				function isObjectEmpty(object){

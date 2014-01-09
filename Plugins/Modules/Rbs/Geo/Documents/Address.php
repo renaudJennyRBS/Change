@@ -10,6 +10,11 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 {
 
 	/**
+	 * @var array
+	 */
+	protected $fieldValues;
+
+	/**
 	 * @return string[]
 	 */
 	public function getLines()
@@ -49,7 +54,7 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 * @param mixed $value
 	 * @return $this
 	 */
-	public function setFieldValue($fieldName, $value)
+	protected function setFieldValue($fieldName, $value)
 	{
 		if ($this->hasField($fieldName))
 		{
@@ -79,7 +84,7 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 * @param string $fieldName
 	 * @return mixed|null
 	 */
-	public function getFieldValue($fieldName)
+	protected function getFieldValue($fieldName)
 	{
 		if ($this->hasField($fieldName))
 		{
@@ -104,20 +109,33 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	{
 		if (is_array($fieldValues))
 		{
-			foreach($fieldValues as $fieldName => $value)
-			{
-				$this->setFieldValue($fieldName, $value);
-			}
+			$this->fieldValues = $fieldValues;
 		}
 	}
 
 	public function getFieldValues()
 	{
+		if (is_array($this->fieldValues))
+		{
+			return $this->fieldValues;
+		}
 		$fieldValues = array();
 		$af = $this->getAddressFields();
+		$values = $this->getFieldsData();
 		foreach($af->getFieldsName() as $fieldName)
 		{
-			$fieldValues[$fieldName] = $this->getFieldValue($fieldName);
+			$property = $this->getDocumentModel()->getProperty($fieldName);
+			if ($property)
+			{
+				$fieldValues[$fieldName] = $property->getValue($this);
+			}
+			else
+			{
+				if (is_array($values) && isset($values[$fieldName]))
+				{
+					$fieldValues[$fieldName] = $values[$fieldName];
+				}
+			}
 		}
 		return $fieldValues;
 	}
@@ -163,6 +181,34 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		}
 
 		$event->setParam('propertiesErrors', count($propertiesErrors) ? $propertiesErrors : null);
+
+		if (count($propertiesErrors) === 0)
+		{
+			foreach ($this->getFieldValues() as $fieldName => $fieldValue)
+			{
+				if ($this->hasField($fieldName))
+				{
+					$property = $this->getDocumentModel()->getProperty($fieldName);
+					if ($property)
+					{
+						$property->setValue($this, $fieldValue);
+					}
+					else
+					{
+						$values = $this->getFieldsData();
+						if (!is_array($values))
+						{
+							$values = array($fieldName => $fieldValue);
+						}
+						else
+						{
+							$values[$fieldName] = $fieldValue;
+						}
+						$this->setFieldsData($values);
+					}
+				}
+			}
+		}
 	}
 
 	/**

@@ -25,6 +25,7 @@ class OrderRemainder
 				//  'noShipment' if there is no shipment at all
 				//  'remain' at least one shipment is done but not all of them
 				//  'sent' if there is no remain
+				//  'unavailable' if there is no shippingMode
 				$status = 'noShipment';
 
 				/* @var $order \Rbs\Order\Documents\Order */
@@ -72,23 +73,28 @@ class OrderRemainder
 					{
 						/* @var $sku \Rbs\Stock\Documents\Sku */
 						$sku = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($shipmentLine['SKU']);
-						$skuData[$sku->getCode()]['quantity'] -= $shipmentLine['quantity'];
+						if (isset($skuData[$sku->getCode()]))
+						{
+							$skuData[$sku->getCode()]['quantity'] -= $shipmentLine['quantity'];
+						}
 					}
 				}
 
 				$address = ['address' => new \stdClass(), 'addressFields' => 0];
 				$remainLines = [];
+				$itemForShippingModeCount = 0;
 				foreach ($skuData as $codeSku => $skuLine)
 				{
-					if ($skuLine['shippingModeId'] === $shippingModeId)
+					if (isset($skuLine['shippingModeId']) && $skuLine['shippingModeId'] === $shippingModeId)
 					{
+						$itemForShippingModeCount++;
 						//try to find if the original order quantity differs from the remain, in this case
 						//that mean at least a shipment is already done for this mode
 						if ($skuOrderQuantity[$codeSku] !== $skuLine['quantity'])
 						{
 							$status = 'remain';
 						}
-						if ($skuLine['quantity'] !== 0)
+						if ($skuLine['quantity'] > 0)
 						{
 							$sku = $this->getSKUByCode($codeSku, $event->getApplicationServices()->getDocumentManager());
 							$remainLines[] = [
@@ -103,7 +109,12 @@ class OrderRemainder
 					}
 				}
 
-				if (!count($remainLines))
+				if ($itemForShippingModeCount === 0)
+				{
+					//if we cannot find any item for this shippingMode we cannot be clear concerning the status
+					$status = 'unavailable';
+				}
+				elseif (!count($remainLines))
 				{
 					$status = 'sent';
 				}

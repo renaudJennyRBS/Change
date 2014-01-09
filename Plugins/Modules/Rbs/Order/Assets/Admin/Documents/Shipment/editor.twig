@@ -7,25 +7,25 @@
 			{{ i18n('m.rbs.order.admin.shipment_new_from_scratch_helper', ['ucf']) }}
 		</div>
 
-		<rbs-field ng-if="document.isNew() || !document.orderId" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}">
+		<rbs-field ng-if="canEdit.order" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}">
 			<rbs-document-picker-single
 				ng-model="data.order"
 				accepted-model="Rbs_Order_Order"
 				selector-title="{{ i18nAttr('m.rbs.order.admin.shipment_select_order', ['ucf']) }}">
 			</rbs-document-picker-single>
 		</rbs-field>
-		<rbs-field ng-if="!document.isNew() && document.shippingModeCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}" ng-disabled="true">
-			<p class="form-control-static">(= data.order.label =)</p>
+		<rbs-field ng-if="!canEdit.order" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}" ng-disabled="true">
+			<p class="form-control-static"><a href="" ng-href="Rbs/Order/Order/(= data.order.id =)">(= data.order.label =)</a></p>
 		</rbs-field>
 
-		<rbs-field ng-if="document.isNew() || !document.shippingModeCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}">
+		<rbs-field ng-if="canEdit.carrier" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}">
 			<rbs-document-picker-single
 				ng-model="data.carrier"
 				accepted-model="Rbs_Shipping_Mode"
 				selector-title="{{ i18nAttr('m.rbs.order.admin.shipment_select_shippingMode', ['ucf']) }}">
 			</rbs-document-picker-single>
 		</rbs-field>
-		<rbs-field ng-if="!document.isNew() && document.shippingModeCode" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}" ng-disabled="true">
+		<rbs-field ng-if="!canEdit.carrier" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}" ng-disabled="true">
 			<p class="form-control-static">(= document.shippingModeCode =)</p>
 		</rbs-field>
 
@@ -41,7 +41,7 @@
 		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'carrierStatus'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<div class="panel panel-default">
+		<div class="panel panel-default" ng-if="!(document.prepared && !document.address.lines)">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-envelope"></i>
 					{{ i18n('m.rbs.order.admin.shipment_shipping_address', ['ucf']) }}
@@ -49,11 +49,12 @@
 			</div>
 			<div ng-if="document && !document.prepared">
 				<div rbs-order-address="" class="panel-body"
+					address-documents="userAddresses"
 					address-fields="document.address.addressFields"
 					address="document.address.address">
 				</div>
 			</div>
-			<address ng-if="document.prepared && document.address.lines" class="panel-body">
+			<address ng-if="document.prepared" class="panel-body">
 				<span ng-repeat="addressLine in document.address.lines">(= addressLine =)<br></span>
 			</address>
 		</div>
@@ -68,12 +69,12 @@
 					<div class="btn-toolbar">
 						<button class="btn btn-default" type="button" ng-click="removeLines()" ng-disabled="data.removeLinesDisabled"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.shipment_remove_lines', ['ucf']) }}</button>
 					</div>
-
+					<p></p>
 					<table class="document-list table table-condensed table-bordered table-striped table-hover">
 						<thead>
 							<tr>
 								<th style="cursor: pointer; text-align: center; width: 30px;">
-									<input type="checkbox" ng-model="selectAllShipmentLines">
+									<input type="checkbox" ng-model="data.selectAllShipmentLines">
 								</th>
 								<th>{{ i18n('m.rbs.order.admin.shipment_line_number', ['ucf']) }}</th>
 								<th>{{ i18n('m.rbs.order.admin.shipment_designation', ['ucf']) }}</th>

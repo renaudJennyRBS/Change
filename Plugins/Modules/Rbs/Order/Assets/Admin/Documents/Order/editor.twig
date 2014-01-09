@@ -115,6 +115,9 @@
 						<td>(= shipment.carrierStatus =)</td>
 					</tr>
 				</table>
+				<a ng-if="document.id > 0" href="" ng-href="Rbs/Order/Shipment/new?orderId=(= document.id =)">
+					{{ i18n('m.rbs.order.admin.order_add_shipment', ['ucf']) }}
+				</a>
 			</div>
 		</div>
 
