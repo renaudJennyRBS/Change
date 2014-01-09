@@ -43,7 +43,7 @@ class EventManagerFactory
 	{
 		$this->application = null;
 		$this->sharedEventManager = null;
-		foreach ($this->services as $name => $service)
+		foreach ($this->services as $service)
 		{
 			if (is_callable(array($service, 'shutdown')))
 			{

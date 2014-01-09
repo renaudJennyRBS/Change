@@ -401,18 +401,6 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @return \Change\Documents\Property[] keys assumed as property names.
-	 */
-	public function getIndexedProperties()
-	{
-		return array_filter($this->properties, function (Property $property)
-		{
-			return $property->isIndexed();
-		});
-	}
-
-	/**
-	 * @api
 	 * @param string $propertyName
 	 * @return boolean
 	 */
@@ -491,22 +479,6 @@ abstract class AbstractModel
 	public function getPropertyNames()
 	{
 		return array_keys($this->properties);
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasCascadeDelete()
-	{
-		foreach ($this->getProperties() as $property)
-		{
-			if ($property->getCascadeDelete())
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

@@ -18,6 +18,10 @@
 					{
 						scope.document.taxCategories = {};
 					}
+
+					if (scope.document.isNew()) {
+						scope.document.priority = 25;
+					}
 				};
 
 				scope.onReady = function(){

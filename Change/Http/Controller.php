@@ -2,7 +2,6 @@
 namespace Change\Http;
 
 use Change\Application;
-use Change\Services\ApplicationServices;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 

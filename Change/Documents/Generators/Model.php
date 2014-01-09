@@ -566,7 +566,7 @@ class Model
 	}
 
 	/**
-	 * @return Property
+	 * @return Property[]
 	 */
 	public function getProperties()
 	{
@@ -602,7 +602,7 @@ class Model
 	}
 
 	/**
-	 * @return InverseProperty
+	 * @return InverseProperty[]
 	 */
 	public function getInverseProperties()
 	{
@@ -865,6 +865,7 @@ class Model
 				return true;
 			}
 		}
+		return false;
 	}
 
 	/**

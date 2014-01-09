@@ -2,7 +2,6 @@
 namespace Change\Application\Console;
 
 use Change\Application\Console\ChangeCommand as Command;
-use Change\Commands\Events\ConsoleCommandResponse;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

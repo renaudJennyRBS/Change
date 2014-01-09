@@ -141,10 +141,6 @@ class StorageResolver
 									$msg = "The uploaded file exceeds " . ini_get('upload_max_filesize') . ". See php.ini.";
 									break;
 
-								case UPLOAD_ERR_INI_SIZE :
-									$msg = "Upload error: UPLOAD_ERR_INI_SIZE";
-									break;
-
 								case UPLOAD_ERR_FORM_SIZE :
 									$msg = "Upload error: UPLOAD_ERR_FORM_SIZE";
 									break;

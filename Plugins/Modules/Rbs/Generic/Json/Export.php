@@ -50,6 +50,11 @@ class Export
 	protected $codes = [];
 
 	/**
+	 * @var \Rbs\Generic\Json\JsonConverter
+	 */
+	protected $valueConverter;
+
+	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 */
 	public function __construct(\Change\Documents\DocumentManager $documentManager)
@@ -191,6 +196,28 @@ class Export
 	}
 
 	/**
+	 * @param \Rbs\Generic\Json\JsonConverter $valueConverter
+	 * @return $this
+	 */
+	public function setValueConverter($valueConverter)
+	{
+		$this->valueConverter = $valueConverter;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Generic\Json\JsonConverter
+	 */
+	public function getValueConverter()
+	{
+		if ($this->valueConverter === null) {
+			$this->valueConverter = new \Rbs\Generic\Json\JsonConverter();
+		}
+		return $this->valueConverter;
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function toArray()
@@ -326,8 +353,7 @@ class Export
 			}
 			else
 			{
-				$pc = new \Change\Http\Rest\ValueConverter(null, null);
-				$array[$propertyName] = $pc->toRestValue($value, $property->getType());
+				$array[$propertyName] = $this->getValueConverter()->toRestValue($value, $property->getType());
 			}
 		}
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
@@ -364,8 +390,7 @@ class Export
 				continue;
 			}
 			$value = $property->getValue($document);
-			$pc = new \Change\Http\Rest\ValueConverter(null, null);
-			$array[$propertyName] = $pc->toRestValue($value, $property->getType());
+			$array[$propertyName] = $this->getValueConverter()->toRestValue($value, $property->getType());
 		}
 		$this->getDocumentManager()->popLCID();
 		return $array;

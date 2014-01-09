@@ -1,10 +1,7 @@
 <?php
 namespace Change\Presentation\Interfaces;
 
-use Change\Presentation\Layout\Layout;
-
 /**
- * @package Change\Presentation\Interfaces
  * @name \Change\Presentation\Interfaces\PageTemplate
  */
 interface PageTemplate

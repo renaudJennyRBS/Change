@@ -49,6 +49,11 @@ class Import
 	protected $codes = [];
 
 	/**
+	 * @var \Rbs\Generic\Json\JsonConverter
+	 */
+	protected $valueConverter;
+
+	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 */
 	public function __construct(\Change\Documents\DocumentManager $documentManager)
@@ -156,6 +161,27 @@ class Import
 	public function getImported()
 	{
 		return $this->imported;
+	}
+
+	/**
+	 * @param \Rbs\Generic\Json\JsonConverter $valueConverter
+	 * @return $this
+	 */
+	public function setValueConverter($valueConverter)
+	{
+		$this->valueConverter = $valueConverter;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Generic\Json\JsonConverter
+	 */
+	public function getValueConverter()
+	{
+		if ($this->valueConverter === null) {
+			$this->valueConverter = new \Rbs\Generic\Json\JsonConverter();
+		}
+		return $this->valueConverter;
 	}
 
 	/**
@@ -302,8 +328,7 @@ class Import
 			}
 			else
 			{
-				$pc = new \Change\Http\Rest\ValueConverter(null, null);
-				$property->setValue($document, $pc->toPropertyValue($value, $property->getType()));
+				$property->setValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
 			}
 		}
 
@@ -356,8 +381,7 @@ class Import
 				continue;
 			}
 			$value = $jsonLCID[$propertyName];
-			$pc = new \Change\Http\Rest\ValueConverter(null, null);
-			$property->setLocalizedValue($document, $pc->toPropertyValue($value, $property->getType()));
+			$property->setLocalizedValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
 		}
 	}
 } 

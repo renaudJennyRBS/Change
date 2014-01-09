@@ -112,7 +112,6 @@ class GetModelInformation
 				{
 					$infos['documentType'] = $property->getDocumentType();
 				}
-				$infos['indexed'] = $property->getIndexed();
 				$infos['localized'] = $property->getLocalized();
 				$infos['stateless'] = $property->getStateless();
 				$infos['required'] = $property->getRequired();

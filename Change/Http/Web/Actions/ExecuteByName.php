@@ -2,7 +2,6 @@
 namespace Change\Http\Web\Actions;
 
 use Change\Http\Web\Event;
-use Zend\Authentication\Storage\Session;
 use Zend\Http\Response as HttpResponse;
 
 /**

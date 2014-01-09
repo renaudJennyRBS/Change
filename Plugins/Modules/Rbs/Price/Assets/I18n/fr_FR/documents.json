@@ -68,6 +68,9 @@
 	"price_priority":{
 		"message":"priorité"
 	},
+	"price_targetid":{
+		"message":"cible"
+	},
 	"price_bovalue":{
 		"message":"prix"
 	},

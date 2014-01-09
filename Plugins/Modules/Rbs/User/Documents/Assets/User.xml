@@ -16,9 +16,9 @@
 
 		<property name="label" stateless="true" />
 
-		<property name="passwordHash" type="String" indexed="none" />
+		<property name="passwordHash" type="String" />
 
-		<property name="hashMethod" type="String" indexed="none" default-value="bcrypt">
+		<property name="hashMethod" type="String" default-value="bcrypt">
 			<dboptions length="20" />
 		</property>
 

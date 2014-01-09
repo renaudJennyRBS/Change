@@ -294,19 +294,19 @@ class Logging
 	}
 
 	/**
-	 * @param integer $errno
-	 * @param string $errstr
-	 * @param string $errfile
-	 * @param integer $errline
-	 * @param array $errcontext
+	 * @param integer $errNo
+	 * @param string $errStr
+	 * @param string $errFile
+	 * @param integer $errLine
+	 * @param array $errContext
 	 * @return bool
-	 * @throws Exception
+	 * @throws \Exception
 	 */
-	public function defaultErrorHandler($errno, $errstr, $errfile, $errline, $errcontext)
+	public function defaultErrorHandler($errNo, $errStr, $errFile, $errLine, $errContext)
 	{
-		$message = '[' . $this->errorType[$errno] . '] ' . $errstr;
-		$extra = array('errno' => $errno, 'file' => $errfile, 'line' => $errline);
-		switch ($errno)
+		$message = '[' . $this->errorType[$errNo] . '] ' . $errStr;
+		$extra = array('errno' => $errNo, 'file' => $errFile, 'line' => $errLine);
+		switch ($errNo)
 		{
 			case E_USER_ERROR :
 			case E_USER_WARNING :
@@ -316,13 +316,12 @@ class Logging
 			default :
 				if ($this->getConfiguration()->getEntry('Change/Application/development-mode'))
 				{
-					if ($errno === E_USER_DEPRECATED)
+					if ($errNo === E_USER_DEPRECATED)
 					{
-						$this->phperror('[E_USER_DEPRECATED] ' . $errstr);
-						// TODO old class
-						$this->phperror(\f_util_ProcessUtils::getBackTrace(false, 5));
+						$this->phperror('[E_USER_DEPRECATED] ' . $errStr);
+						// TODO Add backTrace
 					}
-					else if ($errno & error_reporting())
+					else if ($errNo & error_reporting())
 					{
 						$this->phperror($message);
 					}

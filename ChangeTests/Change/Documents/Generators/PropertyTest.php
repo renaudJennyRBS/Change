@@ -19,8 +19,6 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(0, $p->getComputedMinOccurs());
 		$this->assertEquals(100, $p->getComputedMaxOccurs());
 		$this->assertNull($p->getDocumentType());
-		$this->assertNull($p->getIndexed());
-		$this->assertNull($p->getCascadeDelete());
 		$this->assertNull($p->getDefaultValue());
 		$this->assertNull($p->getDefaultPhpValue());
 		$this->assertNull($p->getRequired());
@@ -174,52 +172,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->initialize($doc->documentElement);
 		$this->assertEquals('Change_Tests_Basic', $p->getDocumentType());
 	}
-		
-	public function testIndexedAttribute()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" indexed="none" />');
-		$model = new Model('vendor', 'module', 'name');
-		$p = new Property($model);
-		$p->initialize($doc->documentElement);
-		$this->assertEquals('none', $p->getIndexed());
-		
-		$doc->loadXML('<property name="test" indexed="string"/>');
-		
-		try
-		{
-			$p = new Property($model);
-			$p->initialize($doc->documentElement);
-			$this->fail('Invalid indexed attribute value');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertStringStartsWith('Invalid indexed attribute value', $e->getMessage());
-		}		
-	}
 
-	public function testCascadeDeleteAttribute()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" cascade-delete="true" />');
-		$model = new Model('vendor', 'module', 'name');
-		$p = new Property($model);
-		$p->initialize($doc->documentElement);
-		$this->assertEquals(true, $p->getCascadeDelete());
-		
-		$doc->loadXML('<property name="test" cascade-delete="True" />');
-		try
-		{
-			$p = new Property($model);
-			$p->initialize($doc->documentElement);
-			$this->fail('Invalid cascade-delete attribute value');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertStringStartsWith('Invalid cascade-delete attribute value', $e->getMessage());
-		}	
-	}
-	
 	public function testDefaultValueAttribute()
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
@@ -416,7 +369,6 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertTrue($p->getRequired());
-		$ca = $p->getConstraintArray();
 		$this->assertEquals(array('maxSize' => array('max' => 255)), $p->getConstraintArray());
 		
 		$p = new Property($model, 'refLCID');

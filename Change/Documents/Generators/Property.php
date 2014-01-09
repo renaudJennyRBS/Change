@@ -48,16 +48,6 @@ class Property
 	protected $documentType;
 
 	/**
-	 * @var string description|property|none
-	 */
-	protected $indexed;
-
-	/**
-	 * @var boolean
-	 */
-	protected $cascadeDelete;
-
-	/**
 	 * @var string
 	 */
 	protected $defaultValue;
@@ -187,26 +177,6 @@ class Property
 					}
 					$this->documentType = $value;
 					break;
-				case "indexed":
-					if ($value == 'description' || $value == 'property' || $value == 'none')
-					{
-						$this->indexed = $value;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "cascade-delete":
-					if ($value === 'true' || $value === 'false')
-					{
-						$this->cascadeDelete = ($value === 'true');
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
 				case "default-value":
 					$this->defaultValue = $value;
 					break;
@@ -265,7 +235,7 @@ class Property
 			throw new \RuntimeException('Property name can not be null', 54024);
 		}
 
-		if ($this->stateless && ($this->cascadeDelete || $this->hasCorrection))
+		if ($this->stateless && $this->hasCorrection)
 		{
 			throw new \RuntimeException('Property stateless can not be applicable', 54024);
 		}
@@ -407,22 +377,6 @@ class Property
 	public function getDocumentType()
 	{
 		return $this->documentType;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getIndexed()
-	{
-		return $this->indexed;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getCascadeDelete()
-	{
-		return $this->cascadeDelete;
 	}
 
 	/**

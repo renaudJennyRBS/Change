@@ -15,7 +15,8 @@
 		</property>
 		<property name="sitemapGenerateForWebsites" type="JSON" />
 		<!-- http://www.webrankinfo.com/outils/robots/faq_16_119.htm
-		<property name="robotsMeta" type="String" default-value="index,follow" indexed="none">
+		<property name="robotsMeta" type="String" default-value="index,follow">
 			<dboptions length="20"/>
 		</property>-->
-	</properties></document>
+	</properties>
+</document>
