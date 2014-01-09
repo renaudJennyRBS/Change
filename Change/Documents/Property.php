@@ -67,11 +67,6 @@ class Property
 	protected $maxOccurs = 100;
 
 	/**
-	 * @var boolean
-	 */
-	protected $cascadeDelete = false;
-
-	/**
 	 * @var mixed|null
 	 */
 	protected $defaultValue;
@@ -90,11 +85,6 @@ class Property
 	 * @var boolean
 	 */
 	protected $hasCorrection = false;
-
-	/**
-	 * @var string
-	 */
-	protected $indexed = 'none'; //none, property, description
 
 	/**
 	 * @var string
@@ -169,14 +159,6 @@ class Property
 	/**
 	 * @return boolean
 	 */
-	public function getCascadeDelete()
-	{
-		return $this->cascadeDelete;
-	}
-
-	/**
-	 * @return boolean
-	 */
 	public function getLocalized()
 	{
 		return $this->localized;
@@ -189,23 +171,6 @@ class Property
 	{
 		return $this->hasCorrection;
 	}
-	
-	/**
-	 * @return string [none], property, description
-	 */
-	public function getIndexed()
-	{
-		return $this->indexed;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function isIndexed()
-	{
-		return $this->indexed != 'none';
-	}
-
 
 	/**
 	 * Indicates whether the document property accepts all types of document.
@@ -463,26 +428,6 @@ class Property
 		$this->documentType = $documentType;
 		return $this;
 	}
-	
-	/**
-	 * @param boolean $cascadeDelete
-	 * @return $this
-	 */
-	public function setCascadeDelete($cascadeDelete)
-	{
-		$this->cascadeDelete = $cascadeDelete;
-		return $this;
-	}
-
-	/**
-	 * @param string $indexed
-	 * @return $this
-	 */
-	public function setIndexed($indexed)
-	{
-		$this->indexed = $indexed;
-		return $this;
-	}
 
 	/**
 	 * @param boolean $bool
@@ -503,17 +448,7 @@ class Property
 		$this->hasCorrection = $bool ? true : false;
 		return $this;
 	}
-	
-	/**
-	 * @param mixed $treeNode
-	 * @return $this
-	 */
-	public function setTreeNode($treeNode)
-	{
-		$this->treeNode = $treeNode;
-		return $this;
-	}
-	
+
 	/**
 	 * @api
 	 * @return $this

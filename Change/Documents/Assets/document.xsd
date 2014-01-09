@@ -62,14 +62,6 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="indexTarget">
-		<xs:restriction base="xs:NMTOKEN">
-			<xs:enumeration value="none"/>
-			<xs:enumeration value="property"/>
-			<xs:enumeration value="description"/>
-		</xs:restriction>
-	</xs:simpleType>
-
 	<xs:complexType name="dbOptions">
 		<xs:attribute name="length" use="optional" type="xs:integer" default="255">
 			<xs:annotation>
@@ -176,7 +168,6 @@
 									<xs:attribute name="name" use="required" type="xs:string"/>
 									<xs:attribute name="type" use="optional" type="propertyType" default="String"/>
 									<xs:attribute name="document-type" type="documentModel"/>
-									<xs:attribute name="indexed" type="indexTarget" default="none"/>
 									<xs:attribute name="default-value" type="xs:string"/>
 									<xs:attribute name="required" type="xs:boolean" default="true"/>
 									<xs:attribute name="min-occurs" type="xs:int" default="2"/>
