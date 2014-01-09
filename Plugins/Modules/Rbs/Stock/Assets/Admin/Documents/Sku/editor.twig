@@ -22,9 +22,7 @@
 		</rbs-field-text>
 
 
-		<rbs-field-boolean
-				property="virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'virtual'), ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_virtual_help') }}</span>
+		<rbs-field-boolean property="virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'virtual'), ['ucf']) }}">
 		</rbs-field-boolean>
 
 		<rbs-field ng-hide="document.virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'physicalProperties'), ['ucf']) }}">

@@ -41,11 +41,6 @@
 				<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" >{{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }} <i class="icon-circle-arrow-right"></i></a>
 			</span>
 		</rbs-field-boolean>
-
-		<p>
-			{{ i18n('m.rbs.catalog.documents.product_publication_help', ['ucf'], {'linkStart':'<a href="(= document|rbsURL =)?section=publication">', 'linkEnd':'</a>'}) | raw }}
-		</p>
-
 	</fieldset>
 
 	<fieldset data-ng-show="section=='attributes'"

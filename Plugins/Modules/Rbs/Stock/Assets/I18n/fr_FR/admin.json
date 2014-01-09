@@ -88,8 +88,5 @@
 	},
 	"sku_threshold_remove":{
 		"message":"Supprimer"
-	},
-	"sku_virtual_help":{
-		"message":"Ne possède pas de propriétés physiques, et ne nécessite pas de livraison."
 	}
 }
