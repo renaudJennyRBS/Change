@@ -2,7 +2,7 @@
 	<input class="form-control" type="number" ng-model="durationInterval" ng-disabled="disabled" ng-required="required"/>
 	<span class="input-group-addon contains-input">
 		<select class="form-control" ng-model="durationType"
-			ng-options="key as value for (key, value) in durations" ng-disabled="disabled">
+			ng-options="key as value for (key, value) in durations" ng-disabled="disabled" ng-required="required">
 			<option value="">{{ i18n('m.rbs.admin.admin.timeinterval_choose_type', ['ucf']) }}</option>
 		</select>
 	</span>
