@@ -109,12 +109,11 @@
 	"footerMiddle1" : {
 		"id" : "footerMiddle1",
 		"type" : "block",
-		"name" : "Rbs_Website_Menu",
+		"name":"Rbs_Store_WebStoreSelector",
 		"parameters" : {
-			"documentId" : null,
-			"maxLevel" : 1,
-			"templateName" : "menu-vertical.twig",
-			"showTitle" : true
+			"TTL" : 60,
+			"availableWebStoreIds" : [],
+			"templateName" : "webStoreSelector-vertical.twig"
 		}
 	},
 	"footerMiddle2" : {

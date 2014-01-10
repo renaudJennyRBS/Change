@@ -1,0 +1,40 @@
+{% if webStoreData|length > 1 or webStoreData[0].billingAreas|length > 1 %}
+	<form class="form-horizontal">
+		<fieldset data-rbs-store-web-store-selector-init="" data-web-store-data="{{ webStoreData|json_encode }}"
+			data-web-store-id="{{ parameters.webStoreId }}" data-billing-area-id="{{ parameters.billingAreaId }}">
+			<div class="form-group" data-ng-if="webStoreData.length > 1">
+				<label for="rbs-store-web-store" class="col-sm-4 col-md-3 control-label">
+					{{ i18n('m.rbs.store.front.web_store', ['ucf']) }}
+				</label>
+				<div class="col-sm-8 col-md-9">
+					<select id="rbs-store-web-store" data-ng-model="selection.webStoreId" class="form-control"
+						data-ng-options="webStore.id as webStore.title for webStore in webStoreData">
+					</select>
+				</div>
+			</div>
+
+			<div data-ng-repeat="webStore in webStoreData" data-ng-cloak="">
+				<div data-ng-show="webStore.billingAreas.length > 1">
+					<div class="form-group" data-ng-show="selection.webStoreId == webStore.id">
+						<label for="rbs-store-billing-area-(= webStore.id =)" class="col-sm-4 col-md-3 control-label">
+							{{ i18n('m.rbs.store.front.billing_area', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<select id="rbs-store-billing-area-(= webStore.id =)" data-ng-model="selection.billingAreaId"
+								class="form-control" data-ng-options="area.id as area.title for area in webStore.billingAreas">
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-8 col-md-9 col-sm-offset-4 col-md-offset-3">
+					<button class="btn btn-primary" type="button" data-ng-disabled="!canSubmit()" data-ng-click="submit()">
+						{{ i18n('m.rbs.store.front.validate', ['ucf']) }}
+					</button>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+{% endif %}
