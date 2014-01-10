@@ -22,6 +22,6 @@ abstract class BaseEventInformation extends \Change\Presentation\Blocks\Informat
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_contextual_urls', $ucf));
 		$this->addInformationMeta('templateName', Property::TYPE_STRING, false) // Default value should be set in final class.
-			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_template_name', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.generic.admin.block_template_name', $ucf));
 	}
 }
