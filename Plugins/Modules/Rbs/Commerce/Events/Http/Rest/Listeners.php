@@ -140,6 +140,23 @@ class Listeners implements ListenerAggregateInterface
 					(new \Rbs\Order\Http\Rest\Actions\ProductPriceInfo())->execute($event);
 				});
 			}
+			else if ($relativePath === 'rbs/order/orderRemainder')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Order\Http\Rest\Actions\OrderRemainder())->execute($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Order/Order/([0-9]+)/Shipments/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Order_Shipment');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Order\Http\Rest\ShipmentResult();
+					$cr->orderShipmentCollection($event);
+				});
+			}
 		}
 	}
 }

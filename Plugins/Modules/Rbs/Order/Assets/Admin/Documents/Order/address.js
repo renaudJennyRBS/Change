@@ -16,6 +16,9 @@
 			link : function (scope, element, attrs)
 			{
 				scope.addressId = "";
+				if (!angular.isObject(scope.address)){
+					scope.address = {};
+				}
 
 				scope.populateAddressFields = function(addressDoc) {
 					if(angular.isObject(addressDoc)){
@@ -37,6 +40,13 @@
 						});
 					}
 				}, true);
+
+				// If user select no option for addressFields, empty the address
+				scope.$watch('addressFields', function (addressFields){
+					if (!addressFields){
+						scope.address = {};
+					}
+				})
 			}
 		};
 	}

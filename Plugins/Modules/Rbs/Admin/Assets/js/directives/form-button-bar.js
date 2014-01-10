@@ -8,6 +8,7 @@
 
 		return {
 			restrict: 'E',
+			transclude: true,
 
 			templateUrl : 'Rbs/Admin/js/directives/form-button-bar.twig',
 			require : '^rbsDocumentEditor',

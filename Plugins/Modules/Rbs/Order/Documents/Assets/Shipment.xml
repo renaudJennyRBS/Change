@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
+	<properties>
+		<property name="label" type="String" stateless="true" />
+		<property name="code" type="String" />
+		<property name="orderId" type="DocumentId" document-type="Rbs_Order_Order"/>
+		<property name="prepared" type="Boolean" default-value="false" required="true"/>
+		<property name="parcelCode" type="String"/>
+		<property name="shippingModeCode" type="String"/>
+		<property name="trackingCode" type="String"/>
+		<property name="carrierStatus" type="String"/>
+		<property name="itemCount" type="Integer"/>
+		<property name="data" type="JSON" />
+		<property name="address" type="JSON" />
+	</properties>
+</document>

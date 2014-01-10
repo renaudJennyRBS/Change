@@ -38,7 +38,7 @@
 		<property name="thresholds" type="JSON" />
 		<property name="virtual" type="Boolean" default-value="false" />
 		<property name="physicalProperties" type="JSON" />
-		<property name="allowQuantitySplit" type="Boolean" default-value="false" />
+		<property name="allowQuantitySplit" type="Boolean" default-value="true" />
 		<property name="unlimitedInventory" type="Boolean" default-value="false" />
 		<property name="allowBackorders" type="Boolean" default-value="false" />
 	</properties>

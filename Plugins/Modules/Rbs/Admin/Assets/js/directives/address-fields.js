@@ -43,7 +43,9 @@
 				});
 
 				ngModel.$render = function ngModelRenderFn () {
-					scope.fieldValues = ngModel.$viewValue;
+					if (ngModel.$viewValue){
+						scope.fieldValues = ngModel.$viewValue;
+					}
 				};
 
 				scope.generateFieldsEditor = function (addressFields) {
@@ -76,6 +78,10 @@
 						}
 					}
 				};
+
+				scope.$watchCollection('fieldValues', function (fieldValues){
+					ngModel.$setViewValue(fieldValues);
+				});
 			}
 		};
 	}]);

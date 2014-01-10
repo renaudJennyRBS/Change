@@ -1,4 +1,4 @@
-<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}">
+<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}" ng-show="addressDocuments.length > 0">
 	<select class="form-control" ng-model="addressId">
 		<option value="">{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}</option>
 		<option ng-repeat="addressDoc in addressDocuments" ng-value="(=addressDoc.id=)">(=addressDoc.label=)</option>

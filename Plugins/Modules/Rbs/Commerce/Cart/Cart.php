@@ -84,7 +84,7 @@ class Cart implements \Serializable
 	protected $lines = array();
 
 	/**
-	 * @var \Rbs\Geo\Interfaces\Address
+	 * @var \Rbs\Geo\Address\AddressInterface
 	 */
 	protected $address;
 

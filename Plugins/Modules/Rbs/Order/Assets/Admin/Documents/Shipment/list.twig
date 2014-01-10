@@ -1,0 +1,35 @@
+<div class="row">
+
+	<rbs-workspace-config menu="Rbs_Order">
+		<rbs-breadcrumb-config>
+			<location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.module_name', ['ucf']) }}</location>
+			<location href="(= 'Rbs_Order_Shipment'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.shipment_list', ['ucf']) }}</location>
+		</rbs-breadcrumb-config>
+	</rbs-workspace-config>
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<page-header title="{{ i18nAttr('m.rbs.order.admin.shipment_list', ['ucf']) }}"></page-header>
+		<search-filters model="Rbs_Order_Shipment" filter-query="query" text-search="textSearch"></search-filters>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Order_Shipment' | rbsURL:'new' =)">{{ i18n('m.rbs.order.admin.shipment_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsOrderShipment"
+				model="Rbs_Order_Shipment" filter-query="query">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="prepared">
+				(= doc.prepared | rbsBoolean =)
+			</rbs-column>
+			<rbs-column name="shippingModeCode"></rbs-column>
+			<rbs-column name="trackingCode"></rbs-column>
+			<rbs-column name="carrierStatus"></rbs-column>
+			<rbs-column name="itemCount"></rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

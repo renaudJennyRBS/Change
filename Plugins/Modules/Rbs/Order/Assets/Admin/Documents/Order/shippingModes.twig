@@ -2,12 +2,35 @@
 	<tr>
 		<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
 		<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
-		<th>&nbsp;</th>
+		<th>{{ i18n('m.rbs.order.admin.order_shipping_status', ['ucf']) }}</th>
+		<th>{{ i18n('m.rbs.order.admin.order_shipping_actions', ['ucf']) }}</th>
 	</tr>
 	<tr ng-repeat="shipping in shippingData" ng-show="shipping.lines.length > 0">
 		<td>(=shippingDetails[shipping.id].label=)</td>
 		<td>(=shipping.lines.join(', ')=)</td>
-		<td><a class="icon-envelope" title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="editShippingAddress(shipping.id)"></a></td>
+		<td ng-switch="shippingDetails[shipping.id].status">
+			<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_no_shipment', ['ucf']) }}</span>
+			<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_partially_sent', ['ucf']) }}</span>
+			<span ng-switch-when="sent">{{ i18n('m.rbs.order.admin.order_sent', ['ucf']) }}</span>
+			<span ng-switch-default="">{{ i18n('m.rbs.order.admin.order_unavailable_shipment_status', ['ucf']) }}</span>
+		</td>
+		<td>
+			<a ng-if="orderId > 0 && shippingDetails[shipping.id].status &&
+				(shippingDetails[shipping.id].status == 'noShipment' || shippingDetails[shipping.id].status == 'remain') "
+				href="" ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)">
+				<i class="icon-archive"></i>
+				<span ng-switch="shippingDetails[shipping.id].status">
+					<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_send', ['ucf']) }},</span>
+					<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_send_the_remain', ['ucf']) }},</span>
+					<span ng-switch-default=""></span>
+				</span>
+			</a>
+			<a title="{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf']) }}" ng-click="editShippingAddress(shipping.id)">
+				<i class="icon-envelope"></i>
+				<span ng-if="!addressDefined[shipping.id]">{{ i18n('m.rbs.order.admin.order_specify_shipping_address', ['ucf']) }}</span>
+				<span ng-if="addressDefined[shipping.id]">{{ i18n('m.rbs.order.admin.order_modify_shipping_address', ['ucf']) }}</span>
+			</a>
+		</td>
 	</tr>
 </table>
 <div ng-show="showShippingAddressUI">

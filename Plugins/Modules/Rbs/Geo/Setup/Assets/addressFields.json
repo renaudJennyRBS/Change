@@ -10,6 +10,13 @@
 			{"code":"locality", "title":"Commune", "required":true},
 			{"code":"cedex", "title":"Cedex", "required":false},
 			{"code":"countryCode", "title":"Pays", "required":true, "collectionCode":"Rbs_Geo_Collection_Countries", "defaultValue":"FR"}
+		],
+		"fieldsLayoutData":[
+			["destinataire"],
+			["destinataireOpt"],
+			["voie"],
+			["zipCode", "locality", "cedex"],
+			["country"]
 		]
 	}
 ]

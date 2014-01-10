@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function rbsOrderOrderEditor (Utils, REST)
+	function rbsOrderOrderEditor (Utils, REST, i18n, NotificationCenter, ErrorFormatter)
 	{
 		return {
 			restrict : 'A',
@@ -86,6 +86,17 @@
 					{
 						scope.document.addressData = {};
 					}
+					if (!scope.isNew()){
+						REST.call(scope.document.getLink('shipments'), {
+							column: ['code', 'shippingModeCode', 'trackingCode', 'carrierStatus']
+						}).then(function (data){
+							scope.shipments = data.resources;
+						}, function (error){
+								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.order_invalid_query_order_shipments | ucf'),
+									ErrorFormatter.format(error));
+								console.error(error);
+							});
+					}
 				};
 
 				// This watches for modifications in the user doc in order to fill the address list
@@ -112,7 +123,8 @@
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST' ];
+	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n',
+		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
 
 })();
