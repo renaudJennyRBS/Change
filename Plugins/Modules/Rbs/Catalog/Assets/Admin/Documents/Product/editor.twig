@@ -31,15 +31,10 @@
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}"
 				allow-creation="true"
 				allow-edition="true">
-			<span class="help-block">{{ i18n('m.rbs.catalog.admin.product_visuals_help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-boolean property="categorizable"
 		                   label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'categorizable'), ['ucf']) }}">
-			<span class="help-block">
-				<div>{{ i18n('m.rbs.catalog.admin.product_categorizable_help', ['ucf']) }}</div>
-				<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" >{{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }} <i class="icon-circle-arrow-right"></i></a>
-			</span>
 		</rbs-field-boolean>
 	</fieldset>
 
