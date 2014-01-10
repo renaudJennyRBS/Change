@@ -83,6 +83,9 @@
 	"manage_functions":{
 		"message":"gestion des fonctions"
 	},
+	"inherited_from":{
+		"message":"hérité de"
+	},
 	"show_functions_code":{
 		"message":"afficher le code des fonctions"
 	},

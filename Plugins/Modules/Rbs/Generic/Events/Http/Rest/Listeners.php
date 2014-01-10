@@ -191,6 +191,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Website\Http\Rest\Actions\PagesForFunction())->execute($event);
 					});
 					break;
+				case 'Rbs/Website/InheritedFunctions' :
+					$event->setAction(function (Event $event)
+					{
+						(new \Rbs\Website\Http\Rest\Actions\InheritedFunctions())->execute($event);
+					});
+					break;
 				case 'Rbs/ModelsInfo' :
 					$event->setAction(function (Event $event)
 					{

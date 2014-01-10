@@ -53,6 +53,26 @@
 							spf.label = scope.getFunctionLabel(spf.functionCode);
 						});
 					});
+
+					return $q.all([ p, loadInheritedFunctions(section) ]);
+				}
+
+
+				/**
+				 * Loads the inherited Functions for the given Section (the Functions implemented on the ancestors
+				 * of the Section).
+				 *
+				 * This method populates the following objects in the scope:
+				 * - inheritedFunctions : array of all the inherited Functions
+				 *
+				 * @param section
+				 */
+				function loadInheritedFunctions (section)
+				{
+					var p = REST.call(REST.getBaseUrl('Rbs/Website/InheritedFunctions'), {'section' : section.id});
+					p.then(function (functions) {
+						scope.inheritedFunctions = functions;
+					});
 					return p;
 				}
 
@@ -106,7 +126,8 @@
 					});
 					promises.push(p);
 
-					// When all the pages are loaded, we build an Array that contains all the pages.
+					// When all the pages are loaded (Static and Functional),
+					// we build an Array that contains all the pages.
 					p = $q.all(promises);
 					p.then(function () {
 						scope.allPages = [];
@@ -335,6 +356,7 @@
 				scope.sectionPageFunctionList = [];
 				scope.unimplementedFunctions = [];
 				scope.allFunctions = [];
+				scope.inheritedFunctions = {};
 				scope.newFunction = null;
 				scope.showAllPages = false;
 
@@ -364,6 +386,19 @@
 					{
 						scope.newFunction = func;
 					});
+				};
+
+
+				scope.hasInheritedFunctions = function ()
+				{
+					var count = 0;
+					// Here we check if the object is empty or not.
+					// (angular.forEach does the hasOwnProperty() check).
+					angular.forEach(scope.inheritedFunctions, function ()
+					{
+						count++;
+					});
+					return count > 0;
 				};
 
 
