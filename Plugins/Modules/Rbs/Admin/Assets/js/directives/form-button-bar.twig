@@ -15,6 +15,7 @@
 	</p>
 
 	<p>
+		<div class="pull-right" ng-transclude=""></div>
 		<button ng-if="! navigationContext" disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="goBack($event)" ng-disabled="! canGoBack()">
 			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.admin.btnGoBack', ['ucf']) | raw }}
 		</button>
@@ -23,7 +24,6 @@
 			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.admin.btn_back_to', ['ucf'], {'label': '(= navigationContext.label =)'}) | raw }}
 		</button>
 
-		<div class="pull-right" ng-transclude=""></div>
 		<button disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="confirmReset($event)" ng-disabled="isUnchanged()" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
 		<button disabled="disabled" class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isUnchanged(), 'btn-danger':saveProgress.error}" data-role="save" type="submit"
 		        ng-disabled="form.$invalid || isUnchanged() || saveProgress.running"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}</button>

@@ -221,14 +221,15 @@
 							setShipmentLines(data.remainLines);
 						}
 						else {
-							sortShipmentLinesFromDocumentData();
+							//sort shipmentLines from documentData;
+							dispatchOrderLines();
 						}
 						if (!scope.document.address || !scope.document.address.address || !scope.document.address.addressFields)
 						{
 							scope.document.address = {
 								address: data.address.address,
 								addressFields: data.address.addressFields
-							}
+							};
 						}
 					}, function (error){
 						refreshOrderRemainderLocked = false;
@@ -253,17 +254,13 @@
 					refreshOrderRemainderLocked = false;
 				}
 
-				function sortShipmentLinesFromDocumentData(){
-					//get shipment lines from document data
+				function dispatchOrderLines(){
+					//get shipment lines
 					//sort them in three arrays :
 					//  shipment lines : line already in shipment and present in order remainder
 					//  aside lines : line not in shipment but in order remainder
 					//  new lines : line in shipment but not in order remainder (that mean new lines)
 
-					dispatchOrderLines();
-				}
-
-				function dispatchOrderLines(){
 					angular.forEach(scope.data.remainLines, function (remainderLine){
 						var line = getShipmentLineFromSKU(remainderLine.SKU);
 						if (line){
@@ -283,6 +280,8 @@
 				function dispatchDocumentDataLines(){
 					var promises = [];
 
+					//FIXME because it's each line is get asynchronously this function could disordering the shipment array
+					//FIXME so this will mark document as modified
 					angular.forEach(scope.document.data, function (documentLine){
 						if (!skuIsInArray(documentLine.SKU, scope.data.remainLines)){
 							//get product from SKU
@@ -304,7 +303,7 @@
 									designation: data.resources[0].label,
 									codeSKU: data.resources[0].sku.code,
 									allowQuantitySplit: true,
-									quantity: quantity,
+									quantityToShip: quantity,
 									SKU: sku,
 									newLine: true
 								});

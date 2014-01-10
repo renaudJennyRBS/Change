@@ -30,36 +30,15 @@ class OrderRemainder
 
 				/* @var $order \Rbs\Order\Documents\Order */
 				$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($orderId);
-				$skuData = [];
-				$skuOrderQuantity = []; //keep original quantity information to seek if a shipment is already done
-				foreach ($order->getLines() as $line)
+				$shippingData = $order->getShippingData();
+				$linesData = $order->getLinesData();
+
+				$skuData = $this->getSkuDataFromLines($linesData, $shippingData);
+				//keep original quantity information to seek if a shipment is already done
+				$skuOrderQuantity = [];
+				foreach ($skuData as $codeSKU => $line)
 				{
-					$options = $line->getOptions();
-					$lineShippingModeId = isset($options['shippingMode']) ? $options['shippingMode'] : null;
-					foreach ($line->getItems() as $item)
-					{
-						$skuData[$item->getCodeSKU()] = [
-							'quantity' => $item->getQuantity() * $line->getQuantity(),
-							'designation' => $line->getDesignation()
-						];
-						$skuOrderQuantity[$item->getCodeSKU()] = $item->getQuantity() * $line->getQuantity();
-						if ($lineShippingModeId)
-						{
-							$skuData[$item->getCodeSKU()]['shippingModeId'] = $lineShippingModeId;
-							//search shipping address
-							foreach ($order->getShippingData() as $shippingData)
-							{
-								if (in_array($options['lineNumber'], $shippingData['lines']))
-								{
-									$skuData[$item->getCodeSKU()]['address'] =  [
-										'address' => isset($shippingData['address']) ? $shippingData['address'] : new \stdClass(),
-										'addressFields' => isset($shippingData['addressFields']) ? $shippingData['addressFields'] : 0
-									];
-									break;
-								}
-							}
-						}
-					}
+					$skuOrderQuantity[$codeSKU] = $line['quantity'];
 				}
 
 				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
@@ -186,5 +165,45 @@ class OrderRemainder
 		$dqb = $documentManager->getNewQuery('Rbs_Stock_Sku');
 		$dqb->andPredicates($dqb->eq('code', $code));
 		return $dqb->getFirstDocument();
+	}
+
+	/**
+	 * @param array $linesData
+	 * @param array $shippingData
+	 * @return array
+	 */
+	protected function getSkuDataFromLines($linesData, $shippingData)
+	{
+		$skuData = [];
+		foreach ($linesData as $line)
+		{
+			//TODO use lineKey instead of index after order refactoring
+			$index = $line['index'];
+			foreach ($line['items'] as $item)
+			{
+				$codeSKU = $item['codeSKU'];
+				$skuData[$codeSKU] = [
+					'quantity' => $item['reservationQuantity'] * $line['quantity'],
+					'designation' => $line['designation']
+				];
+
+				foreach ($shippingData as $shippingInfo)
+				{
+					if (in_array($index, $shippingInfo['lines']))
+					{
+						$skuData[$codeSKU]['shippingModeId'] = $shippingInfo['id'];
+						$address = isset($shippingInfo['address']) ? $shippingInfo['address'] : new \stdClass();
+						$addressFields = isset($shippingInfo['addressFields']) ? $shippingInfo['addressFields'] : 0;
+						$skuData[$codeSKU]['address'] =  [
+							'address' => $address,
+							'addressFields' => $addressFields
+						];
+						break;
+					}
+				}
+			}
+		}
+
+		return $skuData;
 	}
 }
