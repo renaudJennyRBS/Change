@@ -142,5 +142,47 @@
   },
   "lines_included":{
     "message":"affected rows"
+  },
+  "shipping_address":{
+    "message":"adresse de livraison"
+  },
+  "use_postal_address":{
+    "message":"utiliser l'adresse postale renseignée plus haut"
+  },
+  "use_another_address":{
+    "message":"choisir une autre adresse"
+  },
+  "coupon_code":{
+    "message":"code promotionnel"
+  },
+  "type_code":{
+    "message":"saisissez votre code"
+  },
+  "ok":{
+    "message":"OK"
+  },
+  "used_coupon_code":{
+    "message":"code coupon appliqué"
+  },
+  "summary_of_amounts":{
+    "message":"récapitulatif des montants"
+  },
+  "total_with_tax":{
+    "message":"total TTC"
+  },
+  "amount_to_pay":{
+    "message":"net à payer"
+  },
+  "payment_connector":{
+    "message":"moyen de paiement"
+  },
+  "select_payment_connector":{
+    "message":"Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser."
+  },
+  "payment_instructions":{
+    "message":"instructions de paiement"
+  },
+  "confirm_order":{
+    "message":"confirmer la commande"
   }
 }

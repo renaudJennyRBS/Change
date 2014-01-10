@@ -3,13 +3,13 @@
 		"message":"section synchronisée"
 	},
 	"variantgroup_rootproduct":{
-		"message":"produit à decliner"
+		"message":"produit parent"
 	},
 	"variantgroup_groupattribute":{
 		"message":"jeu d'attributs"
 	},
 	"variantgroup_axesattributes":{
-		"message":"Attributs à utiliser pour les axes"
+		"message":"Attributs variables"
 	},
 	"variantgroup_othersattributes":{
 		"message":"Autres attributs"

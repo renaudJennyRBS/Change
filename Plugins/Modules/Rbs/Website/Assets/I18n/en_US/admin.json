@@ -105,7 +105,16 @@
     "message":"display the pages that don't have the required blocks for the function"
   },
   "not_ready_pages_warning":{
-    "message":"attention: the following pages don't have the blocks to perform the function <strong>$FUNCTION$<\/strong>"
+    "message":"<span class=\"label label-warning\">Attention<\/span> Les pages suivantes ne disposent pas des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>."
+  },
+  "ready_pages_message":{
+    "message":"les pages suivantes disposent des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>."
+  },
+  "no_ready_pages_message":{
+    "message":"aucune page ne dispose des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>."
+  },
+  "tip":{
+    "message":"astuce"
   },
   "already_used":{
     "message":"already used"
@@ -127,6 +136,9 @@
   },
   "index_page":{
     "message":"index page"
+  },
+  "dont_find_page_create_one":{
+    "message":"Vous ne trouvez pas de page adéquate ? Ajoutez-en une !"
   },
   "remove_function_in_section":{
     "message":"remove the function of this section"

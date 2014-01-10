@@ -22,5 +22,11 @@
   },
   "store_select_orderprocess":{
     "message":"select a checkout process"
+  },
+  "web_store_selector_label":{
+    "message":"sélecteur de boutique et zone de tarification"
+  },
+  "web_store_selector_available_web_stores":{
+    "message":"boutiques disponibles"
   }
 }
