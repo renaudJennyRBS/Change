@@ -63,6 +63,6 @@
     "message":"select the adress format"
   },
   "address_owner_select":{
-    "message":"sélectionner le propriétaire d'adresse"
+    "message":"select the address owner"
   }
 }

@@ -39,7 +39,7 @@ class Collections
 		if ($applicationServices)
 		{
 			$i18n = $applicationServices->getI18nManager();
-			$types = array(Attribute::TYPE_CODE, Attribute::TYPE_INTEGER,
+			$types = array(Attribute::TYPE_STRING, Attribute::TYPE_INTEGER,
 				Attribute::TYPE_DOCUMENTID, Attribute::TYPE_DOCUMENTIDARRAY, Attribute::TYPE_BOOLEAN,
 				Attribute::TYPE_FLOAT, Attribute::TYPE_DATETIME,
 				Attribute::TYPE_TEXT, Attribute::TYPE_GROUP, Attribute::TYPE_PROPERTY);

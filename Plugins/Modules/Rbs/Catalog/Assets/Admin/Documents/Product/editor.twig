@@ -61,7 +61,7 @@
 						</div>
 						<div ng-if="!attributeItemDef.collectionCode">
 							<div data-ng-switch="attributeItemDef.type">
-								<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
 								<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></rbs-switch>
 								<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></rbs-date-selector>
 								<div class="row" data-ng-switch-when="Integer">
@@ -110,7 +110,7 @@
 					</div>
 					<div ng-if="!attributeDef.collectionCode">
 						<div data-ng-switch="attributeDef.type">
-							<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 							<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></rbs-switch>
 							<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></rbs-date-selector>
 							<div class="row" data-ng-switch-when="Integer">

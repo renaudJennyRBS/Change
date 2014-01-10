@@ -15,7 +15,7 @@
     "message":"on total value"
   },
   "tax_cascading_help":{
-    "message":"When this option is enabled, the tax calculation is done on the Excl. VAT value plus previously calculated taxes."
+    "message":"When this option is enabled, the tax calculation is done on the price Excl. VAT plus all the taxes applied to that point."
   },
   "tax_rounding_help":{
     "message":"Determines when the tax amount shall be rounded (on the shopping carts, orders, invoices...)"

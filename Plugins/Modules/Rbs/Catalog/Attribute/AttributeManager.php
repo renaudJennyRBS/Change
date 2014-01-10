@@ -144,7 +144,7 @@ class AttributeManager
 				case Attribute::TYPE_FLOAT:
 					$val['value'] = $row['float_value'];
 					break;
-				case Attribute::TYPE_CODE:
+				case Attribute::TYPE_STRING:
 					$val['value'] = $row['string_value'];
 					break;
 				case Attribute::TYPE_TEXT:
@@ -281,7 +281,7 @@ class AttributeManager
 				case Attribute::TYPE_DATETIME:
 					$result[2] = is_string($value) ? new \DateTime($value) : $value;
 					break;
-				case Attribute::TYPE_CODE:
+				case Attribute::TYPE_STRING:
 					$result[3] = $value;
 					break;
 				case Attribute::TYPE_TEXT:
@@ -484,7 +484,7 @@ class AttributeManager
 					$definition['documentType'] = ($property->getDocumentType()) ? $property->getDocumentType() : '';
 					break;
 				case \Change\Documents\Property::TYPE_STRING :
-					$definition['type'] = Attribute::TYPE_CODE;
+					$definition['type'] = Attribute::TYPE_STRING;
 					break;
 				case \Change\Documents\Property::TYPE_BOOLEAN :
 					$definition['type'] = Attribute::TYPE_BOOLEAN;
@@ -530,13 +530,13 @@ class AttributeManager
 			{
 				$definition['defaultValue'] = (new \DateTime($dv))->format(\DateTime::ISO8601);
 			}
-			elseif ($vt === Attribute::TYPE_CODE)
+			elseif ($vt === Attribute::TYPE_STRING)
 			{
 				$definition['defaultValue'] = $dv;
 			}
 		}
 
-		if (in_array($vt, array(Attribute::TYPE_INTEGER, Attribute::TYPE_CODE, Attribute::TYPE_DOCUMENTID)) && $attribute->getCollectionCode())
+		if (in_array($vt, array(Attribute::TYPE_INTEGER, Attribute::TYPE_STRING, Attribute::TYPE_DOCUMENTID)) && $attribute->getCollectionCode())
 		{
 			$definition['values'] = $this->getCollectionValues($attribute);
 			if (is_array($definition['values']))
@@ -874,7 +874,7 @@ class AttributeManager
 			case \Change\Documents\Property::TYPE_DOCUMENTARRAY :
 				return \Rbs\Catalog\Documents\Attribute::TYPE_DOCUMENTIDARRAY;
 			case \Change\Documents\Property::TYPE_STRING :
-				return \Rbs\Catalog\Documents\Attribute::TYPE_CODE;
+				return \Rbs\Catalog\Documents\Attribute::TYPE_STRING;
 			case \Change\Documents\Property::TYPE_BOOLEAN :
 				return \Rbs\Catalog\Documents\Attribute::TYPE_BOOLEAN;
 			case \Change\Documents\Property::TYPE_INTEGER :

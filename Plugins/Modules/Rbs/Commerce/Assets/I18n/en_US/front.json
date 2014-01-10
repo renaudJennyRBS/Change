@@ -81,16 +81,16 @@
     "message":"actions"
   },
   "accept_terms_and_conditions":{
-    "message":"Avant de passer ma commande, je reconnais avoir lu et compris les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$."
+    "message":"I've read and agreed on $LINK_OPEN$Terms & Conditions$LINK_CLOSE$."
   },
   "proceed_to_checkout":{
-    "message":"passer commande"
+    "message":"proceed to checkout"
   },
   "process_step_cart":{
     "message":"shopping cart"
   },
   "process_step_personal_information":{
-    "message":"informations personnelles"
+    "message":"personnal informations"
   },
   "process_step_shipping":{
     "message":"delivery"
@@ -102,22 +102,22 @@
     "message":"confirmation"
   },
   "already_customer":{
-    "message":"vous êtes déjà client"
+    "message":"registered customer"
   },
   "new_customer":{
     "message":"you are new customer"
   },
   "are_you_really":{
-    "message":"êtes-vous bien $NAME$ ?"
+    "message":"are you $NAME$?"
   },
   "please_log_in_again":{
-    "message":"Pour des raisons de sécurité, merci de vous ré-authentifier."
+    "message":"For security reasons, please login again."
   },
   "not_you":{
-    "message":"vous n'êtes pas $NAME$ ?"
+    "message":"you're not $NAME$?"
   },
   "please_log_out":{
-    "message":"Merci de vous déconnecter."
+    "message":"Please disconnect."
   },
   "continue":{
     "message":"continue"
@@ -129,16 +129,16 @@
     "message":"countries"
   },
   "mailing_address":{
-    "message":"adresse postale"
+    "message":"postal address"
   },
   "shipping_mode":{
     "message":"shipping method"
   },
   "select_shipping_mode":{
-    "message":"Parmi la liste ci-dessous, veuillez sélectionner le mode de livraison pour votre commande."
+    "message":"Among the list below, please select the shipping method for your order."
   },
   "delivery_n":{
-    "message":"livraison $NUMBER$"
+    "message":"delivery $NUMBER$"
   },
   "lines_included":{
     "message":"affected rows"

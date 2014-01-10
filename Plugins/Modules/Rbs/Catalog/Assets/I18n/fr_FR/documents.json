@@ -198,7 +198,7 @@
 	"attribute_type_datetime":{
 		"message":"date"
 	},
-	"attribute_type_code":{
+	"attribute_type_string":{
 		"message":"chaîne de caractères"
 	},
 	"attribute_type_text":{

@@ -24,18 +24,18 @@
     "message":"add a checkout process"
   },
   "process_shippingmodes_picker_title":{
-    "message":"sélectionnez les modes de livraison autorisés"
+    "message":"select the delivery methods allowed"
   },
   "process_paymentconnectors_picker_title":{
-    "message":"sélectionnez les modes de paiement autorisés"
+    "message":"select the payment methods allowed"
   },
   "process_fees_picker_title":{
-    "message":"sélectionnez les frais autorisés"
+    "message":"select authorized fees"
   },
   "lines_price_value_filter":{
-    "message":"Montant hors taxe des lignes"
+    "message":"Subtotal"
   },
   "lines_price_value":{
-    "message":"Le montant hors taxe des lignes"
+    "message":"Subtotal"
   }
 }

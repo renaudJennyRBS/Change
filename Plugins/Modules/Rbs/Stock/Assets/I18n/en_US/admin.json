@@ -69,13 +69,13 @@
     "message":"Maximum quantity of this product that can be ordered."
   },
   "sku_unlimitedinventory_help":{
-    "message":"When this option is enabled, the product will still be considered in stock"
+    "message":"When this option is enabled, the product will still be considered in stock (infinite stock)."
   },
   "sku_allowbackorders_help":{
-    "message":"When this option is enabled, the product can be ordered even when it is out, anticipation of a future replenishment."
+    "message":"When enabled, allow customers to place orders on products that are temporarily out of stock."
   },
   "sku_allowquantitysplit_help":{
-    "message":"When this option is enabled, the order lines corresponding to this SKU can be delivered in several packages."
+    "message":" When enabled, the order lines corresponding to this SKU can be delivered in several packages.\n"
   },
   "sku_threshold_less_or_equals":{
     "message":"Less or equal to"

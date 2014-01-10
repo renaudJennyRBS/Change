@@ -360,7 +360,7 @@
     "message":"Price list loading..."
   },
   "price_create_discount":{
-    "message":"Create a promotion"
+    "message":"Discount this price"
   },
   "condition_list_loading":{
     "message":"Conditions list loading..."

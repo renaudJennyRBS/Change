@@ -48,7 +48,7 @@ class ModelManager
 	{
 		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
 		$query->andPredicates($query->in('valueType', [Attribute::TYPE_BOOLEAN, Attribute::TYPE_INTEGER,
-			Attribute::TYPE_FLOAT, Attribute::TYPE_DATETIME, Attribute::TYPE_DATETIME, Attribute::TYPE_CODE]));
+			Attribute::TYPE_FLOAT, Attribute::TYPE_DATETIME, Attribute::TYPE_DATETIME, Attribute::TYPE_STRING]));
 		$attributes = $query->addOrder('label')->getDocuments();
 
 		$attributeDefinitions = array();
@@ -283,7 +283,7 @@ class ModelManager
 				$valueColumn = $fragmentBuilder->column('date_value', $attributeTable);
 				$paramType = Property::TYPE_DATETIME;
 				break;
-			case Attribute::TYPE_CODE:
+			case Attribute::TYPE_STRING:
 				$valueColumn = $fragmentBuilder->column('string_value', $attributeTable);
 				$paramType = Property::TYPE_STRING;
 				break;

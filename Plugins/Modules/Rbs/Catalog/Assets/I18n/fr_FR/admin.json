@@ -312,7 +312,7 @@
 		"message":"choisissez un jeu d'attributs"
 	},
 	"product_section_attributes":{
-		"message":"Attributs étendus"
+		"message":"Propriétés spécifiques"
 	},
 	"product_price_section_help":{
 		"message":"\n\t\t<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.<\/strong> Un même produit qui apparaît dans plusieurs boutiques et\/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.<\/p>\n\t\t<p>Commencez par <strong>choisir une boutique et une zone de tarification<\/strong> pour afficher et gérer les prix.<\/p>\n\t"

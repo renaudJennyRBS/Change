@@ -90,7 +90,7 @@
     "message":"select a billing area..."
   },
   "order_select_taxzone":{
-    "message":"séléctionnez un code de zone..."
+    "message":"select an area code..."
   },
   "order_select_webstore":{
     "message":"select a web shop..."

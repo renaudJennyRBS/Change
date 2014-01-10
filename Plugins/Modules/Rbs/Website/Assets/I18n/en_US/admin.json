@@ -81,58 +81,58 @@
     "message":"Specify a duration in seconds, or 0 to disable the cache"
   },
   "manage_functions":{
-    "message":"gestion des fonctions"
+    "message":"management of functions"
   },
   "show_functions_code":{
-    "message":"afficher le code des fonctions"
+    "message":"display the functions' code"
   },
   "implemented_functions":{
-    "message":"fonctions implémentées"
+    "message":"implemented functions"
   },
   "via_static_page":{
-    "message":"via la page de contenu"
+    "message":"through the content page"
   },
   "via_functional_page":{
-    "message":"via la page fonctionnelle"
+    "message":"through the functional page"
   },
   "select_page_for_function":{
-    "message":"sélectionnez une page pour l'implémentation de la fonction"
+    "message":"select a page for the implementation of the function"
   },
   "function":{
-    "message":"fonction"
+    "message":"function"
   },
   "show_not_ready_pages":{
-    "message":"afficher les pages qui ne disposent pas des blocs nécessaires à la fonction"
+    "message":"display the pages that don't have the required blocks for the function"
   },
   "not_ready_pages_warning":{
-    "message":"attention : les pages suivantes ne disposent pas des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>"
+    "message":"attention: the following pages don't have the blocks to perform the function <strong>$FUNCTION$<\/strong>"
   },
   "already_used":{
-    "message":"déjà utilisée"
+    "message":"already used"
   },
   "filter_functions":{
-    "message":"filter la liste des fonctions"
+    "message":"filter the list of functions"
   },
   "filter_pages":{
-    "message":"filter la liste des pages"
+    "message":"filter the list of pages"
   },
   "available_functions":{
-    "message":"fonctions disponibles"
+    "message":"available functions"
   },
   "change_page_for_function":{
-    "message":"changer de page pour cette fonction"
+    "message":"change page for this function"
   },
   "function_usage":{
-    "message":"utilisations"
+    "message":"uses"
   },
   "index_page":{
-    "message":"page d'index"
+    "message":"index page"
   },
   "remove_function_in_section":{
-    "message":"retirer la fonction de la section"
+    "message":"remove the function of this section"
   },
   "implement_function_in_section":{
-    "message":"implémenter la fonction dans la section"
+    "message":"implement the function in the section"
   },
   "staticpage_section_help":{
     "message":"The topic or web site that contains the page."
