@@ -1,84 +1,56 @@
-# TODO #
-
-<div class="panel panel-default">
-	<div class="panel-heading">Code promotionnel</div>
-	<div class="panel-body form-horizontal">
-		<div class="form-group no-bottom-margin">
-			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">Saisissez votre code</label>
-			<div class="col-sm-6 col-md-8">
-				<div class="input-group">
-					<input type="text" class="form-control" id="codeCoupon" />
-					<span class="input-group-btn">
-						<button class="btn btn-primary" type="button">OK</button>
-					</span>
+<script type="text/ng-template" id="/payment-connector-selector.static.tpl">
+	<div>
+		<div class="panel panel-default" data-ng-if="connectors.length > 1">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_connector', ['ucf']) }}</div>
+			<div class="panel-body">
+				{{ i18n('m.rbs.commerce.front.select_payment_connector', ['ucf']) }}
+			</div>
+			<div class="list-group">
+				<a data-ng-repeat="(index, connector) in connectors" href="javascript:" class="list-group-item"
+					data-ng-class="{active: connector.id == payment.connectorId}" data-ng-click="selectConnector(index)">
+					<div class="row">
+						<div class="col-sm-7 col-md-8 col-lg-9">
+							(= connector.title =)<br />
+							<div class="small" data-ng-bind-html="trustHtml(connector.description)"></div>
+						</div>
+						<div class="col-sm-5 col-md-4 col-lg-3">
+							<img data-ng-if="connector.visualUrl" data-ng-src="(= connector.visualUrl =)" />
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="panel panel-default" data-ng-if="connectors.length == 1">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_connector', ['ucf']) }}</div>
+			<div class="panel-body" data-ng-init="connector = connectors[0]">
+				<div class="row">
+					<div class="col-sm-7 col-md-8 col-lg-9">
+						(= connector.title =)<br />
+						<div class="small" data-ng-bind-html="trustHtml(connector.description)"></div>
+					</div>
+					<div class="col-sm-5 col-md-4 col-lg-3">
+						<img data-ng-if="connector.visualUrl" data-ng-src="(= connector.visualUrl =)" />
+					</div>
 				</div>
 			</div>
 		</div>
-		<hr />
-		<div class="form-group no-bottom-margin">
-			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">Code coupon appliqué</label>
-			<div class="col-sm-6 col-md-8">
-				<p class="form-control-static">
-					XFRDT-55 <button class="btn btn-default btn-xs">Retirer</button>
-				</p>
-			</div>
-		</div>
+
+		<div class="configuration-zone"></div>
 	</div>
-</div>
+</script>
 
-<div class="panel panel-default">
-	<div class="panel-heading">Récapitulatif des montants</div>
-	<dl class="dl-horizontal">
-		<dt>Total TTC</dt>
-		<dd><span class="price">85,00 €</span></dd>
-		<dt>Coupon</dt>
-		<dd><span class="price">-10,00 €</span></dd>
-		<dt>Net à payer</dt>
-		<dd><span class="price">75,00 €</span></dd>
-	</dl>
-</div>
-
-<div class="panel panel-default">
-	<div class="panel-heading">Moyen de paiement</div>
-	<div class="panel-body">
-		Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser.
+<script type="text/ng-template" id="/payment-connector-deferred.static.tpl">
+	<div class="panel panel-default">
+		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_instructions', ['ucf']) }}</div>
+		<div class="panel-body" data-ng-bind-html="trustHtml(selectedConnector.instructions)"></div>
 	</div>
-	<div class="list-group">
-		<a href="{{ currentURL() }}" class="list-group-item active">
-			Paiement par chèque<br />
-			<small>L'expédition ne sera faite qu'après réception du chèque.</small>
-		</a>
-		<a href="{{ currentURL() }}" class="list-group-item">
-			<img src="http://site36.intportgchange.fr/media/frontoffice/p_CHOIXPAIEMENT_cb.gif?cv=78" />
-			<img src="http://site36.intportgchange.fr/media/frontoffice/p_CHOIXPAIEMENT_visa.gif?cv=78" />
-			<img src="http://site36.intportgchange.fr/media/frontoffice/p_CHOIXPAIEMENT_master.gif?cv=78" />
-		</a>
-	</div>
-</div>
 
-(Si paiement différé)
-<div class="panel panel-default">
-	<div class="panel-heading">Instructions de paiement</div>
-	<dl class="dl-horizontal">
-		<dt>Ordre du chèque</dt>
-		<dd>RBS</dd>
-		<dt>Montant</dt>
-		<dd>75,00 €</dd>
-		<dt>Adresse d'envoi</dt>
-		<dd>
-			<address class="no-bottom-margin">
-				<strong>Twitter, Inc.</strong><br />
-				795 Folsom Ave, Suite 600<br />
-				San Francisco, CA 94107<br />
-				<abbr title="Phone">P:</abbr> (123) 456-7890
-			</address>
-		</dd>
-	</dl>
-</div>
-<button class="btn btn-lg btn-primary pull-right">Confirmer la commande</button>
+	<p class="clearfix">
+		<button class="btn btn-lg btn-primary pull-right">{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}</button>
+	</p>
+</script>
 
-<br /><br />
-
+<!-- TODO: other connectors
 (Si paiement par carte dans le site)
 <div class="panel panel-default">
 	<div class="panel-heading">Données bancaires</div>
@@ -89,3 +61,53 @@
 
 (Si paiement par carte hors site) <br />
 <button class="btn btn-lg btn-primary pull-right">Payer</button>
+-->
+
+<div class="panel panel-default">
+	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupon_code', ['ucf']) }}</div>
+	<div class="panel-body form-horizontal">
+		<div class="form-group no-bottom-margin" data-ng-if="!payment.couponCode">
+			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">
+				{{ i18n('m.rbs.commerce.front.type_code', ['ucf']) }}
+			</label>
+			<div class="col-sm-6 col-md-8">
+				<div class="input-group">
+					<input type="text" class="form-control" data-ng-model="payment.newCouponCode" />
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="button" data-ng-click="setCoupon()">
+							{{ i18n('m.rbs.commerce.front.ok', ['ucf']) }}
+						</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group no-bottom-margin" data-ng-if="payment.couponCode">
+			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">
+				{{ i18n('m.rbs.commerce.front.used_coupon_code', ['ucf']) }}
+			</label>
+			<div class="col-sm-6 col-md-8">
+				<p class="form-control-static">
+					(= payment.couponCode =)
+					<button class="btn btn-default btn-xs" data-ng-click="removeCoupon()">
+						{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}
+					</button>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.summary_of_amounts', ['ucf']) }}</div>
+	<dl class="dl-horizontal">
+		<!-- TODO: handle coupons and discounts...
+		<dt>{{ i18n('m.rbs.commerce.front.total_with_tax', ['ucf']) }}</dt>
+		<dd><span class="price">(= cart.context.formattedPriceValueWithTax =)</span></dd>
+		<dt>Coupon</dt>
+		<dd><span class="price">-10,00 €</span></dd>-->
+		<dt>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</dt>
+		<dd><span class="price">(= cart.context.formattedPriceValueWithTax =)</span></dd>
+	</dl>
+</div>
+
+<div data-rbs-commerce-payment-connector-selector="" data-payment="payment"></div>

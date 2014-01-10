@@ -53,119 +53,49 @@
 	}
 	app.directive('rbsCommerceProcessMenu', rbsCommerceProcessMenu);
 
-	function rbsAddressFields($http) {
+	function rbsCommerceShippingModeSelector($http, $compile, $sce) {
 		return {
 			restrict : 'AE',
-			require : 'ngModel',
-			scope : true,
-			templateUrl : '/address-fields.static.tpl',
-
-			link : function (scope, elm, attrs, ngModel) {
-				scope.countryCode = null;
-				scope.fieldsDef = [];
-				scope.fieldValues = {};
-				scope.leftColumnElementClass = attrs.leftColumnElementClass;
-				scope.rightColumnElementClass = attrs.rightColumnElementClass;
-				scope.readonly = attrs.readonly;
-
-				attrs.$observe('countryCode', function(newValue){
-					console.log('countryCode', newValue);
-					if (newValue != scope.countryCode) {
-						scope.fieldsDef = [];
-						scope.countryCode = newValue;
-					}
-				});
-
-				attrs.$observe('readonly', function(newValue){
-					console.log('attrs.readonly', newValue);
-					scope.readonly = (newValue == 'true');
-				});
-
-				scope.$watch('countryCode', function(newValue) {
-					console.log('countryCode', newValue);
-					if (newValue) {
-						$http.post('Action/Rbs/Geo/GetAddressFields', {countryCode: newValue})
-							.success (function(data) {
-								console.log('GetAddressFields success');
-								scope.generateFieldsEditor(data);
-							})
-							.error(function(data, status, headers) {
-								console.log('GetAddressFields error', data, status, headers);
-							});
-					}
-				});
-
-				ngModel.$render = function ngModelRenderFn () {
-					scope.fieldValues = ngModel.$viewValue;
-				};
-
-				scope.generateFieldsEditor = function (addressFields) {
-					var fieldsDef = addressFields.rows;
-					if (angular.isObject(fieldsDef)) {
-						if (!angular.isObject(ngModel.$viewValue)) {
-							ngModel.$setViewValue({});
-						}
-						scope.fieldsDef = fieldsDef;
-						var fieldValues = ngModel.$viewValue;
-						var fields = scope.fieldsDef;
-						var field;
-						for (var i = 0; i < fields.length; i++) {
-							field = fields[i];
-							var v = null;
-							if(fieldValues.hasOwnProperty(field.code)) {
-								v = fieldValues[field.code];
-							}
-							if(v === null) {
-								v = field.defaultValue;
-								fieldValues[field.code] = v;
-							}
-						}
-
-						if (angular.isObject(addressFields.fieldsLayout)) {
-							fieldValues.__layout = addressFields.fieldsLayout;
-						}
-						else {
-							fieldValues.__layout = undefined;
-						}
-					}
-				};
-			}
-		}
-	}
-	rbsAddressFields.$inject = ['$http'];
-	app.directive('rbsAddressFields', rbsAddressFields);
-
-	function rbsCommerceShippingModeSelector($http, $compile) {
-		return {
-			restrict : 'AE',
-			require : 'ngModel',
-			scope : true,
+			scope : {
+				delivery : '=',
+				zoneCode : '='
+			},
 			templateUrl : '/shipping-mode-selector.static.tpl',
 
-			link : function (scope, element, attrs, ngModel) {
+			link : function (scope, element, attributes) {
 				scope.modes = [];
-				scope.directiveName = null;
-				scope.selectedId = null;
+				scope.display = { readonly: attributes.readonly };
+
+				attributes.$observe('readonly', function(newValue){
+					console.log('rbsCommerceShippingModeSelector - attributes.readonly', newValue);
+					scope.display.readonly = (newValue == 'true');
+				});
 
 				$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines})
 					.success (function(data) {
-						console.log('GetCompatibleShippingModes success');
+						console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes success');
 						scope.modes = data;
 						if (scope.modes.length == 1) {
 							scope.selectMode(0);
 						}
+						else {
+							for (var i = 0; i < scope.modes.length; i++) {
+								if (scope.modes[i].id == scope.delivery.modeId) {
+									scope.currentMode = scope.modes[i];
+								}
+							}
+						}
 					})
 					.error(function(data, status, headers) {
-						console.log('GetCompatibleShippingModes error', data, status, headers);
+						console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status, headers);
 					});
 
 				scope.selectMode = function(index) {
-					console.log('selectMode', index);
+					console.log('rbsCommerceShippingModeSelector - selectMode', index);
 					var mode = scope.modes[index];
-					if (mode.id != ngModel.modeId) {
-						ngModel.modeId = mode.id;
-						scope.selectedId = mode.id;
-						scope.directiveName = mode.directiveName;
+					if (mode.id != scope.delivery.modeId) {
+						scope.delivery.modeId = mode.id;
+						scope.currentMode = mode;
 
 						var html = '<div class="configuration-zone"';
 						if (mode.directiveName) {
@@ -175,24 +105,100 @@
 						element.find('.configuration-zone').replaceWith(html);
 						$compile(element.find('.configuration-zone'))(scope);
 					}
-					console.log('scope.directiveName', scope.directiveName);
-				}
+					console.log('rbsCommerceShippingModeSelector - scope.display.directiveName', mode.directiveName);
+				};
+
+				scope.trustHtml = function (html) {
+					return $sce.trustAsHtml(html);
+				};
 			}
 		}
 	}
-	rbsCommerceShippingModeSelector.$inject = ['$http', '$compile'];
+	rbsCommerceShippingModeSelector.$inject = ['$http', '$compile', '$sce'];
 	app.directive('rbsCommerceShippingModeSelector', rbsCommerceShippingModeSelector);
 
 	function rbsCommerceShippingModeConfigurationHome() {
 		return {
 			restrict : 'AE',
-			scope : true,
-			templateUrl : '/shipping-mode-configuration-home.static.tpl'
+			scope : false,
+			templateUrl : '/shipping-mode-configuration-home.static.tpl',
+			link : function (scope) {
+				scope.delivery.usePostalAddress = 1;
+				if (!scope.delivery.hasOwnProperty('address')) {
+					scope.delivery.address = {};
+				}
 
-			/* TODO */
+				scope.isReadOnly = function() {
+					return scope.readonly;
+				}
+			}
 		}
 	}
 	app.directive('rbsCommerceShippingModeConfigurationHome', rbsCommerceShippingModeConfigurationHome);
+
+	function rbsCommercePaymentConnectorSelector($http, $compile, $sce) {
+		return {
+			restrict : 'AE',
+			scope : {
+				payment : '='
+			},
+			templateUrl : '/payment-connector-selector.static.tpl',
+
+			link : function (scope, element) {
+				scope.connectors = [];
+				scope.selectedConnector = null;
+				scope.directiveName = null;
+
+				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors')
+					.success (function(data) {
+						console.log('GetCompatiblePaymentConnectors success');
+						scope.connectors = data;
+						if (scope.connectors.length == 1) {
+							scope.selectConnector(0);
+						}
+					})
+					.error(function(data, status, headers) {
+						console.log('GetCompatiblePaymentConnectors error', data, status, headers);
+					});
+
+				scope.selectConnector = function(index) {
+					console.log('selectConnector', index);
+					var connector = scope.connectors[index];
+					if (connector.id != scope.payment.connectorId) {
+						scope.selectedConnector = connector;
+						scope.payment.connectorId = connector.id;
+						scope.directiveName = connector.directiveName;
+
+						var html = '<div class="configuration-zone"';
+						if (connector.directiveName) {
+							html += ' ' + connector.directiveName + '=""';
+						}
+						html += '></div>';
+						element.find('.configuration-zone').replaceWith(html);
+						$compile(element.find('.configuration-zone'))(scope);
+					}
+					console.log('scope.directiveName', scope.directiveName);
+				};
+
+				scope.trustHtml = function (html) {
+					return $sce.trustAsHtml(html);
+				};
+			}
+		}
+	}
+	rbsCommercePaymentConnectorSelector.$inject = ['$http', '$compile', '$sce'];
+	app.directive('rbsCommercePaymentConnectorSelector', rbsCommercePaymentConnectorSelector);
+
+	function rbsCommercePaymentConnectorDeferred() {
+		return {
+			restrict : 'AE',
+			scope : false,
+			templateUrl : '/payment-connector-deferred.static.tpl',
+			link : function (scope) {
+			}
+		}
+	}
+	app.directive('rbsCommercePaymentConnectorDeferred', rbsCommercePaymentConnectorDeferred);
 
 	/**
 	 * Cart controller.
@@ -280,8 +286,9 @@
 		scope.cart = null;
 		scope.loading = false;
 		scope.originalQuantities = {};
-		scope.information = {address: {}};
+		scope.information = { address: {}, email: null, confirmEmail: null };
 		scope.shipping = [];
+		scope.payment = { newCouponCode: null };
 		scope.errors = [];
 		scope.currentStep = null;
 		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
@@ -388,8 +395,8 @@
 		};
 		scope.logout = function() {
 			$http.post('Action/Rbs/User/Logout')
-				.success(function(data) {
-					// TODO refresh
+				.success(function() {
+					window.location.reload();
 				})
 				.error(function(data, status, headers) {
 					console.log('Login error', data, status, headers);
@@ -429,72 +436,21 @@
 			return true;
 		};
 
+		/**
+		 * Payment step
+		 */
+		scope.setCoupon = function() {
+			// TODO: server call to validate coupon.
+			scope.payment.couponCode = scope.payment.newCouponCode;
+			delete scope.payment.newCouponCode;
+		};
+
+		scope.removeCoupon = function() {
+			delete scope.payment.couponCode;
+		};
+
 		loadCurrentCart();
 	}
 	rbsCommerceOrderProcessController.$inject = ['$scope', '$http'];
 	app.controller('rbsCommerceOrderProcessController', rbsCommerceOrderProcessController);
-
-	/* Animations */
-	function rbsVerticalIfAnimation() {
-		return {
-			enter : function(element, done) {
-				jQuery(element).css({
-					overflow: 'hidden',
-					height: 0
-				});
-				jQuery(element).animate({
-					height: element.find('.vertical-if-animation-content').height()
-				}, 500, function () {
-					element.css('height', 'auto');
-					done();
-				});
-			},
-
-			leave : function(element, done) {
-				jQuery(element).css({
-					height: element.find('.vertical-if-animation-content').height()
-				});
-				jQuery(element).animate({
-					overflow: 'hidden',
-					height: 0
-				}, 500, done);
-			}
-		};
-	}
-	app.animation('.vertical-if-animation', rbsVerticalIfAnimation);
-
-	function rbsVerticalShowHideAnimation() {
-		return {
-			beforeAddClass : function(element, className, done) {
-				if (className == 'ng-hide') {
-					jQuery(element).animate({
-						overflow: 'hidden',
-						height: 0
-					}, done);
-				}
-				else {
-					done();
-				}
-			},
-
-			removeClass : function(element, className, done) {
-				if (className == 'ng-hide') {
-					element.css({
-						height: 0,
-						overflow: 'hidden'
-					});
-					jQuery(element).animate({
-						height: element.find('.vertical-show-hide-animation-content').height()
-					}, function () {
-						element.css('height', 'auto');
-						done();
-					});
-				}
-				else {
-					done();
-				}
-			}
-		};
-	}
-	app.animation('.vertical-show-hide-animation', rbsVerticalShowHideAnimation);
 })();

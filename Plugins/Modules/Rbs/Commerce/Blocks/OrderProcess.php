@@ -89,39 +89,6 @@ class OrderProcess extends Block
 			if ($cart && !$cart->isEmpty())
 			{
 				$attributes['cart'] = $cart;
-
-				$genericServices = $event->getServices('genericServices');
-				if ($genericServices instanceof \Rbs\Generic\GenericServices)
-				{
-					$collection = $event->getApplicationServices()->getCollectionManager()->getCollection('Rbs_Geo_Collection_Countries');
-					$compatibleCountries = array();
-					$geoManager = $genericServices->getGeoManager();
-					foreach ($geoManager->getCountriesByZoneCode($cart->getZone()) as $country)
-					{
-						// Exclude countries with no defined address model.
-						if (!$country->getAddressFields())
-						{
-							continue;
-						}
-
-						$title = $country->getTitle();
-						if ($collection)
-						{
-							$item = $collection->getItemByValue($country->getCode());
-							if ($item)
-							{
-								$title = $item->getTitle();
-							}
-						}
-						$compatibleCountries[] = array(
-							'id' => $country->getId(),
-							'code' => $country->getCode(),
-							'title' => $title
-						);
-					}
-
-					$attributes['compatibleCountries'] = $compatibleCountries;
-				}
 				return 'order-process.twig';
 			}
 		}

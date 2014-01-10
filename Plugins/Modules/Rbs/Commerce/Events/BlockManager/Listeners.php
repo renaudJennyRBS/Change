@@ -10,7 +10,6 @@ use Zend\EventManager\ListenerAggregateInterface;
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
@@ -27,6 +26,7 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Commerce_Cart', true, $events);
 		new RegisterByBlockName('Rbs_Commerce_ShortCart', true, $events);
 		new RegisterByBlockName('Rbs_Commerce_OrderProcess', true, $events);
+		new RegisterByBlockName('Rbs_Store_WebStoreSelector', true, $events);
 	}
 
 	/**

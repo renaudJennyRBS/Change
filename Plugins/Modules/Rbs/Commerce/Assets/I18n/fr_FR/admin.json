@@ -8,6 +8,9 @@
 	"cart_function":{
 		"message":"détail du panier"
 	},
+	"order_process_label":{
+		"message":"processus de commande"
+	},
 	"order_process_function":{
 		"message":"processus de commande"
 	},

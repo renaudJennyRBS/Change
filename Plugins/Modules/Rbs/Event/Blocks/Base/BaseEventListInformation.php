@@ -25,6 +25,6 @@ abstract class BaseEventListInformation extends \Change\Presentation\Blocks\Info
 		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 10)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_items_per_page', $ucf));
 		$this->addInformationMeta('templateName', Property::TYPE_STRING, false)
-			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_template_name', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.generic.admin.block_template_name', $ucf));
 	}
 }
