@@ -272,9 +272,6 @@
   "product_visuals_picker_title":{
     "message":"select the visuals"
   },
-  "product_visuals_help":{
-    "message":"First visual of the list will be considered to be the product sheet main visual."
-  },
   "product_no_visual":{
     "message":"no visual defined"
   },
@@ -315,16 +312,13 @@
     "message":"choose an attribute set"
   },
   "product_section_attributes":{
-    "message":"Extended attributes"
+    "message":"Specific properties"
   },
   "product_price_section_help":{
     "message":"\n  <p><strong>Product prices depend on web shop and pricing area.<\/strong> The same product that appears in several web shops or pricing areas can have several basic prices, in addition to any promotional prices.<\/p>   <p>Start by <strong>choosing a web shop and a pricing zone<\/strong> to display and manage prices.<\/p>"
   },
   "product_product_list_section_help":{
     "message":"\n  <p>Lists allow to publish the products in web site's sections.<\/p>"
-  },
-  "product_categorizable_help":{
-    "message":"This property allows you to specify whether this product can be displayed in lists of products."
   },
   "product_section_variant":{
     "message":"variants"
@@ -360,7 +354,7 @@
     "message":"Price list loading..."
   },
   "price_create_discount":{
-    "message":"Create a promotion"
+    "message":"Discount this price"
   },
   "condition_list_loading":{
     "message":"Conditions list loading..."
@@ -421,12 +415,6 @@
   },
   "variant_group":{
     "message":"variants group"
-  },
-  "attribute_title_help":{
-    "message":"Title displayed on the website."
-  },
-  "attribute_description_help":{
-    "message":"Attribute description displayed on the web site."
   },
   "product_is_available_in_following_lists":{
     "message":"The product $PRODUCTLINK$ is available in the lists of products below."

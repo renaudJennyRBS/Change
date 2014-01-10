@@ -27,13 +27,13 @@
     "message":"maximum quantity"
   },
   "sku_unlimitedinventory":{
-    "message":"no stock management"
+    "message":"infinite stock"
   },
   "sku_allowbackorders":{
-    "message":"Replenishment orders"
+    "message":"Backorders"
   },
   "sku_allowquantitysplit":{
-    "message":"Splited delivery"
+    "message":"Split delivery"
   },
   "sku_virtual":{
     "message":"virtual"
@@ -54,6 +54,6 @@
     "message":"ISBN"
   },
   "sku_partNumber":{
-    "message":"Manufacturer reference (part number)"
+    "message":"Manufacturer Part Number"
   }
 }

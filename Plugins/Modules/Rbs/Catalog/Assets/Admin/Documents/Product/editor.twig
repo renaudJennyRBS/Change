@@ -31,15 +31,10 @@
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}"
 				allow-creation="true"
 				allow-edition="true">
-			<span class="help-block">{{ i18n('m.rbs.catalog.admin.product_visuals_help', ['ucf']) }}</span>
 		</rbs-field-picker-multiple>
 
 		<rbs-field-boolean property="categorizable"
 		                   label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'categorizable'), ['ucf']) }}">
-			<span class="help-block">
-				<div>{{ i18n('m.rbs.catalog.admin.product_categorizable_help', ['ucf']) }}</div>
-				<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" >{{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }} <i class="icon-circle-arrow-right"></i></a>
-			</span>
 		</rbs-field-boolean>
 	</fieldset>
 
@@ -66,7 +61,7 @@
 						</div>
 						<div ng-if="!attributeItemDef.collectionCode">
 							<div data-ng-switch="attributeItemDef.type">
-								<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+								<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
 								<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></rbs-switch>
 								<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></rbs-date-selector>
 								<div class="row" data-ng-switch-when="Integer">
@@ -115,7 +110,7 @@
 					</div>
 					<div ng-if="!attributeDef.collectionCode">
 						<div data-ng-switch="attributeDef.type">
-							<input type="text" data-ng-switch-when="Code" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+							<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
 							<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></rbs-switch>
 							<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></rbs-date-selector>
 							<div class="row" data-ng-switch-when="Integer">

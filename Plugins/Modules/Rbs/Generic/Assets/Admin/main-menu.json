@@ -35,7 +35,7 @@
 		{
 			"label": "m.rbs.theme.admin.module_name",
 			"url": "Rbs/Theme",
-			"section": "cms"
+			"section": "admin"
 		},
 		{
 			"label": "m.rbs.seo.admin.module_name",

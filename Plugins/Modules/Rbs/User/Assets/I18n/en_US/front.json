@@ -99,6 +99,6 @@
     "message":"password's hash method is empty."
   },
   "error_login_password_not_match":{
-    "message":"L'identifiant et le mot de passe ne correspondent pas."
+    "message":"Username and password do not match."
   }
 }

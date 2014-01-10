@@ -272,9 +272,6 @@
 	"product_visuals_picker_title":{
 		"message":"sélectionner les visuels"
 	},
-	"product_visuals_help":{
-		"message":"Le 1er visuel de la liste sera considéré comme le visuel principal de la fiche."
-	},
 	"product_no_visual":{
 		"message":"aucun visuel défini"
 	},
@@ -315,16 +312,13 @@
 		"message":"choisissez un jeu d'attributs"
 	},
 	"product_section_attributes":{
-		"message":"Attributs étendus"
+		"message":"Propriétés spécifiques"
 	},
 	"product_price_section_help":{
 		"message":"\n\t\t<p><strong>Les prix d'un produit dépendent de la boutique et de la zone de tarification.<\/strong> Un même produit qui apparaît dans plusieurs boutiques et\/ou zones de tarification peut ainsi avoir plusieurs prix de base, en plus des éventuels prix promotionnels.<\/p>\n\t\t<p>Commencez par <strong>choisir une boutique et une zone de tarification<\/strong> pour afficher et gérer les prix.<\/p>\n\t"
 	},
 	"product_product_list_section_help":{
 		"message":"\n\t\t<p>Les listes permettent de publier les produits dans les sections du site.<\/p>\n\t"
-	},
-	"product_categorizable_help":{
-		"message":"Cette propriété permet d'indiquer si ce produit peut être affiché dans des listes de produits ou non."
 	},
 	"product_section_variant":{
 		"message":"variantes"

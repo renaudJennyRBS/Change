@@ -157,5 +157,11 @@
   },
   "document_is_not_published_message":{
     "message":"In order to configure this document URLs, you need to first have $LINKSTART$set sections$LINKEND$ in which this document should appear on the web site."
+  },
+  "open_option_panel":{
+    "message":"options avancées"
+  },
+  "option_panel_title":{
+    "message":"options avancées"
   }
 }

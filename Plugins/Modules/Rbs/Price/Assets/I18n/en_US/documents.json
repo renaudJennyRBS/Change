@@ -68,6 +68,9 @@
   "price_priority":{
     "message":"priority"
   },
+  "price_targetid":{
+    "message":"cible"
+  },
   "price_bovalue":{
     "message":"price"
   },
@@ -81,15 +84,15 @@
     "message":"reference price"
   },
   "fee":{
-    "message":"frais"
+    "message":"fee"
   },
   "fee_sku":{
     "message":"SKU"
   },
   "fee_cartfilterdata":{
-    "message":"Critères d'application"
+    "message":"application criteria"
   },
   "fee_shippingmode":{
-    "message":"Mode de livraison"
+    "message":"Delivery method"
   }
 }

@@ -54,13 +54,13 @@
     "message":"By default"
   },
   "sort_price_asc":{
-    "message":"Du - au + chers"
+    "message":"Price ascending"
   },
   "sort_price_desc":{
-    "message":"Du + au - chers"
+    "message":"Price descending"
   },
   "sort_date_added_desc":{
-    "message":"Par nouveauté"
+    "message":"Latest first"
   },
   "sort_date_title_asc":{
     "message":"Alphabetical order"

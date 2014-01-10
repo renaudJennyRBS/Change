@@ -3,25 +3,25 @@
     "message":"synchronized section"
   },
   "variantgroup_rootproduct":{
-    "message":"original product"
+    "message":"parent product"
   },
   "variantgroup_groupattribute":{
-    "message":"attributes set"
+    "message":"attribute set"
   },
   "variantgroup_axesattributes":{
-    "message":"Attributes to be used for the axis"
+    "message":"Variable attributes"
   },
   "variantgroup_othersattributes":{
     "message":"Other attributes"
   },
   "variantgroup_axesconfiguration":{
-    "message":"Axis configuration"
+    "message":"Configuration of the variant axis"
   },
   "variantgroup_newskuoncreation":{
     "message":"Create a new SKU for each variant"
   },
   "productlist_productsortorder":{
-    "message":"sorting property",
+    "message":"sort on property",
     "description":"Use on product list editor to define the property to sort the product in the list"
   },
   "productlist_productsortdirection":{
@@ -132,6 +132,9 @@
   "product_attribute":{
     "message":"attribute set"
   },
+  "product_publication_help":{
+    "message":"To set the <strong>publication properties<\/strong> of this product, such as its location and its publication dates, please go to section $LINKSTART$Publication$LINKEND$, available in the left menu."
+  },
   "attribute_title":{
     "message":"title"
   },
@@ -195,8 +198,8 @@
   "attribute_type_datetime":{
     "message":"date"
   },
-  "attribute_type_code":{
-    "message":"character string"
+  "attribute_type_string":{
+    "message":"text string"
   },
   "attribute_type_text":{
     "message":"text"

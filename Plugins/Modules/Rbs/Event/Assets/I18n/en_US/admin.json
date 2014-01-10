@@ -11,9 +11,6 @@
   "base_event_contextual_urls":{
     "message":"categories details in the current section"
   },
-  "base_event_template_name":{
-    "message":"display mode"
-  },
   "news_label":{
     "message":"news detail"
   },
@@ -52,9 +49,6 @@
   },
   "base_event_list_items_per_page":{
     "message":"number of items per page"
-  },
-  "base_event_list_template_name":{
-    "message":"display mode"
   },
   "contextual_list_label":{
     "message":"news and events contextual list"

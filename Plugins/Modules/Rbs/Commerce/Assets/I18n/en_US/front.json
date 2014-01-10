@@ -81,16 +81,16 @@
     "message":"actions"
   },
   "accept_terms_and_conditions":{
-    "message":"Avant de passer ma commande, je reconnais avoir lu et compris les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$."
+    "message":"I've read and agreed on $LINK_OPEN$Terms & Conditions$LINK_CLOSE$."
   },
   "proceed_to_checkout":{
-    "message":"passer commande"
+    "message":"proceed to checkout"
   },
   "process_step_cart":{
     "message":"shopping cart"
   },
   "process_step_personal_information":{
-    "message":"informations personnelles"
+    "message":"personnal informations"
   },
   "process_step_shipping":{
     "message":"delivery"
@@ -102,22 +102,22 @@
     "message":"confirmation"
   },
   "already_customer":{
-    "message":"vous êtes déjà client"
+    "message":"registered customer"
   },
   "new_customer":{
     "message":"you are new customer"
   },
   "are_you_really":{
-    "message":"êtes-vous bien $NAME$ ?"
+    "message":"are you $NAME$?"
   },
   "please_log_in_again":{
-    "message":"Pour des raisons de sécurité, merci de vous ré-authentifier."
+    "message":"For security reasons, please login again."
   },
   "not_you":{
-    "message":"vous n'êtes pas $NAME$ ?"
+    "message":"you're not $NAME$?"
   },
   "please_log_out":{
-    "message":"Merci de vous déconnecter."
+    "message":"Please disconnect."
   },
   "continue":{
     "message":"continue"
@@ -129,18 +129,60 @@
     "message":"countries"
   },
   "mailing_address":{
-    "message":"adresse postale"
+    "message":"postal address"
   },
   "shipping_mode":{
     "message":"shipping method"
   },
   "select_shipping_mode":{
-    "message":"Parmi la liste ci-dessous, veuillez sélectionner le mode de livraison pour votre commande."
+    "message":"Among the list below, please select the shipping method for your order."
   },
   "delivery_n":{
-    "message":"livraison $NUMBER$"
+    "message":"delivery $NUMBER$"
   },
   "lines_included":{
     "message":"affected rows"
+  },
+  "shipping_address":{
+    "message":"adresse de livraison"
+  },
+  "use_postal_address":{
+    "message":"utiliser l'adresse postale renseignée plus haut"
+  },
+  "use_another_address":{
+    "message":"choisir une autre adresse"
+  },
+  "coupon_code":{
+    "message":"code promotionnel"
+  },
+  "type_code":{
+    "message":"saisissez votre code"
+  },
+  "ok":{
+    "message":"OK"
+  },
+  "used_coupon_code":{
+    "message":"code coupon appliqué"
+  },
+  "summary_of_amounts":{
+    "message":"récapitulatif des montants"
+  },
+  "total_with_tax":{
+    "message":"total TTC"
+  },
+  "amount_to_pay":{
+    "message":"net à payer"
+  },
+  "payment_connector":{
+    "message":"moyen de paiement"
+  },
+  "select_payment_connector":{
+    "message":"Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser."
+  },
+  "payment_instructions":{
+    "message":"instructions de paiement"
+  },
+  "confirm_order":{
+    "message":"confirmer la commande"
   }
 }

@@ -17,7 +17,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	const TYPE_DOCUMENTIDARRAY = 'DocumentIdArray';
 	const TYPE_FLOAT = 'Float';
 	const TYPE_DATETIME = 'DateTime';
-	const TYPE_CODE = 'Code';
+	const TYPE_STRING = 'String';
 	const TYPE_TEXT = 'Text';
 
 	//Special type
@@ -264,7 +264,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 				}
 			}
 		}
-		elseif (in_array($this->getValueType(), [static::TYPE_GROUP, static::TYPE_DOCUMENTID, static::TYPE_CODE, static::TYPE_INTEGER]))
+		elseif (in_array($this->getValueType(), [static::TYPE_GROUP, static::TYPE_DOCUMENTID, static::TYPE_STRING, static::TYPE_INTEGER]))
 		{
 			return true;
 		}

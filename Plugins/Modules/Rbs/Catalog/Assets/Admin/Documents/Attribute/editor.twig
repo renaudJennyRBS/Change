@@ -31,7 +31,7 @@
 				</rbs-field-text>
 			</div>
 
-			<div data-ng-show="document.valueType == 'Code' || document.valueType == 'Integer' || document.valueType == 'DocumentId'">
+			<div data-ng-show="document.valueType == 'String' || document.valueType == 'Integer' || document.valueType == 'DocumentId'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'collectionCode'), ['ucf']) }}">
 					<select ng-model="document.collectionCode" class="form-control"
 						rbs-items-from-collection="Rbs_Catalog_Collection_AttributeCollections">

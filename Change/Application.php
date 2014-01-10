@@ -64,7 +64,7 @@ class Application
 	 */
 	public function registerCoreAutoload()
 	{
-		return require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'autoload.php';
+		return require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 	}
 
 	/**
