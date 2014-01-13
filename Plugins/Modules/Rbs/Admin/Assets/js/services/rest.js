@@ -1408,7 +1408,7 @@
 							{
 								return storage;
 							}
-							else (!storage)
+							else if (!storage)
 							{
 								return null;
 							}
