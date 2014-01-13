@@ -59,7 +59,7 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(null, $entry->getWarehouse());
 
 		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
-		$query->eq('sku', $sku);
+		$query->andPredicates($query->eq('sku', $sku));
 		$this->assertEquals(1, $query->getCountDocuments());
 
 
@@ -73,7 +73,7 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($entry->getId(), $reusedEntry->getId());
 
 		$query = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
-		$query->eq('sku', $sku);
+		$query->andPredicates($query->eq('sku', $sku));
 		$this->assertEquals(1, $query->getCountDocuments());
 
 		$this->getApplicationServices()->getTransactionManager()->commit();

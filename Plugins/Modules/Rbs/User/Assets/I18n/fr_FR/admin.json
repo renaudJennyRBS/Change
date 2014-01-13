@@ -237,5 +237,8 @@
 	},
 	"profile_gravatar_help":{
 		"message":"Pour utiliser un avatar, créer un compte sur le site <a href=\"http:\/\/fr.gravatar.com\" target=\"_blank\">http:\/\/fr.gravatar.com<\/a>"
+	},
+	"create_account_request_mail_subject":{
+		"message":"Demande de création de compte"
 	}
 }

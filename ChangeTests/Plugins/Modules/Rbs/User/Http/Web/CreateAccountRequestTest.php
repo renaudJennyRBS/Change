@@ -70,8 +70,8 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$jobArgs = $job->getArguments();
 		$this->assertArrayHasKey('email', $jobArgs);
 		$this->assertEquals($requestParams->get('email'), $jobArgs['email']);
-		$this->assertArrayHasKey('templateCode', $jobArgs);
-		$this->assertEquals('createAccountRequest', $jobArgs['templateCode']);
+		$this->assertArrayHasKey('LCID', $jobArgs);
+		$this->assertEquals($i18nManager->getLCID(), $jobArgs['LCID']);
 		$this->assertArrayHasKey('params', $jobArgs);
 		$this->assertNotEmpty($jobArgs['params']);
 		$this->assertArrayHasKey('website', $jobArgs['params']);

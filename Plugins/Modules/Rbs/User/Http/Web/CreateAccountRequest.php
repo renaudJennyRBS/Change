@@ -85,8 +85,7 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 					$jobManager = $event->getApplicationServices()->getJobManager();
 					$arguments = [
-						'themeName' => 'Rbs_Demo',
-						'templateCode' => 'createAccountRequest',
+						'LCID' => $LCID,
 						'params' => $params,
 						'email' => $email
 					];
