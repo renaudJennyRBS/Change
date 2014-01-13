@@ -94,9 +94,9 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 						$arguments = [
 							'params' => $params,
 							'to' => [$user->getEmail()],
-							'templateCode' => 'timeline_mention'
+							'LCID' => $lcid
 						];
-						$jm->createNewJob('Rbs_Timeline_SendTemplateMail', $arguments);
+						$jm->createNewJob('Rbs_Timeline_SendMessageMail', $arguments);
 					}
 
 					$documentManager->popLCID();

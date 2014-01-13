@@ -46,9 +46,9 @@ class Listeners implements ListenerAggregateInterface
 
 		$callBack = function ($event)
 		{
-			(new \Rbs\Timeline\Job\SendTemplateMail())->execute($event);
+			(new \Rbs\Timeline\Job\SendMessageMail())->execute($event);
 		};
-		$events->attach('process_Rbs_Timeline_SendTemplateMail', $callBack, 5);
+		$events->attach('process_Rbs_Timeline_SendMessageMail', $callBack, 5);
 
 		$callBack = function ($event)
 		{

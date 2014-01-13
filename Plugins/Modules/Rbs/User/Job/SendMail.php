@@ -7,6 +7,7 @@ namespace Rbs\User\Job;
 class SendMail
 {
 	/**
+	 * FIXME use front mail management (mail template, system mail, etc...) instead of backoffice mail management
 	 * @param \Change\Job\Event $event
 	 */
 	public function execute(\Change\Job\Event $event)
@@ -15,31 +16,28 @@ class SendMail
 
 		$args = $event->getJob()->getArguments();
 
-		$themeManager = $applicationServices->getThemeManager();
-
-		$themeName = $args['themeName'];
-		$templateCode = $args['templateCode'];
 		$params = $args['params'];
 		$email = $args['email'];
+		$lcid = $args['LCID'];
 
-		if ($themeName && $templateCode && $params && $email)
+		if ($params && $email && $lcid)
 		{
-			$theme = $event->getApplicationServices()->getThemeManager()->getByName($themeName);
-			$template = $themeManager->getMailTemplate($templateCode, $theme);
-
-			if ($template)
+			$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'create-account-request-mail-' . $lcid . '.twig';
+			if (is_file($filePath))
 			{
 				$mailManager = $applicationServices->getMailManager();
+				$templateManager = $applicationServices->getTemplateManager();
+				$i18nManager = $applicationServices->getI18nManager();
+
+				$html = $templateManager->renderTemplateFile($filePath, $params);
+				$subject = $i18nManager->transForLCID($lcid, 'm.rbs.user.admin.create_account_request_mail_subject');
 				//FIXME 'from' is hardcoded (noreply@change4.fr)
-				$message = $mailManager->composeTemplateMessage($template, $params, null,
-					['noreply@change4.fr'], [$email]);
+				$message = $mailManager->prepareMessage(['noreply@change4.fr'], [$email], $subject, $html);
+				$mailManager->prepareHeader($message, ['Content-type' => 'text/html; charset=utf8']);
 				$mailManager->send($message);
-				$event->success();
 			}
-			else
-			{
-				$event->failed('Invalid mail template given');
-			}
+
+			$event->success();
 		}
 		else
 		{

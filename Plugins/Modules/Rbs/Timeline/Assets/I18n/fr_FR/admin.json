@@ -31,5 +31,8 @@
 	},
 	"notification_mention_message":{
 		"message":"un message de $AUTHORNAME$ concernant le document \"$DOCUMENTLABEL$\" vous mentionne"
+	},
+	"message_mail_subject":{
+		"message":"Un message vous mentionne"
 	}
 }
