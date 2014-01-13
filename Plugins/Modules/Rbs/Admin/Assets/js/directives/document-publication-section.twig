@@ -1,0 +1,21 @@
+<div>
+	<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
+		label="{{ i18nAttr('c.documents.publicationsections',['ucf']) }}"
+		selector-title="{{ i18nAttr('m.rbs.generic.admin.publicationsections_picker_title', ['ucf']) }}">
+		<span class="help-block" ng-if="document.publicationSections.length > 0">
+			<a class="go-to-link" href="(= document|rbsURL:'urls' =)">{{ i18n('m.rbs.admin.admin.configure_url_and_redirections', ['ucf']) | raw }}</a>
+		</span>
+		<span class="help-block" ng-if="!hasSpecificHelp">{{ i18n('m.rbs.generic.admin.publicationsections_help', ['ucf']) }}</span>
+		<span class="help-block" ng-if="hasSpecificHelp">(=specificHelp=)</span>
+	</rbs-field-picker-multiple>
+
+	<rbs-field-date
+		property="startPublication"
+		label="{{ i18nAttr('c.documents.startpublication',['ucf']) }}">
+	</rbs-field-date>
+
+	<rbs-field-date
+		property="endPublication"
+		label="{{ i18nAttr('c.documents.endpublication',['ucf']) }}">
+	</rbs-field-date>
+</div>
