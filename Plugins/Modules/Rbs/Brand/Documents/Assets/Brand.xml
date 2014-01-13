@@ -4,6 +4,7 @@
 	localized="true" editable="true" publishable="true">
 	<properties>
 		<property name="title" has-correction="true" />
+		<property name="publicationSections" type="DocumentArray" document-type="Rbs_Website_Section" />
 		<property name="description" type="RichText" localized="true" has-correction="true"/>
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
 		<property name="websiteUrl" type="String" localized="true" has-correction="true"/>

@@ -3,7 +3,7 @@
 	/**
 	 *
 	 */
-	angular.module('RbsChange').directive('clipboardAddWidget', ['RbsChange.Clipboard', function (Clipboard) {
+	angular.module('RbsChange').directive('rbsClipboardAddWidget', ['RbsChange.Clipboard', function (Clipboard) {
 
 		return {
 			restrict : 'E',
