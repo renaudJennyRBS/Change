@@ -32,7 +32,7 @@
 							<button type="button" title="{{ i18nAttr('m.rbs.website.admin.change_page_for_function', ['ucf']) }}" class="btn btn-default btn-xs pull-right" style="margin-left: 15px;" ng-click="changePage(spf)"><i class="icon-pencil"></i></button>
 							<span ng-if="spf.functionCode === 'Rbs_Website_Section'"><i class="icon-home"></i> {{ i18n('m.rbs.website.admin.function_index_page', ['ucf']) }}</span>
 							<span ng-if="spf.functionCode !== 'Rbs_Website_Section'" ng-bind="getFunctionLabel(spf.functionCode)"></span>
-							<span class="text-muted" ng-if="showFunctionsCode"> ((= spf.functionCode=))</span>
+							<span class="text-muted" ng-if="showFunctionsCode"> ((= spf.functionCode =))</span>
 							<button type="button" title="{{ i18nAttr('m.rbs.website.admin.remove_function_in_section', ['ucf']) }}" class="btn btn-danger btn-xs pull-left" ng-click="removeFunction(spf)" style="margin-right: 15px;"><i class="icon-minus"></i></button>
 						</h5>
 						<p class="list-group-item-text">
@@ -47,9 +47,10 @@
 		</div>
 
 
-		<!-- right column: list of available and not implemented functions -->
+		<!-- right column -->
 		<div class="col-md-6" ng-switch="newFunction !== null">
 
+			<!-- list of available pages to implement the new function -->
 			<div ng-switch-when="true" class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title">
@@ -130,6 +131,7 @@
 			</div>
 
 
+			<!-- list of available and not implemented functions -->
 			<div ng-switch-default="" class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title">{{ i18n('m.rbs.website.admin.available_functions', ['ucf', 'lab']) }} (= unimplementedFunctions.length | number =)</h3>
@@ -146,12 +148,29 @@
 
 				<div class="list-group">
 					<div class="list-group-item repeat-animation" ng-repeat="f in unimplementedFunctions | filter:availFunctionsFilter">
-						<button type="button" title="{{ i18nAttr('m.rbs.website.admin.implement_function_in_section', ['ucf']) }}" ng-click="implementFunction(f)" class="btn btn-primary btn-xs pull-right" style="margin-left: 15px;"><i class="icon-plus"></i></button>
+						<button type="button" title="{{ i18nAttr('m.rbs.website.admin.implement_function_in_section', ['ucf']) }}" ng-click="implementFunction(f)" class="btn btn-primary btn-xs pull-right btn-icon" style="margin-left: 15px;">
+							<i ng-class="{true: 'icon-level-down', false: 'icon-plus'}[inheritedFunctions[f.code] != null]"></i>
+						</button>
 						<h5 class="list-group-item-heading">
 							<span ng-if="f.code === 'Rbs_Website_Section'"><i class="icon-home"></i> {{ i18n('m.rbs.website.admin.index_page', ['ucf']) }}</span>
 							<span ng-if="f.code !== 'Rbs_Website_Section'">(= f.label =)</span>
 							<span class="text-muted" ng-if="showFunctionsCode"> ((= f.code =))</span>
 						</h5>
+						<p class="list-group-item-text text-muted" ng-if="inheritedFunctions[f.code]">
+							<small>{{ i18nAttr('m.rbs.website.admin.inherited_from', ['ucf']) }}
+								<a href ng-href="(= inheritedFunctions[f.code].section | rbsURL =)">
+									<i ng-if="inheritedFunctions[f.code].section.model === 'Rbs_Website_Website'" class="icon-home" title="{{ i18nAttr('m.rbs.website.documents.website', ['ucf']) }}"></i>
+									<i ng-if="inheritedFunctions[f.code].section.model === 'Rbs_Website_Topic'" class="icon-folder-close-alt" title="{{ i18nAttr('m.rbs.website.documents.topic', ['ucf']) }}"></i>
+									(= inheritedFunctions[f.code].section.label =)
+								</a>
+								<i class="icon-long-arrow-right"></i>
+								<a href ng-href="(= inheritedFunctions[f.code].page | rbsURL =)">
+									<i ng-if="inheritedFunctions[f.code].page.model === 'Rbs_Website_StaticPage'" class="icon-file-text-alt" title="{{ i18nAttr('m.rbs.website.documents.staticpage', ['ucf']) }}"></i>
+									<i ng-if="inheritedFunctions[f.code].page.model === 'Rbs_Website_FunctionalPage'" class="icon-file-alt" title="{{ i18nAttr('m.rbs.website.documents.functionalpage', ['ucf']) }}"></i>
+									(= inheritedFunctions[f.code].page.label =)
+								</a>
+							</small>
+						</p>
 					</div>
 				</div>
 			</div>

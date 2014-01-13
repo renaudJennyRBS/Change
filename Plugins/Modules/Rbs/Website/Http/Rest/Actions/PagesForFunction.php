@@ -19,7 +19,6 @@ class PagesForFunction
 	public function execute(Event $event)
 	{
 		$request = $event->getRequest();
-		$billingArea = null;
 		if ($request->isGet())
 		{
 			$event->setResult($this->generateResult($event->getApplicationServices(), $request->getQuery('function')));
