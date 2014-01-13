@@ -125,9 +125,6 @@
 	"productlist_productsortorder_help":{
 		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."
 	},
-	"productlist_productsortdirection_help":{
-		"message":"Sens de tri des produits"
-	},
 	"productlist_products_picker_title":{
 		"message":"sélectionner les produits à ajouter à la catégorie"
 	},
