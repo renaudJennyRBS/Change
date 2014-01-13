@@ -24,20 +24,37 @@
 		<rbs-field-url property="websiteUrl" required="false"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
 		</rbs-field-url>
+	</fieldset>
 
-		<rbs-field-date property="startPublication"
+	<fieldset data-ng-show="section=='publication'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'publicationSections'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.generic.admin.publicationsections_picker_title', ['ucf']) }}">
+			<span class="help-block" ng-if="document.publicationSections.length > 0">
+				<a class="go-to-link" href="(= document|rbsURL:'urls' =)">{{ i18n('m.rbs.admin.admin.configure_url_and_redirections', ['ucf']) | raw }}</a>
+			</span>
+		</rbs-field-picker-multiple>
+
+		<rbs-field-date
+			property="startPublication"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'startPublication'), ['ucf']) }}">
 		</rbs-field-date>
 
-		<rbs-field-date property="endPublication" label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'endPublication'), ['ucf']) }}">
+		<rbs-field-date
+			property="endPublication"
+			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'endPublication'), ['ucf']) }}">
 		</rbs-field-date>
+
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+		data-rbs-document-system-info-section="">
 	</fieldset>
 
 	<rbs-form-button-bar></rbs-form-button-bar>
