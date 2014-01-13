@@ -334,6 +334,10 @@ class DocumentManager
 			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
 		}
 		$className = $model->getDocumentClassName();
+		if (!class_exists($className))
+		{
+			throw new \RuntimeException('Class could not be loaded ' . $className, 999999);
+		}
 
 		/* @var $document AbstractDocument */
 		$document = new $className($model);

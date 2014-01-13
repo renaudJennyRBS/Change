@@ -47,7 +47,7 @@ class Resolver extends BaseResolver
 		if (isset($this->resolverClasses[$name]))
 		{
 			$resolver = $this->resolverClasses[$name];
-			if (is_string($resolver))
+			if (is_string($resolver) && class_exists($resolver))
 			{
 				$resolver = new $resolver($this);
 				$this->resolverClasses[$name] = $resolver;

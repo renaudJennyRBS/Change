@@ -463,8 +463,6 @@ class SQLFragmentBuilder
 	 */
 	public function in($lhs, $rhs1, $_ = null)
 	{
-		$lhs = $this->normalizeValue($lhs);
-		$rhs1 = $this->normalizeValue($rhs1);
 		if ($rhs1 instanceof SelectQuery)
 		{
 			$rhs = $this->subQuery($rhs1);
@@ -498,7 +496,7 @@ class SQLFragmentBuilder
 				}
 			}
 		}
-		return new In($lhs, $rhs);
+		return new In($this->normalizeValue($lhs), $rhs);
 	}
 	
 	/**
