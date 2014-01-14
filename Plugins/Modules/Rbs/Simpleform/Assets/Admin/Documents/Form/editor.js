@@ -3,7 +3,7 @@
 	"use strict";
 
 	/**
-Z	 * @constructor
+	 * @constructor
 	 */
 	function Editor(REST, EditorManager, ArrayUtils)
 	{
