@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('documentSystemInfoSection', ['RbsChange.REST', function (REST) {
+	angular.module('RbsChange').directive('rbsDocumentSystemInfoSection', ['RbsChange.REST', function (REST) {
 
 		return {
 			restrict    : 'A',

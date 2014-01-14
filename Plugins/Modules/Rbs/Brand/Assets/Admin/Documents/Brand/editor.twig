@@ -24,20 +24,19 @@
 		<rbs-field-url property="websiteUrl" required="false"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
 		</rbs-field-url>
+	</fieldset>
 
-		<rbs-field-date property="startPublication"
-			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'startPublication'), ['ucf']) }}">
-		</rbs-field-date>
-
-		<rbs-field-date property="endPublication" label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'endPublication'), ['ucf']) }}">
-		</rbs-field-date>
+	<fieldset data-ng-show="section=='publication'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}"
+		data-rbs-document-publication-section="">
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+		data-rbs-document-system-info-section="">
 	</fieldset>
 
 	<rbs-form-button-bar></rbs-form-button-bar>

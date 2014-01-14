@@ -71,10 +71,9 @@
 
 					if (attrs.confirmOff && isON()) {
 
-						// TODO localize
 						Dialog.confirmLocal(
 								sw,
-								"<strong>Confirmation</strong>",
+								"<strong>" + i18n.trans('m.rbs.admin.adminjs.confirmation | ucf') + "</strong>",
 								attrs.confirmOff
 						).then(function () { toggleState(); });
 
@@ -82,7 +81,7 @@
 
 						Dialog.confirmLocal(
 								sw,
-								"<strong>Confirmation</strong>",
+								"<strong>" + i18n.trans('m.rbs.admin.adminjs.confirmation | ucf') + "</strong>",
 								attrs.confirmOn
 						).then(function () { toggleState(); });
 

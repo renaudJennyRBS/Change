@@ -2,7 +2,7 @@
 	<div class="clearfix">
 		<div class="pull-right" ng-if="document !== null && ! document.isNew() && (document.publicationStatus !== undefined || document.hasCorrection())">
 			<a href="javascript:;" ng-href="(= document | rbsURL:'workflow' =)" class="btn" ng-class="{true: 'btn-success', false: 'btn-default'}[document.publicationStatus=='PUBLISHABLE']">
-				<status class="small" ng-model="document"></status>
+				<rbs-status class="small" ng-model="document"></rbs-status>
 				<span ng-if="document.hasCorrection()">
 					{{ i18n('m.rbs.admin.admin.correction', ['ucf']) }}
 					<span class="badge">(= document.META$.correction.propertiesNames.length =)</span>

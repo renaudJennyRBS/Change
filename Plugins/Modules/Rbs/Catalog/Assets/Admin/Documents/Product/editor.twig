@@ -153,36 +153,15 @@
 
 	<fieldset data-ng-show="section=='publication'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-
-		<rbs-field-picker-multiple ng-hide="document.variant" property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
-		                           label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}"
-		                           selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_picker_title', ['ucf']) }}">
-			<span class="help-block">
-				{{ i18n('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}
-			</span>
-			<span class="help-block" ng-if="document.publicationSections.length > 0">
-				<a class="go-to-link" href="(= document|rbsURL:'urls' =)">{{ i18n('m.rbs.admin.admin.configure_url_and_redirections', ['ucf']) | raw }}</a>
-			</span>
-		</rbs-field-picker-multiple>
-
-		<rbs-field-date
-			property="startPublication"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'startPublication'), ['ucf']) }}">
-		</rbs-field-date>
-
-		<rbs-field-date
-			property="endPublication"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'endPublication'), ['ucf']) }}">
-		</rbs-field-date>
-
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}"
+		data-rbs-document-publication-section=""
+		rbs-document-publication-section-help="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}">
 	</fieldset>
-
 
 	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+		data-rbs-document-system-info-section="">
 	</fieldset>
 
 	<rbs-form-button-bar></rbs-form-button-bar>

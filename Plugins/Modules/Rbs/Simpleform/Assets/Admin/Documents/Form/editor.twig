@@ -61,20 +61,8 @@
 
 	<fieldset data-ng-show="section=='publication'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-
-		<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section" allow-creation="true"
-			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'publicationSections'), ['ucf']) }}"
-			selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.publicationsections_picker_title', ['ucf']) }}">
-		</rbs-field-picker-multiple>
-
-		<rbs-field-date property="startPublication"
-			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'startPublication'), ['ucf']) }}">
-		</rbs-field-date>
-
-		<rbs-field-date property="endPublication"
-			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'endPublication'), ['ucf']) }}">
-		</rbs-field-date>
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}"
+		data-rbs-document-publication-section="">
 	</fieldset>
 
 	<fieldset data-ng-show="section=='fields'"
@@ -91,9 +79,9 @@
 			<rbs-column name="label" primary="true">
 				<a href="javascript:;" ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
 			</rbs-column>
-			<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.simpleform.admin.sort_order', ['ucf']) }}">
+			<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
 				<rbs-kb-switch>
-					<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.adminjs.move_top', ['ucf']) }}">
+					<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
 						<i class="icon-step-forward icon-rotate-270"></i>
 					</button>
 					<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
@@ -116,7 +104,7 @@
 		data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+		data-rbs-document-system-info-section="">
 	</fieldset>
 
 	<rbs-form-button-bar></rbs-form-button-bar>

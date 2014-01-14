@@ -6,7 +6,7 @@
 	 * This Directive is to be applied on <a/> elements.
 	 * It adds/removes a CSS class if the current URL equals/differs from the 'href' attribute.
 	 */
-	angular.module('RbsChange').directive('urlMatchClass', ['$rootScope', '$location', function ($rootScope, $location)
+	angular.module('RbsChange').directive('rbsUrlMatchClass', ['$rootScope', '$location', function ($rootScope, $location)
 	{
 		function isCurrentUrl (href) {
 			if (href.charAt(0) !== '/') {

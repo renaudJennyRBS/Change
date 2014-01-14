@@ -600,3 +600,7 @@ rbs-navigation-history {
 	margin-bottom: 0;
 }
 
+.rbs-list-option-panel .form-group{
+	margin-left: 0;
+	margin-right: 0;
+}

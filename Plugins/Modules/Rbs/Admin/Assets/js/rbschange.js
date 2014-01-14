@@ -189,22 +189,6 @@
 		};
 	});
 
- // TODO to be deleted ?
-	app.directive('focusOnShow', ['$timeout', function ($timeout) {
-		return function (scope, element, attr) {
-			if (attr.ngShow) {
-				scope.$watch(attr.ngShow, function (value) {
-					if (value) {
-						$timeout(function () {
-							jQuery(element).find(attr.focusOnShow).first().focus();
-						});
-					}
-				});
-			}
-		};
-	}]);
-
-
 	/**
 	 * Usages:
 	 * `<div rbs-time-ago="my.date.object"></div>`

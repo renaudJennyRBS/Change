@@ -6,10 +6,10 @@
 
 		<div ng-if="! selectionContext" class="btn-toolbar" ng-show="useToolBar">
 			<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
-				<a class="btn btn-default" href go-up-in-tree></a>
+				<a class="btn btn-default" href rbs-go-up-in-tree=""></a>
 			</div>
 
-			<clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></clipboard-add-widget>
+			<rbs-clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></rbs-clipboard-add-widget>
 
 			<span ng-repeat="item in actions" ng-switch="item.type">
 				<button ng-switch-when="single" class="btn btn-default" type="button"
@@ -131,7 +131,6 @@
 				</td>
 				<td class="workflow" class="fade-animation" data-colspan="auto" ng-if="isWorkflow(doc)">
 					<div class="inner">
-						<div class="workflow-indicator"></div>
 						<div rbs-document-workflow-actions="" document="doc.__document" on-close="closeWorkflow($index)" standalone="false" class="rbs-list-option-panel"></div>
 					</div>
 				</td>
@@ -151,7 +150,7 @@
 			    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
 				<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
 					<div class="caption">
-						<h4><status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
+						<h4><rbs-status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
 					</div>
 				</div>
 			</li>

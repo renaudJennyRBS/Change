@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('goUpInTree', ['RbsChange.Breadcrumb', function (Breadcrumb) {
+	angular.module('RbsChange').directive('rbsGoUpInTree', ['RbsChange.Breadcrumb', function (Breadcrumb) {
 
 		return {
 
