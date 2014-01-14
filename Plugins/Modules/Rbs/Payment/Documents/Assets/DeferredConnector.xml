@@ -3,6 +3,6 @@
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 		  extends="Rbs_Payment_Connector" abstract="false">
 	<properties>
-		<property name="instructions" type="RichText" localized="true" />
+		<property name="instructions" type="RichText" localized="true" has-correction="true"/>
 	</properties>
 </document>
