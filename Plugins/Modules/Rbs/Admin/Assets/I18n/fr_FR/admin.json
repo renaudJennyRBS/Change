@@ -372,6 +372,9 @@
 	"create":{
 		"message":"créer"
 	},
+	"sort_actions":{
+		"message":"ordre"
+	},
 	"move_up":{
 		"message":"monter"
 	},

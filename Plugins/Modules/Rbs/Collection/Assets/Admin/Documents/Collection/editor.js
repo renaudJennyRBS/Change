@@ -56,9 +56,8 @@
 					}
 				};
 
-
-				scope.cascadeCreateItem = editorCtrl.registerCreateCascade('items', 'Rbs_Collection_Item');
-				scope.cascadeEditItem = editorCtrl.registerEditCascade('items');
+				scope.cascadeCreate = editorCtrl.registerCreateCascade('items', 'Rbs_Collection_Item');
+				scope.cascadeEdit = editorCtrl.registerEditCascade('items');
 			}
 		};
 
