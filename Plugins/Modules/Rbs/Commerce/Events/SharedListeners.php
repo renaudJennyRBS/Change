@@ -34,6 +34,6 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function detachShared(SharedEventManagerInterface $events)
 	{
-		//TODO
+		//TODO: Implement detachShared() method.
 	}
 }

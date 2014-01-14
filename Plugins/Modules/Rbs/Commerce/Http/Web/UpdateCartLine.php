@@ -64,6 +64,7 @@ class UpdateCartLine extends \Change\Http\Web\Actions\AbstractAjaxAction
 				{
 					$cartManager = $commerceServices->getCartManager();
 					$cart->removeLineByKey($lineKey);
+					$cartManager->normalize($cart);
 					$cartManager->saveCart($cart);
 
 					(new GetCurrentCart())->execute($event);

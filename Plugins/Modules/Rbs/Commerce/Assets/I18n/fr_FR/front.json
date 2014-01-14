@@ -152,17 +152,17 @@
 	"use_another_address":{
 		"message":"choisir une autre adresse"
 	},
-	"coupon_code":{
-		"message":"code promotionnel"
+	"coupons":{
+		"message":"code(s) promotionnel(s)"
 	},
-	"type_code":{
-		"message":"saisissez votre code"
+	"add_code":{
+		"message":"ajouter un code"
+	},
+	"applied_coupons":{
+		"message":"codes appliqués"
 	},
 	"ok":{
 		"message":"OK"
-	},
-	"used_coupon_code":{
-		"message":"code coupon appliqué"
 	},
 	"summary_of_amounts":{
 		"message":"récapitulatif des montants"

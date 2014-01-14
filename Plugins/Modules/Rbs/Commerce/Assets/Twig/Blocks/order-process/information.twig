@@ -90,7 +90,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</div>
 			<div class="panel-body">
-				(= cart.email =)
+				(= information.email =)
 			</div>
 		</div>
 
@@ -105,7 +105,7 @@
 
 		<div data-ng-show="isCurrentStep('information')" class="clearfix">
 			<p>
-				<button class="btn btn-primary btn-lg pull-right" data-ng-click="setCurrentStep('shipping')"
+				<button class="btn btn-primary btn-lg pull-right" data-ng-click="finalizeInformationStep()"
 					data-ng-disabled="!isInformationStepComplete()">
 					{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
 				</button>

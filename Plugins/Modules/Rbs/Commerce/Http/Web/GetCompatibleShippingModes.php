@@ -51,7 +51,7 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 				elseif ($index == 1)
 				{
 					$modeInfos['feesValue'] = '15,05 €';
-					$modeInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-home';
+					$modeInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-address';
 				}
 
 				$modesInfos[] = $modeInfos;

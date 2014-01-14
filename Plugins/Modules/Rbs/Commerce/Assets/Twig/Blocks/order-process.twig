@@ -46,7 +46,7 @@
 			{% include 'Rbs_Commerce/Blocks/order-process/cart.twig' %}
 		</div>
 
-		<div class="vertical-show-hide-animation" data-ng-cloak="" data-ng-show="cart">
+		<div class="vertical-if-animation" data-ng-if="isStepEnabled('information')" data-ng-cloak="">
 			<div class="vertical-show-hide-animation-content">
 				<hr />
 

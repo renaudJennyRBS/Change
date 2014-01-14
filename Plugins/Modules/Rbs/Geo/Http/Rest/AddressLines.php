@@ -30,10 +30,10 @@ class AddressLines
 				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
 				$dqb->andPredicates($dqb->eq('code', $address->getCountryCode()));
 				$country = $dqb->getFirstDocument();
-				/* @var $country \Rbs\Geo\Documents\Country */
-				if ($country)
+				if ($country instanceof \Rbs\Geo\Documents\Country)
 				{
-					$address->setFieldValue('country', $country->getTitle());
+					$i18n = $event->getApplicationServices()->getI18nManager();
+					$address->setFieldValue('country', $i18n->trans($country->getI18nTitleKey()));
 				}
 
 				$result = new \Change\Http\Rest\Result\ArrayResult();
