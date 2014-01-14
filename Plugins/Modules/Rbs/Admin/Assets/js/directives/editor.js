@@ -46,7 +46,7 @@
 						translation = true;
 					}
 
-					var document, documentId = 0, promise, defered, ctx;
+					var document, documentId = 0, promise, defered, navCtx;
 
 					if (! angular.isFunction ($scope.initDocument) || ! (promise = $scope.initDocument())) {
 						if ($routeParams.hasOwnProperty('id')) {
@@ -59,24 +59,23 @@
 							promise = REST.resource(modelName, documentId, $routeParams.LCID);
 						}
 						else {
-							defered = $q.defer();
-							promise = defered.promise;
 							if (! document) {
-
 								// Check if we are coming back here following a selection process.
 								// In that case, we need to get the attached document instead of creating a new one.
-								var navCtx = Navigation.getActiveContext();
+								navCtx = Navigation.getActiveContext();
 								if (navCtx && navCtx.isSelection() && Utils.isDocument(navCtx.params.document) && navCtx.params.document.model === modelName && navCtx.params.document.id < 0) {
 									document = navCtx.params.document;
+									defered = $q.defer();
+									promise = defered.promise;
+									defered.resolve(document);
 								}
 								else {
-									document = REST.newResource(modelName, Settings.get('LCID'));
-									if (! isNaN(documentId) && documentId < 0) {
-										document.id = documentId;
+									if (isNaN(documentId) || documentId >= 0) {
+										documentId = REST.getTemporaryId();
 									}
+									promise = REST.resource(modelName, documentId, Settings.get('LCID'));
 								}
 							}
-							defered.resolve(document);
 						}
 					}
 
@@ -590,12 +589,24 @@
 
 					// Computes a list of changes on the fields in each digest cycle.
 					$scope.changes = [];
-					$scope.$watch('document', function scopeWatchFn () {
+					$scope.$watch('document', function scopeWatchFn ()
+					{
 						ArrayUtils.clear($scope.changes);
-						angular.forEach($scope.document, function (value, name) {
+						angular.forEach($scope.document, function (value, name)
+						{
 							var original = angular.isDefined($scope.original[name]) ? $scope.original[name] : '';
-							if (name !== 'META$' && ! angular.equals(original, value) && $scope.changes.indexOf(name) === -1) {
-								$scope.changes.push(name);
+							if (name !== 'META$' && $scope.changes.indexOf(name) === -1)
+							{
+								if (Utils.isDocument(original) && Utils.isDocument(value)) {
+									if (original.id !== value.id) {
+										$scope.changes.push(name);
+									}
+								}
+								else {
+									if (! angular.equals(original, value)) {
+										$scope.changes.push(name);
+									}
+								}
 							}
 						});
 					}, true);
