@@ -21,6 +21,7 @@
 	registerFieldDirective('File', '<rbs-uploader rbs-file-uploader="" storage-name="files" file-accept="*"></div>', '[rbs-file-uploader]');
 	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
 	registerFieldDirective('Address', '<rbs-address-fields></rbs-address-fields>', 'rbs-address-fields', true);
+	registerFieldDirective('ChainedSelect', '<rbs-document-chained-select></rbs-document-chained-select>', 'rbs-document-chained-select');
 
 
 	/**
@@ -38,20 +39,21 @@
 			transclude : true,
 			template   : fieldTemplate(''),
 
-			compile : function (tElement, tAttrs, transcludeFn)
+			compile : function (tElement, tAttrs)
 			{
 				var $lbl = tElement.find('label').first(),
 					fieldId = 'rbs_field_' + (++fieldIdCounter),
 					required = (tAttrs.required === 'true');
 				$lbl.html(tAttrs.label);
 				$lbl.attr('for', fieldId);
-				return function link (scope, element)
+
+				return function link (scope, iElement, iAttrs, controller, transcludeFn)
 				{
-					transcludeFn(scope, function (clone) {
-						element.find('.controls').append(clone);
-						var $input = element.find('.controls [ng-model]').attr('id', fieldId);
+					transcludeFn(function (clone) {
+						iElement.find('.controls').append(clone);
+						var $input = iElement.find('.controls [ng-model]').attr('id', fieldId);
 						if (required) {
-							element.addClass('required');
+							iElement.addClass('required');
 							$input.attr('required', 'required');
 						}
 					});
@@ -63,7 +65,7 @@
 
 	function fieldTemplate (contents, omitLabel)
 	{
-		if(omitLabel) {
+		if (omitLabel) {
 			return '<div class="form-group property"><div class="col-lg-12 controls">' + contents + '</div></div>';
 		}
 		return '<div class="form-group property">' +
@@ -98,7 +100,6 @@
 	 * @param tAttrs
 	 * @param inputSelector
 	 * @param Utils
-	 * @param inputIdSelector
 	 */
 	function rbsFieldCompile (tElement, tAttrs, inputSelector, Utils)
 	{

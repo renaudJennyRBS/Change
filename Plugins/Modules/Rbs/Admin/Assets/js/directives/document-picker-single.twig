@@ -1,7 +1,9 @@
 <div ng-hide="isEmpty()">
 	<p class="form-control form-control-static" style="height: auto;">
-		<a href ng-href="(= item | rbsURL =)" rbs-start-navigation="" class="pull-right">{{ i18n('m.rbs.admin.admin.picker_open', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
-		<ng-include src="getItemTemplateName(item)"></ng-include>
+		<a ng-if="item" href ng-href="(= item | rbsURL =)" rbs-start-navigation="">
+			<ng-include src="getItemTemplateName(item)"></ng-include>
+			<i class="icon-circle-arrow-right"></i>
+		</a>
 	</p>
 </div>
 

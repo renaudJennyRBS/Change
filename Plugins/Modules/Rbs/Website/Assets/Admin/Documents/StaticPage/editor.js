@@ -39,7 +39,6 @@
 						$('#rbsWebsitePageDefaultAsides').show();
 						$('#rbsWebsitePageBlockPropertiesAside').hide();
 					}
-
 				};
 
 				scope.enterSection = function (section)

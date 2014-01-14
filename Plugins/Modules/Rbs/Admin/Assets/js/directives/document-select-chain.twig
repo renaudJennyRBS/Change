@@ -1,0 +1,11 @@
+<p data-role="value" class="form-control form-control-static">
+	<span class="pull-right">
+		<button type="button" class="btn btn-default btn-xs" ng-click="editMode = ! editMode" style="position:relative;top:-3px;">
+			<i ng-class="{true: 'icon-arrow-up', false: 'icon-arrow-down'}[editMode]"></i>
+			{{ i18n('m.rbs.admin.admin.change') }}
+		</button>
+	</span>
+	<a ng-if="value.id > 0" href ng-href="(= value | rbsURL =)" rbs-start-navigation="">(= value.label =) <i class="icon-circle-arrow-right"></i></a>
+	<span ng-if="! value.id" class="text-muted" style="margin-bottom: 0;">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</span>
+</p>
+<div ng-show="editMode" data-role="selects" class="row form-control-static btn-toolbar"></div>
