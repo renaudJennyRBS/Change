@@ -4,7 +4,7 @@
 	localized="true" editable="true" activable="true">
 	<properties>
 		<property name="path" type="StorageUri" />
-		<property name="alt" type="String" localized="true" />
+		<property name="alt" type="String" localized="true" has-correction="true"/>
 		<property name="width" type="Integer" />
 		<property name="height" type="Integer" />
 		<property name="mimeType" type="String" stateless="true" />
