@@ -64,34 +64,38 @@
 -->
 
 <div class="panel panel-default">
-	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupon_code', ['ucf']) }}</div>
+	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupons', ['ucf']) }}</div>
 	<div class="panel-body form-horizontal">
-		<div class="form-group no-bottom-margin" data-ng-if="!payment.couponCode">
+		<div class="form-group" data-ng-if="payment.coupons.length > 0">
+			<label class="col-sm-6 col-md-4 control-label">
+				{{ i18n('m.rbs.commerce.front.applied_coupons', ['ucf']) }}
+			</label>
+			<div class="col-sm-6 col-md-8">
+				<p class="form-control-static" data-ng-repeat="coupon in payment.coupons">
+					(= coupon.code =)
+					<span data-ng-if="coupon.title && (coupon.title != coupon.code)">((= coupon.title =))</span>
+					<button class="btn btn-default btn-xs" data-ng-click="removeCoupon($index)"
+						title="{{ i18n('m.rbs.commerce.front.remove', ['ucf', 'attr']) }}">
+						<i class="glyphicon glyphicon-remove"></i>
+					</button>
+				</p>
+			</div>
+		</div>
+		<div class="form-group no-bottom-margin">
 			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">
-				{{ i18n('m.rbs.commerce.front.type_code', ['ucf']) }}
+				{{ i18n('m.rbs.commerce.front.add_code', ['ucf']) }}
 			</label>
 			<div class="col-sm-6 col-md-8">
 				<div class="input-group">
 					<input type="text" class="form-control" data-ng-model="payment.newCouponCode" />
 					<span class="input-group-btn">
-						<button class="btn btn-primary" type="button" data-ng-click="setCoupon()">
+						<button class="btn btn-primary" type="button" data-ng-click="addCoupon()"
+							data-ng-disabled="payment.newCouponCode.length < 1">
+							<i class="glyphicon glyphicon-ok"></i>
 							{{ i18n('m.rbs.commerce.front.ok', ['ucf']) }}
 						</button>
 					</span>
 				</div>
-			</div>
-		</div>
-		<div class="form-group no-bottom-margin" data-ng-if="payment.couponCode">
-			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">
-				{{ i18n('m.rbs.commerce.front.used_coupon_code', ['ucf']) }}
-			</label>
-			<div class="col-sm-6 col-md-8">
-				<p class="form-control-static">
-					(= payment.couponCode =)
-					<button class="btn btn-default btn-xs" data-ng-click="removeCoupon()">
-						{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}
-					</button>
-				</p>
 			</div>
 		</div>
 	</div>

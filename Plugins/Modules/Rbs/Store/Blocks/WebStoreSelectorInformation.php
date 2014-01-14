@@ -20,7 +20,7 @@ class WebStoreSelectorInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.store.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.store.admin.web_store_selector_label', $ucf));
-		$this->addInformationMeta('availableWebStoreIds', ParameterInformation::TYPE_DOCUMENTIDARRAY, true)
+		$this->addInformationMeta('availableWebStoreIds', ParameterInformation::TYPE_DOCUMENTIDARRAY, true, array())
 			->setAllowedModelsNames('Rbs_Store_WebStore')
 			->setLabel($i18nManager->trans('m.rbs.store.admin.web_store_selector_available_web_stores', $ucf));
 		$this->addInformationMeta('templateName', Property::TYPE_STRING, false, 'webStoreSelector-horizontal.twig')

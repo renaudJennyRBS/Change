@@ -19,7 +19,7 @@ class BaseLineItem implements LineItemInterface
 	protected $reservationQuantity;
 
 	/**
-	 * @var \Rbs\Order\OrderPrice
+	 * @var \Rbs\Commerce\Std\BasePrice|null
 	 */
 	protected $price;
 
@@ -34,7 +34,7 @@ class BaseLineItem implements LineItemInterface
 	protected $options;
 
 	/**
-	 * @param LineItemInterface|array $codeSKU
+	 * @param LineItemInterface|array $data
 	 */
 	function __construct($data)
 	{
@@ -49,11 +49,13 @@ class BaseLineItem implements LineItemInterface
 	}
 
 	/**
-	 * @return string
+	 * @param string $code
+	 * @return $this
 	 */
 	public function setCodeSKU($code)
 	{
-		return $this->codeSKU = $code;
+		$this->codeSKU = $code;
+		return $this;
 	}
 
 	/**

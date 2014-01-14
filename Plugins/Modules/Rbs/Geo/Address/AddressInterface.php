@@ -2,7 +2,7 @@
 namespace Rbs\Geo\Address;
 
 /**
- * @name \Rbs\Geo\BaseAddress\AddressInterface
+ * @name \Rbs\Geo\Address\AddressInterface
  */
 interface AddressInterface
 {

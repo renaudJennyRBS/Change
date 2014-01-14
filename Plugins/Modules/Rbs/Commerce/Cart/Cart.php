@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Commerce\Cart;
 
-use Zend\Validator\IsInstanceOf;
-
 /**
  * @name \Rbs\Commerce\Cart\Cart
  */
@@ -84,14 +82,24 @@ class Cart implements \Serializable
 	protected $lines = array();
 
 	/**
+	 * @var string
+	 */
+	protected $email;
+
+	/**
 	 * @var \Rbs\Geo\Address\AddressInterface
 	 */
 	protected $address;
 
 	/**
-	 * @var array [[id => code =>, title =>, address =>], ...]
+	 * @var \Rbs\Commerce\Process\ShippingModeInterface[]
 	 */
 	protected $shippingModes = array();
+
+	/**
+	 * @var \Rbs\Commerce\Process\CouponInterface[]
+	 */
+	protected $coupons = array();
 
 	/**
 	 * @var \Rbs\Commerce\Cart\CartLine[]
@@ -102,7 +110,6 @@ class Cart implements \Serializable
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
 	protected $discounts = array();
-
 
 	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
@@ -279,6 +286,42 @@ class Cart implements \Serializable
 	public function getOwnerId()
 	{
 		return $this->ownerId;
+	}
+
+	/**
+	 * @param string $email
+	 * @return $this
+	 */
+	public function setEmail($email)
+	{
+		$this->email = $email;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getEmail()
+	{
+		return $this->email;
+	}
+
+	/**
+	 * @param \Rbs\Geo\Address\AddressInterface $address
+	 * @return $this
+	 */
+	public function setAddress($address)
+	{
+		$this->address = $address;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Geo\Address\AddressInterface
+	 */
+	public function getAddress()
+	{
+		return $this->address;
 	}
 
 	/**
@@ -642,6 +685,42 @@ class Cart implements \Serializable
 	}
 
 	/**
+	 * @param array $shippingModes
+	 * @return $this
+	 */
+	public function setShippingModes($shippingModes)
+	{
+		$this->shippingModes = $shippingModes;
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getShippingModes()
+	{
+		return $this->shippingModes;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Process\CouponInterface[] $coupons
+	 * @return $this
+	 */
+	public function setCoupons($coupons)
+	{
+		$this->coupons = $coupons;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Process\CouponInterface[]
+	 */
+	public function getCoupons()
+	{
+		return $this->coupons;
+	}
+
+	/**
 	 * String representation of object
 	 * @link http://php.net/manual/en/serializable.serialize.php
 	 * @return string the string representation of the object or null
@@ -654,10 +733,12 @@ class Cart implements \Serializable
 			'context' => $this->context,
 			'lines' => $this->lines,
 			'errors' => $this->errors,
+			'email' => $this->email,
 			'address' => $this->address,
 			'fees' => $this->fees,
 			'discounts' => $this->discounts,
 			'shippingModes' => $this->shippingModes,
+			'coupons' => $this->coupons,
 			'taxesValues' => $this->taxesValues,
 		);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
@@ -684,10 +765,12 @@ class Cart implements \Serializable
 		$this->context = $serializedData['context'];
 		$this->lines = $serializedData['lines'];
 		$this->errors = $serializedData['errors'];
+		$this->email = $serializedData['email'];
 		$this->address = $serializedData['address'];
 		$this->fees = $serializedData['fees'];
 		$this->discounts = $serializedData['discounts'];
 		$this->shippingModes = $serializedData['shippingModes'];
+		$this->coupons = $serializedData['coupons'];
 		$this->taxesValues = $serializedData['taxesValues'];
 		foreach ($this->lines as $line)
 		{
@@ -703,21 +786,31 @@ class Cart implements \Serializable
 	{
 		$array = array(
 			'identifier' => $this->identifier,
+			'context' => $this->getContext()->toArray(),
+			'errors' => array(),
+			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
+			'webStoreId' => $this->webStoreId,
 			'billingAreaId' => $this->billingArea ? $this->billingArea->getId() : null,
 			'currencyCode' => $this->billingArea ? $this->billingArea->getCurrencyCode() : null,
 			'taxes' => [],
-			'taxesValues' => [],
 			'zone' => $this->zone,
-			'locked' => $this->locked,
-			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
+			'lines' => array(),
+			'lineTaxesValues' => [], // TODO
 			'userId' => $this->userId,
 			'ownerId' => $this->ownerId,
+			'email' => $this->email,
+			'address' => ($this->address instanceof \Rbs\Geo\Address\AddressInterface) ? $this->address->getFields() : null,
+			'shippingModes' => [],
+			'coupons' => [],
+			'fees' => [], // TODO
+			'discounts' => [], // TODO
+			'taxesValues' => [],
+			'creditNotes' => [], // TODO
+			'locked' => $this->locked,
 			'transactionId' => $this->transactionId,
-			'ordered' => $this->ordered,
-			'webStoreId' => $this->webStoreId,
-			'context' => $this->getContext()->toArray(),
-			'errors' => array(),
-			'lines' => array());
+			'paymentAmount' => null, // TODO
+			'ordered' => $this->ordered
+		);
 
 		foreach ($this->getTaxes() as $tax)
 		{
@@ -732,6 +825,16 @@ class Cart implements \Serializable
 		foreach ($this->lines as $line)
 		{
 			$array['lines'][] = $line->toArray();
+		}
+
+		foreach ($this->shippingModes as $shippingMode)
+		{
+			$array['shippingModes'][] = $shippingMode->toArray();
+		}
+
+		foreach ($this->coupons as $coupon)
+		{
+			$array['coupons'][] = $coupon->toArray();
 		}
 
 		foreach ($this->errors as $error)

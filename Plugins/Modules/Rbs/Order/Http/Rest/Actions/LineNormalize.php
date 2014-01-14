@@ -22,7 +22,7 @@ class LineNormalize
 		{
 			$line = $request->getPost('line');
 
-			$webstoreId = $request->getPost('webStore');
+			$webStoreId = $request->getPost('webStore');
 			$billingAreaId = $request->getPost('billingArea');
 			$zone = $request->getPost('zone');
 
@@ -31,9 +31,8 @@ class LineNormalize
 			$commerceServices = $event->getServices('commerceServices');
 			$pm = $commerceServices->getPriceManager();
 
-
-			/* @var $webstore \Rbs\Store\Documents\WebStore */
-			$webstore = $dm->getDocumentInstance($webstoreId);
+			/* @var $webStore \Rbs\Store\Documents\WebStore */
+			$webStore = $dm->getDocumentInstance($webStoreId);
 
 			/* @var $billingArea \Rbs\Price\Documents\BillingArea */
 			$billingArea = $dm->getDocumentInstance($billingAreaId);
@@ -60,7 +59,7 @@ class LineNormalize
 						if($sku && !$item->getOptions()->get('boPriceValue'))
 						{
 							/* @var $price \Rbs\Price\Documents\Price */
-							$price = $pm->getPriceBySku($sku, ['webStore' => $webstore, 'billingArea' => $billingArea]);
+							$price = $pm->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
 							if ($price instanceof AbstractDocument)
 							{
 								$item->setPrice($price);

@@ -8,7 +8,6 @@ use Change\Documents\Events\Event as DocumentEvent;
  */
 class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo\Address\AddressInterface
 {
-
 	/**
 	 * @var array
 	 */
@@ -105,14 +104,22 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		return null;
 	}
 
+	/**
+	 * @param array $fieldValues
+	 * @return $this
+	 */
 	public function setFieldValues($fieldValues)
 	{
 		if (is_array($fieldValues))
 		{
 			$this->fieldValues = $fieldValues;
 		}
+		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getFieldValues()
 	{
 		if (is_array($this->fieldValues))
@@ -140,13 +147,18 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		return $fieldValues;
 	}
 
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 	}
 
-
+	/**
+	 * @param DocumentEvent $event
+	 */
 	public function onDefaultSave(DocumentEvent $event)
 	{
 		/* @var $address Address */
@@ -220,13 +232,21 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		return is_array($fields) ? $fields : [];
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getLabel()
 	{
 		return $this->getName();
 	}
 
+	/**
+	 * @param string $value
+	 * @return $this
+	 */
 	public function setLabel($value)
 	{
 		// not implemented
+		return $this;
 	}
 }

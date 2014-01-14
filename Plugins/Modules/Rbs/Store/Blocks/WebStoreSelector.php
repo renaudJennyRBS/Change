@@ -21,7 +21,7 @@ class WebStoreSelector extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('webStoreId');
-		$parameters->addParameterMeta('availableWebStoreIds');
+		$parameters->addParameterMeta('availableWebStoreIds', array());
 		$parameters->addParameterMeta('billingAreaId');
 		$parameters->addParameterMeta('templateName', 'webStoreSelector-horizontal.twig');
 

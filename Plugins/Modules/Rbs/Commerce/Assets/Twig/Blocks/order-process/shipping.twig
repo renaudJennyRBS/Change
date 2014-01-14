@@ -45,29 +45,29 @@
 	</div>
 </script>
 
-<script type="text/ng-template" id="/shipping-mode-configuration-home.static.tpl">
+<script type="text/ng-template" id="/shipping-mode-configuration-address.static.tpl">
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_address', ['ucf']) }}</div>
 		<div class="panel-body">
 			<ol>
 				<li class="radio" data-ng-if="!display.readonly">
 					<label>
-						<input type="radio" data-ng-model="delivery.usePostalAddress" value="1">
+						<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="1">
 						{{ i18n('m.rbs.commerce.front.use_postal_address') }}
 					</label>
 				</li>
-				<li class="radio" data-ng-if="display.readonly && delivery.usePostalAddress == 1">
+				<li class="radio" data-ng-if="display.readonly && delivery.options.usePostalAddress == 1">
 					{{ i18n('m.rbs.commerce.front.use_postal_address') }}
 				</li>
 				<li class="radio" data-ng-if="!display.readonly">
 					<label>
-						<input type="radio" data-ng-model="delivery.usePostalAddress" value="2">
+						<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="0">
 						{{ i18n('m.rbs.commerce.front.use_another_address') }}
 					</label>
 				</li>
 			</ol>
 
-			<div data-ng-if="delivery.usePostalAddress == 2">
+			<div data-ng-if="delivery.options.usePostalAddress == 0">
 				<div data-rbs-address-form="" data-ng-model="delivery.address"
 					data-zone-code="(= zoneCode =)" data-readonly="(= display.readonly =)">
 				</div>
@@ -76,8 +76,8 @@
 	</div>
 </script>
 
-<div data-ng-repeat="(index, delivery) in shipping">
-	<div data-ng-if="shipping.length > 1">
+<div data-ng-repeat="(index, delivery) in shipping.deliveries">
+	<div data-ng-if="shipping.deliveries.length > 1">
 		<h3>{{ i18n('m.rbs.commerce.front.delivery_n', ['ucf'], {'number': '(= index+1 =)'}) }}</h3>
 
 		<div class="panel panel-default">
@@ -101,13 +101,13 @@
 		</div>
 	</div>
 
-	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="cart.zone"
+	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="cart.zone" data-cart="cart"
 		data-readonly="(= !isCurrentStep('shipping') =)"></div>
 </div>
 
 <div data-ng-show="isCurrentStep('shipping')" class="clearfix">
 	<p>
-		<button class="btn btn-primary btn-lg pull-right" data-ng-click="setCurrentStep('payment')"
+		<button class="btn btn-primary btn-lg pull-right" data-ng-click="finalizeShippingStep()"
 			data-ng-disabled="!isShippingStepComplete()">
 			{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
 		</button>
