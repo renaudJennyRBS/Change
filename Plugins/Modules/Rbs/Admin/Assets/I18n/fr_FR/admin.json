@@ -861,6 +861,10 @@
 	"back_to_document":{
 		"message":"retourner à <strong>$LABEL$</strong>"
 	},
+	"and_go_back_to":{
+		"message":"et retourner à <strong>$LABEL$</strong>",
+		"description" : "Use in items select box on the top of document list"
+	},
 	"menu_title":{
 		"message":"processus de validation"
 	},
