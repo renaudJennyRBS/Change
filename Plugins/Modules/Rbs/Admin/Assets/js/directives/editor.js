@@ -250,7 +250,7 @@
 				function getSectionOfField (fieldName) {
 					var result = null;
 					angular.forEach($scope._chgMenu, function (entry) {
-						if (entry.type === 'section') {
+						if (angular.isArray(entry.fields)) {
 							angular.forEach(entry.fields, function (field) {
 								if (field.id === fieldName) {
 									result = entry;
@@ -264,18 +264,16 @@
 
 				function markFieldAsInvalid (fieldName, messages) {
 					$element
-						.find('.control-group[property="'+fieldName+'"]').addClass('error')
+						.find('.form-group[property="'+fieldName+'"]').addClass('error')
 						.find('.controls :input').first().focus();
 					getSectionOfField(fieldName).invalid.push(fieldName);
 				}
 
 
 				function clearInvalidFields () {
-					$element.find('.control-group.property.error').removeClass('error');
+					$element.find('.form-group.property.error').removeClass('error');
 					angular.forEach($scope._chgMenu, function (entry) {
-						if (entry.type === 'section') {
-							ArrayUtils.clear(entry.invalid);
-						}
+						ArrayUtils.clear(entry.invalid);
 					});
 				}
 				this.clearInvalidFields = clearInvalidFields;
