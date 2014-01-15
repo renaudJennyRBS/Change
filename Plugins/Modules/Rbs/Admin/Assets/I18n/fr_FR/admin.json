@@ -1096,5 +1096,8 @@
 	},
 	"possible_values": {
 		"message":"valeur prédéfinie"
+	},
+	"change":{
+		"message":"changer"
 	}
 }

@@ -23,7 +23,7 @@
 			replace     : false,
 			scope       : { 'section' : '=' },
 
-			link : function (scope)
+			link : function linkFn (scope)
 			{
 				/**
 				 * Loads the Functions implemented in the given Section.
@@ -90,7 +90,7 @@
 				 *
 				 * @param section Rbs_Website_Section document.
 				 *
-				 * @returns {all|*|all|Promise|all}
+				 * @returns Promise
 				 */
 				function loadPages (section)
 				{
@@ -170,13 +170,13 @@
 				 */
 				function isFunctionImplemented (functionCode)
 				{
-					var i;
-					for (i=0 ; i<scope.sectionPageFunctionList.length ; i++) {
+					var i, result = false;
+					for (i=0 ; i<scope.sectionPageFunctionList.length && ! result ; i++) {
 						if (scope.sectionPageFunctionList[i].functionCode === functionCode) {
-							return true;
+							result = true;
 						}
 					}
-					return false;
+					return result;
 				}
 
 
@@ -206,13 +206,13 @@
 				 */
 				function getFunctionByCode (functionCode)
 				{
-					var i;
-					for (i=0 ; i<scope.allFunctions.length ; i++) {
+					var i, result = null;
+					for (i=0 ; i<scope.allFunctions.length && ! result ; i++) {
 						if (scope.allFunctions[i].code === functionCode) {
-							return scope.allFunctions[i];
+							result = scope.allFunctions[i];
 						}
 					}
-					return null;
+					return result;
 				}
 
 
@@ -291,7 +291,7 @@
 								// Success
 								function () {
 									scope.closePageSelection();
-									loadSectionPageFunctions(section).then(initUnimplementedFunctions);
+									loadSectionPageFunctions(section, null, null).then(initUnimplementedFunctions);
 								},
 								// Error
 								function (error) {
@@ -311,14 +311,14 @@
 				 */
 				function getSectionPageFunctionByCode (functionCode)
 				{
-					var i;
-					for (i=0 ; i<scope.sectionPageFunctionList.length ; i++)
+					var i, result = null;
+					for (i=0 ; i<scope.sectionPageFunctionList.length && ! result ; i++)
 					{
 						if (scope.sectionPageFunctionList[i].functionCode === functionCode) {
-							return scope.sectionPageFunctionList[i];
+							result = scope.sectionPageFunctionList[i];
 						}
 					}
-					return null;
+					return result;
 				}
 
 
@@ -418,7 +418,7 @@
 						// Success
 						function () {
 							scope.closePageSelection();
-							loadSectionPageFunctions(scope.section).then(initUnimplementedFunctions);
+							loadSectionPageFunctions(scope.section, null, null).then(initUnimplementedFunctions);
 						},
 						// Error
 						function (error) {
@@ -433,7 +433,7 @@
 				{
 					REST['delete'](spf).then(function ()
 					{
-						loadSectionPageFunctions(scope.section).then(initUnimplementedFunctions);
+						loadSectionPageFunctions(scope.section, null, null).then(initUnimplementedFunctions);
 					});
 				};
 
@@ -448,7 +448,7 @@
 						{
 							$q.all([
 								loadPages(section),
-								loadSectionPageFunctions(section)
+								loadSectionPageFunctions(section, null, null)
 							]).then(function () {
 								initUnimplementedFunctions();
 								initNavigationContext(section);

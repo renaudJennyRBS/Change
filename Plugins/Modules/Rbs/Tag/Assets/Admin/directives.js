@@ -185,7 +185,7 @@
 
 				scope.$watch('document', function (doc)
 				{
-					if (doc && doc.id && doc.model)
+					if (doc && doc.id > 0 && doc.model)
 					{
 						doc.loadTags().then(function(tags) {
 							scope.tags = tags;
