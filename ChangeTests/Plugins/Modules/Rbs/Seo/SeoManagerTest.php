@@ -70,12 +70,14 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$tm->begin();
 			$documentSeo->update();
+			$documentSeo->mergeCurrentCorrection();
 			$tm->commit();
 		}
 		catch (\Exception $e)
 		{
 			throw $tm->rollBack($e);
 		}
+
 		$seoManager->onDefaultGetMetas($event);
 		$metas = $event->getParam('metas');
 		$this->assertNotNull($metas);
@@ -111,6 +113,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$tm->begin();
 			$modelConfiguration->update();
+			$modelConfiguration->mergeCurrentCorrection();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -129,6 +132,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$tm->begin();
 			$modelConfiguration->update();
+			$modelConfiguration->mergeCurrentCorrection();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -168,6 +172,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$tm->begin();
 			$modelConfiguration->update();
+			$modelConfiguration->mergeCurrentCorrection();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -191,6 +196,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$tm->begin();
 			$documentSeo->update();
+			$documentSeo->mergeCurrentCorrection();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -224,6 +230,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$tm->begin();
 			$modelConfiguration->update();
+			$modelConfiguration->mergeCurrentCorrection();
 			$tm->commit();
 		}
 		catch (\Exception $e)
