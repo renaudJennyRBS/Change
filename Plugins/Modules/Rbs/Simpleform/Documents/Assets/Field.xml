@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	localized="true" editable="true">
 	<properties>
-		<property name="title" type="String" localized="true" />
-		<property name="helpText" type="RichText" localized="true" />
-		<property name="fieldTypeCode" type="String" required="true" />
-		<property name="required" type="Boolean" default-value="false" />
+		<property name="title" type="String" localized="true" has-correction="true"/>
+		<property name="helpText" type="RichText" localized="true" has-correction="true"/>
+		<property name="fieldTypeCode" type="String" required="true" has-correction="true"/>
+		<property name="required" type="Boolean" default-value="false" has-correction="true"/>
 		<property name="parameters" type="JSON" />
 	</properties>
 </document>

@@ -40,6 +40,20 @@
 					scope.document.fields.splice(index, 1);
 				};
 
+				scope.fieldManager.deleteItem = function(doc){
+					var index = null;
+					angular.forEach(scope.document.fields, function (field, i) {
+						if (field.id === doc[0].id)
+						{
+							index = i;
+						}
+
+					});
+
+					scope.fieldManager.remove(index);
+
+				}
+
 				editorCtrl.init('Rbs_Simpleform_Form');
 			}
 		};

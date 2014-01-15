@@ -68,6 +68,14 @@
 	<fieldset data-ng-show="section=='fields'"
 		data-form-section-label="{{ i18nAttr('m.rbs.simpleform.admin.field_list', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-boolean property="useCaptcha"
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'useCaptcha'), ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.simpleform.admin.form_usecaptcha_help', ['ucf']) }}</span>
+		</rbs-field-boolean>
+
+		<hr />
+
 		<div class="add-elements-bar">
 			<a href="javascript:;" ng-click="fieldManager.cascadeCreate()">
 				{{ i18n('m.rbs.simpleform.admin.field_create', ['ucf']) }}
@@ -75,7 +83,9 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Field" collection="document.fields" extend="fieldManager"
-			toolbar="false" selectable="false">
+			toolbar="false" selectable="false" correction="true">
+			<rbs-action name="deleteItem" icon="icon-trash" label="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"></rbs-action>
+			<rbs-quick-actions>[action deleteItem] || [action workflow]</rbs-quick-actions>
 			<rbs-column name="label" primary="true">
 				<a href="javascript:;" ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
 			</rbs-column>
