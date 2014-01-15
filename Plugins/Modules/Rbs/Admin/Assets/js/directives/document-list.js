@@ -93,9 +93,15 @@
 			}
 
 			function buildOtherAction (action) {
-				return	'<a href="javascript:;" ng-click="executeAction(\'' + action.name + '\', doc, $event)">' +
-							action.label +
-						'</a>';
+
+				var html = '<a href="javascript:;" ng-click="executeAction(\'' + action.name + '\', doc, $event)">';
+
+				if (action.icon)
+				{
+					html += '<i class="'+action.icon+'"></i>';
+				}
+
+				return	 html + action.label + '</a>';
 			}
 
 			function buildWorkflowAction () {
