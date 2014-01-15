@@ -5,6 +5,6 @@
 	<properties>
 		<property name="website" type="Document" document-type="Rbs_Website_Website" />
 		<property name="section" type="Document" document-type="Rbs_Website_Section" stateless="true" />
-        <property name="allowedFunctionsCode" type="JSON" />
+        <property name="allowedFunctionsCode" type="JSON" has-correction="true"/>
 	</properties>
 </document>
