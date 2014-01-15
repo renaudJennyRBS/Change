@@ -5,7 +5,7 @@
 	<properties>
 		<property name="label"/>
 		<property name="title" localized="true" has-correction="true" />
-		<property name="pageTemplate" type="Document" document-type="Rbs_Theme_PageTemplate" has-correction="true" />
+		<property name="pageTemplate" type="Document" document-type="Rbs_Theme_Template" has-correction="true" />
 		<property name="editableContent" type="JSON" localized="true" has-correction="true" />
 		<property name="useCache" type="Boolean" default-value="false" />
 		<property name="TTL" type="Integer" default-value="0" />

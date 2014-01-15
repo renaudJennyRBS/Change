@@ -324,13 +324,13 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @return \Rbs\Theme\Documents\PageTemplate
+	 * @return \Rbs\Theme\Documents\Template
 	 * @throws \Exception
 	 */
 	protected function getNewPageTemplate()
 	{
-		$pageTemplate = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_PageTemplate');
-		/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+		$pageTemplate = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_Template');
+		/* @var $pageTemplate \Rbs\Theme\Documents\Template */
 		$pageTemplate->setLabel('template');
 		$pageTemplate->setTheme($this->getNewTheme());
 

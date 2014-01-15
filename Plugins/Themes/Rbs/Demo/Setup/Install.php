@@ -44,9 +44,9 @@ class Install extends \Change\Plugins\InstallBase
 			$themeManager->installPluginAssets($plugin, $theme);
 			$this->writeAssetic($theme, $themeManager);
 
-			$pageTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_PageTemplate');
+			$pageTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Template');
 
-			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
 			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 			$pageTemplate->setTheme($theme);
 			$pageTemplate->setLabel('Sidebar');
@@ -59,7 +59,7 @@ class Install extends \Change\Plugins\InstallBase
 			$pageTemplate->setActive(true);
 			$pageTemplate->save();
 
-			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
 			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
 			$pageTemplate->setTheme($theme);
 			$pageTemplate->setLabel('No Sidebar');

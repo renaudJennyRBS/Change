@@ -22,11 +22,11 @@
 				.route('home', 'Rbs/Theme', { 'redirectTo': 'Rbs/Theme/Theme/'});
 
 			$delegate.model('Rbs_Theme_Theme')
-				.route('tree', 'Rbs/Theme/Theme/:id/Templates/', 'Document/Rbs/Theme/PageTemplate/list.twig');
+				.route('tree', 'Rbs/Theme/Theme/:id/Templates/', 'Document/Rbs/Theme/Template/list.twig');
 
 			$delegate.routesForModels([
 				'Rbs_Theme_Theme',
-				'Rbs_Theme_PageTemplate'
+				'Rbs_Theme_Template'
 			]);
 
 			return $delegate;

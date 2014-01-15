@@ -13,8 +13,8 @@
 
 		<rbs-document-list data-dlid="DLRbsThemeList" model="Rbs_Theme_Theme" activable="true" filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
-			<rbs-column name="themes" label="{{ i18nAttr('m.rbs.theme.admin.pagetemplate_list', ['ucf']) }}">
-				<a href ng-href="(= doc | rbsURL:'tree' =)">{{ i18n('m.rbs.theme.admin.theme_list_pagetemplates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+			<rbs-column name="themes" label="{{ i18nAttr('m.rbs.theme.admin.template_list', ['ucf']) }}">
+				<a href ng-href="(= doc | rbsURL:'tree' =)">{{ i18n('m.rbs.theme.admin.theme_list_templates', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
 			</rbs-column>
 		</rbs-document-list>
 	</div>

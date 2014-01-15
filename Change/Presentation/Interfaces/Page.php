@@ -21,7 +21,7 @@ interface Page
 
 	/**
 	 * @api
-	 * @return PageTemplate
+	 * @return Template
 	 */
 	public function getPageTemplate();
 
