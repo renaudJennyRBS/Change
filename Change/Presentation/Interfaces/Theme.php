@@ -33,7 +33,7 @@ interface Theme
 
 	/**
 	 * @param string $name
-	 * @return \Change\Presentation\Interfaces\PageTemplate
+	 * @return \Change\Presentation\Interfaces\Template
 	 */
 	public function getPageTemplate($name);
 

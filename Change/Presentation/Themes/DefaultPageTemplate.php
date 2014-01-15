@@ -1,10 +1,10 @@
 <?php
 namespace Change\Presentation\Themes;
 
-use Change\Presentation\Interfaces\PageTemplate;
+use Change\Presentation\Interfaces\Template;
 use Change\Presentation\Layout\Layout;
 
-class DefaultPageTemplate implements PageTemplate
+class DefaultPageTemplate implements Template
 {
 	/**
 	 * @var \Change\Presentation\Interfaces\Theme
@@ -53,7 +53,7 @@ class DefaultPageTemplate implements PageTemplate
 	{
 		if ($this->htmlResource === null)
 		{
-			$path = 'Layout/PageTemplate/' . $this->getName() . '.twig';
+			$path = 'Layout/Template/' . $this->getName() . '.twig';
 			$this->htmlResource = $this->getTheme()->getAssetResource($path);
 		}
 		return $this->htmlResource;
@@ -68,7 +68,7 @@ class DefaultPageTemplate implements PageTemplate
 		$res = $this->getHtmlResource();
 		if (!$res->isValid())
 		{
-			throw new \RuntimeException('Layout/PageTemplate/' . $this->getName() . '.twig resource not found', 999999);
+			throw new \RuntimeException('Layout/Template/' . $this->getName() . '.twig resource not found', 999999);
 		}
 		return $res->getContent();
 	}
@@ -80,10 +80,10 @@ class DefaultPageTemplate implements PageTemplate
 	 */
 	public function getContentLayout($websiteId = null)
 	{
-		$res = $this->getTheme()->getAssetResource('Layout/PageTemplate/' . $this->getName() . '.json');
+		$res = $this->getTheme()->getAssetResource('Layout/Template/' . $this->getName() . '.json');
 		if (!$res->isValid())
 		{
-			throw new \RuntimeException('Layout/PageTemplate/' . $this->getName() . '.json resource not found', 999999);
+			throw new \RuntimeException('Layout/Template/' . $this->getName() . '.json resource not found', 999999);
 		}
 		$config = json_decode($res->getContent(), true);
 		return new Layout($config);
@@ -100,5 +100,13 @@ class DefaultPageTemplate implements PageTemplate
 			return $res->getModificationDate();
 		}
 		return new \DateTime();
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isMailSuitable()
+	{
+		return false;
 	}
 }

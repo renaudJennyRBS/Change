@@ -2,11 +2,11 @@
 
 	"use strict";
 
-	function editorRbsThemePageTemplate(ArrayUtils, REST)
+	function editorRbsThemeTemplate(ArrayUtils, REST)
 	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Document/Rbs/Theme/PageTemplate/editor.twig',
+			templateUrl : 'Document/Rbs/Theme/Template/editor.twig',
 			replace : false,
 			require : 'rbsDocumentEditor',
 
@@ -86,7 +86,7 @@
 					scope.buildBlockList();
 				});
 
-				editorCtrl.init('Rbs_Theme_PageTemplate');
+				editorCtrl.init('Rbs_Theme_Template');
 
 				scope.isEditorRow = function(row) {
 					return row.parameters;
@@ -266,6 +266,6 @@
 		};
 	}
 
-	editorRbsThemePageTemplate.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemePageTemplate', editorRbsThemePageTemplate);
+	editorRbsThemeTemplate.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemeTemplate', editorRbsThemeTemplate);
 })();

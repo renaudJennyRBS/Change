@@ -4,10 +4,10 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
 		<rbs-field-text property="label" required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Theme_PageTemplate', 'label'), ['ucf']) }}">
+				label="{{ i18nAttr(propertyKey('Rbs_Theme_Template', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Theme_PageTemplate', 'contentByWebsite'), ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Theme_Template', 'contentByWebsite'), ['ucf']) }}">
 			<select class="form-control" ng-model="websiteId" rbs-items-from-collection="Rbs_Theme_WebsiteIds">
 				<option value=""></option>
 			</select>
@@ -16,8 +16,8 @@
 		<table class="table table-striped">
 			<thead>
 			<tr>
-				<th style="width:20%">{{ i18n('m.rbs.theme.admin.pagetemplates_zone_id', ['ucf']) }}</th>
-				<th style="width:50%">{{ i18n('m.rbs.theme.admin.pagetemplates_block', ['ucf']) }}</th>
+				<th style="width:20%">{{ i18n('m.rbs.theme.admin.templates_zone_id', ['ucf']) }}</th>
+				<th style="width:50%">{{ i18n('m.rbs.theme.admin.templates_block', ['ucf']) }}</th>
 				<th style="width:30%"></th>
 			</tr>
 			</thead>
@@ -55,7 +55,7 @@
 					<div ng-include="row.template"></div>
 					<div class="form-group">
 						<div class="col-lg-offset-3 col-lg-9">
-							<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}</button>
+							<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">{{ i18n('m.rbs.theme.admin.templates_close', ['ucf']) }}</button>
 						</div>
 					</div>
 				</td>
@@ -75,24 +75,24 @@
 					<div data-ng-if="!inEditMode()">
 						<button class="btn btn-default" type="button"
 								data-ng-click="addBlockOverride(row)" data-ng-show="canOverrideBlock(row)">
-							{{ i18n('m.rbs.theme.admin.pagetemplates_override', ['ucf']) }}
+							{{ i18n('m.rbs.theme.admin.templates_override', ['ucf']) }}
 						</button>
 						<button class="btn btn-default" type="button"
 								data-ng-click="removeBlockOverride(row)" data-ng-show="canRemoveOverrideBlock(row)">
-							{{ i18n('m.rbs.theme.admin.pagetemplates_removeoverride', ['ucf']) }}
+							{{ i18n('m.rbs.theme.admin.templates_removeoverride', ['ucf']) }}
 						</button>
 						<button class="btn btn-default" type="button"
 								data-ng-click="parametrizeBlock($index)" data-ng-show="canParametrizeBlock(row)">
-							{{ i18n('m.rbs.theme.admin.pagetemplates_parametrize', ['ucf']) }}
+							{{ i18n('m.rbs.theme.admin.templates_parametrize', ['ucf']) }}
 						</button>
 						<button class="btn btn-default" type="button"
 								data-ng-click="emptyBlock(row)" data-ng-show="canEmptyBlock(row)">
-							{{ i18n('m.rbs.theme.admin.pagetemplates_clear', ['ucf']) }}
+							{{ i18n('m.rbs.theme.admin.templates_clear', ['ucf']) }}
 						</button>
 					</div>
 					<div data-ng-if="inEditMode() && block.id == row.id">
 						<button data-ng-click="closeBlock($index+1)" class="btn btn-default" type="button">
-							{{ i18n('m.rbs.theme.admin.pagetemplates_close', ['ucf']) }}
+							{{ i18n('m.rbs.theme.admin.templates_close', ['ucf']) }}
 						</button>
 					</div>
 				</td>

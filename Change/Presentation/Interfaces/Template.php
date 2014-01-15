@@ -2,9 +2,9 @@
 namespace Change\Presentation\Interfaces;
 
 /**
- * @name \Change\Presentation\Interfaces\PageTemplate
+ * @name \Change\Presentation\Interfaces\Template
  */
-interface PageTemplate
+interface Template
 {
 	/**
 	 * @return \Change\Presentation\Interfaces\Theme
@@ -31,4 +31,9 @@ interface PageTemplate
 	 * @return \Datetime
 	 */
 	public function getModificationDate();
+
+	/**
+	 * @return boolean
+	 */
+	public function isMailSuitable();
 }

@@ -4,9 +4,9 @@ namespace Rbs\Theme\Documents;
 use Change\Presentation\Layout\Layout;
 
 /**
- * @name \Rbs\Theme\Documents\PageTemplate
+ * @name \Rbs\Theme\Documents\Template
  */
-class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate implements \Change\Presentation\Interfaces\PageTemplate
+class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Change\Presentation\Interfaces\Template
 {
 	/**
 	 * @param integer $websiteId
@@ -44,7 +44,7 @@ class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate impleme
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$documentLink = $restResult;
-			/* @var $pageTemplate \Rbs\Theme\Documents\PageTemplate */
+			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
 			$pageTemplate = $documentLink->getDocument();
 			$theme = $pageTemplate->getTheme();
 			if ($theme)
@@ -52,5 +52,10 @@ class PageTemplate extends \Compilation\Rbs\Theme\Documents\PageTemplate impleme
 				$documentLink->setProperty('label', $theme->getLabel() . ' > ' . $pageTemplate->getLabel());
 			}
 		}
+	}
+
+	public function isMailSuitable()
+	{
+		return $this->getMailSuitable();
 	}
 }

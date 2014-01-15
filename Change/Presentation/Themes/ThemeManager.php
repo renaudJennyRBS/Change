@@ -322,24 +322,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param string $code
-	 * @param \Change\Presentation\Interfaces\Theme $theme
-	 * @return \Change\Presentation\Interfaces\MailTemplate
-	 */
-	public function getMailTemplate($code, $theme)
-	{
-		$event = new Event(static::EVENT_MAIL_TEMPLATE_LOADING, $this, array('code' => $code, 'theme' => $theme));
-		$callback = function ($result)
-		{
-			return ($result instanceof \Change\Presentation\Interfaces\MailTemplate);
-		};
-		$results = $this->getEventManager()->triggerUntil($event, $callback);
-		return ($results->stopped()
-			&& ($results->last() instanceof
-				\Change\Presentation\Interfaces\MailTemplate)) ? $results->last() : $event->getParam('mailTemplate');
-	}
-
-	/**
 	 * @param string $name
 	 * @return string
 	 */

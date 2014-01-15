@@ -2,7 +2,7 @@
 namespace Change\Presentation\Themes;
 
 use Change\Presentation\Interfaces\Page;
-use Change\Presentation\Interfaces\PageTemplate;
+use Change\Presentation\Interfaces\Template;
 use Change\Presentation\Layout\Layout;
 use Zend\Http\Response as HttpResponse;
 
@@ -88,7 +88,7 @@ class DefaultPage implements Page
 
 	/**
 	 * @api
-	 * @return PageTemplate
+	 * @return Template
 	 */
 	public function getPageTemplate()
 	{

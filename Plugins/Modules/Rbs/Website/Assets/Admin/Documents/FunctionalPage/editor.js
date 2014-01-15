@@ -158,7 +158,7 @@
 			link : function (scope, element, attrs, editorCtrl) {
 				scope.onLoad = function ()
 				{
-					// Load PageTemplate Document
+					// Load Template Document
 					if (scope.document.pageTemplate) {
 						REST.resource(scope.document.pageTemplate).then(function (template) {
 							scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };

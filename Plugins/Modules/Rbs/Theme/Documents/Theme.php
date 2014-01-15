@@ -153,14 +153,14 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 
 	/**
 	 * @param string $name
-	 * @return \Change\Presentation\Interfaces\PageTemplate
+	 * @return \Change\Presentation\Interfaces\Template
 	 */
 	public function getPageTemplate($name)
 	{
 		$pageTemplate = null;
 		if (is_numeric($name))
 		{
-			$pageTemplate = $this->getDocumentManager()->getDocumentInstance($name, 'Rbs_Theme_PageTemplate');
+			$pageTemplate = $this->getDocumentManager()->getDocumentInstance($name, 'Rbs_Theme_Template');
 		}
 
 		if ($pageTemplate === null)

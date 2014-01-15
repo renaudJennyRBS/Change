@@ -27,7 +27,7 @@
 	}
 
 	ListController.$inject = ['$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.MainMenu', 'RbsChange.REST'];
-	app.controller('Rbs_Theme_PageTemplate_ListController', ListController);
+	app.controller('Rbs_Theme_Template_ListController', ListController);
 
 	/**
 	 * Controller for form.
@@ -41,7 +41,7 @@
 	 */
 	function FormController ($scope, Breadcrumb, FormsManager, REST, Utils)
 	{
-		FormsManager.initResource($scope, 'Rbs_Theme_PageTemplate').then(function (pageTemplate) {
+		FormsManager.initResource($scope, 'Rbs_Theme_Template').then(function (pageTemplate) {
 			if ( ! Utils.isNew(pageTemplate) ) {
 				REST.resource(pageTemplate.theme).then(function (theme) {
 					Breadcrumb.setPath([theme]);
@@ -51,5 +51,5 @@
 	}
 
 	FormController.$inject = [ '$scope', 'RbsChange.Breadcrumb', 'RbsChange.FormsManager', 'RbsChange.REST', 'RbsChange.Utils' ];
-	app.controller('Rbs_Theme_PageTemplate_FormController', FormController);
+	app.controller('Rbs_Theme_Template_FormController', FormController);
 })();

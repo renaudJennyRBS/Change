@@ -2,13 +2,13 @@
 	"module_name":{
 		"message":"Thèmes"
 	},
-	"pagetemplate_list":{
+	"template_list":{
 		"message":"modèles de page"
 	},
-	"pagetemplate_create":{
+	"template_create":{
 		"message":"ajouter un modèle de page"
 	},
-	"theme_list_pagetemplates":{
+	"theme_list_templates":{
 		"message":"lister"
 	},
 	"theme_list":{
@@ -20,25 +20,25 @@
 	"theme_name_help":{
 		"message":"<strong>Ce nom est composé de lettres et de _ uniquement.<\/strong><br\/><span class='label label-danger'>Attention !<\/span> Ce nom fait référence à des fichiers sur le serveur : le changer ici peut rendre le site inaccessible."
 	},
-	"pagetemplates_close":{
+	"templates_close":{
 		"message":"Fermer"
 	},
-	"pagetemplates_zone_id":{
+	"templates_zone_id":{
 		"message":"zone du template"
 	},
-	"pagetemplates_block":{
+	"templates_block":{
 		"message":"bloc"
 	},
-	"pagetemplates_override":{
+	"templates_override":{
 		"message":"surcharger"
 	},
-	"pagetemplates_removeoverride":{
+	"templates_removeoverride":{
 		"message":"restaurer"
 	},
-	"pagetemplates_parametrize":{
+	"templates_parametrize":{
 		"message":"configurer"
 	},
-	"pagetemplates_clear":{
+	"templates_clear":{
 		"message":"vider"
 	}
 }
