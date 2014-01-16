@@ -39,6 +39,37 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		parent::attachEvents($eventManager);
 		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_CREATE_LOCALIZED, Event::EVENT_UPDATE],
 			array($this, 'onInitSupportedFunctions'), 5);
+
+		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDocumentDisplayPage(Event $event)
+	{
+		$functionalPage = $event->getDocument();
+		if ($functionalPage instanceof FunctionalPage)
+		{
+			$pathRule = $event->getParam("pathRule");
+			if ($pathRule instanceof \Change\Http\Web\PathRule)
+			{
+				if ($pathRule->getWebsiteId() ==  $functionalPage->getWebsiteId())
+				{
+					$functionalPage->setSection($functionalPage->getWebsite());
+					if ($pathRule->getSectionId())
+					{
+						$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+						if ($section instanceof Section)
+						{
+							$functionalPage->setSection($section);
+						}
+					}
+					$event->setParam('page', $functionalPage);
+					$event->stopPropagation();
+				}
+			}
+		}
 	}
 
 	/**
