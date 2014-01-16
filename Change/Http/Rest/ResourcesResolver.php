@@ -163,7 +163,7 @@ class ResourcesResolver
 		}
 
 		// Vendor/Module/Name/Id
-		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(-?[0-9]+)$|', $relativePath, $matches))
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(?[0-9]+)$|', $relativePath, $matches))
 		{
 			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
 			$model = $applicationServices->getModelManager()->getModelByName($modelName);
@@ -259,7 +259,7 @@ class ResourcesResolver
 		}
 
 		// Vendor/Module/Name/Id/LCID
-		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(-?[0-9]+)/([a-z]{2}_[A-Z]{2})$|', $relativePath,
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/(?[0-9]+)/([a-z]{2}_[A-Z]{2})$|', $relativePath,
 			$matches)
 		)
 		{

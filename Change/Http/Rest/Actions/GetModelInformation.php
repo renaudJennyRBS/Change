@@ -12,7 +12,8 @@ use Zend\Http\Response as HttpResponse;
  */
 class GetModelInformation
 {
-	protected $sortablePropertyTypes = array(Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING);
+	protected $sortablePropertyTypes = [Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING];
+	protected $ignoreDefaultValues = ['id', 'model', 'refLCID', 'LCID', 'authorName', 'authorId', 'modificationDate', 'creationDate', 'documentVersion'];
 
 	/**
 	 * Use Required Event Params: documentId, modelName
@@ -102,6 +103,7 @@ class GetModelInformation
 			$result->setMeta('abstract', $model->isAbstract());
 			$result->setMeta('useCorrection', $model->useCorrection());
 
+			$newInstance = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
 			// Properties.
 			foreach ($model->getProperties() as $property)
 			{
@@ -116,9 +118,10 @@ class GetModelInformation
 				$infos['stateless'] = $property->getStateless();
 				$infos['required'] = $property->getRequired();
 				$infos['hasCorrection'] = $property->getHasCorrection();
-				if ($property->getDefaultValue() !== null)
+				if (!in_array($property->getName(), $this->ignoreDefaultValues))
 				{
-					$infos['defaultValue'] = $property->getDefaultValue();
+					$converter = new \Change\Http\Rest\PropertyConverter($newInstance, $property);
+					$infos['defaultValue'] = $converter->convertToRestValue($property->getValue($newInstance));
 				}
 				if ($infos['type'] == \Change\Documents\Property::TYPE_DOCUMENTARRAY)
 				{
