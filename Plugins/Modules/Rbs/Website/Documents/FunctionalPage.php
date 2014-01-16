@@ -147,4 +147,22 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		}
 		return $allSupportedFunctionsCode;
 	}
+
+	public function onDefaultUpdateRestResult(Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$documentLink = $restResult;
+			$extraColumn = $event->getParam('extraColumn');
+			if (in_array('allSupportedFunctionsCode', $extraColumn))
+			{
+				/** @var $document FunctionalPage */
+				$document = $documentLink->getDocument();
+				$documentLink->setProperty('allSupportedFunctionsCode', $document->getAllSupportedFunctionsCode());
+			}
+		}
+	}
 }

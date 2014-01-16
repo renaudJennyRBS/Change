@@ -26,6 +26,8 @@ class ActionsResolver
 		$this->registerActionClass('collectionItems', '\Change\Http\Rest\Actions\GetCollectionItems');
 		$this->registerActionClass('collectionCodes', '\Change\Http\Rest\Actions\GetCollectionCodes');
 		$this->registerActionClass('renderRichText', '\Change\Http\Rest\Actions\RenderRichText');
+		$this->registerActionClass('activate', '\Change\Http\Rest\Actions\Activation');
+		$this->registerActionClass('deactivate', '\Change\Http\Rest\Actions\Deactivation');
 	}
 
 	/**

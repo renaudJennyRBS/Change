@@ -277,7 +277,7 @@
 					"align"  : "center",
 					"width"  : "90px",
 					"label"  : i18n.trans('m.rbs.admin.adminjs.activated | ucf'),
-					"content": '<rbs-activate-switch document="doc"/>',
+					"content": '(= doc.active | rbsBoolean =)',
 					"dummy"  : true
 				});
 			}

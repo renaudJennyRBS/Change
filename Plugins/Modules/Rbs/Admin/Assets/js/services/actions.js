@@ -660,11 +660,13 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							doc.active = true;
-							var promise = REST.save(doc);
+							var promise = REST.call(doc.getActionUrl('activate'));
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
-								angular.extend(doc, updatedDoc);
+								doc.active = updatedDoc.active;
+								doc.modificationDate = updatedDoc.modificationDate;
+								delete doc.META$.actions.activate;
+								doc.META$.actions[updatedDoc.action.rel] = updatedDoc.action;
 							});
 						});
 						return $q.all(promises);
@@ -673,7 +675,7 @@
 
 					isEnabled : function ($docs) {
 						for (var i=0 ; i<$docs.length ; i++) {
-							if ($docs[i].active) {
+							if (!$docs[i].isActionAvailable('activate') ) {
 								return false;
 							}
 						}
@@ -698,11 +700,13 @@
 						var promises = [];
 						// Call one REST request per document to activate and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							doc.active = false;
-							var promise = REST.save(doc);
+							var promise = REST.call(doc.getActionUrl('deactivate'));
 							promises.push(promise);
 							promise.then(function (updatedDoc) {
-								angular.extend(doc, updatedDoc);
+								doc.active = updatedDoc.active;
+								doc.modificationDate = updatedDoc.modificationDate;
+								delete doc.META$.actions.deactivate;
+								doc.META$.actions[updatedDoc.action.rel] = updatedDoc.action;
 							});
 						});
 						return $q.all(promises);
@@ -711,7 +715,7 @@
 
 					isEnabled : function ($docs) {
 						for (var i=0 ; i<$docs.length ; i++) {
-							if (! $docs[i].active) {
+							if (!$docs[i].isActionAvailable('deactivate') ) {
 								return false;
 							}
 						}
