@@ -391,6 +391,10 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 	 */
 	protected function getAuthorizedAccessors($model)
 	{
+		if ($this->isNew())
+		{
+			return array();
+		}
 		$accessorIds = $this->getPermissionManager()->getSectionAccessorIds($this->getId(), $this->getWebsite()->getId(), $model);
 		$accessors = [];
 		foreach ($accessorIds as $accessorId)
