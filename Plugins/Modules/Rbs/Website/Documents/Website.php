@@ -101,8 +101,9 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$url->setPort($this->getPort());
 		$url->setPath('/');
 		$urlManager = new UrlManager($url, $this->getScriptName());
-		//TODO TransactionManager not set
-		$urlManager->setDbProvider($this->getDbProvider())->setDocumentManager($this->getDocumentManager());
+
+		//TODO PathRuleManager not set
+		$urlManager->setDocumentManager($this->getDocumentManager());
 		$urlManager->setWebsite($this);
 		$urlManager->setLCID($LCID);
 		$urlManager->setBasePath($this->getPathPart());
@@ -131,18 +132,9 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		{
 			$tm->insertNode($parentNode, $website);
 		}
+
 		$website->setSitemaps($this->defaultSitemaps());
-		$tm = $event->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$website->save();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$website->save();
 	}
 
 	/**
@@ -256,6 +248,33 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 			$sitemaps[] = ['LCID' => $LCID, 'timeInterval' => ''];
 		}
 		return $sitemaps;
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onGetPageByFunction(\Change\Documents\Events\Event $event)
+	{
+		$website = $event->getDocument();
+		if ($website instanceof Website)
+		{
+			$functionCode = $event->getParam('functionCode');
+			$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Page');
+			$spfq = $q->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
+			$spfq->andPredicates($spfq->eq('functionCode', $functionCode), $spfq->eq('section', $website));
+			$page = $q->getFirstDocument();
+			if ($page instanceof StaticPage)
+			{
+				$event->setParam('page', $page);
+				$event->setParam('section', $page->getSection());
+			}
+			elseif ($page instanceof FunctionalPage)
+			{
+				$page->setSection($website);
+				$event->setParam('page', $page);
+				$event->setParam('section', $website);
+			}
+		}
 	}
 
 	/**

@@ -17,10 +17,6 @@ class StoreResultInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.storeresult', $ucf));
 
-		$this->setFunctions(array(
-				'Rbs_Elasticsearch_StoreResult' => $i18nManager->trans('m.rbs.elasticsearch.admin.storeresult_function', $ucf))
-		);
-
 		$this->addInformationMeta('storeIndex', Property::TYPE_DOCUMENTID, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.storeresult_storeindex', $ucf))
 			->setAllowedModelsNames(array('Rbs_Elasticsearch_StoreIndex'));

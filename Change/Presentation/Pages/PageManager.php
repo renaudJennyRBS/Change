@@ -13,6 +13,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 
 	const DEFAULT_IDENTIFIER = 'PageManager';
 
+	const EVENT_GET_FUNCTIONS = 'getFunctions';
 	const EVENT_GET_CACHE_ADAPTER = 'getCacheAdapter';
 	const EVENT_GET_PAGE_RESULT = 'getPageResult';
 
@@ -239,6 +240,17 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 			return $this->dispatchGetPageResult($page);
 		}
 		return null;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getFunctions()
+	{
+		$args = $this->getEventManager()->prepareArgs(['functions' => []]);
+		$this->getEventManager()->trigger(static::EVENT_GET_FUNCTIONS, $this, $args);
+		$functions = $args['functions'];
+		return is_array($functions) ? $functions : [];
 	}
 
 	/**

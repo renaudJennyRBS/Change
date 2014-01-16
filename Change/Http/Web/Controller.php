@@ -38,9 +38,8 @@ class Controller extends \Change\Http\Controller
 		{
 			$applicationServices = $event->getApplicationServices();
 			$event->getUrlManager()
-				->setDbProvider($applicationServices->getDbProvider())
-				->setTransactionManager($applicationServices->getTransactionManager())
-				->setDocumentManager($applicationServices->getDocumentManager());
+				->setDocumentManager($applicationServices->getDocumentManager())
+				->setPathRuleManager($applicationServices->getPathRuleManager());
 		}
 	}
 

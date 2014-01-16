@@ -72,6 +72,10 @@ class ApplicationServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('Change\Permissions\PermissionsManager', $applicationServices->getPermissionsManager());
 
 		$this->assertInstanceOf('Change\Http\OAuth\OAuthManager', $applicationServices->getOAuthManager());
+
 		$this->assertInstanceOf('Change\Events\EventManager', $applicationServices->getOAuthManager()->getEventManager());
+
+		$this->assertInstanceOf('Change\Http\Web\PathRuleManager', $applicationServices->getPathRuleManager());
+		$this->assertInstanceOf('Change\Events\EventManager', $applicationServices->getPathRuleManager()->getEventManager());
 	}
 } 

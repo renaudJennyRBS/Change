@@ -45,6 +45,8 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/OAuthManager/Rbs_Generic', '\Rbs\Generic\Events\OAuthManager\Listeners');
 
 		$configuration->addPersistentEntry('Change/Events/ModelManager/Rbs_Generic', '\Rbs\Generic\Events\ModelManager\Listeners');
+
+		$configuration->addPersistentEntry('Change/Events/PathRuleManager/Rbs_Generic', 'Rbs\Generic\Events\PathRuleManager\Listeners');
 	}
 
 	/**

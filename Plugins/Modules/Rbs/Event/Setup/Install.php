@@ -15,8 +15,8 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeApplication($plugin, $application, $configuration)
 	{
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Event', '\Rbs\Event\Events\BlockManager\Listeners');
-		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Event',
-			'\Rbs\Event\Events\CollectionManager\Listeners');
+		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Event', '\Rbs\Event\Events\CollectionManager\Listeners');
+		$configuration->addPersistentEntry('Change/Events/PageManager/Rbs_Event', '\Rbs\Event\Events\PageManager\Listeners');
 	}
 
 	/**

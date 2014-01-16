@@ -2,6 +2,7 @@
 namespace Rbs\Website\Http\Rest\Actions;
 
 use Change\Http\Event;
+use Change\Http\Request;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -17,43 +18,36 @@ class FunctionsList
 	public function execute(Event $event)
 	{
 		$request = $event->getRequest();
-		$billingArea = null;
-		if ($request->isGet())
+		if (!$request->isGet())
 		{
-			$event->setResult($this->generateResult($event->getApplicationServices()));
+			$result = $event->getController()->notAllowedError($request->getMethod(), [Request::METHOD_GET]);
+			$event->setResult($result);
+			return;
 		}
-	}
-
-	/**
-	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @return \Change\Http\Rest\Result\ArrayResult
-	 */
-	protected function generateResult($applicationServices)
-	{
-		$result = new \Change\Http\Rest\Result\ArrayResult();
-
-		$blockManager = $applicationServices->getBlockManager();
-		$parsedFunctions = array();
-		foreach ($blockManager->getBlockNames() as $blockName)
+		else
 		{
-			$blockInfo = $blockManager->getBlockInformation($blockName);
-			if ($blockInfo)
+			$event->getController()->notAllowedError($request->getMethod(), [$request::METHOD_GET]);
+		}
+
+		$functions = $event->getApplicationServices()->getPageManager()->getFunctions();
+		usort($functions, function($a , $b) {
+			$grpA = isset($a['section']) ? $a['section'] : '';
+			$grpB = isset($b['section']) ? $b['section'] : '';
+			if ($grpA == $grpB)
 			{
-				foreach ($blockInfo->getFunctions() as $funcName => $label)
+				$labA =  isset($a['label']) ? $a['label'] : '';
+				$labB =  isset($b['label']) ? $b['label'] : '';
+				if ($labA == $labB)
 				{
-					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
-					$query->andPredicates($query->eq('functionCode', $funcName));
-					$parsedFunctions[] = array(
-						"code" => $funcName,
-						"label" => $label,
-						"usage" => $query->getCountDocuments()
-					);
+					return 0;
 				}
+				return strcmp($labA, $labB);
 			}
-		}
+			return strcmp($grpA, $grpB);
+		});
 
-		$result->setArray($parsedFunctions);
-
-		return $result;
+		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result->setArray($functions);
+		$event->setResult($result);
 	}
 }

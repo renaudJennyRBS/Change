@@ -14,7 +14,7 @@
 		{% else %}
 			<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_success', ['ucf']) }}</p>
 			<p>{{ i18n('m.rbs.user.front.account_creation_description', ['ucf']) }}</p>
-			<a href="{{ functionURL('Error_401') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
+			<a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
 		{% endfor %}
 	</div>
 {% else %}

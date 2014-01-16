@@ -60,6 +60,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$LCID = $website->getCurrentLCID();
 		$documentSeo = $this->getNewDocumentSeo($website);
 		$urlManager = $website->getUrlManager($LCID);
+		$urlManager->setPathRuleManager($this->getApplicationServices()->getPathRuleManager());
 		$urlManager->setAbsoluteUrl(true);
 
 		//we need to configure website to generate sitemap, that will create his own job, but that doesn't matter (we don't run it)
@@ -153,10 +154,12 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$sitemapXml = new \DOMDocument();
 		$sitemapXml->loadXML($sitemap);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('urlset')->length);
-		$this->assertEquals('http://www.sitemaps.org/schemas/sitemap/0.9', $sitemapXml->getElementsByTagName('urlset')->item(0)->namespaceURI);
+		$this->assertEquals('http://www.sitemaps.org/schemas/sitemap/0.9',
+			$sitemapXml->getElementsByTagName('urlset')->item(0)->namespaceURI);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('url')->length);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('loc')->length);
-		$this->assertEquals($urlManager->getCanonicalByDocument($documentSeo->getTarget(), $website)->toString(), $sitemapXml->getElementsByTagName('loc')->item(0)->textContent);
+		$this->assertEquals($urlManager->getCanonicalByDocument($documentSeo->getTarget(), $website)->normalize()->toString(),
+			$sitemapXml->getElementsByTagName('loc')->item(0)->textContent);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('lastmod')->length);
 		$expectedLastmod = $documentSeo->getTarget()->getDocumentModel()->getProperty('modificationDate')->getValue($documentSeo->getTarget());
 		$this->assertInstanceOf('\DateTime', $expectedLastmod);
@@ -203,7 +206,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$documentSeo = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_DocumentSeo');
 		/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
-		$documentSeo->setTarget($this->getNewProduct());
+		$documentSeo->setTarget($this->getNewProduct($website));
 		$documentSeo->setSitemapChangeFrequency('monthly');
 		$documentSeo->setSitemapPriority(0.5);
 		$sitemapGenerateForWebsites[$website->getId()] = [
@@ -227,16 +230,17 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @return \Rbs\Catalog\Documents\Product
+	 * @param \Rbs\Website\Documents\Website $website
 	 * @throws \Exception
+	 * @return \Rbs\Catalog\Documents\Product
 	 */
-	protected function getNewProduct()
+	protected function getNewProduct($website)
 	{
 		$product = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Catalog_Product');
 		/* @var $product \Rbs\Catalog\Documents\Product */
 		$product->setLabel('Card');
 		$product->getCurrentLocalization()->setTitle('Card');
-
+		$product->getPublicationSections()->add($website);
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
 		{

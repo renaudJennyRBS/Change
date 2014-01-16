@@ -294,7 +294,8 @@ class Resolver extends BaseResolver
 			$fb->alias($fb->column('section_id'), 'sectionId'),
 			$fb->alias($fb->column('relative_path'), 'relativePath'),
 			$fb->alias($fb->column('http_status'), 'httpStatus'),
-			$fb->alias($fb->column('query'), 'query'));
+			$fb->alias($fb->column('query'), 'query'),
+			$fb->alias($fb->column('user_edited'), 'userEdited'));
 
 		$qb->from($qb->getSqlMapping()->getPathRuleTable());
 
@@ -310,14 +311,17 @@ class Resolver extends BaseResolver
 		$sq->bindParameter('hash', $pathRule->getHash());
 
 		$row = $sq->getFirstResult($sq->getRowsConverter()
-			->addIntCol('ruleId', 'documentId', 'sectionId', 'httpStatus')->addTxtCol('relativePath', 'query'));
+			->addIntCol('ruleId', 'documentId', 'sectionId', 'httpStatus')
+			->addTxtCol('relativePath', 'query')
+			->addBoolCol('userEdited'));
 
 		if ($row)
 		{
-			$pathRule->setRuleId(intval($row['ruleId']));
+			$pathRule->setRuleId($row['ruleId']);
 			$pathRule->setRelativePath($row['relativePath']);
-			$pathRule->setHttpStatus(intval($row['httpStatus']));
+			$pathRule->setHttpStatus($row['httpStatus']);
 			$pathRule->setQuery($row['query']);
+			$pathRule->setUserEdited($row['userEdited']);
 
 			if ($row['documentId'])
 			{

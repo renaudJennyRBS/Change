@@ -31,7 +31,8 @@
 					}
 				};
 
-				scope.$watch('document.target', function (target){
+				scope.onLoad = function () {
+					var target = scope.document.target;
 					if (target)
 					{
 						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'modelName': target.model });
@@ -40,7 +41,7 @@
 							scope.variableCount = Object.keys(data).length;
 						});
 					}
-				});
+				};
 
 				editorCtrl.init('Rbs_Seo_DocumentSeo');
 			}

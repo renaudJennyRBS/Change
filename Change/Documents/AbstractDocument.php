@@ -620,6 +620,12 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 					$documentResult->addAction($l);
 				}
 			}
+
+			if ($document instanceof \Change\Documents\Interfaces\Publishable)
+			{
+				$l = new DocumentActionLink($um, $document, 'pathRules');
+				$documentResult->addLink($l);
+			}
 		}
 		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{

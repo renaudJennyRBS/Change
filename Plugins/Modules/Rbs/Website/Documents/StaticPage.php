@@ -2,6 +2,7 @@
 namespace Rbs\Website\Documents;
 
 use Change\Documents\Events\Event;
+use Change\Documents\Interfaces\Publishable;
 
 /**
  * @name \Rbs\Website\Documents\StaticPage
@@ -11,6 +12,10 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
+
+		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), [$this, 'onValidateDisplayDocument'], 5);
+
+
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
 
 		$callback = function (Event $event)
@@ -28,7 +33,6 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			}
 		};
 		$eventManager->attach(Event::EVENT_CREATED, $callback);
-
 		$callback = function (Event $event)
 		{
 			/* @var $page StaticPage */
@@ -48,10 +52,59 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			}
 		};
 		$eventManager->attach(Event::EVENT_UPDATED, $callback);
-		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
-
-
 		$eventManager->attach('fullTextContent', array($this, 'onDefaultFullTextContent'), 5);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onValidateDisplayDocument(Event $event)
+	{
+		/** @var $staticPage StaticPage */
+		$staticPage = $event->getDocument();
+		if ($staticPage->isPropertyModified('displayDocument') && ($displayDocument = $staticPage->getDisplayDocument()) !== null)
+		{
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+			$propertiesErrors = [];
+			if ($displayDocument instanceof Page || $displayDocument instanceof Section || !($displayDocument instanceof Publishable))
+			{
+				$propertiesErrors['displayDocument'][] = $i18nManager->trans('m.rbs.website.admin.displaydocument_invalid_type', ['ucf']);
+			}
+			else
+			{
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($staticPage->getDocumentModel());
+				$query->andPredicates($query->neq('id', $staticPage->getId()), $query->eq('displayDocument', $displayDocument));
+				/** @var $duplicates StaticPage[]|\Change\Documents\DocumentCollection */
+
+				$duplicates = $query->getDocuments();
+				if ($duplicates->count()) {
+					$website = ($staticPage->getSection() ? $staticPage->getSection()->getWebsite() : null);
+					foreach ($duplicates as $duplicateStaticPage)
+					{
+						$duplicateWebsite = ($duplicateStaticPage->getSection() ? $duplicateStaticPage->getSection()->getWebsite() : null);
+						if ($website === $duplicateWebsite)
+						{
+							$propertiesErrors['displayDocument'][] = $i18nManager->trans('m.rbs.website.admin.displaydocument_duplicate', ['ucf']);
+							break;
+						}
+					}
+				}
+			}
+
+			if (count($propertiesErrors))
+			{
+				$errors = $event->getParam('propertiesErrors');
+				if (is_array($errors))
+				{
+					$event->setParam('propertiesErrors', array_merge($propertiesErrors, $errors));
+
+				}
+				else
+				{
+					$event->setParam('propertiesErrors', $propertiesErrors);
+				}
+			}
+		}
 	}
 
 	public function onDefaultFullTextContent(Event $event)
@@ -75,26 +128,6 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 			{
 				$event->setParam('fullTextContent', $fullTextContent);
 			}
-		}
-	}
-	/**
-	 * @param Event $event
-	 */
-	public function onPopulatePathRule(Event $event)
-	{
-		$document = $event->getDocument();
-		if ($document instanceof StaticPage)
-		{
-			/* @var $pathRule \Change\Http\Web\PathRule */
-			$pathRule = $event->getParam('pathRule');
-
-			$relativePath = $pathRule->normalizePath($document->getTitle() . '.' . $document->getId() . '.html');
-			$section = $document->getSection();
-			if ($section instanceof Topic && $section->getPathPart())
-			{
-				$relativePath = $section->getPathPart() . '/' . $relativePath;
-			}
-			$pathRule->setRelativePath($relativePath);
 		}
 	}
 

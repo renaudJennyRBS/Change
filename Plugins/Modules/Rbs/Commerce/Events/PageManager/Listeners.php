@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Generic\Events\PageManager;
+namespace Rbs\Commerce\Events\PageManager;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Generic\Events\PageManager\Listeners
+ * @name \Rbs\Commerce\Events\PageManager\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -20,13 +20,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function ($event)
 		{
-			(new \Change\Presentation\Pages\FileCacheAdapter())->onGetCacheAdapter($event);
-		};
-		$events->attach(\Change\Presentation\Pages\PageManager::EVENT_GET_CACHE_ADAPTER, $callback, 5);
-
-		$callback = function ($event)
-		{
-			(new \Rbs\Generic\Presentation\PageFunctions())->addFunctions($event);
+			(new \Rbs\Commerce\Presentation\PageFunctions())->addFunctions($event);
 		};
 		$events->attach(\Change\Presentation\Pages\PageManager::EVENT_GET_FUNCTIONS, $callback, 5);
 	}

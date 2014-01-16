@@ -29,9 +29,6 @@
 							});
 						}
 					}
-					else if (sectionName === 'functions') {
-						initPageFunctions();
-					}
 				};
 
 				scope.leaveSection = function (section)
@@ -66,40 +63,6 @@
 						scope.document.website = website;
 					}
 				}, true);
-
-				function initPageFunctions () {
-					$q.all([
-						REST.action('collectionItems', { 'code' : 'Rbs_Website_AvailablePageFunctions' }),
-						REST.action('collectionItems', { 'code' : 'Rbs_Website_AvailablePageFunctions', 'pageId' : scope.document.id })
-					]).then(function (results) {
-						scope.allFunctions = results[0].items;
-						scope.availableFunctions = results[1].items;
-						scope.warningFunctions = {};
-						scope.$watch('document.allowedFunctionsCode', function () {
-							updateFunctionsStatus();
-						}, true);
-					});
-				}
-
-				function updateFunctionsStatus () {
-					scope.warningFunctions = null;
-					angular.forEach(scope.document.allowedFunctionsCode, function (funcName) {
-						if (! scope.availableFunctions[funcName]) {
-							if (scope.warningFunctions === null) {
-								scope.warningFunctions = {};
-							}
-							scope.warningFunctions[funcName] = scope.allFunctions[funcName];
-						}
-					});
-				}
-
-				scope.hasAvailableFunctions = function () {
-					var counter = 0;
-					angular.forEach(scope.availableFunctions, function () {
-						counter++;
-					});
-					return counter > 0;
-				};
 
 				scope.editPage = function ($event, page) {
 					if (scope.isUnchanged()) {

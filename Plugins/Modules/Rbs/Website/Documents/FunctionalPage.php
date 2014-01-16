@@ -37,73 +37,114 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onCreated'), 10);
-		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'onUpdated'), 10);
+		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_CREATE_LOCALIZED, Event::EVENT_UPDATE],
+			array($this, 'onInitSupportedFunctions'), 5);
+
+		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
 	}
 
 	/**
 	 * @param Event $event
 	 */
-	public function onCreated(Event $event)
+	public function onDocumentDisplayPage(Event $event)
+	{
+		$functionalPage = $event->getDocument();
+		if ($functionalPage instanceof FunctionalPage)
+		{
+			$pathRule = $event->getParam("pathRule");
+			if ($pathRule instanceof \Change\Http\Web\PathRule)
+			{
+				if ($pathRule->getWebsiteId() ==  $functionalPage->getWebsiteId())
+				{
+					$functionalPage->setSection($functionalPage->getWebsite());
+					if ($pathRule->getSectionId())
+					{
+						$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+						if ($section instanceof Section)
+						{
+							$functionalPage->setSection($section);
+						}
+					}
+					$event->setParam('page', $functionalPage);
+					$event->stopPropagation();
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onInitSupportedFunctions(Event $event)
 	{
 		$page = $event->getDocument();
 		if ($page instanceof FunctionalPage)
 		{
-			$codes = $this->getAllowedFunctionsCode();
-			if (is_array($codes) && count($codes))
+			if (!$page->isPropertyModified('supportedFunctionsCode') && $page->isPropertyModified('editableContent'))
 			{
-				$page->checkDefaultSectionPageFunction($event);
+				$blocksName = [];
+				foreach ($page->getContentLayout()->getBlocks() as $block)
+				{
+					$blocksName[] = $block->getName();
+				}
+				if (count($blocksName))
+				{
+					$supportedFunctions = [];
+					$functions = $event->getApplicationServices()->getPageManager()->getFunctions();
+					foreach ($blocksName as $blockName)
+					{
+						foreach ($functions as $function)
+						{
+							if (isset($function['block']))
+							{
+								if (is_array($function['block']) && in_array($blockName, $function['block']))
+								{
+									$supportedFunctions[$function['code']] = true;
+								}
+								elseif (is_string($function['block']) && $function['block'] == $blockName)
+								{
+									$supportedFunctions[$function['code']] = true;
+								}
+							}
+						}
+					}
+					$sf = $page->getSupportedFunctionsCode();
+					if (is_array($sf))
+					{
+						$sf[$page->getCurrentLCID()] = array_keys($supportedFunctions);
+					}
+					else
+					{
+						$sf = [$page->getCurrentLCID() => array_keys($supportedFunctions)];
+					}
+					$page->setSupportedFunctionsCode($sf);
+				}
 			}
 		}
 	}
 
 	/**
-	 * @param Event $event
+	 * @return array
 	 */
-	public function onUpdated(Event $event)
+	public function getAllSupportedFunctionsCode()
 	{
-		$page = $event->getDocument();
-		if ($page instanceof FunctionalPage && (in_array('allowedFunctionsCode', $event->getParam('modifiedPropertyNames', array()))))
+		$allSupportedFunctionsCode = [];
+		$array = $this->getSupportedFunctionsCode();
+		if (is_array($array))
 		{
-			$codes = $this->getAllowedFunctionsCode();
-			if (is_array($codes) && count($codes))
+			foreach ($array as $data)
 			{
-				$page->checkDefaultSectionPageFunction($event);
+				if (is_array($data))
+				{
+					$allSupportedFunctionsCode = array_merge($allSupportedFunctionsCode, $data);
+				}
+				elseif (is_string($data))
+				{
+					$allSupportedFunctionsCode[] = $data;
+				}
 			}
+			$allSupportedFunctionsCode = array_values(array_unique($allSupportedFunctionsCode));
 		}
-	}
-
-	/**
-	 * For each function this page can handle, check if:
-	 * - it is not handled on the website
-	 * - this page don't handle in any section
-	 * Make this page handle each function on the website that matches these two conditions.
-	 */
-	protected function checkDefaultSectionPageFunction(Event $event)
-	{
-		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
-		$query->andPredicates($query->eq('page', $this));
-		$qb = $query->dbQueryBuilder();
-		$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('functionCode'), 'fc'));
-		$sq = $qb->query();
-		$codes = array_diff($this->getAllowedFunctionsCode(), $sq->getResults($sq->getRowsConverter()->addStrCol('fc')));
-
-		$website = $this->getWebsite();
-		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
-		$query->andPredicates($query->eq('section', $website));
-		$qb = $query->dbQueryBuilder();
-		$qb->addColumn($qb->getFragmentBuilder()->alias($query->getColumn('functionCode'), 'fc'));
-		$sq = $qb->query();
-		$codes = array_diff($codes, $sq->getResults($sq->getRowsConverter()->addStrCol('fc')));
-
-		foreach ($codes as $code)
-		{
-			/* @var $doc \Rbs\Website\Documents\SectionPageFunction */
-			$doc = $this->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_SectionPageFunction');
-			$doc->setSection($website);
-			$doc->setPage($this);
-			$doc->setFunctionCode($code);
-			$doc->create();
-		}
+		return $allSupportedFunctionsCode;
 	}
 }

@@ -31,6 +31,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 		$eventNames = array('documents.created', 'documents.updated');
 		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
 
+
 		$callback = function ($event)
 		{
 			if ($event instanceof \Change\Documents\Events\Event)
@@ -75,6 +76,15 @@ class SharedListeners implements SharedListenerAggregateInterface
 			}
 		};
 		$events->attach('Plugin', 'setupSuccess', $callback, 5);
+
+		$callback = function ($event)
+		{
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				(new \Rbs\Website\Events\PathRuleBuilder())->updatePathRules($event);
+			}
+		};
+		$events->attach('Documents', ['documents.updated'], $callback, 5);
 
 		$callback = function ($event)
 		{

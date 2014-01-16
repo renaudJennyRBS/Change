@@ -1,4 +1,7 @@
 {
+	"module_name": {
+		"message": "CMS"
+	},
 	"synchronize_title_label":{
 		"message":"synchroniser la valeur avec celle du libellé"
 	},

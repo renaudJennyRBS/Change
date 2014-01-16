@@ -1,11 +1,12 @@
 <?php
-namespace Rbs\Generic\Events\PageManager;
+namespace Rbs\Generic\Events\PathRuleManager;
 
+use Change\Http\Web\PathRuleManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Generic\Events\PageManager\Listeners
+ * @name \Rbs\Generic\Events\PathRuleManager\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -18,17 +19,11 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function ($event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			(new \Change\Presentation\Pages\FileCacheAdapter())->onGetCacheAdapter($event);
+			(new \Rbs\Website\Events\PageResolver())->onPopulatePathRule($event);
 		};
-		$events->attach(\Change\Presentation\Pages\PageManager::EVENT_GET_CACHE_ADAPTER, $callback, 5);
-
-		$callback = function ($event)
-		{
-			(new \Rbs\Generic\Presentation\PageFunctions())->addFunctions($event);
-		};
-		$events->attach(\Change\Presentation\Pages\PageManager::EVENT_GET_FUNCTIONS, $callback, 5);
+		$events->attach(PathRuleManager::EVENT_POPULATE_PATH_RULE, $callback, 10);
 	}
 
 	/**

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\User\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
 
 /**
@@ -19,6 +18,5 @@ class CreateAccountInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.user.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.create_account', $ucf));
-		$this->setFunctions(['Rbs_User_CreateAccount' => $i18nManager->trans('m.rbs.user.admin.function_create_account', $ucf)]);
 	}
 }

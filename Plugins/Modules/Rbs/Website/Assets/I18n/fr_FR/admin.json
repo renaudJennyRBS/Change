@@ -248,6 +248,12 @@
 	"staticpage_create":{
 		"message":"ajouter une page de contenu"
 	},
+	"staticpage_displaydocument_picker_title":{
+		"message":"sélectionner le document dont cette page est le détail"
+	},
+	"staticpage_displaydocument_help":{
+		"message":"Le contenu de cette page représente le détail du document sélectionné"
+	},
 	"functionalpage_list":{
 		"message":"pages fonctionnelles"
 	},
@@ -329,9 +335,6 @@
 	"functionalpage_website_picker_title":{
 		"message":"sélectionner un site web"
 	},
-	"functionalpage_functions":{
-		"message":"fonctions"
-	},
 	"functional_page_editor_help":{
 		"message":"Cette page est une <strong>page fonctionnelle<\/strong> : elle permet d'afficher des contenus provenant d'autres modules, comme des actualités ou des fiches produits.<br\/>Pour configurer les fonctions de cette page, après enregistrement, rendez-vous dans la section <em>Fonctions<\/em> du menu à gauche."
 	},
@@ -340,21 +343,6 @@
 	},
 	"all_functions_list":{
 		"message":"<strong>Voici la liste de toutes les fonctions disponibles.<\/strong><br\/>Les fonctions déjà supportées par la page sont sélectionnées. Sélectionnez les fonctions que vous désirez attribuer à cette page."
-	},
-	"page_contains_blocks_for_following_functions":{
-		"message":"Pour information, la page dispose actuellement des blocs nécessaires pour remplir les fonctions suivantes :"
-	},
-	"page_contains_no_function":{
-		"message":"cette page ne dispose d'aucune fonction."
-	},
-	"page_contains_required_blocks":{
-		"message":"La page dispose de tous les blocs nécessaires pour supporter correctement les fonctions choisies."
-	},
-	"following_functions_cannot_be_supported_correctly":{
-		"message":"Les fonctions suivantes ne pourront pas être supportées correctement car la page ne dispose pas des blocs nécessaires à ces fonctions :"
-	},
-	"edit_page_contents_to_fix_this":{
-		"message":"Pour corriger cela, vous pouvez <a href ng-href=\"(= document | rbsURL =)?section=content\">éditer le contenu de la page<\/a>"
 	},
 	"configure_functions":{
 		"message":"configurer"
@@ -396,5 +384,11 @@
 	},
 	"structure":{
 		"message":"structure"
+	},
+	"displaydocument_invalid_type":{
+		"message":"Le model du document n'est pas un model valide"
+	},
+	"displaydocument_duplicate":{
+		"message":"Le document est déja associé à une autre page du site"
 	}
 }

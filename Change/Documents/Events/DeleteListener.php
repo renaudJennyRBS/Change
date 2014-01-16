@@ -332,6 +332,24 @@ class DeleteListener
 					}
 				}
 			}
+
+			if ($model->isPublishable())
+			{
+				$qb = $dbp->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->delete($fb->table('change_path_rule'));
+				$qb->where(
+					$fb->logicOr(
+						$fb->eq($fb->column('website_id'), $fb->number($documentId)),
+						$fb->eq($fb->column('section_id'), $fb->number($documentId)),
+						$fb->eq($fb->column('document_id'), $fb->number($documentId)),
+						$fb->eq($fb->column('document_alias_id'), $fb->number($documentId))
+					));
+
+				$dq = $qb->deleteQuery();
+				$dq->execute();
+			}
+
 			$event->success();
 
 			$transactionManager->commit();

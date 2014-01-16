@@ -46,7 +46,6 @@
 				<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_ttl_help') }}</span>
 			</rbs-field>
 		</div>
-
 	</fieldset>
 
 	<fieldset ng-show="section=='content'" hide-when-create="true"
@@ -54,47 +53,6 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 		<rbs-structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
 		</rbs-structure-editor>
-	</fieldset>
-
-	<fieldset ng-show="section=='functions'" hide-when-create="true"
-	          data-form-section-label="{{ i18nAttr('m.rbs.website.admin.functionalpage_functions', ['ucf']) }}"
-	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-		<div class="control-group property">
-			<span class="help-block">
-				{{ i18n('m.rbs.website.admin.all_functions_list') | raw}}
-			</span>
-
-			<select multiple="multiple" class="form-control" size="10"
-			        ng-model="document.allowedFunctionsCode"
-			        ng-options="value as func.label+' ('+value+')' for (value, func) in allFunctions">
-				<option value="">-</option>
-			</select>
-
-			<div ng-if="hasAvailableFunctions()">
-				{{ i18n('m.rbs.website.admin.page_contains_blocks_for_following_functions') }}
-				<ul>
-					<li ng-repeat="(value, func) in availableFunctions">(= func.label =)<em class="muted"> ((= value =))</em></li>
-				</ul>
-			</div>
-			<div class="alert" ng-if="! hasAvailableFunctions() && ! warningFunctions">
-				<h4>{{ i18n('m.rbs.website.admin.page_contains_no_function') | raw }}</h4>
-				{{ i18n('m.rbs.website.admin.edit_page_contents_to_fix_this') | raw }}
-			</div>
-
-			<div ng-if="document.allowedFunctionsCode">
-				<div ng-if="!warningFunctions" class="alert alert-success">
-					{{ i18n('m.rbs.website.admin.page_contains_required_blocks') }}
-				</div>
-
-				<div ng-if="warningFunctions" class="alert">
-					{{ i18n('m.rbs.website.admin.following_functions_cannot_be_supported_correctly') }}
-					<ul>
-						<li ng-repeat="(value, func) in warningFunctions">(= func.label =)<em class="muted"> ((= value =))</em></li>
-					</ul>
-					{{ i18n('m.rbs.website.admin.edit_page_contents_to_fix_this') | raw }}
-				</div>
-			</div>
-		</div>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"

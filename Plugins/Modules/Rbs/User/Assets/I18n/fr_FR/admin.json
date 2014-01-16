@@ -130,11 +130,17 @@
 		"message":"configuration du compte",
 		"description":"account settings block name (backoffice use)"
 	},
+	"function_login":{
+		"message":"Identification"
+	},
 	"function_create_account":{
 		"message":"création du compte utilisateur"
 	},
 	"function_error_401":{
 		"message":"autorisation nécessaire"
+	},
+	"function_error_403":{
+		"message":"acces refusé"
 	},
 	"group_picker_title":{
 		"message":"sélectionner les groupes"

@@ -80,6 +80,9 @@
 	"staticpage_hidelinks":{
 		"message":"masquer les liens"
 	},
+	"staticpage_displaydocument":{
+		"message":"Page de détail du document"
+	},
 	"functionalpage":{
 		"message":"page fonctionnelle"
 	},
