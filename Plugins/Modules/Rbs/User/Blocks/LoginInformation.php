@@ -18,6 +18,5 @@ class LoginInformation extends Information
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.login', $ucf));
 		$this->addInformationMeta('realm', Property::TYPE_STRING, true, 'web')
 			->setLabel($i18nManager->trans('m.rbs.user.admin.login_realm', $ucf));
-		$this->setFunctions(array('Error_401' => $i18nManager->trans('m.rbs.user.admin.function_error_401', $ucf)));
 	}
 }

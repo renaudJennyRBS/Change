@@ -2,7 +2,6 @@
 namespace ChangeTests\Change\Http\Web;
 
 use Change\Http\Web\PathRule;
-use Change\Http\Web\PathRuleManager;
 
 class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -22,20 +21,19 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param string $baseURL
 	 * @return \Change\Http\Web\UrlManager
 	 */
-	protected function getObject($baseURL = 'http://domain.net')
+	protected function getUrlManager($baseURL = 'http://domain.net')
 	{
 		$urlManager = new \Change\Http\Web\UrlManager(new \Zend\Uri\Http($baseURL));
 		$applicationServices = $this->getApplicationServices();
-		$urlManager->setDbProvider($applicationServices->getDbProvider())
-			->setTransactionManager($applicationServices->getTransactionManager())
-			->setDocumentManager($applicationServices->getDocumentManager());
+		$urlManager->setDocumentManager($applicationServices->getDocumentManager())
+			->setPathRuleManager($applicationServices->getPathRuleManager());
 		return $urlManager;
 	}
 
 	public function testWebsite()
 	{
 		$website = new FakeWebsite_5842135();
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$this->assertNull($urlManager->getWebsite());
 		$this->assertNull($urlManager->getLCID());
 		$this->assertSame($urlManager, $urlManager->setWebsite($website));
@@ -46,7 +44,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testLCID()
 	{
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$this->assertNull($urlManager->getLCID());
 		$this->assertSame($urlManager, $urlManager->setLCID('en_US'));
 		$this->assertEquals('en_US', $urlManager->getLCID());
@@ -54,7 +52,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testAbsoluteUrl()
 	{
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$this->assertEquals('test', $urlManager->getByPathInfo('test')->toString());
 		$this->assertEquals('http://domain.net:80/', $urlManager->getByPathInfo('')->toString());
 
@@ -65,7 +63,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testGetByPathInfoForWebsite()
 	{
 		$website1 = new FakeWebsite_5842135();
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$urlManager->setWebsite($website1);
 		$uri = $urlManager->getByPathInfoForWebsite($website1, $website1->getLCID(), 'test.html', array('a' => 'b'));
 		$this->assertEquals('test.html?a=b', $uri->toString());
@@ -86,7 +84,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testCanonicalByDocument()
 	{
 		$website1 = new FakeWebsite_5842135();
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$urlManager->setWebsite($website1);
 
 		$this->assertEquals('document/500.html', $urlManager->getCanonicalByDocument(500)->toString());
@@ -97,7 +95,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$website1 = new FakeWebsite_5842135();
 		$section1 = new FakeSection_5842135(2000, $website1);
 
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$urlManager->setWebsite($website1);
 		$document = $this->getNewReadonlyDocument('Project_Tests_Correction', 3000);
 
@@ -143,7 +141,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			->setHttpStatus(200);
 		$this->insertPathRule($this->getApplicationServices(), $pathRule);
 
-		$urlManager = $this->getObject();
+		$urlManager = $this->getUrlManager();
 		$website1 = new FakeWebsite_5842135();
 		$urlManager->setWebsite($website1);
 
@@ -194,37 +192,6 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('testA2.html?b=12&count=2&a=2&c=8', $uri->toString());
 	}
 
-	public function testRewritePathRule()
-	{
-		$prm = new PathRuleManager($this->getApplicationServices()->getDbProvider());
-		$rule = $prm->getNewRule(1000, 'fr_FR', 'test.html', 4000, 200);
-
-		$document = $this->getNewReadonlyDocument('Project_Tests_Correction', 4000);
-		$callback = function (\Change\Events\Event $event) {
-			$pathRule = $event->getParam('pathRule');
-			$pathRule->setRelativePath('toto.html');
-		};
-
-		$document->getEventManager()->attach('populatePathRule', $callback);
-		$urlManager = $this->getObject();
-		$pathRule = $urlManager->rewritePathRule($document, $rule);
-		$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
-		$this->assertEquals('toto.html', $pathRule->getRelativePath());
-
-		$document->getEventManager()->attach('populatePathRule', $callback);
-		$pathRule = $urlManager->rewritePathRule($document, $rule);
-		$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
-		$this->assertEquals('4000/toto.html', $pathRule->getRelativePath());
-
-		try
-		{
-			$pathRule = $urlManager->rewritePathRule($document, $rule);
-			$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
-			$this->fail('Exception expected!');
-		}
-		catch (\Exception $e) { }
-	}
-
 	/**
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param PathRule $pathRule
@@ -232,7 +199,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	protected function insertPathRule($applicationServices, $pathRule)
 	{
 		$applicationServices->getTransactionManager()->begin();
-		$prm = new PathRuleManager($applicationServices->getDbProvider());
+		$prm = $applicationServices->getPathRuleManager();
 		$prm->insertPathRule($pathRule);
 		$applicationServices->getTransactionManager()->commit();
 	}

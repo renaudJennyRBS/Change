@@ -15,6 +15,5 @@ class EventInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 		$this->getParameterInformation('docId')->setAllowedModelsNames('Rbs_Event_Event')
 			->setLabel($i18nManager->trans('m.rbs.event.admin.event_doc', $ucf));
 		$this->getParameterInformation('templateName')->setDefaultValue('event.twig');
-		$this->setFunctions(array('Rbs_Event_Event' => $i18nManager->trans('m.rbs.event.admin.event_function', $ucf)));
 	}
 }

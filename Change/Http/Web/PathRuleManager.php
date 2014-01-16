@@ -4,19 +4,40 @@ namespace Change\Http\Web;
 /**
  * @name \Change\Http\Web\PathRuleManager
  */
-class PathRuleManager
+class PathRuleManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
+	const EVENT_MANAGER_IDENTIFIER = 'PathRuleManager';
+	const EVENT_POPULATE_PATH_RULE = 'populatePathRule';
+
 	/**
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider;
 
 	/**
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return string
 	 */
-	function __construct(\Change\Db\DbProvider $dbProvider)
+	protected function getEventManagerIdentifier()
 	{
-		$this->dbProvider = $dbProvider;
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/PathRuleManager');
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach(static::EVENT_POPULATE_PATH_RULE, [$this, 'onDefaultPopulatePathRule'], 5);
 	}
 
 	/**
@@ -38,6 +59,7 @@ class PathRuleManager
 	}
 
 	/**
+	 * @api
 	 * @param integer $ruleId
 	 * @param integer $status
 	 * @throws \RuntimeException
@@ -75,7 +97,6 @@ class PathRuleManager
 	}
 
 	/**
-	 * @api
 	 * @see \Change\I18n\I18nManager::isValidLCID
 	 * @param string $LCID
 	 * @return boolean
@@ -86,6 +107,98 @@ class PathRuleManager
 	}
 
 	/**
+	 * @api
+	 * @param \Change\Http\Web\PathRule $pathRule
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return \Change\Http\Web\PathRule|null
+	 */
+	public function populatePathRuleByDocument($pathRule, $document)
+	{
+		$newPathRule = clone($pathRule);
+		$newPathRule->setRelativePath(null);
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['pathRule' => $newPathRule, 'document' => $document]);
+		$eventManager->trigger(static::EVENT_POPULATE_PATH_RULE, $this, $args);
+		$resultPathRule = $args['pathRule'];
+		if ($resultPathRule instanceof \Change\Http\Web\PathRule && $resultPathRule->getRelativePath())
+		{
+			return $resultPathRule;
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultPopulatePathRule(\Change\Events\Event $event)
+	{
+		$pathRule = $event->getParam('pathRule');
+		$document = $event->getParam('document');
+		if ($pathRule instanceof \Change\Http\Web\PathRule && $document instanceof \Change\Documents\Interfaces\Publishable)
+		{
+			if ($document instanceof \Change\Presentation\Interfaces\Website)
+			{
+				return;
+			}
+			elseif ($document instanceof \Change\Presentation\Interfaces\Section)
+			{
+				if (is_string($pathPart = $document->getPathPart()))
+				{
+					$sectionPath = $pathPart;
+				}
+				elseif (is_string($title = $document->getTitle()))
+				{
+					$sectionPath = $title;
+				}
+				else
+				{
+					$sectionPath = $document->getId();
+				}
+				$pathRule->setRelativePath($pathRule->normalizePath([$sectionPath, '']));
+				$pathRule->setQuery(null);
+				return;
+			}
+
+			$title = $document->getDocumentModel()->getPropertyValue($document, 'title');
+			if ($title)
+			{
+				$section = null;
+				$path = $pathRule->normalizePath($title . '.html');
+				$sectionId = $pathRule->getSectionId();
+				if ($sectionId)
+				{
+					$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($sectionId);
+				}
+				elseif ($document instanceof \Change\Presentation\Interfaces\Page)
+				{
+					$section = $document->getSection();
+				}
+
+				if ($section instanceof \Change\Presentation\Interfaces\Section && !($section instanceof \Change\Presentation\Interfaces\Website))
+				{
+					if (is_string($pathPart = $section->getPathPart()))
+					{
+						$sectionPath = $pathPart;
+					}
+					elseif (is_string($title = $section->getTitle()))
+					{
+						$sectionPath = $pathRule->normalizePath($title);
+					}
+					else
+					{
+						$sectionPath = $section->getId();
+					}
+
+					$path = $sectionPath . '/' . $path;
+				}
+				$pathRule->setRelativePath($path);
+				$pathRule->setQuery(null);
+			}
+		}
+	}
+
+	/**
+	 * @api
 	 * @param integer $websiteId
 	 * @param string $LCID
 	 * @param string $relativePath
@@ -93,10 +206,12 @@ class PathRuleManager
 	 * @param integer $httpStatus
 	 * @param integer $sectionId
 	 * @param string|null $query
+	 * @param bool $userEdited
 	 * @throws \InvalidArgumentException
 	 * @return \Change\Http\Web\PathRule
 	 */
-	public function getNewRule($websiteId, $LCID, $relativePath, $documentId, $httpStatus = 200, $sectionId = 0, $query = null)
+	public function getNewRule($websiteId, $LCID, $relativePath, $documentId, $httpStatus = 200, $sectionId = 0, $query = null,
+		$userEdited = false)
 	{
 		$websiteId = intval($websiteId);
 		if (!$websiteId)
@@ -136,18 +251,125 @@ class PathRuleManager
 			->setLCID($LCID)
 			->setRelativePath($relativePath)
 			->setDocumentId($documentId)
+			->setDocumentAliasId(0)
 			->setHttpStatus($httpStatus)
 			->setSectionId($sectionId)
-			->setQuery($query);
+			->setQuery($query)
+			->setUserEdited($userEdited == true);
 		return $pathRule;
 	}
 
 	/**
+	 * @api
+	 * @param integer $websiteId
+	 * @param string $LCID
+	 * @param string $relativePath
+	 * @return \Change\Http\Web\PathRule|null
+	 */
+	public function getPathRule($websiteId, $LCID, $relativePath)
+	{
+		$pathRule = new PathRule();
+		$pathRule->setWebsiteId($websiteId)->setLCID($LCID)
+			->setRelativePath($relativePath);
+
+		$dbProvider = $this->getDbProvider();
+		$qb = $dbProvider->getNewQueryBuilder('UrlManager.getPathRule');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('rule_id'), $fb->column('relative_path'),
+				$fb->column('document_id'), $fb->column('document_alias_id'), $fb->column('section_id'),
+				$fb->column('query'), $fb->column('http_status'), $fb->column('user_edited'));
+			$qb->from($qb->getSqlMapping()->getPathRuleTable());
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
+				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
+				$fb->eq($fb->column('hash'), $fb->parameter('hash'))
+			));
+		}
+
+		$sq = $qb->query();
+		$sq->bindParameter('websiteId', $websiteId)
+			->bindParameter('LCID', $LCID)
+			->bindParameter('hash', $pathRule->getHash());
+		$row = $sq->getFirstResult($sq->getRowsConverter()->addBoolCol('user_edited')
+			->addTxtCol('relative_path', 'query')
+			->addIntCol('rule_id', 'http_status', 'document_id', 'document_alias_id', 'section_id'));
+		if (is_array($row))
+		{
+			$pathRule->setRuleId($row['rule_id'])
+				->setRelativePath($row['relative_path'])
+				->setQuery($row['query'])
+				->setDocumentId($row['document_id'])
+				->setDocumentAliasId($row['document_alias_id'])
+				->setSectionId($row['section_id'])
+				->setHttpStatus($row['http_status'])
+				->setUserEdited($row['user_edited']);
+			return $pathRule;
+		}
+		return null;
+	}
+
+	/**
+	 * @api
+	 * @param integer $documentId
+	 * @return \Change\Http\Web\PathRule[]
+	 */
+	public function getAllForDocumentId($documentId)
+	{
+		$dbProvider = $this->getDbProvider();
+		$qb = $dbProvider->getNewQueryBuilder('UrlManager.getAllForDocumentId');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('rule_id'), $fb->column('relative_path'),
+				$fb->column('document_id'), $fb->column('document_alias_id'),
+				$fb->column('query'), $fb->column('user_edited'),
+				$fb->column('website_id'), $fb->column('lcid'),
+				$fb->column('section_id'), $fb->column('http_status'));
+			$qb->from($qb->getSqlMapping()->getPathRuleTable());
+			$qb->where(
+				$fb->logicOr(
+					$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+					$fb->eq($fb->column('document_alias_id'), $fb->integerParameter('documentAliasId'))
+				)
+			);
+			$qb->orderAsc($fb->column('rule_id'));
+		}
+
+		$sq = $qb->query();
+		$sq->bindParameter('documentId', intval($documentId))
+			->bindParameter('documentAliasId', intval($documentId));
+
+		$pathRules = array();
+		foreach ($sq->getResults($sq->getRowsConverter()
+			->addIntCol('rule_id', 'document_id', 'document_alias_id', 'http_status', 'website_id', 'section_id')
+			->addBoolCol('user_edited')
+			->addTxtCol('relative_path', 'query', 'lcid')) as $row)
+		{
+			$pathRule = new PathRule();
+			$pathRule->setRuleId($row['rule_id'])
+				->setRelativePath($row['relative_path'])
+				->setQuery($row['query'])
+				->setUserEdited($row['user_edited'])
+				->setWebsiteId($row['website_id'])
+				->setLCID($row['lcid'])
+				->setDocumentId($row['document_id'])
+				->setDocumentAliasId($row['document_alias_id'])
+				->setSectionId($row['section_id'])
+				->setHttpStatus($row['http_status']);
+			$pathRules[] = $pathRule;
+		}
+		return $pathRules;
+	}
+
+	/**
+	 * @api
 	 * @param integer $websiteId
 	 * @param string $LCID
 	 * @param integer $documentId
 	 * @param integer $sectionId
-	 * @return PathRule[]
+	 * @return \Change\Http\Web\PathRule[]
 	 */
 	public function findPathRules($websiteId, $LCID, $documentId, $sectionId)
 	{
@@ -156,32 +378,47 @@ class PathRuleManager
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('rule_id'), $fb->column('relative_path'), $fb->column('query'));
+			$qb->select($fb->column('rule_id'), $fb->column('relative_path'),
+				$fb->column('document_id'), $fb->column('document_alias_id'),
+				$fb->column('query'), $fb->column('user_edited'));
 			$qb->from($qb->getSqlMapping()->getPathRuleTable());
 			$qb->where($fb->logicAnd(
 				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
 				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-				$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
-				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
+				$fb->logicOr(
+					$fb->logicAnd(
+						$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+						$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId'))
+					),
+					$fb->eq($fb->column('document_alias_id'), $fb->integerParameter('documentAliasId'))
+				),
 				$fb->eq($fb->column('http_status'), $fb->number(200))
 			));
 			$qb->orderAsc($fb->column('rule_id'));
 		}
 
 		$sq = $qb->query();
-		$sq->bindParameter('websiteId', $websiteId)->bindParameter('LCID', $LCID);
-		$sq->bindParameter('documentId', intval($documentId))->bindParameter('sectionId', intval($sectionId));
+		$sq->bindParameter('websiteId', $websiteId)
+			->bindParameter('LCID', $LCID)
+			->bindParameter('documentId', intval($documentId))
+			->bindParameter('documentAliasId', intval($documentId))
+			->bindParameter('sectionId', intval($sectionId));
 
 		$pathRules = array();
-		foreach ($sq->getResults() as $row)
+		foreach ($sq->getResults($sq->getRowsConverter()
+			->addIntCol('rule_id', 'document_id', 'document_alias_id')
+			->addBoolCol('user_edited')
+			->addTxtCol('relative_path', 'query')) as $row)
 		{
 			$pathRule = new PathRule();
-			$pathRule->setRuleId(intval($row['rule_id']))
+			$pathRule->setRuleId($row['rule_id'])
 				->setRelativePath($row['relative_path'])
 				->setQuery($row['query'])
+				->setUserEdited($row['user_edited'])
 				->setWebsiteId($websiteId)
 				->setLCID($LCID)
-				->setDocumentId($documentId)
+				->setDocumentId($row['document_id'])
+				->setDocumentAliasId($row['document_alias_id'])
 				->setSectionId($sectionId)
 				->setHttpStatus(200);
 			$pathRules[] = $pathRule;
@@ -190,11 +427,12 @@ class PathRuleManager
 	}
 
 	/**
+	 * @api
 	 * @param integer $websiteId
 	 * @param string $LCID
 	 * @param integer $documentId
 	 * @param integer $sectionId
-	 * @return PathRule[]
+	 * @return \Change\Http\Web\PathRule[]
 	 */
 	public function findRedirectedRules($websiteId, $LCID, $documentId, $sectionId)
 	{
@@ -203,32 +441,44 @@ class PathRuleManager
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('rule_id'), $fb->column('relative_path'), $fb->column('query'), $fb->column('http_status'));
+			$qb->select($fb->column('rule_id'), $fb->column('relative_path'),
+				$fb->column('document_id'), $fb->column('document_alias_id'),
+				$fb->column('query'), $fb->column('http_status'), $fb->column('user_edited'));
 			$qb->from($qb->getSqlMapping()->getPathRuleTable());
 			$qb->where($fb->logicAnd(
 				$fb->eq($fb->column('website_id'), $fb->integerParameter('websiteId')),
 				$fb->eq($fb->column('lcid'), $fb->parameter('LCID')),
-				$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+				$fb->logicOr(
+					$fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')),
+					$fb->eq($fb->column('document_alias_id'), $fb->integerParameter('documentAliasId'))
+				),
 				$fb->eq($fb->column('section_id'), $fb->integerParameter('sectionId')),
 				$fb->neq($fb->column('http_status'), $fb->number(200))
 			));
 			$qb->orderAsc($fb->column('rule_id'));
 		}
 		$sq = $qb->query();
-		$sq->bindParameter('websiteId', $websiteId)->bindParameter('LCID', $LCID);
-		$sq->bindParameter('documentId', intval($documentId))->bindParameter('sectionId', intval($sectionId));
+		$sq->bindParameter('websiteId', $websiteId)
+			->bindParameter('LCID', $LCID)
+			->bindParameter('documentId', intval($documentId))
+			->bindParameter('documentAliasId', intval($documentId))
+			->bindParameter('sectionId', intval($sectionId));
 
 		$pathRules = array();
-		foreach ($sq->getResults($sq->getRowsConverter()->addIntCol('rule_id', 'http_status')
+		foreach ($sq->getResults($sq->getRowsConverter()
+			->addIntCol('rule_id', 'http_status', 'document_id', 'document_alias_id')
+			->addBoolCol('user_edited')
 			->addTxtCol('relative_path', 'query')) as $row)
 		{
 			$pathRule = new PathRule();
 			$pathRule->setRuleId($row['rule_id'])
 				->setRelativePath($row['relative_path'])
 				->setQuery($row['query'])
+				->setUserEdited($row['user_edited'])
 				->setWebsiteId($websiteId)
 				->setLCID($LCID)
-				->setDocumentId($documentId)
+				->setDocumentId($row['document_id'])
+				->setDocumentAliasId($row['document_alias_id'])
 				->setSectionId($sectionId)
 				->setHttpStatus($row['http_status']);
 			$pathRules[] = $pathRule;
@@ -237,27 +487,50 @@ class PathRuleManager
 	}
 
 	/**
-	 * @param PathRule $pathRule
+	 * Update: httpStatus, query, userEdited, documentId, documentAliasId
+	 * @api
+	 * @param \Change\Http\Web\PathRule $pathRule
 	 * @throws \RuntimeException
 	 */
-	public function updatePathRule($pathRule)
+	public function updatePathRule(PathRule $pathRule)
 	{
+		if (intval($pathRule->getRuleId()) <= 0)
+		{
+			throw new \RuntimeException('Invalid pathRule.id', 999999);
+		}
+		if ($pathRule->getHttpStatus() === 404)
+		{
+			$this->updateRuleStatus($pathRule->getRuleId(), 404);
+			return;
+		}
+		elseif (!in_array($pathRule->getHttpStatus(), [200, 301, 302]))
+		{
+			throw new \RuntimeException('Invalid pathRule.httpStatus', 999999);
+		}
+
 		$sb = $this->getDbProvider()->getNewStatementBuilder();
 		$table = $sb->getSqlMapping()->getPathRuleTable();
 		$fb = $sb->getFragmentBuilder();
 		$sb->update($table)
 			->assign($fb->column('http_status'), $fb->integerParameter('httpStatus'))
 			->assign($fb->column('query'), $fb->lobParameter('query'))
+			->assign($fb->column('user_edited'), $fb->booleanParameter('userEdited'))
+			->assign($fb->column('document_id'), $fb->integerParameter('documentId'))
+			->assign($fb->column('document_alias_id'), $fb->integerParameter('documentAliasId'))
 			->where($fb->eq($fb->column('rule_id'), $fb->integerParameter('ruleId')));
 		$uq = $sb->updateQuery();
-		$uq->bindParameter('httpStatus', $pathRule->getHttpStatus());
+		$uq->bindParameter('httpStatus', intval($pathRule->getHttpStatus()));
 		$uq->bindParameter('query', $pathRule->getQuery());
-		$uq->bindParameter('ruleId', $pathRule->getRuleId());
+		$uq->bindParameter('ruleId', intval($pathRule->getRuleId()));
+		$uq->bindParameter('userEdited', $pathRule->getUserEdited() == true);
+		$uq->bindParameter('documentId', intval($pathRule->getDocumentId()));
+		$uq->bindParameter('documentAliasId', intval($pathRule->getDocumentAliasId()));
 		$uq->execute();
 	}
 
 	/**
-	 * @param PathRule $pathRule
+	 * @api
+	 * @param \Change\Http\Web\PathRule $pathRule
 	 * @throws \RuntimeException
 	 */
 	public function insertPathRule($pathRule)
@@ -272,18 +545,22 @@ class PathRuleManager
 			$fb->column('hash'),
 			$fb->column('relative_path'),
 			$fb->column('document_id'),
+			$fb->column('document_alias_id'),
 			$fb->column('section_id'),
 			$fb->column('http_status'),
-			$fb->column('query')
+			$fb->column('query'),
+			$fb->column('user_edited')
 		);
 		$sb->addValues($fb->integerParameter('websiteId'),
 			$fb->parameter('LCID'),
 			$fb->parameter('hash'),
 			$fb->lobParameter('relativePath'),
 			$fb->integerParameter('documentId'),
+			$fb->integerParameter('documentAliasId'),
 			$fb->integerParameter('sectionId'),
 			$fb->integerParameter('httpStatus'),
-			$fb->lobParameter('query')
+			$fb->lobParameter('query'),
+			$fb->booleanParameter('userEdited')
 		);
 
 		$iq = $sb->insertQuery();
@@ -292,14 +569,17 @@ class PathRuleManager
 		$iq->bindParameter('hash', $pathRule->getHash());
 		$iq->bindParameter('relativePath', $pathRule->getRelativePath());
 		$iq->bindParameter('documentId', intval($pathRule->getDocumentId()));
+		$iq->bindParameter('documentAliasId', intval($pathRule->getDocumentAliasId()));
 		$iq->bindParameter('sectionId', intval($pathRule->getSectionId()));
 		$iq->bindParameter('httpStatus', $pathRule->getHttpStatus());
 		$iq->bindParameter('query', $pathRule->getQuery());
+		$iq->bindParameter('userEdited', $pathRule->getUserEdited());
 		$iq->execute();
 		$pathRule->setRuleId($iq->getDbProvider()->getLastInsertId($table));
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Presentation\Interfaces\Section|integer $section
 	 * @throws \InvalidArgumentException

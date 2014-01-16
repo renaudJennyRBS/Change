@@ -65,41 +65,9 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 5);
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onDefaultCreated'), 5);
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
 		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onPopulatePathRule(Event $event)
-	{
-		$pathRule = $event->getParam('pathRule');
-		$product = $event->getDocument();
-		if ($pathRule instanceof \Change\Http\Web\PathRule && $product instanceof Product)
-		{
-			$sectionId = $pathRule->getSectionId();
-			$section = $this->getDocumentManager()->getDocumentInstance($sectionId, 'Rbs_Website_Section');
-			if ($section)
-			{
-				/* @var $section \Rbs\Website\Documents\Section */
-				$sectionPath = ($section->getPathPart() ? $section->getPathPart() . '.' : '') . $section->getId();
-				$path = $pathRule->normalizePath(array(
-					$sectionPath,
-					$product->getCurrentLocalization()->getTitle() . '.' . $product->getId() . '.html'
-				));
-				$pathRule->setRelativePath($path);
-			}
-			else
-			{
-				$path = $pathRule->normalizePath(
-					$product->getCurrentLocalization()->getTitle() . '.' . $product->getId() . '.html'
-				);
-				$pathRule->setRelativePath($path);
-			}
-		}
 	}
 
 	/**

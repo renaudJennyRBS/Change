@@ -16,6 +16,5 @@ class SiteMapInformation extends MenuInformation
 		$this->getParameterInformation('templateName')->setDefaultValue('siteMap.twig');
 		$this->getParameterInformation('maxLevel')->setDefaultValue(5);
 		$this->removeParameterInformation('documentId');
-		$this->setFunctions(array('Rbs_Website_Website_SiteMap' => $i18nManager->trans('m.rbs.website.admin.sitemap', $ucf)));
 	}
 }

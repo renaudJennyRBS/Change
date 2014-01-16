@@ -1,8 +1,8 @@
 <?php
 namespace Rbs\Website\Http\Rest\Actions;
 
-use Change\Documents\Query\Query;
 use Change\Http\Event;
+use Change\Http\Request;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -17,30 +17,35 @@ class InheritedFunctions
 	public function execute(Event $event)
 	{
 		$request = $event->getRequest();
-		if ($request->isGet())
+		if (!$request->isGet())
+		{
+			$result = $event->getController()->notAllowedError($request->getMethod(), [Request::METHOD_GET]);
+			$event->setResult($result);
+			return;
+		}
+		else
 		{
 			$event->setResult($this->generateResult($event->getApplicationServices(), $request->getQuery('section')));
 		}
 	}
 
-
 	/**
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param $sectionId integer
-	 * @return \Change\Http\Rest\Result\ArrayResult
+	 * @return \Change\Http\Rest\Result\ArrayResult|null
 	 */
 	protected function generateResult($applicationServices, $sectionId)
 	{
-		if (! $sectionId)
+		if (!$sectionId)
 		{
-			return;
+			return null;
 		}
 
 		$treeManager = $applicationServices->getTreeManager();
 		$currentNode = $treeManager->getNodeById($sectionId, 'Rbs_Website');
-		if (! $currentNode)
+		if (!$currentNode)
 		{
-			return;
+			return null;
 		}
 
 		$ancestorNodes = $treeManager->getAncestorNodes($currentNode);
@@ -59,7 +64,6 @@ class InheritedFunctions
 			{
 				$query = $dm->getNewQuery('Rbs_Website_SectionPageFunction');
 				$query->andPredicates($query->eq('section', $section->getId()));
-				$functions = array();
 
 				/* @var $spf \Rbs\Website\Documents\SectionPageFunction */
 				foreach ($query->getDocuments() as $spf)
@@ -96,7 +100,6 @@ class InheritedFunctions
 		}
 
 		$result->setArray($functionsByCode);
-
 		return $result;
 	}
 }

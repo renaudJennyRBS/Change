@@ -34,14 +34,11 @@
 
 			<rbs-column name="label" primary="true"></rbs-column>
 
-			<rbs-column name="allowedFunctionsCode">
-				<div ng-if="doc.allowedFunctionsCode">
-					<span ng-repeat="func in doc.allowedFunctionsCode">
+			<rbs-column name="supportedFunctionsCode">
+				<div ng-if="doc.supportedFunctionsCode">
+					<span ng-repeat="func in doc.supportedFunctionsCode">
 						<span class="label label-default">(= func =)</span>
 					</span>
-				</div>
-				<div ng-if="! doc.allowedFunctionsCode">
-					<a href ng-href="(= doc|rbsURL:'form' =)?section=functions"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.configure_functions', ['ucf']) }}</a>
 				</div>
 			</rbs-column>
 		</rbs-document-list>

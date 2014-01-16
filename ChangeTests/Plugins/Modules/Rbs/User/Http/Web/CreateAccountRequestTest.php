@@ -31,6 +31,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$website = $this->getNewWebsite();
 		$i18nManager = $this->getApplicationServices()->getI18nManager();
 		$urlManager = $website->getUrlManager($i18nManager->getLCID());
+		$urlManager->setPathRuleManager($this->getApplicationServices()->getPathRuleManager());
 		$urlManager->setAbsoluteUrl(true);
 
 		$event = new \Change\Http\Web\Event();

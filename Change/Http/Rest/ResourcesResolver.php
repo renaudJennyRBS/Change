@@ -12,6 +12,7 @@ use Change\Http\Rest\Actions\GetCorrection;
 use Change\Http\Rest\Actions\GetDocument;
 use Change\Http\Rest\Actions\GetDocumentCollection;
 use Change\Http\Rest\Actions\GetLocalizedDocument;
+use Change\Http\Rest\Actions\PathRules;
 use Change\Http\Rest\Actions\UpdateDocument;
 use Change\Http\Rest\Actions\UpdateLocalizedDocument;
 
@@ -389,6 +390,58 @@ class ResourcesResolver
 			else
 			{
 				$event->setResult($event->getController()->notAllowedError($method, array(Request::METHOD_GET)));
+				return;
+			}
+		}
+
+		// Vendor/Module/Name/Id[/LCID]/pathRules
+		if (preg_match('|^[A-Z][a-z0-9]+/[A-Z][a-z0-9]+/[A-Z][A-Za-z0-9]+/([0-9]+)(?:/([a-z]{2}_[A-Z]{2}))?/pathRules|',
+			$relativePath, $matches)
+		)
+		{
+			$modelName = $resourceParts[0] . '_' . $resourceParts[1] . '_' . $resourceParts[2];
+			$model = $applicationServices->getModelManager()->getModelByName($modelName);
+			if (!$model || !$model->isPublishable())
+			{
+				return;
+			}
+
+			if (isset($matches[2]))
+			{
+				if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($matches[2]))
+				{
+					return;
+				}
+				$event->setParam('LCID', $matches[2]);
+			}
+
+			$event->setParam('modelName', $modelName);
+			$documentId = intval($resourceParts[3]);
+			$event->setParam('documentId', $documentId);
+
+			if ($method === Request::METHOD_GET)
+			{
+				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
+				$action = function($event)
+				{
+					(new PathRules())->get($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+			elseif ($method === Request::METHOD_POST)
+			{
+				$this->resolver->setAuthorization($event, 'Consumer', $documentId, $modelName);
+				$action = function($event)
+				{
+					(new PathRules())->set($event);
+				};
+				$event->setAction($action);
+				return;
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($method, [Request::METHOD_GET, Request::METHOD_POST]));
 				return;
 			}
 		}

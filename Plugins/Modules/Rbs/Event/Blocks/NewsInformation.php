@@ -15,6 +15,5 @@ class NewsInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 		$this->getParameterInformation('docId')->setAllowedModelsNames('Rbs_Event_News')
 			->setLabel($i18nManager->trans('m.rbs.event.admin.news_doc', $ucf));
 		$this->getParameterInformation('templateName')->setDefaultValue('news.twig');
-		$this->setFunctions(array('Rbs_Event_News' => $i18nManager->trans('m.rbs.event.admin.news_function', $ucf)));
 	}
 }

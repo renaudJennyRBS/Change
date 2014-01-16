@@ -37,6 +37,11 @@ class PathRule
 	protected $documentId;
 
 	/**
+	 * @var integer
+	 */
+	protected $documentAliasId;
+
+	/**
 	 * @var integer|null
 	 */
 	protected $sectionId;
@@ -55,6 +60,11 @@ class PathRule
 	 * @var string
 	 */
 	protected $query;
+
+	/**
+	 * @var boolean
+	 */
+	protected $userEdited = false;
 
 	/**
 	 * @api
@@ -129,6 +139,24 @@ class PathRule
 	}
 
 	/**
+	 * @param boolean $userEdited
+	 * @return $this
+	 */
+	public function setUserEdited($userEdited)
+	{
+		$this->userEdited = $userEdited;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getUserEdited()
+	{
+		return $this->userEdited;
+	}
+
+	/**
 	 * @api
 	 * @return string
 	 */
@@ -175,7 +203,7 @@ class PathRule
 
 	/**
 	 * @api
-	 * @return int
+	 * @return integer
 	 */
 	public function getDocumentId()
 	{
@@ -183,8 +211,26 @@ class PathRule
 	}
 
 	/**
+	 * @param integer $documentAliasId
+	 * @return $this
+	 */
+	public function setDocumentAliasId($documentAliasId)
+	{
+		$this->documentAliasId = $documentAliasId;
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getDocumentAliasId()
+	{
+		return $this->documentAliasId;
+	}
+
+	/**
 	 * @api
-	 * @param int $sectionId
+	 * @param integer $sectionId
 	 * @return $this
 	 */
 	public function setSectionId($sectionId)
@@ -195,7 +241,7 @@ class PathRule
 
 	/**
 	 * @api
-	 * @return int
+	 * @return integer
 	 */
 	public function getSectionId()
 	{
@@ -351,5 +397,15 @@ class PathRule
 		{
 			return str_replace(array('/', '&', '?', '#', ' '), '-', strval($part));
 		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray() {
+		$array = get_object_vars($this);
+		unset($array['hash']);
+		unset($array['location']);
+		return $array;
 	}
 }

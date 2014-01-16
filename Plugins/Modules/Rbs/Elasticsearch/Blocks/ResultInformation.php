@@ -16,9 +16,6 @@ class ResultInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result', $ucf));
-		$this->setFunctions(array(
-				'Rbs_Elasticsearch_Result' => $i18nManager->trans('m.rbs.elasticsearch.admin.result_function', $ucf))
-		);
 
 		$this->addInformationMeta('fulltextIndex', Property::TYPE_DOCUMENTID, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_fulltextindex', $ucf))

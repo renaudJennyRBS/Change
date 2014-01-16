@@ -93,7 +93,6 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
 		$eventManager->attach('getPageByFunction', array($this, 'onGetPageByFunction'), 10);
 		$eventManager->attach(Event::EVENT_NODE_UPDATED, array($this, 'onNodeUpdated'), 10);
-		$eventManager->attach('populatePathRule', array($this, 'onPopulatePathRule'), 10);
 		$eventManager->attach('selectPathRule', array($this, 'onSelectPathRule'), 10);
 	}
 
@@ -206,39 +205,6 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 			else
 			{
 				$permissionManager->addWebRule($section->getId(), $section->getWebsite()->getId());
-			}
-		}
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onPopulatePathRule(Event $event)
-	{
-		$document = $event->getDocument();
-		if ($document instanceof Section)
-		{
-			/* @var $pathRule \Change\Http\Web\PathRule */
-			$pathRule = $event->getParam('pathRule');
-			$queryParameters = $event->getParam('queryParameters');
-			if (isset($queryParameters['sectionPageFunction']))
-			{
-				$sectionPageFunction = $queryParameters['sectionPageFunction'];
-				$em = $document->getEventManager();
-				$args = array('functionCode' => $sectionPageFunction);
-				$event1 = new \Change\Documents\Events\Event('getPageByFunction', $document, $args);
-				$em->trigger($event1);
-				$page = $event1->getParam('page');
-				if ($page)
-				{
-					$relativePath = $pathRule->normalizePath($page->getTitle() . '.html');
-					if ($document instanceof Topic && $document->getPathPart())
-					{
-						$relativePath = $document->getPathPart() . '/' . $relativePath;
-					}
-					$pathRule->setRelativePath($relativePath);
-					$pathRule->setQueryParameters(array('sectionPageFunction' => $sectionPageFunction));
-				}
 			}
 		}
 	}

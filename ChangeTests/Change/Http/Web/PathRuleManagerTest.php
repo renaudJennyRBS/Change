@@ -1,7 +1,6 @@
 <?php
 namespace ChangeTests\Change\Http\Web;
 
-use Change\Http\Web\PathRule;
 use Change\Http\Web\PathRuleManager;
 
 class PathRuleManagerTest extends \ChangeTests\Change\TestAssets\TestCase
@@ -20,14 +19,14 @@ class PathRuleManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @return PathRuleManager
 	 */
-	protected function getNewPathRuleManager()
+	protected function getPathRuleManager()
 	{
-		return new PathRuleManager($this->getApplicationServices()->getDbProvider());
+		return $this->getApplicationServices()->getPathRuleManager();
 	}
 
 	public function testGetNewRule()
 	{
-		$prm = $this->getNewPathRuleManager();
+		$prm = $this->getPathRuleManager();
 		$pathRule = $prm->getNewRule(1000, 'fr_FR', 'test.html', 1010, 301, 1001, 'toto=1');
 		$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
 		$this->assertEquals(1000, $pathRule->getWebsiteId());
@@ -45,7 +44,7 @@ class PathRuleManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testInsertFindAndUpdatePathRules()
 	{
 		$this->getApplicationServices()->getTransactionManager()->begin();
-		$prm = $this->getNewPathRuleManager();
+		$prm = $this->getPathRuleManager();
 
 		// Creation / find.
 		$this->assertCount(0, $prm->findPathRules(1000, 'fr_FR', 1010, 1001));
@@ -82,6 +81,27 @@ class PathRuleManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->getApplicationServices()->getTransactionManager()->commit();
 	}
+
+	public function testRewritePathRule()
+	{
+		$pathRuleManager = $this->getPathRuleManager();
+		$rule = $pathRuleManager->getNewRule(1000, 'fr_FR', 'test.html', 4000, 200);
+		$document = $this->getNewReadonlyDocument('Project_Tests_Correction', 4000);
+		$pathRule = $pathRuleManager->populatePathRuleByDocument($rule, $document);
+		$this->assertNull($pathRule);
+
+		$callback = function (\Change\Events\Event $event) {
+			$pathRule = $event->getParam('pathRule');
+			$pathRule->setRelativePath('toto.html');
+		};
+
+		$pathRuleManager->getEventManager()->attach(PathRuleManager::EVENT_POPULATE_PATH_RULE, $callback);
+		$pathRule = $pathRuleManager->populatePathRuleByDocument($rule, $document);
+		$this->assertInstanceOf('\Change\Http\Web\PathRule', $pathRule);
+		$this->assertEquals('toto.html', $pathRule->getRelativePath());
+
+	}
+
 
 	/**
 	 * @param \Change\Http\Web\PathRule $pathRule1

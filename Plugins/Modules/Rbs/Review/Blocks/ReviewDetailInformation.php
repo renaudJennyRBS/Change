@@ -19,6 +19,5 @@ class ReviewDetailInformation extends Information
 		$this->addInformationMeta('reviewId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.review.front.review', $ucf))
 			->setAllowedModelsNames('Rbs_Review_Review');
-		$this->setFunctions(array('Rbs_Review_Review' => $i18nManager->trans('m.rbs.review.front.review_function', $ucf)));
 	}
 }

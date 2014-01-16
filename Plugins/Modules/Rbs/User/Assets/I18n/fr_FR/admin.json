@@ -136,6 +136,9 @@
 	"function_error_401":{
 		"message":"autorisation nécessaire"
 	},
+	"function_error_403":{
+		"message":"acces refusé"
+	},
 	"group_picker_title":{
 		"message":"sélectionner les groupes"
 	},

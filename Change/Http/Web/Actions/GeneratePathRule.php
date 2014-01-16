@@ -14,6 +14,7 @@ class GeneratePathRule
 	 * Use Required Event Params: pathRule
 	 * @param \Change\Http\Web\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
@@ -29,7 +30,19 @@ class GeneratePathRule
 		$document = $event->getDocument();
 		if ($document instanceof AbstractDocument)
 		{
-			$newPathRule = $urlManager->rewritePathRule($document, $pathRule);
+			$transactionManager = $event->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+				$newPathRule = $this->rewritePathRule($event->getApplicationServices()->getPathRuleManager(), $document,
+					$pathRule);
+				$transactionManager->commit();
+			}
+			catch (\Exception $exception)
+			{
+				throw $transactionManager->rollBack($exception);
+			}
+
 			if ($newPathRule === null)
 			{
 				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
@@ -60,5 +73,55 @@ class GeneratePathRule
 				$action->execute($event);
 			}
 		}
+	}
+
+	/**
+	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Http\Web\PathRule $genericPathRule
+	 * @throws
+	 * @return \Change\Http\Web\PathRule|null
+	 */
+	public function rewritePathRule($pathRuleManager, $document, $genericPathRule)
+	{
+		$newPathRule = $pathRuleManager->populatePathRuleByDocument($genericPathRule, $document);
+		if ($newPathRule && $newPathRule->getRelativePath())
+		{
+			$existingRules = $pathRuleManager->findPathRules($newPathRule->getWebsiteId(), $newPathRule->getLCID(),
+				$newPathRule->getDocumentId(), $newPathRule->getSectionId());
+			if (count($existingRules))
+			{
+				return $existingRules[0];
+			}
+
+			$redirectRules = $pathRuleManager->findRedirectedRules(
+				$newPathRule->getWebsiteId(), $newPathRule->getLCID(),
+				$newPathRule->getDocumentId(), $newPathRule->getSectionId());
+
+			$redirectRule = null;
+			foreach ($redirectRules as $rule)
+			{
+				if ($rule->getRelativePath() === $newPathRule->getRelativePath())
+				{
+					$rule->setQuery($newPathRule->getQuery());
+					$rule->setHttpStatus(200);
+					$pathRuleManager->updatePathRule($rule);
+					return $rule;
+				}
+			}
+
+			try
+			{
+				$pathRuleManager->insertPathRule($newPathRule);
+			}
+			catch (\Exception $pke)
+			{
+				$newPathRule->setRelativePath($document->getId() . '/' . $newPathRule->getRelativePath());
+				$pathRuleManager->insertPathRule($newPathRule);
+			}
+
+			return $newPathRule;
+		}
+		return null;
 	}
 }

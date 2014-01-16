@@ -17,28 +17,32 @@ class Collections
 		if ($applicationServices)
 		{
 			$pageId = $event->getParam('pageId');
-
+			$functions = $applicationServices->getPageManager()->getFunctions();
 			if (!\Change\Stdlib\String::isEmpty($pageId))
 			{
 				$page = $applicationServices->getDocumentManager()->getDocumentInstance($pageId);
 
 				$parsedFunctions = array();
-
 				if ($page instanceof \Rbs\Website\Documents\FunctionalPage)
 				{
-
 					$blocks = $page->getContentLayout()->getBlocks();
 					if (count($blocks))
 					{
-						$blockManager = $applicationServices->getBlockManager();
 						foreach ($blocks as $block)
 						{
-							$blockInfo = $blockManager->getBlockInformation($block->getName());
-							if ($blockInfo)
+							$blockName = $block->getName();
+							foreach ($functions as $function)
 							{
-								foreach ($blockInfo->getFunctions() as $name => $label)
+								if (isset($function['block']))
 								{
-									$parsedFunctions[$name] = $label;
+									if (is_array($function['block']) && in_array($blockName, $function['block']))
+									{
+										$parsedFunctions[$function['code']] = $function['label'];
+									}
+									elseif (is_string($function['block']) && $function['block'] == $blockName)
+									{
+										$parsedFunctions[$function['code']] = $function['label'];
+									}
 								}
 							}
 						}
@@ -50,20 +54,11 @@ class Collections
 			}
 			else
 			{
-				$blockManager = $applicationServices->getBlockManager();
 				$parsedFunctions = array();
-				foreach ($blockManager->getBlockNames() as $blockName)
+				foreach ($functions as $function)
 				{
-					$blockInfo = $blockManager->getBlockInformation($blockName);
-					if ($blockInfo)
-					{
-						foreach ($blockInfo->getFunctions() as $name => $label)
-						{
-							$parsedFunctions[$name] = $label;
-						}
-					}
+					$parsedFunctions[$function['code']] = $function['label'];
 				}
-
 				$event->setParam('collection', new CollectionArray('Rbs_Website_AvailablePageFunctions', $parsedFunctions));
 				$event->stopPropagation();
 			}

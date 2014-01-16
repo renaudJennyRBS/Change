@@ -23,7 +23,6 @@ class ProductInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
 		$this->addInformationMeta('attributesDisplayMode', Property::TYPE_STRING, false, 'table')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_attributes_display_mode', $ucf));
-		$this->setFunctions(array('Rbs_Catalog_Product' => $i18nManager->trans('m.rbs.catalog.admin.product_function', $ucf)));
 
 		$this->addTTL(60)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}

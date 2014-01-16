@@ -25,12 +25,14 @@ class GenerateSitemap
 		}
 
 		$urlManager = $website->getUrlManager($LCID);
+		$urlManager->setPathRuleManager($applicationServices->getPathRuleManager());
 		$urlManager->setAbsoluteUrl(true);
 
 		//TODO: work but find a better way
 		//Create a special UrlManager to manage Assets URL.
 		//Useful for the url path to robots.txt, the sitemap Index and sitemaps.
 		$assetUrlManager = $website->getUrlManager($LCID);
+		$urlManager->setPathRuleManager($applicationServices->getPathRuleManager());
 		$assetUrlManager->setAbsoluteUrl(true);
 
 		$resourceBaseUrl = $application->getConfiguration()->getEntry('Change/Install/webBaseURLPath') . '/Assets';
@@ -76,17 +78,20 @@ class GenerateSitemap
 					if (array_key_exists($website->getId(), $sitemapInfo) && isset($sitemapInfo[$website->getId()]['generate']) &&
 						$sitemapInfo[$website->getId()]['generate'])
 					{
-						$target = $seo->getTarget();
 						/* @var $target \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable */
+						$target = $seo->getTarget();
+						if (!($target instanceof \Change\Documents\Interfaces\Publishable) || !$target->getCanonicalSection($website))
+						{
+							continue;
+						}
 
 						$url = $xml->createElement('url');
-
-						$documentUrl = $urlManager->getCanonicalByDocument($target, $website);
+						$documentUrl = $urlManager->getCanonicalByDocument($target, $website)->normalize()->toString();
 						//800 is the maximum number of characters composing an url because the norm fixes a file max size to 10MB.
 						//And with 10000 urls of 800 characters, the file size is approximately 10MB
 						if (strlen($documentUrl) > 800)
 						{
-							$documentUrl = $urlManager->getByPathInfoForWebsite($website, $LCID, $urlManager->getDefaultDocumentPathInfo($target, $website));
+							$documentUrl = $urlManager->getByPathInfoForWebsite($website, $LCID, $urlManager->getDefaultDocumentPathInfo($target, $website))->normalize()->toString();
 						}
 
 						$loc = $xml->createElement('loc', $documentUrl);

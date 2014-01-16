@@ -7,7 +7,6 @@
 		queryLimit = 500; // 640K ought to be enough for anybody :)
 
 	/**
-	 *
 	 * @param $q
 	 * @param REST
 	 * @param Query
@@ -95,11 +94,19 @@
 				function loadPages (section)
 				{
 					var promises = [],
-						query,
-						p;
+						query, p,
+						websiteId = section.model === "Rbs_Website_Website" ? section.id : section.website.id;
 
-					// Load StaticPages
-					query = Query.treeChildrenQuery('Rbs_Website_StaticPage', section.id);
+					if (section.id != websiteId)
+					{
+						// Load StaticPages
+						query = Query.treeChildrenQuery('Rbs_Website_StaticPage', section.id);
+					}
+					else
+					{
+						query = Query.treeDescendantsQuery('Rbs_Website_StaticPage', websiteId);
+					}
+
 					query.limit = queryLimit;
 					query.offset = 0;
 					query.sort = [{
@@ -113,7 +120,7 @@
 					promises.push(p);
 
 					// Load FunctionalPages
-					query = Query.simpleQuery('Rbs_Website_FunctionalPage', 'website', section.model === "Rbs_Website_Website" ? section.id : section.website.id);
+					query = Query.simpleQuery('Rbs_Website_FunctionalPage', 'website', websiteId);
 					query.limit = queryLimit;
 					query.offset = 0;
 					query.sort = [{
@@ -154,8 +161,7 @@
 						scope.allFunctions = functions;
 						scope.allFunctions.unshift({
 							'code' : INDEX_FUNCTION_CODE,
-							'label' : INDEX_FUNCTION_CODE,
-							'usage' : 0
+							'label' : INDEX_FUNCTION_CODE
 						});
 					});
 					return p;
@@ -229,7 +235,10 @@
 				 */
 				function preparePageSelectionForFunction (functionCode)
 				{
-					var p = REST.call(REST.getBaseUrl('Rbs/Website/PagesForFunction'), {"function": functionCode});
+					var section = scope.section;
+					var websiteId =  (section.hasOwnProperty('website')) ? section.website.id : section.id;
+					var p = REST.call(REST.getBaseUrl('Rbs/Website/PagesForFunction'),
+						{"function": functionCode, "websiteId": websiteId});
 					p.then(function (pages)
 					{
 						scope.readyForFunctionPages = [];

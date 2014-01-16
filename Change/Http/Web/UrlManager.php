@@ -9,19 +9,9 @@ use Change\Documents\AbstractDocument;
 class UrlManager extends \Change\Http\UrlManager
 {
 	/**
-	 * @var \Change\Db\DbProvider
-	 */
-	protected $dbProvider;
-
-	/**
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
-
-	/**
-	 * @var \Change\Transaction\TransactionManager
-	 */
-	protected $transactionManager;
 
 	/**
 	 * @var \Change\Http\Web\PathRuleManager
@@ -54,24 +44,6 @@ class UrlManager extends \Change\Http\UrlManager
 	protected $webUrlManagers = array();
 
 	/**
-	 * @param \Change\Db\DbProvider $dbProvider
-	 * @return $this
-	 */
-	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
-	{
-		$this->dbProvider = $dbProvider;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	protected function getDbProvider()
-	{
-		return $this->dbProvider;
-	}
-
-	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return $this
 	 */
@@ -90,24 +62,6 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
-	 * @param \Change\Transaction\TransactionManager $transactionManager
-	 * @return $this
-	 */
-	public function setTransactionManager(\Change\Transaction\TransactionManager $transactionManager)
-	{
-		$this->transactionManager = $transactionManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Transaction\TransactionManager
-	 */
-	protected function getTransactionManager()
-	{
-		return $this->transactionManager;
-	}
-
-	/**
 	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
 	 * @return $this
 	 */
@@ -122,10 +76,6 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	public function getPathRuleManager()
 	{
-		if ($this->pathRuleManager === null)
-		{
-			$this->pathRuleManager = new \Change\Http\Web\PathRuleManager($this->getDbProvider());
-		}
 		return $this->pathRuleManager;
 	}
 
@@ -219,6 +169,7 @@ class UrlManager extends \Change\Http\UrlManager
 		{
 			$this->webUrlManagers[$key] = $website->getUrlManager($LCID);
 			$this->webUrlManagers[$key]->setAbsoluteUrl(true);
+			$this->webUrlManagers[$key]->setPathRuleManager($this->getPathRuleManager());
 		}
 		return $this->webUrlManagers[$key];
 	}
@@ -345,11 +296,11 @@ class UrlManager extends \Change\Http\UrlManager
 
 	/**
 	 * @param string $functionCode
-	 * @param \Change\Presentation\Interfaces\Section $section
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param array $query
 	 * @return \Zend\Uri\Http|null
 	 */
-	public function getByFunction($functionCode, $section = null, $query = array())
+	public function getByFunction($functionCode, $website = null, $query = array())
 	{
 		$uri = null;
 		if (!is_string($functionCode) || empty($functionCode))
@@ -357,25 +308,23 @@ class UrlManager extends \Change\Http\UrlManager
 			return $uri;
 		}
 
-		if ($section === null)
+		if ($website === null)
 		{
-			$section = $this->getSection() ? $this->getSection() : $this->getWebsite();
+			$website =  $this->getWebsite();
 		}
 
-		if ($section instanceof AbstractDocument)
+		if ($website instanceof AbstractDocument)
 		{
-			$em = $section->getEventManager();
+			$em = $website->getEventManager();
 			$args = array('functionCode' => $functionCode);
-			$event = new \Change\Documents\Events\Event('getPageByFunction', $section, $args);
+			$event = new \Change\Documents\Events\Event('getPageByFunction', $website, $args);
 			$em->trigger($event);
 			$page = $event->getParam('page');
 			if ($page instanceof AbstractDocument)
 			{
-				$section = $event->getParam('section', $section);
-				$query['sectionPageFunction'] = $functionCode;
 				$absoluteUrl = $this->getAbsoluteUrl();
 				$this->setAbsoluteUrl(true);
-				$uri = $this->getCanonicalByDocument($section, null, $query);
+				$uri = $this->getCanonicalByDocument($page, null, $query);
 				$this->setAbsoluteUrl($absoluteUrl);
 			}
 		}
@@ -437,106 +386,6 @@ class UrlManager extends \Change\Http\UrlManager
 			{
 				return $pathRule;
 			}
-		}
-		return null;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\Web\PathRule $genericPathRule
-	 * @return \Change\Http\Web\PathRule|null
-	 */
-	protected function dispatchPopulatePathRule($document, $genericPathRule)
-	{
-		$newPathRule = clone($genericPathRule);
-		$newPathRule->setRelativePath(null);
-		$newPathRule->setQuery(null);
-		$eventManager = $document->getEventManager();
-		$queryParameters = new \ArrayObject($genericPathRule->getQueryParameters());
-		$e = new \Change\Documents\Events\Event('populatePathRule', $document, array('pathRule' => $newPathRule,
-			'queryParameters' => $queryParameters));
-		$eventManager->trigger($e);
-		return $e->getParam('pathRule');
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\Web\PathRule $genericPathRule
-	 * @return null|string
-	 */
-	public function evaluateRelativePath($document, $genericPathRule)
-	{
-		$pathRule = $this->dispatchPopulatePathRule($document, $genericPathRule);
-		if ($pathRule instanceof PathRule && $pathRule->getRelativePath())
-		{
-			return $pathRule->getRelativePath();
-		}
-		else
-		{
-			/* @var $section \Change\Presentation\Interfaces\Section */
-			$section = $this->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
-			return $this->getDefaultDocumentPathInfo($document, $section);
-		}
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @param \Change\Http\Web\PathRule $genericPathRule
-	 * @throws \Exception
-	 * @return \Change\Http\Web\PathRule|null
-	 */
-	public function rewritePathRule($document, $genericPathRule)
-	{
-		$newPathRule = $this->dispatchPopulatePathRule($document, $genericPathRule);
-		if ($newPathRule instanceof PathRule && $newPathRule->getRelativePath())
-		{
-			$transactionManager = $this->getTransactionManager();
-			try
-			{
-				$transactionManager->begin();
-
-				$pathRuleManager = $this->getPathRuleManager();
-				$redirectRules = $pathRuleManager->findRedirectedRules(
-					$newPathRule->getWebsiteId(), $newPathRule->getLCID(),
-					$newPathRule->getDocumentId(), $newPathRule->getSectionId());
-
-				$redirectRule = null;
-				foreach ($redirectRules as $rule)
-				{
-					if ($rule->getRelativePath() === $newPathRule->getRelativePath())
-					{
-						$rule->setQuery($newPathRule->getQuery());
-						$rule->setHttpStatus(200);
-						$pathRuleManager->updatePathRule($rule);
-						$redirectRule = $rule;
-						break;
-					}
-				}
-
-				if (null === $redirectRule)
-				{
-					try
-					{
-						$pathRuleManager->insertPathRule($newPathRule);
-					}
-					catch (\Exception $pke)
-					{
-						$newPathRule->setRelativePath($document->getId() . '/' . $newPathRule->getRelativePath());
-						$pathRuleManager->insertPathRule($newPathRule);
-					}
-				}
-				else
-				{
-					$newPathRule = $redirectRule;
-				}
-
-				$transactionManager->commit();
-			}
-			catch (\Exception $exception)
-			{
-				throw $transactionManager->rollBack($exception);
-			}
-			return $newPathRule;
 		}
 		return null;
 	}

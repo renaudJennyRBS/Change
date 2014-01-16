@@ -9,5 +9,7 @@
 		</property>
 		<property name="section" type="Document" document-type="Rbs_Website_Section" required="true" />
 		<property name="hideLinks" type="Boolean" />
+
+		<property name="displayDocument" type="Document" />
 	</properties>
 </document>

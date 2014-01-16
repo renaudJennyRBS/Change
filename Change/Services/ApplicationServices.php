@@ -262,6 +262,15 @@ class ApplicationServices extends \Zend\Di\Di
 				->addMethodParameter('setTransactionManager', 'transactionManager', array('type' => 'TransactionManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+
+		//PathRuleManager : EventManagerFactory, DbProvider
+		$pathRuleManagerClassName = $this->getInjectedClassName('PathRuleManager', 'Change\Http\Web\PathRuleManager');
+		$classDefinition = $this->getClassDefinition($pathRuleManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDbProvider', true)
+			->addMethodParameter('setDbProvider', 'dbProvider', array('type' => 'DbProvider', 'required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$instanceManager = $this->instanceManager();
@@ -330,6 +339,9 @@ class ApplicationServices extends \Zend\Di\Di
 		$instanceManager->addAlias('PermissionsManager', $permissionsManagerClassName, array());
 
 		$instanceManager->addAlias('OAuthManager', $oAuthManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory));
+
+		$instanceManager->addAlias('PathRuleManager', $pathRuleManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory));
 	}
 
@@ -566,5 +578,14 @@ class ApplicationServices extends \Zend\Di\Di
 	public function getOAuthManager()
 	{
 		return $this->get('OAuthManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Http\Web\PathRuleManager
+	 */
+	public function getPathRuleManager()
+	{
+		return $this->get('PathRuleManager');
 	}
 }

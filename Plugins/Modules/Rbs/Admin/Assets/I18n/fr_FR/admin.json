@@ -1103,5 +1103,110 @@
 	},
 	"change":{
 		"message":"changer"
+	},
+	"urls":{
+		"message":"Récriture d'URLs et redirections"
+	},
+	"rewrite_urls":{
+		"message":"Récriture d'URLs"
+	},
+	"relative_path":{
+		"message":"Chemin relatif"
+	},
+	"document_published_in_lang":{
+		"message":"Le document est publié dans cette langue."
+	},
+	"document_not_published_in_lang":{
+		"message":"Le document n'est pas publié dans cette langue."
+	},
+	"section_published_in_lang":{
+		"message":"Cette section est publiée dans cette langue."
+	},
+	"section_not_published_in_lang":{
+		"message":"Cette section n'est pas publiée dans cette langue."
+	},
+	"detail_function_provided_in_lang":{
+		"message":"La fonction détail est assurée dans cette section pour cette langue."
+	},
+	"detail_function_not_published_in_lang":{
+		"message":"La fonction détail n'est pas publié dans cette section pour cette langue."
+	},
+	"detail_function_not_provided_in_lang":{
+		"message":"La fonction détail n'est pas assurée dans cette section pour cette langue."
+	},
+	"document_is_not_published":{
+		"message":"Ce document n'est publié nulle part sur le site web."
+	},
+	"document_is_not_published_message":{
+		"message":"Pour pouvoir configurer les URLs de ce document, vous devez au préalable avoir $LINKSTART$défini des sections$LINKEND$ dans lesquelles ce document doit s'afficher sur le site web."
+	},
+	"available_languages_help":{
+		"message":"Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit et les sections dans lesquelles il est implanté."
+	},
+	"canonical_help":{
+		"message":"Les lignes marquées d'une <i class=\"icon-star text-info\"><\/i> représentent les implantations canoniques de document dans un site et une langue donnés."
+	},
+	"url":{
+		"message":"URL"
+	},
+	"section":{
+		"message":"section"
+	},
+	"lcid":{
+		"message":"langue"
+	},
+	"canonical_location":{
+		"message":"implantation canonique pour ce site"
+	},
+	"publication":{
+		"message":"publication"
+	},
+	"open_option_panel":{
+		"message":"options avancées"
+	},
+	"option_panel_title":{
+		"message":"options avancées"
+	},
+	"query":{
+		"message":"requête"
+	},
+	"edit_url":{
+		"message":"modifier cette URL"
+	},
+	"restore_default_url":{
+		"message":"revenir à l'URL par défaut"
+	},
+	"validate_url":{
+		"message":"valider les modifications"
+	},
+	"undo_edit_url":{
+		"message":"annuler les modifications"
+	},
+	"redirects":{
+		"message":"redirections"
+	},
+	"permanent":{
+		"message":"permanente"
+	},
+	"make_current_url":{
+		"message":"utiliser comme URL courante"
+	},
+	"edit_redirect":{
+		"message":"modifier cette redirection"
+	},
+	"remove_redirect":{
+		"message":"supprimer cette redirection"
+	},
+	"validate_redirect":{
+		"message":"valider les modifications"
+	},
+	"undo_edit_redirect":{
+		"message":"annuler les modifications"
+	},
+	"add_new_redirect":{
+		"message":"ajouter cette redirection"
+	},
+	"clear_new_redirect":{
+		"message":"réinitialiser cette redirection"
 	}
 }
