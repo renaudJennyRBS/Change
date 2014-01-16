@@ -160,9 +160,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/-3', Request::METHOD_GET);
 		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Basic', $event->getParam('modelName', 'fail'));
-		$this->assertEquals($event->getParam('documentId'), -3);
-		$this->assertTrue(is_callable($event->getAction()));
+		$this->assertNull($event->getAction());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Basic/a10', Request::METHOD_GET);
 		$resolver->resolve($event);
@@ -233,10 +231,7 @@ class ResolverTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/-3', Request::METHOD_GET);
 		$resolver->resolve($event);
-		$this->assertEquals('Project_Tests_Localized', $event->getParam('modelName', 'fail'));
-		$this->assertEquals(-3, $event->getParam('documentId'));
-		$this->assertTrue(is_callable($event->getAction()));
-
+		$this->assertNull($event->getAction());
 
 		$this->resetEvent($event, '/resources/Project/Tests/Localized/a10', Request::METHOD_GET);
 		$resolver->resolve($event);
