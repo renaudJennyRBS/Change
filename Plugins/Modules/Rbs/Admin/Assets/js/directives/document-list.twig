@@ -78,7 +78,7 @@
 					<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
 						<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
 					</button>
-					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : '(= selectionContext.params.document.label =) ((= selectionContext.params.document.model =))'}) }}
+					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : '(= selectionContext.params.document.label =) ((= selectionContext.params.document.model =))'}) | raw }}
 				</div>
 			</div>
 

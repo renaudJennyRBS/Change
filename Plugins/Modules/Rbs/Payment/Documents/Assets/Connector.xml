@@ -4,9 +4,9 @@
 		  localized="true" activable="true" editable="true" abstract="true">
 	<properties>
 		<property name="code" type="String" />
-		<property name="title" type="String" localized="true" required="true"/>
-		<property name="description" type="RichText" localized="true" />
-		<property name="visual" type="Document" document-type="Rbs_Media_Image" />
+		<property name="title" type="String" localized="true" required="true" has-correction="true"/>
+		<property name="description" type="RichText" localized="true" has-correction="true"/>
+		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
 		<property name="minAmount" type="Decimal" default-value="0.0" />
 		<property name="maxAmount" type="Decimal" />
 		<property name="allowedCurrencyCodes" type="JSON" />

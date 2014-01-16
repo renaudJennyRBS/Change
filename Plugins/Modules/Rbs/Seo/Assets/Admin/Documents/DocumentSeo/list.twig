@@ -20,7 +20,7 @@
 			{{ i18n('m.rbs.seo.admin.documentseo_list_help') | raw }}
 		</div>
 
-		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-collection="filter">
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Seo_DocumentSeo" filter-collection="filter" correction="true">
 			<rbs-column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_DocumentSeo', 'target'), ['ucf']) }}"></rbs-column>
 			<rbs-column name="targetModelLabel" label="{{ i18n('m.rbs.seo.documents.documentseo_target_model', ['ucf']) }}"></rbs-column>
 		</rbs-document-list>

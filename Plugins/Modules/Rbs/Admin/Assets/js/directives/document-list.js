@@ -93,9 +93,15 @@
 			}
 
 			function buildOtherAction (action) {
-				return	'<a href="javascript:;" ng-click="executeAction(\'' + action.name + '\', doc, $event)">' +
-							action.label +
-						'</a>';
+
+				var html = '<a href="javascript:;" ng-click="executeAction(\'' + action.name + '\', doc, $event)">';
+
+				if (action.icon)
+				{
+					html += '<i class="'+action.icon+'"></i>';
+				}
+
+				return	 html + action.label + '</a>';
 			}
 
 			function buildWorkflowAction () {
@@ -445,7 +451,7 @@
 					}
 
 					var navCtx = Navigation.getActiveContext();
-					if (navCtx && navCtx.isSelection(tAttrs.model))
+					if (navCtx && navCtx.isSelection(tAttrs.model) && tElement.closest('rbs-document-editor').length === 0)
 					{
 						var selectHtml = '';
 
@@ -615,7 +621,7 @@
 					scope.selectionContext = null;
 					scope.selectionContextDocuments = [];
 					var navCtx = Navigation.getActiveContext();
-					if (navCtx && navCtx.isSelection(attrs.model))
+					if (navCtx && navCtx.isSelection(attrs.model) && elm.closest('rbs-document-editor').length === 0)
 					{
 						scope.selectionContext = navCtx;
 
