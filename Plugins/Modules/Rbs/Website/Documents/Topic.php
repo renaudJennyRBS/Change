@@ -13,7 +13,7 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 	 */
 	public function getPublicationSections()
 	{
-		return array($this);
+		return $this->isNew() ? [] : [$this];
 	}
 
 	/**
