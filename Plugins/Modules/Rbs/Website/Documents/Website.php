@@ -259,7 +259,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		if ($website instanceof Website)
 		{
 			$functionCode = $event->getParam('functionCode');
-			$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_StaticPage');
+			$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_Page');
 			$spfq = $q->getModelBuilder('Rbs_Website_SectionPageFunction', 'page');
 			$spfq->andPredicates($spfq->eq('functionCode', $functionCode), $spfq->eq('section', $website));
 			$page = $q->getFirstDocument();
@@ -267,6 +267,12 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 			{
 				$event->setParam('page', $page);
 				$event->setParam('section', $page->getSection());
+			}
+			elseif ($page instanceof FunctionalPage)
+			{
+				$page->setSection($website);
+				$event->setParam('page', $page);
+				$event->setParam('section', $website);
 			}
 		}
 	}

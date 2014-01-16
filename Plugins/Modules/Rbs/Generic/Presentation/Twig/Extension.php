@@ -338,27 +338,18 @@ class Extension implements \Twig_ExtensionInterface
 
 	/**
 	 * @param string $functionCode
-	 * @param \Change\Presentation\Interfaces\Section|null $section
+	 * @param \Change\Presentation\Interfaces\Website|null $website
 	 * @param array $query
 	 * @return null|string
 	 */
-	public function functionURL($functionCode, $section = null, $query = array())
+	public function functionURL($functionCode, $website = null, $query = array())
 	{
-		if ($section === null)
+		if ($website === null)
 		{
-			$section = $this->getUrlManager()->getSection();
-			if ($section === null)
-			{
-				$section = $this->getUrlManager()->getWebsite();
-			}
+			$website = $this->getUrlManager()->getWebsite();
 		}
-
-		if ($section instanceof \Change\Presentation\Interfaces\Section)
-		{
-			$uri = $this->getUrlManager()->getByFunction($functionCode, $section, $query);
-			return $uri ? $uri->normalize()->toString() : null;
-		}
-		return null;
+		$uri = $this->getUrlManager()->getByFunction($functionCode, $website, $query);
+		return $uri ? $uri->normalize()->toString() : null;
 	}
 
 	/**

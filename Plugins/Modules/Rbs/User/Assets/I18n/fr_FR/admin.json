@@ -130,6 +130,9 @@
 		"message":"configuration du compte",
 		"description":"account settings block name (backoffice use)"
 	},
+	"function_login":{
+		"message":"Identification"
+	},
 	"function_create_account":{
 		"message":"création du compte utilisateur"
 	},

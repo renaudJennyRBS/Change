@@ -10,7 +10,7 @@
 	</ul>
 	{% else %}
 	<ul class="dropdown-menu">
-		<li><a href="{{ functionURL('Error_401') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
+		<li><a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
 		<li><a href="{{ functionURL('Rbs_User_CreateAccount') }}">{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</a></li>
 	</ul>
 	{% endif %}
