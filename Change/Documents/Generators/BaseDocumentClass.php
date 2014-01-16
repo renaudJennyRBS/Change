@@ -87,6 +87,7 @@ class BaseDocumentClass
 		if ($model->getActivable())
 		{
 			$interfaces[] = '\Change\Documents\Interfaces\Activable';
+			$uses[] = '\Change\Documents\Traits\Activation';
 		}
 		if ($model->getUseVersion())
 		{
@@ -153,11 +154,6 @@ class BaseDocumentClass
 			}
 		}
 
-		if ($model->getActivable())
-		{
-			$code .= $this->getActivableInterface($model);
-		}
-
 		if ($model->getEditable())
 		{
 			$code .= $this->getEditableInterface($model);
@@ -219,48 +215,6 @@ class BaseDocumentClass
 		}
 	}' . PHP_EOL;
 		}
-		return $code;
-	}
-
-	/**
-	 * @param \Change\Documents\Generators\Model $model
-	 * @return string
-	 */
-	protected function getActivableInterface($model)
-	{
-		$code = '
-	/**
-	 * @return \DateTime|null
-	 */
-	protected function getCurrentStartActivation()
-	{
-		return $this->getDocumentModel()->getPropertyValue($this, \'startActivation\');
-	}
-
-	/**
-	 * @return \DateTime|null
-	 */
-	protected function getCurrentEndActivation()
-	{
-		return $this->getDocumentModel()->getPropertyValue($this, \'endActivation\');
-	}
-
-	/**
-	 * @param \DateTime $at
-	 * @return boolean
-	 */
-	public function activated(\DateTime $at = null)
-	{
-		if ($this->getDocumentModel()->getPropertyValue($this, \'active\'))
-		{
-			$st = $this->getCurrentStartActivation();
-			$ep = $this->getCurrentEndActivation();
-			$test = ($at === null) ? new \DateTime() : $at;
-			return (null === $st || $st <= $test) && (null === $ep || $test < $ep);
-		}
-		return false;
-	}' . PHP_EOL;
-
 		return $code;
 	}
 

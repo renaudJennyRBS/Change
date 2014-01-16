@@ -123,6 +123,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 		$result = $event->getParam('restResult');
 		/* @var $document Image */
 		$document = $event->getDocument();
+		$urlManager = $result->getUrlManager();
 		if ($result instanceof DocumentResult)
 		{
 			$link = array('rel' => 'publicurl', 'href' => $document->getPublicURL());
@@ -133,7 +134,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 			{
 				$pathParts = explode('/', $selfLink->getPathInfo());
 				array_pop($pathParts);
-				$link = new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl');
+				$link = new Link($urlManager, implode('/', $pathParts) . '/resize', 'resizeurl');
 				$result->addAction($link);
 			}
 		}
@@ -141,8 +142,9 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 		{
 			$pathParts = explode('/', $result->getPathInfo());
 			array_pop($pathParts);
-			$result->setProperty('actions',
-				array(new Link($event->getParam('urlManager'), implode('/', $pathParts) . '/resize', 'resizeurl')));
+			$actions = $result->getProperty('actions', []);
+			$actions[] = new Link($urlManager, implode('/', $pathParts) . '/resize', 'resizeurl');
+			$result->setProperty('actions', $actions);
 			$result->setProperty('width', $document->getWidth());
 			$result->setProperty('height', $document->getHeight());
 		}

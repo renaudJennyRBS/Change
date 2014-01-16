@@ -13,4 +13,9 @@ interface Activable
 	 * @return boolean
 	 */
 	public function activated(\DateTime $at = null);
+
+	/**
+	 * @param boolean $newActivationStatus
+	 */
+	public function updateActivationStatus($newActivationStatus);
 }

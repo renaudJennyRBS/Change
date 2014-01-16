@@ -588,9 +588,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			return;
 		}
 		$documentResult = $event->getParam('restResult');
+		$um = $documentResult->getUrlManager();
 		if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$um = $documentResult->getUrlManager();
 			if ($document->getTreeName())
 			{
 				$tn = $event->getApplicationServices()->getTreeManager()->getNodeByDocument($document);
@@ -626,6 +626,26 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$l = new DocumentActionLink($um, $document, 'pathRules');
 				$documentResult->addLink($l);
 			}
+
+			if ($document instanceof \Change\Documents\Interfaces\Activable)
+			{
+				$active = $model->getPropertyValue($document, 'active');
+				if ($active)
+				{
+					$l = new \Change\Http\Rest\Result\Link($um, 'actions/deactivate', 'deactivate');
+				}
+				else
+				{
+					$l = new \Change\Http\Rest\Result\Link($um, 'actions/activate', 'activate');
+				}
+				$query = ['documentId' => $document->getId()];
+				if ($document instanceof \Change\Documents\Interfaces\Localizable)
+				{
+					$query['LCID'] = $event->getApplicationServices()->getDocumentManager()->getLCID();
+				}
+				$l->setQuery($query);
+				$documentResult->addAction($l);
+			}
 		}
 		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
@@ -649,6 +669,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$documentLink->setProperty($model->getProperty('documentVersion'));
 			}
 
+			$actions = $documentLink->getProperty('actions', []);
+
+
 			if ($document instanceof Publishable)
 			{
 				$documentLink->setProperty($model->getProperty('publicationStatus'));
@@ -656,6 +679,22 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			elseif ($document instanceof Activable)
 			{
 				$documentLink->setProperty($model->getProperty('active'));
+				$active = $model->getPropertyValue($document, 'active');
+				if ($active)
+				{
+					$l = new \Change\Http\Rest\Result\Link($um, 'actions/deactivate', 'deactivate');
+				}
+				else
+				{
+					$l = new \Change\Http\Rest\Result\Link($um, 'actions/activate', 'activate');
+				}
+				$query = ['documentId' => $document->getId()];
+				if ($document instanceof \Change\Documents\Interfaces\Localizable)
+				{
+					$query['LCID'] = $event->getApplicationServices()->getDocumentManager()->getLCID();
+				}
+				$l->setQuery($query);
+				$actions[] = $l;
 			}
 
 			if ($document instanceof Localizable)
@@ -669,8 +708,8 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				/* @var $document AbstractDocument|Correction */
 				if ($document->hasCorrection())
 				{
-					$l = new DocumentActionLink($documentLink->getUrlManager(), $document, 'correction');
-					$documentLink->setProperty('actions', array($l));
+					$l = new DocumentActionLink($um, $document, 'correction');
+					$actions[] = $l;
 					$documentLink->setProperty('correction', true);
 				}
 			}
@@ -685,6 +724,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 						$documentLink->setProperty($property);
 					}
 				}
+			}
+
+			if (count($actions))
+			{
+				$documentLink->setProperty('actions', $actions);
 			}
 
 			if ($documentLink->getLCID())
