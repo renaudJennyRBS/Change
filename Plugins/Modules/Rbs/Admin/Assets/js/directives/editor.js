@@ -54,28 +54,32 @@
 						}
 					}
 
-					if (! promise) {
-						if (! isNaN(documentId) && documentId > 0) {
+					if (! promise)
+					{
+						if (! isNaN(documentId) && documentId > 0)
+						{
 							promise = REST.resource(modelName, documentId, $routeParams.LCID);
 						}
-						else {
-							if (! document) {
+						else
+						{
+							defered = $q.defer();
+							promise = defered.promise;
+							if (! document)
+							{
 								// Check if we are coming back here following a selection process.
 								// In that case, we need to get the attached document instead of creating a new one.
 								navCtx = Navigation.getActiveContext();
 								if (navCtx && navCtx.isSelection() && Utils.isDocument(navCtx.params.document) && navCtx.params.document.model === modelName && navCtx.params.document.id < 0) {
 									document = navCtx.params.document;
-									defered = $q.defer();
-									promise = defered.promise;
-									defered.resolve(document);
 								}
 								else {
-									if (isNaN(documentId) || documentId >= 0) {
-										documentId = REST.getTemporaryId();
+									document = REST.newResource(modelName, Settings.get('LCID'));
+									if (! isNaN(documentId) && documentId < 0) {
+										document.id = documentId;
 									}
-									promise = REST.resource(modelName, documentId, Settings.get('LCID'));
 								}
 							}
+							defered.resolve(document);
 						}
 					}
 
@@ -438,6 +442,11 @@
 							wrappingFormScope.document = $scope.document;
 						}
 
+						// Apply default values for new documents.
+						if ($scope.document.isNew()) {
+							applyDefaultValues($scope.document, $scope.modelInfo);
+						}
+
 						if (translation) {
 							$scope.currentLCID = $scope.document.LCID;
 							$scope.refDocument = promisesResults[2];
@@ -451,11 +460,11 @@
 							});
 						}
 
-						var loadedPromises = [];
+						var loadedPromises = [], p;
 
 						// Call `$scope.onLoad()` if present.
 						if (angular.isFunction($scope.onLoad)) {
-							var p = $scope.onLoad();
+							p = $scope.onLoad();
 							if (p && angular.isFunction(p.then)) {
 								loadedPromises.push(p);
 							}
@@ -476,6 +485,23 @@
 							$q.all(loadedPromises).then(initReferenceDocument);
 						} else {
 							initReferenceDocument();
+						}
+					});
+				}
+
+
+				/**
+				 * Applies the default values defined in the ModelInfo on the given document.
+				 * (only called for new documents).
+				 *
+				 * @param doc
+				 * @param modelInfo
+				 */
+				function applyDefaultValues (doc, modelInfo)
+				{
+					angular.forEach(modelInfo.properties, function (propObject, name) {
+						if (propObject.hasOwnProperty('defaultValue')) {
+							doc[name] = propObject.defaultValue;
 						}
 					});
 				}
