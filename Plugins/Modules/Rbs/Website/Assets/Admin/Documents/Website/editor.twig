@@ -62,9 +62,9 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'sitemapGeneration'), ['ucf']) }}">
 		</rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr('m.rbs.website.documents.website_sitemap_time_interval', ['ucf']) }}" required="false">
+		<rbs-field ng-if="document.sitemapGeneration" label="{{ i18nAttr('m.rbs.website.documents.website_sitemap_time_interval', ['ucf']) }}" required="false">
 			<rbs-time-interval-input name="sitemapTimeInterval" min="1" show="hours,days,weeks"
-				ng-model="data.timeInterval" ng-required="" disabled="(= !document.sitemapGeneration =)">
+				ng-model="data.timeInterval" required="true">
 			</rbs-time-interval-input>
 		</rbs-field>
 
