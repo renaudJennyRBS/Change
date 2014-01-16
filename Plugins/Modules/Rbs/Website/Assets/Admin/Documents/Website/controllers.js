@@ -331,9 +331,17 @@
 		$scope.reloadNode = function (doc)
 		{
 			var node = getNodeInfo(doc);
-			collapseNode(node);
-			node.children = null;
-			toggleNode(node);
+			if (node.level > 0)
+			{
+				collapseNode(node);
+				node.children = null;
+				toggleNode(node);
+			}
+			else
+			{
+				initCache($scope.currentWebsite, true);
+				toggleNode(getNodeInfo($scope.currentWebsite));
+			}
 		};
 
 
