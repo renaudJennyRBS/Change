@@ -112,15 +112,29 @@ class Facets extends Block
 
 		$parameters = $event->getBlockParameters();
 
-		$facetGroupIds = $parameters->getParameter('facetGroups');
-		$facetGroups = array();
-		$storeIndexId = null;
-		$facets = array();
-		foreach ($facetGroupIds as $facetGroupId)
+		$productListId = $parameters->getParameter('productListId');
+		/** @var $productList \Rbs\Catalog\Documents\ProductList|null */
+		$productList = null;
+		if ($productListId !== null)
 		{
-			$group = $documentManager->getDocumentInstance($facetGroupId);
-			if ($group instanceof \Rbs\Elasticsearch\Documents\FacetGroup)
+			$productList = $documentManager->getDocumentInstance($productListId);
+			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
+				$applicationServices->getLogging()->warn(__METHOD__ . ': invalid product list');
+				return null;
+			}
+		}
+
+		if ($productList !== null)
+		{
+			// Get facets groups
+			$groups = $productList->getFacetGroups();
+			$storeIndexId = null;
+			$facetGroups = array();
+			$facets = array();
+			foreach ($groups as $group)
+			{
+
 				if ($storeIndexId == null)
 				{
 					$storeIndexId = $group->getIndexId();
@@ -137,28 +151,19 @@ class Facets extends Block
 					$facetGroups[] = $group;
 				}
 			}
+			$attributes['facetGroups'] = $facetGroups;
+		}
+		else
+		{
+			return null;
 		}
 
-		$attributes['facetGroups'] = $facetGroups;
-
+		// Verify Index
 		$storeIndex = $documentManager->getDocumentInstance($storeIndexId);
 		if (!($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex))
 		{
 			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index');
 			return null;
-		}
-
-		$productListId = $parameters->getParameter('productListId');
-		$productList = null;
-		if ($productListId !== null)
-		{
-			/** @var $productList \Rbs\Catalog\Documents\ProductList|null */
-			$productList = $documentManager->getDocumentInstance($productListId);
-			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
-			{
-				$applicationServices->getLogging()->warn(__METHOD__ . ': invalid product list');
-				return null;
-			}
 		}
 
 		$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
@@ -175,6 +180,7 @@ class Facets extends Block
 			return null;
 		}
 
+		// Create Query
 		$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($storeIndex);
 		$searchQuery->setFacetManager($genericServices->getFacetManager());
 		$searchQuery->setI18nManager($applicationServices->getI18nManager());

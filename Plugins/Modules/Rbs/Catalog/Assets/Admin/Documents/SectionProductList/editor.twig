@@ -27,8 +27,19 @@
 			<rbs-collection-item-selector ng-model="document.productSortDirection"
 				collection-code="Rbs_Generic_Collection_SortDirections">
 			</rbs-collection-item-selector>
-			<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_productsortdirection_help') }}</span>
+			<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_productsortorder_help') }}</span>
 		</rbs-field>
+
+		<hr />
+
+		<rbs-field-picker-multiple property="facetGroups"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_SectionProductList', 'facetGroups'), ['ucf']) }}"
+			accepted-model="Rbs_Elasticsearch_FacetGroup"
+			selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_facetgroups_picker_title', ['ucf']) }}"
+			allow-edition="false"
+			allow-creation="false">
+			<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_facetgroups_help') }} </span>
+		</rbs-field-picker-multiple>
 
 		<hr />
 

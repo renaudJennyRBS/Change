@@ -125,6 +125,12 @@
 	"productlist_productsortorder_help":{
 		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."
 	},
+	"productlist_facetgroups_picker_title":{
+		"message":"sélectionner les groupes de facettes à utiliser pour cette liste"
+	},
+	"productlist_facetgroups_help":{
+		"message":"Propriété utilisée pour attacher à votre liste un groupe de facettes. Ce groupe permettra d'afficher les facettes associées à la liste."
+	},
 	"productlist_products_picker_title":{
 		"message":"sélectionner les produits à ajouter à la catégorie"
 	},

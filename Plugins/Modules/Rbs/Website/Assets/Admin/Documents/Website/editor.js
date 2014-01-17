@@ -21,12 +21,15 @@
 					});
 
 					//take the first sitemap as reference for time interval and other stuff
-					if (angular.isArray(scope.document.sitemaps) && scope.document.sitemaps.length) {
+					if (angular.isArray(scope.document.sitemaps) && scope.document.sitemaps.length > 0) {
 						scope.data.timeInterval = scope.document.sitemaps[0].timeInterval;
 					}
 					scope.$watch('data.timeInterval', function (value){
 						angular.forEach(scope.document.sitemaps, function (sitemap){
-							sitemap.timeInterval = value;
+							if (sitemap.timeInterval !== value && angular.isDefined(value))
+							{
+								sitemap.timeInterval = value;
+							}
 						});
 					});
 
