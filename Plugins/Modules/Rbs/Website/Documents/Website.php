@@ -30,7 +30,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	 */
 	public function getPublicationSections()
 	{
-		return array($this);
+		return $this->isNew() ? [] : [$this];
 	}
 
 	/**
