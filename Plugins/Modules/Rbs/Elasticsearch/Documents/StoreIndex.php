@@ -74,4 +74,20 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 	{
 		return $this->getMappingName() . '_' . $this->getWebsiteId() . '_' . $this->getStoreId() . '_' . strtolower($this->getAnalysisLCID());
 	}
+
+	protected $facets;
+
+	/**
+	 * @return \Rbs\Elasticsearch\Documents\Facet
+	 */
+	public function getFacets()
+	{
+		if ($this->facets === null)
+		{
+			$query = $this->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_Facet');
+			$query->andPredicates($query->eq('indexId', $this->getId()));
+			$this->facets = $query->getDocuments();
+		}
+		return $this->facets;
+	}
 }

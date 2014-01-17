@@ -193,4 +193,21 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		}
 		return $config;
 	}
+
+	/**
+	 * @return \Rbs\Elasticsearch\Documents\Facet
+	 */
+	public function getFacets()
+	{
+		return [];
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Documents\Facet $facets
+	 * @return $this
+	 */
+	public function setFacets($facets)
+	{
+		return $this;
+	}
 }
