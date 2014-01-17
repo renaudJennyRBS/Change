@@ -79,9 +79,10 @@
 
 				$scope.$watch(function () { return $routeParams.view; }, function (view)
 				{
-					if (view) {
-						$scope.view = view;
+					if (! view) {
+						view = "Structure";
 					}
+					$scope.view = view;
 				});
 
 			});

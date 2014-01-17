@@ -12,12 +12,49 @@
 	__change.createEditorForModelTranslation('Rbs_Catalog_Product');
 
 
-	app.run(['$templateCache', function($templateCache) {
+	app.run(['$templateCache', '$rootScope', '$location', 'RbsChange.REST', function ($templateCache, $rootScope, $location, REST)
+	{
 		$templateCache.put(
 			'picker-item-Rbs_Catalog_Product.html',
 			'<span style="line-height: 30px"><img rbs-storage-image="item.adminthumbnail" thumbnail="XS"/> (= item.label =)</span>'
 		);
+
+		// Update Breadcrumb.
+		$rootScope.$on('Change:UpdateBreadcrumb', function (event, eventData, breadcrumbData, promises) {
+			updateBreadcrumb(eventData, breadcrumbData, promises, REST, $location);
+		});
 	}]);
+
+
+	/**
+	 * Updates the Breadcrumb when the default implementation is not the desired behavior.
+	 * @param eventData
+	 * @param breadcrumbData
+	 * @param promises
+	 * @param REST
+	 * @param $location
+	 */
+	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, $location)
+	{
+		if (eventData.modelName === 'Rbs_Catalog_CrossSellingProductList')
+		{
+			var p, search = $location.search();
+			// TODO
+			// Here only the creation is handled, because there is no 'productId' parameter when editing
+			// existing CrossSellingProductLists.
+			if (search.hasOwnProperty('productId'))
+			{
+				breadcrumbData.location.length = 1;
+				p = REST.resource(search.productId);
+				p.then(function (product) {
+					breadcrumbData.location.push(['Product', product.url('list')]); // FIXME i18n
+					breadcrumbData.path.push(product);
+					breadcrumbData.resource = 'New product list'; // FIXME i18n
+				});
+				promises.push(p);
+			}
+		}
+	}
 
 
 	/**
@@ -41,13 +78,13 @@
 				.route('productListItems', 'Rbs/Catalog/CrossSellingProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
 
 			$delegate.model('Rbs_Catalog')
-				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
+				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/' });
 
 			$delegate.model('Rbs_Stock_Sku')
 				.route('list', 'Rbs/Catalog/Sku/', 'Document/Rbs/Stock/Sku/list.twig')
 				.route('form', 'Rbs/Catalog/Sku/:id', 'Document/Rbs/Stock/Sku/form.twig')
 				.route('new' , 'Rbs/Catalog/Sku/new', 'Document/Rbs/Stock/Sku/form.twig')
-				.route('timeline', 'Rbs/Catalog/Sku/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model=Rbs_Stock_Sku', 'controller': 'RbsChangeTimelineController' })
+				.route('timeline', 'Rbs/Catalog/Sku/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model=Rbs_Stock_Sku', 'controller': 'RbsChangeTimelineController' });
 
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
 			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
