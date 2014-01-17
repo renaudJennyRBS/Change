@@ -18,10 +18,6 @@ class FacetsInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
 
-		$this->addInformationMeta('facetGroups', ParameterInformation::TYPE_DOCUMENTIDARRAY, true)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets_facetgroups', $ucf))
-			->setAllowedModelsNames(array('Rbs_Elasticsearch_FacetGroup'));
-
 		$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Catalog_ProductList');
 		$allowedModelsNames = $model->getDescendantsNames();
 		array_unshift($allowedModelsNames, $model->getName());
