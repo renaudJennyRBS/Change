@@ -1,0 +1,9 @@
+<form name="form" ng-submit="submit()" novalidate="">
+	<rbs-field-text
+		property="title" required="true"
+		rbs-sync-value="document.label" sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+		label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'title'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

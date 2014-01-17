@@ -6,6 +6,12 @@
 		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'title'), ['ucf']) }}"
+			input-class="form-control">
+		</rbs-field-text>
+
 		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'sku'), ['ucf']) }}"
 				required="true"
 				accepted-model="Rbs_Stock_Sku"
