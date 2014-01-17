@@ -78,7 +78,7 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 	protected $facets;
 
 	/**
-	 * @return \Rbs\Elasticsearch\Documents\Facet
+	 * @return \Rbs\Elasticsearch\Documents\Facet[]
 	 */
 	public function getFacets()
 	{
