@@ -9,7 +9,7 @@
 		<property name="rounding" type="String" default-value="t">
 			<dboptions length="3" />
 		</property>
-		<property name="data" type="JSON" />
+		<property name="data" type="JSON" has-correction="true"/>
 		<property name="defaultZone" type="String" stateless="true" />
 	</properties>
 </document>

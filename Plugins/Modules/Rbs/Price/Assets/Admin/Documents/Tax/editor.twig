@@ -61,7 +61,7 @@
 					<div class="input-group">
 						<input name="newZoneName" class="form-control" size="20" type="text" ng-model="newZoneName" />
 						<span class="input-group-btn">
-							<button ng-disabled="form.newZoneName.$error.zoneExists" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.add', ['ucf']) }}</button>
+							<button ng-disabled="form.newZoneName.$error.zoneExists || !form.newZoneName.$viewValue" type="button" class="btn btn-default" ng-click="addZone(newZoneName)">{{ i18n('m.rbs.price.admin.add', ['ucf']) }}</button>
 						</span>
 					</div>
 				</div>
@@ -73,7 +73,7 @@
 					<div class="input-group">
 						<input name="newCategoryName" class="form-control" size="20" type="text" ng-model="newCategoryName" />
 						<span class="input-group-btn">
-							<button ng-disabled="form.newCategoryName.$error.categoryExists" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.add', ['ucf']) }}</button>
+							<button ng-disabled="form.newCategoryName.$error.categoryExists || !form.newCategoryName.$viewValue" type="button" class="btn btn-default" ng-click="addCategory(newCategoryName)">{{ i18n('m.rbs.price.admin.add', ['ucf']) }}</button>
 						</span>
 					</div>
 				</div>
