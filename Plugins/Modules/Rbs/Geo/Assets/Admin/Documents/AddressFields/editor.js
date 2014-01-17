@@ -42,9 +42,19 @@
 					scope.document.fields.splice(index, 1);
 				};
 
+				scope.deleteField = function(fieldToBeDelete){
+					var index = null;
+					angular.forEach(scope.document.fields, function (field, i) {
+						if (field.id === fieldToBeDelete.id)
+						{
+							index = i;
+						}
+					});
+					scope.remove(index);
+				}
 
-				scope.cascadeCreateField = editorCtrl.registerCreateCascade('fields', 'Rbs_Geo_AddressField');
-				scope.cascadeEditField = editorCtrl.registerEditCascade('fields');
+				scope.cascadeCreate = editorCtrl.registerCreateCascade('fields', 'Rbs_Geo_AddressField');
+				scope.cascadeEdit = editorCtrl.registerEditCascade('fields');
 			}
 		};
 	}

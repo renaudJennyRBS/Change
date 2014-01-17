@@ -8,52 +8,40 @@
 
 		<div ng-show="document.id > 0">
 			<h3>{{ i18n(propertyKey('Rbs_Geo_AddressFields', 'fields'), ['ucf']) }}</h3>
-			<table data-ng-show="document.fields.length > 0" class="table table-striped">
-				<thead>
-				<tr>
-					<th>
-						{{ i18n(propertyKey('Rbs_Geo_AddressField', 'code'), ['ucf']) }}
-					</th>
-					<th>
-					</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr data-ng-repeat="field in document.fields">
-					<td>
-						<a class="btn-link" ng-click="cascadeEditField(field)">(= field.code =)</a>
-					</td>
-					<td style="width:180px" class="text-right">
-						<rbs-kb-switch>
-							<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
-								<i class="icon-step-forward icon-rotate-270"></i>
-							</button>
-							<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
-								<i class="icon-play icon-rotate-270"></i>
-							</button>
-						</rbs-kb-switch>
-						<rbs-kb-switch>
-							<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
-								<i class="icon-step-forward icon-rotate-90"></i>
-							</button>
-							<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
-								<i class="icon-play icon-rotate-90"></i>
-							</button>
-						</rbs-kb-switch>
-						<button class="btn btn-default btn-icon" type="button" ng-click="cascadeEditField(field)" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}">
-							<i class="icon-pencil"></i>
+
+			<div class="add-elements-bar">
+				<a href="javascript:;" ng-click="cascadeCreate()">{{ i18n('m.rbs.geo.admin.addressfield_create', ['ucf']) }}</a>
+			</div>
+
+			<rbs-document-list data-dlid="DLAddressFields1" model="Rbs_Geo_AddressFields" collection="document.fields" extend="this"
+				toolbar="false" selectable="false" correction="true">
+				<rbs-quick-actions>
+					<a data-ng-if="!doc.locked" href="javascript:;" ng-click="extend.deleteField(doc)" class="danger"><i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}</a>
+				</rbs-quick-actions>
+
+				<rbs-column name="code" primary="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'code'), ['ucf']) }}">
+					<i data-ng-if="doc.locked" class="icon-lock text-info" title="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'locked'), ['ucf']) }}"></i> <a href="javascript:;" ng-click="extend.cascadeEdit(doc)">(= doc.code =)</a>
+				</rbs-column>
+				<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
+					<rbs-kb-switch>
+						<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
+							<i class="icon-step-forward icon-rotate-270"></i>
 						</button>
-						<button ng-hide="field.locked" class="btn btn-danger btn-icon" type="button" ng-click="remove($index)" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
-							<i class="icon-remove"></i>
+						<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
+							<i class="icon-play icon-rotate-270"></i>
 						</button>
-						<button ng-show="field.locked" disabled="true" title="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'locked'), ['ucf']) }}" class="btn btn-info btn-icon" type="button">
-							<i class="icon-lock"></i>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
+							<i class="icon-step-forward icon-rotate-90"></i>
 						</button>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-			<a href="javascript:;" ng-click="cascadeCreateField()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.geo.admin.addressfield_create', ['ucf']) }}</a>
+						<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+				</rbs-column>
+			</rbs-document-list>
+
 		</div>
 	</fieldset>
 	<fieldset data-ng-show="section=='systeminfo'"
