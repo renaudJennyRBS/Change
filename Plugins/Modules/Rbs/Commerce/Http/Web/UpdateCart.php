@@ -27,6 +27,24 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 				{
 					switch ($key)
 					{
+						case 'lineQuantities':
+							foreach ($value as $data)
+							{
+								if (!isset($data['key']) || !isset($data['quantity']))
+								{
+									continue;
+								}
+								elseif ($data['quantity'] > 0)
+								{
+									$cartManager->updateLineQuantityByKey($cart, $data['key'], $data['quantity']);
+								}
+								else
+								{
+									$cartManager->removeLineByKey($cart, $data['key']);
+								}
+							}
+							break;
+
 						case 'userId':
 							$value = intval($value);
 							$cart->setUserId($value > 0 ? $value : 0);
@@ -86,7 +104,6 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 							break;
 					}
 				}
-
 				$cartManager->normalize($cart);
 				$cartManager->saveCart($cart);
 
