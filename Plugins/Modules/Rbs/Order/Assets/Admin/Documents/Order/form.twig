@@ -1,12 +1,5 @@
 <div class="row">
 
-	<rbs-workspace-config>
-		<rbs-breadcrumb-config>
-			<rbs-location href="(= 'Rbs_Order'|rbsURL:'home' =)">{{ i18n('m.rbs.order.admin.module_name', ['ucf']) }}</rbs-location>
-			<rbs-location href="(= 'Rbs_Order_Order'|rbsURL:'list' =)">{{ i18n('m.rbs.order.admin.order_list', ['ucf']) }}</rbs-location>
-		</rbs-breadcrumb-config>
-	</rbs-workspace-config>
-
 	<div class="document-form" rbs-full-width>
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Order_Order'), ['ucf']) }}"></rbs-page-header>
 		<rbs-document-editor rbs-document-editor-rbs-order-order=""></rbs-document-editor>
