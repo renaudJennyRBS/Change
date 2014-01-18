@@ -1,8 +1,8 @@
 <div ng-controller="Rbs_Website_StructureController">
 
 	<div class="add-elements-bar">
-		<a rbs-start-navigation="" href ng-href="(= 'Rbs_Website_Topic' | rbsURL:'new':{tn:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
-		<a rbs-start-navigation="" href ng-href="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_Topic' | rbsURL:'new':{tn:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
+		<a href ng-href="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
 	</div>
 
 	<rbs-document-list data-dlid="DLRbsWebsiteBrowser"
