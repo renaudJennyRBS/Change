@@ -500,7 +500,7 @@
 				function applyDefaultValues (doc, modelInfo)
 				{
 					angular.forEach(modelInfo.properties, function (propObject, name) {
-						if (propObject.hasOwnProperty('defaultValue')) {
+						if (propObject.hasOwnProperty('defaultValue') && propObject.defaultValue !== null) {
 							doc[name] = propObject.defaultValue;
 						}
 					});

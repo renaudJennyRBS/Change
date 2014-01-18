@@ -5,9 +5,10 @@
 	var app = angular.module('RbsChange');
 
 
-	app.config(['$provide', function ($provide) {
-		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider) {
-
+	app.config(['$provide', function ($provide)
+	{
+		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider)
+		{
 			this.$get = function ($location) {
 				var urls = {};
 
@@ -29,7 +30,8 @@
 				};
 
 				var currentModelName = null;
-				var routeDefFn = function (name, route, rule) {
+				var routeDefFn = function (name, route, rule)
+				{
 					var urls, p;
 
 					if (route.charAt(0) !== '/') {
@@ -61,11 +63,15 @@
 						}];
 					}
 
+					rule.relatedModelName = currentModelName;
+					rule.ruleName = name;
+
 					$routeProvider.when(route, rule);
 				};
 
 
-				var getUrl = function (doc, name) {
+				var getUrl = function (doc, name)
+				{
 					var	model, out;
 
 					if (angular.isObject(doc) && angular.isDefined(doc.model)) {

@@ -11,7 +11,12 @@ class InventoryEntry extends \Compilation\Rbs\Stock\Documents\InventoryEntry
 	 */
 	public function getLabel()
 	{
-		return $this->getSku()->getCode();
+		$sku = $this->getSku();
+		if ($sku)
+		{
+			return $sku->getCode();
+		}
+		return null;
 	}
 
 	/**

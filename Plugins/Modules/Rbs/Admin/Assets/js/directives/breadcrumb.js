@@ -2,13 +2,10 @@
 
 	"use strict";
 
-	var app = angular.module('RbsChange'),
-		modelIcons = {
-			//'Rbs_Website_Website' : 'icon-home'
-		};
+	var app = angular.module('RbsChange');
 
-	app.directive('rbsBreadcrumb', ['$location', 'RbsChange.Utils', 'RbsChange.i18n', function ($location, Utils, i18n) {
-
+	app.directive('rbsBreadcrumb', ['$q', '$location', 'RbsChange.Utils', 'RbsChange.i18n', '$rootScope', 'RbsChange.REST', 'RbsChange.UrlManager', function ($q, $location, Utils, i18n, $rootScope, REST, UrlManager)
+	{
 		return {
 			restrict : 'E',
 
@@ -18,9 +15,184 @@
 
 			replace : true,
 
-			link : function (scope, elm) {
+			link : function (scope, elm)
+			{
 
-				function getLabelSuffix () {
+				// This function gets called everytime the route changes or is updated.
+				function routeChanged (event, route)
+				{
+					// Skip invalid and redirection routes.
+					if (! route.originalPath || route.redirectTo) {
+						return;
+					}
+
+					var parts = route.originalPath.split(/\//),
+						shortModuleName = parts[2],
+						fullModuleName = parts[1] + '_' + parts[2],
+						documentName,
+						modelName,
+						eventData = {},
+						breadcrumbData = {
+							location : [],
+							path : [],
+							resource : null
+						},
+						promises = [];
+
+					if (route.originalPath === '/') {
+						update(breadcrumbData);
+						return;
+					}
+
+					// Is the route based on a document?
+					// Well, we could also check 'route.params.id' (and 'route.params.LCID').
+					if (parts.length >= 4) {
+						documentName = parts[3];
+						modelName = parts[1] + '_' + parts[2] + '_' + parts[3];
+					}
+
+					eventData.moduleName = fullModuleName;
+					eventData.route = route;
+
+					// Populate 'location' part of Breadcrumb.
+					breadcrumbData.location.push([shortModuleName, UrlManager.getUrl(fullModuleName, null, 'home')]);
+					if (modelName) {
+						breadcrumbData.location.push([documentName, UrlManager.getUrl(modelName, null, 'list')]);
+						eventData.modelName = modelName;
+					}
+
+					// Dispatch event so that anyone can update the breadcrumb by populating the
+					// 'breadcrumbData' object.
+					//
+					// An example can be found in the Rbs_Website plugin (Assets/Admin/admin.js.
+					// In an 'app.run()' block:
+					// - $rootScope.$on('Change:UpdateBreadcrumb')
+					// - check eventData (2nd arg) and eventData.modelName to check what has to be done
+					// - populate 'breadcrumbData' (3rd arg) (location, path, resource an resourceModifier)
+					// - eventually populate the 'promises' array (4th arg) if you have async processes
+
+					$rootScope.$broadcast('Change:UpdateBreadcrumb', eventData, breadcrumbData, promises);
+
+					// If no one has set 'path' and 'resource' properties of the 'breadcrumbData' object,
+					// a default process is done here.
+					if (breadcrumbData.path.length === 0 && ! breadcrumbData.resource)
+					{
+						defaultUpdateBreadcrumb(eventData, breadcrumbData, promises);
+					}
+
+					if (promises.length) {
+						$q.all(promises).then(function () {
+							update(breadcrumbData);
+						});
+					}
+					else {
+						update(breadcrumbData);
+					}
+				}
+
+
+				/**
+				 * Default implementation of a Breadcrumb update.
+				 *
+				 * @param eventData Information about the new route
+				 * @param breadcrumbData Object to be populated (location, path and resource)
+				 * @param promises An array of Promise objects to be populated if there are async processes
+				 */
+				function defaultUpdateBreadcrumb (eventData, breadcrumbData, promises)
+				{
+					var search = $location.search(),
+						route = eventData.route,
+						p, defer;
+
+					if (route.ruleName === 'new' || (route.params && route.params.id === 'new'))
+					{
+						breadcrumbData.resource = 'New element'; // FIXME i18n
+					}
+					else
+					{
+						if (route.params.id)
+						{
+							defer = $q.defer();
+							if (route.params.LCID) {
+								p = REST.resource(route.relatedModelName, route.params.id, route.params.LCID);
+							} else {
+								p = REST.resource(route.relatedModelName, route.params.id);
+							}
+							p.then(function (res) {
+								breadcrumbData.resource = res;
+								loadAncestors(breadcrumbData.resource, breadcrumbData).then(function () {
+									defer.resolve();
+								});
+							});
+							promises.push(defer.promise);
+						}
+						if (route.ruleName !== 'form' && route.ruleName !== 'list') {
+							breadcrumbData.resourceModifier = route.ruleName;
+						}
+					}
+
+					// Properties 'ruleName' and 'relatedModelName' are set by the UrlManager service.
+					if (search.hasOwnProperty('tn') && (route.ruleName === 'form' || route.ruleName === 'new'))
+					{
+						promises.push(loadAncestors(parseInt(search['tn'], 10), breadcrumbData));
+					}
+				}
+
+
+				/**
+				 * Loads the ancestors of the given treeNode and updates the 'breadcrumbData.path' array.
+				 *
+				 * @param treeNode
+				 * @param breadcrumbData
+				 * @returns {promise|*|Function}
+				 */
+				function loadAncestors (treeNode, breadcrumbData)
+				{
+					var defer = $q.defer();
+
+					if (Utils.isTreeNode(treeNode)) {
+						REST.treeAncestors(treeNode).then(function (ancestors) {
+							defer.resolve(ancestors);
+						});
+					}
+					else if (angular.isNumber(treeNode)) {
+						REST.resource(treeNode).then(function (tn) {
+							if (Utils.isTreeNode(tn)) {
+								REST.treeAncestors(tn).then(function (ancestors) {
+									defer.resolve(ancestors);
+								});
+							}
+						});
+					}
+					else {
+						defer.resolve();
+					}
+
+					defer.promise.then(function (res) {
+						if (res) {
+							breadcrumbData.path = res.resources;
+							// Remove last element because REST.treeAncestors() appends the current tree node
+							// (But here the current node is set as 'breadcrumbData.resource'.)
+							if (breadcrumbData.resource && breadcrumbData.path.length > 0 && breadcrumbData.path[breadcrumbData.path.length-1].id === breadcrumbData.resource.id)
+							{
+								breadcrumbData.path.pop();
+							}
+						}
+					});
+
+					return defer.promise;
+				}
+
+
+				$rootScope.$on('$routeChangeSuccess', routeChanged);
+				$rootScope.$on('$routeUpdate', routeChanged);
+
+
+				// -----
+
+
+				function getLabelSuffix ()
+				{
 					var search = $location.search(), page;
 					if ('offset' in search && 'limit' in search) {
 						page = 1 + (search.offset / search.limit);
@@ -29,8 +201,9 @@
 					return '';
 				}
 
-				function getEntryHtml (entry, disabled, last, cssClass) {
 
+				function getEntryHtml (entry, disabled, last, cssClass)
+				{
 					var item, html, icon, url;
 
 					if (Utils.isDocument(entry)) {
@@ -40,9 +213,6 @@
 							item.push(entry.treeUrl());
 						} else {
 							item.push(last ? "javascript:;" : (entry.url() || "javascript:;"));
-						}
-						if (modelIcons[entry.model]) {
-							item.push(modelIcons[entry.model]);
 						}
 					} else if (angular.isString(entry)) {
 						item = [ entry ];
@@ -69,7 +239,9 @@
 					return html;
 				}
 
-				function update (breadcrumbData) {
+
+				function update (breadcrumbData)
+				{
 					var html, i;
 					html = getEntryHtml(
 						[i18n.trans('m.rbs.admin.adminjs.home | ucf'), ""],
@@ -113,91 +285,10 @@
 					elm.html(html);
 				}
 
-				scope.$on('Change:BreadcrumbChanged', function (event, breadcrumbData) {
-					update(breadcrumbData);
-				});
-
 			}
 
 		};
 
-	}]);
-
-
-	app.directive('rbsLocation', function () {
-		return {
-			restrict : 'E',
-			require : '?^rbsBreadcrumbConfig',
-			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
-				if (rbsBreadcrumbConfig) {
-					attrs.$observe('href', function (href) {
-						rbsBreadcrumbConfig.add('Location', element.index(), element.text(), href);
-					});
-				}
-			}
-		};
-	});
-
-
-	app.directive('rbsBreadcrumbConfig', ['RbsChange.Breadcrumb', function (Breadcrumb) {
-
-		return {
-			restrict : 'E',
-			scope : true,
-			require : '^rbsWorkspaceConfig',
-
-			controller : ['$scope', function ($scope) {
-
-				var bc = {
-					'Location' : [],
-					'Path' : []
-				};
-
-				this.add = function (type, index, text, href) {
-					bc[type][index] = [text, href];
-					if (bc[type].length === $scope.counts[type]) {
-						Breadcrumb['set' + type](bc[type]);
-					}
-				};
-
-			}],
-
-			compile : function (tElement) {
-				tElement.hide();
-				return function linkFn (scope, element) {
-					scope.counts = {
-						'Location' : element.find('rbs-location').length,
-						'Path' : element.find('rbs-path').length
-					};
-				};
-			}
-		};
-
-	}]);
-
-
-	app.directive('rbsPath', function () {
-		return {
-			restrict : 'E',
-			require : '?^rbsBreadcrumbConfig',
-			link : function (scope, element, attrs, rbsBreadcrumbConfig) {
-				if (rbsBreadcrumbConfig) {
-					attrs.$observe('href', function (href) {
-						rbsBreadcrumbConfig.add('Path', element.index()-element.prevAll('rbs-location').length, element.text(), href);
-					});
-				}
-			}
-		};
-	});
-
-
-	app.directive('rbsWorkspaceConfig', [ function () {
-		return {
-			restrict : 'E',
-			scope : true,
-			controller : ['$scope', '$attrs', function ($scope, $attrs) {
-			}]
-		};
 	}]);
 
 })();

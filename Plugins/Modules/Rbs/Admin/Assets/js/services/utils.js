@@ -221,10 +221,11 @@
 				throw new Error("Could not parse model name '" + modelName + "'. Model names are composed of three parts: '<vendor>_<module>_<document>'.");
 			}
 			return {
-				'vendor'   : splat[0],
-				'module'   : splat[1],
+				'vendor' : splat[0],
+				'module' : splat[1],
+				'fullModule' : splat[0] + '_' + splat[1],
 				'document' : splat[2],
-				'change'   : splat[0] === 'Rbs'
+				'change' : splat[0] === 'Rbs'
 			};
 		},
 

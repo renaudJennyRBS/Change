@@ -1,12 +1,5 @@
 <div class="row">
 
-	<rbs-workspace-config>
-		<rbs-breadcrumb-config>
-			<rbs-location href="(= 'Rbs_User'|rbsURL:'home' =)">{{ i18n('m.rbs.user.admin.module_name', ['ucf']) }}</rbs-location>
-			<rbs-location href="(= 'Rbs_User_User'|rbsURL:'list' =)">{{ i18n('m.rbs.user.admin.user_list', ['ucf']) }}</rbs-location>
-		</rbs-breadcrumb-config>
-	</rbs-workspace-config>
-
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
 		<a rbs-aside-other-link rbs-active-route="" href ng-href="(= document|rbsURL:'applications' =)">{{ i18n('m.rbs.user.admin.applications_aside_link', ['ucf']) | raw }}</a>

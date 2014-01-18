@@ -18,20 +18,8 @@
 				scope.add.titlePattern = ALL_REGEXP;
 				scope.addItemUIShown = false;
 
-				scope.onReady = function () {
-					var website = scope.document.website;
-					if (website) {
-						console.log("website=", website);
-						Breadcrumb.setPath([[website.label, UrlManager.getUrl(website, null, 'menus')]]);
-					}
-					else {
-						scope.$watch('document.website', function (website, old) {
-							if (website && website !== old) {
-								Breadcrumb.setPath([[website.label, UrlManager.getUrl(website, null, 'menus')]]);
-							}
-						}, true);
-					}
-
+				scope.onReady = function ()
+				{
 					scope.toggleAddItemUI = function ($event) {
 						$event.preventDefault();
 						scope.addItemUIShown = ! scope.addItemUIShown;

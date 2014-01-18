@@ -1,5 +1,9 @@
 (function () {
 
+	// FIXME
+	// FB 2014-01-17:
+	// This service can be removed as the Breadcrumb is now handled in the rbs-breadcrumb Directive.
+
 	"use strict";
 
 	var app = angular.module('RbsChange');

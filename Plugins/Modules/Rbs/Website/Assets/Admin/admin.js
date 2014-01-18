@@ -11,9 +11,68 @@
 	__change.createEditorForModelTranslation('Rbs_Website_Topic');
 
 
-	app.run(['$templateCache', function($templateCache) {
+	app.run(['$templateCache', '$rootScope', '$location', 'RbsChange.REST', function ($templateCache, $rootScope, $location, REST)
+	{
+		// Template for menu items in pickers.
 		$templateCache.put('picker-item-Rbs_Menu_Item.html', '(=item.title=)(=item.titleKey=)');
+
+		// Update Breadcrumb.
+		$rootScope.$on('Change:UpdateBreadcrumb', function (event, eventData, breadcrumbData, promises) {
+			updateBreadcrumb(eventData, breadcrumbData, promises, REST, $location);
+		});
 	}]);
+
+
+	/**
+	 * Updates the Breadcrumb when the default implementation is not the desired behavior.
+	 * @param eventData
+	 * @param breadcrumbData
+	 * @param promises
+	 * @param REST
+	 * @param $location
+	 */
+	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, $location)
+	{
+		var p, search = $location.search();
+
+		if (eventData.modelName === 'Rbs_Website_StaticPage' || eventData.modelName === 'Rbs_Website_Topic')
+		{
+			breadcrumbData.location.length = 1;
+		}
+		else if (eventData.modelName === 'Rbs_Website_Browse')
+		{
+			// Structure, Menus and Functions
+
+			breadcrumbData.location.length = 1;
+			if (search.hasOwnProperty('website'))
+			{
+				p = REST.resource(search['website']).then(function (website)
+				{
+					breadcrumbData.resource = website;
+					breadcrumbData.resourceModifier = search['view']; // FIXME Use real label instead of URL parameter
+				});
+				promises.push(p);
+			}
+		}
+		else if (eventData.route.relatedModelName === 'Rbs_Website_Menu')
+		{
+			// Menus
+
+			if (eventData.route.params.website)
+			{
+				breadcrumbData.location.length = 1;
+				p = REST.resource(eventData.route.params.website);
+				p.then(function (website) {
+					breadcrumbData.path.push(website);
+					breadcrumbData.path.push(['Menus', website.url('menus')]); // FIXME i18n
+					if (! breadcrumbData.resource) {
+						breadcrumbData.resource = 'New menu'; // FIXME i18n
+					}
+				});
+				promises.push(p);
+			}
+		}
+	}
 
 
 	/**
@@ -23,25 +82,18 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			/*$delegate.model('Rbs_Website_Website')
-				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/browse.twig')
-				.route('functions', 'Rbs/Website/Website/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
-				.route('menus', 'Rbs/Website/Website/:id/Menus/', 'Document/Rbs/Website/Menu/list.twig')
-			;*/
 			$delegate.model('Rbs_Website_Website')
 				.route('tree', 'Rbs/Website/Browse/?website=:id&view=Structure', 'Document/Rbs/Website/Website/browse.twig')
 				.route('functions', 'Rbs/Website/Browse/?website=:id&view=Functions', 'Document/Rbs/Website/Website/browse.twig')
 				.route('menus', 'Rbs/Website/Browse/?website=:id&view=Menus', 'Document/Rbs/Website/Website/browse.twig')
-				.route('properties', 'Rbs/Website/Browse/?website=:id&view=Properties', 'Document/Rbs/Website/Website/browse.twig')
 			;
 
 			$delegate.model('Rbs_Website_Topic')
-				.route('tree', 'Rbs/Website/nav/?tn=:id', 'Document/Rbs/Website/Topic/browse.twig')
 				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
 			;
 
 			$delegate.model('Rbs_Website')
-				.route('home', 'Rbs/Website', { 'redirectTo': 'Rbs/Website/Website/'})
+				.route('home', 'Rbs/Website', { 'redirectTo': 'Rbs/Website/Browse/' })
 			;
 
 			$delegate.routesForLocalizedModels([
