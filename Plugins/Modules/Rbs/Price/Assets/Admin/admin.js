@@ -6,6 +6,7 @@
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorsForLocalizedModel('Rbs_Price_BillingArea');
+	__change.createEditorForModelTranslation('Rbs_Price_Fee');
 
 	/**
 	 * Routes and URL definitions.
@@ -23,12 +24,12 @@
 
 			$delegate.routesForModels([
 				'Rbs_Price_Tax',
-				'Rbs_Price_Fee',
 				'Rbs_Price_Price'
 			]);
 
 			$delegate.routesForLocalizedModels([
-				'Rbs_Price_BillingArea'
+				'Rbs_Price_BillingArea',
+				'Rbs_Price_Fee'
 			]);
 
 			return $delegate;

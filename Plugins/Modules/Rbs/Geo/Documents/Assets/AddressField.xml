@@ -5,10 +5,10 @@
 	<properties>
 		<property name="locked" type="Boolean" default-value="false" />
 		<property name="code" type="String" required="true" />
-		<property name="title" type="String" localized="true" />
-		<property name="required" type="Boolean" default-value="false" />
+		<property name="title" type="String" localized="true" has-correction="true"/>
+		<property name="required" type="Boolean" default-value="false" has-correction="true"/>
 
-		<property name="collectionCode" type="String" >
+		<property name="collectionCode" type="String" has-correction="true">
 			<dboptions length="100" />
 		</property>
 		<property name="defaultValue" type="String" />
