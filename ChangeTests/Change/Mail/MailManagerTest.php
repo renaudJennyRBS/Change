@@ -45,7 +45,7 @@ class MailManagerTest extends TestCase
 		$this->assertTrue($message->getBcc()->has($bcc[0]));
 		$this->assertTrue($message->getReplyTo()->has($replyTo[0]));
 
-		$from = array('fromtest@rbschange.fr' => 'fromtest', 'fromtest2@rbschange.fr' => 'fromtest2');
+		$from = array(['email' => 'fromtest@rbschange.fr', 'name' => 'fromtest'], ['email' => 'fromtest2@rbschange.fr', 'name' => 'fromtest2']);
 		$to = array('totest@rbschange.fr', 'totest2@rbschange.fr');
 		$cc = array('cctest@rbschange.fr', 'cctest2@rbschange.fr');
 		$bcc = array('bcctest@rbschange.fr', 'bcctest2@rbschange.fr');

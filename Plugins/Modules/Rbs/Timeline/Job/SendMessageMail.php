@@ -20,6 +20,7 @@ class SendMessageMail
 
 			$html = $templateManager->renderTemplateFile($filePath, $job->getArgument('params'));
 			$subject = $i18nManager->transForLCID($job->getArgument('LCID'), 'm.rbs.timeline.admin.message_mail_subject');
+			// TODO Fixme Don't use hardcoded value
 			$message = $mailManager->prepareMessage(['noreply@change4.fr'], $job->getArgument('to'), $subject, $html);
 			$mailManager->prepareHeader($message, ['Content-type' => 'text/html; charset=utf8']);
 			$mailManager->send($message);

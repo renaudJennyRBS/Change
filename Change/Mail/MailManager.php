@@ -61,13 +61,14 @@ class MailManager
 	}
 
 	/**
-	 * @param array $from
-	 * @param array $to
+	 * @param array $from ['email@email.com', ['email'=>'email3@email.com'], 'email2@email.com', ['email'=>'email3@email.com', 'name' => 'My name']]
+	 * @param array $to ['email@email.com', ['email'=>'email3@email.com'], 'email2@email.com', ['email'=>'email3@email.com', 'name' => 'My name']]
 	 * @param string $subject
 	 * @param string $body
 	 * @param string|null $txtBody
-	 * @param array|null $cc
-	 * @param array|null $bcc
+	 * @param array|null $cc ['email@email.com', ['email'=>'email3@email.com'], 'email2@email.com', ['email'=>'email3@email.com', 'name' => 'My name']]
+	 * @param array|null $bcc ['email@email.com', ['email'=>'email3@email.com'], 'email2@email.com', ['email'=>'email3@email.com', 'name' => 'My name']]
+	 * @param array|null $replyTo ['email@email.com', ['email'=>'email3@email.com'], 'email2@email.com', ['email'=>'email3@email.com', 'name' => 'My name']]
 	 * @param string|null $encoding
 	 * @param array|null $attachFiles
 	 * @return ZendMessage
@@ -77,63 +78,113 @@ class MailManager
 	{
 		$message = new Message();
 
-		foreach ($from as $email => $name)
+		foreach ($from as $value)
 		{
-			if (is_integer($email))
+			if (is_array($value))
 			{
-				$message->addFrom($name);
+				if (array_key_exists('email', $value))
+				{
+					if (array_key_exists('name', $value))
+					{
+						$message->addFrom($value['email'], $value['name']);
+					}
+					else
+					{
+						$message->addFrom($value['email']);
+					}
+				}
 			}
 			else
 			{
-				$message->addFrom($email, $name);
+				$message->addFrom($value);
 			}
 		}
 
-		foreach ($to as $email => $name)
+		foreach ($to as $value)
 		{
-			if (is_integer($email))
+			if (is_array($value))
 			{
-				$message->addTo($name);
+				if (array_key_exists('email', $value))
+				{
+					if (array_key_exists('name', $value))
+					{
+						$message->addTo($value['email'], $value['name']);
+					}
+					else
+					{
+						$message->addTo($value['email']);
+					}
+				}
 			}
 			else
 			{
-				$message->addTo($email, $name);
+				$message->addTo($value);
 			}
 		}
 
-		foreach ($cc as $email => $name)
+		foreach ($cc as $value)
 		{
-			if (is_integer($email))
+			if (is_array($value))
 			{
-				$message->addCc($name);
+				if (array_key_exists('email', $value))
+				{
+					if (array_key_exists('name', $value))
+					{
+						$message->addCc($value['email'], $value['name']);
+					}
+					else
+					{
+						$message->addCc($value['email']);
+					}
+				}
 			}
 			else
 			{
-				$message->addCc($email, $name);
+				$message->addCc($value);
 			}
 		}
 
-		foreach ($bcc as $email => $name)
+		foreach ($bcc as $value)
 		{
-			if (is_integer($email))
+			if (is_array($value))
 			{
-				$message->addBcc($name);
+				if (array_key_exists('email', $value))
+				{
+					if (array_key_exists('name', $value))
+					{
+						$message->addBcc($value['email'], $value['name']);
+					}
+					else
+					{
+						$message->addBcc($value['email']);
+					}
+				}
 			}
 			else
 			{
-				$message->addBcc($email, $name);
+				$message->addBcc($value);
 			}
 		}
 
-		foreach ($replyTo as $email => $name)
+		foreach ($replyTo as $value)
 		{
-			if (is_integer($email))
+			if (is_array($value))
 			{
-				$message->addReplyTo($name);
+				if (array_key_exists('email', $value))
+				{
+					if (array_key_exists('name', $value))
+					{
+						$message->addReplyTo($value['email'], $value['name']);
+					}
+					else
+					{
+						$message->addReplyTo($value['email']);
+					}
+				}
 			}
 			else
 			{
-				$message->addReplyTo($email, $name);
+				$message->addReplyTo($value);
 			}
 		}
 

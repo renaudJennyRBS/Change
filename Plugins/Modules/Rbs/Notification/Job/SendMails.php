@@ -73,6 +73,7 @@ class SendMails
 
 						$html = $templateManager->renderTemplateFile($filePath, $params);
 						$subject = $i18nManager->transForLCID($lcid, 'm.rbs.notification.admin.notification_mail_subject');
+						// TODO Fixme Don't use hardcoded value
 						$message = $mailManager->prepareMessage(['noreply@change4.fr'], [$user->getEmail()], $subject, $html);
 						$mailManager->prepareHeader($message, ['Content-type' => 'text/html; charset=utf8']);
 						$applicationServices->getDocumentManager()->popLCID();
