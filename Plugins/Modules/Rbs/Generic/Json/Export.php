@@ -9,7 +9,7 @@ use Change\Documents\AbstractDocument;
 class Export
 {
 	/**
-	 * @var integer
+	 * @var integer|string|null
 	 */
 	protected $contextId;
 
@@ -101,7 +101,7 @@ class Export
 	}
 
 	/**
-	 * @param int $contextId
+	 * @param integer|string|null $contextId
 	 * @return $this
 	 */
 	public function setContextId($contextId)
@@ -111,7 +111,7 @@ class Export
 	}
 
 	/**
-	 * @return int
+	 * @return integer|string|null
 	 */
 	public function getContextId()
 	{

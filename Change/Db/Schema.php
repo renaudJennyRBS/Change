@@ -184,6 +184,14 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 					->addField($td->getField('code'))
 					->setName('code'))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_document_code_context'] = $td = $schemaManager->newTableDefinition('change_document_code_context');
+			$td->addField($schemaManager->newIntegerFieldDefinition('context_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newVarCharFieldDefinition('name', array('length' => 100))->setNullable(false))
+				->addKey($this->newPrimaryKey()->addField($td->getField('context_id')))
+				->addKey($this->newUniqueKey()->setName('context')
+					->addField($td->getField('name')))
+				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;
 	}

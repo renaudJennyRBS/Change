@@ -109,4 +109,35 @@ class DocumentCodeManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertTrue($dcm->removeDocumentCode(120, 'd120'));
 	}
+
+	public function testContext()
+	{
+		$dcm = $this->getApplicationServices()->getDocumentCodeManager();
+		$dcm->addDocumentCode(1000, 'code_1', 0);
+		$dcm->addDocumentCode(1000, 'code_2', '');
+		$dcm->addDocumentCode(1000, 'code_3', 'Context Name');
+
+		$contexts = $dcm->getDocumentContexts(1000);
+		$this->assertEquals(['', 'Context Name'], $contexts);
+		$codes = $dcm->getCodesByDocument(1000, '');
+		$this->assertCount(2, $codes);
+		$this->assertContains('code_1', $codes);
+		$this->assertContains('code_2', $codes);
+		$this->assertEquals(['code_3'], $dcm->getCodesByDocument(1000, 'Context Name'));
+		$this->assertCount(0, $dcm->getCodesByDocument(1000, 'Not Found'));
+	}
+
+	/**
+	 * @depends testContext
+	 */
+	public function testQuery()
+	{
+		$JSONDecoder = new \Change\Documents\Query\JSONDecoder();
+		$JSONDecoder->setDocumentManager($this->getApplicationServices()->getDocumentManager());
+		$JSONDecoder->setModelManager($this->getApplicationServices()->getModelManager());
+
+		$query = $JSONDecoder->getQuery(['model' => 'Project_Tests_Basic', 'where' =>['and' => [['op' => 'HasCode', 'code' => 'code_1', 'context' => 'Context Name']]]]);
+		$sql92 = $query->dbQueryBuilder()->query()->toSQL92String();
+		$this->assertEquals('SELECT * FROM "project_tests_doc_basic" AS "_t0" WHERE ((EXISTS(SELECT * FROM "change_document_code" WHERE ("change_document_code"."document_id" = "_t0"."document_id" AND "change_document_code"."code" = :_p1 AND "change_document_code"."context_id" = :_p2))))', $sql92);
+	}
 } 
