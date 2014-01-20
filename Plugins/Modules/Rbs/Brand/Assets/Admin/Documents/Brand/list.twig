@@ -1,6 +1,10 @@
 <div class="row">
 
-	<div rbs-full-width>
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
 		<rbs-page-header title="{{ i18nAttr('m.rbs.brand.admin.brand_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Brand_Brand" filter="filter" ></rbs-document-filter-panel>

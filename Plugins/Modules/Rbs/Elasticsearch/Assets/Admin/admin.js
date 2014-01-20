@@ -8,8 +8,7 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Elasticsearch')
-				.route('home', 'Rbs/Elasticsearch', { 'redirectTo': 'Rbs/Elasticsearch/FullText/'});
+			$delegate.module('Rbs_Elasticsearch', 'Rbs/Elasticsearch', { 'redirectTo': 'Rbs/Elasticsearch/FullText/'});
 
 			$delegate.routesForModels([
 				'Rbs_Elasticsearch_FullText', 'Rbs_Elasticsearch_StoreIndex'
@@ -19,7 +18,7 @@
 				'Rbs_Elasticsearch_FacetGroup', 'Rbs_Elasticsearch_Facet'
 			]);
 
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

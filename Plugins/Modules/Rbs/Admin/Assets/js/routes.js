@@ -20,8 +20,8 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model(null).route('dashboard', '/', 'Rbs/Admin/dashboard/dashboard.twig');
-			return $delegate;
+			$delegate.module("Rbs_Admin").route('dashboard', '/', 'Rbs/Admin/dashboard/dashboard.twig');
+			return $delegate.module(null);
 		}]);
 	}]);
 

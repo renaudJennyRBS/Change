@@ -10,13 +10,12 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model(null)
-				.route('home', 'Rbs/Review', { 'redirectTo': 'Rbs/Review/Review/'});
+			$delegate.module('Rbs_Review', 'Rbs/Review', { 'redirectTo': 'Rbs/Review/Review/'});
 
 			$delegate.routesForModels([
 				'Rbs_Review_Review'
 			]);
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

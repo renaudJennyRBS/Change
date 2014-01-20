@@ -35,9 +35,6 @@
 
 			<fieldset>
 				<legend>{{ i18n('m.rbs.user.admin.profile_notification', ['ucf']) }}</legend>
-				<span class="help-block">
-					{{ i18n('m.rbs.user.admin.profile_notification_helper', ['ucf']) }}
-				</span>
 				<rbs-field label="{{ i18nAttr('m.rbs.user.admin.profile_notification_sending_management', ['ucf']) }}">
 					<div class="btn-group">
 						<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'no'}"
@@ -83,7 +80,7 @@
 				</rbs-field>
 			</fieldset>
 
-			<fieldset>
+			<!--fieldset>
 				<legend>{{ i18n('m.rbs.user.admin.profile_editors', ['ucf']) }}</legend>
 
 				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_editorActionAfterSave', ['ucf']) }}">
@@ -92,7 +89,7 @@
 						<option value="stay">{{ i18n('m.rbs.user.admin.profile_stayonform', ['ucf']) }}</option>
 					</select>
 				</rbs-field>
-			</fieldset>
+			</fieldset-->
 
 			<div class="form-actions">
 				<button disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="revert($event)" ng-disabled="isUnchanged()"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>

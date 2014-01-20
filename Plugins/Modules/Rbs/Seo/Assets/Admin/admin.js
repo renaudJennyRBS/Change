@@ -15,10 +15,10 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Seo').route('home', 'Rbs/Seo', { 'redirectTo': 'Rbs/Seo/DocumentSeo/'});
-			$delegate.model('Rbs_Seo').route('sitemapConfiguration', 'Rbs/Seo/Sitemap', 'Document/Rbs/Seo/SitemapConfiguration/list.twig');
+			$delegate.module('Rbs_Seo', 'Rbs/Seo', { 'redirectTo': 'Rbs/Seo/DocumentSeo/'})
+				.route('sitemapConfiguration', 'Rbs/Seo/Sitemap', 'Document/Rbs/Seo/SitemapConfiguration/list.twig');
 			$delegate.routesForLocalizedModels(['Rbs_Seo_DocumentSeo', 'Rbs_Seo_ModelConfiguration']);
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

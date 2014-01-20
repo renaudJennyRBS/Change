@@ -11,6 +11,8 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
+			$delegate.module('Rbs_User', 'Rbs/User', { 'redirectTo': 'Rbs/User/User/'});
+
 			$delegate.model('Rbs_User_User')
 				.route('applications'  , 'Rbs/User/User/:id/Applications/', 'Document/Rbs/User/User/applications.twig')
 				.route('permission'    , 'Rbs/User/User/:id/Permissions/' , 'Document/Rbs/User/User/permission.twig')
@@ -23,7 +25,6 @@
 				.route('groupUsers', 'Rbs/User/Group/:id/GroupUsers', 'Document/Rbs/User/Group/group-users.twig')
 			;
 
-			$delegate.model('Rbs_User').route('home', 'Rbs/User', { 'redirectTo': 'Rbs/User/User/'});
 			$delegate.model(null).route('userProfile', 'Rbs/User/Profile', 'Document/Rbs/User/Profile/profile.twig');
 
 			$delegate.routesForModels([
@@ -31,7 +32,7 @@
 				'Rbs_User_Group'
 			]);
 
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 
