@@ -69,6 +69,40 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 			(new \Change\Documents\Events\DeleteListener())->onCleanUp($event);
 		};
 		$events->attach('JobManager', 'process_Change_Document_CleanUp', $callBack, 5);
+
+
+		$callBack = function ($event)
+		{
+			/** @var $event \Change\Events\Event */
+			$predicateJSON = $event->getParam('predicateJSON');
+			if (is_array($predicateJSON) && isset($predicateJSON['op']) && ucfirst($predicateJSON['op']) === 'HasCode')
+			{
+				$predicateBuilder = $event->getParam('predicateBuilder');
+				$documentCodeManager = $event->getApplicationServices()->getDocumentCodeManager();
+				$hasTag = new \Change\Db\Query\Predicates\HasCode();
+				$fragment = $hasTag->populate($predicateJSON, $predicateBuilder, $documentCodeManager);
+				if ($fragment)
+				{
+					$event->setParam('SQLFragment', $fragment);
+					$event->stopPropagation();
+				}
+			}
+		};
+		$events->attach('Db', 'SQLFragment', $callBack, 5);
+
+		$callback = function ($event)
+		{
+			/** @var $event \Change\Events\Event */
+			$fragment = $event->getParam('fragment');
+			if ($fragment instanceof \Change\Db\Query\Predicates\HasCode)
+			{
+				/** @var $dbProvider \Change\Db\DbProvider */
+				$dbProvider = $event->getTarget();
+				$event->setParam('sql', $fragment->toSQLString($dbProvider));
+				$event->stopPropagation();
+			}
+		};
+		$events->attach('Db', 'SQLFragmentString', $callback, 5);
 	}
 
 	/**

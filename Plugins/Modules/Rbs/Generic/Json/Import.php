@@ -9,7 +9,7 @@ use Change\Documents\AbstractDocument;
 class Import
 {
 	/**
-	 * @var integer
+	 * @var integer|string|null
 	 */
 	protected $contextId;
 
@@ -112,7 +112,7 @@ class Import
 	}
 
 	/**
-	 * @param int $contextId
+	 * @param integer|string|null $contextId
 	 * @return $this
 	 */
 	public function setContextId($contextId)
@@ -122,7 +122,7 @@ class Import
 	}
 
 	/**
-	 * @return int
+	 * @return integer|string|null
 	 */
 	public function getContextId()
 	{

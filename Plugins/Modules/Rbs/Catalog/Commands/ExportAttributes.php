@@ -37,7 +37,7 @@ class ExportAttributes
 
 		$export = new \Rbs\Generic\Json\Export($applicationServices->getDocumentManager());
 		$export->setDocumentCodeManager($applicationServices->getDocumentCodeManager());
-		$export->setContextId(1);
+		$export->setContextId('Rbs Catalog Attributes');
 
 		$export->setDocuments($attributes);
 		$export->addDocuments($collections);
