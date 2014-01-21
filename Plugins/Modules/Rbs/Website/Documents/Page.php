@@ -44,4 +44,12 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	{
 		return $this->getCurrentLocalization()->getTitle();
 	}
+
+	/**
+	 * @return \Change\Presentation\Interfaces\Template
+	 */
+	public function getTemplate()
+	{
+		return $this->getPageTemplate();
+	}
 }
