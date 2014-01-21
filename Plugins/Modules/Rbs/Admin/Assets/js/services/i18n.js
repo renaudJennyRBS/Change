@@ -85,9 +85,9 @@
 	/**
 	 * Label.
 	 */
-	app.filter('lbl', function () {
+	app.filter('lab', function () {
 
-		return function lblFilterFn (input) {
+		return function labFilterFn (input) {
 			// FIXME Remove space before ':' according to current language.
 			return input + ' :';
 		};
