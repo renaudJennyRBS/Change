@@ -26,12 +26,17 @@
 			"section": "ecommerce",
 			"keywords": "m.rbs.stock.admin.module_keywords"
 		},
-
 		{
 			"label": "m.rbs.order.admin.module_name",
 			"url": "Rbs/Order",
 			"section": "ecommerce",
 			"keywords": "m.rbs.order.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.commerce.admin.module_name",
+			"url": "Rbs/Commerce",
+			"section": "admin",
+			"keywords": "m.rbs.commerce.admin.module_keywords"
 		}
 	]
 }

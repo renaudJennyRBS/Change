@@ -322,5 +322,12 @@
 	},
 	"order_add_shipment":{
 		"message":"ajouter une expédition"
+	},
+	"order_management":{
+		"message":"gestion des commandes"
+	}
+	,
+	"billing_management":{
+		"message":"gestion des paiements"
 	}
 }
