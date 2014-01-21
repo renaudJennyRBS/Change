@@ -18,7 +18,7 @@
 	{
 		Breadcrumb.resetLocation([
 			[i18n.trans('m.rbs.website.admin.module_name | ucf'), "Rbs/Website"],
-			[i18n.trans('m.rbs.website.admin.js.menu-list | ucf'), "Rbs/Website/Menu/"]
+			[i18n.trans('m.rbs.website.admin.menu_list | ucf'), "Rbs/Website/Menu/"]
 		]);
 
 		$scope.selectedWebsite = null;

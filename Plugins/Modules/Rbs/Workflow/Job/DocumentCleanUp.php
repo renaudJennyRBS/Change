@@ -102,6 +102,7 @@ class DocumentCleanUp
 		$applicationServices = $event->getApplicationServices();
 		$documentId = $job->getArgument('documentId');
 		$LCID = $job->getArgument('LCID');
+		$correctionId = $job->getArgument('correctionId');
 
 		$document = $applicationServices->getDocumentManager()->getDocumentInstance($documentId);
 		if (!$document)
@@ -131,15 +132,26 @@ class DocumentCleanUp
 			);
 		}
 		$query->addOrder('workflowInstance');
-
 		$tasks = $query->getDocuments();
-		$applicationServices->getLogging()->fatal(var_export($tasks->ids(), true));
+
 		/* @var $task Task */
 		foreach ($tasks as $task)
 		{
 			try
 			{
-				$this->cancelTask($task, $applicationServices);
+				$workflowInstance = $task->getWorkflowInstance();
+				if (!$workflowInstance)
+				{
+					$this->cancelTask($task, $applicationServices);
+				}
+				else
+				{
+					$context = $workflowInstance->getContext();
+					if (isset($context[WorkItem::CORRECTION_ID_CONTEXT_KEY]) && $context[WorkItem::CORRECTION_ID_CONTEXT_KEY] == $correctionId)
+					{
+						$this->cancelTask($task, $applicationServices);
+					}
+				}
 			}
 			catch (\Exception $e)
 			{
@@ -160,14 +172,10 @@ class DocumentCleanUp
 		try
 		{
 			$applicationServices->getTransactionManager()->begin();
-
 			$workflowInstance = $task->getWorkflowInstance();
-			if ($workflowInstance
-				&& in_array($workflowInstance->getStatus(),
-					array(WorkflowInstance::STATUS_OPEN, WorkflowInstance::STATUS_SUSPENDED))
+			if ($workflowInstance && in_array($workflowInstance->getStatus(), [WorkflowInstance::STATUS_OPEN, WorkflowInstance::STATUS_SUSPENDED])
 			)
 			{
-				$applicationServices->getLogging()->fatal('cancel ' . $task->getId());
 				$workflowInstance->cancel(new \DateTime());
 				$workflowInstance->update();
 			}

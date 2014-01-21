@@ -29,7 +29,7 @@ class ContentValidation
 		if ($document instanceof Correction)
 		{
 			$correction = $document->getCurrentCorrection();
-			if ($correction && $correction->getId() == $ctx['__CORRECTION_ID'])
+			if ($correction && $correction->getId() == $ctx[WorkItem::CORRECTION_ID_CONTEXT_KEY])
 			{
 				$applicationServices = $event->getApplicationServices();
 				$transactionManager = $applicationServices->getTransactionManager();

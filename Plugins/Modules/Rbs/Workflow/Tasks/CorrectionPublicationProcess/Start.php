@@ -4,7 +4,6 @@ namespace Rbs\Workflow\Tasks\CorrectionPublicationProcess;
 use Change\Documents\Events\Event;
 use Change\Documents\Correction;
 use Change\Workflow\Interfaces\WorkItem;
-use Change\Workflow\WorkflowManager;
 
 /**
 * @name \Rbs\Workflow\Tasks\CorrectionPublicationProcess\Start
@@ -22,7 +21,7 @@ class Start
 				$document = $event->getDocument();
 				$wm = $event->getApplicationServices()->getWorkflowManager();
 				$ctx = array(WorkItem::DOCUMENT_ID_CONTEXT_KEY => $document->getId());
-				$ctx['__CORRECTION_ID'] = $correction->getId();
+				$ctx[WorkItem::CORRECTION_ID_CONTEXT_KEY] = $correction->getId();
 				$wm->getNewWorkflowInstance('correctionPublicationProcess', $ctx);
 		}
 	}
