@@ -14,9 +14,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Simpleform').route('home', 'Rbs/Simpleform', { 'redirectTo': 'Rbs/Simpleform/Form/'});
+			$delegate.module('Rbs_Simpleform', 'Rbs/Simpleform', { 'redirectTo': 'Rbs/Simpleform/Form/'});
 			$delegate.routesForLocalizedModels(['Rbs_Simpleform_Form', 'Rbs_Simpleform_Field']);
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

@@ -11,6 +11,9 @@
 	"home":{
 		"message":"accueil"
 	},
+	"new_resource":{
+		"message":"nouvel élément"
+	},
 	"loading":{
 		"message":"chargement..."
 	},

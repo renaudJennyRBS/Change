@@ -11,12 +11,17 @@
 		{
 			this.$get = function ($location) {
 				var urls = {};
+				var labelKeys = {};
 
-				var register = function (modelName, url) {
+				var register = function (key, url) {
 					if (angular.isString(url)) {
 						url = { 'form': url };
 					}
-					urls[modelName] = angular.extend(urls[modelName] || {}, url);
+					urls[key] = angular.extend(urls[key] || {}, url);
+				};
+
+				var registerLabel = function (key, labelObj) {
+					labelKeys[key] = angular.extend(labelKeys[key] || {}, labelObj);
 				};
 
 				var defaultRule = {
@@ -30,6 +35,8 @@
 				};
 
 				var currentModelName = null;
+				var currentModuleName = null;
+
 				var routeDefFn = function (name, route, rule)
 				{
 					var urls, p;
@@ -38,10 +45,38 @@
 						route = '/' + route;
 					}
 
-					if (currentModelName) {
-						urls = {};
-						urls[name] = route;
-						register(currentModelName, urls);
+					var primaryKey = currentModelName || currentModuleName;
+
+					if (primaryKey) {
+						var routeUrl = {};
+						routeUrl[name] = route;
+						if (rule.labelKey)
+						{
+							var routeLabel = {};
+							routeLabel[name] = rule.labelKey;
+							registerLabel(primaryKey, routeLabel)
+						}
+
+						register(primaryKey, routeUrl);
+						if (currentModuleName && currentModelName)
+						{
+							var docName = currentModelName.split('_').slice(2, 3).join('');
+							if (docName.length)
+							{
+								// In case we also need to support routes from another module
+								var secondaryKey = currentModuleName + '_' + docName;
+								register(secondaryKey, routeUrl);
+								if (rule.labelKey)
+								{
+									var routeLabel = {};
+									routeLabel[name] = rule.labelKey;
+									registerLabel(secondaryKey, routeLabel)
+								}
+							}
+						}
+					}
+					else{
+						throw new Error("Invalid route declaration");
 					}
 
 					if (angular.isString(rule)) {
@@ -214,17 +249,43 @@
 						return this;
 					},
 
+					'module' : function (moduleName, route, rule) {
+						currentModuleName = moduleName;
+						if (moduleName === null){
+							currentModelName = null;
+						} else if (route) {
+							if (angular.isObject(rule) && !rule.hasOwnProperty('labelKey')){
+								rule.labelKey = 'm.' +  currentModuleName.replace(/_/g, '.').toLowerCase() + '.admin.module_name | ucf';
+							}
+							this.route('home', route, rule);
+						}
+
+						return this;
+					},
+
 					'routesForModels' : function (modelNames) {
 						var self = this;
 						angular.forEach(modelNames, function (model) {
-							var baseRouteTpl = model.replace(/_/g, '/');
+							var modelParts = model.split('_');
+							var docName = modelParts.slice(2,3).join('');
+							if (currentModuleName)
+							{
+								var baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
+							}
+							else
+							{
+								var baseRouteTpl = modelParts.join('/');
+							}
+							var baseTplDir = model.replace(/_/g, '/');
+							var baseKey = 'm.'+ modelParts.slice(0,2).join('.').toLowerCase();
+							var lowerDocName = docName.toLowerCase();
 							self.model(model)
-								.route('list', baseRouteTpl + '/', 'Document/' + baseRouteTpl + '/list.twig')
-								.route('form', baseRouteTpl + '/:id', 'Document/' + baseRouteTpl + '/form.twig')
-								.route('new' , baseRouteTpl + '/new', 'Document/' + baseRouteTpl + '/form.twig')
-								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
-								.route('timeline', baseRouteTpl + '/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
-								.route('urls', baseRouteTpl + '/:id/url', { 'templateUrl': 'Rbs/Admin/url-manager.twig' })
+								.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
+								.route('form', baseRouteTpl + '/:id', {templateUrl: 'Document/' + baseTplDir + '/form.twig', 'labelKey':baseKey + '.document.' + lowerDocName + ' | ucf'})
+								.route('new' , baseRouteTpl + '/new', 'Document/' + baseTplDir + '/form.twig')
+								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController', 'labelKey':'m.rbs.workflow.admin.workflow | ucf'})
+								.route('timeline', baseRouteTpl + '/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController', 'labelKey':'m.rbs.timeline.admin.timeline | ucf' })
+								.route('urls', baseRouteTpl + '/:id/url', { 'templateUrl': 'Rbs/Admin/url-manager.twig', 'labelKey':'m.rbs.admin.admin.urls | ucf' })
 							;
 						});
 						return this;
@@ -233,15 +294,28 @@
 					'routesForLocalizedModels' : function (modelNames) {
 						var self = this;
 						angular.forEach(modelNames, function (model) {
-							var baseRouteTpl = model.replace(/_/g, '/');
+							var modelParts = model.split('_');
+							var docName = modelParts.slice(2,3).join('');
+							if (currentModuleName)
+							{
+								var baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
+							}
+							else
+							{
+								var baseRouteTpl = modelParts.join('/');
+							}
+							var baseTplDir = model.replace(/_/g, '/');
+							var baseKey = 'm.'+ modelParts.slice(0,2).join('.').toLowerCase();
+							var lowerDocName = docName.toLowerCase();
+
 							self.model(model)
-								.route('list', baseRouteTpl + '/', 'Document/' + baseRouteTpl + '/list.twig')
-								.route('form', baseRouteTpl + '/:id/:LCID', 'Document/' + baseRouteTpl + '/form.twig')
-								.route('new' , baseRouteTpl + '/new', 'Document/' + baseRouteTpl + '/form.twig')
-								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': 'Document/' + baseRouteTpl+'/form.twig', 'controller': 'RbsChangeTranslateEditorController' })
-								.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController' })
-								.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController' })
-								.route('urls', baseRouteTpl + '/:id/:LCID/url', { 'templateUrl': 'Rbs/Admin/url-manager.twig' })
+								.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
+								.route('form', baseRouteTpl + '/:id/:LCID', {templateUrl: 'Document/' + baseTplDir + '/form.twig', 'labelKey':baseKey + '.document.' + lowerDocName + ' | ucf'})
+								.route('new' , baseRouteTpl + '/new', 'Document/' + baseTplDir + '/form.twig')
+								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': 'Document/' + baseTplDir +'/form.twig', 'controller': 'RbsChangeTranslateEditorController', 'labelKey':baseKey + '.document.' + lowerDocName  + ' | ucf'})
+								.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController', 'labelKey':'m.rbs.workflow.admin.workflow | ucf' })
+								.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController', 'labelKey':'m.rbs.timeline.admin.timeline | ucf' })
+								.route('urls', baseRouteTpl + '/:id/:LCID/url', { 'templateUrl': 'Rbs/Admin/url-manager.twig', 'labelKey':'m.rbs.admin.admin.urls | ucf'})
 							;
 						});
 						return this;
@@ -270,6 +344,17 @@
 							return getNamedUrl(doc, params, 'form') + '?section=' + name.substring(5);
 						}
 						return getNamedUrl(doc, params, name);
+					},
+
+					'getLabelKeyForUrl' : function (key, name) {
+
+						if (labelKeys.hasOwnProperty(key)) {
+							var out = labelKeys[key];
+							if (name && out.hasOwnProperty(name)) {
+								return out[name];
+							}
+						}
+						return null;
 					}
 				};
 			};

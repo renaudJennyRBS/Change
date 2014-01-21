@@ -16,23 +16,20 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 
-			$delegate.model('Rbs_Price')
-				.route('home', 'Rbs/Price', { 'redirectTo': 'Rbs/Price/Price/'});
+			$delegate.module('Rbs_Price', 'Rbs/Price', { 'redirectTo': 'Rbs/Price/Price/'});
 
 			$delegate.model('Rbs_Price_Price')
 				.route('discount', 'Rbs/Price/Discount/new', "Document/Rbs/Price/Price/form.twig");
 
 			$delegate.routesForModels([
-				'Rbs_Price_Tax',
 				'Rbs_Price_Price'
 			]);
 
 			$delegate.routesForLocalizedModels([
-				'Rbs_Price_BillingArea',
 				'Rbs_Price_Fee'
 			]);
 
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 
 	}]);

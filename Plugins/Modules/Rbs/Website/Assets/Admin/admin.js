@@ -82,6 +82,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
+			$delegate.module('Rbs_Website', 'Rbs/Website', { 'redirectTo': 'Rbs/Website/Browse/' })
+			;
+
 			$delegate.model('Rbs_Website_Website')
 				.route('tree', 'Rbs/Website/Browse/?website=:id&view=Structure', 'Document/Rbs/Website/Website/browse.twig')
 				.route('functions', 'Rbs/Website/Browse/?website=:id&view=Functions', 'Document/Rbs/Website/Website/browse.twig')
@@ -90,10 +93,6 @@
 
 			$delegate.model('Rbs_Website_Topic')
 				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
-			;
-
-			$delegate.model('Rbs_Website')
-				.route('home', 'Rbs/Website', { 'redirectTo': 'Rbs/Website/Browse/' })
 			;
 
 			$delegate.routesForLocalizedModels([
@@ -109,7 +108,7 @@
 				.route('form', 'Rbs/Website/Website/:website/Menus/:id/:LCID', 'Document/Rbs/Website/Menu/form.twig')
 			;
 
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

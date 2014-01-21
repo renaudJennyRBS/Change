@@ -15,22 +15,10 @@
 			"keywords": "m.rbs.catalog.admin.module_keywords"
 		},
 		{
-			"label": "m.rbs.brand.admin.module_name",
-			"url": "Rbs/Brand",
-			"section": "ecommerce",
-			"keywords": "m.rbs.brand.admin.module_keywords"
-		},
-		{
 			"label": "m.rbs.price.admin.module_name",
 			"url": "Rbs/Price",
 			"section": "ecommerce",
 			"keywords": "m.rbs.price.admin.module_keywords"
-		},
-		{
-			"label": "m.rbs.store.admin.module_name",
-			"url": "Rbs/Store",
-			"section": "ecommerce",
-			"keywords": "m.rbs.store.admin.module_keywords"
 		},
 		{
 			"label": "m.rbs.stock.admin.module_name",
@@ -38,7 +26,6 @@
 			"section": "ecommerce",
 			"keywords": "m.rbs.stock.admin.module_keywords"
 		},
-
 		{
 			"label": "m.rbs.order.admin.module_name",
 			"url": "Rbs/Order",
@@ -46,16 +33,10 @@
 			"keywords": "m.rbs.order.admin.module_keywords"
 		},
 		{
-			"label": "m.rbs.payment.admin.module_name",
-			"url": "Rbs/Payment",
-			"section": "ecommerce",
-			"keywords": "m.rbs.payment.admin.module_keywords"
-		},
-		{
-			"label": "m.rbs.shipping.admin.module_name",
-			"url": "Rbs/Shipping",
-			"section": "ecommerce",
-			"keywords": "m.rbs.shipping.admin.module_keywords"
+			"label": "m.rbs.commerce.admin.module_name",
+			"url": "Rbs/Commerce",
+			"section": "admin",
+			"keywords": "m.rbs.commerce.admin.module_keywords"
 		}
 	]
 }

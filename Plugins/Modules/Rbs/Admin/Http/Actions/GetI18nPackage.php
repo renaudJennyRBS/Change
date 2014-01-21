@@ -41,20 +41,24 @@ class GetI18nPackage
 			else
 			{
 				$modules = $event->getApplicationServices()->getPluginManager()->getModules();
+				$result = [];
 				foreach ($modules as $module)
 				{
 					if ($module->isAvailable())
 					{
-						$packageName = implode('.', ['m', strtolower($module->getVendor()), strtolower($module->getShortName()), 'adminjs']);
-						$keys = $i18nManager->getTranslationsForPackage($packageName, $LCID);
-						if (is_array($keys))
+						foreach (['admin', 'adminjs', 'documents'] as $subPackage)
 						{
-							$package = array();
-							foreach ($keys as $key => $value)
+							$packageName = implode('.', ['m', strtolower($module->getVendor()), strtolower($module->getShortName()), $subPackage]);
+							$keys = $i18nManager->getTranslationsForPackage($packageName, $LCID);
+							if (is_array($keys))
 							{
-								$package[$key] = $value;
+								$package = array();
+								foreach ($keys as $key => $value)
+								{
+									$package[$key] = $value;
+								}
+								$packages[$packageName] = $package;
 							}
-							$packages[$packageName] = $package;
 						}
 					}
 				}

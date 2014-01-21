@@ -17,9 +17,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
+			$delegate.module('Rbs_Media', 'Rbs/Media', { 'redirectTo': 'Rbs/Media/Image/'});
 			$delegate.routesForLocalizedModels(['Rbs_Media_Image']);
-			$delegate.model('Rbs_Media').route('home', 'Rbs/Media', { 'redirectTo': 'Rbs/Media/Image/'});
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

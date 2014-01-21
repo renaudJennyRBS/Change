@@ -64,6 +64,7 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
+			$delegate.module('Rbs_Catalog', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 			$delegate.model('Rbs_Catalog_Product')
 				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Document/Rbs/Catalog/Product/product-prices.twig')
 				.route('cross-selling-lists', 'Rbs/Catalog/Product/:id/CrossSellingProductLists/', 'Document/Rbs/Catalog/Product/product-cross-selling.twig')
@@ -77,23 +78,16 @@
 			$delegate.model('Rbs_Catalog_CrossSellingProductList')
 				.route('productListItems', 'Rbs/Catalog/CrossSellingProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
 
-			$delegate.model('Rbs_Catalog')
-				.route('home', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/' });
+			$delegate.routesForModels(['Rbs_Stock_Sku']);
 
-			$delegate.model('Rbs_Stock_Sku')
-				.route('list', 'Rbs/Catalog/Sku/', 'Document/Rbs/Stock/Sku/list.twig')
-				.route('form', 'Rbs/Catalog/Sku/:id', 'Document/Rbs/Stock/Sku/form.twig')
-				.route('new' , 'Rbs/Catalog/Sku/new', 'Document/Rbs/Stock/Sku/form.twig')
-				.route('timeline', 'Rbs/Catalog/Sku/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model=Rbs_Stock_Sku', 'controller': 'RbsChangeTimelineController' });
-
-			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute']);
+			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute', 'Rbs_Brand_Brand']);
 			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
 				'Rbs_Catalog_ProductListItem', 'Rbs_Catalog_VariantGroup' ]);
 
 			$delegate.model('Rbs_Catalog_VariantGroup')
 				.route('variantList', 'Rbs/Catalog/VariantGroup/:id/VariantList/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
 				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig');
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

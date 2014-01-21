@@ -18,8 +18,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 
-			$delegate.model('Rbs_Theme')
-				.route('home', 'Rbs/Theme', { 'redirectTo': 'Rbs/Theme/Theme/'});
+			$delegate.module('Rbs_Theme', 'Rbs/Theme', { 'redirectTo': 'Rbs/Theme/Theme/'});
 
 			$delegate.model('Rbs_Theme_Theme')
 				.route('tree', 'Rbs/Theme/Theme/:id/Templates/', 'Document/Rbs/Theme/Template/list.twig');
@@ -29,7 +28,7 @@
 				'Rbs_Theme_Template'
 			]);
 
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 
 	}]);

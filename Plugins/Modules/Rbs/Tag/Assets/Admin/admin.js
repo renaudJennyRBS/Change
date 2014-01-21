@@ -12,11 +12,10 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Tag')
-				.route('home', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'})
+			$delegate.module('Rbs_Tag', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'})
 				.route('myTags', 'Rbs/Tag/MyTags/', { 'templateUrl': 'Document/Rbs/Tag/Tag/myTags-list.twig'});
 			$delegate.routesForModels(['Rbs_Tag_Tag']);
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 	}]);
 

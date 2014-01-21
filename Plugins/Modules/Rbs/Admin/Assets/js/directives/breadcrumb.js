@@ -55,9 +55,9 @@
 					eventData.route = route;
 
 					// Populate 'location' part of Breadcrumb.
-					breadcrumbData.location.push([shortModuleName, UrlManager.getUrl(fullModuleName, null, 'home')]);
+					breadcrumbData.location.push([UrlManager.getLabelKeyForUrl(fullModuleName, 'home'), UrlManager.getUrl(fullModuleName, null, 'home')]);
 					if (modelName) {
-						breadcrumbData.location.push([documentName, UrlManager.getUrl(modelName, null, 'list')]);
+						breadcrumbData.location.push([UrlManager.getLabelKeyForUrl(modelName, 'list'), UrlManager.getUrl(modelName, null, 'list')]);
 						eventData.modelName = modelName;
 					}
 
@@ -106,7 +106,7 @@
 
 					if (route.ruleName === 'new' || (route.params && route.params.id === 'new'))
 					{
-						breadcrumbData.resource = 'New element'; // FIXME i18n
+						breadcrumbData.resource = [i18n.trans('m.rbs.admin.adminjs.new_resource | ucf'), ""];
 					}
 					else
 					{
@@ -227,13 +227,13 @@
 						if (cssClass) {
 							html += ' ' + cssClass;
 						}
-						html += '"><span>' + icon + item[0];
+						html += '"><span>' + icon + i18n.trans(item[0]);
 						if (last) {
 							html += getLabelSuffix();
 						}
 						html += '</span></li>';
 					} else {
-						html = '<li' + (cssClass ? (' class="' + cssClass + '"') : '') + '><a href="' + item[1] + '">' + icon + item[0] + '</a></li>';
+						html = '<li' + (cssClass ? (' class="' + cssClass + '"') : '') + '><a href="' + item[1] + '">' + icon + i18n.trans(item[0]) + '</a></li>';
 					}
 
 					return html;

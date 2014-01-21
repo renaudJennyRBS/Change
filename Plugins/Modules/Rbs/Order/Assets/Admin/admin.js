@@ -8,22 +8,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Order')
-				.route('home', 'Rbs/Order', { 'redirectTo': 'Rbs/Order/Order/'});
-
-			$delegate.model('Rbs_Commerce_Process')
-				.route('list', 'Rbs/Order/Process/', 'Document/Rbs/Commerce/Process/list.twig')
-				.route('form', 'Rbs/Order/Process/:id', 'Document/Rbs/Commerce/Process/form.twig')
-				.route('new' , 'Rbs/Order/Process/new', 'Document/Rbs/Commerce/Process/form.twig')
-				.route('timeline', 'Rbs/Order/Process/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model=Rbs_Commerce_Process', 'controller': 'RbsChangeTimelineController' })
-
-			$delegate.routesForModels([
-				'Rbs_Order_Order',
-				'Rbs_Order_Invoice',
-				'Rbs_Order_Shipment'
-			]);
-
-			return $delegate;
+			$delegate.module('Rbs_Order', 'Rbs/Order', { 'redirectTo': 'Rbs/Order/Order/'})
+				.routesForModels(['Rbs_Order_Order','Rbs_Order_Invoice','Rbs_Order_Shipment', 'Rbs_Payment_Transaction']);
+			return $delegate.module(null);
 		}]);
 	}]);
 

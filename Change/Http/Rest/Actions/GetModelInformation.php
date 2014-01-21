@@ -103,7 +103,11 @@ class GetModelInformation
 			$result->setMeta('abstract', $model->isAbstract());
 			$result->setMeta('useCorrection', $model->useCorrection());
 
-			$newInstance = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+			$newInstance = null;
+			if (!$model->isAbstract())
+			{
+				$newInstance = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+			}
 			// Properties.
 			foreach ($model->getProperties() as $property)
 			{
@@ -118,7 +122,7 @@ class GetModelInformation
 				$infos['stateless'] = $property->getStateless();
 				$infos['required'] = $property->getRequired();
 				$infos['hasCorrection'] = $property->getHasCorrection();
-				if (!in_array($property->getName(), $this->ignoreDefaultValues))
+				if ($newInstance && !in_array($property->getName(), $this->ignoreDefaultValues))
 				{
 					$converter = new \Change\Http\Rest\PropertyConverter($newInstance, $property);
 					$infos['defaultValue'] = $converter->convertToRestValue($property->getValue($newInstance));

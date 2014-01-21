@@ -43,6 +43,12 @@
 	},
 	"terms_and_conditions_function":{
 		"message":"termes et conditions"
+	},
+	"store_settings":{
+		"message":"réglagles des boutiques"
+	},
+	"pricing_settings":{
+		"message":"réglagles de la facturation"
 	}
 
 }

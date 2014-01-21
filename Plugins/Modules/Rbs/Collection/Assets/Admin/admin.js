@@ -17,8 +17,7 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.model('Rbs_Collection')
-				.route('home', 'Rbs/Collection', { 'redirectTo': 'Rbs/Collection/Collection/'});
+			$delegate.module('Rbs_Collection', 'Rbs/Collection', { 'redirectTo': 'Rbs/Collection/Collection/'});
 
 			$delegate.routesForModels([
 				'Rbs_Collection_Collection'
@@ -26,7 +25,7 @@
 			$delegate.routesForLocalizedModels([
 				'Rbs_Collection_Item'
 			]);
-			return $delegate;
+			return $delegate.module(null);
 		}]);
 
 	}]);
