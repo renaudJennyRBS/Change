@@ -48,14 +48,10 @@ class ApplicationServices extends \Zend\Di\Di
 	{
 		$this->setApplication($application);
 		$configuration = $application->getConfiguration();
+		$logging = $application->getLogging();
 		$this->setEventManagerFactory($eventManagerFactory);
 
 		$definitionList = new \Zend\Di\DefinitionList(array());
-
-		//Logging : Configuration, Workspace
-		$loggingClassName = $this->getInjectedClassName('Logging', 'Change\Logging\Logging');
-		$classDefinition = $this->getConfigAndWorkspaceClassDefinition($loggingClassName);
-		$definitionList->addDefinition($classDefinition);
 
 		//DbProvider : Configuration, Workspace, EventManagerFactory, Logging
 		$section = $configuration->getEntry('Change/Db/use', 'default');
@@ -63,7 +59,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$classDefinition = $this->getConfigAndWorkspaceClassDefinition($dbProviderClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setLogging', true)
-			->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
+			->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 
@@ -78,7 +74,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$classDefinition = $this->getConfigAndWorkspaceClassDefinition($i18nManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setLogging', true)
-			->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
+			->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$classDefinition->addMethod('setPluginManager', true)
 			->addMethodParameter('setPluginManager', 'pluginManager', array('type' => 'PluginManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -109,7 +105,7 @@ class ApplicationServices extends \Zend\Di\Di
 		$classDefinition = $this->getClassDefinition($mailManagerClassName);
 		$this->addConfigurationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setLogging', true)
-			->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
+			->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//ModelManager : EventManagerFactory, Workspace, PluginManager
@@ -133,7 +129,7 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethod('setI18nManager', true)
 				->addMethodParameter('setI18nManager', 'i18nManager', array('type' => 'I18nManager', 'required' => true))
 			->addMethod('setLogging', true)
-				->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
+				->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 
@@ -182,7 +178,7 @@ class ApplicationServices extends \Zend\Di\Di
 			->addMethod('setTransactionManager', true)
 				->addMethodParameter('setTransactionManager', 'transactionManager', array('type' => 'TransactionManager', 'required' => true))
 			->addMethod('setLogging', true)
-				->addMethodParameter('setLogging', 'logging', array('type' => 'Logging', 'required' => true));
+				->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//BlockManager: EventManagerFactory, Configuration
@@ -277,16 +273,14 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$workspace = $application->getWorkspace();
 
-		$instanceManager->addAlias('Logging', $loggingClassName, array('configuration' => $configuration, 'workspace' => $workspace));
-
 		$instanceManager->addAlias('DbProvider', $dbProviderClassName,
-			array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
+			array('logging'=> $logging, 'configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('TransactionManager', $transactionManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('I18nManager', $i18nManagerClassName,
-			array('configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
+			array('logging'=> $logging, 'configuration' => $configuration, 'workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('PluginManager', $pluginManagerClassName,
 			array('workspace' => $workspace, 'eventManagerFactory' => $eventManagerFactory));
@@ -294,11 +288,11 @@ class ApplicationServices extends \Zend\Di\Di
 		$instanceManager->addAlias('StorageManager', $storageManagerClassName,
 			array('configuration' => $configuration, 'workspace' => $workspace));
 
-		$instanceManager->addAlias('MailManager', $mailManagerClassName, array('configuration' => $configuration));
+		$instanceManager->addAlias('MailManager', $mailManagerClassName, array('logging' => $logging, 'configuration' => $configuration));
 
-		$instanceManager->addAlias('ModelManager', $modelManagerClassName, array('eventManagerFactory' => $eventManagerFactory, 'workspace' => $workspace));
+		$instanceManager->addAlias('ModelManager', $modelManagerClassName, array('logging' => $logging, 'eventManagerFactory' => $eventManagerFactory, 'workspace' => $workspace));
 
-		$instanceManager->addAlias('DocumentManager', $documentManagerClassName, array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
+		$instanceManager->addAlias('DocumentManager', $documentManagerClassName, array('logging'=> $logging, 'configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('DocumentCodeManager', $documentCodeManagerClassName, array());
 
@@ -310,7 +304,7 @@ class ApplicationServices extends \Zend\Di\Di
 			array('eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('JobManager', $jobManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory));
+			array('logging'=> $logging, 'eventManagerFactory' => $eventManagerFactory));
 
 		$instanceManager->addAlias('BlockManager', $blockManagerClassName,
 			array('configuration' => $configuration, 'eventManagerFactory' => $eventManagerFactory));
@@ -343,6 +337,7 @@ class ApplicationServices extends \Zend\Di\Di
 
 		$instanceManager->addAlias('PathRuleManager', $pathRuleManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory));
+
 	}
 
 	public function shutdown()
@@ -369,7 +364,7 @@ class ApplicationServices extends \Zend\Di\Di
 	 */
 	public function getLogging()
 	{
-		return $this->get('Logging');
+		return $this->getApplication()->getLogging();
 	}
 
 	/**

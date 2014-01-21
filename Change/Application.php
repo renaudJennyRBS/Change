@@ -30,6 +30,12 @@ class Application
 	protected $context;
 
 	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
+
+
+	/**
 	 * @api
 	 * @return string
 	 */
@@ -201,6 +207,22 @@ class Application
 			Configuration\Configuration::PROJECT => $this->getWorkspace()->appPath('Config', Configuration\Configuration::PROJECT)
 		];
 	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	public function getLogging()
+	{
+		if ($this->logging === null)
+		{
+			$this->logging = new \Change\Logging\Logging();
+			$this->logging->setConfiguration($this->getConfiguration());
+			$this->logging->setWorkspace($this->getWorkspace());
+		}
+		return $this->logging;
+	}
+
+
 
 	/**
 	 * @api

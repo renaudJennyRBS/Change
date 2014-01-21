@@ -3,12 +3,12 @@
 	"use strict";
 
 	var app = angular.module('RbsChange'),
-		activeContextes = [];
+		activeContexts = [];
 
 
 	app.provider('RbsChange.Navigation', function ()
 	{
-		this.$get = ['$rootScope', '$location', 'RbsChange.Utils', '$q', function ($rootScope, $location, Utils, $q)
+		this.$get = ['$rootScope', '$location', 'RbsChange.Utils', 'RbsChange.i18n', '$q', function ($rootScope, $location, Utils, i18n, $q)
 		{
 			var lastContext;
 
@@ -69,9 +69,9 @@
 
 			function getActiveContextById (id)
 			{
-				for (var i=0 ; i<activeContextes.length ; i++) {
-					if (activeContextes[i].id === id) {
-						return activeContextes[i];
+				for (var i=0 ; i<activeContexts.length ; i++) {
+					if (activeContexts[i].id === id) {
+						return activeContexts[i];
 					}
 				}
 				return null;
@@ -89,9 +89,9 @@
 						defer.reject(context);
 					}
 
-					for (var i=0 ; i<activeContextes.length ; i++) {
-						if (activeContextes[i].id === id) {
-							activeContextes.splice(i, 1);
+					for (var i=0 ; i<activeContexts.length ; i++) {
+						if (activeContexts[i].id === id) {
+							activeContexts.splice(i, 1);
 						}
 					}
 				}
@@ -131,16 +131,25 @@
 
 				lastContext.params = params;
 				if (! lastContext.label) {
-					lastContext.label = params.document ? params.document.label : lastContext.id;
+					if (Utils.isDocument(params.document)){
+						if (params.document.id < 0 && !params.document.label){
+							lastContext.label = i18n.trans('m.rbs.admin.adminjs.new_resource | ucf');
+						} else {
+							lastContext.label = params.document.label;
+						}
+
+					} else {
+						lastContext.label = lastContext.id;
+					}
 				}
-				activeContextes.push(lastContext);
+				activeContexts.push(lastContext);
 				lastContext = null;
 			}
 
 
 			function resolve (result, redirect)
 			{
-				var ctx = activeContextes[activeContextes.length-1];
+				var ctx = activeContexts[activeContexts.length-1];
 				ctx.status = 'committed';
 				ctx.result = result;
 
@@ -152,7 +161,7 @@
 
 			function reject (reason)
 			{
-				var ctx = activeContextes[activeContextes.length-1];
+				var ctx = activeContexts[activeContexts.length-1];
 				ctx.status = 'rejected';
 				ctx.result = reason;
 				$location.path(ctx.path);
@@ -161,13 +170,13 @@
 
 			function isActive ()
 			{
-				return activeContextes.length > 0;
+				return activeContexts.length > 0;
 			}
 
 
 			function getActiveContext ()
 			{
-				return isActive() ? activeContextes[activeContextes.length-1] : null;
+				return isActive() ? activeContexts[activeContexts.length-1] : null;
 			}
 
 
@@ -228,7 +237,7 @@
 		return {
 			restrict : 'E',
 			template :
-				'<div ng-repeat="c in activeContextes">' +
+				'<div ng-repeat="c in activeContexts">' +
 					'<div class="cascading-forms-collapsed" ng-style="getStyle($index)">' +
 						'<a href ng-href="(= c.url =)"><i class="icon-circle-arrow-left"></i> (= c.label =)</a>' +
 						'<span ng-if="c.isSelection()"> &mdash; <span ng-bind="c.params.label"></span></span>' +
@@ -238,10 +247,10 @@
 
 			link : function (scope, iElement)
 			{
-				scope.activeContextes = activeContextes;
-				scope.$watchCollection('activeContextes', function ()
+				scope.activeContexts = activeContexts;
+				scope.$watchCollection('activeContexts', function ()
 				{
-					if (scope.activeContextes.length > 0) {
+					if (scope.activeContexts.length > 0) {
 						iElement.show();
 					} else {
 						iElement.hide();
@@ -250,7 +259,7 @@
 
 				scope.getStyle = function (index)
 				{
-					var count = scope.activeContextes.length;
+					var count = scope.activeContexts.length;
 					return {
 						margin   : '0 ' + ((count - index) * 15) + 'px',
 						opacity  : (0.7 + ((index+1)/count * 0.3)),

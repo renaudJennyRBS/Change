@@ -333,6 +333,10 @@
 						return getNamedUrl(doc, params, 'form');
 					},
 
+					'getNewUrl' : function (doc, params) {
+						return getNamedUrl(doc, params, 'new');
+					},
+
 					'getTranslateUrl' : function (doc, LCID) {
 						return getNamedUrl(doc, { 'LCID': LCID || doc.LCID }, 'translate');
 					},
