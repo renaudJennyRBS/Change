@@ -160,7 +160,7 @@
 		ng-show="section=='discount'"
 		data-form-section-label="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}">
-		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true" load-query="loadPriceQuery">
+			<rbs-document-list ng-show="!document.isNew() && !document.basePrice" data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true" load-query="loadPriceQuery">
 			<rbs-column name="boValue" align="right" width="90px" >
 				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedBoValue=)</a>
 			</rbs-column>
@@ -169,6 +169,9 @@
 			<rbs-column name="startActivation">(= doc.startActivation | rbsDateTime =)</rbs-column>
 			<rbs-column name="endActivation">(= doc.endActivation | rbsDateTime =)</rbs-column>
 		</rbs-document-list>
+		<p ng-hide="!document.isNew() && !document.basePrice">
+			{{ i18nAttr('m.rbs.price.admin.price_no_discount_available', ['ucf']) }}
+		</p>
 	</fieldset>
 
 	<fieldset

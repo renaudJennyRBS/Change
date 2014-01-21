@@ -29,6 +29,9 @@
   "price_publication_section_help":{
     "message":"Vous pouvez indiquer une <strong>période de validité<\/strong> pour ce prix.<br \/><span class=\"label label-danger\">Important<\/span> Si vous définissez un prix promotionnel, il est recommandé d'indiquer une <label class=\"in-text\" for=\"endPublication\">date de fin<\/label>."
   },
+  "price_no_discount_available":{
+    "message":"this price can't be discounted"
+  },
   "price_create_discount_from_price":{
     "message":"create a promotional price from this price"
   },
