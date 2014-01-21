@@ -16,5 +16,6 @@ class RichtextInformation extends \Change\Presentation\Blocks\Information
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.richtext', $ucf));
 		$this->addInformationMeta('contentType', Property::TYPE_STRING, true, 'Markdown');
+		$this->setMailSuitable(true);
 	}
 }

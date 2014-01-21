@@ -10,6 +10,8 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_MANAGER_IDENTIFIER = 'MailManager';
 
+	const VARIABLE_REGEXP = '/\{([a-z][A-Za-z0-9.]*)\}/';
+
 	/**
 	 * @var \Change\Job\JobManager
 	 */
@@ -73,6 +75,14 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach('render', array($this, 'onDefaultRender'), 5);
+	}
+
+	/**
 	 * @param string $code
 	 * @param \Rbs\Website\Documents\Website $website
 	 * @param string $LCID
@@ -116,104 +126,119 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Rbs\Mail\Documents\Mail $mail
 	 * @param \Rbs\Website\Documents\Website $website
 	 * @param string $LCID
-	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @param \Change\Application $application
+	 * @param array $substitutions
 	 * @return string
 	 */
-	public function render($mail, $website, $LCID, $applicationServices, $application)
+	public function render($mail, $website, $LCID, $substitutions)
 	{
-		//arguments are usefull to create Events
-		$arguments = array('application' => $application);
-		$arguments['services'] = new \Zend\Stdlib\Parameters(array('applicationServices' => $applicationServices));
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(array(
+			'mail' => $mail,
+			'website' => $website,
+			'LCID' => $LCID,
+			'substitutions' => $substitutions
+		));
+		$eventManager->trigger('render', $this, $args);
+		return isset($args['html']) ? $args['html'] : '';
+	}
 
-		//use pageEvent to set blocks and make the render
-		/*
-		$event = new \Change\Presentation\Pages\PageEvent();
-		$event->setParams($arguments);
-		$event->setParam('page', $mail);
-		$event->setTarget($applicationServices->getPageManager());
-		*/
-
-		$result = new \Change\Http\Web\Result\Page($mail->getCode());
-
-		$mailTemplate = $mail->getTemplate();
-		$templateLayout = $mailTemplate->getContentLayout($website->getId());
-
-		$mailLayout = $mail->getContentLayout();
-		$containers = array();
-		foreach ($templateLayout->getItems() as $item)
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultRender($event)
+	{
+		$mail = $event->getParam('mail');
+		$website = $event->getParam('website');
+		$LCID = $event->getParam('LCID');
+		$substitutions = $event->getParam('substitutions');
+		if ($mail instanceof \Rbs\Mail\Documents\Mail && $website instanceof \Rbs\Website\Documents\Website && is_string($LCID) && is_array($substitutions))
 		{
-			if ($item instanceof \Change\Presentation\Layout\Container)
+			$applicationServices = $event->getApplicationServices();
+			$application = $event->getApplication();
+			$urlManager = $website->getUrlManager($LCID);
+			$urlManager->setAbsoluteUrl(true);
+			$urlManager->setPathRuleManager($applicationServices->getPathRuleManager());
+
+			$result = new \Change\Http\Web\Result\Page($mail->getCode());
+
+			$mailTemplate = $mail->getTemplate();
+			$templateLayout = $mailTemplate->getContentLayout($website->getId());
+
+			$mailLayout = $mail->getContentLayout();
+			$containers = array();
+			foreach ($templateLayout->getItems() as $item)
 			{
-				$container = $mailLayout->getById($item->getId());
-				if ($container)
+				if ($item instanceof \Change\Presentation\Layout\Container)
 				{
-					$containers[] = $container;
+					$container = $mailLayout->getById($item->getId());
+					if ($container)
+					{
+						$containers[] = $container;
+					}
 				}
 			}
-		}
-		$mailLayout->setItems($containers);
+			$mailLayout->setItems($containers);
 
-		$blocks = array_merge($templateLayout->getBlocks(), $mailLayout->getBlocks());
+			$blocks = array_merge($templateLayout->getBlocks(), $mailLayout->getBlocks());
 
-		if (count($blocks))
-		{
-			$blockManager = $applicationServices->getBlockManager();
-
-			//TODO check this with Eric
-			$httpWebEvent = new \Change\Http\Web\Event();
-			$httpWebEvent->setParams($arguments);
-			$httpWebEvent->setUrlManager($website->getUrlManager($LCID));
-
-			$blockInputs = array();
-			foreach ($blocks as $block)
+			if (count($blocks))
 			{
-				/* @var $block \Change\Presentation\Layout\Block */
-				//$blockParameter = $blockManager->getParameters($block, $pageManager->getHttpWebEvent());
-				$blockParameter = $blockManager->getParameters($block, $httpWebEvent);
-				$blockInputs[] = array($block, $blockParameter);
-			}
+				$blockManager = $applicationServices->getBlockManager();
 
-			$blockResults = array();
-			foreach ($blockInputs as $infos)
-			{
-				list($blockLayout, $parameters) = $infos;
+				$httpWebEvent = new \Change\Http\Web\Event(null, null, $event->getParams());
+				$httpWebEvent->setUrlManager($website->getUrlManager($LCID));
 
-				/* @var $blockLayout \Change\Presentation\Layout\Block */
-				//$blockResult = $blockManager->getResult($blockLayout, $parameters, $pageManager->getHttpWebEvent());
-				$blockResult = $blockManager->getResult($blockLayout, $parameters, $httpWebEvent);
-				var_dump($blockResult);
-				if (isset($blockResult))
+				$blockInputs = array();
+				foreach ($blocks as $block)
 				{
-					$blockResults[$blockLayout->getId()] = $blockResult;
+					/* @var $block \Change\Presentation\Layout\Block */
+					$information = $blockManager->getBlockInformation($block->getName());
+					if ($information && $information->isMailSuitable())
+					{
+						$blockParameter = $blockManager->getParameters($block, $httpWebEvent);
+						$blockInputs[] = array($block, $blockParameter);
+					}
 				}
+
+				$blockResults = array();
+				foreach ($blockInputs as $infos)
+				{
+					list($blockLayout, $parameters) = $infos;
+
+					/* @var $blockLayout \Change\Presentation\Layout\Block */
+					$blockResult = $blockManager->getResult($blockLayout, $parameters, $httpWebEvent);
+					if (isset($blockResult))
+					{
+						$blockResults[$blockLayout->getId()] = $blockResult;
+					}
+				}
+				$result->setBlockResults($blockResults);
 			}
-			$result->setBlockResults($blockResults);
-		}
 
-		$cachePath = $application->getWorkspace()->cachePath('twig', 'mail', $mail->getCode() . '.twig');
-		$cacheTime = max($mail->getModificationDate()->getTimestamp(), $mailTemplate->getModificationDate()->getTimestamp());
+			$cachePath = $application->getWorkspace()->cachePath('twig', 'mail', $mail->getCode() . '.twig');
+			$cacheTime = max($mail->getModificationDate()->getTimestamp(), $mailTemplate->getModificationDate()->getTimestamp());
 
-		if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
-		{
-			$themeManager = $applicationServices->getThemeManager();
-			$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
-			$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
+			if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
 			{
-				return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
-			};
-			$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $mailLayout, $callableTwigBlock);
-			$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $mailLayout, $themeManager, $applicationServices, $application->inDevelopmentMode()));
+				$themeManager = $applicationServices->getThemeManager();
+				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
+				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
+				{
+					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
+				};
+				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $mailLayout, $callableTwigBlock);
+				$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $mailLayout, $themeManager, $applicationServices, $application->inDevelopmentMode()));
 
-			$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $mailTemplate->getHtml());
+				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $mailTemplate->getHtml());
 
-			\Change\Stdlib\File::write($cachePath, $htmlTemplate);
-			touch($cachePath, $cacheTime);
+				\Change\Stdlib\File::write($cachePath, $htmlTemplate);
+				touch($cachePath, $cacheTime);
+			}
+
+			$templateManager = $applicationServices->getTemplateManager();
+			$html = $templateManager->renderTemplateFile($cachePath, array('pageResult' => $result));
+			$event->setParam('html', $this->getSubstitutedString($html, $substitutions));
 		}
-
-		$templateManager = $applicationServices->getTemplateManager();
-		return $templateManager->renderTemplateFile($cachePath, array('pageResult' => $result));
-		//$result->setHtml($templateManager->renderTemplateFile($cachePath, array('pageResult' => $result)));
 	}
 
 	/**
@@ -319,5 +344,24 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $emails;
+	}
+
+	public function getSubstitutedString($string, $substitutions)
+	{
+		if ($string)
+		{
+			if (count($substitutions))
+			{
+				$string = preg_replace_callback(static::VARIABLE_REGEXP, function ($matches) use ($substitutions)
+				{
+					if (array_key_exists($matches[1], $substitutions))
+					{
+						return $substitutions[$matches[1]];
+					}
+					return '';
+				}, $string);
+			}
+		}
+		return ($string) ? $string : null;
 	}
 }

@@ -230,25 +230,27 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('admin@test.com', $replyTo);
 	}
 
-	public function atestRender()
+	public function testRender()
 	{
 		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
 		$mailManager = $genericServices->getMailManager();
 		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
 
-		$LCID = $this->getApplicationServices()->getI18nManager()->getLCID();
-		//declare a block manager to display a rich text block
-		$this->getApplication()->getConfiguration()->addVolatileEntry('Change/Events/BlockManager/Rbs_Generic', '\\Rbs\\Generic\\Events\\BlockManager\\Listeners');
+		//attach generic blockManager listeners to display a rich text block
 		$blockManager = $this->getApplicationServices()->getBlockManager();
-		$events = $blockManager->getEventManager()->getEvents();
-		var_dump($events);
+		$blockManager->getEventManager()->attachAggregate(new \Rbs\Generic\Events\BlockManager\Listeners());
+		//attach website richText
+		$richTextManager = $this->getApplicationServices()->getRichTextManager();
+		$richTextManager->getEventManager()->attachAggregate(new \Rbs\Generic\Events\RichTextManager\Listeners());
 
 		$website = $this->getNewWebsite();
-		$mail = $this->getNewMail('test');
+		$LCID = 'fr_FR';
+		$mail = $this->getNewMail('test', [$website], $LCID, 'I test render method');
 
+		$this->getApplicationServices()->getDocumentManager()->pushLCID($LCID);
 		$mail->setWebsites([$website]);
 		$mail->setSubstitutions(['aSubstitution']);
-		$mail->getCurrentLocalization()->setSubject('a mail for test');
 		$mail->getCurrentLocalization()->setSenderMail('admin@admin.com');
 		$mail->getCurrentLocalization()->setSenderName('Admin of tests');
 		$mail->getCurrentLocalization()->setEditableContent($this->getContentSample());
@@ -259,14 +261,38 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$tm->begin();
 			$mail->save();
 			$tm->commit();
+			$this->getApplicationServices()->getDocumentManager()->popLCID();
 		}
 		catch (\Exception $e)
 		{
+			$this->getApplicationServices()->getDocumentManager();
 			throw $tm->rollBack($e);
 		}
 
-		$html = $mailManager->render($mail, $website, $LCID, $this->getApplicationServices(), $this->getApplication());
-		$this->assertEquals($this->getHtmlSample(), $html);
+		$substitutions = ['aSubstitution' => 'the substitution'];
+		$html = $mailManager->render($mail, $website, $LCID, $substitutions);
+		$htmlDomDocument = new \DOMDocument(1, 'utf-8');
+		$htmlDomDocument->loadHTML($html);
+		$expectedDomDocument = new \DOMDocument(1, 'utf-8');
+		$expectedDomDocument->loadHTML($this->getHtmlSample());
+		$this->assertXmlStringEqualsXmlString($expectedDomDocument->saveHTML(), $htmlDomDocument->saveHTML());
+
+
+
+	}
+
+	public function testGetSubstitutedString()
+	{
+		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
+		$mailManager = $genericServices->getMailManager();
+		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
+
+		$stringToSubstitute = 'Hello, I have a {color} {object}';
+		$substitutions = ['color' => 'black', 'object' => 'cube'];
+
+		$substitutedString = $mailManager->getSubstitutedString($stringToSubstitute, $substitutions);
+		$this->assertEquals('Hello, I have a black cube', $substitutedString);
 	}
 
 	/**
@@ -374,7 +400,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				'id' => 'mainContent', 'grid' => 12, 'type' => 'container',
 				'items' => [
 					[
-						'type' => 'block', 'name' => 'Rbs_Website_RichText', 'id' => 2, 'label' => 'Rbs_Website_RichText',
+						'type' => 'block', 'name' => 'Rbs_Website_Richtext', 'id' => 2, 'label' => 'Rbs_Website_Richtext',
 						'parameters' => [
 							'contentType' => 'Markdown', 'content' => 'It\'s a beautiful HTML sample with {aSubstitution}', 'TTL' => 60
 						]
@@ -393,7 +419,11 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				<html>
 					<body>
 						<div id="content">
-							<p>It\'s a beautiful HTML sample with the substitution</p>
+							<div data-type="block" data-id="2" data-name="Rbs_Website_Richtext">
+								<div class="richtext">
+									<p>It\'s a beautiful HTML sample with the substitution</p>
+								</div>
+							</div>
 						</div>
 					</body>
 				</html>';

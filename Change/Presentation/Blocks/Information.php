@@ -24,6 +24,11 @@ class Information
 	protected $label;
 
 	/**
+	 * @var boolean
+	 */
+	protected $mailSuitable;
+
+	/**
 	 * @var ParameterInformation[]
 	 */
 	protected $parametersInformation = array();
@@ -89,6 +94,22 @@ class Information
 	{
 		$this->label = $label;
 		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isMailSuitable()
+	{
+		return $this->mailSuitable !== null ? $this->mailSuitable : false;
+	}
+
+	/**
+	 * @param boolean $mailSuitable
+	 */
+	public function setMailSuitable($mailSuitable)
+	{
+		$this->mailSuitable = $mailSuitable;
 	}
 
 	/**
