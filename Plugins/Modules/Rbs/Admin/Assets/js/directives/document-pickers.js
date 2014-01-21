@@ -219,7 +219,7 @@
 					navParams.label = scope.modelInfo.properties[property].label;
 				}
 				Navigation.start(iElement, navParams);
-				$location.url(UrlManager.getFormUrl(selectModel));
+				$location.url(UrlManager.getNewUrl(selectModel));
 			}
 		};
 
