@@ -50,6 +50,9 @@
 	"storeindex_create":{
 		"message":"ajouter un index de recherche produits"
 	},
+	"storeindex_list":{
+		"message":"liste des index"
+	},
 	"facetgroup_list":{
 		"message":"liste des groupes de facettes"
 	},

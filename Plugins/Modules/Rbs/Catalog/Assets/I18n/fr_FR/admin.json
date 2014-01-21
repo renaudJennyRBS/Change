@@ -164,6 +164,9 @@
 	"sectionproductlist_create":{
 		"message":"ajouter une liste de produits synchronisée avec une section"
 	},
+	"sectionproductlist_list":{
+		"message":"listes de produits"
+	},
 	"productlistitem_list_aside_link":{
 		"message":"configurer les <strong>listes de produits</strong>"
 	},

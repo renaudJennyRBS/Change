@@ -390,5 +390,14 @@
 	},
 	"displaydocument_duplicate":{
 		"message":"Le document est déja associé à une autre page du site"
+	},
+	"breadcrumb_menus":{
+		"message":"menus"
+	},
+	"breadcrumb_structure":{
+		"message":"structure"
+	},
+	"breadcrumb_functions":{
+		"message":"fonctions"
 	}
 }

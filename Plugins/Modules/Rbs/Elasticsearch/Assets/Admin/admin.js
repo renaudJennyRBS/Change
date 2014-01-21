@@ -17,6 +17,7 @@
 			$delegate.routesForLocalizedModels([
 				'Rbs_Elasticsearch_FacetGroup', 'Rbs_Elasticsearch_Facet'
 			]);
+			$delegate.model("Rbs_Elasticsearch_StoreIndex").route('list', '/Rbs/Elasticsearch/FullText/', {'templateUrl':'Document/Rbs/Elasticsearch/FullText/list.twig'});
 
 			return $delegate.module(null);
 		}]);

@@ -76,10 +76,10 @@
 
 
 				scope.$on('Change:DocumentSaved', function (event, doc) {
-					Settings.set('editorActionAfterSave', scope.actionAfterSave, true);
+					/*Settings.set('editorActionAfterSave', scope.actionAfterSave, true);
 					if (scope.actionAfterSave === 'list') {
 						Breadcrumb.goParent();
-					}
+					} */
 				});
 
 

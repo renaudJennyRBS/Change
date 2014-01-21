@@ -87,6 +87,9 @@
 			$delegate.model('Rbs_Catalog_VariantGroup')
 				.route('variantList', 'Rbs/Catalog/VariantGroup/:id/VariantList/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
 				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig');
+
+			$delegate.model("Rbs_Catalog_SectionProductList").route('list', '/Rbs/Catalog/ProductList/', {'templateUrl':'Document/Rbs/Catalog/ProductList/list.twig'});
+
 			return $delegate.module(null);
 		}]);
 	}]);

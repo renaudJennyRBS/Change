@@ -11,14 +11,14 @@
 	__change.createEditorForModelTranslation('Rbs_Website_Topic');
 
 
-	app.run(['$templateCache', '$rootScope', '$location', 'RbsChange.REST', function ($templateCache, $rootScope, $location, REST)
+	app.run(['$templateCache', '$rootScope', '$location', 'RbsChange.REST', 'RbsChange.i18n', function ($templateCache, $rootScope, $location, REST, I18n)
 	{
 		// Template for menu items in pickers.
 		$templateCache.put('picker-item-Rbs_Menu_Item.html', '(=item.title=)(=item.titleKey=)');
 
 		// Update Breadcrumb.
 		$rootScope.$on('Change:UpdateBreadcrumb', function (event, eventData, breadcrumbData, promises) {
-			updateBreadcrumb(eventData, breadcrumbData, promises, REST, $location);
+			updateBreadcrumb(eventData, breadcrumbData, promises, REST, I18n, $location);
 		});
 	}]);
 
@@ -31,7 +31,7 @@
 	 * @param REST
 	 * @param $location
 	 */
-	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, $location)
+	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, i18n, $location)
 	{
 		var p, search = $location.search();
 
@@ -49,7 +49,7 @@
 				p = REST.resource(search['website']).then(function (website)
 				{
 					breadcrumbData.resource = website;
-					breadcrumbData.resourceModifier = search['view']; // FIXME Use real label instead of URL parameter
+					breadcrumbData.resourceModifier = i18n.trans('m.rbs.website.admin.breadcrumb_' + search['view'].toLowerCase() + ' | ucf');
 				});
 				promises.push(p);
 			}
@@ -64,9 +64,9 @@
 				p = REST.resource(eventData.route.params.website);
 				p.then(function (website) {
 					breadcrumbData.path.push(website);
-					breadcrumbData.path.push(['Menus', website.url('menus')]); // FIXME i18n
+					breadcrumbData.path.push([i18n.trans('m.rbs.website.admin.breadcrumb_menus | ucf'), website.url('menus')]);
 					if (! breadcrumbData.resource) {
-						breadcrumbData.resource = 'New menu'; // FIXME i18n
+						breadcrumbData.resource = i18n.trans('m.rbs.admin.adminjs.new_resource | ucf');
 					}
 				});
 				promises.push(p);
