@@ -59,7 +59,7 @@
 			"label": "m.rbs.review.admin.module_name",
 			"url": "Rbs/Review",
 			"section": "admin",
-			"keywords": "m.rbs.review.admin.js.module_keywords"
+			"keywords": "m.rbs.review.admin.module_keywords"
 		},
 		{
 			"label": "m.rbs.user.admin.module_name",

@@ -1086,11 +1086,11 @@
 					var	mi = Utils.modelInfo(model),
 						location = [
 							[
-								i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module) + '.admin.js.module-name | ucf'),
+								i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module) + '.adminjs.module_name | ucf'),
 								$filter('rbsURL')(mi.vendor + '_' + mi.module, 'home')
 							],
 							[
-								i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module + '.admin.js.' + mi.document) + '-list | ucf'),
+								i18n.trans('m.' + angular.lowercase(mi.vendor + '.' + mi.module + '.adminjs.' + mi.document) + '_list | ucf'),
 								$filter('rbsURL')(model, 'list')
 							]
 						];
