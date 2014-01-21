@@ -276,9 +276,6 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$expectedDomDocument = new \DOMDocument(1, 'utf-8');
 		$expectedDomDocument->loadHTML($this->getHtmlSample());
 		$this->assertXmlStringEqualsXmlString($expectedDomDocument->saveHTML(), $htmlDomDocument->saveHTML());
-
-
-
 	}
 
 	public function testGetSubstitutedString()
