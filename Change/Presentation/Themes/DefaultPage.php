@@ -90,7 +90,7 @@ class DefaultPage implements Page
 	 * @api
 	 * @return Template
 	 */
-	public function getPageTemplate()
+	public function getTemplate()
 	{
 		return $this->themeManager->getDefault()->getPageTemplate('default');
 	}

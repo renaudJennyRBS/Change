@@ -23,7 +23,7 @@ interface Page
 	 * @api
 	 * @return Template
 	 */
-	public function getPageTemplate();
+	public function getTemplate();
 
 	/**
 	 * @return Layout

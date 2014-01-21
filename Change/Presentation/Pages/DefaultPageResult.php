@@ -16,7 +16,7 @@ class DefaultPageResult
 		/* @var $page \Change\Presentation\Interfaces\Page */
 		$page = $event->getPage();
 		$pageManager = $event->getPageManager();
-		$pageTemplate = $page->getPageTemplate();
+		$pageTemplate = $page->getTemplate();
 		$applicationServices = $event->getApplicationServices();
 
 		$result = $event->getPageResult();

@@ -144,6 +144,17 @@ class GenericServices extends \Zend\Di\Di
 			->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//MailManager : EventManagerFactory, DocumentManager, JobManager
+		$mailManagerClassName = $this->getInjectedClassName('MailManager', 'Rbs\Mail\MailManager');
+		$classDefinition = $this->getClassDefinition($mailManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition
+			->addMethod('setJobManager', true)
+			->addMethodParameter('setJobManager', 'jobManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
@@ -151,6 +162,7 @@ class GenericServices extends \Zend\Di\Di
 		$documentManager = function() use ($applicationServices) {return $applicationServices->getDocumentManager();};
 		$i18nManager = function() use ($applicationServices) {return $applicationServices->getI18nManager();};
 		$collectionManager = function() use ($applicationServices) {return $applicationServices->getCollectionManager();};
+		$jobManager = function() use ($applicationServices) {return $applicationServices->getJobManager();};
 		$logging = function() use ($applicationServices) {return $applicationServices->getLogging();};
 		$configuration = $application->getConfiguration();
 
@@ -183,6 +195,10 @@ class GenericServices extends \Zend\Di\Di
 		$im->addAlias('IndexManager', $indexManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory, 'configuration' => $configuration,
 				'documentManager' => $documentManager, 'logging' => $logging));
+
+		$im->addAlias('MailManager', $mailManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory,
+				'documentManager' => $documentManager, 'jobManager' => $jobManager));
 	}
 
 	/**
@@ -246,5 +262,14 @@ class GenericServices extends \Zend\Di\Di
 	public function getGeoManager()
 	{
 		return $this->get('GeoManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Mail\MailManager
+	 */
+	public function getMailManager()
+	{
+		return $this->get('MailManager');
 	}
 }
