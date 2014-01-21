@@ -35,6 +35,9 @@
 	"price_discount_section":{
 		"message":"prix promotionnel"
 	},
+	"price_no_discount_available":{
+		"message":"ce prix ne peut être associé à un prix promotionnel"
+	},
 	"price_select_baseprice":{
 		"message":"sélectionner le prix barré"
 	},
