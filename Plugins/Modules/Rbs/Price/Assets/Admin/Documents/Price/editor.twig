@@ -157,8 +157,23 @@
 	</fieldset>
 
 	<fieldset
+		ng-show="section=='discount'"
+		data-form-section-label="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}">
+		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true" load-query="loadPriceQuery">
+			<rbs-column name="boValue" align="right" width="90px" >
+				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedBoValue=)</a>
+			</rbs-column>
+			<rbs-column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
+			<rbs-column name="webStore" sort="webStore.label">(=doc.webStore.label=)</rbs-column>
+			<rbs-column name="startActivation">(= doc.startActivation | rbsDateTime =)</rbs-column>
+			<rbs-column name="endActivation">(= doc.endActivation | rbsDateTime =)</rbs-column>
+		</rbs-document-list>
+	</fieldset>
+
+	<fieldset
 		ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-rbs-document-system-info-section="">
 	</fieldset>

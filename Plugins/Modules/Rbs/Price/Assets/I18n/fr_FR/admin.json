@@ -32,6 +32,9 @@
 	"price_create_discount_from_price":{
 		"message":"créer un prix promotionnel à partir de ce prix"
 	},
+	"price_discount_section":{
+		"message":"prix promotionnel"
+	},
 	"price_select_baseprice":{
 		"message":"sélectionner le prix barré"
 	},

@@ -25,7 +25,6 @@
 				};
 
 				scope.onReady = function(){
-
 					if (!scope.document.product && $routeParams.productId)
 					{
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
@@ -239,6 +238,29 @@
 
 				scope.endActivationEndOfMonth = function(){
 					scope.document.endActivation = moment().endOf('M').toDate();
+				};
+
+				var documentId = -1;
+				if ($routeParams.hasOwnProperty('id') && $routeParams.id != 'new') {
+					documentId = parseInt($routeParams.id, 10);
+				}
+
+				scope.loadPriceQuery = {
+					"model": "Rbs_Price_Price",
+
+					"where": {
+						"and" : [
+							{
+								"op" : "eq",
+								"lexp" : {
+									"property" : "basePrice"
+								},
+								"rexp" : {
+									"value": documentId
+								}
+							}
+						]
+					}
 				};
 
 			}
