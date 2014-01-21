@@ -1290,11 +1290,16 @@
 
 						scope.pagination.total = response.pagination.count;
 
-						replaceCollection(response.resources);
-
-						scope.$broadcast('Change:DocumentListChanged', scope.collection);
+						if (scope.pagination.total < scope.pagination.offset)
+						{
+							$location.search('offset', 0);
+						}
+						else
+						{
+							replaceCollection(response.resources);
+							scope.$broadcast('Change:DocumentListChanged', scope.collection);
+						}
 					}
-
 
 					function reload ()
 					{
