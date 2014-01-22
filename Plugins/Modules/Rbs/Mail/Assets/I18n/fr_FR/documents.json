@@ -1,0 +1,38 @@
+{
+	"modelconfiguration_modelname":{
+		"message":"nom du modèle"
+	},
+	"mail":{
+		"message":"mail"
+	},
+	"mail_template":{
+		"message":"modèle de mail"
+	},
+	"mail_editablecontent":{
+		"message":"contenu du mail"
+	},
+	"mail_usecache":{
+		"message":"mettre le mail en cache"
+	},
+	"mail_ttl":{
+		"message":"durée du cache"
+	},
+	"mail_code":{
+		"message":"code"
+	},
+	"mail_subject":{
+		"message":"sujet"
+	},
+	"mail_sendername":{
+		"message":"nom de l'expéditeur"
+	},
+	"mail_sendermail":{
+		"message":"email de l'expéditeur"
+	},
+	"mail_websites":{
+		"message":"sites web associés"
+	},
+	"mail_substitutions":{
+		"message":"substitutions disponibles"
+	}
+}
