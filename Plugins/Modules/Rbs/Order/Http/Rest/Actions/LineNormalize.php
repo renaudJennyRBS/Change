@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Order\Http\Rest\Actions;
 
-use Change\Documents\AbstractDocument;
 use Change\Http\Event;
 use Zend\Http\Response as HttpResponse;
 
@@ -20,104 +19,146 @@ class LineNormalize
 		$billingArea = null;
 		if ($request->isPost())
 		{
-			$line = $request->getPost('line');
+			$lineData = $request->getPost('line');
 
 			$webStoreId = $request->getPost('webStore');
 			$billingAreaId = $request->getPost('billingArea');
 			$zone = $request->getPost('zone');
 
-			$dm = $event->getApplicationServices()->getDocumentManager();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$pm = $commerceServices->getPriceManager();
+
+			$priceManager = $commerceServices->getPriceManager();
 
 			/* @var $webStore \Rbs\Store\Documents\WebStore */
-			$webStore = $dm->getDocumentInstance($webStoreId);
+			$webStore = $documentManager->getDocumentInstance($webStoreId, 'Rbs_Store_WebStore');
 
 			/* @var $billingArea \Rbs\Price\Documents\BillingArea */
-			$billingArea = $dm->getDocumentInstance($billingAreaId);
-
-			$orderLine = new \Rbs\Order\OrderLine($line);
-			$items = $orderLine->getItems();
-
-			$designations = array();
-			foreach($items as $item)
+			$billingArea = $documentManager->getDocumentInstance($billingAreaId, 'Rbs_Price_BillingArea');
+			if ($webStore && $billingArea)
 			{
-				$productId = $item->getOptions()->get('productId');
-				if($productId)
+				$currencyCode = $billingArea->getCurrencyCode();
+				$taxes = $billingArea->getTaxes();
+				$pricesValueWithTax = $webStore->getPricesValueWithTax();
+			}
+			else
+			{
+				$taxes = $currencyCode = null;
+				$pricesValueWithTax = false;
+			}
+
+			$orderLine = new \Rbs\Order\OrderLine($lineData);
+			$lineQuantity = $orderLine->getQuantity();
+			if (!$lineQuantity)
+			{
+				$lineQuantity = 1;
+				$orderLine->setQuantity($lineQuantity);
+			}
+
+			$productId = $orderLine->getOptions()->get('productId');
+			if ($productId)
+			{
+				if (!$orderLine->getKey())
 				{
-					/* @var $product \Rbs\Catalog\Documents\Product */
-					$product = $dm->getDocumentInstance($productId);
-					if($product)
+					$orderLine->setKey($productId);
+				}
+
+				/* @var $product \Rbs\Catalog\Documents\Product */
+				$product = $documentManager->getDocumentInstance($productId);
+				if ($product)
+				{
+					if (!$orderLine->getDesignation())
 					{
-						$designations[] = $product->getLabel();
-						$sku = $product->getSku();
-						if($sku && !$item->getCodeSKU())
+						$orderLine->setDesignation($product->getLabel());
+					}
+
+					$sku = $product->getSku();
+					if ($sku && count($orderLine->getItems()) == 0)
+					{
+						$item = new \Rbs\Order\OrderLineItem(['codeSKU' => $sku->getCode()]);
+						if ($webStore && $billingArea)
 						{
-							$item->setCodeSKU($sku->getCode());
+							$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
+							$item->setPrice($price);
 						}
-						if($sku && !$item->getOptions()->get('boPriceValue'))
+						else
 						{
-							/* @var $price \Rbs\Price\Documents\Price */
-							$price = $pm->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
-							if ($price instanceof AbstractDocument)
-							{
-								$item->setPrice($price);
-								$item->setTaxes($pm->getTaxByValue($item->getPriceValue(), $price->getTaxCategories(), $billingArea, $zone));
-								$item->getOptions()->set('boPriceValue', $price->getBoValue());
-								$item->getOptions()->set('boPriceEditWithTax', $price->getBoEditWithTax());
-							}
+							$item->setPrice(null);
 						}
+						$orderLine->appendItem($item);
 					}
 				}
+			}
 
-				$taxes = $item->getTaxes();
-				foreach($taxes as $tax)
-				{
-					if(!$tax->getRate())
-					{
-						$taxDoc = $pm->getTaxByCode($tax->getTaxCode());
-						$rate = $taxDoc->getRate($tax->getCategory(), $tax->getZone());
-						$tax->setRate($rate);
-					}
-				}
+			$taxesLine = [];
+			$priceValue = null;
+			$priceValueWithTax = null;
 
-				if (!$item->getPriceValue() && $item->getOptions()->get('boPriceValue'))
-				{
-					$boValue = $item->getOptions()->get('boPriceValue');
-					$boEditWithTax = $item->getOptions()->get('boPriceEditWithTax', $billingArea->getBoEditWithTax());
-					if($boEditWithTax)
-					{
-						$taxes = $item->getTaxes();
-						foreach($taxes as $tax)
-						{
-							$boValue /= (1+$tax->getRate());
-						}
-					}
-					$item->setPriceValue($boValue);
-				}
-
-				foreach($taxes as $tax)
-				{
-					if(!$tax->getValue())
-					{
-						$tax->setValue($tax->getRate() * $item->getPriceValue());
-					}
-				}
-
-				if(!$item->getReservationQuantity())
+			$items = $orderLine->getItems();
+			foreach ($items as $item)
+			{
+				if (!$item->getReservationQuantity())
 				{
 					$item->setReservationQuantity(1);
 				}
+				if (!$orderLine->getKey())
+				{
+					$orderLine->setKey($item->getCodeSKU());
+				}
+
+				$price = $item->getPrice();
+				if ($price === null) {
+					$item->setPrice(null);
+					$price = $item->getPrice();
+				}
+				$price->setWithTax($pricesValueWithTax);
+
+				$value = $price->getValue();
+				if ($value !== null)
+				{
+					$lineItemValue = $value * $lineQuantity;
+					if ($taxes !== null)
+					{
+						$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
+						if (count($taxArray))
+						{
+							$taxesLine = $priceManager->addTaxesApplication($taxesLine, $taxArray);
+						}
+
+						if ($price->isWithTax())
+						{
+							$priceValueWithTax += $lineItemValue;
+							$priceValue += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+						}
+						else
+						{
+							$priceValue += $lineItemValue;
+							$priceValueWithTax = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+						}
+					}
+					else
+					{
+						if ($price->isWithTax())
+						{
+							$priceValueWithTax += $lineItemValue;
+						}
+						else
+						{
+							$priceValue += $lineItemValue;
+						}
+					}
+				}
 			}
-			if(!$orderLine->getDesignation() && count($designations))
-			{
-				$orderLine->setDesignation($designations[0]);
-			}
+
+			$orderLine->setTaxes($taxesLine);
+			$orderLine->setPriceValueWithTax($priceValueWithTax);
+			$orderLine->setPriceValue($priceValue);
 
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-			$result->setArray(array ('line' => $orderLine->toArray()));
+			$result->setArray(array('line' => $orderLine->toArray()));
 			$event->setResult($result);
 		}
 	}

@@ -12,6 +12,11 @@ interface LineInterface
 	public function getIndex();
 
 	/**
+	 * @return string
+	 */
+	public function getKey();
+
+	/**
 	 * @return integer
 	 */
 	public function getQuantity();
@@ -30,6 +35,21 @@ interface LineInterface
 	 * @return \Rbs\Commerce\Interfaces\LineItemInterface[]
 	 */
 	public function getItems();
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 */
+	public function getTaxes();
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValue();
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithTax();
 
 	/**
 	 * @return array

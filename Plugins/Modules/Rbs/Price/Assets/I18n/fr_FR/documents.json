@@ -29,9 +29,6 @@
 	"billingarea_currencyCode":{
 		"message":"code ISO devise"
 	},
-	"billingarea_boeditwithtax":{
-		"message":"saisie TTC des prix"
-	},
 	"billingarea_taxes":{
 		"message":"taxes"
 	},
@@ -70,12 +67,6 @@
 	},
 	"price_targetid":{
 		"message":"cible"
-	},
-	"price_bovalue":{
-		"message":"prix"
-	},
-	"price_bodiscountvalue":{
-		"message":"prix promotion"
 	},
 	"price_value":{
 		"message":"prix"

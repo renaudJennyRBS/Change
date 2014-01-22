@@ -22,11 +22,6 @@ interface LineItemInterface
 	public function getPrice();
 
 	/**
-	 * @return \Rbs\Price\Tax\TaxApplication[]
-	 */
-	public function getTaxes();
-
-	/**
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions();

@@ -14,6 +14,11 @@ interface PriceInterface
 	/**
 	 * @return boolean
 	 */
+	public function isWithTax();
+
+	/**
+	 * @return boolean
+	 */
 	public function isDiscount();
 
 	/**

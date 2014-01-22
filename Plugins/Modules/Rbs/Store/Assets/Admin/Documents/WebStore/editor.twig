@@ -18,6 +18,13 @@
 			selector-title="{{ i18nAttr('m.rbs.store.admin.store_billingareas_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
+		<span class="help-block" ng-show="document.countDefinedPrices > 0">
+			{{ i18n('m.rbs.store.admin.web_store_pricesvaluewithtax_locked', ['ucf']) | raw }}
+		</span>
+		<rbs-field-boolean property="pricesValueWithTax" ng-disabled="document.countDefinedPrices > 0"
+				label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'pricesValueWithTax'), ['ucf']) }}">
+		</rbs-field-boolean>
+
 		<rbs-field-boolean property="displayPrices"
 			label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPrices'), ['ucf']) }}">
 		</rbs-field-boolean>

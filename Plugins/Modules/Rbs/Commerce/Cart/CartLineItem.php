@@ -29,7 +29,7 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 		}
 		else
 		{
-			$this->codeSKU = $codeSKU;
+			$this->setCodeSKU($codeSKU);
 		}
 	}
 
@@ -57,7 +57,6 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 			'codeSKU' => $this->codeSKU,
 			'reservationQuantity' => $this->reservationQuantity,
 			'price' => $this->price,
-			'taxes' => $this->taxes,
 			'options' => $this->options);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
 	}
@@ -83,7 +82,6 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 		$this->codeSKU = $serializedData['codeSKU'];
 		$this->reservationQuantity = $serializedData['reservationQuantity'];
 		$this->price = $serializedData['price'];
-		$this->taxes = $serializedData['taxes'];
 		$this->options = $serializedData['options'];
 	}
 }

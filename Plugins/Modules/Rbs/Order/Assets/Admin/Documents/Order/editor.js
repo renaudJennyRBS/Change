@@ -10,8 +10,8 @@
 			replace : false,
 			require : 'rbsDocumentEditor',
 
-			link : function (scope, element, attrs, editorCtrl)
-			{
+			link : function (scope, element, attrs, editorCtrl) {
+
 				scope.showNewLineUI = false;
 				scope.showAddressUI = false;
 				scope.showShippingUI = false;
@@ -19,12 +19,12 @@
 				scope.priceInfo = {
 					taxInfo : [],
 					billingArea : {},
-					zones : []
+					zones : [],
+					withTax : false
 				};
-				scope.populateAddressList = function(ownerId)
-				{
-					if(!ownerId)
-					{
+
+				scope.populateAddressList = function(ownerId) {
+					if(!ownerId) {
 						scope.userAddresses = [];
 						return;
 					}
@@ -51,10 +51,8 @@
 					});
 				};
 
-				scope.billingAreaUpdated = function(billingAreaId)
-				{
-					if(!billingAreaId)
-					{
+				scope.billingAreaUpdated = function(billingAreaId) {
+					if(!billingAreaId) {
 						return;
 					}
 					REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(data){
@@ -76,17 +74,33 @@
 					});
 				};
 
-				scope.onReady = function ()
-				{
-					scope.showNewLineUI = scope.document.isNew();
-					if (! scope.document.linesData) {
+				scope.webStoreUpdated = function(webStoreId) {
+					if(!webStoreId) {
+						return;
+					}
+					REST.resource('Rbs_Store_WebStore', webStoreId).then(function(data) {
+						scope.document.contextData.pricesValueWithTax = data.pricesValueWithTax;
+					});
+				};
+
+				scope.onLoad = function() {
+					if (angular.isArray(scope.document.contextData) || !angular.isObject(scope.document.contextData)) {
+						scope.document.contextData = {};
+					}
+
+					if (!angular.isArray(scope.document.linesData)) {
 						scope.document.linesData = [];
 					}
-					if(!angular.isObject(scope.document.addressData) || scope.document.addressData instanceof Array)
-					{
+
+					if (angular.isArray(scope.document.addressData) || !angular.isObject(scope.document.addressData)) {
 						scope.document.addressData = {};
 					}
-					if (!scope.isNew()){
+				};
+
+				scope.onReady = function() {
+					scope.showNewLineUI = scope.document.isNew();
+
+					if (!scope.isNew()) {
 						REST.call(scope.document.getLink('shipments'), {
 							column: ['code', 'shippingModeCode', 'trackingCode', 'carrierStatus']
 						}).then(function (data){
@@ -100,16 +114,24 @@
 				};
 
 				// This watches for modifications in the user doc in order to fill the address list
-				scope.$watch('document.ownerId', function (ownerId, old) {
+				scope.$watch('document.ownerId', function (ownerId) {
 					scope.populateAddressList(ownerId);
 				}, true);
 
-				scope.$watch('document.billingAreaId', function (billingAreaId, old) {
+				scope.$watch('document.billingAreaId', function (billingAreaId) {
 					scope.billingAreaUpdated(billingAreaId);
 				}, true);
 
-				scope.$watch('document.contextData.taxZone', function (taxZone, old) {
+				scope.$watch('document.webStoreId', function (webStoreId) {
+					scope.webStoreUpdated(webStoreId);
+				}, true);
+
+				scope.$watch('document.contextData.taxZone', function (taxZone) {
 					scope.priceInfo.taxZone = taxZone;
+				}, true);
+
+				scope.$watch('document.contextData.pricesValueWithTax', function (pricesValueWithTax) {
+					scope.priceInfo.withTax = pricesValueWithTax;
 				}, true);
 
 				// This refreshes shippingDataObject to be synchronized with order editor

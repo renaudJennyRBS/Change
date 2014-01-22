@@ -9,11 +9,6 @@ use Rbs\Commerce\Interfaces\LineInterface;
 class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Serializable
 {
 	/**
-	 * @var string
-	 */
-	protected $key;
-
-	/**
 	 * @var array|null
 	 */
 	protected $serializedData;
@@ -33,7 +28,7 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		}
 		else
 		{
-			$this->key = $key;
+			$this->setKey($key);
 		}
 	}
 
@@ -48,24 +43,6 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 			$this->restoreSerializedData($documentManager);
 		}
 		return $this;
-	}
-
-	/**
-	 * @param string $key
-	 * @return $this
-	 */
-	public function setKey($key)
-	{
-		$this->key = $key;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getKey()
-	{
-		return $this->key;
 	}
 
 	/**
@@ -142,6 +119,9 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 			'quantity' => $this->quantity,
 			'designation' => $this->designation,
 			'items' => $this->items,
+			'taxes' => $this->taxes,
+			'priceValue' => $this->priceValue,
+			'priceValueWithTax' => $this->priceValueWithTax,
 			'options' => $this->options);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
 	}
@@ -166,6 +146,9 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		$this->quantity = $serializedData['quantity'];
 		$this->designation = $serializedData['designation'];
 		$this->items = $serializedData['items'];
+		$this->taxes = $serializedData['taxes'];
+		$this->priceValue = $serializedData['priceValue'];
+		$this->priceValueWithTax = $serializedData['priceValueWithTax'];
 		$this->options = $serializedData['options'];
 		foreach ($this->items as $item)
 		{

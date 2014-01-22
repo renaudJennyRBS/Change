@@ -24,20 +24,20 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	}
 
 	/**
-	 * @return \Rbs\Order\Std\OrderLine[]
+	 * @return  \Rbs\Order\OrderLine[]
 	 */
 	public function getLines()
 	{
 		$config = $this->getLinesData();
 		if (is_array($config))
 		{
-			return array_map(function($line) { return new \Rbs\Order\Std\OrderLine($line);}, $config);
+			return array_map(function($line) { return new \Rbs\Order\OrderLine($line);}, $config);
 		}
 		return array();
 	}
 
 	/**
-	 * @param \Rbs\Order\Std\OrderLine[] $lines
+	 * @param  \Rbs\Order\OrderLine[] $lines
 	 * @return $this
 	 */
 	public function setLines(array $lines = null)
@@ -47,7 +47,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			$lineData = array();
 			foreach ($lines as $line)
 			{
-				if ($line instanceof \Rbs\Order\Std\OrderLine)
+				if ($line instanceof \Rbs\Order\OrderLine)
 				{
 					$lineData[] = $line->toArray();
 				}
@@ -67,7 +67,6 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
 			$documentResult = $restResult;

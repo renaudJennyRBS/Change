@@ -28,5 +28,8 @@
 	},
 	"web_store_selector_available_web_stores":{
 		"message":"boutiques disponibles"
+	},
+	"web_store_pricesvaluewithtax_locked": {
+		"message":"Le mode de saisie des prix ne peut être modifié, car il existe des prix définis pour cette boutique."
 	}
 }

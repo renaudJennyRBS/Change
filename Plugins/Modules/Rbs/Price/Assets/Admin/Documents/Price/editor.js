@@ -11,11 +11,14 @@
 			require : 'rbsDocumentEditor',
 
 
-			link : function (scope, elm, attrs, editorCtrl)
-			{
-				scope.onLoad = function(){
-					if (angular.isArray(scope.document.taxCategories) || !angular.isObject(scope.document.taxCategories))
-					{
+			link : function (scope, elm, attrs, editorCtrl) {
+				scope.discount = false;
+				scope.webStore = {};
+				scope.billingArea = {};
+				scope.taxInfo = null;
+
+				scope.onLoad = function() {
+					if (angular.isArray(scope.document.taxCategories) || !angular.isObject(scope.document.taxCategories)) {
 						scope.document.taxCategories = {};
 					}
 
@@ -25,19 +28,14 @@
 				};
 
 				scope.onReady = function(){
-					if (!scope.document.product && $routeParams.productId)
-					{
-						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
+					if (!scope.document.product && $routeParams.productId) {
+						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product) {
 							scope.document.sku = product.sku;
 						});
 					}
 
-					scope.discount = false;
-
-					if (scope.document.isNew() && $routeParams.basePriceId)
-					{
-						REST.resource('Rbs_Price_Price', $routeParams.basePriceId).then(function(price){
-
+					if (scope.document.isNew() && $routeParams.basePriceId) {
+						REST.resource('Rbs_Price_Price', $routeParams.basePriceId).then(function(price) {
 							scope.document.sku = price.sku;
 							scope.document.webStore = price.webStore;
 							scope.document.billingArea = price.billingArea;
@@ -45,106 +43,71 @@
 							scope.document.basePrice = price;
 							scope.discount = true;
 
-							REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:price.billingArea.id}).then(function(res){
+							REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:price.billingArea.id}).then(function(res) {
 								scope.taxInfo = res;
 							});
 
 						});
 					}
 
-					if (scope.document.basePrice)
-					{
+					if (scope.document.basePrice) {
 						scope.discount = true;
 					}
 
-					if (scope.document.webStore)
-					{
-						if (angular.isObject(scope.document.webStore))
-						{
-							scope.webStoreId = scope.document.webStore.id;
-						}
-						else
-						{
-							scope.webStoreId = scope.document.webStore;
-						}
-					}
-
-					if (scope.document.startActivation && scope.document.endActivation)
-					{
+					if (scope.document.startActivation && scope.document.endActivation) {
 						var startAct = moment(scope.document.startActivation);
 						var endAct = moment(scope.document.endActivation);
 
-						if (endAct.diff(startAct, 'weeks', true) == 1)
-						{
+						if (endAct.diff(startAct, 'weeks', true) == 1) {
 							scope.activationOffsetClass = {"1w": "active", "2w" : null, "1M": null};
-						}
-						else if (endAct.diff(startAct, 'weeks', true) == 2)
-						{
+						} else if (endAct.diff(startAct, 'weeks', true) == 2) {
 							scope.activationOffsetClass = {"1w": null, "2w" : "active", "1M": null};
 
-						}
-						else if (endAct.diff(startAct, 'months', true) == 1)
-						{
+						} else if (endAct.diff(startAct, 'months', true) == 1) {
 							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": "active"};
-						}
-						else
-						{
+						} else {
 							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
 						}
-					}
-					else
-					{
+					} else {
 						scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
 					}
 
 				};
 
-				scope.webStoreId = null;
-				scope.billingArea = null;
-				scope.taxInfo = null;
-
-				scope.$watch('document.webStore', function(newValue, oldValue){
-					if (newValue)
-					{
-						if (angular.isObject(newValue) && newValue.hasOwnProperty('id'))
-						{
-							scope.webStoreId = newValue.id;
+				scope.$watch('document.webStore', function(newValue) {
+					if (newValue) {
+						var webStoreId = (angular.isObject(newValue)) ? newValue.id : newValue;
+						if (scope.webStore.id != webStoreId) {
+							REST.resource('Rbs_Store_WebStore', webStoreId).then(function(res) {
+								scope.webStore = res;
+							});
 						}
-						else
-						{
-							scope.webStoreId = newValue;
-						}
-					}
-					else
-					{
-						scope.webStoreId = null;
+					} else {
+						scope.webStore = {};
 					}
 
 				});
 
-				scope.$watch('document.billingArea', function(newValue, oldValue){
-					if (newValue)
-					{
-						if (!scope.document.taxCategories)
-						{
+				scope.$watch('document.billingArea', function(newValue) {
+					if (newValue) {
+						if (!scope.document.taxCategories) {
 							scope.document.taxCategories = {};
 						}
 
 						var billingAreaId = (angular.isObject(newValue)) ? newValue.id : newValue;
-						REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(res){
-							scope.billingArea = res;
-						});
-					}
-					else
-					{
-						scope.billingArea = null;
+						if (scope.billingArea.id != billingAreaId) {
+							REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(res){
+								scope.billingArea = res;
+							});
+						}
+					} else {
+						scope.billingArea = {};
 						scope.taxInfo = null;
 					}
 				});
 
 				scope.$watch('billingArea', function(newValue) {
-					if (newValue)
-					{
+					if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
 						REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:newValue.id}).then(function(res){
 							scope.taxInfo = res;
 						});
@@ -181,26 +144,19 @@
 				};
 
 				scope.$watch('document.startActivation', function(newValue, oldValue){
-					if (newValue != oldValue && angular.isObject(scope.activationOffsetClass))
-					{
-						if (scope.activationOffsetClass['1w'])
-						{
+					if (newValue != oldValue && angular.isObject(scope.activationOffsetClass)) {
+						if (scope.activationOffsetClass['1w']) {
 							scope.endActivationOneWeek();
-						}
-						else if (scope.activationOffsetClass['2w'])
-						{
+						} else if (scope.activationOffsetClass['2w']) {
 							scope.endActivationTwoWeeks();
-						}
-						else if (scope.activationOffsetClass['1M'])
-						{
+						} else if (scope.activationOffsetClass['1M']) {
 							scope.endActivationOneMonth();
 						}
 					}
 				});
 
 				scope.endActivationOneWeek = function(toggle){
-					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1w'])
-					{
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1w']) {
 						scope.activationOffsetClass['1w'] = null;
 						return;
 					}
@@ -209,8 +165,7 @@
 				};
 
 				scope.endActivationTwoWeeks = function(toggle){
-					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['2w'])
-					{
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['2w']) {
 						scope.activationOffsetClass['2w'] = null;
 						return;
 					}
@@ -218,9 +173,8 @@
 					scope.activationOffsetClass = {"1w":null, "2w" : "active", "1M": null};
 				};
 
-				scope.endActivationOneMonth = function(toggle){
-					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1M'])
-					{
+				scope.endActivationOneMonth = function(toggle) {
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1M']) {
 						scope.activationOffsetClass['1M'] = null;
 						return;
 					}
@@ -247,7 +201,6 @@
 
 				scope.loadPriceQuery = {
 					"model": "Rbs_Price_Price",
-
 					"where": {
 						"and" : [
 							{

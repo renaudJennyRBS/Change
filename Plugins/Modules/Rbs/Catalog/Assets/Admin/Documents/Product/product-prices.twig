@@ -59,7 +59,7 @@
 		                   extend="List" collection-url="(=pricesURL=)">
 			<rbs-column name="webStore">(=doc.webStore.label=)</rbs-column>
 			<rbs-column name="billingArea">(=doc.billingArea.label=)</rbs-column>
-			<rbs-column name="boValue" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedBoValue=)</a></rbs-column>
+			<rbs-column name="value" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedValue=)</a></rbs-column>
 			<rbs-column name="priority">(=doc.priority=)</rbs-column>
 			<rbs-column name="startActivation">(=doc.startActivation | rbsDateTime=)</rbs-column>
 			<rbs-column name="endActivation">(=doc.endActivation | rbsDateTime =)</rbs-column>

@@ -2,7 +2,6 @@
 namespace Rbs\Order\Collection;
 
 use Change\Collection\CollectionArray;
-use Zend\EventManager\Event;
 
 /**
  * @name \Rbs\Order\Collection\Collections

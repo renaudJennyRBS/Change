@@ -24,11 +24,6 @@ class BaseLineItem implements LineItemInterface
 	protected $price;
 
 	/**
-	 * @var \Rbs\Price\Tax\TaxApplication[]
-	 */
-	protected $taxes = array();
-
-	/**
 	 * @var \Zend\Stdlib\Parameters
 	 */
 	protected $options;
@@ -95,66 +90,11 @@ class BaseLineItem implements LineItemInterface
 	}
 
 	/**
-	 * @return \Rbs\Price\PriceInterface|null
+	 * @return \Rbs\Commerce\Std\BasePrice|null
 	 */
 	public function getPrice()
 	{
 		return $this->price;
-	}
-
-	/**
-	 * @param float|null $priceValue
-	 * @return $this
-	 */
-	public function setPriceValue($priceValue)
-	{
-		if ($this->price === null)
-		{
-			$this->setPrice($priceValue);
-		}
-		$this->price->setValue($priceValue);
-		return $this;
-	}
-
-	/**
-	 * @return float|null
-	 */
-	public function getPriceValue()
-	{
-		return $this->price ? $this->price->getValue() : null;
-	}
-
-	/**
-	 * @param \Rbs\Price\Tax\TaxApplication[] $taxes
-	 * @return $this
-	 */
-	public function setTaxes($taxes)
-	{
-		$this->taxes = array();
-		if (is_array($taxes))
-		{
-			foreach ($taxes as $tax)
-			{
-				$this->appendTax($tax);
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * @return \Rbs\Price\Tax\TaxApplication[]
-	 */
-	public function getTaxes()
-	{
-		return $this->taxes;
-	}
-
-	/**
-	 * @param \Rbs\Price\Tax\TaxApplication $tax
-	 */
-	public function appendTax(\Rbs\Price\Tax\TaxApplication $tax)
-	{
-		$this->taxes[] = $tax;
 	}
 
 	/**
@@ -185,11 +125,8 @@ class BaseLineItem implements LineItemInterface
 				case 'reservationQuantity':
 					$this->reservationQuantity = intval($value);
 					break;
-				case 'priceValue':
-					$this->setPriceValue($value);
-					break;
 				case 'price':
-					$this->price = new \Rbs\Commerce\Std\BasePrice($value);
+					$this->setPrice($value);
 					break;
 				case 'options':
 					if (is_array($value))
@@ -197,28 +134,6 @@ class BaseLineItem implements LineItemInterface
 						foreach ($value as $optName => $optValue)
 						{
 							$this->getOptions()->set($optName, $optValue);
-						}
-					}
-					break;
-				case 'taxes':
-					if (is_array($value))
-					{
-						foreach ($value as $tax)
-						{
-							if (is_array($tax) && isset($tax['taxCode']) && isset($tax['category'])  && isset($tax['zone']))
-							{
-								$taxApplication = new \Rbs\Price\Tax\TaxApplication($tax['taxCode'], $tax['category'], $tax['zone']);
-								if (isset($tax['rate']))
-								{
-									$taxApplication->setRate($tax['rate']);
-								}
-								if (isset($tax['value']))
-								{
-									$taxApplication->setValue($tax['value']);
-								}
-								$this->appendTax($taxApplication);
-							}
-
 						}
 					}
 					break;
@@ -240,12 +155,11 @@ class BaseLineItem implements LineItemInterface
 		$array = array(
 			'codeSKU' => $this->codeSKU,
 			'reservationQuantity' => $this->reservationQuantity,
-			'priceValue' => $this->getPriceValue(),
-			'taxes' => array(),
 			'options' => $this->getOptions()->toArray());
-		foreach ($this->taxes as $tax)
-		{
-			$array['taxes'][] = $tax->toArray();
+
+		$price = $this->getPrice();
+		if ($price) {
+			$array['price'] = $price->toArray();
 		}
 		return $array;
 	}
@@ -258,18 +172,15 @@ class BaseLineItem implements LineItemInterface
 	{
 		$this->setCodeSKU($item->getCodeSKU());
 		$this->setReservationQuantity($item->getReservationQuantity());
-		$this->setPrice($item->getPrice());
+		if (($price = $item->getPrice()) !== null)
+		{
+			$this->setPrice($price);
+		}
 		$this->options = null;
 		foreach($item->getOptions() as $name => $option)
 		{
 			$this->getOptions()->set($name, $option);
 		}
-		$taxes = $item->getTaxes();
-		foreach($taxes as $tax)
-		{
-			$this->appendTax($tax);
-		}
-
 		return $this;
 	}
 }

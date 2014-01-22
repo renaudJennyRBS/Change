@@ -14,12 +14,12 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true">
-			<rbs-column name="boValue" align="right" width="90px" >
-				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedBoValue=)</a>
+			<rbs-column name="value" align="right" width="90px" >
+				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedValue=)</a>
 			</rbs-column>
-			<rbs-column sort="basePrice.boValue" name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
-				<del ng-if="doc.formattedBoBaseValue"><a ng-href="(= doc.basePrice|rbsURL =)">(=doc.formattedBoBaseValue=)</a></del>
-				<a ng-if="!doc.formattedBoBaseValue" href="(= doc | rbsURL:'discount' =)?basePriceId=(=doc.id=)" class="btn btn-default btn-xs">{{ i18nAttr('m.rbs.catalog.admin.price_create_discount') }}</a>
+			<rbs-column sort="basePrice.value" name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
+				<del ng-if="doc.formattedBaseValue"><a ng-href="(= doc.basePrice|rbsURL =)">(=doc.formattedBaseValue=)</a></del>
+				<a ng-if="!doc.formattedBaseValue" href="(= doc | rbsURL:'discount' =)?basePriceId=(=doc.id=)" class="btn btn-default btn-xs">{{ i18nAttr('m.rbs.catalog.admin.price_create_discount') }}</a>
 			</rbs-column>
 			<rbs-column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
 			<rbs-column name="webStore" sort="webStore.label">(=doc.webStore.label=)</rbs-column>
@@ -27,5 +27,4 @@
 			<rbs-column name="endActivation">(= doc.endActivation | rbsDateTime =)</rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

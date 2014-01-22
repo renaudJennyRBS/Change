@@ -180,6 +180,19 @@ class PriceManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 class TestPrice implements  \Rbs\Price\PriceInterface
 {
+	/**
+	 * @var boolean
+	 */
+	public $withTax = false;
+
+	/**
+	 * @return boolean
+	 */
+	public function isWithTax()
+	{
+		return $this->withTax;
+	}
+
 
 	/**
 	 * @return float

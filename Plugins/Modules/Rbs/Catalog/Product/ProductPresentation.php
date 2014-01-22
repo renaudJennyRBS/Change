@@ -1,8 +1,6 @@
 <?php
 namespace Rbs\Catalog\Product;
 
-use Rbs\Price\Tax\TaxApplication;
-
 /**
  * @name \Rbs\Catalog\Product\ProductPresentation
  */
@@ -153,41 +151,95 @@ class ProductPresentation
 				$this->stock['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
 
 				$billingArea = $this->commerceServices->getContext()->getBillingArea();
+
 				if ($billingArea)
 				{
 					$priceManager = $this->commerceServices->getPriceManager();
 					$price = $priceManager->getPriceBySku($sku, ['webStore' => $this->webStoreId, 'billingArea' => $billingArea]);
-					if ($price && ($priceValue = $price->getValue()) !== null)
+					if ($price && ($value = $price->getValue()) !== null)
 					{
-						$this->prices['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
-						$this->prices['price'] = ($priceValue * $quantity);
-						$this->prices['formattedPrice'] = $priceManager->formatValue($this->prices['price'], $currencyCode);
+						$value *= $quantity;
+						$isWithTax = $price->isWithTax();
+						$taxCategories = $price->getTaxCategories();
 
-						$taxApplication = $priceManager->getTaxByValue($priceValue, $price->getTaxCategories());
-						if (count($taxApplication))
+						$this->prices['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
+						$zone = $this->commerceServices->getContext()->getZone();
+						if ($zone)
 						{
-							$tax = array_reduce($taxApplication, function ($result, TaxApplication $cartTax) use ($quantity)
+							if ($isWithTax)
 							{
-								return $result + $cartTax->getValue() * $quantity;
-							}, 0.0);
-							$this->prices['priceWithTax'] = ($priceValue * $quantity) + $tax;
-							$this->prices['formattedPriceWithTax'] = $priceManager->formatValue($this->prices['priceWithTax'], $currencyCode);
+								$taxes = $priceManager->getTaxByValueWithTax($value, $taxCategories, $billingArea, $zone);
+							}
+							else
+							{
+								$taxes = $priceManager->getTaxByValue($value, $taxCategories, $billingArea, $zone);
+							}
+						}
+						else
+						{
+							$taxes = null;
 						}
 
-						$oldValue = $price->getBasePriceValue();
-						if ($oldValue !== null)
+						if ($isWithTax)
 						{
-							$this->prices['priceWithoutDiscount'] = ($oldValue * $quantity);
-							$this->prices['formattedPriceWithoutDiscount'] = $priceManager->formatValue($this->prices['priceWithoutDiscount'], $currencyCode);
-							$taxApplication = $priceManager->getTaxByValue($oldValue, $price->getTaxCategories());
-							if (count($taxApplication))
+							$this->prices['priceWithTax'] = $value;
+							$this->prices['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+							if ($taxes) {
+								$value = $priceManager->getValueWithoutTax($value, $taxes);
+								$this->prices['price'] = $value;
+								$this->prices['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+							}
+						}
+						else
+						{
+							$this->prices['price'] = $value;
+							$this->prices['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+							if ($taxes)
 							{
-								$tax = array_reduce($taxApplication, function ($result, TaxApplication $cartTax) use ($quantity)
+								$value = $priceManager->getValueWithTax($value, $taxes);
+								$this->prices['priceWithTax'] = $value;
+								$this->prices['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+							}
+						}
+
+						if (($oldValue = $price->getBasePriceValue()) !== null)
+						{
+							$oldValue *= $quantity;
+							if ($zone)
+							{
+								if ($isWithTax)
 								{
-									return $result + $cartTax->getValue() * $quantity;
-								}, 0.0);
-								$this->prices['priceWithoutDiscountWithTax'] = ($oldValue * $quantity) + $tax;
-								$this->prices['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($this->prices['priceWithoutDiscountWithTax'], $currencyCode);
+									$taxes = $priceManager->getTaxByValueWithTax($oldValue, $taxCategories, $billingArea, $zone);
+								}
+								else
+								{
+									$taxes = $priceManager->getTaxByValue($oldValue, $taxCategories, $billingArea, $zone);
+								}
+							}
+							else
+							{
+								$taxes = null;
+							}
+							if ($isWithTax)
+							{
+								$this->prices['priceWithoutDiscountWithTax'] = $oldValue;
+								$this->prices['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue, $currencyCode);
+								if ($taxes) {
+									$oldValue = $priceManager->getValueWithoutTax($oldValue, $taxes);
+									$this->prices['priceWithoutDiscount'] = $oldValue;
+									$this->prices['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
+								}
+							}
+							else
+							{
+								$this->prices['priceWithoutDiscount'] = $oldValue;
+								$this->prices['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
+								if ($taxes) {
+
+									$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
+									$this->prices['priceWithoutDiscountWithTax'] = $oldValue;
+									$this->prices['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue, $currencyCode);
+								}
 							}
 						}
 

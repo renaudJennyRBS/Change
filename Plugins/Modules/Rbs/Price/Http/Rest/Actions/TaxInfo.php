@@ -16,12 +16,13 @@ class TaxInfo
 	public function execute(Event $event)
 	{
 		$request = $event->getRequest();
+		/** @var $billingArea \Rbs\Price\Documents\BillingArea */
 		$billingArea = null;
 		if ($request->isGet()) {
 			$billingAreaId = $request->getQuery('id');
 			if (intval($billingAreaId) > 0)
 			{
-				$billingArea = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($billingAreaId);
+				$billingArea = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($billingAreaId, 'Rbs_Price_BillingArea');
 			}
 		}
 		$event->setResult($this->generateResult($billingArea, $event->getApplicationServices()->getI18nManager()->getLCID()));
