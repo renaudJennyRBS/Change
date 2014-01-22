@@ -104,7 +104,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
 		$eventManager->attach('getFiltersDefinition', [$this, 'onDefaultGetFiltersDefinition'], 5);
 		$eventManager->attach('isValidFilter', [$this, 'onDefaultIsValidFilter'], 5);
-
 	}
 
 	/**
@@ -515,7 +514,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$line->setIndex($index);
 				$this->refreshCartLine($cart, $line);
 			}
-			$this->refreshTaxesValues($cart);
+
+			$this->refreshLinesPriceValue($cart);
+			$cart->setTaxesValues($cart->getLinesTaxesValues());
 		}
 	}
 
@@ -525,8 +526,12 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function refreshCartLine(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Commerce\Cart\CartLine $line)
 	{
-		$webStoreId = $cart->getWebStoreId();
+		$webStore = $cart->getWebStore();
 		$billingArea = $cart->getBillingArea();
+		if (!$webStore || !$billingArea)
+		{
+			return;
+		}
 		foreach ($line->getItems() as $item)
 		{
 			$sku = $this->getStockManager()->getSkuByCode($item->getCodeSKU());
@@ -535,9 +540,14 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				if (!$item->getOptions()->get('lockedPrice', false))
 				{
 					$price = $this->getPriceManager()->getPriceBySku($sku,
-						['webStore' => $webStoreId, 'billingArea' => $billingArea, 'cart' => $cart, 'cartLine' => $line]);
+						['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart, 'cartLine' => $line]);
 					$item->setPrice($price);
 				}
+			}
+			$price = $item->getPrice();
+			if ($price)
+			{
+				$item->getPrice()->setWithTax($webStore->getPricesValueWithTax());
 			}
 		}
 	}
@@ -545,44 +555,75 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 */
-	protected function refreshTaxesValues($cart)
+	protected function refreshLinesPriceValue($cart)
 	{
 		$priceManager = $this->getPriceManager();
-		/* @var $taxesValues \Rbs\Price\Tax\TaxApplication[] */
 
-		$taxesValues = [];
-		$billingArea = $cart->getBillingArea();
+		/* @var $linesTaxesValues \Rbs\Price\Tax\TaxApplication[] */
+		$linesTaxesValues = [];
+		$currencyCode = $cart->getCurrencyCode();
 		$zone = $cart->getZone();
-		if ($billingArea && $zone)
+		$taxes = $cart->getTaxes();
+		if (!$currencyCode || !$zone || count($taxes) == 0)
 		{
-			$currencyCode = $billingArea->getCurrencyCode();
-			$taxes = $cart->getTaxes();
-			if (count($taxes))
+			$taxes = null;
+		}
+
+		foreach ($cart->getLines() as $line)
+		{
+			$taxesLine = [];
+			$priceValue = null;
+			$priceValueWithTax = null;
+
+			$lineQuantity = $line->getQuantity();
+			if ($lineQuantity)
 			{
-				foreach ($cart->getLines() as $line)
+				foreach ($line->getItems() as $item)
 				{
-					$lineQuantity = $line->getQuantity();
-					if ($lineQuantity)
+					$price = $item->getPrice();
+					if ($price && (($value = $price->getValue()) !== null))
 					{
-						foreach ($line->getItems() as $item)
+						$lineItemValue = $value * $lineQuantity;
+						if ($taxes !== null)
 						{
-							$price = $item->getPrice();
-							if ($price)
+							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
+							if (count($taxArray))
 							{
-								$item->setTaxes($priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode));
-								$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode,
-									$lineQuantity);
-								if (count($taxArray))
-								{
-									$taxesValues = $priceManager->addTaxesApplication($taxesValues, $taxArray);
-								}
+								$taxesLine = $priceManager->addTaxesApplication($taxesLine, $taxArray);
+							}
+
+							if ($price->isWithTax())
+							{
+								$priceValueWithTax += $lineItemValue;
+								$priceValue += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+							}
+							else
+							{
+								$priceValue += $lineItemValue;
+								$priceValueWithTax = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+							}
+						}
+						else
+						{
+							if ($price->isWithTax())
+							{
+								$priceValueWithTax += $lineItemValue;
+							}
+							else
+							{
+								$priceValue += $lineItemValue;
 							}
 						}
 					}
 				}
 			}
+
+			$line->setTaxes($taxesLine);
+			$line->setPriceValueWithTax($priceValueWithTax);
+			$line->setPriceValue($priceValue);
+			$linesTaxesValues = $priceManager->addTaxesApplication($linesTaxesValues, $taxesLine);
 		}
-		$cart->setTaxesValues($taxesValues);
+		$cart->setLinesTaxesValues($linesTaxesValues);
 	}
 
 	/**

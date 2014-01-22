@@ -24,7 +24,12 @@ class BasePrice implements \Rbs\Price\PriceInterface
 	protected $taxCategories = array();
 
 	/**
-	 * @param \Rbs\Price\PriceInterface $price
+	 * @var boolean
+	 */
+	protected $withTax = false;
+
+	/**
+	 * @param \Rbs\Price\PriceInterface|array|float $price
 	 */
 	function __construct($price)
 	{
@@ -49,6 +54,7 @@ class BasePrice implements \Rbs\Price\PriceInterface
 	public function fromPrice(\Rbs\Price\PriceInterface $price)
 	{
 		$this->value = $price->getValue();
+		$this->withTax = $price->isWithTax();
 		if ($price->isDiscount())
 		{
 			$this->basePriceValue = $price->getBasePriceValue();
@@ -74,6 +80,9 @@ class BasePrice implements \Rbs\Price\PriceInterface
 				case 'value':
 					$this->setValue($value);
 					break;
+				case 'withTax':
+					$this->setWithTax($value);
+					break;
 				case 'basePriceValue':
 					$this->basePriceValue = $value === null ? $value : floatval($value);
 					break;
@@ -83,6 +92,14 @@ class BasePrice implements \Rbs\Price\PriceInterface
 			}
 		}
 		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		return get_object_vars($this);
 	}
 
 	/**
@@ -145,5 +162,23 @@ class BasePrice implements \Rbs\Price\PriceInterface
 	public function getTaxCategories()
 	{
 		return $this->taxCategories;
+	}
+
+	/**
+	 * @param boolean $withTax
+	 * @return $this
+	 */
+	public function setWithTax($withTax)
+	{
+		$this->withTax = ($withTax == true);
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isWithTax()
+	{
+		return $this->withTax;
 	}
 }

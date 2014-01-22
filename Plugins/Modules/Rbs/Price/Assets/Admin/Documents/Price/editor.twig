@@ -25,8 +25,8 @@
 		</rbs-field>
 
 		<rbs-field ng-hide="discount || document.hasJobToUpdateTax" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
-			<select ng-hide="!document.isNew()" class="form-control" ng-required="true" ng-model="document.billingArea" ng-disabled="!webStoreId"
-				rbs-items-collection-params="webStoreId:(=webStoreId=)"
+			<select ng-hide="!document.isNew()" class="form-control" ng-required="true" ng-model="document.billingArea" ng-disabled="!webStore.id"
+				rbs-items-collection-params="webStoreId:(=webStore.id=)"
 				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
 				<option value=""> {{ i18n('m.rbs.price.admin.select_billingarea', ['ucf']) }}</option>
 			</select>
@@ -76,21 +76,21 @@
 
 		<hr/>
 
-		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'boValue'), ['ucf']) }}">
-			<rbs-price-input ng-model="document.boValue" data-currency-code="billingArea.currencyCode"
-				data-price-with-tax="billingArea.boEditWithTax" required="true"></rbs-price-input>
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'value'), ['ucf']) }}">
+			<rbs-price-input ng-model="document.value" data-currency-code="billingArea.currencyCode"
+				data-price-with-tax="webStore.pricesValueWithTax" required="true"></rbs-price-input>
 		</rbs-field>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'ecoTax'), ['ucf']) }}">
 			<rbs-price-input ng-model="document.ecoTax" data-currency-code="billingArea.currencyCode"
-				data-price-with-tax="billingArea.boEditWithTax"></rbs-price-input>
+				data-price-with-tax="webStore.pricesValueWithTax"></rbs-price-input>
 		</rbs-field>
 
 		<span ng-show="discount">
 			<hr/>
 
 			<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}">
-				<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'' =)">(= document.basePrice.formattedBoValue =)</a></p>
+				<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'' =)">(= document.basePrice.formattedValue =)</a></p>
 			</rbs-field>
 
 			<rbs-field-text property="discountDetail"
@@ -160,9 +160,10 @@
 		ng-show="section=='discount'"
 		data-form-section-label="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}">
-			<rbs-document-list ng-show="!document.isNew() && !document.basePrice" data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true" load-query="loadPriceQuery">
-			<rbs-column name="boValue" align="right" width="90px" >
-				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedBoValue=)</a>
+
+		<rbs-document-list ng-show="!document.isNew() && !document.basePrice" data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true" load-query="loadPriceQuery">
+			<rbs-column name="value" align="right" width="90px" >
+				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedValue=)</a>
 			</rbs-column>
 			<rbs-column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
 			<rbs-column name="webStore" sort="webStore.label">(=doc.webStore.label=)</rbs-column>

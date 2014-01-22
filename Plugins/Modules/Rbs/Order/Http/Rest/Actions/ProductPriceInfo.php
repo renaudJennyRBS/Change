@@ -29,12 +29,14 @@ class ProductPriceInfo
 
 			/* @var $webstore \Rbs\Store\Documents\WebStore */
 			$webstore = $dm->getDocumentInstance($webstoreId);
+			/** @var $billingArea \Rbs\Price\Tax\BillingAreaInterface */
 			$billingArea = $dm->getDocumentInstance($billingAreaId);
 			$products = array();
 			foreach ($productIds as $productId)
 			{
 				$products[] = $dm->getDocumentInstance($productId);
 			}
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$event->setResult($this->generateResult($webstore, $billingArea, $products, $commerceServices, $event->getUrlManager()));
 		}
@@ -61,7 +63,7 @@ class ProductPriceInfo
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$data = array();
 			$pm = $commerceServices->getPriceManager();
-			$priceProperties = array('boValue', 'taxCategories');
+			$priceProperties = array('value', 'taxCategories');
 
 			foreach ($products as $product)
 			{

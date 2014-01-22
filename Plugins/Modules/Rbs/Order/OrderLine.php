@@ -11,7 +11,7 @@ class OrderLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface
 
 	/**
 	 * @param array $itemArray
-	 * @return \Rbs\Order\OrderLineItem|null
+	 * @return \Rbs\Order\OrderLineItem
 	 */
 	protected function getNewItemFromArray($itemArray)
 	{
@@ -20,10 +20,26 @@ class OrderLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\LineItemInterface $lineItem
-	 * @return \Rbs\Order\OrderLineItem|null
+	 * @return \Rbs\Order\OrderLineItem
 	 */
 	protected function getNewItemFromLineItem($lineItem)
 	{
 		return new OrderLineItem($lineItem);
+	}
+
+	/**
+	 * @param $codeSKU
+	 * @return null|\Rbs\Order\OrderLineItem
+	 */
+	public function getOrderItemByCodeSky($codeSKU)
+	{
+		foreach ($this->getItems() as $item)
+		{
+			if ($item->getCodeSKU() === $codeSKU)
+			{
+				return $item;
+			}
+		}
+		return null;
 	}
 }

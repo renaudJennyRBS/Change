@@ -392,9 +392,12 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return $result;
 		}
+		$isWithTax = $price->isWithTax();
 
 		/** @var $taxesByCode \Rbs\Price\Tax\TaxInterface[] */
 		$taxesByCode = [];
+
+		/** @var $tax \Rbs\Price\Tax\TaxInterface */
 		foreach ($taxes as $tax)
 		{
 			$taxesByCode[$tax->getCode()] = $tax;
@@ -417,15 +420,17 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 				$taxApplication = new \Rbs\Price\Tax\TaxApplication($tax, $category, $zone, $rate);
 				if (true || $tax->getRounding() == \Rbs\Price\Tax\TaxInterface::ROUNDING_UNIT)
 				{
-					$taxApplication->setValue($this->roundValue($value * $rate, $precision) * $quantity);
+					$valueToRound = $isWithTax ? $value - ($value / (1 + $rate)) : $value * $rate;
+					$taxApplication->setValue($this->roundValue($valueToRound, $precision) * $quantity);
 				}
 				elseif ($tax->getRounding() == \Rbs\Price\Tax\TaxInterface::ROUNDING_ROW)
 				{
-					$taxApplication->setValue($this->roundValue($value * $rate * $quantity, $precision));
+					$valueToRound = $isWithTax ? ($value * $quantity) - (($value * $quantity) / (1 + $rate)) : $value * $quantity * $rate;
+					$taxApplication->setValue($this->roundValue($valueToRound, $precision));
 				}
 				else
 				{
-					$taxApplication->setValue($value * $quantity * $rate);
+					$taxApplication->setValue($isWithTax ? ($value * $quantity) - (($value * $quantity) / (1 + $rate)) : $value * $quantity * $rate);
 				}
 				$result[] = $taxApplication;
 			}
@@ -435,13 +440,13 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
-	 * @param float $value
+	 * @param float $valueWithoutTax
 	 * @param \Rbs\Price\Tax\TaxApplication[] $taxApplications
 	 * @return float
 	 */
-	public function getValueWithTax($value, $taxApplications)
+	public function getValueWithTax($valueWithoutTax, $taxApplications)
 	{
-		$valueWithTax = $value;
+		$valueWithTax = $valueWithoutTax;
 		if (is_array($taxApplications) && count($taxApplications))
 		{
 			/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
@@ -451,6 +456,26 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $valueWithTax;
+	}
+
+	/**
+	 * @api
+	 * @param float $valueWithTax
+	 * @param \Rbs\Price\Tax\TaxApplication[] $taxApplications
+	 * @return float
+	 */
+	public function getValueWithoutTax($valueWithTax, $taxApplications)
+	{
+		$valueWithoutTax = $valueWithTax;
+		if (is_array($taxApplications) && count($taxApplications))
+		{
+			/* @var $taxApplication \Rbs\Price\Tax\TaxApplication */
+			foreach ($taxApplications as $taxApplication)
+			{
+				$valueWithoutTax -= $taxApplication->getValue();
+			}
+		}
+		return $valueWithoutTax;
 	}
 
 	/**
@@ -566,8 +591,6 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultTaxTitle($event)
 	{
 		$taxCode = $event->getParam('taxCode');
-		$event->getApplicationServices()->getLogging()->fatal(__METHOD__ . ' ' . $taxCode);
-
 		if ($taxCode)
 		{
 			$event->setParam('taxTitle', $taxCode);

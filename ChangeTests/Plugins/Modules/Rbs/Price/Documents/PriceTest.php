@@ -24,7 +24,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
 	}
 
-	public function testBoValue()
+	public function testValue()
 	{
 		$dm = $this->getApplicationServices()->getDocumentManager();
 		/* @var $price \Rbs\Price\Documents\Price */
@@ -38,27 +38,27 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $ba \Rbs\Price\Documents\BillingArea */
 		$ba = $this->getNewReadonlyDocument('Rbs_Price_BillingArea', 100);
-		$ba->setBoEditWithTax(true);
 		$ba->setTaxes(array($tax));
 		$price->setBillingArea($ba);
+		$this->assertFalse($price->isWithTax());
 
+		/* @var $store \Rbs\Store\Documents\WebStore */
+		$store = $this->getNewReadonlyDocument('Rbs_Store_WebStore', 101);
+		$store->setPricesValueWithTax(true);
+		$price->setWebStore($store);
+		$this->assertTrue($price->isWithTax());
 		$this->assertNull($price->getValue());
-		$this->assertNull($price->getBoValue());
+
 		$price->setTaxCategories(array('TAX' => 'N'));
 
-		// If there is no valueWithoutDiscount, get/setBaseValue() are based on the value.
-		$price->setBoValue(10.2);
-		$this->assertTrue($price->applyBoValues($this->commerceServices));
-		$this->assertEquals(10.2, $price->getBoValue());
+		$this->assertSame($price, $price->setValue(10.2));
 
-		$this->assertTrue($price->getBoEditWithTax());
-		$this->assertEquals(8.5, $price->getValue());
+		$this->assertEquals(10.2, $price->getValue());
 
-		$price->setBoValue(8.5);
-		$price->applyBoValues($this->commerceServices);
-		$this->assertEquals(8.5, $price->getBoValue());
+		$store->setPricesValueWithTax(false);
+		$this->assertFalse($price->isWithTax());
+		$this->assertEquals(10.2, $price->getValue());
 
-		$this->assertEquals(7.0833, $price->getValue(), '', 0.001);
 	}
 
 	public function testBasePrice()
@@ -78,9 +78,10 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 
 			/* @var $ba \Rbs\Price\Documents\BillingArea */
 			$ba = $this->getNewReadonlyDocument('Rbs_Price_BillingArea', 100);
-			$ba->setBoEditWithTax(true);
 			$ba->setCurrencyCode('EUR');
 			$ba->setTaxes(array($tax));
+
+
 
 			/* @var $sku \Rbs\Stock\Documents\Sku */
 			$sku = $this->getNewReadonlyDocument('Rbs_Stock_Sku', 101);
@@ -88,6 +89,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 
 			/* @var $webStore \Rbs\Store\Documents\WebStore */
 			$webStore = $this->getNewReadonlyDocument('Rbs_Store_WebStore', 102);
+			$webStore->setPricesValueWithTax(true);
 			$webStore->setBillingAreas([$ba]);
 
 			/* @var $price1 \Rbs\Price\Documents\Price */
@@ -96,7 +98,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 			$price1->setWebStore($webStore);
 			$price1->setBillingArea($ba);
 			$price1->setTaxCategories(array('TAX' => 'N'));
-			$price1->setDefaultValue(10.2);
+			$price1->setValue(10.2);
 			$price1->save();
 
 			/* @var $price2 \Rbs\Price\Documents\Price */
@@ -105,7 +107,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 			$price2->setWebStore($webStore);
 			$price2->setBillingArea($ba);
 			$price2->setTaxCategories(array('TAX' => 'N'));
-			$price2->setDefaultValue(10.2);
+			$price2->setValue(10.2);
 			$price2->setBasePrice($price1);
 			$price2->save();
 
@@ -116,7 +118,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 			$price3->setBillingArea($ba);
 			$price3->setTaxCategories(array('TAX' => 'N'));
 			$price3->setBasePrice($price1);
-			$price3->setDefaultValue(10.2);
+			$price3->setValue(10.2);
 			$price3->save();
 
 			/* @var $price4 \Rbs\Price\Documents\Price */
@@ -125,7 +127,7 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 			$price4->setWebStore($webStore);
 			$price4->setBillingArea($ba);
 			$price4->setTaxCategories(array('TAX' => 'N'));
-			$price4->setDefaultValue(10.2);
+			$price4->setValue(10.2);
 			$price4->save();
 
 			$this->assertEquals(2, $price1->countPricesBasedOn());

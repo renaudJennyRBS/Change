@@ -580,6 +580,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		}
 	}
 
+	/**
+	 * @param Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		$document = $event->getDocument();

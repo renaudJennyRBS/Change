@@ -41,12 +41,8 @@
 			</div>
 		</div>
 		<div ng-show="document.linesData.length > 0">
-			<rbs-document-list
-					collection="listLines"
-					data-dlid="RbsOrderOrderEditorLinesList"
-					modification-date="false"
-					extend="extend"
-					actions="">
+			<rbs-document-list collection="listLines" data-dlid="RbsOrderOrderEditorLinesList"
+					modification-date="false" extend="extend" actions="">
 
 				<rbs-column name="index" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
 
@@ -61,7 +57,7 @@
 				</rbs-column>
 
 				<rbs-column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
-					(=doc.items[0].options.boPriceValue | currency =)
+					(=doc.items[0].price.value | currency =)
 				</rbs-column>
 
 				<rbs-column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
@@ -69,7 +65,7 @@
 				</rbs-column>
 
 				<rbs-column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
-					(= doc.items[0].options.boPriceValue * doc.quantity | currency =)
+					(= doc.items[0].price.value * doc.quantity | currency =)
 				</rbs-column>
 
 				<rbs-action name="addLine" icon="icon-plus" label="{{ i18nAttr('m.rbs.order.admin.order_add_line', ['ucf']) }}"
@@ -117,7 +113,7 @@
 				<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
 			</div>
 			<div class="panel-body">
-				<strong>(= extend.boAmount | currency =)</strong>
+				<strong>(= extend.paymentAmount | currency =)</strong>
 			</div>
 		</div>
 	</div>

@@ -110,8 +110,8 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 
-		$itemParameters = ['codeSKU' => 'sku1', 'reservationQuantity' => 55, 'priceValue' => 2.5,
-			'cartTaxes' => [], 'options' => ['p2' => 2]];
+		$itemParameters = ['codeSKU' => 'sku1', 'reservationQuantity' => 55, 'price' => 2.5,
+			'options' => ['p2' => 2]];
 
 		$lineParameters = ['key' => 'k1', 'designation' => 'designation', 'quantity' => 53,
 			'items' => [$itemParameters], 'options' => ['p1' => 1]];
@@ -129,7 +129,7 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$item = $line->getItemByCodeSKU('sku1');
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\CartLineItem', $item);
 		$this->assertEquals(55, $item->getReservationQuantity());
-		$this->assertEquals(2.5, $item->getPriceValue());
+		$this->assertEquals(2.5, $item->getPrice()->getValue());
 		$this->assertEquals(2, $item->getOptions()->get('p2'));
 
 		try
@@ -189,8 +189,9 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cartManager = $cs->getCartManager();
 
 		$cart = new \Rbs\Commerce\Cart\Cart('idt', $cartManager);
+		$cart->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 
-		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'priceValue' => 5.3, 'options' => []];
+		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'price' => 5.3, 'options' => []];
 
 		$lineParameters = ['key' => 'k1', 'designation' => 'designation', 'quantity' => 3,
 			'items' => [$itemParameters], 'options' => []];
@@ -198,17 +199,22 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cart->appendLine($cart->getNewLine($lineParameters));
 
 
-		$itemParameters = ['codeSKU' => 'skTEST2', 'reservationQuantity' => 2, 'priceValue' => 12, 'options' => []];
+		$itemParameters = ['codeSKU' => 'skTEST2', 'reservationQuantity' => 2, 'price' => 12, 'options' => []];
 
 		$lineParameters = ['key' => 'k2', 'designation' => 'designation', 'quantity' => 2,
 			'items' => [$itemParameters], 'options' => []];
 
 		$cart->appendLine($cart->getNewLine($lineParameters));
 
+		$this->assertNull($cart->getPriceValue());
+		$this->assertNull($cart->getPriceValueWithTax());
+		$cartManager->normalize($cart);
+
 		$v = 5.3 * 3 + 12 * 2; //39.9
 		$this->assertEquals($v, $cart->getPriceValue());
 
 		$this->assertTrue($cartManager->isValidFilter($cart, []));
+		$this->assertNull($cart->getPriceValueWithTax());
 
 		$filter = ['name' => 'group', 'operator' => 'AND', 'filters' => [
 			['name' => 'linesPriceValue', 'parameters' => ['propertyName' => 'linesPriceValue', 'operator' => 'gte', 'value' => 40]]

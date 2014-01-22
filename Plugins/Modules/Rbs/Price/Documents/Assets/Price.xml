@@ -13,13 +13,9 @@
 		<property name="basePrice" type="Document" document-type="Rbs_Price_Price" />
 
 		<property name="taxCategories" type="JSON" required="true" />
-		<property name="defaultValue" type="Decimal" required="true" />
+		<property name="value" type="Decimal" required="true" has-correction="true" />
 		<property name="discountDetail" type="String" />
 		<property name="ecoTax" type="Decimal" has-correction="true"/>
-
 		<property name="optionsData" type="JSON" />
-
-		<property name="boEditWithTax" type="Boolean" default-value="false" />
-		<property name="boValue" type="Decimal" has-correction="true"/>
 	</properties>
 </document>

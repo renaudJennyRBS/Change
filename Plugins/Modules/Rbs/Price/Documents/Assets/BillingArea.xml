@@ -7,7 +7,6 @@
 		<property name="currencyCode" type="String">
 			<dboptions length="3" />
 		</property>
-		<property name="boEditWithTax" type="Boolean" default-value="false" />
 		<property name="taxes" type="DocumentArray" document-type="Rbs_Price_Tax" />
 	</properties>
 </document>

@@ -14,6 +14,11 @@ class BaseLine implements LineInterface
 	protected $index;
 
 	/**
+	 * @var string
+	 */
+	protected $key;
+
+	/**
 	 * @var integer
 	 */
 	protected $quantity;
@@ -27,6 +32,21 @@ class BaseLine implements LineInterface
 	 * @var \Rbs\Commerce\Std\BaseLineItem[]
 	 */
 	protected $items = array();
+
+	/**
+	 * @var \Rbs\Price\Tax\TaxApplication[]
+	 */
+	protected $taxes = array();
+
+	/**
+	 * @var float|null
+	 */
+	protected $priceValue;
+
+	/**
+	 * @var float|null
+	 */
+	protected $priceValueWithTax;
 
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -48,7 +68,6 @@ class BaseLine implements LineInterface
 		}
 	}
 
-
 	/**
 	 * @param int $index
 	 * @return $this
@@ -65,6 +84,24 @@ class BaseLine implements LineInterface
 	public function getIndex()
 	{
 		return $this->index;
+	}
+
+	/**
+	 * @param string $key
+	 * @return $this
+	 */
+	public function setKey($key)
+	{
+		$this->key = $key;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getKey()
+	{
+		return $this->key;
 	}
 
 	/**
@@ -112,6 +149,39 @@ class BaseLine implements LineInterface
 	}
 
 	/**
+	 * @param \Rbs\Price\Tax\TaxApplication[] $taxes
+	 * @return $this
+	 */
+	public function setTaxes($taxes)
+	{
+		$this->taxes = array();
+		if (is_array($taxes))
+		{
+			foreach ($taxes as $tax)
+			{
+				$this->appendTax($tax);
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 */
+	public function getTaxes()
+	{
+		return $this->taxes;
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\TaxApplication $tax
+	 */
+	public function appendTax(\Rbs\Price\Tax\TaxApplication $tax)
+	{
+		$this->taxes[] = $tax;
+	}
+
+	/**
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions()
@@ -121,6 +191,42 @@ class BaseLine implements LineInterface
 			$this->options = new \Zend\Stdlib\Parameters();
 		}
 		return $this->options;
+	}
+
+	/**
+	 * @param float|null $priceValueWithTax
+	 * @return $this
+	 */
+	public function setPriceValueWithTax($priceValueWithTax)
+	{
+		$this->priceValueWithTax = $priceValueWithTax;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValueWithTax()
+	{
+		return $this->priceValueWithTax;
+	}
+
+	/**
+	 * @param float|null $priceValue
+	 * @return $this
+	 */
+	public function setPriceValue($priceValue)
+	{
+		$this->priceValue = $priceValue;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPriceValue()
+	{
+		return $this->priceValue;
 	}
 
 	/**
@@ -135,6 +241,9 @@ class BaseLine implements LineInterface
 			{
 				case 'index':
 					$this->setIndex(intval($value));
+					break;
+				case 'key':
+					$this->setKey($value);
 					break;
 				case 'quantity':
 					$this->setQuantity(intval($value));
@@ -166,7 +275,35 @@ class BaseLine implements LineInterface
 						}
 					}
 					break;
+				case 'taxes':
+					if (is_array($value))
+					{
+						foreach ($value as $tax)
+						{
+							if (is_array($tax) && isset($tax['taxCode']) && isset($tax['category'])  && isset($tax['zone']))
+							{
+								$taxApplication = new \Rbs\Price\Tax\TaxApplication($tax['taxCode'], $tax['category'], $tax['zone']);
+								if (isset($tax['rate']))
+								{
+									$taxApplication->setRate($tax['rate']);
+								}
+								if (isset($tax['value']))
+								{
+									$taxApplication->setValue($tax['value']);
+								}
+								$this->appendTax($taxApplication);
+							}
+						}
+					}
+					break;
+				case 'priceValue':
+					$this->setPriceValue($value);
+					break;
+				case 'priceValueWithTax':
+					$this->setPriceValueWithTax($value);
+					break;
 			}
+
 			if ($this->quantity === null)
 			{
 				$this->quantity = 1;
@@ -180,14 +317,24 @@ class BaseLine implements LineInterface
 	 */
 	public function toArray()
 	{
-		$array = array('index' => $this->index,
+		$array = [
+			'index' => $this->index,
+			'key' => $this->key,
 			'quantity' => $this->quantity,
 			'designation' => $this->designation,
 			'items' => array(),
-			'options' => $this->getOptions()->toArray());
+			'taxes' => array(),
+			'priceValue' => $this->priceValue,
+			'priceValueWithTax' => $this->priceValueWithTax,
+			'options' => $this->getOptions()->toArray()
+		];
 		foreach ($this->items as $item)
 		{
 			$array['items'][] = $item->toArray();
+		}
+		foreach ($this->taxes as $tax)
+		{
+			$array['taxes'][] = $tax->toArray();
 		}
 		return $array;
 	}
@@ -199,25 +346,36 @@ class BaseLine implements LineInterface
 	public function fromLine(LineInterface $line)
 	{
 		$this->setIndex($line->getIndex());
+		$this->setKey($line->getKey());
 		$this->setQuantity($line->getQuantity());
 		$this->setDesignation($line->getDesignation());
+
 		$this->options = null;
 		foreach($line->getOptions() as $name => $option)
 		{
 			$this->getOptions()->set($name, $option);
 		}
-		$this->items = array();
+		$this->items = [];
 		foreach($line->getItems() as $item)
 		{
 			$this->items[] = $this->getNewItemFromLineItem($item);
 		}
 
+		$this->taxes = [];
+		$taxes = $line->getTaxes();
+		foreach($taxes as $tax)
+		{
+			$this->appendTax($tax);
+		}
+
+		$this->setPriceValueWithTax($line->getPriceValueWithTax());
+		$this->setPriceValue($line->getPriceValue());
 		return $this;
 	}
 
 	/**
 	 * @param array $itemArray
-	 * @return \Rbs\Commerce\Std\BaseLineItem|null
+	 * @return \Rbs\Commerce\Std\BaseLineItem
 	 */
 	protected function getNewItemFromArray($itemArray)
 	{
@@ -226,7 +384,7 @@ class BaseLine implements LineInterface
 
 	/**
 	 * @param \Rbs\Commerce\Interfaces\LineItemInterface $lineItem
-	 * @return \Rbs\Commerce\Std\BaseLineItem|null
+	 * @return \Rbs\Commerce\Std\BaseLineItem
 	 */
 	protected function getNewItemFromLineItem($lineItem)
 	{
@@ -248,51 +406,10 @@ class BaseLine implements LineInterface
 	 */
 	public function getUnitPriceValue()
 	{
-		return array_reduce($this->items, function ($result, \Rbs\Commerce\Std\BaseLineItem $item)
+		$value = $this->getPriceValue();
+		if ($value !== null && $this->getQuantity())
 		{
-			if ($item->getPriceValue() !== null)
-			{
-				return $result + $item->getPriceValue();
-			}
-			return $result;
-		});
-	}
-
-	/**
-	 * @return float|null
-	 */
-	public function getUnitPriceValueWithTax()
-	{
-		return array_reduce($this->items, function ($result, \Rbs\Commerce\Std\BaseLineItem $item)
-		{
-			if ($item->getPriceValue() !== null)
-			{
-				$tax = array_reduce($item->getTaxes(), function ($result, \Rbs\Price\Tax\TaxApplication $tax)
-				{
-					return $result + $tax->getValue();
-				}, 0.0);
-				return $result + $item->getPriceValue() + $tax;
-			}
-			return $result;
-		});
-	}
-
-	/**
-	 * @return float|null
-	 */
-	public function getPriceValue()
-	{
-		$quantity = $this->getQuantity();
-		if ($quantity)
-		{
-			return array_reduce($this->items, function ($result, \Rbs\Commerce\Std\BaseLineItem $item) use ($quantity)
-			{
-				if ($item->getPriceValue() !== null)
-				{
-					return $result + ($item->getPriceValue() * $quantity);
-				}
-				return $result;
-			});
+			return $value / floatval($this->getQuantity());
 		}
 		return null;
 	}
@@ -300,24 +417,12 @@ class BaseLine implements LineInterface
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValueWithTax()
+	public function getUnitPriceValueWithTax()
 	{
-		$quantity = $this->getQuantity();
-		if ($quantity)
+		$value = $this->getPriceValueWithTax();
+		if ($value !== null && $this->getQuantity())
 		{
-			return array_reduce($this->items, function ($result, \Rbs\Commerce\Std\BaseLineItem $item) use ($quantity)
-			{
-				if ($item->getPriceValue() !== null)
-				{
-					$tax = array_reduce($item->getTaxes(),
-						function ($result, \Rbs\Price\Tax\TaxApplication $tax) use ($quantity)
-						{
-							return $result + $tax->getValue() * $quantity;
-						}, 0.0);
-					return $result + ($item->getPriceValue() * $quantity) + $tax;
-				}
-				return $result;
-			});
+			return $value / floatval($this->getQuantity());
 		}
 		return null;
 	}

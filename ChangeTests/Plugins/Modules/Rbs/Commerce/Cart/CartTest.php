@@ -45,11 +45,14 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$taxApplication->setValue(0.078);
 		$cart->setBillingArea($ba);
 
-		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'priceValue' => 5.3,
-			'taxes' => [$taxApplication->toArray()], 'options' => ['iOpt' => 'testIOpt']];
+		$price = new \Rbs\Commerce\Std\BasePrice(5.3);
+
+		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'price' => $price->toArray(),
+			'options' => ['iOpt' => 'testIOpt']];
 
 		$lineParameters = ['key' => 'k1', 'designation' => 'designation', 'quantity' => 3,
-			'items' => [$itemParameters], 'options' => ['opt' => 'testOpt']];
+			'items' => [$itemParameters], 'taxes' => [$taxApplication->toArray()],
+			'options' => ['opt' => 'testOpt']];
 
 		$cart->appendLine($cart->getNewLine($lineParameters));
 
@@ -83,14 +86,14 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$item = $l->getItemByCodeSKU('skTEST');
 		$this->assertInstanceOf('Rbs\Commerce\Cart\CartLineItem', $item);
 
-		$this->assertEquals(5.3, $item->getPriceValue());
+		$this->assertEquals(5.3, $item->getPrice()->getValue());
 		$this->assertEquals(2, $item->getReservationQuantity());
 		$this->assertEquals('testIOpt', $item->getOptions()->get('iOpt'));
 
-		$this->assertCount(1, $item->getTaxes());
+		$this->assertCount(1, $l->getTaxes());
 
 		/* @var $cartTax \Rbs\Price\Tax\TaxApplication */
-		$cartTax = $item->getTaxes()[0];
+		$cartTax = $l->getTaxes()[0];
 		$this->assertInstanceOf('Rbs\Price\Tax\TaxApplication', $cartTax);
 		$this->assertEquals('cat', $cartTax->getCategory());
 		$this->assertEquals('ZTEST', $cartTax->getZone());

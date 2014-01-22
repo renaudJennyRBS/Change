@@ -29,7 +29,7 @@ class GetCompatiblePaymentConnectors extends \Change\Http\Web\Actions\AbstractAj
 			$connectorsInfos = array();
 			foreach ($connectors as $connector)
 			{
-				/* @var $connector \Rbs\Payment\Documents\Connector */
+				/* @var $connector \Rbs\Payment\Documents\DeferredConnector */
 				$modeInfos = array(
 					'id' => $connector->getId(),
 					'title' => $connector->getCurrentLocalization()->getTitle(),

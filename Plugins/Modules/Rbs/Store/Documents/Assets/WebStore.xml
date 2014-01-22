@@ -7,6 +7,7 @@
 		<property name="billingAreas" type="DocumentArray" document-type="Rbs_Price_BillingArea" required="true" />
 		<property name="displayPrices" type="Boolean" default-value="true" />
 		<property name="displayPricesWithTax" type="Boolean" default-value="true" />
+		<property name="pricesValueWithTax" type="Boolean" default-value="false" />
 		<property name="orderProcess" type="Document" document-type="Rbs_Commerce_Process" />
 	</properties>
 </document>
