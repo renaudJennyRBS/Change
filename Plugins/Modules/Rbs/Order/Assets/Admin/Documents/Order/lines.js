@@ -52,8 +52,8 @@
 						}
 
 						promise.then(function () {
-							scope.extend.editedLine.index = scope.document.linesData.length;
-							scope.document.linesData.push(scope.extend.editedLine);
+							scope.extend.editedLine.index = scope.document.lines.length;
+							scope.document.lines.push(scope.extend.editedLine);
 						});
 
 					},
@@ -68,14 +68,14 @@
 									'line': line,
 									'webStore': scope.document.webStoreId,
 									'billingArea': scope.document.billingAreaId,
-									'zone': scope.document.contextData.taxZone
+									'zone': scope.document.context.taxZone
 								},
 								REST.getHttpConfig()
 							).success(function (result) {
 									extend.loadingProductInfo = false;
 									var line = result.line;
-									line.index = scope.document.linesData.length;
-									scope.document.linesData.push(line);
+									line.index = scope.document.lines.length;
+									scope.document.lines.push(line);
 									scope.document.newLineProducts = undefined;
 								})
 								.error(function (result)
@@ -87,7 +87,7 @@
 
 					removeLines: function (lines) {
 						angular.forEach(lines, function (line) {
-							scope.document.linesData.splice(line.index, 1);
+							scope.document.lines.splice(line.index, 1);
 							line.selected = false;
 							extend.removedLines.push(line);
 							updateLines();
@@ -95,7 +95,7 @@
 					},
 
 					restoreRemovedLine: function (lineIndex) {
-						scope.document.linesData.push(extend.removedLines[lineIndex]);
+						scope.document.lines.push(extend.removedLines[lineIndex]);
 						extend.removedLines.splice(lineIndex, 1);
 						updateLines();
 					},
@@ -167,9 +167,9 @@
 
 				function updateLines() {
 					extend.articleCount = 0;
-					for (var i = 0; i < scope.document.linesData.length; i++) {
-						scope.document.linesData[i].index = i;
-						extend.articleCount += scope.document.linesData[i].quantity;
+					for (var i = 0; i < scope.document.lines.length; i++) {
+						scope.document.lines[i].index = i;
+						extend.articleCount += scope.document.lines[i].quantity;
 					}
 				}
 
@@ -177,7 +177,7 @@
 
 				scope.listLines = [];
 
-				scope.$watchCollection('document.linesData', function (lines) {
+				scope.$watchCollection('document.lines', function (lines) {
 					var listLines = [];
 					if (lines) {
 						for (var i = 0; i < lines.length; i++) {
@@ -188,7 +188,7 @@
 				});
 
 				// This watches for modifications in the lines, made by the user, such as quantity for each line.
-				scope.$watch('document.linesData', function (lines, old) {
+				scope.$watch('document.lines', function (lines, old) {
 					if (scope.document && lines !== old) {
 						scope.extend.paymentAmount = 0;
 						extend.articleCount = 0;
@@ -229,7 +229,7 @@
 				});
 
 				scope.updateAmount = function (document) {
-					var lines = document.linesData;
+					var lines = document.lines;
 					document.amount = 0;
 					for (var i = 0; i < lines.length; i++) {
 						document.amount += (lines[i].priceValueWithTax || lines[i].priceValue);

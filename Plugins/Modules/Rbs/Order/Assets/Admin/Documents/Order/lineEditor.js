@@ -56,7 +56,7 @@
 							'line' : scope.doc,
 							'webStore' : document.webStoreId,
 							'billingArea' : document.billingAreaId,
-							'zone' : document.contextData.taxZone
+							'zone' : document.context.taxZone
 						},
 						REST.getHttpConfig()
 					).success(function (result) {

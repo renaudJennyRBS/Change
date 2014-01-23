@@ -1,12 +1,12 @@
-<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.linesData.length > 0]">
+<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.lines.length > 0]">
 	<div class="panel-heading">
-		<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.linesData.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
+		<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.lines.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
 	</div>
 	<div class="panel-body">
-		<p class="text-warning" ng-show="document.linesData.length == 0">
+		<p class="text-warning" ng-show="document.lines.length == 0">
 			<strong>{{ i18n('m.rbs.order.admin.order_no_lines', ['ucf']) }}</strong>
 		</p>
-		<p ng-show="document.linesData.length == 0">
+		<p ng-show="document.lines.length == 0">
 			{{ i18n('m.rbs.order.admin.order_no_lines_help', ['ucf']) | raw }}
 		</p>
 
@@ -18,7 +18,7 @@
 				<h4>{{ i18n('m.rbs.order.admin.order_new_line', ['ucf']) }}</h4>
 				<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
 
-				<div ng-show="document.billingAreaId && document.contextData.taxZone">
+				<div ng-show="document.billingAreaId && document.context.taxZone">
 					<p>
 						<div>
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
@@ -34,18 +34,18 @@
 						</div>
 					</p>
 				</div>
-				<p ng-hide="document.billingAreaId && document.contextData.taxZone">
+				<p ng-hide="document.billingAreaId && document.context.taxZone">
 					<span class="label label-info">Info</span>
 					{{ i18n('m.rbs.order.admin.order_choose_billingarea_and_taxzone_first', ['ucf']) | raw }}
 				</p>
 			</div>
 		</div>
-		<div ng-show="document.linesData.length > 0">
+		<div ng-show="document.lines.length > 0">
 			<rbs-document-list collection="listLines" data-dlid="RbsOrderOrderEditorLinesList"
 					modification-date="false" extend="extend" actions="">
 
 				<rbs-column name="index" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
-
+					(= doc.index + 1 =)
 				</rbs-column>
 
 				<rbs-column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}" primary="true">
