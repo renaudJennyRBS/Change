@@ -28,17 +28,18 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function tearDown()
 	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		//empty mails
 		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Mail_Mail');
 		$mails = $dqb->getDocuments();
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$tm->begin();
+
+		/** @var $mail \Rbs\Mail\Documents\Mail */
 		foreach ($mails as $mail)
 		{
-			/* @var $mail \Rbs\Mail\Documents\Mail */
 			$mail->delete();
 		}
-		$tm->commit();
 
 		//empty jobs
 		$jobManager = $this->getApplicationServices()->getJobManager();
@@ -56,6 +57,8 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			\Change\Stdlib\File::rmdir($mailCacheFolder);
 			$this->assertFalse(is_dir($mailCacheFolder), 'Mail cache folder isn\'t removed');
 		}
+
+		$tm->commit();
 	}
 
 	public function testGetMailByCode()
