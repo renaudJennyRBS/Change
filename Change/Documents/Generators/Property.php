@@ -48,6 +48,11 @@ class Property
 	protected $documentType;
 
 	/**
+	 * @var boolean
+	 */
+	protected $internal;
+
+	/**
 	 * @var string
 	 */
 	protected $defaultValue;
@@ -176,6 +181,16 @@ class Property
 						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					$this->documentType = $value;
+					break;
+				case "internal":
+					if ($value === 'true')
+					{
+						$this->internal = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "default-value":
 					$this->defaultValue = $value;
@@ -369,6 +384,14 @@ class Property
 	public function getStateless()
 	{
 		return $this->stateless;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getInternal()
+	{
+		return $this->internal;
 	}
 
 	/**

@@ -84,6 +84,11 @@ class Property
 	/**
 	 * @var boolean
 	 */
+	protected $internal = false;
+
+	/**
+	 * @var boolean
+	 */
 	protected $hasCorrection = false;
 
 	/**
@@ -565,6 +570,24 @@ class Property
 	public function getLabelKey()
 	{
 		return $this->labelKey;
+	}
+
+	/**
+	 * @param boolean $internal
+	 * @return $this
+	 */
+	public function setInternal($internal)
+	{
+		$this->internal = $internal;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getInternal()
+	{
+		return $this->internal;
 	}
 
 	/**

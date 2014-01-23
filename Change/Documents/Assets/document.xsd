@@ -168,6 +168,7 @@
 									<xs:attribute name="name" use="required" type="xs:string"/>
 									<xs:attribute name="type" use="optional" type="propertyType" default="String"/>
 									<xs:attribute name="document-type" type="documentModel"/>
+									<xs:attribute name="internal" type="xs:boolean" default="true"/>
 									<xs:attribute name="default-value" type="xs:string"/>
 									<xs:attribute name="required" type="xs:boolean" default="true"/>
 									<xs:attribute name="min-occurs" type="xs:int" default="2"/>
