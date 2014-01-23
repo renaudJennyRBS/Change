@@ -5,12 +5,6 @@
 	"order_webstoreid":{
 		"message":"boutique"
 	},
-	"order_contextdata":{
-		"message":"information générales"
-	},
-	"order_linesdata":{
-		"message":"lignes"
-	},
 	"order_amount":{
 		"message":"montant"
 	},
@@ -22,12 +16,6 @@
 	},
 	"order_processingstatus":{
 		"message":"état"
-	},
-	"order_shippingstatus":{
-		"message":"état de livraison"
-	},
-	"order_paymentstatus":{
-		"message":"état de facturation"
 	},
 	"order":{
 		"message":"commande"

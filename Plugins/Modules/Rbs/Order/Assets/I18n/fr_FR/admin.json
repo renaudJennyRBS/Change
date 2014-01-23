@@ -161,6 +161,18 @@
 	"order_statuses":{
 		"message":"état"
 	},
+	"order_processingstatus_edition":{
+		"message":"édition"
+	},
+	"order_processingstatus_processing":{
+		"message":"en traitement"
+	},
+	"order_processingstatus_finalized":{
+		"message":"finalisé"
+	},
+	"order_processingstatus_canceled":{
+		"message":"annulé"
+	},
 	"order_list":{
 		"message":"commandes"
 	},
@@ -172,51 +184,6 @@
 	},
 	"invoice_create":{
 		"message":"ajouter une facture"
-	},
-	"processing_status_initiated":{
-		"message":"initié"
-	},
-	"processing_status_in_progress":{
-		"message":"en cours"
-	},
-	"processing_status_finalized":{
-		"message":"finalisé"
-	},
-	"processing_status_canceled":{
-		"message":"annulé"
-	},
-	"shipping_status_initiated":{
-		"message":"initié"
-	},
-	"shipping_status_prepared":{
-		"message":"préparé"
-	},
-	"shipping_status_partially_shipped":{
-		"message":"partiellement envoyé"
-	},
-	"shipping_status_shipped":{
-		"message":"envoyé"
-	},
-	"shipping_status_partially_delivered":{
-		"message":"partiellement livré"
-	},
-	"shipping_status_delivered":{
-		"message":"livré"
-	},
-	"payment_status_initiated":{
-		"message":"initié"
-	},
-	"payment_status_unconfirmed":{
-		"message":"non-confirmé"
-	},
-	"payment_status_partially_payed":{
-		"message":"partiellement payé"
-	},
-	"payment_status_payed":{
-		"message":"payé"
-	},
-	"payment_status_canceled":{
-		"message":"annulé"
 	},
 	"module_name":{
 		"message":"commandes"

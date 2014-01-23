@@ -21,6 +21,9 @@
 			<dboptions length="3" />
 		</property>
 
-		<property name="closed" type="Boolean" default-value="false"/>
+		<property name="processingStatus" type="String" default-value="edition">
+			<dboptions length="10" />
+			<constraint name="enum" values="edition,processing,finalized,canceled" />
+		</property>
 	</properties>
 </document>

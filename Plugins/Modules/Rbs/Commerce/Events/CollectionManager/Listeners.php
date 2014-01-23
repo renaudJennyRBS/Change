@@ -48,12 +48,6 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Order_Collection_ProcessingStatus':
 					(new \Rbs\Order\Collection\Collections())->addProcessingStatuses($event);
 					break;
-				case 'Rbs_Order_Collection_ShippingStatus':
-					(new \Rbs\Order\Collection\Collections())->addShippingStatuses($event);
-					break;
-				case 'Rbs_Order_Collection_PaymentStatus':
-					(new \Rbs\Order\Collection\Collections())->addPaymentStatuses($event);
-					break;
 				case 'Rbs_Price_Collection_BillingAreasForWebStore':
 					(new \Rbs\Price\Collection\Collections())->addBillingAreasForWebStore($event);
 					break;

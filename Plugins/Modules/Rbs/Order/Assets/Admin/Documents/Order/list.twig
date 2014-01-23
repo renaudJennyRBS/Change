@@ -14,9 +14,9 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsOrderOrder"
-				model="Rbs_Order_Order" filter-collection="filter" use-properties="shippingStatus processingStatus paymentStatus" extend="extend">
+				model="Rbs_Order_Order" filter-collection="filter"extend="extend">
 			<rbs-column name="code" primary="true"></rbs-column>
-			<rbs-column name="status" align="center" label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">
+			<rbs-column name="processingStatus" align="center" label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">
 				<span rbs-order-status-indicators="" order="doc"></span>
 			</rbs-column>
 			<rbs-column name="amountWithTax"></rbs-column>

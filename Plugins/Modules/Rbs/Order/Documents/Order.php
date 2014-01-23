@@ -8,6 +8,10 @@ use Zend\Http\Response as HttpResponse;
  */
 class Order extends \Compilation\Rbs\Order\Documents\Order
 {
+	const PROCESSING_STATUS_EDITION = 'edition';
+	const PROCESSING_STATUS_PROCESSING = 'processing';
+	const PROCESSING_STATUS_FINALIZED = 'finalized';
+	const PROCESSING_STATUS_CANCELED = 'canceled';
 	/**
 	 * @var \Zend\Stdlib\Parameters
 	 */
