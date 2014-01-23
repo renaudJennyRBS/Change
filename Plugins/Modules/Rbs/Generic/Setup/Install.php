@@ -57,6 +57,7 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
+		(new \Rbs\User\Setup\Install())->executeServices($plugin, $applicationServices);
 	}
 
 	/**

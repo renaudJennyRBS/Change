@@ -361,4 +361,12 @@ class FakeWebsite_5842135 implements \Change\Presentation\Interfaces\Website
 		$urlManager->setAbsoluteUrl(true);
 		return $urlManager;
 	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getMailSender()
+	{
+		return null;
+	}
 }

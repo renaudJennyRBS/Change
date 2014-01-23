@@ -14,6 +14,7 @@
 		<property name="baseurl" type="String" stateless="true" />
 		<property name="sitemapGeneration" type="Boolean" />
 		<property name="sitemaps" type="JSON" />
+		<property name="mailSender" type="String" />
 	<!-- TODO UNCOMMENT THIS AFTER MEDIA MODULE IMPLEMENTATION
 	<property name="icon" type="Document" document-type="Rbs_Media_Image" />
 	-->

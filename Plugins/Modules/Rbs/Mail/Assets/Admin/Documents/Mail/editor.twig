@@ -7,10 +7,19 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="subject" required="true" rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'subject'), ['ucf']) }}">
-		</rbs-field-text>
+		<rbs-field property="subject" label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'subject'), ['ucf']) }}" required="true">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.subject" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.mail.documents.mail_substitutions', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="variable in document.substitutions">
+							<a href="" data-ng-click="addSubstitutionVariable(variable)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</rbs-field>
 
 		<rbs-field-text property="code" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'code'), ['ucf']) }}">
@@ -23,19 +32,15 @@
 			chain="Rbs_Theme_Theme:{{ i18nAttr('m.rbs.theme.documents.theme', ['ucf']) }} // Rbs_Theme_Template.theme:{{ i18nAttr('m.rbs.theme.documents.template', ['ucf']) }}">
 		</rbs-field-chained-select>
 
-		<rbs-field-rich-text property="editableContent" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'editableContent'), ['ucf']) }}">
-		</rbs-field-rich-text>
-
-		<rbs-field-text property="senderName" required="true"
+		<rbs-field-text property="senderName"
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderName'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="senderMail" required="true"
+		<rbs-field-text property="senderMail"
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderMail'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-picker-multiple property="websites" required="true"
+		<rbs-field-picker-multiple property="websites"
 			label="{{ i18nAttr('m.rbs.mail.documents.mail_websites', ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
 			selector-title="{{ i18nAttr('m.rbs.mail.admin.mail_websites_picker_title', ['ucf']) }}"

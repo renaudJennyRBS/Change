@@ -77,8 +77,8 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->getNewMail('test1', [], 'fr_FR', 'a subject');
 
-		//No website is defined for this mail no mail will be found
-		$this->assertNull($method->invoke($mailManager, "test1", $website, 'fr_FR'));
+		//if the mail has no websites defined, it been considered as the default mail for this code & LCID.
+		$this->assertNotNull($method->invoke($mailManager, "test1", $website, 'fr_FR'));
 
 		$this->getNewMail('test2', [$website], 'fr_FR', 'C\'est un email en français');
 
@@ -137,7 +137,8 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(1, $jobIds);
 		$job = $jobManager->getJob($jobIds[0]);
 		$this->assertEquals('Rbs_Mail_SendMail', $job->getName());
-		$expectedArguments = ['mailId' => $mail->getId(), 'emails' => ['to' => $emails], 'LCID' => $LCID, 'substitutions' => $substitutions];
+		$expectedEmails = ['to' => $emails, 'cc' => [], 'bcc' => [], 'reply-to' => []];
+		$expectedArguments = ['mailId' => $mail->getId(), 'emails' => $expectedEmails, 'LCID' => $LCID, 'substitutions' => $substitutions, 'websiteId' => $website->getId()];
 		$this->assertEquals($expectedArguments, $job->getArguments());
 		$this->assertEquals($at, $job->getStartDate());
 	}
@@ -367,6 +368,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$template = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_Template');
 		/* @var $template \Rbs\Theme\Documents\Template */
 		$template->setLabel('Test Mail template');
+		$template->setCode('test_template');
 		$html = '<!doctype html>
 				<html>
 					<body>

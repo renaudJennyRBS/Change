@@ -88,17 +88,17 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach('process_Elasticsearch_Mapping', $callback, 5);
 
-		$callBack = function ($event)
-		{
-			(new \Rbs\User\Job\SendMail())->execute($event);
-		};
-		$events->attach('process_Rbs_User_SendMail', $callBack, 5);
-
 		$callback = function ($event)
 		{
 			(new \Rbs\User\Job\CleanAccountRequestTable())->execute($event);
 		};
 		$events->attach('process_Rbs_User_CleanAccountRequestTable', $callback, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Mail\Job\SendMail())->execute($event);
+		};
+		$events->attach('process_Rbs_Mail_SendMail', $callBack, 5);
 	}
 
 	/**

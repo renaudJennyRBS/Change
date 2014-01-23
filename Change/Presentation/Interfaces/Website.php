@@ -47,4 +47,9 @@ interface Website
 	 * @return \Change\Http\Web\UrlManager
 	 */
 	public function getUrlManager($LCID);
+
+	/**
+	 * @return string|null
+	 */
+	public function getMailSender();
 }

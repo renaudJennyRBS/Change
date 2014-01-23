@@ -83,13 +83,11 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 						'link' => $urlManager->getAjaxURL('Rbs_User', 'CreateAccountConfirmation', $query)
 					];
 
-					$jobManager = $event->getApplicationServices()->getJobManager();
-					$arguments = [
-						'LCID' => $LCID,
-						'params' => $params,
-						'email' => $email
-					];
-					$jobManager->createNewJob('Rbs_User_SendMail', $arguments);
+					/* @var \Rbs\Generic\GenericServices $genericServices */
+					$genericServices = $event->getServices('genericServices');
+					$mailManager = $genericServices->getMailManager();
+					$mailManager->send('user_account_request', $event->getWebsite(), $LCID, $email, $params);
+
 					$documentManager->popLCID();
 
 					$result = new \Change\Http\Web\Result\AjaxResult($data);

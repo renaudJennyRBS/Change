@@ -338,6 +338,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$pageTemplate = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_Template');
 		/* @var $pageTemplate \Rbs\Theme\Documents\Template */
+		$pageTemplate->setCode('test_template');
 		$pageTemplate->setLabel('template');
 		$pageTemplate->setTheme($this->getNewTheme());
 

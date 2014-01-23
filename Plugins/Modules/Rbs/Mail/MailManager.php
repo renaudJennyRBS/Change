@@ -80,11 +80,16 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach('render', array($this, 'onDefaultRender'), 5);
+		$callback = function ($event)
+		{
+			(new \Rbs\User\Events\InstallMails())->execute($event);
+		};
+		$eventManager->attach('installMails', $callback, 5);
 	}
 
 	/**
 	 * @param string $code
-	 * @param \Rbs\Website\Documents\Website $website
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $LCID
 	 * @param string|array $to
 	 * @param array $substitutions
@@ -105,7 +110,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 			throw new \RuntimeException('No dest');
 		}
 
-		$argument = ['mailId' => $mail->getId(), 'emails' => $emails, 'LCID' => $LCID, 'substitutions' => $substitutions];
+		$argument = ['mailId' => $mail->getId(), 'websiteId' => $website->getId(), 'emails' => $emails, 'LCID' => $LCID, 'substitutions' => $substitutions];
 		$this->getJobManager()->createNewJob('Rbs_Mail_SendMail', $argument, $at);
 	}
 
@@ -124,7 +129,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Mail\Documents\Mail $mail
-	 * @param \Rbs\Website\Documents\Website $website
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $LCID
 	 * @param array $substitutions
 	 * @return string
@@ -151,7 +156,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 		$website = $event->getParam('website');
 		$LCID = $event->getParam('LCID');
 		$substitutions = $event->getParam('substitutions');
-		if ($mail instanceof \Rbs\Mail\Documents\Mail && $website instanceof \Rbs\Website\Documents\Website && is_string($LCID) && is_array($substitutions))
+		if ($mail instanceof \Rbs\Mail\Documents\Mail && $website instanceof \Change\Presentation\Interfaces\Website && is_string($LCID) && is_array($substitutions))
 		{
 			$applicationServices = $event->getApplicationServices();
 			$application = $event->getApplication();
@@ -243,14 +248,18 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param string $code
-	 * @param \Rbs\Website\Documents\Website $website
+	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $LCID
 	 * @return \Rbs\Mail\Documents\Mail|null
 	 */
 	protected function getMailByCode($code, $website, $LCID)
 	{
 		$dqb = $this->getDocumentManager()->getNewQuery('Rbs_Mail_Mail', $LCID);
-		$dqb->andPredicates($dqb->eq('code', $code), $dqb->eq('websites', $website), $dqb->isNotNull('subject'));
+		$pb = $dqb->getPredicateBuilder();
+		$dqb->andPredicates($pb->eq('code', $code), $pb->eq('LCID', $LCID),
+			$pb->logicOr($pb->eq('websites', $website), $pb->isNull('websites'))
+		);
+		$dqb->addOrder('websites', false);
 		return $dqb->getFirstDocument();
 	}
 
@@ -260,7 +269,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function convertEmailsParam($to)
 	{
-		$emails = [];
+		$emails = ['to' => [], 'cc' => [], 'bcc' => [], 'reply-to' => []];
 		if ($this->isValidEmailFormat($to))
 		{
 			$emails['to'] = [$to];
