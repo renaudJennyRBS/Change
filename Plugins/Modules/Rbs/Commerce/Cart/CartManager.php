@@ -161,9 +161,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			/** @var $cart \Rbs\Commerce\Cart\Cart */
 			$cart = $args['cart'];
-			if ($webStore instanceof \Change\Documents\AbstractDocument)
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 			{
 				$cart->setWebStoreId($webStore->getId());
+				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
 			}
 
 			if ($billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
@@ -509,6 +510,13 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$cart = $event->getParam('cart');
 		if ($cart instanceof Cart)
 		{
+			$cart->setDocumentManager($event->getApplicationServices()->getDocumentManager());
+			$webstore = $cart->getWebStore();
+			if ($webstore)
+			{
+				$cart->setPricesValueWithTax($webstore->getPricesValueWithTax());
+			}
+
 			foreach ($cart->getLines() as $index => $line)
 			{
 				$line->setIndex($index);
@@ -532,6 +540,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
+
+		$pricesValueWithTax = $cart->getPricesValueWithTax();
 		foreach ($line->getItems() as $item)
 		{
 			$sku = $this->getStockManager()->getSkuByCode($item->getCodeSKU());
@@ -547,7 +557,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$price = $item->getPrice();
 			if ($price)
 			{
-				$item->getPrice()->setWithTax($webStore->getPricesValueWithTax());
+				$item->getPrice()->setWithTax($pricesValueWithTax);
 			}
 		}
 	}

@@ -214,6 +214,25 @@ class Cart implements \Serializable
 	}
 
 	/**
+	 * @return boolean|null
+	 */
+	public function getPricesValueWithTax()
+	{
+		return $this->getContext()->get('pricesValueWithTax', null);
+	}
+
+	/**
+	 * @param boolean $pricesValueWithTax
+	 * @return $this|\Zend\Stdlib\Parameters
+	 */
+	public function setPricesValueWithTax($pricesValueWithTax)
+	{
+		$this->getContext()->set('pricesValueWithTax', $pricesValueWithTax);
+		return $this;
+	}
+
+
+	/**
 	 * @return \Rbs\Store\Documents\Webstore|null
 	 */
 	public function getWebStore()
