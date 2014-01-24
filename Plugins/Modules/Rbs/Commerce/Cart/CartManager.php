@@ -190,6 +190,29 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	public function getUnlockedCart($cart)
+	{
+		if (!$cart->isLocked())
+		{
+			return $cart;
+		}
+
+		$newCart = $this->getNewCart($cart->getWebStore(), $cart->getBillingArea(), $cart->getZone());
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('cart' => $cart, 'newCart' => $newCart));
+		$this->getEventManager()->trigger('getUnlockedCart', $this, $args);
+		if (isset($args['newCart']) && $args['newCart'] instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			return $args['newCart'];
+		}
+		throw new \RuntimeException('Unable to get a new cart', 999999);
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 */
 	public function saveCart(\Rbs\Commerce\Cart\Cart $cart)
 	{
@@ -380,7 +403,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$this->getLogging()->exception($e);
 			}
 		}
-		return $cart->getOrdered();
+		return $cart->getOrderId();
 	}
 
 	/**

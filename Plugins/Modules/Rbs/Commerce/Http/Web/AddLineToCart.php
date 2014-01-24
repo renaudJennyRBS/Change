@@ -24,6 +24,11 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 	}
 
+	/**
+	 * @param \Rbs\Commerce\CommerceServices $commerceServices
+	 * @param \Change\Http\Web\Event $event
+	 * @throws \RuntimeException
+	 */
 	public function add(CommerceServices $commerceServices, Event $event)
 	{
 		$request = $event->getRequest();
