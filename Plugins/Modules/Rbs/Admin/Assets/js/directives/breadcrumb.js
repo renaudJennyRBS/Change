@@ -126,7 +126,7 @@
 							});
 							promises.push(defer.promise);
 						}
-						if (route.ruleName !== 'form' && route.ruleName !== 'list') {
+						if (route.ruleName !== 'form' && route.ruleName !== 'list' && route.ruleName !== 'selector') {
 							breadcrumbData.resourceModifier = route.labelKey || route.ruleName;
 						}
 					}
