@@ -10,7 +10,6 @@
 		<property name="territorialUnitCode" type="String" />
 		<property name="zipCode" type="String" />
 		<property name="locality" type="String" />
-		<property name="fieldsData" type="JSON" />
-		<property name="fieldValues" type="JSON" stateless="true" />
+		<property name="fieldsData" type="JSON" internal="true"/>
 	</properties>
 </document>

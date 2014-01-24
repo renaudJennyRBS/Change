@@ -69,13 +69,6 @@
 								fieldValues[field.code] = v;
 							}
 						}
-
-						if (angular.isObject(addressFields.fieldsLayout)) {
-							fieldValues.__layout = addressFields.fieldsLayout;
-						}
-						else {
-							fieldValues.__layout = undefined;
-						}
 					}
 				};
 

@@ -17,36 +17,51 @@ class AddressLines
 		if ($request->getMethod() === \Zend\Http\Request::METHOD_POST)
 		{
 			$addressData = $request->getPost('address');
-			$addressFieldsId = $request->getPost('addressFieldsId');
+			$address = null;
 			if (is_array($addressData))
 			{
-				$address = new \Rbs\Geo\Address\BaseAddress($addressData);
-				$addressFields = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($addressFieldsId);
-				if ($addressFields instanceof \Rbs\Geo\Documents\AddressFields)
+				if (isset($addressData['id']) && is_numeric($addressData['id']))
 				{
-					$layout = $addressFields->getFieldsLayoutData();
-					$address->setLayout($layout);
+					$address = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($addressData['id']);
 				}
-				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
-				$dqb->andPredicates($dqb->eq('code', $address->getCountryCode()));
-				$country = $dqb->getFirstDocument();
-				if ($country instanceof \Rbs\Geo\Documents\Country)
+				else
 				{
-					$i18n = $event->getApplicationServices()->getI18nManager();
-					$address->setFieldValue('country', $i18n->trans($country->getI18nTitleKey()));
+					$address = new \Rbs\Geo\Address\BaseAddress($addressData);
 				}
+			}
+			elseif (is_numeric($addressData))
+			{
+				$address = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($addressData);
+			}
 
-				$result = new \Change\Http\Rest\Result\ArrayResult();
-				$result->setArray($address->getLines());
-				$result->setHttpStatusCode(Response::STATUS_CODE_200);
-				$event->setResult($result);
+			if ($address instanceof \Rbs\Geo\Address\AddressInterface)
+			{
+				$genericServices = $event->getServices('genericServices');
+				if ($genericServices instanceof \Rbs\Generic\GenericServices)
+				{
+					$lines = $genericServices->getGeoManager()->getFormattedAddress($address);
+					$result = new \Change\Http\Rest\Result\ArrayResult();
+					$result->setArray($lines);
+					$result->setHttpStatusCode(Response::STATUS_CODE_200);
+					$event->setResult($result);
+				}
+				else
+				{
+					$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'Generic services not found');
+					$result->setHttpStatusCode(Response::STATUS_CODE_500);
+					$event->setResult($result);
+				}
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'address given for address lines is not an array');
-				$result->setHttpStatusCode(Response::STATUS_CODE_500);
+				$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'address given for address lines is not valid');
+				$result->setHttpStatusCode(Response::STATUS_CODE_409);
 				$event->setResult($result);
 			}
+		}
+		else
+		{
+			$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_POST]));
 		}
 	}
 }

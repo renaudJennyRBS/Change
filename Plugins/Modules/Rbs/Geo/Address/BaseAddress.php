@@ -6,15 +6,12 @@ namespace Rbs\Geo\Address;
  */
 class BaseAddress implements AddressInterface
 {
-	/**
-	 * @var array
-	 */
-	protected $fieldValues = array();
+	const LINES_FIELD_NAME = '__lines';
 
 	/**
 	 * @var array
 	 */
-	protected $layout = array();
+	protected $fieldValues = array();
 
 	/**
 	 * @param $data \Rbs\Geo\Address\AddressInterface|array
@@ -33,68 +30,47 @@ class BaseAddress implements AddressInterface
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getCountryCode()
 	{
-		return isset($this->fieldValues['countryCode']) ? $this->fieldValues['countryCode'] : null;
+		return $this->getFieldValue(AddressInterface::COUNTRY_CODE_FIELD_NAME);
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getZipCode()
 	{
-		return isset($this->fieldValues['zipCode']) ? $this->fieldValues['zipCode'] : null;
+		return $this->getFieldValue(AddressInterface::ZIP_CODE_FIELD_NAME);
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getLocality()
 	{
-		return isset($this->fieldValues['locality']) ? $this->fieldValues['locality'] : null;
+		return $this->getFieldValue(AddressInterface::LOCALITY_FIELD_NAME);
 	}
+
 
 	/**
 	 * @return string[]
 	 */
 	public function getLines()
 	{
-		$lines =  array();
-		if (count($this->fieldValues) > 0)
-		{
-			if (count($this->layout))
-			{
-				foreach ($this->layout as $lineLayout)
-				{
-					$line = [];
-					foreach ($lineLayout as $fieldName)
-					{
-						$fieldValue = $this->getFieldValue($fieldName);
-						if ($fieldValue)
-						{
-							$line[] = $fieldValue;
-						}
-					}
-					if (count($line))
-					{
-						$lines[] = implode(' ', $line);
-					}
-				}
-			}
-			else
-			{
-				foreach ($this->fieldValues as $fieldValue)
-				{
-					if ($fieldValue)
-					{
-						$lines[] = $fieldValue;
-					}
-				}
-			}
-		}
-		return $lines;
+		$lines = $this->getFieldValue(static::LINES_FIELD_NAME);
+		return is_array($lines)?$lines:[];
+	}
+
+	/**
+	 * @param string[] $lines
+	 * @return $this
+	 */
+	public function setLines($lines)
+	{
+		$this->setFieldValue(static::LINES_FIELD_NAME, (is_array($lines)) ? $lines : null);
+		return $this;
 	}
 
 	/**
@@ -105,25 +81,17 @@ class BaseAddress implements AddressInterface
 	public function setFieldValue($fieldPartName, $value)
 	{
 		$this->fieldValues[$fieldPartName] = $value;
+		return $this;
 	}
 
 	/**
 	 * @param string $fieldPartName
+	 * @param null $defaultValue
 	 * @return mixed|null
 	 */
-	public function getFieldValue($fieldPartName)
+	public function getFieldValue($fieldPartName, $defaultValue = null)
 	{
-		//check if a getter method exist for the field
-		$getter = 'get' . ucfirst($fieldPartName);
-		if (method_exists($this, $getter))
-		{
-			$fieldValue = $this->$getter();
-		}
-		else
-		{
-			$fieldValue = isset($this->fieldValues[$fieldPartName]) ? $this->fieldValues[$fieldPartName] : null;
-		}
-		return $fieldValue;
+		return isset($this->fieldValues[$fieldPartName]) ? $this->fieldValues[$fieldPartName] : $defaultValue;
 	}
 
 	/**
@@ -131,13 +99,10 @@ class BaseAddress implements AddressInterface
 	 */
 	public function fromArray($array)
 	{
-		foreach ($array as $addressField => $addressValue)
+		$this->fieldValues = [];
+		if (is_array($array) || ($array instanceof \Traversable))
 		{
-			if ($addressField == '__layout')
-			{
-				$this->layout = $addressValue;
-			}
-			else
+			foreach ($array as $addressField => $addressValue)
 			{
 				$this->setFieldValue($addressField, $addressValue);
 			}
@@ -157,21 +122,11 @@ class BaseAddress implements AddressInterface
 	 */
 	public function fromAddress($address)
 	{
-		$this->setFieldValue('countryCode', $address->getCountryCode());
-		$this->setFieldValue('zipCode', $address->getZipCode());
-		$this->setFieldValue('locality', $address->getLocality());
+		$this->fieldValues = [];
 		foreach ($address->getFields() as $addressField => $addressValue)
 		{
 			$this->setFieldValue($addressField, $addressValue);
 		}
-	}
-
-	/**
-	 * @param array $layout
-	 */
-	public function setLayout($layout)
-	{
-		$this->layout = $layout;
 	}
 
 	/**
