@@ -350,9 +350,6 @@
 	"module_keywords":{
 		"message":"rayons,produits"
 	},
-	"section_name":{
-		"message":"E-commerce"
-	},
 	"billingarea_list_loading":{
 		"message":"Chargement de la liste des zones de tarification..."
 	},

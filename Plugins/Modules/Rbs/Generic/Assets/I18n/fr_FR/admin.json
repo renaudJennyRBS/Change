@@ -1,6 +1,9 @@
 {
 	"module_name": {
-		"message": "CMS"
+		"message": "Communs"
+	},
+	"section_name":{
+		"message":"Gestion de contenus"
 	},
 	"synchronize_title_label":{
 		"message":"synchroniser la valeur avec celle du libellé"

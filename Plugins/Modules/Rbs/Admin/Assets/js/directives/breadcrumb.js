@@ -127,7 +127,7 @@
 							promises.push(defer.promise);
 						}
 						if (route.ruleName !== 'form' && route.ruleName !== 'list') {
-							breadcrumbData.resourceModifier = route.ruleName;
+							breadcrumbData.resourceModifier = route.labelKey || route.ruleName;
 						}
 					}
 
@@ -227,7 +227,8 @@
 						if (cssClass) {
 							html += ' ' + cssClass;
 						}
-						html += '"><span>' + icon + i18n.trans(item[0]);
+						html += '"><span>' + icon;
+						if (item.length && item[0]) html += i18n.trans(item[0]);
 						if (last) {
 							html += getLabelSuffix();
 						}
