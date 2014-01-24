@@ -1000,7 +1000,14 @@
 		}
 
 		function makeLocalCopyKey (doc, tempId) {
-			var key = doc.model + '-' + (tempId || doc.id);
+			if (doc.id < 0 || tempId)
+			{
+				var key =  doc.model + '-' + 'new';
+			}
+			else
+			{
+				var key =  doc.model + '-' + doc.id;
+			}
 			if (doc.LCID) {
 				key += '-' + doc.LCID;
 			}
