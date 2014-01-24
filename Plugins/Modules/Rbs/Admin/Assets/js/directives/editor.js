@@ -332,13 +332,7 @@
 						// If a Document has been created, we redirect to the URL of the new Document.
 						if ($scope._isNew) {
 							EditorManager.removeCreationLocalCopy(doc, $scope._isNewId);
-
-							if (Navigation.isActive()) {
-								Navigation.resolve(doc);
-							}
-							else {
-								$location.path(doc.url()).replace();
-							}
+							$location.path(doc.url());
 						}
 
 						if (angular.isFunction($scope.onReload)) {
@@ -566,7 +560,12 @@
 						if (context.isSelection() && context.isForDocumentProperty())
 						{
 							if (angular.isArray($scope.document[context.params.property])) {
-								ArrayUtils.append($scope.document[context.params.property], context.result);
+								angular.forEach(context.result, function (selectedDoc)
+								{
+									if (!ArrayUtils.documentInArray(selectedDoc, $scope.document[context.params.property])) {
+										$scope.document[context.params.property].push(selectedDoc);
+									}
+								});
 							}
 							else {
 								$scope.document[context.params.property] = context.result;

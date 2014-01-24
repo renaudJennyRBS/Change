@@ -298,7 +298,7 @@
 		"message":"ouvrir un sélecteur ci-dessous"
 	},
 	"picker_in_place":{
-		"message":"module"
+		"message":"ajouter à la sélection"
 	},
 	"picker_in_place_tooltip":{
 		"message":"aller dans le module pour sélectionner"

@@ -281,6 +281,7 @@
 							var lowerDocName = docName.toLowerCase();
 							self.model(model)
 								.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
+								.route('selector', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
 								.route('form', baseRouteTpl + '/:id', {templateUrl: 'Document/' + baseTplDir + '/form.twig', 'labelKey':baseKey + '.document.' + lowerDocName + ' | ucf'})
 								.route('new' , baseRouteTpl + '/new', 'Document/' + baseTplDir + '/form.twig')
 								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController', 'labelKey':'m.rbs.workflow.admin.workflow | ucf'})
@@ -310,6 +311,7 @@
 
 							self.model(model)
 								.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
+								.route('selector', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
 								.route('form', baseRouteTpl + '/:id/:LCID', {templateUrl: 'Document/' + baseTplDir + '/form.twig', 'labelKey':baseKey + '.document.' + lowerDocName + ' | ucf'})
 								.route('new' , baseRouteTpl + '/new', 'Document/' + baseTplDir + '/form.twig')
 								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': 'Document/' + baseTplDir +'/form.twig', 'controller': 'RbsChangeTranslateEditorController', 'labelKey':baseKey + '.document.' + lowerDocName  + ' | ucf'})
@@ -323,6 +325,10 @@
 
 					'getListUrl' : function (doc, params) {
 						return getNamedUrl(doc, params, 'list');
+					},
+
+					'getSelectorUrl' : function (doc, params) {
+						return getNamedUrl(doc, params, 'selector');
 					},
 
 					'getTreeUrl' : function (doc, params) {
