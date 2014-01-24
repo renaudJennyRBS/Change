@@ -43,7 +43,7 @@
 						</rbs-field-select-from-collection>
 
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_tax_zone', ['ucf']) }}">
-							<select class="form-control" ng-model="document.contextData.taxZone">
+							<select class="form-control" ng-model="document.context.taxZone">
 								<option value="">{{ i18nAttr('m.rbs.order.admin.order_select_taxzone', ['ucf']) }}</option>
 								<option ng-repeat="zone in priceInfo.zones" ng-value="(=zone=)">(=zone=)</option>
 							</select>
@@ -76,7 +76,7 @@
 			<div rbs-order-address="" class="panel-body"
 				ng-show="showAddressUI"
 				address-documents="userAddresses"
-				address-fields="document.contextData.addressFields"
+				address-fields="document.context.addressFields"
 				address="document.addressData">
 			</div>
 		</div>
@@ -89,7 +89,7 @@
 			<div rbs-order-shipping-modes="" class="panel-body"
 				ng-show="showShippingUI"
 				shipping-data="document.shippingData"
-				lines-data="document.linesData"
+				lines="document.lines"
 				address-documents="userAddresses"
 				order-id="(= document.id =)">
 			</div>

@@ -186,6 +186,7 @@ use Change\Documents\InverseProperty;
 			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultPhpValue(), false).')';}
 			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
 			if ($property->getHasCorrection() !== null) {$affects[] = '->setHasCorrection('.$this->escapePHPValue($property->getHasCorrection()).')';}
+			if ($property->getInternal() !== null) {$affects[] = '->setInternal('.$this->escapePHPValue($property->getInternal()).')';}
 			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$affects[] = '->setConstraintArray('.$this->escapePHPValue($property->getConstraintArray()).')';}
 			if (count($affects))
 			{

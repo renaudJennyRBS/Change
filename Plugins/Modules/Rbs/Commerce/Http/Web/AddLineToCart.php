@@ -63,6 +63,7 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 					throw $e;
 				}
 				$cart->setWebStoreId($webStore->getId());
+				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
 				$cart->setBillingArea($commerceServices->getContext()->getBillingArea());
 				$cart->setZone($commerceServices->getContext()->getZone());
 			}

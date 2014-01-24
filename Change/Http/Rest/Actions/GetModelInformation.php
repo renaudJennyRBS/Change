@@ -12,8 +12,10 @@ use Zend\Http\Response as HttpResponse;
  */
 class GetModelInformation
 {
-	protected $sortablePropertyTypes = [Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL, Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING];
-	protected $ignoreDefaultValues = ['id', 'model', 'refLCID', 'LCID', 'authorName', 'authorId', 'modificationDate', 'creationDate', 'documentVersion'];
+	protected $sortablePropertyTypes = [Property::TYPE_BOOLEAN, Property::TYPE_DATE, Property::TYPE_DECIMAL,
+		Property::TYPE_DATETIME, Property::TYPE_FLOAT, Property::TYPE_INTEGER, Property::TYPE_STRING];
+	protected $ignoreDefaultValues = ['id', 'model', 'refLCID', 'LCID', 'authorName', 'authorId', 'modificationDate',
+		'creationDate', 'documentVersion'];
 
 	/**
 	 * Use Required Event Params: documentId, modelName
@@ -111,6 +113,10 @@ class GetModelInformation
 			// Properties.
 			foreach ($model->getProperties() as $property)
 			{
+				if ($property->getInternal())
+				{
+					continue;
+				}
 				$infos = array();
 				$infos['label'] = $i18nm->trans($model->getPropertyLabelKey($property->getName()), array('ucf'));
 				$infos['type'] = $property->getType();
@@ -158,25 +164,26 @@ class GetModelInformation
 		{
 			foreach ($model->getProperties() as $property)
 			{
-				if (!$property->getStateless())
+				if ($property->getStateless() || $property->getInternal())
 				{
-					if (in_array($property->getType(), $this->sortablePropertyTypes))
+					continue;
+				}
+
+				if (in_array($property->getType(), $this->sortablePropertyTypes))
+				{
+					if (!$property->getLocalized() || $parentName === null)
 					{
-						if (!$property->getLocalized() || $parentName === null)
-						{
-							// Localized properties are not sortable on sub model
-							$name = $parentName ?  $parentName . '.' . $property->getName() : $property->getName();
-							$result->setSortableBy($name);
-						}
+						// Localized properties are not sortable on sub model
+						$name = $parentName ? $parentName . '.' . $property->getName() : $property->getName();
+						$result->setSortableBy($name);
 					}
-					else if (!$parentName && $property->getType() === Property::TYPE_DOCUMENT)
-					{
-						$this->addSortablePropertiesForModel($mm->getModelByName($property->getDocumentType()), $result, $mm, $property->getName());
-					}
+				}
+				else if (!$parentName && $property->getType() === Property::TYPE_DOCUMENT)
+				{
+					$this->addSortablePropertiesForModel($mm->getModelByName($property->getDocumentType()), $result, $mm,
+						$property->getName());
 				}
 			}
 		}
-
 	}
-
 }

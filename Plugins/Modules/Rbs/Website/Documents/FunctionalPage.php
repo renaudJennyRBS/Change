@@ -37,7 +37,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_CREATE_LOCALIZED, Event::EVENT_UPDATE],
+		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_UPDATE],
 			array($this, 'onInitSupportedFunctions'), 5);
 
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);

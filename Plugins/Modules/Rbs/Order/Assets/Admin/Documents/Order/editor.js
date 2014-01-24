@@ -79,17 +79,17 @@
 						return;
 					}
 					REST.resource('Rbs_Store_WebStore', webStoreId).then(function(data) {
-						scope.document.contextData.pricesValueWithTax = data.pricesValueWithTax;
+						scope.document.context.pricesValueWithTax = data.pricesValueWithTax;
 					});
 				};
 
 				scope.onLoad = function() {
-					if (angular.isArray(scope.document.contextData) || !angular.isObject(scope.document.contextData)) {
-						scope.document.contextData = {};
+					if (angular.isArray(scope.document.context) || !angular.isObject(scope.document.context)) {
+						scope.document.context = {};
 					}
 
-					if (!angular.isArray(scope.document.linesData)) {
-						scope.document.linesData = [];
+					if (!angular.isArray(scope.document.lines)) {
+						scope.document.lines = [];
 					}
 
 					if (angular.isArray(scope.document.addressData) || !angular.isObject(scope.document.addressData)) {
@@ -126,11 +126,11 @@
 					scope.webStoreUpdated(webStoreId);
 				}, true);
 
-				scope.$watch('document.contextData.taxZone', function (taxZone) {
+				scope.$watch('document.context.taxZone', function (taxZone) {
 					scope.priceInfo.taxZone = taxZone;
 				}, true);
 
-				scope.$watch('document.contextData.pricesValueWithTax', function (pricesValueWithTax) {
+				scope.$watch('document.context.pricesValueWithTax', function (pricesValueWithTax) {
 					scope.priceInfo.withTax = pricesValueWithTax;
 				}, true);
 

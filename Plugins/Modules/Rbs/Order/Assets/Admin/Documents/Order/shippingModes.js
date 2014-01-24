@@ -10,7 +10,7 @@
 			scope : {
 				'addressDocuments' : "=",
 				'shippingData' : "=",
-				'linesData' : "=",
+				'lines' : "=",
 				'orderId' : "@"
 			},
 
@@ -36,7 +36,7 @@
 							scope.shippingDetails[shippingMode.id].status = 'unavailable';
 						}
 					});
-					angular.forEach(scope.linesData, function (line) {
+					angular.forEach(scope.lines, function (line) {
 						var shippingModeId = line.options.shippingMode;
 						if(shippingModeId){
 							var matchingShippingModes = $filter('filter')(shippingModes, {'id': shippingModeId});

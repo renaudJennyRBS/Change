@@ -8,15 +8,15 @@ use Change\Documents\Interfaces\Publishable;
 
 /**
  * @name \Change\Documents\Traits\Correction
+
+ * @method integer getId() from \Change\Documents\AbstractDocument
+ * @method \Change\Db\DbProvider getDbProvider() from \Change\Documents\AbstractDocument
+ * @method \Change\Documents\AbstractModel getDocumentModel() from \Change\Documents\AbstractDocument
+ * @method \Change\Documents\DocumentManager getDocumentManager() from \Change\Documents\AbstractDocument
+ * @method array getModifiedPropertyNames() from \Change\Documents\AbstractDocument
+ * @method \Change\Events\EventManager getEventManager() from \Change\Documents\AbstractDocument
  *
- * From \Change\Documents\AbstractDocument
- * @method integer getId()
- * @method \Change\Db\DbProvider getDbProvider()
- * @method \Change\Documents\AbstractModel getDocumentModel()
- * @method \Change\Documents\DocumentManager getDocumentManager()
- *
- * From \Change\Documents\Traits\DbStorage
- * @method updateDocument()
+ * @method updateDocument() from \Change\Documents\Traits\DbStorage
  */
 trait Correction
 {
@@ -102,9 +102,18 @@ trait Correction
 		return false;
 	}
 
+	/**
+	 * @api
+	 */
 	public function updateMergedDocument()
 	{
+		$modifiedPropertyNames = $this->getModifiedPropertyNames();
+
 		$this->updateDocument();
+
+		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_UPDATED, $this,
+			['modifiedPropertyNames' => $modifiedPropertyNames]);
+		$this->getEventManager()->trigger($event);
 	}
 
 	/**

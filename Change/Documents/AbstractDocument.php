@@ -606,9 +606,14 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			}
 			$model = $document->getDocumentModel();
 
+			/* @var $property \Change\Documents\Property */
 			foreach ($model->getProperties() as $name => $property)
 			{
-				/* @var $property \Change\Documents\Property */
+				if ($property->getInternal())
+				{
+					continue;
+				}
+
 				$c = new PropertyConverter($document, $property, $document->getDocumentManager(), $um);
 				$documentResult->setProperty($name, $c->getRestValue());
 			}
@@ -722,7 +727,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				foreach ($extraColumn as $propertyName)
 				{
 					$property = $model->getProperty($propertyName);
-					if ($property)
+					if ($property && !$property->getInternal())
 					{
 						$documentLink->setProperty($property);
 					}
@@ -768,17 +773,18 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 
 		return $event->getResult() instanceof ErrorResult ? false : $this;
 	}
+
 	/**
 	 * Process the incoming REST data $name and set it to $value
-	 * @param $name
-	 * @param $value
-	 * @param $event
-	 * @return bool
+	 * @param string $name
+	 * @param mixed $value
+	 * @param \Change\Http\Event $event
+	 * @return boolean
 	 */
 	protected function processRestData($name, $value, \Change\Http\Event $event)
 	{
 		$property = $this->getDocumentModel()->getProperty($name);
-		if ($property)
+		if ($property && !$property->getInternal())
 		{
 			if ($name == 'id' && intval($value) > 0 && $this->isNew())
 			{
