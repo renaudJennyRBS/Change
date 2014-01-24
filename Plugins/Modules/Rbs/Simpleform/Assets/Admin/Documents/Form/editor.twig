@@ -59,12 +59,6 @@
 		</rbs-field-boolean>
 	</fieldset>
 
-	<fieldset data-ng-show="section=='publication'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
-		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}"
-		data-rbs-document-publication-section="">
-	</fieldset>
-
 	<fieldset data-ng-show="section=='fields'"
 		data-form-section-label="{{ i18nAttr('m.rbs.simpleform.admin.field_list', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
@@ -108,6 +102,12 @@
 				</rbs-kb-switch>
 			</rbs-column>
 		</rbs-document-list>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='publication'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}"
+		data-rbs-document-publication-section="">
 	</fieldset>
 
 	<fieldset

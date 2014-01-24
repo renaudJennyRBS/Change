@@ -33,7 +33,7 @@
 						<dd>(= doc.alt | rbsEmptyLabel =)</dd>
 						<dt>{{ i18n('m.rbs.media.documents.image_file', ['ucf']) }}</dt>
 						<dd>(= doc.path.storageURI =)</dd>
-						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lbl']) }}</dt>
+						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lab']) }}</dt>
 						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
 						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
 					</dl>
