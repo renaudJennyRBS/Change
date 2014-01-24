@@ -40,5 +40,14 @@
 	},
 	"templates_clear":{
 		"message":"vider"
+	},
+	"theme_pagetemplates":{
+		"message":"templates de page"
+	},
+	"theme_mailtemplates":{
+		"message":"templates de mail"
+	},
+	"manage_theme":{
+		"message":"gérer les thèmes"
 	}
 }

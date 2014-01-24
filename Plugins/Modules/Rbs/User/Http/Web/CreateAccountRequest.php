@@ -95,6 +95,7 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 				}
 				catch (\Exception $e)
 				{
+					$event->getApplicationServices()->getLogging()->exception($e);
 					$documentManager->popLCID();
 					throw $e;
 				}

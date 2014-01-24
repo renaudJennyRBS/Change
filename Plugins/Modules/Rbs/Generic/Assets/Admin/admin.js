@@ -33,7 +33,11 @@
 				.route('Registered', 'Rbs/Generic/Plugins/Registered/', { 'templateUrl': 'Rbs/Plugins/registered-list.twig', 'labelKey':'m.rbs.plugins.admin.registered_list | ucf'})
 				.route('New', 'Rbs/Generic/Plugins/New/', { 'templateUrl': 'Rbs/Plugins/new-list.twig', 'labelKey':'m.rbs.plugins.admin.new_list | ucf'})
 				.model('Rbs_Theme_Theme')
-					.route('tree', 'Rbs/Theme/Theme/:id/Templates/', 'Document/Rbs/Theme/Template/list.twig')
+					.route('tree', 'Rbs/Generic/Theme/:id/Templates/', 'Document/Rbs/Theme/Template/list.twig')
+				.model('Rbs_Theme_Theme')
+				.route('pagetemplates', 'Rbs/Generic/Theme/Browse/?theme=:id&view=PageTemplates', 'Document/Rbs/Theme/Theme/browse.twig')
+				.route('mailtemplates', 'Rbs/Generic/Theme/Browse/?theme=:id&view=MailTemplates', 'Document/Rbs/Theme/Theme/browse.twig')
+
 				.routesForLocalizedModels(['Rbs_Geo_AddressField'])
 				.routesForModels(['Rbs_Tag_Tag', 'Rbs_Theme_Theme', 'Rbs_Theme_Template', 'Rbs_Website_Website', 'Rbs_Geo_Country', 'Rbs_Geo_Address', 'Rbs_Geo_TerritorialUnit', 'Rbs_Geo_Zone', 'Rbs_Geo_AddressFields', 'Rbs_Geo_Address']);
 
