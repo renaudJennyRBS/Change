@@ -9,10 +9,6 @@
 				scope.selection = { webStoreId: parseInt(attrs.webStoreId, 10), billingAreaId: parseInt(attrs.billingAreaId, 10) };
 				scope.webStoreData = angular.fromJson(attrs.webStoreData);
 
-				if (scope.webStoreData.length == 1) {
-					scope.selection.webStoreId = scope.webStoreData[0].id;
-				}
-
 				function areaInArray(areas, id) {
 					for (var i = 0; i < areas.length; i++) {
 						var area = areas[i];
@@ -28,7 +24,7 @@
 						for (var i = 0; i < scope.webStoreData.length; i++) {
 							var store = scope.webStoreData[i];
 							if (store.id == scope.selection.webStoreId) {
-								var areas = store.billingAreas;
+								var areas = store['billingAreas'];
 								if (areas.length == 1) {
 									scope.selection.billingAreaId = areas[0].id;
 								}
@@ -53,6 +49,19 @@
 							console.log('SelectWebStore error', data, status, headers);
 						});
 				};
+
+				if (scope.webStoreData.length == 1) {
+					scope.selection.webStoreId = scope.webStoreData[0].id;
+
+					if (scope.webStoreData[0]['billingAreas'].length == 1) {
+						scope.selection.billingAreaId = scope.webStoreData[0]['billingAreas'][0].id;
+
+						if (scope.selection.webStoreId != attrs.webStoreId
+							|| scope.selection.billingAreaId != attrs.billingAreaId) {
+							scope.submit();
+						}
+					}
+				}
 			}
 		}
 	}

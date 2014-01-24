@@ -578,6 +578,10 @@ rbs-navigation-history {
 	border-bottom: 1px solid #E5E5E5;
 }
 
+rbs-document-url-manager .table tbody > tr > td {
+	vertical-align: middle;
+}
+
 /** list option panel **/
 .rbs-list-option-panel {
 	padding: 10px;

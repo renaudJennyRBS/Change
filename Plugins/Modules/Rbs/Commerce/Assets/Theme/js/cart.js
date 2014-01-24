@@ -3,15 +3,38 @@
 	var app = angular.module('RbsChangeApp');
 
 	/**
-	 * @param value mixed
-	 * @param makeClone boolean
-	 * @returns {*}
+	 * @param {*} value
+	 * @param {boolean} makeClone
+	 * @returns {Object}
 	 */
 	function getObject(value, makeClone) {
 		if (!angular.isObject(value) || angular.isArray(value)) {
 			return {};
 		}
 		return makeClone ? angular.copy(value) : value;
+	}
+
+	/**
+	 * @param {Object} $http
+	 * @param {Object} scope
+	 * @param {Object} postData
+	 * @param {Function=} successCallback
+	 * @param {Function=} errorCallback
+	 */
+	function updateCart($http, scope, postData, successCallback, errorCallback) {
+		$http.post('Action/Rbs/Commerce/UpdateCart', postData)
+			.success(function(data) {
+				scope.cart = data;
+				if (angular.isFunction(successCallback)) {
+					successCallback(data);
+				}
+			})
+			.error(function(data, status, headers) {
+				console.log('UpdateCart error', data, status, headers);
+				if (angular.isFunction(errorCallback)) {
+					errorCallback(data, status, headers);
+				}
+			});
 	}
 
 	function rbsCommerceCartData() {
@@ -265,31 +288,19 @@
 		}
 
 		scope.deleteLine = function(index) {
-			scope.loading = true;
-			var line = scope.cart.lines[index];
-			$http.post('Action/Rbs/Commerce/UpdateCartLine', {lineKey: line.key, delete: true})
-				.success (function(data) {
-					console.log('UpdateCartLine success');
-					setCart(data);
-				})
-				.error(function(data, status, headers) {
-					console.log('UpdateCartLine error', data, status, headers);
-				}
-			);
+			if (scope.cart.lines.length > index) {
+				scope.loading = true;
+				var line = scope.cart.lines[index];
+				updateCart($http, scope, { lineQuantities: [{ key: line.key, quantity: 0}] }, setCart);
+			}
 		};
 
 		scope.updateLine = function(index) {
-			scope.loading = true;
-			var line = scope.cart.lines[index];
-			$http.post('Action/Rbs/Commerce/UpdateCartLine', {lineKey: line.key, quantity: line.quantity})
-				.success (function(data) {
-					console.log('UpdateCartLine success');
-					setCart(data);
-				})
-				.error(function(data, status, headers) {
-					console.log('UpdateCartLine error', data, status, headers);
-				}
-			);
+			if (scope.cart.lines[index].quantity != scope.originalQuantities.index) {
+				scope.loading = true;
+				var line = scope.cart.lines[index];
+				updateCart($http, scope, { lineQuantities: [{ key: line.key, quantity: line.quantity }] }, setCart);
+			}
 		};
 
 		scope.canOrder = function() {
@@ -328,22 +339,6 @@
 		function setCart(data) {
 			scope.loading = false;
 			scope.cart = data;
-		}
-
-		function saveCart(postData, successCallback, errorCallback) {
-			$http.post('Action/Rbs/Commerce/UpdateCart', postData)
-				.success(function(data) {
-					scope.cart = data;
-					if (angular.isFunction(successCallback)) {
-						successCallback(data);
-					}
-				})
-				.error(function(data, status, headers) {
-					console.log('UpdateCart error', data, status, headers);
-					if (angular.isFunction(errorCallback)) {
-						errorCallback(data, status, headers);
-					}
-				});
 		}
 
 		function loadCurrentCart() {
@@ -428,12 +423,12 @@
 			$http.post('Action/Rbs/User/Login', postData)
 				.success(function(data) {
 					if (data.hasOwnProperty('accessorId')) {
-						scope.information.userId = data.accessorId;
+						scope.information.userId = data['accessorId'];
 						delete scope.information.password;
 						scope.information.authenticated = true;
 
 						var postData = { userId: scope.information.userId };
-						saveCart(postData, scope.prepareInformationStep);
+						updateCart($http, scope, postData, scope.prepareInformationStep);
 					}
 					else if (data.hasOwnProperty('error')) {
 						clearErrors();
@@ -458,7 +453,7 @@
 				email: scope.information.email,
 				userId: 0
 			};
-			saveCart(postData, scope.prepareInformationStep);
+			updateCart($http, scope, postData, scope.prepareInformationStep);
 		};
 
 		scope.isAuthenticated = function() {
@@ -472,7 +467,7 @@
 
 		scope.finalizeInformationStep = function() {
 			var postData = { address: scope.information.address };
-			saveCart(postData, function () { scope.setCurrentStep('shipping'); });
+			updateCart($http, scope, postData, function () { scope.setCurrentStep('shipping'); });
 		};
 
 		/**
@@ -541,7 +536,7 @@
 				});
 			}
 			var postData = { shippingModes: scope.cart.shippingModes };
-			saveCart(postData, function() { scope.setCurrentStep('payment'); });
+			updateCart($http, scope, postData, function() { scope.setCurrentStep('payment'); });
 		};
 
 		/**
@@ -555,12 +550,12 @@
 		scope.addCoupon = function() {
 			scope.payment.coupons.push({ 'code': scope.payment.newCouponCode });
 			scope.payment.newCouponCode = '';
-			saveCart({ coupons: scope.payment.coupons }, scope.preparePaymentStep);
+			updateCart($http, scope, { coupons: scope.payment.coupons }, scope.preparePaymentStep);
 		};
 
 		scope.removeCoupon = function(index) {
 			scope.payment.coupons.splice(index, 1);
-			saveCart({ coupons: scope.payment.coupons }, scope.preparePaymentStep);
+			updateCart($http, scope, { coupons: scope.payment.coupons }, scope.preparePaymentStep);
 		};
 
 		loadCurrentCart();
