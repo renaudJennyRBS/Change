@@ -5,21 +5,6 @@
 	var app = angular.module('RbsChange');
 
 
-	/**
-	 * Routes and URL definitions.
-	 */
-	app.config(['$provide', function ($provide)
-	{
-		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
-		{
-			$delegate.module('Rbs_Tag', 'Rbs/Tag', { 'redirectTo': 'Rbs/Tag/Tag/'})
-				.route('myTags', 'Rbs/Tag/MyTags/', { 'templateUrl': 'Document/Rbs/Tag/Tag/myTags-list.twig'});
-			$delegate.routesForModels(['Rbs_Tag_Tag']);
-			return $delegate.module(null);
-		}]);
-	}]);
-
-
 	// Register default editors:
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	__change.createEditorForModel('Rbs_Tag_Tag');

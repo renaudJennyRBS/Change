@@ -11,7 +11,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.module('Rbs_Commerce', 'Rbs/Commerce', { 'templateUrl': 'Rbs/Commerce/settings.twig'})
-				.routesForLocalizedModels(['Rbs_Store_WebStore', 'Rbs_Price_BillingArea', 'Rbs_Shipping_Mode', 'Rbs_Payment_DeferredConnector'])
+				.routesForLocalizedModels(['Rbs_Catalog_Attribute', 'Rbs_Store_WebStore', 'Rbs_Price_BillingArea', 'Rbs_Shipping_Mode', 'Rbs_Payment_DeferredConnector'])
 				.model("Rbs_Payment_Connector").route('list', '/Rbs/Commerce/Connector/', {'templateUrl':'Document/Rbs/Payment/Connector/list.twig'})
 				.model("Rbs_Payment_DeferredConnector").route('list', '/Rbs/Commerce/DeferredConnector/', {'templateUrl':'Document/Rbs/Payment/Connector/list.twig'})
 				.routesForModels(['Rbs_Price_Tax', 'Rbs_Commerce_Process']);

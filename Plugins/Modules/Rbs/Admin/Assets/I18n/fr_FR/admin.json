@@ -441,6 +441,9 @@
 	"admin_section_name":{
 		"message":"administration"
 	},
+	"settings_section_name":{
+		"message":"réglages"
+	},
 	"temporary_id":{
 		"message":"identifiant temporaire"
 	},

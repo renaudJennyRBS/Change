@@ -281,46 +281,52 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$mainMenu = ['sections' => [], 'entries' => []];
 		$pm = $this->getPluginManager();
-		$i18nManager = $this->getI18nManager();
+		$sections = [];
+		$entries = [];
 		foreach ($pm->getInstalledPlugins() as $plugin)
 		{
 			$mainMenuPath = $plugin->getAssetsPath() . '/Admin/main-menu.json';
 			if (is_readable($mainMenuPath))
 			{
-				$menuJson = json_decode(file_get_contents($mainMenuPath), true);
+				$menuJson = \Zend\Json\Json::decode(file_get_contents($mainMenuPath), \Zend\Json\Json::TYPE_ARRAY);
 				if (is_array($menuJson))
 				{
-					if (isset($menuJson['sections']) && is_array($menuJson['sections']))
-					{
-						foreach ($menuJson['sections'] as $jsonSection)
-						{
-							if (isset($jsonSection['label']) && is_string($jsonSection['label']))
-							{
-								$jsonSection['label'] = $i18nManager->trans($jsonSection['label'], ['ucf']);
-							}
-							$mainMenu['sections'][] = $jsonSection;
-						}
-					}
-					if (isset($menuJson['entries']) && is_array($menuJson['entries']))
-					{
-						foreach ($menuJson['entries'] as $jsonEntry)
-						{
-							if (isset($jsonEntry['label']) && is_string($jsonEntry['label']))
-							{
-								$jsonEntry['label'] = $i18nManager->trans($jsonEntry['label'], ['ucf']);
-							}
-							if (isset($jsonEntry['keywords']) && is_string($jsonEntry['keywords']))
-							{
-								$jsonEntry['keywords'] = $i18nManager->trans($jsonEntry['keywords'], ['ucf']);
-							}
-							$mainMenu['entries'][] = $jsonEntry;
-						}
-					}
+					$sections = array_merge($sections, $this->parseSections($menuJson));
+					$entries = array_merge($entries, $this->parseEntries($menuJson));
 				}
 			}
-
 		}
-		return $mainMenu;
+		uasort($sections, function($a, $b){
+			$ida = isset($a['index']) ? $a['index'] : PHP_INT_MAX;
+			$idb = isset($b['index']) ? $b['index'] : PHP_INT_MAX;
+			return $ida >= $idb;
+		});
+		$defaultSection = null;
+		if (count($sections))
+		{
+			reset($sections);
+			$defaultSection = key($sections);
+		}
+		foreach ($entries as $entry)
+		{
+			$section = isset($entry['section']) && isset($sections[$entry['section']]) ? $entry['section'] : $defaultSection;
+			if ($section)
+			{
+				$sections[$section]['entries'][] = $entry;
+			}
+		}
+
+		$result = [];
+		foreach ($sections as $section)
+		{
+			$entries = $section['entries'];
+			usort($entries, function($a, $b){
+				return strcmp(\Change\Stdlib\String::stripAccents($a['label']), \Change\Stdlib\String::stripAccents($b['label']));
+			});
+			$section['entries'] = $entries;
+			$result[] = $section;
+		}
+		return $result;
 	}
 
 	/**
@@ -513,5 +519,54 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	public function getJsAssetManager()
 	{
 		return $this->jsAssetManager;
+	}
+
+	/**
+	 * @param $menuJson
+	 */
+	protected function parseSections($menuJson)
+	{
+		$result = [];
+		if (isset($menuJson['sections']) && is_array($menuJson['sections']))
+		{
+			$i18nManager = $this->getI18nManager();
+			foreach ($menuJson['sections'] as $item)
+			{
+				if (isset($item['code']))
+				{
+					if (isset($item['label']) && is_string($item['label']))
+					{
+						$item['label'] = $i18nManager->trans($item['label'], ['ucf']);
+					}
+					$result[$item['code']] = $item;
+				}
+			}
+		}
+		return $result;
+	}
+
+	private function parseEntries($menuJson)
+	{
+		$result = [];
+		if (isset($menuJson['entries']) && is_array($menuJson['entries']))
+		{
+			$i18nManager = $this->getI18nManager();
+			foreach ($menuJson['entries'] as $item)
+			{
+				if (isset($item['url']))
+				{
+					if (isset($item['label']) && is_string($item['label']))
+					{
+						$item['label'] = $i18nManager->trans($item['label'], ['ucf']);
+					}
+					if (isset($item['keywords']) && is_string($item['keywords']))
+					{
+						$item['keywords'] = $i18nManager->trans($item['keywords'], ['ucf']);
+					}
+					$result[] = $item;
+				}
+			}
+		}
+		return $result;
 	}
 }

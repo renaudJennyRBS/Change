@@ -173,9 +173,6 @@
 	"open_page_editor_warning":{
 		"message":"<strong>Ce formulaire contient des données qui ne sont pas encore enregistrées.<\/strong>\n\t\t<ul>\n\t\t\t<li>Si vous choisissez <strong>Oui<\/strong>, les données de ce formulaire seront enregistrées puis vous serez redirigé vers l'éditeur de page.<\/li><li>Si vous choisissez <strong>Non<\/strong>, cette fenêtre sera fermée et... il ne se passera rien :)<\/li>\n\t\t<\/ul>\n\t\n\t"
 	},
-	"section_name":{
-		"message":"CMS"
-	},
 	"section_permission_rule_helper":{
 		"message":"choisissez de restreindre l'accès de cette section à des utilisateurs ou des groupes d'utilisateurs. Si il n'y a aucun utilisateur ou groupe sélectionné, l'accès est considéré comme public"
 	},

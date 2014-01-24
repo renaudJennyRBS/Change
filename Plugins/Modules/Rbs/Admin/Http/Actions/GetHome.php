@@ -33,10 +33,6 @@ class GetHome
 		$attributes['mainMenu'] = $manager->getMainMenu();
 		$manager->getResources();
 
-		usort($attributes['mainMenu']['entries'], function($a, $b){
-			return strcmp(\Change\Stdlib\String::stripAccents($a['label']), \Change\Stdlib\String::stripAccents($b['label']));
-		});
-
 		$devMode = $event->getApplication()->inDevelopmentMode();
 		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
 		{

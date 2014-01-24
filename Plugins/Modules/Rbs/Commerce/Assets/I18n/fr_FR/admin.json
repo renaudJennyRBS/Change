@@ -49,6 +49,8 @@
 	},
 	"pricing_settings":{
 		"message":"réglagles de la facturation"
+	},
+	"section_name":{
+		"message":"E-commerce"
 	}
-
 }

@@ -7,12 +7,25 @@
 			<span class="icon-bar"></span>
 		</button>
 
-		<a class="navbar-brand" id="mp-menu-trigger" href="javascript:;" title="{{ i18nAttr('m.rbs.admin.admin.main_menu', ['ucf']) }}">
+		<a class="navbar-brand" href="/admin.php/" title="{{ i18nAttr('m.rbs.admin.admin.main_menu', ['ucf']) }}">
 			<img src="Rbs/Admin/img/rbschange-white-icon.png" style="height:26px; margin:-3px 0;" alt="Logo RBS Change" />
-			<i class="icon-caret-right" style="vertical-align: middle;"></i>
 		</a>
 	</div>
 	<div class="collapse navbar-collapse" id="rbs-change-navbar-collapse">
+		<ul class="nav navbar-nav navbar-left main-menu">
+			{% for section in mainMenu %}
+				<li class="dropdown">
+					<a data-toggle="dropdown" class="dropdown-toggle" href="javascript:;"><i class="{{ section.icon }}"></i>&nbsp;
+						{{  section.label }}  <b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						{% for entry in section.entries %}
+							<li><a href ng-href="{{entry.url}}">{{entry.label}}</a></li>
+						{% endfor %}
+					</ul>
+				</li>
+			{% endfor %}
+		</ul>
 		<ul class="nav navbar-nav navbar-right">
 			<li class="dropdown" ng-cloak="">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="javascript:;">

@@ -3,8 +3,8 @@
 		{
 			"code": "ecommerce",
 			"icon": "icon-shopping-cart",
-			"index": 50,
-			"label": "m.rbs.catalog.admin.section_name"
+			"index": 0,
+			"label": "m.rbs.commerce.admin.section_name"
 		}
 	],
 	"entries": [
@@ -35,7 +35,7 @@
 		{
 			"label": "m.rbs.commerce.admin.module_name",
 			"url": "Rbs/Commerce",
-			"section": "admin",
+			"section": "settings",
 			"keywords": "m.rbs.commerce.admin.module_keywords"
 		}
 	]

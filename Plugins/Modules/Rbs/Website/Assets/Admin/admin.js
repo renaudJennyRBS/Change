@@ -96,7 +96,6 @@
 			;
 
 			$delegate.routesForLocalizedModels([
-				'Rbs_Website_Website',
 				'Rbs_Website_Topic',
 				'Rbs_Website_StaticPage',
 				'Rbs_Website_FunctionalPage',

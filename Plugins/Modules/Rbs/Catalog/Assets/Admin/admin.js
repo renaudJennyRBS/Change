@@ -80,7 +80,7 @@
 
 			$delegate.routesForModels(['Rbs_Stock_Sku']);
 
-			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Catalog_Attribute', 'Rbs_Brand_Brand']);
+			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Brand_Brand']);
 			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
 				'Rbs_Catalog_ProductListItem', 'Rbs_Catalog_VariantGroup' ]);
 

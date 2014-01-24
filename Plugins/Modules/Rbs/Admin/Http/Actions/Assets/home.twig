@@ -23,8 +23,6 @@
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet" />
 
-	<link href="Rbs/Admin/lib/MultiLevelPushMenu/mlpushmenu.css" rel="stylesheet" />
-
 	<style type="text/css">
 		#chg_loading_mask {
 			position: absolute;
@@ -77,44 +75,31 @@
 		<i class="icon"></i>{{ i18n('m.rbs.admin.admin.fullscreen_toolbar') }}
 	</div>
 
-	<div class="mp-container">
-		<!-- Push Wrapper -->
-		<div class="mp-pusher" id="mp-pusher">
 
-			{% include 'menu.twig' %}
+	{% include 'header.twig' %}
 
-			<div class="scroller"><!-- this is for emulating position fixed of the nav -->
-				<div class="scroller-inner">
+	<div id="main-content" class="content clearfix">
 
-					{% include 'header.twig' %}
+		<div class="row clearfix" id="mainToolbar">
+			<div class="col-md-12">
+				<rbs-navigation-history></rbs-navigation-history>
+				<rbs-breadcrumb></rbs-breadcrumb>
+				<rbs-notification-center></rbs-notification-center>
+				<div id="helpListTop"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div id="workspace" class="ng-view"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div id="helpListBottom"></div>
+			</div>
+		</div>
+	</div>
 
-					<div id="main-content" class="content clearfix">
-
-						<div class="row clearfix" id="mainToolbar">
-							<div class="col-md-12">
-								<rbs-navigation-history></rbs-navigation-history>
-								<rbs-breadcrumb></rbs-breadcrumb>
-								<rbs-notification-center></rbs-notification-center>
-								<div id="helpListTop"></div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div id="workspace" class="ng-view"></div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div id="helpListBottom"></div>
-							</div>
-						</div>
-					</div>
-
-
-				</div><!-- /scroller-inner -->
-			</div><!-- /scroller -->
-		</div><!-- /pusher -->
-	</div><!-- /container -->
 
 	<script type="text/javascript" src="Rbs/Admin/lib/script.min.js"></script>
 
@@ -139,11 +124,6 @@
 	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment-timezone.min.js"></script>
 
 	<script type="text/javascript" src="Rbs/Admin/i18n.js?LCID={{ LCID }}"></script>
-
-	<script type="text/javascript" src="Rbs/Admin/lib/MultiLevelPushMenu/classie.js"></script>
-	<script type="text/javascript" src="Rbs/Admin/lib/MultiLevelPushMenu/mlpushmenu.js"></script>
-	<script type="text/javascript" src="Rbs/Admin/lib/MultiLevelPushMenu/modernizr.custom.js"></script>
-
 
 	<!-- Templates that needs to be included -->
 

@@ -15,7 +15,7 @@
 	/**
 	 * Routes and URL definitions.
 	 */
-	app.config(['$provide', function ($provide)
+/*	app.config(['$provide', function ($provide)
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
@@ -24,5 +24,5 @@
 			$delegate.routesForModels(['Rbs_Geo_Country', 'Rbs_Geo_Address', 'Rbs_Geo_TerritorialUnit', 'Rbs_Geo_Zone', 'Rbs_Geo_AddressFields', 'Rbs_Geo_Address']);
 			return $delegate.module(null);
 		}]);
-	}]);
+	}]);*/
 })();
