@@ -24,7 +24,8 @@
 		"michelf/php-markdown": "1.3",
 		"kriswallsmith/assetic":"v1.1.2",
 		"leafo/lessphp": "0.4.0",
-		"mrclay/minify": "2.1.7"
+		"mrclay/minify": "2.1.7",
+		"rbschange/plugin-installer": "*"
 	},
 	"require-dev": {
 		"symfony/finder": "2.*"
