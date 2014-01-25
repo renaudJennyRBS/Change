@@ -1,12 +1,11 @@
 {
-	"name": "rbschange/change-core",
+	"name": "rbschange/core",
 	"description": "Core RBS Change Package",
 	"type": "rbschange-core",
 	"license": "AGPL-3.0",
 	"autoload": {
 		"psr-0": {
-			"Change": ".",
-			"Compilation": "."
+			"Change": "."
 		}
 	},
 	"repositories": [
