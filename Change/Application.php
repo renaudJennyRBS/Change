@@ -73,8 +73,9 @@ class Application
 		$classLoader = require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 		if ($classLoader instanceof \Composer\Autoload\ClassLoader)
 		{
-			$classLoader->set('Compilation', array(dirname($this->getWorkspace()->compilationPath())));
+			$classLoader->setPsr4('Compilation\\', [PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation']);
 		}
+		return $classLoader;
 	}
 
 	/**

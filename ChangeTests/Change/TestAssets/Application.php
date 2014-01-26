@@ -13,8 +13,8 @@ class Application extends \Change\Application
 		$classLoader = parent::registerCoreAutoload();
 		if ($classLoader instanceof \Composer\Autoload\ClassLoader)
 		{
-			$classLoader->set('Compilation', array(dirname($this->getWorkspace()->compilationPath())));
-			$classLoader->set('ChangeTests', array(dirname($this->getWorkspace()->projectPath())));
+			$classLoader->setPsr4('ChangeTests\\', [dirname(dirname(__DIR__))]);
+			$classLoader->setPsr4('Compilation\\', [$this->getWorkspace()->compilationPath()]);
 		}
 	}
 

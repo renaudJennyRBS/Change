@@ -8,6 +8,7 @@ php:
   - 5.5
 
 before_install:
+ - composer selfupdate
  - composer install
  - mysql -e 'create database rbschangetest;'
  - bash ChangeTests/travisconfig/init.sh
