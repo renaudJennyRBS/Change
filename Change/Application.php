@@ -66,6 +66,7 @@ class Application
 	}
 
 	/**
+	 * @return \Composer\Autoload\ClassLoader|null
 	 */
 	public function registerCoreAutoload()
 	{
