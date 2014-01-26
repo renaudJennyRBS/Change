@@ -66,11 +66,10 @@ class Application
 	}
 
 	/**
-	 * @return \Composer\Autoload\ClassLoader|null
 	 */
 	public function registerCoreAutoload()
 	{
-		return require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+		require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 	}
 
 	/**
@@ -80,6 +79,7 @@ class Application
 	{
 		$pluginsLoader = new \Change\Plugins\Autoloader();
 		$pluginsLoader->setWorkspace($this->getWorkspace());
+		$pluginsLoader->registerNamespace('Compilation', PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation');
 		$pluginsLoader->register();
 	}
 
