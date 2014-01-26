@@ -3,6 +3,7 @@
 	"name": "rbs/notification",
 	"type":"rbschange-module",
 	"require": {
+		"rbschange/plugin-installer": "*",
 		"rbschange/core": "self.version"
 	}
 }

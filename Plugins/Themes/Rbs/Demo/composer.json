@@ -3,6 +3,7 @@
 	"name": "rbs/demo",
 	"type":"rbschange-theme",
 	"require": {
+		"rbschange/plugin-installer": "*",
 		"rbschange/core": "self.version"
 	}
 }

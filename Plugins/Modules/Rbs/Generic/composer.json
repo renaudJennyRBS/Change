@@ -3,6 +3,7 @@
 	"name": "rbs/generic",
 	"type":"rbschange-module",
 	"require": {
+		"rbschange/plugin-installer": "*",
 		"rbschange/core": "self.version"
 	}
 }

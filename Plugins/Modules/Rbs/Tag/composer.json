@@ -3,6 +3,7 @@
 	"name": "rbs/tag",
 	"type":"rbschange-module",
 	"require": {
+		"rbschange/plugin-installer": "*",
 		"rbschange/core": "self.version"
 	}
 }
