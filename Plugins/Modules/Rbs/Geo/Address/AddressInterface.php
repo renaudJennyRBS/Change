@@ -6,6 +6,10 @@ namespace Rbs\Geo\Address;
  */
 interface AddressInterface
 {
+	const COUNTRY_CODE_FIELD_NAME = 'countryCode';
+	const ZIP_CODE_FIELD_NAME = 'zipCode';
+	const LOCALITY_FIELD_NAME = 'locality';
+
 	/**
 	 * @return string
 	 */
@@ -22,12 +26,12 @@ interface AddressInterface
 	public function getLocality();
 
 	/**
-	 * @return string[]
-	 */
-	public function getLines();
-
-	/**
 	 * @return array|null
 	 */
 	public function getFields();
+
+	/**
+	 * @return array
+	 */
+	public function toArray();
 }

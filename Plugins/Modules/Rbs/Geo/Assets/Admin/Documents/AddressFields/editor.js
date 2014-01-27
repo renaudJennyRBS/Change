@@ -51,7 +51,7 @@
 						}
 					});
 					scope.remove(index);
-				}
+				};
 
 				scope.cascadeCreate = editorCtrl.registerCreateCascade('fields', 'Rbs_Geo_AddressField');
 				scope.cascadeEdit = editorCtrl.registerEditCascade('fields');

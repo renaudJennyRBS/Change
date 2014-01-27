@@ -5,6 +5,7 @@ use Rbs\Commerce\Interfaces\LineInterface;
 
 /**
  * @name \Rbs\Order\OrderLine
+ * @method \Rbs\Order\OrderLineItem[] getItems()
  */
 class OrderLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface
 {

@@ -41,8 +41,7 @@
 			</div>
 		</div>
 		<div ng-show="document.lines.length > 0">
-			<rbs-document-list collection="listLines" data-dlid="RbsOrderOrderEditorLinesList"
-					modification-date="false" extend="extend" actions="">
+			<rbs-document-list collection="listLines" data-dlid="RbsOrderOrderEditorLinesList" modification-date="false" extend="extend" actions="">
 
 				<rbs-column name="index" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
 					(= doc.index + 1 =)
@@ -68,15 +67,13 @@
 					(= doc.items[0].price.value * doc.quantity | currency =)
 				</rbs-column>
 
+
 				<rbs-action name="addLine" icon="icon-plus" label="{{ i18nAttr('m.rbs.order.admin.order_add_line', ['ucf']) }}"
 					selection="0,0"></rbs-action>
-
 				<rbs-action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
 					selection="+"></rbs-action>
-
 				<rbs-action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
 					selection="+"></rbs-action>
-
 				<rbs-quick-actions>
 					<a href="javascript:;" ng-click="extend.removeLines([doc])" class="danger"><i class="icon-trash"></i>{{ i18n('m.rbs.admin.adminjs.delete') }}</a>
 				</rbs-quick-actions>
@@ -85,7 +82,6 @@
 					<div class="clearfix"/>
 					<rbs-order-line-editor ng-model="doc.__document" price-info="extend.priceInfo"/>
 				</rbs-preview>
-
 			</rbs-document-list>
 		</div>
 	</div>

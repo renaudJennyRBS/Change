@@ -15,7 +15,7 @@
 		</div>
 	</rbs-field>
 	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" class="required" >
-		<rbs-price-input ng-model="doc.items[0].price.value" data-currency-code="priceInfo.billingArea.currencyCode"
+		<rbs-price-input ng-model="doc.items[0].price.value" data-currency-code="priceInfo.currencyCode"
 				data-price-with-tax="doc.items[0].price.withTax" required="required"/>
 	</rbs-field>
 	<rbs-field>

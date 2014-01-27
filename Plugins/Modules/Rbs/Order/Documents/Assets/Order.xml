@@ -12,15 +12,17 @@
 		<property name="contextData" type="JSON" internal="true"/>
 
 		<property name="linesData" type="JSON" internal="true" />
-		<property name="addressData" type="JSON" />
-		<property name="shippingData" type="JSON" />
+		<property name="addressData" type="JSON" internal="true" />
+		<property name="shippingData" type="JSON" internal="true" />
 
-		<property name="amount" type="Decimal" />
-		<property name="amountWithTax" type="Decimal" />
+		<property name="paymentAmount" type="Decimal" />
 		<property name="currencyCode" type="String">
 			<dboptions length="3" />
 		</property>
 
-		<property name="closed" type="Boolean" default-value="false"/>
+		<property name="processingStatus" type="String" default-value="edition">
+			<dboptions length="10" />
+			<constraint name="enum" values="edition,processing,finalized,canceled" />
+		</property>
 	</properties>
 </document>

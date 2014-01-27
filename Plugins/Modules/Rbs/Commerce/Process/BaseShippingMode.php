@@ -32,13 +32,17 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 	protected $options;
 
 	/**
-	 * @param array $data
+	 * @param array|\Rbs\Commerce\Process\ShippingModeInterface|null $data
 	 */
 	public function __construct($data = null)
 	{
 		if (is_array($data))
 		{
 			$this->fromArray($data);
+		}
+		elseif ($data instanceof \Rbs\Commerce\Process\ShippingModeInterface)
+		{
+			$this->fromShippingMode($data);
 		}
 	}
 
@@ -136,6 +140,16 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 		return $this->address;
 	}
 
+
+	/**
+	 * @param \Rbs\Commerce\Process\ShippingModeInterface $shippingMode
+	 * @return $this
+	 */
+	public function fromShippingMode($shippingMode)
+	{
+		$this->fromArray($shippingMode->toArray());
+		return $this;
+	}
 	/**
 	 * @param array $array
 	 * @return $this
@@ -198,7 +212,7 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 			'id' => $this->id,
 			'title' => $this->title,
 			'lineKeys' => $this->lineKeys,
-			'address' => $this->address ? $this->address->getFields() : null,
+			'address' => $this->address ? $this->address->toArray() : null,
 			'options' => $this->getOptions()->toArray()
 		);
 		return $array;

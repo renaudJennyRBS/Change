@@ -43,12 +43,11 @@ class Collections
 		/* @var $country \Rbs\geo\Documents\Country */
 		foreach ($query->getDocuments() as $country)
 		{
-			$array[] = ['value' => $country->getCode(), 'label' => $country->getLabel(), 'title' => new I18nString($i18n, $country->getI18nTitleKey())];
+			$array[$country->getCode()] = ['label' => $country->getLabel(), 'title' => new I18nString($i18n, $country->getI18nTitleKey())];
 		}
 
 		$collection = new \Change\Collection\CollectionArray('Rbs_Geo_Collection_Countries', $array);
 		$event->setParam('collection', $collection);
 		$event->stopPropagation();
-
 	}
 }

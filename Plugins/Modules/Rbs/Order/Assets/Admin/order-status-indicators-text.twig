@@ -1,53 +1,14 @@
 <div class="order-status-item" ng-switch="order.processingStatus">
-	<span ng-switch-when="in_progress" class="text-info">
-		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.processing_status_in_progress') }}
+	<span ng-switch-when="edition">
+		<i class="icon-large icon-edit-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_edition') }}
+	</span>
+	<span ng-switch-when="processing" class="text-info">
+		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_processing') }}
 	</span>
 	<span ng-switch-when="finalized" class="text-success">
-		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.processing_status_finalized') }}
+		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_finalized') }}
 	</span>
 	<span ng-switch-when="canceled" class="text-danger">
-		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.processing_status_canceled') }}
-	</span>
-	<span ng-switch-when="initiated">
-		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.processing_status_initiated') }}
-	</span>
-</div>
-
-<div class="order-status-item" ng-switch="order.paymentStatus">
-	<span ng-switch-when="partially_payed" class="text-warning">
-		<i class="icon-money"></i> {{ i18n('m.rbs.order.admin.payment_status_partially_payed') }}
-	</span>
-	<span ng-switch-when="payed" class="text-success">
-		<i class="icon-large icon-money"></i> {{ i18n('m.rbs.order.admin.payment_status_payed') }}
-	</span>
-	<span ng-switch-when="canceled" class="text-danger">
-		<i class="icon-large icon-money"></i> {{ i18n('m.rbs.order.admin.payment_status_canceled') }}
-	</span>
-	<span ng-switch-when="unconfirmed" class="text-warning">
-		<i class="icon-large icon-money"></i> {{ i18n('m.rbs.order.admin.payment_status_unconfirmed') }}
-	</span>
-	<span ng-switch-when="initiated">
-		<i class="icon-large icon-money"></i> {{ i18n('m.rbs.order.admin.payment_status_initiated') }}
-	</span>
-</div>
-
-<div class="order-status-item" ng-switch="order.shippingStatus">
-	<span ng-switch-when="prepared" class="text-info">
-		<i class="icon-large icon-truck"></i> {{ i18n('m.rbs.order.admin.shipping_status_prepared') }}
-	</span>
-	<span ng-switch-when="shipped" class="text-success">
-		<i class="icon-large icon-truck"></i> {{ i18n('m.rbs.order.admin.shipping_status_shipped') }}
-	</span>
-	<span ng-switch-when="partially_shipped" class="text-warning">
-		<i class="icon-truck"></i> {{ i18n('m.rbs.order.admin.shipping_status_partially_shipped') }}
-	</span>
-	<span ng-switch-when="delivered" class="text-success">
-		<i class="icon-large icon-truck"></i> {{ i18n('m.rbs.order.admin.shipping_status_delivered') }}
-	</span>
-	<span ng-switch-when="partially_delivered" class="text-success">
-		<i class="opacity-half icon-truck"></i> {{ i18n('m.rbs.order.admin.shipping_status_partially_delivered') }}
-	</span>
-	<span ng-switch-when="initiated">
-		<i class="icon-large icon-truck"></i> {{ i18n('m.rbs.order.admin.shipping_status_initiated') }}
+		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_canceled') }}
 	</span>
 </div>

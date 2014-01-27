@@ -5,9 +5,9 @@
 		<th>{{ i18n('m.rbs.order.admin.order_shipping_status', ['ucf']) }}</th>
 		<th>{{ i18n('m.rbs.order.admin.order_shipping_actions', ['ucf']) }}</th>
 	</tr>
-	<tr ng-repeat="shipping in shippingData" ng-show="shipping.lines.length > 0">
+	<tr ng-repeat="shipping in shippingModes" ng-show="shipping.lineKeys.length > 0">
 		<td>(=shippingDetails[shipping.id].label=)</td>
-		<td>(=shipping.lines.join(', ')=)</td>
+		<td>(=getLinesNumbers(shipping)=)</td>
 		<td ng-switch="shippingDetails[shipping.id].status">
 			<span ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_no_shipment', ['ucf']) }}</span>
 			<span ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_partially_sent', ['ucf']) }}</span>

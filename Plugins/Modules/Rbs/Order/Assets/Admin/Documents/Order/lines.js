@@ -230,9 +230,9 @@
 
 				scope.updateAmount = function (document) {
 					var lines = document.lines;
-					document.amount = 0;
+					document.paymentAmount = 0;
 					for (var i = 0; i < lines.length; i++) {
-						document.amount += (lines[i].priceValueWithTax || lines[i].priceValue);
+						document.paymentAmount += (lines[i].priceValueWithTax || lines[i].priceValue);
 					}
 				};
 			}

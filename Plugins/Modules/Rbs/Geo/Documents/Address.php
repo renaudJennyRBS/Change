@@ -2,9 +2,11 @@
 namespace Rbs\geo\Documents;
 
 use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\Events;
+use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Rbs\geo\Documents\Address
+ * @name \Rbs\Geo\Documents\Address
  */
 class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo\Address\AddressInterface
 {
@@ -12,27 +14,6 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 * @var array
 	 */
 	protected $fieldValues;
-
-	/**
-	 * @return string[]
-	 */
-	public function getLines()
-	{
-		$lines =  array();
-		$af = $this->getAddressFields();
-		if ($af)
-		{
-			foreach ($af->getFieldsName() as $fieldName)
-			{
-				$value = $this->getFieldValue($fieldName);
-				if ($value)
-				{
-					$lines[] = $value;
-				}
-			}
-		}
-		return $lines;
-	}
 
 	/**
 	 * @param string $fieldName
@@ -110,10 +91,7 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 */
 	public function setFieldValues($fieldValues)
 	{
-		if (is_array($fieldValues))
-		{
-			$this->fieldValues = $fieldValues;
-		}
+		$this->fieldValues = is_array($fieldValues) ? $fieldValues : [];
 		return $this;
 	}
 
@@ -122,29 +100,12 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 */
 	public function getFieldValues()
 	{
-		if (is_array($this->fieldValues))
+		if (!is_array($this->fieldValues))
 		{
-			return $this->fieldValues;
+			$values = $this->getFieldsData();
+			$this->fieldValues = is_array($values) ? $values : [];
 		}
-		$fieldValues = array();
-		$af = $this->getAddressFields();
-		$values = $this->getFieldsData();
-		foreach($af->getFieldsName() as $fieldName)
-		{
-			$property = $this->getDocumentModel()->getProperty($fieldName);
-			if ($property)
-			{
-				$fieldValues[$fieldName] = $property->getValue($this);
-			}
-			else
-			{
-				if (is_array($values) && isset($values[$fieldName]))
-				{
-					$fieldValues[$fieldName] = $values[$fieldName];
-				}
-			}
-		}
-		return $fieldValues;
+		return $this->fieldValues;
 	}
 
 	/**
@@ -164,62 +125,58 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		/* @var $address Address */
 		$address = $event->getDocument();
 
-		$propertiesErrors = $event->getParam('propertiesErrors');
-		if (!is_array($propertiesErrors))
+		$fieldValues = $address->fieldValues;
+		if (is_array($fieldValues))
 		{
-			$propertiesErrors = array();
-		}
-
-		$constraintManager = $event->getApplicationServices()->getConstraintsManager();
-		foreach ($address->getAddressFields()->getFields() as $addressField)
-		{
-			$match = $addressField->getMatch();
-			if(!$match)
+			$cleanFieldValues = [];
+			$af = $address->getAddressFields();
+			if ($af)
 			{
-				continue;
-			}
-			$c = $constraintManager->matches($match);
-			$fieldName = $addressField->getCode();
-			if(!$c->isValid($address->getFieldValue($fieldName)))
-			{
-				foreach($c->getMessages() as $error)
+				$constraintManager = $event->getApplicationServices()->getConstraintsManager();
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$propertiesErrors = $event->getParam('propertiesErrors');
+				if (!is_array($propertiesErrors))
 				{
-					if ($error !== null)
-					{
-						$propertiesErrors[$fieldName][] = $error;
-					}
+					$propertiesErrors = array();
 				}
-			}
-		}
 
-		$event->setParam('propertiesErrors', count($propertiesErrors) ? $propertiesErrors : null);
-
-		if (count($propertiesErrors) === 0)
-		{
-			foreach ($this->getFieldValues() as $fieldName => $fieldValue)
-			{
-				if ($this->hasField($fieldName))
+				foreach ($af->getFields() as $addressField)
 				{
-					$property = $this->getDocumentModel()->getProperty($fieldName);
+					$fieldName = $addressField->getCode();
+					$value = (isset($fieldValues[$fieldName])) ? $fieldValues[$fieldName] : null;
+					if ($value === null && $addressField->getRequired())
+					{
+						$propertiesErrors[$fieldName][] = $i18nManager->trans('c.constraints.isempty', array('ucf'));
+						continue;
+					}
+					$match = $addressField->getMatch();
+					if ($match && $value !== null)
+					{
+						$c = $constraintManager->matches($match);
+						if (!$c->isValid($value))
+						{
+							foreach($c->getMessages() as $error)
+							{
+								if ($error !== null)
+								{
+									$propertiesErrors[$fieldName][] = $error;
+								}
+							}
+							continue;
+						}
+					}
+
+					$cleanFieldValues[$fieldName] = $value;
+					$property = $address->getDocumentModel()->getProperty($fieldName);
 					if ($property)
 					{
-						$property->setValue($this, $fieldValue);
-					}
-					else
-					{
-						$values = $this->getFieldsData();
-						if (!is_array($values))
-						{
-							$values = array($fieldName => $fieldValue);
-						}
-						else
-						{
-							$values[$fieldName] = $fieldValue;
-						}
-						$this->setFieldsData($values);
+						$property->setValue($address, $value);
 					}
 				}
+				$event->setParam('propertiesErrors', count($propertiesErrors) ? $propertiesErrors : null);
 			}
+			$address->setFieldsData(count($cleanFieldValues) ? $cleanFieldValues : null);
+			$address->fieldValues = $cleanFieldValues;
 		}
 	}
 
@@ -228,8 +185,12 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 */
 	public function getFields()
 	{
-		$fields = $this->getFieldsData();
-		return is_array($fields) ? $fields : [];
+		$array = $this->getFieldValues();
+		$array['countryCode'] = $this->getCountryCode();
+		$array['zipCode'] = $this->getZipCode();
+		$array['locality'] = $this->getLocality();
+		return $array;
+
 	}
 
 	/**
@@ -248,5 +209,66 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	{
 		// not implemented
 		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$array = $this->getFields();
+		$array['__id'] = $this->getId();
+		$array['__addressFieldsId'] = $this->getAddressFieldsId();
+		return $array;
+	}
+
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+		$address = $event->getDocument();
+		if (!$address instanceof Address)
+		{
+			return;
+		}
+		$documentResult = $event->getParam('restResult');
+		if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			$pc = new \Change\Http\Rest\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$documentResult->setProperty('fieldValues', $pc->toRestValue($address->getFields(), \Change\Documents\Property::TYPE_JSON));
+			$genericServices = $event->getServices('genericServices');
+			if ($genericServices instanceof \Rbs\Generic\GenericServices)
+			{
+				$documentResult->setProperty('lines', $genericServices->getGeoManager()->getFormattedAddress($address));
+			}
+		}
+		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$extraColumn = $event->getParam('extraColumn');
+			if (is_array($extraColumn) && in_array('fieldValues', $extraColumn)) {
+				$pc = new \Change\Http\Rest\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+				$documentResult->setProperty('fieldValues', $pc->toRestValue($address->getFields(), \Change\Documents\Property::TYPE_JSON));
+			}
+		}
+	}
+
+	/**
+	 * Process the incoming REST data $name and set it to $value
+	 * @param string $name
+	 * @param mixed $value
+	 * @param \Change\Http\Event $event
+	 * @return boolean
+	 */
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		if ($name === 'fieldValues')
+		{
+			$pc = new \Change\Http\Rest\ValueConverter($event->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$this->fieldValues = $pc->toPropertyValue($value, \Change\Documents\Property::TYPE_JSON);
+			return true;
+		}
+		else
+		{
+			return parent::processRestData($name, $value, $event);
+		}
 	}
 }
