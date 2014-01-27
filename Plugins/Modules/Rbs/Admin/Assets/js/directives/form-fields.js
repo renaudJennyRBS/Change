@@ -22,6 +22,7 @@
 	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
 	registerFieldDirective('Address', '<rbs-address-fields></rbs-address-fields>', 'rbs-address-fields', true);
 	registerFieldDirective('ChainedSelect', '<rbs-document-chained-select></rbs-document-chained-select>', 'rbs-document-chained-select');
+	registerFieldDirective('DocumentSelect', '<rbs-document-select></rbs-document-select>', 'rbs-document-select');
 
 
 	/**

@@ -23,12 +23,14 @@
 			template :
 				'<select class="form-control" ng-disabled="disabled" ng-model="value">' +
 					'<option ng-repeat="o in options" ng-class="{\'empty-value\': o.id == 0}" value="(= o.id =)" ng-bind="o.label"></option>' +
-				'</select>',
+				'</select>' +
+				'<a ng-if="documentTarget" href ng-href="(= documentTarget | rbsURL =)">(= documentTarget.label =) <i class="icon-circle-arrow-right"></i></a>',
 			scope : true,
 
 			link : function (scope, iElement, iAttrs, ngModel)
 			{
-				var loadFn;
+				var loadFn,
+					documentTarget = null;
 
 				if (iAttrs.hasOwnProperty('filterProperty'))
 				{
@@ -109,14 +111,16 @@
 						scope.value = ngModel.$viewValue;
 					} else if (angular.isObject(ngModel.$viewValue)) {
 						scope.value = ngModel.$viewValue.id;
+
 					}
 				};
 
 
 				scope.$watch('value', function (value, old)
 				{
-					if (value !== old) {
+					if (old !== undefined && value !== undefined && value !== old) {
 						ngModel.$setViewValue(findOption(parseInt(value, 10)));
+						scope.documentTarget = ngModel.$viewValue;
 					}
 				});
 			}
