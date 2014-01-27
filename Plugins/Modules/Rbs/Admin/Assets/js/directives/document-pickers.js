@@ -102,7 +102,7 @@
 				}
 				else if (/\d+/.test('' + value))
 				{
-					scope.documents = REST.getResources([value])[0];
+					scope.documents = REST.getResources([value]);
 				}
 				else
 				{
