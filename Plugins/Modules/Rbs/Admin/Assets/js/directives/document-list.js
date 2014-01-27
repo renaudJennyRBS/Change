@@ -779,13 +779,8 @@
 					}
 
 
-					function deselectAll () {
-						scope.allSelected.cb = false;
-						angular.forEach(scope.selected, function (selected) {
-							if(selected.cb){
-								selected.cb = false;
-							}
-						});
+					scope.deselectAll = function () {
+						scope.allSelected.cd = false;
 					}
 
 					//
@@ -861,6 +856,7 @@
 
 					scope.remove = function (doc, $event) {
 						REST['delete'](doc).then(function () {
+							scope.deselectAll();
 							reload();
 						});
 					};
