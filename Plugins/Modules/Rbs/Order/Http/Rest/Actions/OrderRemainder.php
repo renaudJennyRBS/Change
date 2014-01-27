@@ -27,13 +27,20 @@ class OrderRemainder
 				//  'sent' if there is no remain
 				//  'unavailable' if there is no shippingMode
 				$status = 'noShipment';
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 				/* @var $order \Rbs\Order\Documents\Order */
-				$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($orderId);
-				$shippingData = $order->getShippingData();
-				$linesData = $order->getLinesData();
+				$order = $params['order'];
+				$shippingModes = $order->getShippingModes();
 
-				$skuData = $this->getSkuDataFromLines($linesData, $shippingData);
+				$lines = $order->getLines();
+				$commerceServices = $event->getServices('commerceServices');
+				if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+				{
+					throw new \RuntimeException(999999, 'Commerce services not set');
+				}
+
+				$skuData = $this->getSkuDataFromLines($lines, $shippingModes);
 				//keep original quantity information to seek if a shipment is already done
 				$skuOrderQuantity = [];
 				foreach ($skuData as $codeSKU => $line)
@@ -41,7 +48,7 @@ class OrderRemainder
 					$skuOrderQuantity[$codeSKU] = $line['quantity'];
 				}
 
-				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
+				$dqb = $documentManager->getNewQuery('Rbs_Order_Shipment');
 				$dqb->andPredicates($dqb->eq('orderId', $orderId), $dqb->eq('prepared', true));
 				$shipments = $dqb->getDocuments();
 				foreach ($shipments as $shipment)
@@ -51,8 +58,8 @@ class OrderRemainder
 					foreach ($shipmentLines as $shipmentLine)
 					{
 						/* @var $sku \Rbs\Stock\Documents\Sku */
-						$sku = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($shipmentLine['SKU']);
-						if (isset($skuData[$sku->getCode()]))
+						$sku = $documentManager->getDocumentInstance($shipmentLine['SKU']);
+						if ($sku && isset($skuData[$sku->getCode()]))
 						{
 							$skuData[$sku->getCode()]['quantity'] -= $shipmentLine['quantity'];
 						}
@@ -64,7 +71,7 @@ class OrderRemainder
 				$itemForShippingModeCount = 0;
 				foreach ($skuData as $codeSku => $skuLine)
 				{
-					if (isset($skuLine['shippingModeId']) && $skuLine['shippingModeId'] === $shippingModeId)
+					if (isset($skuLine['shippingModeId']) && $skuLine['shippingModeId'] == $shippingModeId)
 					{
 						$itemForShippingModeCount++;
 						//try to find if the original order quantity differs from the remain, in this case
@@ -75,14 +82,17 @@ class OrderRemainder
 						}
 						if ($skuLine['quantity'] > 0)
 						{
-							$sku = $this->getSKUByCode($codeSku, $event->getApplicationServices()->getDocumentManager());
-							$remainLines[] = [
-								'designation' => $skuLine['designation'],
-								'quantity' => $skuLine['quantity'],
-								'codeSKU' => $codeSku,
-								'allowQuantitySplit' => $sku->getAllowQuantitySplit(),
-								'SKU' => $sku->getId()
-							];
+							$sku = $commerceServices->getStockManager()->getSKUByCode($codeSku);
+							if ($sku)
+							{
+								$remainLines[] = [
+									'designation' => $skuLine['designation'],
+									'quantity' => $skuLine['quantity'],
+									'codeSKU' => $codeSku,
+									'allowQuantitySplit' => $sku->getAllowQuantitySplit(),
+									'SKU' => $sku->getId()
+								];
+							}
 						}
 						$address = isset($skuLine['address']) ? $skuLine['address'] : $address;
 					}
@@ -156,54 +166,52 @@ class OrderRemainder
 	}
 
 	/**
-	 * @param string $code
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return \Rbs\Stock\Documents\Sku
-	 */
-	protected function getSKUByCode($code, $documentManager)
-	{
-		$dqb = $documentManager->getNewQuery('Rbs_Stock_Sku');
-		$dqb->andPredicates($dqb->eq('code', $code));
-		return $dqb->getFirstDocument();
-	}
-
-	/**
-	 * @param array $linesData
-	 * @param array $shippingData
+	 * @param \Rbs\Order\OrderLine[] $lines
+	 * @param \Rbs\Commerce\Process\BaseShippingMode[] $shippingModes
 	 * @return array
 	 */
-	protected function getSkuDataFromLines($linesData, $shippingData)
+	protected function getSkuDataFromLines($lines, $shippingModes)
 	{
 		$skuData = [];
-		foreach ($linesData as $line)
+		foreach ($lines as $line)
 		{
-			//TODO use lineKey instead of index after order refactoring
-			$index = $line['index'];
-			foreach ($line['items'] as $item)
+			$key = $line->getKey();
+			foreach ($line->getItems() as $item)
 			{
-				$codeSKU = $item['codeSKU'];
-				$skuData[$codeSKU] = [
-					'quantity' => $item['reservationQuantity'] * $line['quantity'],
-					'designation' => $line['designation']
-				];
-
-				foreach ($shippingData as $shippingInfo)
+				$codeSKU = $item->getCodeSKU();
+				if (isset($skuData[$codeSKU]))
 				{
-					if (in_array($index, $shippingInfo['lines']))
+					$skuData[$codeSKU]['quantity'] += $item->getReservationQuantity() * $line->getQuantity();
+				}
+				else
+				{
+					$skuData[$codeSKU] = [
+						'quantity' => $item->getReservationQuantity() * $line->getQuantity(),
+						'designation' => $line->getDesignation()
+					];
+
+					foreach ($shippingModes as $shippingMode)
 					{
-						$skuData[$codeSKU]['shippingModeId'] = $shippingInfo['id'];
-						$address = isset($shippingInfo['address']) ? $shippingInfo['address'] : new \stdClass();
-						$addressFields = isset($shippingInfo['addressFields']) ? $shippingInfo['addressFields'] : 0;
-						$skuData[$codeSKU]['address'] =  [
-							'address' => $address,
-							'addressFields' => $addressFields
-						];
-						break;
+						if (in_array($key, $shippingMode->getLineKeys()))
+						{
+							$skuData[$codeSKU]['shippingModeId'] = $shippingMode->getId();
+							if ($shippingMode->getAddress())
+							{
+								$skuData[$codeSKU]['address'] = [
+									'address' => $shippingMode->getAddress()->toArray()
+								];
+							}
+							else {
+								$skuData[$codeSKU]['address'] = [
+									'address' =>  new \stdClass()
+								];
+							}
+							break;
+						}
 					}
 				}
 			}
 		}
-
 		return $skuData;
 	}
 }

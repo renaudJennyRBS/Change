@@ -40,6 +40,10 @@
 				//In preparedLines, we mean lines already prepared (you can't modify this lines)
 				scope.data.preparedLines = [];
 
+				scope.onLoad = function (){
+					setShipmentPromises();
+				};
+
 				scope.onReady = function ()
 				{
 					if (scope.isNew()){
@@ -66,10 +70,6 @@
 					}
 				};
 
-				scope.onLoad = function (){
-					setShipmentPromises();
-				};
-
 				function setOrderWatch(){
 					scope.$watch('data.order', function (order){
 						if (order){
@@ -84,7 +84,7 @@
 
 				function setShippingModeWatch(){
 					scope.$watch('data.carrier', function (carrier){
-						if (carrier){
+						if (angular.isObject(carrier) && carrier.id > 0) {
 							REST.ensureLoaded(carrier).then(function (data){
 								scope.document.shippingModeCode = data.code;
 								refreshOrderInformation();
@@ -104,7 +104,7 @@
 				function refreshOrderInformation(){
 					resetLinesInformation();
 					dispatchDocumentDataLines().then(function (){
-						if (scope.data.order && scope.data.carrier){
+						if (scope.data.order && (scope.data.carrier && scope.data.carrier.id > 0)){
 							refreshCode();
 							refreshOrderRemainder();
 						}

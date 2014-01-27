@@ -19,11 +19,10 @@
 		</rbs-field>
 
 		<rbs-field ng-if="canEdit.carrier" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}">
-			<rbs-document-picker-single
-				ng-model="data.carrier"
+			<rbs-document-select ng-model="data.carrier"
 				accepted-model="Rbs_Shipping_Mode"
 				selector-title="{{ i18nAttr('m.rbs.order.admin.shipment_select_shippingMode', ['ucf']) }}">
-			</rbs-document-picker-single>
+			</rbs-document-select>
 		</rbs-field>
 		<rbs-field ng-if="!canEdit.carrier" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}" ng-disabled="true">
 			<p class="form-control-static">(= document.shippingModeCode =)</p>

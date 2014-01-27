@@ -5,11 +5,8 @@
 	"order_webstoreid":{
 		"message":"boutique"
 	},
-	"order_amount":{
-		"message":"montant"
-	},
-	"order_amountwithtax":{
-		"message":"montant TTC"
+	"order_paymentamount":{
+		"message":"montant payé"
 	},
 	"order_currencycode":{
 		"message":"devise"
