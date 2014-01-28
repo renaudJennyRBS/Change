@@ -77,6 +77,6 @@ class SendMail
 			$senderMail = trim(substr($senderMail, 0, strrpos($senderMail, '>')));
 			return [['name' => $senderName, 'email' => $senderMail]];
 		}
-		return $event->getApplication()->getConfiguration('GlobalSettings/MailSender');
+		return [$event->getApplication()->getConfiguration('Rbs/Mail/defaultSender')];
 	}
 }
