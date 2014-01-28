@@ -15,22 +15,19 @@
 	 * - filter-property
 	 * - filter-value
 	 */
-	app.directive('rbsDocumentSelect', ['RbsChange.REST', 'RbsChange.Query', function (REST, Query)
+	app.directive('rbsDocumentSelect', ['RbsChange.REST', 'RbsChange.Query', 'RbsChange.Utils', function (REST, Query, Utils)
 	{
 		return {
 			restrict : 'E',
 			require : 'ngModel',
-			template :
-				'<select class="form-control" ng-disabled="disabled" ng-model="value">' +
-					'<option ng-repeat="o in options" ng-class="{\'empty-value\': o.id == 0}" value="(= o.id =)" ng-bind="o.label"></option>' +
-				'</select>' +
-				'<a ng-if="documentTarget" href ng-href="(= documentTarget | rbsURL =)">(= documentTarget.label =) <i class="icon-circle-arrow-right"></i></a>',
+			templateUrl : 'Rbs/Admin/js/directives/document-select.twig',
 			scope : true,
 
 			link : function (scope, iElement, iAttrs, ngModel)
 			{
-				var loadFn,
-					documentTarget = null;
+				var loadFn;
+
+				scope.documentTarget = null;
 
 				if (iAttrs.hasOwnProperty('filterProperty'))
 				{
@@ -120,7 +117,15 @@
 				{
 					if (old !== undefined && value !== undefined && value !== old) {
 						ngModel.$setViewValue(findOption(parseInt(value, 10)));
-						scope.documentTarget = ngModel.$viewValue;
+
+						if (Utils.isDocument(ngModel.$viewValue))
+						{
+							scope.documentTarget = ngModel.$viewValue;
+						}
+						else
+						{
+							scope.documentTarget = null;
+						}
 					}
 				});
 			}
