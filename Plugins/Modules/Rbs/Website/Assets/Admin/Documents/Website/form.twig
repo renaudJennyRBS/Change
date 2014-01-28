@@ -2,9 +2,7 @@
 
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-		<rbs-links-panel>
-			<a rbs-active-route="" rbs-panel-link="" href ng-href="(= document | rbsURL:'tree' =)">{{ i18nAttr('m.rbs.website.admin.website_go_to_tree', ['ucf']) }}</a>
-		</rbs-links-panel>
+		<a rbs-aside-other-link href="(= document | rbsURL:'tree' =)">{{ i18n('m.rbs.website.admin.website_go_to_tree', ['ucf']) | raw }}</a>
 	</div>
 
 	<div class="document-form" rbs-main-column>
