@@ -12,6 +12,8 @@
 
 			link : function (scope, element, attrs, editorCtrl) {
 
+				var contentSectionInitialized = false;
+
 				scope.onReady = function () {
 					scope.editableContentInfo = structureEditorService.getContentInfo(scope.document.editableContent);
 					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
@@ -21,15 +23,20 @@
 
 				scope.initSection = function (sectionName) {
 					if (sectionName === 'content') {
-						if (scope.document.pageTemplate)
-						{
-							REST.resource(scope.document.pageTemplate).then(function (template)
-							{
-								scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
-							});
-						}
+						scope.loadTemplate();
+						contentSectionInitialized = true;
 					}
 				};
+
+				scope.loadTemplate = function () {
+					if (scope.document.pageTemplate)
+					{
+						REST.resource(scope.document.pageTemplate).then(function (template)
+						{
+							scope.pageTemplate = { "html" : template.htmlForBackoffice, "data" : template.editableContent };
+						});
+					}
+				}
 
 				scope.leaveSection = function (section)
 				{
@@ -61,6 +68,12 @@
 				$rootScope.$watch('website', function (website) {
 					if (scope.document && ! scope.document.website) {
 						scope.document.website = website;
+					}
+				}, true);
+
+				scope.$watch('document.pageTemplate', function (pageTemplate, old) {
+					if (old && scope.document && pageTemplate !== old && contentSectionInitialized) {
+						scope.loadTemplate();
 					}
 				}, true);
 

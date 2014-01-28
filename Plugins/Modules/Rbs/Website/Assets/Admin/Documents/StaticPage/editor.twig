@@ -12,12 +12,14 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-chained-select
-				label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"
-				required="true"
-				property="pageTemplate"
-				chain="Rbs_Theme_Theme:{{ i18nAttr('m.rbs.theme.documents.theme', ['ucf']) }} // Rbs_Theme_Template.theme:{{ i18nAttr('m.rbs.theme.documents.template', ['ucf']) }}">
-		</rbs-field-chained-select>
+		<rbs-field-document-select
+			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"
+			empty-label="{{ i18nAttr('m.rbs.website.admin.page_empty_pagetemplate', ['ucf']) }}"
+			required="true"
+			property="pageTemplate"
+			accepted-model="Rbs_Theme_Template"
+			ng-model="document.pageTemplate">
+		</rbs-field-document-select>
 
 		<hr />
 

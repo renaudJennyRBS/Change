@@ -384,6 +384,7 @@
 								// Refresh the list when all the requests have completed.
 								// Notify user if there is an exception during deleting
 								$q.all(promises).then(function () {
+									$scope.deselectAll();
 									$scope.reload();
 								}, function (reason){
 									NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.error_on_delete | ucf'), ErrorFormatter.format(reason));

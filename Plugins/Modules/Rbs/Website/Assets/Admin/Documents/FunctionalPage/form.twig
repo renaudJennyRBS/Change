@@ -30,6 +30,13 @@
 							</div>
 						</div>
 					</div>
+
+					<hr/>
+
+					<div class="rbs-aside-block rbs-aside-other-links">
+						<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
+						<a rbs-aside-other-link href="(= document.pageTemplate | rbsURL =)">{{ i18n('m.rbs.website.admin.page_edit_template', ['ucf']) | raw }}</a>
+					</div>
 				</div>
 			</div>
 			<div class="document-form" rbs-main-column>

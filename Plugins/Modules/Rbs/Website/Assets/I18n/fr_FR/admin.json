@@ -80,6 +80,9 @@
 	"page_ttl_help":{
 		"message":"Indiquer une durée en secondes, ou 0 pour désactiver le cache"
 	},
+	"page_edit_template":{
+		"message":"éditer le template de page"
+	},
 	"manage_functions":{
 		"message":"gestion des fonctions"
 	},
@@ -158,7 +161,7 @@
 	"staticpage_section_picker_title":{
 		"message":"sélectionner la section"
 	},
-	"staticpage_pagetemplate_picker_title":{
+	"page_empty_pagetemplate":{
 		"message":"sélectionner le modèle de page"
 	},
 	"module_name":{
