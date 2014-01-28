@@ -80,6 +80,9 @@
 	"page_ttl_help":{
 		"message":"Indiquer une durée en secondes, ou 0 pour désactiver le cache"
 	},
+	"page_edit_template":{
+		"message":"éditer le template de page"
+	},
 	"manage_functions":{
 		"message":"gestion des fonctions"
 	},
