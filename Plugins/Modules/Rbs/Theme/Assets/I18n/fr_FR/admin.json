@@ -8,17 +8,8 @@
 	"template_create":{
 		"message":"ajouter un modèle de page"
 	},
-	"theme_list_templates":{
-		"message":"lister"
-	},
 	"theme_list":{
 		"message":"thèmes"
-	},
-	"theme_create":{
-		"message":"ajouter un thème"
-	},
-	"theme_name_help":{
-		"message":"<strong>Ce nom est composé de lettres et de _ uniquement.<\/strong><br\/><span class='label label-danger'>Attention !<\/span> Ce nom fait référence à des fichiers sur le serveur : le changer ici peut rendre le site inaccessible."
 	},
 	"templates_close":{
 		"message":"Fermer"
@@ -41,13 +32,16 @@
 	"templates_clear":{
 		"message":"vider"
 	},
-	"theme_pagetemplates":{
+	"theme_page_templates":{
 		"message":"templates de page"
 	},
-	"theme_mailtemplates":{
+	"theme_mail_templates":{
 		"message":"templates de mail"
 	},
-	"manage_theme":{
-		"message":"gérer les thèmes"
+	"breadcrumb_pagetemplates":{
+		"message":"templates de page"
+	},
+	"breadcrumb_mailtemplates":{
+		"message":"templates de mail"
 	}
 }

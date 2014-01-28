@@ -14,11 +14,29 @@
 
 	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, i18n, urlManager, $location)
 	{
-		if (eventData.route.originalPath.indexOf('/Rbs/Generic/Plugins/') == 0)
-		{
+		var search = $location.search();
+
+		if (eventData.route.originalPath.indexOf('/Rbs/Generic/Plugins/') == 0) {
 			breadcrumbData.location.pop();
 		}
+		else if (eventData.route.originalPath.indexOf('/Rbs/Generic/Theme/') == 0) {
+			breadcrumbData.location.pop();
+			breadcrumbData.path.push([i18n.trans('m.rbs.theme.admin.breadcrumb_' + search['view'].toLowerCase() + ' | ucf'), null]);
+		}
+		else if (eventData.route.originalPath.indexOf('/Rbs/Generic/Template/') == 0) {
+			breadcrumbData.location.pop();
 
+			var p = REST.resource('Rbs_Theme_Template', eventData.route.params.id).then(function (template)
+			{
+				if (template.mailSuitable) {
+					breadcrumbData.path.push([i18n.trans('m.rbs.theme.admin.breadcrumb_mailtemplates | ucf'), urlManager.getUrl('Rbs_Theme_Theme', {'id':template.theme.id}, 'mailtemplates')]);
+				}
+				else {
+					breadcrumbData.path.push([i18n.trans('m.rbs.theme.admin.breadcrumb_pagetemplates | ucf'), urlManager.getUrl('Rbs_Theme_Theme', {'id':template.theme.id}, 'pagetemplates')]);
+				}
+			});
+			promises.push(p);
+		}
 	}
 
 		/**

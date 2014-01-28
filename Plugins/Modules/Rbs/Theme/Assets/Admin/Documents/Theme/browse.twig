@@ -10,11 +10,8 @@
 				</div>
 			</form>
 			<ul class="nav navbar-nav" ng-if="currentTheme">
-				<li ng-class="{'active': view == 'PageTemplates'}"><a href ng-href="(= currentTheme | rbsURL:'pagetemplates' =)"><i class="icon-file-text"></i> {{ i18n('m.rbs.theme.admin.theme_pagetemplates', ['ucf']) }}</a></li>
-				<li ng-class="{'active': view == 'MailTemplates'}"><a href ng-href="(= currentWebsite | rbsURL:'mailtemplates' =)"><i class="icon-envelope"></i> {{ i18n('m.rbs.theme.admin.theme_mailtemplates', ['ucf']) }}</a></li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a href="(= 'Rbs_Theme_Theme' | rbsURL:'list' =)"><i class="icon-cog"></i> {{ i18n('m.rbs.theme.admin.manage_theme', ['ucf']) }}</a></li>
+				<li ng-class="{'active': view == 'PageTemplates'}"><a href ng-href="(= currentTheme | rbsURL:'pagetemplates' =)"><i class="icon-file-text"></i> {{ i18n('m.rbs.theme.admin.theme_page_templates', ['ucf']) }}</a></li>
+				<li ng-class="{'active': view == 'MailTemplates'}"><a href ng-href="(= currentTheme | rbsURL:'mailtemplates' =)"><i class="icon-envelope"></i> {{ i18n('m.rbs.theme.admin.theme_mail_templates', ['ucf']) }}</a></li>
 			</ul>
 		</nav>
 
