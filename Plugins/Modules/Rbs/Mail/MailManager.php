@@ -80,11 +80,6 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach('render', array($this, 'onDefaultRender'), 5);
-		$callback = function ($event)
-		{
-			(new \Rbs\User\Events\InstallMails())->execute($event);
-		};
-		$eventManager->attach('installMails', $callback, 5);
 	}
 
 	/**
@@ -329,6 +324,12 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return false;
+	}
+
+	public function installMails($template, $filters)
+	{
+		$eventManager = $this->getEventManager();
+		$eventManager->trigger('installMails', $this, ['mailTemplate' => $template, 'filters' => $filters]);
 	}
 
 	/**

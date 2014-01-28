@@ -25,26 +25,34 @@ class InstallMails
 			$template = $dqb->getFirstDocument();
 			if ($template)
 			{
+				$filters = [];
 				$package = $event->getParam('package');
 				if ($package)
 				{
-					//TODO
+					$pluginManager = $applicationServices->getPluginManager();
+					$plugins = $pluginManager->getInstalledPlugins();
+					foreach ($plugins as $plugin)
+					{
+						if ($package === $plugin->getName() || $package === $plugin->getPackage())
+						{
+							$filters[] = $plugin->getName();
+						}
+					}
+				}
+
+				if (!$package || ($package && count($filters) > 0))
+				{
+					/* @var $genericServices \Rbs\Generic\GenericServices */
+					$genericServices = $event->getServices('genericServices');
+					$mailManager = $genericServices->getMailManager();
+					$mailManager->installMails($template, $filters);
+
+					$response->addInfoMessage('Mails installed');
 				}
 				else
 				{
-					//TODO too
+					$response->addErrorMessage('package or module: ' . $package . ' not found');
 				}
-
-				/* @var $genericServices \Rbs\Generic\GenericServices */
-				$genericServices = $event->getServices('genericServices');
-				$mailManager = $genericServices->getMailManager();;
-				$eventManager = $mailManager->getEventManager();
-				$args = $eventManager->prepareArgs(array(
-					'mailTemplate' => $template
-				));
-				$eventManager->trigger('installMails', $this, $args);
-
-				$response->addInfoMessage('Mails installed');
 			}
 			else
 			{

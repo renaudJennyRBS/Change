@@ -25,12 +25,10 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-chained-select
-			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'template'), ['ucf']) }}"
-			required="true"
-			property="template"
-			chain="Rbs_Theme_Theme:{{ i18nAttr('m.rbs.theme.documents.theme', ['ucf']) }} // Rbs_Theme_Template.theme:{{ i18nAttr('m.rbs.theme.documents.template', ['ucf']) }}">
-		</rbs-field-chained-select>
+		<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'template'), ['ucf']) }}" required="true"
+				property="template" ng-model="document.template"
+				accepted-model="Rbs_Theme_Template">
+		</rbs-field-document-select>
 
 		<rbs-field-text property="senderName"
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderName'), ['ucf']) }}">
@@ -46,12 +44,6 @@
 			selector-title="{{ i18nAttr('m.rbs.mail.admin.mail_websites_picker_title', ['ucf']) }}"
 			allow-creation="false">
 		</rbs-field-picker-multiple>
-
-		<!--
-		<rbs-field property="substitutions" label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'substitutions'), ['ucf']) }}">
-			<input class="form-control" ng-model="document.substitutions" ng-list="" disabled="disabled" />
-		</rbs-field>
-		-->
 
 		<rbs-field-boolean property="useCache"
 			label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'useCache'), ['ucf']) }}">
