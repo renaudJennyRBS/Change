@@ -63,6 +63,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Elasticsearch\Commands\Index())->execute($event);
 		};
 		$events->attach('rbs_elasticsearch:index', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Mail\Commands\InstallMails())->execute($event);
+		};
+		$events->attach('rbs_mail:install-mails', $callback);
 	}
 
 	/**

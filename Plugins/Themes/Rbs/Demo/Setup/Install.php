@@ -44,10 +44,11 @@ class Install extends \Change\Plugins\InstallBase
 			$themeManager->installPluginAssets($plugin, $theme);
 			$this->writeAssetic($theme, $themeManager);
 
-			$pageTemplateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Template');
+			$templateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Template');
 
 			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
-			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
+			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
+			$pageTemplate->setCode('Rbs_Demo_Sidebar_Page');
 			$pageTemplate->setTheme($theme);
 			$pageTemplate->setLabel('Sidebar');
 			$html = file_get_contents(__DIR__ . '/Assets/sidebarpage.twig');
@@ -60,7 +61,8 @@ class Install extends \Change\Plugins\InstallBase
 			$pageTemplate->save();
 
 			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
-			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($pageTemplateModel);
+			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
+			$pageTemplate->setCode('Rbs_Demo_No_Sidebar_Page');
 			$pageTemplate->setTheme($theme);
 			$pageTemplate->setLabel('No Sidebar');
 			$html = file_get_contents(__DIR__ . '/Assets/nosidebarpage.twig');
@@ -71,6 +73,21 @@ class Install extends \Change\Plugins\InstallBase
 			$pageTemplate->setHtmlForBackoffice($boHtml);
 			$pageTemplate->setActive(true);
 			$pageTemplate->save();
+
+			/* @var $mailTemplate \Rbs\Theme\Documents\Template */
+			$mailTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
+			$mailTemplate->setCode('Rbs_Demo_Mail');
+			$mailTemplate->setTheme($theme);
+			$mailTemplate->setLabel('Mail');
+			$html = file_get_contents(__DIR__ . '/Assets/mail.twig');
+			$mailTemplate->setHtml($html);
+			$json = file_get_contents(__DIR__ . '/Assets/mail.json');
+			$mailTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
+			$boHtml = file_get_contents(__DIR__ . '/Assets/mail-bo.twig');
+			$mailTemplate->setHtmlForBackoffice($boHtml);
+			$mailTemplate->setMailSuitable(true);
+			$mailTemplate->setActive(true);
+			$mailTemplate->save();
 
 			$transactionManager->commit();
 		}

@@ -26,6 +26,9 @@
 	"website_edit_current":{
 		"message":"éditer le site courant"
 	},
+	"website_mail_sender_help":{
+		"message":"format \"Prénom Nom <adresse@email.fr>\". Adresse prise par défaut pour ce site lors d'envoi d'emails (confirmation de commande, demande de création d'un compte utilisateur...)"
+	},
 	"topic_website_help":{
 		"message":"Le site web dans lequel se trouve cette rubrique."
 	},

@@ -155,5 +155,21 @@
 		},
 		"arguments": {
 		}
+	},
+	"rbs_mail:install-mails": {
+		"description": "Install system mails",
+		"options": {
+			"package": {
+				"description": "restrict to particular package/module",
+				"default":"",
+				"shortcut": "p"
+			}
+		},
+		"arguments": {
+			"template": {
+				"description": "template code",
+				"shortcut": "t"
+			}
+		}
 	}
 }

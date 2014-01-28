@@ -46,6 +46,11 @@ class DefaultPageTemplate implements Template
 		return $this->theme;
 	}
 
+	public function getCode()
+	{
+		return 'Change_DefaultPageTemplate';
+	}
+
 	/**
 	 * @return \Change\Presentation\Interfaces\ThemeResource
 	 */

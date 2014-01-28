@@ -227,6 +227,11 @@ class Import
 			{
 				return $this->imported[$id];
 			}
+			$callback = $this->getOptions()->get('resolveDocument');
+			if (is_callable($callback))
+			{
+				return call_user_func($callback, $id, $this->getContextId());
+			}
 		}
 		elseif ($this->getContextId() !== null)
 		{

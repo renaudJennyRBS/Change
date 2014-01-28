@@ -19,6 +19,11 @@ interface Template
 	/**
 	 * @return string
 	 */
+	public function getCode();
+
+	/**
+	 * @return string
+	 */
 	public function getHtml();
 
 	/**

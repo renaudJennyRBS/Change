@@ -1,0 +1,22 @@
+<div class="row" ng-controller="Rbs_Theme_HeaderController">
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+	<div rbs-main-column>
+		<nav class="navbar navbar-default" role="navigation">
+			<form class="navbar-form navbar-left">
+				<div class="form-group">
+					<select ng-model="currentTheme" ng-change="changeTheme(currentTheme)" ng-options="t.label for t in themes" class="form-control"></select>
+				</div>
+			</form>
+			<ul class="nav navbar-nav" ng-if="currentTheme">
+				<li ng-class="{'active': view == 'PageTemplates'}"><a href ng-href="(= currentTheme | rbsURL:'pagetemplates' =)"><i class="icon-file-text"></i> {{ i18n('m.rbs.theme.admin.theme_page_templates', ['ucf']) }}</a></li>
+				<li ng-class="{'active': view == 'MailTemplates'}"><a href ng-href="(= currentTheme | rbsURL:'mailtemplates' =)"><i class="icon-envelope"></i> {{ i18n('m.rbs.theme.admin.theme_mail_templates', ['ucf']) }}</a></li>
+			</ul>
+		</nav>
+
+		<div ng-if="currentTheme && view" ng-include="'Document/Rbs/Theme/Theme/view' + view + '.twig'"></div>
+
+	</div>
+
+</div>

@@ -22,6 +22,10 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		//register generic services
+		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
+
 		$requestParams = new \Zend\Stdlib\Parameters([
 			'email' => 'test@test.com',
 			'password' => 'abcd123',
@@ -29,6 +33,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		]);
 
 		$website = $this->getNewWebsite();
+		$this->getNewMail();
 		$i18nManager = $this->getApplicationServices()->getI18nManager();
 		$urlManager = $website->getUrlManager($i18nManager->getLCID());
 		$urlManager->setPathRuleManager($this->getApplicationServices()->getPathRuleManager());
@@ -36,6 +41,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$event = new \Change\Http\Web\Event();
 		$event->setParams($this->getDefaultEventArguments());
+		$event->getServices()->set('genericServices', $genericServices);
 		$event->setParam('website', $website);
 		$event->setUrlManager($urlManager);
 		$request = new \Change\Http\Request();
@@ -67,20 +73,21 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$job = $jobManager->getJob($jobs[0]);
 		$this->assertInstanceOf('\Change\Job\Job', $job);
 		/* @var $job \Change\Job\Job */
-		$this->assertEquals('Rbs_User_SendMail', $job->getName());
+		$this->assertEquals('Rbs_Mail_SendMail', $job->getName());
 		$jobArgs = $job->getArguments();
-		$this->assertArrayHasKey('email', $jobArgs);
-		$this->assertEquals($requestParams->get('email'), $jobArgs['email']);
+		$this->assertArrayHasKey('emails', $jobArgs);
+		$this->assertArrayHasKey('to', $jobArgs['emails']);
+		$this->assertEquals([$requestParams->get('email')], $jobArgs['emails']['to']);
 		$this->assertArrayHasKey('LCID', $jobArgs);
 		$this->assertEquals($i18nManager->getLCID(), $jobArgs['LCID']);
-		$this->assertArrayHasKey('params', $jobArgs);
-		$this->assertNotEmpty($jobArgs['params']);
-		$this->assertArrayHasKey('website', $jobArgs['params']);
-		$this->assertEquals($website->getCurrentLocalization()->getTitle(), $jobArgs['params']['website']);
-		$this->assertArrayHasKey('link', $jobArgs['params']);
+		$this->assertArrayHasKey('substitutions', $jobArgs);
+		$this->assertNotEmpty($jobArgs['substitutions']);
+		$this->assertArrayHasKey('website', $jobArgs['substitutions']);
+		$this->assertEquals($website->getCurrentLocalization()->getTitle(), $jobArgs['substitutions']['website']);
+		$this->assertArrayHasKey('link', $jobArgs['substitutions']);
 		$query = ['requestId' => 1,'email' => $requestParams->get('email')];
 		$expectedLink = $urlManager->getAjaxURL('Rbs_User', 'CreateAccountConfirmation', $query);
-		$this->assertEquals($expectedLink, $jobArgs['params']['link']);
+		$this->assertEquals($expectedLink, $jobArgs['substitutions']['link']);
 	}
 
 	/**
@@ -130,5 +137,31 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 			throw $tm->rollBack($e);
 		}
 		return $website;
+	}
+
+	/**
+	 * @return \Rbs\Mail\Documents\Mail
+	 * @throws \Exception
+	 */
+	protected function getNewMail()
+	{
+		$mail = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Mail_Mail');
+		/* @var $mail \Rbs\Mail\Documents\Mail */
+		$mail->setCode('user_account_request');
+		$mail->setLabel('test account request mail');
+		$mail->getCurrentLocalization()->setSubject('test account request mail');
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$mail->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		return $mail;
 	}
 }

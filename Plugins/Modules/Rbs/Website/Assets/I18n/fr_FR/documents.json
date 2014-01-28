@@ -32,6 +32,9 @@
 	"website_sitemaps_url":{
 		"message":"URL des sitemaps"
 	},
+	"website_mailsender":{
+		"message":"expéditeur des e-mails"
+	},
 	"topic":{
 		"message":"rubrique"
 	},
