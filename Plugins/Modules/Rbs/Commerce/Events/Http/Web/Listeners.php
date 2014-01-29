@@ -1,9 +1,7 @@
 <?php
 namespace Rbs\Commerce\Events\Http\Web;
 
-
 use Change\Http\Web\Event;
-
 use Rbs\Commerce\Http\Web\Loader;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -22,8 +20,8 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach('registerServices',  function ($event) {(new Loader)->onRegisterServices($event);}, 1);
-		$events->attach(Event::EVENT_AUTHENTICATE, function ($event) {(new Loader)->onAuthenticate($event);}, 1);
+		$events->attach('registerServices', function ($event) { (new Loader)->onRegisterServices($event); }, 1);
+		$events->attach(Event::EVENT_AUTHENTICATE, function ($event) { (new Loader)->onAuthenticate($event); }, 1);
 	}
 
 	/**
