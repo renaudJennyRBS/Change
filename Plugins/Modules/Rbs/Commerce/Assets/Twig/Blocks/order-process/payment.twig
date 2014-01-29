@@ -51,7 +51,9 @@
 		</div>
 
 		<p class="clearfix">
-			<button type="button" class="btn btn-lg btn-primary pull-right" data-ng-click="confirmOrder()">{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}</a>
+			<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="confirmOrder()">
+				{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}
+			</button>
 		</p>
 	</div>
 </script>
@@ -93,7 +95,7 @@
 		</div>
 		<div data-ng-if="hasTransaction()" class="form-group no-bottom-margin">
 			<div class="col-sm-6 col-md-8 col-sm-offset-6 col-md-offset-4">
-				<button class="btn btn-default pull-right" data-ng-click="setCurrentStep('payment')">
+				<button class="btn btn-default pull-right" type="button" data-ng-click="setCurrentStep('payment')">
 					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
 				</button>
 			</div>
@@ -116,7 +118,7 @@
 
 <div data-ng-if="!hasTransaction()" class="clearfix">
 	<p>
-		<button class="btn btn-lg btn-primary pull-right" data-ng-click="getTransaction()">
+		<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="getTransaction()">
 			{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
 		</button>
 	</p>
