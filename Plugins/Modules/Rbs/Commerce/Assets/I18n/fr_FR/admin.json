@@ -14,6 +14,12 @@
 	"order_process_function":{
 		"message":"processus de commande"
 	},
+	"payment_return_label":{
+		"message":"retour après paiement"
+	},
+	"payment_return_function":{
+		"message":"retour après paiement"
+	},
 	"cart_undefined":{
 		"message":"pas de panier"
 	},

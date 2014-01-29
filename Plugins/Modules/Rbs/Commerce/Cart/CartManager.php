@@ -361,6 +361,33 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @return boolean
+	 */
+	public function startProcessingCart(\Rbs\Commerce\Cart\Cart $cart)
+	{
+		if (!$cart->isProcessing())
+		{
+			try
+			{
+				if (!$cart->isLocked())
+				{
+					throw new \RuntimeException('Can\'t process an unlocked cart!');
+				}
+				$em = $this->getEventManager();
+				$args = $em->prepareArgs(array('cart' => $cart));
+				$this->getEventManager()->trigger('startProcessingCart', $this, $args);
+				return $cart->isProcessing();
+			}
+			catch (\Exception $e)
+			{
+				$this->getLogging()->exception($e);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param integer $transactionId
 	 * @return integer|null
 	 */
@@ -370,6 +397,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			try
 			{
+				if (!$cart->isProcessing())
+				{
+					$this->startProcessingCart($cart);
+				}
 				$em = $this->getEventManager();
 				$args = $em->prepareArgs(array('cart' => $cart, 'transactionId' => $transactionId));
 				$this->getEventManager()->trigger('affectTransactionId', $this, $args);

@@ -163,7 +163,11 @@ class CommerceServices extends Di
 		$classDefinition->addMethod('setCartManager', true)
 			->addMethodParameter('setCartManager', 'cartManager', array('type' => 'CartManager', 'required' => true))
 			->addMethod('setLogging', true)
-			->addMethodParameter('setLogging', 'logging', array('required' => true));
+			->addMethodParameter('setLogging', 'logging', array('required' => true))
+			->addMethod('setTransactionManager', true)
+			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		parent::__construct($definitionList);
@@ -200,7 +204,8 @@ class CommerceServices extends Di
 				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
 
 		$im->addAlias('ProcessManager', $processManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging));
+			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging,
+				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
 	}
 
 	/**

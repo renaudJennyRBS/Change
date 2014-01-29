@@ -179,10 +179,37 @@
 	"select_payment_connector":{
 		"message":"Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser."
 	},
+	"please_wait_loading_connector":{
+		"message":"chargement des informations nécessaires au paiement"
+	},
 	"payment_instructions":{
 		"message":"instructions de paiement"
 	},
 	"confirm_order":{
 		"message":"confirmer la commande"
+	},
+	"payment_confirmation":{
+		"message":"confirmation du paiement",
+		"description": "Used in paymentReturn block."
+	},
+	"invalid_transaction":{
+		"message":"La transaction demandée est invalide.",
+		"description": "Used in paymentReturn block."
+	},
+	"waiting_payment":{
+		"message":"votre commande ne sera traitée qu'après réception du paiement",
+		"description": "Used in paymentReturn block."
+	},
+	"payment_done":{
+		"message":"paiement effectué",
+		"description": "Used in paymentReturn block."
+	},
+	"waiting_payment_confirmation":{
+		"message":"Un e-mail vous sera envoyé dès que nous aurons reçu la confirmation de la banque.",
+		"description": "Used in paymentReturn block."
+	},
+	"payment_confirmation_success":{
+		"message":"Le paiement est confirmé.",
+		"description": "Used in paymentReturn block."
 	}
 }

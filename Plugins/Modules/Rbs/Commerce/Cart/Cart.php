@@ -807,7 +807,6 @@ class Cart implements \Serializable
 			'shippingModes' => $this->shippingModes,
 			'coupons' => $this->coupons,
 			'taxesValues' => $this->taxesValues,
-			'processing' => $this->processing,
 		);
 		return serialize((new CartStorage())->getSerializableValue($serializedData));
 	}
@@ -841,7 +840,6 @@ class Cart implements \Serializable
 		$this->shippingModes = $serializedData['shippingModes'];
 		$this->coupons = $serializedData['coupons'];
 		$this->taxesValues = $serializedData['taxesValues'];
-		$this->processing = isset($serializedData['processing']) ? $serializedData['processing'] : false;
 		foreach ($this->lines as $line)
 		{
 			/* @var $line CartLine */

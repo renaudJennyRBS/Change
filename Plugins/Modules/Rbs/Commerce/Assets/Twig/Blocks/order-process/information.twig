@@ -1,9 +1,6 @@
 <div class="vertical-if-animation" data-ng-if="!isAuthenticated()" data-ng-init="information.realm = '{{ parameters.realm }}'">
-	{% if user %}
-		<div class="vertical-if-animation-content row">
-			<ul class="text-danger" data-ng-if="errors.length">
-				<li data-ng-repeat="error in errors">(= error =)</li>
-			</ul>
+	<div class="vertical-if-animation-content row">
+		{% if user %}
 			<div class="col-sm-6" data-ng-init="information.login = '{{ user.login }}'">
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -14,7 +11,8 @@
 						<div class="form-group">
 							<label for="rbs-order-process-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
 							<input id="rbs-order-process-password" type="password" data-ng-model="information.password"
-								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+								class="form-control"
+								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
 						</div>
 						<button class="btn btn-primary" data-ng-disabled="!canAuthenticate()" data-ng-click="authenticate()">
 							{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
@@ -29,18 +27,14 @@
 					</div>
 					<div class="panel-body">
 						<p>{{ i18n('m.rbs.commerce.front.please_log_out', ['ucf']) }}</p>
-						<a class="btn btn-primary" href="{{ ajaxURL('Rbs_User', 'Logout') }}?redirectLocation={{ currentURL()|url_encode }}">
+						<a class="btn btn-primary"
+							href="{{ ajaxURL('Rbs_User', 'Logout') }}?redirectLocation={{ currentURL()|url_encode }}">
 							{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}
 						</a>
 					</div>
 				</div>
 			</div>
-		</div>
-	{% else %}
-		<div class="vertical-if-animation-content row">
-			<ul class="text-danger" data-ng-if="errors.length">
-				<li data-ng-repeat="error in errors">(= error =)</li>
-			</ul>
+		{% else %}
 			<div class="col-sm-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.already_customer', ['ucf']) }}</div>
@@ -48,12 +42,14 @@
 						<div class="form-group">
 							<label for="rbs-order-process-login">{{ i18n('m.rbs.user.front.login', ['ucf']) }}</label>
 							<input id="rbs-order-process-login" type="text" data-ng-model="information.login"
-								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" />
+								class="form-control"
+								placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" />
 						</div>
 						<div class="form-group">
 							<label for="rbs-order-process-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
 							<input id="rbs-order-process-password" type="password" data-ng-model="information.password"
-								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+								class="form-control"
+								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
 						</div>
 						<button class="btn btn-primary" data-ng-disabled="!canAuthenticate()" data-ng-click="authenticate()">
 							{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
@@ -68,12 +64,16 @@
 						<div class="form-group">
 							<label for="rbs-order-process-email">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
 							<input id="rbs-order-process-email" type="text" data-ng-model="information.email"
-								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+								class="form-control"
+								placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
 						</div>
 						<div class="form-group">
-							<label for="rbs-order-process-confirm-email">{{ i18n('m.rbs.user.front.confirm_email', ['ucf']) }}</label>
+							<label for="rbs-order-process-confirm-email">
+								{{ i18n('m.rbs.user.front.confirm_email', ['ucf']) }}
+							</label>
 							<input id="rbs-order-process-confirm-email" type="text" data-ng-model="information.confirmEmail"
-								class="form-control" placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+								class="form-control"
+								placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
 						</div>
 						<button class="btn btn-primary" data-ng-disabled="!canSetEmail()" data-ng-click="setEmail()">
 							{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
@@ -81,8 +81,8 @@
 					</div>
 				</div>
 			</div>
-		</div>
-	{% endif %}
+		{% endif %}
+	</div>
 </div>
 
 <div class="vertical-if-animation" data-ng-if="isAuthenticated()" data-ng-cloak="">

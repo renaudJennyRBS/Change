@@ -141,6 +141,23 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (Event $event)
 		{
 			$cart = $event->getParam('cart');
+			$cs = $event->getServices('commerceServices');
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+				$cartStorage->startProcessingCart($cart);
+			}
+		};
+		$events->attach('startProcessingCart', $callback, 5);
+
+		$callback = function (Event $event)
+		{
+			$cart = $event->getParam('cart');
 			$transactionId = $event->getParam('transactionId');
 			$cs = $event->getServices('commerceServices');
 			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices

@@ -1,4 +1,4 @@
-(function () {
+(function() {
 	"use strict";
 	var app = angular.module('RbsChangeApp');
 
@@ -39,16 +39,16 @@
 
 	function rbsCommerceCartData() {
 		return {
-			restrict : 'A',
-			template : '<div></div>',
-			replace : true,
-			require : 'ngModel',
+			restrict: 'A',
+			template: '<div></div>',
+			replace: true,
+			require: 'ngModel',
 			scope: false,
 
-			link : function (scope, elm, attrs, ngModel) {
+			link: function(scope, elm, attributes, ngModel) {
 				var cart;
-				if (attrs.hasOwnProperty('cart')) {
-					cart = angular.fromJson(attrs.cart);
+				if (attributes.hasOwnProperty('cart')) {
+					cart = angular.fromJson(attributes.cart);
 				}
 				if (!angular.isObject(cart)) {
 					cart = {};
@@ -57,48 +57,51 @@
 			}
 		}
 	}
+
 	app.directive('rbsCommerceCartData', rbsCommerceCartData);
 
 	function rbsCommerceCartLine() {
 		return {
-			restrict : 'AE',
-			templateUrl : '/simpleLine.static.tpl',
-			link : function (scope) {
+			restrict: 'AE',
+			templateUrl: '/simpleLine.static.tpl',
+			link: function(scope) {
 				scope.originalQuantities[scope.index] = scope.line.quantity;
 
-				scope.isQuantityEdited = function () {
+				scope.isQuantityEdited = function() {
 					return scope.originalQuantities[scope.index] != scope.line.quantity
 				}
 			}
 		}
 	}
+
 	app.directive('rbsCommerceCartLine', rbsCommerceCartLine);
 
 	function rbsCommerceProcessMenu() {
 		return {
-			restrict : 'AE',
-			templateUrl : '/menu.static.tpl',
-			link : function (scope) {
+			restrict: 'AE',
+			templateUrl: '/menu.static.tpl',
+			link: function(scope) {
 				jQuery('body').scrollspy({ target: '.process-sidebar' });
-				scope.$watch('currentStep', function () {
-					jQuery('body').each(function () { $(this).scrollspy('refresh'); });
+				scope.$watch('currentStep', function() {
+					jQuery('body').each(function() { $(this).scrollspy('refresh'); });
 				});
 			}
 		}
 	}
+
 	app.directive('rbsCommerceProcessMenu', rbsCommerceProcessMenu);
 
 	function rbsCommerceShippingModeSelector($http, $compile, $sce) {
 		return {
-			restrict : 'AE',
-			scope : {
-				delivery : '=',
-				zoneCode : '=',
-				cart : '='
+			restrict: 'AE',
+			scope: {
+				delivery: '=',
+				zoneCode: '=',
+				cart: '='
 			},
-			templateUrl : '/shipping-mode-selector.static.tpl',
+			templateUrl: '/shipping-mode-selector.static.tpl',
 
-			link : function (scope, element, attributes) {
+			link: function(scope, element, attributes) {
 				scope.modes = [];
 				scope.display = { readonly: attributes.readonly };
 
@@ -113,14 +116,13 @@
 					$compile(element.find('.configuration-zone'))(scope);
 				}
 
-				attributes.$observe('readonly', function(newValue){
+				attributes.$observe('readonly', function(newValue) {
 					console.log('rbsCommerceShippingModeSelector - attributes.readonly', newValue);
 					scope.display.readonly = (newValue == 'true');
 				});
 
 				$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines})
-					.success (function(data) {
-						console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes success');
+					.success(function(data) {
 						scope.modes = data;
 						if (scope.modes.length == 1) {
 							scope.selectMode(0);
@@ -150,22 +152,23 @@
 					console.log('rbsCommerceShippingModeSelector - scope.display.directiveName', mode.directiveName);
 				};
 
-				scope.trustHtml = function (html) {
+				scope.trustHtml = function(html) {
 					return $sce.trustAsHtml(html);
 				};
 			}
 		}
 	}
+
 	rbsCommerceShippingModeSelector.$inject = ['$http', '$compile', '$sce'];
 	app.directive('rbsCommerceShippingModeSelector', rbsCommerceShippingModeSelector);
 
 	// A directive to configure a shipping mode by selecting an address.
 	function rbsCommerceShippingModeConfigurationAddress() {
 		return {
-			restrict : 'AE',
-			scope : false,
-			templateUrl : '/shipping-mode-configuration-address.static.tpl',
-			link : function (scope) {
+			restrict: 'AE',
+			scope: false,
+			templateUrl: '/shipping-mode-configuration-address.static.tpl',
+			link: function(scope) {
 				if (!scope.delivery.hasOwnProperty('address')) {
 					scope.delivery.address = {};
 				}
@@ -179,6 +182,7 @@
 						scope.delivery.address = angular.copy(scope.cart.address);
 					}
 				}
+
 				applyPostalAddressINecessary();
 
 				scope.$watch('delivery.options.usePostalAddress', applyPostalAddressINecessary);
@@ -189,24 +193,24 @@
 			}
 		}
 	}
+
 	app.directive('rbsCommerceShippingModeConfigurationAddress', rbsCommerceShippingModeConfigurationAddress);
 
 	function rbsCommercePaymentConnectorSelector($http, $compile, $sce) {
 		return {
-			restrict : 'AE',
-			scope : {
-				payment : '='
+			restrict: 'AE',
+			scope: {
+				payment: '='
 			},
-			templateUrl : '/payment-connector-selector.static.tpl',
+			templateUrl: '/payment-connector-selector.static.tpl',
 
-			link : function (scope, element) {
+			link: function(scope, element) {
 				scope.connectors = [];
 				scope.selectedConnector = null;
 				scope.directiveName = null;
 
 				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors')
-					.success (function(data) {
-						console.log('GetCompatiblePaymentConnectors success');
+					.success(function(data) {
 						scope.connectors = data;
 						if (scope.connectors.length == 1) {
 							scope.selectConnector(0);
@@ -217,7 +221,6 @@
 					});
 
 				scope.selectConnector = function(index) {
-					console.log('selectConnector', index);
 					var connector = scope.connectors[index];
 					if (connector.id != scope.payment.connectorId) {
 						scope.selectedConnector = connector;
@@ -232,27 +235,53 @@
 						element.find('.configuration-zone').replaceWith(html);
 						$compile(element.find('.configuration-zone'))(scope);
 					}
-					console.log('scope.directiveName', scope.directiveName);
 				};
 
-				scope.trustHtml = function (html) {
+				scope.trustHtml = function(html) {
 					return $sce.trustAsHtml(html);
 				};
 			}
 		}
 	}
+
 	rbsCommercePaymentConnectorSelector.$inject = ['$http', '$compile', '$sce'];
 	app.directive('rbsCommercePaymentConnectorSelector', rbsCommercePaymentConnectorSelector);
 
-	function rbsCommercePaymentConnectorDeferred() {
+	function rbsCommercePaymentConnectorDeferred($http) {
 		return {
-			restrict : 'AE',
-			scope : false,
-			templateUrl : '/payment-connector-deferred.static.tpl',
-			link : function (scope) {
+			restrict: 'AE',
+			scope: false,
+			templateUrl: '/payment-connector-deferred.static.tpl',
+			link: function(scope) {
+				scope.loadingConnector = true;
+
+				var postData = {
+					connectorId: scope.selectedConnector.id,
+					transactionId: scope.payment.transaction.id
+				};
+				$http.post('Action/Rbs/Payment/GetDeferredConnectorData', postData)
+					.success(function(data) {
+						scope.connectorData = data;
+						scope.loadingConnector = false;
+					})
+					.error(function(data, status, headers) {
+						console.log('GetDeferredConnectorInformation error', data, status, headers);
+					});
+
+				scope.confirmOrder = function() {
+					$http.post('Action/Rbs/Payment/DeferredConnectorReturnSuccess', postData)
+						.success(function(data) {
+							window.location = data['redirectURL'];
+						})
+						.error(function(data, status, headers) {
+							console.log('GetDeferredConnectorInformation error', data, status, headers);
+						});
+				}
 			}
 		}
 	}
+
+	rbsCommercePaymentConnectorDeferred.$inject = ['$http'];
 	app.directive('rbsCommercePaymentConnectorDeferred', rbsCommercePaymentConnectorDeferred);
 
 	/**
@@ -291,7 +320,9 @@
 			if (scope.cart.lines.length > index) {
 				scope.loading = true;
 				var line = scope.cart.lines[index];
-				updateCart($http, scope, { lineQuantities: [{ key: line.key, quantity: 0}] }, setCart);
+				updateCart($http, scope, { lineQuantities: [
+					{ key: line.key, quantity: 0}
+				] }, setCart);
 			}
 		};
 
@@ -299,7 +330,9 @@
 			if (scope.cart.lines[index].quantity != scope.originalQuantities.index) {
 				scope.loading = true;
 				var line = scope.cart.lines[index];
-				updateCart($http, scope, { lineQuantities: [{ key: line.key, quantity: line.quantity }] }, setCart);
+				updateCart($http, scope, { lineQuantities: [
+					{ key: line.key, quantity: line.quantity }
+				] }, setCart);
 			}
 		};
 
@@ -318,6 +351,7 @@
 
 		loadCurrentCart();
 	}
+
 	rbsCommerceCartController.$inject = ['$scope', '$http'];
 	app.controller('rbsCommerceCartController', rbsCommerceCartController);
 
@@ -329,10 +363,9 @@
 		scope.cart = null;
 		scope.loading = false;
 		scope.originalQuantities = {};
-		scope.information = { authenticated: false, email: null };
-		scope.shipping = { deliveries: [] };
-		scope.payment = { newCouponCode: null };
-		scope.errors = [];
+		scope.information = { errors: [], authenticated: false, email: null };
+		scope.shipping = { errors: [], deliveries: [] };
+		scope.payment = { errors: [], newCouponCode: null, transaction: null };
 		scope.currentStep = null;
 		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
 
@@ -356,12 +389,12 @@
 			);
 		}
 
-		function clearErrors() {
-			scope.errors = [];
+		function clearErrors(stepName) {
+			scope[stepName].errors = [];
 		}
 
-		function addError(message) {
-			scope.errors.push(message);
+		function addError(stepName, message) {
+			scope[stepName].errors.push(message);
 		}
 
 		scope.isStepEnabled = function(stepName) {
@@ -388,7 +421,7 @@
 			return false;
 		};
 
-		scope.setCurrentStep = function (stepName) {
+		scope.setCurrentStep = function(stepName) {
 			scope.currentStep = stepName;
 			var methodName = 'prepare' + stepName.charAt(0).toUpperCase() + stepName.slice(1) + 'Step';
 			if (scope.hasOwnProperty(methodName)) {
@@ -396,7 +429,7 @@
 			}
 		};
 
-		scope.isCurrentStep = function (stepName) {
+		scope.isCurrentStep = function(stepName) {
 			return scope.currentStep == stepName;
 		};
 
@@ -404,6 +437,7 @@
 		 * Information step
 		 */
 		scope.prepareInformationStep = function() {
+			scope.payment.transaction = null;
 			scope.information.userId = scope.cart.userId;
 			scope.information.email = scope.cart.email;
 			scope.information.confirmEmail = scope.cart.email;
@@ -415,6 +449,7 @@
 		};
 
 		scope.authenticate = function() {
+			clearErrors('information');
 			var postData = {
 				realm: scope.information.realm,
 				login: scope.information.login,
@@ -425,20 +460,19 @@
 					if (data.hasOwnProperty('accessorId')) {
 						scope.information.userId = data['accessorId'];
 						delete scope.information.password;
-						scope.information.authenticated = true;
 
 						var postData = { userId: scope.information.userId };
-						updateCart($http, scope, postData, scope.prepareInformationStep);
+						updateCart($http, scope, postData, scope.setAuthenticated);
 					}
 					else if (data.hasOwnProperty('error')) {
-						clearErrors();
-						addError(data.error);
+						addError('information', data.error);
 					}
 				})
 				.error(function(data, status, headers) { console.log('Login error', data, status, headers); });
 		};
 
 		scope.logout = function() {
+			clearErrors('information');
 			$http.post('Action/Rbs/User/Logout')
 				.success(function() { window.location.reload(); })
 				.error(function(data, status, headers) { console.log('Logout error', data, status, headers); });
@@ -448,12 +482,27 @@
 			return scope.information.email && scope.information.email == scope.information.confirmEmail;
 		};
 		scope.setEmail = function() {
-			scope.information.authenticated = true;
+			clearErrors('information');
 			var postData = {
 				email: scope.information.email,
 				userId: 0
 			};
-			updateCart($http, scope, postData, scope.prepareInformationStep);
+			updateCart($http, scope, postData, scope.setAuthenticated);
+		};
+
+		scope.setAuthenticated = function() {
+			scope.information.authenticated = true;
+			scope.prepareInformationStep();
+
+			if (scope.cart.locked) {
+				for (var i = 1; i < scope.steps.length; i++) {
+					console.log('set step', scope.steps[i]);
+					scope.setCurrentStep(scope.steps[i]);
+					if (scope.steps[i] == 'payment') {
+						break;
+					}
+				}
+			}
 		};
 
 		scope.isAuthenticated = function() {
@@ -467,7 +516,7 @@
 
 		scope.finalizeInformationStep = function() {
 			var postData = { address: scope.information.address };
-			updateCart($http, scope, postData, function () { scope.setCurrentStep('shipping'); });
+			updateCart($http, scope, postData, function() { scope.setCurrentStep('shipping'); });
 		};
 
 		/**
@@ -476,10 +525,10 @@
 		scope.prepareShippingStep = function() {
 			console.log('prepareShippingStep');
 			var i, j, k;
+			scope.payment.transaction = null;
 			scope.shipping.deliveries = [];
 			if ('shippingModes' in scope.cart && angular.isArray(scope.cart.shippingModes)) {
-				for (i = 0; i < scope.cart.shippingModes.length; i++)
-				{
+				for (i = 0; i < scope.cart.shippingModes.length; i++) {
 					var cartDelivery = scope.cart.shippingModes[i];
 					var delivery = {
 						modeId: cartDelivery.id,
@@ -509,7 +558,7 @@
 				scope.shipping.deliveries.push(defaultDelivery);
 
 				/*var deliveryTemp = { lines: [ scope.cart.lines[0] ] };
-				scope.shipping.deliveries.push(deliveryTemp);*/
+				 scope.shipping.deliveries.push(deliveryTemp);*/
 			}
 		};
 
@@ -544,6 +593,7 @@
 		 */
 		scope.preparePaymentStep = function() {
 			console.log('preparePaymentStep');
+			scope.payment.transaction = null;
 			scope.payment.coupons = scope.cart.coupons;
 		};
 
@@ -558,8 +608,27 @@
 			updateCart($http, scope, { coupons: scope.payment.coupons }, scope.preparePaymentStep);
 		};
 
+		scope.hasTransaction = function() {
+			return scope.payment.transaction;
+		};
+
+		scope.getTransaction = function() {
+			clearErrors('payment');
+			$http.get('Action/Rbs/Commerce/GetTransaction')
+				.success(function(transaction) {
+					if (angular.isObject(transaction)) {
+						scope.payment.transaction = transaction;
+					}
+					else {
+						addError('payment', transaction);
+					}
+				})
+				.error(function(data, status, headers) { console.log('GetTransaction error', data, status, headers); });
+		};
+
 		loadCurrentCart();
 	}
+
 	rbsCommerceOrderProcessController.$inject = ['$scope', '$http'];
 	app.controller('rbsCommerceOrderProcessController', rbsCommerceOrderProcessController);
 })();
