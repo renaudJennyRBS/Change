@@ -26,6 +26,7 @@ class ProductList extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('productListId');
+		$parameters->addParameterMeta('useCurrentSectionProductList');
 		$parameters->addParameterMeta('conditionId');
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('contextualUrls', true);
@@ -44,6 +45,9 @@ class ProductList extends Block
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+
 		if ($parameters->getParameter('productListId') !== null)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
@@ -51,6 +55,20 @@ class ProductList extends Block
 			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
 				$parameters->setParameterValue('productListId', null);
+			}
+		}
+		else if($parameters->getParameter('useCurrentSectionProductList') === true)
+		{
+			/* @var $page \Change\Presentation\Interfaces\Page */
+			$page = $event->getParam('page');
+			$section = $page->getSection();
+
+			$catalogManager = $commerceServices->getCatalogManager();
+			$defaultProductList = $catalogManager->getDefaultProductListBySection($section);
+			if (($defaultProductList instanceof \Rbs\Catalog\Documents\ProductList) && $defaultProductList->activated())
+			{
+
+				$parameters->setParameterValue('productListId', $defaultProductList->getId());
 			}
 		}
 
@@ -64,8 +82,6 @@ class ProductList extends Block
 			}
 		}
 
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
 		$webStore = $commerceServices->getContext()->getWebStore();
 		if ($webStore)
 		{
