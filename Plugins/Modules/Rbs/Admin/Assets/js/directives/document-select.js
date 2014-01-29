@@ -15,7 +15,7 @@
 	 * - filter-property
 	 * - filter-value
 	 */
-	app.directive('rbsDocumentSelect', ['RbsChange.REST', 'RbsChange.Query', 'RbsChange.Utils', function (REST, Query, Utils)
+	app.directive('rbsDocumentSelect', ['RbsChange.REST', 'RbsChange.Query', 'RbsChange.Utils', 'RbsChange.i18n', function (REST, Query, Utils, i18n)
 	{
 		return {
 			restrict : 'E',
@@ -77,13 +77,20 @@
 
 				function setOptions (options)
 				{
+					var emptyLabel = iAttrs.emptyLabel;
+					if (!emptyLabel)
+					{
+						emptyLabel = i18n.trans('m.rbs.admin.admin.select_element | ucf');
+					}
+
 					options.unshift({
 						id : 0,
-						label : '- ' + iAttrs.emptyLabel + ' -'
+						label : '- ' + emptyLabel + ' -'
 					});
 					scope.options = options;
-					ngModel.$setViewValue(findOption(scope.value));
-					scope.documentTarget = findOption(scope.value);
+					var selectedOption = findOption(scope.value);
+					ngModel.$setViewValue(selectedOption);
+					scope.documentTarget = selectedOption;
 				}
 
 
@@ -109,8 +116,9 @@
 				{
 					if (value)
 					{
-						ngModel.$setViewValue(findOption(value));
-						scope.documentTarget = findOption(value);
+						var selectedOption = findOption(scope.value);
+						ngModel.$setViewValue(selectedOption);
+						scope.documentTarget = selectedOption;
 					}
 					else
 					{

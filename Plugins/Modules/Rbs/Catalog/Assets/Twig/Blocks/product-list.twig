@@ -2,8 +2,9 @@
 
 <h1 id="product-list-title">{{ title }}</h1>
 <script type="text/ng-template" id="/addLineToCart.tpl">
-	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()" data-ng-disabled="quantity <= 0">
-		<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()" data-ng-disabled="!canBeOrdered">
+		<span data-ng-show="canBeOrdered"><i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}</span>
+		<span data-ng-hide="canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 	</button>
 </script>
 

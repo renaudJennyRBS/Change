@@ -33,7 +33,7 @@ class Product extends Block
 		if ($parameters->getParameter('productId') === null)
 		{
 			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Catalog\Documents\Product)
+			if ($document instanceof \Rbs\Catalog\Documents\Product && $document->published())
 			{
 				$parameters->setParameterValue('productId', $document->getId());
 			}
