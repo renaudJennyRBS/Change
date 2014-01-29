@@ -34,9 +34,10 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('line_count')->setNullable(true)->setDefaultValue('0'))
 				->addField($schemaManager->newLobFieldDefinition('cart_data')->setNullable(true))
 				->addField($schemaManager->newBooleanFieldDefinition('locked')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newBooleanFieldDefinition('processing')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newIntegerFieldDefinition('owner_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newIntegerFieldDefinition('transaction_id')->setNullable(false)->setDefaultValue('0'))
-				->addField($schemaManager->newBooleanFieldDefinition('ordered')->setNullable(false)->setDefaultValue('0'))
+				->addField($schemaManager->newIntegerFieldDefinition('order_id')->setNullable(false)->setDefaultValue('0'))
 				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
 				->addKey($this->newUniqueKey()->setName('identifier')->addField($td->getField('identifier')))
 				->setOption('AUTONUMBER', 1);

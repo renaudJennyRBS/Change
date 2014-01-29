@@ -5,27 +5,6 @@
 		</div>
 
 		<div ng-if="! selectionContext" class="btn-toolbar" ng-show="useToolBar">
-			<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
-				<a class="btn btn-default" href rbs-go-up-in-tree=""></a>
-			</div>
-
-			<rbs-clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></rbs-clipboard-add-widget>
-
-			<span ng-repeat="item in actions" ng-switch="item.type">
-				<button ng-switch-when="single" class="btn btn-default" type="button"
-				        rbs-bind-action="(= item.name =)"
-				        collection="collection"
-				        selection="selectedDocuments"
-				        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
-				<div ng-switch-when="group" class="btn-group">
-					<button ng-repeat="action in item.actions"
-					        class="btn btn-default" type="button"
-					        rbs-bind-action="(= action =)"
-					        collection="collection"
-					        selection="selectedDocuments"
-					        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
-				</div>
-			</span>
 			<div class="pull-right">
 				<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
 					<i class="icon-refresh icon-spin"></i>
@@ -49,6 +28,28 @@
 					<button title="{{ i18nAttr('m.rbs.admin.admin.list_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="viewMode = 'list'" class="btn btn-default"><i class="icon-list"></i></button>
 				</div>
 			</div>
+
+			<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
+				<a class="btn btn-default" href rbs-go-up-in-tree=""></a>
+			</div>
+
+			<rbs-clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></rbs-clipboard-add-widget>
+
+			<span ng-repeat="item in actions" ng-switch="item.type">
+				<button ng-switch-when="single" class="btn btn-default" type="button"
+				        rbs-bind-action="(= item.name =)"
+				        collection="collection"
+				        selection="selectedDocuments"
+				        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
+				<div ng-switch-when="group" class="btn-group">
+					<button ng-repeat="action in item.actions"
+					        class="btn btn-default" type="button"
+					        rbs-bind-action="(= action =)"
+					        collection="collection"
+					        selection="selectedDocuments"
+					        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
+				</div>
+			</span>
 		</div>
 
 		<div ng-if="selectionContext !== null">

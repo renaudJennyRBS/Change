@@ -40,28 +40,23 @@
 </script>
 
 <script type="text/ng-template" id="/payment-connector-deferred.static.tpl">
-	<div class="panel panel-default">
-		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_instructions', ['ucf']) }}</div>
-		<div class="panel-body" data-ng-bind-html="trustHtml(selectedConnector.instructions)"></div>
+	<div data-ng-show="loadingConnector" class="well text-center">
+		<p>{{ i18n('m.rbs.commerce.front.please_wait_loading_connector', ['ucf', 'etc']) | raw }}</p>
+		<img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" />
 	</div>
+	<div data-ng-if="!loadingConnector">
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_instructions', ['ucf']) }}</div>
+			<div class="panel-body" data-ng-bind-html="trustHtml(connectorData.instructions)"></div>
+		</div>
 
-	<p class="clearfix">
-		<button class="btn btn-lg btn-primary pull-right">{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}</button>
-	</p>
+		<p class="clearfix">
+			<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="confirmOrder()">
+				{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}
+			</button>
+		</p>
+	</div>
 </script>
-
-<!-- TODO: other connectors
-(Si paiement par carte dans le site)
-<div class="panel panel-default">
-	<div class="panel-heading">Données bancaires</div>
-	<div class="panel-body">
-		-- formulaire intégré --
-	</div>
-</div>
-
-(Si paiement par carte hors site) <br />
-<button class="btn btn-lg btn-primary pull-right">Payer</button>
--->
 
 <div class="panel panel-default">
 	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupons', ['ucf']) }}</div>
@@ -74,20 +69,20 @@
 				<p class="form-control-static" data-ng-repeat="coupon in payment.coupons">
 					(= coupon.code =)
 					<span data-ng-if="coupon.title && (coupon.title != coupon.code)">((= coupon.title =))</span>
-					<button class="btn btn-default btn-xs" data-ng-click="removeCoupon($index)"
+					<button class="btn btn-default btn-xs" data-ng-click="removeCoupon($index)" data-ng-if="!hasTransaction()"
 						title="{{ i18n('m.rbs.commerce.front.remove', ['ucf', 'attr']) }}">
 						<i class="glyphicon glyphicon-remove"></i>
 					</button>
 				</p>
 			</div>
 		</div>
-		<div class="form-group no-bottom-margin">
-			<label for="codeCoupon" class="col-sm-6 col-md-4 control-label">
+		<div data-ng-if="!hasTransaction()" class="form-group no-bottom-margin">
+			<label for="newCouponCode" class="col-sm-6 col-md-4 control-label">
 				{{ i18n('m.rbs.commerce.front.add_code', ['ucf']) }}
 			</label>
 			<div class="col-sm-6 col-md-8">
 				<div class="input-group">
-					<input type="text" class="form-control" data-ng-model="payment.newCouponCode" />
+					<input id="newCouponCode" type="text" class="form-control" data-ng-model="payment.newCouponCode" />
 					<span class="input-group-btn">
 						<button class="btn btn-primary" type="button" data-ng-click="addCoupon()"
 							data-ng-disabled="payment.newCouponCode.length < 1">
@@ -96,6 +91,13 @@
 						</button>
 					</span>
 				</div>
+			</div>
+		</div>
+		<div data-ng-if="hasTransaction()" class="form-group no-bottom-margin">
+			<div class="col-sm-6 col-md-8 col-sm-offset-6 col-md-offset-4">
+				<button class="btn btn-default pull-right" type="button" data-ng-click="setCurrentStep('payment')">
+					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -114,4 +116,14 @@
 	</dl>
 </div>
 
-<div data-rbs-commerce-payment-connector-selector="" data-payment="payment"></div>
+<div data-ng-if="!hasTransaction()" class="clearfix">
+	<p>
+		<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="getTransaction()">
+			{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
+		</button>
+	</p>
+</div>
+
+<div data-ng-if="hasTransaction()">
+	<div data-rbs-commerce-payment-connector-selector="" data-payment="payment"></div>
+</div>

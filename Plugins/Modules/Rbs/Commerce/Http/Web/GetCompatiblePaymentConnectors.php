@@ -44,7 +44,6 @@ class GetCompatiblePaymentConnectors extends \Change\Http\Web\Actions\AbstractAj
 				}
 
 				$modeInfos['directiveName'] = 'rbs-commerce-payment-connector-deferred';
-				$modeInfos['instructions'] = $richTextManager->render($connector->getCurrentLocalization()->getInstructions(), "Website", $richTextContext); // TODO: richtext...
 
 				$connectorsInfos[] = $modeInfos;
 			}

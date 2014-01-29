@@ -19,6 +19,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.commerce.admin.order_process_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Commerce_PaymentReturn', 'document' => false, 'block' => 'Rbs_Commerce_PaymentReturn',
+			'label' => $i18nManager->trans('m.rbs.commerce.admin.payment_return_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
+
 		$functions[] = ['code' => 'Rbs_Commerce_TermsAndConditions', 'document' => false, 'block' => null,
 			'label' => $i18nManager->trans('m.rbs.commerce.admin.terms_and_conditions_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];

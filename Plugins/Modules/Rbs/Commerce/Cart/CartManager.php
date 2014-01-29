@@ -190,6 +190,29 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	public function getUnlockedCart($cart)
+	{
+		if (!$cart->isLocked())
+		{
+			return $cart;
+		}
+
+		$newCart = $this->getNewCart($cart->getWebStore(), $cart->getBillingArea(), $cart->getZone());
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('cart' => $cart, 'newCart' => $newCart));
+		$this->getEventManager()->trigger('getUnlockedCart', $this, $args);
+		if (isset($args['newCart']) && $args['newCart'] instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			return $args['newCart'];
+		}
+		throw new \RuntimeException('Unable to get a new cart', 999999);
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 */
 	public function saveCart(\Rbs\Commerce\Cart\Cart $cart)
 	{
@@ -338,6 +361,33 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @return boolean
+	 */
+	public function startProcessingCart(\Rbs\Commerce\Cart\Cart $cart)
+	{
+		if (!$cart->isProcessing())
+		{
+			try
+			{
+				if (!$cart->isLocked())
+				{
+					throw new \RuntimeException('Can\'t process an unlocked cart!');
+				}
+				$em = $this->getEventManager();
+				$args = $em->prepareArgs(array('cart' => $cart));
+				$this->getEventManager()->trigger('startProcessingCart', $this, $args);
+				return $cart->isProcessing();
+			}
+			catch (\Exception $e)
+			{
+				$this->getLogging()->exception($e);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param integer $transactionId
 	 * @return integer|null
 	 */
@@ -347,6 +397,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			try
 			{
+				if (!$cart->isProcessing())
+				{
+					$this->startProcessingCart($cart);
+				}
 				$em = $this->getEventManager();
 				$args = $em->prepareArgs(array('cart' => $cart, 'transactionId' => $transactionId));
 				$this->getEventManager()->trigger('affectTransactionId', $this, $args);
@@ -380,7 +434,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$this->getLogging()->exception($e);
 			}
 		}
-		return $cart->getOrdered();
+		return $cart->getOrderId();
 	}
 
 	/**

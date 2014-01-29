@@ -52,6 +52,9 @@
 
 				<div id="information" class="clearfix">
 					<h2>{{ i18n('m.rbs.commerce.front.process_step_personal_information', ['ucf']) }}</h2>
+					<ul class="text-danger" data-ng-if="information.errors.length">
+						<li data-ng-repeat="error in information.errors">(= error =)</li>
+					</ul>
 					{% include 'Rbs_Commerce/Blocks/order-process/information.twig' %}
 				</div>
 			</div>
@@ -63,6 +66,9 @@
 
 				<div id="shipping" class="clearfix">
 					<h2>{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}</h2>
+					<ul class="text-danger" data-ng-if="shipping.errors.length">
+						<li data-ng-repeat="error in shipping.errors">(= error =)</li>
+					</ul>
 					{% include 'Rbs_Commerce/Blocks/order-process/shipping.twig' %}
 				</div>
 			</div>
@@ -74,6 +80,9 @@
 
 				<div id="payment" class="clearfix">
 					<h2>{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}</h2>
+					<ul class="text-danger" data-ng-if="payment.errors.length">
+						<li data-ng-repeat="error in payment.errors">(= error =)</li>
+					</ul>
 					{% include 'Rbs_Commerce/Blocks/order-process/payment.twig' %}
 				</div>
 			</div>

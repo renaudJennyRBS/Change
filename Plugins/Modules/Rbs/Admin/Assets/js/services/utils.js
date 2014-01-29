@@ -212,7 +212,7 @@
 		/**
 		 * Returns information about the given model name: vendor, module and document.
 		 *
-		 * @param {String} A fully qualified model name, such as `Change_Website_Page`.
+		 * @param {String} modelName A fully qualified model name, such as `Change_Website_Page`.
 		 * @returns {Object} {'vendor', 'module', 'document', 'change':(true|false)}
 		 */
 		modelInfo : function (modelName) {
@@ -340,8 +340,8 @@
 		 *
 		 * @see startsWithIgnoreCase()
 		 *
-		 * @param {String} The String to search in.
-		 * @param {String} The String to search for.
+		 * @param {String} haystack The String to search in.
+		 * @param {String} needle The String to search for.
 		 */
 		startsWith : function (haystack, needle) {
 			return haystack.slice(0, needle.length) === needle;
@@ -354,8 +354,8 @@
 		 *
 		 * @see startsWith()
 		 *
-		 * @param {String} The String to search in.
-		 * @param {String} The String to search for.
+		 * @param {String} haystack The String to search in.
+		 * @param {String} needle The String to search for.
 		 */
 		startsWithIgnoreCase : function (haystack, needle) {
 			return this.startsWith(angular.lowercase(haystack), angular.lowercase(needle));
@@ -368,8 +368,8 @@
 		 *
 		 * @see endsWithIgnoreCase()
 		 *
-		 * @param {String} The String to search in.
-		 * @param {String} The String to search for.
+		 * @param {String} haystack The String to search in.
+		 * @param {String} needle The String to search for.
 		 */
 		endsWith : function (haystack, needle) {
 			return haystack.slice(-needle.length) === needle;
@@ -382,8 +382,8 @@
 		 *
 		 * @see endsWith()
 		 *
-		 * @param {String} The String to search in.
-		 * @param {String} The String to search for.
+		 * @param {String} haystack The String to search in.
+		 * @param {String} needle The String to search for.
 		 */
 		endsWithIgnoreCase : function (haystack, needle) {
 			return this.endsWith(angular.lowercase(haystack), angular.lowercase(needle));

@@ -4,8 +4,8 @@ namespace Change\Http\Web\Actions;
 use Zend\Stdlib\Parameters;
 
 /**
-* @name \Change\Http\Web\Actions\AbstractAjaxAction
-*/
+ * @name \Change\Http\Web\Actions\AbstractAjaxAction
+ */
 abstract class AbstractAjaxAction
 {
 	function __invoke()
@@ -36,6 +36,9 @@ abstract class AbstractAjaxAction
 		return new \Change\Http\Web\Result\AjaxResult($data);
 	}
 
+	/**
+	 * @param \Change\Http\Web\Event $event
+	 */
 	protected function decodePostJSON(\Change\Http\Web\Event $event)
 	{
 		$request = $event->getRequest();
@@ -69,5 +72,4 @@ abstract class AbstractAjaxAction
 			}
 		}
 	}
-
 }

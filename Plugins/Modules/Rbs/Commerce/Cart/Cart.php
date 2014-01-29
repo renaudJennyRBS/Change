@@ -52,14 +52,19 @@ class Cart implements \Serializable
 	protected $locked = false;
 
 	/**
+	 * @var boolean
+	 */
+	protected $processing = false;
+
+	/**
 	 * @var integer
 	 */
 	protected $transactionId = 0;
 
 	/**
-	 * @var boolean
+	 * @var integer
 	 */
-	protected $ordered = false;
+	protected $orderId = 0;
 
 	/**
 	 * @var \DateTime
@@ -375,6 +380,24 @@ class Cart implements \Serializable
 	}
 
 	/**
+	 * @param boolean $processing
+	 * @return $this
+	 */
+	public function setProcessing($processing)
+	{
+		$this->processing = ($processing == true);
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isProcessing()
+	{
+		return $this->processing;
+	}
+
+	/**
 	 * @param integer $transactionId
 	 * @return $this
 	 */
@@ -393,21 +416,21 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param boolean $ordered
+	 * @param integer $orderId
 	 * @return $this
 	 */
-	public function setOrdered($ordered)
+	public function setOrderId($orderId)
 	{
-		$this->ordered = $ordered;
+		$this->orderId = $orderId;
 		return $this;
 	}
 
 	/**
-	 * @return boolean
+	 * @return integer
 	 */
-	public function getOrdered()
+	public function getOrderId()
 	{
-		return $this->ordered;
+		return $this->orderId;
 	}
 
 	/**
@@ -852,9 +875,10 @@ class Cart implements \Serializable
 			'taxesValues' => [],
 			'creditNotes' => [], // TODO
 			'locked' => $this->locked,
+			'processing' => $this->processing,
 			'transactionId' => $this->transactionId,
 			'paymentAmount' => $this->getPaymentAmount(),
-			'ordered' => $this->ordered
+			'orderId' => $this->orderId
 		);
 
 		foreach ($this->getTaxes() as $tax)

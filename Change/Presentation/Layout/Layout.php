@@ -116,6 +116,10 @@ class Layout
 			$type = $data['type'];
 			$id = $data['id'];
 			$item = $this->getNewItem($type, $id);
+			if ($item === null)
+			{
+				continue;
+			}
 			$item->initialize($data);
 			if (isset($data['items']) && count($data['items']))
 			{
@@ -152,6 +156,8 @@ class Layout
 			case 'block':
 				$item = new Block();
 				break;
+			case 'block-chooser':
+				return null;
 			default:
 				throw new \InvalidArgumentException('Argument 1 must be a valid type', 999999);
 		}

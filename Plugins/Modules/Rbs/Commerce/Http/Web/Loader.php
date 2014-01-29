@@ -116,6 +116,23 @@ class Loader
 		$session['billingAreaId'] = ($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea->getId() : 0;
 		$session['zone'] = $context->getZone();
 		$session['cartIdentifier'] = $context->getCartIdentifier();
+
+		// If the cart is replaced, update the last cart identifier in the profile.
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if ($user->authenticated())
+		{
+			if (isset($session['profile']) && $session['profile'] instanceof \Rbs\Commerce\Std\Profile)
+			{
+				/* @var \Rbs\Commerce\Std\Profile $profile */
+				$profile = $session['profile'];
+				if ($profile->getLastCartIdentifier() !== $context->getCartIdentifier())
+				{
+					$profile->setLastCartIdentifier($context->getCartIdentifier());
+					$pm = $event->getApplicationServices()->getProfileManager();
+					$pm->saveProfile($user, $profile);
+				}
+			}
+		}
 	}
 
 	/**
