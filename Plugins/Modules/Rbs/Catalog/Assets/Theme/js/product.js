@@ -32,6 +32,15 @@
 
 				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
 
+				if (scope.quantity > 0 && attrs.sku && attrs.price)
+				{
+					scope.canBeOrdered = true;
+				}
+				else
+				{
+					scope.canBeOrdered = false;
+				}
+
 				var config = {
 					key: attrs.key,
 					productId : attrs.productId,

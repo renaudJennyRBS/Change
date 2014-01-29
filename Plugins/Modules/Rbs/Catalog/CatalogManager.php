@@ -529,4 +529,20 @@ class CatalogManager
 		}
 		$productListItem->delete();
 	}
+
+	/**
+	 * @param \Rbs\Website\Documents\Section $section
+	 * @return \Change\Documents\AbstractDocument|null
+	 */
+	public function getDefaultProductListBySection($section)
+	{
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_SectionProductList');
+		$query->andPredicates(
+			$query->eq('synchronizedSection', $section)
+		);
+		$query->addOrder('id', false);
+		$defaultProductList = $query->getFirstDocument();
+
+		return $defaultProductList;
+	}
 }

@@ -570,6 +570,9 @@
 	"select":{
 		"message":"sélectionner"
 	},
+	"select_element":{
+		"message":"sélectionner un élément"
+	},
 	"select_all":{
 		"message":"tous"
 	},

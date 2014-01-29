@@ -7,7 +7,7 @@
 		<dt>{{ i18n('m.rbs.catalog.front.reference', ['ucf']) }}</dt>
 		<dd>{{ product.code }}</dd>
 		{% endif %}
-		{% if product.brand %}
+		{% if product.brand and product.brand.published %}
 		<dt>{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
 		<dd><a itemprop="brand" href="{{ canonicalURL(product.brand) }}">{{ product.brand.currentLocalization.title }}</a></dd>
 		{% endif %}

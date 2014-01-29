@@ -33,9 +33,20 @@ class Product extends Block
 		if ($parameters->getParameter('productId') === null)
 		{
 			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Catalog\Documents\Product)
+			if ($document instanceof \Rbs\Catalog\Documents\Product && $document->published())
 			{
 				$parameters->setParameterValue('productId', $document->getId());
+			}
+		}
+		else
+		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+			/* @var $product \Rbs\Catalog\Documents\Product */
+			$product = $documentManager->getDocumentInstance($parameters->getParameter('productId'));
+			if (!$product instanceof \Rbs\Catalog\Documents\Product || !$product->published())
+			{
+				$parameters->setParameterValue('productId', null);
 			}
 		}
 

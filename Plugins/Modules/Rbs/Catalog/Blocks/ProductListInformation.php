@@ -19,6 +19,8 @@ class ProductListInformation extends Information
 		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Catalog_ProductList')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
+		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_contextual_urls', $ucf));
 		$this->addInformationMeta('itemsPerLine', Property::TYPE_INTEGER, true, 3)

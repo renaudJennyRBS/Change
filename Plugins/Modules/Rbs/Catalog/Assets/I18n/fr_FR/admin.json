@@ -194,6 +194,9 @@
 	"product_list_list":{
 		"message":"liste de produits"
 	},
+	"product_list_use_current":{
+		"message":"utiliser la liste de la section"
+	},
 	"product_list_contextual_urls":{
 		"message":"détail des produits dans la section courante"
 	},
