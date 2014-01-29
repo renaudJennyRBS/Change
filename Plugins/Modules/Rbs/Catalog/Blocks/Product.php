@@ -38,6 +38,17 @@ class Product extends Block
 				$parameters->setParameterValue('productId', $document->getId());
 			}
 		}
+		else
+		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+			/* @var $product \Rbs\Catalog\Documents\Product */
+			$product = $documentManager->getDocumentInstance($parameters->getParameter('productId'));
+			if (!$product instanceof \Rbs\Catalog\Documents\Product || !$product->published())
+			{
+				$parameters->setParameterValue('productId', null);
+			}
+		}
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
