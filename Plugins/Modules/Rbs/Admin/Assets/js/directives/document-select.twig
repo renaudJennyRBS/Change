@@ -1,4 +1,3 @@
-<select class="form-control" ng-disabled="disabled" ng-model="value">
-	<option ng-repeat="o in options" ng-class="{'empty-value': o.id == 0}" value="(= o.id =)" ng-bind="o.label"></option>
+<select class="form-control" ng-disabled="disabled" ng-model="value" data-ng-options="o.id as o.label for o in options">
 </select>
 <a ng-if="documentTarget" href ng-href="(= documentTarget | rbsURL =)">{{ i18n('m.rbs.admin.admin.edit', ['ucf'])}} <i class="icon-circle-arrow-right"></i></a>

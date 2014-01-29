@@ -89,7 +89,7 @@
 				}, true);
 
 				scope.$watch('document.pageTemplate', function (pageTemplate, old) {
-					if (old && scope.document && pageTemplate !== old && contentSectionInitialized) {
+					if (pageTemplate) {
 						scope.loadTemplate();
 					}
 				}, true);

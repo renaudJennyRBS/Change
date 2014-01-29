@@ -81,51 +81,103 @@
 						id : 0,
 						label : '- ' + iAttrs.emptyLabel + ' -'
 					});
-					scope.value = options[0].id;
 					scope.options = options;
+					ngModel.$setViewValue(findOption(scope.value));
+					scope.documentTarget = findOption(scope.value);
 				}
 
 
 				function findOption (id)
 				{
 					var i, opt = null;
-					if (scope.options) {
-						for (i=0 ; i<scope.options.length && opt === null; i++) {
-							if (scope.options[i].id === id) {
-								opt = scope.options[i];
+
+					if (id)
+					{
+						if (scope.options) {
+							for (i=0 ; i<scope.options.length && opt === null; i++) {
+								if (scope.options[i].id === id) {
+									opt = scope.options[i];
+								}
 							}
 						}
 					}
+
 					return opt;
 				}
 
-
-				ngModel.$render = function ()
-				{
-					if (angular.isString(ngModel.$viewValue)) {
-						scope.value = parseInt(ngModel.$viewValue, 10);
-					} else if (angular.isNumber(ngModel.$viewValue)) {
-						scope.value = ngModel.$viewValue;
-					} else if (angular.isObject(ngModel.$viewValue)) {
-						scope.value = ngModel.$viewValue.id;
-
-					}
-				};
-
-
 				scope.$watch('value', function (value, old)
 				{
-					if (old !== undefined && value !== undefined && value !== old) {
-						ngModel.$setViewValue(findOption(parseInt(value, 10)));
+					if (value)
+					{
+						ngModel.$setViewValue(findOption(value));
+						scope.documentTarget = findOption(value);
+					}
+					else
+					{
+						ngModel.$setViewValue(null);
+						scope.documentTarget = null;
+					}
+				});
 
-						if (Utils.isDocument(ngModel.$viewValue))
+				// Initialize ngModel
+				// If attribute "value-ids" is set to true, the value (ng-model) of the picker will be an ID
+				// or an array of IDs for a multiple picker.
+				ngModel.$parsers.unshift(function (value)
+				{
+					if (iAttrs.valueIds)
+					{
+						if (angular.isObject(value) && value.hasOwnProperty('id'))
 						{
-							scope.documentTarget = ngModel.$viewValue;
+							if(value.id)
+							{
+								return value.id;
+							}
+						}
+						return null;
+					}
+					else
+					{
+						if (angular.isObject(value) && value.hasOwnProperty('id'))
+						{
+							if(value.id)
+							{
+								return value;
+							}
+						}
+						return null;
+					}
+				});
+
+				// Pickers allow ID (or Array of IDs) as value.
+				// In that case, the following formatter will load the identified documents so that ngModel.$render()
+				// always deals with objects (documents).
+				ngModel.$formatters.unshift(function (value)
+				{
+					if (iAttrs.valueIds)
+					{
+						if (value)
+						{
+							scope.value = value;
 						}
 						else
 						{
-							scope.documentTarget = null;
+							scope.value = 0;
 						}
+
+						return REST.getResources([value])[0];
+					}
+					else
+					{
+						if (Utils.isDocument(value))
+						{
+							scope.value = value.id;
+						}
+						else
+						{
+							scope.value = 0;
+						}
+
+						return value;
 					}
 				});
 			}
