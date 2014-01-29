@@ -298,14 +298,20 @@ class UrlManager extends \Change\Http\UrlManager
 	 * @param string $functionCode
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param array $query
+	 * @param string $LCID
 	 * @return \Zend\Uri\Http|null
 	 */
-	public function getByFunction($functionCode, $website = null, $query = array())
+	public function getByFunction($functionCode, $website = null, $query = array(), $LCID = null)
 	{
 		$uri = null;
 		if (!is_string($functionCode) || empty($functionCode))
 		{
 			return $uri;
+		}
+
+		if (null === $LCID)
+		{
+			$LCID = $this->getLCID();
 		}
 
 		if ($website === null)
@@ -324,7 +330,7 @@ class UrlManager extends \Change\Http\UrlManager
 			{
 				$absoluteUrl = $this->getAbsoluteUrl();
 				$this->setAbsoluteUrl(true);
-				$uri = $this->getCanonicalByDocument($page, null, $query);
+				$uri = $this->getCanonicalByDocument($page, null, $query, $LCID);
 				$this->setAbsoluteUrl($absoluteUrl);
 			}
 		}
