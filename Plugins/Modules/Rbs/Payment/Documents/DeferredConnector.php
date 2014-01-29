@@ -8,13 +8,13 @@ class DeferredConnector extends \Compilation\Rbs\Payment\Documents\DeferredConne
 {
 	/**
 	 * @param \Rbs\Payment\Documents\Transaction $transaction
-	 * @return string|string[]
+	 * @return string|null
 	 */
 	public function getPaymentReturnTemplate($transaction)
 	{
 		if ($transaction->getProcessingStatus() == Transaction::STATUS_PROCESSING)
 		{
-			return array('Rbs_Commerce', 'paymentReturn-deferred-processing.twig');
+			return 'Rbs_Commerce/Blocks/paymentReturn/deferred-processing.twig';
 		}
 		return parent::getPaymentReturnTemplate($transaction);
 	}

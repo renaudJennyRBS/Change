@@ -8,20 +8,20 @@ class Connector extends \Compilation\Rbs\Payment\Documents\Connector
 {
 	/**
 	 * @param \Rbs\Payment\Documents\Transaction $transaction
-	 * @return string|string[]
+	 * @return string|null
 	 */
 	public function getPaymentReturnTemplate($transaction)
 	{
 		switch ($transaction->getProcessingStatus())
 		{
 			case Transaction::STATUS_SUCCESS:
-				return array('Rbs_Commerce', 'paymentReturn-default-success.twig');
+				return 'Rbs_Commerce/Blocks/paymentReturn/default-success.twig';
 
 			case Transaction::STATUS_PROCESSING:
-				return array('Rbs_Commerce', 'paymentReturn-default-processing.twig');
+				return 'Rbs_Commerce/Blocks/paymentReturn/default-processing.twig';
 
 			default:
-				return array('Rbs_Commerce', 'paymentReturn-invalid.twig');
+				return null;
 		}
 	}
 }

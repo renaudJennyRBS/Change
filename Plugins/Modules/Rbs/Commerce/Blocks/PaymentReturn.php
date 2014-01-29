@@ -58,27 +58,22 @@ class PaymentReturn extends Block
 			$connector = $transaction->getConnector();
 			if (!$connector)
 			{
-				return 'paymentSuccess-invalid.twig';
+				return 'paymentReturn-invalid.twig';
 			}
 			$attributes['connector'] = $connector;
 
 			$template = $connector->getPaymentReturnTemplate($transaction);
-			if (is_array($template))
+			if ($template === null)
 			{
-				if (count($template) != 2)
-				{
-					throw new \RuntimeException('Invalid template!');
-				}
-				$this->setTemplateModuleName($template[0]);
-				$template = $template[1];
+				return 'paymentReturn-invalid.twig';
 			}
-
-			if (is_string($template))
+			elseif (!is_string($template))
 			{
-				return $template;
+				throw new \RuntimeException('Invalid payment template!');
 			}
-			throw new \RuntimeException('Invalid template!');
+			$attributes['paymentTemplate'] = $template;
+			return 'paymentReturn.twig';
 		}
-		return 'paymentSuccess-invalid.twig';
+		return 'paymentReturn-invalid.twig';
 	}
 }
