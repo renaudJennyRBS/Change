@@ -36,6 +36,10 @@
 	 */
 	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, $location)
 	{
+		if (eventData.modelName === 'Rbs_Catalog_Product' && eventData.route.relatedModelName == 'Rbs_Catalog_VariantGroup')
+		{
+			// Variant group for a given product
+		}
 		if (eventData.modelName === 'Rbs_Catalog_CrossSellingProductList')
 		{
 			var p, search = $location.search();
@@ -66,10 +70,14 @@
 		{
 			$delegate.module('Rbs_Catalog', 'Rbs/Catalog', { 'redirectTo': 'Rbs/Catalog/Product/'});
 			$delegate.model('Rbs_Catalog_Product')
-				.route('prices', 'Rbs/Catalog/Product/:id/Prices/', 'Document/Rbs/Catalog/Product/product-prices.twig')
-				.route('cross-selling-lists', 'Rbs/Catalog/Product/:id/CrossSellingProductLists/', 'Document/Rbs/Catalog/Product/product-cross-selling.twig')
-				.route('product-lists', 'Rbs/Catalog/Product/:id/ProductLists/', 'Document/Rbs/Catalog/Product/product-lists.twig')
-				.route('variant-group', 'Rbs/Catalog/Product/:id/VariantGroup/', 'Document/Rbs/Catalog/VariantGroup/list.twig');
+				.route('prices', 'Rbs/Catalog/Product/:id/Prices/',
+						{'templateUrl':'Document/Rbs/Catalog/Product/product-prices.twig', 'labelKey':'m.rbs.price.admin.price_list | ucf'})
+				.route('cross-selling-lists', 'Rbs/Catalog/Product/:id/CrossSellingProductLists/',
+						{'templateUrl':'Document/Rbs/Catalog/Product/product-cross-selling.twig', 'labelKey':'m.rbs.catalog.admin.crosssellingproductlist_title | ucf'})
+				.route('product-lists','Rbs/Catalog/Product/:id/ProductLists/',
+						{'templateUrl':'Document/Rbs/Catalog/Product/product-lists.twig', 'labelKey':'m.rbs.catalog.admin.productlist_list | ucf'})
+				.route('variant-group', 'Rbs/Catalog/Product/:id/VariantGroup/:variantGroupId',
+							{'templateUrl':'Document/Rbs/Catalog/VariantGroup/form.twig', 'labelKey':'m.rbs.catalog.documents.variantgroup | ucf'});
 
 			$delegate.model('Rbs_Catalog_ProductList')
 				.route('productListItems', 'Rbs/Catalog/ProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
@@ -161,7 +169,7 @@
 					},
 					{"op" : "in",
 						"lexp" : {"property" : "valueType"},
-						"rexp" : ["Property", "Integer", "DocumentId", "Float", "DateTime", "Code"]
+						"rexp" : ["Property", "Integer", "DocumentId", "Float", "DateTime", "String"]
 					}
 				]
 			}

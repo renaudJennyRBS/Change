@@ -168,10 +168,10 @@
 		"message":"listes de produits"
 	},
 	"productlistitem_list_aside_link":{
-		"message":"configurer les <strong>listes de produits</strong>"
+		"message":" Listes de produits"
 	},
 	"product_prices_aside_link":{
-		"message":"configurer les <strong>prix</strong>"
+		"message":"prix"
 	},
 	"attribute_create":{
 		"message":"ajouter un attribut produit"
@@ -261,10 +261,10 @@
 		"message":"listes de produits associés"
 	},
 	"crosssellingproductlist_crossselling_lists_aside_link":{
-		"message":"configurer les <strong>produits associés</strong>"
+		"message":"produits associés"
 	},
 	"variantgroup_aside_link":{
-		"message":"configurer les <strong>variantes</strong>"
+		"message":"variantes"
 	},
 	"productlist_productlist_picker_title":{
 		"message":"choisissez la liste où ajouter le produit"
@@ -441,7 +441,7 @@
 		"message":"Produit concerné"
 	},
 	"productlist_products_aside_link":{
-		"message":"configurer les <strong>produits</strong>"
+		"message":"configurer les produits"
 	},
 	"productlist_reorder_items":{
 		"message":"Gérer et réordonner les produits de cette liste"

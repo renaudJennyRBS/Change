@@ -16,8 +16,7 @@
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
 			$delegate.module('Rbs_Seo', 'Rbs/Seo', { 'redirectTo': 'Rbs/Seo/DocumentSeo/'})
-				.route('sitemapConfiguration', 'Rbs/Seo/Sitemap', 'Document/Rbs/Seo/SitemapConfiguration/list.twig');
-			$delegate.routesForLocalizedModels(['Rbs_Seo_DocumentSeo', 'Rbs_Seo_ModelConfiguration']);
+					.routesForLocalizedModels(['Rbs_Seo_DocumentSeo', 'Rbs_Seo_ModelConfiguration']);
 			return $delegate.module(null);
 		}]);
 	}]);

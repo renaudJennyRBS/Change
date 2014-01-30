@@ -41,7 +41,15 @@
 						newAxesConfiguration.push(axisConfiguration);
 					});
 					scope.document.axesConfiguration = newAxesConfiguration;
-				}
+				};
+
+				scope.initDocument = function(){
+						if ($routeParams.hasOwnProperty('variantGroupId')) {
+							return REST.resource('Rbs_Catalog_VariantGroup', parseInt($routeParams.variantGroupId, 10));
+						}
+					return null;
+				};
+
 
 				scope.onLoad = function() {
 					if (scope.document.isNew()) {

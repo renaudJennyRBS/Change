@@ -1,6 +1,11 @@
-<rbs-panel title="{{ i18nAttr('m.rbs.seo.admin.aside_title') }}">
-	<div ng-if="seoDocument" style="text-align: right;">
-		<a href="javascript:;" ng-href="(= seoDocument | rbsURL =)">{{ i18n('m.rbs.seo.admin.aside_edit_seo_info') }}</a>
+<rbs-panel title="{{ i18nAttr('m.rbs.seo.admin.aside_title') }}" icon="icon-magic">
+	<div ng-if="seoDocument">
+		<p class="list-group-item">
+			<a ng-if="document.publicationStatus" href="javascript:;" ng-href="(= document | rbsURL:'urls' =)"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.admin.admin.configure_url_and_redirections', ['ucf']) | raw }}</a>
+		</p>
+		<p class="list-group-item">
+			<a href="javascript:;" ng-href="(= seoDocument | rbsURL =)"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.seo.admin.aside_edit_seo_info') }}</a>
+		</p>
 	</div>
 	<div ng-if="! seoDocument">
 		{{ i18n('m.rbs.seo.admin.aside_document_has_no_seo_info') }}<br/>
