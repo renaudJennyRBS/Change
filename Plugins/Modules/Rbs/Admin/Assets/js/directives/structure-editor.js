@@ -868,13 +868,13 @@
 				if (! this.isReadOnly())
 				{
 					$($element).on({
-						'dragstart': function (e) {
+						'dragstart': function (event) {
 							draggedEl = $(this).closest('.block-draggable');
 							draggedEl.addClass('dragged');
 							containerOfDraggedEl = draggedEl.parent();
 
-							e.dataTransfer.setData('Text', draggedEl.data('id'));
-							e.dataTransfer.effectAllowed = "copyMove";
+							event.originalEvent.dataTransfer.setData('Text', draggedEl.data('id'));
+							event.originalEvent.dataTransfer.effectAllowed = 'copyMove';
 						},
 
 						'dragend': function () {
@@ -886,31 +886,29 @@
 					// Droppable elements
 
 					$($element).on({
-						'dragenter': function (e) {
-							e.preventDefault();
-							e.stopPropagation();
+						'dragenter': function (event) {
+							event.preventDefault();
+							event.stopPropagation();
 
-							if (e.dataTransfer.getData('Text') !== $(this).data('id')) {
+							if (event.originalEvent.dataTransfer.getData('Text') !== $(this).data('id')) {
 								structureEditorService.highlightDropTarget($(this));
 							}
 						},
 
-						'dragleave': function (e) {
-							e.preventDefault();
-							e.stopPropagation();
+						'dragleave': function (event) {
+							event.preventDefault();
+							event.stopPropagation();
 
 							structureEditorService.unhighlightDropTarget($(this));
 							dropZoneIndicator.hide();
 						},
 
-						'dragover': function (e) {
-							e.dataTransfer.dropEffect = "move";
+						'dragover': function (event) {
+							event.preventDefault();
+							event.stopPropagation();
 
-							e.preventDefault();
-							e.stopPropagation();
-
-							if (e.dataTransfer.getData('Text') !== $(this).data('id')) {
-								var	mouseY = e.originalEvent.pageY,
+							if (event.originalEvent.dataTransfer.getData('Text') !== $(this).data('id')) {
+								var	mouseY = event.originalEvent.pageY,
 									sameParent = containerOfDraggedEl.data('id') === $(this).data('id'),
 									indicatorY = 0, i, midY, childEl, last, finalDropPosition;
 
@@ -960,9 +958,9 @@
 							}
 						},
 
-						'drop': function (e) {
-							e.preventDefault();
-							e.stopPropagation();
+						'drop': function (event) {
+							event.preventDefault();
+							event.stopPropagation();
 
 							dropZoneIndicator.hide();
 
@@ -1267,8 +1265,9 @@
 				elm.addClass('row');
 
 				elm.click(function (event) {
-					event.stopPropagation();
-					ctrl.selectBlock(elm);
+					if (event.target === this) {
+						ctrl.selectBlock(elm);
+					}
 				});
 
 				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
@@ -1987,7 +1986,6 @@
 				scope.item = ctrl.getItemById(element.data('id'));
 
 				scope.selectBlock = function ($event) {
-					$event.stopPropagation();
 					ctrl.selectBlock(element);
 				};
 			}
@@ -2011,7 +2009,6 @@
 
 			"link" : function seBlockChooserLinkFn (scope, element, attrs, ctrl) {
 				scope.selectBlock = function ($event) {
-					$event.stopPropagation();
 					ctrl.selectBlock(element);
 				};
 			}
@@ -2063,7 +2060,6 @@
 				});
 
 				scope.selectBlock = function ($event) {
-					//$event.stopPropagation();
 					ctrl.selectBlock(element);
 				};
 
