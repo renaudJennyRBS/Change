@@ -16,8 +16,6 @@
 
 			link : function (scope, element, attrs, editorCtrl) {
 
-				scope.actionAfterSave = Settings.get('editorActionAfterSave', 'list');
-
 				// Initialize the zone before the buttons with a content that comes from the rest of the world :)
 				var shouldLoadContents = true;
 				scope.$on(Events.EditorReady, function (event, args) {
@@ -34,12 +32,17 @@
 						}
 					}
 
-					scope.navigationContext = Navigation.getActiveContext();
+					scope.navigationContext = Navigation.getCurrentContext();
 
 					scope.rejectNavigationContext = function ()
 					{
-						Navigation.reject();
+						Navigation.setSelectionContextValue();
 					};
+				});
+
+
+				scope.$on('$locationChangeSuccess', function (event) {
+					scope.navigationContext = Navigation.getCurrentContext();
 				});
 
 
@@ -73,15 +76,6 @@
 					}
 					return null;
 				};
-
-
-				scope.$on('Change:DocumentSaved', function (event, doc) {
-					Settings.set('editorActionAfterSave', scope.actionAfterSave, true);
-					if (scope.actionAfterSave === 'list') {
-						Breadcrumb.goParent();
-					}
-				});
-
 
 				scope.publish = function ($event) {
 					var action;

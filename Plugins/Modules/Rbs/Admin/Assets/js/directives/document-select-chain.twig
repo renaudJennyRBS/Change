@@ -5,7 +5,7 @@
 			{{ i18n('m.rbs.admin.admin.change') }}
 		</button>
 	</span>
-	<a ng-if="value.id > 0" href ng-href="(= value | rbsURL =)" rbs-start-navigation="">(= value.label =) <i class="icon-circle-arrow-right"></i></a>
+	<a ng-if="value.id > 0" href target-url="(= value | rbsURL =)" rbs-start-navigation="">(= value.label =) <i class="icon-circle-arrow-right"></i></a>
 	<span ng-if="! value.id" class="text-muted" style="margin-bottom: 0;">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</span>
 </p>
 <div ng-show="editMode" data-role="selects" class="row form-control-static btn-toolbar"></div>

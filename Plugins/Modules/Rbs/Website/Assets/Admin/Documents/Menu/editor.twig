@@ -17,8 +17,7 @@
 		<rbs-field-picker
 				property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'website'), ['ucf']) }}"
 				accepted-model="Rbs_Website_Website"
-				selector-title="{{ i18nAttr('m.rbs.website.admin.menu_website_picker_title', ['ucf']) }}"
-				allow-creation="false">
+				selector-title="{{ i18nAttr('m.rbs.website.admin.menu_website_picker_title', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field property="items" label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'items'), ['ucf']) }}">
@@ -42,7 +41,6 @@
 
 				<rbs-field label="{{ i18n('m.rbs.website.admin.menu_select_document', ['ucf']) }}">
 					<rbs-document-picker-single
-						allow-creation="false"
 						select-model="{publishable:true, abstract:false}"
 						ng-model="add.document.selected"
 						selector-title="{{ i18nAttr('m.rbs.website.admin.menu_select_document_to_add_to_menu', ['ucf']) }}"

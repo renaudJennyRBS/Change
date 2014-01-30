@@ -8,45 +8,35 @@
 		$('body').append('<div id="document-picker-backdrop"/>');
 	}
 
-	var app = angular.module('RbsChange'),
-		counter = 0;
+	var app = angular.module('RbsChange');
 
 	/**
-	 * @param scope
-	 * @param iElement
-	 * @param attrs
-	 * @param ngModel
-	 * @param multiple
-	 * @param REST
-	 * @param Utils
-	 * @param Navigation
-	 * @param $location
-	 * @param UrlManager
-	 *
+	 * @attribute ng-model
 	 * @attribute value-ids
-	 * @attribute allow-in-place-selection
-	 * @attribute input-css-class
-	 * @attribute picker-template
-	 * @attribute allow-creation
-	 * @attribute allow-edition
 	 * @attribute accepted-model
 	 * @attribute property-label
+	 * @attribute selector-url eg: "/Rbs/User/Group/new"
+	 * @attribute context-key
 	 * @attribute selector-title
+	 * @attribute property-label
 	 * @attribute select-model
-	 * @attribute embed-in
 	 * @attribute disable-reordering
+	 * @attribute hide-buttons-label
 	 */
-	function documentPickerLinkFunction(scope, iElement, attrs, ngModel, multiple, REST, Utils, Navigation, $location, UrlManager, ArrayUtils)
+	function documentPickerLinkFunction(scope, iElement, attrs, ngModel, multiple, REST, Utils, Navigation, $timeout, UrlManager, ArrayUtils)
 	{
-		var $el = $(iElement);
-
-		// Example: selector-url="/Rbs/User/Group/new"
+		var valueIds = (attrs.valueIds === 'true');
 		scope.selectorUrl = attrs.selectorUrl;
-
 		scope.multiple = multiple;
-
 		scope.disableReordering = !multiple;
-		scope.showButtonsLabel = $el.closest('.dockable.pinned').length === 0; // TODO: detect block properties editor in page editor...
+		if (scope.disableReordering && attrs.hasOwnProperty('disableReordering'))
+		{
+			scope.disableReordering = false;
+		}
+
+		scope.doc = {list: []};
+
+		scope.showButtonsLabel = attrs.hideButtonsLabel !== 'true';
 
 		scope.selectModel = attrs.selectModel;
 		attrs.$observe('acceptedModel', function ()
@@ -54,166 +44,201 @@
 			scope.acceptedModel = iElement.attr('accepted-model');
 		});
 
-		// Initialize ngModel
-		// If attribute "value-ids" is set to true, the value (ng-model) of the picker will be an ID
-		// or an array of IDs for a multiple picker.
-		ngModel.$parsers.unshift(function (value)
-		{
-			if (attrs.valueIds === 'true')
+		function arrayCopy(array) {
+			var copy = [];
+			angular.forEach(array, function(item) {copy.push(item);});
+			return copy;
+		}
+
+		function getDocById(array, id) {
+			for (var i = 0; i < array.length; i++)
 			{
-				value = Utils.toIds(value);
+				if (array[i].id == id) {
+					return array[i];
+				}
 			}
-			return value;
+			return null;
+		}
+
+		// viewValue => modelValue
+		ngModel.$parsers.unshift(function (viewValue) {
+			var modelValue;
+			if (valueIds) {
+				if (multiple) {
+					modelValue = Utils.toIds(viewValue);
+				} else {
+					modelValue = (Utils.isDocument(viewValue)) ? viewValue.id : 0
+				}
+			} else {
+				if (multiple) {
+					modelValue = arrayCopy(viewValue)
+				} else {
+					modelValue = viewValue
+				}
+			}
+			return viewValue;
 		});
 
-		// Pickers allow ID (or Array of IDs) as value.
-		// In that case, the following formatter will load the identified documents so that ngModel.$render()
-		// always deals with objects (documents).
-		ngModel.$formatters.unshift(function (value)
-		{
-			if (!scope.documents)
-			{
-				scope.documents = [];
-			}
+		// modelValue => viewValue
+		ngModel.$formatters.unshift(function (modelValue) {
+			var viewValue = multiple ? [] : null;
+			var oldList = scope.doc.list;
+			var docList = [];
 
-			if (value)
-			{
-				if (angular.isArray(value))
-				{
-					if (value.length > 0)
-					{
-						var arrayOfIds = false;
-						angular.forEach(value, function (value)
-						{
-							if (/\d+/.test('' + value))
-							{
-								arrayOfIds = true;
+			if (valueIds) {
+				if (multiple) {
+					if (angular.isArray(modelValue)) {
+						var ids = [], doc;
+						angular.forEach(modelValue, function(id) {
+							if (angular.isNumber(id) && id > 0) {
+								doc = getDocById(oldList, id);
+								if (doc) {
+									docList.push(doc);
+								} else {
+									ids.push(id);
+								}
+							} else {
+								console.error('Invalid number value for: ' + getContextValueKey());
 							}
 						});
-						if (arrayOfIds)
-						{
-							scope.documents = REST.getResources(value);
+						if (ids.length) {
+							angular.forEach(REST.getResources(ids), function(doc) {
+								docList.push(doc);
+							});
 						}
-						else
-						{
-							scope.documents = value;
-						}
+						viewValue = arrayCopy(docList);
+					}
+				} else {
+					if (angular.isNumber(modelValue) && modelValue > 0) {
+						viewValue = REST.getResources([modelValue])[0];
+						docList.push(viewValue);
 					}
 				}
-				else if (/\d+/.test('' + value))
-				{
-					scope.documents = REST.getResources([value]);
-				}
-				else
-				{
-					scope.documents.push(value);
+			} else {
+				if (multiple) {
+					if (angular.isArray(modelValue)) {
+						angular.forEach(modelValue, function(doc) {
+							if (Utils.isDocument(doc)) {
+								docList.push(doc);
+								viewValue.push(doc);
+							}
+						})
+					}
+				} else {
+					if (Utils.isDocument(modelValue)) {
+						docList.push(modelValue);
+						viewValue = modelValue;
+					}
 				}
 			}
 
-			return value;
+			scope.doc.list = docList;
+			return viewValue;
 		});
 
-		// Watch from changes coming from the <rbs-token-list/> which is bound to `scope.documents`.
-		scope.$watch('documents', function (documents, old)
-		{
-			if (scope.multiple)
-			{
-				if (documents !== old)
-				{
-					ngModel.$setViewValue(documents);
-				}
-			}
-			else
-			{
-				if (documents.length > 1)
-				{
-					ArrayUtils.remove(documents, 0, 0);
-				}
-
-				if (documents.length == 0)
-				{
-					ngModel.$setViewValue(null);
-				}
-				else if (documents[0] !== old)
-				{
-					ngModel.$setViewValue(documents[0]);
-				}
+		// Watch from changes coming from the <rbs-token-list/> which is bound to `scope.doc.list`.
+		scope.$watch('doc.list', function (documents) {
+			if (multiple) {
+				ngModel.$setViewValue(arrayCopy(documents));
+			} else {
+				ngModel.$setViewValue(documents.length ? documents[0] : null);
 			}
 		}, true);
 
 		// Open a session to select a document directly in the module
 		scope.beginSelectSession = function ()
 		{
-			var p = attrs.ngModel.indexOf('.'),
-				doc, property, selectModel, navParams;
-
-			if (p === -1)
-			{
-				throw new Error("Invalid 'ng-model' attribute on DocumentPicker Directive.");
+			var selectModel = getFormModel();
+			var targetUrl = scope.selectorUrl;
+			if (!targetUrl && selectModel) {
+				targetUrl = UrlManager.getSelectorUrl(selectModel);
 			}
-
-			selectModel = getFormModel();
-			if (selectModel)
-			{
-				doc = scope[attrs.ngModel.substr(0, p)];
-				property = attrs.ngModel.substr(p + 1);
-				navParams = {
-					selector: true,
-					property: property,
-					model: selectModel,
-					multiple: multiple,
-					document: doc || scope.document,
-					ngModel: attrs.ngModel
-				};
-
-				if (scope.modelInfo && scope.modelInfo.properties && scope.modelInfo.properties[property])
-				{
-					navParams.label = scope.modelInfo.properties[property].label;
-				}
-
-				Navigation.start(iElement, navParams);
-				if (scope.selectorUrl)
-				{
-					$location.url(scope.selectorUrl);
-				}
-				else
-				{
-					$location.url(UrlManager.getSelectorUrl(selectModel));
-				}
+			if (!targetUrl) {
+				throw new Error("Invalid targetUrl for selection.");
 			}
+			var navParams = {
+				selector: true,
+				model: selectModel,
+				multiple: multiple,
+				label: attrs.propertyLabel || attrs.selectorTitle || attrs.name
+			};
+
+			var valueKey = getContextValueKey();
+			Navigation.startSelectionContext(targetUrl, valueKey, navParams);
 		};
 
 		// Get allowed model
-		function getFormModel()
-		{
-			if (!multiple && ngModel.$viewValue && ngModel.$viewValue.model)
-			{
+		function getFormModel() {
+			if (!multiple && ngModel.$viewValue && ngModel.$viewValue.model) {
 				return ngModel.$viewValue.model;
-			}
-			else
-			{
+			} else {
 				return scope.acceptedModel;
 			}
 		}
 
+		function getContextValueKey() {
+			return attrs.contextKey ? attrs.contextKey : attrs.ngModel;
+		}
+
+		function applyContextValue(contextValue) {
+			$timeout(function() {
+				if (multiple) {
+					var viewValue = arrayCopy(scope.doc.list);
+					if (angular.isArray(contextValue)) {
+						for (var ci = 0; ci < contextValue.length; ci++) {
+							var add = true, cv = contextValue[ci];
+							angular.forEach(viewValue, function(doc) {
+								if (add && (doc.id == cv.id)) {add = false;}
+							});
+							if (add) {
+								viewValue.push(cv);
+							}
+						}
+						scope.doc.list = viewValue;
+						ngModel.$setViewValue(viewValue);
+						ngModel.$render();
+					}
+				} else {
+					if (!Utils.isDocument(contextValue)) {
+						contextValue = null;
+						scope.doc.list = [];
+					} else {
+						scope.doc.list = [contextValue];
+					}
+					ngModel.$setViewValue(contextValue);
+					ngModel.$render();
+				}
+			});
+		}
+
 		// Clear the list of selected elements
-		scope.clear = function ()
-		{
-			//setValue(null);
-			scope.documents = [];
-			ngModel.$setViewValue(null);
-			ngModel.$render();
+		scope.clear = function () {
+			scope.doc.list = [];
 		};
 
 		// Check if nothing is selected
-		scope.isEmpty = function ()
-		{
-			return !ngModel.$viewValue || (angular.isArray(ngModel.$viewValue) && ngModel.$viewValue.length === 0);
+		scope.isEmpty = function () {
+			return (scope.doc.list.length < 1);
 		};
+
+		var currentContext = Navigation.getCurrentContext();
+		if (currentContext) {
+			var contextValue = currentContext.getSelectionValue(getContextValueKey());
+			if (contextValue !== undefined) {
+				applyContextValue(contextValue);
+			}
+		}
+
+		scope.$on('updateContextValue', function(event, args) {
+			var contextValueKey =  getContextValueKey(), valueKey = args.valueKey, value = args.value;
+			if (contextValueKey === valueKey) {
+				applyContextValue(value);
+			}
+		});
 	}
 
-	var singlePicker = ['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager',
-		'RbsChange.ArrayUtils', function (REST, Utils, Navigation, $location, UrlManager, ArrayUtils)
+	var singlePicker = ['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$timeout', 'RbsChange.UrlManager',
+		'RbsChange.ArrayUtils', function (REST, Utils, Navigation, $timeout, UrlManager, ArrayUtils)
 		{
 			return {
 				restrict: 'EA',
@@ -223,7 +248,7 @@
 
 				link: function (scope, iElement, attrs, ngModel)
 				{
-					documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, REST, Utils, Navigation, $location,
+					documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, REST, Utils, Navigation, $timeout,
 						UrlManager, ArrayUtils);
 				}
 			};
@@ -232,8 +257,8 @@
 	app.directive('rbsWoodyWoodpicker', singlePicker); // Ha ha.
 
 	app.directive('rbsDocumentPickerMultiple',
-		['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$location', 'RbsChange.UrlManager', 'RbsChange.ArrayUtils',
-			function (REST, Utils, Navigation, $location, UrlManager, ArrayUtils)
+		['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$timeout', 'RbsChange.UrlManager', 'RbsChange.ArrayUtils',
+			function (REST, Utils, Navigation, $timeout, UrlManager, ArrayUtils)
 			{
 				return {
 					restrict: 'EA',
@@ -243,7 +268,7 @@
 
 					link: function (scope, iElement, attrs, ngModel)
 					{
-						documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, REST, Utils, Navigation, $location,
+						documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, REST, Utils, Navigation, $timeout,
 							UrlManager, ArrayUtils);
 					}
 				};

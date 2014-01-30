@@ -22,12 +22,12 @@
 			</select>
 		</rbs-field>
 
-		<rbs-field-picker property="country" required="true" accepted-model="Rbs_Geo_Country" allow-creation="false"
+		<rbs-field-picker property="country" required="true" accepted-model="Rbs_Geo_Country"
 			label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'country'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_country_picker_title', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field-picker property="unitParent" accepted-model="Rbs_Geo_TerritorialUnit" allow-creation="false"
+		<rbs-field-picker property="unitParent" accepted-model="Rbs_Geo_TerritorialUnit"
 			label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitParent'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_unitparent_picker_title', ['ucf']) }}">
 		</rbs-field-picker>

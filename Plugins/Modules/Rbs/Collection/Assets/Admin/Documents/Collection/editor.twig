@@ -17,13 +17,13 @@
 			</h3>
 
 			<div class="add-elements-bar">
-				<a href="javascript:;" ng-click="cascadeCreate()">{{ i18n('m.rbs.collection.admin.item_create', ['ucf']) }}</a>
+				<a href ng-click="cascadeCreate()">{{ i18n('m.rbs.collection.admin.item_create', ['ucf']) }}</a>
 			</div>
 
 			<rbs-document-list data-dlid="DLCollection1" model="Rbs_Collection_Item" collection="document.items" extend="this"
 				toolbar="false" selectable="false" correction="true">
 				<rbs-column name="label" primary="true">
-					<a href="javascript:;" ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
+					<a href ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
 				</rbs-column>
 				<rbs-column name="value"></rbs-column>
 				<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">

@@ -6,10 +6,7 @@
 		<rbs-field-picker ng-hide="discount || !document.isNew()" property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
 			selector-title="{{ i18nAttr('m.rbs.price.admin.price_sku_picker_title', ['ucf']) }}"
-			allow-edition="true"
-			allow-creation="false"
-			required="true"
-			ng-hide="hideSku">
+			required="true" ng-hide="hideSku">
 		</rbs-field-picker>
 		<rbs-field ng-show="discount || !document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}">
 			<p class="form-control-static"><a href="(= document.sku | rbsURL:'' =)">(= document.sku.label =)</a></p>
@@ -101,7 +98,7 @@
 		<span class="help-block">
 			{{ i18n('m.rbs.price.admin.price_target_section_help', ['ucf']) | raw }}
 		</span>
-		<rbs-field-picker property="targetId" allow-creation="false" allow-edition="true"
+		<rbs-field-picker property="targetId"
 				label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'targetId'), ['ucf']) }}"
 				selector-title="{{ i18nAttr('m.rbs.price.admin.targetid_picker_title', ['ucf']) }}">
 		</rbs-field-picker>

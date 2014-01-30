@@ -28,8 +28,7 @@
 		<rbs-field-picker property="website" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'website'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Website"
-			selector-title="{{ i18nAttr('m.rbs.website.admin.topic_website_picker_title', ['ucf']) }}"
-			allow-creation="false">
+			selector-title="{{ i18nAttr('m.rbs.website.admin.topic_website_picker_title', ['ucf']) }}">
 			<div class="help-block">{{ i18n('m.rbs.website.admin.topic_website_help', ['ucf']) }}</div>
 		</rbs-field-picker>
 	</fieldset>
@@ -51,15 +50,13 @@
 			<rbs-field-picker-multiple property="authorizedUsers" required="false"
 				label="{{ i18nAttr('m.rbs.website.documents.topic_authorized_users', ['ucf']) }}"
 				accepted-model="Rbs_User_User"
-				selector-title="{{ i18nAttr('m.rbs.website.admin.topic_users_picker_title', ['ucf']) }}"
-				allow-creation="false">
+				selector-title="{{ i18nAttr('m.rbs.website.admin.topic_users_picker_title', ['ucf']) }}">
 			</rbs-field-picker-multiple>
 
 			<rbs-field-picker-multiple property="authorizedGroups" required="false"
 				label="{{ i18nAttr('m.rbs.website.documents.topic_authorized_groups', ['ucf']) }}"
 				accepted-model="Rbs_User_Group"
-				selector-title="{{ i18nAttr('m.rbs.website.admin.topic_groups_picker_title', ['ucf']) }}"
-				allow-creation="false">
+				selector-title="{{ i18nAttr('m.rbs.website.admin.topic_groups_picker_title', ['ucf']) }}">
 			</rbs-field-picker-multiple>
 		</fieldset>
 	</div>

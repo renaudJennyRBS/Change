@@ -868,7 +868,7 @@
 										);
 									}
 									else {
-										console.log("REST.save(): Saved. Not inserted in tree because no tree node information has been provided or status is not 201 (Created).", doc);
+										//console.log("REST.save(): Saved. Not inserted in tree because no tree node information has been provided or status is not 201 (Created).", doc);
 										resolveQ(qToResolve, resource);
 									}
 								}
@@ -1427,10 +1427,8 @@
 							} else {
 								rejectQ(q, "'storagePath' should begin with 'change://'.");
 							}
-
 							return q.promise;
 						}
-
 					}
 
 				};

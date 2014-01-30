@@ -4,7 +4,8 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsBreadcrumb', ['$q', '$location', 'RbsChange.Utils', 'RbsChange.i18n', '$rootScope', 'RbsChange.REST', 'RbsChange.UrlManager', function ($q, $location, Utils, i18n, $rootScope, REST, UrlManager)
+	app.directive('rbsBreadcrumb', ['$q', '$location', 'RbsChange.Utils', 'RbsChange.i18n', '$rootScope', 'RbsChange.REST', 'RbsChange.UrlManager', 'RbsChange.Navigation',
+		function ($q, $location, Utils, i18n, $rootScope, REST, UrlManager, Navigation)
 	{
 		return {
 			restrict : 'E',
@@ -55,9 +56,16 @@
 					eventData.route = route;
 
 					// Populate 'location' part of Breadcrumb.
-					breadcrumbData.location.push([UrlManager.getLabelKeyForUrl(fullModuleName, 'home'), UrlManager.getUrl(fullModuleName, null, 'home')]);
+					breadcrumbData.location.push([
+						UrlManager.getLabelKeyForUrl(fullModuleName, 'home'),
+						UrlManager.getUrl(fullModuleName, null, 'home')
+					]);
 					if (modelName) {
-						breadcrumbData.location.push([UrlManager.getLabelKeyForUrl(modelName, 'list'), UrlManager.getUrl(modelName, null, 'list')]);
+
+						breadcrumbData.location.push([
+							UrlManager.getLabelKeyForUrl(modelName, 'list'),
+							Navigation.addTargetContext(UrlManager.getUrl(modelName, null, 'list'))
+						]);
 						eventData.modelName = modelName;
 					}
 

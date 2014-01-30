@@ -81,8 +81,7 @@
 						accepted-model="Rbs_Catalog_Attribute"
 						property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}"
 						selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axesattributes_picker_title', ['ucf']) }}"
-						master-label="(= document.label =)"
-						allow-edition="false" allow-creation="false" disable-reordering="true"
+						master-label="(= document.label =)" disable-reordering="true"
 						picker-template="picker-axis.twig">
 				</rbs-document-picker-multiple>
 				<div class="btn-toolbar">
@@ -97,8 +96,6 @@
 				label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'othersAttributes'), ['ucf']) }}"
 				accepted-model="Rbs_Catalog_Attribute"
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_othersAttributes_picker_title', ['ucf']) }}"
-				allow-creation="true"
-				allow-edition="true"
 				picker-template="picker-other.twig">
 		</rbs-field-picker-multiple>
 	</fieldset>

@@ -26,8 +26,7 @@
 		<rbs-field-picker property="section" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'section'), ['ucf']) }}"
 			accepted-model="Rbs_Website_Section"
-			selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_section_picker_title', ['ucf']) }}"
-			allow-creation="false">
+			selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_section_picker_title', ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_section_help') }}</span>
 		</rbs-field-picker>
 
@@ -39,7 +38,7 @@
 		<rbs-field-picker property="displayDocument"
 				label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'displayDocument'), ['ucf']) }}"
 				selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_displaydocument_picker_title', ['ucf']) }}"
-				select-model="{publishable:true, abstract:false}" allow-creation="false">
+				select-model="{publishable:true, abstract:false}">
 			<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_displaydocument_help') }}</span>
 		</rbs-field-picker>
 
