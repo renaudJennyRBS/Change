@@ -220,14 +220,12 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 
 			if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
 			{
-				$themeManager = $applicationServices->getThemeManager();
-				$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
-				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
+				$mailHtml = new \Change\Presentation\Layout\MailHtml();
+				$callableTwigBlock = function(\Change\Presentation\Layout\Block $item) use ($mailHtml)
 				{
-					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($twitterBootstrapHtml->getBlockClass($item), true). ')|raw }}';
+					return '{{ pageResult.htmlBlock(\'' . $item->getId() . '\', ' . var_export($mailHtml->getBlockClass($item), true). ')|raw }}';
 				};
-				$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $mailLayout, $callableTwigBlock);
-				$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts($templateLayout, $mailLayout, $themeManager, $applicationServices, $application->inDevelopmentMode()));
+				$twigLayout = $mailHtml->getHtmlParts($templateLayout, $mailLayout, $callableTwigBlock);
 
 				$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $mailTemplate->getHtml());
 

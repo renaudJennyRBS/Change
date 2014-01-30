@@ -58,6 +58,19 @@
 
 	</fieldset>
 
+	<fieldset ng-show="section=='content'" hide-when-create="true"
+		data-form-section-label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'editableContent'), ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<div rbs-tip="Rbs_MailEditor_Markdown">
+			{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
+		</div>
+
+		<rbs-structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
+			template="(= template =)" substitution-variables="(= document.substitutions =)">
+		</rbs-structure-editor>
+	</fieldset>
+
 	<fieldset
 		data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"

@@ -49,6 +49,8 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Elasticsearch_StoreResult', true, $events);
 		new RegisterByBlockName('Rbs_Elasticsearch_Facets', true, $events);
 
+		new RegisterByBlockName('Rbs_Mail_Richtext', true, $events);
+
 		$callback = function($event)
 		{
 			(new \Change\Presentation\Blocks\FileCacheAdapter())->onGetCacheAdapter($event);

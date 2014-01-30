@@ -34,11 +34,15 @@
 					'media': true,
 					'links': true,
 					'users': false,
-					'usergroups': false
+					'usergroups': false,
+					'substitutionVariables': false
 				};
 				if (attrs.profile === 'Admin') {
 					scope.availableSelectors.users = true;
 					scope.availableSelectors.usergroups = true;
+				}
+				else if(attrs.profile === 'Mail') {
+					scope.availableSelectors.substitutionVariables = true;
 				}
 
 				function ensureSelectorsReady () {
@@ -51,7 +55,8 @@
 								'<div class="media-picker"></div>' +
 								'<div class="link-picker"></div>' +
 								'<div class="user-picker"></div>' +
-								'<div class="usergroup-picker"></div>'
+								'<div class="usergroup-picker"></div>' +
+								'<div class="substitution-variables"></div>'
 							);
 						} else {
 							$selectorsContainer = element;
@@ -60,7 +65,8 @@
 							'media' : $selectorsContainer.find('div.media-picker'),
 							'link' : $selectorsContainer.find('div.link-picker'),
 							'user' : $selectorsContainer.find('div.user-picker'),
-							'usergroup' : $selectorsContainer.find('div.usergroup-picker')
+							'usergroup' : $selectorsContainer.find('div.usergroup-picker'),
+							'substitutionVariables' : $selectorsContainer.find('div.substitution-variables')
 						};
 					}
 				}
@@ -510,6 +516,10 @@
 
 						scope.mdInsertText(buildMdLinkTag(href, title || href));
 					}
+				};
+
+				scope.insertSubstitutionVariable = function (variable) {
+					scope.mdInsertText('{' + variable + '}');
 				};
 
 

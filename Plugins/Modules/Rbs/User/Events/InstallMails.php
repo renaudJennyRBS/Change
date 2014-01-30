@@ -28,9 +28,6 @@ class InstallMails
 				$import = new \Rbs\Generic\Json\Import($applicationServices->getDocumentManager());
 				$import->setDocumentCodeManager($applicationServices->getDocumentCodeManager());
 
-				$event->getApplicationServices()->getLogging()->fatal(var_export('=============== $mailTemplate-> ==================', true));
-				$event->getApplicationServices()->getLogging()->fatal(var_export($mailTemplate->getId(), true));
-				$event->getApplicationServices()->getLogging()->fatal(var_export('=================================', true));
 				$resolveDocument = function($id, $contextId) use ($mailTemplate) {
 					switch ($id)
 					{

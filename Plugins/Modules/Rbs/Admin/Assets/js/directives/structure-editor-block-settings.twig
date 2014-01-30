@@ -33,7 +33,7 @@
 	<div ng-hide="block.name" class="form-group">
 		<label class="control-label">{{ i18n('m.rbs.admin.admin.block_type', ['ucf']) }}</label>
 		<div class="controls">
-			<rbs-block-selector block="blockType" selected="(= block.name =)"></rbs-block-selector>
+			<rbs-block-selector block="blockType" selected="(= block.name =)" mail-suitable="(= isMailSuitable =)"></rbs-block-selector>
 		</div>
 	</div>
 

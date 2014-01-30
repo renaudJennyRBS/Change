@@ -12,7 +12,8 @@
 		forEach = angular.forEach,
 
 		DEFAULT_GRID_SIZE = 12,
-		RICH_TEXT_BLOCK_NAME = 'Rbs_Website_Richtext',
+		RICH_TEXT_BLOCK_NAMES = ['Rbs_Website_Richtext', 'Rbs_Mail_Richtext'],
+		MAIL_SUITABLE_MODELS = ['Rbs_Mail_Mail'],
 
 		highlightMargin = 2,
 		highlightBorder = 5;
@@ -158,7 +159,7 @@
 			if (!item.label) {
 				item.label = item.name;
 			}
-			var attrName = (item.name === RICH_TEXT_BLOCK_NAME) ? 'rbs-block-markdown-text' : 'rbs-block-template';
+			var attrName = RICH_TEXT_BLOCK_NAMES.indexOf(item.name) > -1 ? 'rbs-block-markdown-text' : 'rbs-block-template';
 			return '<div ' + attrName + '="" ' + (readonly ? 'readonly="true" ' : '') + 'data-id="' + item.id + '" data-name="' + item.name + '" data-label="' + item.label + '" data-visibility="' + (item.visibility || '') + '">' + item.name + '</div>';
 		};
 
@@ -521,7 +522,8 @@
 						html = '<div rbs-row-settings="" data-id="' + blockEl.data('id') + '"';
 					}
 					else {
-						html = '<div rbs-block-settings-editor="" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '"';
+						var isMailSuitable = MAIL_SUITABLE_MODELS.indexOf($scope.document.model) > -1;
+						html = '<div rbs-block-settings-editor="" data-id="' + blockEl.data('id') + '" data-label="' + item.label + '" mail-suitable="' + isMailSuitable +'"';
 					}
 					forEach(params, function (value, name) {
 						html += ' data-' + name + '="' + value + '"';
@@ -533,7 +535,7 @@
 
 					blockPropertiesPopup = $('#rbsStructureEditorBlockPropertiesPopup');
 					blockPropertiesPopup.html(html);
-					blockPropertiesPopup.attr('data-title', item.name === 'Rbs_Website_Richtext' ? '' : item.label);
+					blockPropertiesPopup.attr('data-title', RICH_TEXT_BLOCK_NAMES.indexOf(item.name) > -1 ? '' : item.label);
 					$compile(blockPropertiesPopup)(blockScope);
 					positionBlockSettingsEditor(blockEl);
 				};
@@ -651,6 +653,10 @@
 						throw new Error("Could not register item " + item.id + ": another item is registered with the same ID (" + $scope.items[item.id].type + ").");
 					}
 
+					// Add substitution variables if it's a mail rich text block
+					if (item.type === 'block' && item.name === 'Rbs_Mail_Richtext') {
+						item.substitutionVariables = $attrs.substitutionVariables;
+					}
 					// Assign new unique ID and register the item.
 					item.id = $scope.getNextBlockId();
 					$scope.items[item.id] = item;
@@ -1056,7 +1062,7 @@
 					return elm.find('.structure-editor').children().length > 0;
 				}
 
-				var originalValue, templateData;
+				var originalValue, templateData, substitutionVariables;
 
 				attrs.$observe('template', function watchLayout (template) {
 					if (template) {
@@ -1067,6 +1073,11 @@
 					}
 				});
 
+				attrs.$observe('substitutionVariables', function (value){
+					if (value) {
+						substitutionVariables = value;
+					}
+				});
 
 				var pendingBlockPropertySetter = null;
 
@@ -1124,6 +1135,10 @@
 									scope.blockIdCounter = Math.max(item.id, scope.blockIdCounter);
 									registerItems(item);
 								});
+							}
+							//if the container/item is a mail rich text block, give it variable substitutions
+							if (container.type === 'block' && container.name === 'Rbs_Mail_Richtext') {
+								container.substitutionVariables = substitutionVariables;
 							}
 						}
 
@@ -1650,12 +1665,16 @@
 
 
 	app.directive('rbsBlockSelector', ['RbsChange.REST', function (REST) {
-		var blockList = [], loading = false;
+		var blockList = [], loading = false, blockListType;
 
-		function loadBlockList () {
-			if (! blockList.length && ! loading) {
+		function loadBlockList (isMailSuitable) {
+			// mail and page share the same blockList, it's useless to load blockList again if it's for the same type
+			// check if there is already something in the blockList for the right type
+			var alreadyLoaded = blockList.length && ((blockListType === 'Mail' && isMailSuitable) || (blockListType === 'Page' && !isMailSuitable));
+			if (! loading && !alreadyLoaded) {
+				blockList = [];
 				loading = true;
-				REST.call(REST.getBaseUrl('admin/blockList/')).then(function (blockData)
+				REST.call(REST.getBaseUrl('admin/blockList/'), {isMailSuitable: isMailSuitable}).then(function (blockData)
 				{
 					angular.forEach(blockData, function (pluginBlocks, pluginLabel)
 					{
@@ -1666,6 +1685,7 @@
 						});
 					});
 					loading = false;
+					blockListType = isMailSuitable ? 'Mail' : 'Page';
 				});
 			}
 			return blockList;
@@ -1685,9 +1705,14 @@
 			template : '<select class="form-control" ng-model="block" ng-required="required" ng-options="block.label group by block.plugin for block in blocks"></select>',
 			scope : { block : '=', selected : '@', required : '@' },
 
-			link : function (scope)
+			link : function (scope, element, attrs)
 			{
-				scope.blocks = loadBlockList();
+				attrs.$observe('mailSuitable', function (value){
+					if (value) {
+						var isMailSuitable = value === 'true';
+						scope.blocks = loadBlockList(isMailSuitable);
+					}
+				});
 
 				function updateSelection () {
 					if (scope.selected && scope.blocks.length > 0 && (! scope.block || scope.block.name !== scope.selected)) {
@@ -1721,8 +1746,9 @@
 			"scope" : true,
 			"templateUrl" : 'Rbs/Admin/js/directives/structure-editor-block-settings.twig',
 
-			"link" : function (scope, element) {
+			"link" : function (scope, element, attrs) {
 				var ctrl = scope.editorCtrl;
+				scope.isMailSuitable = attrs.mailSuitable || false;
 
 				structureEditorService.highlightBlock(null);
 
@@ -1776,7 +1802,7 @@
 
 				scope.$watch('blockType', function (blockType, old) {
 					if (blockType && blockType !== old) {
-						if (blockType.name == 'Rbs_Website_Richtext') {
+						if (RICH_TEXT_BLOCK_NAMES.indexOf(blockType.name) > -1) {
 							onBlockTypeChanged(blockType);
 						}
 						else {
@@ -2009,7 +2035,7 @@
 			"require"    : '^rbsStructureEditor',
 			"transclude" : true,
 			"replace"    : true,
-			"template"   : '<div class="block block-draggable" ng-click="selectBlock($event)"><rbs-rich-text-input data-draggable="true" ng-readonly="readonly" use-tabs="false" ng-model="input.text" profile="Website"></rbs-rich-text-input></div>',
+			"template"   : '<div class="block block-draggable" ng-click="selectBlock($event)"><rbs-rich-text-input data-draggable="true" ng-readonly="readonly" use-tabs="false" ng-model="input.text" profile="(= profile =)" substitution-variables="(= substitutionVariables =)"></rbs-rich-text-input></div>',
 
 			"link" : function seRichTextLinkFn (scope, element, attrs, ctrl) {
 				element.attr('block-label', "Markdown");
@@ -2027,6 +2053,8 @@
 					scope.initItem(item);
 				}
 				scope.input = {text: item.parameters.content};
+				scope.profile = item.name === 'Rbs_Mail_Richtext' ? 'Mail' : 'Website';
+				scope.substitutionVariables = item.substitutionVariables ? JSON.parse(item.substitutionVariables) : [];
 
 				scope.$watch('input.text', function (text, old) {
 					if (text !== old) {

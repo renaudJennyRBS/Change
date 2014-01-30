@@ -403,7 +403,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				'id' => 'mainContent', 'grid' => 12, 'type' => 'container',
 				'items' => [
 					[
-						'type' => 'block', 'name' => 'Rbs_Website_Richtext', 'id' => 2, 'label' => 'Rbs_Website_Richtext',
+						'type' => 'block', 'name' => 'Rbs_Mail_Richtext', 'id' => 2, 'label' => 'Rbs_Mail_Richtext',
 						'parameters' => [
 							'contentType' => 'Markdown', 'content' => 'It\'s a beautiful HTML sample with {aSubstitution}', 'TTL' => 60
 						]
@@ -422,7 +422,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				<html>
 					<body>
 						<div id="content">
-							<div data-type="block" data-id="2" data-name="Rbs_Website_Richtext">
+							<div data-type="block" data-id="2" data-name="Rbs_Mail_Richtext">
 								<div class="richtext">
 									<p>It\'s a beautiful HTML sample with the substitution</p>
 								</div>
