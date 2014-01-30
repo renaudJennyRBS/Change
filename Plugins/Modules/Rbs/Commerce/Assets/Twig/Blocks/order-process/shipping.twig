@@ -68,7 +68,7 @@
 			</ol>
 
 			<div data-ng-if="delivery.options.usePostalAddress == 0">
-				<div data-rbs-address-form="" data-ng-model="delivery.address"
+				<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
 					data-zone-code="(= zoneCode =)" data-readonly="(= display.readonly =)">
 				</div>
 			</div>

@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="/address-form.static.tpl">
-	<div class="form-horizontal">
+	<form name="addressForm" class="form-horizontal">
 		{% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
 		{% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
 		<div class="form-group">
@@ -10,34 +10,58 @@
 				<div data-ng-show="readonly || countries.length == 1" class="form-control-static">
 					(= countryTitle(fieldValues.countryCode) =)
 				</div>
-				<select data-ng-show="!readonly && countries.length > 1" id="rbs-order-process-country"
-					data-ng-model="fieldValues.countryCode" class="form-control">
+				<select data-ng-show="!readonly && countries.length > 1" id="rbs-order-process-country" required="required"
+					data-ng-model="fieldValues.countryCode" class="form-control" name="country" data-ng-class="{
+						'has-error': !readonly && addressForm.country.$invalid,
+						'has-success': !readonly && addressForm.country.$dirty && !addressForm.country.$invalid
+					}">
 					<option data-ng-repeat="country in countries" value="(= country.code =)">
 						(= country.title =)
 					</option>
 				</select>
 			</div>
 		</div>
-		<div class="form-group" data-ng-repeat="fieldDef in fieldsDef" data-ng-if="!readonly || fieldValues[fieldDef.name]">
+		<div class="form-group" data-ng-repeat="fieldDef in fieldsDef" data-ng-if="!readonly || fieldValues[fieldDef.name]"
+			data-ng-form="innerForm" data-ng-class="{
+				'has-error': !readonly && innerForm.field.$dirty && innerForm.field.$invalid,
+				'has-success': !readonly && innerForm.field.$dirty && !innerForm.field.$invalid
+			}">
 			<label for="(= fieldDef.id =)" class="{{ leftColumnElementClass }} control-label">
-				<em data-ng-if="fieldDef.required" class="required-symbol"
+				<em data-ng-if="!readonly && fieldDef.required" class="required-symbol"
 					title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
 				(= fieldDef.title =)
 			</label>
 			<div class="{{ rightColumnElementClass }}" data-ng-if="fieldDef.values">
-				<select data-ng-hide="readonly" id="(= fieldDef.id =)" class="form-control"
+				<select data-ng-hide="readonly" id="(= fieldDef.id =)" name="field" class="form-control"
 					data-ng-required="fieldDef.required" data-ng-model="fieldValues[fieldDef.name]"
 					data-ng-options="key as v.title for (key, v) in fieldDef.values">
 				</select>
 				<div data-ng-show="readonly" class="form-control-static">
 					(= fieldDef.values[fieldValues[fieldDef.name]].title =)
 				</div>
+				<div data-ng-show="innerForm.field.$dirty && innerForm.field.$invalid">
+					<div class="text-danger" data-ng-show="innerForm.field.$error.required">
+						{{ i18n('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }}
+					</div>
+				</div>
 			</div>
 			<div class="{{ rightColumnElementClass }}" data-ng-if="!fieldDef.values">
-				<input data-ng-hide="readonly" id="(= fieldDef.id =)" class="form-control"
-					data-ng-required="fieldDef.required" data-ng-model="fieldValues[fieldDef.name]" type="text" />
+				<input data-ng-if="fieldDef.match" data-ng-hide="readonly" id="(= fieldDef.id =)" name="field"
+					class="form-control" data-ng-pattern="/(= fieldDef.match =)/" data-ng-required="fieldDef.required"
+					data-ng-model="fieldValues[fieldDef.name]" type="text" />
+				<input data-ng-if="!fieldDef.match" data-ng-hide="readonly" id="(= fieldDef.id =)" name="field"
+					class="form-control" data-ng-required="fieldDef.required"
+					data-ng-model="fieldValues[fieldDef.name]" type="text" />
 				<div data-ng-show="readonly" class="form-control-static">(= fieldValues[fieldDef.name] =)</div>
+				<div data-ng-show="innerForm.field.$dirty && innerForm.field.$invalid">
+					<div class="text-danger" data-ng-show="innerForm.field.$error.required">
+						{{ i18n('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }}
+					</div>
+					<div class="text-danger" data-ng-show="innerForm.field.$error.pattern">
+						{{ i18n('c.constraints.notmatch', ['ucf'])|replace({'%pattern%': '(= fieldDef.match =)'}) }}
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
+	</form>
 </script>
