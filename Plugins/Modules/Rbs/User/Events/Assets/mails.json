@@ -20,7 +20,7 @@
 							"type": "container",
 							"items":[
 								{
-									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
 									"parameters": {
 										"contentType": "Markdown",
 										"content": "Bonjour,\n\n### Vous avez fait une demande de création de compte pour le site \"{website}\"\n\nVeuillez confirmer votre adresse e-mail en cliquant sur le lien suivant : [{link}]({link} \"confirmer votre adresse e-mail\")\n\ncordialement.",

@@ -68,7 +68,7 @@
 						</div>
 					</span>
 					<div data-ng-show="canChangeBlocName(row)">
-						<rbs-block-selector block="row.block" selected="(= row.name =)"></rbs-block-selector>
+						<rbs-block-selector block="row.block" selected="(= row.name =)" mail-suitable="(= document.mailSuitable =)"></rbs-block-selector>
 					</div>
 				</td>
 				<td data-ng-if="!isEditorRow(row)">

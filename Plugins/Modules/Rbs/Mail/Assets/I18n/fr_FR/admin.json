@@ -10,5 +10,11 @@
 	},
 	"mail_websites_picker_title":{
 		"message":"sélection des sites rattachés au mail"
+	},
+	"back_to_general_mail_properties":{
+		"message":"Propriétés générales du mail"
+	},
+	"richtext":{
+		"message":"Bloc de texte"
 	}
 }
