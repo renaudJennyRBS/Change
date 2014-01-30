@@ -55,8 +55,13 @@ class FormDefinition
 		$idPrefix = uniqid($this->addressFields->getId() . '_') . '_';
 		foreach ($this->addressFields->getFields() as $addressField)
 		{
-			$input = array('name' => $addressField->getCode(), 'title' => $addressField->getTitle(),
-				'required' => $addressField->getRequired(), 'defaultValue' => $addressField->getDefaultValue());
+			$input = array(
+				'name' => $addressField->getCode(),
+				'title' => $addressField->getTitle(),
+				'required' => $addressField->getRequired(),
+				'match' => $addressField->getMatch(),
+				'defaultValue' => $addressField->getDefaultValue()
+			);
 			if ($addressField->getCollectionCode())
 			{
 				$collection = $this->getCollectionManager()->getCollection($addressField->getCollectionCode());

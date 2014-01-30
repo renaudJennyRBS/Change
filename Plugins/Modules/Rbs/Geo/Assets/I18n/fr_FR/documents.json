@@ -27,7 +27,7 @@
 		"message":"requis"
 	},
 	"addressfield_match":{
-		"message":"expression régulière de validation"
+		"message":"expression rationnelle de validation"
 	},
 	"addressfield_locked":{
 		"message":"code vérouillé"

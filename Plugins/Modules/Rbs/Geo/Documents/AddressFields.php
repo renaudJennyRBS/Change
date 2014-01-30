@@ -78,10 +78,14 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 		{
 			$ids[] = $addressField->getId();
 
-			$def = array('id' => $addressField->getId(), 'title' => $addressField->getTitle(), 'code' => $addressField->getCode(),
+			$def = array(
+				'id' => $addressField->getId(),
+				'title' => $addressField->getTitle(),
+				'code' => $addressField->getCode(),
 				'required' => $addressField->getRequired(),
 				'defaultValue' => $addressField->getDefaultValue(),
-				'collectionCode' => $addressField->getCollectionCode());
+				'collectionCode' => $addressField->getCollectionCode()
+			);
 
 			$definition['fields'][] = $def;
 		}
