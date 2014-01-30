@@ -11,6 +11,9 @@ class AddressField extends \Compilation\Rbs\Geo\Documents\AddressField implement
 	 */
 	protected $propertyCodes;
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

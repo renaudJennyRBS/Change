@@ -180,6 +180,10 @@
 				function applyPostalAddressINecessary() {
 					if (parseInt(scope.delivery.options.usePostalAddress) == 1) {
 						scope.delivery.address = angular.copy(scope.cart.address);
+						scope.delivery.isConfigured = true;
+					}
+					else {
+						scope.delivery.isConfigured = false;
 					}
 				}
 
@@ -442,6 +446,7 @@
 			scope.information.email = scope.cart.email;
 			scope.information.confirmEmail = scope.cart.email;
 			scope.information.address = getObject(scope.cart.address, true);
+			scope.information.isAddressValid = false;
 		};
 
 		scope.canAuthenticate = function() {
@@ -505,13 +510,17 @@
 			}
 		};
 
+		scope.unsetAuthenticated = function() {
+			scope.information.authenticated = false;
+			scope.prepareInformationStep();
+		};
+
 		scope.isAuthenticated = function() {
 			return scope.information.authenticated;
 		};
 
 		scope.isInformationStepComplete = function() {
-			//TODO
-			return true;
+			return scope.information.email && scope.information.isAddressValid;
 		};
 
 		scope.finalizeInformationStep = function() {
@@ -563,7 +572,11 @@
 		};
 
 		scope.isShippingStepComplete = function() {
-			//TODO
+			for (var i = 0; i < scope.shipping.deliveries.length; i++) {
+				if (!scope.shipping.deliveries[i].isConfigured) {
+					return false;
+				}
+			}
 			return true;
 		};
 

@@ -83,6 +83,9 @@
 	"error_password_not_match_confirm_password":{
 		"message":"le mot de passe et sa confirmation ne correspondent pas."
 	},
+	"error_email_not_match_confirm_email":{
+		"message":"l'adresse e-mail et sa confirmation ne correspondent pas."
+	},
 	"error_user_already_exist":{
 		"message":"l'adresse e-mail $EMAIL$ est déjà dans notre base de données utilisateur, si vous avez oublié votre mot de passe, utilisez le formulaire de changement de mot de passe."
 	},
