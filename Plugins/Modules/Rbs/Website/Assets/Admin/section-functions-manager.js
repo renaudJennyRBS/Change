@@ -271,47 +271,6 @@
 					return p;
 				}
 
-
-				/**
-				 * Initializes the Navigation Context for the current view.
-				 *
-				 * @param section
-				 */
-				function initNavigationContext (section)
-				{
-					Navigation.setContext(scope, 'rbsWebsiteFunctions_' + section.id, "Fonctions pour " + section.label)
-						.then(function(context)
-						{
-							// When context is resolved, we need to update/create the appropriate SectionPageFunction.
-							// Context's result is the newly created page.
-							// Function code is found in the context's params.
-							var page = context.result,
-								spf = getSectionPageFunctionByCode(context.params['function']);
-
-							if (! spf) {
-								spf = REST.newResource('Rbs_Website_SectionPageFunction');
-								spf.section = section.id;
-								spf.functionCode = context.params['function'];
-							}
-
-							spf.section = section.id;
-							spf.page = page.id;
-							REST.save(spf).then(
-								// Success
-								function () {
-									scope.closePageSelection();
-									loadSectionPageFunctions(section, null, null).then(initUnimplementedFunctions);
-								},
-								// Error
-								function (error) {
-									console.log("error: ", error);
-									// FIXME Display error message to user.
-								}
-							);
-						});
-				}
-
-
 				/**
 				 * Finds an existing SectionPageFunction document with the given functionCode.
 				 *
@@ -460,7 +419,6 @@
 								loadSectionPageFunctions(section, null, null)
 							]).then(function () {
 								initUnimplementedFunctions();
-								initNavigationContext(section);
 							});
 						});
 					}
@@ -481,5 +439,4 @@
 			SectionFunctionsManagerDirective
 		]
 	);
-
 })();

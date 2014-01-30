@@ -8,7 +8,6 @@
 
 	//-----------------------------------------------------------------------------------------------------------------
 
-
 	app.directive('rbsRepeatCount', function ()
 	{
 		return {
@@ -39,7 +38,6 @@
 			}
 		};
 	});
-
 
 
 	/**
@@ -99,8 +97,6 @@
 	HeaderController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST'];
 	app.controller('Rbs_Website_HeaderController', HeaderController);
 
-
-
 	/**
 	 *
 	 * @param $scope
@@ -118,23 +114,7 @@
 	function StructureController ($scope, $q, ErrorFormatter, i18n, REST, Query, NotificationCenter, Utils, $cacheFactory, Navigation)
 	{
 		var cacheKeyPrefix = 'RbsWebsiteStructureData',
-			cache,
-			treeDb;
-
-
-		REST.action('collectionItems', { 'code': 'Rbs_Website_AvailablePageFunctions' }).then(function (result)
-		{
-			$scope.allFunctions = result.items;
-			$scope.allFunctions['Rbs_Website_Section'] = { "label": i18n.trans('m.rbs.website.adminjs.function_index_page | ucf') };
-
-			$scope.$watch('currentWebsite', function (website)
-			{
-				if (website) {
-					selectWebsite(website);
-				}
-			});
-		});
-
+			cache, treeDb;
 
 		function initCache (website, reset)
 		{
@@ -158,26 +138,13 @@
 			return shouldLoad;
 		}
 
-
-		function selectWebsite (website)
+		function selectWebsite(website)
 		{
 			if (initCache(website, false))
 			{
 				toggleNode(getNodeInfo($scope.currentWebsite));
 			}
-
-			Navigation.setContext($scope, 'RbsWebsiteStructure', website.label).then(function (context)
-			{
-				if (context.params['node']) {
-					$scope.reloadNode(context.params['node']);
-				}
-				else {
-					initCache(website, true);
-					toggleNode(getNodeInfo($scope.currentWebsite));
-				}
-			});
 		}
-
 
 		function getNodeIndex (nodeInfo)
 		{
@@ -495,8 +462,52 @@
 			}
 		};
 
-	}
 
+		$scope.$on('Navigation.saveContext', function (event, args) {
+			var label = $scope.currentWebsite.label;
+			args.context.label(label);
+			var data = {currentWebsite: $scope.currentWebsite, allFunctions: $scope.allFunctions};
+			args.context.savedData('Rbs_Website_StructureController', data);
+		});
+
+		function getContextData() {
+			var currentContext = Navigation.getCurrentContext();
+			if (currentContext) {
+				var data = currentContext.savedData('Rbs_Website_StructureController');
+				if (angular.isObject(data) && data.hasOwnProperty('currentWebsite'))
+				{
+					return data;
+				}
+			}
+			return null;
+		}
+
+		var contextData = getContextData();
+		if (contextData) {
+			var currentContext = Navigation.getCurrentContext();
+			$scope.allFunctions = contextData.allFunctions;
+			$scope.currentWebsite = contextData.currentWebsite;
+			Navigation.popContext();
+			if (currentContext.param('node')) {
+				initCache($scope.currentWebsite, false);
+				$scope.reloadNode(currentContext.param('node'));
+			} else {
+				initCache($scope.currentWebsite, true);
+				toggleNode(getNodeInfo($scope.currentWebsite));
+			}
+		} else {
+			REST.action('collectionItems', { 'code': 'Rbs_Website_AvailablePageFunctions' }).then(function (result) {
+				$scope.allFunctions = result.items;
+				$scope.allFunctions['Rbs_Website_Section'] = { "label": i18n.trans('m.rbs.website.adminjs.function_index_page | ucf') };
+			});
+		}
+
+		$scope.$watch('currentWebsite', function (website) {
+			if (website) {
+				selectWebsite(website);
+			}
+		});
+	}
 
 	StructureController.$inject = [
 		'$scope', '$q',

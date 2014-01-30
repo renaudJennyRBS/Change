@@ -152,7 +152,6 @@
 			return html;
 		}
 
-
 		/**
 		 * @param dlid
 		 * @returns {Object}
@@ -450,12 +449,12 @@
 						previewButton = '<button type="button" class="btn-flat" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
 
-					var navCtx = Navigation.getActiveContext();
-					if (navCtx && navCtx.isSelection(tAttrs.model) && tElement.closest('rbs-document-editor').length === 0)
+					var navCtx = Navigation.getCurrentContext();
+					if (navCtx && navCtx.isSelection() && tElement.closest('rbs-document-editor').length === 0)
 					{
 						var selectHtml = '';
 
-						if (navCtx.getParam('multiple')) {
+						if (navCtx.param('multiple')) {
 							selectHtml +=
 								'<button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc)">' +
 								' <i class="icon-plus"></i></button>';
@@ -613,22 +612,28 @@
 						scope.hideQuickActions(currentQuickActionsIndex);
 					});
 
-
 					//
 					// Selection of Document(s) from a DocumentPicker
 					//
-
 					scope.selectionContext = null;
 					scope.selectionContextDocuments = [];
-					var navCtx = Navigation.getActiveContext();
-					if (navCtx && navCtx.isSelection(attrs.model) && elm.closest('rbs-document-editor').length === 0)
+
+					scope.$on('$locationChangeSuccess', function (event) {
+						var navCtx = Navigation.getCurrentContext();
+						if (!navCtx && scope.selectionContext) {
+							scope.selectionContext = null;
+							scope.selectionContextDocuments = [];
+						}
+					});
+
+					var navCtx = Navigation.getCurrentContext();
+					if (navCtx && navCtx.isSelection() && elm.closest('rbs-document-editor').length === 0)
 					{
 						scope.selectionContext = navCtx;
-
 						scope.selectionContextAppend = function (doc, commit)
 						{
 							var docs = doc ? [doc] : scope.selectedDocuments;
-							if (scope.selectionContext.params.multiple) {
+							if (scope.selectionContext.param('multiple')) {
 								angular.forEach(docs, function (doc) {
 									if (!ArrayUtils.documentInArray(doc, scope.selectionContextDocuments)) {
 										scope.selectionContextDocuments.push(doc);
@@ -651,27 +656,24 @@
 
 						scope.selectionContextResolve = function ()
 						{
-							if (scope.selectionContext.params.multiple) {
-								Navigation.resolve(scope.selectionContextDocuments);
+							if (scope.selectionContext.param('multiple')) {
+								Navigation.setSelectionContextValue(scope.selectionContextDocuments);
 							} else {
-								Navigation.resolve(scope.selectionContextDocuments.length ? scope.selectionContextDocuments[0] : null);
+								Navigation.setSelectionContextValue(scope.selectionContextDocuments.length ? scope.selectionContextDocuments[0] : null);
 							}
 						};
 
 						scope.selectionContextReject = function ()
 						{
-							Navigation.reject();
+							Navigation.setSelectionContextValue();
 						};
 					}
-
 
 					// Checks whether the given Document is suitable for the current selection process (if any).
 					scope.isModelCompatibleWithSelection = function (doc)
 					{
-						return navCtx && navCtx.isSelection(doc.model);
+						return navCtx && navCtx.isSelection();
 					};
-
-
 
 					//
 					// data-* attributes
@@ -743,7 +745,7 @@
 					// Document selection.
 					//
 
-					scope.selectionEnabled = scope.hasColumn('selectable') && (! scope.selectionContext || ! scope.selectionContext.isSelection() || scope.selectionContext.getParam('multiple'));
+					scope.selectionEnabled = scope.hasColumn('selectable') && (! scope.selectionContext || ! scope.selectionContext.isSelection() || scope.selectionContext.param('multiple'));
 
 					function updateSelectedDocuments () {
 						var selectedDocuments = [];

@@ -4,12 +4,11 @@
 
 	var app = angular.module('RbsChange');
 
-
 	app.config(['$provide', function ($provide)
 	{
 		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider)
 		{
-			this.$get = function ($location) {
+			this.$get = ['$location', function ($location) {
 				var urls = {};
 				var labelKeys = {};
 
@@ -368,7 +367,7 @@
 						return null;
 					}
 				};
-			};
+			}];
 		}]);
 
 	}]);

@@ -5,11 +5,9 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective ($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter, UrlManager)
+	function editorDirective($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter, UrlManager)
 	{
 		var CORRECTION_CSS_CLASS = 'correction';
-
-
 		return {
 
 			// We do not need to create a new scope here:
@@ -22,7 +20,8 @@
 			{
 				var	initializedSections = {},
 					translation = false,
-					wrappingFormScope;
+					wrappingFormScope,
+					hasContextData = false;
 
 				// Special trick for localized Documents.
 				// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
@@ -33,6 +32,19 @@
 				// The following bits copy the reference of `$scope.document` in this parent Scope.
 				wrappingFormScope = angular.element($element.closest('.document-form')).scope();
 
+
+				function getContextData(modelName) {
+					var currentContext = Navigation.getCurrentContext();
+					if (currentContext) {
+						var data = currentContext.savedData('editor_' + modelName);
+						if (angular.isObject(data) && data.hasOwnProperty('document'))
+						{
+							hasContextData = true;
+							return data;
+						}
+					}
+					return null;
+				}
 
 				/**
 				 * Initialize current Editor.
@@ -46,37 +58,60 @@
 						translation = true;
 					}
 
-					var document, documentId = 0, promise, defered, navCtx;
+					var document, documentId = 0, promise, defered;
+					var contextData = getContextData(modelName);
+					if (contextData)
+					{
+						var currentContext = Navigation.getCurrentContext();
+						document = contextData.document;
+						documentId = document.id;
+						if (angular.isFunction($scope.onRestoreContext)) {
+							$scope.onRestoreContext(currentContext);
+						}
+						var cascadeKey = currentContext.valueKey();
+						if (cascadeKey)
+						{
+							var splitKey = cascadeKey.split('.');
+							if (splitKey.length === 2 && splitKey[0] === 'editor')
+							{
+								var propertyName = splitKey[1];
+								var v = currentContext.value();
+								if (angular.isArray(v)) {
+									if (!angular.isArray(document[propertyName]))
+									{
+										document[propertyName] = []
+									}
+									angular.forEach(v, function(doc) {
+										document[propertyName].push(doc);
+									})
+								}
+								else
+								{
+									document[propertyName] = v;
+								}
+							}
+						}
+						prepareEditor(document);
+						Navigation.popContext(currentContext);
+						return;
+					}
 
-					if (! angular.isFunction ($scope.initDocument) || ! (promise = $scope.initDocument())) {
+					if (!angular.isFunction($scope.initDocument) || ! (promise = $scope.initDocument())) {
 						if ($routeParams.hasOwnProperty('id')) {
 							documentId = parseInt($routeParams.id, 10);
 						}
 					}
 
-					if (! promise)
-					{
-						if (! isNaN(documentId) && documentId > 0)
-						{
+					if (!promise) {
+						if (!isNaN(documentId) && documentId > 0) {
 							promise = REST.resource(modelName, documentId, $routeParams.LCID);
-						}
-						else
-						{
+						} else {
 							defered = $q.defer();
 							promise = defered.promise;
-							if (! document)
-							{
-								// Check if we are coming back here following a selection process.
-								// In that case, we need to get the attached document instead of creating a new one.
-								navCtx = Navigation.getActiveContext();
-								if (navCtx && navCtx.isSelection() && Utils.isDocument(navCtx.params.document) && navCtx.params.document.model === modelName && navCtx.params.document.id < 0) {
-									document = navCtx.params.document;
-								}
-								else {
-									document = REST.newResource(modelName, Settings.get('LCID'));
-									if (! isNaN(documentId) && documentId < 0) {
-										document.id = documentId;
-									}
+							if (!document) {
+								document = REST.newResource(modelName, Settings.get('LCID'));
+								if (! isNaN(documentId) && documentId < 0) {
+									document.id = documentId;
 								}
 							}
 							defered.resolve(document);
@@ -88,36 +123,37 @@
 					});
 				};
 
-
 				this.registerCreateCascade = function (propertyName, model, title)
 				{
-					return function () {
-						Navigation.start({
+					return function() {
+						var property = $scope.modelInfo.properties[propertyName];
+						var params = {
 							selector : true,
 							property : propertyName,
+							propertyType : property.type,
 							model : model,
 							label : title,
 							document : $scope.document,
 							ngModel : 'document.' + propertyName
-						});
-						$location.url(UrlManager.getUrl(model, null, 'new'));
+						};
+						var tagerURL = UrlManager.getUrl(model, null, 'new');
+						Navigation.startSelectionContext(tagerURL, 'editor.' + propertyName, params);
 					};
 				};
 
-
 				this.registerEditCascade = function (propertyName, title)
 				{
-					return function (childDocument) {
-						Navigation.start({
+					return function(doc) {
+						var params = {
 							property : propertyName,
 							label : title,
 							document : $scope.document,
 							ngModel : 'document.' + propertyName
-						});
-						$location.url(UrlManager.getUrl(childDocument));
+						};
+						var tagerURL = UrlManager.getUrl(doc);
+						Navigation.startSelectionContext(tagerURL, null, params);
 					};
 				};
-
 
 				$scope.saveProgress = {
 					"running"   : false,
@@ -332,6 +368,23 @@
 						// If a Document has been created, we redirect to the URL of the new Document.
 						if ($scope._isNew) {
 							EditorManager.removeCreationLocalCopy(doc, $scope._isNewId);
+							var context = Navigation.getCurrentContext();
+							if (context) {
+								var edtKey = context.valueKey();
+								if (edtKey && edtKey.split('.')[0] === 'editor')
+								{
+									var model = context.param('model'), propertyType = context.param('propertyType');
+									if (model === doc.model) {
+										if (propertyType === 'DocumentArray') {
+											context.value([doc]);
+										} else if (propertyType === 'Document') {
+											context.value(doc);
+										} else if (propertyType === 'DocumentId') {
+											context.value(doc.id);
+										}
+									}
+								}
+							}
 							$location.path(doc.url());
 						}
 
@@ -437,7 +490,7 @@
 						}
 
 						// Apply default values for new documents.
-						if ($scope.document.isNew()) {
+						if ($scope.document.isNew() && !hasContextData) {
 							applyDefaultValues($scope.document, $scope.modelInfo);
 						}
 
@@ -482,7 +535,6 @@
 						}
 					});
 				}
-
 
 				/**
 				 * Applies the default values defined in the ModelInfo on the given document.
@@ -531,53 +583,22 @@
 				 */
 				function initReferenceDocument ()
 				{
-					$scope.original = angular.copy($scope.document);
+					var contextData = getContextData($scope.document.model);
+					if (contextData) {
+						$scope.original = contextData.original;
+						EditorManager.removeLocalCopy($scope.document);
+					} else {
+						$scope.original = angular.copy($scope.document);
+					}
 
 					initCorrection();
 					initMenu();
 
 					// --- selection process BEGIN
-
-					var navCtxId, navCtx;
-					if ($scope.original.id < 0) {
-						navCtxId = 'Editor:' + $scope.original.model + ':new';
-					} else {
-						navCtxId = 'Editor:' + $scope.original.model + ':' + $scope.original.id;
-					}
-
-					navCtx = Navigation.getActiveContext();
 					if (mergeLocalCopy($scope.document)) {
-						// If local copy has been merged after a selection process,
-						// do not notify about this merge.
-						if (! navCtx || navCtx.id !== navCtxId || ! navCtx.isSelection()) {
-							$scope.$emit('Change:Editor:LocalCopyMerged');
-						}
+						$scope.$emit('Change:Editor:LocalCopyMerged');
 					}
-
-					// Define current context and what has to be done when it is resolved.
-					Navigation.setContext($scope, navCtxId, $scope.original.label).then(function (context)
-					{
-						if (context.isSelection() && context.isForDocumentProperty())
-						{
-							if (angular.isArray($scope.document[context.params.property])) {
-								angular.forEach(context.result, function (selectedDoc)
-								{
-									if (!ArrayUtils.documentInArray(selectedDoc, $scope.document[context.params.property])) {
-										$scope.document[context.params.property].push(selectedDoc);
-									}
-								});
-							}
-							else {
-								$scope.document[context.params.property] = context.result;
-							}
-						}
-						if (angular.isFunction($scope.finalizeNavigationContext)) {
-							$scope.finalizeNavigationContext(context);
-						}
-					});
-
 					// --- selection process END
-
 
 					$element.css('display', 'block');
 
@@ -593,6 +614,7 @@
 
 					// Watch for section changes to initialize them if needed.
 					$scope.$watch('section', function (section, previousSection) {
+
 						if (section !== undefined && section !== null) {
 							initSectionOnce(section);
 						}
@@ -764,6 +786,12 @@
 						CTRL.submit();
 					});
 
+					scope.$on('Navigation.saveContext', function (event, args) {
+						var label = scope.document.label || i18n.trans('m.rbs.admin.adminjs.new_element | ucf');
+						args.context.label(label);
+						var data = {document: scope.document, original: scope.original};
+						args.context.savedData('editor_' + scope.document.model, data);
+					});
 
 					/**
 					 * Reset the form back to the originally loaded document (scope.original).
@@ -833,9 +861,9 @@
 					};
 
 
-					scope.goBack = function goBackFn () {
+					scope.goBack = function goBackFn (event) {
 						if (angular.isFunction(scope.onCancel)) {
-							scope.onCancel();
+							scope.onCancel(event);
 						}
 					};
 
@@ -859,20 +887,13 @@
 						return Utils.hasCorrection(scope.document);
 					};
 
-
-					scope.onCancel = function onCancelFn () {
-						var navCtx = Navigation.getActiveContext();
-						if (navCtx) {
-							Navigation.reject();
-						}
-						else {
-							Breadcrumb.goParent();
-						}
+					scope.onCancel = function onCancelFn(event)
+					{
+						var url = UrlManager.getListUrl(scope.document);
+						$location.url(Navigation.addTargetContext(url));
 					};
-
 				};
 			}
-
 		};
 
 	}
@@ -897,8 +918,6 @@
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);
-
-
 
 
 	function editorDirectiveTranslate (i18n) {

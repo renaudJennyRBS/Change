@@ -1,17 +1,16 @@
-<div ng-show="documents.length > 0">
-	<rbs-token-list ng-if="disableReordering" items="documents" rows="true" disable-reordering="true"></rbs-token-list>
-	<rbs-token-list ng-if="!disableReordering" items="documents" rows="true"></rbs-token-list>
+<div ng-hide="isEmpty()">
+	<rbs-token-list ng-if="disableReordering || doc.list.length == 1" items="doc.list" rows="true" disable-reordering="true"></rbs-token-list>
+	<rbs-token-list ng-if="!disableReordering && doc.list.length > 1" items="doc.list" rows="true"></rbs-token-list>
 </div>
 
-<p class="form-control form-control-static text-muted" style="margin-bottom: 0;" ng-show="! documents || documents.length == 0">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</p>
+<p ng-show="isEmpty()" class="form-control form-control-static text-muted"
+		style="margin-bottom: 0;">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</p>
 
 <div class="btn-toolbar">
 	<div class="btn-group">
-		<button
-			type="button"
-			class="btn btn-default btn-xs"
+		<button type="button" class="btn btn-default btn-xs"
 			ng-click="beginSelectSession()"
-			ng-if="multiple || (!multiple && (!documents || documents.length == 0))"
+			ng-if="multiple || (!multiple && (doc.list.length == 0))"
 			title="{{ i18nAttr('m.rbs.admin.admin.picker_in_place_tooltip', ['ucf', 'etc']) }}"><i class="icon-external-link"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_in_place', ['etc']) }}</span></button>
 	</div>
 	<button

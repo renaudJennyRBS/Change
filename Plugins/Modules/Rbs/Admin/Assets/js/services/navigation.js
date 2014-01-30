@@ -2,245 +2,228 @@
 
 	"use strict";
 
-	var app = angular.module('RbsChange'),
-		activeContexts = [];
-
+	var app = angular.module('RbsChange'), activeContexts = [];
 
 	app.provider('RbsChange.Navigation', function ()
 	{
-		this.$get = ['$rootScope', '$location', 'RbsChange.Utils', 'RbsChange.i18n', '$q', function ($rootScope, $location, Utils, i18n, $q)
+		this.$get = ['$rootScope', '$location', '$timeout', function ($rootScope, $location, $timeout)
 		{
-			var lastContext;
-
-			function NavigationContext (id, label)
+			function NavigationContext()
 			{
-				// Update context info.
-				if (Utils.isDocument(id)) {
-					this.id = id.model;
-					this.document = id;
-					this.label = label || this.document.label || this.document.title;
-				}
-				else {
-					this.id = id;
-					this.label = label;
-				}
+				var data = {}, k, v, l, valueParams = {}, hasData = false;
 
-				this.url = $location.absUrl();
-				this.path = $location.path();
-				this.search = angular.copy($location.search());
+				this.id = (new Date()).getTime();
 
-				this.getParam = function (name)
-				{
-					return angular.isObject(this.params) ? this.params[name] : undefined;
+				this.savedData = function(key, value) {
+					if (key === undefined) {
+						return data;
+					} else {
+						if (value !== undefined) {
+							hasData = true;
+							data[key] = value;
+							return this;
+						} else {
+							return data[key];
+						}
+					}
 				};
 
-				this.isSelection = function (model)
-				{
-					var result = this.getParam('selector');
-					if (result)
+				this.hasData = function() {
+					return hasData;
+				};
+
+				this.label = function(newLabel) {
+					if (newLabel !== undefined) {
+						l = newLabel;
+						return this;
+					}
+					return l;
+				};
+
+				this.redirect = function() {
+					$location.url(this.url);
+				};
+
+				this.value = function(value) {
+					if (value !== undefined) {
+						v = value;
+						return this;
+					}
+					return v;
+				};
+
+				this.valueKey = function(valueKey) {
+					if (valueKey !== undefined) {
+						k = valueKey;
+						return this;
+					}
+					return k;
+				};
+
+				this.isSelection = function() {
+					return (k !== undefined);
+				};
+
+				this.labelKey = function(labelKey) {
+					return this.param('label', labelKey);
+				};
+
+				this.getSelectionValue = function(valueKey) {
+					if (valueKey === k)
 					{
-						if (angular.isString(model))
-						{
-							return this.getParam('model') === model.trim();
-						}
-						else if (angular.isArray(model))
-						{
-							angular.forEach(model.split(/\s+/), function (modelName) {
-								if (modelName === model) {
-									return true;
-								}
-							});
-							return false;
-						}
+						return v;
 					}
-					return result;
+					return undefined;
 				};
 
-				this.isForDocumentProperty = function ()
-				{
-					var ngModel = this.getParam('ngModel');
-					if (angular.isString(ngModel)) {
-						return ngModel.substr(0, 9) === 'document.';
+				this.param = function(name, value) {
+					if (name === undefined) {
+						return valueParams;
+					} else {
+						if (value !== undefined) {
+							valueParams[name] = value;
+							return this;
+						} else {
+							return valueParams[name];
+						}
 					}
-					return false;
-				};
+				}
 			}
 
-
-			function getActiveContextById (id)
-			{
-				for (var i=0 ; i<activeContexts.length ; i++) {
-					if (activeContexts[i].id === id) {
-						return activeContexts[i];
+			function startSelectionContext(targetUrl, valueKey, params) {
+				var context = new NavigationContext();
+				$rootScope.$broadcast('Navigation.saveContext', {context : context});
+				if (context.hasData()) {
+					var url = $location.url(), splited = url.split('#');
+					if (splited.length == 2) {
+						var fromContext = splited[1];
+						if (indexOfContextId(fromContext) != -1) {
+							context.fromContext = fromContext;
+						}
 					}
+					context.url = splited[0] + '#'+ context.id;
+					context.targetUrl = targetUrl;
+					context.valueKey(valueKey === undefined ? null : valueKey) ;
+					if (angular.isObject(params)) {
+						angular.forEach(params, function(value, key) {
+							context.param(key, value);
+						});
+					}
+					activeContexts.push(context);
+					$location.url(targetUrl).hash(context.id);
+				} else {
+					$location.url(targetUrl);
+				}
+			}
+
+			function setSelectionContextValue(value, context) {
+				context =  (context === undefined) ? getCurrentContext() : context;
+				if (context) {
+					context.value(value);
+					$location.url(context.url);
+				}
+			}
+
+			function indexOfContextId(id) {
+				var i, length = activeContexts.length;
+				for (i = 0; i < length; i++) {
+					if (id == activeContexts[i].id) {
+						return i;
+					}
+				}
+				return -1;
+			}
+
+			function getCurrentContext() {
+				var i, context, id = $location.hash(), length = activeContexts.length;
+				if (id) {
+					i = indexOfContextId(id);
+					if (i == -1) {
+						$location.hash(null);
+						return null;
+					}
+					context = activeContexts[i];
+					if (i < (length -1)) {
+						activeContexts.splice(i + 1);
+					}
+					return context;
 				}
 				return null;
 			}
 
-
-			function finalizeActiveContext (id, defer)
-			{
-				var context = getActiveContextById(id);
-				// Search for a context with the same ID and remove it.
-				if (context) {
-					if (context.status === 'committed') {
-						defer.resolve(context);
-					} else {
-						defer.reject(context);
-					}
-
-					for (var i=0 ; i<activeContexts.length ; i++) {
-						if (activeContexts[i].id === id) {
-							activeContexts.splice(i, 1);
-						}
-					}
-				}
-			}
-
-
-			function setContext (scope, id, label)
-			{
-				var defer = $q.defer();
-
-				finalizeActiveContext(id, defer);
-
-				lastContext = new NavigationContext(id, label);
-
-				scope.$on('$destroy', function ()
+			function popContext(context) {
+				context =  (context === undefined) ? getCurrentContext() : context;
+				if (context)
 				{
-					lastContext = null;
-				});
-
-				return defer.promise;
-			}
-
-
-			function start (data, additionalParams)
-			{
-				if (! lastContext) {
-					console.log("No context.");
-					return;
-				}
-
-				var params;
-				if (data instanceof jQuery) {
-					params = angular.extend({}, extractParamsFromElement(data), additionalParams);
-				} else if (angular.isObject(data)) {
-					params = data;
-				}
-
-				lastContext.params = params;
-				if (! lastContext.label) {
-					if (Utils.isDocument(params.document)){
-						if (params.document.id < 0 && !params.document.label){
-							lastContext.label = i18n.trans('m.rbs.admin.adminjs.new_resource | ucf');
+					$timeout(function() {
+						var i = indexOfContextId(context.id);
+						activeContexts.splice(i);
+						if (context.hasOwnProperty('fromContext') && indexOfContextId(context.fromContext) != -1) {
+							$location.hash(context.fromContext);
 						} else {
-							lastContext.label = params.document.label;
+							$location.hash(null);
 						}
+					});
+				}
+				return context;
+			}
 
-					} else {
-						lastContext.label = lastContext.id;
+			function getActiveContexts() {
+				return activeContexts;
+			}
+
+			function addTargetContext(targetUrl) {
+				if (activeContexts.length < 1) {
+					return targetUrl;
+				}
+				var context, i, lastIndex = activeContexts.length - 1;
+				for(i = lastIndex; i >= 0; i--) {
+					context = activeContexts[i];
+					if (context.targetUrl == targetUrl) {
+						targetUrl += '#' + context.id;
+						return targetUrl;
 					}
 				}
-				activeContexts.push(lastContext);
-				lastContext = null;
-			}
 
-
-			function resolve (result, redirect)
-			{
-				var ctx = activeContexts[activeContexts.length-1];
-				ctx.status = 'committed';
-				ctx.result = result;
-
-				if (redirect !== false) {
-					$location.path(ctx.path).search(ctx.search);
-				}
-			}
-
-
-			function reject (reason)
-			{
-				var ctx = activeContexts[activeContexts.length-1];
-				ctx.status = 'rejected';
-				ctx.result = reason;
-				$location.path(ctx.path);
-			}
-
-
-			function isActive ()
-			{
-				return activeContexts.length > 0;
-			}
-
-
-			function getActiveContext ()
-			{
-				return isActive() ? activeContexts[activeContexts.length-1] : null;
-			}
-
-
-			function extractParamsFromElement (el)
-			{
-				var params = {};
-				angular.forEach(el.data(), function (v, n)
-				{
-					if (n.substr(0, 10) === 'navigation') {
-						params[angular.lowercase(n.substr(10, 1)) + n.substr(11)] = v;
+				var cleanTarget = targetUrl.split('?')[0];
+				if (cleanTarget != targetUrl) {
+					for(i = lastIndex; i >= 0; i--) {
+						context = activeContexts[i];
+						if (context.targetUrl == cleanTarget) {
+							targetUrl += '#' + context.id;
+							return targetUrl;
+						}
 					}
-				});
-				return params;
+				}
+				return targetUrl;
 			}
-
 
 			// Public API
-
 			return {
-				setContext : setContext,
-				start : start,
-				resolve : resolve,
-				reject : reject,
-				isActive : isActive,
-				getActiveContext : getActiveContext
+				startSelectionContext : startSelectionContext,
+				setSelectionContextValue : setSelectionContextValue,
+				getCurrentContext : getCurrentContext,
+				popContext : popContext,
+				indexOfContextId : indexOfContextId,
+				getActiveContexts : getActiveContexts,
+				addTargetContext : addTargetContext
 			};
 		}];
-
 	});
-
-
-
-
-	app.directive('rbsStartNavigation', ['RbsChange.Navigation', function (NS)
-	{
-		return {
-			restrict : 'A',
-
-			link : function (scope, iElement)
-			{
-				iElement.click(function ()
-				{
-					NS.start(iElement);
-				});
-			}
-		};
-	}]);
-
-
-
 
 	/**
 	 * Directive: rbsNavigationHistory
 	 * Usage    : as element: <rbs-navigation-history></rbs-navigation-history>
 	 */
-	app.directive('rbsNavigationHistory', ['RbsChange.Navigation', function (NS)
+	app.directive('rbsNavigationHistory', ['RbsChange.Navigation', function (Navigation)
 	{
 		return {
 			restrict : 'E',
 			template :
 				'<div ng-repeat="c in activeContexts">' +
 					'<div class="cascading-forms-collapsed" ng-style="getStyle($index)">' +
-						'<a href ng-href="(= c.url =)"><i class="icon-circle-arrow-left"></i> (= c.label =)</a>' +
-						'<span ng-if="c.isSelection()"> &mdash; <span ng-bind="c.params.label"></span></span>' +
+						'<a href ng-click="c.redirect()"><i class="icon-circle-arrow-left"></i> (= c.label() =)</a>' +
+						'<span ng-if="c.labelKey()"> &mdash; <span ng-bind="c.labelKey()"></span></span>' +
 					'</div>' +
 				'</div>',
 			scope : {},
@@ -268,7 +251,30 @@
 				};
 			}
 		};
-
 	}]);
 
+	app.directive('rbsStartNavigation', ['RbsChange.Navigation', function (Navigation)
+	{
+		return {
+			restrict : 'A',
+			link : function (scope, iElement, attrs)
+			{
+				iElement.click(function ()
+				{
+					var targetUrl = attrs.targetUrl, params = {}, hasParams = false;
+					angular.forEach(iElement.data(), function (v, n)
+					{
+						if (n.substr(0, 10) === 'navigation') {
+							hasParams = true;
+							params[angular.lowercase(n.substr(10, 1)) + n.substr(11)] = v;
+						}
+					});
+					if (!hasParams) {
+						params = null;
+					}
+					Navigation.startSelectionContext(targetUrl, null, params);
+				});
+			}
+		};
+	}]);
 })();

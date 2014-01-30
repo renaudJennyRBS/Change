@@ -23,32 +23,33 @@
 					scope.loadItems();
 				};
 
+				scope.onRestoreContext = function(currentContext) {
+					var key = currentContext.valueKey(), value = currentContext.value();
+					if (key && key.split('.')[0] == 'attr') {
+						scope.attributeContext = {valueKey: key, value: value};
+					}
+				};
+
 				scope.loadItems = function() {
 					if (scope.document.META$.links.hasOwnProperty('productListItems')) {
 						REST.collection(scope.document.META$.links['productListItems'].href).then(function(result){
-							if (angular.isObject(result) && result.hasOwnProperty('resources'))
-							{
+							if (angular.isObject(result) && result.hasOwnProperty('resources')) {
 								scope.productListItems = result.resources;
 							}
 						});
-					}
-					else {
+					} else {
 						scope.productListItems = [];
 					}
 				};
 
 				scope.toggleHighlight = function(doc){
 					var url = null;
-					if (!doc.isHighlighted)
-					{
+					if (!doc.isHighlighted) {
 						url = doc.META$.actions['downplay'].href;
-					}
-					else
-					{
+					} else {
 						url = doc.META$.actions['highlight'].href;
 					}
-					if (url)
-					{
+					if (url) {
 						$http.get(url)
 							.success(function (data) {
 								scope.loadItems();
@@ -115,6 +116,10 @@
 					}
 					$timeout(function () {
 						scope.$emit('Change:Editor:UpdateMenu');
+						if (scope.attributeContext !== undefined) {
+							scope.$broadcast('updateContextValue', scope.attributeContext);
+							scope.attributeContext = undefined;
+						}
 					});
 				};
 

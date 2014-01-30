@@ -22,7 +22,7 @@
 				scope.enabled = false;
 
 				ngModel.$formatters.unshift(function (value) {
-					scope.enabled = (value === scope.$eval(attrs.rbsSyncValue));
+					scope.enabled = (value == scope.$eval(attrs.rbsSyncValue));
 					return value;
 				});
 

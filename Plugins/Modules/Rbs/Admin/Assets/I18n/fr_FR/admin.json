@@ -212,15 +212,6 @@
 	"choose_existent":{
 		"message":"choisir parmi des documents existants"
 	},
-	"afterSave":{
-		"message":"après l'enregistrement :"
-	},
-	"afterSaveStay":{
-		"message":"rester sur ce formulaire"
-	},
-	"afterSaveGoList":{
-		"message":"retourner à la liste"
-	},
 	"btnGoBack":{
 		"message":"retourner<small>à la liste<\/small>"
 	},
@@ -422,6 +413,9 @@
 	},
 	"select_and_close":{
 		"message":"sélectionner et fermer"
+	},
+	"select_multiple":{
+		"message":"multiple"
 	},
 	"replace":{
 		"message":"remplacer"

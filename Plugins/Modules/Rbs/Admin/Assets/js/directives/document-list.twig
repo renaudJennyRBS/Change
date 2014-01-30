@@ -53,14 +53,13 @@
 		</div>
 
 		<div ng-if="selectionContext !== null">
-			<div class="panel panel-success" ng-if="selectionContext.params.multiple">
+			<div class="panel panel-success" ng-if="selectionContext.param('multiple')">
 				<div class="panel-heading">
 					<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
 					<div>
-						{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.params.label"></strong>
-						<span ng-if="selectionContext.params.multiple"> (multiple)</span>
-						{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.params.document.label"></strong>
-						<span> ((= selectionContext.params.document.model =))</span>
+						{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.param('label')"></strong>
+						<span ng-if="selectionContext.param('multiple')"> ({{ i18n('m.rbs.admin.admin.select_multiple') }})</span>
+						{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.label()"></strong>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -79,18 +78,17 @@
 					<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
 						<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
 					</button>
-					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : '(= selectionContext.params.document.label =) ((= selectionContext.params.document.model =))'}) | raw }}
+					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : "(= selectionContext.label() =)"}) | raw }}
 				</div>
 			</div>
 
-			<div class="panel panel-success" ng-if="! selectionContext.params.multiple">
+			<div class="panel panel-success" ng-if="! selectionContext.param('multiple')">
 				<div class="panel-heading">
 					<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
 					<div>
-						{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.params.label"></strong>
-						<span ng-if="selectionContext.params.multiple"> (multiple)</span>
-						{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.params.document.label"></strong>
-						<span> ((= selectionContext.params.document.model =))</span>
+						{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.param('label')"></strong>
+						<span ng-if="selectionContext.param('multiple')"> (multiple)</span>
+						{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.label()"></strong>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -100,11 +98,11 @@
 					<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
 						<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
 					</button>
-					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : '(= selectionContext.params.document.label =) ((= selectionContext.params.document.model =))'}) }}
+					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : "(= selectionContext.label() =)"}) | raw }}
 				</div>
 			</div>
 
-			<div class="btn-toolbar" ng-if="selectionContext.params.multiple">
+			<div class="btn-toolbar" ng-if="selectionContext.param('multiple')">
 				<button type="button" class="btn btn-default" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
 			</div>
 		</div>

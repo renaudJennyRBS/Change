@@ -27,7 +27,6 @@
 		</div>
 		<div ng-show="document.confirmationMode == 'page'">
 			<rbs-field-picker property="confirmationPage" accepted-model="Rbs_Website_StaticPage"
-				allow-creation="true" allow-edition="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationPage'), ['ucf']) }}"
 				selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationpage_picker_title', ['ucf']) }}">
 			</rbs-field-picker>
@@ -35,13 +34,13 @@
 
 		<hr />
 
-		<rbs-field-picker-multiple property="receiverUsers" accepted-model="Rbs_User_User" allow-creation="true"
-			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverUsers'), ['ucf']) }}"
+		<rbs-field-picker-multiple property="receiverUsers" accepted-model="Rbs_User_User"
+				label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverUsers'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.simpleform.admin.form_receiverusers_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
-		<rbs-field-picker-multiple property="receiverGroups" accepted-model="Rbs_User_Group" allow-creation="true"
-			allow-edition="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverGroups'), ['ucf']) }}"
+		<rbs-field-picker-multiple property="receiverGroups" accepted-model="Rbs_User_Group"
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverGroups'), ['ucf']) }}"
 			selector-title="{{ i18nAttr('m.rbs.simpleform.admin.form_receivergroups_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 

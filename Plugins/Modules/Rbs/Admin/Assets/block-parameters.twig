@@ -22,12 +22,14 @@
 				{% elseif param.type == 'Collection' %}
 					<select id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" class="form-control" rbs-items-from-collection="{{ param.collectionCode }}"></select>
 				{% elseif param.type == 'Document' or param.type == 'DocumentId' %}
-					<rbs-document-picker-single data-navigation-label="{{ param.label }}" value-ids="true" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false"
+					<rbs-document-picker-single data-navigation-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
+							ng-model="blockParameters.{{ param.name }}"
 						{% if param.allowedModelsNames is defined %}
 							{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
 						{% endif %}></rbs-document-picker-single>
 				{% elseif param.type == 'DocumentArray' or param.type == 'DocumentIdArray' %}
-					<rbs-document-picker-multiple data-navigation-label="{{ param.label }}" value-ids="true" ng-model="blockParameters.{{ param.name }}" embed-in="#se-picker-container" allow-creation="false" allow-edition="false"
+					<rbs-document-picker-multiple data-navigation-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
+							ng-model="blockParameters.{{ param.name }}"
 						{% if param.allowedModelsNames is defined %}
 							{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
 						{% endif %}></rbs-document-picker-multiple>
