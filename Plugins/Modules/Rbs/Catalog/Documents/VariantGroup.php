@@ -102,7 +102,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 
 		foreach ($this->getAxesAttributes() as $attribute)
 		{
-			if ($attribute->getAxis())
+			if ($attribute->getAxis() && $attribute->getValueType() != 'Group')
 			{
 				$hasConf = false;
 				$attributes[$attribute->getId()] = $attribute;
