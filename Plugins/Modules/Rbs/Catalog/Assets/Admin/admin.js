@@ -36,10 +36,6 @@
 	 */
 	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, $location)
 	{
-		if (eventData.modelName === 'Rbs_Catalog_Product' && eventData.route.relatedModelName == 'Rbs_Catalog_VariantGroup')
-		{
-			// Variant group for a given product
-		}
 		if (eventData.modelName === 'Rbs_Catalog_CrossSellingProductList')
 		{
 			var p, search = $location.search();
