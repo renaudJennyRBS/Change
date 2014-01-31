@@ -631,13 +631,15 @@
 					{
 						var docs = [], i;
 						for (i=0 ; i<ids.length ; i++) {
-							docs.push({});
+							docs.push({id: ids[i], model: ''});
 						}
-
 						this.resources(ids).then(function (collection) {
 							var i;
 							for (i=0 ; i<collection.resources.length ; i++) {
 								angular.extend(docs[i], collection.resources[i]);
+							}
+							if (collection.resources.length < docs.length) {
+								docs.splice(collection.resources.length);
 							}
 						});
 						digest();

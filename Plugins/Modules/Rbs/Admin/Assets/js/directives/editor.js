@@ -889,7 +889,7 @@
 
 					scope.onCancel = function onCancelFn(event)
 					{
-						var url = UrlManager.getListUrl(scope.document);
+						var url = UrlManager.getSelectorUrl(scope.document);
 						$location.url(Navigation.addTargetContext(url));
 					};
 				};

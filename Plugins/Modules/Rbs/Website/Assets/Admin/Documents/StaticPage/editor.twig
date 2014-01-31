@@ -25,7 +25,7 @@
 
 		<rbs-field-picker property="section" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'section'), ['ucf']) }}"
-			accepted-model="Rbs_Website_Section"
+			select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
 			selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_section_picker_title', ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_section_help') }}</span>
 		</rbs-field-picker>

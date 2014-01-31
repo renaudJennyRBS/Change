@@ -3,11 +3,6 @@
 
 	"use strict";
 
-	if ($('#document-picker-backdrop').length === 0)
-	{
-		$('body').append('<div id="document-picker-backdrop"/>');
-	}
-
 	var app = angular.module('RbsChange');
 
 	/**
@@ -23,25 +18,54 @@
 	 * @attribute disable-reordering
 	 * @attribute hide-buttons-label
 	 */
-	function documentPickerLinkFunction(scope, iElement, attrs, ngModel, multiple, REST, Utils, Navigation, $timeout, UrlManager, ArrayUtils)
+	function documentPickerLinkFunction(scope, iElement, attrs, ngModel, multiple, REST, Utils, Navigation, $timeout, UrlManager, Models)
 	{
 		var valueIds = (attrs.valueIds === 'true');
 		scope.selectorUrl = attrs.selectorUrl;
 		scope.multiple = multiple;
+
 		scope.disableReordering = !multiple;
 		if (scope.disableReordering && attrs.hasOwnProperty('disableReordering'))
 		{
 			scope.disableReordering = false;
 		}
 
+		scope.selectorTitle = attrs.selectorTitle;
+
 		scope.doc = {list: []};
 
 		scope.showButtonsLabel = attrs.hideButtonsLabel !== 'true';
 
-		scope.selectModel = attrs.selectModel;
+		scope.models = {};
+
 		attrs.$observe('acceptedModel', function ()
 		{
 			scope.acceptedModel = iElement.attr('accepted-model');
+		});
+
+		attrs.$observe('selectModel', function (value) {
+			if (attrs.hasOwnProperty('selectModel')) {
+				var filter = scope.$eval(attrs.selectModel);
+				if (angular.isArray(filter)) {
+					scope.models.filters = {name: filter};
+				} else if (angular.isObject(filter)) {
+					scope.models.filters = filter;
+				} else {
+					scope.models.filters = {abstract:false, editable:true};
+				}
+				scope.models.filtered = Models.getByFilter(scope.models.filters);
+			} else {
+				scope.models.filters = undefined;
+				scope.models.filtered = [];
+			}
+		});
+
+		scope.$watchCollection('models.filtered', function (modelsFiltered) {
+			if (angular.isArray(modelsFiltered)) {
+				if (!angular.isObject(scope.models.model) && modelsFiltered.length) {
+					scope.models.model = modelsFiltered[0];
+				}
+			}
 		});
 
 		function arrayCopy(array) {
@@ -62,6 +86,11 @@
 
 		// viewValue => modelValue
 		ngModel.$parsers.unshift(function (viewValue) {
+			if (viewValue === undefined)
+			{
+				return viewValue;
+			}
+
 			var modelValue;
 			if (valueIds) {
 				if (multiple) {
@@ -76,11 +105,14 @@
 					modelValue = viewValue
 				}
 			}
-			return viewValue;
+			return modelValue;
 		});
 
 		// modelValue => viewValue
 		ngModel.$formatters.unshift(function (modelValue) {
+			if (modelValue === undefined) {
+				return modelValue;
+			}
 			var viewValue = multiple ? [] : null;
 			var oldList = scope.doc.list;
 			var docList = [];
@@ -137,44 +169,56 @@
 		});
 
 		// Watch from changes coming from the <rbs-token-list/> which is bound to `scope.doc.list`.
-		scope.$watch('doc.list', function (documents) {
+		scope.$watchCollection('doc.list', function (documents, old) {
+			if (documents.length === 0 && ngModel.$viewValue === undefined) {
+				return;
+			}
 			if (multiple) {
 				ngModel.$setViewValue(arrayCopy(documents));
 			} else {
 				ngModel.$setViewValue(documents.length ? documents[0] : null);
 			}
-		}, true);
+		});
+
+		scope.hasTragetUrl = function () {
+			if (scope.selectorUrl) {
+				return true;
+			}
+			if (angular.isObject(scope.models.model)) {
+				return true;
+			}
+			return scope.acceptedModel ? true : false;
+		};
 
 		// Open a session to select a document directly in the module
 		scope.beginSelectSession = function ()
 		{
-			var selectModel = getFormModel();
-			var targetUrl = scope.selectorUrl;
-			if (!targetUrl && selectModel) {
-				targetUrl = UrlManager.getSelectorUrl(selectModel);
+			var selectModel, targetUrl = scope.selectorUrl;
+			if (!targetUrl) {
+				if (angular.isObject(scope.models.model)) {
+					selectModel = scope.models.model.name;
+					targetUrl = UrlManager.getSelectorUrl(selectModel);
+				}
+				else if (scope.acceptedModel) {
+					selectModel = scope.acceptedModel;
+					targetUrl = UrlManager.getSelectorUrl(selectModel);
+				}
 			}
+
 			if (!targetUrl) {
 				throw new Error("Invalid targetUrl for selection.");
 			}
+
 			var navParams = {
 				selector: true,
 				model: selectModel,
 				multiple: multiple,
-				label: attrs.propertyLabel || attrs.selectorTitle || attrs.name
+				label: attrs.propertyLabel || attrs.name
 			};
 
 			var valueKey = getContextValueKey();
 			Navigation.startSelectionContext(targetUrl, valueKey, navParams);
 		};
-
-		// Get allowed model
-		function getFormModel() {
-			if (!multiple && ngModel.$viewValue && ngModel.$viewValue.model) {
-				return ngModel.$viewValue.model;
-			} else {
-				return scope.acceptedModel;
-			}
-		}
 
 		function getContextValueKey() {
 			return attrs.contextKey ? attrs.contextKey : attrs.ngModel;
@@ -238,7 +282,7 @@
 	}
 
 	var singlePicker = ['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$timeout', 'RbsChange.UrlManager',
-		'RbsChange.ArrayUtils', function (REST, Utils, Navigation, $timeout, UrlManager, ArrayUtils)
+		'RbsChange.Models', function (REST, Utils, Navigation, $timeout, UrlManager, Models)
 		{
 			return {
 				restrict: 'EA',
@@ -249,7 +293,7 @@
 				link: function (scope, iElement, attrs, ngModel)
 				{
 					documentPickerLinkFunction(scope, iElement, attrs, ngModel, false, REST, Utils, Navigation, $timeout,
-						UrlManager, ArrayUtils);
+						UrlManager, Models);
 				}
 			};
 		}];
@@ -257,8 +301,8 @@
 	app.directive('rbsWoodyWoodpicker', singlePicker); // Ha ha.
 
 	app.directive('rbsDocumentPickerMultiple',
-		['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$timeout', 'RbsChange.UrlManager', 'RbsChange.ArrayUtils',
-			function (REST, Utils, Navigation, $timeout, UrlManager, ArrayUtils)
+		['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$timeout', 'RbsChange.UrlManager', 'RbsChange.Models',
+			function (REST, Utils, Navigation, $timeout, UrlManager, Models)
 			{
 				return {
 					restrict: 'EA',
@@ -269,7 +313,7 @@
 					link: function (scope, iElement, attrs, ngModel)
 					{
 						documentPickerLinkFunction(scope, iElement, attrs, ngModel, true, REST, Utils, Navigation, $timeout,
-							UrlManager, ArrayUtils);
+							UrlManager, Models);
 					}
 				};
 			}]);
