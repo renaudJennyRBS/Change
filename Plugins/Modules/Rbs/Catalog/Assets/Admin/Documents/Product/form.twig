@@ -1,15 +1,44 @@
 <div class="row">
 
 	<div rbs-aside-column>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<span class="list-group-item">
+					<a ng-show="! document.variant && document.variantGroup" href="Rbs/Catalog/Product/(=document.id=)/VariantGroup/(=document.variantGroup.id=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+					<a ng-show="! document.variant && ! document.variantGroup" href="Rbs/Catalog/VariantGroup/new?productId=(= document.id =)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+				</span>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.catalog.admin.merchandizing', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'cross-selling-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item">
+					<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'prices' =)"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.product_prices_aside_link', ['ucf']) | raw }}</a>
+				</p>
+			</div>
+		</div>
 
-		<a ng-show="! document.variant && document.variantGroup" rbs-aside-other-link href="Rbs/Catalog/VariantGroup/(= document.variantGroup.id =)">{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
-		<a ng-show="! document.variant && ! document.variantGroup" rbs-aside-other-link href="Rbs/Catalog/VariantGroup/new?productId=(= document.id =)">{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+		<rbs-aside-seo ng-if="document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
 
-		<a rbs-aside-other-link href="(= document | rbsURL:'cross-selling-lists' =)" >{{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
-		<a rbs-aside-other-link ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" >{{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
+		<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>
+		<div class="rbs-aside-block rbs-aside-other-links" ng-hide="document.isNew()">
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
+			<a href="javascript:;" ng-href="(= document | rbsURL:'timeline' =)">{{ i18n('m.rbs.admin.admin.view_timeline', ['ucf']) | raw }}</a>
+		</div>
 
-		<a rbs-aside-other-link href="(= document | rbsURL:'prices' =)">{{ i18n('m.rbs.catalog.admin.product_prices_aside_link', ['ucf']) | raw }}</a>
 	</div>
 
 	<div class="document-form" rbs-main-column>

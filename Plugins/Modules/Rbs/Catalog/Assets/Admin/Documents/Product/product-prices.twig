@@ -60,6 +60,10 @@
 			<rbs-column name="webStore">(=doc.webStore.label=)</rbs-column>
 			<rbs-column name="billingArea">(=doc.billingArea.label=)</rbs-column>
 			<rbs-column name="value" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedValue=)</a></rbs-column>
+			<rbs-column sort="basePrice.value" name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
+				<del ng-if="doc.formattedBaseValue"><a ng-href="(= doc.basePrice|rbsURL =)">(=doc.formattedBaseValue=)</a></del>
+				<a ng-if="!doc.formattedBaseValue" href="(= doc | rbsURL:'discount' =)?basePriceId=(=doc.id=)" class="btn btn-default btn-xs">{{ i18nAttr('m.rbs.catalog.admin.price_create_discount') }}</a>
+			</rbs-column>
 			<rbs-column name="priority">(=doc.priority=)</rbs-column>
 			<rbs-column name="startActivation">(=doc.startActivation | rbsDateTime=)</rbs-column>
 			<rbs-column name="endActivation">(=doc.endActivation | rbsDateTime =)</rbs-column>

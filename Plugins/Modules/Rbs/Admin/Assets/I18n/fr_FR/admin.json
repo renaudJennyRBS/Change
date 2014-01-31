@@ -1049,7 +1049,7 @@
 		"message":"document concerné"
 	},
 	"configure_url_and_redirections":{
-		"message":"Gérer les <strong>URL et redirections</strong>"
+		"message":"URLs et redirections"
 	},
 	"view_timeline":{
 		"message":"Consulter la <strong>Timeline</strong>"

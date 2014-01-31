@@ -30,7 +30,7 @@
 		"message":"métas"
 	},
 	"aside_title":{
-		"message":"Référencement"
+		"message":"Référencement & URLs"
 	},
 	"aside_document_has_no_seo_info":{
 		"message":"Ce document ne dispose pas d'information pour le référencement."
@@ -39,7 +39,7 @@
 		"message":"Créer"
 	},
 	"aside_edit_seo_info":{
-		"message":"Éditer les informations de référencement du document"
+		"message":"Informations de référencement du document"
 	},
 	"documentseo_list_help":{
 		"message":"La création d'informations de référencement pour un document s'effectue dans l'éditeur de ce document.<br \/>\n\tVous pouvez aussi configurer la génération automatique des informations de référencement par modèle via <a href=\"Rbs\/Seo\/ModelConfiguration\/\">la configuration des modèles<\/a>."
@@ -61,5 +61,41 @@
 	},
 	"head_metas":{
 		"message":"métas d'en-têtes de la page"
+	},
+	"documentseo_list":{
+		"message":"référencement des documents"
+	},
+	"modelconfiguration_list":{
+		"message":"configuration des modèles"
+	},
+	"sitemapconfiguration_list":{
+		"message":"configuration des sitemaps"
+	},
+	"documentseo_sitemap_change_frequency_option":{
+		"message":"choisir la fréquence de changement..."
+	},
+	"documentseo_sitemap_change_frequency_always":{
+		"message":"toujours (always)"
+	},
+	"documentseo_sitemap_change_frequency_hourly":{
+		"message":"horaire (hourly)"
+	},
+	"documentseo_sitemap_change_frequency_daily":{
+		"message":"quotidien (daily)"
+	},
+	"documentseo_sitemap_change_frequency_weekly":{
+		"message":"hebdomadaire (weekly)"
+	},
+	"documentseo_sitemap_change_frequency_monthly":{
+		"message":"mensuel (monthly)"
+	},
+	"documentseo_sitemap_change_frequency_yearly":{
+		"message":"annuel (yearly)"
+	},
+	"documentseo_sitemap_change_frequency_never":{
+		"message":"jamais (never)"
+	},
+	"documentseo_target_model":{
+		"message":"type de la cible"
 	}
 }

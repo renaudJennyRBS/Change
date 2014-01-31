@@ -1,8 +1,9 @@
 <div class="row">
 
 	<div rbs-aside-column>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
 		<rbs-aside ng-if="! document.isNew()" template="Document/Rbs/Catalog/VariantGroup/aside.twig"></rbs-aside>
+		<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>
 	</div>
 
 	<div class="document-form" rbs-main-column>
