@@ -1,6 +1,6 @@
 {% if parameters.webStoreId %}
 	<script type="text/ng-template" id="/addLineToCart.tpl">
-		<div class="form-group" data-ng-show="stockLevel > 0">
+		<div class="form-group" data-ng-show="stockLevel > 0 && canBeOrdered">
 			<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
 			<input class="form-control" type="number" data-ng-model="quantity" id="product-quantity" name="quantity"
 					max="{{ productPresentation.stock.maxQuantity }}"
