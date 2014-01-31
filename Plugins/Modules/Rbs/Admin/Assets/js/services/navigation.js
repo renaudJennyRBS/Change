@@ -114,7 +114,6 @@
 				} else {
 					$location.url(targetUrl);
 				}
-				$rootScope.$apply();
 			}
 
 			function setSelectionContextValue(value, context) {
@@ -254,7 +253,7 @@
 		};
 	}]);
 
-	app.directive('rbsStartNavigation', ['RbsChange.Navigation', function (Navigation)
+	app.directive('rbsStartNavigation', ['RbsChange.Navigation', '$rootScope', function (Navigation, $rootScope)
 	{
 		return {
 			restrict : 'A',
@@ -274,6 +273,7 @@
 						params = null;
 					}
 					Navigation.startSelectionContext(targetUrl, null, params);
+					$rootScope.$apply();
 				});
 			}
 		};
