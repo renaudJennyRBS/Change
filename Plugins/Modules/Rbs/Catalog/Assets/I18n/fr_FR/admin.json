@@ -182,6 +182,9 @@
 	"attribute_picker_title":{
 		"message":"selectionner les attributs du groupe"
 	},
+	"attribute_producttypology_help":{
+		"message":"Indique que ce groupe peut être utilisé pour créer une fiche produit."
+	},
 	"variantgroup_create":{
 		"message":"ajouter un groupe de variantes"
 	},

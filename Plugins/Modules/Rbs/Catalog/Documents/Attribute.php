@@ -49,6 +49,12 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 				/* @var $attribute Attribute */
 				$fv = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute_type_'
 					. strtolower($this->getValueType()), array('ucf'));
+
+				if ($this->getValueType() == 'Group' && $this->getProductTypology())
+				{
+					$fv .= ' ('.$event->getApplicationServices()->getI18nManager()->trans('m.rbs.catalog.documents.attribute_producttypology', array('ucf')).')';
+				}
+
 				$restResult->setProperty('valueTypeFormatted', $fv);
 			}
 		}
