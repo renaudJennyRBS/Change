@@ -51,8 +51,15 @@
 
 			<div data-ng-show="document.valueType == 'DocumentId' || document.valueType == 'DocumentIdArray'">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'documentType'), ['ucf']) }}">
-					<rbs-model-selector filter="{abstract: false, editable: true}" class="form-control" model="document.documentType"></rbs-model-selector>
+					<rbs-model-selector ng-if="document.isNew()" filter="{abstract: false, editable: true}" class="form-control" model="document.documentType"></rbs-model-selector>
+					<p ng-if="!document.isNew()"  class="form-control-static">(= documentTypeLabel =)</p>
 				</rbs-field>
+			</div>
+
+			<div data-ng-show="document.valueType == 'DocumentId'">
+				<rbs-field-boolean property="usePicker"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'usePicker'), ['ucf']) }}">
+				</rbs-field-boolean>
 			</div>
 		</div>
 

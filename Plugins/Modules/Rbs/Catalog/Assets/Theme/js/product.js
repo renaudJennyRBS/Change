@@ -240,6 +240,16 @@
 				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
 				scope.productAvailability = data.stock;
 				scope.prices = data.prices;
+
+				if (scope.quantity > 0 && data.stock.sku && data.prices.price)
+				{
+					scope.canBeOrdered = true;
+				}
+				else
+				{
+					scope.canBeOrdered = false;
+				}
+
 			} else {
 				scope.productConfig.productId = 0;
 				scope.productConfig.key = null;

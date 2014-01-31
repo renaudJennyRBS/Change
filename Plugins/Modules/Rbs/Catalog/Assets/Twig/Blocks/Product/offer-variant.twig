@@ -1,13 +1,17 @@
 {% if parameters.webStoreId %}
 
 	<script type="text/ng-template" id="/addLineToCart.tpl">
-		<div class="form-group" data-ng-show="stockLevel > 0">
+		<div class="form-group" data-ng-show="stockLevel > 0 && canBeOrdered">
 			<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-			<input class="form-control" type="number" data-ng-model="quantity" />
+			<input class="form-control" type="number" data-ng-model="quantity"
+				max="{{ productPresentation.stock.maxQuantity }}"
+				min="{{ productPresentation.stock.minQuantity }}"
+				step="{{ productPresentation.stock.quantityIncrement }}" />
 			<!-- min="(= stockMin =)" max="(= stockMax =)" step="(= stockStep =)" -->
 		</div>
-		<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()" data-ng-disabled="quantity <= 0">
-			<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+		<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()" data-ng-disabled="!canBeOrdered">
+			<span data-ng-show="canBeOrdered"><i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}</span>
+			<span data-ng-hide="canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 		</button>
 	</script>
 
@@ -106,6 +110,7 @@
 			<div rbs-catalog-product-data="" data-ng-model="productConfig"
 					data-key="{{ parameters.productId }}" data-product-id="{{ parameters.productId }}"
 					data-sku="{{ productPresentation.codeSKU }}"
+					data-price="{{ productPresentation.priceValue }}"
 					data-redirect-url="{{ parameters.redirectUrl }}"
 					data-designation="{{ productPresentation.designation }}"
 					data-stock-level="{{ productPresentation.stock.level }}"

@@ -463,7 +463,7 @@ class AttributeManager
 		$vt = $attribute->getValueType();
 		$definition = array('id' => $attribute->getId(), 'label' => $attribute->getLabel(),
 			'required' => $attribute->getRequiredValue(), 'valueType' => $vt, 'type' => $vt,
-			'defaultValue' => null, 'collectionCode' => null, 'values' => null);
+			'defaultValue' => null, 'collectionCode' => null, 'values' => null, 'usePicker' => $attribute->getUsePicker());
 
 		if (Attribute::TYPE_PROPERTY == $vt)
 		{

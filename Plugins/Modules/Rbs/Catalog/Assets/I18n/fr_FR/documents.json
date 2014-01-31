@@ -213,6 +213,9 @@
 	"attribute_type_property":{
 		"message":"propriété d'un produit"
 	},
+	"attribute_usepicker":{
+		"message":"utiliser un picker plutôt qu'une liste"
+	},
 	"productlist_configure_products":{
 		"message":"configurer"
 	}

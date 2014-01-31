@@ -7,7 +7,7 @@
 	// Do not declare an editor here if you have an 'editor.js' for your Model.
 	//__change.createEditorForModel('Rbs_Catalog_ProductListItem');
 
-	__change.createEditorsForLocalizedModel('Rbs_Catalog_Attribute');
+	__change.createEditorForModelTranslation('Rbs_Catalog_Attribute');
 
 	__change.createEditorForModelTranslation('Rbs_Catalog_Product');
 
