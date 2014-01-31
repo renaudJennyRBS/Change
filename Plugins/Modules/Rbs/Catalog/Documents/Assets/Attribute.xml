@@ -22,5 +22,7 @@
 		<property name="axis" type="Boolean" default-value="false" />
 
 		<property name="usePicker" type="Boolean" default-value="false" />
+
+		<property name="productTypology" type="Boolean" default-value="false" />
 	</properties>
 </document>

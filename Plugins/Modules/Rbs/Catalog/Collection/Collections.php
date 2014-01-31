@@ -95,6 +95,10 @@ class Collections
 			{
 				$docQuery->andPredicates($docQuery->eq('axis', true));
 			}
+			if ($event->getParam('productTypology'))
+			{
+				$docQuery->andPredicates($docQuery->eq('productTypology', true));
+			}
 
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();

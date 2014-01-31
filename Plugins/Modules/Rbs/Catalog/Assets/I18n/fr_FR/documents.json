@@ -216,6 +216,9 @@
 	"attribute_usepicker":{
 		"message":"utiliser un picker plutôt qu'une liste"
 	},
+	"attribute_producttypology":{
+		"message":"typologie de produit"
+	},
 	"productlist_configure_products":{
 		"message":"configurer"
 	}

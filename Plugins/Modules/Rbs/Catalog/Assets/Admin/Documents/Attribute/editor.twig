@@ -68,6 +68,11 @@
 				label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'attributes'), ['ucf']) }}"
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.attribute_picker_title', ['ucf']) }}">
 			</rbs-field-picker-multiple>
+
+			<rbs-field-boolean property="productTypology"
+				label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'productTypology'), ['ucf']) }}">
+				<span class="help-block">{{ i18n('m.rbs.catalog.admin.attribute_producttypology_help') }} </span>
+			</rbs-field-boolean>
 		</div>
 		<hr />
 
