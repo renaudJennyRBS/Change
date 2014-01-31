@@ -39,6 +39,12 @@ class ModelsInfo
 		foreach ($modelManager->getModelsNames() as $modelName)
 		{
 			$model = $modelManager->getModelByName($modelName);
+			$pluginKey = strtolower('m.' . $model->getVendorName() . '.' . $model->getShortModuleName() . '.admin.module_name');
+			$pluginLabel = $i18n->trans($pluginKey);
+			if ($pluginKey == $pluginLabel) {
+				continue;
+			}
+
 			$models[] = array(
 				'name' => $model->getName(),
 				'label' => $i18n->trans($model->getLabelKey(), array('ucf')),
@@ -46,9 +52,15 @@ class ModelsInfo
 				'root' => !$model->hasParent(),
 				'abstract' => $model->isAbstract(),
 				'publishable' => $model->isPublishable(),
+				'localized' => $model->isLocalized(),
+				'activable' => $model->isActivable(),
+				'stateless' => $model->isStateless(),
+				'useCorrection' => $model->useCorrection(),
 				'editable' => $model->isEditable(),
-				'plugin' => $i18n->trans('m.' . $model->getVendorName() . '.' . $model->getShortModuleName()
-						. '.admin.module_name', array('ucf'))
+				'plugin' => $pluginLabel = $i18n->trans($pluginKey, array('ucf')),
+				'descendants' => $model->getDescendantsNames(),
+				'ancestors' => $model->getAncestorsNames(),
+				'compatible' => array_merge([$model->getName()], $model->getAncestorsNames())
 			);
 		}
 

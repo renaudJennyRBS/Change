@@ -29,166 +29,25 @@
 	line-height: 1.1em;
 }
 
-
-#embedded-modal-backdrop,
-#document-picker-backdrop {
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	background: black;
-	display: none;
-	z-index: 100;
-	opacity: 0.32;
-}
-
-
-.document-picker-embedded,
-.embedded-modal {
-	z-index: 101;
-	position: relative;
-	margin: 10px 0 0 0;
-	background: white;
-	padding: 10px 15px 10px;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-	border-radius: 5px;
-	font-size: 14px;
-}
-
-.form-horizontal .col-lg-9 .document-picker-embedded,
-.form-horizontal .col-lg-9 .embedded-modal {
-	margin-left: -180px;
-}
-
-#mainContainer.col-md-12 .document-picker-embedded {
-	margin-left: 0;
-}
-
-.embedded-modal {
-	margin: 10px 0;
-	display: none;
-}
-
-.document-picker-embedded .pagination {
-	margin-bottom: 0;
-}
-
-.document-picker-embedded h3 {
-	margin-top: 0;
-}
-
-.document-picker-embedded:after,
-.embedded-modal:after {
-	position: absolute;
-	border-bottom: 9px solid #FFFFFF;
-	border-left: 9px solid transparent;
-	border-right: 9px solid transparent;
-	content: "";
-	display: inline-block;
-	left: 50px;
-	top: -9px;
-}
-
-.document-picker-embedded:before,
-.embedded-modal:before {
-	position: absolute;
-	border-bottom: 10px solid rgba(0, 0, 0, 0.2);
-	border-left: 10px solid transparent;
-	border-right: 10px solid transparent;
-	content: "";
-	display: inline-block;
-	left: 49px;
-	top: -10px;
-}
-
-.form-horizontal .document-picker-embedded:before {
-	left: 129px;
-}
-.form-horizontal .document-picker-embedded:after {
-	left: 130px;
-}
-
-
-/* Right-aligned embedded modal */
-.embedded-modal.right:after {
-	left: auto;
-	right: 50px;
-}
-
-.embedded-modal.right:before {
-	left: auto;
-	right: 49px;
-}
-
-/* Bottom-aligned embedded modal */
-.embedded-modal.bottom:after {
-	top: auto;
-	bottom: -9px;
-	border-top: 9px solid #FFFFFF;
-	border-bottom: none;
-}
-
-.embedded-modal.bottom:before {
-	top: auto;
-	bottom: -10px;
-	border-top: 10px solid rgba(0, 0, 0, 0.2);
-	border-bottom: none;
-}
-
-.embedded-modal h3 {
-	border-bottom: 1px solid #EEEEEE;
-	margin: 0 -15px 10px;
-	padding: 0 15px 6px;
-}
-
-.embedded-modal .container-fluid {
-	margin: 0 -15px;
-	padding: 0 15px;
-}
-
-.embeded-modal p,
-#workspace .page-header .embedded-modal p {
-	line-height: 18px;
-}
-
-.embedded-modal.bottom.has-form-actions:after {
-	top: auto;
-	bottom: -9px;
-	border-top: 9px solid #F5F5F5;
-	border-bottom: none;
-}
-
-.embedded-modal .form-actions {
-	margin: 10px -15px -10px -15px;
-	border-radius: 0 0 5px 5px;
-	padding: 10px 15px;
-}
-
-rbs-document-picker-single .input-append,
-.rbs-document-picker-single .input-append {
+rbs-document-picker-single .input-append {
 	display: inline-block;
 	margin: 0;
 }
 
-rbs-document-picker-single .input-append + .btn-group,
-.rbs-document-picker-single .input-append + .btn-group {
+rbs-document-picker-single .input-append + .btn-group {
 	margin-left: 5px;
 }
 
-.form-horizontal rbs-document-picker-single .input-append + .btn-group,
-.form-horizontal .rbs-document-picker-single .input-append + .btn-group {
+.form-horizontal rbs-document-picker-single .input-append + .btn-group {
 	margin-bottom: auto;
 }
 
-.rbs-document-picker-single > .btn-toolbar,
-rbs-document-picker-single > .btn-toolbar,
-.rbs-document-picker-multiple > .btn-toolbar,
-rbs-document-picker-multiple > .btn-toolbar{
+rbs-document-picker-single > .picker-toolbar,
+rbs-document-picker-multiple > .picker-toolbar,
+rbs-document-chained-select .btn-toolbar{
 	background: none repeat scroll 0 0 #F5F5F5;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
-	font-size: 0;
 	margin: 0 10px 10px;
 	padding: 4px;
 	border-left: 1px solid #E5E5E5;
@@ -198,25 +57,7 @@ rbs-document-picker-multiple > .btn-toolbar{
 	z-index: 0;
 }
 
-
-rbs-document-chained-select .btn-toolbar {
-	background: none repeat scroll 0 0 #F5F5F5;
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
-	font-size: 0;
-	margin: 0 10px 10px;
-	padding: 4px;
-	border-left: 1px solid #E5E5E5;
-	border-right: 1px solid #E5E5E5;
-	border-bottom: 1px solid #E5E5E5;
-	position: relative;
-	z-index: 0;
-}
-
-
-.rbs-document-picker-single .empty,
 rbs-document-picker-single .empty,
-.rbs-document-picker-multiple .empty,
 rbs-document-picker-multiple .empty{
 	color: silver;
 	font-style: italic;
@@ -234,7 +75,6 @@ rbs-document-picker-multiple .empty{
 .select-session strong {
 	color: #51A351;
 }
-
 .select-session h4 {
 	color: #AABBAA;
 	text-transform: uppercase;

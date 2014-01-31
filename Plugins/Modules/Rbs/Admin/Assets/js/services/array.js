@@ -63,6 +63,16 @@
 				return jQuery.inArray(value, arr);
 			},
 
+			intersect: function (arr1, arr2) {
+				var intersect = [];
+				for (var i = 0; i < arr1.length; i++) {
+					if (jQuery.inArray(arr1[i], arr2)) {
+						intersect.push(arr1[i]);
+					}
+				}
+				return intersect;
+			},
+
 			documentInArray: function (document, array) {
 				var isDocumentInArray = false;
 				angular.forEach(array, function (inArrayDoc) {

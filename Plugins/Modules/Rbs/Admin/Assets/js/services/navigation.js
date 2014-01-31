@@ -114,6 +114,7 @@
 				} else {
 					$location.url(targetUrl);
 				}
+				$rootScope.$apply();
 			}
 
 			function setSelectionContextValue(value, context) {
@@ -259,7 +260,7 @@
 			restrict : 'A',
 			link : function (scope, iElement, attrs)
 			{
-				iElement.click(function ()
+				iElement.click(function (event)
 				{
 					var targetUrl = attrs.targetUrl, params = {}, hasParams = false;
 					angular.forEach(iElement.data(), function (v, n)

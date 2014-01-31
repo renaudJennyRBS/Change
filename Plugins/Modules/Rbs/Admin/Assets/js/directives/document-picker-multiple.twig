@@ -4,21 +4,28 @@
 </div>
 
 <p ng-show="isEmpty()" class="form-control form-control-static text-muted"
-		style="margin-bottom: 0;">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</p>
+		style="margin-bottom: 0;">
+	<span ng-show="selectorTitle" ng-bind="selectorTitle"></span>
+	<span ng-hide="selectorTitle">{{ i18n('m.rbs.admin.admin.picker_no_element', ['ucf']) }}</span></p>
 
-<div class="btn-toolbar">
-	<div class="btn-group">
-		<button type="button" class="btn btn-default btn-xs"
-			ng-click="beginSelectSession()"
-			ng-if="multiple || (!multiple && (doc.list.length == 0))"
-			title="{{ i18nAttr('m.rbs.admin.admin.picker_in_place_tooltip', ['ucf', 'etc']) }}"><i class="icon-external-link"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_in_place', ['etc']) }}</span></button>
-	</div>
+<div class="picker-toolbar form-inline">
 	<button
-		type="button"
-		class="btn btn-default btn-xs pull-right"
-		ng-click="clear()"
-		ng-disabled="isEmpty()"
-		title="{{ i18nAttr('m.rbs.admin.admin.picker_clear_tooltip', ['ucf']) }}"><i class="icon-eraser"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_clear') }}</span></button>
+			type="button"
+			class="btn btn-default btn-xs pull-right"
+			ng-click="clear()"
+			ng-disabled="isEmpty()"
+			title="{{ i18nAttr('m.rbs.admin.admin.picker_clear_tooltip', ['ucf']) }}"><i class="icon-eraser"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_clear') }}</span></button>
+
+		<select class="form-control input-sm"
+				ng-model="models.model" ng-show="models.filtered.length"
+				data-ng-disabled="!multiple && !isEmpty()"
+				ng-options="m.label group by m.plugin for m in models.filtered"></select>
+
+		<button type="button" class="btn btn-default btn-xs"
+			data-ng-disabled="!hasTragetUrl() || (!multiple && !isEmpty())"
+			ng-click="beginSelectSession()"
+			title="{{ i18nAttr('m.rbs.admin.admin.picker_in_place_tooltip', ['ucf', 'etc']) }}"><i class="icon-external-link"></i><span ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_in_place', ['etc']) }}</span></button>
 </div>
+
 
 

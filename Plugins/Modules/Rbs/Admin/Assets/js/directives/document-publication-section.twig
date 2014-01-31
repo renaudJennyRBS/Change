@@ -1,5 +1,6 @@
 <div>
-	<rbs-field-picker-multiple property="publicationSections" accepted-model="Rbs_Website_Section"
+	<rbs-field-picker-multiple property="publicationSections"
+		select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
 		label="{{ i18nAttr('c.documents.publicationsections',['ucf']) }}"
 		selector-title="{{ i18nAttr('m.rbs.generic.admin.publicationsections_picker_title', ['ucf']) }}">
 		<span class="help-block" ng-if="document.publicationSections.length > 0">

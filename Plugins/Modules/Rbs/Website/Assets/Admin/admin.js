@@ -92,7 +92,12 @@
 			;
 
 			$delegate.model('Rbs_Website_Topic')
+				.route('selector', 'Rbs/Website/Browse/?view=Structure', 'Document/Rbs/Website/Website/browse.twig')
 				.route('functions', 'Rbs/Website/Topic/:id/Functions/', 'Document/Rbs/Website/SectionPageFunction/list.twig')
+			;
+
+			$delegate.model('Rbs_Website_Section')
+				.route('selector', 'Rbs/Website/Browse/?view=Structure', 'Document/Rbs/Website/Website/browse.twig')
 			;
 
 			$delegate.routesForLocalizedModels([
