@@ -4,8 +4,8 @@ namespace Change\Documents\Query;
 use Change\Db\Query\Predicates\Like;
 
 /**
-* @name \Change\Documents\Query\JSONDecoder
-*/
+ * @name \Change\Documents\Query\JSONDecoder
+ */
 class JSONDecoder
 {
 	/**
@@ -162,7 +162,7 @@ class JSONDecoder
 		$this->joins = array();
 		if (isset($jsonQuery['join']) && is_array($jsonQuery['join']))
 		{
-			foreach($jsonQuery['join'] as $joinJSON)
+			foreach ($jsonQuery['join'] as $joinJSON)
 			{
 				$this->processJoin($query, $joinJSON);
 			}
@@ -170,7 +170,7 @@ class JSONDecoder
 
 		if (isset($jsonQuery['where']) && is_array($jsonQuery['where']))
 		{
-			foreach($jsonQuery['where'] as $junction => $predicatesJSON)
+			foreach ($jsonQuery['where'] as $junction => $predicatesJSON)
 			{
 				$predicates = $this->configureJunction($query->getPredicateBuilder(), $junction, $predicatesJSON, false);
 				if ($junction === 'and')
@@ -264,13 +264,13 @@ class JSONDecoder
 		$property = $model->getProperty($propertyName);
 		if ($property === null || $property->getStateless())
 		{
-			throw new \RuntimeException('Invalid Join property: '. $propertyName, 999999);
+			throw new \RuntimeException('Invalid Join property: ' . $propertyName, 999999);
 		}
 
 		$parentProperty = $parentQuery->getModel()->getProperty($parentPropertyName);
 		if ($parentProperty === null || $parentProperty->getStateless())
 		{
-			throw new \RuntimeException('Invalid Join parentProperty: '. $parentPropertyName, 999999);
+			throw new \RuntimeException('Invalid Join parentProperty: ' . $parentPropertyName, 999999);
 		}
 		$childBuilder = $parentQuery->getPropertyModelBuilder($parentProperty, $model, $property);
 		if (isset($joinJSON['LCID']))
@@ -280,7 +280,7 @@ class JSONDecoder
 		$this->joins[$joinName] = $childBuilder;
 		if (isset($joinJSON['join']) && is_array($joinJSON['join']))
 		{
-			foreach($joinJSON['join'] as $childJoinJSON)
+			foreach ($joinJSON['join'] as $childJoinJSON)
 			{
 				$this->processJoin($childBuilder, $childJoinJSON);
 			}
@@ -303,7 +303,7 @@ class JSONDecoder
 		}
 
 		$predicates = array();
-		foreach($predicatesJSON as $predicateJSON)
+		foreach ($predicatesJSON as $predicateJSON)
 		{
 			$predicates[] = $this->configurePredicate($predicateBuilder, $predicateJSON);
 		}
@@ -340,7 +340,7 @@ class JSONDecoder
 		}
 		elseif (isset($predicateJSON['op']))
 		{
-			$callable = array($this, 'configure' . ucfirst($predicateJSON['op']. 'Predicate'));
+			$callable = array($this, 'configure' . ucfirst($predicateJSON['op'] . 'Predicate'));
 			if (is_callable($callable))
 			{
 				return call_user_func($callable, $predicateBuilder, $predicateJSON);
@@ -375,7 +375,8 @@ class JSONDecoder
 				$abstractBuilder = $this->joins[$expressionJson['join']];
 				return $abstractBuilder->getPredicateBuilder();
 			}
-			throw new \RuntimeException('Invalid join property: ' . $expressionJson['join'] . '.' . $expressionJson['property'] , 999999);
+			throw new \RuntimeException('Invalid join property: ' . $expressionJson['join'] . '.'
+			. $expressionJson['property'], 999999);
 		}
 		return $predicateBuilder;
 	}
@@ -491,15 +492,15 @@ class JSONDecoder
 			{
 				if ($predicateJSON['mode'] === 'begin')
 				{
-					$matchMode =  Like::BEGIN;
+					$matchMode = Like::BEGIN;
 				}
 				elseif ($predicateJSON['mode'] === 'end')
 				{
-					$matchMode =  Like::END;
+					$matchMode = Like::END;
 				}
 				elseif ($predicateJSON['mode'] === 'any')
 				{
-					$matchMode =  Like::ANYWHERE;
+					$matchMode = Like::ANYWHERE;
 				}
 				else
 				{
@@ -578,6 +579,48 @@ class JSONDecoder
 				->isNotNull($predicateJSON['exp']['property']);
 		}
 		throw new \RuntimeException('Invalid isNull predicate', 999999);
+	}
+
+	/**
+	 * @param PredicateBuilder $predicateBuilder
+	 * @param array $predicateJSON
+	 * @throws \RuntimeException
+	 * @return \Change\Db\Query\Predicates\InterfacePredicate
+	 */
+	protected function configureExistsPredicate($predicateBuilder, $predicateJSON)
+	{
+		if (!isset($predicateJSON['exp']['model']))
+		{
+			throw new \RuntimeException('Invalid exists model value', 999999);
+		}
+
+		if (!isset($predicateJSON['exp']['property']))
+		{
+			throw new \RuntimeException('Invalid exists property value', 999999);
+		}
+
+		return $predicateBuilder->exists('id', $predicateJSON['exp']['model'], $predicateJSON['exp']['property']);
+	}
+
+	/**
+	 * @param PredicateBuilder $predicateBuilder
+	 * @param array $predicateJSON
+	 * @throws \RuntimeException
+	 * @return \Change\Db\Query\Predicates\InterfacePredicate
+	 */
+	protected function configureNotExistsPredicate($predicateBuilder, $predicateJSON)
+	{
+		if (!isset($predicateJSON['exp']['model']))
+		{
+			throw new \RuntimeException('Invalid not exists model value', 999999);
+		}
+
+		if (!isset($predicateJSON['exp']['property']))
+		{
+			throw new \RuntimeException('Invalid not exists property value', 999999);
+		}
+
+		return $predicateBuilder->notExists('id', $predicateJSON['exp']['model'], $predicateJSON['exp']['property']);
 	}
 
 	/**
@@ -684,7 +727,6 @@ class JSONDecoder
 		}
 		return $predicateBuilder->activated($at, $to);
 	}
-
 
 	/**
 	 * @param PredicateBuilder $predicateBuilder

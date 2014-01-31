@@ -208,7 +208,8 @@ class PredicateBuilder
 
 			$docEq = $fb->eq($fb->getDocumentColumn('id', $fromTable), $abstractBuilder->getColumn('id'));
 			$relnamePredicate = $fb->eq($fb->column('relname', $fromTable), $fb->string($property->getName()));
-			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable), $abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
+			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable),
+				$abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
 
 			$and = new \Change\Db\Query\Predicates\Conjunction($docEq, $relnamePredicate, $idPredicate);
 			$where = new \Change\Db\Query\Clauses\WhereClause($and);
@@ -241,7 +242,8 @@ class PredicateBuilder
 
 			$docEq = $fb->eq($fb->getDocumentColumn('id', $fromTable), $abstractBuilder->getColumn('id'));
 			$relnamePredicate = $fb->eq($fb->column('relname', $fromTable), $fb->string($property->getName()));
-			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable), $abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
+			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable),
+				$abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
 
 			$and = new \Change\Db\Query\Predicates\Conjunction($docEq, $relnamePredicate, $idPredicate);
 			$where = new \Change\Db\Query\Clauses\WhereClause($and);
@@ -414,6 +416,105 @@ class PredicateBuilder
 			return $this->getFragmentBuilder()->neq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
 		return new UnaryPredicate($expression, UnaryPredicate::ISNOTNULL);
+	}
+
+	/**
+	 * @api
+	 * @param string|Property $propertyName
+	 * @param \Change\Documents\AbstractModel|string $model
+	 * @param \Change\Documents\Property|string $modelProperty
+	 * @param boolean $notExist
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate
+	 */
+	protected function buildExists($propertyName, $model, $modelProperty, $notExist)
+	{
+		list($expression, $property) = $this->convertPropertyArgument($propertyName);
+
+		/* @var $property Property */
+		if ($property !== null && $model !== null && $modelProperty !== null)
+		{
+			$fragmentBuilder = $this->getFragmentBuilder();
+
+			if (!$model instanceof \Change\Documents\AbstractModel)
+			{
+				$model = $this->getBuilder()->getDocumentManager()->getModelManager()->getModelByName($model);
+			}
+
+			if ($model)
+			{
+				$modelPropertyName = $modelProperty instanceof \Change\Documents\Property ? $modelProperty->getName() : $modelProperty;
+
+				$modelProperty = $model->getProperty($modelPropertyName);
+
+				if ($modelProperty )
+				{
+
+					if ($modelProperty->getLocalized())
+					{
+						$fromTable = $fragmentBuilder->getDocumentI18nTable($model->getRootName());
+						$eq = $fragmentBuilder->eq($expression, $fragmentBuilder->getDocumentColumn($modelPropertyName, $fromTable));
+					}
+					elseif ($modelProperty->getType() == \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+					{
+						$fromTable = $fragmentBuilder->getDocumentRelationTable($model->getRootName());
+						$id = $fragmentBuilder->eq($expression, $fragmentBuilder->getDocumentColumn('relatedid', $fromTable));
+						$rel = $fragmentBuilder->eq($fragmentBuilder->string($modelPropertyName), $fragmentBuilder->getDocumentColumn('relname', $fromTable));
+						$eq = $fragmentBuilder->logicAnd($id, $rel);
+					}
+					else
+					{
+						$fromTable = $fragmentBuilder->getDocumentTable($model->getRootName());
+						$eq = $fragmentBuilder->eq($expression, $fragmentBuilder->getDocumentColumn($modelPropertyName, $fromTable));
+					}
+
+					$sq = new \Change\Db\Query\SelectQuery();
+					$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+					$fromClause = new \Change\Db\Query\Clauses\FromClause();
+					$fromClause->setTableExpression($fromTable);
+					$sq->setFromClause($fromClause);
+
+					$where = new \Change\Db\Query\Clauses\WhereClause($eq);
+					$sq->setWhereClause($where);
+
+					if ($notExist)
+					{
+						return $fragmentBuilder->notExists(new \Change\Db\Query\Expressions\SubQuery($sq));
+					}
+					else
+					{
+						return $fragmentBuilder->exists(new \Change\Db\Query\Expressions\SubQuery($sq));
+					}
+				}
+			}
+		}
+		throw new \InvalidArgumentException('Invalid exists predicate arguments', 999999);
+	}
+
+	/**
+	 * @api
+	 * @param string|Property $propertyName
+	 * @param \Change\Documents\AbstractModel|string $model
+	 * @param \Change\Documents\Property|string $modelProperty
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate
+	 */
+	public function exists($propertyName, $model, $modelProperty)
+	{
+		return $this->buildExists($propertyName, $model, $modelProperty, false);
+	}
+
+	/**
+	 * @api
+	 * @param string|Property $propertyName
+	 * @param \Change\Documents\AbstractModel|string $model
+	 * @param \Change\Documents\Property|string $modelProperty
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate
+	 */
+	public function notExists($propertyName, $model, $modelProperty)
+	{
+		return $this->buildExists($propertyName, $model, $modelProperty, true);
 	}
 
 	/**
