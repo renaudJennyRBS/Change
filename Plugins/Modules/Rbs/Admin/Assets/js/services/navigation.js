@@ -114,6 +114,7 @@
 				} else {
 					$location.url(targetUrl);
 				}
+				$rootScope.$apply();
 			}
 
 			function setSelectionContextValue(value, context) {
