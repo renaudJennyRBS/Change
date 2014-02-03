@@ -23,7 +23,7 @@
 				<p class="list-group-item">
 					<a href="(= document | rbsURL:'cross-selling-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
 				</p>
-				<p class="list-group-item">
+				<p class="list-group-item" ng-if="document.categorizable">
 					<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
 				</p>
 				<p class="list-group-item">

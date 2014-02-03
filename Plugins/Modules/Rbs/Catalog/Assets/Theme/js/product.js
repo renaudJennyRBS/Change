@@ -155,7 +155,7 @@
 				axesLength, index = 0, parentValues = [];
 			if (val && val.hasOwnProperty('axes')) {
 				axesLength = val.axes.axesValues.length;
-				buildSelectAxisValues(index, parentValues, val.axes.products);
+				buildSelectAxisValues(index, parentValues, val.axes.products, val.axes.axesValues);
 
 				product = findProduct(productId, val.axes.products);
 				if (product) {
@@ -166,7 +166,7 @@
 							scope.selectedAxesValues[index] = scope.axesValues[index][i];
 							parentValues.push(productAxisVal);
 							if (index + 1 < axesLength) {
-								buildSelectAxisValues(index + 1, parentValues, val.axes.products);
+								buildSelectAxisValues(index + 1, parentValues, val.axes.products, val.axes.axesValues);
 							}
 						} else {
 							scope.selectedAxesValues[index] = null;
@@ -197,7 +197,7 @@
 			}
 
 			if (expected.length < axes.length) {
-				buildSelectAxisValues(expected.length, expected, products);
+				buildSelectAxisValues(expected.length, expected, products, axes);
 			}
 
 			for (i = expected.length; i < axes.length; i++) {
@@ -280,14 +280,26 @@
 			return null;
 		}
 
-		function buildSelectAxisValues(index, parentAxesValue, products) {
+		function buildSelectAxisValues(index, parentAxesValue, products, axes) {
 			var values = [], value, axisId;
 			angular.forEach(products, function(product) {
 				if (eqAxesValues(parentAxesValue, product.values)) {
 					value = product.values[index].value;
 					axisId = product.values[index].id;
 					if (value !== null && (getIndexOfValue(values, value) == -1)) {
-						values.push({id: axisId, value: value, title:value, index: index})
+						var title = value;
+						if (axes[index].hasOwnProperty('defaultValues') && axes[index]['defaultValues'].length > 0)
+						{
+							for (var i=0;i<axes[index]['defaultValues'].length;i++)
+							{
+								if (axes[index]['defaultValues'][i].hasOwnProperty('title') && axes[index]['defaultValues'][i]['value'] == value)
+								{
+									title = axes[index]['defaultValues'][i]['title'];
+									break;
+								}
+							}
+						}
+						values.push({id: axisId, value: value, title:title, index: index})
 					}
 				}
 			});

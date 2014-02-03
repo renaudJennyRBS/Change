@@ -80,7 +80,7 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'requiredValue'), ['ucf']) }}">
 		</rbs-field-boolean>
 
-		<rbs-field-boolean property="axis"
+		<rbs-field-boolean property="axis" data-ng-show="document.valueType == 'DocumentId' || document.valueType == 'String' || document.valueType == 'Integer' || document.valueType == 'Property'"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'axis'), ['ucf']) }}">
 		</rbs-field-boolean>
 
