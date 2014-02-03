@@ -25,7 +25,7 @@
 
 			<div class="depth-level-indicator" ng-style="extend.getIndicatorStyle(doc, $index)"></div>
 
-			<span class="pull-right" style="margin-right: 8px;">
+			<span class="pull-right">
 				<button ng-if="extend.isPage(doc) && ! extend.isIndexPage(doc)" type="button" class="btn-flat" ng-disabled="busy" ng-click="extend.setIndexPage(doc, $index); extend.busyIndex=$index;" ng-switch="busy && $index == extend.busyIndex">
 					{{ i18n('m.rbs.website.admin.index', ['ucf']) }}
 				</button>

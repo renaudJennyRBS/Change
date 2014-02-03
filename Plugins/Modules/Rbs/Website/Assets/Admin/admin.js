@@ -107,6 +107,10 @@
 				'Rbs_Website_Menu'
 			]);
 
+			$delegate.model('Rbs_Website_StaticPage')
+				.route('selector', 'Rbs/Website/Browse/?view=Structure', 'Document/Rbs/Website/Website/browse.twig')
+			;
+
 			$delegate.model('Rbs_Website_Menu')
 				.route('new', 'Rbs/Website/Website/:website/Menus/new', 'Document/Rbs/Website/Menu/form.twig')
 				.route('form', 'Rbs/Website/Website/:website/Menus/:id/:LCID', 'Document/Rbs/Website/Menu/form.twig')

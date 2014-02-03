@@ -38,6 +38,9 @@
 	"user_identifier":{
 		"message":"identifiant de l'interface d'administration"
 	},
+	"user_groups":{
+		"message":"groupes"
+	},
 	"profile":{
 		"message":"profile"
 	}

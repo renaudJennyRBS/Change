@@ -12,8 +12,10 @@
 	</li>
 	<li ng-show="filter.parameters.operator != 'isNull'">
 		<rbs-document-picker-single ng-model="filter.parameters.value" value-ids="true"
-				accepted-model="(= filterDefinition.config.documentType =)"></rbs-document-picker-single>
-		<div id="searchFiltersDocumentPickerEmbedContainer(=filter.name=)"></div>
+				select-model="(= filterDefinition.config.selectModel =)"
+				property-label="(= filterDefinition.config.label =)"
+				context-key="(= contextKey + '_' + filter.name =)"
+		></rbs-document-picker-single>
 		<div class="btn-group" ng-show="filterDefinition.config.possibleValues">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.admin.admin.possible_values') }} <span class="caret"></span></button></button>
 			<ul class="dropdown-menu pull-right">

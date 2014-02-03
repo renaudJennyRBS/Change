@@ -15,12 +15,15 @@
 		return {
 			restrict: 'E',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-panel.twig',
-
+			controller: ['$scope', function(scope) {
+				if (!angular.isDefined(scope.filter)) {
+					scope.filter = {};
+				}
+			}],
 			link: function(scope, element, attrs) {
 				var model = attrs.model;
 
 				if (!model) {
-					console.log('rbsDocumentFilterPanel directive require "model" attribute');
 					scope.model ='Rbs_Invalid_Model';
 					element.hide();
 				}
@@ -59,11 +62,6 @@
 				function initializeFilter()
 				{
 					scope.model = attrs.model;
-
-					if (!angular.isObject(scope.filter)){
-						scope.filter = {};
-					}
-
 					var loadedFilter = getStoredFilter();
 					if (loadedFilter && loadedFilter.name == 'group') {
 						angular.copy(loadedFilter, scope.filter);
@@ -111,6 +109,12 @@
 				});
 
 				initializeFilter();
+
+				scope.$watchCollection('filter.filters', function(filters) {
+					if (!scope.showFilter && angular.isArray(filters) && filters.length) {
+						scope.showFilter = true;
+					}
+				});
 			}
 		}
 	}]);
@@ -122,11 +126,21 @@
 		});
 		collection.remove();
 
-		var html = '', directiveName;
+		var html = '', directiveName, contextKey;
 		angular.forEach(filters, function(filter, idx){
 			if (scope.filterDefinitions.hasOwnProperty(filter.name)) {
 				directiveName = scope.filterDefinitions[filter.name].directiveName;
-				html += '<li class="list-group-item" '+ directiveName+ '="" filter="filter.filters['+ idx + ']" parent-operator="filter.operator"></li>';
+				html += '<li class="list-group-item" '+ directiveName+ '="" filter="filter.filters['+ idx + ']"';
+				contextKey = element.attr('context-key');
+				if (contextKey && contextKey.length) {
+					html += ' context-key="' + contextKey + '_'  + idx +'"';
+				} else {
+					html += ' context-key="' + idx +'"';
+				}
+				if (filter.name === 'group') {
+					html += ' parent-operator="filter.operator"';
+				}
+				html += '></li>';
 			} else {
 				html += '<li class="list-group-item" rbs-document-filter-unknown="" filter="filter.filters['+ idx + ']" parent-operator="filter.operator"></li>';
 			}
@@ -227,7 +241,7 @@
 		};
 	});
 
-	app.directive('rbsDocumentFilterContainer', ['$compile', function($compile) {
+	app.directive('rbsDocumentFilterContainer', ['$compile', 'RbsChange.Models', 'RbsChange.Navigation', function($compile, Models, Navigation) {
 		return {
 			restrict: 'A',
 			transclude: true,
@@ -242,18 +256,11 @@
 					scope.filter.filters = [];
 				}
 
-				if (!angular.isObject(scope.filter)) {
-					scope.$watch('filter', function(filter, oldFilter) {
-						if (filter === undefined) {
-							scope.filter = {};
-							initFilter();
-						} else if (angular.isObject(scope.filter) && scope.filter.name !== 'group') {
-							initFilter()
-						}
-					});
-				} else if (scope.filter.name !== 'group') {
-					initFilter();
-				}
+				scope.$watch('filter', function(filter) {
+					if (angular.isObject(filter) && scope.filter.name !== 'group') {
+						initFilter();
+					}
+				});
 
 				function delFilter(filter) {
 					var removeFilter = function(filter, filters) {
@@ -272,8 +279,6 @@
 					};
 					removeFilter(filter, scope.filter.filters);
 				}
-
-
 
 				var filterDefinitions = scope.filterDefinitions = {};
 
@@ -329,6 +334,23 @@
 						nodeScope.filterDefinition = scope.filterDefinitions[nodeScope.filter.name];
 					}
 				};
+
+				this.getCurrentContext = function() {
+					return scope.currentContext;
+				};
+
+				var currentContext = Navigation.getCurrentContext();
+				if (currentContext) {
+					var data = currentContext.savedData('filter_' + scope.model);
+					if (angular.isObject(data) && data.hasOwnProperty('filter'))
+					{
+						scope.currentContext = currentContext;
+						var search = scope.filter.search;
+						angular.extend(scope.filter, data.filter);
+						scope.filter.search = search;
+						Navigation.popContext(currentContext);
+					}
+				}
 			}],
 
 			link: function(scope, element) {
@@ -357,6 +379,13 @@
 
 				scope.$watchCollection('filter.filters', function(filters) {
 					redrawFilters($compile, scope, element, filters);
+				});
+
+				scope.$on('Navigation.saveContext', function (event, args) {
+					var label = Models.getModelLabel(scope.model);
+					args.context.label(label);
+					var data = {filter: scope.filter};
+					args.context.savedData('filter_' + scope.model, data);
 				});
 			}
 		};
@@ -414,7 +443,7 @@
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-unknown.twig',
 			scope: {
-				filter : '='
+				filter : '=', contextKey: "@"
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -439,7 +468,7 @@
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-boolean.twig',
 			scope: {
-				filter : '='
+				filter : '=', contextKey: "@"
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -470,7 +499,7 @@
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-datetime.twig',
 			scope: {
-				filter : '='
+				filter : '=', contextKey: "@"
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -497,7 +526,7 @@
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-document.twig',
 			scope: {
-				filter : '='
+				filter : '=', contextKey: "@"
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -523,7 +552,7 @@
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-number.twig',
 			scope: {
-				filter : '='
+				filter : '=', contextKey: "@"
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -548,7 +577,7 @@
 			require: '^rbsDocumentFilterContainer',
 			templateUrl : 'Rbs/Admin/js/directives/document-filter-property-string.twig',
 			scope: {
-				filter : '='
+				filter : '=', contextKey: "@"
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);

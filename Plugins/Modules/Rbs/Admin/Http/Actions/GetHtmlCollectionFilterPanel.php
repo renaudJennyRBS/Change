@@ -66,6 +66,14 @@ class GetHtmlCollectionFilterPanel
 								case Property::TYPE_DOCUMENTID:
 								case Property::TYPE_DOCUMENTARRAY:
 									$definitions[$key]['directiveName']= 'rbs-document-filter-property-document';
+									if (isset($definition['config']['documentType']))
+									{
+										$definitions[$key]['config']['selectModel'] = json_encode(['name' => $definition['config']['documentType']]);
+									}
+									else
+									{
+										$definitions[$key]['config']['selectModel'] = 'true';
+									}
 									break;
 							}
 						}

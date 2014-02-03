@@ -33,6 +33,7 @@
 								angular.forEach(results, function (result) {
 									var model = new ChangeModel();
 									angular.extend(model, result);
+									model.META$.loaded = true;
 									loadedModels.push(model);
 								});
 								allModels = $filter('orderBy')(loadedModels, ['plugin','label']);
@@ -100,6 +101,7 @@
 							}
 						}
 					}
+					getByFilter({name: name});
 					var labArray = name.toLowerCase().split('_');
 					return i18n.trans('m.' + labArray[0] + '.' + labArray[1] + '.documents.' + labArray[2]);
 				}

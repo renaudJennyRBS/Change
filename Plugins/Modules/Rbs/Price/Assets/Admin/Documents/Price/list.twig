@@ -14,7 +14,7 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true">
-			<rbs-column name="value" align="right" width="90px" >
+			<rbs-column name="value" align="right" primary="true">
 				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedValue=)</a>
 			</rbs-column>
 			<rbs-column sort="basePrice.value" name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
@@ -23,8 +23,6 @@
 			</rbs-column>
 			<rbs-column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
 			<rbs-column name="webStore" sort="webStore.label">(=doc.webStore.label=)</rbs-column>
-			<rbs-column name="startActivation">(= doc.startActivation | rbsDateTime =)</rbs-column>
-			<rbs-column name="endActivation">(= doc.endActivation | rbsDateTime =)</rbs-column>
 		</rbs-document-list>
 	</div>
 </div>
