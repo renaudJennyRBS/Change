@@ -9,7 +9,6 @@ use Zend\Http\Response;
  */
 class Result
 {
-
 	/**
 	 * @var Headers|null
 	 */
@@ -29,7 +28,7 @@ class Result
 	}
 
 	/**
-	 * @param int $httpStatusCode
+	 * @param integer $httpStatusCode
 	 */
 	public function setHttpStatusCode($httpStatusCode)
 	{
@@ -37,7 +36,7 @@ class Result
 	}
 
 	/**
-	 * @return int
+	 * @return integer
 	 */
 	public function getHttpStatusCode()
 	{

@@ -813,7 +813,7 @@ class Cart implements \Serializable
 
 	/**
 	 * @link http://php.net/manual/en/serializable.unserialize.php
-	 * @param string $serialized <p>
+	 * @param string $serialized
 	 * @return void
 	 */
 	public function unserialize($serialized)
@@ -856,7 +856,7 @@ class Cart implements \Serializable
 			'identifier' => $this->identifier,
 			'context' => $this->getContext()->toArray(),
 			'errors' => [],
-			'lastUpdate' => $this->lastUpdate->format(\DateTime::ISO8601),
+			'lastUpdate' => $this->lastUpdate ? $this->lastUpdate->format(\DateTime::ISO8601) : null,
 			'webStoreId' => $this->webStoreId,
 			'billingAreaId' => $this->billingArea ? $this->billingArea->getId() : null,
 			'currencyCode' => $this->billingArea ? $this->billingArea->getCurrencyCode() : null,
