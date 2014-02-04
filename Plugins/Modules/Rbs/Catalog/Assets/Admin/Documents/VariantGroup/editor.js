@@ -7,9 +7,9 @@
 	 */
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup',
 		['RbsChange.REST', '$timeout', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n',
-			'RbsChange.UrlManager', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu',
+			'RbsChange.UrlManager', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', '$q',
 			function Editor (REST, $timeout, $routeParams, Breadcrumb, i18n,
-				UrlManager, ArrayUtils, MainMenu)
+				UrlManager, ArrayUtils, MainMenu, $q)
 	{
 		return {
 			restrict : 'A',
@@ -44,9 +44,19 @@
 				};
 
 				scope.initDocument = function(){
-						if ($routeParams.hasOwnProperty('variantGroupId')) {
+					if ($routeParams.hasOwnProperty('variantGroupId')) {
+						var docId = $routeParams.variantGroupId;
+						if (docId != 'new')
+						{
 							return REST.resource('Rbs_Catalog_VariantGroup', parseInt($routeParams.variantGroupId, 10));
+						} else {
+							var defered = $q.defer();
+							var promise = defered.promise;
+							var document = REST.newResource('Rbs_Catalog_VariantGroup');
+							defered.resolve(document);
+							return promise;
 						}
+					}
 					return null;
 				};
 

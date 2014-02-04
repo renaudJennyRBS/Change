@@ -1,10 +1,23 @@
 <div class="row" ng-controller="Rbs_Catalog_VariantGroup_VariantListController">
 
 	<div rbs-aside-column>
-		<rbs-links-panel>
-			<a rbs-active-route="" class="list-group-item" href="(= document | rbsURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
-		</rbs-links-panel>
-		<rbs-aside template="Document/Rbs/Catalog/VariantGroup/aside.twig"></rbs-aside>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-config':{productId:document.rootProduct.id}=)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_variant_config', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-edit':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_edit', ['ucf']) | raw}}</a>
+				</p>
+			</div>
+		</div>
+		<div class="rbs-aside-block" ng-show="document.rootProduct">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+		</div>
 	</div>
 
 	<div rbs-main-column>

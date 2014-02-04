@@ -27,6 +27,13 @@
 				scope.possibleVariantsCount = 0;
 				scope.hasJobs = false;
 
+				scope.initDocument = function(){
+					if ($routeParams.hasOwnProperty('variantGroupId')) {
+						return REST.resource('Rbs_Catalog_VariantGroup', parseInt($routeParams.variantGroupId, 10));
+					}
+					return null;
+				};
+
 				scope.onLoad = function() {
 
 					scope.hasJobs = (angular.isArray(scope.document.jobs) && scope.document.jobs.length > 0);

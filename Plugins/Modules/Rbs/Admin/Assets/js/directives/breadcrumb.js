@@ -79,11 +79,11 @@
 					// - populate 'breadcrumbData' (3rd arg) (location, path, resource an resourceModifier)
 					// - eventually populate the 'promises' array (4th arg) if you have async processes
 
-					$rootScope.$broadcast('Change:UpdateBreadcrumb', eventData, breadcrumbData, promises);
+					var bcEvent = $rootScope.$broadcast('Change:UpdateBreadcrumb', eventData, breadcrumbData, promises);
 
 					// If no one has set 'path' and 'resource' properties of the 'breadcrumbData' object,
 					// a default process is done here.
-					if (breadcrumbData.path.length === 0 && ! breadcrumbData.resource)
+					if (!bcEvent.defaultPrevented && breadcrumbData.path.length === 0 && ! breadcrumbData.resource)
 					{
 						defaultUpdateBreadcrumb(eventData, breadcrumbData, promises);
 					}

@@ -32,11 +32,17 @@
 	"variantgroup_variant":{
 		"message":"variantes"
 	},
-	"variantgroup_variantlist":{
+	"variantgroup_variant_list":{
 		"message":"liste des variantes"
+	},
+	"variantgroup_variant_config":{
+		"message":"configuration des attributs"
 	},
 	"variantgroup_edit":{
 		"message":"configuration des variantes"
+	},
+	"variantgroup_variant_edit":{
+		"message":"génération des variantes"
 	},
 	"variantgroup_visibility_head":{
 		"message":"visible dans les listes"
@@ -265,9 +271,6 @@
 	},
 	"crosssellingproductlist_crossselling_lists_aside_link":{
 		"message":"produits associés"
-	},
-	"variantgroup_aside_link":{
-		"message":"variantes"
 	},
 	"productlist_productlist_picker_title":{
 		"message":"choisissez la liste où ajouter le produit"

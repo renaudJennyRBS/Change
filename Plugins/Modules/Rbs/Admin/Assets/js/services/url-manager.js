@@ -134,20 +134,27 @@
 				var replaceParams = function (urlTpl, routeParams, queryStringParams)
 				{
 					queryStringParams = angular.extend({}, queryStringParams);
+					var tplParamRegexp = /:([a-z]+)/gi, tplParams = [], result;
+					while (result = tplParamRegexp.exec(urlTpl)) {
+						tplParams.push(result[1]);
+					};
 
-					angular.forEach(routeParams, function (v, k)
-					{
-						if (angular.isObject(v) && v.id) {
-							v = v.id;
-						}
-						// Is this a parameter in the route?
-						if (urlTpl.indexOf(':' + k) !== -1) {
-							urlTpl = urlTpl.replace(new RegExp(':'+k, 'g'), v);
-							// Do NOT set a parameter in the query string if it has already been used in the route.
-							if (queryStringParams.hasOwnProperty(k)) {
-								delete queryStringParams[k];
+					angular.forEach(tplParams, function(paramName){
+						var v = '';
+						if (routeParams.hasOwnProperty(paramName)){
+							v = routeParams[paramName];
+							if (angular.isObject(v) && v.id) {
+								v = v.id;
 							}
+							// Do NOT set a parameter in the query string if it has already been used in the route.
+							if (queryStringParams.hasOwnProperty(paramName)) {
+								delete queryStringParams[paramName];
+							}
+
+						} else {
+							console.error(paramName + ' can not be replaced in URL tpl ' + urlTpl);
 						}
+						urlTpl = urlTpl.replace(new RegExp(':'+paramName, 'g'), v);
 					});
 
 					urlTpl = urlTpl.replace(/\/+/g, '/');
@@ -205,14 +212,6 @@
 
 					if (! angular.isObject(params)) {
 						params = {};
-					}
-
-					if (! params.LCID && doc.LCID) {
-						params.LCID = doc.LCID;
-					}
-
-					if ((! name || name === 'form') && doc.refLCID && doc.refLCID !== params.LCID) {
-						name = 'translate';
 					}
 
 					url = getUrl(doc, name || 'form');
