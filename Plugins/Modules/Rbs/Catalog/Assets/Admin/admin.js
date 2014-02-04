@@ -12,7 +12,7 @@
 	__change.createEditorForModelTranslation('Rbs_Catalog_Product');
 
 
-	app.run(['$templateCache', '$rootScope', '$location', 'RbsChange.REST', function ($templateCache, $rootScope, $location, REST)
+	app.run(['$templateCache', '$rootScope', '$location', 'RbsChange.REST', 'RbsChange.i18n', function ($templateCache, $rootScope, $location, REST, i18n)
 	{
 		$templateCache.put(
 			'picker-item-Rbs_Catalog_Product.html',
@@ -21,25 +21,25 @@
 
 		// Update Breadcrumb.
 		$rootScope.$on('Change:UpdateBreadcrumb', function (event, eventData, breadcrumbData, promises) {
-			updateBreadcrumb(eventData, breadcrumbData, promises, REST, $location);
+			updateBreadcrumb(event, eventData, breadcrumbData, promises, REST, i18n, $location);
 		});
 	}]);
 
 
 	/**
 	 * Updates the Breadcrumb when the default implementation is not the desired behavior.
+	 * @param event
 	 * @param eventData
 	 * @param breadcrumbData
 	 * @param promises
 	 * @param REST
 	 * @param $location
 	 */
-	function updateBreadcrumb (eventData, breadcrumbData, promises, REST, $location)
+	function updateBreadcrumb (event, eventData, breadcrumbData, promises, REST, i18n, $location)
 	{
 		if (eventData.modelName === 'Rbs_Catalog_CrossSellingProductList')
 		{
 			var p, search = $location.search();
-			// TODO
 			// Here only the creation is handled, because there is no 'productId' parameter when editing
 			// existing CrossSellingProductLists.
 			if (search.hasOwnProperty('productId'))
@@ -53,6 +53,25 @@
 				});
 				promises.push(p);
 			}
+		}
+		else if (eventData.route.relatedModelName == "Rbs_Catalog_VariantGroup")
+		{
+			event.preventDefault();
+			p = REST.resource(eventData.route.params.id).then(function (variant)
+			{
+				breadcrumbData.resource = [i18n.trans('m.rbs.catalog.documents.variantgroup | ucf'), variant.url('variant-list', {productId:eventData.route.params.productId})];
+				if (eventData.route.ruleName == 'variant-list')
+				{
+					breadcrumbData.resourceModifier = null;
+				}
+				else
+				{
+					breadcrumbData.resourceModifier = eventData.route.labelKey || eventData.route.ruleName;
+				}
+				breadcrumbData.location.push([variant.rootProduct.label, variant.rootProduct.url('form')]);
+				console.log(breadcrumbData);
+			});
+			promises.push(p);
 		}
 	}
 
@@ -72,8 +91,9 @@
 						{'templateUrl':'Document/Rbs/Catalog/Product/product-cross-selling.twig', 'labelKey':'m.rbs.catalog.admin.crosssellingproductlist_title | ucf'})
 				.route('product-lists','Rbs/Catalog/Product/:id/ProductLists/',
 						{'templateUrl':'Document/Rbs/Catalog/Product/product-lists.twig', 'labelKey':'m.rbs.catalog.admin.productlist_list | ucf'})
-				.route('variant-group', 'Rbs/Catalog/Product/:id/VariantGroup/:variantGroupId',
-							{'templateUrl':'Document/Rbs/Catalog/VariantGroup/form.twig', 'labelKey':'m.rbs.catalog.documents.variantgroup | ucf'});
+				.route('variant-new', 'Rbs/Catalog/Product/:id/VariantGroup/new',
+					{'templateUrl':'Document/Rbs/Catalog/VariantGroup/form.twig', 'labelKey':'m.rbs.catalog.documents.variantgroup | ucf'});
+
 
 			$delegate.model('Rbs_Catalog_ProductList')
 				.route('productListItems', 'Rbs/Catalog/ProductList/:id/Products/', 'Document/Rbs/Catalog/ProductList/products.twig');
@@ -86,11 +106,13 @@
 
 			$delegate.routesForLocalizedModels(['Rbs_Catalog_Product', 'Rbs_Brand_Brand']);
 			$delegate.routesForModels(['Rbs_Catalog_ProductList', 'Rbs_Catalog_SectionProductList', 'Rbs_Catalog_CrossSellingProductList',
-				'Rbs_Catalog_ProductListItem', 'Rbs_Catalog_VariantGroup' ]);
+				'Rbs_Catalog_ProductListItem']);
 
 			$delegate.model('Rbs_Catalog_VariantGroup')
-				.route('variantList', 'Rbs/Catalog/VariantGroup/:id/VariantList/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
-				.route('variantEdit', 'Rbs/Catalog/VariantGroup/:id/Edit', 'Document/Rbs/Catalog/VariantGroup/variant-form.twig');
+				.route('variant-list', 'Rbs/Catalog/Product/:productId/VariantGroup/:id/list/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
+				.route('variant-edit', 'Rbs/Catalog/Product/:productId/VariantGroup/:id/edit', {'templateUrl': 'Document/Rbs/Catalog/VariantGroup/variant-form.twig', 'labelKey':'m.rbs.catalog.admin.variantgroup_variant_edit | ucf'})
+				.route('variant-config', 'Rbs/Catalog/Product/:productId/VariantGroup/:id',
+					{'templateUrl':'Document/Rbs/Catalog/VariantGroup/form.twig', 'labelKey':'m.rbs.catalog.admin.variantgroup_variant_config | ucf'})
 
 			$delegate.model("Rbs_Catalog_SectionProductList").route('list', '/Rbs/Catalog/ProductList/', {'templateUrl':'Document/Rbs/Catalog/ProductList/list.twig'});
 

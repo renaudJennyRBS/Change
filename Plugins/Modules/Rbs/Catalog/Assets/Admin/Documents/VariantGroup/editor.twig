@@ -3,22 +3,6 @@
 	          data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<div data-ng-if="document.isNew()">
-			<rbs-field property="rootProduct" required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}">
-				<p class="form-control-static">(= document.rootProduct.label =)</p>
-			</rbs-field>
-		</div>
-
-		<div class="form-group property" ng-hide="document.isNew()">
-			<label class="col-lg-3 control-label">{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'rootProduct'), ['ucf']) }}</label>
-			<div class="col-lg-9 controls">
-				<p class="form-control-static">
-					<a href ng-href="(= document.rootProduct | rbsURL =)">(= document.rootProduct.label =)</a>
-				</p>
-			</div>
-		</div>
-
 		<h3>
 			{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}
 			<input type="hidden" data-ng-model="document.axesAttributes" name="axesAttributesLength">
@@ -98,12 +82,6 @@
 				selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_othersAttributes_picker_title', ['ucf']) }}"
 				picker-template="picker-other.twig">
 		</rbs-field-picker-multiple>
-	</fieldset>
-
-	<fieldset data-ng-show="section=='systeminfo'"
-		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
-	 	data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-		data-rbs-document-system-info-section="">
 	</fieldset>
 
 	<rbs-form-button-bar></rbs-form-button-bar>

@@ -76,8 +76,8 @@
 					return Utils.isNew(this);
 				};
 
-				ChangeDocument.prototype.url = function (name) {
-					return UrlManager.getUrl(this, name || 'form');
+				ChangeDocument.prototype.url = function (name, params) {
+					return UrlManager.getUrl(this, params || {}, name || 'form');
 				};
 
 				ChangeDocument.prototype.refUrl = function (name) {

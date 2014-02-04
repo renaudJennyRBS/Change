@@ -279,10 +279,12 @@
 
 				function executeSaveAction () {
 					saveOperation("Saving Document");
+					var pList = $scope.changes;
+					pList.push('documentVersion');
 					REST.save(
 						$scope.document,
 						Breadcrumb.getCurrentNode(),
-						$scope.changes
+						pList
 					).then(saveSuccessHandler, saveErrorHandler);
 				}
 
