@@ -64,8 +64,18 @@
 					<div>
 						<p><span class="label label-info">{{ i18n('m.rbs.website.admin.tip', ['ucf']) }}</span> {{ i18n('m.rbs.website.admin.dont_find_page_create_one') }}</p>
 						<div class="btn-toolbar">
-							<a class="btn btn-sm btn-default" rbs-start-navigation="" data-navigation-function="(= newFunction.code || newFunction.functionCode =)" href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn:section.id} =)"><i class="icon-plus"></i> {{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
-							<a class="btn btn-sm btn-default" rbs-start-navigation="" data-navigation-function="(= newFunction.code || newFunction.functionCode =)" href target-url="(= 'Rbs_Website_FunctionalPage' | rbsURL:'new':{tn:section.id} =)"><i class="icon-plus"></i> {{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}</a>
+							<a class="btn btn-sm btn-default" rbs-start-navigation=""
+								data-navigation-model="Rbs_Website_StaticPage"
+								data-navigation-property-type="Document" data-value-key="editor.page"
+								href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn:section.id} =)">
+								<i class="icon-plus"></i> {{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}
+							</a>
+							<a class="btn btn-sm btn-default" rbs-start-navigation=""
+								data-navigation-model="Rbs_Website_FunctionalPage"
+								data-navigation-property-type="Document" data-value-key="editor.page"
+								href target-url="(= 'Rbs_Website_FunctionalPage' | rbsURL:'new':{tn:section.id} =)">
+								<i class="icon-plus"></i> {{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}
+							</a>
 						</div>
 					</div>
 				</div>

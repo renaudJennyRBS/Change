@@ -262,17 +262,21 @@
 				iElement.click(function (event)
 				{
 					var targetUrl = attrs.targetUrl, params = {}, hasParams = false;
+					var valueKey = null;
 					angular.forEach(iElement.data(), function (v, n)
 					{
 						if (n.substr(0, 10) === 'navigation') {
 							hasParams = true;
 							params[angular.lowercase(n.substr(10, 1)) + n.substr(11)] = v;
 						}
+						if (n === 'valueKey') {
+							valueKey = v;
+						}
 					});
 					if (!hasParams) {
 						params = null;
 					}
-					Navigation.startSelectionContext(targetUrl, null, params);
+					Navigation.startSelectionContext(targetUrl, valueKey, params);
 					$rootScope.$apply();
 				});
 			}
