@@ -46,4 +46,16 @@ class Mail extends \Compilation\Rbs\Mail\Documents\Mail implements \Change\Prese
 		//FIXME how to find the correct website in websites?
 		return count($this->getWebsites()) ? $this->getWebsites()[0] : null;
 	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @throws \Exception
+	 */
+	protected function onDelete()
+	{
+		if (!$this->getIsVariation())
+		{
+			throw new \RuntimeException('can not delete an original mail', 999999);
+		}
+	}
 }

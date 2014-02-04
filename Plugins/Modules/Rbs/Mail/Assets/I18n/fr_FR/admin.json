@@ -16,5 +16,11 @@
 	},
 	"richtext":{
 		"message":"Bloc de texte"
+	},
+	"mail_add_mail_variation":{
+		"message":"Ajouter une déclinaison"
+	},
+	"mail_add_mail_variation_error":{
+		"message":"Une erreur s'est produite pendant l'ajout d'une variation de mail"
 	}
 }

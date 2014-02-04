@@ -13,5 +13,6 @@
 		<property name="senderMail" type="String" localized="true" has-correction="true" />
 		<property name="websites" type="DocumentArray" document-type="Rbs_Website_Website" />
 		<property name="substitutions" type="JSON"  />
+		<property name="isVariation" default-value="false" />
 	</properties>
 </document>
