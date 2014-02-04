@@ -327,7 +327,9 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 					case Property::TYPE_DOCUMENTID:
 					case Property::TYPE_DOCUMENTARRAY:
 						$definition = ['name' => $property->getName(), 'parameters' => ['propertyName' => $property->getName()]];
-						$definition['config']['documentType'] = $property->getDocumentType() ? $property->getDocumentType() : '';
+						if ($property->getDocumentType()) {
+							$definition['config']['documentType'] = $property->getDocumentType();
+						}
 						break;
 				}
 

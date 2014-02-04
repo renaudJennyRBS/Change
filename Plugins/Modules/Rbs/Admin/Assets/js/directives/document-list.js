@@ -449,31 +449,25 @@
 						previewButton = '<button type="button" class="btn-flat" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
 
-					var navCtx = Navigation.getCurrentContext();
-					if (navCtx && navCtx.isSelection() && tElement.closest('rbs-document-editor').length === 0)
+					if (tElement.closest('rbs-document-editor').length === 0)
 					{
-						var selectHtml = '';
-
-						if (navCtx.param('multiple')) {
-							selectHtml +=
-								'<button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc)">' +
+						var selectHtml =
+								'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc)">' +
 								' <i class="icon-plus"></i></button>';
-						}
 
 						selectHtml += ' <button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc, true)">' +
 							i18n.trans('m.rbs.admin.adminjs.select') +
 							' <i class="icon-circle-arrow-right"></i></button>';
 
-
-						$td.find('.primary-cell').prepend('<span ng-if="isModelCompatibleWithSelection(doc)" class="pull-right quick-actions-buttons">' + previewButton + selectHtml + '</span>');
-
+						$td.find('.primary-cell').prepend('<span ng-show="selectionContext" class="pull-right quick-actions-buttons">' + previewButton + selectHtml + '</span>');
 					}
-					else if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].contents.length > 0) {
+
+					if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].contents.length > 0) {
 						// if quickActions markup is not present, default quick actions are taken
 						// but if it present and empty, don't add the quick actions button
 						$td.find('.primary-cell')
 							.prepend(
-								'<span class="pull-right quick-actions-buttons">' +
+								'<span class="pull-right quick-actions-buttons" ng-hide="selectionContext">' +
 									previewButton +
 									'<button type="button" class="btn-flat" ng-click="toggleQuickActions($index, $event)"><i class="icon-ellipsis-horizontal icon-large"></i></button>' +
 									buildQuickActionsHtml(dlid, tAttrs, localActions) +
@@ -594,8 +588,6 @@
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
 					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
 
-
-
 					scope.deleteConfirm = {};
 
 					scope.askDeleteConfirmation = function ($index, $event) {
@@ -620,9 +612,14 @@
 
 					scope.$on('$locationChangeSuccess', function (event) {
 						var navCtx = Navigation.getCurrentContext();
-						if (!navCtx && scope.selectionContext) {
-							scope.selectionContext = null;
-							scope.selectionContextDocuments = [];
+						if (navCtx === undefined) {
+							navCtx = null;
+						}
+						if (navCtx !== scope.selectionContext) {
+							if (scope.selectionContext) {
+								scope.selectionContextDocuments = [];
+							}
+							scope.selectionContext = navCtx ? navCtx : null;
 						}
 					});
 
@@ -668,12 +665,6 @@
 							Navigation.setSelectionContextValue();
 						};
 					}
-
-					// Checks whether the given Document is suitable for the current selection process (if any).
-					scope.isModelCompatibleWithSelection = function (doc)
-					{
-						return navCtx && navCtx.isSelection();
-					};
 
 					//
 					// data-* attributes
@@ -740,50 +731,50 @@
 					};
 
 
+					scope.$watch('selectionContext', function (selectionContext) {
+						var selectionEnabled = scope.hasColumn('selectable') && (!selectionContext || !selectionContext.isSelection() || selectionContext.param('multiple'));
+						scope.selectionEnabled = selectionEnabled;
+						scope.selected = [];
+					});
 
 					//
 					// Document selection.
 					//
-
-					scope.selectionEnabled = scope.hasColumn('selectable') && (! scope.selectionContext || ! scope.selectionContext.isSelection() || scope.selectionContext.param('multiple'));
-
 					function updateSelectedDocuments () {
 						var selectedDocuments = [];
 						var selected = [];
-						angular.forEach(scope.collection, function (doc, index) {
-							var cb = false;
-							if(index < scope.selected.length && scope.selected[index].cb){
-								selectedDocuments.push(doc);
-								cb = true;
-							}
-							selected.push({'cb': cb});
-						});
+						if (scope.selectionEnabled) {
+							angular.forEach(scope.collection, function (doc, index) {
+								var cb = false;
+								if (index < scope.selected.length && scope.selected[index].cb){
+									selectedDocuments.push(doc);
+									cb = true;
+								}
+								selected.push({'cb': cb});
+							});
+						}
 						scope.selected = selected;
 						scope.selectedDocuments = selectedDocuments;
 						scope.$emit('Change:DocumentList:' + dlid + ':CollectionChanged', scope.collection);
 					}
 
-					if (scope.selectionEnabled)
-					{
-						scope.allSelected = {
-							'cb' : false
-						};
-						scope.selected = [];
+					scope.allSelected = {'cb' : false};
+					scope.selected = [];
 
-						scope.$watch('allSelected', function () {
-							angular.forEach(scope.selected, function (selected) {
-								selected.cb = scope.allSelected.cb;
-							});
-						}, true);
 
-						scope.$watchCollection('collection', updateSelectedDocuments);
-						scope.$watch('selected', updateSelectedDocuments, true);
-					}
+					scope.$watch('allSelected', function (allSelected) {
+						angular.forEach(scope.selected, function (selected) {
+							selected.cb = scope.allSelected.cb;
+						});
+					}, true);
+
+					scope.$watchCollection('collection', updateSelectedDocuments);
+					scope.$watch('selected', updateSelectedDocuments, true);
 
 
 					scope.deselectAll = function () {
 						scope.allSelected.cd = false;
-					}
+					};
 
 					//
 					// Actions.
