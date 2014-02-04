@@ -34,5 +34,8 @@
 	},
 	"mail_substitutions":{
 		"message":"substitutions"
+	},
+	"mail_isvariation":{
+		"message":"déclinaison"
 	}
 }

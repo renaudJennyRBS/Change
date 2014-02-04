@@ -42,6 +42,9 @@
 				</div>
 			</div>
 			<div rbs-main-column>
+				<button ng-if="!document.isVariation" type="button" class="btn btn-default pull-right" ng-click="addMailVariation()">
+					<i class="icon-mail-reply-all"></i> {{ i18n('m.rbs.mail.admin.mail_add_mail_variation', ['ucf']) }}
+				</button>
 				<div class="document-form">
 					<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Mail_Mail'), ['ucf']) }}"></rbs-page-header>
 					<rbs-document-editor rbs-document-editor-rbs-mail-mail=""></rbs-document-editor>

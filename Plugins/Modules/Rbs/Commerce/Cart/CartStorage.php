@@ -255,7 +255,7 @@ class CartStorage
 			$qb->assign($fb->column('user_id'), $fb->integerParameter('userId'));
 			$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
 			$qb->assign($fb->column('transaction_id'), $fb->integerParameter('transactionId'));
-			$qb->assign($fb->column('order_id'), $fb->integerParameter('order_id'));
+			$qb->assign($fb->column('order_id'), $fb->integerParameter('orderId'));
 			$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
 			$qb->assign($fb->column('price_value'), $fb->decimalParameter('priceValue'));
 			$qb->assign($fb->column('price_value_with_tax'), $fb->decimalParameter('priceValueWithTax'));
