@@ -9,7 +9,6 @@
 	 * @attribute ng-model
 	 * @attribute value-ids
 	 * @attribute accepted-model
-	 * @attribute property-label
 	 * @attribute selector-url eg: "/Rbs/User/Group/new"
 	 * @attribute context-key
 	 * @attribute selector-title
