@@ -86,6 +86,9 @@
 	"page_edit_template":{
 		"message":"éditer le template de page"
 	},
+	"page_template_not_suitable_help":{
+		"message":"le modèle sélectionné n'est pas compatible avec les pages, le document ne pourra pas être enregistré"
+	},
 	"manage_functions":{
 		"message":"gestion des fonctions"
 	},

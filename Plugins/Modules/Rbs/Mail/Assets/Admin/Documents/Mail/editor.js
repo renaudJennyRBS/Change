@@ -11,9 +11,10 @@
 	 * @param NotificationCenter
 	 * @param ErrorFormatter
 	 * @param $location
+	 * @param $q
 	 * @constructor
 	 */
-	function Editor($http, REST, Utils, i18n, NotificationCenter, ErrorFormatter, $location)
+	function Editor($http, REST, Utils, i18n, NotificationCenter, ErrorFormatter, $location, $q)
 	{
 		return {
 			restrict : 'A',
@@ -104,11 +105,27 @@
 					}
 				}, true);
 
+				scope.preSave = function (document) {
+					var p = $q.defer();
+					if (document.template.mailSuitable) {
+						p.resolve();
+					}
+					else {
+						var error = {
+							code: 999999,
+							message: i18n.trans('m.rbs.mail.admin.mail_template_not_suitable_help | ucf'),
+							httpStatus: 500
+						};
+						p.reject(error);
+					}
+					return p.promise;
+				};
+
 				editorCtrl.init('Rbs_Mail_Mail');
 			}
 		};
 	}
 
-	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', 'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', '$location'];
+	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.i18n', 'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', '$location', '$q'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsMailMail', Editor);
 })();

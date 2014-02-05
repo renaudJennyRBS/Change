@@ -19,6 +19,9 @@
 			property="pageTemplate"
 			accepted-model="Rbs_Theme_Template"
 			ng-model="document.pageTemplate">
+			<span ng-if="document.pageTemplate.mailSuitable" class="help-block text-warning">
+				{{ i18n('m.rbs.website.admin.page_template_not_suitable_help', ['ucf']) }}
+			</span>
 		</rbs-field-document-select>
 
 		<hr />
