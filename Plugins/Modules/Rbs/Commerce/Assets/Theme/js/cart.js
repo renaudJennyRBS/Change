@@ -130,11 +130,10 @@
 						else {
 							for (var i = 0; i < scope.modes.length; i++) {
 								if (scope.modes[i].id == scope.delivery.modeId) {
-									scope.currentMode = scope.modes[i];
+									scope.selectMode(i);
 								}
 							}
 						}
-						setupConfigurationZone();
 					})
 					.error(function(data, status, headers) {
 						console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status, headers);
@@ -143,12 +142,10 @@
 				scope.selectMode = function(index) {
 					console.log('rbsCommerceShippingModeSelector - selectMode', index);
 					var mode = scope.modes[index];
-					if (mode.id != scope.delivery.modeId) {
-						scope.delivery.modeId = mode.id;
-						scope.delivery.modeTitle = mode.title;
-						scope.currentMode = mode;
-						setupConfigurationZone();
-					}
+					scope.delivery.modeId = mode.id;
+					scope.delivery.modeTitle = mode.title;
+					scope.currentMode = mode;
+					setupConfigurationZone();
 					console.log('rbsCommerceShippingModeSelector - scope.display.directiveName', mode.directiveName);
 				};
 
@@ -161,6 +158,19 @@
 
 	rbsCommerceShippingModeSelector.$inject = ['$http', '$compile', '$sce'];
 	app.directive('rbsCommerceShippingModeSelector', rbsCommerceShippingModeSelector);
+
+	// A trivial directive for shipping mode without any configuration.
+	function rbsCommerceShippingModeConfigurationNone() {
+		return {
+			restrict: 'AE',
+			scope: false,
+			link: function(scope) {
+				scope.delivery.isConfigured = true;
+			}
+		}
+	}
+
+	app.directive('rbsCommerceShippingModeConfigurationNone', rbsCommerceShippingModeConfigurationNone);
 
 	// A directive to configure a shipping mode by selecting an address.
 	function rbsCommerceShippingModeConfigurationAddress() {
@@ -446,7 +456,9 @@
 			scope.information.email = scope.cart.email;
 			scope.information.confirmEmail = scope.cart.email;
 			scope.information.address = getObject(scope.cart.address, true);
-			scope.information.isAddressValid = false;
+			if (!scope.information.hasOwnProperty('isAddressValid')) {
+				scope.information.isAddressValid = false;
+			}
 		};
 
 		scope.canAuthenticate = function() {
@@ -559,7 +571,7 @@
 			}
 
 			if (scope.shipping.deliveries.length == 0) {
-				// TODO: handle forced shipping modes and reload data from cart.
+				// TODO: handle forced shipping modes.
 				var defaultDelivery = { lines: [], address: {}, options: { } };
 				for (i = 0; i < scope.cart.lines.length; i++) {
 					defaultDelivery.lines.push(scope.cart.lines[i]);

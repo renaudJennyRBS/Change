@@ -46,7 +46,7 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 				if ($index == 0)
 				{
 					$modeInfos['feesValue'] = 'Offert';
-					$modeInfos['directiveName'] = null;
+					$modeInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-none';
 				}
 				elseif ($index == 1)
 				{
