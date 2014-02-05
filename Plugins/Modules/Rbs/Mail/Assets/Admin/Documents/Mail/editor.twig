@@ -28,6 +28,9 @@
 		<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'template'), ['ucf']) }}" required="true"
 				property="template" ng-model="document.template"
 				accepted-model="Rbs_Theme_Template">
+			<span ng-if="!document.template.mailSuitable" class="help-block text-warning">
+				{{ i18n('m.rbs.mail.admin.mail_template_not_suitable_help', ['ucf']) }}
+			</span>
 		</rbs-field-document-select>
 
 		<rbs-field-text property="senderName"

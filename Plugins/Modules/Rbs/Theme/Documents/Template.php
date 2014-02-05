@@ -51,6 +51,7 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 			{
 				$documentLink->setProperty('label', $theme->getLabel() . ' > ' . $pageTemplate->getLabel());
 			}
+			$documentLink->setProperty('mailSuitable', $pageTemplate->getMailSuitable());
 		}
 	}
 

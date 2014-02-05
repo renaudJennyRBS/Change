@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function changeEditorWebsitePage($rootScope, REST, Breadcrumb) {
+	function changeEditorWebsitePage($rootScope, REST, Breadcrumb, $q, i18n) {
 		return {
 			restrict: 'A',
 			templateUrl: 'Document/Rbs/Website/StaticPage/editor.twig',
@@ -93,6 +93,21 @@
 					scope.loadTemplate();
 				}, true);
 
+				scope.preSave = function (document) {
+					var p = $q.defer();
+					if (!document.pageTemplate.mailSuitable) {
+						p.resolve();
+					}
+					else {
+						var error = {
+							code: 999999,
+							message: i18n.trans('m.rbs.website.admin.page_template_not_suitable_help | ucf'),
+							httpStatus: 500
+						};
+						p.reject(error);
+					}
+					return p.promise;
+				};
 			}
 		};
 
@@ -103,7 +118,9 @@
 	changeEditorWebsitePage.$inject = [
 		'$rootScope',
 		'RbsChange.REST',
-		'RbsChange.Breadcrumb'
+		'RbsChange.Breadcrumb',
+		'$q',
+		'RbsChange.i18n'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteStaticpage', changeEditorWebsitePage);
 

@@ -18,9 +18,12 @@
 		"message":"Bloc de texte"
 	},
 	"mail_add_mail_variation":{
-		"message":"Ajouter une déclinaison"
+		"message":"ajouter une déclinaison"
 	},
 	"mail_add_mail_variation_error":{
-		"message":"Une erreur s'est produite pendant l'ajout d'une variation de mail"
+		"message":"une erreur s'est produite pendant l'ajout d'une variation de mail"
+	},
+	"mail_template_not_suitable_help":{
+		"message":"le modèle sélectionné n'est pas compatible avec les mails, le document ne pourra pas être enregistré"
 	}
 }
