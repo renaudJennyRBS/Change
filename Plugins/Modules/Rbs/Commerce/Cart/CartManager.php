@@ -439,6 +439,24 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param integer|\Rbs\User\Documents\User $user
+	 */
+	public function affectUser(\Rbs\Commerce\Cart\Cart $cart, $user)
+	{
+		try
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(array('cart' => $cart, 'user' => $user));
+			$this->getEventManager()->trigger('affectUser', $this, $args);
+		}
+		catch (\Exception $e)
+		{
+			$this->getLogging()->exception($e);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param string|\Rbs\Commerce\Cart\CartLine $key
 	 * @return \Rbs\Commerce\Cart\CartLine|null
 	 */
@@ -565,10 +583,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		if ($cart instanceof Cart)
 		{
 			$cart->setDocumentManager($event->getApplicationServices()->getDocumentManager());
-			$webstore = $cart->getWebStore();
-			if ($webstore)
+			$webStore = $cart->getWebStore();
+			if ($webStore)
 			{
-				$cart->setPricesValueWithTax($webstore->getPricesValueWithTax());
+				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
 			}
 
 			foreach ($cart->getLines() as $index => $line)

@@ -192,6 +192,24 @@ class Listeners implements ListenerAggregateInterface
 			}
 		};
 		$events->attach('affectOrder', $callback, 5);
+
+		$callback = function (Event $event)
+		{
+			$cart = $event->getParam('cart');
+			$user = $event->getParam('user');
+			$cs = $event->getServices('commerceServices');
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cs instanceof \Rbs\Commerce\CommerceServices && isset($user))
+			{
+				$as = $event->getApplicationServices();
+				$cartStorage = new \Rbs\Commerce\Cart\CartStorage();
+				$cartStorage->setTransactionManager($as->getTransactionManager())
+					->setDbProvider($as->getDbProvider())
+					->setDocumentManager($as->getDocumentManager())
+					->setContext($cs->getContext());
+				$cartStorage->affectUser($cart, $user);
+			}
+		};
+		$events->attach('affectUser', $callback, 5);
 	}
 
 	/**

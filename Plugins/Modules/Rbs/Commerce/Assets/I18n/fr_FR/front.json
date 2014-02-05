@@ -197,7 +197,7 @@
 	},
 	"invalid_transaction":{
 		"message":"La transaction demandée est invalide.",
-		"description": "Used in paymentReturn block."
+		"description": "Used in paymentReturn block and in post-order registration process."
 	},
 	"waiting_payment":{
 		"message":"votre commande ne sera traitée qu'après réception du paiement",
@@ -213,6 +213,18 @@
 	},
 	"payment_confirmation_success":{
 		"message":"Le paiement est confirmé.",
+		"description": "Used in paymentReturn block."
+	},
+	"register_now":{
+		"message":"créez votre compte",
+		"description": "Used in paymentReturn block."
+	},
+	"register_to_follow_orders":{
+		"message":"Pour pouvoir suivre l'historique de vos commandes, vous pouvez créer votre compte client.",
+		"description": "Used in paymentReturn block."
+	},
+	"register_button":{
+		"message":"créer un compte",
 		"description": "Used in paymentReturn block."
 	}
 }

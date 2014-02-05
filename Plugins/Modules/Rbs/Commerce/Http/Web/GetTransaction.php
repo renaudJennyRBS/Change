@@ -32,6 +32,7 @@ class GetTransaction extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$contextData = $cart->getContext()->toArray();
 				$contextData['from'] = 'cart';
 				$contextData['email'] = $cart->getEmail();
+				$contextData['guestCheckout'] = !$cart->getOwnerId() && !$cart->getUserId();
 				$contextData['websiteId'] = $event->getWebsite()->getId();
 				$contextData['LCID'] = $event->getApplicationServices()->getDocumentManager()->getLCID();
 				$contextData['returnSuccessFunction'] = 'Rbs_Commerce_PaymentReturn';

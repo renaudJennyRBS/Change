@@ -430,7 +430,7 @@ class CartStorage
 			$qb = $this->getDbProvider()->getNewStatementBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->update($fb->table('rbs_commerce_dat_cart'));
-			$qb->assign($fb->column('order_id'), $fb->booleanParameter('order_id'));
+			$qb->assign($fb->column('order_id'), $fb->integerParameter('order_id'));
 			$qb->where(
 				$fb->logicAnd(
 					$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
@@ -447,6 +447,39 @@ class CartStorage
 			$tm->commit();
 			$this->cachedCarts = array();
 			$cart->setOrderId($orderId);
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
+	 * @param Cart $cart
+	 * @param integer|\Rbs\User\Documents\User $user
+	 * @throws \Exception
+	 */
+	public function affectUser(Cart $cart, $user)
+	{
+		$tm = $this->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$userId = ($user instanceof \Rbs\User\Documents\User) ? $user->getId() : intval($user);
+			$qb = $this->getDbProvider()->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->table('rbs_commerce_dat_cart'));
+			$qb->assign($fb->column('user_id'), $fb->integerParameter('user_id'));
+			$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
+
+			$uq = $qb->updateQuery();
+			$uq->bindParameter('user_id', $userId);
+			$uq->bindParameter('identifier', $cart->getIdentifier());
+			$uq->execute();
+
+			$tm->commit();
+			$this->cachedCarts = array();
+			$cart->setUserId($userId);
 		}
 		catch (\Exception $e)
 		{
