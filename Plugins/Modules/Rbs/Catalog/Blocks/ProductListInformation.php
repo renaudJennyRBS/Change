@@ -16,9 +16,7 @@ class ProductListInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_label', $ucf));
-		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
-			->setAllowedModelsNames('Rbs_Catalog_ProductList')
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager);
 		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)

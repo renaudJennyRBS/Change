@@ -26,16 +26,22 @@ class ReviewDetail extends Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		if ($parameters->getParameter('reviewId') === null)
-		{
-			$target = $event->getParam('document');
-			if ($target instanceof \Rbs\Review\Documents\Review)
-			{
-				$parameters->setParameterValue('reviewId', $target->getId());
-			}
-		}
+		$this->setParameterValueForDetailBlock($parameters, $event);
 
 		return $parameters;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		if ($document instanceof \Rbs\Review\Documents\Review && $document->published())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -49,7 +55,7 @@ class ReviewDetail extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		$review = $event->getApplicationServices()->getDocumentManager()
-			->getDocumentInstance($parameters->getParameter('reviewId'));
+			->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
 		if ($review)
 		{
 			/* @var $review \Rbs\Review\Documents\Review */

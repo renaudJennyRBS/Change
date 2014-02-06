@@ -21,7 +21,7 @@ class Product extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('productId');
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
@@ -30,25 +30,8 @@ class Product extends Block
 		$parameters->addParameterMeta('redirectUrl');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		if ($parameters->getParameter('productId') === null)
-		{
-			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Catalog\Documents\Product && $document->published())
-			{
-				$parameters->setParameterValue('productId', $document->getId());
-			}
-		}
-		else
-		{
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			/* @var $product \Rbs\Catalog\Documents\Product */
-			$product = $documentManager->getDocumentInstance($parameters->getParameter('productId'));
-			if (!$product instanceof \Rbs\Catalog\Documents\Product || !$product->published())
-			{
-				$parameters->setParameterValue('productId', null);
-			}
-		}
+		$parameters = $this->setParameterValueForDetailBlock($parameters, $event);
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -85,6 +68,19 @@ class Product extends Block
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		if ($document instanceof \Rbs\Catalog\Documents\Product && $document->published())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
@@ -93,7 +89,7 @@ class Product extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$productId = $parameters->getParameter('productId');
+		$productId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		if ($productId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
@@ -118,7 +114,7 @@ class Product extends Block
 
 				if ($product->getVariantGroup())
 				{
-					$variantConfiguration = $commerceServices->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup());
+					$variantConfiguration = $commerceServices->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup(), true);
 					$attributes['axes'] = $variantConfiguration;
 					$axesNames = $this->getAxesNames($product->getVariantGroup(), $documentManager);
 					$attributes['axesNames'] = $axesNames;

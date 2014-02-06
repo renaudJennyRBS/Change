@@ -34,7 +34,7 @@ class Menu extends Block
 		$parameters->addParameterMeta('templateName', 'menu-vertical.twig');
 		$parameters->addParameterMeta('showTitle', false);
 		$parameters->addParameterMeta('contextual', false);
-		$parameters->addParameterMeta('documentId');
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('maxLevel', 1);
 		$parameters->addParameterMeta('pageId');
 		$parameters->addParameterMeta('sectionId');
@@ -49,11 +49,35 @@ class Menu extends Block
 			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
 
-		if (!$parameters->getParameter('documentId') && $parameters->getParameter('contextual'))
+		if (!$parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) && $parameters->getParameter('contextual'))
 		{
-			$parameters->setParameterValue('documentId', $parameters->getParameter('sectionId'));
+			$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $parameters->getParameter('sectionId'));
 		}
+		else
+		{
+			$document = $event->getApplicationServices()->getDocumentManager()
+				->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
+			if (!$this->isValidDocument($document))
+			{
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, null);
+			}
+		}
+
+
 		return $parameters;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		if (($document instanceof \Rbs\Website\Documents\Menu && $document->activated()) || ($document instanceof \Rbs\Website\Documents\Section && $document->published()))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -69,7 +93,7 @@ class Menu extends Block
 		$this->applicationServices = $event->getApplicationServices();
 		$dm = $event->getApplicationServices()->getDocumentManager();
 		$parameters = $event->getBlockParameters();
-		$doc = $dm->getDocumentInstance($parameters->getDocumentId());
+		$doc = $dm->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
 		if ($doc !== null)
 		{
 			/* @var $website \Rbs\Website\Documents\Website */

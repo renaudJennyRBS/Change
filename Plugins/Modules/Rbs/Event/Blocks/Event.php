@@ -24,8 +24,8 @@ class Event extends \Rbs\Event\Blocks\Base\BaseEvent
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return boolean
 	 */
-	protected function checkDocumentType($document)
+	protected function isValidDocument($document)
 	{
-		return ($document instanceof \Rbs\Event\Documents\Event);
+		return ($document instanceof \Rbs\Event\Documents\Event && $document->published());
 	}
 }

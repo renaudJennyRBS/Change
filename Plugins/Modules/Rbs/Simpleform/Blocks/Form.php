@@ -22,20 +22,14 @@ class Form extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->setNoCache();
-		$parameters->addParameterMeta('formId');
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('errId');
 		$parameters->addParameterMeta('success');
 		$parameters->addParameterMeta('authenticated');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		if ($parameters->getParameter('formId') === null)
-		{
-			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Simpleform\Documents\Form)
-			{
-				$parameters->setParameterValue('formId', $document->getId());
-			}
-		}
+
+		$this->setParameterValueForDetailBlock($parameters, $event);
 
 		$request = $event->getHttpRequest();
 		$blockId = $event->getBlockLayout()->getId();
@@ -48,6 +42,19 @@ class Form extends Block
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		if ($document instanceof \Rbs\Simpleform\Documents\Form && $document->published())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
@@ -56,7 +63,7 @@ class Form extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$formId = $parameters->getParameter('formId');
+		$formId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		if ($formId)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();

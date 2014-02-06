@@ -378,6 +378,9 @@
 		"message":"Propriétés du bloc",
 		"description":"Used as title in the block properties box in the page editor (left column)."
 	},
+	"block_property_document_to_display":{
+		"message":"document à afficher"
+	},
 	"no_block_selected":{
 		"message":"Aucun bloc sélectionné.",
 		"description":"Used as default content in the block properties box in the page editor (left column)."

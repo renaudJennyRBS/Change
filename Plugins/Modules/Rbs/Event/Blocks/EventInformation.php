@@ -12,8 +12,7 @@ class EventInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 		$this->setLabel($i18nManager->trans('m.rbs.event.admin.event_label', $ucf));
-		$this->getParameterInformation('docId')->setAllowedModelsNames('Rbs_Event_Event')
-			->setLabel($i18nManager->trans('m.rbs.event.admin.event_doc', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Event_Event', $i18nManager);
 		$this->getParameterInformation('templateName')->setDefaultValue('event.twig');
 	}
 }

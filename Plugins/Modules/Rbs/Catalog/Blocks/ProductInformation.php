@@ -16,9 +16,7 @@ class ProductInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_label', $ucf));
-		$this->addInformationMeta('productId', Property::TYPE_DOCUMENT, false, null)
-			->setAllowedModelsNames('Rbs_Catalog_Product')
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_product', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Catalog_Product', $i18nManager);
 		$this->addInformationMeta('activateZoom', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
 		$this->addInformationMeta('attributesDisplayMode', Property::TYPE_STRING, false, 'table')

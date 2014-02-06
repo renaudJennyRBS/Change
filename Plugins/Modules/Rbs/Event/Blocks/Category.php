@@ -17,20 +17,27 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('sectionRestriction', 'website');
-		$parameters->addParameterMeta('categoryId');
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->getParameterMeta('templateName')->setDefaultValue('category.twig');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		if ($parameters->getParameter('categoryId') === null)
-		{
-			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Event\Documents\Category)
-			{
-				$parameters->setParameterValue('categoryId', $document->getId());
-			}
-		}
+		$parameters = $this->setParameterValueForDetailBlock($parameters, $event);
+
 		return $parameters;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		if ($document instanceof \Rbs\Event\Documents\Category && $document->published())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -45,7 +52,7 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 	{
 		$parameters = $event->getBlockParameters();
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
+		$category = $documentManager->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
 		if (!($category instanceof \Rbs\Event\Documents\Category))
 		{
 			return null;
@@ -53,7 +60,7 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 		$attributes['category'] = $category;
 
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$category = $documentManager->getDocumentInstance($parameters->getParameter('categoryId'));
+		$category = $documentManager->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
 		$query = $documentManager->getNewQuery('Rbs_Event_BaseEvent');
 		$query->andPredicates($query->published(), $query->eq('categories', $category));
 		$subQuery1 = $query->getPropertyBuilder('publicationSections');

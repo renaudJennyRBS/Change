@@ -24,8 +24,8 @@ class News extends \Rbs\Event\Blocks\Base\BaseEvent
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return boolean
 	 */
-	protected function checkDocumentType($document)
+	protected function isValidDocument($document)
 	{
-		return ($document instanceof \Rbs\Event\Documents\News);
+		return ($document instanceof \Rbs\Event\Documents\News && $document->published());
 	}
 }
