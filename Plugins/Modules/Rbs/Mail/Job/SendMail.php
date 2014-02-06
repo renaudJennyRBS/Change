@@ -21,7 +21,7 @@ class SendMail
 		$LCID = $args['LCID'];
 		$substitutions = $args['substitutions'];
 
-		if ($mailId && $websiteId && $emails && $LCID && $substitutions)
+		if ($mailId && $websiteId && $emails && $LCID && is_array($substitutions))
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			/* @var $mail \Rbs\Mail\Documents\Mail */

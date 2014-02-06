@@ -16,7 +16,7 @@ class WebStore extends \Compilation\Rbs\Store\Documents\WebStore
 			if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
 			{
 				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
-				$query->eq('webStore', $document);
+				$query->andPredicates($query->eq('webStore', $document));
 				$documentResult->setProperty('countDefinedPrices', $query->getCountDocuments());
 			}
 		}
