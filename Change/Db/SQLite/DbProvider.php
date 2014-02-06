@@ -303,7 +303,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			$query->setCachedSql($this->buildQuery($query));
 		}
-		
+
 		$statement = $this->prepareStatement($query->getCachedSql());
 		foreach ($query->getParameters() as $parameter)
 		{

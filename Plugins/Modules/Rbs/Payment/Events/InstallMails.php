@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\User\Events;
+namespace Rbs\Payment\Events;
 
 use Change\Events\Event;
 
 /**
- * @name \Rbs\User\Events\InstallMails
+ * @name \Rbs\Payment\Events\InstallMails
  */
 class InstallMails
 {
@@ -18,9 +18,9 @@ class InstallMails
 		$mailTemplate = $event->getParam('mailTemplate');
 		$filters = $event->getParam('filters');
 
-		if (count($filters) === 0 || in_array('Rbs_User', $filters))
+		if (count($filters) === 0 || in_array('Rbs_Payment', $filters))
 		{
-			$docs = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('user_account_request', 'Rbs Mail Install');
+			$docs = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_payment_transaction_mails', 'Rbs Mail Install');
 			if (count($docs) == 0)
 			{
 				$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'mails.json';

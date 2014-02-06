@@ -170,6 +170,16 @@ class CommerceServices extends Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//PaymentManager : EventManagerFactory, TransactionManager, DocumentManager
+		$paymentManagerClassName = $this->getInjectedClassName('PaymentManager', 'Rbs\Payment\PaymentManager');
+		$classDefinition = $this->getClassDefinition($paymentManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$classDefinition->addMethod('setTransactionManager', true)
+			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -205,6 +215,10 @@ class CommerceServices extends Di
 
 		$im->addAlias('ProcessManager', $processManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging,
+				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
+
+		$im->addAlias('PaymentManager', $paymentManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory,
 				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
 	}
 
@@ -279,5 +293,13 @@ class CommerceServices extends Di
 	public function getProcessManager()
 	{
 		return $this->get('ProcessManager');
+	}
+
+	/**
+	 * @return \Rbs\Payment\PaymentManager
+	 */
+	public function getPaymentManager()
+	{
+		return $this->get('PaymentManager');
 	}
 }

@@ -39,6 +39,21 @@
 		<rbs-field-rich-text property="instructions" required="false"
 				label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'instructions'), ['ucf']) }}">
 		</rbs-field-rich-text>
+
+		<hr />
+
+		<rbs-field-boolean property="processingMail"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'processingMail'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field-boolean property="successMail"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'successMail'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field-boolean property="errorMail"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'errorMail'), ['ucf']) }}">
+		</rbs-field-boolean>
+
 	</fieldset>
 
 	<fieldset

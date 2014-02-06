@@ -34,6 +34,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ModelManager/Rbs_Commerce', '\Rbs\Commerce\Events\ModelManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/PageManager/Rbs_Commerce', '\Rbs\Commerce\Events\PageManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Mail/Events/MailManager/Rbs_Commerce', '\Rbs\Commerce\Events\MailManager\Listeners');
 	}
 
 	/**

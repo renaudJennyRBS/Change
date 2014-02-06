@@ -52,5 +52,14 @@
 	},
 	"connector_description":{
 		"message":"description"
+	},
+	"connector_processingmail":{
+		"message":"mail de transaction en cours"
+	},
+	"connector_successmail":{
+		"message":"mail de succès"
+	},
+	"connector_errormail":{
+		"message":"mail d'erreur"
 	}
 }
