@@ -22,6 +22,9 @@ class User extends \Compilation\Rbs\User\Documents\User
 		return $this->configuration;
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onDefaultInjection(\Change\Events\Event $event)
 	{
 		parent::onDefaultInjection($event);
@@ -166,6 +169,9 @@ class User extends \Compilation\Rbs\User\Documents\User
 		return $this;
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

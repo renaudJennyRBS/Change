@@ -20,6 +20,12 @@
 	"payment_return_function":{
 		"message":"retour après paiement"
 	},
+	"create_account_for_transaction_label":{
+		"message":"inscription après commande"
+	},
+	"create_account_for_transaction_function":{
+		"message":"inscription après commande"
+	},
 	"cart_undefined":{
 		"message":"pas de panier"
 	},

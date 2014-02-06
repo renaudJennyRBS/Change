@@ -24,6 +24,9 @@ class CreateAccount extends Block
 		$parameters->addParameterMeta('authenticated', false);
 		$parameters->addParameterMeta('errId');
 		$parameters->addParameterMeta('context');
+		$parameters->addParameterMeta('initialValues', array());
+		$parameters->addParameterMeta('readonlyNames', array());
+		$parameters->addParameterMeta('formAction', 'Action/Rbs/User/CreateAccountRequest');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$request = $event->getHttpRequest();
@@ -61,11 +64,13 @@ class CreateAccount extends Block
 			if ($sessionErrors && is_array($sessionErrors))
 			{
 				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
+				$attributes['inputData'] = isset($sessionErrors['inputData']);
 			}
 		}
-
-		$attributes['context'] = $parameters->getParameterValue('context');
-		$attributes['authenticated'] = $parameters->getParameter('authenticated');
+		else
+		{
+			$attributes['inputData'] = $parameters->getParameterValue('initialValues');
+		}
 		return 'create-account.twig';
 	}
 }

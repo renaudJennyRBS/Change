@@ -72,6 +72,12 @@ class PaymentReturn extends Block
 				throw new \RuntimeException('Invalid payment template!');
 			}
 			$attributes['paymentTemplate'] = $template;
+
+			$data = $transaction->getContextData();
+			if (isset($data['guestCheckout']) && $data['guestCheckout'] == true && isset($data['email']))
+			{
+				$attributes['proposeRegistration'] = true;
+			}
 			return 'paymentReturn.twig';
 		}
 		return 'paymentReturn-invalid.twig';

@@ -20,40 +20,17 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			$data = $event->getRequest()->getQuery()->toArray();
 			$urlManager = $event->getUrlManager();
 			$urlManager->setAbsoluteUrl(true);
-			$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', null, ['context' => 'create']);
+			$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', null, ['context' => 'create']);;
 			$event->setParam('redirectLocation', $redirectURL);
 			$event->setParam('errorLocation', $redirectURL);
 
 			$email = $data['email'];
-			//get request parameters or errors
+			// Get request parameters or errors.
 			$requestParameters = $this->getRequestParameters($event);
 			$params = isset($requestParameters['params']) ? $requestParameters['params'] : null;
 			if ($params && count($requestParameters['errors']) === 0)
 			{
-				$user = $this->getNewUserFromParams($email, $params, $event->getApplicationServices()->getDocumentManager());
-				//TODO: RBSChange/evolutions#70 : allow groups configuration in backoffice
-				//at the moment, just give web access to the user by put him in "web" realm group.
-				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_User_Group');
-				$dqb->andPredicates($dqb->eq('realm', 'web'));
-				$group = $dqb->getFirstDocument();
-				if (!$group)
-				{
-					throw new \Exception('Group with realm "web" doesn\'t exist', 999999);
-				}
-				$user->getGroups()->add($group);
-
-				$tm = $event->getApplicationServices()->getTransactionManager();
-				try
-				{
-					$tm->begin();
-					$user->save();
-					$tm->commit();
-				}
-				catch (\Exception $e)
-				{
-					throw $tm->rollBack($e);
-				}
-
+				$this->createUser($event, $email, $params);
 				$result = new \Change\Http\Web\Result\AjaxResult($data);
 				$event->setResult($result);
 			}
@@ -90,7 +67,7 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 		}
 		if ($requestId && $email)
 		{
-			//check if email match the request, and check if the date is still valid
+			// Check if email match the request, and check if the date is still valid.
 			$dbProvider = $event->getApplicationServices()->getDbProvider();
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
@@ -105,7 +82,7 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 
 			$sq->bindParameter('requestId', $requestId);
 			$sq->bindParameter('email', $email);
-			//check the validity of the request by comparing date (delta of 24h after the request)
+			// Check the validity of the request by comparing date (delta of 24h after the request).
 			$now = new \DateTime();
 			$sq->bindParameter('validityDate', $now->sub(new \DateInterval('PT24H')));
 			$requestParameters = $sq->getFirstResult($sq->getRowsConverter()->addTxtCol('config_parameters'));
@@ -118,7 +95,7 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			{
 				$params = json_decode($requestParameters, true);
 
-				//check if user already exist
+				// Check if the user already exists.
 				$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_User_User');
 				$dqb->andPredicates($dqb->eq('email', $email));
 				$count = $dqb->getCountDocuments();
@@ -155,6 +132,42 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 		$user->setEmail($email);
 		$user->setHashMethod($params['hashMethod']);
 		$user->setPasswordHash($params['passwordHash']);
+		return $user;
+	}
+
+	/**
+	 * @param \Change\Http\Web\Event $event
+	 * @param $email
+	 * @param $params
+	 * @throws \Exception
+	 * @return \Rbs\User\Documents\User
+	 */
+	public function createUser(\Change\Http\Web\Event $event, $email, $params)
+	{
+		$user = $this->getNewUserFromParams($email, $params, $event->getApplicationServices()->getDocumentManager());
+		//TODO: RBSChange/evolutions#70 : allow groups configuration in backoffice
+		// At the moment, just give web access to the user by put him in "web" realm group.
+		$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_User_Group');
+		$dqb->andPredicates($dqb->eq('realm', 'web'));
+		$group = $dqb->getFirstDocument();
+		if (!$group)
+		{
+			throw new \Exception('Group with realm "web" doesn\'t exist', 999999);
+		}
+		$user->getGroups()->add($group);
+
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$user->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
 		return $user;
 	}
 }

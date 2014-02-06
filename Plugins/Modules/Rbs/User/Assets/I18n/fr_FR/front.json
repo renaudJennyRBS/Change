@@ -54,7 +54,7 @@
 		"message":"la demande de création de votre compte a bien été enregistrée."
 	},
 	"account_creation_request_description":{
-		"message":"Vous allez recevoir un e-mail de confirmation, cliquez sur le lien fournit dans celui-ci pour finaliser la création de votre compte."
+		"message":"Vous allez recevoir un e-mail de confirmation, cliquez sur le lien fourni dans celui-ci pour finaliser la création de votre compte."
 	},
 	"account_creation_title":{
 		"message":"création de compte"

@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\User\Events;
 
-use Change\Documents\Query\Query;
 use Change\Events\Event;
 
 /**

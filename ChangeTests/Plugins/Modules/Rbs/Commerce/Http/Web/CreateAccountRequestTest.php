@@ -1,8 +1,9 @@
 <?php
-namespace ChangeTests\Rbs\User\Http\Web;
+
+namespace ChangeTests\Rbs\Commerce\Http\Web;
 
 /**
- * @name \ChangeTests\Rbs\User\Http\Web\CreateAccountRequestTest
+ * @name \ChangeTests\Rbs\Commerce\Http\Web\CreateAccountRequestTest
  */
 class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 {
@@ -31,6 +32,12 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 			'confirmPassword' => 'abcd123'
 		]);
 
+		$emailAddress = 'another-test@test.com';
+		$transaction = $this->getNewTransaction('another-test@test.com');
+		$queryParams = new \Zend\Stdlib\Parameters([
+			'transactionId' => $transaction->getId()
+		]);
+
 		$website = $this->getNewWebsite();
 		$this->getNewMail();
 		$i18nManager = $this->getApplicationServices()->getI18nManager();
@@ -45,28 +52,33 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event->setUrlManager($urlManager);
 		$request = new \Change\Http\Request();
 		$request->setMethod(\Zend\Http\Request::METHOD_POST);
+		$request->setQuery($queryParams);
 		$request->setPost($requestParams);
 		$request->setLCID($i18nManager->getLCID());
 		$event->setRequest($request);
 
-		// Rre-test:
+		// Pre-test:
 		// Test if there is no job.
 		$jobManager = $this->getApplicationServices()->getJobManager();
 		$this->assertEquals(0, $jobManager->getCountJobIds());
 
-		$createAccountRequest = new \Rbs\User\Http\Web\CreateAccountRequest();
+		$createAccountRequest = new \Rbs\Commerce\Http\Web\CreateAccountRequest();
 		$createAccountRequest->execute($event);
 
 		$dbProvider = $this->getApplicationServices()->getDbProvider();
 		$this->assertNotNull($event->getResult());
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 
-		$accountRequests = $this->getAccountRequestsFromEmail($requestParams->get('email'), $dbProvider);
+		// The email in the transaction overloads the one in the POST data.
+		$accountRequests = $this->getAccountRequestsFromEmail($emailAddress, $dbProvider);
 		// There is only one request at this step.
 		$this->assertCount(1, $accountRequests, 'there is more thant one account request in database');
 		$accountRequest = $accountRequests[0];
 		$this->assertEquals((new \DateTime())->getTimestamp(), $accountRequest['request_date']->getTimestamp(),
 			'request date must be now (with 10s delta)', 10);
+		$configParameters = json_decode($accountRequest['config_parameters'], true);
+		$this->assertArrayHasKey('Rbs_Commerce_TransactionId', $configParameters);
+		$this->assertEquals($transaction->getId(), $configParameters['Rbs_Commerce_TransactionId']);
 
 		// Check if the job has been created.
 		$jobs = $jobManager->getJobIds();
@@ -78,7 +90,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$jobArgs = $job->getArguments();
 		$this->assertArrayHasKey('emails', $jobArgs);
 		$this->assertArrayHasKey('to', $jobArgs['emails']);
-		$this->assertEquals([$requestParams->get('email')], $jobArgs['emails']['to']);
+		$this->assertEquals([$emailAddress], $jobArgs['emails']['to']);
 		$this->assertArrayHasKey('LCID', $jobArgs);
 		$this->assertEquals($i18nManager->getLCID(), $jobArgs['LCID']);
 		$this->assertArrayHasKey('substitutions', $jobArgs);
@@ -86,9 +98,35 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayHasKey('website', $jobArgs['substitutions']);
 		$this->assertEquals($website->getCurrentLocalization()->getTitle(), $jobArgs['substitutions']['website']);
 		$this->assertArrayHasKey('link', $jobArgs['substitutions']);
-		$query = ['requestId' => 1, 'email' => $requestParams->get('email')];
-		$expectedLink = $urlManager->getAjaxURL('Rbs_User', 'CreateAccountConfirmation', $query);
+		$query = ['requestId' => 1, 'email' => $emailAddress];
+		$expectedLink = $urlManager->getAjaxURL('Rbs_Commerce', 'CreateAccountConfirmation', $query);
 		$this->assertEquals($expectedLink, $jobArgs['substitutions']['link']);
+	}
+
+	/**
+	 * @param string $email
+	 * @throws \Exception
+	 * @return \Rbs\Payment\Documents\Transaction
+	 */
+	protected function getNewTransaction($email)
+	{
+		$transaction = $this->getApplicationServices()->getDocumentManager()
+			->getNewDocumentInstanceByModelName('Rbs_Payment_Transaction');
+		/* @var $transaction \Rbs\Payment\Documents\Transaction */
+		$transaction->setContextData(['email' => $email]);
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$transaction->save();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		return $transaction;
 	}
 
 	/**
@@ -100,7 +138,8 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('request_id'), $fb->column('email'), $fb->column('request_date'));
+		$qb->select($fb->column('request_id'), $fb->column('email'), $fb->column('request_date'),
+			$fb->column('config_parameters'));
 		$qb->from($fb->table('rbs_user_account_request'));
 		$qb->where($fb->logicAnd(
 			$fb->eq($fb->column('email'), $fb->parameter('email'))
@@ -111,7 +150,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$sq->bindParameter('email', $email);
 		$sq->bindParameter('now', (new \DateTime()));
 		return $sq->getResults($sq->getRowsConverter()
-			->addIntCol('request_id')->addDtCol('request_date')->addStrCol('email'));
+			->addIntCol('request_id')->addDtCol('request_date')->addStrCol('email')->addStrCol('config_parameters'));
 	}
 
 	/**

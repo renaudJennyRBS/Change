@@ -247,7 +247,7 @@
 						// Dispatch pages:
 						// - into 'scope.readyForFunctionPages' for pages ready to implement the function
 						// - into 'scope.notReadyForFunctionPages' for pages NOT ready to implement the function
-						function dispathPages (pages, readyPages)
+						function dispatchPages (pages, readyPages)
 						{
 							angular.forEach(pages, function (p)
 							{
@@ -264,8 +264,8 @@
 							});
 						}
 
-						dispathPages(scope.functionalPages, pages);
-						dispathPages(scope.staticPages, pages);
+						dispatchPages(scope.functionalPages, pages);
+						dispatchPages(scope.staticPages, pages);
 					});
 
 					return p;
@@ -327,7 +327,6 @@
 				scope.inheritedFunctions = {};
 				scope.newFunction = null;
 				scope.showAllPages = false;
-
 
 				// Returns the label of a Function from its code.
 				scope.getFunctionLabel = function (functionCode)
@@ -423,6 +422,31 @@
 						});
 					}
 				});
+
+				scope.$on('Navigation.saveContext', function (event, args) {
+					var label = scope.section.label;
+					args.context.label(label);
+					var data = {
+						newFunction: scope.newFunction,
+						readyForFunctionPages: scope.readyForFunctionPages,
+						notReadyForFunctionPages: scope.notReadyForFunctionPages
+					};
+					args.context.savedData('functions', data);
+				});
+
+				var currentContext = Navigation.getCurrentContext();
+				if (currentContext) {
+					var contextData = currentContext.savedData('functions');
+					if (contextData) {
+						scope.newFunction = contextData.newFunction;
+						scope.readyForFunctionPages = contextData.readyForFunctionPages;
+						scope.notReadyForFunctionPages = contextData.notReadyForFunctionPages;
+						Navigation.popContext(currentContext);
+						if (currentContext.valueKey() === 'editor.page' && currentContext.value()) {
+							scope.selectPage(currentContext.value());
+						}
+					}
+				}
 			}
 		};
 	}

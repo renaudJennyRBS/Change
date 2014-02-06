@@ -15,79 +15,20 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$themeModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
-		$query = $applicationServices->getDocumentManager()->getNewQuery($themeModel);
-		$query->andPredicates($query->eq('name', 'Rbs_Demo'));
-		$theme = $query->getFirstDocument();
 		$themeManager = $applicationServices->getThemeManager();
-		if ($theme instanceof \Rbs\Theme\Documents\Theme)
-		{
-			$themeManager->installPluginTemplates($plugin, $theme);
-			$themeManager->installPluginAssets($plugin, $theme);
-			$this->writeAssetic($theme, $themeManager);
-			return;
-		}
-
 		$transactionManager = $applicationServices->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
 
-			/* @var $theme \Rbs\Theme\Documents\Theme */
-			$theme = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
-			$theme->setLabel('Demo');
-			$theme->setName('Rbs_Demo');
-			$theme->setActive(true);
-			$theme->save();
-
+			$theme = $this->getTheme($applicationServices, 'Rbs_Demo');
 			$themeManager->installPluginTemplates($plugin, $theme);
 			$themeManager->installPluginAssets($plugin, $theme);
 			$this->writeAssetic($theme, $themeManager);
 
-			$templateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Template');
-
-			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
-			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
-			$pageTemplate->setCode('Rbs_Demo_Sidebar_Page');
-			$pageTemplate->setTheme($theme);
-			$pageTemplate->setLabel('Sidebar');
-			$html = file_get_contents(__DIR__ . '/Assets/sidebarpage.twig');
-			$pageTemplate->setHtml($html);
-			$json = file_get_contents(__DIR__ . '/Assets/sidebarpage.json');
-			$pageTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
-			$boHtml = file_get_contents(__DIR__ . '/Assets/sidebarpage-bo.twig');
-			$pageTemplate->setHtmlForBackoffice($boHtml);
-			$pageTemplate->setActive(true);
-			$pageTemplate->save();
-
-			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
-			$pageTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
-			$pageTemplate->setCode('Rbs_Demo_No_Sidebar_Page');
-			$pageTemplate->setTheme($theme);
-			$pageTemplate->setLabel('No Sidebar');
-			$html = file_get_contents(__DIR__ . '/Assets/nosidebarpage.twig');
-			$pageTemplate->setHtml($html);
-			$json = file_get_contents(__DIR__ . '/Assets/nosidebarpage.json');
-			$pageTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
-			$boHtml = file_get_contents(__DIR__ . '/Assets/nosidebarpage-bo.twig');
-			$pageTemplate->setHtmlForBackoffice($boHtml);
-			$pageTemplate->setActive(true);
-			$pageTemplate->save();
-
-			/* @var $mailTemplate \Rbs\Theme\Documents\Template */
-			$mailTemplate = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
-			$mailTemplate->setCode('Rbs_Demo_Mail');
-			$mailTemplate->setTheme($theme);
-			$mailTemplate->setLabel('Mail');
-			$html = file_get_contents(__DIR__ . '/Assets/mail.twig');
-			$mailTemplate->setHtml($html);
-			$json = file_get_contents(__DIR__ . '/Assets/mail.json');
-			$mailTemplate->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
-			$boHtml = file_get_contents(__DIR__ . '/Assets/mail-bo.twig');
-			$mailTemplate->setHtmlForBackoffice($boHtml);
-			$mailTemplate->setMailSuitable(true);
-			$mailTemplate->setActive(true);
-			$mailTemplate->save();
+			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_Sidebar_Page', 'sidebarpage', 'Sidebar');
+			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_No_Sidebar_Page', 'nosidebarpage', 'No Sidebar');
+			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_Mail', 'mail', 'Mail', true);
 
 			$transactionManager->commit();
 		}
@@ -107,5 +48,63 @@ class Install extends \Change\Plugins\InstallBase
 		$am = $themeManager->getAsseticManager($configuration);
 		$writer = new \Assetic\AssetWriter($themeManager->getAssetRootPath());
 		$writer->writeManagerAssets($am);
+	}
+
+	/**
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param string $name
+	 * @return \Rbs\Theme\Documents\Theme
+	 */
+	protected function getTheme($applicationServices, $name)
+	{
+		$themeModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Theme');
+		$query = $applicationServices->getDocumentManager()->getNewQuery($themeModel);
+		$query->andPredicates($query->eq('name', $name));
+		$theme = $query->getFirstDocument();
+		if (!($theme instanceof \Rbs\Theme\Documents\Theme))
+		{
+			/* @var $theme \Rbs\Theme\Documents\Theme */
+			$theme = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($themeModel);
+			$theme->setLabel('Demo');
+			$theme->setName($name);
+			$theme->setActive(true);
+			$theme->save();
+		}
+		return $theme;
+	}
+
+	/**
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param \Rbs\Theme\Documents\Theme $theme
+	 * @param string $code
+	 * @param string $name
+	 * @param string $label
+	 * @param boolean $mailSuitable
+	 * @return \Rbs\Theme\Documents\Template
+	 */
+	protected function getTemplate($applicationServices, $theme, $code, $name, $label, $mailSuitable = false)
+	{
+		$templateModel = $applicationServices->getModelManager()->getModelByName('Rbs_Theme_Template');
+		$query = $applicationServices->getDocumentManager()->getNewQuery($templateModel);
+		$query->andPredicates($query->eq('code', $code));
+		$template = $query->getFirstDocument();
+		if (!($template instanceof \Rbs\Theme\Documents\Template))
+		{
+			/* @var $template \Rbs\Theme\Documents\Template */
+			$template = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModel($templateModel);
+			$template->setCode($code);
+			$template->setTheme($theme);
+			$template->setLabel($label);
+			$html = file_get_contents(__DIR__ . '/Assets/' . $name . '.twig');
+			$template->setHtml($html);
+			$json = file_get_contents(__DIR__ . '/Assets/' . $name . '.json');
+			$template->setEditableContent(Json::decode($json, Json::TYPE_ARRAY));
+			$boHtml = file_get_contents(__DIR__ . '/Assets/' . $name . '-bo.twig');
+			$template->setHtmlForBackoffice($boHtml);
+			$template->setMailSuitable($mailSuitable);
+			$template->setActive(true);
+			$template->save();
+		}
+		return $template;
 	}
 }
