@@ -58,55 +58,7 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 			throw new \RuntimeException('Unable to get CommerceServices', 999999);
 		}
 
-		//send payment connector transaction processing mail
-		$email = $transaction->getContextData()['email'];
-		if ($connector->getProcessingMail() && $email)
-		{
-			$paymentManager = $commerceServices->getPaymentManager();
-
-			$genericServices = $event->getServices('genericServices');
-			if (!($genericServices instanceof \Rbs\Generic\GenericServices))
-			{
-				throw new \RuntimeException('Unable to get CommerceServices', 999999);
-			}
-			$mailManager = $genericServices->getMailManager();
-			$code = $paymentManager->getMailCode($transaction);
-			$substitutions = $paymentManager->getMailSubstitutions($transaction);
-			$mailManager->send($code, $event->getWebsite(), $event->getRequest()->getLCID(), [$email], $substitutions);
-		}
-
-		$contextData = $transaction->getContextData();
-		if (isset($contextData['from']) && $contextData['from'] == 'cart')
-		{
-			$cartManager = $commerceServices->getCartManager();
-			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
-			{
-				try
-				{
-					$tm->begin();
-
-					// Set cart as processing.
-					if (!$cart->isProcessing())
-					{
-						$cartManager->startProcessingCart($cart);
-					}
-
-					// Remove cart from context.
-					$context = $commerceServices->getContext();
-					if ($context->getCartIdentifier() == $transaction->getTargetIdentifier())
-					{
-						$context->setCartIdentifier(null)->save();
-					}
-
-					$tm->commit();
-				}
-				catch (\Exception $e)
-				{
-					throw $tm->rollBack($e);
-				}
-			}
-		}
+		$commerceServices->getProcessManager()->handleProcessingForTransaction($transaction);
 
 		$pathRuleManager = $event->getApplicationServices()->getPathRuleManager();
 		$data = array('redirectURL' => $this->getRedirectURL($transaction, $documentManager, $pathRuleManager));

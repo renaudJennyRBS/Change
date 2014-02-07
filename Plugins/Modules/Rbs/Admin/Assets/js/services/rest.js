@@ -444,8 +444,8 @@
 
 				REST = {
 
-					'getHttpConfig' : function () {
-						return getHttpConfig();
+					'getHttpConfig' : function (transformer) {
+						return getHttpConfig(transformer);
 					},
 
 					'transformObjectToChangeDocument' : function (object) {

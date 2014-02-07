@@ -1,37 +1,19 @@
 <div class="row">
-
-	<div rbs-aside-column>
+	<div data-rbs-aside-column="">
 		<rbs-default-asides-for-list></rbs-default-asides-for-list>
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Payment_Transaction" filter="filter" ></rbs-document-filter-panel>
-
-		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Payment_Transaction' | rbsURL:'new' =)">{{ i18n('m.rbs.payment.admin.transaction_create', ['ucf']) }}</a>
-		</div>
+			model="Rbs_Payment_Transaction" filter="filter"></rbs-document-filter-panel>
 
 		<rbs-document-list data-dlid="DLRbsPaymentTransaction"
-				model="Rbs_Payment_Transaction" filter-collection="filter" publishable="false">
-			<rbs-column name="amount" primary="true"></rbs-column>
-			<rbs-column name="currencyCode"></rbs-column>
-			<rbs-column name="processingStatus"></rbs-column>
+			model="Rbs_Payment_Transaction" filter-collection="filter" publishable="false">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="amount">(= doc.formattedAmount =)</rbs-column>
+			<rbs-column name="processingStatus">(= doc.formattedProcessingStatus =)</rbs-column>
 			<rbs-column name="processingDate"></rbs-column>
-			<rbs-column name="processingIdentifier"></rbs-column>
-			<rbs-preview style="min-height: 200px">
-				<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
-				<div style="margin-left: 290px;">
-					<h4>(= doc.label =)</h4>
-					<dl class="dl-horizontal">
-						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lab']) }}</dt>
-						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
-					</dl>
-				</div>
-			</rbs-preview>
 		</rbs-document-list>
 	</div>
-
 </div>
