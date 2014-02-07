@@ -32,7 +32,6 @@ rbs-form-button-bar > .confirmation-area {
 	top: 26px;
 }
 
-
 .form-vertical .form-group [class^="col-"],
 .form-vertical .form-group [class*=" col-"] {
 	display: block;
@@ -48,15 +47,20 @@ rbs-form-button-bar > .confirmation-area {
 	text-align: left;
 }
 
-
 .correction label.control-label {
 	color: #449D44;
 	font-style: italic;
 }
 
+.form-control {
+	border-radius: 3px;
+}
+
+.form-control:focus {
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 0 2px rgba(102, 175, 233, 0.3);
+}
 
 /* invalid fields */
-
 input.ng-dirty.ng-invalid,
 textarea.ng-dirty.ng-invalid,
 select.ng-dirty.ng-invalid {
@@ -65,13 +69,7 @@ select.ng-dirty.ng-invalid {
 	box-shadow: 0 0 0 2px #F8B9B7;
 }
 
-.form-control {
-	border-radius: 3px;
-}
-
-
 /* cascading forms */
-
 .cascading-forms-collapsed {
 	color: #999999;
 	padding: 4px 12px;
@@ -79,12 +77,12 @@ select.ng-dirty.ng-invalid {
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.3);
-	background-image: -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	background-image: linear-gradient(to bottom, #ffffff 0%, #eeeeee 100%);
 	transition: font-size 0.2s ease, margin 0.2s ease;
 	position: relative;
 }
 
-
-.form-control:focus {
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 0 2px rgba(102, 175, 233, 0.3);
+/* Good interline between buttons in document editor when there is more than one line */
+.form-actions .form-buttons {
+	line-height: 55px;
 }
