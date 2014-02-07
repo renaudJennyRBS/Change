@@ -79,6 +79,9 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('getNewTransaction', [$this, 'onDefaultGetNewTransaction'], 5);
 		$eventManager->attach('handleRegistrationForTransaction', [$this, 'onDefaultHandleRegistrationForTransaction'], 5);
+		$eventManager->attach('handleProcessingForTransaction', [$this, 'onDefaultHandleProcessingForTransaction'], 5);
+		$eventManager->attach('handleSuccessForTransaction', [$this, 'onDefaultHandleSuccessForTransaction'], 5);
+		$eventManager->attach('handleFailedForTransaction', [$this, 'onDefaultHandleFailedForTransaction'], 5);
 	}
 
 	/**
@@ -159,13 +162,166 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 
 		if ($user instanceof \Rbs\User\Documents\User && $transaction instanceof \Rbs\Payment\Documents\Transaction)
 		{
-			$cart = $this->getCartManager()->getCartByIdentifier($transaction->getTargetIdentifier());
+			if (isset($contextData['from']) && $contextData['from'] == 'cart')
+			{
+				/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+				$commerceServices = $event->getServices('commerceServices');
+				$cartManager = $commerceServices->getCartManager();
+				$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
+				if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+				{
+					$cartManager->affectUser($cart, $user);
+				}
+
+				// TODO affect the order if the cart is already converted.
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 */
+	public function handleProcessingForTransaction($transaction)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('transaction' => $transaction));
+		$this->getEventManager()->trigger('handleProcessingForTransaction', $this, $args);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultHandleProcessingForTransaction(\Change\Events\Event $event)
+	{
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+
+		/* @var $transaction \Rbs\Payment\Documents\Transaction */
+		$transaction = $event->getParam('transaction');
+		$contextData = $transaction->getContextData();
+
+		// Update the cart.
+		if (isset($contextData['from']) && $contextData['from'] == 'cart')
+		{
+			$cartManager = $commerceServices->getCartManager();
+			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
 			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 			{
-				$this->getCartManager()->affectUser($cart, $user);
-			}
+				// Set cart as processing.
+				if (!$cart->isProcessing())
+				{
+					$cartManager->startProcessingCart($cart);
+				}
 
-			// TODO affect the order if the cart is already converted.
+				// Remove cart from context.
+				$context = $commerceServices->getContext();
+				if ($context->getCartIdentifier() == $transaction->getTargetIdentifier())
+				{
+					$context->setCartIdentifier(null)->save();
+				}
+			}
 		}
+
+		// Send the email notification.
+		$connector = $transaction->getConnector();
+		$email = isset($contextData['email']) ? $contextData['email'] : null;
+		$websiteId = isset($contextData['websiteId']) ? $contextData['websiteId'] : null;
+		$LCID = isset($contextData['LCID']) ? $contextData['LCID'] : null;
+		if ($email && $websiteId && $LCID && $connector->getProcessingMail())
+		{
+			/* @var $website \Rbs\Website\Documents\Website */
+			$website = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($websiteId);
+			if ($website instanceof \Rbs\Website\Documents\Website)
+			{
+				$paymentManager = $commerceServices->getPaymentManager();
+				$genericServices = $event->getServices('genericServices');
+				if (!($genericServices instanceof \Rbs\Generic\GenericServices))
+				{
+					throw new \RuntimeException('Unable to get CommerceServices', 999999);
+				}
+				$mailManager = $genericServices->getMailManager();
+				$code = $paymentManager->getMailCode($transaction);
+				$substitutions = $paymentManager->getMailSubstitutions($transaction);
+				$mailManager->send($code, $website, $LCID, [$email], $substitutions);
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 */
+	public function handleSuccessForTransaction($transaction)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('transaction' => $transaction));
+		$this->getEventManager()->trigger('handleSuccessForTransaction', $this, $args);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultHandleSuccessForTransaction(\Change\Events\Event $event)
+	{
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+
+		/* @var $transaction \Rbs\Payment\Documents\Transaction */
+		$transaction = $event->getParam('transaction');
+		$contextData = $transaction->getContextData();
+
+		// Update the cart.
+		if (isset($contextData['from']) && $contextData['from'] == 'cart')
+		{
+			$cartManager = $commerceServices->getCartManager();
+			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+			{
+				// Set transactionId in cart.
+				$cartManager->affectTransactionId($cart, $transaction->getId());
+			}
+		}
+
+		// Send the email notification.
+		// TODO
+	}
+
+	/**
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 */
+	public function handleFailedForTransaction($transaction)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('transaction' => $transaction));
+		$this->getEventManager()->trigger('handleSuccessForTransaction', $this, $args);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultHandleFailedForTransaction(\Change\Events\Event $event)
+	{
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+
+		/* @var $transaction \Rbs\Payment\Documents\Transaction */
+		$transaction = $event->getParam('transaction');
+		$contextData = $transaction->getContextData();
+
+		// Update the cart.
+		if (isset($contextData['from']) && $contextData['from'] == 'cart')
+		{
+			$cartManager = $commerceServices->getCartManager();
+			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
+			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+			{
+				// TODO: is there anything to do here?
+			}
+		}
+
+		// Send the email notification.
+		// TODO
 	}
 }

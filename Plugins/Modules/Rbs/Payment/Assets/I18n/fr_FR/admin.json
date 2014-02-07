@@ -22,5 +22,23 @@
 	},
 	"module_keywords":{
 		"message":"paiements,transactions"
+	},
+	"transaction_status_initiated":{
+		"message":"initialisée"
+	},
+	"transaction_status_processing":{
+		"message":"en cours"
+	},
+	"transaction_status_success":{
+		"message":"paiement réussi"
+	},
+	"transaction_status_failed":{
+		"message":"paiement échoué"
+	},
+	"validate_payment_button":{
+		"message":"valider<small>le paiement</small>"
+	},
+	"refuse_payment_button":{
+		"message":"refuser<small>le paiement</small>"
 	}
 }
