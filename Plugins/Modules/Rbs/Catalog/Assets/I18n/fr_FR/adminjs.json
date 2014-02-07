@@ -34,5 +34,14 @@
 	},
 	"variant_group":{
 		"message":"Groupe de variantes"
+	},
+	"variant_group_stocks_update":{
+		"message":"mise à jour des stocks des variantes"
+	},
+	"impossible_to_update_stock_of_variant_group":{
+		"message":"impossible de mettre à jour les stocks des variantes"
+	},
+	"variant_group_stock_update":{
+		"message":"les stocks des vaiantes ont été mis à jour"
 	}
 }

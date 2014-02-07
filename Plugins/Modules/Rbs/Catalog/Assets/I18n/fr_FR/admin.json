@@ -38,6 +38,12 @@
 	"variantgroup_variant_config":{
 		"message":"configuration des attributs"
 	},
+	"variantgroup_variantstocks":{
+		"message":"stocks des variantes"
+	},
+	"variantgroup_stocks_config":{
+		"message":"configuration des stocks"
+	},
 	"variantgroup_edit":{
 		"message":"configuration des variantes"
 	},
