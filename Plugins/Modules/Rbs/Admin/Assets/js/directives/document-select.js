@@ -12,8 +12,10 @@
 	 * Attributes:
 	 * - ngModel
 	 * - empty-label
+	 * - accepted-model
 	 * - filter-property
 	 * - filter-value
+	 * - value-ids
 	 */
 	app.directive('rbsDocumentSelect', ['RbsChange.REST', 'RbsChange.Query', 'RbsChange.Utils', 'RbsChange.i18n', function (REST, Query, Utils, i18n)
 	{
@@ -108,7 +110,6 @@
 							}
 						}
 					}
-
 					return opt;
 				}
 

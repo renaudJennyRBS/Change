@@ -29,11 +29,14 @@
 	"website_mail_sender_help":{
 		"message":"format \"Prénom Nom <adresse@email.fr>\". Adresse prise par défaut pour ce site lors d'envoi d'emails (confirmation de commande, demande de création d'un compte utilisateur...)"
 	},
-	"topic_website_help":{
-		"message":"Le site web dans lequel se trouve cette rubrique."
+	"topic_section_help":{
+		"message":"La rubrique ou le site parent de cette rubrique."
 	},
-	"topic_website_picker_title":{
-		"message":"Sélectionner le site web parent"
+	"topic_section":{
+		"message":"Section"
+	},
+	"topic_section_picker_title":{
+		"message":"Sélectionner la rubrique ou le site parent."
 	},
 	"topic_indexpage_help":{
 		"message":"La page d'index se sélectionne depuis l'écran des fonctions de la rubrique."

@@ -591,8 +591,20 @@
 	"document_modify_without_save_title":{
 		"message":"Vous avez précédement modifié ce document, sans l'enregistrer sur le serveur."
 	},
-	"document_modify_without_save_content":{
-		"message":"Vos modifications ont été conservées et elles sont présentes dans l'éditeur ci-dessous."
+	"document_modify_localcopy_p1":{
+		"message":"Vous pouvez"
+	},
+	"document_modify_localcopy_p2":{
+		"message":"appliquer"
+	},
+	"document_modify_localcopy_p3":{
+		"message":"les modifications, ou"
+	},
+	"document_modify_localcopy_p4":{
+		"message":"supprimer"
+	},
+	"document_modify_localcopy_p5":{
+		"message":"la copie locale."
 	},
 	"chuck":{
 		"message":"On ne cherche pas Chuck Norris.<br\/>C'est Chuck Norris qui vous trouve."

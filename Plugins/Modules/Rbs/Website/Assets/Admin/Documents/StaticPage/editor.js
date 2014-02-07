@@ -14,8 +14,11 @@
 				var contentSectionInitialized = false;
 
 				scope.onLoad = function () {
-					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
-						scope.document.section = Breadcrumb.getCurrentNode();
+					if (!scope.document.section){
+						var nodeId =  Breadcrumb.getCurrentNodeId();
+						if (nodeId) {
+							REST.resource(nodeId).then(function (doc){ scope.document.section = doc})
+						}
 					}
 				};
 

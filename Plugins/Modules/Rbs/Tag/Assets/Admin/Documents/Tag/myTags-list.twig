@@ -14,8 +14,7 @@
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsTag1"
-				model="Rbs_Tag_Tag" children-property="children"
-				use-properties="children userTag" filter-collection="filter">
+				model="Rbs_Tag_Tag" use-properties="children userTag" filter-collection="filter">
 
 			<rbs-column name="label" primary="true">
 				<a href ng-href="(= doc | rbsURL:'form' =)"><span rbs-tag="doc"></span></a>

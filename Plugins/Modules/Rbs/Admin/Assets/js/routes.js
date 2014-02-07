@@ -20,7 +20,9 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.module("Rbs_Admin").route('dashboard', '/', 'Rbs/Admin/dashboard/dashboard.twig');
+			$delegate.module("Rbs_Admin").route('dashboard', '/',
+				{'templateUrl':'Rbs/Admin/dashboard/dashboard.twig', 'labelKey':'m.rbs.admin.adminjs.home | ucf'}
+			);
 			return $delegate.module(null);
 		}]);
 	}]);

@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function changeEditorWebsiteMenu(Breadcrumb, REST, $routeParams, $q, UrlManager) {
+	function changeEditorWebsiteMenu(REST, $routeParams, $q) {
 
 		var I18N_KEY_REGEXP = /^([a-zA-Z0-9]+\.?)+$/,
 			ALL_REGEXP = /^.+$/;
@@ -87,8 +87,6 @@
 			}
 		};
 	}
-
-	changeEditorWebsiteMenu.$inject = ['RbsChange.Breadcrumb', 'RbsChange.REST', '$routeParams', '$q', 'RbsChange.UrlManager'];
-
+	changeEditorWebsiteMenu.$inject = ['RbsChange.REST', '$routeParams', '$q'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteMenu', changeEditorWebsiteMenu);
 })();

@@ -173,7 +173,7 @@
 			}
 
 			function addTargetContext(targetUrl) {
-				if (activeContexts.length < 1) {
+				if (activeContexts.length < 1 || !targetUrl || targetUrl.length == 0) {
 					return targetUrl;
 				}
 				var context, i, lastIndex = activeContexts.length - 1;

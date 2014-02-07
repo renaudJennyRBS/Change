@@ -8,9 +8,9 @@
 		</rbs-field-text>
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Theme_Template', 'contentByWebsite'), ['ucf']) }}">
-			<select class="form-control" ng-model="websiteId" rbs-items-from-collection="Rbs_Theme_WebsiteIds">
-				<option value=""></option>
-			</select>
+			<rbs-document-select ng-model="select.websiteId" value-ids="true" accepted-model="Rbs_Website_Website"
+					empty-label="Configuration par défaut">
+			</rbs-document-select>
 		</rbs-field>
 
 		<table class="table table-striped">

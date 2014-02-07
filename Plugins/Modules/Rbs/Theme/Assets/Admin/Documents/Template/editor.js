@@ -12,13 +12,29 @@
 
 			link : function (scope, element, attrs, editorCtrl)
 			{
-				scope.websiteId = null;
+				scope.select = {websiteId: null};
 
 				scope.blockList = [];
 
 				scope.block = null;
 
 				scope.blockParameters = null;
+
+				scope.$on('Navigation.saveContext', function (event, args) {
+					var data = {select: scope.select, blockList: scope.blockList,
+						block: scope.block, blockParameters: scope.blockParameters};
+					args.context.savedData('templateEditor', data);
+				});
+
+				scope.onRestoreContext = function(currentContext) {
+					var data = currentContext.savedData('templateEditor');
+					if (data) {
+						scope.select = data.select;
+						scope.block = data.block;
+						scope.blockList = data.blockList;
+						scope.blockParameters = data.blockParameters;
+					}
+				};
 
 				scope.$on('blockSelected', function(event, args) {
 					angular.forEach(scope.blockList, function(value, key) {
@@ -54,7 +70,10 @@
 				};
 
 				scope.onReady = function() {
-					scope.buildBlockList();
+					if (scope.blockList.length == 0)
+					{
+						scope.buildBlockList();
+					}
 				};
 
 				scope.buildBlockList = function() {
@@ -63,10 +82,10 @@
 						contentByWebsite = scope.document.contentByWebsite,
 						blockList = [], webBlocks = {}, byWebsite, row;
 
-					byWebsite = scope.websiteId != null;
+					byWebsite = scope.select.websiteId != null;
 
-					if (byWebsite && contentByWebsite.hasOwnProperty(scope.websiteId)) {
-						webBlocks = contentByWebsite[scope.websiteId];
+					if (byWebsite && contentByWebsite.hasOwnProperty(scope.select.websiteId)) {
+						webBlocks = contentByWebsite[scope.select.websiteId];
 					}
 
 					angular.forEach(editableContent, function(value, key) {
@@ -82,8 +101,10 @@
 					scope.blockList = blockList;
 				};
 
-				scope.$watch('websiteId', function(newValue) {
-					scope.buildBlockList();
+				scope.$watch('select.websiteId', function(newValue, oldValue) {
+					if (newValue !== oldValue) {
+						scope.buildBlockList();
+					}
 				});
 
 				editorCtrl.init('Rbs_Theme_Template');
@@ -97,7 +118,7 @@
 				};
 
 				scope.canChangeBlocName = function(row) {
-					return !(scope.inEditMode() || (scope.websiteId && !row.override));
+					return !(scope.inEditMode() || (scope.select.websiteId && !row.override));
 				};
 
 				scope.closeBlock = function(index) {
@@ -108,9 +129,9 @@
 
 				scope.getBlockById = function(id) {
 					var blockList;
-					if (scope.websiteId) {
-						if (scope.document.contentByWebsite.hasOwnProperty(scope.websiteId)) {
-							blockList = scope.document.contentByWebsite[scope.websiteId];
+					if (scope.select.websiteId) {
+						if (scope.document.contentByWebsite.hasOwnProperty(scope.select.websiteId)) {
+							blockList = scope.document.contentByWebsite[scope.select.websiteId];
 						}
 					}
 					else {
@@ -161,7 +182,7 @@
 				};
 
 				scope.canOverrideBlock = function(row) {
-					if (scope.websiteId) {
+					if (scope.select.websiteId) {
 						return !row.override;
 					}
 					return false;
@@ -171,15 +192,15 @@
 					var block = {};
 					angular.copy(scope.document.editableContent[row.id], block);
 					var contentByWebsite = scope.document.contentByWebsite;
-					if (!contentByWebsite.hasOwnProperty(scope.websiteId)) {
-						contentByWebsite[scope.websiteId] = {};
+					if (!contentByWebsite.hasOwnProperty(scope.select.websiteId)) {
+						contentByWebsite[scope.select.websiteId] = {};
 					}
-					contentByWebsite[scope.websiteId][row.id] = block;
+					contentByWebsite[scope.select.websiteId][row.id] = block;
 					row.override = true;
 				};
 
 				scope.canRemoveOverrideBlock = function(row) {
-					if (scope.websiteId) {
+					if (scope.select.websiteId) {
 						return row.override;
 					}
 					return false;
@@ -187,7 +208,7 @@
 
 				scope.removeBlockOverride = function(row) {
 					var contentByWebsite = scope.document.contentByWebsite;
-					delete contentByWebsite[scope.websiteId][row.id];
+					delete contentByWebsite[scope.select.websiteId][row.id];
 					var block = scope.document.editableContent[row.id];
 					row.block = {};
 					row.name = block.name;

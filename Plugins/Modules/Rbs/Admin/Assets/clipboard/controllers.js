@@ -4,14 +4,12 @@
 
 	var app = angular.module('RbsChange');
 
-	app.config(['$routeProvider', function ($routeProvider)
-	{
+	app.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider
-		. when(
-			'/clipboard',
+			.when('/clipboard',
 			{
-				templateUrl : 'Rbs/Admin/clipboard/list.twig',
-				reloadOnSearch : false
+				templateUrl: 'Rbs/Admin/clipboard/list.twig',
+				reloadOnSearch: false
 			})
 		;
 
@@ -20,8 +18,7 @@
 	/**
 	 * @name Rbs_Admin_ClipboardController
 	 */
-	function ChangeAdminClipboardController ($scope, Breadcrumb, Clipboard, MainMenu, i18n) {
-		Breadcrumb.resetLocation([[i18n.trans('m.rbs.admin.adminjs.clipboard', ['ucf']), "clipboard"]]);
+	function ChangeAdminClipboardController($scope, Clipboard, MainMenu) {
 
 		$scope.clipboardItems = Clipboard.values;
 
@@ -30,12 +27,12 @@
 		};
 
 		$scope.clipboardList = {
-			'removeFromClipboard' : function ($docs) {
+			'removeFromClipboard': function ($docs) {
 				angular.forEach($docs, function (doc) {
 					Clipboard.remove(doc);
 				});
 			},
-			'clearClipboard' : function () {
+			'clearClipboard': function () {
 				Clipboard.clear();
 			}
 		};
@@ -45,12 +42,9 @@
 
 	ChangeAdminClipboardController.$inject = [
 		'$scope',
-		'RbsChange.Breadcrumb',
 		'RbsChange.Clipboard',
-		'RbsChange.MainMenu',
-		'RbsChange.i18n'
+		'RbsChange.MainMenu'
 	];
 	app.controller('Rbs_Admin_ClipboardController', ChangeAdminClipboardController);
-
 
 })();

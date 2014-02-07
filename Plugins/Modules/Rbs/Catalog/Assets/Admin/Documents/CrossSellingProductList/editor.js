@@ -2,7 +2,7 @@
 {
 	"use strict";
 
-	function Editor(REST, $routeParams, Breadcrumb, i18n, UrlManager)
+	function Editor(REST, $routeParams)
 	{
 		return {
 			restrict: 'EA',
@@ -20,17 +20,6 @@
 							scope.document.product = product;
 						});
 					}
-
-					if (scope.document.product)
-					{
-						Breadcrumb.setLocation([
-							[i18n.trans('m.rbs.catalog.adminjs.module_name | ucf'), "Rbs/Catalog"],
-							[i18n.trans('m.rbs.catalog.adminjs.product_list | ucf'), UrlManager.getUrl(scope.document.product, 'list')],
-							[scope.document.product.label, UrlManager.getUrl(scope.document.product, 'form') ],
-							[i18n.trans('m.rbs.catalog.adminjs.cross_selling_list | ucf'), "Rbs/Catalog/Product"]],
-							[scope.document.label, UrlManager.getUrl(scope.document, 'form')]
-						);
-					}
 				};
 
 				editorCtrl.init('Rbs_Catalog_CrossSellingProductList');
@@ -38,6 +27,6 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.UrlManager'];
+	Editor.$inject = ['RbsChange.REST', '$routeParams'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
 })();

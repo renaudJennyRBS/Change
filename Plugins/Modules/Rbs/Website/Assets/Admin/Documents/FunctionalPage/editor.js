@@ -2,7 +2,7 @@
 
 	"use strict";
 
-	function changeEditorWebsiteFunctionalPage($rootScope, $location, Dialog, UrlManager, Breadcrumb, i18n, structureEditorService, REST, $q) {
+	function changeEditorWebsiteFunctionalPage($rootScope, Breadcrumb, REST) {
 
 		return {
 			restrict: 'A',
@@ -15,8 +15,11 @@
 				var contentSectionInitialized = false;
 
 				scope.onLoad = function () {
-					if (!scope.document.section && Breadcrumb.getCurrentNode()) {
-						scope.document.section = Breadcrumb.getCurrentNode();
+					if (!scope.document.section){
+						var nodeId =  Breadcrumb.getCurrentNodeId();
+						if (nodeId) {
+							REST.resource(nodeId).then(function (doc){scope.document.section = doc})
+						}
 					}
 				};
 
@@ -76,7 +79,7 @@
 					}
 				}, true);
 
-				scope.$watch('document.pageTemplate', function (pageTemplate, old) {
+				scope.$watch('document.pageTemplate', function () {
 					scope.loadTemplate();
 				}, true);
 
@@ -104,14 +107,8 @@
 
 	changeEditorWebsiteFunctionalPage.$inject = [
 		'$rootScope',
-		'$location',
-		'RbsChange.Dialog',
-		'RbsChange.UrlManager',
 		'RbsChange.Breadcrumb',
-		'RbsChange.i18n',
-		'structureEditorService',
-		'RbsChange.REST',
-		'$q'
+		'RbsChange.REST'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpage', changeEditorWebsiteFunctionalPage);
 

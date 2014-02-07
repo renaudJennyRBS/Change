@@ -39,62 +39,56 @@
 		};
 	});
 
+	function WebsiteSelector ($scope, $route, $location, REST, $filter) {
+		REST.collection('Rbs_Website_Website').then(function (collection) {
+			var path;
+			if (collection.resources.length) {
+				var website = collection.resources[0];
+				var options = $route.current.$$route.options;
+				var view =  (angular.isObject(options) && options.hasOwnProperty('view')) ? options.view : 'structure';
+				path = $filter('rbsURL')(website, view);
 
-	/**
-	 *
-	 *
-	 * @param $scope
-	 * @param $routeParams
-	 * @param $location
-	 * @param REST
-	 * @constructor
-	 */
-	function HeaderController ($scope, $routeParams, $location, REST)
+			} else {
+				path = $filter('rbsURL')('Rbs_Website_Website', 'list');
+			}
+			$location.path(path);
+		});
+	}
+
+	WebsiteSelector.$inject = ['$scope', '$route', '$location', 'RbsChange.REST', '$filter'];
+	app.controller('Rbs_Website_WebsiteSelector', WebsiteSelector);
+
+	function HeaderController ($scope, $route, $routeParams, $location, REST, $filter)
 	{
+		$scope.currentWebsiteId = $routeParams.id;
 		$scope.currentWebsite = null;
-		$scope.viewUrl = null;
+		$scope.view = $route.current.$$route.ruleName;
+		$scope.websites = [];
 
 		REST.treeChildren('Rbs/Website').then(function (root)
 		{
-			REST.treeChildren(root.resources[0], {column:['baseurl']}).then(function (websites)
+			REST.treeChildren(root.resources[0]).then(function (websites)
 			{
 				$scope.websites = websites.resources;
-
-				if (! $scope.currentWebsite) {
-					var i,
-					    wsid = parseInt($location.search()['website'], 10);
-					if (! isNaN(wsid)) {
-						for (i=0 ; i<websites.resources.length && ! $scope.currentWebsite ; i++) {
-							if (websites.resources[i].id === wsid) {
-								$scope.currentWebsite = websites.resources[i];
-							}
-						}
-					}
-					if (! $scope.currentWebsite) {
-						$scope.currentWebsite = websites.resources[0];
+				for (var i=0 ; i < websites.resources.length; i++) {
+					if (websites.resources[i].id == $scope.currentWebsiteId) {
+						$scope.currentWebsite = websites.resources[i];
+						break;
 					}
 				}
-
-				$scope.$watch(function () { return $routeParams.view; }, function (view)
-				{
-					if (! view) {
-						view = "Structure";
-					}
-					$scope.view = view;
-				});
-
 			});
 		});
 
 		$scope.$watch('currentWebsite', function (website)
 		{
-			if (website) {
-				$location.search('website', website.id);
+			if (website && (website.id != $scope.currentWebsiteId)) {
+				var path = $filter('rbsURL')(website, $scope.view);
+				$location.path(path);
 			}
 		});
 	}
 
-	HeaderController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST'];
+	HeaderController.$inject = ['$scope', '$route', '$routeParams', '$location', 'RbsChange.REST', '$filter'];
 	app.controller('Rbs_Website_HeaderController', HeaderController);
 
 	/**

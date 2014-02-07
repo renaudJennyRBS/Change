@@ -18,63 +18,7 @@
 			'picker-item-Rbs_Catalog_Product.html',
 			'<span style="line-height: 30px"><img rbs-storage-image="item.adminthumbnail" thumbnail="XS"/> (= item.label =)</span>'
 		);
-
-		// Update Breadcrumb.
-		$rootScope.$on('Change:UpdateBreadcrumb', function (event, eventData, breadcrumbData, promises) {
-			updateBreadcrumb(event, eventData, breadcrumbData, promises, REST, i18n, $location);
-		});
 	}]);
-
-
-	/**
-	 * Updates the Breadcrumb when the default implementation is not the desired behavior.
-	 * @param event
-	 * @param eventData
-	 * @param breadcrumbData
-	 * @param promises
-	 * @param REST
-	 * @param $location
-	 */
-	function updateBreadcrumb (event, eventData, breadcrumbData, promises, REST, i18n, $location)
-	{
-		if (eventData.modelName === 'Rbs_Catalog_CrossSellingProductList')
-		{
-			var p, search = $location.search();
-			// Here only the creation is handled, because there is no 'productId' parameter when editing
-			// existing CrossSellingProductLists.
-			if (search.hasOwnProperty('productId'))
-			{
-				breadcrumbData.location.length = 1;
-				p = REST.resource(search.productId);
-				p.then(function (product) {
-					breadcrumbData.location.push(['Product', product.url('list')]); // FIXME i18n
-					breadcrumbData.path.push(product);
-					breadcrumbData.resource = 'New product list'; // FIXME i18n
-				});
-				promises.push(p);
-			}
-		}
-		else if (eventData.route.relatedModelName == "Rbs_Catalog_VariantGroup")
-		{
-			event.preventDefault();
-			p = REST.resource(eventData.route.params.id).then(function (variant)
-			{
-				breadcrumbData.resource = [i18n.trans('m.rbs.catalog.documents.variantgroup | ucf'), variant.url('variant-list', {productId:eventData.route.params.productId})];
-				if (eventData.route.ruleName == 'variant-list')
-				{
-					breadcrumbData.resourceModifier = null;
-				}
-				else
-				{
-					breadcrumbData.resourceModifier = eventData.route.labelKey || eventData.route.ruleName;
-				}
-				breadcrumbData.location.push([variant.rootProduct.label, variant.rootProduct.url('form')]);
-				console.log(breadcrumbData);
-			});
-			promises.push(p);
-		}
-	}
-
 
 	/**
 	 * Routes and URL definitions.
@@ -119,63 +63,6 @@
 			return $delegate.module(null);
 		}]);
 	}]);
-
-	app.controller('rbsProductCategorizableSelector', function ($scope) {
-		$scope.productCategorizableQuery= { "model": "Rbs_Catalog_Product",
-			"where": {
-				"and" : [
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "categorizable"
-						},
-						"rexp" : {
-							"value": true
-						}
-					}
-				]
-			}
-		};
-	});
-
-	app.controller('rbsProductEmptyGroupSelector', function ($scope) {
-		$scope.productEmptyGroupQuery= { "model": "Rbs_Catalog_Product",
-			"where": {
-				"and" : [
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "variantGroup"
-						},
-						"rexp" : {
-							"value": 0
-						}
-					}
-				]
-			}
-		};
-	});
-
-	function ProductListsPickerController($scope)
-	{
-		$scope.productListsPickerQuery =
-		{
-			"model": "Rbs_Catalog_ProductList",
-			"where" : {
-				"and" : [
-					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "variant"
-						},
-						"rexp" : {
-							"value" : false
-						}
-					}
-				]
-			}
-		};
-	}
 
 	app.controller('rbsAxisAttributesSelector', function ($scope) {
 		$scope.axisAttributesQuery= { "model": "Rbs_Catalog_Attribute",

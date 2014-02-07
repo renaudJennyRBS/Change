@@ -6,59 +6,60 @@
 
 
 	//-----------------------------------------------------------------------------------------------------------------
+	function ThemeSelector ($scope, $route, $location, REST, $filter) {
+		REST.collection('Rbs_Theme_Theme', {limit:1}).then(function (collection) {
+			var path;
+			if (collection.resources.length) {
+				var theme = collection.resources[0];
+				var options = $route.current.$$route.options;
+				var view =  (angular.isObject(options) && options.hasOwnProperty('view')) ? options.view : 'pagetemplates';
+				path = $filter('rbsURL')(theme, view);
+				$location.path(path);
+			}
+		});
+	}
 
+	ThemeSelector.$inject = ['$scope', '$route', '$location', 'RbsChange.REST', '$filter'];
+	app.controller('Rbs_Theme_ThemeSelector', ThemeSelector);
 
 	/**
 	 *
 	 *
 	 * @param $scope
+	 * @param $route
 	 * @param $routeParams
 	 * @param $location
 	 * @param REST
-	 * @param Query
+	 * @param $filter
 	 * @constructor
 	 */
-	function HeaderController ($scope, $routeParams, $location, REST, Query)
+	function HeaderController ($scope, $route, $routeParams, $location, REST, $filter)
 	{
+		$scope.currentThemeId = $routeParams.id;
 		$scope.currentTheme = null;
-		$scope.viewUrl = null;
+		$scope.view = $route.current.$$route.ruleName;
+		$scope.themes = [];
 
 		REST.query({model: 'Rbs_Theme_Theme'}).then(function (data){
 			$scope.themes = data.resources;
 
-			if (! $scope.currentTheme){
-				var i,
-					wsid = parseInt($location.search()['theme'], 10);
-				if (! isNaN(wsid)) {
-					for (i=0 ; i<data.resources.length && ! $scope.currentTheme ; i++) {
-						if (data.resources[i].id === wsid) {
-							$scope.currentTheme = data.resources[i];
-						}
-					}
+			for (var i=0 ; i < data.resources.length; i++) {
+				if (data.resources[i].id == $scope.currentThemeId) {
+					$scope.currentTheme = data.resources[i];
+					break;
 				}
-				if (! $scope.currentTheme) {
-					$scope.currentTheme = data.resources[0];
-				}
-
-				$scope.$watch(function () { return $routeParams.view; }, function (view)
-				{
-					if (! view) {
-						view = "PageTemplates";
-					}
-					$scope.view = view;
-				});
 			}
 		});
 
-		$scope.$watch('currentTheme', function (theme)
-		{
-			if (theme) {
-				$location.search('theme', theme.id);
+		$scope.$watch('currentTheme', function (theme) {
+			if (theme && (theme.id != $scope.currentThemeId)) {
+				var path = $filter('rbsURL')(theme, $scope.view);
+				$location.path(path);
 			}
 		});
 	}
 
-	HeaderController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', 'RbsChange.Query'];
+	HeaderController.$inject = ['$scope', '$route', '$routeParams', '$location', 'RbsChange.REST', '$filter'];
 	app.controller('Rbs_Theme_HeaderController', HeaderController);
 
 	/**

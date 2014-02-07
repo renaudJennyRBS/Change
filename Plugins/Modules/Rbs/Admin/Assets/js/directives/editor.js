@@ -5,7 +5,8 @@
 	var app = angular.module('RbsChange');
 
 
-	function editorDirective($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, Breadcrumb, REST, Events, Settings, NotificationCenter, MainMenu, SelectSession, Navigation, ErrorFormatter, UrlManager)
+	function editorDirective($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, REST,
+		Events, Settings, NotificationCenter, Navigation, ErrorFormatter, UrlManager, Breadcrumb)
 	{
 		var CORRECTION_CSS_CLASS = 'correction';
 		return {
@@ -282,9 +283,7 @@
 					var pList = $scope.changes;
 					pList.push('documentVersion');
 					REST.save(
-						$scope.document,
-						Breadcrumb.getCurrentNode(),
-						pList
+						$scope.document, pList
 					).then(saveSuccessHandler, saveErrorHandler);
 				}
 
@@ -453,15 +452,12 @@
 					$scope._isNew = $scope.document.isNew();
 					if ($scope._isNew) {
 						$scope._isNewId = $scope.document.id;
-						Breadcrumb.setResource(i18n.trans('m.rbs.admin.adminjs.new_element | ucf'));
 					}
 					else {
 						$scope._isNewId = null;
-						Breadcrumb.setResource($scope.document);
 					}
 
 					var promises = [
-						Breadcrumb.ready(),
 						REST.modelInfo($scope.document.model)
 					];
 
@@ -479,11 +475,10 @@
 					}
 
 					// Editor will be considered ready when:
-					// - Breadcrumb is ready,
 					// - Information about the Document's Model have been loaded.
 					$q.all(promises).then(function (promisesResults)
 					{
-						$scope.modelInfo = promisesResults[1];
+						$scope.modelInfo = promisesResults[0];
 						delete $scope.modelInfo.links;
 
 						if (wrappingFormScope.$id !== $scope.$id) {
@@ -498,8 +493,8 @@
 
 						if (translation) {
 							$scope.currentLCID = $scope.document.LCID;
-							$scope.refDocument = promisesResults[2];
-							$scope.availableLanguages = promisesResults[3].items;
+							$scope.refDocument = promisesResults[1];
+							$scope.availableLanguages = promisesResults[2].items;
 
 							$scope.availableTranslations = {};
 							angular.forEach($scope.availableLanguages, function (l, id) {
@@ -568,17 +563,6 @@
 				}
 
 
-				function mergeLocalCopy (doc) {
-					var localCopy = EditorManager.getLocalCopy(doc);
-					if (localCopy)
-					{
-						angular.extend(doc, localCopy);
-						return true;
-					}
-					return false;
-				}
-
-
 				/**
 				 * Creates the reference document (original) from the current document.
 				 * Triggers the `Events.EditorReady` event.
@@ -596,10 +580,6 @@
 					initCorrection();
 					initMenu();
 
-					// --- selection process BEGIN
-					if (mergeLocalCopy($scope.document)) {
-						$scope.$emit('Change:Editor:LocalCopyMerged');
-					}
 					// --- selection process END
 
 					$element.css('display', 'block');
@@ -891,32 +871,19 @@
 
 					scope.onCancel = function onCancelFn(event)
 					{
-						var url = UrlManager.getSelectorUrl(scope.document);
-						$location.url(Navigation.addTargetContext(url));
+						Breadcrumb.goParent();
 					};
 				};
 			}
 		};
-
 	}
 
 	editorDirective.$inject = [
 		'$rootScope', '$routeParams', '$q',
-		'$location',
-		'RbsChange.EditorManager',
-		'RbsChange.Utils',
-		'RbsChange.ArrayUtils',
-		'RbsChange.i18n',
-		'RbsChange.Breadcrumb',
-		'RbsChange.REST',
-		'RbsChange.Events',
-		'RbsChange.Settings',
-		'RbsChange.NotificationCenter',
-		'RbsChange.MainMenu',
-		'RbsChange.SelectSession',
-		'RbsChange.Navigation',
-		'RbsChange.ErrorFormatter',
-		'RbsChange.UrlManager'
+		'$location', 'RbsChange.EditorManager', 'RbsChange.Utils',
+		'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.REST',
+		'RbsChange.Events', 'RbsChange.Settings', 'RbsChange.NotificationCenter',
+		'RbsChange.Navigation', 'RbsChange.ErrorFormatter', 'RbsChange.UrlManager', 'RbsChange.Breadcrumb'
 	];
 
 	app.directive('rbsDocumentEditor', editorDirective);
@@ -998,8 +965,8 @@
 	//
 	//
 
-
-	app.factory('RbsChange.EditorManager', ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Breadcrumb', 'RbsChange.Dialog', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService', 'RbsChange.Settings', 'RbsChange.UrlManager', 'RbsChange.Navigation', function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Breadcrumb, Dialog, MainMenu, REST, Utils, ArrayUtils, localStorageService, Settings, UrlManager, Navigation)
+	app.factory('RbsChange.EditorManager', ['$compile', '$http', '$timeout', '$q', '$rootScope', '$routeParams', '$location', '$resource', 'RbsChange.Dialog', 'RbsChange.MainMenu', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.ArrayUtils', 'localStorageService',
+		function ($compile, $http, $timeout, $q, $rootScope, $routeParams, $location, $resource, Dialog, MainMenu, REST, Utils, ArrayUtils, localStorageService)
 	{
 		var	localCopyRepo;
 
@@ -1021,13 +988,14 @@
 		}
 
 		function makeLocalCopyKey (doc, tempId) {
+			var key;
 			if (doc.id < 0 || tempId)
 			{
-				var key =  doc.model + '-' + 'new';
+				key =  doc.model + '-' + 'new';
 			}
 			else
 			{
-				var key =  doc.model + '-' + doc.id;
+				key =  doc.model + '-' + doc.id;
 			}
 			if (doc.LCID) {
 				key += '-' + doc.LCID;
@@ -1055,9 +1023,8 @@
 			},
 
 			'getLocalCopy' : function (doc) {
-				var	key = makeLocalCopyKey(doc),
-					rawCopy = localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
-				return rawCopy;
+				var	key = makeLocalCopyKey(doc);
+				return localCopyRepo.hasOwnProperty(key) ? localCopyRepo[key] : null;
 			},
 
 			'removeLocalCopy' : function (doc) {
@@ -1104,7 +1071,8 @@
 	}]);
 
 
-	app.controller('RbsChangeWorkflowController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.Breadcrumb', 'RbsChange.i18n', 'RbsChange.Utils', function (REST, $scope, $filter, $routeParams, Breadcrumb, i18n, Utils) {
+	app.controller('RbsChangeWorkflowController', ['RbsChange.REST', '$scope', '$filter', '$routeParams', 'RbsChange.i18n', 'RbsChange.Utils',
+		function (REST, $scope, $filter, $routeParams, i18n, Utils) {
 		$scope.$watch('model', function (model) {
 			if (model) {
 				REST.resource(model, $routeParams.id, $routeParams.LCID).then(function (doc) {
@@ -1121,9 +1089,6 @@
 								$filter('rbsURL')(model, 'list')
 							]
 						];
-
-					Breadcrumb.setLocation(location);
-					Breadcrumb.setResource(doc, 'Workflow');
 				});
 			}
 		});
