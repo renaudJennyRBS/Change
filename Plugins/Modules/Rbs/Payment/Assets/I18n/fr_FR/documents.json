@@ -1,7 +1,4 @@
 {
-	"deferredconnector_instructions":{
-		"message":"instruction de paiement"
-	},
 	"connector":{
 		"message":"connecteur bancaire"
 	},
@@ -10,6 +7,12 @@
 	},
 	"deferredconnector":{
 		"message":"connecteur à paiement différé"
+	},
+	"deferredconnector_instructions":{
+		"message":"instruction de paiement"
+	},
+	"deferredconnector_autovalidatepayment":{
+		"message":"validation automatique"
 	},
 	"transaction_connector":{
 		"message":"connecteur bancaire"

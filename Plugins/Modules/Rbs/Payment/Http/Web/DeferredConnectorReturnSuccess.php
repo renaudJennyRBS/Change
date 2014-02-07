@@ -41,7 +41,16 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 				$tm->begin();
 
 				$transaction->setConnector($connector);
-				$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
+				if (!$connector->getAutoValidatePayment())
+				{
+					$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
+				}
+				else
+				{
+					$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_SUCCESS);
+					$transaction->setProcessingIdentifier('AUTO');
+					$transaction->setProcessingDate(new \DateTime());
+				}
 				$transaction->save();
 
 				$tm->commit();
@@ -50,15 +59,19 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 			{
 				throw $tm->rollBack($e);
 			}
-		}
 
-		$commerceServices = $event->getServices('commerceServices');
-		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
-		{
-			throw new \RuntimeException('Unable to get CommerceServices', 999999);
-		}
+			$commerceServices = $event->getServices('commerceServices');
+			if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+			{
+				throw new \RuntimeException('Unable to get CommerceServices', 999999);
+			}
 
-		$commerceServices->getProcessManager()->handleProcessingForTransaction($transaction);
+			$commerceServices->getProcessManager()->handleProcessingForTransaction($transaction);
+			if ($connector->getAutoValidatePayment())
+			{
+				$commerceServices->getProcessManager()->handleSuccessForTransaction($transaction);
+			}
+		}
 
 		$pathRuleManager = $event->getApplicationServices()->getPathRuleManager();
 		$data = array('redirectURL' => $this->getRedirectURL($transaction, $documentManager, $pathRuleManager));

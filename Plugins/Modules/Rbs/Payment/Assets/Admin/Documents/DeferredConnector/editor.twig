@@ -8,7 +8,7 @@
 		</rbs-field-text>
 
 		<rbs-field-text property="code" required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'code'), ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
@@ -21,23 +21,31 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'description'), ['ucf']) }}">
 		</rbs-field-rich-text>
 
-		<rbs-field-picker property="visual" label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'visual'), ['ucf']) }}"
-				accepted-model="Rbs_Media_Image"
-				selector-title="{{ i18nAttr('m.rbs.payment.admin.connector_select_visual', ['ucf']) }}">
+		<rbs-field-picker property="visual"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'visual'), ['ucf']) }}"
+			accepted-model="Rbs_Media_Image"
+			selector-title="{{ i18nAttr('m.rbs.payment.admin.connector_select_visual', ['ucf']) }}">
 		</rbs-field-picker>
 
 		<rbs-field-float property="minAmount"
-				label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'minAmount'), ['ucf']) }}"
-				max-length="9" input-class="input-mini">
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'minAmount'), ['ucf']) }}"
+			max-length="9" input-class="input-mini">
 		</rbs-field-float>
 
 		<rbs-field-float property="maxAmount"
-				label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'maxAmount'), ['ucf']) }}"
-				max-length="9" input-class="input-mini">
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'maxAmount'), ['ucf']) }}"
+			max-length="9" input-class="input-mini">
 		</rbs-field-float>
-		
+
+		<rbs-field-boolean property="autoValidatePayment"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'autoValidatePayment'), ['ucf']) }}">
+			<span class="help-block">
+				{{ i18nAttr('m.rbs.payment.admin.deferredconnector_autovalidatepayment_help', ['ucf']) }}
+			</span>
+		</rbs-field-boolean>
+
 		<rbs-field-rich-text property="instructions" required="false"
-				label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'instructions'), ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'instructions'), ['ucf']) }}">
 		</rbs-field-rich-text>
 
 		<hr />

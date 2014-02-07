@@ -11,6 +11,9 @@
 	"deferredconnector_create":{
 		"message":"ajouter un connecteur à paiement différé"
 	},
+	"deferredconnector_autovalidatepayment_help":{
+		"message":"Permet d'activer une validation automatique du paiement lors de la confirmation de la commande."
+	},
 	"transaction_select_connector":{
 		"message":"sélectionner un connecteur bancaire"
 	},
