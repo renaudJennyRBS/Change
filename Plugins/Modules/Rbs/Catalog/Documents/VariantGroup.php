@@ -207,12 +207,19 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	}
 
 	/**
+	 * @param boolean $publishedProductOnly
 	 * @return Product[]
 	 */
-	public function getVariantProducts()
+	public function getVariantProducts($publishedProductOnly = false)
 	{
 		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
 		$query->andPredicates($query->eq('variantGroup', $this), $query->neq('id', $this->getRootProductId()));
+
+		if ($publishedProductOnly)
+		{
+			$query->andPredicates($query->published());
+		}
+
 		return $query->getDocuments()->toArray();
 	}
 }

@@ -194,7 +194,7 @@ class ProductList extends Block
 					$visual = $product->getFirstVisual();
 					$row['visual'] = $visual ? $visual->getPath() : null;
 
-					$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
+					$productPresentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
 					if ($productPresentation)
 					{
 						$productPresentation->evaluate();

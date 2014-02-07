@@ -125,7 +125,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 					$visual = $p->getFirstVisual();
 					$row['visual'] = $visual ? $visual->getPath() : null;
 
-					$productPresentation = $p->getPresentation($commerceServices, $commerceServices->getContext()->getWebStore()->getId());
+					$productPresentation = $p->getPresentation($commerceServices, $commerceServices->getContext()->getWebStore()->getId(), $event->getUrlManager());
 					if ($productPresentation)
 					{
 						$productPresentation->evaluate();

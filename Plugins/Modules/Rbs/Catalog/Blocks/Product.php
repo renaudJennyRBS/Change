@@ -4,7 +4,6 @@ namespace Rbs\Catalog\Blocks;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
-use Rbs\Catalog\Product\AxisConfiguration;
 
 /**
  * @name \Rbs\Catalog\Blocks\Product
@@ -100,11 +99,17 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$attributes['product'] = $product;
+				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+				$productPresentation->evaluate();
+				$attributes['productPresentation'] = $productPresentation;
+
+				return 'product.twig';
+
+				/*$attributes['product'] = $product;
 				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 
 				// Cart line configs.
-				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'));
+				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
 				if ($productPresentation)
 				{
 					$productPresentation->evaluate();
@@ -124,34 +129,11 @@ class Product extends Block
 				else
 				{
 					return 'product.twig';
-				}
+				}*/
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return array
-	 */
-	public function getAxesNames($variantGroup, $documentManager)
-	{
-		$axesNames = array();
-		$configuration = $variantGroup->getAxesConfiguration();
-		if (is_array($configuration) && count($configuration))
-		{
-			foreach ($configuration as $confArray)
-			{
-				$conf = (new AxisConfiguration())->fromArray($confArray);
-				/* @var $axeAttribute \Rbs\Catalog\Documents\Attribute */
-				$axeAttribute = $documentManager->getDocumentInstance($conf->getId());
-				if ($axeAttribute)
-				{
-					$axesNames[] = $axeAttribute->getCurrentLocalization()->getTitle();
-				}
-			}
-		}
-		return $axesNames;
-	}
+
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Catalog;
 
+use Change\Stdlib\String;
+
 /**
  * @name \Rbs\Catalog\CatalogManager
  */
@@ -20,6 +22,21 @@ class CatalogManager
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
+
+	/**
+	 * @var \Rbs\Price\PriceManager
+	 */
+	protected $priceManager;
+
+	/**
+	 * @var \Rbs\Stock\Services\StockManager
+	 */
+	protected $stockManager;
+
+	/**
+	 * @var \Rbs\Catalog\Attribute\AttributeManager
+	 */
+	protected $attributeManager;
 
 	/**
 	 * @param \Change\Transaction\TransactionManager $transactionManager
@@ -74,12 +91,63 @@ class CatalogManager
 	{
 		return $this->documentManager;
 	}
-	
-	
-	
+
+	/**
+	 * @param \Rbs\Price\PriceManager $priceManager
+	 * @return $this
+	 */
+	public function setPriceManager($priceManager)
+	{
+		$this->priceManager = $priceManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Price\PriceManager
+	 */
+	protected function getPriceManager()
+	{
+		return $this->priceManager;
+	}
+
+	/**
+	 * @param \Rbs\Stock\Services\StockManager $stockManager
+	 * @return $this
+	 */
+	public function setStockManager($stockManager)
+	{
+		$this->stockManager = $stockManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Stock\Services\StockManager
+	 */
+	protected function getStockManager()
+	{
+		return $this->stockManager;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Attribute\AttributeManager $attributeManager
+	 * @return $this
+	 */
+	public function setAttributeManager($attributeManager)
+	{
+		$this->attributeManager = $attributeManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Catalog\Attribute\AttributeManager
+	 */
+	protected function getAttributeManager()
+	{
+		return $this->attributeManager;
+	}
+
 	/**
 	 * Add the product in a product list for the given condition/priority.
-	 *
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\Documents\ProductList $productList
@@ -87,7 +155,8 @@ class CatalogManager
 	 * @return \Rbs\Catalog\Documents\ProductListItem
 	 * @throws \Exception
 	 */
-	public function addProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
+	public function addProductInProductList(\Rbs\Catalog\Documents\Product $product,
+		\Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
 		$documentManager = $this->getDocumentManager();
 		$tm = $this->getTransactionManager();
@@ -120,7 +189,8 @@ class CatalogManager
 	 * @param $condition
 	 * @throws \Exception
 	 */
-	public function removeProductFromProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
+	public function removeProductFromProductList(\Rbs\Catalog\Documents\Product $product,
+		\Rbs\Catalog\Documents\ProductList $productList, $condition)
 	{
 		$tm = $this->getTransactionManager();
 		try
@@ -149,10 +219,12 @@ class CatalogManager
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @return \Rbs\Catalog\Documents\ProductListItem|null
 	 */
-	public function getProductListItem(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition)
+	public function getProductListItem(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList,
+		$condition)
 	{
 		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
-		$query->andPredicates($query->eq('product', $product), $query->eq('productList', $productList), $query->eq('condition', $condition));
+		$query->andPredicates($query->eq('product', $product), $query->eq('productList', $productList),
+			$query->eq('condition', $condition));
 		return $query->getFirstDocument();
 	}
 
@@ -165,7 +237,8 @@ class CatalogManager
 	 * @param \Rbs\Catalog\Documents\Product $before
 	 * @throws \RuntimeException
 	 */
-	public function highlightProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition = null, $before = null)
+	public function highlightProductInProductList(\Rbs\Catalog\Documents\Product $product,
+		\Rbs\Catalog\Documents\ProductList $productList, $condition = null, $before = null)
 	{
 		$productListItem = $this->getProductListItem($product, $productList, $condition);
 		if (!$productListItem)
@@ -188,7 +261,8 @@ class CatalogManager
 	 * @param \Rbs\Catalog\Documents\Condition $condition
 	 * @throws \RuntimeException
 	 */
-	public function downplayProductInProductList(\Rbs\Catalog\Documents\Product $product, \Rbs\Catalog\Documents\ProductList $productList, $condition = null)
+	public function downplayProductInProductList(\Rbs\Catalog\Documents\Product $product,
+		\Rbs\Catalog\Documents\ProductList $productList, $condition = null)
 	{
 		$productListItem = $this->getProductListItem($product, $productList, $condition);
 		if (!$productListItem)
@@ -544,5 +618,401 @@ class CatalogManager
 		$defaultProductList = $query->getFirstDocument();
 
 		return $defaultProductList;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param integer $webStoreId
+	 * @param \Rbs\Price\Documents\BillingArea $billingArea
+	 * @return null|\Rbs\Price\PriceInterface
+	 */
+	public function getProductPrice($product, $webStoreId, $billingArea)
+	{
+		if ($product->hasVariants())
+		{
+			$skus = $product->getAllSkuOfVariant(true);
+			foreach ($skus as $sku)
+			{
+				$p = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStoreId, 'billingArea' => $billingArea]);
+				if ($p != null)
+				{
+					$prices[] = $p;
+				}
+			}
+
+			$lowestPrice = null;
+			foreach ($prices as $price)
+			{
+				if ($lowestPrice == null)
+				{
+					$lowestPrice = $price;
+				}
+				else
+				{
+					if ($price->getValue() < $lowestPrice->getValue())
+					{
+						$lowestPrice = $price;
+					}
+				}
+			}
+
+			return $lowestPrice;
+		}
+		else
+		{
+			return $this->priceManager->getPriceBySku($product->getSku(),
+				['webStore' => $webStoreId, 'billingArea' => $billingArea]);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param integer|null $webStoreId
+	 * @return integer|null
+	 */
+	public function getProductStockLevel($product, $webStoreId = null)
+	{
+		$level = null;
+
+		if ($product->hasVariants())
+		{
+			$skus = $product->getAllSkuOfVariant(true);
+			$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStoreId);
+		}
+		else
+		{
+			$sku = $product->getSku();
+			if ($sku)
+			{
+				$level = $this->getStockManager()->getInventoryLevel($sku, $webStoreId);
+			}
+		}
+
+		return $level;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param integer $level
+	 * @param integer|null $webStoreId
+	 * @return string
+	 */
+	public function getProductThreshold($product, $level, $webStoreId = null)
+	{
+		$threshold = null;
+
+		if ($product->hasVariants())
+		{
+			$skus = $product->getAllSkuOfVariant(true);
+			$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStoreId, $level);
+		}
+		else
+		{
+			$sku = $product->getSku();
+			if ($sku)
+			{
+				$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStoreId, $level);
+			}
+		}
+
+		return $threshold;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param null|integer $webStoreId
+	 * @return array
+	 */
+	public function getStockInfo($product, $webStoreId = null)
+	{
+		$stockInfo = array();
+
+		$level = $this->getProductStockLevel($product, $webStoreId);
+		$threshold = $this->getProductThreshold($product, $level, $webStoreId);
+
+		$stockInfo['level'] = $level;
+		$stockInfo['threshold'] = $threshold;
+		$stockInfo['thresholdClass'] = 'stock-' . \Change\Stdlib\String::toLower($threshold);
+		switch ($threshold)
+		{
+			case \Rbs\Stock\Services\StockManager::THRESHOLD_AVAILABLE:
+				$stockInfo['thresholdClass'] .= ' alert-success';
+				break;
+			case \Rbs\Stock\Services\StockManager::THRESHOLD_UNAVAILABLE:
+				$stockInfo['thresholdClass'] .= 'alert-danger';
+				break;
+		}
+
+		$stockInfo['thresholdTitle'] = $this->getStockManager()->getInventoryThresholdTitle($threshold);
+
+		if ($product->hasVariants())
+		{
+			$tmpSkuCode = preg_replace('/[^a-zA-Z0-9]+/', '-',
+				String::stripAccents(String::toUpper($product->getLabel())) . time());
+			$stockInfo['sku'] = String::subString($tmpSkuCode, 0, 80);
+			$stockInfo['minQuantity'] = 1;
+			$stockInfo['maxQuantity'] = $level;
+			$stockInfo['quantityIncrement'] = 1;
+		}
+		else
+		{
+			$sku = $product->getSku();
+
+			if ($sku)
+			{
+				$stockInfo['sku'] = $sku->getCode();
+				$stockInfo['minQuantity'] = $sku->getMinQuantity();
+				$stockInfo['maxQuantity'] = $sku->getMaxQuantity() ? min(max($sku->getMinQuantity(), $sku->getMaxQuantity()),
+					$level) : $level;
+				$stockInfo['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
+			}
+		}
+
+		return $stockInfo;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param integer $quantity
+	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
+	 * @param string $zone
+	 * @param integer|null $webstoreId
+	 * @return array
+	 */
+	public function getPricesInfos($product, $quantity, $billingArea, $zone, $webstoreId = null)
+	{
+		$priceInfo = array();
+
+		if ($billingArea)
+		{
+			$price = $this->getProductPrice($product, $webstoreId, $billingArea);
+
+			if ($price && ($value = $price->getValue()) !== null)
+			{
+				$priceManager = $this->getPriceManager();
+
+				$value *= $quantity;
+				$isWithTax = $price->isWithTax();
+				$taxCategories = $price->getTaxCategories();
+
+				$priceInfo['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
+				if ($zone)
+				{
+					if ($isWithTax)
+					{
+						$taxes = $priceManager->getTaxByValueWithTax($value, $taxCategories, $billingArea, $zone);
+					}
+					else
+					{
+						$taxes = $priceManager->getTaxByValue($value, $taxCategories, $billingArea, $zone);
+					}
+				}
+				else
+				{
+					$taxes = null;
+				}
+
+				if ($isWithTax)
+				{
+					$priceInfo['priceWithTax'] = $value;
+					$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+					if ($taxes)
+					{
+						$value = $priceManager->getValueWithoutTax($value, $taxes);
+						$priceInfo['price'] = $value;
+						$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+					}
+				}
+				else
+				{
+					$priceInfo['price'] = $value;
+					$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+					if ($taxes)
+					{
+						$value = $priceManager->getValueWithTax($value, $taxes);
+						$priceInfo['priceWithTax'] = $value;
+						$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+					}
+				}
+
+				if (($oldValue = $price->getBasePriceValue()) !== null)
+				{
+					$oldValue *= $quantity;
+					if ($zone)
+					{
+						if ($isWithTax)
+						{
+							$taxes = $priceManager->getTaxByValueWithTax($oldValue, $taxCategories, $billingArea, $zone);
+						}
+						else
+						{
+							$taxes = $priceManager->getTaxByValue($oldValue, $taxCategories, $billingArea, $zone);
+						}
+					}
+					else
+					{
+						$taxes = null;
+					}
+					if ($isWithTax)
+					{
+						$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
+						$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
+							$currencyCode);
+						if ($taxes)
+						{
+							$oldValue = $priceManager->getValueWithoutTax($oldValue, $taxes);
+							$priceInfo['priceWithoutDiscount'] = $oldValue;
+							$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue,
+								$currencyCode);
+						}
+					}
+					else
+					{
+						$priceInfo['priceWithoutDiscount'] = $oldValue;
+						$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
+						if ($taxes)
+						{
+
+							$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
+							$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
+							$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
+								$currencyCode);
+						}
+					}
+				}
+
+				if ($price instanceof \Rbs\Price\Documents\Price)
+				{
+					if ($price->getEcoTax() !== null)
+					{
+						$priceInfo['ecoTax'] = ($price->getEcoTax() * $quantity);
+						$priceInfo['formattedEcoTax'] = $priceManager->formatValue($priceInfo['ecoTax'], $currencyCode);
+					}
+				}
+			}
+		}
+
+		return $priceInfo;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Change\Http\Web\UrlManager|null $urlManager
+	 * @return array
+	 */
+	public function getGeneralInfo($product, $urlManager = null)
+	{
+		$generalInfo = array();
+
+		$generalInfo['product'] = $product;
+		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
+		$generalInfo['description'] = $product->getCurrentLocalization()->getDescription();
+		$generalInfo['hasVariants'] = $product->hasVariants();
+
+		if ($product->getBrand() && $product->getBrand()->published())
+		{
+			$generalInfo['brand'] = $product->getBrand();
+		}
+
+		if ($urlManager instanceof \Change\Http\Web\UrlManager)
+		{
+			$generalInfo['url'] = $urlManager->getCanonicalByDocument($product)->normalize()->toString();
+		}
+
+		return $generalInfo;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return array
+	 */
+	public function getVariantsConfiguration($product)
+	{
+		$variantsConfiguration = array();
+
+		// TODO use hasVariant ?
+		if ($product->getVariantGroup())
+		{
+			$variantsConfiguration['variantGroup'] = $product->getVariantGroup();
+			$variantsConfiguration['axes'] = $this->getAttributeManager()
+				->buildVariantConfiguration($product->getVariantGroup(), true);
+			$variantsConfiguration['axesNames'] = $this->getAxesNames($product->getVariantGroup(), $this->getDocumentManager());
+		}
+
+		return $variantsConfiguration;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return array
+	 */
+	protected function getAxesNames($variantGroup, $documentManager)
+	{
+		$axesNames = array();
+		$configuration = $variantGroup->getAxesConfiguration();
+		if (is_array($configuration) && count($configuration))
+		{
+			foreach ($configuration as $confArray)
+			{
+				$conf = (new \Rbs\Catalog\Product\AxisConfiguration())->fromArray($confArray);
+				/* @var $axeAttribute \Rbs\Catalog\Documents\Attribute */
+				$axeAttribute = $documentManager->getDocumentInstance($conf->getId());
+				if ($axeAttribute)
+				{
+					$axesNames[] = $axeAttribute->getCurrentLocalization()->getTitle();
+				}
+			}
+		}
+		return $axesNames;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return array
+	 */
+	public function getAttributesConfiguration($product)
+	{
+		$attributesConfiguration = array();
+
+		$attributesConfiguration['attributesConfig'] = $this->getAttributeManager()
+			->getProductAttributesConfiguration('specifications', $product);
+
+		return $attributesConfiguration;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return array
+	 */
+	public function getVisualsInfos($product)
+	{
+		$visualsInfos = array();
+		$visualsInfos['visuals'] = array();
+
+		if ($product->getVisualsCount() > 0)
+		{
+			$visualsInfos['visuals'] = $product->getVisuals();
+			$visualsInfos['count'] = $product->getVisualsCount();
+		}
+		else
+		{
+			if ($product->getVariantGroup())
+			{
+				if ($product->getVariant())
+				{
+					// Get visual of first upper product
+					// TODO
+				}
+				else
+				{
+					// Get visual of one of under product
+					// TODO
+				}
+			}
+			$visualsInfos['count'] = count($visualsInfos['visuals']);
+		}
+
+		return $visualsInfos;
 	}
 }

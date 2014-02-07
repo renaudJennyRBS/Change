@@ -30,6 +30,11 @@
 					}
 				}
 
+				if (attrs.hasOwnProperty('hasVariants'))
+				{
+					scope.hasVariants = attrs.hasVariants
+				}
+
 				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
 
 				if (scope.quantity > 0 && attrs.sku && attrs.price)
@@ -225,6 +230,7 @@
 			if (data) {
 				scope.productConfig.productId = data.productId;
 				scope.productConfig.key = data.key;
+				scope.productConfig.hasVariants = data.hasVariants;
 				scope.productConfig.designation = data.designation;
 				scope.productConfig.sku = data.stock.sku;
 
@@ -253,6 +259,7 @@
 			} else {
 				scope.productConfig.productId = 0;
 				scope.productConfig.key = null;
+				scope.productConfig.hasVariants = null;
 				scope.productConfig.designation = '';
 				scope.productConfig.sku = null;
 

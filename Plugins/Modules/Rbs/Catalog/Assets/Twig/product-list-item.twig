@@ -16,25 +16,27 @@
 		</li>
 		{% if parameters.webStoreId %}
 			{% block prices %}
-				{% if row.productPresentation.getPriceValue %}
+				{% if row.productPresentation.prices.price %}
 					{% if parameters.displayPrices  %}
 						<li class="product-price price">
-							{{ formatPrice(row.productPresentation.priceValue) }}
+							{% if row.productPresentation.general.hasVariants  %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
+							{{ formatPrice(row.productPresentation.prices.price) }}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-							{% if row.productPresentation.priceValueWithoutDiscount %}
+							{% if row.productPresentation.prices.priceWithoutDiscount %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{- formatPrice(row.productPresentation.priceValueWithoutDiscount) -}}
+									{{- formatPrice(row.productPresentation.prices.priceWithoutDiscount) -}}
 								</del>
 							{% endif %}
 						</li>
 					{% endif %}
 					{% if parameters.displayPricesWithTax %}
 						<li class="product-price price">
-							{{ formatPrice(row.productPresentation.priceValueWithTax) }}
+							{% if row.productPresentation.general.hasVariants  %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
+							{{ formatPrice(row.productPresentation.prices.priceWithTax) }}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
-							{% if row.productPresentation.priceValueWithoutDiscountWithTax %}
+							{% if row.productPresentation.prices.priceWithoutDiscountWithTax %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{- formatPrice(row.productPresentation.priceValueWithoutDiscountWithTax) -}}
+									{{- formatPrice(row.productPresentation.prices.priceWithoutDiscountWithTax) -}}
 								</del>
 							{% endif %}
 						</li>
@@ -44,18 +46,28 @@
 
 			{% block addToCart %}
 				<li class="product-add">
-					<div rbs-catalog-product-data="" data-ng-model="productConfig"
-						data-key="{{ row.id }}" data-product-id="{{ row.id }}"
-						data-sku="{{ row.productPresentation.codeSKU }}"
-						data-price="{{ row.productPresentation.priceValue }}"
-						data-redirect-url="{{ parameters.redirectUrl }}"
-						data-designation="{{ row.productPresentation.designation }}"
-						data-stock-level ="{{ row.productPresentation.stock.level }}"
-						data-stock-min ="{{ row.productPresentation.stock.minQuantity }}"
-						data-stock-max ="{{ row.productPresentation.stock.maxQuantity }}"
-						data-stock-step ="{{ row.productPresentation.stock.quantityIncrement }}" ></div>
+					{% if not row.productPresentation.general.hasVariants  %}
+						<div rbs-catalog-product-data="" data-ng-model="productConfig"
+							data-key="{{ row.id }}"
+							data-product-id="{{ row.id }}"
+							data-has-variants="{{ row.productPresentation.general.hasVariants }}"
+							data-sku="{{ row.productPresentation.stock.sku }}"
+							data-price="{{ row.productPresentation.prices.price }}"
+							data-redirect-url="{{ parameters.redirectUrl }}"
+							data-designation="{{ row.productPresentation.general.designation }}"
+							data-stock-level ="{{ row.productPresentation.stock.level }}"
+							data-stock-min ="{{ row.productPresentation.stock.minQuantity }}"
+							data-stock-max ="{{ row.productPresentation.stock.maxQuantity }}"
+							data-stock-step ="{{ row.productPresentation.stock.quantityIncrement }}" ></div>
+					{% else %}
+						<div class="ng-valid ng-dirty">
+							<a class="btn btn-primary btn-sm" title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
+								href="{{ row.url }}">{{ i18n('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}</a>
+						</div>
+					{% endif %}
 				</li>
 			{% endblock %}
+
 		{% endif %}
 	</ul>
 </li>

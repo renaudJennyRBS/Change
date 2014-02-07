@@ -259,6 +259,55 @@ class StockManager
 	}
 
 	/**
+	 * @param \Rbs\Stock\Documents\Sku[] $skus
+	 * @param integer|\Rbs\Store\Documents\WebStore|null $store
+	 * @return integer
+	 */
+	public function getInventoryLevelForManySku($skus, $store = null)
+	{
+		$skusId = array();
+		foreach ($skus as $sku)
+		{
+			if ($sku->getUnlimitedInventory())
+			{
+				return static::UNLIMITED_LEVEL;
+			}
+			$skusId[] = $sku->getId();
+		}
+
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query->andPredicates($query->in('sku', $skusId), $query->eq('warehouse', 0));
+		$dbQueryBuilder = $query->dbQueryBuilder();
+		$fb = $dbQueryBuilder->getFragmentBuilder();
+
+		$docTable = $query->getTableAliasName();
+		$mvtTable = $fb->table('rbs_stock_dat_mvt');
+
+		$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
+			$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
+			$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
+		));
+		$sum = $fb->alias($fb->sum($fb->column('movement', $mvtTable)), 'movement');
+		$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
+		$dbQueryBuilder->addColumn($level);
+		$dbQueryBuilder->addColumn($sum);
+		$result = $dbQueryBuilder->query()->getFirstResult();
+		$level = intval($result['level']);
+		$movement = intval($result['movement']);
+		if ($store === null)
+		{
+			$store = $this->getContext()->getWebStore();
+		}
+
+		if ($store)
+		{
+			$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
+			return $level + $movement - $this->getReservedQuantity($skusId, $storeId);
+		}
+		return $level + $movement;
+	}
+
+	/**
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @param integer $level
@@ -287,17 +336,28 @@ class StockManager
 	}
 
 	/**
-	 * @param \Rbs\Stock\Documents\Sku $sku
+	 * @param \Rbs\Stock\Documents\Sku[] $skus
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
+	 * @param integer $level
+	 * @return string
+	 */
+	public function getInventoryThresholdForManySku($skus, $store = null, $level = null)
+	{
+		if ($level === null)
+		{
+			$level = $this->getInventoryLevelForManySku($skus, $store);
+		}
+
+		return $level > 0 ? static::THRESHOLD_AVAILABLE : static::THRESHOLD_UNAVAILABLE;
+	}
+
+
+	/**
 	 * @param string $threshold
 	 * @return string|null
 	 */
-	public function getInventoryThresholdTitle(\Rbs\Stock\Documents\Sku $sku, $store = null, $threshold = null)
+	public function getInventoryThresholdTitle($threshold)
 	{
-		if ($threshold === null)
-		{
-			$threshold = $this->getInventoryThreshold($sku, $store);
-		}
 		if ($threshold)
 		{
 			$cm = $this->getCollectionManager();
@@ -383,7 +443,7 @@ class StockManager
 	}
 
 	/**
-	 * @param integer $skuId
+	 * @param integer | integer[] $skuId
 	 * @param integer $storeId
 	 * @return integer
 	 */
@@ -396,18 +456,29 @@ class StockManager
 			$resTable = $fb->table('rbs_stock_dat_res');
 			$qb->select($fb->alias($fb->sum($fb->column('reservation')), 'quantity'));
 			$qb->from($resTable);
+
+			if (is_array($skuId))
+			{
+				$skuPredicate = $fb->in($fb->column('sku_id'), $skuId);
+			}
+			else
+			{
+				$skuPredicate = $fb->eq($fb->column('sku_id'), $skuId);
+			}
+
 			$qb->where(
 				$fb->logicAnd(
-					$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')),
+					$skuPredicate,
 					$fb->eq($fb->column('store_id'), $fb->integerParameter('storeId'))
 				)
 			);
 		}
 		$query = $qb->query();
-		$query->bindParameter('skuId', $skuId);
 		$query->bindParameter('storeId', $storeId);
 		return intval($query->getFirstResult($query->getRowsConverter()->addIntCol('quantity')));
 	}
+
+
 
 	/**
 	 * @param string $targetIdentifier
