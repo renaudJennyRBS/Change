@@ -10,17 +10,12 @@
 		{
 			this.$get = ['$location', function ($location) {
 				var urls = {};
-				var labelKeys = {};
 
 				var register = function (key, url) {
 					if (angular.isString(url)) {
 						url = { 'form': url };
 					}
 					urls[key] = angular.extend(urls[key] || {}, url);
-				};
-
-				var registerLabel = function (key, labelObj) {
-					labelKeys[key] = angular.extend(labelKeys[key] || {}, labelObj);
 				};
 
 				var defaultRule = {
@@ -49,12 +44,6 @@
 					if (primaryKey) {
 						var routeUrl = {};
 						routeUrl[name] = route;
-						if (rule.labelKey)
-						{
-							var routeLabel = {};
-							routeLabel[name] = rule.labelKey;
-							registerLabel(primaryKey, routeLabel)
-						}
 
 						register(primaryKey, routeUrl);
 						if (currentModuleName && currentModelName)
@@ -65,12 +54,6 @@
 								// In case we also need to support routes from another module
 								var secondaryKey = currentModuleName + '_' + docName;
 								register(secondaryKey, routeUrl);
-								if (rule.labelKey)
-								{
-									var routeLabel = {};
-									routeLabel[name] = rule.labelKey;
-									registerLabel(secondaryKey, routeLabel)
-								}
 							}
 						}
 					}
@@ -82,7 +65,7 @@
 						rule = { templateUrl : rule };
 					}
 
-					if (! rule.hasOwnProperty('redirectTo')) {
+					if (!rule.hasOwnProperty('redirectTo')) {
 						rule = angular.extend({}, defaultRule, rule);
 					}
 					if ((p = route.indexOf('?')) !== -1) {
@@ -97,7 +80,7 @@
 						}];
 					}
 
-					rule.relatedModelName = currentModelName;
+					rule.relatedModelName = primaryKey;
 					rule.ruleName = name;
 
 					$routeProvider.when(route, rule);
@@ -137,7 +120,7 @@
 					var tplParamRegexp = /:([a-z]+)/gi, tplParams = [], result;
 					while (result = tplParamRegexp.exec(urlTpl)) {
 						tplParams.push(result[1]);
-					};
+					}
 
 					angular.forEach(tplParams, function(paramName){
 						var v = '';
@@ -262,59 +245,94 @@
 					},
 
 					'routesForModels' : function (modelNames) {
-						var self = this;
-						angular.forEach(modelNames, function (model) {
-							var modelParts = model.split('_');
-							var docName = modelParts.slice(2,3).join('');
-							if (currentModuleName)
-							{
-								var baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
+						var self = this, model, ruleNames, defaultRuleNames = ['form', 'workflow', 'timeline', 'urls', 'list'];
+						angular.forEach(modelNames, function (modelInfo) {
+							if (angular.isArray(modelInfo)) {
+								model = modelInfo[0];
+								ruleNames = modelInfo.slice(1);
+							} else {
+								model = modelInfo;
+								ruleNames = defaultRuleNames;
 							}
-							else
-							{
-								var baseRouteTpl = modelParts.join('/');
+							var modelParts = model.split('_'), baseRouteTpl;
+							var docName = modelParts.slice(2,3).join('');
+							if (currentModuleName) {
+								baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
+							} else {
+								baseRouteTpl = modelParts.join('/');
 							}
 							var baseTplDir = model.replace(/_/g, '/');
 							var baseKey = 'm.'+ modelParts.slice(0,2).join('.').toLowerCase();
 							var lowerDocName = docName.toLowerCase();
-							self.model(model)
-								.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
-								.route('form', baseRouteTpl + '/:id', {templateUrl: 'Document/' + baseTplDir + '/form.twig', 'labelKey':baseKey + '.document.' + lowerDocName + ' | ucf'})
-								.route('new' , baseRouteTpl + '/new', 'Document/' + baseTplDir + '/form.twig')
-								.route('workflow', baseRouteTpl + '/:id/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController', 'labelKey':'m.rbs.workflow.admin.workflow | ucf'})
-								.route('timeline', baseRouteTpl + '/:id/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController', 'labelKey':'m.rbs.timeline.admin.timeline | ucf' })
-								.route('urls', baseRouteTpl + '/:id/url', { 'templateUrl': 'Rbs/Admin/url-manager.twig', 'labelKey':'m.rbs.admin.admin.urls | ucf' })
-							;
+
+							self.model(model);
+							angular.forEach(ruleNames, function(ruleName) {
+								switch (ruleName) {
+									case 'form':
+										self.route('form', baseRouteTpl + '/:id', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey:baseKey + '.documents.' + lowerDocName + ' | ucf'})
+											.route('new' , baseRouteTpl + '/new', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey: 'm.rbs.admin.adminjs.new_resource | ucf' });
+										break;
+									case 'list':
+										self.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', labelKey:baseKey + '.admin.' + lowerDocName + '_list | ucf'});
+										break;
+									case 'workflow':
+										self.route('workflow', baseRouteTpl + '/:id/workflow', {templateUrl: 'Rbs/Admin/workflow/workflow.twig?model='+model, controller: 'RbsChangeWorkflowController', labelKey:'m.rbs.workflow.admin.workflow | ucf'});
+										break;
+									case 'timeline':
+										self.route('timeline', baseRouteTpl + '/:id/timeline', {templateUrl: 'Rbs/Timeline/timeline.twig?model='+model, controller: 'RbsChangeTimelineController', labelKey:'m.rbs.timeline.admin.timeline | ucf' });
+										break;
+									case 'urls':
+										self.route('urls', baseRouteTpl + '/:id/url', {templateUrl: 'Rbs/Admin/url-manager.twig', labelKey:'m.rbs.admin.admin.urls | ucf' });
+										break;
+								}
+							});
 						});
 						return this;
 					},
 
 					'routesForLocalizedModels' : function (modelNames) {
-						var self = this;
-						angular.forEach(modelNames, function (model) {
-							var modelParts = model.split('_');
-							var docName = modelParts.slice(2,3).join('');
-							if (currentModuleName)
-							{
-								var baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
+						var self = this, model, ruleNames, defaultRuleNames = ['form', 'list', 'workflow', 'timeline', 'urls'];
+						angular.forEach(modelNames, function (modelInfo) {
+							if (angular.isArray(modelInfo)) {
+								model = modelInfo[0];
+								ruleNames = modelInfo.slice(1);
+							} else {
+								model = modelInfo;
+								ruleNames = defaultRuleNames;
 							}
-							else
-							{
-								var baseRouteTpl = modelParts.join('/');
+							var modelParts = model.split('_'), baseRouteTpl;
+							var docName = modelParts.slice(2,3).join('');
+							if (currentModuleName) {
+								baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
+							} else {
+								baseRouteTpl = modelParts.join('/');
 							}
 							var baseTplDir = model.replace(/_/g, '/');
 							var baseKey = 'm.'+ modelParts.slice(0,2).join('.').toLowerCase();
 							var lowerDocName = docName.toLowerCase();
 
-							self.model(model)
-								.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', 'labelKey':baseKey + '.admin.' + lowerDocName + '_list | ucf'})
-								.route('form', baseRouteTpl + '/:id/:LCID', {templateUrl: 'Document/' + baseTplDir + '/form.twig', 'labelKey':baseKey + '.document.' + lowerDocName + ' | ucf'})
-								.route('new' , baseRouteTpl + '/new', 'Document/' + baseTplDir + '/form.twig')
-								.route('translate', baseRouteTpl + '/:id/:LCID/translate', { 'templateUrl': 'Document/' + baseTplDir +'/form.twig', 'controller': 'RbsChangeTranslateEditorController', 'labelKey':baseKey + '.document.' + lowerDocName  + ' | ucf'})
-								.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', { 'templateUrl': 'Rbs/Admin/workflow/workflow.twig?model='+model, 'controller': 'RbsChangeWorkflowController', 'labelKey':'m.rbs.workflow.admin.workflow | ucf' })
-								.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', { 'templateUrl': 'Rbs/Timeline/timeline.twig?model='+model, 'controller': 'RbsChangeTimelineController', 'labelKey':'m.rbs.timeline.admin.timeline | ucf' })
-								.route('urls', baseRouteTpl + '/:id/:LCID/url', { 'templateUrl': 'Rbs/Admin/url-manager.twig', 'labelKey':'m.rbs.admin.admin.urls | ucf'})
-							;
+							self.model(model);
+							angular.forEach(ruleNames, function(ruleName) {
+								switch (ruleName) {
+									case 'form':
+										self.route('form', baseRouteTpl + '/:id/:LCID', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey:baseKey + '.documents.' + lowerDocName + ' | ucf'})
+											.route('new' , baseRouteTpl + '/new', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey: 'm.rbs.admin.adminjs.new_resource | ucf' })
+											.route('translate', baseRouteTpl + '/:id/:LCID/translate', {templateUrl: 'Document/' + baseTplDir +'/form.twig', controller: 'RbsChangeTranslateEditorController', labelKey:baseKey + '.documents.' + lowerDocName  + ' | ucf'});
+										break;
+									case 'list':
+										self.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', labelKey:baseKey + '.admin.' + lowerDocName + '_list | ucf'});
+										break;
+									case 'workflow':
+										self.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', {templateUrl: 'Rbs/Admin/workflow/workflow.twig?model='+model, controller: 'RbsChangeWorkflowController', labelKey:'m.rbs.workflow.admin.workflow | ucf' });
+										break;
+									case 'timeline':
+										self.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', {templateUrl: 'Rbs/Timeline/timeline.twig?model='+model, controller: 'RbsChangeTimelineController', labelKey:'m.rbs.timeline.admin.timeline | ucf' });
+										break;
+									case 'urls':
+										self.route('urls', baseRouteTpl + '/:id/:LCID/url', {templateUrl: 'Rbs/Admin/url-manager.twig', labelKey:'m.rbs.admin.admin.urls | ucf'});
+										break;
+								}
+							});
 						});
 						return this;
 					},
@@ -353,17 +371,6 @@
 							return getNamedUrl(doc, params, 'form') + '?section=' + name.substring(5);
 						}
 						return getNamedUrl(doc, params, name);
-					},
-
-					'getLabelKeyForUrl' : function (key, name) {
-
-						if (labelKeys.hasOwnProperty(key)) {
-							var out = labelKeys[key];
-							if (name && out.hasOwnProperty(name)) {
-								return out[name];
-							}
-						}
-						return null;
 					}
 				};
 			}];
@@ -378,12 +385,12 @@
 	var urlFilter = ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
 		return function (doc, urlName, params) {
-			var	url, node;
+			var	url, nodeId;
 
 			if (params === 'tree') {
-				node = Breadcrumb.getCurrentNode();
-				if (node) {
-					params = { 'tn' : node.id };
+				nodeId = Breadcrumb.getCurrentNodeId();
+				if (nodeId) {
+					params = { 'tn' : nodeId };
 				} else {
 					params = null;
 				}

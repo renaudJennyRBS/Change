@@ -21,7 +21,7 @@ class MenuInformation extends Information
 		$this->addInformationMeta('contextual', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_contextual', $ucf));
 		$this->addInformationMeta('documentId', Property::TYPE_DOCUMENTID)
-			->setAllowedModelsNames(array('Rbs_Website_Section', 'Rbs_Website_Menu'))
+			->setAllowedModelsNames(array('Rbs_Website_Topic', 'Rbs_Website_Menu'))
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_documentid', $ucf));
 		$this->addInformationMeta('maxLevel', Property::TYPE_INTEGER, true, 1)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_maxlevel', $ucf));

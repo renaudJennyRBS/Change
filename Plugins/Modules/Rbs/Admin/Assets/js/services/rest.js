@@ -4,6 +4,9 @@
 
 	var app = angular.module('RbsChange');
 
+	app.factory('RbsChange.DocumentCache', ['$cacheFactory', function($cacheFactory) {
+		return $cacheFactory('RbsChange.DocumentCache', {capacity: 50});
+	} ]);
 
 	/**
 	 * REST service.
@@ -25,8 +28,9 @@
 			'RbsChange.ArrayUtils',
 			'RbsChange.UrlManager',
 			'localStorageService',
+			'RbsChange.DocumentCache',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService) {
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService, DocumentCache) {
 
 				var absoluteUrl,
 				    language = 'fr_FR',
@@ -416,6 +420,25 @@
 					return string.replace(/_/g, '/');
 				}
 
+				function _toDocumentRef(model, id, lcid) {
+					if (/[0-9]+/.test(model)) {
+						id = model;
+						model = undefined;
+						lcid = undefined;
+					} else {
+						if (Utils.isDocument(model)) {
+							id = model.id;
+							lcid = model.LCID;
+							model = model.model;
+						}
+					}
+					return {id: id, lcid: lcid, model: model};
+				}
+
+				$rootScope.$on('$routeChangeStart', function() {
+					DocumentCache.removeAll();
+				});
+
 
 				// Public API of the REST service.
 
@@ -575,11 +598,10 @@
 					 * @return {Object} Promise that will be resolved when the Resource is loaded.
 					 */
 					'resource' : function (model, id, lcid) {
-						var q = $q.defer(),
-							self = this;
+						var q = $q.defer(), self = this, httpConfig = getHttpConfig(transformResponseResourceFn);
+						httpConfig.cache = DocumentCache;
 
-						$http.get(this.getResourceUrl(model, id, lcid), getHttpConfig(transformResponseResourceFn))
-
+						$http.get(this.getResourceUrl(model, id, lcid), httpConfig)
 							.success(function restResourceSuccessCallback (data) {
 								if (Utils.hasCorrection(data)) {
 									self.loadCorrection(data).then(function (doc) {
@@ -603,7 +625,6 @@
 							});
 
 						digest();
-
 						return q.promise;
 					},
 
@@ -868,9 +889,7 @@
 												rejectQ(qToResolve, data);
 											}
 										);
-									}
-									else {
-										//console.log("REST.save(): Saved. Not inserted in tree because no tree node information has been provided or status is not 201 (Created).", doc);
+									} else {
 										resolveQ(qToResolve, resource);
 									}
 								}

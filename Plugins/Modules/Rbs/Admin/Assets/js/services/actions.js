@@ -597,17 +597,14 @@
 					selection   : "+",
 					loading     : true,
 
-					execute : ['$docs', '$currentTreeNode', function ($docs, $currentTreeNode) {
-
+					execute : ['$docs', function ($docs) {
 						var promises = [];
 						// Call one REST request per document and store the resulting Promise.
 						angular.forEach($docs, function (doc) {
-							promises.push(REST.save(doc, $currentTreeNode));
+							promises.push(REST.save(doc));
 						});
 						return $q.all(promises);
-
 					}]
-
 				});
 
 
@@ -622,7 +619,6 @@
 					icon        : "icon-reorder",
 
 					execute : ['$scope', '$embedDialog', '$target', function ($scope, $embedDialog, $target) {
-						//$DL.toggleSort('nodeOrder', true);
 						Dialog.embed(
 							$embedDialog,
 							{
@@ -637,9 +633,8 @@
 					}],
 
 					isEnabled : function ($docs, $DL) {
-						return true; // FIXME $DL.hasColumn('nodeOrder') && $DL.collection && $DL.collection.length > 1;
+						return true;
 					}
-
 				});
 
 

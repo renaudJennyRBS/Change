@@ -29,10 +29,6 @@
 				</div>
 			</div>
 
-			<div ng-if="hasColumn('nodeOrder')" class="btn-virtual-group">
-				<a class="btn btn-default" href rbs-go-up-in-tree=""></a>
-			</div>
-
 			<rbs-clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></rbs-clipboard-add-widget>
 
 			<span ng-repeat="item in actions" ng-switch="item.type">

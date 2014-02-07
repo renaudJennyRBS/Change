@@ -29,11 +29,11 @@
 	 */
 	app.constant('RbsChange.Events', {
 
-		// Raised when an Editor has finished loading its document and the Breadcrumb is loaded.
+		// Raised when an Editor has finished loading its document.
 		// Single argument is the edited document.
 		'EditorLoaded'                   : 'Change:Editor.Loaded',
 
-		// Raised when an Editor is ready (its document and the Breadcrumb are loaded).
+		// Raised when an Editor is ready.
 		// Single argument is the edited document.
 		'EditorReady'                    : 'Change:Editor.Ready',
 
@@ -152,7 +152,6 @@
 		__change.createEditorForModel(modelName, linkFn);
 		__change.createEditorForModelTranslation(modelName, linkFn);
 	};
-
 
 	//-------------------------------------------------------------------------
 	//

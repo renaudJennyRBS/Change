@@ -88,7 +88,6 @@
 
 
 				function doSubmit () {
-					console.log("executing task ", scope.data.action);
 					if (scope.data.action === 'contentValidation' && scope.data.contentAction === 'reject') {
 						reject(scope.data.action, scope.data.rejectReason);
 					}
@@ -140,10 +139,9 @@
 					// When validating the publication, we need to save the 'startPublication' and 'endPublication'
 					// properties on the Document before executing the workflow task.
 					if (scope.data.action === 'publicationValidation' && publicationDatesChanged()) {
-						console.log("publicationValidation: saving Document with ", scope.data.startPublication, scope.data.endPublication);
 						scope.document.startPublication = scope.data.startPublication;
 						scope.document.endPublication = scope.data.endPublication;
-						REST.save(scope.document, null, ['startPublication', 'endPublication']).then(function (updated) {
+						REST.save(scope.document, ['startPublication', 'endPublication']).then(function (updated) {
 							angular.extend(scope.document, updated);
 							doSubmit();
 						});
@@ -237,7 +235,6 @@
 							REST.save(copy).then(function (updated) {
 								delete scope.document.META$.correction;
 								angular.extend(scope.document, updated);
-								console.log("saved ", scope.document);
 								$location.path(scope.document.url());
 							});
 						}

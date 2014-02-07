@@ -30,29 +30,7 @@
 
 	app.constant('RbsChange.PaginationPageSizes', [ 10, 20, 30, 50, 75, 100 ]);
 
-	app.directive('rbsDocumentList', [
-		'$q',
-		'$rootScope',
-		'$location',
-		'$cacheFactory',
-		'RbsChange.i18n',
-		'RbsChange.REST',
-		'RbsChange.Utils',
-		'RbsChange.ArrayUtils',
-		'RbsChange.Breadcrumb',
-		'RbsChange.Actions',
-		'RbsChange.NotificationCenter',
-		'RbsChange.Settings',
-		'RbsChange.EditorManager',
-		'RbsChange.Events',
-		'RbsChange.PaginationPageSizes',
-		'RbsChange.Navigation',
-		'RbsChange.ErrorFormatter',
-		documentListDirectiveFn
-	]);
-
-
-	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Breadcrumb, Actions, NotificationCenter, Settings, EditorManager, Events, PaginationPageSizes, Navigation, ErrorFormatter)
+	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Actions, NotificationCenter, Settings, Events, PaginationPageSizes, Navigation, ErrorFormatter)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -802,10 +780,6 @@
 							actionList = actionList.replace('default', DEFAULT_ACTIONS);
 						}
 
-						if (! scope.hasColumn('nodeOrder') ) {
-							actionList = actionList.replace('nodeOrder', '');
-						}
-
 						angular.forEach(actionList.split(/ +/), function (action) {
 							// Locally defined action?
 							if (localActions[action]) {
@@ -1269,16 +1243,7 @@
 					}
 
 					function documentCollectionLoadedCallback (response) {
-						// We are loading a collection, so we can tell the Breadcrumb that there is
-						// no end-resource to display.
-						Breadcrumb.setResource(null);
-
-						if (scope.hasColumn('nodeOrder')) {
-							scope.sortable.push('nodeOrder');
-						}
-
 						scope.pagination.total = response.pagination.count;
-
 						if (scope.pagination.total < scope.pagination.offset)
 						{
 							$location.search('offset', 0);
@@ -1314,51 +1279,27 @@
 						// TODO Reorganize this to use a query for tree and/or tag
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
-						} else if (attrs.tree) {
-							promise = REST.treeChildren(Breadcrumb.getCurrentNode(), params);
 						} else {
-							if (attrs.childrenProperty) {
-								var currentNode = Breadcrumb.getCurrentNode();
-								if (currentNode) {
-									var children = currentNode[attrs.childrenProperty];
-									documentCollectionLoadedCallback({
-										'resources' : children,
-										'pagination': {
-											'count' : children.length
-										}
-									});
-								} else {
-									if (elm.is('[collection-url]')) {
-										if (attrs.collectionUrl) {
-											promise = REST.collection(scope.collectionUrl, params);
-										}
-									} else if (attrs.model && ! attrs.loadQuery) {
-										params.filter = scope.filterCollection;
-										promise = REST.collection(attrs.model, params);
+							if (scope.currentFilter) {
+								var query = {
+									"model" : attrs.model,
+									"where" : {
+										"and" : []
 									}
-								}
-							} else if (! attrs.parentProperty) {
-								if (scope.currentFilter) {
-									var query = {
-										"model" : attrs.model,
-										"where" : {
-											"and" : []
-										}
-									};
-									$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
-										"filter" : scope.currentFilter,
-										"predicates" : query.where.and
-									});
-									promise = REST.query(prepareQueryObject(query), {'column': columnNames});
-								} else {
-									if (elm.is('[collection-url]')) {
-										if (attrs.collectionUrl) {
-											promise = REST.collection(scope.collectionUrl, params);
-										}
-									} else if (attrs.model && ! attrs.loadQuery) {
-										params.filter = scope.filterCollection;
-										promise = REST.collection(attrs.model, params);
+								};
+								$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
+									"filter" : scope.currentFilter,
+									"predicates" : query.where.and
+								});
+								promise = REST.query(prepareQueryObject(query), {'column': columnNames});
+							} else {
+								if (elm.is('[collection-url]')) {
+									if (attrs.collectionUrl) {
+										promise = REST.collection(scope.collectionUrl, params);
 									}
+								} else if (attrs.model && ! attrs.loadQuery) {
+									params.filter = scope.filterCollection;
+									promise = REST.collection(attrs.model, params);
 								}
 							}
 						}
@@ -1429,24 +1370,6 @@
 
 					}, true);
 
-
-					function buildQueryParentProperty () {
-						var currentNode = Breadcrumb.getCurrentNode();
-						if (angular.isObject(currentNode)) {
-							queryObject = {
-								"model" : attrs.model,
-								"where" : {
-									"and" : [{
-										"op" : "eq",
-										"lexp" : { "property" : attrs.parentProperty },
-										"rexp" : { "value"    : currentNode.id }
-									}]
-								}
-							};
-							reload();
-						}
-					}
-
 					if (elm.is('[collection-url]')) {
 						attrs.$observe('collectionUrl', function () {
 							if (scope.collectionUrl) {
@@ -1454,7 +1377,6 @@
 							}
 						});
 					}
-
 
 					//---------------------------------------------------------
 					//
@@ -1540,39 +1462,15 @@
 						if (scope.externalCollection) {
 							return;
 						}
-						if (attrs.tree) {
-							// If in a tree context, reload the list when the Breadcrumb is ready
-							// and each time it changes.
-							Breadcrumb.ready().then(function () {
-								reload();
-								scope.$on('Change:TreePathChanged', function () {
-									reload();
-								});
-							});
-						} else if (attrs.parentProperty) {
-							Breadcrumb.ready().then(function () {
-								buildQueryParentProperty();
-								scope.$on('Change:TreePathChanged', function () {
-									buildQueryParentProperty();
-								});
-							});
-						} else if (attrs.childrenProperty) {
-							Breadcrumb.ready().then(function () {
-								reload();
-								scope.$on('Change:TreePathChanged', function () {
-									reload();
-								});
-							});
-						} else {
-							// Not in a tree.
-							var search = $location.search();
-							// If one of "load-query" or "collection-url" attribute is present,
-							// the list should not be loaded now: it will be when these objects are $watched.
-							// And it works the same way with "sort" parameter in the URL:
-							// the $watch() on $location.search() will load the query.
-							if (! elm.is('[load-query]') && ! elm.is('[collection-url]') && ! search['sort'] && ! search['filter']) {
-								reload();
-							}
+						// Not in a tree.
+						var search = $location.search();
+
+						// If one of "load-query" or "collection-url" attribute is present,
+						// the list should not be loaded now: it will be when these objects are $watched.
+						// And it works the same way with "sort" parameter in the URL:
+						// the $watch() on $location.search() will load the query.
+						if (! elm.is('[load-query]') && ! elm.is('[collection-url]') && ! search['sort'] && ! search['filter']) {
+							reload();
 						}
 					}
 
@@ -1581,11 +1479,6 @@
 
 					function prepareQueryObject (query) {
 						query = angular.copy(query);
-						// Sort by "label" instead of "nodeOrder" when sending a query (search).
-						if (scope.sort.column === 'nodeOrder') {
-							scope.sort.column = 'label';
-							scope.sort.descending = 'asc';
-						}
 						query.offset = scope.pagination.offset;
 						query.limit  = scope.pagination.limit;
 						if (!angular.isObject(query.order))
@@ -1676,6 +1569,15 @@
 		};
 	}
 
+	app.directive('rbsDocumentList', [
+		'$q', '$rootScope', '$location',
+		'$cacheFactory', 'RbsChange.i18n', 'RbsChange.REST',
+		'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Actions',
+		'RbsChange.NotificationCenter', 'RbsChange.Settings',
+		'RbsChange.Events', 'RbsChange.PaginationPageSizes',
+		'RbsChange.Navigation', 'RbsChange.ErrorFormatter',
+		documentListDirectiveFn
+	]);
 
 	app.directive('rbsColumn', ['rbsThumbnailSizes', function (sizes) {
 

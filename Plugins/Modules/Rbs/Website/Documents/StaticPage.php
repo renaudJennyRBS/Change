@@ -190,5 +190,24 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				$documentLink->setProperty('functions', $functions);
 			}
 		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+
+			/** @var $staticPage StaticPage */
+			$staticPage = $event->getDocument();
+
+			$documentResult = $restResult;
+			$section = $staticPage->getSection();
+
+			$website = null;
+			if ($section instanceof Topic) {
+				$website = $section->getWebsite();
+			}elseif ($section instanceof Website) {
+				$website = $section;
+			}
+			$um = $documentResult->getUrlManager();
+			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
+			$documentResult->setProperty('website', $vc->toRestValue($website, \Change\Documents\Property::TYPE_DOCUMENT));
+		}
 	}
 }

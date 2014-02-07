@@ -8,20 +8,14 @@
 	 * Controller for Dashboard.
 	 *
 	 * @param $scope
-	 * @param Workspace
-	 * @param Breadcrumb
-	 * @param MainMenu
-	 * @param i18n
 	 * @param REST
 	 * @param Dialog
 	 * @param Settings
-	 * @param UrlManager
 	 * @param User
+	 * @param $location
 	 * @constructor
 	 */
-	function DashboardController($scope, Breadcrumb, REST, Dialog, Settings, User, $location)
-	{
-		Breadcrumb.resetLocation();
+	function DashboardController($scope, REST, Dialog, Settings, User, $location) {
 
 		var $embedContainer = $('#chgDashboardEmbedContainer');
 
@@ -34,7 +28,8 @@
 		function refreshDashboard() {
 			settings = angular.copy(Settings.get('dashboard', {}));
 			if (settings.tags && settings.tags.length) {
-				REST.call(REST.getBaseUrl('admin/tagsInfo/'), {'tags':settings.tags}, REST.collectionTransformer()).then(function (result) {
+				REST.call(REST.getBaseUrl('admin/tagsInfo/'), {'tags': settings.tags},
+					REST.collectionTransformer()).then(function (result) {
 					settings.tags = result;
 					$scope.dashboardSettings = settings;
 				});
@@ -42,6 +37,7 @@
 				$scope.dashboardSettings = settings;
 			}
 		}
+
 		refreshDashboard();
 
 		$scope.showDashboardSettings = function ($event) {
@@ -49,13 +45,13 @@
 				$embedContainer,
 				'Rbs/Admin/dashboard/settings.twig',
 				$scope,
-				{ 'pointedElement' : $event.target }
+				{ 'pointedElement': $event.target }
 			);
 		};
 
 		$scope.saveSettings = function () {
 			var dashboard = {
-				tags : []
+				tags: []
 			};
 			angular.forEach($scope.dashboardSettings.tags, function (tag) {
 				if (angular.isObject(tag) && tag.id) {
@@ -68,10 +64,9 @@
 			});
 		};
 
-		$scope.goToUserProfile = function()
-		{
+		$scope.goToUserProfile = function () {
 			$location.path('/Rbs/User/Profile');
-		}
+		};
 
 		//
 		// Tags
@@ -84,10 +79,9 @@
 				$embedContainer,
 				'Rbs/Admin/dashboard/tags.twig',
 				$scope,
-				{ 'pointedElement' : $event.target }
+				{ 'pointedElement': $event.target }
 			);
 		};
-
 
 		//
 		// Tasks
@@ -98,12 +92,13 @@
 				$embedContainer,
 				'Rbs/Admin/dashboard/tasks.twig',
 				$scope,
-				{ 'pointedElement' : $event.target }
+				{ 'pointedElement': $event.target }
 			);
 		};
 
 		$scope.reloadTasks = function () {
-			REST.call(REST.getBaseUrl('admin/currentTasks/'), {'column':['document','taskCode','status']}, REST.collectionTransformer()).then(function (result) {
+			REST.call(REST.getBaseUrl('admin/currentTasks/'), {'column': ['document', 'taskCode', 'status']},
+				REST.collectionTransformer()).then(function (result) {
 				$scope.tasks = result;
 			});
 		};
@@ -112,15 +107,15 @@
 
 		$scope.taskList = {
 
-			'resolveTask' : function (task) {
+			'resolveTask': function (task) {
 				REST.executeTask(task);
 			},
 
-			'rejectTask' : function (task) {
+			'rejectTask': function (task) {
 				REST.executeTask(
 					task,
 					{
-						'reason' : window.prompt("Veuillez indiquer le motif du refus :")
+						'reason': window.prompt("Veuillez indiquer le motif du refus :")
 					}
 				);
 			}
@@ -135,12 +130,11 @@
 				$embedContainer,
 				'Rbs/Admin/dashboard/notifications.twig',
 				$scope,
-				{ 'pointedElement' : $event.target }
+				{ 'pointedElement': $event.target }
 			);
 		};
 
-		function getNotificationQuery(status)
-		{
+		function getNotificationQuery(status) {
 			return {
 				'model': 'Rbs_Notification_Notification',
 				'where': {
@@ -172,15 +166,15 @@
 		$scope.notificationType = 'new';
 		$scope.notificationQuery = getNotificationQuery('new');
 
-		function reloadNotificationsQuery()
-		{
-			REST.query(getNotificationQuery('new')).then(function (data){
+		function reloadNotificationsQuery() {
+			REST.query(getNotificationQuery('new')).then(function (data) {
 				$scope.newNotificationCount = data.pagination.count;
 			});
 		}
+
 		reloadNotificationsQuery();
 
-		$scope.$watch('notificationType', function (type){
+		$scope.$watch('notificationType', function (type) {
 			$scope.notificationQuery = getNotificationQuery(type);
 		});
 
@@ -188,7 +182,7 @@
 			'readNotification': function (notification) {
 				notification.status = 'read';
 				notification.disableButton = true;
-				REST.save(notification).then(function (){
+				REST.save(notification).then(function () {
 					reloadNotificationsQuery();
 					$scope.$broadcast('Change:DocumentList:DLRbsDashboardNotificationsList:call', { method: 'reload' });
 				});
@@ -196,12 +190,12 @@
 			'deleteNotification': function (notification) {
 				notification.status = 'deleted';
 				notification.disableButton = true;
-				REST.save(notification).then(function(){
+				REST.save(notification).then(function () {
 					reloadNotificationsQuery();
 					$scope.$broadcast('Change:DocumentList:DLRbsDashboardNotificationsList:call', { method: 'reload' });
 				});
 			},
-			getNotificationType: function() {
+			getNotificationType: function () {
 				return $scope.notificationType;
 			}
 		};
@@ -209,7 +203,6 @@
 
 	DashboardController.$inject = [
 		'$scope',
-		'RbsChange.Breadcrumb',
 		'RbsChange.REST',
 		'RbsChange.Dialog',
 		'RbsChange.Settings',

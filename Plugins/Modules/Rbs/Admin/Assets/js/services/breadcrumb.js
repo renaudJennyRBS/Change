@@ -1,9 +1,4 @@
 (function () {
-
-	// FIXME
-	// FB 2014-01-17:
-	// This service can be removed as the Breadcrumb is now handled in the rbs-breadcrumb Directive.
-
 	"use strict";
 
 	var app = angular.module('RbsChange');
@@ -11,298 +6,192 @@
 	app.provider('RbsChange.Breadcrumb', function RbsChangeBreadcrumbProvider() {
 
 		this.$get = [
-			'$rootScope', '$document', '$location', '$q',
-			'RbsChange.ArrayUtils',
-			'RbsChange.Utils',
-			'RbsChange.REST',
+			'$rootScope', '$document', '$location', '$q', 'RbsChange.ArrayUtils',
+			'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n', '$route', 'RbsChange.Navigation',
 
-			function ($rootScope, $document, $location, $q, ArrayUtils, Utils, REST) {
+			function ($rootScope, $document, $location, $q, ArrayUtils, Utils, REST, i18n, $route, Navigation) {
 
-				var location = [],
-				    path = [],
-				    fullPath = [],
-				    resource = null,
-					resourceModifier = null,
-				    disabled = false,
-				    frozen = false,
-				    breadcrumbService,
-				    loading = false,
-					currentTreeNodeId = 0,
-					readyQ = [];
+				var entriesArray = [],
+					current = null,
+					home = null;
 
-				breadcrumbService = {
+				function goParent() {
+					if (entriesArray.length) {
+						var entry = entriesArray[entriesArray.length - 1];
+						$location.url(entry.url());
+					} else {
+						$location.url(home.url());
+					}
+				}
 
-					windowTitleDivider : " / ",
-					windowTitlePrefix  : "RBS Change",
+				function getCurrentNodeId() {
+					return $location.search().tn;
+				}
 
-					disable : function () {
-						disabled = true;
-						broadcastEvent('Disable');
-					},
+				function currentEntry() {
+					return current;
+				}
 
-					enable : function () {
-						disabled = false;
-						broadcastEvent('Enable');
-					},
+				function homeEntry() {
+					return home;
+				}
 
-					isDisabled : function () {
-						return disabled;
-					},
+				function pathEntries() {
+					return entriesArray.length ? entriesArray : null;
+				}
 
-					freeze : function () {
-						frozen = true;
-					},
 
-					unfreeze : function () {
-						frozen = false;
-					},
+				function updateItems(event, currentRoute) {
+					if (!home) {
+						home = findRoute('/');
+					}
+					var currentPath = $location.path(),
+						parts =  currentPath.split('/'), part,
+						partialPath = '/',
+						entry, redirectRoute;
 
-					isFrozen : function () {
-						return frozen;
-					},
-
-					setLocation : function (loc) {
-						if ( ! frozen && ! angular.equals(location, loc) ) {
-							location = angular.copy(loc);
-							update('Location');
+					if (currentPath != '/') {
+						current = findRoute(currentPath);
+						if (current) {
+							resolveLabel(current);
 						}
-					},
+					} else {
+						current = null;
+					}
 
-					resetLocation : function (loc) {
-						if ( ! frozen && (path.length || ! angular.equals(location, loc) || ! loc) ) {
-							location = loc ? angular.copy(loc) : [];
-							ArrayUtils.clear(path);
-							resource = null;
-							update('Location');
+					entriesArray.length = 0;
+					for (var i = 0; i < parts.length; i++) {
+						part = parts[i];
+						if (part.length) {
+							partialPath += part;
+							entry = findRoute(partialPath);
+							if (entry) {
+								if ((!current || entry.route !== current.route)) {
+									if (!entry.route.redirectTo || entry.label) {
+										resolveLabel(entry);
+										entriesArray.push(entry);
+									}
+								}
+							}
+							partialPath += '/';
 						}
-					},
+					}
 
-					setPath : function (p) {
-						if ( ! frozen && ! angular.equals(path, p) ) {
-							path = angular.copy(p);
-							update('TreePath');
+					$rootScope.$broadcast('Change:UpdateBreadcrumb', entriesArray, current);
+
+					updatePageTitle();
+
+					$rootScope.$broadcast('Change:BreadcrumbUpdated');
+				}
+
+				function updatePageTitle() {
+					var title = 'Rbs Change';
+					angular.forEach(entriesArray, function(entry) {
+						if (entry.label) {
+							title += ' / ' + entry.label;
 						}
-					},
+					});
+					if (current && current.label)
+					{
+						title += ' / ' + current.label;
+					}
 
-					getCurrentNode : function () {
-						return path[path.length - 1];
-					},
+					$document[0].title = title;
+				}
 
-					getClosest : function (modelName) {
-						var i;
-						for (i=path.length-1 ; i >= 0 ; i--) {
-							if (path[i].model === modelName) {
-								return path[i];
+				function resolveLabel(entry) {
+					var route = entry.route;
+					if (route.ruleName === 'form' && entry.params.hasOwnProperty('id')) {
+						REST.resources([entry.params.id]).then(function(collection) {
+							if (collection.resources.length) {
+								entry.label = collection.resources[0].label;
+								updatePageTitle();
+							}
+						}, function () {entry.label = 'Not Found'})
+					}
+				}
+
+				function findRoute(searchPath) {
+					var params, entry = null;
+					angular.forEach($route.routes, function(route) {
+						if (!entry && (params = switchRouteMatcher(searchPath, route))) {
+							entry = {label: null, route: route, path: searchPath, params: params,
+								url : function() {return Navigation.addTargetContext(this.path.substring(1))}};
+							if (route.redirectTo == (route.originalPath + '/')) {
+								var redirectRoute = $route.routes[route.redirectTo];
+								if (redirectRoute) {
+									entry.route = route = redirectRoute;
+									entry.path = searchPath + '/';
+								}
+							}
+
+							if (route.hasOwnProperty('labelKey')) {
+								entry.label = i18n.trans(route.labelKey);
+							}
+						}
+					});
+					return entry;
+				}
+
+
+				/**
+				 * @param on {string} current url
+				 * @param route {Object} route regexp to match the url against
+				 * @return {?Object}
+				 *
+				 * @description
+				 * Check if the route matches the current url.
+				 *
+				 * Inspired by match in
+				 * visionmedia/express/lib/router/router.js.
+				 */
+				function switchRouteMatcher(on, route) {
+					var keys = route.keys,
+						params = {};
+
+					if (!route.regexp) return null;
+
+					var m = route.regexp.exec(on);
+					if (!m) return null;
+
+					for (var i = 1, len = m.length; i < len; ++i) {
+						var key = keys[i - 1];
+
+						var val = 'string' == typeof m[i]
+							? decodeURIComponent(m[i])
+							: m[i];
+
+						if (key && val) {
+							params[key.name] = val;
+						}
+					}
+					return params;
+				}
+
+				$rootScope.$on('$routeChangeSuccess', updateItems);
+
+				return  {
+					goParent : goParent,
+					getCurrentNodeId : getCurrentNodeId,
+					homeEntry: homeEntry,
+					pathEntries : pathEntries,
+					currentEntry : currentEntry,
+					getEntryByPath: function(searchPath) {
+						if (angular.isString(searchPath) && searchPath.length) {
+							var li = searchPath.length -1;
+							if (searchPath === '/') {
+								return findRoute(searchPath)
+							} else if (searchPath.lastIndexOf('/') == li) {
+								return findRoute(searchPath.substring(0, li));
+							} else {
+								return findRoute(searchPath);
 							}
 						}
 						return null;
 					},
-
-					getWebsite : function () {
-						return this.getClosest('Rbs_Website_Website');
-					},
-
-					goParent : function () {
-						var node = this.getCurrentNode();
-						if (angular.isArray(node) && node.length === 2) {
-							$location.url(node[1]);
-						} else if (node && node.treeUrl && node.treeUrl()) {
-							$location.url(node.treeUrl());
-						} else if (location.length) {
-							$location.url(location[location.length-1][1]);
-						} else {
-							history.back();
-						}
-					},
-
-					setResource : function (res, modifier) {
-						if ( ! angular.equals(resource, res) ) {
-							resource = angular.copy(res);
-							update('Resource');
-						}
-						if (Utils.isDocument(resource) && resource.refLCID && resource.refLCID !== resource.LCID) {
-							if (modifier) {
-								modifier += ' (' + resource.LCID + ')';
-							}
-							else {
-								modifier = resource.LCID;
-							}
-						}
-						this.setResourceModifier(modifier);
-					},
-
-					setResourceModifier : function (string) {
-						if (resourceModifier !== string) {
-							resourceModifier = string;
-							update('ResourceModifier');
-						}
-					},
-
-					ready : function () {
-						var q = $q.defer();
-						if (loading) {
-							readyQ.push(q);
-						} else {
-							q.resolve(buildEventData());
-						}
-						return q.promise;
-					}
-
+					refreshPageTitle: updatePageTitle
 				};
-
-
-				function update (what) {
-					var i,
-					    last,
-					    module,
-					    title;
-
-					fullPath = [];
-
-					if ( ! frozen ) {
-
-						for (i = 0 ; i < location.length ; i++) {
-							if (location[i]) {
-								fullPath.push(location[i]);
-							}
-						}
-
-						for (i = 0 ; i < path.length ; i++) {
-							if (path[i]) {
-								fullPath.push(path[i]);
-							}
-						}
-
-						if (resource) {
-							fullPath.push(resource);
-						}
-
-						if (resourceModifier) {
-							fullPath.push(resourceModifier);
-						}
-
-						// Updates window title:
-						// RBS Change / <module's name> / <last path element>
-						// RBS Change / <module's name>
-						// RBS Change
-						title = [ breadcrumbService.windowTitlePrefix ];
-						if (fullPath.length > 0) {
-							last = fullPath[fullPath.length-1];
-							// Grab the module's name if there is more than one element in the path.
-							if (fullPath.length > 1) {
-								module = fullPath[0];
-								title.push(angular.isArray(module) ? module[0] : module);
-							}
-							title.push(angular.isArray(last) ? last[0] : Utils.isDocument(last) ? last.label : last);
-						}
-						$document[0].title = title.join(breadcrumbService.windowTitleDivider);
-
-						broadcastEvent(what);
-					}
-
-				}
-
-
-				function buildEventData () {
-					return {
-						'fullPath'    : fullPath,
-						'path'        : path,
-						'currentNode' : breadcrumbService.getCurrentNode(),
-						'location'    : location,
-						'resource'    : resource,
-						'resourceModifier' : resourceModifier,
-						'website'     : breadcrumbService.getWebsite(),
-						'disabled'    : disabled,
-						'frozen'      : frozen
-					};
-				}
-
-
-				function broadcastEvent (what) {
-					if (!loading) {
-						var data = buildEventData();
-						$rootScope.$broadcast('Change:BreadcrumbChanged', data);
-						$rootScope.$broadcast('Change:' + what + 'Changed', data);
-					}
-				}
-
-
-				function resolvePendingQs () {
-					var data = buildEventData();
-					while (readyQ.length) {
-						readyQ.pop().resolve(data);
-					}
-				}
-
-
-				function rejectPendingQs () {
-					while (readyQ.length) {
-						readyQ.pop().reject();
-					}
-				}
-
-
-				function routeChangeSuccessFn (force) {
-					var treeNodeId = $location.search()['tn'];
-					if (! frozen && ! loading && (force || treeNodeId !== currentTreeNodeId || path.length === 0)) {
-						if (treeNodeId) {
-							loading = true;
-							REST.resource(treeNodeId).then(
-
-								// Success:
-								function (treeNode) {
-									if (Utils.isTreeNode(treeNode)) {
-										// Load tree ancestors of the current TreeNode to update the breadcrumb.
-										REST.treeAncestors(treeNode).then(
-
-											// Success:
-											function (ancestors) {
-												loading = false;
-												currentTreeNodeId = treeNodeId;
-												breadcrumbService.setPath(ancestors.resources);
-												$rootScope.website = breadcrumbService.getWebsite();
-												resolvePendingQs();
-											},
-
-											// Error:
-											function () {
-												loading = false;
-											}
-										);
-									} else {
-										loading = false;
-										breadcrumbService.setPath([treeNode]);
-										resolvePendingQs();
-									}
-								},
-
-								// Error:
-								function () {
-									loading = false;
-									rejectPendingQs();
-								}
-							);
-						} else {
-							breadcrumbService.setPath([]);
-							resolvePendingQs();
-						}
-					}
-				}
-
-				$rootScope.$on('$routeChangeSuccess', function () {
-					// If route changes, we force reloading even if the tree node is the same.
-					routeChangeSuccessFn(true);
-				});
-
-				$rootScope.$on('$routeUpdate', function () {
-					routeChangeSuccessFn(false);
-				});
-
-				return breadcrumbService;
-
 			}
 		];
-
 	});
-
 })();

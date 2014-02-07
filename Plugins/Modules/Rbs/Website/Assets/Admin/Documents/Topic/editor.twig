@@ -12,24 +12,17 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<!--
-		<rbs-field-text property="pathPart"
-			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'pathPart'), ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.website.admin.topic_pathPart_help', ['ucf']) }}</span>
-		</rbs-field-text>
-		-->
-
 		<rbs-field ng-hide="document.isNew() || !document.indexPage" label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'indexPage'), ['ucf']) }}">
 			<div class="form-control-static">(=document.indexPage.label=)</div>
 		</rbs-field>
 
 		<hr/>
 
-		<rbs-field-picker property="website" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'website'), ['ucf']) }}"
-			accepted-model="Rbs_Website_Website"
-			selector-title="{{ i18nAttr('m.rbs.website.admin.topic_website_picker_title', ['ucf']) }}">
-			<div class="help-block">{{ i18n('m.rbs.website.admin.topic_website_help', ['ucf']) }}</div>
+		<rbs-field-picker property="section" required="true"
+				label="{{ i18nAttr('m.rbs.website.admin.topic_section', ['ucf']) }}"
+				select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
+				selector-title="{{ i18nAttr('m.rbs.website.admin.topic_section_picker_title', ['ucf']) }}">
+			<div class="help-block">{{ i18n('m.rbs.website.admin.topic_section_help', ['ucf']) }}</div>
 		</rbs-field-picker>
 	</fieldset>
 
