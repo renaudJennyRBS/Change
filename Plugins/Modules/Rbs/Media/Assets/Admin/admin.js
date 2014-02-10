@@ -4,24 +4,9 @@
 
 	var app = angular.module('RbsChange');
 
-	/**
-	 * Routes and URL definitions.
-	 */
-	app.config(['$provide', function ($provide)
-	{
-		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
-		{
-			$delegate.module('Rbs_Media', 'Rbs/Media', { 'redirectTo': 'Rbs/Media/Image/'});
-			$delegate.routesForLocalizedModels(['Rbs_Media_Image']);
-			return $delegate.module(null);
-		}]);
-	}]);
-
-
 	app.run(['$templateCache', function($templateCache) {
 		$templateCache.put('picker-item-Rbs_Media_Image.html', '<span style="line-height: 30px"><img rbs-storage-image="item" thumbnail="XS"/> (= item.label =) ((= item.width =) &times; (= item.height =))</span>');
 	}]);
-
 
 	/**
 	 * Controller for tag-based menu.

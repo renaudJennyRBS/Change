@@ -514,6 +514,34 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getRoutes()
+	{
+		$routes = [];
+		foreach ($this->getPluginManager()->getModules() as $module)
+		{
+			if ($module->isAvailable()) {
+				$filePath = $this->getApplication()->getWorkspace()->composePath($module->getAssetsPath(), 'Admin', 'routes.json');
+				if (is_readable($filePath)) {
+					$moduleRoutes = json_decode(file_get_contents($filePath), true);
+					if (is_array($moduleRoutes))
+					{
+						foreach ($moduleRoutes as $path => $route)
+						{
+							if (is_array($route) && isset($route['rule'])) {
+								unset($route['auto']);
+								$routes[$path] = $route;
+							}
+						}
+					}
+				}
+			}
+		}
+		return $routes;
+	}
+
+	/**
 	 * @return \Assetic\AssetManager
 	 */
 	public function getJsAssetManager()
@@ -522,7 +550,8 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param $menuJson
+	 * @param array $menuJson
+	 * @return array
 	 */
 	protected function parseSections($menuJson)
 	{

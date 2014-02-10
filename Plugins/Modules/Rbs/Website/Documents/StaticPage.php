@@ -166,19 +166,34 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 	{
 		parent::onDefaultUpdateRestResult($event);
 
+		/** @var $staticPage StaticPage */
+		$staticPage = $event->getDocument();
+		$website = null;
+		$section = $staticPage->getSection();
+		if ($section instanceof Topic) {
+			$website = $section->getWebsite();
+		}elseif ($section instanceof Website) {
+			$website = $section;
+		}
+
 		$restResult = $event->getParam('restResult');
+
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$documentLink = $restResult;
+
+			$um = $documentLink->getUrlManager();
+			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
+			$documentLink->setProperty('website', $vc->toRestValue($website, \Change\Documents\Property::TYPE_DOCUMENT));
+
 			$extraColumn = $event->getParam('extraColumn');
 			if (in_array('functions', $extraColumn))
 			{
-				$document = $documentLink->getDocument();
 				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
 				$query->andPredicates(
 					$query->eq('page', $documentLink->getDocument()),
 					$query->eq('section',
-						$event->getApplicationServices()->getTreeManager()->getNodeByDocument($document)->getParentId())
+						$event->getApplicationServices()->getTreeManager()->getNodeByDocument($staticPage)->getParentId())
 				);
 				$functions = array();
 				$funcDocs = $query->getDocuments();
@@ -192,10 +207,6 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-
-			/** @var $staticPage StaticPage */
-			$staticPage = $event->getDocument();
-
 			$documentResult = $restResult;
 			$section = $staticPage->getSection();
 

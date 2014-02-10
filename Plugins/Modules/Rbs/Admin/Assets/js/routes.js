@@ -11,8 +11,6 @@
 
 	var app = angular.module('RbsChange');
 
-
-
 	/**
 	 * Routes and URL definitions.
 	 */
@@ -20,14 +18,20 @@
 	{
 		$provide.decorator('RbsChange.UrlManager', ['$delegate', function ($delegate)
 		{
-			$delegate.module("Rbs_Admin").route('dashboard', '/',
-				{'templateUrl':'Rbs/Admin/dashboard/dashboard.twig', 'labelKey':'m.rbs.admin.adminjs.home | ucf'}
-			);
-			return $delegate.module(null);
+			var home = {
+				"/": {
+					"module": "Rbs_Admin", "name": "dashboard",
+					"rule": {
+						"templateUrl": "Rbs/Admin/dashboard/dashboard.twig",
+						"labelKey":"m.rbs.admin.adminjs.home | ucf"
+				}
+			}};
+			$delegate.applyConfig(home);
+			$delegate.applyConfig(__change.routes);
+
+			return $delegate;
 		}]);
 	}]);
-
-
 
 	app.config(['$routeProvider', function ($routeProvider)
 	{
@@ -48,7 +52,5 @@
 			})
 		.otherwise({ redirectTo: '/404'})
 		;
-
 	}]);
-
 })();

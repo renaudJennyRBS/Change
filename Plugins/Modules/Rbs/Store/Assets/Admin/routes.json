@@ -1,0 +1,55 @@
+{
+	"/Rbs/Commerce/WebStore/": {
+		"model": "Rbs_Store_WebStore",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Store/WebStore/list.twig",
+			"labelKey": "m.rbs.store.admin.webstore_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/WebStore/:id": {
+		"model": "Rbs_Store_WebStore",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
+			"labelKey": "m.rbs.store.documents.webstore | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/WebStore/:id/timeline": {
+		"model": "Rbs_Store_WebStore",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Store_WebStore",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/WebStore/:id/translate/:LCID": {
+		"model": "Rbs_Store_WebStore",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.store.documents.webstore | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/WebStore/new": {
+		"model": "Rbs_Store_WebStore",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Store/": false,
+	"/Rbs/Store/WebStore/": false,
+	"/Rbs/Store/WebStore/:id": false,
+	"/Rbs/Store/WebStore/:id/timeline": false,
+	"/Rbs/Store/WebStore/:id/translate/:LCID": false,
+	"/Rbs/Store/WebStore/new": false
+}

@@ -3,7 +3,7 @@
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
 
-		<a ng-show="!document.basePrice" rbs-aside-other-link="" href="(= document | rbsURL:'discount' =)?basePriceId=(=document.id=)">{{ i18n('m.rbs.catalog.admin.price_create_discount', ['ucf']) | raw }}</a>
+		<a ng-show="!document.basePrice" rbs-aside-other-link="" href="(= document | rbsURL:'discount':{basePriceId:document.id} =)">{{ i18n('m.rbs.catalog.admin.price_create_discount', ['ucf']) | raw }}</a>
 	</div>
 
 	<div class="document-form" rbs-main-column>

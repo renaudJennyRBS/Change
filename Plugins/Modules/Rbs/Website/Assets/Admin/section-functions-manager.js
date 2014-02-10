@@ -50,6 +50,7 @@
 						scope.sectionPageFunctionList = result.resources;
 						angular.forEach(scope.sectionPageFunctionList, function (spf) {
 							spf.label = scope.getFunctionLabel(spf.functionCode);
+
 						});
 					});
 
@@ -427,6 +428,7 @@
 					var label = scope.section.label;
 					args.context.label(label);
 					var data = {
+						section: scope.section,
 						newFunction: scope.newFunction,
 						readyForFunctionPages: scope.readyForFunctionPages,
 						notReadyForFunctionPages: scope.notReadyForFunctionPages
@@ -438,6 +440,7 @@
 				if (currentContext) {
 					var contextData = currentContext.savedData('functions');
 					if (contextData) {
+						scope.section = contextData.section;
 						scope.newFunction = contextData.newFunction;
 						scope.readyForFunctionPages = contextData.readyForFunctionPages;
 						scope.notReadyForFunctionPages = contextData.notReadyForFunctionPages;

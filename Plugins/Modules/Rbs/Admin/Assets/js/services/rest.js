@@ -92,10 +92,6 @@
 					return UrlManager.getTranslateUrl(this, LCID);
 				};
 
-				ChangeDocument.prototype.treeUrl = function () {
-					return UrlManager.getTreeUrl(this);
-				};
-
 				ChangeDocument.prototype.hasUrl = function (name) {
 					return this.url(name) !== 'javascript:;';
 				};
@@ -628,8 +624,6 @@
 						return q.promise;
 					},
 
-
-
 					'resources' : function (ids) {
 						var q = $q.defer(),
 							url = Utils.makeUrl(this.getBaseUrl('admin/documentList'), {'ids' : ids});
@@ -809,6 +803,7 @@
 							delete resource.id;
 							url = this.getCollectionUrl(resource.model);
 						} else {
+							DocumentCache.removeAll();
 							// If resource is NOT new (already been saved), we must PUT on the Resource's URL.
 							method = 'put';
 							url = this.getResourceUrl(resource);
@@ -966,6 +961,7 @@
 							q.reject("Action '" + taskCode + "' is not available for Document '" + doc.id + "'.");
 						}
 						else {
+							DocumentCache.removeAll();
 							// Load the Task Document
 							// TODO Optimize:
 							// Can we call 'execute' directly with '/execute' at the end of the Task URL?

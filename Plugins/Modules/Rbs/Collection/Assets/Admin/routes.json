@@ -1,0 +1,105 @@
+{
+	"/Rbs/Collection/": {
+		"module": "Rbs_Collection",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Collection/Collection/"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Collection/": {
+		"model": "Rbs_Collection_Collection",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Collection/Collection/list.twig",
+			"labelKey": "m.rbs.collection.admin.collection_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Collection/:id": {
+		"model": "Rbs_Collection_Collection",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Collection/Collection/form.twig",
+			"labelKey": "m.rbs.collection.documents.collection | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Collection/:id/timeline": {
+		"model": "Rbs_Collection_Collection",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Collection_Collection",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Collection/new": {
+		"model": "Rbs_Collection_Collection",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Collection/Collection/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Item/:id": {
+		"model": "Rbs_Collection_Item",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
+			"labelKey": "m.rbs.collection.documents.item | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Item/:id/timeline": {
+		"model": "Rbs_Collection_Item",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Collection_Item",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Item/:id/translate/:LCID": {
+		"model": "Rbs_Collection_Item",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.collection.documents.item | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Item/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Collection_Item",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Collection_Item",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Item/:id/workflow": {
+		"model": "Rbs_Collection_Item",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Collection_Item",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Collection/Item/new": {
+		"model": "Rbs_Collection_Item",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

@@ -1,0 +1,144 @@
+{
+	"/Rbs/Seo/": {
+		"module": "Rbs_Seo",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Seo/DocumentSeo/"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/DocumentSeo/list.twig",
+			"labelKey": "m.rbs.seo.admin.documentseo_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/:id": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
+			"labelKey": "m.rbs.seo.documents.documentseo | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/:id/timeline": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Seo_DocumentSeo",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/:id/translate/:LCID": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.seo.documents.documentseo | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_DocumentSeo",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/:id/workflow": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_DocumentSeo",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/DocumentSeo/new": {
+		"model": "Rbs_Seo_DocumentSeo",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/list.twig",
+			"labelKey": "m.rbs.seo.admin.modelconfiguration_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/:id": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
+			"labelKey": "m.rbs.seo.documents.modelconfiguration | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/:id/timeline": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Seo_ModelConfiguration",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/:id/translate/:LCID": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.seo.documents.modelconfiguration | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_ModelConfiguration",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/:id/workflow": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_ModelConfiguration",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Seo/ModelConfiguration/new": {
+		"model": "Rbs_Seo_ModelConfiguration",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"/Rbs/Dev/": {
+		"module": "Rbs_Dev",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": true
+	}
+}

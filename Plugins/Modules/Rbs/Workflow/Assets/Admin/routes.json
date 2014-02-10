@@ -1,0 +1,10 @@
+{
+	"/Rbs/Workflow/": {
+		"module": "Rbs_Workflow",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": true
+	}
+}

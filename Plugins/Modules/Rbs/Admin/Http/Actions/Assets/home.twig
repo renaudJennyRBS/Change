@@ -61,6 +61,18 @@
 			OAuth: {{ OAuth.Consumer|json_encode|raw }}
 		};
 	</script>
+
+	<!-- Templates that needs to be included -->
+	<script type="text/ng-template" id="Rbs/Admin/js/directives/aside-defaults-editor.twig">
+		<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>
+		<rbs-aside-seo ng-if="document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
+		<div class="rbs-aside-block rbs-aside-other-links" ng-hide="document.isNew()">
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
+			<a href="javascript:;" ng-href="(= document | rbsURL:'timeline' =)">{{ i18n('m.rbs.admin.admin.view_timeline', ['ucf']) | raw }}</a>
+		</div>
+	</script>
 </head>
 
 <body data-ng-controller="Change.RootController">
@@ -124,23 +136,13 @@
 	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment-timezone.min.js"></script>
 
 	<script type="text/javascript" src="Rbs/Admin/i18n.js?LCID={{ LCID }}"></script>
-
-	<!-- Templates that needs to be included -->
-
-	<script type="text/ng-template" id="Rbs/Admin/js/directives/aside-defaults-editor.twig">
-		<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
-		<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>
-		<rbs-aside-seo ng-if="document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
-		<div class="rbs-aside-block rbs-aside-other-links" ng-hide="document.isNew()">
-			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
-			<a href="javascript:;" ng-href="(= document | rbsURL:'timeline' =)">{{ i18n('m.rbs.admin.admin.view_timeline', ['ucf']) | raw }}</a>
-		</div>
-	</script>
+	<script type="text/javascript" src="Rbs/Admin/routes.js"></script>
 
 	<!-- modules -->
 	{% for src in scripts %}
 		<script type="text/javascript" src="{{ src }}"></script>
 	{% endfor %}
+
+	<script type="text/javascript" src="Rbs/Admin/editors.js"></script>
 </body>
 </html>

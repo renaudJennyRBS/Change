@@ -156,11 +156,16 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$documentLink = $restResult;
+
+			/** @var $document FunctionalPage */
+			$document = $documentLink->getDocument();
+			$um = $restResult->getUrlManager();
+			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
+			$documentLink->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
+
 			$extraColumn = $event->getParam('extraColumn');
 			if (in_array('allSupportedFunctionsCode', $extraColumn))
 			{
-				/** @var $document FunctionalPage */
-				$document = $documentLink->getDocument();
 				$documentLink->setProperty('allSupportedFunctionsCode', $document->getAllSupportedFunctionsCode());
 			}
 		}

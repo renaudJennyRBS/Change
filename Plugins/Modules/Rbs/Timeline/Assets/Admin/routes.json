@@ -1,0 +1,10 @@
+{
+	"/Rbs/Timeline/": {
+		"module": "Rbs_Timeline",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": true
+	}
+}

@@ -132,6 +132,7 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
 			$documentResult->setProperty('section', $vc->toRestValue($section, \Change\Documents\Property::TYPE_DOCUMENT));
 		}
+
 	}
 
 	/**
