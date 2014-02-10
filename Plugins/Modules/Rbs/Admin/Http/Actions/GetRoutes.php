@@ -18,6 +18,9 @@ class GetRoutes
 		$manager = $event->getParam('manager');
 		$routes = $manager->getRoutes();
 
+		//WildCard :IDENTIFIER at last
+		krsort($routes);
+
 		$result = new \Rbs\Admin\Http\Result\Renderer();
 		$result->setHeaderContentType('application/javascript');
 		$result->setRenderer(function() use ($routes)

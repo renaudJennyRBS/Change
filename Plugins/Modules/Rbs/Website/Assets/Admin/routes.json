@@ -98,55 +98,11 @@
 		"auto": false
 	},
 	"/Rbs/Website/FunctionalPage/new": false,
-	"/Rbs/Website/Menu/:id": {
-		"model": "Rbs_Website_Menu",
-		"name": "form",
-		"rule": {
-			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
-			"labelKey": "m.rbs.website.documents.menu | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Website/Menu/:id/timeline": {
-		"model": "Rbs_Website_Menu",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Website_Menu",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Website/Menu/:id/translate/:LCID": {
-		"model": "Rbs_Website_Menu",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.website.documents.menu | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Website/Menu/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Website_Menu",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Menu",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Website/Menu/:id/workflow": {
-		"model": "Rbs_Website_Menu",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Menu",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
+	"/Rbs/Website/Menu/:id": false,
+	"/Rbs/Website/Menu/:id/timeline": false,
+	"/Rbs/Website/Menu/:id/translate/:LCID": false,
+	"/Rbs/Website/Menu/:id/translate/:LCID/workflow": false,
+	"/Rbs/Website/Menu/:id/workflow": false,
 	"/Rbs/Website/Menu/Browse/": {
 		"model": "Rbs_Website_Menu",
 		"name": "selector",
@@ -243,6 +199,56 @@
 	"/Rbs/Website/Website/:id/translate/:LCID/workflow": false,
 	"/Rbs/Website/Website/:id/urls": false,
 	"/Rbs/Website/Website/:id/workflow": false,
+	"/Rbs/Website/Website/:website/Menus/Menu/:id": {
+		"model": "Rbs_Website_Menu",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
+			"labelKey": "m.rbs.website.documents.menu | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/Menus/Menu/:id/timeline": {
+		"model": "Rbs_Website_Menu",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Website_Menu",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/Menus/Menu/:id/translate/:LCID": {
+		"model": "Rbs_Website_Menu",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.website.documents.menu | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/Menus/Menu/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Website_Menu",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Menu",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/Menus/Menu/:id/workflow": {
+		"model": "Rbs_Website_Menu",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Menu",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/Menus/Menu/new": false,
 	"/Rbs/Website/Website/:website/Menus/new": {
 		"model": "Rbs_Website_Menu",
 		"name": "new",

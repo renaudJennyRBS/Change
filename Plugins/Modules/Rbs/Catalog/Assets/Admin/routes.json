@@ -155,6 +155,15 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/VariantStocks/": {
+		"model": "Rbs_Catalog_VariantGroup",
+		"name": "variant-stocks",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-stocks.twig",
+			"labelKey": "m.rbs.catalog.admin.variantgroup_stocks_config | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/edit": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-edit",
@@ -170,15 +179,6 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-list.twig",
 			"labelKey": "m.rbs.catalog.admin.variantgroup_list | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/VariantStocks/": {
-		"model": "Rbs_Catalog_VariantGroup",
-		"name": "variant-stocks",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-stocks.twig",
-			"labelKey": "m.rbs.catalog.admin.variantgroup_stocks_config | ucf"
 		},
 		"auto": false
 	},
