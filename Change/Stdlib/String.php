@@ -182,4 +182,32 @@ class String
 	{
 		return str_replace(static::$fromAccents, static::$toAccents, $string);
 	}
+
+	const DEFAULT_SUBSTITUTION_REGEXP = '/\{([a-z][A-Za-z0-9.]*)\}/';
+
+	/**
+	 * @param string $string
+	 * @param array $substitutions
+	 * @param string $regExp
+	 * @return string|null
+	 */
+	public static function getSubstitutedString($string, $substitutions, $regExp = self::DEFAULT_SUBSTITUTION_REGEXP)
+	{
+		if (is_string($string) && $string)
+		{
+			if (count($substitutions))
+			{
+				$string = preg_replace_callback($regExp, function ($matches) use ($substitutions)
+				{
+					if (array_key_exists($matches[1], $substitutions))
+					{
+						return $substitutions[$matches[1]];
+					}
+					return '';
+				}, $string);
+			}
+			return $string;
+		}
+		return null;
+	}
 }
