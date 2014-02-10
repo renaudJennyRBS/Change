@@ -21,7 +21,7 @@
 				elm.addClass('row');
 
 				elm.click(function (event) {
-					if (event.target === this) {
+					if (event.target === this || event.target.parentNode === this) {
 						ctrl.selectBlock(elm);
 					}
 				});
@@ -58,6 +58,13 @@
 						item.offset = parseInt(elm.attr('data-offset'), 10) || 0;
 					}
 				};
+
+				// On click on a column, select the row.
+				elm.click(function (event) {
+					if (event.target === this) {
+						ctrl.selectBlock(jQuery(this.parentNode));
+					}
+				});
 
 				structureEditorService.initChildItems(scope, elm, item, ctrl.isReadOnly());
 			}
