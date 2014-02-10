@@ -35,16 +35,17 @@
 					scope.hasVariants = attrs.hasVariants
 				}
 
-				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
+				if (attrs.hasOwnProperty('hasOwnSku'))
+				{
+					scope.hasOwnSku = attrs.hasOwnSku
+				}
 
-				if (scope.quantity > 0 && attrs.sku && attrs.price)
+				if (attrs.hasOwnProperty('canBeOrdered'))
 				{
-					scope.canBeOrdered = true;
+					scope.canBeOrdered = attrs.canBeOrdered
 				}
-				else
-				{
-					scope.canBeOrdered = false;
-				}
+
+				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
 
 				var config = {
 					key: attrs.key,
@@ -231,7 +232,7 @@
 				scope.productConfig.productId = data.productId;
 				scope.productConfig.key = data.key;
 				scope.productConfig.hasVariants = data.hasVariants;
-				scope.productConfig.designation = data.designation;
+				scope.productConfig.designation = data.general.designation;
 				scope.productConfig.sku = data.stock.sku;
 
 				scope.stockLevel = data.stock.level;
@@ -247,21 +248,16 @@
 				scope.productAvailability = data.stock;
 				scope.prices = data.prices;
 
-				if (scope.quantity > 0 && data.stock.sku && data.prices.price)
-				{
-					scope.canBeOrdered = true;
-				}
-				else
-				{
-					scope.canBeOrdered = false;
-				}
+				scope.canBeOrdered = data.general.canBeOrdered;
+				scope.hasOwnSku = data.general.hasOwnSku;
 
 			} else {
 				scope.productConfig.productId = 0;
 				scope.productConfig.key = null;
-				scope.productConfig.hasVariants = null;
+				scope.productConfig.hasVariants = false;
 				scope.productConfig.designation = '';
 				scope.productConfig.sku = null;
+				scope.hasOwnSku = false;
 
 				scope.productAvailability = {};
 				scope.prices = {};

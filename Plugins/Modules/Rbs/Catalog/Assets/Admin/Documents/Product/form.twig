@@ -3,7 +3,7 @@
 	<div rbs-aside-column>
 		<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>
 		<rbs-aside-editor-menu></rbs-aside-editor-menu>
-		<div class="panel panel-default">
+		<div ng-if="!document.isNew()" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
 			</div>

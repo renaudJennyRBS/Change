@@ -54,7 +54,8 @@
 
 			$delegate.model('Rbs_Catalog_VariantGroup')
 				.route('variant-list', 'Rbs/Catalog/Product/:productId/VariantGroup/:id/list/', 'Document/Rbs/Catalog/VariantGroup/variant-list.twig')
-				.route('variant-edit', 'Rbs/Catalog/Product/:productId/VariantGroup/:id/edit', {'templateUrl': 'Document/Rbs/Catalog/VariantGroup/variant-form.twig', 'labelKey':'m.rbs.catalog.admin.variantgroup_variant_edit | ucf'})
+				.route('variant-edit', 'Rbs/Catalog/Product/:productId/VariantGroup/:id/edit',
+					{'templateUrl': 'Document/Rbs/Catalog/VariantGroup/variant-form.twig', 'labelKey':'m.rbs.catalog.admin.variantgroup_variant_edit | ucf'})
 				.route('variant-config', 'Rbs/Catalog/Product/:productId/VariantGroup/:id',
 					{'templateUrl':'Document/Rbs/Catalog/VariantGroup/form.twig', 'labelKey':'m.rbs.catalog.admin.variantgroup_variant_config | ucf'})
 				.route('variant-stocks', 'Rbs/Catalog/Product/:productId/VariantGroup/:id/VariantStocks/',

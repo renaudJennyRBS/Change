@@ -616,6 +616,14 @@
 							var url = Utils.makeUrl('rbs/catalog/variantstocks', { 'variantGroupId': documentId });
 							$http.get(REST.getBaseUrl(url)).success(function (data)
 							{
+								angular.forEach(data.warehouses, function (w)
+								{
+									if (angular.isArray(w.skus) || !angular.isObject(w.skus))
+									{
+										w.skus = {};
+									}
+								});
+
 								scope.oldData = angular.copy(data);
 								scope.data = data;
 							});

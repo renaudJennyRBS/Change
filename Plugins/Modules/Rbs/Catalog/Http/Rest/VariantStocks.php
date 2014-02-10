@@ -23,19 +23,21 @@ class VariantStocks
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 
 			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
-			$query->andPredicates($query->eq('variant', true), $query->eq('variantGroup', $variantGroup));
+			$query->andPredicates($query->eq('variant', true), $query->eq('variantGroup', $variantGroup), $query->isNotNull('sku'));
 
 			$resultArray = array();
 
 			$warehousesArray = array();
 			$productsArray = array();
 
+			$defaultWarehouseCode = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.stock.admin.warehouse_default_label', ['ucf']);
+
 			$collection = $query->getDocuments();
 			foreach ($collection as $document)
 			{
+				/* @var $document \Rbs\Catalog\Documents\Product */
 				$sku = $document->getSku();
 
-				/* @var $document \Rbs\Catalog\Documents\Product */
 				$productsArray[$document->getId()] = ['label' => $document->getLabel()];
 				$productsArray[$document->getId()]['sku'] = ['id' => $sku->getId(), 'label' => $sku->getLabel()];
 
@@ -43,25 +45,39 @@ class VariantStocks
 				$inventoryQuery->andPredicates($inventoryQuery->eq('sku', $sku));
 
 				$inventoryCollection = $inventoryQuery->getDocuments();
-				foreach ($inventoryCollection as $inventory)
+
+				$event->getApplicationServices()->getLogging()->fatal(var_export($inventoryCollection->count(), true));
+
+				if ($inventoryCollection->count() > 0)
 				{
-					/* @var $inventory \Rbs\Stock\Documents\InventoryEntry */
-					$warehouse = $inventory->getWarehouse();
-
-					$warehouseId = -1;
-					$warehouseCode = 'Stock';
-					if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+					foreach ($inventoryCollection as $inventory)
 					{
-						$warehouseId = $warehouse->getId();
-						$warehouseCode = $warehouse->getCode();
-					}
+						/* @var $inventory \Rbs\Stock\Documents\InventoryEntry */
+						$warehouse = $inventory->getWarehouse();
 
-					if (!array_key_exists($warehouseId, $warehousesArray))
-					{
-						$warehousesArray[$warehouseId] = ['code' => $warehouseCode, 'skus' => array()];
+						$warehouseId = -1;
+						$warehouseCode = $defaultWarehouseCode;
+						if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+						{
+							$warehouseId = $warehouse->getId();
+							$warehouseCode = $warehouse->getCode();
+						}
+
+						if (!array_key_exists($warehouseId, $warehousesArray))
+						{
+							$warehousesArray[$warehouseId] = ['code' => $warehouseCode, 'skus' => array()];
+						}
+						$warehousesArray[$warehouseId]['skus'][$sku->getId()] = $inventory->getLevel();
 					}
-					$warehousesArray[$warehouseId]['skus'][$sku->getId()] = $inventory->getLevel();
 				}
+				else
+				{
+					if (!array_key_exists(-1, $warehousesArray))
+					{
+						$warehousesArray[-1] = ['code' => $defaultWarehouseCode, 'skus' => array()];
+					}
+				}
+
 			}
 
 			$resultArray['warehouses'] = $warehousesArray;
@@ -83,9 +99,7 @@ class VariantStocks
 	public function saveVariantStocks(\Change\Http\Event $event)
 	{
 		$request = $event->getRequest();
-
 		$stocks = $request->getPost('stocks');
-		$event->getApplicationServices()->getLogging()->fatal(var_export($stocks, true));
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -94,18 +108,13 @@ class VariantStocks
 		$stockManager = $commerceServices->getStockManager();
 		/* @var $documentManger \Change\Documents\DocumentManager */
 		$documentManger = $event->getApplicationServices()->getDocumentManager();
-
-		$event->getApplicationServices()->getLogging()->fatal('##@@##');
-
 		$warehouseIds = array_keys($stocks);
-		$event->getApplicationServices()->getLogging()->fatal(var_export($warehouseIds, true));
 
 		foreach ($warehouseIds as $warehouseId)
 		{
 
 			if ($warehouseId === -1)
 			{
-				$event->getApplicationServices()->getLogging()->fatal('warehouse null');
 				$warehouse = null;
 			}
 			else
@@ -116,17 +125,8 @@ class VariantStocks
 
 			foreach($stocks[$warehouseId]['skus'] as $skuId => $stock)
 			{
-				$event->getApplicationServices()->getLogging()->fatal('stock : ' . $stock);
-				$event->getApplicationServices()->getLogging()->fatal('sku : ' . $skuId);
-
 				/* @var $sku \Rbs\Stock\Documents\Sku */
 				$sku = $documentManger->getDocumentInstance($skuId, 'Rbs_Stock_Sku');
-				$event->getApplicationServices()->getLogging()->fatal(get_class($sku));
-				if ($sku instanceof \Rbs\Stock\Documents\Sku)
-				{
-					$event->getApplicationServices()->getLogging()->fatal('sku ok');
-				}
-
 				$stockManager->setInventory($stock, $sku, $warehouse);
 			}
 

@@ -58,7 +58,8 @@
 							data-stock-level ="{{ row.productPresentation.stock.level }}"
 							data-stock-min ="{{ row.productPresentation.stock.minQuantity }}"
 							data-stock-max ="{{ row.productPresentation.stock.maxQuantity }}"
-							data-stock-step ="{{ row.productPresentation.stock.quantityIncrement }}" ></div>
+							data-stock-step ="{{ row.productPresentation.stock.quantityIncrement }}"
+							data-can-be-ordered ="{{ row.productPresentation.general.canBeOrdered }}"></div>
 					{% else %}
 						<div class="ng-valid ng-dirty">
 							<a class="btn btn-primary btn-sm" title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"

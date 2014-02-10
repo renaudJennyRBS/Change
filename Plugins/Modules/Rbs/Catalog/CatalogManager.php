@@ -630,6 +630,8 @@ class CatalogManager
 	{
 		if ($product->hasVariants())
 		{
+			$prices = array();
+
 			$skus = $product->getAllSkuOfVariant(true);
 			foreach ($skus as $sku)
 			{
@@ -677,7 +679,10 @@ class CatalogManager
 		if ($product->hasVariants())
 		{
 			$skus = $product->getAllSkuOfVariant(true);
-			$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStoreId);
+			if ($skus !== null && $skus->count() > 0)
+			{
+				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStoreId);
+			}
 		}
 		else
 		{
@@ -704,7 +709,10 @@ class CatalogManager
 		if ($product->hasVariants())
 		{
 			$skus = $product->getAllSkuOfVariant(true);
-			$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStoreId, $level);
+			if ($skus !== null && $skus->count() > 0)
+			{
+				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStoreId, $level);
+			}
 		}
 		else
 		{
@@ -904,10 +912,12 @@ class CatalogManager
 	{
 		$generalInfo = array();
 
+		$generalInfo['productId'] = $product->getId();
 		$generalInfo['product'] = $product;
 		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
 		$generalInfo['description'] = $product->getCurrentLocalization()->getDescription();
 		$generalInfo['hasVariants'] = $product->hasVariants();
+		$generalInfo['hasOwnSku'] = $product->getSku() !== null ? true : false;
 
 		if ($product->getBrand() && $product->getBrand()->published())
 		{

@@ -35,6 +35,9 @@
 	"variantgroup_variant_list":{
 		"message":"liste des variantes"
 	},
+	"variantgroup_aside_link":{
+		"message":"configurer les variantes"
+	},
 	"variantgroup_variant_config":{
 		"message":"configuration des attributs"
 	},

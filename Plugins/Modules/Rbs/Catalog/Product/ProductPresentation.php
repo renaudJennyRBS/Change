@@ -74,6 +74,8 @@ class ProductPresentation
 		$this->product = $product;
 		$this->webStoreId = $webStoreId;
 		$this->urlManager = $urlManager;
+
+		$this->general = $this->getGeneral();
 	}
 
 	/**
@@ -244,6 +246,17 @@ class ProductPresentation
 		{
 			$this->getPrices($quantity);
 			$this->getStock();
+
+			if ($this->general['hasOwnSku'] === true && isset($this->stock['level'])
+				&& $this->stock['level'] > 0 && $this->stock['level'] >= $this->stock['minQuantity']
+				&& isset($this->prices['price']))
+			{
+				$this->general['canBeOrdered'] = true;
+			}
+			else
+			{
+				$this->general['canBeOrdered'] = false;
+			}
 		}
 		return $this;
 	}
@@ -253,20 +266,7 @@ class ProductPresentation
 		$array = [];
 		$array['productId'] = $this->product->getId();
 		$array['key'] = $array['productId'];
-		$array['designation'] = $this->getGeneral()['title'];
-
-		/*if (!is_array($this->stock))
-	{
-		$this->resetStock();
-	}
-		$array['stock'] = $this->stock;
-
-		if (!is_array($this->prices))
-		{
-			$this->resetPrice();
-		}
-		$array['prices'] = $this->prices;*/
-
+		$array['general'] = $this->getGeneral();
 		$array['stock'] = $this->getStock();
 		$array['prices'] = $this->getPrices();
 		return $array;

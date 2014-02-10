@@ -9,7 +9,7 @@
 				step="{{ productPresentation.stock.quantityIncrement }}" />
 			<!-- min="(= stockMin =)" max="(= stockMax =)" step="(= stockStep =)" -->
 		</div>
-		<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()" data-ng-disabled="!canBeOrdered">
+		<button ng-if="hasOwnSku" name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()" data-ng-disabled="!canBeOrdered">
 			<span data-ng-show="canBeOrdered"><i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}</span>
 			<span data-ng-hide="canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 		</button>
@@ -61,7 +61,7 @@
 					data-threshold="{{ productPresentation.stock.threshold }}"
 					data-threshold-class="{{ productPresentation.stock.thresholdClass }}"
 					data-threshold-title="{{ productPresentation.stock.thresholdTitle }}">
-				{% if productPresentation.stock.thresholdTitle %}
+				{% if productPresentation.general.hasOwnSku and productPresentation.stock.thresholdTitle %}
 					<div class="alert availability text-center {{ productPresentation.stock.thresholdClass }}">
 						<h4 itemprop="availability">{{ productPresentation.stock.thresholdTitle }}</h4>
 					</div>
@@ -74,7 +74,7 @@
 					data-display="{{ parameters.displayPrices }}"
 					data-display-with-tax="{{ parameters.displayPricesWithTax }}"
 					data-prices="{{ productPresentation.prices | json_encode }}">
-			{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+			{% if productPresentation.general.hasOwnSku and (parameters.displayPrices or parameters.displayPricesWithTax) %}
 				{% set prices = productPresentation.prices %}
 				{% if prices.currencyCode %}<meta itemprop="priceCurrency" content="{{ prices.currencyCode }}" />{% endif %}
 				<ul class="list-unstyled main-price">
@@ -117,7 +117,9 @@
 					data-stock-level="{{ productPresentation.stock.level }}"
 					data-stock-min ="{{ productPresentation.stock.minQuantity }}"
 					data-stock-max ="{{ productPresentation.stock.maxQuantity }}"
-					data-stock-step ="{{ productPresentation.stock.quantityIncrement }}"></div>
+					data-stock-step ="{{ productPresentation.stock.quantityIncrement }}"
+					data-has-own-sku ="{{ productPresentation.general.hasOwnSku }}"
+					data-can-be-ordered ="{{ productPresentation.general.canBeOrdered }}"></div>
 		</form>
 	</div>
 {% endif %}

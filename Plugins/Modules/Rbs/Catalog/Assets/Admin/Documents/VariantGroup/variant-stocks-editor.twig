@@ -3,7 +3,7 @@
 		<table class="table table-striped">
 
 			<thead>
-				<td>Product</td>
+				<td>{{ i18n('m.rbs.catalog.admin.product_product', ['ucf']) }}</td>
 				<td ng-repeat="(warehouseId, warehouse) in data.warehouses">(= warehouse.code =)</td>
 			</thead>
 
@@ -23,6 +23,5 @@
 			<i class="icon-white icon-ok" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
 			</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
 		</button>
-
 	</form>
 </div>
