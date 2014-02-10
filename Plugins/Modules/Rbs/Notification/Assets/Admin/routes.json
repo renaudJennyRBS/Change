@@ -1,0 +1,10 @@
+{
+	"/Rbs/Notification/": {
+		"module": "Rbs_Notification",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": true
+	}
+}

@@ -11,11 +11,12 @@
 			this.$get = ['$location', function ($location) {
 				var urls = {};
 
-				var register = function (key, url) {
-					if (angular.isString(url)) {
-						url = { 'form': url };
+				var register = function (key, name, path) {
+					if (!urls.hasOwnProperty(key))
+					{
+						urls[key] = {};
 					}
-					urls[key] = angular.extend(urls[key] || {}, url);
+					urls[key][name] = path;
 				};
 
 				var defaultRule = {
@@ -28,94 +29,67 @@
 					reloadOnSearch : false
 				};
 
-				var currentModelName = null;
-				var currentModuleName = null;
+				var applyConfig = function(routes) {
+					var rule, key, name;
+					angular.forEach(routes, function(route, path) {
+						if (route.hasOwnProperty('rule')) {
+							rule = route.rule;
+							key = route.model || route.module;
+							name = route.name;
+							if (key && name) {
+								register(key, name, path);
+								rule.ruleName =  name;
 
-				var routeDefFn = function (name, route, rule)
-				{
-					var urls, p;
+								//TODO Compatibility check
+								rule.relatedModelName =  key;
 
-					if (route.charAt(0) !== '/') {
-						route = '/' + route;
-					}
-
-					var primaryKey = currentModelName || currentModuleName;
-
-					if (primaryKey) {
-						var routeUrl = {};
-						routeUrl[name] = route;
-
-						register(primaryKey, routeUrl);
-						if (currentModuleName && currentModelName)
-						{
-							var docName = currentModelName.split('_').slice(2, 3).join('');
-							if (docName.length)
-							{
-								// In case we also need to support routes from another module
-								var secondaryKey = currentModuleName + '_' + docName;
-								register(secondaryKey, routeUrl);
+								if (route.hasOwnProperty('options')) {
+									rule.options = route.options;
+								}
 							}
+							if (!rule.hasOwnProperty('redirectTo')) {
+								rule = angular.extend({}, defaultRule, rule);
+								if (rule.templateUrl) {
+									//TODO Compatibility check
+									rule.resolve.rbsPlugin = ['$rootScope', '$location', function ($rootScope, $location) {
+										var tokens = $location.path().split('/');
+										if (tokens.length > 2) {
+											$rootScope.rbsCurrentPluginName = tokens[1] + '_' + tokens[2];
+										} else {
+											$rootScope.rbsCurrentPluginName = 'Rbs_Admin';
+										}
+										return $rootScope.rbsCurrentPluginName
+									}];
+								}
+							}
+							$routeProvider.when(path, rule);
 						}
-					}
-					else{
-						throw new Error("Invalid route declaration");
-					}
-
-					if (angular.isString(rule)) {
-						rule = { templateUrl : rule };
-					}
-
-					if (!rule.hasOwnProperty('redirectTo')) {
-						rule = angular.extend({}, defaultRule, rule);
-					}
-					if ((p = route.indexOf('?')) !== -1) {
-						route = route.substring(0, p);
-					}
-
-					if (rule.templateUrl && rule.resolve) {
-						rule.resolve.rbsPlugin = ['$rootScope', '$location', function ($rootScope, $location) {
-							var tokens = $location.path().split('/');
-							$rootScope.rbsCurrentPluginName = tokens[1] + '_' + tokens[2];
-							return $rootScope.rbsCurrentPluginName;
-						}];
-					}
-
-					rule.relatedModelName = primaryKey;
-					rule.ruleName = name;
-
-					$routeProvider.when(route, rule);
+					});
 				};
 
-
-				var getUrl = function (doc, name)
-				{
-					var	model, out;
-
+				var getUrl = function (doc, name) {
+					var	key, namedPaths;
 					if (angular.isObject(doc) && angular.isDefined(doc.model)) {
-						model = doc.model;
+						key = doc.model;
 					} else if (angular.isString(doc)) {
-						model = doc;
+						key = doc;
 					} else {
 						throw new Error("Could not determine the Model of the given parameter: " + doc + ". Please provide a Model name (String) or a Document object.");
 					}
 
-					if (urls.hasOwnProperty(model)) {
-						out = urls[model];
-						if (name && out.hasOwnProperty(name)) {
-							return out[name];
-						} else if (name === 'i18n' && out.hasOwnProperty('form')) {
-							return out['form'];
-						} else if (angular.isString(out)) {
-							return out;
+					if (urls.hasOwnProperty(key)) {
+						namedPaths = urls[key];
+						if (name && namedPaths.hasOwnProperty(name)) {
+							return namedPaths[name];
+						} else if (name === 'i18n' && namedPaths.hasOwnProperty('form')) {
+							return namedPaths['form'];
 						}
-						return null;
 					}
 					return null;
 				};
 
 
-				var replaceParams = function (urlTpl, routeParams, queryStringParams)
-				{
+				var replaceParams = function (urlTpl, routeParams, queryStringParams) {
 					queryStringParams = angular.extend({}, queryStringParams);
 					var tplParamRegexp = /:([a-z]+)/gi, tplParams = [], result;
 					while (result = tplParamRegexp.exec(urlTpl)) {
@@ -152,14 +126,16 @@
 						url = url.slice(1);
 					}
 
-					var search = $location.search(),
-						params = {};
+					var search = $location.search(), params = {};
+
 					if (search.hasOwnProperty('np')) {
 						params['np'] = search['np'];
 					}
+
 					if (search.hasOwnProperty('nf')) {
 						params['nf'] = search['nf'];
 					}
+
 					return Utils.makeUrl(url, params);
 				};
 
@@ -172,28 +148,12 @@
 				 * the full URL ready to be used.
 				 * If a Model name is provided, the returned String is the URL template, with parameters,
 				 * as defined in the Module's configuration.
-				 *
-				 * @param {Object|String} The Document object or a Model name.
-				 * Can be one of:
-				 * - `String`: Model name such as 'Rbs_Website_Page'.
-				 * - `Object`: Document object with the required own property 'model'.
-				 *
-				 * @param {Object} Optional parameters object that will take precedence over the Document's properties.
-				 *
-				 * @param {String} Name of the URL to get.
-				 *
 				 * @returns {String} The URL of the provided element.
 				 */
-				var getNamedUrl = function (doc, params, name) {
+				var getNamedUrl = function (doc, name, params) {
 					var url;
 
-					// Allows second parameter to be the name of the rule to use if there are no parameters.
-					if (angular.isDefined(params) && ! angular.isObject(params) && angular.isUndefined(name)) {
-						name = params;
-						params = {};
-					}
-
-					if (! angular.isObject(params)) {
+					if (!angular.isObject(params)) {
 						params = {};
 					}
 
@@ -216,169 +176,39 @@
 
 
 				// Public API
-
 				return {
-					'register'   : register,
-
-					'route' : function (name, route, rule) {
-						routeDefFn(name, route, rule);
-						return this;
-					},
-
-					'model' : function (modelName) {
-						currentModelName = modelName;
-						return this;
-					},
-
-					'module' : function (moduleName, route, rule) {
-						currentModuleName = moduleName;
-						if (moduleName === null){
-							currentModelName = null;
-						} else if (route) {
-							if (angular.isObject(rule) && !rule.hasOwnProperty('labelKey')){
-								rule.labelKey = 'm.' +  currentModuleName.replace(/_/g, '.').toLowerCase() + '.admin.module_name | ucf';
-							}
-							this.route('home', route, rule);
-						}
-
-						return this;
-					},
-
-					'routesForModels' : function (modelNames) {
-						var self = this, model, ruleNames, defaultRuleNames = ['form', 'workflow', 'timeline', 'urls', 'list'];
-						angular.forEach(modelNames, function (modelInfo) {
-							if (angular.isArray(modelInfo)) {
-								model = modelInfo[0];
-								ruleNames = modelInfo.slice(1);
-							} else {
-								model = modelInfo;
-								ruleNames = defaultRuleNames;
-							}
-							var modelParts = model.split('_'), baseRouteTpl;
-							var docName = modelParts.slice(2,3).join('');
-							if (currentModuleName) {
-								baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
-							} else {
-								baseRouteTpl = modelParts.join('/');
-							}
-							var baseTplDir = model.replace(/_/g, '/');
-							var baseKey = 'm.'+ modelParts.slice(0,2).join('.').toLowerCase();
-							var lowerDocName = docName.toLowerCase();
-
-							self.model(model);
-							angular.forEach(ruleNames, function(ruleName) {
-								switch (ruleName) {
-									case 'form':
-										self.route('form', baseRouteTpl + '/:id', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey:baseKey + '.documents.' + lowerDocName + ' | ucf'})
-											.route('new' , baseRouteTpl + '/new', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey: 'm.rbs.admin.adminjs.new_resource | ucf' });
-										break;
-									case 'list':
-										self.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', labelKey:baseKey + '.admin.' + lowerDocName + '_list | ucf'});
-										break;
-									case 'workflow':
-										self.route('workflow', baseRouteTpl + '/:id/workflow', {templateUrl: 'Rbs/Admin/workflow/workflow.twig?model='+model, controller: 'RbsChangeWorkflowController', labelKey:'m.rbs.workflow.admin.workflow | ucf'});
-										break;
-									case 'timeline':
-										self.route('timeline', baseRouteTpl + '/:id/timeline', {templateUrl: 'Rbs/Timeline/timeline.twig?model='+model, controller: 'RbsChangeTimelineController', labelKey:'m.rbs.timeline.admin.timeline | ucf' });
-										break;
-									case 'urls':
-										self.route('urls', baseRouteTpl + '/:id/url', {templateUrl: 'Rbs/Admin/url-manager.twig', labelKey:'m.rbs.admin.admin.urls | ucf' });
-										break;
-								}
-							});
-						});
-						return this;
-					},
-
-					'routesForLocalizedModels' : function (modelNames) {
-						var self = this, model, ruleNames, defaultRuleNames = ['form', 'list', 'workflow', 'timeline', 'urls'];
-						angular.forEach(modelNames, function (modelInfo) {
-							if (angular.isArray(modelInfo)) {
-								model = modelInfo[0];
-								ruleNames = modelInfo.slice(1);
-							} else {
-								model = modelInfo;
-								ruleNames = defaultRuleNames;
-							}
-							var modelParts = model.split('_'), baseRouteTpl;
-							var docName = modelParts.slice(2,3).join('');
-							if (currentModuleName) {
-								baseRouteTpl = currentModuleName.replace(/_/g, '/') + '/' + docName;
-							} else {
-								baseRouteTpl = modelParts.join('/');
-							}
-							var baseTplDir = model.replace(/_/g, '/');
-							var baseKey = 'm.'+ modelParts.slice(0,2).join('.').toLowerCase();
-							var lowerDocName = docName.toLowerCase();
-
-							self.model(model);
-							angular.forEach(ruleNames, function(ruleName) {
-								switch (ruleName) {
-									case 'form':
-										self.route('form', baseRouteTpl + '/:id/:LCID', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey:baseKey + '.documents.' + lowerDocName + ' | ucf'})
-											.route('new' , baseRouteTpl + '/new', {templateUrl: 'Document/' + baseTplDir + '/form.twig', labelKey: 'm.rbs.admin.adminjs.new_resource | ucf' })
-											.route('translate', baseRouteTpl + '/:id/:LCID/translate', {templateUrl: 'Document/' + baseTplDir +'/form.twig', controller: 'RbsChangeTranslateEditorController', labelKey:baseKey + '.documents.' + lowerDocName  + ' | ucf'});
-										break;
-									case 'list':
-										self.route('list', baseRouteTpl + '/', {templateUrl: 'Document/' + baseTplDir + '/list.twig', labelKey:baseKey + '.admin.' + lowerDocName + '_list | ucf'});
-										break;
-									case 'workflow':
-										self.route('workflow', baseRouteTpl + '/:id/:LCID/workflow', {templateUrl: 'Rbs/Admin/workflow/workflow.twig?model='+model, controller: 'RbsChangeWorkflowController', labelKey:'m.rbs.workflow.admin.workflow | ucf' });
-										break;
-									case 'timeline':
-										self.route('timeline', baseRouteTpl + '/:id/:LCID/timeline', {templateUrl: 'Rbs/Timeline/timeline.twig?model='+model, controller: 'RbsChangeTimelineController', labelKey:'m.rbs.timeline.admin.timeline | ucf' });
-										break;
-									case 'urls':
-										self.route('urls', baseRouteTpl + '/:id/:LCID/url', {templateUrl: 'Rbs/Admin/url-manager.twig', labelKey:'m.rbs.admin.admin.urls | ucf'});
-										break;
-								}
-							});
-						});
-						return this;
-					},
+					'applyConfig' : applyConfig,
 
 					'getListUrl' : function (doc, params) {
-						return getNamedUrl(doc, params, 'list');
+						return getNamedUrl(doc, 'list', params);
 					},
 
 					'getSelectorUrl' : function (doc, params) {
-						var result = getNamedUrl(doc, params, 'selector');
+						var result = getNamedUrl(doc, 'selector', params);
 						if (result != "javascript:;")
 							return result;
-						return getNamedUrl(doc, params, 'list');
-					},
-
-					'getTreeUrl' : function (doc, params) {
-						return getNamedUrl(doc, params, 'tree');
+						return getNamedUrl(doc, 'list', params);
 					},
 
 					'getFormUrl' : function (doc, params) {
-						return getNamedUrl(doc, params, 'form');
+						return getNamedUrl(doc, 'form', params);
 					},
 
 					'getNewUrl' : function (doc, params) {
-						return getNamedUrl(doc, params, 'new');
+						return getNamedUrl(doc, 'new', params);
 					},
 
 					'getTranslateUrl' : function (doc, LCID) {
-						return getNamedUrl(doc, { 'LCID': LCID || doc.LCID }, 'translate');
+						return getNamedUrl(doc, 'translate', {'LCID': LCID || doc.LCID});
 					},
 
-					'getUrl'     : function (doc, params, name) {
-						// Special case for 'form' routes that can have a section to go directly to the
-						// corresponding section of the editor.
-						if (name && name.substr(0, 5) === 'form.') {
-							return getNamedUrl(doc, params, 'form') + '?section=' + name.substring(5);
-						}
-						return getNamedUrl(doc, params, name);
+					'getUrl' : function (doc, params, name) {
+						return getNamedUrl(doc, name, params);
 					}
 				};
 			}];
 		}]);
-
 	}]);
-
-
 
 	// Filters
 
@@ -400,16 +230,14 @@
 				if (! urlName && doc.refLCID && doc.LCID !== doc.refLCID) {
 					urlName = 'translate';
 				}
-				url = UrlManager.getUrl(doc, angular.extend({ 'LCID': doc.LCID }, params), urlName);
+				url = UrlManager.getUrl(doc, params, urlName);
 			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
 				url = UrlManager.getUrl(doc, params || null, urlName);
 			} else {
 				return 'javascript:;';
 			}
-
 			return url;
 		};
-
 	}];
 
 	app.filter('rbsURL', urlFilter);
@@ -419,6 +247,4 @@
 			return doc && doc.model ? doc.model.replace(/_/g, '/') + '/' + tplName + '.twig' : '';
 		};
 	});
-
-
 })();

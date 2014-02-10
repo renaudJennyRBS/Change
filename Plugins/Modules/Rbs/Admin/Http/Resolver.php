@@ -30,8 +30,7 @@ class Resolver extends BaseResolver
 		if ($path === '/')
 		{
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetHome();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetHome())->execute($event);
 			};
 			$event->setAction($action);
 			return;
@@ -41,8 +40,23 @@ class Resolver extends BaseResolver
 		if ($relativePath === 'Rbs/Admin/i18n.js')
 		{
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetI18nPackage();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetI18nPackage())->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif ($relativePath === 'Rbs/Admin/routes.js')
+		{
+			$action = function($event) {
+				(new \Rbs\Admin\Http\Actions\GetRoutes())->execute($event);
+			};
+			$event->setAction($action);
+			return;
+		}
+		elseif ($relativePath === 'Rbs/Admin/editors.js')
+		{
+			$action = function($event) {
+				(new \Rbs\Admin\Http\Actions\GetDocumentEditors())->execute($event);
 			};
 			$event->setAction($action);
 			return;
@@ -54,8 +68,7 @@ class Resolver extends BaseResolver
 			$event->setParam('LCID', $lcid);
 			$event->setParam('package', $package);
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetI18nPackage();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetI18nPackage())->execute($event);
 			};
 			$event->setAction($action);
 			return;
@@ -64,8 +77,7 @@ class Resolver extends BaseResolver
 		{
 			$event->setParam('resourcePath', $relativePath);
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetAggregate();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetAggregate())->execute($event);
 			};
 			$event->setAction($action);
 			return;
@@ -101,8 +113,7 @@ class Resolver extends BaseResolver
 			$event->setParam('vendor', $vendor);
 			$event->setParam('shortModuleName', $shortModuleName);
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetHtmlFragment();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetHtmlFragment())->execute($event);
 			};
 			$event->setAction($action);
 			return;
@@ -119,15 +130,13 @@ class Resolver extends BaseResolver
 			if ($extension === 'twig')
 			{
 				$action = function($event) {
-					$action = new \Rbs\Admin\Http\Actions\GetHtmlFragment();
-					$action->execute($event);
+					(new \Rbs\Admin\Http\Actions\GetHtmlFragment())->execute($event);
 				};
 				$event->setAction($action);
 				return;
 			}
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetResource();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetResource())->execute($event);
 			};
 			$event->setAction($action);
 			return;
@@ -135,13 +144,11 @@ class Resolver extends BaseResolver
 		else
 		{
 			$action = function($event) {
-				$action = new \Rbs\Admin\Http\Actions\GetHome();
-				$action->execute($event);
+				(new \Rbs\Admin\Http\Actions\GetHome())->execute($event);
 			};
 			$event->setAction($action);
 			return;
 		}
-
 	}
 
 	/**

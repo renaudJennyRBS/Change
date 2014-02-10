@@ -63,5 +63,13 @@
 				"default": null
 			}
 		}
+	},
+	"rbs_dev:admin-routes": {
+		"description": "Generate admin routes definition",
+		"dev": true,
+		"options":{
+		},
+		"arguments":{
+		}
 	}
 }

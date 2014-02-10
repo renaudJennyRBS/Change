@@ -1,0 +1,126 @@
+{
+	"/Rbs/Commerce/Connector/": {
+		"model": "Rbs_Payment_Connector",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/Connector/list.twig",
+			"labelKey": "m.rbs.payment.admin.connector_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/Connector/list.twig",
+			"labelKey": "m.rbs.payment.admin.connector_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/:id": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
+			"labelKey": "m.rbs.payment.documents.deferredconnector | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/:id/timeline": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Payment_DeferredConnector",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/:id/translate/:LCID": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.payment.documents.deferredconnector | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_DeferredConnector",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/:id/workflow": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_DeferredConnector",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/DeferredConnector/new": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Transaction/": {
+		"model": "Rbs_Payment_Transaction",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/Transaction/list.twig",
+			"labelKey": "m.rbs.payment.admin.transaction_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Transaction/:id": {
+		"model": "Rbs_Payment_Transaction",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/Transaction/form.twig",
+			"labelKey": "m.rbs.payment.documents.transaction | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Transaction/:id/timeline": {
+		"model": "Rbs_Payment_Transaction",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Payment_Transaction",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Transaction/new": {
+		"model": "Rbs_Payment_Transaction",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/Transaction/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Payment/": false,
+	"/Rbs/Payment/DeferredConnector/:id": false,
+	"/Rbs/Payment/DeferredConnector/:id/timeline": false,
+	"/Rbs/Payment/DeferredConnector/:id/translate/:LCID": false,
+	"/Rbs/Payment/DeferredConnector/:id/translate/:LCID/workflow": false,
+	"/Rbs/Payment/DeferredConnector/:id/workflow": false,
+	"/Rbs/Payment/DeferredConnector/new": false,
+	"/Rbs/Payment/Transaction/": false,
+	"/Rbs/Payment/Transaction/:id": false,
+	"/Rbs/Payment/Transaction/:id/timeline": false,
+	"/Rbs/Payment/Transaction/new": false
+}

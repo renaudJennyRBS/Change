@@ -1,0 +1,44 @@
+{
+	"/Rbs/Generic/Tag/": {
+		"model": "Rbs_Tag_Tag",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Tag/Tag/list.twig",
+			"labelKey": "m.rbs.tag.admin.tag_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Tag/:id": {
+		"model": "Rbs_Tag_Tag",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Tag/Tag/form.twig",
+			"labelKey": "m.rbs.tag.documents.tag | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Tag/:id/timeline": {
+		"model": "Rbs_Tag_Tag",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Tag_Tag",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Tag/new": {
+		"model": "Rbs_Tag_Tag",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Tag/Tag/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Tag/": false,
+	"/Rbs/Tag/Tag/": false,
+	"/Rbs/Tag/Tag/:id": false,
+	"/Rbs/Tag/Tag/:id/timeline": false,
+	"/Rbs/Tag/Tag/new": false
+}

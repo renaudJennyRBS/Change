@@ -157,7 +157,7 @@
 
 		function loadNode (nodeInfo)
 		{
-			REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title']}).then(
+			REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title', 'website']}).then(
 				// Success
 				function (results)
 				{

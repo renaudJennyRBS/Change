@@ -10,7 +10,7 @@
 			<div class="list-group">
 				<span class="list-group-item">
 					<a ng-show="! document.variant && document.variantGroup" href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}</a>
-					<a ng-show="! document.variant && ! document.variantGroup" href="(= document | rbsURL:'variant-new'=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+					<a ng-show="! document.variant && ! document.variantGroup" href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
 				</span>
 			</div>
 		</div>

@@ -1,0 +1,88 @@
+{
+	"/Rbs/Catalog/Sku/": {
+		"model": "Rbs_Stock_Sku",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Sku/list.twig",
+			"labelKey": "m.rbs.stock.admin.sku_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Sku/:id": {
+		"model": "Rbs_Stock_Sku",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Sku/form.twig",
+			"labelKey": "m.rbs.stock.documents.sku | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Sku/:id/timeline": {
+		"model": "Rbs_Stock_Sku",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Stock_Sku",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Sku/new": {
+		"model": "Rbs_Stock_Sku",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Sku/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Stock/": {
+		"module": "Rbs_Stock",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Stock/InventoryEntry/"
+		},
+		"auto": true
+	},
+	"/Rbs/Stock/InventoryEntry/": {
+		"model": "Rbs_Stock_InventoryEntry",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/InventoryEntry/list.twig",
+			"labelKey": "m.rbs.stock.admin.inventoryentry_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Stock/InventoryEntry/:id": {
+		"model": "Rbs_Stock_InventoryEntry",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/InventoryEntry/form.twig",
+			"labelKey": "m.rbs.stock.documents.inventoryentry | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Stock/InventoryEntry/:id/timeline": {
+		"model": "Rbs_Stock_InventoryEntry",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Stock_InventoryEntry",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Stock/InventoryEntry/new": {
+		"model": "Rbs_Stock_InventoryEntry",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/InventoryEntry/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Stock/Sku/": false,
+	"/Rbs/Stock/Sku/:id": false,
+	"/Rbs/Stock/Sku/:id/timeline": false,
+	"/Rbs/Stock/Sku/new": false
+}

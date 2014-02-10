@@ -1,0 +1,121 @@
+{
+	"/Rbs/Order/": {
+		"module": "Rbs_Order",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Order/Order/"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Invoice/": {
+		"model": "Rbs_Order_Invoice",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Invoice/list.twig",
+			"labelKey": "m.rbs.order.admin.invoice_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Invoice/:id": {
+		"model": "Rbs_Order_Invoice",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Invoice/form.twig",
+			"labelKey": "m.rbs.order.documents.invoice | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Invoice/:id/timeline": {
+		"model": "Rbs_Order_Invoice",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Order_Invoice",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Invoice/new": {
+		"model": "Rbs_Order_Invoice",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Invoice/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Order/": {
+		"model": "Rbs_Order_Order",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Order/list.twig",
+			"labelKey": "m.rbs.order.admin.order_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Order/:id": {
+		"model": "Rbs_Order_Order",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Order/form.twig",
+			"labelKey": "m.rbs.order.documents.order | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Order/:id/timeline": {
+		"model": "Rbs_Order_Order",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Order_Order",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Order/new": {
+		"model": "Rbs_Order_Order",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Order/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Shipment/": {
+		"model": "Rbs_Order_Shipment",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Shipment/list.twig",
+			"labelKey": "m.rbs.order.admin.shipment_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Shipment/:id": {
+		"model": "Rbs_Order_Shipment",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Shipment/form.twig",
+			"labelKey": "m.rbs.order.documents.shipment | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Shipment/:id/timeline": {
+		"model": "Rbs_Order_Shipment",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Order_Shipment",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/Shipment/new": {
+		"model": "Rbs_Order_Shipment",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Shipment/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

@@ -1,0 +1,218 @@
+{
+	"/Rbs/Elasticsearch/": {
+		"module": "Rbs_Elasticsearch",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Elasticsearch/FullText/"
+		},
+		"auto": false
+	},
+	"/Rbs/Elasticsearch/Facet/": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/Facet/list.twig",
+			"labelKey": "m.rbs.elasticsearch.admin.facet_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/Facet/:id": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/Facet/form.twig",
+			"labelKey": "m.rbs.elasticsearch.documents.facet | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/Facet/:id/timeline": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Elasticsearch_Facet",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/Facet/:id/translate/:LCID": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/Facet/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.elasticsearch.documents.facet | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/Facet/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Elasticsearch_Facet",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/Facet/:id/workflow": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Elasticsearch_Facet",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/Facet/new": {
+		"model": "Rbs_Elasticsearch_Facet",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/Facet/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/list.twig",
+			"labelKey": "m.rbs.elasticsearch.admin.facetgroup_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/:id": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/form.twig",
+			"labelKey": "m.rbs.elasticsearch.documents.facetgroup | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/:id/timeline": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Elasticsearch_FacetGroup",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/:id/translate/:LCID": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.elasticsearch.documents.facetgroup | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Elasticsearch_FacetGroup",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/:id/workflow": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Elasticsearch_FacetGroup",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FacetGroup/new": {
+		"model": "Rbs_Elasticsearch_FacetGroup",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FullText/": {
+		"model": "Rbs_Elasticsearch_FullText",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FullText/list.twig",
+			"labelKey": "m.rbs.elasticsearch.admin.fulltext_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FullText/:id": {
+		"model": "Rbs_Elasticsearch_FullText",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FullText/form.twig",
+			"labelKey": "m.rbs.elasticsearch.documents.fulltext | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FullText/:id/timeline": {
+		"model": "Rbs_Elasticsearch_FullText",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Elasticsearch_FullText",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/FullText/new": {
+		"model": "Rbs_Elasticsearch_FullText",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/FullText/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/StoreIndex/": {
+		"model": "Rbs_Elasticsearch_StoreIndex",
+		"name": "list",
+		"rule": {
+			"redirectTo": "/Rbs/Elasticsearch/FullText/",
+			"labelKey": "m.rbs.elasticsearch.admin.fulltext_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Elasticsearch/StoreIndex/:id": {
+		"model": "Rbs_Elasticsearch_StoreIndex",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/form.twig",
+			"labelKey": "m.rbs.elasticsearch.documents.storeindex | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/StoreIndex/:id/timeline": {
+		"model": "Rbs_Elasticsearch_StoreIndex",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Elasticsearch_StoreIndex",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Elasticsearch/StoreIndex/new": {
+		"model": "Rbs_Elasticsearch_StoreIndex",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

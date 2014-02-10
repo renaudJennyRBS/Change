@@ -2,7 +2,9 @@
 
 	"use strict";
 
-	function changeEditorWebsiteFunctionalPage($rootScope, Breadcrumb, REST) {
+	var app = angular.module('RbsChange');
+
+	function changeEditorWebsiteFunctionalPage($rootScope, Breadcrumb, REST, $routeParams) {
 
 		return {
 			restrict: 'A',
@@ -15,11 +17,9 @@
 				var contentSectionInitialized = false;
 
 				scope.onLoad = function () {
-					if (!scope.document.section){
-						var nodeId =  Breadcrumb.getCurrentNodeId();
-						if (nodeId) {
-							REST.resource(nodeId).then(function (doc){scope.document.section = doc})
-						}
+					if (scope.document.isNew() && $routeParams.website && !scope.document.website) {
+						scope.document.website = $routeParams.website;
+						REST.resource($routeParams.website).then(function (doc){ scope.document.website = doc});
 					}
 				};
 
@@ -103,43 +103,8 @@
 
 	}
 
-	var app = angular.module('RbsChange');
-
 	changeEditorWebsiteFunctionalPage.$inject = [
-		'$rootScope',
-		'RbsChange.Breadcrumb',
-		'RbsChange.REST'
+		'$rootScope', 'RbsChange.Breadcrumb', 'RbsChange.REST', '$routeParams'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpage', changeEditorWebsiteFunctionalPage);
-
-	/**
-	 * Localized version of the editor.
-	 */
-	function changeEditorWebsitePageTranslate(REST) {
-		return {
-			restrict: 'A',
-			templateUrl: 'Document/Rbs/Website/FunctionalPage/editor-translate.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
-
-			link: function (scope, element, attrs, editorCtrl) {
-				scope.onLoad = function () {
-					// Load Template Document
-					if (scope.document.pageTemplate) {
-						REST.resource(scope.document.pageTemplate).then(function (template) {
-							scope.pageTemplate = { "html": template.htmlForBackoffice, "data": template.editableContent };
-						});
-					}
-				};
-				editorCtrl.init('Rbs_Website_FunctionalPage');
-			}
-		};
-	}
-
-	changeEditorWebsitePageTranslate.$inject = [
-		'RbsChange.REST'
-	];
-
-	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpageTranslate', changeEditorWebsitePageTranslate);
-
 })();

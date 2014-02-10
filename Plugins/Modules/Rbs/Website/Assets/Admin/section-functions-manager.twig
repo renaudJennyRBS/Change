@@ -67,13 +67,13 @@
 							<a class="btn btn-sm btn-default" rbs-start-navigation=""
 								data-navigation-model="Rbs_Website_StaticPage"
 								data-navigation-property-type="Document" data-value-key="editor.page"
-								href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{tn:section.id} =)">
+								href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website:section.id,tn:section.id} =)">
 								<i class="icon-plus"></i> {{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}
 							</a>
 							<a class="btn btn-sm btn-default" rbs-start-navigation=""
 								data-navigation-model="Rbs_Website_FunctionalPage"
 								data-navigation-property-type="Document" data-value-key="editor.page"
-								href target-url="(= 'Rbs_Website_FunctionalPage' | rbsURL:'new':{tn:section.id} =)">
+								href target-url="(= 'Rbs_Website_FunctionalPage' | rbsURL:'new':{website:section.id,tn:section.id} =)">
 								<i class="icon-plus"></i> {{ i18n('m.rbs.website.admin.functionalpage_create', ['ucf']) }}
 							</a>
 						</div>

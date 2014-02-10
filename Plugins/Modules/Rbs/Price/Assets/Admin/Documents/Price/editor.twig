@@ -48,7 +48,7 @@
 			</table>
 		</rbs-field>
 		<rbs-field ng-show="discount || document.hasJobToUpdateTax" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
-			<p class="form-control-static"><a href="(= document.billingArea | rbsURL:'' =)">(= document.billingArea.label =)</a></p>
+			<p class="form-control-static"><a href="(= document.billingArea | rbsURL:'form' =)">(= document.billingArea.label =)</a></p>
 
 			<table ng-show="taxInfo" class="table table-striped">
 				<thead>
@@ -87,7 +87,7 @@
 			<hr/>
 
 			<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}">
-				<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'' =)">(= document.basePrice.formattedValue =)</a></p>
+				<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'form' =)">(= document.basePrice.formattedValue =)</a></p>
 			</rbs-field>
 
 			<rbs-field-text property="discountDetail"

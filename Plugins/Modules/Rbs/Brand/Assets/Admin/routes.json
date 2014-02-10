@@ -1,0 +1,87 @@
+{
+	"/Rbs/Brand/": false,
+	"/Rbs/Brand/Brand/": false,
+	"/Rbs/Brand/Brand/:id": false,
+	"/Rbs/Brand/Brand/:id/timeline": false,
+	"/Rbs/Brand/Brand/:id/translate/:LCID": false,
+	"/Rbs/Brand/Brand/:id/translate/:LCID/workflow": false,
+	"/Rbs/Brand/Brand/:id/urls": false,
+	"/Rbs/Brand/Brand/:id/workflow": false,
+	"/Rbs/Brand/Brand/new": false,
+	"/Rbs/Catalog/Brand/": {
+		"model": "Rbs_Brand_Brand",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Brand/Brand/list.twig",
+			"labelKey": "m.rbs.brand.admin.brand_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/:id": {
+		"model": "Rbs_Brand_Brand",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"labelKey": "m.rbs.brand.documents.brand | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/:id/timeline": {
+		"model": "Rbs_Brand_Brand",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Brand_Brand",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/:id/translate/:LCID": {
+		"model": "Rbs_Brand_Brand",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.brand.documents.brand | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Brand_Brand",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Brand_Brand",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/:id/urls": {
+		"model": "Rbs_Brand_Brand",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/:id/workflow": {
+		"model": "Rbs_Brand_Brand",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Brand_Brand",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Brand/new": {
+		"model": "Rbs_Brand_Brand",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	}
+}
