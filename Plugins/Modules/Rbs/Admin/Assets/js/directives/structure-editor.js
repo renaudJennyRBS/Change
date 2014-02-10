@@ -306,10 +306,12 @@
 									": another item is registered with the same ID (" + $scope.items[item.id].type + ").");
 							}
 
-							// Add substitution variables if it's a mail rich text block
-							if (item.type === 'block' && item.name === 'Rbs_Mail_Richtext') {
+							// Add substitution variables if it's a rich text block.
+							if (item.type === 'block'
+									&& (item.name === 'Rbs_Mail_Richtext' || item.name === 'Rbs_Website_Richtext')) {
 								item.substitutionVariables = $attrs.substitutionVariables;
 							}
+
 							// Assign new unique ID and register the item.
 							item.id = $scope.getNextBlockId();
 							$scope.items[item.id] = item;

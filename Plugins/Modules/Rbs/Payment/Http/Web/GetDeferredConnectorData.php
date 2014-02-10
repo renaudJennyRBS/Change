@@ -32,13 +32,8 @@ class GetDeferredConnectorData extends \Change\Http\Web\Actions\AbstractAjaxActi
 			throw new \RuntimeException('Invalid transaction: ' . $transaction, 999999);
 		}
 
-		$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
-		$richTextManager = $event->getApplicationServices()->getRichTextManager();
-
 		$query = array('connectorId' => $connector->getId(), 'transactionId' => $transaction->getId());
-		$instructions = $connector->getCurrentLocalization()->getInstructions();
 		$data = array(
-			'instructions' => $richTextManager->render($instructions, 'Website', $richTextContext),
 			'paymentURL' => $event->getUrlManager()->getAjaxURL('Rbs_Payment', 'DeferredConnectorReturnSuccess', $query)
 		);
 

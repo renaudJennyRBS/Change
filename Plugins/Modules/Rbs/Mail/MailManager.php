@@ -324,6 +324,10 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 		return false;
 	}
 
+	/**
+	 * @param \Rbs\Theme\Documents\Template $template
+	 * @param string[] $filters
+	 */
 	public function installMails($template, $filters)
 	{
 		$eventManager = $this->getEventManager();
@@ -354,22 +358,13 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 		return $emails;
 	}
 
+	/**
+	 * @param string $string
+	 * @param array $substitutions
+	 * @return string|null
+	 */
 	public function getSubstitutedString($string, $substitutions)
 	{
-		if ($string)
-		{
-			if (count($substitutions))
-			{
-				$string = preg_replace_callback(static::VARIABLE_REGEXP, function ($matches) use ($substitutions)
-				{
-					if (array_key_exists($matches[1], $substitutions))
-					{
-						return $substitutions[$matches[1]];
-					}
-					return '';
-				}, $string);
-			}
-		}
-		return ($string) ? $string : null;
+		return \Change\Stdlib\String::getSubstitutedString($string, $substitutions, static::VARIABLE_REGEXP);
 	}
 }

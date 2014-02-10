@@ -41,7 +41,18 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 				$tm->begin();
 
 				$transaction->setConnector($connector);
-				$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
+				$this->setPaymentReturnMessage($event, $connector, $transaction);
+
+				if (!$connector->getAutoValidatePayment())
+				{
+					$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
+				}
+				else
+				{
+					$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_SUCCESS);
+					$transaction->setProcessingIdentifier('AUTO');
+					$transaction->setProcessingDate(new \DateTime());
+				}
 				$transaction->save();
 
 				$tm->commit();
@@ -50,15 +61,19 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 			{
 				throw $tm->rollBack($e);
 			}
-		}
 
-		$commerceServices = $event->getServices('commerceServices');
-		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
-		{
-			throw new \RuntimeException('Unable to get CommerceServices', 999999);
-		}
+			$commerceServices = $event->getServices('commerceServices');
+			if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+			{
+				throw new \RuntimeException('Unable to get CommerceServices', 999999);
+			}
 
-		$commerceServices->getProcessManager()->handleProcessingForTransaction($transaction);
+			$commerceServices->getProcessManager()->handleProcessingForTransaction($transaction);
+			if ($connector->getAutoValidatePayment())
+			{
+				$commerceServices->getProcessManager()->handleSuccessForTransaction($transaction);
+			}
+		}
 
 		$pathRuleManager = $event->getApplicationServices()->getPathRuleManager();
 		$data = array('redirectURL' => $this->getRedirectURL($transaction, $documentManager, $pathRuleManager));
@@ -90,5 +105,31 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Http\Web\Event $event
+	 * @param \Rbs\Payment\Documents\DeferredConnector $connector
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 * @return \Rbs\Commerce\CommerceServices
+	 */
+	protected function setPaymentReturnMessage(\Change\Http\Web\Event $event, $connector, $transaction)
+	{
+		$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
+		$richTextManager = $event->getApplicationServices()->getRichTextManager();
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		$priceManager = $commerceServices->getPriceManager();
+		$instructions = $connector->getCurrentLocalization()->getInstructions();
+		$substitutions = [
+			'transactionId' => $transaction->getId(),
+			'amount' => $priceManager->formatValue($transaction->getAmount(), $transaction->getCurrencyCode())
+		];
+		$instructions->setRawText(\Change\Stdlib\String::getSubstitutedString($instructions->getRawText(), $substitutions));
+
+		$processingData = $transaction->getProcessingData();
+		$processingData['PaymentReturn_Message'] = $richTextManager->render($instructions, 'Website', $richTextContext);
+		$transaction->setProcessingData($processingData);
+		return $commerceServices;
 	}
 }

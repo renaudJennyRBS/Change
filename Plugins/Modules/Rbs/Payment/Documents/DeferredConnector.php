@@ -1,6 +1,10 @@
 <?php
 namespace Rbs\Payment\Documents;
 
+use Change\Documents\Events\Event;
+use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\Result\DocumentResult;
+
 /**
  * @name \Rbs\Payment\Documents\DeferredConnector
  */
@@ -17,5 +21,25 @@ class DeferredConnector extends \Compilation\Rbs\Payment\Documents\DeferredConne
 			return 'Rbs_Commerce/Blocks/paymentReturn/deferred-processing.twig';
 		}
 		return parent::getPaymentReturnTemplate($transaction);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultUpdateRestResult(Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		/** @var $restResult DocumentLink|DocumentResult */
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof DocumentResult)
+		{
+			$i18n = $event->getApplicationServices()->getI18nManager();
+			$transactionModel = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Payment_Transaction');
+			$restResult->setProperty('substitutions', [
+				'amount' => $i18n->trans($transactionModel->getProperty('amount')->getLabelKey(), ['ucf']),
+				'transactionId' => $i18n->trans($transactionModel->getLabelKey(), ['ucf'])
+			]);
+		}
 	}
 }

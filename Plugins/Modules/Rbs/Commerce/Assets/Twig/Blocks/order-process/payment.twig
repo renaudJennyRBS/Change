@@ -46,8 +46,8 @@
 	</div>
 	<div data-ng-if="!loadingConnector">
 		<div class="panel panel-default">
-			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_instructions', ['ucf']) }}</div>
-			<div class="panel-body" data-ng-bind-html="trustHtml(connectorData.instructions)"></div>
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</div>
+			<div class="panel-body price">(= cart.context.formattedPriceValueWithTax =)</div>
 		</div>
 
 		<p class="clearfix">
@@ -125,5 +125,5 @@
 </div>
 
 <div data-ng-if="hasTransaction()">
-	<div data-rbs-commerce-payment-connector-selector="" data-payment="payment"></div>
+	<div data-rbs-commerce-payment-connector-selector="" data-payment="payment" data-cart="cart"></div>
 </div>
