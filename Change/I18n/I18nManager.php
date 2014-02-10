@@ -393,6 +393,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param string $packageName
+	 * @param string $LCID
 	 * @return array
 	 */
 	public function getTranslationsForPackage($packageName, $LCID)
@@ -425,7 +426,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $LCID
 	 * @param string $text
 	 * @param array $formatters value in array lab, lc, uc, ucf, js, attr, raw, text, html
-	 * @param array $replacements * @internal param string $format 'TEXT' or 'HTML'
+	 * @param array $replacements
 	 * @return string
 	 */
 	public function formatText($LCID, $text, $formatters = array(), $replacements = array())
@@ -986,7 +987,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param string $locale
+	 * @param string $fileName
 	 * @return string
 	 */
 	protected function getPluginI18nPackageNameByFilename(\Change\Plugins\Plugin $plugin, $fileName)
@@ -1057,9 +1058,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
-
 	/**
-	 * @param \Change\Plugins\Plugin $plugin
 	 * @param string $LCID
 	 * @param array $output
 	 */

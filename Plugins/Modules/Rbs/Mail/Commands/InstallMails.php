@@ -23,7 +23,7 @@ class InstallMails
 			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Theme_Template');
 			$dqb->andPredicates($dqb->eq('code', $templateCode), $dqb->eq('mailSuitable', true));
 			$template = $dqb->getFirstDocument();
-			if ($template)
+			if ($template instanceof \Rbs\Theme\Documents\Template)
 			{
 				$filters = [];
 				$package = $event->getParam('package');
@@ -63,7 +63,5 @@ class InstallMails
 		{
 			$response->addErrorMessage('no template code given');
 		}
-
-
 	}
 }
