@@ -214,7 +214,8 @@
 		return {
 			restrict: 'AE',
 			scope: {
-				payment: '='
+				payment: '=',
+				cart: '='
 			},
 			templateUrl: '/payment-connector-selector.static.tpl',
 

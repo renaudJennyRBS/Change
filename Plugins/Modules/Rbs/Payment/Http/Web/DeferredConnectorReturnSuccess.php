@@ -41,6 +41,8 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 				$tm->begin();
 
 				$transaction->setConnector($connector);
+				$this->setPaymentReturnMessage($event, $connector, $transaction);
+
 				if (!$connector->getAutoValidatePayment())
 				{
 					$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
@@ -103,5 +105,31 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Http\Web\Event $event
+	 * @param \Rbs\Payment\Documents\DeferredConnector $connector
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 * @return \Rbs\Commerce\CommerceServices
+	 */
+	protected function setPaymentReturnMessage(\Change\Http\Web\Event $event, $connector, $transaction)
+	{
+		$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
+		$richTextManager = $event->getApplicationServices()->getRichTextManager();
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		$priceManager = $commerceServices->getPriceManager();
+		$instructions = $connector->getCurrentLocalization()->getInstructions();
+		$substitutions = [
+			'transactionId' => $transaction->getId(),
+			'amount' => $priceManager->formatValue($transaction->getAmount(), $transaction->getCurrencyCode())
+		];
+		$instructions->setRawText(\Change\Stdlib\String::getSubstitutedString($instructions->getRawText(), $substitutions));
+
+		$processingData = $transaction->getProcessingData();
+		$processingData['PaymentReturn_Message'] = $richTextManager->render($instructions, 'Website', $richTextContext);
+		$transaction->setProcessingData($processingData);
+		return $commerceServices;
 	}
 }
