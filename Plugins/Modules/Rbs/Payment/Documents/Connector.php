@@ -17,6 +17,9 @@ class Connector extends \Compilation\Rbs\Payment\Documents\Connector
 			case Transaction::STATUS_SUCCESS:
 				return 'Rbs_Commerce/Blocks/paymentReturn/default-success.twig';
 
+			case Transaction::STATUS_FAILED:
+				return 'Rbs_Commerce/Blocks/paymentReturn/default-failed.twig';
+
 			case Transaction::STATUS_PROCESSING:
 				return 'Rbs_Commerce/Blocks/paymentReturn/default-processing.twig';
 
