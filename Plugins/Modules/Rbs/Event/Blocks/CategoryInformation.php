@@ -14,6 +14,7 @@ class CategoryInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformatio
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 		$this->setLabel($i18nManager->trans('m.rbs.event.admin.category_label', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Event_Category', $i18nManager);
 		$this->addInformationMeta('sectionRestriction', Property::TYPE_STRING, true, 'website')
 			->setLabel($i18nManager->trans('m.rbs.event.admin.category_section_restriction', $ucf))
 			->setCollectionCode('Rbs_Event_Collection_SectionRestrictions');

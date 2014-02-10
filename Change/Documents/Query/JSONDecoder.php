@@ -589,17 +589,23 @@ class JSONDecoder
 	 */
 	protected function configureExistsPredicate($predicateBuilder, $predicateJSON)
 	{
-		if (!isset($predicateJSON['exp']['model']))
+		if (!isset($predicateJSON['rexp']['model']))
 		{
 			throw new \RuntimeException('Invalid exists model value', 999999);
 		}
 
-		if (!isset($predicateJSON['exp']['property']))
+		if (!isset($predicateJSON['rexp']['property']))
 		{
 			throw new \RuntimeException('Invalid exists property value', 999999);
 		}
 
-		return $predicateBuilder->exists('id', $predicateJSON['exp']['model'], $predicateJSON['exp']['property']);
+		if (isset($predicateJSON['lexp']))
+		{
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->exists($predicateJSON['lexp']['property'], $predicateJSON['rexp']['model'], $predicateJSON['rexp']['property']);
+		}
+
+		return $predicateBuilder->exists('id', $predicateJSON['rexp']['model'], $predicateJSON['rexp']['property']);
 	}
 
 	/**
@@ -610,17 +616,23 @@ class JSONDecoder
 	 */
 	protected function configureNotExistsPredicate($predicateBuilder, $predicateJSON)
 	{
-		if (!isset($predicateJSON['exp']['model']))
+		if (!isset($predicateJSON['rexp']['model']))
 		{
 			throw new \RuntimeException('Invalid not exists model value', 999999);
 		}
 
-		if (!isset($predicateJSON['exp']['property']))
+		if (!isset($predicateJSON['rexp']['property']))
 		{
 			throw new \RuntimeException('Invalid not exists property value', 999999);
 		}
 
-		return $predicateBuilder->notExists('id', $predicateJSON['exp']['model'], $predicateJSON['exp']['property']);
+		if (isset($predicateJSON['lexp']))
+		{
+			return $this->getValidPredicateBuilder($predicateBuilder, $predicateJSON['lexp'])
+				->notExists($predicateJSON['lexp']['property'], $predicateJSON['rexp']['model'], $predicateJSON['rexp']['property']);
+		}
+
+		return $predicateBuilder->notExists('id', $predicateJSON['rexp']['model'], $predicateJSON['rexp']['property']);
 	}
 
 	/**

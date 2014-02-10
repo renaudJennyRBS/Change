@@ -128,6 +128,18 @@ class Information
 	}
 
 	/**
+	 * @param string|string[] $allowedModelsNames
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return ParameterInformation
+	 */
+	public function addInformationMetaForDetailBlock($allowedModelsNames, $i18nManager)
+	{
+		return $this->addInformationMeta(\Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, Property::TYPE_DOCUMENTID, false, null)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.block_property_document_to_display', array('ucf')))
+			->setAllowedModelsNames($allowedModelsNames);
+	}
+
+	/**
 	 * @param integer $defaultValue
 	 * @return ParameterInformation
 	 */

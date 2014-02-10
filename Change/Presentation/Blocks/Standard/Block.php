@@ -10,6 +10,8 @@ use Change\Presentation\Blocks\Parameters;
  */
 class Block
 {
+	const DOCUMENT_TO_DISPLAY_PROPERTY_NAME = 'toDisplayDocumentId';
+
 	/**
 	 * @api
 	 * Set Block Parameters on $event
@@ -40,6 +42,46 @@ class Block
 			$parameters = $this->parameterize($event);
 			$event->setBlockParameters($parameters);
 		}
+	}
+
+	/**
+	 * @api
+	 * Set the parameter to define the document id that must be displayed and check it's possible to display it.
+	 * @param \Change\Presentation\Blocks\Parameters $parameters
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Change\Presentation\Blocks\Parameters
+	 */
+	protected function setParameterValueForDetailBlock($parameters, $event)
+	{
+		if ($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) === null)
+		{
+			$document = $event->getParam('document');
+			if ($this->isValidDocument($document))
+			{
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $document->getId());
+			}
+		}
+		else
+		{
+			$document = $event->getApplicationServices()->getDocumentManager()
+				->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
+			if (!$this->isValidDocument($document))
+			{
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, null);
+			}
+		}
+		return $parameters;
+	}
+
+	/**
+	 * @api
+	 * Must be implemented in the final block class
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		return false;
 	}
 
 	/**

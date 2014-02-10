@@ -88,5 +88,8 @@
 	},
 	"sku_threshold_remove":{
 		"message":"Supprimer"
+	},
+	"warehouse_default_label":{
+		"message":"stock principal"
 	}
 }

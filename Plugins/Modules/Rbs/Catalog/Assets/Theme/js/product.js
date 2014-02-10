@@ -30,16 +30,22 @@
 					}
 				}
 
-				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
+				if (attrs.hasOwnProperty('hasVariants'))
+				{
+					scope.hasVariants = attrs.hasVariants
+				}
 
-				if (scope.quantity > 0 && attrs.sku && attrs.price)
+				if (attrs.hasOwnProperty('hasOwnSku'))
 				{
-					scope.canBeOrdered = true;
+					scope.hasOwnSku = attrs.hasOwnSku
 				}
-				else
+
+				if (attrs.hasOwnProperty('canBeOrdered'))
 				{
-					scope.canBeOrdered = false;
+					scope.canBeOrdered = attrs.canBeOrdered
 				}
+
+				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
 
 				var config = {
 					key: attrs.key,
@@ -155,7 +161,7 @@
 				axesLength, index = 0, parentValues = [];
 			if (val && val.hasOwnProperty('axes')) {
 				axesLength = val.axes.axesValues.length;
-				buildSelectAxisValues(index, parentValues, val.axes.products);
+				buildSelectAxisValues(index, parentValues, val.axes.products, val.axes.axesValues);
 
 				product = findProduct(productId, val.axes.products);
 				if (product) {
@@ -166,7 +172,7 @@
 							scope.selectedAxesValues[index] = scope.axesValues[index][i];
 							parentValues.push(productAxisVal);
 							if (index + 1 < axesLength) {
-								buildSelectAxisValues(index + 1, parentValues, val.axes.products);
+								buildSelectAxisValues(index + 1, parentValues, val.axes.products, val.axes.axesValues);
 							}
 						} else {
 							scope.selectedAxesValues[index] = null;
@@ -197,7 +203,7 @@
 			}
 
 			if (expected.length < axes.length) {
-				buildSelectAxisValues(expected.length, expected, products);
+				buildSelectAxisValues(expected.length, expected, products, axes);
 			}
 
 			for (i = expected.length; i < axes.length; i++) {
@@ -225,7 +231,8 @@
 			if (data) {
 				scope.productConfig.productId = data.productId;
 				scope.productConfig.key = data.key;
-				scope.productConfig.designation = data.designation;
+				scope.productConfig.hasVariants = data.hasVariants;
+				scope.productConfig.designation = data.general.designation;
 				scope.productConfig.sku = data.stock.sku;
 
 				scope.stockLevel = data.stock.level;
@@ -241,20 +248,16 @@
 				scope.productAvailability = data.stock;
 				scope.prices = data.prices;
 
-				if (scope.quantity > 0 && data.stock.sku && data.prices.price)
-				{
-					scope.canBeOrdered = true;
-				}
-				else
-				{
-					scope.canBeOrdered = false;
-				}
+				scope.canBeOrdered = data.general.canBeOrdered;
+				scope.hasOwnSku = data.general.hasOwnSku;
 
 			} else {
 				scope.productConfig.productId = 0;
 				scope.productConfig.key = null;
+				scope.productConfig.hasVariants = false;
 				scope.productConfig.designation = '';
 				scope.productConfig.sku = null;
+				scope.hasOwnSku = false;
 
 				scope.productAvailability = {};
 				scope.prices = {};
@@ -280,14 +283,26 @@
 			return null;
 		}
 
-		function buildSelectAxisValues(index, parentAxesValue, products) {
+		function buildSelectAxisValues(index, parentAxesValue, products, axes) {
 			var values = [], value, axisId;
 			angular.forEach(products, function(product) {
 				if (eqAxesValues(parentAxesValue, product.values)) {
 					value = product.values[index].value;
 					axisId = product.values[index].id;
 					if (value !== null && (getIndexOfValue(values, value) == -1)) {
-						values.push({id: axisId, value: value, title:value, index: index})
+						var title = value;
+						if (axes[index].hasOwnProperty('defaultValues') && axes[index]['defaultValues'].length > 0)
+						{
+							for (var i=0;i<axes[index]['defaultValues'].length;i++)
+							{
+								if (axes[index]['defaultValues'][i].hasOwnProperty('title') && axes[index]['defaultValues'][i]['value'] == value)
+								{
+									title = axes[index]['defaultValues'][i]['title'];
+									break;
+								}
+							}
+						}
+						values.push({id: axisId, value: value, title:title, index: index})
 					}
 				}
 			});

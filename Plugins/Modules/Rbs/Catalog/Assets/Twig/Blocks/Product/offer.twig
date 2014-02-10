@@ -25,15 +25,15 @@
 		{% endblock %}
 
 		{% block prices %}
-			{% if productPresentation.priceValue and (parameters.displayPrices or parameters.displayPricesWithTax) %}
+			{% if productPresentation.prices.price and (parameters.displayPrices or parameters.displayPricesWithTax) %}
 				<ul class="list-unstyled main-price">
 					{% if parameters.displayPrices %}
 						<li class="price">
-							{{ formatPrice(productPresentation.priceValue) }}
+							{{ formatPrice(productPresentation.prices.price) }}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-							{% if productPresentation.priceValueWithoutDiscount %}
+							{% if productPresentation.prices.priceWithoutDiscount %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{ formatPrice(productPresentation.priceValueWithoutDiscount) }}
+									{{ formatPrice(productPresentation.prices.priceWithoutDiscount) }}
 								</del>
 							{% endif %}
 						</li>
@@ -41,18 +41,18 @@
 					{% if parameters.displayPricesWithTax %}
 						<li class="price">
 							<meta itemprop="priceCurrency" content="EUR" />
-							<span itemprop="price">{{ formatPrice(productPresentation.priceValueWithTax) }}</span>
+							<span itemprop="price">{{ formatPrice(productPresentation.prices.priceWithTax) }}</span>
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
-							{% if productPresentation.priceValueWithoutDiscountWithTax %}
+							{% if productPresentation.prices.priceWithoutDiscountWithTax %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{ formatPrice(productPresentation.priceValueWithoutDiscountWithTax) }}
+									{{ formatPrice(productPresentation.prices.priceWithoutDiscountWithTax) }}
 								</del>
 							{% endif %}
 						</li>
 					{% endif %}
-					{% if productPresentation.ecoTaxValue %}
+					{% if productPresentation.prices.ecoTax %}
 						<li class="small">
-							{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }} {{ formatPrice(productPresentation.ecoTaxValue) }}
+							{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }} {{ formatPrice(productPresentation.prices.ecoTax) }}
 						</li>
 					{% endif %}
 				</ul>
@@ -63,15 +63,17 @@
 			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
 			<fieldset>
 				<div rbs-catalog-product-data="" data-ng-model="productConfig"
-						data-key="{{ parameters.productId }}" data-product-id="{{ parameters.productId }}"
-						data-sku="{{ productPresentation.codeSKU }}"
-						data-price="{{ productPresentation.priceValue }}"
+						data-key="{{ parameters.toDisplayDocumentId }}"
+						data-product-id="{{ parameters.toDisplayDocumentId }}"
+						data-sku="{{ productPresentation.stock.sku }}"
+						data-price="{{ productPresentation.prices.price }}"
 						data-redirect-url="{{ parameters.redirectUrl }}"
-						data-designation="{{ productPresentation.designation }}"
+						data-designation="{{ productPresentation.general.title }}"
 						data-stock-level ="{{ productPresentation.stock.level }}"
 						data-stock-min ="{{ productPresentation.stock.minQuantity }}"
 						data-stock-max ="{{ productPresentation.stock.maxQuantity }}"
-						data-stock-step ="{{ productPresentation.stock.quantityIncrement }}" ></div>
+						data-stock-step ="{{ productPresentation.stock.quantityIncrement }}"
+						data-can-be-ordered ="{{ productPresentation.general.canBeOrdered }}"></div>
 			</fieldset>
 		</form>
 	</div>

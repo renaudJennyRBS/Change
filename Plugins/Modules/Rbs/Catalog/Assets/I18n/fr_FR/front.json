@@ -64,5 +64,8 @@
 	},
 	"sort_date_title_asc":{
 		"message":"Ordre alphabetique"
+	},
+	"from":{
+		"message":"à partir de"
 	}
 }

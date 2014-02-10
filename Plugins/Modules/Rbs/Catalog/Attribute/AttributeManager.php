@@ -1049,9 +1049,10 @@ class AttributeManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
+	 * @param bool $onlyPublishedProduct
 	 * @return array
 	 */
-	public function buildVariantConfiguration($variantGroup)
+	public function buildVariantConfiguration($variantGroup, $onlyPublishedProduct = false)
 	{
 		$configuration = ['axesValues' => [], 'products' => []];
 		if ($variantGroup->getAxesAttributesCount())
@@ -1070,7 +1071,7 @@ class AttributeManager
 
 		/** @var $axesAttributes \Rbs\Catalog\Documents\Attribute[] */
 		$axesAttributes = $variantGroup->getAxesAttributes()->toArray();
-		$products = $variantGroup->getVariantProducts();
+		$products = $variantGroup->getVariantProducts($onlyPublishedProduct);
 		foreach ($products as $product)
 		{
 			$info = ['id' => $product->getId()];

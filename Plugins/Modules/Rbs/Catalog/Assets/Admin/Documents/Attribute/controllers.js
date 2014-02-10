@@ -16,7 +16,7 @@
 				"and" : [
 					{
 						"op" : "notExists",
-						"exp" : {
+						"rexp" : {
 							"model" : "Rbs_Catalog_VariantGroup",
 							"property" : "groupAttribute"
 						}

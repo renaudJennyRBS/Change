@@ -243,11 +243,12 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	/**
 	 * @param \Rbs\Commerce\CommerceServices $commerceServices
 	 * @param integer $webStoreId
+	 * @param \Change\Http\Web\UrlManager $urlManager
 	 * @return \Rbs\Catalog\Product\ProductPresentation
 	 */
-	public function getPresentation(\Rbs\Commerce\CommerceServices $commerceServices, $webStoreId)
+	public function getPresentation(\Rbs\Commerce\CommerceServices $commerceServices, $webStoreId, $urlManager)
 	{
-		return new \Rbs\Catalog\Product\ProductPresentation($commerceServices, $this, $webStoreId);
+		return new \Rbs\Catalog\Product\ProductPresentation($commerceServices, $this, $webStoreId, $urlManager);
 	}
 
 	/**
@@ -268,4 +269,26 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	{
 		return !($this->getVariant()) && $this->getVariantGroup();
 	}
+
+	/**
+	 * @param boolean $onlyPublishedProduct
+	 * @return \Change\Documents\DocumentCollection
+	 */
+	public function getAllSkuOfVariant($onlyPublishedProduct = false)
+	{
+		if($this->hasVariants())
+		{
+			$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
+			$productQuery = $query->getPropertyModelBuilder('id', 'Rbs_Catalog_Product', 'sku');
+			$productQuery->andPredicates($productQuery->eq('variant', true), $productQuery->eq('variantGroup', $this->getVariantGroup()));
+			if ($onlyPublishedProduct)
+			{
+				$productQuery->andPredicates($productQuery->published());
+			}
+
+			return $query->getDocuments();
+		}
+		return null;
+	}
+
 }

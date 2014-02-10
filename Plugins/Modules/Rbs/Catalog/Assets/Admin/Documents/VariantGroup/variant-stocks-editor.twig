@@ -1,0 +1,27 @@
+<div class="row">
+	<form name="form" ng-submit="save()" class="form-horizontal">
+		<table class="table table-striped">
+
+			<thead>
+				<td>{{ i18n('m.rbs.catalog.admin.product_product', ['ucf']) }}</td>
+				<td ng-repeat="(warehouseId, warehouse) in data.warehouses">(= warehouse.code =)</td>
+			</thead>
+
+			<tr ng-repeat="(productId, product) in data.products">
+				<td>(= product.label =)</td>
+				<td ng-repeat="(warehouseId, warehouse) in data.warehouses">
+					<input type="number" rbs-integer="" class="form-control input-sm" ng-model="warehouse.skus[product.sku.id]" size="4" />
+				</td>
+			</tr>
+
+		</table>
+
+		<div class="confirmation-area"></div>
+
+		<button class="btn btn-default btn-headline" type="button" ng-click="confirmReset($event)" ng-disabled="!isChanged" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
+		<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}" data-role="save" type="submit" ng-disabled="!isChanged || saveProgress.running">
+			<i class="icon-white icon-ok" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
+			</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
+		</button>
+	</form>
+</div>

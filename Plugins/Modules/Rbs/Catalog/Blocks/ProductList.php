@@ -25,7 +25,7 @@ class ProductList extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('productListId');
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('useCurrentSectionProductList');
 		$parameters->addParameterMeta('conditionId');
 		$parameters->addParameterMeta('webStoreId');
@@ -48,16 +48,9 @@ class ProductList extends Block
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 
-		if ($parameters->getParameter('productListId') !== null)
-		{
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$productList = $documentManager->getDocumentInstance($parameters->getParameter('productListId'));
-			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
-			{
-				$parameters->setParameterValue('productListId', null);
-			}
-		}
-		else if($parameters->getParameter('useCurrentSectionProductList') === true)
+		$this->setParameterValueForDetailBlock($parameters, $event);
+
+		if ($parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) == null && $parameters->getParameter('useCurrentSectionProductList') === true)
 		{
 			/* @var $page \Change\Presentation\Interfaces\Page */
 			$page = $event->getParam('page');
@@ -65,10 +58,9 @@ class ProductList extends Block
 
 			$catalogManager = $commerceServices->getCatalogManager();
 			$defaultProductList = $catalogManager->getDefaultProductListBySection($section);
-			if (($defaultProductList instanceof \Rbs\Catalog\Documents\ProductList) && $defaultProductList->activated())
+			if ($this->isValidDocument($defaultProductList))
 			{
-
-				$parameters->setParameterValue('productListId', $defaultProductList->getId());
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $defaultProductList->getId());
 			}
 		}
 
@@ -116,6 +108,19 @@ class ProductList extends Block
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		if ($document instanceof \Rbs\Catalog\Documents\ProductList && $document->activated())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param Event $event
 	 * @param \ArrayObject $attributes
@@ -124,7 +129,7 @@ class ProductList extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$productListId = $parameters->getParameter('productListId');
+		$productListId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		if ($productListId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
@@ -144,13 +149,15 @@ class ProductList extends Block
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = $documentManager->getNewQuery('Rbs_Catalog_Product', $documentManager->getLCID());
 			$query->andPredicates($query->published());
+
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
 			$subQuery->andPredicates(
 				$subQuery->eq('productList', $productListId),
 				$subQuery->eq('condition', $conditionId ? $conditionId : 0),
 				$subQuery->activated()
 			);
-			$this->addSort($parameters->getParameter('sortBy'), $productList, $query, $subQuery,$commerceServices->getContext());
+
+			$this->addSort($parameters->getParameter('sortBy'), $productList, $query, $subQuery, $commerceServices->getContext());
 
 			$rows = array();
 			$totalCount = $query->getCountDocuments();
@@ -183,11 +190,11 @@ class ProductList extends Block
 						$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 					}
 
-					$row = array('id' => $product->getId(), 'url' => $url);
+					$row = array('id' => $product->getId(), 'url' => $url, 'hasVariants' => $product->hasVariants());
 					$visual = $product->getFirstVisual();
 					$row['visual'] = $visual ? $visual->getPath() : null;
 
-					$productPresentation = $product->getPresentation($commerceServices, $webStoreId);
+					$productPresentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
 					if ($productPresentation)
 					{
 						$productPresentation->evaluate();
@@ -241,7 +248,7 @@ class ProductList extends Block
 							$priceQuery->andPredicates($priceQuery->activated(), $priceQuery->eq('billingArea', $ba),
 								$priceQuery->eq('webStore', $webStore), $priceQuery->eq('targetId', 0)
 							);
-							$priceQuery->addOrder('defaultValue', $sortDir == 'asc');
+							$priceQuery->addOrder('value', $sortDir == 'asc');
 						}
 						break;
 				}

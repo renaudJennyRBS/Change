@@ -19,9 +19,7 @@ class FormInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.simpleform.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.simpleform.admin.block_form_label', $ucf));
-		$this->addInformationMeta('formId', Property::TYPE_DOCUMENTID, false, null)
-			->setAllowedModelsNames('Rbs_Simpleform_Form')
-			->setLabel($i18nManager->trans('m.rbs.simpleform.admin.block_form_form', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Simpleform_Form', $i18nManager);
 		$this->addTTL(0);
 	}
 }

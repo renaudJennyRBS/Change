@@ -30,13 +30,10 @@ class CrossSelling extends Block
 		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		if ($parameters->getParameter('productId') === null)
+		$document = $event->getParam('document');
+		if ($document instanceof \Rbs\Catalog\Documents\Product && $document->published())
 		{
-			$document = $event->getParam('document');
-			if ($document instanceof \Rbs\Catalog\Documents\Product)
-			{
-				$parameters->setParameterValue('productId', $document->getId());
-			}
+			$parameters->setParameterValue('productId', $document->getId());
 		}
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */

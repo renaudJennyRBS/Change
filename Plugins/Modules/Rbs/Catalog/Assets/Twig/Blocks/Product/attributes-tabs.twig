@@ -1,10 +1,10 @@
 <ul id="block-{{ blockId }}-attribute-group-tabs" class="nav nav-tabs">
-	{% for group in attributesConfig %}
+	{% for group in productPresentation.attributesConfiguration %}
 		<li{% if loop.index == 1 %} class="active"{% endif %}><a href="#block-{{ blockId }}-attribute-group-tab-{{ loop.index }}" data-toggle="tab">{{ group.title }}</a></li>
 	{% endfor %}
 </ul>
 <div class="tab-content">
-	{% for group in attributesConfig %}
+	{% for group in productPresentation.attributesConfiguration %}
 		<div id="block-{{ blockId }}-attribute-group-tab-{{ loop.index }}" class="tab-pane fade{% if loop.index == 1 %} active in{% endif %}">
 			<dl class="dl-horizontal">
 				{% for item in group.items %}

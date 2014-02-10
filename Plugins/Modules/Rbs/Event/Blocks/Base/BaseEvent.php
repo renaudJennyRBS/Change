@@ -21,7 +21,7 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 		$website = $section->getWebsite();
 
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('docId');
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('showTime', true);
 		$parameters->addParameterMeta('showCategories', true);
 		$parameters->addParameterMeta('contextualUrls', true);
@@ -29,14 +29,7 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		if ($parameters->getParameter('docId') === null)
-		{
-			$document = $event->getParam('document');
-			if ($this->checkDocumentType($document))
-			{
-				$parameters->setParameterValue('docId', $document->getId());
-			}
-		}
+		$parameters = $this->setParameterValueForDetailBlock($parameters, $event);
 
 		$parameters->addParameterMeta('websiteId', $website->getId());
 		if ($parameters->getParameter('contextualUrls'))
@@ -47,12 +40,6 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 	}
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @return boolean
-	 */
-	abstract protected function checkDocumentType($document);
-
-	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
@@ -61,12 +48,12 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$docId = $parameters->getParameter('docId');
+		$docId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		if ($docId)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$document = $documentManager->getDocumentInstance($docId);
-			if ($this->checkDocumentType($document))
+			if ($this->isValidDocument($document))
 			{
 				/* @var $document \Rbs\Event\Documents\BaseEvent */
 				$attributes['doc'] = $document;

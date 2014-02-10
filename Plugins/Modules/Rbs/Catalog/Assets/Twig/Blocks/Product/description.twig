@@ -4,11 +4,11 @@
 
 {% block description %}
 	<div itemprop="description">
-		{{ product.currentLocalization.description|richText }}
+		{{ productPresentation.general.description|richText }}
 	</div>
 {% endblock %}
 
-{% if parameters.attributesDisplayMode and not(attributesConfig is empty) %}
+{% if parameters.attributesDisplayMode and not(productPresentation.attributesConfiguration is empty) %}
 	{% block attributesTitle %}
 		<h2>{{ i18n('m.rbs.catalog.front.attributes', ['ucf']) }}</h2>
 	{% endblock %}

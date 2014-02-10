@@ -2,7 +2,6 @@
 	var script{{ blockId }} = {};
 </script>
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
-
 <article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-ng-controller="RbsCatalogProductController">
 	<header>
 		{% include 'Rbs_Catalog/Blocks/Product/header.twig' %}
@@ -12,7 +11,11 @@
 			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
 		</div>
 		<div class="col-sm-6 col-md-4">
-			{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
+			{% if productPresentation.general.hasVariants %}
+				{% include 'Rbs_Catalog/Blocks/Product/offer-variant.twig' %}
+			{% else %}
+				{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
+			{% endif %}
 		</div>
 	</div>
 	{% include 'Rbs_Catalog/Blocks/Product/description.twig' %}

@@ -38,11 +38,11 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$presentation = $product->getPresentation($commerceServices, $commerceServices->getContext()->getWebstore()->getId());
-				$responseData['productId'] = $product->getId();
-				$responseData['key'] = $product->getId();
-				$responseData['designation'] = $product->getCurrentLocalization()->getTitle();
-				$responseData['codeSKU'] = $presentation->getCodeSKU();
+				$presentation = $product->getPresentation($commerceServices, $commerceServices->getContext()->getWebstore()->getId(), $event->getUrlManager());
+				//$responseData['productId'] = $product->getId();
+				//$responseData['key'] = $product->getId();
+				//$responseData['designation'] = $presentation->getGeneral()['title'];
+				//$responseData['codeSKU'] = $presentation->getStock()['sku'];
 
 				$presentation->evaluate();
 				$responseData = $presentation->toArray();

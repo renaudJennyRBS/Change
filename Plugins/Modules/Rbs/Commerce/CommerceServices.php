@@ -96,7 +96,22 @@ class CommerceServices extends Di
 				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//CatalogManager : DbProvider, TransactionManager, DocumentManager
+		//StockManager : Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
+		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\Services\StockManager');
+		$classDefinition = $this->getClassDefinition($stockManagerClassName);
+		$classDefinition->addMethod('setContext', true)
+			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
+			->addMethod('setDbProvider', true)
+			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
+			->addMethod('setTransactionManager', true)
+			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setCollectionManager', true)
+			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
+		//CatalogManager : DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
 		$catalogManagerClassName = $this->getInjectedClassName('CatalogManager', 'Rbs\Catalog\CatalogManager');
 		$classDefinition = $this->getClassDefinition($catalogManagerClassName);
 		$classDefinition->addMethod('setDbProvider', true)
@@ -104,30 +119,19 @@ class CommerceServices extends Di
 			->addMethod('setTransactionManager', true)
 			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
 			->addMethod('setDocumentManager', true)
-			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setPriceManager', true)
+			->addMethodParameter('setPriceManager', 'priceManager', array('type' => 'PriceManager', 'required' => true))
+			->addMethod('setStockManager', true)
+			->addMethodParameter('setStockManager', 'stockManager', array('type' => 'StockManager', 'required' => true))
+			->addMethod('setAttributeManager', true)
+			->addMethodParameter('setAttributeManager', 'attributeManager', array('type' => 'AttributeManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
-
 
 		//ProductManager : EventManagerFactory
 		$productManagerClassName = $this->getInjectedClassName('ProductManager', 'Rbs\Catalog\Product\ProductManager');
 		$classDefinition = $this->getClassDefinition($productManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
-		$definitionList->addDefinition($classDefinition);
-
-
-		//StockManager : Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
-		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\Services\StockManager');
-		$classDefinition = $this->getClassDefinition($stockManagerClassName);
-		$classDefinition->addMethod('setContext', true)
-				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
-			->addMethod('setDbProvider', true)
-				->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
-			->addMethod('setTransactionManager', true)
-				->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
-			->addMethod('setDocumentManager', true)
-				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
-			->addMethod('setCollectionManager', true)
-				->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//CartManager : StockManager, PriceManager, EventManagerFactory, Logging

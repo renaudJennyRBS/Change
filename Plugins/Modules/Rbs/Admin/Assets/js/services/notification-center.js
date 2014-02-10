@@ -37,6 +37,7 @@
 					this.notifications.push(notification);
 				},
 
+				// timeout in milliseconds
 				info: function (title, body, id, timeout)
 				{
 					this.push({
