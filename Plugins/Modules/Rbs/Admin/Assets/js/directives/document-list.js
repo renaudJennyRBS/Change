@@ -568,6 +568,10 @@
 
 					scope.deleteConfirm = {};
 
+					scope.setViewMode = function(viewMode) {
+						scope.viewMode = viewMode;
+					}
+
 					scope.askDeleteConfirmation = function ($index, $event) {
 						scope.deleteConfirm[$index] = true;
 						$event.stopPropagation();
