@@ -86,20 +86,26 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
-	 * @param $targetIdentifier
-	 * @param $amount
-	 * @param $currencyCode
+	 * @param string $targetIdentifier
+	 * @param float $amount
+	 * @param string $currencyCode
+	 * @param string $email
+	 * @param integer $userId
+	 * @param integer $ownerId
 	 * @param array $contextData
 	 * @throws \Exception
 	 * @return \Rbs\Payment\Documents\Transaction|null
 	 */
-	public function getNewTransaction($targetIdentifier, $amount, $currencyCode, $contextData = array())
+	public function getNewTransaction($targetIdentifier, $amount, $currencyCode, $email, $userId, $ownerId, $contextData = array())
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array(
 			'targetIdentifier' => $targetIdentifier,
 			'amount' => $amount,
 			'currencyCode' => $currencyCode,
+			'email' => $email,
+			'userId' => $userId,
+			'ownerId' => $ownerId,
 			'contextData' => $contextData
 		));
 		$this->getEventManager()->trigger('getNewTransaction', $this, $args);
@@ -127,6 +133,9 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$transaction->setTargetIdentifier($event->getParam('targetIdentifier'));
 			$transaction->setAmount($event->getParam('amount'));
 			$transaction->setCurrencyCode($event->getParam('currencyCode'));
+			$transaction->setEmail($event->getParam('email'));
+			$transaction->setUserId($event->getParam('userId'));
+			$transaction->setOwnerId($event->getParam('ownerId'));
 			$transaction->setContextData($event->getParam('contextData'));
 			$transaction->save();
 
@@ -314,7 +323,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$connector = $transaction->getConnector();
 		$contextData = $transaction->getContextData();
-		$email = isset($contextData['email']) ? $contextData['email'] : null;
+		$email = $transaction->getEmail();
 		$websiteId = isset($contextData['websiteId']) ? $contextData['websiteId'] : null;
 		$LCID = isset($contextData['LCID']) ? $contextData['LCID'] : null;
 

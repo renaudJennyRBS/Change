@@ -74,7 +74,7 @@ class PaymentReturn extends Block
 			$attributes['paymentTemplate'] = $template;
 
 			$data = $transaction->getContextData();
-			if (isset($data['guestCheckout']) && $data['guestCheckout'] == true && isset($data['email']))
+			if (isset($data['guestCheckout']) && $data['guestCheckout'] == true && $transaction->getEmail())
 			{
 				$attributes['proposeRegistration'] = true;
 			}

@@ -24,22 +24,18 @@ class CreateAccountForTransaction extends \Rbs\User\Blocks\CreateAccount
 		$request = $event->getHttpRequest();
 		$transactionId = $request->getQuery('transactionId');
 		$transaction = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($transactionId);
-		if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+		if ($transaction instanceof \Rbs\Payment\Documents\Transaction && $transaction->getEmail())
 		{
-			$data = $transaction->getContextData();
-			if (isset($data['email']))
-			{
-				$parameters->addParameterMeta('transactionId');
-				$parameters->setParameterValue('transactionId', $transactionId);
-				$parameters->setParameterValue('formAction', 'Action/Rbs/Commerce/CreateAccountRequest?transactionId=' . $transactionId);
+			$parameters->addParameterMeta('transactionId');
+			$parameters->setParameterValue('transactionId', $transactionId);
+			$parameters->setParameterValue('formAction', 'Action/Rbs/Commerce/CreateAccountRequest?transactionId=' . $transactionId);
 
-				$initialValues = $parameters->getParameterValue('initialValues');
-				$initialValues['email'] = $data['email'];
-				$parameters->setParameterValue('initialValues', $initialValues);
-				$readonlyNames = $parameters->getParameterValue('readonlyNames');
-				$readonlyNames['email'] = true;
-				$parameters->setParameterValue('readonlyNames', $readonlyNames);
-			}
+			$initialValues = $parameters->getParameterValue('initialValues');
+			$initialValues['email'] = $transaction->getEmail();
+			$parameters->setParameterValue('initialValues', $initialValues);
+			$readonlyNames = $parameters->getParameterValue('readonlyNames');
+			$readonlyNames['email'] = true;
+			$parameters->setParameterValue('readonlyNames', $readonlyNames);
 		}
 		return $parameters;
 	}

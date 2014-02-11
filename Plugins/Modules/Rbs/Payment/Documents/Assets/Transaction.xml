@@ -4,6 +4,9 @@
 	editable="true">
 	<properties>
 		<property name="label" type="String" stateless="true" />
+		<property name="email" type="String" />
+		<property name="userId" type="DocumentId" document-type="Rbs_User_User" />
+		<property name="ownerId" type="DocumentId" />
 		<property name="targetIdentifier" type="String" />
 		<property name="contextData" type="JSON" />
 		<property name="amount" type="Decimal" />
