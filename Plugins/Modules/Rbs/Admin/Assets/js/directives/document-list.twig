@@ -1,112 +1,110 @@
 <div>
-	<p>
-		<div ng-show="previewAvailable" rbs-tip="RbsDocumentListGeneralWithPreview">
-			{{ i18n('m.rbs.admin.admin.preview_tip') | raw }}
-		</div>
+	<div ng-show="previewAvailable" rbs-tip="RbsDocumentListGeneralWithPreview">
+		{{ i18n('m.rbs.admin.admin.preview_tip') | raw }}
+	</div>
 
-		<div ng-if="! selectionContext" class="btn-toolbar" ng-show="useToolBar">
-			<div class="pull-right">
-				<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
-					<i class="icon-refresh icon-spin"></i>
+	<div ng-if="! selectionContext" class="btn-toolbar" ng-show="useToolBar">
+		<div class="pull-right">
+			<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
+				<i class="icon-refresh icon-spin"></i>
+			</button>
+			<button type="button" ng-if="! busy" class="btn btn-default" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
+				<i class="icon-refresh"></i>
+			</button>
+
+			<div ng-if="viewMode == 'grid'" class="btn-group" title="{{ i18nAttr('m.rbs.admin.admin.sort', ['ucf']) }}">
+				<a class="btn btn-default" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
+				<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<span class="caret"></span>
 				</button>
-				<button type="button" ng-if="! busy" class="btn btn-default" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
-					<i class="icon-refresh"></i>
-				</button>
-
-				<div ng-if="viewMode == 'grid'" class="btn-group" title="{{ i18nAttr('m.rbs.admin.admin.sort', ['ucf']) }}">
-					<a class="btn btn-default" href ng-href="(= headerUrl(sort.column) =)"><i ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[sort.descending]"></i> (= columns[sort.column].label =)</a>
-					<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu">
-						<li ng-repeat="c in sortable" ng-hide="! columns[c].label"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
-					</ul>
-				</div>
-
-				<div class="btn-group" ng-show="gridModeAvailable">
-					<button title="{{ i18nAttr('m.rbs.admin.admin.grid_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="setViewMode('grid')" class="btn btn-default"><i class="icon-th-large"></i></button>
-					<button title="{{ i18nAttr('m.rbs.admin.admin.list_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="setViewMode('list')" class="btn btn-default"><i class="icon-list"></i></button>
-				</div>
+				<ul class="dropdown-menu">
+					<li ng-repeat="c in sortable" ng-hide="! columns[c].label"><a href ng-href="(= headerUrl(c) =)">(= columns[c].label =)</a></li>
+				</ul>
 			</div>
 
-			<rbs-clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></rbs-clipboard-add-widget>
+			<div class="btn-group" ng-show="gridModeAvailable">
+				<button title="{{ i18nAttr('m.rbs.admin.admin.grid_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="setViewMode('grid')" class="btn btn-default"><i class="icon-th-large"></i></button>
+				<button title="{{ i18nAttr('m.rbs.admin.admin.list_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="setViewMode('list')" class="btn btn-default"><i class="icon-list"></i></button>
+			</div>
+		</div>
 
-			<span ng-repeat="item in actions" ng-switch="item.type">
-				<button ng-switch-when="single" class="btn btn-default" type="button"
-				        rbs-bind-action="(= item.name =)"
-				        collection="collection"
-				        selection="selectedDocuments"
-				        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
-				<div ng-switch-when="group" class="btn-group">
-					<button ng-repeat="action in item.actions"
-					        class="btn btn-default" type="button"
-					        rbs-bind-action="(= action =)"
-					        collection="collection"
-					        selection="selectedDocuments"
-					        embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
-				</div>
+		<rbs-clipboard-add-widget ng-if="selectionEnabled" selected="selectedDocuments"></rbs-clipboard-add-widget>
+
+		<span ng-repeat="item in actions" ng-switch="item.type">
+			<button ng-switch-when="single" class="btn btn-default" type="button"
+					rbs-bind-action="(= item.name =)"
+					collection="collection"
+					selection="selectedDocuments"
+					embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
+			<span ng-switch-when="group" class="btn-group">
+				<button ng-repeat="action in item.actions"
+						class="btn btn-default" type="button"
+						rbs-bind-action="(= action =)"
+						collection="collection"
+						selection="selectedDocuments"
+						embed-dialog="(= embeddedActionsOptionsContainerId =)"></button>
 			</span>
-		</div>
+		</span>
+	</div>
 
-		<div ng-if="selectionContext !== null">
-			<div class="panel panel-success" ng-if="selectionContext.param('multiple')">
-				<div class="panel-heading">
-					<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
-					<div>
-						{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.param('label')"></strong>
-						<span ng-if="selectionContext.param('multiple')"> ({{ i18n('m.rbs.admin.admin.select_multiple') }})</span>
-						{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.label()"></strong>
-					</div>
-				</div>
-				<div class="panel-body">
-					<p>
-						{{ i18n('m.rbs.admin.admin.compose_selection_message') }}
-					</p>
-					<p ng-show="selectionContextDocuments.length == 0">
-						<strong>{{ i18n('m.rbs.admin.admin.selection_is_empty_now') }}</strong>
-					</p>
-					<p ng-hide="selectionContextDocuments.length == 0">
-						<rbs-token-list rows="true" items="selectionContextDocuments"></rbs-token-list>
-					</p>
-				</div>
-				<div class="panel-footer">
-					<button type="button" class="pull-right btn btn-sm btn-success" ng-click="selectionContextResolve()"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.validate_selection', ['ucf']) }}</button>
-					<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
-						<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
-					</button>
-					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : "(= selectionContext.label() =)"}) | raw }}
+	<div ng-if="selectionContext !== null">
+		<div class="panel panel-success" ng-if="selectionContext.param('multiple')">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
+				<div>
+					{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.param('label')"></strong>
+					<span ng-if="selectionContext.param('multiple')"> ({{ i18n('m.rbs.admin.admin.select_multiple') }})</span>
+					{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.label()"></strong>
 				</div>
 			</div>
-
-			<div class="panel panel-success" ng-if="! selectionContext.param('multiple')">
-				<div class="panel-heading">
-					<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
-					<div>
-						{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.param('label')"></strong>
-						<span ng-if="selectionContext.param('multiple')"> (multiple)</span>
-						{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.label()"></strong>
-					</div>
-				</div>
-				<div class="panel-body">
+			<div class="panel-body">
+				<p>
 					{{ i18n('m.rbs.admin.admin.compose_selection_message') }}
-				</div>
-				<div class="panel-footer">
-					<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
-						<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
-					</button>
-					{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : "(= selectionContext.label() =)"}) | raw }}
-				</div>
+				</p>
+				<p ng-show="selectionContextDocuments.length == 0">
+					<strong>{{ i18n('m.rbs.admin.admin.selection_is_empty_now') }}</strong>
+				</p>
+				<p ng-hide="selectionContextDocuments.length == 0">
+					<rbs-token-list rows="true" items="selectionContextDocuments"></rbs-token-list>
+				</p>
 			</div>
-
-			<div class="btn-toolbar" ng-if="selectionContext.param('multiple')">
-				<button type="button" class="btn btn-default" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
+			<div class="panel-footer">
+				<button type="button" class="pull-right btn btn-sm btn-success" ng-click="selectionContextResolve()"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.validate_selection', ['ucf']) }}</button>
+				<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
+					<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
+				</button>
+				{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : "(= selectionContext.label() =)"}) | raw }}
 			</div>
 		</div>
 
-		<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)"></div>
-	</p>
+		<div class="panel panel-success" ng-if="! selectionContext.param('multiple')">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.elements_selection', ['ucf']) }}</h3>
+				<div>
+					{{ i18n('m.rbs.admin.admin.for_property') }} <strong ng-bind="selectionContext.param('label')"></strong>
+					<span ng-if="selectionContext.param('multiple')"> (multiple)</span>
+					{{ i18n('m.rbs.admin.admin.of') }} <strong ng-bind="selectionContext.label()"></strong>
+				</div>
+			</div>
+			<div class="panel-body">
+				{{ i18n('m.rbs.admin.admin.compose_selection_message') }}
+			</div>
+			<div class="panel-footer">
+				<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
+					<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
+				</button>
+				{{ i18n('m.rbs.admin.admin.and_go_back_to', [], {'label' : "(= selectionContext.label() =)"}) | raw }}
+			</div>
+		</div>
 
-	<table ng-if="viewMode == 'list'" class="document-list table table-condensed table-bordered" ng-class="{'table-striped': stripedRows, 'table-hover': hoverRows}">
+		<div class="btn-toolbar" ng-if="selectionContext.param('multiple')">
+			<button type="button" class="btn btn-default" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
+		</div>
+	</div>
+
+	<div class="clearfix" data-role="embedded-actions-options-container" id="(=embeddedActionsOptionsContainerId=)"></div>
+
+	<table ng-if="viewMode == 'list'" class="document-list table table-condensed table-bordered margin-top" ng-class="{'table-striped': stripedRows, 'table-hover': hoverRows}">
 		<thead>
 			<tr>
 			</tr>
@@ -140,11 +138,13 @@
 	<div ng-if="viewMode == 'grid'">
 		<div ng-if="collection.length == 0 && !busy" class="empty-row">{{ i18n('m.rbs.admin.admin.this_list_is_empty', ['ucf']) }}</div>
 		<ul class="thumbnail-grid clearfix list-unstyled">
-			<li ng-repeat="doc in collection"
-			    ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
+			<li ng-repeat="doc in collection" ng-class="{selected: doc.selected, warning: doc.status!='PUBLISHABLE'}">
 				<div class="inner" ng-class="doc.status" ng-click="doc.selected = ! doc.selected">
 					<div class="caption">
-						<h4><rbs-status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
+						<h4>
+							<rbs-status ng-model="doc" class="small"></rbs-status>
+							<a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a>
+						</h4>
 					</div>
 				</div>
 			</li>
@@ -152,53 +152,53 @@
 	</div>
 
 	<footer ng-hide="(! collection.length && ! busy) || disablePagination">
-			<div class="pull-right">
-				<ul class="pagination pagination-sm" style="margin-top:0">
-					<li ng-class="{disabled: isFirstPage()}">
-						<a ng-if="!isFirstPage()" ng-href="(= pageUrl(0) =)"><i class="icon-double-angle-left"></i></a>
-						<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-double-angle-left"></i></a>
-					</li>
-					<li ng-class="{disabled: isFirstPage()}">
-						<a ng-if="!isFirstPage()" ng-href="(= pageUrl(currentPage-1) =)"><i class="icon-angle-left"></i></a>
-						<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-angle-left"></i></a>
-					</li>
+		<div class="pull-right">
+			<ul class="pagination pagination-sm" style="margin-top:0">
+				<li ng-class="{disabled: isFirstPage()}">
+					<a ng-if="!isFirstPage()" ng-href="(= pageUrl(0) =)"><i class="icon-double-angle-left"></i></a>
+					<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-double-angle-left"></i></a>
+				</li>
+				<li ng-class="{disabled: isFirstPage()}">
+					<a ng-if="!isFirstPage()" ng-href="(= pageUrl(currentPage-1) =)"><i class="icon-angle-left"></i></a>
+					<a ng-if="isFirstPage()" href="javascript:;"><i class="icon-angle-left"></i></a>
+				</li>
 
-					<li ng-repeat="page in pages" ng-class="{active: page==currentPage, disabled: isDisabled(page)}"><a
-								ng-href="(= pageUrl(page) =)">(= displayPageNumber(page) =)</a></li>
+				<li ng-repeat="page in pages" ng-class="{active: page==currentPage, disabled: isDisabled(page)}"><a
+							ng-href="(= pageUrl(page) =)">(= displayPageNumber(page) =)</a></li>
 
-					<li ng-class="{disabled: isLastPage()}">
-						<a ng-if="!isLastPage()" ng-href="(= pageUrl(currentPage+1) =)"><i class="icon-angle-right"></i></a>
-						<a ng-if="isLastPage()" href="javascript:;"><i class="icon-angle-right"></i></a>
-					</li>
+				<li ng-class="{disabled: isLastPage()}">
+					<a ng-if="!isLastPage()" ng-href="(= pageUrl(currentPage+1) =)"><i class="icon-angle-right"></i></a>
+					<a ng-if="isLastPage()" href="javascript:;"><i class="icon-angle-right"></i></a>
+				</li>
 
-					<li ng-class="{disabled: isLastPage()}">
-						<a ng-if="!isLastPage()" ng-href="(= pageUrl(pages.length-1) =)"><i class="icon-double-angle-right"></i></a>
-						<a ng-if="isLastPage()" href="javascript:;"><i class="icon-double-angle-right"></i></a>
-					</li>
+				<li ng-class="{disabled: isLastPage()}">
+					<a ng-if="!isLastPage()" ng-href="(= pageUrl(pages.length-1) =)"><i class="icon-double-angle-right"></i></a>
+					<a ng-if="isLastPage()" href="javascript:;"><i class="icon-double-angle-right"></i></a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="pagination-info">
+			<strong ng-pluralize data-count="pagination.total"
+					data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_no') }}',
+						one: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_one') }}',
+						other: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_other') }}'}"></strong>
+				<span class="text-muted" ng-show="pages.length > 0">
+					{{ i18n('m.rbs.admin.admin.on') }}
+					<span ng-pluralize data-count="pages.length" data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.pagination_no_page') }}',
+						one: '{{ i18nAttr('m.rbs.admin.admin.pagination_page') }}',
+						other: '{{ i18nAttr('m.rbs.admin.admin.pagination_pages') }}'}"></span>
+				</span>
+			<div class="btn-group dropup">
+				<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+					(= pagination.limit =) {{ i18n('m.rbs.admin.admin.per_page') }} <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu pull-right" style="text-align: left">
+					<li ng-repeat="ps in predefinedPageSizes"><a href ng-href="(= pageUrl(0, ps) =)">(= ps =) <i class="icon-ok" ng-if="pagination.limit == ps"></i></a></li>
 				</ul>
 			</div>
 
-			<div class="pagination-info">
-				<strong ng-pluralize data-count="pagination.total"
-				        data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_no') }}',
-							one: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_one') }}',
-							other: '{{ i18nAttr('m.rbs.admin.admin.pagination_total_other') }}'}"></strong>
-					<span class="text-muted" ng-show="pages.length > 0">
-						{{ i18n('m.rbs.admin.admin.on') }}
-						<span ng-pluralize data-count="pages.length" data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.pagination_no_page') }}',
-							one: '{{ i18nAttr('m.rbs.admin.admin.pagination_page') }}',
-							other: '{{ i18nAttr('m.rbs.admin.admin.pagination_pages') }}'}"></span>
-					</span>
-				<div class="btn-group dropup">
-					<button class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-						(= pagination.limit =) {{ i18n('m.rbs.admin.admin.per_page') }} <span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" style="text-align: left">
-						<li ng-repeat="ps in predefinedPageSizes"><a href ng-href="(= pageUrl(0, ps) =)">(= ps =) <i class="icon-ok" ng-if="pagination.limit == ps"></i></a></li>
-					</ul>
-				</div>
-
-				<strong ng-show="busy" style="margin-left:1em;"><i class="icon-spinner icon-spin icon-large"></i> {{ i18n('m.rbs.admin.admin.loading', ['ucf']) }}</strong>
-			</div>
+			<strong ng-show="busy" style="margin-left:1em;"><i class="icon-spinner icon-spin icon-large"></i> {{ i18n('m.rbs.admin.admin.loading', ['ucf']) }}</strong>
+		</div>
 	</footer>
 </div>
