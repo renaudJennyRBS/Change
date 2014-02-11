@@ -70,7 +70,8 @@
 		"module": "Rbs_Website",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Website/Browse/"
+			"redirectTo": "/Rbs/Website/Browse/",
+			"labelKey": "m.rbs.website.admin.module_name | ucf"
 		},
 		"auto": false
 	},

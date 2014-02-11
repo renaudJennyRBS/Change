@@ -3,7 +3,8 @@
 		"module": "Rbs_Event",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Event/News/"
+			"redirectTo": "/Rbs/Event/News/",
+			"labelKey": "m.rbs.event.admin.module_name | ucf"
 		},
 		"auto": false
 	},

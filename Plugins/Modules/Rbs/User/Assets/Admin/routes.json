@@ -3,7 +3,8 @@
 		"module": "Rbs_User",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/User/User/"
+			"redirectTo": "/Rbs/User/User/",
+			"labelKey": "m.rbs.user.admin.module_name | ucf"
 		},
 		"auto": false
 	},
