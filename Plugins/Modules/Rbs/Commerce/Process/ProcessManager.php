@@ -224,28 +224,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		// Send the email notification.
-		$connector = $transaction->getConnector();
-		$email = isset($contextData['email']) ? $contextData['email'] : null;
-		$websiteId = isset($contextData['websiteId']) ? $contextData['websiteId'] : null;
-		$LCID = isset($contextData['LCID']) ? $contextData['LCID'] : null;
-		if ($email && $websiteId && $LCID && $connector->getProcessingMail())
-		{
-			/* @var $website \Rbs\Website\Documents\Website */
-			$website = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($websiteId);
-			if ($website instanceof \Rbs\Website\Documents\Website)
-			{
-				$paymentManager = $commerceServices->getPaymentManager();
-				$genericServices = $event->getServices('genericServices');
-				if (!($genericServices instanceof \Rbs\Generic\GenericServices))
-				{
-					throw new \RuntimeException('Unable to get CommerceServices', 999999);
-				}
-				$mailManager = $genericServices->getMailManager();
-				$code = $paymentManager->getMailCode($transaction);
-				$substitutions = $paymentManager->getMailSubstitutions($transaction);
-				$mailManager->send($code, $website, $LCID, [$email], $substitutions);
-			}
-		}
+		$this->sendMailFromTransaction($transaction, $commerceServices->getPaymentManager(), $event);
 	}
 
 	/**
@@ -284,7 +263,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		// Send the email notification.
-		// TODO
+		$this->sendMailFromTransaction($transaction, $commerceServices->getPaymentManager(), $event);
 	}
 
 	/**
@@ -322,6 +301,39 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		// Send the email notification.
-		// TODO
+		$this->sendMailFromTransaction($transaction, $commerceServices->getPaymentManager(), $event);
+	}
+
+	/**
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 * @param \Rbs\Payment\PaymentManager $paymentManager
+	 * @param \Change\Events\Event $event
+	 * @throws \RuntimeException
+	 */
+	protected function sendMailFromTransaction($transaction, $paymentManager, $event)
+	{
+		$connector = $transaction->getConnector();
+		$contextData = $transaction->getContextData();
+		$email = isset($contextData['email']) ? $contextData['email'] : null;
+		$websiteId = isset($contextData['websiteId']) ? $contextData['websiteId'] : null;
+		$LCID = isset($contextData['LCID']) ? $contextData['LCID'] : null;
+
+		if ($email && $websiteId && $LCID && $connector->getProcessingMail())
+		{
+			/* @var $website \Rbs\Website\Documents\Website */
+			$website = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($websiteId);
+			if ($website instanceof \Rbs\Website\Documents\Website)
+			{
+				$genericServices = $event->getServices('genericServices');
+				if (!($genericServices instanceof \Rbs\Generic\GenericServices))
+				{
+					throw new \RuntimeException('Unable to get CommerceServices', 999999);
+				}
+				$mailManager = $genericServices->getMailManager();
+				$code = $paymentManager->getMailCode($transaction);
+				$substitutions = $paymentManager->getMailSubstitutions($transaction);
+				$mailManager->send($code, $website, $LCID, [$email], $substitutions);
+			}
+		}
 	}
 }

@@ -17,6 +17,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function setUp()
 	{
+		static::initDocumentsDb();
 		//set the cache folder for mail
 		$mailCacheFolder = $this->getApplication()->getWorkspace()->cachePath('mail');
 		if (!is_dir($mailCacheFolder))
@@ -28,27 +29,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function tearDown()
 	{
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$tm->begin();
-
-		//empty mails
-		$dqb = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Mail_Mail');
-		$mails = $dqb->getDocuments();
-
-		/** @var $mail \Rbs\Mail\Documents\Mail */
-		foreach ($mails as $mail)
-		{
-			$mail->delete();
-		}
-
-		//empty jobs
-		$jobManager = $this->getApplicationServices()->getJobManager();
-		$jobIds = $jobManager->getJobIds();
-		foreach ($jobIds as $jobId)
-		{
-			$job = $jobManager->getJob($jobId);
-			$jobManager->deleteJob($job);
-		}
+		static::clearDB();
 
 		//remove the cache folder for mail
 		$mailCacheFolder = $this->getApplication()->getWorkspace()->cachePath('mail');
@@ -57,8 +38,6 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			\Change\Stdlib\File::rmdir($mailCacheFolder);
 			$this->assertFalse(is_dir($mailCacheFolder), 'Mail cache folder isn\'t removed');
 		}
-
-		$tm->commit();
 	}
 
 	public function testGetMailByCode()
@@ -141,6 +120,28 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$expectedArguments = ['mailId' => $mail->getId(), 'emails' => $expectedEmails, 'LCID' => $LCID, 'substitutions' => $substitutions, 'websiteId' => $website->getId()];
 		$this->assertEquals($expectedArguments, $job->getArguments());
 		$this->assertEquals($at, $job->getStartDate());
+
+		//test with a deactivate mail, no job will be created
+		$mail = $this->getNewMail('test2', [$website], 'fr_FR', 'Deactivate mail for test', false);
+		$mailManager->send('test2', $website, $LCID, $emails, $substitutions, $at);
+		$jobIds = $jobManager->getJobIds();
+		$this->assertCount(1, $jobIds);
+		//active it and try again
+		$this->getApplicationServices()->getDocumentManager()->pushLCID($LCID);
+		$mail->getCurrentLocalization()->setActive(true);
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$mail->save();
+			$tm->commit();
+			$this->getApplicationServices()->getDocumentManager()->popLCID();
+		}
+		catch (\Exception $e)
+		{
+			$this->getApplicationServices()->getDocumentManager();
+			throw $tm->rollBack($e);
+		}
 	}
 
 	public function testGetCodes()
@@ -302,10 +303,11 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param \Rbs\Website\Documents\Website[] $websites
 	 * @param string $LCID
 	 * @param string $subject
+	 * @param boolean $active
 	 * @return \Rbs\Mail\Documents\Mail
 	 * @throws \Exception
 	 */
-	protected function getNewMail($code, $websites, $LCID, $subject)
+	protected function getNewMail($code, $websites, $LCID, $subject, $active = true)
 	{
 		$this->getApplicationServices()->getDocumentManager()->pushLCID($LCID);
 		$mail = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Mail_Mail');
@@ -317,6 +319,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$mail->setWebsites($websites);
 		}
 		$mail->getCurrentLocalization()->setSubject($subject);
+		$mail->getCurrentLocalization()->setActive($active);
 
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try

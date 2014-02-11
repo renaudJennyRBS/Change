@@ -104,34 +104,32 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		// Send a mail to confirm email.
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$documentManager->pushLCID($LCID);
+		$urlManager = $website->getUrlManager($LCID);
+		$urlManager->setAbsoluteUrl(true);
+
+		$query = [
+			'requestId' => $requestId,
+			'email' => $email
+		];
+		$params = [
+			'website' => $website->getTitle(),
+			'link' => $this->getConfirmationUrl($urlManager, $query)
+		];
+
+		/* @var \Rbs\Generic\GenericServices $genericServices */
+		$genericServices = $event->getServices('genericServices');
+		$mailManager = $genericServices->getMailManager();
 		try
 		{
-			$documentManager->pushLCID($LCID);
-			$urlManager = $website->getUrlManager($LCID);
-			$urlManager->setAbsoluteUrl(true);
-
-			$query = [
-				'requestId' => $requestId,
-				'email' => $email
-			];
-			$params = [
-				'website' => $website->getTitle(),
-				'link' => $this->getConfirmationUrl($urlManager, $query)
-			];
-
-			/* @var \Rbs\Generic\GenericServices $genericServices */
-			$genericServices = $event->getServices('genericServices');
-			$mailManager = $genericServices->getMailManager();
 			$mailManager->send('user_account_request', $website, $LCID, $email, $params);
-
-			$documentManager->popLCID();
 		}
-		catch (\Exception $e)
+		catch (\RuntimeException $e)
 		{
-			$event->getApplicationServices()->getLogging()->exception($e);
-			$documentManager->popLCID();
-			throw $e;
+			$event->getApplicationServices()->getLogging()->info($e);
 		}
+		$documentManager->popLCID();
+
 	}
 
 	/**

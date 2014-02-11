@@ -105,8 +105,11 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 			throw new \RuntimeException('No dest');
 		}
 
-		$argument = ['mailId' => $mail->getId(), 'websiteId' => $website->getId(), 'emails' => $emails, 'LCID' => $LCID, 'substitutions' => $substitutions];
-		$this->getJobManager()->createNewJob('Rbs_Mail_SendMail', $argument, $at);
+		if ($mail->activated())
+		{
+			$argument = ['mailId' => $mail->getId(), 'websiteId' => $website->getId(), 'emails' => $emails, 'LCID' => $LCID, 'substitutions' => $substitutions];
+			$this->getJobManager()->createNewJob('Rbs_Mail_SendMail', $argument, $at);
+		}
 	}
 
 	/**
