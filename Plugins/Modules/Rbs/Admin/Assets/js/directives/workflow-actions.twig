@@ -39,10 +39,6 @@
 					</p>
 				</div>
 			</div>
-			<rbs-advanced-mode>
-				<p>{{ i18n('m.rbs.admin.admin.run_all_steps_message') | raw }}</p>
-				<p><button type="button" class="btn btn-danger" ng-click="runDirectPublication()"><i class="icon-fast-forward"></i> {{ i18n('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}</button></p>
-			</rbs-advanced-mode>
 		</div>
 
 		<div ng-switch-when="contentValidation">
@@ -256,6 +252,13 @@
 			</div>
 		</div>
 
+		<rbs-advanced-mode data-ng-if="document.META$.actions.hasOwnProperty('directPublication')">
+			<p>{{ i18n('m.rbs.admin.admin.run_all_steps_message') | raw }}</p>
+			<p><button type="button" class="btn btn-danger" data-ng-click="runDirectPublication()">
+					<i class="icon-fast-forward"></i> {{ i18n('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}
+				</button></p>
+		</rbs-advanced-mode>
+
 		<div ng-switch-default="">
 			{{ i18n('m.rbs.admin.admin.no_action_to_execute', ['ucf']) }}
 		</div>
@@ -328,5 +331,4 @@
 			</div>
 		</div>
 	</div>
-
 </div>
