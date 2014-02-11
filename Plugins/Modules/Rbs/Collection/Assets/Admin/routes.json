@@ -3,7 +3,8 @@
 		"module": "Rbs_Collection",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Collection/Collection/"
+			"redirectTo": "/Rbs/Collection/Collection/",
+			"labelKey": "m.rbs.collection.admin.module_name | ucf"
 		},
 		"auto": true
 	},

@@ -3,7 +3,8 @@
 		"module": "Rbs_Review",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Review/Review/"
+			"redirectTo": "/Rbs/Review/Review/",
+			"labelKey": "m.rbs.review.admin.module_name | ucf"
 		},
 		"auto": true
 	},

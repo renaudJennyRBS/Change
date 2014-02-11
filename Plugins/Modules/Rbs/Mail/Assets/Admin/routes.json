@@ -3,7 +3,8 @@
 		"module": "Rbs_Mail",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Mail/Mail/"
+			"redirectTo": "/Rbs/Mail/Mail/",
+			"labelKey": "m.rbs.mail.admin.module_name | ucf"
 		},
 		"auto": true
 	},
