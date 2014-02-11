@@ -29,7 +29,8 @@
 							]
 						}
 					},
-					"subject": "Transaction en cours"
+					"subject": "Transaction en cours",
+					"active": false
 				}
 			}
 		},

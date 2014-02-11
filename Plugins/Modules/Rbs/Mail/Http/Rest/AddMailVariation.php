@@ -33,6 +33,9 @@ class AddMailVariation
 					$variation->getCurrentLocalization()->setSenderMail($document->getCurrentLocalization()->getSenderMail());
 					$variation->getCurrentLocalization()->setSenderName($document->getCurrentLocalization()->getSenderName());
 					$variation->getCurrentLocalization()->setEditableContent($document->getCurrentLocalization()->getEditableContent());
+					$variation->getCurrentLocalization()->setActive($document->getCurrentLocalization()->getActive());
+					$variation->getCurrentLocalization()->setStartActivation($document->getCurrentLocalization()->getStartActivation());
+					$variation->getCurrentLocalization()->setEndActivation($document->getCurrentLocalization()->getEndActivation());
 					$documentManager->popLCID();
 				}
 				
