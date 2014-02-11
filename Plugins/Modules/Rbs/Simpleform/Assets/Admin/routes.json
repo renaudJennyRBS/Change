@@ -7,15 +7,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Simpleform/Field/": {
-		"model": "Rbs_Simpleform_Field",
-		"name": "list",
-		"rule": {
-			"templateUrl": "Document/Rbs/Simpleform/Field/list.twig",
-			"labelKey": "m.rbs.simpleform.admin.field_list | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Simpleform/Field/:id": {
 		"model": "Rbs_Simpleform_Field",
 		"name": "form",
