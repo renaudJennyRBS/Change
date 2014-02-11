@@ -116,9 +116,7 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 		$document = $event->getDocument();
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$documentResult = $restResult;
 			$section = null;
-			$um = $documentResult->getUrlManager();
 			$tm = $event->getApplicationServices()->getTreeManager();
 			$topicNode = $tm->getNodeByDocument($document);
 			if ($topicNode)
@@ -129,10 +127,13 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 					$section = null;
 				}
 			}
-			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
-			$documentResult->setProperty('section', $vc->toRestValue($section, \Change\Documents\Property::TYPE_DOCUMENT));
+			$vc = new \Change\Http\Rest\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$restResult->setProperty('section', $vc->toRestValue($section, \Change\Documents\Property::TYPE_DOCUMENT));
 		}
-
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink) {
+			$vc = new \Change\Http\Rest\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$restResult->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
+		}
 	}
 
 	/**
