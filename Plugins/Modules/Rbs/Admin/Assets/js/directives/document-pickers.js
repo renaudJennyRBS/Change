@@ -20,6 +20,7 @@
 	function documentPickerLinkFunction(scope, iElement, attrs, ngModel, multiple, REST, Utils, Navigation, $timeout, UrlManager, Models)
 	{
 		var valueIds = (attrs.valueIds === 'true');
+
 		scope.selectorUrl = attrs.selectorUrl;
 		scope.multiple = multiple;
 

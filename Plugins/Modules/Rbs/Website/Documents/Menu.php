@@ -14,7 +14,7 @@ class Menu extends \Compilation\Rbs\Website\Documents\Menu
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
 
-		/** @var $document Product */
+		/** @var $document Menu */
 		$document = $event->getDocument();
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
@@ -31,6 +31,9 @@ class Menu extends \Compilation\Rbs\Website\Documents\Menu
 				}
 				$restResult->setProperty('items', $items);
 			}
+
+			$vc = new \Change\Http\Rest\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$restResult->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
 		}
 	}
 }

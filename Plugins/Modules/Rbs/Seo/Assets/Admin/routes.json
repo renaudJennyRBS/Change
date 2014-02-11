@@ -3,7 +3,8 @@
 		"module": "Rbs_Seo",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Seo/DocumentSeo/"
+			"redirectTo": "/Rbs/Seo/DocumentSeo/",
+			"labelKey": "m.rbs.seo.admin.module_name | ucf"
 		},
 		"auto": true
 	},

@@ -3,7 +3,8 @@
 		"module": "Rbs_Media",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Media/Image/"
+			"redirectTo": "/Rbs/Media/Image/",
+			"labelKey": "m.rbs.media.admin.module_name | ucf"
 		},
 		"auto": true
 	},
