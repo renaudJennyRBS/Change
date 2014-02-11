@@ -236,7 +236,7 @@
 
 				<div ng-switch-when="VALIDATION">
 					<button type="button" class="btn btn-primary btn-headline" ng-disabled="correctionData.reject" ng-click="correctionData.contentValidation()"><i class="icon-ok"></i>{{ i18n('m.rbs.admin.admin.button_validate') | raw }}</button>
-					<button type="button" class="btn btn-danger btn-headline" ng-class="{'active': correctionData.reject}" ng-click="correctionData.reject = ! correctionData.reject"><i class="icon-ban-circle"></i>{{ i18n('m.rbs.admin.admin.reject_correction', ['ucf']) }}</button>
+					<button type="button" class="btn btn-danger btn-headline" ng-class="{'active': correctionData.reject}" ng-click="correctionData.reject = ! correctionData.reject"><i class="icon-ban-circle"></i>{{ i18n('m.rbs.admin.admin.button_reject') | raw }}</button>
 					<div ng-if="correctionData.reject" ng-form="" name="rejectForm" class="well well-sm margin-top clearfix">
 						<rbs-field label="{{ i18n('m.rbs.admin.admin.please_provide_reason', ['ucf']) }}" required="true">
 							<input type="text" rbs-auto-focus="true" class="form-control" ng-required="true" ng-model="correctionData.rejectMessage"/>
