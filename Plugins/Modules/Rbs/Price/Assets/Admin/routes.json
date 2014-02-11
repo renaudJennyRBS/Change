@@ -97,7 +97,8 @@
 		"module": "Rbs_Price",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Price/Price/"
+			"redirectTo": "/Rbs/Price/Price/",
+			"labelKey": "m.rbs.price.admin.module_name | ucf"
 		},
 		"auto": false
 	},

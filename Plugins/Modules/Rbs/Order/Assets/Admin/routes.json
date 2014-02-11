@@ -3,7 +3,8 @@
 		"module": "Rbs_Order",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Order/Order/"
+			"redirectTo": "/Rbs/Order/Order/",
+			"labelKey": "m.rbs.order.admin.module_name | ucf"
 		},
 		"auto": false
 	},

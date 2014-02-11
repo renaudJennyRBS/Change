@@ -3,7 +3,8 @@
 		"module": "Rbs_Elasticsearch",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Elasticsearch/FullText/"
+			"redirectTo": "/Rbs/Elasticsearch/FullText/",
+			"labelKey": "m.rbs.elasticsearch.admin.module_name | ucf"
 		},
 		"auto": false
 	},
