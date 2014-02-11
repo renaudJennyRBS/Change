@@ -42,13 +42,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.brand.documents.brand | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Catalog/Brand/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Brand_Brand",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Brand_Brand",
 			"controller": "RbsChangeWorkflowController",

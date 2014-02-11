@@ -257,13 +257,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/AddressField/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.geo.documents.addressfield | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Geo/AddressField/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Geo_AddressField",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Geo_AddressField",
 			"controller": "RbsChangeWorkflowController",

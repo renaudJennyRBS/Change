@@ -3,7 +3,7 @@
 		"module": "Rbs_Seo",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Seo/DocumentSeo/",
+			"redirectTo": "/Rbs/Seo/ModelConfiguration/",
 			"labelKey": "m.rbs.seo.admin.module_name | ucf"
 		},
 		"auto": true
@@ -42,13 +42,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.seo.documents.documentseo | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Seo/DocumentSeo/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Seo_DocumentSeo",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_DocumentSeo",
 			"controller": "RbsChangeWorkflowController",
@@ -109,13 +109,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.seo.documents.modelconfiguration | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Seo/ModelConfiguration/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Seo_ModelConfiguration",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_ModelConfiguration",
 			"controller": "RbsChangeWorkflowController",

@@ -33,13 +33,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.shipping.documents.mode | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Commerce/Mode/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Shipping_Mode",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Shipping_Mode",
 			"controller": "RbsChangeWorkflowController",

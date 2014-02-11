@@ -33,7 +33,7 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.store.documents.webstore | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},

@@ -42,13 +42,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.payment.documents.deferredconnector | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Commerce/DeferredConnector/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Payment_DeferredConnector",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_DeferredConnector",
 			"controller": "RbsChangeWorkflowController",

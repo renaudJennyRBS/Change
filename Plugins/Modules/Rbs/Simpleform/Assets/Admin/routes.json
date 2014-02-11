@@ -32,13 +32,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Simpleform/Field/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.simpleform.documents.field | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Simpleform/Field/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Simpleform_Field",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Simpleform_Field",
 			"controller": "RbsChangeWorkflowController",
@@ -99,13 +99,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Simpleform/Form/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.simpleform.documents.form | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Simpleform/Form/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Simpleform_Form",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Simpleform_Form",
 			"controller": "RbsChangeWorkflowController",

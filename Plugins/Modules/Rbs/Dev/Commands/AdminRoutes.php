@@ -183,7 +183,7 @@ class AdminRoutes
 					'rule' => [
 						'templateUrl' => 'Document' . $baseGenericRule . 'form.twig',
 						'controller' => 'RbsChangeTranslateEditorController',
-						'labelKey' => $baseKey . '.documents.' . strtolower($model->getShortName()) . ' | ucf'
+						'labelKey' => 'm.rbs.admin.admin.translation | ucf'
 					]];
 				$routes[$baseGenericRule . $docPath . '/translate/:LCID'] = $route;
 			}
@@ -208,7 +208,7 @@ class AdminRoutes
 
 				if ($model->isLocalized())
 				{
-					$route = ['model' => $modelName, 'name' => 'workflow',
+					$route = ['model' => $modelName, 'name' => 'localizedWorkflow',
 						'rule' => [
 							'templateUrl' => 'Rbs/Admin/workflow/workflow.twig?model=' . $modelName,
 							'controller' => 'RbsChangeWorkflowController',

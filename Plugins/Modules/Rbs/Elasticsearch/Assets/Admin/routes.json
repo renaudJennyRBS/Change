@@ -42,13 +42,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Elasticsearch/Facet/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.elasticsearch.documents.facet | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Elasticsearch/Facet/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Elasticsearch_Facet",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Elasticsearch_Facet",
 			"controller": "RbsChangeWorkflowController",
@@ -109,13 +109,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.elasticsearch.documents.facetgroup | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Elasticsearch/FacetGroup/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Elasticsearch_FacetGroup",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Elasticsearch_FacetGroup",
 			"controller": "RbsChangeWorkflowController",

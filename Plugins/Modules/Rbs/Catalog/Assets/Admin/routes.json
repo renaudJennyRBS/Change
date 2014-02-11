@@ -113,13 +113,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.catalog.documents.product | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Catalog/Product/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Catalog_Product",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_Product",
 			"controller": "RbsChangeWorkflowController",
@@ -374,13 +374,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/Attribute/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.catalog.documents.attribute | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Commerce/Attribute/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Catalog_Attribute",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_Attribute",
 			"controller": "RbsChangeWorkflowController",

@@ -33,7 +33,7 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.price.documents.billingarea | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
@@ -141,13 +141,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Price/Fee/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.price.documents.fee | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Price/Fee/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Price_Fee",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Price_Fee",
 			"controller": "RbsChangeWorkflowController",
