@@ -2,10 +2,10 @@
 {% if rows %}
 <h1 id="product-list-title">{{ parameters.title }}</h1>
 
-<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
+{#<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
 	<input type="hidden" name="quantity" value="1" />
 	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
+	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />#}
 
 	<!-- Slider
 	================================================== -->
@@ -50,5 +50,5 @@
 		</a>
 	</div>
 	<!-- /.carousel -->
-</form>
+{#</form>#}
 {% endif %}

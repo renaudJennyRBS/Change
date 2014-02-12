@@ -32,28 +32,53 @@
 	}
 </script>
 
-{% if productPresentation.visuals.count > 0 %}
-	<div class="visuals" id="visuals-{{ blockId }}">
+<script type="text/ng-template" id="/productVisuals.tpl">
+	<div data-ng-show="visuals && !productLoading" class="visuals" id="visuals-{{ blockId }}">
 		<ul class="list-unstyled full-visuals">
-			{% for visual in productPresentation.visuals.visuals %}
-				<li id="full-visual-{{ blockId }}-{{ visual.id }}">
-					{% if parameters.activateZoom %}<a href="{{ imageURL(visual) }}"
-						onmouseover="script{{ blockId }}.visuals.startZoom(this)">{% endif %}
-						<img itemprop="image" src="{{ catalogMacros.detailVisualURL(visual) }}" alt="" />
-					{% if parameters.activateZoom %}</a>{% endif %}
-				</li>
-			{% endfor %}
+			<li data-ng-repeat="visual in visuals" id="full-visual-{{ blockId }}-(= visual.id =)">
+				{% if parameters.activateZoom %}
+					<a href="(= visual.url.main =)" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+				{% endif %}
+				<img itemprop="image" src="(= visual.url.detail =)" alt="" />
+				{% if parameters.activateZoom %}</a>{% endif %}
+			</li>
 		</ul>
-		{% if productPresentation.visuals.count > 1 %}
-			<ul class="list-inline thumbnail-visuals">
-				{% for visual in productPresentation.visuals.visuals %}
-					<li class="thumbnail" id="thumbnail-visual-{{ blockId }}-{{ visual.id }}"
-						title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
-						<img src="{{ catalogMacros.detailThumbnailURL(visual) }}" alt=""
-							onclick="script{{ blockId }}.visuals.showVisual({{ visual.id }})" />
+		<ul ng-if="visuals.length > 1" class="list-inline thumbnail-visuals">
+			<li data-ng-repeat="visual in visuals" class="thumbnail" id="thumbnail-visual-{{ blockId }}-(= visual.id =)"
+				title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
+				<img src="(= visual.url.thumbnail =)" alt=""
+					onclick="script{{ blockId }}.visuals.showVisual(visual.id)" />
+			</li>
+		</ul>
+	</div>
+	<div data-ng-show="!visuals && !productLoading" ng-transclude></div>
+</script>
+
+<div rbs-catalog-product-visuals="" >
+	{% if productPresentation.visuals.visualsInstance.count > 0 %}
+		<div class="visuals" id="visuals-{{ blockId }}">
+			<ul class="list-unstyled full-visuals">
+				{% for visual in productPresentation.visuals.visualsInstance %}
+					<li id="full-visual-{{ blockId }}-{{ visual.id }}">
+						{% if parameters.activateZoom %}
+							<a href="{{ imageURL(visual) }}"onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+						{% endif %}
+							<img itemprop="image" src="{{ catalogMacros.detailVisualURL(visual) }}" alt="{{ visual.currentLocalization.alt }}" />
+						{% if parameters.activateZoom %}</a>{% endif %}
 					</li>
 				{% endfor %}
 			</ul>
-		{% endif %}
-	</div>
-{% endif %}
+			{% if productPresentation.visuals.count > 1 %}
+				<ul class="list-inline thumbnail-visuals">
+					{% for visual in productPresentation.visuals.visualsInstance %}
+						<li class="thumbnail" id="thumbnail-visual-{{ blockId }}-{{ visual.id }}"
+							title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
+							<img src="{{ catalogMacros.detailThumbnailURL(visual) }}" alt="{{ visual.currentLocalization.alt }}"
+								onclick="script{{ blockId }}.visuals.showVisual({{ visual.id }})" />
+						</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+	{% endif %}
+</div>

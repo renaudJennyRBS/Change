@@ -8,53 +8,13 @@
 			restrict : 'A',
 			templateUrl : '/addLineToCart.tpl',
 			replace : false,
-			require : 'ngModel',
 			scope: false,
 
-			link : function (scope, elm, attrs, ngModel) {
-				var v =  parseInt(attrs.stockLevel, 10);
-				scope.stockLevel = isNaN(v) ? 0 : v;
-
-				v = parseInt(attrs.stockMin, 10);
-				scope.stockMin = isNaN(v) ? 0 : v;
-
-				if (attrs.hasOwnProperty('stockStep')){
-					v = parseInt(attrs.stockStep, 10);
-					scope.stockStep = isNaN(v) ? 0 : v;
-
-					if (attrs.hasOwnProperty('stockMax')) {
-						v = parseInt(attrs.stockMax, 10);
-						scope.stockMax = isNaN(v) ? scope.stockLevel : v;
-					} else {
-						scope.stockMax = scope.stockLevel;
-					}
-				}
-
-				if (attrs.hasOwnProperty('hasVariants'))
-				{
-					scope.hasVariants = attrs.hasVariants
-				}
-
-				if (attrs.hasOwnProperty('hasOwnSku'))
-				{
-					scope.hasOwnSku = attrs.hasOwnSku
-				}
-
-				if (attrs.hasOwnProperty('canBeOrdered'))
-				{
-					scope.canBeOrdered = attrs.canBeOrdered
-				}
-
-				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
-
-				var config = {
-					key: attrs.key,
-					productId : attrs.productId,
-					designation: attrs.designation,
-					sku: attrs.sku,
-					redirectUrl: attrs.redirectUrl
-				};
-				ngModel.$setViewValue(config);
+			link : function (scope, elm, attrs) {
+				var v =  parseInt(attrs.productId, 10);
+				scope.baseProductId = scope.product.id = isNaN(v) ? 0 : v;
+				scope.product.designation = attrs.designation;
+				scope.redirectUrl = attrs.redirectUrl;
 			}
 		}
 	}
@@ -65,16 +25,10 @@
 			restrict : 'A',
 			templateUrl : '/productAvailability.tpl',
 			replace : false,
-			require : 'ngModel',
 			scope: false,
+			transclude: true,
 
-			link : function (scope, elm, attrs, ngModel) {
-				scope.level = (attrs.hasOwnProperty('level')) ? parseInt(attrs.level, 10) : null;
-				scope.threshold = (attrs.hasOwnProperty('threshold')) ? attrs.threshold : null;
-				scope.thresholdClass = (attrs.hasOwnProperty('thresholdClass')) ? attrs.thresholdClass : null;
-				scope.thresholdTitle = (attrs.hasOwnProperty('thresholdTitle')) ? attrs.thresholdTitle: null;
-				ngModel.$setViewValue({level: scope.level, threshold: scope.threshold,
-					thresholdClass: scope.thresholdClass, thresholdTitle: scope.thresholdTitle});
+			link : function (scope, elm, attrs) {
 			}
 		}
 	}
@@ -88,11 +42,11 @@
 			replace : false,
 			require : 'ngModel',
 			scope: false,
+			transclude: true,
 
 			link : function (scope, elm, attrs, ngModel) {
 				var display = (attrs.hasOwnProperty('display')) ? (attrs.display == "1") : false;
 				var displayWithTax = (attrs.hasOwnProperty('displayWithTax')) ? (attrs.displayWithTax == "1") : false;
-				scope.prices = (attrs.hasOwnProperty('prices')) ? angular.fromJson(attrs.prices) : {};
 				ngModel.$setViewValue({display: display, displayWithTax: displayWithTax});
 			}
 		}
@@ -100,21 +54,31 @@
 	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
 
 
+	function rbsCatalogProductVisuals() {
+		return {
+			restrict : 'A',
+			templateUrl : '/productVisuals.tpl',
+			replace : false,
+			scope: false,
+			transclude: true,
+
+			link : function (scope, elm, attrs) {
+			}
+		}
+	}
+	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
+
+
 	function rbsCatalogVariantData() {
 		return {
 			restrict : 'A',
 			template : '<div></div>',
 			replace : true,
-			require : 'ngModel',
 			scope: false,
 
-			link : function (scope, elm, attrs, ngModel) {
+			link : function (scope, elm, attrs) {
 				scope.variantGroupId = attrs.variantGroupId;
-				var config = {
-					variantGroupId: attrs.variantGroupId,
-					axes : angular.fromJson(attrs.axes)
-				};
-				ngModel.$setViewValue(config);
+				scope.axes = angular.fromJson(attrs.axes);
 			}
 		}
 	}
@@ -123,47 +87,58 @@
 
 	function RbsCatalogProductController(scope, $http)
 	{
-		scope.quantity = 1;
-		scope.stockLevel = 0;
-		scope.stockMin = 0;
-		scope.stockMax = 0;
-		scope.stockStep = 1;
+		scope.quantity = 0;
 
-		scope.productConfig = {};
+		scope.productLoading = false;
+
+		scope.redirectUrl = null;
 		scope.pricesConfig = {};
 
-		scope.productAvailability = {};
-		scope.prices = {};
-
-		scope.variantConfig = {};
-
-		scope.selectedAxesValues = [];
-
+		// Variant Config
 		scope.axesValues = [];
+		scope.selectedAxesValues = [];
+		scope.axes = null;
+
+		// Base Product
+		scope.baseProductId = 0;
+
+		// Product
+		scope.product = {'id': 0};
+
+		setCurrentProduct(null);
 
 		scope.addLine = function() {
-			var data =  {key: scope.productConfig.key,
-				designation: scope.productConfig.designation,
-				quantity: scope.quantity,
-				options: {productId: scope.productConfig.productId},
-				items: [{codeSKU: scope.productConfig.sku}] };
-			$http.post('Action/Rbs/Commerce/AddLineToCart', data, {}).success(function(data, status, headers) {
-				if (scope.productConfig.redirectUrl) {
-					window.location.href = scope.productConfig.redirectUrl;
-				}
-			}).error(function(data, status, headers) {
-				console.log('error', data, status, headers);
-			});
+			if (scope.product.id !== 0)
+			{
+				var data = {
+					key: scope.product.id,
+					designation: scope.product.title,
+					quantity: scope.quantity,
+					options: {productId: scope.product.id},
+					items: [{codeSKU: scope.stock.sku}]
+				};
+
+				$http.post('Action/Rbs/Commerce/AddLineToCart', data, {})
+					.success(function(data, status, headers) {
+						if (scope.redirectUrl)
+						{
+							window.location.href = scope.redirectUrl;
+						}
+					})
+					.error(function(data, status, headers) {
+						console.log('error', data, status, headers);
+					});
+			}
 		};
 
-		scope.$watch('variantConfig', function(val) {
-			var i, product, productAxisVal, productId = scope.productConfig.productId,
+		scope.$watch('axes', function(val) {
+			var i, product, productAxisVal, productId = scope.product.id,
 				axesLength, index = 0, parentValues = [];
-			if (val && val.hasOwnProperty('axes')) {
-				axesLength = val.axes.axesValues.length;
-				buildSelectAxisValues(index, parentValues, val.axes.products, val.axes.axesValues);
+			if (val) {
+				axesLength = val.axesValues.length;
+				buildSelectAxisValues(index, parentValues, val.products, val.axesValues);
 
-				product = findProduct(productId, val.axes.products);
+				product = findProduct(productId, val.products);
 				if (product) {
 					for (index = 0; index < axesLength; index++) {
 						productAxisVal = product.values[index];
@@ -172,7 +147,7 @@
 							scope.selectedAxesValues[index] = scope.axesValues[index][i];
 							parentValues.push(productAxisVal);
 							if (index + 1 < axesLength) {
-								buildSelectAxisValues(index + 1, parentValues, val.axes.products, val.axes.axesValues);
+								buildSelectAxisValues(index + 1, parentValues, val.products, val.axesValues);
 							}
 						} else {
 							scope.selectedAxesValues[index] = null;
@@ -191,10 +166,10 @@
 		};
 
 		scope.$watchCollection('selectedAxesValues', function(val) {
-			if (!val || !scope.variantConfig || !scope.variantConfig.hasOwnProperty('axes')) {
+			if (!val || !scope.axes) {
 				return;
 			}
-			var i, expected = [], axes = scope.variantConfig.axes.axesValues, products = scope.variantConfig.axes.products;
+			var i, expected = [], axes = scope.axes.axesValues, products = scope.axes.products;
 			for (i = 0; i < val.length; i++) {
 				if (val[i] === null) {
 					break;
@@ -214,12 +189,19 @@
 
 			for (i = 0; i < products.length; i++) {
 				if (eqAxesValues(expected, products[i].values)) {
-					if (products[i].id != scope.productConfig.productId) {
+					if (products[i].id != scope.product.id) {
+						scope.productLoading = true;
 						$http.post('Action/Rbs/Catalog/ProductResult', {
 							productId: products[i].id,
 							axesValues: products[i].values
-						}).success(function (data) {
+						})
+						.success(function (data) {
+								scope.productLoading = false;
 								setCurrentProduct(data);
+						})
+						.error(function () {
+								scope.productLoading = false;
+								setCurrentProduct(null);
 						});
 					}
 					return;
@@ -228,47 +210,24 @@
 		});
 
 		function setCurrentProduct(data) {
-			if (data) {
-				scope.productConfig.productId = data.productId;
-				scope.productConfig.key = data.key;
-				scope.productConfig.hasVariants = data.hasVariants;
-				scope.productConfig.designation = data.general.designation;
-				scope.productConfig.sku = data.stock.sku;
-
-				scope.stockLevel = data.stock.level;
-				scope.stockMin = data.stock.minQuantity;
-				scope.stockMax = data.stock.maxQuantity;
-				scope.stockStep = data.stock.quantityIncrement;
-
-				scope.threshold = data.stock.threshold;
-				scope.thresholdTitle = data.stock.thresholdTitle;
-				scope.thresholdClass = data.stock.thresholdClass;
-
-				scope.quantity = Math.min(scope.stockMin, scope.stockLevel);
-				scope.productAvailability = data.stock;
+			if (data)
+			{
+				scope.product = data.general;
 				scope.prices = data.prices;
+				scope.stock = data.stock;
+				scope.visuals = data.visuals.visuals;
 
-				scope.canBeOrdered = data.general.canBeOrdered;
-				scope.hasOwnSku = data.general.hasOwnSku;
+				scope.quantity = Math.min(data.stock.minQuantity, data.stock.maxQuantity);
+			}
+			else
+			{
+				var pId = scope.product.id;
+				scope.product = null;
+				scope.product = {'id': pId};
+				scope.prices = null;
+				scope.stock = null;
+				scope.visuals = null;
 
-			} else {
-				scope.productConfig.productId = 0;
-				scope.productConfig.key = null;
-				scope.productConfig.hasVariants = false;
-				scope.productConfig.designation = '';
-				scope.productConfig.sku = null;
-				scope.hasOwnSku = false;
-
-				scope.productAvailability = {};
-				scope.prices = {};
-
-				scope.stockLevel = 0;
-				scope.stockMin = 0;
-				scope.stockMax = 0;
-				scope.stockStep = 0;
-				scope.threshold = null;
-				scope.thresholdTitle = null;
-				scope.thresholdClass = null;
 				scope.quantity = 0;
 			}
 		}
