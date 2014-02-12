@@ -41,7 +41,11 @@
 				};
 
 				this.redirect = function() {
-					$location.url(this.url);
+					if ($location.url() == this.url) {
+						popContext(this);
+					} else {
+						$location.url(this.url);
+					}
 				};
 
 				this.value = function(value) {
