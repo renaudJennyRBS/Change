@@ -912,7 +912,7 @@ class CatalogManager
 	{
 		$generalInfo = array();
 
-		$generalInfo['productId'] = $product->getId();
+		$generalInfo['id'] = $product->getId();
 		$generalInfo['product'] = $product;
 		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
 		$generalInfo['description'] = $product->getCurrentLocalization()->getDescription();
@@ -993,16 +993,20 @@ class CatalogManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param array $formats
 	 * @return array
 	 */
-	public function getVisualsInfos($product)
+	public function getVisualsInfos($product,
+		$formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
+			'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
 	{
 		$visualsInfos = array();
+		$visualsInfos['visualsInstance'] = array();
 		$visualsInfos['visuals'] = array();
 
 		if ($product->getVisualsCount() > 0)
 		{
-			$visualsInfos['visuals'] = $product->getVisuals();
+			$visualsInfos['visualsInstance'] = $product->getVisuals();
 			$visualsInfos['count'] = $product->getVisualsCount();
 		}
 		else
@@ -1020,7 +1024,34 @@ class CatalogManager
 					// TODO
 				}
 			}
-			$visualsInfos['count'] = count($visualsInfos['visuals']);
+			$visualsInfos['count'] = count($visualsInfos['visualsInstance']);
+		}
+
+		foreach ($visualsInfos['visualsInstance'] as $instance)
+		{
+			$v = array('id' => $instance->getId(), 'alt' => $instance->getCurrentLocalization()->getAlt(), 'url' => array());
+			$v['url']['main'] = $instance->getPublicURL();
+
+			// Foreach formats, generate URL
+			foreach($formats as $type => $values)
+			{
+				$w = null;
+				$h = null;
+
+				if (isset($values['maxWidth']))
+				{
+					$w = $values['maxWidth'];
+				}
+				if (isset($values['maxHeight']))
+				{
+					$h = $values['maxHeight'];
+				}
+
+				$v['url'][$type] = $instance->getPublicURL(intval($w), intval($h));
+
+			}
+
+			$visualsInfos['visuals'][] = $v;
 		}
 
 		return $visualsInfos;

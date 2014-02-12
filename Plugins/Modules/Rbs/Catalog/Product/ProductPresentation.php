@@ -261,7 +261,11 @@ class ProductPresentation
 		return $this;
 	}
 
-	public function toArray()
+	/**
+	 * @param array $formats
+	 * @return array
+	 */
+	public function toArray($formats)
 	{
 		$array = [];
 		$array['productId'] = $this->product->getId();
@@ -269,6 +273,14 @@ class ProductPresentation
 		$array['general'] = $this->getGeneral();
 		$array['stock'] = $this->getStock();
 		$array['prices'] = $this->getPrices();
+		if ($formats !== null)
+		{
+			$array['visuals'] = $this->getVisuals($formats);
+		}
+		else
+		{
+			$array['visuals'] = $this->getVisuals();
+		}
 		return $array;
 	}
 }

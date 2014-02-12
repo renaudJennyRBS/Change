@@ -1,12 +1,6 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 
 <h1 id="product-list-title">{{ title }}</h1>
-<script type="text/ng-template" id="/addLineToCart.tpl">
-	<button data-ng-show="!hasVariants" name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()" data-ng-disabled="!canBeOrdered">
-		<span data-ng-show="canBeOrdered"><i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}</span>
-		<span data-ng-hide="canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
-	</button>
-</script>
 
 {% if parameters.showOrdering %}
 	<ul class="nav nav-pills">
@@ -18,7 +12,7 @@
 	</ul>
 {% endif %}
 
-<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
+{#<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">#}
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
 			{% for row in rows %}
@@ -26,5 +20,5 @@
 			{% endfor %}
 		</ul>
 	{% endspaceless %}
-</form>
+{#</form>#}
 {% include 'Rbs_Generic/pagination.twig' %}

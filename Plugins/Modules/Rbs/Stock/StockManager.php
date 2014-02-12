@@ -449,30 +449,60 @@ class StockManager
 	 */
 	protected function getReservedQuantity($skuId, $storeId)
 	{
+
+		if (is_array($skuId))
+		{
+			if (count($skuId) > 1)
+			{
+				return $this->getReservedQuantityByArray($skuId, $storeId);
+			}
+			$skuId = $skuId[0];
+		}
+
 		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantity');
+
 		if (!$qb->isCached())
 		{
+
 			$fb = $qb->getFragmentBuilder();
 			$resTable = $fb->table('rbs_stock_dat_res');
 			$qb->select($fb->alias($fb->sum($fb->column('reservation')), 'quantity'));
 			$qb->from($resTable);
 
-			if (is_array($skuId))
-			{
-				$skuPredicate = $fb->in($fb->column('sku_id'), $skuId);
-			}
-			else
-			{
-				$skuPredicate = $fb->eq($fb->column('sku_id'), $skuId);
-			}
-
 			$qb->where(
 				$fb->logicAnd(
-					$skuPredicate,
+					$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')),
 					$fb->eq($fb->column('store_id'), $fb->integerParameter('storeId'))
 				)
 			);
 		}
+		$query = $qb->query();
+		$query->bindParameter('skuId', $skuId);
+		$query->bindParameter('storeId', $storeId);
+		return intval($query->getFirstResult($query->getRowsConverter()->addIntCol('quantity')));
+	}
+
+	/**
+	 * @param integer[] $skuIds
+	 * @param integer $storeId
+	 * @return integer
+	 */
+	protected function getReservedQuantityByArray($skuIds, $storeId)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantity');
+
+		$fb = $qb->getFragmentBuilder();
+		$resTable = $fb->table('rbs_stock_dat_res');
+		$qb->select($fb->alias($fb->sum($fb->column('reservation')), 'quantity'));
+		$qb->from($resTable);
+
+		$qb->where(
+			$fb->logicAnd(
+				$fb->in($fb->column('sku_id'), $skuIds),
+				$fb->eq($fb->column('store_id'), $fb->integerParameter('storeId'))
+			)
+		);
+
 		$query = $qb->query();
 		$query->bindParameter('storeId', $storeId);
 		return intval($query->getFirstResult($query->getRowsConverter()->addIntCol('quantity')));

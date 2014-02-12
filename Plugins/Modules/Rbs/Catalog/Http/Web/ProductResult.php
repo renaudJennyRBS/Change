@@ -29,6 +29,11 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$dm = $event->getApplicationServices()->getDocumentManager();
 		$data = $event->getRequest()->getPost()->toArray();
 		$productId = $data['productId'];
+		$formats = null;
+		if (isset($data['formats']))
+		{
+			$formats = $data['formats'];
+		}
 
 		$product = $dm->getDocumentInstance($productId);
 
@@ -39,13 +44,8 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$presentation = $product->getPresentation($commerceServices, $commerceServices->getContext()->getWebstore()->getId(), $event->getUrlManager());
-				//$responseData['productId'] = $product->getId();
-				//$responseData['key'] = $product->getId();
-				//$responseData['designation'] = $presentation->getGeneral()['title'];
-				//$responseData['codeSKU'] = $presentation->getStock()['sku'];
-
 				$presentation->evaluate();
-				$responseData = $presentation->toArray();
+				$responseData = $presentation->toArray($formats);
 				$result = new \Change\Http\Web\Result\AjaxResult($responseData);
 				$event->setResult($result);
 				return;

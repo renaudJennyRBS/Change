@@ -102,34 +102,7 @@ class Product extends Block
 				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
 				$productPresentation->evaluate();
 				$attributes['productPresentation'] = $productPresentation;
-
 				return 'product.twig';
-
-				/*$attributes['product'] = $product;
-				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
-
-				// Cart line configs.
-				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
-				if ($productPresentation)
-				{
-					$productPresentation->evaluate();
-					$attributes['productPresentation'] = $productPresentation;
-				}
-				$attributes['attributesConfig'] = $commerceServices->getAttributeManager()->getProductAttributesConfiguration('specifications', $product);
-
-				if ($product->getVariantGroup())
-				{
-					$variantConfiguration = $commerceServices->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup(), true);
-					$attributes['axes'] = $variantConfiguration;
-					$axesNames = $this->getAxesNames($product->getVariantGroup(), $documentManager);
-					$attributes['axesNames'] = $axesNames;
-					$attributes['variantGroup'] = $product->getVariantGroup();
-					return 'product-variant.twig';
-				}
-				else
-				{
-					return 'product.twig';
-				}*/
 			}
 		}
 		return null;

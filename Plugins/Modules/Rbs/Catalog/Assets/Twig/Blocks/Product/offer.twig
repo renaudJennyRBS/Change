@@ -1,20 +1,4 @@
 {% if parameters.webStoreId %}
-	<script type="text/ng-template" id="/addLineToCart.tpl">
-		<div class="form-group" data-ng-show="stockLevel > 0 && canBeOrdered">
-			<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-			<input class="form-control" type="number" data-ng-model="quantity" id="product-quantity" name="quantity"
-					max="{{ productPresentation.stock.maxQuantity }}"
-					min="{{ productPresentation.stock.minQuantity }}"
-					step="{{ productPresentation.stock.quantityIncrement }}" />
-		</div>
-
-		<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()" data-ng-disabled="!canBeOrdered">
-			<span data-ng-show="canBeOrdered"><i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}</span>
-			<span data-ng-hide="canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
-		</button>
-
-	</script>
-
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block availability %}
 			{% if productPresentation.stock.thresholdTitle %}
@@ -26,10 +10,15 @@
 
 		{% block prices %}
 			{% if productPresentation.prices.price and (parameters.displayPrices or parameters.displayPricesWithTax) %}
+				{% if productPresentation.prices.currencyCode %}<meta itemprop="priceCurrency" content="{{ productPresentation.prices.currencyCode }}" />{% endif %}
 				<ul class="list-unstyled main-price">
 					{% if parameters.displayPrices %}
 						<li class="price">
-							{{ formatPrice(productPresentation.prices.price) }}
+							{% if not (parameters.displayPricesWithTax and prices.priceWithTax) %}
+								<span itemprop="price">{{ formatPrice(productPresentation.prices.price) }}</span>
+							{% else %}
+								{{ formatPrice(productPresentation.prices.price) }}
+							{% endif %}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 							{% if productPresentation.prices.priceWithoutDiscount %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
@@ -40,7 +29,6 @@
 					{% endif %}
 					{% if parameters.displayPricesWithTax %}
 						<li class="price">
-							<meta itemprop="priceCurrency" content="EUR" />
 							<span itemprop="price">{{ formatPrice(productPresentation.prices.priceWithTax) }}</span>
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
 							{% if productPresentation.prices.priceWithoutDiscountWithTax %}
@@ -60,20 +48,33 @@
 		{% endblock %}
 
 		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
-			<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
+			<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
+			<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
 			<fieldset>
-				<div rbs-catalog-product-data="" data-ng-model="productConfig"
-						data-key="{{ parameters.toDisplayDocumentId }}"
-						data-product-id="{{ parameters.toDisplayDocumentId }}"
-						data-sku="{{ productPresentation.stock.sku }}"
-						data-price="{{ productPresentation.prices.price }}"
-						data-redirect-url="{{ parameters.redirectUrl }}"
-						data-designation="{{ productPresentation.general.title }}"
-						data-stock-level ="{{ productPresentation.stock.level }}"
-						data-stock-min ="{{ productPresentation.stock.minQuantity }}"
-						data-stock-max ="{{ productPresentation.stock.maxQuantity }}"
-						data-stock-step ="{{ productPresentation.stock.quantityIncrement }}"
-						data-can-be-ordered ="{{ productPresentation.general.canBeOrdered }}"></div>
+				{% if productPresentation.general.hasOwnSku %}
+					{% if productPresentation.general.canBeOrdered %}
+						<input type="hidden" name="key" value="{{ productPresentation.general.id }}">
+						<input type="hidden" name="designation" value="{{ productPresentation.general.title }}">
+						<input type="hidden" name="options[productId]" value="{{ productPresentation.general.id }}">
+						<input type="hidden" name="items[][codeSKU]" value="{{ productPresentation.stock.sku }}">
+						<div class="form-group">
+							<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
+							<input class="form-control" type="number" id="product-quantity" name="quantity"
+								value="{{ productPresentation.stock.minQuantity }}"
+								max="{{ productPresentation.stock.maxQuantity }}"
+								min="{{ productPresentation.stock.minQuantity }}"
+								step="{{ productPresentation.stock.quantityIncrement }}" />
+						</div>
+					{% endif %}
+
+					<button type="submit" class="btn btn-primary btn-lg" {% if not productPresentation.general.canBeOrdered %} disabled="true" {% endif %}>
+						{% if productPresentation.general.canBeOrdered %}
+							<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+						{% else %}
+							{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+						{% endif %}
+					</button>
+				{% endif %}
 			</fieldset>
 		</form>
 	</div>
