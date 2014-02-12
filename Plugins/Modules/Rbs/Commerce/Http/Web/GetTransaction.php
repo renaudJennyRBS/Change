@@ -27,16 +27,21 @@ class GetTransaction extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$cartManager->lockCart($cart);
 				}
 
-				$amount = $cart->getPriceValueWithTax();
-				$currencyCode = $cart->getCurrencyCode();
 				$contextData = $cart->getContext()->toArray();
 				$contextData['from'] = 'cart';
-				$contextData['email'] = $cart->getEmail();
 				$contextData['guestCheckout'] = !$cart->getOwnerId() && !$cart->getUserId();
 				$contextData['websiteId'] = $event->getWebsite()->getId();
 				$contextData['LCID'] = $event->getApplicationServices()->getDocumentManager()->getLCID();
 				$contextData['returnSuccessFunction'] = 'Rbs_Commerce_PaymentReturn';
-				$transaction = $processManager->getNewTransaction($cart->getIdentifier(), $amount, $currencyCode, $contextData);
+				$transaction = $processManager->getNewTransaction(
+					$cart->getIdentifier(),
+					$cart->getPriceValueWithTax(),
+					$cart->getCurrencyCode(),
+					$cart->getEmail(),
+					$cart->getUserId(),
+					$cart->getOwnerId(),
+					$contextData
+				);
 
 				$data = array(
 					'id' => $transaction->getId(),

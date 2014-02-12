@@ -4,6 +4,8 @@
 	editable="true">
 	<properties>
 		<property name="label" stateless="true" />
+		<property name="email" type="String" />
+		<property name="userId" type="DocumentId" document-type="Rbs_User_User" />
 		<property name="ownerId" type="DocumentId" />
 
 		<property name="code" type="String" />

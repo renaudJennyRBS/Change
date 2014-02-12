@@ -33,13 +33,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Website/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.website.documents.website | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Generic/Website/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Website_Website",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Website",
 			"controller": "RbsChangeWorkflowController",
@@ -225,13 +225,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.website.documents.menu | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Website/Website/:website/Menus/Menu/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Website_Menu",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Menu",
 			"controller": "RbsChangeWorkflowController",
@@ -284,13 +284,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/FunctionalPage/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.website.documents.functionalpage | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Website/Website/:website/Structure/FunctionalPage/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Website_FunctionalPage",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_FunctionalPage",
 			"controller": "RbsChangeWorkflowController",
@@ -342,13 +342,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/StaticPage/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.website.documents.staticpage | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Website/Website/:website/Structure/StaticPage/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Website_StaticPage",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_StaticPage",
 			"controller": "RbsChangeWorkflowController",
@@ -418,13 +418,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Topic/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.website.documents.topic | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Website/Website/:website/Structure/Topic/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Website_Topic",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Website_Topic",
 			"controller": "RbsChangeWorkflowController",

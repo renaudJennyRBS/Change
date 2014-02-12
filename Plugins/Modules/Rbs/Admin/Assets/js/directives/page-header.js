@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsPageHeader', ['RbsChange.EditorManager', function (EditorManager) {
+	app.directive('rbsPageHeader', ['RbsChange.EditorManager', 'RbsChange.Utils', function (EditorManager, Utils) {
 		return {
 
 			restrict: 'E',
@@ -27,7 +27,7 @@
 				scope.showLocalCopyMessage = true;
 
 				scope.hasLocalCopy = function() {
-					return scope.document && EditorManager.getLocalCopy(scope.document) != null
+					return Utils.isDocument(scope.document) && EditorManager.getLocalCopy(scope.document) != null
 				};
 
 				scope.mergeLocalCopy = function() {
@@ -44,7 +44,16 @@
 					var doc = scope.document;
 					EditorManager.removeLocalCopy(doc);
 					scope.showLocalCopyMessage = false;
-				}
+				};
+
+				scope.showWorkflowButton = function () {
+					return Utils.isDocument(scope.document) && !scope.document.isNew()
+						&& (scope.document.publicationStatus || scope.document.hasCorrection());
+				};
+
+				scope.getWorkflowRouteName = function () {
+					return (Utils.isDocument(scope.document) && scope.document.refLCID && scope.document.refLCID != scope.document.LCID) ? 'localizedWorkflow' : 'workflow';
+				};
 			}
 		};
 	}]);

@@ -42,13 +42,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Event/Category/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.event.documents.category | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Event/Category/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Event_Category",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_Category",
 			"controller": "RbsChangeWorkflowController",
@@ -118,13 +118,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Event/Event/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.event.documents.event | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Event/Event/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Event_Event",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_Event",
 			"controller": "RbsChangeWorkflowController",
@@ -194,13 +194,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Event/News/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.event.documents.news | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Event/News/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Event_News",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_News",
 			"controller": "RbsChangeWorkflowController",

@@ -40,7 +40,7 @@
 		"module": "Rbs_Stock",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Stock/InventoryEntry/",
+			"redirectTo": "/Rbs/Stock/Sku/",
 			"labelKey": "m.rbs.stock.admin.module_name | ucf"
 		},
 		"auto": true

@@ -42,13 +42,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.mail.documents.mail | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Mail/Mail/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Mail_Mail",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Mail_Mail",
 			"controller": "RbsChangeWorkflowController",

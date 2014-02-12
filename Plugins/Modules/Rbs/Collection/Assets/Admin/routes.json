@@ -70,13 +70,13 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.collection.documents.item | ucf"
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
 		"auto": true
 	},
 	"/Rbs/Collection/Item/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Collection_Item",
-		"name": "workflow",
+		"name": "localizedWorkflow",
 		"rule": {
 			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Collection_Item",
 			"controller": "RbsChangeWorkflowController",

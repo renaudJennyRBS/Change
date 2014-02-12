@@ -22,21 +22,13 @@ class CreateAccountRequest extends \Rbs\User\Http\Web\CreateAccountRequest
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$transactionId = $event->getRequest()->getQuery('transactionId');
 			$transaction = $documentManager->getDocumentInstance($transactionId);
-			if (!($transaction instanceof \Rbs\Payment\Documents\Transaction))
+			if (!($transaction instanceof \Rbs\Payment\Documents\Transaction) || !$transaction->getEmail())
 			{
 				$parametersErrors = array($i18nManager->trans('m.rbs.commerce.front.invalid_transaction'));
 				$event->setResult($this->getErrorResult($parametersErrors, $data));
 				return;
 			}
-
-			$context = $transaction->getContextData();
-			if (!is_array($context) || !isset($context['email']))
-			{
-				$parametersErrors = array($i18nManager->trans('m.rbs.commerce.front.invalid_transaction'));
-				$event->setResult($this->getErrorResult($parametersErrors, $data));
-				return;
-			}
-			$data['email'] = $context['email'];
+			$data['email'] = $transaction->getEmail();
 
 			// Instantiate constraint manager to register locales in validation.
 			$event->getApplicationServices()->getConstraintsManager();

@@ -101,9 +101,12 @@
 			</rbs-quick-actions>
 
 			<rbs-grid-item>
-				<img rbs-storage-image="doc.visuals[0].id" thumbnail="L"/>
+				<img rbs-storage-image="doc.product.adminthumbnail" thumbnail="L" />
 				<div class="caption">
-					<h4><rbs-status ng-model="doc" class="small"/> <a href ng-href="(= doc | rbsURL =)">(=doc.label=)</a></h4>
+					<h4>
+						<rbs-status ng-model="doc.product" class="small"></rbs-status>
+						<a href ng-href="(= doc.product | rbsURL =)">(= doc.product.label =)</a>
+					</h4>
 				</div>
 			</rbs-grid-item>
 		</rbs-document-list>

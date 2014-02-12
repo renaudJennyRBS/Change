@@ -1,4 +1,10 @@
 {
+	"order_email":{
+		"message":"adresse e-mail"
+	},
+	"order_userid":{
+		"message":"utilisateur"
+	},
 	"order_ownerid":{
 		"message":"propriétaire"
 	},

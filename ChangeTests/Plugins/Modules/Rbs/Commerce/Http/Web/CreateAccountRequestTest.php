@@ -113,7 +113,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$transaction = $this->getApplicationServices()->getDocumentManager()
 			->getNewDocumentInstanceByModelName('Rbs_Payment_Transaction');
 		/* @var $transaction \Rbs\Payment\Documents\Transaction */
-		$transaction->setContextData(['email' => $email]);
+		$transaction->setEmail($email);
 
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		try
