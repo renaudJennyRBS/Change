@@ -15,7 +15,7 @@
 
 		<hr />
 
-		<rbs-field required="true" d label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}">
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}">
 			<select ng-model="document.valueType" ng-disabled="!document.isNew()" class="form-control" required="required"
 				rbs-items-from-collection="Rbs_Catalog_Collection_AttributeValueTypes">
 				<option value=""></option>
