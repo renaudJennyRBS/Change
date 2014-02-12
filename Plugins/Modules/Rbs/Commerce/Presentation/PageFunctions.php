@@ -36,6 +36,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.catalog.admin.product_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Brand_Brand', 'document' => true, 'block' => 'Rbs_Brand_Brand',
+			'label' => $i18nManager->trans('m.rbs.brand.admin.brand_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
+
 		$event->setParam('functions', $functions);
 	}
 } 
