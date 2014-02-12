@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorWebsiteFunctionalPage($rootScope, Breadcrumb, REST, $routeParams) {
+	function changeEditorWebsiteFunctionalPage($rootScope, $q, REST, $routeParams, i18n) {
 
 		return {
 			restrict: 'A',
@@ -104,7 +104,7 @@
 	}
 
 	changeEditorWebsiteFunctionalPage.$inject = [
-		'$rootScope', 'RbsChange.Breadcrumb', 'RbsChange.REST', '$routeParams'
+		'$rootScope', '$q', 'RbsChange.REST', '$routeParams', 'RbsChange.i18n'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpage', changeEditorWebsiteFunctionalPage);
 })();

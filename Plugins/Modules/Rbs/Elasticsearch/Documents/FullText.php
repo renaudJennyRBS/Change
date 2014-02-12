@@ -158,7 +158,19 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	 */
 	public function getFacetsDefinition()
 	{
-		$facetsDefinition = $this->getFacets()->toArray();
+		$facets = $this->getFacets();
+		if (is_array($facets) ) {
+			$facetsDefinition = $facets;
+		}
+		else if (is_object($facets)  && method_exists($facets, 'toArray'))
+		{
+			$facetsDefinition = $facets->toArray();
+		}
+		else
+		{
+			$facetsDefinition = [];
+		}
+
 		if (count($facetsDefinition) === 0)
 		{
 			$facetsDefinition[] = $this->getDefaultModelFacet();
