@@ -7,6 +7,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public static function setUpBeforeClass()
 	{
+		static::clearDB();
 		static::initDocumentsDb();
 	}
 
@@ -15,9 +16,13 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	/**
+	 * @var \Rbs\Generic\GenericServices
+	 */
+	protected $genericServices;
+
 	public function setUp()
 	{
-		static::initDocumentsDb();
 		//set the cache folder for mail
 		$mailCacheFolder = $this->getApplication()->getWorkspace()->cachePath('mail');
 		if (!is_dir($mailCacheFolder))
@@ -25,161 +30,193 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			\Change\Stdlib\File::mkdir($mailCacheFolder);
 			$this->assertTrue(is_dir($mailCacheFolder), 'Mail cache folder has not been created');
 		}
+
+		$this->genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$this->getEventManagerFactory()->addSharedService('genericServices', $this->genericServices);
+	}
+
+	/**
+	 * @return \Rbs\Mail\MailManager
+	 */
+	protected function getMailManager()
+	{
+		return $this->genericServices->getMailManager();
 	}
 
 	public function tearDown()
 	{
-		static::clearDB();
-
-		//remove the cache folder for mail
-		$mailCacheFolder = $this->getApplication()->getWorkspace()->cachePath('mail');
-		if (is_dir($mailCacheFolder))
+		if ($this->getApplicationServices()->getTransactionManager()->started())
 		{
-			\Change\Stdlib\File::rmdir($mailCacheFolder);
-			$this->assertFalse(is_dir($mailCacheFolder), 'Mail cache folder isn\'t removed');
-		}
-	}
-
-	public function testGetMailByCode()
-	{
-		$method = new \ReflectionMethod(
-			'\Rbs\Mail\MailManager', 'getMailByCode'
-		);
-
-		$method->setAccessible(true);
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$mailManager = $genericServices->getMailManager();
-
-		$website = $this->getNewWebsite();
-
-		$this->assertNull($method->invoke($mailManager, "test", $website, 'fr_FR'));
-
-		$this->getNewMail('test1', [], 'fr_FR', 'a subject');
-
-		//if the mail has no websites defined, it been considered as the default mail for this code & LCID.
-		$this->assertNotNull($method->invoke($mailManager, "test1", $website, 'fr_FR'));
-
-		$this->getNewMail('test2', [$website], 'fr_FR', 'C\'est un email en français');
-
-		/* @var $mail \Rbs\Mail\Documents\Mail */
-		$mail = $method->invoke($mailManager, "test2", $website, 'fr_FR');
-		$this->assertNotNull($mail);
-		$this->getApplicationServices()->getDocumentManager()->pushLCID('fr_FR');
-		$this->assertEquals('C\'est un email en français', $mail->getCurrentLocalization()->getSubject());
-		$this->getApplicationServices()->getDocumentManager()->popLCID();
-
-		//english mail is not available
-		$mail = $method->invoke($mailManager, "test2", $website, 'en_US');
-		$this->assertNull($mail);
-
-		$this->getNewMail('test3', [$website], 'en_US', 'It\'s an english mail');
-		$mail = $method->invoke($mailManager, "test3", $website, 'en_US');
-		$this->assertNotNull($mail);
-		$this->getApplicationServices()->getDocumentManager()->pushLCID('en_US');
-		$this->assertEquals('It\'s an english mail', $mail->getCurrentLocalization()->getSubject());
-		$this->getApplicationServices()->getDocumentManager()->popLCID();
-
-		$website2 = $this->getNewWebsite();
-		$this->getNewMail('test4', [$website2], 'fr_FR', 'website2 mail');
-
-		$mail = $method->invoke($mailManager, "test4", $website2, 'fr_FR');
-		$this->assertNotNull($mail);
-		$this->getApplicationServices()->getDocumentManager()->pushLCID('fr_FR');
-		$this->assertEquals('website2 mail', $mail->getCurrentLocalization()->getSubject());
-		$this->getApplicationServices()->getDocumentManager()->popLCID();
-
-		//test on the first website return nothing
-		$mail = $method->invoke($mailManager, "test4", $website, 'fr_FR');
-		$this->assertNull($mail);
-	}
-
-	public function testSend()
-	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$mailManager = $genericServices->getMailManager();
-		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
-
-		//send method of MailManager will create a job, first we check if there is no job in base
-		$jobManager = $this->getApplicationServices()->getJobManager();
-		$jobIds = $jobManager->getJobIds();
-		$this->assertCount(0, $jobIds);
-		$LCID = $this->getApplicationServices()->getI18nManager()->getLCID();
-
-		$website = $this->getNewWebsite();
-		$mail = $this->getNewMail('test', [$website], 'fr_FR', 'New mail for test');
-
-		$emails = ['mario.bros@nintendo.fr', 'luigi.bros@nintendo.fr'];
-		$at = (new \DateTime())->add((new \DateInterval('PT10M')));
-		$substitutions = ['aSubstitution' => 'the substitution'];
-		$mailManager->send('test', $website, $LCID, $emails, $substitutions, $at);
-		$jobIds = $jobManager->getJobIds();
-		$this->assertCount(1, $jobIds);
-		$job = $jobManager->getJob($jobIds[0]);
-		$this->assertEquals('Rbs_Mail_SendMail', $job->getName());
-		$expectedEmails = ['to' => $emails, 'cc' => [], 'bcc' => [], 'reply-to' => []];
-		$expectedArguments = ['mailId' => $mail->getId(), 'emails' => $expectedEmails, 'LCID' => $LCID, 'substitutions' => $substitutions, 'websiteId' => $website->getId()];
-		$this->assertEquals($expectedArguments, $job->getArguments());
-		$this->assertEquals($at, $job->getStartDate());
-
-		//test with a deactivate mail, no job will be created
-		$mail = $this->getNewMail('test2', [$website], 'fr_FR', 'Deactivate mail for test', false);
-		$mailManager->send('test2', $website, $LCID, $emails, $substitutions, $at);
-		$jobIds = $jobManager->getJobIds();
-		$this->assertCount(1, $jobIds);
-		//active it and try again
-		$this->getApplicationServices()->getDocumentManager()->pushLCID($LCID);
-		$mail->getCurrentLocalization()->setActive(true);
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$mail->save();
-			$tm->commit();
-			$this->getApplicationServices()->getDocumentManager()->popLCID();
-		}
-		catch (\Exception $e)
-		{
-			$this->getApplicationServices()->getDocumentManager();
-			throw $tm->rollBack($e);
+			$this->getApplicationServices()->getTransactionManager()->commit();
 		}
 	}
 
 	public function testGetCodes()
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$mailManager = $genericServices->getMailManager();
-		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
 
-		$codes = $mailManager->getCodes();
-		$this->assertCount(0, $codes);
+			$mailManager = $this->getMailManager();
+			$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
 
-		$this->getNewMail('test1', [], 'fr_FR', 'test 1');
-		$codes = $mailManager->getCodes();
-		$this->assertCount(1, $codes);
-		$this->assertTrue(in_array('test1', $codes), 'test1 code is not in code array');
+			$codes = $mailManager->getCodes();
+			$this->assertCount(0, $codes);
 
-		$this->getNewMail('test2', [], 'fr_FR', 'test 1');
-		$codes = $mailManager->getCodes();
-		$this->assertCount(2, $codes);
-		$this->assertTrue(in_array('test1', $codes), 'test1 code is not in code array');
-		$this->assertTrue(in_array('test2', $codes), 'test2 code is not in code array');
+			$this->getNewMail('test1', [], 'fr_FR', 'test 1');
+			$codes = $mailManager->getCodes();
+			$this->assertCount(1, $codes);
+			$this->assertTrue(in_array('test1', $codes), 'test1 code is not in code array');
+
+			$this->getNewMail('test2', [], 'fr_FR', 'test 1');
+			$codes = $mailManager->getCodes();
+			$this->assertCount(2, $codes);
+			$this->assertTrue(in_array('test1', $codes), 'test1 code is not in code array');
+			$this->assertTrue(in_array('test2', $codes), 'test2 code is not in code array');
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	public function testGetMailByCode()
+	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$method = new \ReflectionMethod(
+				'\Rbs\Mail\MailManager', 'getMailByCode'
+			);
+
+			$method->setAccessible(true);
+			$mailManager = $this->getMailManager();
+
+			$website = $this->getNewWebsite();
+
+			$this->assertNull($method->invoke($mailManager, "test", $website, 'fr_FR'));
+
+			$this->getNewMail('test1', [], 'fr_FR', 'a subject');
+
+			//if the mail has no websites defined, it been considered as the default mail for this code & LCID.
+			$this->assertNotNull($method->invoke($mailManager, "test1", $website, 'fr_FR'));
+
+			$this->getNewMail('test2', [$website], 'fr_FR', 'C\'est un email en français');
+
+			/* @var $mail \Rbs\Mail\Documents\Mail */
+			$mail = $method->invoke($mailManager, "test2", $website, 'fr_FR');
+			$this->assertNotNull($mail);
+			$this->getApplicationServices()->getDocumentManager()->pushLCID('fr_FR');
+			$this->assertEquals('C\'est un email en français', $mail->getCurrentLocalization()->getSubject());
+			$this->getApplicationServices()->getDocumentManager()->popLCID();
+
+			//english mail is not available
+			$mail = $method->invoke($mailManager, "test2", $website, 'en_US');
+			$this->assertNull($mail);
+
+			$this->getNewMail('test3', [$website], 'en_US', 'It\'s an english mail');
+			$mail = $method->invoke($mailManager, "test3", $website, 'en_US');
+			$this->assertNotNull($mail);
+			$this->getApplicationServices()->getDocumentManager()->pushLCID('en_US');
+			$this->assertEquals('It\'s an english mail', $mail->getCurrentLocalization()->getSubject());
+			$this->getApplicationServices()->getDocumentManager()->popLCID();
+
+			$website2 = $this->getNewWebsite();
+			$this->getNewMail('test4', [$website2], 'fr_FR', 'website2 mail');
+
+			$mail = $method->invoke($mailManager, "test4", $website2, 'fr_FR');
+			$this->assertNotNull($mail);
+			$this->getApplicationServices()->getDocumentManager()->pushLCID('fr_FR');
+			$this->assertEquals('website2 mail', $mail->getCurrentLocalization()->getSubject());
+			$this->getApplicationServices()->getDocumentManager()->popLCID();
+
+			//test on the first website return nothing
+			$mail = $method->invoke($mailManager, "test4", $website, 'fr_FR');
+			$this->assertNull($mail);
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	public function testSend()
+	{
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$mailManager = $this->getMailManager();
+			$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
+
+			//send method of MailManager will create a job, first we check if there is no job in base
+			$jobManager = $this->getApplicationServices()->getJobManager();
+			$jobIds = $jobManager->getJobIds();
+			$this->assertCount(0, $jobIds);
+			$LCID = $this->getApplicationServices()->getI18nManager()->getLCID();
+
+			$website = $this->getNewWebsite();
+			$mail = $this->getNewMail('test', [$website], 'fr_FR', 'New mail for test');
+
+			$emails = ['mario.bros@nintendo.fr', 'luigi.bros@nintendo.fr'];
+			$at = (new \DateTime())->add((new \DateInterval('PT10M')));
+			$substitutions = ['aSubstitution' => 'the substitution'];
+			$mailManager->send('test', $website, $LCID, $emails, $substitutions, $at);
+			$jobIds = $jobManager->getJobIds();
+			$this->assertCount(1, $jobIds);
+			$job = $jobManager->getJob($jobIds[0]);
+			$this->assertEquals('Rbs_Mail_SendMail', $job->getName());
+			$expectedEmails = ['to' => $emails, 'cc' => [], 'bcc' => [], 'reply-to' => []];
+			$expectedArguments = ['mailId' => $mail->getId(), 'emails' => $expectedEmails, 'LCID' => $LCID,
+				'substitutions' => $substitutions, 'websiteId' => $website->getId()];
+			$this->assertEquals($expectedArguments, $job->getArguments());
+			$this->assertEquals($at, $job->getStartDate());
+
+			//test with a deactivate mail, no job will be created
+			$mail = $this->getNewMail('test2', [$website], 'fr_FR', 'Deactivate mail for test', false);
+			$mailManager->send('test2', $website, $LCID, $emails, $substitutions, $at);
+			$jobIds = $jobManager->getJobIds();
+			$this->assertCount(1, $jobIds);
+			//active it and try again
+			$this->getApplicationServices()->getDocumentManager()->pushLCID($LCID);
+			$mail->getCurrentLocalization()->setActive(true);
+
+			$mail->save();
+
+			$this->getApplicationServices()->getDocumentManager()->popLCID();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
 	}
 
 	public function testIsValidEmailFormat()
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$mailManager = $genericServices->getMailManager();
+		$mailManager = $this->getMailManager();
 		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
 
 		$goodEmail = 'mario.bros@nintendo.com';
-		$this->assertTrue($mailManager->isValidEmailFormat($goodEmail), var_export($goodEmail, true) . ' return a wrong email format');
+		$this->assertTrue($mailManager->isValidEmailFormat($goodEmail),
+			var_export($goodEmail, true) . ' return a wrong email format');
 		$goodEmail = ['email' => 'mario.bros@nintendo.com', 'name' => 'Mario Bros'];
-		$this->assertTrue($mailManager->isValidEmailFormat($goodEmail), var_export($goodEmail, true) . ' return a wrong email format');
+		$this->assertTrue($mailManager->isValidEmailFormat($goodEmail),
+			var_export($goodEmail, true) . ' return a wrong email format');
 
 		$wrongEmail = ['mario.bros@nintendo'];
-		$this->assertFalse($mailManager->isValidEmailFormat($wrongEmail), var_export($wrongEmail, true) . ' return a good email format');
+		$this->assertFalse($mailManager->isValidEmailFormat($wrongEmail),
+			var_export($wrongEmail, true) . ' return a good email format');
 		$wrongEmail = ['mario.bros@nintendo' => ['Mario', 'Bros']];
-		$this->assertFalse($mailManager->isValidEmailFormat($wrongEmail), var_export($wrongEmail, true) . ' return a good email format');
+		$this->assertFalse($mailManager->isValidEmailFormat($wrongEmail),
+			var_export($wrongEmail, true) . ' return a good email format');
 	}
 
 	public function testConvertEmailsParam()
@@ -189,8 +226,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		);
 		$method->setAccessible(true);
 
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$mailManager = $genericServices->getMailManager();
+		$mailManager = $this->getMailManager();
 		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
 
 		//test with simple emails
@@ -220,7 +256,8 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($moreComplexEmailArray, $result['to']);
 
 		//test with hash table of 'to', 'cc', 'bcc', 'reply-to'...
-		$emailTable = ['to' => $verySimpleEmail, 'cc' => $namedEmail, 'bcc' => $moreComplexEmailArray, 'reply-to' => 'admin@test.com'];
+		$emailTable = ['to' => $verySimpleEmail, 'cc' => $namedEmail, 'bcc' => $moreComplexEmailArray,
+			'reply-to' => 'admin@test.com'];
 		$result = $method->invoke($mailManager, $emailTable);
 		$to = $result['to'];
 		$this->assertEquals($verySimpleEmail, $to);
@@ -238,9 +275,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testRender()
 	{
 		$this->markTestSkipped('Method MailManager::render() cannot be tested yet');
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
-		$mailManager = $genericServices->getMailManager();
+		$mailManager = $this->getMailManager();
 		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
 
 		//attach generic blockManager listeners to display a rich text block
@@ -286,9 +321,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testGetSubstitutedString()
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
-		$mailManager = $genericServices->getMailManager();
+		$mailManager = $this->getMailManager();
 		$this->assertInstanceOf('\Rbs\Mail\MailManager', $mailManager);
 
 		$stringToSubstitute = 'Hello, I have a {color} {object}';
@@ -321,19 +354,10 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$mail->getCurrentLocalization()->setSubject($subject);
 		$mail->getCurrentLocalization()->setActive($active);
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$mail->save();
-			$tm->commit();
-			$this->getApplicationServices()->getDocumentManager()->popLCID();
-		}
-		catch (\Exception $e)
-		{
-			$this->getApplicationServices()->getDocumentManager()->popLCID();
-			throw $tm->rollBack($e);
-		}
+		$mail->save();
+
+		$this->getApplicationServices()->getDocumentManager()->popLCID();
+
 		return $mail;
 	}
 
@@ -343,22 +367,12 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewWebsite()
 	{
-		$website = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Website_Website');
+		$website = $this->getApplicationServices()->getDocumentManager()
+			->getNewDocumentInstanceByModelName('Rbs_Website_Website');
 		/* @var $website \Rbs\Website\Documents\Website */
 		$website->setLabel('Website Test');
 		$website->getCurrentLocalization()->setTitle('Website Test');
-
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$website->save();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$website->save();
 		return $website;
 	}
 
@@ -368,7 +382,8 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getNewTemplate()
 	{
-		$template = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Theme_Template');
+		$template = $this->getApplicationServices()->getDocumentManager()
+			->getNewDocumentInstanceByModelName('Rbs_Theme_Template');
 		/* @var $template \Rbs\Theme\Documents\Template */
 		$template->setLabel('Test Mail template');
 		$template->setCode('test_template');
@@ -381,21 +396,13 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 					</body>
 				</html>';
 		$template->setHtml($html);
-		$template->setEditableContent(['mainContent' => ['id' => 'mainContent', 'grid' => 9, 'type' => 'container', 'parameters' => []]]);
+		$template->setEditableContent(['mainContent' => ['id' => 'mainContent', 'grid' => 9, 'type' => 'container',
+			'parameters' => []]]);
 		$template->setHtmlForBackoffice('<div class="row"><div data-editable-zone-id="mainContent" class="col-sm-12"></div><div>');
 		$template->setActive(true);
 
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		try
-		{
-			$tm->begin();
-			$template->save();
-			$tm->commit();
-		}
-		catch (\Exception $e)
-		{
-			throw $tm->rollBack($e);
-		}
+		$template->save();
+
 		return $template;
 	}
 
@@ -408,7 +415,8 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 					[
 						'type' => 'block', 'name' => 'Rbs_Mail_Richtext', 'id' => 2, 'label' => 'Rbs_Mail_Richtext',
 						'parameters' => [
-							'contentType' => 'Markdown', 'content' => 'It\'s a beautiful HTML sample with {aSubstitution}', 'TTL' => 60
+							'contentType' => 'Markdown', 'content' => 'It\'s a beautiful HTML sample with {aSubstitution}',
+							'TTL' => 60
 						]
 					]
 				]

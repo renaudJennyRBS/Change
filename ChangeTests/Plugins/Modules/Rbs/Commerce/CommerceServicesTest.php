@@ -13,7 +13,7 @@ class CommerceServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertInstanceOf('Rbs\Catalog\CatalogManager', $cs->getCatalogManager());
 
-		$this->assertInstanceOf('Rbs\Stock\Services\StockManager', $cs->getStockManager());
+		$this->assertInstanceOf('Rbs\Stock\StockManager', $cs->getStockManager());
 
 		$this->assertInstanceOf('Rbs\Commerce\Cart\CartManager', $cs->getCartManager());
 

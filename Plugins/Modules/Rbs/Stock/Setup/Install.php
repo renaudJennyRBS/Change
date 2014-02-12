@@ -69,7 +69,7 @@ class Install extends \Change\Plugins\InstallBase
 
 				/* @var $item \Rbs\Collection\Documents\Item */
 				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
-				$item->setValue(\Rbs\Stock\Services\StockManager::THRESHOLD_AVAILABLE);
+				$item->setValue(\Rbs\Stock\StockManager::THRESHOLD_AVAILABLE);
 				$item->setLabel('Available');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.setup.sku_threshold_available', array('ucf')));
 				$item->setLocked(true);
@@ -78,7 +78,7 @@ class Install extends \Change\Plugins\InstallBase
 
 				/* @var $item \Rbs\Collection\Documents\Item */
 				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
-				$item->setValue(\Rbs\Stock\Services\StockManager::THRESHOLD_UNAVAILABLE);
+				$item->setValue(\Rbs\Stock\StockManager::THRESHOLD_UNAVAILABLE);
 				$item->setLabel('Unavailable');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.stock.setup.sku_threshold_unavailable', array('ucf')));
 				$item->setLocked(true);

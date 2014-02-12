@@ -29,7 +29,7 @@ class CatalogManager
 	protected $priceManager;
 
 	/**
-	 * @var \Rbs\Stock\Services\StockManager
+	 * @var \Rbs\Stock\StockManager
 	 */
 	protected $stockManager;
 
@@ -111,7 +111,7 @@ class CatalogManager
 	}
 
 	/**
-	 * @param \Rbs\Stock\Services\StockManager $stockManager
+	 * @param \Rbs\Stock\StockManager $stockManager
 	 * @return $this
 	 */
 	public function setStockManager($stockManager)
@@ -121,7 +121,7 @@ class CatalogManager
 	}
 
 	/**
-	 * @return \Rbs\Stock\Services\StockManager
+	 * @return \Rbs\Stock\StockManager
 	 */
 	protected function getStockManager()
 	{
@@ -743,10 +743,10 @@ class CatalogManager
 		$stockInfo['thresholdClass'] = 'stock-' . \Change\Stdlib\String::toLower($threshold);
 		switch ($threshold)
 		{
-			case \Rbs\Stock\Services\StockManager::THRESHOLD_AVAILABLE:
+			case \Rbs\Stock\StockManager::THRESHOLD_AVAILABLE:
 				$stockInfo['thresholdClass'] .= ' alert-success';
 				break;
-			case \Rbs\Stock\Services\StockManager::THRESHOLD_UNAVAILABLE:
+			case \Rbs\Stock\StockManager::THRESHOLD_UNAVAILABLE:
 				$stockInfo['thresholdClass'] .= 'alert-danger';
 				break;
 		}

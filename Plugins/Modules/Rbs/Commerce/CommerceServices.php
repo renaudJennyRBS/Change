@@ -97,7 +97,7 @@ class CommerceServices extends Di
 		$definitionList->addDefinition($classDefinition);
 
 		//StockManager : Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
-		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\Services\StockManager');
+		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\StockManager');
 		$classDefinition = $this->getClassDefinition($stockManagerClassName);
 		$classDefinition->addMethod('setContext', true)
 			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
@@ -263,7 +263,7 @@ class CommerceServices extends Di
 	}
 
 	/**
-	 * @return \Rbs\Stock\Services\StockManager
+	 * @return \Rbs\Stock\StockManager
 	 */
 	public function getStockManager()
 	{

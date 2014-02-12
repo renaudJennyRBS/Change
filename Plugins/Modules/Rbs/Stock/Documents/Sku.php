@@ -248,9 +248,9 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	 */
 	public function getDefaultThresholds()
 	{
-		return array(array('l' => 0, 'c' => \Rbs\Stock\Services\StockManager::THRESHOLD_UNAVAILABLE),
-			array('l' => \Rbs\Stock\Services\StockManager::UNLIMITED_LEVEL,
-				'c' => \Rbs\Stock\Services\StockManager::THRESHOLD_AVAILABLE));
+		return array(array('l' => 0, 'c' => \Rbs\Stock\StockManager::THRESHOLD_UNAVAILABLE),
+			array('l' => \Rbs\Stock\StockManager::UNLIMITED_LEVEL,
+				'c' => \Rbs\Stock\StockManager::THRESHOLD_AVAILABLE));
 	}
 
 	public function setDefaultValues(AbstractModel $documentModel)

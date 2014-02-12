@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Website\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 
@@ -23,7 +22,7 @@ class SiteMap extends Menu
 		$parameters = parent::parameterize($event);
 		$parameters->getParameterMeta('templateName')->setDefaultValue('siteMap.twig');
 		$parameters->getParameterMeta('maxLevel')->setDefaultValue(5);
-		$parameters->setParameterValue('documentId', $event->getParam('website')->getId());
+		$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $event->getParam('website')->getId());
 		return $parameters;
 	}
 }

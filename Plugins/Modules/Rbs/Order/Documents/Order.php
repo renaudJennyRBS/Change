@@ -446,7 +446,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	 * @param Order $order
 	 * @param \Rbs\Order\OrderLine $line
 	 * @param \Rbs\Price\PriceManager $priceManager
-	 * @param \Rbs\Stock\Services\StockManager $stockManager
+	 * @param \Rbs\Stock\StockManager $stockManager
 	 */
 	public function refreshCartLine(Order $order, \Rbs\Order\OrderLine $line, $priceManager, $stockManager)
 	{
