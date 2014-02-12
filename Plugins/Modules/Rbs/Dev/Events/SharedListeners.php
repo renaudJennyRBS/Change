@@ -17,9 +17,9 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$dl = new \Rbs\Dev\Events\DevLogging();
-		$events->attach('*', '*', array($dl, 'logBeginEvent'), 100);
-		$events->attach('*', '*', array($dl, 'logEndEvent'), -100);
+//		$dl = new \Rbs\Dev\Events\DevLogging();
+//		$events->attach('*', '*', array($dl, 'logBeginEvent'), 100);
+//		$events->attach('*', '*', array($dl, 'logEndEvent'), -100);
 	}
 
 	/**

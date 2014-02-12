@@ -39,36 +39,31 @@
 		};
 	});
 
-	function WebsiteSelector ($scope, $route, $location, REST, $filter) {
+	function WebsiteSelector ($scope, $routeParams, $location, REST, $filter) {
 		REST.collection('Rbs_Website_Website').then(function (collection) {
 			var path;
 			if (collection.resources.length) {
 				var website = collection.resources[0];
-				var options = $route.current.$$route.options;
-				var view =  (angular.isObject(options) && options.hasOwnProperty('view')) ? options.view : 'structure';
+				var view =  ($routeParams.hasOwnProperty('view')) ? $routeParams.view : 'structure';
 				path = $filter('rbsURL')(website, view);
-
 			} else {
 				path = $filter('rbsURL')('Rbs_Website_Website', 'list');
 			}
 			$location.path(path);
 		});
 	}
-
-	WebsiteSelector.$inject = ['$scope', '$route', '$location', 'RbsChange.REST', '$filter'];
+	WebsiteSelector.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', '$filter'];
 	app.controller('Rbs_Website_WebsiteSelector', WebsiteSelector);
 
-	function HeaderController ($scope, $route, $routeParams, $location, REST, $filter)
-	{
+
+	function HeaderController ($scope, $routeParams, $location, REST, $filter) {
 		$scope.currentWebsiteId = $routeParams.id;
 		$scope.currentWebsite = null;
-		$scope.view = $route.current.$$route.ruleName;
+		$scope.view = $routeParams.view;
 		$scope.websites = [];
 
-		REST.treeChildren('Rbs/Website').then(function (root)
-		{
-			REST.treeChildren(root.resources[0]).then(function (websites)
-			{
+		REST.treeChildren('Rbs/Website').then(function (root) {
+			REST.treeChildren(root.resources[0]).then(function (websites) {
 				$scope.websites = websites.resources;
 				for (var i=0 ; i < websites.resources.length; i++) {
 					if (websites.resources[i].id == $scope.currentWebsiteId) {
@@ -79,16 +74,14 @@
 			});
 		});
 
-		$scope.$watch('currentWebsite', function (website)
-		{
+		$scope.$watch('currentWebsite', function (website) {
 			if (website && (website.id != $scope.currentWebsiteId)) {
 				var path = $filter('rbsURL')(website, $scope.view);
 				$location.path(path);
 			}
 		});
 	}
-
-	HeaderController.$inject = ['$scope', '$route', '$routeParams', '$location', 'RbsChange.REST', '$filter'];
+	HeaderController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.REST', '$filter'];
 	app.controller('Rbs_Website_HeaderController', HeaderController);
 
 	/**

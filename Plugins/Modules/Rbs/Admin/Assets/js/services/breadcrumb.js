@@ -7,9 +7,9 @@
 
 		this.$get = [
 			'$rootScope', '$document', '$location', '$q', 'RbsChange.ArrayUtils',
-			'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n', '$route', 'RbsChange.Navigation',
+			'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n', '$route', 'RbsChange.Navigation', '$routeParams',
 
-			function ($rootScope, $document, $location, $q, ArrayUtils, Utils, REST, i18n, $route, Navigation) {
+			function ($rootScope, $document, $location, $q, ArrayUtils, Utils, REST, i18n, $route, Navigation, $routeParams) {
 
 				var entriesArray = [],
 					current = null,
@@ -40,7 +40,6 @@
 					return entriesArray.length ? entriesArray : null;
 				}
 
-
 				function updateItems(event, currentRoute) {
 					if (!home) {
 						home = findRoute('/');
@@ -54,6 +53,13 @@
 						current = findRoute(currentPath);
 						if (current) {
 							resolveLabel(current);
+							if (angular.isObject(current.route.options)) {
+								angular.forEach(current.route.options, function(v, k) {
+									if (!$routeParams.hasOwnProperty(k)) {
+										$routeParams[k] = v;
+									}
+								})
+							}
 						}
 					} else {
 						current = null;
