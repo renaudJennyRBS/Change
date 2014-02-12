@@ -1,7 +1,6 @@
 <?php
 namespace Rbs\Catalog\Http\Rest;
 
-use Rbs\Stock\Services\StockManager;
 use Zend\Http\Response;
 
 /**
@@ -104,7 +103,7 @@ class VariantStocks
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 
-		/* @var $stockManager \Rbs\Stock\Services\StockManager */
+		/* @var $stockManager \Rbs\Stock\StockManager */
 		$stockManager = $commerceServices->getStockManager();
 		/* @var $documentManger \Change\Documents\DocumentManager */
 		$documentManger = $event->getApplicationServices()->getDocumentManager();

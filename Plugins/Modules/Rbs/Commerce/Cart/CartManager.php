@@ -11,7 +11,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_MANAGER_IDENTIFIER = 'CartManager';
 
 	/**
-	 * @var \Rbs\Stock\Services\StockManager
+	 * @var \Rbs\Stock\StockManager
 	 */
 	protected $stockManager;
 
@@ -44,17 +44,17 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Stock\Services\StockManager $stockManager
+	 * @param \Rbs\Stock\StockManager $stockManager
 	 * @return $this
 	 */
-	public function setStockManager(\Rbs\Stock\Services\StockManager $stockManager)
+	public function setStockManager(\Rbs\Stock\StockManager $stockManager)
 	{
 		$this->stockManager = $stockManager;
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Stock\Services\StockManager
+	 * @return \Rbs\Stock\StockManager
 	 */
 	protected function getStockManager()
 	{
