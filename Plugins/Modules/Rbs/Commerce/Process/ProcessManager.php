@@ -131,8 +131,8 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$transaction->setAmount($event->getParam('amount'));
 			$transaction->setCurrencyCode($event->getParam('currencyCode'));
 			$transaction->setEmail($event->getParam('email'));
-			$transaction->setUserId($event->getParam('userId'));
-			$transaction->setOwnerId($event->getParam('ownerId'));
+			$transaction->setAuthorId($event->getParam('userId'));
+			$transaction->setOwnerId($event->getParam('ownerId') ? $event->getParam('ownerId') : $event->getParam('userId'));
 			$transaction->setContextData($event->getParam('contextData'));
 			$transaction->save();
 
@@ -178,8 +178,8 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				/* @var $order \Rbs\Order\Documents\Order */
 				$order = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Order_Order');
 				$order->setEmail($cart->getEmail());
-				$order->setUserId($cart->getUserId());
-				$order->setOwnerId($cart->getOwnerId());
+				$order->setAuthorId($cart->getUserId());
+				$order->setOwnerId($cart->getOwnerId() ? $cart->getOwnerId() : $cart->getUserId());
 				$order->setWebStoreId($cart->getWebStoreId());
 				$order->setBillingAreaId($cart->getBillingArea()->getId());
 				$order->setContext($cart->getContext()->toArray());

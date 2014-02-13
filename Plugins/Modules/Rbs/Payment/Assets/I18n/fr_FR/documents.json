@@ -32,9 +32,6 @@
 	"transaction_email":{
 		"message":"adresse e-mail"
 	},
-	"transaction_userid":{
-		"message":"utilisateur"
-	},
 	"transaction_ownerid":{
 		"message":"propriétaire"
 	},

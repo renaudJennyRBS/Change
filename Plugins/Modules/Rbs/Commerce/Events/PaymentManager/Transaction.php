@@ -119,7 +119,11 @@ class Transaction
 						$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getOrderId());
 						if ($order instanceof \Rbs\Order\Documents\Order)
 						{
-							$order->setUserId($user->getId());
+							$order->setAuthorId($user->getId());
+							if (!$order->getOwnerId())
+							{
+								$order->setOwnerId($user->getId());
+							}
 							$order->save();
 						}
 					}

@@ -31,7 +31,11 @@ class CreateAccountConfirmation extends \Rbs\User\Http\Web\CreateAccountConfirma
 				{
 					$tm->begin();
 
-					$transaction->setUserId($user->getId());
+					$transaction->setAuthorId($user->getId());
+					if (!$transaction->getOwnerId())
+					{
+						$transaction->setOwnerId($user->getId());
+					}
 					$transaction->save();
 
 					$commerceServices->getPaymentManager()->handleRegistrationForTransaction($user, $transaction);
