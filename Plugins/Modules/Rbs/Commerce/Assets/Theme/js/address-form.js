@@ -87,6 +87,7 @@
 									v = field.defaultValue;
 									fieldValues[field.name] = v;
 								}
+								fieldValues.__addressFieldsId = addressFields.definition;
 							}
 						}
 					}

@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\Commerce\Http\Web;
+namespace Rbs\Payment\Http\Web;
 
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\Commerce\Http\Web\CreateAccountRequest
+* @name \Rbs\Payment\Http\Web\CreateAccountRequest
 */
 class CreateAccountRequest extends \Rbs\User\Http\Web\CreateAccountRequest
 {
@@ -58,6 +58,6 @@ class CreateAccountRequest extends \Rbs\User\Http\Web\CreateAccountRequest
 	 */
 	protected function getConfirmationUrl($urlManager, $query)
 	{
-		return $urlManager->getAjaxURL('Rbs_Commerce', 'CreateAccountConfirmation', $query);
+		return $urlManager->getAjaxURL('Rbs_Payment', 'CreateAccountConfirmation', $query);
 	}
 }

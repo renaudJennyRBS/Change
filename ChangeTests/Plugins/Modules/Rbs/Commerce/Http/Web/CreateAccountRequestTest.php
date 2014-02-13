@@ -62,7 +62,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$jobManager = $this->getApplicationServices()->getJobManager();
 		$this->assertEquals(0, $jobManager->getCountJobIds());
 
-		$createAccountRequest = new \Rbs\Commerce\Http\Web\CreateAccountRequest();
+		$createAccountRequest = new \Rbs\Payment\Http\Web\CreateAccountRequest();
 		$createAccountRequest->execute($event);
 
 		$dbProvider = $this->getApplicationServices()->getDbProvider();

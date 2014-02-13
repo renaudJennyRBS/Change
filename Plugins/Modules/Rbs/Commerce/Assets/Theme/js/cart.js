@@ -166,6 +166,7 @@
 			scope: false,
 			link: function(scope) {
 				scope.delivery.isConfigured = true;
+				scope.delivery.address = null;
 			}
 		}
 	}
@@ -180,7 +181,7 @@
 			templateUrl: '/shipping-mode-configuration-address.static.tpl',
 			link: function(scope) {
 				if (!scope.delivery.hasOwnProperty('address')) {
-					scope.delivery.address = {};
+					scope.delivery.address = { __addressFieldsId: null };
 				}
 
 				if (!scope.delivery.options.hasOwnProperty('usePostalAddress')) {

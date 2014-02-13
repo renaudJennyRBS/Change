@@ -1,10 +1,10 @@
 <?php
-namespace Rbs\Commerce\Http\Web;
+namespace Rbs\Payment\Http\Web;
 
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\Commerce\Http\Web\CreateAccountConfirmation
+* @name \Rbs\Payment\Http\Web\CreateAccountConfirmation
 */
 class CreateAccountConfirmation extends \Rbs\User\Http\Web\CreateAccountConfirmation
 {
@@ -26,7 +26,22 @@ class CreateAccountConfirmation extends \Rbs\User\Http\Web\CreateAccountConfirma
 			$transaction = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($params[$key]);
 			if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
 			{
-				$commerceServices->getProcessManager()->handleRegistrationForTransaction($user, $transaction);
+				$tm = $event->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$tm->begin();
+
+					$transaction->setUserId($user->getId());
+					$transaction->save();
+
+					$commerceServices->getPaymentManager()->handleRegistrationForTransaction($user, $transaction);
+
+					$tm->commit();
+				}
+				catch (\Exception $e)
+				{
+					$tm->rollBack($e);
+				}
 			}
 		}
 

@@ -43,5 +43,11 @@
 	},
 	"refuse_payment_button":{
 		"message":"refuser<small>le paiement</small>"
+	},
+	"create_account_for_transaction_label":{
+		"message":"inscription après transaction"
+	},
+	"create_account_for_transaction_function":{
+		"message":"inscription après transaction"
 	}
 }
