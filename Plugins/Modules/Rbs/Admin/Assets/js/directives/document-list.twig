@@ -5,10 +5,10 @@
 
 	<div ng-if="! selectionContext" class="btn-toolbar" ng-show="useToolBar">
 		<div class="pull-right">
-			<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
+			<button type="button" ng-if="busy" class="btn btn-warning" disabled="disabled" title="{{ i18nAttr('m.rbs.admin.admin.refresh', ['ucf']) }}">
 				<i class="icon-refresh icon-spin"></i>
 			</button>
-			<button type="button" ng-if="! busy" class="btn btn-default" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.lists.refresh', ['ucf']) }}">
+			<button type="button" ng-if="! busy" class="btn btn-default" ng-click="refresh()" title="{{ i18nAttr('m.rbs.admin.admin.refresh', ['ucf']) }}">
 				<i class="icon-refresh"></i>
 			</button>
 
