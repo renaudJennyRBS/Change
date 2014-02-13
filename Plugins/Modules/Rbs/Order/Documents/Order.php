@@ -167,7 +167,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	 */
 	public function appendLine($line)
 	{
-		//Unserialise lines
+		// Unserialize lines.
 		$this->getLines();
 		if ($line instanceof \Rbs\Order\OrderLine)
 		{

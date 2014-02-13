@@ -751,7 +751,7 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param array $shippingModes
+	 * @param \Rbs\Commerce\Process\ShippingModeInterface[] $shippingModes
 	 * @return $this
 	 */
 	public function setShippingModes($shippingModes)
@@ -761,7 +761,7 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @return array
+	 * @return \Rbs\Commerce\Process\ShippingModeInterface[]
 	 */
 	public function getShippingModes()
 	{
