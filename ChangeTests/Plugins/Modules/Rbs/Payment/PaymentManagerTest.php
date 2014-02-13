@@ -23,16 +23,13 @@ class PaymentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		/* @var $transaction \Rbs\Payment\Documents\Transaction */
 		$transaction = $this->getNewReadonlyDocument('Rbs_Payment_Transaction', 100);
-		$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
-		$code = $paymentManager->getMailCode($transaction);
+		$code = $paymentManager->getMailCode($transaction, \Rbs\Payment\Documents\Transaction::STATUS_PROCESSING);
 		$this->assertEquals('rbs_payment_transaction_processing', $code);
 
-		$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_SUCCESS);
-		$code = $paymentManager->getMailCode($transaction);
+		$code = $paymentManager->getMailCode($transaction, \Rbs\Payment\Documents\Transaction::STATUS_SUCCESS);
 		$this->assertEquals('rbs_payment_transaction_success', $code);
 
-		$transaction->setProcessingStatus(\Rbs\Payment\Documents\Transaction::STATUS_FAILED);
-		$code = $paymentManager->getMailCode($transaction);
+		$code = $paymentManager->getMailCode($transaction, \Rbs\Payment\Documents\Transaction::STATUS_FAILED);
 		$this->assertEquals('rbs_payment_transaction_failed', $code);
 	}
 }
