@@ -19,6 +19,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.event.admin.news_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.event.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Event_Category', 'document' => true, 'block' => 'Rbs_Event_Category',
+			'label' => $i18nManager->trans('m.rbs.event.admin.category_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.event.admin.module_name', $ucf)];
+
 		$event->setParam('functions', $functions);
 	}
 } 
