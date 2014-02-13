@@ -2,9 +2,6 @@
 	"order_select_ownerid":{
 		"message":"séléctionner le propriétaire"
 	},
-	"order_email":{
-		"message":"email"
-	},
 	"order_code_waiting":{
 		"message":"en attente d'affectation"
 	},

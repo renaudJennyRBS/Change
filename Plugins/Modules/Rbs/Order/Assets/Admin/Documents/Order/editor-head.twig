@@ -35,8 +35,8 @@
 						value-ids="true"
 						selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_ownerid', ['ucf']) }}">
 				</rbs-field-picker>
-				<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_email', ['ucf']) }}">
-					<input type="text" class="form-control" ng-model="document.context.email" />
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'email'), ['ucf']) }}">
+					<input type="text" class="form-control" ng-model="document.email" />
 				</rbs-field>
 			</div>
 		</div>
