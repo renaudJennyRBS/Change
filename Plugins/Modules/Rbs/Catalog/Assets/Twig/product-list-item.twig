@@ -1,15 +1,16 @@
 <li>
 	<ul class="grid-list-cell">
 		<li class="product-visual">
-			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.title}) }}"
+			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
 				href="{{ row.url }}">
-				<img alt="" src="{{ catalogMacros.listThumbnailURL(row.visual) }}" /></a>
+				{% set visual = row.productPresentation.getFirstVisual({'list' : listFormat}) %}
+				<img alt="{{ visual.visuals[0].alt }}" src="{{ visual.visuals[0].url.list }}" /></a>
 			<div class="pictograms-container">
 			</div>
 		</li>
 		<li class="product-label">
-			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.title}) }}"
-				href="{{ row.url }}">{{ row.title }}</a>
+			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
+				href="{{ row.url }}">{{ row.productPresentation.general.title }}</a>
 		</li>
 		<li class="product-availability">
 			{{ row.productPresentation.stock.thresholdTitle }}

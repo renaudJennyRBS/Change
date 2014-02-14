@@ -54,26 +54,28 @@
 	<div data-ng-show="!visuals && !productLoading" ng-transclude></div>
 </script>
 
-<div rbs-catalog-product-visuals="" >
-	{% if productPresentation.visuals.visualsInstance.count > 0 %}
+{% set allFormats =  {'detail' : detailFormat, 'thumbnail' : detailThumbnailFormat} %}
+<div rbs-catalog-product-visuals="" visual-formats="{{ allFormats | json_encode }}">
+	{% set allVisuals = productPresentation.getVisuals(allFormats) %}
+	{% if allVisuals.count > 0 %}
 		<div class="visuals" id="visuals-{{ blockId }}">
 			<ul class="list-unstyled full-visuals">
-				{% for visual in productPresentation.visuals.visualsInstance %}
+				{% for visual in allVisuals.visuals %}
 					<li id="full-visual-{{ blockId }}-{{ visual.id }}">
 						{% if parameters.activateZoom %}
-							<a href="{{ imageURL(visual) }}"onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+							<a href="{{ visual.url.main }}"onmouseover="script{{ blockId }}.visuals.startZoom(this)">
 						{% endif %}
-							<img itemprop="image" src="{{ catalogMacros.detailVisualURL(visual) }}" alt="{{ visual.currentLocalization.alt }}" />
+							<img itemprop="image" src="{{ visual.url.detail }}" alt="{{ visual.alt }}" />
 						{% if parameters.activateZoom %}</a>{% endif %}
 					</li>
 				{% endfor %}
 			</ul>
-			{% if productPresentation.visuals.count > 1 %}
+			{% if allVisuals.count > 1 %}
 				<ul class="list-inline thumbnail-visuals">
-					{% for visual in productPresentation.visuals.visualsInstance %}
+					{% for visual in allVisuals.visuals %}
 						<li class="thumbnail" id="thumbnail-visual-{{ blockId }}-{{ visual.id }}"
 							title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
-							<img src="{{ catalogMacros.detailThumbnailURL(visual) }}" alt="{{ visual.currentLocalization.alt }}"
+							<img src="{{ visual.url.thumbnail }}" alt="{{ visual.alt }}"
 								onclick="script{{ blockId }}.visuals.showVisual({{ visual.id }})" />
 						</li>
 					{% endfor %}

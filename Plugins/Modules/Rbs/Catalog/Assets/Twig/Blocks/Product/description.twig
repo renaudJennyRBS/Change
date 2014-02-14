@@ -1,11 +1,15 @@
 {% block descriptionTitle %}
-	<h2>{{ i18n('m.rbs.catalog.front.full_description', ['ucf']) }}</h2>
+	{% if productPresentation.general.description %}
+		<h2>{{ i18n('m.rbs.catalog.front.full_description', ['ucf']) }}</h2>
+	{% endif %}
 {% endblock %}
 
 {% block description %}
-	<div itemprop="description">
-		{{ productPresentation.general.description|richText }}
-	</div>
+	{% if productPresentation.general.description %}
+		<div itemprop="description">
+			{{ productPresentation.general.description|richText }}
+		</div>
+	{% endif %}
 {% endblock %}
 
 {% if parameters.attributesDisplayMode and not(productPresentation.attributesConfiguration is empty) %}

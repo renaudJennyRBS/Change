@@ -2,6 +2,9 @@
 	var script{{ blockId }} = {};
 </script>
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+{% set detailFormat = {'maxWidth' : 540, 'maxHeight' : 405}  %}
+{% set detailThumbnailFormat = {'maxWidth': 80, 'maxHeight' : 60}  %}
+{% set attributeThumbnailFormat = {'maxWidth' : 160, 'maxHeight' : 120}  %}
 <article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-ng-controller="RbsCatalogProductController">
 	<header>
 		{% include 'Rbs_Catalog/Blocks/Product/header.twig' %}

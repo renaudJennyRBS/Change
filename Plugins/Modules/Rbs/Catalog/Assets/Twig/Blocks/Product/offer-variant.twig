@@ -3,8 +3,11 @@
 		<div data-ng-show="product.hasOwnSku && !productLoading">
 			<div class="form-group" data-ng-show="product.canBeOrdered">
 				<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-				<input class="form-control" type="number" name="quantity" data-ng-model="quantity"
+				<input data-ng-show="stock.maxQuantity" class="form-control" type="number" name="quantity" data-ng-model="quantity"
 					max="(= stock.maxQuantity =)"
+					min="(= stock.minQuantity =)"
+					step="(= stock.quantityIncrement =)"/>
+				<input data-ng-show="!stock.maxQuantity" class="form-control" type="number" name="quantity" data-ng-model="quantity"
 					min="(= stock.minQuantity =)"
 					step="(= stock.quantityIncrement =)"/>
 			</div>
