@@ -12,7 +12,7 @@
 		"model": "Rbs_Payment_DeferredConnector",
 		"name": "list",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/Connector/list.twig",
+			"redirectTo": "/Rbs/Commerce/Connector/",
 			"labelKey": "m.rbs.payment.admin.connector_list | ucf"
 		},
 		"auto": false
