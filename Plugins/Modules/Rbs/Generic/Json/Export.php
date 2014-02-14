@@ -356,6 +356,7 @@ class Export
 				$array[$propertyName] = $this->getValueConverter()->toRestValue($value, $property->getType());
 			}
 		}
+
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
 			$refLCID = $document->getRefLCID();
@@ -368,6 +369,12 @@ class Export
 				}
 				$array['_LCID'][$LCID] = $this->getDocumentAsLCIDArray($document, $model, $LCID);
 			}
+		}
+
+		$callback = $this->getOptions()->get('toArray');
+		if (is_callable($callback))
+		{
+			return call_user_func($callback, $document, $array);
 		}
 		return $array;
 	}
