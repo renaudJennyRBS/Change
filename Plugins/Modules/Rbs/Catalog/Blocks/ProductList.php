@@ -190,9 +190,7 @@ class ProductList extends Block
 						$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
 					}
 
-					$row = array('id' => $product->getId(), 'url' => $url, 'hasVariants' => $product->hasVariants());
-					$visual = $product->getFirstVisual();
-					$row['visual'] = $visual ? $visual->getPath() : null;
+					$row = array('id' => $product->getId(), 'url' => $url);
 
 					$productPresentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
 					if ($productPresentation)

@@ -572,6 +572,38 @@ class AttributeManager
 	}
 
 	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Change\Documents\Property | string $property
+	 * @return boolean
+	 */
+	public function hasAttributeForProperty ($product, $property)
+	{
+		if ($property instanceof \Change\Documents\Property)
+		{
+			$property = $property->getName();
+		}
+
+		$groupAttribute = $product->getAttribute();
+		if (!$groupAttribute || !$groupAttribute->getAttributesCount())
+		{
+			return false;
+		}
+
+		foreach ($groupAttribute->getAttributes() as $attribute)
+		{
+			if ($attribute->getValueType() == Attribute::TYPE_PROPERTY)
+			{
+				if ($attribute->getProductProperty() ==  $property)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * @param array $attributeValues
 	 * @return array|null
 	 */

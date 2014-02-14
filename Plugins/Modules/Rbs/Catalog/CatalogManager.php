@@ -759,7 +759,7 @@ class CatalogManager
 				String::stripAccents(String::toUpper($product->getLabel())) . time());
 			$stockInfo['sku'] = String::subString($tmpSkuCode, 0, 80);
 			$stockInfo['minQuantity'] = 1;
-			$stockInfo['maxQuantity'] = $level;
+			$stockInfo['maxQuantity'] = \Rbs\Stock\StockManager::UNLIMITED_LEVEL;
 			$stockInfo['quantityIncrement'] = 1;
 		}
 		else
@@ -770,8 +770,16 @@ class CatalogManager
 			{
 				$stockInfo['sku'] = $sku->getCode();
 				$stockInfo['minQuantity'] = $sku->getMinQuantity();
-				$stockInfo['maxQuantity'] = $sku->getMaxQuantity() ? min(max($sku->getMinQuantity(), $sku->getMaxQuantity()),
-					$level) : $level;
+				if ($sku->getAllowBackorders())
+				{
+					$stockInfo['maxQuantity'] = null;
+				}
+				else
+				{
+					$stockInfo['maxQuantity'] = $sku->getMaxQuantity() ? min(max($sku->getMinQuantity(), $sku->getMaxQuantity()),
+						$level) : $level;
+				}
+
 				$stockInfo['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
 			}
 		}
@@ -915,11 +923,33 @@ class CatalogManager
 		$generalInfo['id'] = $product->getId();
 		$generalInfo['product'] = $product;
 		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
-		$generalInfo['description'] = $product->getCurrentLocalization()->getDescription();
-		$generalInfo['hasVariants'] = $product->hasVariants();
-		$generalInfo['hasOwnSku'] = $product->getSku() !== null ? true : false;
 
-		if ($product->getBrand() && $product->getBrand()->published())
+		// Description must be present in product attributes and not empty
+		$generalInfo['description'] = null;
+		$pDescription = $product->getCurrentLocalization()->getDescription();
+		if ($pDescription !== null && $pDescription->getRawText() !== null
+			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'description')
+		)
+		{
+			$generalInfo['description'] = $pDescription;
+		}
+
+		$generalInfo['hasVariants'] = $product->hasVariants();
+
+		if ($product->getSku() !== null)
+		{
+			$generalInfo['hasOwnSku'] = true;
+			$generalInfo['allowBackorders'] = $product->getSku()->getAllowBackorders();
+		}
+		else
+		{
+			$generalInfo['hasOwnSku'] = false;
+			$generalInfo['allowBackorders'] = false;
+		}
+
+		if ($product->getBrand() && $product->getBrand()->published()
+			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'brand')
+		)
 		{
 			$generalInfo['brand'] = $product->getBrand();
 		}
@@ -979,14 +1009,13 @@ class CatalogManager
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param string $visibility
 	 * @return array
 	 */
-	public function getAttributesConfiguration($product)
+	public function getAttributesConfiguration($product, $visibility = 'specifications')
 	{
-		$attributesConfiguration = array();
-
-		$attributesConfiguration['attributesConfig'] = $this->getAttributeManager()
-			->getProductAttributesConfiguration('specifications', $product);
+		$attributesConfiguration = $this->getAttributeManager()
+			->getProductAttributesConfiguration($visibility, $product);
 
 		return $attributesConfiguration;
 	}
@@ -994,11 +1023,13 @@ class CatalogManager
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $formats
+	 * @param boolean $onlyFirst
 	 * @return array
 	 */
 	public function getVisualsInfos($product,
 		$formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
-			'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
+			'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]),
+		$onlyFirst = false)
 	{
 		$visualsInfos = array();
 		$visualsInfos['visualsInstance'] = array();
@@ -1006,8 +1037,25 @@ class CatalogManager
 
 		if ($product->getVisualsCount() > 0)
 		{
-			$visualsInfos['visualsInstance'] = $product->getVisuals();
-			$visualsInfos['count'] = $product->getVisualsCount();
+			if ($onlyFirst)
+			{
+				$firstVisual = $product->getFirstVisual();
+				if ($firstVisual !== null)
+				{
+					$visualsInfos['visualsInstance'] = [$firstVisual];
+					$visualsInfos['count'] = 1;
+				}
+				else
+				{
+					$visualsInfos['visualsInstance'] = null;
+					$visualsInfos['count'] = 0;
+				}
+			}
+			else
+			{
+				$visualsInfos['visualsInstance'] = $product->getVisuals();
+				$visualsInfos['count'] = $product->getVisualsCount();
+			}
 		}
 		else
 		{
@@ -1033,7 +1081,7 @@ class CatalogManager
 			$v['url']['main'] = $instance->getPublicURL();
 
 			// Foreach formats, generate URL
-			foreach($formats as $type => $values)
+			foreach ($formats as $type => $values)
 			{
 				$w = null;
 				$h = null;

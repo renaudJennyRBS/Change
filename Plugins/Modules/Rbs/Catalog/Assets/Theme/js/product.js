@@ -63,6 +63,10 @@
 			transclude: true,
 
 			link : function (scope, elm, attrs) {
+				if (attrs.hasOwnProperty('visualFormats'))
+				{
+					angular.extend(scope.visualFormats, angular.fromJson(attrs.visualFormats));
+				}
 			}
 		}
 	}
@@ -87,12 +91,11 @@
 
 	function RbsCatalogProductController(scope, $http)
 	{
-		scope.quantity = 0;
-
 		scope.productLoading = false;
 
 		scope.redirectUrl = null;
 		scope.pricesConfig = {};
+		scope.visualFormats = {};
 
 		// Variant Config
 		scope.axesValues = [];
@@ -193,7 +196,8 @@
 						scope.productLoading = true;
 						$http.post('Action/Rbs/Catalog/ProductResult', {
 							productId: products[i].id,
-							axesValues: products[i].values
+							axesValues: products[i].values,
+							formats: scope.visualFormats
 						})
 						.success(function (data) {
 								scope.productLoading = false;
@@ -217,7 +221,8 @@
 				scope.stock = data.stock;
 				scope.visuals = data.visuals.visuals;
 
-				scope.quantity = Math.min(data.stock.minQuantity, data.stock.maxQuantity);
+				//scope.quantity = Math.min(data.stock.minQuantity, data.stock.maxQuantity);
+				scope.quantity = data.stock.minQuantity;
 			}
 			else
 			{
@@ -228,7 +233,7 @@
 				scope.stock = null;
 				scope.visuals = null;
 
-				scope.quantity = 0;
+				scope.quantity = 1;
 			}
 		}
 

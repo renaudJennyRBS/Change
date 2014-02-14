@@ -160,16 +160,33 @@ class ProductPresentation
 		return $this->pictograms;
 	}
 
+	public function getFirstVisual($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
+		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
+	{
+		$v = $this->doGetVisuals($formats, true);
+		return $v;
+	}
+
+	public function getVisuals($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
+		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
+	{
+		// TODO Cache with formats
+		/*if ($this->visuals === null)
+		{*/
+		$this->visuals = $this->doGetVisuals($formats, false);
+		/*}*/
+		return $this->visuals;
+	}
+
 	/**
+	 * @param array $formats
+	 * @param boolean $onlyFirst
 	 * @return array
 	 */
-	public function getVisuals()
+	protected function doGetVisuals($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
+		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]), $onlyFirst)
 	{
-		if ($this->visuals === null)
-		{
-			$this->visuals = $this->commerceServices->getCatalogManager()->getVisualsInfos($this->product);
-		}
-		return $this->visuals;
+		return $this->commerceServices->getCatalogManager()->getVisualsInfos($this->product, $formats, $onlyFirst);
 	}
 
 	/**
@@ -206,30 +223,11 @@ class ProductPresentation
 
 	protected function resetPrice()
 	{
-		/*$this->prices['currencyCode'] = null;
-		$this->prices['price'] = null;
-		$this->prices['formattedPrice'] = null;
-		$this->prices['priceWithTax'] = null;
-		$this->prices['formattedPriceWithTax'] = null;
-		$this->prices['priceWithoutDiscount'] = null;
-		$this->prices['formattedPriceWithoutDiscount'] = null;
-		$this->prices['priceWithoutDiscountWithTax'] = null;
-		$this->prices['formattedPriceWithoutDiscountWithTax'] = null;
-		$this->prices['ecoTax'] = null;
-		$this->prices['formattedEcoTax'] = null;*/
 		$this->prices = null;
 	}
 
 	protected function resetStock()
 	{
-		/*$this->stock['sku'] = null;
-		$this->stock['level'] = null;
-		$this->stock['threshold'] = null;
-		$this->stock['thresholdClass'] = null;
-		$this->stock['thresholdTitle'] = null;
-		$this->stock['minQuantity'] = null;
-		$this->stock['maxQuantity'] = null;
-		$this->stock['quantityIncrement'] = null;*/
 		$this->stock = null;
 	}
 
@@ -247,9 +245,9 @@ class ProductPresentation
 			$this->getPrices($quantity);
 			$this->getStock();
 
-			if ($this->general['hasOwnSku'] === true && isset($this->stock['level'])
-				&& $this->stock['level'] > 0 && $this->stock['level'] >= $this->stock['minQuantity']
-				&& isset($this->prices['price']))
+			if ($this->general['hasOwnSku'] === true && isset($this->prices['price']) &&
+				((isset($this->stock['level']) && $this->stock['level'] > 0 && $this->stock['level'] >= $this->stock['minQuantity']) || (isset($this->general['allowBackorders']) && $this->general['allowBackorders'] === true))
+				)
 			{
 				$this->general['canBeOrdered'] = true;
 			}
