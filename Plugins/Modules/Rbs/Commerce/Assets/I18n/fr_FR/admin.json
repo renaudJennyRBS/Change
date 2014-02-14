@@ -58,5 +58,11 @@
 	},
 	"section_name":{
 		"message":"E-commerce"
+	},
+	"fee_list":{
+		"message":"frais"
+	},
+	"fee_create":{
+		"message":"ajouter un frais"
 	}
 }

@@ -130,11 +130,5 @@
   },
   "tax_update_in_progress_help":{
     "message":"Taxes update is in progress. Setup will be available again after update."
-  },
-  "fee_list":{
-    "message":"fee"
-  },
-  "fee_create":{
-    "message":"add a fee"
   }
 }

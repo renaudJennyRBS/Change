@@ -40,5 +40,11 @@
   },
   "lines_price_value":{
     "message":"Subtotal"
+  },
+  "fee_list":{
+    "message":"fee"
+  },
+  "fee_create":{
+    "message":"add a fee"
   }
 }

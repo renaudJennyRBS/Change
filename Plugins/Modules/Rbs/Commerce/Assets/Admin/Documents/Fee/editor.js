@@ -6,7 +6,7 @@
 	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Document/Rbs/Price/Fee/editor.twig',
+			templateUrl : 'Document/Rbs/Commerce/Fee/editor.twig',
 			require : 'rbsDocumentEditor',
 
 			link : function (scope, element, attrs, editorCtrl)
@@ -21,9 +21,9 @@
 					}
 				};
 
-				editorCtrl.init('Rbs_Price_Fee');
+				editorCtrl.init('Rbs_Commerce_Fee');
 			}
 		}
 	}
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsPriceFee', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCommerceFee', Editor);
 })();

@@ -3,28 +3,28 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'label'), ['ucf']) }}">
+		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Fee', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
 		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
 			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'title'), ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Commerce_Fee', 'title'), ['ucf']) }}"
 			input-class="form-control">
 		</rbs-field-text>
 
-		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'sku'), ['ucf']) }}"
+		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Fee', 'sku'), ['ucf']) }}"
 				required="true"
 				accepted-model="Rbs_Stock_Sku"
 				selector-title="{{ i18nAttr('m.rbs.admin.admin.select', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'cartFilterData'), ['ucf']) }}">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Commerce_Fee', 'cartFilterData'), ['ucf']) }}">
 			<div rbs-document-filter-container="" filter="document.cartFilterData">
 				<div rbs-cart-fee-definitions=""></div>
 			</div>
 		</rbs-field>
 
-		<rbs-field-picker property="shippingMode" label="{{ i18nAttr(propertyKey('Rbs_Price_Fee', 'shippingMode'), ['ucf']) }}"
+		<rbs-field-picker property="shippingMode" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Fee', 'shippingMode'), ['ucf']) }}"
 				accepted-model="Rbs_Shipping_Mode"
 				selector-title="{{ i18nAttr('m.rbs.admin.admin.select', ['ucf']) }}">
 		</rbs-field-picker>
