@@ -91,6 +91,29 @@
 
 	app.directive('rbsCommerceProcessMenu', rbsCommerceProcessMenu);
 
+	function rbsCommerceAuthenticationStep() {
+		return {
+			restrict: 'AE',
+			scope: true,
+			templateUrl: '/authentication-step.static.tpl',
+
+			link: function(scope, element, attributes) {
+				if (!scope.information.hasOwnProperty('realm')) {
+					scope.information.realm = attributes.realm;
+					if (attributes.login) {
+						scope.information.login = attributes.login;
+						scope.information.guest = false;
+					}
+					else {
+						scope.information.guest = true;
+					}
+				}
+			}
+		}
+	}
+
+	app.directive('rbsCommerceAuthenticationStep', rbsCommerceAuthenticationStep);
+
 	function rbsCommerceShippingModeSelector($http, $compile, $sce) {
 		return {
 			restrict: 'AE',
@@ -477,6 +500,7 @@
 			$http.post('Action/Rbs/User/Login', postData)
 				.success(function(data) {
 					if (data.hasOwnProperty('accessorId')) {
+						scope.information.guest = false;
 						scope.information.userId = data['accessorId'];
 						delete scope.information.password;
 
