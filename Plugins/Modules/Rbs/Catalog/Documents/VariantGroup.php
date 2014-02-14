@@ -222,4 +222,28 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 
 		return $query->getDocuments()->toArray();
 	}
+
+	/**
+	 * Check if the variant group configuration define that product must be generated for intermediary configuration
+	 * @return boolean
+	 */
+	public function mustGenerateOnlyLastVariant()
+	{
+		$axesConfig = $this->getAxesConfiguration();
+
+		$count = 0;
+		foreach ($axesConfig as $config)
+		{
+			if ($config['url'] === true)
+			{
+				$count++;
+			}
+		}
+
+		if ($count > 1)
+		{
+			return false;
+		}
+		return true;
+	}
 }

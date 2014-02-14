@@ -46,11 +46,23 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 				foreach ($cart->getLines() as $line)
 				{
-					$line->getOptions()
-						->set('formattedPriceValue', $pm->formatValue($line->getPriceValue(), $currency))
+					$options = $line->getOptions();
+					$options->set('formattedPriceValue', $pm->formatValue($line->getPriceValue(), $currency))
 						->set('formattedPriceValueWithTax', $pm->formatValue($line->getPriceValueWithTax(), $currency))
 						->set('formattedUnitPriceValue', $pm->formatValue($line->getUnitPriceValue(), $currency))
 						->set('formattedUnitPriceValueWithTax', $pm->formatValue($line->getUnitPriceValueWithTax(), $currency));
+
+					$productId = $options->get('productId');
+					if ($productId)
+					{
+						$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
+						if ($product instanceof \Rbs\Catalog\Documents\Product)
+						{
+							$url = $event->getUrlManager()->getCanonicalByDocument($product)->normalize()->toString();
+							$options->set('productUrl', $url);
+						}
+					}
+
 				}
 			}
 

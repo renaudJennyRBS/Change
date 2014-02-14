@@ -1089,10 +1089,12 @@ class AttributeManager
 		$configuration = ['axesValues' => [], 'products' => []];
 		if ($variantGroup->getAxesAttributesCount())
 		{
+			$axesConfiguration = $variantGroup->getAxesConfiguration();
 			foreach ($variantGroup->getAxesAttributes() as $axisAttribute)
 			{
 				if ($axisAttribute->getAxis())
 				{
+
 					$info = ['id' => $axisAttribute->getId(), 'values' => []];
 					$defaultValues = $this->getCollectionValues($axisAttribute);
 					$info['defaultValues'] =  ($defaultValues) ? $defaultValues : [];

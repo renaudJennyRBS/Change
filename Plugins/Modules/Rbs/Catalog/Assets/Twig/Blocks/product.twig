@@ -14,7 +14,7 @@
 			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
 		</div>
 		<div class="col-sm-6 col-md-4">
-			{% if productPresentation.general.hasVariants %}
+			{% if not productPresentation.general.hasOwnSku %}
 				{% include 'Rbs_Catalog/Blocks/Product/offer-variant.twig' %}
 			{% else %}
 				{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}

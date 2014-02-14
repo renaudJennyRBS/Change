@@ -628,7 +628,7 @@ class CatalogManager
 	 */
 	public function getProductPrice($product, $webStoreId, $billingArea)
 	{
-		if ($product->hasVariants())
+		if (!$product->getSku() && $product->getVariantGroup())
 		{
 			$prices = array();
 
@@ -676,7 +676,7 @@ class CatalogManager
 	{
 		$level = null;
 
-		if ($product->hasVariants())
+		if (!$product->getSku() && $product->getVariantGroup())
 		{
 			$skus = $product->getAllSkuOfVariant(true);
 			if ($skus !== null && $skus->count() > 0)
@@ -706,7 +706,7 @@ class CatalogManager
 	{
 		$threshold = null;
 
-		if ($product->hasVariants())
+		if (!$product->getSku() && $product->getVariantGroup())
 		{
 			$skus = $product->getAllSkuOfVariant(true);
 			if ($skus !== null && $skus->count() > 0)
@@ -753,7 +753,7 @@ class CatalogManager
 
 		$stockInfo['thresholdTitle'] = $this->getStockManager()->getInventoryThresholdTitle($threshold);
 
-		if ($product->hasVariants())
+		if (!$product->getSku() && $product->getVariantGroup())
 		{
 			$tmpSkuCode = preg_replace('/[^a-zA-Z0-9]+/', '-',
 				String::stripAccents(String::toUpper($product->getLabel())) . time());
@@ -970,7 +970,7 @@ class CatalogManager
 	{
 		$variantsConfiguration = array();
 
-		// TODO use hasVariant ?
+		// TODO Active a cache on variant group
 		if ($product->getVariantGroup())
 		{
 			$variantsConfiguration['variantGroup'] = $product->getVariantGroup();
@@ -980,6 +980,46 @@ class CatalogManager
 		}
 
 		return $variantsConfiguration;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return array
+	 */
+	public function getVariantInfo($product)
+	{
+		$variantInfo = array();
+
+		if ($product->getVariantGroup())
+		{
+			$vConfiguration = $this->getVariantsConfiguration($product);
+			var_dump($vConfiguration['axes']);
+
+			$variantInfo['isRoot'] = $product->hasVariants();
+			$variantInfo['depth'] = count($vConfiguration['axes']['axesValues']);
+
+			foreach ($vConfiguration['axes']['products'] as $infoProduct)
+			{
+				if ($infoProduct['id'] === $product->getId())
+				{
+					$variantInfo['isFinal'] = true;
+					$variantInfo['level'] = $variantInfo['depth'];
+					for ($i = 0; $i < count($infoProduct['values']); $i++)
+					{
+						if ($infoProduct['values'][$i]['value'] === null)
+						{
+							$variantInfo['isFinal'] = false;
+							$variantInfo['level'] = $i;
+							break;
+						}
+					}
+				}
+			}
+
+			return $variantInfo;
+		}
+
+		return null;
 	}
 
 	/**

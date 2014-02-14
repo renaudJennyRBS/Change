@@ -93,16 +93,59 @@ class Product extends Block
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
+			$catalogManager = $commerceServices->getCatalogManager();
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
-				$productPresentation->evaluate();
-				$attributes['productPresentation'] = $productPresentation;
-				return 'product.twig';
+				$finalProduct = $this->getProductToBeDisplay($product, $catalogManager);
+
+				if ($finalProduct !== null)
+				{
+					$productPresentation = $finalProduct->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+					$productPresentation->evaluate();
+					$attributes['productPresentation'] = $productPresentation;
+					return 'product.twig';
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\CatalogManager $catalogManager
+	 * @return \Rbs\Catalog\Documents\Product
+	 */
+	protected function getProductToBeDisplay($product, $catalogManager)
+	{
+		if ($product->hasVariants() || !$product->getVariantGroup())
+		{
+			return $product;
+		}
+		else
+		{
+			$variantInfo = $catalogManager->getVariantInfo($product);
+			var_dump($variantInfo);
+			if ($variantInfo)
+			{
+				if (!$variantInfo['isFinal'] )
+				{
+					return $product;
+				}
+				else
+				{
+					if ($product->getVariantGroup()->mustGenerateOnlyLastVariant())
+					{
+						return $product;
+					}
+					else
+					{
+
+					}
+				}
 			}
 		}
 		return null;

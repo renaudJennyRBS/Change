@@ -347,6 +347,7 @@
 				.success(function(data) {
 					console.log('GetCurrentCart success');
 					setCart(data);
+					console.log(scope.cart.lines);
 				})
 				.error(function(data, status, headers) {
 					console.log('GetCurrentCart error', data, status, headers);

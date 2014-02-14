@@ -276,7 +276,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	 */
 	public function getAllSkuOfVariant($onlyPublishedProduct = false)
 	{
-		if($this->hasVariants())
+		if(!$this->getSku() && $this->getVariantGroup())
 		{
 			$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
 			$productQuery = $query->getPropertyModelBuilder('id', 'Rbs_Catalog_Product', 'sku');
