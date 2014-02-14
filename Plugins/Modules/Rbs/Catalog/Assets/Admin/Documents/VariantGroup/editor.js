@@ -33,10 +33,18 @@
 									}
 								});
 								if (axisConfiguration == null) {
-									axisConfiguration = {id: attribute.id, url: false, categorizable: false}
+									axisConfiguration = {id: attribute.id, url: false, categorizable: true}
 								}
 								newAxesConfiguration.push(axisConfiguration);
 							});
+
+							// Set url configuration to true for the last
+							if (newAxesConfiguration.length > 0 && newAxesConfiguration[newAxesConfiguration.length-1].url !== true)
+							{
+								newAxesConfiguration[newAxesConfiguration.length-1].url = true;
+							}
+
+
 							scope.document.axesConfiguration = newAxesConfiguration;
 						}
 

@@ -1,0 +1,98 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-list':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw}}</a>
+				</p>
+			</div>
+		</div>
+		<div class="rbs-aside-block" ng-show="document.rootProduct">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+		</div>
+	</div>
+
+	<div class="document-form" rbs-main-column>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></rbs-page-header>
+		<rbs-document-editor-rbs-catalog-variant-group-prices>
+
+			<div>
+				<form name="form" ng-submit="save()" class="form-horizontal">
+
+					<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
+						<select class="form-control" ng-required="true" ng-model="config.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
+							<option value=""> {{ i18n('m.rbs.store.admin.select_webstore', ['ucf']) }}</option>
+						</select>
+					</rbs-field>
+
+					<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
+						<select class="form-control" ng-required="true" ng-model="config.billingArea" ng-disabled="!webStore.id"
+							rbs-items-collection-params="webStoreId:(=webStore.id=)"
+							rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
+							<option value=""> {{ i18n('m.rbs.price.admin.select_billingarea', ['ucf']) }}</option>
+						</select>
+					</rbs-field>
+
+					<div ng-show="data" class="alert alert-info">{{ i18n('m.rbs.catalog.admin.variantgroup_only_current_prices', ['ucf']) | raw}}</div>
+					<table class="table table-striped" ng-show="data">
+
+						<thead>
+							<td>{{ i18n('m.rbs.catalog.admin.product_product', ['ucf']) }}</td>
+							<td>{{ i18n('m.rbs.price.documents.price_value', ['ucf']) }}</td>
+							<td>{{ i18n('m.rbs.price.documents.price_ecotax', ['ucf']) }}</td>
+							<td>{{ i18n('m.rbs.price.documents.price_taxcategories', ['ucf']) }}</td>
+							<td></td>
+						</thead>
+
+						<tr ng-repeat="(skuId, sku) in data">
+							<td><a href ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'form':{id:sku.productId} =)">(= sku.label =)</a></td>
+							<td>
+								<input type="number" class="form-control input-sm" ng-model="sku.price.value"/>
+								<a href="" ng-if="$first" ng-click="applyValueOnAll(sku.price.value)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
+							</td>
+							<td>
+								<input type="number" class="form-control input-sm" ng-model="sku.price.ecoTax"/>
+								<a href="" ng-if="$first" ng-click="applyEcoTaxOnAll(sku.price.ecoTax)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
+							</td>
+							<td>
+								<table>
+									<tr ng-repeat="tax in taxInfo">
+										<td>(=tax.code=)</td>
+										<td>
+											<select ng-model="sku.price.taxCategories[tax.code]" class="input-medium form-control" ng-options="c.code as c.formattedRate + '  (' + c.code + ')' for c in tax.categories">
+												<option value="">{{ i18n('m.rbs.price.documents.tax_not_applicable', ['ucf']) }}</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+								<a href="" ng-if="$first" ng-click="applyTaxCategoriesOnAll(sku.price.taxCategories)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
+							</td>
+							<td>
+								<a href ng-href="(= 'Rbs_Price_Price' | rbsURL:'form':{id:sku.price.id} =)">{{ i18n('m.rbs.catalog.admin.variantgroup_edit_price', ['ucf']) }}</a></br>
+								<a ng-if="sku.priceCount > 1" href ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'prices':{id:sku.productId} =)">{{ i18n('m.rbs.catalog.admin.variantgroup_see_all_prices', ['ucf']) }}</a>
+							</td>
+						</tr>
+
+					</table>
+
+					<div class="confirmation-area"></div>
+
+					<button class="btn btn-default btn-headline" type="button" ng-click="confirmReset($event)" ng-disabled="!isChanged" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
+					<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}" data-role="save" type="submit" ng-disabled="!isChanged || saveProgress.running">
+						<i class="icon-white icon-ok" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
+						</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
+					</button>
+				</form>
+			</div>
+
+		</rbs-document-editor-rbs-catalog-variant-group-prices>
+	</div>
+
+</div>
+
+

@@ -9,6 +9,9 @@
 				<p class="list-group-item">
 					<a href="(= document | rbsURL:'variant-list':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw}}</a>
 				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-edit':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_edit', ['ucf']) | raw}}</a>
+				</p>
 			</div>
 		</div>
 		<div class="rbs-aside-block" ng-show="document.rootProduct">

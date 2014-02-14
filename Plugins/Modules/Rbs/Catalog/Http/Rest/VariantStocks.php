@@ -4,7 +4,7 @@ namespace Rbs\Catalog\Http\Rest;
 use Zend\Http\Response;
 
 /**
- * @name \Rbs\Catalog\Http\Rest\GetVariantStocks
+ * @name \Rbs\Catalog\Http\Rest\VariantStocks
  */
 class VariantStocks
 {
@@ -45,8 +45,6 @@ class VariantStocks
 
 				$inventoryCollection = $inventoryQuery->getDocuments();
 
-				$event->getApplicationServices()->getLogging()->fatal(var_export($inventoryCollection->count(), true));
-
 				if ($inventoryCollection->count() > 0)
 				{
 					foreach ($inventoryCollection as $inventory)
@@ -84,7 +82,7 @@ class VariantStocks
 
 			$result->setArray($resultArray);
 
-			$result->setHttpStatusCode(Response::STATUS_CODE_200);
+			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 
 		}
 		else
@@ -109,30 +107,39 @@ class VariantStocks
 		$documentManger = $event->getApplicationServices()->getDocumentManager();
 		$warehouseIds = array_keys($stocks);
 
-		foreach ($warehouseIds as $warehouseId)
+		if ($stocks !== null)
 		{
+			$result = new \Change\Http\Result();
 
-			if ($warehouseId === -1)
+			foreach ($warehouseIds as $warehouseId)
 			{
-				$warehouse = null;
-			}
-			else
-			{
-				/* @var $warehouse \Rbs\Stock\Documents\AbstractWarehouse */
-				$warehouse = $documentManger->getDocumentInstance($warehouseId);
+
+				if ($warehouseId === -1)
+				{
+					$warehouse = null;
+				}
+				else
+				{
+					/* @var $warehouse \Rbs\Stock\Documents\AbstractWarehouse */
+					$warehouse = $documentManger->getDocumentInstance($warehouseId);
+				}
+
+				foreach($stocks[$warehouseId]['skus'] as $skuId => $stock)
+				{
+					/* @var $sku \Rbs\Stock\Documents\Sku */
+					$sku = $documentManger->getDocumentInstance($skuId, 'Rbs_Stock_Sku');
+					$stockManager->setInventory($stock, $sku, $warehouse);
+				}
+
 			}
 
-			foreach($stocks[$warehouseId]['skus'] as $skuId => $stock)
-			{
-				/* @var $sku \Rbs\Stock\Documents\Sku */
-				$sku = $documentManger->getDocumentInstance($skuId, 'Rbs_Stock_Sku');
-				$stockManager->setInventory($stock, $sku, $warehouse);
-			}
-
+			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 		}
-
-		$result = new \Change\Http\Result();
-		$result->setHttpStatusCode(Response::STATUS_CODE_200);
+		else
+		{
+			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				'Stocks data is empty ', \Zend\Http\Response::STATUS_CODE_409);
+		}
 
 		$event->setResult($result);
 	}

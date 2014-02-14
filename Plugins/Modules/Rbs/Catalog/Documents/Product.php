@@ -40,6 +40,13 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 				$baseUrl = implode('/', $pathParts);
 				$documentResult->addLink(new Link($um, $baseUrl . '/ProductListItems/', 'productListItems'));
 				$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
+
+				// TODO Variant link
+				/*if ($document->getVariantGroup())
+				{
+					$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
+				}*/
+
 				$image = $document->getFirstVisual();
 				if ($image)
 				{
