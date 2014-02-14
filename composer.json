@@ -32,6 +32,7 @@
 		"rbs/catalog": "self.version",
 		"rbs/collection": "self.version",
 		"rbs/commerce": "self.version",
+		"rbs/discount": "self.version",
 		"rbs/elasticsearch": "self.version",
 		"rbs/generic": "self.version",
 		"rbs/geo": "self.version",

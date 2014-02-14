@@ -4,7 +4,7 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsCartFeeDefinitions', ['RbsChange.REST', function(REST) {
+	app.directive('rbsCartFilterDefinitions', ['RbsChange.REST', function(REST) {
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
