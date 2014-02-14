@@ -9,7 +9,6 @@ use Rbs\Commerce\Interfaces\LineInterface;
  */
 class OrderLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface
 {
-
 	/**
 	 * @param array $itemArray
 	 * @return \Rbs\Order\OrderLineItem

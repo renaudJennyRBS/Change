@@ -13,6 +13,12 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 */
 	public function execute(\Change\Http\Web\Event $event)
 	{
+		$genericServices = $event->getServices('genericServices');
+		if (!($genericServices instanceof \Rbs\Generic\GenericServices))
+		{
+			throw new \RuntimeException('Unable to get GenericServices', 999999);
+		}
+
 		$commerceServices = $event->getServices('commerceServices');
 		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
 		{
@@ -78,13 +84,14 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		if (isset($arguments['address']))
 		{
-			if (!is_array($arguments['address']))
+			if (!is_array($arguments['address']) || !count($arguments['address']))
 			{
 				$address = null;
 			}
 			else
 			{
 				$address = new \Rbs\Geo\Address\BaseAddress($arguments['address']);
+				$address->setLines($genericServices->getGeoManager()->getFormattedAddress($address));
 			}
 			$cart->setAddress($address);
 		}
@@ -94,7 +101,13 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$shippingModes = array();
 			foreach ($arguments['shippingModes'] as $data)
 			{
-				$shippingModes[] = new \Rbs\Commerce\Process\BaseShippingMode($data);
+				$mode = new \Rbs\Commerce\Process\BaseShippingMode($data);
+				$address = $mode->getAddress();
+				if ($address)
+				{
+					$address->setLines($genericServices->getGeoManager()->getFormattedAddress($address));
+				}
+				$shippingModes[] = $mode;
 			}
 			$cart->setShippingModes($shippingModes);
 		}

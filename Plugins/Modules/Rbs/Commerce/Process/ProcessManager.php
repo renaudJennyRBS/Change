@@ -78,10 +78,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach('getNewTransaction', [$this, 'onDefaultGetNewTransaction'], 5);
-		$eventManager->attach('handleRegistrationForTransaction', [$this, 'onDefaultHandleRegistrationForTransaction'], 5);
-		$eventManager->attach('handleProcessingForTransaction', [$this, 'onDefaultHandleProcessingForTransaction'], 5);
-		$eventManager->attach('handleSuccessForTransaction', [$this, 'onDefaultHandleSuccessForTransaction'], 5);
-		$eventManager->attach('handleFailedForTransaction', [$this, 'onDefaultHandleFailedForTransaction'], 5);
+		$eventManager->attach('createOrderFromCart', [$this, 'onDefaultCreateOrderFromCart'], 5);
 	}
 
 	/**
@@ -134,8 +131,8 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$transaction->setAmount($event->getParam('amount'));
 			$transaction->setCurrencyCode($event->getParam('currencyCode'));
 			$transaction->setEmail($event->getParam('email'));
-			$transaction->setUserId($event->getParam('userId'));
-			$transaction->setOwnerId($event->getParam('ownerId'));
+			$transaction->setAuthorId($event->getParam('userId'));
+			$transaction->setOwnerId($event->getParam('ownerId') ? $event->getParam('ownerId') : $event->getParam('userId'));
 			$transaction->setContextData($event->getParam('contextData'));
 			$transaction->save();
 
@@ -149,200 +146,64 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @api
-	 * @param \Rbs\User\Documents\User $user
-	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 * @param $cart
+	 * @return \Rbs\Order\Documents\Order|null
 	 */
-	public function handleRegistrationForTransaction($user, $transaction)
+	public function createOrderFromCart($cart)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('user' => $user, 'transaction' => $transaction));
-		$this->getEventManager()->trigger('handleRegistrationForTransaction', $this, $args);
+		$args = $em->prepareArgs(array('cart' => $cart));
+		$this->getEventManager()->trigger('createOrderFromCart', $this, $args);
+		if (isset($args['order']) && $args['order'] instanceof \Rbs\Order\Documents\Order)
+		{
+			return $args['order'];
+		}
+		return null;
 	}
 
 	/**
 	 * @param \Change\Events\Event $event
 	 * @throws \Exception
 	 */
-	public function onDefaultHandleRegistrationForTransaction(\Change\Events\Event $event)
+	public function onDefaultCreateOrderFromCart(\Change\Events\Event $event)
 	{
-		$user = $event->getParam('user');
-		$transaction = $event->getParam('transaction');
-
-		if ($user instanceof \Rbs\User\Documents\User && $transaction instanceof \Rbs\Payment\Documents\Transaction)
+		$cart = $event->getParam('cart');
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 		{
-			if (isset($contextData['from']) && $contextData['from'] == 'cart')
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			try
 			{
-				/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-				$commerceServices = $event->getServices('commerceServices');
-				$cartManager = $commerceServices->getCartManager();
-				$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-				if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+				$tm->begin();
+
+				/* @var $order \Rbs\Order\Documents\Order */
+				$order = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Order_Order');
+				$order->setEmail($cart->getEmail());
+				$order->setAuthorId($cart->getUserId());
+				$order->setOwnerId($cart->getOwnerId() ? $cart->getOwnerId() : $cart->getUserId());
+				$order->setWebStoreId($cart->getWebStoreId());
+				$order->setBillingAreaId($cart->getBillingArea()->getId());
+				$order->setContext($cart->getContext()->toArray());
+				foreach ($cart->getLines() as $line)
 				{
-					$cartManager->affectUser($cart, $user);
+					$order->appendLine($line->toArray());
 				}
+				$order->setAddress($cart->getAddress()->toArray());
+				$order->setShippingModes($cart->getShippingModes());
+				// TODO: fees, discounts, coupons...
+				$order->setPaymentAmount($cart->getPaymentAmount());
+				$order->setCurrencyCode($cart->getCurrencyCode());
+				$order->setProcessingStatus(\Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING);
+				$order->save();
 
-				// TODO affect the order if the cart is already converted.
+				$this->getCartManager()->affectOrder($cart, $order);
+
+				$tm->commit();
 			}
-		}
-	}
-
-	/**
-	 * @param \Rbs\Payment\Documents\Transaction $transaction
-	 */
-	public function handleProcessingForTransaction($transaction)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('transaction' => $transaction));
-		$this->getEventManager()->trigger('handleProcessingForTransaction', $this, $args);
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 * @throws \Exception
-	 */
-	public function onDefaultHandleProcessingForTransaction(\Change\Events\Event $event)
-	{
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-
-		/* @var $transaction \Rbs\Payment\Documents\Transaction */
-		$transaction = $event->getParam('transaction');
-		$contextData = $transaction->getContextData();
-
-		// Update the cart.
-		if (isset($contextData['from']) && $contextData['from'] == 'cart')
-		{
-			$cartManager = $commerceServices->getCartManager();
-			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+			catch (\Exception $e)
 			{
-				// Set cart as processing.
-				if (!$cart->isProcessing())
-				{
-					$cartManager->startProcessingCart($cart);
-				}
-
-				// Remove cart from context.
-				$context = $commerceServices->getContext();
-				if ($context->getCartIdentifier() == $transaction->getTargetIdentifier())
-				{
-					$context->setCartIdentifier(null)->save();
-				}
+				throw $tm->rollBack($e);
 			}
-		}
-
-		// Send the email notification.
-		$this->sendMailFromTransaction($transaction, $commerceServices->getPaymentManager(), $event);
-	}
-
-	/**
-	 * @param \Rbs\Payment\Documents\Transaction $transaction
-	 */
-	public function handleSuccessForTransaction($transaction)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('transaction' => $transaction));
-		$this->getEventManager()->trigger('handleSuccessForTransaction', $this, $args);
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 * @throws \Exception
-	 */
-	public function onDefaultHandleSuccessForTransaction(\Change\Events\Event $event)
-	{
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-
-		/* @var $transaction \Rbs\Payment\Documents\Transaction */
-		$transaction = $event->getParam('transaction');
-		$contextData = $transaction->getContextData();
-
-		// Update the cart.
-		if (isset($contextData['from']) && $contextData['from'] == 'cart')
-		{
-			$cartManager = $commerceServices->getCartManager();
-			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
-			{
-				// Set transactionId in cart.
-				$cartManager->affectTransactionId($cart, $transaction->getId());
-			}
-		}
-
-		// Send the email notification.
-		$this->sendMailFromTransaction($transaction, $commerceServices->getPaymentManager(), $event);
-	}
-
-	/**
-	 * @param \Rbs\Payment\Documents\Transaction $transaction
-	 */
-	public function handleFailedForTransaction($transaction)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('transaction' => $transaction));
-		$this->getEventManager()->trigger('handleSuccessForTransaction', $this, $args);
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 * @throws \Exception
-	 */
-	public function onDefaultHandleFailedForTransaction(\Change\Events\Event $event)
-	{
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-
-		/* @var $transaction \Rbs\Payment\Documents\Transaction */
-		$transaction = $event->getParam('transaction');
-		$contextData = $transaction->getContextData();
-
-		// Update the cart.
-		if (isset($contextData['from']) && $contextData['from'] == 'cart')
-		{
-			$cartManager = $commerceServices->getCartManager();
-			$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
-			{
-				// TODO: is there anything to do here?
-			}
-		}
-
-		// Send the email notification.
-		$this->sendMailFromTransaction($transaction, $commerceServices->getPaymentManager(), $event);
-	}
-
-	/**
-	 * @param \Rbs\Payment\Documents\Transaction $transaction
-	 * @param \Rbs\Payment\PaymentManager $paymentManager
-	 * @param \Change\Events\Event $event
-	 * @throws \RuntimeException
-	 */
-	protected function sendMailFromTransaction($transaction, $paymentManager, $event)
-	{
-		$connector = $transaction->getConnector();
-		$contextData = $transaction->getContextData();
-		$email = $transaction->getEmail();
-		$websiteId = isset($contextData['websiteId']) ? $contextData['websiteId'] : null;
-		$LCID = isset($contextData['LCID']) ? $contextData['LCID'] : null;
-
-		if ($email && $websiteId && $LCID && $connector->getProcessingMail())
-		{
-			/* @var $website \Rbs\Website\Documents\Website */
-			$website = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($websiteId);
-			if ($website instanceof \Rbs\Website\Documents\Website)
-			{
-				$genericServices = $event->getServices('genericServices');
-				if (!($genericServices instanceof \Rbs\Generic\GenericServices))
-				{
-					throw new \RuntimeException('Unable to get CommerceServices', 999999);
-				}
-				$mailManager = $genericServices->getMailManager();
-				$code = $paymentManager->getMailCode($transaction);
-				$substitutions = $paymentManager->getMailSubstitutions($transaction);
-				$mailManager->send($code, $website, $LCID, [$email], $substitutions);
-			}
+			$event->setParam('order', $order);
 		}
 	}
 }

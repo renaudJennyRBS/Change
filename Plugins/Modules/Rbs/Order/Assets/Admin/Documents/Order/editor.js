@@ -98,10 +98,10 @@
 						scope.userAddresses = data.resources;
 					});
 
-					if (!scope.document.context.email)
+					if (!scope.document.email)
 					{
 						REST.resource('Rbs_User_User', ownerId).then(function(data) {
-							scope.document.context.email = data.email;
+							scope.document.email = data.email;
 						});
 					}
 				};

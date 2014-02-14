@@ -1,8 +1,8 @@
 <?php
-namespace Rbs\Commerce\Blocks;
+namespace Rbs\Payment\Blocks;
 
 /**
- * @name \Rbs\Commerce\Blocks\CreateAccountForOrderInformation
+ * @name \Rbs\Payment\Blocks\CreateAccountForOrderInformation
  */
 class CreateAccountForTransactionInformation extends \Rbs\User\Blocks\CreateAccountInformation
 {
@@ -14,7 +14,7 @@ class CreateAccountForTransactionInformation extends \Rbs\User\Blocks\CreateAcco
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
-		$this->setSection($i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf));
-		$this->setLabel($i18nManager->trans('m.rbs.commerce.admin.create_account_for_transaction_label', $ucf));
+		$this->setSection($i18nManager->trans('m.rbs.payment.admin.module_name', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.payment.admin.create_account_for_transaction_label', $ucf));
 	}
 }

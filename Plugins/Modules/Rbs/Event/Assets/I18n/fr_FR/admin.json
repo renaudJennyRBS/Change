@@ -56,6 +56,9 @@
 	"category_label":{
 		"message":"détail d'une catégorie"
 	},
+	"category_function":{
+		"message":"détail d'une catégorie"
+	},
 	"category_section_restriction":{
 		"message":"restreindre aux éléments publiés dans"
 	},

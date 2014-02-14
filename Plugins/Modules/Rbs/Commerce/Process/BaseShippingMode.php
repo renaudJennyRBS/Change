@@ -123,7 +123,7 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 	}
 
 	/**
-	 * @param \Rbs\Geo\Address\AddressInterface $address
+	 * @param \Rbs\Geo\Address\BaseAddress $address
 	 * @return $this
 	 */
 	public function setAddress($address)
@@ -133,7 +133,7 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 	}
 
 	/**
-	 * @return \Rbs\Geo\Address\AddressInterface
+	 * @return \Rbs\Geo\Address\BaseAddress
 	 */
 	public function getAddress()
 	{

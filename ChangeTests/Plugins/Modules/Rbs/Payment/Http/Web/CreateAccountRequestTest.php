@@ -62,7 +62,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$jobManager = $this->getApplicationServices()->getJobManager();
 		$this->assertEquals(0, $jobManager->getCountJobIds());
 
-		$createAccountRequest = new \Rbs\Commerce\Http\Web\CreateAccountRequest();
+		$createAccountRequest = new \Rbs\Payment\Http\Web\CreateAccountRequest();
 		$createAccountRequest->execute($event);
 
 		$dbProvider = $this->getApplicationServices()->getDbProvider();
@@ -99,7 +99,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals($website->getCurrentLocalization()->getTitle(), $jobArgs['substitutions']['website']);
 		$this->assertArrayHasKey('link', $jobArgs['substitutions']);
 		$query = ['requestId' => 1, 'email' => $emailAddress];
-		$expectedLink = $urlManager->getAjaxURL('Rbs_Commerce', 'CreateAccountConfirmation', $query);
+		$expectedLink = $urlManager->getAjaxURL('Rbs_Payment', 'CreateAccountConfirmation', $query);
 		$this->assertEquals($expectedLink, $jobArgs['substitutions']['link']);
 	}
 

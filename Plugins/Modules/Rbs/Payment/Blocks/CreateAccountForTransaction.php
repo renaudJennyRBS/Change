@@ -1,11 +1,11 @@
 <?php
-namespace Rbs\Commerce\Blocks;
+namespace Rbs\Payment\Blocks;
 
 use Change\Presentation\Blocks\Event;
 use Change\Presentation\Blocks\Parameters;
 
 /**
- * @name \Rbs\Commerce\Blocks\CreateAccountForTransaction
+ * @name \Rbs\Payment\Blocks\CreateAccountForTransaction
  */
 class CreateAccountForTransaction extends \Rbs\User\Blocks\CreateAccount
 {
@@ -28,7 +28,7 @@ class CreateAccountForTransaction extends \Rbs\User\Blocks\CreateAccount
 		{
 			$parameters->addParameterMeta('transactionId');
 			$parameters->setParameterValue('transactionId', $transactionId);
-			$parameters->setParameterValue('formAction', 'Action/Rbs/Commerce/CreateAccountRequest?transactionId=' . $transactionId);
+			$parameters->setParameterValue('formAction', 'Action/Rbs/Payment/CreateAccountRequest?transactionId=' . $transactionId);
 
 			$initialValues = $parameters->getParameterValue('initialValues');
 			$initialValues['email'] = $transaction->getEmail();

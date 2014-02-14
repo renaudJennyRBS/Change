@@ -50,15 +50,15 @@ class UpdateProcessingStatusForTransaction
 				$tm->begin();
 
 				$transaction->save();
-				$processManager = $commerceServices->getProcessManager();
+				$paymentManager = $commerceServices->getPaymentManager();
 
 				// In case where the transaction is turned directly from initiated to new status.
 				if ($params['originalStatus'] === \Rbs\Payment\Documents\Transaction::STATUS_INITIATED)
 				{
-					$processManager->handleProcessingForTransaction($transaction);
+					$paymentManager->handleProcessingForTransaction($transaction);
 				}
 
-				$processManager->{'handle' . ucfirst($status) . 'ForTransaction'}($transaction);
+				$paymentManager->{'handle' . ucfirst($status) . 'ForTransaction'}($transaction);
 
 				$tm->commit();
 			}

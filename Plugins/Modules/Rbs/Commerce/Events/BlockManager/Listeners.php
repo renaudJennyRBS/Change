@@ -19,6 +19,7 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
+		new RegisterByBlockName('Rbs_Brand_Brand', true, $events);
 		new RegisterByBlockName('Rbs_Catalog_ProductList', true, $events);
 		new RegisterByBlockName('Rbs_Catalog_Product', true, $events);
 		new RegisterByBlockName('Rbs_Catalog_CrossSelling', true, $events);
@@ -27,9 +28,8 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Commerce_ShortCart', true, $events);
 		new RegisterByBlockName('Rbs_Commerce_OrderProcess', true, $events);
 		new RegisterByBlockName('Rbs_Commerce_PaymentReturn', true, $events);
-		new RegisterByBlockName('Rbs_Commerce_CreateAccountForTransaction', true, $events);
+		new RegisterByBlockName('Rbs_Payment_CreateAccountForTransaction', true, $events);
 		new RegisterByBlockName('Rbs_Store_WebStoreSelector', true, $events);
-		new RegisterByBlockName('Rbs_Brand_Brand', true, $events);
 	}
 
 	/**

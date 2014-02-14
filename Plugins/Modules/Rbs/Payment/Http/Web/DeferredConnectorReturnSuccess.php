@@ -68,10 +68,10 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 				throw new \RuntimeException('Unable to get CommerceServices', 999999);
 			}
 
-			$commerceServices->getProcessManager()->handleProcessingForTransaction($transaction);
+			$commerceServices->getPaymentManager()->handleProcessingForTransaction($transaction);
 			if ($connector->getAutoValidatePayment())
 			{
-				$commerceServices->getProcessManager()->handleSuccessForTransaction($transaction);
+				$commerceServices->getPaymentManager()->handleSuccessForTransaction($transaction);
 			}
 		}
 

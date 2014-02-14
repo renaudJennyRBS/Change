@@ -3,7 +3,7 @@
 .structure-editor {
 	background: url('../img/page-editor-bg.png') repeat;
 	margin: 0 -4px;
-	padding: 2px;
+	padding: 2px 4px;
 	position: relative;
 	top: 4px;
 	border: 4px solid rgba(0,0,0,0.5);
@@ -16,6 +16,10 @@
 	border-radius: 4px;
 }
 
+.structure-editor .row .block-container.editable-zone {
+	padding: 6px 8px;
+}
+
 .structure-editor .not-editable-zone {
 	background: url('../img/disabled-content-bg.png') repeat;
 	border: 1px solid rgba(121,121,121, 0.7);
@@ -25,11 +29,17 @@
 	float: left;
 	line-height: 40px;
 	margin: 0px !important;
+	text-shadow: 0 1px 1px black;
 }
 
-.structure-editor .not-editable-row, .structure-editor .not-editable-cell {
+.structure-editor .not-editable-cell {
 	margin: 0px !important;
 	padding: 0px !important;
+}
+
+.structure-editor .not-editable-row {
+	margin: 0 -15px !important;
+	padding: 0 !important;
 }
 
 .structure-editor .not-editable-cell .not-editable-zone{
@@ -59,7 +69,6 @@
 
 .structure-editor .row {
 	margin: 6px 0;
-	padding: 2px 4px;
 }
 .structure-editor .row .block-container {
 	padding: 4px;
@@ -142,6 +151,7 @@
 	border: 1px solid rgba(0, 87, 141, 0.7);
 	border-radius: 4px 4px 4px 4px;
 	cursor: pointer;
+	padding: 2px 4px;
 }
 .structure-editor [rbs-row].active {
 	background: url("../img/columns-selected-bg.png") repeat scroll 0 0 transparent;
