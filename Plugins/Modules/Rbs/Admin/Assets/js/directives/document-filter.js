@@ -10,7 +10,7 @@
 		};
 	});
 
-	app.directive('rbsDocumentFilterPanel', ['localStorageService', function(localStorageService) {
+	app.directive('rbsDocumentFilterPanel', ['$http', 'localStorageService', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.NotificationCenter', 'RbsChange.i18n', function ($http, localStorageService, REST, Utils, NotificationCenter, i18n) {
 		var searchIndex = 0;
 		return {
 			restrict: 'E',
@@ -115,8 +115,90 @@
 						scope.showFilter = true;
 					}
 				});
+
+
+				scope.savedFilters = [];
+				scope.showFilterList = false;
+
+
+				function loadFilters ()
+				{
+					var p, url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters'), {'model' : model});
+					p = $http.get(url);
+					p.success(function (filters)
+					{
+						scope.savedFilters = filters;
+					});
+					return p;
+				}
+				loadFilters();
+
+
+				scope.useExistingFilter = function (f)
+				{
+					if (f && f.content) {
+						scope.filter = f.content;
+						scope.existingFilterInUse = f;
+						scope.applyFilter();
+					} else {
+						scope.existingFilterInUse = null;
+					}
+				};
+
+
+				scope.createFilter = function ()
+				{
+					var url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters')),
+						title = window.prompt(i18n.trans('m.rbs.admin.adminjs.enter_filter_title'));
+
+					if (title)
+					{
+						$http.post(url, {'model_name' : model, 'content' : angular.fromJson(scope.filter), 'title' : title})
+							.success(function (data) {
+								loadFilters().then(function ()
+								{
+									scope.useExistingFilter(data);
+								});
+							})
+							.error(function (data) {
+								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.filter_create_error'), data.message, 'rbs_filter_create_error');
+							});
+					}
+				};
+
+
+				scope.updateExistingFilter = function ()
+				{
+					var url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters'));
+
+					$http.put(url, scope.existingFilterInUse)
+						.success(function () {
+							loadFilters();
+						})
+						.error(function (data) {
+							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.filter_update_error'), data.message, 'rbs_filter_update_error');
+						});
+				};
+
+
+				scope.removeExistingFilter = function ()
+				{
+					if (window.confirm(i18n.trans('m.rbs.admin.adminjs.confirm_delete_filter')))
+					{
+						var url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters'), {'filter_id' : scope.existingFilterInUse['filter_id']});
+
+						$http['delete'](url)
+							.success(function () {
+								scope.useExistingFilter(null);
+								loadFilters();
+							})
+							.error(function (data) {
+								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.filter_delete_error'), data.message, 'rbs_filter_delete_error');
+							});
+					}
+				};
 			}
-		}
+		};
 	}]);
 
 	function redrawFilters($compile, scope, element, filters) {

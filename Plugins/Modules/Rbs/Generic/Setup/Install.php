@@ -1,11 +1,64 @@
 <?php
 namespace Rbs\Generic\Setup;
+use Change\Db\Schema\FieldDefinition;
+use Change\Db\Schema\KeyDefinition;
 
 /**
  * @name \Rbs\Generic\Setup\Install
  */
 class Install extends \Change\Plugins\InstallBase
 {
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
+	 * @throws \RuntimeException
+	 */
+	public function executeDbSchema($plugin, $schemaManager)
+	{
+		$this->initializeTables($schemaManager);
+	}
+
+	/**
+	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
+	 */
+	private function initializeTables($schemaManager)
+	{
+		$td = $schemaManager->newTableDefinition('change_document_filters');
+		$idField = new FieldDefinition('filter_id');
+		$idField->setType(FieldDefinition::INTEGER);
+		$idField->setAutoNumber(true);
+		$idField->setNullable(false);
+		$td->addField($idField);
+
+		$modelField = new FieldDefinition('model_name');
+		$modelField->setType(FieldDefinition::VARCHAR);
+		$modelField->setLength(80);
+		$modelField->setNullable(false);
+		$td->addField($modelField);
+
+		$userIdField = new FieldDefinition('user_id');
+		$userIdField->setType(FieldDefinition::INTEGER);
+		$userIdField->setDefaultValue(0);
+		$td->addField($userIdField);
+
+		$jsonField = new FieldDefinition('content');
+		$jsonField->setType(FieldDefinition::TEXT);
+		$td->addField($jsonField);
+
+		$titleField = new FieldDefinition('title');
+		$titleField->setType(FieldDefinition::VARCHAR);
+		$titleField->setLength(255);
+		$titleField->setNullable(false);
+		$td->addField($titleField);
+
+		$key = new KeyDefinition();
+		$key->setType(KeyDefinition::PRIMARY);
+		$key->addField($idField);
+		$td->addKey($key);
+		$schemaManager->createOrAlterTable($td);
+	}
+
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
