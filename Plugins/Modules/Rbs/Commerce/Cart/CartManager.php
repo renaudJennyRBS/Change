@@ -11,6 +11,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_MANAGER_IDENTIFIER = 'CartManager';
 
 	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
 	 * @var \Rbs\Stock\StockManager
 	 */
 	protected $stockManager;
@@ -24,6 +29,29 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var \Change\Logging\Logging
 	 */
 	protected $logging;
+
+	/**
+	 * @var array
+	 */
+	protected $cachedCarts = [];
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
 
 	/**
 	 * @param \Rbs\Price\PriceManager $priceManager
@@ -104,43 +132,18 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
 		$eventManager->attach('getFiltersDefinition', [$this, 'onDefaultGetFiltersDefinition'], 5);
 		$eventManager->attach('isValidFilter', [$this, 'onDefaultIsValidFilter'], 5);
-	}
 
-	/**
-	 * @param string $cartIdentifier
-	 * @return \Rbs\Commerce\Cart\Cart|null
-	 */
-	public function getCartByIdentifier($cartIdentifier)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('cartIdentifier' => $cartIdentifier));
-		$this->getEventManager()->trigger('getCartByIdentifier', $this, $args);
-		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
-		{
-			return $args['cart'];
-		}
-		return null;
-	}
-
-	/**
-	 * Return Merged cart
-	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @param \Rbs\Commerce\Cart\Cart $cartToMerge
-	 * @return \Rbs\Commerce\Cart\Cart
-	 */
-	public function mergeCart($cart, $cartToMerge)
-	{
-		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cartToMerge instanceof \Rbs\Commerce\Cart\Cart)
-		{
-			$em = $this->getEventManager();
-			$args = $em->prepareArgs(array('cart' => $cart, 'cartToMerge' => $cartToMerge));
-			$this->getEventManager()->trigger('mergeCart', $this, $args);
-			if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
-			{
-				return $args['cart'];
-			}
-		}
-		return $cart;
+		$eventManager->attach('getNewCart', [$this, 'onDefaultGetNewCart'], 5);
+		$eventManager->attach('saveCart', [$this, 'onDefaultSaveCart'], 5);
+		$eventManager->attach('getCartByIdentifier', [$this, 'onDefaultGetCartByIdentifier'], 5);
+		$eventManager->attach('mergeCart', [$this, 'onDefaultMergeCart'], 5);
+		$eventManager->attach('getUnlockedCart', [$this, 'onDefaultGetUnlockedCart'], 5);
+		$eventManager->attach('lockCart', [$this, 'onDefaultLockCart'], 5);
+		$eventManager->attach('startProcessingCart', [$this, 'onDefaultStartProcessingCart'], 5);
+		$eventManager->attach('affectTransactionId', [$this, 'onDefaultAffectTransactionId'], 5);
+		$eventManager->attach('affectOrder', [$this, 'onDefaultAffectOrder'], 5);
+		$eventManager->attach('affectUser', [$this, 'onDefaultAffectUser'], 5);
+		$eventManager->attach('deleteCart', [$this, 'onDefaultDeleteCart'], 5);
 	}
 
 	/**
@@ -154,8 +157,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	public function getNewCart($webStore = null, $billingArea = null, $zone = null, array $context = array())
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(
-			array('webStore' => $webStore, 'billingArea' => $billingArea, 'zone' => $zone, 'context' => $context));
+		$args = $em->prepareArgs(['webStore' => $webStore, 'billingArea' => $billingArea, 'zone' => $zone,
+			'context' => $context]);
 		$this->getEventManager()->trigger('getNewCart', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
 		{
@@ -189,26 +192,60 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @throws \RuntimeException
-	 * @return \Rbs\Commerce\Cart\Cart
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
 	 */
-	public function getUnlockedCart($cart)
+	public function onDefaultGetNewCart(\Change\Events\Event $event)
 	{
-		if (!$cart->isLocked())
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		$dbProvider = $event->getApplicationServices()->getDbProvider();
+		$cart = null;
+		try
 		{
-			return $cart;
-		}
+			$tm->begin();
 
-		$newCart = $this->getNewCart($cart->getWebStore(), $cart->getBillingArea(), $cart->getZone());
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('cart' => $cart, 'newCart' => $newCart));
-		$this->getEventManager()->trigger('getUnlockedCart', $this, $args);
-		if (isset($args['newCart']) && $args['newCart'] instanceof \Rbs\Commerce\Cart\Cart)
-		{
-			return $args['newCart'];
+			$qb = $dbProvider->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$date = new \DateTime();
+
+			$qb->insert($fb->table('rbs_commerce_dat_cart'),
+				$fb->column('creation_date'), $fb->column('last_update'));
+			$qb->addValue($fb->dateTimeParameter('creationDate'));
+			$qb->addValue($fb->dateTimeParameter('lastUpdate'));
+
+			$iq = $qb->insertQuery();
+			$iq->bindParameter('creationDate', $date);
+			$iq->bindParameter('lastUpdate', $date);
+			$iq->execute();
+
+			$storageId = $iq->getDbProvider()->getLastInsertId('rbs_commerce_dat_cart');
+			$identifier = sha1($storageId . '-' . $date->getTimestamp());
+
+			$cart = new Cart($identifier, $this);
+			$cart->lastUpdate($date);
+			$cart->getContext()->set('storageId', $storageId);
+
+			$qb = $dbProvider->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->table('rbs_commerce_dat_cart'));
+			$qb->assign($fb->column('identifier'), $fb->parameter('identifier'));
+			$qb->assign($fb->column('cart_data'), $fb->lobParameter('cartData'));
+			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('id')));
+			$uq = $qb->updateQuery();
+
+			$uq->bindParameter('identifier', $cart->getIdentifier());
+			$uq->bindParameter('cartData', serialize($cart));
+			$uq->bindParameter('id', $storageId);
+			$uq->execute();
+
+			$this->cachedCarts = array();
+			$tm->commit();
 		}
-		throw new \RuntimeException('Unable to get a new cart', 999999);
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+		$event->setParam('cart', $cart);
 	}
 
 	/**
@@ -222,6 +259,246 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$em = $this->getEventManager();
 			$args = $em->prepareArgs(array('cart' => $cart));
 			$this->getEventManager()->trigger('saveCart', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultSaveCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			$cart->lastUpdate(new \DateTime());
+			try
+			{
+				$tm->begin();
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+
+				$qb->update($fb->table('rbs_commerce_dat_cart'));
+				$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
+				$qb->assign($fb->column('cart_data'), $fb->lobParameter('cartData'));
+				$qb->assign($fb->column('store_id'), $fb->integerParameter('webStoreId'));
+				$qb->assign($fb->column('user_id'), $fb->integerParameter('userId'));
+				$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
+				$qb->assign($fb->column('transaction_id'), $fb->integerParameter('transactionId'));
+				$qb->assign($fb->column('order_id'), $fb->integerParameter('orderId'));
+				$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
+				$qb->assign($fb->column('price_value'), $fb->decimalParameter('priceValue'));
+				$qb->assign($fb->column('price_value_with_tax'), $fb->decimalParameter('priceValueWithTax'));
+				$qb->assign($fb->column('currency_code'), $fb->parameter('currencyCode'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+						$fb->eq($fb->column('locked'), $fb->booleanParameter('locked'))
+					)
+				);
+				$uq = $qb->updateQuery();
+
+				$uq->bindParameter('lastUpdate', $cart->lastUpdate());
+				$uq->bindParameter('cartData', serialize($cart));
+				$uq->bindParameter('webStoreId', $cart->getWebStoreId());
+				$uq->bindParameter('ownerId', $cart->getOwnerId());
+				$uq->bindParameter('userId', $cart->getUserId());
+				$uq->bindParameter('transactionId', $cart->getTransactionId());
+				$uq->bindParameter('orderId', $cart->getOrderId());
+
+				$uq->bindParameter('lineCount', count($cart->getLines()));
+				$uq->bindParameter('priceValue', $cart->getPriceValue());
+				$uq->bindParameter('priceValueWithTax', $cart->getPriceValueWithTax());
+				$uq->bindParameter('currencyCode', $cart->getCurrencyCode());
+
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				$uq->bindParameter('locked', false);
+				$uq->execute();
+
+				$this->cachedCarts = array();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+	}
+
+	/**
+	 * @param string $cartIdentifier
+	 * @return \Rbs\Commerce\Cart\Cart|null
+	 */
+	public function getCartByIdentifier($cartIdentifier)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('cartIdentifier' => $cartIdentifier));
+		$this->getEventManager()->trigger('getCartByIdentifier', $this, $args);
+		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			return $args['cart'];
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetCartByIdentifier(\Change\Events\Event $event)
+	{
+		$identifier = $event->getParam('cartIdentifier');
+		if (!$identifier)
+		{
+			return;
+		}
+
+		if (!array_key_exists($identifier, $this->cachedCarts))
+		{
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			$qb = $dbProvider->getNewQueryBuilder('loadCart');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id')
+					, $fb->column('user_id'), $fb->column('transaction_id'), $fb->column('order_id'),
+					$fb->column('locked'), $fb->column('processing'), $fb->column('last_update'));
+				$qb->from($fb->table('rbs_commerce_dat_cart'));
+				$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
+			}
+			$sq = $qb->query();
+			$sq->bindParameter('identifier', $identifier);
+
+			$cartInfo = $sq->getFirstResult($sq->getRowsConverter()
+				->addLobCol('cart_data')
+				->addIntCol('owner_id', 'store_id', 'user_id', 'transaction_id', 'order_id')
+				->addBoolCol('locked', 'processing')->addDtCol('last_update'));
+
+			$this->cachedCarts[$identifier] = $cartInfo;
+		}
+		else
+		{
+			$cartInfo = $this->cachedCarts[$identifier];
+		}
+
+		if ($cartInfo)
+		{
+			$cart = unserialize($cartInfo['cart_data']);
+			if ($cart instanceof Cart)
+			{
+				$cart->setIdentifier($identifier)
+					->setWebStoreId($cartInfo['store_id'])
+					->setUserId($cartInfo['user_id'])
+					->setLocked($cartInfo['locked'])
+					->setProcessing($cartInfo['processing'])
+					->setOwnerId($cartInfo['owner_id'])
+					->setTransactionId($cartInfo['transaction_id'])
+					->setOrderId($cartInfo['order_id']);
+				$cart->lastUpdate($cartInfo['last_update']);
+				$cart->setCartManager($this);
+				$event->setParam('cart', $cart);
+			}
+		}
+	}
+
+	/**
+	 * Return Merged cart
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Rbs\Commerce\Cart\Cart $cartToMerge
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	public function mergeCart($cart, $cartToMerge)
+	{
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cartToMerge instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(array('cart' => $cart, 'cartToMerge' => $cartToMerge));
+			$this->getEventManager()->trigger('mergeCart', $this, $args);
+			if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
+			{
+				return $args['cart'];
+			}
+		}
+		return $cart;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultMergeCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		$cartToMerge = $event->getParam('cartToMerge');
+		if (($cart instanceof \Rbs\Commerce\Cart\Cart) && ($cartToMerge instanceof \Rbs\Commerce\Cart\Cart))
+		{
+			if ($cart->getWebStoreId() == $cartToMerge->getWebStoreId())
+			{
+				foreach ($cartToMerge->getLines() as $lineToMerge)
+				{
+					$currentCartLine = $cart->getLineByKey($lineToMerge->getKey());
+					if ($currentCartLine === null)
+					{
+						$this->addLine($cart, $lineToMerge->toArray());
+					}
+					else
+					{
+						$newQuantity = $currentCartLine->getQuantity() + $lineToMerge->getQuantity();
+						$this->updateLineQuantityByKey($cart, $currentCartLine->getKey(), $newQuantity);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	public function getUnlockedCart($cart)
+	{
+		if (!$cart->isLocked())
+		{
+			return $cart;
+		}
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('cart' => $cart));
+		$this->getEventManager()->trigger('getUnlockedCart', $this, $args);
+		if (isset($args['newCart']) && $args['newCart'] instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			return $args['newCart'];
+		}
+		throw new \RuntimeException('Unable to get a new cart', 999999);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetUnlockedCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			/** @var $webStore \Rbs\Store\Documents\WebStore */
+			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone());
+			$newCart->getContext()->set('lockedCart', $cart->getIdentifier());
+			$newCart->setUserId($cart->getUserId());
+			$newCart->setOwnerId($cart->getOwnerId());
+			foreach ($cart->getLines() as $line)
+			{
+				$this->addLine($newCart, $newCart->getNewLine($line->toArray()));
+			}
+			$newCart->setEmail($cart->getEmail());
+			$newCart->setAddress($cart->getAddress());
+			$newCart->setShippingModes($cart->getShippingModes());
+			$newCart->setCoupons($cart->getCoupons());
+			$event->setParam('newCart', $newCart);
 		}
 	}
 
@@ -360,6 +637,55 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultLockCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			$lastUpdate = new \DateTime();
+
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			try
+			{
+				$tm->begin();
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_commerce_dat_cart'));
+				$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
+				$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
+				$qb->assign($fb->column('locked'), $fb->booleanParameter('locked'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+						$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
+					)
+				);
+
+				$uq = $qb->updateQuery();
+				$uq->bindParameter('lastUpdate', $lastUpdate);
+				$uq->bindParameter('ownerId', $cart->getOwnerId());
+				$uq->bindParameter('locked', true);
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				$uq->bindParameter('whereLocked', false);
+				$uq->execute();
+
+				$tm->commit();
+				$this->cachedCarts = [];
+				$cart->lastUpdate($lastUpdate);
+				$cart->setLocked(true);
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+	}
+
+	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @return boolean
 	 */
@@ -384,6 +710,54 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultStartProcessingCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			$lastUpdate = new \DateTime();
+
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			try
+			{
+				$tm->begin();
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_commerce_dat_cart'));
+				$qb->assign($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate'));
+				$qb->assign($fb->column('processing'), $fb->booleanParameter('processing'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+						$fb->eq($fb->column('processing'), $fb->booleanParameter('whereProcessing'))
+					)
+				);
+
+				$uq = $qb->updateQuery();
+				$uq->bindParameter('lastUpdate', $lastUpdate);
+				$uq->bindParameter('processing', true);
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				$uq->bindParameter('whereProcessing', false);
+				$uq->execute();
+
+				$tm->commit();
+
+				$this->cachedCarts = [];
+				$cart->lastUpdate($lastUpdate);
+				$cart->setProcessing(true);
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
 	}
 
 	/**
@@ -415,6 +789,51 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultAffectTransactionId(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		$transactionId = $event->getParam('transactionId');
+
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart && is_numeric($transactionId))
+		{
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			try
+			{
+				$tm->begin();
+
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_commerce_dat_cart'));
+				$qb->assign($fb->column('transaction_id'), $fb->integerParameter('transactionId'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+						$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
+					)
+				);
+
+				$uq = $qb->updateQuery();
+				$uq->bindParameter('transactionId', $transactionId);
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				$uq->bindParameter('whereLocked', true);
+				$uq->execute();
+
+				$tm->commit();
+				$this->cachedCarts = [];
+				$cart->setTransactionId($transactionId);
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+	}
+
+	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param integer|\Rbs\Order\Documents\Order $order
 	 * @return integer|null
@@ -438,6 +857,51 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultAffectOrder(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		$order = $event->getParam('order');
+
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $order)
+		{
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			try
+			{
+				$tm->begin();
+				$orderId = ($order instanceof \Change\Documents\AbstractDocument) ? $order->getId() : intval($order);
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_commerce_dat_cart'));
+				$qb->assign($fb->column('order_id'), $fb->integerParameter('order_id'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+						$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
+					)
+				);
+
+				$uq = $qb->updateQuery();
+				$uq->bindParameter('order_id', $orderId);
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				$uq->bindParameter('whereLocked', true);
+				$uq->execute();
+
+				$tm->commit();
+				$this->cachedCarts = [];
+				$cart->setOrderId($orderId);
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+	}
+
+	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param integer|\Rbs\User\Documents\User $user
 	 */
@@ -452,6 +916,114 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		catch (\Exception $e)
 		{
 			$this->getLogging()->exception($e);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultAffectUser(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		$user = $event->getParam('user');
+
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $user)
+		{
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			try
+			{
+				$tm->begin();
+				$userId = ($user instanceof \Change\Documents\AbstractDocument) ? $user->getId() : intval($user);
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_commerce_dat_cart'));
+				$qb->assign($fb->column('user_id'), $fb->integerParameter('user_id'));
+				$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
+
+				$uq = $qb->updateQuery();
+				$uq->bindParameter('user_id', $userId);
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				$uq->execute();
+
+				$tm->commit();
+				$this->cachedCarts = [];
+				$cart->setUserId($userId);
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param bool $purge
+	 */
+	public function deleteCart(\Rbs\Commerce\Cart\Cart $cart, $purge = false)
+	{
+		try
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(array('cart' => $cart, 'purge' => $purge));
+			$this->getEventManager()->trigger('deleteCart', $this, $args);
+		}
+		catch (\Exception $e)
+		{
+			$this->getLogging()->exception($e);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultDeleteCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		$purge = $event->getParam('purge', false);
+
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			try
+			{
+				$tm->begin();
+				$qb = $dbProvider->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->delete($fb->table('rbs_commerce_dat_cart'));
+				if ($purge)
+				{
+					$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
+				}
+				else
+				{
+					$qb->where(
+						$fb->logicAnd(
+							$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
+							$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
+						)
+					);
+				}
+
+				$uq = $qb->deleteQuery();
+				$uq->bindParameter('identifier', $cart->getIdentifier());
+				if (!$purge) {
+					$uq->bindParameter('whereLocked', false);
+				}
+				$uq->execute();
+
+				$tm->commit();
+				$this->cachedCarts = [];
+				$cart->getContext()->set('storageId', null);
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
 		}
 	}
 
@@ -582,9 +1154,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$cart = $event->getParam('cart');
 		if ($cart instanceof Cart)
 		{
-			$cart->setDocumentManager($event->getApplicationServices()->getDocumentManager());
-			$webStore = $cart->getWebStore();
-			if ($webStore)
+			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+			if ($webStore instanceof \Rbs\Store\Documents\Webstore)
 			{
 				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
 			}
@@ -606,9 +1177,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function refreshCartLine(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Commerce\Cart\CartLine $line)
 	{
-		$webStore = $cart->getWebStore();
+		$webStore = $this->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
 		$billingArea = $cart->getBillingArea();
-		if (!$webStore || !$billingArea)
+		if (!($webStore instanceof \Rbs\Store\Documents\Webstore) || !$billingArea)
 		{
 			return;
 		}
@@ -872,5 +1443,46 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			return true;
 		}
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return array|\Change\Documents\DocumentWeakReference|mixed
+	 */
+	public function getSerializableValue($value)
+	{
+		if ($value instanceof \Change\Documents\AbstractDocument)
+		{
+			return new \Change\Documents\DocumentWeakReference($value);
+		}
+		elseif (is_array($value) || $value instanceof \Zend\Stdlib\Parameters)
+		{
+			foreach ($value as $k => $v)
+			{
+				$value[$k] = $this->getSerializableValue($v);
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @throws \RuntimeException
+	 * @return array|\Change\Documents\AbstractDocument|mixed
+	 */
+	public function restoreSerializableValue($value)
+	{
+		if ($value instanceof \Change\Documents\DocumentWeakReference)
+		{
+			return $value->getDocument($this->getDocumentManager());
+		}
+		elseif (is_array($value) || $value instanceof \Zend\Stdlib\Parameters)
+		{
+			foreach ($value as $k => $v)
+			{
+				$value[$k] = $this->restoreSerializableValue($v);
+			}
+		}
+		return $value;
 	}
 }

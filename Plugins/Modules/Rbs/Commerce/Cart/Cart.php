@@ -12,11 +12,6 @@ class Cart implements \Serializable
 	protected $cartManager;
 
 	/**
-	 * @var \Change\Documents\DocumentManager
-	 */
-	protected $documentManager;
-
-	/**
 	 * @var string
 	 */
 	protected $identifier;
@@ -79,17 +74,17 @@ class Cart implements \Serializable
 	/**
 	 * @var CartError[]
 	 */
-	protected $errors = array();
+	protected $errors = [];
 
 	/**
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
-	protected $lines = array();
+	protected $lines = [];
 
 	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
 	 */
-	protected $linesTaxesValues = array();
+	protected $linesTaxesValues = [];
 
 	/**
 	 * @var string
@@ -104,27 +99,27 @@ class Cart implements \Serializable
 	/**
 	 * @var \Rbs\Commerce\Process\ShippingModeInterface[]
 	 */
-	protected $shippingModes = array();
+	protected $shippingModes = [];
 
 	/**
 	 * @var \Rbs\Commerce\Process\CouponInterface[]
 	 */
-	protected $coupons = array();
+	protected $coupons = [];
 
 	/**
 	 * @var \Rbs\Commerce\Cart\CartLine[]
 	 */
-	protected $fees = array();
+	protected $fees = [];
 
 	/**
-	 * @var \Rbs\Commerce\Cart\CartLine[]
+	 * @var \Rbs\Commerce\Cart\CartDiscount[]
 	 */
-	protected $discounts = array();
+	protected $discounts =[];
 
 	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
 	 */
-	protected $taxesValues = array();
+	protected $taxesValues = [];
 
 	/**
 	 * @var array|null
@@ -142,28 +137,6 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return $this
-	 */
-	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager = null)
-	{
-		$this->documentManager = $documentManager;
-		if ($documentManager && $this->serializedData)
-		{
-			$this->restoreSerializedData();
-		}
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentManager
-	 */
-	public function getDocumentManager()
-	{
-		return $this->documentManager;
-	}
-
-	/**
 	 * @return \Rbs\Commerce\Cart\CartManager
 	 */
 	public function getCartManager()
@@ -175,10 +148,13 @@ class Cart implements \Serializable
 	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
 	 * @return $this
 	 */
-	public function setCartManager($cartManager)
+	public function setCartManager(\Rbs\Commerce\Cart\CartManager $cartManager)
 	{
 		$this->cartManager = $cartManager;
-
+		if ($this->serializedData)
+		{
+			$this->restoreSerializedData();
+		}
 		return $this;
 	}
 
@@ -234,15 +210,6 @@ class Cart implements \Serializable
 	{
 		$this->getContext()->set('pricesValueWithTax', $pricesValueWithTax);
 		return $this;
-	}
-
-
-	/**
-	 * @return \Rbs\Store\Documents\Webstore|null
-	 */
-	public function getWebStore()
-	{
-		return $this->getDocumentManager()->getDocumentInstance($this->getWebStoreId(), 'Rbs_Store_Webstore');
 	}
 
 	/**
@@ -550,7 +517,7 @@ class Cart implements \Serializable
 	 */
 	public function getNewLine($parameters)
 	{
-		return new CartLine($parameters);
+		return new CartLine($parameters, $this->getCartManager());
 	}
 
 	/**
@@ -808,7 +775,7 @@ class Cart implements \Serializable
 			'coupons' => $this->coupons,
 			'taxesValues' => $this->taxesValues,
 		);
-		return serialize((new CartStorage())->getSerializableValue($serializedData));
+		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
 
 	/**
@@ -821,10 +788,13 @@ class Cart implements \Serializable
 		$this->serializedData = unserialize($serialized);
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function restoreSerializedData()
 	{
-		$serializedData = (new CartStorage())->setDocumentManager($this->getDocumentManager())
-			->restoreSerializableValue($this->serializedData);
+		$cartManager = $this->getCartManager();
+		$serializedData = $cartManager->restoreSerializableValue($this->serializedData);
 		$this->serializedData = null;
 		$this->identifier = $serializedData['identifier'];
 		$this->billingArea = $serializedData['billingArea'];
@@ -840,11 +810,25 @@ class Cart implements \Serializable
 		$this->shippingModes = $serializedData['shippingModes'];
 		$this->coupons = $serializedData['coupons'];
 		$this->taxesValues = $serializedData['taxesValues'];
+
 		foreach ($this->lines as $line)
 		{
 			/* @var $line CartLine */
-			$line->setDocumentManager($this->getDocumentManager());
+			$line->setCartManager($cartManager);
 		}
+		foreach ($this->fees as $fee)
+		{
+			/* @var $fee CartLine */
+			$fee->setCartManager($cartManager);
+		}
+
+		foreach ($this->discounts as $discount)
+		{
+
+			$discount->setCartManager($cartManager);
+		}
+
+		return $serializedData;
 	}
 
 	/**
@@ -911,10 +895,21 @@ class Cart implements \Serializable
 			$array['coupons'][] = $coupon->toArray();
 		}
 
+		foreach ($this->fees as $fee)
+		{
+			$array['fees'][] = $fee->toArray();
+		}
+
+		foreach ($this->discounts as $discount)
+		{
+			$array['discounts'][] = $discount->toArray();
+		}
+
 		foreach ($this->errors as $error)
 		{
 			$array['errors'][] = $error->toArray();
 		}
+
 		return $array;
 	}
 }

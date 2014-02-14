@@ -64,7 +64,6 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$cart2->setCartManager($cs->getCartManager());
 
-		$cart2->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 		$this->assertEquals('idt', $cart2->getIdentifier());
 		$this->assertEquals('ZTEST', $cart2->getZone());
 		$this->assertEquals(0, $cart2->getOwnerId());
