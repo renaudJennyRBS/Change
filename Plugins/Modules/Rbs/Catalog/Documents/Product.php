@@ -40,6 +40,13 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 				$baseUrl = implode('/', $pathParts);
 				$documentResult->addLink(new Link($um, $baseUrl . '/ProductListItems/', 'productListItems'));
 				$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
+
+				// TODO Variant link
+				/*if ($document->getVariantGroup())
+				{
+					$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
+				}*/
+
 				$image = $document->getFirstVisual();
 				if ($image)
 				{
@@ -276,7 +283,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	 */
 	public function getAllSkuOfVariant($onlyPublishedProduct = false)
 	{
-		if($this->hasVariants())
+		if(!$this->getSku() && $this->getVariantGroup())
 		{
 			$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
 			$productQuery = $query->getPropertyModelBuilder('id', 'Rbs_Catalog_Product', 'sku');

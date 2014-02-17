@@ -15,6 +15,9 @@
 				<p class="list-group-item">
 					<a href="(= document | rbsURL:'variant-stocks':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantstocks', ['ucf']) | raw}}</a>
 				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-prices':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantprices', ['ucf']) | raw}}</a>
+				</p>
 			</div>
 		</div>
 		<div class="rbs-aside-block" ng-show="document.rootProduct">

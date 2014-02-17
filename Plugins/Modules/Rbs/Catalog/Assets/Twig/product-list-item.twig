@@ -20,7 +20,7 @@
 				{% if row.productPresentation.prices.price %}
 					{% if parameters.displayPrices  %}
 						<li class="product-price price">
-							{% if row.productPresentation.general.hasVariants  %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
+							{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price  %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
 							{{ formatPrice(row.productPresentation.prices.price) }}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 							{% if row.productPresentation.prices.priceWithoutDiscount %}
@@ -32,7 +32,7 @@
 					{% endif %}
 					{% if parameters.displayPricesWithTax %}
 						<li class="product-price price">
-							{% if row.productPresentation.general.hasVariants  %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
+							{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
 							{{ formatPrice(row.productPresentation.prices.priceWithTax) }}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
 							{% if row.productPresentation.prices.priceWithoutDiscountWithTax %}
@@ -47,7 +47,7 @@
 
 			{% block addToCart %}
 				<li class="product-add">
-					{% if not row.productPresentation.general.hasVariants  %}
+					{% if row.productPresentation.general.hasOwnSku %}
 						<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
 							<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
 							<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />

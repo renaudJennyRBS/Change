@@ -24,6 +24,9 @@
 				<a href="" data-ng-href="(= doc | rbsURL:'cross-selling-lists' =)">
 					{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}
 				</a>
+				<a href="" data-ng-href="(= doc.variantGroup | rbsURL:'variant-list':{productId:doc.id}=)">
+					{{ i18n('m.rbs.catalog.admin.variantgroup_variant', ['ucf']) }}
+				</a>
 				[action default]
 			</rbs-quick-actions>
 			<rbs-column name="sku" sort="sku.code"><small>(= doc.sku.code =)</small></rbs-column>

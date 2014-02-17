@@ -24,7 +24,7 @@
 		"message":"Sélectionner des attributs de présentation"
 	},
 	"axis_url":{
-		"message":"Fiche produit par valeur"
+		"message":"Générer une fiche produit par valeur"
 	},
 	"axis_categorizable":{
 		"message":"Fiche produit visible dans les listes"
@@ -44,8 +44,14 @@
 	"variantgroup_variantstocks":{
 		"message":"stocks des variantes"
 	},
+	"variantgroup_variantprices":{
+		"message":"prix des variantes"
+	},
 	"variantgroup_stocks_config":{
 		"message":"configuration des stocks"
+	},
+	"variantgroup_prices_config":{
+		"message":"configuration des prix"
 	},
 	"variantgroup_edit":{
 		"message":"configuration des variantes"
@@ -136,6 +142,18 @@
 	},
 	"variantgroup_jobs_infos":{
 		"message":"La configuration des variantes n'est pas accessible pour le moment. Merci de patienter quelques minutes."
+	},
+	"variantgroup_edit_price":{
+		"message":"éditer le prix"
+	},
+	"variantgroup_apply_on_all":{
+		"message":"appliquer sur tout"
+	},
+	"variantgroup_see_all_prices":{
+		"message":"voir les prix"
+	},
+	"variantgroup_only_current_prices":{
+		"message":"l'édition rapide des prix ne concerne, pour chaque produit, que le prix le plus prioritaire et ayant la date d'activation la plus récente"
 	},
 	"productlist_productsortorder_help":{
 		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."

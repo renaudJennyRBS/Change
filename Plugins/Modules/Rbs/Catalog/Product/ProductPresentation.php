@@ -256,6 +256,7 @@ class ProductPresentation
 				$this->general['canBeOrdered'] = false;
 			}
 		}
+
 		return $this;
 	}
 

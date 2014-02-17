@@ -587,12 +587,12 @@
 	}]);
 
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroupStocks',
-		['RbsChange.REST', '$routeParams', 'RbsChange.i18n', 'RbsChange.Utils', '$http', 'RbsChange.NotificationCenter', 'RbsChange.Dialog',
-			function Editor(REST, $routeParams, i18n, Utils, $http, NotificationCenter, Dialog)
+		['RbsChange.REST', '$routeParams', 'RbsChange.i18n', 'RbsChange.Utils', '$http', 'RbsChange.NotificationCenter', 'RbsChange.Dialog', 'RbsChange.ErrorFormatter',
+			function Editor(REST, $routeParams, i18n, Utils, $http, NotificationCenter, Dialog, ErrorFormatter)
 			{
 				return {
 					restrict: 'E',
-					templateUrl: 'Document/Rbs/Catalog/VariantGroup/variant-stocks-editor.twig',
+					replace: false,
 
 					link: function (scope, element)
 					{
@@ -644,7 +644,7 @@
 									scope.isChanged = false;
 									scope.oldData = angular.copy(scope.data);
 
-									messages.push(i18n.trans('m.rbs.catalog.adminjs.variant_group_stock_update | ucf'));
+									messages.push(i18n.trans('m.rbs.catalog.adminjs.variant_group_stocks_updated | ucf'));
 
 									NotificationCenter.info(i18n.trans('m.rbs.catalog.adminjs.variant_group_stocks_update | ucf'), messages,
 										'rbs_stock_update_stocks', 5000);
@@ -654,7 +654,7 @@
 									scope.saveProgress.running = null;
 									scope.saveProgress.error = true;
 
-									messages.push(i18n.trans('m.rbs.catalog.adminjs.impossible_to_update_stock_of_variant_group | ucf'));
+									messages.push(i18n.trans('m.rbs.catalog.adminjs.impossible_to_update_stocks_of_variant_group | ucf'));
 									messages.push(ErrorFormatter.format(r));
 
 									NotificationCenter.error(i18n.trans('m.rbs.catalog.adminjs.variant_group_stocks_update | ucf'),
@@ -693,6 +693,191 @@
 							}
 						}, true);
 
+					}
+				}
+			}]);
+
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroupPrices',
+		['RbsChange.REST', '$routeParams', 'RbsChange.i18n', 'RbsChange.Utils', '$http', 'RbsChange.NotificationCenter', 'RbsChange.Dialog', 'RbsChange.ErrorFormatter',
+			function Editor(REST, $routeParams, i18n, Utils, $http, NotificationCenter, Dialog, ErrorFormatter)
+			{
+				return {
+					restrict: 'E',
+					replace: false,
+
+					link: function (scope, element)
+					{
+						scope.data = null;
+						scope.config = {};
+
+						scope.webStore = {};
+
+						scope.isChanged = false;
+						scope.saveProgress = {};
+
+						var documentId;
+						if ($routeParams.hasOwnProperty('id'))
+						{
+							documentId = parseInt($routeParams.id, 10);
+						}
+
+						if (!isNaN(documentId) && documentId > 0)
+						{
+							REST.resource(documentId).then(function (doc)
+							{
+								scope.document = doc;
+							});
+						}
+
+						scope.$watch('config.webStore', function(newValue) {
+							if (newValue) {
+								var webStoreId = (angular.isObject(newValue)) ? newValue.id : newValue;
+								if (scope.webStore.id != webStoreId) {
+									REST.resource('Rbs_Store_WebStore', webStoreId).then(function(res) {
+										scope.webStore = res;
+									});
+								}
+							}
+							else
+							{
+								scope.webStore = {};
+							}
+						});
+
+						scope.$watch('config.billingArea', function(newValue) {
+							if (newValue) {
+								var billingAreaId = (angular.isObject(newValue)) ? newValue.id : newValue;
+								if (scope.billingArea.id != billingAreaId) {
+									REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(res){
+										scope.billingArea = res;
+									});
+								}
+							} else {
+								scope.billingArea = {};
+								scope.taxInfo = null;
+							}
+						});
+
+						scope.$watch('billingArea', function(newValue) {
+
+							// Load tax info
+							if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
+								REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:newValue.id}).then(function(res){
+									scope.taxInfo = res;
+								});
+
+								// Load products and prices
+								loadVariantPrices();
+							}
+
+						});
+
+						function loadVariantPrices()
+						{
+							var url = Utils.makeUrl('rbs/catalog/variantprices', { 'variantGroupId': documentId, 'webStoreId': scope.webStore.id, 'billingAreaId': scope.billingArea.id });
+							$http.get(REST.getBaseUrl(url)).success(function (data)
+							{
+								angular.forEach(data, function (sku)
+								{
+									if (sku.price.taxCategories == null)
+									{
+										sku.price.taxCategories = {};
+									}
+								});
+
+								scope.oldData = angular.copy(data);
+								scope.data = data;
+							});
+						}
+
+						scope.$watch('data', function(newValue) {
+							if (angular.equals(scope.oldData, scope.data))
+							{
+								scope.isChanged = false;
+							}
+							else
+							{
+								scope.isChanged = true;
+							}
+						}, true);
+
+						scope.save = function ()
+						{
+							var messages = new Array();;
+
+							scope.saveProgress.running = true;
+
+							$http.post(REST.getBaseUrl('rbs/catalog/savevariantprices'), {'webStoreId': scope.webStore.id, 'billingAreaId': scope.billingArea.id, 'data': scope.data})
+								.success(function (data)
+								{
+									scope.saveProgress.running = null;
+									scope.saveProgress.error = null;
+									scope.isChanged = false;
+
+									messages.push(i18n.trans('m.rbs.catalog.adminjs.variant_group_prices_update | ucf'));
+
+									NotificationCenter.info(i18n.trans('m.rbs.catalog.adminjs.variant_group_prices_update | ucf'), messages,
+										'rbs_stock_update_prices', 5000);
+
+									// Reload
+									loadVariantPrices();
+								})
+								.error(function (r)
+								{
+									scope.saveProgress.running = null;
+									scope.saveProgress.error = true;
+
+									messages.push(i18n.trans('m.rbs.catalog.adminjs.impossible_to_update_prices_of_variant_group | ucf'));
+									messages.push(ErrorFormatter.format(r));
+
+									NotificationCenter.error(i18n.trans('m.rbs.catalog.adminjs.variant_group_prices_update | ucf'),
+										messages, 'rbs_stock_update_prices');
+								});
+						}
+
+						scope.reset = function ()
+						{
+							scope.data = angular.copy(scope.oldData);
+						}
+
+						scope.confirmReset = function ($event) {
+							Dialog.confirmEmbed(
+								element.find('.confirmation-area'),
+								i18n.trans('m.rbs.admin.adminjs.confirm_restore | ucf'),
+								i18n.trans('m.rbs.admin.adminjs.confirm_restore_message | ucf'),
+								scope,
+								{
+									'pointedElement': $($event.target),
+									'primaryButtonText': i18n.trans('m.rbs.admin.adminjs.restore_data_button | ucf')
+								}
+							).then(function () {
+									scope.reset();
+								});
+						};
+
+						scope.applyValueOnAll = function(value)
+						{
+							angular.forEach(scope.data, function (sku)
+							{
+								sku.price.value = value;
+							});
+						}
+
+						scope.applyEcoTaxOnAll = function(ecoTax)
+						{
+							angular.forEach(scope.data, function (sku)
+							{
+								sku.price.ecoTax = ecoTax;
+							});
+						}
+
+						scope.applyTaxCategoriesOnAll = function(taxCategories)
+						{
+							angular.forEach(scope.data, function (sku)
+							{
+								sku.price.taxCategories = taxCategories;
+							});
+						}
 					}
 				}
 			}]);

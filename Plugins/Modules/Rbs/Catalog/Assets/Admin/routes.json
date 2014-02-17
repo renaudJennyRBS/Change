@@ -155,12 +155,21 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/VariantStocks/": {
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/stocks": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-stocks",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-stocks.twig",
 			"labelKey": "m.rbs.catalog.admin.variantgroup_stocks_config | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/prices": {
+		"model": "Rbs_Catalog_VariantGroup",
+		"name": "variant-prices",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-prices.twig",
+			"labelKey": "m.rbs.catalog.admin.variantgroup_prices_config | ucf"
 		},
 		"auto": false
 	},

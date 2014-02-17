@@ -13,7 +13,7 @@
 			<a href ng-href="(= 'Rbs_Price_Price' | rbsURL:'new' =)">{{ i18n('m.rbs.price.admin.price_create', ['ucf']) }}</a>
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true">
+		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false">
 			<rbs-column name="value" align="right" primary="true">
 				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedValue=)</a>
 			</rbs-column>

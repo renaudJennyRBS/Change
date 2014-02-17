@@ -1,6 +1,10 @@
 <script type="text/ng-template" id="/simpleLine.static.tpl">
 	<td>(= line.index+1 =)</td>
-	<td>(= line.designation =)</td>
+	<td>
+		<a data-ng-if="line.options.productUrl" href="(= line.options.productUrl =)">
+		(= line.designation =)
+		</a data-ng-if="line.options.productUrl">
+	</td>
 	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
 		<td class="price">
 			{% if parameters.displayPrices %}
