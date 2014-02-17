@@ -123,7 +123,7 @@
 
 				function loadFilters ()
 				{
-					var p, url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters'), {'model' : model});
+					var p, url = Utils.makeUrl(REST.getBaseUrl('actions/filters/'), {'model' : model});
 					p = $http.get(url);
 					p.success(function (filters)
 					{
@@ -148,12 +148,12 @@
 
 				scope.createFilter = function ()
 				{
-					var url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters')),
-						title = window.prompt(i18n.trans('m.rbs.admin.adminjs.enter_filter_title'));
+					var url = Utils.makeUrl(REST.getBaseUrl('actions/filters/')),
+						label = window.prompt(i18n.trans('m.rbs.admin.adminjs.enter_filter_title'));
 
-					if (title)
+					if (label)
 					{
-						$http.post(url, {'model_name' : model, 'content' : angular.fromJson(scope.filter), 'title' : title})
+						$http.post(url, {'model_name' : model, 'content' : angular.fromJson(scope.filter), 'label' : label})
 							.success(function (data) {
 								loadFilters().then(function ()
 								{
@@ -169,7 +169,7 @@
 
 				scope.updateExistingFilter = function ()
 				{
-					var url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters'));
+					var url = Utils.makeUrl(REST.getBaseUrl('actions/filters/'));
 
 					$http.put(url, scope.existingFilterInUse)
 						.success(function () {
@@ -185,7 +185,7 @@
 				{
 					if (window.confirm(i18n.trans('m.rbs.admin.adminjs.confirm_delete_filter')))
 					{
-						var url = Utils.makeUrl(REST.getBaseUrl('Rbs/DocumentFilters'), {'filter_id' : scope.existingFilterInUse['filter_id']});
+						var url = Utils.makeUrl(REST.getBaseUrl('actions/filters/'), {'filter_id' : scope.existingFilterInUse['filter_id']});
 
 						$http['delete'](url)
 							.success(function () {

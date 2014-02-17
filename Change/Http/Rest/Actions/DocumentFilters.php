@@ -1,13 +1,42 @@
 <?php
-namespace Rbs\Generic\Http\Rest\Actions;
+namespace Change\Http\Rest\Actions;
+
 use Change\Http\Rest\Result\ArrayResult;
 use Zend\Http\Response;
 
 /**
- * @name \Rbs\Generic\Http\Rest\Actions\DocumentFilters
+ * @name \Change\Http\Rest\Actions\DocumentFilters
  */
 class DocumentFilters
 {
+
+	/**
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 */
+	public function execute(\Change\Http\Event $event)
+	{
+		$request = $event->getRequest();
+
+		if ($request->isGet())
+		{
+			$this->getFiltersList($event);
+		}
+		elseif ($request->isPost())
+		{
+			$this->createFilter($event);
+		}
+		elseif ($request->isPut())
+		{
+			$this->updateFilter($event);
+		}
+		elseif ($request->isDelete())
+		{
+			$this->deleteFilter($event);
+		}
+	}
+
+
 	/**
 	 * @param \Change\Http\Event $event
 	 */
@@ -61,9 +90,9 @@ class DocumentFilters
 
 		$modelName = $params->get('model_name');
 		$content = $params->get('content');
-		$title = $params->get('title');
+		$label = $params->get('label');
 
-		if ($modelName && $content && $title)
+		if ($modelName && $content && $label)
 		{
 			$result = new ArrayResult();
 
@@ -77,11 +106,11 @@ class DocumentFilters
 				$stmt = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
 				$fb = $stmt->getFragmentBuilder();
 
-				$stmt->insert($fb->table('change_document_filters'), 'model_name', 'title', 'content', 'user_id');
-				$stmt->addValues($fb->parameter('model_name'), $fb->parameter('title'), $fb->parameter('content'), $fb->parameter('user_id'));
+				$stmt->insert($fb->table('change_document_filters'), 'model_name', 'label', 'content', 'user_id');
+				$stmt->addValues($fb->parameter('model_name'), $fb->parameter('label'), $fb->parameter('content'), $fb->parameter('user_id'));
 				$query = $stmt->insertQuery();
 				$query->bindParameter('model_name', $modelName);
-				$query->bindParameter('title', $title);
+				$query->bindParameter('label', $label);
 				$query->bindParameter('content', json_encode($content));
 				$query->bindParameter('user_id', $userId);
 				$query->execute();
@@ -91,7 +120,7 @@ class DocumentFilters
 				$newFilterId = $event->getApplicationServices()->getDbProvider()->getLastInsertId('change_document_filters');
 				$result->setArray([
 					'filter_id' => $newFilterId,
-					'title' => $title,
+					'label' => $label,
 					'model_name' => $modelName,
 					'content' => $content,
 					'user_id' => $userId
@@ -125,9 +154,9 @@ class DocumentFilters
 		$modelName = $params->get('model_name');
 		$content = $params->get('content');
 		$id = $params->get('filter_id');
-		$title = $params->get('title');
+		$label = $params->get('label');
 
-		if ($id && $modelName && $content && $title)
+		if ($id && $modelName && $content && $label)
 		{
 			$result = new ArrayResult();
 			$applicationServices = $event->getApplicationServices();
@@ -142,13 +171,13 @@ class DocumentFilters
 
 				$stmt->update($fb->table('change_document_filters'));
 				$stmt->assign($fb->column('model_name'), $fb->parameter('model_name'));
-				$stmt->assign($fb->column('title'), $fb->parameter('title'));
+				$stmt->assign($fb->column('label'), $fb->parameter('label'));
 				$stmt->assign($fb->column('content'), $fb->parameter('content'));
 				$stmt->where($fb->eq($fb->column('filter_id'), $fb->integerParameter('filter_id')));
 				$query = $stmt->updateQuery();
 				$query->bindParameter('filter_id', $id);
 				$query->bindParameter('model_name', $modelName);
-				$query->bindParameter('title', $title);
+				$query->bindParameter('label', $label);
 				$query->bindParameter('content', json_encode($content));
 				$query->execute();
 
@@ -156,7 +185,7 @@ class DocumentFilters
 
 				$result->setArray([
 					'filter_id' => $id,
-					'title' => $title,
+					'label' => $label,
 					'model_name' => $modelName,
 					'content' => $content
 				]);

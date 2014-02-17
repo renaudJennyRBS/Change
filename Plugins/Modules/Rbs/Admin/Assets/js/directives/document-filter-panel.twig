@@ -20,7 +20,7 @@
 						</button>
 						<ul class="dropdown-menu pull-right" role="menu">
 							<li ng-repeat="f in savedFilters"><a href="javascript:;" ng-click="useExistingFilter(f)">
-									<span ng-if="f.filter_id == existingFilterInUse.filter_id"><i class="icon-ok"></i> </span>(=f.title=)</a>
+									<span ng-if="f.filter_id == existingFilterInUse.filter_id"><i class="icon-ok"></i> </span>(=f.label=)</a>
 							</li>
 						</ul>
 					</div>
@@ -35,7 +35,7 @@
 		<div class="panel-footer" ng-if="existingFilterInUse">
 			{{ i18n('m.rbs.admin.admin.selected_filter', ['ucf']) }} (<a href="javascript:;" ng-click="useExistingFilter(null)">{{ i18n('m.rbs.admin.admin.unselect_filter') }}</a>)
 			<div class="input-group">
-				<input type="text" class="form-control" ng-model="existingFilterInUse.title">
+				<input type="text" class="form-control" ng-model="existingFilterInUse.label">
 				<span class="input-group-btn">
 					<button type="button" class="btn btn-success" ng-click="updateExistingFilter()">{{ i18n('m.rbs.admin.admin.update_filter', ['ucf']) }}</button>
 					<button type="button" class="btn btn-danger" ng-click="removeExistingFilter()" title="{{ i18nAttr('m.rbs.admin.admin.delete_filter', ['ucf']) }}"><i class="icon-trash"></i></button>

@@ -28,6 +28,7 @@ class ActionsResolver
 		$this->registerActionClass('renderRichText', '\Change\Http\Rest\Actions\RenderRichText');
 		$this->registerActionClass('activate', '\Change\Http\Rest\Actions\Activation');
 		$this->registerActionClass('deactivate', '\Change\Http\Rest\Actions\Deactivation');
+		$this->registerActionClass('filters', '\Change\Http\Rest\Actions\DocumentFilters');
 	}
 
 	/**
