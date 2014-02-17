@@ -37,25 +37,25 @@
 		<ul class="list-unstyled full-visuals">
 			<li data-ng-repeat="visual in visuals" id="full-visual-{{ blockId }}-(= visual.id =)">
 				{% if parameters.activateZoom %}
-					<a href="(= visual.url.main =)" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+					<a data-ng-href="(= visual.url.main =)" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
 				{% endif %}
-				<img itemprop="image" src="(= visual.url.detail =)" alt="" />
+				<img itemprop="image" data-ng-src="(= visual.url.detail =)" alt="" />
 				{% if parameters.activateZoom %}</a>{% endif %}
 			</li>
 		</ul>
-		<ul ng-if="visuals.length > 1" class="list-inline thumbnail-visuals">
+		<ul data-ng-if="visuals.length > 1" class="list-inline thumbnail-visuals">
 			<li data-ng-repeat="visual in visuals" class="thumbnail" id="thumbnail-visual-{{ blockId }}-(= visual.id =)"
 				title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
-				<img src="(= visual.url.thumbnail =)" alt=""
+				<img data-ng-src="(= visual.url.thumbnail =)" alt=""
 					onclick="script{{ blockId }}.visuals.showVisual(visual.id)" />
 			</li>
 		</ul>
 	</div>
-	<div data-ng-show="!visuals && !productLoading" ng-transclude></div>
+	<div data-ng-show="!visuals && !productLoading" data-ng-transclude=""></div>
 </script>
 
 {% set allFormats =  {'detail' : detailFormat, 'thumbnail' : detailThumbnailFormat} %}
-<div rbs-catalog-product-visuals="" visual-formats="{{ allFormats | json_encode }}">
+<div data-rbs-catalog-product-visuals="" data-visual-formats="{{ allFormats | json_encode }}">
 	{% set allVisuals = productPresentation.getVisuals(allFormats) %}
 	{% if allVisuals.count > 0 %}
 		<div class="visuals" id="visuals-{{ blockId }}">
@@ -63,7 +63,7 @@
 				{% for visual in allVisuals.visuals %}
 					<li id="full-visual-{{ blockId }}-{{ visual.id }}">
 						{% if parameters.activateZoom %}
-							<a href="{{ visual.url.main }}"onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+							<a href="{{ visual.url.main }}" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
 						{% endif %}
 							<img itemprop="image" src="{{ visual.url.detail }}" alt="{{ visual.alt }}" />
 						{% if parameters.activateZoom %}</a>{% endif %}
