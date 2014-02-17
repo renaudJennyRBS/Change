@@ -1,0 +1,77 @@
+{
+  "module_name":{
+    "message":"tags"
+  },
+  "module_keywords":{
+    "message":"tags,labels"
+  },
+  "tags":{
+    "message":"tags"
+  },
+  "all_tags":{
+    "message":"all tags"
+  },
+  "show_hide_all_tags":{
+    "message":"show\/hide all tags"
+  },
+  "applying_tags":{
+    "message":"applying tags"
+  },
+  "manage_tags":{
+    "message":"manage tags"
+  },
+  "tag_list":{
+    "message":"common tags"
+  },
+  "mytags_list":{
+    "message":"personal tags"
+  },
+  "tag_create":{
+    "message":"add tag"
+  },
+  "tag_color_help":{
+    "message":"Colors helps to visually distinguish the different tags. Choose different colors for your tags: you'll see that it's very eye candy! <i class=\"icon-smile\"><\/i>"
+  },
+  "tag_module_help":{
+    "message":"\n\t\tIt's possible to constrain the use of a tag to a module. But it's quite rare. If you don't understand, keep this entry empty! <i class=\"icon-smile\"><\/i>\n\t"
+  },
+  "tag_children_help":{
+    "message":"\n\t\t<strong>Child tags allow you to hierarchically organize your tags and ease the tagging process.<\/strong><br\/>\n\t\tFor example, if you create a tag <strong><em>lake<\/strong><\/em> under a tag <strong><em>landscape<\/strong><\/em>, all the documents tagged with <strong><em>lake<\/strong><\/em>\n\t\twill also be tagged as <strong><em>landscape<\/strong><\/em>, automatically. When searching for <strong><em>landscape<\/strong><\/em>,\n\t\tthe documents tagged with <strong><em>lake<\/strong><\/em> will be in the results."
+  },
+  "tag_children_selector_title":{
+    "message":"Select child tags"
+  },
+  "tag_usertag_help":{
+    "message":"\n\t\t<strong>Personnal tags can only be used by their creator.<\/strong><br\/>\n\t\tYou can create as many personnal tags as you want to organize the contents of your websites.<br\/>\n\t\t<span class=\"label label-danger\">Warning!<\/span> Once the tag created, this proprerty cannot be changed.\n\t"
+  },
+  "tag_usertag_cannot_be_modified":{
+    "message":"This property can only be defined when creating the tag.\n\t"
+  },
+  "tag_no_child_tag":{
+    "message":"No child tags."
+  },
+  "tag_child_tag":{
+    "message":"'One child tag:"
+  },
+  "tag_child_tags":{
+    "message":"{} child tags:"
+  },
+  "no_tags":{
+    "message":"none"
+  },
+  "common_tags":{
+    "message":"common tags"
+  },
+  "find":{
+    "message":"find by tags"
+  },
+  "clear_selection":{
+    "message":"clear"
+  },
+  "my_tags":{
+    "message":"personal tags"
+  },
+  "why_use_tags":{
+    "message":"Tags allow you to <strong>organize your content<\/strong> to classify them and find them more easily."
+  }
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	editable="true"
+	activable="true">
+	<properties>
+		<property name="label" stateless="true" />
+		<property name="code" type="String" required="true">
+			<dboptions length="80" />
+		</property>
+		<property name="ean13" type="String">
+			<dboptions length="13" />
+			<constraint name="matches" pattern="/^[0-9]{13}$/" />
+		</property>
+		<property name="upc" type="String">
+			<dboptions length="12" />
+			<constraint name="matches" pattern="/^[0-9]{12}$/" />
+		</property>
+		<property name="jan" type="String">
+			<dboptions length="13" />
+			<constraint name="matches" pattern="/^[0-9]{13}$/" />
+		</property>
+
+		<property name="isbn" type="String">
+			<dboptions length="13" />
+			<constraint name="matches" pattern="/^[0-9]{13}$/" />
+		</property>
+
+		<property name="unit" type="String" default-value="PC">
+			<dboptions length="80" />
+		</property>
+
+		<property name="partNumber" type="String"></property>
+
+		<property name="quantityIncrement" type="Integer" default-value="1" required="true" />
+		<property name="minQuantity" type="Integer" default-value="1" required="true" />
+		<property name="maxQuantity" type="Integer" />
+		<property name="thresholds" type="JSON" />
+		<property name="virtual" type="Boolean" default-value="false" />
+		<property name="physicalProperties" type="JSON" />
+		<property name="allowQuantitySplit" type="Boolean" default-value="true" />
+		<property name="unlimitedInventory" type="Boolean" default-value="false" />
+		<property name="allowBackorders" type="Boolean" default-value="false" />
+	</properties>
+</document>

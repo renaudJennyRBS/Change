@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		activable="true" editable="true">
+	<properties>
+		<property name="code" type="String" required="true" />
+		<property name="html" type="LongString" has-correction="true" />
+		<property name="htmlForBackoffice" type="LongString" has-correction="true" />
+		<property name="editableContent" type="JSON" has-correction="true"/>
+		<property name="theme" type="Document" document-type="Rbs_Theme_Theme" />
+		<property name="contentByWebsite" type="JSON" has-correction="true"/>
+		<property name="mailSuitable" type="Boolean" default-value="false" />
+	</properties>
+</document>

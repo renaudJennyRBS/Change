@@ -1,0 +1,27 @@
+{% macro item(item) %}
+	{% import _self as menu %}
+	<li{% if item.isInPath or item.isCurrent %} class="active"{% endif %}>
+		<a href="{{ item.url }}">{{ item.title }}</a>
+		<ul class="bullet">
+			{% for child in item.getChildren %}
+				{{ menu.item(child) }}
+			{% endfor %}
+		</ul>
+	</li>
+{% endmacro %}
+{% import _self as menu %}
+
+<nav>
+	{% if parameters.showTitle == true %}
+		<h3>
+			{% if root.url %}<a href="{{ root.url }}">{% endif %}{{ root.title }}{% if root.url %}</a>{% endif %}
+		</h3>
+	{% endif %}
+	{% if root.hasChild %}
+		<ul class="bullet">
+			{% for child in root.children %}
+				{{ menu.item(child) }}
+			{% endfor %}
+		</ul>
+	{% endif %}
+</nav>

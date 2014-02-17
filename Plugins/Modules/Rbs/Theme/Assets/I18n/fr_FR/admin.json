@@ -1,0 +1,47 @@
+{
+	"module_name":{
+		"message":"Thèmes"
+	},
+	"template_list":{
+		"message":"modèles de page"
+	},
+	"template_create":{
+		"message":"ajouter un modèle de page"
+	},
+	"theme_list":{
+		"message":"thèmes"
+	},
+	"templates_close":{
+		"message":"Fermer"
+	},
+	"templates_zone_id":{
+		"message":"zone du template"
+	},
+	"templates_block":{
+		"message":"bloc"
+	},
+	"templates_override":{
+		"message":"surcharger"
+	},
+	"templates_removeoverride":{
+		"message":"restaurer"
+	},
+	"templates_parametrize":{
+		"message":"configurer"
+	},
+	"templates_clear":{
+		"message":"vider"
+	},
+	"theme_page_templates":{
+		"message":"templates de page"
+	},
+	"theme_mail_templates":{
+		"message":"templates de mail"
+	},
+	"breadcrumb_pagetemplates":{
+		"message":"templates de page"
+	},
+	"breadcrumb_mailtemplates":{
+		"message":"templates de mail"
+	}
+}

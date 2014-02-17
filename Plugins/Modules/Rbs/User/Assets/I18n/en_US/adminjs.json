@@ -1,0 +1,5 @@
+{
+  "confirm_revoke_token":{
+    "message":"confirm token revocation: {token} ?"
+  }
+}

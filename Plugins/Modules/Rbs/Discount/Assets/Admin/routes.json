@@ -1,0 +1,145 @@
+{
+	"/Rbs/Discount/": {
+		"module": "Rbs_Discount",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Discount/Discount/",
+			"labelKey": "m.rbs.discount.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Discount/Coupon/": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/list.twig",
+			"labelKey": "m.rbs.discount.admin.coupon_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Coupon/:id": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
+			"labelKey": "m.rbs.discount.documents.coupon | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Coupon/:id/timeline": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Discount_Coupon",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Coupon/:id/translate/:LCID": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Coupon/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Discount_Coupon",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Coupon/:id/workflow": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Discount_Coupon",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Coupon/new": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/": {
+		"model": "Rbs_Discount_Discount",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/list.twig",
+			"labelKey": "m.rbs.discount.admin.discount_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/:id": {
+		"model": "Rbs_Discount_Discount",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
+			"labelKey": "m.rbs.discount.documents.discount | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/:id/timeline": {
+		"model": "Rbs_Discount_Discount",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Discount_Discount",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/:id/translate/:LCID": {
+		"model": "Rbs_Discount_Discount",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Discount_Discount",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Discount_Discount",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/:id/workflow": {
+		"model": "Rbs_Discount_Discount",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Discount_Discount",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Discount/Discount/new": {
+		"model": "Rbs_Discount_Discount",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

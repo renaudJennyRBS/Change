@@ -1,0 +1,50 @@
+{
+  "module_name":{
+    "message":"E-commerce"
+  },
+  "cart_label":{
+    "message":"shopping cart contents"
+  },
+  "cart_function":{
+    "message":"shopping cart contents"
+  },
+  "order_process_label":{
+    "message":"processus de commande"
+  },
+  "order_process_function":{
+    "message":"checkout process"
+  },
+  "cart_undefined":{
+    "message":"no shopping cart"
+  },
+  "shortcart_label":{
+    "message":"shopping cart summary"
+  },
+  "process_list":{
+    "message":"checkout process"
+  },
+  "process_create":{
+    "message":"add a checkout process"
+  },
+  "process_shippingmodes_picker_title":{
+    "message":"select the delivery methods allowed"
+  },
+  "process_paymentconnectors_picker_title":{
+    "message":"select the payment methods allowed"
+  },
+  "process_fees_picker_title":{
+    "message":"select authorized fees"
+  },
+  "lines_price_value_filter":{
+    "message":"Subtotal"
+  },
+  "lines_price_value":{
+    "message":"Subtotal"
+  },
+  "fee_list":{
+    "message":"fee"
+  },
+  "fee_create":{
+    "message":"add a fee"
+  }
+}

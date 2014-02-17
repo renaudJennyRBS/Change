@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		  localized="true" publishable="true" tree-name="Rbs_Website" editable="true" abstract="true">
+	<properties>
+		<property name="label"/>
+		<property name="title" localized="true" has-correction="true"/>
+
+		<property name="pathPart" type="String" localized="true"/>
+		<property name="indexPage" type="Document" document-type="Rbs_Website_Page" stateless="true" />
+		<property name="allowedTemplateNames" type="JSON"/>
+
+		<property name="authorizedUsers" type="DocumentArray" document-type="Rbs_User_User" stateless="true" />
+		<property name="authorizedGroups" type="DocumentArray" document-type="Rbs_User_Group" stateless="true" />
+
+		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
+		<property name="defaultSkin" type="Document" document-type="Rbs_Skin_Skin" />
+		-->
+	</properties>
+</document>

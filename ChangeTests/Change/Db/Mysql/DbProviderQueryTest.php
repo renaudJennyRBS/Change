@@ -7,7 +7,6 @@ use Change\Db\Query\ResultsConverter;
 
 class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-
 	protected function setUp()
 	{
 		if (!in_array('mysql', \PDO::getAvailableDrivers()))
@@ -28,7 +27,6 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 	/**
-	 * @return \Change\Db\Mysql\DbProvider
 	 */
 	public function testGetInstance()
 	{
@@ -39,27 +37,28 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$testSchema = new \ChangeTests\Change\Db\Mysql\TestAssets\Schema($schemaManager);
 		$testSchema->generate();
-
-		return $provider;
 	}
 	
 	/**
 	 * @depends testGetInstance
-	 *
 	 */
-	public function testInsert(DbProvider $provider)
+	public function testInsert()
 	{
+		$provider = $this->getApplicationServices()->getDbProvider();
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		$sb = $provider->getNewStatementBuilder();
 		$fb = $sb->getFragmentBuilder();
 		$iq = $sb->insert('test_t1', 'id', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6')
 			->addValues(
-			$fb->integerParameter('id', $sb),
-			$fb->parameter('f1', $sb),
-			$fb->integerParameter('f2', $sb),
-			$fb->typedParameter('f3', ScalarType::DECIMAL, $sb),
-			$fb->typedParameter('f4', ScalarType::BOOLEAN, $sb),
-			$fb->parameter('f5', $sb),
-			$fb->dateTimeParameter('f6', $sb)
+			$fb->integerParameter('id'),
+			$fb->parameter('f1'),
+			$fb->integerParameter('f2'),
+			$fb->decimalParameter('f3'),
+			$fb->booleanParameter('f4'),
+			$fb->parameter('f5'),
+			$fb->dateTimeParameter('f6')
 		)->insertQuery();
 
 		$iq->bindParameter('id', 5);
@@ -109,13 +108,13 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$iq = $sb->insert('test_t2', 'id', '2f1', '2f2', '2f3', '2f4', '2f5', '2f6')
 			->addValues(
-			$fb->integerParameter('id', $sb),
-			$fb->parameter('f1', $sb),
-			$fb->integerParameter('f2', $sb),
-			$fb->typedParameter('f3', ScalarType::DECIMAL, $sb),
-			$fb->typedParameter('f4', ScalarType::BOOLEAN, $sb),
-			$fb->parameter('f5', $sb),
-			$fb->dateTimeParameter('f6', $sb)
+			$fb->integerParameter('id'),
+			$fb->parameter('f1'),
+			$fb->integerParameter('f2'),
+			$fb->decimalParameter('f3'),
+			$fb->booleanParameter('f4'),
+			$fb->parameter('f5'),
+			$fb->dateTimeParameter('f6')
 		)->insertQuery();
 
 		$iq->bindParameter('id', 50);
@@ -145,16 +144,16 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 		$iq->bindParameter('f6', new \DateTime('2013-06-05 01:00:00', new \DateTimeZone('GMT')));
 		$iq->execute();
 
-		return $provider;
+		$tm->commit();
 	}
 
 	/**
+	 * @return void
 	 * @depends testInsert
-	 * @param \Change\Db\Mysql\DbProvider $provider
-	 * @return \Change\Db\Mysql\DbProvider
 	 */
-	public function testSelect(DbProvider $provider)
+	public function testSelect()
 	{
+		$provider = $this->getApplicationServices()->getDbProvider();
 		$qb = $provider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 
@@ -180,7 +179,5 @@ class DbProviderQueryTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(2, $rows);
 		$this->assertEquals(101, $rows[0]['id']);
 		$this->assertEquals(100, $rows[1]['id']);
-
-		return $provider;
 	}
 }

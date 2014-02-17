@@ -8,7 +8,7 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testConstruct()
 	{
-		$constraintsManager = $this->getDocumentServices()->getConstraintsManager();
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
 		$this->assertInstanceOf('\Change\Documents\Constraints\ConstraintsManager', $constraintsManager);
 		
 		$this->assertEquals('c.constraints', \Zend\Validator\AbstractValidator::getDefaultTranslatorTextDomain());
@@ -16,17 +16,14 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$t = \Zend\Validator\AbstractValidator::getDefaultTranslator();
 		$this->assertInstanceOf('\Change\Documents\Constraints\Translator', $t);
 		$this->assertInstanceOf('\Change\I18n\I18nManager', $t->getI18nManager());
-		
-		return $constraintsManager;
 	}
 	
 	/**
 	 * @depends testConstruct
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testDefaultConstraint($constraintsManager)
+	public function testDefaultConstraint()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
 		$this->assertTrue($constraintsManager->hasDefaultConstraint('domain'));
 		$this->assertTrue($constraintsManager->hasDefaultConstraint('url'));
 		$this->assertTrue($constraintsManager->hasDefaultConstraint('unique'));
@@ -35,17 +32,14 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($constraintsManager->hasDefaultConstraint('test'));
 		$constraintsManager->registerConstraint('test', '\ChangeTests\Documents\Constraints\ConstraintNotFound');
 		$this->assertTrue($constraintsManager->hasDefaultConstraint('test'));
-		
-		return $constraintsManager;
 	}
 	
 	/**
 	 * @depends testDefaultConstraint
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testGetByName($constraintsManager)
+	public function testGetByName()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
 		$this->assertInstanceOf('\Change\Documents\Constraints\Domain', $constraintsManager->getByName('domain'));
 		$this->assertInstanceOf('\Change\Documents\Constraints\Min', $constraintsManager->getByName('min', array('min' => 1)));
 	
@@ -74,17 +68,14 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		{
 			$this->assertStringStartsWith('Constraint invalidconstraint not found', $e->getMessage());
 		}
-		
-		return $constraintsManager;
 	}	
 	
 	/**
 	 * @depends testGetByName
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testEmail($constraintsManager)
+	public function testEmail()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
 		include __DIR__ . '/TestAssets/Translator.php';
 		$t = \ChangeTests\Documents\Constraints\TestAssets\Translator::factory(array());
 		\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
@@ -99,18 +90,19 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$messages = $constraint->getMessages();
 		$this->assertArrayHasKey('emailAddressInvalidFormat', $messages);
 		$this->assertStringStartsWith('c.constraints.', $messages['emailAddressInvalidFormat']);
-		
-		return $constraintsManager;
 	}
 	
 
 	/**
 	 * @depends testEmail
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testEmails($constraintsManager)
+	public function testEmails()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
+
+		$t = \ChangeTests\Documents\Constraints\TestAssets\Translator::factory(array());
+		\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+
 		$constraint = $constraintsManager->getByName('emails');
 		$this->assertTrue($constraint->isValid('noreplay@rbschange.fr'));
 		$this->assertTrue($constraint->isValid('noreplay@rbschange.fr, admin@rbschange.fr'));
@@ -121,16 +113,18 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$messages = $constraint->getMessages();
 		$this->assertArrayHasKey('emailsAddressInvalid', $messages);
 		$this->assertStringStartsWith('c.constraints.', $messages['emailsAddressInvalid']);
-		return $constraintsManager;
 	}
 	
 	/**
 	 * @depends testEmails
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testInteger($constraintsManager)
+	public function testInteger()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
+
+		$t = \ChangeTests\Documents\Constraints\TestAssets\Translator::factory(array());
+		\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+
 		$constraint = $constraintsManager->getByName('integer');
 		$this->assertTrue($constraint->isValid('5'));
 
@@ -140,16 +134,18 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$messages = $constraint->getMessages();
 		$this->assertArrayHasKey('notDigits', $messages);
 		$this->assertStringStartsWith('c.constraints.', $messages['notDigits']);
-		return $constraintsManager;
 	}
 	
 	/**
 	 * @depends testInteger
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testMatches($constraintsManager)
+	public function testMatches()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
+
+		$t = \ChangeTests\Documents\Constraints\TestAssets\Translator::factory(array());
+		\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+
 		$constraint = $constraintsManager->getByName('matches', array('pattern' => '/^[0-5]+$/'));
 		$this->assertTrue($constraint->isValid('4'));
 		$this->assertTrue($constraint->isValid('45550'));
@@ -160,16 +156,18 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$messages = $constraint->getMessages();
 		$this->assertArrayHasKey('regexNotMatch', $messages);
 		$this->assertStringStartsWith('c.constraints.', $messages['regexNotMatch']);
-		return $constraintsManager;
 	}
 	
 	/**
 	 * @depends testMatches
-	 * @param \Change\Documents\Constraints\ConstraintsManager $constraintsManager
-	 * @return \Change\Documents\Constraints\ConstraintsManager
 	 */
-	public function testRange($constraintsManager)
+	public function testRange()
 	{
+		$constraintsManager = $this->getApplicationServices()->getConstraintsManager();
+
+		$t = \ChangeTests\Documents\Constraints\TestAssets\Translator::factory(array());
+		\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+
 		$constraint = $constraintsManager->getByName('range', array('min' => 5, 'max' => 10));
 		$this->assertTrue($constraint->isValid('5'));
 		$this->assertTrue($constraint->isValid('6'));
@@ -187,7 +185,5 @@ class ConstraintsManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($constraint->isValid('5'));
 		$messages = $constraint->getMessages();
 		$this->assertArrayHasKey('notBetweenStrict', $messages);
-		
-		return $constraintsManager;
 	}
 }

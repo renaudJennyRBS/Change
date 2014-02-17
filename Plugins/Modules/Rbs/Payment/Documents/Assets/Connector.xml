@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		  localized="true" activable="true" editable="true" abstract="true">
+	<properties>
+		<property name="code" type="String" />
+		<property name="title" type="String" localized="true" required="true" has-correction="true"/>
+		<property name="description" type="RichText" localized="true" has-correction="true"/>
+		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
+		<property name="minAmount" type="Decimal" default-value="0.0" />
+		<property name="maxAmount" type="Decimal" />
+		<property name="allowedCurrencyCodes" type="JSON" />
+		<property name="processingMail" type="Boolean" default-value="false" />
+		<property name="successMail" type="Boolean" default-value="false" />
+		<property name="errorMail" type="Boolean" default-value="false" />
+	</properties>
+</document>

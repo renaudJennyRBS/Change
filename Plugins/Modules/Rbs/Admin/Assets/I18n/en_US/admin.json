@@ -1,0 +1,1097 @@
+{
+  "toggle_navigation":{
+    "message":"toggle navigation"
+  },
+  "properties":{
+    "message":"properties"
+  },
+  "system_properties":{
+    "message":"system properties"
+  },
+  "ttl":{
+    "message":"Cache expiration time in seconds"
+  },
+  "clipboard_change":{
+    "message":"clipboard"
+  },
+  "clipboard":{
+    "message":"clipboard"
+  },
+  "remove_from_clipboard":{
+    "message":"remove from clipboard"
+  },
+  "clean_clipboard":{
+    "message":"clear the clipboard"
+  },
+  "help":{
+    "message":"clipboard help"
+  },
+  "save":{
+    "message":"save"
+  },
+  "clear":{
+    "message":"clear"
+  },
+  "add":{
+    "message":"add"
+  },
+  "delete":{
+    "message":"delete"
+  },
+  "edit":{
+    "message":"edit"
+  },
+  "replace_by":{
+    "message":"replace with"
+  },
+  "display_clipboard_list":{
+    "message":"Show clipboard content to apply actions"
+  },
+  "display":{
+    "message":"show"
+  },
+  "clipboard_empty":{
+    "message":"The clipboard is empty"
+  },
+  "selected_element":{
+    "message":"the selected item"
+  },
+  "selected_elements":{
+    "message":"the $COUNT$ selected items"
+  },
+  "select_elements_to_add":{
+    "message":"You must select items in the list before you can add them."
+  },
+  "add_selected_elements_to_clipboard":{
+    "message":"Add selection to the clipboard"
+  },
+  "replace_by_selected_elements":{
+    "message":"Replace the content of clipboard by the selected items in the list below"
+  },
+  "being_validated":{
+    "message":"This correction is <strong>currently being validated<\/strong>: it can neither be modified nor deleted."
+  },
+  "modified_properties_list":{
+    "message":"List of properties changed in correction"
+  },
+  "original_value":{
+    "message":"original value"
+  },
+  "in_use":{
+    "message":"in use"
+  },
+  "diff":{
+    "message":"diff."
+  },
+  "property":{
+    "message":"property"
+  },
+  "fixed_value":{
+    "message":"corrected value"
+  },
+  "displayed_in_editor":{
+    "message":"displayed in the editor"
+  },
+  "publish_correction_after_validation":{
+    "message":"apply the correction immediately after its validation."
+  },
+  "choose_plublication_date":{
+    "message":"Choose a date for the application of the correction:"
+  },
+  "content_has_been_validated":{
+    "message":"The content of this correction has been <strong>validated<\/strong>."
+  },
+  "correction_will_be_published_on":{
+    "message":"the Correction will be applied on"
+  },
+  "correction_is_about_to_be_published":{
+    "message":"This correction will be applied: it can neither be modifier or deleted."
+  },
+  "correction_has_been_published":{
+    "message":"This correction has been applied to the document."
+  },
+  "need_help":{
+    "message":"Need help about corrections?"
+  },
+  "correction_created_on":{
+    "message":"date created"
+  },
+  "please_provide_reason":{
+    "message":"reason for refusal"
+  },
+  "reject_correction":{
+    "message":"refuse correction"
+  },
+  "cancel_reject":{
+    "message":"postpone refusal"
+  },
+  "button_validate":{
+    "message":"Validate <small>correction<\/small>"
+  },
+  "button_delete":{
+    "message":"Delete <small>correction<\/small>"
+  },
+  "button_publish":{
+    "message":"Apply <small>correction<\/small>"
+  },
+  "button_reject":{
+    "message":"Refuse <small>correction<\/small>"
+  },
+  "title":{
+    "message":"search for items..."
+  },
+  "requiredConditions":{
+    "message":"Matching: "
+  },
+  "all":{
+    "message":"every filter"
+  },
+  "allTooltip":{
+    "message":"logical AND"
+  },
+  "atLeastOne":{
+    "message":"at least one filter"
+  },
+  "atLeastOneTooltip":{
+    "message":"logical OR"
+  },
+  "deleteThisFilter":{
+    "message":"delete filter"
+  },
+  "cancelAllFilters":{
+    "message":"clear filters"
+  },
+  "contains":{
+    "message":"contains"
+  },
+  "startsWith":{
+    "message":"starts with"
+  },
+  "equals":{
+    "message":"equals"
+  },
+  "endsWith":{
+    "message":"ends with"
+  },
+  "is":{
+    "message":"is"
+  },
+  "isNot":{
+    "message":"is not"
+  },
+  "isGreaterThanOrEquals":{
+    "message":"is greater than or equal"
+  },
+  "isLessThanOrEquals":{
+    "message":"is less than or equal"
+  },
+  "isDifferentOf":{
+    "message":"is different of"
+  },
+  "isBefore":{
+    "message":"is before"
+  },
+  "isOn":{
+    "message":"is"
+  },
+  "isNull":{
+    "message":"is empty"
+  },
+  "isAfter":{
+    "message":"is after"
+  },
+  "saveSearch":{
+    "message":"save search"
+  },
+  "filter":{
+    "message":"Search"
+  },
+  "addFilter":{
+    "message":"add a condition"
+  },
+  "choose_existent":{
+    "message":"choose among existing documents"
+  },
+  "afterSave":{
+    "message":"upon saving :"
+  },
+  "afterSaveStay":{
+    "message":"stay on this form"
+  },
+  "afterSaveGoList":{
+    "message":"go back to list"
+  },
+  "btnGoBack":{
+    "message":"go back <small>to list<\/small>"
+  },
+  "btn_back_to":{
+    "message":"go back to <small>$LABEL$<\/small>",
+    "description":"Used in the button bar in editors"
+  },
+  "btnSave":{
+    "message":"save<small>changes <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
+  },
+  "btnRevert":{
+    "message":"Revert<small>changes <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
+  },
+  "titleRevert":{
+    "message":"Revert to the last saved data"
+  },
+  "btnCancelCascade":{
+    "message":"cancel <small>and go back to previous form<\/small>"
+  },
+  "no_propertie_modified":{
+    "message":"No property was changed."
+  },
+  "propertie_modified":{
+    "message":"One property was changed."
+  },
+  "properties_modified":{
+    "message":"{} properties were changed."
+  },
+  "date_selector_at":{
+    "message":"at"
+  },
+  "date_selector_format":{
+    "message":"mm\/dd\/yyyy"
+  },
+  "date_selector_hour_letter":{
+    "message":":"
+  },
+  "date_selector_lang":{
+    "message":"en"
+  },
+  "time_zone_selector_text":{
+    "message":"You can select a timezone just for this form, until you log out or permanently as your default timezone."
+  },
+  "always_use_this_timezone":{
+    "message":"always use this timezone"
+  },
+  "current_time_in_selected_timezone":{
+    "message":"current time in selected timezone:"
+  },
+  "use":{
+    "message":"use"
+  },
+  "always_use":{
+    "message":"always use"
+  },
+  "picker_no_element":{
+    "message":"no element"
+  },
+  "picker_open":{
+    "message":"open"
+  },
+  "picker_edit_tooltip":{
+    "message":"edit selection"
+  },
+  "picker_create":{
+    "message":"create"
+  },
+  "picker_create_tooltip":{
+    "message":"create a new document"
+  },
+  "picker_selector":{
+    "message":"selector"
+  },
+  "picker_selector_tooltip":{
+    "message":"open selector above"
+  },
+  "picker_in_place":{
+    "message":"module"
+  },
+  "picker_in_place_tooltip":{
+    "message":"go to the module to select documents"
+  },
+  "picker_clear":{
+    "message":"clear"
+  },
+  "picker_clear_tooltip":{
+    "message":"clear selection"
+  },
+  "picker_clipboard":{
+    "message":"clipboard"
+  },
+  "picker_clipboard_tooltip":{
+    "message":"fill using Clipboard"
+  },
+  "picker_choose_model_to_select":{
+    "message":"document types"
+  },
+  "picker_add_to_end":{
+    "message":"add at the end"
+  },
+  "picker_add_to_begin":{
+    "message":"Add at the beginning"
+  },
+  "picker_help_filter":{
+    "message":"For more advanced search filters, you can go directly to $HTMLOPEN$ the module $HTMLCLOSE$."
+  },
+  "click_to_select_another_image":{
+    "message":"click to select another image from your computer"
+  },
+  "activation":{
+    "message":"activation"
+  },
+  "validation":{
+    "message":"validation"
+  },
+  "translation":{
+    "message":"translation"
+  },
+  "translations":{
+    "message":"translations"
+  },
+  "reference_language":{
+    "message":"reference language"
+  },
+  "general_properties":{
+    "message":"general properties"
+  },
+  "advanced_properties":{
+    "message":"advanced properties"
+  },
+  "publication_properties":{
+    "message":"publication"
+  },
+  "information":{
+    "message":"information"
+  },
+  "languages":{
+    "message":"languages"
+  },
+  "contents":{
+    "message":"contents"
+  },
+  "status":{
+    "message":"state"
+  },
+  "administration":{
+    "message":"administration"
+  },
+  "create":{
+    "message":"create"
+  },
+  "move_up":{
+    "message":"up"
+  },
+  "move_top":{
+    "message":"topmost"
+  },
+  "move_down":{
+    "message":"down"
+  },
+  "move_bottom":{
+    "message":"bottommost"
+  },
+  "submit":{
+    "message":"submit"
+  },
+  "cancel":{
+    "message":"cancel"
+  },
+  "yes":{
+    "message":"yes"
+  },
+  "no":{
+    "message":"no"
+  },
+  "translate":{
+    "message":"translate"
+  },
+  "search":{
+    "message":"search"
+  },
+  "this_document_exists_in_multiple_languages":{
+    "message":"this Document has multiple languages"
+  },
+  "fullscreen_toolbar":{
+    "message":"You are running RBS Change in full-screen mode. Click this bar to exit full-screen mode."
+  },
+  "copyright":{
+    "message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.rbschange.com\"> RBS Change<\/a> is an open-source CMS and E-Commerce platform developed by <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/www.rbs.fr\"> Ready Business System<\/a>."
+  },
+  "please_wait":{
+    "message":"Please wait for a few seconds :)"
+  },
+  "close":{
+    "message":"close"
+  },
+  "select_and_close":{
+    "message":"Select and close"
+  },
+  "replace":{
+    "message":"replace"
+  },
+  "options":{
+    "message":"options"
+  },
+  "correction":{
+    "message":"correction"
+  },
+  "this_document_has_a_correction_on":{
+    "message":"this Document has a Correction on"
+  },
+  "correction_editor_explanation":{
+    "message":"The values diplayed in this editor are the values of the Correction, and the concerned properties are displayed with a color.<br\/>To see more information about the modified properties, and the original values, use the <strong>Correction<\/strong> button below."
+  },
+  "admin_section_name":{
+    "message":"administration"
+  },
+  "temporary_id":{
+    "message":"temporary ID"
+  },
+  "reorderDescription":{
+    "message":"Reorder the items by dragging the <i class=\"icon-reorder\"><\/i> icons on each line."
+  },
+  "alphabeticalSort":{
+    "message":"sort alphabetically"
+  },
+  "reverseSort":{
+    "message":"reverse"
+  },
+  "this_list_is_empty":{
+    "message":"This list is empty!"
+  },
+  "loading":{
+    "message":"Loading..."
+  },
+  "you_can":{
+    "message":"you can"
+  },
+  "create_elements_with_buttons":{
+    "message":"create new elements using the commands above"
+  },
+  "clear_search_filters":{
+    "message":"clear search filters"
+  },
+  "refresh":{
+    "message":"refresh list"
+  },
+  "sort":{
+    "message":"sort"
+  },
+  "list_display":{
+    "message":"display as list"
+  },
+  "grid_display":{
+    "message":"display as grid"
+  },
+  "pagination_total_no":{
+    "message":"No element"
+  },
+  "pagination_total_one":{
+    "message":"One element"
+  },
+  "pagination_total_other":{
+    "message":"{} elements"
+  },
+  "pagination_no_page":{
+    "message":"no element"
+  },
+  "pagination_page":{
+    "message":"one page"
+  },
+  "pagination_pages":{
+    "message":"{} pages"
+  },
+  "on":{
+    "message":"on"
+  },
+  "per_page":{
+    "message":"per page"
+  },
+  "close_preview":{
+    "message":"close preview"
+  },
+  "close_all_previews":{
+    "message":"close all previews"
+  },
+  "replace_by_this":{
+    "message":"Replace with this element"
+  },
+  "elements_selection":{
+    "message":"selection"
+  },
+  "for_property":{
+    "message":"for property"
+  },
+  "of":{
+    "message":"from"
+  },
+  "compose_selection_message":{
+    "message":"Select items from the list below."
+  },
+  "selection_is_empty_now":{
+    "message":"Your selection is empty for the moment."
+  },
+  "validate_selection":{
+    "message":"Confirm selection"
+  },
+  "cancel_selection":{
+    "message":"Cancel selection"
+  },
+  "add_selected_elements":{
+    "message":"Add selected items"
+  },
+  "clear_selection":{
+    "message":"Empty"
+  },
+  "preview_tip":{
+    "message":"Hover over lines in the list below to display options and preview documents. <br\/>Document previews are reloaded from the server if you click <strong>Preview<\/strong> while leaving the <strong>[Shift]<\/strong> key pressed."
+  },
+  "display_options":{
+    "message":"display options"
+  },
+  "display_thumbnail_informations":{
+    "message":"view thumbnails information"
+  },
+  "display_informations":{
+    "message":"display information"
+  },
+  "published":{
+    "message":"published"
+  },
+  "not_published":{
+    "message":"unpublished"
+  },
+  "thumbnail":{
+    "message":"thumbnails"
+  },
+  "sort_by":{
+    "message":"sort by"
+  },
+  "select":{
+    "message":"select"
+  },
+  "select_all":{
+    "message":"all"
+  },
+  "select_neither":{
+    "message":"none"
+  },
+  "local_copies_message_no":{
+    "message":"No local copy"
+  },
+  "local_copies_message_one":{
+    "message":"You have one local copy of an unsaved document."
+  },
+  "local_copies_message_other":{
+    "message":"You have {} local copies of unsaved documents"
+  },
+  "remove_all_local_copies":{
+    "message":"remove local copies"
+  },
+  "local_copy_indicator_title":{
+    "message":"manage local copies"
+  },
+  "document_modify_without_save_title":{
+    "message":"You have previously modified this document without saving it."
+  },
+  "document_modify_without_save_content":{
+    "message":"Your changes have been preserved and they are displayed in the editor below."
+  },
+  "chuck":{
+    "message":"You don't find Chuck Norris. <br\/>Chuck Norris finds you."
+  },
+  "open":{
+    "message":"open main menu (Ctrl+Alt+M)"
+  },
+  "profile":{
+    "message":"profile"
+  },
+  "logout":{
+    "message":"log out"
+  },
+  "clear_search":{
+    "message":"clear search"
+  },
+  "other_modules":{
+    "message":"other modules"
+  },
+  "help_bottom":{
+    "message":"This menu can be open with Ctrl+Alt+M."
+  },
+  "website":{
+    "message":"Web site"
+  },
+  "twitter":{
+    "message":"Twitter"
+  },
+  "github":{
+    "message":"GitHub"
+  },
+  "go_to_fullscreen":{
+    "message":"switch to full-screen mode"
+  },
+  "type_enter_to_go_to":{
+    "message":"Press <strong class=\"kb\"> enter<\/strong> to get to <br\/> <strong>$PARAM$<\/strong>."
+  },
+  "editor":{
+    "message":"editor"
+  },
+  "preview":{
+    "message":"preview"
+  },
+  "markdown_help":{
+    "message":"display Markdown syntax help"
+  },
+  "heading_level_0":{
+    "message":"delete"
+  },
+  "heading_level_1":{
+    "message":"level 1"
+  },
+  "heading_level_2":{
+    "message":"level 2"
+  },
+  "heading_level_3":{
+    "message":"level 3"
+  },
+  "heading_level_4":{
+    "message":"level 4"
+  },
+  "heading_level_5":{
+    "message":"level 5"
+  },
+  "heading_level_6":{
+    "message":"level 6"
+  },
+  "bold":{
+    "message":"bold"
+  },
+  "italic":{
+    "message":"italic"
+  },
+  "undo":{
+    "message":"cancel"
+  },
+  "redo":{
+    "message":"restore"
+  },
+  "insert_picture":{
+    "message":"insert an image"
+  },
+  "select_picture":{
+    "message":"Select an image to insert into the editor below"
+  },
+  "insert_internal_link":{
+    "message":"insert an internal link"
+  },
+  "insert_external_link":{
+    "message":"insert an external link"
+  },
+  "select_document_to_link":{
+    "message":"Select a document you want to generate a link for in the editor below"
+  },
+  "insert_user":{
+    "message":"insert a user"
+  },
+  "select_user":{
+    "message":"Select a user to insert into the editor below"
+  },
+  "insert_usergroup":{
+    "message":"insert a group of users"
+  },
+  "select_usergroup":{
+    "message":"Select a group of users to insert into the editor below"
+  },
+  "years":{
+    "message":"years"
+  },
+  "months":{
+    "message":"months"
+  },
+  "weeks":{
+    "message":"weeks"
+  },
+  "days":{
+    "message":"days"
+  },
+  "hours":{
+    "message":"hours"
+  },
+  "minutes":{
+    "message":"minutes"
+  },
+  "seconds":{
+    "message":"seconds"
+  },
+  "rbs_pageeditor_markdown":{
+    "message":"<strong>Richtext zones support the markdown syntax.<\/strong> <br\/>   Although a little less visual, this syntax allows you to have better control on the structure of your content and improves quality and organisation. <br\/>   <a href=\"http:\/\/fr.wikipedia.org\/wiki\/Markdown\" target=\"_blank\"> learn more about the Markdown syntax...<\/a>"
+  },
+  "draft_description":{
+    "message":"This document is draft."
+  },
+  "frozen_description":{
+    "message":"This document has been frozen and is not visible on the website."
+  },
+  "filed_description":{
+    "message":"This document has been filed.<br\/>It can be displayed on the website with blocks that take filed content into account."
+  },
+  "validation_description":{
+    "message":"The content of this document must be validated before the document can be published on the website."
+  },
+  "validcontent_description":{
+    "message":"The content of this document has been validated: the last step is too validate its publication."
+  },
+  "unpublishable_description":{
+    "message":"This document <strong>is not<\/strong> ready to be published on the website."
+  },
+  "publishable_description":{
+    "message":"This document is ready to be published on the website."
+  },
+  "request_validation":{
+    "message":"request validation"
+  },
+  "run_all_steps_message":{
+    "message":"You can execute all the steps of the validation process here by clicking the <strong>Publish now<\/strong> button below. Click <strong>Help<\/strong> to know more about the validation process."
+  },
+  "run_all_steps_button":{
+    "message":"publish now"
+  },
+  "request_validation_done":{
+    "message":"validation requested"
+  },
+  "content_validated":{
+    "message":"content validated"
+  },
+  "publication_validated":{
+    "message":"publication validated"
+  },
+  "to_validate_content_you_can":{
+    "message":"to validate the content of this document you can"
+  },
+  "open_document_editor":{
+    "message":"open the document editor"
+  },
+  "open_document_editor_in_new_tab":{
+    "message":"open the document editor in a new tab"
+  },
+  "accepted":{
+    "message":"accepted"
+  },
+  "rejected":{
+    "message":"rejected"
+  },
+  "accept":{
+    "message":"accept"
+  },
+  "reject":{
+    "message":"reject"
+  },
+  "freeze":{
+    "message":"freeze"
+  },
+  "unfreeze":{
+    "message":"unfreeze"
+  },
+  "reject_reason":{
+    "message":"reject reason"
+  },
+  "why_do_you_reject_content":{
+    "message":"why do you reject the content of this document?"
+  },
+  "reject_content":{
+    "message":"reject content"
+  },
+  "accept_content":{
+    "message":"validate content"
+  },
+  "accept_publication":{
+    "message":"validate publication"
+  },
+  "you_can_freeze_document":{
+    "message":"You can freeze this document: it won't be visible on the website."
+  },
+  "freeze_document":{
+    "message":"freeze document"
+  },
+  "unfreeze_document":{
+    "message":"unfreeze document"
+  },
+  "frozen_document":{
+    "message":"document frozen"
+  },
+  "this_document_is_frozen":{
+    "message":"This document is frozen: it is not visible on the website. To make it visible again, you can unfreeze it."
+  },
+  "modified_content_correction":{
+    "message":"Content modified &rarr; correction"
+  },
+  "caution":{
+    "message":"warning"
+  },
+  "document_has_been_modified_since_its_publication":{
+    "message":"This document has been modified since its publication: the modifications won't be visible until the Correction is validated."
+  },
+  "to_validate_correction_please_go_to":{
+    "message":"to validate the Correction, please go to"
+  },
+  "document_editor":{
+    "message":"the Document editor"
+  },
+  "to_check_modified_properties":{
+    "message":"so that you can <strong>check the modified properties<\/strong>"
+  },
+  "action_has_failed":{
+    "message":"action failed"
+  },
+  "help_draft_explain":{
+    "message":"When you are done <strong>drafting<\/strong> a document and want to submit it for web publishing, you can <strong>request its validation<\/strong>."
+  },
+  "help_validation_explain":{
+    "message":"The document is <strong>waiting for validation<\/strong> of its content.<ul><li><strong>Deny:<\/strong> the document will become a <strong>draft<\/strong> again;<\/li><li><strong>Accept:<\/strong> it will then be required to <strong>validate the publication<\/strong> of the document.<\/li><\/ul>"
+  },
+  "help_validcontent_explain":{
+    "message":"The content of the document has been validated, it is now necessary to <strong>validate its publication<\/strong> on the web site."
+  },
+  "help_publishable_explain":{
+    "message":"All conditions required to publish the document are met.<br \/> It is possible to prevent its publication by <strong>freezing<\/strong> the document."
+  },
+  "help_frozen_explain":{
+    "message":"The document was frozen to prevent publishing it on the website. <br\/>It is possible to re-enable its display by <strong>unfreezing<\/strong> the document."
+  },
+  "back_to_editor":{
+    "message":"back to the edition of the document"
+  },
+  "back_to_document":{
+    "message":"back to <strong>$LABEL$<\/strong>"
+  },
+  "menu_title":{
+    "message":"validation process"
+  },
+  "menu_contents":{
+    "message":"This interface allows you to control validation and publication of the documents to be posted on your web site."
+  },
+  "richtext_title":{
+    "message":"title"
+  },
+  "workflow_title":{
+    "message":"Workflow"
+  },
+  "show_changes":{
+    "message":"display changes"
+  },
+  "timeinterval_choose_type":{
+    "message":"choose a time period"
+  },
+  "insert_block_left":{
+    "message":"add a block to the left"
+  },
+  "insert_block_right":{
+    "message":"add a block to the right"
+  },
+  "insert_block_after":{
+    "message":"add a block below the selected block"
+  },
+  "insert_block_bottom":{
+    "message":"add a block at the bottom of the box"
+  },
+  "insert_block_before":{
+    "message":"add a block above the selected block"
+  },
+  "insert_block_top":{
+    "message":"add a block at the top of area"
+  },
+  "insert_block_into_column":{
+    "message":"add a block in this column"
+  },
+  "delete_block":{
+    "message":"delete block"
+  },
+  "delete_block_group":{
+    "message":"delete group of blocks"
+  },
+  "parameterize_columns":{
+    "message":"set up columns"
+  },
+  "block_name":{
+    "message":"block name"
+  },
+  "block_type":{
+    "message":"block type"
+  },
+  "block_label":{
+    "message":"block label"
+  },
+  "block_visibility":{
+    "message":"visibility"
+  },
+  "block_visibility_raw":{
+    "message":"without envelope"
+  },
+  "block_visibility_x":{
+    "message":"< 768px"
+  },
+  "block_visibility_s":{
+    "message":"≥ 768px"
+  },
+  "block_visibility_m":{
+    "message":"≥ 992px"
+  },
+  "block_visibility_l":{
+    "message":"≥ 1200px"
+  },
+  "block_ttl":{
+    "message":"Cache expiration time in seconds"
+  },
+  "block_ttl_none":{
+    "message":"no cache"
+  },
+  "block_ttl_1m":{
+    "message":"1m"
+  },
+  "block_ttl_1minute":{
+    "message":"1 minute"
+  },
+  "block_ttl_10m":{
+    "message":"10m"
+  },
+  "block_ttl_10minutes":{
+    "message":"10 minutes"
+  },
+  "block_ttl_1h":{
+    "message":"1h"
+  },
+  "block_ttl_1hour":{
+    "message":"1 hour"
+  },
+  "equitable_distribution":{
+    "message":"distribute uniformly"
+  },
+  "column":{
+    "message":"column"
+  },
+  "no_block":{
+    "message":"no block"
+  },
+  "one_block":{
+    "message":"one block"
+  },
+  "n_blocks":{
+    "message":"{} blocks"
+  },
+  "width":{
+    "message":"width"
+  },
+  "width_reduce":{
+    "message":"shrink"
+  },
+  "width_enlarge":{
+    "message":"enlarge"
+  },
+  "shift":{
+    "message":"offset"
+  },
+  "shift_left":{
+    "message":"offset left"
+  },
+  "shift_right":{
+    "message":"offset right"
+  },
+  "dashboard":{
+    "message":"dashboard"
+  },
+  "dashboard_notifications":{
+    "message":"notifications"
+  },
+  "dashboard_notification_new":{
+    "message":"new"
+  },
+  "dashboard_notification_read":{
+    "message":"read"
+  },
+  "dashboard_task_tasks":{
+    "message":"tasks"
+  },
+  "dashboard_task_tasks_in_progress":{
+    "message":"current tasks"
+  },
+  "dashboard_task_end":{
+    "message":"completed"
+  },
+  "dashboard_task_to_execute":{
+    "message":"left"
+  },
+  "dashboard_settings":{
+    "message":"dashboard configuration"
+  },
+  "dashboard_settings_tags":{
+    "message":"tags"
+  },
+  "main_menu":{
+    "message":"main menu"
+  },
+  "drag_to_reorder":{
+    "message":"drag to reorder"
+  },
+  "about":{
+    "message":"about"
+  },
+  "has_current_correction":{
+    "message":"a correction is pending"
+  },
+  "saving":{
+    "message":"saving"
+  },
+  "no_action_to_execute":{
+    "message":"You have no action to take."
+  },
+  "concerned_document":{
+    "message":"concerned document"
+  },
+  "configure_url_and_redirections":{
+    "message":"Manage <strong>URLs and redirects<\/strong>"
+  },
+  "view_timeline":{
+    "message":"See <strong>Timeline<\/strong>"
+  },
+  "other_operations":{
+    "message":"other operations"
+  },
+  "for":{
+    "message":"for"
+  },
+  "read_only":{
+    "message":"read only",
+    "description":"Used in structure editor."
+  },
+  "drag_block":{
+    "message":"move the block by drag n drop",
+    "description":"Title of the button to drag & drop a richtext blocks in the page editor."
+  },
+  "structure_editor_new_block":{
+    "message":"new block"
+  },
+  "filter_group_and_title":{
+    "message":"matching all the following conditions:"
+  },
+  "filter_group_and_toggle":{
+    "message":"All"
+  },
+  "filter_group_or_title":{
+    "message":"matching at least one of the following conditions:"
+  },
+  "filter_group_or_toggle":{
+    "message":"At least one"
+  },
+  "filter_add":{
+    "message":"Add"
+  },
+  "reset_filter":{
+    "message":"Clear all conditions"
+  },
+  "group_filter":{
+    "message":"Conditions group"
+  },
+  "common_filter_group":{
+    "message":"Common"
+  },
+  "unknown_filter":{
+    "message":"unknown condition"
+  },
+  "possible_values":{
+    "message":"predefined value"
+  }
+}

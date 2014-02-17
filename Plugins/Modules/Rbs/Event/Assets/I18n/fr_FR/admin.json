@@ -1,0 +1,107 @@
+{
+	"module_name":{
+		"message":"Actualités et événements"
+	},
+	"base_event_show_time":{
+		"message":"afficher les heures et minutes"
+	},
+	"base_event_show_categories":{
+		"message":"afficher les catégories"
+	},
+	"base_event_contextual_urls":{
+		"message":"détails des catégories dans la section courante"
+	},
+	"news_label":{
+		"message":"détail d'une actualité"
+	},
+	"news_doc":{
+		"message":"actualité à afficher"
+	},
+	"news_function":{
+		"message":"détail d'une actualité"
+	},
+	"event_label":{
+		"message":"détail d'un événement"
+	},
+	"event_doc":{
+		"message":"événement à afficher"
+	},
+	"event_function":{
+		"message":"détail d'un événement"
+	},
+	"base_event_list_section_id":{
+		"message":"section"
+	},
+	"base_event_list_include_sub_sections":{
+		"message":"inclure les sous-sections"
+	},
+	"base_event_list_show_time":{
+		"message":"afficher les heures et minutes"
+	},
+	"base_event_list_show_categories":{
+		"message":"afficher les catégories"
+	},
+	"base_event_list_contextual_urls":{
+		"message":"détails des actualités et événements dans la section courante"
+	},
+	"base_event_list_contextual_category_urls":{
+		"message":"détails des catégories dans la section courante"
+	},
+	"base_event_list_items_per_page":{
+		"message":"nombre d'éléments par page"
+	},
+	"contextual_list_label":{
+		"message":"liste contextuelle des actualités et événements"
+	},
+	"category_label":{
+		"message":"détail d'une catégorie"
+	},
+	"category_function":{
+		"message":"détail d'une catégorie"
+	},
+	"category_section_restriction":{
+		"message":"restreindre aux éléments publiés dans"
+	},
+	"calendar_label":{
+		"message":"calendrier"
+	},
+	"news_list":{
+		"message":"actualités"
+	},
+	"news_create":{
+		"message":"ajouter une actualité"
+	},
+	"event_list":{
+		"message":"événements"
+	},
+	"event_create":{
+		"message":"ajouter un événement"
+	},
+	"category_list":{
+		"message":"catégories"
+	},
+	"category_create":{
+		"message":"ajouter une catégorie"
+	},
+	"baseevent_detailvisual_help":{
+		"message":"Visuel utilisé dans l'affichage de détail. Ce visuel n'est pas utilisé pour l'affichage en liste."
+	},
+	"baseevent_detailvisual_picker_title":{
+		"message":"sélectionnez le visuel de détail"
+	},
+	"baseevent_listvisual_help":{
+		"message":"Visuel utilisé pour l'affichage en liste."
+	},
+	"baseevent_listvisual_picker_title":{
+		"message":"sélectionnez le visuel de liste"
+	},
+	"baseevent_categories_picker_title":{
+		"message":"sélectionnez les catégories"
+	},
+	"baseevent_allowcomments_help":{
+		"message":"Autoriser ou non les utilisateurs à soumettre de nouveaux commentaires. Ce choix n'a aucun effet sur les commentaires existants."
+	},
+	"baseevent_excludefromrss_help":{
+		"message":"Exclure ou non des flux RSS. Choisissez oui si ce document est en accès restreint."
+	}
+}

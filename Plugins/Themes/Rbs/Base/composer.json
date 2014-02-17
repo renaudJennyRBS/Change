@@ -1,0 +1,9 @@
+{
+	"license": "AGPL-3.0",
+	"name": "rbs/base",
+	"type":"rbschange-theme",
+	"require": {
+		"rbschange/plugin-installer": "*",
+		"rbschange/core": "self.version"
+	}
+}

@@ -19,6 +19,7 @@
 		<property name="lob1" type="Lob" />
 		<property name="richtext1" type="RichText" localized="true"/>
 		<property name="json1" type="JSON"/>
+		<property name="storeUri1" type="StorageUri" />
 		<property name="object1" type="Object"/>
 		<property name="documentid1" type="DocumentId"  document-type="Change_Test_TestType" />
 		<property name="document1" type="Document" document-type="Change_Test_TestType" />

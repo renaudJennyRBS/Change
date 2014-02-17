@@ -1,8 +1,6 @@
 <?php
 namespace Change\Presentation\Blocks;
 
-use Change\Documents\Property;
-
 /**
  * @name \Change\Presentation\Blocks\Parameters
  */
@@ -39,15 +37,49 @@ class Parameters
 	}
 
 	/**
+	 * @return integer
+	 */
+	public function getTTL()
+	{
+		$TTL = $this->getParameter('TTL');
+		return $TTL === null ? 60 : $TTL;
+	}
+
+	/**
+	 * Set to 0 for no cache
+	 * @param int $TTL
+	 * @return $this
+	 */
+	public function setTTL($TTL = 60)
+	{
+		$TTL = max(0, $TTL);
+		if (!$this->hasParameterMeta('TTL'))
+		{
+			$this->addParameterMeta('TTL', $TTL);
+		}
+		else
+		{
+			$this->getParameterMeta('TTL')->setDefaultValue($TTL);
+		}
+		return $this;
+	}
+
+	/**
+	 * @return $this
+	 */
+	public function setNoCache()
+	{
+		return $this->setTTL(0);
+	}
+
+	/**
 	 * @param string $name
-	 * @param string $type
-	 * @param bool $required
 	 * @param mixed $defaultValue
 	 * @return ParameterMeta
 	 */
-	public function addParameterMeta($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
+	public function addParameterMeta($name, $defaultValue = null)
 	{
-		$parameterMeta = new ParameterMeta($name, $type, $required, $defaultValue);
+		$parameterMeta = new ParameterMeta($name, $defaultValue);
 		$key = $this->ucLower($name);
 		$this->parametersMeta[$key] = $parameterMeta;
 		return $parameterMeta;

@@ -1,0 +1,47 @@
+{
+	"modelconfiguration_modelname":{
+		"message":"nom du modèle"
+	},
+	"modelconfiguration_sitemapdefaultchangefrequency":{
+		"message":"fréquence (changefreq)"
+	},
+	"modelconfiguration_sitemapdefaultpriority":{
+		"message":"priorité de l'URL (priority)"
+	},
+	"modelconfiguration_documentseoautogenerate":{
+		"message":"création automatique du document SEO"
+	},
+	"modelconfiguration_defaultmetatitle":{
+		"message":"méta titre par défaut"
+	},
+	"modelconfiguration_defaultmetadescription":{
+		"message":"méta description par défaut"
+	},
+	"modelconfiguration_defaultmetakeywords":{
+		"message":"méta keywords par défaut"
+	},
+	"documentseo":{
+		"message":"référencement d'un document"
+	},
+	"modelconfiguration":{
+		"message":"configuration du modèle"
+	},
+	"documentseo_target":{
+		"message":"document cible"
+	},
+	"documentseo_metatitle":{
+		"message":"méta titre de la page"
+	},
+	"documentseo_metadescription":{
+		"message":"méta description"
+	},
+	"documentseo_metakeywords":{
+		"message":"méta mots-clés"
+	},
+	"documentseo_sitemapchangefrequency":{
+		"message":"fréquence (changefreq)"
+	},
+	"documentseo_sitemappriority":{
+		"message":"priorité de l'URL (priority)"
+	}
+}

@@ -1,0 +1,8 @@
+<div class="alert" ng-class="{'info': 'alert-info', 'error': 'alert-danger', 'warning': 'alert-warning'}[notification.level]">
+	<rbs-kb-switch>
+		<button rbs-kb-default="" type="button" class="close" ng-click="remove()" title="{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}">&times;</button>
+		<button rbs-kb-when="alt" type="button" class="close" ng-click="removeAll()" title="{{ i18nAttr('m.rbs.admin.admin.close_all', ['ucf']) }}">&times;</button>
+	</rbs-kb-switch>
+	<h4 ng-show="notification.title" ng-bind-html="notification.title"></h4>
+	<div ng-show="notification.body" ng-bind-html="notification.body"></div>
+</div>

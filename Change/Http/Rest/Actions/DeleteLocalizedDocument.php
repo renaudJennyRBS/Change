@@ -18,14 +18,14 @@ class DeleteLocalizedDocument
 	protected function getDocument($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model || !$model->isLocalized())
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
 			return null;
@@ -43,6 +43,7 @@ class DeleteLocalizedDocument
 	 * Use Required Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
@@ -59,24 +60,27 @@ class DeleteLocalizedDocument
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
+			$transactionManager->begin();
 			$documentManager->pushLCID($LCID);
 
 			/* @var $document Localizable */
-			$document->getLocalizableFunctions()->delete();
+			$document->deleteCurrentLocalization();
 
 			$result = new Result();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_204);
 			$event->setResult($result);
 
 			$documentManager->popLCID();
+			$transactionManager->commit();
 		}
 		catch (\Exception $e)
 		{
-			$documentManager->popLCID($e);
+			throw $transactionManager->rollBack($e);
 		}
 	}
 }

@@ -1,0 +1,18 @@
+<nav>
+	{% if parameters.showTitle == true %}
+		<h3>
+			{% if root.url %}<a href="{{ root.url }}">{% endif %}{{ root.title }}{% if root.url %}</a>{% endif %}
+		</h3>
+	{% endif %}
+	{% if root.hasChild %}
+		<ul class="list-inline">
+			{% for child in root.children %}
+				{% spaceless %}
+					<li{% if child.isInPath or child.isCurrent %} class="active"{% endif %}>
+						<a href="{{ child.url }}">{{ child.title }}</a>
+					</li>
+				{% endspaceless %}
+			{% endfor %}
+		</ul>
+	{% endif %}
+</nav>

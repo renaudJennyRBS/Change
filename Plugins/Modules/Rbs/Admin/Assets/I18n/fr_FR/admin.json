@@ -1,0 +1,1224 @@
+{
+	"toggle_navigation":{
+		"message":"basculer la navigation"
+	},
+	"properties":{
+		"message":"propriétés"
+	},
+	"system_properties":{
+		"message":"propriétés système"
+	},
+	"ttl":{
+		"message":"Durée du cache en secondes"
+	},
+	"clipboard_change":{
+		"message":"presse-papier Change"
+	},
+	"clipboard":{
+		"message":"presse-papier"
+	},
+	"remove_from_clipboard":{
+		"message":"retirer du Presse-papier"
+	},
+	"clean_clipboard":{
+		"message":"effacer le Presse-papier"
+	},
+	"help":{
+		"message":"aide sur le Presse-papier de Change"
+	},
+	"save":{
+		"message":"enregistrer"
+	},
+	"clear":{
+		"message":"effacer"
+	},
+	"add":{
+		"message":"ajouter"
+	},
+	"delete":{
+		"message":"supprimer"
+	},
+	"edit":{
+		"message":"éditer"
+	},
+	"replace_by":{
+		"message":"remplacer par"
+	},
+	"display_clipboard_list":{
+		"message":"Afficher les éléments du Presse-papier pour leur appliquer des actions"
+	},
+	"display":{
+		"message":"afficher"
+	},
+	"clipboard_empty":{
+		"message":"Le Presse-papier est vide"
+	},
+	"selected_element":{
+		"message":"l\\'élément sélectionné"
+	},
+	"selected_elements":{
+		"message":"les $COUNT$ éléments sélectionnés"
+	},
+	"select_elements_to_add":{
+		"message":"Vous devez sélectionner des éléments dans la liste avant de pouvoir les ajouter."
+	},
+	"add_selected_elements_to_clipboard":{
+		"message":"Ajouter les éléments sélectionnés au presse-papier"
+	},
+	"replace_by_selected_elements":{
+		"message":"Remplacer le presse-papier par les éléments sélectionnés dans la liste ci-dessous"
+	},
+	"being_validated":{
+		"message":"Cette Correction est <strong>en cours de validation<\/strong> : elle ne peut être ni modifiée, ni supprimée."
+	},
+	"modified_properties_list":{
+		"message":"Liste des propriétés modifiées dans la correction"
+	},
+	"original_value":{
+		"message":"valeur originale"
+	},
+	"in_use":{
+		"message":"en cours d'utilisation"
+	},
+	"diff":{
+		"message":"diff."
+	},
+	"property":{
+		"message":"propriété"
+	},
+	"fixed_value":{
+		"message":"valeur corrigée"
+	},
+	"displayed_in_editor":{
+		"message":"affichée dans l'éditeur"
+	},
+	"publish_correction_after_validation":{
+		"message":"appliquer la correction immédiatement après sa validation."
+	},
+	"choose_plublication_date":{
+		"message":"choisir une date d'application de la correction :"
+	},
+	"content_has_been_validated":{
+		"message":"Le contenu de cette Correction a été <strong>validé<\/strong>."
+	},
+	"correction_will_be_published_on":{
+		"message":"la Correction sera appliquée le"
+	},
+	"correction_is_about_to_be_published":{
+		"message":"Cette Correction va être appliquée : elle ne peut être modifiée, ni supprimée."
+	},
+	"correction_has_been_published":{
+		"message":"Cette Correction a été appliquée sur le document."
+	},
+	"need_help":{
+		"message":"Besoin d'aide à propos des corrections ?"
+	},
+	"correction_created_on":{
+		"message":"créée le"
+	},
+	"please_provide_reason":{
+		"message":"raison du refus"
+	},
+	"reject_correction":{
+		"message":"refuser la correction"
+	},
+	"cancel_reject":{
+		"message":"ne pas refuser maintenant"
+	},
+	"button_validate":{
+		"message":"Valider<small>la correction<\/small>"
+	},
+	"button_delete":{
+		"message":"Supprimer<small>la correction<\/small>"
+	},
+	"button_publish":{
+		"message":"Appliquer<small>la correction<\/small>"
+	},
+	"button_reject":{
+		"message":"Refuser<small>la correction<\/small>"
+	},
+	"title":{
+		"message":"rechercher des éléments ..."
+	},
+	"requiredConditions":{
+		"message":"conditions requises :"
+	},
+	"all":{
+		"message":"tout"
+	},
+	"allTooltip":{
+		"message":"Effectue un ET binaire"
+	},
+	"atLeastOne":{
+		"message":"au moins une"
+	},
+	"atLeastOneTooltip":{
+		"message":"Effectue un OU binaire"
+	},
+	"deleteThisFilter":{
+		"message":"supprimer ce filtre"
+	},
+	"cancelAllFilters":{
+		"message":"annuler tous les filtres"
+	},
+	"contains":{
+		"message":"contient"
+	},
+	"startsWith":{
+		"message":"commence par"
+	},
+	"equals":{
+		"message":"égale"
+	},
+	"endsWith":{
+		"message":"se termine par"
+	},
+	"is":{
+		"message":"est"
+	},
+	"isNot":{
+		"message":"n'est pas"
+	},
+	"isGreaterThanOrEquals":{
+		"message":"est supérieur(e) ou égal(e) à"
+	},
+	"isLessThanOrEquals":{
+		"message":"est inférieur(e) ou égal(e) à"
+	},
+	"isDifferentOf":{
+		"message":"est différent de"
+	},
+	"isBefore":{
+		"message":"est antérieure à"
+	},
+	"isOn":{
+		"message":"est le"
+	},
+	"isNull":{
+		"message":"est vide"
+	},
+	"isAfter":{
+		"message":"est postérieure à"
+	},
+	"saveSearch":{
+		"message":"ajouter aux recherches favorites"
+	},
+	"filter":{
+		"message":"Rechercher"
+	},
+	"addFilter":{
+		"message":"ajouter une condition"
+	},
+	"choose_existent":{
+		"message":"choisir parmi des documents existants"
+	},
+	"btnGoBack":{
+		"message":"retourner<small>à la liste<\/small>"
+	},
+	"btn_back_to":{
+		"message":"retourner à<small>$LABEL$<\/small>",
+		"description":"Used in the button bar in editors"
+	},
+	"btnSave":{
+		"message":"enregistrer<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
+	},
+	"btnRevert":{
+		"message":"annuler<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
+	},
+	"titleRevert":{
+		"message":"Rétablir les dernières données enregistrées"
+	},
+	"btnCancelCascade":{
+		"message":"annuler<small>et retourner au formulaire parent<\/small>"
+	},
+	"no_propertie_modified":{
+		"message": "Aucune propriété n\\'a été modifiée."
+	},
+	"propertie_modified":{
+		"message": "Une propriété a été modifiée."
+	},
+	"properties_modified":{
+		"message": "{} propriétés ont été modifiées."
+	},
+	"date_selector_at":{
+		"message":"à"
+	},
+	"date_selector_format":{
+		"message":"dd\/mm\/yyyy"
+	},
+	"date_selector_hour_letter":{
+		"message":"H"
+	},
+	"date_selector_lang":{
+		"message":"fr"
+	},
+	"time_zone_selector_text":{
+		"message":"Vous pouvez choisir d'utiliser ce fuseau horaire pour le formulaire en cours uniquement ou pour toujours (enregistré dans <a href=\"Rbs\/User\/Profile\">vos paramètres de profil<\/a>)."
+	},
+	"always_use_this_timezone":{
+		"message":"toujours utiliser ce fuseau horaire"
+	},
+	"current_time_in_selected_timezone":{
+		"message":"heure actuelle dans la zone sélectionnée :"
+	},
+	"use":{
+		"message":"utiliser"
+	},
+	"always_use":{
+		"message":"utiliser toujours"
+	},
+	"picker_no_element":{
+		"message":"aucun élément"
+	},
+	"picker_open":{
+		"message":"ouvrir"
+	},
+	"picker_edit_tooltip":{
+		"message":"éditer les propriétés du document sélectionné"
+	},
+	"picker_create":{
+		"message":"créer"
+	},
+	"picker_create_tooltip":{
+		"message":"créer un nouveau document"
+	},
+	"picker_selector":{
+		"message":"sélecteur"
+	},
+	"picker_selector_tooltip":{
+		"message":"ouvrir un sélecteur ci-dessous"
+	},
+	"picker_in_place":{
+		"message":"ajouter à la sélection"
+	},
+	"picker_in_place_tooltip":{
+		"message":"aller dans le module pour sélectionner"
+	},
+	"picker_clear":{
+		"message":"effacer"
+	},
+	"picker_clear_tooltip":{
+		"message":"effacer la sélection"
+	},
+	"picker_clipboard":{
+		"message":"presse-papier"
+	},
+	"picker_clipboard_tooltip":{
+		"message":"prendre dans le Presse-papier"
+	},
+	"picker_choose_model_to_select":{
+		"message":"type de documents"
+	},
+	"picker_add_to_end":{
+		"message":"ajouter à la fin"
+	},
+	"picker_add_to_begin":{
+		"message":"ajouter au début"
+	},
+	"picker_help_filter":{
+		"message":"Pour bénéficier de filtres de recherches plus avancés, vous pouvez vous rendre directement dans $HTMLOPEN$le module concerné$HTMLCLOSE$."
+	},
+	"click_to_select_another_image":{
+		"message":"cliquer pour sélectionner une autre image depuis votre ordinateur"
+	},
+	"activation":{
+		"message":"activation"
+	},
+	"validation":{
+		"message":"validation"
+	},
+	"translation":{
+		"message":"traduction"
+	},
+	"translations":{
+		"message":"traductions"
+	},
+	"reference_language":{
+		"message":"langue de référence"
+	},
+	"general_properties":{
+		"message":"propriétés générales"
+	},
+	"advanced_properties":{
+		"message":"propriétés avancées"
+	},
+	"publication_properties":{
+		"message":"publication"
+	},
+	"information":{
+		"message":"informations"
+	},
+	"languages":{
+		"message":"langues"
+	},
+	"contents":{
+		"message":"contenus"
+	},
+	"status":{
+		"message":"état"
+	},
+	"administration":{
+		"message":"administration"
+	},
+	"create":{
+		"message":"créer"
+	},
+	"sort_actions":{
+		"message":"ordre"
+	},
+	"move_up":{
+		"message":"monter"
+	},
+	"move_top":{
+		"message":"monter au début"
+	},
+	"move_down":{
+		"message":"descendre"
+	},
+	"move_bottom":{
+		"message":"descendre à la fin"
+	},
+	"submit":{
+		"message":"valider"
+	},
+	"cancel":{
+		"message":"annuler"
+	},
+	"yes":{
+		"message":"oui"
+	},
+	"no":{
+		"message":"non"
+	},
+	"translate":{
+		"message":"traduire"
+	},
+	"search":{
+		"message":"rechercher"
+	},
+	"this_document_exists_in_multiple_languages":{
+		"message":"ce document existe en plusieurs langues"
+	},
+	"fullscreen_toolbar":{
+		"message":"Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran."
+	},
+	"copyright":{
+		"message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.rbschange.com\">RBS Change<\/a> est un CMS e-commerce open-source edité par la société <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/www.rbs.fr\">Ready Business System<\/a>."
+	},
+	"please_wait":{
+		"message":"Merci de bien vouloir patienter<br \/>quelques secondes :)"
+	},
+	"close":{
+		"message":"fermer"
+	},
+	"select_and_close":{
+		"message":"sélectionner et fermer"
+	},
+	"select_multiple":{
+		"message":"multiple"
+	},
+	"replace":{
+		"message":"remplacer"
+	},
+	"options":{
+		"message":"options"
+	},
+	"correction":{
+		"message":"correction"
+	},
+	"this_document_has_a_correction_on":{
+		"message":"ce Document dispose d'une Correction portant sur"
+	},
+	"correction_editor_explanation":{
+		"message":"Les valeurs des propriétés affichées dans cet éditeur tiennent compte de la Correction (les propriétés corrigées sont affichées en couleur).<br\/>Pour voir le détail des propriétés qui ont été corrigées, ainsi que les valeurs d'origine, utilisez le bouton\t<strong>Correction<\/strong> ci-dessus."
+	},
+	"admin_section_name":{
+		"message":"administration"
+	},
+	"settings_section_name":{
+		"message":"réglages"
+	},
+	"temporary_id":{
+		"message":"identifiant temporaire"
+	},
+	"reorderDescription":{
+		"message":"Réorganisez les éléments en faisant glisser les symboles <i class=\"icon-reorder\"><\/i> disponibles sur chaque ligne."
+	},
+	"alphabeticalSort":{
+		"message":"tri alphabétique"
+	},
+	"reverseSort":{
+		"message":"inverser"
+	},
+	"this_list_is_empty":{
+		"message":"Cette liste est vide."
+	},
+	"loading":{
+		"message":"Chargement en cours..."
+	},
+	"you_can":{
+		"message":"vous pouvez"
+	},
+	"create_elements_with_buttons":{
+		"message":"créer des éléments en utilisant les boutons ci-dessus"
+	},
+	"clear_search_filters":{
+		"message":"effacer les filtres de recherche"
+	},
+	"refresh":{
+		"message":"rafraîchir la liste"
+	},
+	"sort":{
+		"message":"tri"
+	},
+	"list_display":{
+		"message":"affichage en liste"
+	},
+	"grid_display":{
+		"message":"affichage en grille"
+	},
+	"pagination_total_no":{
+		"message":"aucun élément"
+	},
+	"pagination_total_one":{
+		"message":"un élément"
+	},
+	"pagination_total_other":{
+		"message":"{} éléments"
+	},
+	"pagination_no_page":{
+		"message":"aucun élément"
+	},
+	"pagination_page":{
+		"message":"une page"
+	},
+	"pagination_pages":{
+		"message":"{} pages"
+	},
+	"on":{
+		"message":"sur"
+	},
+	"per_page":{
+		"message":"par page"
+	},
+	"close_preview":{
+		"message":"fermer l'aperçu"
+	},
+	"close_all_previews":{
+		"message":"fermer tous les aperçus"
+	},
+	"replace_by_this":{
+		"message":"Remplacer par cet élément"
+	},
+	"elements_selection":{
+		"message":"sélection d'éléments"
+	},
+	"for_property":{
+		"message":"pour la propriété"
+	},
+	"of":{
+		"message":"de"
+	},
+	"compose_selection_message":{
+		"message":"Composez votre sélection à l'aide de la liste ci-dessous."
+	},
+	"selection_is_empty_now":{
+		"message":"Votre sélection est vide pour l'instant."
+	},
+	"validate_selection":{
+		"message":"Valider la sélection"
+	},
+	"cancel_selection":{
+		"message":"Annuler la sélection"
+	},
+	"add_selected_elements":{
+		"message":"Ajouter les éléments sélectionnés"
+	},
+	"clear_selection":{
+		"message":"Vider"
+	},
+	"preview_tip":{
+		"message":"Survolez les lignes dans la liste ci-dessous pour afficher des options et prévisualiser les documents.<br\/>Les aperçus de documents sont rechargés depuis le serveur si vous cliquez sur <strong>aperçu<\/strong> tout en laissant la touche <strong>[Shift]<\/strong> appuyée."
+	},
+	"display_options":{
+		"message":"options d'affichage"
+	},
+	"display_thumbnail_informations":{
+		"message":"afficher les informations sur les vignettes"
+	},
+	"display_informations":{
+		"message":"afficher les informations"
+	},
+	"published":{
+		"message":"publiés"
+	},
+	"not_published":{
+		"message":"non publiés"
+	},
+	"thumbnail":{
+		"message":"vignettes"
+	},
+	"sort_by":{
+		"message":"trier par"
+	},
+	"select":{
+		"message":"sélectionner"
+	},
+	"select_element":{
+		"message":"sélectionner un élément"
+	},
+	"select_all":{
+		"message":"tous"
+	},
+	"select_neither":{
+		"message":"aucun"
+	},
+	"local_copies_message_no":{
+		"message":"Aucune copie locale"
+	},
+	"local_copies_message_one":{
+		"message":"Une copie locale"
+	},
+	"local_copies_message_other":{
+		"message":"{} copies locales"
+	},
+	"remove_all_local_copies":{
+		"message":"effacer les copies locales"
+	},
+	"local_copy_indicator_title":{
+		"message":"gestion des copies locales"
+	},
+	"document_modify_without_save_title":{
+		"message":"Vous avez précédement modifié ce document, sans l'enregistrer sur le serveur."
+	},
+	"document_modify_localcopy_p1":{
+		"message":"Vous pouvez"
+	},
+	"document_modify_localcopy_p2":{
+		"message":"appliquer"
+	},
+	"document_modify_localcopy_p3":{
+		"message":"les modifications, ou"
+	},
+	"document_modify_localcopy_p4":{
+		"message":"supprimer"
+	},
+	"document_modify_localcopy_p5":{
+		"message":"la copie locale."
+	},
+	"chuck":{
+		"message":"On ne cherche pas Chuck Norris.<br\/>C'est Chuck Norris qui vous trouve."
+	},
+	"open":{
+		"message":"ouvrir le menu principal (Ctrl+Alt+M)"
+	},
+	"profile":{
+		"message":"profil"
+	},
+	"logout":{
+		"message":"déconnexion"
+	},
+	"clear_search":{
+		"message":"effacer la recherche"
+	},
+	"other_modules":{
+		"message":"autres modules"
+	},
+	"help_bottom":{
+		"message":"Ce menu peut être ouvert avec le raccourci clavier Ctrl+Alt+M."
+	},
+	"website":{
+		"message":"Site web"
+	},
+	"twitter":{
+		"message":"Twitter"
+	},
+	"github":{
+		"message":"GitHub"
+	},
+	"go_to_fullscreen":{
+		"message":"basculer en mode plein écran"
+	},
+	"type_enter_to_go_to":{
+		"message":"Appuyez sur <strong class=\"kb\">Entrée<\/strong> pour vous rendre à<br\/><strong>$PARAM$<\/strong>."
+	},
+	"editor":{
+		"message":"éditeur"
+	},
+	"preview":{
+		"message":"aperçu"
+	},
+	"markdown_help":{
+		"message":"afficher l'aide pour le markdown"
+	},
+	"heading_level_0":{
+		"message":"supprimer"
+	},
+	"heading_level_1":{
+		"message":"niveau 1"
+	},
+	"heading_level_2":{
+		"message":"niveau 2"
+	},
+	"heading_level_3":{
+		"message":"niveau 3"
+	},
+	"heading_level_4":{
+		"message":"niveau 4"
+	},
+	"heading_level_5":{
+		"message":"niveau 5"
+	},
+	"heading_level_6":{
+		"message":"niveau 6"
+	},
+	"bold":{
+		"message":"gras"
+	},
+	"italic":{
+		"message":"italique"
+	},
+	"undo":{
+		"message":"annuler"
+	},
+	"redo":{
+		"message":"rétablir"
+	},
+	"insert_picture":{
+		"message":"insérer une image"
+	},
+	"select_picture":{
+		"message":"Sélectionner une image à insérer dans l'éditeur ci-dessous"
+	},
+	"insert_internal_link":{
+		"message":"insérer un lien interne"
+	},
+	"insert_external_link":{
+		"message":"insérer un lien externe"
+	},
+	"select_document_to_link":{
+		"message":"Sélectionner un document à lier dans l'éditeur ci-dessous"
+	},
+	"insert_user":{
+		"message":"insérer un utilisateur"
+	},
+	"select_user":{
+		"message":"Sélectionner un utilisateur à insérer dans l'éditeur ci-dessous"
+	},
+	"insert_usergroup":{
+		"message":"insérer un groupe d'utilisateurs"
+	},
+	"select_usergroup":{
+		"message":"Sélectionner un groupe d'utilisateurs à insérer dans l'éditeur ci-dessous"
+	},
+	"years":{
+		"message":"années"
+	},
+	"months":{
+		"message":"mois"
+	},
+	"weeks":{
+		"message":"semaines"
+	},
+	"days":{
+		"message":"jours"
+	},
+	"hours":{
+		"message":"heures"
+	},
+	"minutes":{
+		"message":"minutes"
+	},
+	"seconds":{
+		"message":"secondes"
+	},
+	"rbs_pageeditor_markdown":{
+		"message":"<strong>Les zones de textes riches sont éditables avec une syntaxe Markdown.<\/strong><br\/>\n\t\tBien qu'un peu moins visuelle, cette syntaxe vous permet d'avoir un meilleur contrôle sur\n\t\tla structure de vos contenus et permet de produire des contenus de qualité et correctement organisés.<br\/>\n\t\t<a href=\"http:\/\/fr.wikipedia.org\/wiki\/Markdown\" target=\"_blank\">En savoir plus sur la syntaxe Markdown...<\/a>"
+	},
+	"draft_description":{
+		"message":"Ce document est à l'état de brouillon."
+	},
+	"frozen_description":{
+		"message":"Ce document a été gelé et n'est donc pas visible sur le site web."
+	},
+	"filed_description":{
+		"message":"Ce document a été archivé.<br\/>Il peut toutefois être affiché sur le site web dans les blocs qui gèrent les archives."
+	},
+	"validation_description":{
+		"message":"Le contenu de ce document doit être validé avant qu'il ne puisse être publié sur le site web."
+	},
+	"validcontent_description":{
+		"message":"Le contenu de ce document a été validé : il ne reste qu'à valider sa publication."
+	},
+	"unpublishable_description":{
+		"message":"Ce document <strong>n'est pas<\/strong> prêt pour être publié sur le site web."
+	},
+	"publishable_description":{
+		"message":"Ce document est prêt pour être publié sur le site web."
+	},
+	"request_validation":{
+		"message":"demander la validation"
+	},
+	"run_all_steps_message":{
+		"message":"Vous avez la possibilité d'exécuter toutes les étapes du processus de validation en une seule fois en cliquant sur le bouton <strong>Publier tout de suite<\/strong> ci-dessous. Cliquez sur le bouton <strong>Aide<\/strong> pour en savoir plus sur le fonctionnement du processus de validation."
+	},
+	"run_all_steps_button":{
+		"message":"publier tout de suite"
+	},
+	"request_validation_done":{
+		"message":"demande de validation effectuée"
+	},
+	"content_validated":{
+		"message":"contenu validé"
+	},
+	"publication_validated":{
+		"message":"publication validée"
+	},
+	"to_validate_content_you_can":{
+		"message":"pour valider le contenu de ce document, vous pouvez"
+	},
+	"open_document_editor":{
+		"message":"ouvrir l'éditeur du document"
+	},
+	"open_document_editor_in_new_tab":{
+		"message":"ouvrir l'éditeur du document dans un nouvel onglet"
+	},
+	"accepted":{
+		"message":"accepté"
+	},
+	"rejected":{
+		"message":"refusé"
+	},
+	"accept":{
+		"message":"accepter"
+	},
+	"reject":{
+		"message":"refuser"
+	},
+	"freeze":{
+		"message":"geler"
+	},
+	"unfreeze":{
+		"message":"dégeler"
+	},
+	"reject_reason":{
+		"message":"motif du refus"
+	},
+	"why_do_you_reject_content":{
+		"message":"pourquoi refusez-vous le contenu de ce document ?"
+	},
+	"reject_content":{
+		"message":"refuser le contenu"
+	},
+	"accept_content":{
+		"message":"valider le contenu"
+	},
+	"accept_publication":{
+		"message":"valider la publication"
+	},
+	"you_can_freeze_document":{
+		"message":"Vous pouvez geler ce document : son affichage sur le site web sera alors désactivé."
+	},
+	"freeze_document":{
+		"message":"geler le document"
+	},
+	"unfreeze_document":{
+		"message":"dégeler le document"
+	},
+	"frozen_document":{
+		"message":"document gelé"
+	},
+	"this_document_is_frozen":{
+		"message":"Ce document est gelé : son affichage sur le site web a été désactivé temporairement. Pour le rendre de nouveau visible, vous pouvez le dégeler."
+	},
+	"modified_content_correction":{
+		"message":"Contenu modifié → correction"
+	},
+	"caution":{
+		"message":"attention"
+	},
+	"document_has_been_modified_since_its_publication":{
+		"message":"Le document a été modifié depuis sa publication : les modifications ne seront pas visibles tant que la Correction n'aura pas été validée."
+	},
+	"to_validate_correction_please_go_to":{
+		"message":"pour valider la Correction, veuillez vous rendre sur"
+	},
+	"document_editor":{
+		"message":"l'éditeur du Document"
+	},
+	"to_check_modified_properties":{
+		"message":"afin de <strong>vérifier les propriétés qui ont été modifiées<\/strong>"
+	},
+	"action_has_failed":{
+		"message":"l'action a échoué"
+	},
+	"help_draft_explain":{
+		"message":"Lorsqu'un Document à l'état de <strong>brouillon<\/strong> vous semble correct, et lorsque vous souhaitez le publier sur le site web, vous pouvez faire une <strong>demande de validation<\/strong>."
+	},
+	"help_validation_explain":{
+		"message":"Le Document est ici en <strong>attente de validation<\/strong> de son contenu.<ul><li><strong>Refuser :<\/strong> le Document repassera à l'état de <strong>brouillon<\/strong> ;<\/li><li><strong>Accepter :<\/strong> il restera alors à <strong>valider la publication<\/strong> du Document.<\/li><\/ul>"
+	},
+	"help_validcontent_explain":{
+		"message":"Le contenu du Document a été validé, il faut maintenant <strong>valider sa publication<\/strong> sur le site web."
+	},
+	"help_publishable_explain":{
+		"message":"Ici, toutes les conditions requises pour l'affichage du Document sont validées.<br\/>Il est possible d'empêcher son affichage en <strong>gelant<\/strong> le Document."
+	},
+	"help_frozen_explain":{
+		"message":"Le Document a été gelé pour empêcher son affichage sur le site web.<br\/>Il est possible de réactiver son affichage en <strong>dégelant<\/strong> le Document."
+	},
+	"back_to_editor":{
+		"message":"retour à l'édition du document"
+	},
+	"back_to_document":{
+		"message":"retourner à <strong>$LABEL$</strong>"
+	},
+	"and_go_back_to":{
+		"message":"et retourner à <strong>$LABEL$</strong>",
+		"description" : "Use in items select box on the top of document list"
+	},
+	"menu_title":{
+		"message":"processus de validation"
+	},
+	"menu_contents":{
+		"message":"Cette interface vous permet de contrôler la validation et la publication du contenu des documents destinés à être affichés sur votre site web."
+	},
+	"richtext_title":{
+		"message":"titre"
+	},
+	"workflow_title":{
+		"message":"Processus de validation (workflow)"
+	},
+	"show_changes":{
+		"message":"afficher les changements"
+	},
+	"timeinterval_choose_type":{
+		"message":"choisissez la période"
+	},
+	"insert_block_left": {
+		"message": "ajouter un bloc à gauche"
+	},
+	"insert_block_right": {
+		"message": "ajouter un bloc à droite"
+	},
+	"insert_block_after": {
+		"message": "ajouter un bloc au dessous du bloc sélectionné"
+	},
+	"insert_block_bottom": {
+		"message": "ajouter un bloc au bas de la zone"
+	},
+	"insert_block_before": {
+		"message": "ajouter un bloc au dessus du block sélectionné"
+	},
+	"insert_block_top": {
+		"message": "ajouter un bloc en haut de la zone"
+	},
+	"insert_block_into_column": {
+		"message": "ajouter un bloc dans cette colonne"
+	},
+	"delete_block": {
+		"message": "supprimer le bloc"
+	},
+	"delete_block_group": {
+		"message": "supprimer le groupe de blocs"
+	},
+	"parameterize_columns": {
+		"message": "paramétrer les colonnes"
+	},
+	"block_name":{
+		"message":"nom du bloc"
+	},
+	"block_type": {
+		"message": "type de bloc"
+	},
+	"block_label": {
+		"message": "libellé du bloc"
+	},
+	"block_visibility":{
+		"message":"visibilité"
+	},
+	"block_visibility_raw":{
+		"message":"sans enveloppe"
+	},
+	"block_visibility_x":{
+		"message":"< 768px"
+	},
+	"block_visibility_s":{
+		"message":"≥ 768px"
+	},
+	"block_visibility_m":{
+		"message":"≥ 992px"
+	},
+	"block_visibility_l":{
+		"message":"≥ 1200px"
+	},
+	"block_ttl":{
+		"message":"durée du cache (secondes)"
+	},
+	"block_ttl_none":{
+		"message":"aucun"
+	},
+	"block_ttl_1m":{
+		"message":"1m"
+	},
+	"block_ttl_1minute":{
+		"message":"1 minute"
+	},
+	"block_ttl_10m":{
+		"message":"10m"
+	},
+	"block_ttl_10minutes":{
+		"message":"10 minutes"
+	},
+	"block_ttl_1h":{
+		"message":"1h"
+	},
+	"block_ttl_1hour":{
+		"message":"1 heure"
+	},
+	"equitable_distribution":{
+		"message":"répartir équitablement"
+	},
+	"column":{
+		"message":"colonne"
+	},
+	"no_block":{
+		"message":"aucun bloc"
+	},
+	"one_block":{
+		"message":"un bloc"
+	},
+	"n_blocks":{
+		"message":"{} blocs"
+	},
+	"width":{
+		"message":"largeur"
+	},
+	"width_reduce":{
+		"message":"réduire"
+	},
+	"width_enlarge":{
+		"message":"agrandir"
+	},
+	"shift":{
+		"message":"décallage"
+	},
+	"shift_left":{
+		"message":"décaler à gauche"
+	},
+	"shift_right":{
+		"message":"décaler à droite"
+	},
+	"dashboard":{
+		"message":"tableau de bord"
+	},
+	"dashboard_notifications":{
+		"message":"notifications"
+	},
+	"dashboard_notification_new":{
+		"message":"nouvelles"
+	},
+	"dashboard_notification_read":{
+		"message":"lues"
+	},
+	"dashboard_task_tasks": {
+		"message":"tâches"
+	},
+	"dashboard_task_tasks_in_progress":{
+		"message":"tâches en cours"
+	},
+	"dashboard_task_end":{
+		"message":"terminé"
+	},
+	"dashboard_task_to_execute":{
+		"message":"à exécuter"
+	},
+	"dashboard_settings":{
+		"message":"configuration du tableau de bord"
+	},
+	"dashboard_settings_tags":{
+		"message":"étiquettes"
+	},
+	"main_menu":{
+		"message":"menu principal"
+	},
+	"drag_to_reorder":{
+		"message":"glisser pour réordonner"
+	},
+	"about": {
+		"message":"à propos"
+	},
+	"has_current_correction": {
+		"message":"une correction est en cours"
+	},
+	"saving": {
+		"message":"enregistrement"
+	},
+	"no_action_to_execute": {
+		"message":"Vous n'avez aucune action à effectuer."
+	},
+	"concerned_document": {
+		"message":"document concerné"
+	},
+	"configure_url_and_redirections":{
+		"message":"URLs et redirections"
+	},
+	"view_timeline":{
+		"message":"Consulter la <strong>Timeline</strong>"
+	},
+	"other_operations":{
+		"message":"autres opérations"
+	},
+	"for":{
+		"message":"pour"
+	},
+	"read_only": {
+		"message":"lecture seule",
+		"description":"Used in structure editor."
+	},
+	"drag_block": {
+		"message":"déplacer le bloc par glisser/déposer",
+		"description":"Title of the button to drag & drop a richtext blocks in the page editor."
+	},
+	"structure_editor_new_block": {
+		"message":"nouveau bloc"
+	},
+	"filter_group_and_title": {
+		"message":"qui vérifient toutes les conditions suivantes :"
+	},
+	"filter_group_and_toggle": {
+		"message":"Tous"
+	},
+	"filter_group_or_title": {
+		"message":"qui vérifient au moins l'une des conditions suivantes :"
+	},
+	"filter_group_or_toggle": {
+		"message":"Au moins un"
+	},
+	"filter_add": {
+		"message":"Ajouter"
+	},
+	"reset_filter": {
+		"message":"Effacer toutes les conditions"
+	},
+	"group_filter": {
+		"message":"Groupe de conditions"
+	},
+	"common_filter_group": {
+		"message":"Commun"
+	},
+	"unknown_filter": {
+		"message":"condition inconnue"
+	},
+	"possible_values": {
+		"message":"valeur prédéfinie"
+	},
+	"change":{
+		"message":"changer"
+	},
+	"urls":{
+		"message":"Récriture d'URLs et redirections"
+	},
+	"rewrite_urls":{
+		"message":"Récriture d'URLs"
+	},
+	"relative_path":{
+		"message":"Chemin relatif"
+	},
+	"document_published_in_lang":{
+		"message":"Le document est publié dans cette langue."
+	},
+	"document_not_published_in_lang":{
+		"message":"Le document n'est pas publié dans cette langue."
+	},
+	"section_published_in_lang":{
+		"message":"Cette section est publiée dans cette langue."
+	},
+	"section_not_published_in_lang":{
+		"message":"Cette section n'est pas publiée dans cette langue."
+	},
+	"detail_function_provided_in_lang":{
+		"message":"La fonction détail est assurée dans cette section pour cette langue."
+	},
+	"detail_function_not_published_in_lang":{
+		"message":"La fonction détail n'est pas publié dans cette section pour cette langue."
+	},
+	"detail_function_not_provided_in_lang":{
+		"message":"La fonction détail n'est pas assurée dans cette section pour cette langue."
+	},
+	"document_is_not_published":{
+		"message":"Ce document n'est publié nulle part sur le site web."
+	},
+	"document_is_not_published_message":{
+		"message":"Pour pouvoir configurer les URLs de ce document, vous devez au préalable avoir $LINKSTART$défini des sections$LINKEND$ dans lesquelles ce document doit s'afficher sur le site web."
+	},
+	"available_languages_help":{
+		"message":"Le tableau ci-dessous ne présente que les langues dans lesquelles ce document est traduit et les sections dans lesquelles il est implanté."
+	},
+	"canonical_help":{
+		"message":"Les lignes marquées d'une <i class=\"icon-star text-info\"><\/i> représentent les implantations canoniques de document dans un site et une langue donnés."
+	},
+	"url":{
+		"message":"URL"
+	},
+	"section":{
+		"message":"section"
+	},
+	"lcid":{
+		"message":"langue"
+	},
+	"canonical_location":{
+		"message":"implantation canonique pour ce site"
+	},
+	"publication":{
+		"message":"publication"
+	},
+	"open_option_panel":{
+		"message":"options avancées"
+	},
+	"option_panel_title":{
+		"message":"options avancées"
+	},
+	"query":{
+		"message":"requête"
+	},
+	"edit_url":{
+		"message":"modifier cette URL"
+	},
+	"restore_default_url":{
+		"message":"revenir à l'URL par défaut"
+	},
+	"validate_url":{
+		"message":"valider les modifications"
+	},
+	"undo_edit_url":{
+		"message":"annuler les modifications"
+	},
+	"redirects":{
+		"message":"redirections"
+	},
+	"permanent":{
+		"message":"permanente"
+	},
+	"make_current_url":{
+		"message":"utiliser comme URL courante"
+	},
+	"edit_redirect":{
+		"message":"modifier cette redirection"
+	},
+	"remove_redirect":{
+		"message":"supprimer cette redirection"
+	},
+	"validate_redirect":{
+		"message":"valider les modifications"
+	},
+	"undo_edit_redirect":{
+		"message":"annuler les modifications"
+	},
+	"add_new_redirect":{
+		"message":"ajouter cette redirection"
+	},
+	"clear_new_redirect":{
+		"message":"réinitialiser cette redirection"
+	}
+}

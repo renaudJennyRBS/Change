@@ -1,0 +1,148 @@
+{
+	"/Rbs/User/": {
+		"module": "Rbs_User",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/User/User/",
+			"labelKey": "m.rbs.user.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/Group/": {
+		"model": "Rbs_User_Group",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Group/list.twig",
+			"labelKey": "m.rbs.user.admin.group_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/Group/:id": {
+		"model": "Rbs_User_Group",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Group/form.twig",
+			"labelKey": "m.rbs.user.documents.group | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/Group/:id/GroupUsers/": {
+		"model": "Rbs_User_Group",
+		"name": "groupUsers",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Group/group-users.twig",
+			"labelKey": "m.rbs.user.admin.users_in_group | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/Group/:id/Permissions/": {
+		"model": "Rbs_User_Group",
+		"name": "permission",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/permission.twig",
+			"labelKey": "m.rbs.user.admin.permissions | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/Group/:id/PublicProfile": {
+		"model": "Rbs_User_Group",
+		"name": "public-profile",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Group/public-profile.twig",
+			"labelKey": "m.rbs.user.admin.public_profile_sub_title | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/Group/:id/timeline": {
+		"model": "Rbs_User_Group",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_User_Group",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/Group/new": {
+		"model": "Rbs_User_Group",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Group/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/Profile": {
+		"module": "Rbs_User",
+		"name": "userProfile",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Profile/profile.twig",
+			"labelKey": "m.rbs.user.admin.public_profile_sub_title | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/User/": {
+		"model": "Rbs_User_User",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/list.twig",
+			"labelKey": "m.rbs.user.admin.user_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/User/:id": {
+		"model": "Rbs_User_User",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/form.twig",
+			"labelKey": "m.rbs.user.documents.user | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/User/:id/Applications/": {
+		"model": "Rbs_User_User",
+		"name": "applications",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/applications.twig",
+			"labelKey": "m.rbs.user.admin.applications | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/User/:id/Permissions/": {
+		"model": "Rbs_User_User",
+		"name": "permission",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/permission.twig",
+			"labelKey": "m.rbs.user.admin.permissions | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/User/:id/PublicProfile": {
+		"model": "Rbs_User_User",
+		"name": "public-profile",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/public-profile.twig",
+			"labelKey": "m.rbs.user.admin.public_profile_sub_title | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/User/:id/timeline": {
+		"model": "Rbs_User_User",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_User_User",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/User/User/new": {
+		"model": "Rbs_User_User",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

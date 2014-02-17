@@ -8,12 +8,12 @@ namespace Change\Db\Query;
 class InsertQuery extends AbstractQuery
 {
 	/**
-	 * @var \Change\Db\Query\Clauses\InsertClause
+	 * @var Clauses\InsertClause
 	 */
 	protected $insertClause;
 
 	/**
-	 * @var \Change\Db\Query\Clauses\ValuesClause
+	 * @var Clauses\ValuesClause
 	 */
 	protected $valuesClause;
 
@@ -24,7 +24,7 @@ class InsertQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\InsertClause|null
+	 * @return Clauses\InsertClause|null
 	 */
 	public function getInsertClause()
 	{
@@ -33,7 +33,7 @@ class InsertQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\ValuesClause|null
+	 * @return Clauses\ValuesClause|null
 	 */
 	public function getValuesClause()
 	{
@@ -51,18 +51,18 @@ class InsertQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\InsertClause $insertClause
+	 * @param Clauses\InsertClause $insertClause
 	 */
-	public function setInsertClause(\Change\Db\Query\Clauses\InsertClause $insertClause)
+	public function setInsertClause(Clauses\InsertClause $insertClause)
 	{
 		$this->insertClause = $insertClause;
 	}
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\ValuesClause $valuesClause
+	 * @param Clauses\ValuesClause $valuesClause
 	 */
-	public function setValuesClause(\Change\Db\Query\Clauses\ValuesClause $valuesClause)
+	public function setValuesClause(Clauses\ValuesClause $valuesClause)
 	{
 		$this->valuesClause = $valuesClause;
 	}
@@ -122,6 +122,6 @@ class InsertQuery extends AbstractQuery
 	 */
 	public function execute()
 	{
-		return $this->dbProvider->executeQuery($this);
+		return $this->getDbProvider()->executeQuery($this);
 	}
 }

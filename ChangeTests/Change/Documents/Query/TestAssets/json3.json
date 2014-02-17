@@ -1,0 +1,13 @@
+{
+	"model": "Project_Tests_Correction",
+	"LCID" : "fr_FR",
+	"where": {
+		"and": [
+			{
+				"op": "published",
+				"at": "2013-07-04T15:04:08Z",
+				"to": "2013-08-04T15:04:08Z"
+			}
+		]
+	}
+}

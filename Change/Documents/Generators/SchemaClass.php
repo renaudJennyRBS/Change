@@ -128,7 +128,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		$schemaManager = $this->schemaManager;
 		$sqlMapping = $this->sqlMapping;
 
-		foreach ($model->getProperties() as $propertyName => $property)
+		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
 			if ($property->getDbOptions() !== null)
@@ -141,7 +141,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 
 		foreach($descendants as $model)
 		{
-			foreach ($model->getProperties() as $propertyName => $property)
+			foreach ($model->getProperties() as $property)
 			{
 				/* @var $property \Change\Documents\Generators\Property */
 				if ($property->getDbOptions() !== null)
@@ -276,7 +276,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 				
 			if ($propertyName === 'publicationStatus')
 			{
-				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'VALUES\' => array(\'DRAFT\',\'VALIDATION\',\'PUBLISHABLE\',\'UNPUBLISHABLE\',\'DEACTIVATED\',\'FILED\')))';
+				$fd = '$schemaManager->newEnumFieldDefinition('.$fnEsc.', array(\'VALUES\' => array(\'DRAFT\',\'VALIDATION\',\'VALIDCONTENT\',\'VALID\',\'PUBLISHABLE\',\'UNPUBLISHABLE\',\'FROZEN\',\'FILED\')))->setNullable(false)->setDefaultValue(\'DRAFT\')';
 			}
 			else
 			{
@@ -284,18 +284,19 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 				$dbOptionsEsc = $this->escapePHPValue($property->getDbOptions());
 				switch ($propertyType)
 				{
-					case 'Document' :
 					case 'Integer' :
-					case 'DocumentId' :
 						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'DocumentArray' :
+					case 'DocumentId' :
+					case 'Document' :
 						$fd = '$schemaManager->newIntegerFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')->setDefaultValue(\'0\')';
 						break;
 					case 'String' :
 						$fd = '$schemaManager->newVarCharFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'LongString' :
+					case 'StorageUri' :
 					case 'XML' :
 					case 'RichText' :
 					case 'JSON' :

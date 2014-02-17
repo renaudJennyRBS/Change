@@ -1,0 +1,30 @@
+<form class="form-horizontal" ng-submit="submit()">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+		<rbs-field-text
+			property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_User_Group', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="realm" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_User_Group', 'realm'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="identifier" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_User_Group', 'identifier'), ['ucf']) }}">
+		</rbs-field-text>
+
+	</fieldset>
+
+	<fieldset
+			data-ng-show="section=='systeminfo'"
+			data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

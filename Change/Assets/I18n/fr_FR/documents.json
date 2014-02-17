@@ -1,0 +1,62 @@
+{
+	"id":{
+		"message":"identifiant"
+	},
+	"model":{
+		"message":"modèle"
+	},
+	"creationdate":{
+		"message":"date de création"
+	},
+	"modificationdate":{
+		"message":"dernière modification"
+	},
+	"reflcid":{
+		"message":"langue de référence"
+	},
+	"lcid":{
+		"message":"langue"
+	},
+	"publicationstatus":{
+		"message":"statut de publication"
+	},
+	"startpublication":{
+		"message":"début de publication"
+	},
+	"endpublication":{
+		"message":"fin de publication"
+	},
+	"active":{
+		"message":"actif"
+	},
+	"startactivation":{
+		"message":"début d'activation"
+	},
+	"endactivation":{
+		"message":"fin d'activation"
+	},
+	"treename":{
+		"message":"arbre"
+	},
+	"label":{
+		"message":"libellé"
+	},
+	"authorname":{
+		"message":"nom de l'auteur"
+	},
+	"authorid":{
+		"message":"identifiant de l'auteur"
+	},
+	"documentversion":{
+		"message":"version"
+	},
+	"title":{
+		"message":"titre sur le(s) site(s)"
+	},
+	"code":{
+		"message":"code"
+	},
+	"publicationsections":{
+		"message":"sections de publication"
+	}
+}

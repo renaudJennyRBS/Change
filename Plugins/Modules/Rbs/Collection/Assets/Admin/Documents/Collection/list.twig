@@ -1,0 +1,22 @@
+<div class="row">
+
+	<div rbs-full-width>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.collection.admin.collection_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Collection_Collection" filter="filter" ></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Collection_Collection' | rbsURL:'new' =)">{{ i18n('m.rbs.collection.admin.collection_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Collection_Collection" filter-collection="filter">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-preview>
+				<ul style="margin-bottom: 0;">
+					<li ng-repeat="item in doc.items">(= item.label =) <span class="muted">((= item.value =))</span></li>
+				</ul>
+			</rbs-preview>
+		</rbs-document-list>
+	</div>
+
+</div>

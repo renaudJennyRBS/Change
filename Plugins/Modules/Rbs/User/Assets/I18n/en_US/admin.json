@@ -1,0 +1,241 @@
+{
+  "module_name":{
+    "message":"users"
+  },
+  "module_keywords":{
+    "message":"groups,security,password,login,account,authentication"
+  },
+  "group":{
+    "message":"group"
+  },
+  "group_list":{
+    "message":"groups"
+  },
+  "group_users_remove_from_group":{
+    "message":"remove from the group"
+  },
+  "confirm_remove_permission_rule":{
+    "message":"confirm the deletion of $ROLE$ permission rule for $PRIVILEGE$ privilege on $RESOURCE_ID$ resource?"
+  },
+  "confirm_remove_all_permission_rules":{
+    "message":"confirm the deletion of all the permissions rules for user $USER$?"
+  },
+  "profile":{
+    "message":"user profile"
+  },
+  "token":{
+    "message":"token"
+  },
+  "application":{
+    "message":"application"
+  },
+  "realm":{
+    "message":"realm"
+  },
+  "device":{
+    "message":"device"
+  },
+  "creation_date":{
+    "message":"creation date"
+  },
+  "validity_date":{
+    "message":"validity date"
+  },
+  "revoke_token":{
+    "message":"revoke"
+  },
+  "applications_list_sub_title":{
+    "message":"applications"
+  },
+  "applications":{
+    "message":"applications"
+  },
+  "applications_aside_link":{
+    "message":"configure <strong>access to applications<\/strong>"
+  },
+  "permissions":{
+    "message":"permissions"
+  },
+  "permissions_aside_link":{
+    "message":"configure <strong>permissions<\/strong>"
+  },
+  "current_password":{
+    "message":"current password"
+  },
+  "new_password":{
+    "message":"new password"
+  },
+  "permission":{
+    "message":"permission"
+  },
+  "permission_rule":{
+    "message":"permission rule"
+  },
+  "permission_rules_sub_title":{
+    "message":"permission rules"
+  },
+  "permission_roles":{
+    "message":"roles"
+  },
+  "permission_privileges":{
+    "message":"privileges"
+  },
+  "permission_role":{
+    "message":"role"
+  },
+  "permission_resource":{
+    "message":"resource"
+  },
+  "permission_resources":{
+    "message":"resources"
+  },
+  "permission_privilege":{
+    "message":"privilege"
+  },
+  "new_permission_rules":{
+    "message":"new permission rules"
+  },
+  "remove_permission_rule":{
+    "message":"remove"
+  },
+  "remove_all_permission_rules":{
+    "message":"remove all rules"
+  },
+  "customise":{
+    "message":"customize"
+  },
+  "add":{
+    "message":"add"
+  },
+  "public_profile_sub_title":{
+    "message":"public profile"
+  },
+  "login":{
+    "message":"Login block"
+  },
+  "login_realm":{
+    "message":"realm"
+  },
+  "account_short":{
+    "message":"Reduced user account"
+  },
+  "create_account":{
+    "message":"user account creation",
+    "description":"account creation block name (backoffice use)"
+  },
+  "create_account_hash_method":{
+    "message":"password's hash method"
+  },
+  "account_settings":{
+    "message":"account setup",
+    "description":"account settings block name (backoffice use)"
+  },
+  "function_create_account":{
+    "message":"user account creation"
+  },
+  "function_error_401":{
+    "message":"Unauthorized"
+  },
+  "group_picker_title":{
+    "message":"select groups"
+  },
+  "user_list":{
+    "message":"users"
+  },
+  "user_create":{
+    "message":"add user"
+  },
+  "group_create":{
+    "message":"add user group"
+  },
+  "users_in_group":{
+    "message":"group users"
+  },
+  "users_in_group_aside_link":{
+    "message":"manage <strong>group users<\/strong>"
+  },
+  "add_users_in_group":{
+    "message":"add users to the group"
+  },
+  "users_in_group_picker_title":{
+    "message":"select users to add to the group"
+  },
+  "profile_lcid":{
+    "message":"language"
+  },
+  "profile_timezone":{
+    "message":"time zone"
+  },
+  "profile_avatar":{
+    "message":"avatar"
+  },
+  "profile_pagingsize":{
+    "message":"number of items per page"
+  },
+  "profile_documentlistviewmode":{
+    "message":"Lists display mode"
+  },
+  "profile_list":{
+    "message":"list"
+  },
+  "profile_grid":{
+    "message":"grid"
+  },
+  "profile_editoractionaftersave":{
+    "message":"after save"
+  },
+  "profile_backtolist":{
+    "message":"go back to list"
+  },
+  "profile_stayonform":{
+    "message":"stay on the form"
+  },
+  "profile_internationalization":{
+    "message":"language & region"
+  },
+  "profile_lists":{
+    "message":"list display"
+  },
+  "profile_editors":{
+    "message":"editing forms"
+  },
+  "profile_personnal_info":{
+    "message":"personnal information"
+  },
+  "profile_warning":{
+    "message":"caution!"
+  },
+  "profile_change_language_warning":{
+    "message":"after changing the language, you will need to clear your browser's cache and reload the page."
+  },
+  "profile_notification":{
+    "message":"notifications"
+  },
+  "profile_notification_helper":{
+    "message":"configure unread notifications email's sending frequency."
+  },
+  "profile_notification_sending_management":{
+    "message":"e-mail notifications"
+  },
+  "profile_notification_no_email":{
+    "message":"do not send anything"
+  },
+  "profile_notification_immediately":{
+    "message":"send immediately"
+  },
+  "profile_notification_with_time_interval":{
+    "message":"send at regular time intervals"
+  },
+  "profile_notification_time_interval":{
+    "message":"sending frequency"
+  },
+  "profile_notification_time_interval_at":{
+    "message":"to"
+  },
+  "profile_notification_time_interval_helper":{
+    "message":"If you select <strong>frequency of sending 1 days<\/strong> and <strong>12:00<\/strong> you will receive an e-mail every day between 12:00 and 12:05. <br\/>  If you select <strong>frequency 2 hours<\/strong> and <strong>1:15<\/strong>, only minutes will be taken into account, (the next email received will be between 3:15 and 3:20, and then between 5:15 and 5:20...)"
+  },
+  "profile_gravatar_help":{
+    "message":"To use an avatar, create an account on <a href=\"http:\/\/en.gravatar.com\" target=\"_blank\">http:\/\/en.gravatar.com<\/a>"
+  }
+}

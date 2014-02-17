@@ -1,8 +1,6 @@
 <?php
 namespace Change\Http\Rest;
 
-use Change\Application\ApplicationServices;
-use Change\Documents\DocumentServices;
 use Change\Http\Event;
 use Change\Http\Result;
 use Zend\Http\Response as HttpResponse;
@@ -13,37 +11,33 @@ use Change\Http\Rest\Result\ErrorResult;
  */
 class Controller extends \Change\Http\Controller
 {
+	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Http', 'Http.Rest');
+	}
 
 	/**
-	 * @param \Zend\EventManager\EventManagerInterface $eventManager
-	 * @return void
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	protected function registerDefaultListeners($eventManager)
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->addIdentifiers('Http.Rest');
+		parent::attachEvents($eventManager);
+		$eventManager->attach(Event::EVENT_REQUEST, array($this, 'onDefaultRequest'), 5);
 		$eventManager->attach(Event::EVENT_EXCEPTION, array($this, 'onException'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}
 
-	/**
-	 * @param \Change\Http\Request $request
-	 * @return Event
-	 */
-	protected function createEvent($request)
+	public function onDefaultRegisterServices(Event $event)
 	{
-		$event = parent::createEvent($request);
-		$this->initializeEvent($event);
-		return $event;
+		parent::onDefaultRegisterServices($event);
+		$event->getApplicationServices()->getPermissionsManager()->allow(false);
 	}
 
-	/**
-	 * @param Event $event
-	 */
-	protected function initializeEvent(Event $event)
+	public function onDefaultRequest(Event $event)
 	{
-		$event->setApplicationServices(new ApplicationServices($this->getApplication()));
-		$event->setDocumentServices(new DocumentServices($event->getApplicationServices()));
-
 		$request = $event->getRequest();
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$request->populateLCIDByHeader($i18nManager);
@@ -59,7 +53,6 @@ class Controller extends \Change\Http\Controller
 		$response->getHeaders()->addHeaderLine('Content-Type: application/json');
 		return $response;
 	}
-
 
 	/**
 	 * @param Event $event
@@ -89,12 +82,15 @@ class Controller extends \Change\Http\Controller
 			if ($event->getResult() instanceof Result)
 			{
 				$result = $event->getResult();
-				$error->setHttpStatusCode($result->getHttpStatusCode());
-				if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_404)
+				if ($result->getHttpStatusCode() && $result->getHttpStatusCode() !== HttpResponse::STATUS_CODE_200)
 				{
-					$error->setErrorCode('PATH-NOT-FOUND');
-					$error->setErrorMessage('Unable to resolve path');
-					$error->addDataValue('path', $event->getRequest()->getPath());
+					$error->setHttpStatusCode($result->getHttpStatusCode());
+					if ($result->getHttpStatusCode() === HttpResponse::STATUS_CODE_404)
+					{
+						$error->setErrorCode('PATH-NOT-FOUND');
+						$error->setErrorMessage('Unable to resolve path');
+						$error->addDataValue('path', $event->getRequest()->getPath());
+					}
 				}
 			}
 
@@ -113,6 +109,10 @@ class Controller extends \Change\Http\Controller
 		{
 			$response = $event->getController()->createResponse();
 			$response->getHeaders()->addHeaders($result->getHeaders());
+			if ($this->getApplication()->inDevelopmentMode())
+			{
+				$response->getHeaders()->addHeaderLine('Change-Memory-Usage: ' . number_format(memory_get_usage()));
+			}
 
 			$response->setStatusCode($result->getHttpStatusCode());
 			$event->setResponse($response);

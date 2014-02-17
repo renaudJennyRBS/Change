@@ -33,7 +33,7 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	protected $options;
 
 	/**
-	 * @var array
+	 * @var Expressions\Parameter[]
 	 */
 	protected $parameters = array();
 
@@ -46,26 +46,16 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	 * @param DbProvider $dbProvider
 	 * @param string $cachedKey
 	 */
-	public function __construct(DbProvider $dbProvider, $cachedKey = null)
+	public function __construct(DbProvider $dbProvider = null, $cachedKey = null)
 	{
 		$this->setDbProvider($dbProvider);
 		$this->cachedKey = $cachedKey;
 	}
 
 	/**
-	 * Get the query's parameters list.
-	 * @api
-	 * @return \Change\Db\Query\Expressions\Parameter[]
-	 */
-	public function getParameters()
-	{
-		return $this->parameters;
-	}
-
-	/**
 	 * Set the query's parameters list.
 	 * @api
-	 * @param \Change\Db\Query\Expressions\Parameter[] $parameters
+	 * @param Expressions\Parameter[] $parameters
 	 */
 	public function setParameters($parameters)
 	{
@@ -80,13 +70,35 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	}
 
 	/**
+	 * Get the query's parameters list.
+	 * @api
+	 * @return Expressions\Parameter[]
+	 */
+	public function getParameters()
+	{
+		return $this->parameters;
+	}
+
+	/**
+	 * @api
+	 * @param string $parameterName
+	 * @return Expressions\Parameter|null
+	 */
+	public function getParameter($parameterName)
+	{
+		return isset($this->parameters[$parameterName]) ? $this->parameters[$parameterName] : null;
+	}
+
+
+
+	/**
 	 * Declare a new query parameter.
 	 * @api
 	 * @throws \RuntimeException
-	 * @param \Change\Db\Query\Expressions\Parameter $parameter
-	 * @return \Change\Db\Query\AbstractQuery
+	 * @param Expressions\Parameter $parameter
+	 * @return $this
 	 */
-	public function addParameter(\Change\Db\Query\Expressions\Parameter $parameter)
+	public function addParameter(Expressions\Parameter $parameter)
 	{
 		$parameterName = $parameter->getName();
 		if (isset($this->parameters[$parameterName]))
@@ -103,7 +115,7 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	 * @throws \RuntimeException
 	 * @param string $parameterName
 	 * @param mixed $value
-	 * @return \Change\Db\Query\AbstractQuery
+	 * @return $this
 	 */
 	public function bindParameter($parameterName, $value)
 	{
@@ -151,10 +163,15 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	/**
 	 * Get the provider the query is bound to.
 	 * @api
+	 * @throws \RuntimeException
 	 * @return DbProvider
 	 */
 	public function getDbProvider()
 	{
+		if ($this->dbProvider === null)
+		{
+			throw new \RuntimeException('DbProvider not set', 999999);
+		}
 		return $this->dbProvider;
 	}
 
@@ -163,7 +180,7 @@ abstract class AbstractQuery implements InterfaceSQLFragment
 	 * @api
 	 * @param DbProvider $dbProvider
 	 */
-	public function setDbProvider(DbProvider $dbProvider)
+	public function setDbProvider(DbProvider $dbProvider = null)
 	{
 		$this->dbProvider = $dbProvider;
 	}

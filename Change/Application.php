@@ -10,7 +10,7 @@ class Application
 	const CHANGE_VERSION = "4.0";
 
 	/**
-	 * @var \Change\Configuration\Configuration
+	 * @var Configuration\Configuration
 	 */
 	protected $configuration;
 
@@ -20,26 +20,23 @@ class Application
 	protected $workspace;
 
 	/**
-	 * @var \Change\Application\PackageManager
-	 */
-	protected $packageManager;
-
-	/**
-	 * @var \Change\Events\SharedEventManager
-	 */
-	protected $sharedEventManager;
-
-	/**
-	 * @var \Change\Application
-	 */
-	protected static $sharedInstance;
-
-	/**
 	 * @var bool
 	 */
 	protected $started = false;
 
 	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $context;
+
+	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
+
+
+	/**
+	 * @api
 	 * @return string
 	 */
 	public function getVersion()
@@ -48,81 +45,57 @@ class Application
 	}
 
 	/**
-	 * Injection-based autoload if you want injection to work, this should be the
-	 * last autoload coming from RBS Change you should register
-	 * (it gets prepended to the autoload stack).
+	 * @param \Zend\Stdlib\Parameters $context
 	 */
-	public function registerInjectionAutoload()
+	public function setContext(\Zend\Stdlib\Parameters $context)
 	{
-		$basePath = $this->getWorkspace()->compilationPath('Injection');
-		spl_autoload_register(function ($className) use($basePath)
-		{
-			$phpFileName = str_replace('\\', '_', $className) . '.php';
-			$phpFilePath = $basePath . DIRECTORY_SEPARATOR . '_' . $phpFileName;
-			if (file_exists($phpFilePath))
-			{
-				require_once $phpFilePath;
-			}
-		}, true, true);
+		$this->context = $context;
 	}
 
 	/**
-	 * Registers the core autoload.
+	 * @api
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getContext()
+	{
+		if ($this->context === null)
+		{
+			$this->setContext(new \Zend\Stdlib\Parameters());
+		}
+		return $this->context;
+	}
+
+	/**
+	 * @return \Composer\Autoload\ClassLoader|null
 	 */
 	public function registerCoreAutoload()
 	{
-		$namespaces = array('Change' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Change',
-			'Zend' => PROJECT_HOME . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'zendframework' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'Zend');
-
-		require_once $namespaces['Zend'] . DIRECTORY_SEPARATOR . 'Loader' . DIRECTORY_SEPARATOR . 'StandardAutoloader.php';
-		$zendLoader = new \Zend\Loader\StandardAutoloader();
-		foreach ($namespaces as $namespace => $path)
+		$classLoader = require_once PROJECT_HOME . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+		if ($classLoader instanceof \Composer\Autoload\ClassLoader)
 		{
-			$zendLoader->registerNamespace($namespace, $path);
+			$classLoader->setPsr4('Compilation\\', [PROJECT_HOME . DIRECTORY_SEPARATOR . 'Compilation']);
 		}
-		$zendLoader->register();
+		return $classLoader;
 	}
 
 	/**
-	 * Register autoload for compiled code.
+	 * Register autoload for plugins
 	 */
-	public function registerCompilationAutoload()
+	public function registerPluginsAutoload()
 	{
-		// Register the compilation namespace
-		$zendLoader = new \Zend\Loader\StandardAutoloader();
-		$zendLoader->registerNamespace('Compilation', $this->getWorkspace()->compilationPath());
-		$zendLoader->register();
+		$pluginsLoader = new \Change\Plugins\Autoloader();
+		$pluginsLoader->setWorkspace($this->getWorkspace());
+		$pluginsLoader->register();
 	}
 
 	/**
-	 * Register autoload for packages
-	 */
-	public function registerPackagesAutoload()
-	{
-		$zendLoader = new \Zend\Loader\StandardAutoloader();
-		// Register additional packages autoload
-		foreach ($this->getPackageManager()->getRegisteredAutoloads() as $namespace => $path)
-		{
-			if (substr($namespace, -1) == '_')
-			{
-				$zendLoader->registerPrefix($namespace, $path);
-			}
-			else
-			{
-				$zendLoader->registerNamespace($namespace, $path);
-			}
-		}
-		$zendLoader->register();
-	}
-
-	/**
+	 * @api
 	 * Namespace-based autoloading
 	 */
-	public function registerNamespaceAutoload()
+	public function registerAutoload()
 	{
 		$this->registerCoreAutoload();
-		$this->registerCompilationAutoload();
-		$this->registerPackagesAutoload();
+		$this->registerPluginsAutoload();
 	}
 
 	/**
@@ -132,7 +105,7 @@ class Application
 	{
 		$this->workspace = $workspace;
 	}
-	
+
 	/**
 	 * @api
 	 * @return \Change\Workspace
@@ -149,65 +122,28 @@ class Application
 	/**
 	 * @param Configuration\Configuration $configuration
 	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	public function setConfiguration(Configuration\Configuration $configuration)
 	{
 		$this->configuration = $configuration;
 	}
 
 	/**
+	 * Return the entire configuration or a specific entry if $entryName is not null
 	 * @api
-	 * @return \Change\Configuration\Configuration
+	 * @param string $entryName
+	 * @return Configuration\Configuration|mixed|null
 	 */
-	public function getConfiguration()
+	public function getConfiguration($entryName = null)
 	{
 		if ($this->configuration === null)
 		{
-			$this->configuration = new \Change\Configuration\Configuration($this->getProjectConfigurationPaths());
+			$this->configuration = new Configuration\Configuration($this->getProjectConfigurationPaths());
+		}
+		if ($entryName)
+		{
+			return $this->configuration->getEntry($entryName);
 		}
 		return $this->configuration;
-	}
-
-	/**
-	 * @param \Change\Application\PackageManager $packageManager
-	 */
-	public function setPackageManager($packageManager)
-	{
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Application\PackageManager
-	 */
-	public function getPackageManager()
-	{
-		if ($this->packageManager === null)
-		{
-			$this->packageManager = new \Change\Application\PackageManager($this->getWorkspace());
-		}
-		return $this->packageManager;
-	}
-
-	/**
-	 * @param \Change\Events\SharedEventManager $eventManager
-	 */
-	public function setSharedEventManager(\Change\Events\SharedEventManager $eventManager)
-	{
-		$this->sharedEventManager = $eventManager;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Events\SharedEventManager
-	 */
-	public function getSharedEventManager()
-	{
-		if ($this->sharedEventManager === null)
-		{
-			$this->sharedEventManager = new \Change\Events\SharedEventManager();
-			$this->sharedEventManager->attachConfiguredListeners($this->getConfiguration());
-		}
-		return $this->sharedEventManager;
 	}
 
 	/**
@@ -224,7 +160,7 @@ class Application
 				define('PROJECT_HOME', dirname(__DIR__));
 			}
 			// @codeCoverageIgnoreEnd
-			$this->registerNamespaceAutoload();
+			$this->registerAutoload();
 			if ($bootStrapClass && method_exists($bootStrapClass, 'main'))
 			{
 				call_user_func(array($bootStrapClass, 'main'), $this);
@@ -241,13 +177,6 @@ class Application
 					}
 				}
 			}
-			
-			if ($this->inDevelopmentMode())
-			{
-				$injection = new \Change\Injection\Injection($this->getConfiguration(), $this->getWorkspace());
-				$injection->update();
-			}
-			$this->registerInjectionAutoload();
 			$this->started = true;
 		}
 	}
@@ -272,28 +201,33 @@ class Application
 
 	/**
 	 * Get all the project-level config files paths, in the correct order
-	 *
 	 * @api
 	 * @return array string
 	 */
 	public function getProjectConfigurationPaths()
 	{
-		$workspace = $this->getWorkspace();
-		$result = array();
-		$globalConfigFile = $workspace->appPath('Config', 'project.json');
-		if (file_exists($globalConfigFile))
-		{
-			$result[] = $globalConfigFile;
-		}
-
-		//@TODO Fix instance config file name
-		$instanceConfigFile = $workspace->appPath('Config', 'project.default.json');
-		if (file_exists($instanceConfigFile))
-		{
-			$result[] = $instanceConfigFile;
-		}
-		return $result;
+		return [
+			Configuration\Configuration::AUTOGEN => $this->getWorkspace()
+					->appPath('Config', Configuration\Configuration::AUTOGEN),
+			Configuration\Configuration::PROJECT => $this->getWorkspace()->appPath('Config', Configuration\Configuration::PROJECT)
+		];
 	}
+
+	/**
+	 * @return \Change\Logging\Logging
+	 */
+	public function getLogging()
+	{
+		if ($this->logging === null)
+		{
+			$this->logging = new \Change\Logging\Logging();
+			$this->logging->setConfiguration($this->getConfiguration());
+			$this->logging->setWorkspace($this->getWorkspace());
+		}
+		return $this->logging;
+	}
+
+
 
 	/**
 	 * @api
@@ -302,6 +236,6 @@ class Application
 	 */
 	public function inDevelopmentMode()
 	{
-		return $this->getConfiguration()->getEntry('Change/Application/development-mode', false);
+		return $this->getConfiguration()->inDevelopmentMode();
 	}
 }

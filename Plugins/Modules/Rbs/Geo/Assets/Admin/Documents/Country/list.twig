@@ -1,0 +1,22 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.geo.admin.country_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Geo_Country" filter="filter" ></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Geo_Country' | rbsURL:'new' =)">{{ i18n('m.rbs.geo.admin.country_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLGeoCountry" model="Rbs_Geo_Country" filter-collection="filter" activable="true">
+			<rbs-column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}" primary="true"></rbs-column>
+			<rbs-column name="code" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}"></rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

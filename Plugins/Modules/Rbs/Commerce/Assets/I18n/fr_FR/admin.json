@@ -1,0 +1,68 @@
+{
+	"module_name":{
+		"message":"E-commerce"
+	},
+	"cart_label":{
+		"message":"détail du panier"
+	},
+	"cart_function":{
+		"message":"détail du panier"
+	},
+	"order_process_label":{
+		"message":"processus de commande"
+	},
+	"order_process_function":{
+		"message":"processus de commande"
+	},
+	"payment_return_label":{
+		"message":"retour après paiement"
+	},
+	"payment_return_function":{
+		"message":"retour après paiement"
+	},
+	"cart_undefined":{
+		"message":"pas de panier"
+	},
+	"shortcart_label":{
+		"message":"résumé du panier"
+	},
+	"process_list":{
+		"message":"processus de commande"
+	},
+	"process_create":{
+		"message":"ajouter un processus de commande"
+	},
+	"process_shippingmodes_picker_title":{
+		"message":"sélectionnez les modes de livraison autorisés"
+	},
+	"process_paymentconnectors_picker_title":{
+		"message":"sélectionnez les modes de paiement autorisés"
+	},
+	"process_fees_picker_title":{
+		"message":"sélectionnez les frais autorisés"
+	},
+	"lines_price_value_filter":{
+		"message":"Montant total des lignes"
+	},
+	"lines_price_value":{
+		"message":"Le montant total des lignes"
+	},
+	"terms_and_conditions_function":{
+		"message":"termes et conditions"
+	},
+	"store_settings":{
+		"message":"réglagles des boutiques"
+	},
+	"pricing_settings":{
+		"message":"réglagles de la facturation"
+	},
+	"section_name":{
+		"message":"E-commerce"
+	},
+	"fee_list":{
+		"message":"frais"
+	},
+	"fee_create":{
+		"message":"ajouter un frais"
+	}
+}

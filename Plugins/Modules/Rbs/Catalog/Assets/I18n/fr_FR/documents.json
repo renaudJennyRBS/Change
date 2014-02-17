@@ -1,0 +1,225 @@
+{
+	"sectionproductlist_synchronizedsection":{
+		"message":"section synchronisée"
+	},
+	"variantgroup_rootproduct":{
+		"message":"produit parent"
+	},
+	"variantgroup_groupattribute":{
+		"message":"jeu d'attributs"
+	},
+	"variantgroup_axesattributes":{
+		"message":"Attributs variables"
+	},
+	"variantgroup_othersattributes":{
+		"message":"Autres attributs"
+	},
+	"variantgroup_axesconfiguration":{
+		"message":"Configuration des axes"
+	},
+	"variantgroup_newskuoncreation":{
+		"message":"Créer un nouveau SKU par variante"
+	},
+	"productlist_productsortorder":{
+		"message":"propriété pour le tri",
+		"description":"Use on product list editor to define the property to sort the product in the list"
+	},
+	"productlist_productsortdirection":{
+		"message":"sens de tri"
+	},
+	"productlist_facetgroups":{
+		"message":"groupes de facettes associés"
+	},
+	"productlist_products":{
+		"message":"produits"
+	},
+	"productlistitem_condition":{
+		"message":"condition"
+	},
+	"condition":{
+		"message":"condition"
+	},
+	"product":{
+		"message":"produit"
+	},
+	"productlist":{
+		"message":"liste de produits"
+	},
+	"sectionproductlist":{
+		"message":"liste de produits synchronisée avec une section"
+	},
+	"productlistitem":{
+		"message":"appartenance à une liste"
+	},
+	"attribute":{
+		"message":"attribut produit"
+	},
+	"variantgroup":{
+		"message":"groupe de variantes"
+	},
+	"crosssellingproductlist":{
+		"message":"liste de produits associés"
+	},
+	"crosssellingproductlist_accessories":{
+		"message":"accessoires"
+	},
+	"crosssellingproductlist_similar":{
+		"message":"produits similaires"
+	},
+	"crosssellingproductlist_higher_range":{
+		"message":"produits de gamme supérieure"
+	},
+	"crosssellingproductlist_product":{
+		"message":"produit"
+	},
+	"crosssellingproductlist_crossSellingType":{
+		"message":"type de liaison"
+	},
+	"crosssellingproductlist_symmetrical":{
+		"message":"relation symétrique"
+	},
+	"crosssellingproductlist_label":{
+		"message":"nom de la liste"
+	},
+	"productlistitem_product":{
+		"message":"produit"
+	},
+	"productlistitem_productlist":{
+		"message":"liste"
+	},
+	"product_label":{
+		"message":"libellé"
+	},
+	"product_title":{
+		"message":"titre"
+	},
+	"product_description":{
+		"message":"description"
+	},
+	"product_categorizable":{
+		"message":"catégorisable"
+	},
+	"product_visual":{
+		"message":"visuel"
+	},
+	"product_visuals":{
+		"message":"visuels"
+	},
+	"product_pictograms":{
+		"message":"pictogrammes"
+	},
+	"product_brand":{
+		"message":"marque"
+	},
+	"product_shippedin":{
+		"message":"délai d'expédition"
+	},
+	"product_newskuoncreation":{
+		"message":"Créer un nouveau SKU"
+	},
+	"product_sku":{
+		"message":"SKU"
+	},
+	"product_variant":{
+		"message": "variante"
+	},
+	"product_minorderquantity":{
+		"message":"quantité minimum"
+	},
+	"product_maxorderquantity":{
+		"message":"quantité maximum"
+	},
+	"product_publicationsections":{
+		"message":"sections de publication"
+	},
+	"product_attribute":{
+		"message":"jeu d'attributs"
+	},
+	"product_publication_help":{
+		"message":"Pour définir les <strong>propriétés de publication</strong> de ce produit, comme son emplacement ou ses dates de publication, veuillez vous rendre dans la section $LINKSTART$Publication$LINKEND$, disponible dans le menu à gauche."
+	},
+	"attribute_title":{
+		"message":"titre"
+	},
+	"attribute_valuetype":{
+		"message":"type d'attribut"
+	},
+	"attribute_defaultvalue":{
+		"message":"valeur par défaut de l'attribut"
+	},
+	"attribute_requiredvalue":{
+		"message":"attribut requis"
+	},
+	"attribute_localizedvalue":{
+		"message":"valeur localisé"
+	},
+	"attribute_description":{
+		"message":"description"
+	},
+	"attribute_documenttype":{
+		"message":"modèle de document"
+	},
+	"attribute_collectioncode":{
+		"message":"valeurs comprises dans la collection"
+	},
+	"attribute_productproperty":{
+		"message":"propriété du produit"
+	},
+	"attribute_attributes":{
+		"message":"attributs du groupe"
+	},
+	"attribute_visibility":{
+		"message":"visibilité"
+	},
+	"attribute_axis":{
+		"message":"axe de déclinaison"
+	},
+	"attribute_visibility_comparisons":{
+		"message":"comparaisons"
+	},
+	"attribute_visibility_specifications":{
+		"message":"caractéristiques"
+	},
+	"attribute_visibility_list_item":{
+		"message":"utilisable dans les listes"
+	},
+	"attribute_type_boolean":{
+		"message":"oui \/ non"
+	},
+	"attribute_type_integer":{
+		"message":"nombre entier"
+	},
+	"attribute_type_documentid":{
+		"message":"document"
+	},
+	"attribute_type_documentidarray":{
+		"message":"liste de documents"
+	},
+	"attribute_type_float":{
+		"message":"numérique"
+	},
+	"attribute_type_datetime":{
+		"message":"date"
+	},
+	"attribute_type_string":{
+		"message":"chaîne de caractères"
+	},
+	"attribute_type_text":{
+		"message":"texte"
+	},
+	"attribute_type_group":{
+		"message":"groupe d'attributs"
+	},
+	"attribute_type_property":{
+		"message":"propriété d'un produit"
+	},
+	"attribute_usepicker":{
+		"message":"utiliser un picker plutôt qu'une liste"
+	},
+	"attribute_producttypology":{
+		"message":"typologie de produit"
+	},
+	"productlist_configure_products":{
+		"message":"configurer"
+	}
+}

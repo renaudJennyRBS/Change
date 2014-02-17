@@ -1,6 +1,8 @@
 <?php
 namespace Change\Http\Rest\Result;
 
+use Change\Documents\Interfaces\Localizable;
+use Change\Http\Rest\RestfulDocumentInterface;
 use Change\Http\Result;
 
 /**
@@ -28,10 +30,38 @@ class DocumentResult extends Result
 	 */
 	protected $actions = array();
 
-	public function __construct()
+	/**
+	 * @var \Change\Documents\AbstractDocument
+	 */
+	protected $document;
+
+	/**
+	 * @var \Change\Http\UrlManager
+	 */
+	protected $urlManager;
+
+	/**
+	 * @param \Change\Http\UrlManager $urlManager
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function __construct($urlManager, $document)
 	{
 		$this->links = new Links();
 		$this->actions = new Links();
+		$this->setUrlManager($urlManager);
+		$this->setDocument($document);
+
+		$documentLink = new DocumentLink($urlManager, $document);
+		$this->addLink($documentLink);
+
+		$modelLink = new ModelLink($urlManager, array('name' => $document->getDocumentModelName()), false);
+		$modelLink->setRel('model');
+		$this->addLink($modelLink);
+
+		if ($document instanceof RestfulDocumentInterface)
+		{
+			$document->populateRestDocumentResult($this);
+		}
 	}
 
 	/**
@@ -59,9 +89,9 @@ class DocumentResult extends Result
 
 	/**
 	 * @param string $rel
-	 * @return array|false
+	 * @return \Change\Http\Rest\Result\Link|array
 	 */
-	public function getRelLinks($rel)
+	public function getRelLink($rel)
 	{
 		return $this->links[$rel];
 	}
@@ -82,8 +112,6 @@ class DocumentResult extends Result
 	{
 		$this->links[$rel] = $link;
 	}
-
-
 
 	/**
 	 * @param array|\Change\Http\Rest\Result\Links $actions
@@ -110,9 +138,9 @@ class DocumentResult extends Result
 
 	/**
 	 * @param string $rel
-	 * @return array|false
+	 * @return \Change\Http\Rest\Result\Link|array
 	 */
-	public function getRelActions($rel)
+	public function getRelAction($rel)
 	{
 		return $this->actions[$rel];
 	}
@@ -157,6 +185,15 @@ class DocumentResult extends Result
 	public function setProperty($name, $value)
 	{
 		$this->properties[$name] = $value;
+	}
+
+	/**
+	 * @param string $name
+	 * @return mixed|null
+	 */
+	public function getProperty($name)
+	{
+		return isset($this->properties[$name]) ? $this->properties[$name] : null;
 	}
 
 	/**
@@ -230,5 +267,58 @@ class DocumentResult extends Result
 			}
 		}
 		return $value;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function setDocument($document)
+	{
+		$this->document = $document;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		return $this->document;
+	}
+
+	/**
+	 * @param \Change\Http\UrlManager $urlManager
+	 */
+	public function setUrlManager($urlManager)
+	{
+		$this->urlManager = $urlManager;
+	}
+
+	/**
+	 * @return \Change\Http\UrlManager
+	 */
+	public function getUrlManager()
+	{
+		return $this->urlManager;
+	}
+
+	public function getBaseUrl($includeLang = false)
+	{
+		$baseUrl = null;
+		$selfLinks = $this->getRelLink('self');
+		$selfLink = array_shift($selfLinks);
+		if ($selfLink instanceof Link)
+		{
+			if (($this->document instanceof Localizable) && !$includeLang)
+			{
+				$pathParts = explode('/', $selfLink->getPathInfo());
+				array_pop($pathParts);
+				$baseUrl = implode('/', $pathParts);
+			}
+			else
+			{
+				$baseUrl = $selfLink->getPathInfo();
+			}
+		}
+		return $baseUrl;
 	}
 }

@@ -1,0 +1,188 @@
+{
+  "cart_without_webstore":{
+    "message":"the shopping cart is not linked to a store"
+  },
+  "line_without_quantity":{
+    "message":"the line $NUMBER$ does not contain a valid quantity"
+  },
+  "line_without_sku":{
+    "message":"the line $NUMBER$ does not contain a valid article"
+  },
+  "line_without_price":{
+    "message":"the line $NUMBER$ does not have a valid price"
+  },
+  "cart_reservation_error":{
+    "message":"unable to book some products"
+  },
+  "add_to_cart":{
+    "message":"add to cart"
+  },
+  "view_my_cart":{
+    "message":"view cart"
+  },
+  "my_cart":{
+    "message":"my cart"
+  },
+  "empty":{
+    "message":"empty"
+  },
+  "empty_cart":{
+    "message":"your shopping cart is empty.",
+    "description":"Used in cart detail block"
+  },
+  "empty_cart_message":{
+    "message":"You have not added item in your shopping cart.",
+    "description":"Used in cart detail block"
+  },
+  "please_wait_loading_cart":{
+    "message":"shopping cart loading",
+    "description":"Used in cart detail block, during loading"
+  },
+  "article":{
+    "message":"item"
+  },
+  "articles":{
+    "message":"items"
+  },
+  "excluding_fees":{
+    "message":"shipping fee excluded"
+  },
+  "update":{
+    "message":"update"
+  },
+  "remove":{
+    "message":"delete"
+  },
+  "designation":{
+    "message":"designation"
+  },
+  "unit_price":{
+    "message":"unit price"
+  },
+  "quantity":{
+    "message":"quantity"
+  },
+  "total_price":{
+    "message":"total price"
+  },
+  "taxes_amount":{
+    "message":"tax"
+  },
+  "amount_without_tax":{
+    "message":"amount Excl. VAT"
+  },
+  "amount_with_tax":{
+    "message":"amount incl. VAT"
+  },
+  "cart_contents":{
+    "message":"cart content"
+  },
+  "actions":{
+    "message":"actions"
+  },
+  "accept_terms_and_conditions":{
+    "message":"I've read and agreed on $LINK_OPEN$Terms & Conditions$LINK_CLOSE$."
+  },
+  "proceed_to_checkout":{
+    "message":"proceed to checkout"
+  },
+  "process_step_cart":{
+    "message":"shopping cart"
+  },
+  "process_step_personal_information":{
+    "message":"personnal informations"
+  },
+  "process_step_shipping":{
+    "message":"delivery"
+  },
+  "process_step_payment":{
+    "message":"payment"
+  },
+  "process_step_confirmation":{
+    "message":"confirmation"
+  },
+  "already_customer":{
+    "message":"registered customer"
+  },
+  "new_customer":{
+    "message":"you are new customer"
+  },
+  "are_you_really":{
+    "message":"are you $NAME$?"
+  },
+  "please_log_in_again":{
+    "message":"For security reasons, please login again."
+  },
+  "not_you":{
+    "message":"you're not $NAME$?"
+  },
+  "please_log_out":{
+    "message":"Please disconnect."
+  },
+  "continue":{
+    "message":"continue"
+  },
+  "modify":{
+    "message":"edit"
+  },
+  "country":{
+    "message":"countries"
+  },
+  "mailing_address":{
+    "message":"postal address"
+  },
+  "shipping_mode":{
+    "message":"shipping method"
+  },
+  "select_shipping_mode":{
+    "message":"Among the list below, please select the shipping method for your order."
+  },
+  "delivery_n":{
+    "message":"delivery $NUMBER$"
+  },
+  "lines_included":{
+    "message":"affected rows"
+  },
+  "shipping_address":{
+    "message":"adresse de livraison"
+  },
+  "use_postal_address":{
+    "message":"utiliser l'adresse postale renseignée plus haut"
+  },
+  "use_another_address":{
+    "message":"choisir une autre adresse"
+  },
+  "coupon_code":{
+    "message":"code promotionnel"
+  },
+  "type_code":{
+    "message":"saisissez votre code"
+  },
+  "ok":{
+    "message":"OK"
+  },
+  "used_coupon_code":{
+    "message":"code coupon appliqué"
+  },
+  "summary_of_amounts":{
+    "message":"récapitulatif des montants"
+  },
+  "total_with_tax":{
+    "message":"total TTC"
+  },
+  "amount_to_pay":{
+    "message":"net à payer"
+  },
+  "payment_connector":{
+    "message":"moyen de paiement"
+  },
+  "select_payment_connector":{
+    "message":"Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser."
+  },
+  "payment_instructions":{
+    "message":"instructions de paiement"
+  },
+  "confirm_order":{
+    "message":"confirmer la commande"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "order_ownerid":{
+    "message":"owner"
+  },
+  "order_webstoreid":{
+    "message":"web store"
+  },
+  "order_contextdata":{
+    "message":"general informations"
+  },
+  "order_linesdata":{
+    "message":"lines"
+  },
+  "order_amount":{
+    "message":"amount"
+  },
+  "order_amountwithtax":{
+    "message":"amount incl. VAT"
+  },
+  "order_currencycode":{
+    "message":"currency"
+  },
+  "order_processingstatus":{
+    "message":"status"
+  },
+  "order_shippingstatus":{
+    "message":"delivery status"
+  },
+  "order_paymentstatus":{
+    "message":"billing status"
+  },
+  "order":{
+    "message":"order"
+  },
+  "invoice":{
+    "message":"invoice"
+  },
+  "invoice_order":{
+    "message":"order"
+  },
+  "invoice_transaction":{
+    "message":"paiement transaction"
+  },
+  "invoice_amount":{
+    "message":"amount"
+  },
+  "invoice_amountwithtax":{
+    "message":"amount incl. VAT"
+  },
+  "invoice_currencycode":{
+    "message":"currency"
+  },
+  "shipment":{
+    "message":"expédition"
+  },
+  "shipment_orderid":{
+    "message":"commande associée"
+  },
+  "shipment_prepared":{
+    "message":"préparé"
+  },
+  "shipment_code":{
+    "message":"code d'expédition"
+  },
+  "shipment_parcelcode":{
+    "message":"code colis"
+  },
+  "shipment_shippingmodecode":{
+    "message":"mode de livraison"
+  },
+  "shipment_trackingcode":{
+    "message":"code de tracking"
+  },
+  "shipment_carrierstatus":{
+    "message":"statut d'expédition (transporteur)"
+  },
+  "shipment_itemcount":{
+    "message":"nombre d'éléments"
+  },
+  "shipment_line_number":{
+    "message":"numéro de ligne"
+  }
+}

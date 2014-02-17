@@ -1,0 +1,129 @@
+<script type="text/ng-template" id="/payment-connector-selector.static.tpl">
+	<div>
+		<div class="panel panel-default" data-ng-if="connectors.length > 1">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_connector', ['ucf']) }}</div>
+			<div class="panel-body">
+				{{ i18n('m.rbs.commerce.front.select_payment_connector', ['ucf']) }}
+			</div>
+			<div class="list-group">
+				<a data-ng-repeat="(index, connector) in connectors" href="javascript:" class="list-group-item"
+					data-ng-class="{active: connector.id == payment.connectorId}" data-ng-click="selectConnector(index)">
+					<div class="row">
+						<div class="col-sm-7 col-md-8 col-lg-9">
+							(= connector.title =)<br />
+							<div class="small" data-ng-bind-html="trustHtml(connector.description)"></div>
+						</div>
+						<div class="col-sm-5 col-md-4 col-lg-3">
+							<img data-ng-if="connector.visualUrl" data-ng-src="(= connector.visualUrl =)" />
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="panel panel-default" data-ng-if="connectors.length == 1">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_connector', ['ucf']) }}</div>
+			<div class="panel-body" data-ng-init="connector = connectors[0]">
+				<div class="row">
+					<div class="col-sm-7 col-md-8 col-lg-9">
+						(= connector.title =)<br />
+						<div class="small" data-ng-bind-html="trustHtml(connector.description)"></div>
+					</div>
+					<div class="col-sm-5 col-md-4 col-lg-3">
+						<img data-ng-if="connector.visualUrl" data-ng-src="(= connector.visualUrl =)" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="configuration-zone"></div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="/payment-connector-deferred.static.tpl">
+	<div data-ng-show="loadingConnector" class="well text-center">
+		<p>{{ i18n('m.rbs.commerce.front.please_wait_loading_connector', ['ucf', 'etc']) | raw }}</p>
+		<img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" />
+	</div>
+	<div data-ng-if="!loadingConnector">
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</div>
+			<div class="panel-body price">(= cart.context.formattedPriceValueWithTax =)</div>
+		</div>
+
+		<p class="clearfix">
+			<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="confirmOrder()">
+				{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}
+			</button>
+		</p>
+	</div>
+</script>
+
+<div class="panel panel-default">
+	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupons', ['ucf']) }}</div>
+	<div class="panel-body form-horizontal">
+		<div class="form-group" data-ng-if="payment.coupons.length > 0">
+			<label class="col-sm-6 col-md-4 control-label">
+				{{ i18n('m.rbs.commerce.front.applied_coupons', ['ucf']) }}
+			</label>
+			<div class="col-sm-6 col-md-8">
+				<p class="form-control-static" data-ng-repeat="coupon in payment.coupons">
+					(= coupon.code =)
+					<span data-ng-if="coupon.title && (coupon.title != coupon.code)">((= coupon.title =))</span>
+					<button class="btn btn-default btn-xs" data-ng-click="removeCoupon($index)" data-ng-if="!hasTransaction()"
+						title="{{ i18n('m.rbs.commerce.front.remove', ['ucf', 'attr']) }}">
+						<i class="glyphicon glyphicon-remove"></i>
+					</button>
+				</p>
+			</div>
+		</div>
+		<div data-ng-if="!hasTransaction()" class="form-group no-bottom-margin">
+			<label for="newCouponCode" class="col-sm-6 col-md-4 control-label">
+				{{ i18n('m.rbs.commerce.front.add_code', ['ucf']) }}
+			</label>
+			<div class="col-sm-6 col-md-8">
+				<div class="input-group">
+					<input id="newCouponCode" type="text" class="form-control" data-ng-model="payment.newCouponCode" />
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="button" data-ng-click="addCoupon()"
+							data-ng-disabled="payment.newCouponCode.length < 1">
+							<i class="glyphicon glyphicon-ok"></i>
+							{{ i18n('m.rbs.commerce.front.ok', ['ucf']) }}
+						</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div data-ng-if="hasTransaction()" class="form-group no-bottom-margin">
+			<div class="col-sm-6 col-md-8 col-sm-offset-6 col-md-offset-4">
+				<button class="btn btn-default pull-right" type="button" data-ng-click="setCurrentStep('payment')">
+					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.summary_of_amounts', ['ucf']) }}</div>
+	<dl class="dl-horizontal">
+		<!-- TODO: handle coupons and discounts...
+		<dt>{{ i18n('m.rbs.commerce.front.total_with_tax', ['ucf']) }}</dt>
+		<dd><span class="price">(= cart.context.formattedPriceValueWithTax =)</span></dd>
+		<dt>Coupon</dt>
+		<dd><span class="price">-10,00 €</span></dd>-->
+		<dt>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</dt>
+		<dd><span class="price">(= cart.context.formattedPriceValueWithTax =)</span></dd>
+	</dl>
+</div>
+
+<div data-ng-if="!hasTransaction()" class="clearfix">
+	<p>
+		<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="getTransaction()">
+			{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
+		</button>
+	</p>
+</div>
+
+<div data-ng-if="hasTransaction()">
+	<div data-rbs-commerce-payment-connector-selector="" data-payment="payment" data-cart="cart"></div>
+</div>

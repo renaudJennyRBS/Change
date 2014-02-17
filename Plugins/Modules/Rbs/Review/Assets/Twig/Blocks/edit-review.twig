@@ -1,0 +1,32 @@
+<h2>{{ i18n('m.rbs.review.front.edit_review', ['ucf']) }}</h2>
+{% if canEdit %}{# display the edition form if user is authenticated and he is the review author #}
+	{% if review.promoted %}
+		<p>{{ i18n('m.rbs.review.front.review_detail_promoted', ['ucf']) }}</p>
+	{% endif %}
+	{% if review.pendingValidation %}
+		<p>{{ i18n('m.rbs.review.front.pending_publication', ['ucf']) }}</p>
+	{% endif %}
+	<form method="post" id="Review" action="Action/Rbs/Review/UpdateReview" class="well well-small">
+		<input type="hidden" name="reviewId" value="{{ review.id }}">
+		<input type="hidden" name="redirectLocation" value="/{{ review.target.url }}" />
+		<fieldset>
+			<div class="form-group">
+				<label for="rbs-review-review-pseudonym">{{ i18n('m.rbs.review.front.review_post_pseudonym', ['ucf']) }}</label>
+				<p id="rbs-review-review-pseudonym" class="form-control-static">{{ review.pseudonym }}</p>
+			</div>
+			<div class="form-group">
+				<label for="rbs-review-review-rating-value">{{ i18n('m.rbs.review.front.review_post_rating', ['ucf']) }}</label>
+				{% include 'Rbs_Review/Blocks/star-rating.twig' %}
+			</div>
+			<div class="form-group">
+				<label for="rbs-review-review-content">{{ i18n('m.rbs.review.front.review_post_content', ['ucf']) }}</label>
+				<textarea id="rbs-review-review-content" name="content" class="form-control">{{ review.content }}</textarea>
+			</div>
+			<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.review.front.review_post_submit', ['ucf']) }}</button>
+		</fieldset>
+	</form>
+{% else %}{# display the review like in the list (with more details) #}
+	<p>{{ i18n('m.rbs.review.blocks.cannot-edit-review', ['ucf']) }}</p>
+	{# TODO: add a button to connect user #}
+	{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review } %}
+{% endif %}

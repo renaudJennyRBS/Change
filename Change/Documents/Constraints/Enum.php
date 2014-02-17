@@ -6,8 +6,8 @@ namespace Change\Documents\Constraints;
  */
 class Enum extends \Zend\Validator\AbstractValidator
 {
-	const NOTINLIST = 'notInList';
-	
+	const NOT_IN_LIST = 'notInList';
+
 	/**
 	 * @var string
 	 */
@@ -18,15 +18,25 @@ class Enum extends \Zend\Validator\AbstractValidator
 	 */
 	protected $values;
 
- 	/**
+	/**
+	 * @var \Change\Documents\AbstractDocument
+	 */
+	protected $document;
+
+	/**
+	 * @var \Change\Documents\Events\Event
+	 */
+	protected $documentEvent;
+
+	/**
 	 * @param array $params <fromList => modelName>
-	 */   
+	 */
 	public function __construct($params = array())
 	{
-		$this->messageTemplates = array(self::NOTINLIST => self::NOTINLIST);
+		$this->messageTemplates = array(self::NOT_IN_LIST => self::NOT_IN_LIST);
 		parent::__construct($params);
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -60,8 +70,53 @@ class Enum extends \Zend\Validator\AbstractValidator
 	}
 
 	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 */
+	public function setDocument($document)
+	{
+		$this->document = $document;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		if ($this->document === null)
+		{
+			throw new \RuntimeException('Document not set', 999999);
+		}
+		return $this->document;
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $documentEvent
+	 * @return $this
+	 */
+	public function setDocumentEvent($documentEvent)
+	{
+		$this->documentEvent = $documentEvent;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\Events\Event
+	 */
+	public function getDocumentEvent()
+	{
+		if ($this->documentEvent === null)
+		{
+			throw new \RuntimeException('DocumentEvent not set', 999999);
+		}
+		return $this->documentEvent;
+	}
+
+	/**
 	 * @param  mixed $value
 	 * @throws \LogicException
+	 * @throws \RuntimeException
 	 * @return boolean
 	 */
 	public function isValid($value)
@@ -78,18 +133,27 @@ class Enum extends \Zend\Validator\AbstractValidator
 				}
 			}
 
-			$this->error(self::NOTINLIST);
+			$this->error(self::NOT_IN_LIST);
 			return false;
 		}
 
 		$fromList = $this->getFromList();
 		if (is_string($fromList))
 		{
-			//@TODO Implement this when Change/list module is ready.
-			throw new \LogicException('Not implemented', 10001);
-			$this->error(self::NOTINLIST);
-			return false;
+			$document = $this->getDocument();
+			$cm = $this->getDocumentEvent()->getApplicationServices()->getCollectionManager();
+			$collection = $cm->getCollection($fromList, array('document' => $document));
+			if ($collection === null)
+			{
+				throw  new \LogicException('Collection ' . $fromList . ' not found', 999999);
+			}
+
+			if ($collection->getItemByValue($value) === null)
+			{
+				$this->error(self::NOT_IN_LIST);
+				return false;
+			}
 		}
 		return true;
-	}	
+	}
 }

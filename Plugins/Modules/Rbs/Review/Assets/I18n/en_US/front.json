@@ -1,0 +1,155 @@
+{
+  "review":{
+    "message":"review"
+  },
+  "review_target":{
+    "message":"document"
+  },
+  "review_list":{
+    "message":"All reviews"
+  },
+  "review_list_show_average_rating":{
+    "message":"display the average rating"
+  },
+  "review_list_items_per_page":{
+    "message":"review per page"
+  },
+  "average_rating":{
+    "message":"average rating: $AVERAGERATING$"
+  },
+  "average_rating_stars":{
+    "message":"$STARS$ stars: $COUNT$"
+  },
+  "review_average_rating":{
+    "message":"average rating"
+  },
+  "review_rating":{
+    "message":"$RATINGVALUE$ out of $BESTRATING$"
+  },
+  "review_about":{
+    "message":"About $TARGET$"
+  },
+  "review_post":{
+    "message":"add your own review"
+  },
+  "review_post_review":{
+    "message":"review submission form"
+  },
+  "review_edit":{
+    "message":"edit your review"
+  },
+  "review_post_pseudonym":{
+    "message":"nickname"
+  },
+  "review_post_rating":{
+    "message":"rating"
+  },
+  "review_post_content":{
+    "message":"review"
+  },
+  "review_post_submit":{
+    "message":"post this review"
+  },
+  "review_post_not_connected":{
+    "message":"You must login to give your review"
+  },
+  "review_post_section":{
+    "message":"section"
+  },
+  "already_reviewed":{
+    "message":"you have already add your review"
+  },
+  "your_review":{
+    "message":"your review"
+  },
+  "pending_publication":{
+    "message":"your review is being validated by our team"
+  },
+  "review_pending_correction":{
+    "message":"the correction in your review is being validated"
+  },
+  "review_pending_correction_new_note":{
+    "message":"new rating"
+  },
+  "review_pending_correction_new_content":{
+    "message":"new Content"
+  },
+  "promoted_review_list":{
+    "message":"list of highlighted reviews"
+  },
+  "promoted_review_list_mode":{
+    "message":"highlight mode"
+  },
+  "promoted_review_list_max_reviews":{
+    "message":"maximum number of displayed reviews"
+  },
+  "promoted_review_list_reviews":{
+    "message":"manual selection of reviews (if manual mode is selected)"
+  },
+  "promoted_review_list_title_promoted":{
+    "message":"promoted reviews"
+  },
+  "promoted_review_list_title_most_recent":{
+    "message":"most recent reviews"
+  },
+  "promoted_review_list_title_default_manual":{
+    "message":"selected reviews"
+  },
+  "review_detail":{
+    "message":"review detail"
+  },
+  "can_edit_review":{
+    "message":"afford to update review"
+  },
+  "current_star_rating":{
+    "message":"$RATING$ star(s)"
+  },
+  "star_rating_0":{
+    "message":"0 star"
+  },
+  "star_rating_1":{
+    "message":"1 star"
+  },
+  "star_rating_2":{
+    "message":"2 stars"
+  },
+  "star_rating_3":{
+    "message":"3 stars"
+  },
+  "star_rating_4":{
+    "message":"4 stars"
+  },
+  "star_rating_5":{
+    "message":"5 stars"
+  },
+  "review_detail_promoted":{
+    "message":"This review was highlighted, if you edit it, it will return by a validation phase and risks losing its status."
+  },
+  "review_vote":{
+    "message":"Was this review helpful to you?"
+  },
+  "review_upvote":{
+    "message":"yes"
+  },
+  "review_downvote":{
+    "message":"no"
+  },
+  "review_novote":{
+    "message":"be the first to rate this comment."
+  },
+  "review_voted":{
+    "message":"your vote has been recorded."
+  },
+  "review_function":{
+    "message":"review detail"
+  },
+  "edit_review":{
+    "message":"review edition"
+  },
+  "edit_review_function":{
+    "message":"review edition"
+  },
+  "review_note_distribution":{
+    "message":"rating distribution"
+  }
+}

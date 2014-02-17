@@ -1,32 +1,22 @@
 <?php
 namespace ChangeTests\Change\Documents\Query;
 
-use Change\Documents\Query\Builder;
+use Change\Documents\Query\Query;
 use Change\Documents\Query\ChildBuilder;
 use ChangeTests\Change\TestAssets\TestCase;
 
 class ChildBuilderTest extends TestCase
 {
 
-	static public function setUpBeforeClass()
+	public static function setUpBeforeClass()
 	{
-		$app = static::getNewApplication();
-
-		$appServices = static::getNewApplicationServices($app);
-
-		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
-		$compiler->generate();
-
-		$appServices->getDbProvider()->getSchemaManager()->clearDB();
-		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
-		$generator->generate();
-
+		static::initDocumentsDb();
 	}
+
 
 	public static function tearDownAfterClass()
 	{
-		$dbp =  static::getNewApplicationServices(static::getNewApplication())->getDbProvider();
-		$dbp->getSchemaManager()->clearDB();
+		static::clearDB();
 	}
 
 	public function testInitializeDB()
@@ -39,12 +29,12 @@ class ChildBuilderTest extends TestCase
 	public function testConstruct()
 	{
 
-		$builder = new Builder($this->getDocumentServices(), 'Project_Tests_Basic');
+		$builder = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Project_Tests_Basic');
 
 
 		$childBuilder = new ChildBuilder($builder, 'Project_Tests_Localized', 'id', 'id');
 		$this->assertSame($builder, $childBuilder->getParent());
-		$this->assertSame($builder, $childBuilder->getMaster());
+		$this->assertSame($builder, $childBuilder->getQuery());
 		$this->assertSame($this->getApplicationServices()->getDbProvider(), $builder->getDbProvider());
 		$this->assertEquals('Project_Tests_Localized', $childBuilder->getModel()->getName());
 

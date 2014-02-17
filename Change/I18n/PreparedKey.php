@@ -7,6 +7,9 @@ namespace Change\I18n;
  */
 class PreparedKey
 {
+	const KEY_REGEXP = '/^(m|t)(\.[a-z0-9]+){3}(\.[a-z0-9_@]+)$|^(c)(\.[a-z0-9]+)(\.[a-z0-9_@]+)$/';
+
+
 	/**
 	 * @var string
 	 */
@@ -48,6 +51,14 @@ class PreparedKey
 	/**
 	 * @return string
 	 */
+	public function __toString()
+	{
+		return $this->getKey();
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getRawValue()
 	{
 		return $this->key;
@@ -82,11 +93,11 @@ class PreparedKey
 		if ($this->path === null)
 		{
 			$key = \Change\Stdlib\String::toLower($this->key);
-			if (preg_match('/^(c|m|t)\.[a-z0-9]+(\.[a-z0-9-]+)+$/', $key))
+			if (preg_match(static::KEY_REGEXP, $key))
 			{
 				$parts = explode('.', $key);
-				$this->path = implode('.', array_slice($parts, 0, -1));
-				$this->id = end($parts);
+				$this->id = array_pop($parts);
+				$this->path = implode('.', $parts);
 			}
 			else
 			{
@@ -156,12 +167,11 @@ class PreparedKey
 
 	/**
 	 * @api
-	 * @param string $key
-	 * @param string $value
+	 * @param string[] $formatters
 	 */
 	public function mergeFormatters($formatters)
 	{
-		$this->formatters = array_unique(array_merge($this->formatters, $formatters));
+		$this->formatters = array_values(array_unique(array_merge($this->formatters, $formatters)));
 	}
 
 	/**
@@ -203,8 +213,7 @@ class PreparedKey
 
 	/**
 	 * @api
-	 * @param string $key
-	 * @param string $value
+	 * @param array<string => string> $replacements
 	 */
 	public function mergeReplacements($replacements)
 	{

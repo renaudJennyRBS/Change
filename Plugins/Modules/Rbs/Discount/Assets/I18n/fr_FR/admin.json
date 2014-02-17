@@ -1,0 +1,20 @@
+{
+	"module_name":{
+		"message":"Réductions et coupons"
+	},
+	"module_keywords":{
+		"message":"coupon,reduction,remise"
+	},
+	"discount_list":{
+		"message":"réductions"
+	},
+	"discount_create":{
+		"message":"ajouter une réductions"
+	},
+	"coupon_list":{
+		"message":"coupons"
+	},
+	"coupon_create":{
+		"message":"ajouter un coupon"
+	}
+}

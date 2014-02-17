@@ -1,0 +1,238 @@
+{
+	"cart_without_webstore":{
+		"message":"le panier n'est pas relié à une boutique"
+	},
+	"line_without_quantity":{
+		"message":"la ligne $NUMBER$ ne contient pas une quantité valide"
+	},
+	"line_without_sku":{
+		"message":"la ligne $NUMBER$ ne possède pas d'article valide"
+	},
+	"line_without_price":{
+		"message":"la ligne $NUMBER$ ne possède pas un prix valide"
+	},
+	"cart_reservation_error":{
+		"message":"impossible de réserver certains produits"
+	},
+	"add_to_cart":{
+		"message":"ajouter au panier"
+	},
+	"not_available":{
+		"message":"indisponible"
+	},
+	"view_my_cart":{
+		"message":"voir mon panier"
+	},
+	"my_cart":{
+		"message":"mon panier"
+	},
+	"empty":{
+		"message":"vide"
+	},
+	"empty_cart":{
+		"message":"Votre panier est vide.",
+		"description": "Used in cart detail block"
+	},
+	"empty_cart_message":{
+		"message":"Vous n'avez pas ajouté d'article dans votre panier.",
+		"description": "Used in cart detail block"
+	},
+	"please_wait_loading_cart":{
+		"message":"panier en cours de chargement",
+		"description": "Used in cart detail block, during loading"
+	},
+	"article":{
+		"message":"article"
+	},
+	"articles":{
+		"message":"articles"
+	},
+	"excluding_fees":{
+		"message":"hors frais de port"
+	},
+	"update":{
+		"message":"mettre à jour"
+	},
+	"remove":{
+		"message":"supprimer"
+	},
+	"designation":{
+		"message":"désignation"
+	},
+	"unit_price":{
+		"message":"prix unitaire"
+	},
+	"quantity":{
+		"message":"quantité"
+	},
+	"total_price":{
+		"message":"prix total"
+	},
+	"taxes_amount":{
+		"message":"montant des taxes"
+	},
+	"amount_without_tax":{
+		"message":"montant HT"
+	},
+	"amount_with_tax":{
+		"message":"montant TTC"
+	},
+	"cart_contents":{
+		"message":"contenu du panier"
+	},
+	"actions":{
+		"message":"actions"
+	},
+	"accept_terms_and_conditions":{
+		"message":"Avant de passer ma commande, je reconnais avoir lu et compris les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$."
+	},
+	"proceed_to_checkout":{
+		"message":"passer commande"
+	},
+	"process_step_cart":{
+		"message":"panier"
+	},
+	"process_step_personal_information":{
+		"message":"informations personnelles"
+	},
+	"process_step_shipping":{
+		"message":"livraison"
+	},
+	"process_step_payment":{
+		"message":"paiement"
+	},
+	"process_step_confirmation":{
+		"message":"confirmation"
+	},
+	"already_customer":{
+		"message":"vous êtes déjà client"
+	},
+	"new_customer":{
+		"message":"vous êtes nouveau client"
+	},
+	"are_you_really":{
+		"message":"êtes-vous bien $NAME$ ?"
+	},
+	"please_log_in_again":{
+		"message":"Pour des raisons de sécurité, merci de vous ré-authentifier."
+	},
+	"not_you":{
+		"message":"vous n'êtes pas $NAME$ ?"
+	},
+	"please_log_out":{
+		"message":"Merci de vous déconnecter."
+	},
+	"continue":{
+		"message":"continuer"
+	},
+	"modify":{
+		"message":"modifier"
+	},
+	"country":{
+		"message":"pays"
+	},
+	"mailing_address":{
+		"message":"adresse postale"
+	},
+	"shipping_mode":{
+		"message":"mode de livraison"
+	},
+	"select_shipping_mode":{
+		"message":"Parmi la liste ci-dessous, veuillez sélectionner le mode de livraison pour votre commande."
+	},
+	"delivery_n":{
+		"message":"livraison $NUMBER$"
+	},
+	"lines_included":{
+		"message":"lignes concernées"
+	},
+	"shipping_address":{
+		"message":"adresse de livraison"
+	},
+	"use_postal_address":{
+		"message":"utiliser l'adresse postale renseignée plus haut"
+	},
+	"use_another_address":{
+		"message":"choisir une autre adresse"
+	},
+	"coupons":{
+		"message":"code(s) promotionnel(s)"
+	},
+	"add_code":{
+		"message":"ajouter un code"
+	},
+	"applied_coupons":{
+		"message":"codes appliqués"
+	},
+	"ok":{
+		"message":"OK"
+	},
+	"summary_of_amounts":{
+		"message":"récapitulatif des montants"
+	},
+	"total_with_tax":{
+		"message":"total TTC"
+	},
+	"amount_to_pay":{
+		"message":"net à payer"
+	},
+	"payment_connector":{
+		"message":"moyen de paiement"
+	},
+	"select_payment_connector":{
+		"message":"Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser."
+	},
+	"please_wait_loading_connector":{
+		"message":"chargement des informations nécessaires au paiement"
+	},
+	"payment_instructions":{
+		"message":"instructions de paiement"
+	},
+	"confirm_order":{
+		"message":"confirmer la commande"
+	},
+	"payment_confirmation":{
+		"message":"confirmation du paiement",
+		"description": "Used in paymentReturn block."
+	},
+	"invalid_transaction":{
+		"message":"La transaction demandée est invalide.",
+		"description": "Used in paymentReturn block and in post-order registration process."
+	},
+	"waiting_payment":{
+		"message":"votre commande ne sera traitée qu'après réception du paiement",
+		"description": "Used in paymentReturn block."
+	},
+	"payment_done":{
+		"message":"paiement effectué",
+		"description": "Used in paymentReturn block."
+	},
+	"payment_failed":{
+		"message":"paiement échoué",
+		"description": "Used in paymentReturn block."
+	},
+	"waiting_payment_confirmation":{
+		"message":"Un e-mail vous sera envoyé dès que nous aurons reçu la confirmation de la banque.",
+		"description": "Used in paymentReturn block."
+	},
+	"payment_confirmation_success":{
+		"message":"Le paiement est confirmé.",
+		"description": "Used in paymentReturn block."
+	},
+	"payment_confirmation_failed":{
+		"message":"Le paiement a été refusé.",
+		"description": "Used in paymentReturn block."
+	},
+	"register_now":{
+		"message":"créez votre compte",
+		"description": "Used in paymentReturn block."
+	},
+	"register_to_follow_orders":{
+		"message":"Pour pouvoir suivre l'historique de vos commandes, vous pouvez créer votre compte client.",
+		"description": "Used in paymentReturn block."
+	},
+	"register_button":{
+		"message":"créer un compte",
+		"description": "Used in paymentReturn block."
+	}
+}

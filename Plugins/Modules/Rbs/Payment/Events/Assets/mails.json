@@ -1,0 +1,105 @@
+{
+	"documents": [
+		{
+			"_id": "rbs_payment_transaction_processing",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_payment_transaction_processing",
+			"substitutions": ["token", "link"],
+			"label": "Paiement : transaction en cours",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR":{
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "Bonjour,\n\nNous vous informons que la transaction concernant le paiement est en cours\n\ncordialement.",
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Transaction en cours",
+					"active": false
+				}
+			}
+		},
+		{
+			"_id": "rbs_payment_transaction_success",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_payment_transaction_success",
+			"substitutions": ["token", "link"],
+			"label": "Paiement : succès de la transaction",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR":{
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "Bonjour,\n\nNous vous informons que la transaction concernant le paiement s'est terminée avec succès\n\ncordialement.",
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Transaction réussie"
+				}
+			}
+		},
+		{
+			"_id": "rbs_payment_transaction_failed",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_payment_transaction_failed",
+			"substitutions": ["token", "link"],
+			"label": "Paiement : erreurs durant la transaction",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR":{
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "Bonjour,\n\nUne erreur est servenue pendant la transaction de votre paiement\n\ncordialement.",
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Erreur durant la transaction"
+				}
+			}
+		}
+	],
+	"contextId": "Rbs Mail Install"
+}

@@ -1,17 +1,11 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Documents\AbstractDocument;
-use Change\Documents\Interfaces\Editable;
-use Change\Documents\Interfaces\Localizable;
-use Change\Documents\Interfaces\Publishable;
 use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\UrlManager;
-use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\TreeNodeLink;
-use Change\Http\Rest\Result\DocumentActionLink;
 use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\Result\TreeNodeLink;
+use Zend\Http\Response as HttpResponse;
+
 /**
  * @name \Change\Http\Rest\Actions\GetTreeNodeCollection
  */
@@ -24,8 +18,8 @@ class GetTreeNodeCollection
 	 */
 	public function execute($event)
 	{
-		$documentServices = $event->getDocumentServices();
-		$treeManager = $documentServices->getTreeManager();
+		$applicationServices = $event->getApplicationServices();
+		$treeManager = $applicationServices->getTreeManager();
 
 		$treeName = $event->getParam('treeName');
 		if (!$treeName || !$treeManager->hasTreeName($treeName))
@@ -43,7 +37,6 @@ class GetTreeNodeCollection
 		$nodes = array();
 		if (!count($pathIds))
 		{
-
 			$node = $treeManager->getRootNode($treeName);
 			if ($node)
 			{
@@ -54,11 +47,14 @@ class GetTreeNodeCollection
 		{
 			$nodeId = end($pathIds);
 			$parentNode = $treeManager->getNodeById($nodeId, $treeName);
-			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds ))))
+			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds))))
 			{
 				return;
 			}
-			$nodes = $treeManager->getChildrenNode($parentNode);
+			$offset = intval($event->getRequest()->getQuery('offset', 0));
+			$limit = intval($event->getRequest()->getQuery('limit', 10));
+			$treeManager->getChildrenCount($parentNode);
+			$nodes = $treeManager->getChildrenNode($parentNode, $offset, $limit);
 		}
 		$this->generateResult($event, $parentNode, $nodes);
 	}
@@ -66,7 +62,7 @@ class GetTreeNodeCollection
 	/**
 	 * @param \Change\Http\Event $event
 	 * @param \Change\Documents\TreeNode|null $parentNode
-	 * @param \Change\Documents\TreeNode[]$nodes
+	 * @param \Change\Documents\TreeNode[] $nodes
 	 * @return \Change\Http\Rest\Result\DocumentResult
 	 */
 	protected function generateResult($event, $parentNode, $nodes)
@@ -82,9 +78,7 @@ class GetTreeNodeCollection
 			$result->setLimit(intval($limit));
 		}
 		$result->setSort('nodeOrder');
-
-		$result->setCount(count($nodes));
-		//TODO Add pagination
+		$result->setCount($parentNode ? $parentNode->getChildrenCount() : count($nodes));
 
 		$selfLink = new Link($urlManager, $event->getRequest()->getPath());
 		$selfLink->setQuery($this->buildQueryArray($result));
@@ -102,13 +96,18 @@ class GetTreeNodeCollection
 			$result->addLink($anl);
 		}
 
+		$extraColumn = $event->getRequest()->getQuery('column', array());
+		$treeManager = $event->getApplicationServices()->getTreeManager();
 		foreach ($nodes as $node)
 		{
-			/* @var $node \Change\Documents\TreeNode */;
-			$t = new TreeNodeLink($urlManager, $node);
+			/* @var $node \Change\Documents\TreeNode */
+			$node->setTreeManager($treeManager);
 			$document = $node->getDocument();
-			$this->addResourceItemInfos($t->getDocumentLink(), $document, $urlManager);
-			$result->addResource($t);
+			if (!$document)
+			{
+				continue;
+			}
+			$result->addResource(new TreeNodeLink($urlManager, $node, TreeNodeLink::MODE_PROPERTY, $extraColumn));
 		}
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
@@ -124,58 +123,4 @@ class GetTreeNodeCollection
 	{
 		return array('limit' => $result->getLimit(), 'offset' => $result->getOffset());
 	}
-
-
-	/**
-	 * @param DocumentLink $documentLink
-	 * @param AbstractDocument $document
-	 * @param UrlManager $urlManager
-	 * @return DocumentLink
-	 */
-	protected function addResourceItemInfos(DocumentLink $documentLink, AbstractDocument $document, UrlManager $urlManager)
-	{
-		if ($documentLink->getLCID())
-		{
-			$document->getDocumentServices()->getDocumentManager()->pushLCID($documentLink->getLCID());
-		}
-
-		$model = $document->getDocumentModel();
-
-		$documentLink->setProperty($model->getProperty('creationDate'));
-		$documentLink->setProperty($model->getProperty('modificationDate'));
-
-		if ($document instanceof Editable)
-		{
-			$documentLink->setProperty($model->getProperty('label'));
-			$documentLink->setProperty($model->getProperty('documentVersion'));
-		}
-
-		if ($document instanceof Publishable)
-		{
-			$documentLink->setProperty($model->getProperty('publicationStatus'));
-		}
-
-		if ($document instanceof Localizable)
-		{
-			$documentLink->setProperty($model->getProperty('refLCID'));
-			$documentLink->setProperty($model->getProperty('LCID'));
-		}
-
-		if ($model->useCorrection())
-		{
-			$cf = $document->getCorrectionFunctions();
-			if ($cf->hasCorrection())
-			{
-				$l = new DocumentActionLink($urlManager, $document, 'getCorrection');
-				$documentLink->setProperty('actions', array($l));
-			}
-		}
-
-		if ($documentLink->getLCID())
-		{
-			$document->getDocumentServices()->getDocumentManager()->popLCID();
-		}
-		return $documentLink;
-	}
-
 }

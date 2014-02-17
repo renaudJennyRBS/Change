@@ -1,0 +1,326 @@
+{
+  "order_select_ownerid":{
+    "message":"Select the owner"
+  },
+  "order_select_webstoreid":{
+    "message":"select a store"
+  },
+  "order_section_lines":{
+    "message":"rows"
+  },
+  "order_add_product":{
+    "message":"add a product"
+  },
+  "order_add_product_quantity":{
+    "message":"quantity"
+  },
+  "order_add":{
+    "message":"add"
+  },
+  "order_line_number":{
+    "message":"row"
+  },
+  "order_quantity":{
+    "message":"quantity"
+  },
+  "order_unit_price":{
+    "message":"unit price"
+  },
+  "order_line_total_price":{
+    "message":"total"
+  },
+  "order_designation":{
+    "message":"designation"
+  },
+  "order_sku":{
+    "message":"SKU code"
+  },
+  "order_lines":{
+    "message":"rows"
+  },
+  "order_articles":{
+    "message":"items"
+  },
+  "order_no_lines":{
+    "message":"This order contains no items for the moment."
+  },
+  "order_no_lines_help":{
+    "message":"Use the area <strong>new row<\/strong>: choose items (by SKU or <em>via<\/em> selector) and then add them to the order with the <strong>Add products<\/strong> button."
+  },
+  "order_new_line":{
+    "message":"new row"
+  },
+  "order_parameters":{
+    "message":"parameters"
+  },
+  "order_customer":{
+    "message":"customer"
+  },
+  "order_billing_address":{
+    "message":"billing address"
+  },
+  "order_address_document":{
+    "message":"existing address"
+  },
+  "order_select_address":{
+    "message":"select an address"
+  },
+  "order_address_fields":{
+    "message":"address format"
+  },
+  "order_add_line":{
+    "message":"add items"
+  },
+  "order_total":{
+    "message":"total"
+  },
+  "order_billing_area":{
+    "message":"billing area"
+  },
+  "order_tax_zone":{
+    "message":"area code for tax calculation"
+  },
+  "order_article_choice_help":{
+    "message":"Select items using the selector below and then click <strong>Add items<\/strong>."
+  },
+  "order_search_by_sku":{
+    "message":"Search by SKU code"
+  },
+  "order_select_billingarea":{
+    "message":"select a billing area..."
+  },
+  "order_select_taxzone":{
+    "message":"select an area code..."
+  },
+  "order_select_webstore":{
+    "message":"select a web shop..."
+  },
+  "order_remove_lines":{
+    "message":"delete rows"
+  },
+  "order_removed_lines":{
+    "message":"recently deleted rows"
+  },
+  "order_put_back_in_order":{
+    "message":"put back into order"
+  },
+  "order_remove_permanently":{
+    "message":"permanently delete"
+  },
+  "order_choose_billingarea_and_taxzone_first":{
+    "message":"You must choose a <strong>billing area<\/strong> and an <strong>Area Code for tax calculation<\/strong> before you can choose items."
+  },
+  "order_article_selector_title":{
+    "message":"Select items to add to the order"
+  },
+  "order_add_lines":{
+    "message":"Add rows"
+  },
+  "order_set_shipping_mode":{
+    "message":"set the delivery mode"
+  },
+  "order_select_shipping_mode":{
+    "message":"select the delivery mode"
+  },
+  "order_shipping":{
+    "message":"delivery"
+  },
+  "order_shipping_mode":{
+    "message":"mode"
+  },
+  "order_shipping_lines":{
+    "message":"lines"
+  },
+  "order_shipping_address":{
+    "message":"delivery address"
+  },
+  "order_shipping_status":{
+    "message":"statut"
+  },
+  "order_shipping_actions":{
+    "message":"actions"
+  },
+  "order_action_mark_as_payed":{
+    "message":"paid"
+  },
+  "order_action_mark_as_shipped":{
+    "message":"shipped"
+  },
+  "order_action_mark_as_delivered":{
+    "message":"delivered"
+  },
+  "order_action_mark_as_finalized":{
+    "message":"finalized"
+  },
+  "order_action_mark_as_prepared":{
+    "message":"prepared"
+  },
+  "order_action_cancel":{
+    "message":"cancel"
+  },
+  "order_statuses":{
+    "message":"state"
+  },
+  "order_list":{
+    "message":"orders"
+  },
+  "order_create":{
+    "message":"add an order"
+  },
+  "invoice_list":{
+    "message":"invoices"
+  },
+  "invoice_create":{
+    "message":"add an invoice"
+  },
+  "processing_status_initiated":{
+    "message":"created"
+  },
+  "processing_status_in_progress":{
+    "message":"in progress"
+  },
+  "processing_status_finalized":{
+    "message":"completed"
+  },
+  "processing_status_canceled":{
+    "message":"cancelled"
+  },
+  "shipping_status_initiated":{
+    "message":"created"
+  },
+  "shipping_status_prepared":{
+    "message":"prepared"
+  },
+  "shipping_status_partially_shipped":{
+    "message":"partially sent"
+  },
+  "shipping_status_shipped":{
+    "message":"sent"
+  },
+  "shipping_status_partially_delivered":{
+    "message":"partially delivered"
+  },
+  "shipping_status_delivered":{
+    "message":"delivered"
+  },
+  "payment_status_initiated":{
+    "message":"created"
+  },
+  "payment_status_unconfirmed":{
+    "message":"non-confirmed"
+  },
+  "payment_status_partially_payed":{
+    "message":"partially paid"
+  },
+  "payment_status_payed":{
+    "message":"paid"
+  },
+  "payment_status_canceled":{
+    "message":"cancelled"
+  },
+  "module_name":{
+    "message":"orders"
+  },
+  "module_keywords":{
+    "message":"orders, invoices"
+  },
+  "invoice_select_order":{
+    "message":"select an order"
+  },
+  "invoice_select_transaction":{
+    "message":"select a bank transaction"
+  },
+  "shipment_list":{
+    "message":"expéditions"
+  },
+  "shipment_create":{
+    "message":"ajouter une expédition"
+  },
+  "shipment_select_shippingmode":{
+    "message":"sélectionner le mode de livraison"
+  },
+  "shipment_select_order":{
+    "message":"sélectionner une commande associée"
+  },
+  "shipment_articles":{
+    "message":"articles"
+  },
+  "shipment_add_another_articles":{
+    "message":"ajouter d'autres articles"
+  },
+  "shipment_article_selector_title":{
+    "message":"sélectionnez des articles à ajouter à l'expédition"
+  },
+  "shipment_add_articles":{
+    "message":"ajouter les articles"
+  },
+  "shipment_designation":{
+    "message":"désignation"
+  },
+  "shipment_sku":{
+    "message":"SKU"
+  },
+  "shipment_remainder":{
+    "message":"reliquat"
+  },
+  "shipment_quantity":{
+    "message":"quantité"
+  },
+  "shipment_line_number":{
+    "message":"numéro de ligne"
+  },
+  "shipment_remove_lines":{
+    "message":"retirer de l'expédition"
+  },
+  "shipment_remainder_help":{
+    "message":"lignes non présentes dans l'expédition mais présentes dans le reliquat"
+  },
+  "shipment_warning_new_lines":{
+    "message":"nouvelles lignes d'expédition non présentes dans le reliquat"
+  },
+  "shipment_quantity_to_ship_exceeded":{
+    "message":"attention, l'une des quantités à expédier excède celle du reliquat. Êtes-vous sûr de vouloir envoyer une quantité supérieure à celle indiquer par le reliquat ?"
+  },
+  "shipment_new_from_scratch_helper":{
+    "message":"l'expédition que vous voulez créer n'a pas de commande associée ou de mode de livraison. Il n'est donc pas possible de calculer un reliquat. Les articles en reliquat s'afficheront une fois que la commande associée et le mode de livraison seront définis"
+  },
+  "shipment_prepare_button":{
+    "message":"Valider la préparation<small>de l'expédition<\/small>"
+  },
+  "shipment_shipping_address":{
+    "message":"adresse"
+  },
+  "order_send":{
+    "message":"expédier"
+  },
+  "order_send_the_remain":{
+    "message":"expédier le reliquat"
+  },
+  "order_shipment":{
+    "message":"expédition"
+  },
+  "order_no_shipment":{
+    "message":"non-expédié"
+  },
+  "order_partially_sent":{
+    "message":"partiellement expédié"
+  },
+  "order_sent":{
+    "message":"expédié"
+  },
+  "order_unavailable_shipment_status":{
+    "message":"non disponible"
+  },
+  "order_shipping_mode_list":{
+    "message":"mode de livraison"
+  },
+  "order_specify_shipping_address":{
+    "message":"définir l'adresse de livraison"
+  },
+  "order_modify_shipping_address":{
+    "message":"modifier l'adresse de livraison"
+  },
+  "order_add_shipment":{
+    "message":"ajouter une expédition"
+  }
+}

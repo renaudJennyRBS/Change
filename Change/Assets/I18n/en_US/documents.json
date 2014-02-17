@@ -1,0 +1,62 @@
+{
+  "id":{
+    "message":"ID"
+  },
+  "model":{
+    "message":"model"
+  },
+  "creationdate":{
+    "message":"date created"
+  },
+  "modificationdate":{
+    "message":"date modified"
+  },
+  "reflcid":{
+    "message":"reference language"
+  },
+  "lcid":{
+    "message":"language"
+  },
+  "publicationstatus":{
+    "message":"publication status"
+  },
+  "startpublication":{
+    "message":"date published"
+  },
+  "endpublication":{
+    "message":"date unpublished"
+  },
+  "active":{
+    "message":"active"
+  },
+  "startactivation":{
+    "message":"date activated"
+  },
+  "endactivation":{
+    "message":"date deactivated"
+  },
+  "treename":{
+    "message":"tree"
+  },
+  "label":{
+    "message":"label"
+  },
+  "authorname":{
+    "message":"author name"
+  },
+  "authorid":{
+    "message":"author ID"
+  },
+  "documentversion":{
+    "message":"version"
+  },
+  "title":{
+    "message":"title (front-end)"
+  },
+  "code":{
+    "message":"code"
+  },
+  "publicationsections":{
+    "message":"publication sections"
+  }
+}

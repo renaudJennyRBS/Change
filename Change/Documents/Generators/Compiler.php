@@ -22,15 +22,15 @@ class Compiler
 	protected $application;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
 
 	/**
 	 * @param \Change\Application $application
-	 * @param \Change\Application\ApplicationServices $applicationServices
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 */
-	public function __construct(\Change\Application $application, \Change\Application\ApplicationServices $applicationServices)
+	public function __construct(\Change\Application $application, \Change\Services\ApplicationServices $applicationServices)
 	{
 		$this->application = $application;
 		$this->applicationServices = $applicationServices;
@@ -74,27 +74,28 @@ class Compiler
 			$model->validate();
 			
 			$modelName = $model->getName();
-			$extendName = $model->getExtend();
+			$extendName = $model->getExtends();
 
 			if ($extendName)
 			{
 				$extModel = $this->getModelByName($extendName);
 				if ($extModel === null)
 				{
-					throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $model->getExtend(), 54002);
+					throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $model->getExtends(), 54002);
 				}
-				$model->setExtendModel($extModel);
+				$model->setExtendedModel($extModel);
 				$model->setParent($extModel);
-				if ($model->getInject())
+				if ($model->getReplace())
 				{
 					if (isset($injectionArray[$extendName]))
 					{
 						throw new \RuntimeException('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $injectionArray[$extendName], 54003);
 					}
 					$injectionArray[$extendName] = $model;
+					$extModel->replacedBy($model->getName());
 				}
 			}
-			elseif ($model->getInject())
+			elseif ($model->getReplace())
 			{
 				throw new \RuntimeException('Invalid Injection on ' . $modelName, 54004);
 			}
@@ -103,14 +104,14 @@ class Compiler
 		foreach ($this->models as $model)
 		{
 			/* @var $model Model */
-			$extModel = $model->getExtendModel();
+			$extModel = $model->getExtendedModel();
 			if ($extModel)
 			{
 				$extendName = $extModel->getName();
 				
 				if (in_array($extModel, $injectionArray))
 				{
-					throw new \RuntimeException($model . ' extends a injecting model ' . $extendName, 54005);
+					throw new \RuntimeException($model . ' extends a "replace" model ' . $extendName, 54005);
 				}
 				
 				if (isset($injectionArray[$extendName]) && $injectionArray[$extendName] !== $model)
@@ -135,7 +136,7 @@ class Compiler
 	 */
 	public function validateInheritance()
 	{
-		foreach ($this->modelNamesByExtendLevel as $lvl => $modelNames)
+		foreach ($this->modelNamesByExtendLevel as $modelNames)
 		{
 			foreach ($modelNames as $modelName)
 			{
@@ -204,9 +205,9 @@ class Compiler
 	 */
 	public function getParent($model)
 	{
-		if ($model->getExtend())
+		if ($model->getExtends())
 		{
-			return $this->getModelByName($model->getExtend());
+			return $this->getModelByName($model->getExtends());
 		}
 		return null;
 	}
@@ -241,7 +242,7 @@ class Compiler
 		foreach ($this->models as $cm)
 		{
 			/* @var $cm Model */
-			$cmp = $cm->getExtend() ? $this->getModelByName($cm->getExtend()) : null;
+			$cmp = $cm->getExtends() ? $this->getModelByName($cm->getExtends()) : null;
 			if ($cmp === $model)
 			{
 				$result[$cm->getName()] = $cm;
@@ -253,7 +254,7 @@ class Compiler
 	/**
 	 * @param Model $model
 	 * @param boolean $excludeInjected
-	 * @return Model
+	 * @return Model[]
 	 */
 	public function getDescendants($model, $excludeInjected = false)
 	{
@@ -261,7 +262,7 @@ class Compiler
 		foreach ($this->getChildren($model) as $name => $cm)
 		{
 			/* @var $cm Model */
-			if ($excludeInjected && $cm->getInject())
+			if ($excludeInjected && $cm->getReplace())
 			{
 				continue;
 			}
@@ -276,7 +277,7 @@ class Compiler
 	}
 	
 	/**
-	 * @return Model
+	 * @return Model[]
 	 */
 	public function getModels()
 	{
@@ -335,44 +336,23 @@ class Compiler
 	public function generate()
 	{
 		$nbModels = 0;
-		
-		$workspace = $this->application->getWorkspace();
-		if (is_dir($workspace->pluginsModulesPath()))
+		$plugins = $this->applicationServices->getPluginManager()->getModules();
+		foreach($plugins as $plugin)
 		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->pluginsModulesPath(), '*', '*', 'Documents', 'Assets', '*.xml'));
-			$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
-			foreach ($paths as $definitionPath)
+			$vendor = $plugin->getVendor();
+			$moduleName = $plugin->getShortName();
+			foreach ($plugin->getDocumentDefinitionPaths() as $documentName => $definitionPath)
 			{
-				$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
-				$count = count($parts);
-				$documentName = basename($parts[$count - 1], '.xml');
-				$moduleName = $parts[$count - 4];
-				$vendor = $parts[$count - 5];
-				$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
-				$nbModels++;
-			}
-		}
-
-		if (is_dir($workspace->projectModulesPath()))
-		{
-			$pattern = implode(DIRECTORY_SEPARATOR, array($workspace->projectModulesPath(), '*', 'Documents', 'Assets', '*.xml'));
-			$paths = \Zend\Stdlib\Glob::glob($pattern, \Zend\Stdlib\Glob::GLOB_NOESCAPE + \Zend\Stdlib\Glob::GLOB_NOSORT);
-			foreach ($paths as $definitionPath)
-			{
-				$parts = explode(DIRECTORY_SEPARATOR, $definitionPath);
-				$count = count($parts);
-				$documentName = basename($parts[$count - 1], '.xml');
-				$moduleName = $parts[$count - 4];
-				$vendor = 'Project';
 				$this->loadDocument($vendor, $moduleName, $documentName, $definitionPath);
 				$nbModels++;
 			}
 		}
 		
 		$this->buildTree();
-		
 		$this->validateInheritance();
-		
-		$this->saveModelsPHPCode();
+		if (is_array($this->models) && count($this->models))
+		{
+			$this->saveModelsPHPCode();
+		}
 	}
 }

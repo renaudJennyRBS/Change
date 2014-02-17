@@ -1,0 +1,20 @@
+{
+	"mainContent": {
+		"id": "mainContent",
+		"grid": 12,
+		"type": "container",
+		"parameters": {
+		},
+		"items": [
+			{
+				"id": "message",
+				"type": "block",
+				"name": "Rbs_Website_Richtext",
+				"parameters": {
+					"contentType" : "Markdown",
+					"content": "Oups ! Vous n'avez pas les droits nécéssaires."
+				}
+			}
+		]
+	}
+}

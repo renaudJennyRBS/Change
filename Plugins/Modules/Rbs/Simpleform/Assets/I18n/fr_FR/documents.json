@@ -1,0 +1,50 @@
+{
+	"form_usecaptcha":{
+		"message":"utiliser un CAPTCHA"
+	},
+	"form_receiverusers":{
+		"message":"utilisateurs destinataires"
+	},
+	"form_receivergroups":{
+		"message":"groupes destinataires"
+	},
+	"form_receiveremails":{
+		"message":"adresses e-mail destinataires"
+	},
+	"form_confirmationmessage":{
+		"message":"message de confirmation"
+	},
+	"form_confirmationmode":{
+		"message":"mode de confirmation"
+	},
+	"form_confirmationpopin":{
+		"message":"confirmation dans une popin"
+	},
+	"form_confirmationpage":{
+		"message":"page de confirmation"
+	},
+	"form_sendacknowledgment":{
+		"message":"envoyer un accusé de réception"
+	},
+	"form_saveresponses":{
+		"message":"enregistrer les réponses"
+	},
+	"form":{
+		"message":"formulaire"
+	},
+	"field":{
+		"message":"champ"
+	},
+	"field_required":{
+		"message":"requis"
+	},
+	"field_fieldtypecode":{
+		"message":"type de champ"
+	},
+	"field_helptext":{
+		"message":"texte d'aide"
+	},
+	"response":{
+		"message":"réponse"
+	}
+}

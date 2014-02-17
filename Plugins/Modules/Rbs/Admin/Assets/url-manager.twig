@@ -1,0 +1,18 @@
+<div class="row" ng-controller="RbsChangeSimpleDocumentController">
+
+	<div rbs-aside-column>
+		<div class="rbs-aside-block" ng-show="document">
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.concerned_document', ['ucf']) }}</h3>
+			<rbs-document-preview document="document"></rbs-document-preview>
+		</div>
+	</div>
+
+	<div rbs-main-column>
+		<div class="page-header">
+			<h2>{{ i18n('m.rbs.admin.admin.urls', ['ucf']) }}</h2>
+		</div>
+
+		<rbs-document-url-manager document="document"></rbs-document-url-manager>
+	</div>
+
+</div>

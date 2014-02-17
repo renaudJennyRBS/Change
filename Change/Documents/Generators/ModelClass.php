@@ -38,9 +38,12 @@ class ModelClass
 		$this->compiler = $compiler;
 		
 		$code = '<'. '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
-		$extendModel = $model->getExtendModel();
-		$extend = $extendModel ? $extendModel->getModelClassName() : '\Change\Documents\AbstractModel';
+		$parentModel = $model->getParent();
+		$extend = $parentModel ? $parentModel->getModelClassName() : '\Change\Documents\AbstractModel';
 		$code .= '
+use Change\Documents\Property;
+use Change\Documents\InverseProperty;
+
 /**
  * @name '.$model->getModelClassName().'
  */
@@ -56,24 +59,53 @@ class ModelClass
 			$code .= $this->getLoadInverseProperties($model);
 		}
 		$code .= $this->getOthersFunctions($model);
-			
+
 		$code .= '}'. PHP_EOL;
 		
 		$this->compiler = null;
 		return $code;
 	}
-	
+
 	/**
 	 * @param mixed $value
+	 * @param boolean $removeSpace
 	 * @return string
 	 */
 	protected function escapePHPValue($value, $removeSpace = true)
 	{
+		if (is_array($value))
+		{
+			return $this->escapeArrayPHPValue($value);
+		}
 		if ($removeSpace)
 		{
 			return str_replace(array(PHP_EOL, ' ', "\t"), '', var_export($value, true));
 		}
 		return var_export($value, true);
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return string
+	 */
+	protected function escapeArrayPHPValue($value)
+	{
+		$data = array();
+		if (\Zend\Stdlib\ArrayUtils::isList($value))
+		{
+			foreach($value as $val)
+			{
+				$data[] = $this->escapePHPValue($val, false);
+			}
+		}
+		else
+		{
+			foreach($value as $key => $val)
+			{
+				$data[] = $this->escapePHPValue($key, false) . ' => '. $this->escapePHPValue($val, false);
+			}
+		}
+		return 'array(' . implode(', ', $data) . ')';
 	}
 	
 
@@ -88,30 +120,34 @@ class ModelClass
 	public function __construct(\\Change\\Documents\\ModelManager $modelManager)
 	{
 		parent::__construct($modelManager);'. PHP_EOL;
-		if ($model->getExtend() && !$model->getInject())
+		if ($model->getExtends() && !$model->getReplace())
 		{	
-			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtend()) . ';'. PHP_EOL;
+			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtends()) . ';'. PHP_EOL;
 		}
-		
-		$descendantsNames = array_keys($this->compiler->getDescendants($model, true));	
-		if (!$model->getInject())
+
+		if (!$model->getReplace())
 		{
+			$descendantsNames = array_keys($this->compiler->getDescendants($model, true));
 			$code .= '		$this->descendantsNames = ' . $this->escapePHPValue($descendantsNames) . ';'. PHP_EOL;
 			$code .= '		$this->vendorName = ' . $this->escapePHPValue($model->getVendor()) . ';'. PHP_EOL;
 			$code .= '		$this->shortModuleName = ' . $this->escapePHPValue($model->getShortModuleName()) . ';'. PHP_EOL;
 			$code .= '		$this->shortName = ' . $this->escapePHPValue($model->getShortName()) . ';'. PHP_EOL;
-			$code .= '		$this->injectedBy = null;'. PHP_EOL;
+
+		}
+
+		if ($model->replacedBy())
+		{
+			$code .= '		$this->replacedBy = ' . $this->escapePHPValue($model->replacedBy()) . ';'. PHP_EOL;
 		}
 		else
 		{
-			$code .= '		$this->injectedBy = ' . $this->escapePHPValue($model->getName()) . ';'. PHP_EOL;
+			$code .= '		$this->replacedBy = null;'. PHP_EOL;
 		}
 
 		if ($model->getTreeName() !== null)
 		{
 			$code .= '		$this->treeName = ' . $this->escapePHPValue($model->getTreeName()) . ';'. PHP_EOL;
 		}
-		
 		$code .= '	}'. PHP_EOL;
 		return $code;
 	}
@@ -125,18 +161,20 @@ class ModelClass
 		$code = '
 	protected function loadProperties()
 	{
-		parent::loadProperties();'. PHP_EOL;
+		parent::loadProperties();
+		/* @var $p Property */'. PHP_EOL;
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			$code .= '		$p = $this->properties['.$this->escapePHPValue($property->getName()).']';
 			if ($property->getParent())
 			{
-				$code .= ';'. PHP_EOL;
+				$code .= '		$p = $this->properties['.$this->escapePHPValue($property->getName()).'];'. PHP_EOL;
 			}
 			else
 			{
-				$code .= ' = new \Change\Documents\Property('.$this->escapePHPValue($property->getName()).', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+				$code .= '		$p = new Property('.$this->escapePHPValue($property->getName()).', '.$this->escapePHPValue($property->getType()).');'. PHP_EOL;
+				$code .= '		$p->setLabelKey('.$this->escapePHPValue($property->getLabelKey()).');'. PHP_EOL;
+				$code .= '		$this->properties['.$this->escapePHPValue($property->getName()).'] = $p;'. PHP_EOL;
 			}
 			 
 			$affects = array();
@@ -145,13 +183,11 @@ class ModelClass
 			if ($property->getMinOccurs() !== null) {$affects[] = '->setMinOccurs('.$this->escapePHPValue($property->getMinOccurs()).')';}
 			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
 			if ($property->getDocumentType() !== null) {$affects[] = '->setDocumentType('.$this->escapePHPValue($property->getDocumentType()).')';}
-			if ($property->getCascadeDelete() !== null) {$affects[] = '->setCascadeDelete('.$this->escapePHPValue($property->getCascadeDelete()).')';}
 			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultPhpValue(), false).')';}
 			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
-			if ($property->getIndexed() !== null) {$affects[] = '->setIndexed('.$this->escapePHPValue($property->getIndexed()).')';}
 			if ($property->getHasCorrection() !== null) {$affects[] = '->setHasCorrection('.$this->escapePHPValue($property->getHasCorrection()).')';}
+			if ($property->getInternal() !== null) {$affects[] = '->setInternal('.$this->escapePHPValue($property->getInternal()).')';}
 			if (is_array($property->getConstraintArray()) && count($property->getConstraintArray())) {$affects[] = '->setConstraintArray('.$this->escapePHPValue($property->getConstraintArray()).')';}
-
 			if (count($affects))
 			{
 				$code .= '		$p' . implode('', $affects) . ';'. PHP_EOL;
@@ -174,8 +210,8 @@ class ModelClass
 		foreach ($model->getInverseProperties() as $inverseProperty)
 		{
 			/* @var $inverseProperty \Change\Documents\Generators\InverseProperty */
-			$code .= '		$p = $this->inverseProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = new \Change\Documents\InverseProperty('.$this->escapePHPValue($inverseProperty->getName()).');'. PHP_EOL;
-			$code .= '		$p->setRelatedDocumentType('.$this->escapePHPValue($inverseProperty->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($inverseProperty->getRelatedPropertyName()).');'. PHP_EOL;
+			$code .= '		$p = new InverseProperty('.$this->escapePHPValue($inverseProperty->getName()).');'. PHP_EOL;
+			$code .= '		$this->inverseProperties['.$this->escapePHPValue($inverseProperty->getName()).'] = $p->setRelatedDocumentType('.$this->escapePHPValue($inverseProperty->getRelatedDocumentName()).')->setRelatedPropertyName('.$this->escapePHPValue($inverseProperty->getRelatedPropertyName()).');'. PHP_EOL;
 		}
 		$code .= '	}'. PHP_EOL;
 		return $code;
@@ -187,8 +223,25 @@ class ModelClass
 	 */	
 	protected function getOthersFunctions($model)
 	{	
-		$code = '';
-		
+		$code = '
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getDocumentClassName()
+	{
+		return '.$this->escapePHPValue($model->getDocumentClassName()).';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getLocalizedDocumentClassName()
+	{
+		return '.$this->escapePHPValue($model->getDocumentLocalizedClassName()).';
+	}';
+
 		if ($model->getIcon())
 		{
 			$code .= '
@@ -202,6 +255,7 @@ class ModelClass
 	}'. PHP_EOL;
 		}
 
+
 		if ($model->getStateless())
 		{
 			$code .= '
@@ -212,6 +266,19 @@ class ModelClass
 	public function isStateless()
 	{
 		return true;
+	}'. PHP_EOL;
+		}
+
+		if ($model->getAbstract() !== null)
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isAbstract()
+	{
+		return '. $this->escapePHPValue($model->getAbstract()).';
 	}'. PHP_EOL;
 		}
 
@@ -290,6 +357,18 @@ class ModelClass
 	public function isPublishable()
 	{
 		return '. $this->escapePHPValue($model->getPublishable()).';
+	}'. PHP_EOL;
+		}
+		elseif ($model->getActivable() !== null)
+		{
+			$code .= '
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isActivable()
+	{
+		return '. $this->escapePHPValue($model->getActivable()).';
 	}'. PHP_EOL;
 		}
 		

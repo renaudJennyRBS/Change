@@ -1,0 +1,397 @@
+{
+  "function_index_page":{
+    "message":"index page"
+  },
+  "website_baseurl_help":{
+    "message":"URL of the homepage of this website in its reference language."
+  },
+  "website_indexpage_help":{
+    "message":"The home page is selected from the web site's functions screen."
+  },
+  "website_notify_url_creation":{
+    "message":"Notify me of the creation"
+  },
+  "website_sitemap_url_pending_creation":{
+    "message":"in creation"
+  },
+  "website_notification_sitemap_url_creation":{
+    "message":"\"$WEBSITE$\" sitemap URL for \"$LCID$\" local was generated"
+  },
+  "website_sitemap_help":{
+    "message":"If you enable the sitemap generation, an index file will be automatically generated for each language of the web site, by using documents SEO informations (configure them via <a href=\"Rbs\/Seo\/DocumentSeo\/\"> module SEO<\/a>)."
+  },
+  "website_go_to_tree":{
+    "message":"navigate down the tree"
+  },
+  "website_edit_current":{
+    "message":"edit the current web site"
+  },
+  "topic_website_help":{
+    "message":"The website this topic belongs to."
+  },
+  "topic_website_picker_title":{
+    "message":"Select the parent web site"
+  },
+  "topic_indexpage_help":{
+    "message":"The index page is selected from the web site's functions screen."
+  },
+  "topic_pathpart_help":{
+    "message":"\n\t\tPath used in the URL for this topic.\n\t"
+  },
+  "topic_section_no_function":{
+    "message":"no function is configured for this section."
+  },
+  "topic_section_function":{
+    "message":"This section has the following function:"
+  },
+  "topic_section_functions":{
+    "message":"This section has the {} following functions:"
+  },
+  "topic_configure_section_functions_link":{
+    "message":"configure this section's functions"
+  },
+  "topic_function_via_page":{
+    "message":"<em>via<\/em> page"
+  },
+  "topic_functions":{
+    "message":"functions"
+  },
+  "topic_permission_rule_title":{
+    "message":"permission rules"
+  },
+  "topic_users_picker_title":{
+    "message":"select users"
+  },
+  "topic_groups_picker_title":{
+    "message":"select user groups"
+  },
+  "topic_edit_current":{
+    "message":"edit current section"
+  },
+  "page_pagetemplate_picker_title":{
+    "message":"select the page template"
+  },
+  "page_open_page_editor":{
+    "message":"open page editor"
+  },
+  "page_full_screen":{
+    "message":"full screen"
+  },
+  "page_ttl_help":{
+    "message":"Specify a duration in seconds, or 0 to disable the cache"
+  },
+  "manage_functions":{
+    "message":"management of functions"
+  },
+  "show_functions_code":{
+    "message":"display the functions' code"
+  },
+  "implemented_functions":{
+    "message":"implemented functions"
+  },
+  "via_static_page":{
+    "message":"through the content page"
+  },
+  "via_functional_page":{
+    "message":"through the functional page"
+  },
+  "select_page_for_function":{
+    "message":"select a page for the implementation of the function"
+  },
+  "function":{
+    "message":"function"
+  },
+  "show_not_ready_pages":{
+    "message":"display the pages that don't have the required blocks for the function"
+  },
+  "not_ready_pages_warning":{
+    "message":"<span class=\"label label-warning\">Attention<\/span> Les pages suivantes ne disposent pas des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>."
+  },
+  "ready_pages_message":{
+    "message":"les pages suivantes disposent des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>."
+  },
+  "no_ready_pages_message":{
+    "message":"aucune page ne dispose des blocs nécessaires pour remplir la fonction <strong>$FUNCTION$<\/strong>."
+  },
+  "tip":{
+    "message":"astuce"
+  },
+  "already_used":{
+    "message":"already used"
+  },
+  "filter_functions":{
+    "message":"filter the list of functions"
+  },
+  "filter_pages":{
+    "message":"filter the list of pages"
+  },
+  "available_functions":{
+    "message":"available functions"
+  },
+  "change_page_for_function":{
+    "message":"change page for this function"
+  },
+  "function_usage":{
+    "message":"uses"
+  },
+  "index_page":{
+    "message":"index page"
+  },
+  "dont_find_page_create_one":{
+    "message":"Vous ne trouvez pas de page adéquate ? Ajoutez-en une !"
+  },
+  "remove_function_in_section":{
+    "message":"remove the function of this section"
+  },
+  "implement_function_in_section":{
+    "message":"implement the function in the section"
+  },
+  "staticpage_section_help":{
+    "message":"The topic or web site that contains the page."
+  },
+  "staticpage_hideLinks_help":{
+    "message":"By activating this option, the page will not appear in the elements of navigation such as menus. Mainly used for the index by topic pages."
+  },
+  "staticpage_section_picker_title":{
+    "message":"select the section"
+  },
+  "staticpage_pagetemplate_picker_title":{
+    "message":"select the page template"
+  },
+  "module_name":{
+    "message":"websites & pages"
+  },
+  "module_keywords":{
+    "message":"websites,pages,templates,topics,blocks,menus,text,sitemap"
+  },
+  "host_name":{
+    "message":"hostname"
+  },
+  "open_page_editor_warning":{
+    "message":"<strong>This form contains unsaved changes.<\/strong>\n\t\t<ul>\n\t\t\t<li>By clicking <strong>Yes<\/strong>,changes will be  <strong>saved<\/strong> and you will be redirected to the page editor.<\/li>\n\t\t\t<li>By clicking <strong>No<\/strong>, this <strong>popup will be dismissed<\/strong> and no harm will be done :)<\/li>\n\t\t<\/ul>\n\t\n\t"
+  },
+  "section_name":{
+    "message":"CMS"
+  },
+  "section_permission_rule_helper":{
+    "message":"choose to restrict access in this section to users or groups of users. If there is no selected group or user, access is considered to be public"
+  },
+  "website_properties":{
+    "message":"properties"
+  },
+  "website_structure":{
+    "message":"structure"
+  },
+  "navigate_in_website":{
+    "message":"navigate the web site"
+  },
+  "richtext":{
+    "message":"richtext block"
+  },
+  "menu":{
+    "message":"menu block"
+  },
+  "menu_templatename":{
+    "message":"rendering template"
+  },
+  "menu_contextual":{
+    "message":"contextual to the topic"
+  },
+  "menu_documentid":{
+    "message":"root document"
+  },
+  "menu_maxlevel":{
+    "message":"maximum depth"
+  },
+  "menu_showtitle":{
+    "message":"display title"
+  },
+  "sitemap":{
+    "message":"sitemap"
+  },
+  "exception":{
+    "message":"exception"
+  },
+  "exception_show_stack_trace":{
+    "message":"display stack trace"
+  },
+  "error":{
+    "message":"error"
+  },
+  "error_codehttp":{
+    "message":"http error code"
+  },
+  "function_error_404":{
+    "message":"Page not found"
+  },
+  "function_error_403":{
+    "message":"Access denied"
+  },
+  "function_error_500":{
+    "message":"Application internal error"
+  },
+  "xhtml_template":{
+    "message":"HTML template"
+  },
+  "menu_list":{
+    "message":"navigation menus"
+  },
+  "menu_create":{
+    "message":"add navigation menu"
+  },
+  "staticpage_list":{
+    "message":"pages"
+  },
+  "staticpage_create":{
+    "message":"add content page"
+  },
+  "functionalpage_list":{
+    "message":"fonctional pages list"
+  },
+  "functionalpage_create":{
+    "message":"add functional page"
+  },
+  "functionalpage_pagetemplate_picker_title":{
+    "message":"select a page template"
+  },
+  "topic_list":{
+    "message":"topics"
+  },
+  "topic_create":{
+    "message":"add topic"
+  },
+  "website_list":{
+    "message":"websites"
+  },
+  "website_create":{
+    "message":"add website"
+  },
+  "menu_website_picker_title":{
+    "message":"select the website of the menu"
+  },
+  "menu_section_items":{
+    "message":"Menu entries"
+  },
+  "menu_select_document":{
+    "message":"Document"
+  },
+  "menu_url":{
+    "message":"URL"
+  },
+  "menu_i18nKey":{
+    "message":"key translation"
+  },
+  "menu_this_menu_is_empty":{
+    "message":"This menu is empty"
+  },
+  "menu_this_menu_is_empty_help":{
+    "message":"\n  Use the <em>Add<\/em> list below to add entries to this menu."
+  },
+  "menu_function_print_page":{
+    "message":"print page"
+  },
+  "menu_function_go_to_content":{
+    "message":"go to content"
+  },
+  "menu_function_bookmark_page":{
+    "message":"bookmark page"
+  },
+  "menu_add_items":{
+    "message":"add entries"
+  },
+  "menu_add_document_item":{
+    "message":"add an entry pointing to a document"
+  },
+  "menu_add_document_item_help":{
+    "message":"You can select a publishable document. After choosing a document, it is possible to change the title to display in the menu."
+  },
+  "menu_add_url_item":{
+    "message":"add an entry pointing to a URL"
+  },
+  "menu_add_url_item_help":{
+    "message":"Use this mode to include links to external pages to the web site. For a link to an internal URL, use the form above."
+  },
+  "menu_select_document_to_add_to_menu":{
+    "message":"select a document to add to the menu"
+  },
+  "menu_add_this_element":{
+    "message":"add this item to the menu"
+  },
+  "menu_menus_are_grouped_by_website":{
+    "message":"<strong>Menus are classified by web site.<\/strong> <br\/>Choose a web site to access the menus attached to him."
+  },
+  "functionalpage_website_help":{
+    "message":"The website this page belongs to."
+  },
+  "functionalpage_website_picker_title":{
+    "message":"select the website for this page"
+  },
+  "functionalpage_functions":{
+    "message":"functions"
+  },
+  "functional_page_editor_help":{
+    "message":"This page is a <strong>functional page<\/strong>: it is used to display contents from other modules, such as news or products.<br\/>To configure this page functions, after saving it, go to the <em>Functions<\/em> in the menu on the left."
+  },
+  "functional_page_list_help":{
+    "message":"The <strong>functional pages<\/strong> are used to display contents coming from different modules, such as news or products."
+  },
+  "all_functions_list":{
+    "message":"<strong>Here is the list of all available functions.<\/strong><br\/>Functions already supported by this page are selected in the list below. Select the functions you want to associate to this page."
+  },
+  "page_contains_blocks_for_following_functions":{
+    "message":"This page currently holds the required blocks to support the following functions:"
+  },
+  "page_contains_no_function":{
+    "message":"<h4>This page supports no functions.<\/h4>To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+  },
+  "page_contains_required_blocks":{
+    "message":"This page holds all the required blocks to support the selected functions."
+  },
+  "following_functions_cannot_be_supported_correctly":{
+    "message":"The following functions won't work correctly because the page does not hold the required blocks:"
+  },
+  "edit_page_contents_to_fix_this":{
+    "message":"To fix this, you can <a href ng-href=\"(= doc | documentURL:'editor' =)\">edit the page contents<\/a>."
+  },
+  "configure_functions":{
+    "message":"configure"
+  },
+  "richtext_content":{
+    "message":"text"
+  },
+  "thread":{
+    "message":"breadcrumb"
+  },
+  "thread_separator":{
+    "message":"link separator"
+  },
+  "block_module_name":{
+    "message":"twig file source module"
+  },
+  "block_template_name":{
+    "message":"twig file"
+  },
+  "switchlang":{
+    "message":"language change"
+  },
+  "block_properties":{
+    "message":"Block properties",
+    "description":"Used as title in the block properties box in the page editor (left column)."
+  },
+  "no_block_selected":{
+    "message":"No selected block.",
+    "description":"Used as default content in the block properties box in the page editor (left column)."
+  },
+  "back_to_general_page_properties":{
+    "message":"Page general properties"
+  },
+  "manage_websites":{
+    "message":"Manage websites"
+  },
+  "index":{
+    "message":"Section home"
+  },
+  "structure":{
+    "message":"structure"
+  }
+}

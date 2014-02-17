@@ -1,8 +1,6 @@
 <?php
 namespace Change\Db\Query\Expressions;
 
-use Change\Db\Query\InterfaceSQLFragment;
-
 /**
  * @name \Change\Db\Query\Expressions\Join
  * @api

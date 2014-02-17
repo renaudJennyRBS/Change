@@ -1,26 +1,22 @@
 <?php
 namespace Change\Presentation\Templates\Twig;
 
-use Change\Presentation\PresentationServices;
-
 /**
- * Class Extension
- * @package Change\Presentation\Templates\Twig
  * @name \Change\Presentation\Templates\Twig\Extension
  */
-class Extension  implements \Twig_ExtensionInterface
+class Extension implements \Twig_ExtensionInterface
 {
 	/**
-	 * @var PresentationServices
+	 * @var \Change\I18n\I18nManager
 	 */
-	protected $presentationServices;
+	protected $i18nManager;
 
 	/**
-	 * @param PresentationServices $presentationServices
+	 * @param \Change\I18n\I18nManager $i18nManager
 	 */
-	function __construct(PresentationServices $presentationServices)
+	function __construct(\Change\I18n\I18nManager $i18nManager)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->i18nManager = $i18nManager;
 	}
 
 	/**
@@ -39,7 +35,6 @@ class Extension  implements \Twig_ExtensionInterface
 	 */
 	public function initRuntime(\Twig_Environment $environment)
 	{
-
 	}
 
 	/**
@@ -85,8 +80,8 @@ class Extension  implements \Twig_ExtensionInterface
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('i18n', array($this, 'i18n'), array('is_safe' => array('html'))),
-			new \Twig_SimpleFunction('i18nAttr', array($this, 'i18nAttr'), array('is_safe' => array('html_attr'))),
+			new \Twig_SimpleFunction('i18n', array($this, 'i18n')),
+			new \Twig_SimpleFunction('i18nAttr', array($this, 'i18nAttr'), array('is_safe' => array('html', 'html_attr'))),
 		);
 	}
 
@@ -109,38 +104,41 @@ class Extension  implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @return \Change\Application\ApplicationServices
+	 * @return \Change\I18n\I18nManager
 	 */
-	protected function getApplicationServices()
+	protected function getI18nManager()
 	{
-		return $this->presentationServices->getApplicationServices();
+		return $this->i18nManager;
 	}
 
 	/**
 	 * @param string $i18nKey
+	 * @param string[] $formatters
 	 * @param array $replacementArray
 	 * @return string
 	 */
-	public function i18n($i18nKey, $replacementArray = null)
+	public function i18n($i18nKey, $formatters = array(), $replacementArray = null)
 	{
 		if (!is_array($replacementArray))
 		{
 			$replacementArray = array();
 		}
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, array('html'), $replacementArray);
+		return $this->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 
 	/**
 	 * @param string $i18nKey
+	 * @param string[] $formatters
 	 * @param array $replacementArray
 	 * @return string
 	 */
-	public function i18nAttr($i18nKey, $replacementArray = null)
+	public function i18nAttr($i18nKey, $formatters = array(), $replacementArray = null)
 	{
 		if (!is_array($replacementArray))
 		{
 			$replacementArray = array();
 		}
-		return $this->getApplicationServices()->getI18nManager()->trans($i18nKey, array('attr'), $replacementArray);
+		$formatters[] = 'attr';
+		return $this->getI18nManager()->trans($i18nKey, $formatters, $replacementArray);
 	}
 }

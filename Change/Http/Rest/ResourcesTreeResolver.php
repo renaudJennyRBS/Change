@@ -36,7 +36,7 @@ class ResourcesTreeResolver
 	{
 		if (!isset($namespaceParts[1]))
 		{
-			$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+			$treeNames = $event->getApplicationServices()->getTreeManager()->getTreeNames();
 			$vendors = array();
 			foreach ($treeNames as $treeName)
 			{
@@ -48,7 +48,7 @@ class ResourcesTreeResolver
 		elseif (!isset($namespaceParts[2]))
 		{
 			$vendor = $namespaceParts[1];
-			$treeNames = $event->getDocumentServices()->getTreeManager()->getTreeNames();
+			$treeNames = $event->getApplicationServices()->getTreeManager()->getTreeNames();
 			$shortModulesNames = array();
 			foreach ($treeNames as $treeName)
 			{
@@ -89,8 +89,8 @@ class ResourcesTreeResolver
 			$vendor = array_shift($resourceParts);
 			$shortModuleName = array_shift($resourceParts);
 			$treeName = $vendor . '_' . $shortModuleName;
-			$documentServices = $event->getDocumentServices();
-			if ($documentServices->getTreeManager()->hasTreeName($treeName))
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices->getTreeManager()->hasTreeName($treeName))
 			{
 				$event->setParam('treeName', $treeName);
 				$pathIds = array();
@@ -104,7 +104,7 @@ class ResourcesTreeResolver
 					elseif ($nodeId == 'ancestors' && $event->getParam('isDirectory') && count($resourceParts) === 0)
 					{
 						$event->setParam('pathIds', $pathIds);
-						$this->resolver->setAuthorisation($event, end($pathIds), $treeName . '.ancestors');
+						$this->resolver->setAuthorization($event, 'Consumer', end($pathIds), $treeName);
 						$action = function($event) {
 							$action = new GetTreeNodeAncestors();
 							$action->execute($event);
@@ -127,7 +127,7 @@ class ResourcesTreeResolver
 				{
 					if ($method === Request::METHOD_POST)
 					{
-						$this->resolver->setAuthorisation($event, $resource, $treeName . '.createNode');
+						$this->resolver->setAuthorization($event, 'Creator', is_numeric($resource) ? $resource : null, $treeName);
 						$action = function($event) {
 							$action = new CreateTreeNode();
 							$action->execute($event);
@@ -137,7 +137,7 @@ class ResourcesTreeResolver
 					}
 					elseif ($method === Request::METHOD_GET)
 					{
-						$this->resolver->setAuthorisation($event, $resource, $treeName . '.children');
+						$this->resolver->setAuthorization($event, 'Consumer', is_numeric($resource) ? $resource : null, $treeName);
 						$action = function($event) {
 							$action = new GetTreeNodeCollection();
 							$action->execute($event);
@@ -146,7 +146,7 @@ class ResourcesTreeResolver
 						return;
 					}
 
-					$result = $this->resolver->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
+					$result = $event->getController()->notAllowedError($method, array(Request::METHOD_GET, Request::METHOD_POST));
 					$event->setResult($result);
 					return;
 				}
@@ -154,7 +154,7 @@ class ResourcesTreeResolver
 				{
 					if ($method === Request::METHOD_GET)
 					{
-						$this->resolver->setAuthorisation($event, $resource, $treeName . '.loadNode');
+						$this->resolver->setAuthorization($event, 'Consumer', $resource, $treeName);
 						$action = function($event) {
 							$action = new GetTreeNode();
 							$action->execute($event);
@@ -164,7 +164,7 @@ class ResourcesTreeResolver
 					}
 					elseif ($method === Request::METHOD_PUT)
 					{
-						$this->resolver->setAuthorisation($event, $resource, $treeName . '.updateNode');
+						$this->resolver->setAuthorization($event, 'Creator', $resource, $treeName);
 						$action = function($event) {
 							$action = new UpdateTreeNode();
 							$action->execute($event);
@@ -174,7 +174,7 @@ class ResourcesTreeResolver
 					}
 					elseif ($method === Request::METHOD_DELETE)
 					{
-						$this->resolver->setAuthorisation($event, $resource, $treeName . '.deleteNode');
+						$this->resolver->setAuthorization($event, 'Creator', $resource, $treeName);
 						$action = function($event) {
 							$action = new DeleteTreeNode();
 							$action->execute($event);
@@ -182,7 +182,7 @@ class ResourcesTreeResolver
 						$event->setAction($action);
 						return;
 					}
-					$result = $this->resolver->buildNotAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
+					$result = $event->getController()->notAllowedError($method, array(Request::METHOD_GET, Request::METHOD_PUT, Request::METHOD_DELETE));
 					$event->setResult($result);
 					return;
 				}

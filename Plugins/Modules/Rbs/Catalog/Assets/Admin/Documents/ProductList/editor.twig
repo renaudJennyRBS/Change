@@ -1,0 +1,53 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<hr />
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'productSortOrder'), ['ucf']) }}">
+			<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder" class="form-control"
+				rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
+			</select>
+			<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_productsortorder_help') }} </span>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'productSortDirection'), ['ucf']) }}">
+			<rbs-collection-item-selector ng-model="document.productSortDirection"
+				collection-code="Rbs_Generic_Collection_SortDirections">
+			</rbs-collection-item-selector>
+		</rbs-field>
+
+		<hr />
+
+		<rbs-field-picker-multiple property="facetGroups"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'facetGroups'), ['ucf']) }}"
+			accepted-model="Rbs_Elasticsearch_FacetGroup"
+			selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_facetgroups_picker_title', ['ucf']) }}">
+			<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_facetgroups_help') }} </span>
+		</rbs-field-picker-multiple>
+
+		<hr />
+
+		<rbs-field-date property="startActivation"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'startActivation'), ['ucf']) }}">
+		</rbs-field-date>
+
+		<rbs-field-date property="endActivation"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'endActivation'), ['ucf']) }}">
+		</rbs-field-date>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

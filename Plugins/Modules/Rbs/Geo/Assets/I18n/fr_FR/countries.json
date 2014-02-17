@@ -1,0 +1,749 @@
+{
+	"ad": {
+		"message": "ANDORRA"
+	},
+	"ae": {
+		"message": "UNITED ARAB EMIRATES"
+	},
+	"af": {
+		"message": "AFGHANISTAN"
+	},
+	"ag": {
+		"message": "ANTIGUA AND BARBUDA"
+	},
+	"ai": {
+		"message": "ANGUILLA"
+	},
+	"al": {
+		"message": "ALBANIA"
+	},
+	"am": {
+		"message": "ARMENIA"
+	},
+	"ao": {
+		"message": "ANGOLA"
+	},
+	"aq": {
+		"message": "ANTARCTICA"
+	},
+	"ar": {
+		"message": "ARGENTINA"
+	},
+	"as": {
+		"message": "AMERICAN SAMOA"
+	},
+	"at": {
+		"message": "AUSTRIA"
+	},
+	"au": {
+		"message": "AUSTRALIA"
+	},
+	"aw": {
+		"message": "ARUBA"
+	},
+	"ax": {
+		"message": "ÃLAND ISLANDS"
+	},
+	"az": {
+		"message": "AZERBAIJAN"
+	},
+	"ba": {
+		"message": "BOSNIA AND HERZEGOVINA"
+	},
+	"bb": {
+		"message": "BARBADOS"
+	},
+	"bd": {
+		"message": "BANGLADESH"
+	},
+	"be": {
+		"message": "BELGIUM"
+	},
+	"bf": {
+		"message": "BURKINA FASO"
+	},
+	"bg": {
+		"message": "BULGARIA"
+	},
+	"bh": {
+		"message": "BAHRAIN"
+	},
+	"bi": {
+		"message": "BURUNDI"
+	},
+	"bj": {
+		"message": "BENIN"
+	},
+	"bl": {
+		"message": "SAINT BARTHÃLEMY"
+	},
+	"bm": {
+		"message": "BERMUDA"
+	},
+	"bn": {
+		"message": "BRUNEI DARUSSALAM"
+	},
+	"bo": {
+		"message": "BOLIVIA, PLURINATIONAL STATE OF"
+	},
+	"bq": {
+		"message": "BONAIRE, SINT EUSTATIUS AND SABA"
+	},
+	"br": {
+		"message": "BRAZIL"
+	},
+	"bs": {
+		"message": "BAHAMAS"
+	},
+	"bt": {
+		"message": "BHUTAN"
+	},
+	"bv": {
+		"message": "BOUVET ISLAND"
+	},
+	"bw": {
+		"message": "BOTSWANA"
+	},
+	"by": {
+		"message": "BELARUS"
+	},
+	"bz": {
+		"message": "BELIZE"
+	},
+	"ca": {
+		"message": "CANADA"
+	},
+	"cc": {
+		"message": "COCOS (KEELING) ISLANDS"
+	},
+	"cd": {
+		"message": "CONGO, THE DEMOCRATIC REPUBLIC OF THE"
+	},
+	"cf": {
+		"message": "CENTRAL AFRICAN REPUBLIC"
+	},
+	"cg": {
+		"message": "CONGO"
+	},
+	"ch": {
+		"message": "SWITZERLAND"
+	},
+	"ci": {
+		"message": "CÃTE D'IVOIRE"
+	},
+	"ck": {
+		"message": "COOK ISLANDS"
+	},
+	"cl": {
+		"message": "CHILE"
+	},
+	"cm": {
+		"message": "CAMEROON"
+	},
+	"cn": {
+		"message": "CHINA"
+	},
+	"co": {
+		"message": "COLOMBIA"
+	},
+	"cr": {
+		"message": "COSTA RICA"
+	},
+	"cu": {
+		"message": "CUBA"
+	},
+	"cv": {
+		"message": "CAPE VERDE"
+	},
+	"cw": {
+		"message": "CURAÃAO"
+	},
+	"cx": {
+		"message": "CHRISTMAS ISLAND"
+	},
+	"cy": {
+		"message": "CYPRUS"
+	},
+	"cz": {
+		"message": "CZECH REPUBLIC"
+	},
+	"de": {
+		"message": "GERMANY"
+	},
+	"dj": {
+		"message": "DJIBOUTI"
+	},
+	"dk": {
+		"message": "DENMARK"
+	},
+	"dm": {
+		"message": "DOMINICA"
+	},
+	"do": {
+		"message": "DOMINICAN REPUBLIC"
+	},
+	"dz": {
+		"message": "ALGERIA"
+	},
+	"ec": {
+		"message": "ECUADOR"
+	},
+	"ee": {
+		"message": "ESTONIA"
+	},
+	"eg": {
+		"message": "EGYPT"
+	},
+	"eh": {
+		"message": "WESTERN SAHARA"
+	},
+	"er": {
+		"message": "ERITREA"
+	},
+	"es": {
+		"message": "SPAIN"
+	},
+	"et": {
+		"message": "ETHIOPIA"
+	},
+	"fi": {
+		"message": "FINLAND"
+	},
+	"fj": {
+		"message": "FIJI"
+	},
+	"fk": {
+		"message": "FALKLAND ISLANDS (MALVINAS)"
+	},
+	"fm": {
+		"message": "MICRONESIA, FEDERATED STATES OF"
+	},
+	"fo": {
+		"message": "FAROE ISLANDS"
+	},
+	"fr": {
+		"message": "FRANCE"
+	},
+	"ga": {
+		"message": "GABON"
+	},
+	"gb": {
+		"message": "UNITED KINGDOM"
+	},
+	"gd": {
+		"message": "GRENADA"
+	},
+	"ge": {
+		"message": "GEORGIA"
+	},
+	"gf": {
+		"message": "FRENCH GUIANA"
+	},
+	"gg": {
+		"message": "GUERNSEY"
+	},
+	"gh": {
+		"message": "GHANA"
+	},
+	"gi": {
+		"message": "GIBRALTAR"
+	},
+	"gl": {
+		"message": "GREENLAND"
+	},
+	"gm": {
+		"message": "GAMBIA"
+	},
+	"gn": {
+		"message": "GUINEA"
+	},
+	"gp": {
+		"message": "GUADELOUPE"
+	},
+	"gq": {
+		"message": "EQUATORIAL GUINEA"
+	},
+	"gr": {
+		"message": "GREECE"
+	},
+	"gs": {
+		"message": "SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS"
+	},
+	"gt": {
+		"message": "GUATEMALA"
+	},
+	"gu": {
+		"message": "GUAM"
+	},
+	"gw": {
+		"message": "GUINEA-BISSAU"
+	},
+	"gy": {
+		"message": "GUYANA"
+	},
+	"hk": {
+		"message": "HONG KONG"
+	},
+	"hm": {
+		"message": "HEARD ISLAND AND MCDONALD ISLANDS"
+	},
+	"hn": {
+		"message": "HONDURAS"
+	},
+	"hr": {
+		"message": "CROATIA"
+	},
+	"ht": {
+		"message": "HAITI"
+	},
+	"hu": {
+		"message": "HUNGARY"
+	},
+	"id": {
+		"message": "INDONESIA"
+	},
+	"ie": {
+		"message": "IRELAND"
+	},
+	"il": {
+		"message": "ISRAEL"
+	},
+	"im": {
+		"message": "ISLE OF MAN"
+	},
+	"in": {
+		"message": "INDIA"
+	},
+	"io": {
+		"message": "BRITISH INDIAN OCEAN TERRITORY"
+	},
+	"iq": {
+		"message": "IRAQ"
+	},
+	"ir": {
+		"message": "IRAN, ISLAMIC REPUBLIC OF"
+	},
+	"is": {
+		"message": "ICELAND"
+	},
+	"it": {
+		"message": "ITALY"
+	},
+	"je": {
+		"message": "JERSEY"
+	},
+	"jm": {
+		"message": "JAMAICA"
+	},
+	"jo": {
+		"message": "JORDAN"
+	},
+	"jp": {
+		"message": "JAPAN"
+	},
+	"ke": {
+		"message": "KENYA"
+	},
+	"kg": {
+		"message": "KYRGYZSTAN"
+	},
+	"kh": {
+		"message": "CAMBODIA"
+	},
+	"ki": {
+		"message": "KIRIBATI"
+	},
+	"km": {
+		"message": "COMOROS"
+	},
+	"kn": {
+		"message": "SAINT KITTS AND NEVIS"
+	},
+	"kp": {
+		"message": "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF"
+	},
+	"kr": {
+		"message": "KOREA, REPUBLIC OF"
+	},
+	"kw": {
+		"message": "KUWAIT"
+	},
+	"ky": {
+		"message": "CAYMAN ISLANDS"
+	},
+	"kz": {
+		"message": "KAZAKHSTAN"
+	},
+	"la": {
+		"message": "LAO PEOPLE'S DEMOCRATIC REPUBLIC"
+	},
+	"lb": {
+		"message": "LEBANON"
+	},
+	"lc": {
+		"message": "SAINT LUCIA"
+	},
+	"li": {
+		"message": "LIECHTENSTEIN"
+	},
+	"lk": {
+		"message": "SRI LANKA"
+	},
+	"lr": {
+		"message": "LIBERIA"
+	},
+	"ls": {
+		"message": "LESOTHO"
+	},
+	"lt": {
+		"message": "LITHUANIA"
+	},
+	"lu": {
+		"message": "LUXEMBOURG"
+	},
+	"lv": {
+		"message": "LATVIA"
+	},
+	"ly": {
+		"message": "LIBYA"
+	},
+	"ma": {
+		"message": "MOROCCO"
+	},
+	"mc": {
+		"message": "MONACO"
+	},
+	"md": {
+		"message": "MOLDOVA, REPUBLIC OF"
+	},
+	"me": {
+		"message": "MONTENEGRO"
+	},
+	"mf": {
+		"message": "SAINT MARTIN (FRENCH PART)"
+	},
+	"mg": {
+		"message": "MADAGASCAR"
+	},
+	"mh": {
+		"message": "MARSHALL ISLANDS"
+	},
+	"mk": {
+		"message": "MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF"
+	},
+	"ml": {
+		"message": "MALI"
+	},
+	"mm": {
+		"message": "MYANMAR"
+	},
+	"mn": {
+		"message": "MONGOLIA"
+	},
+	"mo": {
+		"message": "MACAO"
+	},
+	"mp": {
+		"message": "NORTHERN MARIANA ISLANDS"
+	},
+	"mq": {
+		"message": "MARTINIQUE"
+	},
+	"mr": {
+		"message": "MAURITANIA"
+	},
+	"ms": {
+		"message": "MONTSERRAT"
+	},
+	"mt": {
+		"message": "MALTA"
+	},
+	"mu": {
+		"message": "MAURITIUS"
+	},
+	"mv": {
+		"message": "MALDIVES"
+	},
+	"mw": {
+		"message": "MALAWI"
+	},
+	"mx": {
+		"message": "MEXICO"
+	},
+	"my": {
+		"message": "MALAYSIA"
+	},
+	"mz": {
+		"message": "MOZAMBIQUE"
+	},
+	"na": {
+		"message": "NAMIBIA"
+	},
+	"nc": {
+		"message": "NEW CALEDONIA"
+	},
+	"ne": {
+		"message": "NIGER"
+	},
+	"nf": {
+		"message": "NORFOLK ISLAND"
+	},
+	"ng": {
+		"message": "NIGERIA"
+	},
+	"ni": {
+		"message": "NICARAGUA"
+	},
+	"nl": {
+		"message": "NETHERLANDS"
+	},
+	"no": {
+		"message": "NORWAY"
+	},
+	"np": {
+		"message": "NEPAL"
+	},
+	"nr": {
+		"message": "NAURU"
+	},
+	"nu": {
+		"message": "NIUE"
+	},
+	"nz": {
+		"message": "NEW ZEALAND"
+	},
+	"om": {
+		"message": "OMAN"
+	},
+	"pa": {
+		"message": "PANAMA"
+	},
+	"pe": {
+		"message": "PERU"
+	},
+	"pf": {
+		"message": "FRENCH POLYNESIA"
+	},
+	"pg": {
+		"message": "PAPUA NEW GUINEA"
+	},
+	"ph": {
+		"message": "PHILIPPINES"
+	},
+	"pk": {
+		"message": "PAKISTAN"
+	},
+	"pl": {
+		"message": "POLAND"
+	},
+	"pm": {
+		"message": "SAINT PIERRE AND MIQUELON"
+	},
+	"pn": {
+		"message": "PITCAIRN"
+	},
+	"pr": {
+		"message": "PUERTO RICO"
+	},
+	"ps": {
+		"message": "PALESTINE, STATE OF"
+	},
+	"pt": {
+		"message": "PORTUGAL"
+	},
+	"pw": {
+		"message": "PALAU"
+	},
+	"py": {
+		"message": "PARAGUAY"
+	},
+	"qa": {
+		"message": "QATAR"
+	},
+	"re": {
+		"message": "RÃUNION"
+	},
+	"ro": {
+		"message": "ROMANIA"
+	},
+	"rs": {
+		"message": "SERBIA"
+	},
+	"ru": {
+		"message": "RUSSIAN FEDERATION"
+	},
+	"rw": {
+		"message": "RWANDA"
+	},
+	"sa": {
+		"message": "SAUDI ARABIA"
+	},
+	"sb": {
+		"message": "SOLOMON ISLANDS"
+	},
+	"sc": {
+		"message": "SEYCHELLES"
+	},
+	"sd": {
+		"message": "SUDAN"
+	},
+	"se": {
+		"message": "SWEDEN"
+	},
+	"sg": {
+		"message": "SINGAPORE"
+	},
+	"sh": {
+		"message": "SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA"
+	},
+	"si": {
+		"message": "SLOVENIA"
+	},
+	"sj": {
+		"message": "SVALBARD AND JAN MAYEN"
+	},
+	"sk": {
+		"message": "SLOVAKIA"
+	},
+	"sl": {
+		"message": "SIERRA LEONE"
+	},
+	"sm": {
+		"message": "SAN MARINO"
+	},
+	"sn": {
+		"message": "SENEGAL"
+	},
+	"so": {
+		"message": "SOMALIA"
+	},
+	"sr": {
+		"message": "SURINAME"
+	},
+	"ss": {
+		"message": "SOUTH SUDAN"
+	},
+	"st": {
+		"message": "SAO TOME AND PRINCIPE"
+	},
+	"sv": {
+		"message": "EL SALVADOR"
+	},
+	"sx": {
+		"message": "SINT MAARTEN (DUTCH PART)"
+	},
+	"sy": {
+		"message": "SYRIAN ARAB REPUBLIC"
+	},
+	"sz": {
+		"message": "SWAZILAND"
+	},
+	"tc": {
+		"message": "TURKS AND CAICOS ISLANDS"
+	},
+	"td": {
+		"message": "CHAD"
+	},
+	"tf": {
+		"message": "FRENCH SOUTHERN TERRITORIES"
+	},
+	"tg": {
+		"message": "TOGO"
+	},
+	"th": {
+		"message": "THAILAND"
+	},
+	"tj": {
+		"message": "TAJIKISTAN"
+	},
+	"tk": {
+		"message": "TOKELAU"
+	},
+	"tl": {
+		"message": "TIMOR-LESTE"
+	},
+	"tm": {
+		"message": "TURKMENISTAN"
+	},
+	"tn": {
+		"message": "TUNISIA"
+	},
+	"to": {
+		"message": "TONGA"
+	},
+	"tr": {
+		"message": "TURKEY"
+	},
+	"tt": {
+		"message": "TRINIDAD AND TOBAGO"
+	},
+	"tv": {
+		"message": "TUVALU"
+	},
+	"tw": {
+		"message": "TAIWAN, PROVINCE OF CHINA"
+	},
+	"tz": {
+		"message": "TANZANIA, UNITED REPUBLIC OF"
+	},
+	"ua": {
+		"message": "UKRAINE"
+	},
+	"ug": {
+		"message": "UGANDA"
+	},
+	"um": {
+		"message": "UNITED STATES MINOR OUTLYING ISLANDS"
+	},
+	"us": {
+		"message": "UNITED STATES"
+	},
+	"uy": {
+		"message": "URUGUAY"
+	},
+	"uz": {
+		"message": "UZBEKISTAN"
+	},
+	"va": {
+		"message": "HOLY SEE (VATICAN CITY STATE)"
+	},
+	"vc": {
+		"message": "SAINT VINCENT AND THE GRENADINES"
+	},
+	"ve": {
+		"message": "VENEZUELA, BOLIVARIAN REPUBLIC OF"
+	},
+	"vg": {
+		"message": "VIRGIN ISLANDS, BRITISH"
+	},
+	"vi": {
+		"message": "VIRGIN ISLANDS, U.S."
+	},
+	"vn": {
+		"message": "VIET NAM"
+	},
+	"vu": {
+		"message": "VANUATU"
+	},
+	"wf": {
+		"message": "WALLIS AND FUTUNA"
+	},
+	"ws": {
+		"message": "SAMOA"
+	},
+	"ye": {
+		"message": "YEMEN"
+	},
+	"yt": {
+		"message": "MAYOTTE"
+	},
+	"za": {
+		"message": "SOUTH AFRICA"
+	},
+	"zm": {
+		"message": "ZAMBIA"
+	},
+	"zw": {
+		"message": "ZIMBABWE"
+	}
+}

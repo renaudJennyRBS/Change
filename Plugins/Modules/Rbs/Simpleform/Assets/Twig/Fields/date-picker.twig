@@ -1,0 +1,11 @@
+<div class="form-group{{ errorClassName }}">
+	{% include 'Rbs_Simpleform/default-label.twig' %}
+	<div class="{{ rightColumnElementClass }}">
+		<input class="form-control form-control-inline" type="date" name="{{ fieldName }}" id="{{ fieldId }}" size="16"
+			autocomplete="off" value="{{ fieldInfos.value }}"
+			{% if fieldInfos.field.required %}required=""{% endif %}
+			{% if fieldInfos.field.parameters.placeHolder %}placeholder="{{ fieldInfos.field.parameters.placeHolder }}"{% endif %} />
+		{% include 'Rbs_Simpleform/default-error-messages.twig' %}
+		{% include 'Rbs_Simpleform/default-help-text.twig' %}
+	</div>
+</div>

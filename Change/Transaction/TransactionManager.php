@@ -4,45 +4,48 @@ namespace Change\Transaction;
 /**
  * @name \Change\Transaction\TransactionManager
  */
-class TransactionManager extends \Exception
+class TransactionManager implements \Zend\EventManager\EventsCapableInterface
 {
-	/**
-	 * @var \Change\Db\DbProvider
-	 */
-	protected $dbProvider;
+	use \Change\Events\EventsCapableTrait;
 	
+	const EVENT_MANAGER_IDENTIFIER = 'TransactionManager';
+
+	const EVENT_BEGIN = 'begin';
+	const EVENT_COMMIT = 'commit';
+	const EVENT_ROLLBACK = 'rollback';
+
 	/**
 	 * @var integer
 	 */
 	protected $count = 0;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $dirty = false;
 
 	/**
-	 * @param \Change\Db\DbProvider $provider
+	 * @return string
 	 */
-	public function __construct(\Change\Db\DbProvider $provider)
+	protected function getEventManagerIdentifier()
 	{
-		$this->setDbProvider($provider);
+		return static::EVENT_MANAGER_IDENTIFIER;
 	}
 
 	/**
-	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return array
 	 */
-	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	protected function getListenerAggregateClassNames()
 	{
-		$this->dbProvider = $dbProvider;
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/TransactionManager');
 	}
 
 	/**
-	 * @return \Change\Db\DbProvider
+	 * @param \Change\Events\EventManager $eventManager
 	 */
-	public function getDbProvider()
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		return $this->dbProvider;
+		(new DefaultListeners())->attach($eventManager);
 	}
 
 	/**
@@ -52,15 +55,7 @@ class TransactionManager extends \Exception
 	{
 		return $this->count > 0;
 	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function isDirty()
-	{
-		return $this->dirty;
-	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -68,41 +63,36 @@ class TransactionManager extends \Exception
 	{
 		return $this->count;
 	}
-	
 
-	
 	public function begin()
 	{
 		$this->checkDirty();
 		$this->count++;
-		if ($this->count == 1)
-		{
-			$this->getDbProvider()->beginTransaction();
-		}
-		else
-		{
-			
-		}	
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
+
+		$event = new \Change\Events\Event(static::EVENT_BEGIN, $this, $args);
+		$em->trigger($event);
 	}
-	
+
 	public function commit()
 	{
 		$this->checkDirty();
 		if ($this->count <= 0)
 		{
-			throw new \LogicException('Commit bad transaction count ('.$this->count.')', 121000);
-		}	
-		if ($this->count == 1)
-		{
-			$this->getDbProvider()->commit();
+			throw new \LogicException('Commit bad transaction count (' . $this->count . ')', 121000);
 		}
-		else
-		{
-			
-		}
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
+
+		$event = new \Change\Events\Event(static::EVENT_COMMIT, $this, $args);
+		$em->trigger($event);
+
 		$this->count--;
 	}
-	
+
 	/**
 	 * @param \Exception $e
 	 * @throws \LogicException
@@ -115,16 +105,19 @@ class TransactionManager extends \Exception
 		{
 			throw new \LogicException('Rollback bad transaction count', 121001);
 		}
+
+		$this->dirty = true;
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('primary' => $this->count === 1, 'count' => $this->count));
+		$event = new \Change\Events\Event(static::EVENT_ROLLBACK, $this, $args);
+		$em->trigger($event);
+
 		$this->count--;
-		
-		if (!$this->dirty)
-		{
-			$this->dirty = true;
-		}
-		if ($this->count == 0)
+
+		if ($this->count === 0)
 		{
 			$this->dirty = false;
-			$this->getDbProvider()->rollBack();
 		}
 		else
 		{
@@ -134,10 +127,10 @@ class TransactionManager extends \Exception
 			}
 			throw $e;
 		}
-		
+
 		return ($e instanceof RollbackException) ? $e->getPrevious() : $e;
 	}
-		
+
 	/**
 	 * @throws \LogicException
 	 */
@@ -148,9 +141,12 @@ class TransactionManager extends \Exception
 			throw new \LogicException('Transaction is dirty', 121002);
 		}
 	}
-	
+
+	/**
+	 * @return string
+	 */
 	public function __toString()
 	{
-		return 'Transaction count: ' .$this->count . ' dirty: ' .($this->dirty ? 'true' : 'false');
+		return 'Transaction count: ' . $this->count . ' dirty: ' . ($this->dirty ? 'true' : 'false');
 	}
 }

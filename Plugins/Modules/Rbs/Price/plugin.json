@@ -1,0 +1,7 @@
+{
+	"type":"module",
+	"vendor":"Rbs",
+	"name":"Price",
+	"package": "ECom",
+	"defaultLCID":"fr_FR"
+}

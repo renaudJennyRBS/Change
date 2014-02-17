@@ -1,25 +1,19 @@
 <?php
 namespace Change\Presentation\Blocks;
 
-use Zend\EventManager\Event as ZendEvent;
+use Change\Http\Web\Result\BlockResult;
+use Change\Http\Web\UrlManager;
+use Change\Permissions\PermissionsManager;
+use Change\Presentation\Layout\Block;
+use Change\User\AuthenticationManager;
 
 /**
  * @name \Change\Presentation\Blocks\Event
  */
-class Event extends ZendEvent
+class Event extends \Change\Events\Event
 {
 	/**
-	 * @var \Change\Presentation\PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices|null
-	 */
-	protected $documentServices;
-
-	/**
-	 * @var \Change\Presentation\Layout\Block
+	 * @var Block
 	 */
 	protected $blockLayout;
 
@@ -29,51 +23,27 @@ class Event extends ZendEvent
 	protected $blockParameters;
 
 	/**
-	 * @var \Change\Http\Web\Result\BlockResult;
+	 * @var BlockResult;
 	 */
 	protected $blockResult;
 
 	/**
-	 * @param \Change\Presentation\PresentationServices|null $presentationServices
+	 * @var UrlManager
 	 */
-	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices)
-	{
-		$this->presentationServices = $presentationServices;
-	}
+	protected $urlManager;
 
 	/**
-	 * @api
-	 * @return \Change\Presentation\PresentationServices|null
+	 * @var AuthenticationManager
 	 */
-	public function getPresentationServices()
-	{
-		return $this->presentationServices;
-	}
+	protected $authenticationManager;
 
 	/**
-	 * @param \Change\Documents\DocumentServices|null $documentServices
+	 * @var PermissionsManager
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-	}
+	protected $permissionsManager;
 
 	/**
-	 * @api
-	 * @throws \RuntimeException
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		if ($this->documentServices === null)
-		{
-			throw new \RuntimeException('documentServices is not set', 999999);
-		}
-		return $this->documentServices;
-	}
-
-	/**
-	 * @param \Change\Presentation\Layout\Block $blockLayout
+	 * @param Block $blockLayout
 	 * @return $this
 	 */
 	public function setBlockLayout($blockLayout)
@@ -84,7 +54,7 @@ class Event extends ZendEvent
 
 	/**
 	 * @api
-	 * @return \Change\Presentation\Layout\Block
+	 * @return Block
 	 */
 	public function getBlockLayout()
 	{
@@ -113,7 +83,7 @@ class Event extends ZendEvent
 
 	/**
 	 * @api
-	 * @param \Change\Http\Web\Result\BlockResult $blockResult
+	 * @param BlockResult $blockResult
 	 * @return $this
 	 */
 	public function setBlockResult($blockResult)
@@ -124,13 +94,12 @@ class Event extends ZendEvent
 
 	/**
 	 * @api
-	 * @return \Change\Http\Web\Result\BlockResult|null
+	 * @return BlockResult|null
 	 */
 	public function getBlockResult()
 	{
 		return $this->blockResult;
 	}
-
 
 	/**
 	 * @api
@@ -139,5 +108,55 @@ class Event extends ZendEvent
 	public function getHttpRequest()
 	{
 		return $this->getParam('httpRequest');
+	}
+
+	/**
+	 * @param UrlManager $urlManager
+	 * @return $this
+	 */
+	public function setUrlManager($urlManager)
+	{
+		$this->urlManager = $urlManager;
+		return $this;
+	}
+
+	/**
+	 * @return UrlManager
+	 */
+	public function getUrlManager()
+	{
+		return $this->urlManager;
+	}
+
+	/**
+	 * @param AuthenticationManager $authenticationManager
+	 */
+	public function setAuthenticationManager($authenticationManager)
+	{
+		$this->authenticationManager = $authenticationManager;
+	}
+
+	/**
+	 * @return AuthenticationManager
+	 */
+	public function getAuthenticationManager()
+	{
+		return $this->authenticationManager;
+	}
+
+	/**
+	 * @param PermissionsManager $permissionsManager
+	 */
+	public function setPermissionsManager($permissionsManager)
+	{
+		$this->permissionsManager = $permissionsManager;
+	}
+
+	/**
+	 * @return PermissionsManager
+	 */
+	public function getPermissionsManager()
+	{
+		return $this->permissionsManager;
 	}
 }

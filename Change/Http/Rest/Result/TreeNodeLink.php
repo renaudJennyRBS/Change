@@ -36,14 +36,15 @@ class TreeNodeLink extends Link
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param \Change\Documents\TreeNode $treeNode
 	 * @param string $mode
+	 * @param array $extraColumn
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\TreeNode $treeNode, $mode = self::MODE_PROPERTY)
+	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\TreeNode $treeNode, $mode = self::MODE_PROPERTY, $extraColumn = array())
 	{
 		$this->treeNode = $treeNode;
 		$this->mode = $mode;
 		if ($mode === static::MODE_PROPERTY)
 		{
-			$this->documentLink = new DocumentLink($urlManager, $treeNode->getDocument(), DocumentLink::MODE_PROPERTY);
+			$this->documentLink = new DocumentLink($urlManager, $treeNode->getDocument(), DocumentLink::MODE_PROPERTY, $extraColumn);
 		}
 		parent::__construct($urlManager, $this->buildPathInfo());
 	}

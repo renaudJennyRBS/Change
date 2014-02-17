@@ -1,18 +1,20 @@
 language: php
 
+services:
+  - elasticsearch
+
 php:
-  - 5.3
   - 5.4
   - 5.5
+  - hhvm
+
+matrix:
+  allow_failures:
+    - php: hhvm
 
 before_install:
- - wget "https://packages.zendframework.com/releases/ZendFramework-2.1.4/ZendFramework-minimal-2.1.4.tgz"
- - tar -zxf ZendFramework-minimal-2.1.4.tgz
- - mkdir -p Libraries/zendframework
- - mv ZendFramework-minimal-2.1.4 Libraries/zendframework/zendframework
- - wget "https://github.com/zendframework/ZendOAuth/archive/release-2.0.1.zip"
- - unzip release-2.0.1.zip -d Libraries/zendframework/
- - mv Libraries/zendframework/ZendOAuth-release-2.0.1 Libraries/zendframework/zendoauth
+ - composer selfupdate
+ - composer install
  - mysql -e 'create database rbschangetest;'
  - bash ChangeTests/travisconfig/init.sh
 
@@ -20,6 +22,8 @@ script:
  - cd ChangeTests/
  - phpunit --configuration phpunit.xml.dist
  - phpunit --configuration phpunit.xml.sqlite.dist
+ - phpunit --configuration phpunit.xml.plugins.dist
+ - phpunit --configuration phpunit.xml.perf.dist
 
 notifications:
    email:

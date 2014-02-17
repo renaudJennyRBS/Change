@@ -58,13 +58,4 @@ class WorkspaceTest extends \PHPUnit_Framework_TestCase
 		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'Plugins','Modules','Dir1', 'Dir2', 'Dir3', 'File.php'));
 		$this->assertEquals($expected, $workspace->pluginsModulesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
 	}
-
-	/**
-	 * @depends testConstruct
-	 */
-	public function testLibrariesPath(Workspace $workspace)
-	{
-		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'Libraries','Dir1', 'Dir2', 'Dir3', 'File.php'));
-		$this->assertEquals($expected, $workspace->librariesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
-	}
 }

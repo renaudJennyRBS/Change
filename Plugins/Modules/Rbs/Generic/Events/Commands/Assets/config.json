@@ -1,0 +1,175 @@
+{
+    "rbs_plugins:sign": {
+        "description": "Sign plugin for distribution",
+        "dev": true,
+        "options":{
+            "key": {
+                "description": "vendor private key",
+                "default": null,
+                "shortcut": "k"
+            },
+            "cert": {
+                "description": "vendor certificate",
+                "default": null,
+                "shortcut": "c"
+            },
+            "passphrase": {
+                "description": "vendor certificate passphrase",
+                "default": "",
+                "shortcut": "p"
+            },
+            "type": {
+                "description": "type of plugin",
+                "default": "module",
+                "shortcut": "t"
+            },
+            "vendor": {
+                "description": "vendor of the plugin",
+                "default": "project",
+                "shortcut": "e"
+            }
+        },
+        "arguments":{
+            "name": {
+                "description": "short name of the plugin",
+                "required": true,
+                "default": null
+            }
+        }
+    },
+    "rbs_plugins:verify":{
+        "description": "Check signed plugin integrity",
+        "dev": true,
+        "options":{
+            "type": {
+                "description": "type of plugin",
+                "default": "module",
+                "shortcut": "t"
+            },
+            "vendor": {
+                "description": "vendor of the plugin",
+                "default": "project",
+                "shortcut": "e"
+            }
+        },
+        "arguments":{
+            "name": {
+                "description": "short name of the plugin",
+                "required": true,
+                "default": null
+            }
+        }
+    },
+	"rbs_website:add-default-website": {
+		"description": "Add default Website",
+		"options":{
+			"baseURL": {
+				"description": "base url of website",
+				"default": "http://localhost/index.php/"
+			}
+		}
+	},
+	"rbs_user:add-user":{
+		"description": "Add a new user",
+		"options":{
+			"realms": {
+				"description": "authentication realm",
+				"default": null,
+				"shortcut": null
+			},
+			"is-root": {
+				"description": "adds all priviledges to the user",
+				"default": false,
+				"shortcut": null
+			},
+			"password": {
+				"description": "password",
+				"default": null,
+				"shortcut": "p"
+			}
+		},
+		"arguments":{
+			"email": {
+				"description": "user e-mail",
+				"required": true,
+				"default": null
+			},
+			"login": {
+				"description": "user login",
+				"required": false,
+				"default": null
+			}
+		}
+	},
+	"rbs_elasticsearch:client": {
+		"description": "Elastic Search Client",
+		"options": {
+			"list": {
+				"description": "list client names",
+				"shortcut": "l"
+			},
+			"create": {
+				"description": "create index"
+			},
+			"delete": {
+				"description": "delete index"
+			},
+			"facet-mapping": {
+				"description": "set facet mapping",
+				"shortcut": "f"
+			}
+		},
+		"arguments": {
+			"name": {
+				"description": "client name",
+				"required": false,
+				"default": null
+			},
+			"indexName": {
+				"description": "index name",
+				"required": false,
+				"default": null
+			}
+		}
+	},
+	"rbs_elasticsearch:index": {
+		"description": "Documents Indexation",
+		"options": {
+			"publishable": {
+				"description": "publishable model",
+				"shortcut": "p"
+			},
+			"model": {
+				"description": "index model",
+				"default":"",
+				"shortcut": "m"
+			},
+			"all": {
+				"description": "index all document",
+				"shortcut": "a"
+			},
+			"useJob": {
+				"description": "use jobs for indexation",
+				"shortcut": "j"
+			}
+		},
+		"arguments": {
+		}
+	},
+	"rbs_mail:install-mails": {
+		"description": "Install system mails",
+		"options": {
+			"package": {
+				"description": "restrict to particular package/module",
+				"default":"",
+				"shortcut": "p"
+			}
+		},
+		"arguments": {
+			"template": {
+				"description": "template code",
+				"shortcut": "t"
+			}
+		}
+	}
+}

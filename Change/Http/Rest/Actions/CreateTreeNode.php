@@ -4,8 +4,6 @@ namespace Change\Http\Rest\Actions;
 use Change\Http\Rest\Result\ErrorResult;
 use Change\Http\Rest\Result\TreeNodeResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\TreeNodeLink;
 
 /**
  * @name \Change\Http\Rest\Actions\CreateTreeNode
@@ -15,12 +13,32 @@ class CreateTreeNode
 	/**
 	 * Use Event Params: treeName, pathIds
 	 * @param \Change\Http\Event $event
-	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
-		$documentServices = $event->getDocumentServices();
-		$treeManager = $documentServices->getTreeManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$this->executeInTransaction($event);
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
+	/**
+	 * Use Event Params: treeName, pathIds
+	 * @param \Change\Http\Event $event
+	 * @throws \RuntimeException
+	 */
+	protected function executeInTransaction($event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		$treeManager = $applicationServices->getTreeManager();
 
 		$treeName = $event->getParam('treeName');
 		if (!$treeName || !$treeManager->hasTreeName($treeName))
@@ -34,7 +52,8 @@ class CreateTreeNode
 			throw new \RuntimeException('Invalid Parameter: pathIds', 71000);
 		}
 		$properties = $event->getRequest()->getPost()->toArray();
-		$document = isset($properties['id']) ? $documentServices->getDocumentManager()->getDocumentInstance(intval($properties['id'])) : null;
+		$document = isset($properties['id']) ? $applicationServices->getDocumentManager()
+			->getDocumentInstance(intval($properties['id'])) : null;
 		if (!$document)
 		{
 			$errorResult = new ErrorResult('DOCUMENT-NOT-FOUND', 'Document not found', HttpResponse::STATUS_CODE_409);
@@ -61,12 +80,13 @@ class CreateTreeNode
 		{
 			$nodeId = end($pathIds);
 			$parentNode = $treeManager->getNodeById($nodeId, $treeName);
-			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds ))))
+			if (!$parentNode || (($parentNode->getPath() . $nodeId) != ('/' . implode('/', $pathIds))))
 			{
 				return;
 			}
 
-			$beforeNode = isset($properties['beforeId']) ? $treeManager->getNodeById(intval($properties['beforeId']), $treeName): null;
+			$beforeNode = isset($properties['beforeId']) ? $treeManager->getNodeById(intval($properties['beforeId']),
+				$treeName) : null;
 			$node = $treeManager->insertNode($parentNode, $document, $beforeNode);
 		}
 

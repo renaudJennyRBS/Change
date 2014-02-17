@@ -8,37 +8,37 @@ namespace Change\Db\Query;
 class SelectQuery extends AbstractQuery
 {
 	/**
-	 * @var \Change\Db\Query\Clauses\SelectClause
+	 * @var Clauses\SelectClause
 	 */
 	protected $selectClause;
 	
 	/**
-	 * @var \Change\Db\Query\Clauses\FromClause
+	 * @var Clauses\FromClause
 	 */
 	protected $fromClause;
 	
 	/**
-	 * @var \Change\Db\Query\Clauses\WhereClause
+	 * @var Clauses\WhereClause
 	 */
 	protected $whereClause;
 	
 	/**
-	 * @var \Change\Db\Query\Clauses\HavingClause
+	 * @var Clauses\HavingClause
 	 */
 	protected $havingClause;
 	
 	/**
-	 * @var \Change\Db\Query\Clauses\OrderByClause
+	 * @var Clauses\OrderByClause
 	 */
 	protected $orderByClause;
 	
 	/**
-	 * @var \Change\Db\Query\Clauses\GroupByClause
+	 * @var Clauses\GroupByClause
 	 */
 	protected $groupByClause;
 	
 	/**
-	 * @var \Change\Db\Query\Clauses\CollateClause
+	 * @var Clauses\CollateClause
 	 */
 	protected $collateClause;
 	
@@ -54,7 +54,7 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\SelectClause|null
+	 * @return Clauses\SelectClause|null
 	 */
 	public function getSelectClause()
 	{
@@ -63,16 +63,16 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\SelectClause $selectClause
+	 * @param Clauses\SelectClause $selectClause
 	 */
-	public function setSelectClause(\Change\Db\Query\Clauses\SelectClause $selectClause)
+	public function setSelectClause(Clauses\SelectClause $selectClause)
 	{
 		$this->selectClause = $selectClause;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\FromClause
+	 * @return Clauses\FromClause
 	 */
 	public function getFromClause()
 	{
@@ -81,16 +81,16 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\FromClause $fromClause
+	 * @param Clauses\FromClause $fromClause
 	 */
-	public function setFromClause(\Change\Db\Query\Clauses\FromClause $fromClause)
+	public function setFromClause(Clauses\FromClause $fromClause)
 	{
 		$this->fromClause = $fromClause;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\WhereClause
+	 * @return Clauses\WhereClause
 	 */
 	public function getWhereClause()
 	{
@@ -99,16 +99,16 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
+	 * @param Clauses\WhereClause $whereClause
 	 */
-	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
+	public function setWhereClause(Clauses\WhereClause $whereClause)
 	{
 		$this->whereClause = $whereClause;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\GroupByClause
+	 * @return Clauses\GroupByClause
 	 */
 	public function getGroupByClause()
 	{
@@ -117,16 +117,16 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\GroupByClause $groupByClause
+	 * @param Clauses\GroupByClause $groupByClause
 	 */
-	public function setGroupByClause(\Change\Db\Query\Clauses\GroupByClause $groupByClause)
+	public function setGroupByClause(Clauses\GroupByClause $groupByClause)
 	{
 		$this->groupByClause = $groupByClause;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\HavingClause
+	 * @return Clauses\HavingClause
 	 */
 	public function getHavingClause()
 	{
@@ -135,16 +135,16 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\HavingClause $havingClause
+	 * @param Clauses\HavingClause $havingClause
 	 */
-	public function setHavingClause(\Change\Db\Query\Clauses\HavingClause $havingClause)
+	public function setHavingClause(Clauses\HavingClause $havingClause)
 	{
 		$this->havingClause = $havingClause;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\OrderByClause
+	 * @return Clauses\OrderByClause
 	 */
 	public function getOrderByClause()
 	{
@@ -153,16 +153,16 @@ class SelectQuery extends AbstractQuery
 	
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\OrderByClause $orderByClause
+	 * @param Clauses\OrderByClause $orderByClause
 	 */
-	public function setOrderByClause(\Change\Db\Query\Clauses\OrderByClause $orderByClause)
+	public function setOrderByClause(Clauses\OrderByClause $orderByClause)
 	{
 		$this->orderByClause = $orderByClause;
 	}
 	
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\CollateClause
+	 * @return Clauses\CollateClause
 	 */
 	public function getCollateClause()
 	{
@@ -171,9 +171,9 @@ class SelectQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\CollateClause $collateClause
+	 * @param Clauses\CollateClause $collateClause
 	 */
-	public function setCollateClause(\Change\Db\Query\Clauses\CollateClause $collateClause)
+	public function setCollateClause(Clauses\CollateClause $collateClause)
 	{
 		$this->collateClause = $collateClause;
 	}
@@ -241,10 +241,12 @@ class SelectQuery extends AbstractQuery
 	/**
 	 * @api
 	 * @param integer|null $startIndex
+	 * @return $this
 	 */
 	public function setStartIndex($startIndex)
 	{
 		$this->startIndex = $startIndex;
+		return $this;
 	}
 
 	/**
@@ -259,10 +261,12 @@ class SelectQuery extends AbstractQuery
 	/**
 	 * @api
 	 * @param integer|null $maxResults
+	 * @return $this
 	 */
 	public function setMaxResults($maxResults)
 	{
 		$this->maxResults = $maxResults;
+		return $this;
 	}
 
 	/**
@@ -275,20 +279,33 @@ class SelectQuery extends AbstractQuery
 	}
 
 	/**
+	 * @return ResultsConverter
+	 */
+	public function getRowsConverter()
+	{
+		$dbp = $this->getDbProvider();
+		return new ResultsConverter(function($dbValue, $dbType) use ($dbp) {return $dbp->dbToPhp($dbValue, $dbType);});
+	}
+
+	/**
 	 * @api
-	 * @param \Closure|array $rowsConverter
+	 * @param mixed $rowsConverter Should be callable or null
 	 * @return array rows
 	 */
 	public function getResults($rowsConverter = null)
 	{
-		$results = $this->dbProvider->getQueryResultsArray($this);	
-		return is_callable($rowsConverter) ? call_user_func($rowsConverter, $results) : $results;
+		$results = $this->getDbProvider()->getQueryResultsArray($this);
+		if (is_array($results) && count($results))
+		{
+			return is_callable($rowsConverter) ? call_user_func($rowsConverter, $results) : $results;
+		}
+		return array();
 	}
 	
 	/**
 	 * @api
-	 * @param \Closure|array $rowConverter
-	 * @return array row
+	 * @param mixed $rowConverter Should be callable or null
+	 * @return array|mixed|null row
 	 */
 	public function getFirstResult($rowConverter = null)
 	{

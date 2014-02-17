@@ -1,0 +1,41 @@
+{
+	"module_name": {
+		"message": "Communs"
+	},
+	"section_name":{
+		"message":"Gestion de contenus"
+	},
+	"synchronize_title_label":{
+		"message":"synchroniser la valeur avec celle du libellé"
+	},
+	"publicationsections_help":{
+		"message":"sections dans lesquelles ce document est implanté."
+	},
+	"publicationsections_picker_title":{
+		"message":"sélectionnez les sections dans lesquelles publier ce document"
+	},
+	"any_role":{
+		"message":"tous"
+	},
+	"role_consumer":{
+		"message":"lecteur"
+	},
+	"role_creator":{
+		"message":"créateur"
+	},
+	"role_editor":{
+		"message":"validateur"
+	},
+	"role_publisher":{
+		"message":"publicateur"
+	},
+	"role_administrator":{
+		"message":"administrateur"
+	},
+	"any_privilege":{
+		"message":"tous"
+	},
+	"block_template_name":{
+		"message":"mode d'affichage"
+	}
+}

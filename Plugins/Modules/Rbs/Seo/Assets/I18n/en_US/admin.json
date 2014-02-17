@@ -1,0 +1,167 @@
+{
+  "module_name":{
+    "message":"SEO"
+  },
+  "module_keywords":{
+    "message":"SEO, search engines, optimization"
+  },
+  "urls":{
+    "message":"URLs rewriting and redirects"
+  },
+  "url":{
+    "message":"URL"
+  },
+  "section":{
+    "message":"section"
+  },
+  "website":{
+    "message":"website"
+  },
+  "lcid":{
+    "message":"language"
+  },
+  "canonical_location":{
+    "message":"canonical implementation for this web site"
+  },
+  "publication":{
+    "message":"publication"
+  },
+  "published":{
+    "message":"Published"
+  },
+  "not_published":{
+    "message":"Unpublished"
+  },
+  "redirects":{
+    "message":"redirects"
+  },
+  "permanent":{
+    "message":"Permanent"
+  },
+  "query":{
+    "message":"request"
+  },
+  "document_published_in_lang":{
+    "message":"The document is published in this language."
+  },
+  "document_not_published_in_lang":{
+    "message":"The document is not published in this language."
+  },
+  "section_published_in_lang":{
+    "message":"This section is published in this language."
+  },
+  "section_not_published_in_lang":{
+    "message":"This section is not published in this language."
+  },
+  "detail_function_provided_in_lang":{
+    "message":"The detail function is provided in this section for this language."
+  },
+  "detail_function_not_provided_in_lang":{
+    "message":"The detail function is not provided in this section for this language."
+  },
+  "available_languages_help":{
+    "message":"Below table shows only languages in which this document is translated and the sections in which it sets up."
+  },
+  "canonical_help":{
+    "message":"The marked lines of a <i class=\"icon-star text-info\"><\/i> represent the document canonical implementations in a web site and a given language."
+  },
+  "edit_url":{
+    "message":"modify this URL"
+  },
+  "restore_default_url":{
+    "message":"back to the default URL"
+  },
+  "validate_url":{
+    "message":"submit changes"
+  },
+  "undo_edit_url":{
+    "message":"cancel changes"
+  },
+  "edit_redirect":{
+    "message":"modify this redirection"
+  },
+  "remove_redirect":{
+    "message":"delete this redirection"
+  },
+  "validate_redirect":{
+    "message":"submit changes"
+  },
+  "undo_edit_redirect":{
+    "message":"cancel changes"
+  },
+  "add_new_redirect":{
+    "message":"add this redirection"
+  },
+  "clear_new_redirect":{
+    "message":"reset this redirection"
+  },
+  "make_current_url":{
+    "message":"use as current URL"
+  },
+  "sitemap":{
+    "message":"sitemap"
+  },
+  "add_on_website_sitemap":{
+    "message":"add this SEO in the sitemap"
+  },
+  "meta_variables":{
+    "message":"variables"
+  },
+  "document_model":{
+    "message":"document model"
+  },
+  "generate_seo_document_for_model":{
+    "message":"generate SEO document for this model"
+  },
+  "document_seo_auto_generation":{
+    "message":"automatic generation of SEO documents"
+  },
+  "meta":{
+    "message":"metas"
+  },
+  "aside_title":{
+    "message":"SEO"
+  },
+  "aside_document_has_no_seo_info":{
+    "message":"This document has no SEO informations."
+  },
+  "aside_create_seo_info":{
+    "message":"Create"
+  },
+  "aside_edit_seo_info":{
+    "message":"Edit SEO informations for this document"
+  },
+  "documentseo_list_help":{
+    "message":"SEO information for a document is created in the document's editor of this document's editor.<br \/>\nYou can also configure automatic SEO information generation by model via <a href=\"Rbs\/Seo\/ModelConfiguration\/\">models configuration<\/a>."
+  },
+  "modelconfiguration_list_help":{
+    "message":"If automatic creation is enabled for a model, this model documents, old as new, will automatically generate their <strong>SEO information<\/strong> (SEO document).<br \/>\nSitemap useful informations, as changefreq or default priority, are configurable by model"
+  },
+  "meta_variable_document_title":{
+    "message":"document title"
+  },
+  "meta_variable_page_title":{
+    "message":"page title"
+  },
+  "meta_variable_website_title":{
+    "message":"web site title"
+  },
+  "meta_variable_section_title":{
+    "message":"section title"
+  },
+  "head_metas":{
+    "message":"page headers metas"
+  },
+  "document_is_not_published":{
+    "message":"This document is published nowhere on the web site."
+  },
+  "document_is_not_published_message":{
+    "message":"In order to configure this document URLs, you need to first have $LINKSTART$set sections$LINKEND$ in which this document should appear on the web site."
+  },
+  "open_option_panel":{
+    "message":"options avancées"
+  },
+  "option_panel_title":{
+    "message":"options avancées"
+  }
+}

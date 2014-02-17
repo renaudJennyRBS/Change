@@ -1,0 +1,74 @@
+{
+	"connector":{
+		"message":"connecteur bancaire"
+	},
+	"transaction":{
+		"message":"transaction bancaire"
+	},
+	"deferredconnector":{
+		"message":"connecteur à paiement différé"
+	},
+	"deferredconnector_instructions":{
+		"message":"instruction de paiement"
+	},
+	"deferredconnector_autovalidatepayment":{
+		"message":"validation automatique"
+	},
+	"transaction_connector":{
+		"message":"connecteur bancaire"
+	},
+	"transaction_targetidentifier":{
+		"message":"origine de la transaction"
+	},
+	"transaction_contextdata":{
+		"message":"Information supplémentaire"
+	},
+	"transaction_amount":{
+		"message":"montant"
+	},
+	"transaction_currencycode":{
+		"message":"devise"
+	},
+	"transaction_email":{
+		"message":"adresse e-mail"
+	},
+	"transaction_ownerid":{
+		"message":"propriétaire"
+	},
+	"transaction_processingstatus":{
+		"message":"état"
+	},
+	"transaction_processingidentifier":{
+		"message":"identifiant bancaire"
+	},
+	"transaction_processingdate":{
+		"message":"date de réalisation"
+	},
+	"transaction_processingdata":{
+		"message":"données techniques de la transaction"
+	},
+	"connector_visual":{
+		"message":"visuel"
+	},
+	"connector_minamount":{
+		"message":"Montant minimum"
+	},
+	"connector_maxamount":{
+		"message":"Montant maximum"
+	},
+	"connector_allowedcurrencycodes":{
+		"message":"codes devise autorisés"
+	},
+	"connector_description":{
+		"message":"description"
+	},
+	"connector_processingmail":{
+		"message":"mail de transaction en cours"
+	},
+	"connector_successmail":{
+		"message":"mail de succès"
+	},
+	"connector_errormail":{
+		"message":"mail d'erreur"
+	}
+}

@@ -1,12 +1,10 @@
 <?php
 namespace Change\Http\Rest\Actions;
 
-use Change\Documents\Interfaces\Localizable;
-use Change\Http\Rest\Result\DocumentLink;
+use Change\Documents\Interfaces\Editable;
 use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\CreateDocument
@@ -17,9 +15,11 @@ class CreateDocument
 	 * Use Required Event Params: modelName
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$documentId = $event->getParam('documentId');
 		if ($documentId !== null)
 		{
@@ -29,7 +29,7 @@ class CreateDocument
 				throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 			}
 
-			$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+			$document = $documentManager->getDocumentInstance($documentId);
 			if ($document)
 			{
 				$errorResult = new ErrorResult('DOCUMENT-ALREADY-EXIST', 'document already exist', HttpResponse::STATUS_CODE_409);
@@ -41,52 +41,60 @@ class CreateDocument
 		}
 
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model)
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
-
-		$document = $event->getDocumentServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+		$document = $documentManager->getNewDocumentInstanceByModel($model);
 		if ($documentId)
 		{
 			$document->initialize($documentId);
 		}
 		$properties = $event->getRequest()->getPost()->toArray();
 
-		if ($document instanceof Localizable)
+		$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : $event->getApplicationServices()
+			->getI18nManager()->getLCID();
+		if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
 		{
-			$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : null;
-			if (!$event->getApplicationServices()->getI18nManager()->isSupportedLCID($LCID))
-			{
-				$supported = $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs();
-				$errorResult = new ErrorResult('INVALID-LCID', 'Invalid refLCID property value', HttpResponse::STATUS_CODE_409);
-				$errorResult->addDataValue('value', $LCID);
-				$errorResult->addDataValue('supported-LCID', $supported);
-				$event->setResult($errorResult);
-				return;
-			}
-			$event->setParam('LCID', $LCID);
+			$supported = $event->getApplicationServices()->getI18nManager()->getSupportedLCIDs();
+			$errorResult = new ErrorResult('INVALID-LCID', 'Invalid refLCID property value', HttpResponse::STATUS_CODE_409);
+			$errorResult->addDataValue('value', $LCID);
+			$errorResult->addDataValue('supported-LCID', $supported);
+			$event->setResult($errorResult);
+			return;
 		}
-		else
-		{
-			$LCID = null;
-		}
+		$event->setParam('LCID', $LCID);
 
-		if ($LCID)
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$pop = false;
+		try
 		{
-			$documentManager = $document->getDocumentServices()->getDocumentManager();
 			$documentManager->pushLCID($LCID);
-			$this->create($event, $document, $properties);
+			$pop = true;
+			$transactionManager->begin();
+			$result = $document->populateDocumentFromRestEvent($event);
+			if ($result)
+			{
+				if ($document instanceof Editable)
+				{
+					$document->setOwnerUser($event->getAuthenticationManager()->getCurrentUser());
+				}
+				$this->create($event, $document, $properties);
+			}
+			$transactionManager->commit();
 			$documentManager->popLCID();
 		}
-		else
+		catch (\Exception $e)
 		{
-			$this->create($event, $document, $properties);
+			if ($pop)
+			{
+				$documentManager->popLCID();
+			}
+			throw $transactionManager->rollBack($e);
 		}
 	}
-
 
 	/**
 	 * @param \Change\Http\Event $event
@@ -96,28 +104,6 @@ class CreateDocument
 	 */
 	protected function create($event, $document, $properties)
 	{
-		$urlManager = $event->getUrlManager();
-		foreach ($document->getDocumentModel()->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if (array_key_exists($name, $properties))
-			{
-				try
-				{
-					$c = new PropertyConverter($document, $property, $urlManager);
-					$c->setPropertyValue($properties[$name]);
-				}
-				catch (\Exception $e)
-				{
-					$errorResult = new ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
-					$errorResult->setData(array('name' => $name, 'value' => $properties[$name], 'type' => $property->getType()));
-					$errorResult->addDataValue('document-type', $property->getDocumentType());
-					$event->setResult($errorResult);
-					return;
-				}
-			}
-		}
-
 		try
 		{
 			$document->create();
@@ -132,30 +118,25 @@ class CreateDocument
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
 			}
 		}
-		catch (\Exception $e)
+		catch (\Change\Documents\PropertiesValidationException $e)
 		{
-			$code = $e->getCode();
-			if ($code && $code >= 52000 && $code < 53000)
+			$errors = $e->getPropertiesErrors();
+			$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
+			if (count($errors) > 0)
 			{
-				$errors = isset($e->propertiesErrors) ? $e->propertiesErrors : array();
-				$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
-				if (count($errors) > 0)
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$pe = array();
+				foreach ($errors as $propertyName => $errorsMsg)
 				{
-					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					$pe = array();
-					foreach ($errors as $propertyName => $errorsMsg)
+					foreach ($errorsMsg as $errorMsg)
 					{
-						foreach ($errorsMsg as $errorMsg)
-						{
-							$pe[$propertyName][] = $i18nManager->trans($errorMsg);
-						}
+						$pe[$propertyName][] = $i18nManager->trans($errorMsg);
 					}
-					$errorResult->addDataValue('properties-errors', $pe);
 				}
-				$event->setResult($errorResult);
-				return;
+				$errorResult->addDataValue('properties-errors', $pe);
 			}
-			throw $e;
+			$event->setResult($errorResult);
+			return;
 		}
 	}
 }

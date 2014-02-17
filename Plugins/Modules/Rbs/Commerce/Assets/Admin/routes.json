@@ -1,0 +1,115 @@
+{
+	"/Rbs/Commerce/": {
+		"module": "Rbs_Commerce",
+		"name": "home",
+		"rule": {
+			"templateUrl": "Rbs/Commerce/settings.twig",
+			"labelKey": "m.rbs.commerce.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Fee/": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Fee/list.twig",
+			"labelKey": "m.rbs.commerce.admin.fee_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Fee/:id": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
+			"labelKey": "m.rbs.commerce.documents.fee | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Fee/:id/timeline": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Commerce_Fee",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Fee/:id/translate/:LCID": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Fee/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Commerce_Fee",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Fee/:id/workflow": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Commerce_Fee",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Fee/new": {
+		"model": "Rbs_Commerce_Fee",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Process/": {
+		"model": "Rbs_Commerce_Process",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Process/list.twig",
+			"labelKey": "m.rbs.commerce.admin.process_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Process/:id": {
+		"model": "Rbs_Commerce_Process",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Process/form.twig",
+			"labelKey": "m.rbs.commerce.documents.process | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Process/:id/timeline": {
+		"model": "Rbs_Commerce_Process",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Commerce_Process",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Commerce/Process/new": {
+		"model": "Rbs_Commerce_Process",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Process/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

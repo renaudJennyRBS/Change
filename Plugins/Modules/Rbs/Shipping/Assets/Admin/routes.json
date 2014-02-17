@@ -1,0 +1,77 @@
+{
+	"/Rbs/Commerce/Mode/": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Shipping/Mode/list.twig",
+			"labelKey": "m.rbs.shipping.admin.mode_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Mode/:id": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
+			"labelKey": "m.rbs.shipping.documents.mode | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Mode/:id/timeline": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Shipping_Mode",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Mode/:id/translate/:LCID": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Mode/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Shipping_Mode",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Mode/:id/workflow": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Shipping_Mode",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Mode/new": {
+		"model": "Rbs_Shipping_Mode",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Shipping/": false,
+	"/Rbs/Shipping/Mode/": false,
+	"/Rbs/Shipping/Mode/:id": false,
+	"/Rbs/Shipping/Mode/:id/timeline": false,
+	"/Rbs/Shipping/Mode/:id/translate/:LCID": false,
+	"/Rbs/Shipping/Mode/:id/translate/:LCID/workflow": false,
+	"/Rbs/Shipping/Mode/:id/workflow": false,
+	"/Rbs/Shipping/Mode/new": false
+}

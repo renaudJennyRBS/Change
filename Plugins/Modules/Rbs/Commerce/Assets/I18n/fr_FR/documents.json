@@ -1,0 +1,29 @@
+{
+	"profile":{
+		"message":"profile"
+	},
+	"process":{
+		"message":"processus de commande"
+	},
+	"process_shippingmodes":{
+		"message":"modes de livraison"
+	},
+	"process_paymentconnectors":{
+		"message":"modes de paiement"
+	},
+	"process_fees":{
+		"message":"frais"
+	},
+	"fee":{
+		"message":"frais"
+	},
+	"fee_sku":{
+		"message":"sku"
+	},
+	"fee_cartfilterdata":{
+		"message":"Critères d'application"
+	},
+	"fee_shippingmode":{
+		"message":"Mode de livraison"
+	}
+}

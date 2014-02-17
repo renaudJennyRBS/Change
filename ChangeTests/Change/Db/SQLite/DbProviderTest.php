@@ -29,6 +29,7 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testGetInstance()
 	{
+		/** @var $provider DbProvider */
 		$provider = $this->getApplicationServices()->getDbProvider();
 
 		/* @var $provider \Change\Db\SQLite\DbProvider */
@@ -48,40 +49,47 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->assertEquals('HY000', $e->getCode());
 		}
 
-		return $provider;
+		$provider->closeConnection();
 	}
-	
-	/**
-	 * @depends testGetInstance
-	 */
-	public function testTransaction(DbProvider $provider)
+
+	public function testTransaction()
 	{
+		/** @var $provider DbProvider */
+		$provider = $this->getApplicationServices()->getDbProvider();
+
+		$event = new \Zend\EventManager\Event('tm', $this, array('primary' => true));
+
 		$this->assertFalse($provider->inTransaction());
 		
 		$provider->beginTransaction();
 		
 		$this->assertTrue($provider->inTransaction());
 	
-		$provider->commit();
+		$provider->commit($event);
 		
 		$this->assertFalse($provider->inTransaction());
 		
-		$provider->beginTransaction();
+		$provider->beginTransaction($event);
 		
 		$this->assertTrue($provider->inTransaction());
 		
-		$provider->rollBack();
+		$provider->rollBack($event);
 		
-		$this->assertFalse($provider->inTransaction());	
-		
-		return $provider;
+		$this->assertFalse($provider->inTransaction());
+
+
+		$event->setParam('primary', false);
+		$provider->beginTransaction($event);
+		$this->assertFalse($provider->inTransaction());
+
+		$provider->closeConnection();
 	}
-	
-	/**
-	 * @depends testTransaction
-	 */
-	public function testValues(DbProvider $provider)
+
+	public function testValues()
 	{
+		/** @var $provider DbProvider */
+		$provider = $this->getApplicationServices()->getDbProvider();
+
 		$this->assertSame(1, $provider->phpToDB(true, ScalarType::BOOLEAN));
 		$this->assertSame(true, $provider->dbToPhp(1, ScalarType::BOOLEAN));
 		$this->assertSame(0, $provider->phpToDB(false, ScalarType::BOOLEAN));
@@ -92,20 +100,25 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 		
 		$this->assertSame($dbVal, $provider->phpToDB($dt, ScalarType::DATETIME));
 		$this->assertEquals($dt, $provider->dbToPhp($dbVal, ScalarType::DATETIME));
-		return $provider;
+
+		$provider->closeConnection();
 	}
 
-	/**
-	 * @depends testValues
-	 */
-	public function testGetLastInsertId(DbProvider $provider)
+	public function testGetLastInsertId()
 	{
+		/** @var $provider DbProvider */
+		$provider = $this->getApplicationServices()->getDbProvider();
+
 		$pdo = $provider->getDriver();
 		$pdo->exec("DROP TABLE IF EXISTS [test_auto_number]");
 		$pdo->exec("CREATE TABLE [test_auto_number] ([auto] INTEGER PRIMARY KEY AUTOINCREMENT, [test] int(11) NOT NULL)");
+		$pdo->beginTransaction();
 		$pdo->exec("INSERT INTO [sqlite_sequence] ([name], [seq]) VALUES('test_auto_number', 5000)");
 		$pdo->exec("INSERT INTO [test_auto_number] ([test]) VALUES(2)");
 		$auto = $provider->getLastInsertId('test_auto_number');
 		$this->assertEquals(5001, $auto);
+		$pdo->commit();
+
+		$provider->closeConnection();
 	}
 }

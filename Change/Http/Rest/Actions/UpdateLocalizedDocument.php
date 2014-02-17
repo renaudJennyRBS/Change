@@ -2,10 +2,8 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Localizable;
-use Change\Http\Rest\Result\DocumentResult;
 use Change\Http\Rest\Result\ErrorResult;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\UpdateLocalizedDocument
@@ -21,14 +19,14 @@ class UpdateLocalizedDocument
 	protected function getDocument($event)
 	{
 		$modelName = $event->getParam('modelName');
-		$model = ($modelName) ? $event->getDocumentServices()->getModelManager()->getModelByName($modelName) : null;
+		$model = ($modelName) ? $event->getApplicationServices()->getModelManager()->getModelByName($modelName) : null;
 		if (!$model || !$model->isLocalized())
 		{
 			throw new \RuntimeException('Invalid Parameter: modelName', 71000);
 		}
 
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId, $model);
 		if (!$document)
 		{
 			return null;
@@ -42,11 +40,11 @@ class UpdateLocalizedDocument
 		return $document;
 	}
 
-
 	/**
 	 * Use Required Event Params: documentId, modelName, LCID
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
+	 * @throws \Exception
 	 */
 	public function execute($event)
 	{
@@ -74,28 +72,41 @@ class UpdateLocalizedDocument
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$pop = false;
 		try
 		{
 			$documentManager->pushLCID($LCID);
+			$pop = true;
+			$transactionManager->begin();
 			if (!$document->isNew())
 			{
-				$this->update($event, $document, $properties);
+				$result = $document->populateDocumentFromRestEvent($event);
+				if ($result)
+				{
+					$this->update($event, $document, $properties);
+				}
 			}
 			else
 			{
 				/* @var $document Localizable */
-				$supported = $document->getLocalizableFunctions()->getLCIDArray();
+				$supported = $document->getLCIDArray();
 				$errorResult = new ErrorResult('INVALID-LCID', 'Invalid LCID property value', HttpResponse::STATUS_CODE_409);
 				$errorResult->addDataValue('value', $LCID);
 				$errorResult->addDataValue('supported-LCID', $supported);
 				$event->setResult($errorResult);
 			}
+			$transactionManager->commit();
 			$documentManager->popLCID();
 		}
 		catch (\Exception $e)
 		{
-			$documentManager->popLCID($e);
+			if ($pop)
+			{
+				$documentManager->popLCID();
+			}
+			throw $transactionManager->rollBack($e);
 		}
 	}
 
@@ -107,58 +118,32 @@ class UpdateLocalizedDocument
 	 */
 	protected function update($event, $document, $properties)
 	{
-		$urlManager = $event->getUrlManager();
-		foreach ($document->getDocumentModel()->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if (array_key_exists($name, $properties))
-			{
-				try
-				{
-					$c = new PropertyConverter($document, $property, $urlManager);
-					$c->setPropertyValue($properties[$name]);
-				}
-				catch (\Exception $e)
-				{
-					$errorResult = new ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
-					$errorResult->setData(array('name' => $name, 'value' => $properties[$name], 'type' => $property->getType()));
-					$errorResult->addDataValue('document-type', $property->getDocumentType());
-					$event->setResult($errorResult);
-					return;
-				}
-			}
-		}
-
 		try
 		{
 			$document->update();
+			$document->reset();
 			$getDocument = new GetLocalizedDocument();
 			$getDocument->execute($event);
 		}
-		catch (\Exception $e)
+		catch (\Change\Documents\PropertiesValidationException $e)
 		{
-			$code = $e->getCode();
-			if ($code && $code >= 52000 && $code < 53000)
+			$errors = $e->getPropertiesErrors();
+			$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
+			if (count($errors) > 0)
 			{
-				$errors = isset($e->propertiesErrors) ? $e->propertiesErrors : array();
-				$errorResult = new ErrorResult('VALIDATION-ERROR', 'Document properties validation error', HttpResponse::STATUS_CODE_409);
-				if (count($errors) > 0)
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$pe = array();
+				foreach ($errors as $propertyName => $errorsMsg)
 				{
-					$i18nManager = $event->getApplicationServices()->getI18nManager();
-					$pe = array();
-					foreach ($errors as $propertyName => $errorsMsg)
+					foreach ($errorsMsg as $errorMsg)
 					{
-						foreach ($errorsMsg as $errorMsg)
-						{
-							$pe[$propertyName][] = $i18nManager->trans($errorMsg);
-						}
+						$pe[$propertyName][] = $i18nManager->trans($errorMsg);
 					}
-					$errorResult->addDataValue('properties-errors', $pe);
 				}
-				$event->setResult($errorResult);
-				return;
+				$errorResult->addDataValue('properties-errors', $pe);
 			}
-			throw $e;
+			$event->setResult($errorResult);
+			return;
 		}
 	}
 }

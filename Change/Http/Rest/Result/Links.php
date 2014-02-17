@@ -18,10 +18,14 @@ class Links extends \ArrayObject
 		}
 		else
 		{
-			parent::offsetExists($index);
+			return parent::offsetExists($index);
 		}
 	}
 
+	/**
+	 * @param mixed $index
+	 * @return array|false|mixed
+	 */
 	public function offsetGet($index)
 	{
 		if (is_string($index))
@@ -30,7 +34,7 @@ class Links extends \ArrayObject
 		}
 		else
 		{
-			parent::offsetGet($index);
+			return parent::offsetGet($index);
 		}
 	}
 
@@ -141,7 +145,6 @@ class Links extends \ArrayObject
 				$array[] = $link;
 			}
 		}
-
 		return $array;
 	}
 }

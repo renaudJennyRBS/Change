@@ -1,0 +1,26 @@
+{% if parameters.accessorId != null %}
+	<p>{{ i18n('m.rbs.user.front.you_are_authentified_as', ['ucf'], { 'name': parameters.accessorName }) }}</p>
+	<p><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></p>
+{% else %}
+	<form method="post" id="Login" action="Action/Rbs/User/Login">
+		<input type="hidden" name="realm" value="{{ parameters.realm }}">
+		<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
+		<fieldset>
+			<legend>{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</legend>
+			<div class="form-group">
+				<label for="rbs-user-login-login">{{ i18n('m.rbs.user.front.login', ['ucf']) }}</label>
+				<input id="rbs-user-login-login" type="text" name="login" class="form-control"
+					placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" />
+			</div>
+			<div class="form-group">
+				<label for="rbs-user-login-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
+				<input id="rbs-user-login-password" type="password" name="password" class="form-control"
+					placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+			</div>
+			<div class="checkbox">
+				<label><input type="checkbox" value="remember-me"> {{ i18n('m.rbs.user.front.remember_me', ['ucf']) }}</label>
+			</div>
+			<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}</button>
+		</fieldset>
+	</form>
+{% endif %}

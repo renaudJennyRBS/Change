@@ -3,66 +3,62 @@ namespace Change\Documents\Interfaces;
 
 /**
  * @name \Change\Documents\Interfaces\Publishable
+ * @method integer getId()
+ * @method \Change\Documents\AbstractModel getDocumentModel()
  */
 interface Publishable
 {
 	const STATUS_DRAFT = 'DRAFT';
 	
 	const STATUS_VALIDATION = 'VALIDATION';
+
+	const STATUS_VALIDCONTENT = 'VALIDCONTENT';
+
+	const STATUS_VALID = 'VALID';
 	
 	const STATUS_PUBLISHABLE = 'PUBLISHABLE';
 	
 	const STATUS_UNPUBLISHABLE = 'UNPUBLISHABLE';
 	
-	const STATUS_DEACTIVATED = 'DEACTIVATED';
+	const STATUS_FROZEN = 'FROZEN';
 	
 	const STATUS_FILED = 'FILED';
 
 	/**
+	 * Return valid PublicationStatus for correction system
 	 * @api
-	 * @return integer
+	 * @return string[]
 	 */
-	public function getId();
+	public function getValidPublicationStatusForCorrection();
 
 	/**
 	 * @api
-	 * @return string
+	 * @return \Change\Presentation\Interfaces\Section[]
 	 */
-	public function getPublicationStatus();
-	
-	/**
-	 * @api
-	 * @param string $publicationStatus
-	 */
-	public function setPublicationStatus($publicationStatus);
-	
-	/**
-	 * @api
-	 * @return string|null
-	 */
-	public function getStartPublication();
-		
-	/**
-	 * @api
-	 * @param string|null $startPublication
-	 */
-	public function setStartPublication($startPublication);
-	
-	/**
-	 * @api
-	 * @return string|null
-	 */
-	public function getEndPublication();
-	
-	/**
-	 * @api
-	 * @param string|null $endPublication
-	 */
-	public function setEndPublication($endPublication);
+	public function getPublicationSections();
 
 	/**
 	 * @api
-	 * @return \Change\Documents\PublishableFunctions
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @return \Change\Presentation\Interfaces\Section
 	 */
-	public function getPublishableFunctions();
+	public function getCanonicalSection(\Change\Presentation\Interfaces\Website $website = null);
+
+	/**
+	 * @param \DateTime $at
+	 * @return boolean
+	 */
+	public function published(\DateTime $at = null);
+
+	/**
+	 * Return true if is publishable or a string for reason if is unpublishable
+	 * @return string|boolean
+	 */
+	public function isPublishable();
+
+
+	/**
+	 * @param string $newPublicationStatus
+	 */
+	public function updatePublicationStatus($newPublicationStatus);
 }

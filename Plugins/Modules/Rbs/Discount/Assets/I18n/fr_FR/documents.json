@@ -1,0 +1,23 @@
+{
+	"discount": {
+		"message": "réduction"
+	},
+	"discount_cartfilterdata": {
+		"message": "Critères d'application"
+	},
+	"discount_value": {
+		"message": "montant"
+	},
+	"discount_webstore": {
+		"message": "boutique"
+	},
+	"coupon": {
+		"message": "coupon"
+	},
+	"coupon_cartfilterdata": {
+		"message": "Critères d'application"
+	},
+	"coupon_code": {
+		"message": "code"
+	}
+}

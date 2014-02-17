@@ -1,0 +1,23 @@
+<div data-ng-controller="Rbs_Admin_ClipboardController">
+
+	<div class="page-header">
+		<h2>{{ i18n('m.rbs.admin.admin.clipboard_change', ['ucf']) }}</h2>
+	</div>
+
+	<rbs-document-list data-dlid="RbsAdminClipboardList"
+	                   extend="clipboardList"
+	                   collection="clipboardItems">
+
+		<rbs-column name="path" thumbnail="XS" thumbnail-path="doc" label="<i class='icon-picture'></i>"></rbs-column>
+		<rbs-column name="label" label="Document" primary="true"></rbs-column>
+
+		<rbs-action name="removeFromClipboard" label="{{ i18nAttr('m.rbs.admin.admin.remove_from_clipboard', ['ucf']) }}" selection="+"></rbs-action>
+		<rbs-action name="clearClipboard" label="{{ i18nAttr('m.rbs.admin.admin.clean_clipboard', ['ucf']) }}"></rbs-action>
+
+		<rbs-quick-actions>
+			[action delete] || [action removeFromClipboard]
+		</rbs-quick-actions>
+
+	</rbs-document-list>
+
+</div>

@@ -1,0 +1,39 @@
+{
+	"documents": [
+		{
+			"_id": "user_account_request",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "user_account_request",
+			"substitutions": ["website", "link"],
+			"label": "Création de compte utilisateur",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "Bonjour,\n\n### Vous avez fait une demande de création de compte pour le site \"{website}\"\n\nVeuillez confirmer votre adresse e-mail en cliquant sur le lien suivant : [{link}]({link} \"confirmer votre adresse e-mail\")\n\ncordialement.",
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Création de compte utilisateur"
+				}
+			}
+		}
+	],
+	"contextId": "Rbs Mail Install"
+}

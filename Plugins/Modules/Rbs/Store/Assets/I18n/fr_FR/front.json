@@ -1,0 +1,14 @@
+{
+	"validate":{
+		"message":"valider"
+	},
+	"web_store":{
+		"message":"boutique"
+	},
+	"billing_area":{
+		"message":"zone de tarification"
+	},
+	"error_invalid_parameters":{
+		"message":"Les paramètres fournis sont invalides."
+	}
+}

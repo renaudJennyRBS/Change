@@ -1,0 +1,7 @@
+{
+	"type":"module",
+	"vendor":"Rbs",
+	"name":"Theme",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
+}

@@ -1,0 +1,53 @@
+{
+	"connector_list":{
+		"message":"connecteurs bancaires"
+	},
+	"transaction_list":{
+		"message":"transactions bancaires"
+	},
+	"transaction_create":{
+		"message":"ajouter une transaction bancaire"
+	},
+	"deferredconnector_create":{
+		"message":"ajouter un connecteur à paiement différé"
+	},
+	"deferredconnector_autovalidatepayment_help":{
+		"message":"Permet d'activer une validation automatique du paiement lors de la confirmation de la commande."
+	},
+	"transaction_select_connector":{
+		"message":"sélectionner un connecteur bancaire"
+	},
+	"connector_select_visual":{
+		"message":"sélectionner un visuel"
+	},
+	"module_name":{
+		"message":"paiements"
+	},
+	"module_keywords":{
+		"message":"paiements,transactions"
+	},
+	"transaction_status_initiated":{
+		"message":"initialisée"
+	},
+	"transaction_status_processing":{
+		"message":"en cours"
+	},
+	"transaction_status_success":{
+		"message":"paiement réussi"
+	},
+	"transaction_status_failed":{
+		"message":"paiement échoué"
+	},
+	"validate_payment_button":{
+		"message":"valider<small>le paiement</small>"
+	},
+	"refuse_payment_button":{
+		"message":"refuser<small>le paiement</small>"
+	},
+	"create_account_for_transaction_label":{
+		"message":"inscription après transaction"
+	},
+	"create_account_for_transaction_function":{
+		"message":"inscription après transaction"
+	}
+}

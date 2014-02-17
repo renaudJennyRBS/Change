@@ -1,0 +1,29 @@
+<form name="form" data-ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.admin.addressfield_locked_warning') | raw }}</p>
+
+		<rbs-field-text property="code" required="true" ng-disabled="document.locked"
+				label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'code'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="title" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'title'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-boolean property="required" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'required'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field-text property="match" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'match'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'collectionCode'), ['ucf']) }}">
+			<select data-ng-model="document.collectionCode" rbs-items-from-collection="Rbs_Collection_Collection_List" class="form-control">
+				<option value=""> {{ i18n('m.rbs.geo.admin.addressfield_select_collectioncode', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+	</fieldset>
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

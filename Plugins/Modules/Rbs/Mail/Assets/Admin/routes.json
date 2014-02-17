@@ -1,0 +1,78 @@
+{
+	"/Rbs/Mail/": {
+		"module": "Rbs_Mail",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Mail/Mail/",
+			"labelKey": "m.rbs.mail.admin.module_name | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/": {
+		"model": "Rbs_Mail_Mail",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Mail/Mail/list.twig",
+			"labelKey": "m.rbs.mail.admin.mail_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/:id": {
+		"model": "Rbs_Mail_Mail",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
+			"labelKey": "m.rbs.mail.documents.mail | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/:id/timeline": {
+		"model": "Rbs_Mail_Mail",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Mail_Mail",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/:id/translate/:LCID": {
+		"model": "Rbs_Mail_Mail",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Mail_Mail",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Mail_Mail",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/:id/workflow": {
+		"model": "Rbs_Mail_Mail",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Mail_Mail",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Mail/Mail/new": {
+		"model": "Rbs_Mail_Mail",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

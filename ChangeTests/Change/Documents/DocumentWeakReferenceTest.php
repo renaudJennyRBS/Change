@@ -3,20 +3,16 @@ namespace ChangeTests\Change\Documents;
 
 class DocumentWeakReferenceTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	public function testInitializeDB()
+	public static function setUpBeforeClass()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
+		static::initDocumentsClasses();
 	}
 
-	/**
-	 * @depends testInitializeDB
-	 */
 	public function testSerialize()
 	{
 		$mi = new \ChangeTests\Change\Documents\TestAssets\MemoryInstance();
-		$document = $mi->getInstanceRo5001($this->getDocumentServices());
-		$manager = $this->getDocumentServices()->getDocumentManager();
+		$manager = $this->getApplicationServices()->getDocumentManager();
+		$document = $mi->getInstanceRo5001($manager);
 
 		$id = $document->getId();
 		$wr = new \Change\Documents\DocumentWeakReference($document);

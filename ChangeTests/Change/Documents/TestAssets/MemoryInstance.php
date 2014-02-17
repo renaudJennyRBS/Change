@@ -7,29 +7,29 @@ namespace ChangeTests\Change\Documents\TestAssets;
 class MemoryInstance
 {
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return \Project\Tests\Documents\Basic
 	 */
-	public function getInstanceRo5001(\Change\Documents\DocumentServices $documentServices)
+	public function getInstanceRo5001(\Change\Documents\DocumentManager $documentManager)
 	{
 		/* @var $doc \Project\Tests\Documents\Basic */
-		$doc = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
+		$doc = $documentManager->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$doc->setPStr('lab 5001');
-		$doc->initialize(5001, \Change\Documents\DocumentManager::STATE_LOADED);
+		$doc->initialize(5001, \Change\Documents\AbstractDocument::STATE_LOADED);
 		return $doc;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return \Project\Tests\Documents\Localized
 	 */
-	public function getInstanceRo5002(\Change\Documents\DocumentServices $documentServices)
+	public function getInstanceRo5002(\Change\Documents\DocumentManager $documentManager)
 	{
 		/* @var $doc \Project\Tests\Documents\Localized */
-		$doc = $documentServices->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Localized');
+		$doc = $documentManager->getNewDocumentInstanceByModelName('Project_Tests_Localized');
 		$doc->setPStr('lab 5002');
-		$doc->setPLStr('Localized 5002');
-		$doc->initialize(5002, \Change\Documents\DocumentManager::STATE_LOADED);
+		$doc->getCurrentLocalization()->setPLStr('Localized 5002');
+		$doc->initialize(5002, \Change\Documents\AbstractDocument::STATE_LOADED);
 		return $doc;
 	}
 }

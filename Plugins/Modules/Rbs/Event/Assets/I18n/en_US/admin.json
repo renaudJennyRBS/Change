@@ -1,0 +1,104 @@
+{
+  "module_name":{
+    "message":"News and events"
+  },
+  "base_event_show_time":{
+    "message":"display hours and minutes"
+  },
+  "base_event_show_categories":{
+    "message":"display categories"
+  },
+  "base_event_contextual_urls":{
+    "message":"categories details in the current section"
+  },
+  "news_label":{
+    "message":"news detail"
+  },
+  "news_doc":{
+    "message":"news to display"
+  },
+  "news_function":{
+    "message":"news detail"
+  },
+  "event_label":{
+    "message":"event detail"
+  },
+  "event_doc":{
+    "message":"event to display"
+  },
+  "event_function":{
+    "message":"event detail"
+  },
+  "base_event_list_section_id":{
+    "message":"section"
+  },
+  "base_event_list_include_sub_sections":{
+    "message":"include subsections"
+  },
+  "base_event_list_show_time":{
+    "message":"display hours and minutes"
+  },
+  "base_event_list_show_categories":{
+    "message":"display categories"
+  },
+  "base_event_list_contextual_urls":{
+    "message":"news and events details in the current section"
+  },
+  "base_event_list_contextual_category_urls":{
+    "message":"categories details in the current section"
+  },
+  "base_event_list_items_per_page":{
+    "message":"number of items per page"
+  },
+  "contextual_list_label":{
+    "message":"news and events contextual list"
+  },
+  "category_label":{
+    "message":"category detail"
+  },
+  "category_section_restriction":{
+    "message":"restrict to items published in"
+  },
+  "calendar_label":{
+    "message":"calendar"
+  },
+  "news_list":{
+    "message":"news"
+  },
+  "news_create":{
+    "message":"add a news"
+  },
+  "event_list":{
+    "message":"events"
+  },
+  "event_create":{
+    "message":"add an event"
+  },
+  "category_list":{
+    "message":"categories"
+  },
+  "category_create":{
+    "message":"add a category"
+  },
+  "baseevent_detailvisual_help":{
+    "message":"Visual used in detail view. This visual is not used for display in list."
+  },
+  "baseevent_detailvisual_picker_title":{
+    "message":"select the detail visual"
+  },
+  "baseevent_listvisual_help":{
+    "message":"Visual used for display in list."
+  },
+  "baseevent_listvisual_picker_title":{
+    "message":"select the list visual"
+  },
+  "baseevent_categories_picker_title":{
+    "message":"select the categories"
+  },
+  "baseevent_allowcomments_help":{
+    "message":"Allow users to submit new comments or not. This choice has no effect on existing comments."
+  },
+  "baseevent_excludefromrss_help":{
+    "message":"Exclude from RSS feeds or not. Choose Yes if this document is restricted."
+  }
+}

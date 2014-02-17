@@ -19,6 +19,7 @@ class Property
 	
 	const TYPE_LONGSTRING = 'LongString';
 	const TYPE_XML = 'XML';
+	const TYPE_STORAGEURI = 'StorageUri';
 	
 	const TYPE_RICHTEXT = 'RichText';
 	const TYPE_JSON = 'JSON';
@@ -63,12 +64,7 @@ class Property
 	/**
 	 * @var integer
 	 */
-	protected $maxOccurs = 1;
-
-	/**
-	 * @var boolean
-	 */
-	protected $cascadeDelete = false;
+	protected $maxOccurs = 100;
 
 	/**
 	 * @var mixed|null
@@ -88,12 +84,17 @@ class Property
 	/**
 	 * @var boolean
 	 */
+	protected $internal = false;
+
+	/**
+	 * @var boolean
+	 */
 	protected $hasCorrection = false;
 
 	/**
 	 * @var string
 	 */
-	protected $indexed = 'none'; //none, property, description
+	protected $labelKey;
 	
 	/**
 	 * @param string $name
@@ -163,14 +164,6 @@ class Property
 	/**
 	 * @return boolean
 	 */
-	public function getCascadeDelete()
-	{
-		return $this->cascadeDelete;
-	}
-
-	/**
-	 * @return boolean
-	 */
 	public function getLocalized()
 	{
 		return $this->localized;
@@ -183,23 +176,6 @@ class Property
 	{
 		return $this->hasCorrection;
 	}
-	
-	/**
-	 * @return string [none], property, description
-	 */
-	public function getIndexed()
-	{
-		return $this->indexed;
-	}
-	
-	/**
-	 * @return boolean
-	 */
-	public function isIndexed()
-	{
-		return $this->indexed != 'none';
-	}
-
 
 	/**
 	 * Indicates whether the document property accepts all types of document.
@@ -239,6 +215,7 @@ class Property
 			case self::TYPE_JSON:
 			case self::TYPE_OBJECT:
 			case self::TYPE_LONGSTRING:
+			case self::TYPE_STORAGEURI:
 			case self::TYPE_RICHTEXT:
 				return true;
 			default:
@@ -257,7 +234,7 @@ class Property
 		{
 			case self::TYPE_INTEGER:
 			case self::TYPE_DECIMAL:
-			case self::TYPE_DOUBLE:
+			case self::TYPE_FLOAT:
 				return true;
 			default:
 				return false;
@@ -271,7 +248,7 @@ class Property
 	 */
 	public function isDocument()
 	{
-		return ($this->type === self::TYPE_DOCUMENT || $this->type === self::TYPE_DOCUMENTARRAY);;
+		return ($this->type === self::TYPE_DOCUMENT || $this->type === self::TYPE_DOCUMENTARRAY);
 	}
 
 	/**
@@ -340,7 +317,7 @@ class Property
 		return $this->maxOccurs == 1;
 	}
 
-	/* Information de présentation */
+	/* Presentation information */
 
 	/**
 	 * @return mixed
@@ -456,26 +433,6 @@ class Property
 		$this->documentType = $documentType;
 		return $this;
 	}
-	
-	/**
-	 * @param boolean $cascadeDelete
-	 * @return $this
-	 */
-	public function setCascadeDelete($cascadeDelete)
-	{
-		$this->cascadeDelete = $cascadeDelete;
-		return $this;
-	}
-
-	/**
-	 * @param string $indexed
-	 * @return $this
-	 */
-	public function setIndexed($indexed)
-	{
-		$this->indexed = $indexed;
-		return $this;
-	}
 
 	/**
 	 * @param boolean $bool
@@ -496,17 +453,7 @@ class Property
 		$this->hasCorrection = $bool ? true : false;
 		return $this;
 	}
-	
-	/**
-	 * @param mixed $treeNode
-	 * @return $this
-	 */
-	public function setTreeNode($treeNode)
-	{
-		$this->treeNode = $treeNode;
-		return $this;
-	}
-	
+
 	/**
 	 * @api
 	 * @return $this
@@ -517,11 +464,7 @@ class Property
 		{
 			$this->setMaxOccurs(1);
 		}
-		elseif ($this->maxOccurs <= 1)
-		{
-			$this->setMaxOccurs(-1);
-		}
-	
+
 		if ($this->documentType !== null && !$this->isDocument() && $this->type !== self::TYPE_DOCUMENTID)
 		{
 			$this->documentType = null;
@@ -530,54 +473,121 @@ class Property
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Localizable|\Change\Documents\AbstractLocalizedDocument $document
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
 	 * @return mixed
 	 */
-	public function getValue($document)
+	public function getValue(\Change\Documents\AbstractDocument $document)
 	{
 		if ($this->name === 'model')
 		{
-			$getter = 'getDocumentModelName';
+			return $document->getDocumentModelName();
 		}
 		else
 		{
 			$getter = 'get' . ucfirst($this->name);
+			if ($this->getLocalized() && $document instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				return call_user_func(array($document->getCurrentLocalization(), $getter));
+			}
+			else
+			{
+				return call_user_func(array($document, $getter));
+			}
 		}
-		return call_user_func(array($document, $getter));
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param AbstractDocument $document
 	 * @return mixed
 	 */
-	public function getOldValue($document)
+	public function getOldValue(\Change\Documents\AbstractDocument $document)
 	{
 		if ($this->name === 'id')
 		{
-			$getter = 'getId';
+			return $document->getId();
 		}
 		elseif ($this->name === 'model')
 		{
-			$getter = 'getDocumentModelName';
+			return $document->getDocumentModelName();
 		}
 		else
 		{
 			$getter = 'get' . ucfirst($this->name).'OldValue';
+			if ($this->getLocalized() && $document instanceof \Change\Documents\Interfaces\Localizable)
+			{
+				return call_user_func(array($document->getCurrentLocalization(), $getter));
+			}
+			else
+			{
+				return call_user_func(array($document, $getter));
+			}
 		}
-		return call_user_func(array($document, $getter));
 	}
 	
 	/**
-	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractLocalizedDocument $document
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
 	 * @param mixed $value
 	 */
-	public function setValue($document, $value)
+	public function setValue(\Change\Documents\AbstractDocument $document, $value)
 	{
-		if ($this->name !== 'id' && $this->name !== 'model')
+		if ($this->getLocalized())
+		{
+			$this->setLocalizedValue($document->getCurrentLocalization(), $value);
+		}
+		elseif ($this->name !== 'id' && $this->name !== 'model')
 		{
 			$setter = 'set' . ucfirst($this->name);
 			call_user_func(array($document, $setter), $value);
 		}
+	}
+
+	/**
+	 * @param AbstractLocalizedDocument $localizedDocument
+	 * @param mixed $value
+	 */
+	public function setLocalizedValue(\Change\Documents\AbstractLocalizedDocument $localizedDocument, $value)
+	{
+		if ($this->getLocalized() && $this->name !== 'id' && $this->name !== 'model')
+		{
+			$setter = 'set' . ucfirst($this->name);
+			call_user_func(array($localizedDocument, $setter), $value);
+		}
+	}
+
+	/**
+	 * @param string $labelKey
+	 * @return $this
+	 */
+	public function setLabelKey($labelKey)
+	{
+		$this->labelKey = $labelKey;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabelKey()
+	{
+		return $this->labelKey;
+	}
+
+	/**
+	 * @param boolean $internal
+	 * @return $this
+	 */
+	public function setInternal($internal)
+	{
+		$this->internal = $internal;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getInternal()
+	{
+		return $this->internal;
 	}
 
 	/**

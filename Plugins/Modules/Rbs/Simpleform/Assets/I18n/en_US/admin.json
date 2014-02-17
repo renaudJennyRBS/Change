@@ -1,0 +1,212 @@
+{
+  "sort_order":{
+    "message":"order"
+  },
+  "form_usecaptcha_help":{
+    "message":"Ask unregistered users to enter a security code."
+  },
+  "form_receiverusers_picker_title":{
+    "message":"users recipients selection"
+  },
+  "form_receivergroups_picker_title":{
+    "message":"recipient groups selection"
+  },
+  "form_confirmationmode_message":{
+    "message":"message on the page"
+  },
+  "form_confirmationmode_popin":{
+    "message":"message in a popin"
+  },
+  "form_confirmationmode_page":{
+    "message":"redirect to another page"
+  },
+  "form_list":{
+    "message":"forms"
+  },
+  "form_create":{
+    "message":"add a form"
+  },
+  "field_list":{
+    "message":"fields"
+  },
+  "field_create":{
+    "message":"add a field"
+  },
+  "module_name":{
+    "message":"simple forms"
+  },
+  "module_keywords":{
+    "message":"form,field,recipient,email,reply,contact"
+  },
+  "type_hidden":{
+    "message":"hidden field"
+  },
+  "type_text_input":{
+    "message":"short text"
+  },
+  "type_text_area":{
+    "message":"long text"
+  },
+  "type_text_email":{
+    "message":"e-mail address"
+  },
+  "type_text_emails":{
+    "message":"email addresses separated by commas"
+  },
+  "type_text_url":{
+    "message":"URL"
+  },
+  "type_text_integer":{
+    "message":"integer"
+  },
+  "type_text_float":{
+    "message":"decimal number"
+  },
+  "type_boolean_radio":{
+    "message":"yes\/no (radio buttons)"
+  },
+  "type_boolean_checkbox":{
+    "message":"yes\/no (check box)"
+  },
+  "type_collection_select":{
+    "message":"drop-down liste"
+  },
+  "type_collection_select_multiple":{
+    "message":"multiple choice list"
+  },
+  "type_collection_radio":{
+    "message":"radio buttons list"
+  },
+  "type_collection_checkbox":{
+    "message":"checkbox list"
+  },
+  "type_date_picker":{
+    "message":"date"
+  },
+  "type_date_time_picker":{
+    "message":"date and time"
+  },
+  "type_file":{
+    "message":"attachment"
+  },
+  "block_form_label":{
+    "message":"form detail"
+  },
+  "block_form_function":{
+    "message":"form detail"
+  },
+  "block_form_form":{
+    "message":"form to display"
+  },
+  "field_warning_only_ios":{
+    "message":"Taken into account only on iOS."
+  },
+  "field_parameters_collection":{
+    "message":"possible values collection"
+  },
+  "field_parameters_acknowledgment_receiver":{
+    "message":"acknowledgement of receipt recipient"
+  },
+  "field_parameters_line_count":{
+    "message":"number of rows"
+  },
+  "field_parameters_interval_type":{
+    "message":"interval type"
+  },
+  "field_parameters_interval_type_relative":{
+    "message":"dates relating to the current date"
+  },
+  "field_parameters_interval_type_absolute":{
+    "message":"fixed dates"
+  },
+  "field_parameters_minimal_date":{
+    "message":"minimum date"
+  },
+  "field_parameters_maximal_date":{
+    "message":"maximum date"
+  },
+  "field_parameters_place_holder":{
+    "message":"placeholder"
+  },
+  "field_parameters_place_holder_help":{
+    "message":"Sample text, displayed when the field is empty."
+  },
+  "field_parameters_time_place_holder":{
+    "message":"time placeholder"
+  },
+  "field_parameters_time_place_holder_help":{
+    "message":"Sample text, displayed in the time field when it is empty."
+  },
+  "field_parameters_auto_complete":{
+    "message":"auto-complete"
+  },
+  "field_parameters_auto_complete_help":{
+    "message":"Enable or not browser auto-complete."
+  },
+  "field_parameters_auto_capitalize":{
+    "message":"capitalization"
+  },
+  "field_parameters_auto_capitalize_help":{
+    "message":"Automatic capitalization set up."
+  },
+  "field_parameters_auto_capitalize_none":{
+    "message":"disabled"
+  },
+  "field_parameters_auto_capitalize_sentences":{
+    "message":"beginning of a sentence"
+  },
+  "field_parameters_auto_capitalize_words":{
+    "message":"beginning of a word"
+  },
+  "field_parameters_auto_capitalize_characters":{
+    "message":"each character"
+  },
+  "field_parameters_auto_correct":{
+    "message":"auto-correction"
+  },
+  "field_parameters_auto_correct_help":{
+    "message":"Activate or not  automatic correction."
+  },
+  "field_parameters_validators":{
+    "message":"validators"
+  },
+  "field_parameters_min":{
+    "message":"minimum value"
+  },
+  "field_parameters_max":{
+    "message":"maximum value"
+  },
+  "field_parameters_min_size":{
+    "message":"minimum length"
+  },
+  "field_parameters_max_size":{
+    "message":"maximum length"
+  },
+  "field_parameters_min_count":{
+    "message":"values minimum number"
+  },
+  "field_parameters_max_count":{
+    "message":"values maximum number"
+  },
+  "field_parameters_none":{
+    "message":"none"
+  },
+  "field_parameters_email":{
+    "message":"e-mail address"
+  },
+  "field_parameters_emails":{
+    "message":"email addresses separated by commas"
+  },
+  "field_parameters_url":{
+    "message":"URL"
+  },
+  "field_parameters_integer":{
+    "message":"integer"
+  },
+  "field_parameters_decimal":{
+    "message":"decimal Number"
+  },
+  "field_parameters_pattern":{
+    "message":"rational expression"
+  }
+}

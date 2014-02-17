@@ -8,23 +8,23 @@ namespace Change\Db\Query;
 class DeleteQuery extends AbstractQuery
 {
 	/**
-	 * @var \Change\Db\Query\Clauses\DeleteClause
+	 * @var Clauses\DeleteClause
 	 */
 	protected $deleteClause;
 
 	/**
-	 * @var \Change\Db\Query\Clauses\FromClause
+	 * @var Clauses\FromClause
 	 */
 	protected $fromClause;
 
 	/**
-	 * @var \Change\Db\Query\Clauses\WhereClause
+	 * @var Clauses\WhereClause
 	 */
 	protected $whereClause;
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\DeleteClause|null
+	 * @return Clauses\DeleteClause|null
 	 */
 	public function getDeleteClause()
 	{
@@ -33,16 +33,16 @@ class DeleteQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\DeleteClause $deleteClause
+	 * @param Clauses\DeleteClause $deleteClause
 	 */
-	public function setDeleteClause(\Change\Db\Query\Clauses\DeleteClause $deleteClause)
+	public function setDeleteClause(Clauses\DeleteClause $deleteClause)
 	{
 		$this->deleteClause = $deleteClause;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\FromClause|null
+	 * @return Clauses\FromClause|null
 	 */
 	public function getFromClause()
 	{
@@ -51,16 +51,16 @@ class DeleteQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\FromClause $fromClause
+	 * @param Clauses\FromClause $fromClause
 	 */
-	public function setFromClause(\Change\Db\Query\Clauses\FromClause $fromClause)
+	public function setFromClause(Clauses\FromClause $fromClause)
 	{
 		$this->fromClause = $fromClause;
 	}
 
 	/**
 	 * @api
-	 * @return \Change\Db\Query\Clauses\WhereClause|null
+	 * @return Clauses\WhereClause|null
 	 */
 	public function getWhereClause()
 	{
@@ -69,9 +69,9 @@ class DeleteQuery extends AbstractQuery
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\Clauses\WhereClause $whereClause
+	 * @param Clauses\WhereClause $whereClause
 	 */
-	public function setWhereClause(\Change\Db\Query\Clauses\WhereClause $whereClause)
+	public function setWhereClause(Clauses\WhereClause $whereClause)
 	{
 		$this->whereClause = $whereClause;
 	}
@@ -115,6 +115,6 @@ class DeleteQuery extends AbstractQuery
 	 */
 	public function execute()
 	{
-		return $this->dbProvider->executeQuery($this);
+		return $this->getDbProvider()->executeQuery($this);
 	}
 }

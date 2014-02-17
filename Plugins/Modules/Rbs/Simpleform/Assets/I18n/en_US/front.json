@@ -1,0 +1,59 @@
+{
+  "this_field_is_required":{
+    "message":"This field is mandatory"
+  },
+  "send":{
+    "message":"send"
+  },
+  "not_sent_containing_errors":{
+    "message":"Some of entered data are incorrect."
+  },
+  "back_to_form":{
+    "message":"back to form"
+  },
+  "bad_csrf_token":{
+    "message":"The authentication token is invalid, please resubmit the form."
+  },
+  "bad_captcha":{
+    "message":"The security code is incorrect."
+  },
+  "captcha":{
+    "message":"security code"
+  },
+  "date_picker_at":{
+    "message":"at"
+  },
+  "date_picker_h":{
+    "message":"H"
+  },
+  "field_required":{
+    "message":"This field is mandatory"
+  },
+  "invalid_array":{
+    "message":"Value entered is not a valid array"
+  },
+  "invalid_string":{
+    "message":"The value entered must be a character string"
+  },
+  "invalid_boolean":{
+    "message":"The value entered must be 'true' or 'false'"
+  },
+  "invalid_integer":{
+    "message":"The value entered must be an integer"
+  },
+  "invalid_float":{
+    "message":"The value entered must be a decimal number"
+  },
+  "invalid_file":{
+    "message":"The selected file could not be uploaded correctly"
+  },
+  "not_less_than_values":{
+    "message":"You must select at least $MIN$ values"
+  },
+  "not_more_than_values":{
+    "message":"You select maximum $MAX$ values"
+  },
+  "must_select_date_and_time":{
+    "message":"You must specify both a date and a time"
+  }
+}

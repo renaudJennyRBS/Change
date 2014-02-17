@@ -99,6 +99,7 @@ class SqlMapping
 	
 			case \Change\Documents\Property::TYPE_JSON:
 			case \Change\Documents\Property::TYPE_LONGSTRING:
+			case \Change\Documents\Property::TYPE_STORAGEURI:
 			case \Change\Documents\Property::TYPE_RICHTEXT:
 			case \Change\Documents\Property::TYPE_XML:
 				return \Change\Db\ScalarType::TEXT;
@@ -108,6 +109,15 @@ class SqlMapping
 				return \Change\Db\ScalarType::LOB;
 		}
 		return \Change\Db\ScalarType::STRING;
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getPluginTableName()
+	{
+		return 'change_plugin';
 	}
 		
 	/**
@@ -159,8 +169,44 @@ class SqlMapping
 	 * @api
 	 * @return string
 	 */
+	public function getOAuthApplicationTable()
+	{
+		return 'change_oauth_application';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
 	public function getPathRuleTable()
 	{
 		return 'change_path_rule';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getJobTable()
+	{
+		return 'change_job';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getPermissionRuleTable()
+	{
+		return 'change_permission_rule';
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function getWebPermissionRuleTable()
+	{
+		return 'change_web_permission_rule';
 	}
 }

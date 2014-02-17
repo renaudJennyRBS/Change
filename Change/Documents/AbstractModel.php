@@ -11,37 +11,37 @@ abstract class AbstractModel
 	 * @var \Change\Documents\Property[]
 	 */
 	protected $properties;
-	
+
 	/**
 	 * @var \Change\Documents\Property[]
 	 */
 	protected $inverseProperties;
-	
+
 	/**
 	 * @var string[]
 	 */
 	protected $descendantsNames = array();
-	
+
 	/**
 	 * @var string[]
 	 */
 	protected $ancestorsNames = array();
-	
+
 	/**
 	 * @var ModelManager
 	 */
 	protected $modelManager;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $vendorName;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $shortModuleName;
-	
+
 	/**
 	 * @var string
 	 */
@@ -55,8 +55,8 @@ abstract class AbstractModel
 	/**
 	 * @var string
 	 */
-	protected $injectedBy;
-	
+	protected $replacedBy;
+
 	/**
 	 * @param ModelManager $modelManager
 	 */
@@ -66,7 +66,7 @@ abstract class AbstractModel
 		$this->loadProperties();
 		$this->loadInverseProperties();
 	}
-	
+
 	/**
 	 * @api
 	 * @return string For example: Change
@@ -75,7 +75,7 @@ abstract class AbstractModel
 	{
 		return $this->vendorName;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string For example: Generic
@@ -84,7 +84,7 @@ abstract class AbstractModel
 	{
 		return $this->shortModuleName;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string For example: Folder
@@ -93,19 +93,19 @@ abstract class AbstractModel
 	{
 		return $this->shortName;
 	}
-	
+
 	/**
 	 * @api
-	 * @return string For example: Change_Generic
+	 * @return string For example: Rbs_Generic
 	 */
 	public function getModuleName()
 	{
 		return $this->getVendorName() . '_' . $this->getShortModuleName();
 	}
-	
+
 	/**
 	 * @api
-	 * @return string For example: Change_Generic_Folder
+	 * @return string For example: Rbs_Generic_Folder
 	 */
 	public function getName()
 	{
@@ -120,7 +120,16 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isAbstract()
+	{
+		return false;
+	}
+
 	/**
 	 * @api
 	 * @return boolean
@@ -129,7 +138,7 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -138,7 +147,7 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -156,7 +165,7 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -165,7 +174,7 @@ abstract class AbstractModel
 	{
 		return $this->isBackofficeIndexable() || $this->isFrontofficeIndexable();
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -174,7 +183,7 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-		
+
 	/**
 	 * @api
 	 * @return boolean
@@ -183,7 +192,16 @@ abstract class AbstractModel
 	{
 		return false;
 	}
-	
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isActivable()
+	{
+		return false;
+	}
+
 	/**
 	 * @api
 	 * @return boolean
@@ -228,7 +246,7 @@ abstract class AbstractModel
 	{
 		return count($this->descendantsNames) > 0;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string[]
@@ -242,11 +260,11 @@ abstract class AbstractModel
 	 * @api
 	 * @return string|null
 	 */
-	public function getInjectedBy()
+	public function getReplacedBy()
 	{
-		return $this->injectedBy;
+		return $this->replacedBy;
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
@@ -255,7 +273,7 @@ abstract class AbstractModel
 	{
 		return count($this->ancestorsNames) > 0;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string|null
@@ -264,11 +282,11 @@ abstract class AbstractModel
 	{
 		if ($this->hasParent())
 		{
-			return $this->ancestorsNames[count($this->ancestorsNames) -1];
+			return $this->ancestorsNames[count($this->ancestorsNames) - 1];
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string[]
@@ -277,7 +295,7 @@ abstract class AbstractModel
 	{
 		return $this->ancestorsNames;
 	}
-	
+
 	/**
 	 * @api
 	 * @return string
@@ -288,92 +306,99 @@ abstract class AbstractModel
 		return (count($amn)) ? $amn[0] : $this->getName();
 	}
 
-
-
 	/**
 	 * @return void
 	 */
 	protected function loadProperties()
 	{
 		$this->properties = array();
-		$p = $this->properties['id'] = new \Change\Documents\Property('id', 'Integer');
-		$p->setRequired(true);
-		
-		$p = $this->properties['model'] = new \Change\Documents\Property('model', 'String');
-		$p->setRequired(true)->setDefaultValue($this->getName());
+
+		$p = new Property('id', 'Integer');
+		$p->setLabelKey('c.documents.id');
+		$this->properties['id'] = $p->setRequired(true);
+
+		$p =  new Property('model', 'String');
+		$p->setLabelKey('c.documents.model');
+		$this->properties['model'] = $p->setRequired(true)->setDefaultValue($this->getName());
 	}
-	
+
 	/**
 	 * @api
-	 * @return array<string, \Change\Documents\Property>
+	 * @return \Change\Documents\Property[] keys assumed as property names.
 	 */
 	public function getProperties()
 	{
 		return $this->properties;
 	}
-	
+
 	/**
 	 * @api
-	 * @return array<string, \Change\Documents\Property>
+	 * @return \Change\Documents\Property[] keys assumed as property names.
 	 */
 	public function getLocalizedProperties()
 	{
-		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->getLocalized();});
+		return array_filter($this->properties, function (Property $property)
+		{
+			return $property->getLocalized();
+		});
 	}
-	
+
 	/**
 	 * @api
-	 * @return array<string, \Change\Documents\Property>
+	 * @return \Change\Documents\Property[] keys assumed as property names.
 	 */
 	public function getNonLocalizedProperties()
 	{
 		if ($this->isLocalized())
 		{
-			return array_filter($this->properties, function(\Change\Documents\Property $property) {return !$property->getLocalized();});
+			return array_filter($this->properties, function (Property $property)
+			{
+				return !$property->getLocalized();
+			});
 		}
 		return $this->properties;
-	}
-	
-	/**
-	 * @api
-	 * @return array<string, \Change\Documents\Property>
-	 */
-	public function getPropertiesWithCorrection()
-	{
-		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->getHasCorrection();});
-	}
-	
-	/**
-	 * @api
-	 * @return array<string, \Change\Documents\Property>
-	 */
-	public function getLocalizedPropertiesWithCorrection()
-	{
-		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->getLocalized() && $property->getHasCorrection();});
 	}
 
 	/**
 	 * @api
-	 * @return array<string, \Change\Documents\Property>
+	 * @return \Change\Documents\Property[] keys assumed as property names.
+	 */
+	public function getPropertiesWithCorrection()
+	{
+		return array_filter($this->properties, function (Property $property)
+		{
+			return $property->getHasCorrection();
+		});
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Documents\Property[] keys assumed as property names.
+	 */
+	public function getLocalizedPropertiesWithCorrection()
+	{
+		return array_filter($this->properties, function (Property $property)
+		{
+			return $property->getLocalized() && $property->getHasCorrection();
+		});
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Documents\Property[] keys assumed as property names.
 	 */
 	public function getNonLocalizedPropertiesWithCorrection()
 	{
 		if ($this->isLocalized())
 		{
-			return array_filter($this->properties, function(\Change\Documents\Property $property) {return !$property->getLocalized() && $property->getHasCorrection();});
+			return array_filter($this->properties, function (Property $property)
+			{
+				return !$property->getLocalized() && $property->getHasCorrection();
+			});
 		}
 		return $this->getPropertiesWithCorrection();
 	}
-	
-	/**
-	 * @api
-	 * @return array<string, \Change\Documents\Property>
-	 */
-	public function getIndexedProperties()
-	{
-		return array_filter($this->properties, function(\Change\Documents\Property $property) {return $property->isIndexed();});
-	}
-	
+
 	/**
 	 * @api
 	 * @param string $propertyName
@@ -383,7 +408,7 @@ abstract class AbstractModel
 	{
 		return isset($this->properties[$propertyName]);
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $propertyName
@@ -397,31 +422,63 @@ abstract class AbstractModel
 		}
 		return null;
 	}
-	
+
+	/**
+	 * @api
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
+	 * @param string $propertyName
+	 * @param mixed $defaultValue [optional]
+	 * @return mixed|null
+	 */
+	public function getPropertyValue(AbstractDocument $document, $propertyName, $defaultValue = null)
+	{
+		if ($this->hasProperty($propertyName))
+		{
+			return $this->properties[$propertyName]->getValue($document);
+		}
+		return $defaultValue;
+	}
+
+	/**
+	 * @api
+	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
+	 * @param string $propertyName
+	 * @param mixed $value
+	 * @return $this
+	 */
+	public function setPropertyValue(AbstractDocument $document, $propertyName, $value)
+	{
+		if ($this->hasProperty($propertyName))
+		{
+			$this->properties[$propertyName]->setValue($document, $value);
+		}
+		return $this;
+	}
+
+	/**
+	 * @param string|AbstractModel $modelOrModelName
+	 * @return bool
+	 */
+	public function isInstanceOf($modelOrModelName)
+	{
+		$modelName = ($modelOrModelName instanceof AbstractModel) ? $modelOrModelName->getName() : strval($modelOrModelName);
+		if ($this->getName() === $modelName)
+		{
+			return true;
+		}
+		elseif (in_array($modelName, $this->getAncestorsNames()))
+		{
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * @api
 	 * @return string[]
 	 */
-	public function getPropertiesNames()
+	public function getPropertyNames()
 	{
 		return array_keys($this->properties);
-	}
-	
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasCascadeDelete()
-	{
-		foreach ($this->getProperties() as $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getCascadeDelete())
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -434,13 +491,13 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @return array<string, \Change\Documents\InverseProperty>
+	 * @return \Change\Documents\InverseProperty[] keys assumed as property names.
 	 */
 	public function getInverseProperties()
 	{
 		return $this->inverseProperties;
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $name
@@ -466,6 +523,17 @@ abstract class AbstractModel
 	}
 
 	/**
+	 * @param string $name
+	 * @return string
+	 */
+	public function getPropertyLabelKey($name)
+	{
+		$property = $this->getProperty($name);
+		return $property ? $property->getLabelKey() : $name;
+
+	}
+
+	/**
 	 * @api
 	 * @return string
 	 */
@@ -473,16 +541,28 @@ abstract class AbstractModel
 	{
 		return 'document';
 	}
-	
+
 	/**
 	 * @api
 	 * @return string
 	 */
 	public function getLabelKey()
 	{
-		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.document.'. $this->getShortName().'.document-name');
+		return strtolower('m.' . $this->getVendorName() . '.' . $this->getShortModuleName() . '.documents.' . $this->getShortName());
 	}
-	
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	abstract function getDocumentClassName();
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	abstract function getLocalizedDocumentClassName();
+
 	/**
 	 * @return string
 	 */

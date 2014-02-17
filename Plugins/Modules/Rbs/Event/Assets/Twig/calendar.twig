@@ -1,0 +1,40 @@
+{% set paramName = 'date-' ~ blockId %}
+<table class="table table-condensed table-bordered calendar">
+	<caption>
+		<ul class="list-inline">
+			<li><a href="{{ currentURL({(paramName): previousYearDate}) }}" title="{{  i18nAttr('m.rbs.event.fo.previous-year', ['ucf']) }}">«</a></li>
+			<li><a href="{{ currentURL({(paramName): previousMonthDate}) }}" title="{{  i18nAttr('m.rbs.event.front.previous_month', ['ucf']) }}">‹</a></li>
+			<li class="active">
+				<span>{{ date|formatDate('MMMM yyyy')|capitalize }}</span>
+			</li>
+			<li><a href="{{ currentURL({(paramName): nextMonthDate}) }}" title="{{  i18nAttr('m.rbs.event.front.next_month', ['ucf']) }}">›</a></li>
+			<li><a href="{{ currentURL({(paramName): nextYearDate}) }}" title="{{  i18nAttr('m.rbs.event.fo.next-year', ['ucf']) }}">»</a></li>
+		</ul>
+	</caption>
+	<thead>
+		<tr>
+			{% for i in 1..7 %}
+				{% set date = ('2013-07-0' ~ i) %}
+				{% set dayName = date|formatDate('cccc')|capitalize %}
+				<th scope="col" abbr="{{ dayName }}" title="{{ dayName }}">{{ date|formatDate('cccccc')|capitalize }}</th>
+			{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+		{% for week in weeks %}
+			<tr>
+				{% for day in week %}
+					<td class="{{ day.class }}">
+						{% if day.number and day.hasUrl %}
+							<a href="{{ currentURL({(paramName): day.date}) }}">{{ day.number }} {% if day.count %}<small>({{ day.count }})</small>{% endif %}</a>
+						{% elseif day.number %}
+							{{ day.number }} {% if day.count %}<small>({{ day.count }})</small>{% endif %}
+						{% else %}
+							&nbsp;
+						{% endif %}
+					</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

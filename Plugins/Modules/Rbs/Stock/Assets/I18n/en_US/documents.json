@@ -1,0 +1,59 @@
+{
+  "sku":{
+    "message":"SKU"
+  },
+  "inventoryentry":{
+    "message":"stock"
+  },
+  "inventoryentry_sku":{
+    "message":"SKU"
+  },
+  "inventoryentry_level":{
+    "message":"level"
+  },
+  "sku_physicalproperties":{
+    "message":"physical data"
+  },
+  "sku_unit":{
+    "message":"unit"
+  },
+  "sku_quantityincrement":{
+    "message":"quantity increment"
+  },
+  "sku_minquantity":{
+    "message":"minimum quantity"
+  },
+  "sku_maxquantity":{
+    "message":"maximum quantity"
+  },
+  "sku_unlimitedinventory":{
+    "message":"infinite stock"
+  },
+  "sku_allowbackorders":{
+    "message":"Backorders"
+  },
+  "sku_allowquantitysplit":{
+    "message":"Split delivery"
+  },
+  "sku_virtual":{
+    "message":"virtual"
+  },
+  "sku_thresholds":{
+    "message":"Thresholds"
+  },
+  "sku_ean13":{
+    "message":"EAN13"
+  },
+  "sku_upc":{
+    "message":"UPC"
+  },
+  "sku_jan":{
+    "message":"JAN"
+  },
+  "sku_isbn":{
+    "message":"ISBN"
+  },
+  "sku_partNumber":{
+    "message":"Manufacturer Part Number"
+  }
+}

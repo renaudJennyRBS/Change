@@ -1,0 +1,23 @@
+{
+	"header" : {
+		"id" : "header",
+		"type" : "block",
+		"name" : "",
+		"parameters" : {
+		}
+	},
+	"mainContent" : {
+		"id" : "mainContent",
+		"grid" : 9,
+		"type" : "container",
+		"parameters" : {
+		}
+	},
+	"footer" : {
+		"id" : "footer",
+		"type" : "block",
+		"name" : "",
+		"parameters" : {
+		}
+	}
+}

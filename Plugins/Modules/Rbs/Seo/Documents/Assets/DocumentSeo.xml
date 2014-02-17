@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		localized="true">
+	<properties>
+		<property name="label" stateless="true" />
+		<property name="target" type="Document" />
+
+		<property name="metaTitle" type="LongString" localized="true" has-correction="true" />
+		<property name="metaDescription" type="LongString" localized="true" has-correction="true" />
+		<property name="metaKeywords" type="LongString" localized="true" has-correction="true" />
+
+		<property name="sitemapChangeFrequency" type="String" />
+		<property name="sitemapPriority" type="Float">
+			<constraint name="range" min="0.0" max="1.0" />
+		</property>
+		<property name="sitemapGenerateForWebsites" type="JSON" />
+		<!-- http://www.webrankinfo.com/outils/robots/faq_16_119.htm
+		<property name="robotsMeta" type="String" default-value="index,follow">
+			<dboptions length="20"/>
+		</property>-->
+	</properties>
+</document>

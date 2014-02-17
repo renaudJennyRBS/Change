@@ -1,0 +1,37 @@
+<div class="row" ng-controller="Rbs_Catalog_VariantGroup_VariantListController">
+
+	<div rbs-aside-column>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-config':{productId:document.rootProduct.id}=)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_variant_config', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-edit':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_edit', ['ucf']) | raw}}</a>
+				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-stocks':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantstocks', ['ucf']) | raw}}</a>
+				</p>
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'variant-prices':{productId:document.rootProduct.id} =)"><i class="icon-arrow-right"></i> {{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantprices', ['ucf']) | raw}}</a>
+				</p>
+			</div>
+		</div>
+		<div class="rbs-aside-block" ng-show="document.rootProduct">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+		</div>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-document-list data-dlid="DLRbsCatalogVariantList" model="Rbs_Catalog_Product"
+				publishable="true" load-query="loadQuery">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-quick-actions>[action edit] || [action delete]</rbs-quick-actions>
+			<rbs-column name="sku">(= doc.sku.label =)</rbs-column>
+		</rbs-document-list>
+	</div>
+</div>

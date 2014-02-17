@@ -5,6 +5,12 @@ use Change\Http\UrlManager;
 
 class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsClasses();
+	}
+
 	public function testConstruct()
 	{
 		$uri = new \Zend\Uri\Http();
@@ -16,11 +22,13 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('http://domain.net/', $urlManager->getSelf()->normalize()->toString());
 	}
 
+	/**
+	 * @depends testConstruct
+	 */
 	public function testByPathInfo()
 	{
 		$uri = new \Zend\Uri\Http();
 		$uri->parse('http://domain.net');
-
 		$urlManager = new UrlManager($uri);
 
 		$http = $urlManager->getByPathInfo('/test');
@@ -44,8 +52,6 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$http = $urlManager->getByPathInfo('');
 		$this->assertEquals('http://domain.net/', $http->normalize()->toString());
-
-
 
 		$uri = new \Zend\Uri\Http();
 		$uri->parse('http://domain.net/home.html');
@@ -59,6 +65,5 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$http = $urlManager->getByPathInfo('', array('a' => ' b'));
 		$this->assertEquals('http://domain.net/index.php/?a=%20b', $http->normalize()->toString());
-
 	}
 }

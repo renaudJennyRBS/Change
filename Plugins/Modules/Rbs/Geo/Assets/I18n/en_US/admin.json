@@ -1,0 +1,68 @@
+{
+  "zone_list":{
+    "message":"zones"
+  },
+  "zone_create":{
+    "message":"add a new zone"
+  },
+  "country_list":{
+    "message":"countries"
+  },
+  "country_create":{
+    "message":"add a new country"
+  },
+  "territorialunit_list":{
+    "message":"territorial units"
+  },
+  "territorialunit_create":{
+    "message":"add a new territorial unit"
+  },
+  "addressfields_list":{
+    "message":"address format"
+  },
+  "addressfields_create":{
+    "message":"add a new address format"
+  },
+  "addressfield_create":{
+    "message":"add an address field"
+  },
+  "zone_country_picker_title":{
+    "message":"select a country"
+  },
+  "addressfield_locked_warning":{
+    "message":"\n <span class=\"label label-danger\">Attention!<\/span> This field is locked because it is required by the address system. You can therefore not remove it, nor change its code."
+  },
+  "addressfield_select_collectioncode":{
+    "message":"select a collection"
+  },
+  "module_name":{
+    "message":"geographical zones"
+  },
+  "module_keywords":{
+    "message":"zones,countries,addresses,states,provinces"
+  },
+  "select_unittype":{
+    "message":"select a type of territorial unit"
+  },
+  "territorialunit_country_picker_title":{
+    "message":"select a country"
+  },
+  "territorialunit_unitparent_picker_title":{
+    "message":"select the parent territorial unit"
+  },
+  "country_select_addressfields":{
+    "message":"select the adress format"
+  },
+  "address_list":{
+    "message":"addresses"
+  },
+  "address_create":{
+    "message":"add an address"
+  },
+  "address_fields_select":{
+    "message":"select the adress format"
+  },
+  "address_owner_select":{
+    "message":"select the address owner"
+  }
+}

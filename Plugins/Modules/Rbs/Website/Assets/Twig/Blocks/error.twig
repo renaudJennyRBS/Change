@@ -1,0 +1,5 @@
+{% if parameters.codeHttp == 404 %}
+<h4>{{ i18n('m.rbs.website.front.error_404', ['ucf']) }}</h4>
+{% elseif parameters.codeHttp == 403 %}
+<h4>{{ i18n('m.rbs.website.front.error_403', ['ucf']) }}</h4>
+{% endif %}

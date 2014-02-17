@@ -1,0 +1,80 @@
+{
+  "facetgroup_indexid":{
+    "message":"index"
+  },
+  "facetgroup_facets":{
+    "message":"facets"
+  },
+  "fulltext_label_website":{
+    "message":"$WEBSITELABEL$ full-text index"
+  },
+  "fulltext_name":{
+    "message":"index name"
+  },
+  "fulltext_clientname":{
+    "message":"client configuration"
+  },
+  "fulltext_analysislcid":{
+    "message":"index language"
+  },
+  "fulltext_website":{
+    "message":"web site"
+  },
+  "fulltext":{
+    "message":"web search index"
+  },
+  "storeindex":{
+    "message":"products search index"
+  },
+  "facetgroup":{
+    "message":"facet group"
+  },
+  "facet":{
+    "message":"facet"
+  },
+  "storeindex_label_store":{
+    "message":"index of the store $WEBSITELABEL$"
+  },
+  "storeindex_store":{
+    "message":"web store"
+  },
+  "facet_fieldname":{
+    "message":"index facette ID"
+  },
+  "facet_facettype":{
+    "message":"facet type"
+  },
+  "facet_indexid":{
+    "message":"index"
+  },
+  "facet_multiplechoice":{
+    "message":"multi choice"
+  },
+  "facet_collectioncode":{
+    "message":"value list"
+  },
+  "facet_showemptyitem":{
+    "message":"see empty facets"
+  },
+  "facet_attributeid":{
+    "message":"attribute"
+  },
+  "facet_valuesextractorname":{
+    "message":"retrieving index value"
+  },
+  "facet_type_term":{
+    "message":"Set of values"
+  },
+  "facet_type_range":{
+    "message":"Range of values"
+  },
+  "facet_value_extractor_price":{
+    "message":"public price"
+  },
+  "facet_value_extractor_sku_threshold":{
+    "message":"stock level"
+  },
+  "facet_value_extractor_attribute":{
+    "message":"attribute"
+  }
+}

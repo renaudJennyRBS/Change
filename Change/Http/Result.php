@@ -20,7 +20,15 @@ class Result
 	protected $httpStatusCode;
 
 	/**
-	 * @param int $httpStatusCode
+	 * @param integer $httpStatusCode
+	 */
+	function __construct($httpStatusCode = \Zend\Http\Response::STATUS_CODE_200)
+	{
+		$this->httpStatusCode = $httpStatusCode;
+	}
+
+	/**
+	 * @param integer $httpStatusCode
 	 */
 	public function setHttpStatusCode($httpStatusCode)
 	{
@@ -28,7 +36,7 @@ class Result
 	}
 
 	/**
-	 * @return int
+	 * @return integer
 	 */
 	public function getHttpStatusCode()
 	{
@@ -48,7 +56,8 @@ class Result
 	 */
 	public function getHeaders()
 	{
-		if ($this->headers === null) {
+		if ($this->headers === null)
+		{
 
 			$this->headers = new Headers();
 		}
@@ -76,6 +85,18 @@ class Result
 		if ($location)
 		{
 			$this->getHeaders()->addHeaderLine('Location', $location);
+		}
+	}
+
+	/**
+	 * @param string|null $contentType
+	 */
+	public function setHeaderContentType($contentType)
+	{
+		$this->removeHeader('Content-Type');
+		if ($contentType)
+		{
+			$this->getHeaders()->addHeaderLine('Content-Type', $contentType);
 		}
 	}
 
@@ -141,6 +162,32 @@ class Result
 			return $header->getFieldValue();
 		}
 		return null;
+	}
+
+	/**
+	 * @param \DateTime|null
+	 */
+	public function setHeaderExpires($expires)
+	{
+		$this->removeHeader('Expires');
+		if ($expires)
+		{
+			$header = new \Zend\Http\Header\Expires();
+			$header->setDate($expires);
+			$this->getHeaders()->addHeader($header);
+		}
+	}
+
+	/**
+	 * @param string|null
+	 */
+	public function setHeaderCacheControl($cacheControl)
+	{
+		$this->removeHeader('Cache-Control');
+		if ($cacheControl)
+		{
+			$this->getHeaders()->addHeaderLine('Cache-Control', $cacheControl);
+		}
 	}
 
 	/**

@@ -1,8 +1,6 @@
 <?php
 namespace ChangeTests\Change\Http;
 
-use Change\Http\Event;
-
 class EventTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	/**
@@ -34,31 +32,30 @@ class EventTest extends \ChangeTests\Change\TestAssets\TestCase
 	 * @param \Change\Http\Event $event
 	 * @return \Change\Http\Event
 	 */
+	public function testApplication($event)
+	{
+		$this->assertNull($event->getApplication());
+		$event->setParam('application', $this->getApplication());
+		$this->assertSame($this->getApplication(), $event->getApplication());
+		return $event;
+	}
+
+
+	/**
+	 * @depends testApplication
+	 * @param \Change\Http\Event $event
+	 * @return \Change\Http\Event
+	 */
 	public function testApplicationServices($event)
 	{
 		$this->assertNull($event->getApplicationServices());
-		$as = $this->getApplicationServices();
-		$event->setApplicationServices($as);
-		$this->assertSame($as, $event->getApplicationServices());
+		$event->setParams($this->getDefaultEventArguments());
+		$this->assertSame($this->getApplicationServices(), $event->getApplicationServices());
 		return $event;
 	}
 
 	/**
 	 * @depends testApplicationServices
-	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Event
-	 */
-	public function testDocumentServices($event)
-	{
-		$this->assertNull($event->getDocumentServices());
-		$ds = $this->getDocumentServices();
-		$event->setDocumentServices($ds);
-		$this->assertSame($ds, $event->getDocumentServices());
-		return $event;
-	}
-
-	/**
-	 * @depends testDocumentServices
 	 * @param \Change\Http\Event $event
 	 * @return \Change\Http\Event
 	 */

@@ -35,13 +35,13 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$m2 = $compiler->loadDocument('Change', 'Test', 'TestTypeExt', $definitionPath);
 		
 		
-		$definitionPath = __DIR__ . '/TestAssets/TestTypeInj.xml';
-		$m3 = $compiler->loadDocument('Change', 'Test', 'TestTypeInj', $definitionPath);
+		$definitionPath = __DIR__ . '/TestAssets/TestTypeRepl.xml';
+		$m3 = $compiler->loadDocument('Change', 'Test', 'TestTypeRepl', $definitionPath);
 		
 		$this->assertCount(3, $compiler->getModels());
 		$this->assertCount(0, $compiler->getModelsByLevel(0));
 
-		$userModel = new \Change\Documents\Generators\Model('Change', 'Users', 'User');
+		$userModel = new \Change\Documents\Generators\Model('Rbs', 'User', 'User');
 		$compiler->addModel($userModel);
 		
 		$compiler->buildTree();

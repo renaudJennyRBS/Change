@@ -1,12 +1,9 @@
 {
 	"Change":{
-		"Application":{
-			"php-cli-path":"/usr/bin/php"
-		},
 		"Db":{
 			"use": "sqlite",
 			"sqlite":{
-				"database":"<current_dir>/ChangeTests/UnitTestWorkspace/App/TestSQLite.db",
+				"database":"ChangeTests/UnitTestWorkspace/App/TestSQLite.db",
 				"longTransaction":5
 			}
 		}

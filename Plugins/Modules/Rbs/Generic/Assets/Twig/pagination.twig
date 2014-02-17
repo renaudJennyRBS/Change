@@ -1,0 +1,29 @@
+{% if pageCount > 1 %}
+	{% set paramName = 'pageNumber-' ~ blockId %}
+	<ul class="pagination">
+		{% if pageNumber > 1 %}
+			<li><a href="{{ currentURL({(paramName): null}) }}" title="{{ i18nAttr('m.rbs.generic.front.first_page', ['ucf']) }}">«</a></li>
+			<li><a href="{{ currentURL({(paramName): (pageNumber > 2) ? (pageNumber-1) : null}) }}" title="{{ i18nAttr('m.rbs.generic.front.previous_page', ['ucf']) }}">‹</a></li>
+		{% else %}
+			<li class="disabled"><span>«</span></li>
+			<li class="disabled"><span>‹</span></li>
+		{% endif %}
+		{% if pageNumber > 4 %}<li><span>...</span></li>{% endif %}
+		{% for i in ((pageNumber > 3) ? (pageNumber-3) : 1)..((pageCount-pageNumber > 3) ? (pageNumber+3) : pageCount) %}
+			{% if i == pageNumber %}
+				<li class="active"><span>{{ i }}</span></li>
+			{% else %}
+				<li><a href="{{ currentURL({(paramName): (i > 1) ? i : null}) }}">{{ i }}</a></li>
+			{% endif %}
+		{% endfor %}
+		{% if pageCount-pageNumber > 4 %}<li><span>...</span></li>{% endif %}
+		{% if pageNumber < pageCount %}
+			<li><a href="{{ currentURL({(paramName): pageNumber+1}) }}" title="{{ i18nAttr('m.rbs.generic.front.next_page', ['ucf']) }}">›</a></li>
+			<li><a href="{{ currentURL({(paramName): pageCount}) }}" title="{{ i18nAttr('m.rbs.generic.front.last_page', ['ucf']) }}">»</a></li>
+		{% else %}
+			<li class="disabled"><span>›</span></li>
+			<li class="disabled"><span>»</span></li>
+		{% endif %}
+		<li class="page-count"><span>{{ i18n('m.rbs.generic.front.page_x_of_y', ['ucf'], {pageNumber: pageNumber, pageCount: pageCount}) }}</span></li>
+	</ul>
+{% endif %}

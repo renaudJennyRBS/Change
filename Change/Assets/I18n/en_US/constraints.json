@@ -1,0 +1,128 @@
+{
+  "isinvalidfield":{
+    "message":"this field is invalid: "
+  },
+  "isempty":{
+    "message":"This value is mandatory and cannot be empty."
+  },
+  "notbetweendocumentarray":{
+    "message":"this field is not valid: count =' $COUNT$ ' min occurs =' $MINOCCURS$ ', max occurs =' $MAXOCCURS$ '"
+  },
+  "maxoccurs":{
+    "message":"this field must contain at most $MAXOCCURS$ items"
+  },
+  "minoccurs":{
+    "message":"This field must contain at least $MAXOCCURS$ items"
+  },
+  "emailaddressinvalid":{
+    "message":"This field must contain a valid email address."
+  },
+  "emailsaddressinvalid":{
+    "message":"this field contains invalid email addresses (%value%)."
+  },
+  "emailaddressinvalidformat":{
+    "message":"this field must contain a valid email address."
+  },
+  "emailaddressinvalidhostname":{
+    "message":"the field \"$FIELD$\" must contain a valid e-mail address ('%hostname%' is not a valid hostname for e-mail '%value%')."
+  },
+  "emailaddressinvalidmxrecord":{
+    "message":"the field \"$FIELD$\" must contain a valid e-mail address\n\t\t('%hostname%' does not appear to have a valid MX record for the e-mail address '%value%')."
+  },
+  "emailaddressinvalidsegment":{
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%hostname%' is not in a routable network segment. The e-mail address '%value%' should not be resolved from public network)."
+  },
+  "emailaddressdotatom":{
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' can not be matched against dot-atom format)."
+  },
+  "emailaddressquotedstring":{
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' does not match the quoted-string format)."
+  },
+  "emailaddressinvalidlocalpart":{
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%localPart%' is no valid local part for e-mail address '%value%')."
+  },
+  "emailaddresslengthexceeded":{
+    "message":"the field \"$FIELD$\" must be a valid e-mail address\n\t\t('%value%' exceeds allowed size)."
+  },
+  "stringlengthtoolong":{
+    "message":"this field must have a maximum size of %max% characters."
+  },
+  "stringlengthinvalid":{
+    "message":"this field must be of type string"
+  },
+  "stringlengthtooshort":{
+    "message":"this field must have a minimum size of %min% characters."
+  },
+  "notunique":{
+    "message":"the value of field \"$FIELD$\" must be unique."
+  },
+  "notmatch":{
+    "message":"this field must have the following format: %pattern%."
+  },
+  "notgreaterthan":{
+    "message":"this field must have a minimum value of %min%."
+  },
+  "notlessthan":{
+    "message":"this field must have a maximum value of %max%."
+  },
+  "notbetween":{
+    "message":"this field must have a value between %min% et %max%."
+  },
+  "notbetweenstrict":{
+    "message":"this field must have a value strictly between %min% et %max%."
+  },
+  "hostnamecannotdecodepunycode":{
+    "message":"'%value%' appears to be a DNS hostname but the given punycode notation cannot be decoded"
+  },
+  "hostnameinvalid":{
+    "message":"Invalid type. String expected"
+  },
+  "hostnamedashcharacter":{
+    "message":"'%value%' appears to be a DNS hostname but contains a dash in an invalid position"
+  },
+  "hostnameinvalidhostname":{
+    "message":"'%value%' does not match the expected structure for a DNS hostname"
+  },
+  "hostnameinvalidhostnameschema":{
+    "message":"'%value%' appears to be a DNS hostname but cannot match against hostname schema for TLD '%tld%'"
+  },
+  "hostnameinvalidlocalname":{
+    "message":"'%value%' does not appear to be a valid local network name"
+  },
+  "hostnameinvaliduri":{
+    "message":"'%value%' does not appear to be a valid URI hostname"
+  },
+  "hostnameipaddressnotallowed":{
+    "message":"'%value%' appears to be an IP address, but IP addresses are not allowed"
+  },
+  "hostnamelocalnamenotallowed":{
+    "message":"'%value%' appears to be a local network name but local network names are not allowed"
+  },
+  "hostnameundecipherabletld":{
+    "message":"'%value%' appears to be a DNS hostname but cannot extract TLD part"
+  },
+  "hostnameunknowntld":{
+    "message":"'%value%' appears to be a DNS hostname but cannot match TLD against known list"
+  },
+  "notdigits":{
+    "message":"'%value%' must contain only digits"
+  },
+  "domaininvalid":{
+    "message":"'%value%' is not a valid domain name."
+  },
+  "urlinvalid":{
+    "message":"'%value%' is not a valid URL."
+  },
+  "notinlist":{
+    "message":"'%value%' is not an allowed value."
+  },
+  "storageuriinvalid":{
+    "message":"'%value%' must be a valid storage URI."
+  },
+  "publicationStatusInvalid":{
+    "message":"'%value%' must be a valid publication status."
+  },
+  "newpublicationStatusInvalid":{
+    "message":"'%value%' is not  valid for new document."
+  }
+}

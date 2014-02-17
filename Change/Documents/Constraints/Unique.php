@@ -6,161 +6,143 @@ namespace Change\Documents\Constraints;
  */
 class Unique extends \Zend\Validator\AbstractValidator
 {
-	const NOTUNIQUE = 'notUnique';
-	
-	/**
-	 * @var string
-	 */
-	protected $modelName;
+	const NOT_UNIQUE = 'notUnique';
 
 	/**
-	 * @var string
+	 * @var \Change\Documents\AbstractDocument
 	 */
-	protected $propertyName;
+	protected $document;
 
 	/**
-	 * @var \Change\Application\ApplicationServices
+	 * @var \Change\Documents\Property
 	 */
-	protected $applicationServices;
+	protected $property;
 
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\Documents\Events\Event
 	 */
-	protected $documentServices;
+	protected $documentEvent;
 
-	/**
-	 * @var integer
-	 */
-	protected $documentId = 0;
-	
  	/**
 	 * @param array $params <modelName => modelName, propertyName => propertyName, [documentId => documentId]>
 	 */   
 	public function __construct($params = array())
 	{
-		$this->messageTemplates = array(self::NOTUNIQUE => self::NOTUNIQUE);
-		$this->messageVariables = array('propertyName' => 'propertyName');
+		$this->messageTemplates = array(self::NOT_UNIQUE => self::NOT_UNIQUE);
 		parent::__construct($params);
 	}
-	
+
 	/**
-	 * @return string
+	 * @param \Change\Documents\AbstractDocument $document
 	 */
-	public function getModelName()
+	public function setDocument($document)
 	{
-		return $this->modelName;
+		$this->document = $document;
 	}
 
 	/**
-	 * @param string $modelName
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\AbstractDocument
 	 */
-	public function setModelName($modelName)
+	public function getDocument()
 	{
-		$this->modelName = $modelName;
+		if ($this->document === null)
+		{
+			throw new \RuntimeException('Document not set.', 999999);
+		}
+		return $this->document;
 	}
 
 	/**
-	 * @return string
+	 * @param \Change\Documents\Property $property
 	 */
-	public function getPropertyName()
+	public function setProperty($property)
 	{
-		return $this->propertyName;
+		$this->property = $property;
 	}
 
 	/**
-	 * @param string $propertyName
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\Property
 	 */
-	public function setPropertyName($propertyName)
+	public function getProperty()
 	{
-		$this->propertyName = $propertyName;
+		if ($this->property === null)
+		{
+			throw new \RuntimeException('Property not set.', 999999);
+		}
+		return $this->property;
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $documentEvent
+	 * @return $this
+	 */
+	public function setDocumentEvent($documentEvent)
+	{
+		$this->documentEvent = $documentEvent;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\Events\Event
+	 */
+	public function getDocumentEvent()
+	{
+		if ($this->documentEvent === null)
+		{
+			throw new \RuntimeException('DocumentEvent not set.', 999999);
+		}
+		return $this->documentEvent;
 	}
 
 	/**
 	 * @return integer
 	 */
-	public function getDocumentId()
+	protected function getDocumentId()
 	{
-		return $this->documentId;
-	}
-
-	/**
-	 * @param integer $documentId
-	 */
-	public function setDocumentId($documentId)
-	{
-		$this->documentId = $documentId;
-	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices($applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices($documentServices)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
+		return $this->getDocument()->getId();
 	}
 
 	/**
 	 * @param  mixed $value
+	 * @throws \LogicException
 	 * @return boolean
 	 */
 	public function isValid($value)
 	{
-		$modelName = $this->getModelName();
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName($modelName);
-		if ($model === null)
+		$model = $this->getDocument()->getDocumentModel();
+		if ($model->isStateless())
 		{
-			throw new \InvalidArgumentException('Invalid document model name: ' . $modelName, 52003);
+			throw new \LogicException('Invalid unique constraint on stateless model:' . $model, 999999);
 		}
-		
-		$property = $model->getProperty($this->getPropertyName());
-		if ($property === null)
+		$property = $this->getProperty();
+		if ($property->getStateless())
 		{
-			throw new \InvalidArgumentException('Invalid property name: ' . $modelName . '::' . $this->getPropertyName(), 52004);
-		}	
+			throw new \LogicException('Invalid unique constraint on stateless property:' . $model. '::' .$property, 999999);
+		}
 
-		$qb = $this->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+		$applicationServices = $this->getDocumentEvent()->getApplicationServices();
+		$qb = $applicationServices->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		
 		$query = $qb->select($fb->getDocumentColumn('id'))
 			->from($property->getLocalized() ? $fb->getDocumentI18nTable($model->getRootName()) : $fb->getDocumentTable($model->getRootName()))
 			->where(
 				$fb->logicAnd(
-					$fb->neq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-					$fb->eq($fb->getDocumentColumn($property->getName()), $fb->parameter('value', $qb))
+					$fb->neq($fb->getDocumentColumn('id'), $fb->integerParameter('id')),
+					$fb->eq($fb->getDocumentColumn($property->getName()), $fb->parameter('value'))
 				)
 			)->query();
-		
+
 		$query->setMaxResults(1);
 		$query->bindParameter('id', $this->getDocumentId());
 		$query->bindParameter('value', $value);
-		$rows = $query->getResults();
-		if (count($rows))
+		$row = $query->getFirstResult();
+		if ($row)
 		{
-			$this->error(self::NOTUNIQUE);
+			$this->error(self::NOT_UNIQUE);
 			return false;
 		}
 		return true;

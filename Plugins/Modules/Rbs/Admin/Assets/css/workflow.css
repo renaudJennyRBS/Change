@@ -1,0 +1,299 @@
+[rbs-document-workflow-actions] {
+	padding: 10px;
+	position: relative;
+}
+
+
+rbs-document-list [rbs-document-workflow-actions] {
+	background: #F5F5F5;
+	border: 5px solid #bbbbbb;
+	border-radius: 5px;
+}
+
+[rbs-document-workflow-actions] h3 {
+	color: #bbbbbb;
+	font-size: 20pt;
+	line-height: 20pt;
+	margin-top: 0;
+	font-weight: normal;
+}
+
+[rbs-document-workflow-actions] form {
+	margin: 0;
+}
+
+[rbs-document-workflow-actions] form .control-group:last-child {
+	margin-bottom: 0;
+}
+
+.bullet-correction {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	line-height: 14px;
+	border: 2px solid rgba(128, 0, 0, 0.75);
+	border-radius: 10px;
+	color: rgb(128,0,0);
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.bullet-status {
+	display: inline-block;
+	position: relative;
+	width: 18px;
+	height: 18px;
+	border-radius: 2px;
+	-webkit-transition: background 0.2s ease;
+	-moz-transition: background 0.2s ease;
+	-ms-transition: background 0.2s ease;
+	-o-transition: background 0.2s ease;
+	transition: background 0.2s ease;
+	cursor: pointer;
+	top: 2px;
+	background: white;
+	z-index: 1;
+}
+
+.bullet-status .overlay {
+	position: absolute;
+
+	color: black;
+	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+	font-size: 9px;
+	font-weight: bold;
+	padding: 0;
+	line-height: 9px;
+
+	top: 6px;
+	left: 6px;
+	height: 13px;
+	width: 13px;
+
+	background: #FFFFFF;
+	border: 2px solid rgba(0, 0, 0, 0.75);
+	border-radius: 10px;
+	opacity: 0.85;
+	text-align: center;
+}
+
+.bullet-status.small .overlay {
+	font-size: 8px;
+	line-height: 7px;
+	top: 2px;
+	left: 4px;
+	height: 11px;
+	width: 11px;
+}
+
+
+.bullet-status .overlay.correction {
+	border-color: rgba(128, 0, 0, 0.75);
+	color: rgb(128,0,0);
+}
+
+.bullet-status.small {
+	width: 12px;
+	height: 12px;
+	border-radius: 7px;
+	position: relative;
+	top: 1px;
+}
+
+.bullet-status.PUBLISHABLE {
+	border-radius: 10px;
+	background: #A2C200;
+}
+
+.bullet-status.VALIDCONTENT {
+	background: #B1EA37;
+}
+
+.bullet-status.DRAFT {
+	border: 4px solid #BBBBBB;
+}
+
+.bullet-status.UNPUBLISHABLE {
+	background: #ff001a;
+}
+
+.bullet-status.FROZEN {
+	border-radius: 10px;
+	background: #33BBFF;
+}
+
+.bullet-status.FILED {
+	border-radius: 10px;
+	background: #a277c7;
+}
+
+.bullet-status.VALIDATION {
+	background: #efa700;
+}
+
+rbs-document-list .document-list tbody td.workflow {
+	padding: 0;
+}
+
+rbs-document-list .document-list tbody td.workflow > .inner {
+	position: relative;
+	margin: 0 -10px;
+}
+
+rbs-document-list td.workflow .workflow-indicator {
+	position: absolute;
+	top: -24px;
+	left: 59px;
+	width: 6px;
+	height: 32px;
+	background: #bbbdcc;/*#eef0ff;*/
+}
+
+
+/* Colors for each status */
+
+rbs-document-list [rbs-document-workflow-actions].PUBLISHABLE,
+rbs-document-list [rbs-document-workflow-actions].VALIDCONTENT {
+	background: #F0F8DD;
+	border-color: #A2C200;
+}
+rbs-document-list td.workflow .workflow-indicator.PUBLISHABLE,
+rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
+	background: #A2C200;
+}
+
+[rbs-document-workflow-actions].PUBLISHABLE h3,
+[rbs-document-workflow-actions].VALIDCONTENT h3 {
+	color: #A2C200;
+}
+
+
+rbs-document-list [rbs-document-workflow-actions].VALIDATION {
+	background: #fff8f0;
+	border-color: #EFA700;
+}
+rbs-document-list td.workflow .workflow-indicator.VALIDATION {
+	background: #EFA700;
+}
+[rbs-document-workflow-actions].VALIDATION h3 {
+	color: #EFA700;
+}
+
+
+rbs-document-list [rbs-document-workflow-actions].UNPUBLISHABLE {
+	background: #faf0f0;
+	border-color: #CC8888;
+}
+rbs-document-list td.workflow .workflow-indicator.UNPUBLISHABLE {
+	background: #CC8888;
+}
+[rbs-document-workflow-actions].UNPUBLISHABLE h3 {
+	color: #EFA700;
+}
+
+
+rbs-document-list [rbs-document-workflow-actions].FROZEN {
+	background: #F0F8FF;
+	border-color: #33BBFF;
+}
+rbs-document-list td.workflow .workflow-indicator.FROZEN {
+	background: #33BBFF;
+}
+[rbs-document-workflow-actions].FROZEN h3 {
+	color: #33BBFF;
+}
+
+.workflow-help {
+	border-top: 4px dotted rgba(0,0,0,0.1);
+	margin: 10px -10px 0 -10px;
+	padding: 10px;
+}
+
+.workflow-help .step .block,
+.workflow-help .arrow {
+	display: block;
+	width: 200px;
+	*zoom: 1;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.workflow-help .step:after,
+.workflow-help .step:before {
+	display: table;
+	line-height: 0;
+	content: "";
+}
+.workflow-help .step:after {
+	clear: both;
+}
+
+.workflow-help .step .block {
+	border: 4px solid rgba(0,0,0,0.2);
+	background: rgba(255,255,255,0.9);
+	border-radius: 4px 4px 4px 4px;
+	padding: 5px;
+	margin: 0;
+	float: left;
+}
+
+.workflow-help .step .explain {
+	margin-left: 210px;
+	color: rgba(0, 0, 0, 0.6);
+	font-style: italic;
+	line-height: 18px;
+}
+
+.workflow-help .step.current .block {
+	border-color: #0088CC;
+}
+.workflow-help .step.current .explain {
+	color: #0088CC;
+}
+
+.workflow-help .arrow {
+	color: rgba(0,0,0,0.2);
+	font-size: 3em;
+	padding: 0 4px;
+	text-align: center;
+}
+
+.workflow-help .arrow > i + i {
+	color: rgba(0,0,0,0.1);
+}
+
+.workflow-help .step .block h5 {
+	margin: 0;
+}
+.workflow-help .step .block h5 .bullet-status {
+	vertical-align: top;
+	margin-right: 4px;
+}
+
+.workflow-help .step .block .action {
+	font-size: 90%;
+	display: block;
+	margin-top: 5px;
+	padding: 3px 6px;
+	border-radius: 4px;
+	background: #eeeeee;
+}
+
+.workflow-help .step .block .action.accept {
+	color: green;
+}
+.workflow-help .step .block .action.reject {
+	color: darkred;
+}
+
+
+[rbs-document-workflow-actions] .advanced-mode {
+	margin: 10px -10px -10px -10px;
+	padding: 0px;
+	background: #FFF0F0;
+}
+
+[rbs-document-workflow-actions] .advanced-mode .inner {
+	padding: 10px;
+}

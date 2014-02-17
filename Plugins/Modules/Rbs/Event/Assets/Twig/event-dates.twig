@@ -1,0 +1,17 @@
+{% if showTime %}
+	<span itemprop="startDate">{{ doc.date|transDateTime }}</span>
+	{% if doc.onOneMinute %}
+		<meta itemprop="endDate" content="{{ doc.endDate|transDateTime }}" />
+	{% else %}
+		<span class="divider"> - </span>
+		<span itemprop="endDate">{{ doc.endDate|transDateTime }}</span>
+	{% endif %}
+{% else %}
+	<span itemprop="startDate">{{ doc.date|transDate }}</span>
+	{% if doc.onOneDay %}
+		<meta itemprop="endDate" content="{{ doc.endDate|transDate }}" />
+	{% else %}
+		<span class="divider"> - </span>
+		<span itemprop="endDate">{{ doc.endDate|transDate }}</span>
+	{% endif %}
+{% endif %}

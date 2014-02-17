@@ -12,6 +12,7 @@
 		<property name="pDa" type="Date" />
 		<property name="pDaTi" type="DateTime" />
 		<property name="pText" type="LongString" />
+		<property name="pStorUri" type="StorageUri" />
 		<property name="pJson" type="JSON" />
 		<property name="pXml" type="XML" />
 		<property name="pRt" type="RichText" />
@@ -31,6 +32,7 @@
 		<property name="pLDa" type="Date"  localized="true" />
 		<property name="pLDaTi" type="DateTime"  localized="true" />
 		<property name="pLText" type="LongString"  localized="true" />
+		<property name="pLStorUri" type="StorageUri"  localized="true" />
 		<property name="pLJson" type="JSON"  localized="true" />
 		<property name="pLXml" type="XML"  localized="true" />
 		<property name="pLRt" type="RichText"  localized="true" />

@@ -9,7 +9,6 @@ use Change\Presentation\Blocks\Information;
  */
 class BlockLink extends Link
 {
-
 	/**
 	 * @var Information
 	 */
@@ -32,6 +31,9 @@ class BlockLink extends Link
 		parent::__construct($urlManager, $this->buildPathInfo());
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function buildPathInfo()
 	{
 		$path = array_merge(array('blocks'), explode('_', $this->information->getName()));

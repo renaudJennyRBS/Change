@@ -49,7 +49,6 @@ class StringTest extends \PHPUnit_Framework_TestCase
 
 		$string = \Change\Stdlib\String::random(42);
 		$this->assertEquals(42, \Change\Stdlib\String::length($string));
-
 	}
 
 	public function testIsEmpty()
@@ -105,5 +104,38 @@ class StringTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue(\Change\Stdlib\String::endsWith('on a testé', 'on a testé'));
 		$this->assertFalse(\Change\Stdlib\String::endsWith('on a testé', 'on a testé 123'));
 		$this->assertFalse(\Change\Stdlib\String::endsWith('on a testé', '123 on a testé'));
+	}
+
+	public function testGetSubstitutedString()
+	{
+		// The order of substitutions does not matter.
+		$stringToSubstitute = 'When {inventor} invented the telephone he had 3 missed calls from {missedCallsFrom}.';
+		$substitutions = ['missedCallsFrom' => 'Chuck Norris', 'inventor' => 'Alexander Bell'];
+		$substitutedString = \Change\Stdlib\String::getSubstitutedString($stringToSubstitute, $substitutions);
+		$this->assertEquals('When Alexander Bell invented the telephone he had 3 missed calls from Chuck Norris.', $substitutedString);
+
+		// Substitutions may contain dots and upper cased letters but must start with a lower case letter.
+		$stringToSubstitute = 'Fear of {first.fear.object} is arachnophobia, fear of {secondFearObject} is claustrophobia, fear of {Chuck.Norris} is just called Logic.';
+		$substitutions = ['first.fear.object' => 'spiders', 'secondFearObject' => 'tight spaces', 'Chuck.Norris' => 'Chuck Norris'];
+		$substitutedString = \Change\Stdlib\String::getSubstitutedString($stringToSubstitute, $substitutions);
+		$this->assertEquals('Fear of spiders is arachnophobia, fear of tight spaces is claustrophobia, fear of {Chuck.Norris} is just called Logic.', $substitutedString);
+
+		// Substitutions are case sensitive and unknown substitutions are replaced by empty string.
+		$stringToSubstitute = '{chuck.Norris} has already been to {where}; that\'s why there are no signs of {life}.';
+		$substitutions = ['wHeRe' => 'Mars', 'chuck.Norris' => 'Chuck Norris'];
+		$substitutedString = \Change\Stdlib\String::getSubstitutedString($stringToSubstitute, $substitutions);
+		$this->assertEquals('Chuck Norris has already been to ; that\'s why there are no signs of .', $substitutedString);
+
+		// Replacement of multiple occurrences.
+		$stringToSubstitute = '{who} destroyed {what}, because {who} only recognizes the element of surprise.';
+		$substitutions = ['who' => 'Chuck Norris', 'what' => 'the periodic table'];
+		$substitutedString = \Change\Stdlib\String::getSubstitutedString($stringToSubstitute, $substitutions);
+		$this->assertEquals('Chuck Norris destroyed the periodic table, because Chuck Norris only recognizes the element of surprise.', $substitutedString);
+
+		// Specific regexp...
+		$stringToSubstitute = '%who% once had a near-%Chuck% experience.';
+		$substitutions = ['Chuck' => 'Chuck Norris', 'who' => 'Death'];
+		$substitutedString = \Change\Stdlib\String::getSubstitutedString($stringToSubstitute, $substitutions, '/%([A-Za-z][A-Za-z0-9.]*)%/');
+		$this->assertEquals('Death once had a near-Chuck Norris experience.', $substitutedString);
 	}
 }

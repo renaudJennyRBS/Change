@@ -1,0 +1,34 @@
+<form name="form" data-ng-submit="submit()" class="form-horizontal" novalidate>
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+			label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'title'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'currencyCode'), ['ucf']) }}">
+			<select class="form-control" ng-model="document.currencyCode"
+				rbs-items-from-collection="Rbs_Price_Collection_Iso4217">
+			</select>
+		</rbs-field>
+
+		<rbs-field-picker-multiple property="taxes" required="false" label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'taxes'), ['ucf']) }}"
+			accepted-model="Rbs_Price_Tax"
+			selector-title="{{ i18nAttr('m.rbs.price.admin.billingarea_taxes_picker_title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

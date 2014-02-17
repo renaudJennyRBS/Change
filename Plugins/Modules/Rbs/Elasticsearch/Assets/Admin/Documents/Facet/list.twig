@@ -1,0 +1,23 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+	<div rbs-main-column>
+
+		<rbs-page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_list', ['ucf']) }}"></rbs-page-header>
+
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Elasticsearch_Facet" filter="filter" ></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			{{ createLinks('Rbs_Elasticsearch_Facet') }}
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsElasticsearchFacet" model="Rbs_Elasticsearch_Facet" filter-collection="filter" correction="true">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="fieldName"></rbs-column>
+			<rbs-column name="facetType"></rbs-column>
+		</rbs-document-list>
+	</div>
+</div>

@@ -1,0 +1,30 @@
+{
+	"total_result_count":{
+		"message":"nombre total de résultats"
+	},
+	"ignore_facet":{
+		"message":"ignorer"
+	},
+	"facets_filter":{
+		"message":"filtrer"
+	},
+	"terms":{
+		"message":"termes"
+	},
+	"type":{
+		"message":"type"
+	},
+	"types":{
+		"message":"types"
+	},
+	"search":{
+		"message":"rechercher"
+	},
+	"score":{
+		"message":"pertinence"
+	},
+	"fragment_separator":{
+		"message":" [...] ",
+		"description":"Used to separate the different fragments of the result description."
+	}
+}

@@ -1,0 +1,10 @@
+{% set model = item.value.getDocumentModel() %}
+{% if item.value.getDocumentModelName() == 'Rbs_Media_Image' %}
+	<img src="{{ catalogMacros.attributeThumbnailURL(item.value) }}" alt="{{ item.value.alt }}" />
+{% elseif model.isPublishable() %}
+		<a href="{{ canonicalURL(item.value) }}">{% spaceless %}
+			{% if model.isLocalized() %}{{ item.value.currentLocalization.title }}{% else %}{{ item.value.title }}{% endif %}
+		{% endspaceless %}</a>
+{% elseif model.hasProperty('title') %}
+	{% if model.isLocalized() %}{{ item.value.currentLocalization.title }}{% else %}{{ item.value.title }}{% endif %}
+{% endif %}

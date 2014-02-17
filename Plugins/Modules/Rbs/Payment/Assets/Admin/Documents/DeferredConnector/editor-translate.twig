@@ -1,0 +1,15 @@
+<form name="form" ng-submit="submit()" novalidate="">
+	<rbs-field-text property="title" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'title'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field-rich-text property="description" required="false"
+		label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'description'), ['ucf']) }}">
+	</rbs-field-rich-text>
+
+	<rbs-field-rich-text property="description" required="false"
+		label="{{ i18nAttr(propertyKey('Rbs_Payment_DeferredConnector', 'instructions'), ['ucf']) }}">
+	</rbs-field-rich-text>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

@@ -1,0 +1,239 @@
+{
+	"/Rbs/Event/": {
+		"module": "Rbs_Event",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Event/News/",
+			"labelKey": "m.rbs.event.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Event/Category/": {
+		"model": "Rbs_Event_Category",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Category/list.twig",
+			"labelKey": "m.rbs.event.admin.category_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/:id": {
+		"model": "Rbs_Event_Category",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Category/form.twig",
+			"labelKey": "m.rbs.event.documents.category | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/:id/timeline": {
+		"model": "Rbs_Event_Category",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Event_Category",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/:id/translate/:LCID": {
+		"model": "Rbs_Event_Category",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Category/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Event_Category",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_Category",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/:id/urls": {
+		"model": "Rbs_Event_Category",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/:id/workflow": {
+		"model": "Rbs_Event_Category",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_Category",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Category/new": {
+		"model": "Rbs_Event_Category",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Category/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/": {
+		"model": "Rbs_Event_Event",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Event/list.twig",
+			"labelKey": "m.rbs.event.admin.event_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/:id": {
+		"model": "Rbs_Event_Event",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Event/form.twig",
+			"labelKey": "m.rbs.event.documents.event | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/:id/timeline": {
+		"model": "Rbs_Event_Event",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Event_Event",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/:id/translate/:LCID": {
+		"model": "Rbs_Event_Event",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Event/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Event_Event",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_Event",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/:id/urls": {
+		"model": "Rbs_Event_Event",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/:id/workflow": {
+		"model": "Rbs_Event_Event",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_Event",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/Event/new": {
+		"model": "Rbs_Event_Event",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/Event/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/": {
+		"model": "Rbs_Event_News",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/News/list.twig",
+			"labelKey": "m.rbs.event.admin.news_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/:id": {
+		"model": "Rbs_Event_News",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/News/form.twig",
+			"labelKey": "m.rbs.event.documents.news | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/:id/timeline": {
+		"model": "Rbs_Event_News",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Event_News",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/:id/translate/:LCID": {
+		"model": "Rbs_Event_News",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/News/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Event_News",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_News",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/:id/urls": {
+		"model": "Rbs_Event_News",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/:id/workflow": {
+		"model": "Rbs_Event_News",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Event_News",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Event/News/new": {
+		"model": "Rbs_Event_News",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Event/News/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

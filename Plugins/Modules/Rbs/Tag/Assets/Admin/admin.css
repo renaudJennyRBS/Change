@@ -1,0 +1,226 @@
+button.tag-menu {
+	display: block;
+	border: 0 solid #999999;
+	border-left: 10px solid;
+	color: #999999;
+	background: #F0F0F0;
+	margin-bottom: 5px;
+	width: 100%;
+	text-align: left;
+	padding: 0;
+}
+
+a.tag.tag-color-setter {
+	cursor: pointer;
+	text-decoration: none;
+	margin-left: 5px;
+}
+a.tag.tag-color-setter:first-child {
+	margin-left: 0;
+}
+a.tag.tag-color-setter i:before {
+	cursor: pointer;
+}
+a:link > i:before {
+	cursor: pointer;
+}
+
+span.tag {
+	display: inline-block;
+	border: 1px solid rgba(0,0,0,0.2);
+	background: white;
+	padding: 3px 6px;
+	line-height: 1.1em;
+	margin: 0 2px 2px 0;
+	font-size: 80%;
+	font-weight: bold;
+	border-radius: 2px;
+	text-transform: lowercase;
+	color: white;
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.75);
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12);
+}
+
+span.tag.new {
+	background: white;
+	color: rgba(0,0,0,0.5);
+	text-shadow: none;
+}
+
+button.tag span {
+	padding: 1px 5px;
+}
+
+button.tag span.text {
+	text-align: left;
+}
+
+button.tag span.count {
+	float: right;
+	text-align: right;
+}
+
+span.tag { /* gray */
+	background: #A9A9A9;
+}
+.tag-color-setter { /* gray */
+	color: #A9A9A9;
+}
+button.tag {
+	border-color: #A9A9A9;
+	color: #A9A9A9;
+}
+
+span.tag.red {
+	background: #fb645c;
+}
+.tag-color-setter.red {
+	color: #fb645c;
+}
+button.tag.red {
+	border-color: #fb645c;
+	color: #fb645c;
+}
+
+span.tag.blue {
+	background: #5aa3fe;
+}
+.tag-color-setter.blue {
+	color: #5aa3fe;
+}
+button.tag.blue {
+	border-color: #5aa3fe;
+	color: #5aa3fe;
+}
+
+span.tag.green {
+	background: #a4c644;
+}
+.tag-color-setter.green {
+	color: #a4c644;
+}
+button.tag.green {
+	border-color: #a4c644;
+	color: #a4c644;
+}
+
+span.tag.orange {
+	background: #f7aa47;
+}
+.tag-color-setter.orange {
+	color: #f7aa47;
+}
+button.tag.orange {
+	border-color: #f7aa47;
+	color: #f7aa47;
+}
+
+span.tag.purple {
+	background: #c08dd8;
+}
+.tag-color-setter.purple {
+	color: #c08dd8;
+}
+button.tag.purple {
+	border-color: #c08dd8;
+	color: #c08dd8;
+}
+
+span.tag.yellow {
+	background: #efdb47;
+}
+.tag-color-setter.yellow {
+	color: #efdb47;
+}
+button.tag.yellow {
+	border-color: #efdb47;
+	color: #efdb47;
+}
+
+
+/* Tag selector */
+.tag-selector {
+	color: #444;
+	min-height: 26px;
+}
+
+.tag-selector input[type=text],
+.tag-selector .tag {
+	margin: 2px;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.tag a.tag-delete:link,
+.tag a.tag-delete:visited,
+.tag a.tag-delete:hover {
+	color: inherit;
+	text-decoration: none;
+	margin-left: 4px;
+}
+
+.tag-selector input[type=text] {
+	border: 0;
+	background: white;
+	height: 20px;
+
+	margin: 2px 10px 2px 5px;
+	background: none;
+	width: 1px;
+	outline: none;
+	padding: 1px 0;
+	min-width: 2px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+.tag-selector .all-tags {
+	margin-top: 10px;
+	padding-top: 4px;
+	border-top: 1px #DDDDDD dashed;
+}
+
+.tag-selector .all-tags h6 {
+	margin: 5px;
+}
+
+#rbsTagSelectorAutocompleteList {
+	padding: 7px;
+	background: #444444;
+	color: white;
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	border-radius: 4px;
+	border: 1px solid white;
+}
+
+
+
+#rbsTagSelectorAutocompleteList:after {
+	border-bottom: 6px solid #444444;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 10px;
+	position: absolute;
+	top: -6px;
+}
+
+#rbsTagSelectorAutocompleteList:before {
+	border-bottom: 7px solid white;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 9px;
+	position: absolute;
+	top: -7px;
+}
+
+
+
+
+#rbsTagSelectorAutocompleteList a:link,
+#rbsTagSelectorAutocompleteList a:visited {
+	color: white;
+}

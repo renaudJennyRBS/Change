@@ -1,0 +1,38 @@
+{
+	"message_list":{
+		"message":"Timeline des messages"
+	},
+	"leave_a_message_helper":{
+		"message":"<h4>Mentionner des utilisateurs<\/h4>\n\tUtilisez le caractère <strong>@<\/strong> pour désigner une personne\n\tou <strong>@+<\/strong> pour désigner un groupe de personnes.<br\/>Les personnes ainsi mentionnées seront averties du nouveau message."
+	},
+	"leave_a_message_submit":{
+		"message":"enregistrer"
+	},
+	"leave_a_message_update":{
+		"message":"mettre à jour"
+	},
+	"edited_message":{
+		"message":"message modifié le : "
+	},
+	"edit_message":{
+		"message":"éditer"
+	},
+	"remove_message":{
+		"message":"supprimer"
+	},
+	"users":{
+		"message":"utilisateurs"
+	},
+	"groups":{
+		"message":"groupe d'utilisateurs"
+	},
+	"context_unavailable":{
+		"message":"Le document n'est plus disponible"
+	},
+	"notification_mention_message":{
+		"message":"un message de $AUTHORNAME$ concernant le document \"$DOCUMENTLABEL$\" vous mentionne"
+	},
+	"message_mail_subject":{
+		"message":"Un message vous mentionne"
+	}
+}

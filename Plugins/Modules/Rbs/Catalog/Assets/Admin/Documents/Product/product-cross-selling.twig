@@ -1,0 +1,46 @@
+<div class="row" ng-controller="Rbs_Catalog_Product_CrossSellingController">
+
+	<div rbs-aside-column>
+
+		<div class="rbs-aside-block">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="product"></rbs-document-preview>
+		</div>
+
+	</div>
+
+	<div rbs-main-column>
+
+		<p>
+			<a href="(= product | rbsURL =)" class="back-to-link">
+				{{ i18n('m.rbs.catalog.admin.product_back_to_product', ['ucf']) }}
+				<strong>(= product.label =)</strong>
+			</a>
+		</p>
+
+		<div class="page-header">
+			<h2>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}</h2>
+		</div>
+
+		<div class="add-elements-bar">
+			<a href="Rbs/Catalog/CrossSellingProductList/new?productId=(=product.id=)" ng-click="cascadeCreateCrossSellingProductList()">
+				{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crosssellingproductlist_create', ['ucf']) }}
+			</a>
+		</div>
+
+		<p>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list_help') | raw }}</p>
+
+		<rbs-document-list data-dlid="DLRbsCatalogCrossSellingProductList" model="Rbs_Catalog_CrossSellingProductList"
+			activable="true" load-query="loadQuery">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-quick-actions>
+				<a href="(= doc | rbsURL:'productListItems' =)">{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.products') }}</a>
+				|| [action edit]
+				|| [action delete]
+			</rbs-quick-actions>
+			productListItems
+			<rbs-column name="crossSellingType"></rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

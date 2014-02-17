@@ -1,0 +1,15 @@
+<div data-ng-repeat="threshold in thresholds">
+	<small>
+		<a ng-show="$first || (threshold.l - thresholds[$index-1].l) > 1"
+			href="javascript:;" ng-click="createThreshold($index)"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.stock.admin.sku_threshold_add') }}</a>
+	</small>
+	<div class="form-inline">
+		<span ng-show="threshold.l < 1000000">{{ i18n('m.rbs.stock.admin.sku_threshold_less_or_equals') }}
+			<input type="number" class="form-control" ng-model="threshold.l" style="width: 80px;" ng-blur="sortThreshold()"/></span>
+		<span ng-show="threshold.l >= 1000000">{{ i18n(propertyKey('Rbs_Stock_Sku', 'unlimitedInventory'), ['ucf']) }}</span>
+		, {{ i18n('m.rbs.stock.admin.sku_threshold_use') }} <select class="form-control" ng-model="threshold.c" rbs-items-from-collection="Rbs_Stock_Collection_Threshold"></select>
+		<small>
+			<a href="javascript:;" ng-click="removeThreshold($index)" ng-hide="$last"><i class="icon-minus-sign"> </i>{{ i18n('m.rbs.stock.admin.sku_threshold_remove') }}</a>
+		</small>
+	</div>
+</div>

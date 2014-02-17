@@ -1,15 +1,13 @@
 <?php
 namespace Change\Db\Query\Clauses;
 
-use Change\Db\Query\Clauses\AbstractClause;
-
 /**
  * @name \Change\Db\Query\Clauses\WhereClause
  */
 class WhereClause extends AbstractClause
 {
 	/**
-	 * @var Change\Db\Query\Predicates\InterfacePredicate
+	 * @var \Change\Db\Query\Predicates\InterfacePredicate
 	 */
 	protected $predicate;
 	

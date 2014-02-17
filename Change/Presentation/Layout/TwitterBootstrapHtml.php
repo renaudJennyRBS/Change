@@ -42,6 +42,39 @@ class TwitterBootstrapHtml
 	}
 
 	/**
+	 * @param Block $item
+	 * @return null
+	 */
+	public function getBlockClass(\Change\Presentation\Layout\Block $item)
+	{
+		$vi = $item->getVisibility();
+		if ($vi == 'raw')
+		{
+			return 'raw';
+		}
+		elseif ($vi)
+		{
+			$classes = array();
+			$vi = $item->getVisibility();
+			for($i = 0; $i < strlen($vi); $i++)
+			{
+				switch ($vi[$i])
+				{
+					case 'X' : $classes[] = 'visible-xs'; break;
+					case 'S' : $classes[] = 'visible-sm'; break;
+					case 'M' : $classes[] = 'visible-md'; break;
+					case 'L' : $classes[] = 'visible-lg'; break;
+				}
+			}
+			if (count($classes))
+			{
+				return implode(' ', $classes);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @param \Change\Presentation\Layout\Layout $templateLayout
 	 * @param \Change\Presentation\Layout\Layout $pageLayout
 	 * @param Callable $callableBlockHtml
@@ -62,7 +95,6 @@ class TwitterBootstrapHtml
 			}
 			elseif ($item instanceof Container)
 			{
-				$this->fluid = $item->getGridMode() == 'fluid';
 				$container = $pageLayout->getById($item->getId());
 				if ($container instanceof Container)
 				{
@@ -79,8 +111,65 @@ class TwitterBootstrapHtml
 	}
 
 	/**
+	 * @param \Change\Presentation\Layout\Layout $templateLayout
+	 * @param \Change\Presentation\Layout\Layout $pageLayout
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param boolean $developmentMode
+	 * @return array
+	 */
+	public function getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices, $developmentMode)
+	{
+		$blockNames = array();
+		foreach($templateLayout->getBlocks() as $block)
+		{
+			$blockNames[$block->getName()] = true;
+		}
+		foreach($pageLayout->getBlocks() as $block)
+		{
+			$blockNames[$block->getName()] = true;
+		}
+
+		$configuration = $themeManager->getDefault()->getAssetConfiguration();
+		$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+		$am = $themeManager->getAsseticManager($configuration);
+
+		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
+		$jsFooter = array();
+		$assetBaseUrl = ($developmentMode) ? '' : $themeManager->getAssetBaseUrl();
+		foreach($jsNames as $jsName)
+		{
+			try
+			{
+				$a = $am->get($jsName);
+				$jsFooter[] = '<script type="text/javascript" src="' .$assetBaseUrl . $a->getTargetPath() . '"></script>';
+			}
+			catch (\Exception $e)
+			{
+				$applicationServices->getLogging()->warn('asset resource name not found: ' . $jsName);
+			}
+		}
+
+		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
+		$cssHead = [];
+		foreach($cssNames as $cssName)
+		{
+			try
+			{
+				$a = $am->get($cssName);
+				$cssHead[] = '<link rel="stylesheet" type="text/css" href="' . $assetBaseUrl . $a->getTargetPath() . '">';
+			}
+			catch (\Exception $e)
+			{
+				$applicationServices->getLogging()->warn('asset resource name not found: ' . $cssName);
+			}
+		}
+
+		return array('<!-- cssHead -->' => implode(PHP_EOL, $cssHead), '<!-- jsFooter -->' => implode(PHP_EOL, $jsFooter));
+	}
+
+	/**
 	 * @param Item $item
-	 * @param Container $container
 	 * @param Callable $callableTwigBlock
 	 * @return string|null
 	 */
@@ -98,21 +187,19 @@ class TwitterBootstrapHtml
 		}
 		if ($item instanceof Cell)
 		{
-			return '<div data-id="' . $item->getId() . '" class="span' . $item->getSize() . '">' . $innerHTML . '</div>';
+			return '<div data-id="' . $item->getId() . '" class="col-lg-' . $item->getSize() . '">' . $innerHTML . '</div>';
 		}
 		elseif ($item instanceof Row)
 		{
-			$class = $this->fluid ? 'row-fluid' : 'row';
+			$class = 'row';
 			return
 				'<div class="' . $class . '" data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML
 				. '</div>';
 		}
 		elseif ($item instanceof Container)
 		{
-			$class = $this->fluid ? 'container-fluid' : 'container';
-			return
-				'<div class="' . $class . '" data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML
-				. '</div>';
+			//return '<div data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML . '</div>';
+			return $innerHTML;
 		}
 		return (!empty($innerHTML)) ? $innerHTML : null;
 	}

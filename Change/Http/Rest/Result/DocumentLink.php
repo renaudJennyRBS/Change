@@ -24,7 +24,6 @@ class DocumentLink extends Link
 	 */
 	protected $LCID;
 
-
 	/**
 	 * @var array
 	 */
@@ -34,16 +33,22 @@ class DocumentLink extends Link
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @param string $action
+	 * @param array $extraColumns
 	 */
-	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document, $action = self::MODE_LINK)
+	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document,
+		$action = self::MODE_LINK, $extraColumns = array())
 	{
 		$this->document = $document;
 		$this->mode = $action;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{
-			$this->LCID =  $document->isNew() ? $document->getRefLCID() : $document->getLCID();
+			$this->LCID = $document->getRefLCID();
 		}
 		parent::__construct($urlManager, $this->buildPathInfo());
+		if ($action == self::MODE_PROPERTY)
+		{
+			$document->populateRestDocumentLink($this, $extraColumns);
+		}
 	}
 
 	protected function buildPathInfo()
@@ -146,11 +151,29 @@ class DocumentLink extends Link
 		{
 			if ($value === null)
 			{
-				$c = new \Change\Http\Rest\PropertyConverter($this->document, $name, $this->urlManager);
+				$c = new \Change\Http\Rest\PropertyConverter($this->document, $name, null, $this->urlManager);
 				$value = $c->getRestValue();
 			}
 			$this->setProperty($name->getName(), $value);
 		}
+	}
+
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	public function getProperty($name, $defaultValue = null)
+	{
+		return isset($this->properties[$name]) ? $this->properties[$name] : $defaultValue;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractDocument
+	 */
+	public function getDocument()
+	{
+		return $this->document;
 	}
 
 	/**

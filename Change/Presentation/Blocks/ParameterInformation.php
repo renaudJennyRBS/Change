@@ -8,6 +8,9 @@ use Change\Documents\Property;
  */
 class ParameterInformation
 {
+	const TYPE_COLLECTION = 'Collection';
+	const TYPE_DOCUMENTIDARRAY = 'DocumentIdArray';
+
 	/**
 	 * @var array
 	 */
@@ -33,6 +36,24 @@ class ParameterInformation
 	public function getName()
 	{
 		return $this->attributes['name'];
+	}
+
+	/**
+	 * @param string $label
+	 * @return $this
+	 */
+	public function setLabel($label)
+	{
+		$this->attributes['label'] = $label;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabel()
+	{
+		return $this->attributes['label'];
 	}
 
 	/**
@@ -88,4 +109,33 @@ class ParameterInformation
 	{
 		return $this->attributes;
 	}
+
+	/**
+	 * @param $collectionCode
+	 * @return $this
+	 */
+	public function setCollectionCode($collectionCode)
+	{
+		$this->attributes['collectionCode'] = $collectionCode;
+		return $this;
+	}
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function __get($name)
+	{
+		return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
+	}
+
+	/**
+	 * @param $name
+	 * @return bool
+	 */
+	public function __isset($name)
+	{
+		return array_key_exists($name, $this->attributes);
+	}
+
 }

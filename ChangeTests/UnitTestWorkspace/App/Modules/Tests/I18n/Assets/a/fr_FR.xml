@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<i18n baseKey="m.project.tests.a" lcid="fr_FR">
-	<key id="toto">toto fr a</key>
-	<key id="titi" format="html">titi fr a</key>
-	<key id="withparams">withparams {param1} {param2} fr a</key>
-</i18n>

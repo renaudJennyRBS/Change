@@ -1,0 +1,25 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<div ng-if="document.isNew()" ng-include="'Document/Rbs/Order/Order/editor-new.twig'"></div>
+
+		<div ng-show="!document.isNew()">
+			<div ng-include="'Document/Rbs/Order/Order/editor-head.twig'"></div>
+			<rbs-order-lines></rbs-order-lines>
+			<div ng-include="'Document/Rbs/Order/Order/editor-shipping.twig'"></div>
+			<div ng-include="'Document/Rbs/Order/Order/editor-payment.twig'"></div>
+			<div ng-include="'Document/Rbs/Order/Order/editor-shipment.twig'"></div>
+		</div>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

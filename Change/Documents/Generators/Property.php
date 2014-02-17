@@ -6,91 +6,82 @@ namespace Change\Documents\Generators;
  */
 class Property
 {
-	protected static $TYPES = array('String', 'Boolean', 'Integer', 'Float', 'Decimal',
-		'Date', 'DateTime', 'LongString', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
-		'DocumentId', 'Document', 'DocumentArray');
-	
-	protected static $RESERVED_PROPERTY_NAMES = array('id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
-			'creationdate', 'modificationdate',
-			'authorname', 'authorid', 'documentversion',
-			'publicationstatus', 'startpublication', 'endpublication', 'versionofid');
-	
-	protected static $RESERVED_PROPERTY_METHODS = array('get{Name}', 'set{Name}', 'get{Name}OldValue', 
-		'get{Name}DOMDocument', 'set{Name}DOMDocument', 'getDecoded{Name}', 'get{Name}Instance', 
-		'get{Name}OldValueId', 'get{Name}Id', 
-		'get{Name}OldValueIds', 'add{Name}', 'set{Name}AtIndex', 'remove{Name}', 'remove{Name}ByIndex', 
-		'removeAll{Name}', 'get{Name}ByIndex', 'get{Name}Ids', 'getIndexof{Name}');
-	
+	protected static $TYPES = ['String', 'Boolean', 'Integer', 'Float', 'Decimal',
+		'Date', 'DateTime', 'LongString', 'StorageUri', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
+		'DocumentId', 'Document', 'DocumentArray'];
+
+	protected static $RESERVED_PROPERTY_NAMES = ['id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
+		'creationdate', 'modificationdate', 'authorname', 'authorid', 'documentversion',
+		'publicationstatus', 'startpublication', 'endpublication', 'versionofid',
+		'active', 'startactivation', 'endactivation'];
+
+	protected static $COMMON_PROPERTY_NAMES = ['label', 'title', 'publicationsections', 'code'];
+
 	/**
 	 * @var \Change\Documents\Generators\Property
 	 */
 	protected $parent;
-	
+
 	/**
 	 * @var Model
 	 */
 	protected $model;
-		
+
 	/**
 	 * @var string
 	 */
 	protected $name;
-	
+
 	/**
 	 * @var string
-	 */	
+	 */
 	protected $type;
 
 	/**
 	 * @var boolean
 	 */
 	protected $stateless;
-	
+
 	/**
 	 * @var string
 	 */
 	protected $documentType;
-	
-	/**
-	 * @var string description|property|none
-	 */
-	protected $indexed;
-	
+
 	/**
 	 * @var boolean
 	 */
-	protected $cascadeDelete;
+	protected $internal;
 
 	/**
 	 * @var string
 	 */
 	protected $defaultValue;
-	
+
 	/**
 	 * @var boolean
-	 */	
+	 */
 	protected $required;
-	
+
 	/**
 	 * @var integer
 	 */
 	protected $minOccurs;
-	
+
 	/**
 	 * @var integer
-	 */	
+	 */
 	protected $maxOccurs;
-			
+
 	/**
 	 * @var boolean
 	 */
 	protected $localized;
-	
+
 	/**
 	 * @var boolean
 	 */
 	protected $hasCorrection;
-		
+
 	/**
 	 * @var array
 	 */
@@ -100,7 +91,12 @@ class Property
 	 * @var array
 	 */
 	protected $dbOptions;
-	
+
+	/**
+	 * @var string
+	 */
+	protected $labelKey;
+
 	/**
 	 * @return string[]
 	 */
@@ -108,7 +104,7 @@ class Property
 	{
 		return static::$RESERVED_PROPERTY_NAMES;
 	}
-	
+
 	/**
 	 * @return string[]
 	 */
@@ -129,13 +125,21 @@ class Property
 		$this->type = $type;
 	}
 
+	protected function checkReservedPropertyName($name)
+	{
+		if (in_array(strtolower($name), self::$RESERVED_PROPERTY_NAMES))
+		{
+			throw new \RuntimeException('Invalid name attribute value: ' . $name, 54022);
+		}
+	}
+
 	/**
 	 * @param \DOMElement $xmlElement
 	 * @throws \RuntimeException
 	 */
 	public function initialize($xmlElement)
 	{
-		foreach($xmlElement->attributes as $attribute)
+		foreach ($xmlElement->attributes as $attribute)
 		{
 			/* @var $attribute \DOMNode */
 			$name = $attribute->nodeName;
@@ -144,20 +148,17 @@ class Property
 			if ($tv == '' || $tv != $value)
 			{
 				throw new \RuntimeException('Invalid empty or spaced attribute value for ' . $name, 54021);
-			}	
+			}
 			switch ($name)
 			{
 				case "name":
-					if (in_array(strtolower($value), self::$RESERVED_PROPERTY_NAMES))
-					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
-					}
+					$this->checkReservedPropertyName($value);
 					$this->name = $value;
 					break;
 				case "type":
 					if (!in_array($value, static::$TYPES))
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					else
 					{
@@ -171,34 +172,24 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "document-type":
 					if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					$this->documentType = $value;
-					break;	
-				case "indexed":
-					if ($value == 'description' || $value == 'property' || $value == 'none')
-					{
-						$this->indexed = $value;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
-					}
 					break;
-				case "cascade-delete":
-					if ($value === 'true' || $value === 'false')
+				case "internal":
+					if ($value === 'true')
 					{
-						$this->cascadeDelete = ($value === 'true');
+						$this->internal = true;
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "default-value":
@@ -211,21 +202,21 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "min-occurs":
 					$this->minOccurs = intval($value);
 					if ($this->minOccurs <= 1)
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "max-occurs":
 					$this->maxOccurs = intval($value);
-					if ($this->maxOccurs != -1 && $this->maxOccurs < 1)
+					if ($this->maxOccurs <= 1)
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "localized":
@@ -235,7 +226,7 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "has-correction":
@@ -245,7 +236,7 @@ class Property
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid '.$name.' attribute value: ' . $value, 54022);
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				default:
@@ -253,13 +244,13 @@ class Property
 					break;
 			}
 		}
-		
+
 		if ($this->getName() === null)
 		{
 			throw new \RuntimeException('Property name can not be null', 54024);
 		}
 
-		if ($this->stateless && ($this->cascadeDelete || $this->hasCorrection))
+		if ($this->stateless && $this->hasCorrection)
 		{
 			throw new \RuntimeException('Property stateless can not be applicable', 54024);
 		}
@@ -275,7 +266,7 @@ class Property
 				}
 				$params = array();
 				$name = null;
-				foreach ($node->attributes as $attr) 
+				foreach ($node->attributes as $attr)
 				{
 					/* @var $attr \DOMAttr */
 					if ($attr->name === 'name')
@@ -285,7 +276,14 @@ class Property
 					else
 					{
 						$v = $attr->value;
-						if ($v === 'true') {$v = true;} elseif ($v === 'false') {$v = false;}
+						if ($v === 'true')
+						{
+							$v = true;
+						}
+						elseif ($v === 'false')
+						{
+							$v = false;
+						}
 						$params[$attr->name] = $v;
 					}
 				}
@@ -312,20 +310,20 @@ class Property
 			}
 			elseif ($node->nodeType == XML_ELEMENT_NODE)
 			{
-				throw new \RuntimeException('Invalid property children node ' . $this->getName() . ' -> ' . $node->nodeName, 54026);
+				throw new \RuntimeException('Invalid property children node ' . $this->getName() . ' -> '
+				. $node->nodeName, 54026);
 			}
 		}
 	}
-	
+
 	/**
-	 * 
 	 * @return Model
 	 */
 	public function getModel()
 	{
 		return $this->model;
 	}
-	
+
 	/**
 	 * @return \Change\Documents\Generators\Property
 	 */
@@ -333,7 +331,7 @@ class Property
 	{
 		return $this->parent;
 	}
-	
+
 	/**
 	 * @param \Change\Documents\Generators\Property $parent
 	 */
@@ -341,7 +339,7 @@ class Property
 	{
 		$this->parent = $parent;
 	}
-	
+
 	/**
 	 * @return \Change\Documents\Generators\Property[]
 	 */
@@ -355,7 +353,7 @@ class Property
 		}
 		return array();
 	}
-	
+
 	/**
 	 * @return \Change\Documents\Generators\Property
 	 */
@@ -363,7 +361,7 @@ class Property
 	{
 		return ($this->parent) ? $this->parent->getRoot() : $this;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -389,27 +387,19 @@ class Property
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function getInternal()
+	{
+		return $this->internal;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getDocumentType()
 	{
 		return $this->documentType;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getIndexed()
-	{
-		return $this->indexed;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getCascadeDelete()
-	{
-		return $this->cascadeDelete;
 	}
 
 	/**
@@ -451,7 +441,7 @@ class Property
 	{
 		return $this->localized;
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
@@ -483,7 +473,7 @@ class Property
 	{
 		$this->dbOptions = $dbOptions;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -491,7 +481,7 @@ class Property
 	{
 		return $this->getRoot()->getType();
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -500,12 +490,15 @@ class Property
 		$p = $this;
 		while ($p)
 		{
-			if ($p->getMinOccurs() !== null) {return $p->getMinOccurs();}
+			if ($p->getMinOccurs() !== null)
+			{
+				return $p->getMinOccurs();
+			}
 			$p = $p->getParent();
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -514,20 +507,27 @@ class Property
 		$p = $this;
 		while ($p)
 		{
-			if ($p->getMaxOccurs() !== null) {return $p->getMaxOccurs();}
+			if ($p->getMaxOccurs() !== null)
+			{
+				return $p->getMaxOccurs();
+			}
 			$p = $p->getParent();
 		}
-		return -1;
+		return 100;
 	}
-	
+
 	/**
 	 * @param boolean|null $localized
 	 */
 	public function makeLocalized($localized)
 	{
+		if ($this->stateless)
+		{
+			$localized = null;
+		}
 		$this->localized = $localized;
 	}
-		
+
 	/**
 	 * @param string $string
 	 */
@@ -535,7 +535,7 @@ class Property
 	{
 		$this->defaultValue = $string;
 	}
-	
+
 	/**
 	 * @throws \Exception
 	 */
@@ -548,6 +548,12 @@ class Property
 				{
 					$this->type = 'String';
 					$this->required = true;
+				}
+				break;
+			case 'title':
+				if ($this->type !== null)
+				{
+					$this->type = 'String';
 				}
 				break;
 			case 'refLCID':
@@ -569,12 +575,9 @@ class Property
 				break;
 			case 'authorId':
 				$this->type = 'DocumentId';
-				$this->documentType = 'Change_Users_User';
 				break;
 			case 'documentVersion':
 				$this->type = 'Integer';
-				$this->defaultValue = '0';
-				$this->required = true;
 				break;
 			case 'publicationStatus':
 				$this->type = 'String';
@@ -585,6 +588,19 @@ class Property
 				$this->type = 'DateTime';
 				break;
 			case 'endPublication':
+				$this->type = 'DateTime';
+				break;
+			case 'publicationSections':
+				$this->type = 'DocumentArray';
+				break;
+			case 'active':
+				$this->type = 'Boolean';
+				$this->defaultValue = 'true';
+				break;
+			case 'startActivation':
+				$this->type = 'DateTime';
+				break;
+			case 'endActivation':
 				$this->type = 'DateTime';
 				break;
 			case 'versionOfId':
@@ -599,7 +615,7 @@ class Property
 		}
 		$this->setDefaultConstraints();
 	}
-	
+
 	/**
 	 * @throws \Exception
 	 */
@@ -631,6 +647,11 @@ class Property
 				$this->type = 'String';
 				$this->setDefaultConstraints();
 			}
+			$lcName = strtolower($this->name);
+			if ($this->labelKey === null && in_array($lcName, array_merge(static::$RESERVED_PROPERTY_NAMES, static::$COMMON_PROPERTY_NAMES)))
+			{
+				$this->setLabelKey('c.documents.' . $lcName);
+			}
 		}
 		else
 		{
@@ -640,7 +661,15 @@ class Property
 			}
 		}
 
-		$ancestors = $this->getAncestors();
+		if ($this->hasCorrection)
+		{
+			if ($this->name === 'label')
+			{
+				throw new \RuntimeException('Invalid has-correction attribute on ' . $this->model . '::' . $this, 54028);
+			}
+			$model->getRoot()->implementCorrection(true);
+		}
+
 		if ($model->checkLocalized())
 		{
 			switch ($this->name)
@@ -649,19 +678,28 @@ class Property
 				case 'versionOfId':
 				case 'treeName':
 					$this->makeLocalized(null);
-					break;					
+					break;
+				case 'label':
+					if ($this->localized !== null)
+					{
+						throw new \RuntimeException('Invalid localized attribute on ' . $this->model . '::' . $this, 54028);
+					}
+					break;
 				case 'LCID':
 				case 'creationDate':
 				case 'modificationDate':
-
-				case 'label':
+				case 'title':
 				case 'authorName':
 				case 'authorId':
 				case 'documentVersion':
-					
+
 				case 'publicationStatus':
 				case 'startPublication':
 				case 'endPublication':
+
+				case 'active':
+				case 'startActivation':
+				case 'endActivation':
 					$this->makeLocalized(true);
 			}
 		}
@@ -669,7 +707,7 @@ class Property
 		{
 			throw new \RuntimeException('Invalid localized attribute on ' . $this, 54028);
 		}
-		
+
 		$type = $this->getComputedType();
 		if ($type !== 'DocumentArray')
 		{
@@ -686,13 +724,13 @@ class Property
 		{
 			$mi = $this->getComputedMinOccurs();
 			$ma = $this->getComputedMaxOccurs();
-			if ($ma != -1 && $ma < $mi)
+			if ($ma < $mi)
 			{
 				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this, 54028);
 			}
 		}
 	}
-	
+
 	/**
 	 * Set default constraints in the property.
 	 */
@@ -703,6 +741,20 @@ class Property
 			if ($this->constraintArray === null || !isset($this->constraintArray['maxSize']))
 			{
 				$this->constraintArray['maxSize'] = array('max' => 255);
+			}
+			if ($this->name === 'publicationStatus')
+			{
+				if (!isset($this->constraintArray['publicationStatus']))
+				{
+					$this->constraintArray['publicationStatus'] = array();
+				}
+			}
+		}
+		elseif ($this->type === 'StorageUri')
+		{
+			if ($this->constraintArray === null || !isset($this->constraintArray['storageUri']))
+			{
+				$this->constraintArray['storageUri'] = array();
 			}
 		}
 	}
@@ -715,7 +767,7 @@ class Property
 		$type = $this->getComputedType();
 		return ($type === 'Document' || $type === 'DocumentArray' || $type === 'DocumentId');
 	}
-		
+
 	/**
 	 * @return boolean|number|string
 	 */
@@ -740,7 +792,35 @@ class Property
 		}
 		return $val;
 	}
-	
+
+	/**
+	 * @param boolean $stateless
+	 */
+	public function setStateless($stateless)
+	{
+		$this->stateless = ($stateless === true) ? true : null;
+	}
+
+	/**
+	 * @param string $labelKey
+	 */
+	public function setLabelKey($labelKey)
+	{
+		$this->labelKey = $labelKey;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabelKey()
+	{
+		if ($this->labelKey)
+		{
+			return $this->labelKey;
+		}
+		return \Change\Stdlib\String::toLower(implode('.', ['m', $this->getModel()->getVendor(), $this->getModel()->getShortModuleName(), 'documents', $this->getModel()->getShortName() . '_' . $this->getName()]));
+	}
+
 	/**
 	 * @return string
 	 */

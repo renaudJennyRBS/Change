@@ -1,0 +1,68 @@
+{
+	"zone_list":{
+		"message":"zones"
+	},
+	"zone_create":{
+		"message":"ajouter une zone"
+	},
+	"country_list":{
+		"message":"pays"
+	},
+	"country_create":{
+		"message":"ajouter un pays"
+	},
+	"territorialunit_list":{
+		"message":"unités territoriales"
+	},
+	"territorialunit_create":{
+		"message":"ajouter une unité territoriale"
+	},
+	"addressfields_list":{
+		"message":"modèles d'adresse"
+	},
+	"addressfields_create":{
+		"message":"ajouter un modèle d'adresse"
+	},
+	"addressfield_create":{
+		"message":"ajouter un champ d'adresse"
+	},
+	"zone_country_picker_title":{
+		"message":"sélectionner le pays"
+	},
+	"addressfield_locked_warning":{
+		"message":"\n\t<span class=\"label label-danger\">Attention!<\/span> Ce champ est vérouillé car il est requis par le sytème d'adresse.\n\t\t\tVous ne pourrez donc pas le supprimer, ni changer son code.\n\t"
+	},
+	"addressfield_select_collectioncode":{
+		"message":"sélectionner une collection"
+	},
+	"module_name":{
+		"message":"zones géographiques"
+	},
+	"module_keywords":{
+		"message":"zones,pays,adresses,départements,régions"
+	},
+	"select_unittype":{
+		"message":"sélectionner un type d'unité territoriale"
+	},
+	"territorialunit_country_picker_title":{
+		"message":"sélectionner le pays"
+	},
+	"territorialunit_unitparent_picker_title":{
+		"message":"sélectionner l'unité territoriale parente"
+	},
+	"country_select_addressfields":{
+		"message":"sélectionner le modèle d'adresse"
+	},
+	"address_list":{
+		"message":"adresses"
+	},
+	"address_create":{
+		"message":"ajouter une adresse"
+	},
+	"address_fields_select":{
+		"message":"sélectionner le modèle d'adresse"
+	},
+	"address_owner_select":{
+		"message":"sélectionner le propriétaire d'adresse"
+	}
+}

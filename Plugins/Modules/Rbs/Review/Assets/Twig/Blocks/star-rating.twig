@@ -1,0 +1,25 @@
+{% if editionMode %}
+<div data-ng-init="review.rating = {% if review.rating == null %}80{% else %}{{ review.rating }}{% endif %}">
+	<ol class="list-inline star-rating">
+		<li><label title="{{ i18n('m.rbs.review.blocks.star-rating-0') }}"><input type="radio" name="review" data-ng-model="review.rating" value="0" class="sr-only" /><span class="glyphicon glyphicon-star-empty"></span></label></li> |
+		<li data-ng-class="{'selected': review.rating > 0}"><label title="{{ i18n('m.rbs.review.front.star_rating_1') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="20" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 20}"><label title="{{ i18n('m.rbs.review.front.star_rating_2') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="40" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 40}"><label title="{{ i18n('m.rbs.review.front.star_rating_3') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="60" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 60}"><label title="{{ i18n('m.rbs.review.front.star_rating_4') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="80" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li data-ng-class="{'selected': review.rating > 80}"><label title="{{ i18n('m.rbs.review.front.star_rating_5') }}"><input type="radio" name="rating" data-ng-model="review.rating" value="100" class="sr-only"/><span class="glyphicon glyphicon-star"></span></label></li>
+		<li><span class="ng-cloak">(= review.rating * (5/100) =)</span>/5</li>
+	</ol>
+</div>
+{% else %}
+<p class="sr-only">
+	{{ i18n('m.rbs.review.front.review_rating', ['ucf'],
+	{ 'ratingValue': '<span itemprop="ratingValue">' ~ reviewStarRating ~ '</span>', 'bestRating': '<span itemprop="bestRating">5</span>' }) | raw }}
+</p>
+<ol class="list-inline star-rating-display">
+	<li class="{% if reviewStarRating > 0 %}full{% endif %}"><span class="glyphicon glyphicon-star"></span></li>
+	<li class="{% if reviewStarRating > 1 %}full{% endif %}"><span class="glyphicon glyphicon-star"></span></li>
+	<li class="{% if reviewStarRating > 2 %}full{% endif %}"><span class="glyphicon glyphicon-star"></span></li>
+	<li class="{% if reviewStarRating > 3 %}full{% endif %}"><span class="glyphicon glyphicon-star"></span></li>
+	<li class="{% if reviewStarRating > 4 %}full{% endif %}"><span class="glyphicon glyphicon-star"></span></li>
+</ol>
+{% endif %}

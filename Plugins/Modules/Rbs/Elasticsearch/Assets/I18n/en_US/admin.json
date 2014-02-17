@@ -1,0 +1,83 @@
+{
+  "module_name":{
+    "message":"Elasticsearch"
+  },
+  "module_keywords":{
+    "message":""
+  },
+  "shortsearch":{
+    "message":"Search field"
+  },
+  "shortsearch_resultsectionid":{
+    "message":"Results display section"
+  },
+  "result":{
+    "message":"Search result"
+  },
+  "result_function":{
+    "message":"Search Result"
+  },
+  "result_fulltextindex":{
+    "message":"Search index"
+  },
+  "facets":{
+    "message":"Facets"
+  },
+  "facets_facetgroups":{
+    "message":"Facets group"
+  },
+  "storeresult":{
+    "message":"Store search result"
+  },
+  "storeresult_function":{
+    "message":"Store search result"
+  },
+  "storeresult_storeindex":{
+    "message":"Store index"
+  },
+  "facetgroup_facets_picker_title":{
+    "message":"select group's facets"
+  },
+  "fulltext_name_help":{
+    "message":"The name will be automatically generated if this field is not filled."
+  },
+  "fulltext_list":{
+    "message":"index list"
+  },
+  "fulltext_create":{
+    "message":"add a web search index"
+  },
+  "storeindex_create":{
+    "message":"add a products search index"
+  },
+  "facetgroup_list":{
+    "message":"facets groups list"
+  },
+  "facetgroup_create":{
+    "message":"add a facets group"
+  },
+  "facet_list":{
+    "message":"facets list"
+  },
+  "facet_create":{
+    "message":"add a facet"
+  },
+  "storeindex_section_facets":{
+    "message":"facets"
+  },
+  "facet_synchronize_title_label":{
+    "message":"synchronized with label"
+  },
+  "facet_section_indexer":{
+    "message":"indexing"
+  },
+  "facet_section_filter":{
+    "message":"filter and search"
+  },
+  "website_picker_title":{
+    "message":"select a website"
+  },
+  "store_picker_title":{
+    "message":"select a store"
+  }
+}

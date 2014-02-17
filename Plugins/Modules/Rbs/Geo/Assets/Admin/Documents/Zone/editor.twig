@@ -1,0 +1,27 @@
+<form name="form" data-ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="code" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'code'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker property="country" required="true" accepted-model="Rbs_Geo_Country"
+			label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'country'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.geo.admin.zone_country_picker_title', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-todo>RBSChange/evolutions#55 critères de validité d'une adresse.</rbs-todo>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

@@ -1,0 +1,171 @@
+{
+	"/Rbs/Commerce/BillingArea/": {
+		"model": "Rbs_Price_BillingArea",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/BillingArea/list.twig",
+			"labelKey": "m.rbs.price.admin.billingarea_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/BillingArea/:id": {
+		"model": "Rbs_Price_BillingArea",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
+			"labelKey": "m.rbs.price.documents.billingarea | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/BillingArea/:id/timeline": {
+		"model": "Rbs_Price_BillingArea",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Price_BillingArea",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/BillingArea/:id/translate/:LCID": {
+		"model": "Rbs_Price_BillingArea",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/BillingArea/new": {
+		"model": "Rbs_Price_BillingArea",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Tax/": {
+		"model": "Rbs_Price_Tax",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Tax/list.twig",
+			"labelKey": "m.rbs.price.admin.tax_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Tax/:id": {
+		"model": "Rbs_Price_Tax",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Tax/form.twig",
+			"labelKey": "m.rbs.price.documents.tax | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Tax/:id/timeline": {
+		"model": "Rbs_Price_Tax",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Price_Tax",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Tax/:id/workflow": {
+		"model": "Rbs_Price_Tax",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Price_Tax",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Tax/new": {
+		"model": "Rbs_Price_Tax",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Tax/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Price/": {
+		"module": "Rbs_Price",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Price/Price/",
+			"labelKey": "m.rbs.price.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Price/BillingArea/": false,
+	"/Rbs/Price/BillingArea/:id": false,
+	"/Rbs/Price/BillingArea/:id/timeline": false,
+	"/Rbs/Price/BillingArea/:id/translate/:LCID": false,
+	"/Rbs/Price/BillingArea/new": false,
+	"/Rbs/Price/Price/": {
+		"model": "Rbs_Price_Price",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Price/list.twig",
+			"labelKey": "m.rbs.price.admin.price_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Price/Price/:basePriceId/discount/new": {
+		"model": "Rbs_Price_Price",
+		"name": "discount",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Price/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Price/Price/:id": {
+		"model": "Rbs_Price_Price",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Price/form.twig",
+			"labelKey": "m.rbs.price.documents.price | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Price/Price/:id/timeline": {
+		"model": "Rbs_Price_Price",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Price_Price",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Price/Price/:id/workflow": {
+		"model": "Rbs_Price_Price",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Price_Price",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Price/Price/new": {
+		"model": "Rbs_Price_Price",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/Price/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Price/Tax/": false,
+	"/Rbs/Price/Tax/:id": false,
+	"/Rbs/Price/Tax/:id/timeline": false,
+	"/Rbs/Price/Tax/:id/workflow": false,
+	"/Rbs/Price/Tax/new": false
+}

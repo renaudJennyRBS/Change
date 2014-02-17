@@ -1,0 +1,23 @@
+{
+  "tags":{
+    "message":"tags"
+  },
+  "no_available_tag":{
+    "message":"No tag available"
+  },
+  "available_tag":{
+    "message":"One tag available:"
+  },
+  "available_tags":{
+    "message":"{} tags available:"
+  },
+  "tag_not_saved":{
+    "message":"this tag will be created when this form is saved"
+  },
+  "enter_selects_first_tag":{
+    "message":"[Enter] to select first tag"
+  },
+  "usertag_text":{
+    "message":"this tag is personal and can only be used by you"
+  }
+}

@@ -1,0 +1,53 @@
+<div class="row">
+
+	<div rbs-full-width>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.media.admin.image_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Media_Image" filter="filter" ></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			<a href="(= 'Rbs_Media_Image' | rbsURL:'new' =)">{{ i18n('m.rbs.media.admin.image_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsMediaImage" model="Rbs_Media_Image" filter-collection="filter"
+				use-properties="width height alt" activable="true" correction="true">
+
+			<rbs-column name="path" thumbnail="XS" thumbnail-path="doc"></rbs-column>
+			<rbs-column name="label" primary="true">
+				<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
+				<div ng-if="doc.alt"><small>(= doc.alt =)</small></div>
+			</rbs-column>
+			<rbs-column name="width" width="80px" align="right"><span class="width-column">(= doc.width | number =)</span></rbs-column>
+			<rbs-column name="height" width="80px"><span class="height-column">(= doc.height | number =)</span></rbs-column>
+
+			<rbs-preview style="min-height: 200px">
+				<img rbs-storage-image="doc" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
+				<div style="margin-left: 290px;">
+					<h4>(= doc.label =)</h4>
+					<dl class="dl-horizontal">
+						<dt>{{ i18n('m.rbs.media.documents.image_dimensions', ['ucf']) }}</dt>
+						<dd>(= doc.width | number =) &times; (= doc.height | number =) <abbr title="Pixels">px</abbr></dd>
+						<dt>{{ i18n('m.rbs.media.documents.image_megapixels', ['ucf']) }}</dt>
+						<dd>(= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.documents.image_megapixels', ['ucf']) }}">Mpx</abbr></dd>
+						<dt>{{ i18n(propertyKey('Rbs_Media_Image', 'alt'), ['ucf']) }}</dt>
+						<dd>(= doc.alt | rbsEmptyLabel =)</dd>
+						<dt>{{ i18n('m.rbs.media.documents.image_file', ['ucf']) }}</dt>
+						<dd>(= doc.path.storageURI =)</dd>
+						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lab']) }}</dt>
+						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
+						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
+					</dl>
+				</div>
+			</rbs-preview>
+
+			<rbs-grid-item>
+				<img rbs-storage-image="doc" thumbnail="L" />
+				<div class="absolute-bottom caption">
+					<h4><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></h4>
+					<div>(= doc.width | number =) &times; (= doc.height | number =) &bull; (= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.documents.image_megapixels', ['ucf']) }}">Mpx</abbr></div>
+				</div>
+			</rbs-grid-item>
+
+		</rbs-document-list>
+	</div>
+</div>

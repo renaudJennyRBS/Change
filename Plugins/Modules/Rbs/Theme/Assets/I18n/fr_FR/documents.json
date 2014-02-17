@@ -1,0 +1,29 @@
+{
+	"template":{
+		"message":"modèle de page"
+	},
+	"theme":{
+		"message":"thème"
+	},
+	"template_html":{
+		"message":"HTML"
+	},
+	"template_htmlforbackoffice":{
+		"message":"HTML backoffice"
+	},
+	"template_editablecontent":{
+		"message":"zones de contenu"
+	},
+	"template_contentbywebsite":{
+		"message":"Contenu par site web"
+	},
+	"template_theme":{
+		"message":"thème"
+	},
+	"theme_name":{
+		"message":"nom (code)"
+	},
+	"theme_parenttheme":{
+		"message":"thème parent"
+	}
+}

@@ -1,0 +1,134 @@
+{
+  "directives_with_tax_abbr":{
+    "message":"Incl. VAT"
+  },
+  "directives_without_tax_abbr":{
+    "message":"Excl. VAT"
+  },
+  "collection_taxroundingstrategy_on_unit_value":{
+    "message":"on unitary value"
+  },
+  "collection_taxroundingstrategy_on_line_value":{
+    "message":"on line value"
+  },
+  "collection_taxroundingstrategy_on_total_value":{
+    "message":"on total value"
+  },
+  "tax_cascading_help":{
+    "message":"When this option is enabled, the tax calculation is done on the price Excl. VAT plus all the taxes applied to that point."
+  },
+  "tax_rounding_help":{
+    "message":"Determines when the tax amount shall be rounded (on the shopping carts, orders, invoices...)"
+  },
+  "price_sku_picker_title":{
+    "message":"Select a SKU"
+  },
+  "price_discount_section_help":{
+    "message":"Pour appliquer une <label class=\"in-text\" for=\"discount\">promotion<\/label> sur le montant indiqué ci-dessus, saisissez la valeur de la promotion ainsi que le type de promotion&nbsp;: pourcentage, prix barré ou valeur à déduire."
+  },
+  "price_publication_section_help":{
+    "message":"Vous pouvez indiquer une <strong>période de validité<\/strong> pour ce prix.<br \/><span class=\"label label-danger\">Important<\/span> Si vous définissez un prix promotionnel, il est recommandé d'indiquer une <label class=\"in-text\" for=\"endPublication\">date de fin<\/label>."
+  },
+  "price_no_discount_available":{
+    "message":"this price can't be discounted"
+  },
+  "price_create_discount_from_price":{
+    "message":"create a promotional price from this price"
+  },
+  "price_select_baseprice":{
+    "message":"select the promotional price"
+  },
+  "price_target_section_help":{
+    "message":"Vous pouvez spécifier une <strong>cible<\/strong> pour ce prix.<br \/><span class=\"label label-danger\">Important<\/span> Si vous définissez une cible, il est recommandé de définir une <label class=\"in-text\" for=\"priority\">priorité<\/label> différente de la priorité standard."
+  },
+  "targetid_picker_title":{
+    "message":"Séléctionner une cible pour le prix"
+  },
+  "module_name":{
+    "message":"prices and taxes"
+  },
+  "module_keywords":{
+    "message":"price,taxes,price list,zone,promotional price"
+  },
+  "price_list":{
+    "message":"price"
+  },
+  "price_create":{
+    "message":"add a price"
+  },
+  "tax_list":{
+    "message":"taxes"
+  },
+  "tax_create":{
+    "message":"add a tax"
+  },
+  "billingarea_list":{
+    "message":"pricing zone"
+  },
+  "billingarea_create":{
+    "message":"add a pricing zone"
+  },
+  "billingarea_taxes_picker_title":{
+    "message":"pricing zone"
+  },
+  "tax_delete_zone":{
+    "message":"delete"
+  },
+  "tax_delete_category":{
+    "message":"delete"
+  },
+  "tax_make_default_zone":{
+    "message":"default zone"
+  },
+  "tax_add_zone":{
+    "message":"add a new zone"
+  },
+  "tax_add_category":{
+    "message":"add a category"
+  },
+  "add":{
+    "message":"add"
+  },
+  "category_exists":{
+    "message":"there is already a category with this code"
+  },
+  "zone_exists":{
+    "message":"there is already an area with this code"
+  },
+  "select_billingarea":{
+    "message":"select a pricing area"
+  },
+  "now":{
+    "message":"now"
+  },
+  "tomorrow":{
+    "message":"tomorrow"
+  },
+  "nextmonday":{
+    "message":"next monday"
+  },
+  "nextmonth":{
+    "message":"next month"
+  },
+  "add_one_week":{
+    "message":"+ 1 week"
+  },
+  "add_two_weeks":{
+    "message":"+ 2 weeks"
+  },
+  "add_one_month":{
+    "message":"+ 1 month"
+  },
+  "end_of_week":{
+    "message":"end of the week"
+  },
+  "end_of_month":{
+    "message":"end of the month"
+  },
+  "tax_update_in_progress":{
+    "message":"taxes update in progress"
+  },
+  "tax_update_in_progress_help":{
+    "message":"Taxes update is in progress. Setup will be available again after update."
+  }
+}

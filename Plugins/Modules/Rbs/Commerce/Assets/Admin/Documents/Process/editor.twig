@@ -1,0 +1,34 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker-multiple property="shippingModes" accepted-model="Rbs_Shipping_Mode"
+			label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'shippingModes'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_shippingmodes_picker_title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+
+		<rbs-field-picker-multiple property="paymentConnectors" accepted-model="Rbs_Payment_Connector"
+			label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'paymentConnectors'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_paymentconnectors_picker_title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+
+
+		<rbs-field-picker-multiple property="fees" accepted-model="Rbs_Commerce_Fee"
+				label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'fees'), ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_fees_picker_title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

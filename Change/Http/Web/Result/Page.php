@@ -2,7 +2,6 @@
 namespace Change\Http\Web\Result;
 
 use Change\Http\Result;
-use Change\Presentation\Layout\Layout;
 
 /**
  * @name \Change\Http\Web\Result\Page
@@ -17,22 +16,12 @@ class Page extends Result
 	/**
 	 * @var array
 	 */
-	protected $head = array();
+	protected $htmlHead = array();
 
 	/**
-	 * @var Layout
+	 * @var string
 	 */
-	protected $templateLayout = array();
-
-	/**
-	 * @var Layout
-	 */
-	protected $contentLayout = array();
-
-	/**
-	 * @var Callable
-	 */
-	protected $renderer;
+	protected $html;
 
 	/**
 	 * @var \Change\Http\Web\Result\BlockResult[]
@@ -81,7 +70,7 @@ class Page extends Result
 	 */
 	public function addHeadAsString($headString)
 	{
-		$this->head[] = $headString;
+		$this->htmlHead[] = $headString;
 	}
 
 	/**
@@ -90,39 +79,7 @@ class Page extends Result
 	 */
 	public function addNamedHeadAsString($name, $headString)
 	{
-		$this->head[$name] = $headString;
-	}
-
-	/**
-	 * @param Layout $templateLayout
-	 */
-	public function setTemplateLayout(Layout $templateLayout)
-	{
-		$this->templateLayout = $templateLayout;
-	}
-
-	/**
-	 * @return Layout
-	 */
-	public function getTemplateLayout()
-	{
-		return $this->templateLayout;
-	}
-
-	/**
-	 * @param Layout $contentLayout
-	 */
-	public function setContentLayout(Layout $contentLayout)
-	{
-		$this->contentLayout = $contentLayout;
-	}
-
-	/**
-	 * @return Layout
-	 */
-	public function getContentLayout()
-	{
-		return $this->contentLayout;
+		$this->htmlHead[$name] = $headString;
 	}
 
 	/**
@@ -133,7 +90,7 @@ class Page extends Result
 		$this->blockResults = array();
 		if (is_array($blockResults))
 		{
-			foreach($blockResults as $blockResult)
+			foreach ($blockResults as $blockResult)
 			{
 				$this->addBlockResult($blockResult);
 			}
@@ -157,45 +114,21 @@ class Page extends Result
 	}
 
 	/**
-	 * @param Callable $renderer
-	 */
-	public function setRenderer($renderer)
-	{
-		$this->renderer = $renderer;
-	}
-
-	/**
-	 * @return Callable
-	 */
-	public function getRenderer()
-	{
-		return $this->renderer;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function hasRenderer()
-	{
-		return ($this->renderer && is_callable($this->renderer));
-	}
-
-
-	/**
 	 * Used by template
 	 * @return array
 	 */
 	public function getHead()
 	{
-		return $this->head;
+		return $this->htmlHead;
 	}
 
 	/**
 	 * Used by template
-	 * @param $id
+	 * @param string $id
+	 * @param string|null $class
 	 * @return string
 	 */
-	public function htmlBlock($id)
+	public function htmlBlock($id, $class = null)
 	{
 		$br = isset($this->blockResults[$id]) ? $this->blockResults[$id] : null;
 		if ($br)
@@ -208,27 +141,50 @@ class Page extends Result
 			$innerHTML = null;
 			$name = "unknown";
 		}
-		if ($innerHTML)
+
+		if ($class == 'raw')
 		{
-			return '<div data-type="block" data-id="' . $id . '" data-name="' . $name . '">' . $innerHTML . '</div>';
+			return $innerHTML;
+		}
+		elseif ($innerHTML)
+		{
+			if ($class)
+			{
+				$class = ' class="' . $class . '"';
+			}
+			else
+			{
+				$class = '';
+			}
+			return
+				'<div data-type="block" data-id="' . $id . '" data-name="' . $name . '"' . $class . '>' . $innerHTML . '</div>';
 		}
 		return '<div data-type="block" class="empty" data-id="' . $id . '" data-name="' . $name . '"></div>';
 	}
 
 	/**
-	 * Used for generate response
+	 * @param string $html
+	 * @return $this
+	 */
+	public function setHtml($html)
+	{
+		$this->html = $html;
+		return $this;
+	}
+
+	/**
 	 * @return string
-	 * @throws \RuntimeException
+	 */
+	public function getHtml()
+	{
+		return $this->html;
+	}
+
+	/**
+	 * @return string
 	 */
 	public function toHtml()
 	{
-		if ($this->hasRenderer())
-		{
-			return call_user_func($this->renderer);
-		}
-		else
-		{
-			throw new \RuntimeException('Renderer not set', 999999);
-		}
+		return $this->html;
 	}
 }

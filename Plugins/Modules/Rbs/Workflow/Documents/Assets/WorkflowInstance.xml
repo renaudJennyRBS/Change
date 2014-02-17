@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
+	<properties>
+		<property name="workflow" type="Document" document-type="Rbs_Workflow_Workflow" required="true" />
+		<property name="document" type="Document" />
+		<property name="status" type="String" required="true" default-value="EN">
+			<dboptions length="2" />
+		</property>
+		<property name="contextData"  type="JSON" />
+		<property name="itemsData" type="JSON" />
+		<property name="startDate" type="DateTime" />
+		<property name="endDate" type="DateTime" />
+	</properties>
+</document>

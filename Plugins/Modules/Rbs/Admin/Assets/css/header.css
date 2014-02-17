@@ -1,0 +1,70 @@
+@CHARSET "UTF-8";
+
+/* top navbar */
+#rbs-change-navbar a.navbar-brand {
+	position: relative;
+	top: -2px;
+}
+
+.navbar-indicators > li {
+	border-left: 1px solid black;
+	background: rgba(255,255,255,0.1);
+}
+.navbar-indicators > li.on > a {
+	background: rgba(255,255,255,0.25);
+	color: white;
+}
+.navbar-indicators > li > a {
+	font-size: 1.33333em;
+	min-width: 70px;
+	text-align: center;
+}
+.navbar-indicators > li:last-child {
+	border-right: 1px solid black;
+}
+
+#rbs-change-navbar-collapse {
+	padding: 0;
+}
+#rbs-change-navbar-collapse .navbar-nav.navbar-right:last-child {
+	margin: 0;
+}
+
+@media (max-width: 768px) {
+	.navbar-indicators > li,
+	.navbar-indicators > li.on > a {
+		background: inherit;
+	}
+	.navbar-indicators > li > a {
+		font-size: 14px;
+	}
+
+	#rbs-change-navbar-collapse .navbar-nav {
+		margin: 0;
+	}
+	#rbs-change-navbar-collapse .navbar-indicators > li > a {
+		text-align: left;
+		content: " "attr(title);
+	}
+
+	#rbs-change-navbar-collapse .dropdown-menu {
+		background: #191919;
+	}
+	#rbs-change-navbar-collapse .dropdown-menu > li.disabled > a {
+		color: #555;
+	}
+	#rbs-change-navbar-collapse .divider {
+		background: #444;
+	}
+}
+
+@media (min-width: 768px) {
+	.navbar-indicators .indicator-title {
+		display: none;
+	}
+}
+
+/* TODO remove this style when fullScreenBar will be removed */
+#fullScreenBar {
+	display: none;
+}

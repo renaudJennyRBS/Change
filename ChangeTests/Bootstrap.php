@@ -10,12 +10,23 @@ if (!defined('PROJECT_HOME'))
 }
 require_once PROJECT_HOME . '/Change/Application.php';
 require_once 'Change/TestAssets/Application.php';
-
+@unlink('UnitTestWorkspace/App/Config/project.autogen.json');
 $application = new \ChangeTests\Change\TestAssets\Application();
-$application->registerCoreAutoload();
-$zendLoader  = new \Zend\Loader\StandardAutoloader();
-$zendLoader->registerNamespace('ChangeTests', realpath(__DIR__) .'/');
-$zendLoader->register();
-$application->registerCompilationAutoload();
-$application->registerPackagesAutoload();
+$application->registerAutoload();
 $application->clearCache();
+$pluginManager = new \Change\Plugins\PluginManager();
+$pluginManager->setWorkspace($application->getWorkspace());
+$pluginManager->compile(false);
+$application->registerPluginsAutoload();
+$i18nManager = new \Change\I18n\I18nManager();
+$i18nManager->setWorkspace($application->getWorkspace());
+$i18nManager->setConfiguration($application->getConfiguration());
+$i18nManager->compileCoreI18nFiles();
+foreach ($pluginManager->getPlugins() as $plugin)
+{
+	if ($plugin->isAvailable())
+	{
+		$i18nManager->compilePluginI18nFiles($plugin);
+	}
+}
+

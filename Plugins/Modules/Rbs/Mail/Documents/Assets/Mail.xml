@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	localized="true" editable="true" activable="true">
+	<properties>
+		<property name="template" type="Document" document-type="Rbs_Theme_Template" has-correction="true" />
+		<property name="editableContent" type="JSON" localized="true" has-correction="true" />
+		<property name="useCache" type="Boolean" default-value="false" />
+		<property name="TTL" type="Integer" default-value="0" />
+		<property name="code" type="String" required="true" />
+		<property name="subject" type="String" required="true" localized="true" has-correction="true" />
+		<property name="senderName" type="String" localized="true" has-correction="true" />
+		<property name="senderMail" type="String" localized="true" has-correction="true" />
+		<property name="websites" type="DocumentArray" document-type="Rbs_Website_Website" />
+		<property name="substitutions" type="JSON"  />
+		<property name="isVariation" type="Boolean" default-value="false" />
+	</properties>
+</document>

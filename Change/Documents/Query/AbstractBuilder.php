@@ -51,6 +51,17 @@ abstract class AbstractBuilder
 	 */
 	protected $predicateBuilder;
 
+	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
+
 
 	/**
 	 * @param AbstractModel $model
@@ -58,7 +69,53 @@ abstract class AbstractBuilder
 	function __construct(AbstractModel $model)
 	{
 		$this->setModel($model);
-		$this->setTableAliasName('_t' . $this->getMaster()->getNextAliasCounter());
+		$this->setTableAliasName('_t' . $this->getQuery()->getNextAliasCounter());
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\DocumentManager
+	 */
+	public function getDocumentManager()
+	{
+		if ($this->documentManager === null)
+		{
+			throw new \RuntimeException('DocumentManager not set', 999999);
+		}
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager(\Change\Documents\ModelManager $modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		if ($this->modelManager === null)
+		{
+			throw new \RuntimeException('ModelManager not set', 999999);
+		}
+		return $this->modelManager;
 	}
 
 	/**
@@ -125,14 +182,10 @@ abstract class AbstractBuilder
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getLCID()
 	{
-		if ($this->LCID === null)
-		{
-			$this->LCID = $this->getDocumentServices()->getDocumentManager()->getLCID();
-		}
 		return $this->LCID;
 	}
 
@@ -237,7 +290,7 @@ abstract class AbstractBuilder
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid document Property', 999999);
 		}
-		$model = $this->getDocumentServices()->getModelManager()->getModelByName($property->getDocumentType());
+		$model = $this->getModelManager()->getModelByName($property->getDocumentType());
 		if ($model === null || $model->isStateless())
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid document Property', 999999);
@@ -257,7 +310,7 @@ abstract class AbstractBuilder
 	 */
 	public function getModelBuilder($modelName, $propertyName)
 	{
-		$model = (is_string($modelName)) ?  $this->getDocumentServices()->getModelManager()->getModelByName($modelName) : $modelName;
+		$model = (is_string($modelName)) ?  $this->getModelManager()->getModelByName($modelName) : $modelName;
 		if (!($model instanceof AbstractModel) || $model->isStateless())
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a valid document model', 999999);
@@ -290,14 +343,14 @@ abstract class AbstractBuilder
 			throw new \InvalidArgumentException('Argument 1 must be a valid Property', 999999);
 		}
 
-		$model = (is_string($modelName)) ?  $this->getDocumentServices()->getModelManager()->getModelByName($modelName) : $modelName;
+		$model = (is_string($modelName)) ?  $this->getModelManager()->getModelByName($modelName) : $modelName;
 		if (!($model instanceof AbstractModel) || $model->isStateless())
 		{
 			throw new \InvalidArgumentException('Argument 2 must be a valid document model', 999999);
 		}
 
 		$modelProperty = $model->getProperty(($modelPropertyName instanceof Property) ? $modelPropertyName->getName() : $modelPropertyName);
-		if ( $modelProperty === null ||  $modelProperty->getStateless() || $modelProperty->getLocalized())
+		if ($modelProperty === null || $modelProperty->getStateless() || $modelProperty->getLocalized())
 		{
 			throw new \InvalidArgumentException('Argument 3 must be a valid Property', 999999);
 		}
@@ -317,18 +370,18 @@ abstract class AbstractBuilder
 	/**
 	 * @return InterfacePredicate|null
 	 */
-	abstract protected function getPredicate();
+	abstract public function getPredicate();
 
 	/**
 	 * @param InterfacePredicate $predicate
 	 */
-	abstract protected function setPredicate(InterfacePredicate $predicate);
+	abstract public function setPredicate(InterfacePredicate $predicate);
 
 	/**
 	 * @api
-	 * @return Builder
+	 * @return Query
 	 */
-	abstract public function getMaster();
+	abstract public function getQuery();
 
 	/**
 	 * @api
@@ -342,11 +395,6 @@ abstract class AbstractBuilder
 	 * @return void
 	 */
 	abstract protected function populateQueryBuilder($qb, \ArrayObject $sysPredicate = null);
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	abstract protected function getDocumentServices();
 
 	/**
 	 * @return \Change\Db\DbProvider
@@ -372,6 +420,7 @@ abstract class AbstractBuilder
 	 * @api
 	 * @param InterfacePredicate $p1
 	 * @param InterfacePredicate $_ [optional]
+	 * @throws \InvalidArgumentException
 	 * @return $this
 	 */
 	public function andPredicates($p1, $_ = null)
@@ -382,11 +431,7 @@ abstract class AbstractBuilder
 		{
 			$predicate->addArgument($pp);
 		}
-		foreach (func_get_args() as $pp)
-		{
-			$predicate->addArgument($pp);
-		}
-
+		$this->addJunctionArgs($predicate, func_get_args());
 		$this->setPredicate($predicate);
 		return $this;
 	}
@@ -395,6 +440,7 @@ abstract class AbstractBuilder
 	 * @api
 	 * @param InterfacePredicate $p1
 	 * @param InterfacePredicate $_ [optional]
+	 * @throws \InvalidArgumentException
 	 * @return $this
 	 */
 	public function orPredicates($p1, $_ = null)
@@ -405,13 +451,33 @@ abstract class AbstractBuilder
 		{
 			$predicate->addArgument($pp);
 		}
-		foreach (func_get_args() as $pp)
-		{
-			$predicate->addArgument($pp);
-		}
-
+		$this->addJunctionArgs($predicate, func_get_args());
 		$this->setPredicate($predicate);
 		return $this;
+	}
+
+	/**
+	 * @param Disjunction|Conjunction $junction
+	 * @param array $args
+	 * @throws \InvalidArgumentException
+	 */
+	protected function addJunctionArgs($junction, $args)
+	{
+		foreach ($args as $arg)
+		{
+			if (is_array($arg))
+			{
+				$this->addJunctionArgs($junction, $arg);
+			}
+			elseif ($arg instanceof \Change\Db\Query\InterfaceSQLFragment)
+			{
+				$junction->addArgument($arg);
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Invalid SQL Fragment', 999999);
+			}
+		}
 	}
 
 	/**
@@ -425,7 +491,15 @@ abstract class AbstractBuilder
 		$localizedIdentifier = $fb->identifier($this->getLocalizedTableAliasName());
 
 		$id =  $pb->eq('id', $fb->getDocumentColumn('id', $localizedIdentifier));
-		$LCID = $fb->eq($fb->getDocumentColumn('LCID', $localizedIdentifier), $fb->string($this->getLCID()));
+		if ($this->getLCID())
+		{
+			$LCIDValue = $fb->string($this->getLCID());
+		}
+		else
+		{
+			$LCIDValue = $fb->getDocumentColumn('refLCID', $fb->identifier($this->getTableAliasName()));
+		}
+		$LCID = $fb->eq($fb->getDocumentColumn('LCID', $localizedIdentifier), $LCIDValue);
 
 		$joinCondition = new \Change\Db\Query\Predicates\Conjunction($id, $LCID);
 		$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($joinCondition, 'ON');
@@ -468,8 +542,16 @@ abstract class AbstractBuilder
 		{
 			$value = $value->getDocumentId();
 		}
+		elseif (is_object($value) && is_callable(array($value, 'getId')))
+		{
+			$value = call_user_func(array($value, 'getId'));
+		}
 
-		if ($type === null)
+		if ($type instanceof Property)
+		{
+			$type = $type->getType();
+		}
+		elseif (!is_string($type))
 		{
 			if (is_int($value))
 			{
@@ -493,20 +575,14 @@ abstract class AbstractBuilder
 			}
 		}
 
-		if (is_string($type))
+		if ($value === null && in_array($type, array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID)))
 		{
-			$dbType = $this->getDbProvider()->getSqlMapping()->getDbScalarType($type);
-		}
-		elseif ($type instanceof Property)
-		{
-			$dbType = $this->getDbProvider()->getSqlMapping()->getDbScalarType($type->getType());
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 2 must be a valid type', 999999);
+			$value = 0;
 		}
 
-		$name = '_p' . $this->getMaster()->getNextAliasCounter();
+		$dbType = $this->getDbProvider()->getSqlMapping()->getDbScalarType($type);
+
+		$name = '_p' . $this->getQuery()->getNextAliasCounter();
 		$parameter = $this->getFragmentBuilder()->typedParameter($name, $dbType);
 		$this->setValuedParameter($parameter, $value);
 		return $parameter;
@@ -635,70 +711,49 @@ abstract class AbstractBuilder
 
 	/**
 	 * @see \Change\Documents\Query\PredicateBuilder::published
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
 	 * @return InterfacePredicate
 	 */
-	public function published()
+	public function published($at = null, $to = null)
 	{
-		return $this->getPredicateBuilder()->published();
+		return $this->getPredicateBuilder()->published($at, $to);
 	}
 
 	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::childOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
+	 * @see \Change\Documents\Query\PredicateBuilder::notPublished
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
 	 */
-	public function childOf($node, $propertyName = 'id')
+	public function notPublished($at = null, $to = null)
 	{
-		return $this->getPredicateBuilder()->childOf($node, $propertyName);
+		return $this->getPredicateBuilder()->notPublished($at, $to);
 	}
 
 	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::descendantOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
+	 * @see \Change\Documents\Query\PredicateBuilder::activated
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
 	 */
-	public function descendantOf($node, $propertyName = 'id')
+	public function activated($at = null, $to = null)
 	{
-		return $this->getPredicateBuilder()->descendantOf($node, $propertyName);
+		return $this->getPredicateBuilder()->activated($at, $to);
 	}
 
 	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::ancestorOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
+	 * @see \Change\Documents\Query\PredicateBuilder::notActivated
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
 	 */
-	public function ancestorOf($node, $propertyName = 'id')
+	public function notActivated($at = null, $to = null)
 	{
-		return $this->getPredicateBuilder()->ancestorOf($node, $propertyName);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::ancestorOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function nextSiblingOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->nextSiblingOf($node, $propertyName);
-	}
-
-	/**
-	 * @see \Change\Documents\Query\PredicateBuilder::previousSiblingOf
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function previousSiblingOf($node, $propertyName = 'id')
-	{
-		return $this->getPredicateBuilder()->previousSiblingOf($node, $propertyName);
+		return $this->getPredicateBuilder()->notActivated($at, $to);
 	}
 }

@@ -1,0 +1,17 @@
+{%  if rows %}
+	{% if parameters.mode == 'promoted' %}
+		<h2>{{ i18n('m.rbs.review.front.promoted_review_list_title_promoted', ['ucf']) }}</h2>
+	{% elseif parameters.mode == 'recent' %}
+		<h2>{{ i18n('m.rbs.review.front.promoted_review_list_title_most_recent', ['ucf']) }}</h2>
+	{% else %}
+		<h2>{{ i18n('m.rbs.review.front.promoted_review_list_title_default_manual', ['ucf']) }}</h2>
+	{% endif %}
+
+	<ul class="list-unstyled comment-list">
+		{% for row in rows %}
+			<li>
+				{% include 'Rbs_Review/Blocks/review.twig' with { 'review': row } %}
+			</li>
+		{% endfor %}
+	</ul>
+{% endif %}

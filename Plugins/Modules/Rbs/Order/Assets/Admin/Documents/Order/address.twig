@@ -1,0 +1,12 @@
+<rbs-field label="{{ i18n('m.rbs.order.admin.order_address_document', ['ucf']) }}" ng-show="addressDocuments.length > 0">
+	<select class="form-control" ng-model="address.__id">
+		<option value="">{{ i18nAttr('m.rbs.order.admin.order_select_address', ['ucf']) }}</option>
+		<option ng-repeat="addressDoc in addressDocuments" ng-value="(=addressDoc.id=)">(=addressDoc.label=)</option>
+	</select>
+</rbs-field>
+<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_address_fields', ['ucf']) }}">
+	<rbs-document-select ng-model="address.__addressFieldsId" accepted-model="Rbs_Geo_AddressFields"
+		value-ids="true" empty-label="{{ i18nAttr('m.rbs.geo.admin.address_fields_select', ['ucf']) }}">
+	</rbs-document-select>
+</rbs-field>
+<rbs-address-fields ng-model="address" address-fields="address.__addressFieldsId"/>

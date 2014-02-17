@@ -1,0 +1,7 @@
+{% if fieldInfos.errors %}
+	<div class="help-block">
+		{% for error in fieldInfos.errors %}
+			<p>{{ error }}</p>
+		{% endfor %}
+	</div>
+{% endif %}

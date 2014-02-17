@@ -1,0 +1,11 @@
+{
+	"mode":{
+		"message":"mode de livraison"
+	},
+	"mode_visual":{
+		"message":"visuel"
+	},
+	"mode_description":{
+		"message":"description"
+	}
+}

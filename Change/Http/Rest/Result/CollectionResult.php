@@ -43,7 +43,6 @@ class CollectionResult extends \Change\Http\Result
 	 */
 	protected $count = 0;
 
-
 	public function __construct()
 	{
 		$this->links = new Links();

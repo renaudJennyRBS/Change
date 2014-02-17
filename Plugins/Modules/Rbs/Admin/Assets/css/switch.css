@@ -1,0 +1,120 @@
+@CHARSET "UTF-8";
+
+.switch-on-off.switch {
+	border: 1px solid rgba(64,64,64,0.4);
+	background: white;
+	box-shadow: 0 0 4px rgba(0,0,0,0.2) inset;
+	position: relative;
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	border-radius: 5px;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	margin: 3px 0;
+	height: 22px;
+}
+
+.switch-on-off.switch label {
+	display: inline-block;
+	text-align: center;
+	vertical-align: top;
+	cursor: pointer;
+	font-size: 11pt;
+	position: relative;
+	z-index: 5;
+	margin: 0;
+
+	-webkit-transition: color .15s linear;
+	-moz-transition: color .15s linear;
+	-ms-transition: color .15s linear;
+	-o-transition: color .15s linear;
+	transition: color .15s linear, border-color .1s linear;
+
+	font-weight: normal;
+	width: 37px;
+}
+
+.switch-on-off.switch > .switch-button {
+	background: none;
+	display: inline-block;
+	position: absolute;
+	top: -3px;
+	border-radius: 5px;
+	border: 3px solid #0088CC;
+	background: white;
+	box-shadow: 0 0 3px rgba(0,0,0,0.4), 0 -10px 0 rgba(0, 128, 255, 0.1) inset;
+	z-index: 4;
+
+	-webkit-transition: left .15s linear;
+	-moz-transition: left .15s linear;
+	-ms-transition: left .15s linear;
+	-o-transition: left .15s linear;
+	transition: left .15s linear, border-color .1s linear;
+
+	height: 26px;
+	left: 35px;
+	width: 40px;
+}
+
+.switch-on-off.switch.on > .switch-button {
+	left: -1px;
+}
+
+.switch-on-off.switch label.on,
+.switch-on-off.switch.on label.off {
+	color: #777777;
+}
+
+.switch-on-off.switch.busy.on label.off,
+.switch-on-off.switch.busy.off label.on {
+	animation-duration: 1s;
+	animation-name: switchOnOffBusyIcon;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
+@keyframes switchOnOffBusyIcon {
+	from { opacity: 1.0; }
+	50% { opacity: 0.4; }
+	to { opacity: 1.0; }
+}
+
+
+.switch-on-off.switch label.off,
+.switch-on-off.switch.on label.on {
+	color: #0088CC;
+	text-shadow: 0 1px 1px white;
+}
+
+.switch-on-off.switch[disabled] {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+.switch-on-off.switch[disabled] > .switch-button {
+	border: 3px solid #888888;
+	box-shadow: 0 0 3px rgba(0,0,0,0.4), 0 -10px 0 rgba(128, 128, 128, 0.12) inset;
+}
+.switch-on-off.switch[disabled] label {
+	cursor: not-allowed;
+}
+.switch-on-off.switch[disabled] label.off,
+.switch-on-off.switch.on[disabled] label.on {
+	color: #888888;
+}
+
+.switch-on-off.switch.busy > .switch-button {
+	background: #0088CC url(../img/ajax-loader-white.gif) center center no-repeat;
+	z-index: 6;
+}
+
+.switch-on-off.switch.busy,
+.switch-on-off.switch.busy label {
+	cursor: not-allowed;
+}
+
+
+.btn-toolbar .btn + .switch, .btn-toolbar .btn-group + .switch,
+.btn-toolbar .switch + .btn, .btn-toolbar .switch + .btn-group {
+	margin-left: 5px;
+}

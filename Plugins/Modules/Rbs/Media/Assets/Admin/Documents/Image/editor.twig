@@ -1,0 +1,47 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-image
+				property="path"
+				required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'path'), ['ucf']) }}">
+		</rbs-field-image>
+
+		<rbs-field-text
+				property="label" required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+				property="alt"
+				label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'alt'), ['ucf']) }}">
+		</rbs-field-text>
+	</fieldset>
+
+	<fieldset data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<fieldset data-ng-show="section=='fileinfo'"
+		hide-when-create="true"
+		data-form-section-label="{{ i18nAttr('m.rbs.media.documents.image_file_informations', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}">
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'width'), ['ucf']) }}">
+			<span class="uneditable-input">(=document.width | number=)</span>
+		</rbs-field>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'height'), ['ucf']) }}">
+			<span class="uneditable-input">(=document.height | number=)</span>
+		</rbs-field>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'mimeType'), ['ucf']) }}">
+			<span class="uneditable-input">(=document.mimetype=)</span>
+		</rbs-field>
+
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

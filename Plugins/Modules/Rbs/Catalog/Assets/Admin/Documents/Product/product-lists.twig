@@ -1,0 +1,96 @@
+<div class="row" ng-controller="Rbs_Catalog_Product_ProductListsController">
+
+
+	<div rbs-aside-column>
+		<div class="rbs-aside-block">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="product"></rbs-document-preview>
+		</div>
+	</div>
+
+
+	<div rbs-main-column>
+
+		<p>
+			<a href="(= product | rbsURL =)" class="back-to-link">
+				{{ i18n('m.rbs.catalog.admin.product_back_to_product', ['ucf']) }}
+				<strong>(= product.label =)</strong>
+			</a>
+		</p>
+
+		<div class="page-header">
+			<h2>{{ i18n('m.rbs.catalog.admin.product_productlists', ['ucf']) }}</h2>
+		</div>
+
+		<div ng-if="productListItems.length > 0">
+			<p><strong>{{ i18n('m.rbs.catalog.admin.product_is_available_in_following_lists', [],
+				{'productLink': '<a href="(= product | rbsURL =)">(= product.label =)</a>'}) | raw }}
+			</strong></p>
+			<p>{{ i18n('m.rbs.catalog.admin.product_productlists_explanation') | raw }}</p>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th>
+					</th>
+					<th>
+						{{ i18n(propertyKey('Rbs_Catalog_ProductListItem', 'productList'), ['ucf']) }}
+					</th>
+					<th>
+						{{ i18n('m.rbs.catalog.admin.productlist_highlight', ['ucf']) }}
+					</th>
+					<th>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="item in productListItems">
+					<td style="vertical-align: middle; width: 50px;">
+						<a title="{{ i18nAttr('m.rbs.catalog.admin.productlist_reorder_items', ['ucf']) }}" class="btn btn-sm btn-default pull-right" href="(= item.productList | rbsURL:'productListItems' =)">
+							<i class="icon-reorder"></i>
+						</a>
+					</td>
+					<td style="vertical-align: middle;">
+						<a href="(= item.productList | rbsURL =)">(= item.productList.label =)</a>
+					</td>
+					<td style="vertical-align: middle;">
+						<rbs-switch ng-class="{'busy': isHighlightBusy(item)}" ng-model="item.isHighlighted" ng-change="toggleHighlight(item)"></rbs-switch>
+					</td>
+					<td style="text-align: right; vertical-align: middle;">
+						<button class="btn btn-sm btn-danger" type="button"
+						        ng-disabled="isRemoveBusy(item)"
+						        ng-click="deleteProductListItem(item)">
+							<i ng-class="{true:'icon-spin icon-spinner', false:'icon-remove'}[isRemoveBusy(item)]"></i>
+							{{ i18n('m.rbs.catalog.admin.remove_from_list', ['ucf']) }}
+						</button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<p ng-if="! productListItems.length"><strong>{{ i18n('m.rbs.catalog.admin.product_is_available_in_no_lists', [],
+				{'productLink': '<a href="(= product | rbsURL =)">(= product.label =)</a>'}) | raw }}</strong></p>
+
+		<h4>{{ i18n('m.rbs.catalog.admin.product_choose_lists', ['ucf']) }}</h4>
+		<p>{{ i18n('m.rbs.catalog.admin.product_choose_lists_message', ['ucf']) }}</p>
+		<rbs-document-picker-multiple ng-model="DATA.selectedLists"
+		     accepted-model="Rbs_Catalog_ProductList"
+		     property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}"
+		     selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_productlists_picker_title', ['ucf']) }}"
+		     master-label="(= product.label =)">
+		</rbs-document-picker-multiple>
+		<div class="btn-toolbar">
+			<button type="button" class="btn btn-primary"
+			        ng-click="addToSelectedLists()"
+			        ng-show="DATA.selectedLists.length > 0"
+					ng-disabled="DATA.addBusy">
+				<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[DATA.addBusy]"></i>
+				{{ i18n('m.rbs.catalog.admin.product_add_to_selected_lists', ['ucf'], {'product':'(= product.label =)'}) | raw }}
+			</button>
+		</div>
+
+	</div>
+
+
+</div>

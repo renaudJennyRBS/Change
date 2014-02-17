@@ -1,0 +1,73 @@
+<form novalidate="" data-ng-controller="Rbs_Catalog_Product_PricesController" class="form-horizontal">
+	<div class="page-header">
+		<h2 class="ng-binding">
+			<a href="(= product | rbsURL:'form' =)">(= product.label =)</a>
+			<small>
+				{{ i18n('m.rbs.catalog.admin.product_price_list', ['ucf']) }}
+			</small>
+		</h2>
+	</div>
+	<fieldset>
+		<legend>{{ i18n('m.rbs.catalog.admin.filter_product_prices', ['ucf']) }}</legend>
+		<div class="form-group property">
+			<label class="col-md-3 control-label" data-not-a-property="" for="selectWebStores">
+				{{ i18n('m.rbs.store.documents.webstore', ['ucf']) }}
+			</label>
+			<div class="col-md-9 controls">
+				<select ng-model="params.webStoreId" class="form-control" rbs-items-from-collection="Rbs_Store_Collection_WebStores" ng-change="changeWebStore(params.webStoreId)">
+					<option value=""> {{ i18n('m.rbs.store.admin.select_webstore', ['ucf']) }}</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group property">
+			<label class="col-md-3 control-label" data-not-a-property="" for="selectWebStores">
+				{{ i18n(modelKey('Rbs_Price_BillingArea'), ['ucf']) }}
+			</label>
+			<div class="col-md-9 controls">
+				<select ng-model="params.areaId" class="form-control" ng-disabled="!params.webStoreId" rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
+				        rbs-items-collection-params="webStoreId:(=params.webStoreId=)" ng-change="changeArea(params.areaId)">
+					<option value="">{{ i18n('m.rbs.price.admin.select_billingarea', ['ucf']) }}</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group property">
+			<label class="col-md-3 control-label"
+			       for="startActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'startActivation'), ['ucf']) }}
+			</label>
+			<div class="col-md-9 controls">
+				<rbs-date-selector data-ng-model="params.startActivation" name="startActivation"  ng-change="changeStartActivation(params.startActivation)"></rbs-date-selector>
+			</div>
+		</div>
+
+		<div class="form-group property">
+			<label class="col-md-3 control-label"
+			       for="endActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'endActivation'), ['ucf']) }}
+			</label>
+			<div class="col-md-9 controls">
+				<rbs-date-selector data-ng-model="params.endActivation" name="endActivation"  ng-change="changeEndActivation(params.endActivation)"></rbs-date-selector>
+			</div>
+		</div>
+		<div class="add-elements-bar">
+			<a href="Rbs/Price/Price/new?productId=(=product.id=)" ng-click="cascadeCreatePrice()">
+				{{ i18nAttr('m.rbs.price.admin.price_create', ['ucf']) }}
+			</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsPricePrice" model="Rbs_Price_Price"
+		                   extend="List" collection-url="(=pricesURL=)">
+			<rbs-column name="webStore">(=doc.webStore.label=)</rbs-column>
+			<rbs-column name="billingArea">(=doc.billingArea.label=)</rbs-column>
+			<rbs-column name="value" primary="true"><a href="(= doc|rbsURL =)">(=doc.formattedValue=)</a></rbs-column>
+			<rbs-column sort="basePrice.value" name="basePrice" align="right" width="150px" label="{{ i18nAttr('m.rbs.price.documents.price_baseprice', ['ucf']) }}">
+				<del ng-if="doc.formattedBaseValue"><a ng-href="(= doc.basePrice|rbsURL =)">(=doc.formattedBaseValue=)</a></del>
+				<a ng-if="!doc.formattedBaseValue" href="(= doc | rbsURL:'discount':{basePriceId:doc.id} =)" class="btn btn-default btn-xs">{{ i18nAttr('m.rbs.catalog.admin.price_create_discount') }}</a>
+			</rbs-column>
+			<rbs-column name="priority">(=doc.priority=)</rbs-column>
+			<rbs-column name="startActivation">(=doc.startActivation | rbsDateTime=)</rbs-column>
+			<rbs-column name="endActivation">(=doc.endActivation | rbsDateTime =)</rbs-column>
+		</rbs-document-list>
+
+	</fieldset>
+</form>

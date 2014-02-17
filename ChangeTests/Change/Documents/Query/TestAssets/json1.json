@@ -1,0 +1,22 @@
+{
+	"model": "Project_Tests_Basic",
+	"where": {
+		"and": [
+			{
+				"op": "eq",
+				"lexp": {
+					"property": "pDocArr"
+				},
+				"rexp": {
+					"value": 100010
+				}
+			}
+		]
+	},
+	"order": [
+		{
+			"property": "pStr",
+			"order": "asc"
+		}
+	]
+}

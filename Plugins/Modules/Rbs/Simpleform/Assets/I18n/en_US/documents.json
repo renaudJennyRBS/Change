@@ -1,0 +1,50 @@
+{
+  "form_usecaptcha":{
+    "message":"use a CAPTCHA"
+  },
+  "form_receiverusers":{
+    "message":"recipients user"
+  },
+  "form_receivergroups":{
+    "message":"recipients groups"
+  },
+  "form_receiveremails":{
+    "message":"recipient email addresses"
+  },
+  "form_confirmationmessage":{
+    "message":"confirmation message"
+  },
+  "form_confirmationmode":{
+    "message":"confirmation mode"
+  },
+  "form_confirmationpopin":{
+    "message":"confirmation in a popin"
+  },
+  "form_confirmationpage":{
+    "message":"confirmation page"
+  },
+  "form_sendacknowledgment":{
+    "message":"send an acknowledgement of receipt"
+  },
+  "form_saveresponses":{
+    "message":"save replies"
+  },
+  "form":{
+    "message":"form"
+  },
+  "field":{
+    "message":"field"
+  },
+  "field_required":{
+    "message":"required"
+  },
+  "field_fieldtypecode":{
+    "message":"field type"
+  },
+  "field_helptext":{
+    "message":"help text"
+  },
+  "response":{
+    "message":"reply"
+  }
+}

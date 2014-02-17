@@ -1,0 +1,32 @@
+{
+  "pagetemplate":{
+    "message":"page template"
+  },
+  "theme":{
+    "message":"theme"
+  },
+  "pagetemplate_html":{
+    "message":"Html"
+  },
+  "pagetemplate_htmlforbackoffice":{
+    "message":"backoffice HTML"
+  },
+  "pagetemplate_editablecontent":{
+    "message":"content zones"
+  },
+  "pagetemplate_contentbywebsite":{
+    "message":"Content by web site"
+  },
+  "pagetemplate_theme":{
+    "message":"themes"
+  },
+  "theme_name":{
+    "message":"name (code)"
+  },
+  "theme_parenttheme":{
+    "message":"parent theme"
+  },
+  "mailtemplate":{
+    "message":"e-mail template"
+  }
+}

@@ -1,0 +1,247 @@
+{
+	"module_name":{
+		"message":"utilisateurs"
+	},
+	"module_keywords":{
+		"message":"groupes,sécurité,mot de passe,password,login,comptes,authentification"
+	},
+	"group":{
+		"message":"groupe"
+	},
+	"group_list":{
+		"message":"groupes"
+	},
+	"group_users_remove_from_group":{
+		"message":"retirer du groupe"
+	},
+	"confirm_remove_permission_rule":{
+		"message":"confirmer la suppression de la règle de permission $ROLE$ pour le privilège $PRIVILEGE$ sur la ressource $RESOURCE_ID$ ?"
+	},
+	"confirm_remove_all_permission_rules":{
+		"message":"confirmer la suppresion de toutes les règles de permissions pour l'utilisateur $USER$ ?"
+	},
+	"profile":{
+		"message":"profil utilisateur"
+	},
+	"token":{
+		"message":"jeton"
+	},
+	"application":{
+		"message":"application"
+	},
+	"realm":{
+		"message":"realm"
+	},
+	"device":{
+		"message":"appareil"
+	},
+	"creation_date":{
+		"message":"date de création"
+	},
+	"validity_date":{
+		"message":"date de validité"
+	},
+	"revoke_token":{
+		"message":"révoquer"
+	},
+	"applications_list_sub_title":{
+		"message":"applications"
+	},
+	"applications":{
+		"message":"applications"
+	},
+	"applications_aside_link":{
+		"message":"configurer l'<strong>accès aux applications</strong>"
+	},
+	"permissions":{
+		"message":"permissions"
+	},
+	"permissions_aside_link":{
+		"message":"configurer les <strong>permissions</strong>"
+	},
+	"current_password":{
+		"message":"mot de passe actuel"
+	},
+	"new_password":{
+		"message":"nouveau mot de passe"
+	},
+	"permission":{
+		"message":"permission"
+	},
+	"permission_rule":{
+		"message":"règle de permission"
+	},
+	"permission_rules_sub_title":{
+		"message":"règles de permission"
+	},
+	"permission_roles":{
+		"message":"rôles"
+	},
+	"permission_privileges":{
+		"message":"privilèges"
+	},
+	"permission_role":{
+		"message":"rôle"
+	},
+	"permission_resource":{
+		"message":"ressource"
+	},
+	"permission_resources":{
+		"message":"ressources"
+	},
+	"permission_privilege":{
+		"message":"privilège"
+	},
+	"new_permission_rules":{
+		"message":"nouvelles règles de permission"
+	},
+	"remove_permission_rule":{
+		"message":"retirer"
+	},
+	"remove_all_permission_rules":{
+		"message":"retirer toutes les règles"
+	},
+	"customise":{
+		"message":"personnaliser"
+	},
+	"add":{
+		"message":"ajouter"
+	},
+	"public_profile_sub_title":{
+		"message":"profil public"
+	},
+	"login":{
+		"message":"Bloc d'identification"
+	},
+	"login_realm":{
+		"message":"realm"
+	},
+	"account_short":{
+		"message":"Compte utilisateur réduit"
+	},
+	"create_account":{
+		"message":"creation d'un compte utilisateur",
+		"description":"account creation block name (backoffice use)"
+	},
+	"create_account_hash_method":{
+		"message":"méthode de hash pour le mot de passe"
+	},
+	"account_settings":{
+		"message":"configuration du compte",
+		"description":"account settings block name (backoffice use)"
+	},
+	"function_login":{
+		"message":"Identification"
+	},
+	"function_create_account":{
+		"message":"création du compte utilisateur"
+	},
+	"function_error_401":{
+		"message":"autorisation nécessaire"
+	},
+	"function_error_403":{
+		"message":"acces refusé"
+	},
+	"group_picker_title":{
+		"message":"sélectionner les groupes"
+	},
+	"user_list":{
+		"message":"utilisateurs"
+	},
+	"user_create":{
+		"message":"ajouter un utilisateur"
+	},
+	"group_create":{
+		"message":"ajouter un groupe d'utilisateurs"
+	},
+	"users_in_group":{
+		"message":"utilisateurs du groupe"
+	},
+	"users_in_group_aside_link":{
+		"message":"gérer les <strong>utilisateurs du groupe</strong>"
+	},
+	"add_users_in_group":{
+		"message":"ajouter des utilisateurs au groupe"
+	},
+	"users_in_group_picker_title":{
+		"message":"sélectionner les utilisateurs à ajouter au groupe"
+	},
+	"profile_lcid":{
+		"message":"langue"
+	},
+	"profile_timezone":{
+		"message":"fuseau horraire"
+	},
+	"profile_avatar":{
+		"message":"avatar"
+	},
+	"profile_pagingsize":{
+		"message":"nombre d'éléments par page"
+	},
+	"profile_documentlistviewmode":{
+		"message":"Affichage des listes"
+	},
+	"profile_list":{
+		"message":"liste"
+	},
+	"profile_grid":{
+		"message":"grille"
+	},
+	"profile_editoractionaftersave":{
+		"message":"après l'enregistrement"
+	},
+	"profile_backtolist":{
+		"message":"retourner à la liste"
+	},
+	"profile_stayonform":{
+		"message":"rester sur le formulaire"
+	},
+	"profile_internationalization":{
+		"message":"langues et région"
+	},
+	"profile_lists":{
+		"message":"affichage des listes"
+	},
+	"profile_editors":{
+		"message":"formulaires d'édition"
+	},
+	"profile_personnal_info":{
+		"message":"informations personnelles"
+	},
+	"profile_warning":{
+		"message":"attention !"
+	},
+	"profile_change_language_warning":{
+		"message":"après avoir changé de langue, vous devrez vider les caches de votre navigateur et recharger la page."
+	},
+	"profile_notification":{
+		"message":"notifications"
+	},
+	"profile_notification_sending_management":{
+		"message":"notifications par e-mail"
+	},
+	"profile_notification_no_email":{
+		"message":"ne rien envoyer"
+	},
+	"profile_notification_immediately":{
+		"message":"envoyer immédiatement"
+	},
+	"profile_notification_with_time_interval":{
+		"message":"envoyer à intervalles réguliers"
+	},
+	"profile_notification_time_interval":{
+		"message":"fréquence d'envoi"
+	},
+	"profile_notification_time_interval_at":{
+		"message":"à"
+	},
+	"profile_notification_time_interval_helper":{
+		"message":"si vous sélectionnez <strong>fréquence d'envoi 1 jours<\/strong> et <strong>à 12:00<\/strong> vous recevrez un e-mail tous les jours entre 12h et 12h05.<br\/>\n\tSi vous sélectionnez <strong>fréquence d'envoi 2 heures<\/strong> et <strong>à 13:15<\/strong>, seules les minutes seront prises en compte, (le prochain e-mail reçu sera donc entre 15h15 et 15h20, puis entre 17h15 et 17h20...)"
+	},
+	"profile_gravatar_help":{
+		"message":"Pour utiliser un avatar, créer un compte sur le site <a href=\"http:\/\/fr.gravatar.com\" target=\"_blank\">http:\/\/fr.gravatar.com<\/a>"
+	},
+	"create_account_request_mail_subject":{
+		"message":"Demande de création de compte"
+	}
+}

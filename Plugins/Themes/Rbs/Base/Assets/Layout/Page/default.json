@@ -1,0 +1,11 @@
+{
+	"mainContent": {
+		"id": "mainContent",
+		"grid": 12,
+		"type": "container",
+		"parameters": {
+		},
+		"items": [
+		]
+	}
+}

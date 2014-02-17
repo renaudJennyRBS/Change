@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	localized="true">
+	<properties>
+		<property name="locked" type="Boolean" default-value="false" />
+		<property name="code" type="String" required="true" />
+		<property name="title" type="String" localized="true" has-correction="true"/>
+		<property name="required" type="Boolean" default-value="false" has-correction="true"/>
+
+		<property name="collectionCode" type="String" has-correction="true">
+			<dboptions length="100" />
+		</property>
+		<property name="defaultValue" type="String" />
+		<property name="match" type="String" />
+	</properties>
+</document>

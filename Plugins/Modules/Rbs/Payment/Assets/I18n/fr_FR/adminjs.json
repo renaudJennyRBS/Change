@@ -1,0 +1,17 @@
+{
+	"deferredconnector_create":{
+		"message":"ajouter un connecteur à paiement différé"
+	},
+	"transaction_confirm_validate_payment_title":{
+		"message":"Valider le paiement ?"
+	},
+	"transaction_confirm_validate_payment":{
+		"message":"Une fois la transaction validée il ne sera plus possible de modifier les informations."
+	},
+	"transaction_confirm_refuse_payment_title":{
+		"message":"Refuser le paiement ?"
+	},
+	"transaction_confirm_refuse_payment":{
+		"message":"Une fois la transaction refusée il ne sera plus possible de modifier les informations."
+	}
+}

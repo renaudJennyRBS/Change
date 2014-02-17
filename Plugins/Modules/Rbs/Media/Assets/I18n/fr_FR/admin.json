@@ -1,0 +1,17 @@
+{
+	"module_name":{
+		"message":"médiathèque"
+	},
+	"module_keywords":{
+		"message":"images,photos,photographies,videos,vidéos,documents,icônes,icones,visuels,albums,galeries"
+	},
+	"image_list":{
+		"message":"images"
+	},
+	"image_create":{
+		"message":"ajouter une image"
+	},
+	"find_images":{
+		"message":"trouver des images"
+	}
+}

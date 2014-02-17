@@ -3,19 +3,15 @@ namespace Change\Documents\Interfaces;
 
 /**
  * @name \Change\Documents\Interfaces\Localizable
- * @api
+ * @method integer getId()
+ * @method \Change\Documents\AbstractModel getDocumentModel()
  */
 interface Localizable
 {
 	/**
 	 * @api
-	 * @return integer
-	 */
-	public function getId();
-
-	/**
-	 * @api
 	 * @param string $val
+	 * @return $this
 	 */
 	public function setRefLCID($val);
 
@@ -29,17 +25,35 @@ interface Localizable
 	 * @api
 	 * @return string
 	 */
-	public function getLCID();
+	public function getCurrentLCID();
 
 	/**
 	 * @api
-	 * @return \Change\Documents\LocalizableFunctions
+	 * @return string[]
 	 */
-	public function getLocalizableFunctions();
+	public function getLCIDArray();
 
 	/**
 	 * @api
 	 * @return \Change\Documents\AbstractLocalizedDocument
 	 */
-	public function getCurrentLocalizedPart();
+	public function getCurrentLocalization();
+
+	/**
+	 * @api
+	 * @return \Change\Documents\AbstractLocalizedDocument
+	 */
+	public function getRefLocalization();
+
+	/**
+	 * @api
+	 * @throws \RuntimeException if current LCID = refLCID
+	 */
+	public function deleteCurrentLocalization();
+
+	/**
+	 * @api
+	 * @param boolean $newDocument
+	 */
+	public function saveCurrentLocalization($newDocument = false);
 }

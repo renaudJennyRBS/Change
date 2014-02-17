@@ -1,8 +1,8 @@
 <?php
 namespace Change\Documents;
 
-use Change\Application\ApplicationServices;
 use Change\Db\Query\ResultsConverter;
+use Change\Db\ScalarType;
 
 /**
  * @name \Change\Documents\DocumentManager
@@ -10,27 +10,7 @@ use Change\Db\Query\ResultsConverter;
  */
 class DocumentManager
 {
-	const STATE_NEW = 1;
-
-	const STATE_INITIALIZED = 2;
-
-	const STATE_LOADING = 3;
-
-	const STATE_LOADED = 4;
-
-	const STATE_SAVING = 5;
-
-	const STATE_DELETED = 6;
-
-	/**
-	 * @var ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var DocumentServices
-	 */
-	protected $documentServices;
+	const EVENT_MANAGER_IDENTIFIER = 'Documents';
 
 	/**
 	 * Document instances by id
@@ -39,9 +19,9 @@ class DocumentManager
 	protected $documentInstances = array();
 
 	/**
-	 * @var array
+	 * @var integer
 	 */
-	protected $tmpRelationIds = array();
+	protected $cycleCount = 0;
 
 	/**
 	 * Temporary identifier for new persistent document
@@ -50,50 +30,130 @@ class DocumentManager
 	protected $newInstancesCounter = 0;
 
 	/**
-	 * @param ApplicationServices $applicationServices
+	 * @var string[] ex: "en_US" or "fr_FR"
 	 */
-	public function setApplicationServices(ApplicationServices $applicationServices)
+	protected $LCIDStack = array();
+
+	/**
+	 * @var boolean
+	 */
+	protected $inTransaction = false;
+
+	/**
+	 * @var array
+	 */
+	protected $LCIDStackTransaction = array();
+
+	/**
+	 * @var \Change\Logging\Logging
+	 */
+	protected $logging;
+
+	/**
+	 * @var \Change\Db\DbProvider
+	 */
+	protected $dbProvider = null;
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager = null;
+
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager = null;
+
+	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
+
+	/**
+	 * @var \Change\Events\EventManagerFactory
+	 */
+	protected $eventManagerFactory;
+
+	/**
+	 * @var \Change\Events\EventManager
+	 */
+	protected $eventManager;
+
+	/**
+	 * @return \Change\Events\EventManager
+	 */
+	protected function getEventManager()
 	{
-		$this->applicationServices = $applicationServices;
+		if ($this->eventManager === null)
+		{
+			$this->eventManager = $this->getEventManagerFactory()->getNewEventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager->attach('injection', array($this, 'onDefaultInjection'), 5);
+		}
+		return $this->eventManager;
 	}
 
 	/**
-	 * @return ApplicationServices
+	 * @param \Change\Logging\Logging $logging
+	 * @return $this
 	 */
-	public function getApplicationServices()
+	public function setLogging(\Change\Logging\Logging $logging)
 	{
-		return $this->applicationServices;
+		$this->logging = $logging;
+		return $this;
 	}
 
 	/**
-	 * @param DocumentServices $documentServices
+	 * @return \Change\Logging\Logging
 	 */
-	public function setDocumentServices(DocumentServices $documentServices)
+	public function getLogging()
 	{
-		$this->documentServices = $documentServices;
+		return $this->logging;
 	}
 
 	/**
-	 * @return DocumentServices
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
 	 */
-	public function getDocumentServices()
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		return $this->documentServices;
-	}
-
-	public function __destruct()
-	{
-		$this->reset();
+		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**
-	 * Cleanup all documents instance
+	 * @return \Change\Configuration\Configuration
 	 */
-	public function reset()
+	public function getConfiguration()
 	{
-		$this->documentInstances = array();
-		$this->tmpRelationIds = array();
-		$this->newInstancesCounter = 0;
+		return $this->configuration;
+	}
+
+	/**
+	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
+	 * @return $this
+	 */
+	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
+	{
+		$this->eventManagerFactory = $eventManagerFactory;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Events\EventManagerFactory
+	 */
+	protected function getEventManagerFactory()
+	{
+		return $this->eventManagerFactory;
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @return $this
+	 */
+	public function setDbProvider(\Change\Db\DbProvider $dbProvider)
+	{
+		$this->dbProvider = $dbProvider;
+		return $this;
 	}
 
 	/**
@@ -101,25 +161,17 @@ class DocumentManager
 	 */
 	protected function getDbProvider()
 	{
-		return $this->applicationServices->getDbProvider();
+		return $this->dbProvider;
 	}
 
 	/**
-	 * @param string $cacheKey
-	 * @return \Change\Db\Query\Builder
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
 	 */
-	protected function getNewQueryBuilder($cacheKey = null)
+	public function setI18nManager(\Change\I18n\I18nManager $i18nManager)
 	{
-		return $this->applicationServices->getDbProvider()->getNewQueryBuilder($cacheKey);
-	}
-
-	/**
-	 * @param string $cacheKey
-	 * @return \Change\Db\Query\StatementBuilder
-	 */
-	protected function getNewStatementBuilder($cacheKey = null)
-	{
-		return $this->applicationServices->getDbProvider()->getNewStatementBuilder($cacheKey);
+		$this->i18nManager = $i18nManager;
+		return $this;
 	}
 
 	/**
@@ -127,7 +179,17 @@ class DocumentManager
 	 */
 	protected function getI18nManager()
 	{
-		return $this->getApplicationServices()->getI18nManager();
+		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager(\Change\Documents\ModelManager $modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
 	}
 
 	/**
@@ -136,512 +198,99 @@ class DocumentManager
 	 */
 	public function getModelManager()
 	{
-		return $this->getDocumentServices()->getModelManager();
+		return $this->modelManager;
 	}
 
 	/**
-	 * @api
-	 * @param AbstractDocument $document
+	 * @param \Change\Events\Event $event
 	 */
-	public function loadDocument(AbstractDocument $document)
+	public function beginTransaction(\Change\Events\Event $event)
 	{
-		$document->setPersistentState(static::STATE_LOADING);
-		$model = $document->getDocumentModel();
-
-		$qb = $this->getNewQueryBuilder(__METHOD__ . $model->getName());
-		if (!$qb->isCached())
+		if ($event->getParam('primary'))
 		{
-			$fb = $qb->getFragmentBuilder();
-			$sqlMapping = $qb->getSqlMapping();
-			$qb->select()->from($fb->getDocumentTable($model->getRootName()))->where($fb->eq($fb->getDocumentColumn('id'),
-				$fb->integerParameter('id', $qb)));
-
-			foreach ($model->getProperties() as $property)
-			{
-				/* @var $property \Change\Documents\Property */
-				if ($property->getStateless())
-				{
-					continue;
-				}
-				if (!$property->getLocalized())
-				{
-					$qb->addColumn($fb->alias($fb->column($sqlMapping->getDocumentFieldName($property->getName())),
-						$property->getName()));
-				}
-			}
+			$this->inTransaction = true;
 		}
+		$count = $event->getParam('count');
+		$this->LCIDStackTransaction[$count] = $this->LCIDStack;
+	}
 
-		$sq = $qb->query();
-		$sq->bindParameter('id', $document->getId());
-
-		$propertyBag = $sq->getFirstResult();
-		if ($propertyBag)
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function commit(\Change\Events\Event $event)
+	{
+		if ($event->getParam('primary'))
 		{
-			$dbp = $sq->getDbProvider();
-			$sqlMapping = $dbp->getSqlMapping();
-			foreach ($propertyBag as $propertyName => $dbValue)
-			{
-				if (($property = $model->getProperty($propertyName)) !== null)
-				{
-					$property->setValue($document, $dbp->dbToPhp($dbValue, $sqlMapping->getDbScalarType($property->getType())));
-				}
-			}
-			$document->setPersistentState(static::STATE_LOADED);
+			$this->inTransaction = false;
+			$this->reset();
 		}
-		else
+		$count = $event->getParam('count');
+		unset($this->LCIDStackTransaction[$count]);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function rollBack(\Change\Events\Event $event)
+	{
+
+		$count = $event->getParam('count');
+		if (isset($this->LCIDStackTransaction[$count]))
 		{
-			$document->setPersistentState(static::STATE_DELETED);
+			$this->LCIDStack = $this->LCIDStackTransaction[$count];
+		}
+		if ($event->getParam('primary'))
+		{
+			$this->LCIDStackTransaction = array();
+			$this->inTransaction = false;
+			$this->reset();
 		}
 	}
 
 	/**
 	 * @api
-	 * @param AbstractDocument $document
-	 * @return array()
+	 * @return bool
 	 */
-	public function loadMetas(AbstractDocument $document)
+	public function inTransaction()
 	{
-		$qb = $this->getNewQueryBuilder(__METHOD__);
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select('metas')->from($fb->getDocumentMetasTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)))
-				->query();
-		}
-		$query = $qb->query();
-		$query->bindParameter('id', $document->getId());
-		$row = $query->getFirstResult();
-		if ($row !== null && $row['metas'])
-		{
-			return json_decode($row['metas'], true);
-		}
-		return array();
+		return $this->inTransaction;
+	}
+
+	public function __destruct()
+	{
+		$this->reset();
 	}
 
 	/**
 	 * @api
-	 * @param AbstractDocument $document
-	 * @return integer
+	 * Cleanup all documents instance
 	 */
-	public function affectId(AbstractDocument $document)
+	public function reset()
 	{
-		$dbp = $this->getDbProvider();
-
-		$qb = $this->getNewStatementBuilder();
-		$fb = $qb->getFragmentBuilder();
-		$dt = $fb->getDocumentIndexTable();
-		$qb->insert($dt);
-		$iq = $qb->insertQuery();
-
-		if ($document->getId() > 0)
+		array_map(function (AbstractDocument $document)
 		{
-			$qb->addColumn($fb->getDocumentColumn('id'));
-			$qb->addValue($fb->integerParameter('id', $qb));
-			$iq->bindParameter('id', $document->getId());
-		}
-
-		$qb->addColumn($fb->getDocumentColumn('model'));
-		$qb->addValue($fb->parameter('model', $qb));
-		$iq->bindParameter('model', $document->getDocumentModelName());
-
-		$iq->execute();
-		if ($document->getId() > 0)
-		{
-			$id = $document->getId();
-		}
-		else
-		{
-			$tmpId = $document->getId();
-			$id = $dbp->getLastInsertId($dt->getName());
-			if (isset($this->tmpRelationIds[$tmpId]))
-			{
-				unset($this->documentInstances[$tmpId]);
-				$this->tmpRelationIds[$tmpId] = $id;
-			}
-			$document->initialize($id);
-		}
-		return $id;
+			$document->cleanUp();
+		}, $this->documentInstances);
+		$this->documentInstances = array();
+		$this->newInstancesCounter = 0;
 	}
 
 	/**
-	 * @param AbstractDocument $document
-	 * @throws \InvalidArgumentException
+	 * @param string $cacheKey
+	 * @return \Change\Db\Query\Builder
 	 */
-	public function insertDocument(AbstractDocument $document)
+	protected function getNewQueryBuilder($cacheKey = null)
 	{
-		if ($document->getId() <= 0)
-		{
-			throw new \InvalidArgumentException('Invalid Document Id: ' . $document->getId(), 51008);
-		}
-		elseif ($document->getPersistentState() != static::STATE_NEW)
-		{
-			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
-		}
-
-		$document->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$fb = $qb->getFragmentBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$model = $document->getDocumentModel();
-
-		$relations = array();
-
-		$qb->insert($fb->getDocumentTable($model->getRootName()));
-		$iq = $qb->insertQuery();
-		foreach ($model->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
-			{
-				continue;
-			}
-			if (!$property->getLocalized())
-			{
-				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
-				{
-					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
-				}
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->addColumn($fb->getDocumentColumn($name));
-				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($document));
-			}
-		}
-		$iq->execute();
-		foreach ($relations as $name => $ids)
-		{
-			if (count($ids))
-			{
-				$this->insertRelation($document, $model, $name, $ids);
-			}
-		}
-
-		$document->setPersistentState(static::STATE_LOADED);
+		return $this->getDbProvider()->getNewQueryBuilder($cacheKey);
 	}
 
 	/**
-	 * @param AbstractDocument $document
-	 * @param AbstractModel $model
-	 * @param string $name
+	 * @param string $cacheKey
+	 * @return \Change\Db\Query\StatementBuilder
 	 */
-	protected function deleteRelation($document, $model, $name)
+	protected function getNewStatementBuilder($cacheKey = null)
 	{
-		$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->delete($fb->getDocumentRelationTable($model->getRootName()));
-			$qb->where(
-				$fb->logicAnd(
-					$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-					$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
-				)
-			);
-		}
-		$query = $qb->deleteQuery();
-		$query->bindParameter('id', $document->getId());
-		$query->bindParameter('relname', $name);
-		$query->execute();
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param AbstractModel $model
-	 * @param string $name
-	 * @param integer[] $ids
-	 * @throws \RuntimeException
-	 */
-	protected function insertRelation($document, $model, $name, $ids)
-	{
-		$idsToSave = array();
-		foreach ($ids as $id)
-		{
-			if ($id === null)
-			{
-				continue;
-			}
-
-			if (($relDoc = $this->getFromCache($id)) !== null)
-			{
-				$id = $relDoc->getId();
-			}
-			if ($id < 0)
-			{
-				throw new \RuntimeException('Invalid relation document id: ' . $id, 50003);
-			}
-			$idsToSave[] = $id;
-		}
-
-		if (count($idsToSave))
-		{
-			$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-			if (!$qb->isCached())
-			{
-				$fb = $qb->getFragmentBuilder();
-				$qb->insert($fb->getDocumentRelationTable($model->getRootName()), $fb->getDocumentColumn('id'), 'relname',
-					'relorder', 'relatedid');
-				$qb->addValues($fb->integerParameter('id', $qb), $fb->parameter('relname', $qb),
-					$fb->integerParameter('order', $qb), $fb->integerParameter('relatedid', $qb));
-			}
-
-			$query = $qb->insertQuery();
-			$query->bindParameter('id', $document->getId());
-			$query->bindParameter('relname', $name);
-			foreach ($idsToSave as $order => $relatedid)
-			{
-				$query->bindParameter('order', $order);
-				$query->bindParameter('relatedid', $relatedid);
-				$query->execute();
-			}
-		}
-	}
-
-	/**
-	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @throws \InvalidArgumentException
-	 */
-	public function insertLocalizedDocument(AbstractDocument $document,
-		\Change\Documents\AbstractLocalizedDocument $localizedPart)
-	{
-		if ($document->getId() <= 0)
-		{
-			throw new \InvalidArgumentException('Invalid Document Id: ' . $document->getId(), 51008);
-		}
-		elseif ($localizedPart->getPersistentState() != static::STATE_NEW)
-		{
-			throw new \InvalidArgumentException(
-				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
-		}
-		if ($localizedPart->getId() !== $document->getId())
-		{
-			$localizedPart->initialize($document->getId(), $localizedPart->getLCID(), static::STATE_NEW);
-		}
-		$localizedPart->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$fb = $qb->getFragmentBuilder();
-
-		$model = $document->getDocumentModel();
-		$qb->insert($fb->getDocumentI18nTable($model->getRootName()));
-		$iq = $qb->insertQuery();
-		foreach ($model->getProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
-			{
-				continue;
-			}
-			if ($property->getLocalized() || $name === 'id')
-			{
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->addColumn($fb->getDocumentColumn($name));
-				$qb->addValue($fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($document));
-			}
-		}
-
-		$iq->execute();
-		$localizedPart->setPersistentState(static::STATE_LOADED);
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @throws \InvalidArgumentException
-	 */
-	public function updateDocument(AbstractDocument $document)
-	{
-		if ($document->getPersistentState() != static::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
-		}
-
-		$document->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$fb = $qb->getFragmentBuilder();
-		$model = $document->getDocumentModel();
-
-		$qb->update($fb->getDocumentTable($model->getRootName()));
-		$iq = $qb->updateQuery();
-		$execute = false;
-		$relations = array();
-
-		foreach ($model->getNonLocalizedProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
-			{
-				continue;
-			}
-			if ($document->isPropertyModified($name))
-			{
-				if ($property->getType() === Property::TYPE_DOCUMENTARRAY)
-				{
-					$relations[$name] = call_user_func(array($document, 'get' . ucfirst($name) . 'Ids'));
-				}
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($document));
-				$execute = true;
-			}
-		}
-
-		if ($execute)
-		{
-			$qb->where($fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id', $qb)));
-			$iq->bindParameter('id', $document->getId());
-			$iq->execute();
-
-			foreach ($relations as $name => $ids)
-			{
-				$this->deleteRelation($document, $model, $name);
-				if (count($ids))
-				{
-					$this->insertRelation($document, $model, $name, $ids);
-				}
-			}
-		}
-		$document->setPersistentState(static::STATE_LOADED);
-	}
-
-	/**
-	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @throws \InvalidArgumentException
-	 */
-	public function updateLocalizedDocument(AbstractDocument $document,
-		\Change\Documents\AbstractLocalizedDocument $localizedPart)
-	{
-		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException(
-				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
-		}
-		if ($localizedPart->getId() !== $document->getId())
-		{
-			$localizedPart->initialize($document->getId(), $localizedPart->getLCID(), static::STATE_LOADED);
-		}
-
-		$localizedPart->setPersistentState(static::STATE_SAVING);
-
-		$qb = $this->getNewStatementBuilder();
-		$sqlMapping = $qb->getSqlMapping();
-		$fb = $qb->getFragmentBuilder();
-		$model = $document->getDocumentModel();
-
-		$qb->update($sqlMapping->getDocumentI18nTableName($model->getRootName()));
-		$iq = $qb->updateQuery();
-		$execute = false;
-
-		foreach ($model->getLocalizedProperties() as $name => $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getStateless())
-			{
-				continue;
-			}
-			if ($localizedPart->isPropertyModified($name))
-			{
-				$dbType = $sqlMapping->getDbScalarType($property->getType());
-				$qb->assign($fb->getDocumentColumn($name), $fb->typedParameter($name, $dbType, $qb));
-				$iq->bindParameter($name, $property->getValue($localizedPart));
-				$execute = true;
-			}
-		}
-
-		if ($execute)
-		{
-			$qb->where(
-				$fb->logicAnd(
-					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('id')), $fb->integerParameter('id', $qb)),
-					$fb->eq($fb->column($sqlMapping->getDocumentFieldName('LCID')), $fb->parameter('LCID', $qb))
-				)
-
-			);
-			$iq->bindParameter('id', $localizedPart->getId());
-			$iq->bindParameter('LCID', $localizedPart->getLCID());
-			$iq->execute();
-		}
-
-		$localizedPart->setPersistentState(static::STATE_LOADED);
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param array $metas
-	 */
-	public function saveMetas(AbstractDocument $document, $metas)
-	{
-		$qb = $this->getNewStatementBuilder(__METHOD__.'Delete');
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->delete($fb->getDocumentMetasTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-		}
-
-		$deleteQuery = $qb->deleteQuery();
-		$deleteQuery->bindParameter('id', $document->getId());
-		$deleteQuery->execute();
-		if (!is_array($metas) || count($metas) == 0)
-		{
-			return;
-		}
-
-		$qb = $this->getNewStatementBuilder(__METHOD__.'Insert');
-		if (!$qb->isCached())
-		{
-
-			$fb = $qb->getFragmentBuilder();
-			$qb->insert($fb->getDocumentMetasTable(), $fb->getDocumentColumn('id'), 'metas', 'lastupdate')
-				->addValues($fb->integerParameter('id', $qb), $fb->typedParameter('metas', \Change\Db\ScalarType::TEXT, $qb),
-					$fb->dateTimeParameter('lastupdate', $qb));
-		}
-
-		$insertQuery = $qb->insertQuery();
-		$insertQuery->bindParameter('id', $document->getId());
-		$insertQuery->bindParameter('metas', json_encode($metas));
-		$insertQuery->bindParameter('lastupdate', new \DateTime());
-		$insertQuery->execute();
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param string $propertyName
-	 * @return integer[]
-	 */
-	public function getPropertyDocumentIds(AbstractDocument $document, $propertyName)
-	{
-		$model = $document->getDocumentModel();
-		$qb = $this->getNewQueryBuilder(__METHOD__ . $model->getRootName());
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->alias($fb->column('relatedid'), 'id'))->from($fb->getDocumentRelationTable($model->getRootName()))
-				->where(
-					$fb->logicAnd(
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-						$fb->eq($fb->column('relname'), $fb->parameter('relname', $qb))
-					))
-				->orderAsc($fb->column('relorder'));
-		}
-
-		$query = $qb->query();
-		$query->bindParameter('id', $document->getId());
-		$query->bindParameter('relname', $propertyName);
-		$result = $query->getResults(function ($rows)
-		{
-			return array_map(function ($row)
-			{
-				return $row['id'];
-			}, $rows);
-		});
-		return $result;
+		return $this->getDbProvider()->getNewStatementBuilder($cacheKey);
 	}
 
 	/**
@@ -661,151 +310,81 @@ class DocumentManager
 
 	/**
 	 * @param AbstractModel $model
+	 * @throws \RuntimeException
 	 * @return AbstractDocument
 	 */
 	public function getNewDocumentInstanceByModel(AbstractModel $model)
 	{
 		$newDocument = $this->createNewDocumentInstance($model);
 		$this->newInstancesCounter--;
-		$newDocument->initialize($this->newInstancesCounter, static::STATE_NEW);
+		$newDocument->initialize($this->newInstancesCounter, AbstractDocument::STATE_NEW);
 		$newDocument->setDefaultValues($model);
 		return $newDocument;
 	}
 
 	/**
 	 * @param AbstractModel $model
+	 * @throws \RuntimeException
 	 * @return AbstractDocument
 	 */
 	protected function createNewDocumentInstance(AbstractModel $model)
 	{
-		$className = $this->getDocumentClassFromModel($model);
-		/* @var $newDocument AbstractDocument */
-		return new $className($this->getDocumentServices(), $model);
+		if ($model->isAbstract())
+		{
+			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
+		}
+		$className = $model->getDocumentClassName();
+		if (!class_exists($className))
+		{
+			throw new \RuntimeException('Class could not be loaded ' . $className, 999999);
+		}
+
+		/* @var $document AbstractDocument */
+		$document = new $className($model);
+		$document->setEventManagerFactory($this->eventManagerFactory)
+			->setDocumentManager($this)
+			->setDbProvider($this->dbProvider);
+		$this->getEventManager()->trigger('injection', $this, array('document' => $document));
+		return $document;
 	}
 
 	/**
-	 * @param AbstractModel $model
-	 * @return \Change\Documents\AbstractLocalizedDocument
+	 * @param \Change\Events\Event $event
 	 */
-	protected function createNewLocalizedDocumentInstance(AbstractModel $model)
+	public function onDefaultInjection(\Change\Events\Event $event)
 	{
-		$className = $this->getLocalizedDocumentClassFromModel($model);
-		return new $className($this);
+		$document = $event->getParam('document');
+		if ($document instanceof AbstractDocument)
+		{
+			$document->onDefaultInjection($event);
+		}
 	}
 
 	/**
-	 * @param AbstractDocument $document
-	 * @param string $LCID
-	 * @return \Change\Documents\AbstractLocalizedDocument
-	 */
-	public function getLocalizedDocumentInstanceByDocument(AbstractDocument $document, $LCID)
-	{
-		$model = $document->getDocumentModel();
-		$localizedPart = $this->createNewLocalizedDocumentInstance($model);
-		$localizedPart->initialize($document->getId(), $LCID, static::STATE_NEW);
-
-		if ($document->getPersistentState() != static::STATE_NEW)
-		{
-			$localizedPart->setPersistentState(static::STATE_LOADING);
-			$qb = $this->getNewQueryBuilder(__METHOD__ . $model->getName());
-			if (!$qb->isCached())
-			{
-				$fb = $qb->getFragmentBuilder();
-				$qb->select()->from($fb->getDocumentI18nTable($model->getRootName()));
-				foreach ($model->getProperties() as $property)
-				{
-					/* @var $property \Change\Documents\Property */
-					if ($property->getStateless())
-					{
-						continue;
-					}
-					if ($property->getLocalized())
-					{
-						$qb->addColumn($fb->alias($fb->getDocumentColumn($property->getName()), $property->getName()));
-					}
-				}
-
-				$qb->where(
-					$fb->logicAnd(
-						$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-						$fb->eq($fb->column('lcid'), $fb->parameter('lcid', $qb)
-						)
-					)
-				);
-			}
-
-			$q = $qb->query();
-			$q->bindParameter('id', $document->getId())->bindParameter('lcid', $LCID);
-			$propertyBag = $q->getFirstResult();
-			if ($propertyBag)
-			{
-				$dbp = $q->getDbProvider();
-				$sqlMapping = $dbp->getSqlMapping();
-				foreach ($propertyBag as $propertyName => $dbValue)
-				{
-					if (($property = $model->getProperty($propertyName)) !== null)
-					{
-						$propVal = $dbp->dbToPhp($dbValue, $sqlMapping->getDbScalarType($property->getType()));
-						$property->setValue($localizedPart, $propVal);
-					}
-				}
-				$localizedPart->setPersistentState(static::STATE_LOADED);
-			}
-			elseif ($document->getPersistentState() == static::STATE_DELETED)
-			{
-				$localizedPart->setPersistentState(static::STATE_DELETED);
-			}
-			else
-			{
-				$localizedPart->setPersistentState(static::STATE_NEW);
-				$localizedPart->setDefaultValues($model);
-			}
-		}
-		else
-		{
-			$localizedPart->setDefaultValues($model);
-		}
-		return $localizedPart;
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @return string[]
-	 */
-	public function getLocalizedDocumentLCIDArray(AbstractDocument $document)
-	{
-		if ($document->getId() <= 0)
-		{
-			return array();
-		}
-
-		$model = $document->getDocumentModel();
-		$qb = $this->getNewQueryBuilder(__METHOD__ . $model->getRootName());
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->alias($fb->getDocumentColumn('LCID'), 'lc'))
-				->from($fb->getDocumentI18nTable($model->getRootName()))
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-		}
-
-		$q = $qb->query();
-		$q->bindParameter('id', $document->getId());
-		$rows = $q->getResults();
-		return array_map(function ($row)
-		{
-			return $row['lc'];
-		}, $rows);
-	}
-
-	/**
+	 * @api
 	 * @param integer $documentId
-	 * @param AbstractModel $model
+	 * @param AbstractModel|String $model
 	 * @return AbstractDocument|null
 	 */
-	public function getDocumentInstance($documentId, AbstractModel $model = null)
+	public function getDocumentInstance($documentId, $model = null)
 	{
 		$id = intval($documentId);
+		if ($id <= 0)
+		{
+			return null;
+		}
+
+		if (is_string($model))
+		{
+			$modelName = $model;
+			$model = $this->getModelManager()->getModelByName($modelName);
+			if ($model === null)
+			{
+				$this->getLogging()->warn(__METHOD__ . ' Invalid document model name: ' . $modelName);
+				return null;
+			}
+		}
+
 		$document = $this->getFromCache($id);
 		if ($document !== null)
 		{
@@ -815,120 +394,142 @@ class DocumentManager
 					&& !in_array($model->getName(), $document->getDocumentModel()->getAncestorsNames())
 				)
 				{
-					$this->applicationServices->getLogging()->warn(
+					$this->getLogging()->warn(
 						__METHOD__ . ' Invalid document model name: ' . $document->getDocumentModelName() . ', '
-							. $model->getName() . ' Expected');
+						. $model->getName() . ' Expected');
 					return null;
 				}
 			}
 			return $document;
 		}
-		elseif ($id > 0)
+
+		$this->gcCache();
+
+		if ($model)
 		{
-			if ($model && $model->isStateless())
+			if ($model->isAbstract())
+			{
+				return null;
+			}
+			elseif ($model->isStateless())
 			{
 				$document = $this->createNewDocumentInstance($model);
-				$document->initialize($id, static::STATE_INITIALIZED);
+				$document->initialize($id, AbstractDocument::STATE_INITIALIZED);
 				$document->load();
 				return $document;
 			}
+		}
 
-			$qb = $this->getNewQueryBuilder(__METHOD__ . ($model ? $model->getRootName() : 'std'));
-			if (!$qb->isCached())
+		$qb = $this->getNewQueryBuilder(__METHOD__ . ($model ? $model->getRootName() : 'std'));
+		if (!$qb->isCached())
+		{
+
+			$fb = $qb->getFragmentBuilder();
+			if ($model)
 			{
-
-				$fb = $qb->getFragmentBuilder();
-				if ($model)
-				{
-					$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
-						->from($fb->getDocumentTable($model->getRootName()))
-						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-				}
-				else
-				{
-					$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
-						->from($fb->getDocumentIndexTable())
-						->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-				}
-			}
-
-			$query = $qb->query();
-			$query->bindParameter('id', $id);
-
-			$constructorInfos = $query->getFirstResult();
-			if ($constructorInfos)
-			{
-				$modelName = $constructorInfos['model'];
-				$documentModel = $this->getModelManager()->getModelByName($modelName);
-				if ($documentModel !== null)
-				{
-					$document = $this->createNewDocumentInstance($documentModel);
-					$document->initialize($id, static::STATE_INITIALIZED);
-					return $document;
-				}
-				else
-				{
-					$this->applicationServices->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
-				}
+				$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
+					->from($fb->getDocumentTable($model->getRootName()))
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 			}
 			else
 			{
-				$this->applicationServices->getLogging()->info('Document id ' . $id . ' not found');
+				$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'))
+					->from($fb->getDocumentIndexTable())
+					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 			}
 		}
+
+		$query = $qb->query();
+		$query->bindParameter('id', $id);
+
+		$constructorInfos = $query->getFirstResult();
+		if ($constructorInfos)
+		{
+			$modelName = $constructorInfos['model'];
+			$documentModel = $this->getModelManager()->getModelByName($modelName);
+			if ($documentModel !== null && !$documentModel->isAbstract())
+			{
+				$document = $this->createNewDocumentInstance($documentModel);
+				$document->initialize($id, AbstractDocument::STATE_INITIALIZED);
+				return $document;
+			}
+			else
+			{
+				$this->getLogging()->error(__METHOD__ . ' Invalid model name: ' . $modelName);
+			}
+		}
+		else
+		{
+			$this->getLogging()->info('Document id ' . $id . ' not found');
+		}
+
 		return null;
 	}
 
 	/**
 	 * @param AbstractDocument $document
-	 * @param integer|null $oldId
 	 */
-	public function reference(AbstractDocument $document, $oldId)
+	public function reference(AbstractDocument $document)
 	{
 		$documentId = $document->getId();
-		if ($oldId !== 0 && $documentId !== $oldId)
+		if ($documentId > 0)
 		{
-			unset($this->documentInstances[$oldId]);
-			$this->tmpRelationIds[$oldId] = $documentId;
+			$this->documentInstances[$documentId] = $document;
 		}
-		$this->documentInstances[$documentId] = $document;
 	}
 
 	/**
+	 * @api
+	 * @param $documentId
+	 * @return boolean
+	 */
+	public function isInCache($documentId)
+	{
+		return $this->getFromCache($documentId) !== null;
+	}
+
+	/**
+	 * @api
 	 * @param integer $documentId
 	 * @return AbstractDocument|null
 	 */
-	protected function getFromCache($documentId)
+	public function getFromCache($documentId)
 	{
 		$id = intval($documentId);
-		if (isset($this->tmpRelationIds[$id]))
-		{
-			$id = intval($this->tmpRelationIds[$id]);
-		}
 		return isset($this->documentInstances[$id]) ? $this->documentInstances[$id] : null;
 	}
 
-	/**
-	 * @param AbstractModel $model
-	 * @return string
-	 */
-	protected function getDocumentClassFromModel($model)
+	protected function gcCache()
 	{
-		return '\\' . implode('\\',
-			array($model->getVendorName(), $model->getShortModuleName(), 'Documents', $model->getShortName()));
+		if (!$this->inTransaction)
+		{
+			$this->cycleCount++;
+			if ($this->cycleCount % 100 === 0)
+			{
+				$this->getLogging()->info(__METHOD__ . ': ' . count($this->documentInstances));
+				$this->reset();
+			}
+		}
 	}
 
 	/**
-	 * @param AbstractModel $model
-	 * @return string
+	 * @api
+	 * @param string|AbstractModel $modelOrModelName
+	 * @param string $LCID if null use refLCID of document
+	 * @return \Change\Documents\Query\Query
 	 */
-	protected function getLocalizedDocumentClassFromModel($model)
+	public function getNewQuery($modelOrModelName, $LCID = null)
 	{
-		return '\\' . implode('\\', array('Compilation', $model->getVendorName(), $model->getShortModuleName(), 'Documents',
-			'Localized' . $model->getShortName()));
+		$query = new \Change\Documents\Query\Query($modelOrModelName, $this, $this->getModelManager(), $this->getDbProvider());
+		if ($LCID)
+		{
+			$query->setLCID($LCID);
+		}
+		return $query;
 	}
 
 	/**
+	 * @api
 	 * @param AbstractDocument $document
 	 * @param array $backupData
 	 * @return integer
@@ -941,9 +542,9 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert($fb->getDocumentDeletedTable(), $fb->getDocumentColumn('id'), $fb->getDocumentColumn('model'),
 				'deletiondate', 'datas')
-				->addValues($fb->integerParameter('id', $qb), $fb->parameter('model', $qb),
-					$fb->dateTimeParameter('deletiondate', $qb),
-					$fb->typedParameter('datas', \Change\Db\ScalarType::TEXT, $qb));
+				->addValues($fb->integerParameter('id'), $fb->parameter('model'),
+					$fb->dateTimeParameter('deletiondate'),
+					$fb->lobParameter('datas'));
 		}
 
 		$iq = $qb->insertQuery();
@@ -955,6 +556,7 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param integer $documentId
 	 * @return array|null
 	 */
@@ -966,14 +568,14 @@ class DocumentManager
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->alias($fb->getDocumentColumn('model'), 'model'), 'deletiondate', 'datas')
 				->from($fb->getDocumentDeletedTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
+				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id')));
 		}
 
 		$sq = $qb->query();
 		$sq->bindParameter('id', $documentId);
 
-		$converter = new ResultsConverter($sq->getDbProvider(), array('datas' => \Change\Db\ScalarType::TEXT,
-			'deletiondate' => \Change\Db\ScalarType::DATETIME));
+		$converter = new ResultsConverter($sq->getDbProvider(), array('datas' => ScalarType::TEXT,
+			'deletiondate' => ScalarType::DATETIME));
 
 		$row = $sq->getFirstResult(array($converter, 'convertRow'));
 		if ($row !== null)
@@ -987,134 +589,11 @@ class DocumentManager
 		return null;
 	}
 
-	/**
-	 * @param AbstractDocument $document
-	 * @return integer
-	 * @throws \InvalidArgumentException
-	 */
-	public function deleteDocument(AbstractDocument $document)
-	{
-		if ($document->getPersistentState() != static::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
-		}
-
-		$model = $document->getDocumentModel();
-		$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->delete($fb->getDocumentTable($model->getRootName()))
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-		}
-
-		$dq = $qb->deleteQuery();
-		$dq->bindParameter('id', $document->getId());
-		$rowCount = $dq->execute();
-
-		$qb = $this->getNewStatementBuilder(__METHOD__.'documentIndex');
-		if (!$qb->isCached())
-		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->delete($fb->getDocumentIndexTable())
-				->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-		}
-
-		$dq = $qb->deleteQuery();
-		$dq->bindParameter('id', $document->getId());
-		$dq->execute();
-
-		$document->setPersistentState(static::STATE_DELETED);
-		return $rowCount;
-	}
-
-	/**
-	 * @param AbstractDocument|\Change\Documents\Interfaces\Localizable $document
-	 * @return integer|boolean
-	 * @throws \InvalidArgumentException
-	 */
-	public function deleteLocalizedDocuments(AbstractDocument $document)
-	{
-		if ($document->getPersistentState() != static::STATE_DELETED)
-		{
-			throw new \InvalidArgumentException('Invalid Document persistent state: ' . $document->getPersistentState(), 51009);
-		}
-
-		$model = $document->getDocumentModel();
-		$rowCount = false;
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
-		{
-			$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-			if (!$qb->isCached())
-			{
-
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->getDocumentI18nTable($model->getRootName()))
-					->where($fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)));
-			}
-
-			$dq = $qb->deleteQuery();
-			$dq->bindParameter('id', $document->getId());
-
-			$rowCount = $dq->execute();
-			$document->getLocalizableFunctions()->unsetLocalizedPart();
-		}
-		return $rowCount;
-	}
-
-	/**
-	 * @param AbstractDocument $document
-	 * @param \Change\Documents\AbstractLocalizedDocument $localizedPart
-	 * @return integer|boolean
-	 * @throws \InvalidArgumentException
-	 */
-	public function deleteLocalizedDocument(AbstractDocument $document,
-		\Change\Documents\AbstractLocalizedDocument $localizedPart)
-	{
-		if ($localizedPart->getPersistentState() != static::STATE_LOADED)
-		{
-			throw new \InvalidArgumentException(
-				'Invalid I18n Document persistent state: ' . $localizedPart->getPersistentState(), 51010);
-		}
-
-		$model = $document->getDocumentModel();
-		$rowCount = false;
-		if ($document instanceof \Change\Documents\Interfaces\Localizable)
-		{
-			$qb = $this->getNewStatementBuilder(__METHOD__ . $model->getRootName());
-			if (!$qb->isCached())
-			{
-
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->getDocumentI18nTable($model->getRootName()))
-					->where(
-						$fb->logicAnd(
-							$fb->eq($fb->getDocumentColumn('id'), $fb->integerParameter('id', $qb)),
-							$fb->eq($fb->getDocumentColumn('LCID'), $fb->parameter('LCID', $qb)))
-					);
-
-			}
-			$dq = $qb->deleteQuery();
-			$dq->bindParameter('id', $document->getId());
-			$dq->bindParameter('LCID', $localizedPart->getLCID());
-
-			$rowCount = $dq->execute();
-			$document->getLocalizableFunctions()->unsetLocalizedPart($localizedPart);
-		}
-		return $rowCount;
-	}
-
 	// Working lang.
-
-	/**
-	 * @var string[] ex: "en_GB" or "fr_FR"
-	 */
-	protected $LCIDStack = array();
-
 	/**
 	 * Get the current lcid.
 	 * @api
-	 * @return string ex: "en_GB" or "fr_FR"
+	 * @return string ex: "en_US" or "fr_FR"
 	 */
 	public function getLCID()
 	{
@@ -1152,12 +631,18 @@ class DocumentManager
 	 */
 	public function popLCID($exception = null)
 	{
-		// FIXME: what if the exception was raized by pushLCID (and so no lang was pushed)?
 		if ($this->getLCIDStackSize() === 0)
 		{
-			throw new \LogicException('Invalid LCID Stack size', 51013);
+			if ($exception === null)
+			{
+				$exception = new \LogicException('Invalid LCID Stack size', 51013);
+			}
 		}
-		array_pop($this->LCIDStack);
+		else
+		{
+			array_pop($this->LCIDStack);
+		}
+
 		if ($exception !== null)
 		{
 			throw $exception;

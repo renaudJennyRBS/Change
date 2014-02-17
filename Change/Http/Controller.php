@@ -2,43 +2,36 @@
 namespace Change\Http;
 
 use Change\Application;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerInterface;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Http\Response as HttpResponse;
 
 /**
  * @name \Change\Http\Controller
  */
-class Controller implements EventManagerAwareInterface
+class Controller implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
 	/**
 	 * @var Application
 	 */
 	protected $application;
 
 	/**
-	 * @var ActionResolver
+	 * @var BaseResolver
 	 */
 	protected $actionResolver;
-
-
-	/**
-	 * @var EventManager
-	 */
-	protected $eventManager;
 
 	/**
 	 * @param Application $application
 	 */
-	function __construct(Application $application)
+	public function __construct(Application $application)
 	{
 		$this->setApplication($application);
 	}
 
 	/**
-	 * @param Application $application
+	 * @param \Change\Application $application
 	 */
 	public function setApplication(Application $application)
 	{
@@ -46,7 +39,7 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @return Application
+	 * @return \Change\Application
 	 */
 	public function getApplication()
 	{
@@ -54,45 +47,52 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param EventManager|EventManagerInterface $eventManager
-	 * @return void
+	 * @return string[]
 	 */
-	public function setEventManager(EventManagerInterface $eventManager)
+	protected function getEventManagerIdentifier()
 	{
-		$this->eventManager = $eventManager;
+		return array('Http');
 	}
 
 	/**
-	 * @return EventManager
+	 * @return string[]
 	 */
-	public function getEventManager()
+	protected function getListenerAggregateClassNames()
 	{
-		if ($this->eventManager === null)
+		$classes = array();
+		foreach ($this->getEventManagerIdentifier() as $name)
 		{
-			$eventManager = new EventManager('Http');
-			$eventManager->setSharedManager($this->application->getSharedEventManager());
-			$this->registerDefaultListeners($eventManager);
-			$this->setEventManager($eventManager);
+			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $name));
+			if (is_array($entry))
+			{
+				foreach ($entry as $className)
+				{
+					if (is_string($className))
+					{
+						$classes[] = $className;
+					}
+				}
+			}
 		}
-		return $this->eventManager;
+		return array_unique($classes);
 	}
 
 	/**
-	 * @param ActionResolver $actionResolver
+	 * @param BaseResolver $actionResolver
 	 */
-	public function setActionResolver(ActionResolver $actionResolver)
+	public function setActionResolver(BaseResolver $actionResolver)
 	{
 		$this->actionResolver = $actionResolver;
 	}
 
 	/**
-	 * @return ActionResolver
+	 * @return BaseResolver
 	 */
 	public function getActionResolver()
 	{
 		if ($this->actionResolver === null)
 		{
-			$this->actionResolver = new ActionResolver();
+			$this->actionResolver = new BaseResolver();
 		}
 		return $this->actionResolver;
 	}
@@ -104,31 +104,36 @@ class Controller implements EventManagerAwareInterface
 	 */
 	public function handle(Request $request)
 	{
-		$eventManager = $this->getEventManager();
+		if ($this->eventManagerFactory === null)
+		{
+			$this->eventManagerFactory = new \Change\Events\EventManagerFactory($this->application);
+			$this->eventManagerFactory->addSharedService('applicationServices',
+				new \Change\Services\ApplicationServices($this->application, $this->eventManagerFactory));
+		}
+
 		$event = $this->createEvent($request);
 		try
 		{
-			$this->doSendRequest($eventManager, $event);
+			$this->doSendRegisterServices($event);
+
+			$this->doSendRequest($event);
 
 			if (!($event->getResult() instanceof Result))
 			{
 				$this->getActionResolver()->resolve($event);
 
-				$this->doSendAction($eventManager, $event);
+				$this->doSendAction($event);
 
-				$this->validateAuthentication($event);
-
-				$action = $event->getAction();
-
-				if (is_callable($action))
+				if ($this->checkAuthorization($event))
 				{
-					if ($this->checkAuthorization($event))
+					$action = $event->getAction();
+					if (is_callable($action))
 					{
 						call_user_func($action, $event);
 					}
 				}
 
-				$this->doSendResult($eventManager, $event);
+				$this->doSendResult($event);
 
 				if (!($event->getResult() instanceof Result))
 				{
@@ -136,11 +141,11 @@ class Controller implements EventManagerAwareInterface
 				}
 			}
 
-			$this->doSendResponse($eventManager, $event);
+			$this->doSendResponse($event);
 		}
 		catch (\Exception $exception)
 		{
-			$this->doSendException($eventManager, $event, $exception);
+			$this->doSendException($event, $exception);
 		}
 
 		if ($event->getResponse() instanceof Response)
@@ -153,26 +158,6 @@ class Controller implements EventManagerAwareInterface
 
 	/**
 	 * @param Event $event
-	 */
-	protected function validateAuthentication($event)
-	{
-		if (!($event->getAuthentication() instanceof AuthenticationInterface))
-		{
-			$authentication = new AnonymousAuthentication();
-			$event->setAuthentication($authentication);
-		}
-
-		if (!($event->getAcl() instanceof AclInterface))
-		{
-			$configurationAcl = new ConfigurationAcl($event->getAuthentication());
-			$allowAnonymous = $this->application->getConfiguration()->getEntry('Change/Http/allowAnonymous', true);
-			$configurationAcl->setAllowAnonymous($allowAnonymous);
-			$event->setAcl($configurationAcl);
-		}
-	}
-
-	/**
-	 * @param Event $event
 	 * @return boolean
 	 */
 	protected function checkAuthorization(Event $event)
@@ -180,27 +165,28 @@ class Controller implements EventManagerAwareInterface
 		$authorization = $event->getAuthorization();
 		if (is_callable($authorization))
 		{
-			try
+			$permissionsManager = $event->getPermissionsManager();
+			$this->doSendAuthenticate($event);
+			if (!$permissionsManager->allow())
 			{
+				$user = $event->getAuthenticationManager()->getCurrentUser();
+				$permissionsManager->setUser($user);
 				$authorized = call_user_func($authorization, $event);
-			}
-			catch (\Exception $e)
-			{
-				$authorized = false;
-			}
-
-			if (!$authorized)
-			{
-				if ($event->getAuthentication()->isAuthenticated())
+				if (!$authorized)
 				{
-					$this->forbidden($event);
-					return false;
+					if ($user->authenticated())
+					{
+						$this->forbidden($event);
+						return false;
+					}
+					else
+					{
+						$this->unauthorized($event);
+						return false;
+					}
 				}
-				$this->unauthorized($event);
-				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -257,15 +243,41 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
+	 * @param string $notAllowed
+	 * @param string[] $allow
+	 * @return Result
+	 */
+	public function notAllowedError($notAllowed, array $allow)
+	{
+		$result = new Result(HttpResponse::STATUS_CODE_405);
+		$header = \Zend\Http\Header\Allow::fromString('allow: ' . implode(', ', $allow));
+		$result->getHeaders()->addHeader($header);
+		return $result;
+	}
+
+	/**
 	 * @param Event $event
 	 */
-	protected function doSendRequest($eventManager, Event $event)
+	protected function doSendRegisterServices(Event $event)
+	{
+
+		$event->setName('registerServices');
+		$event->setTarget($this);
+		$event->setParam('eventManagerFactory', $this->eventManagerFactory);
+		$this->getEventManager()->trigger($event);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	protected function doSendRequest(Event $event)
 	{
 		$event->setName(Event::EVENT_REQUEST);
 		$event->setTarget($this);
-
-		$results = $eventManager->trigger($event, function($result) {return ($result instanceof Result);});
+		$results = $this->getEventManager()->trigger($event, function ($result)
+		{
+			return ($result instanceof Result);
+		});
 		if ($results->stopped() && ($results->last() instanceof Result))
 		{
 			$event->setResult($results->last());
@@ -273,15 +285,27 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendAction($eventManager, Event $event)
+	protected function doSendAuthenticate(Event $event)
+	{
+		$event->setName(Event::EVENT_AUTHENTICATE);
+		$event->setTarget($this);
+		$this->getEventManager()->trigger($event);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	protected function doSendAction(Event $event)
 	{
 		$event->setName(Event::EVENT_ACTION);
 		$event->setTarget($this);
 
-		$results = $eventManager->trigger($event, function($result) {return ($result !== null) && is_callable($result);});
+		$results = $this->getEventManager()->trigger($event, function ($result)
+		{
+			return ($result !== null) && is_callable($result);
+		});
 		$last = $results->last();
 		if ($results->stopped() && ($last !== null && is_callable($last)))
 		{
@@ -290,15 +314,16 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendResult($eventManager, Event $event)
+	protected function doSendResult(Event $event)
 	{
 		$event->setName(Event::EVENT_RESULT);
 		$event->setTarget($this);
-
-		$results = $eventManager->trigger($event, function($result) {return ($result instanceof Result);});
+		$results = $this->getEventManager()->trigger($event, function ($result)
+		{
+			return ($result instanceof Result);
+		});
 		if ($results->stopped() && ($results->last() instanceof Result))
 		{
 			$event->setResult($results->last());
@@ -306,82 +331,64 @@ class Controller implements EventManagerAwareInterface
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 */
-	protected function doSendResponse($eventManager, Event $event)
+	protected function doSendResponse(Event $event)
 	{
 		try
 		{
 			$event->setName(Event::EVENT_RESPONSE);
 			$event->setTarget($this);
 
-			$results = $eventManager->trigger($event, function($result) {return ($result instanceof Response);});
+			$results = $this->getEventManager()->trigger($event, function ($result)
+			{
+				return ($result instanceof Response);
+			});
 			if ($results->stopped() && ($results->last() instanceof Response))
 			{
 				$event->setResponse($results->last());
 			}
-
 		}
 		catch (\Exception $exception)
 		{
-			$event->setParam('Exception', $exception);
 			if ($event->getApplicationServices())
 			{
 				$event->getApplicationServices()->getLogging()->exception($exception);
+			}
+
+			if (!($event->getParam('Exception') instanceof \Exception))
+			{
+				$this->doSendException($event, $exception);
 			}
 		}
 	}
 
 	/**
-	 * @param EventManager $eventManager
 	 * @param Event $event
 	 * @param \Exception $exception
 	 */
-	protected function doSendException($eventManager, $event, $exception)
+	protected function doSendException($event, $exception)
 	{
 		try
 		{
+			if ($event->getApplicationServices())
+			{
+				$event->getApplicationServices()->getLogging()->exception($exception);
+			}
+
 			$event->setParam('Exception', $exception);
 			$event->setName(Event::EVENT_EXCEPTION);
 			$event->setTarget($this);
-			$eventManager->trigger($event);
-
-			$this->doSendResponse($eventManager, $event);
+			$this->getEventManager()->trigger($event);
+			$this->doSendResponse($event);
 		}
 		catch (\Exception $e)
 		{
 			if ($event->getApplicationServices())
 			{
-				$event->getApplicationServices()->getLogging()->exception($exception);
+				$event->getApplicationServices()->getLogging()->exception($e);
 			}
 		}
-	}
-
-	/**
-	 * @param EventManagerInterface $eventManager
-	 * @return void
-	 */
-	protected function registerDefaultListeners($eventManager)
-	{
-
-	}
-
-	/**
-	 * @param Request $request
-	 * @return Event
-	 */
-	protected function createEvent($request)
-	{
-		$event = new Event();
-		$event->setRequest($request);
-		$script = $request->getServer('SCRIPT_NAME');
-		if (strpos($request->getRequestUri(), $script) !== 0)
-		{
-			$script = null;
-		}
-		$event->setUrlManager(new UrlManager($request->getUri(), $script));
-		return $event;
 	}
 
 	/**
@@ -431,5 +438,40 @@ class Controller implements EventManagerAwareInterface
 		$response->setStatusCode($result->getHttpStatusCode());
 		$response->setHeaders($result->getHeaders());
 		return $response;
+	}
+
+	/**
+	 * @param Request $request
+	 * @return Event
+	 */
+	protected function createEvent($request)
+	{
+		$event = new Event();
+		$event->setRequest($request);
+
+		$script = $request->getServer('SCRIPT_NAME');
+		if (strpos($request->getRequestUri(), $script) !== 0)
+		{
+			$script = null;
+		}
+
+		$urlManager = new UrlManager($request->getUri(), $script);
+		$event->setUrlManager($urlManager);
+		return $event;
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultRegisterServices(Event $event)
+	{
 	}
 }

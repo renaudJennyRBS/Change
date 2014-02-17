@@ -1,0 +1,19 @@
+<div class="row">
+	<div data-rbs-aside-column="">
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div data-rbs-main-column="">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false"
+			model="Rbs_Payment_Transaction" filter="filter"></rbs-document-filter-panel>
+
+		<rbs-document-list data-dlid="DLRbsPaymentTransaction"
+			model="Rbs_Payment_Transaction" filter-collection="filter" publishable="false">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="amount">(= doc.formattedAmount =)</rbs-column>
+			<rbs-column name="processingStatus">(= doc.formattedProcessingStatus =)</rbs-column>
+			<rbs-column name="processingDate">(= doc.processingDate|rbsDateTime =)</rbs-column>
+		</rbs-document-list>
+	</div>
+</div>

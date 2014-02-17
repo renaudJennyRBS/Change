@@ -32,7 +32,7 @@ class InverseProperty
 	 */
 	public function getName()
 	{
-		$model = ($this->relatedProperty->getModel()->getInject()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
+		$model = ($this->relatedProperty->getModel()->getReplace()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
 		return $model->getVendor() . $model->getShortModuleName(). $model->getShortName().ucfirst($this->relatedProperty->getName());
 	}
 	
@@ -49,7 +49,7 @@ class InverseProperty
 	 */
 	public function getRelatedDocumentName()
 	{
-		$model = ($this->relatedProperty->getModel()->getInject()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
+		$model = ($this->relatedProperty->getModel()->getReplace()) ? $this->relatedProperty->getModel()->getParent() : $this->relatedProperty->getModel();
 		return $model->getName();
 	}
 

@@ -1,0 +1,125 @@
+@CHARSET "UTF-8";
+
+
+.token-list {
+	*zoom: 1;
+	margin: 0;
+	list-style: none;
+}
+
+
+.token-list:before,
+.token-list:after {
+	display: table;
+	line-height: 0;
+	content: "";
+}
+
+.token-list:after {
+	clear: both;
+}
+
+.token-list > li {
+	display: inline-block;
+	border-radius: 4px;
+	border: 1px solid #0088CC;
+	padding: 3px 9px;
+	background-color: white;
+	box-shadow: 0 0 5px rgb(200, 208, 215);
+	color: #0088CC;
+	font-size: 12px;
+	font-weight: bold;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+	margin: 3px;
+	cursor: pointer;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: 1;
+	position: relative;
+}
+
+.token-list.rows > li {
+	display: block;
+	margin: 4px 0 0 0;
+}
+
+.token-list.rows > li:last-child {
+	margin-bottom: 0;
+}
+
+.token-list > li small {
+	font-weight: normal;
+	margin-left: 0.8em;
+}
+
+
+.token-list > li.selected {
+	background-color: #0088CC;
+	border-color: #005599;
+	color: white;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.75);
+	background-image: -moz-linear-gradient(bottom, #005599 0%, #0088CC 100%);
+}
+
+.token-list > li.muted,
+.token-list > li.more {
+	border: 0;
+	background: none;
+	cursor: default;
+	font-weight: normal;
+	line-height: 20px;
+	color: #999999;
+}
+
+.token-list > li.masked {
+	display: none;
+}
+
+.token-list.view-all > li.masked {
+	display: inline-block;
+}
+
+.token-list.view-all.rows > li {
+	display: block;
+}
+
+.token-list > li.muted {
+	font-style: italic;
+	line-height: 20px;
+}
+
+.token-list > li .delete:focus {
+	outline: none;
+}
+
+
+.token-list > li .actions {
+	margin-left: 10px;
+}
+
+.token-list > li .actions > * {
+	margin-left: 10px;
+}
+
+.token-list > li.selected .actions a,
+.token-list > li.selected .actions a:hover {
+	color: white;
+}
+
+.token-list .sortable-placeholder {
+	border: 2px solid #e30018;
+	padding: 2px 8px;
+	background-color: rgba(255,248,240,0.75);
+	color: #e30018;
+}
+
+.token-list > li .icon-reorder {
+	margin-top: 1px;
+	cursor: move;
+}
+
+.token-list .sortable-dragging {
+	transform: scale(0.85);
+}

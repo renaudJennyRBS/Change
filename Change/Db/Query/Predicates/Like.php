@@ -1,14 +1,8 @@
 <?php
 namespace Change\Db\Query\Predicates;
 
-use Change\Db\Query\Expressions\Func;
-
-use Change\Db\Query\Expressions\ExpressionList;
-
 use Change\Db\Query\Expressions\String;
-
 use Change\Db\Query\Expressions\AbstractExpression;
-use Change\Db\Query\Expressions\BinaryOperation;
 use Change\Db\Query\Expressions\Concat;
 
 /**

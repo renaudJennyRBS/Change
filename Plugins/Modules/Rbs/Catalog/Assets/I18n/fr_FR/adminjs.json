@@ -1,0 +1,56 @@
+{
+	"module_name":{
+		"message":"catalogue"
+	},
+	"product_list":{
+		"message":"produits"
+	},
+	"cross_selling_list":{
+		"message":"Listes de produits associés"
+	},
+	"price_list":{
+		"message":"liste des prix du produit"
+	},
+	"remove":{
+		"message":"retirer"
+	},
+	"remove_products_from_list":{
+		"message":"Retirer les produits sélectionnés de la liste."
+	},
+	"productlist_list":{
+		"message":"listes de produits"
+	},
+	"highlight":{
+		"message":"mettre en avant"
+	},
+	"highlight_products":{
+		"message":"Mettre en avant les produits sélectionnés."
+	},
+	"remove_highlight":{
+		"message":"ne plus mettre en avant"
+	},
+	"remove_highlight_products":{
+		"message":"Ne plus mettre en avant les produits sélectionnés."
+	},
+	"variant_group":{
+		"message":"Groupe de variantes"
+	},
+	"variant_group_stocks_update":{
+		"message":"mise à jour des stocks des variantes"
+	},
+	"impossible_to_update_stocks_of_variant_group":{
+		"message":"impossible de mettre à jour les stocks des variantes"
+	},
+	"variant_group_stocks_updated":{
+		"message":"les stocks des variantes ont été mis à jour"
+	},
+	"variant_group_prices_update":{
+		"message":"mise à jour des prix des variantes"
+	},
+	"impossible_to_update_prices_of_variant_group":{
+		"message":"impossible de mettre à jour les prix des variantes"
+	},
+	"variant_group_prices_updated":{
+		"message":"les prix des variantes ont été mis à jour"
+	}
+}

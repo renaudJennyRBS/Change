@@ -1,0 +1,30 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}" required="true">
+			<select ng-model="document.code" required="true" class="form-control"
+					rbs-items-from-collection="Rbs_Geo_All_Countries_Codes" >
+				<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field-picker
+				property="addressFields" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'addressFields'), ['ucf']) }}"
+				accepted-model="Rbs_Geo_AddressFields"
+				selector-title="{{ i18nAttr('m.rbs.geo.admin.country_select_addressfields', ['ucf']) }}">
+		</rbs-field-picker>
+	</fieldset>
+
+	<fieldset ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		document-system-info-section>
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

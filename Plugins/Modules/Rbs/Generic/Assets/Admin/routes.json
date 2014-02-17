@@ -1,0 +1,38 @@
+{
+	"/Rbs/Generic/": {
+		"module": "Rbs_Generic",
+		"name": "home",
+		"rule": {
+			"templateUrl": "Rbs/Generic/settings.twig",
+			"labelKey": "m.rbs.generic.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Plugins/Installed/": {
+		"module": "Rbs_Generic",
+		"name": "Installed",
+		"rule": {
+			"templateUrl": "Rbs/Plugins/installed-list.twig",
+			"labelKey": "m.rbs.plugins.admin.installed_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Plugins/New/": {
+		"module": "Rbs_Generic",
+		"name": "New",
+		"rule": {
+			"templateUrl": "Rbs/Plugins/new-list.twig",
+			"labelKey": "'m.rbs.plugins.admin.new_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Plugins/Registered/": {
+		"module": "Rbs_Generic",
+		"name": "Registered",
+		"rule": {
+			"templateUrl": "Rbs/Plugins/registered-list.twig",
+			"labelKey": "m.rbs.plugins.admin.registered_list | ucf"
+		},
+		"auto": false
+	}
+}

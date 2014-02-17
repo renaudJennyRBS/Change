@@ -1,0 +1,84 @@
+{
+	"sections": [
+		{
+			"code": "cms",
+			"index": 50,
+			"icon": "icon-file-text",
+			"label": "m.rbs.generic.admin.section_name"
+		},
+		{
+			"code": "admin",
+			"index": 100,
+			"icon": "icon-wrench",
+			"label": "m.rbs.admin.admin.admin_section_name"
+		},
+		{
+			"code": "settings",
+			"index": 200,
+			"icon": "icon-cogs",
+			"label": "m.rbs.admin.admin.settings_section_name"
+		}
+	],
+	"entries": [
+		{
+			"label": "m.rbs.website.admin.module_name",
+			"url": "Rbs/Website/",
+			"section": "cms",
+			"keywords": "m.rbs.website.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.media.admin.module_name",
+			"url": "Rbs/Media",
+			"section": "cms",
+			"keywords": "m.rbs.media.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.simpleform.admin.module_name",
+			"url": "Rbs/Simpleform",
+			"section": "cms",
+			"keywords": "m.rbs.simpleform.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.seo.admin.module_name",
+			"url": "Rbs/Seo",
+			"section": "admin",
+			"keywords": "m.rbs.seo.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.collection.admin.module_name",
+			"url": "Rbs/Collection",
+			"section": "admin",
+			"keywords": "m.rbs.collection.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.review.admin.module_name",
+			"url": "Rbs/Review",
+			"section": "cms",
+			"keywords": "m.rbs.review.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.user.admin.module_name",
+			"url": "Rbs/User",
+			"section": "admin",
+			"keywords": "m.rbs.user.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.elasticsearch.admin.module_name",
+			"url": "Rbs/Elasticsearch",
+			"section": "admin",
+			"keywords": "m.rbs.elasticsearch.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.generic.admin.module_name",
+			"url": "Rbs/Generic",
+			"section": "settings",
+			"keywords": "m.rbs.generic.admin.module_keywords"
+		},
+		{
+			"label": "m.rbs.mail.admin.module_name",
+			"url": "Rbs/Mail",
+			"section": "admin",
+			"keywords": "m.rbs.mail.admin.module_keywords"
+		}
+	]
+}

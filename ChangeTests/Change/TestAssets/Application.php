@@ -8,6 +8,16 @@ namespace ChangeTests\Change\TestAssets;
  */
 class Application extends \Change\Application
 {
+	public function registerCoreAutoload()
+	{
+		$classLoader = parent::registerCoreAutoload();
+		if ($classLoader instanceof \Composer\Autoload\ClassLoader)
+		{
+			$classLoader->setPsr4('ChangeTests\\', [dirname(dirname(__DIR__))]);
+			$classLoader->setPsr4('Compilation\\', [$this->getWorkspace()->compilationPath()]);
+		}
+	}
+
 	/**
 	 * @return \Change\Workspace
 	 */
@@ -18,14 +28,6 @@ class Application extends \Change\Application
 			$this->workspace = new \ChangeTests\Change\TestAssets\Workspace();
 		}
 		return $this->workspace;
-	}
-
-	public function registerCoreAutoload()
-	{
-		parent::registerCoreAutoload();
-		$zendLoader  = new \Zend\Loader\StandardAutoloader();
-		$zendLoader->registerNamespace('ChangeTests', dirname(dirname(__DIR__)));
-		$zendLoader->register();
 	}
 
 	/**
@@ -40,10 +42,7 @@ class Application extends \Change\Application
 		if (isset($_ENV['TestConfigFile']) && $_ENV['TestConfigFile'] != '')
 		{
 			$testConfigFile = $this->getWorkspace()->appPath('Config', $_ENV['TestConfigFile']);
-			if (file_exists($testConfigFile))
-			{
-				$result[] = $testConfigFile;
-			}
+			$result['TEST'] = $testConfigFile;
 		}
 		return $result;
 	}

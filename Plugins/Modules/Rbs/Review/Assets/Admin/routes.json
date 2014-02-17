@@ -1,0 +1,67 @@
+{
+	"/Rbs/Review/": {
+		"module": "Rbs_Review",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Review/Review/",
+			"labelKey": "m.rbs.review.admin.module_name | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Review/Review/": {
+		"model": "Rbs_Review_Review",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Review/Review/list.twig",
+			"labelKey": "m.rbs.review.admin.review_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Review/Review/:id": {
+		"model": "Rbs_Review_Review",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Review/Review/form.twig",
+			"labelKey": "m.rbs.review.documents.review | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Review/Review/:id/timeline": {
+		"model": "Rbs_Review_Review",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Review_Review",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Review/Review/:id/urls": {
+		"model": "Rbs_Review_Review",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Review/Review/:id/workflow": {
+		"model": "Rbs_Review_Review",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Review_Review",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Review/Review/new": {
+		"model": "Rbs_Review_Review",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Review/Review/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

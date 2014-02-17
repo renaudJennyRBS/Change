@@ -75,7 +75,9 @@ class FakeEventHandler
 	 */
 	public function onException($event)
 	{
-		$code =  $event->getParam('Exception')->getCode();
+		/* @var $e \Exception */
+		$e = $event->getParam('Exception');
+		$code =  $e->getCode();
 		$this->callNames[] = 'onException(' . $code . ')';
 		if ($this->throwOn == 'onException')
 		{

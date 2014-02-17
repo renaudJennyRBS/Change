@@ -1,0 +1,23 @@
+<div class="row">
+
+	<div rbs-full-width>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.mail.admin.mail_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false"
+			model="Rbs_Mail_Mail" filter="filter" ></rbs-document-filter-panel>
+
+		<rbs-document-list data-dlid="DLRbsMailMail" activable="true"
+			model="Rbs_Mail_Mail" filter-collection="filter">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="isVariation" width="40px">
+				(= doc.isVariation | rbsBoolean =)
+			</rbs-column>
+			<rbs-column name="code">
+				(= doc.code =)
+			</rbs-column>
+			<rbs-column name="websites">
+				<span ng-repeat="website in doc.websites">(= website.label =)<span ng-if="! $last">, </span></span>
+			</rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

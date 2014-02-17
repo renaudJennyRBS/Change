@@ -1,0 +1,123 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+
+	<div rbs-tip="rbsVariantGroupEditorHelp" data-ng-hide="hasJobs">
+		{{ i18n('m.rbs.catalog.admin.variantgroup_help_tip', ['ucf']) | raw}}
+	</div>
+
+	<ul class="breadcrumb variant-group-editor">
+		<li class="active"><span ng-bind="document.label"></span></li><li ng-repeat="item in path" class="active"><span ng-bind="item.value.title"></span></li>
+	</ul>
+
+	<div class="axes-columns-nav">
+		<div class="axis-column" ng-repeat="axis in axesInfo" ng-style="getColumnWidthStyle()">
+			<div class="axis-header">
+				<span class="pull-right" data-ng-hide="hasJobs">
+					<button type="button" class="btn btn-default btn-sm" ng-class="{'active': inEditMode(axis.index)}" ng-click="toggleEditMode(axis.index)">
+						<i class="icon-cog"></i>
+					</button>
+				</span>
+				<h4>
+					<span ng-switch="axesInfo[$index].url">
+						<i ng-switch-when="false" class="icon-check-empty muted" title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axe_no_url', ['ucf']) }}"></i>
+						<i ng-switch-when="true" class="icon-check" title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axe_has_url', ['ucf']) }}"></i>
+					</span>
+					<span ng-switch="axesInfo[$index].categorizable">
+						<i ng-switch-when="false" class="icon-eye-close muted" title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axe_no_categorizable', ['ucf']) }}"></i>
+						<i ng-switch-when="true" class="icon-eye-open" title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axe_categorizable', ['ucf']) }}"></i>
+					</span>
+					<span ng-bind="axis.label"></span> (<span ng-bind="axis.values.length"></span>)
+				</h4>
+
+				<div ng-form="" ng-if="inEditMode(axis.index)">
+					<p>{{ i18n('m.rbs.catalog.admin.variantgroup_add_axis_value', ['ucf']) }}</p>
+					<p>
+						<input rbs-variant-group-editor-new-axis-value-validator="" axis-index="(= axis.index =)"
+								rbs-auto-focus="" autocapitalize="off" type="text" class="form-control" required="required"
+								name="axisValueToAdd" ng-model="axisValueToAdd[axis.index]" ng-keypress="addValueOnEnter(axis.index, $event)"/>
+					<p class="text-danger" ng-show="valueAlreadyExists(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_value_already_exists', ['ucf']) }}</p>
+					<div class="btn-toolbar">
+						<button class="btn btn-default" type="button" ng-click="toggleEditMode(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_cancel', ['ucf']) }}</button>
+						<button class="btn btn-primary" type="button" ng-disabled="isInvalid(axis.index)" ng-click="addAxisValue(axis.index)">{{ i18n('m.rbs.catalog.admin.variantgroup_add', ['ucf']) }}</button>
+					</div>
+					</p>
+				</div>
+			</div>
+
+			<div class="axis-values" data-ng-hide="hasJobs">
+				<div ng-repeat="value in axis.values" class="axis-value" ng-class="{'odd': $odd, 'selected': inNavPath(axis.index, value), 'between-selection': isBetween(axis.index, $index), 'unused': (used = isVariantSelected(axis.index, value.value)) != 'Y'}" ng-click="navigate(axis.index, value, $index)">
+					<span ng-switch="inEditMode(axis.index)">
+						<button ng-switch-when="true" type="button" ng-click="removeAxisValue(axis.index, $index)" class="btn btn-xs btn-danger"><i class="icon-trash"></i></button>
+						<span ng-switch-when="false" ng-switch="used">
+							<button ng-switch-when="Y" type="button" class="btn btn-xs btn-success" ng-click="unselectVariant(axis.index, value, $index, $event)"><i class="icon-minus"></i></button>
+							<button ng-switch-when="N" type="button" class="btn btn-xs btn-default" ng-click="selectVariant(axis.index, value, $index, $event)"><i class="icon-plus"></i></button>
+							<button ng-switch-when="S" type="button" class="btn btn-xs btn-default" disabled="disabled"><i class="icon-share-alt"></i></button>
+							<button ng-switch-when="C" type="button" class="btn btn-xs btn-success" disabled="disabled"><i class="icon-share-alt"></i></button>
+							<button ng-switch-when="U" type="button" class="btn btn-xs btn-default" disabled="disabled"><i class="icon-question"></i></button>
+						</span>
+					</span>
+					<span ng-bind="value.title"></span>
+				</div>
+				<div ng-if="$index > 0" class="indicator"></div>
+			</div>
+		</div>
+
+		<div class="axis-column" ng-if="navigationEnd">
+			<div class="axis-header">
+				<h4>
+					<span ng-repeat="item in path">
+						<span ng-bind="item.value.title"></span>
+					</span>
+				</h4>
+			</div>
+			<div class="axis-values">
+				<div class="axis-value" style="cursor: default" ng-switch="finalProductSaved()">
+					<div ng-switch-when="true" ng-switch="loadingFinalProduct">
+						<div ng-switch-when="true">
+							<i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_loading_product_info', ['ucf']) }}
+						</div>
+						<div ng-switch-when="false">
+							<h4 ng-bind="finalProduct.label"></h4>
+							<p class="clearfix" ng-if="finalProduct.visuals.length">
+								<img ng-repeat="visual in finalProduct.visuals" rbs-storage-image="visual.id" thumbnail="XS" class="img-polaroid margin-right pull-left"/>
+							</p>
+							<p ng-if="! finalProduct.visuals.length">
+								<em class="muted">{{ i18n('m.rbs.catalog.admin.variantgroup_no_visuals', ['ucf']) }}</em>
+							</p>
+							<p>
+								<a href ng-href="(= getFinalProductUrl() =)">{{ i18n('m.rbs.catalog.admin.variantgroup_go_to_product', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+							</p>
+						</div>
+					</div>
+					<div ng-switch-when="false" class="alert alert-warning">
+						{{ i18n('m.rbs.catalog.admin.variantgroup_product_does_not_exist_yet') | raw }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="well" style="margin-top: 20px;" data-ng-hide="hasJobs">
+				<span class="pull-right">
+					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_generate_all_action', ['ucf']) }}</button>
+					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_remove_all_action', ['ucf']) }}</button>
+				</span>
+		<h4>
+			<span ng-bind="document.variantConfiguration.products.length"></span>
+			{{ i18n('m.rbs.catalog.admin.variantgroup_existing_products_of') }}
+			<span ng-bind="possibleVariantsCount"></span>
+			{{ i18n('m.rbs.catalog.admin.variantgroup_possible_products') }}
+		</h4>
+		<p><span class="label label-info">Info</span>
+			{{ i18n('m.rbs.catalog.admin.variantgroup_products_will_be_created_when_this_form_is_submitted', ['ucf']) }}
+		</p>
+	</div>
+
+	<div class="well" style="margin-top: 20px;" data-ng-show="hasJobs">
+		{{ i18n('m.rbs.catalog.admin.variantgroup_jobs_infos', ['ucf']) | raw}}
+	</div>
+
+	<rbs-field-boolean property="newSkuOnCreation"
+			label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'newSkuOnCreation'), ['ucf']) }}">
+	</rbs-field-boolean>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

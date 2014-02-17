@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" editable="true">
+	<properties>
+		<property name="code" type="String">
+			<dboptions length="80" />
+		</property>
+		<property name="cascading" type="Boolean" default-value="false" />
+		<property name="rounding" type="String" default-value="t">
+			<dboptions length="3" />
+		</property>
+		<property name="data" type="JSON" has-correction="true"/>
+		<property name="defaultZone" type="String" stateless="true" />
+	</properties>
+</document>

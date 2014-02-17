@@ -1,0 +1,57 @@
+{
+	"mappings": {
+		"product": {
+			"properties": {
+				"title":{
+					"type":"multi_field",
+					"fields":{
+						"title": {"type": "string", "boost": 4, "analyzer": "text_analyzer"},
+						"untouched": {"include_in_all": false, "index": "not_analyzed", "type": "string"}
+					}
+				},
+				"content": {"type": "string", "boost": 2, "analyzer": "text_analyzer"},
+				"model": {"type": "string", "index": "not_analyzed"},
+				"canonicalSectionId": { "type": "integer", "index": "not_analyzed"},
+				"startPublication": {"type": "date", "index": "not_analyzed"},
+				"endPublication": {"type": "date", "index": "not_analyzed"},
+				"creationDate": {"type": "date", "index": "not_analyzed"},
+				"listItems" : {
+					"properties": {
+						"position": {"type": "long"},
+						"listId": {"type": "long"},
+						"itemId": {"type": "long"},
+						"creationDate": {"type": "date", "index": "not_analyzed"}
+					},
+					"type": "nested"
+				},
+				"prices" : {
+					"properties": {
+						"priceId": {"type": "long"},
+						"billingAreaId": {"type": "long"},
+						"zone": {"type": "string", "index": "not_analyzed", "include_in_all": false},
+						"value" : {"type" : "float"},
+						"valueWithTax" : {"type" : "float"},
+						"startActivation": {"type": "date", "index": "not_analyzed"},
+						"endActivation": {"type": "date", "index": "not_analyzed"}
+					},
+					"type": "nested"
+				}
+			}
+		}
+	},
+	"settings": {
+		"index": {
+			"analysis": {
+				"analyzer": {
+					"text_analyzer": {
+						"tokenizer": "standard",
+						"filter": ["standard", "lowercase", "asciifolding", "elision", "text_snowball"]
+					}
+				},
+				"filter": {
+					"text_snowball": {"type": "snowball", "name": "English"}
+				}
+			}
+		}
+	}
+}

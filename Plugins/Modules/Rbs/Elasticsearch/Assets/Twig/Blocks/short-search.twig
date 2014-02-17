@@ -1,0 +1,13 @@
+<form class="form-inline" action="{{ parameters.formAction }}" method="GET">
+{% if parameters.sectionPageFunction %}
+	<input name="sectionPageFunction"  type="hidden" value="{{ parameters.sectionPageFunction }}" />
+{% endif %}
+	<div class="input-group">
+		<input name="searchText" type="text" class="form-control typeahead elastic-search" value="{{ parameters.searchText }}"/>
+		<span class="input-group-btn">
+			<button type="submit" class="btn btn-primary" title="{{ i18nAttr('m.rbs.elasticsearch.front.search', ['ucf']) }}">
+				<i class="glyphicon glyphicon-search"></i>
+			</button>
+		</span>
+	</div>
+</form>

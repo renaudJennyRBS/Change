@@ -1,0 +1,87 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+	          data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+	          data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<h3>
+			{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}
+			<input type="hidden" data-ng-model="document.axesAttributes" name="axesAttributesLength">
+		</h3>
+		<table data-ng-show="document.axesConfiguration.length > 0" class="table table-striped">
+			<thead>
+			<tr>
+				<th>
+					{{ i18n(propertyKey('Rbs_Catalog_Attribute', 'label'), ['ucf']) }}
+				</th>
+				<th>
+					{{ i18n('m.rbs.catalog.admin.axis_url', ['ucf']) }}
+				</th>
+				{#<th>
+					{{ i18n('m.rbs.catalog.admin.axis_categorizable', ['ucf']) }}
+				</th>#}
+				<th>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr data-ng-repeat="axisConfiguration in document.axesConfiguration">
+				<td>(= getAxisLabel($index) =)</td>
+				<td><rbs-switch ng-model="axisConfiguration.url" ng-disabled="$last"></rbs-switch></td>
+				{#<td><rbs-switch ng-model="axisConfiguration.categorizable" ng-disabled="axisConfiguration.url == false"></rbs-switch></td>#}
+				<td style="width:180px">
+					<rbs-kb-switch>
+						<button style="width:36px" ng-disabled="$first" rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}" ng-click="moveTop($index)">
+							<i class="icon-step-forward icon-rotate-270"></i>
+						</button>
+						<button style="width:36px" ng-disabled="$first" rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}" ng-click="moveUp($index)">
+							<i class="icon-play icon-rotate-270"></i>
+						</button>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button style="width:36px" ng-disabled="$last" rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}" ng-click="moveBottom($index)">
+							<i class="icon-step-forward icon-rotate-90"></i>
+						</button>
+						<button style="width:36px" ng-disabled="$last" rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-sm"
+								type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}" ng-click="moveDown($index)">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+					<button style="width:36px" class="btn btn-danger btn-sm" type="button" ng-click="remove($index)"
+							title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
+						<i class="icon-remove"></i>
+					</button>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<div class="control-group property">
+			<div class="controls">
+				<rbs-document-picker-multiple ng-model="Attributes.axesToAdd" name="axesToAdd"
+						accepted-model="Rbs_Catalog_Attribute"
+						property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}"
+						selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axesattributes_picker_title', ['ucf']) }}"
+						master-label="(= document.label =)" disable-reordering="true"
+						picker-template="picker-axis.twig">
+				</rbs-document-picker-multiple>
+				<div class="btn-toolbar">
+					<button type="button" class="btn btn-primary" ng-click="addAxisAttributesFromPicker()" data-ng-disabled="Attributes.axesToAdd.length == 0">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
+				</div>
+			</div>
+		</div>
+
+		<hr />
+
+		<rbs-field-picker-multiple property="othersAttributes"
+				label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'othersAttributes'), ['ucf']) }}"
+				accepted-model="Rbs_Catalog_Attribute"
+				selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_othersAttributes_picker_title', ['ucf']) }}"
+				picker-template="picker-other.twig">
+		</rbs-field-picker-multiple>
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

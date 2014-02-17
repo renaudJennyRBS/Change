@@ -1,0 +1,11 @@
+{
+	"setup_large_picture":{
+		"message":"grande image"
+	},
+	"setup_medium_picture":{
+		"message":"image moyenne"
+	},
+	"setup_to_translate":{
+		"message":"à traduire"
+	}
+}

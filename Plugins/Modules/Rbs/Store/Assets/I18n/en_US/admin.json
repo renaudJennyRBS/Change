@@ -1,0 +1,32 @@
+{
+  "module_name":{
+    "message":"Web stores"
+  },
+  "module_keywords":{
+    "message":"stores,shops,webstores"
+  },
+  "select_webstore":{
+    "message":"select a web store"
+  },
+  "webstore_list_loading":{
+    "message":"loading web stores list..."
+  },
+  "webstore_list":{
+    "message":"web stores"
+  },
+  "webstore_create":{
+    "message":"add a new web store"
+  },
+  "store_billingareas_picker_title":{
+    "message":"select pricing zones"
+  },
+  "store_select_orderprocess":{
+    "message":"select a checkout process"
+  },
+  "web_store_selector_label":{
+    "message":"sélecteur de boutique et zone de tarification"
+  },
+  "web_store_selector_available_web_stores":{
+    "message":"boutiques disponibles"
+  }
+}

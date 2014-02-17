@@ -1,0 +1,91 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-aside template="Document/Rbs/User/Profile/aside.twig"></rbs-aside>
+	</div>
+
+	<div rbs-main-column>
+		<form class="form-horizontal" novalidate ng-submit="saveProfile()" name="form" ng-controller="Rbs_User_Profile_Controller">
+
+			<fieldset>
+				<legend>{{ i18n('m.rbs.user.admin.profile_personnal_info', ['ucf']) }}</legend>
+
+				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_avatar', ['ucf']) }}">
+					{#<input type="text" id="avatar" class="form-control" name="avatar" ng-model="user.profile.avatar"/>#}
+					<p class="form-control-static" >{{ i18n('m.rbs.user.admin.profile_gravatar_help', ['ucf']) | raw }}</p>
+				</rbs-field>
+			</fieldset>
+
+			<fieldset>
+				<legend>{{ i18n('m.rbs.user.admin.profile_internationalization', ['ucf']) }}</legend>
+
+				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_lcid', ['ucf']) }}">
+					<select id="LCID" class="form-control" rbs-items-from-collection="Rbs_Generic_Collection_Languages" ng-model="user.profile.LCID"></select>
+					<span class="help-block">
+						<span class="label label-danger">{{ i18n('m.rbs.user.admin.profile_warning', ['ucf']) }}</span>
+						{{ i18n('m.rbs.user.admin.profile_change_language_warning', ['ucf']) }}
+					</span>
+				</rbs-field>
+
+				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_timezone', ['ucf']) }}">
+					<div rbs-form-simple-filter="" filter="tzFilter" style="clear:none;"></div>
+					<select id="timeZone" class="form-control" size="10" rbs-items-from-collection="Rbs_Generic_Collection_TimeZones" filter="tzFilter" ng-model="user.profile.TimeZone"></select>
+				</rbs-field>
+			</fieldset>
+
+			<fieldset>
+				<legend>{{ i18n('m.rbs.user.admin.profile_notification', ['ucf']) }}</legend>
+				<rbs-field label="{{ i18nAttr('m.rbs.user.admin.profile_notification_sending_management', ['ucf']) }}">
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'no'}"
+							data-ng-click="setNotificationMailMode('no')">
+							{{ i18n('m.rbs.user.admin.profile_notification_no_email', ['ucf']) }}
+						</button>
+						<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'immediately'}"
+							data-ng-click="setNotificationMailMode('immediately')">
+							{{ i18n('m.rbs.user.admin.profile_notification_immediately', ['ucf']) }}
+						</button>
+						<button type="button" class="btn btn-default" ng-class="{active: notificationMailMode == 'timeInterval'}"
+							data-ng-click="setNotificationMailMode('timeInterval')">
+							{{ i18n('m.rbs.user.admin.profile_notification_with_time_interval', ['ucf']) }}
+						</button>
+					</div>
+				</rbs-field>
+				<rbs-field label="{{ i18nAttr('m.rbs.user.admin.profile_notification_time_interval', ['ucf']) }}">
+					<rbs-time-interval-input id="notificationmailinterval" label="{{ i18nAttr("m.rbs.user.admin.profile_notification_time_interval", ["ucf"]) }}"
+						ng-model="user.profile.notificationMailInterval" show="days,hours" disabled="(= notificationMailMode != 'timeInterval' =)" min="1">
+					</rbs-time-interval-input>
+				</rbs-field>
+				<rbs-field label="{{ i18nAttr('m.rbs.user.admin.profile_notification_time_interval_at', ['ucf']) }}">
+					<input class="form-control" type="time" ng-model="user.profile.notificationMailAt"
+						ng-pattern="/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/" ng-disabled="notificationMailMode != 'timeInterval'"/>
+				</rbs-field>
+				<span class="help-block">
+					{{ i18n('m.rbs.user.admin.profile_notification_time_interval_helper', ['ucf']) | raw }}
+				</span>
+			</fieldset>
+
+			<fieldset>
+				<legend>{{ i18n('m.rbs.user.admin.profile_lists', ['ucf']) }}</legend>
+
+				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_pagingSize', ['ucf']) }}">
+					<select id="pagingSize" class="form-control" ng-model="user.profile.pagingSize" ng-options="size for size in PaginationPageSizes"></select>
+				</rbs-field>
+
+				<rbs-field label="{{ i18n('m.rbs.user.admin.profile_documentListViewMode', ['ucf']) }}">
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" ng-class="{'active':user.profile.documentListViewMode == 'list'}" ng-click="user.profile.documentListViewMode = 'list'"><i class="icon-list"></i> {{ i18n('m.rbs.user.admin.profile_list', ['ucf']) }}</button>
+						<button type="button" class="btn btn-default" ng-class="{'active':user.profile.documentListViewMode == 'grid'}" ng-click="user.profile.documentListViewMode = 'grid'"><i class="icon-th-large"></i> {{ i18n('m.rbs.user.admin.profile_grid', ['ucf']) }}</button>
+					</div>
+				</rbs-field>
+			</fieldset>
+
+			<div class="form-actions">
+				<button disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="revert($event)" ng-disabled="isUnchanged()"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
+				<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isUnchanged(), 'btn-danger':saveProgress.error}" type="submit"
+				        ng-disabled="form.$invalid || isUnchanged()"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}</button>
+			</div>
+		</form>
+	</div>
+
+</div>

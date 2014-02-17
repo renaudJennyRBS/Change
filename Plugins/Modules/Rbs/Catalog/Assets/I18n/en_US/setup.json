@@ -1,0 +1,29 @@
+{
+  "attr_description":{
+    "message":"description"
+  },
+  "attr_visuals":{
+    "message":"visuals"
+  },
+  "attr_pictograms":{
+    "message":"pictograms"
+  },
+  "attr_brand":{
+    "message":"brand"
+  },
+  "attr_genericattributes":{
+    "message":"General attributes"
+  },
+  "attr_cross_selling_similar":{
+    "message":"similar products"
+  },
+  "attr_cross_selling_accessories":{
+    "message":"accessories"
+  },
+  "attr_cross_selling_higher_range":{
+    "message":"top-of-the-line products"
+  },
+  "attr_cross_selling_types":{
+    "message":"types of related products"
+  }
+}

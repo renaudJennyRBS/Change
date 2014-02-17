@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+{% for headLine in pageResult.head %}
+	{{ headLine|raw }}
+{% endfor %}
+	<link rel="icon" type="image/png" href="{{ resourceURL('Theme/Rbs/Base/img/favicon.png') }}" />
+	<!-- cssHead -->
+</head>
+<body>
+	<header id="header">
+		<div class="navbar navbar-default navbar-static-top">
+			<p class="navbar-text">
+				<a class="brand logo" href="/">
+					<img src="{{ resourceURL('Theme/Rbs/Base/img/logo.png') }}" alt="" />
+				</a>
+			</p>
+		</div>
+	</header>
+	<section id="content">
+		<div id="content-middle">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="page-header">
+							<h1>{{ i18n('t.rbs.base.front.error_title', ['ucf']) }}</h1>
+						</div>
+						<!-- mainContent -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- jsFooter -->
+</body>
+</html>

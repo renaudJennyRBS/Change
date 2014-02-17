@@ -15,11 +15,11 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('change_generic_document', $model->getName());
 		
 		$this->assertNull($model->getParent());
-		$this->assertNull($model->getExtendModel());
+		$this->assertNull($model->getExtendedModel());
 		$this->assertCount(0, $model->getProperties());
 		$this->assertCount(0, $model->getInverseProperties());
-		$this->assertNull($model->getExtend());
-		$this->assertNull($model->getInject());
+		$this->assertNull($model->getExtends());
+		$this->assertNull($model->getReplace());
 		$this->assertNull($model->getLocalized());
 		$this->assertNull($model->getIcon());
 		$this->assertNull($model->getHasUrl());
@@ -29,6 +29,8 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertNull($model->getUseVersion());
 		$this->assertNull($model->getEditable());
 		$this->assertNull($model->getStateless());
+		$this->assertNull($model->getAbstract());
+
 		$this->assertEquals('Compilation\change\generic\Documents', $model->getCompilationNameSpace());
 		$this->assertEquals('change\generic\Documents', $model->getNameSpace());
 		
@@ -54,7 +56,7 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document icon="icon" has-url="true"
-			frontoffice-indexable="true" backoffice-indexable="true" editable="true" publishable="true" 
+			frontoffice-indexable="true" backoffice-indexable="true" editable="true" publishable="true" abstract="true"
 			use-version="true" localized="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http">
 	<properties>
 		<property name="test" />
@@ -62,9 +64,10 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 </document>');
 		$model->setXmlDocument($doc);
 		$this->assertCount(1, $model->getProperties());
+		$this->assertTrue($model->getAbstract());
 		
 		$model->validate();
-		$this->assertCount(13, $model->getProperties());
+		$this->assertCount(15, $model->getProperties());
 				
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('test'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('creationDate'));
@@ -80,7 +83,10 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('authorName'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('authorId'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('documentVersion'));
-		
+
+		$this->assertTrue($model->getPublishable());
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('title'));
+		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('publicationSections'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('publicationStatus'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('startPublication'));
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('endPublication'));
@@ -90,17 +96,17 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(0, $model->getAncestors());
 		
 		$model2 = new \Change\Documents\Generators\Model('change', 'generic', 'documentext');
-		$doc->loadXML('<document extend="change_generic_document" inject="true">
+		$doc->loadXML('<document extends="change_generic_document" replace="true">
 	<properties>
 		<property name="test" default-value="essai" />
 	</properties>
 </document>');
 		$model2->setXmlDocument($doc);
-		$model2->setExtendModel($model);
+		$model2->setExtendedModel($model);
 		$model2->setParent($model);
-		$this->assertTrue($model2->getInject());
-		$this->assertEquals("change_generic_document", $model2->getExtend());
-		$this->assertEquals($model, $model2->getExtendModel());
+		$this->assertTrue($model2->getReplace());
+		$this->assertEquals("change_generic_document", $model2->getExtends());
+		$this->assertEquals($model, $model2->getExtendedModel());
 		$this->assertEquals($model, $model2->getParent());
 		
 		$this->assertCount(1, $model2->getAncestors());

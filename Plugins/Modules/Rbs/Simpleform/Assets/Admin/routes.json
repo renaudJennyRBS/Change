@@ -1,0 +1,144 @@
+{
+	"/Rbs/Simpleform/": {
+		"module": "Rbs_Simpleform",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Simpleform/Form/"
+		},
+		"auto": false
+	},
+	"/Rbs/Simpleform/Field/:id": {
+		"model": "Rbs_Simpleform_Field",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Field/form.twig",
+			"labelKey": "m.rbs.simpleform.documents.field | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Field/:id/timeline": {
+		"model": "Rbs_Simpleform_Field",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Simpleform_Field",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Field/:id/translate/:LCID": {
+		"model": "Rbs_Simpleform_Field",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Field/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Field/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Simpleform_Field",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Simpleform_Field",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Field/:id/workflow": {
+		"model": "Rbs_Simpleform_Field",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Simpleform_Field",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Field/new": {
+		"model": "Rbs_Simpleform_Field",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Field/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Form/list.twig",
+			"labelKey": "m.rbs.simpleform.admin.form_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/:id": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Form/form.twig",
+			"labelKey": "m.rbs.simpleform.documents.form | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/:id/timeline": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Simpleform_Form",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/:id/translate/:LCID": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Form/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Simpleform_Form",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/:id/urls": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/:id/workflow": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Simpleform_Form",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Simpleform/Form/new": {
+		"model": "Rbs_Simpleform_Form",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Simpleform/Form/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

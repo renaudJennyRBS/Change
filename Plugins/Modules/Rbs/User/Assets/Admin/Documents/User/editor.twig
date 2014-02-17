@@ -1,0 +1,43 @@
+<form class="form-horizontal" ng-submit="submit()">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text
+			property="email" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'email'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text
+			property="login"
+			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'login'), ['ucf']) }}">
+		</rbs-field-text>
+
+
+		<rbs-field property="password" required="true" ng-if="document.isNew()"
+			label="{{ i18nAttr(propertyKey('Rbs_User_User', 'password'), ['ucf']) }}">
+			<input class="form-control" type="password" ng-model="document.password" />
+		</rbs-field>
+
+		<rbs-field property="password" ng-if="!document.isNew()"
+			label="{{ i18nAttr('m.rbs.user.admin.new_password', ['ucf']) }}">
+			<input class="form-control" type="password" ng-model="document.password" />
+		</rbs-field>
+
+
+		<rbs-field-picker-multiple property="groups" required="false" label="{{ i18nAttr('m.rbs.user.admin.group_list', ['ucf']) }}"
+			accepted-model="Rbs_User_Group"
+			selector-title="{{ i18nAttr('m.rbs.user.admin.group_picker_title', ['ucf']) }}">
+		</rbs-field-picker-multiple>
+
+	</fieldset>
+
+	<fieldset
+			data-ng-show="section=='systeminfo'"
+			data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+			data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

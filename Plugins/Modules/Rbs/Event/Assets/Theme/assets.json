@@ -1,0 +1,5 @@
+{
+	"Calendar" : {
+		"cssAssets" : ["Theme/Rbs/Base/Rbs_Event/css/calendar-default.css"]
+	}
+}

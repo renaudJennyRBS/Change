@@ -1,0 +1,41 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_Connector', 'label'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="code" required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Payment_Connector', 'code'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-picker property="visual" label="{{ i18nAttr(propertyKey('Rbs_Payment_Connector', 'visual'), ['ucf']) }}"
+				accepted-model="Rbs_Media_Image"
+				selector-title="{{ i18nAttr('m.rbs.payment.admin.connector_select_visual', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-float
+				property="minAmount"
+				label="{{ i18nAttr(propertyKey('Rbs_Payment_Connector', 'minAmount'), ['ucf']) }}"
+				max-length="9" input-class="input-mini">
+		</rbs-field-float>
+
+		<rbs-field-float
+				property="maxAmount"
+				label="{{ i18nAttr(propertyKey('Rbs_Payment_Connector', 'maxAmount'), ['ucf']) }}"
+				max-length="9" input-class="input-mini">
+		</rbs-field-float>
+
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

@@ -1,0 +1,1624 @@
+body {
+	color: var(main-text-color);
+	background-color: var(main-background-color);
+}
+
+a {
+	color: var(main-link-color);
+}
+
+a:hover,
+a:focus {
+	color: var(main-link-hover-color);
+}
+
+a:current {
+	color: var(main-link-current-color);
+}
+
+hr {
+	border-top-color: var(main-border-color);
+}
+
+.text-muted {
+	color: var(main-light-text-color);
+}
+
+.text-primary,
+.text-active {
+	color: var(primary-text-color);
+}
+
+.text-warning {
+	color: var(warning-text-color);
+}
+
+.text-danger {
+	color: var(danger-text-color);
+}
+
+.text-success {
+	color: var(success-text-color);
+}
+
+.text-info {
+	color: var(info-text-color);
+}
+
+small,
+.small,
+h1 small,
+h2 small,
+h3 small,
+h4 small,
+h5 small,
+h6 small,
+.h1 small,
+.h2 small,
+.h3 small,
+.h4 small,
+.h5 small,
+.h6 small,
+blockquote small {
+	color: var(main-light-text-color);
+}
+
+.page-header {
+	border-bottom-color: var(main-border-color);
+}
+
+abbr[title],
+abbr[data-original-title] {
+	border-bottom-color: var(main-border-color);
+}
+
+blockquote {
+	border-left-color: var(main-border-color);
+}
+blockquote.pull-right {
+	border-right-color: var(main-border-color);
+}
+
+code {
+	color: var(main-light-text-color);
+	background-color: var(main-background-second-color);
+}
+
+pre {
+	color: var(main-text-color);
+	background-color: var(main-background-second-color);
+	border-color: var(main-border-color);
+}
+
+table td[class^="col-"],
+table th[class^="col-"] {
+	position: static;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th {
+	background-color: var(inverse-background-second-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+	border: none;
+	color: var(inverse-text-color);
+	font-weight: normal;
+}
+
+.table > thead > tr > th a,
+.table > tbody > tr > th a,
+.table > tfoot > tr > th a {
+	color: var(inverse-link-color);
+}
+
+.table > thead > tr > th a:hover,
+.table > thead > tr > th a:focus,
+.table > tbody > tr > th a:hover,
+.table > tbody > tr > th a:focus,
+.table > tfoot > tr > th a:hover,
+.table > tfoot > tr > th a:focus {
+	color: var(inverse-link-hover-color);
+}
+
+.table thead > tr > td,
+.table tbody > tr > td,
+.table tfoot > tr > td {
+	border-top: 1px solid var(main-border-color);
+}
+
+.table tbody + tbody {
+	border-top: 2px solid var(main-border-color);
+}
+
+.table .table {
+	background-color: var(main-background-color);
+}
+
+.table-bordered,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+	border-color: var(main-border-color);
+}
+
+.table-striped > tbody > tr:nth-child(even) > td,
+.table-striped > tbody > tr:nth-child(even) > th {
+	background-color: var(alternate-even-color);
+}
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+	background-color: var(alternate-odd-color);
+}
+
+.table-hover > tbody > tr:hover {
+	box-shadow: 0 0 3px var(main-border-color), 0 0 6px var(main-border-color);
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.025), rgba(0, 0, 0, 0.025));
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.025), rgba(0, 0, 0, 0.025));
+}
+
+.table > thead > tr > td.active,
+.table > tbody > tr > td.active,
+.table > tfoot > tr > td.active,
+.table > thead > tr > th.active,
+.table > tbody > tr > th.active,
+.table > tfoot > tr > th.active,
+.table > thead > tr.active > td,
+.table > tbody > tr.active > td,
+.table > tfoot > tr.active > td,
+.table > thead > tr.active > th,
+.table > tbody > tr.active > th,
+.table > tfoot > tr.active > th {
+	background-color: var(primary-background-color);
+	border-color: var(main-border-color);
+}
+
+.table > thead > tr > td.success,
+.table > tbody > tr > td.success,
+.table > tfoot > tr > td.success,
+.table > thead > tr > th.success,
+.table > tbody > tr > th.success,
+.table > tfoot > tr > th.success,
+.table > thead > tr.success > td,
+.table > tbody > tr.success > td,
+.table > tfoot > tr.success > td,
+.table > thead > tr.success > th,
+.table > tbody > tr.success > th,
+.table > tfoot > tr.success > th,
+.table-hover > tbody > tr > td.success:hover,
+.table-hover > tbody > tr > th.success:hover,
+.table-hover > tbody > tr.success:hover > td {
+	background-color: var(success-background-color);
+	border-color: var(main-border-color);
+}
+
+.table > thead > tr > td.danger,
+.table > tbody > tr > td.danger,
+.table > tfoot > tr > td.danger,
+.table > thead > tr > th.danger,
+.table > tbody > tr > th.danger,
+.table > tfoot > tr > th.danger,
+.table > thead > tr.danger > td,
+.table > tbody > tr.danger > td,
+.table > tfoot > tr.danger > td,
+.table > thead > tr.danger > th,
+.table > tbody > tr.danger > th,
+.table > tfoot > tr.danger > th,
+.table-hover > tbody > tr > td.danger:hover,
+.table-hover > tbody > tr > th.danger:hover,
+.table-hover > tbody > tr.danger:hover > td {
+	background-color: var(danger-background-color);
+	border-color: var(main-border-color);
+}
+
+.table > thead > tr > td.warning,
+.table > tbody > tr > td.warning,
+.table > tfoot > tr > td.warning,
+.table > thead > tr > th.warning,
+.table > tbody > tr > th.warning,
+.table > tfoot > tr > th.warning,
+.table > thead > tr.warning > td,
+.table > tbody > tr.warning > td,
+.table > tfoot > tr.warning > td,
+.table > thead > tr.warning > th,
+.table > tbody > tr.warning > th,
+.table > tfoot > tr.warning > th,
+.table-hover > tbody > tr > td.warning:hover,
+.table-hover > tbody > tr > th.warning:hover,
+.table-hover > tbody > tr.warning:hover > td {
+	background-color: var(warning-background-color);
+	border-color: var(main-border-color);
+}
+
+legend {
+	color: var(main-text-color);
+	border-bottom-color: var(main-border-color);
+}
+
+.form-control:-moz-placeholder {
+	color: var(main-light-text-color);
+}
+
+.form-control::-moz-placeholder {
+	color: var(main-light-text-color);
+}
+
+.form-control:-ms-input-placeholder {
+	color: var(main-light-text-color);
+}
+
+.form-control::-webkit-input-placeholder {
+	color: var(main-light-text-color);
+}
+
+.form-control {
+	color: var(main-text-color);
+	background-color: var(main-background-color);
+	border-color: var(main-border-color);
+	-webkit-box-shadow: inset 0 1px 1px var(main-border-color) );
+	box-shadow: inset 0 1px 1px var(main-border-color) );
+}
+
+.form-control:hover {
+	-webkit-box-shadow: inset 0 0 6px var(main-disabled-text-color);
+	box-shadow: inset 0 0 6px var(main-disabled-text-color);
+}
+
+.form-control:focus {
+	border-color: var(info-text-color);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(info-text-color);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(info-text-color);
+}
+
+option {
+	background-color: var(main-background-color);
+	color: var(main-text-color);
+}
+
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+	color: var(main-disabled-text-color);
+	background-color: var(main-disabled-background-color);
+}
+
+.has-warning .help-block,
+.has-warning .control-label {
+	color: var(warning-text-color);
+}
+
+.has-warning .form-control {
+	border-color: var(warning-text-color);
+}
+
+.has-warning .form-control:focus {
+	border-color: var(warning-text-color);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(warning-text-color);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(warning-text-color);
+}
+
+.has-warning .input-group-addon {
+	color: var(warning-text-color);
+	background-color: var(warning-background-color);
+	border-color: var(warning-text-color);
+}
+
+.has-error .help-block,
+.has-error .control-label {
+	color: var(danger-text-color);
+}
+
+.has-error .form-control,
+:invalid {
+	border-color: var(danger-text-color);
+}
+
+.has-error .form-control:focus,
+:invalid:focus {
+	border-color: var(danger-text-color);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(danger-text-color);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(danger-text-color);
+}
+
+.has-error .input-group-addon {
+	color: var(danger-text-color);
+	background-color: var(danger-background-color);
+	border-color: var(danger-text-color);
+}
+
+.has-success .help-block,
+.has-success .control-label {
+	color: var(success-text-color);
+}
+
+.has-success .form-control {
+	border-color: var(success-text-color);
+}
+
+.has-success .form-control:focus {
+	border-color: var(success-text-color);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(success-text-color);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px var(success-text-color);
+}
+
+.has-success .input-group-addon {
+	color: var(success-text-color);
+	background-color: var(success-background-color);
+	border-color: var(success-text-color);
+}
+
+.help-block {
+	color: var(main-text-color);
+}
+
+.btn {
+	font-weight: normal;
+}
+
+.btn:hover,
+.btn:focus {
+	background-image: -webkit-linear-gradient(top, var(btn-hover-gradient));
+	background-image: linear-gradient(to bottom, var(btn-hover-gradient));
+}
+
+.btn:active,
+.btn.active {
+	-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+	box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.btn-default {
+	color: var(grad-default-text-color);
+	background-color: var(grad-default-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-first-color), var(grad-default-second-color));
+	background-image: linear-gradient(to bottom, var(grad-default-first-color), var(grad-default-second-color));
+	border-color: var(btn-default-border-colors);
+}
+.btn-default .caret {
+	border-top-color: var(grad-default-text-color);
+}
+.dropup .btn-default .caret {
+	border-bottom-color: var(grad-default-text-color);
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active {
+	color: var(grad-default-text-color);
+	background-color: var(grad-default-second-color);
+	border-color: var(grad-default-second-color);
+}
+
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn,
+.btn.disabled:hover,
+.btn[disabled]:hover,
+fieldset[disabled] .btn:hover,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
+fieldset[disabled] .btn:focus,
+.btn-default.disabled:active,
+.btn-default[disabled]:active,
+fieldset[disabled] .btn:active,
+.btn.disabled.active,
+.btn[disabled].active,
+fieldset[disabled] .btn.active {
+	background-image: -webkit-linear-gradient(top, var(btn-disabled-gradient));
+	background-image: linear-gradient(to bottom, var(btn-disabled-gradient));
+	border-color: var(btn-disabled-border-colors);
+}
+
+.btn-default.disabled,
+.btn-default[disabled],
+fieldset[disabled] .btn-default,
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+fieldset[disabled] .btn-default:hover,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
+fieldset[disabled] .btn-default:focus,
+.btn-default.disabled:active,
+.btn-default[disabled]:active,
+fieldset[disabled] .btn-default:active,
+.btn-default.disabled.active,
+.btn-default[disabled].active,
+fieldset[disabled] .btn-default.active {
+	background-color: var(grad-default-second-color);
+}
+
+.btn-primary {
+	color: var(grad-primary-text-color);
+	background-color: var(grad-primary-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-image: linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+	border-color: var(btn-default-border-colors);
+}
+.btn-primary .caret {
+	border-top-color: var(grad-primary-text-color);
+}
+.dropup .btn-primary .caret {
+	border-bottom-color: var(grad-primary-text-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+	color: var(grad-primary-text-color);
+	background-color: var(grad-primary-second-color);
+	border-color: var(grad-primary-second-color);
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+	background-color: var(grad-primary-second-color);
+}
+
+.btn-warning {
+	color: var(grad-warning-text-color);
+	background-color: var(grad-warning-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-warning-first-color), var(grad-warning-second-color));
+	background-image: linear-gradient(to bottom, var(grad-warning-first-color), var(grad-warning-second-color));
+	border-color: var(btn-default-border-colors);
+}
+.btn-warning .caret {
+	border-top-color: var(grad-warning-text-color);
+}
+.dropup .btn-warning .caret {
+	border-bottom-color: var(grad-warning-text-color);
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active,
+.btn-warning.active {
+	color: var(grad-warning-text-color);
+	background-color: var(grad-warning-second-color);
+}
+
+.btn-warning.disabled,
+.btn-warning[disabled],
+fieldset[disabled] .btn-warning,
+.btn-warning.disabled:hover,
+.btn-warning[disabled]:hover,
+fieldset[disabled] .btn-warning:hover,
+.btn-warning.disabled:focus,
+.btn-warning[disabled]:focus,
+fieldset[disabled] .btn-warning:focus,
+.btn-warning.disabled:active,
+.btn-warning[disabled]:active,
+fieldset[disabled] .btn-warning:active,
+.btn-warning.disabled.active,
+.btn-warning[disabled].active,
+fieldset[disabled] .btn-warning.active {
+	background-color: var(grad-warning-second-color);
+}
+
+.btn-danger {
+	color: var(grad-danger-text-color);
+	background-color: var(grad-danger-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-danger-first-color), var(grad-danger-second-color));
+	background-image: linear-gradient(to bottom, var(grad-danger-first-color), var(grad-danger-second-color));
+	border-color: var(btn-default-border-colors);
+}
+.btn-danger .caret {
+	border-top-color: var(grad-danger-text-color);
+}
+.dropup .btn-danger .caret {
+	border-bottom-color: var(grad-danger-text-color);
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active,
+.btn-danger.active {
+	color: var(grad-danger-text-color);
+	background-color: var(grad-danger-second-color);
+}
+
+.btn-danger.disabled,
+.btn-danger[disabled],
+fieldset[disabled] .btn-danger,
+.btn-danger.disabled:hover,
+.btn-danger[disabled]:hover,
+fieldset[disabled] .btn-danger:hover,
+.btn-danger.disabled:focus,
+.btn-danger[disabled]:focus,
+fieldset[disabled] .btn-danger:focus,
+.btn-danger.disabled:active,
+.btn-danger[disabled]:active,
+fieldset[disabled] .btn-danger:active,
+.btn-danger.disabled.active,
+.btn-danger[disabled].active,
+fieldset[disabled] .btn-danger.active {
+	background-color: var(grad-danger-second-color);
+}
+
+.btn-success {
+	color: var(grad-success-text-color);
+	background-color: var(grad-success-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-success-first-color), var(grad-success-second-color));
+	background-image: linear-gradient(to bottom, var(grad-success-first-color), var(grad-success-second-color));
+	border-color: var(btn-default-border-colors);
+}
+.btn-success .caret {
+	border-top-color: var(grad-success-text-color);
+}
+.dropup .btn-success .caret {
+	border-bottom-color: var(grad-success-text-color);
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.active {
+	color: var(grad-success-text-color);
+	background-color: var(grad-success-second-color);
+}
+
+.btn-success.disabled,
+.btn-success[disabled],
+fieldset[disabled] .btn-success,
+.btn-success.disabled:hover,
+.btn-success[disabled]:hover,
+fieldset[disabled] .btn-success:hover,
+.btn-success.disabled:focus,
+.btn-success[disabled]:focus,
+fieldset[disabled] .btn-success:focus,
+.btn-success.disabled:active,
+.btn-success[disabled]:active,
+fieldset[disabled] .btn-success:active,
+.btn-success.disabled.active,
+.btn-success[disabled].active,
+fieldset[disabled] .btn-success.active {
+	background-color: var(grad-success-second-color);
+}
+
+.btn-info {
+	color: var(grad-info-text-color);
+	background-color: var(grad-info-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-info-first-color), var(grad-info-second-color));
+	background-image: linear-gradient(to bottom, var(grad-info-first-color), var(grad-info-second-color));
+	border-color: var(btn-default-border-colors);
+}
+.btn-info .caret {
+	border-top-color: var(grad-info-text-color);
+}
+.dropup .btn-info .caret {
+	border-bottom-color: var(grad-info-text-color);
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active,
+.btn-info.active {
+	color: var(grad-info-text-color);
+	background-color: var(grad-info-second-color);
+}
+
+.btn-info.disabled,
+.btn-info[disabled],
+fieldset[disabled] .btn-info,
+.btn-info.disabled:hover,
+.btn-info[disabled]:hover,
+fieldset[disabled] .btn-info:hover,
+.btn-info.disabled:focus,
+.btn-info[disabled]:focus,
+fieldset[disabled] .btn-info:focus,
+.btn-info.disabled:active,
+.btn-info[disabled]:active,
+fieldset[disabled] .btn-info:active,
+.btn-info.disabled.active,
+.btn-info[disabled].active,
+fieldset[disabled] .btn-info.active {
+	background-color: var(grad-info-second-color);
+}
+
+.btn-link {
+	color: var(main-link-color);
+	background: transparent;
+	border: none;
+}
+.btn-link .caret {
+	border-top-color: var(main-link-color);
+}
+.dropup .btn-link .caret {
+	border-bottom-color: var(main-link-color);
+}
+
+.btn-link:hover,
+.btn-link:focus {
+	color: var(main-link-hover-color);
+	background: transparent;
+	border: none;
+}
+
+.btn-link.disabled,
+.btn-link[disabled],
+fieldset[disabled] .btn-link,
+.btn-link.disabled:hover,
+.btn-link[disabled]:hover,
+fieldset[disabled] .btn-link:hover,
+.btn-link.disabled:focus,
+.btn-link[disabled]:focus,
+fieldset[disabled] .btn-link:focus,
+.btn-link.disabled:active,
+.btn-link[disabled]:active,
+fieldset[disabled] .btn-link:active,
+.btn-link.disabled.active,
+.btn-link[disabled].active,
+fieldset[disabled] .btn-link.active {
+	color: var(main-disabled-text-color);
+	background: transparent;
+	border: none;
+}
+
+.input-group-addon {
+	background-color: var(main-background-second-color);
+	border-color-color: var(main-border-color);
+}
+
+.caret {
+	border-style: solid;
+	border-top-color: var(main-text-color);
+}
+a .caret {
+	border-top-color: var(main-link-color);
+}
+a:hover .caret,
+a:focus .caret {
+	border-top-color: var(main-link-hover-color);
+}
+
+.dropdown-menu {
+	color: var(main-text-color);
+	background-color: var(secondary-background-color);
+	border-color: var(main-border-color);
+	margin: 0;
+	border-radius: 0;
+}
+
+.dropdown-menu .divider {
+	background-color: var(main-border-color);
+}
+
+.dropdown-menu > li > a {
+	color: var(main-link-color);
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+	color: var(grad-primary-text-color);
+	background-color: var(grad-primary-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-image: linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+}
+
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+	color: var(main-disabled-text-color);
+}
+
+.dropdown-header {
+	color: var(main-text-color);
+}
+
+.dropup .caret,
+.navbar-fixed-bottom .dropdown .caret {
+	border-bottom-color: var(main-text-color);
+	border-style: solid;
+}
+
+.list-group-item:first-child,
+.list-group-item:last-child {
+	border-radius: 0;
+}
+
+.list-group-item {
+	background-color: var(main-background-color);
+	border-color: var(main-border-color);
+}
+
+a.list-group-item {
+	color: var(main-text-color);
+}
+
+a.list-group-item .list-group-item-heading {
+	color: var(main-link-color);
+}
+
+a.list-group-item:hover,
+a.list-group-item:focus {
+	background-color: var(main-background-second-color);
+}
+
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+	color: var(grad-primary-text-color);
+	background-color: var(grad-primary-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-image: linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+	border-color: var(main-border-color);
+}
+
+.list-group-item.active .list-group-item-text,
+.list-group-item.active:hover .list-group-item-text,
+.list-group-item.active:focus .list-group-item-text {
+	color: var(grad-primary-text-color);
+}
+
+.panel {
+	background-color: var(main-background-color);
+	border-color: var(main-border-color);
+	border-radius: 0;
+}
+
+.panel .panel-title,
+.panel-group .accordion-toggle {
+	color: inherit;
+}
+
+.panel-heading,
+.panel-footer {
+	background-color: var(main-background-second-color);
+	border-top-color: var(main-border-color);
+	border-radius: 0;
+}
+.panel-primary .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(main-border-color);
+}
+.panel-primary .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(main-border-color);
+}
+
+.panel-primary,
+.panel-primary .img-thumbnail {
+	border-color: var(primary-text-color);
+}
+
+.panel-primary .panel-heading,
+.panel-primary .panel-footer {
+	color: var(primary-text-color);
+	background-color: var(primary-background-color);
+	border-color: var(primary-text-color);
+}
+.panel-primary .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(primary-text-color);
+}
+.panel-primary .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(primary-text-color);
+}
+
+.panel-success,
+.panel-success .img-thumbnail {
+	border-color: var(success-text-color);
+}
+
+.panel-success .panel-heading,
+.panel-success .panel-footer {
+	color: var(success-text-color);
+	background-color: var(success-background-color);
+	border-color: var(success-text-color);
+}
+
+.panel-success .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(success-text-color);
+}
+.panel-success .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(success-text-color);
+}
+
+.panel-warning,
+.panel-warning .img-thumbnail {
+	border-color: var(warning-text-color);
+}
+
+.panel-warning .panel-heading,
+.panel-warning .panel-footer {
+	color: var(warning-text-color);
+	background-color: var(warning-background-color);
+	border-color: var(warning-text-color);
+}
+
+.panel-warning .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(warning-text-color);
+}
+.panel-warning .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(warning-text-color);
+}
+
+.panel-danger,
+.panel-danger .img-thumbnail {
+	border-color: var(danger-text-color);
+}
+
+.panel-danger .panel-heading,
+.panel-danger .panel-footer {
+	color: var(danger-text-color);
+	background-color: var(danger-background-color);
+	border-color: var(danger-text-color);
+}
+
+.panel-danger .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(danger-text-color);
+}
+.panel-danger .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(danger-text-color);
+}
+
+.panel-info,
+.panel-info .img-thumbnail {
+	border-color: var(info-text-color);
+}
+
+.panel-info .panel-heading,
+.panel-info .panel-footer {
+	color: var(info-text-color);
+	background-color: var(info-background-color);
+	border-color: var(info-text-color);
+}
+
+.panel-info .panel-heading + .panel-collapse .panel-body {
+	border-top-color: var(info-text-color);
+}
+.panel-info .panel-footer + .panel-collapse .panel-body {
+	border-bottom-color: var(info-text-color);
+}
+
+.well {
+	background-color: var(main-background-secondary-color);
+	border-color: var(main-border-color);
+}
+
+.well blockquote {
+	border-color: var(main-border-color);
+}
+
+.close {
+	color: var(main-text-color);
+}
+
+.close:hover,
+.close:focus {
+	color: var(main-text-color);
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+	color: var(grad-default-text-color);
+	background-color: var(grad-default-second-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-first-color), var(grad-default-second-color));
+	background-image: linear-gradient(to bottom, var(grad-default-first-color), var(grad-default-second-color));
+}
+
+.nav > li.disabled > a,
+.nav > li.disabled > a:hover,
+.nav > li.disabled > a:focus {
+	color: var(main-disabled-text-color);
+}
+
+.nav .nav-divider {
+	background-color: var(main-border-color);
+}
+
+.nav-tabs {
+	border-bottom-color: var(main-border-color);
+}
+
+.nav-tabs > li > a:hover {
+	border-color: var(main-border-color);
+}
+
+.nav-tabs > li > a:focus {
+	outline: none;
+	border-color: var(main-border-color);
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+	color: var(main-text-color);
+	background: var(main-background-color);
+	border-color: var(main-border-color);
+	border-bottom-color: transparent;
+}
+
+.nav-tabs.nav-justified > li > a {
+	border-bottom-color: var(main-border-color);
+}
+
+.nav-tabs.nav-justified > .active > a {
+	border-bottom-color: var(main-background-color);
+	font-weight: bold;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+	color: var(grad-primary-text-color);
+	background-color: var(grad-primary-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-image: linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+}
+
+.nav-tabs-justified > li > a {
+	border-bottom-color: var(main-border-color);
+}
+
+.nav-tabs-justified > .active > a {
+	border-bottom-color: var(main-background-color);
+}
+
+.nav .caret {
+	border-top-color: var(main-link-color);
+	border-bottom-color: var(main-link-color);
+}
+
+.nav a:hover .caret {
+	border-top-color: var(main-link-hover-color);
+	border-bottom-color: var(main-link-hover-color);
+}
+
+.navbar {
+	color: var(grad-default-text-color);
+	background-color: var(main-background-color);
+	background-image: -webkit-linear-gradient(top, var(main-background-color), var(main-background-second-color));
+	background-image: linear-gradient(to bottom, var(main-background-color), var(main-background-second-color));
+	border: 1px solid var(main-border-color);
+	border-radius: 0;
+	margin-bottom: 15px;
+}
+
+.navbar-collapse,
+.navbar-form {
+	border-color: var(main-border-color);
+}
+
+.navbar .navbar-text,
+.navbar-brand {
+	color: var(main-text-color);
+}
+
+.navbar-nav > li > a,
+a.navbar-brand {
+	color: var(main-link-color);
+}
+
+.navbar-brand {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+.navbar-toggle {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+.navbar-collapse,
+.navbar-header {
+	padding-left: 0;
+	padding-right: 0;
+}
+.navbar-nav,
+.navbar-form {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.navbar-nav > li > a:hover,
+.navbar-nav > li > a:focus,
+a.navbar-brand:hover,
+a.navbar-brand:focus,
+.navbar-nav > .open > a,
+.navbar-nav > .open > a:hover,
+.navbar-nav > .open > a:focus {
+	color: var(main-link-hover-color);
+	background-color: var(main-background-second-color);
+	background-image: -webkit-linear-gradient(top, var(main-background-second-color), var(main-background-color));
+	background-image: linear-gradient(to bottom, var(main-background-second-color), var(main-background-color));
+}
+
+.navbar-nav > .active > a,
+.navbar-nav > .active > a:hover,
+.navbar-nav > .active > a:focus {
+	color: var(main-text-color);
+	background: var(main-background-second-color);
+}
+
+.navbar-nav > .disabled > a,
+.navbar-nav > .disabled > a:hover,
+.navbar-nav > .disabled > a:focus {
+	color: var(main-disabled-text-color);
+}
+
+.navbar-toggle {
+	color: var(main-text-color);
+	background-color: var(main-background-color);
+	background-image: -webkit-linear-gradient(top, var(main-background-color), var(main-background-second-color));
+	background-image: linear-gradient(to bottom, var(main-background-color), var(main-background-second-color));
+	border-color: var(main-border-color);
+}
+
+.navbar-toggle:hover,
+.navbar-toggle:focus {
+	background-color: var(main-background-color);
+	background-image: -webkit-linear-gradient(top, var(btn-hover-gradient));
+	background-image: linear-gradient(to bottom, var(btn-hover-gradient));
+}
+
+.navbar-toggle .icon-bar {
+	background-color: var(main-text-color);
+}
+
+.navbar-nav > .dropdown > a .caret {
+	border-top-color: var(main-link-color);
+	border-bottom-color: var(main-link-color);
+}
+
+.navbar-nav > .open > a .caret,
+.navbar-nav > .open > a:hover .caret,
+.navbar-nav > .open > a:focus .caret,
+.navbar-nav > .dropdown > a:hover .caret {
+	border-top-color: var(grad-default-text-color);
+	border-bottom-color: var(grad-default-text-color);
+}
+
+.navbar-inverse {
+	background-color: var(inverse-background-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+	border-color: var(inverse-border-color);
+}
+
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+	border-color: var(inverse-border-color);
+}
+
+.navbar-inverse .navbar-text,
+.navbar-inverse .navbar-brand {
+	color: var(inverse-text-color);
+}
+
+.navbar-inverse .navbar-nav > li > a,
+.navbar-inverse a.navbar-brand {
+	color: var(inverse-link-color);
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus,
+.navbar-inverse a.navbar-brand:hover,
+.navbar-inverse a.navbar-brand:focus,
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:hover,
+.navbar-inverse .navbar-nav > .open > a:focus {
+	color: var(inverse-link-hover-color);
+	background-color: var(inverse-background-second-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-second-color), var(inverse-background-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-second-color), var(inverse-background-color));
+}
+
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus {
+	color: var(inverse-text-hover-color);
+	background: var(inverse-background-second-color);
+}
+
+.navbar-inverse .navbar-nav > .disabled > a,
+.navbar-inverse .navbar-nav > .disabled > a:hover,
+.navbar-inverse .navbar-nav > .disabled > a:focus {
+	color: var(inverse-text-color);
+}
+
+.navbar-inverse .navbar-toggle {
+	color: var(inverse-text-color);
+	background-color: var(inverse-background-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+	border-color: var(inverse-border-color);
+}
+
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+	background-color: var(inverse-background-color);
+	background-image: -webkit-linear-gradient(top, var(btn-hover-gradient));
+	background-image: linear-gradient(to bottom, var(btn-hover-gradient));
+}
+
+.navbar-inverse .navbar-toggle .icon-bar {
+	border-color: var(inverse-text-color);
+}
+
+.navbar-inverse .navbar-nav > .open > a .caret,
+.navbar-inverse .navbar-nav > .dropdown > a .caret {
+	border-top-color: var(inverse-link-color);
+	border-bottom-color: var(inverse-link-color);
+}
+
+.navbar-inverse .navbar-nav > .open > a:hover .caret,
+.navbar-inverse .navbar-nav > .open > a:focus .caret,
+.navbar-inverse .navbar-nav > .dropdown > a:hover .caret,
+.navbar-inverse .navbar-nav > .dropdown > a:focus .caret {
+	border-top-color: var(inverse-link-hover-color);
+	border-bottom-color: var(inverse-link-hover-color);
+}
+
+.navbar-link {
+	color: var(main-link-color);
+}
+
+.navbar-link:hover {
+	color: var(main-link-hover-color);
+}
+
+.navbar-inverse .navbar-link {
+	color: var(inverse-link-color);
+}
+
+.navbar-inverse .navbar-link:hover {
+	color: var(inverse-link-hover-color);
+}
+
+.breadcrumb {
+	height: 30px;
+	line-height: 30px;
+	padding: 0 0 0 30px;
+	background: transparent var(thread-image) no-repeat left center;
+	margin-bottom: 0;
+}
+
+.breadcrumb a {
+	text-decoration: none;
+}
+
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
+
+.breadcrumb > li + li:before {
+	color: var(main-border-color);
+}
+
+.breadcrumb > .active {
+	color: inherit;
+	font-weight: bold;
+}
+
+.pagination {
+	width: 100%;
+	margin: 0 0 15px 0;
+}
+.pagination > .page-count > span {
+	border: 1px solid var(main-border-color);
+	float: right;
+}
+
+.pagination,
+.pagination > li:first-child > a,
+.pagination > li:first-child > span,
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+	border-radius: 0;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+	background-color: var(grad-default-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-first-color), var(grad-default-second-color));
+	background-image: linear-gradient(to bottom, var(grad-default-first-color), var(grad-default-second-color));
+	border-color: var(main-border-color);
+}
+
+.pagination > li > a:hover,
+.pagination > li > a:focus,
+.pagination > .active > a,
+.pagination > .active > span {
+	background-color: var(grad-default-second-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-second-color), var(grad-default-first-color));
+	background-image: linear-gradient(to bottom, var(grad-default-second-color), var(grad-default-first-color));
+}
+
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:hover {
+	color: var(grad-default-text-color);
+	background: var(grad-default-second-color);
+	border-color: var(grad-default-link-color);
+}
+
+.pagination > .disabled > span,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > a:focus {
+	color: var(main-disabled-text-color);
+	background-color: var(main-background-color);
+}
+
+.pager li > a,
+.pager li > span {
+	background-color: var(grad-default-second-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-second-color), var(grad-default-first-color));
+	background-image: linear-gradient(to bottom, var(grad-default-second-color), var(grad-default-first-color));
+	border-radius: 4px;
+}
+
+.pager .disabled > a,
+.pager .disabled > a:hover,
+.pager .disabled > a:focus,
+.pager .disabled > span {
+	color: var(main-disabled-text-color);
+}
+
+.modal-content {
+	background-color: var(main-background-color);
+}
+
+.modal-header {
+	background-color: var(grad-primary-first-color);
+	background-image: linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+	border: none;
+	border-radius: 6px 6px 0 0;
+	color: var(grad-primary-text-color);
+	font-weight: bold;
+}
+.modal-header .modal-title {
+	color: inherit;
+}
+
+.modal-header,
+.modal-footer {
+	padding: 10px 15px;
+}
+
+.modal-footer {
+	margin-top: 0;
+	border-top-color: var(main-border-color);
+}
+
+.tooltip-inner {
+	background-color: var(inverse-background-second-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+	color: var(inverse-text-color);
+}
+
+.tooltip.top .tooltip-arrow,
+.tooltip.top-left .tooltip-arrow,
+.tooltip.top-right .tooltip-arrow {
+	border-top-color: var(inverse-background-second-color);
+}
+
+.tooltip.right .tooltip-arrow {
+	border-right-color: var(inverse-background-second-color);
+}
+
+.tooltip.left .tooltip-arrow {
+	border-left-color: var(inverse-background-second-color);
+}
+
+.tooltip.bottom .tooltip-arrow,
+.tooltip.bottom-left .tooltip-arrow,
+.tooltip.bottom-right .tooltip-arrow {
+	border-bottom-color: var(inverse-background-color);
+}
+
+.popover {
+	background-color: var(main-background-color);
+	border-color: var(main-border-color);
+	padding: 0;
+}
+
+.popover-title {
+	background-color: var(aletrnate-odd-color);
+	border-bottom-color: var(main-border-color);
+}
+
+.popover.top .arrow {
+	border-top-color: var(main-border-color);
+}
+
+.popover.top .arrow:after {
+	border-top-color: var(main-background-color);
+}
+
+.popover.right .arrow {
+	border-right-color: var(main-border-color);
+}
+
+.popover.right .arrow:after {
+	border-right-color: var(main-background-color);
+}
+
+.popover.bottom .arrow {
+	border-bottom-color: var(main-border-color);
+}
+
+.popover.bottom .arrow:after {
+	border-bottom-color: var(main-background-color);
+}
+
+.popover.left .arrow {
+	border-left-color: var(main-border-color);
+}
+
+.popover.left .arrow:after {
+	border-left-color: var(main-background-color);
+}
+
+.alert {
+	color: var(warning-text-color);
+	background-color: var(warning-background-color);
+	border-color: var(warning-text-color);
+	border-radius: 0;
+}
+
+.alert hr {
+	border-top-color: var(warning-text-color);
+	border-top-color: var(warning-text-color);
+}
+
+.alert .alert-link {
+	color: var(warning-text-color);
+	text-decoration: underline;
+}
+.alert .alert-link:hover {
+	text-decoration: none;
+}
+
+.alert-success {
+	color: var(success-text-color);
+	background-color: var(success-background-color);
+	border-color: var(success-text-color);
+}
+
+.alert-success hr {
+	border-top-color: var(success-text-color);
+}
+
+.alert-success .alert-link {
+	color: var(success-text-color);
+}
+
+.alert-danger {
+	color: var(danger-text-color);
+	background-color: var(danger-background-color);
+	border-color: var(danger-text-color);
+}
+
+.alert-danger hr {
+	border-top-color: var(danger-text-color);
+}
+
+.alert-danger .alert-link {
+	color: var(danger-text-color);
+}
+
+.alert-info {
+	color: var(info-text-color);
+	background-color: var(info-background-color);
+	border-color: var(info-text-color);
+}
+
+.alert-info hr {
+	border-top-color: var(info-text-color);
+}
+
+.alert-info .alert-link {
+	color: var(info-text-color);
+}
+
+.thumbnail,
+.img-thumbnail {
+	background-color: var(main-background-color);
+	border-color: var(main-border-color);
+	border-radius: 0;
+}
+
+a.thumbnail:hover,
+a.thumbnail:focus {
+	border-color: var(main-link-color);
+}
+
+.thumbnail .caption {
+	color: var(main-text-color);
+}
+
+.label[href]:hover,
+.label[href]:focus {
+	background-image: -webkit-linear-gradient(top, var(btn-hover-gradient));
+	background-image: linear-gradient(to bottom, var(btn-hover-gradient));
+}
+
+.label-default {
+	color: var(grad-default-text-color);
+	background-color: var(grad-default-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-first-color), var(grad-default-second-color));
+	background-image: linear-gradient(to bottom, var(grad-default-first-color), var(grad-default-second-color));
+}
+
+.label-default[href]:hover,
+.label-default[href]:focus {
+	color: var(grad-default-text-color);
+	background-color: var(grad-default-second-color);
+}
+
+.label-danger {
+	color: var(grad-danger-text-color);
+	background-color: var(grad-danger-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-danger-first-color), var(grad-danger-second-color));
+	background-image: linear-gradient(to bottom, var(grad-danger-first-color), var(grad-danger-second-color));
+}
+
+.label-danger[href]:hover,
+.label-danger[href]:focus {
+	color: var(grad-danger-text-color);
+	background-color: var(grad-danger-second-color);
+}
+
+.label-success {
+	color: var(grad-success-text-color);
+	background-color: var(grad-success-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-success-first-color), var(grad-success-second-color));
+	background-image: linear-gradient(to bottom, var(grad-success-first-color), var(grad-success-second-color));
+}
+
+.label-success[href]:hover,
+.label-success[href]:focus {
+	color: var(grad-success-text-color);
+	background-color: var(grad-success-second-color);
+}
+
+.label-warning {
+	color: var(grad-warning-text-color);
+	background-color: var(grad-warning-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-warning-first-color), var(grad-warning-second-color));
+	background-image: linear-gradient(to bottom, var(grad-warning-first-color), var(grad-warning-second-color));
+}
+
+.label-warning[href]:hover,
+.label-warning[href]:focus {
+	color: var(grad-warning-text-color);
+	background-color: var(grad-warning-second-color);
+}
+
+.label-info {
+	color: var(grad-info-text-color);
+	background-color: var(grad-info-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-info-first-color), var(grad-info-second-color));
+	background-image: linear-gradient(to bottom, var(grad-info-first-color), var(grad-info-second-color));
+}
+
+.label-info[href]:hover,
+.label-info[href]:focus {
+	color: var(grad-info-text-color);
+	background-color: var(grad-info-second-color);
+}
+
+.badge,
+a.list-group-item.active > .badge,
+.nav-pills > .active > a > .badge {
+	color: var(inverse-text-color);
+	background-color: var(inverse-background-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+}
+
+a.badge {
+	color: var(inverse-link-color);
+	background-color: var(inverse-background-color);
+	background-image: -webkit-linear-gradient(top, var(inverse-background-color), var(inverse-background-second-color));
+	background-image: linear-gradient(to bottom, var(inverse-background-color), var(inverse-background-second-color));
+}
+
+a.badge:hover,
+a.badge:focus {
+	color: var(inverse-link-hover-color);
+}
+
+.progress {
+	background-color: var(grad-default-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-default-first-color), var(grad-default-second-color));
+	background-image: linear-gradient(to bottom, var(grad-default-first-color), var(grad-default-second-color));
+}
+
+.progress-bar {
+	color: var(grad-info-text-color);
+	background-color: var(grad-primary-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-image: linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+}
+.progress-striped .progress-bar {
+	background-image: -webkit-linear-gradient(45deg, var(striped-gradient)), -webkit-linear-gradient(top, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-image: linear-gradient(45deg, var(striped-gradient)), linear-gradient(to bottom, var(grad-primary-first-color), var(grad-primary-second-color));
+	background-position: left top;
+	background-repeat: repeat;
+	background-size: 40px 40px, 100% 100%;
+}
+
+.progress-bar-danger {
+	color: var(grad-danger-text-color);
+	background-color: var(grad-danger-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-danger-first-color), var(grad-danger-second-color));
+	background-image: linear-gradient(to bottom, var(grad-danger-first-color), var(grad-danger-second-color));
+}
+.progress-striped .progress-bar-danger {
+	background-image: -webkit-linear-gradient(45deg, var(striped-gradient)), -webkit-linear-gradient(top, var(grad-danger-first-color), var(grad-danger-second-color));
+	background-image: linear-gradient(45deg, var(striped-gradient)), linear-gradient(to bottom, var(grad-danger-first-color), var(grad-danger-second-color));
+}
+
+.progress-bar-success {
+	color: var(grad-success-text-color);
+	background-color: var(grad-success-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-success-first-color), var(grad-success-second-color));
+	background-image: linear-gradient(to bottom, var(grad-success-first-color), var(grad-success-second-color));
+}
+.progress-striped .progress-bar-success {
+	background-image: -webkit-linear-gradient(45deg, var(striped-gradient)), -webkit-linear-gradient(top, var(grad-success-first-color), var(grad-success-second-color));
+	background-image: linear-gradient(45deg, var(striped-gradient)), linear-gradient(to bottom, var(grad-success-first-color), var(grad-success-second-color));
+}
+
+.progress-bar-warning {
+	color: var(grad-warning-text-color);
+	background-color: var(grad-warning-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-warning-first-color), var(grad-warning-second-color));
+	background-image: linear-gradient(to bottom, var(grad-warning-first-color), var(grad-warning-second-color));
+}
+.progress-striped .progress-bar-warning {
+	background-image: -webkit-linear-gradient(45deg, var(striped-gradient)), -webkit-linear-gradient(top, var(grad-warning-first-color), var(grad-warning-second-color));
+	background-image: linear-gradient(45deg, var(striped-gradient)), linear-gradient(to bottom, var(grad-warning-first-color), var(grad-warning-second-color));
+}
+
+.progress-bar-info {
+	color: var(grad-info-text-color);
+	background-color: var(grad-info-first-color);
+	background-image: -webkit-linear-gradient(top, var(grad-info-first-color), var(grad-info-second-color));
+	background-image: linear-gradient(to bottom, var(grad-info-first-color), var(grad-info-second-color));
+}
+.progress-striped .progress-bar-info {
+	background-image: -webkit-linear-gradient(45deg, var(striped-gradient)), -webkit-linear-gradient(top, var(grad-info-first-color), var(grad-info-second-color));
+	background-image: linear-gradient(45deg, var(striped-gradient)), linear-gradient(to bottom, var(grad-info-first-color), var(grad-info-second-color));
+}
+
+.carousel-control,
+.carousel-control:hover,
+.carousel-control:focus,
+.carousel-caption {
+	color: var(inverse-text-color);
+}
+
+.carousel-indicators li {
+	border-color: var(inverse-text-color);
+}
+
+.carousel-indicators .active {
+	background-color: var(inverse-text-color);
+}
+
+.jumbotron {
+	background-color: var(main-background-second-color);
+	border-radius: 0;
+}

@@ -1,0 +1,70 @@
+<div data-ng-controller="Rbs_User_User_PermissionController">
+	<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.permission_rules_sub_title', ['ucf']) }}"></rbs-page-header><br />
+	<table class="document-list table table-condensed table-bordered table-striped table-hover token">
+		<thead>
+			<tr>
+				<th data-ng-class="{'sorted':isSortedOn('role')}">
+					<a href="" data-ng-click="predicate = 'role'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.permission_role', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('role')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('role')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('privilege')}">
+					<a href="" data-ng-click="predicate = 'privilege'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.permission_privilege', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('privilege')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('privilege')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('resource_id')}">
+					<a href="" data-ng-click="predicate = 'resource_id'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.permission_resource', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('resource_id')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('resource_id')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th><button class="btn btn-danger btn-sm" data-ng-click="removeAllPermissionRules()">{{ i18n('m.rbs.user.admin.remove_all_permission_rules', ['ucf']) }}</button></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr data-ng-repeat="permissionRule in permissionRules | orderBy:predicate:reverse" class="normal-row">
+				<td>(= permissionRule.role =)</td>
+				<td>(= permissionRule.privilege =)</td>
+				<td>(= permissionRule.resource_id =)</td>
+				<td><button class="btn btn-danger btn-sm" data-ng-click="removePermissionRule(permissionRule)">{{ i18n('m.rbs.user.admin.remove_permission_rule', ['ucf']) }}</button></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h4>{{ i18n('m.rbs.user.admin.new_permission_rules', ['ucf']) }}</h4>
+	<form name="form" data-ng-submit="submit()" >
+		<fieldset>
+			<div class="control-group required">
+				<label class="control-label" for="role">{{ i18n('m.rbs.user.admin.permission_roles', ['ucf']) }}</label>
+				<div class="controls">
+					<div class="btn-group">
+						<button class="btn btn-default" data-ng-class="{true:'', false:'active'}[showRoles]" data-ng-click="newPermissionRules.roles = ['*']; showRoles = false">{{ i18n('m.rbs.generic.admin.any_role', ['ucf']) }}</button>
+						<button class="btn btn-default" data-ng-class="{true:'active', false:''}[showRoles]" data-ng-click="showRoles = true">{{ i18n('m.rbs.user.admin.customise', ['ucf']) }}</button>
+					</div>
+					<select id="role" data-ng-if="showRoles" multiple="multiple" data-ng-model="newPermissionRules.roles" data-ng-options="key as value.label for (key, value) in permissionRoles"></select>
+				</div>
+			</div>
+			<div class="control-group required">
+				<label class="control-label" for="privilege">{{ i18n('m.rbs.user.admin.permission_privileges', ['ucf']) }}</label>
+				<div class="controls">
+					<div class="btn-group">
+						<button class="btn btn-default" data-ng-class="{true:'', false:'active'}[showPrivileges]" data-ng-click="newPermissionRules.privileges = ['*']; showPrivileges = false">{{ i18n('m.rbs.generic.admin.any_privilege', ['ucf']) }}</button>
+						<button class="btn btn-default" data-ng-class="{true:'active', false:''}[showPrivileges]" data-ng-click="showPrivileges = true">{{ i18n('m.rbs.user.admin.customise', ['ucf']) }}</button>
+					</div>
+					<select data-ng-if="showPrivileges" multiple="multiple" data-ng-model="newPermissionRules.privileges" data-ng-options="key as value.label for (key, value) in permissionPrivileges"></select>
+				</div>
+			</div>
+			<div class="control-group required">
+				<label class="control-label" for="resource">{{ i18n('m.rbs.user.admin.permission_resources', ['ucf']) }}</label>
+				<input type="text" data-ng-list="," data-ng-model="newPermissionRules.resources">
+			</div>
+			<button class="btn btn-default" data-ng-click="addPermissionRules()">{{ i18n('m.rbs.user.admin.add', ['ucf']) }}</button>
+		</fieldset>
+	</form>
+</div>

@@ -1,30 +1,61 @@
 {
 	"name": "rbschange/change",
 	"description": "RBS Change CMS & E-Commerce Platform",
-	"type": "rbschange-core",
-	"license":"AGPL-3.0",
-	"autoload":
-	{
-		"psr-0":
-		{
-			"Change" : "."
+	"license": "AGPL-3.0",
+	"autoload": {
+		"psr-4": {
+			"Change\\": "Change"
 		}
 	},
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.zendframework.com/"
-        }
-    ],
-    "require":
-    {
-        "php": ">=5.3.3",
-        "zendframework/zendframework": "2.1.4",
-        "zendframework/zendoauth": "2.0.1",
-		"twig/twig": "1.*"
-    },
-	"config":
-	{
-		"vendor-dir":"Libraries"
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://packages.zendframework.com/"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"zendframework/zendframework": "2.*",
+		"zendframework/zendoauth": "2.*",
+		"twig/twig": "1.*",
+		"ruflin/elastica": "0.90.*",
+		"ircmaxell/password-compat": "1.0.*",
+		"michelf/php-markdown": "1.*",
+		"kriswallsmith/assetic":"1.*",
+		"leafo/lessphp": "0.*",
+		"mrclay/minify": "2.*"
+	},
+	"replace":{
+		"rbschange/core": "self.version",
+		"rbs/admin": "self.version",
+		"rbs/brand": "self.version",
+		"rbs/catalog": "self.version",
+		"rbs/collection": "self.version",
+		"rbs/commerce": "self.version",
+		"rbs/discount": "self.version",
+		"rbs/elasticsearch": "self.version",
+		"rbs/generic": "self.version",
+		"rbs/geo": "self.version",
+		"rbs/mail": "self.version",
+		"rbs/media": "self.version",
+		"rbs/notification": "self.version",
+		"rbs/order": "self.version",
+		"rbs/payment": "self.version",
+		"rbs/plugins": "self.version",
+		"rbs/price": "self.version",
+		"rbs/review": "self.version",
+		"rbs/seo": "self.version",
+		"rbs/shipping": "self.version",
+		"rbs/simpleform": "self.version",
+		"rbs/stock": "self.version",
+		"rbs/store": "self.version",
+		"rbs/tag": "self.version",
+		"rbs/theme": "self.version",
+		"rbs/timeline": "self.version",
+		"rbs/user": "self.version",
+		"rbs/website": "self.version",
+		"rbs/workflow": "self.version",
+		"rbs/base":"self.version",
+		"rbs/demo":"self.version"
 	}
 }

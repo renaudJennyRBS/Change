@@ -5,7 +5,6 @@ use Change\Http\Event;
 use Change\Http\Rest\Actions\DiscoverNameSpace;
 use Change\Http\Rest\Actions\GetBlockCollection;
 use Change\Http\Rest\Actions\GetBlockInformation;
-use Change\Presentation\PresentationServices;
 
 /**
  * @name \Change\Http\Rest\BlocksResolver
@@ -20,7 +19,7 @@ class BlocksResolver
 	/**
 	 * @param \Change\Http\Rest\Resolver $resolver
 	 */
-	function __construct(Resolver $resolver)
+	public function __construct(Resolver $resolver)
 	{
 		$this->resolver = $resolver;
 	}
@@ -32,7 +31,7 @@ class BlocksResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		$bm = $event->getPresentationServices()->getBlockManager();
+		$bm = $event->getApplicationServices()->getBlockManager();
 		if (!isset($namespaceParts[1]))
 		{
 			$vendors = array();
@@ -71,10 +70,6 @@ class BlocksResolver
 	 */
 	public function resolve($event, $resourceParts, $method)
 	{
-		if ($event->getPresentationServices() === null)
-		{
-			$event->setPresentationServices(new PresentationServices($event->getApplicationServices()));
-		}
 		if (count($resourceParts) < 2 && $method === Request::METHOD_GET)
 		{
 			array_unshift($resourceParts, 'blocks');
@@ -112,5 +107,4 @@ class BlocksResolver
 			return;
 		}
 	}
-
 }

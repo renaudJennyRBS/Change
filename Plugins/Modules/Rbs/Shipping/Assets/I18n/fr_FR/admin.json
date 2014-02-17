@@ -1,0 +1,17 @@
+{
+	"mode_list":{
+		"message":"modes de livraison"
+	},
+	"mode_create":{
+		"message":"ajouter un mode de livraison"
+	},
+	"mode_select_visual":{
+		"message":"sélectionner un visuel"
+	},
+	"module_name":{
+		"message":"expéditions"
+	},
+	"module_keywords":{
+		"message":"expédition,livraison,transporteur,mode de livraison"
+	}
+}

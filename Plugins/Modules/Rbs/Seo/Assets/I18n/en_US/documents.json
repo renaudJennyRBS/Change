@@ -1,0 +1,96 @@
+{
+  "modelconfiguration_modelname":{
+    "message":"model name"
+  },
+  "modelconfiguration_sitemapdefaultchangefrequency":{
+    "message":"frequency (changefreq)"
+  },
+  "modelconfiguration_sitemapdefaultpriority":{
+    "message":"URL priority (priority)"
+  },
+  "modelconfiguration_documentseoautogenerate":{
+    "message":"automatic creation of SEO document"
+  },
+  "modelconfiguration_defaultmetatitle":{
+    "message":"default meta title"
+  },
+  "modelconfiguration_defaultmetadescription":{
+    "message":"default meta description"
+  },
+  "modelconfiguration_defaultmetakeywords":{
+    "message":"default meta keywords"
+  },
+  "documentseo":{
+    "message":"document's SEO"
+  },
+  "documentseo_list":{
+    "message":"documents' SEO"
+  },
+  "modelconfiguration_list":{
+    "message":"models configuration"
+  },
+  "modelconfiguration":{
+    "message":"model configuration"
+  },
+  "sitemapconfiguration_list":{
+    "message":"sitemaps configuration"
+  },
+  "documentseo_target":{
+    "message":"targeted document"
+  },
+  "documentseo_target_model":{
+    "moveTo":"m.rbs.seo.admin.documentseo",
+    "message":"target type"
+  },
+  "documentseo_target_picker_title":{
+    "moveTo":"m.rbs.seo.admin.documentseo",
+    "message":"Select the document you want to optimize SEO"
+  },
+  "documentseo_metatitle":{
+    "message":"page meta title"
+  },
+  "documentseo_metadescription":{
+    "message":"meta description"
+  },
+  "documentseo_metakeywords":{
+    "message":"meta keywords"
+  },
+  "documentseo_sitemapchangefrequency":{
+    "message":"frequency (changefreq)"
+  },
+  "documentseo_sitemappriority":{
+    "message":"URL priority (priority)"
+  },
+  "documentseo_sitemap_change_frequency_option":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"document change frequency"
+  },
+  "documentseo_sitemap_change_frequency_always":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"always"
+  },
+  "documentseo_sitemap_change_frequency_hourly":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"hourly"
+  },
+  "documentseo_sitemap_change_frequency_daily":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"daily"
+  },
+  "documentseo_sitemap_change_frequency_weekly":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"weekly"
+  },
+  "documentseo_sitemap_change_frequency_monthly":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"monthly"
+  },
+  "documentseo_sitemap_change_frequency_yearly":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"yearly"
+  },
+  "documentseo_sitemap_change_frequency_never":{
+    "moveTo":"m.rbs.seo.admin",
+    "message":"never"
+  }
+}

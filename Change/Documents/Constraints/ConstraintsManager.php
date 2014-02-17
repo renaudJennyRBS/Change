@@ -8,15 +8,10 @@ namespace Change\Documents\Constraints;
 class ConstraintsManager
 {
 	/**
-	 * @var \Change\Documents\DocumentServices
+	 * @var \Change\I18n\I18nManager
 	 */
-	protected $documentServices;
+	protected $i18nManager = null;
 
-	/**
-	 * @var \Change\Application\ApplicationServices
-	 */
-	protected $applicationServices;
-	
 	/**
 	 * @var array
 	 */
@@ -28,7 +23,34 @@ class ConstraintsManager
 			'domain' => '\Change\Documents\Constraints\Domain',
 			'url' => '\Change\Documents\Constraints\Url',
 			'unique' => '\Change\Documents\Constraints\Unique',
-			'enum' => '\Change\Documents\Constraints\Enum');
+			'enum' => '\Change\Documents\Constraints\Enum',
+			'storageUri' => '\Change\Documents\Constraints\StorageUri',
+			'publicationStatus' => '\Change\Documents\Constraints\PublicationStatus');
+	}
+
+	public function shutdown()
+	{
+		\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain();
+		\Zend\Validator\AbstractValidator::setDefaultTranslator();
+	}
+
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager(\Change\I18n\I18nManager $i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		$this->registerDefaultTranslator();
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
 	}
 
 	protected function registerDefaultTranslator()
@@ -37,44 +59,10 @@ class ConstraintsManager
 		{
 			\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain('c.constraints');
 			$t = Translator::factory(array());
-			$t->setI18nManager($this->getApplicationServices()->getI18nManager());
+			$t->setI18nManager($this->getI18nManager());
 			\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
 		}
 	}
-
-	/**
-	 * @param \Change\Application\ApplicationServices $applicationServices
-	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices)
-	{
-		$this->applicationServices = $applicationServices;
-		$this->registerDefaultTranslator();
-	}
-
-	/**
-	 * @return \Change\Application\ApplicationServices
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
 
 	/**
 	 * @param string $name
@@ -191,6 +179,10 @@ class ConstraintsManager
 		{
 			$c->setMessage($params['message']);
 		}
+		else
+		{
+			$c->setMessage('notMatch');
+		}
 		return $c;
 	}
 	
@@ -223,6 +215,7 @@ class ConstraintsManager
 	
 	/**
 	 * @param array $params<allow => \Zend\Validator\Hostname::ALLOW_*>
+	 * @return \Zend\Validator\Hostname
 	 */
 	public function hostname($params = array())
 	{

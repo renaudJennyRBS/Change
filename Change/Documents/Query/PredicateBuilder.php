@@ -1,20 +1,18 @@
 <?php
 namespace Change\Documents\Query;
 
-use Change\Db\Query\Predicates\InterfacePredicate;
+use Change\Db\Query\Expressions\AbstractExpression;
 use Change\Db\Query\Expressions\ExpressionList;
 use Change\Db\Query\Expressions\Subquery;
 use Change\Db\Query\InterfaceSQLFragment;
+use Change\Db\Query\Predicates\HasPermission;
 use Change\Db\Query\Predicates\In;
+use Change\Db\Query\Predicates\InterfacePredicate;
 use Change\Db\Query\Predicates\Like;
 use Change\Db\Query\Predicates\UnaryPredicate;
-use Change\Db\Query\SQLFragmentBuilder;
 use Change\Db\Query\SelectQuery;
-use Change\Documents\Property;
 
-use Change\Documents\AbstractDocument;
-use Change\Documents\TreeNode;
-use Change\Db\Query\Expressions\Join;
+use Change\Documents\Property;
 
 /**
  * @name \Change\Documents\Query\PredicateBuilder
@@ -32,6 +30,14 @@ class PredicateBuilder
 	function __construct(AbstractBuilder $builder)
 	{
 		$this->builder = $builder;
+	}
+
+	/**
+	 * @return \Change\Documents\Query\AbstractBuilder
+	 */
+	public function getBuilder()
+	{
+		return $this->builder;
 	}
 
 	/**
@@ -100,6 +106,22 @@ class PredicateBuilder
 			$rhs = $this->builder->getValueAsParameter($value);
 		}
 		return array($lhs, $rhs);
+	}
+
+	/**
+	 * @param Property|string $propertyName
+	 * @return \Change\Db\Query\Expressions\Column
+	 */
+	public function columnProperty($propertyName)
+	{
+		if ($propertyName instanceof InterfaceSQLFragment)
+		{
+			return $propertyName;
+		}
+		else
+		{
+			return $this->builder->getColumn($propertyName);
+		}
 	}
 
 	/**
@@ -172,8 +194,30 @@ class PredicateBuilder
 	 */
 	public function eq($propertyName, $value)
 	{
+		$fb = $this->getFragmentBuilder();
+		$property = $this->builder->getValidProperty($propertyName);
+		if ($property && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		{
+			$abstractBuilder = $this->builder;
+			$sq = new \Change\Db\Query\SelectQuery();
+			$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+			$fromClause = new \Change\Db\Query\Clauses\FromClause();
+			$fromTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
+			$fromClause->setTableExpression($fromTable);
+			$sq->setFromClause($fromClause);
+
+			$docEq = $fb->eq($fb->getDocumentColumn('id', $fromTable), $abstractBuilder->getColumn('id'));
+			$relnamePredicate = $fb->eq($fb->column('relname', $fromTable), $fb->string($property->getName()));
+			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable),
+				$abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
+
+			$and = new \Change\Db\Query\Predicates\Conjunction($docEq, $relnamePredicate, $idPredicate);
+			$where = new \Change\Db\Query\Clauses\WhereClause($and);
+			$sq->setWhereClause($where);
+			return new \Change\Db\Query\Predicates\Exists(new \Change\Db\Query\Expressions\SubQuery($sq));
+		}
 		list($lhs, $rhs) = $this->convertPropertyValueArgument($propertyName, $value);
-		return $this->getFragmentBuilder()->eq($lhs, $rhs);
+		return $fb->eq($lhs, $rhs);
 	}
 
 	/**
@@ -184,8 +228,30 @@ class PredicateBuilder
 	 */
 	public function neq($propertyName, $value)
 	{
+		$fb = $this->getFragmentBuilder();
+		$property = $this->builder->getValidProperty($propertyName);
+		if ($property && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		{
+			$abstractBuilder = $this->builder;
+			$sq = new \Change\Db\Query\SelectQuery();
+			$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+			$fromClause = new \Change\Db\Query\Clauses\FromClause();
+			$fromTable = $fb->getDocumentRelationTable($abstractBuilder->getModel()->getRootName());
+			$fromClause->setTableExpression($fromTable);
+			$sq->setFromClause($fromClause);
+
+			$docEq = $fb->eq($fb->getDocumentColumn('id', $fromTable), $abstractBuilder->getColumn('id'));
+			$relnamePredicate = $fb->eq($fb->column('relname', $fromTable), $fb->string($property->getName()));
+			$idPredicate = $fb->eq($fb->column('relatedid', $fromTable),
+				$abstractBuilder->getValueAsParameter($value, Property::TYPE_INTEGER));
+
+			$and = new \Change\Db\Query\Predicates\Conjunction($docEq, $relnamePredicate, $idPredicate);
+			$where = new \Change\Db\Query\Clauses\WhereClause($and);
+			$sq->setWhereClause($where);
+			return new \Change\Db\Query\Predicates\Exists(new \Change\Db\Query\Expressions\SubQuery($sq), true);
+		}
 		list($lhs, $rhs) = $this->convertPropertyValueArgument($propertyName, $value);
-		return $this->getFragmentBuilder()->neq($lhs, $rhs);
+		return $fb->neq($lhs, $rhs);
 	}
 
 	/**
@@ -322,7 +388,10 @@ class PredicateBuilder
 		list($expression, $property) = $this->convertPropertyArgument($propertyName);
 
 		/* @var $property Property */
-		if ($property !== null && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		if ($property !== null
+			&& in_array($property->getType(),
+				array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID))
+		)
 		{
 			return $this->getFragmentBuilder()->eq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
@@ -339,7 +408,10 @@ class PredicateBuilder
 		list($expression, $property) = $this->convertPropertyArgument($propertyName);
 
 		/* @var $property Property */
-		if ($property !== null && $property->getType() === Property::TYPE_DOCUMENTARRAY)
+		if ($property !== null
+			&& in_array($property->getType(),
+				array(Property::TYPE_DOCUMENTARRAY, Property::TYPE_DOCUMENT, Property::TYPE_DOCUMENTID))
+		)
 		{
 			return $this->getFragmentBuilder()->neq($expression, $this->builder->getValueAsParameter(0, Property::TYPE_INTEGER));
 		}
@@ -348,195 +420,239 @@ class PredicateBuilder
 
 	/**
 	 * @api
+	 * @param string|Property $propertyName
+	 * @param \Change\Documents\AbstractModel|string $model
+	 * @param \Change\Documents\Property|string $modelProperty
+	 * @param boolean $notExist
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate
+	 */
+	protected function buildExists($propertyName, $model, $modelProperty, $notExist)
+	{
+		list($expression, $property) = $this->convertPropertyArgument($propertyName);
+
+		/* @var $property Property */
+		if ($property !== null && $model !== null && $modelProperty !== null)
+		{
+			$fragmentBuilder = $this->getFragmentBuilder();
+
+			if (!$model instanceof \Change\Documents\AbstractModel)
+			{
+				$model = $this->getBuilder()->getDocumentManager()->getModelManager()->getModelByName($model);
+			}
+
+			if ($model)
+			{
+				$modelPropertyName = $modelProperty instanceof \Change\Documents\Property ? $modelProperty->getName() : $modelProperty;
+
+				$modelProperty = $model->getProperty($modelPropertyName);
+
+				if ($modelProperty )
+				{
+
+					if ($modelProperty->getLocalized())
+					{
+						$fromTable = $fragmentBuilder->getDocumentI18nTable($model->getRootName());
+						$eq = $fragmentBuilder->eq($expression, $fragmentBuilder->getDocumentColumn($modelPropertyName, $fromTable));
+					}
+					elseif ($modelProperty->getType() == \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+					{
+						$fromTable = $fragmentBuilder->getDocumentRelationTable($model->getRootName());
+						$id = $fragmentBuilder->eq($expression, $fragmentBuilder->getDocumentColumn('relatedid', $fromTable));
+						$rel = $fragmentBuilder->eq($fragmentBuilder->string($modelPropertyName), $fragmentBuilder->getDocumentColumn('relname', $fromTable));
+						$eq = $fragmentBuilder->logicAnd($id, $rel);
+					}
+					else
+					{
+						$fromTable = $fragmentBuilder->getDocumentTable($model->getRootName());
+						$eq = $fragmentBuilder->eq($expression, $fragmentBuilder->getDocumentColumn($modelPropertyName, $fromTable));
+					}
+
+					$sq = new \Change\Db\Query\SelectQuery();
+					$sq->setSelectClause(new \Change\Db\Query\Clauses\SelectClause());
+					$fromClause = new \Change\Db\Query\Clauses\FromClause();
+					$fromClause->setTableExpression($fromTable);
+					$sq->setFromClause($fromClause);
+
+					$where = new \Change\Db\Query\Clauses\WhereClause($eq);
+					$sq->setWhereClause($where);
+
+					if ($notExist)
+					{
+						return $fragmentBuilder->notExists(new \Change\Db\Query\Expressions\SubQuery($sq));
+					}
+					else
+					{
+						return $fragmentBuilder->exists(new \Change\Db\Query\Expressions\SubQuery($sq));
+					}
+				}
+			}
+		}
+		throw new \InvalidArgumentException('Invalid exists predicate arguments', 999999);
+	}
+
+	/**
+	 * @api
+	 * @param string|Property $propertyName
+	 * @param \Change\Documents\AbstractModel|string $model
+	 * @param \Change\Documents\Property|string $modelProperty
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate
+	 */
+	public function exists($propertyName, $model, $modelProperty)
+	{
+		return $this->buildExists($propertyName, $model, $modelProperty, false);
+	}
+
+	/**
+	 * @api
+	 * @param string|Property $propertyName
+	 * @param \Change\Documents\AbstractModel|string $model
+	 * @param \Change\Documents\Property|string $modelProperty
+	 * @throws \InvalidArgumentException
+	 * @return InterfacePredicate
+	 */
+	public function notExists($propertyName, $model, $modelProperty)
+	{
+		return $this->buildExists($propertyName, $model, $modelProperty, true);
+	}
+
+	/**
+	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
 	 * @throws \RuntimeException
 	 * @return InterfacePredicate
 	 */
-	public function published()
+	public function published($at = null, $to = null)
 	{
 		if (!$this->builder->getModel()->isPublishable())
 		{
 			throw new \RuntimeException('Model is not publishable: ' . $this->builder->getModel(), 999999);
 		}
 		$fb = $this->getFragmentBuilder();
-		$publicationDate = new \DateTime();
+
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
 
 		return $fb->logicAnd(
 			$this->eq('publicationStatus', \Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE),
-			$fb->logicOr($this->isNull('startPublication'), $this->lte('startPublication', $publicationDate)),
-			$fb->logicOr($this->isNull('endPublication'), $this->gt('endPublication', $publicationDate))
+			$fb->logicOr($this->isNull('startPublication'), $this->lte('startPublication', $at)),
+			$fb->logicOr($this->isNull('endPublication'), $this->gt('endPublication', $to))
 		);
 	}
 
 	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @return array
-	 * @throws \InvalidArgumentException
+	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
 	 */
-	protected function validateNodeArgument($node)
+	public function notPublished($at = null, $to = null)
 	{
-		if ($node instanceof AbstractDocument)
+		if (!$this->builder->getModel()->isPublishable())
 		{
-			$document = $node;
+			throw new \RuntimeException('Model is not publishable: ' . $this->builder->getModel(), 999999);
 		}
-		elseif ($node instanceof TreeNode)
-		{
-			$document = $node->getDocument();
-		}
-		elseif (is_numeric($node))
-		{
-			$document = $this->builder->getMaster()->getDocumentServices()->getDocumentManager()->getDocumentInstance($node);
-		}
-		else
-		{
-			$document = null;
-		}
-
-		if ($document === null || !$document->getDocumentModel()->useTree())
-		{
-			throw new \InvalidArgumentException('Argument 1 must by a valid node', 999999);
-		}
-
-		$node = $this->builder->getMaster()->getDocumentServices()->getTreeManager()->getNodeByDocument($document);
-		if ($node === null)
-		{
-			throw new \InvalidArgumentException('Argument 1 must by a valid node', 999999);
-		}
-		return array($document, $node);
-	}
-
-	/**
-	 * @param \Change\Db\Query\SQLFragmentBuilder $fragmentBuilder
-	 * @param \Change\Db\Query\Expressions\Table $treeTable
-	 * @param string $treeTableIdentifier
-	 * @param string|Property $propertyName
-	 * @return Join
-	 */
-	protected function buildTreeTableJoin($fragmentBuilder, $treeTable, $treeTableIdentifier, $propertyName)
-	{
-		$id = $this->eq($propertyName, $fragmentBuilder->getDocumentColumn('id', $treeTableIdentifier));
-		$joinExpr = new \Change\Db\Query\Expressions\UnaryOperation($id, 'ON');
-		$join = new Join($fragmentBuilder->alias($treeTable, $treeTableIdentifier), Join::INNER_JOIN, $joinExpr);
-		return $join;
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function childOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
 		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($document->getId(), Property::TYPE_INTEGER));
-	}
-
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function descendantOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
-
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->like($fb->column('node_path', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getFullPath(), Property::TYPE_STRING), \Change\Db\Query\Predicates\Like::BEGIN);
-	}
-
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function ancestorOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
-
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-		$this->builder->addJoin($treeTableIdentifier, $join);
-		$ancestorsIds = $node->getAncestorIds();
-		if (count($ancestorsIds) == 0)
+		if (!($at instanceof \DateTime))
 		{
-			$ancestorsIds[] = -1;
+			$at = new \DateTime();
 		}
-		return $this->in($fb->getDocumentColumn('id', $treeTableIdentifier), $ancestorsIds);
-	}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
 
-	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
-	 */
-	public function nextSiblingOf($node, $propertyName = 'id')
-	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
-		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
-
-		$this->builder->addJoin($treeTableIdentifier, $join);
-
-		return $fb->logicAnd(
-			$fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getParentId(), Property::TYPE_INTEGER)),
-			$fb->gt($fb->column('node_order', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getPosition(), Property::TYPE_INTEGER))
+		return $fb->logicOr(
+			$this->neq('publicationStatus', \Change\Documents\Interfaces\Publishable::STATUS_PUBLISHABLE),
+			$fb->logicAnd($this->isNotNull('startPublication'), $this->gt('startPublication', $at)),
+			$fb->logicAnd($this->isNotNull('endPublication'), $this->lte('endPublication', $to))
 		);
 	}
 
 	/**
-	 * @param TreeNode|AbstractDocument|integer $node
-	 * @param string|Property $propertyName
-	 * @return \Change\Db\Query\Predicates\BinaryPredicate
-	 * @throws \InvalidArgumentException
+	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
 	 */
-	public function previousSiblingOf($node, $propertyName = 'id')
+	public function activated($at = null, $to = null)
 	{
-		list($document, $node) = $this->validateNodeArgument($node);
-
-		/* @var $document AbstractDocument */
-		/* @var $node TreeNode */
+		if (!$this->builder->getModel()->isActivable())
+		{
+			throw new \RuntimeException('Model is not activable: ' . $this->builder->getModel(), 999999);
+		}
 		$fb = $this->getFragmentBuilder();
-		$treeTable = $fb->getTreeTable($node->getTreeName());
-		$treeTableIdentifier = '_j' . $this->builder->getMaster()->getNextAliasCounter() . 'T';
-		$join = $this->buildTreeTableJoin($fb, $treeTable, $treeTableIdentifier, $propertyName);
 
-		$this->builder->addJoin($treeTableIdentifier, $join);
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
 
 		return $fb->logicAnd(
-			$fb->eq($fb->column('parent_id', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getParentId(), Property::TYPE_INTEGER)),
-			$fb->lt($fb->column('node_order', $treeTableIdentifier), $this->builder->getValueAsParameter($node->getPosition(), Property::TYPE_INTEGER))
+			$this->eq('active', true),
+			$fb->logicOr($this->isNull('startActivation'), $this->lte('startActivation', $at)),
+			$fb->logicOr($this->isNull('endActivation'), $this->gt('endActivation', $to))
+		);
+	}
+
+	/**
+	 * @api
+	 * @param AbstractExpression|\Change\User\UserInterface|integer|null $accessor
+	 * @param AbstractExpression|string|null $role
+	 * @param AbstractExpression|integer|null $resource
+	 * @param AbstractExpression|string|null $privilege
+	 * @return HasPermission
+	 */
+	public function hasPermission($accessor = null, $role = null, $resource = null, $privilege = null)
+	{
+		if ($resource === null)
+		{
+			$resource = $this->builder->getColumn('id');
+		}
+		return $this->getFragmentBuilder()->hasPermission($accessor, $role, $resource, $privilege);
+	}
+
+	/**
+	 * @api
+	 * @param \DateTime $at
+	 * @param \DateTime $to
+	 * @throws \RuntimeException
+	 * @return InterfacePredicate
+	 */
+	public function notActivated($at = null, $to = null)
+	{
+		if (!$this->builder->getModel()->isActivable())
+		{
+			throw new \RuntimeException('Model is not activable: ' . $this->builder->getModel(), 999999);
+		}
+		$fb = $this->getFragmentBuilder();
+		if (!($at instanceof \DateTime))
+		{
+			$at = new \DateTime();
+		}
+		if (!($to instanceof \DateTime))
+		{
+			$to = $at;
+		}
+
+		return $fb->logicOr(
+			$this->neq('active', true),
+			$fb->logicAnd($this->isNotNull('startActivation'), $this->gt('startActivation', $at)),
+			$fb->logicAnd($this->isNotNull('endActivation'), $this->lte('endActivation', $to))
 		);
 	}
 }

@@ -1,0 +1,40 @@
+<div class="row" ng-controller="Rbs_Website_HeaderController">
+
+	<div rbs-full-width>
+
+		<nav class="navbar navbar-default" role="navigation">
+			<form class="navbar-form navbar-left">
+				<div class="form-group">
+					<select ng-model="currentWebsite" ng-change="changeWebsite(currentWebsite)" ng-options="w.label for w in websites" class="form-control"></select>
+				</div>
+			</form>
+			<ul class="nav navbar-nav" ng-if="currentWebsite">
+				<li><a href ng-href="(= currentWebsite | rbsURL:'structure' =)"><i class="icon-puzzle-piece"></i> {{ i18n('m.rbs.website.admin.website_structure', ['ucf']) }}</a></li>
+				<li class="active"><a href ng-href="(= currentWebsite | rbsURL:'menus' =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.website.documents.topic_menus', ['ucf']) }}</a></li>
+				<li><a href ng-href="(= currentWebsite | rbsURL:'functions' =)"><i class="icon-wrench"></i> {{ i18n('m.rbs.website.admin.topic_functions', ['ucf']) }}</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="(= 'Rbs_Website_Website' | rbsURL:'list' =)"><i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.manage_websites') }}</a></li>
+			</ul>
+		</nav>
+
+		<div ng-controller="Rbs_Website_MenusController">
+
+			<div class="add-elements-bar">
+				<a href ng-href="(= 'Rbs_Website_Menu' | rbsURL:'new':{'website':currentWebsite.id,'LCID':currentWebsite.LCID} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
+			</div>
+
+			<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
+					load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
+				<rbs-column name="label" primary="true">
+					<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
+				</rbs-column>
+				<rbs-column name="items">
+				<span ng-repeat="item in doc.items">
+					<span class="label label-default" ng-bind-html="item.title"></span>
+				</span>
+				</rbs-column>
+			</rbs-document-list>
+		</div>
+	</div>
+</div>

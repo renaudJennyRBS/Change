@@ -1,0 +1,7 @@
+{
+	"type":"module",
+	"vendor":"Rbs",
+	"name":"Notification",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
+}

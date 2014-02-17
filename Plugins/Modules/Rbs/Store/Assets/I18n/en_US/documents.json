@@ -1,0 +1,17 @@
+{
+  "webstore":{
+    "message":"web store"
+  },
+  "webstore_billingareas":{
+    "message":"pricing zones"
+  },
+  "webstore_displayprices":{
+    "message":"display prices excluding taxes"
+  },
+  "webstore_displaypriceswithtax":{
+    "message":"display prices including taxes"
+  },
+  "webstore_orderprocess":{
+    "message":"checkout process"
+  }
+}

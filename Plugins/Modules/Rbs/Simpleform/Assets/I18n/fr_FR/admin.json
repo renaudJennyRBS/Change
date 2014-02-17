@@ -1,0 +1,209 @@
+{
+	"form_usecaptcha_help":{
+		"message":"Demander aux utilisateurs non-enregistrés de saisir un code de sécurité."
+	},
+	"form_receiverusers_picker_title":{
+		"message":"sélection des utilisateurs destinataires"
+	},
+	"form_receivergroups_picker_title":{
+		"message":"sélection des groupes destinataires"
+	},
+	"form_confirmationmode_message":{
+		"message":"message dans la page"
+	},
+	"form_confirmationmode_popin":{
+		"message":"message dans une popin"
+	},
+	"form_confirmationmode_page":{
+		"message":"redirection vers une autre page"
+	},
+	"form_list":{
+		"message":"formulaires"
+	},
+	"form_create":{
+		"message":"ajouter un formulaire"
+	},
+	"field_list":{
+		"message":"champs"
+	},
+	"field_create":{
+		"message":"ajouter un champ"
+	},
+	"module_name":{
+		"message":"formulaires simples"
+	},
+	"module_keywords":{
+		"message":"formulaire,champ,destinataire,email,réponse,contact"
+	},
+	"type_hidden":{
+		"message":"champ caché"
+	},
+	"type_text_input":{
+		"message":"texte court"
+	},
+	"type_text_area":{
+		"message":"texte long"
+	},
+	"type_text_email":{
+		"message":"adresse e-mail"
+	},
+	"type_text_emails":{
+		"message":"adresses e-mail séparées par des virgules"
+	},
+	"type_text_url":{
+		"message":"URL"
+	},
+	"type_text_integer":{
+		"message":"nombre entier"
+	},
+	"type_text_float":{
+		"message":"nombre décimal"
+	},
+	"type_boolean_radio":{
+		"message":"oui\/non (boutons radio)"
+	},
+	"type_boolean_checkbox":{
+		"message":"oui\/non (case à cocher)"
+	},
+	"type_collection_select":{
+		"message":"liste déroulante"
+	},
+	"type_collection_select_multiple":{
+		"message":"liste à choix multiples"
+	},
+	"type_collection_radio":{
+		"message":"liste de boutons radio"
+	},
+	"type_collection_checkbox":{
+		"message":"liste de cases à cocher"
+	},
+	"type_date_picker":{
+		"message":"date"
+	},
+	"type_date_time_picker":{
+		"message":"date et heure"
+	},
+	"type_file":{
+		"message":"pièce jointe"
+	},
+	"block_form_label":{
+		"message":"détail d'un formulaire"
+	},
+	"block_form_function":{
+		"message":"détail d'un formulaire"
+	},
+	"block_form_form":{
+		"message":"formulaire à afficher"
+	},
+	"field_warning_only_ios":{
+		"message":"Pris en compte uniquement sur iOS."
+	},
+	"field_parameters_collection":{
+		"message":"collection des valeurs possibles"
+	},
+	"field_parameters_acknowledgment_receiver":{
+		"message":"destinataire de l'accusé de réception"
+	},
+	"field_parameters_line_count":{
+		"message":"nombre de lignes"
+	},
+	"field_parameters_interval_type":{
+		"message":"type d'intervalle"
+	},
+	"field_parameters_interval_type_relative":{
+		"message":"dates relatives à la date courante"
+	},
+	"field_parameters_interval_type_absolute":{
+		"message":"dates fixes"
+	},
+	"field_parameters_minimal_date":{
+		"message":"date minimale"
+	},
+	"field_parameters_maximal_date":{
+		"message":"date maximale"
+	},
+	"field_parameters_place_holder":{
+		"message":"placeholder"
+	},
+	"field_parameters_place_holder_help":{
+		"message":"Texte d'exemple, affiché dans le champs lorsqu'il est vide."
+	},
+	"field_parameters_time_place_holder":{
+		"message":"placeholder de l'heure"
+	},
+	"field_parameters_time_place_holder_help":{
+		"message":"Texte d'exemple, affiché dans le champ permettant de saisir l'heure lorsqu'il est vide."
+	},
+	"field_parameters_auto_complete":{
+		"message":"auto-complétion"
+	},
+	"field_parameters_auto_complete_help":{
+		"message":"Activer ou non l'auto-complétion par le navigateur."
+	},
+	"field_parameters_auto_capitalize":{
+		"message":"mise en majuscule"
+	},
+	"field_parameters_auto_capitalize_help":{
+		"message":"Configuration de la mise en majuscule automatique."
+	},
+	"field_parameters_auto_capitalize_none":{
+		"message":"désactivée"
+	},
+	"field_parameters_auto_capitalize_sentences":{
+		"message":"en début de phrase"
+	},
+	"field_parameters_auto_capitalize_words":{
+		"message":"en début de mot"
+	},
+	"field_parameters_auto_capitalize_characters":{
+		"message":"chaque caractère"
+	},
+	"field_parameters_auto_correct":{
+		"message":"auto-correction"
+	},
+	"field_parameters_auto_correct_help":{
+		"message":"Activer ou non la correction automatique."
+	},
+	"field_parameters_validators":{
+		"message":"validateurs"
+	},
+	"field_parameters_min":{
+		"message":"valeur minimale"
+	},
+	"field_parameters_max":{
+		"message":"valeur maximale"
+	},
+	"field_parameters_min_size":{
+		"message":"longueur minimale"
+	},
+	"field_parameters_max_size":{
+		"message":"longueur maximale"
+	},
+	"field_parameters_min_count":{
+		"message":"nombre minimum de valeurs"
+	},
+	"field_parameters_max_count":{
+		"message":"nombre maximum de valeurs"
+	},
+	"field_parameters_none":{
+		"message":"aucun"
+	},
+	"field_parameters_email":{
+		"message":"adresse e-mail"
+	},
+	"field_parameters_emails":{
+		"message":"adresses e-mail séparées par des virgules"
+	},
+	"field_parameters_url":{
+		"message":"URL"
+	},
+	"field_parameters_integer":{
+		"message":"nombre entier"
+	},
+	"field_parameters_decimal":{
+		"message":"nombre décimal"
+	},
+	"field_parameters_pattern":{
+		"message":"expression rationnelle"
+	}
+}

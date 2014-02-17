@@ -1,0 +1,27 @@
+{
+	"login":{
+		"message":"identifiant ou adresse e-mail"
+	},
+	"password":{
+		"message":"mot de passe"
+	},
+	"authorize_application":{
+		"message":"autoriser une application à se lier à votre compte"
+	},
+	"authorize":{
+		"message":"autoriser"
+	},
+	"invalid_credentials":{
+		"message":"vos informations de connexion sont incorrectes!"
+	},
+	"application_name":{
+		"message":"application"
+	},
+	"device":{
+		"message":"appareil"
+	},
+	"on_device":{
+		"message":"sur",
+		"description":"Used to say \"web browser on the system\", like Firefox on Windows"
+	}
+}

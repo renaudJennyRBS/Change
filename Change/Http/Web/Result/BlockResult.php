@@ -32,11 +32,6 @@ class BlockResult
 	protected $html = false;
 
 	/**
-	 * @var \Callable
-	 */
-	protected $htmlCallback;
-
-	/**
 	 * @param string $id
 	 * @param string $name
 	 */
@@ -52,6 +47,16 @@ class BlockResult
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * @param string $id
+	 * @return $this
+	 */
+	public function setId($id)
+	{
+		$this->id = $id;
+		return $this;
 	}
 
 	/**
@@ -148,32 +153,16 @@ class BlockResult
 	{
 		if ($this->html === false)
 		{
-			$callable = $this->getHtmlCallback();
-			if (is_callable($callable))
-			{
-				$this->html = call_user_func($callable);
-			}
-			else
-			{
-				throw new \RuntimeException('Unable to getHTML', 999999);
-			}
+			return '';
 		}
 		return $this->html;
 	}
 
 	/**
-	 * @param \Callable $htmlCallback
+	 * @return bool
 	 */
-	public function setHtmlCallback($htmlCallback)
+	public function hasHtml()
 	{
-		$this->htmlCallback = $htmlCallback;
-	}
-
-	/**
-	 * @return \Callable
-	 */
-	public function getHtmlCallback()
-	{
-		return $this->htmlCallback;
+		return false !== $this->html;
 	}
 }

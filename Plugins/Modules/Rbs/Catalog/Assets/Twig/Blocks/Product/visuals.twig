@@ -1,0 +1,86 @@
+<script type="text/javascript">
+	script{{ blockId }}.visuals = {
+		showVisual: function(visualId) {
+			jQuery("#visuals-{{ blockId }} [id^='full-visual']").hide();
+			jQuery('#full-visual-{{ blockId }}-'+visualId).show();
+			return false;
+		},
+		startZoom: function(node) {
+			var jNode = jQuery(node);
+			var zoomDiv = jQuery('<div class="zoomDiv"><img src="' + node.getAttribute('href') + '" alt="" /></div>');
+			jNode.after(zoomDiv);
+
+			var image = jNode.children('img');
+			var bigImage = zoomDiv.children('img');
+			var scaleX = (bigImage.width() / image.width());
+			var scaleY = (bigImage.height() / image.height());
+			var offset = image.offset();
+
+			jNode.mousemove(function(e){
+				bigImage.css({
+					top: Math.max(zoomDiv.height()-bigImage.height(), Math.min(0, zoomDiv.height()/2 - (e.pageY - offset.top)*scaleY)),
+					left: Math.max(zoomDiv.width()-bigImage.width(), Math.min(0, zoomDiv.width()/2 - (e.pageX - offset.left)*scaleX))
+				});
+			});
+
+			jNode.mouseout(function () {
+				jQuery('.zoomDiv').remove();
+				jNode.unbind('mousemove');
+				jNode.unbind('mouseout');
+			});
+		}
+	}
+</script>
+
+<script type="text/ng-template" id="/productVisuals.tpl">
+	<div data-ng-show="visuals && !productLoading" class="visuals" id="visuals-{{ blockId }}">
+		<ul class="list-unstyled full-visuals">
+			<li data-ng-repeat="visual in visuals" id="full-visual-{{ blockId }}-(= visual.id =)">
+				{% if parameters.activateZoom %}
+					<a data-ng-href="(= visual.url.main =)" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+				{% endif %}
+				<img itemprop="image" data-ng-src="(= visual.url.detail =)" alt="" />
+				{% if parameters.activateZoom %}</a>{% endif %}
+			</li>
+		</ul>
+		<ul data-ng-if="visuals.length > 1" class="list-inline thumbnail-visuals">
+			<li data-ng-repeat="visual in visuals" class="thumbnail" id="thumbnail-visual-{{ blockId }}-(= visual.id =)"
+				title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
+				<img data-ng-src="(= visual.url.thumbnail =)" alt=""
+					onclick="script{{ blockId }}.visuals.showVisual(visual.id)" />
+			</li>
+		</ul>
+	</div>
+	<div data-ng-show="!visuals && !productLoading" data-ng-transclude=""></div>
+</script>
+
+{% set allFormats =  {'detail' : detailFormat, 'thumbnail' : detailThumbnailFormat} %}
+<div data-rbs-catalog-product-visuals="" data-visual-formats="{{ allFormats | json_encode }}">
+	{% set allVisuals = productPresentation.getVisuals(allFormats) %}
+	{% if allVisuals.count > 0 %}
+		<div class="visuals" id="visuals-{{ blockId }}">
+			<ul class="list-unstyled full-visuals">
+				{% for visual in allVisuals.visuals %}
+					<li id="full-visual-{{ blockId }}-{{ visual.id }}">
+						{% if parameters.activateZoom %}
+							<a href="{{ visual.url.main }}" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
+						{% endif %}
+							<img itemprop="image" src="{{ visual.url.detail }}" alt="{{ visual.alt }}" />
+						{% if parameters.activateZoom %}</a>{% endif %}
+					</li>
+				{% endfor %}
+			</ul>
+			{% if allVisuals.count > 1 %}
+				<ul class="list-inline thumbnail-visuals">
+					{% for visual in allVisuals.visuals %}
+						<li class="thumbnail" id="thumbnail-visual-{{ blockId }}-{{ visual.id }}"
+							title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
+							<img src="{{ visual.url.thumbnail }}" alt="{{ visual.alt }}"
+								onclick="script{{ blockId }}.visuals.showVisual({{ visual.id }})" />
+						</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+	{% endif %}
+</div>

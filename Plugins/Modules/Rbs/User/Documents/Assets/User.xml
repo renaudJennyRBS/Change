@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	editable="true" activable="true">
+	<properties>
+		<property name="email" type="String" required="true">
+			<constraint name="email" />
+		</property>
+
+		<property name="login" type="String">
+			<dboptions length="50" />
+			<constraint name="maxSize" max="50" />
+			<constraint name="unique" />
+			<constraint name="matches" pattern="/^[a-z0-9][a-z0-9_\-]{1,49}$/i" />
+		</property>
+
+		<property name="label" stateless="true" />
+
+		<property name="passwordHash" type="String" />
+
+		<property name="hashMethod" type="String" default-value="bcrypt">
+			<dboptions length="20" />
+		</property>
+
+		<property name="groups" type="DocumentArray" document-type="Rbs_User_Group" />
+
+		<property name="password" type="String" stateless="true">
+			<constraint name="maxSize" max="50" />
+		</property>
+	</properties>
+</document>

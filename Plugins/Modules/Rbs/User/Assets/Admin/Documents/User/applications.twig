@@ -1,0 +1,64 @@
+<div data-ng-controller="Rbs_User_User_ApplicationsController">
+
+	<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.applications_list_sub_title', ['ucf']) }}"></rbs-page-header>
+	<div class="alert alert-info" data-ng-if="tokenToDisplay">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<span>(= tokenToDisplay =)</span>
+	</div>
+	<table class="document-list table table-condensed table-bordered table-striped table-hover token">
+		<thead>
+			<tr>
+				<th>{{ i18n('m.rbs.user.admin.token', ['ucf']) }}</th>
+				<th data-ng-class="{'sorted':isSortedOn('application')}">
+					<a href="" data-ng-click="predicate = 'application'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.application', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('application')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('application')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('realm')}">
+					<a href="" data-ng-click="predicate = 'realm'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.realm', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('realm')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('realm')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('device')}">
+					<a href="" data-ng-click="predicate = 'device'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.device', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('device')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('device')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('creation_date')}">
+					<a href="" data-ng-click="predicate = 'creation_date'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.creation_date', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('creation_date')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('creation_date')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th data-ng-class="{'sorted':isSortedOn('validity_date')}">
+					<a href="" data-ng-click="predicate = 'validity_date'; reverse=!reverse">
+						{{ i18n('m.rbs.user.admin.validity_date', ['ucf']) }}
+					</a>
+					<i data-ng-if="!isSortedOn('validity_date')" class="column-sort-indicator icon-sort"></i>
+					<i data-ng-if="isSortedOn('validity_date')" data-ng-class="{true:'icon-sort-down', false:'icon-sort-up'}[reverse]"></i>
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr data-ng-repeat="token in tokens | orderBy:predicate:reverse" class="normal-row">
+				<td>
+					<a href data-ng-click="displayToken(token)">(= token.token | rbsEllipsis:20:'center' =)</a>
+				</td>
+				<td>(= token.application =)</td>
+				<td>(= token.realm =)</td>
+				<td>(= token.device =)</td>
+				<td>(= token.creation_date | date:'medium' =)</td>
+				<td>(= token.validity_date | date:'medium' =)</td>
+				<td><button class="btn btn-danger btn-sm" data-ng-click="revokeToken(token)">{{ i18nAttr('m.rbs.user.admin.revoke_token', ['ucf']) }}</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

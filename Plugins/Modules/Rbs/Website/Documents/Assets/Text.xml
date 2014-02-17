@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"	
+	localized="true" activable="true" editable="true">
+	<properties>
+		<property name="editor" type="String" localized="true" has-correction="true" required="true" default-value="bbcode"/>
+		<property name="xmlText" type="RichText" localized="true" has-correction="true"/>
+		<property name="html" type="LongString" stateless="true" />
+		<property name="src" type="LongString" stateless="true" />
+	</properties>
+</document>

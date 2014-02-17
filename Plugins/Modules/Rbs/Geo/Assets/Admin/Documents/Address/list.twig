@@ -1,0 +1,21 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.geo.admin.address_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Geo_Address" filter="filter" ></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Geo_Address' | rbsURL:'new' =)">{{ i18n('m.rbs.geo.admin.address_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLGeoAddress" model="Rbs_Geo_Address" filter-collection="filter" activable="true">
+			<rbs-column name="label" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'label'), ['ucf']) }}" primary="true"></rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

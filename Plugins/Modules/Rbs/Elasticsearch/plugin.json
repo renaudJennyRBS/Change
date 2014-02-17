@@ -1,0 +1,7 @@
+{
+	"type":"module",
+	"vendor":"Rbs",
+	"name":"Elasticsearch",
+	"package":"Core",
+	"defaultLCID":"fr_FR"
+}

@@ -1,0 +1,618 @@
+@CHARSET "UTF-8";
+
+
+
+#main-content > .row,
+body > footer > .row {
+	margin-right: 0;
+	margin-left: 0;
+}
+
+body {
+	background: white;
+}
+
+
+/* general classes for margins, ... */
+
+.margin-right {
+	margin-right: 15px;
+}
+
+.margin-top {
+	margin-top: 15px;
+}
+
+.discrete-button {
+	background: none;
+	border: none;
+	width: 100%;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.opacity-half {
+	opacity: 0.5;
+}
+
+
+/* icons overlays */
+
+.iconoverlay {
+	position: relative;
+	display: inline-block;
+}
+
+.iconoverlay label {
+	position: absolute;
+	top: 4px;
+	left: 0;
+	display: inline-block;
+	text-align: center;
+	color: white;
+	width: 100%;
+	font-size: 10pt;
+	z-index: 10;
+	text-shadow: 0 0 1px black;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+	font-variant: normal;
+}
+
+
+/* Bootstrap overrides */
+
+.list-inline > li {
+	vertical-align: middle;
+}
+
+.navbar {
+	border-radius: 0;
+}
+
+.navbar .brand {
+	padding-left: 2%;
+}
+
+.navbar-nav > li > .dropdown-menu {
+	margin-top: 2px;
+}
+
+.dropdown-menu > li.dropdown-text {
+	display: block;
+	padding: 3px 20px;
+	line-height: 20px;
+}
+
+.form-inline .form-control {
+	width: auto;
+}
+
+.panel .panel-heading .panel-title .pull-right {
+	position: relative;
+	top: -2px;
+}
+
+h3.panel-title {
+	font-variant: small-caps;
+}
+
+.panel-default h3.panel-title {
+	color: #888888;
+	text-shadow: 0 1px 0 white;
+	font-weight: bold;
+}
+
+.panel-heading .close {
+	position: relative;
+	top: -5px;
+}
+
+.panel-primary .panel-heading .close {
+	color: white;
+	opacity: 0.75;
+}
+.panel-primary .panel-heading .close:hover {
+	opacity: 1;
+}
+
+.panel,
+.panel-heading,
+.panel-footer
+.panel > .list-group:not(:last-child),
+.panel > .list-group:not(:last-child) > .list-group-item:last-child,
+.panel .list-group-item:last-child,
+.panel .form-actions {
+	border-radius: 0;
+}
+
+.panel .panel-heading h3.panel-title {
+	font-size: 14pt;
+	font-variant: normal;
+	font-weight: lighter;
+	text-shadow: none;
+	text-transform: none;
+}
+
+
+.panel.panel-default {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border: 1px solid #BBBBBB;
+	box-shadow: 0 0 0 3px #EEEEEE;
+}
+
+.panel.panel-default .panel-heading {
+	background: #f0f0f0;
+}
+
+.panel.panel-default .panel-heading h3.panel-title,
+.rbs-aside-block h3{
+	color: #777777;
+	font-size: 14pt;
+	font-variant: normal;
+	font-weight: lighter;
+	text-shadow: none;
+	text-transform: none;
+}
+
+.panel.panel-success {
+	border-color: #A2C200;
+	box-shadow: 0 0 0 3px #f0f8dd;
+}
+
+.panel.panel-success .panel-heading {
+	background: #f0f8dd;
+	color: #A2C200;
+}
+
+.panel.panel-success .panel-heading h3.panel-title {
+	color: #A2C200;
+}
+
+
+.btn-toolbar .btn-group {
+	float: none;
+}
+
+.input-group-addon {
+	width: auto;
+}
+
+.input-group + .btn-toolbar,
+.form-inline + .btn-toolbar {
+	margin-top: 3px;
+}
+
+/* Move nav bars under popup menus (initial value 1000) */
+.navbar {
+	z-index: 998;
+}
+
+/* Move #rbs-change-navbar over other nav bars to have its popup menus visible */
+#rbs-change-navbar {
+	z-index: 999;
+}
+
+/* Bootstrap addons */
+
+.input-group-addon.contains-input {
+	padding: 4px 8px;
+}
+
+.input-group-addon.contains-input > .form-control {
+	padding: 0;
+	height: 24px;
+}
+
+.popover-content .list-group {
+	box-shadow: none;
+	margin: -7px -12px;
+	min-width: 150px;
+}
+
+.popover-content .list-group .list-group-item {
+	border: 0 none;
+}
+
+.dropdown-menu i[class^="icon-"],
+.dropdown-menu i[class*=" icon-"] {
+	display: inline-block;
+	text-align: center;
+	width: 16px;
+}
+
+/* rbs-form-simple */
+
+[rbs-form-simple-filter] {
+	display: block;
+	clear: both;
+	position: relative;
+	margin: 5px 0;
+}
+
+[rbs-form-simple-filter] input {
+	display: block;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 100%;
+	height: 32px;
+}
+
+[rbs-form-simple-filter] button {
+	position: absolute;
+	right: 2px;
+	top: 3px;
+	line-height: 26px;
+	background: none;
+	border: none;
+	background: none;
+	color: #CCCCCC;
+}
+
+
+/* left-menu */
+
+h4.list-group-item {
+	border-top-width: 0;
+	font-size: 16px;
+	color: silver;
+	margin-top: 1px;
+	font-variant: small-caps;
+}
+
+h4.list-group-item:first-child {
+	border-top-width: 1px;
+}
+
+.badge-required-indicator {
+	font-family: Courier New,Courier;
+	font-size: 14pt;
+	top: 3px;
+	margin-right: 3px;
+	position: relative;
+	line-height: 10pt;
+}
+
+#rbs-left-menu .panel .list-group-item {
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+
+/* workspace */
+
+#workspace .page-header {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+
+#workspace .page-header h2 {
+	margin-top: 0;
+}
+
+/* buttons containing only an icon */
+
+.btn-icon {
+	padding-left: 0;
+	padding-right: 0;
+	text-align: center;
+}
+
+.btn-icon.btn-lg {
+	width: 48px;
+}
+
+.btn-icon {
+	width: 36px;
+}
+
+.btn-icon.btn-sm {
+	width: 30px;
+}
+
+.btn-icon.btn-xs {
+	width: 22px;
+}
+
+/* editors */
+
+.btn.btn-headline {
+	font-size: 16px;
+	font-weight: bold;
+	text-align: left;
+	overflow: hidden;
+}
+
+.btn.btn-headline i[class^="icon-"] {
+	font-size: 32px;
+	float: left;
+	margin-right: 5px;
+	margin-top: 1px;
+	width: 32px;
+}
+
+.btn.btn-headline small {
+	font-size: 12px;
+	line-height: 12px;
+	font-weight: normal;
+	white-space: nowrap;
+}
+
+.btn.btn-headline small {
+	display: block;
+	font-size: 12px;
+	line-height: 12px;
+	font-weight: normal;
+	white-space: nowrap;
+	padding-left: 37px;
+}
+
+.sync-value-button {
+	font-family: "Andale Mono", "Courier New", Monospace;
+	font-size: 14pt;
+	left: 16px;
+	top: 1px;
+	position: absolute;
+	width: 30px;
+	height: 32px;
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
+	border: none;
+	border-right: 1px solid rgba(0,0,0,0.1);
+	line-height: 1.1em;
+}
+
+
+/* advanced mode */
+
+.advanced-mode h4 {
+	color: #b94a48;
+	margin-top: 0;
+	text-transform: uppercase;
+}
+
+.advanced-mode .separator {
+	background-color: #EE5F5B;
+	background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+	background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	background-size: 20px 20px;
+	height: 10px;
+}
+
+.advanced-mode > .inner > div > p:last-child {
+	margin-bottom: 0;
+}
+
+/* footer */
+
+body > footer {
+	font-size: 9pt;
+	color: silver;
+	border-top: 1px solid #e5e5e5;
+	margin-top: 15px;
+	padding-top: 5px;
+}
+
+body > footer .icons-container {
+	text-align: center;
+	top: -14px;
+	position: relative;
+}
+
+body > footer .icons {
+	text-align: center;
+	font-size: 12pt;
+	background: none repeat scroll 0 0 white;
+	box-shadow: 0 0 5px rgba(128, 128, 128, 0.2) inset;
+	border: 1px solid #E5E5E5;
+	border-radius: 15px 15px 15px 15px;
+	padding: 5px 8px;
+}
+
+body > footer .icons a:hover,
+body > footer .icons a:visited:hover{
+	text-decoration: none;
+}
+
+body > footer .icons a {
+	margin: 0 5px;
+}
+
+body > footer {
+	line-height: 12px;
+}
+
+body > footer a:link,
+body > footer a:visited {
+	color: silver;
+	text-decoration: none;
+	font-weight: bold;
+}
+body > footer a:hover,
+body > footer a:visited:hover {
+	color: #0088CC;
+	text-decoration: underline;
+}
+
+/** word wrapping */
+.break-word {
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
+}
+
+/**
+ * rbs-todo
+ * hidden by default, directive in module Rbs_Dev
+ */
+rbs-todo {
+	display: none;
+}
+
+/** JSTree fixes */
+.panel .jstree a {
+	height: auto;
+}
+
+
+.rbs-panel-busy {
+	background: rgba(0,0,0,0.6);
+	color: white;
+	position: absolute;
+	font-size: 20pt;
+	text-align: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	font-weight: lighter;
+}
+
+.panel-success .rbs-panel-busy {
+	background: rgba(162, 194, 0, 0.8);
+	text-shadow: 0 0 3px black;
+}
+
+.panel {
+	position: relative;
+}
+
+
+.rbs-aside-block {
+	border-right: 3px dotted #EEEEEE;
+	font-size: 90%;
+	padding: 10px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.rbs-aside-block hr {
+	margin: 0;
+}
+
+.rbs-aside-block h3 {
+	margin-bottom: 10px;
+}
+
+.rbs-aside-block a {
+	display: block;
+	margin: 5px 0;
+}
+
+.rbs-aside-block a strong {
+	text-transform: uppercase;
+	font-size: 90%;
+}
+
+
+a.back-to-link:before {
+	content: "\f0a8 ";
+	font-family: FontAwesome;
+}
+
+a.go-to-link:after {
+	content: " \f0a9";
+	font-family: FontAwesome;
+}
+
+
+.rbs-aside-other-links {
+	text-align: right;
+	padding: 10px 14px 10px 0;
+}
+
+
+/** Field size */
+[size="2"],
+[size="2"].form-control {
+	max-width: 5em;
+}
+
+.btn-flat {
+	background: none repeat scroll 0 0 #F0F5F8;
+	border-radius: 2px;
+	box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.2) inset;
+	color: #6688AA;
+	display: inline-block;
+	font-size: 12px;
+	line-height: 1.6;
+	padding: 2px 8px;
+	text-decoration: none;
+	text-transform: uppercase;
+	-webkit-transition: color 0.1s ease-in, background-color 0.1s ease-in;
+	-moz-transition: color 0.1s ease-in, background-color 0.1s ease-in;
+	transition: color 0.1s ease-in, background-color 0.1s ease-in;
+	border: 0 none;
+	vertical-align: middle;
+}
+
+.btn-flat:hover {
+	background: none repeat scroll 0 0 #6688AA;
+	color: #F0F5F8;
+	text-decoration: none;
+}
+
+.btn-flat + .btn-flat {
+	margin-left: 4px;
+}
+
+.btn-flat + .btn {
+	margin-left: 4px;
+}
+
+.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+	background-color: rgba(0,0,0,0.05);
+}
+
+rbs-navigation-history {
+	display: block;
+	border-bottom: 1px solid #E5E5E5;
+}
+
+rbs-document-url-manager .table tbody > tr > td {
+	vertical-align: middle;
+}
+
+/** list option panel **/
+.rbs-list-option-panel {
+	padding: 10px;
+	position: relative;
+}
+
+.rbs-list-option-panel {
+	background: #F5F5F5;
+	border: 5px solid #bbbbbb;
+	border-radius: 5px;
+}
+
+.rbs-list-option-panel h3 {
+	text-transform: uppercase;
+	color: #bbbbbb;
+	font-size: 20pt;
+	line-height: 20pt;
+	margin-top: 0;
+	font-weight: lighter;
+	text-shadow: 0 0 2px rgba(0,0,0,0.2);
+}
+
+.rbs-list-option-panel form {
+	margin: 0;
+}
+
+.rbs-list-option-panel form .control-group:last-child {
+	margin-bottom: 0;
+}
+
+.rbs-list-option-panel .form-group{
+	margin-left: 0;
+	margin-right: 0;
+}

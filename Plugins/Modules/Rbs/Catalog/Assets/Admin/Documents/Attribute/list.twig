@@ -1,0 +1,22 @@
+<div class="row" ng-controller="Rbs_Catalog_Attribute_AttributeController">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.catalog.admin.attribute_list', ['ucf']) }}"></rbs-page-header>
+
+		<rbs-document-filter-panel open-by-default="false"
+				model="Rbs_Catalog_Attribute" filter="filter" ></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Catalog_Attribute' | rbsURL:'new' =)">{{ i18n('m.rbs.catalog.admin.attribute_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsCatalogAttribute" model="Rbs_Catalog_Attribute" filter-collection="filter" correction="true" load-query="loadQuery">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="valueTypeFormatted" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'valueType'), ['ucf']) }}"></rbs-column>
+		</rbs-document-list>
+	</div>
+</div>

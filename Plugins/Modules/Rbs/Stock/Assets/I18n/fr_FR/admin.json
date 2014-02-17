@@ -1,0 +1,95 @@
+{
+	"module_name":{
+		"message":"stocks"
+	},
+	"module_keywords":{
+		"message":""
+	},
+	"inventoryentry_list":{
+		"message":"inventaire"
+	},
+	"inventoryentry_create":{
+		"message":"définir un stock"
+	},
+	"inventoryentry_sku_picker_title":{
+		"message":"sélectionner un SKU"
+	},
+	"sku_list":{
+		"message":"SKU"
+	},
+	"sku_create":{
+		"message":"ajouter un SKU"
+	},
+	"mass_abbr":{
+		"message":"m"
+	},
+	"length_abbr":{
+		"message":"L"
+	},
+	"width_abbr":{
+		"message":"l"
+	},
+	"height_abbr":{
+		"message":"h"
+	},
+	"mass":{
+		"message":"masse"
+	},
+	"length":{
+		"message":"longueur"
+	},
+	"width":{
+		"message":"largeur"
+	},
+	"height":{
+		"message":"hauteur"
+	},
+	"g_abbr":{
+		"message":"g"
+	},
+	"kg_abbr":{
+		"message":"kg"
+	},
+	"lbs_abbr":{
+		"message":"lbs"
+	},
+	"cm_abbr":{
+		"message":"cm"
+	},
+	"m_abbr":{
+		"message":"m"
+	},
+	"in_abbr":{
+		"message":"in"
+	},
+	"sku_minquantity_help":{
+		"message":"Quantité minimum de ce produit que l'on peut commander."
+	},
+	"sku_maxquantity_help":{
+		"message":"Quantité maximum de ce produit que l'on peut commander."
+	},
+	"sku_unlimitedinventory_help":{
+		"message":"Lorsque cette option est activée, le produit sera toujours considéré en stock"
+	},
+	"sku_allowbackorders_help":{
+		"message":"Lorsque cette option est activée, le produit peut être commandé même lorsqu'il est en rupture, en prévision d'un réassort futur."
+	},
+	"sku_allowquantitysplit_help":{
+		"message":"Lorsque cette option est activée, les lignes de commandes correspondant à ce SKU pourront être livrées en plusieurs colis."
+	},
+	"sku_threshold_less_or_equals":{
+		"message":"Inférieur ou égale à"
+	},
+	"sku_threshold_use":{
+		"message":"utiliser"
+	},
+	"sku_threshold_add":{
+		"message":"Ajouter un seuil"
+	},
+	"sku_threshold_remove":{
+		"message":"Supprimer"
+	},
+	"warehouse_default_label":{
+		"message":"stock principal"
+	}
+}

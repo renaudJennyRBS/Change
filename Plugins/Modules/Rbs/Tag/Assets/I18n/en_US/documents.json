@@ -1,0 +1,17 @@
+{
+  "tag":{
+    "message":"tag"
+  },
+  "tag_color":{
+    "message":"color"
+  },
+  "tag_module":{
+    "message":"module"
+  },
+  "tag_children":{
+    "message":"child tags"
+  },
+  "tag_usertag":{
+    "message":"personnal tag"
+  }
+}

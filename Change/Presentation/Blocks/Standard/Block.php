@@ -1,21 +1,24 @@
 <?php
 namespace Change\Presentation\Blocks\Standard;
 
-use Change\Presentation\Blocks\Event;
 use Change\Http\Web\Result\BlockResult;
 use Change\Presentation\Blocks\Parameters;
 
 /**
  * @api
- * Class Block
- * @package Change\Presentation\Blocks\Standard
  * @name \Change\Presentation\Blocks\Standard\Block
  */
 class Block
 {
+	const DOCUMENT_TO_DISPLAY_PROPERTY_NAME = 'toDisplayDocumentId';
+
 	/**
-	 * @param Event $event
-	 * @return Parameters
+	 * @api
+	 * Set Block Parameters on $event
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
+	 * Event params includes all params from Http\Event (ex: pathRule and page).
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Change\Presentation\Blocks\Parameters
 	 */
 	protected function parameterize($event)
 	{
@@ -26,9 +29,9 @@ class Block
 	/**
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getPresentationServices, getDocumentServices
-	 * Optional Event method: getHttpRequest
-	 * @param Event $event
+	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
+	 * Event params includes all params from Http\Event (ex: pathRule and page).
+	 * @param \Change\Presentation\Blocks\Event $event
 	 * @return \Change\Presentation\Blocks\Parameters
 	 */
 	public function onParameterize($event)
@@ -39,6 +42,46 @@ class Block
 			$parameters = $this->parameterize($event);
 			$event->setBlockParameters($parameters);
 		}
+	}
+
+	/**
+	 * @api
+	 * Set the parameter to define the document id that must be displayed and check it's possible to display it.
+	 * @param \Change\Presentation\Blocks\Parameters $parameters
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Change\Presentation\Blocks\Parameters
+	 */
+	protected function setParameterValueForDetailBlock($parameters, $event)
+	{
+		if ($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) === null)
+		{
+			$document = $event->getParam('document');
+			if ($this->isValidDocument($document))
+			{
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $document->getId());
+			}
+		}
+		else
+		{
+			$document = $event->getApplicationServices()->getDocumentManager()
+				->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
+			if (!$this->isValidDocument($document))
+			{
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, null);
+			}
+		}
+		return $parameters;
+	}
+
+	/**
+	 * @api
+	 * Must be implemented in the final block class
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return boolean
+	 */
+	protected function isValidDocument($document)
+	{
+		return false;
 	}
 
 	/**
@@ -63,7 +106,7 @@ class Block
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Presentation\Blocks\Event $event
 	 */
 	public function onExecute($event)
 	{
@@ -71,25 +114,34 @@ class Block
 		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
 		$event->setBlockResult($result);
 
-		$attributes = new  \ArrayObject(array('parameters' => $event->getBlockParameters()));
+		$attributes = new  \ArrayObject(array('parameters' => $event->getBlockParameters(), 'blockId' => $blockLayout->getId()));
 		$templateName = $this->execute($event, $attributes);
 
-		if (is_string($templateName) && !$result->getHtmlCallback())
+		if (is_string($templateName) && !$result->hasHtml())
 		{
-			$presentationServices = $event->getPresentationServices();
+			$applicationServices = $event->getApplicationServices();
 			$templateModuleName = $this->getTemplateModuleName();
 			if ($templateModuleName === null)
 			{
 				$sn = explode('_', $blockLayout->getName());
 				$templateModuleName = $sn[0] . '_' . $sn[1];
 			}
-			$this->setTemplateRenderer($presentationServices, $result, $attributes->getArrayCopy(), $templateModuleName, $templateName);
+			$this->setTemplateRenderer($applicationServices, $result, $attributes->getArrayCopy(), $templateModuleName,
+				$templateName);
+		}
+
+		if (!$result->hasHtml())
+		{
+			$result->setHtml('');
 		}
 	}
 
 	/**
+	 * @api
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * @param Event $event
+	 * Required Event method: getBlockLayout(), getBlockParameters(), getBlockResult(),
+	 *        getApplication, getApplicationServices, getServices, getUrlManager()
+	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
 	 */
@@ -99,21 +151,32 @@ class Block
 	}
 
 	/**
-	 * @param \Change\Presentation\PresentationServices $presentationServices
-	 * @param BlockResult $result
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param \Change\Http\Web\Result\BlockResult $result
 	 * @param array $attributes
 	 * @param string $templateModuleName
 	 * @param string $templateName
 	 */
-	protected function setTemplateRenderer($presentationServices, $result, $attributes, $templateModuleName, $templateName)
+	protected function setTemplateRenderer($applicationServices, $result, $attributes, $templateModuleName, $templateName)
 	{
-		$templatePath = $presentationServices->getThemeManager()->getCurrent()
-			->getBlocTemplatePath($templateModuleName, $templateName);
-		$templateManager = $presentationServices->getTemplateManager();
-		$callback = function () use ($templateManager, $templatePath, $attributes)
+		$relativePath = $applicationServices->getThemeManager()->getCurrent()
+			->getTemplateRelativePath($templateModuleName, 'Blocks/' . $templateName);
+
+		$templateManager = $applicationServices->getTemplateManager();
+		$result->setHtml($templateManager->renderThemeTemplateFile($relativePath, $attributes));
+	}
+
+	/**
+	 * @param integer $pageNumber
+	 * @param integer $pageCount
+	 * @return integer
+	 */
+	protected function fixPageNumber($pageNumber, $pageCount)
+	{
+		if (!is_numeric($pageNumber) || $pageNumber < 1 || $pageNumber > $pageCount)
 		{
-			return $templateManager->renderTemplateFile($templatePath, $attributes);
-		};
-		$result->setHtmlCallback($callback);
+			return 1;
+		}
+		return $pageNumber;
 	}
 }

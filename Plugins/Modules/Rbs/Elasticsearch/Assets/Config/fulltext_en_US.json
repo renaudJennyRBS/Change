@@ -1,0 +1,41 @@
+{
+	"mappings": {
+		"document": {
+			"properties": {
+				"title":{
+					"type":"multi_field",
+					"fields":{
+						"title": {"type": "string", "boost": 4, "analyzer": "text_analyzer"},
+						"autocomplete":{"analyzer":"autocomplete", "type":"string"}
+					}
+				},
+				"content": {"type": "string", "boost": 2, "analyzer": "text_analyzer"},
+				"model": {"type": "string", "index": "not_analyzed"},
+				"canonicalSectionId": { "type": "integer", "index": "not_analyzed"},
+				"startPublication": {"type": "date", "index": "not_analyzed"},
+				"endPublication": {"type": "date", "index": "not_analyzed"}
+			}
+		}
+	},
+	"settings": {
+		"index": {
+			"analysis": {
+				"analyzer": {
+					"text_analyzer": {
+						"tokenizer": "standard",
+						"filter": ["standard", "lowercase", "asciifolding", "elision", "text_snowball"]
+					},
+					"autocomplete":{
+						"type":"custom",
+						"tokenizer":"standard",
+						"filter":[ "standard", "lowercase", "stop", "kstem", "auto_ngram" ]
+					}
+				},
+				"filter": {
+					"text_snowball": {"type": "snowball", "name": "English"},
+					"auto_ngram":{"type": "ngram", "min_gram": 3, "max_gram": 15}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"Cart" : {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Commerce/js/cart.js"
+		]
+	},
+	"OrderProcess" : {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Commerce/js/animations.js",
+			"Theme/Rbs/Base/Rbs_Commerce/js/address-form.js",
+			"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
+			"Theme/Rbs/Base/Rbs_Commerce/js/process-menu.js"
+		],
+		"cssAssets" : [
+			"Theme/Rbs/Base/Rbs_Commerce/css/process-menu.css"
+		]
+	}
+}

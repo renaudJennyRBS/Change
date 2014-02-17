@@ -1,0 +1,35 @@
+{
+  "message_list":{
+    "message":"Messages timeline"
+  },
+  "leave_a_message_helper":{
+    "message":"<h4>Mention users<\/h4>  Use the <strong>@<\/strong> character to designate a person or <strong>@+<\/strong> to refer to a group of people. <br\/>The mentioned will be notified of the new message."
+  },
+  "leave_a_message_submit":{
+    "message":"save"
+  },
+  "leave_a_message_update":{
+    "message":"update"
+  },
+  "edited_message":{
+    "message":"post edited: "
+  },
+  "edit_message":{
+    "message":"edit"
+  },
+  "remove_message":{
+    "message":"delete"
+  },
+  "users":{
+    "message":"users"
+  },
+  "groups":{
+    "message":"user group"
+  },
+  "context_unavailable":{
+    "message":"The document is no longer available"
+  },
+  "notification_mention_message":{
+    "message":"a timeline message mention you"
+  }
+}

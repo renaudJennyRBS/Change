@@ -17,16 +17,15 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('String', $p->getType());
 		$this->assertEquals('String', $p->getComputedType());
 		$this->assertEquals(0, $p->getComputedMinOccurs());
-		$this->assertEquals(-1, $p->getComputedMaxOccurs());
+		$this->assertEquals(100, $p->getComputedMaxOccurs());
 		$this->assertNull($p->getDocumentType());
-		$this->assertNull($p->getIndexed());
-		$this->assertNull($p->getCascadeDelete());
 		$this->assertNull($p->getDefaultValue());
 		$this->assertNull($p->getDefaultPhpValue());
 		$this->assertNull($p->getRequired());
 		$this->assertNull($p->getMinOccurs());
 		$this->assertNull($p->getMaxOccurs());
 		$this->assertNull($p->getLocalized());
+		$this->assertNull($p->getInternal());
 		$this->assertNull($p->getConstraintArray());
 		$this->assertNull($p->getParent());
 		$this->assertNull($p->getStateless());
@@ -174,52 +173,7 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p->initialize($doc->documentElement);
 		$this->assertEquals('Change_Tests_Basic', $p->getDocumentType());
 	}
-		
-	public function testIndexedAttribute()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" indexed="none" />');
-		$model = new Model('vendor', 'module', 'name');
-		$p = new Property($model);
-		$p->initialize($doc->documentElement);
-		$this->assertEquals('none', $p->getIndexed());
-		
-		$doc->loadXML('<property name="test" indexed="string"/>');
-		
-		try
-		{
-			$p = new Property($model);
-			$p->initialize($doc->documentElement);
-			$this->fail('Invalid indexed attribute value');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertStringStartsWith('Invalid indexed attribute value', $e->getMessage());
-		}		
-	}
 
-	public function testCascadeDeleteAttribute()
-	{
-		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<property name="test" cascade-delete="true" />');
-		$model = new Model('vendor', 'module', 'name');
-		$p = new Property($model);
-		$p->initialize($doc->documentElement);
-		$this->assertEquals(true, $p->getCascadeDelete());
-		
-		$doc->loadXML('<property name="test" cascade-delete="True" />');
-		try
-		{
-			$p = new Property($model);
-			$p->initialize($doc->documentElement);
-			$this->fail('Invalid cascade-delete attribute value');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertStringStartsWith('Invalid cascade-delete attribute value', $e->getMessage());
-		}	
-	}
-	
 	public function testDefaultValueAttribute()
 	{
 		$doc = new \DOMDocument('1.0', 'utf-8');
@@ -249,6 +203,28 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		catch (\RuntimeException $e)
 		{
 			$this->assertStringStartsWith('Invalid required attribute value', $e->getMessage());
+		}
+	}
+
+	public function testInternalAttribute()
+	{
+		$doc = new \DOMDocument('1.0', 'utf-8');
+		$doc->loadXML('<property name="test" internal="true" />');
+		$model = new Model('vendor', 'module', 'name');
+		$p = new Property($model);
+		$p->initialize($doc->documentElement);
+		$this->assertTrue($p->getInternal());
+
+		$doc->loadXML('<property name="test" internal="false" />');
+		try
+		{
+			$p = new Property($model);
+			$p->initialize($doc->documentElement);
+			$this->fail('Invalid internal attribute value');
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->assertStringStartsWith('Invalid internal attribute value', $e->getMessage());
 		}
 	}
 
@@ -407,11 +383,15 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 	public function testValidate()
 	{
 		$model = new Model('vendor', 'module', 'name');
+
+		$p = new Property($model, 'label');
+		$p->validate();
+		$this->assertNull($p->getType());
+
 		$p = new Property($model, 'label' , 'Integer');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());
 		$this->assertTrue($p->getRequired());
-		$ca = $p->getConstraintArray();
 		$this->assertEquals(array('maxSize' => array('max' => 255)), $p->getConstraintArray());
 		
 		$p = new Property($model, 'refLCID');
@@ -445,14 +425,31 @@ class PropertyTest extends \PHPUnit_Framework_TestCase
 		$p = new Property($model, 'authorId');
 		$p->validate();
 		$this->assertEquals('DocumentId', $p->getType());
-		$this->assertEquals('Change_Users_User', $p->getDocumentType());
+		$this->assertNull($p->getDocumentType());
+
+
 		
 		$p = new Property($model, 'documentVersion');
 		$p->validate();
 		$this->assertEquals('Integer', $p->getType());
-		$this->assertEquals('0', $p->getDefaultValue());
-		$this->assertTrue($p->getRequired());
-		
+		$this->assertNull($p->getDefaultValue());
+		$this->assertNull($p->getRequired());
+
+
+		$p = new Property($model, 'title', 'Integer');
+		$p->validate();
+		$this->assertEquals('String', $p->getType());
+
+		$p = new Property($model, 'title');
+		$p->validate();
+		$this->assertNull($p->getType());
+
+
+		$p = new Property($model, 'publicationSections');
+		$p->validate();
+		$this->assertEquals('DocumentArray', $p->getType());
+		$this->assertNull($p->getDocumentType());
+
 		$p = new Property($model, 'publicationStatus');
 		$p->validate();
 		$this->assertEquals('String', $p->getType());

@@ -1,0 +1,134 @@
+<div class="row" ng-controller="Rbs_Catalog_ProductList_ProductsController">
+
+	<div rbs-aside-column>
+		<div class="rbs-aside-block" ng-show="productList.product">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="productList.product"></rbs-document-preview>
+		</div>
+	</div>
+
+
+	<div rbs-main-column>
+
+		<div class="page-header">
+			<h2>(= productList.label =)</h2>
+		</div>
+
+		<div ng-if="List.isSynchronized">
+			<p>{{ i18n(propertyKey('Rbs_Catalog_SectionProductList', 'synchronizedSection'), ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | rbsURL =)">(= productList.synchronizedSection.label =)</a></p>
+			<p>{{ i18n('m.rbs.catalog.admin.sectionproductlist_synchronizedsection_help', ['ucf']) }}</p>
+		</div>
+
+		<p>
+			{{ i18n(propertyKey('Rbs_Catalog_ProductList', 'productSortOrder'), ['ucf', 'lab']) }}
+			(= List.sortOrders[productList.productSortOrder].label =)
+			(= List.sortDirections[productList.productSortDirection].label =)
+			<br/><a href="(= productList | rbsURL =)">{{ i18n('m.rbs.catalog.admin.productlist_edit_properties', ['ucf']) }}</a>
+		</p>
+
+
+		<div ng-if="List.conditions.length > 1">
+			<p>{{ i18n('m.rbs.catalog.admin.productlistitem_condition_help', ['ucf']) }}</p>
+
+			<div class="control-group" >
+				<label class="control-label" data-not-a-property="" for="selectCondition">
+					{{ i18n('m.rbs.catalog.documents.productlistitem_condition', ['ucf']) }}
+				</label>
+
+				<div class="controls">
+					<div class="btn-group" ng-if="List.conditions.length <= 5">
+						<button class="btn btn-default" ng-class="{active: List.selectedCondition == condition}" type="button"
+							data-ng-repeat="condition in List.conditions" ng-click="List.selectedCondition = condition">
+							<i class="icon-ok" ng-show="List.selectedCondition == condition"></i> (= condition.label =)
+						</button>
+					</div>
+					<div class="btn-group" ng-if="List.conditions.length > 5">
+						<button class="btn btn-default" data-toggle="dropdown" type="button"
+							data-ng-class="{active: List.selectedCondition}">
+							<span ng-show="List.selectedCondition"><i class="icon-ok"></i> (= List.selectedCondition.label =)</span>
+							<em ng-show="!List.selectedCondition">...</em>
+						</button>
+						<button class="btn dropdown-toggle" data-toggle="dropdown">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li ng-repeat="condition in List.conditions" ng-click="List.selectedCondition = condition">
+								<a><i class="icon-ok" ng-show="List.selectedCondition == condition"></i> (= condition.label =)</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<rbs-document-list data-dlid="DLRbsCatalogProductListProducts" model="Rbs_Catalog_ProductListItem" activable="true"
+			collection-url="(=productsUrl=)"
+			modification-date="false" extend="List" actions="Rbs_Catalog_RemoveProductsFromProductList"
+			use-properties="title">
+			<rbs-column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_productvisual', ['ucf']) }}"></rbs-column>
+			<rbs-column name="productLabel" label="{{ i18nAttr('m.rbs.catalog.documents.product_label', ['ucf']) }}" primary="true">
+				<strong><a href ng-href="(= doc | rbsURL =)">(= doc.product.label =)</a></strong>
+			</rbs-column>
+			<rbs-column name="priority" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_sort_order', ['ucf']) }}" align="center" width="110px">
+				<span ng-show="doc.isHighlighted">
+					<rbs-kb-switch>
+						<button rbs-kb-alt="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-top', ['ucf']) }}" ng-click="extend.moveTop(doc)">
+							<i class="icon-step-forward icon-rotate-270"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="pagination.offset == 0 && $index == 0" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}" ng-click="extend.moveUp(doc)">
+							<i class="icon-play icon-rotate-270"></i>
+						</button>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button rbs-kb-alt="" ng-disabled="doc.position ==  -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.move-bottom', ['ucf']) }}" ng-click="extend.moveBottom(doc)">
+							<i class="icon-step-forward icon-rotate-90"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="doc.position == -1" class="btn btn-default" type="button" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}" ng-click="extend.moveDown(doc)">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+				</span>
+			</rbs-column>
+			<rbs-column name="highlight" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_highlight', ['ucf']) }}" align="center" width="90px">
+				<rbs-switch ng-model="doc.isHighlighted" ng-change="extend.toggleHighlight(doc)"></rbs-switch>
+			</rbs-column>
+
+			<rbs-quick-actions>
+				[action edit]
+				|| <a href="(= doc.product | rbsURL =)">{{ i18nAttr('m.rbs.catalog.admin.productlist_edit_product', ['ucf']) }}</a>
+				|| [action Rbs_Catalog_RemoveProductsFromProductList]
+			</rbs-quick-actions>
+
+			<rbs-grid-item>
+				<img rbs-storage-image="doc.product.adminthumbnail" thumbnail="L" />
+				<div class="caption">
+					<h4>
+						<rbs-status ng-model="doc.product" class="small"></rbs-status>
+						<a href ng-href="(= doc.product | rbsURL =)">(= doc.product.label =)</a>
+					</h4>
+				</div>
+			</rbs-grid-item>
+		</rbs-document-list>
+
+		<h4>{{ i18n('m.rbs.catalog.admin.productlist_add_products', ['ucf']) }}</h4>
+
+		<div class="control-group property">
+			<label class="control-label" for="{{ name }}">{{ i18n('m.rbs.catalog.documents.productlist_products', ['ucf']) }}</label>
+			<div class="controls">
+				<rbs-document-picker-multiple ng-model="List.productsToAdd"
+					accepted-model="Rbs_Catalog_Product"
+					property-label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_products_picker_title', ['ucf']) }}"
+					disable-reordering="true">
+				</rbs-document-picker-multiple>
+
+				<div class="btn-toolbar">
+					<button type="button" class="btn btn-primary" ng-click="addProductsFromPicker()" ng-disabled="hasProductsToAdd()">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>

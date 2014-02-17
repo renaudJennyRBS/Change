@@ -1,0 +1,183 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker ng-hide="discount || !document.isNew()" property="sku" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}"
+			accepted-model="Rbs_Stock_Sku"
+			selector-title="{{ i18nAttr('m.rbs.price.admin.price_sku_picker_title', ['ucf']) }}"
+			required="true" ng-hide="hideSku">
+		</rbs-field-picker>
+		<rbs-field ng-show="discount || !document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}">
+			<p class="form-control-static"><a href="(= document.sku | rbsURL:'' =)">(= document.sku.label =)</a></p>
+		</rbs-field>
+
+		<rbs-field ng-hide="discount || !document.isNew()" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
+			<select class="form-control" ng-required="true" ng-model="document.webStore" rbs-items-from-collection="Rbs_Store_Collection_WebStores">
+				<option value=""> {{ i18n('m.rbs.store.admin.select_webstore', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+		<rbs-field ng-show="discount || !document.isNew()" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
+			<p class="form-control-static"><a href="(= document.webStore | rbsURL:'' =)">(= document.webStore.label =)</a></p>
+		</rbs-field>
+
+		<rbs-field ng-hide="discount || document.hasJobToUpdateTax" required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
+			<select ng-hide="!document.isNew()" class="form-control" ng-required="true" ng-model="document.billingArea" ng-disabled="!webStore.id"
+				rbs-items-collection-params="webStoreId:(=webStore.id=)"
+				rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore">
+				<option value=""> {{ i18n('m.rbs.price.admin.select_billingarea', ['ucf']) }}</option>
+			</select>
+			<p ng-show="!document.isNew()" class="form-control-static"><a href="(= document.billingArea | rbsURL:'' =)">(= document.billingArea.label =)</a></p>
+			<table ng-show="taxInfo" class="table table-striped">
+				<thead>
+				<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.price.documents.tax_category', ['ucf']) }}</th>
+				</thead>
+				<tbody>
+				<tr ng-repeat="tax in taxInfo">
+					<td>(=tax.code=)<br/>
+						<small>(=tax.label=)</small>
+					</td>
+					<td>
+						<select ng-model="document.taxCategories[tax.code]" class="input-medium form-control" ng-options="c.code as c.formattedRate + '  (' + c.code + ')' for c in tax.categories">
+							<option value="">{{ i18n('m.rbs.price.documents.tax_not_applicable', ['ucf']) }}</option>
+						</select>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</rbs-field>
+		<rbs-field ng-show="discount || document.hasJobToUpdateTax" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
+			<p class="form-control-static"><a href="(= document.billingArea | rbsURL:'form' =)">(= document.billingArea.label =)</a></p>
+
+			<table ng-show="taxInfo" class="table table-striped">
+				<thead>
+				<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.price.documents.tax_category', ['ucf']) }}</th>
+				</thead>
+				<tbody>
+				<tr ng-repeat="tax in taxInfo">
+					<td>(=tax.code=)<br/>
+						<small>(=tax.label=)</small>
+					</td>
+					<td>
+						<span ng-repeat="c in tax.categories" ng-if="c.code == document.taxCategories[tax.code]">
+								<p  class="form-control-static">(= c.formattedRate =) ( (= c.code =) )</p>
+								<p ng-show="document.hasJobToUpdateTax || document.basePrice.hasJobToUpdateTax" class="form-control-static icon-warning-sign"> {{ i18n('m.rbs.price.admin.tax_update_in_progress', ['ucf']) }}</p>
+						</span>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</rbs-field>
+
+		<hr/>
+
+		<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'value'), ['ucf']) }}">
+			<rbs-price-input ng-model="document.value" data-currency-code="billingArea.currencyCode"
+				data-price-with-tax="webStore.pricesValueWithTax" required="true"></rbs-price-input>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'ecoTax'), ['ucf']) }}">
+			<rbs-price-input ng-model="document.ecoTax" data-currency-code="billingArea.currencyCode"
+				data-price-with-tax="webStore.pricesValueWithTax"></rbs-price-input>
+		</rbs-field>
+
+		<span ng-show="discount">
+			<hr/>
+
+			<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}">
+				<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'form' =)">(= document.basePrice.formattedValue =)</a></p>
+			</rbs-field>
+
+			<rbs-field-text property="discountDetail"
+				label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'discountDetail'), ['ucf']) }}">
+			</rbs-field-text>
+		</span>
+		<hr/>
+		<span class="help-block">
+			{{ i18n('m.rbs.price.admin.price_target_section_help', ['ucf']) | raw }}
+		</span>
+		<rbs-field-picker property="targetId" select-model="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'targetId'), ['ucf']) }}"
+				selector-title="{{ i18nAttr('m.rbs.price.admin.targetid_picker_title', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-integer label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'priority'), ['ucf']) }}"
+				ng-disabled="!document.targetId" property="priority">
+		</rbs-field-integer>
+
+		<hr/>
+		<span class="help-block">
+			{{ i18n('m.rbs.price.admin.price_publication_section_help', ['ucf']) | raw }}
+		</span>
+
+		<div class="form-group property">
+			<label class="col-md-3 control-label"
+				for="startActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'startActivation'), ['ucf']) }}
+			</label>
+
+			<div class="col-md-9 controls">
+				<rbs-date-selector ng-model="document.startActivation" name="startActivation"></rbs-date-selector>
+				<div class="btn-toolbar">
+					<div class="btn-group">
+						<button ng-click="activationNow()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.now') }}</button>
+						<button ng-click="activationTomorrow()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.tomorrow') }}</button>
+						<button ng-click="activationNextMonday()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.nextmonday') }}</button>
+						<button ng-click="activationNextMonth()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.nextmonth') }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group property">
+			<label class="col-md-3 control-label"
+				for="endActivation">{{ i18n(propertyKey('Rbs_Price_Price', 'endActivation'), ['ucf']) }}
+			</label>
+
+			<div class="col-md-9 controls">
+				<rbs-date-selector ng-model="document.endActivation" name="endActivation"></rbs-date-selector>
+				<div class="btn-toolbar">
+					<div class="btn-group">
+						<button ng-click="endActivationOneWeek(true)" ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['1w']" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.add_one_week') }}</button>
+						<button ng-click="endActivationTwoWeeks(true)" ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['2w']" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.add_two_weeks') }}</button>
+						<button ng-click="endActivationOneMonth(true)" ng-disabled="!document.startActivation" type="button" ng-class="activationOffsetClass['1M']" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.add_one_month') }}</button>
+					</div>
+					<div class="btn-group">
+						<button ng-click="endActivationTomorrow()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.tomorrow') }}</button>
+						<button ng-click="endActivationEndOfWeek()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.end_of_week') }}</button>
+						<button ng-click="endActivationEndOfMonth()" type="button" class="btn btn-default btn-sm">{{ i18n('m.rbs.price.admin.end_of_month') }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset
+		ng-show="section=='discount'"
+		data-form-section-label="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}">
+
+		<rbs-document-list ng-show="!document.isNew() && !document.basePrice" data-dlid="DLRbsPricePrice" model="Rbs_Price_Price" filter-collection="filter" actions="default" activable="false" correction="true" load-query="loadPriceQuery">
+			<rbs-column name="value" align="right" width="90px" >
+				<a  ng-href="(=doc|rbsURL=)">(=doc.formattedValue=)</a>
+			</rbs-column>
+			<rbs-column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
+			<rbs-column name="webStore" sort="webStore.label">(=doc.webStore.label=)</rbs-column>
+			<rbs-column name="startActivation">(= doc.startActivation | rbsDateTime =)</rbs-column>
+			<rbs-column name="endActivation">(= doc.endActivation | rbsDateTime =)</rbs-column>
+		</rbs-document-list>
+		<p ng-hide="!document.isNew() && !document.basePrice">
+			{{ i18nAttr('m.rbs.price.admin.price_no_discount_available', ['ucf']) }}
+		</p>
+	</fieldset>
+
+	<fieldset
+		ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

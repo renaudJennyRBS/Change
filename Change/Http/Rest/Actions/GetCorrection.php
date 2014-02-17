@@ -2,10 +2,10 @@
 namespace Change\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Localizable;
+use Change\Http\Rest\PropertyConverter;
 use Change\Http\Rest\Result\DocumentCorrectionResult;
 use Change\Http\Rest\Result\DocumentLink;
 use Zend\Http\Response as HttpResponse;
-use Change\Http\Rest\PropertyConverter;
 
 /**
  * @name \Change\Http\Rest\Actions\GetCorrection
@@ -16,12 +16,12 @@ class GetCorrection
 	/**
 	 * @param \Change\Http\Event $event
 	 * @throws \RuntimeException
-	 * @return \Change\Documents\AbstractDocument|null
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	protected function getDocument($event)
 	{
 		$documentId = intval($event->getParam('documentId'));
-		$document = $event->getDocumentServices()->getDocumentManager()->getDocumentInstance($documentId);
+		$document = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($documentId);
 		if (!$document)
 		{
 			return null;
@@ -48,7 +48,7 @@ class GetCorrection
 			return;
 		}
 
-		$documentManager = $document->getDocumentServices()->getDocumentManager();
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 		$LCID = null;
 		if ($document instanceof Localizable)
@@ -59,14 +59,16 @@ class GetCorrection
 				throw new \RuntimeException('Invalid Parameter: LCID', 71000);
 			}
 		}
+
+		/* @var $document \Change\Documents\Interfaces\Correction */
 		if ($LCID)
 		{
 			try
 			{
 				$documentManager->pushLCID($LCID);
-				if ($document->getCorrectionFunctions()->hasCorrection())
+				if ($document->hasCorrection())
 				{
-					$this->doGetCorrection($event, $document, $document->getCorrectionFunctions()->getCorrection());
+					$this->doGetCorrection($event, $document, $document->getCurrentCorrection());
 				}
 				$documentManager->popLCID();
 			}
@@ -77,9 +79,9 @@ class GetCorrection
 		}
 		else
 		{
-			if ($document->getCorrectionFunctions()->hasCorrection())
+			if ($document->hasCorrection())
 			{
-				$correction = $document->getCorrectionFunctions()->getCorrection();
+				$correction = $document->getCurrentCorrection();
 				$this->doGetCorrection($event, $document, $correction);
 			}
 		}
@@ -94,30 +96,30 @@ class GetCorrection
 	protected function doGetCorrection($event, $document, $correction)
 	{
 		$urlManager = $event->getUrlManager();
-		$result = new DocumentCorrectionResult();
+		$result = new DocumentCorrectionResult($event->getUrlManager(), $document);
 
 		$documentLink = new DocumentLink($urlManager, $document);
 		$documentLink->setRel('resource');
 		$result->addLink($documentLink);
 
 		$model = $document->getDocumentModel();
-		$correctionInfos = array('id' => $correction->getId(), 'status' => $correction->getStatus(), 'propertiesNames' => array());
+		$correctionInfos = array('id' => $correction->getId(), 'status' => $correction->getStatus(),
+			'propertiesNames' => array());
 		$properties = array();
 		if ($document instanceof Localizable)
 		{
-			$localizedOnly = $document->getRefLCID() != $correction->getLCID();
+			$localizedOnly = \Change\Documents\Correction::NULL_LCID_KEY != $correction->getLCID();
 		}
 		else
 		{
 			$localizedOnly = false;
 		}
-
 		foreach ($model->getProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */
 			if ($property->getLocalized() || !$localizedOnly)
 			{
-				$c = new PropertyConverter($document, $property, $urlManager);
+				$c = new PropertyConverter($document, $property, null, $urlManager);
 				if ($correction->isModifiedProperty($name))
 				{
 					$correctionInfos['propertiesNames'][] = $name;

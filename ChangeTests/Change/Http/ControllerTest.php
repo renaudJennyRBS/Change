@@ -13,9 +13,9 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$controller = new Controller($application);
+		$controller->setEventManagerFactory(new \Change\Events\EventManagerFactory($application));
 		$this->assertSame($application, $controller->getApplication());
-		$this->assertInstanceOf('\Zend\EventManager\EventManager', $controller->getEventManager());
-		$this->assertSame($application->getSharedEventManager(), $controller->getEventManager()->getSharedManager());
+		$this->assertInstanceOf('\Change\Events\EventManager', $controller->getEventManager());
 		$this->assertSame(array('Http'), $controller->getEventManager()->getIdentifiers());
 		return $controller;
 	}
@@ -27,7 +27,7 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testActionResolver($controller)
 	{
-		$ac = new \Change\Http\ActionResolver();
+		$ac = new \Change\Http\BaseResolver();
 
 		$controller->setActionResolver($ac);
 
@@ -106,8 +106,9 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Zend\Http\PhpEnvironment\Response', $response);
 		$this->assertEquals(500, $response->getStatusCode());
 
-		$this->assertCount(5, $fakeEventHandler->callNames);
-		$this->assertEquals(array('onRequest', 'onAction', 'execute', 'onResult', 'onResponse'), $fakeEventHandler->callNames);
+		$this->assertCount(7, $fakeEventHandler->callNames);
+		$this->assertEquals(array('onRequest', 'onAction', 'execute', 'onResult', 'onResponse', 'onException(10003)', 'onResponse'),
+			$fakeEventHandler->callNames);
 
 		return $controller;
 	}

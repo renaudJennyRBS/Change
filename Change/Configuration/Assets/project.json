@@ -1,66 +1,62 @@
 {
-	"Change":{
-		"Application":{
-			"php-cli-path":"php",
-			"development-mode":false
+	"Change": {
+		"Application": {
+			"php-cli-path": "php",
+			"development-mode": false
 		},
-		"Logging":{
-			"writers":{
-				"default":"stream"
+		"Logging": {
+			"writers": {
+				"default": "stream"
 			},
-			"level":"WARN"
+			"level": "WARN"
 		},
-		"I18n":{
-			"supported-lcids":["fr_FR", "en_GB"],
-			"langs":{
-				"en_GB":"en"
-			},
-			"default-timezone":"Europe\/Paris",
-			"synchro":{}
+		"I18n": {
+			"supported-lcids": [],
+			"langs": {},
+			"default-timezone": "Europe\/Paris",
+			"synchro": {}
 		},
-		"Injection":{
-			"class":{}
-		},
-		"Db":{
+		"Db": {
 			"use": "default",
-			"default":{
-				"dbprovider":"\\Change\\Db\\Mysql\\DbProvider",
-				"user":null,
-				"password":null,
-				"database":null,
-				"host":"127.0.0.1",
-				"port":3306,
-				"unix_socket":null,
-				"longTransaction":5
+			"default": {
+				"dbprovider": "\\Change\\Db\\Mysql\\DbProvider",
+				"user": null,
+				"password": null,
+				"database": null,
+				"host": "127.0.0.1",
+				"port": 3306,
+				"unix_socket": null,
+				"longTransaction": 5
 			},
-			"sqlite":{
-				"dbprovider":"\\Change\\Db\\SQLite\\DbProvider",
-				"database":null
+			"sqlite": {
+				"dbprovider": "\\Change\\Db\\SQLite\\DbProvider",
+				"database": null
 			}
 		},
-		"Events":{
-			"ListenerAggregateClasses":{
-				"Change":"\\Change\\Events\\DefaultSharedListenerAggregate",
-                "Rest":"\\Change\\Http\\Rest\\OAuth\\SharedListenerAggregate"
+		"Events": {
+			"ListenerAggregateClasses": {
+				"Change": "\\Change\\Events\\DefaultSharedListenerAggregate"
+			},
+			"Http": {
+				"Rest": {
+					"OAuth": "\\Change\\Http\\Rest\\OAuth\\ListenerAggregate"
+				}
+			},
+			"Commands": {
+				"Change": "\\Change\\Commands\\Events\\ListenerAggregate"
 			}
 		},
-        "Http":{
-            "Rest":{
-                "OAuth":{
-                    "consumerKey":"TODO_SET_CONSUMER_KEY",
-                    "consumerSecret":"TODO_SET_CONSUMER_SECRET",
-                    "timestampMaxOffset":60,
-                    "tokenAccessValidity":"P10Y",
-                    "tokenRequestValidity":"P1D"
-                }
-            },
-			"Web":{
-				"SingleWebsite":true
-			},
-            "allowAnonymous":true
-        },
-        "Users":{
-            "salt":"a6CHo80Qzg5DOe"
-        }
+		"Http": {
+			"Web": {
+				"SingleWebsite": true
+			}
+		},
+		"User": {
+			"salt": "a6CHo80Qzg5DOe"
+		},
+		"Cache": {
+			"block": true,
+			"page": true
+		}
 	}
 }

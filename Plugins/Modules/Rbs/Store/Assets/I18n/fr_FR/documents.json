@@ -1,0 +1,20 @@
+{
+	"webstore":{
+		"message":"boutique"
+	},
+	"webstore_billingareas":{
+		"message":"zones de tarification"
+	},
+	"webstore_pricesvaluewithtax":{
+		"message":"saisie TTC des prix"
+	},
+	"webstore_displayprices":{
+		"message":"afficher les prix HT"
+	},
+	"webstore_displaypriceswithtax":{
+		"message":"afficher les prix TTC"
+	},
+	"webstore_orderprocess":{
+		"message":"processus de commande"
+	}
+}

@@ -1,0 +1,56 @@
+{
+  "deferredconnector_instructions":{
+    "message":"payment instructions"
+  },
+  "connector":{
+    "message":"paiement gateway"
+  },
+  "transaction":{
+    "message":"paiement transaction"
+  },
+  "deferredconnector":{
+    "message":"deferred payment gateway"
+  },
+  "transaction_connector":{
+    "message":"paiement gateway"
+  },
+  "transaction_targetidentifier":{
+    "message":"transaction origin"
+  },
+  "transaction_contextdata":{
+    "message":"Additional information"
+  },
+  "transaction_amount":{
+    "message":"amount"
+  },
+  "transaction_currencycode":{
+    "message":"currency"
+  },
+  "transaction_processingstatus":{
+    "message":"status"
+  },
+  "transaction_processingidentifier":{
+    "message":"paiement ID"
+  },
+  "transaction_processingdate":{
+    "message":"date"
+  },
+  "transaction_processingdata":{
+    "message":"transaction's technical datas"
+  },
+  "connector_visual":{
+    "message":"visual"
+  },
+  "connector_minamount":{
+    "message":"Minimum amount"
+  },
+  "connector_maxamount":{
+    "message":"Maximum amount"
+  },
+  "connector_allowedcurrencycodes":{
+    "message":"currency codes allowed"
+  },
+  "connector_description":{
+    "message":"description"
+  }
+}

@@ -1,0 +1,10 @@
+<form name="form" ng-submit="submit()" novalidate="">
+	<rbs-field-text property="title" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'title'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-structure-editor name="contents" property="editableContent" ng-model="document.editableContent"
+		template="(=pageTemplate=)">
+	</rbs-structure-editor>
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

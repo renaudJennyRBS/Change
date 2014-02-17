@@ -1,0 +1,24 @@
+{
+	"PromotedReviewList" : {
+		"cssAssets" : ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	},
+
+	"ReviewList" : {
+		"cssAssets" : ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	},
+
+	"ReviewAverageRating": {
+		"cssAssets": ["Theme/Rbs/Base/Rbs_Review/css/review.css"]
+	},
+
+	"PostReview": {
+		"cssAssets": ["Theme/Rbs/Base/Rbs_Review/css/review.css"]
+	},
+
+	"ReviewDetail": {
+		"cssAssets": ["Theme/Rbs/Base/Rbs_Review/css/review.css"],
+		"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
+	}
+}

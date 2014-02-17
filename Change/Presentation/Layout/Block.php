@@ -7,11 +7,15 @@ namespace Change\Presentation\Layout;
  */
 class Block extends Item
 {
-
 	/**
 	 * @var string
 	 */
 	protected $name;
+
+	/**
+	 * @var string|null
+	 */
+	protected $visibility;
 
 	/**
 	 * @return string
@@ -30,6 +34,14 @@ class Block extends Item
 	}
 
 	/**
+	 * @return string|null
+	 */
+	public function getVisibility()
+	{
+		return $this->visibility;
+	}
+
+	/**
 	 * @param array $data
 	 * @return void
 	 */
@@ -37,5 +49,6 @@ class Block extends Item
 	{
 		parent::initialize($data);
 		$this->name = $data['name'];
+		$this->visibility = isset($data['visibility']) ? $data['visibility']: null;
 	}
 }

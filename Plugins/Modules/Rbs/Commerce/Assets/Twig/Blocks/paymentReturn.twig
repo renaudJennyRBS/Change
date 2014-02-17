@@ -1,0 +1,18 @@
+<h2>{{ i18n('m.rbs.commerce.front.payment_confirmation', ['ucf']) }}</h2>
+
+{% include paymentTemplate %}
+
+{% if proposeRegistration %}
+	<div class="panel panel-info">
+		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.register_now', ['ucf']) }}</div>
+		<div class="panel-body">
+			<p>{{ i18n('m.rbs.commerce.front.register_to_follow_orders', ['ucf']) }}</p>
+			<div>
+				<a class="btn btn-default btn-primary"
+					href="{{ functionURL('Rbs_Payment_CreateAccountForTransaction', null, {'transactionId': parameters.transactionId}) }}">
+					{{ i18n('m.rbs.commerce.front.register_button', ['ucf']) }}
+				</a>
+			</div>
+		</div>
+	</div>
+{% endif %}

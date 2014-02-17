@@ -1,0 +1,41 @@
+{
+	"baseevent_date":{
+		"message":"date"
+	},
+	"baseevent_enddate":{
+		"message":"date de fin"
+	},
+	"baseevent_summary":{
+		"message":"résumé"
+	},
+	"baseevent_text":{
+		"message":"contenu"
+	},
+	"baseevent_detailvisual":{
+		"message":"visuel de détail"
+	},
+	"baseevent_listvisual":{
+		"message":"visuel de liste"
+	},
+	"baseevent_categories":{
+		"message":"catégories"
+	},
+	"baseevent_allowcomments":{
+		"message":"autoriser les commentaires"
+	},
+	"baseevent_excludefromrss":{
+		"message":"exclure des flux RSS"
+	},
+	"category_description":{
+		"message":"description"
+	},
+	"news":{
+		"message":"actualité"
+	},
+	"event":{
+		"message":"événement"
+	},
+	"category":{
+		"message":"catégorie"
+	}
+}

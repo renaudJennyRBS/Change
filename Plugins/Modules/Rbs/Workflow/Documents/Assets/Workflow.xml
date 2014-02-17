@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd" 
+	editable="true" activable="true">
+	<properties>
+		<property name="description" type="LongString" />
+		<property name="startTask"  type="String" required="true">
+			<dboptions length="100" />
+		</property>
+		<property name="itemsData" type="JSON" />
+		<property name="errors" type="LongString" />
+		<property name="saveVolatile" type="Boolean" default-value="false"/>
+	</properties>
+</document>

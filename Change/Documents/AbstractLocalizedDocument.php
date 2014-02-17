@@ -8,47 +8,31 @@ namespace Change\Documents;
 abstract class AbstractLocalizedDocument implements \Serializable
 {
 	/**
+	 * @var AbstractModel
+	 */
+	protected $documentModel;
+
+	/**
 	 * @var integer
 	 */
 	private $id;
-	
+
 	/**
 	 * @var integer
 	 */
-	private $persistentState = DocumentManager::STATE_NEW;
+	private $persistentState = AbstractDocument::STATE_NEW;
 
-	/**
-	 * @var \Change\Documents\DocumentManager
-	 */
-	protected $documentManager;
-	
 	/**
 	 * @var array
 	 */
 	protected $modifiedProperties = array();
 
 	/**
-	 * @param \Change\Documents\DocumentManager $manager
+	 * @param AbstractModel $documentModel
 	 */
-	public function __construct(\Change\Documents\DocumentManager $manager)
+	function __construct(AbstractModel $documentModel)
 	{
-		$this->setDocumentManager($manager);
-	}
-	
-	/**
-	 * @param \Change\Documents\DocumentManager $manager
-	 */
-	public function setDocumentManager(\Change\Documents\DocumentManager $manager)
-	{
-		$this->documentManager = $manager;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentManager
-	 */
-	public function getDocumentManager()
-	{
-		return $this->documentManager;
+		$this->setDocumentModel($documentModel);
 	}
 
 	/**
@@ -68,84 +52,123 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	{
 		return;
 	}
-	
+
 	/**
 	 * @param integer $id
 	 * @param string $lcid
-	 * @param integer $persistentState DocumentManager::STATE_*
+	 * @param integer $persistentState \Change\Documents\AbstractDocument::STATE_*
 	 */
-	public function initialize($id, $lcid, $persistentState)
+	public function initialize($id, $lcid, $persistentState = null)
 	{
 		$this->id = intval($id);
 		$this->setLCID($lcid);
-		$this->persistentState = $this->setPersistentState($persistentState);
+		if ($persistentState !== null)
+		{
+			$this->persistentState = $this->setPersistentState($persistentState);
+		}
 	}
-	
+
 	/**
-	 * \Change\Documents\DocumentManager::STATE_*
+	 * @param \Change\Documents\AbstractModel $documentModel
+	 */
+	public final function setDocumentModel(\Change\Documents\AbstractModel $documentModel)
+	{
+		$this->documentModel = $documentModel;
+	}
+
+	/**
+	 * @return \Change\Documents\AbstractModel
+	 */
+	public final function getDocumentModel()
+	{
+		return $this->documentModel;
+	}
+
+
+	/**
+	 * Return \Change\Documents\AbstractDocument::STATE_*
 	 * @return integer
 	 */
-	public function getPersistentState()
+	public final function getPersistentState()
 	{
 		return $this->persistentState;
 	}
-	
+
 	/**
-	 * \Change\Documents\DocumentManager::STATE_*
-	 * @param integer $newValue
+	 * @return boolean
+	 */
+	public function isNew()
+	{
+		return $this->getPersistentState() === AbstractDocument::STATE_NEW;
+	}
+
+	/**
+	 * @param integer $newValue \Change\Documents\AbstractDocument::STATE_*
 	 * @return integer
 	 */
-	public function setPersistentState($newValue)
+	public final function setPersistentState($newValue)
 	{
 		$oldState = $this->persistentState;
 		switch ($newValue)
 		{
-			case DocumentManager::STATE_LOADED:
+			case AbstractDocument::STATE_LOADED:
 				$this->clearModifiedProperties();
-			case DocumentManager::STATE_NEW:
-			case DocumentManager::STATE_LOADING:
-			case DocumentManager::STATE_DELETED:
-			case DocumentManager::STATE_SAVING:
+				$this->persistentState = $newValue;
+				break;
+			case AbstractDocument::STATE_NEW:
+			case AbstractDocument::STATE_LOADING:
+			case AbstractDocument::STATE_DELETED:
+			case AbstractDocument::STATE_DELETING:
+			case AbstractDocument::STATE_SAVING:
 				$this->persistentState = $newValue;
 				break;
 		}
 		return $oldState;
 	}
-	
+
 	/**
-	 * @api
-	 * @return boolean
+	 * @param mixed $inputValue
+	 * @param string $propertyType
+	 * @return bool|\DateTime|float|int|null|string
 	 */
-	public function isDeleted()
+	protected function convertToInternalValue($inputValue, $propertyType)
 	{
-		return $this->persistentState === DocumentManager::STATE_DELETED;
+		switch ($propertyType)
+		{
+			case Property::TYPE_DATE:
+				$inputValue = is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')) : $inputValue;
+				return ($inputValue instanceof \DateTime) ? \DateTime::createFromFormat('Y-m-d', $inputValue->format('Y-m-d'), new \DateTimeZone('UTC'))->setTime(0, 0) : null;
+
+			case Property::TYPE_DATETIME:
+				return is_string($inputValue) ? new \DateTime($inputValue, new \DateTimeZone('UTC')): (($inputValue instanceof \DateTime) ? $inputValue : null);
+
+			case Property::TYPE_BOOLEAN:
+				return ($inputValue === null) ? $inputValue : (bool)$inputValue;
+
+			case Property::TYPE_INTEGER:
+				return ($inputValue === null) ? $inputValue : intval($inputValue);
+
+			case Property::TYPE_FLOAT:
+			case Property::TYPE_DECIMAL:
+				return ($inputValue === null) ? $inputValue : floatval($inputValue);
+
+			case Property::TYPE_DOCUMENTID :
+				if (is_object($inputValue) && is_callable(array($inputValue, 'getId')))
+				{
+					$inputValue = call_user_func(array($inputValue, 'getId'));
+				}
+				return max(0, intval($inputValue));
+			case Property::TYPE_JSON:
+				return ($inputValue === null || is_string($inputValue)) ? $inputValue : json_encode($inputValue);
+
+			case Property::TYPE_OBJECT:
+				return ($inputValue === null || is_string($inputValue)) ? $inputValue : serialize($inputValue);
+
+			default:
+				return $inputValue === null ? $inputValue : strval($inputValue);
+		}
 	}
-	
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isNew()
-	{
-		return $this->persistentState === DocumentManager::STATE_NEW;
-	}
-	
-	/**
-	 * @param array $modifiedProperties
-	 */
-	public function setModifiedProperties($modifiedProperties = array())
-	{
-		$this->modifiedProperties = $modifiedProperties;
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function getModifiedProperties()
-	{
-		return $this->modifiedProperties;
-	}
-	
+
 	/**
 	 * @return integer
 	 */
@@ -153,7 +176,16 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	{
 		return $this->id;
 	}
-						
+
+	/**
+	 * @api
+	 * @param string $propertyName
+	 */
+	public function removeOldPropertyValue($propertyName)
+	{
+		unset($this->modifiedProperties[$propertyName]);
+	}
+
 	/**
 	 * @api
 	 * @return string[]
@@ -162,34 +194,34 @@ abstract class AbstractLocalizedDocument implements \Serializable
 	{
 		return array_keys($this->modifiedProperties);
 	}
-	
+
 	/**
 	 * @api
 	 * @return boolean
 	 */
 	public function hasModifiedProperties()
 	{
-		return count($this->modifiedProperties) > 0;
+		return count($this->getModifiedPropertyNames()) !== 0;
 	}
-	
+
 	/**
-	 * @api
+	 * @return void
 	 */
 	protected function clearModifiedProperties()
 	{
 		$this->modifiedProperties = array();
 	}
-	
+
 	/**
 	 * @api
 	 * @param string $propertyName
 	 * @return boolean
 	 */
-	public function isPropertyModified($propertyName)
+	public final function isPropertyModified($propertyName)
 	{
-		return array_key_exists($propertyName, $this->modifiedProperties);
+		return in_array($propertyName, $this->getModifiedPropertyNames());
 	}
-	
+
 	/**
 	 * @param string $propertyName
 	 * @param mixed $value
@@ -201,24 +233,12 @@ abstract class AbstractLocalizedDocument implements \Serializable
 			$this->modifiedProperties[$propertyName] = $value;
 		}
 	}
-	
-	/**
-	 * @api
-	 * @param string $propertyName
-	 */
-	public function removeOldPropertyValue($propertyName)
-	{
-		if (array_key_exists($propertyName, $this->modifiedProperties))
-		{
-			unset($this->modifiedProperties[$propertyName]);
-		}
-	}
-	
+
 	/**
 	 * @param string $propertyName
 	 * @return mixed
 	 */
-	protected function getOldPropertyValue($propertyName)
+	public final function getOldPropertyValue($propertyName)
 	{
 		if (array_key_exists($propertyName, $this->modifiedProperties))
 		{
@@ -226,74 +246,39 @@ abstract class AbstractLocalizedDocument implements \Serializable
 		}
 		return null;
 	}
-	
-	/**
-	 * @api
-	 * @param \Change\Documents\AbstractModel $documentModel
-	 */
-	public function setDefaultValues(\Change\Documents\AbstractModel $documentModel)
-	{
-		$this->persistentState = DocumentManager::STATE_NEW;
-		foreach ($documentModel->getProperties() as $property)
-		{
-			/* @var $property \Change\Documents\Property */
-			if ($property->getLocalized() && $property->getDefaultValue() !== null)
-			{
-				$property->setValue($this, $property->getDefaultValue());
-			}
-		}
-		$this->clearModifiedProperties();
-	}
-	
-	/**
-	 * @api
-	 * @param \Change\Documents\AbstractModel $documentModel
-	 */
-	public function reset(\Change\Documents\AbstractModel $documentModel)
-	{
-		$this->modifiedProperties = array();
-		if ($this->persistentState === DocumentManager::STATE_LOADED)
-		{
-			$this->persistentState = DocumentManager::STATE_INITIALIZED;
-		}
-		elseif($this->persistentState === DocumentManager::STATE_NEW)
-		{
-			$this->setDefaultValues($documentModel);
-		}
-	}
-	
+
 	// Generic Method
-	
+
 	/**
 	 * @api
 	 * @return string
 	 */
 	abstract public function getLCID();
-	
+
 	/**
 	 * @api
 	 * @param string $LCID
 	 */
 	abstract public function setLCID($LCID);
-	
+
 	/**
 	 * @api
 	 * @return \DateTime
 	 */
 	abstract public function getCreationDate();
-	
+
 	/**
 	 * @api
 	 * @param \DateTime $creationDate
 	 */
 	abstract public function setCreationDate($creationDate);
-	
+
 	/**
 	 * @api
 	 * @return \DateTime
 	 */
 	abstract public function getModificationDate();
-	
+
 	/**
 	 * @api
 	 * @param \DateTime $modificationDate

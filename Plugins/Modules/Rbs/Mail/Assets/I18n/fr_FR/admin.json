@@ -1,0 +1,29 @@
+{
+	"module_name":{
+		"message":"Mail"
+	},
+	"module_keywords":{
+		"message":"mail, email, e-mail, notification"
+	},
+	"mail_list":{
+		"message":"mail"
+	},
+	"mail_websites_picker_title":{
+		"message":"sélection des sites rattachés au mail"
+	},
+	"back_to_general_mail_properties":{
+		"message":"Propriétés générales du mail"
+	},
+	"richtext":{
+		"message":"Bloc de texte"
+	},
+	"mail_add_mail_variation":{
+		"message":"ajouter une déclinaison"
+	},
+	"mail_add_mail_variation_error":{
+		"message":"une erreur s'est produite pendant l'ajout d'une variation de mail"
+	},
+	"mail_template_not_suitable_help":{
+		"message":"le modèle sélectionné n'est pas compatible avec les mails, le document ne pourra pas être enregistré"
+	}
+}

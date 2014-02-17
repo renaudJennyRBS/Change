@@ -1,0 +1,30 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="icon-archive"></i>
+			<a href ng-init="orderContext.showShipmentUI = false" ng-click="orderContext.showShipmentUI = !orderContext.showShipmentUI">
+				{{ i18n('m.rbs.order.admin.order_shipment', ['ucf']) }}
+				<i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showShipmentUI]"></i>
+			</a>
+		</h3>
+	</div>
+	<div class="panel-body" ng-show="showShipmentUI">
+		<table class="table table-bordered table-condensed table-striped">
+			<tr>
+				<th>{{ i18n('m.rbs.order.documents.shipment_code', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.order.documents.shipment_shippingmodecode', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.order.documents.shipment_trackingcode', ['ucf']) }}</th>
+				<th>{{ i18n('m.rbs.order.documents.shipment_carrierstatus', ['ucf']) }}</th>
+			</tr>
+			<tr ng-repeat="shipment in shipments" ng-show="shipments.length > 0">
+				<td><a href="" ng-href="Rbs/Order/Shipment/(= shipment.id =)">(= shipment.code =)</a></td>
+				<td>(= shipment.shippingModeCode =)</td>
+				<td>(= shipment.trackingCode =)</td>
+				<td>(= shipment.carrierStatus =)</td>
+			</tr>
+		</table>
+		<a ng-if="document.id > 0" href="" ng-href="Rbs/Order/Shipment/new?orderId=(= document.id =)">
+			{{ i18n('m.rbs.order.admin.order_add_shipment', ['ucf']) }}
+		</a>
+	</div>
+</div>

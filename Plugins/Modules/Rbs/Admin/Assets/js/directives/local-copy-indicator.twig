@@ -1,0 +1,26 @@
+<li class="dropdown"ng-class="{'on': localCopies.length > 0}" title="{{ i18nAttr('m.rbs.admin.admin.local_copy_indicator_title', ['ucf']) }}">
+	<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+		<i class="icon-edit"></i>
+		(= localCopies.length =)
+		<span class="indicator-title">{{ i18nAttr('m.rbs.admin.admin.local_copy_indicator_title', ['ucf']) }}</span>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="dropdown-header" ng-pluralize="" count="localCopies.length" when="
+			{0: '{{ i18nAttr('m.rbs.admin.admin.local_copies_message_no') }}',
+			one: '{{ i18nAttr('m.rbs.admin.admin.local_copies_message_one') }}',
+			other: '{{ i18nAttr('m.rbs.admin.admin.local_copies_message_other') }}'}"></li>
+		<li class="divider" ng-if="localCopies.length > 0"></li>
+
+		<li ng-repeat="copy in localCopies track by localizedId(copy)"><a href ng-href="(= copy | rbsURL =)">
+			<rbs-status class="small" ng-model="copy"></rbs-status>
+			<strong>(= copy.label =)</strong>
+			<br/>(= copy.model =) / (= copy.LCID =) / (= copy.id =)
+			<br/><small class="muted"><time display="both" datetime="(= copy.META$.localCopy.saveDate =)"></time></small>
+		</a></li>
+
+		<li ng-if="localCopies.length > 0" class="divider"></li>
+		<li ng-if="localCopies.length > 0"><a href="javascript:;" ng-click="clearLocalCopies()">
+			<i class="icon-trash"></i> {{ i18n('m.rbs.admin.admin.remove_all_local_copies', ['ucf']) }}
+		</a></li>
+	</ul>
+</li>

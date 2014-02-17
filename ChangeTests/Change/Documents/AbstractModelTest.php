@@ -1,19 +1,19 @@
 <?php
 namespace ChangeTests\Change\Documents;
 
-use Change\Documents\AbstractModel;
-use Change\Documents\ModelManager;
-
 class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	public static function setUpBeforeClass()
+	{
+		static::initDocumentsClasses();
+	}
+
 	/**
 	 * @return \Change\Documents\ModelManager
 	 */
 	public function testInitializeDB()
 	{
-		$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
-		$compiler->generate();
-		return $this->getDocumentServices()->getModelManager();
+		return $this->getApplicationServices()->getModelManager();
 	}
 
 	/**
@@ -40,23 +40,22 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($modelBasic->hasDescendants());
 		$this->assertTrue($modelBasic->useTree());
 		$this->assertCount(0, $modelBasic->getDescendantsNames());
-		$this->assertNull($modelBasic->getInjectedBy());
+		$this->assertNull($modelBasic->getReplacedBy());
 		$this->assertFalse($modelBasic->hasParent());
 		$this->assertNull($modelBasic->getParentName());
 		$this->assertCount(0, $modelBasic->getAncestorsNames());
 		$this->assertEquals('Project_Tests_Basic', $modelBasic->getRootName());
 		$this->assertEquals('Project_Tests', $modelBasic->getTreeName());
 
-		$this->assertCount(21, $modelBasic->getProperties());
+		$this->assertCount(22, $modelBasic->getProperties());
 		$this->assertArrayHasKey('pStr', $modelBasic->getProperties());
 
 		$this->assertCount(0, $modelBasic->getLocalizedProperties());
-		$this->assertCount(21, $modelBasic->getNonLocalizedProperties());
+		$this->assertCount(22, $modelBasic->getNonLocalizedProperties());
 		$this->assertCount(0, $modelBasic->getPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getLocalizedPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getNonLocalizedPropertiesWithCorrection());
 
-		$this->assertCount(0, $modelBasic->getIndexedProperties());
 		$this->assertTrue($modelBasic->hasProperty('pStr'));
 		$this->assertTrue($modelBasic->hasProperty('id'));
 		$this->assertTrue($modelBasic->hasProperty('model'));
@@ -65,14 +64,12 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Change\Documents\Property', $property);
 		$this->assertEquals('pStr', $property->getName());
 
-		$names = $modelBasic->getPropertiesNames();
-		$this->assertCount(21, $names);
+		$names = $modelBasic->getPropertyNames();
+		$this->assertCount(22, $names);
 		$this->assertContains('id', $names);
 		$this->assertContains('model', $names);
 		$this->assertContains('creationDate', $names);
 		$this->assertContains('modificationDate', $names);
-
-		$this->assertFalse($modelBasic->hasCascadeDelete());
 
 		$inverseProperties = $modelBasic->getInverseProperties();
 		$this->assertArrayHasKey('ProjectTestsLocalizedPDocInst', $inverseProperties);
@@ -87,7 +84,9 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('pDocArr', $inverseProperty->getRelatedPropertyName());
 
 		$this->assertEquals('test', $modelBasic->getIcon());
-		$this->assertEquals('m.project.tests.document.basic.document-name', $modelBasic->getLabelKey());
+		$this->assertEquals('m.project.tests.documents.basic', $modelBasic->getLabelKey());
+		$this->assertEquals('undefined', $modelBasic->getPropertyLabelKey('undefined'));
+		$this->assertEquals('m.project.tests.documents.basic_pstr', $modelBasic->getPropertyLabelKey('pStr'));
 		$this->assertEquals('Project_Tests_Basic', strval($modelBasic));
 		return $modelManager;
 	}
@@ -101,9 +100,9 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$modelLocalized = $modelManager->getModelByName('Project_Tests_Localized');
 		$this->assertTrue($modelLocalized->isLocalized());
-		$this->assertCount(36, $modelLocalized->getProperties());
-		$this->assertCount(17, $modelLocalized->getLocalizedProperties());
-		$this->assertCount(19, $modelLocalized->getNonLocalizedProperties());
+		$this->assertCount(38, $modelLocalized->getProperties());
+		$this->assertCount(18, $modelLocalized->getLocalizedProperties());
+		$this->assertCount(20, $modelLocalized->getNonLocalizedProperties());
 
 		$this->assertArrayHasKey('refLCID', $modelLocalized->getNonLocalizedProperties());
 		$this->assertArrayHasKey('LCID', $modelLocalized->getLocalizedProperties());

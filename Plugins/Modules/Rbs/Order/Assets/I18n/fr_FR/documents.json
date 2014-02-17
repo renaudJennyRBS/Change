@@ -1,0 +1,92 @@
+{
+	"order_email":{
+		"message":"adresse e-mail"
+	},
+	"order_ownerid":{
+		"message":"propriétaire"
+	},
+	"order_webstoreid":{
+		"message":"boutique"
+	},
+	"order_paymentamount":{
+		"message":"montant payé"
+	},
+	"order_currencycode":{
+		"message":"devise"
+	},
+	"order_processingstatus":{
+		"message":"état"
+	},
+	"order":{
+		"message":"commande"
+	},
+	"invoice":{
+		"message":"facture"
+	},
+	"invoice_order":{
+		"message":"commande"
+	},
+	"invoice_transaction":{
+		"message":"transaction bancaire"
+	},
+	"invoice_amount":{
+		"message":"montant"
+	},
+	"invoice_amountwithtax":{
+		"message":"montant TTC"
+	},
+	"invoice_currencycode":{
+		"message":"devise"
+	},
+	"shipment":{
+		"message":"expédition"
+	},
+	"shipment_orderid":{
+		"message":"commande associée"
+	},
+	"shipment_prepared":{
+		"message":"préparé"
+	},
+	"shipment_code":{
+		"message":"code d'expédition"
+	},
+	"shipment_parcelcode":{
+		"message":"code colis"
+	},
+	"shipment_shippingmodecode":{
+		"message":"mode de livraison"
+	},
+	"shipment_trackingcode":{
+		"message":"code de tracking"
+	},
+	"shipment_carrierstatus":{
+		"message":"statut transporteur"
+	},
+	"shipment_itemcount":{
+		"message":"nombre d'éléments"
+	},
+	"shipment_line_number":{
+		"message":"numéro de ligne"
+	},
+	"creditnote":{
+		"message":"avoir"
+	},
+	"creditnote_ownerId":{
+		"message":"bénéficiaire"
+	},
+	"creditnote_code":{
+		"message":"numéro de l'avoir"
+	},
+	"creditnote_targetidentifier":{
+		"message":"origine"
+	},
+	"creditnote_amount":{
+		"message":"montant"
+	},
+	"creditnote_amountnotapplied":{
+		"message":"montant non restitué"
+	},
+	"creditnote_currencycode":{
+		"message":"devise"
+	}
+}

@@ -1,0 +1,107 @@
+{
+	"you_are_authentified_as":{
+		"message":"vous êtes authentifié en tant que $NAME$"
+	},
+	"please_log_in":{
+		"message":"connectez-vous"
+	},
+	"login":{
+		"message":"identifiant de connexion"
+	},
+	"login_placeholder":{
+		"message":"identifiant ou adresse e-mail"
+	},
+	"password":{
+		"message":"mot de passe"
+	},
+	"confirm_password":{
+		"message":"confirmer le mot de passe"
+	},
+	"password_placeholder":{
+		"message":"votre mot de passe"
+	},
+	"remember_me":{
+		"message":"cochez pour rester connecté"
+	},
+	"log_in":{
+		"message":"connexion"
+	},
+	"log_out":{
+		"message":"déconnexion"
+	},
+	"my_account":{
+		"message":"mon compte"
+	},
+	"create_your_account":{
+		"message":"créer votre compte"
+	},
+	"email":{
+		"message":"adresse e-mail"
+	},
+	"confirm_email":{
+		"message":"confirmer l'adresse e-mail"
+	},
+	"email_placeholder":{
+		"message":"votre adresse e-mail"
+	},
+	"submit_account_creation":{
+		"message":"créer mon compte"
+	},
+	"account_creation_request_title":{
+		"message":"demande de création de compte"
+	},
+	"account_creation_request_success":{
+		"message":"la demande de création de votre compte a bien été enregistrée."
+	},
+	"account_creation_request_description":{
+		"message":"Vous allez recevoir un e-mail de confirmation, cliquez sur le lien fourni dans celui-ci pour finaliser la création de votre compte."
+	},
+	"account_creation_title":{
+		"message":"création de compte"
+	},
+	"account_creation_success":{
+		"message":"votre compte a bien été créé."
+	},
+	"account_creation_description":{
+		"message":"vous pouvez dès à présent vous connecter avec votre e-mail et votre mot de passe."
+	},
+	"account_creation_log_in":{
+		"message":"suivez ce lien pour accéder au formulaire de connexion."
+	},
+	"error_empty_email":{
+		"message":"l'adresse e-mail est vide."
+	},
+	"error_email_invalid":{
+		"message":"l'adresse e-mail $EMAIL$ n'est pas valide."
+	},
+	"error_empty_password":{
+		"message":"le mot de passe est vide."
+	},
+	"error_password_exceeds_max_characters":{
+		"message":"le mot de passe dépasse le nombre maximum de caractères autorisé (50)."
+	},
+	"error_password_not_match_confirm_password":{
+		"message":"le mot de passe et sa confirmation ne correspondent pas."
+	},
+	"error_email_not_match_confirm_email":{
+		"message":"l'adresse e-mail et sa confirmation ne correspondent pas."
+	},
+	"error_user_already_exist":{
+		"message":"l'adresse e-mail $EMAIL$ est déjà dans notre base de données utilisateur, si vous avez oublié votre mot de passe, utilisez le formulaire de changement de mot de passe."
+	},
+	"error_request_already_done":{
+		"message":"une demande de création de compte pour l'e-mail $EMAIL$ est déjà en cours."
+	},
+	"error_empty_request_id":{
+		"message":"il n'y a pas d'identifiant de création de compte."
+	},
+	"error_request_expired":{
+		"message":"la demande de création de compte a expirée."
+	},
+	"error_empty_hash_method":{
+		"message":"la méthode de hash du password est vide."
+	},
+	"error_login_password_not_match":{
+		"message":"L'identifiant et le mot de passe ne correspondent pas."
+	}
+}

@@ -1,0 +1,7 @@
+[rbs-order-status-indicators] .order-status-item {
+	margin-right: 10px;
+}
+
+[rbs-order-status-indicators] .order-status-item:last-child {
+	margin-right: 0;
+}

@@ -1,0 +1,68 @@
+{
+  "select":{
+    "message":"select"
+  },
+  "view_product_details":{
+    "message":"view details for $PRODUCT$"
+  },
+  "with_tax":{
+    "message":"taxes included"
+  },
+  "with_tax_abbr":{
+    "message":"Incl. VAT"
+  },
+  "without_tax":{
+    "message":"taxes excluded"
+  },
+  "without_tax_abbr":{
+    "message":"Excl. VAT"
+  },
+  "reference":{
+    "message":"model number"
+  },
+  "brand":{
+    "message":"brand"
+  },
+  "old_price":{
+    "message":"list price"
+  },
+  "including":{
+    "message":"including"
+  },
+  "ecotax":{
+    "message":"DEEE"
+  },
+  "click_to_show_image":{
+    "message":"click here for larger image"
+  },
+  "full_description":{
+    "message":"full description"
+  },
+  "attributes":{
+    "message":"features"
+  },
+  "main_attributes":{
+    "message":"general features"
+  },
+  "variants":{
+    "message":"variants"
+  },
+  "select_variant":{
+    "message":"Pick a variant"
+  },
+  "sort_default":{
+    "message":"By default"
+  },
+  "sort_price_asc":{
+    "message":"Price ascending"
+  },
+  "sort_price_desc":{
+    "message":"Price descending"
+  },
+  "sort_date_added_desc":{
+    "message":"Latest first"
+  },
+  "sort_date_title_asc":{
+    "message":"Alphabetical order"
+  }
+}

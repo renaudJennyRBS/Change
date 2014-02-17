@@ -1,17 +1,15 @@
 <?php
 namespace Change\Presentation\Blocks;
 
-use Change\Events\SharedEventManager;
 use Change\Http\Web\Result\BlockResult;
-use Change\Presentation\PresentationServices;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\SharedListenerAggregateInterface;
 
 /**
  * @name \Change\Presentation\Blocks\BlockManager
  */
-class BlockManager
+class BlockManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
 	const DEFAULT_IDENTIFIER = 'Http.Web.Block';
 
 	const EVENT_PARAMETERIZE = 'block.parameterize';
@@ -20,20 +18,12 @@ class BlockManager
 
 	const EVENT_INFORMATION = 'block.information';
 
-	/**
-	 * @var PresentationServices
-	 */
-	protected $presentationServices;
+	const EVENT_GET_CACHE_ADAPTER = 'getCacheAdapter';
 
 	/**
-	 * @var \Change\Documents\DocumentServices|null
+	 * @var \Change\Configuration\Configuration
 	 */
-	protected $documentServices;
-
-	/**
-	 * @var SharedEventManager
-	 */
-	protected $sharedEventManager;
+	protected $configuration;
 
 	/**
 	 * @var array
@@ -41,59 +31,26 @@ class BlockManager
 	protected $blocks;
 
 	/**
-	 * @param PresentationServices $presentationServices
-	 * @throws \RuntimeException
+	 * @var \Zend\Cache\Storage\Adapter\AbstractAdapter
 	 */
-	public function setPresentationServices(PresentationServices $presentationServices)
+	protected $cacheAdapter = false;
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$this->presentationServices = $presentationServices;
+		$this->configuration = $configuration;
+		return $this;
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentServices $documentServices
+	 * @return \Change\Configuration\Configuration
 	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices)
+	protected function getConfiguration()
 	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @return SharedEventManager
-	 * @throws \RuntimeException
-	 */
-	protected function registerBlocks()
-	{
-		if ($this->sharedEventManager === null)
-		{
-			$application = $this->presentationServices->getApplicationServices()->getApplication();
-			$this->sharedEventManager = $application->getSharedEventManager();
-			$sharedListeners = $application->getConfiguration()->getEntry('Change/Presentation/Blocks', array());
-
-			foreach ($sharedListeners as $className)
-			{
-				if (class_exists($className))
-				{
-					$sharedListener = new $className();
-					if ($sharedListener instanceof SharedListenerAggregateInterface)
-					{
-						$sharedListener->attachShared($this->sharedEventManager);
-					}
-				}
-				else
-				{
-					throw new \RuntimeException('Block configuration class not found: ' . $className, 999999);
-				}
-			}
-		}
-		return $this->sharedEventManager;
+		return $this->configuration;
 	}
 
 	/**
@@ -106,6 +63,22 @@ class BlockManager
 	}
 
 	/**
+	 * @return null|string|string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return static::DEFAULT_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/BlockManager');
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getBlockNames()
@@ -113,9 +86,7 @@ class BlockManager
 		if ($this->blocks === null)
 		{
 			$this->blocks = array();
-			$sharedEventManager = $this->registerBlocks();
-			$eventManager = new EventManager(array(static::DEFAULT_IDENTIFIER));
-			$eventManager->setSharedManager($sharedEventManager);
+			$eventManager = $this->getEventManager();
 			$event = new Event(static::EVENT_INFORMATION, $this);
 			$eventManager->trigger($event);
 		}
@@ -131,7 +102,7 @@ class BlockManager
 		$this->getBlockNames();
 		if (isset($this->blocks[$name]))
 		{
-			$infos = $this->blocks[$name] ;
+			$infos = $this->blocks[$name];
 			if ($infos instanceof Information)
 			{
 				return $infos;
@@ -144,43 +115,42 @@ class BlockManager
 					$this->blocks[$name] = $infos;
 					return $infos;
 				}
+				else
+				{
+					unset($this->blocks[$name]);
+				}
 			}
-
 		}
 		return null;
 	}
 
 	/**
-	 * @return PresentationServices
+	 * @api
+	 * @param string $prefix
+	 * @param string $blockName
+	 * @return string
 	 */
-	public function getPresentationServices()
+	public static function composeEventName($prefix, $blockName)
 	{
-		return $this->presentationServices;
+		return $prefix . '.' . $blockName;
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Presentation\Layout\Block $blockLayout
-	 * @param \Change\Http\Event $httpEvent
+	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return Parameters
 	 */
-	public function getParameters($blockLayout, $httpEvent = null)
+	public function getParameters($blockLayout, $httpEvent)
 	{
-		$sharedEventManager = $this->registerBlocks();
-		$eventManager = new EventManager(array(static::DEFAULT_IDENTIFIER, $blockLayout->getName()));
-		$eventManager->setSharedManager($sharedEventManager);
-		$event = new Event(static::EVENT_PARAMETERIZE, $this);
-
-		if ($httpEvent instanceof \Change\Http\Event)
-		{
-			$event->setParam('httpRequest', $httpEvent->getRequest());
-			if ($this->documentServices === null)
-			{
-				$this->documentServices = $httpEvent->getDocumentServices();
-			}
-		}
-		$event->setPresentationServices($this->presentationServices);
-		$event->setDocumentServices($this->documentServices);
+		$eventManager = $this->getEventManager();
+		$event = new Event(static::composeEventName(static::EVENT_PARAMETERIZE,
+			$blockLayout->getName()), $this, $httpEvent->getParams());
+		$event->setAuthenticationManager($httpEvent->getAuthenticationManager());
+		$event->setPermissionsManager($httpEvent->getPermissionsManager());
+		$event->setParam('httpRequest', $httpEvent->getRequest());
 		$event->setBlockLayout($blockLayout);
+		$event->setUrlManager($httpEvent->getUrlManager());
 		$results = $eventManager->trigger($event, function ($result)
 		{
 			return $result instanceof Parameters;
@@ -202,25 +172,84 @@ class BlockManager
 	/**
 	 * @param \Change\Presentation\Layout\Block $blockLayout
 	 * @param Parameters $parameters
+	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return BlockResult|null
 	 */
-	public function getResult($blockLayout, $parameters)
+	public function getResult($blockLayout, $parameters, $httpEvent)
 	{
-		$sharedEventManager = $this->registerBlocks();
+		$cacheAdapter = $this->getCacheAdapter();
+		if ($cacheAdapter && ($ttl = $parameters->getTTL()) > 0)
+		{
+			$cacheAdapter->getOptions()->setTtl($ttl);
+			$key = md5(serialize($parameters) . ($httpEvent ? $httpEvent->getUrlManager()->getLCID() : ''));
+			if ($cacheAdapter->hasItem($key))
+			{
+				$result = $cacheAdapter->getItem($key);
+				if ($result instanceof BlockResult){
+					$result->setId($blockLayout->getId());
+				}
+			}
+			else
+			{
+				$result = $this->dispatchExecute($blockLayout, $parameters, $httpEvent);
+				$cacheAdapter->addItem($key, $result);
+			}
+			return $result;
+		}
+		return $this->dispatchExecute($blockLayout, $parameters, $httpEvent);
+	}
 
-		$eventManager = new EventManager(array(static::DEFAULT_IDENTIFIER, $blockLayout->getName()));
-		$eventManager->setSharedManager($sharedEventManager);
-
-		$event = new Event(static::EVENT_EXECUTE, $this);
-		$event->setPresentationServices($this->presentationServices);
-		$event->setDocumentServices($this->documentServices);
+	/**
+	 * @param \Change\Presentation\Layout\Block $blockLayout
+	 * @param Parameters $parameters
+	 * @param \Change\Http\Web\Event $httpEvent
+	 * @return BlockResult|null
+	 */
+	protected function dispatchExecute($blockLayout, $parameters, $httpEvent)
+	{
+		$eventManager = $this->getEventManager();
+		$event = new Event(static::composeEventName(static::EVENT_EXECUTE,
+			$blockLayout->getName()), $this, $httpEvent->getParams());
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
-		$results = $eventManager->trigger($event, function ($result)
-		{
-			return $result instanceof BlockResult;
-		});
-		$result = ($results->stopped()) ? $results->last() : $event->getBlockResult();
+		$event->setUrlManager($httpEvent->getUrlManager());
+		$eventManager->trigger($event);
+
+		$result = $event->getBlockResult();
 		return ($result instanceof BlockResult) ? $result : null;
+	}
+
+	/**
+	 * @return \Zend\Cache\Storage\Adapter\AbstractAdapter|null
+	 */
+	public function getCacheAdapter()
+	{
+		if (false === $this->cacheAdapter)
+		{
+			$this->cacheAdapter = null;
+			$configuration = $this->getConfiguration();
+			if ($configuration->getEntry('Change/Cache/block'))
+			{
+				$eventManager = $this->getEventManager();
+				$event = new \Change\Events\Event(static::EVENT_GET_CACHE_ADAPTER, $this);
+				$eventManager->trigger($event);
+				$cache = $event->getParam('cacheAdapter');
+				if ($cache instanceof \Zend\Cache\Storage\Adapter\AbstractAdapter)
+				{
+					$this->cacheAdapter = $cache;
+				}
+			}
+		}
+		return $this->cacheAdapter;
+	}
+
+	/**
+	 * @param \Zend\Cache\Storage\Adapter\AbstractAdapter $cacheAdapter
+	 * @return $this
+	 */
+	public function setCacheAdapter(\Zend\Cache\Storage\Adapter\AbstractAdapter $cacheAdapter = null)
+	{
+		$this->cacheAdapter = $cacheAdapter;
+		return $this;
 	}
 }

@@ -1,0 +1,19 @@
+{
+	"mainContent": {
+		"id": "mainContent",
+		"grid": 12,
+		"type": "container",
+		"parameters": {
+		},
+		"items": [
+			{
+				"id": "message",
+				"type": "block",
+				"name": "Rbs_Website_Exception",
+				"parameters": {
+					"message": "Grave erreur !!"
+				}
+			}
+		]
+	}
+}

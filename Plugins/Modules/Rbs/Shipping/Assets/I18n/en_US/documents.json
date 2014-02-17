@@ -1,0 +1,11 @@
+{
+  "mode":{
+    "message":"shipping method"
+  },
+  "mode_visual":{
+    "message":"visual"
+  },
+  "mode_description":{
+    "message":"description"
+  }
+}

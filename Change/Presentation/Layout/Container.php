@@ -28,14 +28,6 @@ class Container extends Item
 	/**
 	 * @return string
 	 */
-	public function getGridMode()
-	{
-		return $this->gridMode;
-	}
-
-	/**
-	 * @return string
-	 */
 	public function getType()
 	{
 		return 'container';
@@ -49,6 +41,5 @@ class Container extends Item
 	{
 		parent::initialize($data);
 		$this->grid = $data['grid'];
-		$this->gridMode = $data['gridMode'];
 	}
 }

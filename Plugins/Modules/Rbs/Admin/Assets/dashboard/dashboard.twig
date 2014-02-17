@@ -1,0 +1,46 @@
+<div ng-controller="Rbs_Admin_DashboardController" class="dashboard">
+
+	<div class="small-indicators">
+		<rbs-avatar size='62' user-id='(= user.id =)' ng-click="goToUserProfile()"></rbs-avatar>
+		<span ng-click="showNotifications($event)">
+			<i class="icon-exclamation-sign"></i>
+			<div>{{ i18n('m.rbs.admin.admin.dashboard_notifications', ['ucf']) }}</div>
+			<div class="value">(= newNotificationCount =)</div>
+		</span>
+		<span ng-click="showTasks($event)">
+			<i class="icon-tasks"></i>
+			<div>{{ i18n('m.rbs.admin.admin.dashboard_task_tasks', ['ucf']) }}</div>
+			<div class="value"><i class="icon-spinner icon-spin" ng-hide="tasks"></i>(= tasks.pagination.count =)</div>
+		</span>
+
+		<span ng-repeat="tag in dashboardSettings.tags" style="border-bottom: 3px solid #0088cc;" ng-click="showTaggedDocuments(tag, $event)">
+			<i class="icon-tag"></i>
+			<div ng-bind="tag.label"></div>
+			<div class="value" ng-bind="tag.documentCount | number"></div>
+		</span>
+
+		<span class="settings" ng-click="showDashboardSettings($event)">
+			<i class="icon-cog"></i>
+		</span>
+	</div>
+	<div id="chgDashboardEmbedContainer"></div>
+
+	<div class="jumbotron">
+		<h1>Welcome to RBS Change 4!</h1>
+		<p>
+			The RBS team is really proud to show you this first beta version of its nextgen
+			open source CMS & e-commerce platform!
+		</p>
+		<p>
+			This beta version is still under active development and is <strong>not suitable for production websites</strong>.
+		</p>
+		<p>
+			Thank you very much for giving it a try!
+			Don't hesitate to tell us what you find great, and what troubles you encounter. This will help us to improve RBS Change!
+		</p>
+		<p class="text-muted">
+			For more information, please visit the <a href="https://github.com/RBSChange/Change" target="_blank">project's home on GitHub</a>.
+		</p>
+	</div>
+
+</div>

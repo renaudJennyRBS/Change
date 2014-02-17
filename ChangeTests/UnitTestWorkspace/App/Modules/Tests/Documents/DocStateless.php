@@ -201,4 +201,39 @@ class DocStateless extends \Compilation\Project\Tests\Documents\DocStateless
 	{
 		return $this->data;
 	}
+
+	/**
+	 * @throws \Exception
+	 * @return void
+	 */
+	protected function doLoad()
+	{
+		// TODO: Implement doLoad() method.
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return void
+	 */
+	protected function doCreate()
+	{
+		// TODO: Implement doCreate() method.
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return void
+	 */
+	protected function doUpdate()
+	{
+		// TODO: Implement doUpdate() method.
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	protected function doDelete()
+	{
+		// TODO: Implement doDelete() method.
+	}
 }

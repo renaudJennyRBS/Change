@@ -1,0 +1,11 @@
+{
+	"home":{
+		"message":"accueil"
+	},
+	"error_404":{
+		"message":"oups!, cette page n'est pas disponible."
+	},
+	"error_403":{
+		"message":"oups!, vous n'avez pas les droits nécéssaires."
+	}
+}

@@ -16,17 +16,58 @@ class Information
 	/**
 	 * @var string
 	 */
+	protected $section;
+
+	/**
+	 * @var string
+	 */
 	protected $label;
+
+	/**
+	 * @var boolean
+	 */
+	protected $mailSuitable;
 
 	/**
 	 * @var ParameterInformation[]
 	 */
 	protected $parametersInformation = array();
 
-
+	/**
+	 * @param string $name
+	 */
 	function __construct($name)
 	{
 		$this->name = $name;
+		list($vendor, $shortModuleName,) = explode('_', $name);
+		$this->section = $vendor . '_' . $shortModuleName;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Events\Event $event
+	 */
+	public function onInformation(\Change\Events\Event $event)
+	{
+
+	}
+
+	/**
+	 * @param string $section
+	 * @return $this
+	 */
+	public function setSection($section)
+	{
+		$this->section = $section;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSection()
+	{
+		return $this->section;
 	}
 
 	/**
@@ -47,12 +88,29 @@ class Information
 
 	/**
 	 * @param string $label
+	 * @return $this
 	 */
 	public function setLabel($label)
 	{
 		$this->label = $label;
+		return $this;
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public function isMailSuitable()
+	{
+		return $this->mailSuitable !== null ? $this->mailSuitable : false;
+	}
+
+	/**
+	 * @param boolean $mailSuitable
+	 */
+	public function setMailSuitable($mailSuitable)
+	{
+		$this->mailSuitable = $mailSuitable;
+	}
 
 	/**
 	 * @param string $name
@@ -66,6 +124,28 @@ class Information
 		$parameterInformation = new ParameterInformation($name, $type, $required, $defaultValue);
 		$key = $this->ucLower($name);
 		$this->parametersInformation[$key] = $parameterInformation;
+		return $parameterInformation;
+	}
+
+	/**
+	 * @param string|string[] $allowedModelsNames
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return ParameterInformation
+	 */
+	public function addInformationMetaForDetailBlock($allowedModelsNames, $i18nManager)
+	{
+		return $this->addInformationMeta(\Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, Property::TYPE_DOCUMENTID, false, null)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.block_property_document_to_display', array('ucf')))
+			->setAllowedModelsNames($allowedModelsNames);
+	}
+
+	/**
+	 * @param integer $defaultValue
+	 * @return ParameterInformation
+	 */
+	protected function addTTL($defaultValue)
+	{
+		$parameterInformation = $this->addInformationMeta('TTL', Property::TYPE_INTEGER, true, $defaultValue);
 		return $parameterInformation;
 	}
 
@@ -95,6 +175,22 @@ class Information
 	{
 		$key = $this->ucLower($name);
 		return isset($this->parametersInformation[$key]) ? $this->parametersInformation[$key] : null;
+	}
+
+	/**
+	 * @param string $name
+	 * @return ParameterInformation|null
+	 */
+	public function removeParameterInformation($name)
+	{
+		$key = $this->ucLower($name);
+		if (isset($this->parametersInformation[$key]))
+		{
+			$parameter = $this->parametersInformation[$key];
+			unset($this->parametersInformation[$key]);
+			return $parameter;
+		}
+		return null;
 	}
 
 	/**

@@ -1,0 +1,85 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.meta', ['ucf']) }}">
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaTitle'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.metaTitle" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in metaVariables">
+							<a href="" data-ng-click="addMetaVariable('metaTitle', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaDescription'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.metaDescription" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in metaVariables">
+							<a href="" data-ng-click="addMetaVariable('metaDescription', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'metaKeywords'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.metaKeywords" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in metaVariables">
+							<a href="" data-ng-click="addMetaVariable('metaKeywords', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</rbs-field>
+
+	</fieldset>
+
+	<fieldset data-ng-show="section=='sitemap'"
+		data-form-section-label="{{ i18nAttr('m.rbs.seo.admin.sitemap', ['ucf']) }}">
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapChangeFrequency'), ['ucf']) }}">
+			<select class="form-control" data-ng-model="document.sitemapChangeFrequency" rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
+				<option value=""> {{ i18n('m.rbs.seo.admin.documentseo_sitemap_change_frequency_option', ['ucf']) }}</option>
+			</select>
+		</rbs-field>
+
+		<rbs-field-float property="sitemapPriority"
+			label="{{ i18nAttr(propertyKey('Rbs_Seo_DocumentSeo', 'sitemapPriority'), ['ucf']) }}">
+		</rbs-field-float>
+
+		<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.seo.admin.website', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.seo.admin.add_on_website_sitemap', ['ucf']) }}</th>
+				</tr>
+			</thead>
+			<tbody data-ng-repeat="(websiteId, sitemapWebsiteInfo) in document.sitemapGenerateForWebsites">
+				<tr>
+					<td>(= sitemapWebsiteInfo.label =)</td>
+					<td><rbs-switch ng-model="sitemapWebsiteInfo.generate"></rbs-switch></td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

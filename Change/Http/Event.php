@@ -4,61 +4,37 @@ namespace Change\Http;
 /**
  * @name \Change\Http\Event
  */
-class Event extends \Zend\EventManager\Event
+class Event extends \Change\Events\Event
 {
-	const EVENT_REQUEST      = 'http.request';
-	const EVENT_ACTION       = 'http.action';
-	const EVENT_RESULT 		 = 'http.result';
-	const EVENT_RESPONSE     = 'http.response';
-	const EVENT_EXCEPTION    = 'http.exception';
+	const EVENT_REQUEST = 'http.request';
+	const EVENT_ACTION = 'http.action';
+	const EVENT_RESULT = 'http.result';
+	const EVENT_RESPONSE = 'http.response';
+	const EVENT_EXCEPTION = 'http.exception';
+	const EVENT_AUTHENTICATE = 'http.authenticate';
 
 	/**
-	 * @var \Change\Application\ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @var \Change\Documents\DocumentServices
-	 */
-	protected $documentServices;
-
-	/**
-	 * @var \Change\Presentation\PresentationServices
-	 */
-	protected $presentationServices;
-
-	/**
-	 * @var \Change\Http\Request
+	 * @var Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \Change\Http\AuthenticationInterface|null
-	 */
-	protected $authentication;
-
-	/**
-	 * @var \Change\Http\AclInterface
-	 */
-	protected $acl;
-
-	/**
-	 * @var \Change\Http\UrlManager
+	 * @var UrlManager
 	 */
 	protected $urlManager;
 
 	/**
-	 * @var callable|null
+	 * @var Callable|null
 	 */
 	protected $authorization;
 
 	/**
-	 * @var callable|null
+	 * @var Callable|null
 	 */
 	protected $action;
 
 	/**
-	 * @var \Change\Http\Result
+	 * @var Result
 	 */
 	protected $result;
 
@@ -69,11 +45,11 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\Controller|null
+	 * @return Controller|null
 	 */
 	public function getController()
 	{
-		if ($this->getTarget() instanceof \Change\Http\Controller)
+		if ($this->getTarget() instanceof Controller)
 		{
 			return $this->getTarget();
 		}
@@ -81,58 +57,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Application\ApplicationServices|null $applicationServices
-	 */
-	public function setApplicationServices(\Change\Application\ApplicationServices $applicationServices = null)
-	{
-		$this->applicationServices = $applicationServices;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Application\ApplicationServices|null
-	 */
-	public function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentServices|null $documentServices
-	 */
-	public function setDocumentServices(\Change\Documents\DocumentServices $documentServices = null)
-	{
-		$this->documentServices = $documentServices;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Documents\DocumentServices|null
-	 */
-	public function getDocumentServices()
-	{
-		return $this->documentServices;
-	}
-
-	/**
-	 * @param \Change\Presentation\PresentationServices|null $presentationServices
-	 */
-	public function setPresentationServices(\Change\Presentation\PresentationServices $presentationServices = null)
-	{
-		$this->presentationServices = $presentationServices;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Presentation\PresentationServices|null
-	 */
-	public function getPresentationServices()
-	{
-		return $this->presentationServices;
-	}
-
-	/**
-	 * @param \Change\Http\Request $request
+	 * @param Request $request
 	 */
 	public function setRequest($request)
 	{
@@ -141,7 +66,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\Request
+	 * @return Request
 	 */
 	public function getRequest()
 	{
@@ -149,41 +74,7 @@ class Event extends \Zend\EventManager\Event
 	}
 
 	/**
-	 * @param \Change\Http\AuthenticationInterface|null $authentication
-	 */
-	public function setAuthentication($authentication)
-	{
-		$this->authentication = $authentication;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Http\AuthenticationInterface|null
-	 */
-	public function getAuthentication()
-	{
-		return $this->authentication;
-	}
-
-	/**
-	 * @param \Change\Http\AclInterface $acl
-	 */
-	public function setAcl($acl)
-	{
-		$this->acl = $acl;
-	}
-
-	/**
-	 * @api
-	 * @return \Change\Http\AclInterface
-	 */
-	public function getAcl()
-	{
-		return $this->acl;
-	}
-
-	/**
-	 * @param \Change\Http\UrlManager $urlManager
+	 * @param UrlManager $urlManager
 	 */
 	public function setUrlManager($urlManager)
 	{
@@ -192,7 +83,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\UrlManager
+	 * @return UrlManager
 	 */
 	public function getUrlManager()
 	{
@@ -201,7 +92,25 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @param callable|null $authorization
+	 * @return \Change\User\AuthenticationManager
+	 */
+	public function getAuthenticationManager()
+	{
+		return $this->getApplicationServices()->getAuthenticationManager();
+	}
+
+	/**
+	 * @api
+	 * @return \Change\Permissions\PermissionsManager
+	 */
+	public function getPermissionsManager()
+	{
+		return $this->getApplicationServices()->getPermissionsManager();
+	}
+
+	/**
+	 * @api
+	 * @param Callable|null $authorization
 	 */
 	public function setAuthorization($authorization)
 	{
@@ -210,7 +119,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return callable|null
+	 * @return Callable|null
 	 */
 	public function getAuthorization()
 	{
@@ -219,7 +128,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @param callable|null $action
+	 * @param Callable|null $action
 	 */
 	public function setAction($action)
 	{
@@ -228,7 +137,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return callable|null
+	 * @return Callable|null
 	 */
 	public function getAction()
 	{
@@ -237,7 +146,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @param \Change\Http\Result $result
+	 * @param Result $result
 	 */
 	public function setResult($result)
 	{
@@ -246,7 +155,7 @@ class Event extends \Zend\EventManager\Event
 
 	/**
 	 * @api
-	 * @return \Change\Http\Result
+	 * @return Result
 	 */
 	public function getResult()
 	{

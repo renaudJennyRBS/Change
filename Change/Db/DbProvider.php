@@ -1,7 +1,6 @@
 <?php
 namespace Change\Db;
 
-use Change\Configuration\Configuration;
 use Change\Db\Query\AbstractQuery;
 use Change\Db\Query\Builder;
 use Change\Db\Query\StatementBuilder;
@@ -13,15 +12,31 @@ use Change\Logging\Logging;
  */
 abstract class DbProvider
 {
+	use \Change\Events\EventsCapableTrait;
+
+	const EVENT_SQL_FRAGMENT_STRING = 'SQLFragmentString';
+
+	const EVENT_SQL_FRAGMENT = 'SQLFragment';
+
 	/**
 	 * @var integer
 	 */
 	protected $id;
 
 	/**
-	 * @var array
+	 * @var \ArrayObject
 	 */
 	protected $connectionInfos;
+
+	/**
+	 * @var \Change\Workspace
+	 */
+	protected $workspace;
+
+	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
 
 	/**
 	 * @var array
@@ -49,6 +64,21 @@ abstract class DbProvider
 	protected $statementBuilderQueries;
 
 	/**
+	 * @var string[]
+	 */
+	protected $listenerAggregateClassNames;
+
+	/**
+	 * @var boolean
+	 */
+	protected $readOnly = false;
+
+	/**
+	 * @var boolean
+	 */
+	protected $checkTransactionBeforeWriting = true;
+
+	/**
 	 * @return integer
 	 */
 	public function getId()
@@ -57,42 +87,118 @@ abstract class DbProvider
 	}
 
 	/**
+	 * @return string[]
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return array('Db');
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		$classNames = array();
+		foreach ($this->getEventManagerIdentifier() as $identifier)
+		{
+			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $identifier));
+			if (is_array($entry))
+			{
+				foreach ($entry as $className)
+				{
+					if (is_string($className))
+					{
+						$classNames[] = $className;
+					}
+				}
+			}
+		}
+		return array_unique($classNames);
+	}
+
+	/**
 	 * @return string
 	 */
 	public abstract function getType();
 
 	/**
-	 * @param Configuration $config
-	 * @param Logging $logging
-	 * @throws \RuntimeException
-	 * @return \Change\Db\DbProvider
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
 	 */
-	public static function newInstance(Configuration $config, Logging $logging)
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
 	{
-		$section = $config->getEntry('Change/Db/use', 'default');
-		$connectionInfos = $config->getEntry('Change/Db/' . $section, array());
-		if (!isset($connectionInfos['dbprovider']))
+		$this->configuration = $configuration;
+		if ($this->connectionInfos === null)
 		{
-			throw new \RuntimeException('Missing or incomplete database configuration', 31000);
+			$section = $configuration->getEntry('Change/Db/use', 'default');
+			$connectionInfos = $configuration->getEntry('Change/Db/' . $section, array());
+			if (is_array($connectionInfos))
+			{
+				$this->setConnectionInfos(new \ArrayObject($connectionInfos));
+			}
+			else
+			{
+				$this->setConnectionInfos(new \ArrayObject());
+			}
 		}
-		$className = $connectionInfos['dbprovider'];
-		return new $className($connectionInfos, $logging);
+		return $this;
 	}
 
 	/**
-	 * @param array $connectionInfos
-	 * @param Logging $logging
+	 * @param \Change\Workspace $workspace
+	 * @return $this
 	 */
-	public function __construct(array $connectionInfos, Logging $logging)
+	public function setWorkspace(\Change\Workspace $workspace)
 	{
-		$this->connectionInfos = $connectionInfos;
-		$this->setLogging($logging);
+		$this->workspace = $workspace;
+		return $this;
+	}
+
+	public function __construct()
+	{
 		$this->timers = array('init' => microtime(true),
-			'longTransaction' => isset($connectionInfos['longTransaction']) ? floatval($connectionInfos['longTransaction']) : 0.2);
+			'select' => 0, 'exec' => 0, 'longTransaction' => 0.2);
 	}
 
 	/**
-	 * @return array
+	 * @param boolean $readOnly
+	 * @return $this
+	 */
+	public function setReadOnly($readOnly)
+	{
+		$this->readOnly = $readOnly;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getReadOnly()
+	{
+		return $this->readOnly;
+	}
+
+	/**
+	 * @param boolean $checkTransactionBeforeWriting
+	 * @return $this
+	 */
+	public function setCheckTransactionBeforeWriting($checkTransactionBeforeWriting)
+	{
+		$this->checkTransactionBeforeWriting = $checkTransactionBeforeWriting;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getCheckTransactionBeforeWriting()
+	{
+		return $this->checkTransactionBeforeWriting;
+	}
+
+	/**
+	 * @return \ArrayObject
 	 */
 	public function getConnectionInfos()
 	{
@@ -100,11 +206,15 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @param array $connectionInfos
+	 * @param \ArrayObject $connectionInfos
 	 */
 	public function setConnectionInfos($connectionInfos)
 	{
 		$this->connectionInfos = $connectionInfos;
+		if (isset($connectionInfos['longTransaction']))
+		{
+			$this->timers['longTransaction'] = floatval($connectionInfos['longTransaction']);
+		}
 	}
 
 	/**
@@ -141,6 +251,7 @@ abstract class DbProvider
 
 	/**
 	 * @param string $cacheKey
+	 * @throws \RuntimeException
 	 * @return StatementBuilder
 	 */
 	public function getNewStatementBuilder($cacheKey = null)
@@ -150,30 +261,10 @@ abstract class DbProvider
 		return new StatementBuilder($this, $cacheKey, $query);
 	}
 
-	/**
-	 * @return Logging
-	 */
-	public function getLogging()
-	{
-		return $this->logging;
-	}
-
-	/**
-	 * @param Logging $logging
-	 */
-	public function setLogging(Logging $logging)
-	{
-		$this->logging = $logging;
-	}
-
 	public function __destruct()
 	{
 		unset($this->builderQueries);
 		unset($this->statementBuilderQueries);
-		if ($this->inTransaction())
-		{
-			$this->logging->warn(__METHOD__ . ' called while active transaction (' . $this->transactionCount . ')');
-		}
 	}
 
 	/**
@@ -199,24 +290,38 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @return void
+	 * @param Logging $logging
 	 */
-	public abstract function beginTransaction();
+	public function setLogging(Logging $logging)
+	{
+		$this->logging = $logging;
+	}
 
 	/**
-	 * @return void
+	 * @return Logging
 	 */
-	public abstract function commit();
+	public function getLogging()
+	{
+		return $this->logging;
+	}
 
 	/**
+	 * @param \Change\Events\Event $event
 	 * @return void
 	 */
-	public abstract function rollBack();
+	public abstract function beginTransaction($event = null);
 
 	/**
-	 * @return boolean
+	 * @param \Change\Events\Event $event
+	 * @return void
 	 */
-	public abstract function inTransaction();
+	public abstract function commit($event);
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @return void
+	 */
+	public abstract function rollBack($event);
 
 	/**
 	 * @param string $tableName
@@ -226,12 +331,42 @@ abstract class DbProvider
 
 	/**
 	 * @api
-	 * @param \Change\Db\Query\InterfaceSQLFragment $fragment
+	 * @param Query\InterfaceSQLFragment $fragment
 	 * @return string
 	 */
-	public function buildSQLFragment(\Change\Db\Query\InterfaceSQLFragment $fragment)
+	public abstract function buildSQLFragment(Query\InterfaceSQLFragment $fragment);
+
+	/**
+	 * @param Query\InterfaceSQLFragment $fragment
+	 * @return string
+	 */
+	public function buildCustomSQLFragment(Query\InterfaceSQLFragment $fragment)
 	{
+		$event = new \Change\Events\Event(static::EVENT_SQL_FRAGMENT_STRING, $this, array('fragment' => $fragment));
+		$this->getEventManager()->trigger($event);
+		$sql = $event->getParam('sql');
+		if (is_string($sql))
+		{
+			return $sql;
+		}
+		$this->getLogging()->warn(__METHOD__ . '(' . get_class($fragment) . ') not implemented');
 		return $fragment->toSQL92String();
+	}
+
+	/**
+	 * @param array $argument
+	 * @return Query\InterfaceSQLFragment|null
+	 */
+	public function getCustomSQLFragment(array $argument = array())
+	{
+		$event = new \Change\Events\Event(static::EVENT_SQL_FRAGMENT, $this, $argument);
+		$this->getEventManager()->trigger($event);
+		$fragment = $event->getParam('SQLFragment');
+		if ($fragment instanceof Query\InterfaceSQLFragment)
+		{
+			return $fragment;
+		}
+		return null;
 	}
 
 	/**

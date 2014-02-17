@@ -1,0 +1,216 @@
+{
+  "sectionproductlist_synchronizedsection":{
+    "message":"synchronized section"
+  },
+  "variantgroup_rootproduct":{
+    "message":"parent product"
+  },
+  "variantgroup_groupattribute":{
+    "message":"attribute set"
+  },
+  "variantgroup_axesattributes":{
+    "message":"Variable attributes"
+  },
+  "variantgroup_othersattributes":{
+    "message":"Other attributes"
+  },
+  "variantgroup_axesconfiguration":{
+    "message":"Configuration of the variant axis"
+  },
+  "variantgroup_newskuoncreation":{
+    "message":"Create a new SKU for each variant"
+  },
+  "productlist_productsortorder":{
+    "message":"sort on property",
+    "description":"Use on product list editor to define the property to sort the product in the list"
+  },
+  "productlist_productsortdirection":{
+    "message":"sort direction"
+  },
+  "productlist_products":{
+    "message":"products"
+  },
+  "productlistitem_condition":{
+    "message":"condition"
+  },
+  "condition":{
+    "message":"condition"
+  },
+  "product":{
+    "message":"product"
+  },
+  "productlist":{
+    "message":"products list"
+  },
+  "sectionproductlist":{
+    "message":"products list synchronized with a section"
+  },
+  "productlistitem":{
+    "message":"belonging to a list"
+  },
+  "attribute":{
+    "message":"product attribute"
+  },
+  "variantgroup":{
+    "message":"variants group"
+  },
+  "crosssellingproductlist":{
+    "message":"list of related products"
+  },
+  "crosssellingproductlist_accessories":{
+    "message":"accessories"
+  },
+  "crosssellingproductlist_similar":{
+    "message":"similar products"
+  },
+  "crosssellingproductlist_higher_range":{
+    "message":"up-selling products"
+  },
+  "crosssellingproductlist_product":{
+    "message":"product"
+  },
+  "crosssellingproductlist_crossSellingType":{
+    "message":"link type"
+  },
+  "crosssellingproductlist_symmetrical":{
+    "message":"symmetric relation"
+  },
+  "crosssellingproductlist_label":{
+    "message":"list name"
+  },
+  "productlistitem_product":{
+    "message":"product"
+  },
+  "productlistitem_productlist":{
+    "message":"list"
+  },
+  "product_label":{
+    "message":"label"
+  },
+  "product_title":{
+    "message":"title"
+  },
+  "product_description":{
+    "message":"description"
+  },
+  "product_categorizable":{
+    "message":"categorizable"
+  },
+  "product_visual":{
+    "message":"visual"
+  },
+  "product_visuals":{
+    "message":"visuals"
+  },
+  "product_pictograms":{
+    "message":"pictograms"
+  },
+  "product_brand":{
+    "message":"brand"
+  },
+  "product_shippedin":{
+    "message":"shipping time"
+  },
+  "product_newskuoncreation":{
+    "message":"Create a new SKU"
+  },
+  "product_sku":{
+    "message":"SKU"
+  },
+  "product_variant":{
+    "message":"variant"
+  },
+  "product_minorderquantity":{
+    "message":"minimum quantity"
+  },
+  "product_maxorderquantity":{
+    "message":"maximum quantity"
+  },
+  "product_publicationsections":{
+    "message":"publication sections"
+  },
+  "product_attribute":{
+    "message":"attribute set"
+  },
+  "product_publication_help":{
+    "message":"To set the <strong>publication properties<\/strong> of this product, such as its location and its publication dates, please go to section $LINKSTART$Publication$LINKEND$, available in the left menu."
+  },
+  "attribute_title":{
+    "message":"title"
+  },
+  "attribute_valuetype":{
+    "message":"attribute type"
+  },
+  "attribute_defaultvalue":{
+    "message":"default attribute value"
+  },
+  "attribute_requiredvalue":{
+    "message":"required attribute"
+  },
+  "attribute_localizedvalue":{
+    "message":"localized value"
+  },
+  "attribute_description":{
+    "message":"description"
+  },
+  "attribute_documenttype":{
+    "message":"document template"
+  },
+  "attribute_collectioncode":{
+    "message":"value within the collection"
+  },
+  "attribute_productproperty":{
+    "message":"product property"
+  },
+  "attribute_attributes":{
+    "message":"group attributes"
+  },
+  "attribute_visibility":{
+    "message":"visibility"
+  },
+  "attribute_axis":{
+    "message":"declination axis"
+  },
+  "attribute_visibility_comparisons":{
+    "message":"comparisons"
+  },
+  "attribute_visibility_specifications":{
+    "message":"features"
+  },
+  "attribute_visibility_list_item":{
+    "message":"can be used in lists"
+  },
+  "attribute_type_boolean":{
+    "message":"yes \/ no"
+  },
+  "attribute_type_integer":{
+    "message":"integer"
+  },
+  "attribute_type_documentid":{
+    "message":"document"
+  },
+  "attribute_type_documentidarray":{
+    "message":"documents list"
+  },
+  "attribute_type_float":{
+    "message":"numeric"
+  },
+  "attribute_type_datetime":{
+    "message":"date"
+  },
+  "attribute_type_string":{
+    "message":"text string"
+  },
+  "attribute_type_text":{
+    "message":"text"
+  },
+  "attribute_type_group":{
+    "message":"attributes group"
+  },
+  "attribute_type_property":{
+    "message":"product property"
+  },
+  "productlist_configure_products":{
+    "message":"configure"
+  }
+}

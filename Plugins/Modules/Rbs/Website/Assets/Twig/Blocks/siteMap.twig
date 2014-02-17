@@ -1,0 +1,25 @@
+{% macro item(item) %}
+	{% import _self as menu %}
+	<li>
+		{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
+		{% if item.hasChild %}
+			<ul class="bullet">
+				{% for child in item.getChildren %}
+					{{ menu.item(child) }}
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</li>
+{% endmacro %}
+{% import _self as menu %}
+
+<nav>
+	{% if parameters.showTitle == true %}
+		<h1>{{ i18n('m.rbs.website.front.home',['ucf']) }}</h1>
+	{% endif %}
+	<ul class="bullet">
+		{% for child in root.children %}
+			{{ menu.item(child) }}
+		{% endfor %}
+	</ul>
+</nav>

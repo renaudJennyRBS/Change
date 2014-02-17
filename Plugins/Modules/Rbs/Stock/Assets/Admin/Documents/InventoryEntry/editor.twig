@@ -1,0 +1,29 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'sku'), ['ucf']) }}"
+			data-ng-disabled="document.sku"
+			required="true"
+			accepted-model="Rbs_Stock_Sku"
+			selector-title="{{ i18nAttr('m.rbs.stock.admin.inventoryentry_sku_picker_title', ['ucf']) }}">
+		</rbs-field-picker>
+
+		<rbs-field-integer
+			property="level"
+			label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'level'), ['ucf']) }}"
+			max-length="9"
+			input-class="input-mini">
+		</rbs-field-integer>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>

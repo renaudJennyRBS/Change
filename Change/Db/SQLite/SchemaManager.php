@@ -3,7 +3,6 @@ namespace Change\Db\SQLite;
 
 use Change\Db\Schema\TableDefinition;
 use Change\Db\Schema\FieldDefinition;
-use Change\Db\Schema\KeyDefinition;
 
 /**
  * @name \Change\Db\SQLite\SchemaManager
@@ -100,7 +99,7 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	public function getName()
 	{
 		$ci = $this->dbProvider->getConnectionInfos();
-		return is_array($ci) && isset($ci['database']) ? $ci['database'] : null;
+		return isset($ci['database']) ? $ci['database'] : null;
 	}
 	
 	/**
@@ -119,6 +118,14 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 		}
 		return true;
 	}
+
+	/**
+	 * @return void
+	 */
+	public function closeConnection()
+	{
+		$this->pdo = null;
+	}
 		
 	/**
 	 * @param string $sql
@@ -127,7 +134,6 @@ class SchemaManager implements \Change\Db\InterfaceSchemaManager
 	 */
 	public function execute($sql)
 	{
-		$this->logging->info(__METHOD__ . ': ' . $sql);
 		return $this->getDriver()->exec($sql);
 	}
 

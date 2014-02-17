@@ -1,0 +1,11 @@
+{
+	"categories":{
+		"message":"catégories"
+	},
+	"previous_month":{
+		"message":"mois précédent"
+	},
+	"next_month":{
+		"message":"mois suivant"
+	}
+}

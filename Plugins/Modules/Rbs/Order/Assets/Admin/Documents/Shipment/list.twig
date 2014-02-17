@@ -1,0 +1,29 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.order.admin.shipment_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false" model="Rbs_Order_Shipment" filter="filter">
+		</rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			<a href ng-href="(= 'Rbs_Order_Shipment' | rbsURL:'new' =)">{{ i18n('m.rbs.order.admin.shipment_create', ['ucf']) }}</a>
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsOrderShipment"
+				model="Rbs_Order_Shipment" filter-query="query">
+			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="prepared">
+				(= doc.prepared | rbsBoolean =)
+			</rbs-column>
+			<rbs-column name="shippingModeCode"></rbs-column>
+			<rbs-column name="trackingCode"></rbs-column>
+			<rbs-column name="carrierStatus"></rbs-column>
+			<rbs-column name="itemCount" ></rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

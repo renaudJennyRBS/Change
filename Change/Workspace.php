@@ -60,19 +60,6 @@ class Workspace
 	}
 
 	/**
-	 * Build a path relative to the "Libraries" folder
-	 *
-	 * @api
-	 * @return string
-	 */
-	public function librariesPath()
-	{
-		$args = func_get_args();
-		array_unshift($args, $this->librariesBase());
-		return $this->buildPathFromComponents($args);
-	}
-
-	/**
 	 * Build a path relative to the project's modules folder (App/Modules/)
 	 *
 	 * @api
@@ -98,6 +85,18 @@ class Workspace
 		return call_user_func_array(array($this, 'projectPath'), $args);
 	}
 
+	/**
+	 * Build a path relative to the project's themes folder (App/Themes/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function projectThemesPath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'Themes');
+		return call_user_func_array(array($this, 'appPath'), $args);
+	}
 
 	/**
 	 * Build a path relative to the plugins themes folder (Plugins/Themes/)
@@ -132,6 +131,80 @@ class Workspace
 		$args = func_get_args();
 		array_unshift($args, 'cache');
 		return call_user_func_array(array($this, 'tmpPath'), $args);
+	}
+
+	/**
+	 * @api
+	 * @return string
+	 */
+	public function composeAbsolutePath()
+	{
+		$path = $this->composePath(func_get_args());
+		if (empty($path))
+		{
+			return $this->projectBase();
+		}
+
+		if ($path[0] !== DIRECTORY_SEPARATOR)
+		{
+			if (preg_match('/^[a-zA-Z]:/', $path))
+			{
+				return $path;
+			}
+			return $this->projectPath($path);
+		}
+		return $path;
+	}
+
+	/**
+	 * @api
+	 * @param string|string[] $part1
+	 * @param string|string[] $_ [optional]
+	 * return string
+	 */
+	public function composePath($partPart1, $_ = null)
+	{
+		$path = '';
+		foreach (func_get_args() as $pathPartArg)
+		{
+			if (is_array($pathPartArg))
+			{
+				if (count($pathPartArg))
+				{
+					$pathPart = call_user_func_array(array($this, 'composePath'), $pathPartArg);
+				}
+				else
+				{
+					$pathPart = '';
+				}
+			}
+			else
+			{
+				$pathPart = strval($pathPartArg);
+			}
+
+			if ($pathPart !== '')
+			{
+				if (DIRECTORY_SEPARATOR !== '/')
+				{
+					$pathPart = str_replace('/', DIRECTORY_SEPARATOR, $pathPart);
+				}
+
+				if ($path !== '')
+				{
+					$pathPart = trim($pathPart, DIRECTORY_SEPARATOR);
+					if ($pathPart !== '')
+					{
+						$path .= DIRECTORY_SEPARATOR . $pathPart;
+					}
+				}
+				else
+				{
+					$path .= $pathPart;
+				}
+			}
+		}
+		return $path;
 	}
 
 	/**
