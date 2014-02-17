@@ -326,13 +326,15 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		}
 	}
 
-
 	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
+
+		/** @var $order Order */
+		$order = $event->getDocument();
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
@@ -346,24 +348,39 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Shipments/', 'shipments'));
 			}
 
-			/** @var $order Order */
-			$order = $event->getDocument();
 			$documentResult->setProperty('context', $order->getContext()->toArray());
+			$taxes = [];
+			$billingArea = $order->getBillingAreaIdInstance();
+			if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
+			{
+				foreach ($billingArea->getTaxes() as $tax)
+				{
+					$taxes[$tax->getCode()] = $tax->toArray();
+					$taxes[$tax->getCode()]['label'] = $tax->getLabel();
+				}
+			}
+			$documentResult->setProperty('taxes', count($taxes) ? $taxes : null);
 
 			$documentResult->setProperty('address', $this->getAddress()->toArray());
 
 			$documentResult->setProperty('lines', array_map(function(\Rbs\Order\OrderLine $line) {return $line->toArray();}, $this->getLines()));
 			$documentResult->setProperty('linesTaxesValues', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $this->getLinesTaxesValues()));
+			// TODO: include discounts, fees, etc.
+			$documentResult->setProperty('taxesValues', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $this->getLinesTaxesValues()));
 
 			$documentResult->setProperty('shippingModes', array_map(function(\Rbs\Commerce\Process\BaseShippingMode $mode) {return $mode->toArray();}, $this->getShippingModes()));
-
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$linkResult = $restResult;
-			if (!$linkResult->getProperty('code')) {
+			if (!$linkResult->getProperty('code'))
+			{
 				$linkResult->setProperty('code', $linkResult->getProperty('label'));
 			}
+
+			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			$formattedAmount = $nf->formatCurrency($order->getPaymentAmount(), $order->getCurrencyCode());
+			$restResult->setProperty('formattedPaymentAmount', $formattedAmount);
 		}
 	}
 

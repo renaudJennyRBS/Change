@@ -10,9 +10,7 @@
 
 			link: function (scope, element, attrs) {
 				var extend = {
-
 					articleCount: 0,
-					paymentAmount: null,
 					loadingProductInfo: false,
 					removedLines: [],
 					editedLine: {},
@@ -60,7 +58,7 @@
 
 					addNewLines: function () {
 						extend.loadingProductInfo = true;
-						var ids = Utils.toIds(scope.document.newLineProducts);
+						var ids = Utils.toIds(scope.data.newLineProducts);
 						angular.forEach(ids, function (id) {
 							var line = {options: {productId: id}};
 							$http.post(REST.getBaseUrl('rbs/order/lineNormalize'),
@@ -76,7 +74,7 @@
 									var line = result.line;
 									line.index = scope.document.lines.length;
 									scope.document.lines.push(line);
-									scope.document.newLineProducts = undefined;
+									scope.data.newLineProducts = [];
 								})
 								.error(function (result)
 								{
@@ -176,6 +174,7 @@
 				scope.extend = extend;
 
 				scope.listLines = [];
+				scope.data = { newLineProducts: [] };
 
 				scope.$watchCollection('document.lines', function (lines) {
 					var listLines = [];
@@ -190,17 +189,23 @@
 				// This watches for modifications in the lines, made by the user, such as quantity for each line.
 				scope.$watch('document.lines', function (lines, old) {
 					if (scope.document && lines !== old) {
-						scope.extend.paymentAmount = 0;
+						scope.document.paymentAmount = 0;
 						extend.articleCount = 0;
 						for (var i = 0; i < lines.length; i++) {
 							extend.articleCount += lines[i].quantity;
 							var value = lines[i].items[0].price.value;
 							if (value) {
-								scope.extend.paymentAmount += lines[i].quantity * value;
+								scope.document.paymentAmount += lines[i].quantity * value;
 							}
 						}
 					}
 				}, true);
+
+				scope.$watch('data.newLineProducts.length', function (value){
+					if (value) {
+						scope.orderContext.showNewLineUI = true;
+					}
+				});
 
 				scope.$on(Events.EditorPreSave, function (event, args) {
 					var promises = args['promises'];

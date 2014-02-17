@@ -11,12 +11,11 @@
 			templateUrl : 'Rbs/Admin/js/directives/address-fields.twig',
 
 			link : function (scope, elm, attrs, ngModel) {
-
 				scope.addressFieldsId = null;
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
 
-				scope.$watch(attrs.addressFields, function(newValue){
+				scope.$watch(attrs.addressFields, function(newValue) {
 					var fieldsId = null;
 					if (newValue) {
 						if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
@@ -78,5 +77,4 @@
 			}
 		};
 	}]);
-
 })(window.jQuery);

@@ -60,7 +60,7 @@
 		"message":"code de tracking"
 	},
 	"shipment_carrierstatus":{
-		"message":"statut d'expédition (transporteur)"
+		"message":"statut transporteur"
 	},
 	"shipment_itemcount":{
 		"message":"nombre d'éléments"

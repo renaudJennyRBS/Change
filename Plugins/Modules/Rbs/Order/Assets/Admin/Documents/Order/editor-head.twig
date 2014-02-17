@@ -42,12 +42,11 @@
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="showAddressUI = !showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showAddressUI]"></i></a>
+				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="orderContext.showAddressUI = !orderContext.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showAddressUI]"></i></a>
 				</h3>
 			</div>
-			<div rbs-order-address="" class="panel-body" ng-show="showAddressUI"
-					address-documents="userAddresses"
-					address="document.address" address-fields="document.address.__addressFieldsId" >
+			<div rbs-order-address="" class="panel-body" ng-show="orderContext.showAddressUI"
+				address-documents="userAddresses"address="document.address">
 			</div>
 		</div>
 	</div>

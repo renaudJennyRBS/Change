@@ -9,14 +9,13 @@
 			templateUrl : 'Document/Rbs/Order/Order/address.twig',
 			scope : {
 				'addressDocuments' : "=",
-				'addressFields' : "=",
 				'address': "="
 			},
 
 			link : function (scope, element, attrs)
 			{
 				if (!angular.isObject(scope.address)) {
-					scope.address = {};
+					scope.address = { __addressFieldsId: null };
 				}
 
 				scope.populateAddressFields = function(addressDoc) {
@@ -41,15 +40,8 @@
 				}, true);
 
 				// If user select no option for addressFields, empty the address
-				scope.$watch('addressFields', function (addressFields) {
-					if (addressFields)
-					{
-						if (angular.isObject(addressFields)) {
-							scope.address.__addressFieldsId = addressFields.id;
-						} else {
-							scope.address.__addressFieldsId = addressFields;
-						}
-					}
+				scope.$watch('address.__addressFieldsId', function (value) {
+					console.log('address.__addressFieldsId', value);
 				});
 			}
 		};

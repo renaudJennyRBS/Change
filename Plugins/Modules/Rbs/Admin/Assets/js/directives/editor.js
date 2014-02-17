@@ -773,6 +773,9 @@
 						args.context.label(label);
 						var data = {document: scope.document, original: scope.original};
 						args.context.savedData('editor_' + scope.document.model, data);
+						if (angular.isFunction(scope.onSaveContext)) {
+							scope.onSaveContext(args.context);
+						}
 					});
 
 					/**

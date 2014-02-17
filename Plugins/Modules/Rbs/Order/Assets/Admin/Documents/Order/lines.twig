@@ -12,9 +12,9 @@
 
 		<div ng-show="document.webStoreId">
 			<p>
-				<a href="javascript:;" ng-click="showNewLineUI = !showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showNewLineUI]"></i> {{ i18n('m.rbs.order.admin.order_add_lines', ['ucf']) }}</a>
+				<a href="javascript:;" ng-click="orderContext.showNewLineUI = !orderContext.showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showNewLineUI]"></i> {{ i18n('m.rbs.order.admin.order_add_lines', ['ucf']) }}</a>
 			</p>
-			<div class="well well-sm" ng-show="showNewLineUI">
+			<div class="well well-sm" ng-show="orderContext.showNewLineUI">
 				<h4>{{ i18n('m.rbs.order.admin.order_new_line', ['ucf']) }}</h4>
 				<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
 
@@ -23,9 +23,9 @@
 						<div>
 						<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
 						<rbs-document-picker-multiple accepted-model="Rbs_Catalog_Product"
-							 selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="document.newLineProducts">
+							 selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="data.newLineProducts">
 						 </rbs-document-picker-multiple>
-						<button type="button" ng-disabled="extend.loadingProductInfo || ! document.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
+						<button type="button" ng-disabled="extend.loadingProductInfo || ! data.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
 							<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
 						</button>
 						</rbs-field>
@@ -96,19 +96,6 @@
 				<button class="btn btn-danger btn-sm" ng-click="extend.trashRemovedLine($index)" title="{{ i18nAttr('m.rbs.order.admin.order_remove_permanently', ['ucf']) }}"><i class="icon-trash"></i></button>
 			</span>
 			(= line.quantity =) &times; (= line.designation =)
-		</div>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-md-6 col-md-offset-6">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-dollar"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
-			</div>
-			<div class="panel-body">
-				<strong>(= extend.paymentAmount | currency =)</strong>
-			</div>
 		</div>
 	</div>
 </div>

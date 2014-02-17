@@ -6,12 +6,6 @@ td .correction {
 	top: 2px;
 }
 
-rbs-document-list .table thead > tr > th,
-rbs-document-list .table thead > tr > td,
-rbs-document-list .table tbody > tr > th,
-rbs-document-list .table tbody > tr > td {
-	vertical-align: middle;
-}
 rbs-document-list table {
 	margin: 0;
 }
@@ -21,7 +15,15 @@ rbs-document-list .panel-footer .pagination {
 	top: -4px;
 }
 
-rbs-document-list .table thead > tr > th {
+
+.document-list thead > tr > th,
+.document-list thead > tr > td,
+.document-list tbody > tr > th,
+.document-list tbody > tr > td {
+	vertical-align: middle;
+}
+
+.document-list thead > tr > th {
 	padding-top: 15px;
 	padding-bottom: 15px;
 }

@@ -295,8 +295,7 @@
 	},
 	"order_management":{
 		"message":"gestion des commandes"
-	}
-	,
+	},
 	"billing_management":{
 		"message":"gestion des paiements"
 	},
@@ -305,5 +304,8 @@
 	},
 	"creditnote_create":{
 		"message":"ajouter un avoir"
+	},
+	"taxes_amount":{
+		"message":"montant des taxes"
 	}
 }

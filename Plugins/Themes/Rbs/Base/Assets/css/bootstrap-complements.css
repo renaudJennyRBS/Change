@@ -190,3 +190,13 @@
 .grid-list-bordered .grid-list-cell {
 	border: 1px solid #ddd;
 }
+
+.grid-list-align-top > li {
+	vertical-align: top;
+}
+.grid-list-align-bottom > li {
+	vertical-align: bottom;
+}
+.grid-list-align-middle > li {
+	vertical-align: middle;
+}

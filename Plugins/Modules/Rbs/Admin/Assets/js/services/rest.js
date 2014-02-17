@@ -563,7 +563,7 @@
 					 * Creates a new, unsaved resource of the given `model` in the given locale (`lcid`).
 					 *
 					 * @param model Model name.
-					 * @param lcid (Optional) Locale ID (5 chars).
+					 * @param {string=} lcid (Optional) Locale ID (5 chars).
 					 *
 					 * @return {Object}
 					 */
@@ -589,7 +589,7 @@
 					 *
 					 * @param model Model name.
 					 * @param id Resource's ID.
-					 * @param lcid (Optionnal) Locale ID.
+					 * @param {string=} lcid (Optional) Locale ID.
 					 *
 					 * @return {Object} Promise that will be resolved when the Resource is loaded.
 					 */
@@ -668,7 +668,7 @@
 					 *
 					 * @param model
 					 * @param id
-					 * @param lcid
+					 * @param {string=} lcid
 					 * @returns {*}
 					 */
 					'ensureLoaded' : function (model, id, lcid) {

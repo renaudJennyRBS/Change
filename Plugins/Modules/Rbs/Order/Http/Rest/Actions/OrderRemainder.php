@@ -66,7 +66,7 @@ class OrderRemainder
 					}
 				}
 
-				$address = ['address' => new \stdClass(), 'addressFields' => 0];
+				$address = null;
 				$remainLines = [];
 				$itemForShippingModeCount = 0;
 				foreach ($skuData as $codeSku => $skuLine)
@@ -197,14 +197,10 @@ class OrderRemainder
 							$skuData[$codeSKU]['shippingModeId'] = $shippingMode->getId();
 							if ($shippingMode->getAddress())
 							{
-								$skuData[$codeSKU]['address'] = [
-									'address' => $shippingMode->getAddress()->toArray()
-								];
+								$skuData[$codeSKU]['address'] = $shippingMode->getAddress()->toArray();
 							}
 							else {
-								$skuData[$codeSKU]['address'] = [
-									'address' =>  new \stdClass()
-								];
+								$skuData[$codeSKU]['address'] = null;
 							}
 							break;
 						}

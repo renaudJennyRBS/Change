@@ -11,10 +11,11 @@
 			require : 'rbsDocumentEditor',
 
 			link : function (scope, element, attrs, editorCtrl) {
-
-				scope.showNewLineUI = false;
-				scope.showAddressUI = false;
-				scope.showShippingUI = false;
+				scope.orderContext = {
+					showNewLineUI: false,
+					showAddressUI: false,
+					showShippingUI: false
+				};
 				scope.userAddresses = [];
 				scope.shipments = [];
 				scope.priceInfo = {
@@ -23,15 +24,31 @@
 					zones : [],
 					withTax : false
 				};
-				scope.userAddressFieldsId = 0;
+
+				var contextRestored = false;
+
+				scope.onSaveContext = function (currentContext) {
+					console.log('onSaveContext');
+					currentContext.savedData('order', {
+						orderContext: scope.orderContext,
+						userAddresses: scope.userAddresses,
+						shipments: scope.shipments,
+						priceInfo: scope.priceInfo
+					});
+				};
+
+				scope.onRestoreContext = function (currentContext) {
+					console.log('onRestoreContext');
+					var toRestoreData = currentContext.savedData('order');
+					scope.orderContext = toRestoreData.orderContext;
+					scope.userAddresses = toRestoreData.userAddresses;
+					scope.shipments = toRestoreData.priceInfo;
+					contextRestored = true;
+				};
 
 				scope.onLoad = function() {
 					if (angular.isArray(scope.document.context) || !angular.isObject(scope.document.context)) {
 						scope.document.context = {};
-					}
-
-					if (scope.document.context.hasOwnProperty('addressFields')) {
-						scope.userAddressFieldsId = scope.document.context.addressFields;
 					}
 
 					if (!angular.isArray(scope.document.lines)) {
@@ -41,13 +58,14 @@
 					if (angular.isArray(scope.document.address) || !angular.isObject(scope.document.address)) {
 						scope.document.address = {};
 					}
+
 					if (!angular.isArray(scope.document.shippingModes)) {
 						scope.document.shippingModes = [];
 					}
 				};
 
 				scope.onReady = function() {
-					scope.showNewLineUI = scope.document.isNew();
+					scope.orderContext.showNewLineUI = scope.document.isNew();
 
 					var shipmentsLink = scope.document.getLink('shipments');
 					if (shipmentsLink) {
@@ -120,7 +138,6 @@
 					});
 				};
 
-
 				scope.billingAreaUpdated = function(billingAreaId) {
 					if(!billingAreaId) {
 						return;
@@ -156,7 +173,7 @@
 					scope.billingAreaUpdated(billingAreaId);
 				}, true);
 
-				// This watches for modifications in the user doc in order to fill the address list
+				// This watches for modifications in the user doc in order to fill the address list.
 				scope.$watch('document.ownerId', function (ownerId) {
 					scope.populateAddressList(ownerId);
 				}, true);
@@ -169,10 +186,10 @@
 					scope.priceInfo.withTax = pricesValueWithTax;
 				}, true);
 
-				// This refreshes shippingModesObject to be synchronized with order editor
+				// This refreshes shippingModesObject to be synchronized with order editor.
 				scope.$on('shippingModesUpdatedFromLines', function (event) {
 					scope.$broadcast('shippingModesUpdated');
-					scope.showShippingUI = true;
+					scope.orderContext.showShippingUI = true;
 				});
 
 				editorCtrl.init('Rbs_Order_Order');

@@ -5,9 +5,8 @@
 	</select>
 </rbs-field>
 <rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_address_fields', ['ucf']) }}">
-	<select class="form-control" ng-model="address.__addressFieldsId"
-			rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
-		<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
-	</select>
+	<rbs-document-select ng-model="address.__addressFieldsId" accepted-model="Rbs_Geo_AddressFields"
+		value-ids="true" empty-label="{{ i18nAttr('m.rbs.geo.admin.address_fields_select', ['ucf']) }}">
+	</rbs-document-select>
 </rbs-field>
 <rbs-address-fields ng-model="address" address-fields="address.__addressFieldsId"/>
