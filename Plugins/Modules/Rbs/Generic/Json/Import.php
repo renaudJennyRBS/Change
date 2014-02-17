@@ -337,6 +337,12 @@ class Import
 			}
 		}
 
+		$callback = $this->getOptions()->get('preSave');
+		if (is_callable($callback))
+		{
+			call_user_func($callback, $document, $jsonDocument);
+		}
+
 		/** @var $document \Change\Documents\Interfaces\Localizable|AbstractDocument */
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
 		{

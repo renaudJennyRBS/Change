@@ -13,5 +13,17 @@
 	},
 	"process_fees":{
 		"message":"frais"
+	},
+	"fee":{
+		"message":"frais"
+	},
+	"fee_sku":{
+		"message":"sku"
+	},
+	"fee_cartfilterdata":{
+		"message":"Critères d'application"
+	},
+	"fee_shippingmode":{
+		"message":"Mode de livraison"
 	}
 }

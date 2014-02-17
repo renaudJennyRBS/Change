@@ -37,16 +37,6 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$cs = $this->commerceServices;
 		$cm = $cs->getCartManager();
-		try
-		{
-			$cm->getNewCart();
-			$this->fail('RuntimeException expected');
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->assertEquals('Unable to get a new cart', $e->getMessage());
-		}
-		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 
 		$cart = $cm->getNewCart();
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
@@ -69,7 +59,6 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$cs = $this->commerceServices;
 		$cm = $cs->getCartManager();
-		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 		$this->assertEquals($identifier, $cart->getIdentifier());
@@ -85,7 +74,6 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$cs = $this->commerceServices;
 		$cm = $cs->getCartManager();
-		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 		$cart->getContext()->set('TEST', 'VALUE');
@@ -106,7 +94,6 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$cs = $this->commerceServices;
 		$cm = $cs->getCartManager();
-		(new \Rbs\Commerce\Events\CartManager\Listeners())->attach($cm->getEventManager());
 		$cart = $cm->getCartByIdentifier($identifier);
 		$this->assertInstanceOf('\Rbs\Commerce\Cart\Cart', $cart);
 
@@ -189,7 +176,6 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cartManager = $cs->getCartManager();
 
 		$cart = new \Rbs\Commerce\Cart\Cart('idt', $cartManager);
-		$cart->setDocumentManager($this->getApplicationServices()->getDocumentManager());
 
 		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'price' => 5.3, 'options' => []];
 

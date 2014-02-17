@@ -42,10 +42,10 @@
 		"message":"sélectionnez les frais autorisés"
 	},
 	"lines_price_value_filter":{
-		"message":"Montant hors taxe des lignes"
+		"message":"Montant total des lignes"
 	},
 	"lines_price_value":{
-		"message":"Le montant hors taxe des lignes"
+		"message":"Le montant total des lignes"
 	},
 	"terms_and_conditions_function":{
 		"message":"termes et conditions"
@@ -58,5 +58,11 @@
 	},
 	"section_name":{
 		"message":"E-commerce"
+	},
+	"fee_list":{
+		"message":"frais"
+	},
+	"fee_create":{
+		"message":"ajouter un frais"
 	}
 }

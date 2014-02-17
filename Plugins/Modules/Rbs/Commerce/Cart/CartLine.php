@@ -14,10 +14,18 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 	protected $serializedData;
 
 	/**
-	 * @param string|array|LineInterface $key
+	 * @var \Rbs\Commerce\Cart\CartManager
 	 */
-	function __construct($key)
+	protected $cartManager;
+
+	/**
+	 * @param string|array|LineInterface $key
+	 * @param CartManager $cartManager
+	 */
+	function __construct($key, \Rbs\Commerce\Cart\CartManager $cartManager)
 	{
+		$this->cartManager = $cartManager;
+
 		if (is_array($key))
 		{
 			$this->fromArray($key);
@@ -33,14 +41,30 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return \Rbs\Commerce\Cart\CartManager
+	 */
+	protected function getCartManager()
+	{
+		return $this->cartManager;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
 	 * @return $this
 	 */
-	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	public function setCartManager(\Rbs\Commerce\Cart\CartManager $cartManager)
 	{
+		$this->cartManager = $cartManager;
 		if ($this->serializedData)
 		{
-			$this->restoreSerializedData($documentManager);
+			$this->restoreSerializedData();
+		}
+		else
+		{
+			foreach ($this->getItems() as $item)
+			{
+				$item->setCartManager($cartManager);
+			}
 		}
 		return $this;
 	}
@@ -123,7 +147,7 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 			'priceValue' => $this->priceValue,
 			'priceValueWithTax' => $this->priceValueWithTax,
 			'options' => $this->options);
-		return serialize((new CartStorage())->getSerializableValue($serializedData));
+		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
 
 	/**
@@ -136,10 +160,13 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		$this->serializedData = unserialize($serialized);
 	}
 
-	protected function restoreSerializedData(\Change\Documents\DocumentManager $documentManager)
+	/**
+	 * @return array
+	 */
+	protected function restoreSerializedData()
 	{
-		$serializedData = (new CartStorage())->setDocumentManager($documentManager)
-			->restoreSerializableValue($this->serializedData);
+		$serializedData = $this->getCartManager()->restoreSerializableValue($this->serializedData);
+
 		$this->serializedData = null;
 		$this->index = $serializedData['index'];
 		$this->key = $serializedData['key'];
@@ -153,32 +180,10 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		foreach ($this->items as $item)
 		{
 			/* @var $item CartLineItem */
-			$item->setDocumentManager($documentManager);
+			$item->setCartManager($this->getCartManager());
 		}
-	}
 
-	/**
-	 * @param array $array
-	 * @return $this
-	 */
-	public function fromArray(array $array)
-	{
-		parent::fromArray($array);
-		if(array_key_exists('key', $array))
-		{
-			$this->setKey(strval($array['key']));
-		}
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function toArray()
-	{
-		$array = parent::toArray();
-		$array['key'] = $this->key;
-		return $array;
+		return $serializedData;
 	}
 
 	/**
@@ -187,7 +192,7 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 	 */
 	protected function getNewItemFromArray($itemArray)
 	{
-		$item = new CartLineItem($itemArray);
+		$item = new CartLineItem($itemArray, $this->getCartManager());
 		if ($item->getCodeSKU())
 		{
 			return $item;
@@ -201,7 +206,7 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 	 */
 	protected function getNewItemFromLineItem($lineItem)
 	{
-		return new CartLineItem($lineItem);
+		return new CartLineItem($lineItem, $this->getCartManager());
 	}
 
 	public function __toString()

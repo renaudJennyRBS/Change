@@ -176,16 +176,15 @@
 				return activeContexts;
 			}
 
-			function addTargetContext(targetUrl) {
+			function getContextByTargetUrl(targetUrl) {
 				if (activeContexts.length < 1 || !targetUrl || targetUrl.length == 0) {
-					return targetUrl;
+					return null;
 				}
 				var context, i, lastIndex = activeContexts.length - 1;
 				for(i = lastIndex; i >= 0; i--) {
 					context = activeContexts[i];
 					if (context.targetUrl == targetUrl) {
-						targetUrl += '#' + context.id;
-						return targetUrl;
+						return context;
 					}
 				}
 
@@ -194,12 +193,11 @@
 					for(i = lastIndex; i >= 0; i--) {
 						context = activeContexts[i];
 						if (context.targetUrl == cleanTarget) {
-							targetUrl += '#' + context.id;
-							return targetUrl;
+							return context;
 						}
 					}
 				}
-				return targetUrl;
+				return null;
 			}
 
 			// Public API
@@ -210,7 +208,7 @@
 				popContext : popContext,
 				indexOfContextId : indexOfContextId,
 				getActiveContexts : getActiveContexts,
-				addTargetContext : addTargetContext
+				getContextByTargetUrl : getContextByTargetUrl
 			};
 		}];
 	});

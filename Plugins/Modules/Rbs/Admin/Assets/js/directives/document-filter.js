@@ -306,7 +306,7 @@
 				};
 
 				scope.isAnd = function() {
-					return scope.filter.operator == 'AND';
+					return !scope.filter || scope.filter.operator == 'AND';
 				};
 
 				scope.countAllFilters = function() {

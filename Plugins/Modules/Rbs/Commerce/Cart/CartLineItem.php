@@ -15,10 +15,17 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 	protected $serializedData;
 
 	/**
-	 * @param string|array|LineItemInterface $codeSKU
+	 * @var \Rbs\Commerce\Cart\CartManager
 	 */
-	function __construct($codeSKU)
+	protected $cartManager;
+
+	/**
+	 * @param string|array|LineItemInterface $codeSKU
+	 * @param CartManager $cartManager
+	 */
+	function __construct($codeSKU, \Rbs\Commerce\Cart\CartManager $cartManager)
 	{
+		$this->cartManager = $cartManager;
 		if (is_array($codeSKU))
 		{
 			$this->fromArray($codeSKU);
@@ -34,14 +41,23 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return \Rbs\Commerce\Cart\CartManager
+	 */
+	protected function getCartManager()
+	{
+		return $this->cartManager;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
 	 * @return $this
 	 */
-	public function setDocumentManager(\Change\Documents\DocumentManager $documentManager)
+	public function setCartManager(\Rbs\Commerce\Cart\CartManager $cartManager)
 	{
-		if ($this->serializedData)
+		$this->cartManager = $cartManager;
+		if ($this->serializedData && $cartManager)
 		{
-			$this->restoreSerializedData($documentManager);
+			$this->restoreSerializedData();
 		}
 		return $this;
 	}
@@ -58,7 +74,7 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 			'reservationQuantity' => $this->reservationQuantity,
 			'price' => $this->price,
 			'options' => $this->options);
-		return serialize((new CartStorage())->getSerializableValue($serializedData));
+		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
 
 	/**
@@ -73,15 +89,18 @@ class CartLineItem extends \Rbs\Commerce\Std\BaseLineItem implements LineItemInt
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return array
 	 */
-	protected function restoreSerializedData(\Change\Documents\DocumentManager $documentManager)
+	protected function restoreSerializedData()
 	{
-		$serializedData = (new CartStorage())->setDocumentManager($documentManager)->restoreSerializableValue($this->serializedData);
+		$serializedData = $this->getCartManager()->restoreSerializableValue($this->serializedData);
 		$this->serializedData = null;
+
 		$this->codeSKU = $serializedData['codeSKU'];
 		$this->reservationQuantity = $serializedData['reservationQuantity'];
 		$this->price = $serializedData['price'];
 		$this->options = $serializedData['options'];
+
+		return $serializedData;
 	}
 }

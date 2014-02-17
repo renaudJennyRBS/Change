@@ -121,15 +121,28 @@
 					var params, entry = null;
 					angular.forEach($route.routes, function(route) {
 						if (!entry && (params = switchRouteMatcher(searchPath, route))) {
-							entry = {label: null, route: route, path: searchPath, params: params,
-								url : function() {return Navigation.addTargetContext(this.path.substring(1))}};
 							if (route.redirectTo == (route.originalPath + '/')) {
 								var redirectRoute = $route.routes[route.redirectTo];
 								if (redirectRoute) {
-									entry.route = route = redirectRoute;
-									entry.path = searchPath + '/';
+									route = redirectRoute;
+									searchPath += '/';
 								}
 							}
+
+							entry = {label: null, route: route, path: searchPath, params: params,
+								url : function() {
+									var ctx, url;
+									if (angular.isString(this.route.redirectTo)) {
+										url = this.route.redirectTo.substring(1);
+										ctx = Navigation.getContextByTargetUrl(url);
+										if (ctx) {
+											return url + "#" + ctx.id;
+										}
+									}
+									url = this.path.substring(1);
+									ctx = Navigation.getContextByTargetUrl(url);
+									return ctx ? url + "#" + ctx.id : url;
+								}};
 
 							if (route.hasOwnProperty('labelKey')) {
 								entry.label = i18n.trans(route.labelKey);

@@ -5,6 +5,6 @@
 	<properties>
 		<property name="paymentConnectors" type="DocumentArray" document-type="Rbs_Payment_Connector" />
 		<property name="shippingModes" type="DocumentArray" document-type="Rbs_Shipping_Mode" />
-		<property name="fees" type="DocumentArray" document-type="Rbs_Price_Fee" />
+		<property name="fees" type="DocumentArray" document-type="Rbs_Commerce_Fee" />
 	</properties>
 </document>

@@ -136,11 +136,7 @@ class Cart
 			$cart = $cartManager->getCartByIdentifier($cartIdentifier);
 			if ($cart)
 			{
-				$cartStorage  = new \Rbs\Commerce\Cart\CartStorage();
-				$cartStorage->setTransactionManager($event->getApplicationServices()->getTransactionManager());
-				$cartStorage->setDbProvider($event->getApplicationServices()->getDbProvider());
-				$cartStorage->setDocumentManager($event->getApplicationServices()->getDocumentManager());
-				$cartStorage->deleteCart($cart);
+				$cartManager->deleteCart($cart);
 			}
 		}
 	}
