@@ -1104,11 +1104,17 @@
 	"update_filter": {
 		"message":"mettre à jour"
 	},
+	"filter_updated": {
+		"message":"mis à jour !"
+	},
 	"delete_filter": {
 		"message":"supprimer le filtre"
 	},
 	"create_filter": {
 		"message":"enregistrer ce filtre"
+	},
+	"filter_created": {
+		"message":"créé !"
 	},
 	"saved_filters": {
 		"message":"filtres enregistrés"

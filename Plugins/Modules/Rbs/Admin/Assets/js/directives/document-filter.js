@@ -153,14 +153,17 @@
 
 					if (label)
 					{
+						scope.creatingFilter = true;
 						$http.post(url, {'model_name' : model, 'content' : angular.fromJson(scope.filter), 'label' : label})
 							.success(function (data) {
 								loadFilters().then(function ()
 								{
+									scope.creatingFilter = false;
 									scope.useExistingFilter(data);
 								});
 							})
 							.error(function (data) {
+								scope.creatingFilter = false;
 								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.filter_create_error'), data.message, 'rbs_filter_create_error');
 							});
 					}
@@ -170,12 +173,17 @@
 				scope.updateExistingFilter = function ()
 				{
 					var url = Utils.makeUrl(REST.getBaseUrl('actions/filters/'));
+					scope.updatingFilter = true;
 
 					$http.put(url, scope.existingFilterInUse)
 						.success(function () {
-							loadFilters();
+							loadFilters().then(function ()
+							{
+								scope.updatingFilter = false;
+							});
 						})
 						.error(function (data) {
+							scope.updatingFilter = false;
 							NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.filter_update_error'), data.message, 'rbs_filter_update_error');
 						});
 				};
@@ -186,13 +194,18 @@
 					if (window.confirm(i18n.trans('m.rbs.admin.adminjs.confirm_delete_filter')))
 					{
 						var url = Utils.makeUrl(REST.getBaseUrl('actions/filters/'), {'filter_id' : scope.existingFilterInUse['filter_id']});
+						scope.deletingFilter = true;
 
 						$http['delete'](url)
 							.success(function () {
 								scope.useExistingFilter(null);
-								loadFilters();
+								loadFilters().then(function ()
+								{
+									scope.deletingFilter = false;
+								});
 							})
 							.error(function (data) {
+								scope.deletingFilter = false;
 								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.filter_delete_error'), data.message, 'rbs_filter_delete_error');
 							});
 					}

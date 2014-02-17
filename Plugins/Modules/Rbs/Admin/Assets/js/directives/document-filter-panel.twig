@@ -24,7 +24,7 @@
 							</li>
 						</ul>
 					</div>
-					<button type="button" class="btn btn-primary" ng-click="createFilter()">{{ i18n('m.rbs.admin.admin.create_filter', ['ucf']) }}</button>
+					<button type="button" rbs-async-action-button="creatingFilter" rbs-async-action-button-done-label="{{ i18nAttr('m.rbs.admin.admin.filter_created', ['ucf']) }}" class="btn btn-primary" ng-click="createFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.create_filter', ['ucf']) }}</button>
 				</span>
 
 				<button type="submit" class="btn btn-primary"><i class="icon-filter icon-white"></i> {{ i18n('m.rbs.admin.admin.filter', ['ucf']) }}</button>
@@ -37,8 +37,8 @@
 			<div class="input-group">
 				<input type="text" class="form-control" ng-model="existingFilterInUse.label">
 				<span class="input-group-btn">
-					<button type="button" class="btn btn-success" ng-click="updateExistingFilter()">{{ i18n('m.rbs.admin.admin.update_filter', ['ucf']) }}</button>
-					<button type="button" class="btn btn-danger" ng-click="removeExistingFilter()" title="{{ i18nAttr('m.rbs.admin.admin.delete_filter', ['ucf']) }}"><i class="icon-trash"></i></button>
+					<button type="button" rbs-async-action-button="updatingFilter" rbs-async-action-button-done-label="{{ i18nAttr('m.rbs.admin.admin.filter_updated', ['ucf']) }}" class="btn btn-success" ng-click="updateExistingFilter()"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.update_filter', ['ucf']) }}</button>
+					<button type="button" rbs-async-action-button="deletingFilter" class="btn btn-danger" ng-click="removeExistingFilter()" title="{{ i18nAttr('m.rbs.admin.admin.delete_filter', ['ucf']) }}"><i class="icon-trash"></i></button>
 				</span>
 			</div>
 		</div>
