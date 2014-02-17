@@ -299,5 +299,11 @@
 	,
 	"billing_management":{
 		"message":"gestion des paiements"
+	},
+	"creditnote_list":{
+		"message":"avoirs"
+	},
+	"creditnote_create":{
+		"message":"ajouter un avoir"
 	}
 }

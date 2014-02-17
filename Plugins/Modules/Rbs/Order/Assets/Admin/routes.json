@@ -8,6 +8,43 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Order/CreditNote/": {
+		"model": "Rbs_Order_CreditNote",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/CreditNote/list.twig",
+			"labelKey": "m.rbs.order.admin.creditnote_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/CreditNote/:id": {
+		"model": "Rbs_Order_CreditNote",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/CreditNote/form.twig",
+			"labelKey": "m.rbs.order.documents.creditnote | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/CreditNote/:id/timeline": {
+		"model": "Rbs_Order_CreditNote",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Order_CreditNote",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Order/CreditNote/new": {
+		"model": "Rbs_Order_CreditNote",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/CreditNote/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
 	"/Rbs/Order/Invoice/": {
 		"model": "Rbs_Order_Invoice",
 		"name": "list",

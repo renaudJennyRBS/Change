@@ -67,5 +67,26 @@
 	},
 	"shipment_line_number":{
 		"message":"numéro de ligne"
+	},
+	"creditnote":{
+		"message":"avoir"
+	},
+	"creditnote_ownerId":{
+		"message":"bénéficiaire"
+	},
+	"creditnote_code":{
+		"message":"numéro de l'avoir"
+	},
+	"creditnote_targetidentifier":{
+		"message":"origine"
+	},
+	"creditnote_amount":{
+		"message":"montant"
+	},
+	"creditnote_amountnotapplied":{
+		"message":"montant non restitué"
+	},
+	"creditnote_currencycode":{
+		"message":"devise"
 	}
 }

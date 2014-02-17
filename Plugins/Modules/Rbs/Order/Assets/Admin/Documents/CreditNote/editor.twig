@@ -1,0 +1,26 @@
+<form name="form" ng-submit="submit()" class="form-horizontal">
+	<fieldset data-ng-show="section==''"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+
+		<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'code'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'amount'), ['ucf']) }}">
+			<rbs-price-input data-ng-model="document.amount" data-currency-code="(=document.currencyCode=)" />
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'currencyCode'), ['ucf']) }}">
+			<select ng-model="document.currencyCode" rbs-items-from-collection="Rbs_Price_Collection_Iso4217" class="form-control"></select>
+		</rbs-field>
+	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
+	<rbs-form-button-bar></rbs-form-button-bar>
+</form>
