@@ -1022,26 +1022,18 @@ class CatalogManager
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\VariantGroup|integer $variantGroup
+	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
 	 * @return \Rbs\Catalog\Documents\Product|null
 	 */
 	public function getRootProductOfVariantGroup($variantGroup)
 	{
-		if ($variantGroup instanceof \Rbs\Catalog\Documents\VariantGroup)
+		$rootProduct = $variantGroup->getRootProduct();
+
+		if ($rootProduct->published())
 		{
-			$variantGroup = $variantGroup->getId();
+			return $rootProduct;
 		}
-
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
-		$query->andPredicates(
-			$query->eq('variant', false),
-			$query->published()
-		);
-		$subQuery = $query->getPropertyBuilder('variantGroup');
-		$subQuery->getPredicateBuilder();
-		$subQuery->andPredicates($subQuery->eq('id', $variantGroup));
-
-		return $query->getFirstDocument();
+		return null;
 	}
 
 	/**

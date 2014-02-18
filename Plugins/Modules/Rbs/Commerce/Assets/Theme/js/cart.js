@@ -340,7 +340,6 @@
 			$http.post('Action/Rbs/Commerce/GetCurrentCart', {refresh: false})
 				.success(function(data) {
 					setCart(data);
-					console.log(scope.cart.lines);
 				})
 				.error(function(data, status, headers) {
 					console.log('GetCurrentCart error', data, status, headers);

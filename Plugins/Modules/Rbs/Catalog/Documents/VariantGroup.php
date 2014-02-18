@@ -152,10 +152,12 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
+		/** @var $document VariantGroup */
+		$document = $event->getDocument();
+
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			/** @var $document VariantGroup */
-			$document = $event->getDocument();
+
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
@@ -179,6 +181,10 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			{
 				throw new \RuntimeException('CommerceServices not set', 999999);
 			}
+		}
+		else if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$restResult->setProperty('rootProductId', $document->getRootProductId());
 		}
 	}
 
