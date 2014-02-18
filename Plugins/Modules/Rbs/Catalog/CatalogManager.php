@@ -993,7 +993,6 @@ class CatalogManager
 		if ($product->getVariantGroup())
 		{
 			$vConfiguration = $this->getVariantsConfiguration($product);
-			var_dump($vConfiguration['axes']);
 
 			$variantInfo['isRoot'] = $product->hasVariants();
 			$variantInfo['depth'] = count($vConfiguration['axes']['axesValues']);
@@ -1020,6 +1019,95 @@ class CatalogManager
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\VariantGroup|integer $variantGroup
+	 * @return \Rbs\Catalog\Documents\Product|null
+	 */
+	public function getRootProductOfVariantGroup($variantGroup)
+	{
+		if ($variantGroup instanceof \Rbs\Catalog\Documents\VariantGroup)
+		{
+			$variantGroup = $variantGroup->getId();
+		}
+
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+		$query->andPredicates(
+			$query->eq('variant', false),
+			$query->published()
+		);
+		$subQuery = $query->getPropertyBuilder('variantGroup');
+		$subQuery->getPredicateBuilder();
+		$subQuery->andPredicates($subQuery->eq('id', $variantGroup));
+
+		return $query->getFirstDocument();
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $variant
+	 * @return integer|null
+	 */
+	public function getVariantProductIdMustBeDisplayedForVariant($variant)
+	{
+		$axesConfiguration = $variant->getVariantGroup()->getAxesConfiguration();
+		$axesCount = count($axesConfiguration);
+		$axes = array();
+		for ($i = 0; $i < count($axesConfiguration) - 1; $i++)
+		{
+			if ($axesConfiguration[$i]['url'] === true)
+			{
+				$axesConfiguration[$i]['level'] = $i;
+				$axes[] =  $axesConfiguration[$i];
+			}
+		}
+		$axes = array_reverse($axes);
+
+		$newProductId = null;
+		if (count($axes) > 0)
+		{
+			$productAxesConfiguration = null;
+			$vConfiguration = $this->getVariantsConfiguration($variant);
+			foreach ($vConfiguration['axes']['products'] as $infoProduct)
+			{
+				if ($infoProduct['id'] === $variant->getId())
+				{
+					$productAxesConfiguration = $infoProduct;
+					break;
+				}
+			}
+
+			foreach ($axes as $axe)
+			{
+				$productAxesConfigurationValue = $productAxesConfiguration['values'][$axe['level']]['value'];
+				foreach ($vConfiguration['axes']['products'] as $infoProduct)
+				{
+					if ($infoProduct['values'][$axe['level']]['value'] == $productAxesConfigurationValue)
+					{
+						$newProductId = $infoProduct['id'];
+						for ($i = ($axe['level'] + 1); $i < $axesCount; $i++)
+						{
+							if ($infoProduct['values'][$i]['value'] !== null)
+							{
+								$newProductId = null;
+							}
+						}
+					}
+
+					if ($newProductId != null)
+					{
+						break;
+					}
+				}
+
+				if ($newProductId != null)
+				{
+					break;
+				}
+			}
+		}
+
+		return $newProductId;
 	}
 
 	/**

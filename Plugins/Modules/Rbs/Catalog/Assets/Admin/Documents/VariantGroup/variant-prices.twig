@@ -56,7 +56,7 @@
 								<a href="" ng-if="$first" ng-click="applyValueOnAll(sku.price.value)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
 							</td>
 							<td>
-								<input type="number" class="form-control input-sm" ng-model="sku.price.ecoTax"/>
+								<input type="text" rbs-smart-float="" class="form-control input-sm" ng-model="sku.price.ecoTax"/>
 								<a href="" ng-if="$first" ng-click="applyEcoTaxOnAll(sku.price.ecoTax)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
 							</td>
 							<td>
@@ -73,7 +73,7 @@
 								<a href="" ng-if="$first" ng-click="applyTaxCategoriesOnAll(sku.price.taxCategories)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
 							</td>
 							<td>
-								<a href ng-href="(= 'Rbs_Price_Price' | rbsURL:'form':{id:sku.price.id} =)">{{ i18n('m.rbs.catalog.admin.variantgroup_edit_price', ['ucf']) }}</a></br>
+								<a ng-if="sku.price.id" href ng-href="(= 'Rbs_Price_Price' | rbsURL:'form':{id:sku.price.id} =)">{{ i18n('m.rbs.catalog.admin.variantgroup_edit_price', ['ucf']) }}</a></br>
 								<a ng-if="sku.priceCount > 1" href ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'prices':{id:sku.productId} =)">{{ i18n('m.rbs.catalog.admin.variantgroup_see_all_prices', ['ucf']) }}</a>
 							</td>
 						</tr>
