@@ -100,7 +100,7 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$finalProduct = $this->getProductToBeDisplay($product, $catalogManager);
+				$finalProduct = $this->getProductToBeDisplayed($product, $catalogManager, $documentManager);
 
 				if ($finalProduct !== null)
 				{
@@ -117,9 +117,10 @@ class Product extends Block
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param \Rbs\Catalog\CatalogManager $catalogManager
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return \Rbs\Catalog\Documents\Product
 	 */
-	protected function getProductToBeDisplay($product, $catalogManager)
+	protected function getProductToBeDisplayed($product, $catalogManager, $documentManager)
 	{
 		if ($product->hasVariants() || !$product->getVariantGroup())
 		{
@@ -128,7 +129,6 @@ class Product extends Block
 		else
 		{
 			$variantInfo = $catalogManager->getVariantInfo($product);
-			var_dump($variantInfo);
 			if ($variantInfo)
 			{
 				if (!$variantInfo['isFinal'] )
@@ -143,7 +143,21 @@ class Product extends Block
 					}
 					else
 					{
+						$newProductId = $catalogManager->getVariantProductIdMustBeDisplayedForVariant($product);
 
+						if ($newProductId != null)
+						{
+							$product = $documentManager->getDocumentInstance($newProductId);
+							if ($product instanceof \Rbs\Catalog\Documents\Product)
+							{
+								return $product;
+							}
+						}
+						else
+						{
+							// Try to find root product
+							return $catalogManager->getRootProductOfVariantGroup($product->getVariantGroup());
+						}
 					}
 				}
 			}

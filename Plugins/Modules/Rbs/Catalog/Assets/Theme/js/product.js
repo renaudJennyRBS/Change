@@ -145,19 +145,35 @@
 				if (product) {
 					for (index = 0; index < axesLength; index++) {
 						productAxisVal = product.values[index];
-						i = getIndexOfValue(scope.axesValues[index], productAxisVal.value);
-						if (i != -1) {
+						i = -1;
+						if (scope.axesValues[index])
+						{
+							i = getIndexOfValue(scope.axesValues[index], productAxisVal.value);
+						}
+						if (i != -1)
+						{
 							scope.selectedAxesValues[index] = scope.axesValues[index][i];
 							parentValues.push(productAxisVal);
-							if (index + 1 < axesLength) {
+							if (index + 1 < axesLength)
+							{
 								buildSelectAxisValues(index + 1, parentValues, val.products, val.axesValues);
 							}
-						} else {
+
+							if (index == axesLength - 1)
+							{
+								loadProduct(product)
+							}
+						}
+						else
+						{
 							scope.selectedAxesValues[index] = null;
 						}
 					}
-				} else {
-					for (i = 0; i < axesLength; i++) {
+				}
+				else
+				{
+					for (i = 0; i < axesLength; i++)
+					{
 						scope.selectedAxesValues[i] = null;
 					}
 				}
@@ -172,6 +188,7 @@
 			if (!val || !scope.axes) {
 				return;
 			}
+
 			var i, expected = [], axes = scope.axes.axesValues, products = scope.axes.products;
 			for (i = 0; i < val.length; i++) {
 				if (val[i] === null) {
@@ -191,27 +208,32 @@
 			setCurrentProduct(null);
 
 			for (i = 0; i < products.length; i++) {
-				if (eqAxesValues(expected, products[i].values)) {
+				if (eqAxesValues(expected, products[i].values))
+				{
 					if (products[i].id != scope.product.id) {
-						scope.productLoading = true;
-						$http.post('Action/Rbs/Catalog/ProductResult', {
-							productId: products[i].id,
-							axesValues: products[i].values,
-							formats: scope.visualFormats
-						})
-						.success(function (data) {
-								scope.productLoading = false;
-								setCurrentProduct(data);
-						})
-						.error(function () {
-								scope.productLoading = false;
-								setCurrentProduct(null);
-						});
+						loadProduct(products[i]);
 					}
 					return;
 				}
 			}
 		});
+
+		function loadProduct(product) {
+			scope.productLoading = true;
+			$http.post('Action/Rbs/Catalog/ProductResult', {
+				productId: product.id,
+				axesValues: product.values,
+				formats: scope.visualFormats
+			})
+				.success(function (data) {
+					scope.productLoading = false;
+					setCurrentProduct(data);
+				})
+				.error(function () {
+					scope.productLoading = false;
+					setCurrentProduct(null);
+				});
+		}
 
 		function setCurrentProduct(data) {
 			if (data)
