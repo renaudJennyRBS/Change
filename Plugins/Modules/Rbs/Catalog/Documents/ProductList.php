@@ -8,7 +8,6 @@ use Change\Http\Rest\Result\Link;
  */
 class ProductList extends \Compilation\Rbs\Catalog\Documents\ProductList
 {
-
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

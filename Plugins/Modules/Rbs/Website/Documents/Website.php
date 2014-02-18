@@ -100,8 +100,8 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$url->setHost($this->getHostName());
 		$url->setPort($this->getPort());
 		$url->setPath('/');
-		$urlManager = new UrlManager($url, $this->getScriptName());
 
+		$urlManager = new UrlManager($url, $this->getScriptName());
 		//TODO PathRuleManager not set
 		$urlManager->setDocumentManager($this->getDocumentManager());
 		$urlManager->setWebsite($this);
@@ -122,6 +122,9 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATE, array($this, 'onWebsiteUpdate'), 5);
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onCreated(\Change\Documents\Events\Event $event)
 	{
 		/* @var $website Website */

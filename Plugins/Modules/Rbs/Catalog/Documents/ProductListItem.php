@@ -10,13 +10,16 @@ use Change\Http\Rest\Result\Link;
 class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 {
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isHighlighted()
 	{
 		return $this->getPosition() < 0;
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

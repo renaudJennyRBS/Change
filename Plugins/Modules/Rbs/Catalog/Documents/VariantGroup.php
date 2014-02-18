@@ -2,7 +2,6 @@
 namespace Rbs\Catalog\Documents;
 
 use Change\Documents\AbstractModel;
-use Change\Documents\Events\Event;
 use Change\Http\Rest\Result\ErrorResult;
 use Rbs\Catalog\Product\AxisConfiguration;
 use Zend\Http\Response as HttpResponse;
@@ -27,27 +26,35 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		$this->setAxesAttributes(array());
 	}
 
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onDefaultCreated'));
-		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
-		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
-	}
-
-	public function onDefaultCreate(Event $event)
-	{
-		if (!$this->getLabel() && $this->getRootProduct())
-		{
-			$this->setLabel($this->getRootProduct()->getLabel());
-		}
-		$this->normalizeAxesProperties();
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onDefaultCreated'));
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Documents\Events\Event $event
 	 */
-	public function onDefaultCreated(Event $event)
+	public function onDefaultCreate(\Change\Documents\Events\Event $event)
+	{
+		/* @var $product \Rbs\Catalog\Documents\VariantGroup */
+		$product = $event->getDocument();
+		if (!$product->getLabel() && $product->getRootProduct())
+		{
+			$product->setLabel($product->getRootProduct()->getLabel());
+		}
+		$product->normalizeAxesProperties();
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultCreated(\Change\Documents\Events\Event $event)
 	{
 		/** @var $variantGroup VariantGroup */
 		$variantGroup = $event->getDocument();
@@ -70,7 +77,10 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		}
 	}
 
-	public function onDefaultUpdate(Event $event)
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdate(\Change\Documents\Events\Event $event)
 	{
 		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('axesConfiguration'))
 		{
@@ -148,6 +158,10 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		}
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 * @throws \RuntimeException
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
@@ -190,10 +204,10 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 
 	/**
 	 * Process the incoming REST data $name and set it to $value
-	 * @param $name
-	 * @param $value
-	 * @param $event
-	 * @return bool
+	 * @param string $name
+	 * @param mixed $value
+	 * @param \Change\Http\Event $event
+	 * @return boolean
 	 */
 	protected function processRestData($name, $value, \Change\Http\Event $event)
 	{
@@ -214,7 +228,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 
 	/**
 	 * @param boolean $publishedProductOnly
-	 * @return Product[]
+	 * @return \Rbs\Catalog\Documents\Product[]
 	 */
 	public function getVariantProducts($publishedProductOnly = false)
 	{
