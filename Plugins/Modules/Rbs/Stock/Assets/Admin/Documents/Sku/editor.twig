@@ -85,32 +85,20 @@
 					</div>
 				</div>
 			</div>
-
 		</rbs-field>
-		<rbs-field
-			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'unit'), ['ucf']) }}">
-			<select ng-model="unit" class="form-control" rbs-items-from-collection="Rbs_Stock_Collection_Unit">
-			</select>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'unit'), ['ucf']) }}">
+			<select ng-model="unit" class="form-control" rbs-items-from-collection="Rbs_Stock_Collection_Unit"></select>
 		</rbs-field>
 
-		<rbs-field-integer
-			property="quantityIncrement"
-			min="1"
-			max="10000"
+		<rbs-field-integer property="quantityIncrement" min="1" max="10000"
 			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'quantityIncrement'), ['ucf']) }}">
 		</rbs-field-integer>
 
-		<rbs-field-integer
-			property="minQuantity"
-			min="1"
-			max="10000"
+		<rbs-field-integer property="minQuantity" min="1" max="10000"
 			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'minQuantity'), ['ucf']) }}">
 		</rbs-field-integer>
 
-		<rbs-field-integer
-			min="1"
-			max="10000"
-			property="maxQuantity"
+		<rbs-field-integer min="1" max="10000" property="maxQuantity"
 			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'maxQuantity'), ['ucf']) }}">
 		</rbs-field-integer>
 
@@ -119,27 +107,26 @@
 			<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_unlimitedinventory_help') }}</span>
 		</rbs-field-boolean>
 
-		<rbs-field-boolean ng-hide="document.unlimitedInventory"
-				property="allowBackorders"
+		<div ng-hide="document.unlimitedInventory">
+			<rbs-field-boolean property="allowBackorders"
 				label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'allowBackorders'), ['ucf']) }}">
-			<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_allowbackorders_help') }}</span>
-		</rbs-field-boolean>
+				<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_allowbackorders_help') }}</span>
+			</rbs-field-boolean>
 
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'thresholds'), ['ucf']) }}">
-			<rbs-thresholds-editor thresholds-values="document.thresholds">
-			</rbs-thresholds-editor>
-		</rbs-field>
+			<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'thresholds'), ['ucf']) }}">
+				<rbs-thresholds-editor thresholds-values="document.thresholds">
+				</rbs-thresholds-editor>
+			</rbs-field>
+		</div>
 
-		<rbs-field-boolean
-			property="allowQuantitySplit"
+		<rbs-field-boolean property="allowQuantitySplit"
 			label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'allowQuantitySplit'), ['ucf']) }}">
 			<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_allowquantitysplit_help') }}</span>
 		</rbs-field-boolean>
 
 	</fieldset>
 
-	<fieldset
-		data-ng-show="section=='systeminfo'"
+	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-rbs-document-system-info-section="">
