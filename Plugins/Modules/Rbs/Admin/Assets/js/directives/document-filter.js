@@ -477,10 +477,12 @@
 				});
 
 				scope.$on('Navigation.saveContext', function (event, args) {
-					var label = Models.getModelLabel(scope.model);
-					args.context.label(label);
-					var data = {filter: scope.filter};
-					args.context.savedData('filter_' + scope.model, data);
+					if (scope.model) {
+						var label = Models.getModelLabel(scope.model);
+						args.context.label(label);
+						var data = {filter: scope.filter};
+						args.context.savedData('filter_' + scope.model, data);
+					}
 				});
 			}
 		};

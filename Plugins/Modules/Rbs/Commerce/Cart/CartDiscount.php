@@ -39,6 +39,16 @@ class CartDiscount extends \Rbs\Commerce\Process\BaseDiscount implements \Serial
 	}
 
 	/**
+	 * @param array|\Rbs\Commerce\Process\DiscountInterface|null $data
+	 * @param CartManager $cartManager
+	 */
+	function __construct($data, \Rbs\Commerce\Cart\CartManager $cartManager)
+	{
+		$this->cartManager = $cartManager;
+		parent::__construct($data);
+	}
+
+	/**
 	 * (PHP 5 &gt;= 5.1.0)<br/>
 	 * String representation of object
 	 * @link http://php.net/manual/en/serializable.serialize.php
@@ -54,7 +64,7 @@ class CartDiscount extends \Rbs\Commerce\Process\BaseDiscount implements \Serial
 			'taxes' => $this->taxes,
 			'options' => $this->options
 		];
-		return serialize($this->cartManager->getSerializableValue($serializedData));
+		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
 
 	/**

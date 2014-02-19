@@ -15,9 +15,6 @@ class Tax extends \Compilation\Rbs\Price\Documents\Tax implements \Rbs\Price\Tax
 	 */
 	protected $ratesCache = array();
 
-
-
-
 	/**
 	 * @param string $category
 	 * @param string $zone

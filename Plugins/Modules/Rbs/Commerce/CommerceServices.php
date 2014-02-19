@@ -172,6 +172,13 @@ class CommerceServices extends Di
 			->addMethodParameter('setLogging', 'logging', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+
+		//DiscountManager: EventManagerFactory
+		$discountManagerClassName = $this->getInjectedClassName('DiscountManager', '\Rbs\Discount\DiscountManager');
+		$classDefinition = $this->getClassDefinition($discountManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
+		$definitionList->addDefinition($classDefinition);
+
 		//PaymentManager : EventManagerFactory, TransactionManager, DocumentManager
 		$paymentManagerClassName = $this->getInjectedClassName('PaymentManager', 'Rbs\Payment\PaymentManager');
 		$classDefinition = $this->getClassDefinition($paymentManagerClassName);
@@ -221,6 +228,9 @@ class CommerceServices extends Di
 		$im->addAlias('PaymentManager', $paymentManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory,
 				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
+
+		$im->addAlias('DiscountManager', $discountManagerClassName,
+			array('eventManagerFactory' => $eventManagerFactory));
 	}
 
 	/**
@@ -302,5 +312,13 @@ class CommerceServices extends Di
 	public function getPaymentManager()
 	{
 		return $this->get('PaymentManager');
+	}
+
+	/**
+	 * @return \Rbs\Discount\DiscountManager
+	 */
+	public function getDiscountManager()
+	{
+		return $this->get('DiscountManager');
 	}
 }

@@ -24,7 +24,7 @@ interface DiscountInterface
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValue();
+	public function getAmount();
 
 	/**
 	 * @return \Rbs\Price\Tax\TaxApplication[]
@@ -34,7 +34,7 @@ interface DiscountInterface
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValueWithTax();
+	public function getAmountWithTaxes();
 
 	/**
 	 * @return \Zend\Stdlib\Parameters

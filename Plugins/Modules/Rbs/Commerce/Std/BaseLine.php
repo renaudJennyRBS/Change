@@ -41,12 +41,12 @@ class BaseLine implements LineInterface
 	/**
 	 * @var float|null
 	 */
-	protected $priceValue;
+	protected $amount;
 
 	/**
 	 * @var float|null
 	 */
-	protected $priceValueWithTax;
+	protected $amountWithTaxes;
 
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -194,39 +194,39 @@ class BaseLine implements LineInterface
 	}
 
 	/**
-	 * @param float|null $priceValueWithTax
+	 * @param float|null $amountWithTaxes
 	 * @return $this
 	 */
-	public function setPriceValueWithTax($priceValueWithTax)
+	public function setAmountWithTaxes($amountWithTaxes)
 	{
-		$this->priceValueWithTax = $priceValueWithTax;
+		$this->amountWithTaxes = $amountWithTaxes;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValueWithTax()
+	public function getAmountWithTaxes()
 	{
-		return $this->priceValueWithTax;
+		return $this->amountWithTaxes;
 	}
 
 	/**
-	 * @param float|null $priceValue
+	 * @param float|null $amount
 	 * @return $this
 	 */
-	public function setPriceValue($priceValue)
+	public function setAmount($amount)
 	{
-		$this->priceValue = $priceValue;
+		$this->amount = $amount;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValue()
+	public function getAmount()
 	{
-		return $this->priceValue;
+		return $this->amount;
 	}
 
 	/**
@@ -296,11 +296,11 @@ class BaseLine implements LineInterface
 						}
 					}
 					break;
-				case 'priceValue':
-					$this->setPriceValue($value);
+				case 'amount':
+					$this->setAmount($value);
 					break;
-				case 'priceValueWithTax':
-					$this->setPriceValueWithTax($value);
+				case 'amountWithTaxes':
+					$this->setAmountWithTaxes($value);
 					break;
 			}
 
@@ -324,8 +324,8 @@ class BaseLine implements LineInterface
 			'designation' => $this->designation,
 			'items' => array(),
 			'taxes' => array(),
-			'priceValue' => $this->priceValue,
-			'priceValueWithTax' => $this->priceValueWithTax,
+			'amount' => $this->amount,
+			'amountWithTaxes' => $this->amountWithTaxes,
 			'options' => $this->getOptions()->toArray()
 		];
 		foreach ($this->items as $item)
@@ -368,8 +368,8 @@ class BaseLine implements LineInterface
 			$this->appendTax($tax);
 		}
 
-		$this->setPriceValueWithTax($line->getPriceValueWithTax());
-		$this->setPriceValue($line->getPriceValue());
+		$this->setAmountWithTaxes($line->getAmountWithTaxes());
+		$this->setAmount($line->getAmount());
 		return $this;
 	}
 
@@ -404,9 +404,9 @@ class BaseLine implements LineInterface
 	/**
 	 * @return float|null
 	 */
-	public function getUnitPriceValue()
+	public function getUnitAmount()
 	{
-		$value = $this->getPriceValue();
+		$value = $this->getAmount();
 		if ($value !== null && $this->getQuantity())
 		{
 			return $value / floatval($this->getQuantity());
@@ -417,9 +417,9 @@ class BaseLine implements LineInterface
 	/**
 	 * @return float|null
 	 */
-	public function getUnitPriceValueWithTax()
+	public function getUnitAmountWithTaxes()
 	{
-		$value = $this->getPriceValueWithTax();
+		$value = $this->getAmountWithTaxes();
 		if ($value !== null && $this->getQuantity())
 		{
 			return $value / floatval($this->getQuantity());

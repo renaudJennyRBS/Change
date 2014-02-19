@@ -5,6 +5,9 @@
 	"cart_label":{
 		"message":"détail du panier"
 	},
+	"manage_processes":{
+		"message":"gérer les processus de commande"
+	},
 	"cart_function":{
 		"message":"détail du panier"
 	},
@@ -64,5 +67,9 @@
 	},
 	"fee_create":{
 		"message":"ajouter un frais"
+	},
+	"aside_process":{
+		"message":"Frais & Réduction"
 	}
+
 }

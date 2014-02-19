@@ -30,6 +30,10 @@ class BaseCoupon implements \Rbs\Commerce\Process\CouponInterface
 		{
 			$this->fromArray($data);
 		}
+		elseif($data instanceof \Rbs\Commerce\Process\CouponInterface)
+		{
+			$this->fromArray($data->toArray());
+		}
 	}
 
 	/**
@@ -69,16 +73,6 @@ class BaseCoupon implements \Rbs\Commerce\Process\CouponInterface
 	}
 
 	/**
-	 * @param \Zend\Stdlib\Parameters $options
-	 * @return $this
-	 */
-	public function setOptions($options)
-	{
-		$this->options = $options;
-		return $this;
-	}
-
-	/**
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions()
@@ -96,20 +90,24 @@ class BaseCoupon implements \Rbs\Commerce\Process\CouponInterface
 	 */
 	public function fromArray(array $array)
 	{
+		$this->options = null;
+		$this->code = null;
+		$this->title = null;
 		foreach ($array as $name => $value)
 		{
+			if ($value === null)
+			{
+				continue;
+			}
 			switch ($name)
 			{
 				case 'code':
 					$this->setCode(strval($value));
 					break;
-
 				case 'title':
 					$this->setTitle(strval($value));
 					break;
-
 				case 'options':
-					$this->options = null;
 					if (is_array($value))
 					{
 						foreach ($value as $optName => $optValue)
@@ -131,7 +129,7 @@ class BaseCoupon implements \Rbs\Commerce\Process\CouponInterface
 		$array = array(
 			'code' => $this->code,
 			'title' => $this->title,
-			'options' => $this->getOptions()->toArray()
+			'options' => $this->options ? $this->options->toArray() : null
 		);
 		return $array;
 	}

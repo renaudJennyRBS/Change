@@ -5,6 +5,7 @@ use Rbs\Commerce\Interfaces\LineInterface;
 
 /**
  * @name \Rbs\Commerce\Cart\CartLine
+ * @method \Rbs\Commerce\Cart\CartLineItem[] getItems()
  */
 class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Serializable
 {
@@ -144,8 +145,8 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 			'designation' => $this->designation,
 			'items' => $this->items,
 			'taxes' => $this->taxes,
-			'priceValue' => $this->priceValue,
-			'priceValueWithTax' => $this->priceValueWithTax,
+			'amount' => $this->amount,
+			'amountWithTaxes' => $this->amountWithTaxes,
 			'options' => $this->options);
 		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
@@ -174,8 +175,8 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		$this->designation = $serializedData['designation'];
 		$this->items = $serializedData['items'];
 		$this->taxes = $serializedData['taxes'];
-		$this->priceValue = $serializedData['priceValue'];
-		$this->priceValueWithTax = $serializedData['priceValueWithTax'];
+		$this->amount = $serializedData['amount'];
+		$this->amountWithTaxes = $serializedData['amountWithTaxes'];
 		$this->options = $serializedData['options'];
 		foreach ($this->items as $item)
 		{

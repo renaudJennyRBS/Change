@@ -19,7 +19,7 @@
 			<rbs-column name="processingStatus" align="center" label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">
 				<span rbs-order-status-indicators="" order="doc"></span>
 			</rbs-column>
-			<rbs-column name="paymentAmount">(= doc.formattedPaymentAmount =)</rbs-column>
+			<rbs-column name="paymentAmountWithTaxes">(= doc.formattedPaymentAmountWithTaxes =)</rbs-column>
 			<rbs-column name="creationDate">(= doc.creationDate | rbsDateTime =)</rbs-column>
 			<rbs-preview style="min-height: 200px">
 				<h4>(= doc.label =)</h4>

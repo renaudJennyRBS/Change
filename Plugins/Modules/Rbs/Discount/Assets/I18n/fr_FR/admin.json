@@ -11,6 +11,9 @@
 	"discount_create":{
 		"message":"ajouter une réductions"
 	},
+	"type_free_shipping_fee":{
+		"message":"frais de port offert"
+	},
 	"coupon_list":{
 		"message":"coupons"
 	},

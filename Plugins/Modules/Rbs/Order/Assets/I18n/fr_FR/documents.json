@@ -8,7 +8,7 @@
 	"order_webstoreid":{
 		"message":"boutique"
 	},
-	"order_paymentamount":{
+	"order_paymentamountwithtaxes":{
 		"message":"montant payé"
 	},
 	"order_currencycode":{

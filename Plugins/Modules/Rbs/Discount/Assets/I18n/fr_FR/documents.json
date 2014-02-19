@@ -5,14 +5,20 @@
 	"discount_cartfilterdata": {
 		"message": "Critères d'application"
 	},
-	"discount_value": {
-		"message": "montant"
+	"discount_orderprocess":{
+		"message":"processus de commande"
+	},
+	"discount_discounttype": {
+		"message": "type"
 	},
 	"discount_webstore": {
 		"message": "boutique"
 	},
 	"coupon": {
 		"message": "coupon"
+	},
+	"coupon_orderprocess":{
+		"message":"processus de commande"
 	},
 	"coupon_cartfilterdata": {
 		"message": "Critères d'application"

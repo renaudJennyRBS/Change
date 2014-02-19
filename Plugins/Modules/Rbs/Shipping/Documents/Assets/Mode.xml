@@ -7,5 +7,6 @@
 		<property name="title" type="String" localized="true"  required="true" has-correction="true"/>
 		<property name="description" type="RichText" localized="true" has-correction="true"/>
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
+		<property name="hasAddress" type="Boolean" default-value="false"/>
 	</properties>
 </document>

@@ -189,13 +189,13 @@
 				// This watches for modifications in the lines, made by the user, such as quantity for each line.
 				scope.$watch('document.lines', function (lines, old) {
 					if (scope.document && lines !== old) {
-						scope.document.paymentAmount = 0;
+						scope.document.paymentAmountWithTaxes = 0;
 						extend.articleCount = 0;
 						for (var i = 0; i < lines.length; i++) {
 							extend.articleCount += lines[i].quantity;
 							var value = lines[i].items[0].price.value;
 							if (value) {
-								scope.document.paymentAmount += lines[i].quantity * value;
+								scope.document.paymentAmountWithTaxes += lines[i].quantity * value;
 							}
 						}
 					}
@@ -235,9 +235,9 @@
 
 				scope.updateAmount = function (document) {
 					var lines = document.lines;
-					document.paymentAmount = 0;
+					document.paymentAmountWithTaxes = 0;
 					for (var i = 0; i < lines.length; i++) {
-						document.paymentAmount += (lines[i].priceValueWithTax || lines[i].priceValue);
+						document.paymentAmountWithTaxes += (lines[i].amountWithTaxes || lines[i].amount);
 					}
 				};
 			}
