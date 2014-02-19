@@ -366,6 +366,8 @@ class VariantConfiguration
 					$product = $this->findVariantProduct($loadedProducts, $flatValues);
 					if ($product !== null)
 					{
+						$product->setCategorizable($axisConfiguration->getCategorizable());
+						$product->save();
 						$this->removeVariantProduct($loadedProducts, $product);
 					}
 					else
@@ -417,6 +419,8 @@ class VariantConfiguration
 			$product = $this->findVariantProduct($loadedProducts, $flatValues);
 			if ($product !== null)
 			{
+				$product->setCategorizable($lastAxisConfiguration->getCategorizable());
+				$product->save();
 				$this->removeVariantProduct($loadedProducts, $product);
 			}
 			else

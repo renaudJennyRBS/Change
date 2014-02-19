@@ -122,47 +122,30 @@ class Product extends Block
 	 */
 	protected function getProductToBeDisplayed($product, $catalogManager, $documentManager)
 	{
-		if ($product->hasVariants() || !$product->getVariantGroup())
+		// If product is a simple product or is root product of variant or is categorizable
+		if (!$product->getVariantGroup() || $product->hasVariants() ||  $product->getCategorizable())
 		{
 			return $product;
 		}
-		else
+
+		// Else you have a product that is a final product of variant
+		// If you have generated intermediate variant
+		if (!$product->getVariantGroup()->mustGenerateOnlyLastVariant())
 		{
-			$variantInfo = $catalogManager->getVariantInfo($product);
-			if ($variantInfo)
+			// Try to find the intermediate variant that must be used to display product
+			$newProductId = $catalogManager->getVariantProductIdMustBeDisplayedForVariant($product);
+			if ($newProductId != null)
 			{
-				if (!$variantInfo['isFinal'] )
+				$product = $documentManager->getDocumentInstance($newProductId);
+				if ($product instanceof \Rbs\Catalog\Documents\Product)
 				{
 					return $product;
 				}
-				else
-				{
-					if ($product->getVariantGroup()->mustGenerateOnlyLastVariant())
-					{
-						return $product;
-					}
-					else
-					{
-						$newProductId = $catalogManager->getVariantProductIdMustBeDisplayedForVariant($product);
-
-						if ($newProductId != null)
-						{
-							$product = $documentManager->getDocumentInstance($newProductId);
-							if ($product instanceof \Rbs\Catalog\Documents\Product)
-							{
-								return $product;
-							}
-						}
-						else
-						{
-							// Try to find root product
-							return $catalogManager->getRootProductOfVariantGroup($product->getVariantGroup());
-						}
-					}
-				}
 			}
 		}
-		return null;
+
+		// Else try to return the root product of variant
+		return $catalogManager->getRootProductOfVariantGroup($product->getVariantGroup());
 	}
 
 
