@@ -226,6 +226,37 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Mail\Http\Rest\AddMailVariation())->execute($event);
 					});
 					break;
+				case 'Rbs/DocumentFilters' :
+					$method = $event->getRequest()->getMethod();
+					if ($method === Request::METHOD_GET)
+					{
+						$event->setAction(function (Event $event)
+						{
+							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->getFiltersList($event);
+						});
+					}
+					elseif ($method === Request::METHOD_POST)
+					{
+						$event->setAction(function (Event $event)
+						{
+							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->createFilter($event);
+						});
+					}
+					elseif ($method === Request::METHOD_PUT)
+					{
+						$event->setAction(function (Event $event)
+						{
+							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->updateFilter($event);
+						});
+					}
+					elseif ($method === Request::METHOD_DELETE)
+					{
+						$event->setAction(function (Event $event)
+						{
+							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->deleteFilter($event);
+						});
+					}
+					break;
 			}
 		}
 	}

@@ -1,5 +1,7 @@
 <?php
 namespace Rbs\Generic\Setup;
+use Change\Db\Schema\FieldDefinition;
+use Change\Db\Schema\KeyDefinition;
 
 /**
  * @name \Rbs\Generic\Setup\Install

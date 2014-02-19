@@ -387,5 +387,20 @@
 	"filter_document_list_summary_less_three":{
 		"message":"les <strong>$count$ éléments</strong> suivants : <strong class=\"element\">$elementsAsHtml$</strong> et <strong class=\"element\">$lastElement$</strong>",
 		"description":"Use in document list to display a confirmation message when you execute an action, like delete, to remember the items selected"
+	},
+	"filter_delete_error":{
+		"message":"Le filtre n'a pas pu être supprimé"
+	},
+	"filter_create_error":{
+		"message":"Le filtre n'a pas pu être créé"
+	},
+	"filter_update_error":{
+		"message":"Le filtre n'a pas pu être mis à jour"
+	},
+	"enter_filter_title":{
+		"message":"Veuillez donner un titre à ce filtre"
+	},
+	"confirm_delete_filter":{
+		"message":"Souhaitez-vous réellement supprimer ce filtre ?"
 	}
 }

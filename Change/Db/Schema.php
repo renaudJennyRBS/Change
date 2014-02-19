@@ -10,7 +10,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 	 * @var \Change\Db\Schema\TableDefinition[]
 	 */
 	protected $tables;
-		
+
 	/**
 	 * @return \Change\Db\Schema\TableDefinition[]
 	 */
@@ -21,26 +21,26 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 			$schemaManager = $this->getSchemaManager();
 			$idDef = $schemaManager->newIntegerFieldDefinition('document_id')->setNullable(false)->setAutoNumber(true);
 			$modelDef = $schemaManager->newVarCharFieldDefinition('document_model', array('length' => 80))->setDefaultValue('')->setNullable(false);
-			
+
 			$this->tables['change_document'] = $schemaManager->newTableDefinition('change_document')
 				->addField($idDef)->addField($modelDef)
 				->addKey($this->newPrimaryKey()->addField($idDef))
 				->setOption('AUTONUMBER', 100000);
-			
+
 			$idDef = $schemaManager->newIntegerFieldDefinition('document_id')->setDefaultValue('0')->setNullable(false);
-			
+
 			$this->tables['change_document_metas'] = $schemaManager->newTableDefinition('change_document_metas')
 			->addField($idDef)
 			->addField($schemaManager->newTextFieldDefinition('metas'))
 			->addField($schemaManager->newTimeStampFieldDefinition('lastupdate'))
 			->addKey($this->newPrimaryKey()->addField($idDef));
-			
+
 			$this->tables['change_document_deleted'] = $schemaManager->newTableDefinition('change_document_deleted')
 			->addField($idDef)->addField($modelDef)
 			->addField($schemaManager->newTimeStampFieldDefinition('deletiondate'))
 			->addField($schemaManager->newTextFieldDefinition('datas'))
 			->addKey($this->newPrimaryKey()->addField($idDef));
-			
+
 			$correctionId = $schemaManager->newIntegerFieldDefinition('correction_id')->setNullable(false)->setAutoNumber(true);
 			$lcid = $schemaManager->newVarCharFieldDefinition('lcid', array('length' => 5))->setNullable(false)->setDefaultValue('_____');
 			$status = $schemaManager->newEnumFieldDefinition('status', array('VALUES' => array('DRAFT', 'VALIDATION', 'VALIDCONTENT', 'VALID', 'PUBLISHABLE', 'FILED')))->setNullable(false)->setDefaultValue('DRAFT');
@@ -191,6 +191,15 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addKey($this->newPrimaryKey()->addField($td->getField('context_id')))
 				->addKey($this->newUniqueKey()->setName('context')
 					->addField($td->getField('name')))
+				->setOption('AUTONUMBER', 1);
+
+			$this->tables['change_document_filters'] = $td = $schemaManager->newTableDefinition('change_document_filters');
+			$td->addField($schemaManager->newIntegerFieldDefinition('filter_id')->setNullable(false)->setAutoNumber(true))
+				->addField($schemaManager->newVarCharFieldDefinition('model_name', array('length' => 80))->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('user_id')->setDefaultValue(0))
+				->addField($schemaManager->newTextFieldDefinition('content')->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('label', array('length' => 255))->setNullable(false))
+				->addKey($this->newPrimaryKey()->addField($td->getField('filter_id')))
 				->setOption('AUTONUMBER', 1);
 		}
 		return $this->tables;

@@ -135,10 +135,10 @@
 		"message":"déjà utilisée"
 	},
 	"filter_functions":{
-		"message":"filter la liste des fonctions"
+		"message":"filtrer la liste des fonctions"
 	},
 	"filter_pages":{
-		"message":"filter la liste des pages"
+		"message":"filtrer la liste des pages"
 	},
 	"available_functions":{
 		"message":"fonctions disponibles"
