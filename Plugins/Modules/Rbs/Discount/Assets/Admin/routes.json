@@ -3,30 +3,53 @@
 		"module": "Rbs_Discount",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Discount/Discount/",
+			"controller": "Rbs_Discount_OrderProcessSelector",
+			"template": "<div></div>",
 			"labelKey": "m.rbs.discount.admin.module_name | ucf"
 		},
 		"auto": false
 	},
-	"/Rbs/Discount/Coupon/": {
+	"/Rbs/Discount/Coupon/": false,
+	"/Rbs/Discount/Coupon/:id": false,
+	"/Rbs/Discount/Coupon/:id/timeline": false,
+	"/Rbs/Discount/Coupon/:id/translate/:LCID": false,
+	"/Rbs/Discount/Coupon/:id/translate/:LCID/workflow": false,
+	"/Rbs/Discount/Coupon/:id/workflow": false,
+	"/Rbs/Discount/Coupon/new": false,
+	"/Rbs/Discount/Discount/": false,
+	"/Rbs/Discount/Discount/:id": false,
+	"/Rbs/Discount/Discount/:id/timeline": false,
+	"/Rbs/Discount/Discount/:id/translate/:LCID": false,
+	"/Rbs/Discount/Discount/:id/translate/:LCID/workflow": false,
+	"/Rbs/Discount/Discount/:id/workflow": false,
+	"/Rbs/Discount/Discount/new": false,
+	"/Rbs/Discount/Process/:id": {
+		"name": "form",
+		"rule": {
+			"redirectTo": "/Rbs/Commerce/Process/:id",
+			"labelKey": "m.rbs.commerce.documents.process | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "list",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Coupon/list.twig",
 			"labelKey": "m.rbs.discount.admin.coupon_list | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Coupon/:id": {
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
 			"labelKey": "m.rbs.discount.documents.coupon | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Coupon/:id/timeline": {
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id/timeline": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "timeline",
 		"rule": {
@@ -34,9 +57,9 @@
 			"controller": "RbsChangeTimelineController",
 			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Coupon/:id/translate/:LCID": {
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id/translate/:LCID": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "translate",
 		"rule": {
@@ -44,9 +67,9 @@
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Coupon/:id/translate/:LCID/workflow": {
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "localizedWorkflow",
 		"rule": {
@@ -54,9 +77,9 @@
 			"controller": "RbsChangeWorkflowController",
 			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Coupon/:id/workflow": {
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id/workflow": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "workflow",
 		"rule": {
@@ -64,36 +87,36 @@
 			"controller": "RbsChangeWorkflowController",
 			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Coupon/new": {
+	"/Rbs/Discount/Process/:orderProcessId/Coupon/new": {
 		"model": "Rbs_Discount_Coupon",
 		"name": "new",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/": {
 		"model": "Rbs_Discount_Discount",
 		"name": "list",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Discount/list.twig",
 			"labelKey": "m.rbs.discount.admin.discount_list | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/:id": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/:id": {
 		"model": "Rbs_Discount_Discount",
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
 			"labelKey": "m.rbs.discount.documents.discount | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/:id/timeline": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/:id/timeline": {
 		"model": "Rbs_Discount_Discount",
 		"name": "timeline",
 		"rule": {
@@ -101,9 +124,9 @@
 			"controller": "RbsChangeTimelineController",
 			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/:id/translate/:LCID": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/:id/translate/:LCID": {
 		"model": "Rbs_Discount_Discount",
 		"name": "translate",
 		"rule": {
@@ -111,9 +134,9 @@
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/:id/translate/:LCID/workflow": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/:id/translate/:LCID/workflow": {
 		"model": "Rbs_Discount_Discount",
 		"name": "localizedWorkflow",
 		"rule": {
@@ -121,9 +144,9 @@
 			"controller": "RbsChangeWorkflowController",
 			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/:id/workflow": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/:id/workflow": {
 		"model": "Rbs_Discount_Discount",
 		"name": "workflow",
 		"rule": {
@@ -131,15 +154,15 @@
 			"controller": "RbsChangeWorkflowController",
 			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
-	"/Rbs/Discount/Discount/new": {
+	"/Rbs/Discount/Process/:orderProcessId/Discount/new": {
 		"model": "Rbs_Discount_Discount",
 		"name": "new",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
-		"auto": true
+		"auto": false
 	}
 }

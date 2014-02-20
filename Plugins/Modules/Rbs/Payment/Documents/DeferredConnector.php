@@ -10,6 +10,22 @@ use Change\Http\Rest\Result\DocumentResult;
  */
 class DeferredConnector extends \Compilation\Rbs\Payment\Documents\DeferredConnector
 {
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach('httpInfos', [$this, 'onDefaultHttpInfos'], 5);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultHttpInfos(Event $event)
+	{
+		$httpInfos = $event->getParam('httpInfos',[]);
+		$httpInfos['directiveName'] = 'rbs-commerce-payment-connector-deferred';
+		$event->setParam('httpInfos', $httpInfos);
+	}
+
 	/**
 	 * @param \Rbs\Payment\Documents\Transaction $transaction
 	 * @return string|null

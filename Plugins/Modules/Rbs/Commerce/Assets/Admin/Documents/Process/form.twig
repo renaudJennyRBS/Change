@@ -1,7 +1,21 @@
 <div class="row">
 
 	<div rbs-aside-column>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+
+		<div ng-if="!document.isNew()" class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.commerce.admin.aside_process') }}</h3>
+			</div>
+			<div class="list-group">
+				<span class="list-group-item">
+					<a href ng-href="(= 'Rbs_Commerce_Fee' | rbsURL:'new':{orderProcessId:document.id} =)">{{ i18n('m.rbs.commerce.admin.fee_create', ['ucf']) | raw }}</a>
+				</span>
+				<span class="list-group-item">
+					<a href ng-href="(= 'Rbs_Discount_Discount' | rbsURL:'new':{orderProcessId:document.id} =)">{{ i18n('m.rbs.discount.admin.discount_create', ['ucf']) | raw }}</a>
+				</span>
+			</div>
+		</div>
 	</div>
 
 	<div class="document-form" rbs-main-column>

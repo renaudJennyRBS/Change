@@ -38,14 +38,17 @@
 							name = route.name;
 							if (key && name) {
 								register(key, name, path);
+							}
+
+							if (name) {
 								rule.ruleName =  name;
-
-								//TODO Compatibility check
+							}
+							if (key) {
 								rule.relatedModelName =  key;
+							}
 
-								if (route.hasOwnProperty('options')) {
-									rule.options = route.options;
-								}
+							if (route.hasOwnProperty('options')) {
+								rule.options = route.options;
 							}
 							if (!rule.hasOwnProperty('redirectTo')) {
 								rule = angular.extend({}, defaultRule, rule);

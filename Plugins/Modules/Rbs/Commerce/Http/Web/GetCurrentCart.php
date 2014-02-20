@@ -25,32 +25,54 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			{
 				$cart = new Cart(null, $cartManager);
 			}
+			elseif($event->getRequest()->getQuery()->get('normalize'))
+			{
+				$cartManager->normalize($cart);
+			}
 
 			$pm = $commerceServices->getPriceManager();
 			$currency = $cart->getCurrencyCode();
 			if ($currency)
 			{
-				$taxes = array();
-				foreach ($cart->getTaxesValues() as $tax)
+				$linesTaxes = array();
+				foreach ($cart->getLinesTaxes() as $tax)
 				{
 					$taxInfos = $tax->toArray();
 					$taxInfos['title'] = $pm->taxTitle($tax);
 					$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
 					$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
-					$taxes[] = $taxInfos;
+					$linesTaxes[] = $taxInfos;
 				}
+
+
+				$totalTaxes = array();
+				foreach ($cart->getTotalTaxes() as $tax)
+				{
+					$taxInfos = $tax->toArray();
+					$taxInfos['title'] = $pm->taxTitle($tax);
+					$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
+					$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
+					$totalTaxes[] = $taxInfos;
+				}
+
 				$cart->getContext()
-					->set('formattedPriceValue', $pm->formatValue($cart->getPriceValue(), $currency))
-					->set('formattedPriceValueWithTax', $pm->formatValue($cart->getPriceValueWithTax(), $currency))
-					->set('formattedTaxes', $taxes);
+					->set('formattedLinesAmount', $pm->formatValue($cart->getLinesAmount(), $currency))
+					->set('formattedLinesTaxes', $linesTaxes)
+					->set('formattedLinesAmountWithTaxes', $pm->formatValue($cart->getLinesAmountWithTaxes(), $currency))
+					->set('formattedTotalAmount', $pm->formatValue($cart->getTotalAmount(), $currency))
+					->set('formattedTotalTaxes', $totalTaxes)
+					->set('formattedTotalAmountWithTaxes', $pm->formatValue($cart->getTotalAmountWithTaxes(), $currency))
+					->set('formattedPaymentAmountWithTaxes', $pm->formatValue($cart->getPaymentAmountWithTaxes(), $currency));
+
 
 				foreach ($cart->getLines() as $line)
 				{
+
 					$options = $line->getOptions();
-					$options->set('formattedPriceValue', $pm->formatValue($line->getPriceValue(), $currency))
-						->set('formattedPriceValueWithTax', $pm->formatValue($line->getPriceValueWithTax(), $currency))
-						->set('formattedUnitPriceValue', $pm->formatValue($line->getUnitPriceValue(), $currency))
-						->set('formattedUnitPriceValueWithTax', $pm->formatValue($line->getUnitPriceValueWithTax(), $currency));
+					$options->set('formattedAmount', $pm->formatValue($line->getAmount(), $currency))
+						->set('formattedAmountWithTaxes', $pm->formatValue($line->getAmountWithTaxes(), $currency))
+						->set('formattedUnitAmount', $pm->formatValue($line->getUnitAmount(), $currency))
+						->set('formattedUnitAmountWithTaxes', $pm->formatValue($line->getUnitAmountWithTaxes(), $currency));
 
 					$productId = $options->get('productId');
 					if ($productId)
@@ -62,11 +84,20 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 							$options->set('productUrl', $url);
 						}
 					}
-
 				}
 			}
+			$cartArray = $cart->toArray();
+			if ($cart->getIdentifier())
+			{
+				$orderProcess = $commerceServices->getProcessManager()->getOrderProcessByCart($cart);
+				$cartArray['orderProcess'] = $orderProcess ? $orderProcess->getId() : false;
+			}
+			else
+			{
+				$cartArray['orderProcess'] = false;
+			}
 
-			$result = $this->getNewAjaxResult($cart->toArray());
+			$result = $this->getNewAjaxResult($cartArray);
 			$event->setResult($result);
 			return;
 		}

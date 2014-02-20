@@ -234,5 +234,8 @@
 	"register_button":{
 		"message":"créer un compte",
 		"description": "Used in paymentReturn block."
+	},
+	"free_shipping_fee":{
+		"message":"offert"
 	}
 }

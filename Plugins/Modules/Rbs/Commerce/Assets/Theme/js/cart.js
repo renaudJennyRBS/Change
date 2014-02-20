@@ -140,7 +140,6 @@
 				}
 
 				attributes.$observe('readonly', function(newValue) {
-					console.log('rbsCommerceShippingModeSelector - attributes.readonly', newValue);
 					scope.display.readonly = (newValue == 'true');
 				});
 
@@ -163,13 +162,11 @@
 					});
 
 				scope.selectMode = function(index) {
-					console.log('rbsCommerceShippingModeSelector - selectMode', index);
 					var mode = scope.modes[index];
 					scope.delivery.modeId = mode.id;
 					scope.delivery.modeTitle = mode.title;
 					scope.currentMode = mode;
 					setupConfigurationZone();
-					console.log('rbsCommerceShippingModeSelector - scope.display.directiveName', mode.directiveName);
 				};
 
 				scope.trustHtml = function(html) {
@@ -332,10 +329,7 @@
 		scope.loading = false;
 		scope.originalQuantities = {};
 
-		console.log('Init rbsCommerceCartController');
-
 		function setCart(data) {
-			console.log('setCart');
 			scope.loading = false;
 			scope.cart = data;
 			scope.originalQuantities = {};
@@ -345,7 +339,6 @@
 			scope.loading = true;
 			$http.post('Action/Rbs/Commerce/GetCurrentCart', {refresh: false})
 				.success(function(data) {
-					console.log('GetCurrentCart success');
 					setCart(data);
 					console.log(scope.cart.lines);
 				})
@@ -377,7 +370,7 @@
 		};
 
 		scope.canOrder = function() {
-			if (!scope.cart || !scope.cart.lines || scope.cart.lines.count < 1) {
+			if (!scope.cart || !scope.cart.lines || scope.cart.lines.count < 1 || !scope.cart.orderProcess) {
 				return false;
 			}
 			var result = true;
@@ -418,7 +411,6 @@
 			scope.loading = true;
 			$http.post('Action/Rbs/Commerce/GetCurrentCart', {refresh: false})
 				.success(function(data) {
-					console.log('GetCurrentCart success');
 					setCart(data);
 					scope.setCurrentStep('information');
 				})
@@ -540,7 +532,6 @@
 
 			if (scope.cart.locked) {
 				for (var i = 1; i < scope.steps.length; i++) {
-					console.log('set step', scope.steps[i]);
 					scope.setCurrentStep(scope.steps[i]);
 					if (scope.steps[i] == 'payment') {
 						break;
@@ -571,7 +562,6 @@
 		 * Shipping step
 		 */
 		scope.prepareShippingStep = function() {
-			console.log('prepareShippingStep');
 			var i, j, k;
 			scope.payment.transaction = null;
 			scope.shipping.deliveries = [];
@@ -644,7 +634,6 @@
 		 * Payment step
 		 */
 		scope.preparePaymentStep = function() {
-			console.log('preparePaymentStep');
 			scope.payment.transaction = null;
 			scope.payment.coupons = scope.cart.coupons;
 		};

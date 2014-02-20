@@ -4,8 +4,9 @@
 		  editable="true" activable="true" localized="true">
 	<properties>
 		<property name="title" type="String" localized="true" has-correction="true"/>
-		<property name="webStore" type="Document" document-type="Rbs_Store_WebStore" />
-		<property name="value" type="Decimal" has-correction="true" />
-		<property name="cartFilterData" type="JSON" has-correction="true"/>
+		<property name="orderProcess" type="Document" document-type="Rbs_Commerce_Process" />
+		<property name="discountType" type="String" />
+		<property name="parametersData" type="JSON" />
+		<property name="cartFilterData" type="JSON" />
 	</properties>
 </document>

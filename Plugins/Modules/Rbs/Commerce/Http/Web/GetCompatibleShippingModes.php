@@ -1,6 +1,8 @@
 <?php
 namespace Rbs\Commerce\Http\Web;
 
+
+
 /**
  * @name \Rbs\Commerce\Http\Web\GetCompatibleShippingModes
  */
@@ -12,54 +14,87 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 	 */
 	public function execute(\Change\Http\Web\Event $event)
 	{
-		$request = $event->getRequest();
-		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
-
-		// TODO: mockup implementation... the real implementation should be done in a ProcessManager.
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$query = $documentManager->getNewQuery('Rbs_Shipping_Mode');
-		$pb = $query->getPredicateBuilder();
-		$query->andPredicates($pb->activated());
-		$shippingModes = $query->getDocuments();
-		if (count($shippingModes))
+		$modesInfos = [];
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
-			$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
-			$richTextManager = $event->getApplicationServices()->getRichTextManager();
-
-			$modesInfos = array();
-			foreach ($shippingModes as $index => $shippingMode)
+			$cartManager = $commerceServices->getCartManager();
+			$cartIdentifier = $commerceServices->getContext()->getCartIdentifier();
+			$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
+			if ($cart)
 			{
-				/* @var $shippingMode \Rbs\Shipping\Documents\Mode */
-				$modeInfos = array(
-					'id' => $shippingMode->getId(),
-					'title' => $shippingMode->getCurrentLocalization()->getTitle(),
-					'description' => $richTextManager->render($shippingMode->getCurrentLocalization()->getDescription(), "Website", $richTextContext)
-				);
-
-				$visual = $shippingMode->getVisual();
-				if ($visual)
+				$orderProcess = $commerceServices->getProcessManager()->getOrderProcessByCart($cart);
+				if ($orderProcess)
 				{
-					$modeInfos['visualId'] = $visual->getId();
-					$modeInfos['visualUrl'] = $visual->getPublicURL(160, 90); // TODO: get size as a parameter?
-				}
+					$shippingModes = $commerceServices->getProcessManager()->getCompatibleShippingModes($orderProcess, $cart);
+					if (count($shippingModes))
+					{
+						$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
+						$richTextManager = $event->getApplicationServices()->getRichTextManager();
 
-				if ($index == 0)
-				{
-					$modeInfos['feesValue'] = 'Offert';
-					$modeInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-none';
-				}
-				elseif ($index == 1)
-				{
-					$modeInfos['feesValue'] = '15,05 €';
-					$modeInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-address';
-				}
+						/* @var $shippingMode \Rbs\Shipping\Documents\Mode */
+						foreach ($shippingModes as $index => $shippingMode)
+						{
+							$modeInfos = array(
+								'id' => $shippingMode->getId(),
+								'title' => $shippingMode->getCurrentLocalization()->getTitle(),
+								'description' => $richTextManager->render($shippingMode->getCurrentLocalization()
+										->getDescription(), "Website", $richTextContext)
+							);
 
-				$modesInfos[] = $modeInfos;
+							$visual = $shippingMode->getVisual();
+							if ($visual)
+							{
+								$modeInfos['visualId'] = $visual->getId();
+								$modeInfos['visualUrl'] = $visual->getPublicURL(160, 90); // TODO: get size as a parameter?
+							}
+
+							$webStore = $event->getApplicationServices()->getDocumentManager()
+								->getDocumentInstance($cart->getWebStoreId());
+							$billingArea = $cart->getBillingArea();
+							$fee = $commerceServices->getProcessManager()->getShippingFee($orderProcess, $cart, $shippingMode);
+							if ($fee && $webStore)
+							{
+								$price = $commerceServices->getPriceManager()->getPriceBySku($fee->getSku(),
+									['webStore' => $cart->getWebStoreId(), 'billingArea' => $billingArea, 'cart' => $cart,
+										'shippingMode' => $shippingMode, 'fee' => $fee]);
+
+								if ($price && ($feesValue = $price->getValue()) > 0)
+								{
+									if (!$price->isWithTax())
+									{
+										$taxes = $commerceServices->getPriceManager()
+											->getTaxesApplication($price, $billingArea->getTaxes(), $cart->getZone(),
+											$billingArea->getCurrencyCode());
+										$feesValue = $commerceServices->getPriceManager()
+											->getValueWithTax($feesValue, $taxes);
+									}
+									$modeInfos['feeId'] = $fee->getId();
+									$modeInfos['feesValue'] = $commerceServices->getPriceManager()
+										->formatValue($feesValue, $billingArea->getCurrencyCode());
+								}
+							}
+
+							if (!isset($modeInfos['feesValue']))
+							{
+								$modeInfos['feesValue'] = $event->getApplicationServices()->getI18nManager()
+									->trans('m.rbs.commerce.front.free_shipping_fee', ['ucf']);
+							}
+
+							$evt = new \Change\Documents\Events\Event('httpInfos', $shippingMode, ['httpEvent' => $event,
+								'httpInfos' => $modeInfos, 'cart' => $cart, 'fee' => $fee]);
+							$shippingMode->getEventManager()->trigger($evt);
+							$httpInfos = $evt->getParam('httpInfos');
+							if (is_array($httpInfos) && count($httpInfos))
+							{
+								$modesInfos[] = $httpInfos;
+							}
+						}
+					}
+				}
 			}
-
-			$result = $this->getNewAjaxResult($modesInfos);
-			$event->setResult($result);
-			return;
 		}
+		$result = $this->getNewAjaxResult($modesInfos);
+		$event->setResult($result);
 	}
 }

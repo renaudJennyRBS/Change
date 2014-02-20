@@ -7,17 +7,21 @@
 			label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'label'), ['ucf']) }}">
 		</rbs-field-text>
 
+		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+				sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'title'), ['ucf']) }}"
+				input-class="form-control">
+		</rbs-field-text>
+
 		<rbs-field-text property="code" required="true"
 				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'title'), ['ucf']) }}"
-			input-class="form-control">
-		</rbs-field-text>
+		<rbs-field-boolean property="hasAddress"
+				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'hasAddress'), ['ucf']) }}">
+		</rbs-field-boolean>
 
-		<rbs-field-rich-text property="description" required="false"
+		<rbs-field-rich-text property="description"
 			label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'description'), ['ucf']) }}">
 		</rbs-field-rich-text>
 

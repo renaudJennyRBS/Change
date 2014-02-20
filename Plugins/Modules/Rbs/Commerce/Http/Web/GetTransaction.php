@@ -35,7 +35,7 @@ class GetTransaction extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$contextData['returnSuccessFunction'] = 'Rbs_Commerce_PaymentReturn';
 				$transaction = $processManager->getNewTransaction(
 					$cart->getIdentifier(),
-					$cart->getPriceValueWithTax(),
+					$cart->getLinesAmountWithTaxes(),
 					$cart->getCurrencyCode(),
 					$cart->getEmail(),
 					$cart->getUserId(),

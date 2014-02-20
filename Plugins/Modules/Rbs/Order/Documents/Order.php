@@ -14,10 +14,21 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	const PROCESSING_STATUS_PROCESSING = 'processing';
 	const PROCESSING_STATUS_FINALIZED = 'finalized';
 	const PROCESSING_STATUS_CANCELED = 'canceled';
+
+	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $content;
+
 	/**
 	 * @var \Zend\Stdlib\Parameters
 	 */
 	protected $context;
+
+	/**
+	 * @var \Rbs\Price\Tax\BaseTax[]
+	 */
+	protected $taxes;
 
 	/**
 	 * @var \Rbs\Order\OrderLine[]
@@ -25,14 +36,65 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	protected $lines;
 
 	/**
+	 * @var \Rbs\Price\Tax\TaxApplication[]
+	 */
+	protected $linesTaxes;
+
+	/**
 	 * @var \Rbs\Geo\Address\BaseAddress
 	 */
-	protected $address;
+	protected $address = false;
 
 	/**
 	 * @var \Rbs\Commerce\Process\BaseShippingMode[]
 	 */
 	protected $shippingModes;
+
+	/**
+	 * @var \Rbs\Commerce\Process\BaseCoupon[]
+	 */
+	protected $coupons;
+
+	/**
+	 * @var \Rbs\Order\OrderLine[]
+	 */
+	protected $fees;
+
+	/**
+	 * @var \Rbs\Commerce\Process\BaseDiscount[]
+	 */
+	protected $discounts;
+
+	/**
+	 * @var \Rbs\Price\Tax\TaxApplication[]
+	 */
+	protected $totalTaxes;
+
+	/**
+	 * @var \Rbs\Commerce\Process\BaseCreditNote[]
+	 */
+	protected $creditNotes;
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	protected  function getContent()
+	{
+		if ($this->content === null)
+		{
+			$v = $this->getContentData();
+			$this->content = new \Zend\Stdlib\Parameters(is_array($v) ? $v : null);
+		}
+		return $this->content;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	protected  function hasLoadedContent()
+	{
+		return ($this->content !== null);
+	}
 
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
@@ -42,6 +104,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 4);
 	}
 
 	/**
@@ -89,13 +152,23 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	{
 		if ($this->context === null)
 		{
-			$v = $this->getContextData();
-			$this->context = new \Zend\Stdlib\Parameters(is_array($v) ? $v : null);
+			$this->setContext($this->getContent()->get('context'));
 		}
 		return $this->context;
 	}
 
 	/**
+	 * @param string $zone
+	 * @return $this
+	 */
+	public function setZone($zone)
+	{
+		$this->getContext()->set('taxZone', $zone);
+		return $this;
+	}
+
+	/**
+	 * @api
 	 * @return string|null
 	 */
 	public function getZone()
@@ -104,6 +177,42 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	}
 
 	/**
+	 * @param $taxes
+	 * @return $this
+	 */
+	public function setTaxes($taxes = null)
+	{
+		$this->taxes = [];
+		if (is_array($taxes))
+		{
+			foreach ($taxes as $tax)
+			{
+				if ($tax instanceof \Rbs\Price\Tax\BaseTax) {
+					$this->taxes[] = $tax;
+				}
+				elseif ($tax instanceof \Rbs\Price\Tax\TaxInterface || is_array($tax)) {
+					$this->taxes[] = new \Rbs\Price\Tax\BaseTax($tax);
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Price\Tax\BaseTax[]
+	 */
+	public function getTaxes()
+	{
+		if ($this->taxes === null)
+		{
+			$this->setTaxes($this->getContent()->get('taxes'));
+		}
+		return $this->taxes;
+	}
+
+	/**
+	 * @api
 	 * @return boolean|null
 	 */
 	public function getPricesValueWithTax()
@@ -122,44 +231,40 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	}
 
 	/**
+	 * @param \Rbs\Order\OrderLine[] $lines
+	 * @return $this
+	 */
+	public function setLines($lines = null)
+	{
+		$this->lines = [];
+		if (is_array($lines))
+		{
+			foreach ($lines as $line)
+			{
+				if ($line instanceof \Rbs\Order\OrderLine)
+				{
+					$this->lines[] = $line;
+				}
+				elseif (is_array($line) || $line instanceof \Rbs\Commerce\Interfaces\LineInterface)
+				{
+					$this->lines[] = new \Rbs\Order\OrderLine($line);
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
 	 * @return  \Rbs\Order\OrderLine[]
 	 */
 	public function getLines()
 	{
 		if ($this->lines === null)
 		{
-			$linesData = $this->getLinesData();
-			if (is_array($linesData))
-			{
-				$this->lines = array_map(function($line) {return new \Rbs\Order\OrderLine($line);}, $linesData);
-			}
-			else
-			{
-				$this->lines = [];
-			}
+			$this->setLines($this->getContent()->get('lines'));
 		}
 		return $this->lines;
-	}
-
-	/**
-	 * @param  \Rbs\Order\OrderLine[] $lines
-	 * @return $this
-	 */
-	public function setLines(array $lines)
-	{
-		$this->lines = array();
-		foreach ($lines as $line)
-		{
-			if ($line instanceof \Rbs\Order\OrderLine)
-			{
-				$this->lines[] = $line;
-			}
-			elseif (is_array($line))
-			{
-				$this->lines[] = new \Rbs\Order\OrderLine($line);
-			}
-		}
-		return $this;
 	}
 
 	/**
@@ -196,30 +301,40 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	 */
 	public function setAddress($address)
 	{
-		$this->address = new \Rbs\Geo\Address\BaseAddress($address);
+		$this->address = null;
+		if ($address instanceof \Rbs\Geo\Address\BaseAddress)
+		{
+			$this->address = $address;
+		}
+		elseif (is_array($address) || $address instanceof \Rbs\Geo\Address\AddressInterface)
+		{
+			$this->address = new \Rbs\Geo\Address\BaseAddress($address);
+		}
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Geo\Address\BaseAddress
+	 * @api
+	 * @return \Rbs\Geo\Address\BaseAddress|null
 	 */
 	public function getAddress()
 	{
-		if ($this->address === null)
+		if ($this->address === false)
 		{
-			$this->setAddress($this->getAddressData());
+			$this->setAddress($this->getContent()->get('address'));
 		}
 		return $this->address;
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Process\BaseShippingMode[] $shippingModes
+	 * @param array|\Rbs\Commerce\Process\ShippingModeInterface[] $shippingModes
 	 * @return $this
 	 */
-	public function setShippingModes(array $shippingModes = null)
+	public function setShippingModes($shippingModes = null)
 	{
 		$this->shippingModes = [];
-		if ($shippingModes) {
+		if (is_array($shippingModes))
+		{
 			foreach ($shippingModes as $shippingMode)
 			{
 				$this->shippingModes[] = new \Rbs\Commerce\Process\BaseShippingMode($shippingMode);
@@ -229,25 +344,166 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	}
 
 	/**
+	 * @api
 	 * @return \Rbs\Commerce\Process\BaseShippingMode[]
 	 */
 	public function getShippingModes()
 	{
 		if ($this->shippingModes === null)
 		{
-			$shippingModes = $this->getShippingData();
-			if (is_array($shippingModes))
-			{
-				$this->shippingModes = array_map(function($shippingMode) {return new \Rbs\Commerce\Process\BaseShippingMode($shippingMode);}, $shippingModes);
-			}
-			else
-			{
-				$this->shippingModes = [];
-			}
+			$this->setShippingModes($this->getContent()->get('shippingModes'));
 		}
 		return $this->shippingModes;
 	}
 
+	/**
+	 * @param array|\Rbs\Commerce\Interfaces\LineInterface[] $fees
+	 * @return $this
+	 */
+	public function setFees($fees = null)
+	{
+		$this->fees = [];
+		if (is_array($fees))
+		{
+			foreach ($fees as $fee)
+			{
+				if ($fee instanceof \Rbs\Order\OrderLine)
+				{
+					$this->fees[] = $fee;
+				}
+				elseif (is_array($fee) || $fee instanceof \Rbs\Commerce\Interfaces\LineInterface)
+				{
+					$this->fees[] = new \Rbs\Order\OrderLine($fee);
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return  \Rbs\Order\OrderLine[]
+	 */
+	public function getFees()
+	{
+		if ($this->fees === null)
+		{
+			$this->setFees($this->getContent()->get('fees'));
+		}
+		return $this->fees;
+	}
+
+	/**
+	 * @param array|\Rbs\Commerce\Process\DiscountInterface[] $discounts
+	 * @return $this
+	 */
+	public function setDiscounts($discounts = null)
+	{
+		$this->discounts = [];
+		if (is_array($discounts))
+		{
+			foreach ($discounts as $discount)
+			{
+				if ($discount instanceof \Rbs\Commerce\Process\BaseDiscount)
+				{
+					$this->discounts[] = $discount;
+				}
+				elseif (is_array($discount) || $discount instanceof \Rbs\Commerce\Process\DiscountInterface)
+				{
+					$this->discounts[] = new \Rbs\Commerce\Process\BaseDiscount($discount);
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Commerce\Process\BaseDiscount[]
+	 */
+	public function getDiscounts()
+	{
+		if ($this->discounts === null)
+		{
+			$this->setDiscounts($this->getContent()->get('discounts'));
+		}
+		return $this->discounts;
+	}
+
+	/**
+	 * @param array|\Rbs\Commerce\Process\CouponInterface[] $coupons
+	 * @return $this
+	 */
+	public function setCoupons($coupons = null)
+	{
+		$this->coupons = [];
+		if (is_array($coupons))
+		{
+			foreach ($coupons as $coupon)
+			{
+				if ($coupon instanceof \Rbs\Commerce\Process\BaseCoupon)
+				{
+					$this->coupons[] = $coupon;
+				}
+				elseif (is_array($coupon) || $coupon instanceof \Rbs\Commerce\Process\CouponInterface)
+				{
+					$this->coupons[] = new \Rbs\Commerce\Process\BaseCoupon($coupon);
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Commerce\Process\BaseCoupon[]
+	 */
+	public function getCoupons()
+	{
+		if ($this->coupons === null)
+		{
+			$this->setCoupons($this->getContent()->get('coupons'));
+		}
+		return $this->coupons;
+	}
+
+
+	/**
+	 * @param array|\Rbs\Commerce\Process\CreditNoteInterface[] $creditNotes
+	 * @return $this
+	 */
+	public function setCreditNotes($creditNotes = null)
+	{
+		$this->creditNotes = [];
+		if (is_array($creditNotes))
+		{
+			foreach ($creditNotes as $creditNote)
+			{
+				if ($creditNote instanceof \Rbs\Commerce\Process\BaseCreditNote)
+				{
+					$this->creditNotes[] = $creditNote;
+				}
+				elseif (is_array($creditNote) || $creditNote instanceof \Rbs\Commerce\Process\CreditNoteInterface)
+				{
+					$this->creditNotes[] = new \Rbs\Commerce\Process\BaseCreditNote($creditNote);
+				}
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Commerce\Process\BaseCreditNote[]
+	 */
+	public function getCreditNotes()
+	{
+		if ($this->creditNotes === null)
+		{
+			$this->setCreditNotes($this->getContent()->get('creditNotes'));
+		}
+		return $this->creditNotes;
+	}
 	/**
 	 * @param Events\Event $event
 	 */
@@ -284,11 +540,23 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			}
 		}
 
-		if (is_array($this->lines))
+		if ($this->isNew() || $this->isPropertyModified('billingAreaId'))
 		{
-			$this->normalize();
+			$ba = $this->getBillingAreaIdInstance();
+			if ($ba instanceof \Rbs\Price\Documents\BillingArea)
+			{
+				$this->setCurrencyCode($ba->getCurrencyCode());
+				$this->setTaxes($ba->getTaxes()->toArray());
+			}
 		}
 
+		if ($this->getProcessingStatus() == 'edition')
+		{
+			if (is_array($this->lines) || is_array($this->fees) || is_array($this->discounts) || is_array($this->creditNotes))
+			{
+				$this->normalize();
+			}
+		}
 		$this->setWrappedFields();
 	}
 
@@ -296,33 +564,98 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	{
 		if ($this->context instanceof \Zend\Stdlib\Parameters)
 		{
-			$this->setContextData($this->context->toArray());
+			$this->getContent()->set('context', $this->context->toArray());
 			$this->context = null;
+		}
+
+		if (is_array($this->taxes))
+		{
+			$this->getContent()->set('taxes', array_map(function(\Rbs\Price\Tax\BaseTax $value)
+			{
+				return $value->toArray();
+			}, $this->taxes));
+			$this->taxes = null;
 		}
 
 		if (is_array($this->lines))
 		{
 			$this->updateLinesIndex($this->lines);
-			$this->setLinesData(array_map(function(\Rbs\Order\OrderLine $line)
+			$this->getContent()->set('lines', array_map(function(\Rbs\Order\OrderLine $value)
 			{
-				return $line->toArray();
+				return $value->toArray();
 			}, $this->lines));
 			$this->lines = null;
 		}
 
+		if (is_array($this->linesTaxes))
+		{
+			$this->getContent()->set('linesTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $value)
+			{
+				return $value->toArray();
+			}, $this->linesTaxes));
+			$this->linesTaxes = null;
+		}
+
 		if ($this->address instanceof \Rbs\Geo\Address\BaseAddress)
 		{
-			$this->setAddressData($this->address->toArray());
-			$this->address = null;
+			$this->getContent()->set('address', $this->address->toArray());
+			$this->address = false;
+		}
+		elseif ($this->address === null)
+		{
+			$this->getContent()->set('address', null);
+			$this->address = false;
 		}
 
 		if (is_array($this->shippingModes))
 		{
-			$this->setShippingData(array_map(function(\Rbs\Commerce\Process\BaseShippingMode $shippingMode)
+			$this->getContent()->set('shippingModes', array_map(function(\Rbs\Commerce\Process\BaseShippingMode $value)
 			{
-				return $shippingMode->toArray();
+				return $value->toArray();
 			}, $this->shippingModes));
 			$this->shippingModes = null;
+		}
+
+		if (is_array($this->fees))
+		{
+			$this->updateLinesIndex($this->fees);
+			$this->getContent()->set('fees', array_map(function(\Rbs\Order\OrderLine $value)
+			{
+				return $value->toArray();
+			}, $this->fees));
+			$this->fees = null;
+		}
+
+		if (is_array($this->discounts))
+		{
+			$this->getContent()->set('discounts', array_map(function(\Rbs\Commerce\Process\BaseDiscount $value)
+			{
+				return $value->toArray();
+			}, $this->discounts));
+			$this->discounts = null;
+		}
+
+		if (is_array($this->totalTaxes))
+		{
+			$this->getContent()->set('totalTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $value)
+			{
+				return $value->toArray();
+			}, $this->totalTaxes));
+			$this->totalTaxes = null;
+		}
+
+		if (is_array($this->creditNotes))
+		{
+			$this->getContent()->set('creditNotes', array_map(function(\Rbs\Commerce\Process\BaseCreditNote $value)
+			{
+				return $value->toArray();
+			}, $this->creditNotes));
+			$this->creditNotes = null;
+		}
+
+		if ($this->content !== null) {
+			$this->setContentData($this->content->toArray());
+			$this->content = null;
 		}
 	}
 
@@ -348,26 +681,35 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Shipments/', 'shipments'));
 			}
 
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
 			$documentResult->setProperty('context', $order->getContext()->toArray());
+
 			$taxes = [];
-			$billingArea = $order->getBillingAreaIdInstance();
-			if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
+			foreach ($order->getTaxes() as $tax)
 			{
-				foreach ($billingArea->getTaxes() as $tax)
-				{
-					$taxes[$tax->getCode()] = $tax->toArray();
-					$taxes[$tax->getCode()]['label'] = $tax->getLabel();
-				}
+				$taxes[$tax->getCode()] = $tax->toArray();
+				$taxes[$tax->getCode()]['label'] = $commerceServices->getPriceManager()->taxTitle($tax);
 			}
+
 			$documentResult->setProperty('taxes', count($taxes) ? $taxes : null);
+			$documentResult->setProperty('lines', array_map(function(\Rbs\Order\OrderLine $line) {return $line->toArray();}, $order->getLines()));
+			$documentResult->setProperty('linesAmount', $order->getLinesAmount());
+			$documentResult->setProperty('linesTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $order->getLinesTaxes()));
+			$documentResult->setProperty('linesAmountWithTaxes', $order->getLinesAmountWithTaxes());
 
-			$documentResult->setProperty('address', $this->getAddress()->toArray());
+			$documentResult->setProperty('fees', array_map(function(\Rbs\Order\OrderLine $fee) {return $fee->toArray();}, $order->getFees()));
+			$documentResult->setProperty('coupons', array_map(function(\Rbs\Commerce\Process\BaseCoupon $coupon) {return $coupon->toArray();}, $order->getCoupons()));
+			$documentResult->setProperty('discounts', array_map(function(\Rbs\Commerce\Process\BaseDiscount $discount) {return $discount->toArray();}, $order->getDiscounts()));
 
-			$documentResult->setProperty('lines', array_map(function(\Rbs\Order\OrderLine $line) {return $line->toArray();}, $this->getLines()));
-			$documentResult->setProperty('linesTaxesValues', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $this->getLinesTaxesValues()));
-			// TODO: include discounts, fees, etc.
-			$documentResult->setProperty('taxesValues', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $this->getLinesTaxesValues()));
+			$documentResult->setProperty('totalAmount', $order->getTotalAmount());
+			$documentResult->setProperty('totalTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $order->getTotalTaxes()));
+			$documentResult->setProperty('totalAmountWithTaxes', $order->getTotalAmountWithTaxes());
 
+			$documentResult->setProperty('creditNotes', array_map(function(\Rbs\Commerce\Process\BaseCreditNote $creditNote) {return $creditNote->toArray();}, $order->getCreditNotes()));
+
+			$address = $this->getAddress();
+			$documentResult->setProperty('address', $address ? $address->toArray() : null);
 			$documentResult->setProperty('shippingModes', array_map(function(\Rbs\Commerce\Process\BaseShippingMode $mode) {return $mode->toArray();}, $this->getShippingModes()));
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
@@ -379,12 +721,12 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			}
 
 			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
-			$formattedAmount = $nf->formatCurrency($order->getPaymentAmount(), $order->getCurrencyCode());
-			$restResult->setProperty('formattedPaymentAmount', $formattedAmount);
+			$formattedAmount = $nf->formatCurrency($order->getPaymentAmountWithTaxes(), $order->getCurrencyCode());
+			$restResult->setProperty('formattedPaymentAmountWithTaxes', $formattedAmount);
 		}
 	}
 
-	protected $ignoredPropertiesForRestEvents = array('model', 'paymentAmount', 'currencyCode');
+	protected $ignoredPropertiesForRestEvents = array('model', 'paymentAmountWithTaxes', 'currencyCode');
 
 	/**
 	 * @param string $name
@@ -407,6 +749,18 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				break;
 			case 'shippingModes':
 				$this->setShippingModes(is_array($value) ? $value : null);
+				break;
+			case 'fees':
+				$this->setFees($value);
+				break;
+			case 'discounts':
+				$this->setDiscounts($value);
+				break;
+			case 'coupons':
+				$this->setCoupons($value);
+				break;
+			case 'creditNotes':
+				$this->setCreditNotes($value);
 				break;
 			default:
 				return parent::processRestData($name, $value, $event);
@@ -432,32 +786,99 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		$order = $event->getParam('order');
 		if ($order instanceof Order)
 		{
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+
+			$stockManager = $commerceServices->getStockManager();
+			$priceManager = $commerceServices->getPriceManager();
+			$webstore = $order->getWebStoreIdInstance();
+			if ($webstore)
 			{
-				$stockManager = $commerceServices->getStockManager();
-				$priceManager = $commerceServices->getPriceManager();
-				$webstore = $order->getWebStoreIdInstance();
-				if ($webstore)
-				{
-					$order->setPricesValueWithTax($webstore->getPricesValueWithTax());
-				}
-
-				foreach ($order->getLines() as $index => $line)
-				{
-					$line->setIndex($index);
-					$this->refreshCartLine($order, $line, $priceManager, $stockManager);
-				}
-
-				$this->refreshLinesPriceValue($order, $priceManager);
+				$order->setPricesValueWithTax($webstore->getPricesValueWithTax());
 			}
 
-			//TODO: complete with fees and discount
-			$this->setPaymentAmount($this->getLinesPriceValueWithTax());
+			foreach ($order->getLines() as $index => $line)
+			{
+				$line->setIndex($index);
+				$this->refreshCartLine($order, $line, $priceManager, $stockManager);
+			}
+
+			$this->refreshLinesAmount($order, $priceManager);
 		}
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultNormalizeModifiers(\Change\Events\Event $event)
+	{
+		$order = $event->getParam('order');
+		if ($order instanceof Order)
+		{
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
 
+			/*
+				$cart->removeAllFees();
+				$cart->removeAllDiscounts();
+
+				$processManager = $commerceServices->getProcessManager();
+				$process = $processManager->getOrderProcessByCart($cart);
+				if ($process)
+				{
+					$documents = $process->getAvailableModifiers();
+					foreach ($documents as $document)
+					{
+						if ($document instanceof \Rbs\Commerce\Documents\Fee) {
+							$modifier = $document->getValidModifier($cart);
+							if ($modifier) {
+								$modifier->apply();
+							}
+						}
+						elseif ($document instanceof \Rbs\Discount\Documents\Discount) {
+							$modifier = $document->getValidModifier($cart);
+							if ($modifier) {
+								$modifier->apply();
+							}
+						}
+					}
+				}
+			*/
+
+			$priceManager = $commerceServices->getPriceManager();
+
+			//Add fees and discounts
+			$totalAmount = $order->getLinesAmount();
+			$totalAmountWithTaxes = $order->getLinesAmountWithTaxes();
+			$totalTaxes = $order->getLinesTaxes();
+			foreach ($order->getFees() as $fee)
+			{
+				$totalAmount += $fee->getAmount();
+				$totalAmountWithTaxes += $fee->getAmountWithTaxes();
+				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
+			}
+
+			foreach ($order->getDiscounts() as $discount)
+			{
+				$totalAmount += $discount->getAmount();
+				$totalAmountWithTaxes += $discount->getAmountWithTaxes();
+				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
+			}
+
+			$order->setTotalAmount($totalAmount);
+			$order->setTotalAmountWithTaxes($totalAmountWithTaxes);
+			$order->setTotalTaxes($totalTaxes);
+
+			//Add Credit notes
+			$paymentAmountWithTaxes = $totalAmountWithTaxes;
+			foreach ($order->getCreditNotes() as $creditNote)
+			{
+				$paymentAmountWithTaxes += $creditNote->getAmount();
+			}
+
+			$order->setPaymentAmountWithTaxes($paymentAmountWithTaxes);
+		}
+	}
 
 	/**
 	 * @param Order $order
@@ -497,7 +918,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	 * @param Order $order
 	 * @param \Rbs\Price\PriceManager $priceManager
 	 */
-	protected function refreshLinesPriceValue(Order $order, $priceManager )
+	protected function refreshLinesAmount(Order $order, $priceManager )
 	{
 		$currencyCode = $this->getCurrencyCode();
 		$zone = $order->getZone();
@@ -511,11 +932,16 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			$taxes = [];
 		}
 
+		/* @var $linesTaxes \Rbs\Price\Tax\TaxApplication[] */
+		$linesTaxes = [];
+		$linesAmount = 0.0;
+		$linesAmountWithTaxes = 0.0;
+
 		foreach ($order->getLines() as $line)
 		{
-			$taxesLine = [];
-			$priceValue = null;
-			$priceValueWithTax = null;
+			$lineTaxes = [];
+			$amount = null;
+			$amountWithTaxes = null;
 			$lineQuantity = $line->getQuantity();
 			if ($lineQuantity)
 			{
@@ -530,115 +956,185 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
 							if (count($taxArray))
 							{
-								$taxesLine = $priceManager->addTaxesApplication($taxesLine, $taxArray);
+								$lineTaxes = $priceManager->addTaxesApplication($lineTaxes, $taxArray);
 							}
 
 							if ($price->isWithTax())
 							{
-								$priceValueWithTax += $lineItemValue;
-								$priceValue += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+								$amountWithTaxes += $lineItemValue;
+								$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
 							}
 							else
 							{
-								$priceValue += $lineItemValue;
-								$priceValueWithTax = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+								$amount += $lineItemValue;
+								$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
 							}
 						}
 						else
 						{
-							if ($price->isWithTax())
-							{
-								$priceValueWithTax += $lineItemValue;
-							}
-							else
-							{
-								$priceValue += $lineItemValue;
-							}
+							$amountWithTaxes += $lineItemValue;
+							$amount += $lineItemValue;
 						}
 					}
 				}
 			}
-			$line->setTaxes($taxesLine);
-			$line->setPriceValueWithTax($priceValueWithTax);
-			$line->setPriceValue($priceValue);
+			$line->setTaxes($lineTaxes);
+			$line->setAmountWithTaxes($amountWithTaxes);
+			$line->setAmount($amount);
+
+			$linesAmount += $amount;
+			$linesAmountWithTaxes += $amountWithTaxes;
+			$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);
 		}
+
+		$order->setLinesTaxes($linesTaxes);
+		$order->setLinesAmount($linesAmount);
+		$order->setLinesAmountWithTaxes($linesAmountWithTaxes);
+	}
+
+	/**
+	 * @param float|null $linesAmount
+	 * @return $this
+	 */
+	public function setLinesAmount($linesAmount)
+	{
+		$this->getContent()->set('linesAmount', $linesAmount);
+		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getLinesPriceValue()
+	public function getLinesAmount()
 	{
-		$price = null;
-		foreach ($this->getLines() as $line)
+		return $this->getContent()->get('linesAmount');
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\TaxApplication[] $linesTaxes
+	 * @return $this
+	 */
+	public function setLinesTaxes($linesTaxes)
+	{
+		$this->linesTaxes = [];
+		if (is_array($linesTaxes))
 		{
-			$value = $line->getPriceValue();
-			if ($value !== null)
+			foreach ($linesTaxes as $tax)
 			{
-				$price += $value;
+				if ($tax instanceof \Rbs\Price\Tax\TaxApplication)
+				{
+					$this->linesTaxes[] = $tax;
+				}
+				elseif (is_array($tax))
+				{
+					$this->linesTaxes[] = (new \Rbs\Price\Tax\TaxApplication($tax));
+				}
 			}
 		}
-		return $price;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 */
+	public function getLinesTaxes()
+	{
+		if ($this->linesTaxes === null)
+		{
+			$this->setLinesTaxes($this->getContent()->get('linesTaxes'));
+		}
+		return $this->linesTaxes;
+	}
+
+
+	/**
+	 * @param float|null $linesAmountWithTaxes
+	 * @return $this
+	 */
+	public function setLinesAmountWithTaxes($linesAmountWithTaxes)
+	{
+		$this->getContent()->set('linesAmountWithTaxes', $linesAmountWithTaxes);
+		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getLinesPriceValueWithTax()
+	public function getLinesAmountWithTaxes()
 	{
-		$price = null;
-		foreach ($this->lines as $line)
+		return $this->getContent()->get('linesAmountWithTaxes');
+	}
+
+
+	/**
+	 * @param float|null $totalAmount
+	 * @return $this
+	 */
+	public function setTotalAmount($totalAmount)
+	{
+		$this->getContent()->set('totalAmount', $totalAmount);
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getTotalAmount()
+	{
+		return $this->getContent()->get('totalAmount');
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\TaxApplication[] $totalTaxes
+	 * @return $this
+	 */
+	public function setTotalTaxes($totalTaxes)
+	{
+		$this->totalTaxes = [];
+		if (is_array($totalTaxes))
 		{
-			$value = $line->getPriceValueWithTax();
-			if ($value !== null)
+			foreach ($totalTaxes as $tax)
 			{
-				$price += $value;
+				if ($tax instanceof \Rbs\Price\Tax\TaxApplication)
+				{
+					$this->totalTaxes[] = $tax;
+				}
+				elseif (is_array($tax))
+				{
+					$this->totalTaxes[] = (new \Rbs\Price\Tax\TaxApplication($tax));
+				}
 			}
 		}
-		return $price;
+		return $this;
 	}
 
 	/**
 	 * @return \Rbs\Price\Tax\TaxApplication[]
 	 */
-	public function getLinesTaxesValues()
+	public function getTotalTaxes()
 	{
-		$taxes = [];
-		foreach ($this->lines as $line)
+		if ($this->totalTaxes === null)
 		{
-			$lineTaxes = $line->getTaxes();
-			if (is_array($lineTaxes) && count($lineTaxes))
-			{
-				$taxes = $this->addTaxesApplication($taxes, $lineTaxes);
-			}
+			$this->setTotalTaxes($this->getContent()->get('totalTaxes'));
 		}
-		return $taxes;
+		return $this->totalTaxes;
 	}
 
 	/**
-	 * @param \Rbs\Price\Tax\TaxApplication[] $taxesA
-	 * @param \Rbs\Price\Tax\TaxApplication[] $taxesB
-	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 * @param float|null $totalAmountWithTaxes
+	 * @return $this
 	 */
-	protected function addTaxesApplication($taxesA, $taxesB)
+	public function setTotalAmountWithTaxes($totalAmountWithTaxes)
 	{
-		/** @var $res \Rbs\Price\Tax\TaxApplication[] */
-		$res = [];
-		foreach ($taxesA as $taxA)
-		{
-			$res[$taxA->getTaxKey()] = clone($taxA);
-		}
-		foreach ($taxesB as $taxB)
-		{
-			if (isset($res[$taxB->getTaxKey()]))
-			{
-				$res[$taxB->getTaxKey()]->addValue($taxB->getValue());
-			}
-			else
-			{
-				$res[$taxB->getTaxKey()] = clone($taxB);
-			}
-		}
-		return array_values($res);
+		$this->getContent()->set('totalAmountWithTaxes', $totalAmountWithTaxes);
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getTotalAmountWithTaxes()
+	{
+		return $this->getContent()->get('totalAmountWithTaxes');
 	}
 }

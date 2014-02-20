@@ -129,7 +129,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach('validCart', [$this, 'onDefaultValidCart'], 5);
+
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 4);
+
 		$eventManager->attach('getFiltersDefinition', [$this, 'onDefaultGetFiltersDefinition'], 5);
 		$eventManager->attach('isValidFilter', [$this, 'onDefaultIsValidFilter'], 5);
 
@@ -289,8 +292,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$qb->assign($fb->column('transaction_id'), $fb->integerParameter('transactionId'));
 				$qb->assign($fb->column('order_id'), $fb->integerParameter('orderId'));
 				$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
-				$qb->assign($fb->column('price_value'), $fb->decimalParameter('priceValue'));
-				$qb->assign($fb->column('price_value_with_tax'), $fb->decimalParameter('priceValueWithTax'));
+				$qb->assign($fb->column('total_amount'), $fb->decimalParameter('totalAmount'));
+				$qb->assign($fb->column('total_amount_with_taxes'), $fb->decimalParameter('totalAmountWithTaxes'));
+				$qb->assign($fb->column('payment_amount_with_taxes'), $fb->decimalParameter('paymentAmountWithTaxes'));
 				$qb->assign($fb->column('currency_code'), $fb->parameter('currencyCode'));
 				$qb->where(
 					$fb->logicAnd(
@@ -309,8 +313,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$uq->bindParameter('orderId', $cart->getOrderId());
 
 				$uq->bindParameter('lineCount', count($cart->getLines()));
-				$uq->bindParameter('priceValue', $cart->getPriceValue());
-				$uq->bindParameter('priceValueWithTax', $cart->getPriceValueWithTax());
+				$uq->bindParameter('totalAmount', $cart->getLinesAmount());
+				$uq->bindParameter('totalAmountWithTaxes', $cart->getLinesAmountWithTaxes());
+				$uq->bindParameter('paymentAmountWithTaxes', $cart->getPaymentAmountWithTaxes());
 				$uq->bindParameter('currencyCode', $cart->getCurrencyCode());
 
 				$uq->bindParameter('identifier', $cart->getIdentifier());
@@ -388,6 +393,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$cart = unserialize($cartInfo['cart_data']);
 			if ($cart instanceof Cart)
 			{
+				$cart->setCartManager($this);
 				$cart->setIdentifier($identifier)
 					->setWebStoreId($cartInfo['store_id'])
 					->setUserId($cartInfo['user_id'])
@@ -397,7 +403,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					->setTransactionId($cartInfo['transaction_id'])
 					->setOrderId($cartInfo['order_id']);
 				$cart->lastUpdate($cartInfo['last_update']);
-				$cart->setCartManager($this);
 				$event->setParam('cart', $cart);
 			}
 		}
@@ -570,7 +575,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					$err = new CartError($message, $line->getKey());
 					$errors[] = $err;
 				}
-				elseif ($line->getUnitPriceValue() === null)
+				elseif ($line->getUnitAmount() === null)
 				{
 					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_price', array('ucf'),
 						array('number' => $line->getIndex() + 1));
@@ -1166,8 +1171,77 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$this->refreshCartLine($cart, $line);
 			}
 
-			$this->refreshLinesPriceValue($cart);
-			$cart->setTaxesValues($cart->getLinesTaxesValues());
+			$this->refreshLinesAmount($cart);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultNormalizeModifiers(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof Cart)
+		{
+			$cart->removeAllFees();
+			$cart->removeAllDiscounts();
+
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+			$processManager = $commerceServices->getProcessManager();
+			$process = $processManager->getOrderProcessByCart($cart);
+			if ($process)
+			{
+				$documents = $process->getAvailableModifiers();
+				foreach ($documents as $document)
+				{
+					if ($document instanceof \Rbs\Commerce\Documents\Fee) {
+						$modifier = $document->getValidModifier($cart);
+						if ($modifier) {
+							$modifier->apply();
+						}
+					}
+					elseif ($document instanceof \Rbs\Discount\Documents\Discount) {
+						$modifier = $document->getValidModifier($cart);
+						if ($modifier) {
+							$modifier->apply();
+						}
+					}
+				}
+			}
+
+			$priceManager = $commerceServices->getPriceManager();
+
+			//Add fees and discounts
+			$totalAmount = $cart->getLinesAmount();
+			$totalAmountWithTaxes = $cart->getLinesAmountWithTaxes();
+			$totalTaxes = $cart->getLinesTaxes();
+			foreach ($cart->getFees() as $fee)
+			{
+				$totalAmount += $fee->getAmount();
+				$totalAmountWithTaxes += $fee->getAmountWithTaxes();
+				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
+			}
+
+			foreach ($cart->getDiscounts() as $discount)
+			{
+				$totalAmount += $discount->getAmount();
+				$totalAmountWithTaxes += $discount->getAmountWithTaxes();
+				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
+			}
+
+			$cart->setTotalAmount($totalAmount);
+			$cart->setTotalAmountWithTaxes($totalAmountWithTaxes);
+			$cart->setTotalTaxes($totalTaxes);
+
+			//Add Credit notes
+			$paymentAmount = $totalAmountWithTaxes;
+			foreach ($cart->getCreditNotes() as $creditNote)
+			{
+				$paymentAmount += $creditNote->getAmount();
+			}
+
+			$cart->setPaymentAmountWithTaxes($paymentAmount);
 		}
 	}
 
@@ -1208,12 +1282,15 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 */
-	protected function refreshLinesPriceValue($cart)
+	protected function refreshLinesAmount($cart)
 	{
 		$priceManager = $this->getPriceManager();
 
-		/* @var $linesTaxesValues \Rbs\Price\Tax\TaxApplication[] */
-		$linesTaxesValues = [];
+		/* @var $linesTaxes \Rbs\Price\Tax\TaxApplication[] */
+		$linesTaxes = [];
+		$linesAmount = 0.0;
+		$linesAmountWithTaxes = 0.0;
+
 		$currencyCode = $cart->getCurrencyCode();
 		$zone = $cart->getZone();
 		$taxes = $cart->getTaxes();
@@ -1224,9 +1301,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 		foreach ($cart->getLines() as $line)
 		{
-			$taxesLine = [];
-			$priceValue = null;
-			$priceValueWithTax = null;
+			$lineTaxes = [];
+			$amount = null;
+			$amountWithTaxes = null;
 
 			$lineQuantity = $line->getQuantity();
 			if ($lineQuantity)
@@ -1242,41 +1319,40 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
 							if (count($taxArray))
 							{
-								$taxesLine = $priceManager->addTaxesApplication($taxesLine, $taxArray);
+								$lineTaxes = $priceManager->addTaxesApplication($lineTaxes, $taxArray);
 							}
 
 							if ($price->isWithTax())
 							{
-								$priceValueWithTax += $lineItemValue;
-								$priceValue += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+								$amountWithTaxes += $lineItemValue;
+								$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
 							}
 							else
 							{
-								$priceValue += $lineItemValue;
-								$priceValueWithTax = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+								$amount += $lineItemValue;
+								$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
 							}
 						}
 						else
 						{
-							if ($price->isWithTax())
-							{
-								$priceValueWithTax += $lineItemValue;
-							}
-							else
-							{
-								$priceValue += $lineItemValue;
-							}
+							$amountWithTaxes += $lineItemValue;
+							$amount += $lineItemValue;
 						}
 					}
 				}
 			}
 
-			$line->setTaxes($taxesLine);
-			$line->setPriceValueWithTax($priceValueWithTax);
-			$line->setPriceValue($priceValue);
-			$linesTaxesValues = $priceManager->addTaxesApplication($linesTaxesValues, $taxesLine);
+			$line->setTaxes($lineTaxes);
+			$line->setAmountWithTaxes($amountWithTaxes);
+			$line->setAmount($amount);
+			$linesAmount += $amount;
+			$linesAmountWithTaxes += $amountWithTaxes;
+			$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);
 		}
-		$cart->setLinesTaxesValues($linesTaxesValues);
+
+		$cart->setLinesTaxes($linesTaxes);
+		$cart->setLinesAmount($linesAmount);
+		$cart->setLinesAmountWithTaxes($linesAmountWithTaxes);
 	}
 
 	/**
@@ -1397,13 +1473,14 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$value = $filter['parameters']['value'];
 				$operator = $filter['parameters']['operator'];
 
+				$linesAmount = $cart->getPricesValueWithTax() ? $cart->getLinesAmountWithTaxes() : $cart->getLinesAmount();
 				if ($operator == 'gte')
 				{
-					$event->setParam('valid', $cart->getPriceValue() >= $value);
+					$event->setParam('valid', $linesAmount >= $value);
 				}
 				else
 				{
-					$event->setParam('valid', $cart->getPriceValue() <= $value);
+					$event->setParam('valid', $linesAmount <= $value);
 				}
 			}
 		}

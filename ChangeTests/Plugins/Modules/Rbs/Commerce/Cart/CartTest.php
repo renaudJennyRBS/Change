@@ -66,7 +66,7 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertEquals('idt', $cart2->getIdentifier());
 		$this->assertEquals('ZTEST', $cart2->getZone());
-		$this->assertEquals(0, $cart2->getOwnerId());
+		$this->assertEquals(500, $cart2->getOwnerId());
 		$this->assertEquals('v1', $cart2->getContext()->get('c1'));
 		$this->assertSame($webStore, $cart2->getContext()->get('webStore'));
 		$this->assertSame($ba, $cart2->getBillingArea());

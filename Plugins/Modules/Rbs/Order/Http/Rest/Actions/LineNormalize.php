@@ -93,8 +93,8 @@ class LineNormalize
 			}
 
 			$taxesLine = [];
-			$priceValue = null;
-			$priceValueWithTax = null;
+			$amount = null;
+			$amountWithTaxes = null;
 
 			$items = $orderLine->getItems();
 			foreach ($items as $item)
@@ -129,32 +129,26 @@ class LineNormalize
 
 						if ($price->isWithTax())
 						{
-							$priceValueWithTax += $lineItemValue;
-							$priceValue += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+							$amountWithTaxes += $lineItemValue;
+							$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
 						}
 						else
 						{
-							$priceValue += $lineItemValue;
-							$priceValueWithTax = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+							$amount += $lineItemValue;
+							$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
 						}
 					}
 					else
 					{
-						if ($price->isWithTax())
-						{
-							$priceValueWithTax += $lineItemValue;
-						}
-						else
-						{
-							$priceValue += $lineItemValue;
-						}
+						$amountWithTaxes += $lineItemValue;
+						$amount += $lineItemValue;
 					}
 				}
 			}
 
 			$orderLine->setTaxes($taxesLine);
-			$orderLine->setPriceValueWithTax($priceValueWithTax);
-			$orderLine->setPriceValue($priceValue);
+			$orderLine->setAmountWithTaxes($amountWithTaxes);
+			$orderLine->setAmount($amount);
 
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

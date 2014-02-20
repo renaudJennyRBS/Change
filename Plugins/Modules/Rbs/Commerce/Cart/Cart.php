@@ -82,9 +82,19 @@ class Cart implements \Serializable
 	protected $lines = [];
 
 	/**
+	 * @var float|null
+	 */
+	protected $linesAmount;
+
+	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
 	 */
-	protected $linesTaxesValues = [];
+	protected $linesTaxes = [];
+
+	/**
+	 * @var float|null
+	 */
+	protected $linesAmountWithTaxes;
 
 	/**
 	 * @var string
@@ -114,12 +124,32 @@ class Cart implements \Serializable
 	/**
 	 * @var \Rbs\Commerce\Cart\CartDiscount[]
 	 */
-	protected $discounts =[];
+	protected $discounts = [];
+
+	/**
+	 * @var float|null
+	 */
+	protected $totalAmount;
 
 	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
 	 */
-	protected $taxesValues = [];
+	protected $totalTaxes = [];
+
+	/**
+	 * @var float|null
+	 */
+	protected $totalAmountWithTaxes;
+
+	/**
+	 * @var \Rbs\Commerce\Process\BaseCreditNote[]
+	 */
+	protected $creditNotes = [];
+
+	/**
+	 * @var float|null
+	 */
+	protected $paymentAmountWithTaxes;
 
 	/**
 	 * @var array|null
@@ -512,12 +542,21 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param array $parameters
+	 * @param string|array|\Rbs\Commerce\Interfaces\LineInterface $parameters
 	 * @return \Rbs\Commerce\Cart\CartLine
 	 */
 	public function getNewLine($parameters)
 	{
 		return new CartLine($parameters, $this->getCartManager());
+	}
+
+	/**
+	 * @param array|\Rbs\Commerce\Process\DiscountInterface|null $parameters
+	 * @return \Rbs\Commerce\Cart\CartDiscount
+	 */
+	public function getNewDiscount($parameters)
+	{
+		return new CartDiscount($parameters, $this->getCartManager());
 	}
 
 	/**
@@ -634,7 +673,7 @@ class Cart implements \Serializable
 	 */
 	public function getTaxes()
 	{
-		$taxes = $this->billingArea ?  $this->billingArea->getTaxes() : [];
+		$taxes = $this->billingArea ? $this->billingArea->getTaxes() : [];
 		if ($taxes instanceof \Change\Documents\DocumentArrayProperty)
 		{
 			$taxes = $taxes->toArray();
@@ -643,78 +682,129 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @return \Rbs\Price\Tax\TaxApplication[]
-	 */
-	public function getLinesTaxesValues()
-	{
-		return $this->linesTaxesValues;
-	}
-
-	/**
-	 * @param \Rbs\Price\Tax\TaxApplication[] $linesTaxesValues
+	 * @param float|null $linesAmount
 	 * @return $this
 	 */
-	public function setLinesTaxesValues(array $linesTaxesValues)
+	public function setLinesAmount($linesAmount)
 	{
-		$this->linesTaxesValues = $linesTaxesValues;
+		$this->linesAmount = $linesAmount;
 		return $this;
-	}
-
-	/**
-	 * @param \Rbs\Price\Tax\TaxApplication[] $taxesValues
-	 * @return $this
-	 */
-	public function setTaxesValues(array $taxesValues)
-	{
-		$this->taxesValues = $taxesValues;
-		return $this;
-	}
-
-	/**
-	 * @return \Rbs\Price\Tax\TaxApplication[]
-	 */
-	public function getTaxesValues()
-	{
-		return $this->taxesValues;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValue()
+	public function getLinesAmount()
 	{
-		$price = null;
-		foreach ($this->lines as $line)
-		{
-			$value = $line->getPriceValue();
-			if ($value !== null)
-			{
-				$price += $value;
-			}
-		}
-		return $price;
+		return $this->linesAmount;
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 */
+	public function getLinesTaxes()
+	{
+		return $this->linesTaxes;
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\TaxApplication[] $linesTaxes
+	 * @return $this
+	 */
+	public function setLinesTaxes(array $linesTaxes)
+	{
+		$this->linesTaxes = $linesTaxes;
+		return $this;
+	}
+
+	/**
+	 * @param float|null $linesAmountWithTaxes
+	 * @return $this
+	 */
+	public function setLinesAmountWithTaxes($linesAmountWithTaxes)
+	{
+		$this->linesAmountWithTaxes = $linesAmountWithTaxes;
+		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValueWithTax()
+	public function getLinesAmountWithTaxes()
 	{
-		$price = null;
-		foreach ($this->lines as $line)
-		{
-			$value = $line->getPriceValueWithTax();
-			if ($value !== null)
-			{
-				$price += $value;
-			}
-		}
-		return $price;
+		return $this->linesAmountWithTaxes;
 	}
 
-	public function getPaymentAmount()
+	/**
+	 * @param float|null $totalAmount
+	 * @return $this
+	 */
+	public function setTotalAmount($totalAmount)
 	{
-		return $this->getPriceValueWithTax();
+		$this->totalAmount = $totalAmount;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getTotalAmount()
+	{
+		return $this->totalAmount;
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\TaxApplication[] $totalTaxes
+	 * @return $this
+	 */
+	public function setTotalTaxes(array $totalTaxes)
+	{
+		$this->totalTaxes = $totalTaxes;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxApplication[]
+	 */
+	public function getTotalTaxes()
+	{
+		return $this->totalTaxes;
+	}
+
+	/**
+	 * @param float|null $totalAmountWithTaxes
+	 * @return $this
+	 */
+	public function setTotalAmountWithTaxes($totalAmountWithTaxes)
+	{
+		$this->totalAmountWithTaxes = $totalAmountWithTaxes;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getTotalAmountWithTaxes()
+	{
+		return $this->totalAmountWithTaxes;
+	}
+
+	/**
+	 * @param float|null $paymentAmountWithTaxes
+	 * @return $this
+	 */
+	public function setPaymentAmountWithTaxes($paymentAmountWithTaxes)
+	{
+		$this->paymentAmountWithTaxes = $paymentAmountWithTaxes;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getPaymentAmountWithTaxes()
+	{
+		return $this->paymentAmountWithTaxes;
 	}
 
 	/**
@@ -760,21 +850,8 @@ class Cart implements \Serializable
 	 */
 	public function serialize()
 	{
-		$serializedData = array('identifier' => $this->identifier,
-			'billingArea' => $this->billingArea,
-			'zone' => $this->zone,
-			'context' => $this->context,
-			'lines' => $this->lines,
-			'linesTaxesValues' => $this->linesTaxesValues,
-			'errors' => $this->errors,
-			'email' => $this->email,
-			'address' => $this->address,
-			'fees' => $this->fees,
-			'discounts' => $this->discounts,
-			'shippingModes' => $this->shippingModes,
-			'coupons' => $this->coupons,
-			'taxesValues' => $this->taxesValues,
-		);
+		$serializedData = get_object_vars($this);
+		unset($serializedData['cartManager']);
 		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
 
@@ -796,39 +873,210 @@ class Cart implements \Serializable
 		$cartManager = $this->getCartManager();
 		$serializedData = $cartManager->restoreSerializableValue($this->serializedData);
 		$this->serializedData = null;
-		$this->identifier = $serializedData['identifier'];
-		$this->billingArea = $serializedData['billingArea'];
-		$this->zone = $serializedData['zone'];
-		$this->context = $serializedData['context'];
-		$this->lines = $serializedData['lines'];
-		$this->linesTaxesValues = $serializedData['linesTaxesValues'];
-		$this->errors = $serializedData['errors'];
-		$this->email = $serializedData['email'];
-		$this->address = $serializedData['address'];
-		$this->fees = $serializedData['fees'];
-		$this->discounts = $serializedData['discounts'];
-		$this->shippingModes = $serializedData['shippingModes'];
-		$this->coupons = $serializedData['coupons'];
-		$this->taxesValues = $serializedData['taxesValues'];
+		foreach ($serializedData as $k => $v)
+		{
+			switch ($k) {
+				case 'identifier': $this->identifier = $v; break;
+				case 'billingArea': $this->billingArea = $v; break;
+				case 'zone': $this->zone = $v; break;
+				case 'webStoreId': $this->webStoreId = $v; break;
+				case 'userId': $this->userId = $v; break;
+				case 'ownerId': $this->ownerId = $v; break;
+				case 'locked': $this->locked = $v; break;
+				case 'processing': $this->processing = $v; break;
+				case 'transactionId': $this->transactionId = $v; break;
+				case 'orderId': $this->orderId = $v; break;
+				case 'lastUpdate': $this->lastUpdate = $v; break;
+				case 'context': $this->context = $v; break;
+				case 'errors': $this->errors = $v; break;
+				case 'lines': $this->lines = $v; break;
+				case 'linesAmount': $this->linesAmount = $v; break;
+				case 'linesTaxes': $this->linesTaxes = $v; break;
+				case 'linesAmountWithTaxes': $this->linesAmountWithTaxes = $v; break;
+				case 'email': $this->email = $v; break;
+				case 'address': $this->address = $v; break;
+				case 'shippingModes': $this->shippingModes = $v; break;
+				case 'coupons': $this->coupons = $v; break;
+				case 'fees': $this->fees = $v; break;
+				case 'discounts': $this->discounts = $v; break;
+				case 'totalAmount': $this->totalAmount = $v; break;
+				case 'totalTaxes': $this->totalTaxes = $v; break;
+				case 'totalAmountWithTaxes': $this->totalAmountWithTaxes = $v; break;
+				case 'creditNotes': $this->creditNotes = $v; break;
+				case 'paymentAmountWithTaxes': $this->paymentAmountWithTaxes = $v; break;
+			}
+		}
 
+		/* @var $line CartLine */
 		foreach ($this->lines as $line)
 		{
-			/* @var $line CartLine */
+
 			$line->setCartManager($cartManager);
 		}
+
+		/* @var $fee CartLine */
 		foreach ($this->fees as $fee)
 		{
-			/* @var $fee CartLine */
 			$fee->setCartManager($cartManager);
 		}
 
+		/** @var $discount CartDiscount */
 		foreach ($this->discounts as $discount)
 		{
-
 			$discount->setCartManager($cartManager);
 		}
 
 		return $serializedData;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Cart\CartLine[]
+	 */
+	public function getFees()
+	{
+		return $this->fees;
+	}
+
+	/**
+	 * @param string $feeKey
+	 * @return \Rbs\Commerce\Cart\CartLine|null
+	 */
+	public function getFeeByKey($feeKey)
+	{
+		foreach ($this->fees as $fee)
+		{
+			if ($fee->getKey() === $feeKey)
+			{
+				return $fee;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param CartLine $feeLine
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Cart\CartLine
+	 */
+	public function appendFee(CartLine $feeLine)
+	{
+		if ($this->getFeeByKey($feeLine->getKey()))
+		{
+			throw new \RuntimeException('Duplicate fee key: ' . $feeLine->getKey(), 999999);
+		}
+		$index = count($this->fees);
+		$this->fees[] = $feeLine;
+		$feeLine->setIndex($index);
+		return $feeLine;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Cart\CartLine[]
+	 */
+	public function removeAllFees()
+	{
+		$removed = $this->fees;
+		$this->fees = [];
+		return $removed;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Cart\CartDiscount[]
+	 */
+	public function getDiscounts()
+	{
+		return $this->discounts;
+	}
+
+	/**
+	 * @param string $id
+	 * @return \Rbs\Commerce\Cart\CartDiscount|null
+	 */
+	public function getDiscountById($id)
+	{
+		foreach ($this->discounts as $discount)
+		{
+			if ($discount->getId() == $id)
+			{
+				return $discount;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param CartDiscount $discount
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Cart\CartDiscount
+	 */
+	public function appendDiscount(CartDiscount $discount)
+	{
+		if ($this->getDiscountById($discount->getId()))
+		{
+			throw new \RuntimeException('Duplicate discount id: ' . $discount->getId(), 999999);
+		}
+		$this->discounts[] = $discount;
+		return $discount;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Cart\CartDiscount[]
+	 */
+	public function removeAllDiscounts()
+	{
+		$removed = $this->discounts;
+		$this->discounts = [];
+		return $removed;
+	}
+
+
+	/**
+	 * @return \Rbs\Commerce\Process\BaseCreditNote[]
+	 */
+	public function getCreditNotes()
+	{
+		return $this->creditNotes;
+	}
+
+	/**
+	 * @param string $id
+	 * @return \Rbs\Commerce\Process\BaseCreditNote|null
+	 */
+	public function getCreditNoteById($id)
+	{
+		foreach ($this->creditNotes as $creditNote)
+		{
+			if ($creditNote->getId() == $id)
+			{
+				return $creditNote;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Process\BaseCreditNote $creditNote
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Process\BaseCreditNote
+	 */
+	public function appendCreditNote(\Rbs\Commerce\Process\BaseCreditNote $creditNote)
+	{
+		if ($this->getCreditNoteById($creditNote->getId()))
+		{
+			throw new \RuntimeException('Duplicate credit note id: ' . $creditNote->getId(), 999999);
+		}
+		$this->creditNotes[] = $creditNote;
+		return $creditNote;
+	}
+
+	/**
+	 * @return \Rbs\Commerce\Process\BaseCreditNote[]
+	 */
+	public function removeAllCreditNotes()
+	{
+		$removed = $this->creditNotes;
+		$this->creditNotes = [];
+		return $removed;
 	}
 
 	/**
@@ -846,22 +1094,32 @@ class Cart implements \Serializable
 			'currencyCode' => $this->billingArea ? $this->billingArea->getCurrencyCode() : null,
 			'taxes' => [],
 			'zone' => $this->zone,
+
 			'lines' => [],
-			'linesTaxesValues' => [],
+			'linesAmount' => $this->linesAmount,
+			'linesTaxes' => [],
+			'linesAmountWithTaxes' => $this->linesAmountWithTaxes,
+
+			'address' => ($this->address instanceof \Rbs\Geo\Address\AddressInterface) ? $this->address->getFields() : null,
+			'shippingModes' => [],
+
+			'coupons' => [],
+			'fees' => [],
+			'discounts' => [],
+
+			'totalAmount' => $this->totalAmount,
+			'totalTaxes' => [],
+			'totalAmountWithTaxes' => $this->totalAmountWithTaxes,
+
+			'creditNotes' => [],
+			'paymentAmountWithTaxes' => $this->getPaymentAmountWithTaxes(),
+
 			'userId' => $this->userId,
 			'ownerId' => $this->ownerId,
 			'email' => $this->email,
-			'address' => ($this->address instanceof \Rbs\Geo\Address\AddressInterface) ? $this->address->getFields() : null,
-			'shippingModes' => [],
-			'coupons' => [],
-			'fees' => [], // TODO
-			'discounts' => [], // TODO
-			'taxesValues' => [],
-			'creditNotes' => [], // TODO
 			'locked' => $this->locked,
 			'processing' => $this->processing,
 			'transactionId' => $this->transactionId,
-			'paymentAmount' => $this->getPaymentAmount(),
 			'orderId' => $this->orderId
 		);
 
@@ -870,14 +1128,14 @@ class Cart implements \Serializable
 			$array['taxes'][] = $tax->toArray();
 		}
 
-		foreach ($this->getTaxesValues() as $taxApplication)
+		foreach ($this->getTotalTaxes() as $taxApplication)
 		{
-			$array['taxesValues'][] = $taxApplication->toArray();
+			$array['totalTaxes'][] = $taxApplication->toArray();
 		}
 
-		foreach ($this->getLinesTaxesValues() as $taxApplication)
+		foreach ($this->getLinesTaxes() as $taxApplication)
 		{
-			$array['linesTaxesValues'][] = $taxApplication->toArray();
+			$array['linesTaxes'][] = $taxApplication->toArray();
 		}
 
 		foreach ($this->lines as $line)
@@ -903,6 +1161,11 @@ class Cart implements \Serializable
 		foreach ($this->discounts as $discount)
 		{
 			$array['discounts'][] = $discount->toArray();
+		}
+
+		foreach ($this->creditNotes as $creditNote)
+		{
+			$array['creditNotes'][] = $creditNote->toArray();
 		}
 
 		foreach ($this->errors as $error)

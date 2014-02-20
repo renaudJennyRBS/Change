@@ -11,11 +11,11 @@
 	"process_paymentconnectors":{
 		"message":"modes de paiement"
 	},
-	"process_fees":{
-		"message":"frais"
-	},
 	"fee":{
 		"message":"frais"
+	},
+	"fee_orderprocess":{
+		"message":"processus de commande"
 	},
 	"fee_sku":{
 		"message":"sku"

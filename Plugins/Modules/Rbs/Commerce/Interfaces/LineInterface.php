@@ -44,12 +44,12 @@ interface LineInterface
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValue();
+	public function getAmount();
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValueWithTax();
+	public function getAmountWithTaxes();
 
 	/**
 	 * @return array

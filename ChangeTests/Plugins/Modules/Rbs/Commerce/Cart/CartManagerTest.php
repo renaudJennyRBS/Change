@@ -192,15 +192,15 @@ class CartManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$cart->appendLine($cart->getNewLine($lineParameters));
 
-		$this->assertNull($cart->getPriceValue());
-		$this->assertNull($cart->getPriceValueWithTax());
+		$this->assertNull($cart->getLinesAmount());
+		$this->assertNull($cart->getLinesAmountWithTaxes());
 		$cartManager->normalize($cart);
 
 		$v = 5.3 * 3 + 12 * 2; //39.9
-		$this->assertEquals($v, $cart->getPriceValue());
+		$this->assertEquals($v, $cart->getLinesAmount());
 
 		$this->assertTrue($cartManager->isValidFilter($cart, []));
-		$this->assertNull($cart->getPriceValueWithTax());
+		$this->assertEquals($v, $cart->getLinesAmountWithTaxes());
 
 		$filter = ['name' => 'group', 'operator' => 'AND', 'filters' => [
 			['name' => 'linesPriceValue', 'parameters' => ['propertyName' => 'linesPriceValue', 'operator' => 'gte', 'value' => 40]]

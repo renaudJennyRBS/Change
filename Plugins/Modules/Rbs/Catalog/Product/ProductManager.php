@@ -219,8 +219,8 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function mostExpensiveUnitPrice($line1, $line2)
 	{
-		$price1 = $line1->getUnitPriceValueWithTax();
-		$price2 = $line2->getUnitPriceValueWithTax();
+		$price1 = $line1->getUnitAmountWithTaxes();
+		$price2 = $line2->getUnitAmountWithTaxes();
 		if ($price1 == $price2) {
 			return 0;
 		}

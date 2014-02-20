@@ -45,6 +45,10 @@ class TaxApplication
 		}
 		elseif (is_array($taxCode) && isset($taxCode['taxCode']))
 		{
+			if (isset($taxCode['value']) )
+			{
+				$this->value = floatval($taxCode['value']);
+			}
 			if (isset($taxCode['category']))
 			{
 				$category = $taxCode['category'];
@@ -58,6 +62,7 @@ class TaxApplication
 				$rate = $taxCode['rate'];
 			}
 			$taxCode = $taxCode['taxCode'];
+
 		}
 		$this->taxCode = $taxCode;
 		$this->category = $category;

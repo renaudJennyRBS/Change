@@ -360,17 +360,25 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 		$res = [];
 		foreach ($taxesA as $taxA)
 		{
-			$res[$taxA->getTaxKey()] = clone($taxA);
+			$k = $taxA->getTaxKey();
+			if (abs($taxA->getValue()) > 0.00001)
+			{
+				$res[$k] = clone($taxA);
+			}
 		}
 		foreach ($taxesB as $taxB)
 		{
-			if (isset($res[$taxB->getTaxKey()]))
+			$k = $taxB->getTaxKey();
+			if (isset($res[$k]))
 			{
-				$res[$taxB->getTaxKey()]->addValue($taxB->getValue());
+				$res[$k]->addValue($taxB->getValue());
+				if (abs($res[$k]->getValue()) < 0.00001) {
+					unset($res[$k]);
+				}
 			}
-			else
+			elseif (abs($taxB->getValue()) > 0.00001)
 			{
-				$res[$taxB->getTaxKey()] = clone($taxB);
+				$res[$k] = clone($taxB);
 			}
 		}
 		return array_values($res);

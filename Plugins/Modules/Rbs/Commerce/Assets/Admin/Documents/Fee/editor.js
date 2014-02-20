@@ -2,8 +2,7 @@
 {
 	"use strict";
 
-	function Editor ()
-	{
+	function Editor ($routeParams, REST) {
 		return {
 			restrict : 'A',
 			templateUrl : 'Document/Rbs/Commerce/Fee/editor.twig',
@@ -12,7 +11,12 @@
 			link : function (scope, element, attrs, editorCtrl)
 			{
 				scope.onLoad = function(){
-
+					if (scope.document.isNew() && $routeParams.hasOwnProperty('orderProcessId') && !scope.document.orderProcess) {
+						REST.resource('Rbs_Commerce_Process', $routeParams['orderProcessId']).then(function(process) {
+							scope.document.orderProcess = process;
+							scope.document.orderProcessId = process.id;
+						})
+					}
 				};
 
 				scope.onReady = function(){
@@ -25,5 +29,6 @@
 			}
 		}
 	}
+	Editor.$inject = ['$routeParams', 'RbsChange.REST'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCommerceFee', Editor);
 })();

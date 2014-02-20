@@ -16,11 +16,34 @@
 			selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_paymentconnectors_picker_title', ['ucf']) }}">
 		</rbs-field-picker-multiple>
 
-
-		<rbs-field-picker-multiple property="fees" accepted-model="Rbs_Commerce_Fee"
-				label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'fees'), ['ucf']) }}"
-				selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_fees_picker_title', ['ucf']) }}">
-		</rbs-field-picker-multiple>
+		<div ng-hide="document.isNew()">
+			<rbs-document-list data-dlid="DLRbsCommerceProcessModifier" collection="document.modifiersOrder"  extend="modifiersManager" ng-cloak=""
+					toolbar="false" selectable="false" activable="true">
+				<rbs-column name="model" label="{{ i18nAttr('c.documents.model', ['ucf']) }}" >(= doc.modelName =)</rbs-column>
+				<rbs-column name="label" primary="true" label="{{ i18nAttr('c.documents.label', ['ucf']) }}">
+					<a ng-href="(= doc | rbsURL:'form' =)">(= doc.label =)</a>
+				</rbs-column>
+				<rbs-quick-actions></rbs-quick-actions>
+				<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
+					<rbs-kb-switch>
+						<button rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveTop($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
+							<i class="icon-step-forward icon-rotate-270"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="$first" class="btn btn-default btn-icon" type="button" ng-click="extend.moveUp($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
+							<i class="icon-play icon-rotate-270"></i>
+						</button>
+					</rbs-kb-switch>
+					<rbs-kb-switch>
+						<button rbs-kb-when="alt" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveBottom($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
+							<i class="icon-step-forward icon-rotate-90"></i>
+						</button>
+						<button rbs-kb-default="" ng-disabled="$last" class="btn btn-default btn-icon" type="button" ng-click="extend.moveDown($index)" title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
+							<i class="icon-play icon-rotate-90"></i>
+						</button>
+					</rbs-kb-switch>
+				</rbs-column>
+			</rbs-document-list>
+		</div>
 	</fieldset>
 
 	<fieldset

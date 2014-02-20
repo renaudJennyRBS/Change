@@ -12,6 +12,11 @@
 			input-class="form-control">
 		</rbs-field-text>
 
+		<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'orderProcess'), ['ucf']) }}"
+				required="true" property="orderProcess" accepted-model="Rbs_Commerce_Process"
+				ng-model="document.orderProcess">
+		</rbs-field-document-select>
+
 		<rbs-field-text property="code" required="true" label="{{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 

@@ -4,6 +4,7 @@
 		  editable="true" activable="true" localized="true">
 	<properties>
 		<property name="title" type="String" localized="true" has-correction="true"/>
+		<property name="orderProcess" type="Document" document-type="Rbs_Commerce_Process" />
 		<property name="code" type="String" has-correction="true" />
 		<property name="cartFilterData" type="JSON" has-correction="true"/>
 	</properties>

@@ -128,13 +128,13 @@ class BaseDiscount implements \Rbs\Commerce\Process\DiscountInterface
 	 */
 	public function getTaxes()
 	{
-		$this->taxes;
+		return $this->taxes;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValue()
+	public function getAmount()
 	{
 		if ($this->price)
 		{
@@ -148,13 +148,13 @@ class BaseDiscount implements \Rbs\Commerce\Process\DiscountInterface
 			}
 			return $value;
 		}
-		return $this->getOptions()->get('priceValue');
+		return $this->getOptions()->get('amount');
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPriceValueWithTax()
+	public function getAmountWithTaxes()
 	{
 		if ($this->price)
 		{
@@ -168,7 +168,7 @@ class BaseDiscount implements \Rbs\Commerce\Process\DiscountInterface
 			}
 			return $value;
 		}
-		return $this->getOptions()->get('priceValueWithTax');
+		return $this->getOptions()->get('amountWithTaxes');
 	}
 
 	/**
@@ -242,11 +242,11 @@ class BaseDiscount implements \Rbs\Commerce\Process\DiscountInterface
 				case 'price':
 					$this->setPrice($value);
 					break;
-				case 'priceValue':
-					$this->getOptions()->set('priceValue', $value);
+				case 'amount':
+					$this->getOptions()->set('amount', $value);
 					break;
-				case 'priceValueWithTax':
-					$this->getOptions()->set('priceValueWithTax', $value);
+				case 'amountWithTaxes':
+					$this->getOptions()->set('amountWithTaxes', $value);
 					break;
 				case 'taxes':
 					if (is_array($value))
