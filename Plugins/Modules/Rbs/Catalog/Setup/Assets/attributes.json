@@ -37,6 +37,7 @@
 		"collectionCode":null,
 		"visibility":["specifications", "comparisons"],
 		"documentType":"",
-		"attributes":["description", "brand", "pictograms"]
+		"attributes":["description", "brand", "pictograms"],
+		"productTypology":true
 	}
 }

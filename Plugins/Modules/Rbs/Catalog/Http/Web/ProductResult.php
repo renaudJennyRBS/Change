@@ -36,14 +36,13 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 
 		$product = $dm->getDocumentInstance($productId);
-
 		if ($product instanceof \Rbs\Catalog\Documents\Product)
 		{
 			$commerceServices = $event->getServices('commerceServices');
-
 			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$presentation = $product->getPresentation($commerceServices, $commerceServices->getContext()->getWebstore()->getId(), $event->getUrlManager());
+				$webStoreId = $commerceServices->getContext()->getWebstore()->getId();
+				$presentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
 				$presentation->evaluate();
 				$responseData = $presentation->toArray($formats);
 				$result = new \Change\Http\Web\Result\AjaxResult($responseData);

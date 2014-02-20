@@ -1,86 +1,104 @@
-(function () {
+(function() {
 	"use strict";
 
 	var app = angular.module('RbsChangeApp');
 
 	function rbsCatalogProductData() {
 		return {
-			restrict : 'A',
-			templateUrl : '/addLineToCart.tpl',
-			replace : false,
+			restrict: 'A',
+			templateUrl: '/addLineToCart.tpl',
+			replace: false,
 			scope: false,
 
-			link : function (scope, elm, attrs) {
-				var v =  parseInt(attrs.productId, 10);
+			link: function(scope, elm, attrs) {
+				var v = parseInt(attrs.productId, 10);
 				scope.baseProductId = scope.product.id = isNaN(v) ? 0 : v;
 				scope.product.designation = attrs.designation;
 				scope.redirectUrl = attrs.redirectUrl;
 			}
 		}
 	}
+
 	app.directive('rbsCatalogProductData', rbsCatalogProductData);
 
 	function rbsCatalogProductAvailability() {
 		return {
-			restrict : 'A',
-			templateUrl : '/productAvailability.tpl',
-			replace : false,
+			restrict: 'A',
+			templateUrl: '/productAvailability.tpl',
+			replace: false,
 			scope: false,
 			transclude: true,
 
-			link : function (scope, elm, attrs) {
+			link: function(scope, elm, attrs) {
 			}
 		}
 	}
-	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
 
+	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
 
 	function rbsCatalogProductPrice() {
 		return {
-			restrict : 'A',
-			templateUrl : '/productPrice.tpl',
-			replace : false,
-			require : 'ngModel',
+			restrict: 'A',
+			templateUrl: '/productPrice.tpl',
+			replace: false,
+			require: 'ngModel',
 			scope: false,
 			transclude: true,
 
-			link : function (scope, elm, attrs, ngModel) {
+			link: function(scope, elm, attrs, ngModel) {
 				var display = (attrs.hasOwnProperty('display')) ? (attrs.display == "1") : false;
 				var displayWithTax = (attrs.hasOwnProperty('displayWithTax')) ? (attrs.displayWithTax == "1") : false;
 				ngModel.$setViewValue({display: display, displayWithTax: displayWithTax});
 			}
 		}
 	}
+
 	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
 
-
-	function rbsCatalogProductVisuals() {
+	function rbsCatalogProductPictograms() {
 		return {
-			restrict : 'A',
-			templateUrl : '/productVisuals.tpl',
-			replace : false,
+			restrict: 'A',
+			templateUrl: '/productPictograms.tpl',
+			replace: false,
 			scope: false,
 			transclude: true,
 
-			link : function (scope, elm, attrs) {
-				if (attrs.hasOwnProperty('visualFormats'))
-				{
+			link: function(scope, elm, attrs) {
+				if (attrs.hasOwnProperty('pictogramFormats')) {
+					angular.extend(scope['pictogramFormats'], angular.fromJson(attrs['pictogramFormats']));
+				}
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
+
+	function rbsCatalogProductVisuals() {
+		return {
+			restrict: 'A',
+			templateUrl: '/productVisuals.tpl',
+			replace: false,
+			scope: false,
+			transclude: true,
+
+			link: function(scope, elm, attrs) {
+				if (attrs.hasOwnProperty('visualFormats')) {
 					angular.extend(scope.visualFormats, angular.fromJson(attrs.visualFormats));
 				}
 			}
 		}
 	}
-	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
 
+	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
 
 	function rbsCatalogVariantData() {
 		return {
-			restrict : 'A',
-			template : '<div></div>',
-			replace : true,
+			restrict: 'A',
+			template: '<div></div>',
+			replace: true,
 			scope: false,
 
-			link : function (scope, elm, attrs) {
+			link: function(scope, elm, attrs) {
 				scope.variantGroupId = attrs.variantGroupId;
 				scope.axes = angular.fromJson(attrs.axes);
 			}
@@ -89,12 +107,12 @@
 
 	app.directive('rbsCatalogVariantData', rbsCatalogVariantData);
 
-	function RbsCatalogProductController(scope, $http)
-	{
+	function RbsCatalogProductController(scope, $http) {
 		scope.productLoading = false;
 
 		scope.redirectUrl = null;
 		scope.pricesConfig = {};
+		scope.pictogramFormats = {};
 		scope.visualFormats = {};
 
 		// Variant Config
@@ -111,20 +129,20 @@
 		setCurrentProduct(null);
 
 		scope.addLine = function() {
-			if (scope.product.id !== 0)
-			{
+			if (scope.product.id !== 0) {
 				var data = {
 					key: scope.product.id,
 					designation: scope.product.title,
 					quantity: scope.quantity,
 					options: {productId: scope.product.id},
-					items: [{codeSKU: scope.stock.sku}]
+					items: [
+						{codeSKU: scope.stock.sku}
+					]
 				};
 
 				$http.post('Action/Rbs/Commerce/AddLineToCart', data, {})
-					.success(function(data, status, headers) {
-						if (scope.redirectUrl)
-						{
+					.success(function() {
+						if (scope.redirectUrl) {
 							window.location.href = scope.redirectUrl;
 						}
 					})
@@ -146,41 +164,34 @@
 					for (index = 0; index < axesLength; index++) {
 						productAxisVal = product.values[index];
 						i = -1;
-						if (scope.axesValues[index])
-						{
+						if (scope.axesValues[index]) {
 							i = getIndexOfValue(scope.axesValues[index], productAxisVal.value);
 						}
-						if (i != -1)
-						{
+						if (i != -1) {
 							scope.selectedAxesValues[index] = scope.axesValues[index][i];
 							parentValues.push(productAxisVal);
-							if (index + 1 < axesLength)
-							{
+							if (index + 1 < axesLength) {
 								buildSelectAxisValues(index + 1, parentValues, val.products, val.axesValues);
 							}
 
-							if (index == axesLength - 1)
-							{
+							if (index == axesLength - 1) {
 								loadProduct(product)
 							}
 						}
-						else
-						{
+						else {
 							scope.selectedAxesValues[index] = null;
 						}
 					}
 				}
-				else
-				{
-					for (i = 0; i < axesLength; i++)
-					{
+				else {
+					for (i = 0; i < axesLength; i++) {
 						scope.selectedAxesValues[i] = null;
 					}
 				}
 			}
 		});
 
-		scope.variantChanged  = function(axisIndex) {
+		scope.variantChanged = function(axisIndex) {
 			scope.selectedAxesValues.length = axisIndex + 1;
 		};
 
@@ -194,67 +205,69 @@
 				if (val[i] === null) {
 					break;
 				}
-				expected.push({id:val[i].id, value: val[i].value});
+				expected.push({id: val[i].id, value: val[i].value});
 			}
 
 			if (expected.length < axes.length) {
 				buildSelectAxisValues(expected.length, expected, products, axes);
 			}
 
-			for (i = expected.length; i < axes.length; i++) {
-				expected.push({id:axes[i].id, value: null});
+			var significantAxesCount = expected.length;
+			for (i = significantAxesCount; i < axes.length; i++) {
+				expected.push({id: axes[i].id, value: null});
 			}
 
-			setCurrentProduct(null);
-
-			for (i = 0; i < products.length; i++) {
-				if (eqAxesValues(expected, products[i].values))
-				{
-					if (products[i].id != scope.product.id) {
-						loadProduct(products[i]);
+			while (significantAxesCount > 0)
+			{
+				// Look for a product with these axis values.
+				for (i = 0; i < products.length; i++) {
+					if (eqAxesValues(expected, products[i].values)) {
+						if (products[i].id != scope.product.id) {
+							loadProduct(products[i]);
+						}
+						return;
 					}
-					return;
 				}
+				// Iteratively remove the last axis value look for a parent intermediate product.
+				significantAxesCount--;
+				expected[significantAxesCount].value = null;
 			}
+			setCurrentProduct(null);
 		});
 
 		function loadProduct(product) {
 			scope.productLoading = true;
-			$http.post('Action/Rbs/Catalog/ProductResult', {
+			var params = {
 				productId: product.id,
 				axesValues: product.values,
-				formats: scope.visualFormats
-			})
-				.success(function (data) {
+				formats: { visuals: scope.visualFormats, pictograms: scope.pictogramFormats }
+			};
+			$http.post('Action/Rbs/Catalog/ProductResult', params)
+				.success(function(data) {
 					scope.productLoading = false;
 					setCurrentProduct(data);
 				})
-				.error(function () {
+				.error(function() {
 					scope.productLoading = false;
 					setCurrentProduct(null);
 				});
 		}
 
 		function setCurrentProduct(data) {
-			if (data)
-			{
+			if (data) {
 				scope.product = data.general;
 				scope.prices = data.prices;
 				scope.stock = data.stock;
-				scope.visuals = data.visuals.visuals;
-
-				//scope.quantity = Math.min(data.stock.minQuantity, data.stock.maxQuantity);
+				scope.pictograms = data.pictograms.data;
+				scope.visuals = data.visuals.data;
 				scope.quantity = data.stock.minQuantity;
 			}
-			else
-			{
-				var pId = scope.product.id;
-				scope.product = null;
-				scope.product = {'id': pId};
+			else {
+				scope.product = {'id': null};
 				scope.prices = null;
 				scope.stock = null;
+				scope.pictograms = null;
 				scope.visuals = null;
-
 				scope.quantity = 1;
 			}
 		}
@@ -277,18 +290,16 @@
 					axisId = product.values[index].id;
 					if (value !== null && (getIndexOfValue(values, value) == -1)) {
 						var title = value;
-						if (axes[index].hasOwnProperty('defaultValues') && axes[index]['defaultValues'].length > 0)
-						{
-							for (var i=0;i<axes[index]['defaultValues'].length;i++)
-							{
-								if (axes[index]['defaultValues'][i].hasOwnProperty('title') && axes[index]['defaultValues'][i]['value'] == value)
-								{
+						if (axes[index].hasOwnProperty('defaultValues') && axes[index]['defaultValues'].length > 0) {
+							for (var i = 0; i < axes[index]['defaultValues'].length; i++) {
+								if (axes[index]['defaultValues'][i].hasOwnProperty('title') &&
+									axes[index]['defaultValues'][i]['value'] == value) {
 									title = axes[index]['defaultValues'][i]['title'];
 									break;
 								}
 							}
 						}
-						values.push({id: axisId, value: value, title:title, index: index})
+						values.push({id: axisId, value: value, title: title, index: index})
 					}
 				}
 			});
@@ -301,11 +312,8 @@
 				eav = expected[e];
 				for (a = 0; a < actual.length; a++) {
 					aav = actual[a];
-					if (aav.id == eav.id) {
-						if (aav.value !== eav.value)
-						{
-							return false;
-						}
+					if (aav.id == eav.id && aav.value !== eav.value) {
+						return false;
 					}
 				}
 			}
@@ -316,14 +324,14 @@
 			var e, ev;
 			for (e = 0; e < array.length; e++) {
 				ev = array[e];
-				if (ev.hasOwnProperty('value') && ev.value == value)
-				{
+				if (ev.hasOwnProperty('value') && ev.value == value) {
 					return e;
 				}
 			}
 			return -1;
 		}
 	}
+
 	RbsCatalogProductController.$inject = ['$scope', '$http'];
 	app.controller('RbsCatalogProductController', RbsCatalogProductController);
 })();

@@ -122,17 +122,17 @@ class Product extends Block
 	 */
 	protected function getProductToBeDisplayed($product, $catalogManager, $documentManager)
 	{
-		// If product is a simple product or is root product of variant or is categorizable
+		// If product is a simple product or is root product of variant or is categorizable.
 		if (!$product->getVariantGroup() || $product->hasVariants() ||  $product->getCategorizable())
 		{
 			return $product;
 		}
 
-		// Else you have a product that is a final product of variant
-		// If you have generated intermediate variant
+		// Else you have a product that is a final product of variant.
+		// If you have generated intermediate variant.
 		if (!$product->getVariantGroup()->mustGenerateOnlyLastVariant())
 		{
-			// Try to find the intermediate variant that must be used to display product
+			// Try to find the intermediate variant that must be used to display product.
 			$newProductId = $catalogManager->getVariantProductIdMustBeDisplayedForVariant($product);
 			if ($newProductId != null)
 			{
@@ -144,9 +144,7 @@ class Product extends Block
 			}
 		}
 
-		// Else try to return the root product of variant
+		// Else try to return the root product of variant.
 		return $catalogManager->getRootProductOfVariantGroup($product->getVariantGroup());
 	}
-
-
 }

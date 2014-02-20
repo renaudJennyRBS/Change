@@ -1,43 +1,25 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+{% set listFormat = {'maxWidth': 160, 'maxHeight' : 120}  %}
+{% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
 {% if rows %}
-<h1 id="product-list-title">{{ parameters.title }}</h1>
+	<h1 id="product-list-title">{{ parameters.title }}</h1>
 
-{#<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">
-	<input type="hidden" name="quantity" value="1" />
-	<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-	<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />#}
-
-	<!-- Slider
-	================================================== -->
-	<div id="myCarousel{{ blockId }}" class="carousel slide">
-		<!-- Indicators -->
-
-		<ol class="carousel-indicators">
-			{#
-			{% for i in range(0,slideCount-1) %}
-					{%  if loop.first %}
-						<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}" class="active"></li>
-					{%  else %}
-						<li data-target="#myCarousel{{ blockId }}" data-slide-to="{{ i }}"></li>
-					{% endif %}
-				{%  endfor %}
-			#}
-		</ol>
-
+	<div id="myCarousel{{ blockId }}" class="carousel slide" data-ride="carousel">
 		<div class="carousel-inner">
 			{% for i in range(0,slideCount-1) %}
 				{% set slideNumber = loop.index0 %}
-				{% if loop.first %}
-				<div class="item active">
-				{%  else %}
-				<div class="item">
-				{%  endif %}
-					<ul class="grid-list grid-list-{{ itemsPerSlide }} grid-list-bordered product-list">
+				<div class="item{% if loop.first %} active{% endif %}">
 					{% spaceless %}
-					{%  for row in rows|slice(slideNumber * itemsPerSlide, itemsPerSlide) %}
-						{% include 'Rbs_Catalog/Blocks/product-list-item.twig' %}
-					{% endfor %}
-					{% endspaceless %}</ul>
+						<ul class="grid-list grid-list-{{ itemsPerSlide }} grid-list-bordered product-list">
+							{% for row in rows|slice(slideNumber * itemsPerSlide, itemsPerSlide) %}
+								<li>
+									<div class="grid-list-cell">
+										{% include 'Rbs_Catalog/product-list-item.twig' %}
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					{% endspaceless %}
 				</div>
 			{% endfor %}
 		</div>
@@ -49,6 +31,4 @@
 			<span class="icon-next"></span>
 		</a>
 	</div>
-	<!-- /.carousel -->
-{#</form>#}
 {% endif %}

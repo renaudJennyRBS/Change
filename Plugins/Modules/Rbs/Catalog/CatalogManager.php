@@ -6,8 +6,40 @@ use Change\Stdlib\String;
 /**
  * @name \Rbs\Catalog\CatalogManager
  */
-class CatalogManager
+class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
+	const EVENT_MANAGER_IDENTIFIER = 'CatalogManager';
+
+	const EVENT_GET_VISUALS = 'getVisuals';
+	const EVENT_GET_PICTOGRAMS = 'getPictograms';
+
+	/**
+	 * @return string
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CatalogManager');
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach(static::EVENT_GET_PICTOGRAMS, [$this, 'onDefaultGetPictograms'], 5);
+		$eventManager->attach(static::EVENT_GET_VISUALS, [$this, 'onDefaultGetVisuals'], 5);
+	}
+
 	/**
 	 * @var \Change\Transaction\TransactionManager
 	 */
@@ -272,7 +304,7 @@ class CatalogManager
 		$currentPosition = $productListItem->getPosition();
 		if ($currentPosition === 0)
 		{
-			// Nothing to do
+			// Nothing to do.
 			return;
 		}
 		$this->downplayProductListItem($productListItem);
@@ -349,21 +381,21 @@ class CatalogManager
 			$beforePosition = $beforeProductListItem->getPosition();
 			if ($currentPosition < 0)
 			{
-				// We are re-ordering
+				// We are re-ordering.
 				$atPosition = $currentPosition < $beforePosition ? $beforePosition - 1 : $beforePosition;
 			}
 			else
 			{
-				// We introduce a new node
+				// We introduce a new node.
 				$atPosition = $beforePosition - 1;
 			}
 		}
 		if ($currentPosition === $atPosition)
 		{
-			// Nothing to do
+			// Nothing to do.
 			return;
 		}
-		// Prepare what's needed for queries
+		// Prepare what's needed for queries.
 		$updateQuery = $this->getDbProvider()->getNewStatementBuilder();
 		$fb = $updateQuery->getFragmentBuilder();
 		$positionColumn = $fb->getDocumentColumn('position');
@@ -441,7 +473,7 @@ class CatalogManager
 		}
 		if ($productListItem->getPosition() == 0)
 		{
-			// Nothing to do
+			// Nothing to do.
 			return;
 		}
 		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
@@ -496,7 +528,7 @@ class CatalogManager
 		}
 		if ($productListItem->getPosition() == 0)
 		{
-			// Nothing to do
+			// Nothing to do.
 			return;
 		}
 		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
@@ -645,6 +677,8 @@ class CatalogManager
 			$lowestPrice = null;
 			foreach ($prices as $price)
 			{
+				/* @var $price \Rbs\Price\Documents\Price */
+				/* @var $lowestPrice \Rbs\Price\Documents\Price */
 				if ($lowestPrice == null)
 				{
 					$lowestPrice = $price;
@@ -792,17 +826,15 @@ class CatalogManager
 	 * @param integer $quantity
 	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @param string $zone
-	 * @param integer|null $webstoreId
+	 * @param integer|null $webStoreId
 	 * @return array
 	 */
-	public function getPricesInfos($product, $quantity, $billingArea, $zone, $webstoreId = null)
+	public function getPricesInfos($product, $quantity, $billingArea, $zone, $webStoreId = null)
 	{
 		$priceInfo = array();
-
 		if ($billingArea)
 		{
-			$price = $this->getProductPrice($product, $webstoreId, $billingArea);
-
+			$price = $this->getProductPrice($product, $webStoreId, $billingArea);
 			if ($price && ($value = $price->getValue()) !== null)
 			{
 				$priceManager = $this->getPriceManager();
@@ -888,7 +920,6 @@ class CatalogManager
 						$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
 						if ($taxes)
 						{
-
 							$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
 							$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
 							$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
@@ -1045,12 +1076,12 @@ class CatalogManager
 		$axesConfiguration = $variant->getVariantGroup()->getAxesConfiguration();
 		$axesCount = count($axesConfiguration);
 		$axes = array();
-		for ($i = 0; $i < count($axesConfiguration) - 1; $i++)
+		for ($i = 0; $i < $axesCount - 1; $i++)
 		{
 			if ($axesConfiguration[$i]['url'] === true)
 			{
 				$axesConfiguration[$i]['level'] = $i;
-				$axes[] =  $axesConfiguration[$i];
+				$axes[] = $axesConfiguration[$i];
 			}
 		}
 		$axes = array_reverse($axes);
@@ -1069,15 +1100,15 @@ class CatalogManager
 				}
 			}
 
-			foreach ($axes as $axe)
+			foreach ($axes as $axis)
 			{
-				$productAxesConfigurationValue = $productAxesConfiguration['values'][$axe['level']]['value'];
+				$productAxesConfigurationValue = $productAxesConfiguration['values'][$axis['level']]['value'];
 				foreach ($vConfiguration['axes']['products'] as $infoProduct)
 				{
-					if ($infoProduct['values'][$axe['level']]['value'] == $productAxesConfigurationValue)
+					if ($infoProduct['values'][$axis['level']]['value'] == $productAxesConfigurationValue)
 					{
 						$newProductId = $infoProduct['id'];
-						for ($i = ($axe['level'] + 1); $i < $axesCount; $i++)
+						for ($i = ($axis['level'] + 1); $i < $axesCount; $i++)
 						{
 							if ($infoProduct['values'][$i]['value'] !== null)
 							{
@@ -1088,18 +1119,64 @@ class CatalogManager
 
 					if ($newProductId != null)
 					{
-						break;
+						break 2;
 					}
 				}
+			}
+		}
 
-				if ($newProductId != null)
+		return $newProductId;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return \Rbs\Catalog\Documents\Product[]
+	 */
+	public function getProductAncestors($product)
+	{
+		if (!$product->getVariant())
+		{
+			return array();
+		}
+
+		// Look for the axes configuration of the product.
+		$productAxesConfiguration = null;
+		$variantConfiguration = $this->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup(), true);
+		foreach ($variantConfiguration['products'] as $infoProduct)
+		{
+			if ($infoProduct['id'] === $product->getId())
+			{
+				$productAxesConfiguration = $infoProduct;
+				break;
+			}
+		}
+
+		// Look fot the product with the same values fort the first axes and null for the other ones.
+		$ancestors = array();
+		foreach ($variantConfiguration['products'] as $infoProduct)
+		{
+			$keyParts = array();
+			foreach ($infoProduct['values'] as $level => $axis)
+			{
+				if ($axis['value'] === null)
+				{
+					$ancestors[implode('/', $keyParts)] = $this->getDocumentManager()->getDocumentInstance($infoProduct['id']);
+					break;
+				}
+				elseif ($axis['value'] == $productAxesConfiguration['values'][$level]['value'])
+				{
+					$keyParts[] = $axis['value'];
+				}
+				else
 				{
 					break;
 				}
 			}
 		}
 
-		return $newProductId;
+		// Sort by key and return ancestors.
+		ksort($ancestors);
+		return array_values($ancestors);
 	}
 
 	/**
@@ -1134,94 +1211,164 @@ class CatalogManager
 	 */
 	public function getAttributesConfiguration($product, $visibility = 'specifications')
 	{
-		$attributesConfiguration = $this->getAttributeManager()
-			->getProductAttributesConfiguration($visibility, $product);
-
-		return $attributesConfiguration;
+		return $this->getAttributeManager()->getProductAttributesConfiguration($visibility, $product);
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $formats
 	 * @param boolean $onlyFirst
 	 * @return array
 	 */
-	public function getVisualsInfos($product,
-		$formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
-			'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]),
-		$onlyFirst = false)
+	public function getVisualsInfos($product, $formats, $onlyFirst = false)
 	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('product' => $product, 'formats' => $formats, 'onlyFirst' => $onlyFirst));
+		$this->getEventManager()->trigger(static::EVENT_GET_VISUALS, $this, $args);
+		if (isset($args['visualsInfos']))
+		{
+			return $args['visualsInfos'];
+		}
+		return array();
+	}
+
+	/**
+	 * $event requires two parameters: product, formats and onlyFirst
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetVisuals(\Change\Events\Event $event)
+	{
+		$product = $event->getParam('product');
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return;
+		}
+		$formats = is_array($event->getParam('formats')) ? $event->getParam('formats') : array();
+		$onlyFirst = $event->getParam('onlyFirst');
+
 		$visualsInfos = array();
-		$visualsInfos['visualsInstance'] = array();
-		$visualsInfos['visuals'] = array();
+		$visualsInfos['instances'] = array();
+		$visualsInfos['data'] = array();
 
 		if ($product->getVisualsCount() > 0)
 		{
-			if ($onlyFirst)
+			$visualsInfos['instances'] = $onlyFirst ? [ $product->getFirstVisual() ] : $product->getVisuals();
+		}
+		elseif ($product->getVariantGroup())
+		{
+			if ($product->getVariant())
 			{
-				$firstVisual = $product->getFirstVisual();
-				if ($firstVisual !== null)
+				$ancestors = $this->getProductAncestors($product);
+				$ancestors = array_reverse($ancestors);
+				$ancestors[] = $product->getVariantGroup()->getRootProduct();
+				foreach ($ancestors as $ancestor)
 				{
-					$visualsInfos['visualsInstance'] = [$firstVisual];
-					$visualsInfos['count'] = 1;
-				}
-				else
-				{
-					$visualsInfos['visualsInstance'] = null;
-					$visualsInfos['count'] = 0;
+					/* @var $ancestor \Rbs\Catalog\Documents\Product */
+					if ($ancestor->getVisualsCount() > 0)
+					{
+						$visualsInfos['instances'] = $onlyFirst ? [ $ancestor->getFirstVisual() ] : $ancestor->getVisuals();
+						break;
+					}
 				}
 			}
-			else
+
+			// Get visual of one of under product.
+			if (!count($visualsInfos['instances']))
 			{
-				$visualsInfos['visualsInstance'] = $product->getVisuals();
-				$visualsInfos['count'] = $product->getVisualsCount();
+				$query = $this->getDocumentManager()->getNewQuery('Rbs_Media_Image');
+				$pqb = $query->getModelBuilder('Rbs_Catalog_Product', 'visuals');
+				$query->andPredicates(
+					$pqb->getPredicateBuilder()->published(),
+					$pqb->getPredicateBuilder()->eq('variantGroup', $product->getVariantGroup())
+				);
+				$visual = $query->getFirstDocument();
+				if ($visual)
+				{
+					$visualsInfos['instances'][] = $visual;
+				}
 			}
+		}
+		$visualsInfos['count'] = count($visualsInfos['instances']);
+
+		foreach ($visualsInfos['instances'] as $instance)
+		{
+			$visualsInfos['data'][] = $this->getImageInfos($instance, $formats);
+		}
+
+		$event->setParam('visualsInfos', $visualsInfos);
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param array $formats
+	 * @return array
+	 */
+	public function getPictogramsInfos($product, $formats)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('product' => $product, 'formats' => $formats));
+		$this->getEventManager()->trigger(static::EVENT_GET_PICTOGRAMS, $this, $args);
+		if (isset($args['pictogramsInfos']))
+		{
+			return $args['pictogramsInfos'];
+		}
+		return array();
+	}
+
+	/**
+	 * $event requires two parameters : product and formats
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetPictograms(\Change\Events\Event $event)
+	{
+		$product = $event->getParam('product');
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return;
+		}
+		$formats = is_array($event->getParam('formats')) ? $event->getParam('formats') : array();
+
+		$pictogramsInfos = array();
+		$pictogramsInfos['instances'] = array();
+		$pictogramsInfos['data'] = array();
+
+		// Variants always use the pictograms from the root product.
+		if ($product->getVariantGroup())
+		{
+			$pictogramsInfos['instances'] = $product->getVariantGroup()->getRootProduct()->getPictograms();
 		}
 		else
 		{
-			if ($product->getVariantGroup())
-			{
-				if ($product->getVariant())
-				{
-					// Get visual of first upper product
-					// TODO
-				}
-				else
-				{
-					// Get visual of one of under product
-					// TODO
-				}
-			}
-			$visualsInfos['count'] = count($visualsInfos['visualsInstance']);
+			$pictogramsInfos['instances'] = $product->getPictograms();
 		}
+		$pictogramsInfos['count'] = count($pictogramsInfos['instances']);
 
-		foreach ($visualsInfos['visualsInstance'] as $instance)
+		foreach ($pictogramsInfos['instances'] as $instance)
 		{
-			$v = array('id' => $instance->getId(), 'alt' => $instance->getCurrentLocalization()->getAlt(), 'url' => array());
-			$v['url']['main'] = $instance->getPublicURL();
-
-			// Foreach formats, generate URL
-			foreach ($formats as $type => $values)
-			{
-				$w = null;
-				$h = null;
-
-				if (isset($values['maxWidth']))
-				{
-					$w = $values['maxWidth'];
-				}
-				if (isset($values['maxHeight']))
-				{
-					$h = $values['maxHeight'];
-				}
-
-				$v['url'][$type] = $instance->getPublicURL(intval($w), intval($h));
-
-			}
-
-			$visualsInfos['visuals'][] = $v;
+			$pictogramsInfos['data'][] = $this->getImageInfos($instance, $formats);
 		}
+		$event->setParam('pictogramsInfos', $pictogramsInfos);
+	}
 
-		return $visualsInfos;
+	/**
+	 * @param \Rbs\Media\Documents\Image $image
+	 * @param array $formats
+	 * @return array
+	 */
+	protected function getImageInfos($image, $formats)
+	{
+		$infos = array('id' => $image->getId(), 'alt' => $image->getCurrentLocalization()->getAlt(), 'url' => array());
+		$infos['url']['main'] = $image->getPublicURL();
+
+		// Foreach formats, generate URL.
+		foreach ($formats as $type => $values)
+		{
+			$w = isset($values['maxWidth']) ? $values['maxWidth'] : null;
+			$h = isset($values['maxHeight']) ? $values['maxHeight'] : null;
+			$infos['url'][$type] = $image->getPublicURL(intval($w), intval($h));
+		}
+		return $infos;
 	}
 }
