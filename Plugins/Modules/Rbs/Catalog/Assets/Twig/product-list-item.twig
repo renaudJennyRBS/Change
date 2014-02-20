@@ -1,82 +1,109 @@
-<li>
-	<ul class="grid-list-cell">
-		<li class="product-visual">
-			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
-				href="{{ row.url }}">
-				{% set visual = row.productPresentation.getFirstVisual({'list' : listFormat}) %}
-				<img alt="{{ visual.visuals[0].alt }}" src="{{ visual.visuals[0].url.list }}" /></a>
+{% block visual %}
+	<div class="product-visual">
+		<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
+			href="{{ row.url }}">
+			{% set visuals = row.productPresentation.getFirstVisual({'list': listFormat}).data %}
+			{% if visuals|length %}
+				<img alt="{{ visuals[0].alt }}" src="{{ visuals[0].url.list }}" />
+			{% endif %}
+		</a>
+		{% set pictograms = row.productPresentation.getPictograms({'pictogram': pictogramFormat}).data %}
+		{% if pictograms|length %}
 			<div class="pictograms-container">
+				{% spaceless %}
+					<ul class="list-inline">
+						{% for pictogram in pictograms %}
+							<li>
+								{% if pictogram.targetUrl %}<a href="{{ pictogram.targetUrl }}">{% endif %}
+								<img alt="{{ pictogram.alt }}" src="{{ pictogram.url.pictogram }}" />
+								{% if pictogram.targetUrl %}</a>{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% endspaceless %}
 			</div>
-		</li>
-		<li class="product-label">
-			<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
-				href="{{ row.url }}">{{ row.productPresentation.general.title }}</a>
-		</li>
-		<li class="product-availability">
-			{{ row.productPresentation.stock.thresholdTitle }}
-		</li>
-		{% if parameters.webStoreId %}
-			{% block prices %}
-				{% if row.productPresentation.prices.price %}
-					{% if parameters.displayPrices  %}
-						<li class="product-price price">
-							{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price  %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
-							{{ formatPrice(row.productPresentation.prices.price) }}
-							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-							{% if row.productPresentation.prices.priceWithoutDiscount %}
-								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{- formatPrice(row.productPresentation.prices.priceWithoutDiscount) -}}
-								</del>
-							{% endif %}
-						</li>
-					{% endif %}
-					{% if parameters.displayPricesWithTax %}
-						<li class="product-price price">
-							{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price %}{{ i18n('m.rbs.catalog.front.from') }}{% endif %}
-							{{ formatPrice(row.productPresentation.prices.priceWithTax) }}
-							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
-							{% if row.productPresentation.prices.priceWithoutDiscountWithTax %}
-								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{- formatPrice(row.productPresentation.prices.priceWithoutDiscountWithTax) -}}
-								</del>
-							{% endif %}
-						</li>
-					{% endif %}
-				{% endif %}
-			{% endblock %}
-
-			{% block addToCart %}
-				<li class="product-add">
-					{% if row.productPresentation.general.hasOwnSku %}
-						<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
-							<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-							<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-							<fieldset>
-								{% if row.productPresentation.general.canBeOrdered %}
-									<input type="hidden" name="key" value="{{ row.productPresentation.general.id }}">
-									<input type="hidden" name="designation" value="{{ row.productPresentation.general.title }}">
-									<input type="hidden" name="options[productId]" value="{{ row.productPresentation.general.id }}">
-									<input type="hidden" name="items[][codeSKU]" value="{{ row.productPresentation.stock.sku }}">
-								{% endif %}
-
-								<button type="submit" class="btn btn-primary btn-sm" {% if not row.productPresentation.general.canBeOrdered %} disabled="true" {% endif %}>
-									{% if row.productPresentation.general.canBeOrdered %}
-										<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-									{% else %}
-										{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-									{% endif %}
-								</button>
-							</fieldset>
-						</form>
-					{% else %}
-						<div class="ng-valid ng-dirty">
-							<a class="btn btn-primary btn-sm" title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
-								href="{{ row.url }}">{{ i18n('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}</a>
-						</div>
-					{% endif %}
-				</li>
-			{% endblock %}
-
 		{% endif %}
-	</ul>
-</li>
+	</div>
+{% endblock %}
+<div class="product-label">
+	<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
+		href="{{ row.url }}">{{ row.productPresentation.general.title }}</a>
+</div>
+<div class="product-availability">
+	{{ row.productPresentation.stock.thresholdTitle }}
+</div>
+{% if parameters.webStoreId %}
+	{% block prices %}
+		{% if row.productPresentation.prices.price %}
+			{% if parameters.displayPrices %}
+				<div class="product-price price">
+					{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price %}
+						{{ i18n('m.rbs.catalog.front.from') }}
+					{% endif %}
+					{{ formatPrice(row.productPresentation.prices.price) }}
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+					</abbr>
+					{% if row.productPresentation.prices.priceWithoutDiscount %}
+						<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+							{{- formatPrice(row.productPresentation.prices.priceWithoutDiscount) -}}
+						</del>
+					{% endif %}
+				</div>
+			{% endif %}
+			{% if parameters.displayPricesWithTax %}
+				<div class="product-price price">
+					{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price %}
+						{{ i18n('m.rbs.catalog.front.from') }}
+					{% endif %}
+					{{ formatPrice(row.productPresentation.prices.priceWithTax) }}
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">
+						{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}
+					</abbr>
+					{% if row.productPresentation.prices.priceWithoutDiscountWithTax %}
+						<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+							{{- formatPrice(row.productPresentation.prices.priceWithoutDiscountWithTax) -}}
+						</del>
+					{% endif %}
+				</div>
+			{% endif %}
+		{% endif %}
+	{% endblock %}
+
+	{% block addToCart %}
+		<div class="product-add">
+			{% if row.productPresentation.general.hasOwnSku %}
+				<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
+					<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
+					<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
+					<fieldset>
+						{% if row.productPresentation.general.canBeOrdered %}
+							<input type="hidden" name="key" value="{{ row.productPresentation.general.id }}">
+							<input type="hidden" name="designation" value="{{ row.productPresentation.general.title }}">
+							<input type="hidden" name="options[productId]" value="{{ row.productPresentation.general.id }}">
+							<input type="hidden" name="items[][codeSKU]" value="{{ row.productPresentation.stock.sku }}">
+						{% endif %}
+
+						<button type="submit" class="btn btn-primary btn-sm"
+							{% if not row.productPresentation.general.canBeOrdered %} disabled="disabled"{% endif %}>
+							{% if row.productPresentation.general.canBeOrdered %}
+								<i class="glyphicon glyphicon-shopping-cart"></i>
+								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+							{% else %}
+								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+							{% endif %}
+						</button>
+					</fieldset>
+				</form>
+			{% else %}
+				<div class="ng-valid ng-dirty">
+					{% set productTitle = row.productPresentation.general.title %}
+					<a class="btn btn-primary btn-sm" href="{{ row.url }}"
+						title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}">
+						{{ i18n('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}
+					</a>
+				</div>
+			{% endif %}
+		</div>
+	{% endblock %}
+{% endif %}

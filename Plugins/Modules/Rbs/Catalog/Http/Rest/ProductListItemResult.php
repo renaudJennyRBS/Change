@@ -267,9 +267,10 @@ class ProductListItemResult
 		/* @var $cm \Rbs\Catalog\CatalogManager */
 		$cm = $cs->getCatalogManager();
 		$productList = $dm->getDocumentInstance($event->getRequest()->getPost('productListId'));
+		/* @var $condition \Rbs\Catalog\Documents\Condition|null */
 		$condition = $dm->getDocumentInstance($event->getRequest()->getPost('conditionId'));
 		$result = array();
-		if ($productList instanceof  \Rbs\Catalog\Documents\ProductList)
+		if ($productList instanceof \Rbs\Catalog\Documents\ProductList)
 		{
 			try
 			{

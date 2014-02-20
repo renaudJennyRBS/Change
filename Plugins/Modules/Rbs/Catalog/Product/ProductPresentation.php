@@ -148,18 +148,18 @@ class ProductPresentation
 	}
 
 	/**
+	 * @param array $formats
 	 * @return array
 	 */
-	public function getPictograms()
+	public function getPictograms($formats = array('pictogram' => ['maxWidth' => 60, 'maxHeight' => 45]))
 	{
-		if ($this->pictograms === null)
-		{
-			// TODO
-			$this->pictograms = null;
-		}
-		return $this->pictograms;
+		return $this->commerceServices->getCatalogManager()->getPictogramsInfos($this->product, $formats);
 	}
 
+	/**
+	 * @param array $formats
+	 * @return array
+	 */
 	public function getFirstVisual($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
 		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
 	{
@@ -167,6 +167,10 @@ class ProductPresentation
 		return $v;
 	}
 
+	/**
+	 * @param array $formats
+	 * @return array
+	 */
 	public function getVisuals($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
 		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
 	{
@@ -183,8 +187,7 @@ class ProductPresentation
 	 * @param boolean $onlyFirst
 	 * @return array
 	 */
-	protected function doGetVisuals($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
-		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]), $onlyFirst)
+	protected function doGetVisuals($formats, $onlyFirst)
 	{
 		return $this->commerceServices->getCatalogManager()->getVisualsInfos($this->product, $formats, $onlyFirst);
 	}
@@ -272,13 +275,21 @@ class ProductPresentation
 		$array['general'] = $this->getGeneral();
 		$array['stock'] = $this->getStock();
 		$array['prices'] = $this->getPrices();
-		if ($formats !== null)
+		if (isset($formats['visuals']))
 		{
-			$array['visuals'] = $this->getVisuals($formats);
+			$array['visuals'] = $this->getVisuals($formats['visuals']);
 		}
 		else
 		{
 			$array['visuals'] = $this->getVisuals();
+		}
+		if (isset($formats['pictograms']))
+		{
+			$array['pictograms'] = $this->getPictograms($formats['pictograms']);
+		}
+		else
+		{
+			$array['pictograms'] = $this->getPictograms();
 		}
 		return $array;
 	}

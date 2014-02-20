@@ -89,6 +89,7 @@ class CartCrossSelling extends Block
 			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 			{
 				$csParameters = array();
+				$csParameters['urlManager'] = $event->getUrlManager();
 				$csParameters['crossSellingType'] = $crossSellingType;
 				$csParameters['productChoiceStrategy'] = $productChoiceStrategy;
 				$rows = $productManager->getCrossSellingForCart($cart, $csParameters);

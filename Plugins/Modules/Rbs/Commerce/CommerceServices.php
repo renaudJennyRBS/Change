@@ -111,9 +111,10 @@ class CommerceServices extends Di
 			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//CatalogManager : DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
+		//CatalogManager : EventManagerFactory, DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
 		$catalogManagerClassName = $this->getInjectedClassName('CatalogManager', 'Rbs\Catalog\CatalogManager');
 		$classDefinition = $this->getClassDefinition($catalogManagerClassName);
+		$this->addEventsCapableClassDefinition($classDefinition);
 		$classDefinition->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
 			->addMethod('setTransactionManager', true)
@@ -134,7 +135,7 @@ class CommerceServices extends Di
 		$this->addEventsCapableClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//CartManager : StockManager, PriceManager, EventManagerFactory, Logging, DocumentManager
+		//CartManager : EventManagerFactory, StockManager, PriceManager, Logging, DocumentManager
 		$cartManagerClassName = $this->getInjectedClassName('CartManager', 'Rbs\Commerce\Cart\CartManager');
 		$classDefinition = $this->getClassDefinition($cartManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
@@ -162,7 +163,7 @@ class CommerceServices extends Di
 			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//ProcessManager: CartManager, EventManagerFactory, Logging
+		//ProcessManager: EventManagerFactory, CartManager, Logging
 		$processManagerClassName = $this->getInjectedClassName('ProcessManager', 'Rbs\Commerce\Process\ProcessManager');
 		$classDefinition = $this->getClassDefinition($processManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
@@ -203,10 +204,12 @@ class CommerceServices extends Di
 		$im->addAlias('Context', $contextClassName, array('eventManagerFactory' => $eventManagerFactory));
 
 		$im->addAlias('PriceManager', $priceManagerClassName,
-			array('eventManagerFactory' => $this->getEventManagerFactory(), 'i18nManager' => $i18nManager, 'documentManager' => $documentManager));
+			array('eventManagerFactory' => $eventManagerFactory, 'i18nManager' => $i18nManager,
+				'documentManager' => $documentManager));
 
 		$im->addAlias('CatalogManager', $catalogManagerClassName,
-			array('dbProvider' => $dbProvider, 'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
+			array('eventManagerFactory' => $eventManagerFactory, 'dbProvider' => $dbProvider,
+				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
 
 		$im->addAlias('ProductManager', $productManagerClassName,
 			array('eventManagerFactory' => $eventManagerFactory));

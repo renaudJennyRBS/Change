@@ -43,6 +43,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * Gets Cross Selling info for a product using parameters array
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $csParameters
 	 * @return \Rbs\Catalog\Product\ProductItem[]
@@ -61,6 +62,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * Gets Cross Selling info for a cart using parameters array
+	 * @api
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param array $csParameters
 	 * @return \Rbs\Catalog\Product\ProductItem[]
@@ -79,10 +81,8 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * Gets Cross Selling products for a product using parameters array
-	 * $event requires two parameters : product and csParameters
-	 * @api
+	 * $event requires two parameters: product and csParameters
 	 * @param \Change\Events\Event $event
-	 * @return \Rbs\Catalog\Product\ProductItem[]
 	 */
 	public function onDefaultGetCrossSellingProductsByProduct(\Change\Events\Event $event)
 	{
@@ -93,16 +93,16 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 		$products = array();
 		$product = $event->getParam('product');
 		$parameters = $event->getParam('csParameters');
-		if (isset($parameters['crossSellingType']))
+		if (isset($parameters['crossSellingType']) && isset($parameters['urlManager']))
 		{
-			//Gets CrossSellingProductList
+			// Gets CrossSellingProductList.
 			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_CrossSellingProductList');
 			$pb = $query->getPredicateBuilder();
 			$query->andPredicates($pb->eq('product', $product), $pb->eq('crossSellingType', $parameters['crossSellingType']));
 			$crossSellingList = $query->getFirstDocument();
 
 			/* @var $crossSellingList \Rbs\Catalog\Documents\CrossSellingProductList */
-			if($crossSellingList)
+			if ($crossSellingList)
 			{
 				$documentManager = $applicationServices->getDocumentManager();
 				$query = $documentManager->getNewQuery('Rbs_Catalog_Product');
@@ -115,17 +115,17 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 				$subQuery->addOrder('position', true);
 				$query->addOrder($crossSellingList->getProductSortOrder(), $crossSellingList->getProductSortDirection());
 
-				foreach($query->getDocuments() as $p)
+				/* @var $urlManager \Change\Http\Web\UrlManager */
+				$urlManager = $parameters['urlManager'];
+				foreach ($query->getDocuments() as $p)
 				{
 					/* @var $p \Rbs\Catalog\Documents\Product */
-					$website = $p->getCanonicalSection()->getWebsite();
-					$lcid = $applicationServices->getI18nManager()->getLCID();
-					$url = $website->getUrlManager($lcid)->getCanonicalByDocument($p)->toString();
+					$url = $urlManager->getCanonicalByDocument($p)->toString();
 					$row = array('id' => $p->getId(), 'url' => $url);
 					$visual = $p->getFirstVisual();
 					$row['visual'] = $visual ? $visual->getPath() : null;
 
-					$productPresentation = $p->getPresentation($commerceServices, $commerceServices->getContext()->getWebStore()->getId(), $event->getUrlManager());
+					$productPresentation = $p->getPresentation($commerceServices, $commerceServices->getContext()->getWebStore()->getId(), $urlManager);
 					if ($productPresentation)
 					{
 						$productPresentation->evaluate();
@@ -135,36 +135,29 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 					$products[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
 				}
 			}
+			$event->setParam('csProducts', $products);
 		}
-
-		return $products;
 	}
 
 	/**
 	 * Gets Cross Selling products for a product using parameters array
-	 * $event requires two parameters : cart and csParameters
-	 * @api
+	 * $event requires two parameters: cart and csParameters
 	 * @param \Change\Events\Event $event
-	 * @return \Rbs\Catalog\Product\ProductItem[]
 	 */
 	public function onDefaultCrossSellingProductsByCart(\Change\Events\Event $event)
 	{
-		$products = array();
 		$parameters = $event->getParam('csParameters');
 		$product = $this->getProductFromCart($event);
 
 		if ($product && isset($parameters['crossSellingType']))
 		{
 			$event->setParam('product', $product);
-			$products = $this->onDefaultGetCrossSellingProductsByProduct($event);
+			$this->onDefaultGetCrossSellingProductsByProduct($event);
 		}
-
-		return $products;
 	}
 
 	/**
-	 * Choose a product form cart according to strategy
-	 * @api
+	 * Choose a product form cart according to strategy.
 	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Catalog\Documents\Product|null
 	 */
@@ -177,7 +170,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$line = null;
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			/* Let's be optimistic : cartline key = productId */
+			// Let's be optimistic: cart line key = productId.
 			switch($strategy)
 			{
 				case ProductManager::LAST_PRODUCT:
@@ -211,8 +204,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * usort comparison function
-	 * @api
+	 * usort comparison function.
 	 * @param \Rbs\Commerce\Cart\CartLine $line1
 	 * @param \Rbs\Commerce\Cart\CartLine $line2
 	 * @return \Rbs\Catalog\Documents\Product

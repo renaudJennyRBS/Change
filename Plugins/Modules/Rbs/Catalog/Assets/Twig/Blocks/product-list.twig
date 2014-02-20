@@ -1,5 +1,6 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
 {% set listFormat = {'maxWidth': 160, 'maxHeight' : 120}  %}
+{% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
 
 <h1 id="product-list-title">{{ title }}</h1>
 
@@ -15,9 +16,13 @@
 
 {#<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">#}
 	{% spaceless %}
-		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
+		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered grid-list-align-top product-list">
 			{% for row in rows %}
-				{% include 'Rbs_Catalog/product-list-item.twig' %}
+				<li>
+					<div class="grid-list-cell">
+						{% include 'Rbs_Catalog/product-list-item.twig' %}
+					</div>
+				</li>
 			{% endfor %}
 		</ul>
 	{% endspaceless %}

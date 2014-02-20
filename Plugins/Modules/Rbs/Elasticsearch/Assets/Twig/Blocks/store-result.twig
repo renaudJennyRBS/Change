@@ -19,7 +19,11 @@
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered product-list">
 			{% for row in rows %}
-				{% include 'Rbs_Catalog/product-list-item.twig' %}
+				<li>
+					<div class="grid-list-cell">
+						{% include 'Rbs_Catalog/product-list-item.twig' %}
+					</div>
+				</li>
 			{% endfor %}
 		</ul>
 	{% endspaceless %}
