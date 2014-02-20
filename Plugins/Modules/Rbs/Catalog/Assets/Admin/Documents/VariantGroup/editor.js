@@ -44,8 +44,9 @@
 								newAxesConfiguration[newAxesConfiguration.length-1].url = true;
 							}
 
-
 							scope.document.axesConfiguration = newAxesConfiguration;
+
+							scope.checkNeedCategorizable();
 						}
 
 						scope.initDocument = function () {
@@ -88,6 +89,36 @@
 								});
 							}
 						};
+
+						scope.checkNeedCategorizable = function()
+						{
+							var middleAxesUrlCounter = 0;
+							for (var i = 0; i < scope.document.axesConfiguration.length - 1; i++)
+							{
+								var conf = scope.document.axesConfiguration[i];
+								if (conf.url === true)
+								{
+									conf.categorizable = true;
+									middleAxesUrlCounter = middleAxesUrlCounter + 1;
+								}
+								else
+								{
+									conf.categorizable = false;
+								}
+							}
+							angular.forEach(scope.document.axesConfiguration, function (conf) {
+
+							});
+							if (scope.document.axesConfiguration.length == 1 || middleAxesUrlCounter < 1)
+							{
+								scope.needCategorizable = true;
+							}
+							else
+							{
+								scope.document.axesConfiguration[scope.document.axesConfiguration.length-1].categorizable = false;
+								scope.needCategorizable = false;
+							}
+						}
 
 						scope.$watchCollection('Attributes.axesToAdd', function (newValue) {
 							if (scope.form.hasOwnProperty('axesToAdd')) {

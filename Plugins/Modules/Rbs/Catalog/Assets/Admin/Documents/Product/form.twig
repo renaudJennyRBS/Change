@@ -3,19 +3,19 @@
 	<div rbs-aside-column>
 		<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>
 		<rbs-aside-editor-menu></rbs-aside-editor-menu>
-		<div ng-if="!document.isNew() && ! document.variant" class="panel panel-default">
+		<div ng-show="!document.isNew()" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
 			</div>
 			<div class="list-group">
 				<span class="list-group-item">
-					<a ng-show="! document.variant && document.variantGroup" href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}</a>
-					<a ng-show="! document.variant && ! document.variantGroup" href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+					<a ng-show="document.variantGroup.rootProductId" href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.variantGroup.rootProductId}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}</a>
+					<a ng-show="! document.variant && ! document.variantGroup.rootProductId" href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
 				</span>
 			</div>
 		</div>
 
-		<div class="panel panel-default">
+		<div ng-show="!document.isNew()" class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.catalog.admin.merchandizing', ['ucf']) }}</h3>
 			</div>
@@ -34,7 +34,7 @@
 
 		<rbs-aside-seo ng-if="document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
 
-		<rbs-aside-tag-selector document="document"></rbs-aside-tag-selector>
+		<rbs-aside-tag-selector ng-show="!document.isNew()" document="document"></rbs-aside-tag-selector>
 		<div class="rbs-aside-block rbs-aside-other-links" ng-hide="document.isNew()">
 			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
 			<a href="javascript:;" ng-href="(= document | rbsURL:'timeline' =)">{{ i18n('m.rbs.admin.admin.view_timeline', ['ucf']) | raw }}</a>

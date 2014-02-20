@@ -146,7 +146,7 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id": {
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/attributes": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-config",
 		"rule": {
@@ -182,7 +182,7 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/list/": {
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-list",
 		"rule": {

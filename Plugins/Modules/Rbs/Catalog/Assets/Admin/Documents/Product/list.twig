@@ -24,7 +24,7 @@
 				<a href="" data-ng-href="(= doc | rbsURL:'cross-selling-lists' =)">
 					{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}
 				</a>
-				<a href="" data-ng-href="(= doc.variantGroup | rbsURL:'variant-list':{productId:doc.id}=)">
+				<a ng-if="doc.variantGroup" href="" data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'variant-list':{productId:doc.variantGroup.rootProductId, id:doc.variantGroup.id} =)" >
 					{{ i18n('m.rbs.catalog.admin.variantgroup_variant', ['ucf']) }}
 				</a>
 				[action default]

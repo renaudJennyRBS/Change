@@ -16,9 +16,9 @@
 				<th>
 					{{ i18n('m.rbs.catalog.admin.axis_url', ['ucf']) }}
 				</th>
-				{#<th>
-					{{ i18n('m.rbs.catalog.admin.axis_categorizable', ['ucf']) }}
-				</th>#}
+				<th>
+					<span >{{ i18n('m.rbs.catalog.admin.axis_categorizable', ['ucf']) }}</span>
+				</th>
 				<th>
 				</th>
 			</tr>
@@ -26,8 +26,8 @@
 			<tbody>
 			<tr data-ng-repeat="axisConfiguration in document.axesConfiguration">
 				<td>(= getAxisLabel($index) =)</td>
-				<td><rbs-switch ng-model="axisConfiguration.url" ng-disabled="$last"></rbs-switch></td>
-				{#<td><rbs-switch ng-model="axisConfiguration.categorizable" ng-disabled="axisConfiguration.url == false"></rbs-switch></td>#}
+				<td><rbs-switch ng-model="axisConfiguration.url" ng-disabled="$last" ng-change="checkNeedCategorizable($index)"></rbs-switch></td>
+				<td><rbs-switch ng-model="axisConfiguration.categorizable" ng-disabled="!$last || !needCategorizable"></rbs-switch></td>
 				<td style="width:180px">
 					<rbs-kb-switch>
 						<button style="width:36px" ng-disabled="$first" rbs-kb-when="alt" ng-disabled="$first" class="btn btn-default btn-sm"

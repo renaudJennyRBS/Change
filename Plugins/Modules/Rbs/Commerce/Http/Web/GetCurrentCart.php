@@ -75,13 +75,13 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 						->set('formattedUnitAmountWithTaxes', $pm->formatValue($line->getUnitAmountWithTaxes(), $currency));
 
 					$productId = $options->get('productId');
-					if ($productId)
+					if ($options->get('url') == null && $productId != null)
 					{
 						$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
 						if ($product instanceof \Rbs\Catalog\Documents\Product)
 						{
 							$url = $event->getUrlManager()->getCanonicalByDocument($product)->normalize()->toString();
-							$options->set('productUrl', $url);
+							$options->set('url', $url);
 						}
 					}
 				}

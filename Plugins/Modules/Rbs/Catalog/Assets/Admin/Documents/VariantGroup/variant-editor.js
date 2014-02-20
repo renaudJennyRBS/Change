@@ -779,7 +779,7 @@
 							{
 								angular.forEach(data, function (sku)
 								{
-									if (sku.price.taxCategories == null)
+									if (!angular.isObject(sku.price.taxCategories) || angular.isArray(sku.price.taxCategories))
 									{
 										sku.price.taxCategories = {};
 									}
@@ -875,7 +875,7 @@
 						{
 							angular.forEach(scope.data, function (sku)
 							{
-								sku.price.taxCategories = taxCategories;
+								sku.price.taxCategories = angular.copy(taxCategories);
 							});
 						}
 					}

@@ -82,8 +82,8 @@
 
 					<div class="confirmation-area"></div>
 
-					<button class="btn btn-default btn-headline" type="button" ng-click="confirmReset($event)" ng-disabled="!isChanged" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
-					<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}" data-role="save" type="submit" ng-disabled="!isChanged || saveProgress.running">
+					<button ng-show="data" class="btn btn-default btn-headline" type="button" ng-click="confirmReset($event)" ng-disabled="!isChanged" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
+					<button ng-show="data" class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}" data-role="save" type="submit" ng-disabled="!isChanged || saveProgress.running">
 						<i class="icon-white icon-ok" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
 						</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
 					</button>

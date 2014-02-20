@@ -41,12 +41,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 				$documentResult->addLink(new Link($um, $baseUrl . '/ProductListItems/', 'productListItems'));
 				$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
 
-				// TODO Variant link
-				/*if ($document->getVariantGroup())
-				{
-					$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
-				}*/
-
 				$image = $document->getFirstVisual();
 				if ($image)
 				{
@@ -60,6 +54,10 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			if ($image)
 			{
 				$restResult->setProperty('adminthumbnail', $image->getPublicURL(512, 512));
+			}
+			if ($document->getVariantGroup())
+			{
+				$restResult->setProperty('variantGroup', array('id' => $document->getVariantGroup()->getId(), 'rootProductId' => $document->getVariantGroup()->getRootProductId()));
 			}
 		}
 	}
