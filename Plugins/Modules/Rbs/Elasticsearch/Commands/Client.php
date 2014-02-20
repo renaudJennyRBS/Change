@@ -34,7 +34,7 @@ class Client
 				{
 					$status = $client->getStatus();
 					$srvStat = $status->getServerStatus();
-					if ($srvStat['ok'])
+					if (isset($srvStat['status']) && $srvStat['status'] == 200)
 					{
 						$response->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
 							. $srvStat['status'] . ')');

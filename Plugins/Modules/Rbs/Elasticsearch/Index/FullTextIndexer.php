@@ -118,7 +118,7 @@ class FullTextIndexer
 		{
 			if ($LCID === null || $LCID == $fulltext->getAnalysisLCID())
 			{
-				$this->getIndexManager()->documentIdToDelete($fulltext->getClientName(), $fulltext->getName(), $documentId);
+				$this->getIndexManager()->documentIdToDelete($fulltext->getClientName(), $fulltext->getName(), $documentId, $fulltext->getDefaultTypeName());
 			}
 		}
 	}

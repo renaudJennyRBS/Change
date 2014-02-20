@@ -18,7 +18,7 @@
 		"zendframework/zendframework": "2.*",
 		"zendframework/zendoauth": "2.*",
 		"twig/twig": "1.*",
-		"ruflin/elastica": "0.90.*",
+		"ruflin/elastica": "1.0.*",
 		"ircmaxell/password-compat": "1.0.*",
 		"michelf/php-markdown": "1.*",
 		"kriswallsmith/assetic":"1.*",
