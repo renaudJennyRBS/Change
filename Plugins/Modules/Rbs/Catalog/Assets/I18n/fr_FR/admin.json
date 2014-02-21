@@ -155,6 +155,12 @@
 	"variantgroup_only_current_prices":{
 		"message":"l'édition rapide des prix ne concerne, pour chaque produit, que le prix le plus prioritaire et ayant la date d'activation la plus récente"
 	},
+	"variantgroup_edit_sku":{
+		"message":"éditer le SKU"
+	},
+	"variantgroup_unlimited_inventory":{
+		"message":"Stock \"infini\" (désactivable en éditant le SKU)."
+	},
 	"productlist_productsortorder_help":{
 		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."
 	},
