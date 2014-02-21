@@ -493,6 +493,21 @@
 
 				inner.html(__gridItems[dlid].content);
 				delete __gridItems[dlid];
+
+
+				if (tElement.closest('rbs-document-editor').length === 0)
+				{
+					var selectHtml =
+						'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc)">' +
+							' <i class="icon-plus"></i></button>';
+
+					selectHtml += ' <button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc, true)">' +
+						i18n.trans('m.rbs.admin.adminjs.select') +
+						' <i class="icon-circle-arrow-right"></i></button>';
+
+					inner.find('.caption').prepend('<div ng-show="selectionContext" class="quick-actions-buttons pull-right">' + selectHtml + '</div>');
+				}
+
 			}
 
 			return gridModeAvailable;
