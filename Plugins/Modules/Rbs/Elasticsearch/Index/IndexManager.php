@@ -281,8 +281,9 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $clientName
 	 * @param string $indexName
 	 * @param string $id
+	 * @param string|\Elastica\Type $type
 	 */
-	public function documentIdToDelete($clientName, $indexName, $id)
+	public function documentIdToDelete($clientName, $indexName, $id, $type = null)
 	{
 		if (!array_key_exists($clientName, $this->clientBulks))
 		{
@@ -302,7 +303,12 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($this->ensureIndexExist($clientName, $indexName))
 			{
-				$bulk->addAction((new \Elastica\Bulk\Action(\Elastica\Bulk\Action::OP_TYPE_DELETE))->setId($id)->setIndex($indexName));
+				$action = (new \Elastica\Bulk\Action(\Elastica\Bulk\Action::OP_TYPE_DELETE))->setId($id)->setIndex($indexName);
+				if ($type !== null)
+				{
+					$action->setType($type);
+				}
+				$bulk->addAction($action);
 			}
 		}
 	}

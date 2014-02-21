@@ -46,7 +46,7 @@ class Index
 				if ($client)
 				{
 					$srvStat = $client->getStatus()->getServerStatus();
-					if (isset($srvStat['ok']) && $srvStat['ok'])
+					if (isset($srvStat['status']) && $srvStat['status'] == 200)
 					{
 						$hasClient = true;
 						break;
