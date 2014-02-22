@@ -20,11 +20,11 @@
 				label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></rbs-column>
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-quick-actions>
-				<a href="" data-ng-href="(= doc | rbsURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
+				<a ng-if="doc.sku" href="" data-ng-href="(= doc | rbsURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
 				<a href="" data-ng-href="(= doc | rbsURL:'cross-selling-lists' =)">
 					{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}
 				</a>
-				<a ng-if="doc.variantGroup" href="" data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'variant-list':{productId:doc.variantGroup.rootProductId, id:doc.variantGroup.id} =)" >
+				<a ng-if="doc.variantGroup && !doc.variant" href="" data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'variant-list':{productId:doc.variantGroup.rootProductId, id:doc.variantGroup.id} =)" >
 					{{ i18n('m.rbs.catalog.admin.variantgroup_variant', ['ucf']) }}
 				</a>
 				[action default]

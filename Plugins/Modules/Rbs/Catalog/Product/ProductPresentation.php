@@ -199,7 +199,7 @@ class ProductPresentation
 	{
 		if ($this->variantsConfiguration === null)
 		{
-			$this->variantsConfiguration = $this->commerceServices->getCatalogManager()->getVariantsConfiguration($this->product);
+			$this->variantsConfiguration = $this->commerceServices->getCatalogManager()->getVariantsConfiguration($this->product, true);
 		}
 		return $this->variantsConfiguration;
 	}

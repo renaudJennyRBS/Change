@@ -21,7 +21,7 @@
 		<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'sku'), ['ucf']) }}"
 			accepted-model="Rbs_Stock_Sku"
 			selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_sku_picker_title', ['ucf']) }}"
-			ng-hide="document.newSkuOnCreation && document.id <= 0">
+			ng-hide="(document.variantGroup && !document.variantInfo.isFinal) || (document.newSkuOnCreation && document.id <= 0)">
 		</rbs-field-picker>
 
 		<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'visuals'), ['ucf']) }}"
