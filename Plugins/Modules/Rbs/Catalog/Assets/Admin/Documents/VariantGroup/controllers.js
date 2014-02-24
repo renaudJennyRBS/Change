@@ -1,45 +1,44 @@
-(function () {
-
+(function() {
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-	function VariantListController(scope, $routeParams, REST)
-	{
-		REST.resource($routeParams.id).then(function (doc)
-		{
+	function VariantListController(scope, $routeParams, REST) {
+		scope.loaded = false;
+		scope.hasJobs = false;
+		REST.resource($routeParams.id).then(function(doc) {
 			scope.document = doc;
+			scope.hasJobs = (angular.isArray(doc.jobs) && doc.jobs.length > 0);
+			scope.loaded = true;
 		});
 
 		scope.loadQuery = {
 			"model": "Rbs_Catalog_Product",
 			"where": {
-				"and" : [
+				"and": [
 					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "variant"
+						"op": "eq",
+						"lexp": {
+							"property": "variant"
 						},
-						"rexp" : {
+						"rexp": {
 							"value": "true"
 						}
 					},
 					{
-						"op" : "eq",
-						"lexp" : {
-							"property" : "variantGroup"
+						"op": "eq",
+						"lexp": {
+							"property": "variantGroup"
 						},
-						"rexp" : {
+						"rexp": {
 							"value": $routeParams.id
 						}
 					}
 				]
 			}
 		};
-
-
 	}
+
 	VariantListController.$inject = ['$scope', '$routeParams', 'RbsChange.REST'];
 	app.controller('Rbs_Catalog_VariantGroup_VariantListController', VariantListController);
-
 })();

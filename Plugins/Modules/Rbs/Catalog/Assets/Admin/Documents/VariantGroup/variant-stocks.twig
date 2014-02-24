@@ -1,74 +1,67 @@
 <div class="row">
 	<div data-rbs-aside-column="">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
-			</div>
-			<div class="list-group">
-				<p class="list-group-item">
-					<a href="" data-ng-href="(= document | rbsURL:'variant-list':{productId:document.rootProduct.id} =)">
-						<i class="icon-arrow-right"></i>
-						{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw}}
-					</a>
-				</p>
-			</div>
-		</div>
-		<div class="rbs-aside-block" data-ng-show="document.rootProduct">
-			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
-			<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
-		</div>
+		{% set currentRootName = 'variant-stocks' %}
+		{% include '@Rbs_Catalog/Documents/VariantGroup/variant-aside-column.twig' %}
 	</div>
 
 	<div class="document-form" data-rbs-main-column="">
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></rbs-page-header>
-		<rbs-document-editor-rbs-catalog-variant-group-stocks>
-			<div class="row">
-				<form name="form" data-ng-submit="save()" class="form-horizontal">
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<td>{{ i18n('m.rbs.catalog.admin.product_product', ['ucf']) }}</td>
-								<td data-ng-repeat="(warehouseId, warehouse) in data.warehouses">(= warehouse.code =)</td>
-								<td></td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr data-ng-repeat="(productId, product) in data.products">
-								<td>
-									<a href="" data-ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'form':{id:productId} =)">
-										(= product.label =)
-									</a>
-								</td>
-								<td data-ng-if="!product.sku.unlimitedInventory" data-ng-repeat="(warehouseId, warehouse) in data.warehouses">
-									<input type="number" data-rbs-integer="" class="form-control input-sm"
-										data-ng-model="warehouse.skus[product.sku.id]" size="4" />
-								</td>
-								<td data-ng-if="product.sku.unlimitedInventory" colspan="(= data.warehouses.length =)">
-									{{ i18n('m.rbs.catalog.admin.variantgroup_unlimited_inventory', ['ucf']) }}
-								</td>
-								<td>
-									<a href="" data-ng-href="(= 'Rbs_Stock_Sku' | rbsURL:'form':{id:product.sku.id} =)">
-										{{ i18n('m.rbs.catalog.admin.variantgroup_edit_sku', ['ucf']) }}
-									</a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
 
-					<div class="confirmation-area"></div>
-
-					<button class="btn btn-default btn-headline" type="button" data-ng-click="confirmReset($event)"
-						data-ng-disabled="!isChanged" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}">
-						<i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}
-					</button>
-					<button class="btn btn-headline btn-primary" type="submit" data-role="save"
-						data-ng-disabled="!isChanged || saveProgress.running"
-						data-ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}">
-						<i class="icon-white icon-ok" data-ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
-						</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
-					</button>
-				</form>
+		<div data-ng-show="loaded">
+			<div class="well" style="margin-top: 20px;" data-ng-show="hasJobs">
+				{{ i18n('m.rbs.catalog.admin.variantgroup_jobs_infos', ['ucf']) | raw}}
 			</div>
-		</rbs-document-editor-rbs-catalog-variant-group-stocks>
+
+			<rbs-document-editor-rbs-catalog-variant-group-stocks data-ng-hide="hasJobs">
+				<div class="row">
+					<form name="form" data-ng-submit="save()" class="form-horizontal">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<td>{{ i18n('m.rbs.catalog.admin.product_product', ['ucf']) }}</td>
+									<td data-ng-repeat="(warehouseId, warehouse) in data.warehouses">(= warehouse.code =)</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-ng-repeat="(productId, product) in data.products">
+									<td>
+										<a href="" data-ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'form':{id:productId} =)">
+											(= product.label =)
+										</a>
+									</td>
+									<td data-ng-if="!product.sku.unlimitedInventory"
+										data-ng-repeat="(warehouseId, warehouse) in data.warehouses">
+										<input type="number" data-rbs-integer="" class="form-control input-sm"
+											data-ng-model="warehouse.skus[product.sku.id]" size="4" />
+									</td>
+									<td data-ng-if="product.sku.unlimitedInventory" colspan="(= data.warehouses.length =)">
+										{{ i18n('m.rbs.catalog.admin.variantgroup_unlimited_inventory', ['ucf']) }}
+									</td>
+									<td>
+										<a href="" data-ng-href="(= 'Rbs_Stock_Sku' | rbsURL:'form':{id:product.sku.id} =)">
+											{{ i18n('m.rbs.catalog.admin.variantgroup_edit_sku', ['ucf']) }}
+										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="confirmation-area"></div>
+
+						<button class="btn btn-default btn-headline" type="button" data-ng-click="confirmReset($event)"
+							data-ng-disabled="!isChanged" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}">
+							<i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}
+						</button>
+						<button class="btn btn-headline btn-primary" type="submit" data-role="save"
+							data-ng-disabled="!isChanged || saveProgress.running"
+							data-ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}">
+							<i class="icon-white icon-ok" data-ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
+							</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
+						</button>
+					</form>
+				</div>
+			</rbs-document-editor-rbs-catalog-variant-group-stocks>
+		</div>
 	</div>
 </div>

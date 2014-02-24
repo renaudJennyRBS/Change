@@ -1,20 +1,53 @@
-(function ()
-{
+(function() {
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
-	app.directive('rbsDocumentPreviewRbsCatalogProduct', ['RbsChange.REST', function (REST)
-	{
+	app.directive('rbsDocumentPreviewRbsCatalogProduct', ['RbsChange.REST', function(REST) {
 		return {
-			restrict : 'E',
-			scope : {
-				document : '='
+			restrict: 'E',
+			scope: {
+				document: '='
 			},
-			templateUrl : 'Rbs/Catalog/rbs-document-preview-rbs-catalog-product.twig',
+			templateUrl: 'Rbs/Catalog/rbs-document-preview-rbs-catalog-product.twig',
 			link: function(scope) {
 				REST.ensureLoaded(scope.document);
+			}
+		};
+	}]);
+
+	function rbsDocumentPreviewRbsCatalogProductList(REST) {
+		return {
+			restrict: 'E',
+			scope: {
+				document: '='
+			},
+			templateUrl: 'Rbs/Catalog/rbs-document-preview-rbs-catalog-product-list.twig',
+			link: function(scope) {
+				REST.ensureLoaded(scope.document).then(function(doc) {
+					angular.extend(scope.document, doc);
+				});
+			}
+		};
+	}
+	rbsDocumentPreviewRbsCatalogProductList.$inject = ['RbsChange.REST'];
+	app.directive('rbsDocumentPreviewRbsCatalogProductList', rbsDocumentPreviewRbsCatalogProductList);
+	app.directive('rbsDocumentPreviewRbsCatalogSectionProductList', rbsDocumentPreviewRbsCatalogProductList);
+
+	app.directive('rbsDocumentPreviewRbsCatalogCrossSellingProductList', ['RbsChange.REST', function(REST) {
+		return {
+			restrict: 'E',
+			scope: {
+				document: '='
+			},
+			templateUrl: 'Rbs/Catalog/rbs-document-preview-rbs-catalog-cross-selling-product-list.twig',
+			link: function(scope) {
+				REST.ensureLoaded(scope.document).then(function(doc) {
+					angular.extend(scope.document, doc);
+					REST.ensureLoaded(scope.document.product).then(function(doc) {
+						angular.extend(scope.document.product, doc);
+					});
+				});
 			}
 		};
 	}]);
@@ -23,9 +56,9 @@
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
-			templateUrl : 'Rbs/Catalog/rbs-document-filter-stock-inventory.twig',
+			templateUrl: 'Rbs/Catalog/rbs-document-filter-stock-inventory.twig',
 			scope: {
-				filter : '='
+				filter: '='
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -53,9 +86,9 @@
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
-			templateUrl : 'Rbs/Catalog/rbs-document-filter-product-codes.twig',
+			templateUrl: 'Rbs/Catalog/rbs-document-filter-product-codes.twig',
 			scope: {
-				filter : '='
+				filter: '='
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
@@ -88,9 +121,9 @@
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentFilterContainer',
-			templateUrl : 'Rbs/Catalog/rbs-document-filter-product-attribute.twig',
+			templateUrl: 'Rbs/Catalog/rbs-document-filter-product-attribute.twig',
 			scope: {
-				filter : '='
+				filter: '='
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
