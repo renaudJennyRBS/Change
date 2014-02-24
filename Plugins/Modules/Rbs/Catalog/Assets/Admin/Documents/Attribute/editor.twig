@@ -76,7 +76,7 @@
 		</div>
 		<hr />
 
-		<rbs-field-boolean data-ng-disable="document.valueType == 'Text' || document.valueType == 'Boolean'" property="requiredValue"
+		<rbs-field-boolean data-ng-hide="document.valueType == 'Group'" data-ng-disable="document.valueType == 'Text' || document.valueType == 'Boolean'" property="requiredValue"
 			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'requiredValue'), ['ucf']) }}">
 		</rbs-field-boolean>
 
