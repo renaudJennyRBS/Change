@@ -995,9 +995,10 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param boolean $onlyPublishedProduct
 	 * @return array
 	 */
-	public function getVariantsConfiguration($product)
+	public function getVariantsConfiguration($product, $onlyPublishedProduct = true)
 	{
 		$variantsConfiguration = array();
 
@@ -1006,7 +1007,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$variantsConfiguration['variantGroup'] = $product->getVariantGroup();
 			$variantsConfiguration['axes'] = $this->getAttributeManager()
-				->buildVariantConfiguration($product->getVariantGroup(), true);
+				->buildVariantConfiguration($product->getVariantGroup(), $onlyPublishedProduct);
 			$variantsConfiguration['axesNames'] = $this->getAxesNames($product->getVariantGroup(), $this->getDocumentManager());
 		}
 
@@ -1023,7 +1024,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 		if ($product->getVariantGroup())
 		{
-			$vConfiguration = $this->getVariantsConfiguration($product);
+			$vConfiguration = $this->getVariantsConfiguration($product, false);
 
 			$variantInfo['isRoot'] = $product->hasVariants();
 			$variantInfo['depth'] = count($vConfiguration['axes']['axesValues']);
@@ -1090,7 +1091,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		if (count($axes) > 0)
 		{
 			$productAxesConfiguration = null;
-			$vConfiguration = $this->getVariantsConfiguration($variant);
+			$vConfiguration = $this->getVariantsConfiguration($variant, true);
 			foreach ($vConfiguration['axes']['products'] as $infoProduct)
 			{
 				if ($infoProduct['id'] === $variant->getId())
@@ -1130,9 +1131,10 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @return \Rbs\Catalog\Documents\Product[]
+	 * @param boolean $onlyPublishedProduct
+	 * @return integer[]
 	 */
-	public function getProductAncestors($product)
+	public function getProductIdAncestors($product, $onlyPublishedProduct)
 	{
 		if (!$product->getVariant())
 		{
@@ -1141,7 +1143,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 		// Look for the axes configuration of the product.
 		$productAxesConfiguration = null;
-		$variantConfiguration = $this->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup(), true);
+		$variantConfiguration = $this->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup(), $onlyPublishedProduct);
 		foreach ($variantConfiguration['products'] as $infoProduct)
 		{
 			if ($infoProduct['id'] === $product->getId())
@@ -1160,7 +1162,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				if ($axis['value'] === null)
 				{
-					$ancestors[implode('/', $keyParts)] = $this->getDocumentManager()->getDocumentInstance($infoProduct['id']);
+					$ancestors[implode('/', $keyParts)] = $infoProduct['id'];
 					break;
 				}
 				elseif ($axis['value'] == $productAxesConfiguration['values'][$level]['value'])
@@ -1177,6 +1179,25 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		// Sort by key and return ancestors.
 		ksort($ancestors);
 		return array_values($ancestors);
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param boolean $onlyPublishedProduct
+	 * @return \Rbs\Catalog\Documents\Product[]
+	 */
+	public function getProductAncestors($product, $onlyPublishedProduct)
+	{
+		$ancestorsId = $this->getProductIdAncestors($product, $onlyPublishedProduct);
+		$ancestors = array();
+
+		$dm = $this->getDocumentManager();
+		foreach ($ancestorsId as $key => $value)
+		{
+			$ancestors[$key] = $dm->getDocumentInstance($value);
+		}
+
+		return $ancestors;
 	}
 
 	/**
@@ -1259,7 +1280,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($product->getVariant())
 			{
-				$ancestors = $this->getProductAncestors($product);
+				$ancestors = $this->getProductAncestors($product, true);
 				$ancestors = array_reverse($ancestors);
 				$ancestors[] = $product->getVariantGroup()->getRootProduct();
 				foreach ($ancestors as $ancestor)

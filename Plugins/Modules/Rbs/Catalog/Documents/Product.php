@@ -46,6 +46,13 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 				{
 					$documentResult->addLink(array('href' => $image->getPublicURL(512, 512), 'rel' => 'adminthumbnail'));
 				}
+
+				if ($document->getVariantGroup())
+				{
+					$commerceServices = $event->getServices('commerceServices');
+					$catalogManager = $commerceServices->getCatalogManager();
+					$documentResult->setProperty('variantInfo', $catalogManager->getVariantInfo($document));
+				}
 			}
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
@@ -59,6 +66,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			{
 				$restResult->setProperty('variantGroup', array('id' => $document->getVariantGroup()->getId(), 'rootProductId' => $document->getVariantGroup()->getRootProductId()));
 			}
+			$restResult->setProperty('variant', $document->getVariant());
 		}
 	}
 
@@ -169,6 +177,11 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		if ($product->isPropertyModified('publicationSections'))
 		{
 			$product->synchronizeSectionDocumentLists();
+		}
+
+		if ($product->isPropertyModified('variantGroup'))
+		{
+			$product->setSku(null);
 		}
 	}
 
