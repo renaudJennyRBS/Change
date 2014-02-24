@@ -55,6 +55,17 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 			$documentLink->setProperty('mailSuitable', $pageTemplate->getMailSuitable());
 			$documentLink->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
 		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
+			$pageTemplate = $restResult->getDocument();
+			$theme = $pageTemplate->getTheme();
+			if ($theme)
+			{
+				$restResult->setProperty('themeId', $theme->getId());
+			}
+			$restResult->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
+		}
 	}
 
 	public function isMailSuitable()
