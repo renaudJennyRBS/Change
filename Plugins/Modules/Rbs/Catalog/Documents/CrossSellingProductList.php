@@ -10,6 +10,27 @@ use Change\I18n\PreparedKey;
 class CrossSellingProductList extends \Compilation\Rbs\Catalog\Documents\CrossSellingProductList
 {
 	/**
+	 * @param Event $event
+	 */
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			/* @var $document \Rbs\Catalog\Documents\CrossSellingProductList */
+			$document = $restResult->getDocument();
+			$restResult->setProperty('productId', $document->getProductId());
+		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			/* @var $document \Rbs\Catalog\Documents\CrossSellingProductList */
+			$document = $restResult->getDocument();
+			$restResult->setProperty('productId', $document->getProductId());
+		}
+	}
+
+	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
 	protected function attachEvents($eventManager)

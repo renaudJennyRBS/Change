@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
-	activable="true">
+	activable="true" editable="true">
 	<properties>
+		<property name="label" stateless="true" />
 		<property name="productList" type="Document" document-type="Rbs_Catalog_ProductList" />
 		<property name="product" type="Document" document-type="Rbs_Catalog_Product" />
 		<property name="condition" type="Document" document-type="Rbs_Catalog_Condition" />

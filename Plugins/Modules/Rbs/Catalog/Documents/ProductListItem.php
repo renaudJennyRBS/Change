@@ -10,6 +10,24 @@ use Change\Http\Rest\Result\Link;
 class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 {
 	/**
+	 * @return string
+	 */
+	public function getLabel()
+	{
+		return $this->getProduct()->getLabel();
+	}
+
+	/**
+	 * @param string $label
+	 * @return $this
+	 */
+	public function setLabel($label)
+	{
+		// Nothing to do...
+		return $this;
+	}
+
+	/**
 	 * @return boolean
 	 */
 	public function isHighlighted()
@@ -26,45 +44,50 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			$documentResult = $restResult;
-			$um = $documentResult->getUrlManager();
+			/* @var $document \Rbs\Catalog\Documents\ProductListItem */
+			$document = $restResult->getDocument();
+			$urlManager = $restResult->getUrlManager();
+			$restResult->setProperty('productListId', $document->getProductListId());
+
 			/* @var $selfLink DocumentLink */
-			$selfLink = $documentResult->getRelLink('self')[0];
+			$selfLink = $restResult->getRelLink('self')[0];
 			$pathInfo = $selfLink->getPathInfo();
 			if ($this->isHighlighted())
 			{
-				$documentResult->addAction(new Link($um, $pathInfo . '/downplay', 'downplay'));
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/downplay', 'downplay'));
 			}
 			else
 			{
-				$documentResult->addAction(new Link($um, $pathInfo . '/highlight', 'highlight'));
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/highlight', 'highlight'));
 			}
-			$documentResult->addAction(new Link($um, $pathInfo . '/moveup', 'moveup'));
-			$documentResult->addAction(new Link($um, $pathInfo . '/movedown', 'movedown'));
-			$documentResult->addAction(new Link($um, $pathInfo . '/highlighttop', 'highlighttop'));
-			$documentResult->addAction(new Link($um, $pathInfo . '/highlightbottom', 'highlightbottom'));
+			$restResult->addAction(new Link($urlManager, $pathInfo . '/moveup', 'moveup'));
+			$restResult->addAction(new Link($urlManager, $pathInfo . '/movedown', 'movedown'));
+			$restResult->addAction(new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'));
+			$restResult->addAction(new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'));
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
-			//$extraColumn = $event->getParam('extraColumn');
-			$documentLink = $restResult;
-			$urlManager = $documentLink->getUrlManager();
-			$product = $this->getProduct();
+			/* @var $document \Rbs\Catalog\Documents\ProductListItem */
+			$document = $restResult->getDocument();
+			$urlManager = $restResult->getUrlManager();
+
+			$product = $document->getProduct();
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$documentLink->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY));
+				$restResult->setProperty('product', new DocumentLink($urlManager, $product, DocumentLink::MODE_PROPERTY));
 			}
 			$productList = $this->getProductList();
 			if ($productList instanceof \Rbs\Catalog\Documents\ProductList)
 			{
-				$documentLink->setProperty('productList',
+				$restResult->setProperty('productList',
 					new DocumentLink($urlManager, $productList, DocumentLink::MODE_PROPERTY));
 			}
 
-			$documentLink->setProperty('isHighlighted', $this->isHighlighted());
-			$documentLink->setProperty('position', $this->getPosition());
+			$restResult->setProperty('isHighlighted', $document->isHighlighted());
+			$restResult->setProperty('position', $document->getPosition());
+			$restResult->setProperty('productListId', $document->getProductListId());
 
-			$pathInfo = $documentLink->getPathInfo();
+			$pathInfo = $restResult->getPathInfo();
 
 			if ($this->isHighlighted())
 			{
@@ -78,7 +101,7 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 			$actions[] = (new Link($urlManager, $pathInfo . '/movedown', 'movedown'))->toArray();
 			$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
 			$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
-			$documentLink->setProperty('actions', $actions);
+			$restResult->setProperty('actions', $actions);
 		}
 	}
 

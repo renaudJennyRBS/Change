@@ -1,0 +1,15 @@
+<p>
+	<a href="" data-ng-href="(= document | rbsURL =)">
+		<strong>(= document.label =)</strong>
+	</a>
+	<small>
+		{{ i18n('m.rbs.catalog.admin.product_list_on') }}
+		<a href="" data-ng-href="(= document.product | rbsURL =)">(= document.product.label =)</a>
+	</small>
+</p>
+<p data-ng-if="document.product.visuals.length > 0">
+	<img data-rbs-storage-image="document.product.visuals[0].id" data-thumbnail="M"/>
+</p>
+<p data-ng-if="document.product.visuals.length > 1">
+	<img data-ng-repeat="v in document.product.visuals" data-ng-if="! $first" data-rbs-storage-image="v.id" data-thumbnail="S"/>
+</p>
