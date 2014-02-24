@@ -498,9 +498,9 @@
 					/**
 					 * Returns the URL of the Resource identified by its `model`, `id` and eventually `lcid`.
 					 *
+					 * @param model
 					 * @param id
 					 * @param lcid
-					 * @param model
 					 *
 					 * @return String Resource's URL.
 					 */
@@ -588,7 +588,7 @@
 					 * Loads the Resource identified by its `model`, `id` and eventually `lcid`.
 					 *
 					 * @param model Model name.
-					 * @param id Resource's ID.
+					 * @param {int=} id Resource's ID.
 					 * @param {string=} lcid (Optional) Locale ID.
 					 *
 					 * @return {Object} Promise that will be resolved when the Resource is loaded.
@@ -667,7 +667,7 @@
 					 * Ensures that the given doc has been fully loaded.
 					 *
 					 * @param model
-					 * @param id
+					 * @param {int=} id
 					 * @param {string=} lcid
 					 * @returns {*}
 					 */

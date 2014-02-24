@@ -616,3 +616,7 @@ rbs-document-url-manager .table tbody > tr > td {
 	margin-left: 0;
 	margin-right: 0;
 }
+
+pre {
+	text-align: left;
+}

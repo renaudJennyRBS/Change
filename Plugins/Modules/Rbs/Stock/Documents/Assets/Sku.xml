@@ -29,9 +29,7 @@
 		<property name="unit" type="String" default-value="PC">
 			<dboptions length="80" />
 		</property>
-
-		<property name="partNumber" type="String"></property>
-
+		<property name="partNumber" type="String" />
 		<property name="quantityIncrement" type="Integer" default-value="1" required="true" />
 		<property name="minQuantity" type="Integer" default-value="1" required="true" />
 		<property name="maxQuantity" type="Integer" />

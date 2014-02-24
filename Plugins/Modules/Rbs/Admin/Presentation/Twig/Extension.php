@@ -189,6 +189,7 @@ class Extension implements \Twig_ExtensionInterface
 	 * Get the property translation key for label
 	 * @param null|string $modelName
 	 * @param null|string $propertyName
+	 * @param null|string $suffix
 	 * @return null|string
 	 */
 	public function propertyKey($modelName = null, $propertyName = null, $suffix = null)
