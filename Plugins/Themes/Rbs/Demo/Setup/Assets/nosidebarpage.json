@@ -75,7 +75,7 @@
 	},
 	"mainContent" : {
 		"id" : "mainContent",
-		"grid" : 9,
+		"grid" : 12,
 		"type" : "container",
 		"parameters" : {
 		}
