@@ -533,7 +533,7 @@ class Cart implements \Serializable
 	{
 		foreach ($this->lines as $line)
 		{
-			if ($line->getKey() === $lineKey)
+			if ($line->getKey() == $lineKey)
 			{
 				return $line;
 			}

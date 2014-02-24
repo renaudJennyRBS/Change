@@ -243,7 +243,7 @@ class BaseLine implements LineInterface
 					$this->setIndex(intval($value));
 					break;
 				case 'key':
-					$this->setKey($value);
+					$this->setKey(strval($value));
 					break;
 				case 'quantity':
 					$this->setQuantity(intval($value));

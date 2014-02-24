@@ -57,11 +57,11 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 				}
 				elseif ($data['quantity'] > 0)
 				{
-					$cartManager->updateLineQuantityByKey($cart, $data['key'], $data['quantity']);
+					$cartManager->updateLineQuantityByKey($cart, strval($data['key']), $data['quantity']);
 				}
 				else
 				{
-					$cartManager->removeLineByKey($cart, $data['key']);
+					$cartManager->removeLineByKey($cart, strval($data['key']));
 				}
 			}
 		}
