@@ -114,22 +114,19 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		if (isset($arguments['coupons']))
 		{
-			$coupons = array();
+			$cart->removeAllCoupons();
 			foreach ($arguments['coupons'] as $data)
 			{
 				// Ignore entries without a code.
-				if (!isset($data['code']))
+				if (!isset($data['code']) || \Change\Stdlib\String::isEmpty($data['code']))
 				{
 					continue;
 				}
-				// TODO: set title property.
-				if (!isset($data['title']))
-				{
-					$data['title'] = $data['code'];
+				$couponCode = $data['code'];
+				if (!$cart->getCouponByCode($couponCode)) {
+					$cart->appendCoupon(new \Rbs\Commerce\Process\BaseCoupon($data));
 				}
-				$coupons[] = new \Rbs\Commerce\Process\BaseCoupon($data);
 			}
-			$cart->setCoupons($coupons);
 		}
 
 		$cartManager->normalize($cart);

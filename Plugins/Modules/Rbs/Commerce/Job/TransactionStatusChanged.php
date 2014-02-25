@@ -26,7 +26,7 @@ class TransactionStatusChanged
 			return;
 		}
 
-		if ($job->getArgument('status') && \Rbs\Payment\Documents\Transaction::STATUS_SUCCESS)
+		if ($job->getArgument('status') == \Rbs\Payment\Documents\Transaction::STATUS_SUCCESS)
 		{
 			$contextData = $transaction->getContextData();
 			if (isset($contextData['from']) && $contextData['from'] == 'cart')

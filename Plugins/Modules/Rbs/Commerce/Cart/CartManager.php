@@ -502,7 +502,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$newCart->setEmail($cart->getEmail());
 			$newCart->setAddress($cart->getAddress());
 			$newCart->setShippingModes($cart->getShippingModes());
-			$newCart->setCoupons($cart->getCoupons());
+			foreach ($cart->getCoupons() as $coupon)
+			{
+				$newCart->appendCoupon($coupon);
+			}
 			$event->setParam('newCart', $newCart);
 		}
 	}
@@ -1183,6 +1186,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$cart = $event->getParam('cart');
 		if ($cart instanceof Cart)
 		{
+
 			$cart->removeAllFees();
 			$cart->removeAllDiscounts();
 
@@ -1192,6 +1196,28 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$process = $processManager->getOrderProcessByCart($cart);
 			if ($process)
 			{
+				$coupons = $cart->removeAllCoupons();
+				foreach ($coupons as $oldCoupon)
+				{
+					$couponCode = $oldCoupon->getCode();
+					$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Discount_Coupon');
+					$q->andPredicates($q->activated(), $q->eq('code', $couponCode), $q->eq('orderProcess', $process));
+
+					/** @var $couponDocument \Rbs\Discount\Documents\Coupon */
+					foreach ($q->getDocuments() as $couponDocument)
+					{
+						if ($couponDocument->isCompatibleWith($cart))
+						{
+							$coupon = new \Rbs\Commerce\Process\BaseCoupon();
+							$coupon->setCode($couponCode);
+							$coupon->setTitle($couponDocument->getCurrentLocalization()->getTitle());
+							$coupon->getOptions()->set('id', $couponDocument->getId());
+							$cart->appendCoupon($coupon);
+							break;
+						}
+					}
+				}
+
 				$documents = $process->getAvailableModifiers();
 				foreach ($documents as $document)
 				{

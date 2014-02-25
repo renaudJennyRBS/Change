@@ -552,7 +552,8 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 
 		if ($this->getProcessingStatus() == 'edition')
 		{
-			if (is_array($this->lines) || is_array($this->fees) || is_array($this->discounts) || is_array($this->creditNotes))
+			if (is_array($this->lines) || is_array($this->coupons) ||
+				is_array($this->fees) || is_array($this->discounts) || is_array($this->creditNotes))
 			{
 				$this->normalize();
 			}
@@ -624,6 +625,15 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				return $value->toArray();
 			}, $this->fees));
 			$this->fees = null;
+		}
+
+		if (is_array($this->coupons))
+		{
+			$this->getContent()->set('coupons', array_map(function(\Rbs\Commerce\Process\BaseCoupon $value)
+			{
+				return $value->toArray();
+			}, $this->coupons));
+			$this->coupons = null;
 		}
 
 		if (is_array($this->discounts))
