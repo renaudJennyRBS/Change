@@ -15,43 +15,10 @@
 	"/Rbs/Catalog/Attribute/:id/translate/:LCID/workflow": false,
 	"/Rbs/Catalog/Attribute/:id/workflow": false,
 	"/Rbs/Catalog/Attribute/new": false,
-	"/Rbs/Catalog/CrossSellingProductList/:id": {
-		"model": "Rbs_Catalog_CrossSellingProductList",
-		"name": "form",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
-			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/CrossSellingProductList/:id/Products/": {
-		"model": "Rbs_Catalog_CrossSellingProductList",
-		"name": "productListItems",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductList/products.twig",
-			"labelKey": "m.rbs.catalog.admin.product_list | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/CrossSellingProductList/:id/timeline": {
-		"model": "Rbs_Catalog_CrossSellingProductList",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_CrossSellingProductList",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/CrossSellingProductList/new": {
-		"model": "Rbs_Catalog_CrossSellingProductList",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": true
-	},
+	"/Rbs/Catalog/CrossSellingProductList/:id": false,
+	"/Rbs/Catalog/CrossSellingProductList/:id/Products/": false,
+	"/Rbs/Catalog/CrossSellingProductList/:id/timeline": false,
+	"/Rbs/Catalog/CrossSellingProductList/new": false,
 	"/Rbs/Catalog/Product/": {
 		"model": "Rbs_Catalog_Product",
 		"name": "list",
@@ -70,7 +37,7 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Catalog/Product/:id/CrossSellingProductLists/": {
+	"/Rbs/Catalog/Product/:id/CrossSellingProductList/": {
 		"model": "Rbs_Catalog_Product",
 		"name": "cross-selling-lists",
 		"rule": {
@@ -146,30 +113,58 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Catalog/Product/:productId/CrossSellingProductList/:id": {
+		"model": "Rbs_Catalog_CrossSellingProductList",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
+			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Product/:productId/CrossSellingProductList/:id/Products/": {
+		"model": "Rbs_Catalog_CrossSellingProductList",
+		"name": "productListItems",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductList/products.twig",
+			"labelKey": "m.rbs.catalog.admin.product_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Product/:productId/CrossSellingProductList/:id/timeline": {
+		"model": "Rbs_Catalog_CrossSellingProductList",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_CrossSellingProductList",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Product/:productId/CrossSellingProductList/new": {
+		"model": "Rbs_Catalog_CrossSellingProductList",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id": {
+		"model": "Rbs_Catalog_VariantGroup",
+		"name": "variant-list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-list.twig",
+			"labelKey": "m.rbs.catalog.admin.variantgroup_list | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/attributes": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-config",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/VariantGroup/form.twig",
 			"labelKey": "m.rbs.catalog.admin.variantgroup_variant_config | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/stocks": {
-		"model": "Rbs_Catalog_VariantGroup",
-		"name": "variant-stocks",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-stocks.twig",
-			"labelKey": "m.rbs.catalog.admin.variantgroup_stocks_config | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/prices": {
-		"model": "Rbs_Catalog_VariantGroup",
-		"name": "variant-prices",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-prices.twig",
-			"labelKey": "m.rbs.catalog.admin.variantgroup_prices_config | ucf"
 		},
 		"auto": false
 	},
@@ -182,12 +177,21 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/Product/:productId/VariantGroup/:id": {
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/prices": {
 		"model": "Rbs_Catalog_VariantGroup",
-		"name": "variant-list",
+		"name": "variant-prices",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-list.twig",
-			"labelKey": "m.rbs.catalog.admin.variantgroup_list | ucf"
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-prices.twig",
+			"labelKey": "m.rbs.catalog.admin.variantgroup_prices_config | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/stocks": {
+		"model": "Rbs_Catalog_VariantGroup",
+		"name": "variant-stocks",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-stocks.twig",
+			"labelKey": "m.rbs.catalog.admin.variantgroup_stocks_config | ucf"
 		},
 		"auto": false
 	},
@@ -246,6 +250,34 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Catalog/ProductList/:productListId/Products/:id": {
+		"model": "Rbs_Catalog_ProductListItem",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/ProductList/:productListId/Products/:id/timeline": {
+		"model": "Rbs_Catalog_ProductListItem",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_ProductListItem",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/ProductList/:productListId/Products/new": {
+		"model": "Rbs_Catalog_ProductListItem",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/ProductList/new": {
 		"model": "Rbs_Catalog_ProductList",
 		"name": "new",
@@ -255,34 +287,9 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Catalog/ProductListItem/:id": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "form",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
-			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/ProductListItem/:id/timeline": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_ProductListItem",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/ProductListItem/new": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": true
-	},
+	"/Rbs/Catalog/ProductListItem/:id": false,
+	"/Rbs/Catalog/ProductListItem/:id/timeline": false,
+	"/Rbs/Catalog/ProductListItem/new": false,
 	"/Rbs/Catalog/SectionProductList/": {
 		"model": "Rbs_Catalog_SectionProductList",
 		"name": "list",

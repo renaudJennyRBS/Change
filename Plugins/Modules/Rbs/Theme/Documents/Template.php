@@ -50,8 +50,21 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 			if ($theme)
 			{
 				$documentLink->setProperty('label', $theme->getLabel() . ' > ' . $pageTemplate->getLabel());
+				$documentLink->setProperty('themeId', $theme->getId());
 			}
 			$documentLink->setProperty('mailSuitable', $pageTemplate->getMailSuitable());
+			$documentLink->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
+		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
+			$pageTemplate = $restResult->getDocument();
+			$theme = $pageTemplate->getTheme();
+			if ($theme)
+			{
+				$restResult->setProperty('themeId', $theme->getId());
+			}
+			$restResult->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
 		}
 	}
 

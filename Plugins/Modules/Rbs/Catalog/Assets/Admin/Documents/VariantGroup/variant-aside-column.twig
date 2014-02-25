@@ -1,0 +1,72 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}
+		</h3>
+	</div>
+	<div class="list-group">
+		{% if currentRootName != 'variant-list' %}
+			<p class="list-group-item">
+				<a href="" data-ng-href="(= document | rbsURL:'variant-list':{productId:document.rootProduct.id} =)">
+					<i class="icon-arrow-right"></i>
+					{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw}}
+				</a>
+			</p>
+		{% else %}
+			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw}}</p>
+		{% endif %}
+		{% if currentRootName != 'variant-stocks' %}
+			<p class="list-group-item">
+				<a href="" data-ng-href="(= document | rbsURL:'variant-stocks':{productId:document.rootProduct.id} =)">
+					<i class="icon-arrow-right"></i>
+					{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantstocks', ['ucf']) | raw}}
+				</a>
+			</p>
+		{% else %}
+			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantstocks', ['ucf']) | raw}}</p>
+		{% endif %}
+		{% if currentRootName != 'variant-prices' %}
+			<p class="list-group-item">
+				<a href="" data-ng-href="(= document | rbsURL:'variant-prices':{productId:document.rootProduct.id} =)">
+					<i class="icon-arrow-right"></i>
+					{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantprices', ['ucf']) | raw}}
+				</a>
+			</p>
+		{% else %}
+			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantprices', ['ucf']) | raw}}</p>
+		{% endif %}
+	</div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="icon-cogs"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_initialization', ['ucf']) }}
+		</h3>
+	</div>
+	<div class="list-group">
+		{% if currentRootName != 'variant-config' %}
+			<p class="list-group-item">
+				<a href="" data-ng-href="(= document | rbsURL:'variant-config':{productId:document.rootProduct.id}=)" >
+					<i class="icon-arrow-right"></i>
+					{{ i18n('m.rbs.catalog.admin.variantgroup_variant_config', ['ucf']) | raw }}
+				</a>
+			</p>
+		{% else %}
+			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_config', ['ucf']) | raw}}</p>
+		{% endif %}
+		{% if currentRootName != 'variant-edit' %}
+			<p class="list-group-item">
+				<a href="" data-ng-href="(= document | rbsURL:'variant-edit':{productId:document.rootProduct.id} =)">
+					<i class="icon-arrow-right"></i>
+					{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_edit', ['ucf']) | raw}}
+				</a>
+			</p>
+		{% else %}
+			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_edit', ['ucf']) | raw}}</p>
+		{% endif %}
+	</div>
+</div>
+<div class="rbs-aside-block" data-ng-show="document.rootProduct">
+	<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+	<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+</div>

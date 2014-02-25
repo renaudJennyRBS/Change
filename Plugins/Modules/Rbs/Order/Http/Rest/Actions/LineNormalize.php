@@ -62,7 +62,7 @@ class LineNormalize
 			{
 				if (!$orderLine->getKey())
 				{
-					$orderLine->setKey($productId);
+					$orderLine->setKey(strval($productId));
 				}
 
 				/* @var $product \Rbs\Catalog\Documents\Product */

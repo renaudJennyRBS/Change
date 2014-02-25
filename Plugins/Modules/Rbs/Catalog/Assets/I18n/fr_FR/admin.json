@@ -155,6 +155,15 @@
 	"variantgroup_only_current_prices":{
 		"message":"l'édition rapide des prix ne concerne, pour chaque produit, que le prix le plus prioritaire et ayant la date d'activation la plus récente"
 	},
+	"variantgroup_edit_sku":{
+		"message":"éditer le SKU"
+	},
+	"variantgroup_unlimited_inventory":{
+		"message":"Stock \"infini\" (désactivable en éditant le SKU)."
+	},
+	"variantgroup_initialization":{
+		"message":"initialisation des variantes"
+	},
 	"productlist_productsortorder_help":{
 		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."
 	},
@@ -251,6 +260,9 @@
 	"product_function":{
 		"message":"détail d'un produit"
 	},
+	"product_added_to_cart_function":{
+		"message":"produit ajouté au panier"
+	},
 	"product_activate_zoom":{
 		"message":"activer le zoom"
 	},
@@ -310,6 +322,15 @@
 	},
 	"productlist_productlabel":{
 		"message":"libellé du produit"
+	},
+	"concerned_product_list":{
+		"message":"liste concernée"
+	},
+	"product_list_on":{
+		"message":"sur le produit"
+	},
+	"product_from_list":{
+		"message":"produit de la liste"
 	},
 	"product_visuals_picker_title":{
 		"message":"sélectionner les visuels"

@@ -1,4 +1,20 @@
 <div class="document-form">
-	<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_ProductListItem'), ['ucf']) }}"></rbs-page-header>
-	<rbs-document-editor rbs-document-editor-rbs-catalog-product-list-item=""></rbs-document-editor>
+	<div data-rbs-aside-column="">
+		<div class="rbs-aside-block" data-ng-show="document.product">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.product"></rbs-document-preview>
+		</div>
+
+		<div class="rbs-aside-block" data-ng-show="document.productList">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.concerned_product_list', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.productList"></rbs-document-preview>
+		</div>
+
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_ProductListItem'), ['ucf']) }}"></rbs-page-header>
+		<rbs-document-editor rbs-document-editor-rbs-catalog-product-list-item=""></rbs-document-editor>
+	</div>
 </div>

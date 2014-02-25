@@ -1,5 +1,4 @@
 (function () {
-
 	"use strict";
 
 	/**
@@ -8,7 +7,6 @@
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroup',
 		['RbsChange.REST', '$timeout', '$routeParams', 'RbsChange.i18n', 'RbsChange.UrlManager', 'RbsChange.ArrayUtils', 'RbsChange.MainMenu', '$q',
 			function Editor(REST, $timeout, $routeParams, i18n, UrlManager, ArrayUtils, MainMenu, $q) {
-
 				return {
 					restrict: 'A',
 					templateUrl: 'Document/Rbs/Catalog/VariantGroup/editor.twig',
@@ -16,7 +14,6 @@
 					require: 'rbsDocumentEditor',
 
 					link: function (scope, elm, attrs, editorCtrl) {
-
 						scope.Attributes = {axesToAdd: []};
 
 						function initAxesConfiguration() {
@@ -38,7 +35,7 @@
 								newAxesConfiguration.push(axisConfiguration);
 							});
 
-							// Set url configuration to true for the last
+							// Set url configuration to true for the last.
 							if (newAxesConfiguration.length > 0 && newAxesConfiguration[newAxesConfiguration.length-1].url !== true)
 							{
 								newAxesConfiguration[newAxesConfiguration.length-1].url = true;
@@ -118,7 +115,7 @@
 								scope.document.axesConfiguration[scope.document.axesConfiguration.length-1].categorizable = false;
 								scope.needCategorizable = false;
 							}
-						}
+						};
 
 						scope.$watchCollection('Attributes.axesToAdd', function (newValue) {
 							if (scope.form.hasOwnProperty('axesToAdd')) {

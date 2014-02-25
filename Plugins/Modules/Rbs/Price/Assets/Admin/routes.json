@@ -152,7 +152,7 @@
 			"controller": "RbsChangeWorkflowController",
 			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Price/Price/new": {
 		"model": "Rbs_Price_Price",

@@ -16,7 +16,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	public function getFirstVisual()
 	{
 		$visuals = $this->getVisuals();
-		return $visuals->count() ? $visuals[0] : null;
+		return $visuals->count() ? $visuals->offsetGet(0) : null;
 	}
 
 	public function onDefaultUpdateRestResult(Event $event)

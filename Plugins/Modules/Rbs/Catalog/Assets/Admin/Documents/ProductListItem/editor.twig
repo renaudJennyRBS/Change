@@ -18,22 +18,14 @@
 			accepted-model="Rbs_Catalog_ProductList"
 			selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_productlist_picker_title', ['ucf']) }}">
 		</rbs-field-picker>
-
-		<hr />
-
-		<rbs-field-boolean
-			property="active"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'active'), ['ucf']) }}">
-		</rbs-field-boolean>
-		<rbs-field-date
-			property="startActivation"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'startActivation'), ['ucf']) }}">
-		</rbs-field-date>
-
-		<rbs-field-date
-			property="endActivation"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'endActivation'), ['ucf']) }}">
-		</rbs-field-date>
 	</fieldset>
+
+	<fieldset
+		data-ng-show="section=='systeminfo'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-system-info-section="">
+	</fieldset>
+
 	<rbs-form-button-bar></rbs-form-button-bar>
 </form>

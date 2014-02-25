@@ -1,5 +1,4 @@
 <form name="form" ng-submit="submit()" class="form-horizontal">
-
 	<div rbs-tip="rbsVariantGroupEditorHelp" data-ng-hide="hasJobs">
 		{{ i18n('m.rbs.catalog.admin.variantgroup_help_tip', ['ucf']) | raw}}
 	</div>
@@ -96,10 +95,10 @@
 		</div>
 	</div>
 	<div class="well" style="margin-top: 20px;" data-ng-hide="hasJobs">
-				<span class="pull-right">
-					<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_generate_all_action', ['ucf']) }}</button>
-					<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_remove_all_action', ['ucf']) }}</button>
-				</span>
+		<span class="pull-right">
+			<button class="btn btn-primary" ng-click="selectAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_generate_all_action', ['ucf']) }}</button>
+			<button class="btn btn-danger" ng-click="removeAllVariants()" type="button">{{ i18n('m.rbs.catalog.admin.variantgroup_remove_all_action', ['ucf']) }}</button>
+		</span>
 		<h4>
 			<span ng-bind="document.variantConfiguration.products.length"></span>
 			{{ i18n('m.rbs.catalog.admin.variantgroup_existing_products_of') }}

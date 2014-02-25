@@ -8,10 +8,11 @@ use Zend\Http\Response;
  */
 class VariantStocks
 {
-
+	/**
+	 * @param \Change\Http\Event $event
+	 */
 	public function getVariantStocks(\Change\Http\Event $event)
 	{
-
 		$request = $event->getRequest();
 		$variantGroupId = $request->getQuery('variantGroupId');
 
@@ -21,16 +22,18 @@ class VariantStocks
 		{
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 
-			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
-			$query->andPredicates($query->eq('variant', true), $query->eq('variantGroup', $variantGroup), $query->isNotNull('sku'));
-
 			$resultArray = array();
-
 			$warehousesArray = array();
 			$productsArray = array();
 
-			$defaultWarehouseCode = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.stock.admin.warehouse_default_label', ['ucf']);
+			$i18n = $event->getApplicationServices()->getI18nManager();
+			$defaultWarehouseCode = $i18n->trans('m.rbs.stock.admin.warehouse_default_label', ['ucf']);
 
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+			$query->andPredicates(
+				$query->eq('variant', true),
+				$query->eq('variantGroup', $variantGroup), $query->isNotNull('sku')
+			);
 			$collection = $query->getDocuments();
 			foreach ($collection as $document)
 			{
@@ -38,7 +41,11 @@ class VariantStocks
 				$sku = $document->getSku();
 
 				$productsArray[$document->getId()] = ['label' => $document->getLabel()];
-				$productsArray[$document->getId()]['sku'] = ['id' => $sku->getId(), 'label' => $sku->getLabel()];
+				$productsArray[$document->getId()]['sku'] = [
+					'id' => $sku->getId(),
+					'label' => $sku->getLabel(),
+					'unlimitedInventory' => $sku->getUnlimitedInventory()
+				];
 
 				$inventoryQuery = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 				$inventoryQuery->andPredicates($inventoryQuery->eq('sku', $sku));
@@ -74,16 +81,13 @@ class VariantStocks
 						$warehousesArray[-1] = ['code' => $defaultWarehouseCode, 'skus' => array()];
 					}
 				}
-
 			}
 
 			$resultArray['warehouses'] = $warehousesArray;
 			$resultArray['products'] = $productsArray;
 
 			$result->setArray($resultArray);
-
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
-
 		}
 		else
 		{
@@ -93,6 +97,9 @@ class VariantStocks
 		$event->setResult($result);
 	}
 
+	/**
+	 * @param \Change\Http\Event $event
+	 */
 	public function saveVariantStocks(\Change\Http\Event $event)
 	{
 		$request = $event->getRequest();
@@ -124,13 +131,12 @@ class VariantStocks
 					$warehouse = $documentManger->getDocumentInstance($warehouseId);
 				}
 
-				foreach($stocks[$warehouseId]['skus'] as $skuId => $stock)
+				foreach ($stocks[$warehouseId]['skus'] as $skuId => $stock)
 				{
 					/* @var $sku \Rbs\Stock\Documents\Sku */
 					$sku = $documentManger->getDocumentInstance($skuId, 'Rbs_Stock_Sku');
 					$stockManager->setInventory($stock, $sku, $warehouse);
 				}
-
 			}
 
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);

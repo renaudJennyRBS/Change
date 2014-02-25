@@ -12,7 +12,7 @@ use Zend\Http\Response as HttpResponse;
 class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 {
 	/**
-	 * @var
+	 * @var array
 	 */
 	protected $variantConfiguration;
 
@@ -171,7 +171,6 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{

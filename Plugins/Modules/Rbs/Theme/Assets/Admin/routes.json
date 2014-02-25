@@ -1,5 +1,5 @@
 {
-	"/Rbs/Generic/Template/:id": {
+	"/Rbs/Generic/Theme/:themeId/:categoryName/:id": {
 		"model": "Rbs_Theme_Template",
 		"name": "form",
 		"rule": {
@@ -8,7 +8,7 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Template/:id/timeline": {
+	"/Rbs/Generic/Theme/:themeId/:categoryName/:id/timeline": {
 		"model": "Rbs_Theme_Template",
 		"name": "timeline",
 		"rule": {
@@ -18,7 +18,7 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Template/:id/workflow": {
+	"/Rbs/Generic/Theme/:themeId/:categoryName/:id/workflow": {
 		"model": "Rbs_Theme_Template",
 		"name": "workflow",
 		"rule": {
@@ -28,7 +28,7 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Template/new": {
+	"/Rbs/Generic/Theme/:themeId/:categoryName/new": {
 		"model": "Rbs_Theme_Template",
 		"name": "new",
 		"rule": {
