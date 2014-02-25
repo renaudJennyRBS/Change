@@ -281,6 +281,15 @@
 	"restore_data_button":{
 		"message":"rétablir les données"
 	},
+	"confirm_delete":{
+		"message":"supprimer ?"
+	},
+	"confirm_delete_message":{
+		"message":"Vous êtes sur le point de supprimer ce document. Cette opération ne pourra pas être annulée."
+	},
+	"delete_data_button":{
+		"message":"supprimer ce document"
+	},
 	"confirm_update_correction":{
 		"message":"Mettre à jour la correction ?"
 	},

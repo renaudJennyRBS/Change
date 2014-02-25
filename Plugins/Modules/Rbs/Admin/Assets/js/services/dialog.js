@@ -169,6 +169,7 @@
 
 					if (options.cssClass) {
 						$el.addClass(options.cssClass);
+						$el.attr('data-embed-css-class', options.cssClass);
 					}
 
 
@@ -229,7 +230,7 @@
 							self.$embeddedEl.find('rbs-document-list').each(function () {
 								angular.element($(this)).isolateScope().$destroy();
 							});
-							self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule);
+							self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule).removeClass(self.$embeddedEl.attr('data-embed-css-class'));
 							self.$embeddedEl = null;
 							$timeout(function () {
 								q.resolve();

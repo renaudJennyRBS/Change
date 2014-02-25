@@ -15,7 +15,12 @@
 	</p>
 
 	<div class="form-buttons">
-		<div class="pull-right" ng-transclude=""></div>
+		<div class="pull-right">
+			<div ng-transclude=""></div>
+			<button class="btn btn-danger btn-headline no-text" type="button" ng-click="confirmDelete($event)">
+				<i class="icon-trash"></i>
+			</button>
+		</div>
 		<button ng-if="!navigationContext" disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="goBack($event)" ng-disabled="! canGoBack()">
 			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.admin.btnGoBack', ['ucf']) | raw }}
 		</button>

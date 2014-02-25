@@ -340,6 +340,11 @@ h4.list-group-item:first-child {
 	width: 32px;
 }
 
+.btn.btn-headline.no-text i[class^="icon-"] {
+	margin-right: 0;
+	float: none;
+}
+
 .btn.btn-headline small {
 	font-size: 12px;
 	line-height: 12px;
