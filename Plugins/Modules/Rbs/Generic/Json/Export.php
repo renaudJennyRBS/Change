@@ -45,6 +45,11 @@ class Export
 	protected $exported = [];
 
 	/**
+	 * @var false;
+	 */
+	protected $added = false;
+
+	/**
 	 * @var string[]
 	 */
 	protected $codes = [];
@@ -138,14 +143,16 @@ class Export
 	{
 		if ($documents instanceof AbstractDocument)
 		{
+			$this->added = true;
 			$documents = [$documents];
 		}
 		if (is_array($documents) || $documents instanceof \Traversable)
 		{
 			foreach ($documents as $document)
 			{
-				if ($document instanceof AbstractDocument)
+				if ($document instanceof AbstractDocument && !isset($this->documents[$document->getId()]))
 				{
+					$this->added = true;
 					$this->documents[$document->getId()] = $document;
 				}
 			}
@@ -225,16 +232,16 @@ class Export
 		$documents = [];
 		$this->exported = [];
 		$this->codes = [];
-
-		foreach ($this->documents as $id => $document)
+		while ($this->added)
 		{
-			if (isset($this->exported[$id])) {
-				continue;
-			}
-			$da = $this->getDocumentAsArray($document);
-			if ($da !== null && isset($da['_model']))
+			$this->added = false;
+			foreach ($this->documents as $document)
 			{
-				$documents[] = $da;
+				$da = $this->getDocumentAsArray($document);
+				if ($da !== null && isset($da['_model']))
+				{
+					$documents[] = $da;
+				}
 			}
 		}
 
@@ -299,11 +306,14 @@ class Export
 
 		if (isset($this->exported[$id]))
 		{
+			if ($level === 0)
+			{
+				return null;
+			}
 			$this->exported[$id]++;
 			return ['_id' => $id];
 		}
 		$this->exported[$id] = 1;
-
 		$array = ['_id' => $id, '_model' => $model->getName()];
 		foreach ($model->getProperties() as $property)
 		{

@@ -836,11 +836,53 @@ class Cart implements \Serializable
 	}
 
 	/**
+	 * @param string $code
+	 * @return \Rbs\Commerce\Cart\CartDiscount|null
+	 */
+	public function getCouponByCode($code)
+	{
+		foreach ($this->coupons as $coupon)
+		{
+			if ($coupon->getCode() == $code)
+			{
+				return $coupon;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Process\CouponInterface $coupon
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Process\CouponInterface
+	 */
+	public function appendCoupon(\Rbs\Commerce\Process\CouponInterface $coupon)
+	{
+		if ($this->getCouponByCode($coupon->getCode()))
+		{
+			throw new \RuntimeException('Duplicate coupon code: ' . $coupon->getCode(), 999999);
+		}
+		$this->coupons[] = $coupon;
+		return $coupon;
+	}
+
+	/**
 	 * @return \Rbs\Commerce\Process\CouponInterface[]
 	 */
 	public function getCoupons()
 	{
 		return $this->coupons;
+	}
+
+	/**
+	 * Return removed coupons
+	 * @return \Rbs\Commerce\Process\CouponInterface[]
+	 */
+	public function removeAllCoupons()
+	{
+		$removed = $this->coupons;
+		$this->coupons = [];
+		return $removed;
 	}
 
 	/**

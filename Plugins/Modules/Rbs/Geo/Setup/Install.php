@@ -92,7 +92,6 @@ class Install extends \Change\Plugins\InstallBase
 
 			$allCountries = json_decode(file_get_contents($path), true);
 			$activable = array('FR', 'DE', 'CH', 'BE', 'LU', 'IT', 'ES', 'GB', 'US', 'CA', 'PT', 'NL', 'AT');
-
 			foreach ($activable as $code)
 			{
 				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
@@ -157,6 +156,21 @@ class Install extends \Change\Plugins\InstallBase
 						{
 							$country->setAddressFields($fields);
 							$country->update();
+							if ($model['countryCode'] == 'FR')
+							{
+								$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Zone');
+								$query->andPredicates($query->eq('code', 'FRC'));
+								$FRCZone = $query->getFirstDocument();
+								if (!$FRCZone)
+								{
+									/** @var $FRCZone \Rbs\Geo\Documents\Zone */
+									$FRCZone = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Zone');
+									$FRCZone->setCode('FRC');
+									$FRCZone->setLabel('France continentale');
+									$FRCZone->setCountry($country);
+									$FRCZone->save();
+								}
+							}
 						}
 					}
 				}
