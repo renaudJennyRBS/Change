@@ -1,0 +1,16 @@
+{% set attributeThumbnailFormat = {'maxWidth' : 160, 'maxHeight' : 120}  %}
+<div class="row">
+	{% set visuals = productPresentation.getFirstVisual({'thumbnail': attributeThumbnailFormat}).data %}
+	{% if visuals|length %}
+		{% set secondColumnClass = 'col-sm-8' %}
+		<div class="col-sm-4">
+			<img alt="{{ visuals[0].alt }}" src="{{ visuals[0].url.thumbnail }}" />
+		</div>
+	{% else %}
+		{% set secondColumnClass = 'col-sm-12' %}
+	{% endif %}
+	<div class="{{ secondColumnClass }}">
+		<h3>{{ productPresentation.general.title }}</h3>
+		<div class="alert alert-success">Cet article a été ajouté au panier !</div>
+	</div>
+</div>

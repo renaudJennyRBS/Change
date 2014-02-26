@@ -260,6 +260,9 @@
 	"product_function":{
 		"message":"détail d'un produit"
 	},
+	"product_added_to_cart_label":{
+		"message":"produit ajouté au panier"
+	},
 	"product_added_to_cart_function":{
 		"message":"produit ajouté au panier"
 	},
