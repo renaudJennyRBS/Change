@@ -8,6 +8,9 @@
 	"billing_area":{
 		"message":"zone de tarification"
 	},
+	"zone":{
+		"message":"zone de taxes"
+	},
 	"error_invalid_parameters":{
 		"message":"Les paramètres fournis sont invalides."
 	}

@@ -1074,59 +1074,14 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getVariantProductIdMustBeDisplayedForVariant($variant)
 	{
-		$axesConfiguration = $variant->getVariantGroup()->getAxesConfiguration();
-		$axesCount = count($axesConfiguration);
-		$axes = array();
-		for ($i = 0; $i < $axesCount - 1; $i++)
+		$ancestorId = $this->getProductIdAncestors($variant, true);
+
+		if ($ancestorId && count($ancestorId) > 0)
 		{
-			if ($axesConfiguration[$i]['url'] === true)
-			{
-				$axesConfiguration[$i]['level'] = $i;
-				$axes[] = $axesConfiguration[$i];
-			}
-		}
-		$axes = array_reverse($axes);
-
-		$newProductId = null;
-		if (count($axes) > 0)
-		{
-			$productAxesConfiguration = null;
-			$vConfiguration = $this->getVariantsConfiguration($variant, true);
-			foreach ($vConfiguration['axes']['products'] as $infoProduct)
-			{
-				if ($infoProduct['id'] === $variant->getId())
-				{
-					$productAxesConfiguration = $infoProduct;
-					break;
-				}
-			}
-
-			foreach ($axes as $axis)
-			{
-				$productAxesConfigurationValue = $productAxesConfiguration['values'][$axis['level']]['value'];
-				foreach ($vConfiguration['axes']['products'] as $infoProduct)
-				{
-					if ($infoProduct['values'][$axis['level']]['value'] == $productAxesConfigurationValue)
-					{
-						$newProductId = $infoProduct['id'];
-						for ($i = ($axis['level'] + 1); $i < $axesCount; $i++)
-						{
-							if ($infoProduct['values'][$i]['value'] !== null)
-							{
-								$newProductId = null;
-							}
-						}
-					}
-
-					if ($newProductId != null)
-					{
-						break 2;
-					}
-				}
-			}
+			return $ancestorId[0];
 		}
 
-		return $newProductId;
+		return null;
 	}
 
 	/**

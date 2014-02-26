@@ -25,21 +25,34 @@ class SelectWebStore extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$webStore = isset($data['webStoreId']) ? $documentManager->getDocumentInstance($data['webStoreId']) : null;
 			/** @var $billingArea \Rbs\Price\Documents\BillingArea */
 			$billingArea = isset($data['billingAreaId']) ? $documentManager->getDocumentInstance($data['billingAreaId']) : null;
+
+			$zone = isset($data['zone']) ? $data['zone'] : null;
+
 			if ($this->checkStoreAndArea($webStore, $billingArea))
 			{
 				$context = $commerceServices->getContext();
 				$context->setWebStore($webStore);
 				$context->setBillingArea($billingArea);
-				$zones = array();
-				foreach ($billingArea->getTaxes() as $tax)
+
+				if ($zone == null)
 				{
-					$zones = array_merge($zones, $tax->getZoneCodes());
+					$zones = array();
+					foreach ($billingArea->getTaxes() as $tax)
+					{
+						$zones = array_merge($zones, $tax->getZoneCodes());
+					}
+					$zones = array_unique($zones);
+					if (count($zones) == 1)
+					{
+						$zone = $zones[0];
+					}
 				}
-				$zones = array_unique($zones);
-				if (count($zones) == 1)
+
+				if ($zone)
 				{
-					$context->setZone($zones[0]);
+					$context->setZone($zone);
 				}
+
 				$context->save();
 
 				$event->setResult($this->getNewAjaxResult());

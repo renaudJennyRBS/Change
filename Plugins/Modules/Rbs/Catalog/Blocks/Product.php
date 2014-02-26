@@ -22,6 +22,8 @@ class Product extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('webStoreId');
+		$parameters->addParameterMeta('billingAreaId');
+		$parameters->addParameterMeta('zone');
 		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
 		$parameters->addParameterMeta('displayPrices');
@@ -43,10 +45,24 @@ class Product extends Block
 				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
 				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 			}
+
+			$billingArea = $commerceServices->getContext()->getBillingArea();
+			if ($billingArea)
+			{
+				$parameters->setParameterValue('billingAreaId', $billingArea->getId());
+			}
+
+			$zone = $commerceServices->getContext()->getZone();
+			if ($zone)
+			{
+				$parameters->setParameterValue('zone', $zone);
+			}
 		}
 		else
 		{
 			$parameters->setParameterValue('webStoreId', 0);
+			$parameters->setParameterValue('billingAreaId', 0);
+			$parameters->setParameterValue('zone', null);
 			$parameters->setParameterValue('displayPrices', false);
 			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
