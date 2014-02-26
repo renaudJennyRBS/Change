@@ -23,7 +23,7 @@
 	"mail_add_mail_variation_error":{
 		"message":"une erreur s'est produite pendant l'ajout d'une variation de mail"
 	},
-	"mail_template_not_suitable_help":{
-		"message":"le modèle sélectionné n'est pas compatible avec les mails, le document ne pourra pas être enregistré"
+	"mail_empty_mailtemplate":{
+		"message":"sélectionnez le modèle de mail"
 	}
 }

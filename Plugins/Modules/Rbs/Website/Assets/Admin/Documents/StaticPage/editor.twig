@@ -15,13 +15,8 @@
 		<rbs-field-document-select
 			label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"
 			empty-label="{{ i18nAttr('m.rbs.website.admin.page_empty_pagetemplate', ['ucf']) }}"
-			required="true"
-			property="pageTemplate"
-			accepted-model="Rbs_Theme_Template"
-			ng-model="document.pageTemplate">
-			<span ng-if="document.pageTemplate.mailSuitable" class="help-block text-warning">
-				{{ i18n('m.rbs.website.admin.page_template_not_suitable_help', ['ucf']) }}
-			</span>
+			required="true" property="pageTemplate" ng-model="document.pageTemplate"
+			accepted-model="Rbs_Theme_Template" filter-property="mailSuitable" filter-value="0">
 		</rbs-field-document-select>
 
 		<hr />
