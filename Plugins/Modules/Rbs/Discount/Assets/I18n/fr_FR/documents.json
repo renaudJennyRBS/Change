@@ -11,6 +11,9 @@
 	"discount_discounttype": {
 		"message": "type"
 	},
+	"discount_parametersdata":{
+		"message":"configuration"
+	},
 	"discount_webstore": {
 		"message": "boutique"
 	},

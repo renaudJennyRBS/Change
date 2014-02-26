@@ -19,5 +19,8 @@
 	},
 	"coupon_create":{
 		"message":"ajouter un coupon"
+	},
+	"discount_free_shipping_mode":{
+		"message":"Seulement pour le mode de livraison"
 	}
 }

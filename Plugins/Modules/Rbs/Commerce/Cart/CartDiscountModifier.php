@@ -98,22 +98,27 @@ class CartDiscountModifier implements \Rbs\Commerce\Process\ModifierInterface
 	 */
 	public function apply()
 	{
-		$cart = $this->cart;
-		$options = $this->options;
-		$options['discountId'] = $this->discount->getId();
-		$parameters = [
-			'id' => $this->discount->getId(),
-			'title' => $this->discount->getCurrentLocalization()->getTitle(),
-			'options' => $options,
-			'lineKeys' => $this->lineKeys,
-			'price' => $this->price,
-			'taxes' => array_map(function (\Rbs\Price\Tax\TaxApplication $tax)
-			{
-				return $tax->toArray();
-			}, $this->taxes)
-		];
+		if ($this->price instanceof \Rbs\Price\PriceInterface)
+		{
+			$cart = $this->cart;
+			$options = $this->options;
+			$options['discountId'] = $this->discount->getId();
+			$parameters = [
+				'id' => $this->discount->getId(),
+				'title' => $this->discount->getCurrentLocalization()->getTitle(),
+				'options' => $options,
+				'lineKeys' => $this->lineKeys,
+				'price' => $this->price,
+				'taxes' => array_map(function (\Rbs\Price\Tax\TaxApplication $tax)
+				{
+					return $tax->toArray();
+				}, $this->taxes)
+			];
 
-		$discount = $cart->getNewDiscount($parameters);
-		$cart->appendDiscount($discount);
+			$discount = $cart->getNewDiscount($parameters);
+			$cart->appendDiscount($discount);
+			return true;
+		}
+		return false;
 	}
 }
