@@ -5,8 +5,8 @@
 	function changeEditorWebsiteMenu(REST, $routeParams, $q) {
 
 		var I18N_KEY_REGEXP = /^([a-zA-Z0-9]+\.?)+$/,
-			ALL_REGEXP = /^.+$/;
-
+			ALL_REGEXP = /^.+$/,
+			tmpId = -1;
 		return {
 			restrict    : 'EA',
 			templateUrl : 'Document/Rbs/Website/Menu/editor.twig',
@@ -14,50 +14,121 @@
 			require     : 'rbsDocumentEditor',
 
 			link : function (scope, element, attrs, editorCtrl) {
-				scope.add = {};
-				scope.add.titlePattern = ALL_REGEXP;
-				scope.addItemUIShown = false;
+				scope.menuContext = {
+					add: {
+						titlePattern : ALL_REGEXP,
+						id: null
+					},
+					addItemUIShown: false
+				};
 
-				scope.onReady = function ()
-				{
-					scope.toggleAddItemUI = function ($event) {
-						$event.preventDefault();
-						scope.addItemUIShown = ! scope.addItemUIShown;
-					};
+				scope.onSaveContext = function (currentContext) {
+					currentContext.savedData('menu', {
+						menuContext: scope.menuContext
+					});
+				};
 
+				scope.onRestoreContext = function (currentContext) {
+					var toRestoreData = currentContext.savedData('menu');
+					scope.menuContext = toRestoreData.menuContext;
+				};
+
+				scope.onSelect = function (data) {
+					scope.menuContext.addItemUIShown = true;
+					scope.menuContext.add.id = data.id;
+					if (data.hasOwnProperty('documentId')) {
+						REST.resource(data.documentId).then(function (document) {
+							scope.menuContext.add.document = {title: data.label, selected: document};
+						});
+						scope.menuContext.add.url = {title: null, selected: null};
+					} else {
+						scope.menuContext.add.url = {title: data.label, selected: data.url};
+						scope.menuContext.add.document = {title: null, selected: null};
+					}
+				};
+
+				scope.onLoad = function () {
+					if (angular.isArray(scope.document.items)) {
+						angular.forEach(scope.document.items, function (item) {
+							item.id = tmpId--;
+						});
+					} else {
+						scope.document.items = [];
+					}
+				};
+
+				scope.onReady = function () {
 					scope.onDocumentSelected = function (doc) {
-						scope.add.document.title = doc.title || doc.label;
+						scope.menuContext.add.document.title = doc.title || doc.label;
 					};
 
 					scope.$watch('add.titleI18nKey', function (i18nKey, old) {
 						if (i18nKey !== old) {
-							scope.add.titlePattern = i18nKey ? I18N_KEY_REGEXP : ALL_REGEXP;
+							scope.menuContext.add.titlePattern = i18nKey ? I18N_KEY_REGEXP : ALL_REGEXP;
 						}
 					}, true);
+				};
 
-					scope.addDocument = function () {
-						var item = {};
-						item[scope.add.document.titleI18nKey ? 'titleKey' : 'title'] = scope.add.document.title;
-						item.documentId = scope.add.document.selected.id;
-						if (! scope.document.items) {
-							scope.document.items = [];
-						}
-						scope.document.items.push(item);
-						scope.add.document.selected = null;
-						scope.add.document.title = null;
-					};
+				scope.toggleAddItemUI = function ($event) {
+					$event.preventDefault();
+					scope.menuContext.addItemUIShown = ! scope.menuContext.addItemUIShown;
+					if (!scope.menuContext.addItemUIShown) {
+						scope.menuContext.add.id = null;
+					}
+				};
 
-					scope.addUrl = function () {
-						var item = {};
-						item[scope.add.url.titleI18nKey ? 'titleKey' : 'title'] = scope.add.url.title;
-						item.url = scope.add.url.selected;
-						if (! scope.document.items) {
-							scope.document.items = [];
+				scope.addDocument = function () {
+					var oldId = scope.menuContext.add.id;
+					var item = {};
+					item[scope.menuContext.add.document.titleI18nKey ? 'titleKey' : 'title'] = scope.menuContext.add.document.title;
+					item.label = item.title || item.titleKey;
+					item.documentId = scope.menuContext.add.document.selected.id;
+					item.id = tmpId--;
+
+					var items = [];
+					angular.forEach(scope.document.items, function(it) {
+						if (it.id !== oldId) {
+							items.push(it);
+						} else {
+							items.push(item);
+							item = null;
 						}
+					});
+
+					scope.document.items = items;
+					if (item) {
 						scope.document.items.push(item);
-						scope.add.url.selected = null;
-						scope.add.url.title = null;
-					};
+					}
+
+					scope.menuContext.add.document = {title: null, selected: null};
+					scope.menuContext.add.id = null;
+				};
+
+				scope.addUrl = function () {
+					var oldId = scope.menuContext.add.id;
+					var item = {};
+					item[scope.menuContext.add.url.titleI18nKey ? 'titleKey' : 'title'] = scope.menuContext.add.url.title;
+					item.label = item.title || item.titleKey;
+					item.url = scope.menuContext.add.url.selected;
+					item.id = tmpId--;
+
+					var items = [];
+					angular.forEach(scope.document.items, function(it) {
+						if (it.id !== oldId) {
+							items.push(it);
+						} else {
+							items.push(item);
+							item = null;
+						}
+					});
+
+					scope.document.items = items;
+					if (item) {
+						scope.document.items.push(item);
+					}
+
+					scope.menuContext.add.url = {title: null, selected: null};
+					scope.menuContext.add.id = null;
 				};
 
 				scope.initDocument = function () {

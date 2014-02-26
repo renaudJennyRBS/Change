@@ -21,7 +21,8 @@
 
 			// Create isolated scope.
 			scope : {
-				items : '='
+				items : '=',
+				openItem : '='
 			},
 
 			compile : function (tElement, tAttrs)
@@ -42,9 +43,13 @@
 
 
 					scope.getItemTemplateName = function (item) {
-						if (! item || ! item.model) {
-							return attrs.itemTemplate || null;
+						if (attrs.itemTemplate) {
+							return attrs.itemTemplate
 						}
+						if (!item || !item.model) {
+							return 'picker-item-default.html';
+						}
+
 						var tplName = 'picker-item-' + item.model + '.html';
 						return $templateCache.get(tplName) ? tplName : 'picker-item-default.html';
 					};
