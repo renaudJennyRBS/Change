@@ -27,11 +27,12 @@ class DisplayDocument
 			throw new \RuntimeException('Invalid Parameter: pathRule', 71000);
 		}
 
+		$requestQuery = $event->getRequest()->getQuery();
 		if ($pathRule->getQuery())
 		{
-			$requestQuery = $event->getRequest()->getQuery();
 			$requestQuery->fromArray(\Zend\Stdlib\ArrayUtils::merge($pathRule->getQueryParameters(), $requestQuery->toArray()));
 		}
+		$pathRule->setQueryParameters($requestQuery->toArray());
 
 		$document = $event->getDocument();
 		if ($document instanceof AbstractDocument)
