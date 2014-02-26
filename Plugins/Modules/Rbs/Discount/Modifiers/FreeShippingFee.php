@@ -6,36 +6,49 @@ namespace Rbs\Discount\Modifiers;
 */
 class FreeShippingFee extends \Rbs\Commerce\Cart\CartDiscountModifier
 {
+	/**
+	 * @return boolean
+	 */
 	public function apply()
 	{
 		foreach ($this->cart->getFees() as $fee)
 		{
-			if (($shippingModeId = $fee->getOptions()->get('shippingModeId')) !== null) {
+			$shippingModeId = $fee->getOptions()->get('shippingModeId');
 
-				$feeItems = $fee->getItems();
-				if (count($feeItems)) {
-					$price = $feeItems[0]->getPrice();
-					if ($price && $price->getValue() !== null)
+			if (!$shippingModeId) {
+				continue;
+			}
+
+			$data = $this->discount->getParametersData();
+			if (is_array($data) && isset($data['shippingMode']) && ($data['shippingMode'] != $data['shippingMode']))
+			{
+				continue;
+			}
+
+			$feeItems = $fee->getItems();
+
+			if (count($feeItems)) {
+				$price = $feeItems[0]->getPrice();
+				if ($price && $price->getValue() !== null)
+				{
+					$dp = clone($price);
+					$dp->setValue(- $dp->getValue() * $fee->getQuantity());
+					$this->setPrice($dp);
+
+					$taxes = [];
+					foreach ($fee->getTaxes() as $tax)
 					{
-						$dp = clone($price);
-						$dp->setValue(- $dp->getValue() * $fee->getQuantity());
-						$this->setPrice($dp);
-
-						$taxes = [];
-						foreach ($fee->getTaxes() as $tax)
-						{
-							$dpt = clone($tax);
-							$dpt->setValue(- $dpt->getValue());
-							$taxes[] = $dpt;
-						}
-						$this->setTaxes($taxes);
-						$this->setOptions(['feeKey' => $fee->getKey(), 'shippingModeId' => $shippingModeId]);
+						$dpt = clone($tax);
+						$dpt->setValue(- $dpt->getValue());
+						$taxes[] = $dpt;
 					}
+					$this->setTaxes($taxes);
+					$this->setOptions(['feeKey' => $fee->getKey(), 'shippingModeId' => $shippingModeId]);
 
 				}
-
-				parent::apply();
 			}
 		}
+
+		return parent::apply();
 	}
 }
