@@ -17,6 +17,7 @@ class CrossSellingInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_label', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Catalog_Product', $i18nManager);
 		$this->addInformationMeta('title', Property::TYPE_STRING, false, null)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_title', $ucf));
 		$this->addInformationMeta('crossSellingType', ParameterInformation::TYPE_COLLECTION, true, 'ACCESSORIES')

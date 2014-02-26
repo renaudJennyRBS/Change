@@ -1,3 +1,10 @@
+<script type="text/ng-template" id="/addItemLineToCart.tpl">
+	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
+		<i class="glyphicon glyphicon-shopping-cart"></i>
+		{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+	</button>
+</script>
+
 {% block visual %}
 	<div class="product-visual">
 		<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
@@ -82,17 +89,24 @@
 							<input type="hidden" name="designation" value="{{ row.productPresentation.general.title }}">
 							<input type="hidden" name="options[productId]" value="{{ row.productPresentation.general.id }}">
 							<input type="hidden" name="items[][codeSKU]" value="{{ row.productPresentation.stock.sku }}">
-						{% endif %}
 
-						<button type="submit" class="btn btn-primary btn-sm"
-							{% if not row.productPresentation.general.canBeOrdered %} disabled="disabled"{% endif %}>
-							{% if row.productPresentation.general.canBeOrdered %}
-								<i class="glyphicon glyphicon-shopping-cart"></i>
-								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-							{% else %}
+							<div data-ng-controller="RbsCatalogProductItemController">
+								<div data-rbs-catalog-product-item-data="" data-product-id="{{ row.productPresentation.general.id }}"
+									data-modal-id="addToCartConfirmationModal-{{ blockId }}" data-section-id="{{ section.id }}"
+									data-product-title="{{ row.productPresentation.general.title }}"
+									data-stock-sku="{{ row.productPresentation.stock.sku }}"
+									data-product-quantity="{{ row.productPresentation.stock.minQuantity }}">
+									<button type="submit" class="btn btn-primary btn-sm">
+										<i class="glyphicon glyphicon-shopping-cart"></i>
+										{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+									</button>
+								</div>
+							</div>
+						{% else %}
+							<button type="submit" class="btn btn-primary btn-sm" disabled="disabled">
 								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-							{% endif %}
-						</button>
+							</button>
+						{% endif %}
 					</fieldset>
 				</form>
 			{% else %}

@@ -34,6 +34,12 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$request = $event->getRequest();
 		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
 
+		if (isset($arguments['modalInfos']))
+		{
+			$modalInfos = $arguments['modalInfos'];
+			unset($arguments['modalInfos']);
+		}
+
 		$webStore = $commerceServices->getContext()->getWebStore();
 		if (!$webStore)
 		{
@@ -97,6 +103,27 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 
 		$result = $this->getNewAjaxResult(array('cart' => $cart->toArray(), 'lineKey' => $line->getKey()));
+		if (isset($modalInfos) && isset($modalInfos['productId']) && isset($modalInfos['sectionPageFunction']))
+		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$product = $documentManager->getDocumentInstance($modalInfos['productId']);
+			$section = $documentManager->getDocumentInstance($modalInfos['sectionId']);
+			$query = ['sectionPageFunction' => $modalInfos['sectionPageFunction']];
+			if ($product)
+			{
+				$urlManager = $event->getUrlManager();
+				$urlManager->setAbsoluteUrl(true);
+				if ($section instanceof \Change\Presentation\Interfaces\Section)
+				{
+					$url = $urlManager->getByDocument($product, $section, $query);
+				}
+				else
+				{
+					$url = $urlManager->getCanonicalByDocument($product, null, $query);
+				}
+				$result->setEntry('modalContentUrl', $url->toString());
+			}
+		}
 		$event->setResult($result);
 	}
 }
