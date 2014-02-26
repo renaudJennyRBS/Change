@@ -76,7 +76,7 @@
 
 		$scope.$watch('currentWebsite', function (website) {
 			if (website && (website.id != $scope.currentWebsiteId)) {
-				var path = $filter('rbsURL')(website, $scope.view);
+				var path = $filter('rbsURL')(website, 'structure');
 				$location.path(path);
 			}
 		});

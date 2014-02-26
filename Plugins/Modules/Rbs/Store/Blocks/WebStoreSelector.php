@@ -23,6 +23,7 @@ class WebStoreSelector extends Block
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('availableWebStoreIds', array());
 		$parameters->addParameterMeta('billingAreaId');
+		$parameters->addParameterMeta('zone');
 		$parameters->addParameterMeta('templateName', 'webStoreSelector-horizontal.twig');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -39,6 +40,12 @@ class WebStoreSelector extends Block
 		if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
 		{
 			$parameters->setParameterValue('billingAreaId', $billingArea->getId());
+		}
+
+		$zone = $commerceServices->getContext()->getZone();
+		if ($zone)
+		{
+			$parameters->setParameterValue('zone', $zone);
 		}
 		return $parameters;
 	}
@@ -66,10 +73,19 @@ class WebStoreSelector extends Block
 				];
 				foreach ($webStore->getBillingAreas() as $billingArea)
 				{
+					$zones = array();
+					foreach ($billingArea->getTaxes() as $tax)
+					{
+						$zones = array_merge($zones, $tax->getZoneCodes());
+					}
+					$zones = array_unique($zones);
+					$zones = array_values($zones);
+
 					/** @var $billingArea \Rbs\Price\Documents\BillingArea */
 					$storeData['billingAreas'][] = [
 						'id' => $billingArea->getId(),
-						'title' => $billingArea->getCurrentLocalization()->getTitle()
+						'title' => $billingArea->getCurrentLocalization()->getTitle(),
+						'zones' => $zones
 					];
 				}
 				$data[] = $storeData;
