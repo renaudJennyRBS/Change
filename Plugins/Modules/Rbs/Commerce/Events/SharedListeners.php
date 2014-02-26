@@ -25,7 +25,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 				$event->getServices()->set('commerceServices', $commerceServices);
 			}
 		};
-		$events->attach(array('Commands', 'JobManager', 'Http.Web', 'Http.Rest'), 'registerServices', $callback, 5);
+		$events->attach(array('Commands', 'JobManager', 'Http'), 'registerServices', $callback, 5);
 	}
 
 	/**
