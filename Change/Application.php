@@ -221,6 +221,17 @@ class Application
 	}
 
 	/**
+	 * @param \Change\Logging\Logging $logging
+	 * @return $this
+	 */
+	public function setLogging(\Change\Logging\Logging $logging = null)
+	{
+		$this->logging = $logging;
+		return $this;
+	}
+
+	/**
+	 * @api
 	 * @return \Change\Logging\Logging
 	 */
 	public function getLogging()
@@ -233,8 +244,6 @@ class Application
 		}
 		return $this->logging;
 	}
-
-
 
 	/**
 	 * @api
