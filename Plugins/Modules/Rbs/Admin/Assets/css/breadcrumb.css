@@ -54,7 +54,7 @@
 }
 
 .rbs-breadcrumb li.location {
-	background: #999999;
+	background: rgb(161,196,0);
 	color: #fff;
 }
 
@@ -63,5 +63,5 @@
 }
 
 .rbs-breadcrumb li.location:after {
-	border-left-color: #999999;
+	border-left-color: rgb(161,196,0);
 }
