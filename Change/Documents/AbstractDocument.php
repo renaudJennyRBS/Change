@@ -753,6 +753,14 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		}
 	}
 
+	/**
+	 * @param Events\Event $event
+	 */
+	public function onDefaultRouteParamsRestResult(\Change\Documents\Events\Event $event)
+	{
+		// Add route params according to route.json.
+	}
+
 	protected $ignoredPropertiesForRestEvents = array('model');
 
 	/**

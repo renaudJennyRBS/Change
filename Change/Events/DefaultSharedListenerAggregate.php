@@ -59,6 +59,15 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 				$event->getDocument()->onDefaultUpdateRestResult($event);
 			}
 		};
+		$events->attach($identifiers, 'updateRestResult', $callBack, 10);
+
+		$callBack = function ($event)
+		{
+			if ($event instanceof \Change\Documents\Events\Event)
+			{
+				$event->getDocument()->onDefaultRouteParamsRestResult($event);
+			}
+		};
 		$events->attach($identifiers, 'updateRestResult', $callBack, 5);
 
 		$callBack = function ($event)
