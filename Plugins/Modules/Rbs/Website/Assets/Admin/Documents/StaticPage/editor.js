@@ -94,25 +94,8 @@
 				scope.$watch('document.pageTemplate', function (pageTemplate) {
 					scope.loadTemplate();
 				}, true);
-
-				scope.preSave = function (document) {
-					var p = $q.defer();
-					if (!document.pageTemplate.mailSuitable) {
-						p.resolve();
-					}
-					else {
-						var error = {
-							code: 999999,
-							message: i18n.trans('m.rbs.website.admin.page_template_not_suitable_help | ucf'),
-							httpStatus: 500
-						};
-						p.reject(error);
-					}
-					return p.promise;
-				};
 			}
 		};
-
 	}
 
 	changeEditorWebsitePage.$inject = [

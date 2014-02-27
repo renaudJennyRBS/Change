@@ -4,7 +4,6 @@
  * Time: 09:44
  */
 (function ($) {
-
 	"use strict";
 
 	$('<div id="rbs-document-list-tester"></div>').css({
@@ -564,13 +563,13 @@
 					scope.previewAvailable = columnResult.preview;
 					scope.embeddedActionsOptionsContainerId = 'EAOC_'+dlid;
 					scope.$DL = scope; // TODO Was used by "bind-action" directive. Still needed?
-					scope.useToolBar = attrs.toolbar === 'false' ? false : true;
+					scope.useToolBar = attrs.toolbar !== 'false';
 
 					scope.deleteConfirm = {};
 
 					scope.setViewMode = function(viewMode) {
 						scope.viewMode = viewMode;
-					}
+					};
 
 					scope.askDeleteConfirmation = function ($index, $event) {
 						scope.deleteConfirm[$index] = true;
@@ -1259,13 +1258,12 @@
 						}
 					}
 
-					function reload ()
-					{
+					function reload () {
 						if (useExternalCollection) {
 							if (angular.isFunction(scope.onReload)) {
 								scope.onReload(scope.sort.column, scope.isSortDescending());
 							}
-							return;
+							return null;
 						}
 
 						var promise, params;
@@ -1427,7 +1425,6 @@
 						}
 
 						function successFn () {
-
 							if (elm.is('[model]')) {
 								// No model value yet?
 								if (attrs.model) {
@@ -1544,10 +1541,10 @@
 						$event.stopPropagation();
 						var el = getQuickActionsElByIndex($index);
 						if (el.is(':visible')) {
-							scope.hideQuickActions($index, $event);
+							scope.hideQuickActions($index);
 						}
 						else {
-							scope.showQuickActions($index, $event);
+							scope.showQuickActions($index);
 						}
 					};
 
@@ -1584,13 +1581,11 @@
 	]);
 
 	app.directive('rbsColumn', ['rbsThumbnailSizes', function (sizes) {
-
 		return {
 			restrict : 'E',
 			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
-
 				var content, dlid;
 
 				dlid = tElement.parent().data('dlid');
@@ -1624,26 +1619,21 @@
 					}
 				}
 
-
 				if (!__columns.hasOwnProperty(dlid)) {
 					__columns[dlid] = [];
 				}
 				__columns[dlid].push(tAttrs);
-
 			}
 		};
-
 	}]);
 
 
 	app.directive('rbsGridItem', [function () {
-
 		return {
 			restrict : 'E',
 			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
-
 				var dlid;
 
 				dlid = tElement.parent().data('dlid');
@@ -1653,21 +1643,17 @@
 
 				tAttrs.content = tElement.html().trim();
 				__gridItems[dlid] = tAttrs;
-
 			}
 		};
-
 	}]);
 
 
 	app.directive('rbsPreview', [function () {
-
 		return {
 			restrict : 'E',
 			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
-
 				var dlid;
 
 				dlid = tElement.parent().data('dlid');
@@ -1675,21 +1661,17 @@
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 				__preview[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
-
 			}
 		};
-
 	}]);
 
 
 	app.directive('rbsQuickActions', [function () {
-
 		return {
 			restrict : 'E',
 			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
-
 				var dlid;
 
 				dlid = tElement.parent().data('dlid');
@@ -1697,22 +1679,17 @@
 					throw new Error("<rbs-document-list/> must have a unique and not empty 'data-dlid' attribute.");
 				}
 				__quickActions[dlid] = angular.extend({}, tAttrs, {'contents': tElement.html().trim()});
-
 			}
 		};
-
 	}]);
 
 
-
 	app.directive('rbsAction', [function () {
-
 		return {
 			restrict : 'E',
 			require  : '^rbsDocumentList',
 
 			compile : function (tElement, tAttrs) {
-
 				var dlid;
 
 				dlid = tElement.parent().data('dlid');
@@ -1726,7 +1703,5 @@
 				__actions[dlid].push(tAttrs);
 			}
 		};
-
 	}]);
-
 })(window.jQuery);

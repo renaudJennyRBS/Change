@@ -105,22 +105,6 @@
 					}
 				}, true);
 
-				scope.preSave = function (document) {
-					var p = $q.defer();
-					if (document.template.mailSuitable) {
-						p.resolve();
-					}
-					else {
-						var error = {
-							code: 999999,
-							message: i18n.trans('m.rbs.mail.admin.mail_template_not_suitable_help | ucf'),
-							httpStatus: 500
-						};
-						p.reject(error);
-					}
-					return p.promise;
-				};
-
 				editorCtrl.init('Rbs_Mail_Mail');
 			}
 		};

@@ -1,4 +1,27 @@
 {% if parameters.webStoreId %}
+	<script type="text/ng-template" id="/addSimpleLineToCart.tpl">
+		{% if productPresentation.general.hasOwnSku %}
+			{% if productPresentation.general.canBeOrdered %}
+				<div class="form-group">
+					<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
+					<input class="form-control" type="number" name="quantity" data-ng-model="quantity"
+						min="{{ productPresentation.stock.minQuantity }}"
+						{% if productPresentation.stock.maxQuantity %}max="{{ productPresentation.stock.maxQuantity }}"{% endif %}
+						step="{{ productPresentation.stock.quantityIncrement }}" />
+				</div>
+
+				<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()">
+					<i class="glyphicon glyphicon-shopping-cart"></i>
+					{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+				</button>
+			{% else %}
+				<button type="button" class="btn btn-primary btn-lg" disabled="disabled">
+					{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+				</button>
+			{% endif %}
+		{% endif %}
+	</script>
+
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block availability %}
 			{% if productPresentation.stock.thresholdTitle %}
@@ -47,12 +70,15 @@
 			{% endif %}
 		{% endblock %}
 
-		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
-			<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-			<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-			<fieldset>
+		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" name="addLineToCart">
+			<fieldset data-rbs-catalog-simple-product-data="" data-product-id="{{ parameters.toDisplayDocumentId }}"
+				data-modal-id="addToCartConfirmationModal-{{ blockId }}" data-section-id="{{ section.id }}"
+				data-product-title="{{ productPresentation.general.title }}" data-stock-sku="{{ productPresentation.stock.sku }}"
+				data-product-quantity="{{ productPresentation.stock.minQuantity }}">
 				{% if productPresentation.general.hasOwnSku %}
 					{% if productPresentation.general.canBeOrdered %}
+						<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
+						<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
 						<input type="hidden" name="key" value="{{ productPresentation.general.id }}">
 						<input type="hidden" name="designation" value="{{ productPresentation.general.title }}">
 						<input type="hidden" name="options[productId]" value="{{ productPresentation.general.id }}">
@@ -61,19 +87,20 @@
 							<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
 							<input class="form-control" type="number" id="product-quantity" name="quantity"
 								value="{{ productPresentation.stock.minQuantity }}"
-								max="{{ productPresentation.stock.maxQuantity }}"
+								{% if productPresentation.stock.maxQuantity %}max="{{ productPresentation.stock.maxQuantity }}"{% endif %}
 								min="{{ productPresentation.stock.minQuantity }}"
 								step="{{ productPresentation.stock.quantityIncrement }}" />
 						</div>
-					{% endif %}
 
-					<button type="submit" class="btn btn-primary btn-lg" {% if not productPresentation.general.canBeOrdered %} disabled="true" {% endif %}>
-						{% if productPresentation.general.canBeOrdered %}
-							<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-						{% else %}
+						<button type="submit" class="btn btn-primary btn-lg">
+							<i class="glyphicon glyphicon-shopping-cart"></i>
+							{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+						</button>
+					{% else %}
+						<button type="button" class="btn btn-primary btn-lg" disabled="disabled">
 							{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-						{% endif %}
-					</button>
+						</button>
+					{% endif %}
 				{% endif %}
 			</fieldset>
 		</form>

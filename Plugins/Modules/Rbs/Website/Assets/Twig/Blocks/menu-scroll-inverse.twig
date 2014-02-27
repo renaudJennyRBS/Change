@@ -1,7 +1,6 @@
 {% macro item(item) %}
 	{% import _self as menu %}
-	<li class="{% if item.hasChild %}dropdown{% endif %} {% if item.isInPath or item.isCurrent %}active{% endif %}"
-		xmlns="http://www.w3.org/1999/html">
+	<li class="{% if item.hasChild %}dropdown{% endif %} {% if item.isInPath or item.isCurrent %}active{% endif %}">
 		<a href="{{ item.url }}"{% if item.hasChild %} data-toggle="dropdown" class="dropdown-toggle"{% endif %}>{{ item.title }}{% if item.hasChild %} <b class="caret"></b>{% endif %}</a>
 		{% if item.hasChild %}
 			<ul class="dropdown-menu">

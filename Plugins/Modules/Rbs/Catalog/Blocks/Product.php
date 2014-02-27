@@ -31,8 +31,7 @@ class Product extends Block
 		$parameters->addParameterMeta('redirectUrl');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-
-		$parameters = $this->setParameterValueForDetailBlock($parameters, $event);
+		$this->setParameterValueForDetailBlock($parameters, $event);
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -126,6 +125,10 @@ class Product extends Block
 					return 'product.twig';
 				}
 			}
+
+			/* @var $page \Change\Presentation\Interfaces\Page */
+			$page = $event->getParam('page');
+			$attributes['section'] = $page->getSection();
 		}
 		return null;
 	}

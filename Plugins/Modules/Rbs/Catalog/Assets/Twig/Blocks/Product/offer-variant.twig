@@ -1,5 +1,5 @@
 {% if parameters.webStoreId %}
-	<script type="text/ng-template" id="/addLineToCart.tpl">
+	<script type="text/ng-template" id="/addVariantLineToCart.tpl">
 		<div data-ng-show="product.hasOwnSku && !productLoading">
 			<div class="form-group" data-ng-show="product.canBeOrdered">
 				<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
@@ -153,34 +153,32 @@
 		{% endblock %}
 
 		<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" name="addLineToCart">
-			<div data-rbs-catalog-product-data="" data-product-id="{{ parameters.toDisplayDocumentId }}"
-				data-product-designation="{{ productPresentation.general.title }}" data-redirect-url="{{ currentURL() }}">
-				<input type="hidden" name="redirectLocation" value="{{ currentURL() }}">
-				<fieldset>
-					{% if productPresentation.general.hasOwnSku %}
-						{% if productPresentation.general.canBeOrdered %}
-							<div class="form-group">
-								<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-								<input class="form-control" type="number" id="product-quantity" name="quantity"
-									value="{{ productPresentation.stock.minQuantity }}"
-									max="{{ productPresentation.stock.maxQuantity }}"
-									min="{{ productPresentation.stock.minQuantity }}"
-									step="{{ productPresentation.stock.quantityIncrement }}" />
-							</div>
-						{% endif %}
+			<fieldset data-rbs-catalog-variant-product-data="" data-product-id="{{ parameters.toDisplayDocumentId }}"
+				data-modal-id="addToCartConfirmationModal-{{ blockId }}" data-section-id="{{ section.id }}">
+				{% if productPresentation.general.hasOwnSku %}
+					{% if productPresentation.general.canBeOrdered %}
+						<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
+						<input type="hidden" name="errorLocation" value="{{ currentURL() }}">
+						<div class="form-group">
+							<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
+							<input class="form-control" type="number" id="product-quantity" name="quantity"
+								value="{{ productPresentation.stock.minQuantity }}"
+								max="{{ productPresentation.stock.maxQuantity }}"
+								min="{{ productPresentation.stock.minQuantity }}"
+								step="{{ productPresentation.stock.quantityIncrement }}" />
+						</div>
 
-						<button type="submit" class="btn btn-primary btn-lg"
-							{% if not productPresentation.general.canBeOrdered %}disabled="disabled"{% endif %}>
-							{% if productPresentation.general.canBeOrdered %}
-								<i class="glyphicon glyphicon-shopping-cart"></i>
-								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-							{% else %}
-								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-							{% endif %}
+						<button type="submit" class="btn btn-primary btn-lg">
+							<i class="glyphicon glyphicon-shopping-cart"></i>
+							{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+						</button>
+					{% else %}
+						<button type="button" class="btn btn-primary btn-lg" disabled="disabled">
+							{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
 						</button>
 					{% endif %}
-				</fieldset>
-			</div>
+				{% endif %}
+			</fieldset>
 		</form>
 	</div>
 {% endif %}

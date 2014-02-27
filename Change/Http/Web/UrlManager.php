@@ -407,7 +407,7 @@ class UrlManager extends \Change\Http\UrlManager
 		if (count($pathRules) === 1)
 		{
 			$pathRule = $pathRules[0];
-			if ($pathRule->getQuery() === null)
+			if ($pathRule->getQuery() === null && !count($queryParameters))
 			{
 				return $pathRule;
 			}

@@ -150,19 +150,33 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$document3000 = $this->getNewReadonlyDocument('Project_Tests_Correction', 3000);
 
-		$uri = $urlManager->getCanonicalByDocument($document3000, $website1, array('b' => 10));
+		$uri = $urlManager->getCanonicalByDocument($document3000, $website1);
+		$this->assertEquals('testDoc3.html', $uri->toString());
+
+		$uri = $urlManager->getByDocument($document3000, $section1);
+		$this->assertEquals('2000/testDoc3.html', $uri->toString());
+
+		$uri = $urlManager->getByDocument($document3000, $section2);
+		$this->assertEquals('document/2001/3000.html', $uri->toString());
+
+		//TODO Detect valid rule by queryParameters analysis
+		/*$uri = $urlManager->getCanonicalByDocument($document3000, $website1, array('b' => 10));
 		$this->assertEquals('testDoc3.html?b=10', $uri->toString());
 
 		$uri = $urlManager->getByDocument($document3000, $section1, array('b' => 10));
 		$this->assertEquals('2000/testDoc3.html?b=10', $uri->toString());
 
 		$uri = $urlManager->getByDocument($document3000, $section2, array('b' => 10));
-		$this->assertEquals('document/2001/3000.html?b=10', $uri->toString());
+		$this->assertEquals('document/2001/3000.html?b=10', $uri->toString());*/
 
 		$document3001 = $this->getNewReadonlyDocument('Project_Tests_Correction', 3001);
 
-		$uri = $urlManager->getCanonicalByDocument($document3001, $website1, array('b' => 10));
-		$this->assertEquals('document/3001.html?b=10', $uri->toString());
+		$uri = $urlManager->getCanonicalByDocument($document3001, $website1);
+		$this->assertEquals('document/3001.html', $uri->toString());
+
+		//TODO Detect valid rule by queryParameters analysis
+		/*$uri = $urlManager->getCanonicalByDocument($document3001, $website1, array('b' => 10));
+		$this->assertEquals('document/3001.html?b=10', $uri->toString());*/
 
 		$callback =  function(\Change\Documents\Events\Event $event)
 		{

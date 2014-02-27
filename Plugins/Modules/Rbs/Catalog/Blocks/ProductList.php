@@ -174,6 +174,7 @@ class ProductList extends Block
 				/* @var $page \Change\Presentation\Interfaces\Page */
 				$page = $event->getParam('page');
 				$section = $page->getSection();
+				$attributes['section'] = $page->getSection();
 
 				$webStoreId = $parameters->getParameter('webStoreId');
 				$contextualUrls = $parameters->getParameter('contextualUrls');

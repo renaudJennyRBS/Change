@@ -1,42 +1,28 @@
 <?php
 namespace Rbs\Catalog\Blocks;
 
-use Change\Presentation\Blocks\Event;
-use Change\Presentation\Blocks\Parameters;
-use Change\Presentation\Blocks\Standard\Block;
-
 /**
- * @name \Rbs\Catalog\Blocks\CrossSelling
+ * @name \Rbs\Catalog\Blocks\ProductAddedToCart
  */
-class CrossSelling extends Block
+class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
 	 * Set Block Parameters on $event
-	 * @param Event $event
-	 * @return Parameters
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Change\Presentation\Blocks\Parameters
 	 */
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('title');
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$parameters->addParameterMeta('crossSellingType', 'ACCESSORIES');
 		$parameters->addParameterMeta('webStoreId');
-		$parameters->addParameterMeta('itemsPerSlide', 3);
-		$parameters->addParameterMeta('slideCount');
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$this->setParameterValueForDetailBlock($parameters, $event);
-
-		$document = $event->getParam('document');
-		if ($document instanceof \Rbs\Catalog\Documents\Product && $document->published())
-		{
-			$parameters->setParameterValue('productId', $document->getId());
-		}
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -56,7 +42,6 @@ class CrossSelling extends Block
 			$parameters->setParameterValue('displayPrices', false);
 			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
-
 		return $parameters;
 	}
 
@@ -75,7 +60,7 @@ class CrossSelling extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * @param Event $event
+	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
 	 */
@@ -83,33 +68,22 @@ class CrossSelling extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		$productId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$crossSellingType = $parameters->getParameter('crossSellingType');
-
-		if ($productId && $crossSellingType)
+		if ($productId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			$rows = array();
-			$product = $documentManager->getDocumentInstance($productId, 'Rbs_Catalog_Product');
+			/* @var $product \Rbs\Catalog\Documents\Product */
+			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$csParameters = array();
-				$csParameters['urlManager'] = $event->getUrlManager();
-				$csParameters['crossSellingType'] = $crossSellingType;
-				$rows = $commerceServices->getProductManager()->getCrossSellingForProduct($product, $csParameters);
+				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+				$productPresentation->evaluate();
+				$attributes['productPresentation'] = $productPresentation;
+				return 'product-added-to-cart.twig';
 			}
-
-			$attributes['rows'] = $rows;
-			$attributes['itemsPerSlide'] = $parameters->getParameter('itemsPerSlide');
-			if (count($rows) && isset($attributes['itemsPerSlide']))
-			{
-				$attributes['slideCount'] = ceil(count($rows)/$attributes['itemsPerSlide']);
-			}
-
-			return 'product-list-slider.twig';
 		}
 		return null;
 	}
-}
+} 

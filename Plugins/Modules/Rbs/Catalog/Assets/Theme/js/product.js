@@ -3,23 +3,58 @@
 
 	var app = angular.module('RbsChangeApp');
 
-	function rbsCatalogProductData() {
-		return {
-			restrict: 'A',
-			templateUrl: '/addLineToCart.tpl',
-			replace: false,
-			scope: false,
+	function productDataLink(scope, elm, attrs) {
+		var v = parseInt(attrs.productId, 10);
+		scope.baseProductId = scope.product.id = isNaN(v) ? 0 : v;
 
-			link: function(scope, elm, attrs) {
-				var v = parseInt(attrs.productId, 10);
-				scope.baseProductId = scope.product.id = isNaN(v) ? 0 : v;
-				scope.product.designation = attrs.designation;
-				scope.redirectUrl = attrs.redirectUrl;
-			}
+		if (attrs.hasOwnProperty('productTitle')) {
+			scope.product.title = attrs['productTitle'];
 		}
+		if (attrs.hasOwnProperty('stockSku')) {
+			scope.stock = { sku: attrs['stockSku'] };
+		}
+		if (attrs.hasOwnProperty('productQuantity')) {
+			scope.quantity = parseInt(attrs['productQuantity']);
+		}
+
+		scope.redirectUrl = attrs.redirectUrl;
+
+		scope.modalId = attrs.modalId;
+		scope.sectionId = attrs.sectionId;
 	}
 
-	app.directive('rbsCatalogProductData', rbsCatalogProductData);
+	function rbsCatalogSimpleProductData() {
+		return {
+			restrict: 'A',
+			templateUrl: '/addSimpleLineToCart.tpl',
+			replace: false,
+			scope: false,
+			link: productDataLink
+		}
+	}
+	app.directive('rbsCatalogSimpleProductData', rbsCatalogSimpleProductData);
+
+	function rbsCatalogVariantProductData() {
+		return {
+			restrict: 'A',
+			templateUrl: '/addVariantLineToCart.tpl',
+			replace: false,
+			scope: false,
+			link: productDataLink
+		}
+	}
+	app.directive('rbsCatalogVariantProductData', rbsCatalogVariantProductData);
+
+	function rbsCatalogProductItemData() {
+		return {
+			restrict: 'A',
+			templateUrl: '/addItemLineToCart.tpl',
+			replace: false,
+			scope: false,
+			link: productDataLink
+		}
+	}
+	app.directive('rbsCatalogProductItemData', rbsCatalogProductItemData);
 
 	function rbsCatalogProductAvailability() {
 		return {
@@ -33,7 +68,6 @@
 			}
 		}
 	}
-
 	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
 
 	function rbsCatalogProductPrice() {
@@ -52,7 +86,6 @@
 			}
 		}
 	}
-
 	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
 
 	function rbsCatalogProductPictograms() {
@@ -70,7 +103,6 @@
 			}
 		}
 	}
-
 	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
 
 	function rbsCatalogProductVisuals() {
@@ -88,7 +120,6 @@
 			}
 		}
 	}
-
 	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
 
 	function rbsCatalogVariantData() {
@@ -104,16 +135,76 @@
 			}
 		}
 	}
-
 	app.directive('rbsCatalogVariantData', rbsCatalogVariantData);
 
-	function RbsCatalogProductController(scope, $http) {
+	function addLine(scope, $http, $compile) {
+		if (scope.product.id !== 0) {
+			var data = {
+				key: scope.product.id,
+				designation: scope.product.title,
+				quantity: scope.quantity,
+				options: {productId: scope.product.id},
+				items: [
+					{codeSKU: scope.stock.sku}
+				]
+			};
+			if (scope.modalId) {
+				data.modalInfos = {
+					sectionPageFunction: 'Rbs_Catalog_ProductAddedToCart',
+					sectionId: scope.sectionId,
+					productId: scope.product.id
+				};
+			}
+
+			scope.modalContentLoading = true;
+			$http.post('Action/Rbs/Commerce/AddLineToCart', data, {})
+				.success(function(resultData) {
+					if (scope.modalId) {
+						if (resultData.hasOwnProperty('modalContentUrl') && resultData.modalContentUrl) {
+							scope.hideModalContent = false;
+							$http.get(resultData.modalContentUrl)
+								.success(function (resultData2) {
+									jQuery('#' + scope.modalId + ' .modal-loading').hide();
+									var mainContentElement = jQuery('#' + scope.modalId + ' .modal-main-content');
+									mainContentElement.html(resultData2);
+									$compile(mainContentElement.contents())(scope);
+									mainContentElement.show();
+									scope.modalContentLoading = false;
+								})
+								.error(function(data, status, headers) {
+									scope.hideModalContent = true;
+									scope.modalContentLoading = false;
+									console.log('error', data, status, headers);
+								});
+						}
+						else {
+							scope.hideModalContent = true;
+						}
+						jQuery('#' + scope.modalId).modal({});
+					}
+					else if (scope.redirectUrl) {
+						window.location.href = scope.redirectUrl;
+					}
+				})
+				.error(function(data, status, headers) {
+					console.log('error', data, status, headers);
+				});
+		}
+	}
+
+	function initializeScope(scope) {
 		scope.productLoading = false;
+		scope.productPresentation = null;
 
 		scope.redirectUrl = null;
+		scope.modalId = null;
+		scope.sectionId = null;
+		scope.modalContentLoading = false;
 		scope.pricesConfig = {};
 		scope.pictogramFormats = {};
 		scope.visualFormats = {};
+		scope.stock = null;
+		scope.quantity = 1;
 
 		// Variant Config
 		scope.axesValues = [];
@@ -125,31 +216,35 @@
 
 		// Product
 		scope.product = {'id': 0};
+	}
+
+	function RbsCatalogSimpleProductController(scope, $http, $compile) {
+		initializeScope(scope);
+
+		scope.addLine = function() {
+			addLine(scope, $http, $compile);
+		};
+	}
+	RbsCatalogSimpleProductController.$inject = ['$scope', '$http', '$compile'];
+	app.controller('RbsCatalogSimpleProductController', RbsCatalogSimpleProductController);
+
+	function RbsCatalogProductItemController(scope, $http, $compile) {
+		initializeScope(scope);
+
+		scope.addLine = function() {
+			addLine(scope, $http, $compile);
+		};
+	}
+	RbsCatalogProductItemController.$inject = ['$scope', '$http', '$compile'];
+	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
+
+	function RbsCatalogVariantProductController(scope, $http, $compile) {
+		initializeScope(scope);
 
 		setCurrentProduct(null);
 
 		scope.addLine = function() {
-			if (scope.product.id !== 0) {
-				var data = {
-					key: scope.product.id,
-					designation: scope.product.title,
-					quantity: scope.quantity,
-					options: {productId: scope.product.id},
-					items: [
-						{codeSKU: scope.stock.sku}
-					]
-				};
-
-				$http.post('Action/Rbs/Commerce/AddLineToCart', data, {})
-					.success(function() {
-						if (scope.redirectUrl) {
-							window.location.href = scope.redirectUrl;
-						}
-					})
-					.error(function(data, status, headers) {
-						console.log('error', data, status, headers);
-					});
-			}
+			addLine(scope, $http, $compile);
 		};
 
 		scope.$watch('axes', function(val) {
@@ -331,7 +426,6 @@
 			return -1;
 		}
 	}
-
-	RbsCatalogProductController.$inject = ['$scope', '$http'];
-	app.controller('RbsCatalogProductController', RbsCatalogProductController);
+	RbsCatalogVariantProductController.$inject = ['$scope', '$http', '$compile'];
+	app.controller('RbsCatalogVariantProductController', RbsCatalogVariantProductController);
 })();
