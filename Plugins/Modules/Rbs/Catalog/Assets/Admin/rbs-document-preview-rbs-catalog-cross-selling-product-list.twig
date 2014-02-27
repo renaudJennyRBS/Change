@@ -8,8 +8,5 @@
 	</small>
 </p>
 <p data-ng-if="document.product.visuals.length > 0">
-	<img data-rbs-storage-image="document.product.visuals[0].id" data-thumbnail="M"/>
-</p>
-<p data-ng-if="document.product.visuals.length > 1">
-	<img data-ng-repeat="v in document.product.visuals" data-ng-if="! $first" data-rbs-storage-image="v.id" data-thumbnail="S"/>
+	<img data-ng-repeat="v in document.product.visuals" data-rbs-storage-image="v.id" data-thumbnail="S"/>
 </p>

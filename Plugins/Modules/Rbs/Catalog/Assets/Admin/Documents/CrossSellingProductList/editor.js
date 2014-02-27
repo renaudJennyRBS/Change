@@ -1,22 +1,20 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	function Editor(REST, $routeParams)
-	{
+	var app = angular.module('RbsChange');
+
+	function Editor(REST, $routeParams) {
 		return {
 			restrict: 'EA',
 			templateUrl: 'Document/Rbs/Catalog/CrossSellingProductList/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			replace: false,
+			require: 'rbsDocumentEditor',
 
-			link : function (scope, elm, attrs, editorCtrl)
-			{
-				scope.onReady = function(){
-					if ($routeParams.productId)
-					{
+			link: function(scope, elm, attrs, editorCtrl) {
+				scope.onReady = function() {
+					if ($routeParams.productId) {
 						//Creation : get Product
-						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product){
+						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product) {
 							scope.document.product = product;
 						});
 					}
@@ -28,5 +26,5 @@
 	}
 
 	Editor.$inject = ['RbsChange.REST', '$routeParams'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
+	app.directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
 })();

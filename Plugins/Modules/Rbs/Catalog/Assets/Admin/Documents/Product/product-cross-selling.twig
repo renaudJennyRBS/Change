@@ -23,7 +23,7 @@
 		</div>
 
 		<div class="add-elements-bar">
-			<a href="Rbs/Catalog/CrossSellingProductList/new?productId=(=product.id=)" ng-click="cascadeCreateCrossSellingProductList()">
+			<a href="(= 'Rbs_Catalog_CrossSellingProductList' | rbsURL:'new':{productId: product.id} =)">
 				{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crosssellingproductlist_create', ['ucf']) }}
 			</a>
 		</div>
