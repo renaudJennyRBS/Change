@@ -335,6 +335,9 @@
 	"menu_add_this_element":{
 		"message":"ajouter cet élément au menu"
 	},
+	"menu_update_this_element":{
+		"message":"mettre à jour l'élément du menu"
+	},
 	"menu_menus_are_grouped_by_website":{
 		"message":"<strong>Les menus sont classés par site web.<\/strong><br\/>Choisissez un site web pour accéder aux menus qui lui sont rattachés."
 	},
