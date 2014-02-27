@@ -352,6 +352,7 @@
 								{
 									'pointedElement'    : $target,
 									'primaryButtonClass': 'btn-danger',
+									'cssClass': 'danger',
 									'primaryButtonText' : i18n.trans('m.rbs.admin.adminjs.delete')
 								}
 							);

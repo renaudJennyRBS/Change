@@ -8,12 +8,12 @@
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 	border-radius: 0;
 	font-size: 14px;
-	background: #333333;
-	color: #eeeeee;
-	border-top: 5px solid rgb(172,172,172);
+	background: #3C3C3C;
+	color: #eeeeee;border-top: 5px solid rgb(172,172,172);
+	border-left: 10px solid rgb(172,172,172);
+	border-top: 0 none;
 	display: none;
 }
-
 
 rbs-form-button-bar > .confirmation-area.embedded-modal {
 	position: relative;
@@ -28,7 +28,7 @@ rbs-form-button-bar > .confirmation-area.embedded-modal {
 
 .embedded-modal:after {
 	position: absolute;
-	border-bottom: 9px solid #FFFFFF;
+	border-bottom: 9px solid #333333;
 	border-left: 9px solid transparent;
 	border-right: 9px solid transparent;
 	content: "";
@@ -111,9 +111,9 @@ rbs-form-button-bar > .confirmation-area.embedded-modal {
 }
 
 .embedded-modal.warning {
-	border-top: 5px solid rgb(239,172,39);
+	border-color: rgb(239,172,39);
 }
 
 .embedded-modal.danger {
-	border-top: 5px solid #D9534F;
+	border-color: #D9534F;
 }
