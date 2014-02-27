@@ -1431,8 +1431,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['filtersDefinition' => []]);
 		$em->trigger('getFiltersDefinition', $this, $args);
-		return isset($args['filtersDefinition'])
-		&& is_array($args['filtersDefinition']) ? array_values($args['filtersDefinition']) : [];
+		return isset($args['filtersDefinition']) && is_array($args['filtersDefinition']) ? array_values($args['filtersDefinition']) : [];
 	}
 
 	/**
@@ -1441,14 +1440,15 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetFiltersDefinition($event)
 	{
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$group = $i18nManager->trans('m.rbs.admin.admin.properties', ['ucf']);
 		$filtersDefinition = $event->getParam('filtersDefinition');
-		$definition = ['name' => 'linesPriceValue', 'parameters' => ['propertyName' => 'linesPriceValue']];
-		$definition['config']['listLabel'] = $i18nManager->trans('m.rbs.commerce.admin.lines_price_value_filter', ['ucf']);
-		$definition['config']['group'] = $group;
-		$definition['config']['label'] = $i18nManager->trans('m.rbs.commerce.admin.lines_price_value', ['ucf']);
-		$definition['directiveName'] = 'rbs-document-filter-property-number';
-		$filtersDefinition[] = $definition;
+		$defaultsDefinitions = json_decode(file_get_contents(__DIR__ . '/Assets/filtersDefinition.json'), true);
+		foreach ($defaultsDefinitions as $definition)
+		{
+			$definition['config']['group'] = $i18nManager->trans($definition['config']['group'], ['ucf']);
+			$definition['config']['listLabel'] = $i18nManager->trans($definition['config']['listLabel'], ['ucf']);
+			$definition['config']['label'] = $i18nManager->trans($definition['config']['label'], ['ucf']);
+			$filtersDefinition[] = $definition;
+		}
 		$event->setParam('filtersDefinition', $filtersDefinition);
 	}
 
@@ -1489,27 +1489,100 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultIsValidFilter($event)
 	{
 		$name = $event->getParam('name');
-		if ($name === 'linesPriceValue')
+		$filter = $event->getParam('filter');
+		switch ($name)
 		{
-			$filter = $event->getParam('filter');
-			if (isset($filter['parameters']['value']) && isset($filter['parameters']['operator']))
-			{
-				/** @var $cart \Rbs\Commerce\Cart\Cart */
-				$cart = $event->getParam('cart');
-				$value = $filter['parameters']['value'];
-				$operator = $filter['parameters']['operator'];
+			case 'linesPriceValue':
+			case 'totalPriceValue':
+				if (isset($filter['parameters']) && is_array($filter['parameters']))
+				{
+					$parameters = $filter['parameters'] + ['operator' => 'isNull', 'value' => null];
+					$expected = $parameters['value'];
+					$operator = $parameters['operator'];
 
-				$linesAmount = $cart->getPricesValueWithTax() ? $cart->getLinesAmountWithTaxes() : $cart->getLinesAmount();
-				if ($operator == 'gte')
-				{
-					$event->setParam('valid', $linesAmount >= $value);
+					/** @var $cart \Rbs\Commerce\Cart\Cart */
+					$cart = $event->getParam('cart');
+					if ($name === 'linesPriceValue')
+					{
+						$value = $cart->getPricesValueWithTax() ? $cart->getLinesAmountWithTaxes() : $cart->getLinesAmount();
+					}
+					else
+					{
+						$value = $cart->getPricesValueWithTax() ? $cart->getTotalAmountWithTaxes() : $cart->getTotalAmount();
+					}
+					$event->setParam('valid', $this->testNumValue($value, $operator, $expected));
 				}
-				else
+				break;
+			case 'hasCoupon':
+				if (isset($filter['parameters']) && is_array($filter['parameters']))
 				{
-					$event->setParam('valid', $linesAmount <= $value);
+					$parameters = $filter['parameters'] + ['operator' => 'isNull', 'value' => null];
+					$expected = $parameters['value'];
+					$operator = $parameters['operator'];
+					$valid = null;
+
+					/** @var $cart \Rbs\Commerce\Cart\Cart */
+					$cart = $event->getParam('cart');
+					if ($operator === 'isNull')
+					{
+						$valid = (count($cart->getCoupons()) === 0);
+					}
+					elseif ($operator === 'eq')
+					{
+						$valid = false;
+						foreach ($cart->getCoupons() as $coupon)
+						{
+							if ($coupon->getOptions()->get('id') == $expected)
+							{
+								$valid = true;
+								break;
+							}
+						}
+					}
+					elseif ($operator === 'neq')
+					{
+						$valid = true;
+						foreach ($cart->getCoupons() as $coupon)
+						{
+							if ($coupon->getOptions()->get('id') == $expected)
+							{
+								$valid = false;
+								break;
+							}
+						}
+					}
+
+					if ($valid !== null)
+					{
+						$event->setParam('valid', $valid);
+					}
 				}
-			}
+				break;
 		}
+	}
+
+	/**
+	 * @param $value
+	 * @param $operator
+	 * @param $expeted
+	 * @return boolean
+	 */
+	protected function testNumValue($value, $operator, $expeted)
+	{
+		switch ($operator)
+		{
+			case 'eq':
+				return abs($value - $expeted) < 0.0001;
+			case 'neq':
+				return abs($value - $expeted) > 0.0001;
+			case 'lte':
+				return $value <= $expeted;
+			case 'gte':
+				return $value >= $expeted;
+			case 'isNull':
+				return $value === null;
+		}
+		return false;
 	}
 
 	/**
