@@ -323,17 +323,35 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 						break;
 					}
 
-					$sku = $document->getSku();
+					if ($document->getVariantGroup())
+					{
+
+					}
+
+					$skus = array();
+					if (!$document->getSku() && $document->getVariantGroup())
+					{
+						$skus = $document->getAllSkuOfVariant(true)->toArray();
+					}
+					else
+					{
+						$skus[] = $document->getSku();
+					}
+
 					$store = $indexDefinition->getStore();
 					$commerceServices = $indexDefinition->getCommerceServices();
 					$prices = [];
-					if ($sku && $store && $commerceServices)
+					if (count($skus) > 0 && $store && $commerceServices)
 					{
 						$priceManager = $commerceServices->getPriceManager();
 						$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
-						$q->andPredicates($q->eq('active', true), $q->eq('sku', $sku), $q->eq('webStore', $store), $q->eq('targetId', 0));
+						$q->andPredicates($q->eq('active', true), $q->in('sku', $skus), $q->eq('webStore', $store), $q->eq('targetId', 0));
 						$q->addOrder('billingArea');
 						$q->addOrder('priority', false);
+						if (count($skus) > 1)
+						{
+							$q->addOrder('value', true);
+						}
 						$q->addOrder('startActivation', false);
 
 						$billingAreaId = null;
