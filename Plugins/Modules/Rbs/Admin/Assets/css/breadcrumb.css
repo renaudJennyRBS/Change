@@ -4,8 +4,8 @@
 	border-radius: 0;
 }
 .rbs-breadcrumb li {
-	padding: 10px 12px 10px;
-	margin-right: 3px;
+	padding: 10px 3px 10px 7px;
+	margin-right: 1px;
 	background: #f5f5f5;
 	position: relative;
 	display: inline-block;
@@ -55,11 +55,21 @@
 
 .rbs-breadcrumb li.location {
 	background: rgb(161,196,0);
-	color: #fff;
+	color: #FFFFFF;
+	text-shadow: 1px 0 0 rgba(0, 0, 0, 0.3);
+	background: #A1C400;
+	background: -moz-linear-gradient(left, #91b400 0%, #a1c400 100%);
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#91b400), color-stop(100%,#a1c400));
+	background: -webkit-linear-gradient(left, #91b400 0%,#a1c400 100%);
+	background: -o-linear-gradient(left, #91b400 0%,#a1c400 100%);
+	background: -ms-linear-gradient(left, #91b400 0%,#a1c400 100%);
+	background: linear-gradient(to right, #91b400 0%,#a1c400 100%);
 }
 
 .rbs-breadcrumb li.location a {
-	color: #fff;
+	color: #FFFFFF;
+	font-weight: bold;
+	line-height: 10px;
 }
 
 .rbs-breadcrumb li.location:after {
