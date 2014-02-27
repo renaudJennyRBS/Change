@@ -173,7 +173,8 @@ class AdminRoutes
 			$route = ['model' => $modelName, 'name' => 'form',
 				'rule' => [
 					'templateUrl' => 'Document' . $baseGenericRule . 'form.twig',
-					'labelKey' => $baseKey . '.documents.' . strtolower($model->getShortName()) . ' | ucf'
+					'labelKey' => $baseKey . '.documents.' . strtolower($model->getShortName()) . ' | ucf',
+					'labelId' => 'id'
 				]];
 			$routes[$baseGenericRule . $docPath] = $route;
 

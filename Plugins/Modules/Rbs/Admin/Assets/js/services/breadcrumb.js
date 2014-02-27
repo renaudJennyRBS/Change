@@ -107,13 +107,18 @@
 
 				function resolveLabel(entry) {
 					var route = entry.route;
-					if (route.ruleName === 'form' && entry.params.hasOwnProperty('id')) {
-						REST.resources([entry.params.id]).then(function(collection) {
+					var id = null;
+					if (angular.isString(route['labelId']) && entry.params.hasOwnProperty(route['labelId'])) {
+						id = parseInt(entry.params[route['labelId']]);
+					}
+
+					if (angular.isNumber(id) && id > 0) {
+						REST.resources([id]).then(function(collection) {
 							if (collection.resources.length) {
 								entry.label = collection.resources[0].label;
 								updatePageTitle();
 							}
-						}, function () {entry.label = 'Not Found'})
+						}, function () {entry.label = 'Not Found'});
 					}
 				}
 

@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Media/Image/form.twig",
-			"labelKey": "m.rbs.media.documents.image | ucf"
+			"labelKey": "m.rbs.media.documents.image | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

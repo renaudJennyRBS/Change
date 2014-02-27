@@ -27,7 +27,8 @@
 		"name": "form",
 		"rule": {
 			"redirectTo": "/Rbs/Commerce/Process/:id",
-			"labelKey": "m.rbs.commerce.documents.process | ucf"
+			"labelKey": "m.rbs.commerce.documents.process | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -45,7 +46,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
-			"labelKey": "m.rbs.discount.documents.coupon | ucf"
+			"labelKey": "m.rbs.discount.documents.coupon | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -112,7 +114,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
-			"labelKey": "m.rbs.discount.documents.discount | ucf"
+			"labelKey": "m.rbs.discount.documents.discount | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

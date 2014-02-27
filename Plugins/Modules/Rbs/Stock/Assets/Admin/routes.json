@@ -13,7 +13,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Stock/Sku/form.twig",
-			"labelKey": "m.rbs.stock.documents.sku | ucf"
+			"labelKey": "m.rbs.stock.documents.sku | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -59,7 +60,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Stock/InventoryEntry/form.twig",
-			"labelKey": "m.rbs.stock.documents.inventoryentry | ucf"
+			"labelKey": "m.rbs.stock.documents.inventoryentry | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

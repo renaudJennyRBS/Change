@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Elasticsearch/Facet/form.twig",
-			"labelKey": "m.rbs.elasticsearch.documents.facet | ucf"
+			"labelKey": "m.rbs.elasticsearch.documents.facet | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -89,7 +90,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/form.twig",
-			"labelKey": "m.rbs.elasticsearch.documents.facetgroup | ucf"
+			"labelKey": "m.rbs.elasticsearch.documents.facetgroup | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -156,7 +158,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Elasticsearch/FullText/form.twig",
-			"labelKey": "m.rbs.elasticsearch.documents.fulltext | ucf"
+			"labelKey": "m.rbs.elasticsearch.documents.fulltext | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -193,7 +196,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/form.twig",
-			"labelKey": "m.rbs.elasticsearch.documents.storeindex | ucf"
+			"labelKey": "m.rbs.elasticsearch.documents.storeindex | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
-			"labelKey": "m.rbs.mail.documents.mail | ucf"
+			"labelKey": "m.rbs.mail.documents.mail | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

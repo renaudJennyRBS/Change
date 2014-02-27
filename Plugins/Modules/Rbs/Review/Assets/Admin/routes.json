@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Review/Review/form.twig",
-			"labelKey": "m.rbs.review.documents.review | ucf"
+			"labelKey": "m.rbs.review.documents.review | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

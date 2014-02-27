@@ -13,7 +13,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
-			"labelKey": "m.rbs.store.documents.webstore | ucf"
+			"labelKey": "m.rbs.store.documents.webstore | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

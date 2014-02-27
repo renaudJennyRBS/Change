@@ -12,7 +12,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Simpleform/Field/form.twig",
-			"labelKey": "m.rbs.simpleform.documents.field | ucf"
+			"labelKey": "m.rbs.simpleform.documents.field | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -79,7 +80,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Simpleform/Form/form.twig",
-			"labelKey": "m.rbs.simpleform.documents.form | ucf"
+			"labelKey": "m.rbs.simpleform.documents.form | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

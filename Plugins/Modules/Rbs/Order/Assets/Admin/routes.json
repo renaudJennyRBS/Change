@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Order/CreditNote/form.twig",
-			"labelKey": "m.rbs.order.documents.creditnote | ucf"
+			"labelKey": "m.rbs.order.documents.creditnote | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -59,7 +60,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Order/Invoice/form.twig",
-			"labelKey": "m.rbs.order.documents.invoice | ucf"
+			"labelKey": "m.rbs.order.documents.invoice | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -96,7 +98,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Order/Order/form.twig",
-			"labelKey": "m.rbs.order.documents.order | ucf"
+			"labelKey": "m.rbs.order.documents.order | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -133,7 +136,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Order/Shipment/form.twig",
-			"labelKey": "m.rbs.order.documents.shipment | ucf"
+			"labelKey": "m.rbs.order.documents.shipment | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
