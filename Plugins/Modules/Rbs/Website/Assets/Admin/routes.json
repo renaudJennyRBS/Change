@@ -13,7 +13,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Website/form.twig",
-			"labelKey": "m.rbs.website.documents.website | ucf"
+			"labelKey": "m.rbs.website.documents.website | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -164,7 +165,8 @@
 		"name": "form",
 		"rule": {
 			"redirectTo": "/Rbs/Website/Website/:id/Structure/",
-			"labelKey": "m.rbs.website.documents.website | ucf"
+			"labelKey": "m.rbs.website.documents.website | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -205,7 +207,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
-			"labelKey": "m.rbs.website.documents.menu | ucf"
+			"labelKey": "m.rbs.website.documents.menu | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -264,7 +267,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/FunctionalPage/form.twig",
-			"labelKey": "m.rbs.website.documents.functionalpage | ucf"
+			"labelKey": "m.rbs.website.documents.functionalpage | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -322,7 +326,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/StaticPage/form.twig",
-			"labelKey": "m.rbs.website.documents.staticpage | ucf"
+			"labelKey": "m.rbs.website.documents.staticpage | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -389,7 +394,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Topic/form.twig",
-			"labelKey": "m.rbs.website.documents.topic | ucf"
+			"labelKey": "m.rbs.website.documents.topic | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

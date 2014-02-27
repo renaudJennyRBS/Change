@@ -28,7 +28,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Commerce/Process/form.twig",
-			"labelKey": "m.rbs.commerce.documents.process | ucf"
+			"labelKey": "m.rbs.commerce.documents.process | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -47,7 +48,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
-			"labelKey": "m.rbs.commerce.documents.fee | ucf"
+			"labelKey": "m.rbs.commerce.documents.fee | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

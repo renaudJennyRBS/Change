@@ -8,6 +8,25 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Catalog/:productListName/:productListId/Products/:id": {
+		"model": "Rbs_Catalog_ProductListItem",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/:productListName/:productListId/Products/new": {
+		"model": "Rbs_Catalog_ProductListItem",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/Attribute/": false,
 	"/Rbs/Catalog/Attribute/:id": false,
 	"/Rbs/Catalog/Attribute/:id/timeline": false,
@@ -15,7 +34,15 @@
 	"/Rbs/Catalog/Attribute/:id/translate/:LCID/workflow": false,
 	"/Rbs/Catalog/Attribute/:id/workflow": false,
 	"/Rbs/Catalog/Attribute/new": false,
-	"/Rbs/Catalog/CrossSellingProductList/:id": false,
+	"/Rbs/Catalog/CrossSellingProductList/:id": {
+		"name": "form",
+		"rule": {
+			"controller": "RbsChangeRedirectToForm",
+			"template": "<div></div>",
+			"labelId": "id"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/CrossSellingProductList/:id/Products/": false,
 	"/Rbs/Catalog/CrossSellingProductList/:id/timeline": false,
 	"/Rbs/Catalog/CrossSellingProductList/new": false,
@@ -28,12 +55,23 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Catalog/Product/:crossSellingRelatedId/CrossSellingProductList/:productListId/Products/:id": {
+		"model": "Rbs_Catalog_ProductListItem",
+		"name": "crossSellingForm",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/Product/:id": {
 		"model": "Rbs_Catalog_Product",
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
-			"labelKey": "m.rbs.catalog.documents.product | ucf"
+			"labelKey": "m.rbs.catalog.documents.product | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -118,7 +156,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
-			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf"
+			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -227,7 +266,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/ProductList/form.twig",
-			"labelKey": "m.rbs.catalog.documents.productlist | ucf"
+			"labelKey": "m.rbs.catalog.documents.productlist | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -249,34 +289,6 @@
 			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": true
-	},
-	"/Rbs/Catalog/ProductList/:productListId/Products/:id": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "form",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
-			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/ProductList/:productListId/Products/:id/timeline": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_ProductListItem",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/ProductList/:productListId/Products/new": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
 	},
 	"/Rbs/Catalog/ProductList/new": {
 		"model": "Rbs_Catalog_ProductList",
@@ -304,7 +316,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/SectionProductList/form.twig",
-			"labelKey": "m.rbs.catalog.documents.sectionproductlist | ucf"
+			"labelKey": "m.rbs.catalog.documents.sectionproductlist | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -341,7 +354,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/VariantGroup/form.twig",
-			"labelKey": "m.rbs.catalog.documents.variantgroup | ucf"
+			"labelKey": "m.rbs.catalog.documents.variantgroup | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -370,7 +384,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/Attribute/form.twig",
-			"labelKey": "m.rbs.catalog.documents.attribute | ucf"
+			"labelKey": "m.rbs.catalog.documents.attribute | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

@@ -13,7 +13,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Tag/Tag/form.twig",
-			"labelKey": "m.rbs.tag.documents.tag | ucf"
+			"labelKey": "m.rbs.tag.documents.tag | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

@@ -13,7 +13,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
-			"labelKey": "m.rbs.price.documents.billingarea | ucf"
+			"labelKey": "m.rbs.price.documents.billingarea | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -60,7 +61,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Price/Tax/form.twig",
-			"labelKey": "m.rbs.price.documents.tax | ucf"
+			"labelKey": "m.rbs.price.documents.tax | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -130,7 +132,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Price/Price/form.twig",
-			"labelKey": "m.rbs.price.documents.price | ucf"
+			"labelKey": "m.rbs.price.documents.price | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

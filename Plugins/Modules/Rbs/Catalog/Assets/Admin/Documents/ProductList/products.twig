@@ -68,7 +68,8 @@
 			use-properties="title">
 			<rbs-column name="visuals" thumbnail="S" thumbnail-path="doc.product.adminthumbnail" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_productvisual', ['ucf']) }}"></rbs-column>
 			<rbs-column name="productLabel" label="{{ i18nAttr('m.rbs.catalog.documents.product_label', ['ucf']) }}" primary="true">
-				<strong><a href ng-href="(= doc | rbsURL =)">(= doc.product.label =)</a></strong>
+				<strong data-ng-if="doc.crossSellingRelatedId"><a href ng-href="(= doc | rbsURL:'crossSellingForm' =)">(= doc.product.label =)</a></strong>
+				<strong data-ng-if="!doc.crossSellingRelatedId"><a href ng-href="(= doc | rbsURL =)">(= doc.product.label =)</a></strong>
 			</rbs-column>
 			<rbs-column name="priority" label="{{ i18nAttr('m.rbs.catalog.admin.productlist_sort_order', ['ucf']) }}" align="center" width="110px">
 				<span ng-show="doc.isHighlighted">

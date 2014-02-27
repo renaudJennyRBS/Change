@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
-			"labelKey": "m.rbs.seo.documents.documentseo | ucf"
+			"labelKey": "m.rbs.seo.documents.documentseo | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -89,7 +90,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
-			"labelKey": "m.rbs.seo.documents.modelconfiguration | ucf"
+			"labelKey": "m.rbs.seo.documents.modelconfiguration | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

@@ -13,7 +13,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/Address/form.twig",
-			"labelKey": "m.rbs.geo.documents.address | ucf"
+			"labelKey": "m.rbs.geo.documents.address | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -50,7 +51,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/AddressFields/form.twig",
-			"labelKey": "m.rbs.geo.documents.addressfields | ucf"
+			"labelKey": "m.rbs.geo.documents.addressfields | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -97,7 +99,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/Country/form.twig",
-			"labelKey": "m.rbs.geo.documents.country | ucf"
+			"labelKey": "m.rbs.geo.documents.country | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -134,7 +137,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/TerritorialUnit/form.twig",
-			"labelKey": "m.rbs.geo.documents.territorialunit | ucf"
+			"labelKey": "m.rbs.geo.documents.territorialunit | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -171,7 +175,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/Zone/form.twig",
-			"labelKey": "m.rbs.geo.documents.zone | ucf"
+			"labelKey": "m.rbs.geo.documents.zone | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -209,7 +214,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/Address/form.twig",
-			"labelKey": "m.rbs.geo.documents.address | ucf"
+			"labelKey": "m.rbs.geo.documents.address | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -237,7 +243,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Geo/AddressField/form.twig",
-			"labelKey": "m.rbs.geo.documents.addressfield | ucf"
+			"labelKey": "m.rbs.geo.documents.addressfield | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

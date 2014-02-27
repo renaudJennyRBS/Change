@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
-			"labelKey": "m.rbs.brand.documents.brand | ucf"
+			"labelKey": "m.rbs.brand.documents.brand | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

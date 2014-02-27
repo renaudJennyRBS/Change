@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Collection/Collection/form.twig",
-			"labelKey": "m.rbs.collection.documents.collection | ucf"
+			"labelKey": "m.rbs.collection.documents.collection | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -50,7 +51,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
-			"labelKey": "m.rbs.collection.documents.item | ucf"
+			"labelKey": "m.rbs.collection.documents.item | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

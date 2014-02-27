@@ -14,7 +14,7 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 	 */
 	public function getLabel()
 	{
-		return $this->getProduct()->getLabel();
+		return $this->getProduct() ? $this->getProduct()->getLabel() : '-';
 	}
 
 	/**
@@ -44,10 +44,7 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
 		{
-			/* @var $document \Rbs\Catalog\Documents\ProductListItem */
-			$document = $restResult->getDocument();
 			$urlManager = $restResult->getUrlManager();
-			$restResult->setProperty('productListId', $document->getProductListId());
 
 			/* @var $selfLink DocumentLink */
 			$selfLink = $restResult->getRelLink('self')[0];
@@ -85,7 +82,6 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 
 			$restResult->setProperty('isHighlighted', $document->isHighlighted());
 			$restResult->setProperty('position', $document->getPosition());
-			$restResult->setProperty('productListId', $document->getProductListId());
 
 			$pathInfo = $restResult->getPathInfo();
 
@@ -102,6 +98,25 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 			$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
 			$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
 			$restResult->setProperty('actions', $actions);
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultRouteParamsRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultRouteParamsRestResult($event);
+		$restResult = $event->getParam('restResult');
+
+		/* @var $document \Rbs\Catalog\Documents\ProductListItem */
+		$document = $restResult->getDocument();
+		$productList = $document->getProductList();
+		$restResult->setProperty('productListId', $productList->getId());
+		$restResult->setProperty('productListName', $productList->getDocumentModel()->getShortName());
+		if ($productList instanceof \Rbs\Catalog\Documents\CrossSellingProductList)
+		{
+			$restResult->setProperty('crossSellingRelatedId', $productList->getProductId());
 		}
 	}
 

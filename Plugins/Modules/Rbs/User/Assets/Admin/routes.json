@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/User/Group/form.twig",
-			"labelKey": "m.rbs.user.documents.group | ucf"
+			"labelKey": "m.rbs.user.documents.group | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -95,7 +96,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/User/User/form.twig",
-			"labelKey": "m.rbs.user.documents.user | ucf"
+			"labelKey": "m.rbs.user.documents.user | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

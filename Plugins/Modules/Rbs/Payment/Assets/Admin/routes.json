@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
-			"labelKey": "m.rbs.payment.documents.deferredconnector | ucf"
+			"labelKey": "m.rbs.payment.documents.deferredconnector | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -89,7 +90,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Payment/Transaction/form.twig",
-			"labelKey": "m.rbs.payment.documents.transaction | ucf"
+			"labelKey": "m.rbs.payment.documents.transaction | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},

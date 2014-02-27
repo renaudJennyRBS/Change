@@ -22,7 +22,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Event/Category/form.twig",
-			"labelKey": "m.rbs.event.documents.category | ucf"
+			"labelKey": "m.rbs.event.documents.category | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -98,7 +99,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Event/Event/form.twig",
-			"labelKey": "m.rbs.event.documents.event | ucf"
+			"labelKey": "m.rbs.event.documents.event | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},
@@ -174,7 +176,8 @@
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Event/News/form.twig",
-			"labelKey": "m.rbs.event.documents.news | ucf"
+			"labelKey": "m.rbs.event.documents.news | ucf",
+			"labelId": "id"
 		},
 		"auto": true
 	},

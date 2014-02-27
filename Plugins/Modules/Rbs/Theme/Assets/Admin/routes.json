@@ -1,10 +1,29 @@
 {
+	"/Rbs/Generic/Theme/:id/MailTemplates": {
+		"model": "Rbs_Theme_Theme",
+		"name": "mailtemplates",
+		"rule": {
+			"templateUrl": "Document/Rbs/Theme/Theme/browseMailTemplates.twig",
+			"labelKey": "m.rbs.theme.admin.breadcrumb_mailtemplates | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Theme/:id/PageTemplates": {
+		"model": "Rbs_Theme_Theme",
+		"name": "pagetemplates",
+		"rule": {
+			"templateUrl": "Document/Rbs/Theme/Theme/browsePageTemplates.twig",
+			"labelKey": "m.rbs.theme.admin.breadcrumb_pagetemplates | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Generic/Theme/:themeId/:categoryName/:id": {
 		"model": "Rbs_Theme_Template",
 		"name": "form",
 		"rule": {
 			"templateUrl": "Document/Rbs/Theme/Template/form.twig",
-			"labelKey": "m.rbs.theme.documents.template | ucf"
+			"labelKey": "m.rbs.theme.documents.template | ucf",
+			"labelId": "id"
 		},
 		"auto": false
 	},
@@ -34,24 +53,6 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Theme/Template/form.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/Theme/:id/MailTemplates": {
-		"model": "Rbs_Theme_Theme",
-		"name": "mailtemplates",
-		"rule": {
-			"templateUrl": "Document/Rbs/Theme/Theme/browseMailTemplates.twig",
-			"labelKey": "m.rbs.theme.admin.breadcrumb_mailtemplates | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/Theme/:id/PageTemplates": {
-		"model": "Rbs_Theme_Theme",
-		"name": "pagetemplates",
-		"rule": {
-			"templateUrl": "Document/Rbs/Theme/Theme/browsePageTemplates.twig",
-			"labelKey": "m.rbs.theme.admin.breadcrumb_pagetemplates | ucf"
 		},
 		"auto": false
 	},
