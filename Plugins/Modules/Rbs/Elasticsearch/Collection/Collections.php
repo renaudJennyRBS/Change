@@ -38,7 +38,7 @@ class Collections
 					try
 					{
 						$serverStatus = $client->getStatus()->getServerStatus();
-						if (isset($serverStatus['ok']) && $serverStatus['ok'])
+						if (isset($serverStatus['status']) && $serverStatus['status'] == 200)
 						{
 							$items[$clientName] .= ' (' . $serverStatus['name'] . ', ' . $serverStatus['version']['number'] . ')';
 						}

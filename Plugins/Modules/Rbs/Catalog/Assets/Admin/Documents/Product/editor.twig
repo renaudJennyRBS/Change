@@ -33,7 +33,7 @@
 	<fieldset data-ng-show="section=='attributes'"
 		data-form-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}">
 
-		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
+		<rbs-field ng-if="!document.variant" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
 			<select class="form-control" ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="productTypology:true">
 				<option value="">{{ i18n('m.rbs.catalog.admin.product_attribute_select', ['ucf']) }}</option>
 			</select>

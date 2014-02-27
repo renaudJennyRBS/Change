@@ -1,4 +1,6 @@
 {% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+{% set listFormat = {'maxWidth': 160, 'maxHeight' : 120}  %}
+{% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
 <script type="text/ng-template" id="/addLineToCart.tpl">
 	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()" data-ng-disabled="quantity <= 0">
 		<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
