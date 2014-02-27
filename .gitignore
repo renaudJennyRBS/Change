@@ -23,6 +23,7 @@ nbproject
 /App/*.db
 ./test*
 /ChangeTests/UnitTestWorkspace/App/*.db
+/ChangeTests/UnitTestWorkspace/www
 /ChangeTests/UnitTestWorkspace/App/Config/project.default.json
 /ChangeTests/UnitTestWorkspace/App/Config/project.sqlite.json
 /ChangeTests/UnitTestWorkspace/Compilation/*

@@ -6,7 +6,7 @@
 	<li ng-show="filterDefinition.config.valueType == 'Boolean'">
 		<rbs-switch data-role="filter-value" ng-model="filter.parameters.value" />
 	</li>
-	<li ng-show="filterDefinition.config.valueType == 'Code'">
+	<li ng-show="filterDefinition.config.valueType == 'String'">
 		<select class="form-control" data-ng-model="filter.parameters.operator">
 			<option value="eq">{{ i18n('m.rbs.admin.admin.equals') }}</option>
 			<option value="neq">{{ i18n('m.rbs.admin.admin.isdifferentof') }}</option>
