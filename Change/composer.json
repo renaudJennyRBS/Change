@@ -2,7 +2,7 @@
 	"name": "rbschange/core",
 	"description": "Core RBS Change Package",
 	"type": "rbschange-core",
-	"license": "AGPL-3.0",
+	"license": "MPL-2.0",
 	"autoload": {
 		"psr-4": {
 			"Change\\": "."
