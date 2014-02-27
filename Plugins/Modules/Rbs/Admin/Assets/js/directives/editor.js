@@ -1107,6 +1107,17 @@
 		});
 	}]);
 
+	/**
+	 * Redirects to the editor of the document with the id specified in $routeParams.
+	 */
+	function RedirectToForm($routeParams, $location, REST, $filter) {
+		var listId = $routeParams.id;
+		REST.resource(listId).then(function(doc) {
+			$location.path($filter('rbsURL')(doc, 'form'));
+		});
+	}
+	RedirectToForm.$inject = ['$routeParams', '$location', 'RbsChange.REST', '$filter'];
+	app.controller('RbsChangeRedirectToForm', RedirectToForm);
 
 
 	// Validators directives.
