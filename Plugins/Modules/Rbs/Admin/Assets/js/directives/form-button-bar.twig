@@ -16,8 +16,8 @@
 
 	<div class="form-buttons">
 		<div class="pull-right">
-			<div ng-transclude=""></div>
-			<button class="btn btn-danger btn-headline no-text" type="button" ng-click="confirmDelete($event)">
+			<span ng-transclude=""></span>
+			<button ng-if="! disableDelete" class="btn btn-danger btn-headline no-text" type="button" ng-click="confirmDelete($event)">
 				<i class="icon-trash"></i>
 			</button>
 		</div>

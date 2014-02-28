@@ -16,6 +16,8 @@
 
 			link : function (scope, element, attrs, editorCtrl) {
 
+				scope.disableDelete = true;
+
 				// Initialize the zone before the buttons with a content that comes from the rest of the world :)
 				var shouldLoadContents = true;
 				scope.$on(Events.EditorReady, function (event, args) {
@@ -38,7 +40,16 @@
 					{
 						Navigation.setSelectionContextValue();
 					};
+
+					updateDisableDelete();
 				});
+
+				function updateDisableDelete ()
+				{
+					scope.disableDelete = ! Utils.isDocument(scope.document) || scope.document.isNew() || attrs.disableDelete === 'true';
+				}
+
+				attrs.$observe('disableDelete', updateDisableDelete);
 
 
 				scope.$on('$locationChangeSuccess', function (event) {
