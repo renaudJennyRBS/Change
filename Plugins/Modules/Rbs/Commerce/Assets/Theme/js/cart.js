@@ -666,6 +666,14 @@
 				.error(function(data, status, headers) { console.log('GetTransaction error', data, status, headers); });
 		};
 
+		scope.showLinesAmount = function() {
+			return scope.cart && (scope.cart.fees.length > 0 || scope.cart.discounts.length > 0);
+		};
+
+		scope.showTotalAmount = function() {
+			return scope.cart && (scope.cart.creditNotes.length > 0);
+		};
+
 		loadCurrentCart();
 	}
 

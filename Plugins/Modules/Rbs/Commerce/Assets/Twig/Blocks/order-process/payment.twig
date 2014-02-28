@@ -103,17 +103,54 @@
 	</div>
 </div>
 
-<div class="panel panel-default">
-	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.summary_of_amounts', ['ucf']) }}</div>
-	<dl class="dl-horizontal">
-		<!-- TODO: handle coupons and discounts...
-		<dt>{{ i18n('m.rbs.commerce.front.total_with_tax', ['ucf']) }}</dt>
-		<dd><span class="price">(= cart.context.formattedTotalAmountWithTaxes =)</span></dd>
-		<dt>Coupon</dt>
-		<dd><span class="price">-10,00 €</span></dd>-->
-		<dt>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</dt>
-		<dd><span class="price">(= cart.context.formattedPaymentAmountWithTaxes =)</span></dd>
-	</dl>
+<div class="row">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.taxes_amount', ['ucf']) }}</div>
+			<table summary="{{ i18nAttr('m.rbs.commerce.front.taxes_amount', ['ucf']) }}"
+				class="table table-striped table-bordered">
+				<tbody>
+					<tr data-ng-repeat="tax in cart.context.formattedTotalTaxes">
+						<td>(= tax.title =) ((= tax.formattedRate =))</td>
+						<td class="price">(= tax.formattedValue =)</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.summary_of_amounts', ['ucf']) }}</div>
+			<table class="table table-striped table-bordered">
+				<tbody>
+					<tr data-ng-show="showLinesAmount()">
+						<td>{{ i18n('m.rbs.commerce.front.lines_amount_with_tax', ['ucf']) }}</td>
+						<td><span class="price">(= cart.context.formattedLinesAmountWithTaxes =)</span></td>
+					</tr>
+					<tr data-ng-repeat="fee in cart.fees">
+						<td>(= fee.designation =)</td>
+						<td><span class="price">(= fee.options.formattedAmountWithTaxes =)</span></td>
+					</tr>
+					<tr data-ng-repeat="discount in cart.discounts">
+						<td>(= discount.title =)</td>
+						<td><span class="price">(= discount.options.formattedAmountWithTaxes =)</span></td>
+					</tr>
+					<tr data-ng-show="showTotalAmount()">
+						<td>{{ i18n('m.rbs.commerce.front.total_amount_with_tax', ['ucf']) }}</td>
+						<td><span class="price">(= cart.context.formattedTotalAmountWithTaxes =)</span></td>
+					</tr>
+					<tr data-ng-repeat="note in cart.creditNotes">
+						<td>(= note.title =)</td>
+						<td><span class="price">(= note.options.formattedAmountWithTaxes =)</span></td>
+					</tr>
+					<tr>
+						<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
+						<td><span class="price">(= cart.context.formattedPaymentAmountWithTaxes =)</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <div data-ng-if="!hasTransaction()" class="clearfix">

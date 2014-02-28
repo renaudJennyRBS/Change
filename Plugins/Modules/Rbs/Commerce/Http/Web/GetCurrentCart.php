@@ -51,7 +51,6 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$linesTaxes[] = $taxInfos;
 				}
 
-
 				$totalTaxes = array();
 				foreach ($cart->getTotalTaxes() as $tax)
 				{
@@ -71,10 +70,8 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 					->set('formattedTotalAmountWithTaxes', $pm->formatValue($cart->getTotalAmountWithTaxes(), $currency))
 					->set('formattedPaymentAmountWithTaxes', $pm->formatValue($cart->getPaymentAmountWithTaxes(), $currency));
 
-
 				foreach ($cart->getLines() as $line)
 				{
-
 					$options = $line->getOptions();
 					$options->set('formattedAmount', $pm->formatValue($line->getAmount(), $currency))
 						->set('formattedAmountWithTaxes', $pm->formatValue($line->getAmountWithTaxes(), $currency))
@@ -91,6 +88,26 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 							$options->set('url', $url);
 						}
 					}
+				}
+
+				foreach ($cart->getDiscounts() as $discount)
+				{
+					$options = $discount->getOptions();
+					$options->set('formattedAmount', $pm->formatValue($discount->getAmount(), $currency))
+						->set('formattedAmountWithTaxes', $pm->formatValue($discount->getAmountWithTaxes(), $currency));
+				}
+
+				foreach ($cart->getFees() as $fee)
+				{
+					$options = $fee->getOptions();
+					$options->set('formattedAmount', $pm->formatValue($fee->getAmount(), $currency))
+						->set('formattedAmountWithTaxes', $pm->formatValue($fee->getAmountWithTaxes(), $currency));
+				}
+
+				foreach ($cart->getCreditNotes() as $note)
+				{
+					$options = $note->getOptions();
+					$options->set('formattedAmount', $pm->formatValue($note->getAmount(), $currency));
 				}
 			}
 			$cartArray = $cart->toArray();
