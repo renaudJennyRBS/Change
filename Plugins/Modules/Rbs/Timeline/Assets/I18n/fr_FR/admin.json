@@ -34,5 +34,11 @@
 	},
 	"message_mail_subject":{
 		"message":"Un message vous mentionne"
+	},
+	"timeline":{
+		"message":"timeline"
+	},
+	"concerned_document":{
+		"message":"document concerné"
 	}
 }

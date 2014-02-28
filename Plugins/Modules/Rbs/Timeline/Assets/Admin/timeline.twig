@@ -1,15 +1,12 @@
-<div class="row" ng-controller="RbsChangeTimelineController" ng-init="model = '{{ query.model }}'">
-
-	<div rbs-aside-column>
-		<rbs-links-panel>
-			<a rbs-active-route="" class="list-group-item" href="(= document | rbsURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
-		</rbs-links-panel>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+<div class="row" data-ng-controller="RbsChangeTimelineController" data-ng-init="model = '{{ query.model }}'">
+	<div data-rbs-aside-column="">
+		<div class="rbs-aside-block" data-ng-show="document">
+			<h3 class="panel-title">{{ i18n('m.rbs.timeline.admin.concerned_document', ['ucf']) }}</h3>
+			<rbs-document-preview document="document"></rbs-document-preview>
+		</div>
 	</div>
-
-	<div rbs-main-column>
+	<div data-rbs-main-column>
 		<rbs-page-header sub-title="Discussion"></rbs-page-header>
-		<div rbs-timeline=""></div>
+		<div data-rbs-timeline=""></div>
 	</div>
-
 </div>
