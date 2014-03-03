@@ -1,4 +1,5 @@
 <?php
+
 namespace Rbs\Seo\Blocks;
 
 use Change\Presentation\Blocks\Event;

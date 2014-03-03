@@ -1,4 +1,5 @@
 <?php
+
 namespace Rbs\Discount\Collection;
 
 use Change\I18n\I18nString;
