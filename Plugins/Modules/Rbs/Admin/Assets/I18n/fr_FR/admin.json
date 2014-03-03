@@ -399,9 +399,6 @@
 	"this_document_exists_in_multiple_languages":{
 		"message":"ce document existe en plusieurs langues"
 	},
-	"fullscreen_toolbar":{
-		"message":"Vous êtes en mode plein écran dans RBS Change. Cliquez sur cette barre pour quitter le mode plein-écran."
-	},
 	"copyright":{
 		"message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.rbschange.com\">RBS Change<\/a> est un CMS e-commerce open-source edité par la société <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/www.rbs.fr\">Ready Business System<\/a>."
 	},
