@@ -223,22 +223,19 @@
 							}
 
 							// If item is a container:
-							if (item.type === 'cell') {
-
+							if (item.type === 'cell')
+							{
 								itemChooser = this.registerNewItem("block-chooser");
 								item.items = [ itemChooser ];
-
-							} else {
-								if (item.type === 'row') {
-
-									item.grid = item.grid || DEFAULT_GRID_SIZE;
-									if (!item.items || item.items.length === 0) {
-										itemCell = this.registerNewItem("cell", {'size': DEFAULT_GRID_SIZE});
-										item.items = [ itemCell ];
-										itemChooser = this.registerNewItem("block-chooser");
-										itemCell.items = [ itemChooser ];
-									}
-
+							}
+							else if (item.type === 'row')
+							{
+								item.grid = item.grid || DEFAULT_GRID_SIZE;
+								if (!item.items || item.items.length === 0) {
+									itemCell = this.registerNewItem("cell", {'size': DEFAULT_GRID_SIZE});
+									item.items = [ itemCell ];
+									itemChooser = this.registerNewItem("block-chooser");
+									itemCell.items = [ itemChooser ];
 								}
 							}
 
@@ -456,6 +453,10 @@
 									if (isContainer(blockEl)) {
 										// Clear any existing items and rebuild the array in parseChildBlocks().
 										item.items = [];
+										if (blockEl.is('[rbs-cell]')) {
+											item.size = structureEditorService.getColumnWidth(blockEl);
+											item.offset = structureEditorService.getColumnOffset(blockEl);
+										}
 										parseChildBlocks(blockEl, item.items);
 									}
 								}

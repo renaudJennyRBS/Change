@@ -155,7 +155,8 @@
 			return cols;
 		};
 
-		this.getColumnWidth = function (seCell) {
+		this.getColumnWidth = function (seCell)
+		{
 			var i, gridSize;
 
 			gridSize = this.getEditableZone(seCell).data('grid');
@@ -172,7 +173,27 @@
 			throw new Error("Could not determine column size (missing 'col-md-*' class?) in grid of size " + gridSize);
 		};
 
-		this.applyColumnsWidth = function (row, columns, gridSize) {
+
+		this.getColumnOffset = function (seCell) {
+			var i, gridSize;
+
+			gridSize = this.getEditableZone(seCell).data('grid');
+			if (!gridSize) {
+				throw new Error("Could not determine grid size in use for column " + seCell);
+			}
+
+			for (i=1 ; i<=gridSize ; i++) {
+				if (seCell.is('.col-md-offset-'+i)) {
+					return i;
+				}
+			}
+
+			return 0;
+		};
+
+
+		this.applyColumnsWidth = function (row, columns, gridSize)
+		{
 			if (row.children().length !== columns.length) {
 				throw new Error("Bad columns count: given " + columns.length + " columns but " + row.children().length + " columns exist in the row.");
 			}
@@ -180,8 +201,8 @@
 			gridSize = gridSize || DEFAULT_GRID_SIZE;
 
 			// Apply 'span' and 'offset' on existing columns.
-			row.children('[rbs-cell]').each(function (index, el) {
-
+			row.children('[rbs-cell]').each(function (index, el)
+			{
 				// Find current 'span*' and 'offset*' classes and remove them.
 				// - 'span*' is from 1 to `gridSize`
 				// - 'offset*' is from 0 to `gridSize-1`
@@ -195,15 +216,15 @@
 						span = i;
 					}
 				}
-				$(el).removeClass('col-md-' + span);
-				$(el).removeClass('col-md-offset-' + offset);
+				$(el).removeClass('col-md-' + span)
+					.removeClass('col-md-offset-' + offset);
 
 				// Add new 'span*' and 'offset*' classes.
-				$(el).addClass('col-md-' + columns[index].span);
-				$(el).attr('data-size', columns[index].span);
+				$(el).addClass('col-md-' + columns[index].span)
+					.attr('data-size', columns[index].span);
 				if (columns[index].offset) {
-					$(el).addClass('col-md-offset-' + columns[index].offset);
-					$(el).attr('data-offset', columns[index].offset);
+					$(el).addClass('col-md-offset-' + columns[index].offset)
+						.attr('data-offset', columns[index].offset);
 				} else {
 					$(el).removeAttr('data-offset');
 				}

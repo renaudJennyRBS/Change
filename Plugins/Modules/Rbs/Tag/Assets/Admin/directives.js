@@ -214,12 +214,14 @@
 				}
 
 
-				function update ()
+				function update (doNotSave)
 				{
 					var tags = [],
 						unsavedPromises = [];
 
-					scope.busy = true;
+					if (! doNotSave) {
+						scope.busy = true;
+					}
 
 					angular.forEach(scope.tags, function (tag, i) {
 						if (tag.input) {
@@ -253,7 +255,7 @@
 							save();
 						});
 					}
-					else {
+					else if (! doNotSave) {
 						save();
 					}
 				}
@@ -311,7 +313,7 @@
 				function moveInput (value, offset) {
 					if (value.length === 0 && (inputIndex+offset) < (scope.tags.length)) {
 						var r = ArrayUtils.move(scope.tags, inputIndex, inputIndex + offset);
-						update();
+						update(true);
 						scope.focus();
 						return r;
 					}

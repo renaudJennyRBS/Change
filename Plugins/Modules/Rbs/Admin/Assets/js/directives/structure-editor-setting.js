@@ -566,7 +566,7 @@
 
 						if (scope.columns[index] && scope.columns[index].offset >= 1) {
 							size = scope.columns[index].offset;
-							$(rowEl.children().get(index)).removeClass("offset" +
+							$(rowEl.children().get(index)).removeClass("col-md-offset-" +
 								scope.columns[index].offset).removeAttr('data-offset');
 						} else {
 							if (scope.totalColumns < gridSize) {

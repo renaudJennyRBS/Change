@@ -29,7 +29,6 @@
 
 rbs-form-button-bar > .confirmation-area {
 	position: relative;
-	top: 26px;
 }
 
 .form-vertical .form-group [class^="col-"],

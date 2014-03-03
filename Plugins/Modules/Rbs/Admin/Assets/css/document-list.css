@@ -334,6 +334,11 @@ rbs-document-list div.empty-row {
 }
 
 
+.thumbnail-grid li .inner .caption .quick-actions-buttons.pull-right {
+	margin-right: 4px;
+	margin-top: 4px;
+}
+
 .grid-small .thumbnail-grid li .inner {
 	height: 60px;
 	line-height: 30px;

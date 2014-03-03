@@ -97,8 +97,12 @@
 			</div>
 		</div>
 
-		<div class="btn-toolbar" ng-if="selectionContext.param('multiple')">
-			<button type="button" class="btn btn-default" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
+		<div class="btn-toolbar">
+			<div class="btn-group pull-right" ng-show="gridModeAvailable">
+				<button title="{{ i18nAttr('m.rbs.admin.admin.grid_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="setViewMode('grid')" class="btn btn-default"><i class="icon-th-large"></i></button>
+				<button title="{{ i18nAttr('m.rbs.admin.admin.list_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="setViewMode('list')" class="btn btn-default"><i class="icon-list"></i></button>
+			</div>
+			<button ng-if="selectionContext.param('multiple')" type="button" class="btn btn-default" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
 		</div>
 	</div>
 

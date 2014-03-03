@@ -2,8 +2,7 @@
 
 
 
-#main-content > .row,
-body > footer > .row {
+#main-content > .row {
 	margin-right: 0;
 	margin-left: 0;
 }
@@ -278,6 +277,10 @@ h4.list-group-item:first-child {
 	line-height: 10pt;
 }
 
+.list-group-item.active .badge {
+	text-shadow: none;
+}
+
 #rbs-left-menu .panel .list-group-item {
 	padding-top: 6px;
 	padding-bottom: 6px;
@@ -334,6 +337,11 @@ h4.list-group-item:first-child {
 	margin-right: 5px;
 	margin-top: 1px;
 	width: 32px;
+}
+
+.btn.btn-headline.no-text i[class^="icon-"] {
+	margin-right: 0;
+	float: none;
 }
 
 .btn.btn-headline small {
@@ -396,39 +404,12 @@ h4.list-group-item:first-child {
 body > footer {
 	font-size: 9pt;
 	color: silver;
-	border-top: 1px solid #e5e5e5;
+	border-top: 5px solid #e5e5e5;
 	margin-top: 15px;
-	padding-top: 5px;
-}
-
-body > footer .icons-container {
-	text-align: center;
-	top: -14px;
-	position: relative;
-}
-
-body > footer .icons {
-	text-align: center;
-	font-size: 12pt;
-	background: none repeat scroll 0 0 white;
-	box-shadow: 0 0 5px rgba(128, 128, 128, 0.2) inset;
-	border: 1px solid #E5E5E5;
-	border-radius: 15px 15px 15px 15px;
-	padding: 5px 8px;
-}
-
-body > footer .icons a:hover,
-body > footer .icons a:visited:hover{
-	text-decoration: none;
-}
-
-body > footer .icons a {
-	margin: 0 5px;
-}
-
-body > footer {
+	padding: 7px 15px;
 	line-height: 12px;
 }
+
 
 body > footer a:link,
 body > footer a:visited {

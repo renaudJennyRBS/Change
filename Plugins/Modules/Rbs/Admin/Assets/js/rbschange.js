@@ -4,7 +4,7 @@
 	$.fn.reverse = [].reverse;
 
 	// Declares the main module and its dependencies.
-	var app = angular.module('RbsChange', ['ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'OAuthModule', 'ngAnimate']);
+	var app = angular.module('RbsChange', ['ngRoute', 'ngResource', 'ngSanitize', 'ngTouch', 'ngCookies', 'ngAnimate', 'OAuthModule']);
 
 
 	//-------------------------------------------------------------------------
@@ -164,7 +164,7 @@
 		return {
 			'restrict'   : 'A',
 			link : function (scope, elm) {
-				elm.html('RBS Change version ' + version + '<small style="display: block;">AngularJS ' + angular.version.full + ' &mdash; jQuery ' + $.fn.jquery + '</small>');
+				elm.html('Version ' + version + ' (AngularJS ' + angular.version.full + ' &mdash; jQuery ' + $.fn.jquery + ')');
 			}
 		};
 	}]);

@@ -4,25 +4,31 @@
 	z-index: 101;
 	position: relative;
 	margin: 10px 0 0 0;
-	background: white;
 	padding: 10px 15px 10px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-	border-radius: 5px;
+	border-radius: 0;
 	font-size: 14px;
+	background: #3C3C3C;
+	color: #eeeeee;border-top: 5px solid rgb(172,172,172);
+	border-left: 10px solid rgb(172,172,172);
+	border-top: 0 none;
+	display: none;
 }
+
+rbs-form-button-bar > .confirmation-area.embedded-modal {
+	position: relative;
+	top: 46px;
+	margin-top: -46px;
+}
+
 
 .form-horizontal .col-lg-9 .embedded-modal {
 	margin-left: -180px;
 }
 
-.embedded-modal {
-	margin: 10px 0;
-	display: none;
-}
-
 .embedded-modal:after {
 	position: absolute;
-	border-bottom: 9px solid #FFFFFF;
+	border-bottom: 9px solid #333333;
 	border-left: 9px solid transparent;
 	border-right: 9px solid transparent;
 	content: "";
@@ -69,7 +75,7 @@
 }
 
 .embedded-modal h3 {
-	border-bottom: 1px solid #EEEEEE;
+	border-bottom: none;
 	margin: 0 -15px 10px;
 	padding: 0 15px 6px;
 }
@@ -87,12 +93,27 @@
 .embedded-modal.bottom.has-form-actions:after {
 	top: auto;
 	bottom: -9px;
-	border-top: 9px solid #F5F5F5;
+	border-top: 9px solid #333333;
 	border-bottom: none;
 }
 
 .embedded-modal .form-actions {
 	margin: 10px -15px -10px -15px;
-	border-radius: 0 0 5px 5px;
+	border-radius: 0;
 	padding: 10px 15px;
+	background: none;
+	border-top: 1px dashed #555555;
+}
+
+.embedded-modal button.close {
+	color: white;
+	opacity: 0.8;
+}
+
+.embedded-modal.warning {
+	border-color: rgb(239,172,39);
+}
+
+.embedded-modal.danger {
+	border-color: #D9534F;
 }

@@ -135,9 +135,10 @@
 
 				lastCssRule : null,
 
-				addCssRule : function (button, parent) {
+				addCssRule : function (button, parent)
+				{
 					var offset = button.offset();
-					var left = Math.floor(offset.left + (button.outerWidth()-14) / 2 - parent.offset().left);
+					var left = Math.floor(offset.left + (button.outerWidth()-14) / 2 - 1 - parent.offset().left - (this.$embeddedEl.outerWidth()-this.$embeddedEl.innerWidth()));
 					var id = ''+left;
 					if ( ! (id in this.cssRulesApplied) ) {
 						$(this.cssRule.replace(/\{\{id\}\}/g, id).replace(/\{\{leftBefore\}\}/g, (left-1)+'px').replace(/\{\{leftAfter\}\}/g, left+'px')).appendTo("head");
@@ -147,7 +148,8 @@
 				},
 
 
-				embed : function ($el, url, scope, options) {
+				embed : function ($el, url, scope, options)
+				{
 					if (this.$embeddedEl !== null) {
 						throw new Error("Cannot embed more than one Modal.");
 					}
@@ -169,8 +171,8 @@
 
 					if (options.cssClass) {
 						$el.addClass(options.cssClass);
+						$el.attr('data-embed-css-class', options.cssClass);
 					}
-
 
 					$el.fadeIn('fast');
 					options.pointedElement = $(options.pointedElement);
@@ -188,8 +190,8 @@
 
 					theScope.dialogEmbedQ = $q.defer();
 
-					if (angular.isObject(url)) {
-
+					if (angular.isObject(url))
+					{
 						var contents =
 							'<header class="clearfix">' +
 							'<button data-ng-click="' + (url.closeButtonNgClick || 'closeEmbeddedModal()') + '" class="close pull-right" style="margin-left:30px;" type="button">×</button>' +
@@ -200,9 +202,9 @@
 						if ($el.find('.form-actions').length > 0) {
 							$el.addClass('has-form-actions');
 						}
-
-					} else {
-
+					}
+					else
+					{
 						$.get(url, function (data) {
 							$compile(data)(theScope, function (clone) {
 								$timeout(function() {
@@ -210,15 +212,14 @@
 								});
 							});
 						});
-
 					}
 
 					return theScope.dialogEmbedQ.promise;
-
 				},
 
 
-				closeEmbedded: function () {
+				closeEmbedded: function ()
+				{
 					var self = this,
 					    q = $q.defer();
 
@@ -229,7 +230,7 @@
 							self.$embeddedEl.find('rbs-document-list').each(function () {
 								angular.element($(this)).isolateScope().$destroy();
 							});
-							self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule);
+							self.$embeddedEl.empty().hide().removeClass('bottom').removeClass(self.lastCssRule).removeClass(self.$embeddedEl.attr('data-embed-css-class'));
 							self.$embeddedEl = null;
 							$timeout(function () {
 								q.resolve();
@@ -245,8 +246,8 @@
 				},
 
 
-				confirmEmbed: function ($el, title, text, scope, options) {
-
+				confirmEmbed: function ($el, title, text, scope, options)
+				{
 					var deferred = $q.defer(),
 					    self = this;
 
@@ -311,15 +312,16 @@
 					);
 
 					return deferred.promise;
-
 				},
 
 
-				destroyEmbedded: function () {
+				destroyEmbedded: function ()
+				{
 					var self = this,
 						q = $q.defer();
 
-					if (self.$embeddedEl !== null) {
+					if (self.$embeddedEl !== null)
+					{
 						$embeddedModalBackdrop.hide();
 						// Remove any <rbs-document-list/> elements.
 						self.$embeddedEl.find('rbs-document-list').each(function () {
@@ -331,7 +333,9 @@
 						$timeout(function () {
 							q.resolve();
 						});
-					} else {
+					}
+					else
+					{
 						$timeout(function () {
 							q.resolve();
 						});
@@ -348,12 +352,14 @@
 				show     : false
 			});
 
-			dialog.$modal.on('shown', function () {
+			dialog.$modal.on('shown', function ()
+			{
 				dialog.$modal.find('.modal-footer .btn-primary').focus();
 			});
 
 			// Close any Dialog when the route changes.
-			$rootScope.$on('$routeChangeSuccess', function () {
+			$rootScope.$on('$routeChangeSuccess', function ()
+			{
 				if (dialog.$embeddedEl) {
 					dialog.destroyEmbedded();
 				}
