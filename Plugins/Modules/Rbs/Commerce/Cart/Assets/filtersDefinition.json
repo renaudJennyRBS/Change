@@ -1,0 +1,39 @@
+[
+	{
+		"name": "linesPriceValue",
+		"parameters": {
+			"propertyName": "linesPriceValue"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.lines_price_value_filter",
+			"label": "m.rbs.commerce.admin.lines_price_value"
+		},
+		"directiveName": "rbs-document-filter-property-number"
+	},
+	{
+		"name": "totalPriceValue",
+		"parameters": {
+			"propertyName": "totalPriceValue"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.total_price_value_filter",
+			"label": "m.rbs.commerce.admin.total_price_value"
+		},
+		"directiveName": "rbs-document-filter-property-number"
+	},
+	{
+		"name": "hasCoupon",
+		"parameters": {
+			"propertyName": "couponId"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.has_coupon_filter",
+			"label": "m.rbs.commerce.admin.has_coupon",
+			"selectModel": "{\"name\":\"Rbs_Discount_Coupon\"}"
+		},
+		"directiveName": "rbs-document-filter-property-document"
+	}
+]

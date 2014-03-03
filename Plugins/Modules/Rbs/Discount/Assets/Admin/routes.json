@@ -9,7 +9,15 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Discount/Coupon/": false,
+	"/Rbs/Discount/Coupon/": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "selector",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/selector.twig",
+			"labelKey": "m.rbs.discount.admin.coupon_list | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Discount/Coupon/:id": false,
 	"/Rbs/Discount/Coupon/:id/timeline": false,
 	"/Rbs/Discount/Coupon/:id/translate/:LCID": false,

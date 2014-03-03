@@ -43,7 +43,8 @@ class GetStorageItemContent
 				else
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-					$result->getHeaders()->addHeaderLine('Content-Type', $itemInfo->getMimeType());
+					$contentType = $itemInfo->getMimeType();
+					$result->getHeaders()->addHeaderLine('Content-Type', $contentType ? $contentType : 'application/octet-stream');
 					$result->setRenderer(function() use ($itemInfo) {return file_get_contents($itemInfo->getPathname());});
 				}
 			}
