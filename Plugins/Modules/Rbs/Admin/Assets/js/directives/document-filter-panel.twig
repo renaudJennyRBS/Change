@@ -1,4 +1,4 @@
-<div class="panel panel-primary">
+<div class="panel panel-info">
 	<div class="panel-heading" ng-click="toggleFilterPanel()" style="cursor: pointer;">
 		<span class="pull-right">
 			<i data-ng-hide="showFilter" class="icon-chevron-down"></i>
@@ -27,7 +27,7 @@
 					<button type="button" rbs-async-action-button="creatingFilter" rbs-async-action-button-done-label="{{ i18nAttr('m.rbs.admin.admin.filter_created', ['ucf']) }}" class="btn btn-primary" ng-click="createFilter()"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.create_filter', ['ucf']) }}</button>
 				</span>
 
-				<button type="submit" class="btn btn-primary"><i class="icon-filter icon-white"></i> {{ i18n('m.rbs.admin.admin.filter', ['ucf']) }}</button>
+				<button type="submit" class="btn btn-info"><i class="icon-filter icon-white"></i> {{ i18n('m.rbs.admin.admin.filter', ['ucf']) }}</button>
 				<button type="button" class="btn btn-default" ng-click="resetFilter()">{{ i18n('m.rbs.admin.admin.reset_filter', ['ucf']) }}</button>
 			</div>
 		</div>

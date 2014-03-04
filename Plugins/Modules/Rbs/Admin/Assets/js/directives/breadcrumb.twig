@@ -1,5 +1,5 @@
 <ul class="rbs-breadcrumb list-unstyled">{% spaceless %}
-	<li ng-show="home" class="location"><a href="(= home.url() =)"><i class="icon-home icon-2x" style="line-height: 10px; position: relative; top: 4px;"></i></a></li>
+	<li ng-show="home" class="location"><a href="(= home.url() =)"><i class="icon-home icon-2x" style="line-height: 10px; position: relative; top: 5px;"></i></a></li>
 	<li ng-show="entries" class="location" ng-repeat="entry in entries"><a href="(= entry.url() =)" ng-bind="entry.label"></a></li>
 	<li ng-show="current" class="active" ><span ng-bind="current.label"></span></li>
 {% endspaceless %}</ul>
