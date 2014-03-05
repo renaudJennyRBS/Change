@@ -16,7 +16,9 @@
 			model="Rbs_Brand_Brand" publishable="true" filter-collection="filter">
 			<rbs-column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></rbs-column>
 			<rbs-column name="label" primary="true"></rbs-column>
-			<rbs-column name="websiteUrl"></rbs-column>
+			<rbs-column name="websiteUrl">
+				<small ng-if="doc.websiteUrl"><a href ng-href="(= doc.websiteUrl =)" target="_blank">(= doc.websiteUrl =) <i class="icon-external-link-sign"></i></a></small>
+			</rbs-column>
 
 			<rbs-preview style="min-height: 200px">
 				<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
