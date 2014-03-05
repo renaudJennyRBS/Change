@@ -622,7 +622,45 @@ class StockManager
 	}
 
 	/**
-	 * Return not reserved quantity
+	 * Remove not confirmed reservation for target identifier
+	 * @api
+	 * @param string $targetIdentifier
+	 * @throws \Exception
+	 */
+	public function cleanupReservations($targetIdentifier)
+	{
+		$transactionManager = $this->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::cleanupReservations');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->delete($fb->table('rbs_stock_dat_res'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('target'), $fb->parameter('targetIdentifier')),
+						$fb->eq($fb->column('confirmed'), $fb->booleanParameter('confirmed'))
+					)
+				);
+			}
+			$statement = $qb->deleteQuery();
+			$statement->bindParameter('targetIdentifier', $targetIdentifier);
+			$statement->bindParameter('confirmed', false);
+			$statement->execute();
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
+	/**
+	 * Remove all reservation for target identifier
+	 * @api
 	 * @param string $targetIdentifier
 	 * @throws \Exception
 	 */
@@ -643,6 +681,40 @@ class StockManager
 			$statement->bindParameter('targetIdentifier', $targetIdentifier);
 			$statement->execute();
 
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
+	/**
+	 * @api
+	 * @param string $targetIdentifier
+	 * @param string $confirmedTargetIdentifier
+	 * @throws \Exception
+	 */
+	public function confirmReservations($targetIdentifier, $confirmedTargetIdentifier = null)
+	{
+		$transactionManager = $this->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::confirmReservations');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_stock_dat_res'));
+				$qb->assign($fb->column('confirmed'), $fb->booleanParameter('confirmed'));
+				$qb->assign($fb->column('target'), $fb->parameter('confirmedTargetIdentifier'));
+				$qb->where($fb->eq($fb->column('target'), $fb->parameter('targetIdentifier')));
+			}
+			$statement = $qb->updateQuery();
+			$statement->bindParameter('confirmed', true);
+			$statement->bindParameter('confirmedTargetIdentifier', $confirmedTargetIdentifier ? $confirmedTargetIdentifier : $targetIdentifier);
+			$statement->bindParameter('targetIdentifier', $targetIdentifier);
+			$statement->execute();
 			$transactionManager->commit();
 		}
 		catch (\Exception $e)

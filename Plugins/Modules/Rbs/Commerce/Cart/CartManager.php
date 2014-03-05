@@ -455,11 +455,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					{
 						$this->addLine($cart, $lineToMerge->toArray());
 					}
-					else
-					{
-						$newQuantity = $currentCartLine->getQuantity() + $lineToMerge->getQuantity();
-						$this->updateLineQuantityByKey($cart, $currentCartLine->getKey(), $newQuantity);
-					}
 				}
 			}
 		}
@@ -607,7 +602,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			else
 			{
-				$commerceServices->getStockManager()->unsetReservations($cart->getIdentifier());
+				$commerceServices->getStockManager()->cleanupReservations($cart->getIdentifier());
 			}
 		}
 	}
@@ -1007,6 +1002,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			try
 			{
 				$tm->begin();
+
+				$this->getStockManager()->cleanupReservations($cart->getIdentifier());
+
 				$qb = $dbProvider->getNewStatementBuilder();
 				$fb = $qb->getFragmentBuilder();
 				$qb->delete($fb->table('rbs_commerce_dat_cart'));
@@ -1031,9 +1029,12 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				$uq->execute();
 
+
 				$tm->commit();
 				$this->cachedCarts = [];
 				$cart->getContext()->set('storageId', null);
+
+
 			}
 			catch (\Exception $e)
 			{
@@ -1667,5 +1668,13 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $value;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getCleanupTTL()
+	{
+		return 60 * 60; //60 minutes
 	}
 }

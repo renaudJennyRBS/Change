@@ -64,6 +64,38 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
+		$jobManager = $applicationServices->getJobManager();
+		$name = 'Rbs_Commerce_Carts_Cleanup';
+		$ids = $jobManager->getJobIdsByName($name);
+
+		if (count($ids) === 0)
+		{
+			$jobManager->createNewJob($name, null, null, true);
+		}
+		else
+		{
+			$first = true;
+			foreach ($ids as $id)
+			{
+				$job = $jobManager->getJob($id);
+				if (!$job)
+				{
+					continue;
+				}
+
+				if ($first && $job->getStatus() !== \Change\Job\JobInterface::STATUS_WAITING)
+				{
+					$jobManager->updateJobStatus($job, \Change\Job\JobInterface::STATUS_WAITING,
+						['reportedAt' => new \DateTime()]);
+				}
+				else if (!$first && $job->getStatus() !== \Change\Job\JobInterface::STATUS_FAILED)
+				{
+					$jobManager->updateJobStatus($job, \Change\Job\JobInterface::STATUS_FAILED);
+				}
+
+				$first = false;
+			}
+		}
 	}
 
 	/**

@@ -347,10 +347,13 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			try
 			{
 				$tm->begin();
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 				/* @var $order \Rbs\Order\Documents\Order */
-				$order = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Order_Order');
+				$order = $documentManager->getNewDocumentInstanceByModelName('Rbs_Order_Order');
 				$order->setContext($cart->getContext()->toArray());
+				$order->getContext()->set('cartIdentifier', $cart->getIdentifier());
+				$order->getContext()->set('transactionId', $cart->getTransactionId());
 				$order->setCreationDate($cart->lastUpdate());
 				$order->setAuthorId($cart->getUserId());
 				$order->setEmail($cart->getEmail());
@@ -382,13 +385,36 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				$order->setTotalAmountWithTaxes($cart->getTotalAmountWithTaxes());
 
 				$order->setCreditNotes($cart->getCreditNotes());
-
 				$order->setPaymentAmountWithTaxes($cart->getPaymentAmountWithTaxes());
 
 				$order->setProcessingStatus(\Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING);
 				$order->save();
 
+				$orderIdentifier = $order->getIdentifier();
 				$this->getCartManager()->affectOrder($cart, $order);
+
+				if ($cart->getTransactionId())
+				{
+					$transaction = $documentManager->getDocumentInstance($cart->getTransactionId());
+					if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+					{
+						$transaction->setTargetIdentifier($orderIdentifier);
+						$contextData = $transaction->getContextData();
+						if (!is_array($contextData)) {
+							$contextData = [];
+						}
+						$contextData['from'] = 'order';
+						$transaction->setContextData($contextData);
+
+						$transaction->update();
+					}
+				}
+
+				$commerceServices = $event->getServices('commerceServices');
+				if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+				{
+					$commerceServices->getStockManager()->confirmReservations($cart->getIdentifier(), $orderIdentifier);
+				}
 
 				$tm->commit();
 			}

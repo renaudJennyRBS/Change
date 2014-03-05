@@ -449,6 +449,27 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
+	 * @param string $name
+	 * @param integer $offset
+	 * @param integer $limit
+	 * @return integer[]
+	 */
+	public function getJobIdsByName($name, $offset = 0, $limit = 20)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->column('id'))->from('change_job');
+		$qb->where($fb->eq($fb->column('name'), $fb->parameter('name')));
+		$qb->orderDesc($fb->column('start_date'));
+		$sq = $qb->query();
+		$sq->bindParameter('name', $name);
+		$sq->setStartIndex($offset);
+		$sq->setMaxResults($limit);
+		return $sq->getResults($sq->getRowsConverter()->addIntCol('id'));
+	}
+
+	/**
+	 * @api
 	 * @param JobInterface $job
 	 * @throws \Exception
 	 */

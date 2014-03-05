@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -102,28 +101,55 @@ class Transaction
 	 */
 	public function handleRegistration(\Change\Events\Event $event)
 	{
-		$event->getApplication()->getLogging()->fatal(__METHOD__);
 		$user = $event->getParam('user');
 		$transaction = $event->getParam('transaction');
 
 		if ($user instanceof \Rbs\User\Documents\User && $transaction instanceof \Rbs\Payment\Documents\Transaction)
 		{
-			$contextData = $transaction->getContextData();
-			if (isset($contextData['from']) && $contextData['from'] == 'cart')
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			try
 			{
-				/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-				$commerceServices = $event->getServices('commerceServices');
-				$cartManager = $commerceServices->getCartManager();
-				$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-				if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+				$tm->begin();
+				$contextData = $transaction->getContextData();
+				if (!is_array($contextData))
 				{
-					// Affect user on cart.
-					$cartManager->affectUser($cart, $user);
+					$contextData = [];
+				}
 
-					// Affect user on order if the cart is already converted.
-					if ($cart->getOrderId())
+				if (isset($contextData['from']) && $contextData['from'] == 'cart')
+				{
+					/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+					$commerceServices = $event->getServices('commerceServices');
+					$cartManager = $commerceServices->getCartManager();
+					$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
+					if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 					{
-						$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getOrderId());
+						// Affect user on cart.
+						$cartManager->affectUser($cart, $user);
+
+						// Affect user on order if the cart is already converted.
+						if ($cart->getOrderId())
+						{
+							$order = $event->getApplicationServices()->getDocumentManager()
+								->getDocumentInstance($cart->getOrderId());
+							if ($order instanceof \Rbs\Order\Documents\Order)
+							{
+								$order->setAuthorId($user->getId());
+								if (!$order->getOwnerId())
+								{
+									$order->setOwnerId($user->getId());
+								}
+								$order->update();
+							}
+						}
+					}
+				}
+				else if (isset($contextData['from']) && $contextData['from'] == 'order')
+				{
+					$idParts = explode(':', $contextData['from']);
+					if (count($idParts) == 2 && $idParts[0] == 'Order')
+					{
+						$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($idParts[1]);
 						if ($order instanceof \Rbs\Order\Documents\Order)
 						{
 							$order->setAuthorId($user->getId());
@@ -131,10 +157,16 @@ class Transaction
 							{
 								$order->setOwnerId($user->getId());
 							}
-							$order->save();
+							$order->update();
 						}
 					}
 				}
+
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
 			}
 		}
 	}
