@@ -72,6 +72,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Commerce\Job\TransactionStatusChanged())->execute($event);
 		};
 		$events->attach('process_Rbs_Payment_TransactionStatusChanged', $callBack, 10);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Commerce\Job\CartsCleanup())->execute($event);
+		};
+		$events->attach('process_Rbs_Commerce_Carts_Cleanup', $callBack, 5);
 	}
 
 	/**

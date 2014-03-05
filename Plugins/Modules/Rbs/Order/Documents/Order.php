@@ -117,6 +117,14 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	/**
 	 * @return string
 	 */
+	public function getIdentifier()
+	{
+		return 'Order:' . $this->getId();
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getLabel()
 	{
 		return $this->getCode() ? $this->getCode() : '[' . $this->getId() . ']';

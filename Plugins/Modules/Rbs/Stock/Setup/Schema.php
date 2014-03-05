@@ -45,6 +45,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('reservation')->setNullable(true))
 				->addField($schemaManager->newIntegerFieldDefinition('store_id')->setNullable(true))
 				->addField($schemaManager->newVarCharFieldDefinition('target')->setLength(80)->setNullable(true))
+				->addField($schemaManager->newBooleanFieldDefinition('confirmed')->setNullable(false)->setDefaultValue(0))
 				->addField($schemaManager->newDateFieldDefinition('date')->setNullable(false))
 				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
 				->setOption('AUTONUMBER', 1);

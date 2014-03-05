@@ -28,6 +28,7 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
+
 		$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Commerce', '\Rbs\Commerce\Events\SharedListeners');
 
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
@@ -43,6 +44,8 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Mail/Events/MailManager/Rbs_Commerce', '\Rbs\Commerce\Events\MailManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Payment/Events/PaymentManager/Rbs_Commerce', '\Rbs\Commerce\Events\PaymentManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
+
+		$configuration->addPersistentEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60);
 	}
 
 	/**
@@ -64,6 +67,38 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
+		$jobManager = $applicationServices->getJobManager();
+		$name = 'Rbs_Commerce_Carts_Cleanup';
+		$ids = $jobManager->getJobIdsByName($name);
+
+		if (count($ids) === 0)
+		{
+			$jobManager->createNewJob($name, null, null, true);
+		}
+		else
+		{
+			$first = true;
+			foreach ($ids as $id)
+			{
+				$job = $jobManager->getJob($id);
+				if (!$job)
+				{
+					continue;
+				}
+
+				if ($first && $job->getStatus() !== \Change\Job\JobInterface::STATUS_WAITING)
+				{
+					$jobManager->updateJobStatus($job, \Change\Job\JobInterface::STATUS_WAITING,
+						['reportedAt' => new \DateTime()]);
+				}
+				else if (!$first && $job->getStatus() !== \Change\Job\JobInterface::STATUS_FAILED)
+				{
+					$jobManager->updateJobStatus($job, \Change\Job\JobInterface::STATUS_FAILED);
+				}
+
+				$first = false;
+			}
+		}
 	}
 
 	/**
