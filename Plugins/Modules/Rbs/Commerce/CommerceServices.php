@@ -146,6 +146,7 @@ class CommerceServices extends Di
 		$cartManagerClassName = $this->getInjectedClassName('CartManager', 'Rbs\Commerce\Cart\CartManager');
 		$classDefinition = $this->getClassDefinition($cartManagerClassName);
 		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addConfigurationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setStockManager', true)
 				->addMethodParameter('setStockManager', 'stockManager', array('type' => 'StockManager', 'required' => true))
 			->addMethod('setPriceManager', true)
@@ -226,7 +227,8 @@ class CommerceServices extends Di
 				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
 
 		$im->addAlias('CartManager', $cartManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging, 'documentManager' => $documentManager));
+			array('eventManagerFactory' => $eventManagerFactory, 'configuration' => $application->getConfiguration(),
+				'logging' => $logging, 'documentManager' => $documentManager));
 
 		$im->addAlias('AttributeManager', $attributeManagerClassName,
 			array('dbProvider' => $dbProvider, 'i18nManager' => $i18nManager,

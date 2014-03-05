@@ -38,6 +38,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected $logging;
 
 	/**
+	 * @var \Change\Configuration\Configuration
+	 */
+	protected $configuration;
+
+	/**
 	 * @var array
 	 */
 	protected $cachedCarts = [];
@@ -112,6 +117,24 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getLogging()
 	{
 		return $this->logging;
+	}
+
+	/**
+	 * @param \Change\Configuration\Configuration $configuration
+	 * @return $this
+	 */
+	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+	{
+		$this->configuration = $configuration;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Configuration\Configuration
+	 */
+	protected function getConfiguration()
+	{
+		return $this->configuration;
 	}
 
 	/**
@@ -1675,6 +1698,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getCleanupTTL()
 	{
-		return 60 * 60; //60 minutes
+		return $this->getConfiguration()->getEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60); //60 minutes
 	}
 }
