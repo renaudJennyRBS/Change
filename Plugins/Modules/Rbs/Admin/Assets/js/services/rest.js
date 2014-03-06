@@ -439,7 +439,6 @@
 				// Public API of the REST service.
 
 				REST = {
-
 					'getHttpConfig' : function (transformer) {
 						return getHttpConfig(transformer);
 					},
@@ -1245,6 +1244,7 @@
 					 * Sends a query to search for documents. Query is sent via a POST call.
 					 *
 					 * @param queryObject
+					 * @param {object=} params
 					 * @returns Promise, resolved with a collection of documents that match the filters.
 					 */
 					'query' : function (queryObject, params) {
@@ -1317,6 +1317,7 @@
 					/**
 					 * @param url Full URL
 					 * @param params
+					 * @param {function=} transformer
 					 *
 					 * @returns Promise
 					 */

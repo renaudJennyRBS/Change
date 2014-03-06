@@ -819,6 +819,10 @@
 						return true;
 					};
 
+					scope.isPropertyModified = function(propertyName) {
+						return angular.isArray(scope.changes) && scope.changes.indexOf(propertyName) !== -1;
+					};
+
 
 					scope.submit = function () {
 						return CTRL.submit();

@@ -1,15 +1,20 @@
-<div class="row">
+<div class="row" data-ng-show="document.lines.length > 0">
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.admin.taxes_amount', ['ucf']) }}</h3>
 			</div>
 			<table class="table table-striped table-bordered">
-				<tbody>
+				<tbody data-ng-if="!contentModified()">
 					<tr data-ng-repeat="tax in document.totalTaxes">
 						<td>(= document.taxes[tax.taxCode].label =)</td>
 						<td>(= (tax.rate * 100) | number =) %</td>
 						<td>(= tax.value | currency =)</td>
+					</tr>
+				</tbody>
+				<tbody data-ng-if="contentModified()">
+					<tr>
+						<td class="text-warning">{{ i18n('m.rbs.order.admin.save_to_see_taxes', ['ucf']) }}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -20,9 +25,50 @@
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
 			</div>
-			<div class="panel-body">
-				<strong>(= document.paymentAmountWithTaxes | currency =)</strong>
-			</div>
+			<table class="table table-striped table-bordered">
+				<tbody data-ng-if="!contentModified()">
+					<tr data-ng-show="showLinesAmount()">
+						<td>{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf']) | raw }}</td>
+						<td>(= document.linesAmountWithTaxes | currency =)</td>
+					</tr>
+					<tr data-ng-repeat="fee in document.fees">
+						<td>(= fee.designation =)</td>
+						<td>(= fee.options.formattedAmountWithTaxes =)</td>
+					</tr>
+					<tr data-ng-repeat="discount in document.discounts">
+						<td>(= discount.title =)</td>
+						<td>(= discount.options.formattedAmountWithTaxes =)</td>
+					</tr>
+					<tr data-ng-show="showTotalAmount()">
+						<td>{{ i18n('m.rbs.order.admin.order_total_amount_with_taxes', ['ucf']) | raw }}</td>
+						<td>(= document.totalAmountWithTaxes | currency =)</td>
+					</tr>
+					<tr data-ng-repeat="note in document.creditNotes">
+						<td>(= note.title =)</td>
+						<td>(= note.amountWithTaxes | currency =)</td>
+					</tr>
+					<tr>
+						<td><strong>{{ i18n('m.rbs.order.admin.order_amount_to_pay', ['ucf']) | raw }}</strong></td>
+						<td><strong>(= document.paymentAmountWithTaxes | currency =)</strong></td>
+					</tr>
+				</tbody>
+				<tbody data-ng-if="contentModified()">
+					<tr>
+						<td>
+							<strong data-ng-show="priceInfo.withTax">
+								{{ i18n('m.rbs.order.admin.order_lines_amount_without_taxes', ['ucf']) | raw }}
+							</strong>
+							<strong data-ng-hide="priceInfo.withTax">
+								{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf']) | raw }}
+							</strong>
+						</td>
+						<td><strong>(= document.paymentAmountWithTaxes | currency =)</strong></td>
+					</tr>
+					<tr>
+						<td class="text-warning" colspan="2">{{ i18n('m.rbs.order.admin.save_to_see_amounts', ['ucf']) }}</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>

@@ -35,7 +35,7 @@ class Install extends \Change\Plugins\InstallBase
 
 			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_Sidebar_Page', 'sidebarpage', 'Sidebar');
 			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_No_Sidebar_Page', 'nosidebarpage', 'No Sidebar');
-			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_Popin', 'popin', 'Popin', true);
+			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_Popin', 'popin', 'Popin');
 			$this->getTemplate($applicationServices, $theme, 'Rbs_Demo_Mail', 'mail', 'Mail', true);
 
 			$transactionManager->commit();

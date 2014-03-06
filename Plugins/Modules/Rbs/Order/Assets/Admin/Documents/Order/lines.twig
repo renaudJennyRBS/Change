@@ -1,99 +1,189 @@
-<div class="panel" ng-class="{true: 'panel-default', false: 'panel-warning'}[document.lines.length > 0]">
+<div class="panel" data-ng-class="{true: 'panel-default', false: 'panel-warning'}[document.lines.length > 0]">
 	<div class="panel-heading">
-		<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.lines.length =) &mdash; {{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= extend.articleCount =)</h3>
+		<h3 class="panel-title">
+			<i class="icon-list"></i>
+			{{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.lines.length =) &mdash;
+			{{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= data.articleCount =)
+		</h3>
 	</div>
 	<div class="panel-body">
-		<p class="text-warning" ng-show="document.lines.length == 0">
+		<p class="text-warning" data-ng-show="document.lines.length == 0">
 			<strong>{{ i18n('m.rbs.order.admin.order_no_lines', ['ucf']) }}</strong>
 		</p>
-		<p ng-show="document.lines.length == 0">
+		<p data-ng-show="document.lines.length == 0">
 			{{ i18n('m.rbs.order.admin.order_no_lines_help', ['ucf']) | raw }}
 		</p>
 
-		<div ng-show="document.webStoreId">
-			<p>
-				<a href="javascript:;" ng-click="orderContext.showNewLineUI = !orderContext.showNewLineUI"><i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showNewLineUI]"></i> {{ i18n('m.rbs.order.admin.order_add_lines', ['ucf']) }}</a>
-			</p>
-			<div class="well well-sm" ng-show="orderContext.showNewLineUI">
-				<h4>{{ i18n('m.rbs.order.admin.order_new_line', ['ucf']) }}</h4>
-				<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
-
-				<div ng-show="document.billingAreaId && document.context.taxZone">
-					<p>
-						<div>
-						<rbs-field label="{{ i18n('m.rbs.order.admin.order_articles', ['ucf']) }}">
-						<rbs-document-picker-multiple accepted-model="Rbs_Catalog_Product"
-							 selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}" ng-model="data.newLineProducts">
-						 </rbs-document-picker-multiple>
-						<button type="button" ng-disabled="extend.loadingProductInfo || ! data.newLineProducts.length || ! document.webStoreId || ! document.billingAreaId" class="btn btn-primary" ng-click="extend.addNewLines()">
-							<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[extend.loadingProductInfo]"></i> {{ i18n('m.rbs.order.admin.order_add_line', ['ucf']) }}
-						</button>
-						</rbs-field>
-						</div>
-					</p>
+		{# Line creation actions #}
+		<div data-ng-show="document.webStoreId">
+			<div class="add-elements-bar" data-ng-if="isContentEditable()">
+				<a href="javascript:;" data-ng-show="document.billingAreaId && document.context.taxZone"
+					data-ng-click="updateNewLineUI('product')">
+					{{ i18n('m.rbs.order.admin.order_add_product_lines', ['ucf']) }}
+				</a>
+				<a href="javascript:;" data-ng-click="updateNewLineUI('custom')">
+					{{ i18n('m.rbs.order.admin.order_add_custom_line', ['ucf']) }}
+				</a>
+			</div>
+			{# New product lines panel #}
+			<div class="panel panel-default" data-ng-show="orderContext.showNewProductLineUI">
+				<div class="panel-heading">
+					<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_product_lines', ['ucf']) }}</h4>
 				</div>
-				<p ng-hide="document.billingAreaId && document.context.taxZone">
-					<span class="label label-info">Info</span>
-					{{ i18n('m.rbs.order.admin.order_choose_billingarea_and_taxzone_first', ['ucf']) | raw }}
-				</p>
+				<div class="panel-body">
+					<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
+					<rbs-document-picker-multiple accepted-model="Rbs_Catalog_Product" ng-model="data.newLineProducts"
+						selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}">
+					</rbs-document-picker-multiple>
+				</div>
+				<div class="panel-footer">
+					<button type="button" class="btn btn-primary btn-success" data-ng-click="addProductLines()"
+						data-ng-disabled="data.loadingProductInfo || !data.newLineProducts.length">
+						<i data-ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[data.loadingProductInfo]"></i>
+						{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+					</button>
+					<button type="button" class="btn btn-default" data-ng-click="updateNewLineUI(null)">
+						{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+					</button>
+				</div>
+			</div>
+			{# New custom line panel #}
+			<div class="panel panel-default" data-ng-if="orderContext.showNewCustomLineUI">
+				<div class="panel-heading">
+					<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}</h4>
+				</div>
+				<div class="panel-body">
+					<rbs-order-line-editor ng-model="data.newCustomLine" price-info="priceInfo"></rbs-order-line-editor>
+				</div>
+				<div class="panel-footer">
+					<button type="button" class="btn btn-primary btn-success" data-ng-click="addCustomLine()">
+						<i data-ng-class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+					</button>
+					<button type="button" class="btn btn-default" data-ng-click="updateNewLineUI(null)">
+						{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+					</button>
+				</div>
 			</div>
 		</div>
-		<div ng-show="document.lines.length > 0">
-			<rbs-document-list collection="listLines" data-dlid="RbsOrderOrderEditorLinesList" modification-date="false" extend="extend" actions="">
-
-				<rbs-column name="index" label="{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}" format="number" width="60px">
-					(= doc.index + 1 =)
-				</rbs-column>
-
-				<rbs-column name="designation" label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}" primary="true">
-					(=doc.designation=)
-				</rbs-column>
-
-				<rbs-column name="sku" label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}">
-					(=doc.items[0].codeSKU=)
-				</rbs-column>
-
-				<rbs-column name="unitPrice" label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" format="number" width="100px">
-					(=doc.items[0].price.value | currency =)
-				</rbs-column>
-
-				<rbs-column name="quantity" label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" format="number" width="100px">
-					<input type="number" min="1" required="true" ng-model="doc.quantity" class="form-control"/>
-				</rbs-column>
-
-				<rbs-column name="totalPrice" label="{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}" format="number" width="100px">
-					(= doc.items[0].price.value * doc.quantity | currency =)
-				</rbs-column>
-
-
-				<rbs-action name="addLine" icon="icon-plus" label="{{ i18nAttr('m.rbs.order.admin.order_add_line', ['ucf']) }}"
-					selection="0,0"></rbs-action>
-				<rbs-action name="removeLines" icon="icon-trash" label="{{ i18nAttr('m.rbs.order.admin.order_remove_lines', ['ucf']) }}"
-					selection="+"></rbs-action>
-				<rbs-action name="setShippingMode" icon="icon-truck" label="{{ i18nAttr('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}"
-					selection="+"></rbs-action>
-				<rbs-quick-actions>
-					<a href="javascript:;" ng-click="extend.removeLines([doc])" class="danger"><i class="icon-trash"></i>{{ i18n('m.rbs.admin.adminjs.delete') }}</a>
-				</rbs-quick-actions>
-
-				<rbs-preview>
-					<div class="clearfix"/>
-					<rbs-order-line-editor ng-model="doc.__document" price-info="extend.priceInfo"/>
-				</rbs-preview>
-			</rbs-document-list>
+		{# Lines #}
+		<div data-ng-show="document.lines.length > 0">
+			{# Actions #}
+			<div class="btn-toolbar" data-ng-if="isContentEditable()">
+				<button type="button" class="btn btn-default" data-ng-click="removeLines()"
+					data-ng-disabled="selection.empty()">
+					<i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.order_remove_lines', ['ucf']) }}
+				</button>
+				<button type="button" class="btn btn-default" data-ng-click="selectShippingMode($event)"
+					data-ng-disabled="selection.empty()">
+					<i class="icon-truck"></i> {{ i18n('m.rbs.order.admin.order_set_shipping_mode', ['ucf']) }}
+				</button>
+			</div>
+			<div class="confirmation-area"></div>
+			{# List (not a document-list but using the same markup) #}
+			<table class="document-list table table-condensed table-bordered table-striped table-hover"
+				data-ng-class="{'margin-top': isContentEditable()}">
+				<thead>
+					<tr>
+						<th class="column-checkbox" data-ng-click="selection.all = !selection.all"
+							data-ng-if="isContentEditable()">
+							<input type="checkbox" data-ng-model="selection.all" data-ng-click="$event.stopPropagation()" />
+						</th>
+						<th class="column-number" style="width: 60px;">
+							{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}
+						</th>
+						<th>{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}</th>
+						<th>{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}</th>
+						<th class="column-number" style="width: 100px;">
+							{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}
+						</th>
+						<th class="column-number" style="width: 100px;">
+							{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}
+						</th>
+						<th class="column-number" style="width: 100px;">
+							{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}
+						</th>
+					</tr>
+				</thead>
+				{# Editable mode #}
+				<tbody data-ng-if="isContentEditable()">
+					{# Main line #}
+					<tr class="normal-row" data-ng-repeat-start="doc in listLines">
+						<td class="column-checkbox" data-ng-click="selection.lines[$index] = !selection.lines[$index]">
+							<input type="checkbox" data-ng-model="selection.lines[$index]"
+								data-ng-click="$event.stopPropagation()">
+						</td>
+						<td class="column-number">(= $index + 1 =)</td>
+						<td>
+							<span class="pull-right quick-actions-buttons">
+								<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}"
+									data-ng-click="data.editedLineIndex = $index" class="btn btn-xs btn-default btn-icon"
+									data-ng-show="data.editedLineIndex != $index">
+									<i class="icon-pencil"></i>
+								</button>
+								<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}"
+									data-ng-click="data.editedLineIndex = null" class="btn btn-xs btn-default btn-icon"
+									data-ng-show="data.editedLineIndex == $index">
+									<i class="icon-pencil"></i>
+								</button>
+								<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"
+									data-ng-click="removeLine($index)" class="btn btn-xs btn-danger btn-icon"
+									data-ng-disabled="!isContentEditable()">
+									<i class="icon-trash"></i>
+								</button>
+							</span>
+							(= doc.designation =)
+						</td>
+						<td>(= doc.items[0].codeSKU =)</td>
+						<td class="column-number">(= doc.items[0].price.value | currency =)</td>
+						<td class="column-number">
+							<input type="number" class="form-control" data-ng-model="doc.quantity" required="true" min="1" />
+						</td>
+						<td class="column-number">(= doc.items[0].price.value * doc.quantity | currency =)</td>
+					</tr>
+					{# Line edition panel #}
+					<tr class="normal-row preview" data-ng-show="data.editedLineIndex == $index" data-ng-repeat-end="">
+						<td class="preview" colspan="7">
+							<div class="inner" style="margin-top: 20px;">
+								<rbs-order-line-editor ng-model="doc" price-info="priceInfo"></rbs-order-line-editor>
+								<button type="button" data-ng-click="data.editedLineIndex = null" class="btn btn-default"
+									data-ng-show="data.editedLineIndex == $index">
+									{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
+								</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+				{# Not editable mode #}
+				<tbody data-ng-if="!isContentEditable()">
+					<tr class="normal-row" data-ng-repeat="doc in listLines">
+						<td class="column-number">(= $index + 1 =)</td>
+						<td>(= doc.designation =)</td>
+						<td>(= doc.items[0].codeSKU =)</td>
+						<td class="column-number">(= doc.items[0].price.value | currency =)</td>
+						<td class="column-number">(= doc.quantity =)</td>
+						<td class="column-number">(= doc.items[0].price.value * doc.quantity | currency =)</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
 
-<div class="panel panel-danger" ng-show="extend.removedLines.length > 0">
+{# Removed lines #}
+<div class="panel panel-danger" data-ng-show="data.removedLines.length > 0">
 	<div class="panel-heading">
 		<h3 class="panel-title"><i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.order_removed_lines', ['ucf']) }}</h3>
 	</div>
 	<div class="list-group">
-		<div ng-repeat="line in extend.removedLines" class="list-group-item" style="line-height: 30px;">
+		<div data-ng-repeat="line in data.removedLines" class="list-group-item" style="line-height: 30px;">
 			<span class="pull-right">
-				<button class="btn btn-default btn-sm" ng-click="extend.restoreRemovedLine($index)">{{ i18n('m.rbs.order.admin.order_put_back_in_order', ['ucf']) }}</button>
-				<button class="btn btn-danger btn-sm" ng-click="extend.trashRemovedLine($index)" title="{{ i18nAttr('m.rbs.order.admin.order_remove_permanently', ['ucf']) }}"><i class="icon-trash"></i></button>
+				<button class="btn btn-default btn-sm" data-ng-click="restoreRemovedLine($index)">
+					{{ i18n('m.rbs.order.admin.order_put_back_in_order', ['ucf']) }}
+				</button>
+				<button class="btn btn-danger btn-sm" data-ng-click="trashRemovedLine($index)"
+					title="{{ i18nAttr('m.rbs.order.admin.order_remove_permanently', ['ucf']) }}">
+					<i class="icon-trash"></i>
+				</button>
 			</span>
 			(= line.quantity =) &times; (= line.designation =)
 		</div>

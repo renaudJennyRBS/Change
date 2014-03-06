@@ -112,6 +112,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 4);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeShippingModes'], 3);
 	}
 
 	/**
@@ -717,15 +718,33 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				$taxes[$tax->getCode()]['label'] = $commerceServices->getPriceManager()->taxTitle($tax);
 			}
 
+			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			$documentResult->setProperty('taxes', count($taxes) ? $taxes : null);
 			$documentResult->setProperty('lines', array_map(function(\Rbs\Order\OrderLine $line) {return $line->toArray();}, $order->getLines()));
 			$documentResult->setProperty('linesAmount', $order->getLinesAmount());
 			$documentResult->setProperty('linesTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $order->getLinesTaxes()));
 			$documentResult->setProperty('linesAmountWithTaxes', $order->getLinesAmountWithTaxes());
 
-			$documentResult->setProperty('fees', array_map(function(\Rbs\Order\OrderLine $fee) {return $fee->toArray();}, $order->getFees()));
+			$callback = function(\Rbs\Order\OrderLine $fee) use ($nf, $order)
+			{
+				$code = $order->getCurrencyCode();
+				$data = $fee->toArray();
+				$data['options']['formattedAmount'] = $nf->formatCurrency($fee->getAmount(), $code);
+				$data['options']['formattedAmountWithTaxes'] = $nf->formatCurrency($fee->getAmountWithTaxes(), $code);
+				return $data;
+			};
+			$documentResult->setProperty('fees', array_map($callback, $order->getFees()));
 			$documentResult->setProperty('coupons', array_map(function(\Rbs\Commerce\Process\BaseCoupon $coupon) {return $coupon->toArray();}, $order->getCoupons()));
-			$documentResult->setProperty('discounts', array_map(function(\Rbs\Commerce\Process\BaseDiscount $discount) {return $discount->toArray();}, $order->getDiscounts()));
+
+			$callback = function(\Rbs\Commerce\Process\BaseDiscount $discount) use ($nf, $order)
+			{
+				$code = $order->getCurrencyCode();
+				$data = $discount->toArray();
+				$data['options']['formattedAmount'] = $nf->formatCurrency($discount->getAmount(), $code);
+				$data['options']['formattedAmountWithTaxes'] = $nf->formatCurrency($discount->getAmountWithTaxes(), $code);
+				return $data;
+			};
+			$documentResult->setProperty('discounts', array_map($callback, $order->getDiscounts()));
 
 			$documentResult->setProperty('totalAmount', $order->getTotalAmount());
 			$documentResult->setProperty('totalTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $order->getTotalTaxes()));
@@ -811,21 +830,21 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		$order = $event->getParam('order');
 		if ($order instanceof Order)
 		{
-			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 
 			$stockManager = $commerceServices->getStockManager();
 			$priceManager = $commerceServices->getPriceManager();
-			$webstore = $order->getWebStoreIdInstance();
-			if ($webstore)
+			$webStore = $order->getWebStoreIdInstance();
+			if ($webStore)
 			{
-				$order->setPricesValueWithTax($webstore->getPricesValueWithTax());
+				$order->setPricesValueWithTax($webStore->getPricesValueWithTax());
 			}
 
 			foreach ($order->getLines() as $index => $line)
 			{
 				$line->setIndex($index);
-				$this->refreshCartLine($order, $line, $priceManager, $stockManager);
+				$this->refreshOrderLine($order, $line, $priceManager, $stockManager);
 			}
 
 			$this->refreshLinesAmount($order, $priceManager);
@@ -906,12 +925,34 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	}
 
 	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultNormalizeShippingModes(\Change\Events\Event $event)
+	{
+		$order = $event->getParam('order');
+		if ($order instanceof Order)
+		{
+			/* @var $genericServices \Rbs\Generic\GenericServices */
+			$genericServices = $event->getServices('genericServices');
+
+			foreach ($order->getShippingModes() as $shippingMode)
+			{
+				$address = $shippingMode->getAddress();
+				if ($address)
+				{
+					$address->setLines($genericServices->getGeoManager()->getFormattedAddress($address));
+				}
+			}
+		}
+	}
+
+	/**
 	 * @param Order $order
 	 * @param \Rbs\Order\OrderLine $line
 	 * @param \Rbs\Price\PriceManager $priceManager
 	 * @param \Rbs\Stock\StockManager $stockManager
 	 */
-	public function refreshCartLine(Order $order, \Rbs\Order\OrderLine $line, $priceManager, $stockManager)
+	public function refreshOrderLine(Order $order, \Rbs\Order\OrderLine $line, $priceManager, $stockManager)
 	{
 		$webStore = $order->getWebStoreIdInstance();
 		$billingArea = $order->getBillingAreaIdInstance();
@@ -921,7 +962,8 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			if (!$item->getOptions()->get('lockedPrice', false))
 			{
 				$sku = $stockManager->getSkuByCode($item->getCodeSKU());
-				if ($webStore && $billingArea && $sku) {
+				if ($webStore && $billingArea && $sku)
+				{
 					$price = $priceManager->getPriceBySku($sku,
 						['webStore' => $webStore, 'billingArea' => $billingArea, 'order' => $order, 'orderLine' => $line]);
 					$item->setPrice($price);
@@ -931,11 +973,11 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 					$item->setPrice(null);
 				}
 			}
-			else
+			$price = $item->getPrice();
+			if ($price)
 			{
-				$item->setPrice(null);
+				$price->setWithTax($pricesValueWithTax);
 			}
-			$item->getPrice()->setWithTax($pricesValueWithTax);
 		}
 	}
 

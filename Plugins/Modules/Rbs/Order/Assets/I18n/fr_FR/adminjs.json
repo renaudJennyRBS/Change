@@ -58,5 +58,17 @@
 	},
 	"order_invalid_query_order_shipments":{
 		"message":"la requête d'obtention des expéditions de la commande est invalide"
+	},
+	"order_update_status_confirm_title_edition":{
+		"message":"modifier le contenu"
+	},
+	"order_update_status_confirm_message_edition":{
+		"message":"Une fois la commande validée vous ne pourrez plus en modifier le contenu."
+	},
+	"order_update_status_confirm_title_processing":{
+		"message":"valider le contenu"
+	},
+	"order_update_status_confirm_message_processing":{
+		"message":"Vous vous apprêtez à modifier le contenu d'une commande déjà validée !"
 	}
 }

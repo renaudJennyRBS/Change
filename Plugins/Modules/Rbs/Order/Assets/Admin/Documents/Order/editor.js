@@ -1,33 +1,33 @@
-(function () {
-
+(function() {
 	"use strict";
 
-	function rbsOrderOrderEditor (Utils, REST, i18n, NotificationCenter, ErrorFormatter)
-	{
+	function rbsOrderOrderEditor(REST, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Order/Order/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			templateUrl: 'Document/Rbs/Order/Order/editor.twig',
+			replace: false,
+			require: 'rbsDocumentEditor',
 
-			link : function (scope, element, attrs, editorCtrl) {
+			link: function(scope, element, attrs, editorCtrl) {
 				scope.orderContext = {
-					showNewLineUI: false,
+					showNewProductLineUI: false,
+					showNewCustomLineUI: false,
 					showAddressUI: false,
-					showShippingUI: false
+					showShippingUI: false,
+					showShipmentUI: false
 				};
 				scope.userAddresses = [];
 				scope.shipments = [];
 				scope.priceInfo = {
-					currencyCode : null,
-					taxInfo : [],
-					zones : [],
-					withTax : false
+					currencyCode: null,
+					taxInfo: [],
+					zones: [],
+					withTax: false
 				};
 
 				var contextRestored = false;
 
-				scope.onSaveContext = function (currentContext) {
+				scope.onSaveContext = function(currentContext) {
 					console.log('onSaveContext');
 					currentContext.savedData('order', {
 						orderContext: scope.orderContext,
@@ -37,13 +37,18 @@
 					});
 				};
 
-				scope.onRestoreContext = function (currentContext) {
+				scope.onRestoreContext = function(currentContext) {
 					console.log('onRestoreContext');
 					var toRestoreData = currentContext.savedData('order');
 					scope.orderContext = toRestoreData.orderContext;
 					scope.userAddresses = toRestoreData.userAddresses;
 					scope.shipments = toRestoreData.priceInfo;
 					contextRestored = true;
+				};
+
+				// When this method returns false, taxes and amount details are hidden until the document is saved.
+				scope.contentModified = function() {
+					return scope.isPropertyModified('lines') || scope.isPropertyModified('paymentAmountWithTaxes');
 				};
 
 				scope.onLoad = function() {
@@ -66,33 +71,74 @@
 
 				scope.onReady = function() {
 					scope.orderContext.showNewLineUI = scope.document.isNew();
-
 					var shipmentsLink = scope.document.getLink('shipments');
 					if (shipmentsLink) {
-						REST.call(shipmentsLink, {
-							column: ['code', 'shippingModeCode', 'trackingCode', 'carrierStatus']
-						}).then(function (data){
-								scope.shipments = data.resources;
-							}, function (error){
-								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.order_invalid_query_order_shipments | ucf'),
-									ErrorFormatter.format(error));
-								console.error(error);
-							});
+						var successCallback = function(data) {
+							console.log(data);
+							scope.shipments = data.resources;
+						};
+						var errorCallback = function(error) {
+							NotificationCenter.error(
+								i18n.trans('m.rbs.order.adminjs.order_invalid_query_order_shipments | ucf'),
+								ErrorFormatter.format(error)
+							);
+							console.error(error);
+						};
+						REST.call(shipmentsLink, { column: ['code', 'shippingModeCode', 'trackingCode', 'carrierStatus'] })
+							.then(successCallback, errorCallback);
 					}
 				};
 
-				scope.populateAddressList = function(ownerId) {
-					if (!ownerId) {
-						scope.userAddresses = [];
+				scope.webStoreUpdated = function(webStoreId) {
+					if (!webStoreId) {
 						return;
 					}
-
-					if (angular.isObject(ownerId)) {
-						if (ownerId.hasOwnProperty('id')) {
-							ownerId = ownerId.id;
-						} else {
-							return;
+					REST.resource('Rbs_Store_WebStore', webStoreId).then(function(data) {
+						scope.document.context.pricesValueWithTax = data.pricesValueWithTax;
+						if (angular.isArray(data['billingAreas'])) {
+							if (data['billingAreas'].length == 1) {
+								scope.document.billingAreaId = data['billingAreas'][0].id;
+							}
 						}
+					});
+				};
+
+				scope.billingAreaUpdated = function(billingAreaId) {
+					if (!billingAreaId) {
+						return;
+					}
+					REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(data) {
+						scope.priceInfo.currencyCode = data.currencyCode;
+						scope.document.currencyCode = data.currencyCode;
+					});
+					REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id: billingAreaId}).then(function(data) {
+						scope.priceInfo.taxInfo = data;
+						scope.priceInfo.currentTaxInfo = taxInfosForZone(scope.priceInfo.taxZone, data);
+						var zones = [];
+						angular.forEach(scope.priceInfo.taxInfo, function(tax) {
+							angular.forEach(tax.zones, function(zone) {
+								if (zones.indexOf(zone) == -1) {
+									zones.push(zone);
+								}
+							});
+						});
+						zones.sort();
+						scope.priceInfo.zones = zones;
+						if (zones.length == 1) {
+							scope.document.context.taxZone = zones[0];
+						}
+					});
+				};
+
+				scope.ownerUpdated = function(ownerId) {
+					if (angular.isObject(ownerId) && ownerId.hasOwnProperty('id')) {
+						ownerId = ownerId.id;
+					}
+
+					if (!angular.isNumber(ownerId)) {
+						scope.userAddresses = [];
+						scope.owner = {};
+						return;
 					}
 
 					var query = {
@@ -112,82 +158,123 @@
 						}
 					};
 
-					REST.query(query, {'column': ['label', 'addressFields', 'fieldValues']}).then(function (data){
+					REST.query(query, {'column': ['label', 'addressFields', 'fieldValues']}).then(function(data) {
 						scope.userAddresses = data.resources;
 					});
 
-					if (!scope.document.email)
-					{
+					if (ownerId) {
 						REST.resource('Rbs_User_User', ownerId).then(function(data) {
-							scope.document.email = data.email;
+							scope.owner = data;
+							console.log(data);
+							if (!scope.document.email) {
+								scope.document.email = data.email;
+							}
 						});
 					}
 				};
 
-				scope.webStoreUpdated = function(webStoreId) {
-					if (!webStoreId) {
-						return;
+				scope.updateNewLineUI = function(mode) {
+					if (mode == 'product') {
+						scope.orderContext.showNewCustomLineUI = false;
+						scope.orderContext.showNewProductLineUI = !scope.orderContext.showNewProductLineUI;
 					}
-					REST.resource('Rbs_Store_WebStore', webStoreId).then(function(data) {
-						scope.document.context.pricesValueWithTax = data.pricesValueWithTax;
-						if (angular.isArray(data.billingAreas)) {
-							if (data.billingAreas.length == 1) {
-								scope.document.billingAreaId = data.billingAreas[0].id;
+					else if (mode == 'custom') {
+						scope.orderContext.showNewProductLineUI = false;
+						scope.orderContext.showNewCustomLineUI = !scope.orderContext.showNewCustomLineUI;
+					}
+					else {
+						scope.orderContext.showNewProductLineUI = false;
+						scope.orderContext.showNewCustomLineUI = false;
+					}
+				};
+
+				scope.isContentEditable = function() {
+					return scope.document.processingStatus == 'edition';
+				};
+
+				scope.showLinesAmount = function() {
+					if (!scope.document) {
+						return false;
+					}
+					else if (!angular.isArray(scope.document['fees']) || scope.document['fees'].length == 0) {
+						return false;
+					}
+					else if (!angular.isArray(scope.document['discounts']) || scope.document['discounts'].length == 0) {
+						return false;
+					}
+					return true;
+				};
+
+				scope.showTotalAmount = function() {
+					if (!scope.document) {
+						return false;
+					}
+					else if (!angular.isArray(scope.document['creditNotes']) || scope.document['creditNotes'].length == 0) {
+						return false;
+					}
+					return true;
+				};
+
+				scope.updateOrderStatus = function(status, $event) {
+					var options = {
+						pointedElement: jQuery($event.target),
+						primaryButtonClass: 'btn-success',
+						cssClass: 'default'
+					};
+					if (status == 'edition') {
+						options.primaryButtonClass = 'btn-warning';
+						options.cssClass = 'warning';
+					}
+					Dialog.confirmEmbed(
+							jQuery($event.target).parents('rbs-form-button-bar').find('.confirmation-area'),
+							i18n.trans('m.rbs.order.adminjs.order_update_status_confirm_title_' + status + ' | ucf'),
+							i18n.trans('m.rbs.order.adminjs.order_update_status_confirm_message_' + status + ' | ucf'),
+							scope,
+							options
+						)
+						.then(function() {
+							scope.document.processingStatus = status;
+							// Wait for angular to check changes.
+							$timeout(function() { scope.submit(); });
+						});
+				};
+
+				function taxInfosForZone(taxZone, taxInfo) {
+					var currentTaxInfo = [];
+					if (taxZone && angular.isArray(taxInfo)) {
+						for (var i = 0; i < taxInfo.length; i++) {
+							if (taxInfo[i].zones.indexOf(taxZone) > -1) {
+								currentTaxInfo.push(taxInfo[i]);
 							}
 						}
-					});
-				};
-
-				scope.billingAreaUpdated = function(billingAreaId) {
-					if(!billingAreaId) {
-						return;
 					}
-					REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(data){
-						scope.priceInfo.currencyCode = data.currencyCode;
-						scope.document.currencyCode = data.currencyCode;
-					});
-					REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:billingAreaId}).then(function(data){
-						scope.priceInfo.taxInfo = data;
-						var zones = [];
-						angular.forEach(scope.priceInfo.taxInfo, function(tax){
-							angular.forEach(tax.zones, function(zone){
-								if(zones.indexOf(zone) == -1){
-									zones.push(zone);
-								}
-							});
-						});
-						zones.sort();
-						scope.priceInfo.zones = zones;
-						if (zones.length == 1)
-						{
-							scope.document.context.taxZone = zones[0];
-						}
-					});
-				};
+					return currentTaxInfo;
+				}
 
-				scope.$watch('document.webStoreId', function (webStoreId) {
+				scope.$watch('document.webStoreId', function(webStoreId) {
 					scope.webStoreUpdated(webStoreId);
 				}, true);
 
-				scope.$watch('document.billingAreaId', function (billingAreaId) {
+				scope.$watch('document.billingAreaId', function(billingAreaId) {
 					scope.billingAreaUpdated(billingAreaId);
 				}, true);
 
 				// This watches for modifications in the user doc in order to fill the address list.
-				scope.$watch('document.ownerId', function (ownerId) {
-					scope.populateAddressList(ownerId);
+				scope.$watch('document.ownerId', function(ownerId) {
+					scope.ownerUpdated(ownerId);
 				}, true);
 
-				scope.$watch('document.context.taxZone', function (taxZone) {
+				scope.$watch('document.context.taxZone', function(taxZone) {
 					scope.priceInfo.taxZone = taxZone;
+					scope.priceInfo.currentTaxInfo = taxInfosForZone(taxZone, scope.priceInfo.taxInfo);
 				}, true);
 
-				scope.$watch('document.context.pricesValueWithTax', function (pricesValueWithTax) {
+				scope.$watch('document.context.pricesValueWithTax', function(pricesValueWithTax) {
 					scope.priceInfo.withTax = pricesValueWithTax;
 				}, true);
 
 				// This refreshes shippingModesObject to be synchronized with order editor.
-				scope.$on('shippingModesUpdatedFromLines', function (event) {
+				scope.$on('shippingModesUpdatedFromLines', function() {
 					scope.$broadcast('shippingModesUpdated');
 					scope.orderContext.showShippingUI = true;
 				});
@@ -197,8 +284,7 @@
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n',
-		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter' ];
+	rbsOrderOrderEditor.$inject = [ 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.NotificationCenter',
+		'RbsChange.ErrorFormatter', 'RbsChange.Dialog', '$timeout' ];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
-
 })();

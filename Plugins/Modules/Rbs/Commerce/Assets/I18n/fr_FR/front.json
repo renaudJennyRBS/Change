@@ -170,7 +170,10 @@
 	"summary_of_amounts":{
 		"message":"récapitulatif des montants"
 	},
-	"total_with_tax":{
+	"lines_amount_with_tax":{
+		"message":"total des lignes TTC"
+	},
+	"total_amount_with_tax":{
 		"message":"total TTC"
 	},
 	"amount_to_pay":{

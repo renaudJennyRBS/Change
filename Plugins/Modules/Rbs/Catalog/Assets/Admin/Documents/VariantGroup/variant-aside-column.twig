@@ -1,3 +1,7 @@
+<div class="rbs-aside-block" data-ng-show="document.rootProduct">
+	<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+	<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+</div>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h3 class="panel-title">
@@ -65,8 +69,4 @@
 			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variant_edit', ['ucf']) | raw}}</p>
 		{% endif %}
 	</div>
-</div>
-<div class="rbs-aside-block" data-ng-show="document.rootProduct">
-	<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
-	<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
 </div>

@@ -1,14 +1,15 @@
-<div class="panel panel-default">
+<div class="panel panel-default" data-ng-show="document.lines.length > 0">
 	<div class="panel-heading">
 		<h3 class="panel-title">
 			<i class="icon-truck"></i>
-			<a href data-ng-click="orderContext.showShippingUI = !orderContext.showShippingUI">
-				{{ i18n('m.rbs.order.admin.order_shipping_mode_list', ['ucf']) }}
+			<a href="javascript:;" data-ng-click="orderContext.showShippingUI = !orderContext.showShippingUI">
+				{{ i18n('m.rbs.order.admin.order_shipping_mode_list', ['ucf', 'lab']) }} (= document.shippingModes.length =)
 				<i data-ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showShippingUI]"></i>
 			</a>
 		</h3>
 	</div>
 	<div data-rbs-order-shipping-modes="" data-ng-show="orderContext.showShippingUI" data-shipping-modes="document.shippingModes"
-		data-lines="document.lines" data-address-documents="userAddresses" data-order-id="(= document.id =)" class="panel-body">
+		data-lines="document.lines" data-address-documents="userAddresses" data-order-id="(= document.id =)" class="panel-body"
+		data-is-order-editable="isContentEditable">
 	</div>
 </div>

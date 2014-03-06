@@ -119,22 +119,48 @@
 
 <div class="vertical-if-animation" data-ng-if="isAuthenticated()" data-ng-cloak="">
 	<div class="vertical-if-animation-content">
-		<div class="panel panel-default">
-			<div class="panel-heading">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</div>
-			<div class="panel-body">
-				<button class="btn btn-default pull-right" data-ng-show="isCurrentStep('information')"
-					data-ng-click="unsetAuthenticated()">
-					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
-				</button>
-				(= information.email =)
+		<div class="vertical-show-hide-animation" data-ng-show="isCurrentStep('information')">
+			<div class="vertical-show-hide-animation-content">
+				<div class="panel panel-default">
+					<div class="panel-heading">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</div>
+					<div class="panel-body">
+						<button class="btn btn-default pull-right" data-ng-click="unsetAuthenticated()">
+							{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+						</button>
+						(= information.email =)
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.mailing_address', ['ucf']) }}</div>
+					<div class="panel-body">
+						<div data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
+							data-zone-code="(= cart.zone =)">
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
-		<div class="panel panel-default">
-			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.mailing_address', ['ucf']) }}</div>
-			<div class="panel-body">
-				<div data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
-					data-zone-code="(= cart.zone =)" data-readonly="(= !isCurrentStep('information') =)">
+		<div class="vertical-show-hide-animation" data-ng-hide="isCurrentStep('information')">
+			<div class="vertical-show-hide-animation-content">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-6">
+								<address>
+									<strong>(= cart.address.__lines[0] =)</strong><br>
+									<a href="mailto:(= information.email =)">(= information.email =)</a>
+								</address>
+							</div>
+							<div class="col-md-6">
+								<address>
+									<strong>(= cart.address.__lines[0] =)</strong>
+									<div data-ng-repeat="line in cart.address.__lines" data-ng-if="!$first">(= line =)</div>
+								</address>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

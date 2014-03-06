@@ -28,7 +28,6 @@
 			}
 		};
 	}
-
 	app.animation('.vertical-if-animation', rbsVerticalIfAnimation);
 
 	function rbsVerticalShowHideAnimation() {
@@ -64,6 +63,5 @@
 			}
 		};
 	}
-
 	app.animation('.vertical-show-hide-animation', rbsVerticalShowHideAnimation);
 })();

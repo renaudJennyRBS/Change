@@ -68,8 +68,20 @@
 			</ol>
 
 			<div data-ng-if="delivery.options.usePostalAddress == 0">
-				<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
-					data-zone-code="(= zoneCode =)" data-readonly="(= display.readonly =)">
+				<div class="vertical-show-hide-animation" data-ng-hide="display.readonly">
+					<div class="vertical-show-hide-animation-content">
+						<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
+							data-zone-code="(= zoneCode =)">
+						</div>
+					</div>
+				</div>
+				<div class="vertical-show-hide-animation" data-ng-show="display.readonly">
+					<div class="vertical-show-hide-animation-content">
+						<address>
+							<strong>(= delivery.address.__lines[0] =)</strong>
+							<div data-ng-repeat="line in delivery.address.__lines" data-ng-if="!$first">(= line =)</div>
+						</address>
+					</div>
 				</div>
 			</div>
 		</div>

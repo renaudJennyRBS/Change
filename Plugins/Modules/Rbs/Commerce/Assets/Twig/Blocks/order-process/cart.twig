@@ -89,7 +89,7 @@
 				class="table table-striped table-bordered">
 				<caption>{{ i18n('m.rbs.commerce.front.taxes_amount', ['ucf']) }}</caption>
 				<tbody>
-						<tr data-ng-repeat="tax in cart.context.formattedTotalTaxes">
+						<tr data-ng-repeat="tax in cart.context.formattedLinesTaxes">
 							<td>(= tax.title =) ((= tax.formattedRate =))</td>
 							<td class="price">(= tax.formattedValue =)</td>
 						</tr>
@@ -101,11 +101,11 @@
 				<tbody>
 					<tr>
 						<td>{{ i18n('m.rbs.commerce.front.amount_without_tax', ['ucf']) }}</td>
-						<td class="price">(= cart.context.formattedTotalAmount =)</td>
+						<td class="price">(= cart.context.formattedLinesAmount =)</td>
 					</tr>
 					<tr>
 						<td>{{ i18n('m.rbs.commerce.front.amount_with_tax', ['ucf']) }}</td>
-						<td class="price">(= cart.context.formattedTotalAmountWithTaxes =)</td>
+						<td class="price">(= cart.context.formattedLinesAmountWithTaxes =)</td>
 					</tr>
 				</tbody>
 			</table>

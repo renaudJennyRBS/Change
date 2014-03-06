@@ -71,9 +71,6 @@
 	"order_address_fields":{
 		"message":"modèle d'adresse"
 	},
-	"order_add_line":{
-		"message":"ajouter les articles"
-	},
 	"order_total":{
 		"message":"total"
 	},
@@ -116,8 +113,11 @@
 	"order_article_selector_title":{
 		"message":"Sélectionnez des articles à ajouter à la commande"
 	},
-	"order_add_lines":{
-		"message":"Ajouter des lignes"
+	"order_add_product_lines": {
+		"message":"Ajouter des produits"
+	},
+	"order_add_custom_line": {
+		"message":"Ajouter une ligne personalisée"
 	},
 	"order_set_shipping_mode":{
 		"message":"définir le mode de livraison"
@@ -290,11 +290,38 @@
 	"order_modify_shipping_address":{
 		"message":"modifier l'adresse de livraison"
 	},
+	"order_show_shipping_address":{
+		"message":"afficher l'adresse de livraison"
+	},
+	"order_hide_shipping_address":{
+		"message":"masquer l'adresse de livraison"
+	},
 	"order_add_shipment":{
 		"message":"ajouter une expédition"
 	},
 	"order_management":{
 		"message":"gestion des commandes"
+	},
+	"order_lines_amount_without_taxes":{
+		"message":"total des lignes <abbr title=\"Hors taxes\">HT</abbr>"
+	},
+	"order_lines_amount_with_taxes":{
+		"message":"total des lignes <abbr title=\"Toutes taxes comprises\">TTC</abbr>"
+	},
+	"order_total_amount_with_taxes":{
+		"message":"montant total <abbr title=\"Toutes taxes comprises\">TTC</abbr>"
+	},
+	"order_amount_to_pay":{
+		"message":"net à payer"
+	},
+	"order_manual_price":{
+		"message":"prix fixé manuellement"
+	},
+	"order_start_processing_button":{
+		"message":"valider <small>le contenu</small>"
+	},
+	"order_make_editable_button":{
+		"message":"modifier <small>le contenu</small>"
 	},
 	"billing_management":{
 		"message":"gestion des paiements"
@@ -307,5 +334,11 @@
 	},
 	"taxes_amount":{
 		"message":"montant des taxes"
+	},
+	"save_to_see_taxes":{
+		"message":"Le contenu ayant été modifié, le détail des taxes sera disponible après enregistrement."
+	},
+	"save_to_see_amounts":{
+		"message":"Le contenu ayant été modifié, le détail des montants sera disponible après enregistrement."
 	}
 }

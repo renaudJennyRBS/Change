@@ -6,7 +6,7 @@ td .correction {
 	top: 2px;
 }
 
-rbs-document-list table {
+.document-list {
 	margin: 0;
 }
 
@@ -45,12 +45,12 @@ rbs-document-list .panel-footer .pagination {
 	box-shadow: 0 -2px 0 #0088CC;
 }
 
-rbs-document-list tr .quick-actions-buttons {
+.document-list tr .quick-actions-buttons {
 	position: relative;
 	margin-left: 8px;
 }
 
-rbs-document-list tr .quick-actions {
+.document-list tr .quick-actions {
 	top: 18px;
 	left: auto;
 	right: -9px;
@@ -58,25 +58,25 @@ rbs-document-list tr .quick-actions {
 	background: #333333;
 }
 
-rbs-document-list tr .popover.quick-actions .arrow {
+.document-list tr .popover.quick-actions .arrow {
 	background: transparent;
 	left: 126px;
 	border-color: transparent;
 }
-rbs-document-list tr .popover.quick-actions .arrow:after {
+.document-list tr .popover.quick-actions .arrow:after {
 	border-bottom-color: #333333;
 }
 
-rbs-document-list tr .quick-actions > .popover-content {
+.document-list tr .quick-actions > .popover-content {
 	padding: 0;
 }
 
-rbs-document-list tr .quick-actions.popover {
+.document-list tr .quick-actions.popover {
 	border-radius: 2px;
 }
 
-rbs-document-list tr .quick-actions > .popover-content > a,
-rbs-document-list tr .quick-actions > .popover-content .quick-action {
+.document-list tr .quick-actions > .popover-content > a,
+.document-list tr .quick-actions > .popover-content .quick-action {
 	font-size: 90%;
 	text-transform: lowercase;
 	padding: 3px 10px;
@@ -89,13 +89,13 @@ rbs-document-list tr .quick-actions > .popover-content .quick-action {
 	line-height: 22px;
 }
 
-rbs-document-list tr .quick-actions > .popover-content i {
+.document-list tr .quick-actions > .popover-content i {
 	font-size: 1.5em;
 	top: 1px;
 	position: relative;
 }
 
-rbs-document-list tr .quick-actions > .popover-content > a i {
+.document-list tr .quick-actions > .popover-content > a i {
 	float: right;
 	margin-left: 10px;
 	-webkit-transition: -webkit-transform 0.05s ease-in;
@@ -103,25 +103,25 @@ rbs-document-list tr .quick-actions > .popover-content > a i {
 	transition: transform 0.05s ease-in;
 }
 
-rbs-document-list tr .quick-actions > .popover-content a:hover > i {
+.document-list tr .quick-actions > .popover-content a:hover > i {
 	-webkit-transform: scale(1.4);
 	-moz-transform: scale(1.4);
 	transform: scale(1.4);
 }
 
-rbs-document-list tr .quick-actions > .popover-content a:hover,
-rbs-document-list tr .quick-actions > .popover-content .quick-action:hover {
+.document-list tr .quick-actions > .popover-content a:hover,
+.document-list tr .quick-actions > .popover-content .quick-action:hover {
 	text-decoration: none;
 	background: #777777;
 }
 
-rbs-document-list tr .quick-actions > .popover-content a.danger:hover,
-rbs-document-list tr .quick-actions > .popover-content .quick-action.danger:hover {
+.document-list tr .quick-actions > .popover-content a.danger:hover,
+.document-list tr .quick-actions > .popover-content .quick-action.danger:hover {
 	background: #FB645C;
 }
 
 
-rbs-document-list .table td .primary-cell {
+.document-list .table td .primary-cell {
 	position: relative;
 	min-width: 120px;
 	margin: -5px;
@@ -135,7 +135,7 @@ rbs-document-list > .btn-toolbar {
 
 
 
-rbs-document-list th .btn-xs {
+.document-list th .btn-xs {
 	font-size: 14px;
 	line-height: 16px;
 	position: relative;
@@ -147,8 +147,9 @@ rbs-document-list th .btn-xs {
 }
 
 .add-elements-bar a {
+	display: inline-block;
 	font-weight: normal;
-	margin-right: 3px;
+	margin-right: 5px;
 	padding: 10px;
 	border: 1px solid #EEEEEE;
 }
@@ -181,7 +182,7 @@ rbs-document-list th .btn-xs {
 	padding: 5px;
 }
 
-rbs-document-list tr.preview td.preview .preview-indicator {
+.document-list tr.preview td.preview .preview-indicator {
 	display: none;
 	position: absolute;
 	top: -7px;
@@ -196,13 +197,13 @@ rbs-document-list tr.preview td.preview .preview-indicator {
 	transform: rotate(-45deg);
 }
 
-rbs-document-list tr td.preview .dl-horizontal dt {
+.document-list tr td.preview .dl-horizontal dt {
 	clear: none;
 }
 
 
-rbs-document-list .empty-row td,
-rbs-document-list div.empty-row {
+.document-list .empty-row td,
+.document-list div.empty-row {
 	color: silver;
 	font-size: 14pt;
 	padding: 14px;
@@ -210,7 +211,7 @@ rbs-document-list div.empty-row {
 	text-shadow: 0 1px 0 white;
 }
 
-rbs-document-list div.empty-row {
+.document-list div.empty-row {
 	border: 1px solid #DDDDDD;
 	border-radius: 4px;
 	background: #F9F9F9;
@@ -494,7 +495,7 @@ rbs-document-list div.empty-row {
 	position: absolute;
 }
 
-rbs-document-list thead {
+.document-list thead {
 	background: -moz-linear-gradient(bottom, #f5f5f5 0%, #ffffff 100%);
 	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#f5f5f5), color-stop(100%,#ffffff));
 	background: -webkit-linear-gradient(bottom, #f5f5f5 0%,#ffffff 100%);
@@ -533,8 +534,8 @@ table.document-list {
 }
 
 
-rbs-document-list .table-bordered > thead > tr > th,
-rbs-document-list .table-bordered > thead > tr > td {
+.document-list.table-bordered > thead > tr > th,
+.document-list.table-bordered > thead > tr > td {
 	border-bottom-width: 5px;
 	border-color: #E0E0E0;
 }
@@ -551,18 +552,28 @@ rbs-document-list .table-bordered > thead > tr > td {
 }
 
 
-rbs-document-list td i.tree-icon:before {
+.document-list td i.tree-icon:before {
 	width: 20px;
 	display: inline-block;
 	cursor: pointer;
 }
 
 
-rbs-document-list .btn-flat {
+.document-list .btn-flat {
 	opacity: 0.65;
 }
 
 
-rbs-document-list tr:hover .btn-flat {
+.document-list tr:hover .btn-flat {
 	opacity: 1;
+}
+
+.document-list .column-checkbox {
+	cursor: pointer;
+	text-align: center;
+	width: 30px;
+}
+
+.document-list .column-number {
+	text-align: right;
 }
