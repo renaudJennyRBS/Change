@@ -1241,5 +1241,8 @@
 	},
 	"clear_new_redirect":{
 		"message":"réinitialiser cette redirection"
+	},
+	"document_does_not_exist":{
+		"message":"Ce document n'existe pas ou a été supprimé."
 	}
 }

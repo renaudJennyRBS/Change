@@ -1,0 +1,36 @@
+<div class="row" rbs-document-editor-base="" model="Rbs_Brand_Brand">
+
+	<div class="document-form" rbs-full-width>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Brand_Brand'), ['ucf']) }}"></rbs-page-header>
+
+		<form ng-submit="submit()" rbs-document-editor-new="">
+
+			<rbs-field-text property="label" required="true"
+			                label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }}">
+			</rbs-field-text>
+
+			<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
+			                sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
+			                label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
+			</rbs-field-text>
+
+			<rbs-field-rich-text property="description" required="false"
+			                     label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
+			</rbs-field-rich-text>
+
+			<rbs-field-picker property="visual" label="{{ i18nAttr('m.rbs.brand.documents.brand_visual', ['ucf']) }}"
+			                  accepted-model="Rbs_Media_Image"
+			                  selector-title="{{ i18nAttr('m.rbs.brand.admin.select_visual', ['ucf']) }}">
+			</rbs-field-picker>
+
+			<rbs-field-url property="websiteUrl" required="false"
+			               label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
+			</rbs-field-url>
+
+			<rbs-document-editor-button-bar disable-delete="true"></rbs-document-editor-button-bar>
+
+		</form>
+
+	</div>
+
+</div>

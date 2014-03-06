@@ -184,18 +184,23 @@
 	 * This Directive displays the menu with the sections of an Editor.
 	 * It updates on the 'Change:UpdateEditorMenu' event.
 	 */
-	app.directive('rbsAsideEditorMenu', ['$compile', '$rootScope', function ($compile, $rootScope)
+	app.directive('rbsAsideEditorMenu', ['$rootScope', function ($rootScope)
 	{
 		return {
 			restrict : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/aside-editor-sections.twig',
+			require : '?^rbsDocumentEditorBase',
 
-			link : function (scope)
+			link : function (scope, iElement, iAttrs, ctrl)
 			{
 				$rootScope.$on('Change:UpdateEditorMenu', function (event, menuEntries)
 				{
 					scope.entries = menuEntries;
 				});
+
+				if (ctrl) {
+					scope.entries = ctrl.getMenuEntries();
+				}
 			}
 		};
 	}]);

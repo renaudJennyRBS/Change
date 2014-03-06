@@ -1,0 +1,36 @@
+<div data-role="preContents"></div>
+
+<div class="confirmation-area"></div>
+<div class="form-actions">
+
+	<p ng-class="{true: 'text-muted'}[changes.length == 0]">
+		<span data-ng-pluralize
+		      data-count="changes.length"
+		      data-when="{0: '{{ i18nAttr('m.rbs.admin.admin.no_propertie_modified') }}',
+				one: '{{ i18nAttr('m.rbs.admin.admin.propertie_modified') }}',
+				other: '{{ i18nAttr('m.rbs.admin.admin.properties_modified') }}'}">
+		</span>
+		<i ng-show="changes.length" ng-class="{'icon-chevron-sign-left': showChanges, 'icon-chevron-sign-right': !showChanges}" ng-click="showChanges = !showChanges"></i>
+		<span ng-show="showChanges"><span class="label label-default" ng-repeat="change in changes">(= change =)</span></span>
+	</p>
+
+	<div class="form-buttons">
+		<div class="pull-right">
+			<span ng-transclude=""></span>
+			<button ng-if="! disableDelete" class="btn btn-danger btn-headline no-text" type="button" ng-click="confirmDelete($event)">
+				<i class="icon-trash"></i>
+			</button>
+		</div>
+		<button ng-if="!navigationContext" disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="goBack($event)" ng-disabled="! canGoBack()">
+			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.admin.btnGoBack', ['ucf']) | raw }}
+		</button>
+
+		<button ng-if="navigationContext" class="btn btn-default btn-headline" type="button" ng-click="rejectNavigationContext()">
+			<i class="icon-arrow-left"></i>{{ i18n('m.rbs.admin.admin.btn_back_to', ['ucf'], {'label': '(= navigationContext.label() =)'}) | raw }}
+		</button>
+
+		<button disabled="disabled" class="btn btn-default btn-headline" type="button" ng-click="confirmReset($event)" ng-disabled="isUnchanged()" title="{{ i18nAttr('m.rbs.admin.admin.titleRevert', ['ucf']) }}"><i class="icon-undo"></i>{{ i18n('m.rbs.admin.admin.btnRevert', ['ucf']) | raw }}</button>
+		<button disabled="disabled" class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isUnchanged(), 'btn-danger':saveProgress.error}" data-role="save" type="submit"
+		        ng-disabled="form.$invalid || isUnchanged() || saveProgress.running"><i class="icon-white" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}"></i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}</button>
+	</div>
+</div>
