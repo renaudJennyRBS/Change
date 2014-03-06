@@ -34,13 +34,13 @@ class Controller extends \Change\Http\Controller
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		parent::attachEvents($eventManager);
+		$eventManager->attach(Event::EVENT_REQUEST, array($this, 'onDefaultRequest'), 5);
 		$eventManager->attach(Event::EVENT_RESULT, array($this, 'onDefaultResult'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
 	}
 
-	public function onDefaultRegisterServices(\Change\Http\Event $event)
+	public function onDefaultRequest($event)
 	{
-		parent::onDefaultRegisterServices($event);
 		if ($event instanceof Event)
 		{
 			$applicationServices = $event->getApplicationServices();

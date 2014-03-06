@@ -17,11 +17,17 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+		$this->attachGenericServicesSharedListener($sharedEventManager);
+	}
+
 	protected function setUp()
 	{
 		parent::setUp();
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
+		$this->initServices($this->getApplication());
 	}
 
 	public function testOnDefaultGetMetas()
@@ -31,7 +37,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			'Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners'
 		);
 
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$genericServices = $this->genericServices;
 		$seoManager = $genericServices->getSeoManager();
 		$this->assertInstanceOf('\Rbs\Seo\SeoManager', $seoManager);
 
@@ -249,7 +255,7 @@ class SeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testCreateSeoDocument()
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$genericServices = $this->genericServices;
 		$seoManager = $genericServices->getSeoManager();
 		$this->assertInstanceOf('\Rbs\Seo\SeoManager', $seoManager);
 

@@ -78,7 +78,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Mail/Events/MailManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Mail/Events/MailManager');
 	}
 
 	/**

@@ -53,7 +53,7 @@ class Context implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CommerceContext');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CommerceContext');
 	}
 
 	public function load()

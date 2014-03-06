@@ -21,14 +21,9 @@ class StorageManager
 	const DEFAULT_SCHEME = 'change';
 
 	/**
-	 * @var Workspace
+	 * @var \Change\Application
 	 */
-	protected $workspace;
-
-	/**
-	 * @var Configuration
-	 */
-	protected $configuration;
+	protected $application;
 
 	/**
 	 * @var DbProvider
@@ -41,11 +36,20 @@ class StorageManager
 	protected $transactionManager;
 
 	/**
-	 * @param Workspace $workspace
+	 * @param \Change\Application $application
 	 */
-	public function setWorkspace(Workspace $workspace)
+	public function setApplication(\Change\Application $application)
 	{
-		$this->workspace = $workspace;
+		$this->application = $application;
+		$this->register();
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
 	}
 
 	/**
@@ -53,24 +57,16 @@ class StorageManager
 	 */
 	public function getWorkspace()
 	{
-		return $this->workspace;
+		return $this->getApplication()->getWorkspace();
 	}
 
-	/**
-	 * @param Configuration $configuration
-	 */
-	public function setConfiguration(Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		$this->register();
-	}
 
 	/**
 	 * @return Configuration
 	 */
 	protected function getConfiguration()
 	{
-		return $this->configuration;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
@@ -80,7 +76,7 @@ class StorageManager
 	 */
 	public function addStorageConfiguration($storageName, $configuration)
 	{
-		$this->configuration->addVolatileEntry('Change/Storage/' . $storageName, $configuration);
+		$this->getConfiguration()->addVolatileEntry('Change/Storage/' . $storageName, $configuration);
 		return $this;
 	}
 

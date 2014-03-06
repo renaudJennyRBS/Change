@@ -9,7 +9,6 @@
 namespace Rbs\Commerce;
 
 use Change\Application;
-use Change\Events\EventManagerFactory;
 use Change\Events\EventsCapableTrait;
 use Change\Services\ApplicationServices;
 use Zend\Di\Di;
@@ -20,11 +19,6 @@ use Zend\Di\Di;
 class CommerceServices extends Di
 {
 	use \Change\Services\ServicesCapableTrait;
-
-	/**
-	 * @var \Change\Application
-	 */
-	protected $application;
 
 	/**
 	 * @var \Change\Services\ApplicationServices
@@ -50,24 +44,6 @@ class CommerceServices extends Di
 	}
 
 	/**
-	 * @param \Change\Application $application
-	 * @return $this
-	 */
-	public function setApplication(\Change\Application $application)
-	{
-		$this->application = $application;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return $this->application;
-	}
-
-	/**
 	 * @return array<alias => className>
 	 */
 	protected function loadInjectionClasses()
@@ -78,27 +54,25 @@ class CommerceServices extends Di
 
 	/**
 	 * @param Application $application
-	 * @param EventManagerFactory $eventManagerFactory
 	 * @param ApplicationServices $applicationServices
 	 */
-	function __construct(Application $application, EventManagerFactory $eventManagerFactory, ApplicationServices $applicationServices)
+	function __construct(Application $application, ApplicationServices $applicationServices)
 	{
 		$this->setApplication($application);
-		$this->setEventManagerFactory($eventManagerFactory);
 		$this->setApplicationServices($applicationServices);
 
 		$definitionList = new \Zend\Di\DefinitionList(array());
 
-		//Context : EventManagerFactory
+		//Context : Application
 		$contextClassName = $this->getInjectedClassName('Context', 'Rbs\Commerce\Std\Context');
 		$classDefinition = $this->getClassDefinition($contextClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//PriceManager : EventManagerFactory, Application, ApplicationServices, Context
+		//PriceManager : Application, Context
 		$priceManagerClassName = $this->getInjectedClassName('PriceManager', 'Rbs\Price\PriceManager');
 		$classDefinition = $this->getClassDefinition($priceManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setContext', true)
 				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -118,10 +92,10 @@ class CommerceServices extends Di
 			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//CatalogManager : EventManagerFactory, DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
+		//CatalogManager : Application, DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
 		$catalogManagerClassName = $this->getInjectedClassName('CatalogManager', 'Rbs\Catalog\CatalogManager');
 		$classDefinition = $this->getClassDefinition($catalogManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setDbProvider', true)
 			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
 			->addMethod('setTransactionManager', true)
@@ -136,23 +110,20 @@ class CommerceServices extends Di
 			->addMethodParameter('setAttributeManager', 'attributeManager', array('type' => 'AttributeManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//ProductManager : EventManagerFactory
+		//ProductManager : Application
 		$productManagerClassName = $this->getInjectedClassName('ProductManager', 'Rbs\Catalog\Product\ProductManager');
 		$classDefinition = $this->getClassDefinition($productManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//CartManager : EventManagerFactory, StockManager, PriceManager, Logging, DocumentManager
+		//CartManager : Application, StockManager, PriceManager, DocumentManager
 		$cartManagerClassName = $this->getInjectedClassName('CartManager', 'Rbs\Commerce\Cart\CartManager');
 		$classDefinition = $this->getClassDefinition($cartManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
-		$this->addConfigurationClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setStockManager', true)
 				->addMethodParameter('setStockManager', 'stockManager', array('type' => 'StockManager', 'required' => true))
 			->addMethod('setPriceManager', true)
 				->addMethodParameter('setPriceManager', 'priceManager', array('type' => 'PriceManager', 'required' => true))
-			->addMethod('setLogging', true)
-				->addMethodParameter('setLogging', 'logging', array('required' => true))
 			->addMethod('setDocumentManager', true)
 				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
@@ -171,27 +142,25 @@ class CommerceServices extends Di
 			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//ProcessManager: EventManagerFactory, CartManager, Logging
+		//ProcessManager: Application, CartManager
 		$processManagerClassName = $this->getInjectedClassName('ProcessManager', 'Rbs\Commerce\Process\ProcessManager');
 		$classDefinition = $this->getClassDefinition($processManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setCartManager', true)
-			->addMethodParameter('setCartManager', 'cartManager', array('type' => 'CartManager', 'required' => true))
-			->addMethod('setLogging', true)
-			->addMethodParameter('setLogging', 'logging', array('required' => true));
+			->addMethodParameter('setCartManager', 'cartManager', array('type' => 'CartManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 
-		//DiscountManager: EventManagerFactory
+		//DiscountManager: Application
 		$discountManagerClassName = $this->getInjectedClassName('DiscountManager', '\Rbs\Discount\DiscountManager');
 		$classDefinition = $this->getClassDefinition($discountManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//PaymentManager : EventManagerFactory, TransactionManager, DocumentManager
+		//PaymentManager : Application, TransactionManager, DocumentManager
 		$paymentManagerClassName = $this->getInjectedClassName('PaymentManager', 'Rbs\Payment\PaymentManager');
 		$classDefinition = $this->getClassDefinition($paymentManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setTransactionManager', true)
 			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
 			->addMethod('setDocumentManager', true)
@@ -207,42 +176,40 @@ class CommerceServices extends Di
 		$documentManager = function() use ($applicationServices) {return $applicationServices->getDocumentManager();};
 		$i18nManager = function() use ($applicationServices) {return $applicationServices->getI18nManager();};
 		$collectionManager = function() use ($applicationServices) {return $applicationServices->getCollectionManager();};
-		$logging = function() use ($applicationServices) {return $applicationServices->getLogging();};
 
-		$im->addAlias('Context', $contextClassName, array('eventManagerFactory' => $eventManagerFactory));
+		$im->addAlias('Context', $contextClassName, array('application' => $application));
 
 		$im->addAlias('PriceManager', $priceManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'i18nManager' => $i18nManager,
+			array('application' => $application, 'i18nManager' => $i18nManager,
 				'documentManager' => $documentManager));
 
 		$im->addAlias('CatalogManager', $catalogManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'dbProvider' => $dbProvider,
+			array('application' => $application, 'dbProvider' => $dbProvider,
 				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
 
 		$im->addAlias('ProductManager', $productManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory));
+			array('application' => $application));
 
 		$im->addAlias('StockManager', $stockManagerClassName,
 			array('dbProvider' => $dbProvider, 'transactionManager' => $transactionManager,
 				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
 
 		$im->addAlias('CartManager', $cartManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'configuration' => $application->getConfiguration(),
-				'logging' => $logging, 'documentManager' => $documentManager));
+			array('application' => $application, 'documentManager' => $documentManager));
 
 		$im->addAlias('AttributeManager', $attributeManagerClassName,
 			array('dbProvider' => $dbProvider, 'i18nManager' => $i18nManager,
 				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
 
 		$im->addAlias('ProcessManager', $processManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'logging' => $logging));
+			array('application' => $application));
 		
 		$im->addAlias('PaymentManager', $paymentManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory,
+			array('application' => $application,
 				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
 
 		$im->addAlias('DiscountManager', $discountManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory));
+			array('application' => $application));
 	}
 
 	/**

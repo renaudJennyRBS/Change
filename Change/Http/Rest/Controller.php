@@ -37,14 +37,9 @@ class Controller extends \Change\Http\Controller
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultJsonResponse'), 5);
 	}
 
-	public function onDefaultRegisterServices(Event $event)
-	{
-		parent::onDefaultRegisterServices($event);
-		$event->getApplicationServices()->getPermissionsManager()->allow(false);
-	}
-
 	public function onDefaultRequest(Event $event)
 	{
+		$event->getApplicationServices()->getPermissionsManager()->allow(false);
 		$request = $event->getRequest();
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$request->populateLCIDByHeader($i18nManager);

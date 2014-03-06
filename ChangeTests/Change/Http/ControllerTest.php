@@ -13,8 +13,6 @@ class ControllerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$application = $this->getApplication();
 		$controller = new Controller($application);
-		$controller->setEventManagerFactory(new \Change\Events\EventManagerFactory($application));
-		$this->assertSame($application, $controller->getApplication());
 		$this->assertInstanceOf('\Change\Events\EventManager', $controller->getEventManager());
 		$this->assertSame(array('Http'), $controller->getEventManager()->getIdentifiers());
 		return $controller;

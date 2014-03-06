@@ -36,11 +36,6 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	protected $pluginManager  = null;
 
 	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace  = null;
-
-	/**
 	 * @return string
 	 */
 	protected function getEventManagerIdentifier()
@@ -53,7 +48,7 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/ModelManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/ModelManager');
 	}
 
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
@@ -80,21 +75,11 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Workspace $workspace
-	 * @return $this
-	 */
-	public function setWorkspace(\Change\Workspace $workspace)
-	{
-		$this->workspace = $workspace;
-		return $this;
-	}
-
-	/**
 	 * @return \Change\Workspace
 	 */
 	protected function getWorkspace()
 	{
-		return $this->workspace;
+		return $this->getApplication()->getWorkspace();
 	}
 
 	/**

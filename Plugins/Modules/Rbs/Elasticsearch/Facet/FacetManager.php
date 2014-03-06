@@ -106,7 +106,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Elasticsearch/Events/FacetManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Elasticsearch/Events/FacetManager');
 	}
 
 	/**
@@ -118,8 +118,6 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getFacetMapping', array($this, 'onDefaultGetFacetMapping'), 5);
 		$eventManager->attach('getFacetQuery', array($this, 'onDefaultGetFacetQuery'), 5);
 		$eventManager->attach('getFilterQuery', array($this, 'onDefaultGetFilterQuery'), 5);
-
-
 	}
 
 	/**

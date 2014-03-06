@@ -78,7 +78,7 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event->setParams($this->getDefaultEventArguments());
 
 		$newDocument = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
-		$eventManager = $this->getEventManagerFactory()->getSharedEventManager();
+		$eventManager = $this->getApplication()->getSharedEventManager();
 		$eventManager->attach('Project_Tests_Basic', 'populateDocumentFromRestEvent', function(\Change\Documents\Events\Event $event){
 			$document = $event->getDocument();
 			$this->assertNull($document->getPStr());

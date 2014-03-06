@@ -65,7 +65,7 @@ class FieldManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Simpleform/Events/FieldTypeManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Simpleform/Events/FieldTypeManager');
 	}
 
 	/**

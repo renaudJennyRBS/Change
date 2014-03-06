@@ -79,7 +79,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Seo/Events/SeoManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Seo/Events/SeoManager');
 	}
 
 	/**

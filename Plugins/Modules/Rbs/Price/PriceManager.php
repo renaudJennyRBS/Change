@@ -65,7 +65,7 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/PriceManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/PriceManager');
 	}
 
 	/**

@@ -41,7 +41,7 @@ class Listeners implements ListenerAggregateInterface
 				}
 			}
 		};
-		$events->attach('registerServices', $callback, 1);
+		$events->attach(Event::EVENT_REQUEST, $callback, 1);
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 5);
 	}
 

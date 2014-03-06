@@ -19,6 +19,11 @@ use Zend\EventManager\SharedListenerAggregateInterface;
 class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 {
 	/**
+	 * @var \Change\Services\ApplicationServices;
+	 */
+	protected $applicationServices;
+
+	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the SharedEventManager
 	 * implementation will pass this to the aggregate.
@@ -26,6 +31,18 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
+		$events->attach('*', '*', function($event) {
+			if ($event instanceof \Change\Events\Event)
+			{
+				if ($this->applicationServices === null) {
+
+					$this->applicationServices = new \Change\Services\ApplicationServices($event->getApplication());
+				}
+				$event->getServices()->set('applicationServices', $this->applicationServices);
+			}
+			return true;
+		}, 9999);
+
 		$identifiers = array('Documents');
 
 		$callBack = function ($event)

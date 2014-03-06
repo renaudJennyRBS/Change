@@ -5,20 +5,25 @@ use Zend\EventManager\EventManagerInterface;
 
 class AvatarManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	protected function getGenericServices()
+
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
-		return $genericServices;
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachGenericServicesSharedListener($sharedEventManager);
 	}
 
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
+	}
 
 	public function testGetAvatarUrl()
 	{
 		$baseURL = 'http://www.rbs.fr';
 		$urlManager = new \Change\Http\UrlManager(new \Zend\Uri\Http($baseURL));
 
-		$avatarManager = $this->getGenericServices()->getAvatarManager();
+		$avatarManager = $this->genericServices->getAvatarManager();
 		$this->assertInstanceOf('Rbs\Media\Avatar\AvatarManager', $avatarManager);
 		$avatarManager->setUrlManager($urlManager);
 
@@ -29,7 +34,7 @@ class AvatarManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$url = $avatarManager->getAvatarUrl(90, null, $user);
 		$this->assertNotNull($url);
 
-		$callback = function ($event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			$event->setParam('url', $event->getParam('email'));
 			$event->stopPropagation();
@@ -79,7 +84,7 @@ class Listener_354651321 implements \Zend\EventManager\ListenerAggregateInterfac
 	public function attach(EventManagerInterface $events)
 	{
 
-		$callback = function ($event)
+		$callback = function (\Change\Events\Event $event)
 		{
 			$event->setParam('url', $event->getParam('email'));
 			$event->stopPropagation();

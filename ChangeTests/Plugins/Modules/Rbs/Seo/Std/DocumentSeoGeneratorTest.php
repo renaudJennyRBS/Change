@@ -17,16 +17,22 @@ class DocumentSeoGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
 	protected function setUp()
 	{
 		parent::setUp();
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
+		$this->initServices($this->getApplication());
 		$callback = function (\Change\Documents\Events\Event $event)
 		{
 			(new \Rbs\Seo\Std\DocumentSeoGenerator())->onDocumentCreated($event);
 		};
-		$this->getEventManagerFactory()->getSharedEventManager()->attach('Documents', array(\Change\Documents\Events\Event::EVENT_CREATED), $callback, 5);
+		$this->getApplication()->getSharedEventManager()->attach('Documents',
+			array(\Change\Documents\Events\Event::EVENT_CREATED), $callback, 5);
 	}
 
 	public function testOnDocumentCreated()

@@ -8,6 +8,7 @@ class InsertDocumentsTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
 	{
+		static::clearDB();
 		static::initDocumentsDb();
 	}
 

@@ -55,7 +55,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/AuthenticationManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/AuthenticationManager');
 	}
 
 	/**

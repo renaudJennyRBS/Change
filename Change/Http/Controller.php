@@ -20,11 +20,6 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	/**
-	 * @var Application
-	 */
-	protected $application;
-
-	/**
 	 * @var BaseResolver
 	 */
 	protected $actionResolver;
@@ -35,22 +30,6 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	public function __construct(Application $application)
 	{
 		$this->setApplication($application);
-	}
-
-	/**
-	 * @param \Change\Application $application
-	 */
-	public function setApplication(Application $application)
-	{
-		$this->application = $application;
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	public function getApplication()
-	{
-		return $this->application;
 	}
 
 	/**
@@ -69,7 +48,7 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$classes = array();
 		foreach ($this->getEventManagerIdentifier() as $name)
 		{
-			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $name));
+			$entry = $this->getApplication()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $name));
 			if (is_array($entry))
 			{
 				foreach ($entry as $className)
@@ -111,18 +90,9 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function handle(Request $request)
 	{
-		if ($this->eventManagerFactory === null)
-		{
-			$this->eventManagerFactory = new \Change\Events\EventManagerFactory($this->application);
-			$this->eventManagerFactory->addSharedService('applicationServices',
-				new \Change\Services\ApplicationServices($this->application, $this->eventManagerFactory));
-		}
-
 		$event = $this->createEvent($request);
 		try
 		{
-			$this->doSendRegisterServices($event);
-
 			$this->doSendRequest($event);
 
 			if (!($event->getResult() instanceof Result))
@@ -260,18 +230,6 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$header = \Zend\Http\Header\Allow::fromString('allow: ' . implode(', ', $allow));
 		$result->getHeaders()->addHeader($header);
 		return $result;
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	protected function doSendRegisterServices(Event $event)
-	{
-
-		$event->setName('registerServices');
-		$event->setTarget($this);
-		$event->setParam('eventManagerFactory', $this->eventManagerFactory);
-		$this->getEventManager()->trigger($event);
 	}
 
 	/**
@@ -465,20 +423,5 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 		$urlManager = new UrlManager($request->getUri(), $script);
 		$event->setUrlManager($urlManager);
 		return $event;
-	}
-
-	/**
-	 * @param \Change\Events\EventManager $eventManager
-	 */
-	protected function attachEvents(\Change\Events\EventManager $eventManager)
-	{
-		$eventManager->attach('registerServices', array($this, 'onDefaultRegisterServices'), 5);
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function onDefaultRegisterServices(Event $event)
-	{
 	}
 }

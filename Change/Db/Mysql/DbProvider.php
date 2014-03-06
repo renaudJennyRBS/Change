@@ -193,7 +193,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		if ($this->schemaManager === null)
 		{
-			$this->schemaManager = new SchemaManager($this, $this->logging);
+			$this->schemaManager = new SchemaManager($this, $this->getLogging());
 		}
 		return $this->schemaManager;
 	}
@@ -241,7 +241,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			if (!$this->inTransaction())
 			{
-				$this->logging->warn(__METHOD__ . " called while not in transaction");
+				$this->getLogging()->warn(__METHOD__ . " called while not in transaction");
 			}
 			else
 			{
@@ -270,7 +270,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			if (!$this->inTransaction())
 			{
-				$this->logging->warn(__METHOD__ . " called while not in transaction");
+				$this->getLogging()->warn(__METHOD__ . " called while not in transaction");
 			}
 			else
 			{

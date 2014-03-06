@@ -3,10 +3,15 @@ namespace ChangeTests\Perf;
 
 class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-
 	public static function setUpBeforeClass()
 	{
 		static::clearDB();
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
 	}
 
 	/**
@@ -14,14 +19,7 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getCommandsEventManager()
 	{
-		$eventManagerFactory = new \Change\Events\EventManagerFactory($this->getApplication());
-		$applicationServices = $this->getApplicationServices();
-		$applicationServices->getPluginManager()->setInstallApplication($this->getApplication());
-		$eventManagerFactory->addSharedService('applicationServices', $this->getApplicationServices());
-
-		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
-		$classNames = $eventManagerFactory->getConfiguredListenerClassNames('Change/Events/Commands');
-		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
+		$eventManager = $this->getApplication()->getNewEventManager('Commands', 'Change/Events/Commands');
 		return $eventManager;
 	}
 

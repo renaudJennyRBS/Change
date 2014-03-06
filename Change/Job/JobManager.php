@@ -28,10 +28,6 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $transactionManager = null;
 
-	/**
-	 * @var \Change\Logging\Logging
-	 */
-	protected $logging = null;
 
 	/**
 	 * @param \Change\Db\DbProvider $dbProvider
@@ -51,22 +47,13 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->dbProvider;
 	}
 
-	/**
-	 * @param \Change\Logging\Logging $logging
-	 * @return $this
-	 */
-	public function setLogging($logging)
-	{
-		$this->logging = $logging;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Logging\Logging
 	 */
 	protected function getLogging()
 	{
-		return $this->logging;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**
@@ -100,7 +87,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/JobManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/JobManager');
 	}
 
 	/**

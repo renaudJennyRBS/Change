@@ -17,6 +17,11 @@ use Zend\EventManager\SharedListenerAggregateInterface;
 class SharedListeners implements SharedListenerAggregateInterface
 {
 	/**
+	 * @var \Rbs\Commerce\CommerceServices
+	 */
+	protected $commerceServices;
+
+	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the SharedEventManager
 	 * implementation will pass this to the aggregate.
@@ -24,15 +29,17 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$callback = function ($event){
-			if (($event instanceof \Change\Events\Event) &&
-				($eventManagerFactory = $event->getParam('eventManagerFactory')) instanceof \Change\Events\EventManagerFactory)
+		$events->attach('*', '*', function($event) {
+			if ($event instanceof \Change\Events\Event)
 			{
-				$commerceServices = new \Rbs\Commerce\CommerceServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
-				$event->getServices()->set('commerceServices', $commerceServices);
+				if ($this->commerceServices === null) {
+
+					$this->commerceServices = new \Rbs\Commerce\CommerceServices($event->getApplication(), $event->getApplicationServices());
+				}
+				$event->getServices()->set('commerceServices', $this->commerceServices);
 			}
-		};
-		$events->attach(array('Commands', 'JobManager', 'Http'), 'registerServices', $callback, 5);
+			return true;
+		}, 9997);
 	}
 
 	/**

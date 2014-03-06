@@ -123,7 +123,7 @@ class MailManagerTest extends TestCase
 		$configuration = $application->getConfiguration();
 
 		$mailManager = new FakeMailManager();
-		$mailManager->setConfiguration($configuration);
+		$mailManager->setApplication($application);
 
 		$from = array('fromtest@rbschange.fr');
 		$to = array('totest@rbschange.fr');

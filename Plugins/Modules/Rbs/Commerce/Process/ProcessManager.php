@@ -23,11 +23,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	protected $cartManager;
 
 	/**
-	 * @var \Change\Logging\Logging
-	 */
-	protected $logging;
-
-	/**
 	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
 	 * @return $this
 	 */
@@ -46,21 +41,11 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Logging\Logging $logging
-	 * @return $this
-	 */
-	public function setLogging(\Change\Logging\Logging $logging)
-	{
-		$this->logging = $logging;
-		return $this;
-	}
-
-	/**
 	 * @return \Change\Logging\Logging
 	 */
 	protected function getLogging()
 	{
-		return $this->logging;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**
@@ -76,7 +61,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/ProcessManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/ProcessManager');
 	}
 
 	/**

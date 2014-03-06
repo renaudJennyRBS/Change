@@ -115,7 +115,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			throw new \RuntimeException('Database not defined', 31001);
 		}
-		$dsn = $protocol . ':' . $this->workspace->composeAbsolutePath($connectionInfos['database']);
+		$dsn = $protocol . ':' . $this->getApplication()->getWorkspace()->composeAbsolutePath($connectionInfos['database']);
 		$pdo = new \PDO($dsn);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		return $pdo;
@@ -142,7 +142,7 @@ class DbProvider extends \Change\Db\DbProvider
 	{
 		if ($this->schemaManager === null)
 		{
-			$this->schemaManager = new SchemaManager($this, $this->logging);
+			$this->schemaManager = new SchemaManager($this, $this->getLogging());
 		}
 		return $this->schemaManager;
 	}
@@ -165,7 +165,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			if ($this->inTransaction())
 			{
-				$this->logging->warn(get_class($this) . " while already in transaction");
+				$this->getLogging()->warn(get_class($this) . " while already in transaction");
 			}
 			else
 			{

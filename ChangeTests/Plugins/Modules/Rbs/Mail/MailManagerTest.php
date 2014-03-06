@@ -16,13 +16,16 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	/**
-	 * @var \Rbs\Generic\GenericServices
-	 */
-	protected $genericServices;
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachGenericServicesSharedListener($sharedEventManager);
+	}
+
 
 	public function setUp()
 	{
+		parent::setUp();
 		//set the cache folder for mail
 		$mailCacheFolder = $this->getApplication()->getWorkspace()->cachePath('mail');
 		if (!is_dir($mailCacheFolder))
@@ -31,8 +34,7 @@ class MailManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$this->assertTrue(is_dir($mailCacheFolder), 'Mail cache folder has not been created');
 		}
 
-		$this->genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('genericServices', $this->genericServices);
+		$this->initServices($this->getApplication());
 	}
 
 	/**

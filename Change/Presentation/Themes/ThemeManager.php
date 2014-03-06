@@ -41,50 +41,23 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $themes = array();
 
-	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
 
-	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace;
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
 	protected function getConfiguration()
 	{
-		return $this->configuration;
+		return $this->getApplication()->getConfiguration();
 	}
 
-	/**
-	 * @param \Change\Workspace $workspace
-	 * @return $this
-	 */
-	public function setWorkspace(\Change\Workspace $workspace)
-	{
-		$this->workspace = $workspace;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Workspace
 	 */
 	protected function getWorkspace()
 	{
-		return $this->workspace;
+		return $this->getApplication()->getWorkspace();
 	}
 
 	/**
@@ -100,7 +73,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/ThemeManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/ThemeManager');
 	}
 
 	/**

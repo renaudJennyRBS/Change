@@ -8,8 +8,7 @@ class GenericServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	protected function getGenericServices()
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
+		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(),  $this->getApplicationServices());
 		return $genericServices;
 	}
 

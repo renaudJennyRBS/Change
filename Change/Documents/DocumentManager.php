@@ -52,9 +52,9 @@ class DocumentManager
 	protected $LCIDStackTransaction = array();
 
 	/**
-	 * @var \Change\Logging\Logging
+	 * @var \Change\Application
 	 */
-	protected $logging;
+	protected $application;
 
 	/**
 	 * @var \Change\Db\DbProvider
@@ -72,19 +72,27 @@ class DocumentManager
 	protected $modelManager = null;
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
-	 * @var \Change\Events\EventManagerFactory
-	 */
-	protected $eventManagerFactory;
-
-	/**
 	 * @var \Change\Events\EventManager
 	 */
 	protected $eventManager;
+
+	/**
+	 * @param \Change\Application $application
+	 * @return $this
+	 */
+	public function setApplication(\Change\Application $application)
+	{
+		$this->application = $application;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
 
 	/**
 	 * @return \Change\Events\EventManager
@@ -93,64 +101,26 @@ class DocumentManager
 	{
 		if ($this->eventManager === null)
 		{
-			$this->eventManager = $this->getEventManagerFactory()->getNewEventManager(static::EVENT_MANAGER_IDENTIFIER);
+			$this->eventManager = $this->getApplication()->getNewEventManager(static::EVENT_MANAGER_IDENTIFIER);
 			$this->eventManager->attach('injection', array($this, 'onDefaultInjection'), 5);
 		}
 		return $this->eventManager;
 	}
 
 	/**
-	 * @param \Change\Logging\Logging $logging
-	 * @return $this
-	 */
-	public function setLogging(\Change\Logging\Logging $logging)
-	{
-		$this->logging = $logging;
-		return $this;
-	}
-
-	/**
 	 * @return \Change\Logging\Logging
 	 */
-	public function getLogging()
+	protected function getLogging()
 	{
-		return $this->logging;
-	}
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
-	public function getConfiguration()
+	protected function getConfiguration()
 	{
-		return $this->configuration;
-	}
-
-	/**
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
-	 * @return $this
-	 */
-	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
-	{
-		$this->eventManagerFactory = $eventManagerFactory;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Events\EventManagerFactory
-	 */
-	protected function getEventManagerFactory()
-	{
-		return $this->eventManagerFactory;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
@@ -348,7 +318,7 @@ class DocumentManager
 
 		/* @var $document AbstractDocument */
 		$document = new $className($model);
-		$document->setEventManagerFactory($this->eventManagerFactory)
+		$document->setApplication($this->getApplication())
 			->setDocumentManager($this)
 			->setDbProvider($this->dbProvider);
 		$this->getEventManager()->trigger('injection', $this, array('document' => $document));

@@ -13,9 +13,21 @@ class GeoManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachGenericServicesSharedListener($sharedEventManager);
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
+	}
+
 	public function testGetCountriesByZoneCode()
 	{
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$genericServices = $this->genericServices;
 		$geoManager = $genericServices->getGeoManager();
 		$this->assertInstanceOf('\Rbs\Geo\GeoManager', $geoManager);
 

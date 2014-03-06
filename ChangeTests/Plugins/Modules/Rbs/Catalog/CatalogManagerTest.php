@@ -9,7 +9,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	/**
 	 * @var \Rbs\Catalog\CatalogManager
 	 */
-	protected $cm;
+	protected $catalogManager;
 
 	public static function setUpBeforeClass()
 	{
@@ -23,12 +23,25 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
+	public function onInitServices(\Change\Events\Event $event)
+	{
+		parent::onInitServices($event);
+
+		/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		$this->catalogManager = $commerceServices->getCatalogManager();
+	}
+
 	protected function setUp()
 	{
 		parent::setUp();
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
-		$this->cm = $cs->getCatalogManager();
+		$this->initServices($this->getApplication());
 	}
 
 	public function testAddProductInProductList()
@@ -54,18 +67,18 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$tm->commit();
 
-		$productListItem = $this->cm->addProductInProductList($product, $productList, null);
+		$productListItem = $this->catalogManager->addProductInProductList($product, $productList, null);
 		$this->assertInstanceOf('\Rbs\Catalog\Documents\ProductListItem', $productListItem);
 		$this->assertEquals($product->getId(), $productListItem->getProduct()->getId());
 		$this->assertEquals($productList->getId(), $productListItem->getProductList()->getId());
 
-		$existingCategorization = $this->cm->addProductInProductList($product, $productList, null);
+		$existingCategorization = $this->catalogManager->addProductInProductList($product, $productList, null);
 		$this->assertInstanceOf('\Rbs\Catalog\Documents\ProductListItem', $productListItem);
 		$this->assertEquals($productListItem->getId(), $existingCategorization->getId());
 		$this->assertEquals($product->getId(), $existingCategorization->getProduct()->getId());
 		$this->assertEquals($productList->getId(), $existingCategorization->getProductList()->getId());
 
-		$newCategorization = $this->cm->addProductInProductList($product, $productList, $condition);
+		$newCategorization = $this->catalogManager->addProductInProductList($product, $productList, $condition);
 		$this->assertInstanceOf('\Rbs\Catalog\Documents\ProductListItem', $productListItem);
 		$this->assertNotEquals($productListItem->getId(), $newCategorization->getId());
 		$this->assertEquals($product->getId(), $newCategorization->getProduct()->getId());
@@ -97,20 +110,20 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$product->setLabel($i);
 			$product->getCurrentLocalization()->setTitle($i);
 			$product->save();
-			$this->cm->addProductInProductList($product, $productList, $condition);
+			$this->catalogManager->addProductInProductList($product, $productList, $condition);
 			$products[] = $product;
 		}
 
 
 		$this->getApplicationServices()->getTransactionManager()->commit();
 
-		$this->cm->highlightProductInProductList($products[0], $productList, $condition);
-		$this->cm->highlightProductInProductList($products[1], $productList, $condition);
-		$this->cm->highlightProductInProductList($products[2], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[0], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[1], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[2], $productList, $condition);
 
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-3 ,$cat->getPosition());
@@ -130,10 +143,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 
 		// Put 3rd product in first position
-		$this->cm->highlightProductInProductList($products[2], $productList, $condition, $products[0]);
+		$this->catalogManager->highlightProductInProductList($products[2], $productList, $condition, $products[0]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-2 ,$cat->getPosition());
@@ -152,10 +165,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->highlightProductInProductList($products[1], $productList, $condition, $products[0]);
+		$this->catalogManager->highlightProductInProductList($products[1], $productList, $condition, $products[0]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-1 ,$cat->getPosition());
@@ -174,10 +187,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->highlightProductInProductList($products[5], $productList, $condition, $products[2]);
+		$this->catalogManager->highlightProductInProductList($products[5], $productList, $condition, $products[2]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-1 ,$cat->getPosition());
@@ -200,10 +213,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->highlightProductInProductList($products[5], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[5], $productList, $condition);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-2 ,$cat->getPosition());
@@ -227,10 +240,10 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		}
 
 
-		$this->cm->highlightProductInProductList($products[2], $productList, $condition, $products[5]);
+		$this->catalogManager->highlightProductInProductList($products[2], $productList, $condition, $products[5]);
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 0)
 			{
 				$this->assertEquals(-3 ,$cat->getPosition());
@@ -252,7 +265,7 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 				$this->assertEquals(0 ,$cat->getPosition());
 			}
 		}
-		$this->cm->removeProductFromProductList($products[2], $productList, $condition);
+		$this->catalogManager->removeProductFromProductList($products[2], $productList, $condition);
 		return array('cat' => $productList, 'con' => $condition, 'pro' => $products);
 	}
 
@@ -279,19 +292,19 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			$product->setLabel($i);
 			$product->getCurrentLocalization()->setTitle($i);
 			$product->save();
-			$this->cm->addProductInProductList($product, $productList, $condition);
+			$this->catalogManager->addProductInProductList($product, $productList, $condition);
 			$products[] = $product;
 		}
 		$this->getApplicationServices()->getTransactionManager()->commit();
 
-		$this->cm->highlightProductInProductList($products[9], $productList, $condition);
-		$this->cm->highlightProductInProductList($products[8], $productList, $condition);
-		$this->cm->highlightProductInProductList($products[7], $productList, $condition);
-		$this->cm->highlightProductInProductList($products[6], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[9], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[8], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[7], $productList, $condition);
+		$this->catalogManager->highlightProductInProductList($products[6], $productList, $condition);
 
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 9)
 			{
 				$this->assertEquals(-4 ,$cat->getPosition());
@@ -314,11 +327,11 @@ class CatalogManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 			}
 		}
 
-		$this->cm->downplayProductInProductList($products[7], $productList, $condition);
+		$this->catalogManager->downplayProductInProductList($products[7], $productList, $condition);
 
 		for ($i = 0; $i < 10; $i++)
 		{
-			$cat = $this->cm->getProductListItem($products[$i], $productList, $condition);
+			$cat = $this->catalogManager->getProductListItem($products[$i], $productList, $condition);
 			if ($i == 9)
 			{
 				$this->assertEquals(-3 ,$cat->getPosition());
