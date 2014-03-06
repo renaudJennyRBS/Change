@@ -9,7 +9,6 @@
 namespace Rbs\Generic;
 
 use Change\Application;
-use Change\Events\EventManagerFactory;
 use Change\Services\ApplicationServices;
 
 /**
@@ -18,11 +17,6 @@ use Change\Services\ApplicationServices;
 class GenericServices extends \Zend\Di\Di
 {
 	use \Change\Services\ServicesCapableTrait;
-
-	/**
-	 * @var \Change\Application
-	 */
-	protected $application;
 
 	/**
 	 * @var \Change\Services\ApplicationServices
@@ -48,24 +42,6 @@ class GenericServices extends \Zend\Di\Di
 	}
 
 	/**
-	 * @param \Change\Application $application
-	 * @return $this
-	 */
-	public function setApplication(\Change\Application $application)
-	{
-		$this->application = $application;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return $this->application;
-	}
-
-	/**
 	 * @return array<alias => className>
 	 */
 	protected function loadInjectionClasses()
@@ -76,21 +52,19 @@ class GenericServices extends \Zend\Di\Di
 
 	/**
 	 * @param Application $application
-	 * @param EventManagerFactory $eventManagerFactory
 	 * @param ApplicationServices $applicationServices
 	 */
-	public function __construct(Application $application, EventManagerFactory $eventManagerFactory, ApplicationServices $applicationServices)
+	public function __construct(Application $application, ApplicationServices $applicationServices)
 	{
 		$this->setApplication($application);
-		$this->setEventManagerFactory($eventManagerFactory);
 		$this->setApplicationServices($applicationServices);
 
 		$definitionList = new \Zend\Di\DefinitionList(array());
 
-		//SeoManager : EventManagerFactory, DocumentManager, TransactionManager
+		//SeoManager : Application, DocumentManager, TransactionManager
 		$seoManagerClassName = $this->getInjectedClassName('SeoManager', 'Rbs\Seo\SeoManager');
 		$classDefinition = $this->getClassDefinition($seoManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition
 			->addMethod('setTransactionManager', true)
 				->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
@@ -98,36 +72,36 @@ class GenericServices extends \Zend\Di\Di
 				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//AvatarManager : EventManagerFactory
+		//AvatarManager : Application
 		$avatarManagerClassName = $this->getInjectedClassName('AvatarManager', 'Rbs\Media\Avatar\AvatarManager');
 		$classDefinition = $this->getClassDefinition($avatarManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//FieldManager : EventManagerFactory, ConstraintsManager
+		//FieldManager : Application, ConstraintsManager
 		$fieldManagerClassName = $this->getInjectedClassName('FieldManager', 'Rbs\Simpleform\Field\FieldManager');
 		$classDefinition = $this->getClassDefinition($fieldManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setConstraintsManager', true)
 			->addMethodParameter('setConstraintsManager', 'constraintsManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//SecurityManager : EventManagerFactory
+		//SecurityManager : Application
 		$securityManagerClassName = $this->getInjectedClassName('SecurityManager', 'Rbs\Simpleform\Security\SecurityManager');
 		$classDefinition = $this->getClassDefinition($securityManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//GeoManager : EventManagerFactory
+		//GeoManager : Application
 		$geoManagerClassName = $this->getInjectedClassName('GeoManager', 'Rbs\Geo\GeoManager');
 		$classDefinition = $this->getClassDefinition($geoManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//FacetManager : EventManagerFactory, DocumentManager, I18nManager, CollectionManager
+		//FacetManager : Application, DocumentManager, I18nManager, CollectionManager
 		$facetManagerClassName = $this->getInjectedClassName('FacetManager', '\Rbs\Elasticsearch\Facet\FacetManager');
 		$classDefinition = $this->getClassDefinition($facetManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition
 			->addMethod('setDocumentManager', true)
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
@@ -137,24 +111,21 @@ class GenericServices extends \Zend\Di\Di
 			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//IndexManager : FacetManager, EventManagerFactory, Configuration, DocumentManager, Logging
+		//IndexManager : FacetManager, Application, DocumentManager
 		$indexManagerClassName = $this->getInjectedClassName('IndexManager', 'Rbs\Elasticsearch\Index\IndexManager');
 		$classDefinition = $this->getClassDefinition($indexManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
-		$this->addConfigurationClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition
 			->addMethod('setFacetManager', true)
 			->addMethodParameter('setFacetManager', 'facetManager', array('type' => 'FacetManager', 'required' => true))
 			->addMethod('setDocumentManager', true)
-			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
-			->addMethod('setLogging', true)
-			->addMethodParameter('setLogging', 'logging', array('required' => true));
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//MailManager : EventManagerFactory, DocumentManager, JobManager
+		//MailManager : Application, DocumentManager, JobManager
 		$mailManagerClassName = $this->getInjectedClassName('MailManager', 'Rbs\Mail\MailManager');
 		$classDefinition = $this->getClassDefinition($mailManagerClassName);
-		$this->addEventsCapableClassDefinition($classDefinition);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition
 			->addMethod('setJobManager', true)
 			->addMethodParameter('setJobManager', 'jobManager', array('required' => true))
@@ -170,42 +141,34 @@ class GenericServices extends \Zend\Di\Di
 		$i18nManager = function() use ($applicationServices) {return $applicationServices->getI18nManager();};
 		$collectionManager = function() use ($applicationServices) {return $applicationServices->getCollectionManager();};
 		$jobManager = function() use ($applicationServices) {return $applicationServices->getJobManager();};
-		$logging = function() use ($applicationServices) {return $applicationServices->getLogging();};
-		$configuration = $application->getConfiguration();
 
 		$im->addAlias('SeoManager', $seoManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory,
+			array('application' => $application,
 				'documentManager' => $documentManager, 'transactionManager' => $transactionManager));
 
-		$im->addAlias('AvatarManager', $avatarManagerClassName,  array('eventManagerFactory' => $this->getEventManagerFactory()));
+		$im->addAlias('AvatarManager', $avatarManagerClassName,  array('application' => $application));
 
 		$constraintsManager = function () use ($applicationServices)
 		{
 			return $applicationServices->getConstraintsManager();
 		};
 		$im->addAlias('FieldManager', $fieldManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'constraintsManager' => $constraintsManager
+			array('application' => $application, 'constraintsManager' => $constraintsManager
 		));
 
-		$im->addAlias('SecurityManager', $securityManagerClassName, array(
-			'eventManagerFactory' => $eventManagerFactory
-		));
+		$im->addAlias('SecurityManager', $securityManagerClassName, array('application' => $application));
 
-		$im->addAlias('GeoManager', $geoManagerClassName, array(
-			'eventManagerFactory' => $eventManagerFactory
-		));
+		$im->addAlias('GeoManager', $geoManagerClassName, array('application' => $application));
 
 		$im->addAlias('FacetManager', $facetManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'documentManager' => $documentManager,
+			array('application' => $application, 'documentManager' => $documentManager,
 				'collectionManager' => $collectionManager, 'i18nManager' => $i18nManager));
 
 		$im->addAlias('IndexManager', $indexManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory, 'configuration' => $configuration,
-				'documentManager' => $documentManager, 'logging' => $logging));
+			array('application' => $application, 'documentManager' => $documentManager));
 
 		$im->addAlias('MailManager', $mailManagerClassName,
-			array('eventManagerFactory' => $eventManagerFactory,
-				'documentManager' => $documentManager, 'jobManager' => $jobManager));
+			array('application' => $application, 'documentManager' => $documentManager, 'jobManager' => $jobManager));
 	}
 
 	/**

@@ -36,7 +36,7 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/ProfileManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/ProfileManager');
 	}
 
 	/**

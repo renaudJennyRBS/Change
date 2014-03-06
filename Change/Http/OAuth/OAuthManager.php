@@ -77,7 +77,7 @@ class OAuthManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/OAuthManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/OAuthManager');
 	}
 
 	/**

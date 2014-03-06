@@ -8,16 +8,17 @@ use Rbs\Price\PriceManager;
  */
 class PriceManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * @var \Rbs\Commerce\CommerceServices;
-	 */
-	protected $commerceServices;
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
 
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
+		$this->initServices($this->getApplication());
+
 		$this->commerceServices->getContext()->setZone('FR');
 		$ba = new TestBillingArea();
 		$ba->taxes[] = new TestTax('TVA', array('c1' => array('FR' => 0.2)));

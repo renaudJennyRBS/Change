@@ -103,7 +103,7 @@ class AvatarManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Media/Events/AvatarManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Media/Events/AvatarManager');
 	}
 
 	/**

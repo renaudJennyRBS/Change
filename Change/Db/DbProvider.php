@@ -11,6 +11,7 @@ namespace Change\Db;
 use Change\Db\Query\AbstractQuery;
 use Change\Db\Query\Builder;
 use Change\Db\Query\StatementBuilder;
+use Change\Events\EventsCapableTrait;
 use Change\Logging\Logging;
 
 /**
@@ -36,24 +37,10 @@ abstract class DbProvider
 	protected $connectionInfos;
 
 	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace;
-
-	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
 	 * @var array
 	 */
 	protected $timers;
 
-	/**
-	 * @var Logging
-	 */
-	protected $logging;
 
 	/**
 	 * @var \Change\Db\SqlMapping
@@ -109,7 +96,7 @@ abstract class DbProvider
 		$classNames = array();
 		foreach ($this->getEventManagerIdentifier() as $identifier)
 		{
-			$entry = $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $identifier));
+			$entry = $this->getApplication()->getConfiguredListenerClassNames('Change/Events/' . str_replace('.', '/', $identifier));
 			if (is_array($entry))
 			{
 				foreach ($entry as $className)
@@ -129,17 +116,15 @@ abstract class DbProvider
 	 */
 	public abstract function getType();
 
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+
+	public function setApplication(\Change\Application $application)
 	{
-		$this->configuration = $configuration;
+		$this->application = $application;
+
 		if ($this->connectionInfos === null)
 		{
-			$section = $configuration->getEntry('Change/Db/use', 'default');
-			$connectionInfos = $configuration->getEntry('Change/Db/' . $section, array());
+			$section = $application->getConfiguration()->getEntry('Change/Db/use', 'default');
+			$connectionInfos = $application->getConfiguration()->getEntry('Change/Db/' . $section, array());
 			if (is_array($connectionInfos))
 			{
 				$this->setConnectionInfos(new \ArrayObject($connectionInfos));
@@ -149,17 +134,6 @@ abstract class DbProvider
 				$this->setConnectionInfos(new \ArrayObject());
 			}
 		}
-		return $this;
-	}
-
-	/**
-	 * @param \Change\Workspace $workspace
-	 * @return $this
-	 */
-	public function setWorkspace(\Change\Workspace $workspace)
-	{
-		$this->workspace = $workspace;
-		return $this;
 	}
 
 	public function __construct()
@@ -297,19 +271,11 @@ abstract class DbProvider
 	}
 
 	/**
-	 * @param Logging $logging
-	 */
-	public function setLogging(Logging $logging)
-	{
-		$this->logging = $logging;
-	}
-
-	/**
 	 * @return Logging
 	 */
 	public function getLogging()
 	{
-		return $this->logging;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**

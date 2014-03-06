@@ -28,11 +28,6 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_GET_CACHE_ADAPTER = 'getCacheAdapter';
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
 	 * @var array
 	 */
 	protected $blocks;
@@ -43,21 +38,11 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	protected $cacheAdapter = false;
 
 	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
-
-	/**
 	 * @return \Change\Configuration\Configuration
 	 */
 	protected function getConfiguration()
 	{
-		return $this->configuration;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
@@ -82,7 +67,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/BlockManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/BlockManager');
 	}
 
 	/**

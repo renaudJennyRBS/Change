@@ -37,11 +37,6 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_TYPE_THEME = 'theme';
 
 	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace;
-
-	/**
 	 * @var DbProvider
 	 */
 	protected $dbProvider;
@@ -52,32 +47,16 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	protected $transactionManager;
 
 	/**
-	 * @var \Change\Application
-	 */
-	protected $installApplication;
-
-	/**
 	 * @var Plugin[]
 	 */
 	protected $plugins;
-
-
-	/**
-	 * @param \Change\Workspace $workspace
-	 * @return $this
-	 */
-	public function setWorkspace(\Change\Workspace $workspace)
-	{
-		$this->workspace = $workspace;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Workspace
 	 */
 	protected function getWorkspace()
 	{
-		return $this->workspace;
+		return $this->getApplication()->getWorkspace();
 	}
 
 	/**
@@ -112,24 +91,6 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	public function getTransactionManager()
 	{
 		return $this->transactionManager;
-	}
-
-	/**
-	 * @param \Change\Application $installApplication
-	 * @return $this
-	 */
-	public function setInstallApplication(\Change\Application $installApplication = null)
-	{
-		$this->installApplication = $installApplication;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	public function getInstallApplication()
-	{
-		return $this->installApplication;
 	}
 
 	/**
@@ -648,7 +609,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/Plugin');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/Plugin');
 	}
 
 	/**
@@ -734,21 +695,16 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function doInstall($eventType, $vendor, $name, $context)
 	{
-		$this->getDbProvider()->closeConnection();
-
-		$installApplication = $this->installApplication;
-		if (!($installApplication instanceof \Change\Application))
+		if (!($this->getApplication()->getConfiguration() instanceof \Change\Configuration\EditableConfiguration))
 		{
-			$installApplication = new \Change\Application();
-			$this->installApplication = $installApplication;
+			$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
+			$this->getApplication()->setConfiguration($editableConfiguration->import($this->getApplication()->getConfiguration()));
+		}
+		else
+		{
+			$editableConfiguration = $this->getApplication()->getConfiguration();
 		}
 
-		$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
-		$installApplication->setConfiguration($editableConfiguration->import($installApplication->getConfiguration()));
-
-		$oldEventManagerFactory = $this->getEventManagerFactory();
-		$this->setEventManagerFactory(new \Change\Events\EventManagerFactory($installApplication));
-		$this->clearEventManager();
 		$installEventManager = $this->getEventManager();
 
 		/* @var $plugins \Change\Plugins\Plugin[] */
@@ -757,12 +713,13 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 
 		$event = new \Change\Events\Event(static::EVENT_SETUP_INITIALIZE, $this, $eventArgs);
 		$results = $installEventManager->trigger($event);
+
 		$date = new \DateTime();
 		foreach ($results as $result)
 		{
 			if ($result instanceof Plugin)
 			{
-				$result->setWorkspace($installApplication->getWorkspace());
+				$result->setWorkspace($this->getWorkspace());
 				$result->setActivated(true);
 				$result->setConfigurationEntry('installDate', $date->format('c'));
 				$plugins[] = $result;
@@ -774,31 +731,22 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		$event->setName(static::EVENT_SETUP_APPLICATION);
 		$installEventManager->trigger($event);
 
-		$applicationServices = new \Change\Services\ApplicationServices($installApplication, $this->getEventManagerFactory());
-		$installEventManager->addService('applicationServices', $applicationServices);
-
-		$event->setName('registerServices');
-		$event->setParam('eventManagerFactory', $this->getEventManagerFactory());
-		$installEventManager->trigger($event);
-		$event->setParam('eventManagerFactory', null);
-
 		if ($eventType !== static::EVENT_TYPE_THEME)
 		{
-			$compiler = new \Change\Documents\Generators\Compiler($installApplication, $applicationServices);
+			$compiler = new \Change\Documents\Generators\Compiler($this->getApplication(), $event->getApplicationServices());
 			$compiler->generate();
 
-			$generator = new \Change\Db\Schema\Generator($installApplication->getWorkspace(), $applicationServices->getDbProvider());
+			$generator = new \Change\Db\Schema\Generator($this->getWorkspace(), $event->getApplicationServices()->getDbProvider());
 			$generator->generatePluginsSchema();
 
 			foreach ($plugins as $plugin)
 			{
-				$applicationServices->getI18nManager()->compilePluginI18nFiles($plugin);
+				$event->getApplicationServices()->getI18nManager()->compilePluginI18nFiles($plugin);
 			}
 		}
 
 		$event->setName(static::EVENT_SETUP_DB_SCHEMA);
 		$installEventManager->trigger($event);
-		$applicationServices->getDbProvider()->getSchemaManager()->closeConnection();
 
 		$event->setName(static::EVENT_SETUP_SERVICES);
 		$installEventManager->trigger($event);
@@ -809,6 +757,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		try
 		{
 			$this->getTransactionManager()->begin();
+
 			foreach ($plugins as $plugin)
 			{
 				$date = new \DateTime();
@@ -817,6 +766,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 				$this->update($plugin);
 			}
 			$editableConfiguration->save();
+
 			$this->getTransactionManager()->commit();
 		}
 		catch (\Exception $e)
@@ -826,11 +776,6 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 
 		$event->setName(static::EVENT_SETUP_SUCCESS);
 		$installEventManager->trigger($event);
-
-		$applicationServices->getDbProvider()->closeConnection();
-
-		$this->setEventManagerFactory($oldEventManagerFactory);
-		$this->clearEventManager();
 
 		return $plugins;
 	}

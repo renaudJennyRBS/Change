@@ -19,37 +19,27 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	 * @param \Change\Application $application
 	 * @return \Change\Services\ApplicationServices
 	 */
-	protected static function getNewEventManagerFactory(\Change\Application $application)
+	protected static function getNewApplicationServices(\Change\Application $application)
 	{
-		return new \Change\Events\EventManagerFactory($application);
+		return new \Change\Services\ApplicationServices($application);
 	}
 
-	/**
-	 * @param \Change\Application $application
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
-	 * @return \Change\Services\ApplicationServices
-	 */
-	protected static function getNewApplicationServices(\Change\Application $application, \Change\Events\EventManagerFactory $eventManagerFactory)
-	{
-		return new \Change\Services\ApplicationServices($application, $eventManagerFactory);
-	}
 
 	protected function tearDown()
 	{
 		parent::tearDown();
 
-		$this->closeDbConnection();
-
-		$this->application = null;
-		if ($this->eventManagerFactory)
-		{
-			$this->eventManagerFactory->shutdown();
-			$this->eventManagerFactory = null;
-		}
-
 		if ($this->applicationServices)
 		{
+			$this->closeDbConnection();
+			$this->applicationServices->shutdown();
 			$this->applicationServices = null;
+		}
+
+		if ($this->application)
+		{
+			$this->application->shutdown();
+			$this->application = null;
 		}
 	}
 
@@ -59,14 +49,19 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	protected $application;
 
 	/**
-	 * @var \Change\Events\EventManagerFactory
-	 */
-	protected $eventManagerFactory;
-
-	/**
 	 * @var \Change\Services\ApplicationServices
 	 */
 	protected $applicationServices;
+
+	/**
+	 * @var \Rbs\Commerce\CommerceServices
+	 */
+	protected $commerceServices;
+
+	/**
+	 * @var \Rbs\Generic\GenericServices
+	 */
+	protected $genericServices;
 
 	/**
 	 * @return \ChangeTests\Change\TestAssets\Application
@@ -81,25 +76,70 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @return \Change\Events\EventManagerFactory
-	 */
-	protected function getEventManagerFactory()
-	{
-		if (!$this->eventManagerFactory)
-		{
-			$this->eventManagerFactory = new \Change\Events\EventManagerFactory($this->getApplication());
-		}
-		return $this->eventManagerFactory;
-	}
-
-	/**
 	 * @return array
 	 */
 	protected function getDefaultEventArguments()
 	{
 		$arguments = array('application' => $this->getApplication());
-		$arguments['services'] = new \Zend\Stdlib\Parameters(array('applicationServices' => $this->getApplicationServices()));
+		$services = new \Zend\Stdlib\Parameters();
+		$services->set('applicationServices', $this->getApplicationServices());
+		$services->set('genericServices', $this->genericServices);
+		$services->set('commerceServices', $this->commerceServices);
+		$arguments['services'] = $services;
 		return $arguments;
+	}
+
+	/**
+	 * @param \Zend\EventManager\SharedEventManager $sharedEventManager
+	 */
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+
+	}
+
+	protected function attachCommerceServicesSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		$sharedEventManager->attach('*', '*', function($event)
+		{
+			if ($event instanceof \Change\Events\Event)
+			{
+				if ($this->commerceServices === null) {
+
+					$this->commerceServices = new \Rbs\Commerce\CommerceServices($event->getApplication(), $event->getApplicationServices());
+				}
+				$event->getServices()->set('commerceServices', $this->commerceServices);
+			}
+			return true;
+		}, 9997);
+	}
+
+	protected function attachGenericServicesSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		$sharedEventManager->attach('*', '*', function($event) {
+			if ($event instanceof \Change\Events\Event)
+			{
+				if ($this->genericServices === null) {
+
+					$this->genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $event->getApplicationServices());
+				}
+				$event->getServices()->set('genericServices', $this->genericServices);
+			}
+			return true;
+		}, 9998);
+	}
+
+
+	protected function initServices(\Change\Application $application)
+	{
+		$this->attachSharedListener($application->getSharedEventManager());
+		$evt = $application->getNewEventManager('PhpUnit');
+		$evt->attach('initServices', [$this, 'onInitServices']);
+		$evt->trigger('initServices', $application);
+	}
+
+	public function onInitServices(\Change\Events\Event $event)
+	{
+		$this->applicationServices = $event->getApplicationServices();
 	}
 
 	/**
@@ -109,8 +149,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	{
 		if (!$this->applicationServices)
 		{
-			$this->applicationServices  = static::getNewApplicationServices($this->getApplication(), $this->getEventManagerFactory());
-			$this->getEventManagerFactory()->addSharedService('applicationServices', $this->applicationServices);
+			$this->initServices($this->getApplication());
 		}
 		return $this->applicationServices;
 	}
@@ -123,22 +162,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @param \Change\Application $app
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
 	 * @return \Change\Services\ApplicationServices
 	 */
-	public static function initDb(&$app = null, &$eventManagerFactory = null)
+	public static function initDb(&$app = null)
 	{
 		if ($app === null)
 		{
 			$app = static::getNewApplication();
 		}
 
-		if ($eventManagerFactory === null)
-		{
-			$eventManagerFactory = static::getNewEventManagerFactory($app);
-		}
-
-		$appServices = static::getNewApplicationServices($app, $eventManagerFactory);
+		$appServices = static::getNewApplicationServices($app);
 		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
 		$generator->generateSystemSchema();
 
@@ -148,22 +181,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @param \Change\Application $app
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
 	 * @return \Change\Services\ApplicationServices
 	 */
-	public static function initDocumentsClasses(&$app = null, &$eventManagerFactory = null)
+	public static function initDocumentsClasses(&$app = null)
 	{
 		if ($app === null)
 		{
 			$app = static::getNewApplication();
 		}
 
-		if ($eventManagerFactory === null)
-		{
-			$eventManagerFactory = static::getNewEventManagerFactory($app);
-		}
-
-		$appServices = static::getNewApplicationServices($app, $eventManagerFactory);
+		$appServices = static::getNewApplicationServices($app);
 
 		$compiler = new \Change\Documents\Generators\Compiler($app, $appServices);
 		$compiler->generate();
@@ -171,22 +198,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @param \Change\Application $app
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
 	 * @return \Change\Services\ApplicationServices
 	 */
-	public static function initDocumentsDb(&$app = null, &$eventManagerFactory = null)
+	public static function initDocumentsDb(&$app = null)
 	{
 		if ($app === null)
 		{
 			$app = static::getNewApplication();
 		}
 
-		if ($eventManagerFactory === null)
-		{
-			$eventManagerFactory = static::getNewEventManagerFactory($app);
-		}
-
-		$appServices = static::getNewApplicationServices($app, $eventManagerFactory);
+		$appServices = static::getNewApplicationServices($app);
 
 		$generator = new \Change\Db\Schema\Generator($app->getWorkspace(), $appServices->getDbProvider());
 		$generator->generateSystemSchema();
@@ -202,20 +223,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @param \Change\Application $app
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
 	 */
-	public static function clearDB(&$app = null, &$eventManagerFactory = null)
+	public static function clearDB(&$app = null)
 	{
 		if ($app === null)
 		{
 			$app = static::getNewApplication();
 		}
 
-		if ($eventManagerFactory === null)
-		{
-			$eventManagerFactory = static::getNewEventManagerFactory($app);
-		}
-		$appServices = static::getNewApplicationServices($app, $eventManagerFactory);
+		$appServices = static::getNewApplicationServices($app);
 		$dbp = $appServices->getDbProvider();
 		$dbp->getSchemaManager()->clearDB();
 		$dbp->getSchemaManager()->closeConnection();

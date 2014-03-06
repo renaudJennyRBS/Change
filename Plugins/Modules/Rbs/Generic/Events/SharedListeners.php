@@ -17,6 +17,11 @@ use Zend\EventManager\SharedListenerAggregateInterface;
 class SharedListeners implements SharedListenerAggregateInterface
 {
 	/**
+	 * @var \Rbs\Generic\GenericServices
+	 */
+	protected $genericServices;
+
+	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the SharedEventManager
 	 * implementation will pass this to the aggregate.
@@ -24,6 +29,18 @@ class SharedListeners implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
+		$events->attach('*', '*', function($event) {
+			if ($event instanceof \Change\Events\Event)
+			{
+				if ($this->genericServices === null) {
+
+					$this->genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $event->getApplicationServices());
+				}
+				$event->getServices()->set('genericServices', $this->genericServices);
+			}
+			return true;
+		}, 9998);
+
 		$callback = function ($event)
 		{
 			if ($event instanceof \Change\Documents\Events\Event)
@@ -169,18 +186,6 @@ class SharedListeners implements SharedListenerAggregateInterface
 			}
 		};
 		$events->attach('TransactionManager', 'commit', $callback, 10);
-
-		$callback = function ($event)
-		{
-			if (($event instanceof \Change\Events\Event)
-				&& ($eventManagerFactory = $event->getParam('eventManagerFactory')) instanceof \Change\Events\EventManagerFactory
-			)
-			{
-				$genericServices = new \Rbs\Generic\GenericServices($event->getApplication(), $eventManagerFactory, $event->getApplicationServices());
-				$event->getServices()->set('genericServices', $genericServices);
-			}
-		};
-		$events->attach(array('Commands', 'JobManager', 'Http'), 'registerServices', $callback, 5);
 	}
 
 	/**

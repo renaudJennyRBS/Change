@@ -15,9 +15,21 @@ class PaymentManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
+	}
+
 	public function testOnDefaultGetMailCode()
 	{
-		$commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$commerceServices = $this->commerceServices;
 		$paymentManager = $commerceServices->getPaymentManager();
 		$this->assertInstanceOf('\Rbs\Payment\PaymentManager', $paymentManager);
 

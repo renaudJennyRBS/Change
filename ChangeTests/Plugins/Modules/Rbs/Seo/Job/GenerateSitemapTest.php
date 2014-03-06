@@ -26,12 +26,17 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 			static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
 	protected function setUp()
 	{
 		parent::setUp();
+		$this->initServices($this->getApplication());
 		$this->seoFolderAlreadyExist = is_dir($this->getAssetSeoPath());
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $cs);
 	}
 
 	public function tearDown()

@@ -35,11 +35,6 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	protected $httpWebEvent;
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
 	 * @var \Change\Http\Request
 	 */
 	protected $request;
@@ -59,22 +54,13 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $permissionsManager;
 
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
 	protected function getConfiguration()
 	{
-		return $this->configuration;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
@@ -90,7 +76,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/PageManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/PageManager');
 	}
 
 	/**

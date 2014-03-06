@@ -19,26 +19,26 @@ trait EventsCapableTrait
 	protected $eventManager;
 
 	/**
-	 * @var \Change\Events\EventManagerFactory
+	 * @var \Change\Application
 	 */
-	protected $eventManagerFactory;
+	protected $application;
 
 	/**
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
+	 * @param \Change\Application $application
 	 * @return $this
 	 */
-	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
+	public function setApplication(\Change\Application $application)
 	{
-		$this->eventManagerFactory = $eventManagerFactory;
+		$this->application = $application;
 		return $this;
 	}
 
 	/**
-	 * @return \Change\Events\EventManagerFactory
+	 * @return \Change\Application
 	 */
-	protected function getEventManagerFactory()
+	protected function getApplication()
 	{
-		return $this->eventManagerFactory;
+		return $this->application;
 	}
 
 	/**
@@ -64,11 +64,6 @@ trait EventsCapableTrait
 	{
 		$this->clearEventManager();
 		$this->eventManager = $eventManager;
-		$classNames = $this->getListenerAggregateClassNames();
-		if (is_array($classNames) && count($classNames))
-		{
-			$this->eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
-		}
 		$this->attachEvents($this->eventManager);
 	}
 
@@ -80,14 +75,7 @@ trait EventsCapableTrait
 	{
 		if ($this->eventManager === null)
 		{
-			if ($this->eventManagerFactory)
-			{
-				$this->setEventManager($this->eventManagerFactory->getNewEventManager($this->getEventManagerIdentifier()));
-			}
-			else
-			{
-				throw new \RuntimeException('EventManagerFactory not set', 999999);
-			}
+			$this->setEventManager($this->getApplication()->getNewEventManager($this->getEventManagerIdentifier(), $this->getListenerAggregateClassNames()));
 		}
 		return $this->eventManager;
 	}

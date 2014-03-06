@@ -12,16 +12,16 @@ class PriceTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
-	/**
-	 * @var \Rbs\Commerce\CommerceServices
-	 */
-	protected $commerceServices;
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
 
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
+		$this->initServices($this->getApplication());
 	}
 
 	public function testValue()

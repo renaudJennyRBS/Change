@@ -40,7 +40,7 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testConstraintUnique()
 	{
 		$appServices = $this->getApplicationServices();
-		$this->getEventManagerFactory()->addSharedService('applicationServices', $appServices);
+
 		$appServices->getTransactionManager()->begin();
 
 		$dm = $appServices->getDocumentManager();

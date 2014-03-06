@@ -33,16 +33,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	protected $priceManager;
 
 	/**
-	 * @var \Change\Logging\Logging
-	 */
-	protected $logging;
-
-	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
 	 * @var array
 	 */
 	protected $cachedCarts = [];
@@ -101,32 +91,14 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->stockManager;
 	}
 
-	/**
-	 * @param \Change\Logging\Logging $logging
-	 * @return $this
-	 */
-	public function setLogging($logging)
-	{
-		$this->logging = $logging;
-		return $this;
-	}
+
 
 	/**
 	 * @return \Change\Logging\Logging
 	 */
 	protected function getLogging()
 	{
-		return $this->logging;
-	}
-
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**
@@ -134,7 +106,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getConfiguration()
 	{
-		return $this->configuration;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
@@ -150,7 +122,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CartManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/CartManager');
 	}
 
 	/**

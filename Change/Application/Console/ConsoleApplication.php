@@ -77,16 +77,9 @@ class ConsoleApplication extends \Symfony\Component\Console\Application
 	public function registerCommands()
 	{
 		$changeApplication = $this->getChangeApplication();
-		$eventManagerFactory = new \Change\Events\EventManagerFactory($changeApplication);
-		$eventManagerFactory->addSharedService('applicationServices', new \Change\Services\ApplicationServices($changeApplication, $eventManagerFactory));
 
-		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
-		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
-		$event = new \Change\Commands\Events\Event('registerServices', $changeApplication, array('eventManagerFactory' => $eventManagerFactory));
-		$eventManager->trigger($event);
-
-		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
-		$event = new \Change\Commands\Events\Event('config', $changeApplication, array('eventManagerFactory' => $eventManagerFactory));
+		$eventManager = $changeApplication->getNewEventManager('Commands', 'Change/Events/Commands');
+		$event = new \Change\Commands\Events\Event('config', $changeApplication, []);
 		$results = $eventManager->trigger($event);
 		foreach ($results as $result)
 		{

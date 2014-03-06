@@ -41,7 +41,7 @@ class SecurityManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Simpleform/Events/SecurityManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Simpleform/Events/SecurityManager');
 	}
 
 	// Cross Site Request Forgery prevention.

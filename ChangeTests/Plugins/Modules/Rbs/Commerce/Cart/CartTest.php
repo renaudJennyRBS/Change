@@ -11,12 +11,24 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::initDocumentsClasses();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
+	}
+
 	public function testConstructor()
 	{
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$commerceServices = $this->commerceServices;
 
-		$cart = new Cart('idt', $cs->getCartManager());
-		$this->assertSame($cs->getCartManager(), $cart->getCartManager());
+		$cart = new Cart('idt', $commerceServices->getCartManager());
+		$this->assertSame($commerceServices->getCartManager(), $cart->getCartManager());
 		$this->assertEquals('idt', $cart->getIdentifier());
 
 		$context = $cart->getContext();
@@ -29,8 +41,8 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testSerialize()
 	{
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$cart = new Cart('idt', $cs->getCartManager());
+		$commerceServices = $this->commerceServices;
+		$cart = new Cart('idt', $commerceServices->getCartManager());
 		$cart->setZone('ZTEST');
 		$cart->setOwnerId(500);
 		$cart->getContext()->set('c1', 'v1');
@@ -62,7 +74,7 @@ class CartTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cart2 = unserialize($serialized);
 		$this->assertNull($cart2->getIdentifier());
 
-		$cart2->setCartManager($cs->getCartManager());
+		$cart2->setCartManager($commerceServices->getCartManager());
 
 		$this->assertEquals('idt', $cart2->getIdentifier());
 		$this->assertEquals('ZTEST', $cart2->getZone());

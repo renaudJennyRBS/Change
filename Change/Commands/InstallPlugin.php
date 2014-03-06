@@ -55,7 +55,5 @@ class InstallPlugin
 		{
 			$response->addErrorMessage("Plugin does not exist");
 		}
-
-
 	}
 }

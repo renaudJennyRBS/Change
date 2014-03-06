@@ -6,21 +6,22 @@ namespace ChangeTests\Modules\Commerce\Process;
  */
 class ProcessManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 {
-	/**
-	 * @var \Rbs\Commerce\CommerceServices;
-	 */
-	protected $commerceServices;
 
 	public static function setUpBeforeClass()
 	{
 		static::initDocumentsClasses();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->commerceServices = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('commerceServices', $this->commerceServices);
+		$this->initServices($this->getApplication());
 	}
 
 	/**

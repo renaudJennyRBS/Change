@@ -19,6 +19,14 @@ use Zend\EventManager\SharedListenerAggregateInterface;
 class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 {
 	/**
+	 * @var \Change\Services\ApplicationServices;
+	 */
+	protected $applicationServices;
+
+
+	protected $documentInstances = [];
+
+	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the SharedEventManager
 	 * implementation will pass this to the aggregate.
@@ -26,7 +34,40 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 	 */
 	public function attachShared(SharedEventManagerInterface $events)
 	{
-		$identifiers = array('Documents');
+		$events->attach('*', '*', function($event) {
+			if ($event instanceof \Change\Events\Event)
+			{
+				if ($this->applicationServices === null) {
+
+					$this->applicationServices = new \Change\Services\ApplicationServices($event->getApplication());
+				}
+				$event->getServices()->set('applicationServices', $this->applicationServices);
+			}
+			return true;
+		}, 9999);
+
+		$identifiers = ['Documents'];
+
+		$events->attach($identifiers, 'setInCache', function(\Change\Events\Event $event) {
+			$document = $event->getParam('document');
+			if ($document instanceof \Change\Documents\AbstractDocument && $document->getId() > 0)
+			{
+				$this->documentInstances[$document->getId()] = $document;
+			}
+			$event->stopPropagation();
+		}, 20000);
+
+		$events->attach($identifiers, 'getFromCache', function(\Change\Events\Event $event) {
+			$id = $event->getParam('id', 0);
+			$event->setParam('document', isset($this->documentInstances[$id]) ? $this->documentInstances[$id] : null);
+			$event->stopPropagation();
+		}, 20000);
+
+		$events->attach($identifiers, 'resetCache', function(\Change\Events\Event $event) {
+			array_map(function (\Change\Documents\AbstractDocument $document) {$document->cleanUp();}, $this->documentInstances);
+			$this->documentInstances = [];
+			$event->stopPropagation();
+		}, 20000);
 
 		$callBack = function ($event)
 		{

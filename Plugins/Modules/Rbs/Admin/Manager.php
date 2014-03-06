@@ -18,11 +18,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	/**
-	 * @var \Change\Application
-	 */
-	protected $application;
-
-	/**
 	 * @var \Change\I18n\I18nManager
 	 */
 	protected $i18nManager;
@@ -61,24 +56,6 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$this->jsAssetManager = new AssetManager();
 		$this->cssAssetManager = new AssetManager();
-	}
-
-	/**
-	 * @param \Change\Application $application
-	 * @return $this
-	 */
-	public function setApplication(\Change\Application $application)
-	{
-		$this->application = $application;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		return $this->application;
 	}
 
 	/**
@@ -181,7 +158,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Admin/Events/Manager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Admin/Events/Manager');
 	}
 
 	/**

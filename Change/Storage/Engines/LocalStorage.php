@@ -52,7 +52,7 @@ class LocalStorage extends AbstractStorage
 	}
 
 	/**
-	 * @param string $basePath
+	 * @param string $baseURL
 	 */
 	public function setBaseURL($baseURL)
 	{
@@ -190,6 +190,7 @@ class LocalStorage extends AbstractStorage
 	/**
 	 * @param $offset
 	 * @param int $whence
+	 * @return array|int
 	 */
 	public function stream_seek($offset, $whence = SEEK_SET)
 	{

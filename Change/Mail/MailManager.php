@@ -9,7 +9,6 @@
 namespace Change\Mail;
 
 use Change\Configuration\Configuration;
-use Change\Logging\Logging;
 use Zend\Mail\Message;
 use Zend\Mail\Transport\Sendmail as SendmailTransport;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
@@ -26,45 +25,40 @@ class MailManager
 {
 
 	/**
-	 * @var Configuration
+	 * @var \Change\Application
 	 */
-	protected $configuration;
+	protected $application;
 
 	/**
-	 * @var Logging
+	 * @param \Change\Application $application
 	 */
-	protected $logging;
-
-	/**
-	 * @param Configuration $configuration
-	 */
-	public function setConfiguration(Configuration $configuration)
+	public function setApplication(\Change\Application $application)
 	{
-		$this->configuration = $configuration;
+		$this->application = $application;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
 	}
 
 	/**
 	 * @return Configuration
 	 */
-	public function getConfiguration()
+	protected function getConfiguration()
 	{
-		return $this->configuration;
-	}
-
-	/**
-	 * @param \Change\Logging\Logging $logging
-	 */
-	public function setLogging($logging)
-	{
-		$this->logging = $logging;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
 	 * @return \Change\Logging\Logging
 	 */
-	public function getLogging()
+	protected function getLogging()
 	{
-		return $this->logging;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**

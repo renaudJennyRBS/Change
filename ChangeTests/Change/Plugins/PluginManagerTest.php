@@ -25,12 +25,6 @@ class PluginManagerTest extends TestCase
 		$this->assertInstanceOf('Change\Plugins\PluginManager', $pluginManager);
 	}
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		$this->getApplicationServices()->getDbProvider()->closeConnection();
-	}
-
 	/**
 	 * @param Plugin[] $plugins
 	 * @param string $type
@@ -298,17 +292,14 @@ class PluginManagerTest extends TestCase
 
 	public function testGetInstalledPlugins()
 	{
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$tm->begin();
-
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
-		$pluginManager->setInstallApplication(static::getNewApplication());
 
 		$installedPlugins = $pluginManager->getInstalledPlugins();
 		$this->assertEmpty($installedPlugins);
 		$plugins = $pluginManager->compile();
 		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
 		$this->assertNotNull($module);
+
 		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_MODULE, $module->getVendor(), $module->getShortName());
 		$installedPlugins = $pluginManager->getInstalledPlugins();
 		$this->assertCount(1, $installedPlugins);
@@ -351,11 +342,7 @@ class PluginManagerTest extends TestCase
 
 	public function testDeinstallLockedModule()
 	{
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$tm->begin();
-
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
-		$pluginManager->setInstallApplication(static::getNewApplication());
 
 		$plugins = $pluginManager->compile();
 		$module = $this->findPlugin($plugins, Plugin::TYPE_MODULE, 'Project', 'Tests');
@@ -365,6 +352,10 @@ class PluginManagerTest extends TestCase
 		$module->setConfiguration($configuration);
 		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_MODULE, $module->getVendor(), $module->getShortName());
 		$pluginManager->compile();
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
+
 		//Test the case: trying to deinstall a locked plugin. It raise an InvalidArgumentException
 		try
 		{
@@ -375,16 +366,14 @@ class PluginManagerTest extends TestCase
 		{
 			$this->assertNotEmpty($e->getMessage());
 		}
+
+		$tm->commit();
 	}
 
 
 	public function testDeinstallLockedTheme()
 	{
-		$tm = $this->getApplicationServices()->getTransactionManager();
-		$tm->begin();
-
 		$pluginManager = $this->getApplicationServices()->getPluginManager();
-		$pluginManager->setInstallApplication(static::getNewApplication());
 
 		$plugins = $pluginManager->compile();
 		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
@@ -394,6 +383,9 @@ class PluginManagerTest extends TestCase
 		$pluginManager->installPlugin(\Change\Plugins\PluginManager::EVENT_TYPE_THEME, $theme->getVendor(), $theme->getShortName());
 		$pluginManager->compile();
 
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+		$tm->begin();
 
 		//Test the case: trying to deinstall a locked plugin. It raise an InvalidArgumentException
 		try
@@ -405,5 +397,7 @@ class PluginManagerTest extends TestCase
 		{
 			$this->assertNotEmpty($e->getMessage());
 		}
+
+		$tm->commit();
 	}
 }

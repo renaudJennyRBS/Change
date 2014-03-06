@@ -32,7 +32,7 @@ class CollectionManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/CollectionManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/CollectionManager');
 	}
 
 	/**

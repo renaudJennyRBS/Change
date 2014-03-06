@@ -5,7 +5,7 @@ class CommerceServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public function testServices()
 	{
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getApplicationServices());
 
 		$this->assertInstanceOf('Rbs\Commerce\Std\Context', $cs->getContext());
 

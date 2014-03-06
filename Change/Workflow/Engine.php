@@ -169,11 +169,11 @@ class Engine
 	/**
 	 * @api
 	 * @param Interfaces\WorkItem $workItem
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
+	 * @param \Change\Application $application
 	 * @throws \RuntimeException
 	 * @return boolean
 	 */
-	public function executeWorkItemTask(Interfaces\WorkItem $workItem, \Change\Events\EventManagerFactory $eventManagerFactory)
+	public function executeWorkItemTask(Interfaces\WorkItem $workItem, \Change\Application $application)
 	{
 		if ($this->workflowInstance !== $workItem->getWorkflowInstance())
 		{
@@ -182,10 +182,8 @@ class Engine
 		$taskCode = $workItem->getTransition()->getTaskCode();
 		try
 		{
-			$evtManager = $eventManagerFactory->getNewEventManager('Workflow.Task');
 			$startTask = $this->workflowInstance->getWorkflow()->startTask();
-			$classes = $eventManagerFactory->getConfiguredListenerClassNames('Change/Events/Workflow/' . $startTask);
-			$eventManagerFactory->registerListenerAggregateClassNames($evtManager, $classes);
+			$evtManager = $application->getNewEventManager('Workflow.Task', 'Change/Events/Workflow/' . $startTask);
 			$args = array('workItem' => $workItem);
 			$evtManager->trigger($taskCode, $this->workflowInstance, $args);
 		}

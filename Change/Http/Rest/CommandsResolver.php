@@ -58,14 +58,7 @@ class CommandsResolver
 	protected function getCommandsEventManager(\Change\Http\Event $event)
 	{
 		$changeApplication = $event->getApplication();
-		$eventManagerFactory = new \Change\Events\EventManagerFactory($changeApplication);
-		foreach ($event->getServices() as $serviceName => $service)
-		{
-			$eventManagerFactory->addSharedService($serviceName, $service);
-		}
-		$eventManager = $eventManagerFactory->getNewEventManager('Commands');
-		$classNames = $changeApplication->getConfiguration()->getEntry('Change/Events/Commands', array());
-		$eventManagerFactory->registerListenerAggregateClassNames($eventManager, $classNames);
+		$eventManager = $changeApplication->getNewEventManager('Commands', 'Change/Events/Commands');
 		return $eventManager;
 	}
 

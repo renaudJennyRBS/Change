@@ -30,31 +30,17 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	protected $extensions;
 
 	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace;
-
-	/**
 	 * @var \Change\Presentation\Themes\ThemeManager
 	 */
 	protected $themeManager;
 
-	/**
-	 * @param \Change\Workspace $workspace
-	 * @return $this
-	 */
-	public function setWorkspace(\Change\Workspace $workspace)
-	{
-		$this->workspace = $workspace;
-		return $this;
-	}
 
 	/**
 	 * @return \Change\Workspace
 	 */
 	protected function getWorkspace()
 	{
-		return $this->workspace;
+		return $this->getApplication()->getWorkspace();
 	}
 
 	/**
@@ -88,7 +74,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/TemplateManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/TemplateManager');
 	}
 
 	/**

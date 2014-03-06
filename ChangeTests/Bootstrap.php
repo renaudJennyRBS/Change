@@ -15,12 +15,11 @@ $application = new \ChangeTests\Change\TestAssets\Application();
 $application->registerAutoload();
 $application->clearCache();
 $pluginManager = new \Change\Plugins\PluginManager();
-$pluginManager->setWorkspace($application->getWorkspace());
+$pluginManager->setApplication($application);
 $pluginManager->compile(false);
 $application->registerPluginsAutoload();
 $i18nManager = new \Change\I18n\I18nManager();
-$i18nManager->setWorkspace($application->getWorkspace());
-$i18nManager->setConfiguration($application->getConfiguration());
+$i18nManager->setApplication($application);
 $i18nManager->compileCoreI18nFiles();
 foreach ($pluginManager->getPlugins() as $plugin)
 {

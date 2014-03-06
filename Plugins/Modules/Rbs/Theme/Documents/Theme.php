@@ -24,40 +24,9 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	protected $themeManager;
 
 	/**
-	 * @var \Change\Application
+	 * @var \Change\Plugins\PluginManager
 	 */
-	private $application;
-
-	/**
-	 * @var \Change\Services\ApplicationServices
-	 */
-	private $applicationServices;
-
-	/**
-	 * @throws \RuntimeException
-	 * @return \Change\Application
-	 */
-	protected function getApplication()
-	{
-		if ($this->application === null)
-		{
-			throw new \RuntimeException('Application not set', 999999);
-		}
-		return $this->application;
-	}
-
-	/**
-	 * @throws \RuntimeException
-	 * @return \Change\Services\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		if ($this->applicationServices === null)
-		{
-			throw new \RuntimeException('ApplicationServices not set', 999999);
-		}
-		return $this->applicationServices;
-	}
+	protected $pluginManager;
 
 	/**
 	 * @return \Change\Workspace
@@ -70,9 +39,9 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	public function onDefaultInjection(\Change\Events\Event $event)
 	{
 		parent::onDefaultInjection($event);
-		$this->application = $event->getApplication();
-		$this->applicationServices = $event->getApplicationServices();
-		$this->themeManager = $this->applicationServices->getThemeManager();
+		$applicationServices = $event->getApplicationServices();
+		$this->themeManager = $applicationServices->getThemeManager();
+		$this->pluginManager = $applicationServices->getPluginManager();
 	}
 
 	/**
@@ -85,8 +54,8 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
-	 * @return \Change\Presentation\Themes\ThemeManager
 	 * @throws \RuntimeException
+	 * @return \Change\Presentation\Themes\ThemeManager
 	 */
 	protected function getThemeManager()
 	{
@@ -95,6 +64,19 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			throw new \RuntimeException('themeManager not set', 999999);
 		}
 		return $this->themeManager;
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 * @return \Change\Plugins\PluginManager
+	 */
+	public function getPluginManager()
+	{
+		if ($this->pluginManager === null)
+		{
+			throw new \RuntimeException('pluginManager not set', 999999);
+		}
+		return $this->pluginManager;
 	}
 
 	/**
@@ -114,7 +96,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 
 			if ($this->getApplication()->inDevelopmentMode() && $this->themeManager)
 			{
-				$pluginManager = $this->getApplicationServices()->getPluginManager();
+				$pluginManager = $this->getPluginManager();
 				$plugin = $pluginManager->getTheme($themeVendor, $shortThemeName);
 				$this->themeManager->installPluginTemplates($plugin, $this);
 			}

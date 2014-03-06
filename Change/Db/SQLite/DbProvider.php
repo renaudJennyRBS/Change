@@ -115,7 +115,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			throw new \RuntimeException('Database not defined', 31001);
 		}
-		$dsn = $protocol . ':' . $this->workspace->composeAbsolutePath($connectionInfos['database']);
+		$dsn = $protocol . ':' . $this->getApplication()->getWorkspace()->composeAbsolutePath($connectionInfos['database']);
 		$pdo = new \PDO($dsn);
 		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		return $pdo;
@@ -134,15 +134,21 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->getLogging()->info('Close Connection: (S: ' . $this->timers['select'] . ', IUD: ' . $this->timers['exec'] . ')');
 		$this->timers['exec'] = $this->timers['select'] = 0;
 	}
-	
+
 	/**
+	 * @throws \RuntimeException
 	 * @return \Change\Db\SQLite\SchemaManager
 	 */
 	public function getSchemaManager()
 	{
 		if ($this->schemaManager === null)
 		{
-			$this->schemaManager = new SchemaManager($this, $this->logging);
+			if ($this->inTransaction)
+			{
+				throw new \RuntimeException('SchemaManager is not available during transaction', 999999);
+			}
+			$this->closeConnection();
+			$this->schemaManager = new SchemaManager($this, $this->getLogging());
 		}
 		return $this->schemaManager;
 	}
@@ -165,7 +171,7 @@ class DbProvider extends \Change\Db\DbProvider
 		{
 			if ($this->inTransaction())
 			{
-				$this->logging->warn(get_class($this) . " while already in transaction");
+				$this->getLogging()->warn(get_class($this) . " while already in transaction");
 			}
 			else
 			{

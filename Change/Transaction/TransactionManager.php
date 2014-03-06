@@ -44,7 +44,7 @@ class TransactionManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/TransactionManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/TransactionManager');
 	}
 
 	/**

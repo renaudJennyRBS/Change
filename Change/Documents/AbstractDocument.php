@@ -72,9 +72,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	protected $documentManager;
 
 	/**
-	 * @var \Change\Events\EventManagerFactory
+	 * @var \Change\Application
 	 */
-	protected $eventManagerFactory;
+	protected $application;
 
 	/**
 	 * @var \Change\Events\EventManager
@@ -96,6 +96,24 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\Application $application
+	 * @return $this
+	 */
+	public function setApplication(\Change\Application $application)
+	{
+		$this->application = $application;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
+
+	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @return $this
 	 */
@@ -111,24 +129,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	protected function getDocumentManager()
 	{
 		return $this->documentManager;
-	}
-
-	/**
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
-	 * @return $this
-	 */
-	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
-	{
-		$this->eventManagerFactory = $eventManagerFactory;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Events\EventManagerFactory
-	 */
-	protected function getEventManagerFactory()
-	{
-		return $this->eventManagerFactory;
 	}
 
 	/**
@@ -207,15 +207,15 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	{
 		if ($this->eventManager === null)
 		{
-			if ($this->eventManagerFactory)
+			if ($this->application)
 			{
 				$model = $this->getDocumentModel();
 				$identifiers = array_merge($model->getAncestorsNames(), array($model->getName(), 'Documents'));
-				$this->eventManager = $this->eventManagerFactory->getNewEventManager($identifiers);
+				$this->eventManager = $this->application->getNewEventManager($identifiers);
 			}
 			else
 			{
-				throw new \RuntimeException('eventManagerFactory not set', 999999);
+				throw new \RuntimeException('application not set', 999999);
 			}
 			$this->attachEvents($this->eventManager);
 		}

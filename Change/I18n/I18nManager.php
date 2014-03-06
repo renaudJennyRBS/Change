@@ -8,6 +8,7 @@
  */
 namespace Change\I18n;
 
+use Change\Events\EventsCapableTrait;
 use Zend\Stdlib\ErrorHandler;
 use Zend\Stdlib\Glob;
 
@@ -64,21 +65,6 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	protected $i18nSynchro = null;
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
-	 * @var \Change\Workspace
-	 */
-	protected $workspace;
-
-	/**
-	 * @var \Change\Logging\Logging
-	 */
-	protected $logging;
-
-	/**
 	 * @var \Change\Plugins\PluginManager
 	 */
 	protected $pluginManager;
@@ -93,13 +79,11 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $loadedPackages = [];
 
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 */
-	public function setConfiguration(\Change\Configuration\Configuration $configuration)
+
+	public function setApplication(\Change\Application $application)
 	{
-		$this->configuration = $configuration;
-		$this->supportedLCIDs = $this->configuration->getEntry('Change/I18n/supported-lcids');
+		$this->application = $application;
+		$this->supportedLCIDs = $application->getConfiguration()->getEntry('Change/I18n/supported-lcids');
 		if (!is_array($this->supportedLCIDs) || count($this->supportedLCIDs) === 0)
 		{
 			$this->supportedLCIDs = array('fr_FR');
@@ -109,41 +93,25 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
-	public function getConfiguration()
+	protected function getConfiguration()
 	{
-		return $this->configuration;
-	}
-
-	/**
-	 * @param \Change\Workspace $workspace
-	 */
-	public function setWorkspace(\Change\Workspace $workspace)
-	{
-		$this->workspace = $workspace;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
 	 * @return \Change\Workspace
 	 */
-	public function getWorkspace()
+	protected function getWorkspace()
 	{
-		return $this->workspace;
-	}
-
-	/**
-	 * @param \Change\Logging\Logging $logging
-	 */
-	public function setLogging(\Change\Logging\Logging $logging)
-	{
-		$this->logging = $logging;
+		return $this->getApplication()->getWorkspace();
 	}
 
 	/**
 	 * @return \Change\Logging\Logging
 	 */
-	public function getLogging()
+	protected function getLogging()
 	{
-		return $this->logging;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**
@@ -157,7 +125,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @return \Change\Plugins\PluginManager
 	 */
-	public function getPluginManager()
+	protected function getPluginManager()
 	{
 		return $this->pluginManager;
 	}
@@ -508,7 +476,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/I18n');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/I18n');
 	}
 
 	/**
@@ -583,7 +551,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			else
 			{
-				$this->logging->info(__METHOD__ . ' Unknown formatter ' . $formatter);
+				$this->getLogging()->info(__METHOD__ . ' Unknown formatter ' . $formatter);
 			}
 		}
 		$event->setParam('text', $text);

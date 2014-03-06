@@ -34,7 +34,7 @@ class WorkflowManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Change/Events/WorkflowManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/WorkflowManager');
 	}
 
 	/**

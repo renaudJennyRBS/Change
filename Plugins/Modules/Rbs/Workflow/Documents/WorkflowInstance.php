@@ -264,7 +264,7 @@ class WorkflowInstance extends \Compilation\Rbs\Workflow\Documents\WorkflowInsta
 	public function execute($workItem)
 	{
 		$engine = new \Change\Workflow\Engine($this);
-		return $engine->executeWorkItemTask($workItem, $this->getEventManagerFactory());
+		return $engine->executeWorkItemTask($workItem, $this->getApplication());
 	}
 
 	/**

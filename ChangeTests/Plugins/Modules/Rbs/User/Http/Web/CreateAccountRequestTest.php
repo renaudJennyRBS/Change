@@ -19,11 +19,23 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		static::clearDB();
 	}
 
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachGenericServicesSharedListener($sharedEventManager);
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
+	}
+
+
 	public function testExecute()
 	{
 		// Register generic services.
-		$genericServices = new \Rbs\Generic\GenericServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
-		$this->getEventManagerFactory()->addSharedService('genericServices', $genericServices);
+		$genericServices = $this->genericServices;
 
 		$requestParams = new \Zend\Stdlib\Parameters([
 			'email' => 'test@test.com',

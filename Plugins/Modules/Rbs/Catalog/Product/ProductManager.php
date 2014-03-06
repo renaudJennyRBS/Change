@@ -36,7 +36,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/ProductManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/ProductManager');
 	}
 
 	/**

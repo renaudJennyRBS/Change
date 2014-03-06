@@ -16,12 +16,6 @@ use Change\Plugins\PluginManager;
  */
 class Install extends \Change\Plugins\InstallBase
 {
-
-	/**
-	 * @var \Change\Events\EventManagerFactory;
-	 */
-	protected $eventManagerFactory;
-
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $events
 	 * @param \Change\Plugins\Plugin $plugin
@@ -30,15 +24,6 @@ class Install extends \Change\Plugins\InstallBase
 	{
 		parent::attach($events, $plugin);
 		$events->attach(PluginManager::EVENT_SETUP_SUCCESS, array($this, 'onSuccess'));
-		$events->attach('registerServices', array($this, 'onRegisterServices'));
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onRegisterServices(\Change\Events\Event $event)
-	{
-		$this->eventManagerFactory = $event->getParam('eventManagerFactory');
 	}
 
 	/**
@@ -49,7 +34,6 @@ class Install extends \Change\Plugins\InstallBase
 		$manager = new \Rbs\Admin\Manager();
 		$applicationServices = $event->getApplicationServices();
 		$manager->setApplication($event->getApplication())
-			->setEventManagerFactory($this->eventManagerFactory)
 			->setI18nManager($applicationServices->getI18nManager())
 			->setModelManager($applicationServices->getModelManager())
 			->setPluginManager($applicationServices->getPluginManager());

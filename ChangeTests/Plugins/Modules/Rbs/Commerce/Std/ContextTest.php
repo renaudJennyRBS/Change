@@ -7,9 +7,21 @@ namespace ChangeTests\Modules\Commerce\Std;
  */
 class ContextTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	protected function attachSharedListener(\Zend\EventManager\SharedEventManager $sharedEventManager)
+	{
+		parent::attachSharedListener($sharedEventManager);
+		$this->attachCommerceServicesSharedListener($sharedEventManager);
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->initServices($this->getApplication());
+	}
+
 	public function testLoad()
 	{
-		$cs = new \Rbs\Commerce\CommerceServices($this->getApplication(), $this->getEventManagerFactory(), $this->getApplicationServices());
+		$cs = $this->commerceServices;
 
 		$context = $cs->getContext();
 

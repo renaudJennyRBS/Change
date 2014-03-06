@@ -30,7 +30,7 @@ class DiscountManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Commerce/Events/DiscountManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/DiscountManager');
 	}
 
 	/**

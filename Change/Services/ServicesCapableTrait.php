@@ -14,32 +14,33 @@ namespace Change\Services;
 trait ServicesCapableTrait
 {
 	/**
-	 * @var \Change\Events\EventManagerFactory
+	 * @var \Change\Application
 	 */
-	protected $eventManagerFactory;
+	protected $application;
+
+	/**
+	 * @param \Change\Application $application
+	 * @return $this
+	 */
+	public function setApplication(\Change\Application $application)
+	{
+		$this->application = $application;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Application
+	 */
+	protected function getApplication()
+	{
+		return $this->application;
+	}
 
 	/**
 	 * @var array<alias => className>
 	 */
 	protected $injectionClasses = null;
 
-	/**
-	 * @param \Change\Events\EventManagerFactory $eventManagerFactory
-	 * @return $this
-	 */
-	public function setEventManagerFactory(\Change\Events\EventManagerFactory $eventManagerFactory)
-	{
-		$this->eventManagerFactory = $eventManagerFactory;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Events\EventManagerFactory
-	 */
-	protected function getEventManagerFactory()
-	{
-		return $this->eventManagerFactory;
-	}
 
 	/**
 	 * @return array<alias => className>
@@ -80,26 +81,7 @@ trait ServicesCapableTrait
 	}
 
 	/**
-	 * setApplication($application)
-	 * setApplicationServices($applicationServices)
-	 * @param string $className
-	 * @return \Zend\Di\Definition\ClassDefinition
-	 */
-	protected function getDefaultClassDefinition($className)
-	{
-		$classDefinition = $this->getClassDefinition($className)
-			->addMethod('setApplication', true)
-			->addMethodParameter('setApplication', 'application',
-				array('type' => 'Change\Application', 'required' => true))
-			->addMethod('setApplicationServices', true)
-			->addMethodParameter('setApplicationServices', 'applicationServices',
-				array('type' => 'Change\Services\ApplicationServices', 'required' => true));
-		return $classDefinition;
-	}
-
-	/**
-	 * setConfiguration($configuration)
-	 * setWorkspace($workspace)
+	 * @deprecated
 	 * @param string $className
 	 * @return \Zend\Di\Definition\ClassDefinition
 	 */
@@ -111,7 +93,7 @@ trait ServicesCapableTrait
 	}
 
 	/**
-	 * setConfiguration($configuration)
+	 * @deprecated
 	 * @param \Zend\Di\Definition\ClassDefinition $classDefinition
 	 * @return $this
 	 */
@@ -124,7 +106,7 @@ trait ServicesCapableTrait
 	}
 
 	/**
-	 * setWorkspace($workspace)
+	 * @deprecated
 	 * @param \Zend\Di\Definition\ClassDefinition $classDefinition
 	 * @return $this
 	 */
@@ -136,15 +118,24 @@ trait ServicesCapableTrait
 	}
 
 	/**
-	 * setEventManagerFactory($eventManagerFactory)
+	 * @deprecated
 	 * @param \Zend\Di\Definition\ClassDefinition $classDefinition
 	 * @return $this
 	 */
 	protected function addEventsCapableClassDefinition(\Zend\Di\Definition\ClassDefinition $classDefinition)
 	{
-		$classDefinition->addMethod('setEventManagerFactory', true)
-			->addMethodParameter('setEventManagerFactory', 'eventManagerFactory',
-				array('type' => 'Change\Events\EventManagerFactory', 'required' => true));
+		return $this->addApplicationClassDefinition($classDefinition);
+	}
+
+	/**
+	 * setApplication(application)
+	 * @param \Zend\Di\Definition\ClassDefinition $classDefinition
+	 * @return $this
+	 */
+	protected function addApplicationClassDefinition(\Zend\Di\Definition\ClassDefinition $classDefinition)
+	{
+		$classDefinition->addMethod('setApplication', true)
+			->addMethodParameter('setApplication', 'application', array('type' => 'Change\Application', 'required' => true));
 		return $this;
 	}
 }

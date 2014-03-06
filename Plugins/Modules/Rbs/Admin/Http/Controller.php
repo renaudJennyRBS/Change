@@ -36,25 +36,22 @@ class Controller extends \Change\Http\Controller
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
 	}
 
-	public function onDefaultRegisterServices(Event $event)
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultRequest(Event $event)
 	{
-		parent::onDefaultRegisterServices($event);
+		$request = $event->getRequest();
 		$applicationServices = $event->getApplicationServices();
 		$applicationServices->getPermissionsManager()->allow(true);
 		$manager = new \Rbs\Admin\Manager();
 		$manager->setApplication($this->getApplication())
-			->setEventManagerFactory($this->getEventManagerFactory())
 			->setI18nManager($applicationServices->getI18nManager())
 			->setModelManager($applicationServices->getModelManager())
 			->setPluginManager($applicationServices->getPluginManager());
 		$event->setParam('manager', $manager);
-	}
 
-	public function onDefaultRequest(Event $event)
-	{
-		$request = $event->getRequest();
-		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$request->populateLCIDByHeader($i18nManager);
+		$request->populateLCIDByHeader($applicationServices->getI18nManager());
 	}
 
 	/**

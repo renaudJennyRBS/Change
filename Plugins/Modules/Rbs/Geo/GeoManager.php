@@ -43,7 +43,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Geo/Events/GeoManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Geo/Events/GeoManager');
 	}
 
 	/**

@@ -21,16 +21,6 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_MANAGER_IDENTIFIER = 'Rbs_Elasticsearch_IndexManager';
 
 	/**
-	 * @var \Change\Configuration\Configuration
-	 */
-	protected $configuration;
-
-	/**
-	 * @var \Change\Logging\Logging
-	 */
-	protected $logging;
-
-	/**
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
@@ -78,32 +68,14 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->facetManager;
 	}
 
-	/**
-	 * @param \Change\Configuration\Configuration $configuration
-	 * @return $this
-	 */
-	public function setConfiguration($configuration)
-	{
-		$this->configuration = $configuration;
-		return $this;
-	}
+
 
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
 	protected function getConfiguration()
 	{
-		return $this->configuration;
-	}
-
-	/**
-	 * @param \Change\Logging\Logging $logging
-	 * @return $this
-	 */
-	public function setLogging($logging)
-	{
-		$this->logging = $logging;
-		return $this;
+		return $this->getApplication()->getConfiguration();
 	}
 
 	/**
@@ -111,7 +83,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getLogging()
 	{
-		return $this->logging;
+		return $this->getApplication()->getLogging();
 	}
 
 	/**
@@ -145,7 +117,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Elasticsearch/Events/IndexManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Elasticsearch/Events/IndexManager');
 	}
 
 	/**

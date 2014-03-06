@@ -77,7 +77,7 @@ class PaymentManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getEventManagerFactory()->getConfiguredListenerClassNames('Rbs/Payment/Events/PaymentManager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Payment/Events/PaymentManager');
 	}
 
 	/**
