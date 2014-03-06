@@ -1,7 +1,5 @@
 @CHARSET "UTF-8";
 
-
-
 #main-content > .row {
 	margin-right: 0;
 	margin-left: 0;
@@ -20,6 +18,10 @@ body {
 
 .margin-top {
 	margin-top: 15px;
+}
+
+.no-bottom-margin {
+	margin-bottom: 0;
 }
 
 .discrete-button {
@@ -137,7 +139,6 @@ h3.panel-title {
 	text-transform: none;
 }
 
-
 .panel.panel-default {
 	background: none repeat scroll 0 0 #FFFFFF;
 	border: 1px solid #BBBBBB;
@@ -172,6 +173,20 @@ h3.panel-title {
 	color: #A2C200;
 }
 
+.panel.panel-info {
+	border-color: #9ACFEA;
+	box-shadow: 0 0 0 3px #EEEEEE;
+}
+
+.panel.panel-warning {
+	border-color: #E0B873;
+	box-shadow: 0 0 0 3px #EEEEEE;
+}
+
+.panel.panel-danger {
+	border-color: #D97A78;
+	box-shadow: 0 0 0 3px #EEEEEE;
+}
 
 .btn-toolbar .btn-group {
 	float: none;
