@@ -167,4 +167,99 @@
 			&& name.charAt(0) !== '$';
 	}
 
+
+	/**
+	 * Directive that displays a 'label' and 'title' fields for publishable Documents.
+	 * The value of these two properties an be synchronized with a 'lock' button.
+	 */
+	app.directive('rbsFieldLabelTitle', [function ()
+	{
+		return {
+			restrict : 'E',
+			replace : true,
+			scope : true,
+			template : fieldTemplate(
+				'<table class="field-label-and-title">' +
+				'<tr>' +
+					'<td>' +
+						'<input type="text" class="form-control" name="label" ng-model="document.label"/>' +
+						'<input type="text" class="form-control" name="title" ng-model="document.title" ng-readonly="isSync()"/>' +
+					'</td>' +
+					'<td valign="middle" class="sync-button-cell">' +
+						'<button type="button" class="btn btn-sm" ng-class="{true:\'btn-info\', false:\'btn-default\'}[isSync()]" ng-click="toggleSync()">' +
+							'<i ng-class="{true:\'icon-lock\', false:\'icon-unlock-alt\'}[isSync()]" class="icon-large"></i>' +
+						'</button>' +
+						'<div class="decorator" ng-class="{\'locked\':isSync()}"></div>' +
+					'</td>' +
+				'</tr>' +
+				'</table>'
+			),
+
+			compile : function (tElement, tAttrs)
+			{
+				var $lbl = tElement.find('label').first(),
+					fieldId = 'rbs_field_label_title_' + (++fieldIdCounter);
+				$lbl.html(tAttrs.label).attr('for', fieldId);
+				tElement.find('input').first()
+					.attr('id', fieldId)
+					.attr('input-id', fieldId)
+					.attr('name', 'label');
+				if (tAttrs.required === 'true') {
+					tElement.find('input').attr('required', 'required');
+					tElement.addClass('required');
+				}
+
+				return function rbsFieldLabelTitleLink (scope)
+				{
+					scope.toggleSync = function ()
+					{
+						var doc = scope.document;
+						if (! doc) {
+							return;
+						}
+
+						doc.META$.labelAndTitleSync = ! doc.META$.labelAndTitleSync;
+						// When locking both values, 'label' is copied into 'title' property.
+						if (doc.META$.labelAndTitleSync) {
+							scope.document.title = scope.document.label;
+						}
+					};
+
+					// Are 'label' and 'title' synchronized?
+					scope.isSync = function ()
+					{
+						return (scope.document && scope.document.META$ && scope.document.META$.labelAndTitleSync) ? true : false;
+					};
+
+					// Wait for the Document to become ready, and determine if the 'label' and 'title' are
+					// equal (synchronized). When done, watching the Document becomes useless, so we remove the watch.
+					var unwatchDoc = scope.$watchCollection('document', function (doc)
+					{
+						if (angular.isDefined(doc.id)) {
+							doc.META$.labelAndTitleSync = (doc.label === doc.title);
+							unwatchDoc();
+						}
+					});
+
+					// Watch for 'label' changes and copy value into 'title' if sync is ON.
+					scope.$watch('document.label', function (label, oldLabel)
+					{
+						if (scope.isSync() && angular.isDefined(label) && label !== oldLabel) {
+							scope.document.title = label;
+						}
+					});
+
+					// Watch for 'title' changes and copy value into 'label' if sync is ON.
+					scope.$watch('document.title', function (title, oldTitle)
+					{
+						if (scope.isSync() && angular.isDefined(title) && title !== oldTitle) {
+							scope.document.label = title;
+						}
+					});
+
+				};
+			}
+		};
+	}]);
+
 })();
