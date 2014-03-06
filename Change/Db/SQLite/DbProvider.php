@@ -134,14 +134,20 @@ class DbProvider extends \Change\Db\DbProvider
 		$this->getLogging()->info('Close Connection: (S: ' . $this->timers['select'] . ', IUD: ' . $this->timers['exec'] . ')');
 		$this->timers['exec'] = $this->timers['select'] = 0;
 	}
-	
+
 	/**
+	 * @throws \RuntimeException
 	 * @return \Change\Db\SQLite\SchemaManager
 	 */
 	public function getSchemaManager()
 	{
 		if ($this->schemaManager === null)
 		{
+			if ($this->inTransaction)
+			{
+				throw new \RuntimeException('SchemaManager is not available during transaction', 999999);
+			}
+			$this->closeConnection();
 			$this->schemaManager = new SchemaManager($this, $this->getLogging());
 		}
 		return $this->schemaManager;
