@@ -20,12 +20,6 @@ class DocumentManager
 	const EVENT_MANAGER_IDENTIFIER = 'Documents';
 
 	/**
-	 * Document instances by id
-	 * @var array<integer, \Change\Documents\AbstractDocument>
-	 */
-	protected $documentInstances = array();
-
-	/**
 	 * @var integer
 	 */
 	protected $cycleCount = 0;
@@ -39,7 +33,7 @@ class DocumentManager
 	/**
 	 * @var string[] ex: "en_US" or "fr_FR"
 	 */
-	protected $LCIDStack = array();
+	protected $LCIDStack = [];
 
 	/**
 	 * @var boolean
@@ -49,7 +43,7 @@ class DocumentManager
 	/**
 	 * @var array
 	 */
-	protected $LCIDStackTransaction = array();
+	protected $LCIDStackTransaction = [];
 
 	/**
 	 * @var \Change\Application
@@ -74,7 +68,7 @@ class DocumentManager
 	/**
 	 * @var \Change\Events\EventManager
 	 */
-	protected $eventManager;
+	protected $eventManager = null;
 
 	/**
 	 * @param \Change\Application $application
@@ -233,9 +227,12 @@ class DocumentManager
 		return $this->inTransaction;
 	}
 
-	public function __destruct()
+	public function shutdown()
 	{
-		$this->reset();
+		if ($this->eventManager)
+		{
+			$this->reset();
+		}
 	}
 
 	/**
@@ -244,11 +241,7 @@ class DocumentManager
 	 */
 	public function reset()
 	{
-		array_map(function (AbstractDocument $document)
-		{
-			$document->cleanUp();
-		}, $this->documentInstances);
-		$this->documentInstances = array();
+		$this->getEventManager()->trigger('resetCache');
 		$this->newInstancesCounter = 0;
 	}
 
@@ -448,10 +441,9 @@ class DocumentManager
 	 */
 	public function reference(AbstractDocument $document)
 	{
-		$documentId = $document->getId();
-		if ($documentId > 0)
+		if ($document->getId() > 0)
 		{
-			$this->documentInstances[$documentId] = $document;
+			$this->getEventManager()->trigger('setInCache', $this, ['document' => $document]);
 		}
 	}
 
@@ -472,8 +464,10 @@ class DocumentManager
 	 */
 	public function getFromCache($documentId)
 	{
-		$id = intval($documentId);
-		return isset($this->documentInstances[$id]) ? $this->documentInstances[$id] : null;
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['id' => intval($documentId)]);
+		$eventManager->trigger('getFromCache', $this, $args);
+		return isset($args['document']) ? $args['document'] : null;
 	}
 
 	protected function gcCache()
@@ -483,7 +477,6 @@ class DocumentManager
 			$this->cycleCount++;
 			if ($this->cycleCount % 100 === 0)
 			{
-				$this->getLogging()->info(__METHOD__ . ': ' . count($this->documentInstances));
 				$this->reset();
 			}
 		}

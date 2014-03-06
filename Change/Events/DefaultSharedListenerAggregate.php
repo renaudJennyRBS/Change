@@ -23,6 +23,9 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 	 */
 	protected $applicationServices;
 
+
+	protected $documentInstances = [];
+
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the SharedEventManager
@@ -43,7 +46,28 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 			return true;
 		}, 9999);
 
-		$identifiers = array('Documents');
+		$identifiers = ['Documents'];
+
+		$events->attach($identifiers, 'setInCache', function(\Change\Events\Event $event) {
+			$document = $event->getParam('document');
+			if ($document instanceof \Change\Documents\AbstractDocument && $document->getId() > 0)
+			{
+				$this->documentInstances[$document->getId()] = $document;
+			}
+			$event->stopPropagation();
+		}, 20000);
+
+		$events->attach($identifiers, 'getFromCache', function(\Change\Events\Event $event) {
+			$id = $event->getParam('id', 0);
+			$event->setParam('document', isset($this->documentInstances[$id]) ? $this->documentInstances[$id] : null);
+			$event->stopPropagation();
+		}, 20000);
+
+		$events->attach($identifiers, 'resetCache', function(\Change\Events\Event $event) {
+			array_map(function (\Change\Documents\AbstractDocument $document) {$document->cleanUp();}, $this->documentInstances);
+			$this->documentInstances = [];
+			$event->stopPropagation();
+		}, 20000);
 
 		$callBack = function ($event)
 		{

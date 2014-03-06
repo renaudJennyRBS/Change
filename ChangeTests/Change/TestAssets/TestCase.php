@@ -36,7 +36,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
 			$this->applicationServices = null;
 		}
 
-		$this->application = null;
+		if ($this->application)
+		{
+			$this->application->shutdown();
+			$this->application = null;
+		}
 	}
 
 	/**

@@ -46,4 +46,13 @@ class Application extends \Change\Application
 		}
 		return $result;
 	}
+
+
+	public function shutdown()
+	{
+		if ($this->sharedEventManager) {
+			$this->sharedEventManager->clearListeners('*');
+			$this->sharedEventManager->clearListeners('Documents');
+		}
+	}
 }
