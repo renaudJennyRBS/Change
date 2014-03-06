@@ -19,7 +19,7 @@
 
 .form-actions {
 	background-image: linear-gradient(to top, white 0%, #F5F5F5 100%);
-	border-top: 1px solid rgba(0, 0, 0, 0.2);
+	border-top: 5px solid #EEEEEE;
 	margin-top: 10px;
 }
 
@@ -84,4 +84,43 @@ select.ng-dirty.ng-invalid {
 /* Good interline between buttons in document editor when there is more than one line */
 .form-actions .form-buttons {
 	line-height: 55px;
+}
+
+
+table.field-label-and-title {
+	width: 100%;
+}
+
+table.field-label-and-title input + input {
+	margin-top: 4px;
+}
+
+table.field-label-and-title .sync-button-cell {
+	width: 36px;
+	text-align: right;
+}
+
+table.field-label-and-title .sync-button-cell button {
+	border-radius: 30px;
+	position: relative;
+	z-index: 1;
+}
+
+
+table.field-label-and-title .sync-button-cell .decorator {
+	border-bottom-right-radius: 10px;
+	border-color: #CCCCCC #CCCCCC #CCCCCC;
+	border-image: none;
+	border-style: solid solid solid none;
+	border-top-right-radius: 10px;
+	border-width: 1px 1px 1px 0;
+	height: 41px;
+	position: absolute;
+	right: 30px;
+	top: 17px;
+	width: 22px;
+}
+
+table.field-label-and-title .sync-button-cell .decorator.locked {
+	border-width: 2px;
 }

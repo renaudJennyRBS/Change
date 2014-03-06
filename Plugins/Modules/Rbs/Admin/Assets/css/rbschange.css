@@ -312,8 +312,9 @@ h4.list-group-item:first-child {
 
 #workspace .page-header {
 	margin-top: 0;
-	margin-bottom: 8px;
+	margin-bottom: 30px;
 	border-width: 5px;
+	padding-bottom: 0;
 }
 
 #workspace .page-header h2 {
@@ -572,8 +573,13 @@ a.go-to-link:after {
 	margin-left: 4px;
 }
 
-.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
 	background-color: rgba(0,0,0,0.05);
+}
+
+.table-hover > tbody > tr:hover > td.preview {
+	background: none;
 }
 
 rbs-navigation-history {

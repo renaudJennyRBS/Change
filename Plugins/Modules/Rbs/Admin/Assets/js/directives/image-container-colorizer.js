@@ -605,21 +605,21 @@
 				}
 			}
 
-			ColorTunes.fadeout(canvas, image.width, image.height, 0.8, bgColor);
-			ColorTunes.feathering(canvas, image.width, image.height, 10, bgColor);
+			//ColorTunes.fadeout(canvas, image.width, image.height, 0.8, bgColor);
+			//ColorTunes.feathering(canvas, image.width, image.height, 10, bgColor);
 
 			rgbToCssString = function(color) {
 				return "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")";
 			};
 
-			container.css({
-				"background-color" : rgbToCssString(bgColor),
-				"color" : rgbToCssString(fgColor)
-			});
+			// Choose darkest color
+			var f = fgColor[0]+fgColor[1]+fgColor[2],
+				b = bgColor[0]+bgColor[1]+bgColor[2];
+			var color = f < b ? fgColor : bgColor;
 
-			container.find('.preview-indicator').css({
-				"background-color" : rgbToCssString(bgColor),
-				"display" : "block"
+			container.css({
+				"border-left-color" : rgbToCssString(color),
+				"color" : rgbToCssString(color)
 			});
 		};
 
