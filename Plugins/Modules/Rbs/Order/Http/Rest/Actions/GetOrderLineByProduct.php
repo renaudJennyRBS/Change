@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,9 +11,9 @@ use Change\Http\Event;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Rbs\Order\Http\Rest\Actions\LineNormalize
+ * @name \Rbs\Order\Http\Rest\Actions\GetOrderLineByProduct
  */
-class LineNormalize
+class GetOrderLineByProduct
 {
 	/**
 	 * @param Event $event
@@ -26,24 +25,28 @@ class LineNormalize
 		$billingArea = null;
 		if ($request->isPost())
 		{
-			$lineData = $request->getPost('line');
-
-			$webStoreId = $request->getPost('webStore');
-			$billingAreaId = $request->getPost('billingArea');
-			$zone = $request->getPost('zone');
-
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+			/* @var $order \Rbs\Order\Documents\Order */
+			$order = $documentManager->getDocumentInstance($request->getPost('orderId'), 'Rbs_Order_Order');
+			/* @var $product \Rbs\Catalog\Documents\Product */
+			$product = $documentManager->getDocumentInstance($request->getPost('productId'), 'Rbs_Catalog_Product');
+
+			if (!$order || !$product)
+			{
+				$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'Invalid parameters');
+				$event->setResult($result);
+			}
 
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-
 			$priceManager = $commerceServices->getPriceManager();
 
 			/* @var $webStore \Rbs\Store\Documents\WebStore */
-			$webStore = $documentManager->getDocumentInstance($webStoreId, 'Rbs_Store_WebStore');
-
+			$webStore = $order->getWebStoreIdInstance();
 			/* @var $billingArea \Rbs\Price\Documents\BillingArea */
-			$billingArea = $documentManager->getDocumentInstance($billingAreaId, 'Rbs_Price_BillingArea');
+			$billingArea = $order->getBillingAreaIdInstance();
+
 			if ($webStore && $billingArea)
 			{
 				$currencyCode = $billingArea->getCurrencyCode();
@@ -56,48 +59,34 @@ class LineNormalize
 				$pricesValueWithTax = false;
 			}
 
-			$orderLine = new \Rbs\Order\OrderLine($lineData);
-			$lineQuantity = $orderLine->getQuantity();
-			if (!$lineQuantity)
-			{
-				$lineQuantity = 1;
-				$orderLine->setQuantity($lineQuantity);
-			}
+			$zone = $order->getZone();
+			$lineQuantity = 1;
 
-			$productId = $orderLine->getOptions()->get('productId');
-			if ($productId)
+			$orderLine = new \Rbs\Order\OrderLine();
+			$orderLine->setQuantity($lineQuantity);
+			$orderLine->getOptions()->set('productId', $product->getId());
+			$orderLine->setKey(strval($product->getId()));
+			$orderLine->setDesignation($product->getLabel());
+
+			$sku = $product->getSku();
+			if ($sku)
 			{
-				if (!$orderLine->getKey())
+				$item = new \Rbs\Order\OrderLineItem(['codeSKU' => $sku->getCode()]);
+				if ($webStore && $billingArea)
 				{
-					$orderLine->setKey(strval($productId));
+					$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
+					$item->setPrice($price);
 				}
-
-				/* @var $product \Rbs\Catalog\Documents\Product */
-				$product = $documentManager->getDocumentInstance($productId);
-				if ($product)
+				else
 				{
-					if (!$orderLine->getDesignation())
-					{
-						$orderLine->setDesignation($product->getLabel());
-					}
-
-					$sku = $product->getSku();
-					if ($sku && count($orderLine->getItems()) == 0)
-					{
-						$item = new \Rbs\Order\OrderLineItem(['codeSKU' => $sku->getCode()]);
-						if ($webStore && $billingArea)
-						{
-							$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
-							$item->setPrice($price);
-						}
-						else
-						{
-							$item->setPrice(null);
-						}
-						$orderLine->appendItem($item);
-					}
+					$item->setPrice(null);
 				}
 			}
+			else
+			{
+				$item = new \Rbs\Order\OrderLineItem([]);
+			}
+			$orderLine->appendItem($item);
 
 			$taxesLine = [];
 			$amount = null;
@@ -116,7 +105,8 @@ class LineNormalize
 				}
 
 				$price = $item->getPrice();
-				if ($price === null) {
+				if ($price === null)
+				{
 					$item->setPrice(null);
 					$price = $item->getPrice();
 				}

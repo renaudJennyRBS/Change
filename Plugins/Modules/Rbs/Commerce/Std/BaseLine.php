@@ -242,6 +242,9 @@ class BaseLine implements LineInterface
 	 */
 	public function fromArray(array $array)
 	{
+		$this->options = null;
+		$this->items = array();
+		$this->taxes = array();
 		foreach ($array as $name => $value)
 		{
 			switch ($name)
@@ -259,7 +262,6 @@ class BaseLine implements LineInterface
 					$this->setDesignation($value);
 					break;
 				case 'options':
-					$this->options = null;
 					if (is_array($value))
 					{
 						foreach ($value as $optName => $optValue)
@@ -269,7 +271,6 @@ class BaseLine implements LineInterface
 					}
 					break;
 				case 'items':
-					$this->items = array();
 					if (is_array($value))
 					{
 						foreach ($value as $itemArray)
@@ -324,6 +325,7 @@ class BaseLine implements LineInterface
 	 */
 	public function toArray()
 	{
+		$options = $this->getOptions()->toArray();
 		$array = [
 			'index' => $this->index,
 			'key' => $this->key,
@@ -333,7 +335,7 @@ class BaseLine implements LineInterface
 			'taxes' => array(),
 			'amount' => $this->amount,
 			'amountWithTaxes' => $this->amountWithTaxes,
-			'options' => $this->getOptions()->toArray()
+			'options' => count($options) ? $options : null
 		];
 		foreach ($this->items as $item)
 		{

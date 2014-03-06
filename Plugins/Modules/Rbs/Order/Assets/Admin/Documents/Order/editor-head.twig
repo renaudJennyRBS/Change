@@ -10,8 +10,10 @@
 				</rbs-field>
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'code'), ['ucf']) }}">
-					<p class="form-control-static" ng-show="document.code">(= document.code =)</p>
-					<p class="form-control-static" ng-hide="document.code">{{ i18n('m.rbs.order.admin.order_code_waiting', ['ucf']) }}</p>
+					<p class="form-control-static" data-ng-show="document.code">(= document.code =)</p>
+					<p class="form-control-static" data-ng-hide="document.code">
+						{{ i18n('m.rbs.order.admin.order_code_waiting', ['ucf']) }}
+					</p>
 				</rbs-field>
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'currencyCode'), ['ucf']) }}">
@@ -30,23 +32,45 @@
 				<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.admin.order_customer', ['ucf']) }}</h3>
 			</div>
 			<div class="panel-body">
-				<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
-						accepted-model="Rbs_User_User"
-						value-ids="true"
-						selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_ownerid', ['ucf']) }}">
+				<rbs-field-picker data-ng-if="isContentEditable()" property="ownerId" accepted-model="Rbs_User_User"
+					value-ids="true" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_ownerid', ['ucf']) }}">
 				</rbs-field-picker>
+				<rbs-field data-ng-if="!isContentEditable()"
+					label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}">
+					<a data-ng-if="owner.id" href="javascript:;" data-ng-href="(= owner|rbsURL =)"
+						class="form-control-static">(= owner.label =)</a>
+					<span data-ng-if="!owner.id">x</span>
+				</rbs-field>
+
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'email'), ['ucf']) }}">
-					<input type="text" class="form-control" ng-model="document.email" />
+					<input data-ng-if="isContentEditable()" type="text" class="form-control" data-ng-model="document.email" />
+					<span data-ng-if="!isContentEditable()" class="form-control-static">(= document.email || 'x' =)</span>
 				</rbs-field>
 			</div>
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-envelope"></i> <a href="javascript:;" ng-click="orderContext.showAddressUI = !orderContext.showAddressUI">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }} <i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showAddressUI]"></i></a>
+				<h3 class="panel-title">
+					<i class="icon-envelope"></i>
+					<a data-ng-if="isContentEditable()" href="javascript:;"
+						data-ng-click="orderContext.showAddressUI = !orderContext.showAddressUI">
+						{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }}
+						<i data-ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showAddressUI]"></i>
+					</a>
+					<span data-ng-if="!isContentEditable()">{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }}</span>
 				</h3>
 			</div>
-			<div rbs-order-address="" class="panel-body" ng-show="orderContext.showAddressUI"
-				address-documents="userAddresses"address="document.address">
+			<div class="panel-body" data-ng-show="orderContext.showAddressUI || !isContentEditable()">
+				<div data-ng-if="isContentEditable()" data-rbs-order-address="" data-address-documents="userAddresses"
+					 data-address="document.address">
+				</div>
+				<div data-ng-if="!isContentEditable()">
+					<address class="no-bottom-margin">
+						<strong>(= document.address.__lines[0] =)</strong>
+						<div data-ng-repeat="line in document.address.__lines" data-ng-if="!$first">(= line =)</div>
+					</address>
+				</div>
 			</div>
 		</div>
 	</div>

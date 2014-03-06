@@ -1318,20 +1318,24 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$pricesValueWithTax = $cart->getPricesValueWithTax();
 		foreach ($line->getItems() as $item)
 		{
-			$sku = $this->getStockManager()->getSkuByCode($item->getCodeSKU());
-			if ($sku)
+			if (!$item->getOptions()->get('lockedPrice', false))
 			{
-				if (!$item->getOptions()->get('lockedPrice', false))
+				$sku = $this->getStockManager()->getSkuByCode($item->getCodeSKU());
+				if ($sku)
 				{
 					$price = $this->getPriceManager()->getPriceBySku($sku,
 						['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart, 'cartLine' => $line]);
 					$item->setPrice($price);
 				}
+				else
+				{
+					$item->setPrice(null);
+				}
 			}
 			$price = $item->getPrice();
 			if ($price)
 			{
-				$item->getPrice()->setWithTax($pricesValueWithTax);
+				$price->setWithTax($pricesValueWithTax);
 			}
 		}
 	}

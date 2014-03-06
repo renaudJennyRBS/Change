@@ -161,11 +161,11 @@ class Listeners implements ListenerAggregateInterface
 					$cr->addproducts($event);
 				});
 			}
-			else if ($relativePath === 'rbs/order/lineNormalize')
+			else if ($relativePath === 'rbs/order/getOrderLineByProduct')
 			{
 				$event->setAction(function ($event)
 				{
-					(new \Rbs\Order\Http\Rest\Actions\LineNormalize())->execute($event);
+					(new \Rbs\Order\Http\Rest\Actions\GetOrderLineByProduct())->execute($event);
 				});
 			}
 			else if ($relativePath === 'rbs/order/productPriceInfo')

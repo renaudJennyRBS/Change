@@ -122,6 +122,7 @@ class BaseLineItem implements LineItemInterface
 	 */
 	public function fromArray(array $array)
 	{
+		$this->options = null;
 		foreach ($array as $name => $value)
 		{
 			switch ($name)
@@ -159,10 +160,11 @@ class BaseLineItem implements LineItemInterface
 	 */
 	public function toArray()
 	{
+		$options = $this->getOptions()->toArray();
 		$array = array(
 			'codeSKU' => $this->codeSKU,
 			'reservationQuantity' => $this->reservationQuantity,
-			'options' => $this->getOptions()->toArray());
+			'options' => count($options) ? $options : null);
 
 		$price = $this->getPrice();
 		if ($price) {

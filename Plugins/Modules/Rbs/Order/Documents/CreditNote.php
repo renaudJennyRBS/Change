@@ -29,4 +29,27 @@ class CreditNote extends \Compilation\Rbs\Order\Documents\CreditNote
 	{
 		return $this;
 	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		/** @var $creditNote CreditNote */
+		$creditNote = $event->getDocument();
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			$formattedAmount = $nf->formatCurrency($creditNote->getAmount(), $creditNote->getCurrencyCode());
+			$restResult->setProperty('formattedAmount', $formattedAmount);
+			if ($creditNote->getAmountNotApplied() !== null)
+			{
+				$formattedAmount = $nf->formatCurrency($creditNote->getAmountNotApplied(), $creditNote->getCurrencyCode());
+				$restResult->setProperty('formattedAmountNotApplied', $formattedAmount);
+			}
+		}
+	}
 }

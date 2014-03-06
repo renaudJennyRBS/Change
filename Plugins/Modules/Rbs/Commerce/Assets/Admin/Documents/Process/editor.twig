@@ -17,8 +17,8 @@
 		</rbs-field-picker-multiple>
 
 		<div ng-hide="document.isNew()">
-			<rbs-document-list data-dlid="DLRbsCommerceProcessModifier" collection="document.modifiersOrder"  extend="modifiersManager" ng-cloak=""
-					toolbar="false" selectable="false" activable="true">
+			<rbs-document-list data-dlid="DLRbsCommerceProcessModifier" collection="document.modifiersOrder"
+				extend="modifiersManager" ng-cloak="" correction="true" toolbar="false" selectable="false" activable="true">
 				<rbs-column name="model" label="{{ i18nAttr('c.documents.model', ['ucf']) }}" >(= doc.modelName =)</rbs-column>
 				<rbs-column name="label" primary="true" label="{{ i18nAttr('c.documents.label', ['ucf']) }}">
 					<a ng-href="(= doc | rbsURL:'form' =)">(= doc.label =)</a>

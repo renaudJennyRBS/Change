@@ -1,17 +1,17 @@
-<form name="form" ng-submit="submit()" class="form-horizontal">
+<form name="form" data-ng-submit="submit()" class="form-horizontal">
 
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<div ng-if="document.isNew()" ng-include="'Document/Rbs/Order/Order/editor-new.twig'"></div>
+		<div data-ng-if="document.isNew()" data-ng-include="'Document/Rbs/Order/Order/editor-new.twig'"></div>
 
-		<div ng-show="!document.isNew()">
-			<div ng-include="'Document/Rbs/Order/Order/editor-head.twig'"></div>
+		<div data-ng-show="!document.isNew()">
+			<div data-ng-include="'Document/Rbs/Order/Order/editor-head.twig'"></div>
 			<rbs-order-lines></rbs-order-lines>
-			<div ng-include="'Document/Rbs/Order/Order/editor-shipping.twig'"></div>
-			<div ng-include="'Document/Rbs/Order/Order/editor-payment.twig'"></div>
-			<div ng-include="'Document/Rbs/Order/Order/editor-shipment.twig'"></div>
+			<div data-ng-include="'Document/Rbs/Order/Order/editor-shipping.twig'"></div>
+			<div data-ng-include="'Document/Rbs/Order/Order/editor-payment.twig'"></div>
+			<div data-ng-include="'Document/Rbs/Order/Order/editor-shipment.twig'"></div>
 		</div>
 	</fieldset>
 
@@ -21,5 +21,17 @@
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-rbs-document-system-info-section="">
 	</fieldset>
-	<rbs-form-button-bar></rbs-form-button-bar>
+
+	<rbs-form-button-bar>
+		<button type="button" data-ng-if="document.processingStatus == 'edition'"
+			data-ng-click="updateOrderStatus('processing', $event)" class="btn btn-headline btn-success"
+			data-ng-disabled="document.lines.length === 0 || !isUnchanged()">
+			<i class="icon-lock"></i>{{ i18n('m.rbs.order.admin.order_start_processing_button', ['ucf']) | raw }}
+		</button>
+		<button type="button" data-ng-if="document.processingStatus == 'processing'"
+			data-ng-click="updateOrderStatus('edition', $event)" class="btn btn-headline btn-warning"
+			data-ng-disabled="!isUnchanged()">
+			<i class="icon-unlock"></i>{{ i18n('m.rbs.order.admin.order_make_editable_button', ['ucf']) | raw }}
+		</button>
+	</rbs-form-button-bar>
 </form>

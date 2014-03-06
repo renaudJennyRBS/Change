@@ -1,42 +1,49 @@
 <div class="col-md-6">
-	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}" class="required" >
-		<input type="text" class="form-control" required="required" ng-model="doc.items[0].codeSKU" />
+	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}" class="required">
+		<input type="text" class="form-control" required="required" data-ng-model="line.items[0].codeSKU" />
 	</rbs-field>
 
-	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}" class="required" >
-		<input type="text" class="form-control" required="required" ng-model="doc.designation" />
+	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}" class="required">
+		<input type="text" class="form-control" required="required" data-ng-model="line.designation" />
+	</rbs-field>
+
+	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" class="required">
+		<input type="number" min="1" required="true" data-ng-model="line.quantity" class="form-control" />
 	</rbs-field>
 </div>
 
 <div class="col-md-6">
-	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}" class="required">
-		<div class="input-group">
-			<input type="number" min="1" required="true" ng-model="doc.quantity" class="form-control"/>
-		</div>
+	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" class="required">
+		<rbs-price-input data-ng-model="line.items[0].price.value" data-currency-code="priceInfo.currencyCode"
+			data-price-with-tax="line.items[0].price.withTax" required="required"
+			data-ng-disabled="!line.items[0].options.lockedPrice">
+		</rbs-price-input>
+		<label>
+			<input type="checkbox" data-ng-checked="line.items[0].options.lockedPrice"
+				data-ng-click="line.items[0].options.lockedPrice = !line.items[0].options.lockedPrice" />
+			{{ i18n('m.rbs.order.admin.order_manual_price', ['ucf']) }}
+		</label>
 	</rbs-field>
-	<rbs-field label="{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}" class="required" >
-		<rbs-price-input ng-model="doc.items[0].price.value" data-currency-code="priceInfo.currencyCode"
-				data-price-with-tax="doc.items[0].price.withTax" required="required"/>
-	</rbs-field>
-	<rbs-field>
-		<table ng-show="currentTaxInfo" class="table table-striped">
-			<thead>
+	<table data-ng-show="priceInfo.currentTaxInfo" class="table table-striped">
+		<thead>
+			<tr>
 				<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
 				<th>{{ i18n('m.rbs.price.documents.tax_category', ['ucf']) }}</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="tax in currentTaxInfo">
-					<td>(=tax.code=)<br/>
-						<small>(=tax.label=)</small>
-					</td>
-					<td>
-						<select ng-model="doc.items[0].price.taxCategories[tax.code]" class="input-medium form-control"
-								ng-options="c.code as c.formattedRate + '  (' + c.code + ')' for c in tax.categories">
-							<option value="">{{ i18n('m.rbs.price.documents.tax_not_applicable', ['ucf']) }}</option>
-						</select>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</rbs-field>
+			</tr>
+		</thead>
+		<tbody>
+			<tr data-ng-repeat="tax in priceInfo.currentTaxInfo">
+				<td>(= tax.code =)<br/>
+					<small>(= tax.label =)</small>
+				</td>
+				<td>
+					<select data-ng-model="line.items[0].price.taxCategories[tax.code]" class="input-medium form-control"
+						data-ng-options="c.code as c.formattedRate + ' (' + c.code + ')' for c in tax.categories"
+						data-ng-disabled="!line.items[0].options.lockedPrice">
+						<option value="">{{ i18n('m.rbs.price.documents.tax_not_applicable', ['ucf']) }}</option>
+					</select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

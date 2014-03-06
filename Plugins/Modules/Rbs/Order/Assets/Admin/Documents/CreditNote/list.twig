@@ -15,9 +15,8 @@
 
 		<rbs-document-list data-dlid="DLRbsOrderCreditNote" model="Rbs_Order_CreditNote" filter-collection="filter">
 			<rbs-column name="code" primary="true"></rbs-column>
-			<rbs-column name="amount"></rbs-column>
-			<rbs-column name="currencyCode"></rbs-column>
-			<rbs-column name="amountNotApplied"></rbs-column>
+			<rbs-column name="amount">(= doc.formattedAmount =)</rbs-column>
+			<rbs-column name="amountNotApplied">(= doc.formattedAmountNotApplied =)</rbs-column>
 		</rbs-document-list>
 	</div>
 </div>

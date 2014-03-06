@@ -16,7 +16,6 @@
 			restrict : 'E',
 			templateUrl : 'Rbs/Price/price-input.twig',
 			require: 'ngModel',
-			replace: 'true',
 			scope: true,
 
 			link : function (scope, elm, attrs, ngModel) {
@@ -31,7 +30,7 @@
 				}
 
 				attrs.$observe('disabled', function(value){
-					scope.disabled = angular.isDefined(value) && value != "false";
+					scope.disabled = angular.isDefined(value) && (value !== "false" && value !== false);
 				});
 
 				attrs.$observe('required', function(value){
