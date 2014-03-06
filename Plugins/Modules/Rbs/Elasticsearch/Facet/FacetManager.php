@@ -328,15 +328,12 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 						break;
 					}
 
-					if ($document->getVariantGroup())
-					{
-
-					}
+					$commerceServices = $indexDefinition->getCommerceServices();
 
 					$skus = array();
 					if (!$document->getSku() && $document->getVariantGroup())
 					{
-						$skus = $document->getAllSkuOfVariant(true)->toArray();
+						$skus = $commerceServices->getCatalogManager()->getAllSkuOfVariant($document, true);
 					}
 					else
 					{
@@ -344,7 +341,6 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					}
 
 					$store = $indexDefinition->getStore();
-					$commerceServices = $indexDefinition->getCommerceServices();
 					$prices = [];
 					if (count($skus) > 0 && $store && $commerceServices)
 					{
@@ -418,15 +414,38 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					$value = ['prices' => $prices];
 					break;
 				case 'SkuThreshold':
-					$sku = $document->getSku();
-					$store = $indexDefinition->getCommerceServices()->getContext()->getWebStore();
-					if ($sku && $store)
+
+					$skus = array();
+					if (!$document->getSku() && $document->getVariantGroup())
 					{
+						$skus = $indexDefinition->getCommerceServices()->getCatalogManager()->getAllSkuOfVariant($document, true);
+					}
+					else
+					{
+						$skus[] = $document->getSku();
+					}
+
+					$store = $indexDefinition->getCommerceServices()->getContext()->getWebStore();
+					if (count($skus) > 0 && $store)
+					{
+						$skuId = 0;
+
 						$fieldName = $facet->getFieldName();
 						$stockManager = $indexDefinition->getCommerceServices()->getStockManager();
-						$level = $stockManager->getInventoryLevel($sku, $store);
-						$threshold = $stockManager->getInventoryThreshold($sku, $store, $level);
-						$value = array($fieldName => $threshold, 'sku_id' => $sku->getId(),
+
+						if (count($skus) == 1)
+						{
+							$skuId = $skus[0]->getId();
+							$level = $stockManager->getInventoryLevel($skus[0], $store);
+							$threshold = $stockManager->getInventoryThreshold($skus[0], $store, $level);
+						}
+						else
+						{
+							$level = $stockManager->getInventoryLevelForManySku($skus, $store);
+							$threshold = $stockManager->getInventoryThresholdForManySku($skus, $store, $level);
+						}
+
+						$value = array($fieldName => $threshold, 'sku_id' => $skuId,
 							$fieldName . '_level' => $level);
 					}
 					break;
@@ -435,23 +454,58 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					if ($attribute)
 					{
 						$fieldName = $facet->getFieldName();
-						$attributeValue = $attribute->getValue($document);
-						if ($attributeValue instanceof \Change\Documents\AbstractDocument)
+
+						$descendants = array();
+						if (!$document->getSku() && $document->getVariantGroup())
 						{
-							$value = array($fieldName => $attributeValue->getId());
+							// Get published variant
+							/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+							$commerceServices = $event->getServices('commerceServices');
+							$catalogManager = $commerceServices->getCatalogManager();
+							$descendants = $catalogManager->getProductDescendants($document, true);
 						}
-						elseif ($attributeValue instanceof \Change\Documents\DocumentArrayProperty)
+
+						$descendants[] = $document;
+						$values = array();
+						foreach($descendants as $descendant)
 						{
-							$value = array($fieldName => $attributeValue->getIds());
+							$attributeValue = $attribute->getValue($descendant);
+							if ($attributeValue instanceof \Change\Documents\AbstractDocument)
+							{
+								if (!in_array($attributeValue->getId(), $values))
+								{
+									$values[] = $attributeValue->getId();
+								}
+							}
+							elseif ($attributeValue instanceof \Change\Documents\DocumentArrayProperty)
+							{
+								foreach ($attributeValue->getIds() as $id)
+								{
+									if (!in_array($id, $values))
+									{
+										$values[] = $id;
+									}
+								}
+							}
+							elseif ($attributeValue instanceof \DateTime)
+							{
+								$date = $attributeValue->format(\DateTime::ISO8601);
+								if (!in_array($date, $values))
+								{
+									$values[] = $date;
+								}
+							}
+							elseif (is_string($attributeValue) || is_bool($attributeValue) || is_numeric($attributeValue) || is_array($attributeValue))
+							{
+								if (!in_array($attributeValue, $values))
+								{
+									$values[] = $attributeValue;
+								}
+							}
 						}
-						elseif ($attributeValue instanceof \DateTime)
-						{
-							$value = array($fieldName => $attributeValue->format(\DateTime::ISO8601));
-						}
-						elseif (is_string($attributeValue) || is_bool($attributeValue) || is_numeric($attributeValue) || is_array($attributeValue))
-						{
-							$value = array($fieldName => $attributeValue);
-						}
+
+						$value = array($fieldName => $values);
+
 					}
 			}
 		}

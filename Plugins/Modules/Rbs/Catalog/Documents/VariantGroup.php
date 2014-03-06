@@ -49,13 +49,14 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	 */
 	public function onDefaultCreate(\Change\Documents\Events\Event $event)
 	{
-		/* @var $product \Rbs\Catalog\Documents\VariantGroup */
-		$product = $event->getDocument();
-		if (!$product->getLabel() && $product->getRootProduct())
+		/* @var $variantGroup \Rbs\Catalog\Documents\VariantGroup */
+		$variantGroup = $event->getDocument();
+		if (!$variantGroup->getLabel() && $variantGroup->getRootProduct())
 		{
-			$product->setLabel($product->getRootProduct()->getLabel());
+			$variantGroup->setLabel($variantGroup->getRootProduct()->getLabel());
 		}
-		$product->normalizeAxesProperties();
+		$variantGroup->normalizeAxesProperties();
+		$variantGroup->checkOtherAttributes();
 	}
 
 	/**
@@ -92,6 +93,11 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('axesConfiguration'))
 		{
 			$this->normalizeAxesProperties();
+		}
+
+		if ($this->isPropertyModified('othersAttributes'))
+		{
+			$this->checkOtherAttributes();
 		}
 
 		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('othersAttributes') || $this->isPropertyModified('axesConfiguration'))
@@ -166,6 +172,29 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	}
 
 	/**
+	 * Check that the attributes set in other attributes cannot be used in axis
+	 */
+	protected function checkOtherAttributes()
+	{
+		$oldOtherAttributes = $this->getOthersAttributes();
+		$newOtherAttributes = null;
+
+		if ($oldOtherAttributes !== null)
+		{
+			$newOtherAttributes = array();
+			foreach($oldOtherAttributes as $oldOtherAttribute)
+			{
+				if (!$oldOtherAttribute->getAxis())
+				{
+					$newOtherAttributes[] = $oldOtherAttribute;
+				}
+			}
+		}
+
+		$this->setOthersAttributes($newOtherAttributes);
+	}
+
+	/**
 	 * @param \Change\Documents\Events\Event $event
 	 * @throws \RuntimeException
 	 */
@@ -205,6 +234,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		else if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$restResult->setProperty('rootProductId', $document->getRootProductId());
+			$restResult->setProperty('axesAttributesId', $document->getAxesAttributesId());
 		}
 	}
 
@@ -272,4 +302,20 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		}
 		return true;
 	}
+
+	/**
+	 * Get the list of attributes id that compose the axes attributes
+	 * @return array
+	 */
+	public function getAxesAttributesId()
+	{
+		$attributesId = array();
+		$attributes = $this->getAxesAttributes();
+		foreach ($attributes as $a)
+		{
+			$attributesId[] = $a->getId();
+		}
+		return $attributesId;
+	}
+
 }

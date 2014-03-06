@@ -40,7 +40,7 @@ class FacetValue
 	function __construct($value, $valueTitle = null)
 	{
 		$this->value = $value;
-		$this->valueTitle = $valueTitle !== null ? $valueTitle : $value;
+		$this->valueTitle = $valueTitle !== null ? $valueTitle : ucfirst($value);
 	}
 
 	/**

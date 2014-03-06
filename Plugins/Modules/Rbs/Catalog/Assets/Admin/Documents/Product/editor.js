@@ -150,6 +150,15 @@
 					var v = {value: attribute.defaultValue};
 					var valIndex = scope.getAttributeValueById(attribute.id);
 
+					attribute.canBeEdit = true;
+					if (attribute.axis == true && scope.document.variantGroup !== null)
+					{
+						if (isAttributeOfVariantGroup(attribute.id))
+						{
+							attribute.canBeEdit = false;
+						}
+					}
+
 					if (attribute.valueType == 'Property') {
 						if (!scope.document.hasOwnProperty(attribute.propertyName))
 						{
@@ -173,6 +182,11 @@
 					}
 					attribute.value = v;
 				};
+
+				function isAttributeOfVariantGroup(attributeId)
+				{
+					return scope.document.variantGroup.axesAttributesId.indexOf(attributeId) > -1;
+				}
 
 				scope.$watch('propAttr', function(newValue) {
 					if (newValue) {

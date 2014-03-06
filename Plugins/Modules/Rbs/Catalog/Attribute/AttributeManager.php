@@ -412,7 +412,7 @@ class AttributeManager
 						$definition['attributes'][] = $defGroup;
 					}
 				}
-				elseif (!$childAttribute->getAxis())
+				else
 				{
 					$def = $this->buildAttributeDefinition($childAttribute);
 					if ($def)
@@ -448,7 +448,7 @@ class AttributeManager
 					$groupDef = $this->buildGroupDefinition($childAttribute, $ids);
 					$definition['attributes'] = array_merge($definition['attributes'], $groupDef['attributes']);
 				}
-				elseif (!$childAttribute->getAxis())
+				else
 				{
 					$def = $this->buildAttributeDefinition($childAttribute);
 					if ($def)
@@ -470,7 +470,7 @@ class AttributeManager
 		$vt = $attribute->getValueType();
 		$definition = array('id' => $attribute->getId(), 'label' => $attribute->getLabel(),
 			'required' => $attribute->getRequiredValue(), 'valueType' => $vt, 'type' => $vt,
-			'defaultValue' => null, 'collectionCode' => null, 'values' => null, 'usePicker' => $attribute->getUsePicker());
+			'defaultValue' => null, 'collectionCode' => null, 'values' => null, 'usePicker' => $attribute->getUsePicker(), 'axis' => $attribute->getAxis());
 
 		if (Attribute::TYPE_PROPERTY == $vt)
 		{

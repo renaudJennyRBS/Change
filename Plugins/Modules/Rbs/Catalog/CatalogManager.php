@@ -669,9 +669,10 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if (!$product->getSku() && $product->getVariantGroup())
 		{
+			// TODO Try to replace by SQL
 			$prices = array();
+			$skus = $this->getAllSkuOfVariant($product, true);
 
-			$skus = $product->getAllSkuOfVariant(true);
 			foreach ($skus as $sku)
 			{
 				$p = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStoreId, 'billingArea' => $billingArea]);
@@ -719,8 +720,8 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 		if (!$product->getSku() && $product->getVariantGroup())
 		{
-			$skus = $product->getAllSkuOfVariant(true);
-			if ($skus !== null && $skus->count() > 0)
+			$skus = $this->getAllSkuOfVariant($product, true);
+			if ($skus !== null && count($skus) > 0)
 			{
 				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStoreId);
 			}
@@ -749,8 +750,8 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 		if (!$product->getSku() && $product->getVariantGroup())
 		{
-			$skus = $product->getAllSkuOfVariant(true);
-			if ($skus !== null && $skus->count() > 0)
+			$skus = $this->getAllSkuOfVariant($product, true);
+			if ($skus !== null && count($skus) > 0)
 			{
 				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStoreId, $level);
 			}
@@ -1094,6 +1095,42 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param boolean $onlyPublishedProduct
+	 * @return array|null
+	 */
+	public function getAllSkuOfVariant($product, $onlyPublishedProduct = false)
+	{
+		if(!$product->getSku() && $product->getVariantGroup())
+		{
+			// If root product
+			if ($product->hasVariants())
+			{
+				$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
+				$productQuery = $query->getPropertyModelBuilder('id', 'Rbs_Catalog_Product', 'sku');
+				$productQuery->andPredicates($productQuery->eq('variant', true), $productQuery->eq('variantGroup', $product->getVariantGroup()));
+				if ($onlyPublishedProduct)
+				{
+					$productQuery->andPredicates($productQuery->published());
+				}
+
+				return $query->getDocuments()->toArray();
+			}
+			else
+			{
+				$skus = array();
+				$products = $this->getProductDescendants($product, true);
+				foreach ($products as $p)
+				{
+					$skus[] = $p->getSku();
+				}
+				return $skus;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param boolean $onlyPublishedProduct
 	 * @return integer[]
 	 */
 	public function getProductIdAncestors($product, $onlyPublishedProduct)
@@ -1115,7 +1152,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		// Look fot the product with the same values fort the first axes and null for the other ones.
+		// Look for the product with the same values for the first axes and null for the other ones.
 		$ancestors = array();
 		foreach ($variantConfiguration['products'] as $infoProduct)
 		{
@@ -1156,10 +1193,83 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		$dm = $this->getDocumentManager();
 		foreach ($ancestorsId as $key => $value)
 		{
-			$ancestors[$key] = $dm->getDocumentInstance($value);
+			$ancestors[$key] = $dm->getDocumentInstance($value, 'Rbs_catalog_Product');
 		}
 
 		return $ancestors;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param boolean $onlyPublishedProduct
+	 * @return integer[]
+	 */
+	public function getProductIdDescendants($product, $onlyPublishedProduct)
+	{
+		// Is Root product
+		if ($product->hasVariants())
+		{
+			// Get all published variant
+			$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+			$query->andPredicates($query->eq('variant', true), $query->eq('variantGroup', $product->getVariantGroup()), $query->neq('id', $product->getId()));
+			if ($onlyPublishedProduct)
+			{
+				$query->andPredicates($query->published());
+			}
+
+			return $query->getDocuments()->ids();
+		}
+
+		// Is not Root product
+		// Look for the axes configuration of the product.
+		$productAxesConfiguration = null;
+		$variantConfiguration = $this->getAttributeManager()->buildVariantConfiguration($product->getVariantGroup(), $onlyPublishedProduct);
+
+		foreach ($variantConfiguration['products'] as $infoProduct)
+		{
+			if ($infoProduct['id'] === $product->getId())
+			{
+				$productAxesConfiguration = $infoProduct;
+				break;
+			}
+		}
+
+		// Look for the product with the same values for the first axes and null for the other ones.
+		$descendants = array();
+		foreach ($variantConfiguration['products'] as $infoProduct)
+		{
+			if ($infoProduct['id'] !== $productAxesConfiguration['id'])
+			{
+				foreach ($productAxesConfiguration['values'] as $index => $confValues)
+				{
+					if ($confValues['value'] !== null && $infoProduct['values'][$index]['value'] == $confValues['value'])
+					{
+						$descendants[] = $infoProduct['id'];
+					}
+				}
+			}
+		}
+
+		return array_values($descendants);
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param boolean $onlyPublishedProduct
+	 * @return \Rbs\Catalog\Documents\Product[]
+	 */
+	public function getProductDescendants($product, $onlyPublishedProduct)
+	{
+		$descendantsId = $this->getProductIdDescendants($product, $onlyPublishedProduct);
+		$descendants = array();
+
+		$dm = $this->getDocumentManager();
+		foreach ($descendantsId as $key => $value)
+		{
+			$descendants[$key] = $dm->getDocumentInstance($value, 'Rbs_catalog_Product');
+		}
+
+		return $descendants;
 	}
 
 	/**
