@@ -42,7 +42,7 @@
 							<tr ng-repeat="(skuId, sku) in data">
 								<td><a href ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'form':{id:sku.productId} =)">(= sku.label =)</a></td>
 								<td>
-									<input type="number" class="form-control input-sm" ng-model="sku.price.value"/>
+									<input type="text" rbs-smart-float="" class="form-control input-sm" ng-model="sku.price.value"/>
 									<a href="" ng-if="$first" ng-click="applyValueOnAll(sku.price.value)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
 								</td>
 								<td>

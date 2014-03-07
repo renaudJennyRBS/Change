@@ -71,7 +71,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			}
 			if ($document->getVariantGroup())
 			{
-				$restResult->setProperty('variantGroup', array('id' => $document->getVariantGroup()->getId(), 'rootProductId' => $document->getVariantGroup()->getRootProductId()));
+				$restResult->setProperty('variantGroup', array('id' => $document->getVariantGroup()->getId(),
+					'rootProductId' => $document->getVariantGroup()->getRootProductId()));
 			}
 			$restResult->setProperty('variant', $document->getVariant());
 		}
@@ -294,26 +295,4 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	{
 		return !($this->getVariant()) && $this->getVariantGroup();
 	}
-
-	/**
-	 * @param boolean $onlyPublishedProduct
-	 * @return \Change\Documents\DocumentCollection
-	 */
-	public function getAllSkuOfVariant($onlyPublishedProduct = false)
-	{
-		if(!$this->getSku() && $this->getVariantGroup())
-		{
-			$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
-			$productQuery = $query->getPropertyModelBuilder('id', 'Rbs_Catalog_Product', 'sku');
-			$productQuery->andPredicates($productQuery->eq('variant', true), $productQuery->eq('variantGroup', $this->getVariantGroup()));
-			if ($onlyPublishedProduct)
-			{
-				$productQuery->andPredicates($productQuery->published());
-			}
-
-			return $query->getDocuments();
-		}
-		return null;
-	}
-
 }
