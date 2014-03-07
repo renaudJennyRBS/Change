@@ -41,7 +41,7 @@
 		"model": "Rbs_Brand_Brand",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"templateUrl": "Document/Rbs/Brand/Brand/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},

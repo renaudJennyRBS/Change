@@ -986,6 +986,8 @@
 			scope : false,
 			priority : 900,
 
+			controller : function () {},
+
 			compile : function (tElement)
 			{
 				tElement.attr('name', 'form');
@@ -1034,6 +1036,65 @@
 
 
 
+	/**
+	 * Directive used to translate an existing Document.
+	 */
+	app.directive('rbsDocumentEditorI18n', ['$location', '$q', 'RbsChange.Events', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', function ($location, $q, Events, NotificationCenter, REST, i18n)
+	{
+		return {
+			restrict : 'A',
+			require : 'rbsDocumentEditorEdit',
+			scope : false,
+			priority : 890,
+
+			compile : function (tElement)
+			{
+				tElement.prepend(
+					'<div class="form-group property">' +
+						'<label class="col-lg-3 control-label">' + i18n.trans('m.rbs.admin.admin.lcid | ucf') + '</label>' +
+						'<div class="col-lg-3 controls">' +
+							'<select class="form-control" ng-model="currentLCID" ng-options="lcid as locale.label for (lcid, locale) in availableTranslations"></select>' +
+						'</div>' +
+					'</div><hr/>'
+				);
+
+				return function (scope, iElement, iAttrs, ctrl)
+				{
+					// Add watch on currentLCID to let the user switch between languages in the editor.
+					scope.$watch('currentLCID', function (lcid, old) {
+						if (lcid !== old) {
+							$location.url(scope.document.translateUrl(lcid));
+						}
+					});
+
+					scope.$on(Events.EditorLoaded, function (event, data)
+					{
+						var p1 = REST.getAvailableLanguages(),
+							p2 = REST.resource(scope.document.model, scope.document.id, scope.document.refLCID);
+						$q.all([p1, p2]).then(function (results)
+						{
+							scope.currentLCID = scope.document.LCID;
+							scope.refDocument = results[1];
+							scope.availableLanguages = results[0].items;
+
+							scope.availableTranslations = {};
+							angular.forEach(scope.availableLanguages, function (l, id) {
+								if (id !== scope.document.refLCID) {
+									scope.availableTranslations[id] = l;
+								}
+							});
+						});
+						data.promises.push(p1);
+						data.promises.push(p2);
+					});
+
+				};
+			}
+		};
+	}]);
+
+
+
 
 
 	app.directive('rbsEditorSection', ['RbsChange.Utils', '$location', function (Utils, $location)
@@ -1059,7 +1120,8 @@
 							'fields' : [],
 							'required' : [],
 							'invalid' : [],
-							'corrected': []
+							'corrected' : [],
+							'index' : iElement.index()
 						};
 
 					entry.url = Utils.makeUrl($location.absUrl(), { section : (sectionId.length ? sectionId : null) });
