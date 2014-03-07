@@ -82,7 +82,7 @@ class Listeners implements ListenerAggregateInterface
 					call_user_func(array($cr, $methodName), $event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Catalog/(ProductList|SectionProductList|CrossSellingProductList|Product)/([0-9]+)/ProductListItems/?$#',
+			else if (preg_match('#^resources/Rbs/Catalog/(ProductList|SectionProductList|CrossSellingProductList|Product|ProductSet)/([0-9]+)/ProductListItems/?$#',
 				$relativePath, $matches)
 			)
 			{

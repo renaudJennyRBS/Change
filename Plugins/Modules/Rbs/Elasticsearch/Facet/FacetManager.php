@@ -333,7 +333,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					$skus = array();
 					if (!$document->getSku() && $document->getVariantGroup())
 					{
-						$skus = $commerceServices->getCatalogManager()->getAllSkuOfVariant($document, true);
+						$skus = $commerceServices->getCatalogManager()->getAllSku($document, true);
 					}
 					else
 					{
@@ -418,7 +418,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					$skus = array();
 					if (!$document->getSku() && $document->getVariantGroup())
 					{
-						$skus = $indexDefinition->getCommerceServices()->getCatalogManager()->getAllSkuOfVariant($document, true);
+						$skus = $indexDefinition->getCommerceServices()->getCatalogManager()->getAllSku($document, true);
 					}
 					else
 					{

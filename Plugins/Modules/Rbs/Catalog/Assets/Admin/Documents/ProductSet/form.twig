@@ -1,0 +1,39 @@
+<div class="row">
+
+	<div rbs-aside-column>
+		<rbs-aside-translation ng-hide="document.isNew()" document="document"></rbs-aside-translation>
+		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+
+		<div ng-show="!document.isNew()" class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.catalog.admin.merchandizing', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'cross-selling-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item" ng-if="document.categorizable">
+					<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
+				</p>
+			</div>
+		</div>
+
+		<rbs-aside-seo ng-if="document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
+
+		<rbs-aside-tag-selector ng-show="!document.isNew()" document="document"></rbs-aside-tag-selector>
+		<div class="rbs-aside-block rbs-aside-other-links" ng-hide="document.isNew()">
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
+			<a href="javascript:;" ng-href="(= document | rbsURL:'timeline' =)">{{ i18n('m.rbs.admin.admin.view_timeline', ['ucf']) | raw }}</a>
+		</div>
+
+	</div>
+
+	<div class="document-form" rbs-main-column>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_ProductSet'), ['ucf']) }}"></rbs-page-header>
+		<div ng-switch="editMode">
+			<rbs-document-editor ng-switch-when="translate" rbs-document-editor-translate="" rbs-document-editor-rbs-catalog-productset-translate=""></rbs-document-editor>
+			<rbs-document-editor ng-switch-default="" rbs-document-editor-rbs-catalog-productset=""></rbs-document-editor>
+		</div>
+	</div>
+
+</div>

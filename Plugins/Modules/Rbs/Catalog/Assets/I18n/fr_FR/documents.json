@@ -39,6 +39,9 @@
 	"condition":{
 		"message":"condition"
 	},
+	"productset":{
+		"message":"ensemble de produits"
+	},
 	"product":{
 		"message":"produit"
 	},
@@ -137,6 +140,9 @@
 	},
 	"product_publication_help":{
 		"message":"Pour définir les <strong>propriétés de publication</strong> de ce produit, comme son emplacement ou ses dates de publication, veuillez vous rendre dans la section $LINKSTART$Publication$LINKEND$, disponible dans le menu à gauche."
+	},
+	"productset_products":{
+		"message":"produits"
 	},
 	"attribute_title":{
 		"message":"titre"

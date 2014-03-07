@@ -1,0 +1,53 @@
+<ul class="grid-list grid-list-1 grid-list-bordered grid-list-align-top product-list">
+	{% for subProduct in subProductsPresentation %}
+		<li>
+			<div class="grid-list-cell">
+				<div class="product-label">
+					<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProduct.general.title}) }}"
+						href="{{ subProduct.general.url }}">{{ subProduct.general.title }}</a>
+				</div>
+				<div class="product-availability">
+					{{ subProduct.stock.thresholdTitle }}
+				</div>
+				{% if parameters.webStoreId %}
+					{% block prices %}
+						{% if subProduct.prices.price %}
+							{% if parameters.displayPrices %}
+								<div class="product-price price">
+									{% if not subProduct.general.hasOwnSku and subProduct.prices.price %}
+										{{ i18n('m.rbs.catalog.front.from') }}
+									{% endif %}
+									{{ subProduct.prices.formattedPrice }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+										{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+									</abbr>
+									{% if subProduct.prices.priceWithoutDiscount %}
+										<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+											{{- subProduct.prices.formattedPriceWithoutDiscount -}}
+										</del>
+									{% endif %}
+								</div>
+							{% endif %}
+							{% if parameters.displayPricesWithTax %}
+								<div class="product-price price">
+									{% if not subProduct.general.hasOwnSku and subProduct.prices.price %}
+										{{ i18n('m.rbs.catalog.front.from') }}
+									{% endif %}
+									{{ subProduct.prices.formattedPriceWithTax }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">
+										{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}
+									</abbr>
+									{% if subProduct.prices.priceWithoutDiscountWithTax %}
+										<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+											{{- subProduct.prices.formattedPriceWithoutDiscountWithTax -}}
+										</del>
+									{% endif %}
+								</div>
+							{% endif %}
+						{% endif %}
+					{% endblock %}
+				{% endif %}
+			</div>
+		</li>
+	{% endfor %}
+</ul>
