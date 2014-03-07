@@ -64,8 +64,8 @@
 
 	<!-- Templates that needs to be included -->
 	<script type="text/ng-template" id="Rbs/Admin/js/directives/aside-defaults-editor.twig">
-		<rbs-aside-translation ng-if="!document.isNew()" document="document"></rbs-aside-translation>
 		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+		<rbs-aside-translation ng-if="!document.isNew()" document="document"></rbs-aside-translation>
 		<rbs-aside-tag-selector ng-if="!document.isNew()" document="document"></rbs-aside-tag-selector>
 		<rbs-aside-seo ng-if="!document.isNew() && document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
 		<div class="rbs-aside-block rbs-aside-other-links" ng-if="!document.isNew()">

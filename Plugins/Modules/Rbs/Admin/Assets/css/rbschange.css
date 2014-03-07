@@ -289,15 +289,6 @@ h4.list-group-item:first-child {
 	border-top-width: 1px;
 }
 
-.badge-required-indicator {
-	font-family: Courier New,Courier;
-	font-size: 14pt;
-	top: 3px;
-	margin-right: 3px;
-	position: relative;
-	line-height: 10pt;
-}
-
 .list-group-item.active .badge {
 	text-shadow: none;
 }
@@ -312,7 +303,7 @@ h4.list-group-item:first-child {
 
 #workspace .page-header {
 	margin-top: 0;
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 	border-width: 5px;
 	padding-bottom: 0;
 }

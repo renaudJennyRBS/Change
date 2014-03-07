@@ -1,14 +1,8 @@
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title"><i class="icon-pencil"></i> {{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</h3>
-	</div>
-	<div class="list-group">
-		<a ng-repeat="entry in entries" class="list-group-item" href="(= entry.url=)" rbs-active-route="">
-			<span class="badge" ng-class="{'badge-success': entry.corrected.length > 0}" ng-if="entry.fields.length">
-				<span class="badge-required-indicator" ng-if="entry.required.length">*</span>
-				(= entry.fields.length =)
-			</span>
-			(= entry.label =)
-		</a>
-	</div>
+<div class="editor-menu">
+	<a ng-repeat="entry in entries | orderBy:'index'" class="editor-menu-item" href="(= entry.url=)" rbs-active-route="">
+		<span class="badge" ng-class="{'badge-success': entry.corrected.length > 0, 'badge-required': entry.required.length}" ng-if="entry.fields.length">
+			(= entry.fields.length =)
+		</span>
+		(= entry.label =)
+	</a>
 </div>

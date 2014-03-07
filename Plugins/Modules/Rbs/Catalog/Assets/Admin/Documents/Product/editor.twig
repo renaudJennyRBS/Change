@@ -2,16 +2,11 @@
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-		<rbs-field-text property="label" required="true"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'label'), ['ucf']) }}"
-			input-class="form-control">
-		</rbs-field-text>
-
-		<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}"
-			input-class="form-control">
-		</rbs-field-text>
+		<rbs-field-label-title
+				property="title"
+				required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}">
+		</rbs-field-label-title>
 
 		<rbs-field-boolean ng-cloak="" ng-hide="document.id > 0"
 			property="newSkuOnCreation"

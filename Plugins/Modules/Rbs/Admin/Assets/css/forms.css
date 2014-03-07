@@ -124,3 +124,64 @@ table.field-label-and-title .sync-button-cell .decorator {
 table.field-label-and-title .sync-button-cell .decorator.locked {
 	border-width: 2px;
 }
+
+
+.editor-menu {
+	margin-bottom: 15px;
+}
+
+a.editor-menu-item {
+	display: block;
+	text-align: right;
+	padding: 7px 44px 7px 10px;
+	position: relative;
+	margin-top: 1px;
+	margin-right: 0px;
+	line-height: 26px;
+	color: #888888;
+	background: linear-gradient(to right, white 0%, #F8F8F8 100%) repeat scroll 0 0 rgba(0, 0, 0, 0)
+}
+
+a.editor-menu-item:hover {
+	text-decoration: none;
+}
+
+a.editor-menu-item.active {
+	background: linear-gradient(to right, #f8f8f8 0%, #eeeeee 100%);
+	text-decoration: none;
+}
+
+a.editor-menu-item.active:focus,
+a.editor-menu-item:active {
+	outline: none;
+}
+
+a.editor-menu-item .badge {
+	position: absolute;
+	right: 10px;
+	top: 8px;
+	background: white;
+	border: 1px solid silver;
+	border-radius: 30px;
+	color: silver;
+	font-size: 16px;
+	font-weight: lighter;
+}
+
+a.editor-menu-item .badge.badge-required {
+	color: #B94A48;
+	border-color: #B94A48;
+}
+
+a.editor-menu-item.active:after {
+	border-bottom: 20px inset rgba(0, 0, 0, 0);
+	border-left: 20px solid #eeeeee;
+	border-top: 20px inset rgba(0, 0, 0, 0);
+	content: "";
+	height: 0;
+	position: absolute;
+	right: -20px;
+	top: 0;
+	width: 0;
+	z-index: 2;
+}
