@@ -394,5 +394,8 @@
 	},
 	"save_to_see_amounts":{
 		"message":"Le contenu ayant été modifié, le détail des montants sera disponible après enregistrement."
+	},
+	"elements_count_abbr":{
+		"message":"Nbr. él."
 	}
 }
