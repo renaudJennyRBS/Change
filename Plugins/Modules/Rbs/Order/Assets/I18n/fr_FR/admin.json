@@ -80,8 +80,8 @@
 	"order_tax_zone":{
 		"message":"code zone pour le calcul des taxes"
 	},
-	"order_article_choice_help":{
-		"message":"Sélectionnez des articles grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter les articles<\/strong>."
+	"order_product_choice_help":{
+		"message":"Sélectionnez des produits grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter<\/strong>."
 	},
 	"order_search_by_sku":{
 		"message":"chercher par code SKU"
@@ -110,8 +110,8 @@
 	"order_choose_billingarea_and_taxzone_first":{
 		"message":"Vous devez choisir une <strong>Zone de facturation<\/strong> ainsi qu'un <strong>Code zone pour le calcul des taxes<\/strong> avant de pouvoir choisir des articles."
 	},
-	"order_article_selector_title":{
-		"message":"Sélectionnez des articles à ajouter à la commande"
+	"order_product_selector_title":{
+		"message":"Sélectionnez des produits à ajouter à la commande"
 	},
 	"order_add_product_lines": {
 		"message":"Ajouter des produits"
@@ -299,6 +299,54 @@
 	"order_add_shipment":{
 		"message":"ajouter une expédition"
 	},
+	"order_add_coupon":{
+		"message":"ajouter un coupon"
+	},
+	"order_coupon_choice_help":{
+		"message":"Sélectionnez un coupon grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter<\/strong>."
+	},
+	"order_coupon_selector_title":{
+		"message":"Sélectionnez un coupon à ajouter à la commande"
+	},
+
+	"order_add_document_fee":{
+		"message":"ajouter un frais"
+	},
+	"order_fee_choice_help":{
+		"message":"Sélectionnez un frais grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter<\/strong>."
+	},
+	"order_fee_selector_title":{
+		"message":"Sélectionnez un frais à ajouter à la commande"
+	},
+	"order_add_custom_fee":{
+		"message":"ajouter un frais personalisé"
+	},
+	"order_fee_amount":{
+		"message":"montant"
+	},
+	"order_total_fees_amount":{
+		"message":"total des frais"
+	},
+
+	"order_add_document_discount":{
+		"message":"ajouter une réduction"
+	},
+	"order_discount_choice_help":{
+		"message":"Sélectionnez une réduction grâce au sélecteur ci-dessous puis cliquez sur <strong>Ajouter<\/strong>."
+	},
+	"order_discount_selector_title":{
+		"message":"Sélectionnez une réduction à ajouter à la commande"
+	},
+	"order_add_custom_discount":{
+		"message":"ajouter une réduction personalisée"
+	},
+	"order_discount_amount":{
+		"message":"montant"
+	},
+	"order_total_discounts_amount":{
+		"message":"total des réductions"
+	},
+
 	"order_management":{
 		"message":"gestion des commandes"
 	},
@@ -331,6 +379,12 @@
 	},
 	"creditnote_create":{
 		"message":"ajouter un avoir"
+	},
+	"used_coupons":{
+		"message":"coupons"
+	},
+	"modifiers":{
+		"message":"frais et réductions"
 	},
 	"taxes_amount":{
 		"message":"montant des taxes"

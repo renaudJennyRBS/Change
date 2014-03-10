@@ -10,8 +10,6 @@
 
 			link: function(scope, element, attrs, editorCtrl) {
 				scope.orderContext = {
-					showNewProductLineUI: false,
-					showNewCustomLineUI: false,
 					showAddressUI: false,
 					showShippingUI: false,
 					showShipmentUI: false
@@ -19,10 +17,15 @@
 				scope.userAddresses = [];
 				scope.shipments = [];
 				scope.priceInfo = {
+					decimals: 2,
 					currencyCode: null,
 					taxInfo: [],
 					zones: [],
 					withTax: false
+				};
+				scope.amounts = {
+					totalFeesAmount: 0,
+					totalDiscountsAmount: 0
 				};
 
 				var contextRestored = false;
@@ -42,13 +45,15 @@
 					var toRestoreData = currentContext.savedData('order');
 					scope.orderContext = toRestoreData.orderContext;
 					scope.userAddresses = toRestoreData.userAddresses;
-					scope.shipments = toRestoreData.priceInfo;
+					scope.shipments = toRestoreData.shipments;
+					scope.priceInfo = toRestoreData.priceInfo;
 					contextRestored = true;
 				};
 
 				// When this method returns false, taxes and amount details are hidden until the document is saved.
-				scope.contentModified = function() {
-					return scope.isPropertyModified('lines') || scope.isPropertyModified('paymentAmountWithTaxes');
+				scope.amountsModified = function() {
+					return scope.isPropertyModified('lines') || scope.isPropertyModified('fees')
+						|| scope.isPropertyModified('discount') || scope.isPropertyModified('creditNotes');
 				};
 
 				scope.onLoad = function() {
@@ -74,7 +79,6 @@
 					var shipmentsLink = scope.document.getLink('shipments');
 					if (shipmentsLink) {
 						var successCallback = function(data) {
-							console.log(data);
 							scope.shipments = data.resources;
 						};
 						var errorCallback = function(error) {
@@ -165,7 +169,6 @@
 					if (ownerId) {
 						REST.resource('Rbs_User_User', ownerId).then(function(data) {
 							scope.owner = data;
-							console.log(data);
 							if (!scope.document.email) {
 								scope.document.email = data.email;
 							}
@@ -271,6 +274,10 @@
 
 				scope.$watch('document.context.pricesValueWithTax', function(pricesValueWithTax) {
 					scope.priceInfo.withTax = pricesValueWithTax;
+				}, true);
+
+				scope.$watch('document.context.decimals', function(decimals) {
+					scope.priceInfo.decimals = decimals;
 				}, true);
 
 				// This refreshes shippingModesObject to be synchronized with order editor.

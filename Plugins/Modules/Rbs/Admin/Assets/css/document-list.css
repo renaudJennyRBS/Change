@@ -504,7 +504,8 @@ rbs-document-list > .btn-toolbar {
 	background: linear-gradient(to top, #f5f5f5 0%,#ffffff 100%);
 }
 
-rbs-document-list footer {
+rbs-document-list footer,
+.document-list tfoot {
 	background: #f5f5f5;
 	background: -moz-linear-gradient(top, #f5f5f5 0%, #ffffff 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f5f5f5), color-stop(100%,#ffffff));
@@ -512,8 +513,10 @@ rbs-document-list footer {
 	background: -o-linear-gradient(top, #f5f5f5 0%,#ffffff 100%);
 	background: -ms-linear-gradient(top, #f5f5f5 0%,#ffffff 100%);
 	background: linear-gradient(to bottom, #f5f5f5 0%,#ffffff 100%);
-
 	border-top: 4px solid #E0E0E0;
+}
+rbs-document-list footer,
+.document-list tfoot > tr > td {
 	height: 50px;
 	line-height: 30px;
 	padding: 10px 20px;

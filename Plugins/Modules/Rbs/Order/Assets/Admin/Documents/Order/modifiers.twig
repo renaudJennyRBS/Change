@@ -1,0 +1,174 @@
+<div>
+	{# Adding fee #}
+	<div class="add-elements-bar" data-ng-if="isContentEditable()">
+		<a href="javascript:;" data-ng-click="updateNewFeeUI('custom')">
+			{{ i18n('m.rbs.order.admin.order_add_custom_fee', ['ucf']) }}
+		</a>
+	</div>
+	{# Add document fee panel #}
+	<div class="panel panel-default" data-ng-show="orderContext.showNewDocumentFeeUI">
+		<div class="panel-heading">
+			<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_document_fee', ['ucf']) }}</h4>
+		</div>
+		<div class="panel-body">
+			<p>{{ i18n('m.rbs.order.admin.order_fee_choice_help', ['ucf']) | raw}}</p>
+			<rbs-document-picker-single accepted-model="Rbs_Commerce_Fee" ng-model="data.newDocumentFee"
+				selector-title="{{ i18nAttr('m.rbs.order.admin.order_fee_selector_title', ['ucf']) }}">
+			</rbs-document-picker-single>
+		</div>
+		<div class="panel-footer">
+			<button type="button" class="btn btn-primary btn-success" data-ng-click="addDocumentFee()"
+				data-ng-disabled="!data.newDocumentFee">
+				<i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+			</button>
+			<button type="button" class="btn btn-default" data-ng-click="updateNewFeeUI(null)">
+				{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+			</button>
+		</div>
+	</div>
+	{# New custom fee panel #}
+	<div class="panel panel-default" data-ng-if="orderContext.showNewCustomFeeUI">
+		<div class="panel-heading">
+			<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_custom_fee', ['ucf']) }}</h4>
+		</div>
+		<div class="panel-body">
+			<rbs-order-modifier-fee-editor ng-model="data.newCustomFee" price-info="priceInfo"></rbs-order-modifier-fee-editor>
+		</div>
+		<div class="panel-footer">
+			<button type="button" class="btn btn-primary btn-success" data-ng-click="addCustomFee()">
+				<i data-ng-class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+			</button>
+			<button type="button" class="btn btn-default" data-ng-click="updateNewFeeUI(null)">
+				{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+			</button>
+		</div>
+	</div>
+	{# Fees list #}
+	<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="document.fees.length > 0">
+		<tbody>
+			<tr class="normal-row" data-ng-repeat-start="fee in document.fees">
+				<td>
+					<span class="pull-right quick-actions-buttons" data-ng-if="isContentEditable()">
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}"
+							data-ng-click="data.editedFeeIndex = $index" class="btn btn-xs btn-default btn-icon"
+							data-ng-show="data.editedFeeIndex != $index">
+							<i class="icon-pencil"></i>
+						</button>
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}"
+							data-ng-click="data.editedFeeIndex = null" class="btn btn-xs btn-default btn-icon"
+							data-ng-show="data.editedFeeIndex == $index">
+							<i class="icon-pencil"></i>
+						</button>
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"
+							data-ng-click="removeFee($index)" class="btn btn-xs btn-danger btn-icon">
+							<i class="icon-trash"></i>
+						</button>
+					</span>
+					(= fee.designation =)
+				</td>
+				<td class="column-number" style="width: 100px;">
+					(= fee.items[0].price.value | number:priceInfo.decimals =)
+				</td>
+			</tr>
+			{# Fee edition panel #}
+			<tr class="normal-row preview" data-ng-show="data.editedFeeIndex == $index" data-ng-repeat-end="">
+				<td class="preview" colspan="7">
+					<div class="inner" style="margin-top: 20px;">
+						<rbs-order-modifier-fee-editor ng-model="fee" price-info="priceInfo">
+						</rbs-order-modifier-fee-editor>
+						<button type="button" data-ng-click="data.editedFeeIndex = null" class="btn btn-default">
+							<i class="icon-chevron-up"></i>
+							{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
+						</button>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="2" class="text-right">
+					<strong>
+						{{ i18n('m.rbs.order.admin.order_total_fees_amount', ['ucf', 'lab']) }}
+						(= amounts.totalFeesAmount | number:priceInfo.decimals =)
+					</strong>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	{# Adding discount #}
+	<div class="add-elements-bar margin-top" data-ng-if="isContentEditable()">
+		<a href="javascript:;" data-ng-click="updateNewDiscountUI('custom')">
+			{{ i18n('m.rbs.order.admin.order_add_custom_discount', ['ucf']) }}
+		</a>
+	</div>
+	{# New custom discount panel #}
+	<div class="panel panel-default" data-ng-if="orderContext.showNewCustomDiscountUI">
+		<div class="panel-heading">
+			<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_custom_discount', ['ucf']) }}</h4>
+		</div>
+		<div class="panel-body">
+			<rbs-order-modifier-discount-editor ng-model="data.newCustomDiscount" price-info="priceInfo">
+			</rbs-order-modifier-discount-editor>
+		</div>
+		<div class="panel-footer">
+			<button type="button" class="btn btn-primary btn-success" data-ng-click="addCustomDiscount()">
+				<i data-ng-class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+			</button>
+			<button type="button" class="btn btn-default" data-ng-click="updateNewDiscountUI(null)">
+				{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+			</button>
+		</div>
+	</div>
+	{# Discounts list #}
+	<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="document.discounts.length > 0">
+		<tbody>
+			<tr class="normal-row" data-ng-repeat-start="discount in document.discounts">
+				<td>
+					<span class="pull-right quick-actions-buttons" data-ng-if="isContentEditable()">
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}"
+							data-ng-click="data.editedDiscountIndex = $index" class="btn btn-xs btn-default btn-icon"
+							data-ng-show="data.editedDiscountIndex != $index">
+							<i class="icon-pencil"></i>
+						</button>
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}"
+							data-ng-click="data.editedDiscountIndex = null" class="btn btn-xs btn-default btn-icon"
+							data-ng-show="data.editedDiscountIndex == $index">
+							<i class="icon-pencil"></i>
+						</button>
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"
+							data-ng-click="removeDiscount($index)" class="btn btn-xs btn-danger btn-icon">
+							<i class="icon-trash"></i>
+						</button>
+					</span>
+					(= discount.title =)
+				</td>
+				<td class="column-number" style="width: 100px;">
+					(= discount.price.value | number:priceInfo.decimals =)
+				</td>
+			</tr>
+			{# Discount edition panel #}
+			<tr class="normal-row preview" data-ng-show="data.editedDiscountIndex == $index" data-ng-repeat-end="">
+				<td class="preview" colspan="7">
+					<div class="inner" style="margin-top: 20px;">
+						<rbs-order-modifier-discount-editor ng-model="discount" price-info="priceInfo">
+						</rbs-order-modifier-discount-editor>
+						<button type="button" data-ng-click="data.editedDiscountIndex = null" class="btn btn-default">
+							<i class="icon-chevron-up"></i>
+							{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
+						</button>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="2" class="text-right">
+					<strong>
+						{{ i18n('m.rbs.order.admin.order_total_discounts_amount', ['ucf', 'lab']) }}
+						(= amounts.totalDiscountsAmount | number:priceInfo.decimals =)
+					</strong>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
