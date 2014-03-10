@@ -155,7 +155,7 @@
 		"model": "Rbs_Catalog_CrossSellingProductList",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf",
 			"labelId": "id"
 		},
@@ -184,7 +184,7 @@
 		"model": "Rbs_Catalog_CrossSellingProductList",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

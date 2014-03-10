@@ -1,26 +1,25 @@
 <div class="row" ng-controller="Rbs_Catalog_Product_CrossSellingController">
 
-	<div rbs-aside-column>
-
-		<div class="rbs-aside-block">
-			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
-			<rbs-document-preview document="product"></rbs-document-preview>
-		</div>
-
-	</div>
-
-	<div rbs-main-column>
-
-		<p>
-			<a href="(= product | rbsURL =)" class="back-to-link">
-				{{ i18n('m.rbs.catalog.admin.product_back_to_product', ['ucf']) }}
-				<strong>(= product.label =)</strong>
-			</a>
-		</p>
-
+	<div class="col-md-12">
 		<div class="page-header">
 			<h2>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}</h2>
 		</div>
+	</div>
+
+	<div rbs-aside-column>
+		<div class="rbs-aside-block">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="product"></rbs-document-preview>
+			<p>
+				<a href="(= product | rbsURL =)" class="back-to-link">
+					{{ i18n('m.rbs.catalog.admin.product_back_to_product', ['ucf']) }}
+					<strong>(= product.label =)</strong>
+				</a>
+			</p>
+		</div>
+	</div>
+
+	<div rbs-main-column>
 
 		<div class="add-elements-bar">
 			<a href="(= 'Rbs_Catalog_CrossSellingProductList' | rbsURL:'new':{productId: product.id} =)">
@@ -41,6 +40,7 @@
 			productListItems
 			<rbs-column name="crossSellingType"></rbs-column>
 		</rbs-document-list>
+
 	</div>
 
 </div>

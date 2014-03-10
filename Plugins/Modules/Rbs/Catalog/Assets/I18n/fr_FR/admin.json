@@ -510,7 +510,7 @@
 		"message":"Produit concerné"
 	},
 	"productlist_products_aside_link":{
-		"message":"configurer les produits"
+		"message":"configurer les <strong>produits</strong>"
 	},
 	"productlist_reorder_items":{
 		"message":"Gérer et réordonner les produits de cette liste"

@@ -1113,7 +1113,7 @@
 			publication : 'icon-globe',
 			systeminfo : 'icon-info-sign',
 			permissions : 'icon-lock',
-			'' : 'icon-pencil'
+			'' : 'icon-edit'
 		};
 
 		return {
