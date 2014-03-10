@@ -591,6 +591,17 @@
 				}
 
 
+				$scope.$on('Change:Editor:UpdateMenu', function () {
+					// 1) Clear all menu entries.
+					menuEntries.length = 0;
+					// 2) Ask every section to update itself with the fields it contains.
+					$scope.$broadcast('Change:Editor:SectionsUpdateMenu');
+					// 3) Tell the aside to update.
+					$scope.$emit('Change:UpdateEditorMenu', menuEntries);
+				});
+
+
+
 				//-----------------------------------------------//
 				//                                               //
 				// Document management                           //
@@ -1126,26 +1137,33 @@
 
 					entry.url = Utils.makeUrl($location.absUrl(), { section : (sectionId.length ? sectionId : null) });
 
-					// Search for fields (properties) in this section.
-					iElement.find('[property]').each(function (index, ctrlGrp)
+					function refreshEntry ()
 					{
-						var $ctrlGrp = $(ctrlGrp),
-							$lbl = $ctrlGrp.find('label[for]').first(),
-							propertyName = $ctrlGrp.attr('property');
+						entry.fields.length = 0;
+						// Search for fields (properties) in this section.
+						iElement.find('[property]').each(function (index, ctrlGrp)
+						{
+							var $ctrlGrp = $(ctrlGrp),
+								$lbl = $ctrlGrp.find('label[for]').first(),
+								propertyName = $ctrlGrp.attr('property');
 
-						entry.fields.push({
-							id : propertyName,
-							label : $lbl.text()
+							entry.fields.push({
+								id : propertyName,
+								label : $lbl.text()
+							});
+							if ($ctrlGrp.hasClass('required')) {
+								entry.required.push(propertyName);
+							}
+							if ($ctrlGrp.hasClass(CORRECTION_CSS_CLASS)) {
+								entry.corrected.push(propertyName);
+							}
 						});
-						if ($ctrlGrp.hasClass('required')) {
-							entry.required.push(propertyName);
-						}
-						if ($ctrlGrp.hasClass(CORRECTION_CSS_CLASS)) {
-							entry.corrected.push(propertyName);
-						}
-					});
+						ctrl.addMenuEntry(entry);
+					}
 
-					ctrl.addMenuEntry(entry);
+					refreshEntry();
+					scope.$on('Change:Editor:SectionsUpdateMenu', refreshEntry);
+
 
 					// Show/hide the section
 					function update (section)

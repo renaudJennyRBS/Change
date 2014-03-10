@@ -69,7 +69,7 @@
 		"model": "Rbs_Catalog_Product",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Product/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.product | ucf",
 			"labelId": "id"
 		},
@@ -247,7 +247,7 @@
 		"model": "Rbs_Catalog_Product",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Product/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

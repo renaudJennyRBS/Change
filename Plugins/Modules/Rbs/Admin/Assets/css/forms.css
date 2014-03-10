@@ -147,8 +147,9 @@ a.editor-menu-item:hover {
 }
 
 a.editor-menu-item.active {
-	background: linear-gradient(to right, #f8f8f8 0%, #eeeeee 100%);
+	background: linear-gradient(to right, white 0%, #ECF2CC 100%);
 	text-decoration: none;
+	color: #719400;
 }
 
 a.editor-menu-item.active:focus,
@@ -175,7 +176,7 @@ a.editor-menu-item .badge.badge-required {
 
 a.editor-menu-item.active:after {
 	border-bottom: 20px inset rgba(0, 0, 0, 0);
-	border-left: 20px solid #eeeeee;
+	border-left: 20px solid #ECF2CC;
 	border-top: 20px inset rgba(0, 0, 0, 0);
 	content: "";
 	height: 0;

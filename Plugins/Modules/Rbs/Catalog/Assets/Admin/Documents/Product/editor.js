@@ -6,18 +6,15 @@
 	 * @param $timeout
 	 * @param $http
 	 * @param REST
-	 * @param EditorManager
 	 * @constructor
 	 */
-	function Editor($timeout, $http, REST, EditorManager)
+	function Editor($timeout, $http, REST)
 	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Document/Rbs/Catalog/Product/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			require : '^rbsDocumentEditorBase',
 
-			link: function (scope, elm, attrs, editorCtrl)
+			link: function (scope)
 			{
 				scope.onReady = function() {
 					scope.loadItems();
@@ -51,7 +48,7 @@
 					}
 					if (url) {
 						$http.get(url)
-							.success(function (data) {
+							.success(function () {
 								scope.loadItems();
 							}
 						);
@@ -198,12 +195,10 @@
 						})
 					}
 				}, true);
-
-				editorCtrl.init('Rbs_Catalog_Product');
 			}
 		};
 	}
 
-	Editor.$inject = ['$timeout', '$http', 'RbsChange.REST', 'RbsChange.EditorManager'];
+	Editor.$inject = ['$timeout', '$http', 'RbsChange.REST'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
 })();
