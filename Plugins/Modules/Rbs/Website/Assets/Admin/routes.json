@@ -325,7 +325,7 @@
 		"model": "Rbs_Website_StaticPage",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/StaticPage/form.twig",
+			"templateUrl": "Document/Rbs/Website/StaticPage/edit.twig",
 			"labelKey": "m.rbs.website.documents.staticpage | ucf",
 			"labelId": "id"
 		},
@@ -345,7 +345,7 @@
 		"model": "Rbs_Website_StaticPage",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/StaticPage/form.twig",
+			"templateUrl": "Document/Rbs/Website/StaticPage/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -384,7 +384,7 @@
 		"model": "Rbs_Website_StaticPage",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/StaticPage/form.twig",
+			"templateUrl": "Document/Rbs/Website/StaticPage/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
