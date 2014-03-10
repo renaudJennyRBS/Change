@@ -197,6 +197,12 @@
 	"product_create":{
 		"message":"ajouter un produit"
 	},
+	"productset_create":{
+		"message":"ajouter un ensemble de produits"
+	},
+	"productset_products_picker_title":{
+		"message":"selectionner les produits composant l'ensemble"
+	},
 	"productlist_list":{
 		"message":"listes de produits"
 	},
@@ -259,6 +265,9 @@
 	},
 	"product_function":{
 		"message":"détail d'un produit"
+	},
+	"productset_function":{
+		"message":"détail d'un ensemble de produits"
 	},
 	"product_added_to_cart_label":{
 		"message":"produit ajouté au panier"
@@ -373,6 +382,9 @@
 	},
 	"product_publicationsections_help":{
 		"message":"Le produit doit être publié dans au moins une section par site où il est affiché. S'il est publié dans plusieurs sections d'un même site, sa section canonique pour ce site sera la première. Pour pouvoir spécialiser l'URL d'un produit dans une section donnée, vous devez le publier explicitement dans cette section."
+	},
+	"productset_publicationsections_help":{
+		"message":"L'ensemble produit doit être publié dans au moins une section par site où il est affiché. S'il est publié dans plusieurs sections d'un même site, sa section canonique pour ce site sera la première. Pour pouvoir spécialiser l'URL d'un ensemble de produit dans une section donnée, vous devez le publier explicitement dans cette section."
 	},
 	"product_attribute_select":{
 		"message":"choisissez un jeu d'attributs"

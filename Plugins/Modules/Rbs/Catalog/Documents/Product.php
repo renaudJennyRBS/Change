@@ -45,8 +45,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 				$pathParts = explode('/', $selfLink->getPathInfo());
 				array_pop($pathParts);
 				$baseUrl = implode('/', $pathParts);
-				$documentResult->addLink(new Link($um, $baseUrl . '/ProductListItems/', 'productListItems'));
-				$documentResult->addLink(new Link($um, $baseUrl . '/Prices/', 'prices'));
+				$this->addLinkOnResult($documentResult, $um, $baseUrl);
 
 				$image = $document->getFirstVisual();
 				if ($image)
@@ -76,6 +75,17 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			}
 			$restResult->setProperty('variant', $document->getVariant());
 		}
+	}
+
+	/**
+	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 * @param \Change\Http\UrlManager $urlManager
+	 * @param string $baseUrl
+	 */
+	protected function addLinkOnResult($documentResult, $urlManager, $baseUrl)
+	{
+		$documentResult->addLink(new Link($urlManager, $baseUrl . '/ProductListItems/', 'productListItems'));
+		$documentResult->addLink(new Link($urlManager, $baseUrl . '/Prices/', 'prices'));
 	}
 
 	protected $ignoredPropertiesForRestEvents = array('model', 'declinationGroup', 'declination');

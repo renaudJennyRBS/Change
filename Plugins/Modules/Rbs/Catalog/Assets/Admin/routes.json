@@ -302,6 +302,92 @@
 	"/Rbs/Catalog/ProductListItem/:id": false,
 	"/Rbs/Catalog/ProductListItem/:id/timeline": false,
 	"/Rbs/Catalog/ProductListItem/new": false,
+	"/Rbs/Catalog/ProductSet/:id": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductSet/form.twig",
+			"labelKey": "m.rbs.catalog.documents.productset | ucf",
+			"labelId": "id"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/:id/timeline": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_ProductSet",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/:id/translate/:LCID": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductSet/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_ProductSet",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/:id/urls": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "urls",
+		"rule": {
+			"templateUrl": "Rbs/Admin/url-manager.twig",
+			"labelKey": "m.rbs.admin.admin.urls | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/:id/workflow": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_ProductSet",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/new": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/ProductSet/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Catalog/ProductSet/:id/CrossSellingProductList/": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "cross-selling-lists",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/Product/product-cross-selling.twig",
+			"labelKey": "m.rbs.catalog.admin.crosssellingproductlist_title | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/ProductSet/:id/ProductLists/": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "product-lists",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/Product/product-lists.twig",
+			"labelKey": "m.rbs.catalog.admin.productlist_list | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/SectionProductList/": {
 		"model": "Rbs_Catalog_SectionProductList",
 		"name": "list",

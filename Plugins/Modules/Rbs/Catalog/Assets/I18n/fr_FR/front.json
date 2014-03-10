@@ -67,5 +67,8 @@
 	},
 	"from":{
 		"message":"à partir de"
+	},
+	"please_configure_axes":{
+		"message":"Merci de configurer les axes du produit"
 	}
 }

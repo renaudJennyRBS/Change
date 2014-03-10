@@ -17,6 +17,7 @@
 				<span data-ng-hide="product.canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 			</button>
 		</div>
+		<div data-ng-hide="product.hasOwnSku" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
 	</script>
 
 	<script type="text/ng-template" id="/productAvailability.tpl">
@@ -80,6 +81,7 @@
 					<select id="selectedVariant{{ i }}" class="form-control" data-ng-model="selectedAxesValues[{{ i }}]"
 						data-ng-options="var.title for var in axesValues[{{ i }}]" data-ng-change="variantChanged({{ i }})"
 						{%if i > 0 %}data-ng-disabled="!selectedAxesValues[{{ i - 1}}]"{%endif%}>
+						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
 					</select>
 				{% endfor %}
 			</div>
@@ -177,6 +179,8 @@
 							{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
 						</button>
 					{% endif %}
+				{% else %}
+					<div class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
 				{% endif %}
 			</fieldset>
 		</form>
