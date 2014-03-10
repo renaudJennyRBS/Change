@@ -47,8 +47,8 @@
 	"topic_menus":{
 		"message":"menus"
 	},
-	"topic_permission":{
-		"message":"permission"
+	"topic_permissions":{
+		"message":"permissions"
 	},
 	"topic_authorized_users":{
 		"message":"utilisateurs autorisés"

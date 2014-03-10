@@ -69,7 +69,7 @@
 		<rbs-aside-tag-selector ng-if="!document.isNew()" document="document"></rbs-aside-tag-selector>
 		<rbs-aside-seo ng-if="!document.isNew() && document.publicationStatus && document.publicationStatus != 'DRAFT'" document="document"></rbs-aside-seo>
 		<div class="rbs-aside-block rbs-aside-other-links" ng-if="!document.isNew()">
-			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
+			<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/><strong>(= document.label =)</strong></span></h3>
 			<a href ng-href="(= document | rbsURL:'timeline' =)">{{ i18n('m.rbs.admin.admin.view_timeline', ['ucf']) | raw }}</a>
 		</div>
 	</script>

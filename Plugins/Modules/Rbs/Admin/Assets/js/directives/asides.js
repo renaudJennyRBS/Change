@@ -154,7 +154,7 @@
 	/**
 	 * Default Asides for an editor view.
 	 */
-	app.directive('rbsDefaultAsidesForEditor', function ()
+	app.directive('rbsDefaultAsidesForEditor', ['$timeout', function ($timeout)
 	{
 		return {
 			restrict : 'E',
@@ -166,15 +166,18 @@
 
 			link : function (scope, iElement)
 			{
-				var otherLinks = iElement.siblings('[rbs-aside-other-link]'),
-				    container = iElement.find('.rbs-aside-other-links');
-				if (otherLinks.length > 0) {
-					container.append('<hr/>');
-				}
-				container.append(otherLinks);
+				$timeout(function ()
+				{
+					var otherLinks = iElement.siblings('[rbs-aside-other-link]'),
+						container = iElement.find('.rbs-aside-other-links');
+					if (otherLinks.length > 0) {
+						container.append('<hr/>');
+					}
+					container.append(otherLinks);
+				});
 			}
 		};
-	});
+	}]);
 
 
 	/**

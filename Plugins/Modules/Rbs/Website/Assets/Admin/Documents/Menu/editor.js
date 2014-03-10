@@ -2,18 +2,17 @@
 
 	"use strict";
 
-	function changeEditorWebsiteMenu(REST, $routeParams, $q) {
-
+	function changeEditorWebsiteMenu(REST, $routeParams, $q)
+	{
 		var I18N_KEY_REGEXP = /^([a-zA-Z0-9]+\.?)+$/,
 			ALL_REGEXP = /^.+$/,
 			tmpId = -1;
 		return {
-			restrict    : 'EA',
-			templateUrl : 'Document/Rbs/Website/Menu/editor.twig',
-			replace     : false,
-			require     : 'rbsDocumentEditor',
+			restrict    : 'A',
+			require     : '^rbsDocumentEditorBase',
 
-			link : function (scope, element, attrs, editorCtrl) {
+			link : function (scope, element, attrs, editorCtrl)
+			{
 				scope.menuContext = {
 					add: {
 						titlePattern : ALL_REGEXP,
@@ -152,9 +151,6 @@
 					}
 					return defer.promise;
 				};
-
-				editorCtrl.init('Rbs_Website_Menu');
-
 			}
 		};
 	}

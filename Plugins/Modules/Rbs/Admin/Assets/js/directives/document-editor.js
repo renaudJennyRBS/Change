@@ -975,7 +975,6 @@
 					// Function called when a creation has been done.
 					scope.terminateSave = function (doc)
 					{
-						console.log("terminateSave: redirect to: ", doc, doc.url());
 						$location.path(doc.url());
 					};
 
@@ -1110,6 +1109,13 @@
 
 	app.directive('rbsEditorSection', ['RbsChange.Utils', '$location', function (Utils, $location)
 	{
+		var defaultSectionIcons = {
+			publication : 'icon-globe',
+			systeminfo : 'icon-info-sign',
+			permissions : 'icon-lock',
+			'' : 'icon-pencil'
+		};
+
 		return {
 			restrict : 'A',
 			scope : false,
@@ -1128,6 +1134,7 @@
 						entry = {
 							'id' : sectionId,
 							'label' : iAttrs['editorSectionLabel'],
+							'icon' : iAttrs['editorSectionIcon'] || defaultSectionIcons[sectionId],
 							'fields' : [],
 							'required' : [],
 							'invalid' : [],

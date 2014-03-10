@@ -42,14 +42,9 @@
 			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-				<rbs-field-text property="label" required="true"
-				                label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }}">
-				</rbs-field-text>
-
-				<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-				                sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-				                label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
-				</rbs-field-text>
+				<rbs-field-label-title property="title" required="true"
+				                       label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
 
 				<rbs-field-document-select
 						label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"

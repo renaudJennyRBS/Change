@@ -12,7 +12,7 @@
 		"model": "Rbs_Website_Website",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Website/form.twig",
+			"templateUrl": "Document/Rbs/Website/Website/edit.twig",
 			"labelKey": "m.rbs.website.documents.website | ucf",
 			"labelId": "id"
 		},
@@ -32,7 +32,7 @@
 		"model": "Rbs_Website_Website",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Website/form.twig",
+			"templateUrl": "Document/Rbs/Website/Website/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -62,7 +62,7 @@
 		"model": "Rbs_Website_Website",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Website/form.twig",
+			"templateUrl": "Document/Rbs/Website/Website/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -206,7 +206,7 @@
 		"model": "Rbs_Website_Menu",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
+			"templateUrl": "Document/Rbs/Website/Menu/edit.twig",
 			"labelKey": "m.rbs.website.documents.menu | ucf",
 			"labelId": "id"
 		},
@@ -226,7 +226,7 @@
 		"model": "Rbs_Website_Menu",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
+			"templateUrl": "Document/Rbs/Website/Menu/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -257,7 +257,7 @@
 		"model": "Rbs_Website_Menu",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Menu/form.twig",
+			"templateUrl": "Document/Rbs/Website/Menu/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -266,7 +266,7 @@
 		"model": "Rbs_Website_FunctionalPage",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/FunctionalPage/form.twig",
+			"templateUrl": "Document/Rbs/Website/FunctionalPage/edit.twig",
 			"labelKey": "m.rbs.website.documents.functionalpage | ucf",
 			"labelId": "id"
 		},
@@ -286,7 +286,7 @@
 		"model": "Rbs_Website_FunctionalPage",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/FunctionalPage/form.twig",
+			"templateUrl": "Document/Rbs/Website/FunctionalPage/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -316,7 +316,7 @@
 		"model": "Rbs_Website_FunctionalPage",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/FunctionalPage/form.twig",
+			"templateUrl": "Document/Rbs/Website/FunctionalPage/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -393,7 +393,7 @@
 		"model": "Rbs_Website_Topic",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Topic/form.twig",
+			"templateUrl": "Document/Rbs/Website/Topic/edit.twig",
 			"labelKey": "m.rbs.website.documents.topic | ucf",
 			"labelId": "id"
 		},
@@ -422,7 +422,7 @@
 		"model": "Rbs_Website_Topic",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Topic/form.twig",
+			"templateUrl": "Document/Rbs/Website/Topic/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -461,7 +461,7 @@
 		"model": "Rbs_Website_Topic",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Website/Topic/form.twig",
+			"templateUrl": "Document/Rbs/Website/Topic/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

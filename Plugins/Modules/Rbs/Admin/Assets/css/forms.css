@@ -186,3 +186,20 @@ a.editor-menu-item.active:after {
 	width: 0;
 	z-index: 2;
 }
+
+a.editor-menu-item i[class^="icon-"],
+a.editor-menu-item i[class*=" icon-"] {
+	font-size: 20pt;
+	height: 10px;
+	line-height: 10px;
+	margin-right: 10px;
+	opacity: 0.15;
+	position: relative;
+	top: -1px;
+	vertical-align: middle;
+}
+
+a.editor-menu-item i[class^="icon-"]:before,
+a.editor-menu-item i[class*=" icon-"]:before {
+	width: 36px;
+}

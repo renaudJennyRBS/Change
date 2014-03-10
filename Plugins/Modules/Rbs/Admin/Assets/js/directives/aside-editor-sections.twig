@@ -3,6 +3,6 @@
 		<span class="badge" ng-class="{'badge-success': entry.corrected.length > 0, 'badge-required': entry.required.length}" ng-if="entry.fields.length">
 			(= entry.fields.length =)
 		</span>
-		(= entry.label =)
+		<i ng-if="entry.icon" class="(=entry.icon=)"></i>(= entry.label =)
 	</a>
 </div>
