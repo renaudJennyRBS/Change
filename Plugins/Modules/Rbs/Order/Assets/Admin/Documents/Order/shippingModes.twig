@@ -1,65 +1,71 @@
-<table class="table table-bordered table-condensed table-striped">
-	<tr>
-		<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
-		<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
-		<th data-ng-if="!isOrderEditable()">{{ i18n('m.rbs.order.admin.order_shipping_status', ['ucf']) }}</th>
-		<th>{{ i18n('m.rbs.order.admin.order_shipping_actions', ['ucf']) }}</th>
-	</tr>
-	<tr data-ng-repeat="shipping in shippingModes" data-ng-show="shipping.lineKeys.length > 0">
-		<td>(= shippingDetails[shipping.id].label =)</td>
-		<td>(= getLinesNumbers(shipping) =)</td>
-		<td data-ng-if="!isOrderEditable()" data-ng-switch="shippingDetails[shipping.id].status">
-			<span data-ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_no_shipment', ['ucf']) }}</span>
-			<span data-ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_partially_sent', ['ucf']) }}</span>
-			<span data-ng-switch-when="sent">{{ i18n('m.rbs.order.admin.order_sent', ['ucf']) }}</span>
-			<span data-ng-switch-default="">{{ i18n('m.rbs.order.admin.order_unavailable_shipment_status', ['ucf']) }}</span>
-		</td>
-		<td>
-			<span data-ng-if="!isOrderEditable() && shippingDetails[shipping.id].status &&
-				(shippingDetails[shipping.id].status == 'noShipment' || shippingDetails[shipping.id].status == 'remain')">
-					<a href="javascript:;" data-ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)">
-						<i class="icon-archive"></i>
-					{% spaceless %}
-						<span data-ng-switch="shippingDetails[shipping.id].status">
-							<span data-ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_send', ['ucf']) }}</span>
-							<span data-ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_send_the_remain', ['ucf']) }}</span>
-							<span data-ng-switch-default=""></span>
-						</span>
-					{% endspaceless %}</a>,
-			</span>
-			<a data-ng-hide="showShippingAddressUI" href="javascript:;" data-ng-click="showShippingAddress(shipping.id)">
-				<i class="icon-envelope"></i>
-				<span data-ng-if="isOrderEditable() && !addressDefined[shipping.id]">
-					{{ i18n('m.rbs.order.admin.order_specify_shipping_address', ['ucf']) }}
+<table class="table table-striped table-bordered no-bottom-margin document-list">
+	<thead>
+		<tr>
+			<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
+			<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
+			<th data-ng-if="!isOrderEditable()">{{ i18n('m.rbs.order.admin.order_shipping_status', ['ucf']) }}</th>
+			<th>{{ i18n('m.rbs.order.admin.order_shipping_actions', ['ucf']) }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="normal-row" data-ng-repeat-start="shipping in shippingModes" data-ng-show="shipping.lineKeys.length > 0">
+			<td>(= shippingDetails[shipping.id].label =)</td>
+			<td>(= getLinesNumbers(shipping) =)</td>
+			<td data-ng-if="!isOrderEditable()" data-ng-switch="shippingDetails[shipping.id].status">
+				<span data-ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_no_shipment', ['ucf']) }}</span>
+				<span data-ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_partially_sent', ['ucf']) }}</span>
+				<span data-ng-switch-when="sent">{{ i18n('m.rbs.order.admin.order_sent', ['ucf']) }}</span>
+				<span data-ng-switch-default="">{{ i18n('m.rbs.order.admin.order_unavailable_shipment_status', ['ucf']) }}</span>
+			</td>
+			<td>
+				<span data-ng-if="!isOrderEditable() && shippingDetails[shipping.id].status &&
+					(shippingDetails[shipping.id].status == 'noShipment' || shippingDetails[shipping.id].status == 'remain')">
+						<a href="javascript:;" data-ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)">
+							<i class="icon-archive"></i>
+						{% spaceless %}
+							<span data-ng-switch="shippingDetails[shipping.id].status">
+								<span data-ng-switch-when="noShipment">{{ i18n('m.rbs.order.admin.order_send', ['ucf']) }}</span>
+								<span data-ng-switch-when="remain">{{ i18n('m.rbs.order.admin.order_send_the_remain', ['ucf']) }}</span>
+								<span data-ng-switch-default=""></span>
+							</span>
+						{% endspaceless %}</a>,
 				</span>
-				<span data-ng-if="isOrderEditable() && addressDefined[shipping.id]">
-					{{ i18n('m.rbs.order.admin.order_modify_shipping_address', ['ucf']) }}
-				</span>
-				<span data-ng-if="!isOrderEditable()">
-					{{ i18n('m.rbs.order.admin.order_show_shipping_address', ['ucf']) }}
-				</span>
-			</a>
-			<a data-ng-show="showShippingAddressUI" href="javascript:;" data-ng-click="hideShippingAddress()">
-				<i class="icon-envelope"></i>
-				{{ i18n('m.rbs.order.admin.order_hide_shipping_address', ['ucf']) }}
-			</a>
-		</td>
-	</tr>
+				<a href="javascript:;" data-ng-hide="data.editedShippingIndex == $index"
+					data-ng-click="data.editedShippingIndex = $index">
+					<i class="icon-envelope"></i>
+					<span data-ng-if="isOrderEditable() && !addressDefined[shipping.id]">
+						{{ i18n('m.rbs.order.admin.order_specify_shipping_address', ['ucf']) }}
+					</span>
+					<span data-ng-if="isOrderEditable() && addressDefined[shipping.id]">
+						{{ i18n('m.rbs.order.admin.order_modify_shipping_address', ['ucf']) }}
+					</span>
+					<span data-ng-if="!isOrderEditable()">
+						{{ i18n('m.rbs.order.admin.order_show_shipping_address', ['ucf']) }}
+					</span>
+				</a>
+				<a href="javascript:;" data-ng-show="data.editedShippingIndex == $index"
+					data-ng-click="data.editedShippingIndex = null">
+					<i class="icon-envelope"></i>
+					{{ i18n('m.rbs.order.admin.order_hide_shipping_address', ['ucf']) }}
+				</a>
+			</td>
+		</tr>
+		{# Address edition panel #}
+		<tr class="normal-row preview" data-ng-show="data.editedShippingIndex == $index" data-ng-repeat-end="">
+			<td colspan="4">
+				<div data-ng-if="isOrderEditable()" data-rbs-order-address="" data-address-documents="addressDocuments"
+					data-address="shipping.address"></div>
+				<div data-ng-if="!isOrderEditable()">
+					<address>
+						<strong>(= shipping.address.__lines[0] =)</strong>
+						<div data-ng-repeat="line in shipping.address.__lines" data-ng-if="!$first">(= line =)</div>
+					</address>
+				</div>
+				<button type="button" data-ng-click="data.editedShippingIndex = null" class="btn btn-default">
+					<i class="icon-chevron-up"></i>
+					{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
+				</button>
+			</td>
+		</tr>
+	</tbody>
 </table>
-<div data-ng-show="showShippingAddressUI">
-	<h4>
-		<a href="javascript:;" data-ng-click="showShippingAddressUI = !showShippingAddressUI">
-			<i data-ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[showShippingAddressUI]"></i>
-			{{ i18nAttr('m.rbs.order.admin.order_shipping_address', ['ucf', 'lab']) }}
-			(=shippingDetails[editedShippingMode.id].label=)
-		</a>
-	</h4>
-	<div data-ng-if="isOrderEditable()" data-rbs-order-address="" data-address-documents="addressDocuments"
-		data-address="editedShippingMode.address"></div>
-	<div data-ng-if="!isOrderEditable()">
-		<address class="no-bottom-margin">
-			<strong>(= editedShippingMode.address.__lines[0] =)</strong>
-			<div data-ng-repeat="line in editedShippingMode.address.__lines" data-ng-if="!$first">(= line =)</div>
-		</address>
-	</div>
-</div>

@@ -8,6 +8,19 @@
 			scope: true,
 
 			link: function(scope, element) {
+				angular.extend(scope.orderContext, {
+					showNewProductLineUI: false,
+					showNewCustomLineUI: false
+				});
+				scope.data = {
+					newLineProducts: [],
+					newCustomLine: getClearCustomLine(),
+					articleCount: 0,
+					loadingProductInfo: false,
+					removedLines: [],
+					editedLineIndex: null
+				};
+				scope.listLines = [];
 				scope.selection = {
 					all: false,
 					lines: [],
@@ -25,15 +38,6 @@
 						}
 					}
 				};
-				scope.data = {
-					newLineProducts: [],
-					newCustomLine: getClearCustomLine(),
-					articleCount: 0,
-					loadingProductInfo: false,
-					removedLines: [],
-					editedLineIndex: null
-				};
-				scope.listLines = [];
 
 				scope.addCustomLine = function() {
 					scope.data.newCustomLine.index = scope.document.lines.length;
@@ -173,13 +177,24 @@
 						for (var i = 0; i < lines.length; i++) {
 							scope.data.articleCount += lines[i].quantity;
 						}
-						if (scope.contentModified()) {
-							scope.document.paymentAmountWithTaxes = 0;
+						if (scope.amountsModified() || scope.isPropertyModified('linesAmountWithTaxes')
+							|| scope.isPropertyModified('linesAmountWithoutTaxes')) {
+							if (scope.priceInfo.withTax) {
+								scope.document.linesAmountWithTaxes = 0;
+							}
+							else {
+								scope.document.linesAmountWithoutTaxes = 0;
+							}
 							for (i = 0; i < lines.length; i++) {
 								lines[i].index = i;
 								var value = lines[i].items[0].price.value;
 								if (value) {
-									scope.document.paymentAmountWithTaxes += lines[i].quantity * value;
+									if (scope.priceInfo.withTax) {
+										scope.document.linesAmountWithTaxes += lines[i].quantity * value;
+									}
+									else {
+										scope.document.linesAmountWithoutTaxes += lines[i].quantity * value;
+									}
 								}
 							}
 						}
@@ -230,7 +245,30 @@
 			}
 		};
 	}
-
 	rbsOrderOrderEditorLines.$inject = [ 'RbsChange.Utils', 'RbsChange.REST', '$http', 'RbsChange.Dialog', 'RbsChange.i18n' ];
 	angular.module('RbsChange').directive('rbsOrderLines', rbsOrderOrderEditorLines);
+
+	function rbsOrderOrderEditorLineEditor() {
+		return {
+			restrict: 'E',
+			templateUrl: 'Document/Rbs/Order/Order/lineEditor.twig',
+			require: 'ngModel',
+			scope: {
+				'priceInfo': "="
+			},
+
+			link: function(scope, element, attrs, ngModel) {
+				scope.line = {};
+
+				ngModel.$render = function ngModelRenderFn() {
+					scope.line = ngModel.$viewValue;
+					var price = scope.line.items[0].price;
+					if (!angular.isObject(price.taxCategories)) {
+						price.taxCategories = {};
+					}
+				};
+			}
+		};
+	}
+	angular.module('RbsChange').directive('rbsOrderLineEditor', rbsOrderOrderEditorLineEditor);
 })();

@@ -709,7 +709,13 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$documentResult->setProperty('context', $order->getContext()->toArray());
+			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
+			$currency = $order->getCurrencyCode();
+			$nf->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $currency);
+			$context = $order->getContext()->toArray();
+			$context['decimals'] = $nf->getAttribute(\NumberFormatter::FRACTION_DIGITS);
+			$context['formattedPaymentAmountWithTaxes'] = $nf->formatCurrency($order->getPaymentAmountWithTaxes(), $currency);
+			$documentResult->setProperty('context', $context);
 
 			$taxes = [];
 			foreach ($order->getTaxes() as $tax)
@@ -718,30 +724,27 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				$taxes[$tax->getCode()]['label'] = $commerceServices->getPriceManager()->taxTitle($tax);
 			}
 
-			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			$documentResult->setProperty('taxes', count($taxes) ? $taxes : null);
 			$documentResult->setProperty('lines', array_map(function(\Rbs\Order\OrderLine $line) {return $line->toArray();}, $order->getLines()));
 			$documentResult->setProperty('linesAmount', $order->getLinesAmount());
 			$documentResult->setProperty('linesTaxes', array_map(function(\Rbs\Price\Tax\TaxApplication $taxApp) {return $taxApp->toArray();}, $order->getLinesTaxes()));
 			$documentResult->setProperty('linesAmountWithTaxes', $order->getLinesAmountWithTaxes());
 
-			$callback = function(\Rbs\Order\OrderLine $fee) use ($nf, $order)
+			$callback = function(\Rbs\Order\OrderLine $fee) use ($nf, $currency)
 			{
-				$code = $order->getCurrencyCode();
 				$data = $fee->toArray();
-				$data['options']['formattedAmount'] = $nf->formatCurrency($fee->getAmount(), $code);
-				$data['options']['formattedAmountWithTaxes'] = $nf->formatCurrency($fee->getAmountWithTaxes(), $code);
+				$data['options']['formattedAmount'] = $nf->formatCurrency($fee->getAmount(), $currency);
+				$data['options']['formattedAmountWithTaxes'] = $nf->formatCurrency($fee->getAmountWithTaxes(), $currency);
 				return $data;
 			};
 			$documentResult->setProperty('fees', array_map($callback, $order->getFees()));
 			$documentResult->setProperty('coupons', array_map(function(\Rbs\Commerce\Process\BaseCoupon $coupon) {return $coupon->toArray();}, $order->getCoupons()));
 
-			$callback = function(\Rbs\Commerce\Process\BaseDiscount $discount) use ($nf, $order)
+			$callback = function(\Rbs\Commerce\Process\BaseDiscount $discount) use ($nf, $currency)
 			{
-				$code = $order->getCurrencyCode();
 				$data = $discount->toArray();
-				$data['options']['formattedAmount'] = $nf->formatCurrency($discount->getAmount(), $code);
-				$data['options']['formattedAmountWithTaxes'] = $nf->formatCurrency($discount->getAmountWithTaxes(), $code);
+				$data['options']['formattedAmount'] = $nf->formatCurrency($discount->getAmount(), $currency);
+				$data['options']['formattedAmountWithTaxes'] = $nf->formatCurrency($discount->getAmountWithTaxes(), $currency);
 				return $data;
 			};
 			$documentResult->setProperty('discounts', array_map($callback, $order->getDiscounts()));
@@ -832,9 +835,9 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-
 			$stockManager = $commerceServices->getStockManager();
 			$priceManager = $commerceServices->getPriceManager();
+
 			$webStore = $order->getWebStoreIdInstance();
 			if ($webStore)
 			{
@@ -861,6 +864,8 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		{
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
+			$stockManager = $commerceServices->getStockManager();
+			$priceManager = $commerceServices->getPriceManager();
 
 			/*
 				$cart->removeAllFees();
@@ -889,14 +894,16 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				}
 			*/
 
-			$priceManager = $commerceServices->getPriceManager();
-
-			//Add fees and discounts
+			// Add fees and discounts.
 			$totalAmount = $order->getLinesAmount();
 			$totalAmountWithTaxes = $order->getLinesAmountWithTaxes();
 			$totalTaxes = $order->getLinesTaxes();
-			foreach ($order->getFees() as $fee)
+			foreach ($order->getFees() as $index => $fee)
 			{
+				$fee->setIndex($index);
+				$this->refreshOrderLine($order, $fee, $priceManager, $stockManager);
+				$this->refreshLineAmount($fee, $order, $priceManager);
+
 				$totalAmount += $fee->getAmount();
 				$totalAmountWithTaxes += $fee->getAmountWithTaxes();
 				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
@@ -904,6 +911,8 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 
 			foreach ($order->getDiscounts() as $discount)
 			{
+				// TODO: refresh discount taxes.
+
 				$totalAmount += $discount->getAmount();
 				$totalAmountWithTaxes += $discount->getAmountWithTaxes();
 				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
@@ -987,18 +996,6 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	 */
 	protected function refreshLinesAmount(Order $order, $priceManager )
 	{
-		$currencyCode = $this->getCurrencyCode();
-		$zone = $order->getZone();
-		$billingArea = $order->getBillingAreaIdInstance();
-		if ($billingArea &&  $zone && $currencyCode)
-		{
-			$taxes = $billingArea->getTaxes()->toArray();
-		}
-		else
-		{
-			$taxes = [];
-		}
-
 		/* @var $linesTaxes \Rbs\Price\Tax\TaxApplication[] */
 		$linesTaxes = [];
 		$linesAmount = 0.0;
@@ -1006,57 +1003,71 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 
 		foreach ($order->getLines() as $line)
 		{
-			$lineTaxes = [];
-			$amount = null;
-			$amountWithTaxes = null;
-			$lineQuantity = $line->getQuantity();
-			if ($lineQuantity)
-			{
-				foreach ($line->getItems() as $item)
-				{
-					$price = $item->getPrice();
-					if ($price && (($value = $price->getValue()) !== null))
-					{
-						$lineItemValue = $value * $lineQuantity;
-						if ($taxes !== null)
-						{
-							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
-							if (count($taxArray))
-							{
-								$lineTaxes = $priceManager->addTaxesApplication($lineTaxes, $taxArray);
-							}
-
-							if ($price->isWithTax())
-							{
-								$amountWithTaxes += $lineItemValue;
-								$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
-							}
-							else
-							{
-								$amount += $lineItemValue;
-								$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
-							}
-						}
-						else
-						{
-							$amountWithTaxes += $lineItemValue;
-							$amount += $lineItemValue;
-						}
-					}
-				}
-			}
-			$line->setTaxes($lineTaxes);
-			$line->setAmountWithTaxes($amountWithTaxes);
-			$line->setAmount($amount);
-
-			$linesAmount += $amount;
-			$linesAmountWithTaxes += $amountWithTaxes;
-			$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);
+			$this->refreshLineAmount($line, $order, $priceManager);
+			$linesAmount += $line->getAmount();
+			$linesAmountWithTaxes += $line->getAmountWithTaxes();
+			$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $line->getTaxes());
 		}
 
 		$order->setLinesTaxes($linesTaxes);
 		$order->setLinesAmount($linesAmount);
 		$order->setLinesAmountWithTaxes($linesAmountWithTaxes);
+	}
+
+	/**
+	 * @param \Rbs\Order\OrderLine $line
+	 * @param \Rbs\Order\Documents\Order $order
+	 * @param \Rbs\Price\PriceManager $priceManager
+	 */
+	protected function refreshLineAmount($line, Order $order, $priceManager)
+	{
+		$currencyCode = $this->getCurrencyCode();
+		$zone = $order->getZone();
+		$billingArea = $order->getBillingAreaIdInstance();
+		$taxes = ($billingArea &&  $zone && $currencyCode) ? $billingArea->getTaxes()->toArray() : [];
+
+		$lineTaxes = [];
+		$amount = null;
+		$amountWithTaxes = null;
+		$lineQuantity = $line->getQuantity();
+		if ($lineQuantity)
+		{
+			foreach ($line->getItems() as $item)
+			{
+				$price = $item->getPrice();
+				if ($price && (($value = $price->getValue()) !== null))
+				{
+					$lineItemValue = $value * $lineQuantity;
+					if ($taxes !== null)
+					{
+						$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
+						if (count($taxArray))
+						{
+							$lineTaxes = $priceManager->addTaxesApplication($lineTaxes, $taxArray);
+						}
+
+						if ($price->isWithTax())
+						{
+							$amountWithTaxes += $lineItemValue;
+							$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+						}
+						else
+						{
+							$amount += $lineItemValue;
+							$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+						}
+					}
+					else
+					{
+						$amountWithTaxes += $lineItemValue;
+						$amount += $lineItemValue;
+					}
+				}
+			}
+		}
+		$line->setTaxes($lineTaxes);
+		$line->setAmountWithTaxes($amountWithTaxes);
+		$line->setAmount($amount);
 	}
 
 	/**

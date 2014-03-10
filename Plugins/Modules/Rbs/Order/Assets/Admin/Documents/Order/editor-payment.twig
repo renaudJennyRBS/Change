@@ -1,18 +1,56 @@
 <div class="row" data-ng-show="document.lines.length > 0">
 	<div class="col-md-6">
+		{# Coupons #}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i class="icon-ticket"></i>
+					<a href="javascript:;" data-ng-click="orderContext.showCouponUI = !orderContext.showCouponUI">
+						{{ i18n('m.rbs.order.admin.used_coupons', ['ucf', 'lab']) }} (= document.coupons.length =)
+						<i data-ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showCouponUI]"></i>
+					</a>
+				</h3>
+			</div>
+			<div class="panel-body" data-ng-show="orderContext.showCouponUI">
+				<div data-rbs-order-coupons=""></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		{# Discounts and fees #}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<i>%</i>
+					<a href="javascript:;" data-ng-click="orderContext.showModifiersUI = !orderContext.showModifiersUI">
+						{{ i18n('m.rbs.order.admin.modifiers', ['ucf', 'lab']) }}
+						(= document.discounts.length + document.fees.length =)
+						<i data-ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[orderContext.showModifiersUI]"></i>
+					</a>
+				</h3>
+			</div>
+			<div class="panel-body" data-ng-show="orderContext.showModifiersUI">
+				<div data-rbs-order-modifiers=""></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row" data-ng-show="document.lines.length > 0">
+	<div class="col-md-6">
+		{# Taxes #}
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.admin.taxes_amount', ['ucf']) }}</h3>
 			</div>
 			<table class="table table-striped table-bordered">
-				<tbody data-ng-if="!contentModified()">
+				<tbody data-ng-if="!amountsModified()">
 					<tr data-ng-repeat="tax in document.totalTaxes">
 						<td>(= document.taxes[tax.taxCode].label =)</td>
 						<td>(= (tax.rate * 100) | number =) %</td>
-						<td>(= tax.value | currency =)</td>
+						<td>(= tax.value | number:priceInfo.decimals =)</td>
 					</tr>
 				</tbody>
-				<tbody data-ng-if="contentModified()">
+				<tbody data-ng-if="amountsModified()">
 					<tr>
 						<td class="text-warning">{{ i18n('m.rbs.order.admin.save_to_see_taxes', ['ucf']) }}</td>
 					</tr>
@@ -21,49 +59,43 @@
 		</div>
 	</div>
 	<div class="col-md-6">
+		{# Amounts and credit notes #}
 		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
 			</div>
 			<table class="table table-striped table-bordered">
-				<tbody data-ng-if="!contentModified()">
-					<tr data-ng-show="showLinesAmount()">
-						<td>{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf']) | raw }}</td>
-						<td>(= document.linesAmountWithTaxes | currency =)</td>
+				<tbody data-ng-if="!amountsModified()">
+					<tr data-ng-if="priceInfo.withTax" data-ng-show="amounts.totalFeesAmount || amounts.totalDiscountsAmount">
+						<td>{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf', 'lab']) | raw }}</td>
+						<td>(= document.linesAmountWithTaxes | number:priceInfo.decimals =)</td>
 					</tr>
-					<tr data-ng-repeat="fee in document.fees">
-						<td>(= fee.designation =)</td>
-						<td>(= fee.options.formattedAmountWithTaxes =)</td>
+					<tr data-ng-if="!priceInfo.withTax" data-ng-show="amounts.totalFeesAmount || amounts.totalDiscountsAmount">
+						<td>{{ i18n('m.rbs.order.admin.order_lines_amount_without_taxes', ['ucf', 'lab']) | raw }}</td>
+						<td>(= document.linesAmountWithoutTaxes | number:priceInfo.decimals =)</td>
 					</tr>
-					<tr data-ng-repeat="discount in document.discounts">
-						<td>(= discount.title =)</td>
-						<td>(= discount.options.formattedAmountWithTaxes =)</td>
+					<tr data-ng-show="amounts.totalFeesAmount">
+						<td>{{ i18n('m.rbs.order.admin.order_total_fees_amount', ['ucf']) }}</td>
+						<td style="width: 100px;">(= amounts.totalFeesAmount | number:priceInfo.decimals =)</td>
+					</tr>
+					<tr data-ng-show="amounts.totalDiscountsAmount">
+						<td>{{ i18n('m.rbs.order.admin.order_total_discounts_amount', ['ucf']) }}</td>
+						<td style="width: 100px;">(= amounts.totalDiscountsAmount | number:priceInfo.decimals =)</td>
 					</tr>
 					<tr data-ng-show="showTotalAmount()">
 						<td>{{ i18n('m.rbs.order.admin.order_total_amount_with_taxes', ['ucf']) | raw }}</td>
-						<td>(= document.totalAmountWithTaxes | currency =)</td>
+						<td style="width: 100px;">(= document.totalAmountWithTaxes | number:priceInfo.decimals =)</td>
 					</tr>
 					<tr data-ng-repeat="note in document.creditNotes">
 						<td>(= note.title =)</td>
-						<td>(= note.amountWithTaxes | currency =)</td>
+						<td style="width: 100px;">(= note.amountWithTaxes | number:priceInfo.decimals =)</td>
 					</tr>
 					<tr>
 						<td><strong>{{ i18n('m.rbs.order.admin.order_amount_to_pay', ['ucf']) | raw }}</strong></td>
-						<td><strong>(= document.paymentAmountWithTaxes | currency =)</strong></td>
+						<td style="width: 100px;"><strong>(= document.context.formattedPaymentAmountWithTaxes =)</strong></td>
 					</tr>
 				</tbody>
-				<tbody data-ng-if="contentModified()">
-					<tr>
-						<td>
-							<strong data-ng-show="priceInfo.withTax">
-								{{ i18n('m.rbs.order.admin.order_lines_amount_without_taxes', ['ucf']) | raw }}
-							</strong>
-							<strong data-ng-hide="priceInfo.withTax">
-								{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf']) | raw }}
-							</strong>
-						</td>
-						<td><strong>(= document.paymentAmountWithTaxes | currency =)</strong></td>
-					</tr>
+				<tbody data-ng-if="amountsModified()">
 					<tr>
 						<td class="text-warning" colspan="2">{{ i18n('m.rbs.order.admin.save_to_see_amounts', ['ucf']) }}</td>
 					</tr>

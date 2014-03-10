@@ -31,9 +31,9 @@
 					<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_product_lines', ['ucf']) }}</h4>
 				</div>
 				<div class="panel-body">
-					<p>{{ i18n('m.rbs.order.admin.order_article_choice_help', ['ucf']) | raw}}</p>
+					<p>{{ i18n('m.rbs.order.admin.order_product_choice_help', ['ucf']) | raw}}</p>
 					<rbs-document-picker-multiple accepted-model="Rbs_Catalog_Product" ng-model="data.newLineProducts"
-						selector-title="{{ i18nAttr('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}">
+						selector-title="{{ i18nAttr('m.rbs.order.admin.order_product_selector_title', ['ucf']) }}">
 					</rbs-document-picker-multiple>
 				</div>
 				<div class="panel-footer">
@@ -50,7 +50,7 @@
 			{# New custom line panel #}
 			<div class="panel panel-default" data-ng-if="orderContext.showNewCustomLineUI">
 				<div class="panel-heading">
-					<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_article_selector_title', ['ucf']) }}</h4>
+					<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_custom_line', ['ucf']) }}</h4>
 				</div>
 				<div class="panel-body">
 					<rbs-order-line-editor ng-model="data.newCustomLine" price-info="priceInfo"></rbs-order-line-editor>
@@ -126,27 +126,28 @@
 									<i class="icon-pencil"></i>
 								</button>
 								<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"
-									data-ng-click="removeLine($index)" class="btn btn-xs btn-danger btn-icon"
-									data-ng-disabled="!isContentEditable()">
+									data-ng-click="removeLine($index)" class="btn btn-xs btn-danger btn-icon">
 									<i class="icon-trash"></i>
 								</button>
 							</span>
 							(= doc.designation =)
 						</td>
 						<td>(= doc.items[0].codeSKU =)</td>
-						<td class="column-number">(= doc.items[0].price.value | currency =)</td>
+						<td class="column-number">(= doc.items[0].price.value | number:priceInfo.decimals =)</td>
 						<td class="column-number">
 							<input type="number" class="form-control" data-ng-model="doc.quantity" required="true" min="1" />
 						</td>
-						<td class="column-number">(= doc.items[0].price.value * doc.quantity | currency =)</td>
+						<td class="column-number">
+							(= doc.items[0].price.value * doc.quantity | number:priceInfo.decimals =)
+						</td>
 					</tr>
 					{# Line edition panel #}
 					<tr class="normal-row preview" data-ng-show="data.editedLineIndex == $index" data-ng-repeat-end="">
 						<td class="preview" colspan="7">
 							<div class="inner" style="margin-top: 20px;">
 								<rbs-order-line-editor ng-model="doc" price-info="priceInfo"></rbs-order-line-editor>
-								<button type="button" data-ng-click="data.editedLineIndex = null" class="btn btn-default"
-									data-ng-show="data.editedLineIndex == $index">
+								<button type="button" data-ng-click="data.editedLineIndex = null" class="btn btn-default">
+									<i class="icon-chevron-up"></i>
 									{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
 								</button>
 							</div>
@@ -159,11 +160,26 @@
 						<td class="column-number">(= $index + 1 =)</td>
 						<td>(= doc.designation =)</td>
 						<td>(= doc.items[0].codeSKU =)</td>
-						<td class="column-number">(= doc.items[0].price.value | currency =)</td>
+						<td class="column-number">(= doc.items[0].price.value | number:priceInfo.decimals =)</td>
 						<td class="column-number">(= doc.quantity =)</td>
-						<td class="column-number">(= doc.items[0].price.value * doc.quantity | currency =)</td>
+						<td class="column-number">(= doc.items[0].price.value * doc.quantity | number:priceInfo.decimals =)</td>
 					</tr>
 				</tbody>
+				{# Total #}
+				<tfoot>
+					<tr>
+						<td colspan="(= isContentEditable() ? 7 : 6 =)" class="text-right">
+							<strong data-ng-if="priceInfo.withTax">
+								{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf', 'lab']) | raw }}
+								(= document.linesAmountWithTaxes | number:priceInfo.decimals =)
+							</strong>
+							<strong data-ng-if="!priceInfo.withTax">
+								{{ i18n('m.rbs.order.admin.order_lines_amount_without_taxes', ['ucf', 'lab']) | raw }}
+								(= document.linesAmountWithoutTaxes | number:priceInfo.decimals =)
+							</strong>
+						</td>
+					</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>

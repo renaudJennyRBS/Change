@@ -14,8 +14,9 @@
 			},
 
 			link: function(scope) {
-				scope.showShippingAddressUI = false;
-				scope.editedShippingMode = {};
+				scope.data = {
+					editedShippingIndex: null
+				};
 				scope.shippingDetails = {};
 				scope.addressDefined = {};
 
@@ -67,22 +68,6 @@
 					});
 				};
 
-				scope.showShippingAddress = function(shippingId) {
-					angular.forEach(scope.shippingModes, function(shipping) {
-						if (shipping.id == shippingId) {
-							if (!angular.isObject(shipping.address)) {
-								shipping.address = {};
-							}
-							scope.editedShippingMode = shipping;
-						}
-					});
-					scope.showShippingAddressUI = true;
-				};
-
-				scope.hideShippingAddress = function() {
-					scope.showShippingAddressUI = false;
-				};
-
 				// This watches for modifications in the address doc in order to fill the address form.
 				scope.$watch('shippingModes', function(shippingModes, old) {
 					if (angular.isObject(shippingModes) && !angular.isObject(old)) {
@@ -93,14 +78,6 @@
 						});
 					}
 				}, true);
-
-				// This refreshes shippingModesObject to be synchronized with parent scope in order editor.
-				scope.$watchCollection('shippingModes', function(shippingModes) {
-					scope.shippingModes = shippingModes;
-					if (angular.isObject(scope.editedShippingMode) && scope.editedShippingMode.id) {
-						scope.editShippingAddress(scope.editedShippingMode.id);
-					}
-				});
 
 				// This refreshes shippingModesObject to be synchronized with order editor.
 				scope.$on('shippingModesUpdated', function() {

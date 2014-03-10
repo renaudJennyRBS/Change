@@ -1,0 +1,45 @@
+<div>
+	{# Adding coupon #}
+	<div class="add-elements-bar" data-ng-if="isContentEditable()">
+		<a href="javascript:;" data-ng-click="orderContext.showNewCouponUI = !orderContext.showNewCouponUI">
+			{{ i18n('m.rbs.order.admin.order_add_coupon', ['ucf']) }}
+		</a>
+	</div>
+	<div class="panel panel-default" data-ng-show="orderContext.showNewCouponUI">
+		<div class="panel-heading">
+			<h4 class="panel-title">{{ i18n('m.rbs.order.admin.order_add_coupon', ['ucf']) }}</h4>
+		</div>
+		<div class="panel-body">
+			<p>{{ i18n('m.rbs.order.admin.order_coupon_choice_help', ['ucf']) | raw}}</p>
+			<rbs-document-picker-single accepted-model="Rbs_Discount_Coupon" ng-model="data.newCoupon"
+				selector-title="{{ i18nAttr('m.rbs.order.admin.order_coupon_selector_title', ['ucf']) }}">
+			</rbs-document-picker-single>
+		</div>
+		<div class="panel-footer">
+			<button type="button" class="btn btn-primary btn-success" data-ng-click="addCoupon()"
+				data-ng-disabled="!data.newCoupon">
+				<i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+			</button>
+			<button type="button" class="btn btn-default" data-ng-click="orderContext.showNewCouponUI = false">
+				{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+			</button>
+		</div>
+	</div>
+	{# Coupons list #}
+	<table class="table table-striped table-bordered no-bottom-margin" data-ng-show="document.coupons.length > 0">
+		<tbody>
+			<tr class="normal-row" data-ng-repeat="coupon in document.coupons">
+				<td>
+					<span class="pull-right quick-actions-buttons" data-ng-if="isContentEditable()">
+						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}"
+							data-ng-click="removeCoupon($index)" class="btn btn-xs btn-danger btn-icon">
+							<i class="icon-trash"></i>
+						</button>
+					</span>
+					(= coupon.title =)
+				</td>
+				<td>(= coupon.code =)</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

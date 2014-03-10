@@ -241,9 +241,12 @@ class BaseDiscount implements \Rbs\Commerce\Process\DiscountInterface
 
 				case 'lineKeys':
 					$this->lineKeys = array();
-					foreach ($value as $lineKey)
+					if (is_array($value))
 					{
-						$this->lineKeys[] = strval($lineKey);
+						foreach ($value as $lineKey)
+						{
+							$this->lineKeys[] = strval($lineKey);
+						}
 					}
 					break;
 				case 'price':
