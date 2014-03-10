@@ -1,9 +1,10 @@
-<form name="form" ng-submit="submit()" class="form-horizontal">
+<form name="form" data-ng-submit="submit()" class="form-horizontal">
 	<fieldset data-ng-show="section==''"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
-		<div rbs-tip="Rbs_Order_ShipmentEditorNewFromScratch" ng-if="document.isNew() && (!data.order || !data.carrier)">
+		<div data-rbs-tip="Rbs_Order_ShipmentEditorNewFromScratch"
+			data-ng-if="document.isNew() && (!data.order || !data.carrier)">
 			{{ i18n('m.rbs.order.admin.shipment_new_from_scratch_helper', ['ucf']) }}
 		</div>
 
@@ -14,7 +15,11 @@
 		</rbs-field>
 		<rbs-field ng-if="!canEdit.order" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}"
 			ng-disabled="true">
-			<p class="form-control-static"><a href="" ng-href="Rbs/Order/Order/(= data.order.id =)">(= data.order.label =)</a></p>
+			<p class="form-control-static">
+				<a href="javascript:;" data-ng-href="Rbs/Order/Order/(= data.order.id =)">
+					(= data.order.label =)
+				</a>
+			</p>
 		</rbs-field>
 
 		<rbs-field ng-if="canEdit.carrier" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingModeCode'), ['ucf']) }}">
@@ -40,33 +45,32 @@
 		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'carrierStatus'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<div class="panel panel-default" ng-if="!(document.prepared && !document.address.lines)">
+		<div class="panel panel-default" data-ng-if="!document.prepared || document.address.__lines">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-envelope"></i>
 					{{ i18n('m.rbs.order.admin.shipment_shipping_address', ['ucf']) }}
 				</h3>
 			</div>
-			<div ng-if="document && !document.prepared">
-				<div rbs-order-address="" class="panel-body"
-					address-documents="userAddresses"
-					address="document.address">
+			<div data-ng-if="document && !document.prepared">
+				<div data-rbs-order-address="" class="panel-body" data-address-documents="userAddresses"
+					data-address="document.address">
 				</div>
 			</div>
-			<address ng-if="document.prepared" class="panel-body">
-				<span ng-repeat="addressLine in document.address.lines">(= addressLine =)<br></span>
+			<address data-ng-if="document.prepared" class="panel-body no-bottom-margin">
+				<strong>(= document.address.__lines[0] =)</strong>
+				<div data-ng-repeat="addressLine in document.address.__lines" data-ng-if="!$first">(= addressLine =)</div>
 			</address>
 		</div>
 
-		<div class="panel panel-default" ng-if="!document.prepared">
+		<div class="panel panel-default" data-ng-if="!document.prepared">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-list"></i> {{ i18n('m.rbs.order.admin.shipment_articles', ['ucf', 'lab']) }} (= data.lines.length =)</h3>
 			</div>
 			<div class="panel-body">
-
-				<div ng-show="data.shipmentLines.length > 0">
+				<div data-ng-show="data.shipmentLines.length > 0">
 					<div class="btn-toolbar">
-						<button class="btn btn-default" type="button" ng-click="removeLines()"
-							ng-disabled="data.removeLinesDisabled">
+						<button class="btn btn-default" type="button" data-ng-click="removeLines()"
+							data-ng-disabled="data.removeLinesDisabled">
 							<i class="icon-trash"></i> {{ i18n('m.rbs.order.admin.shipment_remove_lines', ['ucf']) }}
 						</button>
 					</div>
@@ -75,7 +79,7 @@
 						<thead>
 							<tr>
 								<th class="text-center" style="width: 30px;">
-									<input type="checkbox" ng-model="data.selectAllShipmentLines" />
+									<input type="checkbox" data-ng-model="data.selectAllShipmentLines" />
 								</th>
 								<th>{{ i18n('m.rbs.order.admin.shipment_line_number', ['ucf']) }}</th>
 								<th>{{ i18n('m.rbs.order.admin.shipment_designation', ['ucf']) }}</th>
@@ -85,44 +89,46 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="shipmentLine in data.shipmentLines" class="normal-row"
-								ng-class="{warning: shipmentLine.newLine, danger: shipmentLine.quantity && shipmentLine.quantityToShip > shipmentLine.quantity}">
+							<tr data-ng-repeat="shipmentLine in data.shipmentLines" class="normal-row"
+								data-ng-class="{warning: shipmentLine.newLine, danger: shipmentLine.quantity && shipmentLine.quantityToShip > shipmentLine.quantity}">
 								<td class="text-center">
-									<input type="checkbox" ng-model="shipmentLine.selected" />
+									<input type="checkbox" data-ng-model="shipmentLine.selected" />
 								</td>
 								<td>(= $index + 1 =)</td>
 								<td>(= shipmentLine.designation =)</td>
 								<td>(= shipmentLine.codeSKU =)</td>
 								<td>(= shipmentLine.quantity =)</td>
 								<td style="width: 100px;">
-									<div ng-if="shipmentLine.allowQuantitySplit"ng-class="{'has-warning': shipmentLine.quantity && shipmentLine.quantityToShip > shipmentLine.quantity}">
-										<input type="number" min="1" ng-init="shipmentLine.quantityToShip = shipmentLine.quantityToShip || shipmentLine.quantity || 1"
-											ng-model="shipmentLine.quantityToShip" class="form-control"/>
+									<div data-ng-if="shipmentLine.allowQuantitySplit"
+										data-ng-class="{'has-warning': shipmentLine.quantity && shipmentLine.quantityToShip > shipmentLine.quantity}">
+										<input type="number" min="1" class="form-control"
+											data-ng-model="shipmentLine.quantityToShip"
+											data-ng-init="shipmentLine.quantityToShip = shipmentLine.quantityToShip || shipmentLine.quantity || 1" />
 									</div>
-									<div ng-if="!shipmentLine.allowQuantitySplit">
+									<div data-ng-if="!shipmentLine.allowQuantitySplit">
 										<input type="text" class="form-control" value="(= shipmentLine.quantityToShip =)"
-											ng-init="shipmentLine.quantityToShip = shipmentLine.quantity" disabled="disabled" />
+											data-ng-init="shipmentLine.quantityToShip = shipmentLine.quantity" disabled="disabled" />
 									</div>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 
-					<div ng-if="data.quantityToShipExceeded" class="text-danger">
+					<div data-ng-if="data.quantityToShipExceeded" class="text-danger">
 						<i class="icon-warning-sign icon-large"></i>
 						{{ i18n('m.rbs.order.admin.shipment_quantity_to_ship_exceeded', ['ucf']) }}
 					</div>
 
-					<div ng-if="data.hasNewLines" class="text-warning">
+					<div data-ng-if="data.hasNewLines" class="text-warning">
 						<i class="icon-warning-sign icon-large"></i>
 						{{ i18n('m.rbs.order.admin.shipment_warning_new_lines', ['ucf']) }}
 					</div>
 				</div>
 
-				<div ng-show="data.asideLines.length > 0">
+				<div data-ng-show="data.asideLines.length > 0">
 					<span class="help-block">{{ i18n('m.rbs.order.admin.shipment_remainder_help', ['ucf', 'lab']) }}</span>
 					<ul class="token-list list-unstyled rows">
-						<li ng-repeat="asideLine in data.asideLines" ng-click="moveToShipmentLines(asideLine)">
+						<li data-ng-repeat="asideLine in data.asideLines" data-ng-click="moveToShipmentLines(asideLine)">
 							<span class="pull-right">
 								(= asideLine.quantity =) <i class="icon-circle-arrow-up icon-large"></i>
 							</span>
@@ -134,26 +140,27 @@
 				<hr />
 
 				<p>
-					<a href="javascript:;" ng-click="data.showNewLineUI = !data.showNewLineUI">
-						<i ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[data.showNewLineUI]"></i>
+					<a href="javascript:;" data-ng-click="data.showNewLineUI = !data.showNewLineUI">
+						<i data-ng-class="{true: 'icon-chevron-up', false: 'icon-chevron-down'}[data.showNewLineUI]"></i>
 						{{ i18n('m.rbs.order.admin.shipment_add_another_articles', ['ucf']) }}
 					</a>
 				</p>
 
-				<div class="well well-sm" ng-show="data.showNewLineUI">
+				<div class="well well-sm" data-ng-show="data.showNewLineUI">
 					<rbs-document-picker-multiple accepted-model="Rbs_Catalog_Product" ng-model="data.newLines"
 						selector-title="{{ i18nAttr('m.rbs.order.admin.shipment_article_selector_title', ['ucf']) }}">
 					</rbs-document-picker-multiple>
 
-					<button type="button" ng-disabled="!data.newLines.length" class="btn btn-primary" ng-click="addNewLines()">
-						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[data.loadingProductInfo]"></i>
+					<button type="button" data-ng-disabled="!data.newLines.length" class="btn btn-primary"
+						data-ng-click="addNewLines()">
+						<i data-ng-class="{true:'icon-spin icon-spinner', false:'icon-plus'}[data.loadingProductInfo]"></i>
 						{{ i18n('m.rbs.order.admin.shipment_add_articles', ['ucf']) }}
 					</button>
 				</div>
 			</div>
 		</div>
 
-		<table ng-if="document.prepared && data.preparedLines.length > 0"
+		<table data-ng-if="document.prepared && data.preparedLines.length > 0"
 			class="document-list table table-condensed table-bordered table-striped table-hover">
 			<thead>
 				<tr>
@@ -164,7 +171,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="shipmentLine in data.preparedLines" class="normal-row">
+				<tr data-ng-repeat="shipmentLine in data.preparedLines" class="normal-row">
 					<td>(= $index + 1 =)</td>
 					<td>(= shipmentLine.label =)</td>
 					<td>(= shipmentLine.codeSKU =)</td>
@@ -172,19 +179,18 @@
 				</tr>
 			</tbody>
 		</table>
-
 	</fieldset>
 
 	<fieldset
 		data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-		data-document-system-info-section>
+		data-document-system-info-section="">
 	</fieldset>
 
 	<rbs-form-button-bar>
-		<button type="button" ng-if="!document.prepared" ng-click="validatePreparation($event)"
-			class="btn btn-headline btn-success" ng-disabled="document.data.length === 0 || !isUnchanged()">
+		<button type="button" data-ng-if="!document.prepared" data-ng-click="validatePreparation($event)"
+			class="btn btn-headline btn-success" data-ng-disabled="document.data.length === 0 || !isUnchanged()">
 			<i class="icon-archive"></i>{{ i18n('m.rbs.order.admin.shipment_prepare_button', ['ucf']) | raw }}
 		</button>
 	</rbs-form-button-bar>
