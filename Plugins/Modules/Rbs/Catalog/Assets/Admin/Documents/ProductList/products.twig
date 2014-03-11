@@ -1,5 +1,11 @@
 <div class="row" ng-controller="Rbs_Catalog_ProductList_ProductsController">
 
+	<div class="col-md-12">
+		<div class="page-header">
+			<h2>(= productList.label =)</h2>
+		</div>
+	</div>
+
 	<div rbs-aside-column>
 		<div class="rbs-aside-block" ng-show="productList.product">
 			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
@@ -7,12 +13,7 @@
 		</div>
 	</div>
 
-
 	<div rbs-main-column>
-
-		<div class="page-header">
-			<h2>(= productList.label =)</h2>
-		</div>
 
 		<div ng-if="List.isSynchronized">
 			<p>{{ i18n(propertyKey('Rbs_Catalog_SectionProductList', 'synchronizedSection'), ['ucf', 'lab']) }} <a href="(= productList.synchronizedSection | rbsURL =)">(= productList.synchronizedSection.label =)</a></p>
@@ -25,7 +26,6 @@
 			(= List.sortDirections[productList.productSortDirection].label =)
 			<br/><a href="(= productList | rbsURL =)">{{ i18n('m.rbs.catalog.admin.productlist_edit_properties', ['ucf']) }}</a>
 		</p>
-
 
 		<div ng-if="List.conditions.length > 1">
 			<p>{{ i18n('m.rbs.catalog.admin.productlistitem_condition_help', ['ucf']) }}</p>
@@ -60,7 +60,6 @@
 				</div>
 			</div>
 		</div>
-
 
 		<rbs-document-list data-dlid="DLRbsCatalogProductListProducts" model="Rbs_Catalog_ProductListItem" activable="true"
 			collection-url="(=productsUrl=)"
