@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -12,8 +11,8 @@ use Change\Http\Web\Event;
 use Zend\Http\Response as HttpResponse;
 
 /**
-* @name \Rbs\User\Http\Web\Login
-*/
+ * @name \Rbs\User\Http\Web\Login
+ */
 class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	const DEFAULT_NAMESPACE = 'Authentication';
@@ -33,7 +32,7 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 	/**
 	 * @param Event $event
 	 */
-	public function login(Event $event)
+	protected function login(Event $event)
 	{
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
@@ -42,6 +41,10 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$realm = $data['realm'];
 			$login = $data['login'];
 			$password = $data['password'];
+			unset($data['password']);
+
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+
 			if ($realm && $login && $password)
 			{
 				$am = $event->getAuthenticationManager();
@@ -55,29 +58,44 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 				}
 				else
 				{
-					$data['error'] = $event->getApplicationServices()->getI18nManager()
-						->trans('m.rbs.user.front.error_login_password_not_match', array('ucf'));
+					$data['errors'] = [$i18nManager->trans('m.rbs.user.front.error_login_password_not_match', array('ucf'))];
 				}
 			}
 			else
 			{
-				$data['error'] = 'Invalid parameters';
+				$data['errors'] = array();
+				if (!$realm)
+				{
+					$data['errors'][] = 'Realm is empty';
+				}
+				if (!$login)
+				{
+					$data['errors'][] = $i18nManager->trans('m.rbs.user.front.error_empty_login', ['ucf']);
+				}
+				if (!$password)
+				{
+					$data['errors'][] = $i18nManager->trans('m.rbs.user.front.error_empty_password', ['ucf']);
+				}
 			}
 		}
 		else
 		{
-			$data = array('error' => 'Invalid website');
+			$data = array('errors' => ['Invalid website']);
 		}
 
 		$result = new \Change\Http\Web\Result\AjaxResult($data);
+		if (isset($data['errors']) && count($data['errors']) > 0)
+		{
+			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
+		}
 		$event->setResult($result);
 	}
 
 	/**
 	 * @param \Change\Presentation\Interfaces\Website $website
-	 * @param $accessorId
+	 * @param integer $accessorId
 	 */
-	public function save(\Change\Presentation\Interfaces\Website $website, $accessorId)
+	protected function save(\Change\Presentation\Interfaces\Website $website, $accessorId)
 	{
 		$session = new \Zend\Session\Container(static::DEFAULT_NAMESPACE);
 		if ($accessorId === null || $accessorId === false)
@@ -94,7 +112,7 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @return integer|null
 	 */
-	public function load(\Change\Presentation\Interfaces\Website $website)
+	protected function load(\Change\Presentation\Interfaces\Website $website)
 	{
 		$session = new \Zend\Session\Container(static::DEFAULT_NAMESPACE);
 		if (isset($session[$website->getId()]))

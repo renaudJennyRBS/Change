@@ -1195,6 +1195,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
+
+			$priceManager = $commerceServices->getPriceManager();
+			$this->buildTotalAmount($cart, $priceManager);
+
 			$processManager = $commerceServices->getProcessManager();
 			$process = $processManager->getOrderProcessByCart($cart);
 			if ($process)
@@ -1228,50 +1232,57 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 						$modifier = $document->getValidModifier($cart);
 						if ($modifier) {
 							$modifier->apply();
+							$this->buildTotalAmount($cart, $priceManager);
 						}
 					}
 					elseif ($document instanceof \Rbs\Discount\Documents\Discount) {
 						$modifier = $document->getValidModifier($cart);
 						if ($modifier) {
 							$modifier->apply();
+							$this->buildTotalAmount($cart, $priceManager);
 						}
 					}
 				}
 			}
-
-			$priceManager = $commerceServices->getPriceManager();
-
-			//Add fees and discounts
-			$totalAmount = $cart->getLinesAmount();
-			$totalAmountWithTaxes = $cart->getLinesAmountWithTaxes();
-			$totalTaxes = $cart->getLinesTaxes();
-			foreach ($cart->getFees() as $fee)
-			{
-				$totalAmount += $fee->getAmount();
-				$totalAmountWithTaxes += $fee->getAmountWithTaxes();
-				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
-			}
-
-			foreach ($cart->getDiscounts() as $discount)
-			{
-				$totalAmount += $discount->getAmount();
-				$totalAmountWithTaxes += $discount->getAmountWithTaxes();
-				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
-			}
-
-			$cart->setTotalAmount($totalAmount);
-			$cart->setTotalAmountWithTaxes($totalAmountWithTaxes);
-			$cart->setTotalTaxes($totalTaxes);
-
-			//Add Credit notes
-			$paymentAmount = $totalAmountWithTaxes;
-			foreach ($cart->getCreditNotes() as $creditNote)
-			{
-				$paymentAmount += $creditNote->getAmount();
-			}
-
-			$cart->setPaymentAmountWithTaxes($paymentAmount);
 		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Rbs\Price\PriceManager $priceManager
+	 */
+	protected function buildTotalAmount($cart, $priceManager)
+	{
+		//Add fees and discounts
+		$totalAmount = $cart->getLinesAmount();
+		$totalAmountWithTaxes = $cart->getLinesAmountWithTaxes();
+		$totalTaxes = $cart->getLinesTaxes();
+		foreach ($cart->getFees() as $fee)
+		{
+			$totalAmount += $fee->getAmount();
+			$totalAmountWithTaxes += $fee->getAmountWithTaxes();
+			$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
+		}
+
+		foreach ($cart->getDiscounts() as $discount)
+		{
+			$totalAmount += $discount->getAmount();
+			$totalAmountWithTaxes += $discount->getAmountWithTaxes();
+			$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
+		}
+
+		$cart->setTotalAmount($totalAmount);
+		$cart->setTotalAmountWithTaxes($totalAmountWithTaxes);
+		$cart->setTotalTaxes($totalTaxes);
+
+		//Add Credit notes
+		$paymentAmount = $totalAmountWithTaxes;
+		foreach ($cart->getCreditNotes() as $creditNote)
+		{
+			$paymentAmount += $creditNote->getAmount();
+		}
+
+		$cart->setPaymentAmountWithTaxes($paymentAmount);
 	}
 
 	/**
@@ -1676,4 +1687,5 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		return $this->getConfiguration()->getEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60); //60 minutes
 	}
+
 }

@@ -27,7 +27,7 @@ class FreeShippingFee extends \Rbs\Commerce\Cart\CartDiscountModifier
 			}
 
 			$data = $this->discount->getParametersData();
-			if (is_array($data) && isset($data['shippingMode']) && ($data['shippingMode'] != $data['shippingMode']))
+			if (is_array($data) && isset($data['shippingMode']) && ($data['shippingMode'] != $shippingModeId))
 			{
 				continue;
 			}
