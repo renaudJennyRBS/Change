@@ -168,7 +168,7 @@
 			{
 				$timeout(function ()
 				{
-					var otherLinks = iElement.siblings('[rbs-aside-other-link]'),
+					var otherLinks = iElement.siblings('[rbs-aside-other-link],[data-rbs-aside-other-link]'),
 						container = iElement.find('.rbs-aside-other-links');
 					if (otherLinks.length > 0) {
 						container.append('<hr/>');
