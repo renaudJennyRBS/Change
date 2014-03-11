@@ -87,11 +87,14 @@ class Discount extends \Compilation\Rbs\Discount\Documents\Discount
 		$value = $event->getParam('value');
 		if ($value instanceof \Rbs\Commerce\Cart\Cart)
 		{
-			switch ($discount->getDiscountType()) {
-				case 'rbs-discount-free-shipping-fee':
-					$modifier = new \Rbs\Discount\Modifiers\FreeShippingFee($discount, $value, $commerceServices->getPriceManager());
-					$event->setParam('modifier', $modifier);
-				break;
+			if ($value->getCartManager()->isValidFilter($value, $discount->getCartFilterData()))
+			{
+				switch ($discount->getDiscountType()) {
+					case 'rbs-discount-free-shipping-fee':
+						$modifier = new \Rbs\Discount\Modifiers\FreeShippingFee($discount, $value, $commerceServices->getPriceManager());
+						$event->setParam('modifier', $modifier);
+						break;
+				}
 			}
 		}
 	}

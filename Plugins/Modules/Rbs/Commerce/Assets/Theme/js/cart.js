@@ -248,11 +248,13 @@
 				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors')
 					.success(function(data) {
 						scope.connectors = data;
+						scope.payment.connectorId = null;
 						if (scope.connectors.length == 1) {
 							scope.selectConnector(0);
 						}
 					})
 					.error(function(data, status, headers) {
+						scope.payment.connectorId = null;
 						console.log('GetCompatiblePaymentConnectors error', data, status, headers);
 					});
 
@@ -295,6 +297,7 @@
 					connectorId: scope.selectedConnector.id,
 					transactionId: scope.payment.transaction.id
 				};
+
 				$http.post('Action/Rbs/Payment/GetDeferredConnectorData', postData)
 					.success(function(data) {
 						scope.connectorData = data;
@@ -499,8 +502,8 @@
 						var postData = { userId: scope.information.userId };
 						updateCart($http, scope, postData, scope.setAuthenticated);
 					}
-					else if (data.hasOwnProperty('error')) {
-						addError('information', data.error);
+					else if (data.hasOwnProperty('errors')) {
+						addError('information', data.errors);
 					}
 				})
 				.error(function(data, status, headers) { console.log('Login error', data, status, headers); });
@@ -561,8 +564,34 @@
 		 * Shipping step
 		 */
 		scope.prepareShippingStep = function() {
-			var i, j, k;
 			scope.payment.transaction = null;
+			scope.shipping.deliveries = [];
+			scope.setShippingDeliveries();
+
+			if (scope.shipping.deliveries.length == 0) {
+				// TODO: handle forced shipping modes.
+				var defaultDelivery = { lines: [], address: {}, options: { } };
+				for (var i = 0; i < scope.cart.lines.length; i++) {
+					defaultDelivery.lines.push(scope.cart.lines[i]);
+				}
+				scope.shipping.deliveries.push(defaultDelivery);
+
+				/*var deliveryTemp = { lines: [ scope.cart.lines[0] ] };
+				 scope.shipping.deliveries.push(deliveryTemp);*/
+			}
+		};
+
+		scope.isShippingStepComplete = function() {
+			for (var i = 0; i < scope.shipping.deliveries.length; i++) {
+				if (!scope.shipping.deliveries[i].isConfigured) {
+					return false;
+				}
+			}
+			return true;
+		};
+
+		scope.setShippingDeliveries = function() {
+			var i, j, k;
 			scope.shipping.deliveries = [];
 			if ('shippingModes' in scope.cart && angular.isArray(scope.cart.shippingModes)) {
 				for (i = 0; i < scope.cart.shippingModes.length; i++) {
@@ -585,27 +614,6 @@
 					scope.shipping.deliveries.push(delivery);
 				}
 			}
-
-			if (scope.shipping.deliveries.length == 0) {
-				// TODO: handle forced shipping modes.
-				var defaultDelivery = { lines: [], address: {}, options: { } };
-				for (i = 0; i < scope.cart.lines.length; i++) {
-					defaultDelivery.lines.push(scope.cart.lines[i]);
-				}
-				scope.shipping.deliveries.push(defaultDelivery);
-
-				/*var deliveryTemp = { lines: [ scope.cart.lines[0] ] };
-				 scope.shipping.deliveries.push(deliveryTemp);*/
-			}
-		};
-
-		scope.isShippingStepComplete = function() {
-			for (var i = 0; i < scope.shipping.deliveries.length; i++) {
-				if (!scope.shipping.deliveries[i].isConfigured) {
-					return false;
-				}
-			}
-			return true;
 		};
 
 		scope.finalizeShippingStep = function() {
@@ -626,7 +634,7 @@
 				});
 			}
 			var postData = { shippingModes: scope.cart.shippingModes };
-			updateCart($http, scope, postData, function() { scope.setCurrentStep('payment'); });
+			updateCart($http, scope, postData, function() { scope.setShippingDeliveries(); scope.setCurrentStep('payment'); });
 		};
 
 		/**
@@ -640,12 +648,12 @@
 		scope.addCoupon = function() {
 			scope.payment.coupons.push({ 'code': scope.payment.newCouponCode });
 			scope.payment.newCouponCode = '';
-			updateCart($http, scope, { coupons: scope.payment.coupons }, scope.preparePaymentStep);
+			updateCart($http, scope, { coupons: scope.payment.coupons }, function() { scope.setCurrentStep('payment'); });
 		};
 
 		scope.removeCoupon = function(index) {
 			scope.payment.coupons.splice(index, 1);
-			updateCart($http, scope, { coupons: scope.payment.coupons }, scope.preparePaymentStep);
+			updateCart($http, scope, { coupons: scope.payment.coupons }, function() { scope.setCurrentStep('payment'); });
 		};
 
 		scope.hasTransaction = function() {

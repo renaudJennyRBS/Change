@@ -77,6 +77,9 @@
 	"error_empty_password":{
 		"message":"le mot de passe est vide."
 	},
+	"error_empty_login":{
+		"message":"l'identifiant est vide."
+	},
 	"error_password_exceeds_max_characters":{
 		"message":"le mot de passe dépasse le nombre maximum de caractères autorisé (50)."
 	},
