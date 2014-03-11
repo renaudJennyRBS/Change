@@ -372,7 +372,8 @@
 		};
 
 		scope.canOrder = function() {
-			if (!scope.cart || !scope.cart.lines || scope.cart.lines.count < 1 || !scope.cart.orderProcess) {
+			if (!scope.cart || !scope.cart.lines || scope.cart.lines.count < 1 || !scope.cart.orderProcess
+				|| scope.cart.errors.length) {
 				return false;
 			}
 			var result = true;

@@ -415,6 +415,24 @@ class StockManager
 						return $res->isSame($reservation) ? $res : $result;
 					});
 
+				if (!$sku->getUnlimitedInventory() && !$sku->getAllowBackorders())
+				{
+					$level = $this->getInventoryLevel($sku, $reservation->getWebStoreId());
+					if ($currentReservation instanceof \Rbs\Stock\Std\Reservation)
+					{
+						$level += $currentReservation->getQuantity();
+					}
+					if ($level < $reservation->getQuantity())
+					{
+						$result[] = $reservation;
+						if ($reservation instanceof \Rbs\Commerce\Cart\CartReservation)
+						{
+							$reservation->setQuantityNotReserved($reservation->getQuantity() - $level);
+						}
+						continue;
+					}
+				}
+
 				if ($currentReservation instanceof \Rbs\Stock\Std\Reservation)
 				{
 					$currentReservation->setQuantity($reservation->getQuantity());
