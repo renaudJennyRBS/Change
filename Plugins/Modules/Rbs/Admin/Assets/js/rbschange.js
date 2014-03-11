@@ -53,6 +53,7 @@
 		// Single argument is a hash object with:
 		// - document: the document being edited in the Editor
 		// - contents: array of HTML Strings (Angular code is allowed as it will be compiled :))
+		// FIXME Deprecated, remove it.
 		'EditorFormButtonBarContents'    : 'Change:Editor.FormButtonBarContents',
 
 		// The following events are less useful for you...

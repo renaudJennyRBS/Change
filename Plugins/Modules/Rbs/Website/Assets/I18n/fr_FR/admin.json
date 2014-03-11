@@ -411,5 +411,11 @@
 	},
 	"breadcrumb_functions":{
 		"message":"fonctions"
+	},
+	"manage_website_structure":{
+		"message":"organiser la <strong>structure</strong>"
+	},
+	"manage_website_menus":{
+		"message":"organiser les <strong>menus</strong>"
 	}
 }

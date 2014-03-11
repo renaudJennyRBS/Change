@@ -1,0 +1,152 @@
+<div class="row" rbs-document-editor-base="" model="Rbs_Stock_Sku">
+
+	<div class="col-md-12">
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Stock_Sku'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+	</div>
+
+	<div class="document-form" rbs-main-column>
+
+		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-rbs-stock-sku="">
+
+			<fieldset rbs-editor-section=""
+			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'code'), ['ucf']) }}" max-length="80" required="true">
+				</rbs-field-text>
+
+				<rbs-field-text property="ean13" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'ean13'), ['ucf']) }}" max-length="13">
+				</rbs-field-text>
+
+				<rbs-field-text property="jan" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'jan'), ['ucf']) }}" max-length="13">
+				</rbs-field-text>
+
+				<rbs-field-text property="upc" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'upc'), ['ucf']) }}" max-length="12">
+				</rbs-field-text>
+
+				<rbs-field-text property="isbn" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'isbn'), ['ucf']) }}" max-length="12">
+				</rbs-field-text>
+
+				<rbs-field-text property="partNumber" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'partNumber'), ['ucf']) }}">
+				</rbs-field-text>
+
+
+				<rbs-field-boolean property="virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'virtual'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field ng-hide="document.virtual" label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'physicalProperties'), ['ucf']) }}">
+					<div class="form-inline">
+						<div class="form-group" style="margin:0;">
+							<div class="input-group">
+								<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.mass_abbr') }}</span>
+								<input class="form-control" size="7" ng-model="document.physicalProperties.mass.value" rbs-smart-float="" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.mass') }}">
+								<span class="input-group-addon contains-input">
+									<select class="form-control" ng-model="document.physicalProperties.mass.unit">
+										<option value="kg">{{ i18n('m.rbs.stock.admin.kg_abbr') }}</option>
+										<option value="g">{{ i18n('m.rbs.stock.admin.g_abbr') }}</option>
+										<option value="lbs">{{ i18n('m.rbs.stock.admin.lbs_abbr') }}</option>
+									</select>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-inline" style="margin-top:4px;">
+						<div class="form-group" style="margin:0;">
+							<div class="input-group">
+								<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.length_abbr') }}</span>
+								<input class="form-control" size="7" rbs-smart-float="" ng-model="document.physicalProperties.length.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.length') }}"/>
+								<span class="input-group-addon contains-input">
+									<select class="form-control" ng-model="document.physicalProperties.length.unit">
+										<option value="cm">{{ i18n('m.rbs.stock.admin.cm_abbr') }}</option>
+										<option value="m">{{ i18n('m.rbs.stock.admin.m_abbr') }}</option>
+										<option value="in">{{ i18n('m.rbs.stock.admin.in_abbr') }}</option>
+									</select>
+								</span>
+							</div>
+						</div>
+						<span>x</span>
+						<div class="form-group" style="margin:0;">
+							<div class="input-group">
+								<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.width_abbr') }}</span>
+								<input class="form-control" size="7" rbs-smart-float="" ng-model="document.physicalProperties.width.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.width') }}"/>
+								<span class="input-group-addon contains-input">
+									<select class="form-control" ng-model="document.physicalProperties.width.unit">
+										<option value="cm">{{ i18n('m.rbs.stock.admin.cm_abbr') }}</option>
+										<option value="m">{{ i18n('m.rbs.stock.admin.m_abbr') }}</option>
+										<option value="in">{{ i18n('m.rbs.stock.admin.in_abbr') }}</option>
+									</select>
+								</span>
+							</div>
+						</div>
+						<span>x</span>
+						<div class="form-group" style="margin:0;">
+							<div class="input-group">
+								<span class="input-group-addon">{{ i18n('m.rbs.stock.admin.height_abbr') }}</span>
+								<input class="form-control" size="7" rbs-smart-float="" ng-model="document.physicalProperties.height.value" min="0" type="text" placeholder="{{ i18nAttr('m.rbs.stock.admin.height') }}"/>
+								<span class="input-group-addon contains-input">
+									<select class="form-control" ng-model="document.physicalProperties.height.unit">
+										<option value="cm">{{ i18n('m.rbs.stock.admin.cm_abbr') }}</option>
+										<option value="m">{{ i18n('m.rbs.stock.admin.m_abbr') }}</option>
+										<option value="in">{{ i18n('m.rbs.stock.admin.in_abbr') }}</option>
+									</select>
+								</span>
+							</div>
+						</div>
+					</div>
+				</rbs-field>
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'unit'), ['ucf']) }}">
+					<select ng-model="unit" class="form-control" rbs-items-from-collection="Rbs_Stock_Collection_Unit"></select>
+				</rbs-field>
+
+				<rbs-field-integer property="quantityIncrement" min="1" max="10000"
+					label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'quantityIncrement'), ['ucf']) }}">
+				</rbs-field-integer>
+
+				<rbs-field-integer property="minQuantity" min="1" max="10000"
+					label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'minQuantity'), ['ucf']) }}">
+				</rbs-field-integer>
+
+				<rbs-field-integer min="1" max="10000" property="maxQuantity"
+					label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'maxQuantity'), ['ucf']) }}">
+				</rbs-field-integer>
+
+				<rbs-field-boolean property="unlimitedInventory"
+					label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'unlimitedInventory'), ['ucf']) }}">
+					<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_unlimitedinventory_help') }}</span>
+				</rbs-field-boolean>
+
+				<div ng-hide="document.unlimitedInventory">
+					<rbs-field-boolean property="allowBackorders"
+						label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'allowBackorders'), ['ucf']) }}">
+						<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_allowbackorders_help') }}</span>
+					</rbs-field-boolean>
+
+					<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'thresholds'), ['ucf']) }}">
+						<rbs-thresholds-editor thresholds-values="document.thresholds">
+						</rbs-thresholds-editor>
+					</rbs-field>
+				</div>
+
+				<rbs-field-boolean property="allowQuantitySplit"
+					label="{{ i18nAttr(propertyKey('Rbs_Stock_Sku', 'allowQuantitySplit'), ['ucf']) }}">
+					<span class="help-block">{{ i18n('m.rbs.stock.admin.sku_allowquantitysplit_help') }}</span>
+				</rbs-field-boolean>
+
+			</fieldset>
+
+			<fieldset rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+
+		</form>
+
+	</div>
+
+</div>

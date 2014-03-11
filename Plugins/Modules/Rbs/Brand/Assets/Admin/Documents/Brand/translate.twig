@@ -1,0 +1,36 @@
+<div class="row" rbs-document-editor-base="" model="Rbs_Brand_Brand">
+	<div class="col-md-12">
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Brand_Brand'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+	</div>
+
+	<div class="document-form" rbs-main-column>
+		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-i18n="">
+			<fieldset rbs-editor-section=""
+			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
+			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+				<rbs-field-label-title property="title" required="true"
+				                       label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+				<rbs-field-rich-text property="description" required="false"
+				                     label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
+				</rbs-field-rich-text>
+			</fieldset>
+			<fieldset rbs-editor-section="publication"
+			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}"
+			          data-rbs-document-publication-section="">
+			</fieldset>
+			<fieldset
+					rbs-editor-section="systeminfo"
+					data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+					data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+					data-rbs-document-system-info-section="">
+			</fieldset>
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

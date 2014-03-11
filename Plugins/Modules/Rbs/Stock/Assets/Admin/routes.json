@@ -12,7 +12,7 @@
 		"model": "Rbs_Stock_Sku",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Stock/Sku/form.twig",
+			"templateUrl": "Document/Rbs/Stock/Sku/edit.twig",
 			"labelKey": "m.rbs.stock.documents.sku | ucf",
 			"labelId": "id"
 		},
@@ -32,7 +32,7 @@
 		"model": "Rbs_Stock_Sku",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Stock/Sku/form.twig",
+			"templateUrl": "Document/Rbs/Stock/Sku/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

@@ -4,15 +4,13 @@
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorWebsitePage($routeParams, REST, Breadcrumb, $q, i18n) {
+	function changeEditorWebsitePage($routeParams, REST, Breadcrumb) {
 		return {
-			restrict: 'A',
-			templateUrl: 'Document/Rbs/Website/StaticPage/editor.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
+			restrict : 'A',
+			require : '^rbsDocumentEditorBase',
 
-			link: function (scope, element, attrs, editorCtrl) {
-
+			link: function (scope, element, attrs, editorCtrl)
+			{
 				var contentSectionInitialized = false;
 
 				scope.onLoad = function () {
@@ -82,8 +80,6 @@
 					}
 				};
 
-				editorCtrl.init('Rbs_Website_StaticPage');
-
 				// This is for the "undo" dropdown menu:
 				// Each item automatically activates its previous siblings.
 				$('[data-role=undo-menu]').on('mouseenter', 'li', function () {
@@ -101,9 +97,7 @@
 	changeEditorWebsitePage.$inject = [
 		'$routeParams',
 		'RbsChange.REST',
-		'RbsChange.Breadcrumb',
-		'$q',
-		'RbsChange.i18n'
+		'RbsChange.Breadcrumb'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteStaticpage', changeEditorWebsitePage);
 

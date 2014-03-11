@@ -2,15 +2,14 @@
 
 	"use strict";
 
-	function changeEditorWebsiteWebsite (REST, User) {
-
+	function changeEditorWebsiteWebsite (REST, User)
+	{
 		return {
-			restrict    : 'EA',
-			templateUrl : 'Document/Rbs/Website/Website/editor.twig',
-			replace     : false,
-			require     : 'rbsDocumentEditor',
+			restrict    : 'A',
+			require     : '^rbsDocumentEditorBase',
 
-			link : function (scope, elm, attrs, editorCtrl) {
+			link : function (scope)
+			{
 				scope.data = {};
 				scope.pendingSitemapCreations = false;
 				scope.onReady = function (){
@@ -58,15 +57,12 @@
 						});
 					});
 				};
-
-				editorCtrl.init('Rbs_Website_Website');
 			}
 		};
 
 	}
 
 	changeEditorWebsiteWebsite.$inject = ['RbsChange.REST', 'RbsChange.User'];
-
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsWebsiteWebsite', changeEditorWebsiteWebsite);
 
 })();

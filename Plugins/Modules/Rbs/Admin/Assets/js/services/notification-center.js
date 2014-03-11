@@ -83,7 +83,7 @@
 
 				constructBodyHtml : function (array)
 				{
-					return '<ul><li>' + array.join('</li><li>') + '</li></ul>'
+					return '<ul><li>' + array.join('</li><li>') + '</li></ul>';
 				},
 
 				getIndexOfNotificationById : function (id)

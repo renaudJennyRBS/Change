@@ -1,0 +1,40 @@
+<div class="row" rbs-document-editor-base="" model="Rbs_Website_Website">
+
+	<div class="col-md-12">
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Website'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+	</div>
+
+	<div class="document-form" rbs-main-column>
+
+		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-i18n="" rbs-document-editor-rbs-website-website="">
+
+			<fieldset rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-label-title property="title" required="true"
+				                       label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_Website', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+
+				<rbs-field-url property="baseurl" required="true"
+						label="{{ i18nAttr(propertyKey('Rbs_Website_Website', 'baseurl'), ['ucf']) }}">
+					<span class="help-block">{{ i18n('m.rbs.website.admin.website_baseurl_help', ['ucf']) }}</span>
+				</rbs-field-url>
+
+			</fieldset>
+
+			<fieldset rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+
+		</form>
+
+	</div>
+
+</div>

@@ -1,19 +1,17 @@
-(function () {
+(function ($) {
 
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorWebsiteFunctionalPage($rootScope, $q, REST, $routeParams, i18n) {
-
+	function changeEditorWebsiteFunctionalPage($rootScope, REST, $routeParams)
+	{
 		return {
 			restrict: 'A',
-			templateUrl: 'Document/Rbs/Website/FunctionalPage/editor.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope, element, attrs, editorCtrl) {
-
+			link : function (scope)
+			{
 				var contentSectionInitialized = false;
 
 				scope.onLoad = function () {
@@ -54,7 +52,6 @@
 						$('#rbsWebsitePageDefaultAsides').show();
 						$('#rbsWebsitePageBlockPropertiesAside').hide();
 					}
-
 				};
 
 				scope.enterSection = function (section) {
@@ -63,8 +60,6 @@
 						$('#rbsWebsitePageBlockPropertiesAside').show();
 					}
 				};
-
-				editorCtrl.init('Rbs_Website_FunctionalPage');
 
 				// This is for the "undo" dropdown menu:
 				// Each item automatically activates its previous siblings.
@@ -88,7 +83,8 @@
 	}
 
 	changeEditorWebsiteFunctionalPage.$inject = [
-		'$rootScope', '$q', 'RbsChange.REST', '$routeParams', 'RbsChange.i18n'
+		'$rootScope', 'RbsChange.REST', '$routeParams'
 	];
 	app.directive('rbsDocumentEditorRbsWebsiteFunctionalpage', changeEditorWebsiteFunctionalPage);
-})();
+
+})(window.jQuery);

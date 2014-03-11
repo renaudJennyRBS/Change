@@ -172,6 +172,9 @@ rbs-document-list > .btn-toolbar {
 
 .table-striped.document-list tbody tr.preview td.preview {
 	padding: 0;
+	border-left: 3px solid #E0E0E0;
+	background: white;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .table-striped.document-list tbody tr td.preview button.close {
 	margin: 5px;
@@ -185,7 +188,7 @@ rbs-document-list > .btn-toolbar {
 .document-list tr.preview td.preview .preview-indicator {
 	display: none;
 	position: absolute;
-	top: -7px;
+	top: -6px;
 	left: 280px;
 	width: 10px;
 	height: 10px;
@@ -195,6 +198,7 @@ rbs-document-list > .btn-toolbar {
 	-moz-transform: rotate(-45deg);
 	-o-transform: rotate(-45deg);
 	transform: rotate(-45deg);
+	background: white;
 }
 
 .document-list tr td.preview .dl-horizontal dt {

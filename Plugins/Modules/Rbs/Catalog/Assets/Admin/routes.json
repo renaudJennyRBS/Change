@@ -69,7 +69,7 @@
 		"model": "Rbs_Catalog_Product",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Product/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.product | ucf",
 			"labelId": "id"
 		},
@@ -155,7 +155,7 @@
 		"model": "Rbs_Catalog_CrossSellingProductList",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf",
 			"labelId": "id"
 		},
@@ -184,7 +184,7 @@
 		"model": "Rbs_Catalog_CrossSellingProductList",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -247,7 +247,7 @@
 		"model": "Rbs_Catalog_Product",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Product/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -265,7 +265,7 @@
 		"model": "Rbs_Catalog_ProductList",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/ProductList/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.productlist | ucf",
 			"labelId": "id"
 		},
@@ -294,7 +294,7 @@
 		"model": "Rbs_Catalog_ProductList",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/ProductList/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -401,7 +401,7 @@
 		"model": "Rbs_Catalog_SectionProductList",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/SectionProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/SectionProductList/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.sectionproductlist | ucf",
 			"labelId": "id"
 		},
@@ -430,7 +430,7 @@
 		"model": "Rbs_Catalog_SectionProductList",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/SectionProductList/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/SectionProductList/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

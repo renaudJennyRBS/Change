@@ -1,0 +1,209 @@
+<div class="row" rbs-document-editor-base="" model="Rbs_Catalog_Product">
+
+	<div class="col-md-12">
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<span class="list-group-item">
+					<a ng-show="document.variantGroup.rootProductId" href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.variantGroup.rootProductId}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}</a>
+					<a ng-show="! document.variant && ! document.variantGroup.rootProductId" href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+				</span>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.catalog.admin.merchandizing', ['ucf']) }}</h3>
+			</div>
+			<div class="list-group">
+				<p class="list-group-item">
+					<a href="(= document | rbsURL:'cross-selling-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item" ng-if="document.categorizable">
+					<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
+				</p>
+				<p class="list-group-item" ng-hide="document.variantGroup && !document.variantInfo.isFinal">
+					<a href="(= document | rbsURL:'prices' =)"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.product_prices_aside_link', ['ucf']) | raw }}</a>
+				</p>
+			</div>
+		</div>
+
+
+	</div>
+
+	<div class="document-form" rbs-main-column>
+
+		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-rbs-catalog-product="">
+
+			<fieldset rbs-editor-section=""
+			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-label-title
+						property="title"
+						required="true"
+						label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+
+				<rbs-field-boolean ng-cloak="" ng-hide="document.id > 0"
+					property="newSkuOnCreation"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'newSkuOnCreation'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'sku'), ['ucf']) }}"
+					accepted-model="Rbs_Stock_Sku"
+					selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_sku_picker_title', ['ucf']) }}"
+					ng-hide="(document.variantGroup && !document.variantInfo.isFinal) || (document.newSkuOnCreation && document.id <= 0)">
+				</rbs-field-picker>
+
+				<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'visuals'), ['ucf']) }}"
+						accepted-model="Rbs_Media_Image"
+						selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}">
+				</rbs-field-picker-multiple>
+			</fieldset>
+
+			<fieldset rbs-editor-section="attributes"
+			          data-editor-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}"
+			          data-editor-section-icon="icon-edit-sign">
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
+					<select class="form-control" ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="productTypology:true">
+						<option value="">{{ i18n('m.rbs.catalog.admin.product_attribute_select', ['ucf']) }}</option>
+					</select>
+				</rbs-field>
+
+				<div data-ng-repeat="attributeDef in attributesDef">
+					<div ng-if="attributeDef.attributes">
+						<h4>(= attributeDef.label =)</h4>
+						<hr />
+						<div data-ng-repeat="attributeItemDef in attributeDef.attributes">
+
+							<rbs-field label="(= attributeItemDef.label =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
+								<div ng-if="attributeItemDef.collectionCode">
+									<select ng-model="attributeItemDef.value.value" class="form-control" rbs-items-from-collection="(= attributeItemDef.collectionCode =)">
+										<option value=""></option>
+									</select>
+								</div>
+								<div ng-if="!attributeItemDef.collectionCode">
+									<div data-ng-switch="attributeItemDef.type">
+										<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+										<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></rbs-switch>
+										<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></rbs-date-selector>
+										<div class="row" data-ng-switch-when="Integer">
+											<div class="col-xs-2">
+												<input type="number" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+											</div>
+										</div>
+										<div class="row" data-ng-switch-when="Float">
+											<div class="col-xs-2">
+												<input type="text"  rbs-smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+											</div>
+										</div>
+										<rbs-document-picker-single data-ng-if="attributeItemDef.usePicker" data-ng-switch-when="Document" context-key="(= 'attr.' + attributeDef.id =)"
+												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+										</rbs-document-picker-single>
+										<rbs-document-select data-ng-if="!attributeItemDef.usePicker" data-ng-switch-when="Document"
+											ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+											property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+										</rbs-document-select>
+										<rbs-document-picker-single data-ng-if="attributeItemDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
+												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+										</rbs-document-picker-single>
+										<rbs-document-select data-ng-if="!attributeItemDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true"
+											ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+											property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+										</rbs-document-select>
+										<rbs-document-picker-multiple data-ng-switch-when="DocumentArray" context-key="(= 'attr.' + attributeDef.id =)"
+												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+										</rbs-document-picker-multiple>
+										<rbs-document-picker-multiple data-ng-switch-when="DocumentIdArray" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
+												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+										</rbs-document-picker-multiple>
+										<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
+									</div>
+								</div>
+							</rbs-field>
+						</div>
+					</div>
+
+					<div ng-if="!attributeDef.attributes">
+						<rbs-field label="(= attributeDef.label =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
+							<div ng-if="attributeDef.collectionCode">
+								<select ng-model="attributeDef.value.value" class="form-control" rbs-items-from-collection="(= attributeDef.collectionCode =)">
+									<option value=""></option>
+								</select>
+							</div>
+							<div ng-if="!attributeDef.collectionCode">
+								<div data-ng-switch="attributeDef.type">
+									<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+									<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></rbs-switch>
+									<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></rbs-date-selector>
+									<div class="row" data-ng-switch-when="Integer">
+										<div class="col-xs-2">
+											<input type="number" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+										</div>
+									</div>
+									<div class="row" data-ng-switch-when="Float">
+										<div class="col-xs-2">
+											<input type="text" rbs-smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+										</div>
+									</div>
+									<rbs-document-picker-single data-ng-if="attributeDef.usePicker" data-ng-switch-when="Document" context-key="(= 'attr.' + attributeDef.id =)"
+											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+									</rbs-document-picker-single>
+									<rbs-document-select data-ng-if="!attributeDef.usePicker" data-ng-switch-when="Document"
+										ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+										property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+									</rbs-document-select>
+									<rbs-document-picker-single data-ng-if="attributeDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
+											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+									</rbs-document-picker-single>
+									<rbs-document-select data-ng-if="!attributeDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true"
+										ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+										property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+									</rbs-document-select>
+									<rbs-document-picker-multiple data-ng-switch-when="DocumentArray" context-key="(= 'attr.' + attributeDef.id =)"
+											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+									</rbs-document-picker-multiple>
+									<rbs-document-picker-multiple data-ng-switch-when="DocumentIdArray" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
+											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+									</rbs-document-picker-multiple>
+									<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>
+								</div>
+							</div>
+						</rbs-field>
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset rbs-editor-section="publication"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+				data-rbs-document-publication-section=""
+				rbs-document-publication-section-help="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}">
+			</fieldset>
+
+			<fieldset rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

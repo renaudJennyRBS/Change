@@ -21,7 +21,7 @@
 		"model": "Rbs_Brand_Brand",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"templateUrl": "Document/Rbs/Brand/Brand/edit.twig",
 			"labelKey": "m.rbs.brand.documents.brand | ucf",
 			"labelId": "id"
 		},
@@ -41,7 +41,7 @@
 		"model": "Rbs_Brand_Brand",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"templateUrl": "Document/Rbs/Brand/Brand/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -80,7 +80,7 @@
 		"model": "Rbs_Brand_Brand",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Brand/Brand/form.twig",
+			"templateUrl": "Document/Rbs/Brand/Brand/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

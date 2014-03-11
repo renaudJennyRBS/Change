@@ -3,6 +3,13 @@
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
 
+
+		<rbs-field-label-title
+				required="true"
+				label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
+		</rbs-field-label-title>
+
+<!--
 		<rbs-field-text property="label" required="true"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }}">
 		</rbs-field-text>
@@ -11,6 +18,7 @@
 			sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
 		</rbs-field-text>
+-->
 
 		<rbs-field-rich-text property="description" required="false"
 			label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">

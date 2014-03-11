@@ -154,7 +154,7 @@
 	/**
 	 * Default Asides for an editor view.
 	 */
-	app.directive('rbsDefaultAsidesForEditor', function ()
+	app.directive('rbsDefaultAsidesForEditor', ['$timeout', function ($timeout)
 	{
 		return {
 			restrict : 'E',
@@ -166,15 +166,18 @@
 
 			link : function (scope, iElement)
 			{
-				var otherLinks = iElement.siblings('[rbs-aside-other-link]'),
-				    container = iElement.find('.rbs-aside-other-links');
-				if (otherLinks.length > 0) {
-					container.append('<hr/>');
-				}
-				container.append(otherLinks);
+				$timeout(function ()
+				{
+					var otherLinks = iElement.siblings('[rbs-aside-other-link],[data-rbs-aside-other-link]'),
+						container = iElement.find('.rbs-aside-other-links');
+					if (otherLinks.length > 0) {
+						container.append('<hr/>');
+					}
+					container.append(otherLinks);
+				});
 			}
 		};
-	});
+	}]);
 
 
 	/**
@@ -184,18 +187,23 @@
 	 * This Directive displays the menu with the sections of an Editor.
 	 * It updates on the 'Change:UpdateEditorMenu' event.
 	 */
-	app.directive('rbsAsideEditorMenu', ['$compile', '$rootScope', function ($compile, $rootScope)
+	app.directive('rbsAsideEditorMenu', ['$rootScope', function ($rootScope)
 	{
 		return {
 			restrict : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/aside-editor-sections.twig',
+			require : '?^rbsDocumentEditorBase',
 
-			link : function (scope)
+			link : function (scope, iElement, iAttrs, ctrl)
 			{
 				$rootScope.$on('Change:UpdateEditorMenu', function (event, menuEntries)
 				{
 					scope.entries = menuEntries;
 				});
+
+				if (ctrl) {
+					scope.entries = ctrl.getMenuEntries();
+				}
 			}
 		};
 	}]);

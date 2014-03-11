@@ -2,17 +2,18 @@
 {
 	"use strict";
 
-	function Editor () {
+	function Editor ()
+	{
 		return {
 			restrict : 'A',
-			templateUrl : 'Document/Rbs/Stock/Sku/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			require : '^rbsDocumentEditorBase',
 
-			link : function (scope, element, attrs, editorCtrl)
+			link : function (scope)
 			{
-				scope.data = {lengthUnit:'m'};
-				editorCtrl.init('Rbs_Stock_Sku');
+				// FIXME Is this used? I could not find it in the template...
+				scope.data = {
+					lengthUnit : 'm'
+				};
 			}
 		};
 	}

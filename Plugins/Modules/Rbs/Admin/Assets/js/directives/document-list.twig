@@ -69,7 +69,7 @@
 				</p>
 			</div>
 			<div class="panel-footer">
-				<button type="button" class="pull-right btn btn-sm btn-success" ng-click="selectionContextResolve()"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.validate_selection', ['ucf']) }}</button>
+				<button type="button" class="pull-right btn btn-sm btn-success" ng-click="selectionContextResolve()">{{ i18n('m.rbs.admin.admin.validate_selection', ['ucf']) }} <i class="icon-circle-arrow-right"></i></button>
 				<button type="button" class="btn btn-sm btn-default" ng-click="selectionContextReject()">
 					<i class="icon-circle-arrow-left"></i> {{ i18n('m.rbs.admin.admin.cancel_selection', ['ucf']) }}
 				</button>
@@ -102,7 +102,7 @@
 				<button title="{{ i18nAttr('m.rbs.admin.admin.grid_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'grid'}" ng-click="setViewMode('grid')" class="btn btn-default"><i class="icon-th-large"></i></button>
 				<button title="{{ i18nAttr('m.rbs.admin.admin.list_display', ['ucf']) }}" type="button" ng-class="{'active': viewMode == 'list'}" ng-click="setViewMode('list')" class="btn btn-default"><i class="icon-list"></i></button>
 			</div>
-			<button ng-if="selectionContext.param('multiple')" type="button" class="btn btn-default" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
+			<button ng-if="selectionContext.param('multiple')" type="button" class="btn btn-info" ng-click="selectionContextAppend()" ng-disabled="selectedDocuments.length == 0"><i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add_selected_elements', ['ucf']) }}</button>
 		</div>
 	</div>
 
