@@ -31,7 +31,8 @@
 					menuEntries = [],
 					properties = {},
 					createNewDocumentId,
-					modelInfoPromise;
+					modelInfoPromise,
+					editorUrl;
 
 
 				//-----------------------------------------------//
@@ -759,6 +760,7 @@
 						$scope.original = angular.copy($scope.document);
 					}
 
+					editorUrl = $location.absUrl();
 					initCorrection();
 
 					// Call `$scope.onReady()` if present.
@@ -860,11 +862,12 @@
 
 
 
-				$scope.$on('$routeChangeStart', function () {
+				$rootScope.$on('$locationChangeStart', function () {
 					if (! isUnchanged() ) {
-						EditorManager.saveLocalCopy($scope.document);
+						EditorManager.saveLocalCopy($scope.document, editorUrl);
 					}
 				});
+
 
 
 				//-----------------------------------------------//

@@ -11,7 +11,7 @@
 			other: '{{ i18nAttr('m.rbs.admin.admin.local_copies_message_other') }}'}"></li>
 		<li class="divider" ng-if="localCopies.length > 0"></li>
 
-		<li ng-repeat="copy in localCopies track by localizedId(copy)"><a href ng-href="(= copy | rbsURL =)">
+		<li ng-repeat="copy in localCopies track by localizedId(copy)"><a href ng-href="(= copy.META$.localCopy.editorUrl =)">
 			<rbs-status class="small" ng-model="copy"></rbs-status>
 			<strong>(= copy.label =)</strong>
 			<br/>(= copy.model =) / (= copy.LCID =) / (= copy.id =)
