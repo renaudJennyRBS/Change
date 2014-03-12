@@ -581,7 +581,6 @@
 						properties[f.id] = f.label;
 					});
 					$scope.$emit('Change:UpdateEditorMenu', menuEntries);
-					console.log("properties: ", properties);
 				}
 
 
