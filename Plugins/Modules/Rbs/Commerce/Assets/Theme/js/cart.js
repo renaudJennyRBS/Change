@@ -497,16 +497,25 @@
 					if (data.hasOwnProperty('accessorId')) {
 						scope.information.guest = false;
 						scope.information.userId = data['accessorId'];
-						delete scope.information.password;
 
 						var postData = { userId: scope.information.userId };
 						updateCart($http, scope, postData, scope.setAuthenticated);
 					}
 					else if (data.hasOwnProperty('errors')) {
-						addError('information', data.errors);
+						for (var i=0; i < data.errors.length; i++ )
+						{
+							addError('information', data.errors[i]);
+						}
 					}
+					delete scope.information.password;
 				})
-				.error(function(data, status, headers) { console.log('Login error', data, status, headers); });
+				.error(function(data) {
+					for (var i=0; i < data.errors.length; i++ )
+					{
+						addError('information', data.errors[i]);
+					}
+					delete scope.information.password;
+				});
 		};
 
 		scope.logout = function() {
