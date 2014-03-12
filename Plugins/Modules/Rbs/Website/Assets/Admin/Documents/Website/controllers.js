@@ -150,7 +150,7 @@
 
 		function loadNode (nodeInfo)
 		{
-			REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title', 'website']}).then(
+			return REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title', 'website']}).then(
 				// Success
 				function (results)
 				{
@@ -241,17 +241,25 @@
 		}
 
 
-		function toggleNode (nodeInfo)
+		function toggleNode (nodeInfo, $event)
 		{
 			if (nodeInfo.open) {
-				collapseNode(nodeInfo);
+				if ($event && $event.altKey) {
+					collapseNode(nodeInfo);
+					toggleNode(nodeInfo, $event);
+				} else {
+					return collapseNode(nodeInfo);
+				}
 			}
 			else {
+				if ($event && $event.altKey) {
+					nodeInfo.children = null;
+				}
 				if (nodeInfo.children !== null) {
-					expandNode(nodeInfo);
+					return expandNode(nodeInfo);
 				}
 				else {
-					loadNode(nodeInfo);
+					return loadNode(nodeInfo);
 				}
 			}
 		}
@@ -290,12 +298,12 @@
 			{
 				collapseNode(node);
 				node.children = null;
-				toggleNode(node);
+				return toggleNode(node);
 			}
 			else
 			{
 				initCache($scope.currentWebsite, true);
-				toggleNode(getNodeInfo($scope.currentWebsite));
+				return toggleNode(getNodeInfo($scope.currentWebsite));
 			}
 		};
 
@@ -303,9 +311,9 @@
 		// This object is exposed in the <rbs-document-list/> ('extend' attribute).
 		$scope.browser =
 		{
-			toggleNode : function (doc)
+			toggleNode : function (doc, $event)
 			{
-				return toggleNode(getNodeInfo(doc));
+				return toggleNode(getNodeInfo(doc), $event);
 			},
 
 			isTopic : function (doc)
@@ -446,18 +454,33 @@
 					];
 				}
 				return null;
+			},
+
+			reload : function ()
+			{
+				if (! treeDb) {
+					return;
+				}
+				return $scope.reloadNode($scope.currentWebsite);
+			},
+
+			reloadNode : function (doc)
+			{
+				$scope.reloadNode(doc);
 			}
 		};
 
 
-		$scope.$on('Navigation.saveContext', function (event, args) {
+		$scope.$on('Navigation.saveContext', function (event, args)
+		{
 			var label = $scope.currentWebsite.label;
 			args.context.label(label);
 			var data = {currentWebsite: $scope.currentWebsite, allFunctions: $scope.allFunctions};
 			args.context.savedData('Rbs_Website_StructureController', data);
 		});
 
-		function getContextData() {
+		function getContextData()
+		{
 			var currentContext = Navigation.getCurrentContext();
 			if (currentContext) {
 				var data = currentContext.savedData('Rbs_Website_StructureController');

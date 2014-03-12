@@ -417,5 +417,11 @@
 	},
 	"manage_website_menus":{
 		"message":"organiser les <strong>menus</strong>"
+	},
+	"refresh_topic":{
+		"message":"actualiser"
+	},
+	"alt_click_to_refresh":{
+		"message":"alt+click pour actualiser"
 	}
 }
