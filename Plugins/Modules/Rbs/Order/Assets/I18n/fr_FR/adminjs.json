@@ -70,5 +70,17 @@
 	},
 	"order_update_status_confirm_message_processing":{
 		"message":"Vous vous apprêtez à modifier le contenu d'une commande déjà validée !"
+	},
+	"order_update_status_confirm_title_finalized":{
+		"message":"finaliser la commande"
+	},
+	"order_update_status_confirm_message_finalized":{
+		"message":"Vous vous apprêtez à finaliser la commande."
+	},
+	"order_update_status_confirm_title_canceled":{
+		"message":"annuler la commande"
+	},
+	"order_update_status_confirm_message_canceled":{
+		"message":"Vous vous apprêtez à annuler la commande."
 	}
 }

@@ -371,6 +371,12 @@
 	"order_make_editable_button":{
 		"message":"modifier <small>le contenu</small>"
 	},
+	"order_finalize_button":{
+		"message":"finaliser <small>la commande</small>"
+	},
+	"order_cancel_button":{
+		"message":"annuler <small>la commande</small>"
+	},
 	"billing_management":{
 		"message":"gestion des paiements"
 	},
@@ -397,5 +403,11 @@
 	},
 	"elements_count_abbr":{
 		"message":"Nbr. él."
+	},
+	"order_list_function":{
+		"message":"liste des commandes"
+	},
+	"order_list_label":{
+		"message":"liste des commandes"
 	}
 }

@@ -1,6 +1,10 @@
-<span class="order-status-item" ng-switch="order.processingStatus">
-	<i ng-switch-when="edition" class="icon-edit-sign icon-2x" title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_edition') }}"></i>
-	<i ng-switch-when="processing" class="text-info icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_processing') }}"></i>
-	<i ng-switch-when="finalized" class="text-success icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_finalized') }}"></i>
-	<i ng-switch-when="canceled" class="text-danger icon-info-sign icon-2x" title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_canceled') }}"></i>
+<span class="order-status-item" data-ng-switch="order.processingStatus">
+	<i data-ng-switch-when="edition" class="icon-edit-sign icon-2x"
+		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_edition') }}"></i>
+	<i data-ng-switch-when="processing" class="text-info icon-info-sign icon-2x"
+		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_processing') }}"></i>
+	<i data-ng-switch-when="finalized" class="text-success icon-ok-sign icon-2x"
+		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_finalized') }}"></i>
+	<i data-ng-switch-when="canceled" class="text-danger icon-remove-sign icon-2x"
+		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_canceled') }}"></i>
 </span>
