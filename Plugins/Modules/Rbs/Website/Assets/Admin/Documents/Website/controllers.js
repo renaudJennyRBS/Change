@@ -294,6 +294,9 @@
 		$scope.reloadNode = function (doc)
 		{
 			var node = getNodeInfo(doc);
+			if (doc.model !== 'Rbs_Website_Topic') {
+				node = getNodeInfo(getParent(getNodeIndex(node)));
+			}
 			if (node.level > 0)
 			{
 				collapseNode(node);
