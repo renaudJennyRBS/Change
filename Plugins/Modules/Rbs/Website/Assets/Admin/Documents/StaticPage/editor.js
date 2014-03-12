@@ -17,12 +17,12 @@
 					if (!scope.document.section){
 						var nodeId =  Breadcrumb.getCurrentNodeId();
 						if (nodeId) {
-							REST.resource(nodeId).then(function (doc){ scope.document.section = doc})
+							REST.resource(nodeId).then(function (doc){ scope.document.section = doc; });
 						}
 					}
 					if (scope.document.isNew() && $routeParams.website && !scope.document.website) {
 						scope.document.website = $routeParams.website;
-						REST.resource($routeParams.website).then(function (doc){ scope.document.website = doc});
+						REST.resource($routeParams.website).then(function (doc){ scope.document.website = doc; });
 					}
 				};
 
