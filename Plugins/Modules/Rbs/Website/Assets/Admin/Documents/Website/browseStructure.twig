@@ -36,6 +36,9 @@
 					<a ng-if="doc.is('Rbs_Website_Topic')" href="" ng-href="(= doc | rbsURL:'functions' =)">
 						<i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.topic_functions') }}
 					</a>
+					<a ng-if="! doc.is('Rbs_Website_Topic')" href="" ng-href="(= doc | rbsURL:'createFrom' =)">
+						<i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.new_from', ['etc']) }}
+					</a>
 				</rbs-quick-actions>
 
 				<rbs-column name="label" label="{{ i18n('c.documents.label', ['ucf']) }}" primary="true">
