@@ -51,6 +51,11 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.commerce.admin.terms_and_conditions_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Order_OrderList', 'document' => false,
+			'block' => 'Rbs_Order_OrderList',
+			'label' => $i18nManager->trans('m.rbs.order.admin.order_list_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.order.admin.module_name', $ucf)];
+
 		$functions[] = ['code' => 'Rbs_Payment_CreateAccountForTransaction', 'document' => false,
 			'block' => 'Rbs_Payment_CreateAccountForTransaction',
 			'label' => $i18nManager->trans('m.rbs.payment.admin.create_account_for_transaction_function', $ucf),
