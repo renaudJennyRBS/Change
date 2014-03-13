@@ -150,6 +150,13 @@ class CommerceServices extends Di
 			->addMethodParameter('setCartManager', 'cartManager', array('type' => 'CartManager', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//OrderManager: Application, DocumentManager
+		$orderManagerClassName = $this->getInjectedClassName('OrderManager', '\Rbs\Order\OrderManager');
+		$classDefinition = $this->getClassDefinition($orderManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
 
 		//DiscountManager: Application
 		$discountManagerClassName = $this->getInjectedClassName('DiscountManager', '\Rbs\Discount\DiscountManager');
@@ -180,8 +187,7 @@ class CommerceServices extends Di
 		$im->addAlias('Context', $contextClassName, array('application' => $application));
 
 		$im->addAlias('PriceManager', $priceManagerClassName,
-			array('application' => $application, 'i18nManager' => $i18nManager,
-				'documentManager' => $documentManager));
+			array('application' => $application, 'i18nManager' => $i18nManager, 'documentManager' => $documentManager));
 
 		$im->addAlias('CatalogManager', $catalogManagerClassName,
 			array('application' => $application, 'dbProvider' => $dbProvider,
@@ -201,12 +207,15 @@ class CommerceServices extends Di
 			array('dbProvider' => $dbProvider, 'i18nManager' => $i18nManager,
 				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
 
+		$im->addAlias('OrderManager', $orderManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
+
 		$im->addAlias('ProcessManager', $processManagerClassName,
 			array('application' => $application));
-		
+
 		$im->addAlias('PaymentManager', $paymentManagerClassName,
-			array('application' => $application,
-				'transactionManager' => $transactionManager, 'documentManager' => $documentManager));
+			array('application' => $application, 'transactionManager' => $transactionManager,
+				'documentManager' => $documentManager));
 
 		$im->addAlias('DiscountManager', $discountManagerClassName,
 			array('application' => $application));
@@ -283,6 +292,14 @@ class CommerceServices extends Di
 	public function getProcessManager()
 	{
 		return $this->get('ProcessManager');
+	}
+
+	/**
+	 * @return \Rbs\Order\OrderManager
+	 */
+	public function getOrderManager()
+	{
+		return $this->get('OrderManager');
 	}
 
 	/**

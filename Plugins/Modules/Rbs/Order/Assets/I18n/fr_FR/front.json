@@ -1,0 +1,50 @@
+{
+	"my_orders":{
+		"message":"mes commandes"
+	},
+	"processing_orders":{
+		"message":"commandes en cours"
+	},
+	"finalized_orders":{
+		"message":"commandes finalisées"
+	},
+	"last_n_finalized_orders":{
+		"message":"$NUMBER$ dernières commandes finalisées"
+	},
+	"view_all_finalized_orders":{
+		"message":"voir toutes les commandes finalisées"
+	},
+	"canceled_orders":{
+		"message":"commandes annulées"
+	},
+	"last_n_canceled_orders":{
+		"message":"$NUMBER$ dernières commandes annulées"
+	},
+	"view_all_canceled_orders":{
+		"message":"voir toutes les commandes annulées"
+	},
+	"view_all_orders":{
+		"message":"voir toutes les commandes"
+	},
+	"must_log_in":{
+		"message":"Vous devez vous $OPEN_LINK$connecter$CLOSE_LINK$ pour accéder à la liste de vos commandes."
+	},
+	"generating_order":{
+		"message":"en cours de génération"
+	},
+	"order_number":{
+		"message":"numéro"
+	},
+	"order_date":{
+		"message":"date"
+	},
+	"order_item_count":{
+		"message":"nombre d'articles"
+	},
+	"order_amount":{
+		"message":"montant"
+	},
+	"no_processing_order":{
+		"message":"Vous n'avez aucune commande en cours."
+	}
+}

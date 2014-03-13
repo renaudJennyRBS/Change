@@ -455,6 +455,8 @@ form .description {
 	margin: 3px;
 	cursor: pointer;
 	vertical-align: middle;
+	-webkit-transition: none;
+	transition: none;
 }
 .product-details .thumbnail-visuals img {
 	display: inline-block;
@@ -462,7 +464,7 @@ form .description {
 .product-details .zoomDiv {
 	z-index: 100;
 	position: absolute;
-	top: 0px;
+	top: 0;
 	right: -330px;
 	width: 330px;
 	height: 405px;
@@ -475,6 +477,18 @@ form .description {
 .product-details .zoomDiv img {
 	position: absolute;
 	max-width: none;
+}
+.product-details .product-loading {
+	position: absolute;
+	text-align: center;
+	background: rgba(255, 255, 255, 0.5);
+	width: 100%;
+	width: calc(100% - 30px);
+	height: 100%;
+	z-index: 900;
+}
+.product-details .product-loading .product-loading-indicator {
+	margin: 100px;
 }
 
 /** Order process */

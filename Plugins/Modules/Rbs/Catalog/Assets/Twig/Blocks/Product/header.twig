@@ -1,18 +1,18 @@
 <script type="text/ng-template" id="/productPictograms.tpl">
-	<div data-ng-show="pictograms && !productLoading"  class="pictograms-container pull-right">
-			{% spaceless %}
-				<ul class="list-inline">
-					<li data-ng-repeat="pictogram in pictograms">
-						<a data-ng-if="pictogram.targetUrl" data-ng-href="(= pictogram.targetUrl =)">
-							<img alt="(= pictogram.alt =)" data-ng-src="(= pictogram.url.pictogram =)" />
-						</a>
-						<img data-ng-if="!pictogram.targetUrl" alt="(= pictogram.alt =)"
-							data-ng-src="(= pictogram.url.pictogram =)" />
-					</li>
-				</ul>
-			{% endspaceless %}
-		</div>
-	<div data-ng-show="!pictograms && !productLoading" data-ng-transclude=""></div>
+	<div data-ng-show="pictograms"  class="pictograms-container pull-right">
+		{% spaceless %}
+			<ul class="list-inline">
+				<li data-ng-repeat="pictogram in pictograms">
+					<a data-ng-if="pictogram.targetUrl" data-ng-href="(= pictogram.targetUrl =)">
+						<img alt="(= pictogram.alt =)" data-ng-src="(= pictogram.url.pictogram =)" />
+					</a>
+					<img data-ng-if="!pictogram.targetUrl" alt="(= pictogram.alt =)"
+						data-ng-src="(= pictogram.url.pictogram =)" />
+				</li>
+			</ul>
+		{% endspaceless %}
+	</div>
+	<div data-ng-show="!pictograms" data-ng-transclude=""></div>
 </script>
 
 <div data-rbs-catalog-product-pictograms="" data-pictogram-formats="{{ {'pictogram': pictogramFormat} | json_encode }}">

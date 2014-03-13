@@ -8,6 +8,8 @@
 {% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
 <article itemscope="" itemtype="http://schema.org/Product" class="product-details"
 	data-ng-controller="{% if productPresentation.general.hasOwnSku %}RbsCatalogSimpleProductController{% else %}RbsCatalogVariantProductController{% endif %}">
+	{% include 'Rbs_Catalog/Blocks/Product/loading.twig' %}
+
 	<div class="row">
 		<div class="col-sm-12">
 			<header>

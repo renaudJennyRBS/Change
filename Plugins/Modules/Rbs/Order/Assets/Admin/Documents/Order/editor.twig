@@ -29,9 +29,19 @@
 			<i class="icon-lock"></i>{{ i18n('m.rbs.order.admin.order_start_processing_button', ['ucf']) | raw }}
 		</button>
 		<button type="button" data-ng-if="document.processingStatus == 'processing'"
+			data-ng-click="updateOrderStatus('finalized', $event)" class="btn btn-headline btn-success"
+			data-ng-disabled="!isUnchanged()">
+			<i class="icon-ok-sign"></i>{{ i18n('m.rbs.order.admin.order_finalize_button', ['ucf']) | raw }}
+		</button>
+		<button type="button" data-ng-if="document.processingStatus == 'processing'"
 			data-ng-click="updateOrderStatus('edition', $event)" class="btn btn-headline btn-warning"
 			data-ng-disabled="!isUnchanged()">
 			<i class="icon-unlock"></i>{{ i18n('m.rbs.order.admin.order_make_editable_button', ['ucf']) | raw }}
+		</button>
+		<button type="button" data-ng-if="document.processingStatus == 'processing'"
+			data-ng-click="updateOrderStatus('canceled', $event)" class="btn btn-headline btn-danger"
+			data-ng-disabled="!isUnchanged()">
+			<i class="icon-remove-sign"></i>{{ i18n('m.rbs.order.admin.order_cancel_button', ['ucf']) | raw }}
 		</button>
 	</rbs-form-button-bar>
 </form>

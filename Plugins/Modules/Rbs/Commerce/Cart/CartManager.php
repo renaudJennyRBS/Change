@@ -149,6 +149,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('affectOrder', [$this, 'onDefaultAffectOrder'], 5);
 		$eventManager->attach('affectUser', [$this, 'onDefaultAffectUser'], 5);
 		$eventManager->attach('deleteCart', [$this, 'onDefaultDeleteCart'], 5);
+		$eventManager->attach('getProcessingCartsByUser', [$this, 'onDefaultGetProcessingCartsByUser'], 5);
 	}
 
 	/**
@@ -1688,4 +1689,79 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->getConfiguration()->getEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60); //60 minutes
 	}
 
+	/**
+	 * @param \Rbs\User\Documents\User $user
+	 * @return \Rbs\Commerce\Cart\Cart[]
+	 */
+	public function getProcessingCartsByUser($user)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('user' => $user));
+		$this->getEventManager()->trigger('getProcessingCartsByUser', $this, $args);
+		if (isset($args['carts']))
+		{
+			return $args['carts'];
+		}
+		return array();
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetProcessingCartsByUser(\Change\Events\Event $event)
+	{
+		$user = $event->getParam('user');
+		if ($user instanceof \Rbs\User\Documents\User)
+		{
+			$carts = array();
+			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			$qb = $dbProvider->getNewQueryBuilder('onDefaultGetCartsWithTransactionByUser');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->column('identifier'), $fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id'),
+					$fb->column('user_id'), $fb->column('transaction_id'), $fb->column('order_id'), $fb->column('locked'),
+					$fb->column('processing'), $fb->column('last_update'));
+				$qb->from($fb->table('rbs_commerce_dat_cart'));
+				$qb->where($fb->logicAnd(
+					$fb->eq($fb->column('processing'), $fb->parameter('processing')),
+					$fb->eq($fb->column('order_id'), $fb->parameter('order_id')),
+					$fb->logicOr(
+						$fb->eq($fb->column('user_id'), $fb->parameter('user_id')),
+						$fb->eq($fb->column('owner_id'), $fb->parameter('owner_id'))
+					)
+				));
+			}
+			$sq = $qb->query();
+			$sq->bindParameter('user_id', $user->getId());
+			$sq->bindParameter('owner_id', $user->getId());
+			$sq->bindParameter('processing', true);
+			$sq->bindParameter('order_id', 0);
+
+			$converter = $sq->getRowsConverter()
+				->addLobCol('cart_data')->addStrCol('identifier')
+				->addIntCol('owner_id', 'store_id', 'user_id', 'transaction_id', 'order_id')
+				->addBoolCol('locked', 'processing')->addDtCol('last_update');
+			foreach ($sq->getResults($converter) as $cartInfo)
+			{
+				$cart = unserialize($cartInfo['cart_data']);
+				if ($cart instanceof Cart)
+				{
+					$cart->setCartManager($this);
+					$cart->setIdentifier($cartInfo['identifier'])
+						->setWebStoreId($cartInfo['store_id'])
+						->setUserId($cartInfo['user_id'])
+						->setLocked($cartInfo['locked'])
+						->setProcessing($cartInfo['processing'])
+						->setOwnerId($cartInfo['owner_id'])
+						->setTransactionId($cartInfo['transaction_id'])
+						->setOrderId($cartInfo['order_id']);
+					$cart->lastUpdate($cartInfo['last_update']);
+					$carts[] = $cart;
+				}
+			}
+			$event->setParam('carts', $carts);
+		}
+	}
 }

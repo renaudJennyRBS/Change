@@ -1,0 +1,40 @@
+<h1>{{ i18n('m.rbs.order.front.my_orders', ['ucf']) }}</h1>
+
+<h2>{{ i18n('m.rbs.order.front.finalized_orders', ['ucf']) }}</h2>
+
+{% if paginator and paginator.totalCount %}
+	<div class="table-responsive">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.front.order_item_count', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.front.order_amount', ['ucf']) }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for order in paginator.items %}
+					<tr>
+						<td>
+							<a href="TODO">{{ order.label }}</a>
+						</td>
+						<td>{{ order.date | transDateTime }}</td>
+						<td>{{ order.itemCount }}</td>
+						<td>{{ formatPrice(order.totalAmountWithTaxes, order.currencycode) }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	{% set pageCount = paginator.pageCount %}
+	{% set pageNumber = paginator.pageNumber %}
+	{% include 'Rbs_Generic/pagination.twig' %}
+{% endif %}
+
+<p>
+	<a href="{{ currentURL({'mode': 'default'}) }}">
+		{{ i18n('m.rbs.order.front.view_all_orders', ['ucf']) }}
+	</a>
+</p>

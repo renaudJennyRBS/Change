@@ -228,6 +228,10 @@
 						options.primaryButtonClass = 'btn-warning';
 						options.cssClass = 'warning';
 					}
+					else if (status == 'canceled') {
+						options.primaryButtonClass = 'btn-danger';
+						options.cssClass = 'danger';
+					}
 					Dialog.confirmEmbed(
 							jQuery($event.target).parents('rbs-form-button-bar').find('.confirmation-area'),
 							i18n.trans('m.rbs.order.adminjs.order_update_status_confirm_title_' + status + ' | ucf'),
