@@ -4,7 +4,9 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="addToCartConfirmationModalLabel-{{ blockId }}">Produit ajouté au panier</h4>
+				<h4 class="modal-title" id="addToCartConfirmationModalLabel-{{ blockId }}">
+					{{ i18n('m.rbs.catalog.front.product_added_to_cart', ['ucf']) }}
+				</h4>
 			</div>
 			<div class="modal-body" data-ng-hide="hideModalContent">
 				<div class="modal-loading text-center" data-ng-show="modalContentLoading">
@@ -13,10 +15,11 @@
 				<div class="modal-main-content" data-ng-hide="modalContentLoading"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Poursuivre mes achats</button>
+				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">
+					{{ i18n('m.rbs.catalog.front.continue_shopping', ['ucf']) }}</button>
 				<a href="{{ functionURL('Rbs_Commerce_Cart') }}" class="btn btn-primary">
 					<i class="glyphicon glyphicon-arrow-right"></i>
-					Voir mon panier
+					{{ i18n('m.rbs.catalog.front.view_my_cart', ['ucf']) }}
 				</a>
 			</div>
 		</div>

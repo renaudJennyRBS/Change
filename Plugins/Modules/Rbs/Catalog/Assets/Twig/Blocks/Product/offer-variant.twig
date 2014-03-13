@@ -1,6 +1,6 @@
 {% if parameters.webStoreId %}
 	<script type="text/ng-template" id="/addVariantLineToCart.tpl">
-		<div data-ng-show="product.hasOwnSku && !productLoading">
+		<div data-ng-show="product.hasOwnSku">
 			<div class="form-group" data-ng-show="product.canBeOrdered">
 				<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
 				<input data-ng-show="stock.maxQuantity" class="form-control" type="number" name="quantity"
@@ -17,19 +17,18 @@
 				<span data-ng-hide="product.canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 			</button>
 		</div>
-		<div data-ng-hide="product.hasOwnSku" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
 	</script>
 
 	<script type="text/ng-template" id="/productAvailability.tpl">
-		<div data-ng-show="stock && !productLoading && stock.thresholdTitle" class="alert availability text-center"
+		<div data-ng-show="stock && stock.thresholdTitle" class="alert availability text-center"
 			data-ng-class="stock.thresholdClass">
 			<h4 itemprop="availability">(= stock.thresholdTitle =)</h4>
 		</div>
-		<div data-ng-show="!stock && !productLoading" data-ng-transclude></div>
+		<div data-ng-show="!stock" data-ng-transclude="></div>
 	</script>
 
 	<script type="text/ng-template" id="/productPrice.tpl">
-		<div data-ng-show="prices && !productLoading">
+		<div data-ng-show="prices">
 			<meta itemprop="priceCurrency" content="(= prices.currencyCode =)" data-ng-show="prices.price" />
 			<ul class="list-unstyled main-price" data-ng-show="prices.price">
 				<li class="price" data-ng-show="pricesConfig.display">
@@ -65,7 +64,7 @@
 				</li>
 			</ul>
 		</div>
-		<div data-ng-show="!prices && !productLoading" data-ng-transclude></div>
+		<div data-ng-show="!prices" data-ng-transclude=""></div>
 	</script>
 
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
@@ -80,11 +79,13 @@
 					<label for="selectedVariant{{ i }}">{{ axisName }}</label>
 					<select id="selectedVariant{{ i }}" class="form-control" data-ng-model="selectedAxesValues[{{ i }}]"
 						data-ng-options="var.title for var in axesValues[{{ i }}]" data-ng-change="variantChanged({{ i }})"
-						{%if i > 0 %}data-ng-disabled="!selectedAxesValues[{{ i - 1}}]"{%endif%}>
+						{% if i > 0 %}data-ng-disabled="!selectedAxesValues[{{ i - 1}}]"{% endif %}>
 						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
 					</select>
 				{% endfor %}
 			</div>
+
+			<div data-ng-hide="product.hasOwnSku" data-ng-cloak="" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
 		{% endblock%}
 
 		{% block availability %}
@@ -99,12 +100,14 @@
 
 		{% block prices %}
 			<div data-rbs-catalog-product-price="" data-ng-model="pricesConfig"
-					data-display="{{ parameters.displayPrices }}"
-					data-display-with-tax="{{ parameters.displayPricesWithTax }}">
-					<div>
+				data-display="{{ parameters.displayPrices }}"
+				data-display-with-tax="{{ parameters.displayPricesWithTax }}">
+				<div>
 					{% if productPresentation.prices.price and (parameters.displayPrices or parameters.displayPricesWithTax) %}
 						{% set prices = productPresentation.prices %}
-						{% if prices.currencyCode %}<meta itemprop="priceCurrency" content="{{ prices.currencyCode }}" />{% endif %}
+						{% if prices.currencyCode %}
+							<meta itemprop="priceCurrency" content="{{ prices.currencyCode }}" />
+						{% endif %}
 						<ul class="list-unstyled main-price">
 							{% if parameters.displayPrices and prices.price %}
 								<li class="price">
@@ -150,7 +153,7 @@
 							{% endif %}
 						</ul>
 					{% endif %}
-					</div>
+				</div>
 			</div>
 		{% endblock %}
 
@@ -179,8 +182,6 @@
 							{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
 						</button>
 					{% endif %}
-				{% else %}
-					<div class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
 				{% endif %}
 			</fieldset>
 		</form>

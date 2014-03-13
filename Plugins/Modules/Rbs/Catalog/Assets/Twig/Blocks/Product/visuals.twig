@@ -2,7 +2,7 @@
 	script{{ blockId }}.visuals = {
 		showVisual: function(visualId) {
 			jQuery('[id^="full-visual-{{ blockId }}-"]').hide();
-			jQuery('#full-visual-{{ blockId }}-'+visualId).show();
+			jQuery('#full-visual-{{ blockId }}-' + visualId).show();
 			return false;
 		},
 		startZoom: function(node) {
@@ -18,8 +18,8 @@
 
 			jNode.mousemove(function(e){
 				bigImage.css({
-					top: Math.max(zoomDiv.height()-bigImage.height(), Math.min(0, zoomDiv.height()/2 - (e.pageY - offset.top)*scaleY)),
-					left: Math.max(zoomDiv.width()-bigImage.width(), Math.min(0, zoomDiv.width()/2 - (e.pageX - offset.left)*scaleX))
+					top: Math.max(zoomDiv.height() - bigImage.height(), Math.min(0, zoomDiv.height()/2 - (e.pageY - offset.top)*scaleY)),
+					left: Math.max(zoomDiv.width() - bigImage.width(), Math.min(0, zoomDiv.width()/2 - (e.pageX - offset.left)*scaleX))
 				});
 			});
 
@@ -36,25 +36,27 @@
 </script>
 
 <script type="text/ng-template" id="/productVisuals.tpl">
-	<div data-ng-show="visuals && !productLoading" class="visuals" id="visuals-{{ blockId }}">
+	<div data-ng-show="visuals" class="visuals" id="visuals-{{ blockId }}">
 		<ul class="list-unstyled full-visuals">
 			<li data-ng-repeat="visual in visuals" id="full-visual-{{ blockId }}-(= visual.id =)">
-				{% if parameters.activateZoom %}
+				{% if parameters.activateZoom -%}
 					<a data-ng-href="(= visual.url.main =)" onmouseover="script{{ blockId }}.visuals.startZoom(this)">
-				{% endif %}
-				<img itemprop="image" data-ng-src="(= visual.url.detail =)" alt="" />
-				{% if parameters.activateZoom %}</a>{% endif %}
+				{%- endif -%}
+				<img itemprop="image" data-ng-src="(= visual.url.detail =)" alt="(= visual.alt =)" />
+				{%- if parameters.activateZoom -%}
+					</a>
+				{%- endif %}
 			</li>
 		</ul>
 		<ul data-ng-if="visuals.length > 1" class="list-inline thumbnail-visuals">
 			<li data-ng-repeat="visual in visuals" class="thumbnail" id="thumbnail-visual-{{ blockId }}-(= visual.id =)"
 				title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
-				<img data-ng-src="(= visual.url.thumbnail =)" alt=""
+				<img data-ng-src="(= visual.url.thumbnail =)" alt="(= visual.alt =)"
 					onclick="script{{ blockId }}.visuals.showVisual(visual.id)" />
 			</li>
 		</ul>
 	</div>
-	<div data-ng-show="!visuals && !productLoading" data-ng-transclude=""></div>
+	<div data-ng-show="!visuals" data-ng-transclude=""></div>
 </script>
 
 {% set allFormats =  {'detail' : detailFormat, 'thumbnail' : detailThumbnailFormat} %}
