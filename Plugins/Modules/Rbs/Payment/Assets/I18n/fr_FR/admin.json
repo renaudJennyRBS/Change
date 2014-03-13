@@ -11,6 +11,12 @@
 	"deferredconnector_create":{
 		"message":"ajouter un connecteur à paiement différé"
 	},
+	"atossipsconnector_create":{
+		"message":"ajouter un connecteur Atos Sips"
+	},
+	"technical_properties":{
+		"message":"Propriétés techniques"
+	},
 	"deferredconnector_autovalidatepayment_help":{
 		"message":"Permet d'activer une validation automatique du paiement lors de la confirmation de la commande."
 	},

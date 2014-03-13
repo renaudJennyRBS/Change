@@ -108,7 +108,7 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 			$uri = $urlManager->getByFunction($function, $website, $params, $LCID);
 			if ($uri)
 			{
-				return $uri->toString();
+				return $uri->normalize()->toString();
 			}
 		}
 		return null;

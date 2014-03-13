@@ -260,6 +260,7 @@ class DefaultTheme implements Theme
 		//Now find all modules configuration file
 		$pluginManager = $this->getPluginManager();
 		$plugins = $pluginManager->getInstalledPlugins();
+		$extendConfiguration = [];
 		foreach ($plugins as $plugin)
 		{
 			if ($plugin->isModule() && $plugin->isAvailable())
@@ -270,12 +271,45 @@ class DefaultTheme implements Theme
 					$blockConfigurations = [];
 					foreach (json_decode(\Change\Stdlib\File::read($configurationPath), true) as $blockName => $blockConfiguration)
 					{
-						$blockConfigurations[$plugin->getName() . '_' . $blockName] = $blockConfiguration;
+						if (count(explode('_', $blockName)) === 3)
+						{
+							if (isset($blockConfiguration['jsAssets']) && is_array($blockConfiguration['jsAssets']))
+							{
+								foreach ($blockConfiguration['jsAssets'] as $jsAsset)
+								{
+									$extendConfiguration[$blockName]['jsAssets'][] = $jsAsset;
+								}
+							}
+
+							if (isset($blockConfiguration['cssAssets']) && is_array($blockConfiguration['cssAssets']))
+							{
+								foreach ($blockConfiguration['cssAssets'] as $cssAsset)
+								{
+									$extendConfiguration[$blockName]['cssAssets'][] = $cssAsset;
+								}
+							}
+						}
+						else
+						{
+							$blockConfigurations[$plugin->getName() . '_' . $blockName] = $blockConfiguration;
+						}
 					}
 					$configuration = array_merge($configuration, $blockConfigurations);
 				}
 			}
 		}
+
+		foreach ($extendConfiguration as $blockName => $blockConfiguration)
+		{
+			foreach ($blockConfiguration as $assetKey => $assets)
+			{
+				foreach ($assets as $asset)
+				{
+					$configuration[$blockName][$assetKey][] = $asset;
+				}
+			}
+		}
+
 		return $configuration;
 	}
 

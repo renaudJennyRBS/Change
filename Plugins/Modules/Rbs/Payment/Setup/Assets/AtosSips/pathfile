@@ -1,0 +1,46 @@
+#########################################################################
+#
+#	Pathfile 
+#
+#	Liste des fichiers parametres utilises par le module de paiement
+#
+#########################################################################
+#
+#
+#-------------------------------------------------------------------------
+# Activation (YES) / D�sactivation (NO) du mode DEBUG
+#-------------------------------------------------------------------------
+#
+DEBUG!NO!
+#
+# ------------------------------------------------------------------------
+# Chemin vers le r�pertoire des logos depuis le web alias  
+# Exemple pour le r�pertoire www.merchant.com/sips/payment/logo/
+# indiquer:
+# ------------------------------------------------------------------------
+#
+D_LOGO!/Assets/Theme/Rbs/Base/Rbs_Payment/AtosSips/!
+#
+# --------------------------------------------------------------------------
+#  Fichiers param�tres li�s a l'api sips paiement	
+# --------------------------------------------------------------------------
+#
+# fichier des  param�tres sips
+#
+F_DEFAULT![DATA_DIRECTORY]/parmcom.defaut!
+#
+# fichier param�tre commercant
+#
+F_PARAM![DATA_DIRECTORY]/parmcom!
+#
+# certificat du commercant
+#
+F_CERTIFICATE![DATA_DIRECTORY]/certif!
+#
+# type du certificat
+#
+F_CTYPE!php!
+#
+# --------------------------------------------------------------------------
+# 	end of file
+# --------------------------------------------------------------------------

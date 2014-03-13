@@ -1,0 +1,16 @@
+<div data-ng-show="loadingConnector" class="well text-center">
+	<p>{{ i18n('m.rbs.commerce.front.please_wait_loading_connector', ['ucf', 'etc']) | raw }}</p>
+	<img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" />
+</div>
+<div data-ng-if="!loadingConnector">
+	<div class="panel panel-default">
+		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</div>
+		<div class="panel-body price">(= cart.context.formattedTotalAmountWithTaxes =)</div>
+	</div>
+
+	<p class="clearfix">
+		<button class="btn btn-lg btn-primary pull-right" type="button" data-ng-click="confirmOrder()">
+			{{ i18n('m.rbs.commerce.front.confirm_order', ['ucf']) }}
+		</button>
+	</p>
+</div>

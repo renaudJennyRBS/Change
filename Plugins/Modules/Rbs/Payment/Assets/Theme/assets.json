@@ -1,0 +1,7 @@
+{
+	"Rbs_Commerce_OrderProcess" : {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Payment/connector.js"
+		]
+	}
+}

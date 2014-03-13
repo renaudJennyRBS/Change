@@ -1,0 +1,7 @@
+api sips_617_PLUGIN_linux64-2.6.18.tar crée le 30/05/12 à 17:54:30
+
+type d'api = PLUGIN
+offre = SIPS
+OS = linux64 2.6.18
+version = p617
+processeur = x86_64

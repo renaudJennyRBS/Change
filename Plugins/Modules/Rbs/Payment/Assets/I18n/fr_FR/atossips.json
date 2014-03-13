@@ -1,0 +1,146 @@
+{
+	"err_code_00":{
+		"message":"Transaction approuvée ou traitée avec succès"
+	},
+	"err_code_02":{
+		"message":"Contacter l'émetteur de carte"
+	},
+	"err_code_03":{
+		"message":"Accepteur invalide"
+	},
+	"err_code_04":{
+		"message":"Conserver la carte"
+	},
+	"err_code_05":{
+		"message":"Ne pas honorer"
+	},
+	"err_code_07":{
+		"message":"Conserver la carte, conditions spéciales"
+	},
+	"err_code_08":{
+		"message":"Approuver après identification"
+	},
+	"err_code_12":{
+		"message":"Transaction invalide"
+	},
+	"err_code_13":{
+		"message":"Montant invalide"
+	},
+	"err_code_14":{
+		"message":"Numéro de porteur invalide"
+	},
+	"err_code_15":{
+		"message":"Emetteur de carte inconnu"
+	},
+	"err_code_30":{
+		"message":"Erreur de format"
+	},
+	"err_code_31":{
+		"message":"Identifiant de l'organisme acquéreur inconnu"
+	},
+	"err_code_33":{
+		"message":"Date de validité de la carte dépassée"
+	},
+	"err_code_34":{
+		"message":"Suspicion de fraude"
+	},
+	"err_code_41":{
+		"message":"Carte perdue"
+	},
+	"err_code_43":{
+		"message":"Carte volée"
+	},
+	"err_code_51":{
+		"message":"Provision insuffisante ou crédit dépassé"
+	},
+	"err_code_54":{
+		"message":"Date de validité de la carte dépassée"
+	},
+	"err_code_56":{
+		"message":"Carte absente du fichier"
+	},
+	"err_code_57":{
+		"message":"Transaction non permise à ce porteur"
+	},
+	"err_code_58":{
+		"message":"Transaction interdite au terminal"
+	},
+	"err_code_59":{
+		"message":"Suspicion de fraude"
+	},
+	"err_code_60":{
+		"message":"L'accepteur de carte doit contacter l'acquéreur"
+	},
+	"err_code_61":{
+		"message":"Dépasse la limite du montant de retrait"
+	},
+	"err_code_63":{
+		"message":"Règles de sécurité non respectées"
+	},
+	"err_code_68":{
+		"message":"Réponse non parvenue ou reçue trop tard"
+	},
+	"err_code_90":{
+		"message":"Arrêt momentané du système"
+	},
+	"err_code_91":{
+		"message":"Emetteur de cartes inaccessible"
+	},
+	"err_code_96":{
+		"message":"Mauvais fonctionnement du système"
+	},
+	"err_code_97":{
+		"message":"Échéance de la temporisation de surveillance globale"
+	},
+	"err_code_98":{
+		"message":"Serveur indisponible routage réseau demandé à nouveau"
+	},
+	"err_code_99":{
+		"message":"Incident domaine initiateur"
+	},
+	"err_amex_code_00":{
+		"message":"Transaction approuvée ou traitée avec succès"
+	},
+	"err_amex_code_02":{
+		"message":"Dépassement de plafond"
+	},
+	"err_amex_code_04":{
+		"message":"Conserver la carte"
+	},
+	"err_amex_code_05":{
+		"message":"Ne pas honorer"
+	},
+	"err_amex_code_97":{
+		"message":"Échéance de la temporisation de surveillance globale"
+	},
+	"err_finaref_code_00":{
+		"message":"Transaction approuvée"
+	},
+	"err_finaref_code_03":{
+		"message":"Commerçant inconnu / Identifiant de commerçant incorrect"
+	},
+	"err_finaref_code_05":{
+		"message":"Compte / Porteur avec statut bloqué ou invalide"
+	},
+	"err_finaref_code_11":{
+		"message":"Compte / porteur inconnu"
+	},
+	"err_finaref_code_16":{
+		"message":"Provision insuffisante"
+	},
+	"err_finaref_code_20":{
+		"message":"Commerçant invalide / Code monnaie incorrect / Opération commerciale inconnue / Opération commerciale invalide"
+	},
+	"err_finaref_code_80":{
+		"message":"Transaction approuvée avec dépassement"
+	},
+	"err_finaref_code_81":{
+		"message":"Transaction approuvée avec augmentation capital"
+	},
+	"err_finaref_code_82":{
+		"message":"Transaction approuvée NPAI"
+	},
+	"err_finaref_code_83":{
+		"message":"Compte / porteur invalide"
+	}
+}
