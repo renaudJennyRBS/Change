@@ -497,16 +497,25 @@
 					if (data.hasOwnProperty('accessorId')) {
 						scope.information.guest = false;
 						scope.information.userId = data['accessorId'];
-						delete scope.information.password;
 
 						var postData = { userId: scope.information.userId };
 						updateCart($http, scope, postData, scope.setAuthenticated);
 					}
 					else if (data.hasOwnProperty('errors')) {
-						addError('information', data.errors);
+						for (var i=0; i < data.errors.length; i++ )
+						{
+							addError('information', data.errors[i]);
+						}
 					}
+					delete scope.information.password;
 				})
-				.error(function(data, status, headers) { console.log('Login error', data, status, headers); });
+				.error(function(data) {
+					for (var i=0; i < data.errors.length; i++ )
+					{
+						addError('information', data.errors[i]);
+					}
+					delete scope.information.password;
+				});
 		};
 
 		scope.logout = function() {
@@ -519,13 +528,25 @@
 		scope.canSetEmail = function() {
 			return scope.information.email && scope.information.email == scope.information.confirmEmail;
 		};
+
 		scope.setEmail = function() {
 			clearErrors('information');
+
 			var postData = {
 				email: scope.information.email,
 				userId: 0
 			};
-			updateCart($http, scope, postData, scope.setAuthenticated);
+
+			$http.post('Action/Rbs/User/CheckEmailAvailability', postData)
+				.success(function() {
+					updateCart($http, scope, postData, scope.setAuthenticated);
+				})
+				.error(function(data) {
+					for (var i=0; i < data.errors.length; i++ )
+					{
+						addError('information', data.errors[i]);
+					}
+				});
 		};
 
 		scope.setAuthenticated = function() {
