@@ -7,6 +7,7 @@
 	<div rbs-aside-column>
 
 		<rbs-default-asides-for-editor id="rbsWebsitePageDefaultAsides"></rbs-default-asides-for-editor>
+		<a rbs-aside-other-link href="" ng-href="(= document | rbsURL:'createFrom' =)">{{ i18n('m.rbs.admin.admin.create_from', ['ucf', 'etc']) | raw }}</a>
 
 		<div id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
 
@@ -30,6 +31,7 @@
 			<div class="rbs-aside-block rbs-aside-other-links">
 				<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
 				<a rbs-aside-other-link href="(= document.pageTemplate | rbsURL =)">{{ i18n('m.rbs.website.admin.page_edit_template', ['ucf']) | raw }}</a>
+				<a rbs-aside-other-link href="" ng-href="(= document | rbsURL:'createFrom' =)">{{ i18n('m.rbs.admin.admin.create_from', ['ucf', 'etc']) | raw }}</a>
 			</div>
 
 		</div>

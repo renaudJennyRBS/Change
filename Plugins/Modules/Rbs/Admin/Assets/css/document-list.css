@@ -54,13 +54,13 @@ rbs-document-list .panel-footer .pagination {
 	top: 18px;
 	left: auto;
 	right: -9px;
-	width: 150px;
+	width: 170px;
 	background: #333333;
 }
 
 .document-list tr .popover.quick-actions .arrow {
 	background: transparent;
-	left: 126px;
+	left: 146px;
 	border-color: transparent;
 }
 .document-list tr .popover.quick-actions .arrow:after {
@@ -121,7 +121,7 @@ rbs-document-list .panel-footer .pagination {
 }
 
 
-.document-list .table td .primary-cell {
+.table.document-list td .primary-cell {
 	position: relative;
 	min-width: 120px;
 	margin: -5px;
@@ -132,7 +132,6 @@ rbs-document-list .panel-footer .pagination {
 rbs-document-list > .btn-toolbar {
 	margin-bottom: 10px;
 }
-
 
 
 .document-list th .btn-xs {

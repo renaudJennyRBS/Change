@@ -2,8 +2,8 @@
 
 	"use strict";
 
-	var app = angular.module('RbsChange');
-	var CORRECTION_CSS_CLASS = 'correction';
+	var app = angular.module('RbsChange'),
+		CORRECTION_CSS_CLASS = 'correction';
 
 
 	/**
@@ -16,10 +16,9 @@
 	}
 
 
-	function editorDirective($rootScope, $routeParams, $q, $location, EditorManager, Utils, ArrayUtils, i18n, REST,
+	function editorDirective ($rootScope, $routeParams, $q, $location, $compile, EditorManager, Utils, ArrayUtils, i18n, REST,
 		Events, Settings, NotificationCenter, Navigation, ErrorFormatter, UrlManager, Breadcrumb)
 	{
-
 		return {
 
 			restrict : 'A',
@@ -30,8 +29,10 @@
 				var	initializedSections = {},
 					hasContextData = false,
 					menuEntries = [],
+					properties = {},
 					createNewDocumentId,
-					modelInfoPromise;
+					modelInfoPromise,
+					editorUrl;
 
 
 				//-----------------------------------------------//
@@ -577,6 +578,9 @@
 				function addMenuEntry (entry)
 				{
 					menuEntries.push(entry);
+					angular.forEach(entry.fields, function (f) {
+						properties[f.id] = f.label;
+					});
 					$scope.$emit('Change:UpdateEditorMenu', menuEntries);
 				}
 
@@ -594,6 +598,7 @@
 				$scope.$on('Change:Editor:UpdateMenu', function () {
 					// 1) Clear all menu entries.
 					menuEntries.length = 0;
+					properties = {};
 					// 2) Ask every section to update itself with the fields it contains.
 					$scope.$broadcast('Change:Editor:SectionsUpdateMenu');
 					// 3) Tell the aside to update.
@@ -755,6 +760,7 @@
 						$scope.original = angular.copy($scope.document);
 					}
 
+					editorUrl = $location.absUrl();
 					initCorrection();
 
 					// Call `$scope.onReady()` if present.
@@ -856,11 +862,12 @@
 
 
 
-				$scope.$on('$routeChangeStart', function () {
+				$rootScope.$on('$locationChangeStart', function () {
 					if (! isUnchanged() ) {
-						EditorManager.saveLocalCopy($scope.document);
+						EditorManager.saveLocalCopy($scope.document, editorUrl);
 					}
 				});
+
 
 
 				//-----------------------------------------------//
@@ -886,6 +893,19 @@
 					getCurrentSection : getCurrentSection,
 					addMenuEntry : addMenuEntry,
 					getMenuEntries : getMenuEntries,
+
+					getProperties : function () {
+						return properties;
+					},
+
+					addHeaderMessage : function (html) {
+						var container = $element.find('rbs-page-header');
+						if (container.length) {
+							return container.after($compile(html)($scope));
+						} else {
+							return $element.prepend($compile('<div class="col-md-12">' + html + '</div>')($scope));
+						}
+					},
 
 					getDocumentModelName : getDocumentModelName
 				};
@@ -918,8 +938,8 @@
 	}
 
 	editorDirective.$inject = [
-		'$rootScope', '$routeParams', '$q',
-		'$location', 'RbsChange.EditorManager', 'RbsChange.Utils',
+		'$rootScope', '$routeParams', '$q', '$location', '$compile',
+		'RbsChange.EditorManager', 'RbsChange.Utils',
 		'RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.REST',
 		'RbsChange.Events', 'RbsChange.Settings', 'RbsChange.NotificationCenter',
 		'RbsChange.Navigation', 'RbsChange.ErrorFormatter', 'RbsChange.UrlManager', 'RbsChange.Breadcrumb'
@@ -932,56 +952,91 @@
 	/**
 	 * Directive used to create a new Document.
 	 */
-	app.directive('rbsDocumentEditorNew', ['RbsChange.REST', 'RbsChange.Settings', '$location', function (REST, Settings, $location)
-	{
-		return {
-			restrict : 'A',
-			require : '^rbsDocumentEditorBase',
-			scope : false,
-			priority : 900,
+	app.directive('rbsDocumentEditorNew', [
+		'RbsChange.REST', 'RbsChange.Settings', '$location', '$routeParams', 'RbsChange.NotificationCenter', 'RbsChange.i18n',
+		function (REST, Settings, $location, $routeParams, NotificationCenter, i18n)
+		{
+			return {
+				restrict : 'A',
+				require : '^rbsDocumentEditorBase',
+				scope : false,
+				priority : 900,
 
-			compile : function (tElement)
-			{
-				tElement.attr('name', 'form');
-				tElement.addClass('form-horizontal');
-
-				return function rbsDocumentEditorNewLink (scope, iElement, iAttrs, ctrl)
+				compile : function (tElement)
 				{
-					// First, we check if there is a Navigation Context available for this editor.
+					tElement.attr('name', 'form');
+					tElement.addClass('form-horizontal');
 
-					// If there is one, it will be resolved by the prepareContext() method, and we don't need
-					// to do anything here.
-					if (! ctrl.prepareContext())
+					return function rbsDocumentEditorNewLink (scope, iElement, iAttrs, ctrl)
 					{
-						// No navigation Context:
-						var promise;
+						// First, we check if there is a Navigation Context available for this editor.
 
-						// Is there a 'initDocument()' method in the scope?
-						// TODO remove initDocument?
-						if (angular.isFunction(scope.initDocument)) {
-							promise = scope.initDocument();
+						// If there is one, it will be resolved by the prepareContext() method, and we don't need
+						// to do anything here.
+						if (! ctrl.prepareContext())
+						{
+							// No navigation Context:
+							var promise;
+
+							// Is there a 'initDocument()' method in the scope?
+							// TODO remove initDocument?
+							if (angular.isFunction(scope.initDocument)) {
+								promise = scope.initDocument();
+							}
+
+							if (isPromise(promise)) {
+								promise.then(function (doc) {
+									prepareEditor(doc);
+								});
+							} else {
+								prepareEditor(REST.newResource(ctrl.getDocumentModelName(), Settings.get('LCID')));
+							}
 						}
 
-						if (isPromise(promise)) {
-							promise.then(function (doc) {
-								ctrl.prepareCreation(doc);
-							});
-						} else {
-							ctrl.prepareCreation(REST.newResource(ctrl.getDocumentModelName(), Settings.get('LCID')));
+						function prepareEditor (doc)
+						{
+							ctrl.prepareCreation(doc);
+
+							// Check if there is a 'from' parameter in the route.
+							// In that case, we load the corresponding reference Document and populate the new Document with
+							// the properties of the reference Document.
+							if ($routeParams['from'])
+							{
+								var fromId = parseInt($routeParams['from'], 10);
+								if (! isNaN(fromId))
+								{
+									ctrl.addHeaderMessage('<div rbs-document-editor-create-from-message="createFromReferenceDocument"></div>');
+
+									REST.resource(ctrl.getDocumentModelName(), fromId, doc.LCID).then(
+										// Success
+										function (refDoc)
+										{
+											scope.createFromReferenceDocument = refDoc;
+											angular.forEach(ctrl.getProperties(), function (label, id) {
+												scope.document[id] = refDoc[id];
+											});
+										},
+										// Error
+										function ()
+										{
+											NotificationCenter.error(i18n.trans('m.rbs.admin.admin.reference_document_could_not_be_loaded'));
+										}
+									);
+								}
+							}
 						}
-					}
 
+						// Function called when a creation has been done.
+						scope.terminateSave = function (doc)
+						{
+							$location.path(doc.url());
+						};
 
-					// Function called when a creation has been done.
-					scope.terminateSave = function (doc)
-					{
-						$location.path(doc.url());
 					};
-
-				};
-			}
-		};
-	}]);
+				}
+			};
+		}
+	]);
 
 
 
@@ -1105,8 +1160,11 @@
 
 
 
-
-
+	/**
+	 * Directive for editors' Sections, applied on each fieldset in editors template.
+	 * This directive looks for the fields it contains and registers a menu entry in the
+	 * editor Controller (rbsDocumentEditorBase).
+	 */
 	app.directive('rbsEditorSection', ['RbsChange.Utils', '$location', function (Utils, $location)
 	{
 		var defaultSectionIcons = {
@@ -1195,7 +1253,29 @@
 
 
 
-
-
+	/**
+	 * Directives that displays a message when creating a Document from another one.
+	 */
+	app.directive('rbsDocumentEditorCreateFromMessage', ['RbsChange.i18n', function (i18n)
+	{
+		return {
+			restrict : 'A',
+			template :
+				'<div class="alert alert-info">' +
+					'<p ng-if="refDoc">' +
+						'<i class="icon-info-sign icon-3x pull-left"></i> ' +
+						i18n.trans('m.rbs.admin.admin.creating_a_new_document_from') +
+						' <strong><a href target="_blank" ng-href="(= refDoc | rbsURL =)"><span ng-bind="refDoc.label"></span> <i class="icon-external-link"></i></a></strong>.<br/>' +
+						i18n.trans('m.rbs.admin.admin.creating_a_new_document_from_tip') +
+					'</p>' +
+					'<p ng-if="! refDoc">' +
+						'<i class="icon-spin icon-spinner"></i> ' + i18n.trans('m.rbs.admin.admin.loading_reference_document | ucf | etc') +
+					'</p>' +
+				'</div>',
+			scope : {
+				refDoc : '=rbsDocumentEditorCreateFromMessage'
+			}
+		};
+	}]);
 
 })(window.jQuery);

@@ -1244,5 +1244,23 @@
 	},
 	"document_does_not_exist":{
 		"message":"Ce document n'existe pas ou a été supprimé."
+	},
+	"reference_document_could_not_be_loaded":{
+		"message":"Le document de référence n'a pas pu être chargé."
+	},
+	"create_from":{
+		"message":"créer <strong>nouveau</strong> à partir de"
+	},
+	"new_from":{
+		"message":"créer à partir de"
+	},
+	"creating_a_new_document_from":{
+		"message":"Vous créez un <strong>nouveau document</strong> à partir des informations de"
+	},
+	"creating_a_new_document_from_tip":{
+		"message":"<span class=\"label label-info\">Conseil</span> Pensez à changer au moins le libellé ou le titre pour le différencier du document de référence <i class=\"icon-smile\"></i>"
+	},
+	"loading_reference_document":{
+		"message":"chargement du document de référence"
 	}
 }

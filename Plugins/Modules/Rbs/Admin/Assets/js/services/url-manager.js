@@ -218,7 +218,7 @@
 	var urlFilter = ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
 
 		return function (doc, urlName, params) {
-			var	url, nodeId;
+			var	url, nodeId, qs;
 
 			if (params === 'tree') {
 				nodeId = Breadcrumb.getCurrentNodeId();
@@ -230,10 +230,17 @@
 			}
 
 			if (Utils.isDocument(doc)) {
+				if (urlName === 'createFrom') {
+					urlName = 'new';
+					qs = 'from=' + doc.id;
+				}
 				if (! urlName && doc.refLCID && doc.LCID !== doc.refLCID) {
 					urlName = 'translate';
 				}
 				url = UrlManager.getUrl(doc, params, urlName);
+				if (qs) {
+					url += (url.indexOf('?') === -1 ? '?' : '&') + qs;
+				}
 			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
 				url = UrlManager.getUrl(doc, params || null, urlName);
 			} else {

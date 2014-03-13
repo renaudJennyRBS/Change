@@ -29,12 +29,19 @@
 					collection="browseCollection"
 					striped-rows="false"
 					extend="browser"
+					on-reload="browser.reload"
 					use-properties="functions title website">
 
 				<rbs-quick-actions>
 					[action default]
 					<a ng-if="doc.is('Rbs_Website_Topic')" href="" ng-href="(= doc | rbsURL:'functions' =)">
 						<i class="icon-cog"></i> {{ i18n('m.rbs.website.admin.topic_functions') }}
+					</a>
+					<a ng-if="! doc.is('Rbs_Website_Topic')" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= doc | rbsURL:'createFrom' =)">
+						<i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.new_from', ['etc']) }}
+					</a>
+					<a ng-if="doc.is('Rbs_Website_Topic')" href="javascript:;" ng-click="extend.reloadNode(doc)">
+						<i class="icon-refresh"></i> {{ i18n('m.rbs.website.admin.refresh_topic') }}
 					</a>
 				</rbs-quick-actions>
 
@@ -52,7 +59,7 @@
 					</span>
 
 					<span ng-if="extend.isTopic(doc)">
-						<i ng-if="extend.hasChildren(doc)" ng-click="extend.toggleNode(doc)" class="tree-icon opacity-half icon-large" ng-class="{'icon-folder-open': extend.isNodeOpen(doc), 'icon-folder-close': ! extend.isNodeOpen(doc)}"></i>
+						<i ng-if="extend.hasChildren(doc)" title="{{ i18nAttr('m.rbs.website.admin.alt_click_to_refresh') }}" ng-click="extend.toggleNode(doc, $event)" class="tree-icon opacity-half icon-large" ng-class="{'icon-folder-open': extend.isNodeOpen(doc), 'icon-folder-close': ! extend.isNodeOpen(doc)}"></i>
 						<i ng-if="! extend.hasChildren(doc)" class="tree-icon opacity-half icon-large icon-folder-close-alt"></i>
 						<strong><a href="javascript:;" ng-click="extend.toggleNode(doc)" ng-bind="doc.label"></a></strong>
 						<span class="children-count">(= extend.childrenCount(doc) | rbsMaxNumber =)</span>

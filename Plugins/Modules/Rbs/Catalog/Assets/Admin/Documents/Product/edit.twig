@@ -7,7 +7,6 @@
 	<div rbs-aside-column>
 		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
 
-
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
@@ -36,7 +35,6 @@
 				</p>
 			</div>
 		</div>
-
 
 	</div>
 
@@ -74,7 +72,7 @@
 			          data-editor-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}"
 			          data-editor-section-icon="icon-edit-sign">
 
-				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
+				<rbs-field ng-if="!document.variant" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
 					<select class="form-control" ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="productTypology:true">
 						<option value="">{{ i18n('m.rbs.catalog.admin.product_attribute_select', ['ucf']) }}</option>
 					</select>
@@ -88,28 +86,28 @@
 
 							<rbs-field label="(= attributeItemDef.label =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
 								<div ng-if="attributeItemDef.collectionCode">
-									<select ng-model="attributeItemDef.value.value" class="form-control" rbs-items-from-collection="(= attributeItemDef.collectionCode =)">
+									<select ng-model="attributeItemDef.value.value" class="form-control" rbs-items-from-collection="(= attributeItemDef.collectionCode =)" ng-disabled="!attributeItemDef.canBeEdit">
 										<option value=""></option>
 									</select>
 								</div>
 								<div ng-if="!attributeItemDef.collectionCode">
 									<div data-ng-switch="attributeItemDef.type">
-										<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
-										<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)"></rbs-switch>
-										<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ></rbs-date-selector>
+										<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
+										<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ng-disabled="!attributeDef.canBeEdit"></rbs-switch>
+										<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ng-disabled="!attributeItemDef.canBeEdit"></rbs-date-selector>
 										<div class="row" data-ng-switch-when="Integer">
 											<div class="col-xs-2">
-												<input type="number" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+												<input type="number" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
 											</div>
 										</div>
 										<div class="row" data-ng-switch-when="Float">
 											<div class="col-xs-2">
-												<input type="text"  rbs-smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" />
+												<input type="text"  rbs-smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
 											</div>
 										</div>
 										<rbs-document-picker-single data-ng-if="attributeItemDef.usePicker" data-ng-switch-when="Document" context-key="(= 'attr.' + attributeDef.id =)"
 												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)" ng-disabled="!attributeItemDef.canBeEdit">
 										</rbs-document-picker-single>
 										<rbs-document-select data-ng-if="!attributeItemDef.usePicker" data-ng-switch-when="Document"
 											ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
@@ -117,19 +115,19 @@
 										</rbs-document-select>
 										<rbs-document-picker-single data-ng-if="attributeItemDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
 												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)" ng-disabled="!attributeItemDef.canBeEdit">
 										</rbs-document-picker-single>
 										<rbs-document-select data-ng-if="!attributeItemDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true"
 											ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-											property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+											property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)" ng-disabled="!attributeItemDef.canBeEdit">
 										</rbs-document-select>
 										<rbs-document-picker-multiple data-ng-switch-when="DocumentArray" context-key="(= 'attr.' + attributeDef.id =)"
 												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)" ng-disabled="!attributeItemDef.canBeEdit">
 										</rbs-document-picker-multiple>
 										<rbs-document-picker-multiple data-ng-switch-when="DocumentIdArray" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
 												ng-model="attributeItemDef.value.value" ng-required="attributeItemDef.required"
-												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)">
+												property-label="(= attributeItemDef.label =)" selector-title="" accepted-model="(= attributeItemDef.documentType =)" ng-disabled="!attributeItemDef.canBeEdit">
 										</rbs-document-picker-multiple>
 										<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" profile="Website"></rbs-rich-text-input>
 									</div>
@@ -141,50 +139,50 @@
 					<div ng-if="!attributeDef.attributes">
 						<rbs-field label="(= attributeDef.label =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
 							<div ng-if="attributeDef.collectionCode">
-								<select ng-model="attributeDef.value.value" class="form-control" rbs-items-from-collection="(= attributeDef.collectionCode =)">
+								<select ng-model="attributeDef.value.value" class="form-control" rbs-items-from-collection="(= attributeDef.collectionCode =)" ng-disabled="!attributeDef.canBeEdit">
 									<option value=""></option>
 								</select>
 							</div>
 							<div ng-if="!attributeDef.collectionCode">
 								<div data-ng-switch="attributeDef.type">
-									<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
-									<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)"></rbs-switch>
-									<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ></rbs-date-selector>
+									<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" ng-disabled="!attributeDef.canBeEdit" />
+									<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ng-disabled="!attributeDef.canBeEdit"></rbs-switch>
+									<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ng-disabled="!attributeDef.canBeEdit"></rbs-date-selector>
 									<div class="row" data-ng-switch-when="Integer">
 										<div class="col-xs-2">
-											<input type="number" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+											<input type="number" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" ng-disabled="!attributeDef.canBeEdit"/>
 										</div>
 									</div>
 									<div class="row" data-ng-switch-when="Float">
 										<div class="col-xs-2">
-											<input type="text" rbs-smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" />
+											<input type="text" rbs-smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" ng-disabled="!attributeDef.canBeEdit"/>
 										</div>
 									</div>
 									<rbs-document-picker-single data-ng-if="attributeDef.usePicker" data-ng-switch-when="Document" context-key="(= 'attr.' + attributeDef.id =)"
 											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)" ng-disabled="!attributeDef.canBeEdit">
 									</rbs-document-picker-single>
 									<rbs-document-select data-ng-if="!attributeDef.usePicker" data-ng-switch-when="Document"
 										ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-										property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+										property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)" ng-disabled="!attributeDef.canBeEdit">
 									</rbs-document-select>
 									<rbs-document-picker-single data-ng-if="attributeDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
 											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)" ng-disabled="!attributeDef.canBeEdit">
 									</rbs-document-picker-single>
 									<rbs-document-select data-ng-if="!attributeDef.usePicker" data-ng-switch-when="DocumentId" value-ids="true"
 										ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-										property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+										property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)" ng-disabled="!attributeDef.canBeEdit">
 									</rbs-document-select>
 									<rbs-document-picker-multiple data-ng-switch-when="DocumentArray" context-key="(= 'attr.' + attributeDef.id =)"
 											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)" ng-disabled="!attributeDef.canBeEdit">
 									</rbs-document-picker-multiple>
 									<rbs-document-picker-multiple data-ng-switch-when="DocumentIdArray" value-ids="true" context-key="(= 'attr.' + attributeDef.id =)"
 											ng-model="attributeDef.value.value" ng-required="attributeDef.required"
-											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)">
+											property-label="(= attributeDef.label =)" selector-title="" accepted-model="(= attributeDef.documentType =)" ng-disabled="!attributeDef.canBeEdit">
 									</rbs-document-picker-multiple>
-									<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website"></rbs-rich-text-input>
+									<rbs-rich-text-input data-ng-switch-when="Text" use-tabs="false" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" profile="Website" ng-disabled="!attributeDef.canBeEdit"></rbs-rich-text-input>
 								</div>
 							</div>
 						</rbs-field>

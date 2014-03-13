@@ -22,7 +22,8 @@
 				var	initializedSections = {},
 					translation = false,
 					wrappingFormScope,
-					hasContextData = false;
+					hasContextData = false,
+					editorUrl;
 
 				// Special trick for localized Documents.
 				// In the `form.twig` file for localized Documents, there is an `ng-switch` to load:
@@ -579,6 +580,7 @@
 
 					initCorrection();
 					initMenu();
+					editorUrl = $location.absUrl();
 
 					// --- selection process END
 
@@ -638,9 +640,9 @@
 						});
 					}, true);
 
-					$scope.$on('$routeChangeStart', function () {
+					$scope.$on('$locationChangeStart', function () {
 						if ($scope.changes.length > 0) {
-							EditorManager.saveLocalCopy($scope.document);
+							EditorManager.saveLocalCopy($scope.document, editorUrl);
 						}
 					});
 				}
@@ -1014,13 +1016,14 @@
 
 			// Local copy public API
 
-			'saveLocalCopy' : function (doc) {
+			'saveLocalCopy' : function (doc, url) {
 				var	key = makeLocalCopyKey(doc);
 				doc.META$.localCopy = {
 					saveDate : (new Date()).toString(),
 					documentVersion : doc.documentVersion,
 					modificationDate : doc.modificationDate,
-					publicationStatus : doc.publicationStatus
+					publicationStatus : doc.publicationStatus,
+					editorUrl : url || doc.url()
 				};
 				delete doc.documentVersion;
 				delete doc.modificationDate;
