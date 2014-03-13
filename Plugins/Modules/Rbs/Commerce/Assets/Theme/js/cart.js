@@ -528,13 +528,25 @@
 		scope.canSetEmail = function() {
 			return scope.information.email && scope.information.email == scope.information.confirmEmail;
 		};
+
 		scope.setEmail = function() {
 			clearErrors('information');
+
 			var postData = {
 				email: scope.information.email,
 				userId: 0
 			};
-			updateCart($http, scope, postData, scope.setAuthenticated);
+
+			$http.post('Action/Rbs/User/CheckEmailAvailability', postData)
+				.success(function() {
+					updateCart($http, scope, postData, scope.setAuthenticated);
+				})
+				.error(function(data) {
+					for (var i=0; i < data.errors.length; i++ )
+					{
+						addError('information', data.errors[i]);
+					}
+				});
 		};
 
 		scope.setAuthenticated = function() {
