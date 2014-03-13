@@ -1262,5 +1262,20 @@
 	},
 	"loading_reference_document":{
 		"message":"chargement du document de référence"
+	},
+	"gps_latitude":{
+		"message":"latitude"
+	},
+	"gps_longitude":{
+		"message":"longitude"
+	},
+	"gps_open_map":{
+		"message":"ouvrir la carte"
+	},
+	"gps_map_title":{
+		"message":"carte"
+	},
+	"gps_address_search":{
+		"message":"rechercher une adresse ou un lieu"
 	}
 }
