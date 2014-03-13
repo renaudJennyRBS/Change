@@ -53,6 +53,14 @@ abstract class AbstractConverter implements \Rbs\Simpleform\Converter\ConverterI
 	{
 		if ($validator instanceof \Zend\Validator\ValidatorInterface)
 		{
+			if ($validator instanceof \Zend\Validator\AbstractValidator)
+			{
+				foreach ($validator->getMessageTemplates() as $k => $v)
+				{
+					$validator->setMessage(strtolower($k), $k);
+				}
+			}
+
 			if (!$validator->isValid($value))
 			{
 				return array_values($validator->getMessages());

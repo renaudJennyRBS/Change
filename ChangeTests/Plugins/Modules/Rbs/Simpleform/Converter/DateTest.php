@@ -26,8 +26,8 @@ class DateTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('2013-12-24', $converter->parseFromUI('2013-12-24', array()));
 		$this->assertEquals('2013-12-24', $converter->parseFromUI('   2013-12-24  ', array()));
 		$this->assertError($converter->parseFromUI('abc', array()));
-		$this->assertError($converter->parseFromUI('13-12-24', array()));
-		$this->assertError($converter->parseFromUI('13-32-24', array()));
+		$this->assertError($converter->parseFromUI('2013-13-24', array()));
+		$this->assertError($converter->parseFromUI('2013-12-32', array()));
 	}
 
 	protected function assertError($value)

@@ -66,8 +66,11 @@ class ConstraintsManager
 		{
 			\Zend\Validator\AbstractValidator::setDefaultTranslatorTextDomain('c.constraints');
 			$t = Translator::factory(array());
-			$t->setI18nManager($this->getI18nManager());
-			\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+			if ($t instanceof Translator)
+			{
+				$t->setI18nManager($this->getI18nManager());
+				\Zend\Validator\AbstractValidator::setDefaultTranslator($t);
+			}
 		}
 	}
 
@@ -87,7 +90,7 @@ class ConstraintsManager
 				$constraint = new $className($params);
 				if ($constraint instanceof \Zend\Validator\ValidatorInterface)
 				{
-					return $constraint;
+					return $this->fixMessageTemplates($constraint);
 				}
 			}
 		}
@@ -100,11 +103,27 @@ class ConstraintsManager
 				$constraint = call_user_func($caller, $params);
 				if ($constraint instanceof \Zend\Validator\ValidatorInterface)
 				{
-					return $constraint;
+					return $this->fixMessageTemplates($constraint);
 				}
 			}
 		}
 		throw new \InvalidArgumentException('Constraint '. $name . ' not found', 52002);
+	}
+
+	/**
+	 * @param \Zend\Validator\ValidatorInterface $constraint
+	 * @return \Zend\Validator\ValidatorInterface
+	 */
+	protected function fixMessageTemplates($constraint)
+	{
+		if ($constraint instanceof \Zend\Validator\AbstractValidator)
+		{
+			foreach ($constraint->getMessageTemplates() as $messageKey => $unused)
+			{
+				$constraint->setMessage(strtolower($messageKey), $messageKey);
+			}
+		}
+		return $constraint;
 	}
 	
 	/**
@@ -143,7 +162,7 @@ class ConstraintsManager
 	 */
 	public function email($params = array())
 	{	
-		$params['hostname'] = self::hostname($params);	
+		$params['hostname'] = self::hostname($params);
 		return new \Zend\Validator\EmailAddress($params);
 	}
 	
