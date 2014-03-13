@@ -40,5 +40,8 @@
 	},
 	"concerned_document":{
 		"message":"document concerné"
+	},
+	"admin_view_timeline":{
+		"message":"consulter la <strong>TIMELINE</strong>"
 	}
 }

@@ -201,4 +201,24 @@
 
 	Editor.$inject = ['$timeout', '$http', 'RbsChange.REST'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
+
+	function AsideProductVariantGroup()
+	{
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Catalog/Documents/Product/aside-product-variant-group.twig'
+		}
+	}
+
+	angular.module('RbsChange').directive('rbsAsideProductVariantGroup', AsideProductVariantGroup);
+
+	function AsideProductMerchandising()
+	{
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Catalog/Documents/Product/aside-product-merchandising.twig'
+		}
+	}
+
+	angular.module('RbsChange').directive('rbsAsideProductMerchandising', AsideProductMerchandising);
 })();

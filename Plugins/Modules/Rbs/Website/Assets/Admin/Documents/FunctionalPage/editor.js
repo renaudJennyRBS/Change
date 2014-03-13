@@ -49,15 +49,16 @@
 
 				scope.leaveSection = function (section) {
 					if (section === 'content') {
-						$('#rbsWebsitePageDefaultAsides').show();
+						$('[data-rbs-aside-column]').children().show();
 						$('#rbsWebsitePageBlockPropertiesAside').hide();
 					}
 				};
 
 				scope.enterSection = function (section) {
 					if (section === 'content') {
-						$('#rbsWebsitePageDefaultAsides').hide();
+						$('[data-rbs-aside-column]').children().hide();
 						$('#rbsWebsitePageBlockPropertiesAside').show();
+						$('rbs-aside-editor-menu').show();
 					}
 				};
 

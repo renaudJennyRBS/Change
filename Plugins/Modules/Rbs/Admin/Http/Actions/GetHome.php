@@ -29,8 +29,15 @@ class GetHome
 		$attributes['LCID'] = $event->getApplicationServices()->getI18nManager()->getLCID();
 		$attributes['lang'] = substr($attributes['LCID'], 0, 2);
 
-		/* @var $manager \Rbs\Admin\Manager */
-		$manager = $event->getParam('manager');
+		$genericServices = $event->getServices('genericServices');
+		if ($genericServices instanceof \Rbs\Generic\GenericServices)
+		{
+			$manager = $genericServices->getAdminManager();
+		}
+		else
+		{
+			throw new \RuntimeException('GenericServices not set', 999999);
+		}
 
 
 		$OAuth = $event->getApplicationServices()->getOAuthManager();

@@ -66,8 +66,12 @@
 		"auto": false
 	},
 	"/Rbs/Theme/": false,
+	"/Rbs/Theme/Template/": false,
 	"/Rbs/Theme/Template/:id": false,
 	"/Rbs/Theme/Template/:id/timeline": false,
 	"/Rbs/Theme/Template/:id/workflow": false,
-	"/Rbs/Theme/Template/new": false
+	"/Rbs/Theme/Template/new": false,
+	"/Rbs/Theme/Theme/": false,
+	"/Rbs/Theme/Theme/:id": false,
+	"/Rbs/Theme/Theme/new": false
 }

@@ -64,6 +64,13 @@ class Listeners implements ListenerAggregateInterface
 			$cmd->execute($event);
 		};
 		$events->attach('rbs_dev:admin-routes', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Rbs\Dev\Commands\InitializeView();
+			$cmd->execute($event);
+		};
+		$events->attach('rbs_dev:initialize-view', $callback);
 	}
 
 	/**

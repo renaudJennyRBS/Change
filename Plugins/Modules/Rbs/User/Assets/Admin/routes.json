@@ -82,6 +82,9 @@
 		},
 		"auto": false
 	},
+	"/Rbs/User/Profile/": false,
+	"/Rbs/User/Profile/:id": false,
+	"/Rbs/User/Profile/new": false,
 	"/Rbs/User/User/": {
 		"model": "Rbs_User_User",
 		"name": "list",

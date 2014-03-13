@@ -238,6 +238,7 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Geo/AddressField/": false,
 	"/Rbs/Geo/AddressField/:id": {
 		"model": "Rbs_Geo_AddressField",
 		"name": "form",

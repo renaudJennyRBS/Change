@@ -1,11 +1,11 @@
 <div class="row" rbs-document-editor-base="" model="Rbs_Catalog_Product">
 
 	<div class="col-md-12">
-		<rbs-page-header title="Nouveau produit"></rbs-page-header>
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catakog_Product'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-aside-column>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
 	</div>
 
 	<div class="document-form" rbs-main-column>

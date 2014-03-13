@@ -109,6 +109,7 @@
 	//-------------------------------------------------------------------------
 	//
 	// Default Directives for Editors that do not have specialized code.
+	// TODO: Fallback. Delete after refactoring form.twig/editor.twig
 	//
 	//-------------------------------------------------------------------------
 

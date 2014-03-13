@@ -22,5 +22,7 @@ class GenericServicesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('Rbs\Seo\SeoManager', $genericServices->getSeoManager());
 		$this->assertInstanceOf('Rbs\Simpleform\Field\FieldManager', $genericServices->getFieldManager());
 		$this->assertInstanceOf('Rbs\Simpleform\Security\SecurityManager', $genericServices->getSecurityManager());
+		$this->assertInstanceOf('Rbs\Mail\MailManager', $genericServices->getMailManager());
+		$this->assertInstanceOf('Rbs\Admin\AdminManager', $genericServices->getAdminManager());
 	}
 } 

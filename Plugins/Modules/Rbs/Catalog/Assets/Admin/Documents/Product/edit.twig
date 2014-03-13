@@ -4,38 +4,9 @@
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-aside-column>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
-			</div>
-			<div class="list-group">
-				<span class="list-group-item">
-					<a ng-show="document.variantGroup.rootProductId" href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.variantGroup.rootProductId}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}</a>
-					<a ng-show="! document.variant && ! document.variantGroup.rootProductId" href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
-				</span>
-			</div>
-		</div>
-
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><i class="icon-bullhorn"></i> {{ i18n('m.rbs.catalog.admin.merchandizing', ['ucf']) }}</h3>
-			</div>
-			<div class="list-group">
-				<p class="list-group-item">
-					<a href="(= document | rbsURL:'cross-selling-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.crosssellingproductlist_crossselling_lists_aside_link', ['ucf']) | raw }}</a>
-				</p>
-				<p class="list-group-item" ng-if="document.categorizable">
-					<a ng-show="document.categorizable" href="(= document | rbsURL:'product-lists' =)" ><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.productlistitem_list_aside_link', ['ucf']) | raw }}</a>
-				</p>
-				<p class="list-group-item" ng-hide="document.variantGroup && !document.variantInfo.isFinal">
-					<a href="(= document | rbsURL:'prices' =)"><i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.product_prices_aside_link', ['ucf']) | raw }}</a>
-				</p>
-			</div>
-		</div>
-
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div class="document-form" rbs-main-column>

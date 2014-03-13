@@ -75,9 +75,13 @@
 					angular.forEach(items, function (item, value) {
 						if (! itemsFilter || Utils.containsIgnoreCase(item.label, itemsFilter) || Utils.containsIgnoreCase(value, itemsFilter)) {
 							var $opt = $('<option></option>');
+							var label = item.label;
+							if (attrs.ucfirst == "true") {
+								label = label.charAt(0).toUpperCase() + label.slice(1);
+							}
 							$opt
 								.attr('value', value)
-								.text(item.label)
+								.text(label)
 								.appendTo(elm);
 						}
 					});

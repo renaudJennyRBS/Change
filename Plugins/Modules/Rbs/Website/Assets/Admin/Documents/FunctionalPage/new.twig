@@ -4,34 +4,20 @@
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-aside-column>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
 
-		<rbs-default-asides-for-editor id="rbsWebsitePageDefaultAsides"></rbs-default-asides-for-editor>
-
-		<div id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
-
-			<rbs-aside-editor-menu></rbs-aside-editor-menu>
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
-				</div>
-				<div class="panel-body">
-					<div id="rbsStructureEditorBlockPropertiesPopup"
-					     data-no-block-text="{{ i18nAttr('m.rbs.website.admin.no_block_selected', ['ucf']) }}"
-					     data-edit-in-content="{{ i18nAttr('m.rbs.website.admin.edit_in_content', ['ucf']) }}">
-						{{ i18n('m.rbs.website.admin.no_block_selected', ['ucf']) }}
-					</div>
+		<div class="panel panel-default" id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+			</div>
+			<div class="panel-body">
+				<div id="rbsStructureEditorBlockPropertiesPopup"
+					 data-no-block-text="{{ i18nAttr('m.rbs.website.admin.no_block_selected', ['ucf']) }}"
+					 data-edit-in-content="{{ i18nAttr('m.rbs.website.admin.edit_in_content', ['ucf']) }}">
+					{{ i18n('m.rbs.website.admin.no_block_selected', ['ucf']) }}
 				</div>
 			</div>
-
-			<hr/>
-
-			<div class="rbs-aside-block rbs-aside-other-links">
-				<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
-				<a rbs-aside-other-link href="(= document.pageTemplate | rbsURL =)">{{ i18n('m.rbs.website.admin.page_edit_template', ['ucf']) | raw }}</a>
-			</div>
-
 		</div>
 
 	</div>
@@ -78,6 +64,13 @@
 						<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_ttl_help') }}</span>
 					</rbs-field>
 				</div>
+			</fieldset>
+
+			<fieldset rbs-editor-section="content"
+				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
+				data-editor-section-icon="icon-align-left">
+				<rbs-structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
+				</rbs-structure-editor>
 			</fieldset>
 
 			<fieldset rbs-editor-section="systeminfo"

@@ -4,13 +4,12 @@
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_CrossSellingProductList'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-aside-column>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-
+	<div data-rbs-aside-column="">
 		<div class="rbs-aside-block">
 			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
 			<rbs-document-preview document="document.product"></rbs-document-preview>
 		</div>
+		{% include '@Rbs_Admin/view/asides.twig' %}
 	</div>
 
 	<div class="document-form" rbs-main-column>

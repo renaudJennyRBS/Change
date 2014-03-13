@@ -24,13 +24,20 @@ class Extension implements \Twig_ExtensionInterface
 	protected $modelManager;
 
 	/**
+	 * @var \Rbs\Admin\AdminManager
+	 */
+	protected $adminManager;
+
+	/**
+	 * @param \Rbs\Admin\AdminManager $adminManager
 	 * @param \Change\I18n\I18nManager $i18nManager
 	 * @param \Change\Documents\ModelManager $modelManager
 	 */
-	function __construct(\Change\I18n\I18nManager $i18nManager = null, \Change\Documents\ModelManager $modelManager = null)
+	function __construct(\Rbs\Admin\AdminManager $adminManager = null, \Change\I18n\I18nManager $i18nManager = null, \Change\Documents\ModelManager $modelManager = null)
 	{
 		$this->i18nManager = $i18nManager;
 		$this->modelManager = $modelManager;
+		$this->adminManager = $adminManager;
 	}
 
 	/**
@@ -96,8 +103,8 @@ class Extension implements \Twig_ExtensionInterface
 		return array(
 			new \Twig_SimpleFunction('createLinks', array($this, 'createLinks'), array('is_safe' => array('html'))),
 			new \Twig_SimpleFunction('propertyKey', array($this, 'propertyKey')),
-			new \Twig_SimpleFunction('modelKey', array($this, 'modelKey'))
-
+			new \Twig_SimpleFunction('modelKey', array($this, 'modelKey')),
+			new \Twig_SimpleFunction('namedURL', array($this, 'namedURL'))
 		);
 	}
 
@@ -232,5 +239,29 @@ class Extension implements \Twig_ExtensionInterface
 			}
 		}
 		return $modelName;
+	}
+
+	/**
+	 * @param string $model
+	 * @param string $name
+	 * @return string|null
+	 */
+	public function namedURL($model, $name)
+	{
+		$route = $this->adminManager->getNamedRoute($model, $name);
+		if (is_array($route))
+		{
+			if (strpos($route['path'], '/:'))
+			{
+				return null;
+			}
+			$path = $route['path'];
+			if (isset($route['rule']['redirectTo']))
+			{
+				$path = $route['rule']['redirectTo'];
+			}
+			return substr($path, 1);
+		}
+		return null;
 	}
 }

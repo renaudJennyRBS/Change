@@ -10,21 +10,11 @@
 	},
 	"/Rbs/Catalog/Sku/:id": {
 		"model": "Rbs_Stock_Sku",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Stock/Sku/edit.twig",
 			"labelKey": "m.rbs.stock.documents.sku | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Sku/:id/timeline": {
-		"model": "Rbs_Stock_Sku",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Stock_Sku",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": false
 	},

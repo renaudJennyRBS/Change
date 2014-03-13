@@ -46,10 +46,24 @@ class GetHtmlFragment
 				{
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
-					/* @var $manager \Rbs\Admin\Manager */
-					$manager = $event->getParam('manager');
+					$genericServices = $event->getServices('genericServices');
+					if ($genericServices instanceof \Rbs\Generic\GenericServices)
+					{
+						$manager = $genericServices->getAdminManager();
+					}
+					else
+					{
+						throw new \RuntimeException('GenericServices not set', 999999);
+					}
 
 					$attributes = array('query' => $event->getRequest()->getQuery()->toArray());
+
+					$model = $event->getParam('model');
+					if ($model)
+					{
+						$attributes['attributes'] = $manager->getModelTwigAttributes($model, $event->getParam('view'));
+					}
+
 					list($moduleName, $path) = $this->explodePath($resourcePath);
 					$renderer = function () use ($moduleName, $path, $manager, $attributes)
 					{

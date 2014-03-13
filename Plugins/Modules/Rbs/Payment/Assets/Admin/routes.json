@@ -189,6 +189,7 @@
 	"/Rbs/Payment/AtosSipsConnector/:id/translate/:LCID/workflow": false,
 	"/Rbs/Payment/AtosSipsConnector/:id/workflow": false,
 	"/Rbs/Payment/AtosSipsConnector/new": false,
+	"/Rbs/Payment/DeferredConnector/": false,
 	"/Rbs/Payment/DeferredConnector/:id": false,
 	"/Rbs/Payment/DeferredConnector/:id/timeline": false,
 	"/Rbs/Payment/DeferredConnector/:id/translate/:LCID": false,

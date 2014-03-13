@@ -7,6 +7,7 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Simpleform/Field/": false,
 	"/Rbs/Simpleform/Field/:id": {
 		"model": "Rbs_Simpleform_Field",
 		"name": "form",

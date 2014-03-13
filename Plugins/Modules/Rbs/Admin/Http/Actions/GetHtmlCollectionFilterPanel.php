@@ -108,8 +108,17 @@ class GetHtmlCollectionFilterPanel
 
 					$attributes['definitions'] = $definitions;
 				}
-				/* @var $manager \Rbs\Admin\Manager */
-				$manager = $event->getParam('manager');
+
+				$genericServices = $event->getServices('genericServices');
+				if ($genericServices instanceof \Rbs\Generic\GenericServices)
+				{
+					$manager = $genericServices->getAdminManager();
+				}
+				else
+				{
+					throw new \RuntimeException('GenericServices not set', 999999);
+				}
+
 				$renderer = function () use ($filePath, $manager, $attributes)
 				{
 					return $manager->renderTemplateFile($filePath, $attributes);

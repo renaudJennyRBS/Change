@@ -17,11 +17,11 @@ class Event extends \Change\Events\Event
 	/**
 	 * @api
 	 * @throws \RuntimeException
-	 * @return \Rbs\Admin\Manager
+	 * @return \Rbs\Admin\AdminManager
 	 */
 	public function getManager()
 	{
-		if ($this->getTarget() instanceof \Rbs\Admin\Manager)
+		if ($this->getTarget() instanceof \Rbs\Admin\AdminManager)
 		{
 			return $this->getTarget();
 		}

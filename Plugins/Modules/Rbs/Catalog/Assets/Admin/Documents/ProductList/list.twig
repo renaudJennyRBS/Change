@@ -1,7 +1,8 @@
 <div class="row" ng-controller="Rbs_Catalog_ProductList_ProductListController">
 
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div rbs-main-column>
