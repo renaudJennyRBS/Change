@@ -36,20 +36,33 @@ class GetThemeResource
 					$result = new Resource($theme->getName() . '_' . $themeResourcePath);
 					if ($resource->isValid())
 					{
-						$md = $resource->getModificationDate();
-						$result->setHeaderLastModified($md);
-						$result->getHeaders()->addHeaderLine('Cache-Control', 'public');
-						$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
-						if ($ifModifiedSince && $ifModifiedSince == $md)
+						if (substr($themeResourcePath, -5) === '.twig')
 						{
-							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_304);
-							$result->setRenderer(function() {return null;});
+							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+							$result->getHeaders()->addHeaderLine('Content-Type', 'text/html');
+							$templateManager = $event->getApplicationServices()->getTemplateManager();
+							$result->setRenderer(function() use ($templateManager, $resource)
+							{
+								return $templateManager->renderTemplateString($resource->getContent(), []);
+							});
 						}
 						else
 						{
-							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-							$result->getHeaders()->addHeaderLine('Content-Type', $resource->getContentType());
-							$result->setRenderer(function() use ($resource) {return $resource->getContent();});
+							$md = $resource->getModificationDate();
+							$result->setHeaderLastModified($md);
+							$result->getHeaders()->addHeaderLine('Cache-Control', 'public');
+							$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
+							if ($ifModifiedSince && $ifModifiedSince == $md)
+							{
+								$result->setHttpStatusCode(HttpResponse::STATUS_CODE_304);
+								$result->setRenderer(function() {return null;});
+							}
+							else
+							{
+								$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+								$result->getHeaders()->addHeaderLine('Content-Type', $resource->getContentType());
+								$result->setRenderer(function() use ($resource) {return $resource->getContent();});
+							}
 						}
 					}
 					else

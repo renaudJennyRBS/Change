@@ -160,6 +160,23 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
+	 * @param string $twigTemplate
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function renderTemplateString($twigTemplate, array $attributes)
+	{
+		$loader = new \Twig_Loader_String();
+		$twig = new \Twig_Environment($loader);
+		foreach ($this->getExtensions() as $extension)
+		{
+			$twig->addExtension($extension);
+		}
+		return $twig->render($twigTemplate, $attributes);
+	}
+
+	/**
 	 * @param string $relativePath
 	 * @param array $attributes
 	 * @return string

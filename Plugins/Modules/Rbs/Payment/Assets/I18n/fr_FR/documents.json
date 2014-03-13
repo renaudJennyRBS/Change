@@ -14,6 +14,21 @@
 	"deferredconnector_autovalidatepayment":{
 		"message":"validation automatique"
 	},
+	"atossipsconnector":{
+		"message":"connecteur Atos Sips"
+	},
+	"atossipsconnector_merchantid":{
+		"message":"identifiant Sips du commerçant"
+	},
+	"atossipsconnector_merchantcountry":{
+		"message":"pays du commerçant"
+	},
+	"atossipsconnector_tpeparmcomcontent":{
+		"message":"conetenu du fichier Parmcom"
+	},
+	"atossipsconnector_tpeCertifContent":{
+		"message":"conetenu du fichier Certif"
+	},
 	"transaction_connector":{
 		"message":"connecteur bancaire"
 	},

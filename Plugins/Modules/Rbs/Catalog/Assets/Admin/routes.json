@@ -312,6 +312,24 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Catalog/ProductSet/:id/CrossSellingProductList/": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "cross-selling-lists",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/Product/product-cross-selling.twig",
+			"labelKey": "m.rbs.catalog.admin.crosssellingproductlist_title | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/ProductSet/:id/ProductLists/": {
+		"model": "Rbs_Catalog_ProductSet",
+		"name": "product-lists",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/Product/product-lists.twig",
+			"labelKey": "m.rbs.catalog.admin.productlist_list | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/ProductSet/:id/timeline": {
 		"model": "Rbs_Catalog_ProductSet",
 		"name": "timeline",
@@ -369,24 +387,6 @@
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
-	},
-	"/Rbs/Catalog/ProductSet/:id/CrossSellingProductList/": {
-		"model": "Rbs_Catalog_ProductSet",
-		"name": "cross-selling-lists",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/product-cross-selling.twig",
-			"labelKey": "m.rbs.catalog.admin.crosssellingproductlist_title | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/ProductSet/:id/ProductLists/": {
-		"model": "Rbs_Catalog_ProductSet",
-		"name": "product-lists",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/product-lists.twig",
-			"labelKey": "m.rbs.catalog.admin.productlist_list | ucf"
-		},
-		"auto": false
 	},
 	"/Rbs/Catalog/SectionProductList/": {
 		"model": "Rbs_Catalog_SectionProductList",

@@ -243,9 +243,8 @@
 			link: function(scope, element) {
 				scope.connectors = [];
 				scope.selectedConnector = null;
-				scope.directiveName = null;
 
-				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors')
+				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', {transactionId: scope.payment.transaction.id})
 					.success(function(data) {
 						scope.connectors = data;
 						scope.payment.connectorId = null;
@@ -263,13 +262,16 @@
 					if (connector.id != scope.payment.connectorId) {
 						scope.selectedConnector = connector;
 						scope.payment.connectorId = connector.id;
-						scope.directiveName = connector.directiveName;
+
 
 						var html = '<div class="configuration-zone"';
 						if (connector.directiveName) {
-							html += ' ' + connector.directiveName + '=""';
+							html += ' ' + connector.directiveName + '=""></div>';
+						} else if(connector.html) {
+							html += '>' + connector.html + '</div>';
+						} else {
+							html += '></div>';
 						}
-						html += '></div>';
 						element.find('.configuration-zone').replaceWith(html);
 						$compile(element.find('.configuration-zone'))(scope);
 					}
@@ -284,44 +286,6 @@
 
 	rbsCommercePaymentConnectorSelector.$inject = ['$http', '$compile', '$sce'];
 	app.directive('rbsCommercePaymentConnectorSelector', rbsCommercePaymentConnectorSelector);
-
-	function rbsCommercePaymentConnectorDeferred($http) {
-		return {
-			restrict: 'AE',
-			scope: false,
-			templateUrl: '/payment-connector-deferred.static.tpl',
-			link: function(scope) {
-				scope.loadingConnector = true;
-
-				var postData = {
-					connectorId: scope.selectedConnector.id,
-					transactionId: scope.payment.transaction.id
-				};
-
-				$http.post('Action/Rbs/Payment/GetDeferredConnectorData', postData)
-					.success(function(data) {
-						scope.connectorData = data;
-						scope.loadingConnector = false;
-					})
-					.error(function(data, status, headers) {
-						console.log('GetDeferredConnectorInformation error', data, status, headers);
-					});
-
-				scope.confirmOrder = function() {
-					$http.post('Action/Rbs/Payment/DeferredConnectorReturnSuccess', postData)
-						.success(function(data) {
-							window.location = data['redirectURL'];
-						})
-						.error(function(data, status, headers) {
-							console.log('GetDeferredConnectorInformation error', data, status, headers);
-						});
-				}
-			}
-		}
-	}
-
-	rbsCommercePaymentConnectorDeferred.$inject = ['$http'];
-	app.directive('rbsCommercePaymentConnectorDeferred', rbsCommercePaymentConnectorDeferred);
 
 	/**
 	 * Cart controller.

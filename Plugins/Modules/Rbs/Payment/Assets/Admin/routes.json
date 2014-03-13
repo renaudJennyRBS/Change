@@ -1,4 +1,72 @@
 {
+	"/Rbs/Commerce/AtosSipsConnector/": {
+		"model": "Rbs_Payment_DeferredConnector",
+		"name": "list",
+		"rule": {
+			"redirectTo": "/Rbs/Commerce/Connector/",
+			"labelKey": "m.rbs.payment.admin.connector_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/AtosSipsConnector/:id": {
+		"model": "Rbs_Payment_AtosSipsConnector",
+		"name": "form",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
+			"labelKey": "m.rbs.payment.documents.atossipsconnector | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/AtosSipsConnector/:id/timeline": {
+		"model": "Rbs_Payment_AtosSipsConnector",
+		"name": "timeline",
+		"rule": {
+			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Payment_AtosSipsConnector",
+			"controller": "RbsChangeTimelineController",
+			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/AtosSipsConnector/:id/translate/:LCID": {
+		"model": "Rbs_Payment_AtosSipsConnector",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/AtosSipsConnector/:id/translate/:LCID/workflow": {
+		"model": "Rbs_Payment_AtosSipsConnector",
+		"name": "localizedWorkflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_AtosSipsConnector",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/AtosSipsConnector/:id/workflow": {
+		"model": "Rbs_Payment_AtosSipsConnector",
+		"name": "workflow",
+		"rule": {
+			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_AtosSipsConnector",
+			"controller": "RbsChangeWorkflowController",
+			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/AtosSipsConnector/new": {
+		"model": "Rbs_Payment_AtosSipsConnector",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Commerce/Connector/": {
 		"model": "Rbs_Payment_Connector",
 		"name": "list",
@@ -115,6 +183,12 @@
 		"auto": false
 	},
 	"/Rbs/Payment/": false,
+	"/Rbs/Payment/AtosSipsConnector/:id": false,
+	"/Rbs/Payment/AtosSipsConnector/:id/timeline": false,
+	"/Rbs/Payment/AtosSipsConnector/:id/translate/:LCID": false,
+	"/Rbs/Payment/AtosSipsConnector/:id/translate/:LCID/workflow": false,
+	"/Rbs/Payment/AtosSipsConnector/:id/workflow": false,
+	"/Rbs/Payment/AtosSipsConnector/new": false,
 	"/Rbs/Payment/DeferredConnector/:id": false,
 	"/Rbs/Payment/DeferredConnector/:id/timeline": false,
 	"/Rbs/Payment/DeferredConnector/:id/translate/:LCID": false,
