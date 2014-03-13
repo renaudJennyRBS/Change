@@ -43,8 +43,17 @@ class GetHtmlBlockParameters
 				}
 
 				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-				/* @var $manager \Rbs\Admin\Manager */
-				$manager = $event->getParam('manager');
+
+				$genericServices = $event->getServices('genericServices');
+				if ($genericServices instanceof \Rbs\Generic\GenericServices)
+				{
+					$manager = $genericServices->getAdminManager();
+				}
+				else
+				{
+					throw new \RuntimeException('GenericServices not set', 999999);
+				}
+
 				$attributes = array('information' => $information);
 				$renderer = function () use ($filePath, $manager, $attributes)
 				{

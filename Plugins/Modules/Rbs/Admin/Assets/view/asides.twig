@@ -1,0 +1,4 @@
+{% for asideDirective in attributes['asideDirectives'] %}
+	<{{ asideDirective.name }} {% for attribute in asideDirective['attributes'] %} {{ attribute.name }}="{{ attribute.value }}"{% endfor %}>
+	</{{ asideDirective.name }}>
+{% endfor %}

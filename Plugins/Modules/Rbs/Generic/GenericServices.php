@@ -133,6 +133,19 @@ class GenericServices extends \Zend\Di\Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//AdminManager : Application, EventManagerFactory, i18nManager, ModelManager, PluginManager
+		$adminManagerClassName = $this->getInjectedClassName('AdminManager', 'Rbs\Admin\AdminManager');
+		$classDefinition = $this->getClassDefinition($adminManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition
+			->addMethod('setI18nManager', true)
+			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true))
+			->addMethod('setModelManager', true)
+			->addMethodParameter('setModelManager', 'modelManager', array('required' => true))
+			->addMethod('setPluginManager', true)
+			->addMethodParameter('setPluginManager', 'pluginManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
@@ -141,6 +154,8 @@ class GenericServices extends \Zend\Di\Di
 		$i18nManager = function() use ($applicationServices) {return $applicationServices->getI18nManager();};
 		$collectionManager = function() use ($applicationServices) {return $applicationServices->getCollectionManager();};
 		$jobManager = function() use ($applicationServices) {return $applicationServices->getJobManager();};
+		$modelManager = function() use ($applicationServices) {return $applicationServices->getModelManager();};
+		$pluginManager = function() use ($applicationServices) {return $applicationServices->getPluginManager();};
 
 		$im->addAlias('SeoManager', $seoManagerClassName,
 			array('application' => $application,
@@ -169,6 +184,10 @@ class GenericServices extends \Zend\Di\Di
 
 		$im->addAlias('MailManager', $mailManagerClassName,
 			array('application' => $application, 'documentManager' => $documentManager, 'jobManager' => $jobManager));
+
+		$im->addAlias('AdminManager', $adminManagerClassName,
+			array('application' => $application, 'i18nManager' => $i18nManager, 'modelManager' => $modelManager,
+				'pluginManager' => $pluginManager));
 	}
 
 	/**
@@ -241,5 +260,14 @@ class GenericServices extends \Zend\Di\Di
 	public function getMailManager()
 	{
 		return $this->get('MailManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Admin\AdminManager
+	 */
+	public function getAdminManager()
+	{
+		return $this->get('AdminManager');
 	}
 }

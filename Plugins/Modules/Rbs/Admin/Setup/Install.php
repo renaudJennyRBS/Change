@@ -31,7 +31,7 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function onSuccess(\Change\Events\Event $event)
 	{
-		$manager = new \Rbs\Admin\Manager();
+		$manager = new \Rbs\Admin\AdminManager();
 		$applicationServices = $event->getApplicationServices();
 		$manager->setApplication($event->getApplication())
 			->setI18nManager($applicationServices->getI18nManager())

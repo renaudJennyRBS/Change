@@ -34,8 +34,9 @@
 	"/Rbs/Catalog/Attribute/:id/translate/:LCID/workflow": false,
 	"/Rbs/Catalog/Attribute/:id/workflow": false,
 	"/Rbs/Catalog/Attribute/new": false,
+	"/Rbs/Catalog/CrossSellingProductList/": false,
 	"/Rbs/Catalog/CrossSellingProductList/:id": {
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"controller": "RbsChangeRedirectToForm",
 			"template": "<div></div>",
@@ -116,7 +117,7 @@
 		"model": "Rbs_Catalog_Product",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Product/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Product/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -153,7 +154,7 @@
 	},
 	"/Rbs/Catalog/Product/:productId/CrossSellingProductList/:id": {
 		"model": "Rbs_Catalog_CrossSellingProductList",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/CrossSellingProductList/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.crosssellingproductlist | ucf",
@@ -167,16 +168,6 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Catalog/ProductList/products.twig",
 			"labelKey": "m.rbs.catalog.admin.product_list | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Product/:productId/CrossSellingProductList/:id/timeline": {
-		"model": "Rbs_Catalog_CrossSellingProductList",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_CrossSellingProductList",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": false
 	},
@@ -299,6 +290,7 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Catalog/ProductListItem/": false,
 	"/Rbs/Catalog/ProductListItem/:id": false,
 	"/Rbs/Catalog/ProductListItem/:id/timeline": false,
 	"/Rbs/Catalog/ProductListItem/new": false,
@@ -435,6 +427,7 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Catalog/VariantGroup/": false,
 	"/Rbs/Catalog/VariantGroup/:id": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "form",

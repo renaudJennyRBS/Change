@@ -44,12 +44,6 @@ class Controller extends \Change\Http\Controller
 		$request = $event->getRequest();
 		$applicationServices = $event->getApplicationServices();
 		$applicationServices->getPermissionsManager()->allow(true);
-		$manager = new \Rbs\Admin\Manager();
-		$manager->setApplication($this->getApplication())
-			->setI18nManager($applicationServices->getI18nManager())
-			->setModelManager($applicationServices->getModelManager())
-			->setPluginManager($applicationServices->getPluginManager());
-		$event->setParam('manager', $manager);
 
 		$request->populateLCIDByHeader($applicationServices->getI18nManager());
 	}

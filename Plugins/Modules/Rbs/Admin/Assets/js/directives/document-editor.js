@@ -1104,7 +1104,7 @@
 	/**
 	 * Directive used to translate an existing Document.
 	 */
-	app.directive('rbsDocumentEditorI18n', ['$location', '$q', 'RbsChange.Events', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', function ($location, $q, Events, NotificationCenter, REST, i18n)
+	app.directive('rbsDocumentEditorTranslate', ['$location', '$q', 'RbsChange.Events', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', function ($location, $q, Events, NotificationCenter, REST, i18n)
 	{
 		return {
 			restrict : 'A',

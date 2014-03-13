@@ -193,7 +193,14 @@
 						return getNamedUrl(doc, 'list', params);
 					},
 
+					'getEditUrl' : function (doc, params) {
+						return getNamedUrl(doc, 'edit', params);
+					},
+
 					'getFormUrl' : function (doc, params) {
+						var result = getNamedUrl(doc, 'edit', params);
+						if (result != "javascript:;")
+							return result;
 						return getNamedUrl(doc, 'form', params);
 					},
 
@@ -206,6 +213,12 @@
 					},
 
 					'getUrl' : function (doc, params, name) {
+						//TODO fallback, delete this condition after form.twig refactoring
+						if (!name || name == 'form') {
+							var result = getNamedUrl(doc, 'edit', params);
+							if (result != "javascript:;")
+								return result;
+						}
 						return getNamedUrl(doc, name, params);
 					}
 				};

@@ -46,6 +46,7 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Collection/Item/": false,
 	"/Rbs/Collection/Item/:id": {
 		"model": "Rbs_Collection_Item",
 		"name": "form",

@@ -2,7 +2,6 @@
 	"/Rbs/Brand/": false,
 	"/Rbs/Brand/Brand/": false,
 	"/Rbs/Brand/Brand/:id": false,
-	"/Rbs/Brand/Brand/:id/timeline": false,
 	"/Rbs/Brand/Brand/:id/translate/:LCID": false,
 	"/Rbs/Brand/Brand/:id/translate/:LCID/workflow": false,
 	"/Rbs/Brand/Brand/:id/urls": false,
@@ -19,21 +18,11 @@
 	},
 	"/Rbs/Catalog/Brand/:id": {
 		"model": "Rbs_Brand_Brand",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Brand/Brand/edit.twig",
 			"labelKey": "m.rbs.brand.documents.brand | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Brand/:id/timeline": {
-		"model": "Rbs_Brand_Brand",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Brand_Brand",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": false
 	},

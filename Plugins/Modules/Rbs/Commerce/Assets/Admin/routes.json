@@ -8,6 +8,7 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Commerce/Fee/": false,
 	"/Rbs/Commerce/Fee/:id": false,
 	"/Rbs/Commerce/Fee/:id/timeline": false,
 	"/Rbs/Commerce/Fee/:id/translate/:LCID": false,

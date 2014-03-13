@@ -18,11 +18,20 @@ class GetRoutes
 	/**
 	 * Use Required Event Params: resourcePath
 	 * @param Event $event
+	 * @throws \RuntimeException
 	 */
 	public function execute($event)
 	{
-		/* @var $manager \Rbs\Admin\Manager */
-		$manager = $event->getParam('manager');
+		$genericServices = $event->getServices('genericServices');
+		if ($genericServices instanceof \Rbs\Generic\GenericServices)
+		{
+			$manager = $genericServices->getAdminManager();
+		}
+		else
+		{
+			throw new \RuntimeException('GenericServices not set', 999999);
+		}
+
 		$routes = $manager->getRoutes();
 
 		//WildCard :IDENTIFIER at last

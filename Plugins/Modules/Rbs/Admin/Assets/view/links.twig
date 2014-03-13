@@ -1,0 +1,8 @@
+{% if attributes['links'] | length > 0 %}
+	<div class="rbs-aside-block rbs-aside-other-links">
+		<h3 class="panel-title">{{ i18n('m.rbs.admin.admin.other_operations', ['ucf']) }}<span data-ng-show="document"> {{ i18n('m.rbs.admin.admin.for') }}<br/>(= document.label =)</span></h3>
+		{% for link in attributes['links'] %}
+			<a href="javascript:;"{% for attribute in link['attributes'] %} {{ attribute.name }}="{{ attribute.value }}"{% endfor %} data-ng-href="{{ link.href }}">{{ link.description | raw }}</a>
+		{% endfor %}
+	</div>
+{% endif %}

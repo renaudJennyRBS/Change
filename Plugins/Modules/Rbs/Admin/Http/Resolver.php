@@ -119,6 +119,15 @@ class Resolver extends BaseResolver
 			$event->setParam('resourcePath', implode('/', [$vendor, $shortModuleName, 'Documents' , $shortDocumentName , $baseFileName . '.twig']));
 			$event->setParam('vendor', $vendor);
 			$event->setParam('shortModuleName', $shortModuleName);
+
+			$modelManager = $event->getApplicationServices()->getModelManager();
+			$model = $modelManager->getModelByName($vendor . '_' . $shortModuleName . '_' . $shortDocumentName);
+			if ($model)
+			{
+				$event->setParam('model', $model);
+				$event->setParam('view', $baseFileName);
+			}
+
 			$action = function($event) {
 				(new \Rbs\Admin\Http\Actions\GetHtmlFragment())->execute($event);
 			};

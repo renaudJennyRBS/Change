@@ -13,4 +13,11 @@ namespace Rbs\Mail\Setup;
  */
 class Install extends \Change\Plugins\InstallBase
 {
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
+	 */
+	public function finalize($plugin)
+	{
+		$plugin->setConfigurationEntry('locked', true);
+	}
 }

@@ -897,7 +897,10 @@
 
 	app.directive('rbsDocumentEditor', editorDirective);
 
-
+	/**
+	 * @deprecated
+	 * TODO: Fallback, remove this directive and all calls after form.twig refactoring
+	 */
 	function editorDirectiveTranslate (i18n) {
 
 		return {
@@ -967,7 +970,7 @@
 
 	editorDirectiveTranslate.$inject = ['RbsChange.i18n'];
 
-	app.directive('rbsDocumentEditorTranslate', editorDirectiveTranslate);
+	app.directive('rbsDocumentEditorTranslateDeprecated', editorDirectiveTranslate);
 
 
 	//

@@ -1,0 +1,21 @@
+<div class="row">
+
+	<div class="mapContainer"></div>
+
+	<div class="input-group col-lg-4">
+		<span class="input-group-addon">{{ i18n('m.rbs.admin.admin.gps_latitude', ['ucf']) }}</span>
+		<input data-role="input-latitude" class="form-control" size="16" type="number" data-ng-model="coordinates.latitude" />
+	</div>
+
+	<div class="input-group col-lg-4">
+		<span class="input-group-addon">{{ i18n('m.rbs.admin.admin.gps_longitude', ['ucf']) }}</span>
+		<input data-role="input-longitude" class="form-control" size="16" type="number" data-ng-model="coordinates.longitude" />
+	</div>
+
+	<div class="col-lg-4">
+		<button class="btn btn-info" type="button" data-ng-click="openMap($event)">
+			<i class="icon-globe"></i> {{ i18n('m.rbs.admin.admin.gps_open_map', ['ucf']) }}
+		</button>
+	</div>
+
+</div>

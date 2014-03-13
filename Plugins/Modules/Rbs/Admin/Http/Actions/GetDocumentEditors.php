@@ -21,7 +21,6 @@ class GetDocumentEditors
 	 */
 	public function execute($event)
 	{
-		/* @var $manager \Rbs\Admin\Manager */
 		$modules = $event->getApplicationServices()->getPluginManager()->getModules();
 		$modelManager = $event->getApplicationServices()->getModelManager();
 		$modelNames = $modelManager->getModelsNames();
@@ -37,6 +36,8 @@ class GetDocumentEditors
 					if ($vendor == $module->getVendor() && $moduleName == $module->getShortName())
 					{
 						$path = $module->getAssetsPath() . '/Admin/Documents/' . $document . '/';
+
+						//TODO: this condition is a fallback, delete after refactoring the form.twig and testing all modules
 						if (file_exists($path . '/editor.twig'))
 						{
 							$model = $modelManager->getModelByName($modelName);

@@ -11,9 +11,9 @@ namespace Rbs\Admin;
 use Assetic\AssetManager;
 
 /**
- * @name \Rbs\Admin\Manager
+ * @name \Rbs\Admin\AdminManager
  */
-class Manager implements \Zend\EventManager\EventsCapableInterface
+class AdminManager implements \Zend\EventManager\EventsCapableInterface
 {
 	use \Change\Events\EventsCapableTrait;
 
@@ -131,7 +131,7 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->extensions === null)
 		{
-			$extension = new \Rbs\Admin\Presentation\Twig\Extension($this->getI18nManager(), $this->getModelManager());
+			$extension = new \Rbs\Admin\Presentation\Twig\Extension($this, $this->getI18nManager(), $this->getModelManager());
 			$this->extensions = array($extension->getName() => $extension);
 		}
 		return $this->extensions;
@@ -158,7 +158,16 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getListenerAggregateClassNames()
 	{
-		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Admin/Events/Manager');
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Admin/Events/AdminManager');
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach('getModelTwigAttributes', array($this, 'onDefaultGetModelTwigAttributes'), 5);
+		$eventManager->attach('getRoutes', array($this, 'onDefaultGetRoutes'), 5);
 	}
 
 	/**
@@ -498,9 +507,34 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @return array
 	 */
 	public function getRoutes()
+	{
+		$args = $this->getEventManager()->prepareArgs([]);
+		$this->getEventManager()->trigger('getRoutes', $this, $args);
+		$routes = isset($args['routes']) && is_array($args['routes']) ? $args['routes'] : [];
+
+		foreach ($routes as $path => $route)
+		{
+			if (is_array($route) && isset($route['rule']))
+			{
+				unset($route['auto']);
+				$routes[$path] = $route;
+			}
+			else
+			{
+				unset($routes[$path]);
+			}
+		}
+		return $routes;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetRoutes($event)
 	{
 		$routes = [];
 		foreach ($this->getPluginManager()->getModules() as $module)
@@ -511,18 +545,266 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 					$moduleRoutes = json_decode(file_get_contents($filePath), true);
 					if (is_array($moduleRoutes))
 					{
-						foreach ($moduleRoutes as $path => $route)
-						{
-							if (is_array($route) && isset($route['rule'])) {
-								unset($route['auto']);
-								$routes[$path] = $route;
-							}
-						}
+						$routes = array_merge($routes, $moduleRoutes);
+					}
+					else
+					{
+						$event->getApplicationServices()->getLogging()->error('invalid json file: ' . $filePath);
 					}
 				}
 			}
 		}
-		return $routes;
+		$event->setParam('routes', $routes);
+	}
+
+	/**
+	 * @var array
+	 */
+	protected $namedRoutes;
+
+	/**
+	 * @param string $model
+	 * @param string $name
+	 * @return null
+	 */
+	public function getNamedRoute($model, $name)
+	{
+		if ($this->namedRoutes === null)
+		{
+			$this->namedRoutes = [];
+			foreach ($this->getRoutes() as $path => $route)
+			{
+				if (isset($route['name']) && (isset($route['module'])) || isset($route['model']))
+				{
+					$key = isset($route['model']) ? $route['model'] : $route['module'];
+					$route['path'] = $path;
+					$this->namedRoutes[$key][$route['name']] = $route;
+				}
+			}
+		}
+		if (isset($this->namedRoutes[$model][$name]))
+		{
+			return $this->namedRoutes[$model][$name];
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param string $view edit|list|new|translate
+	 * @return array
+	 */
+	public function getModelTwigAttributes($model, $view)
+	{
+		$args = $this->getEventManager()->prepareArgs([
+			'model' => $model,
+			'view' => $view
+		]);
+
+		$this->getEventManager()->trigger('getModelTwigAttributes', $this, $args);
+		return isset($args['attributes']) && is_array($args['attributes']) ? $args['attributes'] : [];
+	}
+
+	public function onDefaultGetModelTwigAttributes(\Change\Events\Event $event)
+	{
+		/* @var $model \Change\Documents\AbstractModel */
+		$model = $event->getParam('model');
+		$view = $event->getParam('view');
+
+		$attributes = [];
+
+		$pluginManager = $event->getApplicationServices()->getPluginManager();
+		$module = $pluginManager->getModule($model->getVendorName(), $model->getShortModuleName());
+		if (!$module)
+		{
+			throw new \RuntimeException('module ' . $model->getVendorName() . '_' . $model->getShortModuleName() . ' is not found', 999999);
+		}
+
+		switch ($view)
+		{
+			case 'new':
+				$attributes = [
+					'asideDirectives' => [['name' => 'rbs-aside-editor-menu']]
+				];
+
+				break;
+			case 'edit':
+				$attributes = [
+					'asideDirectives' => [['name' => 'rbs-aside-editor-menu']]
+				];
+				if ($model->isLocalized())
+				{
+					array_push($attributes['asideDirectives'],
+						[
+							'name' => 'rbs-aside-translation',
+							'attributes' => [
+								['name' => 'document', 'value' => 'document']
+							]
+						]
+					);
+				}
+				break;
+			case 'list':
+				$attributes = [
+					'asideDirectives' => [['name' => 'rbs-default-asides-for-list']]
+				];
+				break;
+			case 'translate':
+				$attributes = [
+					'asideDirectives' => [
+						[
+							'name' => 'rbs-aside-translation',
+							'attributes' => [
+								['name' => 'document', 'value' => 'document']
+							]
+						],
+						['name' => 'rbs-aside-editor-menu']
+					]
+				];
+				break;
+			default:
+				//TODO?
+				break;
+		}
+
+		$event->setParam('attributes', $attributes);
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param array $views
+	 * @return array
+	 * @throws \RuntimeException
+	 */
+	public function initializeView($model, $views)
+	{
+		$pluginManager = $this->getPluginManager();
+		$module = $pluginManager->getModule($model->getVendorName(), $model->getShortModuleName());
+
+		$filesGenerated = ['paths' => [], 'errors' => []];
+
+		foreach ($views as $view => $generate)
+		{
+			if ($generate)
+			{
+				//check if the file already exist
+				$docPath = implode(DIRECTORY_SEPARATOR,
+					[$module->getAbsolutePath(), 'Assets', 'Admin', 'Documents', $model->getShortName(), $view . '.twig']
+				);
+				if (file_exists($docPath))
+				{
+					$filesGenerated['errors'][$view] = ucfirst($view) . ' view file already exists at path ' . $docPath;
+					continue;
+				}
+
+				$excludedProperties = null;
+				if ($view === 'new')
+				{
+					//refLCID selector will automatically added in the template
+					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID', 'publicationSections',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+				}
+				else if ($view === 'edit')
+				{
+					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID', 'publicationSections',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+				}
+				else if ($view === 'translate')
+				{
+					$excludedProperties = ['creationDate', 'modificationDate', 'LCID',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+				}
+				$attributes = ['model' => $model];
+				if ($excludedProperties)
+				{
+					//if the model is publishable, we exclude the title and the label from properties
+					//because they will be automatically added in the template and synced with each other
+					if ($model->isPublishable())
+					{
+						$excludedProperties = array_merge($excludedProperties, ['label', 'title']);
+					}
+					$attributes['properties'] = $this->getFormModelProperties($model, $excludedProperties, $view === 'translate');
+				}
+				$loader = new \Twig_Loader_Filesystem(__DIR__);
+				$twig = new \Twig_Environment($loader);
+				$twig->addExtension(new \Change\Presentation\Templates\Twig\Extension($this->getI18nManager()));
+				$twig->addExtension(new \Rbs\Admin\Presentation\Twig\Extension($this, $this->getI18nManager(), $this->getModelManager()));
+				\Change\Stdlib\File::write($docPath, $twig->render('Assets/view/' . $view . '.twig', $attributes));
+
+				$filesGenerated['paths'][$view] = $docPath;
+			}
+		}
+
+		return $filesGenerated;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param array $excludedProperties
+	 * @param boolean $localizedOnly
+	 * @return array
+	 */
+	protected function getFormModelProperties($model, $excludedProperties, $localizedOnly = false)
+	{
+		$properties = [];
+
+		$modelProperties = $localizedOnly ? $model->getLocalizedProperties() : $model->getProperties();
+
+		foreach ($modelProperties as $property)
+		{
+			if (!in_array($property->getName(), $excludedProperties) && !$property->getInternal() && !$property->getStateless())
+			{
+				$properties[] = [
+					'name' => $property->getName(),
+					'type' => $this->getFormTypeFromModelType($property->getType()),
+					'required' => $property->getRequired(),
+					'modelName' => $model->getName(),
+					'documentType' => $property->getDocumentType()
+				];
+			}
+		}
+
+		//required property first
+		usort($properties, function ($a, $b)
+		{
+			if ($a['required'] && !$b['required'])
+			{
+				return -1;
+			}
+			else if ($a['required'] && $b['required'])
+			{
+				return 0;
+			}
+			return 1;
+		});
+
+		return $properties;
+	}
+
+	protected function getFormTypeFromModelType($modelType)
+	{
+		switch ($modelType)
+		{
+			case 'String':
+				return 'text';
+			case 'RichText':
+				return 'rich-text';
+			case 'Document':
+				return 'picker';
+			case 'DocumentArray':
+				return 'picker-multiple';
+			case 'Boolean':
+				return 'boolean';
+			case 'Integer':
+				return 'integer';
+			case 'Float':
+				return 'float';
+			case 'Date':
+			case 'DateTime':
+				return 'date';
+			default:
+				return 'unknown';
+		}
 	}
 
 	/**
@@ -581,5 +863,38 @@ class Manager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * @param array $attributes
+	 * @param array $order
+	 */
+	public function getSortedAttributes(&$attributes, $order)
+	{
+		foreach ($order as $type => $newOrder)
+		{
+			if (array_key_exists($type, $attributes))
+			{
+				usort($attributes[$type], function ($a, $b) use ($newOrder)
+				{
+					if (in_array($a['name'], $newOrder))
+					{
+						if (in_array($b['name'], $newOrder))
+						{
+							return array_search($a['name'], $newOrder) - array_search($b['name'], $newOrder);
+						}
+						else
+						{
+							return -1;
+						}
+					}
+					if (in_array($b['name'], $newOrder))
+					{
+						return 1;
+					}
+					return 0;
+				});
+			}
+		}
 	}
 }

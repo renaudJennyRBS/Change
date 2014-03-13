@@ -1,7 +1,10 @@
 <div class="row">
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
+
 	<div rbs-main-column>
 		<rbs-page-header title="{{ i18nAttr('m.rbs.website.admin.website_list', ['ucf']) }}"></rbs-page-header>
 		<search-filters model="Rbs_Website_Website" filter-query="query" text-search="textSearch"></search-filters>

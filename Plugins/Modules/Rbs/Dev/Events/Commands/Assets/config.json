@@ -71,5 +71,37 @@
 		},
 		"arguments":{
 		}
+	},
+	"rbs_dev:initialize-view": {
+		"description": "Initialize view(s) template file for a model",
+		"dev": true,
+		"options":{
+			"list": {
+				"description": "list of document",
+				"shortcut": "l"
+			},
+			"new": {
+				"description": "new editor form",
+				"shortcut": "f"
+			},
+			"edit": {
+				"description": "update editor form",
+				"shortcut": "e"
+			},
+			"translate": {
+				"description": "translate editor form",
+				"shortcut": "t"
+			},
+			"all": {
+				"description": "generate all views"
+			}
+		},
+		"arguments":{
+			"modelName": {
+				"description": "complete name of a model (<Vendor>_<Module>_<Model>)",
+				"required": true,
+				"default": null
+			}
+		}
 	}
 }

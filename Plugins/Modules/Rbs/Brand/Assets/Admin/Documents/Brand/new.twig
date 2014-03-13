@@ -1,24 +1,50 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Brand_Brand">
-	<div class="document-form" rbs-full-width>
+<div class="row" data-rbs-document-editor-base="" model="Rbs_Brand_Brand">
+
+	<div class="col-md-12">
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Brand_Brand'), ['ucf']) }}"></rbs-page-header>
-		<form ng-submit="submit()" rbs-document-editor-new="">
-			<rbs-field-text property="label" required="true"
-			                label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }}">
-			</rbs-field-text>
-			<rbs-field-text property="title" required="true" rbs-sync-value="document.label"
-			                sync-title="{{ i18nAttr('m.rbs.generic.admin.synchronize_title_label', ['ucf']) }}"
-			                label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
-			</rbs-field-text>
-			<rbs-field-rich-text property="description" required="false"
-			                     label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
-			</rbs-field-rich-text>
-			<rbs-field-picker property="visual" label="{{ i18nAttr('m.rbs.brand.documents.brand_visual', ['ucf']) }}"
-			                  accepted-model="Rbs_Media_Image"
-			                  selector-title="{{ i18nAttr('m.rbs.brand.admin.select_visual', ['ucf']) }}">
-			</rbs-field-picker>
-			<rbs-field-url property="websiteUrl" required="false"
-			               label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
-			</rbs-field-url>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" {% if attributes['asideDirectives'] | length %} data-rbs-main-column=""{% else %} data-rbs-full-width=""{% endif %}>
+		<form data-ng-submit="submit()" data-rbs-document-editor-new="">
+
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field property="refLCID" required="true"
+					label="{{ i18nAttr(propertyKey('Tutorial_Cookbook_Recipe', 'refLCID'), ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.refLCID"
+						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
+					</select>
+				</rbs-field>
+
+				<rbs-field-label-title property="title" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+
+				<rbs-field-rich-text property="description" required="false"
+									 label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
+				</rbs-field-rich-text>
+
+				<rbs-field-picker property="visual" label="{{ i18nAttr('m.rbs.brand.documents.brand_visual', ['ucf']) }}"
+								  accepted-model="Rbs_Media_Image"
+								  selector-title="{{ i18nAttr('m.rbs.brand.admin.select_visual', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field-url property="websiteUrl" required="false"
+							   label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
+				</rbs-field-url>
+
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="publication"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+				data-rbs-document-publication-section="">
+			</fieldset>
+
 			<rbs-document-editor-button-bar disable-delete="true"></rbs-document-editor-button-bar>
 		</form>
 	</div>

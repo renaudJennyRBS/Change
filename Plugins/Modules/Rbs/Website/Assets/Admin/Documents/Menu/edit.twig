@@ -4,8 +4,9 @@
 		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Menu'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-aside-column>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div class="document-form" rbs-main-column>

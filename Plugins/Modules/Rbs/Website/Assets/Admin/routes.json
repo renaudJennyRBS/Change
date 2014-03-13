@@ -10,7 +10,7 @@
 	},
 	"/Rbs/Generic/Website/:id": {
 		"model": "Rbs_Website_Website",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Website/edit.twig",
 			"labelKey": "m.rbs.website.documents.website | ucf",
@@ -85,6 +85,7 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Website/FunctionalPage/": false,
 	"/Rbs/Website/FunctionalPage/:id": false,
 	"/Rbs/Website/FunctionalPage/:id/timeline": false,
 	"/Rbs/Website/FunctionalPage/:id/translate/:LCID": false,
@@ -100,6 +101,7 @@
 		"auto": false
 	},
 	"/Rbs/Website/FunctionalPage/new": false,
+	"/Rbs/Website/Menu/": false,
 	"/Rbs/Website/Menu/:id": false,
 	"/Rbs/Website/Menu/:id/timeline": false,
 	"/Rbs/Website/Menu/:id/translate/:LCID": false,
@@ -127,6 +129,9 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Website/SectionPageFunction/:id": false,
+	"/Rbs/Website/SectionPageFunction/new": false,
+	"/Rbs/Website/StaticPage/": false,
 	"/Rbs/Website/StaticPage/:id": false,
 	"/Rbs/Website/StaticPage/:id/timeline": false,
 	"/Rbs/Website/StaticPage/:id/translate/:LCID": false,
@@ -143,6 +148,7 @@
 		"auto": false
 	},
 	"/Rbs/Website/StaticPage/new": false,
+	"/Rbs/Website/Topic/": false,
 	"/Rbs/Website/Topic/:id": false,
 	"/Rbs/Website/Topic/:id/timeline": false,
 	"/Rbs/Website/Topic/:id/translate/:LCID": false,
@@ -204,7 +210,7 @@
 	"/Rbs/Website/Website/:id/workflow": false,
 	"/Rbs/Website/Website/:website/Menus/Menu/:id": {
 		"model": "Rbs_Website_Menu",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Menu/edit.twig",
 			"labelKey": "m.rbs.website.documents.menu | ucf",
@@ -264,7 +270,7 @@
 	},
 	"/Rbs/Website/Website/:website/Structure/FunctionalPage/:id": {
 		"model": "Rbs_Website_FunctionalPage",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/FunctionalPage/edit.twig",
 			"labelKey": "m.rbs.website.documents.functionalpage | ucf",
@@ -323,7 +329,7 @@
 	},
 	"/Rbs/Website/Website/:website/Structure/StaticPage/:id": {
 		"model": "Rbs_Website_StaticPage",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/StaticPage/edit.twig",
 			"labelKey": "m.rbs.website.documents.staticpage | ucf",
@@ -391,7 +397,7 @@
 	},
 	"/Rbs/Website/Website/:website/Structure/Topic/:id": {
 		"model": "Rbs_Website_Topic",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Topic/edit.twig",
 			"labelKey": "m.rbs.website.documents.topic | ucf",

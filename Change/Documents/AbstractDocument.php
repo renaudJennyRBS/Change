@@ -815,6 +815,10 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				}
 				$this->initialize($value);
 			}
+			elseif($name == 'LCID' && $this->isNew())
+			{
+				return true;
+			}
 			else
 			{
 				try

@@ -4,8 +4,8 @@
 		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Stock_Sku'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-aside-column>
-		<rbs-aside-editor-menu></rbs-aside-editor-menu>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
 	</div>
 
 	<div class="document-form" rbs-main-column>
