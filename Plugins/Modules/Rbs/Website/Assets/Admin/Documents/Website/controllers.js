@@ -364,7 +364,7 @@
 
 				if (nextDoc) {
 					nextLvl = getNodeInfo(nextDoc).level-1;
-					style = { background : 'linear-gradient(to bottom, rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*12)+','+Math.max(0, 255-lvl*5)+') 50%, rgb('+Math.max(0, 245-nextLvl*19)+','+Math.max(0, 250-nextLvl*12)+','+Math.max(0, 255-nextLvl*5)+'))' };
+					style = { background : 'linear-gradient(to bottom, rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*9)+','+Math.max(0, 255-lvl*5)+') 50%, rgb('+Math.max(0, 245-nextLvl*19)+','+Math.max(0, 250-nextLvl*12)+','+Math.max(0, 255-nextLvl*5)+'))' };
 				} else {
 					style = { background : 'rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*12)+','+Math.max(0, 255-lvl*5)+')' };
 				}

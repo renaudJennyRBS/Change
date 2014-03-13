@@ -8,7 +8,7 @@
 	box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
 	border-radius: 0;
 	font-size: 14px;
-	background: #3C3C3C;
+	background: #353432;
 	color: #eeeeee;border-top: 5px solid rgb(172,172,172);
 	border-left: 10px solid rgb(172,172,172);
 	border-top: 0 none;
@@ -28,7 +28,7 @@ rbs-form-button-bar > .confirmation-area.embedded-modal {
 
 .embedded-modal:after {
 	position: absolute;
-	border-bottom: 9px solid #333333;
+	border-bottom: 9px solid #353432;
 	border-left: 9px solid transparent;
 	border-right: 9px solid transparent;
 	content: "";
@@ -93,7 +93,7 @@ rbs-form-button-bar > .confirmation-area.embedded-modal {
 .embedded-modal.bottom.has-form-actions:after {
 	top: auto;
 	bottom: -9px;
-	border-top: 9px solid #333333;
+	border-top: 9px solid #4E4D4A;
 	border-bottom: none;
 }
 
@@ -102,7 +102,7 @@ rbs-form-button-bar > .confirmation-area.embedded-modal {
 	border-radius: 0;
 	padding: 10px 15px;
 	background: none;
-	border-top: 1px dashed #555555;
+	border-top: 1px dashed #4E4D4A;
 }
 
 .embedded-modal button.close {
@@ -111,9 +111,9 @@ rbs-form-button-bar > .confirmation-area.embedded-modal {
 }
 
 .embedded-modal.warning {
-	border-color: rgb(239,172,39);
+	border-color: #EBBB54;
 }
 
 .embedded-modal.danger {
-	border-color: #D9534F;
+	border-color: #CF4444;
 }

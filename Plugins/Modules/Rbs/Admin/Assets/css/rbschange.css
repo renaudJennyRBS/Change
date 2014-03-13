@@ -166,17 +166,17 @@ h3.panel-title {
 }
 
 .panel.panel-success {
-	border-color: #A2C200;
+	border-color: #94BA65;
 	box-shadow: 0 0 0 3px #f0f8dd;
 }
 
 .panel.panel-success .panel-heading {
 	background: #f0f8dd;
-	color: #A2C200;
+	color: #94BA65;
 }
 
 .panel.panel-success .panel-heading h3.panel-title {
-	color: #A2C200;
+	color: #94BA65;
 }
 
 .panel.panel-info {
@@ -393,13 +393,13 @@ h4.list-group-item:first-child {
 /* advanced mode */
 
 .advanced-mode h4 {
-	color: #b94a48;
+	color: #CF4444;
 	margin-top: 0;
 	text-transform: uppercase;
 }
 
 .advanced-mode .separator {
-	background-color: #EE5F5B;
+	background-color: #CF4444;
 	background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
 	background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
 	background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
@@ -418,7 +418,7 @@ h4.list-group-item:first-child {
 body > footer {
 	font-size: 9pt;
 	color: silver;
-	border-top: 5px solid #A1C400;
+	border-top: 5px solid #94BA65;
 	padding: 7px 15px;
 	line-height: 12px;
 	box-shadow: 0 -7px 7px rgba(128,128,128, 0.1);
@@ -433,7 +433,7 @@ body > footer a:visited {
 }
 body > footer a:hover,
 body > footer a:visited:hover {
-	color: #0088CC;
+	color: #94BA65;
 	text-decoration: underline;
 }
 
@@ -533,16 +533,16 @@ a.go-to-link:after {
 }
 
 .btn-flat {
-	background: none repeat scroll 0 0 #F0F5F8;
+	background: none repeat scroll 0 0 #F1F8FA;
 	border-radius: 2px;
 	box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.2) inset;
-	color: #6688AA;
+	color: #2790B0;
 	display: inline-block;
 	font-size: 12px;
 	line-height: 1.6;
 	padding: 2px 8px;
 	text-decoration: none;
-	text-transform: uppercase;
+	text-transform: lowercase;
 	-webkit-transition: color 0.1s ease-in, background-color 0.1s ease-in;
 	-moz-transition: color 0.1s ease-in, background-color 0.1s ease-in;
 	transition: color 0.1s ease-in, background-color 0.1s ease-in;
@@ -551,8 +551,8 @@ a.go-to-link:after {
 }
 
 .btn-flat:hover {
-	background: none repeat scroll 0 0 #6688AA;
-	color: #F0F5F8;
+	background: none repeat scroll 0 0 #2790B0;
+	color: #F1F8FA;
 	text-decoration: none;
 }
 
@@ -624,7 +624,34 @@ pre {
 #rbs-change-navbar {
 	border-width: 0 0 5px 0;
 	border-style: solid;
-	border-color: #A1C400;
+	border-color: #94BA65;
 	box-shadow: 0 7px 7px rgba(128,128,128,0.1);
 	margin-bottom: 0;
+}
+
+.btn-selection {
+	background: linear-gradient(to bottom, #AD9FC3 0%, #6f5499 100%);
+	color: white;
+	border-color: #6f5499;
+}
+
+.btn-selection:hover {
+	background: #6f5499;
+	color: white;
+}
+
+.panel.panel-selection {
+	border-color: #6f5499;
+	box-shadow: 0 0 0 3px #E6E2ED;
+}
+.panel.panel-selection.panel-heading h3.panel-title {
+	color: #6f5499;
+}
+
+.panel-selection > .panel-heading {
+	background-image: linear-gradient(to bottom, #AD9FC3 0%, #6f5499 100%);
+	background-repeat: repeat-x;
+	background-color: #6f5499;
+	border-color: #6f5499;
+	color: white;
 }

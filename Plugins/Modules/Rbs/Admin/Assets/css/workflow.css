@@ -102,11 +102,15 @@ rbs-document-list [rbs-document-workflow-actions] {
 
 .bullet-status.PUBLISHABLE {
 	border-radius: 10px;
-	background: #A2C200;
+	background: #94BA65;
+}
+
+.btn-success .bullet-status.PUBLISHABLE {
+	border: 1px solid white;
 }
 
 .bullet-status.VALIDCONTENT {
-	background: #B1EA37;
+	background: #94BA65;
 }
 
 .bullet-status.DRAFT {
@@ -114,12 +118,12 @@ rbs-document-list [rbs-document-workflow-actions] {
 }
 
 .bullet-status.UNPUBLISHABLE {
-	background: #ff001a;
+	background: #CF4444;
 }
 
 .bullet-status.FROZEN {
 	border-radius: 10px;
-	background: #33BBFF;
+	background: #2790B0;
 }
 
 .bullet-status.FILED {
@@ -128,7 +132,7 @@ rbs-document-list [rbs-document-workflow-actions] {
 }
 
 .bullet-status.VALIDATION {
-	background: #efa700;
+	background: #EBBB54;
 }
 
 rbs-document-list .document-list tbody td.workflow {
@@ -155,28 +159,28 @@ rbs-document-list td.workflow .workflow-indicator {
 rbs-document-list [rbs-document-workflow-actions].PUBLISHABLE,
 rbs-document-list [rbs-document-workflow-actions].VALIDCONTENT {
 	background: #F0F8DD;
-	border-color: #A2C200;
+	border-color: #94BA65;
 }
 rbs-document-list td.workflow .workflow-indicator.PUBLISHABLE,
 rbs-document-list td.workflow .workflow-indicator.VALIDCONTENT {
-	background: #A2C200;
+	background: #94BA65;
 }
 
 [rbs-document-workflow-actions].PUBLISHABLE h3,
 [rbs-document-workflow-actions].VALIDCONTENT h3 {
-	color: #A2C200;
+	color: #94BA65;
 }
 
 
 rbs-document-list [rbs-document-workflow-actions].VALIDATION {
 	background: #fff8f0;
-	border-color: #EFA700;
+	border-color: #EBBB54;
 }
 rbs-document-list td.workflow .workflow-indicator.VALIDATION {
-	background: #EFA700;
+	background: #EBBB54;
 }
 [rbs-document-workflow-actions].VALIDATION h3 {
-	color: #EFA700;
+	color: #EBBB54;
 }
 
 
@@ -188,19 +192,19 @@ rbs-document-list td.workflow .workflow-indicator.UNPUBLISHABLE {
 	background: #CC8888;
 }
 [rbs-document-workflow-actions].UNPUBLISHABLE h3 {
-	color: #EFA700;
+	color: #EBBB54;
 }
 
 
 rbs-document-list [rbs-document-workflow-actions].FROZEN {
 	background: #F0F8FF;
-	border-color: #33BBFF;
+	border-color: #2790B0;
 }
 rbs-document-list td.workflow .workflow-indicator.FROZEN {
-	background: #33BBFF;
+	background: #2790B0;
 }
 [rbs-document-workflow-actions].FROZEN h3 {
-	color: #33BBFF;
+	color: #2790B0;
 }
 
 .workflow-help {
@@ -281,10 +285,10 @@ rbs-document-list td.workflow .workflow-indicator.FROZEN {
 }
 
 .workflow-help .step .block .action.accept {
-	color: green;
+	color: #84A65A;
 }
 .workflow-help .step .block .action.reject {
-	color: darkred;
+	color: #B93C3C;
 }
 
 
