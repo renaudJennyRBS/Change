@@ -61,6 +61,11 @@ class Import
 	protected $valueConverter;
 
 	/**
+	 * @var boolean
+	 */
+	protected $addOnly = false;
+
+	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 */
 	public function __construct(\Change\Documents\DocumentManager $documentManager)
@@ -116,6 +121,16 @@ class Import
 			$this->options = new \Zend\Stdlib\Parameters();
 		}
 		return $this->options;
+	}
+
+	/**
+	 * @param boolean $addOnly
+	 * @return $this
+	 */
+	public function addOnly($addOnly)
+	{
+		$this->addOnly = $addOnly == true;
+		return $this;
 	}
 
 	/**
@@ -293,6 +308,10 @@ class Import
 	protected function import(AbstractDocument $document, array $jsonDocument)
 	{
 		if (!isset($jsonDocument['_model']))
+		{
+			return;
+		}
+		if ($this->addOnly && !$document->isNew())
 		{
 			return;
 		}

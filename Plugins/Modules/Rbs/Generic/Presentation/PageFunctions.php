@@ -46,6 +46,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.user.admin.function_login', $ucf),
 			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_User_ResetPassword', 'document' => false, 'block' => 'Rbs_User_ResetPassword',
+			'label' => $i18nManager->trans('m.rbs.user.admin.function_reset_password', $ucf),
+			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];
+
 		$functions[] = ['code' => 'Rbs_Review_EditReview', 'document' => true, 'block' => 'Rbs_Review_EditReview',
 			'label' => $i18nManager->trans('m.rbs.review.front.edit_review_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];

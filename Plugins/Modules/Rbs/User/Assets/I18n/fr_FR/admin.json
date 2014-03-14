@@ -136,6 +136,9 @@
 	"function_create_account":{
 		"message":"création du compte utilisateur"
 	},
+	"function_reset_password":{
+		"message":"Ré-initialisation du mot de passe"
+	},
 	"function_error_401":{
 		"message":"autorisation nécessaire"
 	},
@@ -243,5 +246,8 @@
 	},
 	"create_account_request_mail_subject":{
 		"message":"Demande de création de compte"
+	},
+	"reset_password":{
+		"message":"Ré-initialisation de mot de passe"
 	}
 }
