@@ -45,9 +45,7 @@
 
 				scope.onLoad = function() {
 					console.log('onLoad');
-					if (!contextRestored) {
-						setShipmentPromises();
-					}
+					setShipmentPromises();
 				};
 
 				scope.onReady = function() {

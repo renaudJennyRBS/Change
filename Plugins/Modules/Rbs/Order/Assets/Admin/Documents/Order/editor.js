@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function() {
 	"use strict";
 
@@ -12,7 +19,16 @@
 				scope.orderContext = {
 					showAddressUI: false,
 					showShippingUI: false,
-					showShipmentUI: false
+					showShipmentUI: false,
+					showNewProductLineUI: false,
+					showNewCustomLineUI: false,
+					showCouponUI: false,
+					showNewCouponUI: false,
+					showModifiersUI: false,
+					showNewDocumentFeeUI: false,
+					showNewCustomFeeUI: false,
+					showNewDocumentDiscountUI: false,
+					showNewCustomDiscountUI: false
 				};
 				scope.userAddresses = [];
 				scope.shipments = [];
@@ -173,21 +189,6 @@
 								scope.document.email = data.email;
 							}
 						});
-					}
-				};
-
-				scope.updateNewLineUI = function(mode) {
-					if (mode == 'product') {
-						scope.orderContext.showNewCustomLineUI = false;
-						scope.orderContext.showNewProductLineUI = !scope.orderContext.showNewProductLineUI;
-					}
-					else if (mode == 'custom') {
-						scope.orderContext.showNewProductLineUI = false;
-						scope.orderContext.showNewCustomLineUI = !scope.orderContext.showNewCustomLineUI;
-					}
-					else {
-						scope.orderContext.showNewProductLineUI = false;
-						scope.orderContext.showNewCustomLineUI = false;
 					}
 				};
 
