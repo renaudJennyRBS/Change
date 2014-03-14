@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ($) {
 	"use strict";
 
@@ -12,6 +19,35 @@
 	}]);
 
 
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-token-list
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a list with multiple items inside that can be reordered with drag and drop.
+	 *
+	 * Items can be Documents objects.
+	 *
+	 * ### Defining the template for each item ###
+	 *
+	 * If the items are Documents, it is possible to define a template for each item, based on the Model
+	 * of the Documents. In a JavaScript file of the plugin (ie. `admin.js`), add something like this:
+	 * <pre>
+	 * app.run(['$templateCache', function ($templateCache)
+	 * {
+	 *    $templateCache.put(
+	 *       // Template ID: 'picker-item-' + Document_Model_Name + '.html'
+	 *       'picker-item-Rbs_Catalog_Product.html',
+	 *       // The Document is available in this scope as 'item'
+	 *       '<span style="line-height: 30px"><img rbs-storage-image="item.adminthumbnail" thumbnail="XS"/> (= item.label =)</span>'
+	 *    );
+	 * }]);
+	 * </pre>
+	 *
+	 * @param {Array} items Array of items to display in the list (two-way data-binding).
+	 * @param {Boolean} disable-reordering If true, the user cannot reorder the elements in the list.
+	 */
 	app.directive('rbsTokenList', ['RbsChange.ArrayUtils', '$filter', '$templateCache', function (ArrayUtils, $filter, $templateCache)
 	{
 		return {
@@ -217,4 +253,5 @@
 			} // End of compile function
 		}; // End of Directive object
 	}]);
+
 })(window.jQuery);

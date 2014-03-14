@@ -8,11 +8,11 @@ module.exports = function(grunt) {
         docular: {
             groups: [
                 {
-                    groupTitle: 'Change Admin',
-                    groupId: 'changeadmin',
+                    groupTitle: 'Change',
+                    groupId: 'change',
                     groupIcon: 'icon-globe',
                     sections: [
-                        {
+						{
                             id: "directives",
                             title: "Directives",
                             showSource: false,
@@ -40,7 +40,8 @@ module.exports = function(grunt) {
                 }
             ],
             showDocularDocs: false,
-            showAngularDocs: true
+            showAngularDocs: false,
+			baseUrl: 'http://127.0.0.1:8000/'
         }
 
     });

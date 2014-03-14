@@ -1,9 +1,17 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ($) {
 
 	"use strict";
 
 	var app = angular.module('RbsChange'),
-		CORRECTION_CSS_CLASS = 'correction';
+		CORRECTION_CSS_CLASS = 'correction',
+		editorSectionDirective;
 
 
 	/**
@@ -16,6 +24,50 @@
 	}
 
 
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-editor-base
+	 * @restrict A
+	 *
+	 * @description
+	 * Base directive for Document editors.
+	 *
+	 * ### Public API of the Directive's Controller ###
+	 * (these methods can be called from the child Directives that require this one):
+	 *
+	 * - `prepareContext()`
+	 * - `registerCreateCascade()`
+	 * - `registerEditCascade()`
+	 * - `submit()`
+	 * - `prepareCreation()`
+	 * - `prepareEdition()`
+	 * - `clearInvalidFields()`
+	 * - `getCurrentSection()`
+	 * - `addMenuEntry()`
+	 * - `getMenuEntries()`
+	 * - `getProperties()`
+	 * - `addHeaderMessage()`
+	 * - `getDocumentModelName()`
+	 *
+	 * ### Editor's Scope ###
+	 *
+	 * #### Methods ####
+	 *
+	 * - `isUnchanged()`
+	 * - `reset()`
+	 * - `submit()`
+	 * - `hasStatus()`
+	 * - `hasCorrection()`
+	 *
+	 * #### Properties ####
+	 *
+	 * - `document`: the edited Document
+	 * - `original`: copy of the edited Document, used as a reference to check the changes
+	 * - `changes`: array containing the name of the modified properties
+	 * - `modelInfo`: object containing Model's information
+	 *
+	 * @param {String} model The full model name of the Documents that can be edited in this editor.
+	 */
 	function editorDirective ($rootScope, $routeParams, $q, $location, $compile, EditorManager, Utils, ArrayUtils, i18n, REST,
 		Events, Settings, NotificationCenter, Navigation, ErrorFormatter, UrlManager, Breadcrumb)
 	{
@@ -948,9 +1000,25 @@
 	app.directive('rbsDocumentEditorBase', editorDirective);
 
 
-
 	/**
-	 * Directive used to create a new Document.
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-editor-new
+	 * @restrict A
+	 *
+	 * @description
+	 * Directive used to create new Documents.
+	 *
+	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
+	 *
+	 * @example
+	 * <pre>
+	 *     <div rbs-document-editor-base="" model="...">
+	 *         ...
+	 *         <div rbs-document-editor-new="">
+	 *            ...
+	 *         </div>
+	 *     </div>
+	 * </pre>
 	 */
 	app.directive('rbsDocumentEditorNew', [
 		'RbsChange.REST', 'RbsChange.Settings', '$location', '$routeParams', 'RbsChange.NotificationCenter', 'RbsChange.i18n',
@@ -1039,9 +1107,25 @@
 	]);
 
 
-
 	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-editor-edit
+	 * @restrict A
+	 *
+	 * @description
 	 * Directive used to edit an existing Document.
+	 *
+	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
+	 *
+	 * @example
+	 * <pre>
+	 *     <div rbs-document-editor-base="" model="...">
+	 *         ...
+	 *         <div rbs-document-editor-edit="">
+	 *            ...
+	 *         </div>
+	 *     </div>
+	 * </pre>
 	 */
 	app.directive('rbsDocumentEditorEdit', ['$filter', '$routeParams', '$location', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', function ($filter, $routeParams, $location, NotificationCenter, REST, i18n)
 	{
@@ -1100,9 +1184,25 @@
 	}]);
 
 
-
 	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-editor-translate
+	 * @restrict A
+	 *
+	 * @description
 	 * Directive used to translate an existing Document.
+	 *
+	 * This directive requires the <code>rbs-document-editor-edit=""</code> to be present on an ancestor.
+	 *
+	 * @example
+	 * <pre>
+	 *     <div rbs-document-editor-base="" model="...">
+	 *         ...
+	 *         <div rbs-document-editor-edit="" rbs-document-editor-translate="">
+	 *            ...
+	 *         </div>
+	 *     </div>
+	 * </pre>
 	 */
 	app.directive('rbsDocumentEditorTranslate', ['$location', '$q', 'RbsChange.Events', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', function ($location, $q, Events, NotificationCenter, REST, i18n)
 	{
@@ -1159,13 +1259,20 @@
 	}]);
 
 
-
 	/**
-	 * Directive for editors' Sections, applied on each fieldset in editors template.
-	 * This directive looks for the fields it contains and registers a menu entry in the
-	 * editor Controller (rbsDocumentEditorBase).
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-editor-section
+	 * @restrict A
+	 *
+	 * @description
+	 * Placed on a <code>&lt;fieldset/&gt;</code> to declare a section in the editor.
+	 *
+	 * This directive looks for the fields in the <code>&lt;fieldset/&gt;</code> and registers a menu entry in the
+	 * {@link directives/RbsChange.directive:rbs-document-editor-base editor's Controller}.
+	 *
+	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
 	 */
-	app.directive('rbsEditorSection', ['RbsChange.Utils', '$location', function (Utils, $location)
+	editorSectionDirective = ['RbsChange.Utils', '$location', function (Utils, $location)
 	{
 		var defaultSectionIcons = {
 			publication : 'icon-globe',
@@ -1249,12 +1356,19 @@
 			}
 
 		};
-	}]);
-
+	}];
+	app.directive('rbsEditorSection', editorSectionDirective);
+	app.directive('rbsDocumentEditorSection', editorSectionDirective);
 
 
 	/**
-	 * Directives that displays a message when creating a Document from another one.
+	 * @name RbsChange.directive:rbs-document-editor-create-from-message
+	 * @restrict A
+	 *
+	 * @description
+	 * Displays a message when creating a Document from another one.
+	 *
+	 * @param {Document} rbs-document-editor-create-from-message The reference Document.
 	 */
 	app.directive('rbsDocumentEditorCreateFromMessage', ['RbsChange.i18n', function (i18n)
 	{

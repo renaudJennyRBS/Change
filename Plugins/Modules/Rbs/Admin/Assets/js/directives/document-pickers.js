@@ -1,21 +1,34 @@
-(function ($)
-{
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+(function ($) {
 
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
 	/**
-	 * @attribute ng-model
-	 * @attribute value-ids
-	 * @attribute accepted-model
-	 * @attribute selector-url eg: "/Rbs/User/Group/new"
-	 * @attribute context-key
-	 * @attribute selector-title
-	 * @attribute property-label
-	 * @attribute select-model
-	 * @attribute disable-reordering
-	 * @attribute hide-buttons-label
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-picker-single
+	 * @restrict EA
+	 *
+	 * @param {Object} ng-model The ng-model to bind.
+	 * @param {Boolean=} value-ids If true, stores the ID instead of the Document object.
+	 * @param {String=} accepted-model Model name of the Documents that can be selected.
+	 * @param {String=} context-key TODO
+	 * @param {String=} selector-title TODO
+	 * @param {String=} select-model TODO
+	 * @param {String=} property-label TODO
+	 * @param {Boolean=} hide-buttons-label TODO
+	 *
+	 * @description
+	 * Displays a Document selector to let the user select a single Document.
+	 * The user is redirected to the list of Documents of the desired model name and a
+	 * <strong>Navigation Context</strong> is created.
 	 */
 	function documentPickerLinkFunction(scope, iElement, attrs, ngModel, multiple, REST, Utils, Navigation, $timeout, UrlManager, Models)
 	{
@@ -300,6 +313,26 @@
 	app.directive('rbsDocumentPickerSingle', singlePicker);
 	app.directive('rbsWoodyWoodpicker', singlePicker); // Ha ha.
 
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-picker-multiple
+	 * @restrict EA
+	 *
+	 * @param {Object} ng-model The ng-model to bind.
+	 * @param {Boolean=} value-ids If true, stores the ID instead of the Document object.
+	 * @param {String=} accepted-model Model name of the Documents that can be selected.
+	 * @param {String=} context-key TODO
+	 * @param {String=} selector-title TODO
+	 * @param {String=} select-model TODO
+	 * @param {String=} property-label TODO
+	 * @param {Boolean=} hide-buttons-label TODO
+	 *
+	 * @description
+	 * Displays a Document selector to let the user select multiple Documents.
+	 * The user is redirected to the list of Documents of the desired model name and a
+	 * <strong>Navigation Context</strong> is created.
+	 */
 	app.directive('rbsDocumentPickerMultiple',
 		['RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Navigation', '$timeout', 'RbsChange.UrlManager', 'RbsChange.Models',
 			function (REST, Utils, Navigation, $timeout, UrlManager, Models)
@@ -317,6 +350,7 @@
 					}
 				};
 			}]);
+
 
 	app.service('RbsChange.SelectSession', ['$location', 'RbsChange.UrlManager', '$rootScope', 'RbsChange.MainMenu',
 		function ($location, UrlManager, $rootScope, MainMenu)

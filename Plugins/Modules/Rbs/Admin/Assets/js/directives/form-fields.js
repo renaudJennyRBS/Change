@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
 
 	"use strict";
@@ -6,31 +13,247 @@
 		fieldIdCounter = 0;
 
 
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-text
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a simple text field in a Document editor.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
 	registerFieldDirective('Text', '<input type="text" class="form-control"/>', 'input');
-	registerFieldDirective('Email', '<input type="email" class="form-control"/>', 'input');
-	registerFieldDirective('Url', '<input type="url" class="form-control"/>', 'input');
-	registerFieldDirective('Integer', '<input type="number" class="form-control" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
-	registerFieldDirective('Float', '<input type="text" class="form-control" rbs-smart-float=""/>', 'input');
-	registerFieldDirective('Boolean', '<rbs-switch></rbs-switch>', 'rbs-switch');
-	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
-	registerFieldDirective('Picker', '<rbs-document-picker-single></rbs-document-picker-single>', 'rbs-document-picker-single');
-	registerFieldDirective('PickerMultiple', '<rbs-document-picker-multiple></rbs-document-picker-multiple>', 'rbs-document-picker-multiple');
-	registerFieldDirective('Date', '<rbs-date-selector></rbs-date-selector>', 'rbs-date-selector');
-	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
-	registerFieldDirective('Image', '<rbs-uploader rbs-image-uploader="" storage-name="images" file-accept="image/*"></div>', '[rbs-image-uploader]');
-	registerFieldDirective('File', '<rbs-uploader rbs-file-uploader="" storage-name="files" file-accept="*"></div>', '[rbs-file-uploader]');
-	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
-	registerFieldDirective('Address', '<rbs-address-fields></rbs-address-fields>', 'rbs-address-fields', true);
-	registerFieldDirective('ChainedSelect', '<rbs-document-chained-select></rbs-document-chained-select>', 'rbs-document-chained-select');
-	registerFieldDirective('DocumentSelect', '<rbs-document-select></rbs-document-select>', 'rbs-document-select');
-
 
 	/**
-	 * Basic Directive to wrap custom fields.
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-email
+	 * @restrict E
 	 *
-	 * <code>
-	 *     <rbs-field required="true" label="Property label">...</rbs-field>
-	 * </code>
+	 * @description
+	 * Displays a simple text field in a Document editor with email validation.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Email', '<input type="email" class="form-control"/>', 'input');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-url
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a simple text field in a Document editor with URL validation.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Url', '<input type="url" class="form-control"/>', 'input');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-integer
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a simple text field in a Document editor with integer number validation.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Integer', '<input type="number" class="form-control" ng-pattern="/^\\-?[0-9]+$/"/>', 'input');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-float
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a simple text field in a Document editor with floating number validation.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Float', '<input type="text" class="form-control" rbs-smart-float=""/>', 'input');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-boolean
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a field in a Document editor to select a boolean value.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Boolean', '<rbs-switch></rbs-switch>', 'rbs-switch');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-rich-text
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a rich text field in a Document editor.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('RichText', '<rbs-rich-text-input></rbs-rich-text-input>', 'rbs-rich-text-input');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-picker
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select another Document.
+	 *
+	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-picker-single rbs-document-picker-single Directive}.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 * @param {String} accepted-model Model name of the Documents that can be selected.
+	 */
+	registerFieldDirective('Picker', '<rbs-document-picker-single></rbs-document-picker-single>', 'rbs-document-picker-single');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-picker-multiple
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select other Documents.
+	 *
+	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-picker-multiple rbs-document-picker-multiple Directive}.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 * @param {String} accepted-model Model name of the Documents that can be selected.
+	 */
+	registerFieldDirective('PickerMultiple', '<rbs-document-picker-multiple></rbs-document-picker-multiple>', 'rbs-document-picker-multiple');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-date
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select a date.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Date', '<rbs-date-selector></rbs-date-selector>', 'rbs-date-selector');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-price
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to enter a price.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Price', '<rbs-price-input></rbs-price-input>', 'rbs-price-input');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-image
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select an image to upload.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Image', '<rbs-uploader rbs-image-uploader="" storage-name="images" file-accept="image/*"></div>', '[rbs-image-uploader]');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-file
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select a file to upload.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('File', '<rbs-uploader rbs-file-uploader="" storage-name="files" file-accept="*"></div>', '[rbs-file-uploader]');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-select-from-collection
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select a value that comes from a Collection (see Rbs/Collection plugin).
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 * @param {String} rbs-items-from-collection Identifier of the Collection to use.
+	 * @param {String} empty-value-label Text to display when nothing is selected.
+	 */
+	registerFieldDirective('SelectFromCollection', '<select class="form-control"></select>', 'select');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-address
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays the controls in a Document editor to enter an address.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Address', '<rbs-address-fields></rbs-address-fields>', 'rbs-address-fields', true);
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-chained-select
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays the controls in a Document editor to select a Document via multiple chained listboxes.
+	 *
+	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-chained-select Directive}.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 * @param {String} chain The chain definition.
+	 */
+	registerFieldDirective('ChainedSelect', '<rbs-document-chained-select></rbs-document-chained-select>', 'rbs-document-chained-select');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-document-select
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select a Document via a listbox.
+	 *
+	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-select Directive}.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('DocumentSelect', '<rbs-document-select></rbs-document-select>', 'rbs-document-select');
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field
+	 * @restrict E
+	 *
+	 * @description
+	 * Basic Directive to wrap custom fields.
 	 */
 	app.directive('rbsField', function ()
 	{
@@ -169,8 +392,16 @@
 
 
 	/**
-	 * Directive that displays a 'label' and 'title' fields for publishable Documents.
-	 * The value of these two properties an be synchronized with a 'lock' button.
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-field-label-title
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays two text fields suitable to enter the `label` and `title` properties of publishable Documents. Both
+	 * fields can be synchronized.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
 	 */
 	app.directive('rbsFieldLabelTitle', [function ()
 	{

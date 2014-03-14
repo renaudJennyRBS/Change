@@ -1,16 +1,27 @@
-(function ($) {
+(function () {
 
 	"use strict";
 
-	angular.module('RbsChange').directive('rbsAddressFields', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout) {
-
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-address-fields
+	 * @restrict EA
+	 *
+	 * @description
+	 * Displays the input fields to edit an address.
+	 *
+	 * @param {Document} address Address Document.
+	 */
+	angular.module('RbsChange').directive('rbsAddressFields', ['RbsChange.REST', function (REST)
+	{
 		return {
 			restrict    : 'EA',
 			require     : 'ngModel',
 			scope       : true,
 			templateUrl : 'Rbs/Admin/js/directives/address-fields.twig',
 
-			link : function (scope, elm, attrs, ngModel) {
+			link : function (scope, elm, attrs, ngModel)
+			{
 				scope.addressFieldsId = null;
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
@@ -77,4 +88,4 @@
 			}
 		};
 	}]);
-})(window.jQuery);
+})();

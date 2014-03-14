@@ -1,9 +1,12 @@
 /**
- * User: fredericbonjour
- * Date: 24/05/13
- * Time: 09:44
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 (function ($) {
+
 	"use strict";
 
 	$('<div id="rbs-document-list-tester"></div>').css({
@@ -29,6 +32,58 @@
 
 	app.constant('RbsChange.PaginationPageSizes', [ 10, 20, 30, 50, 75, 100 ]);
 
+
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-list
+	 * @restrict E
+	 *
+	 * @param {String} model The Model name of the Documents to display in the list.
+	 * @param {Object=} extend Object that extends the logic of the <code>&lt;rbs-document-list/&gt;</code>, used
+	 * for communication between the <em>isolated scope</em> of the list and your surrounding controller.
+	 * @param {Object=} load-query Query object used to load the collection of Documents.
+	 * @param {String=} collection-url URL of a REST service that delivers a collection of Documents.
+	 * @param {Array|Object=} external-collection Collection of Documents.
+	 * @param {Function=} on-preview Function called when a preview is requested on a Document.
+	 * @param {Function=} on-reload Function called when a reload is requested, in case of `external-collection`
+	 *
+	 * @description
+	 * Displays a list of Documents in a table.
+	 *
+	 * ### Defining the columns ###
+	 *
+	 * Insert a <code>&lt;rbs-column/&gt;</code> for each column you want in the table.
+	 *
+	 * #### Columns parameters ####
+	 *
+	 * - `name`: name of the Document's property to display in this column.
+	 * - `label`: label of the column (defaults to the label of the property).
+	 * - `align`: `left`, `center` or `right` (defaults to `left`).
+	 * - `width`: width of the column, with unit.
+	 *
+	 * Contents of the column, if provided, is HTML with Angular expressions. If no content is provided,
+	 * the Document's property is displayed as is.
+	 * The Document is available as the `doc` property of the scope.
+	 *
+	 * ### Defining the preview template ###
+	 *
+	 * ### Defining actions in the toolbar ###
+	 *
+	 * ### Defining quick actions ###
+	 *
+	 * @example
+	 * <pre>
+	 *     <rbs-document-list
+	 *       model="...">
+	 *         <rbs-column name="label"></rbs-column>
+	 *         <rbs-column></rbs-column>
+	 *         ...
+	 *         <rbs-grid-item></<rbs-grid-item>
+	 *         <rbs-preview></rbs-preview>
+	 *         <rbs-action></rbs-action>
+	 *     </div>
+	 * </pre>
+	 */
 	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Actions, NotificationCenter, Settings, Events, PaginationPageSizes, Navigation, ErrorFormatter)
 	{
 		/**
