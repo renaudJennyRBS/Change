@@ -224,7 +224,7 @@
 			template :
 				'<div ng-repeat="c in activeContexts">' +
 					'<div class="cascading-forms-collapsed" ng-style="getStyle($index)">' +
-						'<a href ng-click="c.redirect()"><i class="icon-circle-arrow-left"></i> (= c.label() =)</a>' +
+						'<a href="javascript:;" ng-click="c.redirect()"><i class="icon-circle-arrow-left icon-large"></i> (= c.label() =)</a>' +
 						'<span ng-if="c.labelKey()"> &mdash; <span ng-bind="c.labelKey()"></span></span>' +
 					'</div>' +
 				'</div>',

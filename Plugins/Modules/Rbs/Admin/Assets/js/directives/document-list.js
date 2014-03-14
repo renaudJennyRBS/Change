@@ -429,10 +429,10 @@
 					if (tElement.closest('rbs-document-editor').length === 0)
 					{
 						var selectHtml =
-								'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-info btn-xs" ng-click="selectionContextAppend(doc)">' +
+								'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc)">' +
 								' <i class="icon-plus"></i></button>';
 
-						selectHtml += ' <button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc, true)">' +
+						selectHtml += ' <button type="button" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc, true)">' +
 							i18n.trans('m.rbs.admin.adminjs.select') +
 							' <i class="icon-circle-arrow-right"></i></button>';
 
@@ -498,10 +498,10 @@
 				if (tElement.closest('rbs-document-editor').length === 0)
 				{
 					var selectHtml =
-						'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-info btn-xs" ng-click="selectionContextAppend(doc)">' +
+						'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc)">' +
 							' <i class="icon-plus"></i></button>';
 
-					selectHtml += ' <button type="button" class="btn btn-success btn-xs" ng-click="selectionContextAppend(doc, true)">' +
+					selectHtml += ' <button type="button" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc, true)">' +
 						i18n.trans('m.rbs.admin.adminjs.select') +
 						' <i class="icon-circle-arrow-right"></i></button>';
 

@@ -53,9 +53,9 @@
 							{{ i18n('m.rbs.website.admin.index', ['ucf']) }}
 						</button>
 
-						<a ng-if="extend.isTopic(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.staticpage_create', ['ucf']) }}" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website: doc.website.id,tn: doc.id} =)"><i class="icon-file-text-alt icon-large"></i></a>
-						<a ng-if="extend.isTopic(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.topic_create', ['ucf']) }}" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= 'Rbs_Website_Topic' | rbsURL:'new':{website: doc.website.id,tn: doc.id} =)"><i class="icon-folder-close-alt icon-large"></i></a>
-						<a ng-if="! extend.isFunction(doc)" ng-href="(= doc | rbsURL:'form' =)" class="btn-flat"><i class="icon-pencil icon-large"></i></a>
+						<a ng-if="extend.isTopic(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.staticpage_create', ['ucf']) }}" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website: doc.website.id,tn: doc.id} =)">+ <i class="icon-file-text-alt icon-large"></i></a>
+						<a ng-if="extend.isTopic(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.topic_create', ['ucf']) }}" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= 'Rbs_Website_Topic' | rbsURL:'new':{website: doc.website.id,tn: doc.id} =)">+ <i class="icon-folder-close-alt icon-large"></i></a>
+						<a ng-if="! extend.isFunction(doc)" ng-href="(= doc | rbsURL:'form' =)" class="btn-flat">{{ i18n('m.rbs.admin.admin.edit') }}</a>
 					</span>
 
 					<span ng-if="extend.isTopic(doc)">

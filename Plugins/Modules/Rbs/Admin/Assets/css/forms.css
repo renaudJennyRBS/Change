@@ -81,6 +81,14 @@ select.ng-dirty.ng-invalid {
 	position: relative;
 }
 
+rbs-navigation-history a:link,
+rbs-navigation-history a:link {
+	color: #6f5499;
+}
+rbs-navigation-history a:hover {
+	color: #6f5499;
+}
+
 /* Good interline between buttons in document editor when there is more than one line */
 .form-actions .form-buttons {
 	line-height: 55px;
@@ -131,8 +139,7 @@ table.field-label-and-title .sync-button-cell .decorator.locked {
 
 a.editor-menu-item {
 	display: block;
-	text-align: right;
-	padding: 7px 44px 7px 10px;
+	padding: 7px 44px 7px 0;
 	position: relative;
 	margin-top: 1px;
 	margin-right: 0px;
@@ -146,7 +153,7 @@ a.editor-menu-item:hover {
 }
 
 a.editor-menu-item.active {
-	background: linear-gradient(to right, white 0%, #ECF2CC 100%);
+	background: linear-gradient(to right, white 0%, #EAF1E0 100%);
 	text-decoration: none;
 	color: #719400;
 }
@@ -175,7 +182,7 @@ a.editor-menu-item .badge.badge-required {
 
 a.editor-menu-item.active:after {
 	border-bottom: 20px inset rgba(0, 0, 0, 0);
-	border-left: 20px solid #ECF2CC;
+	border-left: 20px solid #EAF1E0;
 	border-top: 20px inset rgba(0, 0, 0, 0);
 	content: "";
 	height: 0;
@@ -191,18 +198,18 @@ a.editor-menu-item i[class*=" icon-"] {
 	font-size: 20pt;
 	height: 10px;
 	line-height: 10px;
-	margin-right: 10px;
 	opacity: 0.15;
 	position: relative;
 	top: -1px;
 	vertical-align: middle;
+	text-align: center;
 }
 
 a.editor-menu-item i[class^="icon-"]:before,
 a.editor-menu-item i[class*=" icon-"]:before {
 	width: 36px;
-}
 
+}
 rbs-gps-google-maps .map-input {
 	background-color: #fff;
 	padding: 0 11px 0 13px;
