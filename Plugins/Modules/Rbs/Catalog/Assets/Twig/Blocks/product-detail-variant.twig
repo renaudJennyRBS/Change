@@ -7,9 +7,8 @@
 {% set attributeThumbnailFormat = {'maxWidth' : 160, 'maxHeight' : 120}  %}
 {% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
 <article itemscope="" itemtype="http://schema.org/Product" class="product-details"
-	data-ng-controller="{% if productPresentation.general.hasOwnSku %}RbsCatalogSimpleProductController{% else %}RbsCatalogVariantProductController{% endif %}">
+	data-ng-controller="RbsCatalogVariantProductController">
 	{% include 'Rbs_Catalog/Blocks/Product/loading.twig' %}
-
 	<div class="row">
 		<div class="col-sm-12">
 			<header>
@@ -22,11 +21,7 @@
 			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
 		</div>
 		<div class="col-sm-6 col-md-4">
-			{% if productPresentation.general.hasOwnSku %}
-				{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
-			{% else %}
-				{% include 'Rbs_Catalog/Blocks/Product/offer-variant.twig' %}
-			{% endif %}
+			{% include 'Rbs_Catalog/Blocks/Product/offer-variant.twig' %}
 			{% include 'Rbs_Catalog/product-added-to-cart-popin.twig' %}
 		</div>
 	</div>

@@ -122,14 +122,15 @@ class Product extends Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$finalProduct = $this->getProductToBeDisplayed($product, $catalogManager, $documentManager);
-
+				$finalProduct = $catalogManager->getProductToBeDisplayed($product);
 				if ($finalProduct !== null)
 				{
-					$productPresentation = $finalProduct->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+					$options = [ 'urlManager' => $event->getUrlManager() ];
+					$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 					$productPresentation->evaluate();
 					$attributes['productPresentation'] = $productPresentation;
-					return 'product.twig';
+
+					return $this->getTemplateName($productPresentation);
 				}
 			}
 
@@ -141,36 +142,18 @@ class Product extends Block
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Catalog\CatalogManager $catalogManager
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return \Rbs\Catalog\Documents\Product
+	 * @param \Rbs\Catalog\Product\ProductPresentation $productPresentation
+	 * @return string
 	 */
-	protected function getProductToBeDisplayed($product, $catalogManager, $documentManager)
+	protected function getTemplateName($productPresentation)
 	{
-		// If product is a simple product or is root product of variant or is categorizable.
-		if (!$product->getVariantGroup() || $product->hasVariants() ||  $product->getCategorizable())
+		if ($productPresentation instanceof \Rbs\Catalog\Product\VariantProductPresentation)
 		{
-			return $product;
+			return 'product-detail-variant.twig';
 		}
-
-		// Else you have a product that is a final product of variant.
-		// If you have generated intermediate variant.
-		if (!$product->getVariantGroup()->mustGenerateOnlyLastVariant())
+		else
 		{
-			// Try to find the intermediate variant that must be used to display product.
-			$newProductId = $catalogManager->getVariantProductIdMustBeDisplayedForVariant($product);
-			if ($newProductId != null)
-			{
-				$product = $documentManager->getDocumentInstance($newProductId);
-				if ($product instanceof \Rbs\Catalog\Documents\Product)
-				{
-					return $product;
-				}
-			}
+			return 'product-detail-simple.twig';
 		}
-
-		// Else try to return the root product of variant.
-		return $catalogManager->getRootProductOfVariantGroup($product->getVariantGroup());
 	}
 }

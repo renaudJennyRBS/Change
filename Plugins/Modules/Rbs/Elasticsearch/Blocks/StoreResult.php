@@ -243,7 +243,6 @@ class StoreResult extends Block
 			$attributes['totalCount'] = $totalCount;
 			$attributes['pageCount'] = $pageCount;
 
-			$webStoreId = $storeIndex->getStoreId();
 			$contextualUrls = $parameters->getParameter('contextualUrls');
 
 			/* @var $result \Elastica\Result */
@@ -267,7 +266,8 @@ class StoreResult extends Block
 				$visual = $product->getFirstVisual();
 				$row['visual'] = $visual ? $visual->getPath() : null;
 
-				$productPresentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
+				$parameters = [ 'urlManager' => $event->getUrlManager() ];
+				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $parameters);
 				if ($productPresentation)
 				{
 					$productPresentation->evaluate();

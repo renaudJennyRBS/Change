@@ -48,8 +48,8 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$commerceServices = $event->getServices('commerceServices');
 			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$webStoreId = $commerceServices->getContext()->getWebstore()->getId();
-				$presentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
+				$options = [ 'urlManager' => $event->getUrlManager() ];
+				$presentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 				$presentation->evaluate();
 				$responseData = $presentation->toArray($formats);
 				$result = new \Change\Http\Web\Result\AjaxResult($responseData);

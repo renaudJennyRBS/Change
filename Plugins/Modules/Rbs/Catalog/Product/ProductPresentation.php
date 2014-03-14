@@ -14,24 +14,29 @@ namespace Rbs\Catalog\Product;
 class ProductPresentation
 {
 	/**
-	 * @var \Rbs\Commerce\CommerceServices
+	 * @var \Rbs\Catalog\CatalogManager
 	 */
-	protected $commerceServices;
-
-	/**
-	 * @var \Change\Http\Web\UrlManager
-	 */
-	protected $urlManager;
-
-	/**
-	 * @var \Rbs\Catalog\Documents\Product
-	 */
-	protected $product;
+	protected $catalogManager;
 
 	/**
 	 * @var integer
 	 */
-	protected $webStoreId;
+	protected $productId;
+
+	/**
+	 * @var \Rbs\Store\Documents\WebStore
+	 */
+	protected $webStore;
+
+	/**
+	 * @var \Rbs\Price\Tax\BillingAreaInterface
+	 */
+	protected $billingArea;
+
+	/**
+	 * @var string
+	 */
+	protected $zone;
 
 	/**
 	 * @var array
@@ -51,7 +56,7 @@ class ProductPresentation
 	/**
 	 * @var array
 	 */
-	protected $general = null;
+	protected $general = array();
 
 	/**
 	 * @var array
@@ -64,45 +69,121 @@ class ProductPresentation
 	protected $attributesConfiguration = null;
 
 	/**
-	 * @var array
-	 */
-	protected $variantsConfiguration = null;
-
-	/**
-	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param integer $webStoreId
-	 * @param \Change\Http\Web\UrlManager $urlManager
-	 */
-	public function __construct(\Rbs\Commerce\CommerceServices $commerceServices, \Rbs\Catalog\Documents\Product $product,
-		$webStoreId, $urlManager)
-	{
-		$this->commerceServices = $commerceServices;
-		$this->product = $product;
-		$this->webStoreId = $webStoreId;
-		$this->urlManager = $urlManager;
-
-		$this->general = $this->getGeneral();
-	}
-
-	/**
-	 * @param integer $webStoreId
+	 * @param \Rbs\Catalog\CatalogManager $catalogManager
 	 * @return $this
 	 */
-	public function setWebStoreId($webStoreId)
+	public function setCatalogManager($catalogManager)
 	{
-		$this->resetPrice();
-		$this->resetStock();
-		$this->webStoreId = $webStoreId;
+		$this->catalogManager = $catalogManager;
 		return $this;
 	}
 
 	/**
-	 * @return integer
+	 * @return \Rbs\Catalog\CatalogManager
 	 */
-	public function getWebStoreId()
+	protected function getCatalogManager()
 	{
-		return $this->webStoreId;
+		return $this->catalogManager;
+	}
+
+	/**
+	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
+	 * @return $this
+	 */
+	public function setBillingArea($billingArea)
+	{
+		$this->billingArea = $billingArea;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\BillingAreaInterface
+	 */
+	public function getBillingArea()
+	{
+		return $this->billingArea;
+	}
+
+	/**
+	 * @param int $productId
+	 * @return $this
+	 */
+	public function setProductId($productId)
+	{
+		$this->productId = $productId;
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getProductId()
+	{
+		return $this->productId;
+	}
+
+	/**
+	 * @param \Rbs\Store\Documents\WebStore $webStore
+	 * @return $this
+	 */
+	public function setWebStore($webStore)
+	{
+		$this->webStore = $webStore;
+		return $this;
+	}
+
+	/**
+	 * @return \Rbs\Store\Documents\WebStore
+	 */
+	public function getWebStore()
+	{
+		return $this->webStore;
+	}
+
+	/**
+	 * @param string $zone
+	 * @return $this
+	 */
+	public function setZone($zone)
+	{
+		$this->zone = $zone;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getZone()
+	{
+		return $this->zone;
+	}
+
+	/**
+	 * @param array $general
+	 * @return $this
+	 */
+	public function setGeneral(array $general)
+	{
+		$this->general = $general;
+		return $this;
+	}
+
+	/**
+	 * @param array $general
+	 * @return $this
+	 */
+	public function addGeneral(array $general)
+	{
+		$this->general = array_merge($this->general, $general);
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getGeneral()
+	{
+		return $this->general;
 	}
 
 	/**
@@ -116,15 +197,33 @@ class ProductPresentation
 	}
 
 	/**
+	 * @return $this
+	 */
+	protected function resetStock()
+	{
+		$this->stock = null;
+		return $this;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getStock()
 	{
 		if ($this->stock === null)
 		{
-			$this->stock = $this->commerceServices->getCatalogManager()->getStockInfo($this->product, $this->webStoreId);
+			$this->stock = $this->catalogManager->getStockInfo($this->productId, $this->webStore);
 		}
 		return $this->stock;
+	}
+
+	/**
+	 * @return $this
+	 */
+	protected function resetPrice()
+	{
+		$this->prices = array();
+		return $this;
 	}
 
 	/**
@@ -133,25 +232,12 @@ class ProductPresentation
 	 */
 	public function getPrices($quantity = 1)
 	{
-		if ($this->prices === null)
+		if (!isset($this->prices[$quantity]))
 		{
-			$billingArea = $this->commerceServices->getContext()->getBillingArea();
-			$zone = $this->commerceServices->getContext()->getZone();
-			$this->prices = $this->commerceServices->getCatalogManager()->getPricesInfos($this->product, $quantity, $billingArea, $zone, $this->webStoreId);
+			$this->prices[$quantity] = $this->catalogManager->getPricesInfos($this->productId, $quantity, $this->webStore,
+				$this->billingArea, $this->zone);
 		}
-		return $this->prices;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getGeneral()
-	{
-		if ($this->general === null)
-		{
-			$this->general = $this->commerceServices->getCatalogManager()->getGeneralInfo($this->product, $this->urlManager);
-		}
-		return $this->general;
+		return $this->prices[$quantity];
 	}
 
 	/**
@@ -160,7 +246,7 @@ class ProductPresentation
 	 */
 	public function getPictograms($formats = array('pictogram' => ['maxWidth' => 60, 'maxHeight' => 45]))
 	{
-		return $this->commerceServices->getCatalogManager()->getPictogramsInfos($this->product, $formats);
+		return $this->catalogManager->getPictogramsInfos($this->productId, $formats);
 	}
 
 	/**
@@ -170,8 +256,7 @@ class ProductPresentation
 	public function getFirstVisual($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
 		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
 	{
-		$v = $this->doGetVisuals($formats, true);
-		return $v;
+		return $this->catalogManager->getVisualsInfos($this->productId, $formats, true);
 	}
 
 	/**
@@ -181,42 +266,7 @@ class ProductPresentation
 	public function getVisuals($formats = array('list' => ['maxWidth' => 160, 'maxHeight' => 120], 'detail' => ['maxWidth' => 540, 'maxHeight' => 405],
 		'thumbnail' => ['maxWidth' => 80, 'maxHeight' => 60], 'attribute' => ['maxWidth' => 160, 'maxHeight' => 120]))
 	{
-		// TODO Cache with formats
-		/*if ($this->visuals === null)
-		{*/
-		$this->visuals = $this->doGetVisuals($formats, false);
-		/*}*/
-		return $this->visuals;
-	}
-
-	/**
-	 * @param array $formats
-	 * @param boolean $onlyFirst
-	 * @return array
-	 */
-	protected function doGetVisuals($formats, $onlyFirst)
-	{
-		return $this->commerceServices->getCatalogManager()->getVisualsInfos($this->product, $formats, $onlyFirst);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getVariantsConfiguration()
-	{
-		if ($this->variantsConfiguration === null)
-		{
-			$this->variantsConfiguration = $this->commerceServices->getCatalogManager()->getVariantsConfiguration($this->product, true);
-		}
-		return $this->variantsConfiguration;
-	}
-
-	/**
-	 * @return \Rbs\Catalog\Documents\Product
-	 */
-	public function getProduct()
-	{
-		return $this->product;
+		return $this->catalogManager->getVisualsInfos($this->productId, $formats, false);
 	}
 
 	/**
@@ -226,19 +276,9 @@ class ProductPresentation
 	{
 		if ($this->attributesConfiguration === null)
 		{
-			$this->attributesConfiguration = $this->commerceServices->getCatalogManager()->getAttributesConfiguration($this->product);
+			$this->attributesConfiguration = $this->catalogManager->getAttributesConfiguration($this->productId);
 		}
 		return $this->attributesConfiguration;
-	}
-
-	protected function resetPrice()
-	{
-		$this->prices = null;
-	}
-
-	protected function resetStock()
-	{
-		$this->stock = null;
 	}
 
 	/**
@@ -249,15 +289,20 @@ class ProductPresentation
 	{
 		$this->resetPrice();
 		$this->resetStock();
-
-		if ($quantity && $this->webStoreId)
+		if ($quantity && $this->webStore)
 		{
-			$this->getPrices($quantity);
-			$this->getStock();
+			$prices = $this->getPrices($quantity);
+			$stock = $this->getStock();
 
-			if ($this->general['hasOwnSku'] === true && isset($this->prices['price']) &&
-				((isset($this->stock['level']) && $this->stock['level'] > 0 && $this->stock['level'] >= $this->stock['minQuantity']) || (isset($this->general['allowBackorders']) && $this->general['allowBackorders'] === true))
-				)
+			if ($this->general['hasOwnSku'] !== true || !isset($prices['price']))
+			{
+				$this->general['canBeOrdered'] = false;
+			}
+			elseif (isset($this->general['allowBackorders']) && $this->general['allowBackorders'] === true)
+			{
+				$this->general['canBeOrdered'] = true;
+			}
+			elseif (isset($stock['level']) && $stock['level'] > 0 && $stock['level'] >= $stock['minQuantity'])
 			{
 				$this->general['canBeOrdered'] = true;
 			}
@@ -266,7 +311,6 @@ class ProductPresentation
 				$this->general['canBeOrdered'] = false;
 			}
 		}
-
 		return $this;
 	}
 
@@ -277,7 +321,7 @@ class ProductPresentation
 	public function toArray($formats)
 	{
 		$array = [];
-		$array['productId'] = $this->product->getId();
+		$array['productId'] = $this->productId;
 		$array['key'] = $array['productId'];
 		$array['general'] = $this->getGeneral();
 		$array['stock'] = $this->getStock();
