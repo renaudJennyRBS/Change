@@ -47,11 +47,10 @@ class GetRoutes
 			foreach ($editRoutes as $path => $route)
 			{
 				$model = $modelManager->getModelByName($route['model']);
-				//add social route to all editable and non abstract model
 				if ($model && $model->isEditable() && !$model->isAbstract())
 				{
-					$socialRouteName = $path . '/timeline';
-					$routes[$socialRouteName] = [
+					$routeName = $path . '/timeline';
+					$routes[$routeName] = [
 						'model' => $route['model'],
 						'name' => 'timeline',
 						'rule' => [

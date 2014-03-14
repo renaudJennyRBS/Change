@@ -15,13 +15,6 @@
 			scope: true,
 
 			link: function(scope) {
-				angular.extend(scope.orderContext, {
-					showModifiersUI: false,
-					showNewDocumentFeeUI: false,
-					showNewCustomFeeUI: false,
-					showNewDocumentDiscountUI: false,
-					showNewCustomDiscountUI: false
-				});
 				scope.data = {
 					newDocumentFee: null,
 					newCustomFee: getClearCustomFee(),

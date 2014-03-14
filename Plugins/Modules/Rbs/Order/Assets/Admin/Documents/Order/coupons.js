@@ -15,10 +15,6 @@
 			scope: true,
 
 			link: function(scope) {
-				angular.extend(scope.orderContext, {
-					showCouponUI: false,
-					showNewCouponUI: false
-				});
 				scope.data = {
 					newCoupon: null,
 					editedLineIndex: null
