@@ -21,6 +21,7 @@
 								type="password" name="password" required="required" class="form-control"
 								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
 						</div>
+						<div class="form-group text-right" rbs-user-forgot-password=""></div>
 						<button class="btn btn-primary" data-ng-disabled="!canAuthenticate()" data-ng-click="authenticate()">
 							{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
 						</button>

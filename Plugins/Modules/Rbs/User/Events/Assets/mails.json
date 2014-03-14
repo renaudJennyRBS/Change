@@ -33,6 +33,40 @@
 					"subject": "Création de compte utilisateur"
 				}
 			}
+		},
+		{
+			"_id": "user_reset_password_request",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "user_reset_password_request",
+			"substitutions": ["website", "link"],
+			"label": "Demande de ré-initialisation de mot de passe",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "Bonjour,\n\n### Vous avez fait une demande de ré-initialisation de mot de passe pour le site \"{website}\"\n\nVeuillez suivre ce mail pour accéder au changement de votre mot de passe : [{link}]({link} \"Changer de mot de passe\")\n\nSi vous n'êtes pas à l'origine de cette demande, ne tenez pas compte de cet email.\n\ncordialement.",
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Demande de ré-initialisation de mot de passe"
+				}
+			}
 		}
 	],
 	"contextId": "Rbs Mail Install"

@@ -106,5 +106,26 @@
 	},
 	"error_login_password_not_match":{
 		"message":"L'identifiant et le mot de passe ne correspondent pas."
+	},
+	"init_your_password":{
+		"message":"ré-initialisation du mot de passe"
+	},
+	"init_password_success":{
+		"message":"votre nouveau mot de passe est maintenant enregistré."
+	},
+	"invalid_token":{
+		"message":"votre demande a expiré. Merci de refaire une demande de ré-initialisation de mot de passe."
+	},
+	"submit_init_password":{
+		"message":"enregistrez votre mot de passe"
+	},
+	"forgot_your_password":{
+		"message":"mot de passe oublié ?"
+	},
+	"send_reset_password_request":{
+		"message":"ré-initialiser mon mot de passe"
+	},
+	"sending_reset_password_request_success":{
+		"message":"demande de ré-initialisation envoyée"
 	}
 }

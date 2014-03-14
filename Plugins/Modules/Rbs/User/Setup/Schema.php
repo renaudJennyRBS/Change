@@ -14,6 +14,7 @@ namespace Rbs\User\Setup;
 class Schema extends \Change\Db\Schema\SchemaDefinition
 {
 	const ACCOUNT_REQUEST_TABLE = 'rbs_user_account_request';
+	const RESET_PASSWORD_TABLE = 'rbs_user_reset_password';
 
 	/**
 	 * @var \Change\Db\Schema\TableDefinition[]
@@ -28,11 +29,21 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 		if ($this->tables === null)
 		{
 			$schemaManager = $this->getSchemaManager();
+
 			$this->tables[self::ACCOUNT_REQUEST_TABLE] = $td = $schemaManager->newTableDefinition(self::ACCOUNT_REQUEST_TABLE);
 			$requestId = $schemaManager->newIntegerFieldDefinition('request_id')->setNullable(false)->setAutoNumber(true);
 			$td->addField($requestId)
 				->addField($schemaManager->newVarCharFieldDefinition('email', array('length' => 255))->setNullable(false))
 				->addField($schemaManager->newTextFieldDefinition('config_parameters')->setNullable(false))
+				->addField($schemaManager->newDateFieldDefinition('request_date')->setNullable(false))
+				->addKey($this->newPrimaryKey()->addField($requestId))
+				->setOption('AUTONUMBER', 1);
+
+			$this->tables[self::RESET_PASSWORD_TABLE] = $resetPasswordTable = $schemaManager->newTableDefinition(self::RESET_PASSWORD_TABLE);
+			$requestId = $schemaManager->newIntegerFieldDefinition('request_id')->setNullable(false)->setAutoNumber(true);
+			$resetPasswordTable->addField($requestId)
+				->addField($schemaManager->newIntegerFieldDefinition('user_id')->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('token', array('length' => 255))->setNullable(false))
 				->addField($schemaManager->newDateFieldDefinition('request_date')->setNullable(false))
 				->addKey($this->newPrimaryKey()->addField($requestId))
 				->setOption('AUTONUMBER', 1);

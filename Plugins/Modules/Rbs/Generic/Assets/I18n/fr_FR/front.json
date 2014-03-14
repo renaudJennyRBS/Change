@@ -25,5 +25,8 @@
 	},
 	"page_x_of_y":{
 		"message":"page $PAGENUMBER$ sur $PAGECOUNT$"
+	},
+	"close":{
+		"message":"fermer"
 	}
 }
