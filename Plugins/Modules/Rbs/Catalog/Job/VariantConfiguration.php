@@ -399,6 +399,7 @@ class VariantConfiguration
 	 * @param AxisConfiguration[] $axesConfiguration
 	 * @param array $loadedProducts
 	 * @param array $fullyQualifiedAxes
+	 * @throws \Exception
 	 */
 	public function updateFinalVariantProducts($attributeManager, $documentManager, $variantGroup, $axesConfiguration,
 		&$loadedProducts, $fullyQualifiedAxes)
@@ -432,13 +433,23 @@ class VariantConfiguration
 			}
 			else
 			{
-				$product = $this->getNewVariantProduct($documentManager, $variantGroup, $variantGroup->getNewSkuOnCreation());
-				$product->setLabel($product->getLabel() . '-' . implode('-', $flatValues));
-				$product->getCurrentLocalization()->setTitle($product->getLabel());
-				$product->setCategorizable($lastAxisConfiguration->getCategorizable());
-				$attributeManager->setProductAxesValue($product, $axesAttributes,
-					$this->normalizeValues($axesConfiguration, $flatValues));
-				$product->create();
+				try
+				{
+					$documentManager->pushLCID($variantGroup->getRootProduct()->getRefLCID());
+					$product = $this->getNewVariantProduct($documentManager, $variantGroup, $variantGroup->getNewSkuOnCreation());
+					$product->setLabel($product->getLabel() . '-' . implode('-', $flatValues));
+					$product->getCurrentLocalization()->setTitle($product->getLabel());
+					$product->setCategorizable($lastAxisConfiguration->getCategorizable());
+					$attributeManager->setProductAxesValue($product, $axesAttributes,
+						$this->normalizeValues($axesConfiguration, $flatValues));
+					$product->create();
+					$documentManager->popLCID();
+				}
+				catch (\Exception $e)
+				{
+					$documentManager->popLCID();
+					throw $e;
+				}
 			}
 		}
 	}
