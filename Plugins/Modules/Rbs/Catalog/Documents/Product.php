@@ -277,17 +277,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	}
 
 	/**
-	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @param integer $webStoreId
-	 * @param \Change\Http\Web\UrlManager $urlManager
-	 * @return \Rbs\Catalog\Product\ProductPresentation
-	 */
-	public function getPresentation(\Rbs\Commerce\CommerceServices $commerceServices, $webStoreId, $urlManager)
-	{
-		return new \Rbs\Catalog\Product\ProductPresentation($commerceServices, $this, $webStoreId, $urlManager);
-	}
-
-	/**
 	 * @param string $crossSellingType
 	 * @return \Rbs\Catalog\Documents\CrossSellingProductList|null
 	 */

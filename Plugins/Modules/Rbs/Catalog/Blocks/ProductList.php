@@ -198,8 +198,6 @@ class ProductList extends Block
 				$page = $event->getParam('page');
 				$section = $page->getSection();
 				$attributes['section'] = $page->getSection();
-
-				$webStoreId = $parameters->getParameter('webStoreId');
 				$contextualUrls = $parameters->getParameter('contextualUrls');
 
 				/* @var $product \Rbs\Catalog\Documents\Product */
@@ -216,7 +214,8 @@ class ProductList extends Block
 
 					$row = array('id' => $product->getId(), 'url' => $url);
 
-					$productPresentation = $product->getPresentation($commerceServices, $webStoreId, $event->getUrlManager());
+					$options = [ 'urlManager' => $event->getUrlManager() ];
+					$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 					if ($productPresentation)
 					{
 						$productPresentation->evaluate();

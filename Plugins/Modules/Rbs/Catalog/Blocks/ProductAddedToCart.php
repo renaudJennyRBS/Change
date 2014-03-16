@@ -85,7 +85,8 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\Product)
 			{
-				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+				$options = [ 'urlManager' => $event->getUrlManager() ];
+				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 				$productPresentation->evaluate();
 				$attributes['productPresentation'] = $productPresentation;
 				return 'product-added-to-cart.twig';

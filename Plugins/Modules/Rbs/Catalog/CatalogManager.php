@@ -45,6 +45,8 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach(static::EVENT_GET_PICTOGRAMS, [$this, 'onDefaultGetPictograms'], 5);
 		$eventManager->attach(static::EVENT_GET_VISUALS, [$this, 'onDefaultGetVisuals'], 5);
+		$eventManager->attach('getProductPresentation', [$this, 'onVariantGetProductPresentation'], 10);
+		$eventManager->attach('getProductPresentation', [$this, 'onDefaultGetProductPresentation'], 5);
 	}
 
 	/**
@@ -184,6 +186,10 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		return $this->attributeManager;
 	}
+
+	//
+	// Product lists.
+	//
 
 	/**
 	 * Add the product in a product list for the given condition/priority.
@@ -659,13 +665,145 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		return $defaultProductList;
 	}
 
+	//
+	// Product detail.
+	//
+
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param integer $webStoreId
-	 * @param \Rbs\Price\Documents\BillingArea $billingArea
+	 * @return \Rbs\Catalog\Documents\Product
+	 */
+	public function getProductToBeDisplayed($product)
+	{
+		// If product is a simple product or is root product of variant or is categorizable.
+		if (!$product->getVariantGroup() || $product->hasVariants() ||  $product->getCategorizable())
+		{
+			return $product;
+		}
+
+		// Else you have a product that is a final product of variant.
+		// If you have generated intermediate variant.
+		if (!$product->getVariantGroup()->mustGenerateOnlyLastVariant())
+		{
+			// Try to find the intermediate variant that must be used to display product.
+			$newProductId = $this->getVariantProductIdMustBeDisplayedForVariant($product);
+			if ($newProductId != null)
+			{
+				$product = $this->getDocumentManager()->getDocumentInstance($newProductId);
+				if ($product instanceof \Rbs\Catalog\Documents\Product)
+				{
+					return $product;
+				}
+			}
+		}
+
+		// Else try to return the root product of variant.
+		return $this->getRootProductOfVariantGroup($product->getVariantGroup());
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
+	 * @return \Rbs\Catalog\Documents\Product|null
+	 */
+	protected function getRootProductOfVariantGroup($variantGroup)
+	{
+		$rootProduct = $variantGroup->getRootProduct();
+
+		if ($rootProduct->published())
+		{
+			return $rootProduct;
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $variant
+	 * @return integer|null
+	 */
+	protected function getVariantProductIdMustBeDisplayedForVariant($variant)
+	{
+		$ancestorId = $this->getProductAncestorIds($variant, true);
+
+		if ($ancestorId && count($ancestorId) > 0)
+		{
+			return $ancestorId[0];
+		}
+
+		return null;
+	}
+
+	//
+	// Product presentation.
+	//
+
+	/**
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @param \Change\Http\Web\UrlManager|null $urlManager
+	 * @return array
+	 */
+	public function getGeneralInfo($product, $urlManager = null)
+	{
+		$generalInfo = array();
+
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return $generalInfo;
+		}
+
+		$generalInfo['id'] = $product->getId();
+		$generalInfo['product'] = $product;
+		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
+
+		// Description must be present in product attributes and not empty
+		$generalInfo['description'] = null;
+		$pDescription = $product->getCurrentLocalization()->getDescription();
+		if ($pDescription !== null && $pDescription->getRawText() !== null
+			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'description')
+		)
+		{
+			$generalInfo['description'] = $pDescription;
+		}
+
+		$generalInfo['hasVariants'] = $product->hasVariants();
+
+		if ($product->getSku() !== null)
+		{
+			$generalInfo['hasOwnSku'] = true;
+			$generalInfo['allowBackorders'] = $product->getSku()->getAllowBackorders();
+		}
+		else
+		{
+			$generalInfo['hasOwnSku'] = false;
+			$generalInfo['allowBackorders'] = false;
+		}
+
+		if ($product->getBrand() && $product->getBrand()->published()
+			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'brand')
+		)
+		{
+			$generalInfo['brand'] = $product->getBrand();
+		}
+
+		if ($urlManager instanceof \Change\Http\Web\UrlManager)
+		{
+			$generalInfo['url'] = $urlManager->getCanonicalByDocument($product)->normalize()->toString();
+		}
+
+		return $generalInfo;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Store\Documents\WebStore $webStore
+	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @return null|\Rbs\Price\PriceInterface
 	 */
-	public function getProductPrice($product, $webStoreId, $billingArea)
+	protected function getProductPrice($product, $webStore, $billingArea)
 	{
 		if ($product instanceof \Rbs\Catalog\Documents\ProductSet || (!$product->getSku() && $product->getVariantGroup()))
 		{
@@ -675,7 +813,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 			foreach ($skus as $sku)
 			{
-				$p = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStoreId, 'billingArea' => $billingArea]);
+				$p = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
 				if ($p != null)
 				{
 					$prices[] = $p;
@@ -705,16 +843,16 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		else
 		{
 			return $this->priceManager->getPriceBySku($product->getSku(),
-				['webStore' => $webStoreId, 'billingArea' => $billingArea]);
+				['webStore' => $webStore, 'billingArea' => $billingArea]);
 		}
 	}
 
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param integer|null $webStoreId
+	 * @param \Rbs\Store\Documents\WebStore|null $webStore
 	 * @return integer|null
 	 */
-	public function getProductStockLevel($product, $webStoreId = null)
+	protected function getProductStockLevel($product, $webStore = null)
 	{
 		$level = null;
 
@@ -723,7 +861,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			$skus = $this->getAllSku($product, true);
 			if ($skus !== null && count($skus) > 0)
 			{
-				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStoreId);
+				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStore);
 			}
 		}
 		else
@@ -731,7 +869,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			$sku = $product->getSku();
 			if ($sku)
 			{
-				$level = $this->getStockManager()->getInventoryLevel($sku, $webStoreId);
+				$level = $this->getStockManager()->getInventoryLevel($sku, $webStore);
 			}
 		}
 
@@ -741,10 +879,10 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param integer $level
-	 * @param integer|null $webStoreId
+	 * @param \Rbs\Store\Documents\WebStore|null $webStore
 	 * @return string
 	 */
-	public function getProductThreshold($product, $level, $webStoreId = null)
+	protected function getProductThreshold($product, $level, $webStore = null)
 	{
 		$threshold = null;
 
@@ -753,7 +891,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			$skus = $this->getAllSku($product, true);
 			if ($skus !== null && count($skus) > 0)
 			{
-				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStoreId, $level);
+				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStore, $level);
 			}
 		}
 		else
@@ -761,7 +899,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			$sku = $product->getSku();
 			if ($sku)
 			{
-				$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStoreId, $level);
+				$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStore, $level);
 			}
 		}
 
@@ -769,16 +907,25 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param null|integer $webStoreId
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @param \Rbs\Store\Documents\WebStore|null $webStore
 	 * @return array
 	 */
-	public function getStockInfo($product, $webStoreId = null)
+	public function getStockInfo($product, $webStore = null)
 	{
 		$stockInfo = array();
 
-		$level = $this->getProductStockLevel($product, $webStoreId);
-		$threshold = $this->getProductThreshold($product, $level, $webStoreId);
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return $stockInfo;
+		}
+
+		$level = $this->getProductStockLevel($product, $webStore);
+		$threshold = $this->getProductThreshold($product, $level, $webStore);
 
 		$stockInfo['level'] = $level;
 		$stockInfo['threshold'] = $threshold;
@@ -830,119 +977,126 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param integer $quantity
+	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @param string $zone
-	 * @param integer|null $webStoreId
 	 * @return array
 	 */
-	public function getPricesInfos($product, $quantity, $billingArea, $zone, $webStoreId = null)
+	public function getPricesInfos($product, $quantity, $webStore, $billingArea, $zone)
 	{
 		$priceInfo = array();
-		if ($billingArea)
+
+		if (is_numeric($product))
 		{
-			$price = $this->getProductPrice($product, $webStoreId, $billingArea);
-			if ($price && ($value = $price->getValue()) !== null)
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product) || !$billingArea)
+		{
+			return $priceInfo;
+		}
+
+		$price = $this->getProductPrice($product, $webStore, $billingArea);
+		if ($price && ($value = $price->getValue()) !== null)
+		{
+			$priceManager = $this->getPriceManager();
+
+			$value *= $quantity;
+			$isWithTax = $price->isWithTax();
+			$taxCategories = $price->getTaxCategories();
+
+			$priceInfo['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
+			if ($zone)
 			{
-				$priceManager = $this->getPriceManager();
+				if ($isWithTax)
+				{
+					$taxes = $priceManager->getTaxByValueWithTax($value, $taxCategories, $billingArea, $zone);
+				}
+				else
+				{
+					$taxes = $priceManager->getTaxByValue($value, $taxCategories, $billingArea, $zone);
+				}
+			}
+			else
+			{
+				$taxes = null;
+			}
 
-				$value *= $quantity;
-				$isWithTax = $price->isWithTax();
-				$taxCategories = $price->getTaxCategories();
+			if ($isWithTax)
+			{
+				$priceInfo['priceWithTax'] = $value;
+				$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+				if ($taxes)
+				{
+					$value = $priceManager->getValueWithoutTax($value, $taxes);
+					$priceInfo['price'] = $value;
+					$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+				}
+			}
+			else
+			{
+				$priceInfo['price'] = $value;
+				$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+				if ($taxes)
+				{
+					$value = $priceManager->getValueWithTax($value, $taxes);
+					$priceInfo['priceWithTax'] = $value;
+					$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+				}
+			}
 
-				$priceInfo['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
+			if (($oldValue = $price->getBasePriceValue()) !== null)
+			{
+				$oldValue *= $quantity;
 				if ($zone)
 				{
 					if ($isWithTax)
 					{
-						$taxes = $priceManager->getTaxByValueWithTax($value, $taxCategories, $billingArea, $zone);
+						$taxes = $priceManager->getTaxByValueWithTax($oldValue, $taxCategories, $billingArea, $zone);
 					}
 					else
 					{
-						$taxes = $priceManager->getTaxByValue($value, $taxCategories, $billingArea, $zone);
+						$taxes = $priceManager->getTaxByValue($oldValue, $taxCategories, $billingArea, $zone);
 					}
 				}
 				else
 				{
 					$taxes = null;
 				}
-
 				if ($isWithTax)
 				{
-					$priceInfo['priceWithTax'] = $value;
-					$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
+					$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
+					$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
+						$currencyCode);
 					if ($taxes)
 					{
-						$value = $priceManager->getValueWithoutTax($value, $taxes);
-						$priceInfo['price'] = $value;
-						$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+						$oldValue = $priceManager->getValueWithoutTax($oldValue, $taxes);
+						$priceInfo['priceWithoutDiscount'] = $oldValue;
+						$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue,
+							$currencyCode);
 					}
 				}
 				else
 				{
-					$priceInfo['price'] = $value;
-					$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
+					$priceInfo['priceWithoutDiscount'] = $oldValue;
+					$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
 					if ($taxes)
 					{
-						$value = $priceManager->getValueWithTax($value, $taxes);
-						$priceInfo['priceWithTax'] = $value;
-						$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
-					}
-				}
-
-				if (($oldValue = $price->getBasePriceValue()) !== null)
-				{
-					$oldValue *= $quantity;
-					if ($zone)
-					{
-						if ($isWithTax)
-						{
-							$taxes = $priceManager->getTaxByValueWithTax($oldValue, $taxCategories, $billingArea, $zone);
-						}
-						else
-						{
-							$taxes = $priceManager->getTaxByValue($oldValue, $taxCategories, $billingArea, $zone);
-						}
-					}
-					else
-					{
-						$taxes = null;
-					}
-					if ($isWithTax)
-					{
+						$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
 						$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
 						$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
 							$currencyCode);
-						if ($taxes)
-						{
-							$oldValue = $priceManager->getValueWithoutTax($oldValue, $taxes);
-							$priceInfo['priceWithoutDiscount'] = $oldValue;
-							$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue,
-								$currencyCode);
-						}
-					}
-					else
-					{
-						$priceInfo['priceWithoutDiscount'] = $oldValue;
-						$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
-						if ($taxes)
-						{
-							$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
-							$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
-							$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
-								$currencyCode);
-						}
 					}
 				}
+			}
 
-				if ($price instanceof \Rbs\Price\Documents\Price)
+			if ($price instanceof \Rbs\Price\Documents\Price)
+			{
+				if ($price->getEcoTax() !== null)
 				{
-					if ($price->getEcoTax() !== null)
-					{
-						$priceInfo['ecoTax'] = ($price->getEcoTax() * $quantity);
-						$priceInfo['formattedEcoTax'] = $priceManager->formatValue($priceInfo['ecoTax'], $currencyCode);
-					}
+					$priceInfo['ecoTax'] = ($price->getEcoTax() * $quantity);
+					$priceInfo['formattedEcoTax'] = $priceManager->formatValue($priceInfo['ecoTax'], $currencyCode);
 				}
 			}
 		}
@@ -951,64 +1105,21 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Change\Http\Web\UrlManager|null $urlManager
-	 * @return array
-	 */
-	public function getGeneralInfo($product, $urlManager = null)
-	{
-		$generalInfo = array();
-
-		$generalInfo['id'] = $product->getId();
-		$generalInfo['product'] = $product;
-		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
-
-		// Description must be present in product attributes and not empty
-		$generalInfo['description'] = null;
-		$pDescription = $product->getCurrentLocalization()->getDescription();
-		if ($pDescription !== null && $pDescription->getRawText() !== null
-			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'description')
-		)
-		{
-			$generalInfo['description'] = $pDescription;
-		}
-
-		$generalInfo['hasVariants'] = $product->hasVariants();
-
-		if ($product->getSku() !== null)
-		{
-			$generalInfo['hasOwnSku'] = true;
-			$generalInfo['allowBackorders'] = $product->getSku()->getAllowBackorders();
-		}
-		else
-		{
-			$generalInfo['hasOwnSku'] = false;
-			$generalInfo['allowBackorders'] = false;
-		}
-
-		if ($product->getBrand() && $product->getBrand()->published()
-			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'brand')
-		)
-		{
-			$generalInfo['brand'] = $product->getBrand();
-		}
-
-		if ($urlManager instanceof \Change\Http\Web\UrlManager)
-		{
-			$generalInfo['url'] = $urlManager->getCanonicalByDocument($product)->normalize()->toString();
-		}
-
-		return $generalInfo;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param boolean $onlyPublishedProduct
 	 * @return array
 	 */
 	public function getVariantsConfiguration($product, $onlyPublishedProduct = true)
 	{
 		$variantsConfiguration = array();
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return $variantsConfiguration;
+		}
 
 		// TODO Active a cache on variant group
 		if ($product->getVariantGroup())
@@ -1056,37 +1167,6 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			}
 
 			return $variantInfo;
-		}
-
-		return null;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
-	 * @return \Rbs\Catalog\Documents\Product|null
-	 */
-	public function getRootProductOfVariantGroup($variantGroup)
-	{
-		$rootProduct = $variantGroup->getRootProduct();
-
-		if ($rootProduct->published())
-		{
-			return $rootProduct;
-		}
-		return null;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $variant
-	 * @return integer|null
-	 */
-	public function getVariantProductIdMustBeDisplayedForVariant($variant)
-	{
-		$ancestorId = $this->getProductIdAncestors($variant, true);
-
-		if ($ancestorId && count($ancestorId) > 0)
-		{
-			return $ancestorId[0];
 		}
 
 		return null;
@@ -1152,7 +1232,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param boolean $onlyPublishedProduct
 	 * @return integer[]
 	 */
-	public function getProductIdAncestors($product, $onlyPublishedProduct)
+	public function getProductAncestorIds($product, $onlyPublishedProduct)
 	{
 		if (!$product->getVariant())
 		{
@@ -1207,7 +1287,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getProductAncestors($product, $onlyPublishedProduct)
 	{
-		$ancestorsId = $this->getProductIdAncestors($product, $onlyPublishedProduct);
+		$ancestorsId = $this->getProductAncestorIds($product, $onlyPublishedProduct);
 		$ancestors = array();
 
 		$dm = $this->getDocumentManager();
@@ -1224,7 +1304,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param boolean $onlyPublishedProduct
 	 * @return integer[]
 	 */
-	public function getProductIdDescendants($product, $onlyPublishedProduct)
+	public function getProductDescendantIds($product, $onlyPublishedProduct)
 	{
 		// Is Root product
 		if ($product->hasVariants())
@@ -1288,7 +1368,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getProductDescendants($product, $onlyPublishedProduct)
 	{
-		$descendantsId = $this->getProductIdDescendants($product, $onlyPublishedProduct);
+		$descendantsId = $this->getProductDescendantIds($product, $onlyPublishedProduct);
 		$descendants = array();
 
 		$dm = $this->getDocumentManager();
@@ -1326,24 +1406,37 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param string $visibility
 	 * @return array
 	 */
 	public function getAttributesConfiguration($product, $visibility = 'specifications')
 	{
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
 		return $this->getAttributeManager()->getProductAttributesConfiguration($visibility, $product);
 	}
 
 	/**
 	 * @api
-	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param array $formats
 	 * @param boolean $onlyFirst
 	 * @return array
 	 */
 	public function getVisualsInfos($product, $formats, $onlyFirst = false)
 	{
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return array();
+		}
+
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('product' => $product, 'formats' => $formats, 'onlyFirst' => $onlyFirst));
 		$this->getEventManager()->trigger(static::EVENT_GET_VISUALS, $this, $args);
@@ -1422,12 +1515,21 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
-	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param array $formats
 	 * @return array
 	 */
 	public function getPictogramsInfos($product, $formats)
 	{
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return array();
+		}
+
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('product' => $product, 'formats' => $formats));
 		$this->getEventManager()->trigger(static::EVENT_GET_PICTOGRAMS, $this, $args);
@@ -1491,5 +1593,114 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			$infos['url'][$type] = $image->getPublicURL(intval($w), intval($h));
 		}
 		return $infos;
+	}
+
+	/**
+	 * Default parameters:
+	 *  - urlManager
+	 *  - webStore (got from context if not specified)
+	 *  - billingArea (got from context if not specified)
+	 *  - zone (got from context if not specified)
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @param array $parameters
+	 * @return \Rbs\Catalog\Product\ProductPresentation
+	 */
+	public function getProductPresentation($product, $parameters)
+	{
+		$em = $this->getEventManager();
+		if (!is_array($parameters))
+		{
+			$parameters = array();
+		}
+		$parameters['product'] = $product;
+		$args = $em->prepareArgs($parameters);
+		$this->getEventManager()->trigger('getProductPresentation', $this, $args);
+		if (isset($args['productPresentation']))
+		{
+			return $args['productPresentation'];
+		}
+		return array();
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetProductPresentation(\Change\Events\Event $event)
+	{
+		$productPresentation = $event->getParam('productPresentation');
+		if (!($productPresentation instanceof \Rbs\Catalog\Product\ProductPresentation))
+		{
+			$productPresentation = new \Rbs\Catalog\Product\ProductPresentation();
+			$event->setParam('productPresentation', $productPresentation);
+		}
+
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+
+		$productPresentation->setCatalogManager($this);
+
+		$webStore = $event->getParam('webStore');
+		if (!$webStore instanceof \Rbs\Store\Documents\WebStore)
+		{
+			$webStore = $commerceServices->getContext()->getWebStore();
+		}
+		$productPresentation->setWebStore($webStore);
+
+		$billingArea = $event->getParam('billingArea');
+		if (!$billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
+		{
+			$billingArea = $commerceServices->getContext()->getBillingArea();
+		}
+		$productPresentation->setBillingArea($billingArea);
+
+		$zone = $event->getParam('zone');
+		if (!$zone)
+		{
+			$zone = $commerceServices->getContext()->getZone();
+		}
+		$productPresentation->setZone($zone);
+
+		$product = $event->getParam('product');
+		if ($product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			$productId = $product->getId();
+		}
+		else
+		{
+			$productId = intval($product);
+		}
+		$productPresentation->setProductId($productId);
+
+		$general = $event->getParam('general');
+		if (is_array($general))
+		{
+			$productPresentation->setGeneral($general);
+		}
+		elseif ($productId)
+		{
+			$productPresentation->addGeneral($this->getGeneralInfo($productId, $event->getParam('urlManager')));
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onVariantGetProductPresentation(\Change\Events\Event $event)
+	{
+		$productPresentation = $event->getParam('productPresentation');
+		if (!($productPresentation instanceof \Rbs\Catalog\Product\ProductPresentation))
+		{
+			$product = $event->getParam('product');
+			if (is_numeric($product))
+			{
+				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($product);
+			}
+			if ($product instanceof \Rbs\Catalog\Documents\Product && $product->getVariantGroupId())
+			{
+				$productPresentation = new \Rbs\Catalog\Product\VariantProductPresentation();
+				$event->setParam('productPresentation', $productPresentation);
+			}
+		}
 	}
 }

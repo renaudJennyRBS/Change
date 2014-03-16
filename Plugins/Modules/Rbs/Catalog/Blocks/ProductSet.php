@@ -48,14 +48,15 @@ class ProductSet extends \Rbs\Catalog\Blocks\Product
 			$product = $documentManager->getDocumentInstance($productId);
 			if ($product instanceof \Rbs\Catalog\Documents\ProductSet)
 			{
-				$productPresentation = $product->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+				$options = [ 'urlManager' => $event->getUrlManager() ];
+				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 				$productPresentation->evaluate();
 				$attributes['productPresentation'] = $productPresentation;
 
 				$subProductsPresentation = array();
 				foreach($product->getProducts() as $p)
 				{
-					$pPresentation = $p->getPresentation($commerceServices, $parameters->getParameter('webStoreId'), $event->getUrlManager());
+					$pPresentation = $commerceServices->getCatalogManager()->getProductPresentation($p, $options);
 					$pPresentation->evaluate();
 					$subProductsPresentation[] = $pPresentation;
 				}
