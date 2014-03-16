@@ -1,31 +1,47 @@
-(function ()
-{
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+(function () {
 
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-time-interval-input
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays controls to enter a duration. The value is an ISO 8601 string,
+	 * like `P3Y6M4DT12H30M5S` for 3 years, 6 months, 4 days, 12 hours, 30 minutes and 5 seconds.
+	 *
+	 * More information here: {@link http://en.wikipedia.org/wiki/ISO_8601#Durations}
+	 */
 	app.directive('rbsTimeIntervalInput', ['RbsChange.i18n', function (i18n)
 	{
-
 		return {
-			restrict: 'E',
-			scope: true,
-			require: 'ngModel',
-			replace: true,
-			templateUrl: 'Rbs/Admin/js/directives/time-interval-input.twig',
+			restrict : 'E',
+			scope : true,
+			require : 'ngModel',
+			replace : true,
+			templateUrl : 'Rbs/Admin/js/directives/time-interval-input.twig',
 
 			compile: function (tElement, tAttrs)
 			{
 				var input = tElement.find('input[type="number"]');
 				if (angular.isDefined(tAttrs.min))
 				{
-					input.attr('min', tAttrs.min)
+					input.attr('min', tAttrs.min);
 				}
 
 				if (angular.isDefined(tAttrs.max))
 				{
-					input.attr('max', tAttrs.max)
+					input.attr('max', tAttrs.max);
 				}
 
 				return function (scope, elm, attrs, ngModel)
@@ -66,7 +82,7 @@
 						scope.durations = durationTranslations;
 					}
 
-					//time interval is ISO 8601 string (like P3Y6M4DT12H30M5S) for 3 years, 6 months, 4 days, 12 hours, 30 minutes and 5 seconds
+					// time interval is ISO 8601 string (like P3Y6M4DT12H30M5S) for 3 years, 6 months, 4 days, 12 hours, 30 minutes and 5 seconds
 					var mtiRegexp = /^P([0-9]?[.,]?[0-9]+)Y([0-9]?[.,]?[0-9]+)M([0-9]?[.,]?[0-9]+)W([0-9]?[.,]?[0-9]+)DT([0-9]?[.,]?[0-9]+)H([0-9]?[.,]?[0-9]+)M([0-9]?[.,]?[0-9]+)S$/;
 					//                  11111111111111111   22222222222222222   33333333333333333    44444444444444444   55555555555555555   66666666666666666   77777777777777777
 

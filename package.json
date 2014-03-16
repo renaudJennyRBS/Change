@@ -1,0 +1,30 @@
+{
+  "name": "Change",
+  "version": "4.0.0",
+  "description": "[![Build Status](https://secure.travis-ci.org/RBSChange/Change.png)](http://travis-ci.org/RBSChange/Change) #RBS Change v4",
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "grunt": "~0.4.4",
+    "grunt-docular": "~0.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RBSChange/Change.git"
+  },
+  "keywords": [
+    "cms"
+  ],
+  "author": "RBS Change",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/RBSChange/Change/issues"
+  },
+  "homepage": "https://github.com/RBSChange/Change"
+}

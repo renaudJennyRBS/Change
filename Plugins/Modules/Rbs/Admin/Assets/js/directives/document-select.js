@@ -1,29 +1,43 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ($) {
+
 	"use strict";
 
 	var app = angular.module('RbsChange'),
 		queryLimit = 200; // limits the number of elements in dropdown lists used in the following Directives.
 
 	/**
-	 * <rbs-document-select></rbs-document-select>
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-select
+	 * @restrict E
 	 *
-	 * Attributes:
-	 * - ngModel
-	 * - empty-label
-	 * - accepted-model
-	 * - filter-property
-	 * - filter-value
-	 * - value-ids
+	 * @description
+	 * Displays a list of Documents in a dropdown listbox (<code>&lt;select/&gt;</code>).
+	 *
+	 * @param {*} ng-model ngModel
+	 * @param {String} accepted-model The full model name of the Documents to display in the list.
+	 * @param {String=} empty-label Text to display when nothing is selected.
+	 * @param {String=} filter-property Name of the property on which the Documents should be filtered (see `filter-value`).
+	 * @param {String=} filter-value The value of the `filter-property`.
+	 * @param {Boolean=} value-ids If true, stores the ID of the selected Document in ngModel instead of the Document object.
 	 */
 	app.directive('rbsDocumentSelect',
-		['RbsChange.REST', 'RbsChange.Query', 'RbsChange.Utils', 'RbsChange.i18n', function (REST, Query, Utils, i18n) {
+		['RbsChange.REST', 'RbsChange.Query', 'RbsChange.Utils', 'RbsChange.i18n', function (REST, Query, Utils, i18n)
+		{
 			return {
-				restrict: 'E',
-				require: 'ngModel',
-				templateUrl: 'Rbs/Admin/js/directives/document-select.twig',
-				scope: true,
+				restrict : 'E',
+				require : 'ngModel',
+				templateUrl : 'Rbs/Admin/js/directives/document-select.twig',
+				scope : true,
 
-				link: function (scope, iElement, iAttrs, ngModel) {
+				link : function (scope, iElement, iAttrs, ngModel)
+				{
 					var loadFn;
 
 					scope.documentTarget = undefined;
@@ -157,23 +171,29 @@
 			};
 		}]);
 
-	/**
-	 * <rbs-document-chained-select><rbs-document-chained-select>
-	 *
-	 * Attributes:
-	 * - ngModel
-	 * - chain : Vendor_Plugin_Parent:label // Vendor_Plugin_Child.parentProperty:label
-	 * - required
-	 */
-	app.directive('rbsDocumentChainedSelect', [function () {
-		return {
-			restrict: 'E',
-			templateUrl: 'Rbs/Admin/js/directives/document-select-chain.twig',
-			require: 'ngModel',
-			scope: true,
 
-			compile: function (tElement, tAttrs) {
-				if (!angular.isString(tAttrs.chain)) {
+	/**
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-document-chained-select
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays multiple chained lists of Documents (<code>&lt;select/&gt;</code>).
+	 *
+	 * @param {*} ng-model ngModel: the value is the Document selected in the last dropdown listbox.
+	 * @param {String} chain Chain description: `Vendor_Plugin_Parent:label // Vendor_Plugin_Child.parentProperty:label`
+	 */
+	app.directive('rbsDocumentChainedSelect', [function ()
+	{
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Admin/js/directives/document-select-chain.twig',
+			require : 'ngModel',
+			scope : true,
+
+			compile: function (tElement, tAttrs)
+			{
+				if (! angular.isString(tAttrs.chain)) {
 					throw new Error("Attribute 'chain' is required.");
 				}
 
@@ -204,7 +224,8 @@
 					$selectsEl.append($select.wrap('<div class="col-md-' + Math.floor(12 / chain.length) + '"></div>').parent());
 				}
 
-				return function link(scope, iElement, iAttrs, ngModel) {
+				return function rbsDocumentChainedSelectLinkFn (scope, iElement, iAttrs, ngModel)
+				{
 					scope.selects = {};
 					scope.editMode = false;
 

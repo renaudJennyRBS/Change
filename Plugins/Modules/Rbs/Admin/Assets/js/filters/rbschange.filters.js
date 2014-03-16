@@ -1,83 +1,93 @@
 (function () {
 
+	"use strict";
+
 	var app = angular.module('RbsChange');
 
 
 	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsDocumentListSummary
+	 * @function
+	 *
+	 * @description
 	 * Renders an HTML string that summarizes the given list of documents.
 	 *
-	 * @param docs List of documents
-	 *
-	 * @return HTML string
+	 * @param {Array} documents Array of Document objects
 	 */
-	app.filter('rbsDocumentListSummary', ['RbsChange.i18n', function (i18n) {
-		return function (docs) {
-
-			function getLabel (obj) {
+	app.filter('rbsDocumentListSummary', ['RbsChange.i18n', function (i18n)
+	{
+		return function (docs)
+		{
+			function getLabel (obj)
+			{
 				if (angular.isObject(obj)) {
-					if ('label' in obj) {
+					if (obj.hasOwnProperty('label')) {
 						return obj.label;
-					} else if ('name' in obj) {
+					} else if (obj.hasOwnProperty('title')) {
+						return obj.title;
+					} else if (obj.hasOwnProperty('name')) {
 						return obj.name;
 					}
 				}
-				return ''+obj;
+				return '' + obj;
 			}
 
-			var out = '';
-			if (angular.isArray(docs)) {
+			var out = '',
+				msg,
+				i;
 
+			if (angular.isArray(docs))
+			{
 				if (docs.length > 3) {
 					out = i18n.trans('m.rbs.admin.adminjs.filter_document_list_summary_more_three', {'count':docs.length, 'element1' : getLabel(docs[0]), 'element2' : getLabel(docs[1]), 'element3' : getLabel(docs[2])});
 				} else if (docs.length > 1) {
-					var msg = [ ];
-					for (var i=0 ; i<docs.length-1 ; i++) {
+					msg = [ ];
+					for (i=0 ; i<docs.length-1 ; i++) {
 						msg.push(getLabel(docs[i]));
 					}
 					out = i18n.trans('m.rbs.admin.adminjs.filter_document_list_summary_less_three', {'count':docs.length, 'elementsAsHtml' : msg.join('</strong>, <strong class=\"element\">'), 'lastElement': getLabel(docs[docs.length-1])});
 				} else {
 					out = "<strong class=\"element\">" + getLabel(docs[0]) + "</strong>";
 				}
-
 			}
-
 			return out;
 		};
 	}]);
 
 
 	/**
-	 * Highlights the given <code>needle</code> in the given <code>input</code>.
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsHighlight
+	 * @function
 	 *
-	 * @param needle The string to be highlighted in the filter input.
+	 * @description
+	 * Highlights the given `needle` in the input string.
 	 *
-	 * @return HTML string (use with ng-bind-html).
-	 *
-	 * @example
-	 * <code>
-	 * <span ng-bind-html="product.label | highlight:'polo'"></span>
-	 * </code>
+	 * @param {String} string The input string.
+	 * @param {String} needle The string to highlight in the input string.
 	 */
-	app.filter('rbsHighlight', function () {
-
+	app.filter('rbsHighlight', function ()
+	{
 		return function (input, needle) {
 			var regex = new RegExp("(" + needle + ")", "ig");
 			return input.replace(regex, '<strong class="highlight">$1</strong>');
 		};
-
 	});
 
+
 	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsStripHtmlTags
+	 * @function
+	 *
 	 * @description
 	 * Removes all the HTML tags from the input string.
 	 *
-	 * @example
-	 * <code>
-	 * <p>{{page.contents | rbsStripHtmlTags}}</p>
-	 * </code>
+	 * @param {String} string The input string.
 	 */
-	app.filter('rbsStripHtmlTags', function () {
-
+	app.filter('rbsStripHtmlTags', function ()
+	{
 		return function (input, allowed) {
 			allowed = (((allowed || "") + "").toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
 			var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
@@ -90,27 +100,18 @@
 	});
 
 
-	function center_text (text, needle, length) {
-		var p = text.toLowerCase().indexOf(needle.toLowerCase());
-		if (p !== -1) {
-			var start = Math.max(0, p - length/2);
-			var end = start + length;
-			if (start > 0) {
-				return '... ' + text.substring(start, end) + '...';
-			} else {
-				return text.substring(start, end) + '...';
-			}
-		}
-		return text.substring(0, length) + '...';
-	}
-
 	/**
-	 * Renders an empty label with a hyphen (by default).
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsEmptyLabel
+	 * @function
 	 *
-	 * @return HTML string (use with ng-bind-html).
+	 * @description
+	 * For empty strings, returns a hyphen.
+	 *
+	 * @param {String} string The input string.
 	 */
-	app.filter('rbsEmptyLabel', function () {
-
+	app.filter('rbsEmptyLabel', function ()
+	{
 		return function (input, value, cssClass) {
 			value = value || '-';
 			if (input === 0) {
@@ -127,22 +128,37 @@
 
 	});
 
+
 	/**
-	 * Add first letter of input to uppercase and the rest to lowercase
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsCapitalize
+	 * @function
+	 *
+	 * @description
+	 * Returns the input string with its first letter uppercase and the remaining lowercase.
+	 *
+	 * @param {String} string The input string.
 	 */
-	app.filter('rbsCapitalize', function() {
+	app.filter('rbsCapitalize', function()
+	{
 		return function(input) {
 			return input.substring(0,1).toUpperCase()+input.substring(1).toLowerCase();
-		}
+		};
 	});
 
+
 	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsFileSize
+	 * @function
+	 *
+	 * @description
 	 * Returns a formatted and human readable file size from an input value in bytes.
 	 *
-	 * @return HTML string (use with ng-bind-html).
+	 * @param {Number} size The size in bytes.
 	 */
-	app.filter('rbsFileSize', ['RbsChange.i18n', function (i18n) {
-
+	app.filter('rbsFileSize', ['RbsChange.i18n', function (i18n)
+	{
 		var units = [
 			['octets', i18n.trans('m.rbs.admin.adminjs.octets | ucf')],
 			['Ko', i18n.trans('m.rbs.admin.adminjs.kilobytes | ucf')],
@@ -165,8 +181,20 @@
 
 	}]);
 
-	app.filter('rbsEllipsis', function () {
 
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsEllipsis
+	 * @function
+	 *
+	 * @description
+	 * Truncates the input string to `length` characters and adds an ellipsis at the end.
+	 *
+	 * @param {String} string The input string.
+	 * @param {Number} length The number of characters of string to display before the ellipsis.
+	 */
+	app.filter('rbsEllipsis', function ()
+	{
 		return function (input, length, where) {
 			where = (where || 'end').toLowerCase();
 			if (!angular.isString(input)) {
@@ -184,18 +212,41 @@
 	});
 
 
-	// TODO Handle other BBcode tags.
-	app.filter('rbsBBcode', function () {
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsBBcode
+	 * @function
+	 *
+	 * @description
+	 * Formats a string with basic BBCode.
+	 *
+	 * For the moment, only the `[b]...[/b]` is supported.
+	 *
+	 * @param {String} string The input string.
+	 */
+	app.filter('rbsBBcode', function ()
+	{
 		return function (input) {
 			return input.replace(/\[(\/?)b\]/g,'<$1b>');
 		};
 	});
 
 
-	// See lib/diff_match_patch
-	// or https://code.google.com/p/google-diff-match-patch/
-	app.filter('rbsDiff', ['RbsChange.i18n', function (i18n) {
-
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsDiff
+	 * @function
+	 *
+	 * @description
+	 * Formats a visual diff between the input string and the first parameter.
+	 *
+	 * Uses `lib/diff_match_patch` ({@link https://code.google.com/p/google-diff-match-patch/)}
+	 *
+	 * @param {String} left The input string to be compared to the first parameter.
+	 * @param {String=} right The string to be compared to the input string.
+	 */
+	app.filter('rbsDiff', ['RbsChange.i18n', function (i18n)
+	{
 		return function (input, match) {
 			var output, diffObj, diffs;
 
@@ -227,7 +278,8 @@
 	}]);
 
 
-	app.filter('rbsStatusLabel', ['RbsChange.i18n', function (i18n) {
+	app.filter('rbsStatusLabel', ['RbsChange.i18n', function (i18n)
+	{
 		return function (input) {
 			if (!input) {
 				return '';
@@ -237,8 +289,19 @@
 	}]);
 
 
-	app.filter('rbsMaxNumber', ['$filter', function ($filter) {
-
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsMaxNumber
+	 * @function
+	 *
+	 * @description
+	 * For large numbers, displays the `max` value appended with a +
+	 *
+	 * @param {Number} number The input number.
+	 * @param {Number=} max The maximum value to display, defaults to 99.
+	 */
+	app.filter('rbsMaxNumber', ['$filter', function ($filter)
+	{
 		return function (input, max) {
 			max = max || 99;
 			if (input > max) {
@@ -257,25 +320,72 @@
 	//-------------------------------------------------------------------------
 
 
-	app.filter('rbsDateTime', ['$filter', function ($filter) {
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsDateTime
+	 * @function
+	 *
+	 * @description
+	 * Formats a Date object with date and time.
+	 *
+	 * @param {Date} date The date to format.
+	 */
+	app.filter('rbsDateTime', ['$filter', function ($filter)
+	{
 		return function (input) {
 			return $filter('date')(input, 'medium');
 		};
 	}]);
 
-	app.filter('rbsDate', ['$filter', function ($filter) {
+
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsDate
+	 * @function
+	 *
+	 * @description
+	 * Formats a Date object with date, without time.
+	 *
+	 * @param {Date} date The date to format.
+	 */
+	app.filter('rbsDate', ['$filter', function ($filter)
+	{
 		return function (input) {
 			return $filter('date')(input, 'mediumDate');
 		};
 	}]);
 
-	app.filter('rbsTime', ['$filter', function ($filter) {
+
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsTime
+	 * @function
+	 *
+	 * @description
+	 * Formats a Date object with time, without the date.
+	 *
+	 * @param {Date} date The date to format.
+	 */
+	app.filter('rbsTime', ['$filter', function ($filter)
+	{
 		return function (input) {
 			return $filter('date')(input, 'mediumTime');
 		};
 	}]);
 
-	app.filter('rbsBoolean', ['RbsChange.i18n', function (i18n) {
+
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsBoolean
+	 * @function
+	 *
+	 * @description
+	 * Formats a Boolean value with localized <em>yes</em> or <em>no</em>.
+	 *
+	 * @param {Boolean} value The boolean value to format.
+	 */
+	app.filter('rbsBoolean', ['RbsChange.i18n', function (i18n)
+	{
 		return function (input) {
 			return i18n.trans(input ? 'm.rbs.admin.adminjs.yes' : 'm.rbs.admin.adminjs.no');
 		};

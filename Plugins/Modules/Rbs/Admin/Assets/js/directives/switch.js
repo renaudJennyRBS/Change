@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ($) {
 
 	"use strict";
@@ -5,16 +12,19 @@
 	var app = angular.module('RbsChange');
 
 	/**
-	 * @name switch
-	 * @description A switch button to bind to a model's boolean property.
+	 * @ngdoc directive
+	 * @name RbsChange.directive:rbs-switch
+	 * @restrict E
 	 *
-	 * @attribute label-on Label for the "on" position
-	 * @attribute label-off Label for the "off" position
-	 * @attribute confirm-on Confirmation message when switching from "off" to "on"
-	 * @attribute confirm-off Confirmation message when switching from "on" to "off"
-	 * @attribute confirm-title Title in the confirmation dialog box (requires "confirm-on" and/or "confirm-off")
+	 * @description
+	 * Displays a Yes/No switch control.
 	 *
-	 * @example: <code><rbs-switch confirm-off="Are you sure to disable this element?" ng-model="myModel.active"/></code>
+	 * @param {Boolean} ng-model The bound value.
+	 * @param {String=} label-on Label for the "on" position
+	 * @param {String=} label-off Label for the "off" position
+	 * @param {String=} confirm-on Confirmation message when switching from "off" to "on"
+	 * @param {String=} confirm-off Confirmation message when switching from "on" to "off"
+	 * @param {String=} confirm-title Title in the confirmation dialog box (requires "confirm-on" and/or "confirm-off")
 	 */
 	app.directive('rbsSwitch', ['RbsChange.Dialog', 'RbsChange.i18n', function (Dialog, i18n)
 	{
