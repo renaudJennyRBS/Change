@@ -1,0 +1,33 @@
+<script type="text/javascript">
+	var script{{ blockId }} = {};
+</script>
+{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
+{% set detailFormat = {'maxWidth' : 540, 'maxHeight' : 405}  %}
+{% set detailThumbnailFormat = {'maxWidth': 80, 'maxHeight' : 60}  %}
+{% set attributeThumbnailFormat = {'maxWidth' : 160, 'maxHeight' : 120}  %}
+{% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
+<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+	data-ng-controller="RbsCatalogSimpleProductController">
+	{% include 'Rbs_Catalog/Blocks/Product/loading.twig' %}
+	<div class="row">
+		<div class="col-sm-12">
+			<header>
+				{% include 'Rbs_Catalog/Blocks/Product/header.twig' %}
+			</header>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6 col-md-8">
+			{% include 'Rbs_Catalog/Blocks/Product/visuals.twig' %}
+		</div>
+		<div class="col-sm-6 col-md-4">
+			{% include 'Rbs_Catalog/Blocks/Product/offer.twig' %}
+			{% include 'Rbs_Catalog/product-added-to-cart-popin.twig' %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			{% include 'Rbs_Catalog/Blocks/Product/description.twig' %}
+		</div>
+	</div>
+</article>
