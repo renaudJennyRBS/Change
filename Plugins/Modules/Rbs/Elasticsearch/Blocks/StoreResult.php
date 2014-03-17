@@ -266,8 +266,8 @@ class StoreResult extends Block
 				$visual = $product->getFirstVisual();
 				$row['visual'] = $visual ? $visual->getPath() : null;
 
-				$parameters = [ 'urlManager' => $event->getUrlManager() ];
-				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $parameters);
+				$options = [ 'urlManager' => $event->getUrlManager() ];
+				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 				if ($productPresentation)
 				{
 					$productPresentation->evaluate();
