@@ -1596,25 +1596,25 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * Default parameters:
+	 * Default options:
 	 *  - urlManager
 	 *  - webStore (got from context if not specified)
 	 *  - billingArea (got from context if not specified)
 	 *  - zone (got from context if not specified)
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param array $parameters
+	 * @param array $options
 	 * @return \Rbs\Catalog\Product\ProductPresentation
 	 */
-	public function getProductPresentation($product, $parameters)
+	public function getProductPresentation($product, $options)
 	{
 		$em = $this->getEventManager();
-		if (!is_array($parameters))
+		if (!is_array($options))
 		{
-			$parameters = array();
+			$options = array();
 		}
-		$parameters['product'] = $product;
-		$args = $em->prepareArgs($parameters);
+		$options['product'] = $product;
+		$args = $em->prepareArgs($options);
 		$this->getEventManager()->trigger('getProductPresentation', $this, $args);
 		if (isset($args['productPresentation']))
 		{

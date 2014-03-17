@@ -126,7 +126,7 @@ class Product extends Block
 				if ($finalProduct !== null)
 				{
 					$options = [ 'urlManager' => $event->getUrlManager() ];
-					$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
+					$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($finalProduct, $options);
 					$productPresentation->evaluate();
 					$attributes['productPresentation'] = $productPresentation;
 
