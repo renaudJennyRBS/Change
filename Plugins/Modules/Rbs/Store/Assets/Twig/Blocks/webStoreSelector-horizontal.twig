@@ -7,30 +7,34 @@
 		<form data-ng-cloak="" class="form-horizontal">
 			<fieldset>
 				<div class="form-group">
-					<label for="rbs-store-web-store">
+					<label for="rbs-store-web-store" class="col-sm-4 col-md-3 control-label">
 						{{ i18n('m.rbs.store.front.web_store', ['ucf']) }}
 					</label>
-					<select data-ng-if="webStoreData.length > 1" id="rbs-store-web-store" data-ng-model="selection.webStoreId" class="form-control"
-						data-ng-options="webStore.id as webStore.title for webStore in webStoreData">
-					</select>
-					<div data-ng-if="webStoreData.length == 1">(= webStoreData[0].title =)</div>
+					<div class="col-sm-8 col-md-9">
+						<select data-ng-if="webStoreData.length > 1" id="rbs-store-web-store" data-ng-model="selection.webStoreId" class="form-control"
+							data-ng-options="webStore.id as webStore.title for webStore in webStoreData">
+						</select>
+						<div data-ng-if="webStoreData.length == 1">(= webStoreData[0].title =)</div>
+					</div>
 				</div>
 
 				<div class="form-group">
-					<label for="rbs-store-billing-area">
+					<label for="rbs-store-billing-area" class="col-sm-4 col-md-3 control-label">
 						{{ i18n('m.rbs.store.front.billing_area', ['ucf']) }}
 					</label>
-					<select data-ng-show="billingAreaData.length > 1" id="rbs-store-billing-area" data-ng-model="selection.billingAreaId"
-						class="form-control" data-ng-options="area.id as area.title for area in billingAreaData">
-					</select>
-					<div data-ng-if="billingAreaData.length == 1">(= billingAreaData[0].title =)</div>
+					<div class="col-sm-8 col-md-9">
+						<select data-ng-show="billingAreaData.length > 1" id="rbs-store-billing-area" data-ng-model="selection.billingAreaId"
+							class="form-control" data-ng-options="area.id as area.title for area in billingAreaData">
+						</select>
+						<div data-ng-if="billingAreaData.length == 1">(= billingAreaData[0].title =)</div>
+					</div>
 				</div>
 
-				<div data-ng-show="zoneData.length > 1">
-					<div class="form-group">
-						<label for="rbs-store-zone">
-							{{ i18n('m.rbs.store.front.zone', ['ucf']) }}
-						</label>
+				<div data-ng-show="zoneData.length > 1" class="form-group">
+					<label for="rbs-store-zone" class="col-sm-4 col-md-3 control-label">
+						{{ i18n('m.rbs.store.front.zone', ['ucf']) }}
+					</label>
+					<div class="col-sm-8 col-md-9">
 						<select id="rbs-store-zone" data-ng-model="selection.zone" class="form-control" data-ng-options="zone as zone for zone in zoneData"></select>
 					</div>
 				</div>
