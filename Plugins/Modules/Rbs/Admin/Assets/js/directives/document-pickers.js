@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-picker-single
+	 * @id RbsChange.directive:rbsDocumentPickerSingle
+	 * @name Document picker (single)
 	 * @restrict EA
 	 *
 	 * @param {Object} ng-model The ng-model to bind.
@@ -316,7 +317,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-picker-multiple
+	 * @id RbsChange.directive:rbsDocumentPickerMultiple
+	 * @name Document picker (multiple)
 	 * @restrict EA
 	 *
 	 * @param {Object} ng-model The ng-model to bind.

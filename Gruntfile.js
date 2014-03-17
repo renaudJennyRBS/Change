@@ -13,34 +13,20 @@ module.exports = function(grunt) {
                     groupIcon: 'icon-globe',
                     sections: [
 						{
-                            id: "directives",
-                            title: "Directives",
+                            id: "change",
+                            title: "Change API",
                             showSource: false,
                             scripts: [
-                                "Plugins/Modules/Rbs/Admin/Assets/js/directives"
+                                "Plugins/Modules/Rbs/Admin/Assets/js"
                             ]
-                        },
-						{
-							id: "filters",
-							title: "Filters",
-							showSource: false,
-							scripts: [
-								"Plugins/Modules/Rbs/Admin/Assets/js/filters"
-							]
-						},
-						{
-							id: "services",
-							title: "Services",
-							showSource: false,
-							scripts: [
-								"Plugins/Modules/Rbs/Admin/Assets/js/services"
-							]
-						}
+                        }
                     ]
                 }
             ],
             showDocularDocs: false,
             showAngularDocs: false,
+			angularStartSymbol: '(=',
+			angularEndSymbol: '=)',
 			baseUrl: 'http://127.0.0.1:8000/'
         }
 

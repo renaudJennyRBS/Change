@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-async-action-button
+	 * @id RbsChange.directive:rbsAsyncActionButton
+	 * @name Asynchronous action button
 	 * @restrict A
 	 *
 	 * @description

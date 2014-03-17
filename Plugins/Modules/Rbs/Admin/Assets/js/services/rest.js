@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
 
 	"use strict";
@@ -9,10 +16,17 @@
 	} ]);
 
 	/**
-	 * REST service.
+	 * @ngdoc service
+	 * @name RbsChange.service:REST
+	 *
+	 * @description Provides methods to deal with REST services:
+	 *
+	 * - load and save Documents
+	 * - load Collections
+	 * - call other REST services
 	 */
-	app.provider('RbsChange.REST', function RbsChangeRESTProvider () {
-
+	app.provider('RbsChange.REST', function RbsChangeRESTProvider ()
+	{
 		var forEach = angular.forEach,
 			REST_BASE_URL,
 			HTTP_STATUS_CREATED = 201,
@@ -30,8 +44,8 @@
 			'localStorageService',
 			'RbsChange.DocumentCache',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService, DocumentCache) {
-
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService, DocumentCache)
+			{
 				var absoluteUrl,
 				    language = 'fr_FR',
 				    lastCreatedDocument = null,
@@ -464,15 +478,20 @@
 						return lastCreatedDocument;
 					},
 
-
 					/**
-					 * @param relativePath
-					 * @returns {String}
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#getBaseUrl
+					 *
+					 * @description
+					 * Returns the full URL of an action based on its `relativePath`, suitable to use with `$http`.
+					 *
+					 * @param {String} relativePath Relative path.
+					 * @returns {String} Full path to use with `$http`.
 					 */
 					'getBaseUrl' : function (relativePath) {
 						return REST_BASE_URL + relativePath;
 					},
-
 
 					/**
 					 * @param lang
@@ -481,9 +500,15 @@
 						language = lang;
 					},
 
-
 					/**
-					 * @returns {Promise}
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#getAvailableLanguages
+					 *
+					 * @description
+					 * Returns the list of all available languages.
+					 *
+					 * @returns {Promise} Promise resolved when the list of languages is loaded.
 					 */
 					'getAvailableLanguages' : function () {
 						return this.action(
@@ -493,15 +518,19 @@
 						);
 					},
 
-
 					/**
-					 * Returns the URL of the Resource identified by its `model`, `id` and eventually `lcid`.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#getResourceUrl
 					 *
-					 * @param model
-					 * @param id
-					 * @param lcid
+					 * @description
+					 * Returns the URL of the resource identified by its `model`, `id` and optional `lcid`.
 					 *
-					 * @return String Resource's URL.
+					 * @param {String} model The Document Model name.
+					 * @param {Integer} id The Document's ID.
+					 * @param {String=} lcid The Document's locale ID.
+					 *
+					 * @return {String} The resource's URL.
 					 */
 					'getResourceUrl' : function (model, id, lcid) {
 						var url;
@@ -529,14 +558,18 @@
 						return url;
 					},
 
-
 					/**
-					 * Returns the URL of the collection for the model `model` and the optional given `params`.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#getCollectionUrl
 					 *
-					 * @param model Model name.
-					 * @param params Parameters (limit, offset, sort, ...)
+					 * @description
+					 * Returns the URL of the collection for the given `model` and optional `params`.
 					 *
-					 * @return {String} Collection's URL.
+					 * @param {String} model Model name.
+					 * @param {Object} params Parameters (limit, offset, sort, ...)
+					 *
+					 * @return {String} The collection's URL.
 					 */
 					'getCollectionUrl' : function (model, params) {
 						model = Utils.modelInfo(model);
@@ -557,14 +590,18 @@
 						return temporaryId;
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#newResource
+					 *
+					 * @description
 					 * Creates a new, unsaved resource of the given `model` in the given locale (`lcid`).
 					 *
-					 * @param model Model name.
-					 * @param {string=} lcid (Optional) Locale ID (5 chars).
+					 * @param {string} model The Document Model name.
+					 * @param {string=} lcid Locale ID (5 chars).
 					 *
-					 * @return {Object}
+					 * @return {Document} The new unsaved Document.
 					 */
 					'newResource' : function (model, lcid) {
 						var props = {
@@ -582,15 +619,19 @@
 						});
 					},
 
-
 					/**
-					 * Loads the Resource identified by its `model`, `id` and eventually `lcid`.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#resource
 					 *
-					 * @param model Model name.
-					 * @param {int=} id Resource's ID.
-					 * @param {string=} lcid (Optional) Locale ID.
+					 * @description
+					 * Loads the Resource identified by its `model`, `id` and optional `lcid`.
 					 *
-					 * @return {Object} Promise that will be resolved when the Resource is loaded.
+					 * @param {String|Document} model Document Model name, or Document object.
+					 * @param {Integer=} id Resource's ID.
+					 * @param {String=} lcid (Optional) Locale ID.
+					 *
+					 * @return {Object} Promise that will be resolved with the Document when the Resource is loaded.
 					 */
 					'resource' : function (model, id, lcid) {
 						var q = $q.defer(), self = this, httpConfig = getHttpConfig(transformResponseResourceFn);
@@ -623,6 +664,18 @@
 						return q.promise;
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#resources
+					 *
+					 * @description
+					 * Loads the Resources identified by the given `ids`.
+					 *
+					 * @param {Array} ids Array of Document IDs.
+					 *
+					 * @return {Object} Promise that will be resolved with the Documents when the Resources are loaded.
+					 */
 					'resources' : function (ids) {
 						var q = $q.defer(),
 							url = Utils.makeUrl(this.getBaseUrl('admin/documentList'), {'ids' : ids});
@@ -640,7 +693,19 @@
 						return q.promise;
 					},
 
-
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#getResources
+					 *
+					 * @description
+					 * Returns an Array with empty Document objects, and loads the Resources identified by the given `ids`.
+					 * When the Resources are loaded, the returned Array is populated with the loaded Documents.
+					 *
+					 * @param {Array} ids Array of Document IDs.
+					 *
+					 * @return {Array} Array of empty Document objects, populated when the Documents are loaded.
+					 */
 					'getResources' : function (ids)
 					{
 						var docs = [], i;
@@ -661,14 +726,19 @@
 						return docs;
 					},
 
-
 					/**
-					 * Ensures that the given doc has been fully loaded.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#ensureLoaded
 					 *
-					 * @param model
-					 * @param {int=} id
-					 * @param {string=} lcid
-					 * @returns {*}
+					 * @description
+					 * Ensures that the given Document has been fully loaded.
+					 *
+					 * @param {String|Document} model Document Model name, or Document object.
+					 * @param {Integer=} id Resource's ID.
+					 * @param {String=} lcid (Optional) Locale ID.
+					 *
+					 * @return {Object} Promise that will be resolved with the Document when the Resource is loaded.
 					 */
 					'ensureLoaded' : function (model, id, lcid) {
 						if (this.isFullyLoaded(model)) {
@@ -679,12 +749,16 @@
 						return this.resource(model, id, lcid);
 					},
 
-
 					/**
-					 * Tells if the given doc has already been fully loaded.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#isFullyLoaded
 					 *
-					 * @param doc
-					 * @returns {*|boolean}
+					 * @description
+					 * Tells whether the given `doc` has already been fully loaded or not.
+					 *
+					 * @param {Document} doc Document object.
+					 * @returns {Boolean} True if `doc` has been fully loaded.
 					 */
 					'isFullyLoaded' : function (doc) {
 						return Utils.isDocument(doc) && doc.META$.loaded === true;
@@ -692,13 +766,18 @@
 
 
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#collection
+					 *
+					 * @description
 					 * Loads a collection via a 'GET' REST call.
 					 *
-					 * @param model Model name OR URL of a RESTful service that returns a Collection.
-					 * @param params Parameters (limit, offset, sort, ...)
+					 * @param {String} model Model name or URL of a RESTful service that returns a Collection.
+					 * @param {Object} params Parameters (limit, offset, sort, ...)
 					 *
-					 * @return Promise Promise that will be resolved when the collection is loaded.
-					 *                 The Promise is resolved with the whole response as argument.
+					 * @returns {Promise} Promise that will be resolved when the collection is loaded.
+					 * The Promise is resolved with the whole response as argument.
 					 */
 					'collection' : function (model, params) {
 						var q = $q.defer(), url;
@@ -747,11 +826,15 @@
 						return q.promise;
 					},
 
-
 					/**
-					 * Loads the Correction for the given `resource`.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#loadCorrection
 					 *
-					 * @param resource
+					 * @description
+					 * Loads the Correction for the given `resource` (Document).
+					 *
+					 * @param {Document} resource The Document.
 					 *
 					 * @returns {Promise} Promise that will be resolved when the Correction has been applied on the given `resource`.
 					 */
@@ -773,15 +856,20 @@
 						return q.promise;
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#save
+					 *
+					 * @description
 					 * Saves the given `resource` via a 'POST' (creation) or 'PUT' (update) REST call.
 					 *
-					 * @param resource The Resource to be saved.
-					 * @param currentTreeNode ChangeDocument Current TreeNode.
+					 * @param {Document} resource The Document to be saved.
+					 * @param {Document=} currentTreeNode Current Document that should be used as the parent in the tree.
+					 * @param {Array=} propertiesList Array of properties to save.
 					 *
-					 * @return {Object} Promise that will be resolved when `resource` is successfully saved.
-					 *                  Promise is resolved with the saved Resource as argument.
+					 * @return {Object} Promise that will be resolved when the Document is successfully saved.
+					 * Promise is resolved with the saved Document as argument.
 					 */
 					'save' : function (resource, currentTreeNode, propertiesList) {
 						var mainQ = $q.defer(),
@@ -912,14 +1000,18 @@
 						return mainQ.promise;
 					},
 
-
 					/**
-					 * Deletes the given `resource` via a 'DELETE' REST call.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#delete
 					 *
-					 * @param resource The Resource to be deleted.
+					 * @description
+					 * Deletes the given `resource` via a <em>DELETE</em> REST call.
 					 *
-					 * @return Promise Promise that will be resolved when `resource` is successfully deleted.
-					 *                 Promise is resolved with the deleted Resource as argument.
+					 * @param {Document} resource The Document to be deleted.
+					 *
+					 * @return {Promise} Promise that will be resolved when the Document is successfully deleted.
+					 * Promise is resolved with the deleted Resource as argument.
 					 */
 					'delete' : function (resource) {
 						var q = $q.defer();
@@ -938,15 +1030,19 @@
 						return q.promise;
 					},
 
-
 					/**
-					 * Calls the action `actionName` on the given `resource` with the given `params`.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#executeTaskByCodeOnDocument
 					 *
-					 * @param taskCode
-					 * @param doc
-					 * @param params
+					 * @description
+					 * Execute a Task identified by its code on the given Document, with optional parameters.
 					 *
-					 * @returns Promise
+					 * @param {String} taskCode The Task's code.
+					 * @param {Document} doc The Document.
+					 * @param {Object=} params Parameters.
+					 *
+					 * @returns {Promise} Promise resolved when the Task has been completed successfully.
 					 */
 					'executeTaskByCodeOnDocument' : function (taskCode, doc, params) {
 						var q = $q.defer(),
@@ -992,12 +1088,18 @@
 						return q.promise;
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#executeTask
 					 *
-					 * @param task
-					 * @param params
-					 * @returns {promise}
+					 * @description
+					 * Execute a Task with optional parameters.
+					 *
+					 * @param {Document} task The Task Document.
+					 * @param {Object=} params Parameters.
+					 *
+					 * @returns {Promise} Promise resolved when the Task has been completed successfully.
 					 */
 					'executeTask' : function (task, params) {
 						var q = $q.defer();
@@ -1036,25 +1138,34 @@
 						return q.promise;
 					},
 
-
-					/**
+					 /**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#treeUrl
+					 *
+					 * @description
 					 * Returns the URL of a tree from its `treeName`.
 					 *
-					 * @param treeName
+					 * @param {String} treeName The Tree name.
 					 *
-					 * @returns String
+					 * @returns {String} REST URL to load the resources of tree `treeName`.
 					 */
 					'treeUrl' : function (treeName) {
 						return REST_BASE_URL + 'resourcestree/' + _ToSlash(treeName) + '/';
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#treeChildren
+					 *
+					 * @description
 					 * Loads the tree children of the given `resource`.
 					 *
-					 * @param resource
+					 * @param {Document} resource Parent Document in a tree.
+					 * @param {Object=} params Parameters.
 					 *
-					 * @returns Promise
+					 * @returns {Promise} Promise resolved with the children when they are loaded.
 					 */
 					'treeChildren' : function (resource, params) {
 						var q = $q.defer(),
@@ -1082,13 +1193,17 @@
 						return q.promise;
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#treeNode
+					 *
+					 * @description
 					 * Loads the TreeNode object of the given `resource`.
 					 *
-					 * @param resource
+					 * @param {Document} resource The Document.
 					 *
-					 * @returns Promise
+					 * @returns {Promise} Promise resolved when the TreeNode is loaded.
 					 */
 					'treeNode' : function (resource) {
 						var q = $q.defer(),
@@ -1113,13 +1228,18 @@
 						return q.promise;
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#treeAncestors
+					 *
+					 * @description
 					 * Loads the tree ancestors of the given `resource`.
 					 *
-					 * @param resource
+					 * @param {Document} resource Document in a tree.
+					 * @param {Object=} params Parameters.
 					 *
-					 * @returns Promise
+					 * @returns {Promise} Promise resolved with the ancestors when they are loaded.
 					 */
 					'treeAncestors' : function (resource) {
 						var	q = $q.defer(),
@@ -1199,12 +1319,17 @@
 						return q.promise;
 					},
 
-
 					/**
-					 * Returns information about a Block.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#blockInfo
 					 *
-					 * @param blockName
-					 * @returns Promise
+					 * @description
+					 * Returns information about a Block from its `blockName`.
+					 *
+					 * @param {String} blockName The block's full name.
+					 *
+					 * @returns {Promise} Promise resolved with the block's information.
 					 */
 					'blockInfo' : function (blockName) {
 						var	q = $q.defer();
@@ -1217,12 +1342,17 @@
 						return q.promise;
 					},
 
-
 					/**
-					 * Returns information about a Model.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#modelInfo
 					 *
-					 * @param modelName
-					 * @returns Promise
+					 * @description
+					 * Returns information about a Document Model from its `modelName`.
+					 *
+					 * @param {String} modelName The Document Model full name.
+					 *
+					 * @returns {Promise} Promise resolved with the Model's information.
 					 */
 					'modelInfo' : function (modelName) {
 						var	q = $q.defer();
@@ -1239,13 +1369,20 @@
 						return q.promise;
 					},
 
-
 					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#query
+					 *
+					 * @description
 					 * Sends a query to search for documents. Query is sent via a POST call.
 					 *
-					 * @param queryObject
-					 * @param {object=} params
-					 * @returns Promise, resolved with a collection of documents that match the filters.
+					 * Query objects can be built with the {@link RbsChange.service:Query Query service}.
+					 *
+					 * @param {Object} queryObject The Query object.
+					 * @param {Object=} params Parameters.
+					 *
+					 * @returns {Promise} Promise resolved with a collection of documents that match the filters.
 					 */
 					'query' : function (queryObject, params) {
 						var	q = $q.defer();
@@ -1264,15 +1401,21 @@
 						return q.promise;
 					},
 
-
 					/**
-					 * Calls the action `actionName` with the given `params`.
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#action
 					 *
-					 * @param actionName
-					 * @param params
-					 * @param cache
+					 * @description
+					 * Calls the action `actionName` with the given `params` (HTTP GET).
 					 *
-					 * @returns Promise
+					 * Use {@link RbsChange.service:REST#postAction `postAction()`} to send the action with an HTTP POST.
+					 *
+					 * @param {String} actionName The action's name.
+					 * @param {Object=} params Parameters.
+					 * @param {Boolean=} cache If true, the result is cached by AngularJS.
+					 *
+					 * @returns {Promise} Promise resolved with the action's result.
 					 */
 					'action' : function (actionName, params, cache) {
 						var	q = $q.defer(),
@@ -1294,6 +1437,22 @@
 						return q.promise;
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#postAction
+					 *
+					 * @description
+					 * Calls the action `actionName` with the given `params` (HTTP POST).
+					 *
+					 * Same as {@link RbsChange.service:REST#action `action()`}, but with an HTTP POST.
+					 *
+					 * @param {String} actionName The action's name.
+					 * @param {Object=} params Parameters.
+					 * @param {Boolean=} cache If true, the result is cached by AngularJS.
+					 *
+					 * @returns {Promise} Promise resolved with the action's result.
+					 */
 					'postAction' : function (actionName, content, params) {
 						var	q = $q.defer(),
 							url;
@@ -1315,11 +1474,18 @@
 					},
 
 					/**
-					 * @param url Full URL
-					 * @param params
-					 * @param {function=} transformer
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:REST
+					 * @name RbsChange.service:REST#call
 					 *
-					 * @returns Promise
+					 * @description
+					 * Calls a REST service with its full URL.
+					 *
+					 * @param {String} url Full URL
+					 * @param {Object=} params Parameters.
+					 * @param {Function=} transformer Response Transformer to use.
+					 *
+					 * @returns {Promise} Promise resolved with the action's result.
 					 */
 					'call' : function (url, params, transformer) {
 						var	q = $q.defer();
@@ -1346,8 +1512,32 @@
 					// Storage
 					//
 
+					/**
+					 * @ngdoc service
+					 * @id RbsChange.service:REST.storage
+					 * @name REST[storage]
+					 *
+					 * @description Sub-service of {@link RbsChange.service:REST REST} that provides methods to deal
+					 * with file uploads.
+					 *
+					 * Inject {@link RbsChange.service:REST REST service} to use it:
+					 * <code>REST.storage.method(...)</code>
+					 */
 					'storage' : {
 
+						/**
+						 * @ngdoc function
+						 * @methodOf RbsChange.service:REST.storage
+						 * @name RbsChange.service:REST.storage#upload
+						 *
+						 * @description
+						 * Uploads a file on the server.
+						 *
+						 * @param {DOMElement} fileElm The input[file] element.
+						 * @param {String} storageName Name of the storage configuration on the server.
+						 *
+						 * @returns {Promise} Promise resolved when the file has been uploaded.
+						 */
 						'upload' : function (fileElm, storageName) {
 							var	q = $q.defer(),
 								formData = new FormData();
@@ -1409,6 +1599,18 @@
 							return q.promise;
 						},
 
+						/**
+						 * @ngdoc function
+						 * @methodOf RbsChange.service:REST.storage
+						 * @name RbsChange.service:REST.storage#displayUrl
+						 *
+						 * @description
+						 * Returns the URL to display the given storage element.
+						 *
+						 * @param {Object} storage Storage object.
+						 *
+						 * @returns {String} string Display URL.
+						 */
 						'displayUrl' : function (storage) {
 							if (angular.isObject(storage) && angular.isArray(storage.links))
 							{
@@ -1433,7 +1635,18 @@
 							throw new Error("'storage' should be an object with links/data.");
 						},
 
-
+						/**
+						 * @ngdoc function
+						 * @methodOf RbsChange.service:REST.storage
+						 * @name RbsChange.service:REST.storage#info
+						 *
+						 * @description
+						 * Returns information about the given storage element.
+						 *
+						 * @param {String} storagePath Storage Path.
+						 *
+						 * @returns {Promise} Promise resolved with storage element's information.
+						 */
 						'info' : function (storagePath) {
 							var q = $q.defer();
 

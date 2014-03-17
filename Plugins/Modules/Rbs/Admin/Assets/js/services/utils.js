@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
 
 	"use strict";
@@ -5,17 +12,25 @@
 	var forEach = angular.forEach;
 
 	/**
-	 * Global utility methods.
+	 * @ngdoc service
+	 * @name RbsChange.service:Utils
+	 *
+	 * @description Provides global utility methods.
 	 */
-	angular.module('RbsChange').constant('RbsChange.Utils', {
-
+	angular.module('RbsChange').constant('RbsChange.Utils',
+	{
 		/**
-		 * Indicates whether the given `doc` has a status among the ones given as arguments.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#hasStatus
 		 *
-		 * @param doc Document
-		 * @param Statuses...
+		 * @description
+		 * Indicates whether the given `doc` has a publication status among the ones given as arguments.
 		 *
-		 * @returns Boolean
+		 * @param {Document} doc Document.
+		 * @param {...String} args Publication statuses.
+		 *
+		 * @returns {Boolean} True if `doc` has a status among the given ones.
 		 */
 		hasStatus : function (doc) {
 			var s, statuses;
@@ -28,24 +43,36 @@
 			return false;
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#hasCorrection
+		 *
+		 * @description
 		 * Indicates whether the given `doc` has a correction or not.
 		 *
-		 * @param doc Document
+		 * @param {Document} doc Document.
 		 *
-		 * @returns Boolean
+		 * @returns {Boolean} true if `doc` has a correction.
 		 */
 		hasCorrection : function (doc) {
 			return this.isDocument(doc) && angular.isObject(doc.META$) && angular.isObject(doc.META$.correction);
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#removeCorrection
 		 *
-		 * @param doc
-		 * @param propertiesNames
-		 * @returns {boolean}
+		 * @description
+		 * Removes the correction from the given `doc`.
+		 *
+		 * If `propertiesNames` is provided, only the specified corrected properties are removed.
+		 *
+		 * @param {Document} doc Document.
+		 * @param {String|Array<String>} propertiesNames Property or list of properties.
+		 *
+		 * @returns {Boolean} false if `doc` has no correction.
 		 */
 		removeCorrection : function (doc, propertiesNames) {
 			if (! this.hasCorrection(doc)) {
@@ -64,11 +91,18 @@
 			return true;
 		},
 
-
 		/**
-		 * @param doc
-		 * @param correctionData
-		 * @returns {*}
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#applyCorrection
+		 *
+		 * @description
+		 * Applies a correction on the given `doc`.
+		 *
+		 * @param {Document} doc Document.
+		 * @param {Object} correctionData Correction's data.
+		 *
+		 * @returns {Document} The Document with correction applied.
 		 */
 		applyCorrection : function (doc, correctionData) {
 			// Copy current values to make them available as 'doc.correction.original'.
@@ -80,35 +114,66 @@
 			return angular.extend(doc, correctionData.properties);
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isLocalized
+		 *
+		 * @description
 		 * Indicates whether the given `doc` is localized or not.
+		 *
+		 * @param {Document} doc Document.
+		 *
+		 * @returns {Boolean} true if `doc` is localized.
 		 */
 		isLocalized : function (doc) {
 			return this.isDocument(doc) && doc.refLCID && doc.LCID;
 		},
 
-
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isValidLCID
+		 *
+		 * @description
+		 * Checks whether the given locale ID is valid or not.
+		 *
+		 * @param {String} lcid Locale ID.
+		 *
+		 * @returns {Boolean} true if the given `lcid` is valid.
+		 */
 		isValidLCID : function (lcid) {
 			return angular.isString(lcid) && (/^[a-z]{2}(_[a-zA-Z]{2})?$/).test(lcid);
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isTreeNode
+		 *
+		 * @description
 		 * Indicates whether the given `doc` is a Tree Node or not.
+		 *
+		 * @param {Document} doc Document object.
+		 *
+		 * @returns {Boolean} true if the given `doc` is a tree node.
 		 */
 		isTreeNode : function (doc) {
 			return this.isDocument(doc) && angular.isObject(doc.META$.treeNode);
 		},
 
-
 		/**
-		 * Indicates whether the given `doc` is a model among the ones given as arguments.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isModel
 		 *
-		 * @param {Document} doc
-		 * @param {String...} Model names
+		 * @description
+		 * Indicates whether the given `doc` has a model among the ones given as arguments.
 		 *
-		 * @returns {Boolean}
+		 * @param {Document} doc Document object.
+		 * @param {...String} models Document Model names.
+		 *
+		 * @returns {Boolean} true if the given `doc` has a model among the given ones.
 		 */
 		isModel : function (doc) {
 			var m, models;
@@ -121,37 +186,71 @@
 			return false;
 		},
 
-
 		/**
-		 * Indicates whether the given `doc` is NOT a model among the ones given as arguments.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isNotModel
 		 *
-		 * @param {Document} doc
-		 * @param {String...} Model names
+		 * @description
+		 * Indicates whether the given `doc` has a model different than the ones given as arguments.
 		 *
-		 * @returns {Boolean}
+		 * @param {Document} doc Document object.
+		 * @param {...String} models Document Model names.
+		 *
+		 * @returns {Boolean} true if the given `doc` has a model different than the given ones.
 		 */
 		isNotModel : function () {
 			return ! this.isModel.apply(this, arguments);
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isDocument
+		 *
+		 * @description
 		 * Indicates whether the given `obj` is a Document or not.
-		 * A Document is an object with the `model` and 'ìd` properties.
+		 *
+		 * @param {Object} obj Object.
+		 *
+		 * @returns {Boolean} true if the given `obj` is a Document.
 		 */
 		isDocument : function (obj) {
 			return angular.isObject(obj) && angular.isDefined(obj.model) && angular.isDefined(obj.id);
 		},
 
-
 		/**
-		 * Indicates whether the given `string` represents a Model name or not.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isModelName
+		 *
+		 * @description
+		 * Indicates whether the given `string` represents a valid Document Model name or not.
+		 *
+		 * @param {String} string Document Model name.
+		 *
+		 * @returns {Boolean} true if the given `string` is a valid Document Model name.
 		 */
 		isModelName : function (string) {
 			return angular.isString(string) && (/^\w+_\w+_\w+$/).test(string);
 		},
 
-
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#simpleRepresentation
+		 *
+		 * @description
+		 * Returns a simple representation of a Document as an poor JavaScript object with the following properties:
+		 *
+		 * - `id`
+		 * - `model`
+		 * - `label` (which is either the `label` or a concatenation of `model` + `id` if `label` is undefined)
+		 *
+		 * @param {Document} doc Document object.
+		 *
+		 * @returns {Object} Simple representation of the given `doc`.
+		 */
 		simpleRepresentation : function (doc) {
 			if (this.isDocument(doc)) {
 				var out = {
@@ -167,27 +266,47 @@
 			return doc;
 		},
 
-
 		/**
-		 * Indicates whether the given `string` represents a Model name or not.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isModuleName
+		 *
+		 * @description
+		 * Indicates whether the given `string` represents a plugin (or module) name or not.
+		 *
+		 * @returns {Boolean} true if the given `string` is a valid plugin name.
 		 */
 		isModuleName : function (string) {
 			return angular.isString(string) && (/^\w+_\w+$/).test(string);
 		},
 
-
 		/**
-		 * Tells whether the given Resource is new or not.
-		 * Newly created resources have a negative ID.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#isNew
+		 *
+		 * @description
+		 * Tells whether the given `doc` is new or not. Newly created Documents have a negative ID.
+		 *
+		 * @param {Document} doc Document object.
+		 *
+		 * @returns {Boolean} true if the given `doc` is new (unsaved).
 		 */
-		isNew : function (resource) {
-			return this.isDocument(resource) && resource.id < 0;
+		isNew : function (doc) {
+			return this.isDocument(doc) && doc.id < 0;
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#duplicateDocument
+		 *
+		 * @description
 		 * Duplicates the given `doc` and returns a new copy ready to be saved.
-		 * @param doc
+		 *
+		 * @param {Document} doc The Document to duplicate.
+		 *
+		 * @returns {Document} Copy of given `doc`, with temporary ID.
 		 */
 		duplicateDocument : function (doc) {
 			doc = angular.copy(doc);
@@ -198,22 +317,38 @@
 			return doc;
 		},
 
-
 		/**
-		 * Tells whether a Document has a local copy or not.
-		 * @param doc
-		 * @returns {*}
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#hasLocalCopy
+		 *
+		 * @description
+		 * Tells whether the given `doc` has a saved local copy or not.
+		 *
+		 * @param {Document} doc Document object.
+		 *
+		 * @returns {Boolean} true if `doc` has a saved local copy.
 		 */
 		hasLocalCopy : function (doc) {
 			return doc.META$ && doc.META$.localCopy;
 		},
 
-
 		/**
-		 * Returns information about the given model name: vendor, module and document.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#modelInfo
 		 *
-		 * @param {String} modelName A fully qualified model name, such as `Change_Website_Page`.
-		 * @returns {Object} {'vendor', 'module', 'document', 'change':(true|false)}
+		 * @description
+		 * Returns information about the given model name as a JavaScript object with the following properties:
+		 *
+		 * - `vendor` (String) Vendor name (ie. <em>Rbs</em>).
+		 * - `module` (String) Plugin's short name (ie. <em>Catalog</em>).
+		 * - `fullModule (String) Plugin's full name (ie. <em>Rbs_Catalog</em>).
+		 * - `document` (String) Document's short name (ie. <em>Product</em>).
+		 * - `change` (Boolean) true if the Model is a core model (provided by RBS).
+		 *
+		 * @param {String} modelName A fully qualified model name, such as `Rbs_Catalog_Product`.
+		 * @returns {Object} Model's information.
 		 */
 		modelInfo : function (modelName) {
 			var splat = modelName.split(/[\/_]/);
@@ -229,11 +364,16 @@
 			};
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#toIds
+		 *
+		 * @description
 		 * Returns the ID of the given Document or an Array of IDs of the given Array of Documents.
-		 * @param value
-		 * @returns {*}
+		 *
+		 * @param {Document|Array<Document>} value Document or Array of Documents.
+		 * @returns {Integer|Array<Integer>} Document's ID or Array of Documents IDs.
 		 */
 		toIds : function (value)
 		{
@@ -251,16 +391,20 @@
 			return newVal;
 		},
 
-
 		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#makeUrl
+		 *
+		 * @description
 		 * Makes a URL from the given one (`url`) and a parameters object (`params`).
 		 * If `params` contains parameters that are present in `url`, they will be replaced.
 		 * All parameters of `params` that are not in `url` are, of course, appended.
 		 *
-		 * @param url The base URL to use.
-		 * @param params Parameters to append or replace in the base url.
+		 * @param {String} url The base URL to use.
+		 * @param {Object} params Hash object representing the parameters to append or replace in the base URL.
 		 *
-		 * @returns {String}
+		 * @returns {String} The updated URL.
 		 */
 		makeUrl : function (url, params) {
 			var baseUrl = url,
@@ -330,80 +474,125 @@
 			return baseUrl + hash;
 		},
 
-
 		// String manipulation methods.
 
-
 		/**
-		 * Indicates whether the String `haystack` starts with the String `needle`.
-		 * The comparison is case-sensitive. For a case-insensitive comparison, use `startsWithIgnoreCase()`.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#startsWith
 		 *
-		 * @see startsWithIgnoreCase()
+		 * @description
+		 * Indicates whether the String `haystack` starts with the String `needle`.
+		 * The comparison is case-sensitive. For a case-insensitive comparison, use {@link RbsChange.service:Utils#startsWithIgnoreCase `Utils.startsWithIgnoreCase()`}.
 		 *
 		 * @param {String} haystack The String to search in.
 		 * @param {String} needle The String to search for.
+		 *
+		 * @returns {Boolean} true if `haystack` starts with `needle`.
 		 */
 		startsWith : function (haystack, needle) {
 			return haystack.slice(0, needle.length) === needle;
 		},
 
-
 		/**
-		 * Indicates whether the String `haystack` starts with the String `needle`.
-		 * The comparison is case-INsensitive. For a case-sensitive comparison, use `startsWith()`.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#startsWithIgnoreCase
 		 *
-		 * @see startsWith()
+		 * @description
+		 * Indicates whether the String `haystack` starts with the String `needle`.
+		 * The comparison is case-INsensitive. For a case-sensitive comparison, use {@link RbsChange.service:Utils#startsWith `Utils.startsWith()`}.
 		 *
 		 * @param {String} haystack The String to search in.
 		 * @param {String} needle The String to search for.
+		 *
+		 * @returns {Boolean} true if `haystack` starts with `needle`.
 		 */
 		startsWithIgnoreCase : function (haystack, needle) {
 			return this.startsWith(angular.lowercase(haystack), angular.lowercase(needle));
 		},
 
-
 		/**
-		 * Indicates whether the String `haystack` ends with the String `needle`.
-		 * The comparison is case-sensitive. For a case-insensitive comparison, use `endsWithIgnoreCase()`.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#endsWithIgnoreCase
 		 *
-		 * @see endsWithIgnoreCase()
+		 * @description
+		 * Indicates whether the String `haystack` ends with the String `needle`.
+		 * The comparison is case-sensitive. For a case-INsensitive comparison, use {@link RbsChange.service:Utils#endsWithIgnoreCase `Utils.endsWithIgnoreCase()`}.
 		 *
 		 * @param {String} haystack The String to search in.
 		 * @param {String} needle The String to search for.
+		 *
+		 * @returns {Boolean} true if `haystack` ends with `needle`.
 		 */
 		endsWith : function (haystack, needle) {
 			return haystack.slice(-needle.length) === needle;
 		},
 
-
 		/**
-		 * Indicates whether the String `haystack` ends with the String `needle`.
-		 * The comparison is case-INsensitive. For a case-sensitive comparison, use `endsWith()`.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#endsWithIgnoreCase
 		 *
-		 * @see endsWith()
+		 * @description
+		 * Indicates whether the String `haystack` ends with the String `needle`.
+		 * The comparison is case-INsensitive. For a case-sensitive comparison, use {@link RbsChange.service:Utils#endsWith `Utils.endsWith()`}.
 		 *
 		 * @param {String} haystack The String to search in.
 		 * @param {String} needle The String to search for.
+		 *
+		 * @returns {Boolean} true if `haystack` ends with `needle`.
 		 */
 		endsWithIgnoreCase : function (haystack, needle) {
 			return this.endsWith(angular.lowercase(haystack), angular.lowercase(needle));
 		},
 
-
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#equalsIgnoreCase
+		 *
+		 * @description
+		 * Indicates whether the String `s1` equals the String `s2`. The comparison is case-INsensitive.
+		 *
+		 * @param {String} s1 First string.
+		 * @param {String} s2 Second string.
+		 *
+		 * @returns {Boolean} true if `s1` equals `s2`.
+		 */
 		equalsIgnoreCase : function (s1, s2) {
 			return angular.lowercase(s1) === angular.lowercase(s2);
 		},
 
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#equalsIgnoreCase
+		 *
+		 * @description
+		 * Indicates whether the String `haystack` contains the String `needle`. The comparison is case-INsensitive.
+		 *
+		 * @param {String} haystack The String to search in.
+		 * @param {String} needle The String to search for.
+		 *
+		 * @returns {Boolean} true if `needle` is found in `haystack`.
+		 */
 		containsIgnoreCase : function (haystack, needle) {
 			return angular.lowercase(haystack).indexOf(angular.lowercase(needle)) !== -1;
 		},
 
-
 		/**
-		 * Converts camel case name to HTML attribute name.
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#normalizeAttrName
 		 *
-		 * @param str
-		 * @returns {XML}
+		 * @description
+		 * Converts camel case name to HTML attribute name (snake-case).
+		 *
+		 * @param {String} str The camel-case String to transform.
+		 *
+		 * @returns {String} Snake-case String.
 		 */
 		normalizeAttrName : function (str) {
 			return str.
@@ -413,7 +602,22 @@
 				});
 		},
 
-
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#getByProperty
+		 *
+		 * @description
+		 * Returns the objects of the `collection` that have a `property` equals to `value`.
+		 *
+		 * Please note that the check is done with a <code>===</code>.
+		 *
+		 * @param {Array} collection The Array of objects.
+		 * @param {String} propertyName Property name.
+		 * @param {*} value Value.
+		 *
+		 * @returns {Array} Array of all the objects from `collection` that match the condition `property=value`.
+		 */
 		getByProperty : function (collection, propertyName, value) {
 			var results = [];
 			angular.forEach(collection, function (item) {
@@ -424,7 +628,19 @@
 			return results;
 		},
 
-
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:Utils
+		 * @name RbsChange.service:Utils#getById
+		 *
+		 * @description
+		 * Returns the object of the `collection` that has the specified `id`.
+		 *
+		 * @param {Array} collection The Array of objects.
+		 * @param {Integer} id The ID.
+		 *
+		 * @returns {Object} Object from `collection` that has the specified `id`.
+		 */
 		getById : function (collection, id) {
 			for (var i=0 ; i<collection.length ; i++) {
 				if (collection[i] && collection[i].id === id) {

@@ -11,7 +11,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-status
+	 * @id RbsChange.directive:rbsStatus
+	 * @name Document publication status icon
 	 * @restrict E
 	 *
 	 * @description

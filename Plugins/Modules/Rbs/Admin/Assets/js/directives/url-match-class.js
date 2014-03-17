@@ -10,13 +10,10 @@
 	"use strict";
 
 	/**
-	 * This Directive is to be applied on <a/> elements.
-	 * It adds/removes a CSS class if the current URL equals/differs from the 'href' attribute.
-	 */
-
-	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-url-match-class
+	 * @id RbsChange.directive:rbsUrlMatchClass
+	 * @name Auto-active links
+	 * @element a
 	 * @restrict A
 	 *
 	 * @description

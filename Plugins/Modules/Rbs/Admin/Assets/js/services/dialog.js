@@ -1,17 +1,30 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ($) {
 
+	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
-	app.provider('RbsChange.Dialog', function RbsChangeDialogProvider() {
-
+	app.provider('RbsChange.Dialog', function RbsChangeDialogProvider()
+	{
 		$('body').append('<div id="embedded-modal-backdrop"/>');
 		var	$embeddedModalBackdrop = $('#embedded-modal-backdrop'),
 			buttonIdCounter = 0;
 
-		this.$get = ['$filter', '$compile', '$timeout', '$rootScope', '$q', 'RbsChange.Utils', 'RbsChange.i18n', function ($filter, $compile, $timeout, $rootScope, $q, Utils, i18n) {
-
+		/**
+		 * @ngdoc service
+		 * @name RbsChange.service:Dialog
+		 *
+		 * @description Provides methods to display dialog boxes.
+		 */
+		this.$get = ['$filter', '$compile', '$timeout', '$rootScope', '$q', 'RbsChange.Utils', 'RbsChange.i18n', function ($filter, $compile, $timeout, $rootScope, $q, Utils, i18n)
+		{
 			var dialog = {
 
 				btnStyle : 'warning',
@@ -23,10 +36,21 @@
 					html      : true
 				},
 
-
-
-				// FIXME $compile the contents into a scope which should be given as argument too.
-				confirm: function (title, message, style, warningMessage) {
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:Dialog
+				 * @name RbsChange.service:Dialog#confirm
+				 *
+				 * @description Opens a confirmation dialog box.
+				 *
+				 * @param {String} title Dialog's title.
+				 * @param {String} message Dialog's contents.
+				 * @param {String=} style Can be one of: `warning`, `danger`, `info` or `success`.
+				 * @param {String=} warningMessage Additional warning message.
+				 */
+				confirm : function (title, message, style, warningMessage)
+				{
+					// FIXME $compile the contents into a scope which should be given as argument too.
 					var deferred = $q.defer(),
 					    self = this;
 
@@ -64,9 +88,23 @@
 				},
 
 
-				// FIXME Use AngularJS's $q service instead of jQuery's Deferred.
-				// FIXME $compile the contents into a scope which should be given as argument too.
-				confirmLocal: function ($el, title, message, options) {
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:Dialog
+				 * @name RbsChange.service:Dialog#confirmLocal
+				 *
+				 * @description Opens a small popover to confirm an action.
+				 *
+				 * @param {jQuery} $el The jQuery element the popover should be attached to.
+				 * @param {String} title Dialog's title.
+				 * @param {String} message Dialog's contents.
+				 * @param {Object=} options Popover options. More information here: {@link http://getbootstrap.com/javascript/#popovers-usage}.
+				 */
+				confirmLocal : function ($el, title, message, options)
+				{
+					// FIXME Use AngularJS's $q service instead of jQuery's Deferred.
+					// FIXME $compile the contents into a scope which should be given as argument too.
+
 					$el = $($el);
 					$el.popover('destroy');
 					options = options || {};
@@ -147,7 +185,30 @@
 					return 'embedded-modal-{{id}}'.replace(/\{\{id\}\}/g, id);
 				},
 
-
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:Dialog
+				 * @name RbsChange.service:Dialog#embed
+				 *
+				 * @description Fetches the content at the given `url` and embeds it into `$el`.
+				 * The content is first <strong>compiled</strong> into the given `scope`, so that <strong>it can contain AngularJS Directives
+				 * and expressions</strong> that will be evaluated in `scope`.
+				 *
+				 * If a `pointedElement` is provided in the options, an small arrow pointing to that element will be added.
+				 *
+				 * @param {jQuery} $el The jQuery element into which the content should be embedded.
+				 * @param {String|Object} url URL of content to embed or JavaScript object:
+				 *
+				 * - `title`
+				 * - `contents`
+				 * - `closeButtonNgClick`
+				 *
+				 * @param {Scope} scope The Angular Scope object into which the content should be compiled and evaluated.
+				 * @param {Object=} options Options object:
+				 *
+				 * - `pointedElement`
+				 * - `cssClass`
+				 */
 				embed : function ($el, url, scope, options)
 				{
 					if (this.$embeddedEl !== null) {
@@ -217,8 +278,15 @@
 					return theScope.dialogEmbedQ.promise;
 				},
 
-
-				closeEmbedded: function ()
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:Dialog
+				 * @name RbsChange.service:Dialog#closeEmbedded
+				 *
+				 * @description
+				 * Closes the last embedded dialog box.
+				 */
+				closeEmbedded : function ()
 				{
 					var self = this,
 					    q = $q.defer();
@@ -245,8 +313,30 @@
 					return q.promise;
 				},
 
-
-				confirmEmbed: function ($el, title, text, scope, options)
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:Dialog
+				 * @name RbsChange.service:Dialog#confirmEmbed
+				 *
+				 * @description
+				 * Embeds a confirmation dialog box into `$el` with the given `title` and content (`text`).
+				 *
+				 * Please note that the `text` is <strong>compiled</strong> into the given `scope`, so that
+				 * <strong>it can contain AngularJS Directives and expressions</strong> that will be evaluated in `scope`.
+				 *
+				 * @param {jQuery} $el The jQuery element into which the content should be embedded.
+				 * @param {String} title Confirmation dialog's title.
+				 * @param {String} text Confirmation dialog's contents.
+				 * @param {Scope} scope The Angular Scope object into which the content should be compiled and evaluated.
+				 * @param {Object=} options Options object:
+				 *
+				 * - `pointedElement`
+				 * - `cssClass`
+				 * - `primaryButtonClass`
+				 * - `primaryButtonText`
+				 * - `primaryButtonIcon`
+				 */
+				confirmEmbed : function ($el, title, text, scope, options)
 				{
 					var deferred = $q.defer(),
 					    self = this;
@@ -315,7 +405,7 @@
 				},
 
 
-				destroyEmbedded: function ()
+				destroyEmbedded : function ()
 				{
 					var self = this,
 						q = $q.defer();

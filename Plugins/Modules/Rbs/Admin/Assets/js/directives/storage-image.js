@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ($) {
 
 	"use strict";
@@ -16,7 +23,28 @@
 	});
 
 	/**
-	 * @example: <code><img rbs-storage-image="myMedia.path" thumbnail="xs"/></code>
+	 * @ngdoc directive
+	 * @id RbsChange.directive:rbsStorageImage
+	 * @name Image from Storage manager
+	 * @element img
+	 * @restrict A
+	 *
+	 * @description
+	 * Displays an image stored in the Storage manager.
+	 *
+	 * @param {String} rbs-storage-image Storage path.
+	 * @param {String} thumbnail Size of the image:
+	 *
+	 * - `xs`: 57x32
+	 * - `s`: 100x56
+	 * - `m`: 177x100
+	 * - `l`: 267x150
+	 * - `xl`: 356x200
+	 *
+	 * @example:
+	 * <pre>
+	 *     <img rbs-storage-image="myMedia.path" thumbnail="xs"/>
+	 * </pre>
 	 */
 	app.directive('rbsStorageImage', ['RbsChange.REST', 'rbsThumbnailSizes', function (REST, sizes)
 	{

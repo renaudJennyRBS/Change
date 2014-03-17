@@ -1,15 +1,33 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
 
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-
 	/**
-	 * Localization service.
+	 * @ngdoc service
+	 * @name RbsChange.service:i18n
+	 * @description UI localization service.
 	 */
-	app.service('RbsChange.i18n', ['$filter', function i18nServiceFn ($filter) {
-
+	app.service('RbsChange.i18n', ['$filter', function i18nServiceFn ($filter)
+	{
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:i18n
+		 * @name RbsChange.service:i18n#trans
+		 *
+		 * @description Translates a localization string.
+		 *
+		 * @param {String} string The localization string.
+		 * @param {Object=} params Replacements parameters.
+		 */
 		this.trans = function (string, params) {
 			var p, path, key, filters = null;
 
@@ -42,56 +60,72 @@
 		};
 	}]);
 
-
 	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:i18n
+	 *
+	 * @description
 	 * Localization filter.
+	 *
+	 * @param {String} string Localization string.
 	 */
-	app.filter('i18n', ['RbsChange.i18n', function (i18n) {
-
+	app.filter('i18n', ['RbsChange.i18n', function (i18n)
+	{
 		return function i18nFilterFn (string, params) {
 			return i18n.trans(string, params);
 		};
-
 	}]);
 
-
 	/**
-	 * Uppercase first letter.
+	 * @ngdoc filter
+	 * @name RbsChange.filter:ucf
+	 *
+	 * @description
+	 * Filter to make the first letter of a string uppercase.
+	 *
+	 * @param {String} string The input string.
 	 */
-	app.filter('ucf', function () {
-
+	app.filter('ucf', function ()
+	{
 		return function ucfFilterFn (input) {
 			if (input && input.length > 0) {
 				return angular.uppercase(input.substr(0, 1)) + input.substr(1);
 			}
 			return input;
 		};
-
 	});
 
-
 	/**
-	 * Ellipsis letter.
+	 * @ngdoc filter
+	 * @name RbsChange.filter:etc
+	 *
+	 * @description
+	 * Appends an ellipsis to the input string.
+	 *
+	 * @param {String} string The input string.
 	 */
-	app.filter('etc', function () {
-
+	app.filter('etc', function ()
+	{
 		return function etcFilterFn (input) {
 			return input + '…';
 		};
-
 	});
 
-
 	/**
-	 * Label.
+	 * @ngdoc filter
+	 * @name RbsChange.filter:lab
+	 *
+	 * @description
+	 * Appends ` :` (double dots) at the end of the input string.
+	 *
+	 * @param {String} string The input string.
 	 */
-	app.filter('lab', function () {
-
+	app.filter('lab', function ()
+	{
 		return function labFilterFn (input) {
 			// FIXME Remove space before ':' according to current language.
 			return input + ' :';
 		};
-
 	});
 
 })();

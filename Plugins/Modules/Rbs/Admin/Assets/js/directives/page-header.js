@@ -27,7 +27,7 @@
 				scope.showLocalCopyMessage = true;
 
 				scope.hasLocalCopy = function() {
-					return Utils.isDocument(scope.document) && EditorManager.getLocalCopy(scope.document) != null
+					return Utils.isDocument(scope.document) && EditorManager.getLocalCopy(scope.document) != null;
 				};
 
 				scope.mergeLocalCopy = function() {

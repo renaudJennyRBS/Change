@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-tip
+	 * @id RbsChange.directive:rbs-tip
+	 * @name User tips
 	 * @restrict A
 	 *
 	 * @description

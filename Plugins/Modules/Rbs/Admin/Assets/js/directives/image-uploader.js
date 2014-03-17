@@ -11,7 +11,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-image-uploader
+	 * @id RbsChange.directive:rbsImageUploader
+	 * @name Image uploader
 	 * @restrict EA
 	 *
 	 * @description

@@ -84,7 +84,8 @@
 					properties = {},
 					createNewDocumentId,
 					modelInfoPromise,
-					editorUrl;
+					editorUrl,
+					documentReady = false;
 
 
 				//-----------------------------------------------//
@@ -154,6 +155,12 @@
 				{
 					$scope.navigationContext = Navigation.getCurrentContext();
 				});
+
+
+				$scope.isDocumentReady = function ()
+				{
+					return documentReady;
+				};
 
 
 				//-----------------------------------------------//
@@ -815,6 +822,8 @@
 					editorUrl = $location.absUrl();
 					initCorrection();
 
+					documentReady = true;
+
 					// Call `$scope.onReady()` if present.
 					if (angular.isFunction($scope.onReady)) {
 						$scope.onReady();
@@ -1267,7 +1276,7 @@
 	 * Placed on a <code>&lt;fieldset/&gt;</code> to declare a section in the editor.
 	 *
 	 * This directive looks for the fields in the <code>&lt;fieldset/&gt;</code> and registers a menu entry in the
-	 * {@link directives/RbsChange.directive:rbs-document-editor-base editor's Controller}.
+	 * {@link change/RbsChange.directive:rbs-document-editor-base editor's Controller}.
 	 *
 	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
 	 */

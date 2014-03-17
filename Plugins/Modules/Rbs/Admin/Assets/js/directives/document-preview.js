@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-preview
+	 * @id RbsChange.directive:rbsDocumentPreview
+	 * @name Document preview
 	 * @restrict E
 	 *
 	 * @param {Document} document The Document to preview.
