@@ -82,7 +82,9 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function getFilters()
 	{
-		return array();
+		return array(
+			new \Twig_SimpleFilter('snakeCase', array($this, 'snakeCase'))
+		);
 	}
 
 	/**
@@ -160,6 +162,20 @@ class Extension implements \Twig_ExtensionInterface
 	protected function getModelManager()
 	{
 		return $this->modelManager;
+	}
+
+	/**
+	 * @param string $string
+	 * @param string $separator
+	 * @return string
+	 */
+	public function snakeCase($string, $separator = '_')
+	{
+		if (is_string($string) && is_string($separator))
+		{
+			return strtolower(preg_replace('/([a-z])([A-Z])/', '$1' . $separator . '$2', $string));
+		}
+		return $string;
 	}
 
 	/**

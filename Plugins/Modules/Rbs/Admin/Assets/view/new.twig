@@ -1,5 +1,4 @@
-<div class="row" data-rbs-document-editor-base="" model="{{ model.name }}">
-
+<div class="row" data-rbs-document-editor-base="" data-model="{{ model.name }}">
 	<div class="col-md-12">
 		<rbs-page-header document="document" sub-title="{{ '{{' }} i18nAttr(modelKey('{{ model.name }}'), ['ucf']) {{ '}}' }}"></rbs-page-header>
 	</div>
@@ -9,34 +8,33 @@
 	</div>
 
 	<div class="document-form" data-rbs-main-column="">
-
-		<form data-ng-submit="submit()" data-rbs-document-editor-new="" data-rbs-document-editor-{{ model.vendorName | lower }}-{{ model.shortModuleName | lower }}-{{ model.shortName | lower }}-new="">
-
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-{{ model.vendorName | lower }}-{{ model.shortModuleName | lower }}-{{ model.shortName | snakeCase('-') }}-new="">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ '{{' }} i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) {{ '}}' }}">
-
 {% if model.localized %}
+
 				<rbs-field property="refLCID" required="true"
 					label="{{ '{{' }} i18nAttr(propertyKey('{{ model.name }}', 'refLCID'), ['ucf']) {{ '}}' }}">
 					<select class="form-control" data-ng-model="document.refLCID"
 						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
 					</select>
 				</rbs-field>
-
 {% endif %}
 {% if model.publishable %}
+
 				<rbs-field-label-title property="title" required="true"
 					label="{{ '{{' }} i18nAttr(propertyKey('{{ model.name }}', 'label'), ['ucf']) {{ '}}' }} / {{ '{{' }} i18nAttr(propertyKey('{{ model.name }}', 'title'), ['ucf']) {{ '}}' }}">
 				</rbs-field-label-title>
-
 {% endif %}
 {% for property in properties %}
 {% if property.type == 'unknown' %}
+
 				<!-- cannot generate form for property "{{ property.name }}".
 					label="{{ '{{' }} i18nAttr(propertyKey('{{ property.modelName }}', '{{ property.name }}'), ['ucf']) {{ '}}' }}"
 				-->
-
 {% else %}
+
 				<rbs-field-{{ property.type }} property="{{ property.name }}" {% if property.required %}required="true"{% endif %}
 
 					label="{{ '{{' }} i18nAttr(propertyKey('{{ property.modelName }}', '{{ property.name }}'), ['ucf']) {{ '}}' }}"
@@ -45,7 +43,6 @@
 					accepted-model="{{ property.documentType }}"
 					{%- endif -%}>
 				</rbs-field-{{ property.type }}>
-
 {% endif %}
 {% endfor %}
 			</fieldset>
@@ -55,8 +52,8 @@
 				data-editor-section-label="{{ '{{ i18nAttr(\'m.rbs.admin.admin.publication_properties\', [\'ucf\']) }}' }}"
 				data-rbs-document-publication-section="">
 			</fieldset>
-{% endif %}
 
+{% endif %}
 			<fieldset
 				data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ '{{ i18nAttr(\'m.rbs.admin.adminjs.status\', [\'ucf\']) }}' }}"
@@ -64,9 +61,6 @@
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
-
 		</form>
-
 	</div>
-
 </div>

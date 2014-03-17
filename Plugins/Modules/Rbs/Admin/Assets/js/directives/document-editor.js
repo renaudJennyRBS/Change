@@ -909,9 +909,8 @@
 
 				function getDocumentModelName ()
 				{
-					return $element.attr('model');
+					return $element.attr('data-model') || $element.attr('model');
 				}
-
 
 
 				$rootScope.$on('$locationChangeStart', function () {
