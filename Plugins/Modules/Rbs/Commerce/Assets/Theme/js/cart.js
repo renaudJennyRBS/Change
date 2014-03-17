@@ -364,7 +364,7 @@
 	/**
 	 * Order process controller.
 	 */
-	function rbsCommerceOrderProcessController(scope, $http) {
+	function rbsCommerceOrderProcessController(scope, $http, $rootScope) {
 		scope.readonlyCart = true;
 		scope.cart = null;
 		scope.loading = false;
@@ -466,6 +466,9 @@
 			$http.post('Action/Rbs/User/Login', postData)
 				.success(function(data) {
 					if (data.hasOwnProperty('accessorId')) {
+
+						$rootScope.$broadcast('rbsUserConnected', {'accessorId' : data['accessorId'], 'accessorName' : data['name']});
+
 						scope.information.guest = false;
 						scope.information.userId = data['accessorId'];
 
@@ -677,6 +680,6 @@
 		loadCurrentCart();
 	}
 
-	rbsCommerceOrderProcessController.$inject = ['$scope', '$http'];
+	rbsCommerceOrderProcessController.$inject = ['$scope', '$http', '$rootScope'];
 	app.controller('rbsCommerceOrderProcessController', rbsCommerceOrderProcessController);
 })();

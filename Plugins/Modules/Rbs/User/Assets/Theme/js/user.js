@@ -37,4 +37,29 @@
 	rbsUserForgotPassword.$inject = ['$http'];
 	app.directive('rbsUserForgotPassword', rbsUserForgotPassword);
 
+
+	function rbsUserShortAccount($rootScope) {
+
+		return {
+			restrict: 'A',
+			templateUrl: '/accountShort.tpl',
+			replace: false,
+			transclude: true,
+
+			link: function(scope) {
+				scope.userNowConnected = false;
+
+				$rootScope.$on('rbsUserConnected', function (event, params){
+					scope.userNowConnected = true;
+					scope.accessorId = params.accessorId;
+					scope.accessorName = params.accessorName;
+				});
+			}
+		}
+
+
+	}
+	rbsUserShortAccount.$inject = ['$rootScope'];
+	app.directive('rbsUserShortAccount', rbsUserShortAccount);
+
 })();
