@@ -17,10 +17,6 @@
 				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'code'), ['ucf']) }}">
 		</rbs-field-text>
 
-		<rbs-field-boolean property="hasAddress"
-				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'hasAddress'), ['ucf']) }}">
-		</rbs-field-boolean>
-
 		<rbs-field-rich-text property="description"
 			label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'description'), ['ucf']) }}">
 		</rbs-field-rich-text>
@@ -29,6 +25,16 @@
 				accepted-model="Rbs_Media_Image"
 				selector-title="{{ i18nAttr('m.rbs.shipping.admin.mode_select_visual', ['ucf']) }}">
 		</rbs-field-picker>
+
+		<rbs-field-boolean property="hasAddress"
+				label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'hasAddress'), ['ucf']) }}">
+		</rbs-field-boolean>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'cartFilterData'), ['ucf']) }}">
+			<div rbs-document-filter-container="" filter="document.cartFilterData">
+				<div rbs-cart-filter-definitions=""></div>
+			</div>
+		</rbs-field>
 	</fieldset>
 
 	<fieldset data-ng-show="section=='systeminfo'"

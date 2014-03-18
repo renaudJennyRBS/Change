@@ -20,9 +20,8 @@ class CartFiltersDefinition
 		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
-			$definitions = $commerceServices->getCartManager()->getFiltersDefinition();
+			$definitions = $commerceServices->getProcessManager()->getFiltersDefinition($event->getRequest()->getQuery()->toArray());
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
-
 			$groupLabel = $i18nManager->trans('m.rbs.admin.admin.group_filter', ['ucf']);
 			$groupDefinition = ['name' => 'group', 'config' => ['listLabel' => $groupLabel, 'label' => $groupLabel],
 				'directiveName' => 'rbs-document-filter-group'];

@@ -44,17 +44,23 @@
 	"process_fees_picker_title":{
 		"message":"sélectionnez les frais autorisés"
 	},
-	"lines_price_value_filter":{
+	"lines_amount_value_filter":{
 		"message":"Montant total des lignes"
 	},
-	"lines_price_value":{
+	"lines_amount_value":{
 		"message":"Le montant total des lignes"
 	},
-	"total_price_value_filter":{
+	"total_amount_value_filter":{
 		"message":"Montant total"
 	},
-	"total_price_value":{
+	"total_amount_value":{
 		"message":"Le montant total"
+	},
+	"payment_amount_filter":{
+		"message":"Montant à payer"
+	},
+	"payment_amount":{
+		"message":"Le montant à payer"
 	},
 	"has_coupon_filter":{
 		"message":"Coupons"

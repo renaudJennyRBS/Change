@@ -65,11 +65,8 @@
 	"connector_visual":{
 		"message":"visuel"
 	},
-	"connector_minamount":{
-		"message":"Montant minimum"
-	},
-	"connector_maxamount":{
-		"message":"Montant maximum"
+	"connector_cartfilterdata":{
+		"message":"Critères d'application"
 	},
 	"connector_allowedcurrencycodes":{
 		"message":"codes devise autorisés"

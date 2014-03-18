@@ -23,6 +23,11 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	protected $cartManager;
 
 	/**
+	 * @var \Rbs\Commerce\Filters\Filters
+	 */
+	protected $filters;
+
+	/**
 	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
 	 * @return $this
 	 */
@@ -75,6 +80,34 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getCompatibleShippingModes', [$this, 'onDefaultGetCompatibleShippingModes'], 5);
 		$eventManager->attach('getCompatiblePaymentConnectors', [$this, 'onDefaultGetCompatiblePaymentConnectors'], 5);
 		$eventManager->attach('getShippingFee', [$this, 'onDefaultGetShippingFee'], 5);
+	}
+
+	/**
+	 * @param array $options
+	 * @return array
+	 */
+	public function getFiltersDefinition($options = [])
+	{
+		if ($this->filters === null)
+		{
+			$this->filters = new \Rbs\Commerce\Filters\Filters($this->getApplication());
+		}
+		return $this->filters->getDefinitions($options);
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param array $filter
+	 * @param array $options
+	 * @return boolean
+	 */
+	public function isValidFilter(\Rbs\Commerce\Cart\Cart $cart, $filter, $options = [])
+	{
+		if ($this->filters === null)
+		{
+			$this->filters = new \Rbs\Commerce\Filters\Filters($this->getApplication());
+		}
+		return $this->filters->isValid($cart, $filter, $options);
 	}
 
 	/**

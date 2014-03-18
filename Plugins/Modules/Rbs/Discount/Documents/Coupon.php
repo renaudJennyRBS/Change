@@ -39,16 +39,12 @@ class Coupon extends \Compilation\Rbs\Discount\Documents\Coupon
 	{
 		if ($this->activated())
 		{
-			if ($value instanceof \Rbs\Commerce\Cart\Cart)
+			if ($value instanceof \Rbs\Commerce\Cart\Cart || $value instanceof \Rbs\Order\Documents\Order)
 			{
-				return $value->getCartManager()->isValidFilter($value, $this->getCartFilterData());
-			}
-			elseif ($value instanceof \Rbs\Order\Documents\Order)
-			{
-				return true;
+				$filters = new \Rbs\Commerce\Filters\Filters($this->getApplication());
+				return $filters->isValid($value, $this->getCartFilterData());
 			}
 		}
 		return false;
 	}
-
 }

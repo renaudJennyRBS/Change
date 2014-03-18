@@ -22,32 +22,8 @@ class Connector extends \Compilation\Rbs\Payment\Documents\Connector
 	{
 		if ($this->activated())
 		{
-			if ($value instanceof \Rbs\Commerce\Cart\Cart)
-			{
-				$paymentAmountWithTaxes = $value->getPaymentAmountWithTaxes();
-				if ($this->getMinAmount() !== null && $paymentAmountWithTaxes < $this->getMinAmount())
-				{
-					return false;
-				}
-				if ($this->getMaxAmount() !== null && $paymentAmountWithTaxes > $this->getMaxAmount())
-				{
-					return false;
-				}
-				return true;
-			}
-			elseif ($value instanceof \Rbs\Order\Documents\Order)
-			{
-				$paymentAmountWithTaxes = $value->getPaymentAmountWithTaxes();
-				if ($this->getMinAmount() !== null && $paymentAmountWithTaxes < $this->getMinAmount())
-				{
-					return false;
-				}
-				if ($this->getMaxAmount() !== null && $paymentAmountWithTaxes > $this->getMaxAmount())
-				{
-					return false;
-				}
-				return true;
-			}
+			$filters = new \Rbs\Commerce\Filters\Filters($this->getApplication());
+			return $filters->isValid($value, $this->getCartFilterData(), $options);
 		}
 		return false;
 	}

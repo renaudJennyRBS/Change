@@ -10,5 +10,8 @@
 	},
 	"mode_hasaddress":{
 		"message":"adresse nécessaire"
+	},
+	"mode_cartfilterdata":{
+		"message":"Critères d'application"
 	}
 }

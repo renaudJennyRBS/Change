@@ -42,6 +42,7 @@
 					}
 				};
 
+
 				scope.$watch('document.discountType', function(directiveName) {
 					redrawDiscountParameterize($compile, scope, directiveName);
 				});
