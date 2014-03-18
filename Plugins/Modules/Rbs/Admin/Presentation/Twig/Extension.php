@@ -173,7 +173,8 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		if (is_string($string) && is_string($separator))
 		{
-			return strtolower(preg_replace('/([a-z])([A-Z])/', '$1' . $separator . '$2', $string));
+			$string = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $separator . '$2', $string);
+			return preg_replace('/[^a-z0-9]/', $separator, strtolower($string));
 		}
 		return $string;
 	}

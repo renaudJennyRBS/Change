@@ -6,12 +6,10 @@
 	function Editor(REST, $routeParams) {
 		return {
 			restrict: 'A',
-			require : '^rbsDocumentEditorBase',
+			require: '^rbsDocumentEditorBase',
 
-			link : function (scope, elm, attrs, editorCtrl)
-			{
-				scope.onReady = function ()
-				{
+			link: function(scope, elm, attrs, editorCtrl) {
+				scope.onReady = function() {
 					if ($routeParams.productId) {
 						//Creation : get Product
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product) {
@@ -24,6 +22,6 @@
 	}
 
 	Editor.$inject = ['RbsChange.REST', '$routeParams'];
-	app.directive('rbsDocumentEditorRbsCatalogCrossSellingProductList', Editor);
-
+	app.directive('rbsDocumentEditorRbsCatalogCrossSellingProductListNew', Editor);
+	app.directive('rbsDocumentEditorRbsCatalogCrossSellingProductListEdit', Editor);
 })();

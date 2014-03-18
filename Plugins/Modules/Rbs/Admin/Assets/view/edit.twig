@@ -1,6 +1,6 @@
 <div class="row" data-rbs-document-editor-base="" data-model="{{ model.name }}">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ '{{' }} i18nAttr(modelKey('{{ model.name }}'), ['ucf']) {{ '}}' }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ '{{' }} i18nAttr(modelKey('{{ model.name }}'), ['ucf']) {{ '}}' }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -10,7 +10,10 @@
 
 	<div class="document-form" data-rbs-main-column="">
 		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
-			data-rbs-document-editor-{{ model.vendorName | lower }}-{{ model.shortModuleName | lower }}-{{ model.shortName | snakeCase('-') }}-edit="">
+{% for ancestorName in model.getAncestorsNames() %}
+			data-rbs-document-editor-{{ ancestorName | snakeCase('-') }}-edit=""
+{% endfor %}
+			data-rbs-document-editor-{{ model.name | snakeCase('-') }}-edit="">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ '{{' }} i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) {{ '}}' }}">
 {% if model.publishable %}

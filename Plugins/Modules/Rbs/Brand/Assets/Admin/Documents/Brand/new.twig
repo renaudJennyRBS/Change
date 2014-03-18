@@ -1,7 +1,7 @@
-<div class="row" data-rbs-document-editor-base="" model="Rbs_Brand_Brand">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Brand_Brand">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Brand_Brand'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Brand_Brand'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -9,8 +9,8 @@
 	</div>
 
 	<div class="document-form" {% if attributes['asideDirectives'] | length %} data-rbs-main-column=""{% else %} data-rbs-full-width=""{% endif %}>
-		<form data-ng-submit="submit()" data-rbs-document-editor-new="">
-
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-brand-brand-new="">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
@@ -37,7 +37,6 @@
 				<rbs-field-url property="websiteUrl" required="false"
 							   label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
 				</rbs-field-url>
-
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="publication"

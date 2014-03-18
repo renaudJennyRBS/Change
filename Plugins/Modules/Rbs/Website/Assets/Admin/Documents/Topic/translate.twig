@@ -1,7 +1,6 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Website_Topic">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Website_Topic">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Topic'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_Topic'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -9,39 +8,27 @@
 		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit="" data-rbs-document-editor-translate=""
+			data-rbs-document-editor-rbs-website-topic-translate="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-translate="" rbs-document-editor-rbs-website-topic="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
-			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-
-				<rbs-field-label-title property="title" required="true"
-				                       label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
-				</rbs-field-label-title>
+				<rbs-field-text property="title" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
+				</rbs-field-text>
 
 				<rbs-field ng-hide="! document.indexPage" label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'indexPage'), ['ucf']) }}">
 					<div class="form-control-static">(=document.indexPage.label=)</div>
 				</rbs-field>
-
-				<rbs-field-picker property="section" required="true"
-						label="{{ i18nAttr('m.rbs.website.admin.topic_section', ['ucf']) }}"
-						select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
-						selector-title="{{ i18nAttr('m.rbs.website.admin.topic_section_picker_title', ['ucf']) }}">
-					<div class="help-block">{{ i18n('m.rbs.website.admin.topic_section_help', ['ucf']) }}</div>
-				</rbs-field-picker>
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
+			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
-				data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
 		</form>
-
 	</div>
-
 </div>

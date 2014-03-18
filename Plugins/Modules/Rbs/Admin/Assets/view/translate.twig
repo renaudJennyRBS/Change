@@ -1,6 +1,6 @@
 <div class="row" data-rbs-document-editor-base="" data-model="{{ model.name }}">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ '{{' }} i18nAttr(modelKey('{{ model.name }}'), ['ucf']) {{ '}}' }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ '{{' }} i18nAttr(modelKey('{{ model.name }}'), ['ucf']) {{ '}}' }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -10,7 +10,10 @@
 
 	<div class="document-form" data-rbs-main-column="">
 		<form data-ng-submit="submit()" data-rbs-document-editor-edit="" data-rbs-document-editor-translate=""
-			data-rbs-document-editor-{{ model.vendorName | lower }}-{{ model.shortModuleName | lower }}-{{ model.shortName | snakeCase('-') }}-i18n="">
+{% for ancestorName in model.getAncestorsNames() %}
+			data-rbs-document-editor-{{ ancestorName | snakeCase('-') }}-translate=""
+{% endfor %}
+			data-rbs-document-editor-{{ model.name | snakeCase('-') }}-translate="">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ '{{' }} i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) {{ '}}' }}">
 
@@ -42,8 +45,7 @@
 			</fieldset>
 {% endif %}
 
-			<fieldset
-				data-rbs-editor-section="systeminfo"
+			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ '{{ i18nAttr(\'m.rbs.admin.adminjs.status\', [\'ucf\']) }}' }}"
 				data-rbs-document-system-info-section="">
 			</fieldset>

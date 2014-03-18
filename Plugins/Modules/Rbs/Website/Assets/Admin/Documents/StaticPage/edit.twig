@@ -1,7 +1,6 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Website_StaticPage">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Website_StaticPage">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -23,81 +22,74 @@
 		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
-
-		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-rbs-website-staticpage="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-website-static-page-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field-label-title property="title" required="true"
-				                       label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
 				</rbs-field-label-title>
 
-				<rbs-field-document-select
-						label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"
-						empty-label="{{ i18nAttr('m.rbs.website.admin.page_empty_pagetemplate', ['ucf']) }}"
-						required="true" property="pageTemplate" ng-model="document.pageTemplate"
-						accepted-model="Rbs_Theme_Template" filter-property="mailSuitable" filter-value="0">
+				<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'pageTemplate'), ['ucf']) }}"
+					empty-label="{{ i18nAttr('m.rbs.website.admin.page_empty_pagetemplate', ['ucf']) }}"
+					required="true" property="pageTemplate" ng-model="document.pageTemplate"
+					accepted-model="Rbs_Theme_Template" filter-property="mailSuitable" filter-value="0">
 				</rbs-field-document-select>
 
 				<hr />
 
 				<rbs-field-picker property="section" required="true"
-				                  label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'section'), ['ucf']) }}"
-				                  select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
-				                  selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_section_picker_title', ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'section'), ['ucf']) }}"
+					select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
+					selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_section_picker_title', ['ucf']) }}">
 					<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_section_help') }}</span>
 				</rbs-field-picker>
 
 				<rbs-field-boolean property="hideLinks"
-				                   label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'hideLinks'), ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'hideLinks'), ['ucf']) }}">
 					<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_hideLinks_help') }}</span>
 				</rbs-field-boolean>
 
 				<rbs-field-picker property="displayDocument"
-				                  label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'displayDocument'), ['ucf']) }}"
-				                  selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_displaydocument_picker_title', ['ucf']) }}"
-				                  select-model="{publishable:true, abstract:false}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'displayDocument'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.website.admin.staticpage_displaydocument_picker_title', ['ucf']) }}"
+					select-model="{publishable:true, abstract:false}">
 					<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_displaydocument_help') }}</span>
 				</rbs-field-picker>
 
 				<hr />
 
 				<rbs-field-boolean property="useCache"
-				                   label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'useCache'), ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'useCache'), ['ucf']) }}">
 				</rbs-field-boolean>
 
 				<div data-ng-show="document.useCache">
 					<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'TTL'), ['ucf']) }}">
-						<input class="form-control" size="7" rbs-smart-float="" ng-model="document.TTL" min="0" type="number" />
+						<input class="form-control" size="7" data-rbs-smart-float="" data-ng-model="document.TTL" min="0" type="number" />
 						<span class="help-block">{{ i18n('m.rbs.website.admin.page_ttl_help') }}</span>
 					</rbs-field>
 				</div>
-
 			</fieldset>
 
-			<fieldset rbs-editor-section="content"
-			          data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'editableContent'), ['ucf']) }}"
-			          data-editor-section-icon="icon-align-left">
-
-				<div rbs-tip="Rbs_PageEditor_Markdown">
+			<fieldset data-rbs-editor-section="content"
+				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'editableContent'), ['ucf']) }}"
+				data-editor-section-icon="icon-align-left">
+				<div data-rbs-tip="Rbs_PageEditor_Markdown">
 					{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
 				</div>
-
 				<rbs-structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
-				                      template="(=pageTemplate=)">
+					template="(=pageTemplate=)">
 				</rbs-structure-editor>
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
-			          data-rbs-document-system-info-section="">
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
-
 		</form>
 	</div>
-
 </div>

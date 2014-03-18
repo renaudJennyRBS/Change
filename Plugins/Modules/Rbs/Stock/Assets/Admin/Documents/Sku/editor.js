@@ -1,23 +1,20 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	function Editor ()
-	{
+	function Editor() {
 		return {
-			restrict : 'A',
-			require : '^rbsDocumentEditorBase',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link : function (scope)
-			{
+			link: function(scope) {
 				// FIXME Is this used? I could not find it in the template...
 				scope.data = {
-					lengthUnit : 'm'
+					lengthUnit: 'm'
 				};
 			}
 		};
 	}
 
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsStockSku', Editor);
-
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsStockSkuNew', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsStockSkuEdit', Editor);
 })();
