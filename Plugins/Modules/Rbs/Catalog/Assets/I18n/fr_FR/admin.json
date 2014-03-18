@@ -164,6 +164,12 @@
 	"variantgroup_initialization":{
 		"message":"initialisation des variantes"
 	},
+	"product_set_aside_link":{
+		"message":"configurer un ensemble"
+	},
+	"product_set_content_list":{
+		"message":"produits de l'ensemble"
+	},
 	"productlist_productsortorder_help":{
 		"message":"Propriété utilisée pour trier les produits dans la liste. Ce tri exclut les produits mis en avant."
 	},

@@ -1,0 +1,35 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Catalog_ProductSet">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_ProductSet'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		<div class="rbs-aside-block" data-ng-show="document.rootProduct">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+		</div>
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-catalog-product-set-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+				<rbs-field-picker-multiple property="products"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductSet', 'products'), ['ucf']) }}"
+					accepted-model="Rbs_Catalog_Product">
+				</rbs-field-picker-multiple>
+			</fieldset>
+
+			<fieldset
+				data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

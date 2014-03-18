@@ -1,7 +1,6 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Catalog_Product">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Catalog_Product">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_Product'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -9,71 +8,62 @@
 		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-catalog-product-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-rbs-catalog-product="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
-
-				<rbs-field-label-title
-						property="title"
-						required="true"
-						label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}">
+				<rbs-field-label-title property="title" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'title'), ['ucf']) }}">
 				</rbs-field-label-title>
-
-				<rbs-field-boolean ng-cloak="" ng-hide="document.id > 0"
-					property="newSkuOnCreation"
-					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'newSkuOnCreation'), ['ucf']) }}">
-				</rbs-field-boolean>
 
 				<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'sku'), ['ucf']) }}"
 					accepted-model="Rbs_Stock_Sku"
 					selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_sku_picker_title', ['ucf']) }}"
-					ng-hide="(document.variantGroup && !document.variantInfo.isFinal) || (document.newSkuOnCreation && document.id <= 0)">
+					ng-hide="(document.variantGroup && !document.variantInfo.isFinal) || document.productSet">
 				</rbs-field-picker>
 
-				<rbs-field-picker-multiple property="visuals" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'visuals'), ['ucf']) }}"
-						accepted-model="Rbs_Media_Image"
-						selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}">
+				<rbs-field-picker-multiple property="visuals" accepted-model="Rbs_Media_Image"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'visuals'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}">
 				</rbs-field-picker-multiple>
 			</fieldset>
 
-			<fieldset rbs-editor-section="attributes"
-			          data-editor-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}"
-			          data-editor-section-icon="icon-edit-sign">
-
+			<fieldset data-rbs-editor-section="attributes"
+				data-editor-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}"
+				data-editor-section-icon="icon-edit-sign">
 				<rbs-field ng-if="!document.variant" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
-					<select class="form-control" ng-model="document.attribute" rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="productTypology:true">
+					<select class="form-control" data-ng-model="document.attribute" data-rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet" rbs-items-collection-params="productTypology:true">
 						<option value="">{{ i18n('m.rbs.catalog.admin.product_attribute_select', ['ucf']) }}</option>
 					</select>
 				</rbs-field>
 
 				<div data-ng-repeat="attributeDef in attributesDef">
-					<div ng-if="attributeDef.attributes">
+					<div data-ng-if="attributeDef.attributes">
 						<h4>(= attributeDef.label =)</h4>
 						<hr />
 						<div data-ng-repeat="attributeItemDef in attributeDef.attributes">
 
 							<rbs-field label="(= attributeItemDef.label =)" data-ng-class="{'required': attributeItemDef.required}" property="attr_(= attributeItemDef.id =)">
-								<div ng-if="attributeItemDef.collectionCode">
-									<select ng-model="attributeItemDef.value.value" class="form-control" rbs-items-from-collection="(= attributeItemDef.collectionCode =)" ng-disabled="!attributeItemDef.canBeEdit">
+								<div data-ng-if="attributeItemDef.collectionCode">
+									<select data-ng-model="attributeItemDef.value.value" class="form-control" data-rbs-items-from-collection="(= attributeItemDef.collectionCode =)" ng-disabled="!attributeItemDef.canBeEdit">
 										<option value=""></option>
 									</select>
 								</div>
-								<div ng-if="!attributeItemDef.collectionCode">
+								<div data-ng-if="!attributeItemDef.collectionCode">
 									<div data-ng-switch="attributeItemDef.type">
-										<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
+										<input type="text" data-ng-switch-when="String" class="form-control" data-ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
 										<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ng-disabled="!attributeDef.canBeEdit"></rbs-switch>
 										<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeItemDef.required" ng-model="attributeItemDef.value.value" id="(= attributeItemDef.id =)" ng-disabled="!attributeItemDef.canBeEdit"></rbs-date-selector>
 										<div class="row" data-ng-switch-when="Integer">
 											<div class="col-xs-2">
-												<input type="number" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
+												<input type="number" class="form-control" data-ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
 											</div>
 										</div>
 										<div class="row" data-ng-switch-when="Float">
 											<div class="col-xs-2">
-												<input type="text"  rbs-smart-float="" class="form-control" ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
+												<input type="text" data-rbs-smart-float="" class="form-control" data-ng-required="attributeItemDef.required" id="(= attributeItemDef.id =)" ng-model="attributeItemDef.value.value" ng-disabled="!attributeItemDef.canBeEdit"/>
 											</div>
 										</div>
 										<rbs-document-picker-single data-ng-if="attributeItemDef.usePicker" data-ng-switch-when="Document" context-key="(= 'attr.' + attributeDef.id =)"
@@ -107,26 +97,26 @@
 						</div>
 					</div>
 
-					<div ng-if="!attributeDef.attributes">
+					<div data-ng-if="!attributeDef.attributes">
 						<rbs-field label="(= attributeDef.label =)" data-ng-class="{'required': attributeDef.required}" property="attr_(= attributeDef.id =)">
-							<div ng-if="attributeDef.collectionCode">
-								<select ng-model="attributeDef.value.value" class="form-control" rbs-items-from-collection="(= attributeDef.collectionCode =)" ng-disabled="!attributeDef.canBeEdit">
+							<div data-ng-if="attributeDef.collectionCode">
+								<select data-ng-model="attributeDef.value.value" class="form-control" data-rbs-items-from-collection="(= attributeDef.collectionCode =)" data-ng-disabled="!attributeDef.canBeEdit">
 									<option value=""></option>
 								</select>
 							</div>
-							<div ng-if="!attributeDef.collectionCode">
+							<div data-ng-if="!attributeDef.collectionCode">
 								<div data-ng-switch="attributeDef.type">
-									<input type="text" data-ng-switch-when="String" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" ng-disabled="!attributeDef.canBeEdit" />
+									<input type="text" data-ng-switch-when="String" class="form-control" data-ng-required="attributeDef.required" id="(= attributeDef.id =)" data-ng-model="attributeDef.value.value" data-ng-disabled="!attributeDef.canBeEdit" />
 									<rbs-switch data-ng-switch-when="Boolean" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ng-disabled="!attributeDef.canBeEdit"></rbs-switch>
 									<rbs-date-selector data-ng-switch-when="DateTime" ng-required="attributeDef.required" ng-model="attributeDef.value.value" id="(= attributeDef.id =)" ng-disabled="!attributeDef.canBeEdit"></rbs-date-selector>
 									<div class="row" data-ng-switch-when="Integer">
 										<div class="col-xs-2">
-											<input type="number" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" ng-disabled="!attributeDef.canBeEdit"/>
+											<input type="number" class="form-control" data-ng-required="attributeDef.required" id="(= attributeDef.id =)" data-ng-model="attributeDef.value.value" data-ng-disabled="!attributeDef.canBeEdit"/>
 										</div>
 									</div>
 									<div class="row" data-ng-switch-when="Float">
 										<div class="col-xs-2">
-											<input type="text" rbs-smart-float="" class="form-control" ng-required="attributeDef.required" id="(= attributeDef.id =)" ng-model="attributeDef.value.value" ng-disabled="!attributeDef.canBeEdit"/>
+											<input type="text" data-rbs-smart-float="" class="form-control" data-ng-required="attributeDef.required" id="(= attributeDef.id =)" data-ng-model="attributeDef.value.value" data-ng-disabled="!attributeDef.canBeEdit"/>
 										</div>
 									</div>
 									<rbs-document-picker-single data-ng-if="attributeDef.usePicker" data-ng-switch-when="Document" context-key="(= 'attr.' + attributeDef.id =)"
@@ -161,13 +151,13 @@
 				</div>
 			</fieldset>
 
-			<fieldset rbs-editor-section="publication"
+			<fieldset data-rbs-editor-section="publication"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
 				data-rbs-document-publication-section=""
-				rbs-document-publication-section-help="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}">
+				data-rbs-document-publication-section-help="{{ i18nAttr('m.rbs.catalog.admin.product_publicationsections_help', ['ucf']) }}">
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
+			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 				data-rbs-document-system-info-section="">
 			</fieldset>

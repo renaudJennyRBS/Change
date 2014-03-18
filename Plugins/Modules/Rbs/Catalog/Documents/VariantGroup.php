@@ -79,7 +79,8 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		{
 			$arguments = $this->variantConfiguration;
 			$arguments['variantGroupId'] = $this->getId();
-			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Catalog_VariantConfiguration', $arguments);
+			$job = $event->getApplicationServices()->getJobManager()
+				->createNewJob('Rbs_Catalog_VariantConfiguration', $arguments);
 			$this->setMeta('Job_VariantConfiguration', $job->getId());
 			$this->saveMetas();
 		}
@@ -100,7 +101,9 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			$this->checkOtherAttributes();
 		}
 
-		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('othersAttributes') || $this->isPropertyModified('axesConfiguration'))
+		if ($this->isPropertyModified('axesAttributes') || $this->isPropertyModified('othersAttributes')
+			|| $this->isPropertyModified('axesConfiguration')
+		)
 		{
 			$arguments = ['variantGroupId' => $this->getId()];
 			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Catalog_AxesConfiguration', $arguments);
@@ -111,7 +114,8 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		{
 			$arguments = $this->variantConfiguration;
 			$arguments['variantGroupId'] = $this->getId();
-			$job = $event->getApplicationServices()->getJobManager()->createNewJob('Rbs_Catalog_VariantConfiguration', $arguments);
+			$job = $event->getApplicationServices()->getJobManager()
+				->createNewJob('Rbs_Catalog_VariantConfiguration', $arguments);
 			$this->setMeta('Job_VariantConfiguration', $job->getId());
 		}
 		$this->saveMetas();
@@ -121,7 +125,10 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	{
 		$attributes = [];
 		$oldConfiguration = $this->getAxesConfiguration();
-		if (!is_array($oldConfiguration)) {$oldConfiguration = array();}
+		if (!is_array($oldConfiguration))
+		{
+			$oldConfiguration = array();
+		}
 
 		foreach ($this->getAxesAttributes() as $attribute)
 		{
@@ -163,7 +170,8 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 					}
 				}
 			}
-			$this->setAxesConfiguration(array_map(function (AxisConfiguration $conf) {return $conf->toArray();}, $configuration));
+			$this->setAxesConfiguration(array_map(function (AxisConfiguration $conf) { return $conf->toArray(); },
+				$configuration));
 		}
 		else
 		{
@@ -182,7 +190,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		if ($oldOtherAttributes !== null)
 		{
 			$newOtherAttributes = array();
-			foreach($oldOtherAttributes as $oldOtherAttribute)
+			foreach ($oldOtherAttributes as $oldOtherAttribute)
 			{
 				if (!$oldOtherAttribute->getAxis())
 				{
@@ -210,7 +218,8 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$restResult->setProperty('variantConfiguration', $cs->getAttributeManager()->buildVariantConfiguration($document));
+				$restResult->setProperty('variantConfiguration',
+					$cs->getAttributeManager()->buildVariantConfiguration($document));
 
 				$jobs = array();
 				$aJobId = $document->getMeta('Job_AxesConfiguration');
@@ -234,7 +243,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		else if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{
 			$restResult->setProperty('rootProductId', $document->getRootProductId());
-			$restResult->setProperty('axesAttributesId', $document->getAxesAttributesId());
+			$restResult->setProperty('axesAttributesId', $document->getAxesAttributeIds());
 		}
 	}
 
@@ -307,15 +316,14 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 	 * Get the list of attributes id that compose the axes attributes
 	 * @return array
 	 */
-	public function getAxesAttributesId()
+	public function getAxesAttributeIds()
 	{
-		$attributesId = array();
+		$attributeIds = array();
 		$attributes = $this->getAxesAttributes();
-		foreach ($attributes as $a)
+		foreach ($attributes as $attribute)
 		{
-			$attributesId[] = $a->getId();
+			$attributeIds[] = $attribute->getId();
 		}
-		return $attributesId;
+		return $attributeIds;
 	}
-
 }

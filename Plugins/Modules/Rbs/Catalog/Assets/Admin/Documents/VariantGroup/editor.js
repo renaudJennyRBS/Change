@@ -52,10 +52,10 @@
 								if (docId != 'new') {
 									return REST.resource('Rbs_Catalog_VariantGroup', parseInt($routeParams.variantGroupId, 10));
 								} else {
-									var defered = $q.defer();
-									var promise = defered.promise;
+									var deferred = $q.defer();
+									var promise = deferred.promise;
 									var document = REST.newResource('Rbs_Catalog_VariantGroup');
-									defered.resolve(document);
+									deferred.resolve(document);
 									return promise;
 								}
 							}
@@ -131,10 +131,10 @@
 						scope.$watchCollection('document.axesAttributes', function (newValue) {
 							if (scope.form.hasOwnProperty('axesAttributesLength')) {
 								if (angular.isArray(newValue) && newValue.length > 0) {
-									scope.form.axesAttributesLength.$setValidity("axesAttributesLength", true);
+									scope.form['axesAttributesLength'].$setValidity("axesAttributesLength", true);
 								}
 								else {
-									scope.form.axesAttributesLength.$setValidity("axesAttributesLength", false);
+									scope.form['axesAttributesLength'].$setValidity("axesAttributesLength", false);
 								}
 							}
 						});

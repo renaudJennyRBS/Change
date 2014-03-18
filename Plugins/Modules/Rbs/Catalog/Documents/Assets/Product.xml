@@ -14,7 +14,8 @@
 		<property name="attributeValues" localized="true" type="JSON" has-correction="true" />
 		<property name="categorizable" type="Boolean" default-value="true" />
 		<property name="variant" type="Boolean" default-value="false" />
-		<property name="variantGroup" type="Document" document-type="Rbs_Catalog_VariantGroup" />
 		<property name="newSkuOnCreation" type="Boolean" stateless="true" default-value="false"/>
+		<property name="variantGroup" type="Document" document-type="Rbs_Catalog_VariantGroup" />
+		<property name="productSet" type="Document" document-type="Rbs_Catalog_ProductSet" />
 	</properties>
 </document>

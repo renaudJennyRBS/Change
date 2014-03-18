@@ -45,7 +45,8 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach(static::EVENT_GET_PICTOGRAMS, [$this, 'onDefaultGetPictograms'], 5);
 		$eventManager->attach(static::EVENT_GET_VISUALS, [$this, 'onDefaultGetVisuals'], 5);
-		$eventManager->attach('getProductPresentation', [$this, 'onVariantGetProductPresentation'], 10);
+		$eventManager->attach('getProductPresentation', [$this, 'onVariantGetProductPresentation'], 15);
+		$eventManager->attach('getProductPresentation', [$this, 'onSetGetProductPresentation'], 10);
 		$eventManager->attach('getProductPresentation', [$this, 'onDefaultGetProductPresentation'], 5);
 	}
 
@@ -666,7 +667,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	//
-	// Product detail.
+	// Variants.
 	//
 
 	/**
@@ -727,6 +728,46 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		if ($ancestorId && count($ancestorId) > 0)
 		{
 			return $ancestorId[0];
+		}
+
+		return null;
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @return array
+	 */
+	public function getVariantInfo($product)
+	{
+		$variantInfo = array();
+
+		if ($product->getVariantGroup())
+		{
+			$vConfiguration = $this->getVariantsConfiguration($product, false);
+
+			$variantInfo['isRoot'] = $product->hasVariants();
+			$variantInfo['depth'] = count($vConfiguration['axes']['axesValues']);
+
+			foreach ($vConfiguration['axes']['products'] as $infoProduct)
+			{
+				if ($infoProduct['id'] === $product->getId())
+				{
+					$variantInfo['isFinal'] = true;
+					$variantInfo['level'] = $variantInfo['depth'];
+					for ($i = 0; $i < count($infoProduct['values']); $i++)
+					{
+						if ($infoProduct['values'][$i]['value'] === null)
+						{
+							$variantInfo['isFinal'] = false;
+							$variantInfo['level'] = $i;
+							break;
+						}
+					}
+				}
+			}
+
+			return $variantInfo;
 		}
 
 		return null;
@@ -805,18 +846,26 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function getProductPrice($product, $webStore, $billingArea)
 	{
-		if ($product instanceof \Rbs\Catalog\Documents\ProductSet || (!$product->getSku() && $product->getVariantGroup()))
+		if ($product->getSku())
 		{
-			// TODO Try to replace by SQL
-			$prices = array();
+			return $this->priceManager->getPriceBySku($product->getSku(),
+				['webStore' => $webStore, 'billingArea' => $billingArea]);
+		}
+		else
+		{
 			$skus = $this->getAllSku($product, true);
+			if (!count($skus))
+			{
+				return null;
+			}
 
+			$prices = array();
 			foreach ($skus as $sku)
 			{
-				$p = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
-				if ($p != null)
+				$price = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
+				if ($price != null)
 				{
-					$prices[] = $p;
+					$prices[] = $price;
 				}
 			}
 
@@ -840,11 +889,6 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 			return $lowestPrice;
 		}
-		else
-		{
-			return $this->priceManager->getPriceBySku($product->getSku(),
-				['webStore' => $webStore, 'billingArea' => $billingArea]);
-		}
 	}
 
 	/**
@@ -855,16 +899,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getProductStockLevel($product, $webStore = null)
 	{
 		$level = null;
-
-		if ($product instanceof \Rbs\Catalog\Documents\ProductSet || (!$product->getSku() && $product->getVariantGroup()))
-		{
-			$skus = $this->getAllSku($product, true);
-			if ($skus !== null && count($skus) > 0)
-			{
-				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStore);
-			}
-		}
-		else
+		if ($product->getSku())
 		{
 			$sku = $product->getSku();
 			if ($sku)
@@ -872,7 +907,14 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				$level = $this->getStockManager()->getInventoryLevel($sku, $webStore);
 			}
 		}
-
+		else
+		{
+			$skus = $this->getAllSku($product, true);
+			if (count($skus))
+			{
+				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStore);
+			}
+		}
 		return $level;
 	}
 
@@ -885,16 +927,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getProductThreshold($product, $level, $webStore = null)
 	{
 		$threshold = null;
-
-		if ($product instanceof \Rbs\Catalog\Documents\ProductSet || (!$product->getSku() && $product->getVariantGroup()))
-		{
-			$skus = $this->getAllSku($product, true);
-			if ($skus !== null && count($skus) > 0)
-			{
-				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStore, $level);
-			}
-		}
-		else
+		if ($product->getSku())
 		{
 			$sku = $product->getSku();
 			if ($sku)
@@ -902,11 +935,19 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStore, $level);
 			}
 		}
-
+		else
+		{
+			$skus = $this->getAllSku($product, true);
+			if (count($skus))
+			{
+				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStore, $level);
+			}
+		}
 		return $threshold;
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param \Rbs\Store\Documents\WebStore|null $webStore
 	 * @return array
@@ -977,6 +1018,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param integer $quantity
 	 * @param \Rbs\Store\Documents\WebStore $webStore
@@ -1105,6 +1147,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
 	 * @param boolean $onlyPublishedProduct
 	 * @return array
@@ -1134,63 +1177,30 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @return array
-	 */
-	public function getVariantInfo($product)
-	{
-		$variantInfo = array();
-
-		if ($product->getVariantGroup())
-		{
-			$vConfiguration = $this->getVariantsConfiguration($product, false);
-
-			$variantInfo['isRoot'] = $product->hasVariants();
-			$variantInfo['depth'] = count($vConfiguration['axes']['axesValues']);
-
-			foreach ($vConfiguration['axes']['products'] as $infoProduct)
-			{
-				if ($infoProduct['id'] === $product->getId())
-				{
-					$variantInfo['isFinal'] = true;
-					$variantInfo['level'] = $variantInfo['depth'];
-					for ($i = 0; $i < count($infoProduct['values']); $i++)
-					{
-						if ($infoProduct['values'][$i]['value'] === null)
-						{
-							$variantInfo['isFinal'] = false;
-							$variantInfo['level'] = $i;
-							break;
-						}
-					}
-				}
-			}
-
-			return $variantInfo;
-		}
-
-		return null;
-	}
-
-	/**
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param boolean $onlyPublishedProduct
-	 * @return array|null
+	 * @return array
 	 */
 	public function getAllSku($product, $onlyPublishedProduct = false)
 	{
-		if ($product instanceof \Rbs\Catalog\Documents\ProductSet)
+		if ($product->getProductSet())
 		{
+			$set = $product->getProductSet();
 			$skus = array();
-			foreach($product->getProducts() as $p)
+			foreach($set->getProducts() as $subProduct)
 			{
-				if ($p->getSku())
+				if ($onlyPublishedProduct && !$subProduct->published())
 				{
-					$skus[] = $p->getSku();
+					continue;
+				}
+				elseif ($subProduct->getSku())
+				{
+					$skus[] = $subProduct->getSku();
 				}
 				else
 				{
-					$skus = array_merge($skus, $this->getAllSku($p));
+					$skus = array_merge($skus, $this->getAllSku($subProduct));
 				}
 			}
 			return $skus;
@@ -1199,7 +1209,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if (!$product->getSku() && $product->getVariantGroup())
 			{
-				// If root product
+				// If root product.
 				if ($product->hasVariants())
 				{
 					$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
@@ -1216,15 +1226,15 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					$skus = array();
 					$products = $this->getProductDescendants($product, true);
-					foreach ($products as $p)
+					foreach ($products as $subProduct)
 					{
-						$skus[] = $p->getSku();
+						$skus[] = $subProduct->getSku();
 					}
 					return $skus;
 				}
 			}
 		}
-		return null;
+		return array();
 	}
 
 	/**
@@ -1232,7 +1242,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param boolean $onlyPublishedProduct
 	 * @return integer[]
 	 */
-	public function getProductAncestorIds($product, $onlyPublishedProduct)
+	protected function getProductAncestorIds($product, $onlyPublishedProduct)
 	{
 		if (!$product->getVariant())
 		{
@@ -1285,7 +1295,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param boolean $onlyPublishedProduct
 	 * @return \Rbs\Catalog\Documents\Product[]
 	 */
-	public function getProductAncestors($product, $onlyPublishedProduct)
+	protected function getProductAncestors($product, $onlyPublishedProduct)
 	{
 		$ancestorsId = $this->getProductAncestorIds($product, $onlyPublishedProduct);
 		$ancestors = array();
@@ -1596,6 +1606,35 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * Used for product sets.
+	 * @api
+	 * @param \Rbs\Catalog\Product\ProductPresentation $productPresentation
+	 * @param array $options
+	 * @return \Rbs\Catalog\Product\ProductPresentation[]
+	 */
+	public function getSubProductPresentations($productPresentation, $options)
+	{
+		$product = $this->getDocumentManager()->getDocumentInstance($productPresentation->getProductId());
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return array();
+		}
+
+		$set = $product->getProductSet();
+		if (!($set instanceof \Rbs\Catalog\Documents\ProductSet))
+		{
+			return array();
+		}
+
+		$subProductsPresentations = array();
+		foreach($set->getProducts() as $subProduct)
+		{
+			$subProductsPresentations[] = $this->getProductPresentation($subProduct, $options);
+		}
+		return $subProductsPresentations;
+	}
+
+	/**
 	 * Default options:
 	 *  - urlManager
 	 *  - webStore (got from context if not specified)
@@ -1639,6 +1678,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		$commerceServices = $event->getServices('commerceServices');
 
 		$productPresentation->setCatalogManager($this);
+		$productPresentation->setUrlManager($event->getParam('urlManager'));
 
 		$webStore = $event->getParam('webStore');
 		if (!$webStore instanceof \Rbs\Store\Documents\WebStore)
@@ -1698,7 +1738,28 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			if ($product instanceof \Rbs\Catalog\Documents\Product && $product->getVariantGroupId())
 			{
-				$productPresentation = new \Rbs\Catalog\Product\VariantProductPresentation();
+				$productPresentation = new \Rbs\Catalog\Product\ProductVariantPresentation();
+				$event->setParam('productPresentation', $productPresentation);
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onSetGetProductPresentation(\Change\Events\Event $event)
+	{
+		$productPresentation = $event->getParam('productPresentation');
+		if (!($productPresentation instanceof \Rbs\Catalog\Product\ProductPresentation))
+		{
+			$product = $event->getParam('product');
+			if (is_numeric($product))
+			{
+				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($product);
+			}
+			if ($product instanceof \Rbs\Catalog\Documents\Product && $product->getProductSetId())
+			{
+				$productPresentation = new \Rbs\Catalog\Product\ProductSetPresentation();
 				$event->setParam('productPresentation', $productPresentation);
 			}
 		}
