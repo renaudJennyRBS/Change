@@ -57,6 +57,10 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		return 'document';
 	}
 
+	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return string
+	 */
 	public function buildLabel(\Change\I18n\I18nManager $i18nManager)
 	{
 		if ($this->getWebsite())
@@ -67,6 +71,9 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		return '';
 	}
 
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

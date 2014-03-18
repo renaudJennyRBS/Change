@@ -63,7 +63,6 @@ class PaymentManager implements \Zend\EventManager\EventsCapableInterface
 		return $this->transactionManager;
 	}
 
-
 	/**
 	 * @return null|string|string[]
 	 */
