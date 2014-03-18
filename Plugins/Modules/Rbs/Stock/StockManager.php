@@ -741,6 +741,67 @@ class StockManager
 		}
 	}
 
+	public function decrementReservation($targetIdentifier, $skuId, $quantity)
+	{
+		$transactionManager = $this->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+
+			//get the current reservation
+			$qb = $this->getDbProvider()->getNewQueryBuilder('stock::decrementReservationSelect');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->column('id'), $fb->column('sku_id'), $fb->column('reservation'));
+				$qb->from($fb->table('rbs_stock_dat_res'));
+				$qb->where($fb->logicAnd(
+						$fb->eq($fb->column('target'), $fb->parameter('targetIdentifier')),
+						$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')))
+				);
+			}
+			$query = $qb->query();
+			$query->bindParameter('targetIdentifier', $targetIdentifier);
+			$query->bindParameter('skuId', $skuId);
+
+
+			$row = $query->getFirstResult($query->getRowsConverter()->addIntCol('id', 'sku_id')
+				->addNumCol('reservation'));
+
+			//if we found a reservation, we'll decrement his quantity
+			if ($row)
+			{
+				$newReservation = $row['reservation'] - $quantity;
+				//we cannot have a reservation under 0.
+				if ($newReservation < 0)
+				{
+					$newReservation = 0;
+				}
+
+				$qb = $this->getDbProvider()->getNewStatementBuilder('stock::decrementReservationUpdate');
+				if (!$qb->isCached())
+				{
+					$fb = $qb->getFragmentBuilder();
+					$qb->update($fb->table('rbs_stock_dat_res'));
+					$qb->assign($fb->column('reservation'), $fb->integerParameter('reservation'));
+					$qb->assign($fb->column('date'), $fb->dateTimeParameter('date'));
+					$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('reservationId')));
+				}
+				$statement = $qb->updateQuery();
+				$statement->bindParameter('reservation', $newReservation);
+				$statement->bindParameter('date', new \DateTime());
+				$statement->bindParameter('reservationId', $row['id']);
+				$statement->execute();
+			}
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
 	protected $skuIds = array();
 
 	/**
