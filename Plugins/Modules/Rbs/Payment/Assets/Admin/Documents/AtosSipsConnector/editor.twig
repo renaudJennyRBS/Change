@@ -27,16 +27,11 @@
 			selector-title="{{ i18nAttr('m.rbs.payment.admin.connector_select_visual', ['ucf']) }}">
 		</rbs-field-picker>
 
-		<rbs-field-float property="minAmount"
-				label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'minAmount'), ['ucf']) }}"
-				max-length="9" input-class="input-mini">
-		</rbs-field-float>
-
-		<rbs-field-float property="maxAmount"
-				label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'maxAmount'), ['ucf']) }}"
-				max-length="9" input-class="input-mini">
-		</rbs-field-float>
-
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'cartFilterData'), ['ucf']) }}">
+			<div rbs-document-filter-container="" filter="document.cartFilterData">
+				<div rbs-cart-filter-definitions=""></div>
+			</div>
+		</rbs-field>
 		<hr />
 
 		<rbs-field-boolean property="processingMail"

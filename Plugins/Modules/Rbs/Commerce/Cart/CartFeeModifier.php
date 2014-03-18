@@ -24,7 +24,7 @@ class CartFeeModifier implements \Rbs\Commerce\Process\ModifierInterface
 	protected $fee;
 
 	/**
-	 * @var \Rbs\Price\Documents\Price
+	 * @var \Rbs\Price\PriceInterface
 	 */
 	protected $price;
 
@@ -37,10 +37,10 @@ class CartFeeModifier implements \Rbs\Commerce\Process\ModifierInterface
 	/**
 	 * @param \Rbs\Commerce\Documents\Fee $fee
 	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @param \Rbs\Price\Documents\Price $price
+	 * @param \Rbs\Price\PriceInterface $price
 	 * @param \Rbs\Price\PriceManager $priceManager
 	 */
-	function __construct(\Rbs\Commerce\Documents\Fee $fee, \Rbs\Commerce\Cart\Cart $cart, \Rbs\Price\Documents\Price $price, \Rbs\Price\PriceManager $priceManager)
+	function __construct(\Rbs\Commerce\Documents\Fee $fee, \Rbs\Commerce\Cart\Cart $cart, \Rbs\Price\PriceInterface $price, \Rbs\Price\PriceManager $priceManager)
 	{
 		$this->fee = $fee;
 		$this->cart = $cart;
@@ -54,6 +54,7 @@ class CartFeeModifier implements \Rbs\Commerce\Process\ModifierInterface
 	public function apply()
 	{
 		$cart = $this->cart;
+		$priceId =  ($this->price instanceof \Rbs\Price\Documents\Price) ? $this->price->getId(): null;
 		$parameters = [
 			'key' => $this->fee->getId(),
 			'quantity' => 1,
@@ -65,7 +66,7 @@ class CartFeeModifier implements \Rbs\Commerce\Process\ModifierInterface
 					'price' => $this->price,
 					'codeSKU' => $this->fee->getSku()->getCode(),
 					'reservationQuantity' => 1,
-					'options' => ['skuId' => $this->fee->getSkuId(), 'priceId' => $this->price->getId()]
+					'options' => ['skuId' => $this->fee->getSkuId(), 'priceId' => $priceId]
 				]
 			]
 		];

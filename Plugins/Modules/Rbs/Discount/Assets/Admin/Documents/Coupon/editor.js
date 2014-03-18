@@ -17,10 +17,8 @@
 							scope.document.orderProcessId = process.id;
 						})
 					}
-				};
 
-				scope.onReady = function(){
-					if (angular.isArray(scope.document.cartFilterData) || !angular.isObject(scope.document.cartFilterData)) {
+					if (!angular.isObject(scope.document.cartFilterData) || angular.isArray(scope.document.cartFilterData)) {
 						scope.document.cartFilterData = {};
 					}
 				};

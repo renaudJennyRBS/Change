@@ -1,0 +1,51 @@
+[
+	{
+		"name": "linesAmountValue",
+		"parameters": {
+			"propertyName": "linesAmountValue"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.lines_amount_value_filter",
+			"label": "m.rbs.commerce.admin.lines_amount_value"
+		},
+		"directiveName": "rbs-document-filter-property-number"
+	},
+	{
+		"name": "totalAmountValue",
+		"parameters": {
+			"propertyName": "totalAmountValue"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.total_amount_value_filter",
+			"label": "m.rbs.commerce.admin.total_amount_value"
+		},
+		"directiveName": "rbs-document-filter-property-number"
+	},
+	{
+		"name": "paymentAmountValue",
+		"parameters": {
+			"propertyName": "paymentAmountValue"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.payment_amount_filter",
+			"label": "m.rbs.commerce.admin.payment_amount"
+		},
+		"directiveName": "rbs-document-filter-property-number"
+	},
+	{
+		"name": "hasCoupon",
+		"parameters": {
+			"propertyName": "couponId"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.has_coupon_filter",
+			"label": "m.rbs.commerce.admin.has_coupon",
+			"selectModel": "{\"name\":\"Rbs_Discount_Coupon\"}"
+		},
+		"directiveName": "rbs-document-filter-property-document"
+	}
+]

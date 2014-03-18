@@ -122,7 +122,7 @@ class Fee extends \Compilation\Rbs\Commerce\Documents\Fee
 				return;
 			}
 
-			if ($value->getCartManager()->isValidFilter($value, $fee->getCartFilterData()))
+			if ($commerceServices->getProcessManager()->isValidFilter($value, $fee->getCartFilterData()))
 			{
 				$event->setParam('modifier', new \Rbs\Commerce\Cart\CartFeeModifier($fee, $value, $price, $priceManager));
 			}

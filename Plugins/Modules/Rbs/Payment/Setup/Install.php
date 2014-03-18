@@ -106,7 +106,6 @@ class Install extends \Change\Plugins\InstallBase
 			$sipsConnector->setLabel('Connecteur bancaire ATOS de test');
 			$sipsConnector->getCurrentLocalization()->setTitle('Connecteur bancaire ATOS de test');
 			$sipsConnector->setMerchantId('011223344551111');
-			$sipsConnector->setMinAmount(0.1);
 			$sipsConnector->setErrorMail(true);
 			$sipsConnector->setProcessingMail(true);
 			$sipsConnector->setSuccessMail(true);

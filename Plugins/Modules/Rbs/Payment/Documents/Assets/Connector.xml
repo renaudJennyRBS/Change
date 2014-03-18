@@ -7,9 +7,8 @@
 		<property name="title" type="String" localized="true" required="true" has-correction="true"/>
 		<property name="description" type="RichText" localized="true" has-correction="true"/>
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
-		<property name="minAmount" type="Decimal" default-value="0.0" />
-		<property name="maxAmount" type="Decimal" />
-		<property name="allowedCurrencyCodes" type="JSON" />
+
+		<property name="cartFilterData" type="JSON" has-correction="true"/>
 		<property name="processingMail" type="Boolean" default-value="false" />
 		<property name="successMail" type="Boolean" default-value="false" />
 		<property name="errorMail" type="Boolean" default-value="false" />

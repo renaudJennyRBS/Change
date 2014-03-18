@@ -47,14 +47,8 @@ class Mode extends \Compilation\Rbs\Shipping\Documents\Mode
 	{
 		if ($this->activated())
 		{
-			if ($value instanceof \Rbs\Commerce\Cart\Cart)
-			{
-				return true;
-			}
-			elseif ($value instanceof \Rbs\Order\Documents\Order)
-			{
-				return true;
-			}
+			$filters = new \Rbs\Commerce\Filters\Filters($this->getApplication());
+			return $filters->isValid($value, $this->getCartFilterData(), $options);
 		}
 		return false;
 	}
