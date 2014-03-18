@@ -137,7 +137,7 @@
 	}
 	app.directive('rbsCatalogVariantData', rbsCatalogVariantData);
 
-	function addLine(scope, $http, $compile) {
+	function addLine(scope, $http, $compile, $rootScope) {
 		if (scope.product.id !== 0) {
 			var data = {
 				key: scope.product.id,
@@ -159,6 +159,9 @@
 			scope.modalContentLoading = true;
 			$http.post('Action/Rbs/Commerce/AddLineToCart', data, {})
 				.success(function(resultData) {
+					// Launch event
+					$rootScope.$broadcast('rbsRefreshCart', {'cart':resultData.cart});
+
 					if (scope.modalId) {
 						if (resultData.hasOwnProperty('modalContentUrl') && resultData.modalContentUrl) {
 							var mainContentElement = jQuery('#' + scope.modalId + ' .modal-main-content');
@@ -219,33 +222,33 @@
 		scope.product = {'id': 0};
 	}
 
-	function RbsCatalogSimpleProductController(scope, $http, $compile) {
+	function RbsCatalogSimpleProductController(scope, $http, $compile, $rootScope) {
 		initializeScope(scope);
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile);
+			addLine(scope, $http, $compile, $rootScope);
 		};
 	}
-	RbsCatalogSimpleProductController.$inject = ['$scope', '$http', '$compile'];
+	RbsCatalogSimpleProductController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
 	app.controller('RbsCatalogSimpleProductController', RbsCatalogSimpleProductController);
 
-	function RbsCatalogProductItemController(scope, $http, $compile) {
+	function RbsCatalogProductItemController(scope, $http, $compile, $rootScope) {
 		initializeScope(scope);
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile);
+			addLine(scope, $http, $compile, $rootScope);
 		};
 	}
-	RbsCatalogProductItemController.$inject = ['$scope', '$http', '$compile'];
+	RbsCatalogProductItemController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
-	function RbsCatalogVariantProductController(scope, $http, $compile) {
+	function RbsCatalogVariantProductController(scope, $http, $compile, $rootScope) {
 		initializeScope(scope);
 
 		setCurrentProduct(null);
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile);
+			addLine(scope, $http, $compile, $rootScope);
 		};
 
 		scope.$watch('axes', function(val) {
@@ -427,6 +430,6 @@
 			return -1;
 		}
 	}
-	RbsCatalogVariantProductController.$inject = ['$scope', '$http', '$compile'];
+	RbsCatalogVariantProductController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
 	app.controller('RbsCatalogVariantProductController', RbsCatalogVariantProductController);
 })();

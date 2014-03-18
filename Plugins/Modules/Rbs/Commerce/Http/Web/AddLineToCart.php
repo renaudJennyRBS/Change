@@ -109,7 +109,10 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			throw $e;
 		}
 
-		$result = $this->getNewAjaxResult(array('cart' => $cart->toArray(), 'lineKey' => $line->getKey()));
+		(new GetCurrentCart())->execute($event);
+		$cartArray = $event->getResult()->toArray();
+		$result = $this->getNewAjaxResult(['cart' => $cartArray, 'lineKey'=> $line->getKey()]);
+
 		if (isset($modalInfos) && isset($modalInfos['productId']) && isset($modalInfos['sectionPageFunction']))
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();

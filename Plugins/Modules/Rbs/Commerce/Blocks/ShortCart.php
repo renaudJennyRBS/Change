@@ -80,9 +80,8 @@ class ShortCart extends Block
 			if ($cart && !$cart->isEmpty())
 			{
 				$attributes['cart'] = $cart;
-				return 'shortCart.twig';
 			}
 		}
-		return 'shortCart-empty.twig';
+		return 'short-cart.twig';
 	}
 }
