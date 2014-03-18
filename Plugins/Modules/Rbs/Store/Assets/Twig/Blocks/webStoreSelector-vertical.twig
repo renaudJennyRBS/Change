@@ -26,13 +26,11 @@
 					<div data-ng-if="billingAreaData.length == 1">(= billingAreaData[0].title =)</div>
 				</div>
 
-				<div data-ng-show="zoneData.length > 1">
-					<div class="form-group">
-						<label for="rbs-store-zone">
-							{{ i18n('m.rbs.store.front.zone', ['ucf']) }}
-						</label>
-						<select id="rbs-store-zone" data-ng-model="selection.zone" class="form-control" data-ng-options="zone as zone for zone in zoneData"></select>
-					</div>
+				<div data-ng-show="zoneData.length > 1" class="form-group">
+					<label for="rbs-store-zone">
+						{{ i18n('m.rbs.store.front.zone', ['ucf']) }}
+					</label>
+					<select id="rbs-store-zone" data-ng-model="selection.zone" class="form-control" data-ng-options="zone as zone for zone in zoneData"></select>
 				</div>
 
 				<button class="btn btn-primary" type="button" data-ng-disabled="!canSubmit()" data-ng-click="submit()">

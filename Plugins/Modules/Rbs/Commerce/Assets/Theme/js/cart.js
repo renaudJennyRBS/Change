@@ -290,7 +290,7 @@
 	/**
 	 * Cart controller.
 	 */
-	function rbsCommerceCartController(scope, $http) {
+	function rbsCommerceCartController(scope, $http, $rootScope) {
 		scope.readonlyCart = false;
 		scope.cart = null;
 		scope.loading = false;
@@ -321,7 +321,10 @@
 				var line = scope.cart.lines[index];
 				updateCart($http, scope, { lineQuantities: [
 					{ key: line.key, quantity: 0}
-				] }, setCart);
+				] }, function (data){
+					$rootScope.$broadcast('rbsRefreshCart', {'cart':data});
+					setCart(data);
+				});
 			}
 		};
 
@@ -331,7 +334,10 @@
 				var line = scope.cart.lines[index];
 				updateCart($http, scope, { lineQuantities: [
 					{ key: line.key, quantity: line.quantity }
-				] }, setCart);
+				] }, function (data){
+					$rootScope.$broadcast('rbsRefreshCart', {'cart':data});
+					setCart(data);
+				});
 			}
 		};
 
@@ -352,7 +358,7 @@
 		loadCurrentCart();
 	}
 
-	rbsCommerceCartController.$inject = ['$scope', '$http'];
+	rbsCommerceCartController.$inject = ['$scope', '$http', '$rootScope'];
 	app.controller('rbsCommerceCartController', rbsCommerceCartController);
 
 	/**
