@@ -24,12 +24,14 @@ class FacetsInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
 
-		$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Catalog_ProductList');
-		$allowedModelsNames = $model->getDescendantsNames();
-		array_unshift($allowedModelsNames, $model->getName());
-		$this->addInformationMeta('productListId', Property::TYPE_DOCUMENTID, false, null)
-			->setAllowedModelsNames($allowedModelsNames)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager);
+
+		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
+
+		$this->addInformationMeta('facetGroups', \Change\Presentation\Blocks\ParameterInformation::TYPE_DOCUMENTIDARRAY)
+			->setAllowedModelsNames('Rbs_Elasticsearch_FacetGroup')
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets_facetgroups', $ucf));
 
 		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}
