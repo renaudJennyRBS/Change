@@ -155,21 +155,11 @@
 	},
 	"/Rbs/Elasticsearch/FullText/:id": {
 		"model": "Rbs_Elasticsearch_FullText",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FullText/form.twig",
+			"templateUrl": "Document/Rbs/Elasticsearch/FullText/edit.twig",
 			"labelKey": "m.rbs.elasticsearch.documents.fulltext | ucf",
 			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Elasticsearch/FullText/:id/timeline": {
-		"model": "Rbs_Elasticsearch_FullText",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Elasticsearch_FullText",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": true
 	},
@@ -177,7 +167,7 @@
 		"model": "Rbs_Elasticsearch_FullText",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FullText/form.twig",
+			"templateUrl": "Document/Rbs/Elasticsearch/FullText/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -193,21 +183,11 @@
 	},
 	"/Rbs/Elasticsearch/StoreIndex/:id": {
 		"model": "Rbs_Elasticsearch_StoreIndex",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/form.twig",
+			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/edit.twig",
 			"labelKey": "m.rbs.elasticsearch.documents.storeindex | ucf",
 			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Elasticsearch/StoreIndex/:id/timeline": {
-		"model": "Rbs_Elasticsearch_StoreIndex",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Elasticsearch_StoreIndex",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": true
 	},
@@ -215,7 +195,7 @@
 		"model": "Rbs_Elasticsearch_StoreIndex",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/form.twig",
+			"templateUrl": "Document/Rbs/Elasticsearch/StoreIndex/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
