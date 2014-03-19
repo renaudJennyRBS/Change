@@ -415,6 +415,7 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					break;
 				case 'SkuThreshold':
 
+					/** @var $skus \Rbs\Stock\Documents\Sku[] */
 					$skus = array();
 					if (!$document->getSku() && $document->getVariantGroup())
 					{
