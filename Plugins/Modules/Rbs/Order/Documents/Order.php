@@ -520,6 +520,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		}
 		return $this->creditNotes;
 	}
+
 	/**
 	 * @param Events\Event $event
 	 */
@@ -544,6 +545,13 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				if ($webStore) {
 					$this->setPricesValueWithTax($webStore->getPricesValueWithTax());
 				}
+			}
+		}
+
+		if ($this->getProcessingStatus() == static::PROCESSING_STATUS_PROCESSING && !$this->getCode()) {
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices) {
+				$this->setCode($commerceServices->getProcessManager()->getNewCode($this));
 			}
 		}
 

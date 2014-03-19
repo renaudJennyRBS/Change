@@ -169,9 +169,9 @@
 				}
 
 				function refreshCode() {
-					if (!scope.document.code && scope.data.order && scope.data.carrier) {
-						scope.document.code = 'E-' + scope.data.order.label + '-' + scope.document.shippingModeCode + '-?';
-					}
+//					if (!scope.document.code && scope.data.order && scope.data.carrier) {
+//						scope.document.code = 'E-' + scope.data.order.label + '-' + scope.document.shippingModeCode + '-?';
+//					}
 				}
 
 				function refreshOrderRemainder() {

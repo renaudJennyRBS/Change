@@ -443,4 +443,20 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$event->setParam('order', $order);
 		}
 	}
+
+	/**
+	 * @param $document
+	 * @return string|null
+	 */
+	public function getNewCode($document)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['document' => $document]);
+		$this->getEventManager()->trigger('getNewCode', $this, $args);
+		if (isset($args['newCode']))
+		{
+			return strval($args['newCode']);
+		}
+		return null;
+	}
 }

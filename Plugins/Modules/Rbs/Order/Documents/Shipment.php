@@ -8,11 +8,24 @@
  */
 namespace Rbs\Order\Documents;
 
+use Change\Documents\Events\Event as DocumentEvent;
+use Change\Documents\Events;
+
 /**
  * @name \Rbs\Order\Documents\Shipment
  */
 class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 {
+
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
+	}
+
 	/**
 	 * @return string
 	 */
@@ -32,5 +45,24 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	public function setLabel($label)
 	{
 		return $this;
+	}
+
+	/**
+	 * @param Events\Event $event
+	 */
+	public function onDefaultSave(DocumentEvent $event)
+	{
+		if ($event->getDocument() !== $this)
+		{
+			return;
+		}
+
+		if ($this->getPrepared() && !$this->getCode())
+		{
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices) {
+				$this->setCode($commerceServices->getProcessManager()->getNewCode($this));
+			}
+		}
 	}
 }
