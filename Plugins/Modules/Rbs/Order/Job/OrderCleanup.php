@@ -31,7 +31,7 @@ class OrderCleanup
 			}
 			else
 			{
-				$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
+				$event->getApplication()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
 			}
 		}
 	}

@@ -42,7 +42,6 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 
 	/**
 	 * @param \Change\Documents\Events\Event $event
-	 * @throws \RuntimeException
 	 */
 	public function onUpdated($event)
 	{
@@ -55,13 +54,12 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 				if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 				{
 					$stockManager = $commerceServices->getStockManager();
+					$this->decrementOrderReservation($shipment, $stockManager, $event->getApplicationServices()->getDocumentManager());
 				}
 				else
 				{
-					throw new \RuntimeException('CommerceServices not set', 999999);
+					$event->getApplication()->getLogging()->error('CommerceServices not set in: ' . __METHOD__);
 				}
-
-				$this->decrementOrderReservation($shipment, $stockManager, $event->getApplicationServices()->getDocumentManager());
 			}
 		}
 	}
@@ -70,7 +68,6 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	 * @param \Rbs\Order\Documents\Shipment $shipment
 	 * @param \Rbs\Stock\StockManager $stockManager
 	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @throws \RuntimeException
 	 */
 	protected function decrementOrderReservation($shipment, $stockManager, $documentManager)
 	{
@@ -91,7 +88,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid shipment, SKU or quantity on data not set', 999999);
+				$this->getApplication()->getLogging()->error('Invalid shipment, SKU or quantity on data not set');
 			}
 		}
 	}

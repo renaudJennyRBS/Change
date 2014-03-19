@@ -89,7 +89,7 @@ class Listeners implements ListenerAggregateInterface
 		{
 			(new \Rbs\Order\Job\OrderCleanup())->execute($event);
 		};
-		$events->attach('process_Change_Document_CleanUp', $callBack, 10);
+		$events->attach('process_Change_Document_CleanUp', $callBack, 5);
 	}
 
 	/**
