@@ -6,7 +6,7 @@
 			"redirectTo": "/Rbs/Collection/Collection/",
 			"labelKey": "m.rbs.collection.admin.module_name | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Collection/Collection/": {
 		"model": "Rbs_Collection_Collection",

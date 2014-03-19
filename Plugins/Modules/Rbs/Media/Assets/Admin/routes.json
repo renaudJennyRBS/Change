@@ -6,7 +6,7 @@
 			"redirectTo": "/Rbs/Media/Image/",
 			"labelKey": "m.rbs.media.admin.module_name | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Media/Image/": {
 		"model": "Rbs_Media_Image",

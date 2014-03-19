@@ -6,7 +6,7 @@
 			"redirectTo": "/Rbs/Review/Review/",
 			"labelKey": "m.rbs.review.admin.module_name | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Review/Review/": {
 		"model": "Rbs_Review_Review",

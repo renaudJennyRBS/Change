@@ -6,7 +6,7 @@
 			"redirectTo": "/Rbs/Mail/Mail/",
 			"labelKey": "m.rbs.mail.admin.module_name | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Mail/Mail/": {
 		"model": "Rbs_Mail_Mail",
