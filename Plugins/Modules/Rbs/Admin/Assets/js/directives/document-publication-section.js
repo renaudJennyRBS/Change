@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-(function () {
-
+(function() {
 	"use strict";
 
 	/**
@@ -19,6 +18,8 @@
 	 * @description
 	 * Used to display the <em>Publication</em> section in Document editors.
 	 *
+	 * @param {String=} rbs-document-publication-section-help
+	 *
 	 * @example
 	 * <pre>
 	 *     <fieldset data-rbs-editor-section="publication"
@@ -27,24 +28,35 @@
 	 *     </fieldset>
 	 * </pre>
 	 */
-	angular.module('RbsChange').directive('rbsDocumentPublicationSection', function ()
-	{
+	angular.module('RbsChange').directive('rbsDocumentPublicationSection', ['RbsChange.REST', function(REST) {
 		return {
-			restrict    : 'A',
-			templateUrl : 'Rbs/Admin/js/directives/document-publication-section.twig',
-			replace     : false,
+			restrict: 'A',
+			templateUrl: 'Rbs/Admin/js/directives/document-publication-section.twig',
+			replace: false,
+			scope: true,
 
-			link : function (scope, iElement, iAttrs)
-			{
+			link: function(scope, iElement, iAttributes) {
 				scope.hasSpecificHelp = false;
 
-				if (iAttrs.rbsDocumentPublicationSectionHelp != undefined && iAttrs.rbsDocumentPublicationSectionHelp != "")
-				{
+				if (iAttributes['rbsDocumentPublicationSectionHelp'] != undefined
+					&& iAttributes['rbsDocumentPublicationSectionHelp'] != "") {
 					scope.hasSpecificHelp = true;
-					scope.specificHelp = iAttrs.rbsDocumentPublicationSectionHelp;
+					scope.specificHelp = iAttributes['rbsDocumentPublicationSectionHelp'];
+				}
+
+				scope.showPublicationSections = function() {
+					if (!scope.document) {
+						return false;
+					}
+					else if (!scope.modelInfo || !('publicationSections' in scope.modelInfo.properties)) {
+						return false;
+					}
+					else if (scope.currentLCID && scope.currentLCID !== scope.document.refLCID) {
+						return false;
+					}
+					return true;
 				}
 			}
 		};
-	});
-
+	}]);
 })();

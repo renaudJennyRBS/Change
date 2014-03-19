@@ -11,5 +11,6 @@
 		<property name="hideLinks" type="Boolean" />
 
 		<property name="displayDocument" type="Document" />
+		<property name="publicationSections" type="DocumentArray" stateless="true" internal="true" />
 	</properties>
 </document>

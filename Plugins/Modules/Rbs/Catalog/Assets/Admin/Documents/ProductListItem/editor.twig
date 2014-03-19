@@ -21,8 +21,13 @@
 		</rbs-field-picker>
 	</fieldset>
 
-	<fieldset
-		data-ng-show="section=='systeminfo'"
+	<fieldset data-ng-show="section=='activation'"
+		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
+		data-rbs-document-activation-section="">
+	</fieldset>
+
+	<fieldset data-ng-show="section=='systeminfo'"
 		data-form-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
 		data-form-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 		data-rbs-document-system-info-section="">

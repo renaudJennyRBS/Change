@@ -49,39 +49,41 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_address', ['ucf']) }}</div>
 		<div class="panel-body">
-			<ol>
-				<li class="radio" data-ng-if="!display.readonly">
-					<label>
-						<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="1">
-						{{ i18n('m.rbs.commerce.front.use_postal_address') }}
-					</label>
-				</li>
-				<li class="radio" data-ng-if="display.readonly && delivery.options.usePostalAddress == 1">
-					{{ i18n('m.rbs.commerce.front.use_postal_address') }}
-				</li>
-				<li class="radio" data-ng-if="!display.readonly">
-					<label>
-						<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="0">
-						{{ i18n('m.rbs.commerce.front.use_another_address') }}
-					</label>
-				</li>
-			</ol>
+			<div class="vertical-show-hide-animation" data-ng-show="!display.readonly">
+				<div class="vertical-show-hide-animation-content">
+					<ol>
+						<li class="radio">
+							<label>
+								<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="1">
+								{{ i18n('m.rbs.commerce.front.use_postal_address') }}
+							</label>
+						</li>
+						<li class="radio">
+							<label>
+								<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="0">
+								{{ i18n('m.rbs.commerce.front.use_another_address') }}
+							</label>
+						</li>
+					</ol>
 
-			<div data-ng-if="delivery.options.usePostalAddress == 0">
-				<div class="vertical-show-hide-animation" data-ng-hide="display.readonly">
-					<div class="vertical-show-hide-animation-content">
-						<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
-							data-zone-code="(= zoneCode =)">
+					<div data-ng-if="delivery.options.usePostalAddress == 0">
+						<div class="vertical-show-hide-animation">
+							<div class="vertical-show-hide-animation-content">
+								<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
+									data-zone-code="(= zoneCode =)">
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="vertical-show-hide-animation" data-ng-show="display.readonly">
-					<div class="vertical-show-hide-animation-content">
-						<address>
-							<strong>(= delivery.address.__lines[0] =)</strong>
-							<div data-ng-repeat="line in delivery.address.__lines" data-ng-if="!$first">(= line =)</div>
-						</address>
-					</div>
+			</div>
+
+			<div class="vertical-show-hide-animation" data-ng-show="display.readonly">
+				<div class="vertical-show-hide-animation-content">
+					<address>
+						<strong>(= delivery.address.__lines[0] =)</strong>
+						<div data-ng-repeat="line in delivery.address.__lines" data-ng-if="!$first">(= line =)</div>
+					</address>
 				</div>
 			</div>
 		</div>

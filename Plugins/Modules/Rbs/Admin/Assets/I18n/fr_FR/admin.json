@@ -345,6 +345,9 @@
 	"publication_properties":{
 		"message":"publication"
 	},
+	"activation_properties":{
+		"message":"activation"
+	},
 	"information":{
 		"message":"informations"
 	},

@@ -652,13 +652,13 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 			case 'translate':
 				$attributes = [
 					'asideDirectives' => [
+						['name' => 'rbs-aside-editor-menu'],
 						[
 							'name' => 'rbs-aside-translation',
 							'attributes' => [
 								['name' => 'document', 'value' => 'document']
 							]
-						],
-						['name' => 'rbs-aside-editor-menu']
+						]
 					]
 				];
 				break;

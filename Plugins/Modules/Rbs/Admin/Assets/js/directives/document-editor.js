@@ -1281,6 +1281,7 @@
 	{
 		var defaultSectionIcons = {
 			publication : 'icon-globe',
+			activation : 'icon-time',
 			systeminfo : 'icon-info-sign',
 			permissions : 'icon-lock',
 			'' : 'icon-edit'

@@ -17,7 +17,6 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class StoreResult extends Block
 {
-
 	protected $validSortBy = ['title.asc', 'price.asc', 'price.desc', 'price.desc', 'dateAdded.desc'];
 
 	/**
@@ -30,38 +29,128 @@ class StoreResult extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('facetFilters', null);
-		$parameters->addParameterMeta('storeIndex');
-		$parameters->addParameterMeta('contextualUrls', true);
+		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
+		$parameters->addParameterMeta('useCurrentSectionProductList');
 		$parameters->addParameterMeta('webStoreId');
-
+		$parameters->addParameterMeta('billingAreaId');
+		$parameters->addParameterMeta('zone');
+		$parameters->addParameterMeta('contextualUrls', true);
 		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
 		$parameters->addParameterMeta('pageNumber', 1);
 		$parameters->addParameterMeta('showOrdering', true);
 		$parameters->addParameterMeta('sortBy', null);
-
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
-
-		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('redirectUrl');
 
-		$parameters->setNoCache();
+		$parameters->addParameterMeta('facetFilters', null);
+		$parameters->addParameterMeta('storeIndex');
 
+		$parameters->setNoCache();
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber',
 			intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $this->getCommerceServices($event);
+		$genericServices = $this->getGenericServices($event);
+		if ($commerceServices == null || $genericServices == null)
+		{
+			$this->setInvalidParameters($parameters);
+			return $parameters;
+		}
+
+		// StoreIndex and WebStore check.
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
+		if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
+		{
+			$webStore = $storeIndex->getStore();
+			if (!$webStore)
+			{
+				$this->setInvalidParameters($parameters);
+				return $parameters;
+			}
+			elseif ($webStore == $commerceServices->getContext()->getWebStore())
+			{
+				$parameters->setParameterValue('webStoreId', $storeIndex->getStoreId());
+				if ($parameters->getParameter('displayPrices') === null)
+				{
+					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+				}
+
+				$billingArea = $commerceServices->getContext()->getBillingArea();
+				if ($billingArea)
+				{
+					$parameters->setParameterValue('billingAreaId', $billingArea->getId());
+				}
+
+				$zone = $commerceServices->getContext()->getZone();
+				if ($zone)
+				{
+					$parameters->setParameterValue('zone', $zone);
+				}
+			}
+			else
+			{
+				$parameters->setParameterValue('billingAreaId', 0);
+				$parameters->setParameterValue('zone', null);
+				$parameters->setParameterValue('displayPrices', false);
+				$parameters->setParameterValue('displayPricesWithTax', false);
+			}
+		}
+		else
+		{
+			$this->setInvalidParameters($parameters);
+			return $parameters;
+		}
+
+		// Product list.
+		$this->setParameterValueForDetailBlock($parameters, $event);
+		if ($parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) == null
+			&& $parameters->getParameter('useCurrentSectionProductList') === true)
+		{
+			/* @var $page \Change\Presentation\Interfaces\Page */
+			$page = $event->getParam('page');
+			$section = $page->getSection();
+
+			$catalogManager = $commerceServices->getCatalogManager();
+			$defaultProductList = $catalogManager->getDefaultProductListBySection($section);
+			if ($this->isValidDocument($defaultProductList))
+			{
+				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $defaultProductList->getId());
+			}
+			else
+			{
+				$this->setInvalidParameters($parameters);
+				return $parameters;
+			}
+		}
+
 		if ($parameters->getParameter('showOrdering'))
 		{
-			$sortBy = $request->getQuery('sortBy');
+			$sortBy = $request->getQuery('sortBy-facet');
 			if ($sortBy && in_array($sortBy, $this->validSortBy))
 			{
 				$parameters->setParameterValue('sortBy', $sortBy);
 			}
+		}
+
+		if (!$parameters->getParameter('redirectUrl'))
+		{
+			$urlManager = $event->getUrlManager();
+			$oldValue = $urlManager->getAbsoluteUrl();
+			$urlManager->setAbsoluteUrl(true);
+			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
+			if ($uri)
+			{
+				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
+			}
+			$urlManager->setAbsoluteUrl($oldValue);
 		}
 
 		$queryFilters = $request->getQuery('facetFilters', null);
@@ -78,38 +167,20 @@ class StoreResult extends Block
 		}
 		$parameters->setParameterValue('facetFilters', $facetFilters);
 
-		if (!$parameters->getParameter('redirectUrl'))
-		{
-			$urlManager = $event->getUrlManager();
-			$oldValue = $urlManager->getAbsoluteUrl();
-			$urlManager->setAbsoluteUrl(true);
-			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
-			if ($uri)
-			{
-				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
-			}
-			$urlManager->setAbsoluteUrl($oldValue);
-		}
-
-		if ($parameters->getParameter('displayPrices') === null)
-		{
-			$parameters->setParameterValue('displayPrices', false);
-			$parameters->setParameterValue('displayPricesWithTax', false);
-
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
-			if ($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex)
-			{
-				$webStore = $storeIndex->getStore();
-				if ($webStore)
-				{
-					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-				}
-			}
-		}
-
 		return $parameters;
+	}
+
+	/**
+	 * @param Parameters $parameters
+	 */
+	protected function setInvalidParameters($parameters)
+	{
+		$parameters->setParameterValue('storeIndex', 0);
+		$parameters->setParameterValue('webStoreId', 0);
+		$parameters->setParameterValue('billingAreaId', 0);
+		$parameters->setParameterValue('zone', null);
+		$parameters->setParameterValue('displayPrices', false);
+		$parameters->setParameterValue('displayPricesWithTax', false);
 	}
 
 	/**
@@ -166,13 +237,20 @@ class StoreResult extends Block
 
 		$commerceServices = $this->getCommerceServices($event);
 		$genericServices = $this->getGenericServices($event);
-		if ($commerceServices == null || $genericServices == null)
+
+		$parameters = $event->getBlockParameters();
+		if (!$parameters->getParameter('storeIndex'))
 		{
-			$applicationServices->getLogging()->warn(__METHOD__ . ': commerceServices or genericServices not defined');
 			return null;
 		}
 
-		$parameters = $event->getBlockParameters();
+		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
+		if (!($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex))
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index');
+			return null;
+		}
+
 		$productListId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$productList = null;
 		if ($productListId !== null)
@@ -187,14 +265,6 @@ class StoreResult extends Block
 		}
 
 		$facetFilters = $parameters->getParameter('facetFilters');
-		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('storeIndex'));
-		if (!($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex))
-		{
-			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index');
-			return null;
-		}
-
-		$parameters->setParameterValue('webStoreId', $storeIndex->getStoreId());
 
 		$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
 		if (!$client)

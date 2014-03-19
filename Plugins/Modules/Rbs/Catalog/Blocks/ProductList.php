@@ -52,14 +52,16 @@ class ProductList extends Block
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$request = $event->getHttpRequest();
-		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
+		$parameters->setParameterValue('pageNumber',
+			intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 
 		$this->setParameterValueForDetailBlock($parameters, $event);
 
-		if ($parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) == null && $parameters->getParameter('useCurrentSectionProductList') === true)
+		if ($parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) == null
+			&& $parameters->getParameter('useCurrentSectionProductList') === true)
 		{
 			/* @var $page \Change\Presentation\Interfaces\Page */
 			$page = $event->getParam('page');
@@ -75,12 +77,24 @@ class ProductList extends Block
 
 		if ($parameters->getParameter('showOrdering'))
 		{
-			$sortBy = $request->getQuery('sortBy');
+			$sortBy = $request->getQuery('sortBy-' . $event->getBlockLayout()->getId());
 			if ($sortBy && in_array($sortBy, $this->validSortBy))
 			{
-				$request->getQuery()->set('sortBy', $sortBy);
 				$parameters->setParameterValue('sortBy', $sortBy);
 			}
+		}
+
+		if (!$parameters->getParameter('redirectUrl'))
+		{
+			$urlManager = $event->getUrlManager();
+			$oldValue = $urlManager->getAbsoluteUrl();
+			$urlManager->setAbsoluteUrl(true);
+			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
+			if ($uri)
+			{
+				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
+			}
+			$urlManager->setAbsoluteUrl($oldValue);
 		}
 
 		$webStore = $commerceServices->getContext()->getWebStore();
@@ -112,19 +126,6 @@ class ProductList extends Block
 			$parameters->setParameterValue('zone', null);
 			$parameters->setParameterValue('displayPrices', false);
 			$parameters->setParameterValue('displayPricesWithTax', false);
-		}
-
-		if (!$parameters->getParameter('redirectUrl'))
-		{
-			$urlManager = $event->getUrlManager();
-			$oldValue = $urlManager->getAbsoluteUrl();
-			$urlManager->setAbsoluteUrl(true);
-			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
-			if ($uri)
-			{
-				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
-			}
-			$urlManager->setAbsoluteUrl($oldValue);
 		}
 
 		return $parameters;
