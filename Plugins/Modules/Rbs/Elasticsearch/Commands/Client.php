@@ -57,7 +57,7 @@ class Client
 								{
 									$status = $idx->getStatus();
 									$numDocs = $status->get('docs')['num_docs'];
-									$size = $status->get('index')['size'];
+									$size = ($status->get('index')['size_in_bytes'] / 1024) . ' kb';
 									$response->addInfoMessage('-- documents: ' . $numDocs . ' , size: ' . $size);
 								}
 								else
