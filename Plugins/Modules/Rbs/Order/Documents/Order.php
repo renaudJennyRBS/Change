@@ -1224,6 +1224,6 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	{
 		$order = $event->getDocument();
 		$jobManager = $event->getApplicationServices()->getJobManager();
-		$jobManager->createNewJob('Rbs_Order_Order_Cleanup', ['orderId' => $order->getId()]);
+		$jobManager->createNewJob('Rbs_Order_Order_Complete', ['orderId' => $order->getId()]);
 	}
 }

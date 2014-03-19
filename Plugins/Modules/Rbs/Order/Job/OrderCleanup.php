@@ -7,8 +7,6 @@
  */
 namespace Rbs\Order\Job;
 
-use \Rbs\Order\Documents\Order;
-
 /**
  * @name \Rbs\Order\Job\OrderCleanup
  */
@@ -16,28 +14,25 @@ class OrderCleanup
 {
 	public function execute(\Change\Job\Event $event)
 	{
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+		$job = $event->getJob();
+		$applicationServices = $event->getApplicationServices();
+		$modelName = $job->getArgument('model');
+		$model = $applicationServices->getModelManager()->getModelByName($modelName);
+		if ($model && $model->getName() == 'Rbs_Order_Order')
 		{
-			$stockManager = $commerceServices->getStockManager();
-
-			$job = $event->getJob();
-
-			$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($job->getArgument('orderId'));
-			if ($order instanceof Order)
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 			{
-				$processingStatus = $order->getProcessingStatus();
-				//if order processing status is finalized or canceled, cleanup the reservation
-				if ($processingStatus == Order::PROCESSING_STATUS_FINALIZED || $processingStatus == Order::PROCESSING_STATUS_CANCELED)
-				{
-					$stockManager->unsetReservations($order->getIdentifier());
-				}
+				$stockManager = $commerceServices->getStockManager();
+
+				$job = $event->getJob();
+				$stockManager->unsetReservations('Order:' . $job->getArgument('id'));
 			}
-		}
-		else
-		{
-			$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
+			else
+			{
+				$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
+			}
 		}
 	}
 } 
