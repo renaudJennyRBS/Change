@@ -55,6 +55,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 
 				if ($document->getVariantGroup())
 				{
+					/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 					$commerceServices = $event->getServices('commerceServices');
 					$catalogManager = $commerceServices->getCatalogManager();
 					$documentResult->setProperty('variantInfo', $catalogManager->getVariantInfo($document));

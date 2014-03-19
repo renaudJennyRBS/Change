@@ -1,11 +1,17 @@
-<div class="panel panel-default">
+<div class="panel panel-default" data-ng-show="shouldBeShown()">
 	<div class="panel-heading">
-		<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18n('m.rbs.catalog.documents.variantgroup', ['ucf']) }}</h3>
+		<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}</h3>
 	</div>
 	<div class="list-group">
 		<span class="list-group-item">
-			<a ng-show="document.variantGroup.rootProductId" href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.variantGroup.rootProductId}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}</a>
-			<a ng-show="! document.variant && ! document.variantGroup.rootProductId" href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)"><i class="icon-arrow-right"></i>	{{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}</a>
+			<a data-ng-show="document.variantGroup.rootProductId" href="javascript:;"
+				data-ng-href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.variantGroup.rootProductId}=)">
+				<i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}
+			</a>
+			<a data-ng-show="! document.variant && ! document.variantGroup.rootProductId" href="javascript:;"
+				data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)">
+				<i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}
+			</a>
 		</span>
 	</div>
 </div>

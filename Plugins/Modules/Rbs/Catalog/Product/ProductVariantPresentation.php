@@ -11,7 +11,7 @@ namespace Rbs\Catalog\Product;
 /**
  * @name \Rbs\Catalog\Product\VariantProductPresentation
  */
-class VariantProductPresentation extends ProductPresentation
+class ProductVariantPresentation extends ProductPresentation
 {
 	/**
 	 * @var array
@@ -28,5 +28,13 @@ class VariantProductPresentation extends ProductPresentation
 			$this->variantsConfiguration = $this->catalogManager->getVariantsConfiguration($this->productId, true);
 		}
 		return $this->variantsConfiguration;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTemplateSuffix()
+	{
+		return 'variant';
 	}
 }

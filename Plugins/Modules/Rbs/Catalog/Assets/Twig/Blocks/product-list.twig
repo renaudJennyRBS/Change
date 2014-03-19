@@ -14,18 +14,17 @@
 	</ul>
 {% endif %}
 
-{#<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="post">#}
-	{% spaceless %}
-		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered grid-list-align-top product-list">
-			{% for row in rows %}
-				<li>
-					<div class="grid-list-cell">
-						{% include 'Rbs_Catalog/product-list-item.twig' %}
-					</div>
-				</li>
-			{% endfor %}
-		</ul>
-	{% endspaceless %}
-{#</form>#}
+{% spaceless %}
+	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered grid-list-align-top product-list">
+		{% for row in rows %}
+			<li>
+				<div class="grid-list-cell">
+					{% include 'Rbs_Catalog/product-list-item.twig' %}
+				</div>
+			</li>
+		{% endfor %}
+	</ul>
+{% endspaceless %}
+
 {% include 'Rbs_Generic/pagination.twig' %}
 {% include 'Rbs_Catalog/product-added-to-cart-popin.twig' %}

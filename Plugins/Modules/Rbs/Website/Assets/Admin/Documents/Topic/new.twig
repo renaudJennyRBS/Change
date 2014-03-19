@@ -1,23 +1,20 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Website_Topic">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Website_Topic">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_Topic'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Website_Topic'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
 		{% include '@Rbs_Admin/view/asides.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
-
-		<form ng-submit="submit()" rbs-document-editor-new="" rbs-document-editor-rbs-website-topic="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
-			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
-
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-website-topic-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 				<rbs-field-label-title property="title" required="true"
-				                       label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_Topic', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_Topic', 'title'), ['ucf']) }}">
 				</rbs-field-label-title>
 
 				<rbs-field-picker property="section" required="true"
@@ -28,15 +25,12 @@
 				</rbs-field-picker>
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
+			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
-				data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
 				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
 		</form>
-
 	</div>
-
 </div>

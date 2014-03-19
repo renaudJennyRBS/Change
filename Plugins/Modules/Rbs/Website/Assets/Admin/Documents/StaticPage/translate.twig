@@ -1,7 +1,6 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Website_StaticPage">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Website_StaticPage">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_StaticPage'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -23,32 +22,34 @@
 		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
-
-		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-translate="" rbs-document-editor-rbs-website-staticpage="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}"
-			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}">
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit="" data-rbs-document-editor-translate=""
+			data-rbs-document-editor-rbs-website-static-page-translate="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field-text property="title" required="true"
-				                label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
 				</rbs-field-text>
+			</fieldset>
 
+			<fieldset data-rbs-editor-section="content"
+				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'editableContent'), ['ucf']) }}"
+				data-editor-section-icon="icon-align-left">
+				<div data-rbs-tip="Rbs_PageEditor_Markdown">
+					{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
+				</div>
 				<rbs-structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
-				                      template="(=pageTemplate=)">
+					template="(=pageTemplate=)">
 				</rbs-structure-editor>
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
-			          data-editor-section-group="{{ i18nAttr('m.rbs.admin.admin.information', ['ucf']) }}"
-			          data-rbs-document-system-info-section="">
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
-
 		</form>
 	</div>
-
 </div>

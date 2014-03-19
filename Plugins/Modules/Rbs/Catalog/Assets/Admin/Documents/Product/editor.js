@@ -1,5 +1,4 @@
-(function ()
-{
+(function() {
 	"use strict";
 
 	/**
@@ -8,14 +7,12 @@
 	 * @param REST
 	 * @constructor
 	 */
-	function Editor($timeout, $http, REST)
-	{
+	function Editor($timeout, $http, REST) {
 		return {
-			restrict : 'A',
-			require : '^rbsDocumentEditorBase',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope)
-			{
+			link: function(scope) {
 				scope.onReady = function() {
 					scope.loadItems();
 				};
@@ -29,34 +26,36 @@
 
 				scope.loadItems = function() {
 					if (scope.document.META$.links.hasOwnProperty('productListItems')) {
-						REST.collection(scope.document.META$.links['productListItems'].href).then(function(result){
+						REST.collection(scope.document.META$.links['productListItems'].href).then(function(result) {
 							if (angular.isObject(result) && result.hasOwnProperty('resources')) {
 								scope.productListItems = result.resources;
 							}
 						});
-					} else {
+					}
+					else {
 						scope.productListItems = [];
 					}
 				};
 
-				scope.toggleHighlight = function(doc){
+				scope.toggleHighlight = function(doc) {
 					var url = null;
-					if (!doc.isHighlighted) {
+					if (!doc['isHighlighted']) {
 						url = doc.META$.actions['downplay'].href;
-					} else {
+					}
+					else {
 						url = doc.META$.actions['highlight'].href;
 					}
 					if (url) {
 						$http.get(url)
-							.success(function () {
+							.success(function() {
 								scope.loadItems();
 							}
 						);
 					}
 				};
 
-				scope.deleteProductListItem = function(doc){
-					REST['delete'](doc).then(function(){
+				scope.deleteProductListItem = function(doc) {
+					REST['delete'](doc).then(function() {
 						scope.loadItems();
 					});
 				};
@@ -71,7 +70,8 @@
 					if (newValue) {
 						if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
 							attrGrpId = newValue.id;
-						} else {
+						}
+						else {
 							attrGrpId = parseInt(newValue, 10);
 							if (isNaN(attrGrpId)) {
 								attrGrpId = null;
@@ -97,21 +97,21 @@
 					}
 				});
 
-				scope.clearAttributesEditor = function () {
+				scope.clearAttributesEditor = function() {
 					scope.attributesDef = [];
 					scope.propAttr = {};
-					$timeout(function () {
+					$timeout(function() {
 						scope.$emit('Change:Editor:UpdateMenu');
 					});
 				};
 
-				scope.generateAttributesEditor = function (attribute) {
-					var editorDefinition = attribute.editorDefinition;
+				scope.generateAttributesEditor = function(attribute) {
+					var editorDefinition = attribute['editorDefinition'];
 					if (angular.isObject(editorDefinition)) {
 						scope.attributesDef = editorDefinition.attributes;
 						scope.assocValues(scope.attributesDef);
 					}
-					$timeout(function () {
+					$timeout(function() {
 						scope.$emit('Change:Editor:UpdateMenu');
 						if (scope.attributeContext !== undefined) {
 							scope.$broadcast('updateContextValue', scope.attributeContext);
@@ -120,17 +120,18 @@
 					});
 				};
 
-				scope.assocValues = function (attributes) {
+				scope.assocValues = function(attributes) {
 					for (var i = 0; i < attributes.length; i++) {
 						if (attributes[i].attributes) {
 							scope.assocValues(attributes[i].attributes)
-						} else {
+						}
+						else {
 							scope.setAttributeValue(attributes[i]);
 						}
 					}
 				};
 
-				scope.getAttributeValueById = function (id) {
+				scope.getAttributeValueById = function(id) {
 					var v, i, attributeValues = scope.document.attributeValues;
 					if (angular.isArray(attributeValues)) {
 						for (i = 0; i < attributeValues.length; i++) {
@@ -143,53 +144,51 @@
 					return null;
 				};
 
-				scope.setAttributeValue = function (attribute) {
+				scope.setAttributeValue = function(attribute) {
 					var v = {value: attribute.defaultValue};
 					var valIndex = scope.getAttributeValueById(attribute.id);
 
 					attribute.canBeEdit = true;
-					if (attribute.axis == true && scope.document.variantGroup !== null)
-					{
-						if (isAttributeOfVariantGroup(attribute.id))
-						{
+					if (attribute.axis == true && scope.document['variantGroup'] !== null) {
+						if (isAttributeOfVariantGroup(attribute.id)) {
 							attribute.canBeEdit = false;
 						}
 					}
 
 					if (attribute.valueType == 'Property') {
-						if (!scope.document.hasOwnProperty(attribute.propertyName))
-						{
+						if (!scope.document.hasOwnProperty(attribute.propertyName)) {
 							scope.document[attribute.propertyName] = null;
 						}
 						v.value = scope.document[attribute.propertyName];
 						scope.propAttr[attribute.propertyName] = v;
-					} else {
+					}
+					else {
 						if (valIndex == null) {
 							v.id = attribute.id;
 							v.valueType = attribute.valueType;
 							if (angular.isArray(scope.document.attributeValues)) {
 								scope.document.attributeValues.push(v);
-							} else {
+							}
+							else {
 								scope.document.attributeValues = [v];
 							}
 
-						} else {
+						}
+						else {
 							v = valIndex;
 						}
 					}
 					attribute.value = v;
 				};
 
-				function isAttributeOfVariantGroup(attributeId)
-				{
-					return scope.document.variantGroup.axesAttributesId.indexOf(attributeId) > -1;
+				function isAttributeOfVariantGroup(attributeId) {
+					return scope.document['variantGroup']['axesAttributesId'].indexOf(attributeId) > -1;
 				}
 
 				scope.$watch('propAttr', function(newValue) {
 					if (newValue) {
 						angular.forEach(scope.propAttr, function(value, key) {
-							if (scope.document.hasOwnProperty(key))
-							{
+							if (scope.document.hasOwnProperty(key)) {
 								scope.document[key] = value.value;
 							}
 						})
@@ -200,23 +199,45 @@
 	}
 
 	Editor.$inject = ['$timeout', '$http', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProduct', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProductNew', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProductEdit', Editor);
 
-	function AsideProductVariantGroup()
-	{
+	function AsideProductVariantGroup() {
 		return {
-			restrict : 'E',
-			templateUrl : 'Rbs/Catalog/Documents/Product/aside-product-variant-group.twig'
+			restrict: 'E',
+			templateUrl: 'Rbs/Catalog/Documents/Product/aside-product-variant-group.twig',
+			scope: true,
+			link: function(scope) {
+				scope.shouldBeShown = function() {
+					// TODO: use isDocumentReady()
+					return scope.document.id && scope.document['productSet'] === null;
+				}
+			}
 		}
 	}
 
 	angular.module('RbsChange').directive('rbsAsideProductVariantGroup', AsideProductVariantGroup);
 
-	function AsideProductMerchandising()
-	{
+	function AsideProductSet() {
 		return {
-			restrict : 'E',
-			templateUrl : 'Rbs/Catalog/Documents/Product/aside-product-merchandising.twig'
+			restrict: 'E',
+			templateUrl: 'Rbs/Catalog/Documents/Product/aside-product-set.twig',
+			scope: true,
+			link: function(scope) {
+				scope.shouldBeShown = function() {
+					// TODO: use isDocumentReady()
+					return scope.document.id && scope.document['variantGroup'] === null;
+				}
+			}
+		}
+	}
+
+	angular.module('RbsChange').directive('rbsAsideProductSet', AsideProductSet);
+
+	function AsideProductMerchandising() {
+		return {
+			restrict: 'E',
+			templateUrl: 'Rbs/Catalog/Documents/Product/aside-product-merchandising.twig'
 		}
 	}
 

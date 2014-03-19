@@ -114,6 +114,7 @@
 					{% set productTitle = row.productPresentation.general.title %}
 					<a class="btn btn-primary btn-sm" href="{{ row.url }}"
 						title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}">
+						<i class="glyphicon glyphicon-arrow-right"></i>
 						{{ i18n('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}
 					</a>
 				</div>

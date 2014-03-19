@@ -130,7 +130,7 @@ class Product extends Block
 					$productPresentation->evaluate();
 					$attributes['productPresentation'] = $productPresentation;
 
-					return $this->getTemplateName($productPresentation);
+					return 'product-detail-' . $productPresentation->getTemplateSuffix() . '.twig';
 				}
 			}
 
@@ -139,21 +139,5 @@ class Product extends Block
 			$attributes['section'] = $page->getSection();
 		}
 		return null;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Product\ProductPresentation $productPresentation
-	 * @return string
-	 */
-	protected function getTemplateName($productPresentation)
-	{
-		if ($productPresentation instanceof \Rbs\Catalog\Product\VariantProductPresentation)
-		{
-			return 'product-detail-variant.twig';
-		}
-		else
-		{
-			return 'product-detail-simple.twig';
-		}
 	}
 }

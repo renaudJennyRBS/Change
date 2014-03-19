@@ -331,13 +331,13 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 					$commerceServices = $indexDefinition->getCommerceServices();
 
 					$skus = array();
-					if (!$document->getSku() && $document->getVariantGroup())
+					if ($document->getSku())
 					{
-						$skus = $commerceServices->getCatalogManager()->getAllSku($document, true);
+						$skus[] = $document->getSku();
 					}
 					else
 					{
-						$skus[] = $document->getSku();
+						$skus = $commerceServices->getCatalogManager()->getAllSku($document, true);
 					}
 
 					$store = $indexDefinition->getStore();
@@ -417,13 +417,13 @@ class FacetManager implements \Zend\EventManager\EventsCapableInterface
 
 					/** @var $skus \Rbs\Stock\Documents\Sku[] */
 					$skus = array();
-					if (!$document->getSku() && $document->getVariantGroup())
+					if ($document->getSku())
 					{
-						$skus = $indexDefinition->getCommerceServices()->getCatalogManager()->getAllSku($document, true);
+						$skus[] = $document->getSku();
 					}
 					else
 					{
-						$skus[] = $document->getSku();
+						$skus = $indexDefinition->getCommerceServices()->getCatalogManager()->getAllSku($document, true);
 					}
 
 					$store = $indexDefinition->getCommerceServices()->getContext()->getWebStore();

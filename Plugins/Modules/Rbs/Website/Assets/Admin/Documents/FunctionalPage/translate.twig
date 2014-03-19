@@ -1,7 +1,6 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Website_FunctionalPage">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Website_FunctionalPage">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -23,38 +22,34 @@
 		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit="" data-rbs-document-editor-translate=""
+			data-rbs-document-editor-rbs-website-functional-page-translate="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-		<form ng-submit="submit()" rbs-document-editor-edit="" rbs-document-editor-translate="" rbs-document-editor-rbs-website-functionalpage="">
+				<rbs-field-text property="title" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Website_StaticPage', 'title'), ['ucf']) }}">
+				</rbs-field-text>
 
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
-
-				<rbs-field-label-title property="title" required="true"
-				                       label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'title'), ['ucf']) }}">
-				</rbs-field-label-title>
-
-				<div rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
+				<div data-rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
 					{{ i18n('m.rbs.website.admin.functional_page_editor_help') | raw }}
 				</div>
 			</fieldset>
 
-			<fieldset rbs-editor-section="content"
+			<fieldset data-rbs-editor-section="content"
 				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
 				data-editor-section-icon="icon-align-left">
 				<rbs-structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
 				</rbs-structure-editor>
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
+			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
 				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
-
 		</form>
-
 	</div>
-
 </div>

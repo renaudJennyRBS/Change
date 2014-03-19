@@ -1,0 +1,17 @@
+<div class="panel panel-default" data-ng-show="shouldBeShown()">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="icon-sitemap"></i> {{ i18nAttr(modelKey('Rbs_Catalog_ProductSet'), ['ucf']) }}</h3>
+	</div>
+	<div class="list-group">
+		<span class="list-group-item">
+			<a data-ng-show="document.productSet" href="javascript:;"
+				data-ng-href="(= document.productSet | rbsURL:'edit':{rootProductId:document.id}=)">
+				<i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.product_set_content_list', ['ucf']) | raw }}
+			</a>
+			<a data-ng-show="! document.productSet" href="javascript:;"
+				data-ng-href="(= 'Rbs_Catalog_ProductSet' | rbsURL:'new':{rootProductId:document.id}=)">
+				<i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.product_set_aside_link', ['ucf']) | raw }}
+			</a>
+		</span>
+	</div>
+</div>

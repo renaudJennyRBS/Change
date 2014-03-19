@@ -19,6 +19,11 @@ class ProductPresentation
 	protected $catalogManager;
 
 	/**
+	 * @var \Change\Http\Web\UrlManager
+	 */
+	protected $urlManager;
+
+	/**
 	 * @var integer
 	 */
 	protected $productId;
@@ -84,6 +89,24 @@ class ProductPresentation
 	protected function getCatalogManager()
 	{
 		return $this->catalogManager;
+	}
+
+	/**
+	 * @param \Change\Http\Web\UrlManager $urlManager
+	 * @return $this
+	 */
+	public function setUrlManager($urlManager)
+	{
+		$this->urlManager = $urlManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Http\Web\UrlManager
+	 */
+	protected function getUrlManager()
+	{
+		return $this->urlManager;
 	}
 
 	/**
@@ -342,6 +365,15 @@ class ProductPresentation
 		{
 			$array['pictograms'] = $this->getPictograms();
 		}
+		$array['templateSuffix'] = $this->getTemplateSuffix();
 		return $array;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTemplateSuffix()
+	{
+		return 'simple';
 	}
 }

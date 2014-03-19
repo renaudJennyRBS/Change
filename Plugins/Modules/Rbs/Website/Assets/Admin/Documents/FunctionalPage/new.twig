@@ -1,7 +1,7 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Website_FunctionalPage">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Website_FunctionalPage">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Website_FunctionalPage'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -19,15 +19,13 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 
-	<div class="document-form" rbs-main-column>
-
-		<form ng-submit="submit()" rbs-document-editor-new="" rbs-document-editor-rbs-website-functionalpage="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-website-functional-page-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field-picker property="website" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'website'), ['ucf']) }}"
 					accepted-model="Rbs_Website_Website"
@@ -48,7 +46,7 @@
 					accepted-model="Rbs_Theme_Template" filter-property="mailSuitable" filter-value="0">
 				</rbs-field-document-select>
 
-				<div rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
+				<div data-rbs-tip="Rbs_Website_FunctionalPageEditorFunctions">
 					{{ i18n('m.rbs.website.admin.functional_page_editor_help') | raw }}
 				</div>
 
@@ -60,28 +58,26 @@
 
 				<div data-ng-show="document.useCache">
 					<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'TTL'), ['ucf']) }}">
-						<input class="form-control" size="7" rbs-smart-float="" ng-model="document.TTL" min="0" type="number" />
+						<input class="form-control" size="7" data-rbs-smart-float="" data-ng-model="document.TTL"
+							min="0" type="number" />
 						<span class="help-block">{{ i18n('m.rbs.website.admin.staticpage_ttl_help') }}</span>
 					</rbs-field>
 				</div>
 			</fieldset>
 
-			<fieldset rbs-editor-section="content"
+			<fieldset data-rbs-editor-section="content"
 				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Website_FunctionalPage', 'editableContent'), ['ucf']) }}"
 				data-editor-section-icon="icon-align-left">
 				<rbs-structure-editor name="contents" ng-model="document.editableContent" template="(=pageTemplate=)">
 				</rbs-structure-editor>
 			</fieldset>
 
-			<fieldset rbs-editor-section="systeminfo"
+			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
 				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
-
 		</form>
-
 	</div>
-
 </div>

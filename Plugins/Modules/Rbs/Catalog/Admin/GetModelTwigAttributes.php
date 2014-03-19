@@ -68,6 +68,7 @@ class GetModelTwigAttributes
 			{
 				$asideDirectives = [
 					['name' => 'rbs-aside-product-variant-group'],
+					['name' => 'rbs-aside-product-set'],
 					['name' => 'rbs-aside-product-merchandising']
 				];
 
@@ -75,7 +76,7 @@ class GetModelTwigAttributes
 
 				//Reorder the directives to put our asides just after the translation and menu asides
 				$order = ['asideDirectives' =>
-					['rbs-aside-editor-menu', 'rbs-aside-translation', 'rbs-aside-product-variant-group', 'rbs-aside-product-merchandising']
+					['rbs-aside-editor-menu', 'rbs-aside-translation', 'rbs-aside-product-variant-group', 'rbs-aside-product-set', 'rbs-aside-product-merchandising']
 				];
 
 				$adminManager->getSortedAttributes($attributes, $order);

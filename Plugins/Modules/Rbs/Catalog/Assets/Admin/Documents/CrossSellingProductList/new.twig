@@ -1,7 +1,7 @@
-<div class="row" rbs-document-editor-base="" model="Rbs_Catalog_CrossSellingProductList">
-
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Catalog_CrossSellingProductList">
 	<div class="col-md-12">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_CrossSellingProductList'), ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_CrossSellingProductList'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -12,29 +12,32 @@
 		{% include '@Rbs_Admin/view/asides.twig' %}
 	</div>
 
-	<div class="document-form" rbs-main-column>
-
-		<form ng-submit="submit()" rbs-document-editor-new="" rbs-document-editor-rbs-catalog-cross-selling-product-list="">
-
-			<fieldset rbs-editor-section=""
-			          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-catalog-product-list-new=""
+			data-rbs-document-editor-rbs-catalog-cross-selling-product-list-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field-text data-ng-hide="document.isNew()" property="label"
 					label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'label'), ['ucf']) }}">
 				</rbs-field-text>
 
-				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'crossSellingType'), ['ucf']) }}" required="true">
-					<rbs-collection-item-selector ng-model="document.crossSellingType" collection-code="Rbs_Catalog_Collection_CrossSellingType"></rbs-collection-item-selector>
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'crossSellingType'), ['ucf']) }}"
+					required="true">
+					<rbs-collection-item-selector ng-model="document.crossSellingType"
+						collection-code="Rbs_Catalog_Collection_CrossSellingType"></rbs-collection-item-selector>
 				</rbs-field>
 
-				<rbs-field-boolean property="symmetrical" label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'symmetrical'), ['ucf']) }}">
+				<rbs-field-boolean property="symmetrical"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'symmetrical'), ['ucf']) }}">
 				</rbs-field-boolean>
 
 				<hr />
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'productSortOrder'), ['ucf']) }}">
-					<select ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder" class="form-control"
-						rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
+					<select data-ng-model="document.productSortOrder" id="productSortOrder" name="productSortOrder"
+						class="form-control" data-rbs-items-from-collection="Rbs_Catalog_Collection_ProductSortOrders">
 					</select>
 					<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_productsortorder_help') }} </span>
 				</rbs-field>
@@ -55,21 +58,16 @@
 				<rbs-field-date property="endActivation"
 					label="{{ i18nAttr(propertyKey('Rbs_Catalog_CrossSellingProductList', 'endActivation'), ['ucf']) }}">
 				</rbs-field-date>
-
 			</fieldset>
 
-			<fieldset
-					rbs-editor-section="systeminfo"
-					data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
-					data-rbs-document-system-info-section="">
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
 			</fieldset>
 
 			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
-
 		</form>
-
 	</div>
-
 </div>
 
 

@@ -1,66 +1,63 @@
-(function ($) {
-
+(function($) {
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-	function changeEditorWebsitePage($routeParams, REST, Breadcrumb) {
+	function Editor($routeParams, REST, Breadcrumb) {
 		return {
-			restrict : 'A',
-			require : '^rbsDocumentEditorBase',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope, element, attrs, editorCtrl)
-			{
+			link: function(scope, element, attrs, editorCtrl) {
 				var contentSectionInitialized = false;
 
-				scope.onLoad = function () {
-					if (!scope.document.section){
-						var nodeId =  Breadcrumb.getCurrentNodeId();
+				scope.onLoad = function() {
+					if (!scope.document.section) {
+						var nodeId = Breadcrumb.getCurrentNodeId();
 						if (nodeId) {
-							REST.resource(nodeId).then(function (doc){ scope.document.section = doc; });
+							REST.resource(nodeId).then(function(doc) { scope.document.section = doc; });
 						}
 					}
 					if (scope.document.isNew() && $routeParams.website && !scope.document.website) {
 						scope.document.website = $routeParams.website;
-						REST.resource($routeParams.website).then(function (doc){ scope.document.website = doc; });
+						REST.resource($routeParams.website).then(function(doc) { scope.document.website = doc; });
 					}
 				};
 
-				scope.initSection = function (sectionName) {
+				scope.initSection = function(sectionName) {
 					if (sectionName === 'content') {
 						scope.loadTemplate();
 						contentSectionInitialized = true;
 					}
 				};
 
-				scope.$on('Navigation.saveContext', function (event, args) {
+				scope.$on('Navigation.saveContext', function(event, args) {
 					args.context.savedData('pageTemplate', scope.pageTemplate);
 				});
 
-				scope.onRestoreContext = function (currentContext) {
+				scope.onRestoreContext = function(currentContext) {
 					scope.pageTemplate = currentContext.savedData('pageTemplate');
 				};
 
-				scope.loadTemplate = function () {
+				scope.loadTemplate = function() {
 					var pt = scope.document.pageTemplate;
 					if (pt) {
-						if (!scope.pageTemplate || scope.pageTemplate.id != pt.id)
-						{
-							REST.resource(pt).then(function (template) {
-								scope.pageTemplate = {id:template.id, html: template.htmlForBackoffice, data: template.editableContent};
+						if (!scope.pageTemplate || scope.pageTemplate.id != pt.id) {
+							REST.resource(pt).then(function(template) {
+								scope.pageTemplate = {id: template.id, html: template.htmlForBackoffice, data: template.editableContent};
 							});
 						}
 					}
 				};
 
-				scope.leaveSection = function (section) {
+				scope.leaveSection = function(section) {
 					if (section === 'content') {
 						$('[data-rbs-aside-column]').children().show();
 						$('#rbsWebsitePageBlockPropertiesAside').hide();
 					}
 				};
 
-				scope.enterSection = function (section) {
+				scope.enterSection = function(section) {
 					if (section === 'content') {
 						$('[data-rbs-aside-column]').children().hide();
 						$('#rbsWebsitePageBlockPropertiesAside').show();
@@ -68,7 +65,7 @@
 					}
 				};
 
-				scope.finalizeNavigationContext = function (context) {
+				scope.finalizeNavigationContext = function(context) {
 					if (context.params.blockId) {
 						scope.$broadcast(
 							'Change:StructureEditor.setBlockParameter',
@@ -83,23 +80,21 @@
 
 				// This is for the "undo" dropdown menu:
 				// Each item automatically activates its previous siblings.
-				$('[data-role=undo-menu]').on('mouseenter', 'li', function () {
+				$('[data-role=undo-menu]').on('mouseenter', 'li', function() {
 					$(this).siblings().removeClass('active');
 					$(this).prevAll().addClass('active');
 				});
 
-				scope.$watch('document.pageTemplate', function (pageTemplate) {
+				scope.$watch('document.pageTemplate', function(pageTemplate) {
 					scope.loadTemplate();
 				}, true);
 			}
 		};
 	}
 
-	changeEditorWebsitePage.$inject = [
-		'$routeParams',
-		'RbsChange.REST',
-		'RbsChange.Breadcrumb'
-	];
-	app.directive('rbsDocumentEditorRbsWebsiteStaticpage', changeEditorWebsitePage);
+	Editor.$inject = [ '$routeParams', 'RbsChange.REST', 'RbsChange.Breadcrumb' ];
+	app.directive('rbsDocumentEditorRbsWebsiteStaticPageNew', Editor);
+	app.directive('rbsDocumentEditorRbsWebsiteStaticPageEdit', Editor);
+	app.directive('rbsDocumentEditorRbsWebsiteStaticPageTranslate', Editor);
 
 })(window.jQuery);

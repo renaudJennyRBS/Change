@@ -76,14 +76,18 @@
 	},
 	"view_my_cart":{
 		"message":"voir mon panier",
-		"description":"Used in ProductAddedToCart block."
+		"description":"Used in the modal dialog show after adding a product to cart."
 	},
 	"continue_shopping":{
 		"message":"poursuivre mes achats",
-		"description":"Used in ProductAddedToCart block."
+		"description":"Used in the modal dialog show after adding a product to cart."
 	},
 	"product_added_to_cart":{
 		"message":"produit ajouté au panier",
+		"description":"Used in the modal dialog show after adding a product to cart."
+	},
+	"this_product_added_to_cart":{
+		"message":"Ce produit a été ajouté au panier !",
 		"description":"Used in ProductAddedToCart block."
 	}
 }
