@@ -4,11 +4,12 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-address-fields
+	 * @id RbsChange.directive:rbsAddressFields
+	 * @name Address fields
 	 * @restrict EA
 	 *
 	 * @description
-	 * Displays the input fields to edit an address.
+	 * Displays the input fields to enter an address.
 	 *
 	 * @param {Document} address Address Document.
 	 */

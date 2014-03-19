@@ -13,18 +13,19 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-async-action-button
+	 * @id RbsChange.directive:rbsAsyncActionButton
+	 * @name Asynchronous action button
 	 * @restrict A
 	 *
 	 * @description
 	 * Used on a <code>&lt;button/&gt;</code> that triggers an async process to add a loading indicator
 	 * while the process is running.
-	 * When the process ends, the button can display a success label during a few seconds before returning back to
+	 * When the process ends, the button can display a <em>done label</em> during a few seconds before returning back to
 	 * its original label.
 	 *
 	 * @param {Boolean} rbs-async-action-button When the value switches to `true`, button is in "loading" state.
-	 * When the value switches back to `false`, the button is in "success" state and displays a <em>success icon</em>
-	 * with an optional <em>success text</em>.
+	 * When the value switches back to `false`, the button is in "success" state and displays a <em>done icon</em>
+	 * with an optional <em>done label</em>.
 	 * @param {String=} rbs-async-action-button-done-label Text to display when the button is in success state.
 	 * @param {Number=} rbs-async-action-button-done-timeout Timeout for success text in milliseconds (defaults to 1500).
 	 */

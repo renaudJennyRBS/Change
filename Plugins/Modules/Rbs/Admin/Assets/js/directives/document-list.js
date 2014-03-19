@@ -35,7 +35,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-list
+	 * @id RbsChange.directive:rbsDocumentList
+	 * @name Documents lists
 	 * @restrict E
 	 *
 	 * @param {String} model The Model name of the Documents to display in the list.

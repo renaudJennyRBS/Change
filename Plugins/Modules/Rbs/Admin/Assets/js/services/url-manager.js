@@ -1,3 +1,10 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function () {
 
 	"use strict";
@@ -6,6 +13,12 @@
 
 	app.config(['$provide', function ($provide)
 	{
+		/**
+		 * @ngdoc service
+		 * @name RbsChange.service:UrlManager
+		 *
+		 * @description Provides methods to get different URLs for the Backoffice UI.
+		 */
 		$provide.provider('RbsChange.UrlManager', ['RbsChange.Utils', '$routeProvider', function (Utils, $routeProvider)
 		{
 			this.$get = ['$location', function ($location) {
@@ -182,10 +195,30 @@
 				return {
 					'applyConfig' : applyConfig,
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:UrlManager
+					 * @name RbsChange.service:UrlManager#getListUrl
+					 *
+					 * @description Returns the URL of the view that lists the Documents.
+					 *
+					 * @param {Document|String} doc Document or Model name.
+					 * @param {Object=} params Parameters to append in the URL.
+					 */
 					'getListUrl' : function (doc, params) {
 						return getNamedUrl(doc, 'list', params);
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:UrlManager
+					 * @name RbsChange.service:UrlManager#getSelectorUrl
+					 *
+					 * @description Returns the URL of the view that lists the Documents for a selection from a picker.
+					 *
+					 * @param {Document|String} doc Document or Model name.
+					 * @param {Object=} params Parameters to append in the URL.
+					 */
 					'getSelectorUrl' : function (doc, params) {
 						var result = getNamedUrl(doc, 'selector', params);
 						if (result != "javascript:;")
@@ -193,6 +226,16 @@
 						return getNamedUrl(doc, 'list', params);
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:UrlManager
+					 * @name RbsChange.service:UrlManager#getEditUrl
+					 *
+					 * @description Returns the URL of the view that displays the editor of the given `doc`.
+					 *
+					 * @param {Document} doc Document.
+					 * @param {Object=} params Parameters to append in the URL.
+					 */
 					'getEditUrl' : function (doc, params) {
 						return getNamedUrl(doc, 'edit', params);
 					},
@@ -204,14 +247,46 @@
 						return getNamedUrl(doc, 'form', params);
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:UrlManager
+					 * @name RbsChange.service:UrlManager#getNewUrl
+					 *
+					 * @description Returns the URL of the view that displays the editor to create a new Document.
+					 *
+					 * @param {String} doc Document Model name.
+					 * @param {Object=} params Parameters to append in the URL.
+					 */
 					'getNewUrl' : function (doc, params) {
 						return getNamedUrl(doc, 'new', params);
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:UrlManager
+					 * @name RbsChange.service:UrlManager#getTranslateUrl
+					 *
+					 * @description Returns the URL of the view that displays the editor to translate the given `doc`.
+					 *
+					 * @param {Document} doc Document.
+					 * @param {Object=} params Parameters to append in the URL.
+					 */
 					'getTranslateUrl' : function (doc, LCID) {
 						return getNamedUrl(doc, 'translate', {'LCID': LCID || doc.LCID});
 					},
 
+					/**
+					 * @ngdoc function
+					 * @methodOf RbsChange.service:UrlManager
+					 * @name RbsChange.service:UrlManager#getUrl
+					 *
+					 * @description Returns the URL of the view that displays the editor of the given `doc`.
+					 *
+					 * Same as {@link RbsChange.service:UrlManager#getEditUrl `getEditUrl`}.
+					 *
+					 * @param {Document} doc Document.
+					 * @param {Object=} params Parameters to append in the URL.
+					 */
 					'getUrl' : function (doc, params, name) {
 						//TODO fallback, delete this condition after form.twig refactoring
 						if (!name || name == 'form') {
@@ -228,9 +303,33 @@
 
 	// Filters
 
-	var urlFilter = ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager) {
-
-		return function (doc, urlName, params) {
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsURL
+	 * @function
+	 *
+	 * @description
+	 * Returns the URL for the input Document, Model name or Plugin name.
+	 *
+	 * Routes are defined in the `Assets/Admin/routes.json` file in each Plugin. Commonly used route names are:
+	 *
+	 * - `new` (with input = Model name)
+	 * - `edit` (with input = Document)
+	 * - `list` (with input = Model name)
+	 *
+	 * @param {Document|String} input Document, Model name or Plugin name.
+	 * @param {String=} routeName Route name (defaults to <em>edit</em>).
+	 *
+	 * @example
+	 * <pre>
+	 *   <a ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'new' =)">Create new product</a>
+	 *   <a ng-href="(= product | rbsURL =)">Edit (= product.label =)</a>
+	 * </pre>
+	 */
+	var urlFilter = ['RbsChange.Breadcrumb', 'RbsChange.Utils', 'RbsChange.UrlManager', function (Breadcrumb, Utils, UrlManager)
+	{
+		return function (doc, routeName, params)
+		{
 			var	url, nodeId, qs;
 
 			if (params === 'tree') {
@@ -243,19 +342,19 @@
 			}
 
 			if (Utils.isDocument(doc)) {
-				if (urlName === 'createFrom') {
-					urlName = 'new';
+				if (routeName === 'createFrom') {
+					routeName = 'new';
 					qs = 'from=' + doc.id;
 				}
-				if (! urlName && doc.refLCID && doc.LCID !== doc.refLCID) {
-					urlName = 'translate';
+				if (! routeName && doc.refLCID && doc.LCID !== doc.refLCID) {
+					routeName = 'translate';
 				}
-				url = UrlManager.getUrl(doc, params, urlName);
+				url = UrlManager.getUrl(doc, params, routeName);
 				if (qs) {
 					url += (url.indexOf('?') === -1 ? '?' : '&') + qs;
 				}
 			} else if (Utils.isModelName(doc) || Utils.isModuleName(doc)) {
-				url = UrlManager.getUrl(doc, params || null, urlName);
+				url = UrlManager.getUrl(doc, params || null, routeName);
 			} else {
 				return 'javascript:;';
 			}

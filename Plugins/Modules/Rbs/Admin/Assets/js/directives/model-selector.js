@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-model-selector
+	 * @id RbsChange.directive:rbsModelSelector
+	 * @name Document Model selector (listbox)
 	 * @restrict E
 	 *
 	 * @description

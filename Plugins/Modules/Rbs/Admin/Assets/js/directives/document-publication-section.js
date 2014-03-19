@@ -11,7 +11,9 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-publication-section
+	 * @id RbsChange.directive:rbsDocumentPublicationSection
+	 * @name Document publication editor panel
+	 * @element fieldset
 	 * @restrict A
 	 *
 	 * @description

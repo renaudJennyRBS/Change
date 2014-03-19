@@ -14,7 +14,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-select
+	 * @id RbsChange.directive:rbsDocumentSelect
+	 * @name Document selector (listbox)
 	 * @restrict E
 	 *
 	 * @description
@@ -171,7 +172,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-chained-select
+	 * @id RbsChange.directive:rbsDocumentChainedSelect
+	 * @name Document selector (chained listboxes)
 	 * @restrict E
 	 *
 	 * @description

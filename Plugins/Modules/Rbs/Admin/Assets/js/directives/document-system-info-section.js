@@ -11,7 +11,9 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-system-info-section
+	 * @id RbsChange.directive:rbsDocumentSystemInfoSection
+	 * @name Document information panel
+	 * @element fieldset
 	 * @restrict A
 	 *
 	 * @description
@@ -20,7 +22,7 @@
 	 * @example
 	 * <pre>
 	 *     <fieldset data-rbs-editor-section="systeminfo"
-	 *        data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.status', ['ucf']) }}"
+	 *        data-editor-section-label="Information"
 	 *        data-rbs-document-system-info-section="">
 	 *     </fieldset>
 	 * </pre>

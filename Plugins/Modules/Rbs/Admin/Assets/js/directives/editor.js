@@ -999,9 +999,9 @@
 			localStorageService.add("localCopy", JSON.stringify(localCopyRepo));
 		}
 
-		function makeLocalCopyKey (doc, tempId) {
+		function makeLocalCopyKey (doc) {
 			var key;
-			if (doc.id < 0 || tempId)
+			if (doc.id < 0)
 			{
 				key =  doc.model + '-' + 'new';
 			}
@@ -1049,8 +1049,8 @@
 				}
 			},
 
-			'removeCreationLocalCopy' : function (doc, tempId) {
-				var	key = makeLocalCopyKey(doc, tempId);
+			'removeCreationLocalCopy' : function (doc) {
+				var	key = makeLocalCopyKey(doc);
 				if (localCopyRepo.hasOwnProperty(key)) {
 					delete localCopyRepo[key];
 					delete doc.META$.localCopy;

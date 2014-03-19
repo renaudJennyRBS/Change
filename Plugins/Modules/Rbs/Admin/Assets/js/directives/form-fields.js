@@ -15,7 +15,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-text
+	 * @id RbsChange.directive:rbsFieldText
+	 * @name Field text
 	 * @restrict E
 	 *
 	 * @description
@@ -28,7 +29,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-email
+	 * @id RbsChange.directive:rbsFieldEmail
+	 * @name Field email
 	 * @restrict E
 	 *
 	 * @description
@@ -41,7 +43,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-url
+	 * @id RbsChange.directive:rbsFieldUrl
+	 * @name Field URL
 	 * @restrict E
 	 *
 	 * @description
@@ -54,7 +57,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-integer
+	 * @id RbsChange.directive:rbsFieldInteger
+	 * @name Field integer
 	 * @restrict E
 	 *
 	 * @description
@@ -67,7 +71,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-float
+	 * @id RbsChange.directive:rbsFieldFloat
+	 * @name Field float
 	 * @restrict E
 	 *
 	 * @description
@@ -80,7 +85,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-boolean
+	 * @id RbsChange.directive:rbsFieldBoolean
+	 * @name Field boolean
 	 * @restrict E
 	 *
 	 * @description
@@ -93,7 +99,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-rich-text
+	 * @id RbsChange.directive:rbsFieldRichText
+	 * @name Field rich text
 	 * @restrict E
 	 *
 	 * @description
@@ -106,13 +113,14 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-picker
+	 * @id RbsChange.directive:rbsFieldPicker
+	 * @name Field document picker
 	 * @restrict E
 	 *
 	 * @description
 	 * Displays a control in a Document editor to select another Document.
 	 *
-	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-picker-single rbs-document-picker-single Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentPickerSingle rbs-document-picker-single Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -122,13 +130,14 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-picker-multiple
+	 * @id RbsChange.directive:rbsFieldPickerMultiple
+	 * @name Field multiple documents picker
 	 * @restrict E
 	 *
 	 * @description
 	 * Displays a control in a Document editor to select other Documents.
 	 *
-	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-picker-multiple rbs-document-picker-multiple Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentPickerMultiple rbs-document-picker-multiple Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -138,7 +147,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-date
+	 * @id RbsChange.directive:rbsFieldDate
+	 * @name Field date
 	 * @restrict E
 	 *
 	 * @description
@@ -151,7 +161,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-price
+	 * @id RbsChange.directive:rbsFieldPrice
+	 * @name Field price
 	 * @restrict E
 	 *
 	 * @description
@@ -164,7 +175,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-image
+	 * @id RbsChange.directive:rbsFieldImage
+	 * @name Field image (upload)
 	 * @restrict E
 	 *
 	 * @description
@@ -177,7 +189,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-file
+	 * @id RbsChange.directive:rbsFieldFile
+	 * @name Field file (upload)
 	 * @restrict E
 	 *
 	 * @description
@@ -190,7 +203,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-select-from-collection
+	 * @id RbsChange.directive:rbsFieldSelectFromCollection
+	 * @name Field select item from Collection
 	 * @restrict E
 	 *
 	 * @description
@@ -205,7 +219,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-address
+	 * @id RbsChange.directive:rbsFieldAddress
+	 * @name Field address
 	 * @restrict E
 	 *
 	 * @description
@@ -218,13 +233,14 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-chained-select
+	 * @id RbsChange.directive:rbsFieldChainedSelect
+	 * @name Field chained selects
 	 * @restrict E
 	 *
 	 * @description
 	 * Displays the controls in a Document editor to select a Document via multiple chained listboxes.
 	 *
-	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-chained-select Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentChainedSelect Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -234,13 +250,14 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-document-select
+	 * @id RbsChange.directive:rbsFieldDocumentSelect
+	 * @name Field Document selector (listbox)
 	 * @restrict E
 	 *
 	 * @description
 	 * Displays a control in a Document editor to select a Document via a listbox.
 	 *
-	 * For more information, see the {@link directives/RbsChange.directive:rbs-document-select Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentSelect Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -249,7 +266,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field
+	 * @id RbsChange.directive:rbsField
+	 * @name Field (generic container)
 	 * @restrict E
 	 *
 	 * @description
@@ -393,7 +411,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-field-label-title
+	 * @id RbsChange.directive:rbsFieldLabelTitle
+	 * @name Field label and title
 	 * @restrict E
 	 *
 	 * @description

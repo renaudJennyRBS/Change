@@ -26,7 +26,9 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-editor-base
+	 * @id RbsChange.directive:rbsDocumentEditorBase
+	 * @name Document editor (base controller)
+	 * @scope
 	 * @restrict A
 	 *
 	 * @description
@@ -84,7 +86,8 @@
 					properties = {},
 					createNewDocumentId,
 					modelInfoPromise,
-					editorUrl;
+					editorUrl,
+					documentReady = false;
 
 
 				//-----------------------------------------------//
@@ -150,10 +153,10 @@
 				};
 
 
-				$scope.$on('$locationChangeSuccess', function (event)
+				$scope.isDocumentReady = function ()
 				{
-					$scope.navigationContext = Navigation.getCurrentContext();
-				});
+					return documentReady;
+				};
 
 
 				//-----------------------------------------------//
@@ -226,8 +229,6 @@
 						}
 
 						Navigation.popContext(currentContext);
-						$scope.navigationContext = Navigation.getCurrentContext();
-
 						return document;
 					}
 					return null;
@@ -266,11 +267,6 @@
 						Navigation.startSelectionContext(tagerURL, null, params);
 					};
 				}
-
-
-
-
-
 
 
 				//-----------------------------------------------//
@@ -815,6 +811,8 @@
 					editorUrl = $location.absUrl();
 					initCorrection();
 
+					documentReady = true;
+
 					// Call `$scope.onReady()` if present.
 					if (angular.isFunction($scope.onReady)) {
 						$scope.onReady();
@@ -826,6 +824,7 @@
 					});
 
 					// Computes a list of changes on the fields in each digest cycle.
+					ArrayUtils.clear($scope.changes);
 					$scope.$watchCollection('document', function editorDocumentWatch ()
 					{
 						ArrayUtils.clear($scope.changes);
@@ -844,6 +843,12 @@
 								}
 							}
 						});
+					});
+
+					$rootScope.$on('$routeChangeStart', function () {
+						if ($scope.changes.length > 0) {
+							EditorManager.saveLocalCopy($scope.document, editorUrl);
+						}
 					});
 				}
 
@@ -913,9 +918,20 @@
 				}
 
 
-				$rootScope.$on('$locationChangeStart', function () {
-					if (! isUnchanged() ) {
-						EditorManager.saveLocalCopy($scope.document, editorUrl);
+				$scope.$on(Events.EditorUpdateDocumentProperties, function onUpdateDocumentPropertiesFn (event, properties)
+				{
+					angular.extend($scope.document, properties);
+					submit();
+				});
+
+				$scope.$on('Navigation.saveContext', function (event, args)
+				{
+					var label = $scope.document.label || i18n.trans('m.rbs.admin.adminjs.new_element | ucf');
+					args.context.label(label);
+					var data = {document: $scope.document, original: $scope.original};
+					args.context.savedData('editor_' + $scope.document.model, data);
+					if (angular.isFunction($scope.onSaveContext)) {
+						$scope.onSaveContext(args.context);
 					}
 				});
 
@@ -966,23 +982,6 @@
 
 			link : function linkFn (scope, element, attrs, ctrl)
 			{
-				scope.$on(Events.EditorUpdateDocumentProperties, function onUpdateDocumentPropertiesFn (event, properties)
-				{
-					angular.extend(scope.document, properties);
-					ctrl.submit();
-				});
-
-				scope.$on('Navigation.saveContext', function (event, args)
-				{
-					var label = scope.document.label || i18n.trans('m.rbs.admin.adminjs.new_element | ucf');
-					args.context.label(label);
-					var data = {document: scope.document, original: scope.original};
-					args.context.savedData('editor_' + scope.document.model, data);
-					if (angular.isFunction(scope.onSaveContext)) {
-						scope.onSaveContext(args.context);
-					}
-				});
-
 				scope.section = ctrl.getCurrentSection();
 			}
 		};
@@ -1001,13 +1000,15 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-editor-new
+	 * @id RbsChange.directive:rbsDocumentEditorNew
+	 * @name Document editor (creation)
 	 * @restrict A
 	 *
 	 * @description
 	 * Directive used to create new Documents.
 	 *
-	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
+	 * This directive requires the {@link change/RbsChange.directive:rbsDocumentEditorBase `rbs-document-editor-base`}
+	 * to be present on an ancestor.
 	 *
 	 * @example
 	 * <pre>
@@ -1108,13 +1109,15 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-editor-edit
+	 * @id RbsChange.directive:rbsDocumentEditorEdit
+	 * @name Document editor (edition)
 	 * @restrict A
 	 *
 	 * @description
 	 * Directive used to edit an existing Document.
 	 *
-	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
+	 * This directive requires the {@link change/RbsChange.directive:rbsDocumentEditorBase `rbs-document-editor-base`}
+	 * to be present on an ancestor.
 	 *
 	 * @example
 	 * <pre>
@@ -1185,13 +1188,15 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-editor-translate
+	 * @id RbsChange.directive:rbsDocumentEditorTranslate
+	 * @name Document editor (translation)
 	 * @restrict A
 	 *
 	 * @description
 	 * Directive used to translate an existing Document.
 	 *
-	 * This directive requires the <code>rbs-document-editor-edit=""</code> to be present on an ancestor.
+	 * This directive requires the {@link change/RbsChange.directive:rbsDocumentEditorEdit `rbs-document-editor-edit`}.
+	 * to be present on the same element.
 	 *
 	 * @example
 	 * <pre>
@@ -1260,14 +1265,15 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-document-editor-section
+	 * @id RbsChange.directive:rbsDocumentEditorSection
+	 * @name Document editor (section)
 	 * @restrict A
 	 *
 	 * @description
 	 * Placed on a <code>&lt;fieldset/&gt;</code> to declare a section in the editor.
 	 *
 	 * This directive looks for the fields in the <code>&lt;fieldset/&gt;</code> and registers a menu entry in the
-	 * {@link directives/RbsChange.directive:rbs-document-editor-base editor's Controller}.
+	 * {@link change/RbsChange.directive:rbsDocumentEditorBase editor's Controller}.
 	 *
 	 * This directive requires the <code>rbs-document-editor-base=""</code> to be present on an ancestor.
 	 */
@@ -1304,9 +1310,12 @@
 							'invalid' : [],
 							'corrected' : [],
 							'index' : iElement.index()
-						};
+						}, p;
 
 					entry.url = Utils.makeUrl($location.absUrl(), { section : (sectionId.length ? sectionId : null) });
+					if ((p = entry.url.indexOf('#')) !== -1) {
+						entry.url = entry.url.substring(0, p);
+					}
 
 					function refreshEntry ()
 					{
@@ -1361,7 +1370,7 @@
 
 
 	/**
-	 * @name RbsChange.directive:rbs-document-editor-create-from-message
+	 * @name RbsChange.directive:rbsDocumentEditorCreateFromMessage
 	 * @restrict A
 	 *
 	 * @description

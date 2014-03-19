@@ -1,8 +1,21 @@
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 (function ()
 {
+	"use strict";
 
 	var app = angular.module('RbsChange');
 
+	/**
+	 * @ngdoc service
+	 * @name RbsChange.service:NotificationCenter
+	 * @description Displays notifications to the user.
+	 */
 	app.provider('RbsChange.NotificationCenter', function RbsChangeNotificationCenterProvider()
 	{
 
@@ -13,7 +26,7 @@
 
 				notifications: [],
 
-				push: function (notification)
+				push : function (notification)
 				{
 					notification.level = notification.level || "info";
 
@@ -37,8 +50,19 @@
 					this.notifications.push(notification);
 				},
 
-				// timeout in milliseconds
-				info: function (title, body, id, timeout)
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:NotificationCenter
+				 * @name RbsChange.service:NotificationCenter#info
+				 *
+				 * @description Displays an informational notification to the user.
+				 *
+				 * @param {String} title The notification's title.
+				 * @param {String} body The notification's main contents.
+				 * @param {String=} id Multiple notifications with the same ids will only be displayed once.
+				 * @param {Integer=} timeout Timeout in millisecond after which the notification is removed from the screen.
+				 */
+				info : function (title, body, id, timeout)
 				{
 					this.push({
 						'title': title,
@@ -49,7 +73,19 @@
 					});
 				},
 
-				warning: function (title, body, id, context)
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:NotificationCenter
+				 * @name RbsChange.service:NotificationCenter#warning
+				 *
+				 * @description Displays a warning notification to the user.
+				 *
+				 * @param {String} title The notification's title.
+				 * @param {String} body The notification's main contents.
+				 * @param {String=} id Multiple notifications with the same ids will only be displayed once.
+				 * @param {Object=} context Object that can be used as a context.
+				 */
+				warning : function (title, body, id, context)
 				{
 					this.push({
 						'title': title,
@@ -60,7 +96,19 @@
 					});
 				},
 
-				error: function (title, body, id, context)
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:NotificationCenter
+				 * @name RbsChange.service:NotificationCenter#error
+				 *
+				 * @description Displays an error notification to the user.
+				 *
+				 * @param {String} title The notification's title.
+				 * @param {String} body The notification's main contents.
+				 * @param {String=} id Multiple notifications with the same ids will only be displayed once.
+				 * @param {Object=} context Object that can be used as a context.
+				 */
+				error : function (title, body, id, context)
 				{
 					this.push({
 						'title': title,
@@ -71,12 +119,28 @@
 					});
 				},
 
-				remove: function (index)
+				/**
+				 * @ngdoc remove
+				 * @methodOf RbsChange.service:NotificationCenter
+				 * @name RbsChange.service:NotificationCenter#remove
+				 *
+				 * @description Removes the notification at the given `index`.
+				 *
+				 * @param {Integer} index Index of the notification to be removed.
+				 */
+				remove : function (index)
 				{
 					ArrayUtils.remove(this.notifications, index, index);
 				},
 
-				clear: function ()
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:NotificationCenter
+				 * @name RbsChange.service:NotificationCenter#clear
+				 *
+				 * @description Removes all the notifications.
+				 */
+				clear : function ()
 				{
 					ArrayUtils.clear(this.notifications);
 				},
@@ -86,6 +150,15 @@
 					return '<ul><li>' + array.join('</li><li>') + '</li></ul>';
 				},
 
+				/**
+				 * @ngdoc function
+				 * @methodOf RbsChange.service:NotificationCenter
+				 * @name RbsChange.service:NotificationCenter#getIndexOfNotificationById
+				 *
+				 * @description Returns the index of a notification from its id.
+				 *
+				 * @param {String} id The notification ID.
+				 */
 				getIndexOfNotificationById : function (id)
 				{
 					for (var i = 0; i < this.notifications.length; i++)

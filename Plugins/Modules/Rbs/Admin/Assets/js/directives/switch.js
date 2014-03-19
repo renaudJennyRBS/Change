@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-switch
+	 * @id RbsChange.directive:rbsSwitch
+	 * @name Yes/No switch control
 	 * @restrict E
 	 *
 	 * @description

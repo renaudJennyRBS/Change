@@ -21,7 +21,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-token-list
+	 * @id RbsChange.directive:rbsTokenList
+	 * @name Token list
 	 * @restrict E
 	 *
 	 * @description

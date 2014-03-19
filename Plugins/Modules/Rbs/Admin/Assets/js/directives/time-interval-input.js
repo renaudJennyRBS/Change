@@ -13,7 +13,8 @@
 
 	/**
 	 * @ngdoc directive
-	 * @name RbsChange.directive:rbs-time-interval-input
+	 * @id RbsChange.directive:rbsTimeIntervalInput
+	 * @name Time interval (duration) input
 	 * @restrict E
 	 *
 	 * @description
