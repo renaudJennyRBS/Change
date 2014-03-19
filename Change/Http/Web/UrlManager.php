@@ -292,6 +292,7 @@ class UrlManager extends \Change\Http\UrlManager
 		if ($section instanceof \Change\Presentation\Interfaces\Website)
 		{
 			$website = $section;
+			$section = null;
 		}
 		else
 		{
@@ -354,9 +355,13 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	protected function getPathInfo($document, $website, $LCID, $section = null, $queryParameters)
 	{
+		$websiteId = $website->getId();
 		$documentId = is_numeric($document) ? intval($document) : $document->getId();
 		$sectionId = $section ? $section->getId() : null;
-		$pathRules = $this->getPathRuleManager()->findPathRules($website->getId(), $LCID, $documentId, $sectionId);
+		if ($sectionId && $sectionId == $websiteId) {
+			$sectionId = null;
+		}
+		$pathRules = $this->getPathRuleManager()->findPathRules($websiteId, $LCID, $documentId, $sectionId);
 		if (count($pathRules))
 		{
 			$pathRule = $this->selectPathRule($document, $pathRules, $queryParameters);

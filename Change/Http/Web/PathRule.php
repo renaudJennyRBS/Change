@@ -102,6 +102,10 @@ class PathRule
 	public function setWebsiteId($websiteId)
 	{
 		$this->websiteId = $websiteId;
+		if ($websiteId && $websiteId == $this->sectionId)
+		{
+			$this->setSectionId(0);
+		}
 		return $this;
 	}
 
@@ -242,6 +246,10 @@ class PathRule
 	 */
 	public function setSectionId($sectionId)
 	{
+		if ($sectionId && $sectionId == $this->websiteId)
+		{
+			$sectionId = 0;
+		}
 		$this->sectionId = $sectionId;
 		return $this;
 	}
