@@ -81,10 +81,10 @@
 			restrict: 'AE',
 			templateUrl: '/menu.static.tpl',
 			link: function(scope) {
-				jQuery('body').scrollspy({ target: '.process-sidebar' });
+				/*jQuery('body').scrollspy({ target: '.process-sidebar' });
 				scope.$watch('currentStep', function() {
 					jQuery('body').each(function() { $(this).scrollspy('refresh'); });
-				});
+				});*/
 			}
 		}
 	}
