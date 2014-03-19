@@ -9,8 +9,5 @@
 		<property name="editableContent" type="JSON" localized="true" has-correction="true" />
 		<property name="useCache" type="Boolean" default-value="false" />
 		<property name="TTL" type="Integer" default-value="0" />
-		<!-- TODO UNCOMMENT THIS AFTER SKIN MODULE IMPLEMENTATION
-		<property name="skin" type="Document" document-type="Rbs_Skin_Skin" />
-		-->
 	</properties>
 </document>

@@ -448,6 +448,15 @@ class Model
 				$property->setStateless(true);
 				$this->properties[$property->getName()] = $property;
 			}
+			else
+			{
+				/* @var $publicationSectionProperty Property */
+				$publicationSectionProperty = $this->properties['publicationSections'];
+				if ($publicationSectionProperty->getType() !== 'DocumentArray')
+				{
+					throw new \RuntimeException('publicationSections must be DocumentArray', 999999);
+				}
+			}
 
 			$property = new Property($this, 'publicationStatus', 'String');
 			$this->properties[$property->getName()] = $property;
