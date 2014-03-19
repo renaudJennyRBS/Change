@@ -50,16 +50,19 @@ class GetRoutes
 				if ($model && $model->isEditable() && !$model->isAbstract())
 				{
 					$routeName = $path . '/timeline';
-					$routes[$routeName] = [
-						'model' => $route['model'],
-						'name' => 'timeline',
-						'rule' => [
-							'templateUrl' => 'Rbs/Timeline/timeline.twig?model=' . $route['model'],
-							'controller' => 'RbsChangeTimelineController',
-							'labelKey' => 'm.rbs.timeline.admin.timeline | ucf'
-						],
-						'auto' => true
-					];
+					if (!isset($routes[$routeName]))
+					{
+						$routes[$routeName] = [
+							'model' => $route['model'],
+							'name' => 'timeline',
+							'rule' => [
+								'templateUrl' => 'Rbs/Timeline/timeline.twig?model=' . $route['model'],
+								'controller' => 'RbsChangeTimelineController',
+								'labelKey' => 'm.rbs.timeline.admin.timeline | ucf'
+							],
+							'auto' => true
+						];
+					}
 				}
 			}
 		}
