@@ -65,13 +65,14 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 							$index = $client->getIndex($indexDef->getName());
 							$q = $this->buildQuery($terms);
 							$result['q'] = $q->toArray();
-							$resultSet = $index->getType($indexDef->getDefaultTypeName())->search($this->buildQuery($terms));
+							$resultSet = $index->getType($indexDef->getDefaultTypeName())->search($q);
 							if ($resultSet->count())
 							{
 								$items = array();
 								foreach ($resultSet->getResults() as $r)
 								{
-									$items[] = $r->title;
+									$item = $r->title;
+									$items[] = is_array($item) ? $item[0] : $item;
 								}
 								$result['items'] = array_values(array_unique($items));
 							}
@@ -92,7 +93,7 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$bool = new \Elastica\Query\Bool();
 		foreach ($terms as $term)
 		{
-			$bool->addShould(new \Elastica\Query\Field('title.autocomplete', $term));
+			$bool->addShould(new \Elastica\Query\Term(['title.autocomplete' => $term]));
 		}
 		$bool->setMinimumNumberShouldMatch(max(1, count($terms) - 1));
 		$query = new \Elastica\Query($bool);

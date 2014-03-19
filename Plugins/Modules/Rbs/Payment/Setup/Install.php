@@ -113,6 +113,9 @@ class Install extends \Change\Plugins\InstallBase
 			$sipsConnector->setTpeParmcomContent(file_get_contents(__DIR__ . '/Assets/AtosSips/parmcom.011223344551111'));
 			$sipsConnector->setTpeCertifContent(file_get_contents(__DIR__ . '/Assets/AtosSips/certif.fr.011223344551111.php'));
 
+			$filterData = json_decode('{"name":"group","parameters":{"all":0,"configured":0},"operator":"AND","filters":[{"name":"paymentAmountValue","parameters":{"propertyName":"paymentAmountValue","operator":"gte","value":1}},{"name":"paymentAmountValue","parameters":{"propertyName":"paymentAmountValue","operator":"lte","value":3000}}]}', true);
+			$sipsConnector->setCartFilterData($filterData);
+
 			if ($sipsConnector->getVisual() == null)
 			{
 				$applicationServices->getStorageManager();

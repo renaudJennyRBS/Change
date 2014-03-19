@@ -56,8 +56,6 @@
 						iAttrs.$observe('filterValue', function (value) {
 							if (value && parseInt(value, 10) > 0) {
 								loadFn();
-							} else {
-								setOptions([]);
 							}
 						});
 					} else {
@@ -90,8 +88,7 @@
 							label: '- ' + emptyLabel + ' -'
 						});
 						scope.options = options;
-						var selectedOption = findOption(scope.value);
-						scope.documentTarget = selectedOption;
+						scope.documentTarget = findOption(scope.value);;
 					}
 
 					function findOption(id) {
