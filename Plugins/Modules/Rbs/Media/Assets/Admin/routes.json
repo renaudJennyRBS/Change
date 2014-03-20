@@ -27,16 +27,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Media/Image/:id/timeline": {
-		"model": "Rbs_Media_Image",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Media_Image",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Media/Image/:id/translate/:LCID": {
 		"model": "Rbs_Media_Image",
 		"name": "translate",
@@ -44,26 +34,6 @@
 			"templateUrl": "Document/Rbs/Media/Image/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Media/Image/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Media_Image",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Media_Image",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Media/Image/:id/workflow": {
-		"model": "Rbs_Media_Image",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Media_Image",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": true
 	},

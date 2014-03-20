@@ -27,26 +27,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Theme/:themeId/:categoryName/:id/timeline": {
-		"model": "Rbs_Theme_Template",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Theme_Template",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/Theme/:themeId/:categoryName/:id/workflow": {
-		"model": "Rbs_Theme_Template",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Theme_Template",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Generic/Theme/:themeId/:categoryName/new": {
 		"model": "Rbs_Theme_Template",
 		"name": "new",
@@ -68,8 +48,6 @@
 	"/Rbs/Theme/": false,
 	"/Rbs/Theme/Template/": false,
 	"/Rbs/Theme/Template/:id": false,
-	"/Rbs/Theme/Template/:id/timeline": false,
-	"/Rbs/Theme/Template/:id/workflow": false,
 	"/Rbs/Theme/Template/new": false,
 	"/Rbs/Theme/Theme/": false,
 	"/Rbs/Theme/Theme/:id": false,

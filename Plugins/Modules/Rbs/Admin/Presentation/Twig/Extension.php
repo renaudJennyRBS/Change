@@ -265,7 +265,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function namedURL($model, $name)
 	{
-		$route = $this->adminManager->getNamedRoute($model, $name);
+		$route = $this->adminManager->getRoutesHelper()->getNamedRoute($model, $name);
 		if (is_array($route))
 		{
 			if (strpos($route['path'], '/:'))

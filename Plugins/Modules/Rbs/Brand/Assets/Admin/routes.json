@@ -3,9 +3,6 @@
 	"/Rbs/Brand/Brand/": false,
 	"/Rbs/Brand/Brand/:id": false,
 	"/Rbs/Brand/Brand/:id/translate/:LCID": false,
-	"/Rbs/Brand/Brand/:id/translate/:LCID/workflow": false,
-	"/Rbs/Brand/Brand/:id/urls": false,
-	"/Rbs/Brand/Brand/:id/workflow": false,
 	"/Rbs/Brand/Brand/new": false,
 	"/Rbs/Catalog/Brand/": {
 		"model": "Rbs_Brand_Brand",
@@ -33,35 +30,6 @@
 			"templateUrl": "Document/Rbs/Brand/Brand/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Brand/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Brand_Brand",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Brand_Brand",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Brand/:id/urls": {
-		"model": "Rbs_Brand_Brand",
-		"name": "urls",
-		"rule": {
-			"templateUrl": "Rbs/Admin/url-manager.twig",
-			"labelKey": "m.rbs.admin.admin.urls | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/Brand/:id/workflow": {
-		"model": "Rbs_Brand_Brand",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Brand_Brand",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": false
 	},

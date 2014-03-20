@@ -18,16 +18,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Tag/:id/timeline": {
-		"model": "Rbs_Tag_Tag",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Tag_Tag",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Generic/Tag/new": {
 		"model": "Rbs_Tag_Tag",
 		"name": "new",
@@ -40,6 +30,5 @@
 	"/Rbs/Tag/": false,
 	"/Rbs/Tag/Tag/": false,
 	"/Rbs/Tag/Tag/:id": false,
-	"/Rbs/Tag/Tag/:id/timeline": false,
 	"/Rbs/Tag/Tag/new": false
 }

@@ -18,16 +18,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Commerce/BillingArea/:id/timeline": {
-		"model": "Rbs_Price_BillingArea",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Price_BillingArea",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Commerce/BillingArea/:id/translate/:LCID": {
 		"model": "Rbs_Price_BillingArea",
 		"name": "translate",
@@ -66,26 +56,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Commerce/Tax/:id/timeline": {
-		"model": "Rbs_Price_Tax",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Price_Tax",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/Tax/:id/workflow": {
-		"model": "Rbs_Price_Tax",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Price_Tax",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Commerce/Tax/new": {
 		"model": "Rbs_Price_Tax",
 		"name": "new",
@@ -106,7 +76,6 @@
 	},
 	"/Rbs/Price/BillingArea/": false,
 	"/Rbs/Price/BillingArea/:id": false,
-	"/Rbs/Price/BillingArea/:id/timeline": false,
 	"/Rbs/Price/BillingArea/:id/translate/:LCID": false,
 	"/Rbs/Price/BillingArea/new": false,
 	"/Rbs/Price/Price/": {
@@ -137,26 +106,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Price/Price/:id/timeline": {
-		"model": "Rbs_Price_Price",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Price_Price",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Price/Price/:id/workflow": {
-		"model": "Rbs_Price_Price",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Price_Price",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Price/Price/new": {
 		"model": "Rbs_Price_Price",
 		"name": "new",
@@ -168,7 +117,5 @@
 	},
 	"/Rbs/Price/Tax/": false,
 	"/Rbs/Price/Tax/:id": false,
-	"/Rbs/Price/Tax/:id/timeline": false,
-	"/Rbs/Price/Tax/:id/workflow": false,
 	"/Rbs/Price/Tax/new": false
 }

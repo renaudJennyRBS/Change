@@ -18,16 +18,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Address/:id/timeline": {
-		"model": "Rbs_Geo_Address",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_Address",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Generic/Address/new": {
 		"model": "Rbs_Geo_Address",
 		"name": "new",
@@ -53,26 +43,6 @@
 			"templateUrl": "Document/Rbs/Geo/AddressFields/form.twig",
 			"labelKey": "m.rbs.geo.documents.addressfields | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/AddressFields/:id/timeline": {
-		"model": "Rbs_Geo_AddressFields",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_AddressFields",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/AddressFields/:id/workflow": {
-		"model": "Rbs_Geo_AddressFields",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Geo_AddressFields",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": false
 	},
@@ -104,16 +74,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/Country/:id/timeline": {
-		"model": "Rbs_Geo_Country",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_Country",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Generic/Country/new": {
 		"model": "Rbs_Geo_Country",
 		"name": "new",
@@ -142,16 +102,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/TerritorialUnit/:id/timeline": {
-		"model": "Rbs_Geo_TerritorialUnit",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_TerritorialUnit",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Generic/TerritorialUnit/new": {
 		"model": "Rbs_Geo_TerritorialUnit",
 		"name": "new",
@@ -177,16 +127,6 @@
 			"templateUrl": "Document/Rbs/Geo/Zone/form.twig",
 			"labelKey": "m.rbs.geo.documents.zone | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/Zone/:id/timeline": {
-		"model": "Rbs_Geo_Zone",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_Zone",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": false
 	},
@@ -219,16 +159,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Geo/Address/:id/timeline": {
-		"model": "Rbs_Geo_Address",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_Address",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Geo/Address/new": {
 		"model": "Rbs_Geo_Address",
 		"name": "new",
@@ -249,16 +179,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Geo/AddressField/:id/timeline": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Geo_AddressField",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Geo/AddressField/:id/translate/:LCID": {
 		"model": "Rbs_Geo_AddressField",
 		"name": "translate",
@@ -266,26 +186,6 @@
 			"templateUrl": "Document/Rbs/Geo/AddressField/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Geo/AddressField/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Geo_AddressField",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Geo/AddressField/:id/workflow": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Geo_AddressField",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": true
 	},
@@ -300,19 +200,14 @@
 	},
 	"/Rbs/Geo/AddressFields/": false,
 	"/Rbs/Geo/AddressFields/:id": false,
-	"/Rbs/Geo/AddressFields/:id/timeline": false,
-	"/Rbs/Geo/AddressFields/:id/workflow": false,
 	"/Rbs/Geo/AddressFields/new": false,
 	"/Rbs/Geo/Country/": false,
 	"/Rbs/Geo/Country/:id": false,
-	"/Rbs/Geo/Country/:id/timeline": false,
 	"/Rbs/Geo/Country/new": false,
 	"/Rbs/Geo/TerritorialUnit/": false,
 	"/Rbs/Geo/TerritorialUnit/:id": false,
-	"/Rbs/Geo/TerritorialUnit/:id/timeline": false,
 	"/Rbs/Geo/TerritorialUnit/new": false,
 	"/Rbs/Geo/Zone/": false,
 	"/Rbs/Geo/Zone/:id": false,
-	"/Rbs/Geo/Zone/:id/timeline": false,
 	"/Rbs/Geo/Zone/new": false
 }

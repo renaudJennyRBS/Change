@@ -18,16 +18,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Commerce/AtosSipsConnector/:id/timeline": {
-		"model": "Rbs_Payment_AtosSipsConnector",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Payment_AtosSipsConnector",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Commerce/AtosSipsConnector/:id/translate/:LCID": {
 		"model": "Rbs_Payment_AtosSipsConnector",
 		"name": "translate",
@@ -35,26 +25,6 @@
 			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/AtosSipsConnector/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Payment_AtosSipsConnector",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_AtosSipsConnector",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/AtosSipsConnector/:id/workflow": {
-		"model": "Rbs_Payment_AtosSipsConnector",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_AtosSipsConnector",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": false
 	},
@@ -95,16 +65,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Commerce/DeferredConnector/:id/timeline": {
-		"model": "Rbs_Payment_DeferredConnector",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Payment_DeferredConnector",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Commerce/DeferredConnector/:id/translate/:LCID": {
 		"model": "Rbs_Payment_DeferredConnector",
 		"name": "translate",
@@ -112,26 +72,6 @@
 			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/DeferredConnector/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Payment_DeferredConnector",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_DeferredConnector",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/DeferredConnector/:id/workflow": {
-		"model": "Rbs_Payment_DeferredConnector",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Payment_DeferredConnector",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": false
 	},
@@ -163,16 +103,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Order/Transaction/:id/timeline": {
-		"model": "Rbs_Payment_Transaction",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Payment_Transaction",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Order/Transaction/new": {
 		"model": "Rbs_Payment_Transaction",
 		"name": "new",
@@ -184,20 +114,13 @@
 	},
 	"/Rbs/Payment/": false,
 	"/Rbs/Payment/AtosSipsConnector/:id": false,
-	"/Rbs/Payment/AtosSipsConnector/:id/timeline": false,
 	"/Rbs/Payment/AtosSipsConnector/:id/translate/:LCID": false,
-	"/Rbs/Payment/AtosSipsConnector/:id/translate/:LCID/workflow": false,
-	"/Rbs/Payment/AtosSipsConnector/:id/workflow": false,
 	"/Rbs/Payment/AtosSipsConnector/new": false,
 	"/Rbs/Payment/DeferredConnector/": false,
 	"/Rbs/Payment/DeferredConnector/:id": false,
-	"/Rbs/Payment/DeferredConnector/:id/timeline": false,
 	"/Rbs/Payment/DeferredConnector/:id/translate/:LCID": false,
-	"/Rbs/Payment/DeferredConnector/:id/translate/:LCID/workflow": false,
-	"/Rbs/Payment/DeferredConnector/:id/workflow": false,
 	"/Rbs/Payment/DeferredConnector/new": false,
 	"/Rbs/Payment/Transaction/": false,
 	"/Rbs/Payment/Transaction/:id": false,
-	"/Rbs/Payment/Transaction/:id/timeline": false,
 	"/Rbs/Payment/Transaction/new": false
 }

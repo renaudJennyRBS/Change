@@ -54,16 +54,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/User/Group/:id/timeline": {
-		"model": "Rbs_User_Group",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_User_Group",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/User/Group/new": {
 		"model": "Rbs_User_Group",
 		"name": "new",
@@ -130,16 +120,6 @@
 			"labelKey": "m.rbs.user.admin.public_profile_sub_title | ucf"
 		},
 		"auto": false
-	},
-	"/Rbs/User/User/:id/timeline": {
-		"model": "Rbs_User_User",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_User_User",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
 	},
 	"/Rbs/User/User/new": {
 		"model": "Rbs_User_User",

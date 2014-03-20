@@ -28,42 +28,29 @@ class GetRoutes
 			return;
 		}
 
-		$adminManager = $event->getTarget();
-		if ($adminManager instanceof \Rbs\Admin\AdminManager)
-		{
-			//filter edit routes
-			$editRoutes = [];
-			foreach ($routes as $path => $route)
-			{
-				if (isset($route['name']) && isset($route['model']) &&
-					                           //TODO: the last OR is a fallback to 'form', remove this condition after form refactoring
-					($route['name'] === 'edit' || $route['name'] === 'form'))
-				{
-					$editRoutes[$path] = $route;
-				}
-			}
+		//NEVER USE the routesHelper directly from adminManager! That will call this method again (infinite loop)!
+		$routesHelper = new \Rbs\Admin\RoutesHelper($routes);
 
-			$modelManager = $event->getApplicationServices()->getModelManager();
-			foreach ($editRoutes as $path => $route)
+		//TODO: the last name 'form' is a fallback, remove this name after form refactoring
+		$editRoutes = $routesHelper->getRoutesWithNames(['edit', 'form']);
+		$timelineRoutes = $routesHelper->getRoutesWithNames(['timeline']);
+		$editRoutes = $routesHelper->getRoutesDiff($editRoutes, $timelineRoutes, 'model');
+
+		foreach ($editRoutes as $path => $route)
+		{
+			$routeName = $path . '/timeline';
+			if (!isset($routes[$routeName]))
 			{
-				$model = $modelManager->getModelByName($route['model']);
-				if ($model && $model->isEditable() && !$model->isAbstract())
-				{
-					$routeName = $path . '/timeline';
-					if (!isset($routes[$routeName]))
-					{
-						$routes[$routeName] = [
-							'model' => $route['model'],
-							'name' => 'timeline',
-							'rule' => [
-								'templateUrl' => 'Rbs/Timeline/timeline.twig?model=' . $route['model'],
-								'controller' => 'RbsChangeTimelineController',
-								'labelKey' => 'm.rbs.timeline.admin.timeline | ucf'
-							],
-							'auto' => true
-						];
-					}
-				}
+				$routes[$routeName] = [
+					'model' => $route['model'],
+					'name' => 'timeline',
+					'rule' => [
+						'templateUrl' => 'Rbs/Timeline/timeline.twig?model=' . $route['model'],
+						'controller' => 'RbsChangeTimelineController',
+						'labelKey' => 'm.rbs.timeline.admin.timeline | ucf'
+					],
+					'auto' => true
+				];
 			}
 		}
 		$event->setParam('routes', $routes);

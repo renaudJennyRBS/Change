@@ -18,16 +18,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Commerce/WebStore/:id/timeline": {
-		"model": "Rbs_Store_WebStore",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Store_WebStore",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Commerce/WebStore/:id/translate/:LCID": {
 		"model": "Rbs_Store_WebStore",
 		"name": "translate",
@@ -50,7 +40,6 @@
 	"/Rbs/Store/": false,
 	"/Rbs/Store/WebStore/": false,
 	"/Rbs/Store/WebStore/:id": false,
-	"/Rbs/Store/WebStore/:id/timeline": false,
 	"/Rbs/Store/WebStore/:id/translate/:LCID": false,
 	"/Rbs/Store/WebStore/new": false
 }
