@@ -1,0 +1,23 @@
+<div class="row" data-ng-controller="RbsCommerceCartList">
+
+	<div rbs-aside-column>
+		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.commerce.admin.cart_list', ['ucf']) }}"></rbs-page-header>
+
+		<rbs-document-list data-dlid="DLRbsCommerceCart" collection="collection" selectable="false" actions=""
+				on-reload="refreshCollection">
+			<rbs-column name="identifier" label="{{ i18nAttr('m.rbs.commerce.admin.cart', ['ucf']) }}">
+				<a ng-href="(= 'Rbs_Commerce_Cart' | rbsURL:'edit':{identifier:doc.identifier} =)">{{ i18n('m.rbs.admin.admin.display', ['ucf']) }}</a></rbs-column>
+			<rbs-column name="line_count" label="{{ i18nAttr('m.rbs.commerce.admin.cart_line_count', ['ucf']) }}">(= doc.line_count =)</rbs-column>
+			<rbs-column name="total_amount_with_taxes" label="{{ i18nAttr('m.rbs.commerce.admin.cart_total_amount', ['ucf']) }}">(= doc.formated_total_amount_with_taxes =)</rbs-column>
+			<rbs-column name="payment_amount_with_taxes" label="{{ i18nAttr('m.rbs.commerce.admin.cart_payment_amount', ['ucf']) }}">(= doc.formated_payment_amount_with_taxes =)</rbs-column>
+			<rbs-column name="transaction" label="{{ i18nAttr('m.rbs.payment.documents.transaction', ['ucf']) }}">
+				<a ng-if="doc.transaction" ng-href="(= doc.transaction|rbsURL =)">(= doc.transaction.formattedProcessingStatus =)</a>
+				<span ng-if="!doc.transaction">(= false | rbsBoolean =)</span>
+			</rbs-column>
+		</rbs-document-list>
+	</div>
+</div>

@@ -111,5 +111,24 @@
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
+	},
+	"/Rbs/Order/Cart/": {
+		"model": "Rbs_Commerce_Cart",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Cart/list.twig",
+			"labelKey": "m.rbs.commerce.admin.cart_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Cart/:identifier": {
+		"model": "Rbs_Commerce_Cart",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Commerce/Cart/edit.twig",
+			"labelKey": "m.rbs.commerce.admin.cart | ucf"
+		},
+		"auto": false
 	}
+
 }
