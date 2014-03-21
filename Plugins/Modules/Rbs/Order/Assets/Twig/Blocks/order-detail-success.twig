@@ -1,0 +1,330 @@
+<h1>{{ i18n('m.rbs.order.front.order_details', ['ucf']) }}</h1>
+
+<div class="row no-bottom-margin">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">
+					<span class="glyphicon glyphicon-info-sign"></span>
+					{{ i18n('m.rbs.order.front.order_general_information', ['ucf']) }}
+				</h2>
+			</div>
+			<dl class="dl-horizontal">
+				<dt>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</dt>
+				<dd>
+					{% if order.code %}
+						{{ order.code }}
+					{% else %}
+						<em>{{ i18n('m.rbs.order.front.generating_order', ['ucf']) }}</em>
+					{% endif %}
+				</dd>
+				<dt>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</dt>
+				<dd>{{ order.date | transDateTime }}</dd>
+				<dt>{{ i18n('m.rbs.order.front.order_processing_status', ['ucf']) }}</dt>
+				<dd{% if order.processingStatus == 'canceled' %} class="text-warning"{% endif %}>
+					{{ i18n('m.rbs.order.front.order_processing_status_' ~ order.processingStatus, ['ucf']) }}
+				</dd>
+			</dl>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">
+					<span class="glyphicon glyphicon-user"></span>
+					{{ i18n('m.rbs.order.front.order_personal_information', ['ucf']) }}
+				</h2>
+			</div>
+			<div class="panel-body">
+				<p>
+					<a href="mailto:{{ order.email }}">{{ order.email }}</a>
+				</p>
+				{% set lines = order.address.lines %}
+				<address class="no-bottom-margin">
+					<strong>{{ lines[0] }}</strong>
+					{% for line in lines %}
+						{% if not loop.first %}<br />{{ line }}{% endif %}
+					{% endfor %}
+				</address>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<span class="glyphicon glyphicon-shopping-cart"></span>
+			{{ i18n('m.rbs.order.front.order_lines', ['ucf']) }}
+		</h2>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-striped table-vertical-middle no-bottom-margin">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>{{ i18n('m.rbs.commerce.front.designation', ['ucf']) }}</th>
+					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+						<th>{{ i18n('m.rbs.commerce.front.unit_price', ['ucf']) }}</th>
+					{% endif %}
+					<th>{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</th>
+					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+						<th>{{ i18n('m.rbs.commerce.front.total_price', ['ucf']) }}</th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for line in order.lines %}
+					<tr>
+						<td>{{ loop.index }}</td>
+						<td>{{ line.designation }}</td>
+						{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+							<td class="price">
+								{% if parameters.displayPrices %}
+									{{ formatPrice(line.unitAmount, order.currencyCode) }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+								{% endif %}
+								{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+								{% if parameters.displayPricesWithTax %}
+									{{ formatPrice(line.unitAmountWithTaxes, order.currencyCode) }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
+								{% endif %}
+							</td>
+						{% endif %}
+						<td class="form-inline">{{ line.quantity }}</td>
+						{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+							<td class="price">
+								{% if parameters.displayPrices %}
+									{{ formatPrice(line.amount, order.currencyCode)}}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+								{% endif %}
+								{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+								{% if parameters.displayPricesWithTax %}
+									{{ formatPrice(line.amountWithTaxes, order.currencyCode) }}
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
+								{% endif %}
+							</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<span class="glyphicon glyphicon-plane"></span>
+			{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}
+		</h2>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-striped table-vertical-middle no-bottom-margin">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.order.front.shipping_mode', ['ucf']) }}</th>
+					{% if (order.shippingModes|length) > 1 %}
+						<th>{{ i18n('m.rbs.order.front.shipping_articles', ['ucf']) }}</th>
+					{% endif %}
+					<th>{{ i18n('m.rbs.order.front.shipping_status', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.front.shipping_address', ['ucf']) }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for shippingMode in order.shippingModes %}
+					<tr>
+						<td>{{ shippingMode.title }}</td>
+						{% if (order.shippingModes|length) > 1 %}
+							<td>
+								{% for line in order.lines %}
+									{% if line.key in shippingMode.lineKeys %}
+										{{ line.designation }} ({{ i18n('m.rbs.order.front.shipping_line') }} {{ loop.index }})<br />
+									{% endif %}
+								{% endfor %}
+							</td>
+						{% endif %}
+						<td>
+							{% set status = order.shippingModesStatuses[shippingMode.id] | lower %}
+							{{ i18n('m.rbs.order.front.shipping_status_' ~ status, ['ucf']) }}
+						</td>
+						<td>
+							{% if shippingMode.address.lines|length %}
+								{% set lines = shippingMode.address.lines %}
+								<address class="no-bottom-margin">
+									<strong>{{ lines[0] }}</strong>
+									{% for line in lines %}
+										{% if not loop.first %}<br />{{ line }}{% endif %}
+									{% endfor %}
+								</address>
+							{% else %}
+								-
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="row no-bottom-margin">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">
+					{{ i18n('m.rbs.commerce.front.taxes_amount', ['ucf']) }}
+				</h2>
+			</div>
+			<table class="table table-striped table-bordered">
+				<tbody>
+					{% for tax in order.totalTaxes %}
+						<tr>
+							<td>{{ taxTitle(tax.taxCode) }} ({{ formatRate(tax.rate) }})</td>
+							<td class="price">{{ formatPrice(tax.value, order.currencyCode) }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">
+					{{ i18n('m.rbs.commerce.front.summary_of_amounts', ['ucf']) }}
+				</h2>
+			</div>
+			<table class="table table-striped table-bordered">
+				<tbody>
+					{% if order.fees | length or order.discounts | length %}
+						<tr>
+							<td>{{ i18n('m.rbs.commerce.front.lines_amount_with_tax', ['ucf']) }}</td>
+							<td class="price">{{ formatPrice(order.linesAmountWithTaxes, order.currencyCode) }}</td>
+						</tr>
+					{% endif %}
+					{% for fee in order.fees %}
+						<tr>
+							<td>{{ fee.designation }}</td>
+							<td class="price">{{ formatPrice(fee.amountWithTaxes, order.currencyCode) }}</td>
+						</tr>
+					{% endfor %}
+					{% for discount in order.discounts %}
+						<tr>
+							<td>{{ discount.title }}</td>
+							<td class="price">{{ formatPrice(discount.amountWithTaxes, order.currencyCode) }}</td>
+						</tr>
+					{% endfor %}
+					{% if order.creditNotes | length %}
+						<tr>
+							<td>{{ i18n('m.rbs.commerce.front.total_amount_with_tax', ['ucf']) }}</td>
+							<td class="price">{{ formatPrice(order.totalAmountWithTaxes, order.currencyCode) }}</td>
+						</tr>
+					{% endif %}
+					{% for creditNotes in order.creditNotes %}
+						<tr>
+							<td>{{ note.title }}</td>
+							<td class="price">{{ formatPrice(note.amountWithTaxes, order.currencyCode) }}</td>
+						</tr>
+					{% endfor %}
+					<tr>
+						<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
+						<td class="price">{{ formatPrice(order.paymentAmountWithTaxes, order.currencyCode) }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{% if order.transactions | length %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title">
+				<span class="glyphicon glyphicon-credit-card"></span>
+				{{ i18n('m.rbs.order.front.order_payment', ['ucf']) }}
+			</h2>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped table-vertical-middle no-bottom-margin">
+				<thead>
+					<tr>
+						<th>{{ i18n('m.rbs.order.front.transaction_connector', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.transaction_amount', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.transaction_status', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.transaction_date', ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for transaction in order.transactions %}
+						<tr>
+							<td>{{ transaction.connectorTitle }}</td>
+							<td>{{ formatPrice(transaction.amount, transaction.currencyCode) }}</td>
+							<td>{{ i18n('m.rbs.order.front.transaction_status_' ~ transaction.processingStatus, ['ucf']) }}</td>
+							<td>
+								{% if transaction.processingDate %}
+									{{ transaction.processingDate | transDateTime }}
+								{% else %}
+									-
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endif %}
+
+{% if order.shipments | length %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title">
+				<span class="glyphicon glyphicon-envelope"></span>
+				{{ i18n('m.rbs.order.front.order_shipments', ['ucf']) }}
+			</h2>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped table-vertical-middle no-bottom-margin">
+				<thead>
+					<tr>
+						<th>{{ i18n('m.rbs.order.front.shipment_code', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.shipment_articles', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.shipment_carrier_infos', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.shipment_address', ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for shipment in order.shipments %}
+						<tr>
+							<td>{{ shipment.code }}</td>
+							<td>
+								{% for line in shipment.lines %}
+									{{ line.quantity }} x {{ line.label }}<br />
+								{% endfor %}
+							</td>
+							<td>
+								{{ shipment.shippingModeCode }}
+								{% if shipment.trackingCode %}<br />{{ shipment.trackingCode }}{% endif %}
+								{% if shipment.carrierStatus %}<br />{{ shipment.carrierStatus }}{% endif %}
+							</td>
+							<td>
+								{% if shipment.address.lines|length %}
+									{% set lines = shipment.address.lines %}
+									<address class="no-bottom-margin">
+										<strong>{{ lines[0] }}</strong>
+										{% for line in lines %}
+											{% if not loop.first %}<br />{{ line }}{% endif %}
+										{% endfor %}
+									</address>
+								{% else %}
+									-
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endif %}

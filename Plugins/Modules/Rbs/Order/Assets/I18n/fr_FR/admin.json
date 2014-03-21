@@ -409,5 +409,11 @@
 	},
 	"order_list_label":{
 		"message":"liste des commandes"
+	},
+	"order_detail_function":{
+		"message":"détail d'une commande"
+	},
+	"order_detail_label":{
+		"message":"détail d'une commande"
 	}
 }
