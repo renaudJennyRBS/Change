@@ -6,6 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 (function() {
+
 	"use strict";
 
 	/**
@@ -18,30 +19,33 @@
 	 * @description
 	 * Used to display the <em>Publication</em> section in Document editors.
 	 *
-	 * @param {String=} rbs-document-publication-section-help
+	 * @param {String=} rbs-document-publication-section-help Additional help message.
 	 *
 	 * @example
 	 * <pre>
 	 *     <fieldset data-rbs-editor-section="publication"
-	 *        data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
+	 *        data-editor-section-label="Publication"
 	 *        data-rbs-document-publication-section="">
 	 *     </fieldset>
 	 * </pre>
 	 */
-	angular.module('RbsChange').directive('rbsDocumentPublicationSection', ['RbsChange.REST', function(REST) {
+	angular.module('RbsChange').directive('rbsDocumentPublicationSection', function ()
+	{
 		return {
 			restrict: 'A',
 			templateUrl: 'Rbs/Admin/js/directives/document-publication-section.twig',
 			replace: false,
 			scope: true,
 
-			link: function(scope, iElement, iAttributes) {
+			link: function(scope, iElement, iAttrs)
+			{
 				scope.hasSpecificHelp = false;
 
-				if (iAttributes['rbsDocumentPublicationSectionHelp'] != undefined
-					&& iAttributes['rbsDocumentPublicationSectionHelp'] != "") {
+				if (angular.isDefined(iAttrs.rbsDocumentPublicationSectionHelp)
+					&& iAttrs.rbsDocumentPublicationSectionHelp !== "")
+				{
 					scope.hasSpecificHelp = true;
-					scope.specificHelp = iAttributes['rbsDocumentPublicationSectionHelp'];
+					scope.specificHelp = iAttrs['rbsDocumentPublicationSectionHelp'];
 				}
 
 				scope.showPublicationSections = function() {
@@ -55,8 +59,9 @@
 						return false;
 					}
 					return true;
-				}
+				};
 			}
 		};
-	}]);
+	});
+
 })();

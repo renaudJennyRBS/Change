@@ -120,7 +120,7 @@
 	 * @description
 	 * Displays a control in a Document editor to select another Document.
 	 *
-	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentPickerSingle rbs-document-picker-single Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentPickerSingle `rbs-document-picker-single` Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -137,7 +137,7 @@
 	 * @description
 	 * Displays a control in a Document editor to select other Documents.
 	 *
-	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentPickerMultiple rbs-document-picker-multiple Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentPickerMultiple `rbs-document-picker-multiple` Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -226,6 +226,8 @@
 	 * @description
 	 * Displays the controls in a Document editor to enter an address.
 	 *
+	 * For more information, see the {@link change/RbsChange.directive:rbsAddressFields `rbs-address-fields` Directive}.
+	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
 	 */
@@ -240,7 +242,7 @@
 	 * @description
 	 * Displays the controls in a Document editor to select a Document via multiple chained listboxes.
 	 *
-	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentChainedSelect Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentChainedSelect `rbs-document-chained-select` Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
@@ -257,7 +259,7 @@
 	 * @description
 	 * Displays a control in a Document editor to select a Document via a listbox.
 	 *
-	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentSelect Directive}.
+	 * For more information, see the {@link change/RbsChange.directive:rbsDocumentSelect `rbs-document-select` Directive}.
 	 *
 	 * @param {String} property Name of the property of the Document.
 	 * @param {String} label Label of the field.
