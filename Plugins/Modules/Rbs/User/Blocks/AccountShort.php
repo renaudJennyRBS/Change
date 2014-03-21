@@ -34,9 +34,6 @@ class AccountShort extends Block
 		if ($currentUser->authenticated())
 		{
 			$parameters->setParameterValue('accessorId', $currentUser->getId());
-
-			/* @var $user \Rbs\User\Documents\User */
-			/*$user = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($currentUser->getId(), 'Rbs_User_User');*/
 			$parameters->setParameterValue('accessorName', $currentUser->getName());
 		}
 		return $parameters;

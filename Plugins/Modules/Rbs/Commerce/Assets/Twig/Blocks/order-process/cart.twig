@@ -1,9 +1,9 @@
 <script type="text/ng-template" id="/simpleLine.static.tpl">
 	<td>(= line.index+1 =)</td>
 	<td>
-		<a data-ng-if="line.options.url" href="(= line.options.url =)">
+		<a data-ng-if="line.options.url" href="javascript:;" data-ng-href="(= line.options.url =)">
 		(= line.designation =)
-		</a data-ng-if="line.options.url">
+		</a>
 	</td>
 	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
 		<td class="price">

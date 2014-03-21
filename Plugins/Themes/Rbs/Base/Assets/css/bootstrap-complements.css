@@ -54,7 +54,7 @@
 
 /* No bottom margin */
 .no-bottom-margin {
-	margin-bottom: 0;
+	margin-bottom: 0 !important;
 }
 
 /* Buttons containing only an icon */
