@@ -64,11 +64,10 @@ class OrderRemainder
 					$shipmentLines = $shipment->getData();
 					foreach ($shipmentLines as $shipmentLine)
 					{
-						/* @var $sku \Rbs\Stock\Documents\Sku */
-						$sku = $documentManager->getDocumentInstance($shipmentLine['SKU']);
-						if ($sku && isset($skuData[$sku->getCode()]))
+						$codeSKU = $shipmentLine['codeSKU'];
+						if ($codeSKU && isset($skuData[$codeSKU]))
 						{
-							$skuData[$sku->getCode()]['quantity'] -= $shipmentLine['quantity'];
+							$skuData[$codeSKU]['quantity'] -= $shipmentLine['quantity'];
 						}
 					}
 				}
@@ -89,17 +88,19 @@ class OrderRemainder
 						}
 						if ($skuLine['quantity'] > 0)
 						{
+							$remainLine = [
+								'designation' => $skuLine['designation'],
+								'quantity' => $skuLine['quantity'],
+								'codeSKU' => $codeSku,
+								'allowQuantitySplit' => true
+							];
 							$sku = $commerceServices->getStockManager()->getSKUByCode($codeSku);
 							if ($sku)
 							{
-								$remainLines[] = [
-									'designation' => $skuLine['designation'],
-									'quantity' => $skuLine['quantity'],
-									'codeSKU' => $codeSku,
-									'allowQuantitySplit' => $sku->getAllowQuantitySplit(),
-									'SKU' => $sku->getId()
-								];
+								$remainLine['SKU'] = $sku->getId();
+								$remainLine['allowQuantitySplit'] = $sku->getAllowQuantitySplit();
 							}
+							$remainLines[] = $remainLine;
 						}
 						$address = isset($skuLine['address']) ? $skuLine['address'] : $address;
 					}

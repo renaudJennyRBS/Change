@@ -45,10 +45,11 @@
 	</div>
 	{# Fees list #}
 	<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="document.fees.length > 0">
-		<tbody>
+		{# Editable mode #}
+		<tbody data-ng-if="isContentEditable()">
 			<tr class="normal-row" data-ng-repeat-start="fee in document.fees">
 				<td>
-					<span class="pull-right quick-actions-buttons" data-ng-if="isContentEditable()">
+					<span class="pull-right quick-actions-buttons">
 						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}"
 							data-ng-click="data.editedFeeIndex = $index" class="btn btn-xs btn-default btn-icon"
 							data-ng-show="data.editedFeeIndex != $index">
@@ -81,6 +82,15 @@
 							{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
 						</button>
 					</div>
+				</td>
+			</tr>
+		</tbody>
+		{# Not editable mode #}
+		<tbody data-ng-if="!isContentEditable()">
+			<tr class="normal-row" data-ng-repeat="fee in document.fees">
+				<td>(= fee.designation =)</td>
+				<td class="column-number" style="width: 100px;">
+					(= fee.items[0].price.value | number:priceInfo.decimals =)
 				</td>
 			</tr>
 		</tbody>
@@ -121,10 +131,11 @@
 	</div>
 	{# Discounts list #}
 	<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="document.discounts.length > 0">
-		<tbody>
+		{# Editable mode #}
+		<tbody data-ng-if="isContentEditable()">
 			<tr class="normal-row" data-ng-repeat-start="discount in document.discounts">
 				<td>
-					<span class="pull-right quick-actions-buttons" data-ng-if="isContentEditable()">
+					<span class="pull-right quick-actions-buttons">
 						<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.edit', ['ucf']) }}"
 							data-ng-click="data.editedDiscountIndex = $index" class="btn btn-xs btn-default btn-icon"
 							data-ng-show="data.editedDiscountIndex != $index">
@@ -157,6 +168,15 @@
 							{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
 						</button>
 					</div>
+				</td>
+			</tr>
+		</tbody>
+		{# Not editable mode #}
+		<tbody data-ng-if="!isContentEditable()">
+			<tr class="normal-row" data-ng-repeat="discount in document.discounts">
+				<td>(= discount.title =)</td>
+				<td class="column-number" style="width: 100px;">
+					(= discount.price.value | number:priceInfo.decimals =)
 				</td>
 			</tr>
 		</tbody>
