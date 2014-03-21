@@ -1,0 +1,10 @@
+<div class="input-group">
+	<input class="form-control" type="text" autocapitalize="off" autocomplete="off" autocorrect="off"
+		placeholder="{{ i18nAttr('m.rbs.admin.adminjs.search', ['ucf', 'etc']) }}" data-ng-keyup="keyup($event)"
+		data-ng-keydown="keydown($event)" data-ng-model="internalFilter" />
+	<span class="input-group-btn">
+		<button type="button" class="btn btn-icon btn-default" data-ng-click="clear()">
+			<i class="icon-remove-circle icon-large"></i>
+		</button>
+	</span>
+</div>

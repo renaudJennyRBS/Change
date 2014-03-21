@@ -252,6 +252,15 @@
 	"date_selector_lang":{
 		"message":"fr"
 	},
+	"date_selector_now":{
+		"message":"maintenant"
+	},
+	"date_selector_none":{
+		"message":"vider les champs"
+	},
+	"date_selector_change_timezone":{
+		"message":"changer de fuseau horaire"
+	},
 	"time_zone_selector_text":{
 		"message":"Vous pouvez choisir d'utiliser ce fuseau horaire pour le formulaire en cours uniquement ou pour toujours (enregistré dans <a href=\"Rbs\/User\/Profile\">vos paramètres de profil<\/a>)."
 	},
