@@ -7,7 +7,18 @@
 	<span class="input-unit">{{ i18n('m.rbs.admin.admin.date_selector_hour_letter') }}</span>
 	<input data-role="input-minute" class="form-control" type="number" size="2" value="00" />
 
-	<button class="btn btn-info timezone-selector" type="button" style="margin-left:10px;vertical-align:top;" data-ng-click="openTimeZoneSelector($event)">
+	<button class="btn btn-info btn-icon" type="button" data-ng-click="setDateToNow()"
+		title="{{ i18nAttr('m.rbs.admin.admin.date_selector_now', ['ucf']) }}">
+		<i class="icon-calendar"></i>
+	</button>
+
+	<button class="btn btn-info btn-icon" type="button" data-ng-click="clearDate()"
+		title="{{ i18nAttr('m.rbs.admin.admin.date_selector_none', ['ucf']) }}">
+		<i class="icon-calendar-empty"></i>
+	</button>
+
+	<button class="btn btn-info timezone-selector" type="button" data-ng-click="openTimeZoneSelector($event)"
+		title="{{ i18nAttr('m.rbs.admin.admin.date_selector_change_timezone', ['ucf']) }}">
 		<i class="icon-globe"></i> (=timeZone=)
 	</button>
 	<div class="timeZoneSelectorContainer"></div>
