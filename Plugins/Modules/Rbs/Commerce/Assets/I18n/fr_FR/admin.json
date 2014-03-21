@@ -88,5 +88,26 @@
 	},
 	"aside_process":{
 		"message":"Frais & Réduction"
+	},
+	"cart_list":{
+		"message":"paniers"
+	},
+	"cart":{
+		"message":"panier"
+	},
+	"cart_line_count":{
+		"message":"Nb ligne"
+	},
+	"cart_total_amount":{
+		"message":"Montant des lignes"
+	},
+	"cart_payment_amount":{
+		"message":"Montant à payer"
+	},
+	"cart_locked":{
+		"message":"Pret à payer"
+	},
+	"cart_processing":{
+		"message":"Transaction effectué"
 	}
 }

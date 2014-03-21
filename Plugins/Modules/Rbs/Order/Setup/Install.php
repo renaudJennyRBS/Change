@@ -13,6 +13,12 @@ namespace Rbs\Order\Setup;
  */
 class Install extends \Change\Plugins\InstallBase
 {
+	public function executeDbSchema($plugin, $schemaManager)
+	{
+		$schema = new Schema($schemaManager);
+		$schema->generate();
+	}
+
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 */

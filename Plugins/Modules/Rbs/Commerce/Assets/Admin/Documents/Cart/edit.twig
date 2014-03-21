@@ -1,0 +1,295 @@
+<div class="row" data-ng-controller="RbsCommerceCartEdit">
+	<div class="document-form" rbs-full-width>
+		<rbs-page-header sub-title="{{ i18nAttr('m.rbs.commerce.admin.cart', ['ucf']) }}"></rbs-page-header>
+		<form data-ng-submit="submit()" name="form">
+			<fieldset>
+				<div class="row">
+					<div class="col-md-6 form-vertical">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title"><i class="icon-info-sign"></i> {{ i18n('m.rbs.order.admin.order_parameters', ['ucf']) }}</h3>
+							</div>
+							<div class="panel-body">
+								<rbs-field label="{{ i18n('m.rbs.store.documents.webstore', ['ucf']) }}">
+									<p class="form-control-static">
+										<a data-ng-href="(= cart.context.webStore|rbsURL =)">(= cart.context.webStore.label =)</a>
+									</p>
+								</rbs-field>
+
+								<rbs-field label="{{ i18nAttr('c.documents.modificationdate', ['ucf']) }}">
+									<p class="form-control-static">(= cart.lastUpdate | rbsDateTime =)</p>
+								</rbs-field>
+
+								<rbs-field label="{{ i18nAttr('c.documents.code', ['ucf']) }}">
+									<p class="form-control-static">(= cart.identifier =)</p>
+								</rbs-field>
+
+								<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'currencyCode'), ['ucf']) }}">
+									<p class="form-control-static">(= cart.currencyCode =)</p>
+								</rbs-field>
+
+								<rbs-field label="{{ i18n('m.rbs.order.admin.order_tax_zone', ['ucf']) }}">
+									<p class="form-control-static">(= cart.zone =)</p>
+								</rbs-field>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6 form-vertical">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title"><i class="icon-user"></i> {{ i18n('m.rbs.order.admin.order_customer', ['ucf']) }}</h3>
+							</div>
+							<div class="panel-body">
+								<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}">
+									<a data-ng-if="cart.context.owner" data-ng-href="(= cart.context.owner|rbsURL =)"
+											class="form-control-static">(= cart.context.owner.label =)</a>
+									<span data-ng-if="!cart.context.owner">x</span>
+								</rbs-field>
+
+								<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'email'), ['ucf']) }}">
+									<span class="form-control-static">(= cart.email || 'x' =)</span>
+								</rbs-field>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									<i class="icon-envelope"></i>
+									<span>{{ i18n('m.rbs.order.admin.order_billing_address', ['ucf']) }}</span>
+								</h3>
+							</div>
+							<div class="panel-body">
+								<div>
+									<address class="no-bottom-margin">
+										<strong>(= cart.address.__lines[0] =)</strong>
+										<div data-ng-repeat="line in cart.address.__lines" data-ng-if="!$first">(= line =)</div>
+									</address>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<i class="icon-list"></i>
+							{{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= cart.lines.length =) &mdash;
+							{{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= cart.context.articleCount =)
+						</h3>
+					</div>
+					<div class="panel-body">
+						<div>
+							{# List (not a document-list but using the same markup) #}
+							<table class="document-list table table-condensed table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th class="column-number" style="width: 60px;">
+											{{ i18nAttr('m.rbs.order.admin.order_line_number', ['ucf']) }}
+										</th>
+										<th>{{ i18nAttr('m.rbs.order.admin.order_designation', ['ucf']) }}</th>
+										<th>{{ i18nAttr('m.rbs.order.admin.order_sku', ['ucf']) }}</th>
+										<th class="column-number" style="width: 100px;">
+											{{ i18nAttr('m.rbs.order.admin.order_unit_price', ['ucf']) }}
+										</th>
+										<th class="column-number" style="width: 100px;">
+											{{ i18nAttr('m.rbs.order.admin.order_quantity', ['ucf']) }}
+										</th>
+										<th class="column-number" style="width: 100px;">
+											{{ i18nAttr('m.rbs.order.admin.order_line_total_price', ['ucf']) }}
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="normal-row" data-ng-repeat="doc in cart.lines">
+										<td class="column-number">(= $index + 1 =)</td>
+										<td ng-if="doc.options.product">
+											<a ng-href="(= doc.options.product|rbsURL =)">(= doc.designation =)</a>
+										</td>
+										<td ng-if="!doc.options.product">(= doc.designation =)</td>
+										<td>(= doc.items[0].codeSKU =)</td>
+										<td class="column-number">(= doc.options.formattedUnitAmountWithTaxes =)</td>
+										<td class="column-number">(= doc.quantity =)</td>
+										<td class="column-number">(= doc.options.formattedAmountWithTaxes =)</td>
+									</tr>
+								</tbody>
+								{# Total #}
+								<tfoot>
+									<tr>
+										<td colspan="6" class="text-right">
+											<strong>
+												{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf', 'lab']) | raw }}
+												(= cart.context.formattedLinesAmountWithTaxes =)
+											</strong>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default" data-ng-show="cart.shippingModes.length > 0">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<i class="icon-truck"></i>
+							{{ i18n('m.rbs.order.admin.order_shipping_mode_list', ['ucf', 'lab']) }} (= cart.shippingModes.length =)
+						</h3>
+					</div>
+
+					<table class="table table-striped table-bordered no-bottom-margin document-list">
+						<thead>
+							<tr>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_mode', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_lines', ['ucf']) }}</th>
+								<th>{{ i18n('m.rbs.order.admin.order_shipping_address', ['ucf']) }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="normal-row" data-ng-repeat="shipping in cart.shippingModes" data-ng-show="shipping.lineKeys.length > 0">
+								<td ng-if="shipping.options.mode">
+									<a ng-href="(= shipping.options.mode|rbsURL =)">(= shipping.title =)</a>
+								</td>
+								<td ng-if="!shipping.options.mode">(= shipping.title =)</td>
+								<td>(= getLinesNumbers(shipping) =)</td>
+								<td>
+									<address ng-show="shipping.address.__lines">
+										<strong>(= shipping.address.__lines[0] =)</strong>
+										<div data-ng-repeat="line in shipping.address.__lines" data-ng-if="!$first">(= line =)</div>
+									</address>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6">
+						{# Coupons #}
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									<i class="icon-ticket"></i>
+									{{ i18n('m.rbs.order.admin.used_coupons', ['ucf', 'lab']) }} (= cart.coupons.length =)
+								</h3>
+							</div>
+							<div class="panel-body">
+								<table class="table table-striped table-bordered no-bottom-margin" data-ng-show="cart.coupons.length > 0">
+									<tbody>
+										<tr class="normal-row" data-ng-repeat="coupon in cart.coupons">
+											<td ng-if="coupon.options.coupon">
+												<a ng-href="(= coupon.options.coupon|rbsURL =)">(= coupon.title =)</a>
+											</td>
+											<td ng-if="!coupon.options.coupon">(= coupon.title =)</td>
+											<td>(= coupon.code =)</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						{# Discounts and fees #}
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									<i>%</i>
+										{{ i18n('m.rbs.order.admin.modifiers', ['ucf', 'lab']) }}
+										(= cart.discounts.length + cart.fees.length =)
+								</h3>
+							</div>
+							<div class="panel-body">
+								{# Fees list #}
+								<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="cart.fees.length > 0">
+									<tbody>
+										<tr class="normal-row" data-ng-repeat="fee in cart.fees">
+											<td ng-if="fee.options.fee">
+												<a ng-href="(= fee.options.fee|rbsURL =)">(= fee.designation =)</a>
+											</td>
+											<td ng-if="!fee.options.fee">(= fee.designation =)</td>
+											<td class="column-number" style="width: 100px;">
+												(= fee.options.formattedAmountWithTaxes =)
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+								{# Discounts list #}
+								<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="cart.discounts.length > 0">
+									<tbody>
+									<tr class="normal-row" data-ng-repeat="discount in cart.discounts">
+										<td ng-if="discount.options.discount">
+											<a ng-href="(= discount.options.discount|rbsURL =)">(= discount.title =)</a>
+										</td>
+										<td ng-if="!discount.options.discount">(= discount.title =)</td>
+										<td class="column-number" style="width: 100px;">
+											(= discount.options.formattedAmountWithTaxes =)
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						{# Taxes #}
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.admin.taxes_amount', ['ucf']) }}</h3>
+							</div>
+							<table class="table table-striped table-bordered">
+								<tbody>
+									<tr data-ng-repeat="tax in cart.context.formattedTotalTaxes">
+										<td>(= tax.title =)</td>
+										<td>(= tax.formattedRate =)</td>
+										<td>(= tax.formattedValue =)</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="col-md-6">
+						{# Amounts and credit notes #}
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title"><i class="icon-money"></i> {{ i18n('m.rbs.order.admin.order_total', ['ucf']) }}</h3>
+							</div>
+							<table class="table table-striped table-bordered">
+								<tbody>
+									<tr>
+										<td>{{ i18n('m.rbs.order.admin.order_lines_amount_with_taxes', ['ucf', 'lab']) | raw }}</td>
+										<td style="width: 100px;">(= cart.context.formattedLinesAmountWithTaxes =)</td>
+									</tr>
+									<tr>
+										<td>{{ i18n('m.rbs.order.admin.order_total_amount_with_taxes', ['ucf']) | raw }}</td>
+										<td style="width: 100px;">(= cart.context.formattedTotalAmountWithTaxes =)</td>
+									</tr>
+									<tr data-ng-repeat="creditNote in cart.creditNotes">
+										<td>(= creditNote.title =)</td>
+										<td style="width: 100px;">(= note.options.formattedAmount =)</td>
+									</tr>
+									<tr>
+										<td>
+											<strong>
+												<a ng-if="cart.context.transaction" ng-href="(= cart.context.transaction|rbsURL =)">
+													{{ i18n('m.rbs.order.admin.order_amount_to_pay', ['ucf']) | raw }}
+												</a>
+												<span ng-if="!cart.context.transaction">
+													{{ i18n('m.rbs.order.admin.order_amount_to_pay', ['ucf']) | raw }}
+												</span>
+											</strong>
+										</td>
+										<td style="width: 100px;">
+											<strong>(= cart.context.formattedPaymentAmountWithTaxes =)</strong>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>

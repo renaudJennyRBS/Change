@@ -1,0 +1,83 @@
+<?php
+/**
+ * Copyright (C) 2014 Ready Business System
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+namespace Rbs\Order;
+
+/**
+ * @name \Rbs\Order\CodeBuilder
+ */
+class CodeBuilder
+{
+	public function onGetNewCode(\Change\Events\Event $event)
+	{
+		$padLength = 8;
+		$application = $event->getApplication();
+
+		$document = $event->getParam('document');
+		if ($document instanceof \Rbs\Order\Documents\Order)
+		{
+			$tableName = 'rbs_order_seq_order';
+			$padLength = $application->getConfiguration()->getEntry('Rbs/Order/CodeBuilder/OrderNumberPad', $padLength);
+		}
+		elseif ($document instanceof \Rbs\Order\Documents\Shipment)
+		{
+			$tableName = 'rbs_order_seq_shipment';
+			$padLength = $application->getConfiguration()->getEntry('Rbs/Order/CodeBuilder/ShipmentNumberPad', $padLength);
+		}
+		elseif ($document instanceof \Rbs\Order\Documents\Invoice)
+		{
+			$tableName = 'rbs_order_seq_invoice';
+			$padLength = $application->getConfiguration()->getEntry('Rbs/Order/CodeBuilder/InvoiceNumberPad', $padLength);
+		}
+		elseif ($document instanceof \Rbs\Order\Documents\CreditNote)
+		{
+			$tableName = 'rbs_order_seq_creditnote';
+			$padLength = $application->getConfiguration()->getEntry('Rbs/Order/CodeBuilder/CreditNoteNumberPad', $padLength);
+		}
+		else
+		{
+			return;
+		}
+
+		$applicationServices = $event->getApplicationServices();
+		try
+		{
+			$applicationServices->getTransactionManager()->begin();
+			$nextId = $this->getNextId($applicationServices->getDbProvider(), $tableName);
+			$prefix = (new \DateTime())->format('Y');
+			$number = str_pad($nextId, $padLength, '0', STR_PAD_LEFT);
+			$event->setParam('newCode', $prefix . $number);
+			$applicationServices->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			$event->getApplication()->getLogging()->exception($e);
+			$applicationServices->getTransactionManager()->commit();
+		}
+	}
+
+	/**
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param $tableName
+	 * @throw \Exception
+	 * @return int
+	 */
+	protected function getNextId(\Change\Db\DbProvider $dbProvider, $tableName)
+	{
+		$sb = $dbProvider->getNewStatementBuilder();
+		$fb = $sb->getFragmentBuilder();
+
+		$iq = $sb->insert($fb->table($tableName))->addColumn($fb->column('creation_date'))
+			->addValue($fb->dateTimeParameter('creationCate'))
+			->insertQuery();
+		$iq->bindParameter('creationCate', new \DateTime());
+
+		$iq->execute();
+		return $dbProvider->getLastInsertId($tableName);
+	}
+} 

@@ -69,11 +69,8 @@ class CommerceResolver
 			$actionName = $resourceParts[0];
 			if ($actionName === 'cart')
 			{
-				if ($method === Request::METHOD_POST)
-				{
-					$event->setAction(function($event) {(new Cart())->insertCart($event);});
+					$event->setAction(function($event) {(new Cart())->collection($event);});
 					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
-				}
 			}
 		}
 		elseif ($nbParts == 2 && $resourceParts[0] == 'cart')
@@ -83,16 +80,6 @@ class CommerceResolver
 			if ($method === Request::METHOD_GET)
 			{
 				$event->setAction(function($event) {(new Cart())->getCart($event);});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
-			}
-			elseif ($method === Request::METHOD_PUT)
-			{
-				$event->setAction(function($event) {(new Cart())->updateCart($event);});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
-			}
-			elseif ($method === Request::METHOD_DELETE)
-			{
-				$event->setAction(function($event) {(new Cart())->deleteCart($event);});
 				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
 			}
 		}

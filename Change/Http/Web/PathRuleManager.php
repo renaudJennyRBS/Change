@@ -380,6 +380,11 @@ class PathRuleManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function findPathRules($websiteId, $LCID, $documentId, $sectionId)
 	{
+		if ($websiteId == $sectionId)
+		{
+			$sectionId = 0;
+		}
+
 		$dbProvider = $this->getDbProvider();
 		$qb = $dbProvider->getNewQueryBuilder('UrlManager.findPathRules');
 		if (!$qb->isCached())
@@ -443,6 +448,10 @@ class PathRuleManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function findRedirectedRules($websiteId, $LCID, $documentId, $sectionId)
 	{
+		if ($websiteId == $sectionId)
+		{
+			$sectionId = 0;
+		}
 		$dbProvider = $this->getDbProvider();
 		$qb = $dbProvider->getNewQueryBuilder('UrlManager.findRedirectedRules');
 		if (!$qb->isCached())

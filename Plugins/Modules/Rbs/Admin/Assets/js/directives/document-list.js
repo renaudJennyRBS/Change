@@ -1330,22 +1330,7 @@
 					}
 
 					function reload () {
-						if (useExternalCollection) {
-							if (angular.isFunction(scope.onReload)) {
-								scope.busy = true;
-								var p = scope.onReload(scope.sort.column, scope.isSortDescending());
-								if (p && angular.isFunction(p.then)) {
-									p.then(stopLoading);
-								} else {
-									stopLoading();
-								}
-							}
-							return null;
-						}
-
 						var promise, params;
-
-						scope.busy = true;
 
 						params = {
 							'offset' : scope.pagination.offset,
@@ -1354,6 +1339,20 @@
 							'desc'   : scope.sort.descending,
 							'column' : columnNames
 						};
+
+						if (useExternalCollection) {
+							if (angular.isFunction(scope.onReload)) {
+								scope.busy = true;
+								var p = scope.onReload(params);
+								if (p && angular.isFunction(p.then)) {
+									p.then(stopLoading);
+								} else {
+									stopLoading();
+								}
+							}
+							return null;
+						}
+						scope.busy = true;
 
 						// TODO Reorganize this to use a query for tree and/or tag
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {

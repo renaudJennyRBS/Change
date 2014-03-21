@@ -52,6 +52,7 @@ class CollectionResult extends \Change\Http\Result
 
 	public function __construct()
 	{
+		parent::__construct();
 		$this->links = new Links();
 	}
 

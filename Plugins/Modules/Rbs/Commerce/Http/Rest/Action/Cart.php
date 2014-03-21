@@ -9,7 +9,6 @@
 namespace Rbs\Commerce\Http\Rest\Action;
 
 use Change\Http\Rest\Result\Link;
-use Rbs\Commerce\Http\Rest\Result\CartResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -20,161 +19,327 @@ class Cart
 	/**
 	 * @param \Change\Http\Event $event
 	 */
+	public function collection($event)
+	{
+		$fields = ['id', 'creation_date', 'last_update', 'identifier', 'user_id', 'store_id', 'total_amount', 'total_amount_with_taxes', 'payment_amount_with_taxes',
+			'currency_code', 'line_count', 'cart_data', 'locked', 'processing', 'owner_id', 'transaction_id', 'order_id'];
+
+		$request = $event->getRequest();
+		$params = $request->getQuery()->toArray();
+		$params += ['offset' => 0, 'limit' => 10, 'sort' => 'last_update', 'desc' => true];
+		$result = new \Change\Http\Rest\Result\CollectionResult();
+		$urlManager = $event->getUrlManager();
+
+		$selfLink = new Link($urlManager, $request->getPath());
+		$result->addLink($selfLink);
+
+		$result->setOffset(intval($params['offset']));
+		$result->setLimit(intval($params['limit']));
+
+		switch ($params['sort'])
+		{
+			case 'id':
+				$result->setSort('id');
+				break;
+			default:
+				$result->setSort('last_update');
+		}
+		$result->setDesc(($params['desc'] === 'true' || $params['desc'] === true));
+
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+		{
+			$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->alias($fb->func('count', '*'), 'rowCount'));
+			$qb->from($fb->table('rbs_commerce_dat_cart'));
+			$restrictions = [];
+			$restrictions[] = $fb->eq($fb->column('order_id'), $fb->number(0));
+			//$restrictions[] = $fb->eq($fb->column('processing'), $fb->number(1));
+
+			if (count($restrictions))
+			{
+				foreach ($restrictions as $restriction)
+				{
+					$qb->andWhere($restriction);
+				}
+			}
+			$countQuery = $qb->query();
+			$result->setCount($countQuery->getFirstResult($countQuery->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount')));
+
+			if ($result->getCount() > $result->getOffset())
+			{
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+				$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->column('identifier'), $fb->column('user_id'), $fb->column('store_id')
+					,$fb->column('locked'), $fb->column('processing'),
+					$fb->column('owner_id'), $fb->column('transaction_id'), $fb->column('line_count'),
+					$fb->column('payment_amount_with_taxes'), $fb->column('total_amount_with_taxes'),
+					$fb->column('currency_code'),
+					$fb->column('last_update'));
+				$qb->from($fb->table('rbs_commerce_dat_cart'));
+				if ($result->getDesc())
+				{
+					$qb->orderDesc($fb->column($result->getSort()));
+				}
+
+				$restrictions = [];
+				$restrictions[] = $fb->eq($fb->column('order_id'), $fb->number(0));
+				//$restrictions[] = $fb->eq($fb->column('processing'), $fb->number(1));
+
+				if (count($restrictions))
+				{
+					foreach ($restrictions as $restriction)
+					{
+						$qb->andWhere($restriction);
+					}
+				}
+				$query = $qb->query();
+				$query->setStartIndex($result->getOffset())->setMaxResults($result->getLimit());
+
+				$rows = $query->getResults($query->getRowsConverter()
+					->addStrCol('identifier', 'currency_code')
+					->addIntCol('user_id', 'store_id', 'owner_id', 'transaction_id', 'line_count')
+					->addBoolCol('locked', 'processing')
+					->addNumCol('payment_amount_with_taxes', 'total_amount_with_taxes')
+					->addDtCol('last_update'));
+
+				$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+				foreach ($rows as $row)
+				{
+					$link = new Link($event->getUrlManager(), 'commerce/cart/' . $row['identifier']);
+					$row['link'] = $link->toArray();
+
+					if ($row['store_id'])
+					{
+						$doc = $documentManager->getDocumentInstance($row['store_id']);
+						if ($doc instanceof \Rbs\Store\Documents\WebStore)
+						{
+							$row['store'] = $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
+						}
+					}
+					if ($row['owner_id'])
+					{
+						$doc = $documentManager->getDocumentInstance($row['owner_id']);
+						if ($doc instanceof \Change\Documents\AbstractDocument)
+						{
+							$row['owner'] = $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
+						}
+					}
+
+					if ($row['processing']) {
+						if ($row['transaction_id']) {
+							$transaction = $documentManager->getDocumentInstance($row['transaction_id']);
+						}
+						else
+						{
+							$q = $documentManager->getNewQuery('Rbs_Payment_Transaction');
+							$q->andPredicates($q->eq('targetIdentifier', $row['identifier']), $q->neq('processingStatus', 'initiated'));
+							$transaction = $q->getFirstDocument();
+						}
+						if ($transaction) {
+							$row['transaction'] = $vc->toRestValue($transaction, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
+						}
+
+					}
+
+					$row['formated_payment_amount_with_taxes'] = $commerceServices->getPriceManager()->formatValue($row['payment_amount_with_taxes'], $row['currency_code']);
+					$row['formated_total_amount_with_taxes'] = $commerceServices->getPriceManager()->formatValue($row['total_amount_with_taxes'], $row['currency_code']);
+					$row['modificationDate'] = $vc->toRestValue($row['last_update'], \Change\Documents\Property::TYPE_DATETIME);
+					$result->addResource($row);
+				}
+			}
+		}
+		$event->setResult($result);
+	}
+
+
+	/**
+	 * @param \Change\Http\Event $event
+	 */
 	public function getCart($event)
 	{
 		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$cartIdentifier = $event->getParam('cartIdentifier');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if ($cart)
 			{
+				$pm = $commerceServices->getPriceManager();
+				$urlManager = $event->getUrlManager();
+				$currency = $cart->getCurrencyCode();
+				$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+				if ($currency)
+				{
+					$linesTaxes = array();
+					foreach ($cart->getLinesTaxes() as $tax)
+					{
+						$taxInfos = $tax->toArray();
+						$taxInfos['title'] = $pm->taxTitle($tax);
+						$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
+						$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
+						$linesTaxes[] = $taxInfos;
+					}
+
+					$totalTaxes = array();
+					foreach ($cart->getTotalTaxes() as $tax)
+					{
+						$taxInfos = $tax->toArray();
+						$taxInfos['title'] = $pm->taxTitle($tax);
+						$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
+						$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
+						$totalTaxes[] = $taxInfos;
+					}
+
+					$cart->getContext()
+						->set('formattedLinesAmount', $pm->formatValue($cart->getLinesAmount(), $currency))
+						->set('formattedLinesTaxes', $linesTaxes)
+						->set('formattedLinesAmountWithTaxes', $pm->formatValue($cart->getLinesAmountWithTaxes(), $currency))
+						->set('formattedTotalAmount', $pm->formatValue($cart->getTotalAmount(), $currency))
+						->set('formattedTotalTaxes', $totalTaxes)
+						->set('formattedTotalAmountWithTaxes', $pm->formatValue($cart->getTotalAmountWithTaxes(), $currency))
+						->set('formattedPaymentAmountWithTaxes', $pm->formatValue($cart->getPaymentAmountWithTaxes(), $currency));
+
+					$articleCount = 0;
+					foreach ($cart->getLines() as $line)
+					{
+						$articleCount += $line->getQuantity();
+						$options = $line->getOptions();
+						$options->set('formattedAmount', $pm->formatValue($line->getAmount(), $currency))
+							->set('formattedAmountWithTaxes', $pm->formatValue($line->getAmountWithTaxes(), $currency))
+							->set('formattedUnitAmount', $pm->formatValue($line->getUnitAmount(), $currency))
+							->set('formattedUnitAmountWithTaxes', $pm->formatValue($line->getUnitAmountWithTaxes(), $currency));
+
+						$productId = $options->get('productId');
+						if ($productId != null)
+						{
+							$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
+							if ($product)
+							{
+								$options->set('product', $vc->toRestValue($product, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+							}
+						}
+					}
+					$cart->getContext()->set('articleCount', $articleCount);
+
+					foreach ($cart->getCoupons() as $coupon)
+					{
+						$id = $coupon->getOptions()->get('id');
+						if ($id)
+						{
+							$doc = $documentManager->getDocumentInstance($id);
+							if ($doc)
+							{
+								$coupon->getOptions()->set('coupon', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+							}
+						}
+					}
+
+					foreach ($cart->getDiscounts() as $discount)
+					{
+						$options = $discount->getOptions();
+						$options->set('formattedAmount', $pm->formatValue($discount->getAmount(), $currency))
+							->set('formattedAmountWithTaxes', $pm->formatValue($discount->getAmountWithTaxes(), $currency));
+						if ($discount->getId())
+						{
+							$doc = $documentManager->getDocumentInstance($discount->getId());
+							if ($doc)
+							{
+								$options->set('discount', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+							}
+						}
+					}
+
+					foreach ($cart->getFees() as $fee)
+					{
+
+						$options = $fee->getOptions();
+						$options->set('formattedAmount', $pm->formatValue($fee->getAmount(), $currency))
+							->set('formattedAmountWithTaxes', $pm->formatValue($fee->getAmountWithTaxes(), $currency));
+						$id = $options->get('feeId');
+						if ($id)
+						{
+							$doc = $documentManager->getDocumentInstance($id);
+							if ($doc)
+							{
+								$options->set('fee', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+							}
+						}
+					}
+
+					foreach ($cart->getCreditNotes() as $note)
+					{
+						$options = $note->getOptions();
+						$options->set('formattedAmount', $pm->formatValue($note->getAmount(), $currency));
+					}
+				}
+
 				$result = new \Rbs\Commerce\Http\Rest\Result\CartResult();
-				$result->setCart($cart->toArray());
-				$link = new Link($event->getUrlManager(), 'commerce/cart/' . $cart->getIdentifier());
+				$link = new Link($urlManager, 'commerce/cart/' . $cart->getIdentifier());
 				$result->addLink($link);
+
+				$context = $cart->getContext();
+				if ($cart->getWebStoreId())
+				{
+					$doc = $documentManager->getDocumentInstance($cart->getWebStoreId());
+					if ($doc instanceof \Rbs\Store\Documents\WebStore)
+					{
+						$context->set('webStore', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+					}
+				}
+
+				if ($cart->getUserId())
+				{
+					$doc = $documentManager->getDocumentInstance($cart->getUserId());
+					if ($doc instanceof \Rbs\User\Documents\User)
+					{
+						$context->set('user', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+					}
+				}
+
+				if ($cart->getOwnerId())
+				{
+					$doc = $documentManager->getDocumentInstance($cart->getOwnerId());
+					if ($doc instanceof \Change\Documents\AbstractDocument)
+					{
+						$context->set('owner', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+					}
+				}
+
+				if ($cart->getTransactionId())
+				{
+					$transaction = $documentManager->getDocumentInstance($cart->getTransactionId());
+					if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+					{
+						$context->set('transaction', $vc->toRestValue($transaction, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+					}
+				}
+				elseif ($cart->isProcessing())
+				{
+					$q = $documentManager->getNewQuery('Rbs_Payment_Transaction');
+					$q->andPredicates($q->eq('targetIdentifier', $cartIdentifier), $q->neq('processingStatus', 'initiated'));
+					$transaction = $q->getFirstDocument();
+					if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+					{
+						$context->set('transaction', $vc->toRestValue($transaction, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+					}
+				}
+
+				foreach ($cart->getShippingModes() as $shippingMode)
+				{
+					$doc = $documentManager->getDocumentInstance($shippingMode->getId());
+					if ($doc)
+					{
+						$shippingMode->getOptions()->set('mode', $vc->toRestValue($doc, \Change\Documents\Property::TYPE_DOCUMENT)->toArray());
+					}
+				}
+
+				$result->setCart($cart->toArray());
 				$event->setResult($result);
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Http\Event $event
-	 */
-	public function insertCart($event)
-	{
-		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
-		{
-			$cart = $commerceServices->getCartManager()->getNewCart();
-			if ($cart)
-			{
-				$event->setParam('cartIdentifier', $cart->getIdentifier());
-				$cartData = $event->getRequest()->getPost()->toArray();
-				if (is_array($cartData) && count($cartData))
-				{
-					$this->populateCart($commerceServices, $cart, $event->getRequest()->getPost()->toArray());
-				}
-				$commerceServices->getCartManager()->saveCart($cart);
-				$this->getCart($event);
-
-				$result = $event->getResult();
-				if ($result instanceof CartResult)
-				{
-					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_201);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Http\Event $event
-	 */
-	public function updateCart($event)
-	{
-		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
-		{
-			$cartIdentifier = $event->getParam('cartIdentifier');
-			$cartManager = $commerceServices->getCartManager();
-			$cart = $cartManager->getCartByIdentifier($cartIdentifier);
-			if ($cart)
-			{
-				$cartData = $event->getRequest()->getPost()->toArray();
-				if (is_array($cartData) && count($cartData))
-				{
-					$this->populateCart($commerceServices, $cart, $cartData);
-					$cartManager->saveCart($cart);
-				}
-				$this->getCart($event);
-			}
-		}
-	}
-
-
-	/**
-	 * @param \Change\Http\Event $event
-	 */
-	public function deleteCart($event)
-	{
-		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
-		{
-			$cartIdentifier = $event->getParam('cartIdentifier');
-			$cartManager = $commerceServices->getCartManager();
-			$cart = $cartManager->getCartByIdentifier($cartIdentifier);
-			if ($cart)
-			{
-				$cartManager->deleteCart($cart);
-			}
-		}
-	}
-
-	/**
-	 * @param \Rbs\Commerce\CommerceServices $commerceServices
-	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @param array $cartData
-	 */
-	protected function populateCart($commerceServices, $cart, $cartData)
-	{
-		if (isset($cartData['billingAreaId']))
-		{
-			$cart->setBillingArea($commerceServices->getPriceManager()->getBillingAreaById($cartData['billingAreaId']));
-		}
-		else
-		{
-			$cart->setBillingArea(null);
-		}
-
-		if (isset($cartData['zone']))
-		{
-			$cart->setZone($cartData['zone']);
-		}
-		elseif (array_key_exists('zone', $cartData))
-		{
-			$cart->setZone(null);
-		}
-
-		if (isset($cartData['webStoreId']))
-		{
-			$cart->setWebStoreId($cartData['webStoreId']);
-		}
-		elseif (array_key_exists('webStoreId', $cartData))
-		{
-			$cart->setWebStoreId(null);
-		}
-
-		if (isset($cartData['ownerId']))
-		{
-			$cart->setOwnerId($cartData['ownerId']);
-		}
-		elseif (array_key_exists('ownerId', $cartData))
-		{
-			$cart->setOwnerId(null);
-		}
-
-		if (isset($cartData['userId']))
-		{
-			$cart->setUserId($cartData['userId']);
-		}
-		elseif (array_key_exists('userId', $cartData))
-		{
-			$cart->setUserId(null);
-		}
-
-		if (isset($cartData['context']) && is_array($cartData['context']))
-		{
-			$cart->getContext()->fromArray($cartData['context']);
-		}
-
-		if (isset($cartData['lines']) && is_array($cartData['lines']))
-		{
-			$cm = $commerceServices->getCartManager();
-			$cart->removeAllLines();
-
-			foreach ($cartData['lines'] as $lineData)
-			{
-				$cm->addLine($cart, $lineData);
 			}
 		}
 	}
