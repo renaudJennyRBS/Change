@@ -55,16 +55,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Stock/InventoryEntry/:id/timeline": {
-		"model": "Rbs_Stock_InventoryEntry",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Stock_InventoryEntry",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Stock/InventoryEntry/new": {
 		"model": "Rbs_Stock_InventoryEntry",
 		"name": "new",
@@ -76,6 +66,5 @@
 	},
 	"/Rbs/Stock/Sku/": false,
 	"/Rbs/Stock/Sku/:id": false,
-	"/Rbs/Stock/Sku/:id/timeline": false,
 	"/Rbs/Stock/Sku/new": false
 }

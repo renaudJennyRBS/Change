@@ -558,35 +558,20 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @var array
+	 * @var \Rbs\Admin\RoutesHelper
 	 */
-	protected $namedRoutes;
+	protected $routesHelper;
 
 	/**
-	 * @param string $model
-	 * @param string $name
-	 * @return null
+	 * @return \Rbs\Admin\RoutesHelper
 	 */
-	public function getNamedRoute($model, $name)
+	public function getRoutesHelper()
 	{
-		if ($this->namedRoutes === null)
+		if ($this->routesHelper === null)
 		{
-			$this->namedRoutes = [];
-			foreach ($this->getRoutes() as $path => $route)
-			{
-				if (isset($route['name']) && (isset($route['module'])) || isset($route['model']))
-				{
-					$key = isset($route['model']) ? $route['model'] : $route['module'];
-					$route['path'] = $path;
-					$this->namedRoutes[$key][$route['name']] = $route;
-				}
-			}
+			$this->routesHelper = new \Rbs\Admin\RoutesHelper($this->getRoutes());
 		}
-		if (isset($this->namedRoutes[$model][$name]))
-		{
-			return $this->namedRoutes[$model][$name];
-		}
-		return null;
+		return $this->routesHelper;
 	}
 
 	/**

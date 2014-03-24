@@ -29,10 +29,7 @@
 	},
 	"/Rbs/Catalog/Attribute/": false,
 	"/Rbs/Catalog/Attribute/:id": false,
-	"/Rbs/Catalog/Attribute/:id/timeline": false,
 	"/Rbs/Catalog/Attribute/:id/translate/:LCID": false,
-	"/Rbs/Catalog/Attribute/:id/translate/:LCID/workflow": false,
-	"/Rbs/Catalog/Attribute/:id/workflow": false,
 	"/Rbs/Catalog/Attribute/new": false,
 	"/Rbs/Catalog/CrossSellingProductList/": false,
 	"/Rbs/Catalog/CrossSellingProductList/:id": {
@@ -45,7 +42,6 @@
 		"auto": false
 	},
 	"/Rbs/Catalog/CrossSellingProductList/:id/Products/": false,
-	"/Rbs/Catalog/CrossSellingProductList/:id/timeline": false,
 	"/Rbs/Catalog/CrossSellingProductList/new": false,
 	"/Rbs/Catalog/Product/": {
 		"model": "Rbs_Catalog_Product",
@@ -103,16 +99,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/Product/:id/timeline": {
-		"model": "Rbs_Catalog_Product",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_Product",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Catalog/Product/:id/translate/:LCID": {
 		"model": "Rbs_Catalog_Product",
 		"name": "translate",
@@ -120,35 +106,6 @@
 			"templateUrl": "Document/Rbs/Catalog/Product/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/Product/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Catalog_Product",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_Product",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/Product/:id/urls": {
-		"model": "Rbs_Catalog_Product",
-		"name": "urls",
-		"rule": {
-			"templateUrl": "Rbs/Admin/url-manager.twig",
-			"labelKey": "m.rbs.admin.admin.urls | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/Product/:id/workflow": {
-		"model": "Rbs_Catalog_Product",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_Product",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": true
 	},
@@ -289,16 +246,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/ProductList/:id/timeline": {
-		"model": "Rbs_Catalog_ProductList",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_ProductList",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Catalog/ProductList/new": {
 		"model": "Rbs_Catalog_ProductList",
 		"name": "new",
@@ -310,7 +257,6 @@
 	},
 	"/Rbs/Catalog/ProductListItem/": false,
 	"/Rbs/Catalog/ProductListItem/:id": false,
-	"/Rbs/Catalog/ProductListItem/:id/timeline": false,
 	"/Rbs/Catalog/ProductListItem/new": false,
 	"/Rbs/Catalog/ProductSet/": false,
 	"/Rbs/Catalog/ProductSet/:id": {
@@ -352,16 +298,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/SectionProductList/:id/timeline": {
-		"model": "Rbs_Catalog_SectionProductList",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_SectionProductList",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Catalog/SectionProductList/new": {
 		"model": "Rbs_Catalog_SectionProductList",
 		"name": "new",
@@ -379,16 +315,6 @@
 			"templateUrl": "Document/Rbs/Catalog/VariantGroup/form.twig",
 			"labelKey": "m.rbs.catalog.documents.variantgroup | ucf",
 			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Catalog/VariantGroup/:id/timeline": {
-		"model": "Rbs_Catalog_VariantGroup",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_VariantGroup",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": true
 	},
@@ -412,16 +338,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Commerce/Attribute/:id/timeline": {
-		"model": "Rbs_Catalog_Attribute",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Catalog_Attribute",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Commerce/Attribute/:id/translate/:LCID": {
 		"model": "Rbs_Catalog_Attribute",
 		"name": "translate",
@@ -429,26 +345,6 @@
 			"templateUrl": "Document/Rbs/Catalog/Attribute/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/Attribute/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Catalog_Attribute",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_Attribute",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Commerce/Attribute/:id/workflow": {
-		"model": "Rbs_Catalog_Attribute",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Catalog_Attribute",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": false
 	},

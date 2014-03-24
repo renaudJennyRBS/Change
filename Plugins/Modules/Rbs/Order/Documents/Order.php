@@ -110,6 +110,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
+		$eventManager->attach(array(DocumentEvent::EVENT_UPDATED), array($this, 'onDefaultUpdated'), 5);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 4);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeShippingModes'], 3);
@@ -1222,5 +1223,20 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 	public function getTotalAmountWithTaxes()
 	{
 		return $this->getContent()->get('totalAmountWithTaxes');
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdated($event)
+	{
+		$order = $event->getDocument();
+		/* @var $order \Rbs\Order\Documents\Order */
+		$orderProcessingStatus = $order->getProcessingStatus();
+		if ($orderProcessingStatus === self::PROCESSING_STATUS_FINALIZED || $orderProcessingStatus === self::PROCESSING_STATUS_CANCELED)
+		{
+			$jobManager = $event->getApplicationServices()->getJobManager();
+			$jobManager->createNewJob('Rbs_Order_Order_Complete', ['orderId' => $order->getId()]);
+		}
 	}
 }

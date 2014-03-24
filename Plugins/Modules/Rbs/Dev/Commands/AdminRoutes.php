@@ -156,12 +156,15 @@ class AdminRoutes
 		$baseGenericRule = '/' . $module->getVendor() . '/' . $module->getShortName() . '/' . $model->getShortName() . '/';
 		$baseKey = strtolower('m.' . $module->getVendor() . '.' . $module->getShortName());
 
-		$route = ['model' => $modelName, 'name' => 'list',
-			'rule' => [
-				'templateUrl' => 'Document' . $baseGenericRule . 'list.twig',
-				'labelKey' => $baseKey . '.admin.' . strtolower($model->getShortName()) . '_list | ucf'
-			]];
-		$routes[$baseGenericRule] = $route;
+		if (file_exists($workspace->composePath($modelAssetPath, 'list.twig')))
+		{
+			$route = ['model' => $modelName, 'name' => 'list',
+				'rule' => [
+					'templateUrl' => 'Document' . $baseGenericRule . 'list.twig',
+					'labelKey' => $baseKey . '.admin.' . strtolower($model->getShortName()) . '_list | ucf'
+				]];
+			$routes[$baseGenericRule] = $route;
+		}
 
 		$docPath = ':id';
 
@@ -193,65 +196,31 @@ class AdminRoutes
 					]];
 				$routes[$baseGenericRule . $docPath . '/translate/:LCID'] = $route;
 			}
-
-			$route = ['model' => $modelName, 'name' => 'timeline',
-				'rule' => [
-					'templateUrl' => 'Rbs/Timeline/timeline.twig?model=' . $modelName,
-					'controller' => 'RbsChangeTimelineController',
-					'labelKey' => 'm.rbs.timeline.admin.timeline | ucf'
-				]];
-			$routes[$baseGenericRule . $docPath . '/timeline'] = $route;
-
-			if ($model->useCorrection() || $model->isPublishable())
-			{
-				$route = ['model' => $modelName, 'name' => 'workflow',
-					'rule' => [
-						'templateUrl' => 'Rbs/Admin/workflow/workflow.twig?model=' . $modelName,
-						'controller' => 'RbsChangeWorkflowController',
-						'labelKey' => 'm.rbs.workflow.admin.workflow | ucf'
-					]];
-				$routes[$baseGenericRule . $docPath . '/workflow'] = $route;
-
-				if ($model->isLocalized())
-				{
-					$route = ['model' => $modelName, 'name' => 'localizedWorkflow',
-						'rule' => [
-							'templateUrl' => 'Rbs/Admin/workflow/workflow.twig?model=' . $modelName,
-							'controller' => 'RbsChangeWorkflowController',
-							'labelKey' => 'm.rbs.workflow.admin.workflow | ucf'
-						]];
-					$routes[$baseGenericRule . $docPath . '/translate/:LCID/workflow'] = $route;
-				}
-			}
-
-			if ($model->isPublishable())
-			{
-				$route = ['model' => $modelName, 'name' => 'urls',
-					'rule' => [
-						'templateUrl' => 'Rbs/Admin/url-manager.twig',
-						'labelKey' => 'm.rbs.admin.admin.urls | ucf'
-					]];
-				$routes[$baseGenericRule . $docPath . '/urls'] = $route;
-			}
 		}
 		else
 		{
-			$route = ['model' => $modelName, 'name' => 'new',
-				'rule' => [
-					'templateUrl' => 'Document' . $baseGenericRule . 'new.twig',
-					'labelKey' => 'm.rbs.admin.adminjs.new_resource | ucf'
-				]];
-			$routes[$baseGenericRule . 'new'] = $route;
+			if (file_exists($workspace->composePath($modelAssetPath, 'new.twig')))
+			{
+				$route = ['model' => $modelName, 'name' => 'new',
+					'rule' => [
+						'templateUrl' => 'Document' . $baseGenericRule . 'new.twig',
+						'labelKey' => 'm.rbs.admin.adminjs.new_resource | ucf'
+					]];
+				$routes[$baseGenericRule . 'new'] = $route;
+			}
 
-			$route = ['model' => $modelName, 'name' => 'edit',
-				'rule' => [
-					'templateUrl' => 'Document' . $baseGenericRule . 'edit.twig',
-					'labelKey' => $baseKey . '.documents.' . strtolower($model->getShortName()) . ' | ucf',
-					'labelId' => 'id'
-				]];
-			$routes[$baseGenericRule . $docPath] = $route;
+			if (file_exists($workspace->composePath($modelAssetPath, 'edit.twig')))
+			{
+				$route = ['model' => $modelName, 'name' => 'edit',
+					'rule' => [
+						'templateUrl' => 'Document' . $baseGenericRule . 'edit.twig',
+						'labelKey' => $baseKey . '.documents.' . strtolower($model->getShortName()) . ' | ucf',
+						'labelId' => 'id'
+					]];
+				$routes[$baseGenericRule . $docPath] = $route;
+			}
 
-			if ($model->isLocalized())
+			if (file_exists($workspace->composePath($modelAssetPath, 'translate.twig')))
 			{
 				$route = ['model' => $modelName, 'name' => 'translate',
 					'rule' => [
@@ -260,38 +229,6 @@ class AdminRoutes
 						'labelKey' => 'm.rbs.admin.admin.translation | ucf'
 					]];
 				$routes[$baseGenericRule . $docPath . '/translate/:LCID'] = $route;
-			}
-
-			if ($model->useCorrection() || $model->isPublishable())
-			{
-				$route = ['model' => $modelName, 'name' => 'workflow',
-					'rule' => [
-						'templateUrl' => 'Rbs/Admin/workflow/workflow.twig?model=' . $modelName,
-						'controller' => 'RbsChangeWorkflowController',
-						'labelKey' => 'm.rbs.workflow.admin.workflow | ucf'
-					]];
-				$routes[$baseGenericRule . $docPath . '/workflow'] = $route;
-
-				if ($model->isLocalized())
-				{
-					$route = ['model' => $modelName, 'name' => 'localizedWorkflow',
-						'rule' => [
-							'templateUrl' => 'Rbs/Admin/workflow/workflow.twig?model=' . $modelName,
-							'controller' => 'RbsChangeWorkflowController',
-							'labelKey' => 'm.rbs.workflow.admin.workflow | ucf'
-						]];
-					$routes[$baseGenericRule . $docPath . '/translate/:LCID/workflow'] = $route;
-				}
-			}
-
-			if ($model->isPublishable())
-			{
-				$route = ['model' => $modelName, 'name' => 'urls',
-					'rule' => [
-						'templateUrl' => 'Rbs/Admin/url-manager.twig',
-						'labelKey' => 'm.rbs.admin.admin.urls | ucf'
-					]];
-				$routes[$baseGenericRule . $docPath . '/urls'] = $route;
 			}
 		}
 		return $routes;

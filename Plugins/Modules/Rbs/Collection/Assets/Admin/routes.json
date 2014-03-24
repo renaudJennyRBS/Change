@@ -6,7 +6,7 @@
 			"redirectTo": "/Rbs/Collection/Collection/",
 			"labelKey": "m.rbs.collection.admin.module_name | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Collection/Collection/": {
 		"model": "Rbs_Collection_Collection",
@@ -24,16 +24,6 @@
 			"templateUrl": "Document/Rbs/Collection/Collection/form.twig",
 			"labelKey": "m.rbs.collection.documents.collection | ucf",
 			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Collection/Collection/:id/timeline": {
-		"model": "Rbs_Collection_Collection",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Collection_Collection",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
 		},
 		"auto": true
 	},
@@ -57,16 +47,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Collection/Item/:id/timeline": {
-		"model": "Rbs_Collection_Item",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Collection_Item",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Collection/Item/:id/translate/:LCID": {
 		"model": "Rbs_Collection_Item",
 		"name": "translate",
@@ -74,26 +54,6 @@
 			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Collection/Item/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Collection_Item",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Collection_Item",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Collection/Item/:id/workflow": {
-		"model": "Rbs_Collection_Item",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Collection_Item",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": true
 	},

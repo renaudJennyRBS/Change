@@ -78,6 +78,18 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Commerce\Job\CartsCleanup())->execute($event);
 		};
 		$events->attach('process_Rbs_Commerce_Carts_Cleanup', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Order\Job\OrderComplete())->execute($event);
+		};
+		$events->attach('process_Rbs_Order_Order_Complete', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Order\Job\OrderCleanup())->execute($event);
+		};
+		$events->attach('process_Change_Document_CleanUp', $callBack, 5);
 	}
 
 	/**

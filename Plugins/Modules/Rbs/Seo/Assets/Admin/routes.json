@@ -27,16 +27,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Seo/DocumentSeo/:id/timeline": {
-		"model": "Rbs_Seo_DocumentSeo",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Seo_DocumentSeo",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Seo/DocumentSeo/:id/translate/:LCID": {
 		"model": "Rbs_Seo_DocumentSeo",
 		"name": "translate",
@@ -44,26 +34,6 @@
 			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Seo/DocumentSeo/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Seo_DocumentSeo",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_DocumentSeo",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Seo/DocumentSeo/:id/workflow": {
-		"model": "Rbs_Seo_DocumentSeo",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_DocumentSeo",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": true
 	},
@@ -95,16 +65,6 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Seo/ModelConfiguration/:id/timeline": {
-		"model": "Rbs_Seo_ModelConfiguration",
-		"name": "timeline",
-		"rule": {
-			"templateUrl": "Rbs/Timeline/timeline.twig?model=Rbs_Seo_ModelConfiguration",
-			"controller": "RbsChangeTimelineController",
-			"labelKey": "m.rbs.timeline.admin.timeline | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Seo/ModelConfiguration/:id/translate/:LCID": {
 		"model": "Rbs_Seo_ModelConfiguration",
 		"name": "translate",
@@ -112,26 +72,6 @@
 			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Seo/ModelConfiguration/:id/translate/:LCID/workflow": {
-		"model": "Rbs_Seo_ModelConfiguration",
-		"name": "localizedWorkflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_ModelConfiguration",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Seo/ModelConfiguration/:id/workflow": {
-		"model": "Rbs_Seo_ModelConfiguration",
-		"name": "workflow",
-		"rule": {
-			"templateUrl": "Rbs/Admin/workflow/workflow.twig?model=Rbs_Seo_ModelConfiguration",
-			"controller": "RbsChangeWorkflowController",
-			"labelKey": "m.rbs.workflow.admin.workflow | ucf"
 		},
 		"auto": true
 	},
