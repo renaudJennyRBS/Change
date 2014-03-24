@@ -359,19 +359,24 @@
 			{
 				var lvl = getNodeInfo(doc).level-1,
 				    nextDoc = (index+1) < $scope.browseCollection.length ? $scope.browseCollection[index+1] : null,
-					nextLvl,
+					nextLvl = -1,
 					style;
 
 				if (nextDoc) {
 					nextLvl = getNodeInfo(nextDoc).level-1;
-					style = { background : 'linear-gradient(to bottom, rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*9)+','+Math.max(0, 255-lvl*5)+') 50%, rgb('+Math.max(0, 245-nextLvl*19)+','+Math.max(0, 250-nextLvl*12)+','+Math.max(0, 255-nextLvl*5)+'))' };
+				}
+
+				if (nextLvl !== lvl) {
+					style = { background : 'linear-gradient(to bottom, rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*9)+','+Math.max(0, 255-lvl*5)+'), rgb('+Math.max(0, 245-nextLvl*19)+','+Math.max(0, 250-nextLvl*9)+','+Math.max(0, 255-nextLvl*5)+'))' };
 				} else {
-					style = { background : 'rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*12)+','+Math.max(0, 255-lvl*5)+')' };
+					style = { background : 'rgb('+Math.max(0, 245-lvl*19)+','+Math.max(0, 250-lvl*9)+','+Math.max(0, 255-lvl*5)+')' };
 				}
 
 				if (index === 0) {
 					style.top = 0;
 				}
+				style.width = (6+lvl*2) + 'px';
+				style.left = (-3-lvl) + 'px';
 
 				return style;
 			},

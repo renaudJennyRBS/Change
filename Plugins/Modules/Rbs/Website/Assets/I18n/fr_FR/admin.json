@@ -423,5 +423,8 @@
 	},
 	"alt_click_to_refresh":{
 		"message":"alt+clic pour actualiser"
+	},
+	"empty":{
+		"message":"vide"
 	}
 }
