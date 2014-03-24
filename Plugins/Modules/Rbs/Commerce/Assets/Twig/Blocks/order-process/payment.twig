@@ -106,27 +106,27 @@
 				<tbody>
 					<tr data-ng-show="showLinesAmount()">
 						<td>{{ i18n('m.rbs.commerce.front.lines_amount_with_tax', ['ucf']) }}</td>
-						<td><span class="price">(= cart.context.formattedLinesAmountWithTaxes =)</span></td>
+						<td class="price">(= cart.context.formattedLinesAmountWithTaxes =)</td>
 					</tr>
 					<tr data-ng-repeat="fee in cart.fees">
 						<td>(= fee.designation =)</td>
-						<td><span class="price">(= fee.options.formattedAmountWithTaxes =)</span></td>
+						<td class="price">(= fee.options.formattedAmountWithTaxes =)</td>
 					</tr>
 					<tr data-ng-repeat="discount in cart.discounts">
 						<td>(= discount.title =)</td>
-						<td><span class="price">(= discount.options.formattedAmountWithTaxes =)</span></td>
+						<td class="price">(= discount.options.formattedAmountWithTaxes =)</td>
 					</tr>
 					<tr data-ng-show="showTotalAmount()">
 						<td>{{ i18n('m.rbs.commerce.front.total_amount_with_tax', ['ucf']) }}</td>
-						<td><span class="price">(= cart.context.formattedTotalAmountWithTaxes =)</span></td>
+						<td class="price">(= cart.context.formattedTotalAmountWithTaxes =)</td>
 					</tr>
 					<tr data-ng-repeat="note in cart.creditNotes">
 						<td>(= note.title =)</td>
-						<td><span class="price">(= note.options.formattedAmountWithTaxes =)</span></td>
+						<td class="price">(= note.options.formattedAmountWithTaxes =)</td>
 					</tr>
 					<tr>
 						<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
-						<td><span class="price">(= cart.context.formattedPaymentAmountWithTaxes =)</span></td>
+						<td class="price">(= cart.context.formattedPaymentAmountWithTaxes =)</td>
 					</tr>
 				</tbody>
 			</table>

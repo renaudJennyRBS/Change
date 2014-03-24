@@ -149,13 +149,13 @@
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-md-6">
-								<address>
+								<address class="no-bottom-margin">
 									<strong>(= cart.address.__lines[0] =)</strong><br>
 									<a href="mailto:(= information.email =)">(= information.email =)</a>
 								</address>
 							</div>
 							<div class="col-md-6">
-								<address>
+								<address class="no-bottom-margin">
 									<strong>(= cart.address.__lines[0] =)</strong>
 									<div data-ng-repeat="line in cart.address.__lines" data-ng-if="!$first">(= line =)</div>
 								</address>

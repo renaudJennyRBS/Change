@@ -685,7 +685,7 @@ class Cart implements \Serializable
 		{
 			$taxes = $taxes->toArray();
 		}
-		return $taxes ;
+		return $taxes;
 	}
 
 	/**

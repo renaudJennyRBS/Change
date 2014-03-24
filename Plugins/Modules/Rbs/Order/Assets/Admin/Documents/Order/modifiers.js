@@ -118,6 +118,9 @@
 
 				scope.$watch('document.fees', function(fees) {
 					scope.amounts.totalFeesAmount = 0;
+					if (!angular.isArray(fees)) {
+						return;
+					}
 					for (var i = 0; i < fees.length; i++) {
 						for (var j = 0; j < fees[i].items.length; j++) {
 							scope.amounts.totalFeesAmount += fees[i].items[j].price.value;
@@ -127,6 +130,9 @@
 
 				scope.$watch('document.discounts', function(discounts) {
 					scope.amounts.totalDiscountsAmount = 0;
+					if (!angular.isArray(discounts)) {
+						return;
+					}
 					for (var i = 0; i < discounts.length; i++) {
 						scope.amounts.totalDiscountsAmount += discounts[i].price.value;
 					}

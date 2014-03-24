@@ -3,34 +3,8 @@
 <h2>{{ i18n('m.rbs.order.front.processing_orders', ['ucf']) }}</h2>
 
 {% if processingOrders %}
-	<div class="table-responsive">
-		<table class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_item_count', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_amount', ['ucf']) }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for order in processingOrders %}
-					<tr>
-						<td>
-							{% if order.label %}
-								<a href="TODO">{{ order.label }}</a>
-							{% else %}
-								<em>{{ i18n('m.rbs.order.front.generating_order', ['ucf']) }}</em>
-							{% endif %}
-						</td>
-						<td>{{ order.date | transDateTime }}</td>
-						<td>{{ order.itemCount }}</td>
-						<td>{{ formatPrice(order.totalAmountWithTaxes, order.currencycode) }}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+	{% set orderPresentations = processingOrders %}
+	{% include 'Rbs_Order/order-list.twig' %}
 {% else %}
 	<p>{{ i18n('m.rbs.order.front.no_processing_order', ['ucf']) }}</p>
 {% endif %}
@@ -45,30 +19,8 @@
 		{%- endif -%}
 	</h2>
 
-	<div class="table-responsive">
-		<table class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_item_count', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_amount', ['ucf']) }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for order in finalizedOrdersPaginator.items %}
-					<tr>
-						<td>
-							<a href="TODO">{{ order.label }}</a>
-						</td>
-						<td>{{ order.date | transDateTime }}</td>
-						<td>{{ order.itemCount }}</td>
-						<td>{{ formatPrice(order.totalAmountWithTaxes, order.currencycode) }}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+	{% set orderPresentations = finalizedOrdersPaginator.items %}
+	{% include 'Rbs_Order/order-list.twig' %}
 
 	{% if hasMore %}
 		<p>
@@ -89,30 +41,8 @@
 		{%- endif -%}
 	</h2>
 
-	<div class="table-responsive">
-		<table class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_item_count', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.order.front.order_amount', ['ucf']) }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for order in canceledOrdersPaginator.items %}
-					<tr>
-						<td>
-							<a href="TODO">{{ order.label }}</a>
-						</td>
-						<td>{{ order.date | transDateTime }}</td>
-						<td>{{ order.itemCount }}</td>
-						<td>{{ formatPrice(order.totalAmountWithTaxes, order.currencycode) }}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+	{% set orderPresentations = canceledOrdersPaginator.items %}
+	{% include 'Rbs_Order/order-list.twig' %}
 
 	{% if hasMore %}
 		<p>

@@ -44,7 +44,106 @@
 	"order_amount":{
 		"message":"montant"
 	},
+	"order_lines":{
+		"message":"contenu"
+	},
+	"order_processing_status":{
+		"message":"statut"
+	},
+	"order_processing_status_processing":{
+		"message":"en cours"
+	},
+	"order_processing_status_finalized":{
+		"message":"finialisée"
+	},
+	"order_processing_status_canceled":{
+		"message":"annulée"
+	},
 	"no_processing_order":{
 		"message":"Vous n'avez aucune commande en cours."
+	},
+	"order_general_information":{
+		"message":"informations générales"
+	},
+	"order_personal_information":{
+		"message":"informations personnelles"
+	},
+	"order_payment":{
+		"message":"paiement"
+	},
+	"order_shipments":{
+		"message":"expéditions"
+	},
+	"order_details":{
+		"message":"détail d'une commande",
+		"description":"Used in the order detail block."
+	},
+	"order_error_forbidden":{
+		"message":"Vous n'êtes pas autorisé à afficher cette commande.",
+		"description":"Used in the order detail block."
+	},
+	"order_error_invalid":{
+		"message":"Aucune commande trouvée.",
+		"description":"Used in the order detail block."
+	},
+	"shipping_mode":{
+		"message":"mode"
+	},
+	"shipping_articles":{
+		"message":"articles"
+	},
+	"shipping_line":{
+		"message":"ligne"
+	},
+	"shipping_status":{
+		"message":"statut"
+	},
+	"shipping_status_unavailable":{
+		"message":"inconnu"
+	},
+	"shipping_status_remain":{
+		"message":"partiellement expédié"
+	},
+	"shipping_status_sent":{
+		"message":"expédié"
+	},
+	"shipping_status_noshipment":{
+		"message":"non-expédié"
+	},
+	"shipping_address":{
+		"message":"adresse"
+	},
+	"transaction_connector":{
+		"message":"mode"
+	},
+	"transaction_amount":{
+		"message":"montant"
+	},
+	"transaction_status":{
+		"message":"statut"
+	},
+	"transaction_date":{
+		"message":"date"
+	},
+	"transaction_status_processing":{
+		"message":"en attente"
+	},
+	"transaction_status_success":{
+		"message":"payé"
+	},
+	"transaction_status_failed":{
+		"message":"échoué"
+	},
+	"shipment_code":{
+		"message":"code"
+	},
+	"shipment_articles":{
+		"message":"articles"
+	},
+	"shipment_carrier_infos":{
+		"message":"informations transporteur"
+	},
+	"shipment_address":{
+		"message":"adresse"
 	}
 }

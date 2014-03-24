@@ -655,3 +655,10 @@ pre {
 	border-color: #6f5499;
 	color: white;
 }
+
+/* Fix form inline */
+.form-inline .form-control {
+	display: inline-block;
+	width: auto;
+	vertical-align: middle;
+}
