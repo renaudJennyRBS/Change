@@ -845,7 +845,7 @@
 						});
 					});
 
-					$rootScope.$on('$routeChangeStart', function () {
+					$scope.$on('$routeChangeStart', function () {
 						if ($scope.changes.length > 0) {
 							EditorManager.saveLocalCopy($scope.document, editorUrl);
 						}
