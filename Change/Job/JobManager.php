@@ -108,7 +108,7 @@ class JobManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function run(JobInterface $job = null)
 	{
-		if ($job === null || $job->getStatus() !== JobInterface::STATUS_WAITING)
+		if ($job === null || ($job->getStatus() !== JobInterface::STATUS_WAITING && $job->getStatus() !== JobInterface::STATUS_FAILED))
 		{
 			return;
 		}
