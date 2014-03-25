@@ -1,0 +1,17 @@
+{
+	"WishlistButton" : {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistButton.js"
+		]
+	},
+	"WishlistDetail": {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistDetail.js"
+		]
+	},
+	"WishlistList": {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistList.js"
+		]
+	}
+}

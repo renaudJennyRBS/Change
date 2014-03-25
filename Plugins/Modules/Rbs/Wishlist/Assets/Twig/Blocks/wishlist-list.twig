@@ -1,0 +1,38 @@
+<div data-ng-controller="RbsWishlistListCtrl">
+	<div class="row">
+		<div class="col-lg-12">
+			{% if wishlists | length > 0 %}
+				<ul data-ng-cloak="" class="grid-list grid-list-4 grid-list-bordered grid-list-align-top product-list">
+					{% for wishlist in wishlists %}
+						<li>
+							<div class="product-visual">
+								<a href="{{ contextualURL(wishlist.id) }}">
+									<img alt="{{ wishlist.visual.alt }}" src="{{ wishlist.visual.src }}" />
+								</a>
+								{% if isUserWishlists %}
+								<button type="button" data-ng-click="setDefaultWishlist({{ wishlist.id }})"
+									class="btn btn-default glyphicon glyphicon-heart{% if not wishlist.default %}-empty{% endif %}"
+									title="{{ i18nAttr('m.rbs.wishlist.front.wishlist_list_default_wishlist') }}">
+								</button>
+								<button type="button" data-ng-click="setWishlistPublic({{ wishlist.id }})"
+									class="btn btn-default">
+									{% if wishlist.public %}<span class="glyphicon glyphicon-eye-open"></span> {{ i18n('m.rbs.wishlist.front.wishlist_public') }}
+									{% else %}<span class="glyphicon glyphicon-eye-close"></span> {{ i18n('m.rbs.wishlist.front.wishlist_private') }}{% endif %}
+								</button>
+								{% endif %}
+							</div>
+							<div class="product-label">
+								<a href="{{ contextualURL(wishlist.id) }}">{{ wishlist.title }}</a>
+								<span class="small">
+									{{ i18n('m.rbs.wishlist.front.wishlist_list_wishlist_product_count', ['ucf'], {count: wishlist.productCount}) }}
+								</span>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p>{{ i18n('m.rbs.wishlist.front.wishlist_list_no_wishlist_in_wishlist_list', ['ucf']) }}</p>
+			{% endif %}
+		</div>
+	</div>
+</div>

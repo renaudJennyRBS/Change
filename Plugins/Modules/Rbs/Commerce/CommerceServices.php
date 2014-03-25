@@ -174,6 +174,14 @@ class CommerceServices extends Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//WishlistManager: Application, DocumentManager
+		$wishlistManagerClassName = $this->getInjectedClassName('WishlistManager', '\Rbs\Wishlist\WishlistManager');
+		$classDefinition = $this->getClassDefinition($wishlistManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -219,6 +227,9 @@ class CommerceServices extends Di
 
 		$im->addAlias('DiscountManager', $discountManagerClassName,
 			array('application' => $application));
+
+		$im->addAlias('WishlistManager', $wishlistManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
 	}
 
 	/**
@@ -316,5 +327,13 @@ class CommerceServices extends Di
 	public function getDiscountManager()
 	{
 		return $this->get('DiscountManager');
+	}
+
+	/**
+	 * @return \Rbs\Wishlist\WishlistManager
+	 */
+	public function getWishlistManager()
+	{
+		return $this->get('WishlistManager');
 	}
 }

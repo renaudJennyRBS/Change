@@ -1,0 +1,34 @@
+<div data-ng-controller="RbsWishlistButtonCtrl"
+	data-ng-init='data = {{ data | json_encode() | raw }}'>
+	<div class="text-danger" data-ng-show="error"><span data-ng-bind="error"></span></div>
+	<div class="text-success" data-ng-show="successMessage"><span data-ng-bind="successMessage"></span></div>
+	<div class="btn-group">
+		<button class="btn btn-xs btn-warning" type="button" data-ng-click="addToWishlist()">
+			<span class="glyphicon glyphicon-plus"></span>
+			{{ i18n('m.rbs.wishlist.front.wishlist_button', ['ucf']) }}
+		</button>
+		<button type="button" class="btn btn-xs btn-warning dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+			<span class="sr-only">{{ i18n('m.rbs.wishlist.front.wishlists_toggle_button', ['ucf']) }}</span>
+		</button>
+		<ul class="dropdown-menu">
+			<li data-ng-repeat="wishlist in wishlists">
+				<a href="" data-ng-click="addToWishlist(wishlist)"><span data-ng-bind="wishlist.title"></span></a>
+			</li>
+			<li class="divider"></li>
+			<li>
+				<a href="" data-ng-click='addNewWishlist("addWishlistModal-{{ blockId }}")'>
+					{{ i18n('m.rbs.wishlist.front.wishlist_add', ['ucf']) }}
+				</a>
+			</li>
+			<li>
+				<a href="" data-ng-href="{{ functionURL('Rbs_Wishlist_WishlistList') }}">
+					{{ i18n('m.rbs.wishlist.front.wishlist_manage_wishlists', ['ucf']) }}
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div>
+		{% include 'Rbs_Wishlist/Blocks/add-wishlist-popin.twig' %}
+	</div>
+</div>

@@ -66,6 +66,14 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.payment.admin.create_account_for_transaction_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.payment.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Wishlist_Wishlist', 'document' => true, 'block' => 'Rbs_Wishlist_Wishlist',
+			'label' => $i18nManager->trans('m.rbs.wishlist.admin.wishlist_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
+
+		$functions[] = ['code' => 'Rbs_Wishlist_WishlistList', 'document' => true, 'block' => 'Rbs_Wishlist_WishlistList',
+			'label' => $i18nManager->trans('m.rbs.wishlist.admin.wishlist_list_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
+
 		$event->setParam('functions', $functions);
 	}
 } 
