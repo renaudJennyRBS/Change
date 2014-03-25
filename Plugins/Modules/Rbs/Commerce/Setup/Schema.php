@@ -33,6 +33,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newDateFieldDefinition('creation_date')->setNullable(false))
 				->addField($schemaManager->newTimeStampFieldDefinition('last_update')->setNullable(false))
 				->addField($schemaManager->newVarCharFieldDefinition('identifier', array('length' => 40))->setNullable(true))
+				->addField($schemaManager->newVarCharFieldDefinition('email')->setNullable(true))
 				->addField($schemaManager->newIntegerFieldDefinition('user_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newIntegerFieldDefinition('store_id')->setNullable(false)->setDefaultValue('0'))
 				->addField($schemaManager->newNumericFieldDefinition('total_amount')->setNullable(true))
