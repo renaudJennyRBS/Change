@@ -311,9 +311,10 @@ class Query extends AbstractBuilder
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Db\Query\SelectQuery $query
 	 */
-	protected function setQueryParameters($query)
+	public function setQueryParameters(\Change\Db\Query\SelectQuery $query)
 	{
 		if (is_array($this->parameters))
 		{
