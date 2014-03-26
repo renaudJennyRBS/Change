@@ -221,10 +221,11 @@ class DocStateless extends \Compilation\Project\Tests\Documents\DocStateless
 	}
 
 	/**
+	 * @param string[] $modifiedPropertyNames
 	 * @throws \Exception
 	 * @return void
 	 */
-	protected function doUpdate()
+	protected function doUpdate($modifiedPropertyNames)
 	{
 		// TODO: Implement doUpdate() method.
 	}

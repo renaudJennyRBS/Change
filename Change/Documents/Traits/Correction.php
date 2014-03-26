@@ -23,7 +23,7 @@ use Change\Documents\Interfaces\Publishable;
  * @method array getModifiedPropertyNames() from \Change\Documents\AbstractDocument
  * @method \Change\Events\EventManager getEventManager() from \Change\Documents\AbstractDocument
  *
- * @method updateDocument() from \Change\Documents\Traits\DbStorage
+ * @method updateDocument(array $modifiedPropertyNames) from \Change\Documents\Traits\DbStorage
  */
 trait Correction
 {
@@ -115,8 +115,7 @@ trait Correction
 	public function updateMergedDocument()
 	{
 		$modifiedPropertyNames = $this->getModifiedPropertyNames();
-
-		$this->updateDocument();
+		$this->updateDocument($modifiedPropertyNames);
 
 		$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_UPDATED, $this,
 			['modifiedPropertyNames' => $modifiedPropertyNames]);
