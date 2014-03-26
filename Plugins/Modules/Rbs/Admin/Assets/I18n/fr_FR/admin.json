@@ -1280,5 +1280,95 @@
 	},
 	"gps_address_search":{
 		"message":"rechercher une adresse ou un lieu"
+	},
+	"choose_input_method":{
+		"message":"Veuillez choisir une méthode de saisie :"
+	},
+	"input_method_warning":{
+		"message":"Ce choix ne pourra pas être changé ultérieurement pour cette propriété de ce document."
+	},
+	"wysiwyg_blocks":{
+		"message":"blocs"
+	},
+	"wysiwyg_lists":{
+		"message":"listes"
+	},
+	"wysiwyg_format":{
+		"message":"format"
+	},
+	"wysiwyg_undo":{
+		"message":"défaire"
+	},
+	"wysiwyg_redo":{
+		"message":"refaire"
+	},
+	"wysiwyg_clear":{
+		"message":"supprimer le formattage"
+	},
+	"wysiwyg_view_source":{
+		"message":"voir le code HTML"
+	},
+	"wysiwyg_heading_1":{
+		"message":"titre de niveau 1"
+	},
+	"wysiwyg_heading_2":{
+		"message":"titre de niveau 2"
+	},
+	"wysiwyg_heading_3":{
+		"message":"titre de niveau 3"
+	},
+	"wysiwyg_heading_4":{
+		"message":"titre de niveau 4"
+	},
+	"wysiwyg_paragraph":{
+		"message":"paragraphe"
+	},
+	"wysiwyg_pre":{
+		"message":"texte pré-formatté"
+	},
+	"wysiwyg_quote":{
+		"message":"citation"
+	},
+	"wysiwyg_unordered_list":{
+		"message":"liste à puces"
+	},
+	"wysiwyg_ordered_list":{
+		"message":"liste numérotée"
+	},
+	"wysiwyg_insert_picture":{
+		"message":"insérer une image"
+	},
+	"wysiwyg_insert_link":{
+		"message":"insérer un lien vers une page du site"
+	},
+	"wysiwyg_insert_external_link":{
+		"message":"insérer un lien externe"
+	},
+	"wysiwyg_remove_link":{
+		"message":"supprimer le lien"
+	},
+	"wysiwyg_insertion":{
+		"message":"insertion"
+	},
+	"wysiwyg_alignment":{
+		"message":"alignement"
+	},
+	"wysiwyg_align_left":{
+		"message":"aligner à gauche"
+	},
+	"wysiwyg_align_center":{
+		"message":"centrer"
+	},
+	"wysiwyg_align_right":{
+		"message":"aligner à droite"
+	},
+	"wysiwyg_bold":{
+		"message":"gras"
+	},
+	"wysiwyg_italic":{
+		"message":"italique"
+	},
+	"wysiwyg_underline":{
+		"message":"souligné"
 	}
 }
