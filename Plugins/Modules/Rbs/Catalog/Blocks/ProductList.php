@@ -20,7 +20,7 @@ class ProductList extends Block
 	/**
 	 * @var array
 	 */
-	protected $validSortBy = ['title.asc', 'price.asc', 'price.desc', 'price.desc', 'dateAdded.desc'];
+	protected $validSortBy = ['title.asc', 'level.asc', 'price.asc', 'price.desc', 'price.desc', 'dateAdded.desc'];
 
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -181,10 +181,15 @@ class ProductList extends Block
 				$subQuery->activated()
 			);
 
-			$this->addSort($parameters->getParameter('sortBy'), $productList, $query, $subQuery, $commerceServices->getContext());
+			$billingAreaId = $parameters->getParameter('billingAreaId');
+			$webStoreId = $parameters->getParameter('webStoreId');
 
+			$defaultSortBy = $productList->getProductSortOrder() . '.' . $productList->getProductSortDirection();
+
+			$queryBuilder = $this->addSort($parameters->getParameter('sortBy'), $defaultSortBy, $query, $subQuery, $webStoreId, $billingAreaId);
 			$rows = array();
-			$totalCount = $query->getCountDocuments();
+			$selectQuery = $queryBuilder->query();
+			$totalCount = $this->getCountDocuments($query, $selectQuery);
 			if ($totalCount)
 			{
 				$itemsPerPage = $parameters->getParameter('itemsPerPage');
@@ -200,10 +205,18 @@ class ProductList extends Block
 				$section = $page->getSection();
 				$attributes['section'] = $page->getSection();
 				$contextualUrls = $parameters->getParameter('contextualUrls');
+				$query->setQueryParameters($selectQuery);
+				$selectQuery->setStartIndex(($pageNumber-1)*$itemsPerPage)->setMaxResults($itemsPerPage);
+				$productIds = $selectQuery->getResults($selectQuery->getRowsConverter()->addIntCol('id'));
 
 				/* @var $product \Rbs\Catalog\Documents\Product */
-				foreach ($query->getDocuments(($pageNumber-1)*$itemsPerPage, $itemsPerPage) as $product)
+				foreach ($productIds as $productId)
 				{
+					$product = $documentManager->getDocumentInstance($productId);
+					if (!($product instanceof \Rbs\Catalog\Documents\Product))
+					{
+						continue;
+					}
 					if ($contextualUrls)
 					{
 						$url = $event->getUrlManager()->getByDocument($product, $section)->toString();
@@ -235,46 +248,105 @@ class ProductList extends Block
 	}
 
 	/**
+	 * @param \Change\Documents\Query\Query $query
+	 * @param \Change\Db\Query\SelectQuery $selectQuery
+	 * @return integer
+	 */
+	public function getCountDocuments($query, $selectQuery)
+	{
+		$qb = $query->getDbProvider()->getNewQueryBuilder();
+		$fragmentBuilder = $qb->getFragmentBuilder();
+		$qb->select($fragmentBuilder->alias($fragmentBuilder->func('count', '*'), 'rowCount'));
+		$qb->from($fragmentBuilder->alias($fragmentBuilder->subQuery($selectQuery), '_tmpCount'));
+		$selectCount = $qb->query();
+		$query->setQueryParameters($selectCount);
+		$count = $selectCount->getFirstResult($selectCount->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+		return $count;
+	}
+
+
+	/**
 	 * @param string|null $sortBy
-	 * @param \Rbs\Catalog\Documents\ProductList $productList
+	 * @param string $defaultSortBy
 	 * @param \Change\Documents\Query\Query $query
 	 * @param \Change\Documents\Query\ChildBuilder $subQuery
-	 * @param \Rbs\Commerce\Std\Context $context
+	 * @param integer $webStoreId
+	 * @param integer $billingAreaId
+	 * @return \Change\Db\Query\Builder
 	 */
-	protected function addSort($sortBy, $productList, $query, $subQuery, $context)
+	protected function addSort($sortBy, $defaultSortBy, $query, $subQuery, $webStoreId, $billingAreaId)
 	{
+		$dbq = null;
 		if ($sortBy == null)
 		{
 			$subQuery->addOrder('position', true);
-			$sortBy = $productList->getProductSortOrder() . '.' . $productList->getProductSortDirection();
+			list($sortName, $sortDir) = explode('.', $defaultSortBy);
 		}
-
-		if ($sortBy)
+		else
 		{
 			list($sortName, $sortDir) = explode('.', $sortBy);
-			if ($sortName && ($sortDir == 'asc' || $sortDir == 'desc'))
+		}
+
+		if ($webStoreId && $billingAreaId && in_array($sortName, ['dateAdded', 'price', 'level']))
+		{
+			$dbq = $query->dbQueryBuilder();
+			$fb = $dbq->getFragmentBuilder();
+			$tableIdentifier = $fb->identifier('tb_sort');
+			$join = $fb->logicAnd(
+				$fb->eq($subQuery->getColumn('id'), $fb->column('listitem_id', $tableIdentifier)),
+				$fb->eq($fb->column('store_id', $tableIdentifier), $fb->number($webStoreId)),
+				$fb->eq($fb->column('billing_area_id', $tableIdentifier), $fb->number($billingAreaId))
+			);
+			$dbq->innerJoin($fb->alias($fb->table('rbs_catalog_dat_productlistitem'), $tableIdentifier), $join);
+
+			if ($sortName == 'level')
 			{
-				switch ($sortName) {
-					case 'title' :
-						$query->addOrder('title', $sortDir == 'asc');
-						break;
-					case 'dateAdded' :
-						$subQuery->addOrder('creationDate', $sortDir == 'asc');
-						break;
-					case 'price' :
-						$ba = $context->getBillingArea();
-						$webStore = $context->getWebStore();
-						if ($ba && $webStore)
-						{
-							$priceQuery = $query->getPropertyModelBuilder('sku', 'Rbs_Price_Price', 'sku');
-							$priceQuery->andPredicates($priceQuery->activated(), $priceQuery->eq('billingArea', $ba),
-								$priceQuery->eq('webStore', $webStore), $priceQuery->eq('targetId', 0)
-							);
-							$priceQuery->addOrder('value', $sortDir == 'asc');
-						}
-						break;
+				if ($sortDir != 'desc')
+				{
+					$dbq->orderAsc($fb->column('sort_level', $tableIdentifier));
+				}
+				else
+				{
+					$dbq->orderDesc($fb->column('sort_level', $tableIdentifier));
+				}
+			}
+			elseif ($sortName == 'price')
+			{
+				if ($sortDir != 'desc')
+				{
+					$dbq->orderAsc($fb->column('sort_price', $tableIdentifier));
+				}
+				else
+				{
+					$dbq->orderDesc($fb->column('sort_price', $tableIdentifier));
+				}
+			}
+			else
+			{
+				if ($sortDir != 'desc')
+				{
+					$dbq->orderAsc($fb->column('sort_date', $tableIdentifier));
+				}
+				else
+				{
+					$dbq->orderDesc($fb->column('sort_date', $tableIdentifier));
 				}
 			}
 		}
+		elseif ($sortName == 'dateAdded')
+		{
+			$subQuery->addOrder('creationDate', $sortDir != 'desc');
+		}
+		else
+		{
+			$query->addOrder('title', $sortDir != 'desc');
+		}
+
+		if ($dbq === null)
+		{
+			$dbq = $query->dbQueryBuilder();
+		}
+		$dbq->addColumn($dbq->getFragmentBuilder()->alias($query->getColumn('id'), 'id'));
+		return $dbq;
 	}
 }

@@ -14,7 +14,7 @@
 		<li {% if parameters.sortBy == 'price.asc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'price.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_asc', ['ucf']) }}</a></li>
 		<li {% if parameters.sortBy == 'price.desc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'price.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_desc', ['ucf']) }}</a></li>
 		<li {% if parameters.sortBy == 'dateAdded.desc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'dateAdded.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_date_added_desc', ['ucf']) }}</a></li>
-		<li {% if parameters.sortBy == 'title.asc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'title.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_date_title_asc', ['ucf']) }}</a></li>
+		<li {% if parameters.sortBy == 'title.asc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'title.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_title_asc', ['ucf']) }}</a></li>
 	</ul>
 {% endif %}
 

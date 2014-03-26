@@ -48,6 +48,16 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getProductPresentation', [$this, 'onVariantGetProductPresentation'], 15);
 		$eventManager->attach('getProductPresentation', [$this, 'onSetGetProductPresentation'], 10);
 		$eventManager->attach('getProductPresentation', [$this, 'onDefaultGetProductPresentation'], 5);
+
+		$itemOrdering = null;
+
+		$eventManager->attach('updateItemOrdering', function($event) use (&$itemOrdering) {
+			if ($itemOrdering === null)
+			{
+				$itemOrdering = new \Rbs\Catalog\Events\ItemOrdering();
+			}
+			$itemOrdering->onUpdateProductListItem($event);
+		}, 5);
 	}
 
 	/**
@@ -1238,6 +1248,42 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
+	 * @param \Rbs\Stock\Documents\Sku $sku
+	 * @param boolean $onlyPublishedProduct
+	 * @return \Rbs\Catalog\Documents\Product[]
+	 */
+	public function getProductsBySku($sku, $onlyPublishedProduct)
+	{
+		$products = [];
+
+		if ($sku instanceof \Rbs\Stock\Documents\Sku)
+		{
+			$q = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
+			$productArray = $q->andPredicates($q->eq('sku', $sku))->getDocuments();
+
+			/** @var $product \Rbs\Catalog\Documents\Product */
+			foreach ($productArray as $product)
+			{
+				if (isset($products[$product->getId()]))
+				{
+					continue;
+				}
+				$products[$product->getId()] = $product;
+				foreach ($this->getProductAncestors($product, false) as $ancestorProduct)
+				{
+					if (isset($products[$ancestorProduct->getId()]))
+					{
+						continue;
+					}
+					$products[$ancestorProduct->getId()] = $ancestorProduct;
+				}
+			}
+		}
+		return array_values($products);
+	}
+
+	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param boolean $onlyPublishedProduct
 	 * @return integer[]
@@ -1761,6 +1807,53 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$productPresentation = new \Rbs\Catalog\Product\ProductSetPresentation();
 				$event->setParam('productPresentation', $productPresentation);
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\ProductListItem $productListItem
+	 * @param array $options
+	 * @throws \Exception
+	 */
+	public function updateItemOrdering($productListItem, array $options = null)
+	{
+		if (!is_array($options))
+		{
+			$options = [];
+		}
+		$options['productListItem'] = $productListItem;
+		$this->getEventManager()->trigger('updateItemOrdering', $this, $options);
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product $product
+	 * @param array $options
+	 * @throws \Exception
+	 */
+	public function updateItemsOrdering($product, array $options = null)
+	{
+		if (!is_array($options))
+		{
+			$options = [];
+		}
+
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductListItem');
+		$items = $query->andPredicates($query->eq('product', $product))->getDocuments();
+		if ($items->count())
+		{
+			try
+			{
+				$this->getTransactionManager()->begin();
+				foreach ($items as $item)
+				{
+					$this->updateItemOrdering($item, $options);
+				}
+				$this->getTransactionManager()->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $this->getTransactionManager()->rollBack($e);
 			}
 		}
 	}

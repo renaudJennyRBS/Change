@@ -39,6 +39,18 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addKey($this->newUniqueKey()->setName('productAttribute')
 					->addField($td->getField('attribute_id'))->addField($td->getField('product_id')))
 				->setOption('AUTONUMBER', 1);
+
+			$this->tables['rbs_catalog_dat_productlistitem'] = $td = $schemaManager->newTableDefinition('rbs_catalog_dat_productlistitem');
+			$td->addField($schemaManager->newIntegerFieldDefinition('listitem_id')->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('store_id')->setNullable(false))
+				->addField($schemaManager->newIntegerFieldDefinition('billing_area_id')->setNullable(false))
+				->addField($schemaManager->newDateFieldDefinition('sort_date')->setNullable(true))
+				->addField($schemaManager->newIntegerFieldDefinition('sort_level')->setNullable(true))
+				->addField($schemaManager->newFloatFieldDefinition('sort_price')->setNullable(true))
+				->addKey($this->newPrimaryKey()
+					->addField($td->getField('listitem_id'))
+					->addField($td->getField('store_id'))
+					->addField($td->getField('billing_area_id')));
 		}
 		return $this->tables;
 	}
