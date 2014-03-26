@@ -77,6 +77,12 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 
 		$callBack = function ($event)
 		{
+			(new \Change\Documents\Events\PublishListener())->onUpdated($event);
+		};
+		$events->attach($identifiers, DocumentEvent::EVENT_UPDATED, $callBack, 5);
+
+		$callBack = function ($event)
+		{
 			(new \Change\Documents\Events\DeleteListener())->onDelete($event);
 		};
 		$events->attach($identifiers, DocumentEvent::EVENT_DELETE, $callBack, 5);
