@@ -36,6 +36,11 @@ class BasePrice implements \Rbs\Price\PriceInterface
 	protected $withTax = false;
 
 	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $options;
+
+	/**
 	 * @param \Rbs\Price\PriceInterface|array|float $price
 	 */
 	function __construct($price)
@@ -71,6 +76,15 @@ class BasePrice implements \Rbs\Price\PriceInterface
 			$this->basePriceValue = null;
 		}
 		$this->setTaxCategories($price->getTaxCategories());
+
+		if ($price->getOptions()->count())
+		{
+			$this->setOptions($price->getOptions());
+		}
+		else
+		{
+			$this->options = null;
+		}
 		return $this;
 	}
 
@@ -80,6 +94,7 @@ class BasePrice implements \Rbs\Price\PriceInterface
 	 */
 	public function fromArray(array $array)
 	{
+		$this->options = null;
 		foreach ($array as $name => $value)
 		{
 			switch ($name)
@@ -95,6 +110,9 @@ class BasePrice implements \Rbs\Price\PriceInterface
 					break;
 				case 'taxCategories':
 					$this->setTaxCategories($value);
+					break;
+				case 'options':
+					$this->setOptions($value);
 					break;
 			}
 		}
@@ -187,5 +205,34 @@ class BasePrice implements \Rbs\Price\PriceInterface
 	public function isWithTax()
 	{
 		return $this->withTax;
+	}
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getOptions()
+	{
+		if ($this->options === null)
+		{
+			$this->options = new \Zend\Stdlib\Parameters();
+		}
+		return $this->options;
+	}
+
+	/**
+	 * @param array|\Traversable $options
+	 * @return $this
+	 */
+	public function setOptions($options)
+	{
+		$this->options = new \Zend\Stdlib\Parameters();
+		if (is_array($options) || $options instanceof \Traversable)
+		{
+			foreach ($options as $name => $value)
+			{
+				$this->options->set($name, $value);
+			}
+		}
+		return $this;
 	}
 }

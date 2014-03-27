@@ -17,6 +17,12 @@ use Change\Http\Rest\Result\DocumentResult;
  */
 class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price\PriceInterface
 {
+
+	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $options;
+
 	/**
 	 * @return string
 	 */
@@ -64,6 +70,28 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		return ($this->isDiscount()) ? $this->getBasePrice()->getValue() : null;
 	}
 
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getOptions()
+	{
+		if ($this->options === null)
+		{
+			$this->loadOptions();
+		}
+		return $this->options;
+	}
+
+	protected function loadOptions()
+	{
+		$this->options = new \Zend\Stdlib\Parameters();
+		$optionsData = $this->getOptionsData();
+		if (is_array($optionsData) && count($optionsData))
+		{
+			$this->options->fromArray($optionsData);
+		}
+	}
+
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
@@ -84,6 +112,12 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		{
 			$this->setStartActivation(new \DateTime());
 		}
+
+		if ($this->options !== null)
+		{
+			$this->setOptionsData($this->options->toArray());
+			$this->options = null;
+		}
 	}
 
 	/**
@@ -98,6 +132,12 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		if ($this->getStartActivation() === null)
 		{
 			$this->setStartActivation(new \DateTime());
+		}
+
+		if ($this->options !== null)
+		{
+			$this->setOptionsData($this->options->toArray());
+			$this->options = null;
 		}
 
 		// Check if property taxCategories is modified and price has associated discount prices
@@ -180,4 +220,6 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		$query->andPredicates($query->eq('basePrice', $this));
 		return $query->getDocuments();
 	}
+
+
 }
