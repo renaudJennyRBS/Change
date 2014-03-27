@@ -182,8 +182,8 @@ class String
 
 	/**
 	 * @api
-	 * @param String $string
-	 * @return String
+	 * @param string $string
+	 * @return string
 	 */
 	public static function stripAccents($string)
 	{
@@ -216,5 +216,25 @@ class String
 			return $string;
 		}
 		return null;
+	}
+
+	/**
+	 * @api
+	 * @param string $plainText
+	 * @return string
+	 */
+	public static function htmlEscape($plainText)
+	{
+		return nl2br(htmlspecialchars($plainText, ENT_NOQUOTES, 'UTF-8'));
+	}
+
+	/**
+	 * @api
+	 * @param string $string
+	 * @return string
+	 */
+	public static function attrEscape($string)
+	{
+		return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 	}
 }
