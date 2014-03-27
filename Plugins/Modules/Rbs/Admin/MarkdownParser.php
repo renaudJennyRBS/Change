@@ -102,7 +102,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 			/* @var $document Editable */
 			$link_text = $document->getLabel();
 		}
-		$result .= ">$link_text</a>";
+		$result .= '>' . $link_text . '</a>';
 
 		return $this->hashPart($result);
 	}
