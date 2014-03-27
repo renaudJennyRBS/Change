@@ -267,6 +267,69 @@
 
 						var currentContext = Navigation.getCurrentContext();
 
+
+						// Open a session to select a document directly in the module
+						scope.beginSelectSessionMarkdown = function (selectModel)
+						{
+							var targetUrl = UrlManager.getSelectorUrl(selectModel),
+								selRange,
+								range = {},
+								navParams;
+
+							if (!targetUrl) {
+								throw new Error("Invalid targetUrl for selection.");
+							}
+
+							if (editor) {
+								selRange = editor.getSelectionRange();
+								range.row = selRange.start.row;
+								range.column = selRange.start.column;
+							}
+
+							navParams = {
+								selector: true,
+								model: selectModel,
+								range: range,
+								label: "Select "+selectModel+" for text editor" // FIXME i18n
+							};
+
+							var valueKey = getContextValueKey();
+							console.log("startSelectionContext: valueKey=", valueKey);
+							Navigation.startSelectionContext(targetUrl, valueKey, navParams);
+						};
+
+
+						function getContextValueKey()
+						{
+							return attrs.contextKey ? attrs.contextKey : attrs.ngModel;
+						}
+
+
+						function applyContextValueMarkdown(contextValue, range)
+						{
+							$timeout(function() {
+								// Position cursor where it was before the select session:
+								if (range) {
+									editor.navigateTo(range.row, range.column);
+								}
+
+								// Insert document:
+								switch (contextValue.model)
+								{
+									case 'Rbs_Media_Image':
+										scope.mdInsertMedia(contextValue);
+										break;
+									case 'Rbs_User_User':
+									case 'Rbs_User_Group':
+										scope.mdInsertIdentifier(contextValue);
+										break;
+									default:
+										scope.mdInsertDocumentLink(contextValue, null);
+								}
+							});
+						}
+
+
 						function initMarkdownEditor (value)
 						{
 							$timeout(function() {
@@ -287,7 +350,7 @@
 								if (currentContext) {
 									var contextValue = currentContext.getSelectionValue(getContextValueKey());
 									if (contextValue !== undefined) {
-										applyContextValue(contextValue, currentContext.param('range'));
+										applyContextValueMarkdown(contextValue, currentContext.param('range'));
 									}
 								}
 
@@ -295,20 +358,6 @@
 						}
 
 						scope.wysiwyg = {};
-
-						function initWysiwygEditor (value)
-						{
-							console.log("initWysiwygEditor with value=", value);
-							if (!value || value === '<br>') {
-								value = '<p>Your text here...</p>';
-							}
-							scope.wysiwyg.content = value;
-							scope.$watch('wysiwyg.content', function (value)
-							{
-								ngModel.$setViewValue({e:'Html',t:value});
-							});
-							wysiwygInitialized = true;
-						}
 
 
 						function canUseAceEditor()
@@ -505,124 +554,6 @@
 						scope.mdInsertText = function(text) {
 							editor.insert(text);
 						};
-/*
-						//
-						// Resources selectors
-						//
-
-						scope.picker = {
-							"insertMedia": function(doc, $event) {
-								$event.stopPropagation();
-								$event.preventDefault();
-								scope.mdInsertMedia(doc);
-							},
-							"insertDocumentLink": function(doc, $event, route) {
-								$event.stopPropagation();
-								$event.preventDefault();
-								scope.mdInsertDocumentLink(doc, route);
-							},
-							"insertIdentifier": function(doc, $event, profile) {
-								$event.stopPropagation();
-								$event.preventDefault();
-								scope.mdInsertIdentifier(doc, profile);
-							}
-						};
-
-						scope.currentSelector = null;
-
-						scope.toggleSelector = function(name) {
-							if (scope.currentSelector === name) {
-								scope.closeSelector(name);
-							}
-							else {
-								scope.closeSelector(scope.currentSelector);
-								scope.openSelector(name);
-							}
-						};
-
-						scope.closeSelector = function(name) {
-							if (name && $selectors[name]) {
-								$selectors[name].hide();
-							}
-							scope.currentSelector = null;
-						};
-
-						scope.openSelector = function(name) {
-							if (scope.currentSelector === name) {
-								return;
-							}
-
-							ensureSelectorsReady();
-
-							scope.closeSelector(scope.currentSelector);
-							scope.currentSelector = name;
-							if (name && $selectors[name]) {
-								var $sel = $selectors[name];
-								if (!$sel.children().length) {
-									$sel.html('<rbs-rich-text-input-' + name + '-selector></rbs-rich-text-input-' + name +
-										'-selector>');
-									$compile($sel)(scope);
-								}
-								$sel.show();
-							}
-						};
-*/
-
-// -----------
-
-						// Open a session to select a document directly in the module
-						scope.beginSelectSession = function (selectModel)
-						{
-							var targetUrl = UrlManager.getSelectorUrl(selectModel);
-
-							if (!targetUrl) {
-								throw new Error("Invalid targetUrl for selection.");
-							}
-
-							var selRange = editor.getSelectionRange(), range = {};
-							range.row = selRange.start.row;
-							range.column = selRange.start.column;
-
-							var navParams = {
-								selector: true,
-								model: selectModel,
-								range: range,
-								label: "Select "+selectModel+" for text editor" // FIXME i18n
-							};
-
-							var valueKey = getContextValueKey();
-							console.log("startSelectionContext: valueKey=", valueKey);
-							Navigation.startSelectionContext(targetUrl, valueKey, navParams);
-						};
-
-						function getContextValueKey() {
-							return attrs.contextKey ? attrs.contextKey : attrs.ngModel;
-						}
-
-						function applyContextValue(contextValue, range) {
-							$timeout(function() {
-								// Position cursor where it was before the select session:
-								if (range) {
-									editor.navigateTo(range.row, range.column);
-								}
-
-								// Insert document:
-								switch (contextValue.model)
-								{
-									case 'Rbs_Media_Image':
-										scope.mdInsertMedia(contextValue);
-										break;
-									case 'Rbs_User_User':
-									case 'Rbs_User_Group':
-										scope.mdInsertIdentifier(contextValue);
-										break;
-									default:
-										scope.mdInsertDocumentLink(contextValue, null);
-								}
-							});
-						}
-
-// -----------
 
 						//
 						// Media insertion
@@ -696,6 +627,96 @@
 							window.open('http://fr.wikipedia.org/wiki/Markdown#Quelques_exemples', 'rbsChangeHelp',
 								'width=800,height=600,scrollbars=yes,resizable=yes');
 						};
+
+
+
+						// ----------------------------------------------------
+						//
+						// WYSIWYG editor methods
+						//
+						// ----------------------------------------------------
+
+
+						scope.$on('WYSIWYG.SelectImage', function (event, data)
+						{
+							console.log("select image!");
+							scope.beginSelectSessionWysiwyg('Rbs_Media_Image', data);
+						});
+
+
+						scope.$on('WYSIWYG.SelectLink', function (event, data)
+						{
+							console.log("select link!");
+							scope.beginSelectSessionWysiwyg('Rbs_Website_StaticPage', data);
+						});
+
+
+						// Open a session to select a document directly in the module
+						scope.beginSelectSessionWysiwyg = function (selectModel, data)
+						{
+							var targetUrl = UrlManager.getSelectorUrl(selectModel),
+								navParams;
+
+							if (! targetUrl) {
+								throw new Error("Invalid targetUrl for selection.");
+							}
+
+							navParams = angular.extend({}, data, {
+								selector : true,
+								model : selectModel,
+								label : "Select "+selectModel+" for text editor" // FIXME i18n
+							});
+
+							Navigation.startSelectionContext(targetUrl, getContextValueKey(), navParams);
+						};
+
+
+						function applyContextValueWysiwyg(contextValue, context)
+						{
+							$timeout(function()
+							{
+								var data = {
+									range : context.param('range'),
+									contents : context.param('contents')
+								};
+
+								if (contextValue.model === 'Rbs_Media_Image')
+								{
+									data.html = '<img src="' + contextValue.META$.actions.resizeurl.href + '" data-document-id="' + contextValue.id + '" style="max-width:500px"/>';
+								}
+								else if (contextValue.model === 'Rbs_Website_StaticPage')
+								{
+									data.html = '<a href="javascript:;" data-document-id="' + contextValue.id + '">' + contextValue.title + '</a>';
+								}
+
+								if (data.html) {
+									scope.$broadcast('WYSIWYG.InsertImage', data);
+								}
+							});
+						}
+
+
+						function initWysiwygEditor (value)
+						{
+							if (!value || value === '<br>') {
+								value = '<p><span contenteditable="false">Your text here...</span></p>';
+							}
+							scope.wysiwyg.content = value;
+							scope.$watch('wysiwyg.content', function (value)
+							{
+								ngModel.$setViewValue({e:'Html',t:value});
+							});
+							wysiwygInitialized = true;
+
+							// Apply navigation context if there is one.
+							if (currentContext) {
+								var contextValue = currentContext.getSelectionValue(getContextValueKey());
+								if (contextValue !== undefined) {
+									applyContextValueWysiwyg(contextValue, currentContext);
+								}
+							}
+						}
+
 					}
 				};
 			}]);
