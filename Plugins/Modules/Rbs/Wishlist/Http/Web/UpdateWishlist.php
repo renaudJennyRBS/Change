@@ -30,6 +30,7 @@ class UpdateWishlist extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$title = isset($data['title']) ? $data['title'] : null;
 			$productIdsToRemove = isset($data['productIdsToRemove']) ? $data['productIdsToRemove'] : null;
 			$changeIsPublic = isset($data['changeIsPublic']) ? $data['changeIsPublic'] : null;
+			$setDefaultWishlist = isset($data['setDefault']) ? $data['setDefault'] : null;
 
 			if ($wishlistId && $userId && $event->getAuthenticationManager()->getCurrentUser()->getId() === $userId)
 			{
@@ -47,7 +48,7 @@ class UpdateWishlist extends \Change\Http\Web\Actions\AbstractAjaxAction
 						}
 						else if ($title)
 						{
-							$this->changeWishlistTitle($title, $wishlist, $userId, $data, $documentManager, $i18nManager);
+							$this->changeWishlistTitle($title, $wishlist, $data, $documentManager, $i18nManager);
 						}
 						else if (is_array($productIdsToRemove))
 						{
@@ -56,6 +57,10 @@ class UpdateWishlist extends \Change\Http\Web\Actions\AbstractAjaxAction
 						else if ($changeIsPublic !== null)
 						{
 							$wishlist->setPublic($changeIsPublic);
+						}
+						else if ($setDefaultWishlist === true)
+						{
+							$this->setDefaultWishlist($wishlist, $data, $documentManager, $event->getApplicationServices()->getTransactionManager());
 						}
 						if (!isset($data['error']))
 						{
@@ -115,17 +120,15 @@ class UpdateWishlist extends \Change\Http\Web\Actions\AbstractAjaxAction
 	/**
 	 * @param string $newTitle
 	 * @param \Rbs\Wishlist\Documents\Wishlist $wishlist
-	 * @param integer $userId
 	 * @param array $data
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param \Change\I18n\I18nManager $i18nManager
 	 */
-	protected function changeWishlistTitle($newTitle, $wishlist, $userId, &$data, $documentManager, $i18nManager)
+	protected function changeWishlistTitle($newTitle, $wishlist, &$data, $documentManager, $i18nManager)
 	{
 		//check if there is no wishlist with this title
-		$user = $documentManager->getDocumentInstance($userId);
 		$dqb = $documentManager->getNewQuery('Rbs_Wishlist_Wishlist');
-		$dqb->andPredicates($dqb->eq('title', $newTitle), $dqb->eq('user', $user));
+		$dqb->andPredicates($dqb->eq('title', $newTitle), $dqb->eq('user', $wishlist->getUser()));
 		if ($dqb->getCountDocuments() === 0)
 		{
 			$wishlist->setTitle($newTitle);
@@ -153,6 +156,38 @@ class UpdateWishlist extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$wishlist->getProducts()->remove($product);
 				}
 			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Wishlist\Documents\Wishlist $wishlist
+	 * @param array $data
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 */
+	protected function setDefaultWishlist($wishlist, &$data, $documentManager, $transactionManager)
+	{
+		//get all user wishlist to set default to false on them, after that, set default to our wishlist
+		$dqb = $documentManager->getNewQuery('Rbs_Wishlist_Wishlist');
+		$dqb->andPredicates($dqb->eq('user', $wishlist->getUser()));
+		$wishlists = $dqb->getDocuments();
+
+		try
+		{
+			$transactionManager->begin();
+			foreach ($wishlists as $otherWishlist)
+			{
+				/* @var $otherWishlist \Rbs\Wishlist\Documents\Wishlist */
+				$otherWishlist->setDefault(false);
+				$otherWishlist->save();
+			}
+			$transactionManager->commit();
+			$wishlist->setDefault(true);
+		}
+		catch(\Exception $e)
+		{
+			$transactionManager->rollBack($e);
+			$data['error'] = $e->getMessage();
 		}
 	}
 }

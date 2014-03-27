@@ -3,7 +3,7 @@
 	<div class="text-danger" data-ng-show="error"><span data-ng-bind="error"></span></div>
 	<div class="text-success" data-ng-show="successMessage"><span data-ng-bind="successMessage"></span></div>
 	<div class="btn-group">
-		<button class="btn btn-xs btn-warning" type="button" data-ng-click="addToWishlist()">
+		<button class="btn btn-xs btn-warning" type="button" data-ng-click="addToWishlist(data.defaultWishlist)">
 			<span class="glyphicon glyphicon-plus"></span>
 			{{ i18n('m.rbs.wishlist.front.wishlist_button', ['ucf']) }}
 		</button>
@@ -13,7 +13,10 @@
 		</button>
 		<ul class="dropdown-menu">
 			<li data-ng-repeat="wishlist in wishlists">
-				<a href="" data-ng-click="addToWishlist(wishlist)"><span data-ng-bind="wishlist.title"></span></a>
+				<a href="" data-ng-click="addToWishlist(wishlist)">
+					<span data-ng-bind="wishlist.title"></span>
+					<em data-ng-if="wishlist.default"> <span class="glyphicon glyphicon-heart" title="{{ i18nAttr('m.rbs.wishlist.front.wishlist_list_default_wishlist') }}"></span></em>
+				</a>
 			</li>
 			<li class="divider"></li>
 			<li>

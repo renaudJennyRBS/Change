@@ -91,5 +91,11 @@
 	},
 	"wishlist_private":{
 		"message":"privée"
+	},
+	"wishlist_warning_product_count_limit":{
+		"message":"attention, votre wishlist contient $COUNT$ produit, vous pouvez au maximum avoir $MAX$ produits par wishlist, pensez à créer d'autres wishlists"
+	},
+	"wishlist_detail_unauthorized":{
+		"message":"vous n'êtes pas authorisé à consulter cette wishlist."
 	}
 }

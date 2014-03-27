@@ -43,6 +43,7 @@ class WishlistButton extends Block
 			$parameters->setParameterValue('userId', $user->getId());
 			$dqb = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Wishlist_Wishlist');
 			$dqb->andPredicates($dqb->eq('user', $user));
+			$dqb->addOrder('default', false);
 			$parameters->setParameterValue('wishlistIds', $dqb->getDocuments()->ids());
 		}
 		else
@@ -86,23 +87,32 @@ class WishlistButton extends Block
 			$urlManager = $event->getUrlManager();
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$wishlistIds = $parameters->getParameterValue('wishlistIds');
+			$defaultWishlist = null;
 			foreach ($wishlistIds as $wishlistId)
 			{
 				$wishlist = $documentManager->getDocumentInstance($wishlistId);
 				if ($wishlist instanceof \Rbs\Wishlist\Documents\Wishlist)
 				{
-					$wishlists[] = [
+					$wishlistData = [
 						'title' => $wishlist->getTitle(),
 						'id' => $wishlist->getId(),
-						'href' => $urlManager->getByDocument($wishlist, $event->getParam('website'))->normalize()->toString()
+						'href' => $urlManager->getByDocument($wishlist, $event->getParam('website'))->normalize()->toString(),
+						'default' => $wishlist->getDefault(),
+						'public' => $wishlist->getPublic()
 					];
+					$wishlists[] = $wishlistData;
+					if ($wishlist->getDefault())
+					{
+						$defaultWishlist = $wishlistData;
+					}
 				}
 			}
 			$attributes['data'] = [
 				'productIds' => $productIds,
 				'wishlists' => $wishlists,
 				'userId' => $userId,
-				'storeId' => $storeId
+				'storeId' => $storeId,
+				'defaultWishlist' => $defaultWishlist
 			];
 			return 'wishlist-button.twig';
 		}

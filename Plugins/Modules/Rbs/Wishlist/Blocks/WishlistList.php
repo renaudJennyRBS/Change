@@ -111,6 +111,9 @@ class WishlistList extends Block
 					'public' => $wishlist->getPublic()
 				];
 			}
+			$attributes['data'] = [
+				'userId' => $user->getId()
+			];
 
 			return 'wishlist-list.twig';
 		}

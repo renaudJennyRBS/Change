@@ -74,15 +74,14 @@ class WishlistDetail extends Block
 		$commerceServices = $event->getServices('commerceServices');
 		if (!$commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
-			//TODO HTTP Status 500
 			return null;
 		}
 
 		$isUserWishlist = $wishlist->getUserId() == $parameters->getParameterValue('userId');
 		if (!$wishlist->getPublic() && !$isUserWishlist)
 		{
-			//TODO HTTP Status 403
-			return null;
+			$attributes['unauthorized'] = true;
+			return 'wishlist-detail.twig';
 		}
 
 		if ($wishlist)
@@ -110,9 +109,7 @@ class WishlistDetail extends Block
 					'availability' => $availability
 				];
 			}
-			$attributes['parameters'] = [
-				//TODO
-			];
+			$attributes['productCountWarning'] = $this->getProductCountWarning($wishlist);
 			$attributes['isUserWishlist'] = $isUserWishlist;
 			$attributes['data'] = [
 				'userId' => $wishlist->getUserId(),
@@ -124,5 +121,21 @@ class WishlistDetail extends Block
 			return 'wishlist-detail.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Rbs\Wishlist\Documents\Wishlist $wishlist
+	 * @return false|array
+	 */
+	protected function getProductCountWarning($wishlist)
+	{
+		//if the product count exceeds 80% of wishlist products max quantity, return data to explain it to the user
+		$maxOccurs = $wishlist->getDocumentModel()->getProperty('products')->getMaxOccurs();
+		$count = $wishlist->getProductsCount();
+		if ($count > $maxOccurs * 0.8)
+		{
+			return ['count' => $count, 'max' => $maxOccurs];
+		}
+		return false;
 	}
 }

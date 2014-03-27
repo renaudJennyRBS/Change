@@ -1,4 +1,4 @@
-<div data-ng-controller="RbsWishlistListCtrl">
+<div data-ng-controller="RbsWishlistListCtrl" data-ng-init='data = {{ data | json_encode() | raw }}'>
 	<div class="row">
 		<div class="col-lg-12">
 			{% if wishlists | length > 0 %}
@@ -14,7 +14,7 @@
 									class="btn btn-default glyphicon glyphicon-heart{% if not wishlist.default %}-empty{% endif %}"
 									title="{{ i18nAttr('m.rbs.wishlist.front.wishlist_list_default_wishlist') }}">
 								</button>
-								<button type="button" data-ng-click="setWishlistPublic({{ wishlist.id }})"
+								<button type="button" data-ng-click="changeIsPublic({{ wishlist.id }}, {% if wishlist.public %}false{% else %}true{% endif %})"
 									class="btn btn-default">
 									{% if wishlist.public %}<span class="glyphicon glyphicon-eye-open"></span> {{ i18n('m.rbs.wishlist.front.wishlist_public') }}
 									{% else %}<span class="glyphicon glyphicon-eye-close"></span> {{ i18n('m.rbs.wishlist.front.wishlist_private') }}{% endif %}
