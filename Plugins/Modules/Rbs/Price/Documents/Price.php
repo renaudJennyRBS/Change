@@ -17,11 +17,45 @@ use Change\Http\Rest\Result\DocumentResult;
  */
 class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price\PriceInterface
 {
-
 	/**
 	 * @var \Zend\Stdlib\Parameters
 	 */
 	protected $options;
+
+	/**
+	 * @var boolean|float|null
+	 */
+	protected $contextualValue = false;
+
+	/**
+	 * @param boolean|float|null $contextualValue
+	 * @return $this
+	 */
+	public function setContextualValue($contextualValue = false)
+	{
+		$this->contextualValue = $contextualValue;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getContextualValue()
+	{
+		return $this->contextualValue;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getValue()
+	{
+		if ($this->contextualValue !== false)
+		{
+			return $this->contextualValue;
+		}
+		return parent::getValue();
+	}
 
 	/**
 	 * @return string
