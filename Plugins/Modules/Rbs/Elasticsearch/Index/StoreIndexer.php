@@ -79,7 +79,7 @@ class StoreIndexer extends FullTextIndexer
 				$publicationStatus = $model->getPropertyValue($document, 'publicationStatus', Publishable::STATUS_FILED);
 				if ($publicationStatus == Publishable::STATUS_PUBLISHABLE)
 				{
-					$this->addProduct($document, $LCID);
+					$this->addProduct($document, $LCID, $event);
 					return;
 				}
 				elseif (in_array($publicationStatus, array(Publishable::STATUS_UNPUBLISHABLE, Publishable::STATUS_FROZEN,
@@ -127,6 +127,7 @@ class StoreIndexer extends FullTextIndexer
 		{
 			$document = $event->getParam('document');
 			$indexedItem = $this->getIndexedListItemInfo($documentId);
+
 			if ($document instanceof \Rbs\Catalog\Documents\ProductListItem)
 			{
 				if ($indexedItem)
@@ -233,15 +234,17 @@ class StoreIndexer extends FullTextIndexer
 				$nested->setQuery($nestedBool);
 				$query = new \Elastica\Query($nested);
 				$query->setSize(1);
-				$query->setFields(['listItems']);
+				$query->setParam('_source', ['listItems.listId', 'listItems.itemId', 'listItems.position']);
 
-				$results = $index->getType($storeIndex->getDefaultTypeName())->search($query)->getResults();
+				$typeIndex = $index->getType($storeIndex->getDefaultTypeName());
+				$search = $typeIndex->search($query);
+				$results = $search->getResults();
 				if (count($results))
 				{
 					/** @var $result \Elastica\Result */
 					$result = $results[0];
 					$productId = intval($result->getId());
-					foreach ($result->getFields()['listItems'] as $listItem)
+					foreach ($result->getSource()['listItems'] as $listItem)
 					{
 						if ($listItem['itemId'] == $itemId)
 						{
@@ -292,37 +295,60 @@ class StoreIndexer extends FullTextIndexer
 	/**
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param string $LCID
+	 * @param Event $event
 	 */
-	protected function addProduct($product, $LCID)
+	protected function addProduct($product, $LCID, $event)
 	{
-		$websiteIds = array();
+		/** @var $websiteIds \Change\Presentation\Interfaces\Website[] */
+		$websiteIds = [];
+
+		//Published sections
 		foreach ($product->getPublicationSections() as $section)
 		{
 			$website = $section->getWebsite();
-			if (!in_array($website->getId(), $websiteIds))
+			if ($website instanceof \Change\Presentation\Interfaces\Website)
 			{
-				$websiteIds[] = $website->getId();
-				foreach ($this->getIndexesDefinition() as $storeIndex)
-				{
-					if ($storeIndex->getAnalysisLCID() === $LCID && $storeIndex->getWebsiteId() == $website->getId())
-					{
-						if (!$storeIndex->getCommerceServices())
-						{
-							$storeIndex->setCommerceServices($this->getCommerceServices());
-						}
-						$elasticaDocument = new Document($product->getId(), array(), $storeIndex->getDefaultTypeName(), $storeIndex->getName());
-						$this->populatePublishableDocument($product, $elasticaDocument, $storeIndex);
+				$websiteIds[$website->getId()] = $website;
+			}
+		}
 
-						$canonicalSection = $product->getCanonicalSection($website);
-						if ($canonicalSection)
-						{
-							$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
-						}
-						$this->getIndexManager()->documentToAdd($storeIndex->getClientName(), $elasticaDocument);
-					}
+		//Static Page
+		$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_StaticPage');
+		$q->andPredicates($q->eq('displayDocument', $product));
+		$page = $q->getFirstDocument();
+		if ($page instanceof \Rbs\Website\Documents\StaticPage) {
+			$section = $page->getSection();
+			if ($section instanceof \Rbs\Website\Documents\Section)
+			{
+				$website = $section->getWebsite();
+				if ($website instanceof \Change\Presentation\Interfaces\Website)
+				{
+					$websiteIds[$website->getId()] = $website;
 				}
 			}
 		}
+
+		foreach ($this->getIndexesDefinition() as $storeIndex)
+		{
+			if ($storeIndex->getAnalysisLCID() === $LCID && isset($websiteIds[$storeIndex->getWebsiteId()]))
+			{
+				if (!$storeIndex->getCommerceServices())
+				{
+					$storeIndex->setCommerceServices($this->getCommerceServices());
+				}
+
+				$elasticaDocument = new Document($product->getId(), array(), $storeIndex->getDefaultTypeName(), $storeIndex->getName());
+				$this->populatePublishableDocument($product, $elasticaDocument, $storeIndex);
+
+				$canonicalSection = $product->getCanonicalSection($storeIndex->getWebsite());
+				if ($canonicalSection)
+				{
+					$elasticaDocument->set('canonicalSectionId', $canonicalSection->getId());
+				}
+				$this->getIndexManager()->documentToAdd($storeIndex->getClientName(), $elasticaDocument);
+			}
+		}
+
 	}
 
 	/**

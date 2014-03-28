@@ -130,7 +130,7 @@ trait Stateless
 
 		$modifiedPropertyNames = $this->getModifiedPropertyNames();
 
-		$this->doUpdate();
+		$this->doUpdate($modifiedPropertyNames);
 		$this->setPersistentState(AbstractDocument::STATE_LOADED);
 
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
@@ -138,10 +138,10 @@ trait Stateless
 	}
 
 	/**
-	 * @throws \Exception
+	 * @param string[] $modifiedPropertyNames
 	 * @return void
 	 */
-	abstract protected function doUpdate();
+	abstract protected function doUpdate($modifiedPropertyNames);
 
 	/**
 	 * @api

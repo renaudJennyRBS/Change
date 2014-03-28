@@ -377,44 +377,49 @@ trait DbStorage
 			throw $e;
 		}
 
-		$modifiedPropertyNames = $this->getModifiedPropertyNames();
 		if ($this->getDocumentModel()->useCorrection())
 		{
 			$this->populateCorrection();
+			$modifiedCorrection = $this->saveCorrection();
+		}
+		else
+		{
+			$modifiedCorrection = false;
 		}
 
-		$this->doUpdate();
+		$modifiedPropertyNames = $this->getModifiedPropertyNames();
+		$this->doUpdate($modifiedPropertyNames, $modifiedCorrection);
 		$event = new DocumentEvent(DocumentEvent::EVENT_UPDATED, $this, array('modifiedPropertyNames' => $modifiedPropertyNames));
 		$this->getEventManager()->trigger($event);
 	}
 
 	/**
-	 * @throws \Exception
+	 * @param string[] $modifiedPropertyNames
+	 * @param boolean $modifiedCorrection
 	 * @return void
 	 */
-	protected function doUpdate()
+	protected function doUpdate($modifiedPropertyNames, $modifiedCorrection)
 	{
-		if ($this->getDocumentModel()->useCorrection())
+		if (count($modifiedPropertyNames) !== 0 || $modifiedCorrection)
 		{
-			$modified = $this->saveCorrection();
-		}
-		else
-		{
-			$modified = false;
-		}
-
-		if ($this->hasModifiedProperties() || $modified)
-		{
+			if (!in_array('modificationDate', $modifiedPropertyNames))
+			{
+				$modifiedPropertyNames[] = 'modificationDate';
+			}
 			$this->getDocumentModel()->getProperty('modificationDate')->setValue($this, new \DateTime());
 			if ($this instanceof \Change\Documents\Interfaces\Editable)
 			{
+				if (!in_array('documentVersion', $modifiedPropertyNames))
+				{
+					$modifiedPropertyNames[] = 'documentVersion';
+				}
 				$p = $this->getDocumentModel()->getProperty('documentVersion');
 				$p->setValue($this, max(0, $p->getValue($this)) + 1);
 			}
 
 			if ($this->getPersistentState() == AbstractDocument::STATE_LOADED)
 			{
-				$this->updateDocument();
+				$this->updateDocument($modifiedPropertyNames);
 			}
 
 			if ($this instanceof Localizable)
@@ -425,18 +430,16 @@ trait DbStorage
 	}
 
 	/**
-	 * @throws \RuntimeException
-	 * @throws \InvalidArgumentException
+	 * @param string[] $modifiedPropertyNames
 	 * @return boolean
 	 */
-	protected function updateDocument()
+	protected function updateDocument($modifiedPropertyNames)
 	{
 		$dbp = $this->getDbProvider();
 		$this->setPersistentState(AbstractDocument::STATE_SAVING);
 		$model = $this->getDocumentModel();
 		$columns = array();
 		$relations = array();
-		$modifiedPropertyNames = $this->getModifiedPropertyNames();
 		foreach ($model->getNonLocalizedProperties() as $name => $property)
 		{
 			/* @var $property \Change\Documents\Property */

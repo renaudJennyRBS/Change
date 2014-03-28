@@ -294,6 +294,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$qb->assign($fb->column('total_amount_with_taxes'), $fb->decimalParameter('totalAmountWithTaxes'));
 				$qb->assign($fb->column('payment_amount_with_taxes'), $fb->decimalParameter('paymentAmountWithTaxes'));
 				$qb->assign($fb->column('currency_code'), $fb->parameter('currencyCode'));
+				$qb->assign($fb->column('email'), $fb->parameter('email'));
 				$qb->where(
 					$fb->logicAnd(
 						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
@@ -315,6 +316,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$uq->bindParameter('totalAmountWithTaxes', $cart->getLinesAmountWithTaxes());
 				$uq->bindParameter('paymentAmountWithTaxes', $cart->getPaymentAmountWithTaxes());
 				$uq->bindParameter('currencyCode', $cart->getCurrencyCode());
+				$uq->bindParameter('email', $cart->getEmail());
 
 				$uq->bindParameter('identifier', $cart->getIdentifier());
 				$uq->bindParameter('locked', false);
@@ -942,7 +944,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$qb->update($fb->table('rbs_commerce_dat_cart'));
 				$qb->assign($fb->column('user_id'), $fb->integerParameter('user_id'));
 				$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
-
 				$uq = $qb->updateQuery();
 				$uq->bindParameter('user_id', $userId);
 				$uq->bindParameter('identifier', $cart->getIdentifier());
@@ -1172,8 +1173,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$line->setIndex($index);
 				$this->refreshCartLine($cart, $line);
 			}
-
-			$this->refreshLinesAmount($cart);
 		}
 	}
 
@@ -1224,14 +1223,16 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$documents = $process->getAvailableModifiers();
 				foreach ($documents as $document)
 				{
-					if ($document instanceof \Rbs\Commerce\Documents\Fee) {
+					if ($document instanceof \Rbs\Commerce\Documents\Fee)
+					{
 						$modifier = $document->getValidModifier($cart);
 						if ($modifier) {
 							$modifier->apply();
 							$this->buildTotalAmount($cart, $priceManager);
 						}
 					}
-					elseif ($document instanceof \Rbs\Discount\Documents\Discount) {
+					elseif ($document instanceof \Rbs\Discount\Documents\Discount)
+					{
 						$modifier = $document->getValidModifier($cart);
 						if ($modifier) {
 							$modifier->apply();
@@ -1243,12 +1244,17 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+
 	/**
+	 * @api
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param \Rbs\Price\PriceManager $priceManager
 	 */
-	protected function buildTotalAmount($cart, $priceManager)
+	public function buildTotalAmount(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Price\PriceManager $priceManager)
 	{
+		//Lines Amount
+		$this->refreshLinesAmount($cart, $priceManager);
+
 		//Add fees and discounts
 		$totalAmount = $cart->getLinesAmount();
 		$totalAmountWithTaxes = $cart->getLinesAmountWithTaxes();
@@ -1321,11 +1327,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Rbs\Price\PriceManager $priceManager
 	 */
-	protected function refreshLinesAmount($cart)
+	protected function refreshLinesAmount($cart, $priceManager)
 	{
-		$priceManager = $this->getPriceManager();
-
 		/* @var $linesTaxes \Rbs\Price\Tax\TaxApplication[] */
 		$linesTaxes = [];
 		$linesAmount = 0.0;

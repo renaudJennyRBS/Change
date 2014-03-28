@@ -62,8 +62,11 @@
 	"sort_date_added_desc":{
 		"message":"Par nouveauté"
 	},
-	"sort_date_title_asc":{
+	"sort_title_asc":{
 		"message":"Ordre alphabetique"
+	},
+	"sort_level_asc":{
+		"message":"Par disponibilité"
 	},
 	"from":{
 		"message":"à partir de"

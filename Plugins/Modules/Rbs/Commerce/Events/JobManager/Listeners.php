@@ -90,6 +90,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Order\Job\OrderCleanup())->execute($event);
 		};
 		$events->attach('process_Change_Document_CleanUp', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Catalog\Events\ItemOrderingUpdater())->onScheduledActivation($event);
+		};
+		$events->attach('process_scheduledActivation', $callBack, 5);
 	}
 
 	/**

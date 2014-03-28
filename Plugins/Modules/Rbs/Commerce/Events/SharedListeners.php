@@ -40,6 +40,27 @@ class SharedListeners implements SharedListenerAggregateInterface
 			}
 			return true;
 		}, 9997);
+
+		$events->attach('Rbs_Catalog_ProductListItem', ['documents.created', 'documents.updated'], function ($event)
+		{
+			(new \Rbs\Catalog\Events\ItemOrderingUpdater)->onItemChange($event);
+		}, 5);
+
+		$events->attach('Rbs_Price_Price', ['documents.created', 'documents.updated'], function ($event)
+		{
+			(new \Rbs\Catalog\Events\ItemOrderingUpdater)->onPriceChange($event);
+		}, 5);
+
+		$events->attach('Rbs_Stock_InventoryEntry', ['documents.created', 'documents.updated'], function ($event)
+		{
+			(new \Rbs\Catalog\Events\ItemOrderingUpdater)->onInventoryEntryChange($event);
+		}, 5);
+
+		$events->attach('Rbs_Stock_Sku', ['documents.updated'], function ($event)
+		{
+			(new \Rbs\Catalog\Events\ItemOrderingUpdater)->onSkuChange($event);
+		}, 5);
+
 	}
 
 	/**

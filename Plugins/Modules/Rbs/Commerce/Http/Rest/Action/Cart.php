@@ -54,8 +54,7 @@ class Cart
 			$qb->select($fb->alias($fb->func('count', '*'), 'rowCount'));
 			$qb->from($fb->table('rbs_commerce_dat_cart'));
 			$restrictions = [];
-			$restrictions[] = $fb->eq($fb->column('order_id'), $fb->number(0));
-			//$restrictions[] = $fb->eq($fb->column('processing'), $fb->number(1));
+			$restrictions[] = $fb->gt($fb->column('line_count'), $fb->number(0));
 
 			if (count($restrictions))
 			{
@@ -86,8 +85,7 @@ class Cart
 				}
 
 				$restrictions = [];
-				$restrictions[] = $fb->eq($fb->column('order_id'), $fb->number(0));
-				//$restrictions[] = $fb->eq($fb->column('processing'), $fb->number(1));
+				$restrictions[] = $fb->gt($fb->column('line_count'), $fb->number(0));
 
 				if (count($restrictions))
 				{
@@ -129,8 +127,10 @@ class Cart
 						}
 					}
 
-					if ($row['processing']) {
-						if ($row['transaction_id']) {
+					if ($row['processing'])
+					{
+						if ($row['transaction_id'])
+						{
 							$transaction = $documentManager->getDocumentInstance($row['transaction_id']);
 						}
 						else
@@ -142,7 +142,6 @@ class Cart
 						if ($transaction) {
 							$row['transaction'] = $vc->toRestValue($transaction, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
 						}
-
 					}
 
 					$row['formated_payment_amount_with_taxes'] = $commerceServices->getPriceManager()->formatValue($row['payment_amount_with_taxes'], $row['currency_code']);

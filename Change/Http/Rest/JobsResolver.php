@@ -123,7 +123,7 @@ class JobsResolver
 		$job = $jobManager->getJob($jobId);
 		if ($job)
 		{
-			if ($job->getStatus() === Job\JobInterface::STATUS_WAITING)
+			if ($job->getStatus() === Job\JobInterface::STATUS_WAITING || $job->getStatus() === Job\JobInterface::STATUS_FAILED)
 			{
 				$jobManager->setTransactionManager($event->getApplicationServices()->getTransactionManager());
 				$jobManager->run($job);
