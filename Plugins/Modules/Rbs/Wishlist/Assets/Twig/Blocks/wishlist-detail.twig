@@ -8,11 +8,11 @@
 <div data-ng-controller="RbsWishlistDetailCtrl"
 	data-ng-init='data = {{ data | json_encode() | raw }}'>
 	<div class="row">
-		<div class="col-lg-8" data-ng-hide="changingTitle">
+		<div class="col-lg-6" data-ng-hide="changingTitle">
 			<h2 data-ng-cloak=""><span data-ng-bind="data.title"></span>{% if isUserWishlist %} <a href="" class="small" data-ng-click="openChangeTitle()"><span class="glyphicon glyphicon-edit"><span class="sr-only">{{ i18n('m.rbs.wishlist.front.wishlist_change_title') }}</span></span></a>{% endif %}</h2>
 		</div>
 		{% if isUserWishlist %}
-			<div class="col-lg-8" data-ng-show="changingTitle">
+			<div class="col-lg-6" data-ng-show="changingTitle">
 				<div data-ng-cloak="" class="input-group">
 					<input type="text" class="form-control" data-ng-model="newTitle" />
 					<span class="input-group-btn">
@@ -21,14 +21,14 @@
 					</span>
 				</div>
 			</div>
-			<div data-ng-cloak="" class="col-lg-2">
-				<button type="button" class="btn btn-warning" data-ng-click="changeIsPublic()">
+			<div data-ng-cloak="" class="col-lg-3">
+				<button type="button" class="btn btn-warning pull-right" data-ng-click="changeIsPublic()">
 					{% if data.isPublic %}{{ i18n('m.rbs.wishlist.front.wishlist_set_wishlist_private', ['ucf']) }}
 					{% else %}{{ i18n('m.rbs.wishlist.front.wishlist_set_wishlist_public', ['ucf']) }}{% endif %}
 				</button>
 			</div>
-			<div data-ng-cloak="" class="col-lg-2">
-				<button type="button" class="btn btn-danger" data-ng-click="deleteWishlist('wishlistDeleteModal')">{{ i18n('m.rbs.wishlist.front.wishlist_delete_wishlist', ['ucf']) }}</button>
+			<div data-ng-cloak="" class="col-lg-3">
+				<button type="button" class="btn btn-danger pull-right" data-ng-click="deleteWishlist('wishlistDeleteModal')">{{ i18n('m.rbs.wishlist.front.wishlist_delete_wishlist', ['ucf']) }}</button>
 			</div>
 		{% endif %}
 	</div>

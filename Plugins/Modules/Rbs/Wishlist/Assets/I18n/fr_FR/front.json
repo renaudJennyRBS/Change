@@ -20,9 +20,6 @@
 	"wishlist_add_title":{
 		"message":"titre"
 	},
-	"wishlist_add_public":{
-		"message":"rendre cette liste public"
-	},
 	"wishlist_error_wishlist_already_exist":{
 		"message":"vous possédez déjà une wishlist qui se nomme $WISHLIST$."
 	},
@@ -54,7 +51,7 @@
 		"message":"rendre cette wishlist privée"
 	},
 	"wishlist_set_wishlist_public":{
-		"message":"rendre cette wishlist public"
+		"message":"rendre cette wishlist publique"
 	},
 	"wishlist_delete_wishlist":{
 		"message":"supprimer cette wishlist"
@@ -96,6 +93,6 @@
 		"message":"attention, votre wishlist contient $COUNT$ produit, vous pouvez au maximum avoir $MAX$ produits par wishlist, pensez à créer d'autres wishlists"
 	},
 	"wishlist_detail_unauthorized":{
-		"message":"vous n'êtes pas authorisé à consulter cette wishlist."
+		"message":"vous n'êtes pas autorisé à consulter cette wishlist."
 	}
 }

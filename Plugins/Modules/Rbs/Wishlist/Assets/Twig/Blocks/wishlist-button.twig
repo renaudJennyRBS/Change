@@ -3,7 +3,7 @@
 	<div class="text-danger" data-ng-show="error"><span data-ng-bind="error"></span></div>
 	<div class="text-success" data-ng-show="successMessage"><span data-ng-bind="successMessage"></span></div>
 	<div class="btn-group">
-		<button class="btn btn-xs btn-warning" type="button" data-ng-click="addToWishlist(data.defaultWishlist)">
+		<button class="btn btn-xs btn-warning" type="button" data-ng-click='addToWishlist(data.defaultWishlist, "addWishlistModal-{{ blockId }}")'>
 			<span class="glyphicon glyphicon-plus"></span>
 			{{ i18n('m.rbs.wishlist.front.wishlist_button', ['ucf']) }}
 		</button>
