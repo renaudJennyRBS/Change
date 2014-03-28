@@ -1373,5 +1373,11 @@
 	},
 	"wysiwyg_tools":{
 		"message":"outils"
+	},
+	"wysiwyg_enter_image_width":{
+		"message":"largeur de l'image (laisser vide pour ne pas choisir)"
+	},
+	"wysiwyg_enter_image_height":{
+		"message":"hauteur de l'image (laisser vide pour ne pas choisir)"
 	}
 }

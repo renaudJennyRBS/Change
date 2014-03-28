@@ -1,4 +1,4 @@
-(function($, rangy) {
+(function ($, rangy) {
 
 	"use strict";
 
@@ -46,13 +46,11 @@
 			},
 			insertUnorderedList : {
 				display : '<i class="icon-list-ul"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_unordered_list'),
-				block : true
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_unordered_list')
 			},
 			insertOrderedList : {
 				display : '<i class="icon-list-ol"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_ordered_list'),
-				block : true
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_ordered_list')
 			},
 			undo : {
 				display : '<i class="icon-undo"></i>',
@@ -150,6 +148,7 @@
 				    editableEl = element.find('[contenteditable]'),
 					sourceEl = element.find('textarea');
 
+				scope.tools = angular.copy(tools);
 				scope.toolbarConfig = [
 					{
 						label : i18n.trans('m.rbs.admin.admin.wysiwyg_blocks'),
@@ -173,53 +172,57 @@
 					}
 				];
 
-				scope.tools = angular.copy(tools);
 
 				scope.getButtonLabel = function (item)
 				{
 					return scope.tools.hasOwnProperty(item) ? scope.tools[item].display : item;
 				};
 
+
 				scope.getButtonTooltip = function (item)
 				{
 					return scope.tools.hasOwnProperty(item) ? scope.tools[item].title : '';
 				};
+
 
 				scope.toolIsActive = function (item)
 				{
 					return scope.tools.hasOwnProperty(item) ? (scope.tools[item].active || false) : false;
 				};
 
-				scope.runTool = function (item)
+
+				scope.runTool = function (toolId)
 				{
-					var tool = scope.tools[item];
+					var tool = scope.tools[toolId];
 					if (angular.isFunction(tool.action)) {
 						tool.action(scope);
 					} else {
 						if (tool.block) {
-							scope.wrapSelection("formatBlock", '<' + item.toUpperCase() + '>');
+							scope.wrapSelection("formatBlock", '<' + toolId.toUpperCase() + '>');
 						} else {
-							scope.wrapSelection(item);
+							scope.wrapSelection(toolId);
 						}
 					}
 					updateSelectedStyles();
 				};
+
 
 				scope.wrapSelection = function (command, options)
 				{
 					$document[0].execCommand(command, false, options || null);
 				};
 
+
 				scope.queryState = function (toolId)
 				{
 					var tool = scope.tools[toolId];
 					if (tool && tool.block) {
-						console.log("queryCommandValue=", $document[0].queryCommandValue('formatBlock'));
 						return $document[0].queryCommandValue('formatBlock').toLowerCase() === toolId.toLowerCase();
 					} else {
 						return $document[0].queryCommandState(toolId);
 					}
 				};
+
 
 				scope.selectLink = function ()
 				{
@@ -230,6 +233,7 @@
 					});
 				};
 
+
 				scope.selectImage = function ()
 				{
 					var range = rangy.saveSelection();
@@ -238,6 +242,7 @@
 						contents : editableEl.html()
 					});
 				};
+
 
 				scope.$on('WYSIWYG.InsertLink', function (event, data)
 				{
@@ -257,6 +262,7 @@
 					});
 				});
 
+
 				scope.$on('WYSIWYG.InsertImage', function (event, data)
 				{
 					editableEl.html(data.contents);
@@ -267,17 +273,6 @@
 					});
 				});
 
-
-
-				// Init options.
-				angular.forEach([
-					'stripBr',
-					'noLineBreaks',
-					'selectNoneditableEl'
-				], function(opt) {
-					var o = attrs[opt];
-					opts[opt] = o && o !== 'false';
-				});
 
 				scope.sourceView = false;
 
@@ -293,36 +288,19 @@
 					}
 				};
 
+
 				// view -> model
 				editableEl.on('input', function()
 				{
 					updateNgModel();
-					if (!scope.$$phase) {
-						scope.$digest();
-					}
+					commitNgModel();
 				});
+
 
 				function updateNgModel ()
 				{
-					var html, html2, rerender;
-					html = editableEl.html();
-					rerender = false;
-					if (opts.stripBr) {
-						html = html.replace(/<br>$/, '');
-					}
-					if (opts.noLineBreaks) {
-						html2 = html.replace(/<div>/g, '').replace(/<br>/g, '').replace(/<\/div>/g, '');
-						if (html2 !== html) {
-							rerender = true;
-							html = html2;
-						}
-					}
-
+					var html = editableEl.html();
 					ngModel.$setViewValue(html);
-
-					if (rerender) {
-						ngModel.$render();
-					}
 					if (html === '') {
 						// the cursor disappears if the contents is empty
 						// so we need to refocus
@@ -342,12 +320,11 @@
 					},100);
 				}
 
+
 				// model -> view
 				var oldRender = ngModel.$render;
 				ngModel.$render = function()
 				{
-					var el, el2, range, sel;
-
 					if (!!oldRender) {
 						oldRender();
 					}
@@ -399,24 +376,30 @@
 					var img = $(event.target),
 						width, height;
 
-					width = window.prompt('Width');
+					// Well, this is not very sexy with a prompt, but it does the job for the moment.
+					width = window.prompt(i18n.trans('m.rbs.admin.admin.wysiwyg_enter_image_width | ucf'));
 					if (width) {
 						width = parseInt(width, 10);
 					}
 
-					height = window.prompt('Height');
+					height = window.prompt(i18n.trans('m.rbs.admin.admin.wysiwyg_enter_image_height | ucf'));
 					if (height) {
 						height = parseInt(height, 10);
 					}
 
 					if (width && ! isNaN(width) && height && ! isNaN(height)) {
-						img.attr('data-resize-width', width);
-						img.attr('data-resize-height', height);
-						img.attr('src', Utils.makeUrl(img.attr('src'), { maxWidth: width, maxHeight: height }));
+						img.attr('data-resize-width', width)
+						   .attr('data-resize-height', height)
+						   .attr('src', Utils.makeUrl(img.attr('src'), { maxWidth: width, maxHeight: height }))
+						   .attr('title', width+'x'+height);
+						img.css({'max-width' : ''});
+						updateNgModel();
+						commitNgModel();
 					}
 				}
 
 
+				// Updates buttons active state.
 				function updateSelectedStyles ()
 				{
 					angular.forEach(scope.toolbarConfig, function (group)
@@ -431,7 +414,14 @@
 							}
 						});
 					});
-					if (!scope.$$phase) {
+					commitNgModel();
+				}
+
+
+				// Calls Angular's digest cycle if needed.
+				function commitNgModel ()
+				{
+					if (! scope.$$phase) {
 						scope.$digest();
 					}
 				}

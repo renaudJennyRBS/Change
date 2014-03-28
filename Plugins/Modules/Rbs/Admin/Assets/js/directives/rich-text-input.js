@@ -60,35 +60,6 @@
 							scope.availableSelectors.substitutionVariables = (scope.substitutionVariables != null);
 						}
 
-/*
-						function ensureSelectorsReady()
-						{
-							if (!$selectors) {
-
-								var seEditor = element.closest('structure-editor');
-								if (seEditor.length === 1) {
-									$selectorsContainer = seEditor.find('.rich-text-input-selectors-container').first();
-									$selectorsContainer.append(
-										'<div class="media-picker"></div>' +
-											'<div class="link-picker"></div>' +
-											'<div class="user-picker"></div>' +
-											'<div class="usergroup-picker"></div>' +
-											'<div class="substitution-variables"></div>'
-									);
-								}
-								else {
-									$selectorsContainer = element;
-								}
-								$selectors = {
-									'media': $selectorsContainer.find('div.media-picker'),
-									'link': $selectorsContainer.find('div.link-picker'),
-									'user': $selectorsContainer.find('div.user-picker'),
-									'usergroup': $selectorsContainer.find('div.usergroup-picker'),
-									'substitutionVariables': $selectorsContainer.find('div.substitution-variables')
-								};
-							}
-						}
-*/
 
 						// Initialize ACE editor.
 						function initWithAceEditor()
@@ -682,7 +653,7 @@
 
 								if (contextValue.model === 'Rbs_Media_Image')
 								{
-									data.html = '<img src="' + contextValue.META$.actions.resizeurl.href + '" data-document-id="' + contextValue.id + '" style="max-width:500px"/>';
+									data.html = '<img title="Double-click to change size..." src="' + contextValue.META$.actions.resizeurl.href + '" data-document-id="' + contextValue.id + '" style="max-width:500px"/>';
 								}
 								else if (contextValue.model === 'Rbs_Website_StaticPage')
 								{
