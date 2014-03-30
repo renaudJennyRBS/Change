@@ -1,4 +1,4 @@
-angular.module('RbsChangeApp').controller('RbsWishlistDetailCtrl', function ($scope, $http)
+angular.module('RbsChangeApp').controller('RbsWishlistDetailCtrl', function ($scope, $http, $rootScope)
 {
 	$scope.changingTitle = false;
 	$scope.loading = true;
@@ -73,5 +73,15 @@ angular.module('RbsChangeApp').controller('RbsWishlistDetailCtrl', function ($sc
 		}).error(function(data) {
 			$scope.errorMessage = data.error;
 		});
+	};
+
+	$scope.addProductsToCart = function () {
+		$http.post('Action/Rbs/Wishlist/AddProductsToCart', {
+			productIds: $scope.selectedProducts
+		}).success(function(resultData) {
+				$rootScope.$broadcast('rbsRefreshCart', {'cart': resultData.cart});
+			}).error(function(data) {
+				$scope.errorMessage = data.error;
+			});
 	};
 });

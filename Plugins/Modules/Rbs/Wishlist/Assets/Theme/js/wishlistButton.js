@@ -16,20 +16,20 @@ angular.module('RbsChangeApp').controller('RbsWishlistButtonCtrl', function ($sc
 	};
 
 	$scope.addToWishlist = function (wishlist, modalId) {
-        if ($scope.data.defaultWishlist) {
-            $http.post('Action/Rbs/Wishlist/UpdateWishlist', {
-                wishlistId: wishlist.id,
-                userId: $scope.data.userId,
-                productIdsToAdd: $scope.data.productIds
-            }).success(function(data) {
-                    $scope.successMessage = data.success;
-                }).error(function(data) {
-                    $scope.error = data.error;
-                });
-        }
-        else {
-            $scope.addNewWishlist(modalId);
-        }
+		if ($scope.data.defaultWishlist) {
+			$http.post('Action/Rbs/Wishlist/UpdateWishlist', {
+				wishlistId: wishlist.id,
+				userId: $scope.data.userId,
+				productIdsToAdd: $scope.data.productIds
+			}).success(function(data) {
+					$scope.successMessage = data.success;
+				}).error(function(data) {
+					$scope.error = data.error;
+				});
+		}
+		else {
+			$scope.addNewWishlist(modalId);
+		}
 	};
 
 	$scope.addNewWishlist = function (modalId) {

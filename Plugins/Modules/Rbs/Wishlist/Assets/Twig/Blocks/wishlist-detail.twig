@@ -76,7 +76,8 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-12">
-			<button data-ng-cloak="" type="button" class="btn btn-danger" data-ng-click="removeSelectedProducts()">{{ i18n('m.rbs.wishlist.front.wishlist_remove_selected_products_from_wishlist', ['ucf']) }}</button>
+			<button data-ng-cloak="" type="button" class="btn btn-success" data-ng-click="addProductsToCart()">{{ i18n('m.rbs.wishlist.front.wishlist_add_selected_products_to_cart', ['ucf']) }}</button>
+			{% if isUserWishlist %}<button data-ng-cloak="" type="button" class="btn btn-danger pull-right" data-ng-click="removeSelectedProducts()">{{ i18n('m.rbs.wishlist.front.wishlist_remove_selected_products_from_wishlist', ['ucf']) }}</button>{% endif %}
 		</div>
 	</div>
 	<div class="modal fade" id="wishlistDeleteModal" tabindex="-1" role="dialog"

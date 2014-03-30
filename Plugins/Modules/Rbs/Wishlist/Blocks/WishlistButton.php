@@ -28,6 +28,7 @@ class WishlistButton extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('productIds');
 		$parameters->setLayoutParameters($event->getBlockLayout());
+		$parameters->setNoCache();
 
 		$commerceServices = $event->getServices('commerceServices');
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */

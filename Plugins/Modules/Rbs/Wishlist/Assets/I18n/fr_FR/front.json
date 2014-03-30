@@ -94,5 +94,8 @@
 	},
 	"wishlist_detail_unauthorized":{
 		"message":"vous n'êtes pas autorisé à consulter cette wishlist."
+	},
+	"wishlist_add_selected_products_to_cart":{
+		"message":"ajouter ces produits au panier"
 	}
 }

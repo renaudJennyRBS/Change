@@ -30,8 +30,8 @@ class WishlistList extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('userId');
 		$parameters->addParameterMeta('storeId');
-
 		$parameters->setLayoutParameters($event->getBlockLayout());
+		$parameters->setNoCache();
 
 		$commerceServices = $event->getServices('commerceServices');
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
