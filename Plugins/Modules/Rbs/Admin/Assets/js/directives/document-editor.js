@@ -845,7 +845,7 @@
 						});
 					});
 
-					$rootScope.$on('$routeChangeStart', function () {
+					$scope.$on('$routeChangeStart', function () {
 						if ($scope.changes.length > 0) {
 							EditorManager.saveLocalCopy($scope.document, editorUrl);
 						}
@@ -1003,6 +1003,7 @@
 	 * @id RbsChange.directive:rbsDocumentEditorNew
 	 * @name Document editor (creation)
 	 * @restrict A
+	 * @element form
 	 *
 	 * @description
 	 * Directive used to create new Documents.
@@ -1015,7 +1016,7 @@
 	 *     <div rbs-document-editor-base="" model="...">
 	 *         ...
 	 *         <div rbs-document-editor-new="">
-	 *            ...
+	 *             ...
 	 *         </div>
 	 *     </div>
 	 * </pre>
@@ -1112,6 +1113,7 @@
 	 * @id RbsChange.directive:rbsDocumentEditorEdit
 	 * @name Document editor (edition)
 	 * @restrict A
+	 * @element form
 	 *
 	 * @description
 	 * Directive used to edit an existing Document.
@@ -1191,11 +1193,12 @@
 	 * @id RbsChange.directive:rbsDocumentEditorTranslate
 	 * @name Document editor (translation)
 	 * @restrict A
+	 * @element form
 	 *
 	 * @description
 	 * Directive used to translate an existing Document.
 	 *
-	 * This directive requires the {@link change/RbsChange.directive:rbsDocumentEditorEdit `rbs-document-editor-edit`}.
+	 * This directive requires the {@link change/RbsChange.directive:rbsDocumentEditorEdit `rbs-document-editor-edit`}
 	 * to be present on the same element.
 	 *
 	 * @example

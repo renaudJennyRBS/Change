@@ -38,39 +38,28 @@
 	 * @id RbsChange.directive:rbsDocumentList
 	 * @name Documents lists
 	 * @restrict E
+	 * @scope
 	 *
 	 * @param {String} model The Model name of the Documents to display in the list.
 	 * @param {Object=} extend Object that extends the logic of the <code>&lt;rbs-document-list/&gt;</code>, used
 	 * for communication between the <em>isolated scope</em> of the list and your surrounding controller.
 	 * @param {Object=} load-query Query object used to load the collection of Documents.
 	 * @param {String=} collection-url URL of a REST service that delivers a collection of Documents.
-	 * @param {Array|Object=} external-collection Collection of Documents.
+	 * @param {Array|Object=} collection Collection of Documents.
 	 * @param {Function=} on-preview Function called when a preview is requested on a Document.
-	 * @param {Function=} on-reload Function called when a reload is requested, in case of `external-collection`
+	 * @param {Function=} on-reload Function called when a reload is requested, in case of `collection`
 	 *
 	 * @description
 	 * Displays a list of Documents in a table.
 	 *
-	 * ### Defining the columns ###
+	 * Children Directives:
 	 *
-	 * Insert a <code>&lt;rbs-column/&gt;</code> for each column you want in the table.
+	 * - `rbs-column`
+	 * - `rbs-preview`
+	 * - `rbs-action`
 	 *
-	 * #### Columns parameters ####
-	 *
-	 * - `name`: name of the Document's property to display in this column.
-	 * - `label`: label of the column (defaults to the label of the property).
-	 * - `align`: `left`, `center` or `right` (defaults to `left`).
-	 * - `width`: width of the column, with unit.
-	 *
-	 * Contents of the column, if provided, is HTML with Angular expressions. If no content is provided,
-	 * the Document's property is displayed as is.
-	 * The Document is available as the `doc` property of the scope.
-	 *
-	 * ### Defining the preview template ###
-	 *
-	 * ### Defining actions in the toolbar ###
-	 *
-	 * ### Defining quick actions ###
+	 * For more information about how to build Documents lists, please read the
+	 * {@link lists/index guide to Documents lists}.
 	 *
 	 * @example
 	 * <pre>

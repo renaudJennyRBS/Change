@@ -1,0 +1,563 @@
+@ngdoc overview
+@id index
+@name Document lists
+@description
+
+This guide will teach you how to create a view to list Documents, with filters, pagination
+and buttons to create new elements.
+
+
+
+@ngdoc overview
+@id template
+@name Global template
+@description
+
+<pre>
+<div class="row">
+    <div rbs-full-width>
+
+        <rbs-page-header title="{{ i18nAttr('m.rbs.media.admin.image_list', ['ucf']) }}"></rbs-page-header>
+
+        <rbs-document-filter-panel
+            open-by-default="false"
+            model="Rbs_Media_Image"
+            filter="filter">
+        </rbs-document-filter-panel>
+
+        <div class="add-elements-bar">
+            <a href="(= 'Rbs_Media_Image' | rbsURL:'new' =)">{{ i18n('m.rbs.media.admin.image_create', ['ucf']) }}</a>
+        </div>
+
+        <rbs-document-list
+            data-dlid="DLRbsMediaImage"
+            model="Rbs_Media_Image"
+            filter-collection="filter"
+            use-properties="width height alt" activable="true" correction="true">
+
+            <rbs-column name="path" thumbnail="XS" thumbnail-path="doc"></rbs-column>
+
+            <rbs-column name="label" primary="true">
+                <strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
+                <div ng-if="doc.alt"><small>(= doc.alt =)</small></div>
+            </rbs-column>
+
+            <rbs-column name="width" width="80px" align="right"><span class="width-column">(= doc.width | number =)</span></rbs-column>
+
+            <rbs-column name="height" width="80px"><span class="height-column">(= doc.height | number =)</span></rbs-column>
+
+            <rbs-preview style="min-height: 200px">
+                <img rbs-storage-image="doc" thumbnail="L" class="absolute-top-left"/>
+                <div style="margin-left: 290px;">
+                    <h4>(= doc.label =)</h4>
+                    <dl class="dl-horizontal">
+                        <dt>{{ i18n('m.rbs.media.documents.image_dimensions', ['ucf']) }}</dt>
+                        <dd>(= doc.width | number =) &times; (= doc.height | number =) <abbr title="Pixels">px</abbr></dd>
+                        <dt>{{ i18n('m.rbs.media.documents.image_megapixels', ['ucf']) }}</dt>
+                        <dd>(= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.documents.image_megapixels', ['ucf']) }}">Mpx</abbr></dd>
+                        <dt>{{ i18n(propertyKey('Rbs_Media_Image', 'alt'), ['ucf']) }}</dt>
+                        <dd>(= doc.alt | rbsEmptyLabel =)</dd>
+                        <dt>{{ i18n('m.rbs.media.documents.image_file', ['ucf']) }}</dt>
+                        <dd>(= doc.path.storageURI =)</dd>
+                        <dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lab']) }}</dt>
+                        <dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
+                        <dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
+                    </dl>
+                </div>
+            </rbs-preview>
+
+            <rbs-grid-item>
+                <img rbs-storage-image="doc" thumbnail="L" />
+                <div class="absolute-bottom caption">
+                    <h4><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></h4>
+                    <div>(= doc.width | number =) &times; (= doc.height | number =) &bull; (= doc.width*doc.height/1000000 | number:1 =) <abbr title="{{ i18nAttr('m.rbs.media.documents.image_megapixels', ['ucf']) }}">Mpx</abbr></div>
+                </div>
+            </rbs-grid-item>
+
+        </rbs-document-list>
+    </div>
+</div>
+</pre>
+
+Here is a list of useful Directives used in this template:
+
+## `rbs-full-width` ##
+
+Sets the required CSS classes to make the element full width into the grid system.
+
+
+## `rbs-page-header` ##
+
+Displays the header of the page.
+
+- `title` : main title
+- `sub-title` : secondary text, displayed after the title, smaller
+
+
+## `rbs-document-filter-panel` ##
+
+Displays a panel with options to search for Documents.
+
+- `model` : full Document Model name of Documents to search for.
+- `filter` : JavaScript object, shared in the scope between this panel and the `rbs-document-list` Directive.
+- `open-as-default` : set to true to automatically open this panel on the page.
+
+
+## `rbs-document-list` ##
+
+See {@link rbsDocumentList `rbsDocumentList` Directive}.
+
+
+@ngdoc overview
+@id rbsDocumentList
+@name rbsDocumentList Directive
+@description
+
+See the {@link change/RbsChange.directive:rbsDocumentList `rbsDocumentList`'s documentation}.
+
+<div class="alert alert-danger">
+<p><strong>This Directive creates a new isolated scope.</strong></p>
+<p>
+All the templates described here (columns, preview, grid mode) may contain Angular Expressions that will be
+evaluated in this isolated scope.
+</p>
+<p>
+If you need to reference something of your Controller that surrounds the `rbsDocumentList`, please have a look
+at the {@link communication Communication with `rbsDocumentList`} section.
+</p>
+</div>
+
+## Basic setup ##
+
+<pre>
+<rbs-document-list
+    data-dlid="DLVendorPluginDocument"
+    model="Vendor_Plugin_Document">
+
+    <column name="label" primary="true"></column>
+</rbs-document-list>
+</pre>
+
+## Available parameters ##
+
+### `data-dlid` ###
+Required, should be unique in a view.
+
+### `model` ###
+Document Model name.
+
+### `publishable` ###
+Set to `true` to automatically add a column with the publication status of the Documents.
+
+### `activable` ###
+Set to `true` to automatically add a column with the activation status of the Documents, with a *switch* to change it.
+
+### `correction` ###
+(only when `publishable` is false or not set)
+
+Set to `true` to add a column that indicates if the Document has a correction or not.
+
+### `selectable` ###
+(defaults to `true`)
+
+Set to `true` to add a column with checkboxes to select Documents in the list.
+
+### `use-properties` ###
+List of space-separated property names to load from the server for each Document. By default, only the properties defined in the columns are loaded.
+
+See *Defining the columns*.
+
+### `filter-collection` ###
+References the JavaScript object declared in Directive `rbs-document-filter-panel`.
+
+### `load-query` ###
+JavaScript object used for the initial data. See {@link change/RbsChange.service:Query Query service}.
+
+### `disable-pagination` ###
+Hide the pagination controls. Use this only with an external collection, if you are sure that there is no pagination.
+
+### `modification-date` ###
+(defaults to `true`)
+
+Set to `true` to add a column with the modification date of the Documents.
+
+### `collection-url` ###
+Indicates the URL of a Documents collection to load. The value of this attribute may be a full Angular Expression.
+
+- this works: `&lt;rbs-document-list collection-url="(= myCollectionUrl =)".../&gt;`
+- this does NOT work: `&lt;rbs-document-list collection-url="http://server/rest/query/(= myParam =)".../&gt;`
+
+
+## Further reading ##
+
+- {@link columns Defining the columns}
+- {@link actions Defining additional actions}
+- {@link quickactions Defining quick actions}
+- {@link gridmode Activating grid mode}
+- {@link preview Defining the template for previewing Documents}
+- {@link listcontents Populating the list}
+
+
+
+@ngdoc overview
+@id columns
+@name Columns
+@description
+
+Columns are defined using the <code>&lt;rbs-column/&gt;</code> tag with the following parameters:
+
+- `name` : name of the Document property to display in this column
+- `label`: title of the column
+- `width`: width of the column, with the unit (ie.: `250px`)
+- `align`: `left` (default), `center` or `right`
+- `format` :
+  - `number` : will align the value on the right, and apply the `number` Angular filter.
+  - `date` : will format the date with the {@link change/RbsChange.filter:rbsDateTime `rbsDateTime`} filter.
+- `primary` : used to define the primary column (see below).
+
+## Primary column ##
+
+The **primary column** is generally the column displaying the label of the Document, with a link to the
+Document's editor. (This link is displayed with a bold font.)
+
+This column also displays the {@link quickactions quick actions}.
+
+
+
+@ngdoc overview
+@id preview
+@name Document preview
+@description
+
+You can activate the *Preview* feature by defining a <code>&lt;rbs-preview&gt;</code> tag.
+The contents of this tag is the Angular template used for every Document, referenced by `doc`.
+
+When the preview is requested, the Document is first loaded so that all its properties are available in the template.
+The fully loaded Document is available as `doc.document`: you may use this one in the preview template.
+
+<pre>
+<rbs-document-list
+    data-dlid="DLRbsMediaImage"
+    model="Rbs_Media_Image"
+    filter-collection="filter">
+    <column name="path" thumbnail="XS"></column>
+    <column name="label" primary="true"></column>
+    <preview>
+        <img rbs-storage-image="(= doc.document.path =)" thumbnail="M" class="pull-left img-polaroid margin-right"/>
+        <h4>(= doc.document.label =)</h4>
+    </preview>
+</rbs-document-list>
+</pre>
+
+
+
+@ngdoc overview
+@id gridmode
+@name Grid mode
+@description
+
+You can activate the *grid mode* feature by defining a <code>&lt;rbs-grid-item&gt;</code> tag.
+The contents of this tag is the Angular template used for every Document, referenced by `doc`.
+
+
+
+@ngdoc overview
+@id actions
+@name Toolbar actions
+@description
+
+Additional actions can be added in the toolbar above the list using the <code>&lt;rbs-action&gt;</code> tag with
+the following parameters:
+
+## Parameters ##
+
+- `name`: identifier of the action, it's the name of the method in the `extend` object.
+- `label`: label of the action, displayed in the button
+- `icon` (optional): {@link http://fortawesome.github.io/Font-Awesome/3.2.1/icons/ icon} displayed in the button
+- `models` (optional): list of models for which the action should be available
+- `selection`: condition for the action to become available. Possible values are:
+  - a number: this exact number of documents should be selected in the list
+  - `+`: at least one document should be selected in the list
+  - `a,b`: number of selected documents should be between `a` and `b` (inclusive)
+
+## Example ##
+
+### Template file ###
+
+<pre>
+<rbs-document-list extend="documentListExtend" ...>
+    <rbs-action
+        name="removeFromClipboard"
+        label="Remove from Clipboard"
+        icon="icon-remove"
+        models="*"
+        selection="+">
+    </rbs-action>
+</rbs-document-list>
+</pre>
+
+### JavaScript ###
+
+```js
+scope.documentListExtend =
+{
+    removeFromClipboard : function ($docs, $embedDialog, $target)
+    {
+        // ...
+    };
+};
+```
+
+Parameters description:
+
+- `$docs`: the selected documents in the list (always an Array, even if there is only one document)
+- `$embedDialog`: the jQuery element used to display an embeded {@link change/RbsChange.service:Dialog Dialog}
+- `$target`: the button that triggered this action
+
+Note: These actions can be used in the {@link quickactions quick actions}.
+
+
+
+@ngdoc overview
+@id quickactions
+@name Quick actions
+@description
+
+Quick actions are links to allow the user to quickly execute an action on a single Document in a list.
+They generally appear as a dropdown menu right-aligned in the primary column (see {@link columns Columns}).
+
+The following quick actions are defined by default:
+- delete
+- validation (if `publishable="true"` or `correction="true"` are set)
+
+You can customize the content of this list by declaring the <code>&lt;rbs-quick-actions/&gt;</code> tag:
+
+<pre>
+<rbs-document-list ...>
+    <rbs-quick-actions>
+        [action delete]
+        <a href="javascript:;"><i class="icon-bell"></i> dring!</a>
+        [action workflow]
+        <a href="javascript:;" ng-click="refresh()"><i class="icon-refresh"></i> refresh</a>
+    </rbs-quick-actions>
+    <rbs-column>...</rbs-column>
+    ...
+</rbs-document-list>
+</pre>
+
+Though you can use a special markup here, it is recommended to add your actions as simple links with these attributes:
+
+- `href="javascript:;"`
+- `ng-click="..."`
+
+You can also add an {@link http://fortawesome.github.io/Font-Awesome/3.2.1/icons/ icon},
+which will be aligned to the right.
+
+To include existing actions:
+
+- single action: `[action &lt;actionIdentifier&gt;]`.
+- all default actions: `[action default]`.
+
+<div class="alert alert-info">
+The Angular code here is executed in the `rbs-document-list`'s Scope.
+</div>
+
+
+
+@ngdoc overview
+@id createlinks
+@name Links to create elements
+@description
+
+<pre>
+<div class="add-elements-bar">
+    <a href="(= 'Rbs_Media_Image' | rbsURL:'new' =)">Add new image</a>
+</div>
+</pre>
+
+Here we use the {@link change/RbsChange.filter:rbsURL `rbsURL` filter}.
+
+
+
+@ngdoc overview
+@id listcontents
+@name List contents
+@description
+
+There are two ways to define the Documents that should be listed in the `rbs-document-list`:
+
+1. let the `rbs-document-list` fetch the Documents of the provided model name, via its `model` attribute.
+2. give the Documents collection to the `rbs-document-list` via its `collection` attribute.
+
+## Documents of a given model ##
+
+Use the `model` attribute:
+
+<pre>
+<rbs-document-list
+    data-dlid="DLRbsCatalogProduct"
+    model="Rbs_Catalog_Product"
+    filter-collection="filter">
+    <column name="label" primary="true"></column>
+</rbs-document-list>
+</pre>
+
+## Externally loaded collection ##
+
+Use the `collection` attribute.
+
+You can also set the `on-reload` attribute to specify the name of a method of your scope that will be called
+when a reload is requested, with the following object as its only parameter:
+
+- `offset` : offset of the first Document to fetch in the sorted list
+- `limit` : maximum number of Documents to fetch from the server
+- `sort` : property name on which the sort should be operated
+- `desc` : `true` or `false`
+- `column` : array of property names to fetch for each Documents of the list (yes, it's `column`and not `columnS`)
+
+Template:
+<pre>
+<rbs-document-list
+    data-dlid="DLRbsWebsiteSectionFunctions"
+    model="Rbs_Website_SectionPageFunction"
+    filter-collection="filter"
+    collection="sectionPageFunctionList"
+    on-reload="reload">
+    ...
+</rbs-document-list>
+</pre>
+
+Controller:
+```js
+$scope.reload = function (params)
+{
+    // Load the list of SectionPageFunction Documents
+    var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', $routeParams.id);
+    query.limit = params.limit;
+    query.offset = params.offset;
+    query.order = [
+        { 'property' : params.sort, 'order' : (params.desc ? 'desc' : 'asc') }
+    ];
+    REST.query(query, { 'column' : params.column }).then(function (result)
+    {
+        $scope.sectionPageFunctionList = result.resources;
+        // ...
+    });
+};
+```
+
+
+
+@ngdoc overview
+@id communication
+@name Communication with rbsDocumentList
+@description
+
+There are **two ways** to communicate with a `rbs-document-list`:
+
+- via the `extend` attribute
+- via events
+
+
+## `extend` attribute ##
+
+The `extend` attribute provides a way to extend the `rbs-document-list`'s logic. The value must be a
+JavaScript object that may contain properties and methods. This object is available in the different templates
+(columns, grid mode, preview) with the name `extend`.
+
+### Example ###
+
+#### Template ####
+<pre>
+<div data-ng-controller="YourController">
+    <rbs-document-list data-dlid="DLClipboard"
+        extend="clipboardList" <!-- object in the scope of YourController -->
+        collection="clipboardItems">
+
+        <rbs-column name="label" label="Document" primary="true">
+            <strong>(= doc.label =)</strong>
+            <!-- call a method of the 'extend' object -->
+            <button type="button" ng-click="extend.openPreviewPopin(doc)">preview</button>
+        </rbs-column>
+
+        <!--
+           'removeFromClipboard' and 'clearClipboard'
+           are methods declared in the 'extend' object
+        -->
+        <rbs-action name="removeFromClipboard" label="Remove from Clipboard" selection="+"></rbs-action>
+        <rbs-action name="clearClipboard" label="Empty Clipboard"></rbs-action>
+
+        <!-- You can reference actions declared with 'rbs-action' in quick actions -->
+        <rbs-quick-actions>
+            [action delete] || [action removeFromClipboard]
+        </rbs-quick-actions>
+    </rbs-document-list>
+</div>
+</pre>
+
+#### YourController ####
+```js
+$scope.clipboardList =
+{
+    removeFromClipboard : function ($docs)
+    {
+        // ...
+    },
+
+    clearClipboard : function ()
+    {
+        // ...
+    },
+
+    openPreviewPopin : function (doc)
+    {
+        // ...
+    }
+};
+```
+
+## Events ##
+
+Each `rbs-document-list` listens to an event named `Change:DocumentList:&lt;document list ID&gt;:call`.
+The data object associated to the event may contain the following properties:
+
+- `method`: name of a method in the isolated scope of `rbsDocumentList`
+- `params`: optional hash object with parameters to provide to the method
+
+When the `rbs-document-list` consumes this event, it adds a `promises` Array in the event's data object, that
+contains an Array of Promise objects. This allows you to be notified when the method has been successfully executed,
+with <code>$q.all(args.promises).then(...);</code>.
+
+A commonly called method is `reload()` (see exemple below).
+
+### Example ###
+
+#### Template ####
+<pre>
+<!-- this button is OUTSIDE of the rbs-document-list's scope -->
+<button type="button" ng-click="reloadList()">Reload</button>
+
+<rbs-document-list
+   data-dlid="DLRbsWebsiteFunctionalPage"
+   ...
+</rbs-document-list>
+</pre>
+
+#### Controller ####
+```js
+$scope.reloadList = function ()
+{
+    var args = {
+        'method' : 'reload',
+        // 'params' : [ ... ]
+    };
+    $scope.$broadcast('Change:DocumentList:DLRbsWebsiteFunctionalPage:call', args);
+
+    $q.all(args.promises).then(function (data) {
+        console.log("reloaded: ", data);
+        // data est un tableau : une entrée par Promise résolue.
+        // (généralement, il n'y a qu'une seule Promise car une seule
+        // liste avec l'ID 'DLRbsWebsiteFunctionalPage')
+    });
+};
+```

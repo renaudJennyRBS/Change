@@ -98,7 +98,7 @@
 
 	/**
 	 * @ngdoc directive
-	 * @id RbsChange.directive:rbs-kb-switch
+	 * @id RbsChange.directive:rbsKbSwitch
 	 * @name Alt-Ctrl-Shift-Meta keys manager
 	 * @restrict EA
 	 *

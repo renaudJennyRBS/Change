@@ -16,8 +16,8 @@
 	 *  - input-id
 	 */
 	app.directive('rbsRichTextInput',
-		['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', 'RbsChange.i18n',
-			function($timeout, REST, Utils, Device, $compile, i18n) {
+		['$timeout', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Device', '$compile', 'RbsChange.i18n', 'RbsChange.Navigation', 'RbsChange.UrlManager',
+			function($timeout, REST, Utils, Device, $compile, i18n, Navigation, UrlManager) {
 				return {
 					restrict: 'E',
 					require: '?ngModel',
@@ -29,12 +29,16 @@
 							session,
 							$textarea,
 							id,
-							$previewEl = element.find('div[data-role="preview-container"] .preview-content'),
+							$previewEl,
 							$editorTab,
 							$selectorsContainer,
-							$selectors;
+							$selectors,
+							renderEditorValue = function(){}, // Will be overwritten later, depending on the editor mode.
+							wysiwygInitialized = false,
+							editorModeChosen = false;
 
-						function parseSubstitutionVariables(substitutions) {
+						function parseSubstitutionVariables(substitutions)
+						{
 							scope.substitutionVariables = null;
 							if (angular.isString(substitutions) && substitutions != '') {
 								substitutions = JSON.parse(substitutions);
@@ -56,60 +60,11 @@
 							scope.availableSelectors.substitutionVariables = (scope.substitutionVariables != null);
 						}
 
-						scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
-						scope.draggable = attrs.draggable === 'true';
 
-						// Init available selectors.
-						scope.availableSelectors = {
-							'media': true,
-							'links': true,
-							'users': false,
-							'usergroups': false
-						};
-						if (attrs.profile === 'Admin') {
-							scope.availableSelectors.users = true;
-							scope.availableSelectors.usergroups = true;
-						}
-
-						parseSubstitutionVariables(attrs.substitutionVariables);
-						attrs.$observe('substitutionVariables', function (value) {
-							parseSubstitutionVariables(value);
-						});
-
-						function ensureSelectorsReady() {
-							if (!$selectors) {
-
-								var seEditor = element.closest('structure-editor');
-								if (seEditor.length === 1) {
-									$selectorsContainer = seEditor.find('.rich-text-input-selectors-container').first();
-									$selectorsContainer.append(
-										'<div class="media-picker"></div>' +
-										'<div class="link-picker"></div>' +
-										'<div class="user-picker"></div>' +
-										'<div class="usergroup-picker"></div>' +
-										'<div class="substitution-variables"></div>'
-									);
-								}
-								else {
-									$selectorsContainer = element;
-								}
-								$selectors = {
-									'media': $selectorsContainer.find('div.media-picker'),
-									'link': $selectorsContainer.find('div.link-picker'),
-									'user': $selectorsContainer.find('div.user-picker'),
-									'usergroup': $selectorsContainer.find('div.usergroup-picker'),
-									'substitutionVariables': $selectorsContainer.find('div.substitution-variables')
-								};
-							}
-						}
-
-						scope.editorId = ++editorIdCounter;
-
-						id = 'rbsInputMarkdownAceEditor' + scope.editorId;
-						element.find('[data-role="rbs-ace-editor"]').attr('id', id);
-
-						// Initialize ACE editor when the scope has been completely applied.
-						function initWithAceEditor() {
+						// Initialize ACE editor.
+						function initWithAceEditor()
+						{
+							element.find('[data-role="rbs-ace-editor"]').attr('id', id);
 							editor = ace.edit(id);
 							session = editor.getSession();
 							session.setMode('ace/mode/markdown');
@@ -133,22 +88,9 @@
 
 							$editorTab = $('#rbsInputMarkdown' + scope.editorId + 'TabEditor');
 
-							heightUpdateFunction(id, editor);
-							editor.getSession().on('change', function() {
-								heightUpdateFunction(id, editor);
-							});
-
-							ngModel.$render = function() {
-								if (angular.isObject(ngModel.$viewValue)) {
-									editor.setValue(ngModel.$viewValue.t);
-								}
-								else {
-									editor.setValue(ngModel.$viewValue);
-								}
-							};
-
 							session.on('change', function() {
 								$timeout(function() {
+									scope.wysiwygContent = editor.getValue();
 									if (angular.isObject(ngModel.$viewValue)) {
 										ngModel.$viewValue.t = editor.getValue();
 										ngModel.$setViewValue(ngModel.$viewValue);
@@ -172,15 +114,44 @@
 								event.preventDefault();
 							});
 
+							renderEditorValue = function (v) {
+								editor.setValue(v);
+							};
+
+							// Tabs and preview.
+							$previewEl = element.find('div[data-role="preview-container"] .preview-content'),
+							element.find('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+								if ($(e.target).data('role') === 'preview') {
+									$previewEl.empty();
+									scope.previewing = true;
+									var params = {
+										'profile': (attrs.profile || 'Website'),
+										'editor': 'Markdown'
+									};
+									REST.postAction('renderRichText', getEditorContent(), params).then(function(data) {
+										$previewEl.html(data.html);
+										scope.previewing = false;
+									});
+								}
+							});
+
+							// Auto-height.
+							heightUpdateFunction(id, editor);
+							editor.getSession().on('change', function() {
+								heightUpdateFunction(id, editor);
+							});
+
 							ngModel.$render();
 						}
 
+
 						// Initialize Textarea-based editor.
-						function initWithTextarea() {
+						function initWithTextarea()
+						{
 							$textarea = $('<textarea></textarea>');
 							$('#' + id).append($textarea);
 
-							// If 'id' and 'input-id' attributes are found are equal, move this id to the real input field
+							// If 'id' and 'input-id' attributes are found and equal, move this id to the real input field
 							// so that the binding with the '<label/>' element works as expected.
 							// (see Directives in 'Rbs/Admin/Assets/js/directives/form-fields.js').
 							if (attrs.id && attrs.id === attrs.inputId) {
@@ -190,15 +161,6 @@
 							}
 
 							$editorTab = $('#rbsInputMarkdown' + scope.editorId + 'TabEditor');
-
-							ngModel.$render = function() {
-								if (angular.isObject(ngModel.$viewValue)) {
-									$textarea.val(ngModel.$viewValue.t);
-								}
-								else {
-									$textarea.val(ngModel.$viewValue);
-								}
-							};
 
 							$textarea.on('change', function() {
 								scope.$apply(function() {
@@ -225,25 +187,158 @@
 								event.preventDefault();
 							});
 
+							renderEditorValue = function (v) {
+								$textarea.val(v);
+							};
+
 							ngModel.$render();
 						}
 
-						function canUseAceEditor() {
+
+						ngModel.$render = function()
+						{
+							console.log("ngModel.$render: ", ngModel.$viewValue);
+							if (angular.isDefined(ngModel.$viewValue))
+							{
+								if (angular.isObject(ngModel.$viewValue)) {
+									// No content? The user can choose the input method.
+									if (! ngModel.$viewValue.t && ! editorModeChosen) {
+										scope.editorMode = 'Choose';
+									} else {
+										scope.editorMode = ngModel.$viewValue.e;
+									}
+
+									if (shouldInitEditors())
+									{
+										if (scope.editorMode === 'Markdown') {
+											initMarkdownEditor(ngModel.$viewValue.t);
+										} else if (scope.editorMode === 'Html') {
+											initWysiwygEditor(ngModel.$viewValue.t);
+										}
+									}
+								}
+							}
+						};
+
+
+						function shouldInitEditors ()
+						{
+							return ! editor && ! $textarea && ! wysiwygInitialized;
+						}
+
+
+						scope.chooseEditorMode = function (editorMode)
+						{
+							console.log("chooseEditorMode=", editorMode);
+							editorModeChosen = true;
+							ngModel.$setViewValue({e:editorMode,t:'',h:null});
+							ngModel.$render();
+						};
+
+
+						var currentContext = Navigation.getCurrentContext();
+
+
+						// Open a session to select a document directly in the module
+						scope.beginSelectSessionMarkdown = function (selectModel)
+						{
+							var targetUrl = UrlManager.getSelectorUrl(selectModel),
+								selRange,
+								range = {},
+								navParams;
+
+							if (!targetUrl) {
+								throw new Error("Invalid targetUrl for selection.");
+							}
+
+							if (editor) {
+								selRange = editor.getSelectionRange();
+								range.row = selRange.start.row;
+								range.column = selRange.start.column;
+							}
+
+							navParams = {
+								selector: true,
+								model: selectModel,
+								range: range,
+								label: "Select "+selectModel+" for text editor" // FIXME i18n
+							};
+
+							var valueKey = getContextValueKey();
+							console.log("startSelectionContext: valueKey=", valueKey);
+							Navigation.startSelectionContext(targetUrl, valueKey, navParams);
+						};
+
+
+						function getContextValueKey()
+						{
+							return attrs.contextKey ? attrs.contextKey : attrs.ngModel;
+						}
+
+
+						function applyContextValueMarkdown(contextValue, range)
+						{
+							$timeout(function() {
+								// Position cursor where it was before the select session:
+								if (range) {
+									editor.navigateTo(range.row, range.column);
+								}
+
+								// Insert document:
+								switch (contextValue.model)
+								{
+									case 'Rbs_Media_Image':
+										scope.mdInsertMedia(contextValue);
+										break;
+									case 'Rbs_User_User':
+									case 'Rbs_User_Group':
+										scope.mdInsertIdentifier(contextValue);
+										break;
+									default:
+										scope.mdInsertDocumentLink(contextValue, null);
+								}
+							});
+						}
+
+
+						function initMarkdownEditor (value)
+						{
+							$timeout(function() {
+
+								// Initialize editor (Markdown or simple textarea).
+								if (! editor && ! $textarea)
+								{
+									if (canUseAceEditor()) {
+										initWithAceEditor();
+									}
+									else {
+										initWithTextarea();
+									}
+								}
+								renderEditorValue(value);
+
+								// Apply navigation context if there is one.
+								if (currentContext) {
+									var contextValue = currentContext.getSelectionValue(getContextValueKey());
+									if (contextValue !== undefined) {
+										applyContextValueMarkdown(contextValue, currentContext.param('range'));
+									}
+								}
+
+							});
+						}
+
+						scope.wysiwyg = {};
+
+
+						function canUseAceEditor()
+						{
 							return !Device.isMultiTouch();
 						}
 
-						scope.useTextarea = !canUseAceEditor();
 
-						$timeout(function() {
-							if (canUseAceEditor()) {
-								initWithAceEditor();
-							}
-							else {
-								initWithTextarea();
-							}
-						});
-
-						function getEditorContent() {
+						function getEditorContent()
+						{
 							if (canUseAceEditor()) {
 								return editor.getValue();
 							}
@@ -252,8 +347,10 @@
 							}
 						}
 
+
 						// Auto-height.
-						function heightUpdateFunction(id, editor) {
+						function heightUpdateFunction(id, editor)
+						{
 							// http://stackoverflow.com/questions/11584061/
 							var newHeight =
 								editor.getSession().getScreenLength() * editor.renderer.lineHeight +
@@ -266,6 +363,34 @@
 							$previewEl.css('min-height', $editorTab.outerHeight() + "px");
 						}
 
+
+						scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
+						scope.draggable = attrs.draggable === 'true';
+						scope.editorId = ++editorIdCounter;
+						scope.useTextarea = !canUseAceEditor();
+
+
+						// Init available selectors.
+						scope.availableSelectors = {
+							'media': true,
+							'links': true,
+							'users': false,
+							'usergroups': false
+						};
+						if (attrs.profile === 'Admin') {
+							scope.availableSelectors.users = true;
+							scope.availableSelectors.usergroups = true;
+						}
+
+						parseSubstitutionVariables(attrs.substitutionVariables);
+						attrs.$observe('substitutionVariables', function (value) {
+							parseSubstitutionVariables(value);
+						});
+
+
+						id = 'rbsInputMarkdownAceEditor' + scope.editorId;
+
+
 						scope.preview = function() {
 							element.find('a[data-toggle="tab"][data-role="preview"]').tab('show');
 						};
@@ -274,25 +399,10 @@
 							element.find('a[data-toggle="tab"][data-role="editor"]').tab('show');
 						};
 
-						// Tabs and preview.
-						element.find('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
-							if ($(e.target).data('role') === 'preview') {
-								$previewEl.empty();
-								scope.previewing = true;
-								var params = {
-									'profile': (attrs.profile || 'Website'),
-									'editor': 'Markdown'
-								};
-								REST.postAction('renderRichText', getEditorContent(), params).then(function(data) {
-									$previewEl.html(data.html);
-									scope.previewing = false;
-								});
-							}
-						});
-
 						// Editor's functions.
 
-						function isSurroundedWith(range, marker) {
+						function isSurroundedWith(range, marker)
+						{
 							var l = marker.length,
 								sr = null, er = null,
 								sc = null, ec = null,
@@ -319,8 +429,7 @@
 							else {
 								if (range.start.row < (lineCount - 1)) {
 									er = range.end.row + 1;
-									line = session.getLine(er);
-									ec = l; // FIXME 'l' or 'line' ? :(
+									ec = l;
 								}
 							}
 
@@ -339,7 +448,8 @@
 							return null;
 						}
 
-						function toggleSurrounding(marker) {
+						function toggleSurrounding(marker)
+						{
 							var range = editor.getSelectionRange(),
 								selection = session.getTextRange(range),
 								surroundingRange;
@@ -417,71 +527,11 @@
 						};
 
 						//
-						// Resources selectors
-						//
-
-						scope.picker = {
-							"insertMedia": function(doc, $event) {
-								$event.stopPropagation();
-								$event.preventDefault();
-								scope.mdInsertMedia(doc);
-							},
-							"insertDocumentLink": function(doc, $event, route) {
-								$event.stopPropagation();
-								$event.preventDefault();
-								scope.mdInsertDocumentLink(doc, route);
-							},
-							"insertIdentifier": function(doc, $event, profile) {
-								$event.stopPropagation();
-								$event.preventDefault();
-								scope.mdInsertIdentifier(doc, profile);
-							}
-						};
-
-						scope.currentSelector = null;
-
-						scope.toggleSelector = function(name) {
-							if (scope.currentSelector === name) {
-								scope.closeSelector(name);
-							}
-							else {
-								scope.closeSelector(scope.currentSelector);
-								scope.openSelector(name);
-							}
-						};
-
-						scope.closeSelector = function(name) {
-							if (name && $selectors[name]) {
-								$selectors[name].hide();
-							}
-							scope.currentSelector = null;
-						};
-
-						scope.openSelector = function(name) {
-							if (scope.currentSelector === name) {
-								return;
-							}
-
-							ensureSelectorsReady();
-
-							scope.closeSelector(scope.currentSelector);
-							scope.currentSelector = name;
-							if (name && $selectors[name]) {
-								var $sel = $selectors[name];
-								if (!$sel.children().length) {
-									$sel.html('<rbs-rich-text-input-' + name + '-selector></rbs-rich-text-input-' + name +
-										'-selector>');
-									$compile($sel)(scope);
-								}
-								$sel.show();
-							}
-						};
-
-						//
 						// Media insertion
 						//
 
-						function buildMdImageTag(imageId, imageLabel) {
+						function buildMdImageTag(imageId, imageLabel)
+						{
 							var range = editor.getSelectionRange(), alt;
 							alt = range.isEmpty() ? imageLabel : session.getTextRange(range);
 							return '![' + alt + '](' + imageId + ' "' + imageLabel + '")';
@@ -495,7 +545,8 @@
 						// Links insertion
 						//
 
-						function buildMdLinkTag(href, title) {
+						function buildMdLinkTag(href, title)
+						{
 							var range = editor.getSelectionRange(), text;
 							if (range.isEmpty()) {
 								text = title;
@@ -508,12 +559,6 @@
 
 						scope.mdInsertDocumentLink = function(doc, route) {
 							var href = doc.id;
-							/*
-							 TODO See if MarkdownParser can handle this.
-							 if (doc.LCID)
-							 {
-							 href += ',' + doc.LCID;
-							 }*/
 							if (route) {
 								href += ',' + route;
 							}
@@ -553,24 +598,99 @@
 							window.open('http://fr.wikipedia.org/wiki/Markdown#Quelques_exemples', 'rbsChangeHelp',
 								'width=800,height=600,scrollbars=yes,resizable=yes');
 						};
+
+
+
+						// ----------------------------------------------------
+						//
+						// WYSIWYG editor methods
+						//
+						// ----------------------------------------------------
+
+
+						scope.$on('WYSIWYG.SelectImage', function (event, data)
+						{
+							console.log("select image!");
+							scope.beginSelectSessionWysiwyg('Rbs_Media_Image', data);
+						});
+
+
+						scope.$on('WYSIWYG.SelectLink', function (event, data)
+						{
+							console.log("select link!");
+							scope.beginSelectSessionWysiwyg('Rbs_Website_StaticPage', data);
+						});
+
+
+						// Open a session to select a document directly in the module
+						scope.beginSelectSessionWysiwyg = function (selectModel, data)
+						{
+							var targetUrl = UrlManager.getSelectorUrl(selectModel),
+								navParams;
+
+							if (! targetUrl) {
+								throw new Error("Invalid targetUrl for selection.");
+							}
+
+							navParams = angular.extend({}, data, {
+								selector : true,
+								model : selectModel,
+								label : "Select "+selectModel+" for text editor" // FIXME i18n
+							});
+
+							Navigation.startSelectionContext(targetUrl, getContextValueKey(), navParams);
+						};
+
+
+						function applyContextValueWysiwyg(contextValue, context)
+						{
+							$timeout(function()
+							{
+								var data = {
+									range : context.param('range'),
+									contents : context.param('contents')
+								};
+
+								if (contextValue.model === 'Rbs_Media_Image')
+								{
+									data.html = '<img title="Double-click to change size..." src="' + contextValue.META$.actions.resizeurl.href + '" data-document-id="' + contextValue.id + '" style="max-width:500px"/>';
+								}
+								else if (contextValue.model === 'Rbs_Website_StaticPage')
+								{
+									data.html = '<a href="javascript:;" data-document-id="' + contextValue.id + '">' + contextValue.title + '</a>';
+								}
+
+								if (data.html) {
+									scope.$broadcast('WYSIWYG.InsertImage', data);
+								}
+							});
+						}
+
+
+						function initWysiwygEditor (value)
+						{
+							if (!value || value === '<br>') {
+								value = '<p><span contenteditable="false">Your text here...</span></p>';
+							}
+							scope.wysiwyg.content = value;
+							scope.$watch('wysiwyg.content', function (value)
+							{
+								ngModel.$setViewValue({e:'Html',t:value});
+							});
+							wysiwygInitialized = true;
+
+							// Apply navigation context if there is one.
+							if (currentContext) {
+								var contextValue = currentContext.getSelectionValue(getContextValueKey());
+								if (contextValue !== undefined) {
+									applyContextValueWysiwyg(contextValue, currentContext);
+								}
+							}
+						}
+
 					}
 				};
 			}]);
-
-	/**
-	 * Media selector
-	 */
-	app.directive('rbsRichTextInputMediaSelector', [ function() {
-		return {
-			restrict: 'E',
-			scope: false,
-			templateUrl: 'Rbs/Admin/js/directives/rich-text-input-media-selector.twig',
-
-			compile: function(tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputMediaSelector" + (++editorIdCounter));
-			}
-		};
-	}]);
 
 	/**
 	 * Document selector for links
@@ -587,36 +707,6 @@
 		};
 	}]);
 
-	/**
-	 * Document selector for users
-	 */
-	app.directive('rbsRichTextInputUserSelector', [ function() {
-		return {
-			restrict: 'E',
-			scope: true,
-			templateUrl: 'Rbs/Admin/js/directives/rich-text-input-user-selector.twig',
-
-			//TODO filter the user, include only activated user.
-			compile: function(tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUserSelector" + (++editorIdCounter));
-			}
-		};
-	}]);
-
-	/**
-	 * Document selector for user groups
-	 */
-	app.directive('rbsRichTextInputUsergroupSelector', [ function() {
-		return {
-			restrict: 'E',
-			scope: true,
-			templateUrl: 'Rbs/Admin/js/directives/rich-text-input-usergroup-selector.twig',
-
-			compile: function(tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputUsergroupSelector" + (++editorIdCounter));
-			}
-		};
-	}]);
 
 	function parseRbsDocumentHref(href) {
 		var doc, matches;

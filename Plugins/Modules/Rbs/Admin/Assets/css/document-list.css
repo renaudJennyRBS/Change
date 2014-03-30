@@ -548,13 +548,22 @@ table.document-list {
 
 
 .children-count {
-	background: none repeat scroll 0 0 rgba(240, 240, 240, 0.9);
-	border: 1px solid rgba(0, 0, 0, 0.05);
-	border-radius: 3px;
-	color: #B0B0B0;
+	background: white;
+	border: 1px solid rgba(39, 144, 176, 0.5);
+	border-radius: 30px;
+	color: rgb(39, 144, 176);
 	margin-left: 4px;
-	padding: 1px 5px;
+	padding: 2px 7px;
 	text-shadow: 1px 1px 0 #FFFFFF;
+	line-height: 25px;
+	cursor: pointer;
+}
+
+.children-count-empty {
+	color: silver;
+	font-style: italic;
+	margin-left: 4px;
+	line-height: 25px;
 }
 
 

@@ -12,16 +12,33 @@ rbs-rich-text-input.focused .ace_editor {
 }
 
 rbs-rich-text-input .btn-toolbar {
-	background: #ffffff;
+	background: #dddddd;
 	background: -moz-linear-gradient(top, #ffffff 0%, #dddddd 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#dddddd));
 	background: -webkit-linear-gradient(top, #ffffff 0%,#dddddd 100%);
 	background: -o-linear-gradient(top, #ffffff 0%,#dddddd 100%);
 	background: -ms-linear-gradient(top, #ffffff 0%,#dddddd 100%);
-	background: linear-gradient(to bottom, #ffffff 0%,#dddddd 100%);
+	background: linear-gradient(to bottom, #ffffff 0%,rgb(204, 204, 204) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dddddd',GradientType=0 );
 	margin: 0;
-	padding: 5px;
+	padding: 5px 0;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+rbs-rich-text-input .btn-toolbar .btn-group:before {
+	color: rgba(0, 0, 0, 0.5);
+	content: " ";
+	display: block;
+	font-size: 9pt;
+	text-align: center;
+	height: 16px;
+	font-variant: small-caps;
+	text-shadow: 1px 1px 0 rgb(255, 255, 255);
+}
+
+rbs-rich-text-input .btn-toolbar .btn-group[caption]:before {
+	content: attr(caption);
 }
 
 .rbs-rich-text-input-inner-selector .pagination ul > .disabled > a {
@@ -82,3 +99,9 @@ rbs-rich-text-input textarea {
 	box-sizing: border-box;
 }
 
+/* WYSIWYG editor - textAngular */
+
+text-angular .form-control {
+	height: auto;
+	min-height: 150px;
+}

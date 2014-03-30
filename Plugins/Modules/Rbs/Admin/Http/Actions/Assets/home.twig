@@ -22,6 +22,7 @@
 	<link href="Rbs/Admin/lib/FontAwesome/css/font-awesome.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-datepicker.css" rel="stylesheet" />
 	<link href="Rbs/Admin/lib/angular-strap/vendor/bootstrap-timepicker.css" rel="stylesheet" />
+	<!--link href="Rbs/Admin/lib/minislate/css/minislate-full.css" rel="stylesheet" /-->
 
 	<style type="text/css">
 		#chg_loading_mask {
@@ -131,6 +132,9 @@
 	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment.min.js"></script>
 	<script type="text/javascript" src="Rbs/Admin/lib/moment/moment-timezone.min.js"></script>
 
+	<script type="text/javascript" src="Rbs/Admin/lib/rangy/uncompressed/rangy-core.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/rangy/uncompressed/rangy-selectionsaverestore.js"></script>
+
 	<script type="text/javascript" src="Rbs/Admin/i18n.js?LCID={{ LCID }}"></script>
 	<script type="text/javascript" src="Rbs/Admin/routes.js"></script>
 
@@ -140,6 +144,7 @@
 	{% endfor %}
 
 	<script type="text/javascript" src="Rbs/Admin/editors.js"></script>
+	<script type="text/javascript" src="Rbs/Admin/lib/textAngular/textAngular.js"></script>
 
 	<footer>
 		<div class="pull-right" rbs-change-version></div>

@@ -1,0 +1,32 @@
+<div class="span12">
+    <h1>Welcome to the Change UI developer guide!</h1>
+
+	<p>You will find here the documentation about how to develop the user interface of your Change plugins.</p>
+
+	<p>
+		First of all, it's important to notice that Change uses the following libs or frameworks for its backoffice interface.
+		It's strongly recommended that you are quite comfortable with them before diving into Change UI development:
+	</p>
+	<ul>
+		<li><a href="http://docs.angularjs.org/" target="_blank">AngularJS</a> (1.2)</li>
+		<li><a href="http://api.jquery.com/" target="_blank">jQuery</a> (1.10)</li>
+		<li><a href="http://getbootstrap.com/getting-started/" target="_blank">Twitter Bootstrap</a> (3)</li>
+		<li><a href="http://fortawesome.github.io/Font-Awesome/3.2.1/icons/" target="_blank">FontAwesome</a> (3.2)</li>
+		<li><a href="http://twig.sensiolabs.org/" target="_blank">Twig</a></li>
+	</ul>
+
+	<div class="alert alert-danger">
+		<h4>Avoiding conflicts between Twig and Angular expressions</h4>
+		<p>
+			To avoid conflicts, Angular has been told to accept expressions enclosed in <code>(= =)</code>,
+			in addition to its default <code>&#123;&#123; &#125;&#125;</code>.
+		</p>
+		<p>
+			<strong>If you have Angular expressions in Twig templates</strong>,
+			please use <code>(= =)</code> so that Twig won't try to evaluate them.
+		</p>
+	</div>
+
+    <h2 ng-show="docGroups.length > 0">Table of Contents</h2>
+    <documentation-group-list></documentation-group-list>
+</div>

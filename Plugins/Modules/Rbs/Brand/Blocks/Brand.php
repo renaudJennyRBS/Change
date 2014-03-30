@@ -62,7 +62,7 @@ class Brand extends Block
 			$brand = $documentManager->getDocumentInstance($brandId);
 			if ($brand instanceof \Rbs\Brand\Documents\Brand)
 			{
-				$attributes['visual'] = $brand->getVisual()->getPublicURL(540, 405);
+				$attributes['visual'] = $brand->getVisual() ? $brand->getVisual()->getPublicURL(540, 405) : null;
 				$attributes['websiteURL'] = $brand->getCurrentLocalization()->getWebsiteUrl();
 				$attributes['description'] = $brand->getCurrentLocalization()->getDescription();
 

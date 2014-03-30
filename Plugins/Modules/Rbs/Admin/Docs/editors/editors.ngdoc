@@ -1,0 +1,435 @@
+@ngdoc overview
+@id index
+@name Document editors
+@description
+
+# Document editors
+
+Editors are views that allow the user to create and edit Documents in the backoffice interface.
+
+They are composed of two main things:
+
+- template files
+- optional JavaScript code (as Angular directives)
+
+The links below explain how to build editors to create and edit Documents in your Change plugins.
+
+<page-list></page-list>
+
+
+
+@ngdoc overview
+@id templates
+@name Template files
+@description
+
+Template files are {@link http://twig.sensiolabs.org/ Twig templates} and
+are located in: `Vendor/Plugin/Assets/Admin/Documents/&lt;Document&gt;/`
+
+In Change, Angular is told to accept expressions begining with <code>(=</code> (instead of <code>{{</code>) and ending with <code>=)</code> (instead of <code>}}</code>).
+Thus, the templates can mix Twig and Angular expressions:
+
+- <code>{{ }}</code> is the Twig syntax (parsed server-side).
+- <code>(= =)</code> is the Angular syntax (parsed client-side).
+
+There are 3 modes, and thus 3 template files:
+
+- `new.twig` used to create new Documents
+- `edit.twig` used to edit existing Documents
+- `translate.twig` used to translate Documents
+
+<pre>
+<!-- rbs-document-editor-base: base editor directive that adds the default methods in the Scope -->
+<div class="row" rbs-document-editor-base="" model="Rbs_Website_StaticPage">
+   ...
+   <!-- ng-submit="submit()" is REQUIRED, please keep it as is! -->
+   <form ng-submit="submit()"
+         <!-- rbs-document-editor-edit: default editing methods -->
+         rbs-document-editor-edit=""
+         <!-- your editor's own logic -->
+         rbs-document-editor-vendor-plugin-document="">
+      ...
+
+      <!-- default section ("Properties") -->
+      <fieldset rbs-editor-section=""
+          data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+          ...
+      </fieldset>
+
+      <!-- another user defined section -->
+      <fieldset rbs-editor-section="mysection"
+          data-editor-section-label="{{ i18nAttr('m.vendor.plugin.mysection', ['ucf']) }}"
+          data-editor-section-icon="icon-...">
+          ...
+      </fieldset>
+
+      <rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+   </form>
+</div>
+</pre>
+
+**`ng-submit="submit()"` is required!**
+
+
+
+@ngdoc overview
+@id fields
+@name Available fields
+@description
+
+The following Directives help you in building editors with the correct layout.
+
+Required attributes:
+
+- `property` : name of the property of the Document that should be bound to the control.
+- `label` : label that should be associated to the control.
+
+Technically, since the edited Document is available as `document` in the editor's Scope,
+a <code>ng-model</code> attribute will be added to the generated <code>&lt;input/&gt;</code> with a value like this:
+<code>ng-model="document.&lt;property&gt;"</code>
+
+Optionnal attributes:
+
+- `required`
+
+Of course, you can use common Angular Directives, such as `ng-hide`, `ng-show`, ...
+
+
+## Text fields ##
+
+### Simple text ###
+<pre>
+<rbs-field-text property="title" label="Title"></rbs-field-text>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldText `rbs-field-text`} Directive.
+
+### E-mail ###
+<pre>
+<rbs-field-email property="emailAddress" label="E-mail address"></rbs-field-email>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldEmail `rbs-field-email`} Directive.
+
+### URL ###
+<pre>
+<rbs-field-url property="websiteUrl" label="Website URL"></rbs-field-url>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldUrl `rbs-field-url`} Directive.
+
+### Rich text ###
+<pre>
+<rbs-field-rich-text property="description" label="Description"></rbs-field-rich-text>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldRichText `rbs-field-rich-text`} Directive.
+
+
+## Number fields ##
+
+### Integer ###
+<pre>
+<rbs-field-integer property="quantity" label="Quantity"></rbs-field-integer>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldInteger `rbs-field-integer`} Directive.
+
+### Float (decimal) ###
+<pre>
+<rbs-field-float property="weight" label="Weight"></rbs-field-float>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldFloat `rbs-field-float`} Directive.
+
+### Price ###
+<pre>
+<rbs-field-price property="totalPrice" label="Total price"></rbs-field-price>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldPrice `rbs-field-price`} Directive.
+
+
+## Boolean ##
+
+<pre>
+<rbs-field-boolean property="active" label="Active"></rbs-field-boolean>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldBoolean `rbs-field-boolean`} Directive.
+
+
+## Document selectors ##
+
+### Single Document picker ###
+<pre>
+<rbs-field-picker
+    property="primaryImage"
+    label="Primary image"
+    accepted-model="Rbs_Media_Image"
+    selector-title="Choose an image"
+    allow-creation="true"
+    allow-edition="true">
+</rbs-field-picker>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldPicker `rbs-field-picker`} Directive.
+
+### Multiple Documents picker ###
+<pre>
+<rbs-field-picker-multiple
+    property="otherImages"
+    label="Optionnal images"
+    accepted-model="Rbs_Media_Image"
+    selector-title="Choose optionnal images"
+    allow-creation="true">
+</rbs-field-picker-multiple>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldPickerMultiple `rbs-field-picker-multiple`} Directive.
+
+### Dropdown listbox (select) ###
+<pre>
+<rbs-field-document-select
+    property="website"
+    label="Website"
+    accepted-model="Rbs_Website_Website">
+</rbs-field-document-select>
+</pre>
+See {@link change/RbsChange.directive:rbsFieldDocumentSelect `rbs-field-document-select`} Directive.
+
+
+
+
+@ngdoc overview
+@id sections
+@name Grouping fields into sections
+@description
+
+Use <code>&lt;fieldset/&gt;</code> elements to group fields, with the following attributes:
+
+- `rbs-editor-section` : identifier of the section, used in the URL and in `scope.initSection()`, `scope.enterSection()` and `scope.leaveSection()`.
+- `editor-section-label` : label of the section, displayed in the left menu.
+- `editor-section-icon` (optional) : name of the {@link http://fortawesome.github.io/Font-Awesome/3.2.1/icons/ icon}
+for the section. While optional, the left menu will look nicer with icons ;-)
+
+Please note that all these attributes may be prefixed with `data-` to make HTML validators happy!
+
+Here is an example:
+
+<pre>
+<!-- default section with no ID: -->
+<fieldset data-rbs-editor-section=""
+    data-editor-section-label="General properties">
+    <!-- default icon is 'icon-pencil' -->
+...
+</fieldset>
+
+<fieldset data-rbs-editor-section="security"
+    data-editor-section-label="Security"
+    data-editor-section-icon="icon-shield">
+...
+</fieldset>
+
+<fieldset data-rbs-editor-section="systeminfo"
+    data-editor-section-label="Status"
+    data-document-system-info-section>
+    <!-- default icon is 'icon-info-sign' -->
+</fieldset>
+</pre>
+
+
+
+@ngdoc overview
+@id logic
+@name Editor's logic
+@description
+
+## Editor Directive ##
+
+If you have a look at the {@link templates basic template for an editor},
+you'll notice a {@link change/RbsChange.directive:rbsDocumentEditorBase `rbs-document-editor-base`} attribute
+on the top-level element. This Directive **creates a Scope and attaches a Controller on it**.
+
+There is also a <code>&lt;form/&gt;</code> element
+with a {@link change/RbsChange.directive:rbsDocumentEditorEdit `rbs-document-editor-edit`} attribute.
+This Directive, which requires {@link change/RbsChange.directive:rbsDocumentEditorBase `rbs-document-editor-base`}
+to be present on an ancestor, handles the loading of an existing Document into the editor.
+**It does not declare a Scope**.
+
+When creating an element, {@link change/RbsChange.directive:rbsDocumentEditorEdit `rbs-document-editor-edit`} is replaced
+by {@link change/RbsChange.directive:rbsDocumentEditorNew `rbs-document-editor-new`}, which handles the logic of
+creating a new Document into the editor.
+**It does not declare a Scope**.
+
+**All the Directives for editors work in the same Scope, created by
+{@link change/RbsChange.directive:rbsDocumentEditorBase `rbs-document-editor-base`}.**
+
+To handle specific logic in an editor, you need to implement a Directive and apply it on the
+<code>&lt;form/&gt;</code> element in the editor's template. This Directive should have the following properties:
+
+- `restrict: 'A'`
+- `require: 'rbsDocumentEditorEdit'`
+- **no template**
+- **no inherited scope nor isolated scope**: all directives work in the same scope created by
+{@link change/RbsChange.directive:rbsDocumentEditorBase `rbs-document-editor-base`}.
+- named as follows: `rbsDocumentEditorVendorPluginDocument`, which leads to the following attribute: `rbs-document-editor-vendor-plugin-document`.
+
+We generally declare these editors Directives in a file called `editor.js`, located where the Twig templates are.
+
+```js
+(function () {
+
+    "use strict";
+
+    function vendorPluginDocumentEditor ()
+    {
+        return {
+            restrict : 'A',
+            require : 'rbsDocumentEditorEdit',
+
+            link : function (scope, iElement, iAttrs, editorCtrl)
+            {
+                // Editor's specific code...
+            }
+        };
+    }
+
+    angular.module('RbsChange').directive('rbsDocumentEditorVendorPluginDocument', vendorPluginDocumentEditor);
+
+})();
+```
+
+
+## Initialization ##
+
+There are two methods of the Scope that can be used to initialize something in an editor:
+
+- `onLoad()` : called when the Document has been loaded. Any modification in `scope.document` **will NOT** mark the editor has modified.
+- `onReady()` : called when everything is ready. Any modification in `scope.document` **will** mark the editor has modified.
+
+In both methods, `scope.document` exists and is a Document object (which is not yet saved to database in the case of a creation).
+
+<pre>
+scope.onLoad = function editorOnLoadFn ()
+{
+   scope.document.myProperty = 42;
+   // document is not marked as modified
+});
+
+scope.onReady = function editorOnLoadFn ()
+{
+   scope.document.myProperty = 42;
+   // document is marked as modified
+});
+</pre>
+
+
+## Pre-save processing ##
+
+If you need to do something **before** the Document is saved to the server, then you should implement the
+<code>preSave()</code> method in the Scope:
+
+<pre>
+scope.preSave = function preSaveFn ()
+{
+   var defer = $q.defer();
+   // Async process
+   ...
+   defer.resolve();
+   ...
+   return defer.promise;
+};
+</pre>
+
+If <code>preSave()</code> returns a Promise, the save process will continue when this Promise is resolved.
+If the Promise is rejected, the save process is canceled and the Document is not saved.
+
+
+## Post-save processing ##
+
+If you need to do something **after** the Document has been saved, then you should implement the
+<code>postSave()</code> method in the Scope:
+
+<pre>
+scope.postSave = function postSaveFn ()
+{
+   var defer = $q.defer();
+   // Async process
+   ...
+   defer.resolve();
+   ...
+   return defer.promise;
+};
+</pre>
+
+If <code>postSave()</code> returns a Promise, the editor will wait for this Promise to be resolved before
+telling the user that everything is done.
+
+
+## Other useful methods in an editor's scope ##
+
+### `initSection(sectionId)`###
+
+Called the first time the user enters the section identified by `sectionId`.
+
+### `enterSection(sectionId)` ###
+
+Called each time the user enters the section identified by `sectionId`.
+If this is the first time, `initSection()` is called before `enterSection()`.
+
+### `leaveSection(sectionId)` ###
+
+Called each time the user leaves the section identified by `sectionId`.
+
+
+## Properties defined in an editor's scope ##
+
+### `document` ###
+
+Object that represents the Document that is being edited.
+
+### `section` ###
+
+String containing the ID of the currently displayed section of the editor.
+
+### `isReferenceLanguage` ###
+
+Boolean: true if the edited document is in its reference language.
+
+### `isLocalized` ###
+
+Boolean: true if the edited document is localizable.
+
+### `locales` ###
+
+Array of available localizations for the edited document.
+
+### `language` ###
+
+Language of the edited document.
+
+### `modelInfo` ###
+
+Object containing information about the Model of the edited document, with the following properties:
+
+- `collections`:
+  - `sortableBy` (Array): Name of the properties on which these Documents can be sorted
+- `metas`:
+  - `abstract`
+  - `activable`
+  - `backofficeIndexable`
+  - `editable`
+  - `frontofficeIndexable`
+  - `icon`
+  - `indexable`
+  - `label`
+  - `localized`
+  - `name`
+  - `parentName`
+  - `publishable`
+  - `rootName`
+  - `stateless`
+  - `treeName`
+  - `useCorrection`
+- `properties`
+  - `hasCorrection`
+  - `label`
+  - `localized`
+  - `required`
+  - `stateless`
+  - `type`
+
+### `changes` ###
+
+Array of properties that have been changed since the document has been loaded.

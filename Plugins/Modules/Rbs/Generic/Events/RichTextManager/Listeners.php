@@ -40,6 +40,14 @@ class Listeners implements ListenerAggregateInterface
 					$event->setParser(new \Rbs\Website\RichText\MarkdownParser($event->getApplicationServices()));
 				}
 			}
+			else if ($event->getEditor() === 'Html')
+			{
+				$event->setParser(new \Rbs\Admin\WysiwygHtmlParser($event->getApplicationServices()));
+			}
+			else
+			{
+				$event->setParser(new \Rbs\Admin\PlainTextParser());
+			}
 		};
 		$events->attach(RichTextManager::EVENT_GET_PARSER, $callback, 5);
 	}
