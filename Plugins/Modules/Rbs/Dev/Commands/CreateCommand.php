@@ -85,5 +85,56 @@ class CreateCommand
 		\Change\Stdlib\File::write($commandDir . DIRECTORY_SEPARATOR . $className . '.php' , $content);
 
 		$response->addInfoMessage('Command added at path ' . $filePath);
+
+		//listeners
+		$content = file_get_contents(__DIR__ . '/Assets/ListenersTemplate.tpl');
+		$search = ['#namespace#', '#className#', '#package#', '#cmdName#'];
+		$replace = [$namespace, $className, strtolower($package), $cmdName];
+		$content = str_replace($search, $replace, $content);
+		$filePath = $commandDir . DIRECTORY_SEPARATOR . 'Listeners.php' ;
+		if (file_exists($filePath))
+		{
+			$response->addWarningMessage('Listeners Class File already exists at path ' . $filePath);
+			$response->addWarningMessage('You have to write on this class to add the listener for your new command event');
+		}
+		else
+		{
+			\Change\Stdlib\File::write($filePath , $content);
+			$response->addInfoMessage('Command added at path ' . $filePath);
+		}
+
+		$config = [
+			strtolower($package) . ':' . $cmdName =>
+				[
+					'description' => 'your command description here',
+					'dev' => false,
+					'arguments' => [
+						'firstArgument' => [
+							'description' => 'first argument description here',
+							'required' => true,
+							'default' => null
+						]
+					],
+					'options' => [
+						'firstOption' => [
+							'description' => 'first option',
+							'shortcut' => 'o'
+						]
+					]
+				]];
+
+		$filePath = $commandDir . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'config.json' ;
+		if (file_exists($filePath))
+		{
+			$response->addWarningMessage('A config file already exists at path ' . $filePath);
+			$response->addWarningMessage('You have to write on this file to add your new command arguments and options');
+		}
+		else
+		{
+			\Change\Stdlib\File::write($filePath , json_encode($config, JSON_PRETTY_PRINT));
+			$response->addInfoMessage('Command added at path ' . $filePath);
+		}
+
+		$response->addInfoMessage('Files successfully created for your command. Don\'t forget to declare the listener in you module setup');
 	}
 }
