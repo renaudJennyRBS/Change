@@ -1,0 +1,101 @@
+{
+	"wishlist_button":{
+		"message":"Wishlist"
+	},
+	"wishlists_toggle_button":{
+		"message":"afficher les wishlists"
+	},
+	"wishlist_add":{
+		"message":"ajouter une wishlist"
+	},
+	"wishlist_modal_close":{
+		"message":"fermer"
+	},
+	"wishlist_modal_add_confirm":{
+		"message":"ajouter"
+	},
+	"wishlist_modal_delete_confirm":{
+		"message":"supprimer"
+	},
+	"wishlist_add_title":{
+		"message":"titre"
+	},
+	"wishlist_error_wishlist_already_exist":{
+		"message":"vous possédez déjà une wishlist qui se nomme $WISHLIST$."
+	},
+	"wishlist_error_can_t_add_products_to_wishlist":{
+		"message":"vous ne pouvez pas ajouter ces produits à votre wishlist"
+	},
+	"wishlist_add_success":{
+		"message":"vous avez ajouté une wishlist"
+	},
+	"wishlist_view_my_wishlist":{
+		"message":"voir ma wishlist"
+	},
+	"wishlist_view_my_wishlists":{
+		"message":"voir mes wishlists"
+	},
+	"wishlist_change_title":{
+		"message":"changer le nom de la wishlist"
+	},
+	"wishlist_change_title_ok":{
+		"message":"OK"
+	},
+	"wishlist_please_wait_loading":{
+		"message":"veuillez patienter, chargement de la wishlist en cours"
+	},
+	"wishlist_remove_selected_products_from_wishlist":{
+		"message":"retirer les produits sélectionnés de la wishlist"
+	},
+	"wishlist_set_wishlist_private":{
+		"message":"rendre cette wishlist privée"
+	},
+	"wishlist_set_wishlist_public":{
+		"message":"rendre cette wishlist publique"
+	},
+	"wishlist_delete_wishlist":{
+		"message":"supprimer cette wishlist"
+	},
+	"wishlist_delete_modal_title":{
+		"message":"suppression d'une wishlist"
+	},
+	"wishlist_delete_modal_body":{
+		"message":"vous êtes sur le point de supprimer la wishlist, cette action est irréversible."
+	},
+	"wishlist_no_products_in_wishlist":{
+		"message":"cette wishlist est vide. Consulter le catalogue pour ajouter des produits."
+	},
+	"wishlist_products_add_success":{
+		"message":"les produits $PRODUCTS$ ont bien été ajoutés à votre wishlist $WISHLIST$."
+	},
+	"wishlist_add_wishlist_success":{
+		"message":"la wishlist $WISHLIST$ a été ajoutée avec les produits $PRODUCTS$."
+	},
+	"wishlist_manage_wishlists":{
+		"message":"gérer mes wishlists"
+	},
+	"wishlist_list_no_wishlist_in_wishlist_list":{
+		"message":"vous n'avez pas encore de wishlist, vous pouvez en ajouter une grâce au bouton wishlist sur la liste produit ou le détail d'un produit"
+	},
+	"wishlist_list_wishlist_product_count":{
+		"message":"contient $COUNT$ produits"
+	},
+	"wishlist_list_default_wishlist":{
+		"message":"wishlist par défaut"
+	},
+	"wishlist_public":{
+		"message":"public"
+	},
+	"wishlist_private":{
+		"message":"privée"
+	},
+	"wishlist_warning_product_count_limit":{
+		"message":"attention, votre wishlist contient $COUNT$ produit, vous pouvez au maximum avoir $MAX$ produits par wishlist, pensez à créer d'autres wishlists"
+	},
+	"wishlist_detail_unauthorized":{
+		"message":"vous n'êtes pas autorisé à consulter cette wishlist."
+	},
+	"wishlist_add_selected_products_to_cart":{
+		"message":"ajouter ces produits au panier"
+	}
+}

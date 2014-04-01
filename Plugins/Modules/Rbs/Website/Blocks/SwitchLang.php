@@ -72,7 +72,15 @@ class SwitchLang extends \Change\Presentation\Blocks\Standard\Block
 
 		/* @var $doc \Change\Documents\AbstractDocument */
 		$doc = $dm->getDocumentInstance($parameters->getDocumentId());
-		$docLCID = $doc ? $doc->getLCIDArray() : $pageLCID;
+		if ($doc && $doc->getDocumentModel()->isLocalized())
+		{
+			/* @var $doc \Change\Documents\Interfaces\Localizable */
+			$docLCID = $doc->getLCIDArray();
+		}
+		else
+		{
+			$docLCID = $pageLCID;
+		}
 
 		$LCID = array_intersect($websiteLCID, $pageLCID, $docLCID);
 

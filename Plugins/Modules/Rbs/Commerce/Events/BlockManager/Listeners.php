@@ -41,6 +41,9 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Order_OrderList', true, $events);
 		new RegisterByBlockName('Rbs_Payment_CreateAccountForTransaction', true, $events);
 		new RegisterByBlockName('Rbs_Store_WebStoreSelector', true, $events);
+		new RegisterByBlockName('Rbs_Wishlist_WishlistButton', true, $events);
+		new RegisterByBlockName('Rbs_Wishlist_WishlistDetail', true, $events);
+		new RegisterByBlockName('Rbs_Wishlist_WishlistList', true, $events);
 	}
 
 	/**
