@@ -1309,7 +1309,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				if ($sku)
 				{
 					$price = $this->getPriceManager()->getPriceBySku($sku,
-						['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart, 'cartLine' => $line]);
+						['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart, 'line' => $line, 'lineItem' => $item]);
 					$item->setPrice($price);
 				}
 				else

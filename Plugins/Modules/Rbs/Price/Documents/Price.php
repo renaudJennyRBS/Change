@@ -18,6 +18,46 @@ use Change\Http\Rest\Result\DocumentResult;
 class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price\PriceInterface
 {
 	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $options;
+
+	/**
+	 * @var boolean|float|null
+	 */
+	protected $contextualValue = false;
+
+	/**
+	 * @param boolean|float|null $contextualValue
+	 * @return $this
+	 */
+	public function setContextualValue($contextualValue = false)
+	{
+		$this->contextualValue = $contextualValue;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getContextualValue()
+	{
+		return $this->contextualValue;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getValue()
+	{
+		if ($this->contextualValue !== false)
+		{
+			return $this->contextualValue;
+		}
+		return parent::getValue();
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getLabel()
@@ -64,6 +104,28 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		return ($this->isDiscount()) ? $this->getBasePrice()->getValue() : null;
 	}
 
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getOptions()
+	{
+		if ($this->options === null)
+		{
+			$this->loadOptions();
+		}
+		return $this->options;
+	}
+
+	protected function loadOptions()
+	{
+		$this->options = new \Zend\Stdlib\Parameters();
+		$optionsData = $this->getOptionsData();
+		if (is_array($optionsData) && count($optionsData))
+		{
+			$this->options->fromArray($optionsData);
+		}
+	}
+
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
@@ -84,6 +146,12 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		{
 			$this->setStartActivation(new \DateTime());
 		}
+
+		if ($this->options !== null)
+		{
+			$this->setOptionsData($this->options->toArray());
+			$this->options = null;
+		}
 	}
 
 	/**
@@ -98,6 +166,12 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		if ($this->getStartActivation() === null)
 		{
 			$this->setStartActivation(new \DateTime());
+		}
+
+		if ($this->options !== null)
+		{
+			$this->setOptionsData($this->options->toArray());
+			$this->options = null;
 		}
 
 		// Check if property taxCategories is modified and price has associated discount prices
@@ -156,7 +230,43 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 					}
 				}
 			}
+
+			if ($restResult instanceof DocumentResult) {
+				$options = $this->getOptions();
+				if ($options->count()) {
+					$restResult->setProperty('options', $options->toArray());
+				} else {
+					$restResult->setProperty('options', null);
+				}
+			}
 		}
+	}
+
+	/**
+	 * Process the incoming REST data $name and set it to $value
+	 * @param string $name
+	 * @param mixed $value
+	 * @param \Change\Http\Event $event
+	 * @return boolean
+	 */
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		switch($name)
+		{
+			case 'options':
+				if (is_array($value))
+				{
+					$this->getOptions()->fromArray($value);
+				}
+				else
+				{
+					$this->getOptions()->fromArray([]);
+				}
+				break;
+			default:
+				return parent::processRestData($name, $value, $event);
+		}
+		return true;
 	}
 
 	/**
@@ -180,4 +290,6 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		$query->andPredicates($query->eq('basePrice', $this));
 		return $query->getDocuments();
 	}
+
+
 }

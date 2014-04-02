@@ -357,6 +357,33 @@
 	"activation_properties":{
 		"message":"activation"
 	},
+	"now":{
+		"message":"maintenant"
+	},
+	"tomorrow":{
+		"message":"demain"
+	},
+	"nextmonday":{
+		"message":"lundi prochain"
+	},
+	"nextmonth":{
+		"message":"mois prochain"
+	},
+	"add_one_week":{
+		"message":"+1 semaine"
+	},
+	"add_two_weeks":{
+		"message":"+2 semaines"
+	},
+	"add_one_month":{
+		"message":"+1 mois"
+	},
+	"end_of_week":{
+		"message":"fin de la semaine"
+	},
+	"end_of_month":{
+		"message":"fin du mois"
+	},
 	"information":{
 		"message":"informations"
 	},

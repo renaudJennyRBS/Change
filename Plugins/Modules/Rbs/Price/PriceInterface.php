@@ -37,4 +37,9 @@ interface PriceInterface
 	 * @return array<taxCode => category>
 	 */
 	public function getTaxCategories();
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getOptions();
 }

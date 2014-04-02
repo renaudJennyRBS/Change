@@ -226,6 +226,14 @@ class TestPrice implements  \Rbs\Price\PriceInterface
 	{
 		return [];
 	}
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getOptions()
+	{
+		return new \Zend\Stdlib\Parameters();
+	}
 }
 
 class TestTax implements \Rbs\Price\Tax\TaxInterface

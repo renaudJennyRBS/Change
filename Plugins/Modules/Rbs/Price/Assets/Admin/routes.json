@@ -91,16 +91,16 @@
 		"model": "Rbs_Price_Price",
 		"name": "discount",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/Price/form.twig",
+			"templateUrl": "Document/Rbs/Price/Price/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Price/Price/:id": {
 		"model": "Rbs_Price_Price",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/Price/form.twig",
+			"templateUrl": "Document/Rbs/Price/Price/edit.twig",
 			"labelKey": "m.rbs.price.documents.price | ucf",
 			"labelId": "id"
 		},
@@ -110,7 +110,7 @@
 		"model": "Rbs_Price_Price",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/Price/form.twig",
+			"templateUrl": "Document/Rbs/Price/Price/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

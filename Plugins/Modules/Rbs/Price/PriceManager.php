@@ -126,8 +126,17 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 
 				$query->addOrder('priority', false);
 				$query->addOrder('startActivation', false);
-
-				$event->setParam('price', $query->getFirstDocument());
+				$price = $query->getFirstDocument();
+				if ($price instanceof \Rbs\Price\Documents\Price)
+				{
+					$event->setParam('price', $price);
+					$event->setParam('contextualValue', false);
+					if ($price->getValueModifierName())
+					{
+						$this->getEventManager()->trigger($price->getValueModifierName(), $price, $event->getParams());
+					}
+					$price->setContextualValue($event->getParam('contextualValue'));
+				}
 			}
 		}
 	}

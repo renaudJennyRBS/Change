@@ -1,0 +1,137 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Price_Price">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Price_Price'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+				data-rbs-document-editor-rbs-price-price-edit="">
+			<fieldset data-rbs-editor-section=""
+					data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}">
+					<p class="form-control-static"><a href="(= document.sku | rbsURL:'' =)">(= document.sku.label =)</a></p>
+				</rbs-field>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
+					<p class="form-control-static"><a href="(= document.webStore | rbsURL:'' =)">(= document.webStore.label =)</a>
+					</p>
+				</rbs-field>
+
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
+					<p class="form-control-static">
+						<a href="(= document.billingArea | rbsURL:'' =)">(= document.billingArea.label =)</a></p>
+
+					<table ng-show="priceContext.taxInfo" class="table table-striped">
+						<thead>
+							<th>{{ i18n(modelKey('Rbs_Price_Tax'), ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.price.documents.tax_category', ['ucf']) }}</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="tax in priceContext.taxInfo">
+								<td>(=tax.code=)<br/>
+									<small>(=tax.label=)</small>
+								</td>
+								<td>
+									<span ng-repeat="c in tax.categories" ng-if="c.code == document.taxCategories[tax.code]">
+											<p class="form-control-static">(= c.formattedRate =) ( (= c.code =) )</p>
+											<p ng-show="document.hasJobToUpdateTax || document.basePrice.hasJobToUpdateTax"
+													class="form-control-static icon-warning-sign"> {{ i18n('m.rbs.price.admin.tax_update_in_progress', ['ucf']) }}</p>
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</rbs-field>
+
+				<hr/>
+
+				<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'value'), ['ucf']) }}">
+					<rbs-price-input ng-model="document.value" data-currency-code="priceContext.billingArea.currencyCode"
+							data-price-with-tax="priceContext.webStore.pricesValueWithTax" required="true"></rbs-price-input>
+				</rbs-field>
+
+				<span ng-show="priceContext.discount">
+					<hr/>
+
+					<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}">
+						<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'form' =)">(=
+								document.basePrice.formattedValue =)</a></p>
+					</rbs-field>
+
+					<rbs-field-text property="discountDetail"
+							label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'discountDetail'), ['ucf']) }}">
+					</rbs-field-text>
+				</span>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'valueModifierName'), ['ucf']) }}">
+					<select ng-model="document.valueModifierName" class="form-control"
+							rbs-items-from-collection="Rbs_Price_Collection_ModifierNames">
+						<option value=""></option>
+					</select>
+				</rbs-field>
+
+				<div id="RbsPricePriceModifierOptions" ng-show="document.valueModifierName"></div>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'ecoTax'), ['ucf']) }}">
+					<rbs-price-input ng-model="document.ecoTax" data-currency-code="priceContext.billingArea.currencyCode"
+							data-price-with-tax="priceContext.webStore.pricesValueWithTax"></rbs-price-input>
+				</rbs-field>
+
+				<hr/>
+
+				<span class="help-block">
+					{{ i18n('m.rbs.price.admin.price_target_section_help', ['ucf']) | raw }}
+				</span>
+				<rbs-field-picker property="targetId" select-model="true"
+						label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'targetId'), ['ucf']) }}"
+						selector-title="{{ i18nAttr('m.rbs.price.admin.targetid_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field-integer label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'priority'), ['ucf']) }}"
+						ng-disabled="!document.targetId" property="priority">
+				</rbs-field-integer>
+
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="discount"
+					data-editor-section-label="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}"
+					data-editor-section-group="{{ i18nAttr('m.rbs.price.admin.price_discount_section', ['ucf']) }}">
+
+				<rbs-document-list data-ng-show="!document.basePrice" data-dlid="DLRbsPricePrice" model="Rbs_Price_Price"
+						filter-collection="filter" actions="default" activable="false" correction="true"
+						load-query="loadPriceQuery">
+					<rbs-column name="value" align="right" width="90px">
+						<a ng-href="(=doc|rbsURL=)">(=doc.formattedValue=)</a>
+					</rbs-column>
+					<rbs-column name="sku" sort="sku.code"><a href="(= doc.sku | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
+					<rbs-column name="webStore" sort="webStore.label">(=doc.webStore.label=)</rbs-column>
+					<rbs-column name="startActivation">(= doc.startActivation | rbsDateTime =)</rbs-column>
+					<rbs-column name="endActivation">(= doc.endActivation | rbsDateTime =)</rbs-column>
+				</rbs-document-list>
+
+				<p ng-hide="!document.basePrice">
+					{{ i18nAttr('m.rbs.price.admin.price_no_discount_available', ['ucf']) }}
+				</p>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+					data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+					data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+					data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+					data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

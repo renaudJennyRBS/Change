@@ -16,6 +16,8 @@
 		<property name="value" type="Decimal" required="true" />
 		<property name="discountDetail" type="String" />
 		<property name="ecoTax" type="Decimal" />
-		<property name="optionsData" type="JSON" />
+		<property name="optionsData" type="JSON" internal="true"/>
+
+		<property name="valueModifierName" type="String" />
 	</properties>
 </document>

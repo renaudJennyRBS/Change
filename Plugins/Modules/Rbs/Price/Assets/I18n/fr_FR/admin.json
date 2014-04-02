@@ -59,6 +59,9 @@
 	"price_create":{
 		"message":"ajouter un prix"
 	},
+	"price_base":{
+		"message":"prix de base"
+	},
 	"tax_list":{
 		"message":"taxes"
 	},
@@ -101,37 +104,25 @@
 	"select_billingarea":{
 		"message":"sélectionner une zone de tarification"
 	},
-	"now":{
-		"message":"maintenant"
-	},
-	"tomorrow":{
-		"message":"demain"
-	},
-	"nextmonday":{
-		"message":"lundi prochain"
-	},
-	"nextmonth":{
-		"message":"mois prochain"
-	},
-	"add_one_week":{
-		"message":"+1 semaine"
-	},
-	"add_two_weeks":{
-		"message":"+2 semaines"
-	},
-	"add_one_month":{
-		"message":"+1 mois"
-	},
-	"end_of_week":{
-		"message":"fin de la semaine"
-	},
-	"end_of_month":{
-		"message":"fin du mois"
-	},
 	"tax_update_in_progress":{
 		"message":"mise à jour des taxes en cours"
 	},
 	"tax_update_in_progress_help":{
 		"message":"Une mise à jour des taxes du prix est en cours. La modification sera de nouveau accessible après application."
+	},
+	"modifiers_reservation_quantity_title":{
+		"message":"Par seuil de quantités"
+	},
+	"threshold_greater_or_equals":{
+		"message":"Pour une quantité superieur ou égale"
+	},
+	"threshold_use":{
+		"message":"utiliser le montant"
+	},
+	"threshold_remove":{
+		"message":"supprimer"
+	},
+	"threshold_add":{
+		"message":"ajouter"
 	}
 }

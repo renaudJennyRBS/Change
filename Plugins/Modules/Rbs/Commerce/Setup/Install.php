@@ -42,8 +42,8 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/PageManager/Rbs_Commerce', '\Rbs\Commerce\Events\PageManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProfileManager\Listeners');
 
-
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/ProcessManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProcessManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Commerce/Events/PriceManager/Rbs_Commerce', '\Rbs\Commerce\Events\PriceManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Mail/Events/MailManager/Rbs_Commerce', '\Rbs\Commerce\Events\MailManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Payment/Events/PaymentManager/Rbs_Commerce', '\Rbs\Commerce\Events\PaymentManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');

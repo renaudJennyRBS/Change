@@ -1,21 +1,44 @@
-(function ()
+(function (jQuery)
 {
 	"use strict";
 
-	function Editor(REST, $routeParams, Settings)
+	function Editor($compile, REST, $routeParams)
 	{
+		function redrawPriceModifier($compile, scope, directiveName) {
+			var container = jQuery('#RbsPricePriceModifierOptions');
+			var collection = container.children();
+			collection.each(function() {
+				angular.element(jQuery(this)).isolateScope().$destroy();
+			});
+			collection.remove();
+
+			if (directiveName) {
+				var html = '<div ' + directiveName + '="" options="document.options" price="document" price-context="priceContext"></div>'
+				container.html(html);
+				$compile(container.children())(scope);
+			}
+		}
+
 		return {
-			restrict: 'EA',
-			templateUrl: 'Document/Rbs/Price/Price/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
+			link : function (scope, elm, attrs) {
+				scope.priceContext = {
+					discount: false,
+					webStore: {},
+					billingArea: {},
+					taxInfo: null
+				};
 
-			link : function (scope, elm, attrs, editorCtrl) {
-				scope.discount = false;
-				scope.webStore = {};
-				scope.billingArea = {};
-				scope.taxInfo = null;
+				scope.onSaveContext = function(context) {
+					context.savedData('priceContext', {ctx: scope.priceContext});
+				};
+
+				scope.onRestoreContext = function(currentContext) {
+					var toRestoreData = currentContext.savedData('priceContext');
+					scope.priceContext = toRestoreData.ctx;
+				};
 
 				scope.onLoad = function() {
 					if (angular.isArray(scope.document.taxCategories) || !angular.isObject(scope.document.taxCategories)) {
@@ -25,10 +48,15 @@
 					if (scope.document.isNew()) {
 						scope.document.priority = 25;
 					}
+
+					if (!angular.isObject(scope.document.options) || angular.isArray(scope.document.options)) {
+						scope.document.options = {};
+					}
 				};
 
 				scope.onReady = function(){
-					if (!scope.document.product && $routeParams.productId) {
+
+					if (!scope.document.sku && $routeParams.productId) {
 						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function(product) {
 							scope.document.sku = product.sku;
 						});
@@ -41,49 +69,29 @@
 							scope.document.billingArea = price.billingArea;
 							scope.document.taxCategories = price.taxCategories;
 							scope.document.basePrice = price;
-							scope.discount = true;
+							scope.priceContext.discount = true;
 
 							REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:price.billingArea.id}).then(function(res) {
-								scope.taxInfo = res;
+								scope.priceContext.taxInfo = res;
 							});
-
 						});
 					}
 
 					if (scope.document.basePrice) {
-						scope.discount = true;
+						scope.priceContext.discount = true;
 					}
-
-					if (scope.document.startActivation && scope.document.endActivation) {
-						var startAct = moment(scope.document.startActivation);
-						var endAct = moment(scope.document.endActivation);
-
-						if (endAct.diff(startAct, 'weeks', true) == 1) {
-							scope.activationOffsetClass = {"1w": "active", "2w" : null, "1M": null};
-						} else if (endAct.diff(startAct, 'weeks', true) == 2) {
-							scope.activationOffsetClass = {"1w": null, "2w" : "active", "1M": null};
-
-						} else if (endAct.diff(startAct, 'months', true) == 1) {
-							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": "active"};
-						} else {
-							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
-						}
-					} else {
-						scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
-					}
-
 				};
 
 				scope.$watch('document.webStore', function(newValue) {
 					if (newValue) {
 						var webStoreId = (angular.isObject(newValue)) ? newValue.id : newValue;
-						if (scope.webStore.id != webStoreId) {
+						if (scope.priceContext.webStore.id != webStoreId) {
 							REST.resource('Rbs_Store_WebStore', webStoreId).then(function(res) {
-								scope.webStore = res;
+								scope.priceContext.webStore = res;
 							});
 						}
 					} else {
-						scope.webStore = {};
+						scope.priceContext.webStore = {};
 					}
 
 				});
@@ -95,104 +103,23 @@
 						}
 
 						var billingAreaId = (angular.isObject(newValue)) ? newValue.id : newValue;
-						if (scope.billingArea.id != billingAreaId) {
+						if (scope.priceContext.billingArea.id != billingAreaId) {
 							REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(res){
-								scope.billingArea = res;
+								scope.priceContext.billingArea = res;
+							});
+							REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:billingAreaId}).then(function(res){
+								scope.priceContext.taxInfo = res;
 							});
 						}
 					} else {
-						scope.billingArea = {};
-						scope.taxInfo = null;
+						scope.priceContext.billingArea = {};
+						scope.priceContext.taxInfo = null;
 					}
 				});
 
-				scope.$watch('billingArea', function(newValue) {
-					if (angular.isObject(newValue) && newValue.hasOwnProperty('id')) {
-						REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id:newValue.id}).then(function(res){
-							scope.taxInfo = res;
-						});
-					}
+				scope.$watch('document.valueModifierName', function(directiveName) {
+					redrawPriceModifier($compile, scope, directiveName);
 				});
-
-				editorCtrl.init('Rbs_Price_Price');
-
-				var _timeZone = Settings.get('TimeZone');
-
-				function now () {
-					return moment.utc().tz(_timeZone);
-				}
-
-				scope.$on('Change:TimeZoneChanged', function (event, tz) {
-					_timeZone = tz;
-				});
-
-
-				scope.activationNow = function(){
-					scope.document.startActivation = now().toDate();
-				};
-
-				scope.activationTomorrow = function(){
-					scope.document.startActivation = now().startOf('d').add('d', 1).toDate();
-				};
-
-				scope.activationNextMonday = function(){
-					scope.document.startActivation = now().add('w', 1).startOf('w').startOf('d').toDate();
-				};
-
-				scope.activationNextMonth = function(){
-					scope.document.startActivation = now().add('M', 1).startOf('M').startOf('d').toDate();
-				};
-
-				scope.$watch('document.startActivation', function(newValue, oldValue){
-					if (newValue != oldValue && angular.isObject(scope.activationOffsetClass)) {
-						if (scope.activationOffsetClass['1w']) {
-							scope.endActivationOneWeek();
-						} else if (scope.activationOffsetClass['2w']) {
-							scope.endActivationTwoWeeks();
-						} else if (scope.activationOffsetClass['1M']) {
-							scope.endActivationOneMonth();
-						}
-					}
-				});
-
-				scope.endActivationOneWeek = function(toggle){
-					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1w']) {
-						scope.activationOffsetClass['1w'] = null;
-						return;
-					}
-					scope.document.endActivation = moment(scope.document.startActivation).add('w', 1).toDate();
-					scope.activationOffsetClass = {"1w":"active", "2w" : null, "1M": null};
-				};
-
-				scope.endActivationTwoWeeks = function(toggle){
-					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['2w']) {
-						scope.activationOffsetClass['2w'] = null;
-						return;
-					}
-					scope.document.endActivation = moment(scope.document.startActivation).add('w', 2).toDate();
-					scope.activationOffsetClass = {"1w":null, "2w" : "active", "1M": null};
-				};
-
-				scope.endActivationOneMonth = function(toggle) {
-					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1M']) {
-						scope.activationOffsetClass['1M'] = null;
-						return;
-					}
-					scope.document.endActivation = moment(scope.document.startActivation).add('M', 1).toDate();
-					scope.activationOffsetClass = {"1w":null, "2w" : null, "1M": "active"};
-				};
-
-				scope.endActivationTomorrow = function(){
-					scope.document.endActivation = moment().endOf('d').toDate();
-				};
-
-				scope.endActivationEndOfWeek = function(){
-					scope.document.endActivation = moment().endOf('w').toDate();
-				};
-
-				scope.endActivationEndOfMonth = function(){
-					scope.document.endActivation = moment().endOf('M').toDate();
-				};
 
 				var documentId = -1;
 				if ($routeParams.hasOwnProperty('id') && $routeParams.id != 'new') {
@@ -220,7 +147,8 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.Settings'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsPricePrice', Editor);
+	Editor.$inject = ['$compile', 'RbsChange.REST', '$routeParams'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsPricePriceEdit', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsPricePriceNew', Editor);
 
-})();
+})(window.jQuery);
