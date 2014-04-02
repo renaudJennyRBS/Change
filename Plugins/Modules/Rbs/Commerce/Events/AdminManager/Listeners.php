@@ -8,7 +8,6 @@
  */
 namespace Rbs\Commerce\Events\AdminManager;
 
-use Change\Http\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -29,6 +28,8 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function ($event)
 		{
 			(new \Rbs\Catalog\Admin\GetModelTwigAttributes())->execute($event);
+			(new \Rbs\Price\Admin\GetModelTwigAttributes())->execute($event);
+
 		};
 		//Priority 1 (default value) to be sure to get the default attributes
 		$events->attach('getModelTwigAttributes', $callback);

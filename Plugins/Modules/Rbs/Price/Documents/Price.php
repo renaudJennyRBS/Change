@@ -230,7 +230,43 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 					}
 				}
 			}
+
+			if ($restResult instanceof DocumentResult) {
+				$options = $this->getOptions();
+				if ($options->count()) {
+					$restResult->setProperty('options', $options->toArray());
+				} else {
+					$restResult->setProperty('options', null);
+				}
+			}
 		}
+	}
+
+	/**
+	 * Process the incoming REST data $name and set it to $value
+	 * @param string $name
+	 * @param mixed $value
+	 * @param \Change\Http\Event $event
+	 * @return boolean
+	 */
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		switch($name)
+		{
+			case 'options':
+				if (is_array($value))
+				{
+					$this->getOptions()->fromArray($value);
+				}
+				else
+				{
+					$this->getOptions()->fromArray([]);
+				}
+				break;
+			default:
+				return parent::processRestData($name, $value, $event);
+		}
+		return true;
 	}
 
 	/**

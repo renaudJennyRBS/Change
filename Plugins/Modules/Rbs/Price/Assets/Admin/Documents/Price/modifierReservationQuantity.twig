@@ -1,0 +1,24 @@
+<div>
+	<ol class="list-inline" ng-repeat="threshold in options.thresholds">
+		<li>{{ i18n('m.rbs.price.admin.threshold_greater_or_equals', ['ucf']) }}</li>
+		<li><input type="number" class="form-control" ng-model="threshold.l" style="width: 80px;" ng-blur="sortThreshold()"/></li>
+		<li>, {{ i18n('m.rbs.price.admin.threshold_use') }}</li>
+		<li>
+			<rbs-price-input ng-model="threshold.v" data-currency-code="priceContext.billingArea.currencyCode"
+					data-price-with-tax="priceContext.webStore.pricesValueWithTax"></rbs-price-input>
+		</li>
+		<li>
+		<small>
+			<a href="javascript:;" ng-click="removeThreshold($index)" ng-hide="$last"><i class="icon-minus-sign"> </i>{{ i18n('m.rbs.price.admin.threshold_remove') }}</a>
+		</small>
+		</li>
+	</ol>
+
+	<ol class="list-inline">
+		<li>
+			<small>
+				<a	href="javascript:;" ng-click="addThreshold()"><i class="icon-plus-sign"> </i>{{ i18n('m.rbs.price.admin.threshold_add') }}</a>
+			</small>
+		</li>
+	</ol>
+</div>
