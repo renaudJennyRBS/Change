@@ -35,7 +35,7 @@
 			templateUrl: 'Rbs/Admin/js/directives/document-publication-section.twig',
 			replace: false,
 			scope: true,
-			link: function (scope, iElement, iAttributes) {
+			link: function (scope, iElement, iAttrs) {
 				scope.hasSpecificHelp = false;
 				var _timeZone = Settings.get('TimeZone');
 
@@ -151,8 +151,8 @@
 					scope.document.endPublication = moment().endOf('M').toDate();
 				};
 
-				if (angular.isDefined(iAttrs.rbsDocumentPublicationSectionHelp)
-					&& iAttrs.rbsDocumentPublicationSectionHelp !== "")
+				if (angular.isDefined(iAttrs['rbsDocumentPublicationSectionHelp'])
+					&& iAttrs['rbsDocumentPublicationSectionHelp'] !== "")
 				{
 					scope.hasSpecificHelp = true;
 					scope.specificHelp = iAttrs['rbsDocumentPublicationSectionHelp'];
