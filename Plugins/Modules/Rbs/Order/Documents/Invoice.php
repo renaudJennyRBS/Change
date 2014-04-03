@@ -14,6 +14,31 @@ namespace Rbs\Order\Documents;
 class Invoice extends \Compilation\Rbs\Order\Documents\Invoice
 {
 	/**
+	 * @return string
+	 */
+	protected function getTemporaryCode()
+	{
+		return '[' . $this->getId() . ']';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabel()
+	{
+		return $this->getCode() ? $this->getCode() : $this->getTemporaryCode();
+	}
+
+	/**
+	 * @param string $label
+	 * @return $this
+	 */
+	public function setLabel($label)
+	{
+		return $this;
+	}
+
+	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
