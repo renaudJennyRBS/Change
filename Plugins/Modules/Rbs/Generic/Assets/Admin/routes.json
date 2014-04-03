@@ -22,7 +22,7 @@
 		"name": "New",
 		"rule": {
 			"templateUrl": "Rbs/Plugins/new-list.twig",
-			"labelKey": "'m.rbs.plugins.admin.new_list | ucf"
+			"labelKey": "m.rbs.plugins.admin.new_list | ucf"
 		},
 		"auto": false
 	},
