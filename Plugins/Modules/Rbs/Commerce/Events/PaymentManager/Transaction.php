@@ -126,22 +126,6 @@ class Transaction
 					{
 						// Affect user on cart.
 						$cartManager->affectUser($cart, $user);
-
-						// Affect user on order if the cart is already converted.
-						if ($cart->getOrderId())
-						{
-							$order = $event->getApplicationServices()->getDocumentManager()
-								->getDocumentInstance($cart->getOrderId());
-							if ($order instanceof \Rbs\Order\Documents\Order)
-							{
-								$order->setAuthorId($user->getId());
-								if (!$order->getOwnerId())
-								{
-									$order->setOwnerId($user->getId());
-								}
-								$order->update();
-							}
-						}
 					}
 				}
 				else if (isset($contextData['from']) && $contextData['from'] == 'order')
