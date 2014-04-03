@@ -525,6 +525,14 @@
 				selectWebsite(website);
 			}
 		});
+
+
+		// Remove cache object when this scope is destroyed to always have fresh data inside it.
+		$scope.$on('$destroy', function () {
+			if (cache) {
+				cache.destroy();
+			}
+		});
 	}
 
 	StructureController.$inject = [

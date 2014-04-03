@@ -1308,7 +1308,7 @@
 						entry = {
 							'id' : sectionId,
 							'label' : iAttrs['editorSectionLabel'],
-							'icon' : iAttrs['editorSectionIcon'] || defaultSectionIcons[sectionId],
+							'icon' : iAttrs['editorSectionIcon'] || defaultSectionIcons[sectionId] || 'icon-edit',
 							'fields' : [],
 							'required' : [],
 							'invalid' : [],
