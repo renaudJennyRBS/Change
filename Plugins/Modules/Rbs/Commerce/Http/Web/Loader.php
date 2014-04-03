@@ -1,14 +1,12 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 namespace Rbs\Commerce\Http\Web;
 
-use Change\Http\Web\Event;
 use Rbs\Commerce\CommerceServices;
 
 /**
@@ -245,167 +243,160 @@ class Loader
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Change\Events\Event $event
 	 */
-	public function onAuthenticate(Event $event)
+	public function onLogin(\Change\Events\Event $event)
 	{
-		$user = $event->getAuthenticationManager()->getCurrentUser();
-		$session = new \Zend\Session\Container('Rbs_Commerce');
-		if (!$user->authenticated())
+		$user = $event->getParam('user');
+		if ($user instanceof \Change\User\UserInterface && $user->authenticated())
 		{
-			$session['userId'] = null;
-			return;
-		}
+			$session = new \Zend\Session\Container('Rbs_Commerce');
+			$session['userId'] = $user->getId();
 
-		if (isset($session['userId']) && $session['userId'] == $user->getId())
-		{
-			return;
-		}
-		$session['userId'] = $user->getId();
-
-		$profileManager = $event->getApplicationServices()->getProfileManager();;
-		$profile = $profileManager->loadProfile($user, 'Rbs_Commerce');
-
-		if ($profile instanceof \Rbs\Commerce\Std\Profile)
-		{
-			$session['profile'] = $profile;
-
-			$saveProfile = false;
-			$saveCart = false;
-
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$profileManager = $event->getApplicationServices()->getProfileManager();;
+			$profile = $profileManager->loadProfile($user, 'Rbs_Commerce');
+			if (!($profile instanceof \Rbs\Commerce\Std\Profile))
+			{
+				$event->getApplicationServices()->getLogging()->error('Commerce profile not set in: ' . __METHOD__);
+				return;
+			}
 
 			/* @var $commerceServices CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			if (!($commerceServices instanceof CommerceServices)) {
+			if (!($commerceServices instanceof CommerceServices))
+			{
 				$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
 				return;
 			}
+
+			$session['profile'] = $profile;
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			$context = $commerceServices->getContext();
 			if ($context->getWebStore() && !$profile->getDefaultWebStoreId())
 			{
 				$profile->setDefaultWebStoreId($context->getWebStore()->getId());
-				$saveProfile = true;
+			}
+			elseif (!$context->getWebStore() && $profile->getDefaultWebStoreId())
+			{
+				$webStore = $documentManager->getDocumentInstance($profile->getDefaultWebStoreId());
+				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+				{
+					$context->setWebStore($webStore);
+				}
 			}
 
 			if ($context->getBillingArea() && !$profile->getDefaultBillingAreaId())
 			{
 				$profile->setDefaultBillingAreaId($context->getBillingArea()->getId());
 				$profile->setDefaultZone($context->getZone());
-				$saveProfile = true;
 			}
-			else if (!$context->getBillingArea() && $profile->getDefaultBillingAreaId())
+			elseif (!$context->getBillingArea() && $profile->getDefaultBillingAreaId())
 			{
 				$billingArea = $documentManager->getDocumentInstance($profile->getDefaultBillingAreaId());
 				if ($billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
 				{
 					$context->setBillingArea($billingArea);
+					$context->setZone($profile->getDefaultZone());
 				}
-				else
-				{
-					$context->setBillingArea(null);
-				}
-				$context->setZone($profile->getDefaultZone());
 			}
 
 			$cartManager = $commerceServices->getCartManager();
-			$currentCart = $context->getCartIdentifier() ? $cartManager->getCartByIdentifier($context->getCartIdentifier()) : null;
-			if ($currentCart)
-			{
-				if ($currentCart->isProcessing())
-				{
-					$currentCart = null;
-				}
-				else if ($currentCart->isLocked())
-				{
-					$currentCart = $cartManager->getUnlockedCart($currentCart);
-				}
-			}
+			$contextCartIdentifier = $context->getCartIdentifier();
+			$profileCartIdentifier = $profile->getLastCartIdentifier();
+
+			$currentCart = $contextCartIdentifier ? $cartManager->getCartByIdentifier($contextCartIdentifier) : null;
+			$profileCart = $profileCartIdentifier && ($profileCartIdentifier != $contextCartIdentifier) ?
+				$cartManager->getCartByIdentifier($profileCartIdentifier) : null;
+
 
 			if ($currentCart)
 			{
-				if ($profile->getLastCartIdentifier() && $profile->getLastCartIdentifier() !== $currentCart->getIdentifier())
+				if (!$currentCart->isLocked() && $profileCart)
 				{
-					$lastCart = $cartManager->getCartByIdentifier($profile->getLastCartIdentifier());
-					if ($lastCart && !$lastCart->isProcessing())
-					{
-						$currentCart = $cartManager->mergeCart($currentCart, $lastCart);
-						if (!$lastCart->isLocked())
-						{
-							$commerceServices->getStockManager()->cleanupReservations($lastCart->getIdentifier());
-						}
-						$saveCart = true;
-					}
-				}
-			}
-			elseif ($profile->getLastCartIdentifier())
-			{
-				$currentCart = $cartManager->getCartByIdentifier($profile->getLastCartIdentifier());
-				if ($currentCart)
-				{
-					$saveCart = true;
-					if ($currentCart->isProcessing())
-					{
-						$currentCart = null;
-					}
-					else if ($currentCart->isLocked())
-					{
-						$currentCart = $cartManager->getUnlockedCart($currentCart);
-					}
-				}
-			}
-
-			if ($currentCart)
-			{
-				$currentCartIdentifier = $currentCart->getIdentifier();
-				if ($currentCart->getUserId() != $user->getId())
-				{
-					$currentCart->setUserId($user->getId());
-					if (!$currentCart->getOwnerId())
-					{
-						$currentCart->setOwnerId($user->getId());
-					}
-
-					if (!$currentCart->getEmail())
-					{
-						$user = $documentManager->getDocumentInstance($user->getId());
-						if ($user instanceof \Rbs\User\Documents\User)
-						{
-							$currentCart->setEmail($user->getEmail());
-						}
-					}
-
-					$saveCart = true;
-				}
-
-				if ($saveCart)
-				{
-					$cartManager->normalize($currentCart);
-					$cartManager->saveCart($currentCart);
+					$currentCart = $cartManager->mergeCart($currentCart, $profileCart);
 				}
 			}
 			else
 			{
-				$currentCartIdentifier = null;
+				if ($profileCart)
+				{
+					$currentCart = $cartManager->getUnlockedCart($profileCart);
+				}
 			}
 
-			$context->setCartIdentifier($currentCartIdentifier);
+			$cartIdentifier = null;
+			if ($currentCart)
+			{
+				$cartIdentifier = $currentCart->getIdentifier();
+				$currentCart->setUserId($user->getId());
+				if (!$currentCart->getOwnerId())
+				{
+					$currentCart->setOwnerId($user->getId());
+				}
+
+				if (!$currentCart->getEmail())
+				{
+					$documentUser = $documentManager->getDocumentInstance($user->getId());
+					if ($documentUser instanceof \Rbs\User\Documents\User)
+					{
+						$currentCart->setEmail($documentUser->getEmail());
+					}
+				}
+
+				$cartManager->normalize($currentCart);
+				$cartManager->saveCart($currentCart);
+			}
+
+			$context->setCartIdentifier($cartIdentifier);
 			$context->save();
 
-			if ($profile->getLastCartIdentifier() !== $currentCartIdentifier)
-			{
-				$profile->setLastCartIdentifier($currentCartIdentifier);
-				$saveProfile = true;
-			}
+			$profile->setLastCartIdentifier($cartIdentifier);
+			$profileManager->saveProfile($user, $profile);
+		}
+	}
+	/**
+	 * @param \Change\Http\Web\Event $event
+	 */
+	public function onAuthenticate(\Change\Http\Web\Event $event)
+	{
+		/* @var $commerceServices CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		if (!($commerceServices instanceof CommerceServices))
+		{
+			$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
+			return;
+		}
 
-			if ($saveProfile)
+		$cartManager = $commerceServices->getCartManager();
+		$context = $commerceServices->getContext();
+		$contextCartIdentifier = $context->getCartIdentifier();
+		$currentCart = $contextCartIdentifier ? $cartManager->getCartByIdentifier($contextCartIdentifier) : null;
+		if ($currentCart && $currentCart->isProcessing())
+		{
+			$context->setCartIdentifier(null);
+			$context->save();
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onLogout(\Change\Events\Event $event)
+	{
+		$session = new \Zend\Session\Container('Rbs_Commerce');
+		$session['userId'] = null;
+		$session['profile'] = null;
+
+		/* @var $commerceServices CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof CommerceServices)
+		{
+			$context = $commerceServices->getContext();
+			if ($context->getCartIdentifier())
 			{
-				if (!$profileManager)
-				{
-					$profileManager = $event->getApplicationServices()->getProfileManager();
-				}
-				$profileManager->saveProfile($user, $profile);
+				$context->setCartIdentifier(null);
+				$context->save();
 			}
 		}
 	}

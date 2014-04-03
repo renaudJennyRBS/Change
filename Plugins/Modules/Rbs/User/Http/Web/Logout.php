@@ -32,7 +32,7 @@ class Logout extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 */
 	public function logout(Event $event)
 	{
-		$event->getApplicationServices()->getAuthenticationManager()->logout();
+		$event->getApplicationServices()->getAuthenticationManager()->logout(['httpEvent' => $event]);
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
 		{

@@ -84,13 +84,14 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $login
 	 * @param string $password
 	 * @param string $realm
+	 * @param array|null $options
 	 * @return UserInterface|null
 	 */
-	public function login($login, $password, $realm)
+	public function login($login, $password, $realm, $options = null)
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('login' => $login,
-			'password' => $password, 'realm' => $realm));
+			'password' => $password, 'realm' => $realm, 'options' => $options));
 
 		$event = new \Change\Events\Event(static::EVENT_LOGIN, $this, $args);
 		$this->getEventManager()->trigger($event);
@@ -104,11 +105,12 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
+	 * @param array|null $options
 	 */
-	public function logout()
+	public function logout($options = null)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['user' => $this->getCurrentUser()]);
+		$args = $em->prepareArgs(['user' => $this->getCurrentUser(), 'options' => $options]);
 		$this->getEventManager()->trigger(static::EVENT_LOGOUT, $this, $args);
 		$this->setCurrentUser(null);
 	}

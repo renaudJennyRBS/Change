@@ -48,7 +48,7 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 			if ($realm && $login && $password)
 			{
 				$am = $event->getAuthenticationManager();
-				$user = $am->login($login, $password, $realm);
+				$user = $am->login($login, $password, $realm, ['httpEvent' => $event]);
 				if ($user instanceof \Change\User\UserInterface)
 				{
 					$am->setCurrentUser($user);
