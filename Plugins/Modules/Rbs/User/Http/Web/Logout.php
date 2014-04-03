@@ -32,6 +32,7 @@ class Logout extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 */
 	public function logout(Event $event)
 	{
+		$event->getApplicationServices()->getAuthenticationManager()->logout();
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
 		{
@@ -43,7 +44,6 @@ class Logout extends \Change\Http\Web\Actions\AbstractAjaxAction
 		{
 			$data = array('error' => 'Invalid website');
 		}
-
 		$result = new \Change\Http\Web\Result\AjaxResult($data);
 		$event->setResult($result);
 	}

@@ -19,6 +19,8 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_LOGIN = 'login';
 
+	const EVENT_LOGOUT = 'logout';
+
 	const EVENT_BY_USER_ID = 'byUserId';
 
 	/**
@@ -59,6 +61,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param integer $userId
 	 * @return UserInterface|null
 	 */
@@ -77,6 +80,7 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param string $login
 	 * @param string $password
 	 * @param string $realm
@@ -96,5 +100,16 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 			return $user;
 		}
 		return null;
+	}
+
+	/**
+	 * @api
+	 */
+	public function logout()
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['user' => $this->getCurrentUser()]);
+		$this->getEventManager()->trigger(static::EVENT_LOGOUT, $this, $args);
+		$this->setCurrentUser(null);
 	}
 }
