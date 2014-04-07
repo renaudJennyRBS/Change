@@ -16,6 +16,13 @@ use Change\Documents\Events;
  */
 class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 {
+	/**
+	 * @return string
+	 */
+	public function getIdentifier()
+	{
+		return 'Shipment:' . $this->getId();
+	}
 
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
@@ -24,27 +31,6 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getLabel()
-	{
-		if ($this->getCode())
-		{
-			return $this->getCode();
-		}
-		return 'NO-CODE-DEFINED';
-	}
-
-	/**
-	 * @param string $label
-	 * @return $this
-	 */
-	public function setLabel($label)
-	{
-		return $this;
 	}
 
 	/**
@@ -57,11 +43,46 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 			return;
 		}
 
-		if ($this->getPrepared() && !$this->getCode())
+		$commerceServices = $event->getServices('commerceServices');
+		if ($this->getPrepared() && $commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
-			$commerceServices = $event->getServices('commerceServices');
-			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices) {
+			if (!$this->getCode())
+			{
 				$this->setCode($commerceServices->getProcessManager()->getNewCode($this));
+			}
+			//if the shipment has just been prepared, decrement stock reservation
+			if ($this->isPropertyModified('prepared'))
+			{
+				$this->decrementOrderReservation($commerceServices->getStockManager(), $event->getApplicationServices()->getDocumentManager());
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Stock\StockManager $stockManager
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @throws \RuntimeException
+	 */
+	protected function decrementOrderReservation($stockManager, $documentManager)
+	{
+		foreach ($this->getData() as $data)
+		{
+			if (isset($data['SKU']) && isset($data['quantity']))
+			{
+				$sku = $documentManager->getDocumentInstance($data['SKU']);
+				if ($sku instanceof \Rbs\Stock\Documents\Sku)
+				{
+					$stockManager->addInventoryMovement($data['quantity'], $sku, null, new \DateTime(), $this->getIdentifier());
+					$order = $this->getOrderId() != 0 ? $documentManager->getDocumentInstance($this->getOrderId()) : null;
+					if ($order instanceof \Rbs\Order\Documents\Order)
+					{
+						$stockManager->decrementReservation($order->getIdentifier(), $sku->getId(), $data['quantity']);
+					}
+				}
+			}
+			else
+			{
+				throw new \RuntimeException('Invalid shipment, SKU or quantity on data not set', 999999);
 			}
 		}
 	}

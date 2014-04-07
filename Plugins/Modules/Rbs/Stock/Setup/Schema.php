@@ -36,6 +36,7 @@ class Schema extends \Change\Db\Schema\SchemaDefinition
 				->addField($schemaManager->newIntegerFieldDefinition('warehouse_id')->setNullable(true))
 				// Validity of the line
 				->addField($schemaManager->newDateFieldDefinition('date')->setNullable(false))
+				->addField($schemaManager->newVarCharFieldDefinition('target')->setLength(80)->setNullable(true))
 				->addKey($this->newPrimaryKey()->addField($td->getField('id')))
 				->setOption('AUTONUMBER', 1);
 

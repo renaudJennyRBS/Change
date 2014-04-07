@@ -68,6 +68,9 @@
 	"shipment_line_number":{
 		"message":"numéro de ligne"
 	},
+	"shipment_shippingDate":{
+		"message":"date d'expédition"
+	},
 	"creditnote":{
 		"message":"avoir"
 	},

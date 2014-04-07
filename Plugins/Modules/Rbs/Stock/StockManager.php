@@ -190,20 +190,21 @@ class StockManager
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
 	 * @param \DateTime|null $date
+	 * @param string $target
 	 * @throws \Exception
 	 * @return integer
 	 */
-	public function addInventoryMovement($amount, \Rbs\Stock\Documents\Sku $sku, $warehouse = null, $date = null)
+	public function addInventoryMovement($amount, \Rbs\Stock\Documents\Sku $sku, $warehouse = null, $date = null, $target = null)
 	{
 		$qb = $this->getDbProvider()->getNewStatementBuilder('addInventoryIssueReceipt');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert($fb->table('rbs_stock_dat_mvt'),
-				$fb->column('sku_id'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
+				$fb->column('sku_id'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'), $fb->column('target'));
 			$qb->addValues(
 				$fb->integerParameter('skuId'), $fb->integerParameter('amount'), $fb->integerParameter('warehouseId'),
-				$fb->dateTimeParameter('dateValue'));
+				$fb->dateTimeParameter('dateValue'), $fb->parameter('target'));
 		}
 		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : 0);
 		$dateValue = ($date instanceof \DateTime) ? $date : new \DateTime();
@@ -212,7 +213,8 @@ class StockManager
 		$is->bindParameter('skuId', $sku->getId())
 			->bindParameter('amount', $amount)
 			->bindParameter('warehouseId', $warehouseId)
-			->bindParameter('dateValue', $dateValue);
+			->bindParameter('dateValue', $dateValue)
+			->bindParameter('target', $target);
 		$is->execute();
 		return $is->getDbProvider()->getLastInsertId('rbs_catalog_dat_attribute');
 	}
