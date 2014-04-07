@@ -51,7 +51,7 @@ class ThemeInstallBase extends  InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$themePlugin = $applicationServices->getPluginManager()->getPlugin(Plugin::TYPE_THEME, 'Rbs', 'Theme');
+		$themePlugin = $applicationServices->getPluginManager()->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Theme');
 		if ($themePlugin === null || !$themePlugin->isAvailable())
 		{
 			return;
@@ -192,13 +192,9 @@ class ThemeInstallBase extends  InstallBase
 		try
 		{
 			$transactionManager->begin();
-			return $theme;
 			$theme->setLabel($applicationServices->getI18nManager()->trans($this->buildThemeLabelKey($plugin), ['ucf']));
-			return $theme;
 			$theme->save();
-			return $theme;
 			$transactionManager->commit();
-			return $theme;
 		}
 		catch (\Exception $e)
 		{

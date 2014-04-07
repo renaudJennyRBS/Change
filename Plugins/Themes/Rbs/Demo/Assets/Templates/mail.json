@@ -1,9 +1,6 @@
 {
 	"mailSuitable":true,
 	"editableContent":{
-		"tptp": {
-			"ptp":"aaa"
-		},
 		"header" : {
 			"id" : "header",
 			"grid" : 12,
