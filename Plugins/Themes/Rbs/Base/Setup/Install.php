@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Theme\Rbs\Base\Setup;
+namespace Themes\Rbs\Base\Setup;
 
+use Change\Plugins\Plugin;
 use Zend\Json\Json;
 
 /**
- * @name \Theme\Rbs\Base\Setup
+ * @name \Themes\Rbs\Base\Setup
  */
 class Install extends \Change\Plugins\InstallBase
 {

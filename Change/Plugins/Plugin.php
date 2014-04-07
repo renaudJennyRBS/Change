@@ -350,7 +350,7 @@ class Plugin
 	 */
 	public function getNamespace()
 	{
-		return ($this->isTheme() ? 'Theme\\' : '' )  . $this->getVendor() . '\\' . $this->getShortName();
+		return ($this->isTheme() ? 'Themes\\' : '' )  . $this->getVendor() . '\\' . $this->getShortName();
 	}
 
 	/**
@@ -389,9 +389,9 @@ class Plugin
 		}
 		if ($this->isModule())
 		{
-			return $this->getWorkspace()->projectModulesPath($this->shortName);
+			return $this->getWorkspace()->projectModulesPath('Project', $this->shortName);
 		}
-		return $this->getWorkspace()->projectThemesPath($this->shortName);
+		return $this->getWorkspace()->projectThemesPath('Project', $this->shortName);
 	}
 
 	/**

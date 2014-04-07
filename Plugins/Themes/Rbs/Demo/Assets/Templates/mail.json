@@ -1,0 +1,31 @@
+{
+	"mailSuitable":true,
+	"editableContent":{
+		"tptp": {
+			"ptp":"aaa"
+		},
+		"header" : {
+			"id" : "header",
+			"grid" : 12,
+			"type" : "block",
+			"name" : "",
+			"parameters" : {
+			}
+		},
+		"mainContent" : {
+			"id" : "mainContent",
+			"grid" : 12,
+			"type" : "container",
+			"parameters" : {
+			}
+		},
+		"footer" : {
+			"id" : "footer",
+			"grid" : 12,
+			"type" : "block",
+			"name" : "",
+			"parameters" : {
+			}
+		}
+	}
+}

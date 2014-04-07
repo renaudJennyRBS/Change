@@ -112,7 +112,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
 		if ($themeVendor == 'Project')
 		{
-			return $this->getWorkspace()->projectThemesPath($shortThemeName, 'Assets');
+			return $this->getWorkspace()->projectThemesPath('Project', $shortThemeName, 'Assets');
 		}
 		return $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets');
 	}
