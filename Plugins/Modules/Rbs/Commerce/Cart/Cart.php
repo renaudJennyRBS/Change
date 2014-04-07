@@ -420,16 +420,6 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param integer $orderId
-	 * @return $this
-	 */
-	public function setOrderId($orderId)
-	{
-		$this->orderId = $orderId;
-		return $this;
-	}
-
-	/**
 	 * @return integer
 	 */
 	public function getOrderId()
@@ -934,7 +924,6 @@ class Cart implements \Serializable
 				case 'locked': $this->locked = $v; break;
 				case 'processing': $this->processing = $v; break;
 				case 'transactionId': $this->transactionId = $v; break;
-				case 'orderId': $this->orderId = $v; break;
 				case 'lastUpdate': $this->lastUpdate = $v; break;
 				case 'context': $this->context = $v; break;
 				case 'errors': $this->errors = $v; break;
@@ -1168,8 +1157,7 @@ class Cart implements \Serializable
 			'email' => $this->email,
 			'locked' => $this->locked,
 			'processing' => $this->processing,
-			'transactionId' => $this->transactionId,
-			'orderId' => $this->orderId
+			'transactionId' => $this->transactionId
 		);
 
 		foreach ($this->getTaxes() as $tax)

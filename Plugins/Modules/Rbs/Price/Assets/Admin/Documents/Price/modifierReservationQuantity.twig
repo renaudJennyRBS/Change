@@ -4,12 +4,12 @@
 		<li><input type="number" class="form-control" ng-model="threshold.l" style="width: 80px;" ng-blur="sortThreshold()"/></li>
 		<li>, {{ i18n('m.rbs.price.admin.threshold_use') }}</li>
 		<li>
-			<rbs-price-input ng-model="threshold.v" data-currency-code="priceContext.billingArea.currencyCode"
+			<rbs-price-input ng-model="threshold.v" data-currency-code="priceContext.billingArea.currencyCode" required="true"
 					data-price-with-tax="priceContext.webStore.pricesValueWithTax"></rbs-price-input>
 		</li>
 		<li>
 		<small>
-			<a href="javascript:;" ng-click="removeThreshold($index)" ng-hide="$last"><i class="icon-minus-sign"> </i>{{ i18n('m.rbs.price.admin.threshold_remove') }}</a>
+			<a href="javascript:;" ng-click="removeThreshold($index)" ng-hide="$first"><i class="icon-minus-sign"> </i>{{ i18n('m.rbs.price.admin.threshold_remove') }}</a>
 		</small>
 		</li>
 	</ol>

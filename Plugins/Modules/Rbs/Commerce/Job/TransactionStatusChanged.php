@@ -40,7 +40,7 @@ class TransactionStatusChanged
 			{
 				$cartManager = $commerceServices->getCartManager();
 				$cart = $cartManager->getCartByIdentifier($transaction->getTargetIdentifier());
-				if ($cart instanceof \Rbs\Commerce\Cart\Cart && !$cart->getOrderId())
+				if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 				{
 					// Create the order.
 					$commerceServices->getProcessManager()->createOrderFromCart($cart);

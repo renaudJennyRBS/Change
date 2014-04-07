@@ -29,8 +29,8 @@ class CurrentTasks
 		$urlManager = $event->getUrlManager();
 		$result->addLink(new Link($urlManager, 'admin/currentTasks/'));
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+		$user = $event->getAuthenticationManager()->getCurrentUser();
 
-		$user = $event->getAuthenticationManager()->login('admin', 'admin', 'Rbs_Admin');
 		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Workflow_Task');
 		$query->andPredicates(
 			$query->eq('showInDashboard', true),

@@ -229,7 +229,7 @@ class AuthenticationListener
 			if ($realm && $login && $password)
 			{
 				$am = $event->getAuthenticationManager();
-				$user = $am->login($login, $password, $realm);
+				$user = $am->login($login, $password, $realm, ['httpEvent' => $event]);
 				if (null !== $user)
 				{
 					$storeOAuth->setAccessorId($user->getId());

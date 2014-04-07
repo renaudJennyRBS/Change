@@ -76,6 +76,8 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('getNewTransaction', [$this, 'onDefaultGetNewTransaction'], 5);
 		$eventManager->attach('createOrderFromCart', [$this, 'onDefaultCreateOrderFromCart'], 5);
+		$eventManager->attach('createInvoiceFromOrder', [$this, 'onDefaultCreateInvoiceFromOrder'], 5);
+
 		$eventManager->attach('getOrderProcessByCart', [$this, 'onDefaultGetOrderProcessByCart'], 5);
 		$eventManager->attach('getCompatibleShippingModes', [$this, 'onDefaultGetCompatibleShippingModes'], 5);
 		$eventManager->attach('getCompatiblePaymentConnectors', [$this, 'onDefaultGetCompatiblePaymentConnectors'], 5);
@@ -409,8 +411,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				$order->save();
 
 				$orderIdentifier = $order->getIdentifier();
-				$this->getCartManager()->affectOrder($cart, $order);
-
 				if ($cart->getTransactionId())
 				{
 					$transaction = $documentManager->getDocumentInstance($cart->getTransactionId());
@@ -423,8 +423,11 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 						}
 						$contextData['from'] = 'order';
 						$transaction->setContextData($contextData);
-
 						$transaction->update();
+						$event->setParam('transaction', $transaction);
+
+						$invoice = $this->createInvoiceFromOrder($order, $transaction);
+						$event->setParam('invoice', $invoice);
 					}
 				}
 
@@ -433,6 +436,9 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					$commerceServices->getStockManager()->confirmReservations($cart->getIdentifier(), $orderIdentifier);
 				}
+
+				//Delete obsolete cart
+				$this->getCartManager()->deleteCart($cart, true);
 
 				$tm->commit();
 			}
@@ -445,7 +451,76 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param $document
+	 * @api
+	 * @param \Rbs\Order\Documents\Order $order
+	 * @param \Rbs\Payment\Documents\Transaction $transaction
+	 * @return \Rbs\Order\Documents\Invoice|null
+	 */
+	public function createInvoiceFromOrder($order, $transaction)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['order' => $order, 'transaction' => $transaction]);
+		$this->getEventManager()->trigger('createInvoiceFromOrder', $this, $args);
+		if (isset($args['invoice']) && $args['invoice'] instanceof \Rbs\Order\Documents\Invoice)
+		{
+			return $args['invoice'];
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultCreateInvoiceFromOrder(\Change\Events\Event $event)
+	{
+		$order = $event->getParam('order');
+		$transaction = $event->getParam('transaction');
+
+		if ($order instanceof \Rbs\Order\Documents\Order)
+		{
+			$invoice = null;
+			$tm = $event->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$tm->begin();
+
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+				/* @var $invoice \Rbs\Order\Documents\Invoice */
+				$invoice = $documentManager->getNewDocumentInstanceByModelName('Rbs_Order_Invoice');
+				$invoice->setOrder($order);
+
+				if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+				{
+					$invoice->setTransaction($transaction);
+					$invoice->setAmountWithTax($transaction->getAmount());
+					$invoice->setCurrencyCode($transaction->getCurrencyCode());
+				}
+				else
+				{
+					$invoice->setAmountWithTax($order->getPaymentAmountWithTaxes());
+					$invoice->setCurrencyCode($order->getCurrencyCode());
+				}
+
+				$invoice->setCode($this->getNewCode($invoice));
+				$invoice->create();
+
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+			$event->setParam('invoice', $invoice);
+		}
+	}
+
+	/**
+	 * By default accept: \Rbs\Order\Documents\Order, \Rbs\Order\Documents\Invoice,
+	 *  \Rbs\Order\Documents\Shipment and \Rbs\Order\Documents\CreditNote
+	 * @api
+	 * @param mixed $document
 	 * @return string|null
 	 */
 	public function getNewCode($document)

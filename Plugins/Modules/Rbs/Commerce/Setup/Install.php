@@ -31,6 +31,7 @@ class Install extends \Change\Plugins\InstallBase
 
 		$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Commerce', '\Rbs\Commerce\Events\SharedListeners');
 
+		$configuration->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_Commerce', '\Rbs\Commerce\Events\AuthenticationManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Commerce', '\Rbs\Commerce\Events\CollectionManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Commands/Rbs_Commerce', '\Rbs\Commerce\Events\Commands\Listeners');
