@@ -87,7 +87,8 @@
 					createNewDocumentId,
 					modelInfoPromise,
 					editorUrl,
-					documentReady = false;
+					documentReady = false,
+					shouldSaveLocalCopy = true;
 
 
 				//-----------------------------------------------//
@@ -846,7 +847,7 @@
 					});
 
 					$scope.$on('$routeChangeStart', function () {
-						if ($scope.changes.length > 0) {
+						if ($scope.changes.length > 0 && shouldSaveLocalCopy) {
 							EditorManager.saveLocalCopy($scope.document, editorUrl);
 						}
 					});
@@ -926,10 +927,12 @@
 
 				$scope.$on('Navigation.saveContext', function (event, args)
 				{
-					var label = $scope.document.label || i18n.trans('m.rbs.admin.adminjs.new_element | ucf');
-					args.context.label(label);
-					var data = {document: $scope.document, original: $scope.original};
-					args.context.savedData('editor_' + $scope.document.model, data);
+					shouldSaveLocalCopy = false;
+					args.context.label($scope.document.label || i18n.trans('m.rbs.admin.adminjs.new_element | ucf'));
+					args.context.savedData(
+						'editor_' + $scope.document.model,
+						{ document: $scope.document, original: $scope.original }
+					);
 					if (angular.isFunction($scope.onSaveContext)) {
 						$scope.onSaveContext(args.context);
 					}
@@ -1308,7 +1311,7 @@
 						entry = {
 							'id' : sectionId,
 							'label' : iAttrs['editorSectionLabel'],
-							'icon' : iAttrs['editorSectionIcon'] || defaultSectionIcons[sectionId],
+							'icon' : iAttrs['editorSectionIcon'] || defaultSectionIcons[sectionId] || 'icon-edit',
 							'fields' : [],
 							'required' : [],
 							'invalid' : [],
