@@ -14,7 +14,7 @@
 	//-------------------------------------------------------------------------
 
 
-	app.constant('RbsChange.Version', '4.0 beta1');
+	app.constant('RbsChange.Version', '4.0-rc1');
 
 
 	app.constant('RbsChange.Device', {
@@ -373,11 +373,5 @@
 			User.logout();
 		};
 	}]);
-
-
-	/**
-	 * Remove main loading mask.
-	 */
-	app.run(function () { });
 
 })( window.jQuery );

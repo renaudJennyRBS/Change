@@ -1,0 +1,16 @@
+<div data-ng-controller="Rbs_Admin_NotificationsController">
+
+	<div class="page-header">
+		<h2>{{ i18n('m.rbs.admin.admin.notifications', ['ucf']) }}</h2>
+	</div>
+
+	<rbs-document-list data-dlid="RbsAdminNotificationsList"
+	                   extend="notificationsList"
+	                   collection="notifications"
+	                   on-reload="reloadNotifications">
+
+		<rbs-column name="message" label="Message"></rbs-column>
+
+	</rbs-document-list>
+
+</div>

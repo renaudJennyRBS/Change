@@ -1,0 +1,19 @@
+<div data-ng-controller="Rbs_Admin_TasksController">
+
+	<div class="page-header">
+		<h2>{{ i18n('m.rbs.admin.admin.tasks', ['ucf']) }}</h2>
+	</div>
+
+	<rbs-document-list data-dlid="RbsAdminTasksList"
+	                   extend="tasksList"
+	                   collection="tasks"
+	                   on-reload="reloadTasks">
+
+		<rbs-column name="label" label="Label" primary="true"></rbs-column>
+		<rbs-column name="document" label="Document">
+			<a href="javascript:;" ng-href="(= doc.document | rbsURL =)"><span ng-bind="doc.document.label"></span> <i class="icon-circle-arrow-right"></i></a>
+		</rbs-column>
+
+	</rbs-document-list>
+
+</div>

@@ -74,7 +74,7 @@
 										} else {
 											$rootScope.rbsCurrentPluginName = 'Rbs_Admin';
 										}
-										return $rootScope.rbsCurrentPluginName
+										return $rootScope.rbsCurrentPluginName;
 									}];
 								}
 							}

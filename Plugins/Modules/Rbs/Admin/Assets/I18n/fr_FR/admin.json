@@ -1415,5 +1415,17 @@
 	},
 	"wysiwyg_enter_image_height":{
 		"message":"hauteur de l'image (laisser vide pour ne pas choisir)"
+	},
+	"tasks":{
+		"message":"tâches"
+	},
+	"see_all_tasks":{
+		"message":"voir toutes les tâches en attente"
+	},
+	"notifications":{
+		"message":"notifications"
+	},
+	"see_all_notifications":{
+		"message":"voir toutes les notifications"
 	}
 }

@@ -1,0 +1,23 @@
+<li class="dropdown" ng-class="{'on': tasks.pagination.count > 0}" title="{{ i18nAttr('m.rbs.admin.admin.tasks', ['ucf']) }}">
+	<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+		<i class="icon-tasks"></i>
+		(= tasks.pagination.count | number =)
+		<span class="indicator-title">{{ i18nAttr('m.rbs.admin.admin.tasks', ['ucf']) }}</span>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="dropdown-header">{{ i18n('m.rbs.admin.admin.tasks' , ['ucf']) }}</li>
+
+		<li ng-repeat="t in tasks.resources">
+			<a href="javascript:;">
+				<strong>(= t.label =)</strong>
+				<br/>(= t.document.label =) ((= t.document.id =))
+				<br/><small class="muted"><time display="both" datetime="(= t.modificationDate =)"></time></small>
+			</a>
+		</li>
+
+		<li ng-if="tasks.resources.length > 0" class="divider"></li>
+		<li ng-if="tasks.resources.length > 0"><a href="tasks">
+			{{ i18n('m.rbs.admin.admin.see_all_tasks', ['ucf','etc']) }}
+		</a></li>
+	</ul>
+</li>
