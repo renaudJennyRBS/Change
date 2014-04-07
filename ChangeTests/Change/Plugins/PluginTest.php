@@ -101,7 +101,7 @@ class PluginTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Change\\Tests', $plugin->getNamespace());
 
 		$plugin = new Plugin(Plugin::TYPE_THEME, 'Change', 'Tests');
-		$this->assertEquals('Theme\\Change\\Tests', $plugin->getNamespace());
+		$this->assertEquals('Themes\\Change\\Tests', $plugin->getNamespace());
 	}
 
 	public function testToArray()

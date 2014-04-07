@@ -135,7 +135,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		// Project modules.
-		$projectModulesPattern = $this->getWorkspace()->projectModulesPath('*', 'plugin.json');
+		$projectModulesPattern = $this->getWorkspace()->projectModulesPath('Project', '*', 'plugin.json');
 		foreach (Glob::glob($projectModulesPattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT) as $filePath)
 		{
 			$plugin = $this->getNewPlugin($filePath);
@@ -157,7 +157,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		// Project themes.
-		$projectThemesPattern = $this->getWorkspace()->projectThemesPath('*', 'plugin.json');
+		$projectThemesPattern = $this->getWorkspace()->projectThemesPath('Project', '*', 'plugin.json');
 		foreach (Glob::glob($projectThemesPattern, Glob::GLOB_NOESCAPE + Glob::GLOB_NOSORT) as $filePath)
 		{
 			$plugin = $this->getNewPlugin($filePath, Plugin::TYPE_THEME);
@@ -242,6 +242,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		$folderName = $parts[$partsCount - 3];
 		if ($vendor === 'Project')
 		{
+			$folderName = $parts[$partsCount - 4];
 			if ($folderName !== ($type == Plugin::TYPE_MODULE ? 'Modules' : 'Themes'))
 			{
 				return null;
@@ -832,7 +833,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($normalizedVendor === 'Project')
 			{
-				$path = $this->getWorkspace()->projectModulesPath($normalizedName, 'plugin.json');
+				$path = $this->getWorkspace()->projectModulesPath('Project', $normalizedName, 'plugin.json');
 			}
 			else
 			{
@@ -844,7 +845,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($normalizedVendor === 'Project')
 			{
-				$path = $this->getWorkspace()->projectThemesPath($normalizedName, 'plugin.json');
+				$path = $this->getWorkspace()->projectThemesPath('Project', $normalizedName, 'plugin.json');
 			}
 			else
 			{

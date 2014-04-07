@@ -377,6 +377,7 @@ class PluginManagerTest extends TestCase
 
 		$plugins = $pluginManager->compile();
 		$theme = $this->findPlugin($plugins, Plugin::TYPE_THEME, 'Project', 'Tests');
+		$this->assertNotNull($theme);
 		$configuration = $theme->getConfiguration();
 		$configuration['locked'] = true;
 		$theme->setConfiguration($configuration);
