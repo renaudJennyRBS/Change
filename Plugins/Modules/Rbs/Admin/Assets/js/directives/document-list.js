@@ -1334,7 +1334,7 @@
 								scope.busy = true;
 								var p = scope.onReload(params);
 								if (p && angular.isFunction(p.then)) {
-									p.then(stopLoading);
+									p.then(function() { stopLoading(); });
 								} else {
 									stopLoading();
 								}
