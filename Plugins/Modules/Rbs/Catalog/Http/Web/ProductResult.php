@@ -52,6 +52,11 @@ class ProductResult extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$presentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
 				$presentation->evaluate();
 				$responseData = $presentation->toArray($formats);
+				//unset stock level info
+				if (isset($responseData['stock']) && isset($responseData['stock']['level']))
+				{
+					unset($responseData['stock']['level']);
+				}
 				$result = new \Change\Http\Web\Result\AjaxResult($responseData);
 				$event->setResult($result);
 				return;
