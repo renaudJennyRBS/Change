@@ -114,15 +114,15 @@
 		"message":"Par seuil de quantités"
 	},
 	"threshold_greater_or_equals":{
-		"message":"Pour une quantité superieur ou égale"
+		"message":"Quantité >= à"
 	},
 	"threshold_use":{
-		"message":"utiliser le montant"
+		"message":"utiliser le prix"
 	},
 	"threshold_remove":{
 		"message":"supprimer"
 	},
 	"threshold_add":{
-		"message":"ajouter"
+		"message":"ajouter un seuil"
 	}
 }
