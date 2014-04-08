@@ -675,9 +675,3 @@ pre {
 	background-image: linear-gradient(to bottom, #F5F5F5 0%, #E8E8E8 100%);
 	background-repeat: repeat-x;
 }
-
-.notification-new {
-	background-color: #E8E8F5;
-	background-image: linear-gradient(to bottom, #F5F5FF 0%, #E8E8F5 100%);
-	background-repeat: repeat-x;
-}

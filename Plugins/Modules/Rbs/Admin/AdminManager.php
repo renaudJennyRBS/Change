@@ -226,7 +226,6 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		$jsAssets->add(new \Assetic\Asset\GlobAsset($pluginPath . '/js/*/*.js'));
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/menu/menu.js'));
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/clipboard/controllers.js'));
-		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/dashboard/controllers.js'));
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/tasks/controllers.js'));
 		$jsAssets->add(new \Assetic\Asset\FileAsset($pluginPath . '/notifications/controllers.js'));
 

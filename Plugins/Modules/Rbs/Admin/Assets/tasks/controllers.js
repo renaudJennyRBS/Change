@@ -23,38 +23,50 @@
 	/**
 	 * @name Rbs_Admin_TasksController
 	 */
-	function ChangeAdminTasksController ($scope, UserTasks)
+	function ChangeAdminTasksController ($scope, $q, UserTasks, i18n)
 	{
+		$scope.tasks = UserTasks.getTasks();
 
-		$scope.reloadTasks = function (params)
+		$scope.dlExt =
 		{
-			var p = UserTasks.load(params);
-			p.then(function (result) {
-				$scope.tasks = result;
-			});
-			return p;
-		};
-
-		$scope.reloadTasks(null);
-
-
-		$scope.clipboardList = {
-			'removeFromClipboard': function ($docs) {
-				angular.forEach($docs, function (doc) {
-					// TODO
-				});
+			executeTask : function (data, actionName)
+			{
+				if (angular.isArray(data)) {
+					var promises = [];
+					angular.forEach(data, function (t) {
+						// When in batch processing, the only allowed action is 'execute'.
+						promises.push(UserTasks.execute(t, 'execute', null, false));
+					});
+					var p = $q.all(promises);
+					p.then(function () {UserTasks.reload()});
+					return p;
+				} else {
+					return UserTasks.execute(data, actionName, null, true);
+				}
 			},
-			'clearClipboard': function () {
 
+			rejectTask : function (data)
+			{
+				var task, reason;
+				if (angular.isArray(data)) {
+					task = data[0];
+				} else {
+					task = data;
+				}
+				reason = window.prompt(i18n.trans("m.rbs.admin.admin.please_indicate_reject_reason"));
+				if (reason && reason.length) {
+					return UserTasks.reject(task, reason);
+				}
 			}
 		};
 
-
+		$scope.reloadTasks = UserTasks.reload;
 	}
 
 	ChangeAdminTasksController.$inject = [
-		'$scope',
-		'RbsChange.UserTasks'
+		'$scope', '$q',
+		'RbsChange.UserTasks',
+		'RbsChange.i18n'
 	];
 	app.controller('Rbs_Admin_TasksController', ChangeAdminTasksController);
 

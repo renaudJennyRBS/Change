@@ -195,7 +195,7 @@
 					description : action.description,
 					label       : action.label,
 					icon        : action.icon,
-					selection   : action.selection,
+					selection   : (action.selection && /\d+/.test(action.selection)) ? parseInt(action.selection, 10) : action.selection,
 					loading     : action.loading === 'true',
 
 					execute : ['$extend', '$docs', '$embedDialog', '$target', function ($extend, $docs, $embedDialog, $target) {

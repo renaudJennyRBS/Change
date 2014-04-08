@@ -19,11 +19,12 @@
 	 */
 	app.service('RbsChange.UserNotifications', [ 'RbsChange.REST', '$q', 'RbsChange.User', 'RbsChange.Settings', '$timeout', function (REST, $q, User, Settings, $timeout)
 	{
-		var notifications = {};
+		var notifications = {},
+			allNotifications = {};
 
 		function getNotificationQuery (status)
 		{
-			return {
+			var query = {
 				'model': 'Rbs_Notification_Notification',
 				'where': {
 					'and': [
@@ -35,19 +36,42 @@
 							'rexp': {
 								'value': User.get().id
 							}
-						},
-						{
-							'op': 'eq',
-							'lexp': {
-								'property': 'status'
-							},
-							'rexp': {
-								'value': status
-							}
 						}
 					]
-				}
+				},
+				'order': [{
+					"property": "creationDate",
+					"order": "desc"
+				}]
 			};
+
+			if (status) {
+				query.where.and.push(
+					{
+						'op': 'eq',
+						'lexp': {
+							'property': 'status'
+						},
+						'rexp': {
+							'value': status
+						}
+					}
+				);
+			} else {
+				query.where.and.push(
+					{
+						'op': 'neq',
+						'lexp': {
+							'property': 'status'
+						},
+						'rexp': {
+							'value': 'deleted'
+						}
+					}
+				);
+			}
+
+			return query;
 		}
 
 		/**
@@ -61,7 +85,7 @@
 		 * @param {Object=} Optional parameters.
 		 * @returns {Promise} Promise resolved when the Notifications are loaded.
 		 */
-		function load (params)
+		function loadNewNotifications (params)
 		{
 			REST.query(
 				getNotificationQuery('new'),
@@ -70,7 +94,18 @@
 				notifications.pagination = data.pagination;
 				notifications.resources = data.resources;
 			});
-			$timeout(load, 1000*60);
+			$timeout(loadNewNotifications, 1000*60);
+		}
+
+		function loadAllNotifications (params)
+		{
+			REST.query(
+					getNotificationQuery(),
+					angular.extend({'column':['message','status','code']}, params)
+				).then(function (data) {
+					allNotifications.pagination = data.pagination;
+					allNotifications.resources = data.resources;
+				});
 		}
 
 		/**
@@ -84,21 +119,66 @@
 		 * @param {Document} notification Notification.
 		 * @returns {Promise} Promise resolved when the Notification is marked as read.
 		 */
-		function markAsRead (notification)
+		function markAsRead (notification, reload)
 		{
 			var n = angular.copy(notification);
 			n.status = 'read';
-			REST.save(n).then(function(){load();});
+			var p = REST.save(n);
+			if (reload === true || angular.isUndefined(reload)) {
+				p.then(function () {
+					loadNewNotifications();
+					loadAllNotifications();
+				});
+			}
+			return p;
 		}
 
-		Settings.ready().then(load);
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:UserNotifications
+		 * @name RbsChange.service:UserNotifications#archive
+		 *
+		 * @description
+		 * Marks the given Notification as deleted.
+		 *
+		 * @param {Document} notification Notification.
+		 * @returns {Promise} Promise resolved when the Notification is marked as deleted.
+		 */
+		function archive (notification, reload)
+		{
+			var n = angular.copy(notification);
+			n.status = 'deleted';
+			var p = REST.save(n);
+			if (reload === true || angular.isUndefined(reload)) {
+				p.then(function () {
+					loadNewNotifications();
+					loadAllNotifications();
+				});
+			}
+			return p;
+		}
+
+		Settings.ready().then(loadNewNotifications);
 
 		// Public API
 		return {
 			markAsRead : markAsRead,
+			archive : archive,
+
+			reload : loadNewNotifications,
+			reloadAll : loadAllNotifications,
+
 			getNotifications : function ()
 			{
 				return notifications;
+			},
+
+			getAllNotifications : function ()
+			{
+				if (angular.isUndefined(allNotifications.resources)) {
+					loadAllNotifications();
+				}
+				return allNotifications;
 			}
 		};
 

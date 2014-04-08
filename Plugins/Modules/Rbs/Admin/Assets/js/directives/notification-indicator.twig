@@ -9,7 +9,7 @@
 		<li class="dropdown-header" ng-if="! notifications.resources.length">{{ i18n('m.rbs.admin.admin.no_notifications' , ['ucf']) }}</li>
 
 		<li ng-repeat="n in notifications.resources">
-			<span class="item" ng-class="{false:'text-muted', true:'notification-new'}[n.status == 'new']">
+			<span class="item">
 				<div>
 					<small><time display="both" datetime="(= n.creationDate =)"></time></small><br/>
 					<span title="(= n.message =)">(= n.message | rbsEllipsis:50:'center' =)</span>

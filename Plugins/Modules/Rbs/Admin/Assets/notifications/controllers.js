@@ -23,37 +23,56 @@
 	/**
 	 * @name Rbs_Admin_NotificationsController
 	 */
-	function ChangeAdminNotificationsController ($scope, UserNotifications)
+	function ChangeAdminNotificationsController ($scope, $q, UserNotifications)
 	{
+		$scope.view = 'unread';
 
-		$scope.reloadNotifications = function (params)
+		$scope.$watch('view', function (view)
 		{
-			var p = UserNotifications.load(params);
-			p.then(function (result) {
-				$scope.notifications = result;
-			});
-			return p;
-		};
+			if (view === 'unread') {
+				$scope.notifications = UserNotifications.getNotifications();
+				$scope.reloadNotifications = UserNotifications.reload;
+			} else if (view === 'all') {
+				$scope.notifications = UserNotifications.getAllNotifications();
+				$scope.reloadNotifications = UserNotifications.reloadAll;
+			}
+		});
 
-		$scope.reloadNotifications(null);
-
-
-		$scope.clipboardList = {
-			'removeFromClipboard': function ($docs) {
-				angular.forEach($docs, function (doc) {
-					// TODO
-				});
+		$scope.dlExt = {
+			markAsRead : function (data)
+			{
+				if (angular.isArray(data)) {
+					var promises = [];
+					angular.forEach(data, function (n) {
+						promises.push(UserNotifications.markAsRead(n, false));
+					});
+					var p = $q.all(promises);
+					p.then($scope.reloadNotifications);
+					return p;
+				} else {
+					return UserNotifications.markAsRead(data, true);
+				}
 			},
-			'clearClipboard': function () {
 
+			archive : function (data)
+			{
+				if (angular.isArray(data)) {
+					var promises = [];
+					angular.forEach(data, function (n) {
+						promises.push(UserNotifications.archive(n, false));
+					});
+					var p = $q.all(promises);
+					p.then($scope.reloadNotifications);
+					return p;
+				} else {
+					return UserNotifications.archive(data, true);
+				}
 			}
 		};
-
-
 	}
 
 	ChangeAdminNotificationsController.$inject = [
-		'$scope',
+		'$scope', '$q',
 		'RbsChange.UserNotifications'
 	];
 	app.controller('Rbs_Admin_NotificationsController', ChangeAdminNotificationsController);

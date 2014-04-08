@@ -60,16 +60,19 @@
 		 * @param {Object=} params Optional parameters.
 		 * @returns {Promise} Promise resolved when the action is successfully executed.
 		 */
-		function execute (task, actionName, params)
+		function execute (task, actionName, params, reload)
 		{
 			actionName = actionName || 'execute';
-			if (task && task.META$ && task.META$.actions && task.META$.actions[actionName]) {
+			if (task && task.META$ && task.META$.actions && task.META$.actions[actionName])
+			{
 				var p = $http.post(
 					task.META$.actions[actionName].href,
 					params,
 					REST.getHttpConfig(REST.resourceTransformer())
 				);
-				p.then(function(){load();});
+				if (reload === true || angular.isUndefined(reload)) {
+					p.then(function(){load();});
+				}
 				return p;
 			}
 			var defer = $q.defer();
@@ -77,13 +80,36 @@
 			return defer.promise;
 		}
 
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:UserTasks
+		 * @name RbsChange.service:UserTasks#reject
+		 *
+		 * @description
+		 * Rejects the given Task with the given reason.
+		 *
+		 * @param {Document} task The Task Document to execute.
+		 * @param {String} reason The reason why the Task is rejected.
+		 * @returns {Promise} Promise resolved when the action is successfully executed.
+		 */
+		function reject (task, reason)
+		{
+			var p = REST.executeTask(task, { reason : reason });
+			p.then(function(){load();});
+			return p;
+		}
+
+
 		// Public API
 		return {
+			execute : execute,
+			reject : reject,
+			reload : load,
+
 			getTasks : function ()
 			{
 				return tasks;
-			},
-			execute : execute
+			}
 		};
 
 	}]);
