@@ -45,6 +45,10 @@
 		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'carrierStatus'), ['ucf']) }}">
 		</rbs-field-text>
 
+		<rbs-field-date data-ng-if="document.prepared" property="shippingDate"
+				label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingDate'), ['ucf']) }}">
+		</rbs-field-date>
+
 		<div class="panel panel-default" data-ng-if="!document.prepared || document.address.__lines">
 			<div class="panel-heading">
 				<h3 class="panel-title"><i class="icon-envelope"></i>
