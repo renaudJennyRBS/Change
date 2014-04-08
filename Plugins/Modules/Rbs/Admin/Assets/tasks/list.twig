@@ -5,14 +5,32 @@
 	</div>
 
 	<rbs-document-list data-dlid="RbsAdminTasksList"
-	                   extend="tasksList"
+	                   extend="dlExt"
 	                   collection="tasks"
 	                   on-reload="reloadTasks">
 
-		<rbs-column name="label" label="Label" primary="true"></rbs-column>
+		<rbs-column name="label" label="Label">
+			<div class="pull-right">
+				<button class="btn btn-xs btn-default" type="button"
+				        ng-click="extend.executeTask(doc)"
+				        ng-disabled="doc.loading">
+					<i ng-class="{true:'icon-spin icon-spinner', false:'icon-play'}[doc.loading == true]"></i>
+				</button>
+
+				<button ng-if="doc.actions[1].rel=='directPublication'"
+				        class="btn btn-xs btn-default" type="button"
+				        ng-click="extend.executeTask(doc, 'directPublication')"
+				        ng-disabled="doc.loading">
+					<i ng-class="{true:'icon-spin icon-spinner', false:'icon-fast-forward'}[doc.loading == true]"></i>
+				</button>
+			</div>
+			(= doc.label =)
+		</rbs-column>
 		<rbs-column name="document" label="Document">
 			<a href="javascript:;" ng-href="(= doc.document | rbsURL =)"><span ng-bind="doc.document.label"></span> <i class="icon-circle-arrow-right"></i></a>
 		</rbs-column>
+
+		<rbs-action name="executeTask" selection="+" icon="icon-play" label="Execute"></rbs-action>
 
 	</rbs-document-list>
 

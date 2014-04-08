@@ -99,7 +99,8 @@
 			getNotifications : function ()
 			{
 				return notifications;
-			}
+			},
+			reload : load
 		};
 
 	}]);

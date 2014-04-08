@@ -5,12 +5,16 @@
 	</div>
 
 	<rbs-document-list data-dlid="RbsAdminNotificationsList"
-	                   extend="notificationsList"
 	                   collection="notifications"
+	                   extend="dlExt"
 	                   on-reload="reloadNotifications">
 
-		<rbs-column name="message" label="Message"></rbs-column>
+		<rbs-column name="message" label="Message">
+			<button type="button" class="btn btn-default btn-xs pull-right" ng-click="extend.markAsRead(doc)"><i class="icon-ok"></i></button>
+			(= doc.message =)
+		</rbs-column>
 
+		<rbs-action name="markAsRead" selection="+" icon="icon-ok" label="Mark as read"></rbs-action>
 	</rbs-document-list>
 
 </div>

@@ -25,31 +25,24 @@
 	 */
 	function ChangeAdminTasksController ($scope, UserTasks)
 	{
+		$scope.tasks = UserTasks.getTasks();
 
-		$scope.reloadTasks = function (params)
-		{
-			var p = UserTasks.load(params);
-			p.then(function (result) {
-				$scope.tasks = result;
-			});
-			return p;
-		};
-
-		$scope.reloadTasks(null);
-
-
-		$scope.clipboardList = {
-			'removeFromClipboard': function ($docs) {
-				angular.forEach($docs, function (doc) {
-					// TODO
-				});
-			},
-			'clearClipboard': function () {
-
+		$scope.dlExt = {
+			executeTask : function (data, actionName)
+			{
+				if (angular.isArray(data)) {
+					var promises = [];
+					angular.forEach(data, function (t) {
+						promises.push(UserTasks.execute(t, actionName));
+					});
+					return $q.all(promises);
+				} else {
+					return UserTasks.execute(data, actionName);
+				}
 			}
 		};
 
-
+		$scope.reloadTasks = UserTasks.reload;
 	}
 
 	ChangeAdminTasksController.$inject = [

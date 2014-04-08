@@ -83,7 +83,8 @@
 			{
 				return tasks;
 			},
-			execute : execute
+			execute : execute,
+			reload : load
 		};
 
 	}]);

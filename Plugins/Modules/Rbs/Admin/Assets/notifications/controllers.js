@@ -23,37 +23,31 @@
 	/**
 	 * @name Rbs_Admin_NotificationsController
 	 */
-	function ChangeAdminNotificationsController ($scope, UserNotifications)
+	function ChangeAdminNotificationsController ($scope, $q, UserNotifications)
 	{
+		$scope.notifications = UserNotifications.getNotifications();
 
-		$scope.reloadNotifications = function (params)
-		{
-			var p = UserNotifications.load(params);
-			p.then(function (result) {
-				$scope.notifications = result;
-			});
-			return p;
-		};
-
-		$scope.reloadNotifications(null);
-
-
-		$scope.clipboardList = {
-			'removeFromClipboard': function ($docs) {
-				angular.forEach($docs, function (doc) {
-					// TODO
-				});
-			},
-			'clearClipboard': function () {
-
+		$scope.dlExt = {
+			markAsRead : function (data)
+			{
+				if (angular.isArray(data)) {
+					var promises = [];
+					angular.forEach(data, function (n) {
+						promises.push(UserNotifications.markAsRead(n));
+					});
+					return $q.all(promises);
+				} else {
+					return UserNotifications.markAsRead(data);
+				}
 			}
 		};
 
+		$scope.reloadNotifications = UserNotifications.reload;
 
 	}
 
 	ChangeAdminNotificationsController.$inject = [
-		'$scope',
+		'$scope', '$q',
 		'RbsChange.UserNotifications'
 	];
 	app.controller('Rbs_Admin_NotificationsController', ChangeAdminNotificationsController);
