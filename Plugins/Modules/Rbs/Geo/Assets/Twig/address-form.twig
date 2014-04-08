@@ -2,16 +2,34 @@
 	<form name="addressForm" class="form-horizontal">
 		{% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
 		{% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
+		<div class="form-group" data-ng-if="data.name !== undefined" data-ng-class="{
+				'has-error': !readonly && addressForm.addressName.$invalid,
+				'has-success': !readonly && addressForm.addressName.$dirty && !addressForm.addressName.$invalid
+			}">
+			<label for="rbs-geo-address-name-{{ blockId }}" class="{{ leftColumnElementClass }} control-label">
+				<em data-ng-if="!readonly" class="required-symbol"
+					title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+				{{ i18n('m.rbs.geo.front.address_name', ['ucf']) }}
+			</label>
+			<div class="{{ rightColumnElementClass }}">
+				<div data-ng-show="readonly" class="form-control-static">
+					(= data.name =)
+				</div>
+				<input type="text" id="rbs-geo-address-name-{{ blockId }}" required="required" data-ng-model="data.name"
+					class="form-control" name="addressName" />
+			</div>
+		</div>
 		<div class="form-group">
-			<label for="rbs-order-process-country" class="{{ leftColumnElementClass }} control-label">
-				{{ i18n('m.rbs.commerce.front.country', ['ucf']) }}
+			<label for="rbs-geo-address-country-{{ blockId }}" class="{{ leftColumnElementClass }} control-label">
+				{{ i18n('m.rbs.geo.front.country', ['ucf']) }}
 			</label>
 			<div class="{{ rightColumnElementClass }}">
 				<div data-ng-show="readonly || countries.length == 1" class="form-control-static">
 					(= countryTitle(fieldValues.countryCode) =)
 				</div>
-				<select data-ng-show="!readonly && countries.length > 1" id="rbs-order-process-country" required="required"
-					data-ng-model="fieldValues.countryCode" class="form-control" name="country" data-ng-class="{
+				<select data-ng-show="!readonly && countries.length > 1" id="rbs-geo-address-country-{{ blockId }}"
+					required="required" data-ng-model="fieldValues.countryCode" class="form-control" name="country"
+					data-ng-class="{
 						'has-error': !readonly && addressForm.country.$invalid,
 						'has-success': !readonly && addressForm.country.$dirty && !addressForm.country.$invalid
 					}">
@@ -61,6 +79,12 @@
 						{{ i18n('c.constraints.notmatch', ['ucf'])|replace({'%pattern%': '(= fieldDef.match =)'}) }}
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
+				<span data-ng-transclude=""></span>
 			</div>
 		</div>
 	</form>

@@ -70,6 +70,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.elasticsearch.admin.storeresult_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Geo_ManageAddresses', 'document' => false, 'block' => 'Rbs_Geo_ManageAddresses',
+			'label' => $i18nManager->trans('m.rbs.geo.admin.manage_addresses_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];
+
 		$event->setParam('functions', $functions);
 	}
 } 

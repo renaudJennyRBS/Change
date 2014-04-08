@@ -21,7 +21,7 @@
 								type="password" name="password" required="required" class="form-control"
 								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
 						</div>
-						<div class="form-group text-right" rbs-user-forgot-password=""></div>
+						<div class="form-group text-right" data-rbs-user-forgot-password=""></div>
 						<button class="btn btn-primary" data-ng-disabled="!canAuthenticate()" data-ng-click="authenticate()">
 							{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
 						</button>
@@ -135,6 +135,30 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.mailing_address', ['ucf']) }}</div>
 					<div class="panel-body">
+						<div class="row">
+							<div data-ng-repeat-start="address in addresses" class="col-md-6 col-lg-4">
+								<h3>(= address.name =)</h3>
+								<address>
+									<strong>(= address.lines[0] =)</strong>
+									<div data-ng-repeat="line in address.lines track by $index" data-ng-if="!$first">
+										(= line =)
+									</div>
+								</address>
+								<p>
+									<button type="button" class="btn btn-sm btn-primary"
+										data-ng-disabled="isValidAddress(information.address, address)"
+										data-ng-click="applyAddress(information.address, address)">
+										{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+									</button> <span data-ng-if="isValidAddress(information.address, address)">*</span>
+								</p>
+							</div>
+							<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg"></div>
+							<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md"></div>
+						</div>
+						<p data-ng-if="hasInvalidAddresses(information.address, addresses)">
+							* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
+						</p>
+
 						<div data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
 							data-zone-code="(= cart.zone =)">
 						</div>
@@ -151,7 +175,7 @@
 							<div class="col-md-6">
 								<address class="no-bottom-margin">
 									<strong>(= cart.address.__lines[0] =)</strong><br>
-									<a href="mailto:(= information.email =)">(= information.email =)</a>
+									<a href="mailto:(= cart.email =)">(= cart.email =)</a>
 								</address>
 							</div>
 							<div class="col-md-6">

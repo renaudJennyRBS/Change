@@ -15,7 +15,9 @@ use Change\User\AbstractProfile;
  */
 class Profile extends AbstractProfile
 {
-
+	/**
+	 * @return string
+	 */
 	public function getName()
 	{
 		return 'Rbs_Commerce';

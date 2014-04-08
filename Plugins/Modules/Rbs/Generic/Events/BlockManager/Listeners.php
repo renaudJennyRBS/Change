@@ -59,6 +59,8 @@ class Listeners implements ListenerAggregateInterface
 
 		new RegisterByBlockName('Rbs_Mail_Richtext', true, $events);
 
+		new RegisterByBlockName('Rbs_Geo_ManageAddresses', true, $events);
+
 		$callback = function($event)
 		{
 			(new \Change\Presentation\Blocks\FileCacheAdapter())->onGetCacheAdapter($event);
