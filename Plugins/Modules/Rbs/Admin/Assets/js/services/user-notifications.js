@@ -11,8 +11,16 @@
 
 	var app = angular.module('RbsChange');
 
-	app.service('RbsChange.UserNotifications', [ 'RbsChange.REST', '$q', 'RbsChange.User', 'RbsChange.Settings', function (REST, $q, User, Settings)
+	/**
+	 * @ngdoc service
+	 * @name RbsChange.service:UserNotifications
+	 *
+	 * @description Provides methods to deal with user Notifications.
+	 */
+	app.service('RbsChange.UserNotifications', [ 'RbsChange.REST', '$q', 'RbsChange.User', 'RbsChange.Settings', '$timeout', function (REST, $q, User, Settings, $timeout)
 	{
+		var notifications = {};
+
 		function getNotificationQuery (status)
 		{
 			return {
@@ -42,27 +50,56 @@
 			};
 		}
 
-
-		function loadNotifications (params)
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:UserNotifications
+		 * @name RbsChange.service:UserNotifications#load
+		 *
+		 * @description
+		 * Loads the Notifications for the current user.
+		 *
+		 * @param {Object=} Optional parameters.
+		 * @returns {Promise} Promise resolved when the Notifications are loaded.
+		 */
+		function load (params)
 		{
-			var defer = $q.defer();
-
-			Settings.ready().then(function()
-			{
-				REST.query(
-					getNotificationQuery('new'),
-					angular.extend({'column':['message']}, params)
-				).then(function (data) {
-					defer.resolve(data);
-				});
+			REST.query(
+				getNotificationQuery('new'),
+				angular.extend({'column':['message','status','code']}, params)
+			).then(function (data) {
+				notifications.pagination = data.pagination;
+				notifications.resources = data.resources;
 			});
-
-			return defer.promise;
+			$timeout(load, 1000*60);
 		}
+
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:UserNotifications
+		 * @name RbsChange.service:UserNotifications#markAsRead
+		 *
+		 * @description
+		 * Marks the given Notification as read.
+		 *
+		 * @param {Document} notification Notification.
+		 * @returns {Promise} Promise resolved when the Notification is marked as read.
+		 */
+		function markAsRead (notification)
+		{
+			var n = angular.copy(notification);
+			n.status = 'read';
+			REST.save(n).then(function(){load();});
+		}
+
+		Settings.ready().then(load);
 
 		// Public API
 		return {
-			load : loadNotifications
+			markAsRead : markAsRead,
+			getNotifications : function ()
+			{
+				return notifications;
+			}
 		};
 
 	}]);

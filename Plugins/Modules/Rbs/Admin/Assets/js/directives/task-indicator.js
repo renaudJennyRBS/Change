@@ -19,15 +19,16 @@
 
 			link : function (scope)
 			{
-				function loadTasks ()
-				{
-					UserTasks.load().then(function (result) {
-						scope.tasks = result;
-					});
-				}
-				loadTasks();
+				scope.tasks = UserTasks.getTasks();
 
-				scope.reload = loadTasks;
+				scope.executeTask = function ($event, task, actionName)
+				{
+					$event.stopPropagation();
+					var t = angular.copy(task);
+					task.loading = true;
+					UserTasks.execute(t, actionName);
+				};
+
 			}
 		};
 	}]);

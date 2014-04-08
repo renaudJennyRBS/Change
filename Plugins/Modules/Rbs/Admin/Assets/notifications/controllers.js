@@ -13,7 +13,7 @@
 
 	app.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider
-			.when('/notifications',
+			.when('/notifications/',
 			{
 				templateUrl : 'Rbs/Admin/notifications/list.twig',
 				reloadOnSearch : false

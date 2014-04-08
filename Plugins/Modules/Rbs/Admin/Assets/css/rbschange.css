@@ -659,3 +659,25 @@ pre {
 	width: auto;
 	vertical-align: middle;
 }
+
+/* Item in TB's dropdown without link */
+.dropdown-menu > li > .item {
+	clear: both;
+	color: #333333;
+	display: block;
+	font-weight: normal;
+	line-height: 1.42857;
+	padding: 3px 20px;
+	white-space: nowrap;
+}
+.dropdown-menu > li > .item:hover {
+	background-color: #E8E8E8;
+	background-image: linear-gradient(to bottom, #F5F5F5 0%, #E8E8E8 100%);
+	background-repeat: repeat-x;
+}
+
+.notification-new {
+	background-color: #E8E8F5;
+	background-image: linear-gradient(to bottom, #F5F5FF 0%, #E8E8F5 100%);
+	background-repeat: repeat-x;
+}

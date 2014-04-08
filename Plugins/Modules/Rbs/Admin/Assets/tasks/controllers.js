@@ -13,7 +13,7 @@
 
 	app.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider
-			.when('/tasks',
+			.when('/tasks/',
 			{
 				templateUrl : 'Rbs/Admin/tasks/list.twig',
 				reloadOnSearch : false

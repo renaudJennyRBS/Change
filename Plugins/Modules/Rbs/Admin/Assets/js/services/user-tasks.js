@@ -11,26 +11,79 @@
 
 	var app = angular.module('RbsChange');
 
-	app.service('RbsChange.UserTasks', [ 'RbsChange.REST', '$q', function (REST, $q)
+	/**
+	 * @ngdoc service
+	 * @name RbsChange.service:UserTasks
+	 *
+	 * @description Provides methods to deal with user tasks (Task in the workflow system).
+	 */
+	app.service('RbsChange.UserTasks', [ 'RbsChange.REST', '$q', '$http', 'RbsChange.Settings', '$timeout', function (REST, $q, $http, Settings, $timeout)
 	{
-		function loadTasks (params)
-		{
-			var defer = $q.defer();
+		var tasks = {};
 
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:UserTasks
+		 * @name RbsChange.service:UserTasks#load
+		 *
+		 * @description
+		 * Loads the Tasks for the current user.
+		 *
+		 * @param {Object=} Optional parameters.
+		 * @returns {Promise} Promise resolved when the Tasks are loaded.
+		 */
+		function load (params)
+		{
 			REST.call(
 				REST.getBaseUrl('admin/currentTasks/'),
 				angular.extend({'column': ['document', 'taskCode', 'status']}, params),
 				REST.collectionTransformer()
-			).then(function (result) {
-				defer.resolve(result);
+			).then(function (data) {
+				tasks.pagination = data.pagination;
+				tasks.resources = data.resources;
 			});
+			$timeout(load, 1000*60);
+		}
 
+		Settings.ready().then(load);
+
+		/**
+		 * @ngdoc function
+		 * @methodOf RbsChange.service:UserTasks
+		 * @name RbsChange.service:UserTasks#execute
+		 *
+		 * @description
+		 * Execute the given Task.
+		 *
+		 * @param {Document} task The Task Document to execute.
+		 * @param {String=} actionName Name of the action to execute. Defaults to 'execute'.
+		 * @param {Object=} params Optional parameters.
+		 * @returns {Promise} Promise resolved when the action is successfully executed.
+		 */
+		function execute (task, actionName, params)
+		{
+			actionName = actionName || 'execute';
+			if (task && task.META$ && task.META$.actions && task.META$.actions[actionName]) {
+				var p = $http.post(
+					task.META$.actions[actionName].href,
+					params,
+					REST.getHttpConfig(REST.resourceTransformer())
+				);
+				p.then(function(){load();});
+				return p;
+			}
+			var defer = $q.defer();
+			defer.reject('Bad Task configuration');
 			return defer.promise;
 		}
 
 		// Public API
 		return {
-			load : loadTasks
+			getTasks : function ()
+			{
+				return tasks;
+			},
+			execute : execute
 		};
 
 	}]);

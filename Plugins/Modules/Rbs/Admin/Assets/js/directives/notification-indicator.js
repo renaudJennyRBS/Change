@@ -9,7 +9,7 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('rbsNotificationIndicator', ['RbsChange.Settings', 'RbsChange.UserNotifications', function (Settings, UserNotifications)
+	angular.module('RbsChange').directive('rbsNotificationIndicator', ['RbsChange.UserNotifications', function (UserNotifications)
 	{
 		return {
 			restrict : 'A',
@@ -19,15 +19,14 @@
 
 			link : function (scope)
 			{
-				function loadNotifications ()
-				{
-					UserNotifications.load().then(function (result) {
-						scope.notifications = result;
-					});
-				}
-				loadNotifications();
+				scope.notifications = UserNotifications.getNotifications();
 
-				scope.reload = loadNotifications;
+				scope.markAsRead = function (notification, event)
+				{
+					event.stopPropagation();
+					notification.status = 'loading';
+					UserNotifications.markAsRead(notification);
+				};
 			}
 		};
 	}]);

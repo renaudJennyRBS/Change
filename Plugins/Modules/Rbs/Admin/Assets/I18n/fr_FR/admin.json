@@ -51,7 +51,7 @@
 		"message":"afficher"
 	},
 	"clipboard_empty":{
-		"message":"Le Presse-papier est vide"
+		"message":"Aucun élément dans le Presse-papier"
 	},
 	"selected_element":{
 		"message":"l\\'élément sélectionné"
@@ -1419,11 +1419,17 @@
 	"tasks":{
 		"message":"tâches"
 	},
+	"no_tasks":{
+		"message":"aucune tâche"
+	},
 	"see_all_tasks":{
 		"message":"voir toutes les tâches en attente"
 	},
 	"notifications":{
 		"message":"notifications"
+	},
+	"no_notifications":{
+		"message":"aucune notification"
 	},
 	"see_all_notifications":{
 		"message":"voir toutes les notifications"
