@@ -1294,7 +1294,7 @@
 						if (scope.externalCollection) {
 							setExternalCollection(scope.externalCollection);
 						}
-						scope.$watch('externalCollection', function (collection, oldCollection) {
+						scope.$watchCollection('externalCollection', function (collection, oldCollection) {
 							if (collection !== oldCollection || ! scope.collection || ! scope.collection.length) {
 								setExternalCollection (collection);
 							}
