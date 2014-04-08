@@ -22,11 +22,10 @@ class GetModelTwigAttributes
 	public function execute(Event $event)
 	{
 		$view = $event->getParam('view');
-		/* @var $model \Change\Documents\AbstractModel */
 		$model = $event->getParam('model');
-
 		$adminManager = $event->getTarget();
-		if ($adminManager instanceof \Rbs\Admin\AdminManager)
+
+		if ($adminManager instanceof \Rbs\Admin\AdminManager && $model instanceof \Change\Documents\AbstractModel)
 		{
 			$attributes = $event->getParam('attributes');
 			//$attributes shouldn't be empty
@@ -46,6 +45,12 @@ class GetModelTwigAttributes
 			{
 				$attributes['links'] = [];
 			}
+
+			if ($model->getName() === 'Rbs_Catalog_ProductList' && $view == 'list' && !isset($attributes['listController']))
+			{
+				$attributes['listController'] = 'Rbs_Catalog_ProductList_ProductListController';
+			}
+
 
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 

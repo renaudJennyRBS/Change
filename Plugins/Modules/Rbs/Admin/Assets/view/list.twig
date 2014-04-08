@@ -10,7 +10,9 @@
 				model="{{ model.name }}" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href data-ng-href="{{ '{{' }} namedURL('{{ model.name }}', 'new') {{ '}}' }}">{{ '{{' }} i18n('m.{{ model.vendorName | lower }}.{{ model.shortModuleName | lower }}.admin.{{ model.shortName | lower }}_create', ['ucf']) {{ '}}' }}</a>
+			{{ '{%' }} for newDocumentLink in attributes['newDocumentLinks'] {{ '%}' }}
+				<a href ng-href="(= '{{ '{{' }} newDocumentLink.modelName {{ '}}' }}' | rbsURL:'new' =)">{{ '{{' }} newDocumentLink.label {{ '}}' }}</a>
+			{{ '{%' }} endfor {{ '%}' }}
 		</div>
 
 		<rbs-document-list data-dlid="DL{{ model.vendorName }}{{ model.shortModuleName }}{{ model.shortName }}"

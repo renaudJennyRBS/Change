@@ -43,6 +43,10 @@
 					return moment.utc().tz(_timeZone);
 				}
 
+				function toIso (date) {
+					return date.zone('+0000').format('YYYY-MM-DDTHH:mm:ssZZ')
+				}
+
 				function setPublicationClasses() {
 					if (scope.document && scope.document.startPublication && scope.document.endPublication) {
 						var startAct = moment(scope.document.startPublication);
@@ -72,19 +76,19 @@
 				});
 
 				scope.publicationNow = function () {
-					scope.document.startPublication = now().toDate();
+					scope.document.startPublication = toIso(now());
 				};
 
 				scope.publicationTomorrow = function () {
-					scope.document.startPublication = now().startOf('d').add('d', 1).toDate();
+					scope.document.startPublication = toIso(now().startOf('d').add('d', 1));
 				};
 
 				scope.publicationNextMonday = function () {
-					scope.document.startPublication = now().add('w', 1).startOf('w').startOf('d').toDate();
+					scope.document.startPublication = toIso(now().add('w', 1).startOf('w').startOf('d'));
 				};
 
 				scope.publicationNextMonth = function () {
-					scope.document.startPublication = now().add('M', 1).startOf('M').startOf('d').toDate();
+					scope.document.startPublication = toIso(now().add('M', 1).startOf('M').startOf('d'));
 				};
 
 				scope.$watch('document.startPublication', function (newValue, oldValue) {
@@ -117,7 +121,7 @@
 						scope.publicationOffsetClass['1w'] = null;
 						return;
 					}
-					scope.document.endPublication = moment(scope.document.startPublication).add('w', 1).toDate();
+					scope.document.endPublication = toIso(moment(scope.document.startPublication).add('w', 1));
 					scope.publicationOffsetClass = {"1w": "active", "2w": null, "1M": null};
 				};
 
@@ -126,7 +130,7 @@
 						scope.publicationOffsetClass['2w'] = null;
 						return;
 					}
-					scope.document.endPublication = moment(scope.document.startPublication).add('w', 2).toDate();
+					scope.document.endPublication = toIso(moment(scope.document.startPublication).add('w', 2));
 					scope.publicationOffsetClass = {"1w": null, "2w": "active", "1M": null};
 				};
 
@@ -135,20 +139,20 @@
 						scope.publicationOffsetClass['1M'] = null;
 						return;
 					}
-					scope.document.endPublication = moment(scope.document.startPublication).add('M', 1).toDate();
+					scope.document.endPublication = toIso(moment(scope.document.startPublication).add('M', 1));
 					scope.publicationOffsetClass = {"1w": null, "2w": null, "1M": "active"};
 				};
 
 				scope.endPublicationTomorrow = function () {
-					scope.document.endPublication = moment().endOf('d').toDate();
+					scope.document.endPublication = toIso(moment().endOf('d'));
 				};
 
 				scope.endPublicationEndOfWeek = function () {
-					scope.document.endPublication = moment().endOf('w').toDate();
+					scope.document.endPublication = toIso(moment().endOf('w'));
 				};
 
 				scope.endPublicationEndOfMonth = function () {
-					scope.document.endPublication = moment().endOf('M').toDate();
+					scope.document.endPublication = toIso(moment().endOf('M'));
 				};
 
 				if (angular.isDefined(iAttrs['rbsDocumentPublicationSectionHelp'])
