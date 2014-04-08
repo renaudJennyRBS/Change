@@ -19,6 +19,23 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	/**
 	 * @return string
 	 */
+	public function getLabel()
+	{
+		return $this->getCode() ? $this->getCode() : '[' . $this->getId() . ']';
+	}
+
+	/**
+	 * @param string $label
+	 * @return $this
+	 */
+	public function setLabel($label)
+	{
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getIdentifier()
 	{
 		return 'Shipment:' . $this->getId();
@@ -87,6 +104,29 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 			else
 			{
 				$this->getApplication()->getLogging()->error('Invalid shipment, SKU or quantity on data not set');
+			}
+		}
+	}
+
+	/**
+	 * @param Events\Event $event
+	 */
+	public function onDefaultUpdateRestResult(DocumentEvent $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		if ($event->getDocument() !== $this)
+		{
+			return;
+		}
+
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		{
+			if (!$this->getCode())
+			{
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$restResult->setProperty('label', $i18nManager->trans('m.rbs.order.admin.code_waiting', ['ucf']));
 			}
 		}
 	}

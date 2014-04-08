@@ -8,10 +8,6 @@
 			{{ i18n('m.rbs.order.admin.shipment_new_from_scratch_helper', ['ucf']) }}
 		</div>
 
-		<rbs-field-text property="label" required="true"
-				label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'label'), ['ucf']) }}">
-		</rbs-field-text>
-
 		<rbs-field ng-if="canEdit.order" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}">
 			<rbs-document-picker-single ng-model="data.order" accepted-model="Rbs_Order_Order"
 				selector-title="{{ i18nAttr('m.rbs.order.admin.shipment_select_order', ['ucf']) }}">

@@ -2,7 +2,7 @@
 	"order_select_ownerid":{
 		"message":"séléctionner le propriétaire"
 	},
-	"order_code_waiting":{
+	"code_waiting":{
 		"message":"en attente d'affectation"
 	},
 	"order_select_webstoreid":{
