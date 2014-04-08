@@ -37,6 +37,10 @@
 					return moment.utc().tz(_timeZone);
 				}
 
+				function toIso (date) {
+					return date.zone('+0000').format('YYYY-MM-DDTHH:mm:ssZZ')
+				}
+
 				function setActivationClasses() {
 					if (scope.document && scope.document.startActivation && scope.document.endActivation) {
 						var startAct = moment(scope.document.startActivation);
@@ -61,20 +65,21 @@
 					_timeZone = tz;
 				});
 
+				//2014-04-08T07:29:09+0000
 				scope.activationNow = function(){
-					scope.document.startActivation = now().toDate();
+					scope.document.startActivation = toIso(now());
 				};
 
 				scope.activationTomorrow = function(){
-					scope.document.startActivation = now().startOf('d').add('d', 1).toDate();
+					scope.document.startActivation = toIso(now().startOf('d').add('d', 1));
 				};
 
 				scope.activationNextMonday = function(){
-					scope.document.startActivation = now().add('w', 1).startOf('w').startOf('d').toDate();
+					scope.document.startActivation = toIso(now().add('w', 1).startOf('w').startOf('d'));
 				};
 
 				scope.activationNextMonth = function(){
-					scope.document.startActivation = now().add('M', 1).startOf('M').startOf('d').toDate();
+					scope.document.startActivation = toIso(now().add('M', 1).startOf('M').startOf('d'));
 				};
 
 				scope.$watch('document.startActivation', function(newValue, oldValue){
@@ -102,7 +107,7 @@
 						scope.activationOffsetClass['1w'] = null;
 						return;
 					}
-					scope.document.endActivation = moment(scope.document.startActivation).add('w', 1).toDate();
+					scope.document.endActivation = toIso(moment(scope.document.startActivation).add('w', 1));
 					scope.activationOffsetClass = {"1w":"active", "2w" : null, "1M": null};
 				};
 
@@ -111,7 +116,7 @@
 						scope.activationOffsetClass['2w'] = null;
 						return;
 					}
-					scope.document.endActivation = moment(scope.document.startActivation).add('w', 2).toDate();
+					scope.document.endActivation = toIso(moment(scope.document.startActivation).add('w', 2));
 					scope.activationOffsetClass = {"1w":null, "2w" : "active", "1M": null};
 				};
 
@@ -120,20 +125,20 @@
 						scope.activationOffsetClass['1M'] = null;
 						return;
 					}
-					scope.document.endActivation = moment(scope.document.startActivation).add('M', 1).toDate();
+					scope.document.endActivation = toIso(moment(scope.document.startActivation).add('M', 1));
 					scope.activationOffsetClass = {"1w":null, "2w" : null, "1M": "active"};
 				};
 
 				scope.endActivationTomorrow = function(){
-					scope.document.endActivation = moment().endOf('d').toDate();
+					scope.document.endActivation = toIso(moment().endOf('d'));
 				};
 
 				scope.endActivationEndOfWeek = function(){
-					scope.document.endActivation = moment().endOf('w').toDate();
+					scope.document.endActivation = toIso(moment().endOf('w'));
 				};
 
 				scope.endActivationEndOfMonth = function(){
-					scope.document.endActivation = moment().endOf('M').toDate();
+					scope.document.endActivation = toIso(moment().endOf('M'));
 				};
 			}
 		};
