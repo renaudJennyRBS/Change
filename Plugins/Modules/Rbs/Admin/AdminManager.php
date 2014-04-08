@@ -605,6 +605,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 			throw new \RuntimeException('module ' . $model->getVendorName() . '_' . $model->getShortModuleName() . ' is not found', 999999);
 		}
 
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		switch ($view)
 		{
 			case 'new':
@@ -630,8 +631,38 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				break;
 			case 'list':
+				$newDocumentLinks = [];
+				$modelNames = [];
+				if (!$model->isAbstract()) {
+					$key = strtolower(implode('.', ['m', $model->getVendorName(), $model->getShortModuleName(),
+						'admin', $model->getShortName() . '_create']));
+					$label = $i18nManager->trans($key, ['ucf']);
+					if ($key !== $label)
+					{
+						$modelNames[] = $model->getName();
+						$newDocumentLinks[] =['modelName' => $model->getName(), 'label' => $label];
+					}
+				}
+
+				foreach ($model->getDescendantsNames() as $descendantName)
+				{
+					$m = $event->getApplicationServices()->getModelManager()->getModelByName($descendantName);
+					if ($m && !$m->isAbstract())
+					{
+						$key = strtolower(implode('.', ['m', $m->getVendorName(), $m->getShortModuleName(),
+							'admin', $m->getShortName() . '_create']));
+						$label = $i18nManager->trans($key, ['ucf']);
+						if ($key !== $label)
+						{
+							$modelNames[] = $m->getName();
+							$newDocumentLinks[] =['modelName' => $m->getName(), 'label' => $label];
+						}
+					}
+				}
 				$attributes = [
-					'asideDirectives' => [['name' => 'rbs-default-asides-for-list']]
+					'asideDirectives' => [['name' => 'rbs-default-asides-for-list']],
+					'newDocumentLinks' => $newDocumentLinks,
+					'modelNames' => $modelNames
 				];
 				break;
 			case 'translate':

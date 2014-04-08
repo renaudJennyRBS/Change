@@ -10,7 +10,9 @@
 				model="Rbs_Shipping_Mode" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			{{ createLinks('Rbs_Shipping_Mode') }}
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">{{ newDocumentLink.label }}</a>
+			{% endfor %}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsShippingMode"

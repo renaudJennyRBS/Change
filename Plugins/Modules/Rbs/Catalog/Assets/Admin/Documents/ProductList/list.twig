@@ -1,4 +1,4 @@
-<div class="row" ng-controller="Rbs_Catalog_ProductList_ProductListController">
+<div class="row" ng-controller="{{ attributes['listController'] }}">
 
 	<div data-rbs-aside-column="">
 		{% include '@Rbs_Admin/view/asides.twig' %}
@@ -11,8 +11,11 @@
 				model="Rbs_Catalog_ProductList" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Catalog_ProductList' | rbsURL:'new' =)">{{ i18n('m.rbs.catalog.admin.productlist_create', ['ucf']) }}</a>
-			<a href ng-href="(= 'Rbs_Catalog_SectionProductList' | rbsURL:'new' =)">{{ i18n('m.rbs.catalog.admin.sectionproductlist_create', ['ucf']) }}</a>
+			<div class="add-elements-bar">
+				{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">{{ newDocumentLink.label }}</a>
+				{% endfor %}
+			</div>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsCatalogProductList" model="Rbs_Catalog_ProductList" activable="true"
