@@ -61,19 +61,23 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	/**
 	 * @param \Rbs\Stock\StockManager $stockManager
 	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @throws \RuntimeException
 	 */
 	protected function decrementOrderReservation($stockManager, $documentManager)
 	{
+		//check if there is no previous movement for this shipment
+		if (count($stockManager->getInventoryMovementsByTarget($this->getIdentifier())))
+		{
+			return;
+		}
+		$order = $this->getOrderId() != 0 ? $documentManager->getDocumentInstance($this->getOrderId()) : null;
 		foreach ($this->getData() as $data)
 		{
-			if (isset($data['SKU']) && isset($data['quantity']))
+			if (isset($data['codeSKU']) && isset($data['quantity']))
 			{
-				$sku = $documentManager->getDocumentInstance($data['SKU']);
-				if ($sku instanceof \Rbs\Stock\Documents\Sku)
+				$sku = $stockManager->getSkuByCode($data['codeSKU']);
+				if ($sku)
 				{
 					$stockManager->addInventoryMovement($data['quantity'], $sku, null, new \DateTime(), $this->getIdentifier());
-					$order = $this->getOrderId() != 0 ? $documentManager->getDocumentInstance($this->getOrderId()) : null;
 					if ($order instanceof \Rbs\Order\Documents\Order)
 					{
 						$stockManager->decrementReservation($order->getIdentifier(), $sku->getId(), $data['quantity']);
@@ -82,7 +86,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 			}
 			else
 			{
-				throw new \RuntimeException('Invalid shipment, SKU or quantity on data not set', 999999);
+				$this->getApplication()->getLogging()->error('Invalid shipment, SKU or quantity on data not set');
 			}
 		}
 	}
