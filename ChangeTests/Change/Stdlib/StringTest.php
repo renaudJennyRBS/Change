@@ -138,4 +138,17 @@ class StringTest extends \PHPUnit_Framework_TestCase
 		$substitutedString = \Change\Stdlib\String::getSubstitutedString($stringToSubstitute, $substitutions, '/%([A-Za-z][A-Za-z0-9.]*)%/');
 		$this->assertEquals('Death once had a near-Chuck Norris experience.', $substitutedString);
 	}
+
+	public function testSnakeCase()
+	{
+		$this->assertEquals('snake_case', \Change\Stdlib\String::snakeCase('SnakeCase'));
+		$this->assertEquals('snake-case', \Change\Stdlib\String::snakeCase('SnakeCase', '-'));
+		$this->assertEquals('snake-cased-string', \Change\Stdlib\String::snakeCase('---Snake.Cased - string!!!', '-'));
+	}
+
+	public function testCamelCase()
+	{
+		$this->assertEquals('CamelCase', \Change\Stdlib\String::camelCase('camel-case'));
+		$this->assertEquals('CamelCasedString', \Change\Stdlib\String::camelCase('---camelCased - string!!!', '-'));
+	}
 }
