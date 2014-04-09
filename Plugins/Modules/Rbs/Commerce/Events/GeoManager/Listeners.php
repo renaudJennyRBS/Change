@@ -17,7 +17,6 @@ use Zend\EventManager\ListenerAggregateInterface;
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
