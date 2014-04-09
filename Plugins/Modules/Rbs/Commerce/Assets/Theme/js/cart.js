@@ -37,6 +37,47 @@
 			});
 	}
 
+	/**
+	 * @param {Object} referenceAddress
+	 * @param {Array} addresses
+	 * @returns {boolean}
+	 */
+	function hasInvalidAddresses(referenceAddress, addresses) {
+		var countryCode = referenceAddress.countryCode;
+		for (var i = 0; i < addresses.length; i++)
+		{
+			if (addresses[i].fieldValues.countryCode != countryCode)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param {Object} referenceAddress
+	 * @param {Array} addressToCheck
+	 * @returns {boolean}
+	 */
+	function isValidAddress(referenceAddress, addressToCheck) {
+		return referenceAddress.countryCode != addressToCheck['fieldValues'].countryCode;
+	}
+
+	/**
+	 * @param {Object} existingAddress
+	 * @param {Object} addressToUse
+	 */
+	function applyAddress(existingAddress, addressToUse) {
+		angular.forEach(addressToUse.fieldValues, function(value, key) {
+			existingAddress[key] = addressToUse.fieldValues[key];
+		});
+		angular.forEach(existingAddress, function(value, key) {
+			if (!addressToUse.fieldValues.hasOwnProperty(key)) {
+				delete(existingAddress[key]);
+			}
+		});
+	}
+
 	function rbsCommerceCartData() {
 		return {
 			restrict: 'A',
@@ -120,7 +161,8 @@
 			scope: {
 				delivery: '=',
 				zoneCode: '=',
-				cart: '='
+				cart: '=',
+				addresses: '='
 			},
 			templateUrl: '/shipping-mode-selector.static.tpl',
 
@@ -208,7 +250,7 @@
 					scope.delivery.options.usePostalAddress = 1;
 				}
 
-				function applyPostalAddressINecessary() {
+				function applyPostalAddressIfNecessary() {
 					if (parseInt(scope.delivery.options.usePostalAddress) == 1) {
 						scope.delivery.address = angular.copy(scope.cart.address);
 						scope.delivery.isConfigured = true;
@@ -218,13 +260,17 @@
 					}
 				}
 
-				applyPostalAddressINecessary();
+				applyPostalAddressIfNecessary();
 
-				scope.$watch('delivery.options.usePostalAddress', applyPostalAddressINecessary);
+				scope.$watch('delivery.options.usePostalAddress', applyPostalAddressIfNecessary);
 
 				scope.isReadOnly = function() {
 					return scope.readonly;
-				}
+				};
+
+				scope.hasInvalidAddresses = hasInvalidAddresses;
+				scope.isValidAddress = isValidAddress;
+				scope.applyAddress = applyAddress;
 			}
 		}
 	}
@@ -375,6 +421,15 @@
 		scope.currentStep = null;
 		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
 
+		$http.get('Action/Rbs/Geo/GetAddresses')
+			.success(function(data) {
+				scope.addresses = data;
+			})
+			.error(function(data, status, headers) {
+				console.log('GetAddresses error', data, status, headers);
+			}
+		);
+
 		function setCart(data) {
 			scope.loading = false;
 			scope.cart = data;
@@ -437,6 +492,10 @@
 		scope.isCurrentStep = function(stepName) {
 			return scope.currentStep == stepName;
 		};
+
+		scope.hasInvalidAddresses = hasInvalidAddresses;
+		scope.isValidAddress = isValidAddress;
+		scope.applyAddress = applyAddress;
 
 		/**
 		 * Information step

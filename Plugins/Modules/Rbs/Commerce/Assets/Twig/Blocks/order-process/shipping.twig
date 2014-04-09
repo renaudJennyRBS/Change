@@ -66,12 +66,35 @@
 						</li>
 					</ol>
 
-					<div data-ng-if="delivery.options.usePostalAddress == 0">
-						<div class="vertical-show-hide-animation">
-							<div class="vertical-show-hide-animation-content">
-								<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
-									data-zone-code="(= zoneCode =)">
+					<div data-ng-if="delivery.options.usePostalAddress == 0" class="vertical-if-animation">
+						<div class="vertical-if-animation-content">
+							<div class="row">
+								<div data-ng-repeat-start="address in addresses" class="col-md-6 col-lg-4">
+									<h3>(= address.name =)</h3>
+									<address>
+										<strong>(= address.lines[0] =)</strong>
+										<div data-ng-repeat="line in address.lines track by $index" data-ng-if="!$first">
+											(= line =)
+										</div>
+									</address>
+									<p>
+										<button type="button" class="btn btn-sm btn-primary"
+											data-ng-disabled="isValidAddress(delivery.address, address)"
+											data-ng-click="applyAddress(delivery.address, address)">
+											{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+										</button>
+										<span data-ng-if="isValidAddress(delivery.address, address)">*</span>
+									</p>
 								</div>
+								<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg"></div>
+								<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md"></div>
+							</div>
+							<p data-ng-if="hasInvalidAddresses(delivery.address, addresses)">
+								* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
+							</p>
+
+							<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
+								data-zone-code="(= zoneCode =)">
 							</div>
 						</div>
 					</div>
@@ -116,7 +139,7 @@
 	</div>
 
 	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="cart.zone" data-cart="cart"
-		data-readonly="(= !isCurrentStep('shipping') =)"></div>
+		data-readonly="(= !isCurrentStep('shipping') =)" data-addresses="addresses"></div>
 </div>
 
 <div data-ng-show="isCurrentStep('shipping')" class="clearfix">

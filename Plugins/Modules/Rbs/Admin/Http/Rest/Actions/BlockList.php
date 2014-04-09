@@ -23,8 +23,7 @@ class BlockList
 	{
 		$result = new ArrayResult(HttpResponse::STATUS_CODE_200);
 		$array = array();
-		$isMailSuitable = $event->getRequest()->getQuery('isMailSuitable');
-		$isMailSuitable = $isMailSuitable === 'true' ? true : false;
+		$isMailSuitable = $event->getRequest()->getQuery('isMailSuitable') === 'true' ? true : false;
 		$blockManager = $event->getApplicationServices()->getBlockManager();
 		$names = $blockManager->getBlockNames();
 		foreach ($names as $name)
@@ -32,8 +31,8 @@ class BlockList
 			$information = $blockManager->getBlockInformation($name);
 			if ($information)
 			{
-				//filter blocks by keeping only those are mailSuitable or not depending on $isMailSuitable
-				if (($isMailSuitable && !$information->isMailSuitable()) || (!$isMailSuitable && $information->isMailSuitable()))
+				// Filter blocks by keeping only those are mailSuitable or not depending on $isMailSuitable.
+				if ($isMailSuitable != $information->isMailSuitable())
 				{
 					continue;
 				}

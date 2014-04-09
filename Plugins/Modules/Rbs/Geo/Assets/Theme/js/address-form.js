@@ -7,14 +7,20 @@
 			restrict: 'AE',
 			require: 'ngModel',
 			scope: {
-				'valid': '='
+				'valid': '=',
+				'addressName': '=',
+				'savingCallback': '=',
+				'hideClearButton': '=',
+				'clearAddress': '='
 			},
+			transclude: true,
 			templateUrl: '/address-form.static.tpl',
 
 			link: function(scope, element, attributes, ngModel) {
 				scope.countries = [];
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
+				scope.data = {};
 				scope.zoneCode = attributes.zoneCode;
 				scope.readonly = attributes.readonly;
 
@@ -62,8 +68,13 @@
 					scope.valid = !newValue;
 				});
 
+				scope.$watch('data.name', function(newValue) {
+					scope.addressName = newValue;
+				});
+
 				ngModel.$render = function ngModelRenderFn() {
 					scope.fieldValues = ngModel.$viewValue;
+					scope.data.name = scope.addressName;
 				};
 
 				scope.generateFieldsEditor = function(addressFields) {
@@ -92,6 +103,18 @@
 						}
 					}
 				};
+
+				if (scope.clearAddress != undefined) {
+					scope.clearAddress = function() {
+						scope.data.name = '';
+						angular.forEach(scope.fieldValues, function(value, key) {
+							if (key != 'countryCode' && key != '__addressFieldsId') {
+								scope.fieldValues[key] = null;
+							}
+							scope['addressForm'].$setPristine();
+						});
+					};
+				}
 			}
 		}
 	}

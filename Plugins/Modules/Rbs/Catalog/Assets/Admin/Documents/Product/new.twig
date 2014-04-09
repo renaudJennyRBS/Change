@@ -42,7 +42,8 @@
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="attributes"
-				data-editor-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}">
+				data-editor-section-label="{{ i18nAttr('m.rbs.catalog.admin.product_section_attributes', ['ucf']) }}"
+				data-editor-section-icon="icon-edit-sign">
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'attribute'), ['ucf']) }}">
 					<select class="form-control" data-ng-model="document.attribute"
 						data-rbs-items-from-collection="Rbs_Catalog_Collection_AttributeSet"

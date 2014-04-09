@@ -1,0 +1,9 @@
+{
+	"ManageAddresses" : {
+		"jsAssets" : [
+			"Theme/Rbs/Base/Rbs_Website/js/animations.js",
+			"Theme/Rbs/Base/Rbs_Geo/js/address-form.js",
+			"Theme/Rbs/Base/Rbs_Geo/js/manage-addresses.js"
+		]
+	}
+}

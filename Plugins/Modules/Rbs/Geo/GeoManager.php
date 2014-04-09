@@ -28,6 +28,12 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach(static::EVENT_COUNTRIES_BY_ZONE_CODE, [$this, 'onDefaultGetCountriesByZoneCode'], 5);
 		$eventManager->attach(static::EVENT_FORMAT_ADDRESS, [$this, 'onDefaultFormatAddress'], 5);
+		$eventManager->attach('getAddresses', [$this, 'onDefaultGetAddresses'], 5);
+		$eventManager->attach('deleteAddress', [$this, 'onDefaultDeleteAddress'], 5);
+		$eventManager->attach('addAddress', [$this, 'onDefaultAddAddress'], 5);
+		$eventManager->attach('updateAddress', [$this, 'onDefaultUpdateAddress'], 5);
+		$eventManager->attach('setDefaultAddress', [$this, 'onDefaultSetDefaultAddress'], 5);
+		$eventManager->attach('getDefaultAddress', [$this, 'onDefaultGetDefaultAddress'], 5);
 	}
 
 	/**
@@ -203,5 +209,329 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $lines;
+	}
+
+	/**
+	 * Get addresses to display in front office.
+	 * @api
+	 * @returns \Rbs\Geo\Address\AddressInterface[]
+	 */
+	public function getAddresses()
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs([]);
+		$this->getEventManager()->trigger('getAddresses', $this, $args);
+		if (isset($args['addresses']) && is_array($args['addresses']))
+		{
+			return $args['addresses'];
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetAddresses($event)
+	{
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if (!$user->authenticated())
+		{
+			return;
+		}
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$query = $documentManager->getNewQuery('Rbs_Geo_Address');
+		$query->andPredicates($query->eq('ownerId', $user->getId()));
+		$query->addOrder('name');
+		$event->setParam('addresses', $query->getDocuments()->toArray());
+	}
+
+	/**
+	 * Address deletion from front office.
+	 * @api
+	 * @param mixed $address
+	 * @return boolean
+	 */
+	public function deleteAddress($address)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['address' => $address]);
+		$this->getEventManager()->trigger('deleteAddress', $this, $args);
+		return (isset($args['done']) && $args['done'] === true);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultDeleteAddress($event)
+	{
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$address = $event->getParam('address');
+		if (is_numeric($address))
+		{
+			$address = $documentManager->getDocumentInstance(intval($address));
+		}
+		if (!($address instanceof \Rbs\Geo\Documents\Address))
+		{
+			return;
+		}
+
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if (!$user->authenticated())
+		{
+			return;
+		}
+
+		if ($user->getId() != $address->getOwnerId())
+		{
+			return;
+		}
+
+		// If the addressId represents an address document it is owned by the current user, delete it.
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$address->delete();
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		$event->setParam('done', true);
+	}
+
+	/**
+	 * Address creation from front office.
+	 * @api
+	 * @param array $fieldValues
+	 * @param string $addressName
+	 * @return boolean
+	 */
+	public function addAddress($fieldValues, $addressName)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['fieldValues' => $fieldValues, 'addressName' => $addressName]);
+		$this->getEventManager()->trigger('addAddress', $this, $args);
+		return (isset($args['done']) && $args['done'] === true);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultAddAddress($event)
+	{
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if (!$user->authenticated())
+		{
+			return;
+		}
+
+		// If the addressId represents an address document it is owned by the current user, delete it.
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$fieldValues = is_array($event->getParam('fieldValues')) ? $event->getParam('fieldValues') : array();
+			$addressFieldsId = isset($fieldValues['__addressFieldsId']) ? $fieldValues['__addressFieldsId'] : 0;
+			/* @var $addressFields \Rbs\Geo\Documents\AddressFields */
+			$addressFields = $documentManager->getDocumentInstance($addressFieldsId);
+
+			/* @var $address \Rbs\Geo\Documents\Address */
+			$address = $documentManager->getNewDocumentInstanceByModelName('Rbs_Geo_Address');
+			$address->setFieldValues($fieldValues);
+			$address->setAddressFields($addressFields);
+			$address->setOwnerId($user->getId());
+			$address->setName(is_string($event->getParam('addressName')) ? $event->getParam('addressName') : '-');
+			$address->save();
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		$event->setParam('done', true);
+	}
+
+	/**
+	 * Address creation from front office.
+	 * @api
+	 * @param array $fieldValues
+	 * @param string $addressName
+	 * @return boolean
+	 */
+	public function updateAddress($fieldValues, $addressName)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['fieldValues' => $fieldValues, 'addressName' => $addressName]);
+		$this->getEventManager()->trigger('updateAddress', $this, $args);
+		return (isset($args['done']) && $args['done'] === true);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultUpdateAddress($event)
+	{
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if (!$user->authenticated())
+		{
+			return;
+		}
+
+		/* @var $address \Rbs\Geo\Documents\Address */
+		$fieldValues = $event->getParam('fieldValues');
+		$addressId = isset($fieldValues['__id']) ? intval($fieldValues['__id']) : 0;
+		$address = $documentManager->getDocumentInstance($addressId);
+		if (!($address instanceof \Rbs\Geo\Documents\Address))
+		{
+			return;
+		}
+
+		if ($address->getOwnerId() != $user->getId())
+		{
+			return;
+		}
+
+		// If the addressId represents an address document owned by the current user, delete it.
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$address->setFieldValues($fieldValues);
+			$address->setName($event->getParam('addressName'));
+			$address->save();
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		$event->setParam('done', true);
+	}
+
+	/**
+	 * Set default address from front office.
+	 * @api
+	 * @param mixed $address
+	 * @return boolean
+	 */
+	public function setDefaultAddress($address)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['address' => $address]);
+		$this->getEventManager()->trigger('setDefaultAddress', $this, $args);
+		return (isset($args['done']) && $args['done'] === true);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultSetDefaultAddress($event)
+	{
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$address = $event->getParam('address');
+		if (is_numeric($address))
+		{
+			$address = $documentManager->getDocumentInstance(intval($address));
+		}
+		if (!($address instanceof \Rbs\Geo\Documents\Address))
+		{
+			return;
+		}
+
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if (!$user->authenticated())
+		{
+			return;
+		}
+
+		$user = $documentManager->getDocumentInstance($user->getId());
+		if (!($user instanceof \Rbs\User\Documents\User))
+		{
+			return;
+		}
+
+		// If the addressId represents an address document and there is an authenticated user, set the default address meta.
+		$tm = $event->getApplicationServices()->getTransactionManager();
+		try
+		{
+			$tm->begin();
+
+			$user->setMeta('Rbs_Geo_DefaultAddressId', $address->getId());
+			$user->saveMetas();
+
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+
+		$event->setParam('done', true);
+	}
+
+	/**
+	 * Get default address for front office.
+	 * @api
+	 * @return \Rbs\Geo\Address\AddressInterface|null
+	 */
+	public function getDefaultAddress()
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs([]);
+		$this->getEventManager()->trigger('getDefaultAddress', $this, $args);
+		if (isset($args['defaultAddress']) && $args['defaultAddress'] instanceof \Rbs\Geo\Address\AddressInterface)
+		{
+			return $args['defaultAddress'];
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetDefaultAddress($event)
+	{
+		if ($event->getParam('defaultAddress') instanceof \Rbs\Geo\Address\AddressInterface)
+		{
+			return;
+		}
+
+		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		if (!$user->authenticated())
+		{
+			return;
+		}
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$user = $documentManager->getDocumentInstance($user->getId());
+		if (!($user instanceof \Rbs\User\Documents\User))
+		{
+			return;
+		}
+
+		$address = $documentManager->getDocumentInstance($user->getMeta('Rbs_Geo_DefaultAddressId'));
+		if ($address instanceof \Rbs\Geo\Documents\Address)
+		{
+			$event->setParam('defaultAddress', $address);
+		}
 	}
 }
