@@ -17,7 +17,6 @@ use Zend\Json\Json;
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
@@ -34,6 +33,7 @@ class Listeners implements ListenerAggregateInterface
 			{
 				return Json::decode(file_get_contents($commandConfigPath), Json::TYPE_ARRAY);
 			}
+			return null;
 		};
 		$events->attach('config', $callback);
 

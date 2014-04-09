@@ -1,0 +1,3 @@
+<h1>{{ i18n('m.#lowerVendor#.#lowerModule#.front.#localeName#_title', ['ucf']) }}</h1>
+
+// Auto-generated template...
