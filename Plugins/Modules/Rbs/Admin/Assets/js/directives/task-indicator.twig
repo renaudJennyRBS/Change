@@ -17,6 +17,7 @@
 				</div>
 				<div>
 					<button class="btn btn-xs btn-danger pull-right" type="button"
+					        ng-if="t.taskCode != 'requestValidation'"
 					        ng-click="rejectTask($event, t)"
 					        ng-disabled="t.loading"
 					        title="{{ i18nAttr('m.rbs.admin.admin.reject', ['ucf']) }}">

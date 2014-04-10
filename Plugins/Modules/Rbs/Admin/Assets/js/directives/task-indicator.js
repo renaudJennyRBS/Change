@@ -9,7 +9,7 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('rbsTaskIndicator', ['RbsChange.UserTasks', function (UserTasks)
+	angular.module('RbsChange').directive('rbsTaskIndicator', ['RbsChange.UserTasks', 'RbsChange.i18n', function (UserTasks, i18n)
 	{
 		return {
 			restrict : 'A',
@@ -32,9 +32,13 @@
 				scope.rejectTask = function ($event, task)
 				{
 					$event.stopPropagation();
-					var t = angular.copy(task);
+					var t = angular.copy(task),
+						reason;
 					task.loading = true;
-					UserTasks.reject(t);
+					reason = window.prompt(i18n.trans("m.rbs.admin.admin.please_indicate_reject_reason"));
+					if (reason && reason.length) {
+						return UserTasks.reject(t, reason);
+					}
 				};
 
 			}
