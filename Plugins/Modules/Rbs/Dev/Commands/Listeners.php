@@ -6,18 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Dev\Events\Commands;
+namespace Rbs\Dev\Commands;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Json\Json;
 
 /**
- * @name \Rbs\Dev\Events\Commands\Listeners
+ * @name \Rbs\Dev\Commands\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
@@ -34,8 +33,16 @@ class Listeners implements ListenerAggregateInterface
 			{
 				return Json::decode(file_get_contents($commandConfigPath), Json::TYPE_ARRAY);
 			}
+			return null;
 		};
 		$events->attach('config', $callback);
+
+		$callback = function ($event)
+		{
+			$cmd = new \Rbs\Dev\Commands\InitializeBlock();
+			$cmd->execute($event);
+		};
+		$events->attach('rbs_dev:initialize-block', $callback);
 
 		$callback = function ($event)
 		{
@@ -53,10 +60,10 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			$cmd = new \Rbs\Dev\Commands\CreateCommand();
+			$cmd = new \Rbs\Dev\Commands\InitializeCommand();
 			$cmd->execute($event);
 		};
-		$events->attach('rbs_dev:create-command', $callback);
+		$events->attach('rbs_dev:initialize-command', $callback);
 
 		$callback = function ($event)
 		{
@@ -71,6 +78,12 @@ class Listeners implements ListenerAggregateInterface
 			$cmd->execute($event);
 		};
 		$events->attach('rbs_dev:initialize-view', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Dev\Commands\Devrest())->execute($event);
+		};
+		$events->attach('rbs_dev:devrest', $callback);
 	}
 
 	/**

@@ -19,6 +19,7 @@ class GetHtmlBlockParameters
 	/**
 	 * Use Required Event Params: vendor, shortModuleName, shortBlockName
 	 * @param Event $event
+	 * @throws \RuntimeException
 	 */
 	public function execute($event)
 	{

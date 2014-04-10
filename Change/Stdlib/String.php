@@ -237,4 +237,50 @@ class String
 	{
 		return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 	}
+
+	/**
+	 * @api
+	 * @param string $string
+	 * @param string $separator
+	 * @return string
+	 */
+	public static function snakeCase($string, $separator = '_')
+	{
+		if (is_string($string) && is_string($separator))
+		{
+			$string = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $separator . '$2', $string);
+			$string = preg_replace('/[^a-z0-9]/', $separator, strtolower($string));
+
+			// Remove consecutive occurrences of the separator.
+			do
+			{
+				$oldString = $string;
+				$string = str_replace($separator.$separator, $separator, $string);
+			}
+			while ($oldString !== $string);
+
+			// Remove separator from the beginning and end of the string.
+			$string = self::beginsWith($string, $separator) ? substr($string, self::length($separator)) : $string;
+			$string = self::endsWith($string, $separator) ? substr($string, 0, - self::length($separator)) : $string;
+
+			return $string;
+		}
+		return $string;
+	}
+
+	/**
+	 * @api
+	 * @param string $string
+	 * @return string
+	 */
+	public static function camelCase($string)
+	{
+		if (is_string($string))
+		{
+			$string = preg_replace('/[^a-zA-Z0-9]/', ' ', $string);
+			$string = implode('', array_map('ucfirst', explode(' ', $string)));
+			return $string;
+		}
+		return $string;
+	}
 }

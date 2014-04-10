@@ -6,12 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Geo\Blocks;
+namespace #namespace#;
 
 /**
- * @name \Rbs\Geo\Blocks\ManageAddresses
+ * @name \#namespace#\#className#
  */
-class ManageAddresses extends \Change\Presentation\Blocks\Standard\Block
+class #className# extends \Change\Presentation\Blocks\Standard\Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -23,13 +23,18 @@ class ManageAddresses extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('authenticated');
+
+		// Declare your parameters here.
+		//$parameters->addParameterMeta('myParameter');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$parameters->setNoCache();
 
-		$user = $event->getAuthenticationManager()->getCurrentUser();
-		$parameters->setParameterValue('authenticated', $user->authenticated());
+		// Uncomment following line to disable caches on this block.
+		//$parameters->setNoCache();
+
+		// Fill your parameters here.
+		//$parameters->setParameterValue('myParameter', $value);
+
 		return $parameters;
 	}
 
@@ -42,10 +47,9 @@ class ManageAddresses extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		if ($parameters->getParameter('authenticated'))
-		{
-			return 'manage-addresses-list.twig';
-		}
-		return null;
+
+		// Implement your block here.
+
+		return '#templateName#';
 	}
 }

@@ -182,6 +182,13 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 				}
 				$event->setParam('propertiesErrors', count($propertiesErrors) ? $propertiesErrors : null);
 			}
+
+			$genericServices = $event->getServices('genericServices');
+			if ($genericServices instanceof \Rbs\Generic\GenericServices)
+			{
+				$cleanFieldValues['__lines'] = $genericServices->getGeoManager()->getFormattedAddress($address);
+			}
+
 			$address->setFieldsData(count($cleanFieldValues) ? $cleanFieldValues : null);
 			$address->fieldValues = $cleanFieldValues;
 		}
@@ -219,6 +226,15 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	}
 
 	/**
+	 * @return string[]
+	 */
+	public function getLines()
+	{
+		$values = $this->getFieldsData();
+		return (is_array($values) && isset($values['__lines']) && is_array($values['__lines'])) ? $values['__lines'] : [];
+	}
+
+	/**
 	 * @return array
 	 */
 	public function toArray()
@@ -229,6 +245,9 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		return $array;
 	}
 
+	/**
+	 * @param Events\Event $event
+	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
@@ -242,11 +261,7 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 		{
 			$pc = new \Change\Http\Rest\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$documentResult->setProperty('fieldValues', $pc->toRestValue($address->getFields(), \Change\Documents\Property::TYPE_JSON));
-			$genericServices = $event->getServices('genericServices');
-			if ($genericServices instanceof \Rbs\Generic\GenericServices)
-			{
-				$documentResult->setProperty('lines', $genericServices->getGeoManager()->getFormattedAddress($address));
-			}
+			$documentResult->setProperty('lines', $address->getLines());
 		}
 		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
 		{

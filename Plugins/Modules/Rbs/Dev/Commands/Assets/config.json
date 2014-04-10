@@ -1,14 +1,49 @@
 {
-	"rbs_dev:create-command": {
-		"description": "Create an empty console command",
+	"rbs_dev:admin-routes": {
+		"description": "Generate admin routes definition",
 		"dev": true,
-		"arguments":{
+		"options": {
+		},
+		"arguments": {
+		}
+	},
+	"rbs_dev:devrest": {
+		"description": "Enables or disables devrest.php",
+		"dev": true,
+		"arguments": {
+			"mode": {
+				"description": "'up' to activate, 'down' to deactivate",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-block": {
+		"description": "Initialize a new block",
+		"dev": true,
+		"arguments": {
 			"package": {
-				"description": "name of the package (vendor/module or change)",
+				"description": "name of the package (vendor_module)",
 				"required": true,
 				"default": null
 			},
-			"cmdname": {
+			"blockName": {
+				"description": "name of the block (e.g. MyBlock)",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-command": {
+		"description": "Create an empty console command",
+		"dev": true,
+		"arguments": {
+			"package": {
+				"description": "name of the package (vendor_module or change)",
+				"required": true,
+				"default": null
+			},
+			"cmdName": {
 				"description": "name of the command (e.g. my-cmd)",
 				"required": true,
 				"default": null
@@ -18,7 +53,7 @@
 	"rbs_dev:initialize-model": {
 		"description": "Initialize an new XML model file",
 		"dev": true,
-		"arguments":{
+		"arguments": {
 			"vendor": {
 				"description": "vendor of the target module",
 				"required": true,
@@ -39,14 +74,14 @@
 	"rbs_dev:initialize-plugin": {
 		"description": "Initialize an new empty plugin skeleton",
 		"dev": true,
-		"options":{
+		"options": {
 			"package": {
 				"description": "package of plugin",
 				"default": null,
 				"shortcut": "p"
 			}
 		},
-		"arguments":{
+		"arguments": {
 			"type": {
 				"description": "type of plugin",
 				"required": true,
@@ -64,18 +99,10 @@
 			}
 		}
 	},
-	"rbs_dev:admin-routes": {
-		"description": "Generate admin routes definition",
-		"dev": true,
-		"options":{
-		},
-		"arguments":{
-		}
-	},
 	"rbs_dev:initialize-view": {
 		"description": "Initialize view(s) template file for a model",
 		"dev": true,
-		"options":{
+		"options": {
 			"list": {
 				"description": "list of document",
 				"shortcut": "l"
@@ -96,7 +123,7 @@
 				"description": "generate all views"
 			}
 		},
-		"arguments":{
+		"arguments": {
 			"modelName": {
 				"description": "complete name of a model (<Vendor>_<Module>_<Model>)",
 				"required": true,

@@ -170,12 +170,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function snakeCase($string, $separator = '_')
 	{
-		if (is_string($string) && is_string($separator))
-		{
-			$string = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $separator . '$2', $string);
-			return preg_replace('/[^a-z0-9]/', $separator, strtolower($string));
-		}
-		return $string;
+		return \Change\Stdlib\String::snakeCase($string, $separator);
 	}
 
 	/**

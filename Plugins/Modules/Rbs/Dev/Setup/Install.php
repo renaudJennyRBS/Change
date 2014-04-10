@@ -13,7 +13,6 @@ namespace Rbs\Dev\Setup;
  */
 class Install extends \Change\Plugins\InstallBase
 {
-
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Application $application
@@ -26,7 +25,6 @@ class Install extends \Change\Plugins\InstallBase
 		//$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Dev',
 		//	'\Rbs\Dev\Events\SharedListeners');
 
-		$configuration->addPersistentEntry('Change/Events/Commands/Rbs_Dev', '\Rbs\Dev\Events\Commands\Listeners');
+		$configuration->addPersistentEntry('Change/Events/Commands/Rbs_Dev', '\Rbs\Dev\Commands\Listeners');
 	}
-
 }

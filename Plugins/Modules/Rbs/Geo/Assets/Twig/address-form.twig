@@ -29,13 +29,11 @@
 				</div>
 				<select data-ng-show="!readonly && countries.length > 1" id="rbs-geo-address-country-{{ blockId }}"
 					required="required" data-ng-model="fieldValues.countryCode" class="form-control" name="country"
+					data-ng-options="country.code as country.title for country in countries"
 					data-ng-class="{
 						'has-error': !readonly && addressForm.country.$invalid,
 						'has-success': !readonly && addressForm.country.$dirty && !addressForm.country.$invalid
 					}">
-					<option data-ng-repeat="country in countries" value="(= country.code =)">
-						(= country.title =)
-					</option>
 				</select>
 			</div>
 		</div>

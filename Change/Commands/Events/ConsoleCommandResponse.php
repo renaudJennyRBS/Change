@@ -10,10 +10,10 @@ namespace Change\Commands\Events;
 
 /**
  * @name \Change\Commands\Events\ConsoleCommandResponse
+ * @see http://symfony.com/doc/current/components/console/introduction.html for the styling options in Symfony console tool.
  */
 class ConsoleCommandResponse implements CommandResponseInterface
 {
-
 	/**
 	 * @var \Symfony\Component\Console\Output\OutputInterface
 	 */
@@ -68,7 +68,7 @@ class ConsoleCommandResponse implements CommandResponseInterface
 	 */
 	public function addWarningMessage($message)
 	{
-		$this->output->writeln('<warning>' . $message . '</warning>');
+		$this->output->writeln('<fg=magenta>' . $message . '</fg=magenta>');
 		return $this;
 	}
 
