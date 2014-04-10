@@ -8,7 +8,8 @@
 	                   extend="dlExt"
 	                   collection="tasks"
 	                   modification-date="false"
-	                   on-reload="reloadTasks">
+	                   on-reload="reloadTasks"
+	                   actions="executeTask rejectTask">
 
 		<rbs-column name="label" label="{{ i18nAttr('m.rbs.admin.admin.task_designation', ['ucf']) }}">
 			(= doc.label =)

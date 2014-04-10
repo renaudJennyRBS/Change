@@ -14,12 +14,22 @@
 					<small><time display="both" datetime="(= n.creationDate =)"></time></small><br/>
 					<span title="(= n.message =)">(= n.message | rbsEllipsis:50:'center' =)</span>
 				</div>
-				<button ng-if="n.status=='new' || n.status=='loading'"
-				        type="button" class="btn btn-xs btn-default"
-				        ng-disabled="n.status=='loading'"
-				        ng-click="markAsRead(n, $event)">
-					<i ng-class="{'loading':'icon-spin icon-spinner', 'new':'icon-ok'}[n.status]"></i>
-				</button>
+				<div>
+					<button ng-if="n.status!='deleted'"
+					        type="button" class="btn btn-xs btn-danger pull-right"
+					        ng-disabled="n.status=='loading'"
+					        ng-click="archive(n, $event)"
+					        title="{{ i18nAttr('m.rbs.admin.admin.notification_delete', ['ucf']) }}">
+						<i ng-class="{'loading':'icon-spin icon-spinner', 'new':'icon-trash'}[n.status]"></i>
+					</button>
+					<button ng-if="n.status=='new' || n.status=='loading'"
+					        type="button" class="btn btn-xs btn-success"
+					        ng-disabled="n.status=='loading'"
+					        ng-click="markAsRead(n, $event)"
+					        title="{{ i18nAttr('m.rbs.admin.admin.notification_mark_as_read', ['ucf']) }}">
+						<i ng-class="{'loading':'icon-spin icon-spinner', 'new':'icon-ok'}[n.status]"></i>
+					</button>
+				</div>
 			</span>
 		</li>
 

@@ -16,15 +16,23 @@
 					<br/><a href="javascript:;" ng-href="(= t.document | rbsURL =)">(= t.document.label =)  ((= t.document.id =)) <i class="icon-circle-arrow-right"></i></a>
 				</div>
 				<div>
-					<button class="btn btn-xs btn-default" type="button"
+					<button class="btn btn-xs btn-danger pull-right" type="button"
+					        ng-click="rejectTask($event, t)"
+					        ng-disabled="t.loading"
+					        title="{{ i18nAttr('m.rbs.admin.admin.reject', ['ucf']) }}">
+						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-ban-circle'}[t.loading == true]"></i>
+					</button>
+					<button class="btn btn-xs btn-success" type="button"
 					        ng-click="executeTask($event, t)"
-					        ng-disabled="t.loading">
+					        ng-disabled="t.loading"
+					        title="{{ i18nAttr('m.rbs.admin.admin.accept', ['ucf']) }}">
 						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-play'}[t.loading == true]"></i>
 					</button>
 					<button ng-if="t.actions[1].rel=='directPublication'"
-					        class="btn btn-xs btn-default" type="button"
+					        class="btn btn-xs btn-warning" type="button"
 					        ng-click="executeTask($event, t, 'directPublication')"
-					        ng-disabled="t.loading">
+					        ng-disabled="t.loading"
+							title="{{ i18nAttr('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}">
 						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-fast-forward'}[t.loading == true]"></i>
 					</button>
 				</div>

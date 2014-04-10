@@ -29,6 +29,14 @@
 					UserTasks.execute(t, actionName);
 				};
 
+				scope.rejectTask = function ($event, task)
+				{
+					$event.stopPropagation();
+					var t = angular.copy(task);
+					task.loading = true;
+					UserTasks.reject(t);
+				};
+
 			}
 		};
 	}]);

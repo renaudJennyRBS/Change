@@ -824,10 +824,12 @@
 					// Locally defined actions.
 					var	actionList = elm.is('[actions]') ? attrs.actions : 'default';
 					angular.forEach(localActions, function (action) {
-						if (actionList.length) {
-							actionList += ' ';
+						if (actionList !== action.name && actionList.indexOf(action.name+' ') === -1 && actionList.indexOf(' '+action.name) === -1) {
+							if (actionList.length) {
+								actionList += ' ';
+							}
+							actionList += action.name;
 						}
-						actionList +=  action.name;
 					});
 
 

@@ -27,6 +27,13 @@
 					notification.status = 'loading';
 					UserNotifications.markAsRead(notification);
 				};
+
+				scope.archive = function (notification, event)
+				{
+					event.stopPropagation();
+					notification.status = 'loading';
+					UserNotifications.archive(notification);
+				};
 			}
 		};
 	}]);

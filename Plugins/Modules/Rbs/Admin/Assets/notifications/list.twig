@@ -19,7 +19,7 @@
 
 		<rbs-column name="message" label="{{ i18nAttr('m.rbs.admin.admin.notification_message', ['ucf']) }}">
 			<span class="pull-right">
-				<button type="button" class="btn btn-default btn-xs"
+				<button type="button" class="btn btn-success btn-xs"
 				        ng-if="doc.status == 'new'"
 				        ng-click="extend.markAsRead(doc)"><i class="icon-ok"></i> {{ i18n('m.rbs.admin.admin.notification_mark_as_read', ['ucf']) }}</button>
 				<button type="button" class="btn btn-danger btn-xs"
