@@ -1,0 +1,49 @@
+<div data-ng-controller="Rbs_Admin_TasksController">
+
+	<div class="page-header">
+		<h2>{{ i18n('m.rbs.admin.admin.tasks', ['ucf']) }}</h2>
+	</div>
+
+	<rbs-document-list data-dlid="RbsAdminTasksList"
+	                   extend="dlExt"
+	                   collection="tasks"
+	                   modification-date="false"
+	                   on-reload="reloadTasks"
+	                   actions="executeTask rejectTask">
+
+		<rbs-column name="label" label="{{ i18nAttr('m.rbs.admin.admin.task_designation', ['ucf']) }}">
+			(= doc.label =)
+		</rbs-column>
+		<rbs-column name="document" label="{{ i18nAttr('m.rbs.admin.admin.concerned_document', ['ucf']) }}">
+			<a href="javascript:;" ng-href="(= doc.document | rbsURL =)"><span ng-bind="doc.document.label"></span> <i class="icon-circle-arrow-right"></i></a>
+		</rbs-column>
+
+		<rbs-column name="action" label="{{ i18nAttr('m.rbs.admin.admin.task_action', ['ucf']) }}">
+			<button class="btn btn-sm btn-danger pull-right" type="button"
+			        ng-click="extend.rejectTask(doc)"
+			        ng-disabled="doc.loading">
+				<i ng-class="{true:'icon-spin icon-spinner', false:'icon-ban-circle'}[doc.loading == true]"></i>
+				{{ i18n('m.rbs.admin.admin.reject', ['ucf']) }}
+			</button>
+			<button class="btn btn-sm btn-success" type="button"
+			        ng-click="extend.executeTask(doc)"
+			        ng-disabled="doc.loading">
+				<i ng-class="{true:'icon-spin icon-spinner', false:'icon-play'}[doc.loading == true]"></i>
+				{{ i18n('m.rbs.admin.admin.accept', ['ucf']) }}
+			</button>
+			<button ng-if="doc.actions[1].rel=='directPublication'"
+			        class="btn btn-sm btn-warning" type="button"
+			        ng-click="extend.executeTask(doc, 'directPublication')"
+			        ng-disabled="doc.loading">
+				<i ng-class="{true:'icon-spin icon-spinner', false:'icon-fast-forward'}[doc.loading == true]"></i>
+				{{ i18n('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}
+			</button>
+		</rbs-column>
+		<rbs-column name="creationDate" label="{{ i18nAttr('m.rbs.admin.admin.date', ['ucf']) }}" format="date"></rbs-column>
+
+		<rbs-action name="executeTask" selection="+" icon="icon-play" label="{{ i18nAttr('m.rbs.admin.admin.accept', ['ucf']) }}"></rbs-action>
+		<rbs-action name="rejectTask" selection="1" icon="icon-ban-circle" label="{{ i18nAttr('m.rbs.admin.admin.reject', ['ucf']) }}"></rbs-action>
+
+	</rbs-document-list>
+
+</div>

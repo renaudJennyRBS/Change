@@ -1,0 +1,48 @@
+<li class="dropdown" ng-class="{'on': tasks.pagination.count > 0}" title="{{ i18nAttr('m.rbs.admin.admin.tasks', ['ucf']) }}">
+	<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+		<i class="icon-tasks"></i>
+		(= tasks.pagination.count | number =)
+		<span class="indicator-title">{{ i18nAttr('m.rbs.admin.admin.tasks', ['ucf']) }}</span>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="dropdown-header" ng-if="tasks.resources.length > 0">{{ i18n('m.rbs.admin.admin.tasks' , ['ucf']) }}</li>
+		<li class="dropdown-header" ng-if="! tasks.resources.length">{{ i18n('m.rbs.admin.admin.no_tasks' , ['ucf']) }}</li>
+
+		<li ng-repeat="t in tasks.resources">
+			<span class="item">
+				<div>
+					<small><time display="both" datetime="(= t.modificationDate =)"></time></small>
+					<br/><strong>(= t.label =)</strong>
+					<br/><a href="javascript:;" ng-href="(= t.document | rbsURL =)">(= t.document.label =)  ((= t.document.id =)) <i class="icon-circle-arrow-right"></i></a>
+				</div>
+				<div>
+					<button class="btn btn-xs btn-danger pull-right" type="button"
+					        ng-if="t.taskCode != 'requestValidation'"
+					        ng-click="rejectTask($event, t)"
+					        ng-disabled="t.loading"
+					        title="{{ i18nAttr('m.rbs.admin.admin.reject', ['ucf']) }}">
+						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-ban-circle'}[t.loading == true]"></i>
+					</button>
+					<button class="btn btn-xs btn-success" type="button"
+					        ng-click="executeTask($event, t)"
+					        ng-disabled="t.loading"
+					        title="{{ i18nAttr('m.rbs.admin.admin.accept', ['ucf']) }}">
+						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-play'}[t.loading == true]"></i>
+					</button>
+					<button ng-if="t.actions[1].rel=='directPublication'"
+					        class="btn btn-xs btn-warning" type="button"
+					        ng-click="executeTask($event, t, 'directPublication')"
+					        ng-disabled="t.loading"
+							title="{{ i18nAttr('m.rbs.admin.admin.run_all_steps_button', ['ucf']) }}">
+						<i ng-class="{true:'icon-spin icon-spinner', false:'icon-fast-forward'}[t.loading == true]"></i>
+					</button>
+				</div>
+			</span>
+		</li>
+
+		<li class="divider" ng-if="tasks.resources.length > 0"></li>
+		<li ng-if="tasks.resources.length > 0"><a href="tasks/">
+			{{ i18n('m.rbs.admin.admin.see_all_tasks', ['ucf','etc']) }}
+		</a></li>
+	</ul>
+</li>

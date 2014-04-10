@@ -195,7 +195,7 @@
 					description : action.description,
 					label       : action.label,
 					icon        : action.icon,
-					selection   : action.selection,
+					selection   : (action.selection && /\d+/.test(action.selection)) ? parseInt(action.selection, 10) : action.selection,
 					loading     : action.loading === 'true',
 
 					execute : ['$extend', '$docs', '$embedDialog', '$target', function ($extend, $docs, $embedDialog, $target) {
@@ -824,10 +824,12 @@
 					// Locally defined actions.
 					var	actionList = elm.is('[actions]') ? attrs.actions : 'default';
 					angular.forEach(localActions, function (action) {
-						if (actionList.length) {
-							actionList += ' ';
+						if (actionList !== action.name && actionList.indexOf(action.name+' ') === -1 && actionList.indexOf(' '+action.name) === -1) {
+							if (actionList.length) {
+								actionList += ' ';
+							}
+							actionList += action.name;
 						}
-						actionList +=  action.name;
 					});
 
 
@@ -1294,7 +1296,7 @@
 						if (scope.externalCollection) {
 							setExternalCollection(scope.externalCollection);
 						}
-						scope.$watch('externalCollection', function (collection, oldCollection) {
+						scope.$watchCollection('externalCollection', function (collection, oldCollection) {
 							if (collection !== oldCollection || ! scope.collection || ! scope.collection.length) {
 								setExternalCollection (collection);
 							}
@@ -1334,7 +1336,7 @@
 								scope.busy = true;
 								var p = scope.onReload(params);
 								if (p && angular.isFunction(p.then)) {
-									p.then(stopLoading);
+									p.then(function() { stopLoading(); });
 								} else {
 									stopLoading();
 								}

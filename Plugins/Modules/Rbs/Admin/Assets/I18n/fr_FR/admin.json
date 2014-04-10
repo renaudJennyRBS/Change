@@ -51,7 +51,7 @@
 		"message":"afficher"
 	},
 	"clipboard_empty":{
-		"message":"Le Presse-papier est vide"
+		"message":"Aucun élément dans le Presse-papier"
 	},
 	"selected_element":{
 		"message":"l\\'élément sélectionné"
@@ -1048,33 +1048,6 @@
 	"dashboard":{
 		"message":"tableau de bord"
 	},
-	"dashboard_notifications":{
-		"message":"notifications"
-	},
-	"dashboard_notification_new":{
-		"message":"nouvelles"
-	},
-	"dashboard_notification_read":{
-		"message":"lues"
-	},
-	"dashboard_task_tasks": {
-		"message":"tâches"
-	},
-	"dashboard_task_tasks_in_progress":{
-		"message":"tâches en cours"
-	},
-	"dashboard_task_end":{
-		"message":"terminé"
-	},
-	"dashboard_task_to_execute":{
-		"message":"à exécuter"
-	},
-	"dashboard_settings":{
-		"message":"configuration du tableau de bord"
-	},
-	"dashboard_settings_tags":{
-		"message":"étiquettes"
-	},
 	"main_menu":{
 		"message":"menu principal"
 	},
@@ -1415,5 +1388,50 @@
 	},
 	"wysiwyg_enter_image_height":{
 		"message":"hauteur de l'image (laisser vide pour ne pas choisir)"
+	},
+	"tasks":{
+		"message":"tâches"
+	},
+	"no_tasks":{
+		"message":"aucune tâche"
+	},
+	"see_all_tasks":{
+		"message":"voir toutes les tâches en attente"
+	},
+	"notifications":{
+		"message":"notifications"
+	},
+	"no_notifications":{
+		"message":"aucune notification"
+	},
+	"see_all_notifications":{
+		"message":"voir toutes les notifications"
+	},
+	"notification_view_all":{
+		"message":"toutes"
+	},
+	"notification_view_unread":{
+		"message":"non lues"
+	},
+	"notification_mark_as_read":{
+		"message":"marquer comme lue"
+	},
+	"notification_delete":{
+		"message":"supprimer"
+	},
+	"notification_message":{
+		"message":"message"
+	},
+	"date":{
+		"message":"date"
+	},
+	"please_indicate_reject_reason":{
+		"message":"Veuillez indiquer le motif du refus :"
+	},
+	"task_designation":{
+		"message":"tâche à effectuer"
+	},
+	"task_action":{
+		"message":"action"
 	}
 }

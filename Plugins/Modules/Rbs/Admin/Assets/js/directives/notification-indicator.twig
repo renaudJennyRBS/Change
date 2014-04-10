@@ -1,0 +1,41 @@
+<li class="dropdown" ng-class="{'on': notifications.pagination.count > 0}" title="{{ i18nAttr('m.rbs.admin.admin.notifications', ['ucf']) }}">
+	<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+		<i ng-class="{ true: 'icon-bell-alt', false: 'icon-bell' }[notifications.pagination.count > 0]"></i>
+		(= notifications.pagination.count | number =)
+		<span class="indicator-title">{{ i18nAttr('m.rbs.admin.admin.notifications', ['ucf']) }}</span>
+	</a>
+	<ul class="dropdown-menu">
+		<li class="dropdown-header" ng-if="notifications.resources.length > 0">{{ i18n('m.rbs.admin.admin.notifications' , ['ucf']) }}</li>
+		<li class="dropdown-header" ng-if="! notifications.resources.length">{{ i18n('m.rbs.admin.admin.no_notifications' , ['ucf']) }}</li>
+
+		<li ng-repeat="n in notifications.resources">
+			<span class="item">
+				<div>
+					<small><time display="both" datetime="(= n.creationDate =)"></time></small><br/>
+					<span title="(= n.message =)">(= n.message | rbsEllipsis:50:'center' =)</span>
+				</div>
+				<div>
+					<button ng-if="n.status!='deleted'"
+					        type="button" class="btn btn-xs btn-danger pull-right"
+					        ng-disabled="n.status=='loading'"
+					        ng-click="archive(n, $event)"
+					        title="{{ i18nAttr('m.rbs.admin.admin.notification_delete', ['ucf']) }}">
+						<i ng-class="{'loading':'icon-spin icon-spinner', 'new':'icon-trash'}[n.status]"></i>
+					</button>
+					<button ng-if="n.status=='new' || n.status=='loading'"
+					        type="button" class="btn btn-xs btn-success"
+					        ng-disabled="n.status=='loading'"
+					        ng-click="markAsRead(n, $event)"
+					        title="{{ i18nAttr('m.rbs.admin.admin.notification_mark_as_read', ['ucf']) }}">
+						<i ng-class="{'loading':'icon-spin icon-spinner', 'new':'icon-ok'}[n.status]"></i>
+					</button>
+				</div>
+			</span>
+		</li>
+
+		<li class="divider" ng-if="notifications.resources.length > 0"></li>
+		<li ng-if="notifications.resources.length > 0"><a href="notifications/">
+			{{ i18n('m.rbs.admin.admin.see_all_notifications', ['ucf','etc']) }}
+		</a></li>
+	</ul>
+</li>
