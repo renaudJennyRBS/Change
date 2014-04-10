@@ -58,6 +58,24 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getFieldsLayout()
+	{
+		$layout = $this->getFieldsLayoutData();
+		if (!is_array($layout) || !count($layout))
+		{
+			$layout = array();
+			foreach ($this->getFields() as $field)
+			{
+				$code = $field->getCode();
+				$layout[] = array($code === 'countryCode' ? 'country' : $code);
+			}
+		}
+		return $layout;
+	}
+
+	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
@@ -69,7 +87,7 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 			/** @var $addressFields AddressFields */
 			$addressFields = $event->getDocument();
 			$restResult->setProperty('editorDefinition', $this->buildEditorDefinition($addressFields));
-			$restResult->setProperty('fieldsLayout', $this->getFieldsLayoutData());
+			$restResult->setProperty('fieldsLayout', $this->getFieldsLayout());
 		}
 	}
 

@@ -37,7 +37,7 @@ class GetAddresses extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$fieldValues = $address->toArray();
 			$addressInfos = array(
 				'fieldValues' => $address->toArray(),
-				'lines' => $geoManager->getFormattedAddress($address)
+				'lines' => $address->getLines()
 			);
 			if (method_exists($address, 'getName'))
 			{

@@ -141,9 +141,13 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$addressFields = null;
 		$fields = $address->getFields();
+		if (!is_array($fields) || !count($fields))
+		{
+			return;
+		}
 
+		$addressFields = null;
 		if ($address instanceof \Rbs\Geo\Documents\Address)
 		{
 			$addressFields = $address->getAddressFields();
@@ -153,35 +157,23 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			$addressFields = $documentManager->getDocumentInstance($fields['__addressFieldsId'], 'Rbs_Geo_AddressFields');
 		}
 
-		$layout = null;
-		if ($addressFields instanceof  \Rbs\Geo\Documents\AddressFields)
+		if ($addressFields instanceof \Rbs\Geo\Documents\AddressFields)
 		{
-			$layout = $addressFields->getFieldsLayoutData();
-		}
-
-		if (count($fields) == 0 || !is_array($layout) || count($layout) == 0)
-		{
-			if ($address instanceof \Rbs\Geo\Address\BaseAddress)
+			if (!isset($fields['country']) && isset($fields[AddressInterface::COUNTRY_CODE_FIELD_NAME]))
 			{
-				$event->setParam('lines', $address->getLines());
+				$countryCode = $fields[AddressInterface::COUNTRY_CODE_FIELD_NAME];
+				$dqb = $documentManager->getNewQuery('Rbs_Geo_Country');
+				$dqb->andPredicates($dqb->eq('code', $countryCode));
+				$country = $dqb->getFirstDocument();
+				if ($country instanceof \Rbs\Geo\Documents\Country)
+				{
+					$i18n = $event->getApplicationServices()->getI18nManager();
+					$fields['country'] = $i18n->trans($country->getI18nTitleKey());
+				}
 			}
-			return;
-		}
 
-		if (!isset($fields['country']) && isset($fields[AddressInterface::COUNTRY_CODE_FIELD_NAME]))
-		{
-			$countryCode = $fields[AddressInterface::COUNTRY_CODE_FIELD_NAME];
-			$dqb = $documentManager->getNewQuery('Rbs_Geo_Country');
-			$dqb->andPredicates($dqb->eq('code', $countryCode));
-			$country = $dqb->getFirstDocument();
-			if ($country instanceof \Rbs\Geo\Documents\Country)
-			{
-				$i18n = $event->getApplicationServices()->getI18nManager();
-				$fields['country'] =  $i18n->trans($country->getI18nTitleKey());
-			}
+			$event->setParam('lines', $this->formatFieldsByLayout($fields, $addressFields->getFieldsLayout()));
 		}
-
-		$event->setParam('lines', $this->formatFieldsByLayout($fields, $layout));
 	}
 
 	/**

@@ -23,17 +23,13 @@ class ManageAddresses extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('accessorId');
-		$parameters->addParameterMeta('zoneCode');
+		$parameters->addParameterMeta('authenticated');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
 		$user = $event->getAuthenticationManager()->getCurrentUser();
-		if ($user->authenticated())
-		{
-			$parameters->setParameterValue('accessorId', $user->getId());
-		}
+		$parameters->setParameterValue('authenticated', $user->authenticated());
 		return $parameters;
 	}
 
@@ -46,9 +42,7 @@ class ManageAddresses extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$user = $documentManager->getDocumentInstance($parameters->getParameter('accessorId'));
-		if ($user instanceof \Rbs\User\Documents\User)
+		if ($parameters->getParameter('authenticated'))
 		{
 			return 'manage-addresses-list.twig';
 		}
