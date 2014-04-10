@@ -122,7 +122,7 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertCount(0, $result);
 
-		$reservations = $this->commerceServices->getStockManager()->getReservations($targetIdentifier);
+		$reservations = $this->commerceServices->getStockManager()->getReservationsByTarget($targetIdentifier);
 		$this->assertCount(1, $reservations);
 		/* @var $reservation \Rbs\Stock\Interfaces\Reservation */
 		$reservation = $reservations[0];

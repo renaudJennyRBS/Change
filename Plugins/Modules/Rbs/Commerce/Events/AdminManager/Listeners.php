@@ -29,6 +29,7 @@ class Listeners implements ListenerAggregateInterface
 		{
 			(new \Rbs\Catalog\Admin\GetModelTwigAttributes())->execute($event);
 			(new \Rbs\Price\Admin\GetModelTwigAttributes())->execute($event);
+			(new \Rbs\Stock\Admin\GetModelTwigAttributes())->execute($event);
 
 		};
 		//Priority 1 (default value) to be sure to get the default attributes

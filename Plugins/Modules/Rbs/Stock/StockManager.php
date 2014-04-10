@@ -214,36 +214,105 @@ class StockManager
 	}
 
 	/**
-	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @param integer|null $limit
+	 * @param integer|null $offset
+	 * @param string|null $orderCol
+	 * @param string|null $orderSort
 	 * @return array
 	 */
-	public function getInventoryMovementsBySku($sku, $warehouse = null)
+	public function getInventoryMovementsBySku($sku, $warehouse = null, $limit= null, $offset = null, $orderCol = null, $orderSort = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getMovementsForSku');
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
+		$qb->from($fb->table('rbs_stock_dat_mvt'));
+		$logicAnd = $fb->logicAnd(
+			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+		);
+		if ($warehouse !== null)
+		{
+			$logicAnd->addArgument($fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId')));
+		}
+		$qb->where($logicAnd);
+
+		if ($orderSort !== null && $orderCol !== null)
+		{
+			if ($orderSort === 'desc')
+			{
+				$qb->orderDesc($fb->column($orderCol));
+			}
+			else
+			{
+				$qb->orderAsc($fb->column($orderCol));
+			}
+		}
+
+		$query = $qb->query();
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		if ($warehouse !== null)
+		{
+			$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+			$query->bindParameter('warehouseId', $warehouseId);
+		}
+
+		if ($limit !== null && $offset !== null)
+		{
+			$query->setMaxResults($limit);
+			$query->setStartIndex($offset);
+		}
+
+		return $query->getResults(
+			$query->getRowsConverter()->addStrCol('target')->addIntCol('movement', 'warehouse_id')->addDtCol('date')
+		);
+	}
+
+	/**
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @return integer
+	 */
+	public function countInventoryMovementsBySku($sku, $warehouse = null)
+	{
+		$key = 'stock::countInventoryMovementsBySku';
+		if ($warehouse !== null)
+		{
+			$key = 'stock::countInventoryMovementsBySkuAndWarehouse';
+		}
+
+		$qb = $this->getDbProvider()->getNewQueryBuilder($key);
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
+			$qb->select($fb->alias($fb->func('count', '*'), 'rowCount'));
 			$qb->from($fb->table('rbs_stock_dat_mvt'));
 			$logicAnd = $fb->logicAnd(
 				$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
 			);
-			if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+			if ($warehouse !== null)
 			{
 				$logicAnd->addArgument($fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId')));
 			}
 			$qb->where($logicAnd);
 		}
 		$query = $qb->query();
-		$query->bindParameter('skuId', $sku->getId());
-		if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		if ($warehouse !== null)
 		{
-			$query->bindParameter('warehouseId', $warehouse->getId());
+			$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+			$query->bindParameter('warehouseId', $warehouseId);
 		}
-		return $query->getResults(
-			$query->getRowsConverter()->addStrCol('target')->addIntCol('movement', 'warehouse_id')->addDtCol('date')
-		);
+
+		$count = $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+
+		return $count;
 	}
 
 	/**
@@ -462,7 +531,7 @@ class StockManager
 			$transactionManager->begin();
 
 			/* @var $currentReservations \Rbs\Stock\Std\Reservation[] */
-			$currentReservations = $this->getReservations($targetIdentifier);
+			$currentReservations = $this->getReservationsByTarget($targetIdentifier);
 
 			foreach ($reservations as $reservation)
 			{
@@ -670,7 +739,7 @@ class StockManager
 	 * @param string $targetIdentifier
 	 * @return \Rbs\Stock\Interfaces\Reservation[]
 	 */
-	public function getReservations($targetIdentifier)
+	public function getReservationsByTarget($targetIdentifier)
 	{
 		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservations');
 		if (!$qb->isCached())
@@ -873,6 +942,107 @@ class StockManager
 		}
 	}
 
+	/**
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Store\Documents\WebStore|integer $store
+	 * @param integer|null $limit
+	 * @param integer|null $offset
+	 * @param string|null $orderCol
+	 * @param string|null $orderSort
+	 * @return array
+	 */
+	public function getReservationsBySku($sku, $store = null, $limit= null, $offset = null, $orderCol = null, $orderSort = null)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->column('reservation'), $fb->column('store_id'), $fb->column('date'), $fb->column('target'),
+			$fb->column('confirmed')); //
+		$qb->from($fb->table('rbs_stock_dat_res'));
+		$logicAnd = $fb->logicAnd(
+			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+		);
+		if ($store !== null)
+		{
+			$logicAnd->addArgument($fb->eq($fb->column('store_id'), $fb->integerParameter('storeId')));
+		}
+		$qb->where($logicAnd);
+
+		if ($orderSort !== null && $orderCol !== null)
+		{
+			if ($orderSort === 'desc')
+			{
+				$qb->orderDesc($fb->column($orderCol));
+			}
+			else
+			{
+				$qb->orderAsc($fb->column($orderCol));
+			}
+		}
+
+		$query = $qb->query();
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		if ($store !== null)
+		{
+			$storeId = $store instanceof \Rbs\Store\Documents\WebStore ? $store->getId() : intval($store);
+			$query->bindParameter('warehouseId', $storeId);
+		}
+
+		if ($limit !== null && $offset !== null)
+		{
+			$query->setMaxResults($limit);
+			$query->setStartIndex($offset);
+		}
+
+		return $queryResult = $query->getResults();
+	}
+
+	/**
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Store\Documents\WebStore|integer $store
+	 * @return integer
+	 */
+	public function countReservationsBySku($sku, $store = null)
+	{
+		$key = 'stock::countReservationsBySku';
+		if ($store !== null)
+		{
+			$key = 'stock::countReservationsBySkuAndStore';
+		}
+
+		$qb = $this->getDbProvider()->getNewQueryBuilder($key);
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->alias($fb->func('count', '*'), 'rowCount'));
+			$qb->from($fb->table('rbs_stock_dat_res'));
+			$logicAnd = $fb->logicAnd(
+				$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+			);
+			if ($store !== null)
+			{
+				$logicAnd->addArgument($fb->eq($fb->column('store_id'), $fb->integerParameter('storeId')));
+			}
+			$qb->where($logicAnd);
+		}
+		$query = $qb->query();
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		if ($store !== null)
+		{
+			$storeId = $store instanceof \Rbs\Store\Documents\WebStore ? $store->getId() : intval($store);
+			$query->bindParameter('warehouseId', $storeId);
+		}
+
+		$count = $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+
+		return $count;
+	}
+
 	protected $skuIds = array();
 
 	/**
@@ -903,5 +1073,21 @@ class StockManager
 			$this->skuIds[$code] =  $sku->getId();
 		}
 		return $sku;
+	}
+
+	/**
+	 * @param string $targetIdentifier
+	 * @return integer|null
+	 */
+	public function getTargetIdFromTargetIdentifier($targetIdentifier)
+	{
+		$split = explode(':', $targetIdentifier);
+
+		if (count($split) == 2 && is_numeric($split[1]))
+		{
+			return $split[1];
+		}
+
+		return null;
 	}
 }

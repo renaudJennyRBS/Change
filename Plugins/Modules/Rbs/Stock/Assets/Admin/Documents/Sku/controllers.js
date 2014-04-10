@@ -86,4 +86,73 @@
 			}
 		};
 	}
+
+
+	/**
+	 * Controller for list of movement.
+	 *
+	 * @param $scope
+	 * @param $q
+	 * @param $http
+	 * @param REST
+	 * @param $routeParams
+	 * @param Utils
+	 * @constructor
+	 */
+	function MovementListController($scope, $q, $http, REST, $routeParams, Utils) {
+
+		$scope.movements = {};
+
+		REST.resource('Rbs_Stock_Sku', $routeParams.id, $routeParams.LCID).then(function (doc) {
+			$scope.document = doc;
+		});
+
+		$scope.loadMovements = function (params) {
+			params.skuId = $routeParams.id;
+			var url = Utils.makeUrl('rbs/stock/movements', params);
+			$http.get(REST.getBaseUrl(url)).success(function(data) {
+				$scope.movements = data;
+			});
+		};
+
+		$scope.loadMovements({});
+
+	}
+
+	MovementListController.$inject = ['$scope', '$q', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
+	app.controller('Rbs_Stock_Movement_ListController', MovementListController);
+
+	/**
+	 * Controller for list of movement.
+	 *
+	 * @param $scope
+	 * @param $q
+	 * @param $http
+	 * @param REST
+	 * @param $routeParams
+	 * @param Utils
+	 * @constructor
+	 */
+	function ReservationListController($scope, $q, $http, REST, $routeParams, Utils) {
+
+		$scope.reservations = {};
+
+		REST.resource('Rbs_Stock_Sku', $routeParams.id, $routeParams.LCID).then(function (doc) {
+			$scope.document = doc;
+		});
+
+		$scope.loadReservations = function (params) {
+			params.skuId = $routeParams.id;
+			var url = Utils.makeUrl('rbs/stock/reservations', params);
+			$http.get(REST.getBaseUrl(url)).success(function(data) {
+				$scope.reservations = data;
+			});
+		};
+
+		$scope.loadReservations({});
+	}
+
+	ReservationListController.$inject = ['$scope', '$q', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
+	app.controller('Rbs_Stock_Reservation_ListController', ReservationListController);
+
 })();

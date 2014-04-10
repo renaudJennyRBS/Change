@@ -214,6 +214,20 @@ class Listeners implements ListenerAggregateInterface
 					$event->setResult($result);
 				}
 			}
+			else if ($relativePath === 'rbs/stock/movements')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Stock\Http\Rest\Actions\GetMovements())->execute($event);
+				});
+			}
+			else if ($relativePath === 'rbs/stock/reservations')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Stock\Http\Rest\Actions\GetReservations())->execute($event);
+				});
+			}
 		}
 	}
 }
