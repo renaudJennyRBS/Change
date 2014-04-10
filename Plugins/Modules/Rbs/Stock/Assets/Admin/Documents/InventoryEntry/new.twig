@@ -1,0 +1,40 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Stock_InventoryEntry">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Stock_InventoryEntry'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-stock-inventory-entry-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-picker property="sku" label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'sku'), ['ucf']) }}"
+					data-ng-disabled="document.sku"
+					required="true"
+					accepted-model="Rbs_Stock_Sku"
+					selector-title="{{ i18nAttr('m.rbs.stock.admin.inventoryentry_sku_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field-integer
+					property="level"
+					label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'level'), ['ucf']) }}"
+					max-length="9"
+					input-class="input-mini">
+				</rbs-field-integer>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

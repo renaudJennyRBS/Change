@@ -91,5 +91,57 @@
 	},
 	"warehouse_default_label":{
 		"message":"stock principal"
+	},
+	"unlock_inventory_value":{
+		"message":"déverrouiller la modification de la valeur d'inventaire"
+	},
+	"unlock_inventory_warning":{
+		"message":"attention pour modifier le niveau de stock vous devez utiliser les mouvements. Si vous modifier directement ce niveau, cela peut engendrer une incohérence avec les mouvements et les réservation en cours."
+	},
+	"sku_movements":{
+		"message":"mouvements"
+	},
+	"sku_reservations":{
+		"message":"réservations"
+	},
+	"see_movement":{
+		"message":"consulter les <strong>mouvements</strong>"
+	},
+	"see_reservation":{
+		"message":"consulter les <strong>réservations</strong>"
+	},
+	"movement_value":{
+		"message":"valeur"
+	},
+	"movement_warehouse":{
+		"message":"entrepot"
+	},
+	"movement_date":{
+		"message":"date"
+	},
+	"movement_target":{
+		"message":"initiateur"
+	},
+	"reservation_value":{
+		"message":"valeur"
+	},
+	"reservation_store":{
+		"message":"boutique"
+	},
+	"reservation_date":{
+		"message":"date"
+	},
+	"reservation_target":{
+		"message":"initiateur"
+	},
+	"reservation_confirmed":{
+		"message":"confimée"
+	},
+	"back_to_sku":{
+		"message":"retourner au SKU"
+	},
+	"concerned_sku":{
+		"message":"SKU concerné"
 	}
+
 }
