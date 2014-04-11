@@ -14,14 +14,14 @@ use Change\Http\Rest\Result\Link;
 use Zend\Http\Response;
 
 /**
- * @name \Rbs\Order\Http\Rest\ShipmentResult
+ * @name \Rbs\Order\Http\Rest\TransactionResult
  */
-class ShipmentResult
+class TransactionResult
 {
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function orderShipmentCollection(\Change\Http\Event $event)
+	public function orderTransactionCollection(\Change\Http\Event $event)
 	{
 		$request = $event->getRequest();
 		$startIndex = intval($request->getQuery('offset', 0));
@@ -32,7 +32,7 @@ class ShipmentResult
 		$desc = ($request->getQuery('desc') == "true");
 		if (\Change\Stdlib\String::isEmpty($sort))
 		{
-			$sort = 'code';
+			$sort = 'processingDate';
 		}
 
 		$urlManager = $event->getUrlManager();
@@ -42,8 +42,8 @@ class ShipmentResult
 		$result->setOffset($startIndex);
 		$result->setLimit($maxResults);
 
-		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
-		$query->andPredicates($query->eq('orderId', $orderId));
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Payment_Transaction');
+		$query->andPredicates($query->eq('targetIdentifier', 'Order:' . $orderId));
 		$query->addOrder($sort, !$desc);
 		$result->setSort($sort);
 		$result->setDesc($desc);
@@ -56,7 +56,7 @@ class ShipmentResult
 			$collection = $query->getDocuments($startIndex, $maxResults);
 			foreach ($collection as $document)
 			{
-				/* @var $document \Rbs\Order\Documents\Shipment */
+				/* @var $document \Rbs\Payment\Documents\Transaction */
 				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));
 			}
 		}

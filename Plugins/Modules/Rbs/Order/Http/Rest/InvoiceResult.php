@@ -14,14 +14,14 @@ use Change\Http\Rest\Result\Link;
 use Zend\Http\Response;
 
 /**
- * @name \Rbs\Order\Http\Rest\ShipmentResult
+ * @name \Rbs\Order\Http\Rest\InvoiceResult
  */
-class ShipmentResult
+class InvoiceResult
 {
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function orderShipmentCollection(\Change\Http\Event $event)
+	public function orderInvoiceCollection(\Change\Http\Event $event)
 	{
 		$request = $event->getRequest();
 		$startIndex = intval($request->getQuery('offset', 0));
@@ -42,8 +42,9 @@ class ShipmentResult
 		$result->setOffset($startIndex);
 		$result->setLimit($maxResults);
 
-		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
-		$query->andPredicates($query->eq('orderId', $orderId));
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$query = $documentManager->getNewQuery('Rbs_Order_Invoice');
+		$query->andPredicates($query->eq('order', $documentManager->getDocumentInstance($orderId)));
 		$query->addOrder($sort, !$desc);
 		$result->setSort($sort);
 		$result->setDesc($desc);
@@ -56,7 +57,7 @@ class ShipmentResult
 			$collection = $query->getDocuments($startIndex, $maxResults);
 			foreach ($collection as $document)
 			{
-				/* @var $document \Rbs\Order\Documents\Shipment */
+				/* @var $document \Rbs\Order\Documents\Invoice */
 				$result->addResource(new DocumentLink($urlManager, $document, DocumentLink::MODE_PROPERTY, $extraColumn));
 			}
 		}

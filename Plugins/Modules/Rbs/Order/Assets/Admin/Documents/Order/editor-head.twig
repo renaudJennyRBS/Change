@@ -38,14 +38,18 @@
 				</rbs-field-picker>
 				<rbs-field data-ng-if="!isContentEditable()"
 					label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}">
-					<a data-ng-if="owner.id" href="javascript:;" data-ng-href="(= owner|rbsURL =)"
-						class="form-control-static">(= owner.label =)</a>
-					<span data-ng-if="!owner.id">x</span>
+					<p data-ng-if="!isContentEditable()" class="form-control-static">
+						<a data-ng-if="owner.id" href="javascript:;" data-ng-href="(= owner|rbsURL =)">(= owner.label =)</a>
+						<em data-ng-if="!owner.id">{{ i18nAttr('m.rbs.order.admin.owner_none', ['ucf']) }}</em>
+					</p>
 				</rbs-field>
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'email'), ['ucf']) }}">
 					<input data-ng-if="isContentEditable()" type="text" class="form-control" data-ng-model="document.email" />
-					<span data-ng-if="!isContentEditable()" class="form-control-static">(= document.email || 'x' =)</span>
+					<p data-ng-if="!isContentEditable()" class="form-control-static">
+						<span data-ng-if="document.email">(= document.email =)</span>
+						<em data-ng-if="!document.email">{{ i18nAttr('m.rbs.order.admin.email_none', ['ucf']) }}</em>
+					</p>
 				</rbs-field>
 			</div>
 		</div>

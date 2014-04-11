@@ -219,12 +219,6 @@
 					}
 				}, true);
 
-				scope.$watch('data.newLineProducts.length', function(value) {
-					if (value) {
-						scope.orderContext.showNewLineUI = true;
-					}
-				});
-
 				scope.$watch('selection.all', function(allSelected) {
 					for (var i = 0; i < scope.selection.lines.length; i++) {
 						scope.selection.lines[i] = allSelected;

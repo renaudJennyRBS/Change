@@ -129,5 +129,13 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 				$restResult->setProperty('label', $i18nManager->trans('m.rbs.order.admin.code_waiting', ['ucf']));
 			}
 		}
+		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		{
+			$linkResult = $restResult;
+			if (!$linkResult->getProperty('code'))
+			{
+				$linkResult->setProperty('code', $linkResult->getProperty('label'));
+			}
+		}
 	}
 }

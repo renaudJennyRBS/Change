@@ -1,17 +1,19 @@
 <div class="row">
 	<div data-rbs-aside-column="">
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.order.admin.invoice_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Order_Invoice" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter" model="Rbs_Order_Invoice"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href data-ng-href="(= 'Rbs_Order_Invoice' | rbsURL:'new' =)">
-				{{ i18n('m.rbs.order.admin.invoice_create', ['ucf']) }}
-			</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsOrderInvoice"

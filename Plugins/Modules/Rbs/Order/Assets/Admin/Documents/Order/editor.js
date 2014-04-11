@@ -8,18 +8,91 @@
 (function() {
 	"use strict";
 
-	function rbsOrderOrderEditor(REST, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout) {
+	function rbsDocumentEditorRbsOrderOrderNew(REST) {
 		return {
 			restrict: 'A',
-			templateUrl: 'Document/Rbs/Order/Order/editor.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
+			require: '^rbsDocumentEditorBase',
 
-			link: function(scope, element, attrs, editorCtrl) {
+			link: function(scope) {
+				scope.webStoreUpdated = function(webStoreId) {
+					if (!webStoreId) {
+						return;
+					}
+					REST.resource('Rbs_Store_WebStore', webStoreId).then(function(data) {
+						scope.document.context.pricesValueWithTax = data.pricesValueWithTax;
+						if (angular.isArray(data['billingAreas'])) {
+							if (data['billingAreas'].length == 1) {
+								scope.document.billingAreaId = data['billingAreas'][0].id;
+							}
+						}
+					});
+				};
+
+				scope.billingAreaUpdated = function(billingAreaId) {
+					if (!billingAreaId) {
+						return;
+					}
+					REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(data) {
+						scope.document.currencyCode = data.currencyCode;
+					});
+					REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id: billingAreaId}).then(function(data) {
+						var zones = [];
+						angular.forEach(data, function(tax) {
+							angular.forEach(tax.zones, function(zone) {
+								if (zones.indexOf(zone) == -1) {
+									zones.push(zone);
+								}
+							});
+						});
+						zones.sort();
+						scope.zones = zones;
+						if (zones.length == 1) {
+							scope.document.context.taxZone = zones[0];
+						}
+					});
+				};
+
+				scope.ownerUpdated = function(ownerId) {
+					if (angular.isObject(ownerId) && ownerId.hasOwnProperty('id')) {
+						ownerId = ownerId.id;
+					}
+
+					if (ownerId) {
+						REST.resource('Rbs_User_User', ownerId).then(function(data) {
+							if (!scope.document.email) {
+								scope.document.email = data.email;
+							}
+						});
+					}
+				};
+
+				scope.$watch('document.webStoreId', function(webStoreId) {
+					scope.webStoreUpdated(webStoreId);
+				}, true);
+
+				scope.$watch('document.billingAreaId', function(billingAreaId) {
+					scope.billingAreaUpdated(billingAreaId);
+				}, true);
+
+				scope.$watch('document.ownerId', function(ownerId) {
+					scope.ownerUpdated(ownerId);
+				}, true);
+			}
+		};
+	}
+
+	rbsDocumentEditorRbsOrderOrderNew.$inject = [ 'RbsChange.REST' ];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrderNew', rbsDocumentEditorRbsOrderOrderNew);
+
+	function rbsDocumentEditorRbsOrderOrderEdit(REST, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout) {
+		return {
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
+
+			link: function(scope) {
 				scope.orderContext = {
 					showAddressUI: false,
 					showShippingUI: false,
-					showShipmentUI: false,
 					showNewProductLineUI: false,
 					showNewCustomLineUI: false,
 					showCouponUI: false,
@@ -31,12 +104,10 @@
 					showNewCustomDiscountUI: false
 				};
 				scope.userAddresses = [];
-				scope.shipments = [];
 				scope.priceInfo = {
 					decimals: 2,
 					currencyCode: null,
 					taxInfo: [],
-					zones: [],
 					withTax: false
 				};
 				scope.amounts = {
@@ -51,7 +122,6 @@
 					currentContext.savedData('order', {
 						orderContext: scope.orderContext,
 						userAddresses: scope.userAddresses,
-						shipments: scope.shipments,
 						priceInfo: scope.priceInfo
 					});
 				};
@@ -61,7 +131,6 @@
 					var toRestoreData = currentContext.savedData('order');
 					scope.orderContext = toRestoreData.orderContext;
 					scope.userAddresses = toRestoreData.userAddresses;
-					scope.shipments = toRestoreData.shipments;
 					scope.priceInfo = toRestoreData.priceInfo;
 					contextRestored = true;
 				};
@@ -91,62 +160,11 @@
 				};
 
 				scope.onReady = function() {
-					scope.orderContext.showNewLineUI = scope.document.isNew();
-					var shipmentsLink = scope.document.getLink('shipments');
-					if (shipmentsLink) {
-						var successCallback = function(data) {
-							scope.shipments = data.resources;
-						};
-						var errorCallback = function(error) {
-							NotificationCenter.error(
-								i18n.trans('m.rbs.order.adminjs.order_invalid_query_order_shipments | ucf'),
-								ErrorFormatter.format(error)
-							);
-							console.error(error);
-						};
-						REST.call(shipmentsLink, { column: ['code', 'shippingModeCode', 'trackingCode', 'carrierStatus'] })
-							.then(successCallback, errorCallback);
-					}
-				};
-
-				scope.webStoreUpdated = function(webStoreId) {
-					if (!webStoreId) {
-						return;
-					}
-					REST.resource('Rbs_Store_WebStore', webStoreId).then(function(data) {
-						scope.document.context.pricesValueWithTax = data.pricesValueWithTax;
-						if (angular.isArray(data['billingAreas'])) {
-							if (data['billingAreas'].length == 1) {
-								scope.document.billingAreaId = data['billingAreas'][0].id;
-							}
-						}
-					});
-				};
-
-				scope.billingAreaUpdated = function(billingAreaId) {
-					if (!billingAreaId) {
-						return;
-					}
-					REST.resource('Rbs_Price_BillingArea', billingAreaId).then(function(data) {
-						scope.priceInfo.currencyCode = data.currencyCode;
-						scope.document.currencyCode = data.currencyCode;
-					});
-					REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id: billingAreaId}).then(function(data) {
+					console.log(angular.copy(scope.document.currencyCode));
+					scope.priceInfo.currencyCode = scope.document.currencyCode;
+					REST.call(REST.getBaseUrl('rbs/price/taxInfo'), {id: scope.document.billingAreaId}).then(function(data) {
 						scope.priceInfo.taxInfo = data;
 						scope.priceInfo.currentTaxInfo = taxInfosForZone(scope.priceInfo.taxZone, data);
-						var zones = [];
-						angular.forEach(scope.priceInfo.taxInfo, function(tax) {
-							angular.forEach(tax.zones, function(zone) {
-								if (zones.indexOf(zone) == -1) {
-									zones.push(zone);
-								}
-							});
-						});
-						zones.sort();
-						scope.priceInfo.zones = zones;
-						if (zones.length == 1) {
-							scope.document.context.taxZone = zones[0];
-						}
 					});
 				};
 
@@ -167,12 +185,8 @@
 							'and': [
 								{
 									'op': 'eq',
-									'lexp': {
-										'property': 'ownerId'
-									},
-									'rexp': {
-										'value': ownerId
-									}
+									'lexp': { 'property': 'ownerId' },
+									'rexp': { 'value': ownerId }
 								}
 							]
 						}
@@ -234,7 +248,7 @@
 						options.cssClass = 'danger';
 					}
 					Dialog.confirmEmbed(
-							jQuery($event.target).parents('rbs-form-button-bar').find('.confirmation-area'),
+							jQuery($event.target).parents('rbs-document-editor-button-bar').find('.confirmation-area'),
 							i18n.trans('m.rbs.order.adminjs.order_update_status_confirm_title_' + status + ' | ucf'),
 							i18n.trans('m.rbs.order.adminjs.order_update_status_confirm_message_' + status + ' | ucf'),
 							scope,
@@ -259,14 +273,6 @@
 					return currentTaxInfo;
 				}
 
-				scope.$watch('document.webStoreId', function(webStoreId) {
-					scope.webStoreUpdated(webStoreId);
-				}, true);
-
-				scope.$watch('document.billingAreaId', function(billingAreaId) {
-					scope.billingAreaUpdated(billingAreaId);
-				}, true);
-
 				// This watches for modifications in the user doc in order to fill the address list.
 				scope.$watch('document.ownerId', function(ownerId) {
 					scope.ownerUpdated(ownerId);
@@ -290,13 +296,11 @@
 					scope.$broadcast('shippingModesUpdated');
 					scope.orderContext.showShippingUI = true;
 				});
-
-				editorCtrl.init('Rbs_Order_Order');
 			}
 		};
 	}
 
-	rbsOrderOrderEditor.$inject = [ 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.NotificationCenter',
+	rbsDocumentEditorRbsOrderOrderEdit.$inject = [ 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.NotificationCenter',
 		'RbsChange.ErrorFormatter', 'RbsChange.Dialog', '$timeout' ];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrder', rbsOrderOrderEditor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderOrderEdit', rbsDocumentEditorRbsOrderOrderEdit);
 })();
