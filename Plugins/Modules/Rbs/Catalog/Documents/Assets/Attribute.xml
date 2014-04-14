@@ -5,7 +5,7 @@
 	<properties>
 		<property name="title" type="String" localized="true" has-correction="true"/>
 		<property name="description" type="RichText" localized="true" has-correction="true"/>
-		<property name="valueType" type="String" default-value="Code" required="true">
+		<property name="valueType" type="String" default-value="String" required="true">
 			<dboptions length="16" />
 			<constraint name="enum" fromList="Rbs_Catalog_Collection_AttributeValueTypes" />
 		</property>
