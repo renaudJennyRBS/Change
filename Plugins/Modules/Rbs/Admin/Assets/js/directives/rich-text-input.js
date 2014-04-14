@@ -197,7 +197,6 @@
 
 						ngModel.$render = function()
 						{
-							console.log("ngModel.$render: ", ngModel.$viewValue);
 							if (angular.isDefined(ngModel.$viewValue))
 							{
 								if (angular.isObject(ngModel.$viewValue)) {
@@ -216,6 +215,10 @@
 											initWysiwygEditor(ngModel.$viewValue.t);
 										}
 									}
+								}
+								else
+								{
+									scope.editorMode = 'Choose';
 								}
 							}
 						};

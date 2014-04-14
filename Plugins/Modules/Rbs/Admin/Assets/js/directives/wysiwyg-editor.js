@@ -5,7 +5,7 @@
 	var app = angular.module('RbsChange');
 
 
-	app.directive('rbsWysiwygEditor', ['$timeout', '$document', '$q', 'RbsChange.i18n', 'RbsChange.Utils', function ($timeout, $document, $q, i18n, Utils)
+	app.directive('rbsWysiwygEditor', ['$timeout', '$document', '$q', '$rootScope', 'RbsChange.i18n', 'RbsChange.Utils', function ($timeout, $document, $q, $rootScope, i18n, Utils)
 	{
 		var tools =
 		{
@@ -421,8 +421,8 @@
 				// Calls Angular's digest cycle if needed.
 				function commitNgModel ()
 				{
-					if (! scope.$$phase) {
-						scope.$digest();
+					if (! $rootScope.$$phase) {
+						scope.$apply();
 					}
 				}
 
