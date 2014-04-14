@@ -229,7 +229,6 @@
 
 						scope.chooseEditorMode = function (editorMode)
 						{
-							console.log("chooseEditorMode=", editorMode);
 							editorModeChosen = true;
 							ngModel.$setViewValue({e:editorMode,t:'',h:null});
 							ngModel.$render();
@@ -265,7 +264,6 @@
 							};
 
 							var valueKey = getContextValueKey();
-							console.log("startSelectionContext: valueKey=", valueKey);
 							Navigation.startSelectionContext(targetUrl, valueKey, navParams);
 						};
 
@@ -610,14 +608,12 @@
 
 						scope.$on('WYSIWYG.SelectImage', function (event, data)
 						{
-							console.log("select image!");
 							scope.beginSelectSessionWysiwyg('Rbs_Media_Image', data);
 						});
 
 
 						scope.$on('WYSIWYG.SelectLink', function (event, data)
 						{
-							console.log("select link!");
 							scope.beginSelectSessionWysiwyg('Rbs_Website_StaticPage', data);
 						});
 
@@ -675,7 +671,7 @@
 							scope.wysiwyg.content = value;
 							scope.$watch('wysiwyg.content', function (value)
 							{
-								ngModel.$setViewValue({e:'Html',t:value});
+								ngModel.$setViewValue({e:'Html',t:value,h:null});
 							});
 							wysiwygInitialized = true;
 
