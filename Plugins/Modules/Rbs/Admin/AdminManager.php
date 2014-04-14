@@ -704,7 +704,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($generate)
 			{
-				//check if the file already exist
+				// Check if the file already exist.
 				$docPath = implode(DIRECTORY_SEPARATOR,
 					[$module->getAbsolutePath(), 'Assets', 'Admin', 'Documents', $model->getShortName(), $view . '.twig']
 				);
@@ -717,19 +717,28 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 				$excludedProperties = null;
 				if ($view === 'new')
 				{
-					//refLCID selector will automatically added in the template
-					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID', 'publicationSections',
-						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+					// refLCID selector will automatically added in the template.
+					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus',
+						'publicationSections', 'startPublication', 'endPublication', // Already present in publication panel.
+						'active', 'startActivation', 'endActivation' // Already present in activation panel.
+					];
 				}
-				else if ($view === 'edit')
+				elseif ($view === 'edit')
 				{
-					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID', 'publicationSections',
-						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus',
+						'publicationSections', 'startPublication', 'endPublication', // Already present in publication panel.
+						'active', 'startActivation', 'endActivation' // Already present in activation panel.
+					];
 				}
-				else if ($view === 'translate')
+				elseif ($view === 'translate')
 				{
 					$excludedProperties = ['creationDate', 'modificationDate', 'LCID',
-						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus',
+						'startPublication', 'endPublication', // Already present in publication panel.
+						'active', 'startActivation', 'endActivation' // Already present in activation panel.
+					];
 				}
 				$attributes = ['model' => $model];
 				if ($excludedProperties)
