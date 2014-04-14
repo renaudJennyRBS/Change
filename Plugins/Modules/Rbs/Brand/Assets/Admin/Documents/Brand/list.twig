@@ -1,5 +1,4 @@
 <div class="row">
-
 	<div data-rbs-aside-column="">
 		{% include '@Rbs_Admin/view/asides.twig' %}
 		{% include '@Rbs_Admin/view/links.twig' %}
@@ -11,7 +10,13 @@
 				model="Rbs_Brand_Brand" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href data-ng-href="(= 'Rbs_Brand_Brand' | rbsURL:'new' =)">{{ i18n('m.rbs.brand.admin.brand_create', ['ucf']) }}</a>
+			<div class="add-elements-bar">
+				{% for newDocumentLink in attributes['newDocumentLinks'] %}
+					<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+						{{ newDocumentLink.label }}
+					</a>
+				{% endfor %}
+			</div>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsBrandBrand"
@@ -45,5 +50,4 @@
 			</rbs-preview>
 		</rbs-document-list>
 	</div>
-
 </div>

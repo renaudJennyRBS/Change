@@ -1,0 +1,48 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Geo_AddressField">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Geo_AddressField'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-geo-address-field-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.admin.addressfield_locked_warning') | raw }}</p>
+
+				<rbs-field-text property="code" required="true" ng-disabled="document.locked"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-text property="title" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'title'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-boolean property="required" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'required'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field-text property="match" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'match'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'collectionCode'), ['ucf']) }}">
+					<select data-ng-model="document.collectionCode" class="form-control"
+						data-rbs-items-from-collection="Rbs_Collection_Collection_List">
+						<option value=""> {{ i18n('m.rbs.geo.admin.addressfield_select_collectioncode', ['ucf']) }}</option>
+					</select>
+				</rbs-field>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

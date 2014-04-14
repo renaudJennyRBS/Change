@@ -1,0 +1,41 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Geo_Zone">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Zone'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-geo-zone-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="label" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'label'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-text property="code"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-picker property="country" required="true" accepted-model="Rbs_Geo_Country"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'country'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.geo.admin.zone_country_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-todo>RBSChange/evolutions#55 critères de validité d'une adresse.</rbs-todo>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

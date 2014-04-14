@@ -1,5 +1,4 @@
 <div class="row" data-ng-controller="Rbs_Catalog_Product_ListController">
-
 	<div data-rbs-aside-column="">
 		{% include '@Rbs_Admin/view/asides.twig' %}
 		{% include '@Rbs_Admin/view/links.twig' %}
@@ -11,9 +10,13 @@
 		</rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href="" data-ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'new' =)">
-				{{ i18n('m.rbs.catalog.admin.product_create', ['ucf']) }}
-			</a>
+			<div class="add-elements-bar">
+				{% for newDocumentLink in attributes['newDocumentLinks'] %}
+					<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+						{{ newDocumentLink.label }}
+					</a>
+				{% endfor %}
+			</div>
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" filter-collection="filter">
@@ -21,11 +24,12 @@
 				label="{{ i18nAttr('m.rbs.catalog.documents.product_visual', ['ucf']) }}"></rbs-column>
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-quick-actions>
-				<a ng-if="doc.sku" href="" data-ng-href="(= doc | rbsURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
+				<a data-ng-if="doc.sku" href="" data-ng-href="(= doc | rbsURL:'prices' =)">{{ i18nAttr('m.rbs.catalog.admin.product_prices') }}</a>
 				<a href="" data-ng-href="(= doc | rbsURL:'cross-selling-lists' =)">
 					{{ i18nAttr('m.rbs.catalog.admin.product_cross_selling') }}
 				</a>
-				<a ng-if="doc.variantGroup && !doc.variant" href="" data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'variant-list':{productId:doc.variantGroup.rootProductId, id:doc.variantGroup.id} =)" >
+				<a data-ng-if="doc.variantGroup && !doc.variant" href="javascript:;"
+					data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'variant-list':{productId:doc.variantGroup.rootProductId, id:doc.variantGroup.id} =)">
 					{{ i18n('m.rbs.catalog.admin.variantgroup_variant', ['ucf']) }}
 				</a>
 				[action default]

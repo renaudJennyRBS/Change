@@ -1,0 +1,44 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Geo_Address">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Address'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-geo-address-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="name" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'name'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-picker property="ownerId" accepted-model="Rbs_User_User" value-ids="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'ownerId'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.geo.admin.address_owner_select', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field required="true" label="{{ i18nAttr(propertyKey('Rbs_Geo_Address', 'addressFields'), ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.addressFields"
+						data-rbs-items-from-collection="Rbs_Generic_Collection_AddressFields">
+						<option value="">{{ i18n('m.rbs.geo.admin.address_fields_select', ['ucf']) }}</option>
+					</select>
+				</rbs-field>
+
+				<rbs-field-address property="fieldValues" address-fields="document.addressFields"></rbs-field-address>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

@@ -1,11 +1,10 @@
-<div class="row" ng-controller="{{ attributes['listController'] }}">
-
+<div class="row" data-ng-controller="{{ attributes['listController'] }}">
 	<div data-rbs-aside-column="">
 		{% include '@Rbs_Admin/view/asides.twig' %}
 		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.catalog.admin.productlist_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Catalog_ProductList" filter="filter" ></rbs-document-filter-panel>
@@ -13,7 +12,9 @@
 		<div class="add-elements-bar">
 			<div class="add-elements-bar">
 				{% for newDocumentLink in attributes['newDocumentLinks'] %}
-				<a href ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">{{ newDocumentLink.label }}</a>
+					<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+						{{ newDocumentLink.label }}
+					</a>
 				{% endfor %}
 			</div>
 		</div>
@@ -26,5 +27,4 @@
 		</rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>
