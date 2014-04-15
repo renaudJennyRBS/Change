@@ -32,6 +32,24 @@
 					<div ng-hide="disabled">
 						<p class="alert alert-warning">{{ i18nAttr('m.rbs.stock.admin.unlock_inventory_warning', ['ucf']) }}</p>
 					</div>
+					<div class="input-group">
+						<p class="form-control-static"><strong>{{ i18n('m.rbs.stock.admin.new_movement', ['ucf']) }}</strong></p>
+						<div class="input-group">
+							<input type="text" rbs-smart-float="" class="form-control" max-length="9" ng-model="movement.value" placeholder="-10"/>
+							<span class="input-group-btn">
+								<button class="btn btn-default btn-success"
+									type="button" ng-click="addMovement()" title="{{ i18nAttr('m.rbs.stock.admin.button_new_movement_title', ['ucf']) }}" ng-disabled="!movement.value" >
+									<i class="icon-ok"></i> {{ i18n('m.rbs.stock.admin.add_movement', ['ucf'])}}
+								</button>
+							</span>
+						</div>
+					</div>
+				</rbs-field>
+				<rbs-field ng-show="info.currentLevel" label="{{ i18nAttr('m.rbs.stock.admin.current_level_label', ['ucf']) }}">
+					<p class="form-control-static">(= info.currentLevel =)</p>
+				</rbs-field>
+				<rbs-field ng-show="info.nbMovement && info.nbMovement > 0" label="{{ i18nAttr('m.rbs.stock.admin.current_movement_label', ['ucf']) }}">
+					<p class="form-control-static">{{ i18n('m.rbs.stock.admin.current_reservation', ['ucf']) }}</p>
 				</rbs-field>
 			</fieldset>
 
@@ -40,7 +58,12 @@
 				data-rbs-document-system-info-section="">
 			</fieldset>
 
-			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+			<rbs-document-editor-button-bar>
+				<button ng-if="info.nbMovement && info.nbMovement > 0" class="btn btn-headline btn-success"
+					type="button" ng-click="confirmConsolidate($event)" title="{{ i18nAttr('m.rbs.stock.admin.consolidate_movement_title', ['ucf']) }}">
+					<i class="icon-cog"></i> {{ i18n('m.rbs.stock.admin.consolidate_movement', ['ucf']) | raw }}
+				</button>
+			</rbs-document-editor-button-bar>
 		</form>
 	</div>
 </div>

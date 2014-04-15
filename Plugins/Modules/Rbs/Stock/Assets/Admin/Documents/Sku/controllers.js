@@ -92,14 +92,13 @@
 	 * Controller for list of movement.
 	 *
 	 * @param $scope
-	 * @param $q
 	 * @param $http
 	 * @param REST
 	 * @param $routeParams
 	 * @param Utils
 	 * @constructor
 	 */
-	function MovementListController($scope, $q, $http, REST, $routeParams, Utils) {
+	function MovementListController($scope, $http, REST, $routeParams, Utils) {
 
 		$scope.movements = {};
 
@@ -108,8 +107,7 @@
 		});
 
 		$scope.loadMovements = function (params) {
-			params.skuId = $routeParams.id;
-			var url = Utils.makeUrl('rbs/stock/movements', params);
+			var url = Utils.makeUrl('resources/Rbs/Stock/Sku/' + $routeParams.id + '/movement/', params);
 			$http.get(REST.getBaseUrl(url)).success(function(data) {
 				$scope.movements = data;
 			});
@@ -119,21 +117,20 @@
 
 	}
 
-	MovementListController.$inject = ['$scope', '$q', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
+	MovementListController.$inject = ['$scope', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
 	app.controller('Rbs_Stock_Movement_ListController', MovementListController);
 
 	/**
 	 * Controller for list of movement.
 	 *
 	 * @param $scope
-	 * @param $q
 	 * @param $http
 	 * @param REST
 	 * @param $routeParams
 	 * @param Utils
 	 * @constructor
 	 */
-	function ReservationListController($scope, $q, $http, REST, $routeParams, Utils) {
+	function ReservationListController($scope, $http, REST, $routeParams, Utils) {
 
 		$scope.reservations = {};
 
@@ -142,8 +139,7 @@
 		});
 
 		$scope.loadReservations = function (params) {
-			params.skuId = $routeParams.id;
-			var url = Utils.makeUrl('rbs/stock/reservations', params);
+			var url = Utils.makeUrl('resources/Rbs/Stock/Sku/' + $routeParams.id + '/reservation/', params);
 			$http.get(REST.getBaseUrl(url)).success(function(data) {
 				$scope.reservations = data;
 			});
@@ -152,7 +148,7 @@
 		$scope.loadReservations({});
 	}
 
-	ReservationListController.$inject = ['$scope', '$q', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
+	ReservationListController.$inject = ['$scope', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
 	app.controller('Rbs_Stock_Reservation_ListController', ReservationListController);
 
 })();

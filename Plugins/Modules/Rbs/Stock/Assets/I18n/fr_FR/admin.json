@@ -142,6 +142,56 @@
 	},
 	"concerned_sku":{
 		"message":"SKU concerné"
+	},
+	"inventory_already_exists":{
+		"message":"un niveau d'inventaire existe déjà pour le sku $SKULABEL$ et l'entrepôt $WAREHOUSE$"
+	},
+	"commerce_services_missing":{
+		"message":"vérification de l'unicité impossible. Merci de réessayer."
+	},
+	"current_level_label":{
+		"message":"niveau réel actuel"
+	},
+	"current_movement_label":{
+		"message":"nombre de mouvements en cours"
+	},
+	"current_reservation":{
+		"message":"(= info.nbMovement =) mouvement(s) en cours pour une variation de (= info.totalMovement =) unité(s)"
+	},
+	"current_reservation_label":{
+		"message":"nombre de réservation en cours"
+	},
+	"consolidate_movement":{
+		"message":"consolider <small>les mouvements</small>"
+	},
+	"consolidate_button":{
+		"message":"consolider"
+	},
+	"confirm_consolidate":{
+		"message":"Consolidation du niveau d'inventaire"
+	},
+	"confirm_consolidate_message":{
+		"message":"En consolidant les mouvements d'inventaire, le niveau d'inventaire va être mis à jour avec les valeurs des mouvements. Ceux-ci seront ensuite supprimés. Cette action ne peut être annulée."
+	},
+	"consolidate_movement_title":{
+		"message":"consolidation des mouvements"
+	},
+	"consolidate_movement_message":{
+		"message":"Une erreur s'est produite lors de la consolidation des mouvements. Merci de réessayer."
+	},
+	"new_movement":{
+		"message":"Ajouter un mouvement de stock"
+	},
+	"button_new_movement_title":{
+		"message":"Ajouter un mouvement de stock"
+	},
+	"add_movement":{
+		"message":"Ajouter un mouvement"
+	},
+	"add_movement_title":{
+		"message":"Ajout d'un mouvement"
+	},
+	"add_movement_error_message":{
+		"message":"Une erreur s'est produite lors de l'ajout du mouvement. Merci de réessayer."
 	}
-
 }

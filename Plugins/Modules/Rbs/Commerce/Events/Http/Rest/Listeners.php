@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -60,6 +59,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		if (!$event->getAction())
 		{
+			$request = $event->getRequest();
 			$relativePath = $event->getParam('pathInfo');
 			if ($relativePath === 'rbs/price/taxInfo')
 			{
@@ -214,7 +214,6 @@ class Listeners implements ListenerAggregateInterface
 			}
 			else if (preg_match('#^resources/Rbs/Payment/Transaction/([0-9]+)/(validatePayment|refusePayment)/?$#', $relativePath, $matches))
 			{
-				$request = $event->getRequest();
 				if ($request->isPost())
 				{
 					$event->getController()->getActionResolver()
@@ -230,22 +229,52 @@ class Listeners implements ListenerAggregateInterface
 				}
 				else
 				{
-					$result = $event->getController()->notAllowedError($request->getMethod(), [\Change\Http\Request::METHOD_POST]);
+					$result = $event->getController()
+						->notAllowedError($request->getMethod(), [\Change\Http\Request::METHOD_POST]);
 					$event->setResult($result);
 				}
 			}
-			else if ($relativePath === 'rbs/stock/movements')
+			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/movement/?$#', $relativePath, $matches))
 			{
+				if ($request->isGet())
+				{
+					$event->setParam('skuId', intval($matches[1]));
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Stock\Http\Rest\Actions\Movement())->getMovements($event);
+					});
+				}
+				else if ($request->isPost())
+				{
+					$event->setParam('skuId', intval($matches[1]));
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Stock\Http\Rest\Actions\Movement())->addMovement($event);
+					});
+				}
+			}
+			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/reservation/?$#', $relativePath, $matches))
+			{
+				$event->setParam('skuId', intval($matches[1]));
 				$event->setAction(function ($event)
 				{
-					(new \Rbs\Stock\Http\Rest\Actions\GetMovements())->execute($event);
+					(new \Rbs\Stock\Http\Rest\Actions\Reservation())->getReservations($event);
 				});
 			}
-			else if ($relativePath === 'rbs/stock/reservations')
+			else if (preg_match('#^resources/Rbs/Stock/InventoryEntry/([0-9]+)/info/?$#', $relativePath, $matches))
 			{
+				$event->setParam('inventoryEntryId', intval($matches[1]));
 				$event->setAction(function ($event)
 				{
-					(new \Rbs\Stock\Http\Rest\Actions\GetReservations())->execute($event);
+					(new \Rbs\Stock\Http\Rest\Actions\InventoryEntry())->getInfos($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Stock/InventoryEntry/([0-9]+)/consolidate/?$#', $relativePath, $matches))
+			{
+				$event->setParam('inventoryEntryId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Stock\Http\Rest\Actions\InventoryEntry())->consolidateMovements($event);
 				});
 			}
 		}

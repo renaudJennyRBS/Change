@@ -226,7 +226,7 @@ class StockManager
 	{
 		$qb = $this->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
+		$qb->select($fb->column('id'), $fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
 		$qb->from($fb->table('rbs_stock_dat_mvt'));
 		$logicAnd = $fb->logicAnd(
 			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
@@ -267,7 +267,7 @@ class StockManager
 		}
 
 		return $query->getResults(
-			$query->getRowsConverter()->addStrCol('target')->addIntCol('movement', 'warehouse_id')->addDtCol('date')
+			$query->getRowsConverter()->addStrCol('target')->addIntCol('id', 'movement', 'warehouse_id')->addDtCol('date')
 		);
 	}
 
@@ -310,22 +310,53 @@ class StockManager
 			$query->bindParameter('warehouseId', $warehouseId);
 		}
 
-		$count = $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+		return $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+	}
 
-		return $count;
+	/**
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @return integer
+	 */
+	public function getValueOfMovementsBySku($sku, $warehouse = null)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->alias($fb->sum($fb->column('movement')), 'movement'));
+		$qb->from($fb->table('rbs_stock_dat_mvt'));
+		$logicAnd = $fb->logicAnd(
+			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+		);
+		if ($warehouse !== null)
+		{
+			$logicAnd->addArgument($fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId')));
+		}
+		$qb->where($logicAnd);
+		$query = $qb->query();
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		if ($warehouse !== null)
+		{
+			$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+			$query->bindParameter('warehouseId', $warehouseId);
+		}
+
+		return $query->getFirstResult($query->getRowsConverter()->addIntCol('movement')->singleColumn('movement'));
 	}
 
 	/**
 	 * Positive = receipt, negative = issue
 	 * @param integer $amount
-	 * @param \Rbs\Stock\Documents\Sku $sku
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
 	 * @param \DateTime|null $date
 	 * @param string $target
 	 * @throws \Exception
 	 * @return integer
 	 */
-	public function addInventoryMovement($amount, \Rbs\Stock\Documents\Sku $sku, $warehouse = null, $date = null, $target = null)
+	public function addInventoryMovement($amount, $sku, $warehouse = null, $date = null, $target = null)
 	{
 		$qb = $this->getDbProvider()->getNewStatementBuilder('addInventoryIssueReceipt');
 		if (!$qb->isCached())
@@ -340,14 +371,33 @@ class StockManager
 		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : 0);
 		$dateValue = ($date instanceof \DateTime) ? $date : new \DateTime();
 
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+
 		$is = $qb->insertQuery();
-		$is->bindParameter('skuId', $sku->getId())
+		$is->bindParameter('skuId', $skuId)
 			->bindParameter('amount', $amount)
 			->bindParameter('warehouseId', $warehouseId)
 			->bindParameter('dateValue', $dateValue)
 			->bindParameter('target', $target);
 		$is->execute();
 		return $is->getDbProvider()->getLastInsertId('rbs_catalog_dat_attribute');
+	}
+
+	/**
+	 * @param integer $movementId
+	 */
+	public function deleteInventoryMovementById($movementId)
+	{
+		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::deleteInventoryMovementById');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->table('rbs_stock_dat_mvt'));
+			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('movementId')));
+		}
+		$statement = $qb->deleteQuery();
+		$statement->bindParameter('movementId', $movementId);
+		$statement->execute();
 	}
 
 	/**
