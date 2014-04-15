@@ -11,9 +11,9 @@
 
 			link: function(scope) {
 				scope.onReady = function () {
-					if ($routeParams.productId) {
+					if ($routeParams.rootProductId) {
 						//Creation : get Product
-						REST.resource('Rbs_Catalog_Product', $routeParams.productId).then(function (product) {
+						REST.resource('Rbs_Catalog_Product', $routeParams.rootProductId).then(function (product) {
 							scope.document.rootProduct = product;
 						});
 					}
