@@ -247,6 +247,36 @@ class AttributeManager
 	}
 
 	/**
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @param \Rbs\Catalog\Attribute[]|integer[] $attributes
+	 * @return integer[]
+	 */
+	public function initProductAttributesValue($product, array $attributes = [])
+	{
+		$inserted = [];
+		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
+		$attributeIds = [];
+		foreach ($attributes as $attribute)
+		{
+			$attributeIds[] = ($attribute instanceof \Rbs\Catalog\Attribute) ? $attribute->getId() : intval($attribute);
+		}
+		$defined = $this->getDefinedAttributesValues($productId);
+		$value = ['valueType' => Attribute::TYPE_STRING, 'value' => null];
+
+		foreach ($attributeIds as $attributeId)
+		{
+			if (!isset($defined[$attributeId]))
+			{
+				$value['id'] = $attributeId;
+				$this->insertAttributeValue($productId, $value);
+				$inserted[] = $attributeId;
+			}
+		}
+		return $inserted;
+	}
+
+	/**
 	 * @param integer $productId
 	 * @return array
 	 */

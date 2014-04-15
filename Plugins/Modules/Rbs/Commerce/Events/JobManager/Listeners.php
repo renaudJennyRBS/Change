@@ -39,6 +39,17 @@ class Listeners implements ListenerAggregateInterface
 
 		$callBack = function ($event)
 		{
+			(new \Rbs\Catalog\Job\CleanUpAttribute())->execute($event);
+		};
+		$events->attach('process_Change_Document_CleanUp', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Catalog\Job\AttributeRefreshValues())->execute($event);
+		};
+		$events->attach('process_Rbs_Catalog_Attribute_Refresh_Values', $callBack, 5);
+		$callBack = function ($event)
+		{
 			(new \Rbs\Catalog\Job\UpdateSymmetricalProductListItem())->execute($event);
 		};
 		$events->attach('process_Rbs_Catalog_UpdateSymmetricalProductListItem', $callBack, 15);
