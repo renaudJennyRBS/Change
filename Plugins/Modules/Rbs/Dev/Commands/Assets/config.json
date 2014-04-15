@@ -35,7 +35,7 @@
 		}
 	},
 	"rbs_dev:initialize-command": {
-		"description": "Create an empty console command",
+		"description": "Initialize a new console command",
 		"dev": true,
 		"arguments": {
 			"package": {
@@ -51,7 +51,7 @@
 		}
 	},
 	"rbs_dev:initialize-model": {
-		"description": "Initialize an new XML model file",
+		"description": "Initialize a new XML model file",
 		"dev": true,
 		"arguments": {
 			"vendor": {
@@ -72,7 +72,7 @@
 		}
 	},
 	"rbs_dev:initialize-plugin": {
-		"description": "Initialize an new empty plugin skeleton",
+		"description": "Initialize a new empty plugin skeleton",
 		"dev": true,
 		"options": {
 			"package": {

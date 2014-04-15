@@ -3,7 +3,7 @@
 		"message":"adresse e-mail"
 	},
 	"order_ownerid":{
-		"message":"propriétaire"
+		"message":"utilisateur"
 	},
 	"order_webstoreid":{
 		"message":"boutique"

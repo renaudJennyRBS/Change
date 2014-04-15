@@ -1,0 +1,39 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Order_CreditNote">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Order_CreditNote'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-order-credit-note-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'amount'), ['ucf']) }}">
+					<rbs-price-input data-ng-model="document.amount" data-currency-code="(= document.currencyCode =)">
+					</rbs-price-input>
+				</rbs-field>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'currencyCode'), ['ucf']) }}">
+					<select data-ng-model="document.currencyCode" data-rbs-items-from-collection="Rbs_Price_Collection_Iso4217"
+						class="form-control"></select>
+				</rbs-field>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

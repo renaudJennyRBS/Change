@@ -1,0 +1,68 @@
+<div data-ng-controller="rbsOrderOrderPayments">
+	{% set currentRouteName = 'payments' %}
+	{% include '@Rbs_Order/Documents/Order/header.twig' %}
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="icon-money"></i>
+				{{ i18n('m.rbs.payment.admin.transaction_list', ['ucf', 'lab']) }} (= transactions.length =)
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="transactions.length > 0">
+				<thead>
+					<tr>
+						<th>{{ i18nAttr(propertyKey('Rbs_Payment_Transaction', 'label'), ['ucf']) }}</th>
+						<th>{{ i18nAttr(propertyKey('Rbs_Payment_Transaction', 'amount'), ['ucf']) }}</th>
+						<th>{{ i18nAttr(propertyKey('Rbs_Payment_Transaction', 'processingStatus'), ['ucf']) }}</th>
+						<th>{{ i18nAttr(propertyKey('Rbs_Payment_Transaction', 'processingDate'), ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tr class="normal-row" data-ng-repeat="transaction in transactions">
+					<td><a href="javascript:;" data-ng-href="(= transaction | rbsURL =)">(= transaction.label =)</a></td>
+					<td>(= transaction.formattedAmount =)</td>
+					<td>(= transaction.formattedProcessingStatus =)</td>
+					<td>(= transaction.processingDate | rbsDateTime =)</td>
+				</tr>
+			</table>
+			<p data-ng-show="transactions.length == 0" class="no-bottom-margin">
+				{{ i18n('m.rbs.order.admin.order_no_transaction_yet', ['ucf']) }}
+			</p>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="icon-money"></i>
+				{{ i18n('m.rbs.order.admin.invoice_list', ['ucf', 'lab']) }} (= invoices.length =)
+			</h3>
+		</div>
+		<div class="panel-body">
+			<div class="add-elements-bar">
+				<a data-ng-if="document.id > 0" href="javascript:;"
+					data-ng-href="(= 'Rbs_Order_Invoice' | rbsURL:'new':{orderId: document.id} =)">
+					{{ i18n('m.rbs.order.admin.order_add_invoice', ['ucf']) }}
+				</a>
+			</div>
+			<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="invoices.length > 0">
+				<thead>
+					<tr>
+						<th>{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'code'), ['ucf']) }}</th>
+						<th>{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'amountWithTax'), ['ucf']) }}</th>
+						<th>{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'creationDate'), ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tr class="normal-row" data-ng-repeat="invoice in invoices">
+					<td><a href="javascript:;" data-ng-href="(= invoice | rbsURL =)">(= invoice.code =)</a></td>
+					<td>(= invoice.formattedAmountWithTax =)</td>
+					<td>(= invoice.creationDate | rbsDateTime =)</td>
+				</tr>
+			</table>
+			<p data-ng-show="invoices.length == 0" class="no-bottom-margin">
+				{{ i18n('m.rbs.order.admin.order_no_invoice_yet', ['ucf']) }}
+			</p>
+		</div>
+	</div>
+</div>

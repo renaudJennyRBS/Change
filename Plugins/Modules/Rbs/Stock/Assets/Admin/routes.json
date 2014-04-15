@@ -18,15 +18,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Catalog/Sku/new": {
-		"model": "Rbs_Stock_Sku",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Stock/Sku/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Catalog/Sku/:id/movement": {
 		"model": "Rbs_Stock_Sku",
 		"name": "movement",
@@ -42,6 +33,15 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Stock/Sku/reservation.twig",
 			"labelKey": "m.rbs.stock.admin.sku_reservations | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Sku/new": {
+		"model": "Rbs_Stock_Sku",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Sku/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	},

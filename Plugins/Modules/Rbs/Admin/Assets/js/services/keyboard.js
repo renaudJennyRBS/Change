@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-(function ($)
-{
+(function($) {
 	"use strict";
 
 	/**
@@ -25,8 +24,7 @@
 	 *   };
 	 * </pre>
 	 */
-	function KeyboardService($rootScope)
-	{
+	function KeyboardService($rootScope) {
 		$rootScope.rbsChangeKeyboardStatus = {
 			'shift': false,
 			'ctrl': false,
@@ -34,61 +32,47 @@
 			'meta': false
 		};
 
-		function keyDown(event)
-		{
-			if (event.shiftKey)
-			{
+		function keyDown(event) {
+			if (event.shiftKey) {
 				$rootScope.rbsChangeKeyboardStatus.shift = true;
 			}
-			if (event.ctrlKey)
-			{
+			if (event.ctrlKey) {
 				$rootScope.rbsChangeKeyboardStatus.ctrl = true;
 			}
-			if (event.altKey)
-			{
+			if (event.altKey) {
 				$rootScope.rbsChangeKeyboardStatus.alt = true;
 			}
-			if (event.metaKey)
-			{
+			if (event.metaKey) {
 				$rootScope.rbsChangeKeyboardStatus.meta = true;
 			}
 			$rootScope.$digest();
 		}
 
-		function keyUp(event)
-		{
-			if (!event.shiftKey)
-			{
+		function keyUp(event) {
+			if (!event.shiftKey) {
 				$rootScope.rbsChangeKeyboardStatus.shift = false;
 			}
-			if (!event.ctrlKey)
-			{
+			if (!event.ctrlKey) {
 				$rootScope.rbsChangeKeyboardStatus.ctrl = false;
 			}
-			if (!event.altKey)
-			{
+			if (!event.altKey) {
 				$rootScope.rbsChangeKeyboardStatus.alt = false;
 			}
-			if (!event.metaKey)
-			{
+			if (!event.metaKey) {
 				$rootScope.rbsChangeKeyboardStatus.meta = false;
 			}
 			$rootScope.$digest();
 		}
 
-		this.watch = function (scope, key, callback)
-		{
+		this.watch = function(scope, key, callback) {
 			var expr = 'rbsChangeKeyboardStatus.' +
 				key.replace(/\+/g, ' && rbsChangeKeyboardStatus.').replace(/\-/g, ' && !rbsChangeKeyboardStatus.');
-			var deregistrationFunc = $rootScope.$watch(expr, function (value, oldValue)
-			{
-				if (value === true || (value === false))
-				{
+			var deregistrationFunc = $rootScope.$watch(expr, function(value, oldValue) {
+				if (value === true || (value === false)) {
 					callback(value, oldValue);
 				}
 			}, true);
-			scope.$on('$destroy', function ()
-			{
+			scope.$on('$destroy', function() {
 				deregistrationFunc();
 			});
 		};
@@ -111,49 +95,43 @@
 	 * @example
 	 * <pre>
 	 * <rbs-kb-switch>
-	 *    <i rbs-kb-when="alt" class="icon-plane icon-3x"></i>
-	 *    <i rbs-kb-when="alt+shift" class="icon-ambulance icon-3x"></i>
-	 *    <i rbs-kb-default="" class="icon-github icon-3x"></i>
+	 *    <i data-rbs-kb-when="alt" class="icon-plane icon-3x"></i>
+	 *    <i data-rbs-kb-when="alt+shift" class="icon-ambulance icon-3x"></i>
+	 *    <i data-rbs-kb-default="" class="icon-github icon-3x"></i>
 	 * </rbs-kb-switch>
 	 * </pre>
 	 */
-	function rbsKbSwitch(Keyboard)
-	{
+	function rbsKbSwitch(Keyboard) {
 		return {
-			restrict : 'EA',
-			link : function (scope, elm)
-			{
+			restrict: 'EA',
+			link: function(scope, elm) {
 				var when, whenCounter, def;
 
-				// shortcut rbs-kb-alt="" instead of rbs-kb-when="alt"
-				elm.find('[rbs-kb-alt]').each(function () {
-					$(this).removeAttr('rbs-kb-alt').attr('rbs-kb-when', 'alt');
+				// Shortcut rbs-kb-alt="" instead of rbs-kb-when="alt".
+				elm.find('[rbs-kb-alt]').each(function() {
+					$(this).removeAttr('rbs-kb-alt').attr('data-rbs-kb-when', 'alt');
+				});
+				elm.find('[data-rbs-kb-alt]').each(function() {
+					$(this).removeAttr('data-rbs-kb-alt').attr('data-rbs-kb-when', 'alt');
 				});
 
-				when = elm.find('[rbs-kb-when]');
 				whenCounter = 0;
-				def = elm.find('[rbs-kb-default]');
-
-				when.each(function ()
-				{
+				def = elm.find('[rbs-kb-default], [data-rbs-kb-default]');
+				elm.find('[rbs-kb-when], [data-rbs-kb-when]').each(function() {
 					var $el = $(this);
-					Keyboard.watch(scope, $el.attr('rbs-kb-when'), function (value, oldValue)
-					{
-						if (value)
-						{
+					var key = $el.attr('rbs-kb-when') || $el.attr('data-rbs-kb-when');
+					Keyboard.watch(scope, key, function(value, oldValue) {
+						if (value) {
 							def.hide();
 							$el.show();
 							whenCounter++;
 						}
-						else
-						{
+						else {
 							$el.hide();
-							if (oldValue === true)
-							{
+							if (oldValue === true) {
 								whenCounter--;
 							}
-							if (whenCounter === 0)
-							{
+							if (whenCounter === 0) {
 								def.show();
 							}
 						}

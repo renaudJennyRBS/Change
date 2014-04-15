@@ -192,6 +192,26 @@ class Listeners implements ListenerAggregateInterface
 					$cr->orderShipmentCollection($event);
 				});
 			}
+			else if (preg_match('#^resources/Rbs/Order/Order/([0-9]+)/Transactions/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Payment_Transaction');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Order\Http\Rest\TransactionResult();
+					$cr->orderTransactionCollection($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Order/Order/([0-9]+)/Invoices/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Order_Invoice');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Order\Http\Rest\InvoiceResult();
+					$cr->orderInvoiceCollection($event);
+				});
+			}
 			else if (preg_match('#^resources/Rbs/Payment/Transaction/([0-9]+)/(validatePayment|refusePayment)/?$#', $relativePath, $matches))
 			{
 				$request = $event->getRequest();

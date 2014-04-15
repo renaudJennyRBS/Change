@@ -1,0 +1,52 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Geo_TerritorialUnit">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Geo_TerritorialUnit'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-geo-territorial-unit-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-label-title property="title" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+
+				<rbs-field-text property="code" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field property="unitType" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitType'), ['ucf']) }}">
+					<select data-ng-required="true" data-ng-model="document.unitType"
+						data-rbs-items-from-collection="Rbs_Geo_Collection_UnitType" class="form-control">
+						<option value=""> {{ i18n('m.rbs.geo.admin.select_unittype', ['ucf']) }}</option>
+					</select>
+				</rbs-field>
+
+				<rbs-field-picker property="country" required="true" accepted-model="Rbs_Geo_Country"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'country'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_country_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field-picker property="unitParent" accepted-model="Rbs_Geo_TerritorialUnit"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitParent'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.geo.admin.territorialunit_unitparent_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

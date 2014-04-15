@@ -1,7 +1,7 @@
 (function() {
 	"use strict";
 
-	function Editor(REST, ArrayUtils, $q, Query, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout, $http) {
+	function Editor(REST, $routeParams, ArrayUtils, $q, Query, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout, $http) {
 		return {
 			restrict: 'A',
 			templateUrl: 'Document/Rbs/Order/Shipment/editor.twig',
@@ -49,14 +49,11 @@
 				scope.onReady = function() {
 					if (scope.isNew()) {
 						// Pre-fill fields if there is data in query url.
-						var query = window.location.search;
-						var queryRegExp = /\?orderId=([0-9]*)(&shippingModeId=([0-9]*))?/;
-						//                            111111  222222222222222223333332
-						if (queryRegExp.test(query)) {
-							var test = queryRegExp.exec(query);
-							var orderId = test[1];
-							var shippingModeId = test[3];
-							setOrderByOrderId(orderId);
+						if ($routeParams.hasOwnProperty('orderId')) {
+							setOrderByOrderId($routeParams.orderId);
+						}
+						if ($routeParams.hasOwnProperty('shippingModeId')) {
+							var shippingModeId = $routeParams.shippingModeId;
 							if (shippingModeId) {
 								REST.resource('Rbs_Shipping_Mode', shippingModeId).then(function(data) {
 									scope.data.carrier = data;
@@ -162,7 +159,7 @@
 						populateAddressList(data['ownerId']);
 						scope.canEdit.order = false;
 					}, function(error) {
-						NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_order | ucf'),
+						NotificationCenter.error(i18n.trans('m.rbs.order.admin.invalid_query_order | ucf'),
 							ErrorFormatter.format(error));
 						console.error(error);
 					});
@@ -520,7 +517,7 @@
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', 'RbsChange.ArrayUtils', '$q', 'RbsChange.Query', 'RbsChange.i18n',
+	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.ArrayUtils', '$q', 'RbsChange.Query', 'RbsChange.i18n',
 		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', 'RbsChange.Dialog', '$timeout', '$http'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderShipment', Editor);
 })();

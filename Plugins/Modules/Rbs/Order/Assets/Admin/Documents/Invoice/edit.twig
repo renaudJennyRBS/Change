@@ -1,0 +1,58 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Order_Invoice">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Order_Invoice'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-order-invoice-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-date property="creationDate"
+					label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'creationDate'), ['ucf']) }}">
+				</rbs-field-date>
+
+				<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-picker property="order" accepted-model="Rbs_Order_Order"
+					label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'order'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.order.admin.invoice_select_order', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field-picker property="transaction" accepted-model="Rbs_Payment_Transaction"
+					label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'transaction'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.order.admin.invoice_select_transaction', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'currencyCode'), ['ucf']) }}">
+					<select data-ng-model="document.currencyCode" data-rbs-items-from-collection="Rbs_Price_Collection_Iso4217"
+						class="form-control"></select>
+				</rbs-field>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'amount'), ['ucf']) }}">
+					<rbs-price-input data-ng-model="document.amount" data-currency-code="(=document.currencyCode=)">
+					</rbs-price-input>
+				</rbs-field>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Invoice', 'amountWithTax'), ['ucf']) }}">
+					<rbs-price-input data-ng-model="document.amountWithTax" data-price-with-tax="true"
+						data-currency-code="(=document.currencyCode=)"></rbs-price-input>
+				</rbs-field>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

@@ -42,7 +42,7 @@ class InitializeView
 		{
 			$views = ['list' => true, 'new' => true, 'edit' => true, 'translate' => $model->isLocalized()];
 		}
-		//at least one view has to be set
+		// At least one view has to be set.
 		else if ($list | $new | $edit | $translate)
 		{
 			if ($translate === true && !$model->isLocalized())

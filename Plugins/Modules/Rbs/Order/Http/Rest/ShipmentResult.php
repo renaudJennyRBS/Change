@@ -18,7 +18,9 @@ use Zend\Http\Response;
  */
 class ShipmentResult
 {
-
+	/**
+	 * @param \Change\Http\Event $event
+	 */
 	public function orderShipmentCollection(\Change\Http\Event $event)
 	{
 		$request = $event->getRequest();
@@ -40,8 +42,7 @@ class ShipmentResult
 		$result->setOffset($startIndex);
 		$result->setLimit($maxResults);
 
-		$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Order_Shipment');
-		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($model);
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
 		$query->andPredicates($query->eq('orderId', $orderId));
 		$query->addOrder($sort, !$desc);
 		$result->setSort($sort);

@@ -19,9 +19,9 @@
 	},
 	"/Rbs/Order/CreditNote/:id": {
 		"model": "Rbs_Order_CreditNote",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/CreditNote/form.twig",
+			"templateUrl": "Document/Rbs/Order/CreditNote/edit.twig",
 			"labelKey": "m.rbs.order.documents.creditnote | ucf",
 			"labelId": "id"
 		},
@@ -31,7 +31,7 @@
 		"model": "Rbs_Order_CreditNote",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/CreditNote/form.twig",
+			"templateUrl": "Document/Rbs/Order/CreditNote/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -47,9 +47,9 @@
 	},
 	"/Rbs/Order/Invoice/:id": {
 		"model": "Rbs_Order_Invoice",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/Invoice/form.twig",
+			"templateUrl": "Document/Rbs/Order/Invoice/edit.twig",
 			"labelKey": "m.rbs.order.documents.invoice | ucf",
 			"labelId": "id"
 		},
@@ -59,7 +59,7 @@
 		"model": "Rbs_Order_Invoice",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/Invoice/form.twig",
+			"templateUrl": "Document/Rbs/Order/Invoice/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -75,19 +75,37 @@
 	},
 	"/Rbs/Order/Order/:id": {
 		"model": "Rbs_Order_Order",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/Order/form.twig",
+			"templateUrl": "Document/Rbs/Order/Order/edit.twig",
 			"labelKey": "m.rbs.order.documents.order | ucf",
 			"labelId": "id"
 		},
 		"auto": true
 	},
+	"/Rbs/Order/Order/:id/payments": {
+		"model": "Rbs_Order_Order",
+		"name": "payments",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Order/payments.twig",
+			"labelKey": "m.rbs.order.admin.payments | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Order/Order/:id/shipments": {
+		"model": "Rbs_Order_Order",
+		"name": "shipments",
+		"rule": {
+			"templateUrl": "Document/Rbs/Order/Order/shipments.twig",
+			"labelKey": "m.rbs.order.admin.shipment_list | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Order/Order/new": {
 		"model": "Rbs_Order_Order",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/Order/form.twig",
+			"templateUrl": "Document/Rbs/Order/Order/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

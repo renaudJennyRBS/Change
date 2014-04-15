@@ -1,52 +1,42 @@
-(function () {
-
+(function() {
 	"use strict";
 
-	function editorRbsGeoAddressFields (EditorManager, REST, ArrayUtils) {
-
+	function rbsDocumentEditorRbsGeoAddressFieldsEdit(ArrayUtils) {
 		return {
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			restrict : 'EA',
-			templateUrl : 'Document/Rbs/Geo/AddressFields/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
-
-			link : function (scope, element, attrs, editorCtrl) {
-
-				scope.onReady = function(){
-					if (!angular.isArray(scope.document.fields))
-					{
+			link: function(scope, element, attrs, editorCtrl) {
+				scope.onReady = function() {
+					if (!angular.isArray(scope.document.fields)) {
 						scope.document.fields = [];
 					}
 				};
 
-				editorCtrl.init('Rbs_Geo_AddressFields');
-
-				scope.moveTop = function(index){
+				scope.moveTop = function(index) {
 					ArrayUtils.move(scope.document.fields, index, 0);
 				};
 
-				scope.moveUp = function(index){
-					ArrayUtils.move(scope.document.fields, index, index-1);
+				scope.moveUp = function(index) {
+					ArrayUtils.move(scope.document.fields, index, index - 1);
 				};
 
-				scope.moveBottom = function(index){
-					ArrayUtils.move(scope.document.fields, index, scope.document.fields.length-1);
+				scope.moveBottom = function(index) {
+					ArrayUtils.move(scope.document.fields, index, scope.document.fields.length - 1);
 				};
 
-				scope.moveDown = function(index){
-					ArrayUtils.move(scope.document.fields, index, index+1);
+				scope.moveDown = function(index) {
+					ArrayUtils.move(scope.document.fields, index, index + 1);
 				};
 
-				scope.remove = function(index){
+				scope.remove = function(index) {
 					scope.document.fields.splice(index, 1);
 				};
 
-				scope.deleteField = function(fieldToBeDelete){
+				scope.deleteField = function(fieldToBeDelete) {
 					var index = null;
-					angular.forEach(scope.document.fields, function (field, i) {
-						if (field.id === fieldToBeDelete.id)
-						{
+					angular.forEach(scope.document.fields, function(field, i) {
+						if (field.id === fieldToBeDelete.id) {
 							index = i;
 						}
 					});
@@ -59,7 +49,6 @@
 		};
 	}
 
-	editorRbsGeoAddressFields.$inject = ['RbsChange.EditorManager', 'RbsChange.REST', 'RbsChange.ArrayUtils'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsGeoAddressFields', editorRbsGeoAddressFields);
-
+	rbsDocumentEditorRbsGeoAddressFieldsEdit.$inject = ['RbsChange.ArrayUtils'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsGeoAddressFieldsEdit', rbsDocumentEditorRbsGeoAddressFieldsEdit);
 })();
