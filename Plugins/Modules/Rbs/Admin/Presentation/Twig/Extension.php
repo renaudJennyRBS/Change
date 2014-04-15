@@ -103,7 +103,6 @@ class Extension implements \Twig_ExtensionInterface
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('createLinks', array($this, 'createLinks'), array('is_safe' => array('html'))),
 			new \Twig_SimpleFunction('propertyKey', array($this, 'propertyKey')),
 			new \Twig_SimpleFunction('modelKey', array($this, 'modelKey')),
 			new \Twig_SimpleFunction('namedURL', array($this, 'namedURL'))
@@ -171,49 +170,7 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function snakeCase($string, $separator = '_')
 	{
-		if (is_string($string) && is_string($separator))
-		{
-			$string = preg_replace('/([a-z0-9])([A-Z])/', '$1' . $separator . '$2', $string);
-			return preg_replace('/[^a-z0-9]/', $separator, strtolower($string));
-		}
-		return $string;
-	}
-
-	/**
-	 * @param $modelName
-	 * @return string
-	 */
-	public function createLinks($modelName)
-	{
-		$modelManager = $this->getModelManager();
-		$model = $modelManager->getModelByName($modelName);
-		if (!$model)
-		{
-			return null;
-		}
-
-		$models = array($model);
-		foreach ($model->getDescendantsNames() as $descendantsName)
-		{
-			$models[] = $modelManager->getModelByName($descendantsName);
-		}
-		$links = array();
-		$i18nManager = $this->getI18nManager();
-
-		/* @var $lm \Change\Documents\AbstractModel */
-		foreach ($models as $lm)
-		{
-			if (!$lm->isAbstract())
-			{
-				$titleKey = strtolower(implode('.',
-					array('m', $lm->getVendorName(), $lm->getShortModuleName(), 'admin', $lm->getShortName() . '_create')));
-				$link =
-					'<a href ng-href="(= \'' . $lm->getName() . '\' | rbsURL:\'new\' =)">' . $i18nManager->trans($titleKey,
-						array('html', 'ucf')) . '</a>';
-				$links[] = $link;
-			}
-		}
-		return implode(' ', $links);
+		return \Change\Stdlib\String::snakeCase($string, $separator);
 	}
 
 	/**

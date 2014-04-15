@@ -66,32 +66,6 @@ class CartsCleanup
 				}
 			}
 
-
-
-			$qb = $dbProvider->getNewQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('identifier'));
-			$qb->from($fb->table('rbs_commerce_dat_cart'));
-			$qb->where($fb->logicAnd(
-					$fb->lte($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate')),
-					$fb->neq($fb->column('order_id'), $fb->integerParameter('orderId'))
-				)
-			);
-			$sq = $qb->query();
-			$sq->bindParameter('lastUpdate', $lastUpdate);
-			$sq->bindParameter('orderId', 0);
-
-			$identifiers = $sq->getResults($sq->getRowsConverter()->addStrCol('identifier')->singleColumn('identifier'));
-			foreach ($identifiers as $identifier)
-			{
-				$cart = $cartManager->getCartByIdentifier($identifier);
-				if ($cart)
-				{
-					$commerceServices->getCartManager()->deleteCart($cart, true);
-				}
-			}
-
-
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->column('identifier'));

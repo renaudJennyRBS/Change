@@ -64,5 +64,11 @@
 	},
 	"address_owner_select":{
 		"message":"sélectionner le propriétaire d'adresse"
+	},
+	"manage_addresses_function":{
+		"message":"gestion des adresses"
+	},
+	"manage_addresses_label":{
+		"message":"gestion des adresses"
 	}
 }

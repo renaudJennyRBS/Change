@@ -122,7 +122,7 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertCount(0, $result);
 
-		$reservations = $this->commerceServices->getStockManager()->getReservations($targetIdentifier);
+		$reservations = $this->commerceServices->getStockManager()->getReservationsByTarget($targetIdentifier);
 		$this->assertCount(1, $reservations);
 		/* @var $reservation \Rbs\Stock\Interfaces\Reservation */
 		$reservation = $reservations[0];
@@ -156,5 +156,82 @@ class StockManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(80, $level);
 
 		$this->getApplicationServices()->getTransactionManager()->commit();
+	}
+
+	public function testGetInventoryMovementsByTarget()
+	{
+		$stockManager = $this->commerceServices->getStockManager();
+		$inventoryMovements = $stockManager->getInventoryMovementsByTarget('test:1234');
+		$this->assertCount(0, $inventoryMovements);
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+
+		$sku = $this->getTestSku();
+		$tm->begin();
+		$stockManager->addInventoryMovement(5, $sku, null, new \DateTime(), 'test:1234');
+		$tm->commit();
+		$inventoryMovements = $stockManager->getInventoryMovementsByTarget('test:1234');
+		$this->assertCount(1, $inventoryMovements);
+		$firstInventoryMovement = $inventoryMovements[0];
+
+		//check data
+		$this->assertArrayHasKey('sku_id', $firstInventoryMovement);
+		$this->assertNotNull($firstInventoryMovement['sku_id']);
+		$this->assertArrayHasKey('movement', $firstInventoryMovement);
+		$this->assertEquals($firstInventoryMovement['movement'], 5);
+
+		//test with another target and check if there is always only one movement on our
+		$tm->begin();
+		$stockManager->addInventoryMovement(5, $sku, null, new \DateTime(), 'test:2345');
+		$tm->commit();
+		$inventoryMovements = $stockManager->getInventoryMovementsByTarget('test:1234');
+		$this->assertCount(1, $inventoryMovements);
+
+		//add other movement for the target
+		$anotherSku = $this->getTestSku();
+		$tm->begin();
+		$stockManager->addInventoryMovement(10, $anotherSku, null, new \DateTime(), 'test:1234');
+		$tm->commit();
+		$inventoryMovements = $stockManager->getInventoryMovementsByTarget('test:1234');
+		$this->assertCount(2, $inventoryMovements);
+	}
+
+	public function testGetInventoryMovementsBySku()
+	{
+		$sku = $this->getTestSku();
+		$stockManager = $this->commerceServices->getStockManager();
+		$inventoryMovements = $stockManager->getInventoryMovementsBySku($sku);
+		$this->assertCount(0, $inventoryMovements);
+
+		$tm = $this->getApplicationServices()->getTransactionManager();
+
+		$tm->begin();
+		$stockManager->addInventoryMovement(5, $sku, null, new \DateTime(), 'test:1234');
+		$tm->commit();
+
+		$inventoryMovements = $stockManager->getInventoryMovementsBySku($sku);
+		$this->assertCount(1, $inventoryMovements);
+		$firstInventoryMovement = $inventoryMovements[0];
+
+		//check data
+		$this->assertArrayHasKey('target', $firstInventoryMovement);
+		$this->assertEquals('test:1234', $firstInventoryMovement['target']);
+		$this->assertArrayHasKey('movement', $firstInventoryMovement);
+		$this->assertEquals($firstInventoryMovement['movement'], 5);
+
+		//test with another sku and check if there is always only one movement on our
+		$anotherSku = $this->getTestSku();
+		$tm->begin();
+		$stockManager->addInventoryMovement(5, $anotherSku, null, new \DateTime(), 'test:1234');
+		$tm->commit();
+		$inventoryMovements = $stockManager->getInventoryMovementsBySku($sku);
+		$this->assertCount(1, $inventoryMovements);
+
+		//add other movement for the sku
+		$tm->begin();
+		$stockManager->addInventoryMovement(10, $sku, null, new \DateTime(), 'test:2345');
+		$tm->commit();
+		$inventoryMovements = $stockManager->getInventoryMovementsBySku($sku);
+		$this->assertCount(2, $inventoryMovements);
 	}
 }

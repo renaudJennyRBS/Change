@@ -60,14 +60,13 @@ class BaseAddress implements AddressInterface
 		return $this->getFieldValue(AddressInterface::LOCALITY_FIELD_NAME);
 	}
 
-
 	/**
 	 * @return string[]
 	 */
 	public function getLines()
 	{
 		$lines = $this->getFieldValue(static::LINES_FIELD_NAME);
-		return is_array($lines)?$lines:[];
+		return is_array($lines) ? $lines : [];
 	}
 
 	/**

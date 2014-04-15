@@ -1,0 +1,48 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Geo_Country">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Geo_Country'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-geo-country-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="label" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'label'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'code'), ['ucf']) }}" required="true">
+					<select data-ng-model="document.code" required="true" class="form-control"
+						data-rbs-items-from-collection="Rbs_Geo_All_Countries_Codes" >
+						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
+					</select>
+				</rbs-field>
+
+				<rbs-field-picker
+					property="addressFields" label="{{ i18nAttr(propertyKey('Rbs_Geo_Country', 'addressFields'), ['ucf']) }}"
+					accepted-model="Rbs_Geo_AddressFields"
+					selector-title="{{ i18nAttr('m.rbs.geo.admin.country_select_addressfields', ['ucf']) }}">
+				</rbs-field-picker>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

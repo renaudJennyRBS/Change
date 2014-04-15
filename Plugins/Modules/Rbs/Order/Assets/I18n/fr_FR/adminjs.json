@@ -29,9 +29,6 @@
 	"shipment_invalid_query_products":{
 		"message":"au moins l'une des requetes pour récupérer les produits a échoué"
 	},
-	"shipment_invalid_query_order":{
-		"message":"la requête pour récupérer la commande est invalide"
-	},
 	"shipment_product_not_found_title":{
 		"message":"le produit est introuvable"
 	},
@@ -55,9 +52,6 @@
 	},
 	"shipment_invalid_request_remainder":{
 		"message":"la requête d'obtention du reliquat est invalide"
-	},
-	"order_invalid_query_order_shipments":{
-		"message":"la requête d'obtention des expéditions de la commande est invalide"
 	},
 	"order_update_status_confirm_title_edition":{
 		"message":"modifier le contenu"

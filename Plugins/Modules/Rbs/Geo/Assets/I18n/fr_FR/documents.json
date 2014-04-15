@@ -29,6 +29,9 @@
 	"addressfield_match":{
 		"message":"expression rationnelle de validation"
 	},
+	"addressfield_defaultvalue":{
+		"message":"valeur par défaut"
+	},
 	"addressfield_locked":{
 		"message":"code vérouillé"
 	},

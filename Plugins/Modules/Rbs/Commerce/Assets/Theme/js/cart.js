@@ -37,6 +37,45 @@
 			});
 	}
 
+	/**
+	 * @param {Object} referenceAddress
+	 * @param {Array} addresses
+	 * @returns {boolean}
+	 */
+	function hasInvalidAddresses(referenceAddress, addresses) {
+		var countryCode = referenceAddress.countryCode;
+		for (var i = 0; i < addresses.length; i++) {
+			if (addresses[i].fieldValues.countryCode != countryCode) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param {Object} referenceAddress
+	 * @param {Array} addressToCheck
+	 * @returns {boolean}
+	 */
+	function isValidAddress(referenceAddress, addressToCheck) {
+		return referenceAddress.countryCode != addressToCheck['fieldValues'].countryCode;
+	}
+
+	/**
+	 * @param {Object} existingAddress
+	 * @param {Object} addressToUse
+	 */
+	function applyAddress(existingAddress, addressToUse) {
+		angular.forEach(addressToUse.fieldValues, function(value, key) {
+			existingAddress[key] = addressToUse.fieldValues[key];
+		});
+		angular.forEach(existingAddress, function(value, key) {
+			if (!addressToUse.fieldValues.hasOwnProperty(key)) {
+				delete(existingAddress[key]);
+			}
+		});
+	}
+
 	function rbsCommerceCartData() {
 		return {
 			restrict: 'A',
@@ -82,9 +121,9 @@
 			templateUrl: '/menu.static.tpl',
 			link: function(scope) {
 				/*jQuery('body').scrollspy({ target: '.process-sidebar' });
-				scope.$watch('currentStep', function() {
-					jQuery('body').each(function() { $(this).scrollspy('refresh'); });
-				});*/
+				 scope.$watch('currentStep', function() {
+				 jQuery('body').each(function() { $(this).scrollspy('refresh'); });
+				 });*/
 			}
 		}
 	}
@@ -120,7 +159,8 @@
 			scope: {
 				delivery: '=',
 				zoneCode: '=',
-				cart: '='
+				cart: '=',
+				addresses: '='
 			},
 			templateUrl: '/shipping-mode-selector.static.tpl',
 
@@ -208,7 +248,7 @@
 					scope.delivery.options.usePostalAddress = 1;
 				}
 
-				function applyPostalAddressINecessary() {
+				function applyPostalAddressIfNecessary() {
 					if (parseInt(scope.delivery.options.usePostalAddress) == 1) {
 						scope.delivery.address = angular.copy(scope.cart.address);
 						scope.delivery.isConfigured = true;
@@ -218,13 +258,17 @@
 					}
 				}
 
-				applyPostalAddressINecessary();
+				applyPostalAddressIfNecessary();
 
-				scope.$watch('delivery.options.usePostalAddress', applyPostalAddressINecessary);
+				scope.$watch('delivery.options.usePostalAddress', applyPostalAddressIfNecessary);
 
 				scope.isReadOnly = function() {
 					return scope.readonly;
-				}
+				};
+
+				scope.hasInvalidAddresses = hasInvalidAddresses;
+				scope.isValidAddress = isValidAddress;
+				scope.applyAddress = applyAddress;
 			}
 		}
 	}
@@ -263,13 +307,14 @@
 						scope.selectedConnector = connector;
 						scope.payment.connectorId = connector.id;
 
-
 						var html = '<div class="configuration-zone"';
 						if (connector.directiveName) {
 							html += ' ' + connector.directiveName + '=""></div>';
-						} else if(connector.html) {
+						}
+						else if (connector.html) {
 							html += '>' + connector.html + '</div>';
-						} else {
+						}
+						else {
 							html += '></div>';
 						}
 						element.find('.configuration-zone').replaceWith(html);
@@ -321,8 +366,8 @@
 				var line = scope.cart.lines[index];
 				updateCart($http, scope, { lineQuantities: [
 					{ key: line.key, quantity: 0}
-				] }, function (data){
-					$rootScope.$broadcast('rbsRefreshCart', {'cart':data});
+				] }, function(data) {
+					$rootScope.$broadcast('rbsRefreshCart', {'cart': data});
 					setCart(data);
 				});
 			}
@@ -334,8 +379,8 @@
 				var line = scope.cart.lines[index];
 				updateCart($http, scope, { lineQuantities: [
 					{ key: line.key, quantity: line.quantity }
-				] }, function (data){
-					$rootScope.$broadcast('rbsRefreshCart', {'cart':data});
+				] }, function(data) {
+					$rootScope.$broadcast('rbsRefreshCart', {'cart': data});
 					setCart(data);
 				});
 			}
@@ -374,6 +419,15 @@
 		scope.payment = { errors: [], newCouponCode: null, transaction: null };
 		scope.currentStep = null;
 		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
+
+		$http.get('Action/Rbs/Geo/GetAddresses')
+			.success(function(data) {
+				scope.addresses = data;
+			})
+			.error(function(data, status, headers) {
+				console.log('GetAddresses error', data, status, headers);
+			}
+		);
 
 		function setCart(data) {
 			scope.loading = false;
@@ -438,6 +492,10 @@
 			return scope.currentStep == stepName;
 		};
 
+		scope.hasInvalidAddresses = hasInvalidAddresses;
+		scope.isValidAddress = isValidAddress;
+		scope.applyAddress = applyAddress;
+
 		/**
 		 * Information step
 		 */
@@ -466,8 +524,8 @@
 			$http.post('Action/Rbs/User/Login', postData)
 				.success(function(data) {
 					if (data.hasOwnProperty('accessorId')) {
-
-						$rootScope.$broadcast('rbsUserConnected', {'accessorId' : data['accessorId'], 'accessorName' : data['name']});
+						var params = { 'accessorId': data['accessorId'], 'accessorName': data['name'] };
+						$rootScope.$broadcast('rbsUserConnected', params);
 
 						scope.information.guest = false;
 						scope.information.userId = data['accessorId'];
@@ -476,16 +534,14 @@
 						updateCart($http, scope, postData, scope.setAuthenticated);
 					}
 					else if (data.hasOwnProperty('errors')) {
-						for (var i=0; i < data.errors.length; i++ )
-						{
+						for (var i = 0; i < data.errors.length; i++) {
 							addError('information', data.errors[i]);
 						}
 					}
 					delete scope.information.password;
 				})
 				.error(function(data) {
-					for (var i=0; i < data.errors.length; i++ )
-					{
+					for (var i = 0; i < data.errors.length; i++) {
 						addError('information', data.errors[i]);
 					}
 					delete scope.information.password;
@@ -516,8 +572,7 @@
 					updateCart($http, scope, postData, scope.setAuthenticated);
 				})
 				.error(function(data) {
-					for (var i=0; i < data.errors.length; i++ )
-					{
+					for (var i = 0; i < data.errors.length; i++) {
 						addError('information', data.errors[i]);
 					}
 				});
@@ -552,7 +607,11 @@
 
 		scope.finalizeInformationStep = function() {
 			var postData = { address: scope.information.address };
-			updateCart($http, scope, postData, function() { scope.setCurrentStep('shipping'); });
+			var callback = function() {
+				scope.information.address = getObject(scope.cart.address, true);
+				scope.setCurrentStep('shipping');
+			};
+			updateCart($http, scope, postData, callback);
 		};
 
 		/**
@@ -629,7 +688,10 @@
 				});
 			}
 			var postData = { shippingModes: scope.cart.shippingModes };
-			updateCart($http, scope, postData, function() { scope.setShippingDeliveries(); scope.setCurrentStep('payment'); });
+			updateCart($http, scope, postData, function() {
+				scope.setShippingDeliveries();
+				scope.setCurrentStep('payment');
+			});
 		};
 
 		/**

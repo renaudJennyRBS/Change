@@ -714,6 +714,8 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			{
 				$baseUrl = $selfLink->getPathInfo();
 				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Shipments/', 'shipments'));
+				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Transactions/', 'transactions'));
+				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Invoices/', 'invoices'));
 			}
 
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */

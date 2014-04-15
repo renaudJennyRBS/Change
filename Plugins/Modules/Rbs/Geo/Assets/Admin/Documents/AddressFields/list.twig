@@ -1,21 +1,27 @@
 <div class="row">
-
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.geo.admin.addressfields_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false"
 				model="Rbs_Geo_AddressFields" filter="filter" ></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Geo_AddressFields' | rbsURL:'new' =)">{{ i18n('m.rbs.geo.admin.addressfields_create', ['ucf']) }}</a>
+			<div class="add-elements-bar">
+				{% for newDocumentLink in attributes['newDocumentLinks'] %}
+					<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+						{{ newDocumentLink.label }}
+					</a>
+				{% endfor %}
+			</div>
 		</div>
 
-		<rbs-document-list data-dlid="DLGeoAddressFields" model="Rbs_Geo_AddressFields" filter-collection="filter">
-			<rbs-column name="label" label="{{ i18n(propertyKey('Rbs_Geo_AddressFields', 'label'), ['ucf']) }}" primary="true"></rbs-column>
+		<rbs-document-list data-dlid="DLGeoAddressFields" model="Rbs_Geo_AddressFields" filter-collection="filter"
+			correction="true">
+			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

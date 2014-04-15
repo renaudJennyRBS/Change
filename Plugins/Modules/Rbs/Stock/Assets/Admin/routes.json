@@ -18,6 +18,24 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Catalog/Sku/:id/movement": {
+		"model": "Rbs_Stock_Sku",
+		"name": "movement",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Sku/movement.twig",
+			"labelKey": "m.rbs.stock.admin.sku_movements | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Catalog/Sku/:id/reservation": {
+		"model": "Rbs_Stock_Sku",
+		"name": "reservation",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Sku/reservation.twig",
+			"labelKey": "m.rbs.stock.admin.sku_reservations | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/Sku/new": {
 		"model": "Rbs_Stock_Sku",
 		"name": "new",
@@ -47,9 +65,9 @@
 	},
 	"/Rbs/Stock/InventoryEntry/:id": {
 		"model": "Rbs_Stock_InventoryEntry",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Stock/InventoryEntry/form.twig",
+			"templateUrl": "Document/Rbs/Stock/InventoryEntry/edit.twig",
 			"labelKey": "m.rbs.stock.documents.inventoryentry | ucf",
 			"labelId": "id"
 		},
@@ -59,7 +77,7 @@
 		"model": "Rbs_Stock_InventoryEntry",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Stock/InventoryEntry/form.twig",
+			"templateUrl": "Document/Rbs/Stock/InventoryEntry/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

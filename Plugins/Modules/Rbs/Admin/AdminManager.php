@@ -606,6 +606,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 			throw new \RuntimeException('module ' . $model->getVendorName() . '_' . $model->getShortModuleName() . ' is not found', 999999);
 		}
 
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		switch ($view)
 		{
 			case 'new':
@@ -631,8 +632,38 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				break;
 			case 'list':
+				$newDocumentLinks = [];
+				$modelNames = [];
+				if (!$model->isAbstract()) {
+					$key = strtolower(implode('.', ['m', $model->getVendorName(), $model->getShortModuleName(),
+						'admin', $model->getShortName() . '_create']));
+					$label = $i18nManager->trans($key, ['ucf']);
+					if ($key !== $label)
+					{
+						$modelNames[] = $model->getName();
+						$newDocumentLinks[] =['modelName' => $model->getName(), 'label' => $label];
+					}
+				}
+
+				foreach ($model->getDescendantsNames() as $descendantName)
+				{
+					$m = $event->getApplicationServices()->getModelManager()->getModelByName($descendantName);
+					if ($m && !$m->isAbstract())
+					{
+						$key = strtolower(implode('.', ['m', $m->getVendorName(), $m->getShortModuleName(),
+							'admin', $m->getShortName() . '_create']));
+						$label = $i18nManager->trans($key, ['ucf']);
+						if ($key !== $label)
+						{
+							$modelNames[] = $m->getName();
+							$newDocumentLinks[] =['modelName' => $m->getName(), 'label' => $label];
+						}
+					}
+				}
 				$attributes = [
-					'asideDirectives' => [['name' => 'rbs-default-asides-for-list']]
+					'asideDirectives' => [['name' => 'rbs-default-asides-for-list']],
+					'newDocumentLinks' => $newDocumentLinks,
+					'modelNames' => $modelNames
 				];
 				break;
 			case 'translate':
@@ -673,7 +704,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($generate)
 			{
-				//check if the file already exist
+				// Check if the file already exist.
 				$docPath = implode(DIRECTORY_SEPARATOR,
 					[$module->getAbsolutePath(), 'Assets', 'Admin', 'Documents', $model->getShortName(), $view . '.twig']
 				);
@@ -686,19 +717,28 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 				$excludedProperties = null;
 				if ($view === 'new')
 				{
-					//refLCID selector will automatically added in the template
-					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID', 'publicationSections',
-						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+					// refLCID selector will automatically added in the template.
+					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus',
+						'publicationSections', 'startPublication', 'endPublication', // Already present in publication panel.
+						'active', 'startActivation', 'endActivation' // Already present in activation panel.
+					];
 				}
-				else if ($view === 'edit')
+				elseif ($view === 'edit')
 				{
-					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID', 'publicationSections',
-						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+					$excludedProperties = ['id', 'model', 'creationDate', 'modificationDate', 'refLCID', 'LCID',
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus',
+						'publicationSections', 'startPublication', 'endPublication', // Already present in publication panel.
+						'active', 'startActivation', 'endActivation' // Already present in activation panel.
+					];
 				}
-				else if ($view === 'translate')
+				elseif ($view === 'translate')
 				{
 					$excludedProperties = ['creationDate', 'modificationDate', 'LCID',
-						'authorName', 'authorId', 'documentVersion', 'publicationStatus', 'startPublication', 'endPublication'];
+						'authorName', 'authorId', 'documentVersion', 'publicationStatus',
+						'startPublication', 'endPublication', // Already present in publication panel.
+						'active', 'startActivation', 'endActivation' // Already present in activation panel.
+					];
 				}
 				$attributes = ['model' => $model];
 				if ($excludedProperties)

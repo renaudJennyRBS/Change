@@ -134,6 +134,12 @@
 	"mailing_address":{
 		"message":"adresse postale"
 	},
+	"button_use_this_address":{
+		"message":"utiliser cette adresse"
+	},
+	"only_addresses_in_the_selected_country_can_be_used":{
+		"message":"Seules les adresses situées dans le pays spécifié ci-dessous peuvent être sélectionnées."
+	},
 	"shipping_mode":{
 		"message":"mode de livraison"
 	},

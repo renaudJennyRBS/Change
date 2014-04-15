@@ -9,12 +9,14 @@
 namespace Rbs\Theme\Documents;
 
 use Change\Presentation\Layout\Layout;
+use Zend\Json\Json;
 
 /**
  * @name \Rbs\Theme\Documents\Template
  */
 class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Change\Presentation\Interfaces\Template
 {
+	const FILE_META_KEY = "fileMeta";
 	/**
 	 * @param integer $websiteId
 	 * @return \Change\Presentation\Layout\Layout
@@ -22,6 +24,21 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 	public function getContentLayout($websiteId = null)
 	{
 		$editableContent = $this->getEditableContent();
+		if ($this->getApplication()->inDevelopmentMode())
+		{
+			$fileMetas = $this->getMeta(static::FILE_META_KEY);
+			if (isset($fileMetas['json']) && file_exists($fileMetas['json']))
+			{
+				if (filemtime($fileMetas['json']) > $this->getModificationDate()->getTimestamp())
+				{
+					$jsonData = Json::decode(file_get_contents($fileMetas['json']), Json::TYPE_ARRAY);
+					if (isset($jsonData['editableContent']) && is_array($jsonData['editableContent']))
+					{
+						$editableContent = array_merge($jsonData['editableContent'], $editableContent);
+					}
+				}
+			}
+		}
 		if ($websiteId)
 		{
 			$contentByWebsite = $this->getContentByWebsite();
@@ -31,6 +48,26 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 			}
 		}
 		return new Layout($editableContent);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHtml()
+	{
+		if ($this->getApplication()->inDevelopmentMode())
+		{
+			$fileMetas = $this->getMeta(static::FILE_META_KEY);
+			if (isset($fileMetas['html']) && file_exists($fileMetas['html']))
+			{
+				if (filemtime($fileMetas['html']) > $this->getModificationDate()->getTimestamp())
+				{
+					$this->application->getLogging()->warn('Please update template ' . $this->getName());
+					return file_get_contents($fileMetas['html']);
+				}
+			}
+		}
+		return $this->getHtmlData();
 	}
 
 	/**

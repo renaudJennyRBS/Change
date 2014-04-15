@@ -141,7 +141,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('lockCart', [$this, 'onDefaultLockCart'], 5);
 		$eventManager->attach('startProcessingCart', [$this, 'onDefaultStartProcessingCart'], 5);
 		$eventManager->attach('affectTransactionId', [$this, 'onDefaultAffectTransactionId'], 5);
-		$eventManager->attach('affectOrder', [$this, 'onDefaultAffectOrder'], 5);
 		$eventManager->attach('affectUser', [$this, 'onDefaultAffectUser'], 5);
 		$eventManager->attach('deleteCart', [$this, 'onDefaultDeleteCart'], 5);
 		$eventManager->attach('getProcessingCartsByUser', [$this, 'onDefaultGetProcessingCartsByUser'], 5);
@@ -288,7 +287,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$qb->assign($fb->column('user_id'), $fb->integerParameter('userId'));
 				$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
 				$qb->assign($fb->column('transaction_id'), $fb->integerParameter('transactionId'));
-				$qb->assign($fb->column('order_id'), $fb->integerParameter('orderId'));
 				$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
 				$qb->assign($fb->column('total_amount'), $fb->decimalParameter('totalAmount'));
 				$qb->assign($fb->column('total_amount_with_taxes'), $fb->decimalParameter('totalAmountWithTaxes'));
@@ -309,7 +307,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$uq->bindParameter('ownerId', $cart->getOwnerId());
 				$uq->bindParameter('userId', $cart->getUserId());
 				$uq->bindParameter('transactionId', $cart->getTransactionId());
-				$uq->bindParameter('orderId', $cart->getOrderId());
 
 				$uq->bindParameter('lineCount', count($cart->getLines()));
 				$uq->bindParameter('totalAmount', $cart->getLinesAmount());
@@ -368,7 +365,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$fb = $qb->getFragmentBuilder();
 				$qb->select($fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id')
-					, $fb->column('user_id'), $fb->column('transaction_id'), $fb->column('order_id'),
+					, $fb->column('user_id'), $fb->column('transaction_id'),
 					$fb->column('locked'), $fb->column('processing'), $fb->column('last_update'));
 				$qb->from($fb->table('rbs_commerce_dat_cart'));
 				$qb->where($fb->eq($fb->column('identifier'), $fb->parameter('identifier')));
@@ -378,7 +375,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 			$cartInfo = $sq->getFirstResult($sq->getRowsConverter()
 				->addLobCol('cart_data')
-				->addIntCol('owner_id', 'store_id', 'user_id', 'transaction_id', 'order_id')
+				->addIntCol('owner_id', 'store_id', 'user_id', 'transaction_id')
 				->addBoolCol('locked', 'processing')->addDtCol('last_update'));
 
 			$this->cachedCarts[$identifier] = $cartInfo;
@@ -400,8 +397,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					->setLocked($cartInfo['locked'])
 					->setProcessing($cartInfo['processing'])
 					->setOwnerId($cartInfo['owner_id'])
-					->setTransactionId($cartInfo['transaction_id'])
-					->setOrderId($cartInfo['order_id']);
+					->setTransactionId($cartInfo['transaction_id']);
 				$cart->lastUpdate($cartInfo['last_update']);
 				$event->setParam('cart', $cart);
 			}
@@ -828,74 +824,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$tm->commit();
 				$this->cachedCarts = [];
 				$cart->setTransactionId($transactionId);
-			}
-			catch (\Exception $e)
-			{
-				throw $tm->rollBack($e);
-			}
-		}
-	}
-
-	/**
-	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @param integer|\Rbs\Order\Documents\Order $order
-	 * @return integer|null
-	 */
-	public function affectOrder(\Rbs\Commerce\Cart\Cart $cart, $order)
-	{
-		if ($cart->isLocked())
-		{
-			try
-			{
-				$em = $this->getEventManager();
-				$args = $em->prepareArgs(array('cart' => $cart, 'order' => $order));
-				$this->getEventManager()->trigger('affectOrder', $this, $args);
-			}
-			catch (\Exception $e)
-			{
-				$this->getLogging()->exception($e);
-			}
-		}
-		return $cart->getOrderId();
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 * @throws \Exception
-	 */
-	public function onDefaultAffectOrder(\Change\Events\Event $event)
-	{
-		$cart = $event->getParam('cart');
-		$order = $event->getParam('order');
-
-		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $order)
-		{
-			$tm = $event->getApplicationServices()->getTransactionManager();
-			$dbProvider = $event->getApplicationServices()->getDbProvider();
-			try
-			{
-				$tm->begin();
-				$orderId = ($order instanceof \Change\Documents\AbstractDocument) ? $order->getId() : intval($order);
-				$qb = $dbProvider->getNewStatementBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$qb->update($fb->table('rbs_commerce_dat_cart'));
-				$qb->assign($fb->column('order_id'), $fb->integerParameter('order_id'));
-				$qb->where(
-					$fb->logicAnd(
-						$fb->eq($fb->column('identifier'), $fb->parameter('identifier')),
-						$fb->eq($fb->column('locked'), $fb->booleanParameter('whereLocked'))
-					)
-				);
-
-				$uq = $qb->updateQuery();
-				$uq->bindParameter('order_id', $orderId);
-				$uq->bindParameter('identifier', $cart->getIdentifier());
-				$uq->bindParameter('whereLocked', true);
-				$uq->execute();
-
-				$tm->commit();
-				$this->cachedCarts = [];
-				$cart->setOrderId($orderId);
 			}
 			catch (\Exception $e)
 			{
@@ -1523,12 +1451,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$fb = $qb->getFragmentBuilder();
 				$qb->select($fb->column('identifier'), $fb->column('cart_data'), $fb->column('owner_id'), $fb->column('store_id'),
-					$fb->column('user_id'), $fb->column('transaction_id'), $fb->column('order_id'), $fb->column('locked'),
+					$fb->column('user_id'), $fb->column('transaction_id'), $fb->column('locked'),
 					$fb->column('processing'), $fb->column('last_update'));
 				$qb->from($fb->table('rbs_commerce_dat_cart'));
 				$qb->where($fb->logicAnd(
 					$fb->eq($fb->column('processing'), $fb->parameter('processing')),
-					$fb->eq($fb->column('order_id'), $fb->parameter('order_id')),
 					$fb->logicOr(
 						$fb->eq($fb->column('user_id'), $fb->parameter('user_id')),
 						$fb->eq($fb->column('owner_id'), $fb->parameter('owner_id'))
@@ -1539,11 +1466,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$sq->bindParameter('user_id', $user->getId());
 			$sq->bindParameter('owner_id', $user->getId());
 			$sq->bindParameter('processing', true);
-			$sq->bindParameter('order_id', 0);
 
 			$converter = $sq->getRowsConverter()
 				->addLobCol('cart_data')->addStrCol('identifier')
-				->addIntCol('owner_id', 'store_id', 'user_id', 'transaction_id', 'order_id')
+				->addIntCol('owner_id', 'store_id', 'user_id', 'transaction_id')
 				->addBoolCol('locked', 'processing')->addDtCol('last_update');
 			foreach ($sq->getResults($converter) as $cartInfo)
 			{
@@ -1557,8 +1483,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 						->setLocked($cartInfo['locked'])
 						->setProcessing($cartInfo['processing'])
 						->setOwnerId($cartInfo['owner_id'])
-						->setTransactionId($cartInfo['transaction_id'])
-						->setOrderId($cartInfo['order_id']);
+						->setTransactionId($cartInfo['transaction_id']);
 					$cart->lastUpdate($cartInfo['last_update']);
 					$carts[] = $cart;
 				}

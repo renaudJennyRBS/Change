@@ -44,14 +44,7 @@ class Register implements ListenerAggregateInterface
 	 */
 	public function getInstallClassName(Plugin $plugin)
 	{
-		if ($plugin->getType() === Plugin::TYPE_THEME)
-		{
-			return 'Theme\\' . $plugin->getVendor() . '\\' . $plugin->getShortName() . '\\Setup\Install';
-		}
-		else
-		{
-			return $plugin->getVendor() . '\\' . $plugin->getShortName() . '\\Setup\Install';
-		}
+		return $plugin->getNamespace() . '\\Setup\Install';
 	}
 
 	/**
@@ -76,9 +69,14 @@ class Register implements ListenerAggregateInterface
 				call_user_func(array($installClass, 'attach'), $events, $plugin);
 			}
 		}
-		else
+		elseif ($this->getPlugin()->getType() === Plugin::TYPE_MODULE)
 		{
 			$installClass = new InstallBase();
+			$installClass->attach($events, $plugin);
+		}
+		elseif ($this->getPlugin()->getType() === Plugin::TYPE_THEME)
+		{
+			$installClass = new ThemeInstallBase();
 			$installClass->attach($events, $plugin);
 		}
 	}

@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	editable="true">
 	<properties>
-		<property name="label" type="String" stateless="true" />
+		<property name="label" stateless="true" />
 		<property name="email" type="String" />
 		<property name="ownerId" type="DocumentId" />
 		<property name="targetIdentifier" type="String" />

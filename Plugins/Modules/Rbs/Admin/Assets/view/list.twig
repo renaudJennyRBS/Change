@@ -6,16 +6,20 @@
 
 	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ '{{' }} i18nAttr('m.{{ model.vendorName | lower }}.{{ model.shortModuleName | lower }}.admin.{{ model.shortName | lower }}_list', ['ucf']) {{ '}}' }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="{{ model.name }}" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="{{ model.name }}"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href data-ng-href="{{ '{{' }} namedURL('{{ model.name }}', 'new') {{ '}}' }}">{{ '{{' }} i18n('m.{{ model.vendorName | lower }}.{{ model.shortModuleName | lower }}.admin.{{ model.shortName | lower }}_create', ['ucf']) {{ '}}' }}</a>
+			{{ '{%' }} for newDocumentLink in attributes['newDocumentLinks'] {{ '%}' }}
+				<a href="javascript:;" data-ng-href="(= '{{ '{{' }} newDocumentLink.modelName {{ '}}' }}' | rbsURL:'new' =)">
+					{{ '{{' }} newDocumentLink.label {{ '}}' }}
+				</a>
+			{{ '{%' }} endfor {{ '%}' }}
 		</div>
 
 		<rbs-document-list data-dlid="DL{{ model.vendorName }}{{ model.shortModuleName }}{{ model.shortName }}"
 			model="{{ model.name }}"
-			{% if model.isPublishable %}publishable="true" {% endif %}{% if model.isActivable %}activable="true" {% endif %}{% if model.isPublishable == false and model.useCorrection %}correction="true" {% endif %} filter-collection="filter">
+			{% if model.isPublishable %}publishable="true" {% endif %}{% if model.isActivable %}activable="true" {% endif %}{% if model.isPublishable == false and model.useCorrection %}correction="true" {% endif %}filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>

@@ -1,0 +1,10 @@
+{
+	"/Rbs/Wishlist/": {
+		"module": "Rbs_Wishlist",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": true
+	}
+}

@@ -40,5 +40,10 @@ interface AddressInterface
 	/**
 	 * @return array
 	 */
+	public function getLines();
+
+	/**
+	 * @return array
+	 */
 	public function toArray();
 }

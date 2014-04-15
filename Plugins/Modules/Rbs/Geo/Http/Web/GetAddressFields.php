@@ -9,8 +9,8 @@
 namespace Rbs\Geo\Http\Web;
 
 /**
-* @name \Rbs\Commerce\Http\Web\GetCurrentCart
-*/
+ * @name \Rbs\Geo\Http\Web\GetAddressFields
+ */
 class GetAddressFields extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	/**
@@ -33,7 +33,7 @@ class GetAddressFields extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$formDefinition->setCollectionManager($event->getApplicationServices()->getCollectionManager());
 
 			$definition = $formDefinition->toArray();
-			$definition['fieldsLayout'] = $addressFields->getFieldsLayoutData();
+			$definition['fieldsLayout'] = $addressFields->getFieldsLayout();
 
 			$result = $this->getNewAjaxResult($definition);
 			$event->setResult($result);

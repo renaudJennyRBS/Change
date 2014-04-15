@@ -94,9 +94,9 @@ class Autoloader extends StandardAutoloader
 		}
 		if ($pluginDatas['type'] === Plugin::TYPE_MODULE)
 		{
-			return $workspace->projectModulesPath($pluginDatas['shortName']);
+			return $workspace->projectModulesPath('Project', $pluginDatas['shortName']);
 		}
-		return $workspace->projectThemesPath($pluginDatas['shortName']);
+		return $workspace->projectThemesPath('Project', $pluginDatas['shortName']);
 	}
 
 	protected function loadClass($class, $type)

@@ -1,0 +1,47 @@
+{
+	"country":{
+		"message":"pays"
+	},
+	"manage_addresses_title":{
+		"message":"gestion des adresses"
+	},
+	"address_list_title":{
+		"message":"adresses enregistrées"
+	},
+	"add_new_address_title":{
+		"message":"ajout d'une nouvelle adresse"
+	},
+	"add_edit_address_title":{
+		"message":"mise à jour d'une adresse"
+	},
+	"no_address_yet":{
+		"message":"Vous n'avez encore renseigné aucune adresse."
+	},
+	"button_edit":{
+		"message":"modifier"
+	},
+	"button_delete":{
+		"message":"supprimer"
+	},
+	"button_save":{
+		"message":"enregistrer"
+	},
+	"button_clear":{
+		"message":"vider les champs"
+	},
+	"button_cancel":{
+		"message":"annuler"
+	},
+	"button_new_address":{
+		"message":"ajouter une nouvelle adresse"
+	},
+	"button_set_default":{
+		"message":"adresse par défaut"
+	},
+	"address_name":{
+		"message":"nom de l'adresse"
+	},
+	"by_default":{
+		"message":"par défaut"
+	}
+}

@@ -1,0 +1,59 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Order_Order">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Order_Order'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-order-order-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-select-from-collection property="webStoreId" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'webStoreId'), ['ucf']) }}"
+					rbs-items-from-collection="Rbs_Store_Collection_WebStores"
+					empty-value-label="{{ i18nAttr('m.rbs.order.admin.order_select_webstore', ['ucf']) }}">
+				</rbs-field-select-from-collection>
+
+				<rbs-field-select-from-collection property="billingAreaId"
+					label="{{ i18nAttr('m.rbs.order.admin.order_billing_area', ['ucf']) }}"
+					rbs-items-collection-params="webStoreId:(=document.webStoreId=)"
+					rbs-items-from-collection="Rbs_Price_Collection_BillingAreasForWebStore"
+					empty-value-label="{{ i18nAttr('m.rbs.order.admin.order_select_billingarea', ['ucf']) }}">
+				</rbs-field-select-from-collection>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'currencyCode'), ['ucf']) }}">
+					<input type="text" class="form-control" data-ng-model="document.currencyCode" data-ng-disabled="true"/>
+				</rbs-field>
+
+				<rbs-field label="{{ i18n('m.rbs.order.admin.order_tax_zone', ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.context.taxZone">
+						<option value="">{{ i18nAttr('m.rbs.order.admin.order_select_taxzone', ['ucf']) }}</option>
+						<option data-ng-repeat="zone in zones" data-ng-value="(= zone =)">(= zone =)</option>
+					</select>
+				</rbs-field>
+
+				<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'ownerId'), ['ucf']) }}"
+					accepted-model="Rbs_User_User" value-ids="true"
+					selector-title="{{ i18nAttr('m.rbs.order.admin.order_select_ownerid', ['ucf']) }}">
+				</rbs-field-picker>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_Order', 'email'), ['ucf']) }}">
+					<input type="text" class="form-control" data-ng-model="document.email" />
+				</rbs-field>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

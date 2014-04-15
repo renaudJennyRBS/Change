@@ -1,0 +1,31 @@
+<div class="row" ng-controller="Rbs_Stock_Movement_ListController">
+
+	<div data-rbs-aside-column="">
+		<div class="rbs-aside-block">
+			<h3 class="panel-title">{{ i18n('m.rbs.stock.admin.concerned_sku', ['ucf']) }}</h3>
+			<p>
+				<a href="(= document | rbsURL =)" class="back-to-link">
+					{{ i18n('m.rbs.stock.admin.back_to_sku', ['ucf']) }}
+					<strong>(= document.label =)</strong>
+				</a>
+			</p>
+		</div>
+	</div>
+
+	<div data-rbs-main-column="">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.stock.admin.sku_movements', ['ucf']) }}"></rbs-page-header><br />
+		<rbs-document-list data-dlid="DLRbsMovementsList"
+			collection="movements"
+			selectable="false"
+			rbs-quick-actions=""
+			actions=""
+			on-reload="loadMovements"
+			modification-date="false">
+			<rbs-column name="movement" label="{{ i18n('m.rbs.stock.admin.movement_value', ['ucf']) }}"></rbs-column>
+			<rbs-column name="warehouse_id" label="{{ i18n('m.rbs.stock.admin.movement_warehouse', ['ucf']) }}"></rbs-column>
+			<rbs-column name="date.date" format="date" label="{{ i18n('m.rbs.stock.admin.movement_date', ['ucf']) }}"></rbs-column>
+			<rbs-column name="target" label="{{ i18n('m.rbs.stock.admin.reservation_target', ['ucf']) }}"><a ng-if="doc.targetInstance" href="(= doc.targetInstance | rbsURL =)">(= doc.targetInstance.label=)</a><span ng-if="!doc.targetInstance">(= doc.target=)</span></rbs-column>
+		</rbs-document-list>
+	</div>
+
+</div>

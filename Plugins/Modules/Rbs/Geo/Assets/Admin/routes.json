@@ -10,9 +10,9 @@
 	},
 	"/Rbs/Generic/Address/:id": {
 		"model": "Rbs_Geo_Address",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Address/form.twig",
+			"templateUrl": "Document/Rbs/Geo/Address/edit.twig",
 			"labelKey": "m.rbs.geo.documents.address | ucf",
 			"labelId": "id"
 		},
@@ -22,7 +22,36 @@
 		"model": "Rbs_Geo_Address",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Address/form.twig",
+			"templateUrl": "Document/Rbs/Geo/Address/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/AddressField/:id": {
+		"model": "Rbs_Geo_AddressField",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Geo/AddressField/edit.twig",
+			"labelKey": "m.rbs.geo.documents.addressfield | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/AddressField/:id/translate/:LCID": {
+		"model": "Rbs_Geo_AddressField",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Geo/AddressField/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/AddressField/new": {
+		"model": "Rbs_Geo_AddressField",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Geo/AddressField/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -38,9 +67,9 @@
 	},
 	"/Rbs/Generic/AddressFields/:id": {
 		"model": "Rbs_Geo_AddressFields",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressFields/form.twig",
+			"templateUrl": "Document/Rbs/Geo/AddressFields/edit.twig",
 			"labelKey": "m.rbs.geo.documents.addressfields | ucf",
 			"labelId": "id"
 		},
@@ -50,7 +79,7 @@
 		"model": "Rbs_Geo_AddressFields",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressFields/form.twig",
+			"templateUrl": "Document/Rbs/Geo/AddressFields/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -66,9 +95,9 @@
 	},
 	"/Rbs/Generic/Country/:id": {
 		"model": "Rbs_Geo_Country",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Country/form.twig",
+			"templateUrl": "Document/Rbs/Geo/Country/edit.twig",
 			"labelKey": "m.rbs.geo.documents.country | ucf",
 			"labelId": "id"
 		},
@@ -78,7 +107,7 @@
 		"model": "Rbs_Geo_Country",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Country/form.twig",
+			"templateUrl": "Document/Rbs/Geo/Country/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -94,9 +123,9 @@
 	},
 	"/Rbs/Generic/TerritorialUnit/:id": {
 		"model": "Rbs_Geo_TerritorialUnit",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/TerritorialUnit/form.twig",
+			"templateUrl": "Document/Rbs/Geo/TerritorialUnit/edit.twig",
 			"labelKey": "m.rbs.geo.documents.territorialunit | ucf",
 			"labelId": "id"
 		},
@@ -106,7 +135,7 @@
 		"model": "Rbs_Geo_TerritorialUnit",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/TerritorialUnit/form.twig",
+			"templateUrl": "Document/Rbs/Geo/TerritorialUnit/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -122,9 +151,9 @@
 	},
 	"/Rbs/Generic/Zone/:id": {
 		"model": "Rbs_Geo_Zone",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Zone/form.twig",
+			"templateUrl": "Document/Rbs/Geo/Zone/edit.twig",
 			"labelKey": "m.rbs.geo.documents.zone | ucf",
 			"labelId": "id"
 		},
@@ -134,70 +163,19 @@
 		"model": "Rbs_Geo_Zone",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Zone/form.twig",
+			"templateUrl": "Document/Rbs/Geo/Zone/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	},
 	"/Rbs/Geo/": false,
-	"/Rbs/Geo/Address/": {
-		"model": "Rbs_Geo_Address",
-		"name": "list",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Address/list.twig",
-			"labelKey": "m.rbs.geo.admin.address_list | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Geo/Address/:id": {
-		"model": "Rbs_Geo_Address",
-		"name": "form",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Address/form.twig",
-			"labelKey": "m.rbs.geo.documents.address | ucf",
-			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Geo/Address/new": {
-		"model": "Rbs_Geo_Address",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/Address/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": true
-	},
+	"/Rbs/Geo/Address/": false,
+	"/Rbs/Geo/Address/:id": false,
+	"/Rbs/Geo/Address/new": false,
 	"/Rbs/Geo/AddressField/": false,
-	"/Rbs/Geo/AddressField/:id": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "form",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressField/form.twig",
-			"labelKey": "m.rbs.geo.documents.addressfield | ucf",
-			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Geo/AddressField/:id/translate/:LCID": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressField/form.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Geo/AddressField/new": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressField/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": true
-	},
+	"/Rbs/Geo/AddressField/:id": false,
+	"/Rbs/Geo/AddressField/:id/translate/:LCID": false,
+	"/Rbs/Geo/AddressField/new": false,
 	"/Rbs/Geo/AddressFields/": false,
 	"/Rbs/Geo/AddressFields/:id": false,
 	"/Rbs/Geo/AddressFields/new": false,

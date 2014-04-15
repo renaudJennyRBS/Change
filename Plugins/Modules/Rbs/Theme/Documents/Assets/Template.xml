@@ -4,11 +4,11 @@
 		activable="true" editable="true">
 	<properties>
 		<property name="code" type="String" required="true" />
-		<property name="html" type="LongString" has-correction="true" />
-		<property name="htmlForBackoffice" type="LongString" has-correction="true" />
-		<property name="editableContent" type="JSON" has-correction="true"/>
+		<property name="htmlData" type="LongString" />
+		<property name="htmlForBackoffice" type="LongString" />
+		<property name="editableContent" type="JSON" />
 		<property name="theme" type="Document" document-type="Rbs_Theme_Theme" />
-		<property name="contentByWebsite" type="JSON" has-correction="true"/>
+		<property name="contentByWebsite" type="JSON" />
 		<property name="mailSuitable" type="Boolean" default-value="false" />
 	</properties>
 </document>

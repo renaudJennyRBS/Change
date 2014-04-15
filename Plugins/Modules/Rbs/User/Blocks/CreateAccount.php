@@ -71,7 +71,7 @@ class CreateAccount extends Block
 			if ($sessionErrors && is_array($sessionErrors))
 			{
 				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
-				$attributes['inputData'] = isset($sessionErrors['inputData']);
+				$attributes['inputData'] = isset($sessionErrors['inputData']) ? $sessionErrors['inputData'] : null;
 			}
 		}
 		else

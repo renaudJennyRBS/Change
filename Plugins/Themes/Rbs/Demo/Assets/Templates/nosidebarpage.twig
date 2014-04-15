@@ -1,0 +1,77 @@
+<!doctype html>
+<html data-ng-app="RbsChangeApp">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<!-- headSeo -->
+{% for headline in pageResult.head %}
+	{{ headline|raw }}
+{% endfor %}
+	<link rel="icon" type="image/png" href="{{ resourceURL('Theme/Rbs/Demo/img/favicon.png') }}" />
+	<!-- cssHead -->
+	<script type="text/javascript">
+		window.__change = {};
+	</script>
+</head>
+<body>
+<header id="header">
+	<div id="header-top" class="main-grad">
+		<div class="row">
+			<div class="col-sm-12 col-md-7"><!-- headerTop1 --></div>
+			<div class="col-sm-5 col-md-2"><!-- headerTop2 --></div>
+			<div class="col-sm-5 col-md-2"><!-- headerTop3 --></div>
+			<div class="col-sm-2 col-md-1"><!-- headerTop4 --></div>
+		</div>
+	</div>
+	<div id="header-middle">
+		<!-- headerMiddle1 -->
+	</div>
+	<div id="header-bottom">
+		<!-- headerBottom1 -->
+	</div>
+</header>
+<div id="content">
+	<section id="content-top">
+		<div class="row">
+			<div class="col-sm-9 col-md-9"><!-- contentTop1 --></div>
+			<div class="col-sm-3 col-md-3"><!-- contentTop2 --></div>
+		</div>
+	</section>
+	<section id="content-middle">
+		<div class="row">
+			<main class="col-xs-12" id="content-column">
+				<!-- mainContent -->
+			</main>
+		</div>
+	</section>
+</div>
+<footer id="footer">
+	<div id="footer-top">
+		<div><!-- footerTop1 --></div>
+	</div>
+	<div id="footer-middle" class="inverse-grad">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-sm-6"><!-- footerMiddle1 --></div>
+					<div class="col-sm-6"><!-- footerMiddle2 --></div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-sm-6"><!-- footerMiddle3 --></div>
+					<div class="col-sm-6"><!-- footerMiddle4 --></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="footer-bottom">
+		<div class="row">
+			<div class="col-sm-6"><!-- footerBottom1 --></div>
+			<div class="col-sm-6"><!-- footerBottom2 --></div>
+		</div>
+	</div>
+</footer>
+<!-- jsFooter -->
+</body>
+</html>

@@ -31,6 +31,7 @@ class Install extends \Change\Plugins\InstallBase
 
 		$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Commerce', '\Rbs\Commerce\Events\SharedListeners');
 
+		$configuration->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_Commerce', '\Rbs\Commerce\Events\AuthenticationManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Commerce', '\Rbs\Commerce\Events\CollectionManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Commands/Rbs_Commerce', '\Rbs\Commerce\Events\Commands\Listeners');
@@ -44,10 +45,11 @@ class Install extends \Change\Plugins\InstallBase
 
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/ProcessManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProcessManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/PriceManager/Rbs_Commerce', '\Rbs\Commerce\Events\PriceManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Geo/Events/GeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\GeoManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Mail/Events/MailManager/Rbs_Commerce', '\Rbs\Commerce\Events\MailManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Payment/Events/PaymentManager/Rbs_Commerce', '\Rbs\Commerce\Events\PaymentManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
-		$configuration->addPersistentEntry('Rbs/Admin/Events/AdminManager/Rbs_Commerce', 'Rbs\Commerce\Events\AdminManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Admin/Events/AdminManager/Rbs_Commerce', '\Rbs\Commerce\Events\AdminManager\Listeners');
 
 		$configuration->addPersistentEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60);
 	}

@@ -22,7 +22,7 @@ class Cart
 	public function collection($event)
 	{
 		$fields = ['id', 'creation_date', 'last_update', 'identifier', 'user_id', 'store_id', 'total_amount', 'total_amount_with_taxes', 'payment_amount_with_taxes',
-			'currency_code', 'line_count', 'cart_data', 'locked', 'processing', 'owner_id', 'transaction_id', 'order_id'];
+			'currency_code', 'line_count', 'cart_data', 'locked', 'processing', 'owner_id', 'transaction_id'];
 
 		$request = $event->getRequest();
 		$params = $request->getQuery()->toArray();

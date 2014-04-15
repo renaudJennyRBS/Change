@@ -46,7 +46,7 @@ class WorkspaceTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testProjectModulesPath(Workspace $workspace)
 	{
-		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'App','Modules','Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'App','Modules', 'Dir1', 'Dir2', 'Dir3', 'File.php'));
 		$this->assertEquals($expected, $workspace->projectModulesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
 	}
 

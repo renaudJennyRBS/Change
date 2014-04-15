@@ -80,10 +80,31 @@ class JobResult extends Result
 	 */
 	public function toArray()
 	{
-		$array =  array();
+		$array = [];
 		$links = $this->getLinks();
 		$array['links'] = $links->toArray();
 		$array['properties'] = $this->properties;
 		return $array;
+	}
+
+	/**
+	 * @param \Change\Job\JobInterface $job
+	 * @param UrlManager $urlManager
+	 * @return $this
+	 */
+	public function setJob($job, $urlManager)
+	{
+		if ($job instanceof \Change\Job\JobInterface)
+		{
+			if ($urlManager instanceof UrlManager)
+			{
+				$this->addLink(new Link($urlManager, 'jobs/' . $job->getId()));
+			}
+			$this->setProperty('id', $job->getId());
+			$this->setProperty('name', $job->getName());
+			$this->setProperty('startDate', $job->getStartDate()->format(\DateTime::ISO8601));
+			$this->setProperty('status', $job->getStatus());
+		}
+		return $this;
 	}
 }

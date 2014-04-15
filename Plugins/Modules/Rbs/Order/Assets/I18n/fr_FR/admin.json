@@ -1,8 +1,8 @@
 {
 	"order_select_ownerid":{
-		"message":"séléctionner le propriétaire"
+		"message":"séléctionner l'utilisateur"
 	},
-	"order_code_waiting":{
+	"code_waiting":{
 		"message":"en attente d'affectation"
 	},
 	"order_select_webstoreid":{
@@ -415,5 +415,38 @@
 	},
 	"order_detail_label":{
 		"message":"détail d'une commande"
+	},
+	"payments":{
+		"message":"transactions et factures"
+	},
+	"invalid_query_order_shipments":{
+		"message":"La requête d'obtention des expéditions de la commande est invalide."
+	},
+	"invalid_query_order_transactions":{
+		"message":"La requête d'obtention des transactions de la commande est invalide."
+	},
+	"invalid_query_order_invoices":{
+		"message":"La requête d'obtention des factures de la commande est invalide."
+	},
+	"invalid_query_order":{
+		"message":"la requête pour récupérer la commande est invalide"
+	},
+	"order_add_invoice":{
+		"message":"ajouter une facture"
+	},
+	"owner_none":{
+		"message":"aucun"
+	},
+	"email_none":{
+		"message":"aucune"
+	},
+	"order_no_transaction_yet":{
+		"message":"Cette commande n'est liée à aucune transaction."
+	},
+	"order_no_invoice_yet":{
+		"message":"Cette commande n'est liée à aucune facture."
+	},
+	"order_no_shipment_yet":{
+		"message":"Cette commande n'a encore donné lieu à aucune expédition."
 	}
 }

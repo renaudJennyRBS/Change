@@ -126,6 +126,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$sitemapIndexFilenameInUrl = substr(strrchr($sitemapIndexUrl, '/'), 1);
 		$this->assertEquals('sitemap_index.' . $websiteId . '.' . $LCID . '.' . $randomKey . '.xml', $sitemapIndexFilenameInUrl);
 		$sitemapIndexPath = $this->getAssetSeoPath($sitemapIndexFilenameInUrl);
+
 		$this->assertFileExists($sitemapIndexPath);
 		$this->generatedFilePaths['sitemapIndex'] = $sitemapIndexPath;
 		$sitemapIndex = \Change\Stdlib\File::read($sitemapIndexPath);
@@ -136,7 +137,8 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('http://www.sitemaps.org/schemas/sitemap/0.9', $sitemapIndexXml->getElementsByTagName('sitemapindex')->item(0)->namespaceURI);
 		$this->assertEquals(1, $sitemapIndexXml->getElementsByTagName('sitemap')->length);
 		$sitemapNode = $sitemapIndexXml->getElementsByTagName('sitemap')->item(0);
-		$this->assertEquals($sitemapNode, $sitemapIndexXml->childNodes->item(0));
+
+		$this->assertEquals($sitemapNode->parentNode, $sitemapIndexXml->documentElement);
 		$this->assertEquals(1, $sitemapIndexXml->getElementsByTagName('loc')->length);
 		$locUrl = $sitemapIndexXml->getElementsByTagName('loc')->item(0)->textContent;
 		$this->assertNotEmpty($locUrl);

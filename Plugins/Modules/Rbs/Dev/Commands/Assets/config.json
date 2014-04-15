@@ -1,0 +1,134 @@
+{
+	"rbs_dev:admin-routes": {
+		"description": "Generate admin routes definition",
+		"dev": true,
+		"options": {
+		},
+		"arguments": {
+		}
+	},
+	"rbs_dev:devrest": {
+		"description": "Enables or disables devrest.php",
+		"dev": true,
+		"arguments": {
+			"mode": {
+				"description": "'up' to activate, 'down' to deactivate",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-block": {
+		"description": "Initialize a new block",
+		"dev": true,
+		"arguments": {
+			"package": {
+				"description": "name of the package (vendor_module)",
+				"required": true,
+				"default": null
+			},
+			"blockName": {
+				"description": "name of the block (e.g. MyBlock)",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-command": {
+		"description": "Initialize a new console command",
+		"dev": true,
+		"arguments": {
+			"package": {
+				"description": "name of the package (vendor_module or change)",
+				"required": true,
+				"default": null
+			},
+			"cmdName": {
+				"description": "name of the command (e.g. my-cmd)",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-model": {
+		"description": "Initialize a new XML model file",
+		"dev": true,
+		"arguments": {
+			"vendor": {
+				"description": "vendor of the target module",
+				"required": true,
+				"default": null
+			},
+			"module": {
+				"description": "name of the target module",
+				"required": true,
+				"default": null
+			},
+			"name": {
+				"description": "short name of the model",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-plugin": {
+		"description": "Initialize a new empty plugin skeleton",
+		"dev": true,
+		"options": {
+			"package": {
+				"description": "package of plugin",
+				"default": null,
+				"shortcut": "p"
+			}
+		},
+		"arguments": {
+			"type": {
+				"description": "type of plugin",
+				"required": true,
+				"default": null
+			},
+			"vendor": {
+				"description": "vendor of the plugin",
+				"required": true,
+				"default": null
+			},
+			"name": {
+				"description": "short name of the plugin",
+				"required": true,
+				"default": null
+			}
+		}
+	},
+	"rbs_dev:initialize-view": {
+		"description": "Initialize view(s) template file for a model",
+		"dev": true,
+		"options": {
+			"list": {
+				"description": "list of document",
+				"shortcut": "l"
+			},
+			"new": {
+				"description": "new editor form",
+				"shortcut": "f"
+			},
+			"edit": {
+				"description": "update editor form",
+				"shortcut": "e"
+			},
+			"translate": {
+				"description": "translate editor form",
+				"shortcut": "t"
+			},
+			"all": {
+				"description": "generate all views"
+			}
+		},
+		"arguments": {
+			"modelName": {
+				"description": "complete name of a model (<Vendor>_<Module>_<Model>)",
+				"required": true,
+				"default": null
+			}
+		}
+	}
+}
