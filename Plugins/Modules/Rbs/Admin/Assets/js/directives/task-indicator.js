@@ -9,7 +9,7 @@
 
 	"use strict";
 
-	angular.module('RbsChange').directive('rbsTaskIndicator', ['RbsChange.UserTasks', 'RbsChange.i18n', function (UserTasks, i18n)
+	angular.module('RbsChange').directive('rbsTaskIndicator', ['RbsChange.UserTasks', 'RbsChange.i18n', '$rootScope', function (UserTasks, i18n, $rootScope)
 	{
 		return {
 			restrict : 'A',
@@ -26,7 +26,9 @@
 					$event.stopPropagation();
 					var t = angular.copy(task);
 					task.loading = true;
-					UserTasks.execute(t, actionName);
+					UserTasks.execute(t, actionName).then(function () {
+						$rootScope.$broadcast('Change:DocumentChanged', t.document);
+					});
 				};
 
 				scope.rejectTask = function ($event, task)

@@ -1134,7 +1134,7 @@
 	 *     </div>
 	 * </pre>
 	 */
-	app.directive('rbsDocumentEditorEdit', ['$filter', '$routeParams', '$location', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', function ($filter, $routeParams, $location, NotificationCenter, REST, i18n)
+	app.directive('rbsDocumentEditorEdit', ['$filter', '$routeParams', '$location', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Utils', function ($filter, $routeParams, $location, NotificationCenter, REST, i18n, Utils)
 	{
 		return {
 			restrict : 'A',
@@ -1185,6 +1185,20 @@
 							}
 						);
 					}
+
+					scope.$on('Change:DocumentChanged', function (event, doc)
+					{
+						if (doc && scope.document.id === doc.id) {
+							scope.reload();
+						}
+					});
+
+					scope.reload = function ()
+					{
+						if (Utils.isDocument(scope.document)) {
+							REST.resource(scope.document).then(ctrl.prepareEdition);
+						}
+					};
 				};
 			}
 		};
