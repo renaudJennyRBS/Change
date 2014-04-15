@@ -34,6 +34,8 @@ class Controller extends \Change\Http\Controller
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_REQUEST, array($this, 'onDefaultRequest'), 5);
 		$eventManager->attach(Event::EVENT_RESPONSE, array($this, 'onDefaultResponse'), 5);
+
+		$eventManager->attach(Event::EVENT_ACTION, array($this, 'onDefaultAction'), 0);
 	}
 
 	/**
@@ -44,8 +46,22 @@ class Controller extends \Change\Http\Controller
 		$request = $event->getRequest();
 		$applicationServices = $event->getApplicationServices();
 		$applicationServices->getPermissionsManager()->allow(true);
-
 		$request->populateLCIDByHeader($applicationServices->getI18nManager());
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultAction(Event $event)
+	{
+		$action = $event->getAction();
+		if ($action === null)
+		{
+			$action = function($event) {
+				(new \Rbs\Admin\Http\Actions\GetHome())->execute($event);
+			};
+			$event->setAction($action);
+		}
 	}
 
 	/**

@@ -157,14 +157,6 @@ class Resolver extends BaseResolver
 			$event->setAction($action);
 			return;
 		}
-		else
-		{
-			$action = function($event) {
-				(new \Rbs\Admin\Http\Actions\GetHome())->execute($event);
-			};
-			$event->setAction($action);
-			return;
-		}
 	}
 
 	/**
