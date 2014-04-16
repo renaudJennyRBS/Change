@@ -923,4 +923,14 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getGenericSettingsStructures()
+	{
+		$args = $this->getEventManager()->prepareArgs([]);
+		$this->getEventManager()->trigger('getGenericSettingsStructures', $this, $args);
+		return isset($args['structures']) && is_array($args['structures']) ? $args['structures'] : [];
+	}
 }

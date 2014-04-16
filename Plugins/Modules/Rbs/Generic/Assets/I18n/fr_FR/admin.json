@@ -37,5 +37,35 @@
 	},
 	"block_template_name":{
 		"message":"mode d'affichage"
+	},
+	"initialize_website":{
+		"message":"website"
+	},
+	"initialize_title":{
+		"message":"initialiser la structure par défaut"
+	},
+	"initialize_label_lang":{
+		"message":"langue des labels"
+	},
+	"initialize_for_website":{
+		"message":"pour un site"
+	},
+	"initialize_for_website_description":{
+		"message":"Vous spécifiez un site et l'action générera une structure par défaut pour ce site. Cette structure comprend une page d'accueil, des pages fonctionnelles pour permettre à un utilisateur de s'inscrire et s'identifier, d'autres pour les erreurs et les pages en accès restreint."
+	},
+	"initialize_button":{
+		"message":"initialiser la structure"
+	},
+	"initialize_template_sidebar":{
+		"message":"modèle de page avec sidebar"
+	},
+	"initialize_template_no_sidebar":{
+		"message":"modèle de page sans sidebar"
+	},
+	"already_initialized_website":{
+		"message":"une structure a déjà été initialisée pour ce site"
+	},
+	"check_already_initialized_error":{
+		"message":"erreur lors de la vérification du context d'initialisation"
 	}
 }

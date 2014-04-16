@@ -86,5 +86,14 @@
 			"labelKey": "m.rbs.commerce.admin.cart | ucf"
 		},
 		"auto": false
+	},
+	"/Rbs/Generic/InitializeWebStore": {
+		"module": "Rbs_Generic",
+		"name": "InitializeWebStore",
+		"rule": {
+			"templateUrl": "Rbs/Commerce/initialize-web-store.twig",
+			"labelKey": "m.rbs.commerce.admin.initialize_for_web_store | ucf"
+		},
+		"auto": false
 	}
 }

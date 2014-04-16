@@ -63,6 +63,10 @@ class GetHtmlFragment
 					{
 						$attributes['attributes'] = $manager->getModelTwigAttributes($model, $event->getParam('view'));
 					}
+					else if ($resourcePath === 'Rbs/Generic/settings.twig')
+					{
+						$attributes['structures'] = $manager->getGenericSettingsStructures();
+					}
 
 					list($moduleName, $path) = $this->explodePath($resourcePath);
 					$renderer = function () use ($moduleName, $path, $manager, $attributes)

@@ -538,4 +538,23 @@ class DocumentCodeManager
 		$this->contextCache[$context] = $contextId;
 		return $contextId;
 	}
+
+	/**
+	 * @param string $context
+	 * @return boolean
+	 */
+	public function contextExist($context)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('DocumentCodeManager_isContextExist');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('context_id'))
+				->from($fb->table('change_document_code_context'))
+				->where($fb->eq($fb->column('name'), $fb->parameter('context')));
+		}
+		$sq = $qb->query();
+		$sq->bindParameter('context', $context);
+		return count($sq->getResults()) > 0;
+	}
 } 

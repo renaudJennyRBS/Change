@@ -1,0 +1,29 @@
+{
+	"store_topic": {
+		"message": "Boutique"
+	},
+	"terms_and_conditions": {
+		"message": "Termes et conditions"
+	},
+	"product_detail": {
+		"message": "Détail d'un produit"
+	},
+	"product_set_detail": {
+		"message": "Détail d'un ensemble de produits"
+	},
+	"review_detail": {
+		"message": "Détail d'un avis"
+	},
+	"review_edit": {
+		"message": "Édition d'un avis"
+	},
+	"user_account_topic": {
+		"message": "Compte utilisateur"
+	},
+	"wishlist_list": {
+		"message": "Liste des wishlists"
+	},
+	"wishlist_detail": {
+		"message": "Détail d'une wishlist"
+	}
+}

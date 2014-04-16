@@ -34,6 +34,12 @@ class Listeners implements ListenerAggregateInterface
 		};
 		//Priority 1 (default value) to be sure to get the default attributes
 		$events->attach('getModelTwigAttributes', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Commerce\Setup\Initialize())->getGenericSettingsStructures($event);
+		};
+		$events->attach('getGenericSettingsStructures', $callback, 5);
 	}
 
 	/**

@@ -105,7 +105,8 @@ class Extension implements \Twig_ExtensionInterface
 		return array(
 			new \Twig_SimpleFunction('propertyKey', array($this, 'propertyKey')),
 			new \Twig_SimpleFunction('modelKey', array($this, 'modelKey')),
-			new \Twig_SimpleFunction('namedURL', array($this, 'namedURL'))
+			new \Twig_SimpleFunction('namedURL', array($this, 'namedURL')),
+			new \Twig_SimpleFunction('transLCID', array($this, 'transLCID'))
 		);
 	}
 
@@ -237,5 +238,15 @@ class Extension implements \Twig_ExtensionInterface
 			return substr($path, 1);
 		}
 		return null;
+	}
+
+
+	/**
+	 * @param string $LCID
+	 * @return string
+	 */
+	public function transLCID($LCID)
+	{
+		return htmlspecialchars(\Locale::getDisplayLanguage($LCID, $this->getI18nManager()->getLCID()));
 	}
 }

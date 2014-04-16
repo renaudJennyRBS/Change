@@ -1,0 +1,40 @@
+<div class="row">
+	<div class="col-lg-12">
+		<form name="form" data-ng-submit="submit()" novalidate class="form-horizontal" data-ng-controller="RbsCommerceInitializeWebStoreCtrl">
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_website', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.website" accepted-model="Rbs_Website_Website"></rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.commerce.admin.initialize_store', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.store" accepted-model="Rbs_Store_WebStore"></rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_sidebar', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.sidebarTemplate" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0">
+				</rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_no_sidebar', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.noSidebarTemplate" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0">
+				</rbs-document-select>
+			</rbs-field>
+
+			<rbs-field required="true"
+					label="{{ i18nAttr('m.rbs.generic.admin.initialize_label_lang', ['ucf']) }}">
+				<select class="form-control" data-ng-model="data.LCID">
+					<option value="fr_FR">{{ transLCID('fr_FR') | capitalize }}</option>
+					<option value="en_US">{{ transLCID('en_US') | capitalize }}</option>
+				</select>
+			</rbs-field>
+
+			<button data-ng-if="!alreadyInitialized" type="button" class="btn btn-default pull-right" data-ng-click="initializeWebStoreStructure()"
+					data-ng-disabled="!data.LCID || !data.website || !data.sidebarTemplate || !data.noSidebarTemplate || onInitialization">
+				<i data-ng-if="onInitialization" class="icon-white icon-spinner"></i>
+				{{ i18n('m.rbs.generic.admin.initialize_button', ['ucf']) }}
+			</button>
+		</form>
+	</div>
+</div>

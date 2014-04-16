@@ -5,7 +5,12 @@
 	</div>
 
 	<div rbs-main-column>
-		<p>descriptif en cours d'élaboration</p>
+		<h1>{{ i18n('m.rbs.generic.admin.initialize_title', ['ucf']) }}</h1>
+
+		{% for structure in structures %}
+			<h3><a href="{{ structure.href }}">{{ structure.title }}</a></h3>
+			<p>{{ structure.description }}</p>
+		{% endfor %}
 	</div>
 
 </div>
