@@ -1029,57 +1029,79 @@
 	 *     </div>
 	 * </pre>
 	 */
-	app.directive('rbsDocumentEditorEdit',
-		['$filter', '$routeParams', '$location', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n',
-			function($filter, $routeParams, $location, NotificationCenter, REST, i18n) {
-				return {
-					restrict: 'A',
-					require: '^rbsDocumentEditorBase',
-					scope: false,
-					priority: 900,
+	app.directive('rbsDocumentEditorEdit', ['$filter', '$routeParams', '$location', 'RbsChange.NotificationCenter', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.Utils',
+		function ($filter, $routeParams, $location, NotificationCenter, REST, i18n, Utils)
+		{
+			return {
+				restrict : 'A',
+				require : '^rbsDocumentEditorBase',
+				scope : false,
+				priority : 900,
 
-					controller: function() {},
+				controller : function () {},
 
-					compile: function(tElement) {
-						tElement.attr('name', 'form');
-						tElement.addClass('form-horizontal');
+				compile : function (tElement)
+				{
+					tElement.attr('name', 'form');
+					tElement.addClass('form-horizontal');
 
-						return function rbsDocumentEditorEditLink(scope, iElement, iAttrs, ctrl) {
-							// First, we check if there is a Navigation Context available for this editor.
+					return function rbsDocumentEditorEditLink (scope, iElement, iAttrs, ctrl)
+					{
+						// First, we check if there is a Navigation Context available for this editor.
 
-							// If there is one, it will be resolved by the prepareContext() method, and we don't need
-							// to do anything here.
-							if (!ctrl.prepareContext()) {
-								// No navigation Context:
-								// Load Document from the server with id and LCID coming from the route's params.
-								REST.resource(ctrl.getDocumentModelName(), parseInt($routeParams.id, 10), $routeParams.LCID).then(
-									// Success
-									function(doc) {
-										// Check the model name of the loaded Document:
-										// It it's not the same as the expected one ("model" attribute), the user is redirected
-										// to the right editor for the loaded Document.
-										if (doc.model !== ctrl.getDocumentModelName()) {
-											$location.path($filter('rbsURL')(doc, 'edit'));
-										}
-										else {
-											ctrl.prepareEdition(doc);
-										}
-									},
-									// Error
-									function() {
-										NotificationCenter.error(
-											i18n.trans('m.rbs.admin.admin.document_does_not_exist | ucf') + ' ' +
-												'<a href="' + $filter('rbsURL')(ctrl.getDocumentModelName(), 'new') + '">' +
-													i18n.trans('m.rbs.admin.admin.create | ucf | etc') +
-												'</a>'
-										);
+						// If there is one, it will be resolved by the prepareContext() method, and we don't need
+						// to do anything here.
+						if (! ctrl.prepareContext())
+						{
+							// No navigation Context:
+							// Load Document from the server with id and LCID coming from the route's params.
+							REST.resource(ctrl.getDocumentModelName(), parseInt($routeParams.id, 10), $routeParams.LCID).then(
+								// Success
+								function (doc)
+								{
+									// Check the model name of the loaded Document:
+									// It it's not the same as the expected one ("model" attribute), the user is redirected
+									// to the right editor for the loaded Document.
+									if (doc.model !== ctrl.getDocumentModelName()) {
+										$location.path($filter('rbsURL')(doc, 'edit'));
 									}
+									else {
+										ctrl.prepareEdition(doc);
+									}
+								},
+								// Error
+								function ()
+								{
+									NotificationCenter.error(
+										i18n.trans('m.rbs.admin.admin.document_does_not_exist | ucf') + ' ' +
+										'<a href="' + $filter('rbsURL')(ctrl.getDocumentModelName(), 'new') + '">' +
+										i18n.trans('m.rbs.admin.admin.create | ucf | etc') +
+										'</a>'
+											);
+										}
 								);
 							}
+
+
+						scope.$on('Change:DocumentChanged', function (event, doc)
+						{
+							if (doc && scope.document.id === doc.id) {
+								scope.reload();
+							}
+						});
+
+						scope.reload = function ()
+						{
+							if (Utils.isDocument(scope.document)) {
+								REST.resource(scope.document).then(ctrl.prepareEdition);
+							}
 						};
-					}
-				};
-			}]);
+
+					};
+				}
+
+			};
+		}]);
 
 	/**
 	 * @ngdoc directive
