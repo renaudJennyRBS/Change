@@ -124,5 +124,11 @@
 	},
 	"threshold_add":{
 		"message":"ajouter un seuil"
+	},
+	"modifiers_lines_amount_title":{
+		"message":"Par montant des lignes"
+	},
+	"amount_greater_or_equals":{
+		"message":"Montant des lignes >= à"
 	}
 }

@@ -228,6 +228,9 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 			if ($this->isPropertyModified('attributes'))
 			{
 				$this->setAxisGroupVisibility();
+				$arguments = ['attributeId' => $this->getId()];
+				$event->getApplicationServices()->getJobManager()
+					->createNewJob('Rbs_Catalog_Attribute_Refresh_Values', $arguments, null, false);
 			}
 		}
 		elseif ($this->getAxis())

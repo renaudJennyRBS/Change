@@ -28,6 +28,10 @@ class Listeners implements ListenerAggregateInterface
 		$events->attach('rbs-price-modifier-reservation-quantity', function ($event) {
 			(new \Rbs\Price\Modifiers\Modifiers())->onPriceModifierReservationQuantity($event);
 		}, 5);
+
+		$events->attach('rbs-price-modifier-lines-amount', function ($event) {
+			(new \Rbs\Price\Modifiers\Modifiers())->onPriceModifierLinesAmount($event);
+		}, 5);
 	}
 
 	/**
