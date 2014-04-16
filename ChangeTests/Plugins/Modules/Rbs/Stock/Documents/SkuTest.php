@@ -244,21 +244,14 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 		/** @var $stock2 \Rbs\Stock\Documents\InventoryEntry */
 		$stock2 = $this->getApplicationServices()->getDocumentManager()
 			->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
-		$stock2->setSku($sku1);
+		$stock2->setSku($sku2);
 		$stock2->setLevel(20);
-
-		/** @var $stock3 \Rbs\Stock\Documents\InventoryEntry */
-		$stock3 = $this->getApplicationServices()->getDocumentManager()
-			->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
-		$stock3->setSku($sku2);
-		$stock3->setLevel(30);
 
 		try
 		{
 			$tm->begin();
 			$stock1->save();
 			$stock2->save();
-			$stock3->save();
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -268,7 +261,7 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$query1 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query1->andPredicates($query1->eq('sku', $sku1));
-		$this->assertEquals(2, $query1->getCountDocuments());
+		$this->assertEquals(1, $query1->getCountDocuments());
 
 		$query2 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query2->andPredicates($query2->eq('sku', $sku2));
