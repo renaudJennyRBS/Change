@@ -94,7 +94,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 				$sku = $stockManager->getSkuByCode($data['codeSKU']);
 				if ($sku)
 				{
-					$stockManager->addInventoryMovement($data['quantity'], $sku, null, new \DateTime(), $this->getIdentifier());
+					$stockManager->addInventoryMovement(-$data['quantity'], $sku, null, new \DateTime(), $this->getIdentifier());
 					if ($order instanceof \Rbs\Order\Documents\Order)
 					{
 						$stockManager->decrementReservation($order->getIdentifier(), $sku->getId(), $data['quantity']);
