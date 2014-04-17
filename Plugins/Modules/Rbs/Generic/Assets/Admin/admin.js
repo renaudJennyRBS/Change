@@ -5,7 +5,7 @@
 
 	function RbsGenericInitializeWebsiteCtrl ($scope, $http, REST, i18n, NotificationCenter, ErrorFormatter)
 	{
-		$scope.data = {website: null, sidebarTemplate: null, noSidebarTemplate: null, LCID: null};
+		$scope.data = {website: null, sidebarTemplate: null, noSidebarTemplate: null, LCID: null, userAccountTopic: null};
 		$scope.onInitialization = false;
 
 		$scope.initializeWebsiteStructure = function () {
@@ -14,7 +14,8 @@
 				websiteId: $scope.data.website.id,
 				sidebarTemplateId: $scope.data.sidebarTemplate.id,
 				noSidebarTemplateId: $scope.data.noSidebarTemplate.id,
-				LCID: $scope.data.LCID
+				LCID: $scope.data.LCID,
+				userAccountTopicId: $scope.data.userAccountTopic != null ? $scope.data.userAccountTopic.id : null
 			}).success(function (){
 				$scope.onInitialization = false;
 				$scope.alreadyInitialized = true;
@@ -41,9 +42,27 @@
 			});
 		}
 
+		function preselectTopics(websiteId) {
+			$http.post(REST.getBaseUrl('Rbs/Generic/GetDocumentByCode'), {
+				codes: {userAccount: 'user_account_topic'},
+				context: 'Website_' + websiteId
+			}).success (function (data) {
+				if (data.userAccount) {
+					REST.resource('Rbs_Website_Topic', data.userAccount).then(function (document){
+						$scope.data.userAccountTopic = document;
+					});
+				}
+			}).error (function (error) {
+				console.error(error);
+				NotificationCenter.error(i18n.trans('m.rbs.generic.admin.get_document_by_code_error | ucf'),
+					ErrorFormatter.format(error));
+			});
+		}
+
 		$scope.$watch('data.website', function (website) {
 			NotificationCenter.clear();
 			if (website) {
+				preselectTopics(website.id);
 				checkAlreadyInitialized(website.id);
 			}
 			else {

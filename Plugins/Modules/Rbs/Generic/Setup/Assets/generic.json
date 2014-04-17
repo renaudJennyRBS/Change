@@ -163,11 +163,26 @@
 		},
 
 		{
-			"_id": "rbs_generic_initialize_reset_password",
-			"_model": "Rbs_Website_FunctionalPage",
-			"label": {"_i18n": "m.rbs.generic.initialize.reset_password"},
+			"_id": "rbs_generic_initialize_user_account_topic",
+			"_model": "Rbs_Website_Topic",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
 			"website": {"_id": "website"},
-			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"_LCID": {
+				"fr_FR": {
+					"title": "Compte utilisateur"
+				},
+				"en_US": {
+					"title": "User account"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_reset_password",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.reset_password"},
+			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {

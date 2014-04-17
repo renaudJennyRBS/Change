@@ -26,6 +26,17 @@
 				</select>
 			</rbs-field>
 
+			<hr />
+
+			<h3>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters', ['ucf']) }}</h3>
+			<p>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters_helper', ['ucf']) }}</p>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.userAccountTopic" accepted-model="Rbs_Website_Topic"
+						filter-property="website" filter-value="(= data.website.id =)">
+				</rbs-document-select>
+			</rbs-field>
+
 			<button data-ng-if="!alreadyInitialized" type="button" class="btn btn-default pull-right" data-ng-click="initializeWebsiteStructure()"
 					data-ng-disabled="!data.LCID || !data.website || !data.sidebarTemplate || !data.noSidebarTemplate || onInitialization">
 				<i data-ng-if="onInitialization" class="icon-white icon-spinner"></i>

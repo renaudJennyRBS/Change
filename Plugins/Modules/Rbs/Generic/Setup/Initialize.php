@@ -23,18 +23,26 @@ class Initialize
 		$sidebarTemplateId = isset($params['sidebarTemplateId']) ? $params['sidebarTemplateId'] : null;
 		$noSidebarTemplateId = isset($params['noSidebarTemplateId']) ? $params['noSidebarTemplateId'] : null;
 		$LCID = isset($params['LCID']) ? $params['LCID'] : null;
+		$userAccountTopicId = isset($params['userAccountTopicId']) ? $params['userAccountTopicId'] : null;
 
 		$website = $applicationServices->getDocumentManager()->getDocumentInstance($websiteId);
 		$sidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($sidebarTemplateId);
 		$noSidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($noSidebarTemplateId);
+		$userAccountTopic = $applicationServices->getDocumentManager()->getDocumentInstance($userAccountTopicId);
 
 		if ($sidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
 			$noSidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
 			$website instanceof \Rbs\Website\Documents\Website && $LCID)
 		{
+			$context = 'Rbs Generic Website Initialize ' . $websiteId;
+			if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
+			{
+				$applicationServices->getDocumentCodeManager()->addDocumentCode($userAccountTopic, 'rbs_generic_initialize_user_account_topic', $context);
+			}
+
 			$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'generic.json';
 			$json = json_decode(file_get_contents($filePath), true);
-			$json['contextId'] = 'Rbs Generic Website Initialize ' . $websiteId;
+			$json['contextId'] = $context;
 
 			$i18nManager = $applicationServices->getI18nManager();
 			$i18nManager->setLCID($LCID);
@@ -85,6 +93,16 @@ class Initialize
 				{
 					$task->setUserId($user->getId());
 					$task->execute();
+				}
+			}
+
+			//keep generic document code if it's useful
+			if (!$userAccountTopic)
+			{
+				$documents = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_commerce_initialize_user_account_topic', $context);
+				if (isset($documents[0]) && $documents[0] != null)
+				{
+					$applicationServices->getDocumentCodeManager()->addDocumentCode($documents[0], 'user_account_topic', 'Website_' . $websiteId);
 				}
 			}
 

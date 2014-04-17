@@ -245,6 +245,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Generic\Http\Rest\DocumentCodeContextExist())->execute($event);
 					});
 					break;
+				case 'Rbs/Generic/GetDocumentByCode' :
+					$event->setAction(function (Event $event)
+					{
+						(new \Rbs\Generic\Http\Rest\GetDocumentByCode())->execute($event);
+					});
+					break;
 			}
 		}
 	}

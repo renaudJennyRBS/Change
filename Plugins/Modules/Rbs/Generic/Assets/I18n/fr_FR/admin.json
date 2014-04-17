@@ -67,5 +67,20 @@
 	},
 	"check_already_initialized_error":{
 		"message":"erreur lors de la vérification du context d'initialisation"
+	},
+	"initialize_parameters":{
+		"message":"paramètres"
+	},
+	"initialize_optional_parameters":{
+		"message":"paramètres optionnels"
+	},
+	"initialize_optional_parameters_helper":{
+		"message":"les paramètres optionnels sont important si vous avez déjà initialisé les sections de votre site. Si les section ne sont pas renseignées ici, elles seront automatiquement ajoutées à l'arborescence du site"
+	},
+	"initialize_user_account_topic":{
+		"message":"section \"compte utilisateur\""
+	},
+	"get_document_by_code_error":{
+		"message":"erreur lors de la requette d'obtention d'un document par code d'initisalisation"
 	}
 }
