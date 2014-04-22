@@ -252,6 +252,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Stock\Http\Rest\Actions\Movement())->addMovement($event);
 					});
 				}
+				else
+				{
+					$result = $event->getController()
+						->notAllowedError($request->getMethod(), [\Change\Http\Request::METHOD_POST]);
+					$event->setResult($result);
+				}
 			}
 			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/stockInfo/?$#', $relativePath, $matches))
 			{

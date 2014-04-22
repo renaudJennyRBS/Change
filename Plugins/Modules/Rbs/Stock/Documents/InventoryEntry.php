@@ -45,39 +45,43 @@ class InventoryEntry extends \Compilation\Rbs\Stock\Documents\InventoryEntry
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$callback = function (Event $event)
-		{
-			/* @var $document InventoryEntry */
-			$document = $event->getDocument();
-			if ($document->isNew())
-			{
+		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 5);
+	}
 
-				// Get Inventory by SKU and Warehouse
-				$cs = $event->getServices('commerceServices');
-				if ($cs instanceof \Rbs\Commerce\CommerceServices)
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultCreate($event)
+	{
+		/* @var $document InventoryEntry */
+		$document = $event->getDocument();
+		if ($document->isNew())
+		{
+
+			// Get Inventory by SKU and Warehouse
+			$cs = $event->getServices('commerceServices');
+			if ($cs instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$stockManager = $cs->getStockManager();
+				$existingInventory = $stockManager->getInventoryEntry($document->getSku(), $document->getWarehouse());
+				if ($existingInventory)
 				{
-					$stockManager = $cs->getStockManager();
-					$existingInventory = $stockManager->getInventoryEntry($document->getSku(), $document->getWarehouse());
-					if ($existingInventory)
+					$warehouseLabel = $document->getWarehouseId();
+					if ($warehouseLabel == null)
 					{
-						$warehouseLabel = $document->getWarehouseId();
-						if ($warehouseLabel == null)
-						{
-							$warehouseLabel = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.stock.admin.warehouse_default_label', array('ucf'));
-						}
-						$errors = $event->getParam('propertiesErrors', array());
-						$errors['sku'][] = new PreparedKey('m.rbs.stock.admin.inventory_already_exists', array('ucf'), array('skuLabel' => $document->getSku()->getLabel(), 'warehouse' => $warehouseLabel));
-						$event->setParam('propertiesErrors', $errors);
+						$warehouseLabel = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.stock.admin.warehouse_default_label', array('ucf'));
 					}
-				}
-				else
-				{
 					$errors = $event->getParam('propertiesErrors', array());
-					$errors['sku'][] = new PreparedKey('m.rbs.stock.admin.commerce_services_missing', array('ucf'));
+					$errors['sku'][] = new PreparedKey('m.rbs.stock.admin.inventory_already_exists', array('ucf'), array('skuLabel' => $document->getSku()->getLabel(), 'warehouse' => $warehouseLabel));
 					$event->setParam('propertiesErrors', $errors);
 				}
 			}
-		};
-		$eventManager->attach(Event::EVENT_CREATE, $callback, 3);
+			else
+			{
+				$errors = $event->getParam('propertiesErrors', array());
+				$errors['sku'][] = new PreparedKey('m.rbs.stock.admin.commerce_services_missing', array('ucf'));
+				$event->setParam('propertiesErrors', $errors);
+			}
+		}
 	}
 }
