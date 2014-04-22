@@ -9,14 +9,16 @@
 {
 	"use strict";
 
-	function Editor()
+	function Editor($http, REST, Utils, Dialog, i18n, NotificationCenter)
 	{
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentEditorBase',
 
-			link : function (scope, elm, attrs) {
+			link : function (scope, element) {
 
+				scope.movement = {value: null};
+				scope.info = {};
 				scope.disabled = true;
 
 				scope.isLocked = function() {
@@ -27,10 +29,71 @@
 					scope.disabled = !scope.disabled;
 				}
 
+				scope.confirmConsolidate = function ($event)
+				{
+					Dialog.confirmEmbed(
+						element.find('.confirmation-area'),
+						i18n.trans('m.rbs.stock.admin.confirm_consolidate | ucf'),
+						i18n.trans('m.rbs.stock.admin.confirm_consolidate_message | ucf'),
+						scope,
+						{
+							'pointedElement' : $($event.target),
+							'primaryButtonText' : i18n.trans('m.rbs.stock.admin.consolidate_button | ucf'),
+							'primaryButtonClass' : 'btn-danger',
+							'cssClass' : 'danger'
+						}
+					).then(function () {
+							var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/consolidate/', {warehouseId: scope.document.warehouse });
+							$http.get(REST.getBaseUrl(url))
+								.success(function() {
+									scope.info.nbMovement = null;
+									scope.info.totalMovement = null;
+								})
+								.error(function(){
+									NotificationCenter.error(
+										i18n.trans('m.rbs.stock.admin.consolidate_movement_title | ucf'),
+										i18n.trans('m.rbs.stock.admin.consolidate_movement_message | ucf'),
+										'EDITOR');
+								})
+						});
+				};
+
+				scope.addMovement = function ()
+				{
+					var data = {movement: scope.movement.value, warehouseId: scope.document.warehouse};
+
+					var url = Utils.makeUrl('resources/Rbs/Stock/Sku/'+ scope.document.sku.id +'/movement/');
+					$http.post(REST.getBaseUrl(url), data)
+						.success(function() {
+						scope.movement.value = null;
+						loadInfos();
+						})
+						.error(function(){
+							NotificationCenter.error(
+								i18n.trans('m.rbs.stock.admin.add_movement_title | ucf'),
+								i18n.trans('m.rbs.stock.admin.add_movement_error_message | ucf'),
+								'EDITOR'
+							);
+						});
+				}
+
+				scope.onReady = function() {
+					loadInfos();
+				}
+
+				function loadInfos ()
+				{
+					var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/info/', {warehouseId: scope.document.warehouse });
+					$http.get(REST.getBaseUrl(url)).success(function(data) {
+						scope.info = data;
+					});
+				}
+
 			}
 		};
 	}
 
+	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.Utils', 'RbsChange.Dialog', 'RbsChange.i18n', 'RbsChange.NotificationCenter'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsStockInventoryEntryEdit', Editor);
 
 })();

@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -11,14 +10,15 @@ namespace Rbs\Stock\Http\Rest\Actions;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Rbs\Stock\Http\Rest\Actions\GetMovements
+ * @name \Rbs\Stock\Http\Rest\Actions\Reservation
  */
-class GetMovements
+class Reservation
 {
+
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function execute($event)
+	public function getReservations($event)
 	{
 		$result = new \Change\Http\Rest\Result\CollectionResult();
 
@@ -33,45 +33,52 @@ class GetMovements
 		}
 
 		$total = 0;
-		$movements = array();
+		$reservations = array();
 
 		$cs = $event->getServices('commerceServices');
 		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$stockManager = $cs->getStockManager();
 
-			$skuId = $event->getRequest()->getQuery('skuId');
+			$skuId = $event->getParam('skuId');
 
-			// Get count of total movements
-			$total = $stockManager->countInventoryMovementsBySku($skuId);
+			// Get count of total reservations
+			$total = $stockManager->countReservationsBySku($skuId);
 
-			// Get list of movements
-			$tmpMovements = $stockManager->getInventoryMovementsBySku($skuId, null, $limit, $offset, 'date', 'desc');
+			// Get list of reservations
+			$tmpReservations = $stockManager->getReservationsBySku($skuId, null, $limit, $offset, 'date', 'desc');
 
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$urlManager = $event->getUrlManager();
 			$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
-			foreach ($tmpMovements as $movement)
+			foreach ($tmpReservations as $reservation)
 			{
-				$targetId = $stockManager->getTargetIdFromTargetIdentifier($movement['target']);
+				$store = $documentManager->getDocumentInstance($reservation['store_id'], 'Rbs_Store_WebStore');
+
+				if ($store instanceof \Rbs\Store\Documents\WebStore)
+				{
+					$reservation['store'] = $vc->toRestValue($store, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
+				}
+
+				$targetId = $stockManager->getTargetIdFromTargetIdentifier($reservation['target']);
 				if ($targetId != null)
 				{
 					$targetObj = $documentManager->getDocumentInstance($targetId);
 					if ($targetObj != null)
 					{
-						$movement['targetInstance'] = $vc->toRestValue($targetObj, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
+						$reservation['targetInstance'] = $vc->toRestValue($targetObj, \Change\Documents\Property::TYPE_DOCUMENT)
+							->toArray();
 					}
 				}
 
-				$movements[] = $movement;
+				$reservations[] = $reservation;
 			}
 		}
-
-		$result->setResources($movements);
+		$result->setResources($reservations);
 
 		$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 		$result->setCount($total);
 		$event->setResult($result);
 	}
 
-} 
+}
