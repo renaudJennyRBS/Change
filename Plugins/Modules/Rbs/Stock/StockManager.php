@@ -152,6 +152,19 @@ class StockManager
 	}
 
 	/**
+	 * @param \Rbs\Stock\Documents\Sku $sku
+	 * @return \Rbs\Stock\Documents\InventoryEntry|null
+	 */
+	public function getInventoryEntries($sku)
+	{
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query->andPredicates(
+			$query->eq('sku', $sku)
+		);
+		return $query->getDocuments();
+	}
+
+	/**
 	 * @param integer $level
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
@@ -311,6 +324,32 @@ class StockManager
 		}
 
 		return $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+	}
+
+	/**
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @return array|mixed|null
+	 */
+	public function getInventoryMovementsInfosBySkuGroupByWarehouse($sku)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getInventoryMovementsInfosBySkuGroupByWarehouse');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->alias($fb->column('warehouse_id'), 'warehouse'), $fb->alias($fb->func('count', '*'), 'count'), $fb->alias($fb->sum($fb->column('movement')), 'movement'));
+			$qb->from($fb->table('rbs_stock_dat_mvt'));
+			$logicAnd = $fb->logicAnd(
+				$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+			);
+			$qb->where($logicAnd);
+			$qb->group($fb->column('warehouse'));
+		}
+		$query = $qb->query();
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		return $query->getResults($query->getRowsConverter()->addIntCol('count', 'movement', 'warehouse'));
 	}
 
 	/**
@@ -716,7 +755,35 @@ class StockManager
 		return intval($query->getFirstResult($query->getRowsConverter()->addIntCol('quantity')));
 	}
 
+	/**
+	 * @param @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @return array|mixed|null
+	 */
+	public function getReservationsInfosBySkuGroupByStoreAndStatus($sku)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservationsInfosBySkuGroupByStore');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('store_id'), $fb->column('confirmed'), $fb->alias($fb->func('count', '*'), 'count'), $fb->alias($fb->sum($fb->column('reservation')), 'reservation'));
+			$qb->from($fb->table('rbs_stock_dat_res'));
 
+			$qb->where(
+				$fb->logicAnd(
+					$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+				)
+			);
+
+			$qb->group($fb->column('store_id'));
+			$qb->group($fb->column('confirmed'));
+		}
+		$query = $qb->query();
+
+		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
+		$query->bindParameter('skuId', $skuId);
+
+		return $query->getResults($query->getRowsConverter()->addIntCol('store_id', 'count', 'reservation')->addBoolCol('confirmed'));
+	}
 
 	/**
 	 * @param string $targetIdentifier

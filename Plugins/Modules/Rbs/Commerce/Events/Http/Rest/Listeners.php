@@ -253,6 +253,14 @@ class Listeners implements ListenerAggregateInterface
 					});
 				}
 			}
+			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/stockInfo/?$#', $relativePath, $matches))
+			{
+				$event->setParam('skuId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Stock\Http\Rest\Actions\Sku())->getInfos($event);
+				});
+			}
 			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/reservation/?$#', $relativePath, $matches))
 			{
 				$event->setParam('skuId', intval($matches[1]));
