@@ -43,7 +43,7 @@
 		}
 
 		function preselectTopics(websiteId) {
-			$http.post(REST.getBaseUrl('Rbs/Generic/GetDocumentByCode'), {
+			$http.post(REST.getBaseUrl('Rbs/Generic/GetDocumentsByCodes'), {
 				codes: {userAccount: 'user_account_topic'},
 				context: 'Website_' + websiteId
 			}).success (function (data) {

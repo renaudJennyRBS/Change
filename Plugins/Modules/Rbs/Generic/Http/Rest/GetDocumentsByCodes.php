@@ -9,9 +9,9 @@
 namespace Rbs\Generic\Http\Rest;
 
 /**
-* @name \Rbs\Generic\Http\Rest\GetDocumentByCode
+* @name \Rbs\Generic\Http\Rest\GetDocumentsByCodes
 */
-class GetDocumentByCode
+class GetDocumentsByCodes
 {
 	public function execute(\Change\Http\Event $event)
 	{
