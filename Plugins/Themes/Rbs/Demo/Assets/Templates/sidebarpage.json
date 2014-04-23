@@ -48,8 +48,8 @@
 				"templateName" : "xhtml-logo.twig"
 			}
 		},
-		"headerBottom1" : {
-			"id" : "headerBottom1",
+		"mainMenu" : {
+			"id" : "mainMenu",
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
