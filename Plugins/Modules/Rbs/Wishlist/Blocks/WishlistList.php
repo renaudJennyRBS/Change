@@ -117,6 +117,15 @@ class WishlistList extends Block
 
 			return 'wishlist-list.twig';
 		}
-		return null;
+		/*
+		else
+		{
+			$unauthorized = new \Change\Http\Result();
+			$unauthorized->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_401);
+			$event->setResult($unauthorized);
+			return $unauthorized;
+		}
+		*/
+		return 'wishlist-list-error.twig';
 	}
 }

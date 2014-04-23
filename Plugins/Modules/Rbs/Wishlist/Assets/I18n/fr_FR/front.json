@@ -97,5 +97,11 @@
 	},
 	"wishlist_add_selected_products_to_cart":{
 		"message":"ajouter ces produits au panier"
+	},
+	"wishlist_my_wishlists":{
+		"message":"mes wishlists"
+	},
+	"must_log_in":{
+		"message":"Vous devez vous $OPEN_LINK$connecter$CLOSE_LINK$ pour accéder à la liste de vos wishlists."
 	}
 }
