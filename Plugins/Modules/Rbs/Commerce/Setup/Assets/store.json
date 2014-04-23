@@ -170,57 +170,6 @@
 		},
 
 		{
-			"_id": "rbs_commerce_initialize_product_set_detail",
-			"_model": "Rbs_Website_FunctionalPage",
-			"label": {"_i18n": "m.rbs.commerce.initialize.product_set_detail"},
-			"section": {"_id": "website"},
-			"website": {"_id": "website"},
-			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
-			"_LCID": {
-				"fr_FR": {
-					"editableContent": {
-						"mainContent":
-						{
-							"id": "mainContent",
-							"grid": 12,
-							"type": "container",
-							"items":[
-								{
-									"type": "block", "name": "Rbs_Catalog_ProductSet", "id": 2, "label": "Rbs_Catalog_ProductSet"
-								}
-							]
-						}
-					},
-					"title": "Détail d'un ensemble de produits"
-				},
-				"en_US": {
-					"editableContent": {
-						"mainContent":
-						{
-							"id": "mainContent",
-							"grid": 12,
-							"type": "container",
-							"items":[
-								{
-									"type": "block", "name": "Rbs_Catalog_ProductSet", "id": 2, "label": "Rbs_Catalog_ProductSet"
-								}
-							]
-						}
-					},
-					"title": "Product set detail"
-				}
-			}
-		},
-		{
-			"_id": "rbs_commerce_initialize_product_set_detail_function",
-			"_model": "Rbs_Website_SectionPageFunction",
-			"functionCode": "Rbs_Catalog_ProductSet",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_product_set_detail"}
-		},
-
-		{
 			"_id": "rbs_commerce_initialize_review_detail",
 			"_model": "Rbs_Website_FunctionalPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.review_detail"},
@@ -393,6 +342,7 @@
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.wishlist_detail"},
 			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"hideLinks": true,
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {

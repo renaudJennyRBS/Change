@@ -99,12 +99,14 @@ class Initialize
 			//keep generic document code if it's useful
 			if (!$userAccountTopic)
 			{
-				$documents = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_commerce_initialize_user_account_topic', $context);
+				$documents = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_generic_initialize_user_account_topic', $context);
 				if (isset($documents[0]) && $documents[0] != null)
 				{
 					$applicationServices->getDocumentCodeManager()->addDocumentCode($documents[0], 'user_account_topic', 'Website_' . $websiteId);
 				}
 			}
+
+			$this->addMenuToTemplates($websiteId, $noSidebarTemplate, $sidebarTemplate, $applicationServices);
 
 			$result = new \Change\Http\Rest\Result\ArrayResult();
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
@@ -152,5 +154,56 @@ class Initialize
 			'description' => $i18nManager->trans('m.rbs.generic.admin.initialize_for_website_description', ['ucf'])
 		];
 		$event->setParam('structures', $structures);
+	}
+
+	/**
+	 * @param integer $websiteId
+	 * @param \Rbs\Theme\Documents\Template $noSidebarTemplate
+	 * @param \Rbs\Theme\Documents\Template $sidebarTemplate
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 */
+	protected function addMenuToTemplates($websiteId, $noSidebarTemplate, $sidebarTemplate, $applicationServices)
+	{
+		$mainMenu = ["id" => "mainMenu", "type" => "block", "name" => "Rbs_Website_Menu", "parameters" => [
+			"documentId" => null, "maxLevel" => 2, "templateName" => "menu-scroll-inverse.twig", "TTL" => 60,
+			"toDisplayDocumentId" => $websiteId
+		]
+		];
+
+		$contentByWebsite = $noSidebarTemplate->getContentByWebsite();
+		if (isset($contentByWebsite[$websiteId]))
+		{
+			$contentByWebsite[$websiteId]['mainMenu'] = $mainMenu;
+		}
+		else
+		{
+			$contentByWebsite[$websiteId] = ['mainMenu' => $mainMenu];
+		}
+		$noSidebarTemplate->setContentByWebsite($contentByWebsite);
+
+		$contentByWebsite = $sidebarTemplate->getContentByWebsite();
+		if (isset($contentByWebsite[$websiteId]))
+		{
+			$contentByWebsite[$websiteId]['mainMenu'] = $mainMenu;
+		}
+		else
+		{
+			$contentByWebsite[$websiteId] = ['mainMenu' => $mainMenu];
+		}
+		$sidebarTemplate->setContentByWebsite($contentByWebsite);
+
+		$transactionManager = $applicationServices->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$noSidebarTemplate->update();
+			$sidebarTemplate->update();
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			$transactionManager->rollBack($e);
+			$applicationServices->getLogging()->error('Error when trying to update templates in Generic Website initialization: ' . $e->getMessage());
+		}
 	}
 } 

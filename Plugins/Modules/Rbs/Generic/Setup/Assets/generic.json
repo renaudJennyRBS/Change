@@ -183,6 +183,7 @@
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.generic.initialize.reset_password"},
 			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
+			"hideLinks": true,
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {

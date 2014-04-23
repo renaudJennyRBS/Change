@@ -26,7 +26,6 @@ class GetDocumentsByCodes
 				$documentsFromCode = $documentCodeManager->getDocumentsByCode($documentCode, $context);
 				if (isset($documentsFromCode[0]) && $documentsFromCode[0])
 				{
-					//Optimize by returning directly the REST document
 					$documents[$key] = $documentsFromCode[0]->getId();
 				}
 			}

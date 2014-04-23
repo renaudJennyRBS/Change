@@ -3,18 +3,18 @@
 		<form name="form" data-ng-submit="submit()" novalidate class="form-horizontal" data-ng-controller="RbsGenericInitializeWebsiteCtrl">
 
 			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_website', ['ucf']) }}" required="true">
-				<rbs-document-select ng-model="data.website" accepted-model="Rbs_Website_Website"></rbs-document-select>
+				<rbs-document-select ng-model="data.websiteId" accepted-model="Rbs_Website_Website" value-ids="true"></rbs-document-select>
 			</rbs-field>
 
 			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_sidebar', ['ucf']) }}" required="true">
-				<rbs-document-select ng-model="data.sidebarTemplate" accepted-model="Rbs_Theme_Template"
-						filter-property="mailSuitable" filter-value="0">
+				<rbs-document-select ng-model="data.sidebarTemplateId" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0" value-ids="true">
 				</rbs-document-select>
 			</rbs-field>
 
 			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_no_sidebar', ['ucf']) }}" required="true">
-				<rbs-document-select ng-model="data.noSidebarTemplate" accepted-model="Rbs_Theme_Template"
-						filter-property="mailSuitable" filter-value="0">
+				<rbs-document-select ng-model="data.noSidebarTemplateId" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0" value-ids="true">
 				</rbs-document-select>
 			</rbs-field>
 
@@ -32,13 +32,13 @@
 			<p>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters_helper', ['ucf']) }}</p>
 
 			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}" required="true">
-				<rbs-document-select ng-model="data.userAccountTopic" accepted-model="Rbs_Website_Topic"
-						filter-property="website" filter-value="(= data.website.id =)">
+				<rbs-document-select ng-model="data.userAccountTopicId" accepted-model="Rbs_Website_Topic"
+						filter-property="website" filter-value="(= data.websiteId =)" value-ids="true">
 				</rbs-document-select>
 			</rbs-field>
 
 			<button data-ng-if="!alreadyInitialized" type="button" class="btn btn-default pull-right" data-ng-click="initializeWebsiteStructure()"
-					data-ng-disabled="!data.LCID || !data.website || !data.sidebarTemplate || !data.noSidebarTemplate || onInitialization">
+					data-ng-disabled="!data.LCID || !data.websiteId || !data.sidebarTemplateId || !data.noSidebarTemplateId || onInitialization">
 				<i data-ng-if="onInitialization" class="icon-white icon-spinner"></i>
 				{{ i18n('m.rbs.generic.admin.initialize_button', ['ucf']) }}
 			</button>

@@ -5,17 +5,17 @@
 
 	function RbsCommerceInitializeWebStoreCtrl ($scope, $http, REST, i18n, NotificationCenter, ErrorFormatter)
 	{
-		$scope.data = {website: null, store: null, sidebarTemplate: null, noSidebarTemplate: null, LCID: null, userAccountTopic: null};
+		$scope.data = {websiteId: null, storeId: null, sidebarTemplateId: null, noSidebarTemplateId: null, LCID: null, userAccountTopicId: null};
 
 		$scope.initializeWebStoreStructure = function () {
 			$scope.onInitialization = true;
 			$http.post(REST.getBaseUrl('rbs/commerce/initializeStore'), {
-				websiteId: $scope.data.website.id,
-				storeId: $scope.data.store.id,
-				sidebarTemplateId: $scope.data.sidebarTemplate.id,
-				noSidebarTemplateId: $scope.data.noSidebarTemplate.id,
+				websiteId: $scope.data.websiteId,
+				storeId: $scope.data.storeId,
+				sidebarTemplateId: $scope.data.sidebarTemplateId,
+				noSidebarTemplateId: $scope.data.noSidebarTemplateId,
 				LCID: $scope.data.LCID,
-				userAccountTopicId: $scope.data.userAccountTopic != null ? $scope.data.userAccountTopic.id : null
+				userAccountTopicId: $scope.data.userAccountTopicId
 			}).success(function (){
 				$scope.onInitialization = false;
 				$scope.alreadyInitialized = true;
@@ -44,13 +44,11 @@
 
 		function preselectTopics(websiteId) {
 			$http.post(REST.getBaseUrl('Rbs/Generic/GetDocumentsByCodes'), {
-				codes: {userAccount: 'user_account_topic'},
+				codes: {userAccountTopicId: 'user_account_topic'},
 				context: 'Website_' + websiteId
 			}).success (function (data) {
-				if (data.userAccount) {
-					REST.resource('Rbs_Website_Topic', data.userAccount).then(function (document){
-						$scope.data.userAccountTopic = document;
-					});
+				if (data.userAccountTopicId) {
+					$scope.data.userAccountTopicId = data.userAccountTopicId;
 				}
 			}).error (function (error) {
 				console.error(error);
@@ -59,12 +57,12 @@
 			});
 		}
 
-		$scope.$watch('data.website', function (website) {
+		$scope.$watch('data.websiteId', function (websiteId) {
 			NotificationCenter.clear();
-			if (website) {
-				preselectTopics(website.id);
-				if ($scope.data.store) {
-					checkAlreadyInitialized(website.id, $scope.data.store.id);
+			if (websiteId) {
+				preselectTopics(websiteId);
+				if ($scope.data.storeId) {
+					checkAlreadyInitialized(websiteId, $scope.data.storeId);
 				}
 			}
 			else {
@@ -72,10 +70,10 @@
 			}
 		});
 
-		$scope.$watch('data.store', function (store) {
+		$scope.$watch('data.storeId', function (storeId) {
 			NotificationCenter.clear();
-			if (store && $scope.data.website) {
-				checkAlreadyInitialized($scope.data.website.id, store.id);
+			if (storeId && $scope.data.websiteId) {
+				checkAlreadyInitialized($scope.data.websiteId, storeId);
 			}
 			else {
 				$scope.alreadyInitialized = false;
