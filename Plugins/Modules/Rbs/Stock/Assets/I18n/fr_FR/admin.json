@@ -110,11 +110,53 @@
 	"see_reservation":{
 		"message":"consulter les <strong>réservations</strong>"
 	},
+	"sku_stock_info":{
+		"message":"informations de stocks"
+	},
+	"sku_stock_info_level_title":{
+		"message":"niveau des stocks"
+	},
+	"sku_stock_info_level":{
+		"message":"niveau de stock initial"
+	},
+	"sku_stock_info_current_level":{
+		"message":"niveau de stock actuel"
+	},
+	"sku_stock_info_warehouse":{
+		"message":"entrepôt concerné"
+	},
+	"sku_stock_info_movement_title":{
+		"message":"mouvements en cours"
+	},
+	"sku_stock_info_movement_count":{
+		"message":"nombre de mouvements"
+	},
+	"sku_stock_info_movement_value":{
+		"message":"variation du stock"
+	},
+	"sku_stock_info_movement_warehouse":{
+		"message":"entrepôt concerné"
+	},
+	"sku_stock_info_reservation_title":{
+		"message":"réservations en cours"
+	},
+	"sku_stock_info_confirmed_reservation_title":{
+		"message":"réservations confirmées"
+	},
+	"sku_stock_info_reservation_store":{
+		"message":"boutique concernée"
+	},
+	"sku_stock_info_reservation_value":{
+		"message":"nombre d'unités"
+	},
+	"sku_stock_info_reservation_count":{
+		"message":"nombre de réservations"
+	},
 	"movement_value":{
 		"message":"valeur"
 	},
 	"movement_warehouse":{
-		"message":"entrepot"
+		"message":"entrepôt"
 	},
 	"movement_date":{
 		"message":"date"
@@ -193,5 +235,23 @@
 	},
 	"add_movement_error_message":{
 		"message":"Une erreur s'est produite lors de l'ajout du mouvement. Merci de réessayer."
+	},
+	"delete_movement":{
+		"message":"supprimer"
+	},
+	"delete_movement_title":{
+		"message":"supprimer le mouvement"
+	},
+	"delete_movement_error_message":{
+		"message":"Une erreur s'est produite lors de la suppression du mouvement. Merci de réessayer."
+	},
+	"confirm_delete":{
+		"message":"confirmez-vous la suppression de ce mouvement ?"
+	},
+	"confirm_delete_message":{
+		"message":"en supprimant un mouvement vous allez agir sur le niveau de stock. Assurez-vous "
+	},
+	"no_information_to_display":{
+		"message":"aucune information à afficher"
 	}
 }

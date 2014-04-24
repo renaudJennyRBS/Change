@@ -98,7 +98,7 @@
 	 * @param Utils
 	 * @constructor
 	 */
-	function MovementListController($scope, $http, REST, $routeParams, Utils) {
+	function MovementListController($scope, $http, REST, $routeParams, Utils, Dialog, i18n, NotificationCenter) {
 
 		$scope.movements = {};
 
@@ -115,9 +115,38 @@
 
 		$scope.loadMovements({});
 
+		$scope.extend = {
+			confirmDelete : function ($event, movementId)
+			{
+				Dialog.confirmEmbed(
+					$('#EAOC_DLRbsMovementsList'),
+					i18n.trans('m.rbs.stock.admin.confirm_delete | ucf'),
+					i18n.trans('m.rbs.stock.admin.confirm_delete_message | ucf'),
+					$scope,
+					{
+						'pointedElement' : $($event.target),
+						'primaryButtonText' : i18n.trans('m.rbs.admin.admin.delete | ucf'),
+						'primaryButtonClass' : 'btn-danger',
+						'cssClass' : 'danger'
+					}
+				).then(function () {
+					var url = Utils.makeUrl('resources/Rbs/Stock/Sku/'+ $scope.document.id +'/movement/' + movementId);
+					$http.delete(REST.getBaseUrl(url))
+						.success(function() {
+							$scope.$broadcast('Change:DocumentList:DLRbsMovementsList:call', { method: 'reload' });
+						})
+						.error(function(){
+							NotificationCenter.error(
+								i18n.trans('m.rbs.stock.admin.delete_movement_title | ucf'),
+								i18n.trans('m.rbs.stock.admin.delete_movement_error_message | ucf'),
+								'EDITOR');
+						})
+				});
+			}
+		};
 	}
 
-	MovementListController.$inject = ['$scope', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils'];
+	MovementListController.$inject = ['$scope', '$http', 'RbsChange.REST', '$routeParams', 'RbsChange.Utils', 'RbsChange.Dialog', 'RbsChange.i18n', 'RbsChange.NotificationCenter'];
 	app.controller('Rbs_Stock_Movement_ListController', MovementListController);
 
 	/**

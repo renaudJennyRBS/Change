@@ -148,6 +148,80 @@
 				data-rbs-document-activation-section="">
 			</fieldset>
 
+			<fieldset data-rbs-editor-section="skustockinfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.stock.admin.sku_stock_info', ['ucf']) }}"
+				data-editor-section-icon="icon-signal">
+
+				<div class="table-responsive" >
+					<h4>{{ i18n('m.rbs.stock.admin.sku_stock_info_level_title', ['ucf']) }}</h4>
+					<table class="table table-striped" ng-if="stockInfoData.inventoryData">
+						<tr>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_level', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_current_level', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_warehouse', ['ucf']) }}</th>
+						</tr>
+						<tr ng-repeat="inventory in stockInfoData.inventoryData">
+							<td>(= inventory.inventoryLevel =)</td>
+							<td>(= inventory.currentLevel =)</td>
+							<td>(= inventory.warehouse =)</td>
+						</tr>
+					</table>
+					<p class="bg-warning lead text-center" ng-if="!stockInfoData.inventoryData">{{ i18n('m.rbs.stock.admin.no_information_to_display', ['ucf']) }}</p>
+				</div>
+
+				<div class="table-responsive" >
+					<h4>{{ i18n('m.rbs.stock.admin.sku_stock_info_movement_title', ['ucf']) }}</h4>
+					<table class="table table-striped" ng-if="stockInfoData.movementsData">
+						<tr>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_movement_count', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_movement_value', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_movement_warehouse', ['ucf']) }}</th>
+						</tr>
+						<tr ng-repeat="movement in stockInfoData.movementsData">
+							<td>(= movement.count =)</td>
+							<td>(= movement.movement =)</td>
+							<td>(= movement.warehouse =)</td>
+						</tr>
+					</table>
+					<p class="bg-warning lead text-center" ng-if="!stockInfoData.movementsData">{{ i18n('m.rbs.stock.admin.no_information_to_display', ['ucf']) }}</p>
+				</div>
+
+				<div class="table-responsive" >
+					<h4>{{ i18n('m.rbs.stock.admin.sku_stock_info_confirmed_reservation_title', ['ucf']) }}</h4>
+					<table class="table table-striped" ng-if="stockInfoData.reservationsData && stockInfoData.hasConfirmedReservations">
+						<tr>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_store', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_count', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_value', ['ucf']) }}</th>
+						</tr>
+						<tr ng-repeat="reservation in stockInfoData.reservationsData"  ng-if="reservation.confirmed">
+							<td name="reservation.store" label="{{ i18n('m.rbs.stock.admin.reservation_store', ['ucf']) }}"><a href="(= reservation.store | rbsURL =)">(= reservation.store.label=)</a></td>
+							<td>(= reservation.count =)</td>
+							<td>(= reservation.reservation =)</td>
+						</tr>
+					</table>
+					<p class="bg-warning lead text-center" ng-if="!stockInfoData.reservationsData || stockInfoData.reservationsData && !stockInfoData.hasConfirmedReservations">{{ i18n('m.rbs.stock.admin.no_information_to_display', ['ucf']) }}</p>
+				</div>
+
+				<div class="table-responsive" >
+					<h4>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_title', ['ucf']) }}</h4>
+					<table class="table table-striped" ng-if="stockInfoData.reservationsData">
+						<tr>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_store', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_count', ['ucf']) }}</th>
+							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_reservation_value', ['ucf']) }}</th>
+						</tr>
+						<tr ng-repeat="reservation in stockInfoData.reservationsData" ng-if="!reservation.confirmed">
+							<td name="reservation.store" label="{{ i18n('m.rbs.stock.admin.reservation_store', ['ucf']) }}"><a href="(= reservation.store | rbsURL =)">(= reservation.store.label=)</a></td>
+							<td>(= reservation.count =)</td>
+							<td>(= reservation.reservation =)</td>
+						</tr>
+					</table>
+					<p class="bg-warning lead text-center" ng-if="!stockInfoData.reservationsData">{{ i18n('m.rbs.stock.admin.no_information_to_display', ['ucf']) }}</p>
+				</div>
+
+			</fieldset>
+
 			<fieldset data-rbs-editor-section="systeminfo"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
 				data-rbs-document-system-info-section="">

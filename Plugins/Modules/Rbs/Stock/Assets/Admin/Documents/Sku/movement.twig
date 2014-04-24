@@ -20,11 +20,18 @@
 			rbs-quick-actions=""
 			actions=""
 			on-reload="loadMovements"
-			modification-date="false">
+			modification-date="false"
+			extend="extend">
 			<rbs-column name="movement" label="{{ i18n('m.rbs.stock.admin.movement_value', ['ucf']) }}"></rbs-column>
 			<rbs-column name="warehouse_id" label="{{ i18n('m.rbs.stock.admin.movement_warehouse', ['ucf']) }}"></rbs-column>
 			<rbs-column name="date.date" format="date" label="{{ i18n('m.rbs.stock.admin.movement_date', ['ucf']) }}"></rbs-column>
 			<rbs-column name="target" label="{{ i18n('m.rbs.stock.admin.reservation_target', ['ucf']) }}"><a ng-if="doc.targetInstance" href="(= doc.targetInstance | rbsURL =)">(= doc.targetInstance.label=)</a><span ng-if="!doc.targetInstance">(= doc.target=)</span></rbs-column>
+			<rbs-column name="action" >
+				<button class="btn btn-danger"
+					type="button" ng-click="extend.confirmDelete($event, doc.id)" title="{{ i18nAttr('m.rbs.stock.admin.delete_movement_title', ['ucf']) }}">
+					<i class="icon-trash"></i> {{ i18n('m.rbs.stock.admin.delete_movement', ['ucf']) | raw }}
+				</button>
+			</rbs-column>
 		</rbs-document-list>
 	</div>
 
