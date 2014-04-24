@@ -149,6 +149,20 @@ class Query extends AbstractBuilder
 	}
 
 	/**
+	 * @param \Change\Db\Query\Builder $qb
+	 */
+	protected function addDocumentIdColumn($qb)
+	{
+		$fb = $qb->getFragmentBuilder();
+		$qb->distinct();
+
+		$tableAliasName = $this->getTableAliasName();
+
+		$idColumn = $fb->alias($fb->getDocumentColumn('id', $tableAliasName), 'id');
+		$qb->addColumn($idColumn);
+	}
+
+	/**
 	 * @return \Change\Db\Query\Builder
 	 */
 	public function dbQueryBuilder()
@@ -192,6 +206,7 @@ class Query extends AbstractBuilder
 	}
 
 	/**
+	 * @api
 	 * @param string|Property $propertyName
 	 * @param boolean $asc
 	 * @param ChildBuilder $childBuilder
@@ -330,6 +345,7 @@ class Query extends AbstractBuilder
 	}
 
 	/**
+	 * @api
 	 * @return AbstractDocument|null
 	 */
 	public function getFirstDocument()
@@ -353,6 +369,7 @@ class Query extends AbstractBuilder
 	}
 
 	/**
+	 * @api
 	 * @param integer $startIndex
 	 * @param integer $maxResults
 	 * @return DocumentCollection
@@ -375,6 +392,29 @@ class Query extends AbstractBuilder
 	}
 
 	/**
+	 * @api
+	 * @param integer $startIndex
+	 * @param integer $maxResults
+	 * @return integer[]
+	 */
+	public function getDocumentIds($startIndex = 0, $maxResults = null)
+	{
+		$qb = $this->getDbQueryBuilder();
+		$this->addDocumentIdColumn($qb);
+		$this->populateQueryBuilder($qb);
+		$this->setQueryOrders($qb);
+		$sc = $qb->query();
+		$this->setQueryParameters($sc);
+		if ($maxResults)
+		{
+			$sc->setMaxResults($maxResults);
+			$sc->setStartIndex($startIndex);
+		}
+		return $sc->getResults($sc->getRowsConverter()->addIntCol('id')->singleColumn('id'));
+	}
+
+	/**
+	 * @api
 	 * @return integer
 	 */
 	public function getCountDocuments()
