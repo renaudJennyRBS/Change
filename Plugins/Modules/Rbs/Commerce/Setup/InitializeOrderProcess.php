@@ -9,9 +9,9 @@
 namespace Rbs\Commerce\Setup;
 
 /**
-* @name \Rbs\Commerce\Setup\Import
+* @name \Rbs\Commerce\Setup\InitializeOrderProcess
 */
-class Initialize
+class InitializeOrderProcess
 {
 	public function execute(\Change\Http\Event $event)
 	{
@@ -23,6 +23,7 @@ class Initialize
 		$storeId = isset($params['storeId']) ? $params['storeId'] : null;
 		$sidebarTemplateId = isset($params['sidebarTemplateId']) ? $params['sidebarTemplateId'] : null;
 		$noSidebarTemplateId = isset($params['noSidebarTemplateId']) ? $params['noSidebarTemplateId'] : null;
+		$popinTemplateId = isset($params['popinTemplateId']) ? $params['popinTemplateId'] : null;
 		$LCID = isset($params['LCID']) ? $params['LCID'] : null;
 		$userAccountTopicId = isset($params['userAccountTopicId']) ? $params['userAccountTopicId'] : null;
 
@@ -31,18 +32,20 @@ class Initialize
 		$sidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($sidebarTemplateId);
 		$noSidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($noSidebarTemplateId);
 		$userAccountTopic = $applicationServices->getDocumentManager()->getDocumentInstance($userAccountTopicId);
+		$popinTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($popinTemplateId);
 
 		if ($sidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
 			$noSidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
+			$popinTemplate instanceof \Rbs\Theme\Documents\Template &&
 			$website instanceof \Rbs\Website\Documents\Website && $store instanceof \Rbs\Store\Documents\WebStore && $LCID)
 		{
-			$context = 'Rbs Commerce WebStore Initialize ' . $websiteId . ' ' . $storeId;
+			$context = 'Rbs Commerce Order Process Initialize ' . $websiteId . ' ' . $storeId;
 			if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
 			{
 				$applicationServices->getDocumentCodeManager()->addDocumentCode($userAccountTopic, 'rbs_commerce_initialize_user_account_topic', $context);
 			}
 
-			$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'store.json';
+			$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'order-process.json';
 			$json = json_decode(file_get_contents($filePath), true);
 			$json['contextId'] = $context;
 
@@ -52,7 +55,7 @@ class Initialize
 			$import->addOnly(true);
 			$import->setDocumentCodeManager($applicationServices->getDocumentCodeManager());
 
-			$resolveDocument = function ($id, $contextId) use ($website, $store, $sidebarTemplate, $noSidebarTemplate)
+			$resolveDocument = function ($id, $contextId) use ($website, $store, $sidebarTemplate, $noSidebarTemplate, $popinTemplate)
 			{
 				switch ($id)
 				{
@@ -61,6 +64,9 @@ class Initialize
 						break;
 					case 'side_bar_template':
 						return $sidebarTemplate;
+						break;
+					case 'popin_template':
+						return $popinTemplate;
 						break;
 					case 'website':
 						return $website;
@@ -88,6 +94,28 @@ class Initialize
 				$result = new \Change\Http\Rest\Result\ErrorResult($e->getCode(), $e->getMessage());
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
 				$event->setResult($result);
+			}
+
+			//set initialized process to given store
+			$orderProcesses = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_commerce_initialize_order_process', $context);
+			if (isset($orderProcesses[0]) && $orderProcesses[0] instanceof \Rbs\Commerce\Documents\Process)
+			{
+				$store->setOrderProcess($orderProcesses[0]);
+				try
+				{
+					$applicationServices->getTransactionManager()->begin();
+					$store->save();
+					$applicationServices->getTransactionManager()->commit();
+				}
+				catch (\Exception $e)
+				{
+					$applicationServices->getTransactionManager()->rollBack($e);
+					$applicationServices->getLogging()->error($e->getMessage());
+
+					$result = new \Change\Http\Rest\Result\ErrorResult($e->getCode(), $e->getMessage());
+					$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
+					$event->setResult($result);
+				}
 			}
 
 			$user = $event->getAuthenticationManager()->getCurrentUser();
@@ -151,10 +179,10 @@ class Initialize
 	{
 		$structures = $event->getParam('structures', []);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$structures['Rbs_Commerce_WebStore'] = [
-			'title' => $i18nManager->trans('m.rbs.commerce.admin.initialize_for_web_store', ['ucf']),
-			'href' => 'Rbs/Generic/InitializeWebStore/',
-			'description' => $i18nManager->trans('m.rbs.commerce.admin.initialize_for_web_store_description', ['ucf'])
+		$structures['Rbs_Commerce_OrderProcess'] = [
+			'title' => $i18nManager->trans('m.rbs.commerce.admin.initialize_for_order_process', ['ucf']),
+			'href' => 'Rbs/Generic/InitializeOrderProcess/',
+			'description' => $i18nManager->trans('m.rbs.commerce.admin.initialize_for_order_process_description', ['ucf'])
 		];
 		$event->setParam('structures', $structures);
 	}

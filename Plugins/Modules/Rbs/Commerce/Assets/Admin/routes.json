@@ -95,5 +95,14 @@
 			"labelKey": "m.rbs.commerce.admin.initialize_for_web_store | ucf"
 		},
 		"auto": false
+	},
+	"/Rbs/Generic/InitializeOrderProcess": {
+		"module": "Rbs_Generic",
+		"name": "InitializeOrderProcess",
+		"rule": {
+			"templateUrl": "Rbs/Commerce/initialize-order-process.twig",
+			"labelKey": "m.rbs.commerce.admin.initialize_for_order_process | ucf"
+		},
+		"auto": false
 	}
 }

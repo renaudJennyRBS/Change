@@ -25,5 +25,41 @@
 	},
 	"wishlist_detail": {
 		"message": "Détail d'une wishlist"
+	},
+	"cart_detail": {
+		"message": "Détail du panier"
+	},
+	"product_added_to_cart": {
+		"message": "Produit ajouté au panier"
+	},
+	"order_process_page": {
+		"message": "Processus de commande"
+	},
+	"payment_return": {
+		"message": "Retour après paiement"
+	},
+	"create_account_for_transaction": {
+		"message": "Inscription après transaction"
+	},
+	"order_detail": {
+		"message": "Détail d'une commande"
+	},
+	"order_list": {
+		"message": "Liste des commandes"
+	},
+	"billing_area_france": {
+		"message": "France"
+	},
+	"shipping_mode_ups": {
+		"message": "UPS"
+	},
+	"shipping_mode_tnt": {
+		"message": "TNT"
+	},
+	"payment_cheque": {
+		"message": "Chèque"
+	},
+	"order_process": {
+		"message": "Processus de commande standard"
 	}
 }

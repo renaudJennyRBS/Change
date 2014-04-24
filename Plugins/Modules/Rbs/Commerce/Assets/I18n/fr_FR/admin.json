@@ -125,7 +125,16 @@
 	"initialize_web_store_error":{
 		"message":"erreur lors de l'initialisation de la boutique"
 	},
-	"initialize_for_process":{
+	"initialize_for_order_process":{
 		"message":"pour un processus de commande"
+	},
+	"initialize_for_order_process_description":{
+		"message":"Vous spécifier un site et une boutique et l'action générera une structure par défaut pour le processus de commande dans le site donné. Cette structure comprend toutes les pages pour que le processus de commande soit prêt à être utilisé. Le mode de paiement par défaut est le chèque."
+	},
+	"initialize_order_process_error":{
+		"message":"erreur lors de l'intitialisation du processus de commande"
+	},
+	"already_initialized_order_process":{
+		"message":"une structure a déjà été initialisée pour ce website et cette boutique"
 	}
 }

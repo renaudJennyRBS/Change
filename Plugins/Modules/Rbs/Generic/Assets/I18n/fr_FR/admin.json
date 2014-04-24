@@ -82,5 +82,8 @@
 	},
 	"get_document_by_code_error":{
 		"message":"erreur lors de la requette d'obtention d'un document par code d'initisalisation"
+	},
+	"initialize_template_popin":{
+		"message":"modèle de page pour fenêtre popin"
 	}
 }

@@ -37,7 +37,8 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			(new \Rbs\Commerce\Setup\Initialize())->getGenericSettingsStructures($event);
+			(new \Rbs\Commerce\Setup\InitializeWebStore())->getGenericSettingsStructures($event);
+			(new \Rbs\Commerce\Setup\InitializeOrderProcess())->getGenericSettingsStructures($event);
 		};
 		$events->attach('getGenericSettingsStructures', $callback, 5);
 	}

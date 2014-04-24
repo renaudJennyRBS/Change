@@ -281,7 +281,14 @@ class Listeners implements ListenerAggregateInterface
 			{
 				$event->setAction(function ($event)
 				{
-					(new \Rbs\Commerce\Setup\Initialize())->execute($event);
+					(new \Rbs\Commerce\Setup\InitializeWebStore())->execute($event);
+				});
+			}
+			else if ($relativePath === 'rbs/commerce/initializeOrderProcess')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Commerce\Setup\InitializeOrderProcess())->execute($event);
 				});
 			}
 		}
