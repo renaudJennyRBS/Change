@@ -36,6 +36,11 @@ class Import
 	protected $modelManager;
 
 	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
+	/**
 	 * @var \Change\Documents\DocumentCodeManager
 	 */
 	protected $documentCodeManager;
@@ -67,10 +72,12 @@ class Import
 
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\I18n\I18nManager $i18nManager
 	 */
-	public function __construct(\Change\Documents\DocumentManager $documentManager)
+	public function __construct(\Change\Documents\DocumentManager $documentManager, \Change\I18n\I18nManager $i18nManager = null)
 	{
 		$this->documentManager = $documentManager;
+		$this->i18nManager = $i18nManager;
 	}
 
 	/**
@@ -79,6 +86,14 @@ class Import
 	protected function getDocumentManager()
 	{
 		return $this->documentManager;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
 	}
 
 	/**
@@ -356,6 +371,17 @@ class Import
 					}
 				}
 				$property->setValue($document, $docs);
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			{
+				if ($this->getI18nManager())
+				{
+					$property->setValue($document, $this->getI18nManager()->trans($value['_i18n']));
+				}
+				else
+				{
+					$property->setValue($document, $value['_18n']);
+				}
 			}
 			else
 			{

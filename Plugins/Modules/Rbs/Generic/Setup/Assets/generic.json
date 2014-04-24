@@ -1,0 +1,488 @@
+{
+	"documents": [
+		{
+			"_id": "rbs_generic_initialize_homepage",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.homepage"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "###Bienvenue sur mon site web",
+										"TTL": 60
+									}
+								}
+							]
+						}
+					},
+					"title": "Page d'accueil"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "###Welcome to my website",
+										"TTL": 60
+									}
+								}
+							]
+						}
+					},
+					"title": "Homepage"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_homepage_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Website_Section",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_homepage"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_create_account",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.create_account"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_CreateAccount", "id": 2, "label": "Rbs_User_CreateAccount"
+								}
+							]
+						}
+					},
+					"title": "Création de compte"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_CreateAccount", "id": 2, "label": "Rbs_User_CreateAccount"
+								}
+							]
+						}
+					},
+					"title": "Create account"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_create_account_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_User_CreateAccount",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_create_account"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_login",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.login"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+								}
+							]
+						}
+					},
+					"title": "Identification"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+								}
+							]
+						}
+					},
+					"title": "Login"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_login_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_User_Login",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_login"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_user_account_topic",
+			"_model": "Rbs_Website_Topic",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"_LCID": {
+				"fr_FR": {
+					"title": "Compte utilisateur"
+				},
+				"en_US": {
+					"title": "User account"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_reset_password",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.reset_password"},
+			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
+			"hideLinks": true,
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_ResetPassword", "id": 2, "label": "Rbs_User_ResetPassword"
+								}
+							]
+						}
+					},
+					"title": "Ré-initialisation du mot de passe"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_ResetPassword", "id": 2, "label": "Rbs_User_ResetPassword"
+								}
+							]
+						}
+					},
+					"title": "Reset password"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_reset_password_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_User_ResetPassword",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_reset_password"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_exception",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.exception"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_Exception", "id": 2, "label": "Rbs_Website_Exception", "showStackTrace": false
+								}
+							]
+						}
+					},
+					"title": "Erreur interne de l'application"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_Exception", "id": 2, "label": "Rbs_Website_Exception", "showStackTrace": false
+								}
+							]
+						}
+					},
+					"title": "Internal server error"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_Error_500_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Error_500",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_exception"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_error",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.error"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_Error", "id": 2, "label": "Rbs_Website_Error"
+								}
+							]
+						}
+					},
+					"title": "Page non trouvée"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_Error", "id": 2, "label": "Rbs_Website_Error"
+								}
+							]
+						}
+					},
+					"title": "Page not found"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_Error_404_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Error_404",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_error"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_unauthorized",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.unauthorized"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+								}
+							]
+						}
+					},
+					"title": "Autorisation nécessaire"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+								}
+							]
+						}
+					},
+					"title": "Unauthorized"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_Error_401_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Error_401",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_unauthorized"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_forbidden",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.forbidden"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+								}
+							]
+						}
+					},
+					"title": "Acces refusé"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+								}
+							]
+						}
+					},
+					"title": "Forbidden"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_Error_403_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Error_403",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_forbidden"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_site_map",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.site_map"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_SiteMap", "id": 2, "label": "Rbs_Website_SiteMap"
+								}
+							]
+						}
+					},
+					"title": "Plan du site"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Website_SiteMap", "id": 2, "label": "Rbs_Website_SiteMap"
+								}
+							]
+						}
+					},
+					"title": "Site map"
+				}
+			}
+		},
+		{
+			"_id": "rbs_generic_initialize_site_map_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Website_Website_SiteMap",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_generic_initialize_site_map"}
+		}
+	],
+	"contextId": "Autogenerated"
+}

@@ -15,7 +15,7 @@
 		{% endif %}
 		<div>
 			{% if parameters.canEdit %}
-				<a href="{{ functionURL('Rbs_Review_EditReview') }}">{{ i18n('m.rbs.review.front.edit_review', ['ucf']) }}</a>
+				<a href="{{ functionURL('Rbs_Review_EditReview', null, {reviewId: review.id}) }}">{{ i18n('m.rbs.review.front.edit_review', ['ucf']) }}</a>
 			{% endif %}
 			{% include 'Rbs_Review/Blocks/review.twig' with { 'review': review, 'class': validationClass } %}
 			{% if hasCorrection %}

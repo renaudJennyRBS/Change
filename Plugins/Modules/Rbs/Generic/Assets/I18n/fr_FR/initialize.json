@@ -1,0 +1,29 @@
+{
+	"homepage": {
+		"message": "Page d'accueil"
+	},
+	"create_account": {
+		"message": "Création de compte"
+	},
+	"login": {
+		"message": "Identification"
+	},
+	"reset_password": {
+		"message": "Ré-initialisation du mot de passe"
+	},
+	"exception": {
+		"message": "Erreur interne de l'application"
+	},
+	"error": {
+		"message": "Page non trouvée"
+	},
+	"unauthorized": {
+		"message": "Autorisation nécessaire"
+	},
+	"forbidden": {
+		"message": "Acces refusé"
+	},
+	"site_map": {
+		"message": "Plan du site"
+	}
+}

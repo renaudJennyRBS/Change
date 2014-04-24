@@ -117,6 +117,6 @@ class WishlistList extends Block
 
 			return 'wishlist-list.twig';
 		}
-		return null;
+		return 'wishlist-list-error.twig';
 	}
 }

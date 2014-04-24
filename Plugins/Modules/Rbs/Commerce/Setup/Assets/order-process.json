@@ -1,0 +1,427 @@
+{
+	"documents": [
+		{
+			"_id": "rbs_commerce_initialize_user_account_topic",
+			"_model": "Rbs_Website_Topic",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"_LCID": {
+				"fr_FR": {
+					"title": "Compte utilisateur"
+				},
+				"en_US": {
+					"title": "User account"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_cart_detail",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.cart_detail"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Commerce_Cart", "id": 2, "label": "Rbs_Commerce_Cart"
+								}
+							]
+						}
+					},
+					"title": "Détail d'un avis"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Commerce_Cart", "id": 2, "label": "Rbs_Commerce_Cart"
+								}
+							]
+						}
+					},
+					"title": "Review detail"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_cart_detail_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Commerce_Cart",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_cart_detail"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_product_added_to_cart",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.product_added_to_cart"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "popin_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Catalog_ProductAddedToCart", "id": 2, "label": "Rbs_Catalog_ProductAddedToCart"
+								}
+							]
+						}
+					},
+					"title": "Produit ajouté au panier"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Catalog_ProductAddedToCart", "id": 2, "label": "Rbs_Catalog_ProductAddedToCart"
+								}
+							]
+						}
+					},
+					"title": "Product added to cart"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_product_add_to_cart_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Catalog_ProductAddedToCart",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_product_added_to_cart"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_order_process_page",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.order_process_page"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Commerce_OrderProcess", "id": 2, "label": "Rbs_Commerce_OrderProcess"
+								}
+							]
+						}
+					},
+					"title": "Processus de commande"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Commerce_OrderProcess", "id": 2, "label": "Rbs_Commerce_OrderProcess"
+								}
+							]
+						}
+					},
+					"title": "Order process"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_order_process_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Commerce_OrderProcess",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_order_process_page"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_payment_return",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.payment_return"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Commerce_PaymentReturn", "id": 2, "label": "Rbs_Commerce_PaymentReturn"
+								}
+							]
+						}
+					},
+					"title": "Retour après paiement"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Commerce_PaymentReturn", "id": 2, "label": "Rbs_Commerce_PaymentReturn"
+								}
+							]
+						}
+					},
+					"title": "Retour après paiement"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_payment_return_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Commerce_PaymentReturn",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_payment_return"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_create_account_for_transaction",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.create_account_for_transaction"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Payment_CreateAccountForTransaction", "id": 2, "label": "Rbs_Payment_CreateAccountForTransaction"
+								}
+							]
+						}
+					},
+					"title": "Inscription après transaction"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Payment_CreateAccountForTransaction", "id": 2, "label": "Rbs_Payment_CreateAccountForTransaction"
+								}
+							]
+						}
+					},
+					"title": "Create account for transaction"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_create_account_for_transaction_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Payment_CreateAccountForTransaction",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_create_account_for_transaction"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_order_detail",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.order_detail"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"website": {"_id": "website"},
+			"hideLinks": true,
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Order_OrderDetail", "id": 2, "label": "Rbs_Order_OrderDetail"
+								}
+							]
+						}
+					},
+					"title": "Détail d'une commande"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Order_OrderDetail", "id": 2, "label": "Rbs_Order_OrderDetail"
+								}
+							]
+						}
+					},
+					"title": "Order detail"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_order_detail_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Order_OrderDetail",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_order_detail"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_order_list",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.order_list"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Order_OrderList", "id": 2, "label": "Rbs_Order_OrderList"
+								}
+							]
+						}
+					},
+					"title": "Liste des commandes"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Order_OrderList", "id": 2, "label": "Rbs_Order_OrderList"
+								}
+							]
+						}
+					},
+					"title": "Order list"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_order_list_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Order_OrderList",
+			"section":{"_id":"website"},
+			"page":{"_id":"rbs_commerce_initialize_order_list"}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_shipping_mode_ups",
+			"_model": "Rbs_Shipping_Mode",
+			"label": {"_i18n": "m.rbs.commerce.initialize.shipping_mode_ups"},
+			"code": "UPS",
+			"_LCID": {
+				"fr_FR": {
+					"title": "UPS"
+				},
+				"en_US": {
+					"title": "UPS"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_shipping_mode_tnt",
+			"_model": "Rbs_Shipping_Mode",
+			"label": {"_i18n": "m.rbs.commerce.initialize.shipping_mode_tnt"},
+			"code": "TNT",
+			"_LCID": {
+				"fr_FR": {
+					"title": "TNT"
+				},
+				"en_US": {
+					"title": "TNT"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_payment_cheque",
+			"_model": "Rbs_Payment_DeferredConnector",
+			"label": {"_i18n": "m.rbs.commerce.initialize.payment_cheque"},
+			"code": "CHQ",
+			"_LCID": {
+				"fr_FR": {
+					"title": "Chèque"
+				},
+				"en_US": {
+					"title": "Cheque"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_order_process",
+			"_model": "Rbs_Commerce_Process",
+			"label": {"_i18n": "m.rbs.commerce.initialize.order_process"},
+			"paymentConnectors":[{"_id": "rbs_commerce_initialize_payment_cheque"}],
+			"shippingModes": [{"_id": "rbs_commerce_initialize_shipping_mode_ups"}, {"_id": "rbs_commerce_initialize_shipping_mode_tnt"}]
+		}
+
+	],
+	"contextId": "Autogenerated"
+}

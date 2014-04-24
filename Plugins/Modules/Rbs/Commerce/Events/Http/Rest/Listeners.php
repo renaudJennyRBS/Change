@@ -308,6 +308,20 @@ class Listeners implements ListenerAggregateInterface
 					(new \Rbs\Stock\Http\Rest\Actions\InventoryEntry())->consolidateMovements($event);
 				});
 			}
+			else if ($relativePath === 'rbs/commerce/initializeStore')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Commerce\Setup\InitializeWebStore())->execute($event);
+				});
+			}
+			else if ($relativePath === 'rbs/commerce/initializeOrderProcess')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Commerce\Setup\InitializeOrderProcess())->execute($event);
+				});
+			}
 		}
 	}
 }

@@ -233,36 +233,23 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Mail\Http\Rest\AddMailVariation())->execute($event);
 					});
 					break;
-				case 'Rbs/DocumentFilters' :
-					$method = $event->getRequest()->getMethod();
-					if ($method === Request::METHOD_GET)
+				case 'Rbs/Generic/InitializeWebsite' :
+					$event->setAction(function (Event $event)
 					{
-						$event->setAction(function (Event $event)
-						{
-							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->getFiltersList($event);
-						});
-					}
-					elseif ($method === Request::METHOD_POST)
+						(new \Rbs\Generic\Setup\Initialize())->execute($event);
+					});
+					break;
+				case 'Rbs/Generic/DocumentCodeContextExist' :
+					$event->setAction(function (Event $event)
 					{
-						$event->setAction(function (Event $event)
-						{
-							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->createFilter($event);
-						});
-					}
-					elseif ($method === Request::METHOD_PUT)
+						(new \Rbs\Generic\Http\Rest\DocumentCodeContextExist())->execute($event);
+					});
+					break;
+				case 'Rbs/Generic/GetDocumentsByCodes' :
+					$event->setAction(function (Event $event)
 					{
-						$event->setAction(function (Event $event)
-						{
-							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->updateFilter($event);
-						});
-					}
-					elseif ($method === Request::METHOD_DELETE)
-					{
-						$event->setAction(function (Event $event)
-						{
-							(new \Rbs\Generic\Http\Rest\Actions\DocumentFilters())->deleteFilter($event);
-						});
-					}
+						(new \Rbs\Generic\Http\Rest\GetDocumentsByCodes())->execute($event);
+					});
 					break;
 			}
 		}

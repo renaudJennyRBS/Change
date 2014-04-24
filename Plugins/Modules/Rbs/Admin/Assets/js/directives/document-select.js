@@ -89,7 +89,8 @@
 							label: '- ' + emptyLabel + ' -'
 						});
 						scope.options = options;
-						scope.documentTarget = findOption(scope.value);;
+						scope.documentTarget = findOption(scope.value);
+						ngModel.$setViewValue(scope.documentTarget);
 					}
 
 					function findOption(id) {
@@ -130,7 +131,7 @@
 									return value.id;
 								}
 							}
-							return null;
+							return value;
 						}
 						else {
 							if (angular.isObject(value) && value.hasOwnProperty('id')) {

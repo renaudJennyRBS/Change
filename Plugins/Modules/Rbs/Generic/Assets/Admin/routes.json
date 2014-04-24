@@ -34,5 +34,14 @@
 			"labelKey": "m.rbs.plugins.admin.registered_list | ucf"
 		},
 		"auto": false
+	},
+	"/Rbs/Generic/InitializeWebsite/": {
+		"module": "Rbs_Generic",
+		"name": "InitializeWebsite",
+		"rule": {
+			"templateUrl": "Rbs/Generic/initialize-website.twig",
+			"labelKey": "m.rbs.generic.admin.initialize_for_website | ucf"
+		},
+		"auto": false
 	}
 }

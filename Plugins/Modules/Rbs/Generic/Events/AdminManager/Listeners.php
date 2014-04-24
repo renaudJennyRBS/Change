@@ -74,6 +74,12 @@ class Listeners implements ListenerAggregateInterface
 		};
 		//Priority 1 (default value) to be sure to get the default routes
 		$events->attach('getRoutes', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Generic\Setup\Initialize())->getGenericSettingsStructures($event);
+		};
+		$events->attach('getGenericSettingsStructures', $callback, 5);
 	}
 
 	/**

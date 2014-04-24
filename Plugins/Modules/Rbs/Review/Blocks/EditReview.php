@@ -34,10 +34,11 @@ class EditReview extends Block
 
 		if ($parameters->getParameter('reviewId') === null)
 		{
-			$target = $event->getParam('document');
-			if ($target instanceof \Rbs\Review\Documents\Review)
+			$reviewId = $event->getHttpRequest()->getQuery('reviewId');
+			if ($reviewId)
 			{
-				$parameters->setParameterValue('reviewId', $target->getId());
+				$parameters->setParameterValue('reviewId', $reviewId);
+				$parameters->setParameterValue('userId', $event->getAuthenticationManager()->getCurrentUser()->getId());
 			}
 		}
 
@@ -55,16 +56,17 @@ class EditReview extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		$review = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($parameters->getParameter('reviewId'));
-		if ($review)
+		if ($review instanceof \Rbs\Review\Documents\Review)
 		{
 			/* @var $review \Rbs\Review\Documents\Review */
 			$urlManager = $event->getUrlManager();
 			$attributes['review'] = $review->getInfoForTemplate($urlManager);
-			$user = $event->getAuthenticationManager()->getCurrentUser();
-			$attributes['canEdit'] = $user->authenticated() && $user->getId() === $review->getAuthorId();
+			$userId = $parameters->getParameter('userId');
+			$attributes['canEdit'] = $userId === $review->getAuthorId();
 			if ($attributes['canEdit'])
 			{
 				$attributes['review']['content'] = $review->getContent()->getRawText();
+				$attributes['editionMode'] = true;
 			}
 
 			return 'edit-review.twig';
