@@ -5,8 +5,8 @@
 			<div class="radio">
 				<label>
 					<input type="radio" name="{{ fieldName }}" id="{{ fieldId }}_{{ item.value }}" value="{{ item.value }}"
-						{% if fieldInfos.value == item.value %}checked="checked"{% endif %} />
-					{{ item.title }}
+						{%- if fieldInfos.value == item.value %} checked="checked"{% endif %} />
+					{{- item.title }}
 				</label>
 			</div>
 		{% endfor %}

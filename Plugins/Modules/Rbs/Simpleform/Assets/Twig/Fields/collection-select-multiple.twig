@@ -5,7 +5,7 @@
 			size="{{ fieldInfos.field.paramers.lineCount }}">
 			{% for item in collectionItems(fieldInfos.field.parameters.collectionCode) %}
 				<option	value="{{ item.value }}"
-					{% if item.value in fieldInfos.value %}selected="selected"{% endif %}>{{ item.title }}</option>
+					{%- if item.value in fieldInfos.value %} selected="selected"{% endif %}>{{ item.title }}</option>
 			{% endfor %}
 		</select>
 		{% include 'Rbs_Simpleform/default-error-messages.twig' %}
