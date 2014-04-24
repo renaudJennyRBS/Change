@@ -236,6 +236,21 @@
 	"add_movement_error_message":{
 		"message":"Une erreur s'est produite lors de l'ajout du mouvement. Merci de réessayer."
 	},
+	"delete_movement":{
+		"message":"supprimer"
+	},
+	"delete_movement_title":{
+		"message":"supprimer le mouvement"
+	},
+	"delete_movement_error_message":{
+		"message":"Une erreur s'est produite lors de la suppression du mouvement. Merci de réessayer."
+	},
+	"confirm_delete":{
+		"message":"confirmez-vous la suppression de ce mouvement ?"
+	},
+	"confirm_delete_message":{
+		"message":"en supprimant un mouvement vous allez agir sur le niveau de stock. Assurez-vous "
+	},
 	"no_information_to_display":{
 		"message":"aucune information à afficher"
 	}

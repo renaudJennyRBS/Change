@@ -736,7 +736,7 @@ class StockManager
 	 */
 	protected function getReservedQuantityByArray($skuIds, $storeId)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantity');
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantityByArray');
 
 		$fb = $qb->getFragmentBuilder();
 		$resTable = $fb->table('rbs_stock_dat_res');

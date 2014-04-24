@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -59,7 +58,8 @@ class Movement
 					$targetObj = $documentManager->getDocumentInstance($targetId);
 					if ($targetObj != null)
 					{
-						$movement['targetInstance'] = $vc->toRestValue($targetObj, \Change\Documents\Property::TYPE_DOCUMENT)->toArray();
+						$movement['targetInstance'] = $vc->toRestValue($targetObj, \Change\Documents\Property::TYPE_DOCUMENT)
+							->toArray();
 					}
 				}
 
@@ -101,7 +101,7 @@ class Movement
 					$stockManager->addInventoryMovement($movement, $skuId, $warehouse);
 					$transactionManager->commit();
 				}
-				catch(\Exception $e)
+				catch (\Exception $e)
 				{
 					$result = new \Change\Http\Rest\Result\ErrorResult(999999,
 						'Movement creation failed', \Zend\Http\Response::STATUS_CODE_409);
@@ -123,4 +123,48 @@ class Movement
 		$event->setResult($result);
 	}
 
-} 
+	/**
+	 * @param \Change\Http\Event $event
+	 */
+	public function deleteMovement($event)
+	{
+		$cs = $event->getServices('commerceServices');
+		if ($cs instanceof \Rbs\Commerce\CommerceServices)
+		{
+			$movementId = $event->getParam('movementId');
+
+			if ($movementId !== null)
+			{
+				$transactionManager = $event->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$result = new \Change\Http\Rest\Result\ArrayResult();
+					$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+
+					$stockManager = $cs->getStockManager();
+
+					$transactionManager->begin();
+					$stockManager->deleteInventoryMovementById($movementId);
+					$transactionManager->commit();
+				}
+				catch (\Exception $e)
+				{
+					$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+						'Movement deletion failed', \Zend\Http\Response::STATUS_CODE_409);
+					$transactionManager->rollBack($e);
+				}
+			}
+			else
+			{
+				$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+					'Missing parameters', \Zend\Http\Response::STATUS_CODE_409);
+			}
+		}
+		else
+		{
+			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				'Stock manager not found', \Zend\Http\Response::STATUS_CODE_409);
+		}
+		$event->setResult($result);
+	}
+}

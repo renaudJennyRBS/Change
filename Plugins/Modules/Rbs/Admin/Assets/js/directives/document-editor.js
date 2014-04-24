@@ -347,7 +347,7 @@
 								saveOperation("error");
 								console.warn("Editor: pre-save Promises error: ", err);
 								NotificationCenter.error(i18n.trans('m.rbs.admin.adminjs.save_error'),
-									ErrorFormatter.format(err));
+									ErrorFormatter.format(err), 'EDITOR');
 							}
 						);
 					}
@@ -451,7 +451,7 @@
 					NotificationCenter.error(
 						i18n.trans('m.rbs.admin.adminjs.save_error'),
 						ErrorFormatter.format(reason),
-						null,
+						'EDITOR',
 						{
 							$propertyInfoProvider: $scope._chgFieldsInfo
 						});
@@ -988,7 +988,7 @@
 										},
 										// Error
 										function() {
-											NotificationCenter.error(i18n.trans('m.rbs.admin.admin.reference_document_could_not_be_loaded'));
+											NotificationCenter.error(i18n.trans('m.rbs.admin.admin.reference_document_could_not_be_loaded'), '', 'EDITOR');
 										}
 									);
 								}
@@ -1076,7 +1076,7 @@
 										i18n.trans('m.rbs.admin.admin.document_does_not_exist | ucf') + ' ' +
 										'<a href="' + $filter('rbsURL')(ctrl.getDocumentModelName(), 'new') + '">' +
 										i18n.trans('m.rbs.admin.admin.create | ucf | etc') +
-										'</a>'
+										'</a>', '', 'EDITOR'
 											);
 										}
 								);

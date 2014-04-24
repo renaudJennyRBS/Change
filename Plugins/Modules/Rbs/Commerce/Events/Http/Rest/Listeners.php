@@ -259,6 +259,23 @@ class Listeners implements ListenerAggregateInterface
 					$event->setResult($result);
 				}
 			}
+			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/movement/([0-9]+)/?$#', $relativePath, $matches))
+			{
+				if ($request->isDelete())
+				{
+					$event->setParam('movementId', intval($matches[2]));
+					$event->setAction(function ($event)
+					{
+						(new \Rbs\Stock\Http\Rest\Actions\Movement())->deleteMovement($event);
+					});
+				}
+				else
+				{
+					$result = $event->getController()
+						->notAllowedError($request->getMethod(), [\Change\Http\Request::METHOD_POST]);
+					$event->setResult($result);
+				}
+			}
 			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/stockInfo/?$#', $relativePath, $matches))
 			{
 				$event->setParam('skuId', intval($matches[1]));
