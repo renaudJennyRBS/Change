@@ -8,9 +8,6 @@
  */
 namespace Themes\Rbs\Base\Setup;
 
-use Change\Plugins\Plugin;
-use Zend\Json\Json;
-
 /**
  * @name \Themes\Rbs\Base\Setup
  */

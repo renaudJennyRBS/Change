@@ -69,6 +69,24 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Generic/InitializeOrderProcess": {
+		"module": "Rbs_Generic",
+		"name": "InitializeOrderProcess",
+		"rule": {
+			"templateUrl": "Rbs/Commerce/initialize-order-process.twig",
+			"labelKey": "m.rbs.commerce.admin.initialize_for_order_process | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/InitializeWebStore": {
+		"module": "Rbs_Generic",
+		"name": "InitializeWebStore",
+		"rule": {
+			"templateUrl": "Rbs/Commerce/initialize-web-store.twig",
+			"labelKey": "m.rbs.commerce.admin.initialize_for_web_store | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Order/Cart/": {
 		"model": "Rbs_Commerce_Cart",
 		"name": "list",
@@ -84,24 +102,6 @@
 		"rule": {
 			"templateUrl": "Document/Rbs/Commerce/Cart/edit.twig",
 			"labelKey": "m.rbs.commerce.admin.cart | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/InitializeWebStore": {
-		"module": "Rbs_Generic",
-		"name": "InitializeWebStore",
-		"rule": {
-			"templateUrl": "Rbs/Commerce/initialize-web-store.twig",
-			"labelKey": "m.rbs.commerce.admin.initialize_for_web_store | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/InitializeOrderProcess": {
-		"module": "Rbs_Generic",
-		"name": "InitializeOrderProcess",
-		"rule": {
-			"templateUrl": "Rbs/Commerce/initialize-order-process.twig",
-			"labelKey": "m.rbs.commerce.admin.initialize_for_order_process | ucf"
 		},
 		"auto": false
 	}
