@@ -5,8 +5,8 @@
 			cols="50" rows="{{ fieldInfos.field.parameters.lineCount }}"
 			autocorrect="{% if fieldInfos.field.parameters.autoCorrect %}on{% else %}off{% endif %}"
 			autocapitalize="{{ fieldInfos.field.parameters.autoCapitalize }}"
-			{% if fieldInfos.field.required %}required="required"{% endif %}
-			{% if fieldInfos.field.parameters.placeHolder %}placeholder="{{ fieldInfos.field.parameters.placeHolder }}"{% endif %}>{{ fieldInfos.value }}</textarea>
+			{%- if fieldInfos.field.required %} required="required"{% endif -%}
+			{%- if fieldInfos.field.parameters.placeHolder %} placeholder="{{ fieldInfos.field.parameters.placeHolder }}"{% endif %}>{{ fieldInfos.value }}</textarea>
 		{% include 'Rbs_Simpleform/default-error-messages.twig' %}
 		{% include 'Rbs_Simpleform/default-help-text.twig' %}
 	</div>

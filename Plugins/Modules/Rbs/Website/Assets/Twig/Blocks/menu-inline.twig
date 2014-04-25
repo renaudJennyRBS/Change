@@ -6,13 +6,13 @@
 	{% endif %}
 	{% if root.hasChild %}
 		<ul class="list-inline">
-			{% for child in root.children %}
+			{%- for child in root.children -%}
 				{% spaceless %}
 					<li{% if child.isInPath or child.isCurrent %} class="active"{% endif %}>
 						<a href="{{ child.url }}">{{ child.title }}</a>
 					</li>
 				{% endspaceless %}
-			{% endfor %}
+			{%- endfor -%}
 		</ul>
 	{% endif %}
 </nav>

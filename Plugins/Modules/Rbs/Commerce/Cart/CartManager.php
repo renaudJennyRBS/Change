@@ -130,8 +130,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('validCart', [$this, 'onDefaultValidCart'], 5);
 
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 5);
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 4);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 15);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 10);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizePresentation'], 5);
 
 		$eventManager->attach('getNewCart', [$this, 'onDefaultGetNewCart'], 5);
 		$eventManager->attach('saveCart', [$this, 'onDefaultSaveCart'], 5);
@@ -1112,7 +1113,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$cart = $event->getParam('cart');
 		if ($cart instanceof Cart)
 		{
-
 			$cart->removeAllFees();
 			$cart->removeAllDiscounts();
 
@@ -1165,6 +1165,40 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 						if ($modifier) {
 							$modifier->apply();
 							$this->buildTotalAmount($cart, $priceManager);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultNormalizePresentation(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof Cart)
+		{
+			/** @var $line \Rbs\Commerce\Cart\CartLine */
+			foreach ($cart->getLines() as $line)
+			{
+				$options = $line->getOptions();
+				$productId = $options->get('productId');
+				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
+				if ($product instanceof \Rbs\Catalog\Documents\Product)
+				{
+					$visual = $product->getFirstVisual();
+					if ($visual instanceof \Rbs\Media\Documents\Image)
+					{
+						$options->set('visualId', $visual->getId());
+						$options->set('visualSrc', $visual->getPublicURL());
+						$format = $event->getApplication()->getConfiguration('Rbs/Commerce/Cart/visualFormat');
+						if (is_array($format))
+						{
+							$width = isset($format['width']) ? $format['width'] : null;
+							$height = isset($format['height']) ? $format['height'] : null;
+							$options->set('visualThumbnailSrc', $visual->getPublicURL($width, $height));
 						}
 					}
 				}

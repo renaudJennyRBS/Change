@@ -5,8 +5,8 @@
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" name="{{ fieldName }}[]" id="{{ fieldId }}_{{ item.value }}" value="{{ item.value }}"
-						{% if item.value in fieldInfos.value %}checked="checked"{% endif %}>
-					{{ item.title }}
+						{%- if item.value in fieldInfos.value %} checked="checked"{% endif %}>
+					{{- item.title }}
 				</label>
 			</div>
 		{% endfor %}

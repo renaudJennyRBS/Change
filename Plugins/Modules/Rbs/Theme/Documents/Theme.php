@@ -242,6 +242,13 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	public function getResourceFilePath($resourcePath)
 	{
 		list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-		return $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', $resourcePath);
+		if ($themeVendor == 'Project')
+		{
+			return $this->getWorkspace()->projectThemesPath($themeVendor, $shortThemeName, 'Assets', $resourcePath);
+		}
+		else
+		{
+			return $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', $resourcePath);
+		}
 	}
 }

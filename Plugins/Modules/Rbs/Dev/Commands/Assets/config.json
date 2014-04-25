@@ -83,12 +83,12 @@
 		},
 		"arguments": {
 			"type": {
-				"description": "type of plugin",
+				"description": "type of plugin ('theme' or 'module')",
 				"required": true,
 				"default": null
 			},
 			"vendor": {
-				"description": "vendor of the plugin",
+				"description": "vendor of the plugin (use 'Project' for project-specific plugin)",
 				"required": true,
 				"default": null
 			},

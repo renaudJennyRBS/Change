@@ -53,6 +53,7 @@
 		"rbs/timeline": "self.version",
 		"rbs/user": "self.version",
 		"rbs/website": "self.version",
+		"rbs/wishlist": "self.version",
 		"rbs/workflow": "self.version",
 		"rbs/base":"self.version",
 		"rbs/demo":"self.version"
