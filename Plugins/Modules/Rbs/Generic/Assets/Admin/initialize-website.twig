@@ -31,7 +31,7 @@
 			<h3>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters', ['ucf']) }}</h3>
 			<p>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters_helper', ['ucf']) }}</p>
 
-			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}" required="true">
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}">
 				<rbs-document-select ng-model="data.userAccountTopicId" accepted-model="Rbs_Website_Topic"
 						filter-property="website" filter-value="(= data.websiteId =)" value-ids="true">
 				</rbs-document-select>
