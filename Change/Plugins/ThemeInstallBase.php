@@ -8,14 +8,13 @@
  */
 namespace Change\Plugins;
 
-use Change\Events\Event;
 use Zend\Json\Json;
 use Zend\Stdlib\Glob;
 
 /**
  * @name \Change\Plugins\ThemeInstallBase
  */
-class ThemeInstallBase extends  InstallBase
+class ThemeInstallBase extends InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
@@ -41,7 +40,6 @@ class ThemeInstallBase extends  InstallBase
 	 */
 	public function executeDbSchema($plugin, $schemaManager)
 	{
-
 	}
 
 	/**
@@ -58,9 +56,7 @@ class ThemeInstallBase extends  InstallBase
 		}
 
 		$transactionManager = $applicationServices->getTransactionManager();
-
 		$theme = $this->createOrUpdateTheme($plugin, $applicationServices, $transactionManager);
-
 
 		// Fetch and create theme if necessary
 		foreach ($this->getTemplatesJsonDefinitions($plugin) as $filePath)
@@ -96,11 +92,7 @@ class ThemeInstallBase extends  InstallBase
 
 	/**
 	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @param \Rbs\Theme\Documents\Theme $theme
 	 * @param string $code
-	 * @param string $name
-	 * @param string $label
-	 * @param boolean $mailSuitable
 	 * @return \Rbs\Theme\Documents\Template
 	 */
 	protected function getTemplateByCode($applicationServices, $code)
@@ -113,6 +105,7 @@ class ThemeInstallBase extends  InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @return array
 	 */
 	protected function getTemplatesJsonDefinitions($plugin)
 	{
@@ -125,6 +118,7 @@ class ThemeInstallBase extends  InstallBase
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param String $templateName
+	 * @return string
 	 */
 	protected function buildTemplateCode($plugin, $templateName)
 	{
@@ -133,7 +127,7 @@ class ThemeInstallBase extends  InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param String $templateName
+	 * @return string
 	 */
 	protected function buildThemeName($plugin)
 	{
@@ -142,7 +136,7 @@ class ThemeInstallBase extends  InstallBase
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
-	 * @param String $templateName
+	 * @return string
 	 */
 	protected function buildThemeLabelKey($plugin)
 	{
@@ -152,6 +146,7 @@ class ThemeInstallBase extends  InstallBase
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 * @param String $templateName
+	 * @return string
 	 */
 	protected function buildTemplateLabelKey($plugin, $templateName)
 	{
@@ -171,9 +166,9 @@ class ThemeInstallBase extends  InstallBase
 	}
 
 	/**
-	 * @param $plugin
-	 * @param $applicationServices
-	 * @param $transactionManager
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Services\ApplicationServices $applicationServices
+	 * @param \Change\Transaction\TransactionManager $transactionManager
 	 * @return \Rbs\Theme\Documents\Theme
 	 * @throws
 	 */
@@ -204,10 +199,10 @@ class ThemeInstallBase extends  InstallBase
 	}
 
 	/**
-	 * @param $theme
-	 * @param $filePath
-	 * @param $plugin
-	 * @param $applicationServices
+	 * @param \Rbs\Theme\Documents\Theme $theme
+	 * @param string $filePath
+	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @throws
 	 */
 	protected function createOrUpdateTemplate($theme, $filePath, $plugin, $applicationServices)
@@ -248,7 +243,7 @@ class ThemeInstallBase extends  InstallBase
 		$filesMeta['htmlForBackoffice'] = $boHtmlFilePath;
 
 		$editableContent = isset($templateDefinition['editableContent'])
-								&& is_array($templateDefinition['editableContent']) ? $templateDefinition['editableContent'] : [];
+			&& is_array($templateDefinition['editableContent']) ? $templateDefinition['editableContent'] : [];
 
 		$existingEditableContent = $template->getEditableContent();
 		if (is_array($existingEditableContent))
@@ -256,7 +251,7 @@ class ThemeInstallBase extends  InstallBase
 			$editableContent = array_merge($editableContent, $existingEditableContent);
 		}
 		$mailSuitable = isset($templateDefinition['mailSuitable'])
-					&& is_bool($templateDefinition['mailSuitable']) ? $templateDefinition['mailSuitable'] : false;
+			&& is_bool($templateDefinition['mailSuitable']) ? $templateDefinition['mailSuitable'] : false;
 
 		$transactionManager = $applicationServices->getTransactionManager();
 		try

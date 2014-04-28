@@ -9,7 +9,7 @@
 namespace Themes\Rbs\Base\Setup;
 
 /**
- * @name \Themes\Rbs\Base\Setup
+ * @name \Themes\Rbs\Base\Setup\Install
  */
 class Install extends \Change\Plugins\InstallBase
 {
