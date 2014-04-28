@@ -1193,12 +1193,24 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					{
 						$options->set('visualId', $visual->getId());
 						$options->set('visualSrc', $visual->getPublicURL());
-						$format = $event->getApplication()->getConfiguration('Rbs/Commerce/Cart/visualFormat');
-						if (is_array($format))
+
+						$formats = $event->getApplication()->getConfiguration('Rbs/Commerce/Cart/VisualFormats');
+						if (is_array($formats) && count($formats))
 						{
-							$width = isset($format['width']) ? $format['width'] : null;
-							$height = isset($format['height']) ? $format['height'] : null;
-							$options->set('visualThumbnailSrc', $visual->getPublicURL($width, $height));
+							$thumbnailSrcArray = array();
+							foreach ($formats as $name => $format)
+							{
+								if (is_array($format))
+								{
+									$width = isset($format['Width']) ? $format['Width'] : null;
+									$height = isset($format['Height']) ? $format['Height'] : null;
+									$thumbnailSrcArray[$name] = $visual->getPublicURL($width, $height);
+								}
+							}
+							if (count($thumbnailSrcArray))
+							{
+								$options->set('visualThumbnailSrc', $thumbnailSrcArray);
+							}
 						}
 					}
 				}
