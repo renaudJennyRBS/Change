@@ -5,6 +5,16 @@
 		</a>
 		<ul class="dropdown-menu" data-ng-show="accessorId">
 			<li><a href="#">(= accessorName =)</a></li>
+			{% if rootMenuEntry and rootMenuEntry.hasChild %}
+				<li class="divider"></li>
+				{%- for child in rootMenuEntry.children -%}
+					{% spaceless %}
+						<li{% if child.isInPath or child.isCurrent %} class="active"{% endif %}>
+							<a href="{{ child.url }}">{{ child.title }}</a>
+						</li>
+					{% endspaceless %}
+				{%- endfor -%}
+			{% endif %}
 			<li class="divider"></li>
 			<li><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></li>
 		</ul>
@@ -21,16 +31,26 @@
 			<i class="glyphicon glyphicon-user"></i> {{ i18n('m.rbs.user.front.my_account', ['ucf']) }} <b class="caret"></b>
 		</a>
 		{% if parameters.accessorId != null %}
-		<ul class="dropdown-menu">
-			<li><a href="#">{{ parameters.accessorName }}</a></li>
-			<li class="divider"></li>
-			<li><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></li>
-		</ul>
+			<ul class="dropdown-menu">
+				<li><a href="#">{{ parameters.accessorName }}</a></li>
+				{% if rootMenuEntry and rootMenuEntry.hasChild %}
+					<li class="divider"></li>
+					{%- for child in rootMenuEntry.children -%}
+						{% spaceless %}
+							<li{% if child.isInPath or child.isCurrent %} class="active"{% endif %}>
+								<a href="{{ child.url }}">{{ child.title }}</a>
+							</li>
+						{% endspaceless %}
+					{%- endfor -%}
+				{% endif %}
+				<li class="divider"></li>
+				<li><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></li>
+			</ul>
 		{% else %}
-		<ul class="dropdown-menu">
-			<li><a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
-			<li><a href="{{ functionURL('Rbs_User_CreateAccount') }}">{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</a></li>
-		</ul>
+			<ul class="dropdown-menu">
+				<li><a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
+				<li><a href="{{ functionURL('Rbs_User_CreateAccount') }}">{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</a></li>
+			</ul>
 		{% endif %}
 	</div>
 </div>

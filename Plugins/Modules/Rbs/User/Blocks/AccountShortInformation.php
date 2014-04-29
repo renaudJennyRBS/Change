@@ -8,13 +8,10 @@
  */
 namespace Rbs\User\Blocks;
 
-use Change\Documents\Property;
-use Change\Presentation\Blocks\Information;
-
 /**
  * @name \Rbs\User\Blocks\AccountShortInformation
  */
-class AccountShortInformation extends Information
+class AccountShortInformation extends \Change\Presentation\Blocks\Information
 {
 	public function onInformation(\Change\Events\Event $event)
 	{
@@ -23,5 +20,6 @@ class AccountShortInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.user.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.account_short', $ucf));
+		$this->addInformationMetaForDetailBlock(array('Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'), $i18nManager);
 	}
 }
