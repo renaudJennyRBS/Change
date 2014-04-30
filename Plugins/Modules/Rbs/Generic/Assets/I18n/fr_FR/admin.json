@@ -39,7 +39,7 @@
 		"message":"mode d'affichage"
 	},
 	"initialize_website":{
-		"message":"website"
+		"message":"site web"
 	},
 	"initialize_title":{
 		"message":"initialiser la structure par défaut"
@@ -85,5 +85,11 @@
 	},
 	"initialize_template_popin":{
 		"message":"modèle de page pour fenêtre popin"
+	},
+	"initialize_website_error":{
+		"message":"erreur lors de l'initialisation du site"
+	},
+	"initialize_website_success":{
+		"message":"l'initialisation de la structure du site s'est déroulée avec succès"
 	}
 }

@@ -10,7 +10,7 @@
 
 		$scope.initializeWebsiteStructure = function () {
 			$scope.onInitialization = true;
-			$http.post(REST.getBaseUrl('Rbs/Generic/InitializeWebsite'), {
+			$http.post(REST.getBaseUrl('commands/rbs_generic/initialize-website'), {
 				websiteId: $scope.data.websiteId,
 				sidebarTemplateId: $scope.data.sidebarTemplateId,
 				noSidebarTemplateId: $scope.data.noSidebarTemplateId,
@@ -19,10 +19,11 @@
 			}).success(function (){
 				$scope.onInitialization = false;
 				$scope.alreadyInitialized = true;
+				NotificationCenter.info(null, i18n.trans('m.rbs.generic.admin.initialize_website_success | ucf'));
 			}).error(function (error){
 				console.error(error);
 				$scope.onInitialization = false;
-				NotificationCenter.error(i18n.trans('m.rbs.commerce.admin.initialize_web_store_error | ucf'),
+				NotificationCenter.error(i18n.trans('m.rbs.generic.admin.initialize_website_error | ucf'),
 					ErrorFormatter.format(error));
 			});
 		};

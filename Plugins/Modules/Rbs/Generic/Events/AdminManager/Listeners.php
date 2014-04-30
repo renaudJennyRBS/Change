@@ -77,7 +77,7 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function ($event)
 		{
-			(new \Rbs\Generic\Setup\Initialize())->getGenericSettingsStructures($event);
+			(new \Rbs\Generic\Commands\InitializeWebsite())->getGenericSettingsStructures($event);
 		};
 		$events->attach('getGenericSettingsStructures', $callback, 5);
 	}

@@ -22,5 +22,82 @@
 				"default": null
 			}
 		}
+	},
+	"rbs_commerce:initialize-web-store": {
+		"description": "Initialize a store structure",
+		"options": {
+			"userAccountTopicId": {
+				"description": "use existing user account topic instead of creating a new one",
+				"default":""
+			}
+		},
+		"arguments": {
+			"websiteId": {
+				"required": true,
+				"description": "the website in which you want to initialize structure",
+				"shortcut": "w"
+			},
+			"storeId": {
+				"required": true,
+				"description": "the store for which you want to initialize structure",
+				"shortcut": "w"
+			},
+			"LCID": {
+				"required": true,
+				"description": "the LCID for labels (ex: en_US)",
+				"shortcut": "l"
+			},
+			"sidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using sidebar style",
+				"shortcut": "s"
+			},
+			"noSidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using no sidebar style",
+				"shortcut": "n"
+			}
+		}
+	},
+	"rbs_commerce:initialize-order-process": {
+		"description": "Initialize a order process structure",
+		"options": {
+			"userAccountTopicId": {
+				"description": "use existing user account topic instead of creating a new one",
+				"default":""
+			}
+		},
+		"arguments": {
+			"websiteId": {
+				"required": true,
+				"description": "the website in which you want to initialize structure",
+				"shortcut": "w"
+			},
+			"storeId": {
+				"required": true,
+				"description": "the store for which you want to initialize structure",
+				"shortcut": "w"
+			},
+			"LCID": {
+				"required": true,
+				"description": "the LCID for labels (ex: en_US)",
+				"shortcut": "l"
+			},
+			"sidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using sidebar style",
+				"shortcut": "s"
+			},
+			"noSidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using no sidebar style",
+				"shortcut": "n"
+			},
+			"popinTemplateId": {
+				"required": true,
+				"description": "the template for page used in popin",
+				"shortcut": "p"
+			}
+		}
 	}
 }

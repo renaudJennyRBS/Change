@@ -333,9 +333,8 @@
 
 		{
 			"_id": "rbs_generic_initialize_unauthorized",
-			"_model": "Rbs_Website_FunctionalPage",
+			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.generic.initialize.unauthorized"},
-			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
