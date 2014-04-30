@@ -647,7 +647,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPlugin($type, $vendor, $name, $context = array())
 	{
-		if ($type == 'module' && $type != 'theme')
+		if ($type == 'module')
 		{
 			$eventType = static::EVENT_TYPE_MODULE;
 		}

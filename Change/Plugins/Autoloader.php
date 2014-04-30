@@ -16,7 +16,6 @@ use Zend\Loader\StandardAutoloader;
 */
 class Autoloader extends StandardAutoloader
 {
-
 	protected $populated = false;
 
 	/**
@@ -78,27 +77,32 @@ class Autoloader extends StandardAutoloader
 	}
 
 	/**
-	 * @param $pluginDatas
+	 * @param array $pluginData
 	 * @param \Change\Workspace $workspace
 	 * @return string
 	 */
-	protected function buildNamespacePath($pluginDatas, $workspace)
+	protected function buildNamespacePath($pluginData, $workspace)
 	{
-		if ($pluginDatas['vendor'] !== 'Project')
+		if ($pluginData['vendor'] !== 'Project')
 		{
-			if ($pluginDatas['type'] === Plugin::TYPE_MODULE)
+			if ($pluginData['type'] === Plugin::TYPE_MODULE)
 			{
-				return $workspace->pluginsModulesPath($pluginDatas['vendor'], $pluginDatas['shortName']);
+				return $workspace->pluginsModulesPath($pluginData['vendor'], $pluginData['shortName']);
 			}
-			return $workspace->pluginsThemesPath($pluginDatas['vendor'], $pluginDatas['shortName']);
+			return $workspace->pluginsThemesPath($pluginData['vendor'], $pluginData['shortName']);
 		}
-		if ($pluginDatas['type'] === Plugin::TYPE_MODULE)
+		if ($pluginData['type'] === Plugin::TYPE_MODULE)
 		{
-			return $workspace->projectModulesPath('Project', $pluginDatas['shortName']);
+			return $workspace->projectModulesPath('Project', $pluginData['shortName']);
 		}
-		return $workspace->projectThemesPath('Project', $pluginDatas['shortName']);
+		return $workspace->projectThemesPath('Project', $pluginData['shortName']);
 	}
 
+	/**
+	 * @param string $class
+	 * @param string $type
+	 * @return bool|string
+	 */
 	protected function loadClass($class, $type)
 	{
 		if (false === $this->populated)
