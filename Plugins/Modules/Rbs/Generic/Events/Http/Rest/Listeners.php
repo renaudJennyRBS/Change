@@ -233,12 +233,6 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Mail\Http\Rest\AddMailVariation())->execute($event);
 					});
 					break;
-				case 'Rbs/Generic/InitializeWebsite' :
-					$event->setAction(function (Event $event)
-					{
-						(new \Rbs\Generic\Setup\Initialize())->execute($event);
-					});
-					break;
 				case 'Rbs/Generic/DocumentCodeContextExist' :
 					$event->setAction(function (Event $event)
 					{

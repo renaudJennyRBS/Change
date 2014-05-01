@@ -43,14 +43,14 @@
 			<h3>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters', ['ucf']) }}</h3>
 			<p>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters_helper', ['ucf']) }}</p>
 
-			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}" required="true">
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}">
 				<rbs-document-select ng-model="data.userAccountTopicId" accepted-model="Rbs_Website_Topic"
 						filter-property="website" filter-value="(= data.websiteId =)" value-ids="true">
 				</rbs-document-select>
 			</rbs-field>
 
 			<button data-ng-if="!alreadyInitialized" type="button" class="btn btn-default pull-right" data-ng-click="initializeOrderProcessStructure()"
-					data-ng-disabled="!data.LCID || !data.websiteId || !data.sidebarTemplateId || !data.noSidebarTemplateId || !data.popinTemplateId || onInitialization">
+					data-ng-disabled="!data.LCID || !data.websiteId || !data.storeId || !data.sidebarTemplateId || !data.noSidebarTemplateId || !data.popinTemplateId || onInitialization">
 				<i data-ng-if="onInitialization" class="icon-white icon-spinner"></i>
 				{{ i18n('m.rbs.generic.admin.initialize_button', ['ucf']) }}
 			</button>

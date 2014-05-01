@@ -76,6 +76,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Mail\Commands\InstallMails())->execute($event);
 		};
 		$events->attach('rbs_mail:install-mails', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Generic\Commands\InitializeWebsite())->execute($event);
+		};
+		$events->attach('rbs_generic:initialize-website', $callback);
 	}
 
 	/**

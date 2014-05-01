@@ -136,5 +136,11 @@
 	},
 	"already_initialized_order_process":{
 		"message":"une structure a déjà été initialisée pour ce website et cette boutique"
+	},
+	"initialize_web_store_success":{
+		"message":"l'initialisation de la structure de la boutique s'est déroulée avec succès"
+	},
+	"initialize_order_process_success":{
+		"message":"l'initialisation de la structure du processus de commande s'est déroulée avec succès"
 	}
 }

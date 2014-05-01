@@ -45,6 +45,18 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Catalog\Commands\ImportAttributes())->execute($event);
 		};
 		$events->attach('rbs_catalog:import-attributes', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Commerce\Commands\InitializeWebStore())->execute($event);
+		};
+		$events->attach('rbs_commerce:initialize-web-store', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Commerce\Commands\InitializeOrderProcess())->execute($event);
+		};
+		$events->attach('rbs_commerce:initialize-order-process', $callback);
 	}
 
 	/**

@@ -171,5 +171,36 @@
 				"shortcut": "t"
 			}
 		}
+	},
+	"rbs_generic:initialize-website": {
+		"description": "Initialize a website structure",
+		"options": {
+			"userAccountTopicId": {
+				"description": "use existing user account topic instead of creating a new one",
+				"default":""
+			}
+		},
+		"arguments": {
+			"websiteId": {
+				"required": true,
+				"description": "the website for which you want to initialize structure",
+				"shortcut": "w"
+			},
+			"LCID": {
+				"required": true,
+				"description": "the LCID for labels (ex: en_US)",
+				"shortcut": "l"
+			},
+			"sidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using sidebar style",
+				"shortcut": "s"
+			},
+			"noSidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using no sidebar style",
+				"shortcut": "n"
+			}
+		}
 	}
 }

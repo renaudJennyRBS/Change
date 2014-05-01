@@ -9,7 +9,7 @@
 
 		$scope.initializeWebStoreStructure = function () {
 			$scope.onInitialization = true;
-			$http.post(REST.getBaseUrl('rbs/commerce/initializeStore'), {
+			$http.post(REST.getBaseUrl('commands/rbs_commerce/initialize-web-store'), {
 				websiteId: $scope.data.websiteId,
 				storeId: $scope.data.storeId,
 				sidebarTemplateId: $scope.data.sidebarTemplateId,
@@ -19,6 +19,7 @@
 			}).success(function (){
 				$scope.onInitialization = false;
 				$scope.alreadyInitialized = true;
+				NotificationCenter.info(null, i18n.trans('m.rbs.commerce.admin.initialize_web_store_success | ucf'));
 			}).error(function (error){
 				console.error(error);
 				$scope.onInitialization = false;
@@ -90,7 +91,7 @@
 
 		$scope.initializeOrderProcessStructure = function () {
 			$scope.onInitialization = true;
-			$http.post(REST.getBaseUrl('rbs/commerce/initializeOrderProcess'), {
+			$http.post(REST.getBaseUrl('commands/rbs_commerce/initialize-order-process'), {
 				websiteId: $scope.data.websiteId,
 				storeId: $scope.data.storeId,
 				sidebarTemplateId: $scope.data.sidebarTemplateId,
@@ -101,6 +102,7 @@
 			}).success(function (){
 				$scope.onInitialization = false;
 				$scope.alreadyInitialized = true;
+				NotificationCenter.info(null, i18n.trans('m.rbs.commerce.admin.initialize_order_process_success | ucf'));
 			}).error(function (error){
 				console.error(error);
 				$scope.onInitialization = false;
