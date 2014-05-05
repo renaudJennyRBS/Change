@@ -21,6 +21,7 @@ class InstallBase
 	 */
 	public function attach($events, $plugin)
 	{
+		$priority = $plugin->getType() == \Change\Plugins\Plugin::TYPE_MODULE ? 10 : 5;
 		$events->attach(PluginManager::EVENT_SETUP_INITIALIZE, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
 			{
@@ -28,7 +29,7 @@ class InstallBase
 				return $plugin;
 			}
 			return null;
-		});
+		}, $priority);
 
 		$events->attach(PluginManager::EVENT_SETUP_APPLICATION, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
@@ -37,14 +38,14 @@ class InstallBase
 				$app = $event->getApplication();
 				$this->executeApplication($plugin, $app, $app->getConfiguration());
 			}
-		});
+		}, $priority);
 
 		$events->attach(PluginManager::EVENT_SETUP_DB_SCHEMA, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
 			{
 				$this->executeDbSchema($plugin, $event->getApplicationServices()->getDbProvider()->getSchemaManager());
 			}
-		});
+		}, $priority);
 
 
 		$events->attach(PluginManager::EVENT_SETUP_SERVICES, function(Event $event) use ($plugin) {
@@ -52,14 +53,14 @@ class InstallBase
 			{
 				$this->executeServices($plugin, $event->getApplicationServices());
 			}
-		});
+		}, $priority);
 
 		$events->attach(PluginManager::EVENT_SETUP_FINALIZE, function(Event $event) use ($plugin) {
 			if ($this->isValid($event, $plugin))
 			{
 				$this->finalize($plugin);
 			}
-		});
+		}, $priority);
 	}
 
 	/**
