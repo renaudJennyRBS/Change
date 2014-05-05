@@ -50,7 +50,7 @@ class ThemeInstallBase extends InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$themePlugin = $applicationServices->getPluginManager()->getPlugin(Plugin::TYPE_MODULE, 'Rbs', 'Theme');
-		if ($themePlugin === null || !$themePlugin->isAvailable())
+		if ($themePlugin === null)
 		{
 			return;
 		}

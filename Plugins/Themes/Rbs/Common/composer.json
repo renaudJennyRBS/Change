@@ -1,0 +1,9 @@
+{
+	"license": "MPL-2.0",
+	"name": "rbs/common",
+	"type":"rbschange-theme",
+	"require": {
+		"rbschange/plugin-installer": "*",
+		"rbschange/core": "self.version"
+	}
+}
