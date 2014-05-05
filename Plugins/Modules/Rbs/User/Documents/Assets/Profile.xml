@@ -2,15 +2,19 @@
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
 	<properties>
-
 		<property name="user" type="Document" document-type="Rbs_User_User"/>
-
+		<!-- Technical properties accessible in Change_User profile -->
+		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
 		<property name="defaultLCID" type="String">
 			<dboptions length="5"/>
 		</property>
-
 		<property name="defaultTimeZone" type="String" required="true">
 			<dboptions length="100"/>
 		</property>
+		<!-- Profile data properties accessible in Rbs_User profile -->
+		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
+		<property name="fullName" type="String" />
+		<property name="titleCode" type="String" />
+		<property name="birthDate" type="Date" />
 	</properties>
 </document>
