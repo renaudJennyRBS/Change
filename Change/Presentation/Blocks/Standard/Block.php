@@ -120,27 +120,9 @@ class Block
 		$blockLayout = $event->getBlockLayout();
 		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
 		$event->setBlockResult($result);
-
-		$attributes = new  \ArrayObject(array('parameters' => $event->getBlockParameters(), 'blockId' => $blockLayout->getId()));
-		$templateName = $this->execute($event, $attributes);
-
-		if (is_string($templateName) && !$result->hasHtml())
-		{
-			$applicationServices = $event->getApplicationServices();
-			$templateModuleName = $this->getTemplateModuleName();
-			if ($templateModuleName === null)
-			{
-				$sn = explode('_', $blockLayout->getName());
-				$templateModuleName = $sn[0] . '_' . $sn[1];
-			}
-			$this->setTemplateRenderer($applicationServices, $result, $attributes->getArrayCopy(), $templateModuleName,
-				$templateName);
-		}
-
-		if (!$result->hasHtml())
-		{
-			$result->setHtml('');
-		}
+		$attributes = $event->getParam('attributes', new \ArrayObject());
+		$event->setParam('templateName', $this->execute($event, $attributes));
+		$event->setParam('templateModuleName', $this->getTemplateModuleName());
 	}
 
 	/**
@@ -155,22 +137,6 @@ class Block
 	protected function execute($event, $attributes)
 	{
 		return null;
-	}
-
-	/**
-	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @param \Change\Http\Web\Result\BlockResult $result
-	 * @param array $attributes
-	 * @param string $templateModuleName
-	 * @param string $templateName
-	 */
-	protected function setTemplateRenderer($applicationServices, $result, $attributes, $templateModuleName, $templateName)
-	{
-		$relativePath = $applicationServices->getThemeManager()->getCurrent()
-			->getTemplateRelativePath($templateModuleName, 'Blocks/' . $templateName);
-
-		$templateManager = $applicationServices->getTemplateManager();
-		$result->setHtml($templateManager->renderThemeTemplateFile($relativePath, $attributes));
 	}
 
 	/**

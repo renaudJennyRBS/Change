@@ -133,7 +133,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return Parameters
 	 */
-	public function getParameters($blockLayout, $httpEvent)
+	public function getParameters(\Change\Presentation\Layout\Block $blockLayout, $httpEvent)
 	{
 		$eventManager = $this->getEventManager();
 		$event = new Event(static::composeEventName(static::EVENT_PARAMETERIZE,
@@ -167,8 +167,13 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Change\Http\Web\Event $httpEvent
 	 * @return BlockResult|null
 	 */
-	public function getResult($blockLayout, $parameters, $httpEvent)
+	public function getResult(\Change\Presentation\Layout\Block $blockLayout, $parameters, $httpEvent)
 	{
+		if (!$blockLayout->getName())
+		{
+			return null;
+		}
+
 		$cacheAdapter = $this->getCacheAdapter();
 		if ($cacheAdapter && ($ttl = $parameters->getTTL()) > 0)
 		{
@@ -200,15 +205,61 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	protected function dispatchExecute($blockLayout, $parameters, $httpEvent)
 	{
 		$eventManager = $this->getEventManager();
-		$event = new Event(static::composeEventName(static::EVENT_EXECUTE,
-			$blockLayout->getName()), $this, $httpEvent->getParams());
+		$eventName = static::composeEventName(static::EVENT_EXECUTE, $blockLayout->getName());
+
+		$event = new Event($eventName, $this, $httpEvent->getParams());
+		$attributes = new \ArrayObject(array('parameters' => $parameters, 'blockId' => $blockLayout->getId()));
+		$event->setParam('attributes', $attributes);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
 		$event->setUrlManager($httpEvent->getUrlManager());
 		$eventManager->trigger($event);
 
 		$result = $event->getBlockResult();
-		return ($result instanceof BlockResult) ? $result : null;
+		if ($result instanceof BlockResult)
+		{
+			$templateName = $event->getParam('templateName');
+			if (!$result->hasHtml() && is_string($templateName))
+			{
+				$applicationServices = $event->getApplicationServices();
+				$templateModuleName = $event->getParam('templateModuleName');
+				if ($templateModuleName === null)
+				{
+					$sn = explode('_', $blockLayout->getName());
+					$templateModuleName = $sn[0] . '_' . $sn[1];
+				}
+
+				$relativePath = $applicationServices->getThemeManager()->getCurrent()
+					->getTemplateRelativePath($templateModuleName, 'Blocks/' . $templateName);
+				$attributes = $event->getParam('attributes', $attributes);
+				if ($attributes instanceof \ArrayObject)
+				{
+					$attributes = $attributes->getArrayCopy();
+				}
+				elseif (!is_array($attributes))
+				{
+					$attributes = [];
+				}
+				$templateManager = $applicationServices->getTemplateManager();
+				try
+				{
+					$result->setHtml($templateManager->renderThemeTemplateFile($relativePath, $attributes));
+				}
+				catch (\Exception $e)
+				{
+					$error = 'Unable to render "'.$relativePath.'" template for block ' . $blockLayout->getName();
+					$result->setHtml('<!-- '. $error .' -->');
+					$this->getApplication()->getLogging()->error($error);
+					$this->getApplication()->getLogging()->exception($e);
+				}
+			}
+			if (!$result->hasHtml())
+			{
+				$result->setHtml('');
+			}
+			return $result;
+		}
+		return null;
 	}
 
 	/**
