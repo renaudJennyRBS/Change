@@ -12,10 +12,6 @@ a:focus {
 	color: var(main-link-hover-color);
 }
 
-a:current {
-	color: var(main-link-current-color);
-}
-
 hr {
 	border-top-color: var(main-border-color);
 }
@@ -258,8 +254,8 @@ legend {
 	color: var(main-text-color);
 	background-color: var(main-background-color);
 	border-color: var(main-border-color);
-	-webkit-box-shadow: inset 0 1px 1px var(main-border-color) );
-	box-shadow: inset 0 1px 1px var(main-border-color) );
+	-webkit-box-shadow: inset 0 1px 1px var(main-border-color);
+	box-shadow: inset 0 1px 1px var(main-border-color);
 }
 
 .form-control:hover {
@@ -673,7 +669,7 @@ fieldset[disabled] .btn-link.active {
 
 .input-group-addon {
 	background-color: var(main-background-second-color);
-	border-color-color: var(main-border-color);
+	border-color: var(main-border-color);
 }
 
 .caret {
@@ -1123,7 +1119,7 @@ a.navbar-brand:focus,
 .navbar-inverse .navbar-nav > .active > a,
 .navbar-inverse .navbar-nav > .active > a:hover,
 .navbar-inverse .navbar-nav > .active > a:focus {
-	color: var(inverse-text-hover-color);
+	color: var(inverse-link-hover-color);
 	background: var(inverse-background-second-color);
 }
 
