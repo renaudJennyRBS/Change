@@ -2,14 +2,8 @@
 	"label":{
 		"message":"thème de démo"
 	},
-	"mail_label":{
-		"message":"gabarit mail par défaut"
-	},
 	"nosidebarpage_label":{
 		"message":"page sans sidebar"
-	},
-	"popin_label":{
-		"message":"fenêtre popin"
 	},
 	"sidebarpage_label":{
 		"message":"page avec sidebar"

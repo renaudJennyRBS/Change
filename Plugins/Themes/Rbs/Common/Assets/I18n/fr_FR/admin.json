@@ -1,0 +1,11 @@
+{
+	"label":{
+		"message":"thème commun"
+	},
+	"mail_label":{
+		"message":"gabarit mail par défaut"
+	},
+	"popin_label":{
+		"message":"fenêtre popin"
+	}
+}
