@@ -690,7 +690,7 @@ a:focus .caret {
 
 .dropdown-menu {
 	color: var(main-text-color);
-	background-color: var(secondary-background-color);
+	background-color: var(main-background-color);
 	border-color: var(main-border-color);
 	margin: 0;
 	border-radius: 0;
