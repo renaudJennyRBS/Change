@@ -1,10 +1,10 @@
 <div data-ng-controller="Rbs_User_User_PublicProfileController">
-
 	<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.public_profile_sub_title', ['ucf']) }}"></rbs-page-header>
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<rbs-avatar ng-if="document.id" size="128" user-id="(= document.id =)"></rbs-avatar><h4>(= document.label =) <small ng-if="document.login">@(= document.login =)</small></h4>
+			<rbs-avatar ng-if="document.id" size="128" user-id="(= document.id =)"></rbs-avatar>
+			<h4>(= document.label =) <small data-ng-if="document.login">@(= document.login =)</small></h4>
 		</div>
 		<div>
 			<dl class="dl-horizontal">
@@ -17,6 +17,7 @@
 			</dl>
 		</div>
 	</div>
+
 	<h4>{{ i18n('m.rbs.user.admin.group_list', ['ucf']) }}</h4>
 	<rbs-document-list data-dlid="DLGroup1"
 		model="Rbs_User_Group"
@@ -27,5 +28,4 @@
 		<rbs-column name="realm"></rbs-column>
 		<rbs-quick-actions></rbs-quick-actions>
 	</rbs-document-list>
-
 </div>
