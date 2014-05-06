@@ -18,16 +18,6 @@ use Change\Presentation\Blocks\Standard\Block;
 class Menu extends Block
 {
 	/**
-	 * @var \Change\I18n\I18nManager
-	 */
-	protected $i18nManager;
-
-	/**
-	 * @var \Change\Http\Web\UrlManager
-	 */
-	protected $urlManager;
-
-	/**
 	 * @api
 	 * Set Block Parameters on $event
 	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
@@ -80,7 +70,8 @@ class Menu extends Block
 	 */
 	protected function isValidDocument($document)
 	{
-		if (($document instanceof \Rbs\Website\Documents\Menu && $document->activated()) || ($document instanceof \Rbs\Website\Documents\Section && $document->published()))
+		if (($document instanceof \Rbs\Website\Documents\Menu && $document->activated())
+			|| ($document instanceof \Rbs\Website\Documents\Section && $document->published()))
 		{
 			return true;
 		}
@@ -97,7 +88,6 @@ class Menu extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$this->applicationServices = $event->getApplicationServices();
 		$dm = $event->getApplicationServices()->getDocumentManager();
 		$parameters = $event->getBlockParameters();
 		$doc = $dm->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
@@ -117,153 +107,13 @@ class Menu extends Block
 			{
 				$path = array();
 			}
-			$this->urlManager = $event->getUrlManager();
-			$this->i18nManager = $event->getApplicationServices()->getI18nManager();
-			$attributes['root'] = $this->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+			$treeManager = $event->getApplicationServices()->getTreeManager();
+			$menuComposer = new \Rbs\Website\Menu\MenuComposer($event->getUrlManager(), $i18nManager, $dm, $treeManager);
+			$attributes['root'] = $menuComposer->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
 			$attributes['uniqueId'] = uniqid();
 			return $parameters->getTemplateName();
 		}
 		return null;
-	}
-
-	/**
-	 * @var \Change\Services\ApplicationServices
-	 */
-	protected $applicationServices;
-
-	/**
-	 * @return \Change\Services\ApplicationServices
-	 */
-	protected function getApplicationServices()
-	{
-		return $this->applicationServices;
-	}
-
-	/**
-	 * @param \Change\Presentation\Interfaces\Website $website
-	 * @param \Change\Documents\AbstractDocument $doc
-	 * @param integer $maxLevel
-	 * @param null|\Rbs\Website\Documents\Page $currentPage
-	 * @param \Rbs\Website\Documents\Section[] $path
-	 * @return \Rbs\Website\Menu\MenuEntry|null
-	 */
-	protected function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path)
-	{
-		if (!$this->shouldBeDisplayed($doc))
-		{
-			return null;
-		}
-
-		$entry = new \Rbs\Website\Menu\MenuEntry();
-		$entry->setTitle($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
-
-		if (!$doc instanceof \Rbs\Website\Documents\Menu)
-		{
-			if ($doc instanceof \Rbs\Website\Documents\Section)
-			{
-				$indexPage = $doc->getIndexPage();
-				if ($indexPage instanceof \Change\Documents\Interfaces\Publishable && $indexPage->published())
-				{
-					$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
-				}
-				elseif ($maxLevel < 1)
-				{
-					return null; // Hide empty topics.
-				}
-				if (count($path) && in_array($doc, $path))
-				{
-					$entry->setInPath(true);
-				}
-			}
-			else
-			{
-				$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
-				if ($currentPage === $doc)
-				{
-					$entry->setCurrent(true);
-					$entry->setInPath(true);
-				}
-			}
-		}
-
-		if ($maxLevel >= 1)
-		{
-			if ($doc instanceof \Rbs\Website\Documents\Section)
-			{
-				$treeManager = $this->getApplicationServices()->getTreeManager();
-				$tn = $treeManager->getNodeByDocument($doc);
-				if ($tn)
-				{
-					foreach ($tn->setTreeManager($treeManager)->getChildren() as $child)
-					{
-						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel - 1, $currentPage,
-							$path));
-					}
-					if (!$entry->getUrl() && !count($entry->getChildren()))
-					{
-						return null; // Hide empty topics.
-					}
-				}
-			}
-			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
-			{
-				foreach ($doc->getCurrentLocalization()->getItems() as $item)
-				{
-					if (isset($item['documentId']))
-					{
-						$subDoc = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($item['documentId']);
-						$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
-						if ($subEntry !== null)
-						{
-							if (isset($item['titleKey']))
-							{
-								$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
-							}
-							elseif (isset($item['title']))
-							{
-								$subEntry->setTitle($item['title']);
-							}
-							$entry->addChild($subEntry);
-						}
-					}
-					elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
-					{
-						$subEntry = new \Rbs\Website\Menu\MenuEntry();
-						if (isset($item['titleKey']))
-						{
-							$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
-						}
-						else
-						{
-							$subEntry->setTitle($item['title']);
-						}
-						$subEntry->setUrl($item['url']);
-						$entry->addChild($subEntry);
-					}
-				}
-			}
-		}
-		return $entry;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $doc
-	 * @return boolean
-	 */
-	protected function shouldBeDisplayed($doc)
-	{
-		if ($doc instanceof \Rbs\Website\Documents\Menu)
-		{
-			return $doc->activated();
-		}
-		if (!($doc instanceof \Change\Documents\Interfaces\Publishable) || !$doc->published())
-		{
-			return false;
-		}
-		if ($doc instanceof \Rbs\Website\Documents\StaticPage && $doc->getHideLinks())
-		{
-			return false;
-		}
-		return true;
 	}
 }

@@ -69,6 +69,31 @@ class Listeners implements ListenerAggregateInterface
 			}
 			$event->setParam('profile', $profile);
 		}
+		else if ($event->getParam('profileName') === 'Rbs_User')
+		{
+			$profile = new \Rbs\User\Profile\Profile();
+
+			$user = $event->getParam('user');
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
+			{
+				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
+				if ($docUser instanceof \Rbs\User\Documents\User)
+				{
+					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
+					$query->andPredicates($query->eq('user', $docUser));
+
+					$documentProfile = $query->getFirstDocument();
+					if ($documentProfile instanceof \Rbs\User\Documents\Profile)
+					{
+						$profile->setPropertyValue('fullName', $documentProfile->getFullName());
+						$profile->setPropertyValue('titleCode', $documentProfile->getTitleCode());
+						$profile->setPropertyValue('birthDate', $documentProfile->getBirthDate());
+					}
+				}
+			}
+			$event->setParam('profile', $profile);
+		}
 		else if ($event->getParam('profileName') === 'Change_User')
 		{
 			$profile = new \Change\User\UserProfile();
@@ -131,6 +156,44 @@ class Listeners implements ListenerAggregateInterface
 				}
 			}
 		}
+		else if ($profile instanceof \Rbs\User\Profile\Profile)
+		{
+			$user = $event->getParam('user');
+			$applicationServices = $event->getApplicationServices();
+			if ($applicationServices && $user instanceof \Change\User\UserInterface)
+			{
+				$transactionManager = $applicationServices->getTransactionManager();
+				try
+				{
+					$transactionManager->begin();
+					$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
+					if ($docUser instanceof \Rbs\User\Documents\User)
+					{
+						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
+						$query->andPredicates($query->eq('user', $docUser));
+
+						/* @var $documentProfile \Rbs\User\Documents\Profile */
+						$documentProfile = $query->getFirstDocument();
+						if ($documentProfile === null)
+						{
+							$documentProfile = $applicationServices->getDocumentManager()
+								->getNewDocumentInstanceByModelName('Rbs_User_Profile');
+							$documentProfile->setUser($docUser);
+						}
+
+						$documentProfile->setFullName($profile->getPropertyValue('fullName'));
+						$documentProfile->setTitleCode($profile->getPropertyValue('titleCode'));
+						$documentProfile->setBirthDate($profile->getPropertyValue('birthDate'));
+						$documentProfile->save();
+					}
+					$transactionManager->commit();
+				}
+				catch (\Exception $e)
+				{
+					throw $transactionManager->rollBack($e);
+				}
+			}
+		}
 		else if ($profile instanceof \Change\User\UserProfile)
 		{
 			$user = $event->getParam('user');
@@ -176,7 +239,7 @@ class Listeners implements ListenerAggregateInterface
 	public function onProfiles(Event $event)
 	{
 		$profiles = $event->getParam('profiles', []);
-		$profiles = ['Change_User', 'Rbs_Admin'] + $profiles;
+		$profiles = ['Change_User', 'Rbs_User', 'Rbs_Admin'] + $profiles;
 		$event->setParam('profiles', $profiles);
 	}
 }

@@ -14,11 +14,11 @@
 				scope.successSending = false;
 				scope.resetPasswordEmail = null;
 
-				scope.openBox = function (){
+				scope.openBox = function() {
 					jQuery('#reset-password-modal-main-content').modal({});
-				}
+				};
 
-				scope.askReset = function (){
+				scope.askReset = function() {
 					scope.sending = true;
 					$http.post('Action/Rbs/User/ResetPasswordRequest', {email: scope.resetPasswordEmail})
 						.success(function() {
@@ -30,16 +30,15 @@
 							scope.successSending = true;
 						}
 					);
-				}
+				};
 			}
 		}
 	}
+
 	rbsUserForgotPassword.$inject = ['$http'];
 	app.directive('rbsUserForgotPassword', rbsUserForgotPassword);
 
-
 	function rbsUserShortAccount($rootScope) {
-
 		return {
 			restrict: 'A',
 			templateUrl: '/accountShort.tpl',
@@ -49,17 +48,15 @@
 			link: function(scope) {
 				scope.userNowConnected = false;
 
-				$rootScope.$on('rbsUserConnected', function (event, params){
+				$rootScope.$on('rbsUserConnected', function(event, params) {
 					scope.userNowConnected = true;
 					scope.accessorId = params.accessorId;
 					scope.accessorName = params.accessorName;
 				});
 			}
 		}
-
-
 	}
+
 	rbsUserShortAccount.$inject = ['$rootScope'];
 	app.directive('rbsUserShortAccount', rbsUserShortAccount);
-
 })();
