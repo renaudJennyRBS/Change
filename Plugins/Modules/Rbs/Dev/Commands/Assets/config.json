@@ -100,7 +100,7 @@
 		}
 	},
 	"rbs_dev:initialize-view": {
-		"description": "Initialize view(s) template file for a model",
+		"description": "Initialize admin view(s) template file for a model",
 		"dev": true,
 		"options": {
 			"list": {
