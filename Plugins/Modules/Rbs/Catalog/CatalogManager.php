@@ -1150,6 +1150,10 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 					$priceInfo['ecoTax'] = ($price->getEcoTax() * $quantity);
 					$priceInfo['formattedEcoTax'] = $priceManager->formatValue($priceInfo['ecoTax'], $currencyCode);
 				}
+				if ($price->getDiscountDetail())
+				{
+					$priceInfo['discountDetail'] = $price->getDiscountDetail();
+				}
 			}
 		}
 
