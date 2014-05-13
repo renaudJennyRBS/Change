@@ -22,7 +22,7 @@
 		"ircmaxell/password-compat": "1.0.*",
 		"michelf/php-markdown": "1.*",
 		"kriswallsmith/assetic":"1.*",
-		"leafo/lessphp": "0.*",
+		"oyejorge/less.php": "1.7.*",
 		"mrclay/minify": "2.*"
 	},
 	"replace":{

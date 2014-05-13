@@ -342,7 +342,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 								}
 								elseif (substr($resourceFilePath, -5) === '.less')
 								{
-									$filter = new \Assetic\Filter\LessphpFilter();
+									$filter = new AsseticLessFilter();
 									$asset->ensureFilter($filter);
 									$asset->setTargetPath($assetUrl . '.css');
 								}
