@@ -30,6 +30,7 @@ class AccountShort extends \Change\Presentation\Blocks\Standard\Block
 		$parameters->addParameterMeta('pageId');
 		$parameters->addParameterMeta('sectionId');
 		$parameters->addParameterMeta('websiteId');
+		$parameters->addParameterMeta('realm', 'web');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$currentUser = $event->getAuthenticationManager()->getCurrentUser();

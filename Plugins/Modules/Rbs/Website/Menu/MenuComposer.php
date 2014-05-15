@@ -114,38 +114,42 @@ class MenuComposer
 			}
 			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
 			{
-				foreach ($doc->getCurrentLocalization()->getItems() as $item)
+				$items = $doc->getCurrentLocalization()->getItems();
+				if (is_array($items))
 				{
-					if (isset($item['documentId']))
+					foreach ($items as $item)
 					{
-						$subDoc = $this->documentManager->getDocumentInstance($item['documentId']);
-						$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
-						if ($subEntry !== null)
+						if (isset($item['documentId']))
 						{
+							$subDoc = $this->documentManager->getDocumentInstance($item['documentId']);
+							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
+							if ($subEntry !== null)
+							{
+								if (isset($item['titleKey']))
+								{
+									$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
+								}
+								elseif (isset($item['title']))
+								{
+									$subEntry->setTitle($item['title']);
+								}
+								$entry->addChild($subEntry);
+							}
+						}
+						elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
+						{
+							$subEntry = new \Rbs\Website\Menu\MenuEntry();
 							if (isset($item['titleKey']))
 							{
 								$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
 							}
-							elseif (isset($item['title']))
+							else
 							{
 								$subEntry->setTitle($item['title']);
 							}
+							$subEntry->setUrl($item['url']);
 							$entry->addChild($subEntry);
 						}
-					}
-					elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
-					{
-						$subEntry = new \Rbs\Website\Menu\MenuEntry();
-						if (isset($item['titleKey']))
-						{
-							$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
-						}
-						else
-						{
-							$subEntry->setTitle($item['title']);
-						}
-						$subEntry->setUrl($item['url']);
-						$entry->addChild($subEntry);
 					}
 				}
 			}
