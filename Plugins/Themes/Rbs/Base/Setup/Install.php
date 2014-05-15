@@ -34,7 +34,17 @@ class Install extends \Change\Plugins\InstallBase
 				$themeManager->installPluginAssets($module);
 			}
 		}
-		$configuration = $themeManager->getDefault()->getAssetConfiguration();
+
+		$this->writeAssetic($themeManager->getDefault(), $themeManager);
+	}
+
+	/**
+	 * @param \Change\Presentation\Themes\DefaultTheme $theme
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 */
+	protected function writeAssetic($theme, $themeManager)
+	{
+		$configuration = $theme->getAssetConfiguration();
 		$am = $themeManager->getAsseticManager($configuration);
 		$writer = new \Assetic\AssetWriter($themeManager->getAssetRootPath());
 		$writer->writeManagerAssets($am);

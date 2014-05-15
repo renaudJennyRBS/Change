@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -28,51 +27,57 @@ class GetThemeResource
 		if ($theme instanceof Theme)
 		{
 			$themeResourcePath = $event->getParam('themeResourcePath');
-			if (is_string($themeResourcePath))
+
+			$resource = $event->getApplicationServices()->getThemeManager()->getResource($theme, $themeResourcePath);
+			$result = new Resource($theme->getName() . '_' . $themeResourcePath);
+			if ($resource && $resource->isValid())
 			{
-				$resource = $theme->getResource($themeResourcePath);
-				if ($resource)
+				if (substr($themeResourcePath, -5) === '.twig')
 				{
-					$result = new Resource($theme->getName() . '_' . $themeResourcePath);
-					if ($resource->isValid())
+					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+					$result->getHeaders()->addHeaderLine('Content-Type', 'text/html');
+					$templateManager = $event->getApplicationServices()->getTemplateManager();
+					$result->setRenderer(function () use ($templateManager, $resource)
 					{
-						if (substr($themeResourcePath, -5) === '.twig')
+						return $templateManager->renderTemplateString($resource->getContent(), []);
+					});
+				}
+				else
+				{
+					$md = $resource->getModificationDate();
+					$result->setHeaderLastModified($md);
+					$result->getHeaders()->addHeaderLine('Cache-Control', 'public');
+					$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
+					if ($ifModifiedSince && $ifModifiedSince == $md)
+					{
+						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_304);
+						$result->setRenderer(function ()
 						{
-							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-							$result->getHeaders()->addHeaderLine('Content-Type', 'text/html');
-							$templateManager = $event->getApplicationServices()->getTemplateManager();
-							$result->setRenderer(function() use ($templateManager, $resource)
-							{
-								return $templateManager->renderTemplateString($resource->getContent(), []);
-							});
-						}
-						else
-						{
-							$md = $resource->getModificationDate();
-							$result->setHeaderLastModified($md);
-							$result->getHeaders()->addHeaderLine('Cache-Control', 'public');
-							$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
-							if ($ifModifiedSince && $ifModifiedSince == $md)
-							{
-								$result->setHttpStatusCode(HttpResponse::STATUS_CODE_304);
-								$result->setRenderer(function() {return null;});
-							}
-							else
-							{
-								$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-								$result->getHeaders()->addHeaderLine('Content-Type', $resource->getContentType());
-								$result->setRenderer(function() use ($resource) {return $resource->getContent();});
-							}
-						}
+							return null;
+						});
 					}
 					else
 					{
-						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
-						$result->setRenderer(function() {return null;});
+						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+						$result->getHeaders()->addHeaderLine('Content-Type', $resource->getContentType());
+						$result->setHeaderLastModified($md);
+						$result->setRenderer(function () use ($resource)
+						{
+							return $resource->getContent();
+						});
 					}
-					$event->setResult($result);
 				}
 			}
+			else
+			{
+				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_404);
+				$result->setRenderer(function ()
+				{
+					return null;
+				});
+			}
+
+			$event->setResult($result);
 		}
 	}
 }
