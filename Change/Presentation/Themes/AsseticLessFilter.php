@@ -16,37 +16,22 @@ use Assetic\Util\LessUtils;
  */
 class AsseticLessFilter implements \Assetic\Filter\DependencyExtractorInterface
 {
-	private $presets = array();
+	/**
+	 * @var string
+	 */
 	private $formatter;
-	private $preserveComments;
 
 	/**
-	 * Lessphp Load Paths
-	 * @var array
+	 * @var string
 	 */
-	protected $loadPaths = array();
+	protected $cacheDir;
 
-	/**
-	 * Adds a load path to the paths used by lessphp
-	 * @param string $path Load Path
-	 */
-	public function addLoadPath($path)
+	function __construct($cacheDir = null)
 	{
-		$this->loadPaths[] = $path;
-	}
-
-	/**
-	 * Sets load paths used by lessphp
-	 * @param array $loadPaths Load paths
-	 */
-	public function setLoadPaths(array $loadPaths)
-	{
-		$this->loadPaths = $loadPaths;
-	}
-
-	public function setPresets(array $presets)
-	{
-		$this->presets = $presets;
+		if ($cacheDir && is_dir($cacheDir))
+		{
+			$this->cacheDir = $cacheDir;
+		}
 	}
 
 	/**
@@ -57,19 +42,15 @@ class AsseticLessFilter implements \Assetic\Filter\DependencyExtractorInterface
 		$this->formatter = $formatter;
 	}
 
-	/**
-	 * @param boolean $preserveComments
-	 */
-	public function setPreserveComments($preserveComments)
-	{
-		$this->preserveComments = $preserveComments;
-	}
-
 	public function filterLoad(AssetInterface $asset)
 	{
 		$root = $asset->getSourceRoot();
 		$path = $asset->getSourcePath();
-
+		if (!$root || !$path)
+		{
+			return;
+		}
+		$lessFilePath = $root . '/' . $path;
 		$options = [];
 		switch ($this->formatter)
 		{
@@ -78,14 +59,21 @@ class AsseticLessFilter implements \Assetic\Filter\DependencyExtractorInterface
 				break;
 		}
 
-		$parser = new \Less_Parser($options);
-		if ($root && $path)
+		if ($this->cacheDir)
 		{
-			$this->loadPaths[] = dirname($root . '/' . $path);
+			\Less_Cache::$cache_dir = $this->cacheDir;
+			$to_cache = [$lessFilePath => ''];
+			$css_file_name = \Less_Cache::Get($to_cache, $options);
+			$css = file_get_contents($this->cacheDir . DIRECTORY_SEPARATOR . $css_file_name);
+			$asset->setContent($css);
 		}
-		$parser->SetImportDirs($this->loadPaths);
-		$parser->parse($asset->getContent());
-		$asset->setContent($parser->getCss());
+		else
+		{
+			$parser = new \Less_Parser($options);
+			$parser->SetImportDirs([dirname($lessFilePath) => '']);
+			$parser->parse($asset->getContent());
+			$asset->setContent($parser->getCss());
+		}
 	}
 
 	public function filterDump(AssetInterface $asset)
@@ -94,7 +82,7 @@ class AsseticLessFilter implements \Assetic\Filter\DependencyExtractorInterface
 
 	public function getChildren(AssetFactory $factory, $content, $loadPath = null)
 	{
-		$loadPaths = $this->loadPaths;
+		$loadPaths = [];
 		if (null !== $loadPath)
 		{
 			$loadPaths[] = $loadPath;

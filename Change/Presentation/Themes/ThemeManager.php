@@ -135,14 +135,14 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @throws \RuntimeException
-	 * @return Theme
+	 * @return \Change\Presentation\Themes\DefaultTheme
 	 */
 	public function getDefault()
 	{
 		if ($this->default === null)
 		{
 			$this->default = $this->getByName(static::DEFAULT_THEME_NAME);
-			if ($this->default === null)
+			if (!($this->default instanceof \Change\Presentation\Themes\DefaultTheme))
 			{
 				throw new \RuntimeException('Theme ' . static::DEFAULT_THEME_NAME . ' not found', 999999);
 			}
@@ -235,8 +235,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function installPluginAssets($plugin, $theme = null)
 	{
 		$workspace = $this->getWorkspace();
-		$path = $plugin->getThemeAssetsPath();
-		if (!is_dir($path))
+		$srcAssetPath = $plugin->getThemeAssetsPath();
+		if (!is_dir($srcAssetPath))
 		{
 			return;
 		}
@@ -248,8 +248,13 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$theme->setThemeManager($this);
 		}
-		$excludedExtensions = ['js', 'json', 'map', 'css', 'twig', 'less'];
-		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path,
+
+		$moduleName = $plugin->isTheme() ? null : $plugin->getName();
+		$targetAssetRootPath = $workspace->composePath($this->getAssetRootPath(), 'Theme',
+			str_replace('_', '/', $theme->getName()), $moduleName);
+
+		$excludedExtensions = ['js', 'json', 'css', 'twig', 'less'];
+		$it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($srcAssetPath,
 			\FilesystemIterator::CURRENT_AS_SELF + \FilesystemIterator::SKIP_DOTS));
 		while ($it->valid())
 		{
@@ -259,11 +264,9 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 				&& !in_array($current->getExtension(), $excludedExtensions)
 			)
 			{
-				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
-				$path = $workspace->composePath($this->getAssetRootPath(), 'Theme', str_replace('_', '/', $theme->getName()),
-					$moduleName, $current->getSubPathname());
-				\Change\Stdlib\File::mkdir(dirname($path));
-				file_put_contents($path, file_get_contents($current->getPathname()));
+				$targetAssetPath = $workspace->composePath($targetAssetRootPath, $current->getSubPathname());
+				\Change\Stdlib\File::mkdir(dirname($targetAssetPath));
+				file_put_contents($targetAssetPath, file_get_contents($current->getPathname()));
 			}
 			$it->next();
 		}
@@ -342,7 +345,17 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 								}
 								elseif (substr($resourceFilePath, -5) === '.less')
 								{
-									$filter = new AsseticLessFilter();
+									$cacheDir = $this->getApplication()->getWorkspace()->cachePath('less');
+									\Change\Stdlib\File::mkdir($cacheDir);
+
+									$filter = new AsseticLessFilter($cacheDir);
+									if ($this->getApplication()->inDevelopmentMode())
+									{
+										$filter->setFormatter('classic');
+									}
+									else {
+										$filter->setFormatter('compressed');
+									}
 									$asset->ensureFilter($filter);
 									$asset->setTargetPath($assetUrl . '.css');
 								}
@@ -359,6 +372,29 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return $am;
+	}
+
+	/**
+	 * @param Theme $theme
+	 * @param string $themeResourcePath
+	 * @return \Change\Presentation\Interfaces\ThemeResource|null
+	 */
+	public function getResource(Theme $theme, $themeResourcePath)
+	{
+		if (!is_string($themeResourcePath))
+		{
+			return null;
+		}
+
+		$assetRootPath = $this->getAssetRootPath();
+		$themeResourcePath =  str_replace('_', '/', $theme->getName());
+		$filePath = $this->getApplication()->getWorkspace()->composePath($assetRootPath, 'Theme', $themeResourcePath, $themeResourcePath);
+		$resource = new \Change\Presentation\Themes\FileResource($filePath);
+		if ($resource->isValid())
+		{
+			return $resource;
+		}
+		return $theme->getResource($themeResourcePath);
 	}
 
 	/**

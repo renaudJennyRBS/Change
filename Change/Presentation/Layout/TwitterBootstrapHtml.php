@@ -138,13 +138,25 @@ class TwitterBootstrapHtml
 		}
 
 		$configuration = $themeManager->getDefault()->getAssetConfiguration();
-		$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+		if ($themeManager->getCurrent() !== $themeManager->getDefault())
+		{
+			$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+		}
 		$am = $themeManager->getAsseticManager($configuration);
+
+		if ($developmentMode)
+		{
+			$assetBaseUrl = '';
+			(new \Assetic\AssetWriter($themeManager->getAssetRootPath()))->writeManagerAssets($am);
+		}
+		else
+		{
+			$assetBaseUrl = $themeManager->getAssetBaseUrl();
+		}
 
 		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
 		$jsFooter = array();
-		$assetBaseUrl = ($developmentMode) ? '' : $themeManager->getAssetBaseUrl();
-		foreach($jsNames as $jsName)
+		foreach ($jsNames as $jsName)
 		{
 			try
 			{
