@@ -92,8 +92,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 		if ($this->templateBasePath === null)
 		{
 			list ($themeVendor, $shortThemeName) = explode('_', $this->getName());
-			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $themeVendor, $shortThemeName);
-
+			$this->templateBasePath = $this->getWorkspace()->compilationPath('Themes', $themeVendor, $shortThemeName);
 			if ($this->getApplication()->inDevelopmentMode() && $this->themeManager)
 			{
 				$pluginManager = $this->getPluginManager();
