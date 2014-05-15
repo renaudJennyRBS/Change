@@ -387,8 +387,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$assetRootPath = $this->getAssetRootPath();
-		$themeResourcePath =  str_replace('_', '/', $theme->getName());
-		$filePath = $this->getApplication()->getWorkspace()->composePath($assetRootPath, 'Theme', $themeResourcePath, $themeResourcePath);
+		$themePath =  str_replace('_', '/', $theme->getName());
+		$filePath = $this->getApplication()->getWorkspace()->composePath($assetRootPath, 'Theme', $themePath, $themeResourcePath);
 		$resource = new \Change\Presentation\Themes\FileResource($filePath);
 		if ($resource->isValid())
 		{
