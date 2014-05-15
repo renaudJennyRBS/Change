@@ -55,7 +55,10 @@ class WebsiteResolver
 							$LCID = $row['LCID'];
 							$i18nManager->setLCID($LCID);
 							$request->setLCID($LCID);
-							break;
+							if ($row['pathPart'])
+							{
+								break;
+							}
 						}
 						else
 						{
@@ -76,11 +79,10 @@ class WebsiteResolver
 					$currentWebsite = $dm->getDocumentInstance(intval($row['id']), $model);
 					if ($currentWebsite instanceof Website)
 					{
-						$LCID = $row['LCID'];
+						$LCID = $currentWebsite->getRefLCID();
 						$i18nManager = $event->getApplicationServices()->getI18nManager();
 						$i18nManager->setLCID($LCID);
 						$request->setLCID($LCID);
-
 					}
 				}
 			}
@@ -140,6 +142,10 @@ class WebsiteResolver
 				{
 					return false;
 				}
+			}
+			else
+			{
+				return false;
 			}
 		}
 		return true;
