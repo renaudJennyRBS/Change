@@ -131,7 +131,7 @@ class DefaultTheme implements Theme
 	{
 		if ($this->templateBasePath === null)
 		{
-			$this->templateBasePath = $this->getWorkspace()->appPath('Themes', $this->vendor, $this->shortName);
+			$this->templateBasePath = $this->getWorkspace()->compilationPath('Themes', $this->vendor, $this->shortName);
 
 			if ($this->getApplication()->inDevelopmentMode())
 			{
@@ -248,14 +248,7 @@ class DefaultTheme implements Theme
 		//first get themes configuration
 		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
 		$resource = $this->getResourceFilePath('assets.json');
-		if (file_exists($resource))
-		{
-			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
-		}
-		else
-		{
-			throw new \RuntimeException('invalid resource assets.json configuration file of default theme', 999999);
-		}
+		$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
 
 		//Now find all modules configuration file
 		$pluginManager = $this->getPluginManager();
