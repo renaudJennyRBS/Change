@@ -118,73 +118,18 @@ class TwitterBootstrapHtml
 	}
 
 	/**
-	 * @param \Change\Presentation\Layout\Layout $templateLayout
-	 * @param \Change\Presentation\Layout\Layout $pageLayout
-	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
-	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @param boolean $developmentMode
 	 * @return array
 	 */
-	public function getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices, $developmentMode)
+	public function getResourceParts()
 	{
-		$blockNames = array();
-		foreach($templateLayout->getBlocks() as $block)
-		{
-			$blockNames[$block->getName()] = true;
-		}
-		foreach($pageLayout->getBlocks() as $block)
-		{
-			$blockNames[$block->getName()] = true;
-		}
+		$cssHead = '{% for cssAsset in pageResult.getCssAssets() %}
+	<link rel="stylesheet" type="text/css" href="{{ resourceURL(cssAsset) }}">
+{% endfor %}';
 
-		$configuration = $themeManager->getDefault()->getAssetConfiguration();
-		if ($themeManager->getCurrent() !== $themeManager->getDefault())
-		{
-			$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
-		}
-		$am = $themeManager->getAsseticManager($configuration);
-
-		if ($developmentMode)
-		{
-			$assetBaseUrl = '';
-			(new \Assetic\AssetWriter($themeManager->getAssetRootPath()))->writeManagerAssets($am);
-		}
-		else
-		{
-			$assetBaseUrl = $themeManager->getAssetBaseUrl();
-		}
-
-		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
-		$jsFooter = array();
-		foreach ($jsNames as $jsName)
-		{
-			try
-			{
-				$a = $am->get($jsName);
-				$jsFooter[] = '<script type="text/javascript" src="' .$assetBaseUrl . $a->getTargetPath() . '"></script>';
-			}
-			catch (\Exception $e)
-			{
-				$applicationServices->getLogging()->warn('asset resource name not found: ' . $jsName);
-			}
-		}
-
-		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
-		$cssHead = [];
-		foreach($cssNames as $cssName)
-		{
-			try
-			{
-				$a = $am->get($cssName);
-				$cssHead[] = '<link rel="stylesheet" type="text/css" href="' . $assetBaseUrl . $a->getTargetPath() . '">';
-			}
-			catch (\Exception $e)
-			{
-				$applicationServices->getLogging()->warn('asset resource name not found: ' . $cssName);
-			}
-		}
-
-		return array('<!-- cssHead -->' => implode(PHP_EOL, $cssHead), '<!-- jsFooter -->' => implode(PHP_EOL, $jsFooter));
+		$jsFooter = '{% for jsFooter in pageResult.getJsAssets() %}
+	<script type="text/javascript" src="{{ resourceURL(jsFooter) }}"></script>
+{% endfor %}';
+		return array('<!-- cssHead -->' => $cssHead, '<!-- jsFooter -->' =>  $jsFooter);
 	}
 
 	/**
