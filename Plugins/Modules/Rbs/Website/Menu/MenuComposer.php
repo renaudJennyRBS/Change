@@ -57,11 +57,6 @@ class MenuComposer
 	 */
 	public function getMenuEntry($website, $doc, $maxLevel, $currentPage, $path)
 	{
-		if (!$this->shouldBeDisplayed($doc))
-		{
-			return null;
-		}
-
 		$entry = new \Rbs\Website\Menu\MenuEntry();
 		$entry->setTitle($doc->getDocumentModel()->getPropertyValue($doc, 'title'));
 
@@ -103,8 +98,11 @@ class MenuComposer
 				{
 					foreach ($tn->setTreeManager($this->treeManager)->getChildren() as $child)
 					{
-						$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel - 1, $currentPage,
-							$path));
+						if ($this->shouldBeDisplayed($doc))
+						{
+							$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel - 1, $currentPage,
+								$path));
+						}
 					}
 					if (!$entry->getUrl() && !count($entry->getChildren()))
 					{
@@ -163,10 +161,6 @@ class MenuComposer
 	 */
 	protected function shouldBeDisplayed($doc)
 	{
-		if ($doc instanceof \Rbs\Website\Documents\Menu)
-		{
-			return $doc->activated();
-		}
 		if (!($doc instanceof \Change\Documents\Interfaces\Publishable) || !$doc->published())
 		{
 			return false;
