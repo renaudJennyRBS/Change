@@ -8,15 +8,15 @@
  */
 namespace Rbs\Admin\Http\Rest;
 
-use Change\Http\Rest\Actions\DiscoverNameSpace;
-use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
+use Change\Http\Rest\V1\DiscoverNameSpace;
+use Change\Http\Rest\V1\Resolver;
 use Rbs\Admin\Http\Rest\Actions\BlockList;
 use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
+use Rbs\Admin\Http\Rest\Actions\DocumentList;
+use Rbs\Admin\Http\Rest\Actions\DocumentPreview;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
 use Rbs\Admin\Http\Rest\Actions\TagsInfo;
-use Rbs\Admin\Http\Rest\Actions\DocumentPreview;
-use Rbs\Admin\Http\Rest\Actions\DocumentList;
 use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 
 /**
@@ -25,12 +25,12 @@ use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 class AdminResolver
 {
 	/**
-	 * @param \Change\Http\Rest\Resolver $resolver
+	 * @param \Change\Http\Rest\V1\Resolver $resolver
 	 */
 	protected $resolver;
 
 	/**
-	 * @param \Change\Http\Rest\Resolver $resolver
+	 * @param \Change\Http\Rest\V1\Resolver $resolver
 	 */
 	function __construct(Resolver $resolver)
 	{

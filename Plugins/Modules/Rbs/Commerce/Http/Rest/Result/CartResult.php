@@ -8,7 +8,7 @@
  */
 namespace Rbs\Commerce\Http\Rest\Result;
 
-use Change\Http\Rest\Result\Links;
+use Change\Http\Rest\V1\Links;
 use Change\Http\Result;
 
 /**
@@ -34,7 +34,7 @@ class CartResult extends Result
 	}
 
 	/**
-	 * @return \Change\Http\Rest\Result\Links
+	 * @return \Change\Http\Rest\V1\Links
 	 */
 	public function getLinks()
 	{
@@ -42,7 +42,7 @@ class CartResult extends Result
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\Link|array $link
+	 * @param \Change\Http\Rest\V1\Link|array $link
 	 */
 	public function addLink($link)
 	{

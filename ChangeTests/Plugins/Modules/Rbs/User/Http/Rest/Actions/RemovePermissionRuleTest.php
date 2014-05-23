@@ -40,7 +40,7 @@ class RemovePermissionRuleTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$firstArrayResult = $result->toArray();
 		$this->assertNotEmpty($firstArrayResult);
 		$this->assertCount(5, $firstArrayResult);
@@ -64,7 +64,7 @@ class RemovePermissionRuleTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$secondArrayResult = $result->toArray();
 		$this->assertNotEmpty($secondArrayResult);
 		$this->assertCount(4, $secondArrayResult);

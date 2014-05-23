@@ -75,12 +75,12 @@ class UpdateProcessingStatusForTransaction
 			}
 
 			$event->setParam('modelName', $transaction->getDocumentModelName());
-			$docAction = new \Change\Http\Rest\Actions\GetDocument();
+			$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 			$docAction->execute($event);
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999, implode(', ', $params['errors']));
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999, implode(', ', $params['errors']));
 			$event->setResult($result);
 		}
 	}

@@ -20,7 +20,7 @@ class WebStore extends \Compilation\Rbs\Store\Documents\WebStore
 		if ($document instanceof WebStore && !$document->isNew())
 		{
 			$documentResult = $event->getParam('restResult');
-			if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
+			if ($documentResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 			{
 				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Price_Price');
 				$query->andPredicates($query->eq('webStore', $document));

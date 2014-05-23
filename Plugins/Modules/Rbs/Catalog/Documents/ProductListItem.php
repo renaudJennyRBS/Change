@@ -8,8 +8,8 @@
  */
 namespace Rbs\Catalog\Documents;
 
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\Link;
+use Change\Http\Rest\V1\Resources\DocumentLink;
 
 /**
  * @name \Rbs\Catalog\Documents\ProductListItem
@@ -49,7 +49,7 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$urlManager = $restResult->getUrlManager();
 
@@ -69,7 +69,7 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 			$restResult->addAction(new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'));
 			$restResult->addAction(new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'));
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			/* @var $document \Rbs\Catalog\Documents\ProductListItem */
 			$document = $restResult->getDocument();

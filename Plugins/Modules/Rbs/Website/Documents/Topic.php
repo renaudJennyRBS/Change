@@ -121,7 +121,7 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 		$restResult = $event->getParam('restResult');
 		/** @var $document Topic */
 		$document = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$section = null;
 			$tm = $event->getApplicationServices()->getTreeManager();
@@ -134,11 +134,11 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 					$section = null;
 				}
 			}
-			$vc = new \Change\Http\Rest\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$vc = new \Change\Http\Rest\V1\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$restResult->setProperty('section', $vc->toRestValue($section, \Change\Documents\Property::TYPE_DOCUMENT));
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink) {
-			$vc = new \Change\Http\Rest\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink) {
+			$vc = new \Change\Http\Rest\V1\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$restResult->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
 		}
 	}
@@ -153,7 +153,7 @@ class Topic extends \Compilation\Rbs\Website\Documents\Topic
 	{
 		if ($name === 'section')
 		{
-			$vc = new \Change\Http\Rest\ValueConverter($event->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$vc = new \Change\Http\Rest\V1\ValueConverter($event->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$section = $vc->toPropertyValue($value, \Change\Documents\Property::TYPE_DOCUMENT);
 			if ($section instanceof Section)
 			{

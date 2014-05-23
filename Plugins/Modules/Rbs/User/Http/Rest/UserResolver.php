@@ -8,16 +8,16 @@
  */
 namespace Rbs\User\Http\Rest;
 
-use Change\Http\Rest\Actions\DiscoverNameSpace;
-use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
+use Change\Http\Rest\V1\DiscoverNameSpace;
+use Change\Http\Rest\V1\Resolver;
 use Rbs\User\Http\Rest\Actions\AddPermission;
 use Rbs\User\Http\Rest\Actions\AddPermissionRules;
 use Rbs\User\Http\Rest\Actions\AddUsersInGroup;
 use Rbs\User\Http\Rest\Actions\GetPermission;
 use Rbs\User\Http\Rest\Actions\GetPermissionRules;
-use Rbs\User\Http\Rest\Actions\RemovePermission;
 use Rbs\User\Http\Rest\Actions\GetUserTokens;
+use Rbs\User\Http\Rest\Actions\RemovePermission;
 use Rbs\User\Http\Rest\Actions\RemovePermissionRule;
 use Rbs\User\Http\Rest\Actions\RemoveUsersFromGroup;
 use Rbs\User\Http\Rest\Actions\RevokeToken;
@@ -28,12 +28,12 @@ use Rbs\User\Http\Rest\Actions\RevokeToken;
 class UserResolver
 {
 	/**
-	 * @param \Change\Http\Rest\Resolver $resolver
+	 * @param \Change\Http\Rest\V1\Resolver $resolver
 	 */
 	protected $resolver;
 
 	/**
-	 * @param \Change\Http\Rest\Resolver $resolver
+	 * @param \Change\Http\Rest\V1\Resolver $resolver
 	 */
 	function __construct(Resolver $resolver)
 	{

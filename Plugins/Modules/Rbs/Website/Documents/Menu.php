@@ -23,7 +23,7 @@ class Menu extends \Compilation\Rbs\Website\Documents\Menu
 
 		/** @var $document Menu */
 		$document = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$items = $restResult->getProperty('items');
 			if (is_array($items))
@@ -39,7 +39,7 @@ class Menu extends \Compilation\Rbs\Website\Documents\Menu
 				$restResult->setProperty('items', $items);
 			}
 
-			$vc = new \Change\Http\Rest\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$vc = new \Change\Http\Rest\V1\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$restResult->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
 		}
 	}

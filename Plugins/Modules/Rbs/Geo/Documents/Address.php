@@ -257,17 +257,17 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 			return;
 		}
 		$documentResult = $event->getParam('restResult');
-		if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($documentResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
-			$pc = new \Change\Http\Rest\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$pc = new \Change\Http\Rest\V1\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$documentResult->setProperty('fieldValues', $pc->toRestValue($address->getFields(), \Change\Documents\Property::TYPE_JSON));
 			$documentResult->setProperty('lines', $address->getLines());
 		}
-		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($documentResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$extraColumn = $event->getParam('extraColumn');
 			if (is_array($extraColumn) && in_array('fieldValues', $extraColumn)) {
-				$pc = new \Change\Http\Rest\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+				$pc = new \Change\Http\Rest\V1\ValueConverter($documentResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 				$documentResult->setProperty('fieldValues', $pc->toRestValue($address->getFields(), \Change\Documents\Property::TYPE_JSON));
 			}
 		}
@@ -284,7 +284,7 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	{
 		if ($name === 'fieldValues')
 		{
-			$pc = new \Change\Http\Rest\ValueConverter($event->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
+			$pc = new \Change\Http\Rest\V1\ValueConverter($event->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$this->fieldValues = $pc->toPropertyValue($value, \Change\Documents\Property::TYPE_JSON);
 			return true;
 		}

@@ -36,7 +36,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
@@ -46,7 +46,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 				$restResult->setProperty('editorDefinition', $cs->getAttributeManager()->buildEditorDefinition($attribute));
 			}
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$extraColumn = $event->getParam('extraColumn');
 			if (in_array('valueTypeFormatted', $extraColumn))

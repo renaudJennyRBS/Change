@@ -10,7 +10,7 @@ namespace Rbs\Order\Http\Rest\Actions;
 
 use Change\Documents\AbstractDocument;
 use Change\Http\Event;
-use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\V1\Resources\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -55,11 +55,11 @@ class ProductPriceInfo
 	 * @param $products \Rbs\Catalog\Documents\Product[]
 	 * @param $commerceServices \Rbs\Commerce\CommerceServices
 	 * @param $urlManager \Change\Http\UrlManager
-	 * @return \Change\Http\Rest\Result\ArrayResult
+	 * @return \Change\Http\Rest\V1\ArrayResult
 	 */
 	protected function generateResult($webStore, $billingArea, $products, $commerceServices, $urlManager)
 	{
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 
 		if ($webStore === null || count($products) === 0)
 		{

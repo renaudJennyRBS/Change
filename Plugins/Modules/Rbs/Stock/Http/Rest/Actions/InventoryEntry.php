@@ -27,7 +27,7 @@ class InventoryEntry
 
 		if ($inventoryEntry != null)
 		{
-			$result = new \Change\Http\Rest\Result\ArrayResult();
+			$result = new \Change\Http\Rest\V1\ArrayResult();
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 
 			$nbMvt = null;
@@ -51,7 +51,7 @@ class InventoryEntry
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Inventory entry ID missing.', \Zend\Http\Response::STATUS_CODE_409);
 		}
 
@@ -75,7 +75,7 @@ class InventoryEntry
 			$transactionManager = $event->getApplicationServices()->getTransactionManager();
 			try
 			{
-				$result = new \Change\Http\Rest\Result\ArrayResult();
+				$result = new \Change\Http\Rest\V1\ArrayResult();
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 
 				$cs = $event->getServices('commerceServices');
@@ -104,14 +104,14 @@ class InventoryEntry
 			}
 			catch(\Exception $e)
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 					'An error has occurred during movements consolidation', \Zend\Http\Response::STATUS_CODE_409);
 				$transactionManager->rollBack($e);
 			}
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Inventory entry ID missing.', \Zend\Http\Response::STATUS_CODE_409);
 		}
 

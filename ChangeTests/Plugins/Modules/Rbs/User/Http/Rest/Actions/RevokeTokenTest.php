@@ -69,7 +69,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getUserTokens->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult, 'array result must contain the test token, if it is not, maybe because of GetUserTokens works wrong');
 		$this->assertCount(1, $arrayResult);
@@ -91,7 +91,7 @@ class RevokeTokenTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getUserTokens->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertEmpty($arrayResult);
 

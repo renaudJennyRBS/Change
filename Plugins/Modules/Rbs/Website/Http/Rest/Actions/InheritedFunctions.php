@@ -39,7 +39,7 @@ class InheritedFunctions
 	/**
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param $sectionId integer
-	 * @return \Change\Http\Rest\Result\ArrayResult|null
+	 * @return \Change\Http\Rest\V1\ArrayResult|null
 	 */
 	protected function generateResult($applicationServices, $sectionId)
 	{
@@ -58,7 +58,7 @@ class InheritedFunctions
 		$ancestorNodes = $treeManager->getAncestorNodes($currentNode);
 		$dm = $applicationServices->getDocumentManager();
 		$functionsByCode = array();
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 
 		// Traverse the tree from root to deepest section.
 		foreach ($ancestorNodes as $ancestor)

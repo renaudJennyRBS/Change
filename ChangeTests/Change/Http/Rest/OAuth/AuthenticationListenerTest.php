@@ -72,8 +72,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$this->setConsumerForTest();
 
-		$controller = new \Change\Http\Rest\Controller($this->getApplication());
-		$controller->setActionResolver(new \Change\Http\Rest\Resolver());
+		$controller = new \Change\Http\Rest\V1\Controller($this->getApplication());
+		$controller->setActionResolver(new \Change\Http\Rest\V1\Resolver());
 
 		$_SERVER['REQUEST_URI'] = '/rest.php/OAuth/RequestToken/';
 		$_SERVER['SERVER_NAME'] = 'localhost';
@@ -110,7 +110,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$authenticationListener->onRequestToken($event);
 
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$this->assertEquals(200, $result->getHttpStatusCode());
 		$resultArray = $result->toArray();
 		$this->assertArrayHasKey('oauth_token', $resultArray);
@@ -128,8 +128,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testOnAuthorizeGet($oauthData)
 	{
-		$controller = new \Change\Http\Rest\Controller($this->getApplication());
-		$controller->setActionResolver(new \Change\Http\Rest\Resolver());
+		$controller = new \Change\Http\Rest\V1\Controller($this->getApplication());
+		$controller->setActionResolver(new \Change\Http\Rest\V1\Resolver());
 
 		$_SERVER['REQUEST_URI'] = '/rest.php/OAuth/Authorize/';
 		$_SERVER['SERVER_NAME'] = 'localhost';
@@ -146,7 +146,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$authenticationListener->onAuthorize($event);
 
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$this->assertEquals(200, $result->getHttpStatusCode());
 		$resultArray = $result->toArray();
 		$this->assertEquals($oauthData['oauth_token'], $resultArray['oauth_token']);
@@ -162,8 +162,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testOnAuthorizePost($oauthData)
 	{
-		$controller = new \Change\Http\Rest\Controller($this->getApplication());
-		$controller->setActionResolver(new \Change\Http\Rest\Resolver());
+		$controller = new \Change\Http\Rest\V1\Controller($this->getApplication());
+		$controller->setActionResolver(new \Change\Http\Rest\V1\Resolver());
 
 		$_SERVER['REQUEST_URI'] = '/rest.php/OAuth/Authorize/';
 		$_SERVER['SERVER_NAME'] = 'localhost';
@@ -198,7 +198,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$authenticationListener->onAuthorize($event);
 
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$this->assertEquals(200, $result->getHttpStatusCode());
 		$resultArray = $result->toArray();
 		$this->assertEquals($oauthData['result']['oauth_token'], $resultArray['oauth_token']);
@@ -218,8 +218,8 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */
 	public function testOnAccessToken($oauthData)
 	{
-		$controller = new \Change\Http\Rest\Controller($this->getApplication());
-		$controller->setActionResolver(new \Change\Http\Rest\Resolver());
+		$controller = new \Change\Http\Rest\V1\Controller($this->getApplication());
+		$controller->setActionResolver(new \Change\Http\Rest\V1\Resolver());
 
 		$_SERVER['REQUEST_URI'] = '/rest.php/OAuth/AccessToken/';
 		$_SERVER['SERVER_NAME'] = 'localhost';
@@ -257,7 +257,7 @@ class AuthenticationListenerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$authenticationListener->onAccessToken($event);
 
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$this->assertEquals(200, $result->getHttpStatusCode());
 		$resultArray = $result->toArray();
 		$this->assertArrayHasKey('oauth_token', $resultArray);

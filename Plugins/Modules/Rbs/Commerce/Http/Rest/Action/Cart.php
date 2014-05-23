@@ -8,7 +8,7 @@
  */
 namespace Rbs\Commerce\Http\Rest\Action;
 
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\Link;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -27,7 +27,7 @@ class Cart
 		$request = $event->getRequest();
 		$params = $request->getQuery()->toArray();
 		$params += ['offset' => 0, 'limit' => 10, 'sort' => 'last_update', 'desc' => true];
-		$result = new \Change\Http\Rest\Result\CollectionResult();
+		$result = new \Change\Http\Rest\V1\CollectionResult();
 		$urlManager = $event->getUrlManager();
 
 		$selfLink = new Link($urlManager, $request->getPath());
@@ -104,7 +104,7 @@ class Cart
 					->addNumCol('payment_amount_with_taxes', 'total_amount_with_taxes')
 					->addDtCol('last_update'));
 
-				$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+				$vc = new \Change\Http\Rest\V1\ValueConverter($urlManager, $documentManager);
 				foreach ($rows as $row)
 				{
 					$link = new Link($event->getUrlManager(), 'commerce/cart/' . $row['identifier']);
@@ -171,7 +171,7 @@ class Cart
 				$pm = $commerceServices->getPriceManager();
 				$urlManager = $event->getUrlManager();
 				$currency = $cart->getCurrencyCode();
-				$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+				$vc = new \Change\Http\Rest\V1\ValueConverter($urlManager, $documentManager);
 				if ($currency)
 				{
 					$linesTaxes = array();

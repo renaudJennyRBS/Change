@@ -33,6 +33,15 @@ class Controller implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
+	 * @return string
+	 */
+	public function getApiVersion()
+	{
+		return '';
+	}
+
+	/**
 	 * @return string[]
 	 */
 	protected function getEventManagerIdentifier()

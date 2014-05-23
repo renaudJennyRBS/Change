@@ -48,7 +48,7 @@ class Invoice extends \Compilation\Rbs\Order\Documents\Invoice
 		/** @var $invoice Invoice */
 		$invoice = $event->getDocument();
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$linkResult = $restResult;
 			if (!$linkResult->getProperty('code'))

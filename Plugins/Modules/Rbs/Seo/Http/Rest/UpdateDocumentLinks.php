@@ -21,7 +21,7 @@ class UpdateDocumentLinks
 		$result = $event->getParam('restResult');
 		$document = $event->getDocument();
 
-		if ($result instanceof \Change\Http\Rest\Result\DocumentResult && $document instanceof \Change\Documents\Interfaces\Publishable)
+		if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentResult && $document instanceof \Change\Documents\Interfaces\Publishable)
 		{
 			/* @var $document \Change\Documents\AbstractDocument */
 			$urlManager = $event->getParam('urlManager');
@@ -32,13 +32,13 @@ class UpdateDocumentLinks
 			{
 				/* @var $documentSeo \Rbs\Seo\Documents\DocumentSeo */
 				$pathInfo = 'resources/Rbs/Seo/DocumentSeo/' . $documentSeo->getId();
-				$l = new \Change\Http\Rest\Result\Link($urlManager, $pathInfo, 'seo');
+				$l = new \Change\Http\Rest\V1\Link($urlManager, $pathInfo, 'seo');
 				$result->addLink($l);
 			}
 			else
 			{
 				$pathInfo = 'Rbs/Seo/CreateSeoForDocument';
-				$l = new \Change\Http\Rest\Result\Link($urlManager, $pathInfo, 'addSeo');
+				$l = new \Change\Http\Rest\V1\Link($urlManager, $pathInfo, 'addSeo');
 				$l->setQuery(['documentId' => $document->getId()]);
 				$result->addAction($l);
 			}

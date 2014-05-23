@@ -85,7 +85,7 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
@@ -99,7 +99,7 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 			$documentLink->setProperty('mailSuitable', $pageTemplate->getMailSuitable());
 			$documentLink->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			/* @var $pageTemplate \Rbs\Theme\Documents\Template */
 			$pageTemplate = $restResult->getDocument();

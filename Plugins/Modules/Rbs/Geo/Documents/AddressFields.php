@@ -82,7 +82,7 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			/** @var $addressFields AddressFields */
 			$addressFields = $event->getDocument();

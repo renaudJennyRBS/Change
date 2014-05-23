@@ -95,7 +95,7 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 		$tm = $this->getApplicationServices()->getTransactionManager();
 		$newMessage = $dm->getDocumentInstance($this->newMessageId, $this->getApplicationServices()->getModelManager()->getModelByName('Rbs_Timeline_Message'));
 
-		$documentLink = new \Change\Http\Rest\Result\DocumentLink(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $newMessage, \Change\Http\Rest\Result\DocumentLink::MODE_PROPERTY);
+		$documentLink = new \Change\Http\Rest\V1\Resources\DocumentLink(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $newMessage, \Change\Http\Rest\V1\Resources\DocumentLink::MODE_PROPERTY);
 		$this->assertNotNull($documentLink);
 		$result = $documentLink->toArray();
 		$this->assertNotNull($result);
@@ -131,8 +131,8 @@ class MessageTest extends \ChangeTests\Change\TestAssets\TestCase
 			$tm->rollBack($e);
 		}
 
-		$documentLink = new \Change\Http\Rest\Result\DocumentLink(new \Change\Http\UrlManager(new \Zend\Uri\Http()),
-			$newMessage, \Change\Http\Rest\Result\DocumentLink::MODE_PROPERTY);
+		$documentLink = new \Change\Http\Rest\V1\Resources\DocumentLink(new \Change\Http\UrlManager(new \Zend\Uri\Http()),
+			$newMessage, \Change\Http\Rest\V1\Resources\DocumentLink::MODE_PROPERTY);
 		$this->assertNotNull($documentLink);
 		$result = $documentLink->toArray();
 		//now because the context is set we can check the contextModel

@@ -8,7 +8,7 @@
  */
 namespace Rbs\Seo\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\ArrayResult;
+use Change\Http\Rest\V1\ArrayResult;
 
 /**
  * @name \Rbs\Seo\Http\Rest\Actions\CreateSeoForDocument
@@ -34,7 +34,7 @@ class CreateSeoForDocument
 					{
 						$event->setParam('documentId', $seo->getId());
 						$event->setParam('modelName', $seo->getDocumentModelName());
-						$action = new \Change\Http\Rest\Actions\GetDocument();
+						$action = new \Change\Http\Rest\V1\Resources\GetDocument();
 						$action->execute($event);
 						return;
 					}

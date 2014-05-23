@@ -8,7 +8,7 @@
  */
 namespace Rbs\Tag\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\CollectionResult;
+use Change\Http\Rest\V1\CollectionResult;
 use Zend\Http\Response as HttpResponse;
 
 /**

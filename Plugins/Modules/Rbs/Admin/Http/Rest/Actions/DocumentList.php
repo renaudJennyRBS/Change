@@ -8,8 +8,8 @@
  */
 namespace Rbs\Admin\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\Rest\Result\DocumentLink;
+use Change\Http\Rest\V1\CollectionResult;
+use Change\Http\Rest\V1\Resources\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 
 /**

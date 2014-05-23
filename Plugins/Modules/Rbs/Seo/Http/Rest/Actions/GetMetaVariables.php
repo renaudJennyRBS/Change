@@ -8,7 +8,7 @@
  */
 namespace Rbs\Seo\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\ArrayResult;
+use Change\Http\Rest\V1\ArrayResult;
 
 /**
  * @name \Rbs\Seo\Http\Rest\Actions\GetMetaVariables

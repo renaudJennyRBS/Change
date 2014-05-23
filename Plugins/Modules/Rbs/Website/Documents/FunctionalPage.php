@@ -160,14 +160,14 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 		parent::onDefaultUpdateRestResult($event);
 
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 
 			/** @var $document FunctionalPage */
 			$document = $documentLink->getDocument();
 			$um = $restResult->getUrlManager();
-			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
+			$vc = new \Change\Http\Rest\V1\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
 			$documentLink->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
 
 			$extraColumn = $event->getParam('extraColumn');

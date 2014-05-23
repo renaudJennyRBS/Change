@@ -27,7 +27,7 @@ class AddressField extends \Compilation\Rbs\Geo\Documents\AddressField implement
 		$restResult = $event->getParam('restResult');
 		/** @var $addressField AddressField */
 		$addressField = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 			$documentLink->setProperty('locked', $addressField->getLocked());

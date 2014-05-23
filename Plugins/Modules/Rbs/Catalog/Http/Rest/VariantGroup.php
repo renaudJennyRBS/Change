@@ -9,9 +9,9 @@
 namespace Rbs\Catalog\Http\Rest;
 
 use Change\Http\Event;
-use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\CollectionResult;
+use Change\Http\Rest\V1\Link;
+use Change\Http\Rest\V1\Resources\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 
 /**

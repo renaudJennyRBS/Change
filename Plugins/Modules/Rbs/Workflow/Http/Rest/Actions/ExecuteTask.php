@@ -12,7 +12,7 @@ use Change\Documents\Events\Event as DocumentEvent;
 use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Publishable;
 use Change\Http\Event as HttpEvent;
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\Link;
 use Change\Http\UrlManager;
 use Change\Workflow\Interfaces\WorkItem;
 use Rbs\Workflow\Documents\Task;
@@ -33,7 +33,7 @@ class ExecuteTask
 		$result = $event->getParam('restResult');
 		$document = $event->getDocument();
 
-		if ($result instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$urlManager = $event->getParam('urlManager');
@@ -74,7 +74,7 @@ class ExecuteTask
 				}
 			}
 		}
-		else if ($result instanceof \Change\Http\Rest\Result\DocumentLink)
+		else if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$urlManager = $event->getParam('urlManager');
@@ -216,7 +216,7 @@ class ExecuteTask
 			$event->getApplicationServices()->getWorkflowManager()->getEventManager()->trigger($event);
 		}
 
-		(new \Change\Http\Rest\Actions\GetDocument())->execute($event);
+		(new \Change\Http\Rest\V1\Resources\GetDocument())->execute($event);
 	}
 
 	/**

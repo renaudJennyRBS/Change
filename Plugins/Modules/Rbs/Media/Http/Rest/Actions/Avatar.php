@@ -8,8 +8,8 @@
  */
 namespace Rbs\Media\Http\Rest\Actions;
 
-use Change\Http\Result;
 use Change\Http\Event;
+use Change\Http\Result;
 use Zend\Http\Response;
 
 /**
@@ -44,7 +44,7 @@ class Avatar
 			return;
 		}
 
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 		$result->setArray(['href' => $url]);
 		$event->setResult($result);
 	}

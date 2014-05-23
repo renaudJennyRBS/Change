@@ -34,7 +34,7 @@ class GetOrderLineByProduct
 
 			if (!$order || !$product)
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'Invalid parameters');
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'Invalid parameters');
 				$event->setResult($result);
 			}
 
@@ -147,7 +147,7 @@ class GetOrderLineByProduct
 			$orderLine->setAmountWithTaxes($amountWithTaxes);
 			$orderLine->setAmount($amount);
 
-			$result = new \Change\Http\Rest\Result\ArrayResult();
+			$result = new \Change\Http\Rest\V1\ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 			$result->setArray(array('line' => $orderLine->toArray()));
 			$event->setResult($result);

@@ -20,7 +20,7 @@ class Reservation
 	 */
 	public function getReservations($event)
 	{
-		$result = new \Change\Http\Rest\Result\CollectionResult();
+		$result = new \Change\Http\Rest\V1\CollectionResult();
 
 		if (($limit = $event->getRequest()->getQuery('limit', 20)) !== null)
 		{
@@ -50,7 +50,7 @@ class Reservation
 
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$urlManager = $event->getUrlManager();
-			$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+			$vc = new \Change\Http\Rest\V1\ValueConverter($urlManager, $documentManager);
 			foreach ($tmpReservations as $reservation)
 			{
 				$store = $documentManager->getDocumentInstance($reservation['store_id'], 'Rbs_Store_WebStore');

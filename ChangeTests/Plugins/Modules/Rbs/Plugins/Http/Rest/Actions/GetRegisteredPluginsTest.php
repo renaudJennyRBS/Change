@@ -35,7 +35,7 @@ class GetRegisteredPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
 
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$registeredPlugins = $pm->getRegisteredPlugins();
 		//There is no registered plugins, because they already fake installed (in the compiled file)
@@ -55,7 +55,7 @@ class GetRegisteredPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getRegisteredPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		//Compare result again
 		$this->assertCount(count($registeredPlugins), $arrayResult);

@@ -81,7 +81,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 
 		/** @var $document FullText */
 		$document = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$restResult->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));
 			$genericServices = $event->getServices('genericServices');
@@ -110,7 +110,7 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 				}
 			}
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 			$documentLink->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));

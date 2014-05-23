@@ -89,7 +89,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 		/* @var $document SectionPageFunction */
 		$document = $event->getDocument();
 
-		/* @var $restResult \Change\Http\Rest\Result\DocumentLink|\Change\Http\Rest\Result\DocumentResult */
+		/* @var $restResult \Change\Http\Rest\V1\Resources\DocumentLink|\Change\Http\Rest\V1\Resources\DocumentResult */
 		$restResult->setProperty('label', $document->getLabel());
 	}
 }

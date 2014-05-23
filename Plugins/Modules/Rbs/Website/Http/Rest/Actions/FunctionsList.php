@@ -53,7 +53,7 @@ class FunctionsList
 			return strcmp($grpA, $grpB);
 		});
 
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 		$result->setArray($functions);
 		$event->setResult($result);
 	}

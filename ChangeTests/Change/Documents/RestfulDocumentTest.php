@@ -56,7 +56,7 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$newDocument = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$result = $newDocument->populateDocumentFromRestEvent($event);
 		$this->assertEquals(false, $result);
-		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
+		$this->assertInstanceOf('\Change\Http\Rest\V1\ErrorResult', $event->getResult());
 		$this->assertEquals(\Zend\Http\Response::STATUS_CODE_409, $event->getResult()->getHttpStatusCode());
 		$this->assertEquals('DOCUMENT-ALREADY-EXIST', $event->getResult()->getErrorCode());
 
@@ -65,7 +65,7 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event->getRequest()->setPost(new \Zend\Stdlib\Parameters($data));
 		$result = $newDocument->populateDocumentFromRestEvent($event);
 		$this->assertEquals(false, $result);
-		$this->assertInstanceOf('\Change\Http\Rest\Result\ErrorResult', $event->getResult());
+		$this->assertInstanceOf('\Change\Http\Rest\V1\ErrorResult', $event->getResult());
 		$this->assertEquals(\Zend\Http\Response::STATUS_CODE_409, $event->getResult()->getHttpStatusCode());
 		$this->assertEquals('INVALID-VALUE-TYPE', $event->getResult()->getErrorCode());
 		$this->assertEquals('pStr', $event->getResult()->getData()['name']);

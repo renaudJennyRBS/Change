@@ -47,21 +47,21 @@ class AddressLines
 				if ($genericServices instanceof \Rbs\Generic\GenericServices)
 				{
 					$lines = $genericServices->getGeoManager()->getFormattedAddress($address);
-					$result = new \Change\Http\Rest\Result\ArrayResult();
+					$result = new \Change\Http\Rest\V1\ArrayResult();
 					$result->setArray($lines);
 					$result->setHttpStatusCode(Response::STATUS_CODE_200);
 					$event->setResult($result);
 				}
 				else
 				{
-					$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'Generic services not found');
+					$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'Generic services not found');
 					$result->setHttpStatusCode(Response::STATUS_CODE_500);
 					$event->setResult($result);
 				}
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'address given for address lines is not valid');
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'address given for address lines is not valid');
 				$result->setHttpStatusCode(Response::STATUS_CODE_409);
 				$event->setResult($result);
 			}

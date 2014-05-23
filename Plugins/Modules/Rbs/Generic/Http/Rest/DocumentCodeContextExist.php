@@ -19,14 +19,14 @@ class DocumentCodeContextExist
 		$context = $event->getRequest()->getPost('context');
 		if ($context)
 		{
-			$result = new \Change\Http\Rest\Result\ArrayResult();
+			$result = new \Change\Http\Rest\V1\ArrayResult();
 			$result->setArray(['result' => $documentCodeManager->contextExist($context)]);
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 			$event->setResult($result);
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'context param is missing');
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'context param is missing');
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_500);
 			$event->setResult($result);
 		}

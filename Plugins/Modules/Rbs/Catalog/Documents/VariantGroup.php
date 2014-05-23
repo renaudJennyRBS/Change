@@ -9,7 +9,7 @@
 namespace Rbs\Catalog\Documents;
 
 use Change\Documents\AbstractModel;
-use Change\Http\Rest\Result\ErrorResult;
+use Change\Http\Rest\V1\ErrorResult;
 use Rbs\Catalog\Product\AxisConfiguration;
 use Zend\Http\Response as HttpResponse;
 
@@ -213,7 +213,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 		/** @var $document VariantGroup */
 		$document = $event->getDocument();
 
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
@@ -240,7 +240,7 @@ class VariantGroup extends \Compilation\Rbs\Catalog\Documents\VariantGroup
 				throw new \RuntimeException('CommerceServices not set', 999999);
 			}
 		}
-		else if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		else if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$restResult->setProperty('rootProductId', $document->getRootProductId());
 			$restResult->setProperty('axesAttributesId', $document->getAxesAttributeIds());
