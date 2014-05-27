@@ -9,9 +9,9 @@
 namespace Rbs\Media\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentResult;
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\Link;
+use Change\Http\Rest\V1\Resources\DocumentLink;
+use Change\Http\Rest\V1\Resources\DocumentResult;
 use Rbs\Media\Std\Resizer;
 
 /**

@@ -35,7 +35,7 @@ class VariantPrices
 			{
 				if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
 				{
-					$result = new \Change\Http\Rest\Result\ArrayResult();
+					$result = new \Change\Http\Rest\V1\ArrayResult();
 
 					$query = $documentManager->getNewQuery('Rbs_Catalog_Product');
 					$query->andPredicates($query->eq('variant', true), $query->eq('variantGroup', $variantGroup),
@@ -76,19 +76,19 @@ class VariantPrices
 				}
 				else
 				{
-					$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+					$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 						'Bad billing area id : ' . $billingAreaId, \Zend\Http\Response::STATUS_CODE_409);
 				}
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 					'Bad webstore id : ' . $webStoreId, \Zend\Http\Response::STATUS_CODE_409);
 			}
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Bad variant group id : ' . $variantGroupId, \Zend\Http\Response::STATUS_CODE_409);
 		}
 
@@ -165,19 +165,19 @@ class VariantPrices
 				}
 				else
 				{
-					$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+					$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 						'Bad billing area id : ' . $billingAreaId, \Zend\Http\Response::STATUS_CODE_409);
 				}
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 					'Bad webstore id : ' . $webStoreId, \Zend\Http\Response::STATUS_CODE_409);
 			}
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Data is empty', \Zend\Http\Response::STATUS_CODE_409);
 		}
 

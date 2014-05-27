@@ -67,7 +67,7 @@ class Sku
 				{
 					$documentManager = $event->getApplicationServices()->getDocumentManager();
 					$urlManager = $event->getUrlManager();
-					$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+					$vc = new \Change\Http\Rest\V1\ValueConverter($urlManager, $documentManager);
 
 					$reservationsData = array();
 					foreach($reservationsInfo as $rInfo)
@@ -87,14 +87,14 @@ class Sku
 
 			}
 
-			$result = new \Change\Http\Rest\Result\ArrayResult();
+			$result = new \Change\Http\Rest\V1\ArrayResult();
 			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 			$result->setArray($data);
 
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Missing parameters', \Zend\Http\Response::STATUS_CODE_409);
 		}
 

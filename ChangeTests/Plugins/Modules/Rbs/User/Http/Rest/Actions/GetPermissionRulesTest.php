@@ -40,7 +40,7 @@ class GetPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		$this->assertCount(5, $arrayResult, 'if it is 7, that mean that all permission are taken et not only them for targeted user');

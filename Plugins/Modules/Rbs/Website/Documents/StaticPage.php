@@ -185,12 +185,12 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 
 		$restResult = $event->getParam('restResult');
 
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 
 			$um = $documentLink->getUrlManager();
-			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
+			$vc = new \Change\Http\Rest\V1\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
 			$documentLink->setProperty('website', $vc->toRestValue($website, \Change\Documents\Property::TYPE_DOCUMENT));
 
 			$extraColumn = $event->getParam('extraColumn');
@@ -212,7 +212,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				$documentLink->setProperty('functions', $functions);
 			}
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$documentResult = $restResult;
 			$section = $staticPage->getSection();
@@ -224,7 +224,7 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				$website = $section;
 			}
 			$um = $documentResult->getUrlManager();
-			$vc = new \Change\Http\Rest\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
+			$vc = new \Change\Http\Rest\V1\ValueConverter($um, $event->getApplicationServices()->getDocumentManager());
 			$documentResult->setProperty('website', $vc->toRestValue($website, \Change\Documents\Property::TYPE_DOCUMENT));
 		}
 	}

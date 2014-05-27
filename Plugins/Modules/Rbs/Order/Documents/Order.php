@@ -704,18 +704,18 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 		/** @var $order Order */
 		$order = $event->getDocument();
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$documentResult = $restResult;
 			$um = $documentResult->getUrlManager();
 			$selfLinks = $documentResult->getRelLink('self');
 			$selfLink = array_shift($selfLinks);
-			if ($selfLink instanceof \Change\Http\Rest\Result\Link)
+			if ($selfLink instanceof \Change\Http\Rest\V1\Link)
 			{
 				$baseUrl = $selfLink->getPathInfo();
-				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Shipments/', 'shipments'));
-				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Transactions/', 'transactions'));
-				$documentResult->addLink(new \Change\Http\Rest\Result\Link($um, $baseUrl . '/Invoices/', 'invoices'));
+				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Shipments/', 'shipments'));
+				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Transactions/', 'transactions'));
+				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Invoices/', 'invoices'));
 			}
 
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
@@ -770,7 +770,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			$documentResult->setProperty('address', $address ? $address->toArray() : null);
 			$documentResult->setProperty('shippingModes', array_map(function(\Rbs\Commerce\Process\BaseShippingMode $mode) {return $mode->toArray();}, $this->getShippingModes()));
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$linkResult = $restResult;
 			if (!$linkResult->getProperty('code'))

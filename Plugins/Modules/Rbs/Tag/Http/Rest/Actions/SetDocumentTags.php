@@ -8,7 +8,7 @@
  */
 namespace Rbs\Tag\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\CollectionResult;
+use Change\Http\Rest\V1\CollectionResult;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -19,7 +19,7 @@ class SetDocumentTags
 	const MAX_TAGS = 1000;
 
 	/**
-	 * @param CollectionResult $result
+	 * @param \Change\Http\Rest\V1\CollectionResult $result
 	 * @return array
 	 */
 	protected function buildQueryArray($result)

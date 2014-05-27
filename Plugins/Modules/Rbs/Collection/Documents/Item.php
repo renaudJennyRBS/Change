@@ -8,7 +8,7 @@
  */
 namespace Rbs\Collection\Documents;
 
-use Change\Http\Rest\Result\ErrorResult;
+use Change\Http\Rest\V1\ErrorResult;
 use Zend\Http\Response as HttpResponse;
 use Zend\Http\Response;
 
@@ -47,7 +47,7 @@ class Item extends \Compilation\Rbs\Collection\Documents\Item implements \Change
 		/** @var $document Item */
 		$document = $event->getDocument();
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 			$documentLink->setProperty('locked', $document->getLocked());

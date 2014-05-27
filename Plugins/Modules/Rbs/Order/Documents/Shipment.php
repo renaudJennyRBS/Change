@@ -8,8 +8,8 @@
  */
 namespace Rbs\Order\Documents;
 
-use Change\Documents\Events\Event as DocumentEvent;
 use Change\Documents\Events;
+use Change\Documents\Events\Event as DocumentEvent;
 
 /**
  * @name \Rbs\Order\Documents\Shipment
@@ -121,7 +121,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 		}
 
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			if (!$this->getCode())
 			{
@@ -129,7 +129,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 				$restResult->setProperty('label', $i18nManager->trans('m.rbs.order.admin.code_waiting', ['ucf']));
 			}
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$linkResult = $restResult;
 			if (!$linkResult->getProperty('code'))

@@ -8,8 +8,8 @@
  */
 namespace Rbs\Catalog\Http\Rest;
 
-use Change\Http\Rest\Actions\DocumentQuery;
-use Change\Http\Rest\Result\ArrayResult;
+use Change\Http\Rest\V1\ArrayResult;
+use Change\Http\Rest\V1\Query\DocumentQuery;
 use Zend\Stdlib\Parameters;
 
 /**
@@ -29,7 +29,7 @@ class ProductListItemResult
 			$cm->moveProductListItemUp($event->getParam('documentId'));
 		}
 		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
-		$docAction = new \Change\Http\Rest\Actions\GetDocument();
+		$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 		$docAction->execute($event);
 	}
 
@@ -45,7 +45,7 @@ class ProductListItemResult
 			$cm->moveProductListItemDown($event->getParam('documentId'));
 		}
 		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
-		$docAction = new \Change\Http\Rest\Actions\GetDocument();
+		$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 		$docAction->execute($event);
 	}
 
@@ -61,7 +61,7 @@ class ProductListItemResult
 			$cm->highlightProductListItemTop($event->getParam('documentId'));
 		}
 		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
-		$docAction = new \Change\Http\Rest\Actions\GetDocument();
+		$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 		$docAction->execute($event);
 	}
 
@@ -77,7 +77,7 @@ class ProductListItemResult
 			$cm->highlightProductListItemBottom($event->getParam('documentId'));
 		}
 		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
-		$docAction = new \Change\Http\Rest\Actions\GetDocument();
+		$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 		$docAction->execute($event);
 	}
 
@@ -93,7 +93,7 @@ class ProductListItemResult
 			$cm->highlightProductListItem($event->getParam('documentId'));
 		}
 		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
-		$docAction = new \Change\Http\Rest\Actions\GetDocument();
+		$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 		$docAction->execute($event);
 	}
 
@@ -109,7 +109,7 @@ class ProductListItemResult
 			$cm->downplayProductListItem($event->getParam('documentId'));
 		}
 		$event->setParam('modelName', 'Rbs_Catalog_ProductListItem');
-		$docAction = new \Change\Http\Rest\Actions\GetDocument();
+		$docAction = new \Change\Http\Rest\V1\Resources\GetDocument();
 		$docAction->execute($event);
 	}
 

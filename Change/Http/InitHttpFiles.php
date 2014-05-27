@@ -39,10 +39,16 @@ class InitHttpFiles
 		$srcPath = $workspace->changePath('Http', 'Assets', 'rest.php');
 		$content = \Change\Stdlib\File::read($srcPath);
 		$content = str_replace('__DIR__', var_export($this->application->getWorkspace()->projectPath(), true), $content);
-
-
 		$rootPath = $workspace->composeAbsolutePath($webBaseDirectory);
 		\Change\Stdlib\File::write($rootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+
+
+		$srcPath = $workspace->changePath('Http', 'Assets', 'rest.V1.php');
+		$content = \Change\Stdlib\File::read($srcPath);
+		$content = str_replace('__DIR__', var_export($this->application->getWorkspace()->projectPath(), true), $content);
+		$rootPath = $workspace->composeAbsolutePath($webBaseDirectory);
+		\Change\Stdlib\File::write($rootPath . DIRECTORY_SEPARATOR . basename($srcPath), $content);
+
 
 		$editConfig->addPersistentEntry('Change/Install/webBaseDirectory', $webBaseDirectory, \Change\Configuration\Configuration::PROJECT);
 		$editConfig->addPersistentEntry('Change/Install/webBaseURLPath', $webBaseURLPath, \Change\Configuration\Configuration::PROJECT);

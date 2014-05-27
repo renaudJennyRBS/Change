@@ -9,9 +9,7 @@
 namespace Rbs\Commerce\Documents;
 
 use Change\Documents\Events;
-use Change\Http\Rest\PropertyConverter;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\ErrorResult;
+use Change\Http\Rest\V1\Resources\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -26,7 +24,7 @@ class Process extends \Compilation\Rbs\Commerce\Documents\Process
 
 		/** @var $process Process */
 		$process = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$documentResult = $restResult;
 			$um = $documentResult->getUrlManager();
@@ -39,7 +37,7 @@ class Process extends \Compilation\Rbs\Commerce\Documents\Process
 			}
 			$documentResult->setProperty('modifiersOrder', $modifiersOrder);
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 
 		}

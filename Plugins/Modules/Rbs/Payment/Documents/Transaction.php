@@ -9,8 +9,8 @@
 namespace Rbs\Payment\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\V1\Resources\DocumentLink;
+use Change\Http\Rest\V1\Resources\DocumentResult;
 
 /**
  * @name \Rbs\Payment\Documents\Transaction
@@ -47,7 +47,7 @@ class Transaction extends \Compilation\Rbs\Payment\Documents\Transaction
 	{
 		parent::onDefaultUpdateRestResult($event);
 
-		/** @var $restResult DocumentLink|DocumentResult */
+		/** @var $restResult \Change\Http\Rest\V1\Resources\DocumentLink|\Change\Http\Rest\V1\Resources\DocumentResult */
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof DocumentLink || $restResult instanceof DocumentResult)
 		{
@@ -70,8 +70,8 @@ class Transaction extends \Compilation\Rbs\Payment\Documents\Transaction
 			$status = $transaction->getProcessingStatus();
 			if ($status === self::STATUS_INITIATED  || $status === self::STATUS_PROCESSING)
 			{
-				$restResult->addAction(new \Change\Http\Rest\Result\DocumentActionLink($restResult->getUrlManager(), $transaction, 'validatePayment'));
-				$restResult->addAction(new \Change\Http\Rest\Result\DocumentActionLink($restResult->getUrlManager(), $transaction, 'refusePayment'));
+				$restResult->addAction(new \Change\Http\Rest\V1\Resources\DocumentActionLink($restResult->getUrlManager(), $transaction, 'validatePayment'));
+				$restResult->addAction(new \Change\Http\Rest\V1\Resources\DocumentActionLink($restResult->getUrlManager(), $transaction, 'refusePayment'));
 			}
 		}
 	}

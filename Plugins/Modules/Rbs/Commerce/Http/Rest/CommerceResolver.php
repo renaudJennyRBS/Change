@@ -8,9 +8,9 @@
  */
 namespace Rbs\Commerce\Http\Rest;
 
-use Change\Http\Rest\Actions\DiscoverNameSpace;
-use Change\Http\Rest\Resolver;
 use Change\Http\Rest\Request;
+use Change\Http\Rest\V1\DiscoverNameSpace;
+use Change\Http\Rest\V1\Resolver;
 use Rbs\Commerce\Http\Rest\Action\Cart;
 
 /**
@@ -19,12 +19,12 @@ use Rbs\Commerce\Http\Rest\Action\Cart;
 class CommerceResolver
 {
 	/**
-	 * @param \Change\Http\Rest\Resolver $resolver
+	 * @param \Change\Http\Rest\V1\Resolver $resolver
 	 */
 	protected $resolver;
 
 	/**
-	 * @param \Change\Http\Rest\Resolver $resolver
+	 * @param \Change\Http\Rest\V1\Resolver $resolver
 	 */
 	function __construct(Resolver $resolver)
 	{

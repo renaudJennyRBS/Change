@@ -40,7 +40,7 @@ class CreditNote extends \Compilation\Rbs\Order\Documents\CreditNote
 		/** @var $creditNote CreditNote */
 		$creditNote = $event->getDocument();
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			$formattedAmount = $nf->formatCurrency($creditNote->getAmount(), $creditNote->getCurrencyCode());

@@ -9,8 +9,8 @@
 namespace Rbs\Payment\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\V1\Resources\DocumentLink;
+use Change\Http\Rest\V1\Resources\DocumentResult;
 
 /**
  * @name \Rbs\Payment\Documents\DeferredConnector
@@ -53,7 +53,7 @@ class DeferredConnector extends \Compilation\Rbs\Payment\Documents\DeferredConne
 	{
 		parent::onDefaultUpdateRestResult($event);
 
-		/** @var $restResult DocumentLink|DocumentResult */
+		/** @var $restResult \Change\Http\Rest\V1\Resources\DocumentLink|\Change\Http\Rest\V1\Resources\DocumentResult */
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof DocumentResult)
 		{

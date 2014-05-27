@@ -43,7 +43,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		$this->assertCount(1, $arrayResult);
@@ -78,7 +78,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		//our 27 new rules + the older: 28
@@ -113,7 +113,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		//28 rules + 1 new - 3 useless = 26 rules
@@ -148,7 +148,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		//26 rules + 2 new - 16 useless = 12 rules
@@ -184,7 +184,7 @@ class AddPermissionRulesTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getPermissionRules->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		//only one rule!

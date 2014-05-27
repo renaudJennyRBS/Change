@@ -28,7 +28,8 @@ class DefaultPageResult
 
 		$result = $event->getPageResult();
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
-		$applicationServices->getThemeManager()->setCurrent($pageTemplate->getTheme());
+		$themeManager = $applicationServices->getThemeManager();
+		$themeManager->setCurrent($pageTemplate->getTheme());
 		$section = $page->getSection();
 		$websiteId = ($section && $section->getWebsite()) ? $section->getWebsite()->getId() : null;
 		$templateLayout = $pageTemplate->getContentLayout($websiteId);
@@ -76,10 +77,16 @@ class DefaultPageResult
 			}
 			$result->setBlockResults($blockResults);
 		}
-
+		
 		$application = $event->getApplication();
-		$cachePath = $application->getWorkspace()->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
-		if ($application->getConfiguration()->inDevelopmentMode())
+		$workspace = $application->getWorkspace();
+		$logging = $application->getLogging();
+		$developmentMode = $application->inDevelopmentMode();
+
+		$this->addResourceParts($result, $blocks, $themeManager, $logging, $developmentMode);
+
+		$cachePath = $workspace->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
+		if ($developmentMode)
 		{
 			$cacheTime = (new \DateTime())->getTimestamp();
 		}
@@ -90,7 +97,6 @@ class DefaultPageResult
 
 		if (!file_exists($cachePath) || filemtime($cachePath) <> $cacheTime)
 		{
-			$themeManager = $applicationServices->getThemeManager();
 			$twitterBootstrapHtml = new \Change\Presentation\Layout\TwitterBootstrapHtml();
 			$callableTwigBlock = function (\Change\Presentation\Layout\Block $item) use ($twitterBootstrapHtml)
 			{
@@ -98,9 +104,7 @@ class DefaultPageResult
 				. var_export($twitterBootstrapHtml->getBlockClass($item), true) . ')|raw }}';
 			};
 			$twigLayout = $twitterBootstrapHtml->getHtmlParts($templateLayout, $pageLayout, $callableTwigBlock);
-			$twigLayout = array_merge($twigLayout,
-				$twitterBootstrapHtml->getResourceParts($templateLayout, $pageLayout, $themeManager, $applicationServices,
-					$application->inDevelopmentMode()));
+			$twigLayout = array_merge($twigLayout, $twitterBootstrapHtml->getResourceParts());
 
 			$htmlTemplate = str_replace(array_keys($twigLayout), array_values($twigLayout), $pageTemplate->getHtml());
 
@@ -110,5 +114,73 @@ class DefaultPageResult
 
 		$templateManager = $event->getApplicationServices()->getTemplateManager();
 		$result->setHtml($templateManager->renderTemplateFile($cachePath, array('pageResult' => $result)));
+	}
+
+	/**
+	 * @param \Change\Http\Web\Result\Page $result
+	 * @param \Change\Presentation\Layout\Block[] $blocks
+	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
+	 * @param \Change\Logging\Logging $logging
+	 * @param boolean $developmentMode
+	 */
+	public function addResourceParts(\Change\Http\Web\Result\Page $result, array $blocks,
+		\Change\Presentation\Themes\ThemeManager $themeManager,
+		\Change\Logging\Logging $logging = null, $developmentMode = false)
+	{
+		$blockNames = array();
+		foreach($blocks as $block)
+		{
+			$blockName = $block->getName();
+			$blockNames[$blockName] = $blockName;
+		}
+
+		$configuration = $themeManager->getDefault()->getAssetConfiguration();
+		if ($themeManager->getCurrent() !== $themeManager->getDefault())
+		{
+			$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
+		}
+
+		$asseticManager = $themeManager->getAsseticManager($configuration);
+
+		if ($developmentMode)
+		{
+			(new \Assetic\AssetWriter($themeManager->getAssetRootPath()))->writeManagerAssets($asseticManager);
+		}
+
+		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
+		foreach($cssNames as $cssName)
+		{
+			try
+			{
+				$a = $asseticManager->get($cssName);
+				$result->addCssAsset($a->getTargetPath());
+			}
+			catch (\Exception $e)
+			{
+				if ($logging)
+				{
+					$logging->warn('asset resource name not found: ' . $cssName);
+					$logging->exception($e);
+				}
+			}
+		}
+
+		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
+		foreach ($jsNames as $jsName)
+		{
+			try
+			{
+				$a = $asseticManager->get($jsName);
+				$result->addJsAsset($a->getTargetPath());
+			}
+			catch (\Exception $e)
+			{
+				if ($logging)
+				{
+					$logging->warn('asset resource name not found: ' . $jsName);
+					$logging->exception($e);
+				}
+			}
+		}
 	}
 }

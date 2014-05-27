@@ -42,7 +42,7 @@ class PagesForFunction
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param string $function
 	 * @param integer $websiteId
-	 * @return \Change\Http\Rest\Result\ArrayResult
+	 * @return \Change\Http\Rest\V1\ArrayResult
 	 */
 	protected function generateResult($applicationServices, $function, $websiteId)
 	{
@@ -80,7 +80,7 @@ class PagesForFunction
 			}
 		}
 
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 		$result->setArray($pagesForFunction);
 		return $result;
 	}

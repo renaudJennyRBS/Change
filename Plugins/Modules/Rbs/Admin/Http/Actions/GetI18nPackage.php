@@ -42,7 +42,7 @@ class GetI18nPackage
 				}
 				$packages[$packageName] = $package;
 
-				$result = new \Change\Http\Rest\Result\ArrayResult();
+				$result = new \Change\Http\Rest\V1\ArrayResult();
 				$result->setArray($packages);
 			}
 			else

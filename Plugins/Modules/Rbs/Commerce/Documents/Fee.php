@@ -29,11 +29,11 @@ class Fee extends \Compilation\Rbs\Commerce\Documents\Fee
 
 		/** @var $fee Fee */
 		$fee = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$restResult->setProperty('orderProcessId', $fee->getOrderProcessId());
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$i18n = $event->getApplicationServices()->getI18nManager();
 			$restResult->setProperty('modelName', $i18n->trans($fee->getDocumentModel()->getLabelKey(), ['ucf']));

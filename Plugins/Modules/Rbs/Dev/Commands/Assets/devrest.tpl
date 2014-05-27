@@ -11,27 +11,16 @@ require_once(#projectPath# . '/Change/Application.php');
 $application = new \Change\Application();
 $application->start();
 
-class AnonymousRequest implements \Zend\EventManager\ListenerAggregateInterface
-{
-	public function attach(\Zend\EventManager\EventManagerInterface $events)
-	{
-		$callback = function (\Change\Http\Event $event)
-		{
-			$allow = $event->getApplication()->inDevelopmentMode();
-			$event->getPermissionsManager()->allow($allow);
-		};
-		$events->attach(\Change\Http\Event::EVENT_REQUEST, $callback, 1);
-	}
-
-	public function detach(\Zend\EventManager\EventManagerInterface $events)
-	{
-		// TODO: Implement detach() method.
-	}
-}
-$application->getConfiguration()->addVolatileEntry('Change/Events/Http/Rest/DEV', 'AnonymousRequest');
-
-$controller = new \Change\Http\Rest\Controller($application);
-$controller->setActionResolver(new \Change\Http\Rest\Resolver());
+$controller = new \Change\Http\Rest\V1\Controller($application);
+$controller->setActionResolver(new \Change\Http\Rest\V1\Resolver());
 $request = new \Change\Http\Rest\Request();
+
+$allow = $application->inDevelopmentMode();
+$anonymous = function (\Change\Http\Event $event) use ($allow)
+{
+	$event->getPermissionsManager()->allow($allow);
+};
+
+$controller->getEventManager()->attach(\Change\Http\Event::EVENT_REQUEST, $anonymous, 1);
 $response = $controller->handle($request);
 $response->send();

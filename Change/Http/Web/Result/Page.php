@@ -23,7 +23,17 @@ class Page extends Result
 	/**
 	 * @var array
 	 */
-	protected $htmlHead = array();
+	protected $htmlHead = [];
+
+	/**
+	 * @var array
+	 */
+	protected $cssAssets = [];
+
+	/**
+	 * @var array
+	 */
+	protected $jsAssets = [];
 
 	/**
 	 * @var string
@@ -127,6 +137,41 @@ class Page extends Result
 	public function getHead()
 	{
 		return $this->htmlHead;
+	}
+
+	/**
+	 * @param string $cssAsset
+	 */
+	public function addCssAsset($cssAsset)
+	{
+		$this->cssAssets[$cssAsset] = $cssAsset;
+	}
+
+	/**
+	 * Used by template
+	 * @return string[]
+	 */
+	public function getCssAssets()
+	{
+		return $this->cssAssets;
+	}
+
+
+	/**
+	 * @param string $jsAsset
+	 */
+	public function addJsAsset($jsAsset)
+	{
+		$this->jsAssets[$jsAsset] = $jsAsset;
+	}
+
+	/**
+	 * Used by template
+	 * @return string[]
+	 */
+	public function getJsAssets()
+	{
+		return $this->jsAssets;
 	}
 
 	/**

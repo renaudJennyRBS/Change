@@ -23,13 +23,13 @@ class CrossSellingProductList extends \Compilation\Rbs\Catalog\Documents\CrossSe
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			/* @var $document \Rbs\Catalog\Documents\CrossSellingProductList */
 			$document = $restResult->getDocument();
 			$restResult->setProperty('productId', $document->getProductId());
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			/* @var $document \Rbs\Catalog\Documents\CrossSellingProductList */
 			$document = $restResult->getDocument();

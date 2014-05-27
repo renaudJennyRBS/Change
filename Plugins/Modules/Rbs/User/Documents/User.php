@@ -8,7 +8,7 @@
  */
 namespace Rbs\User\Documents;
 
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\Link;
 use Change\Stdlib\String;
 
 /**
@@ -183,7 +183,7 @@ class User extends \Compilation\Rbs\User\Documents\User
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$documentResult = $restResult;
 			$um = $documentResult->getUrlManager();

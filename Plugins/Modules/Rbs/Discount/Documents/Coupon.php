@@ -20,11 +20,11 @@ class Coupon extends \Compilation\Rbs\Discount\Documents\Coupon
 
 		/** @var $coupon Coupon */
 		$coupon = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			$restResult->setProperty('orderProcessId', $coupon->getOrderProcessId());
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$restResult->setProperty('orderProcessId', $coupon->getOrderProcessId());
 		}

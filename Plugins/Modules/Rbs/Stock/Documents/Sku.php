@@ -270,7 +270,7 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$restResult->setProperty('code', $this->getCode());
 		}

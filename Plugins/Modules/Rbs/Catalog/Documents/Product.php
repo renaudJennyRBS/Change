@@ -9,7 +9,7 @@
 namespace Rbs\Catalog\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\Link;
 use Change\Stdlib\String;
 
 /**
@@ -33,7 +33,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 
 		/** @var $document Product */
 		$document = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 
 			$documentResult = $restResult;
@@ -62,7 +62,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 				}
 			}
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$image = $document->getFirstVisual();
 			if ($image)
@@ -79,7 +79,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 * @param \Change\Http\Rest\V1\Resources\DocumentResult $documentResult
 	 * @param \Change\Http\UrlManager $urlManager
 	 * @param string $baseUrl
 	 */

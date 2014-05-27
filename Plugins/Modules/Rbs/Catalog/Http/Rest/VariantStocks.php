@@ -27,7 +27,7 @@ class VariantStocks
 
 		if ($variantGroup instanceof \Rbs\Catalog\Documents\VariantGroup)
 		{
-			$result = new \Change\Http\Rest\Result\ArrayResult();
+			$result = new \Change\Http\Rest\V1\ArrayResult();
 
 			$resultArray = array();
 			$warehousesArray = array();
@@ -98,7 +98,7 @@ class VariantStocks
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'Bad variant group id', \Zend\Http\Response::STATUS_CODE_409);
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'Bad variant group id', \Zend\Http\Response::STATUS_CODE_409);
 		}
 
 		$event->setResult($result);
@@ -150,7 +150,7 @@ class VariantStocks
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Stocks data is empty ', \Zend\Http\Response::STATUS_CODE_409);
 		}
 

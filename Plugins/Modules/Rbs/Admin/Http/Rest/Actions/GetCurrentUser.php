@@ -8,7 +8,7 @@
  */
 namespace Rbs\Admin\Http\Rest\Actions;
 
-use Change\Http\Rest\Result\DocumentResult;
+use Change\Http\Rest\V1\Resources\DocumentResult;
 use Zend\Http\Response as HttpResponse;
 
 /**

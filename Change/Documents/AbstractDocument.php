@@ -13,11 +13,6 @@ use Change\Documents\Interfaces\Correction;
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Localizable;
 use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\PropertyConverter;
-use Change\Http\Rest\RestfulDocumentInterface;
-use Change\Http\Rest\Result\DocumentActionLink;
-use Change\Http\Rest\Result\ErrorResult;
-use Change\Http\Rest\Result\TreeNodeLink;
 use Zend\EventManager\EventsCapableInterface;
 use Zend\Http\Response as HttpResponse;
 
@@ -25,7 +20,8 @@ use Zend\Http\Response as HttpResponse;
  * @name \Change\Documents\AbstractDocument
  * @api
  */
-abstract class AbstractDocument implements \Serializable, EventsCapableInterface, RestfulDocumentInterface
+abstract class AbstractDocument implements \Serializable, EventsCapableInterface,
+	\Change\Http\Rest\V1\RestfulDocumentInterface
 {
 	const STATE_NEW = 1;
 
@@ -549,7 +545,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\DocumentResult $documentResult
+	 * @param \Change\Http\Rest\V1\Resources\DocumentResult $documentResult
 	 * @return $this
 	 */
 	public function populateRestDocumentResult($documentResult)
@@ -561,7 +557,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Http\Rest\Result\DocumentLink $documentLink
+	 * @param \Change\Http\Rest\V1\Resources\DocumentLink $documentLink
 	 * @param Array
 	 * @return $this
 	 */
@@ -599,14 +595,15 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		}
 		$documentResult = $event->getParam('restResult');
 		$um = $documentResult->getUrlManager();
-		if ($documentResult instanceof \Change\Http\Rest\Result\DocumentResult)
+		if ($documentResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
 			if ($document->getTreeName())
 			{
 				$tn = $event->getApplicationServices()->getTreeManager()->getNodeByDocument($document);
 				if ($tn)
 				{
-					$l = new TreeNodeLink($um, $tn, TreeNodeLink::MODE_LINK);
+					$l = new \Change\Http\Rest\V1\ResourcesTree\TreeNodeLink($um, $tn,
+						\Change\Http\Rest\V1\ResourcesTree\TreeNodeLink::MODE_LINK);
 					$l->setRel('node');
 					$documentResult->addLink($l);
 				}
@@ -621,7 +618,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 					continue;
 				}
 
-				$c = new PropertyConverter($document, $property, $document->getDocumentManager(), $um);
+				$c = new \Change\Http\Rest\V1\PropertyConverter($document, $property, $document->getDocumentManager(), $um);
 				$documentResult->setProperty($name, $c->getRestValue());
 			}
 
@@ -631,14 +628,14 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$correction = $document->getCurrentCorrection();
 				if ($correction)
 				{
-					$l = new DocumentActionLink($um, $document, 'correction');
+					$l = new \Change\Http\Rest\V1\Resources\DocumentActionLink($um, $document, 'correction');
 					$documentResult->addAction($l);
 				}
 			}
 
 			if ($document instanceof \Change\Documents\Interfaces\Publishable)
 			{
-				$l = new DocumentActionLink($um, $document, 'pathRules');
+				$l = new \Change\Http\Rest\V1\Resources\DocumentActionLink($um, $document, 'pathRules');
 				$documentResult->addLink($l);
 			}
 
@@ -647,11 +644,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$active = $model->getPropertyValue($document, 'active');
 				if ($active)
 				{
-					$l = new \Change\Http\Rest\Result\Link($um, 'actions/deactivate', 'deactivate');
+					$l = new \Change\Http\Rest\V1\Link($um, 'actions/deactivate', 'deactivate');
 				}
 				else
 				{
-					$l = new \Change\Http\Rest\Result\Link($um, 'actions/activate', 'activate');
+					$l = new \Change\Http\Rest\V1\Link($um, 'actions/activate', 'activate');
 				}
 				$query = ['documentId' => $document->getId()];
 				if ($document instanceof \Change\Documents\Interfaces\Localizable)
@@ -662,7 +659,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$documentResult->addAction($l);
 			}
 		}
-		elseif ($documentResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		elseif ($documentResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $documentResult;
 			$extraColumn = $event->getParam('extraColumn');
@@ -697,11 +694,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$active = $model->getPropertyValue($document, 'active');
 				if ($active)
 				{
-					$l = new \Change\Http\Rest\Result\Link($um, 'actions/deactivate', 'deactivate');
+					$l = new \Change\Http\Rest\V1\Link($um, 'actions/deactivate', 'deactivate');
 				}
 				else
 				{
-					$l = new \Change\Http\Rest\Result\Link($um, 'actions/activate', 'activate');
+					$l = new \Change\Http\Rest\V1\Link($um, 'actions/activate', 'activate');
 				}
 				$query = ['documentId' => $document->getId()];
 				if ($document instanceof \Change\Documents\Interfaces\Localizable)
@@ -723,7 +720,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				/* @var $document AbstractDocument|Correction */
 				if ($document->hasCorrection())
 				{
-					$l = new DocumentActionLink($um, $document, 'correction');
+					$l = new \Change\Http\Rest\V1\Resources\DocumentActionLink($um, $document, 'correction');
 					$actions[] = $l;
 					$documentLink->setProperty('correction', true);
 				}
@@ -786,7 +783,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			array('restEvent' => $event));
 		$this->getEventManager()->trigger($documentEvent);
 
-		return $event->getResult() instanceof ErrorResult ? false : $this;
+		return $event->getResult() instanceof \Change\Http\Rest\V1\ErrorResult ? false : $this;
 	}
 
 	/**
@@ -807,7 +804,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$existingDocument = $this->getDocumentManager()->getDocumentInstance($value);
 				if ($existingDocument)
 				{
-					$errorResult = new ErrorResult('DOCUMENT-ALREADY-EXIST', 'document already exist', HttpResponse::STATUS_CODE_409);
+					$errorResult = new \Change\Http\Rest\V1\ErrorResult('DOCUMENT-ALREADY-EXIST', 'document already exist', HttpResponse::STATUS_CODE_409);
 					$errorResult->setData(array('document-id' => $value));
 					$errorResult->addDataValue('model-name', $this->getDocumentModelName());
 					$event->setResult($errorResult);
@@ -823,12 +820,12 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			{
 				try
 				{
-					$c = new PropertyConverter($this, $property, $this->getDocumentManager());
+					$c = new \Change\Http\Rest\V1\PropertyConverter($this, $property, $this->getDocumentManager());
 					$c->setPropertyValue($value);
 				}
 				catch (\Exception $e)
 				{
-					$errorResult = new ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
+					$errorResult = new \Change\Http\Rest\V1\ErrorResult('INVALID-VALUE-TYPE', 'Invalid property value type', HttpResponse::STATUS_CODE_409);
 					$errorResult->setData(array('name' => $name, 'value' => $value, 'type' => $property->getType()));
 					$errorResult->addDataValue('document-type', $property->getDocumentType());
 					$event->setResult($errorResult);

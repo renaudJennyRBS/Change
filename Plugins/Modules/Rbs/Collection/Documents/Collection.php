@@ -9,7 +9,7 @@
 namespace Rbs\Collection\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Rest\Result\ErrorResult;
+use Change\Http\Rest\V1\ErrorResult;
 use Change\I18n\PreparedKey;
 use Zend\Http\Response as HttpResponse;
 

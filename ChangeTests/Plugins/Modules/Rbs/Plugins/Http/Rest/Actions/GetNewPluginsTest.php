@@ -35,7 +35,7 @@ class GetNewPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
 
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		$newPlugins = $pm->getUnregisteredPlugins();
@@ -56,7 +56,7 @@ class GetNewPluginsTest extends \ChangeTests\Change\TestAssets\TestCase
 		$getNewPlugins->execute($event);
 		$this->assertEquals(200, $event->getResult()->getHttpStatusCode());
 		$result = $event->getResult();
-		/* @var $result \Change\Http\Rest\Result\ArrayResult */
+		/* @var $result \Change\Http\Rest\V1\ArrayResult */
 		$arrayResult = $result->toArray();
 		$this->assertNotEmpty($arrayResult);
 		//And the the count is the same

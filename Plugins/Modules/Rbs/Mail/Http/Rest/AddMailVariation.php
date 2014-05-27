@@ -60,14 +60,14 @@ class AddMailVariation
 
 				$event->setParam('documentId', $variation->getId());
 				$event->setParam('modelName', $variation->getDocumentModelName());
-				$action = new \Change\Http\Rest\Actions\GetDocument();
+				$action = new \Change\Http\Rest\V1\Resources\GetDocument();
 				$action->execute($event);
 				return;
 			}
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999, 'invalid document mail id');
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'invalid document mail id');
 			$event->setResult($result);
 		}
 	}

@@ -116,13 +116,13 @@ class OrderRemainder
 					$status = 'sent';
 				}
 
-				$result = new \Change\Http\Rest\Result\ArrayResult();
+				$result = new \Change\Http\Rest\V1\ArrayResult();
 				$result->setArray(['status' => $status, 'remainLines' => $remainLines, 'address' => $address]);
 				$event->setResult($result);
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999, implode(', ', $params['errors']));
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999, implode(', ', $params['errors']));
 				$event->setResult($result);
 			}
 		}

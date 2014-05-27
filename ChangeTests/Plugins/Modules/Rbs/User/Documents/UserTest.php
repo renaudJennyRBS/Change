@@ -67,7 +67,7 @@ class UserTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testUpdateRestDocumentResult()
 	{
-		$documentResult = new \Change\Http\Rest\Result\DocumentResult(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $this->getNewUser());
+		$documentResult = new \Change\Http\Rest\V1\Resources\DocumentResult(new \Change\Http\UrlManager(new \Zend\Uri\Http()), $this->getNewUser());
 		$this->assertNotNull($documentResult);
 		$result = $documentResult->toArray();
 		$this->assertNotNull($result);

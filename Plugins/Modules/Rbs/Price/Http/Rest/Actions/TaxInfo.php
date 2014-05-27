@@ -38,11 +38,11 @@ class TaxInfo
 	/**
 	 * @param \Rbs\Price\Documents\BillingArea $billingArea
 	 * @param string $locale
-	 * @return \Change\Http\Rest\Result\ArrayResult
+	 * @return \Change\Http\Rest\V1\ArrayResult
 	 */
 	protected function generateResult($billingArea, $locale)
 	{
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 		if ($billingArea === null)
 		{
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_400);

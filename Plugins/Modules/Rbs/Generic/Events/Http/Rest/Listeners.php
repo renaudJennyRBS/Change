@@ -30,10 +30,10 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (\Change\Events\Event $event)
 		{
 			$controller = $event->getTarget();
-			if ($controller instanceof \Change\Http\Rest\Controller)
+			if ($controller instanceof \Change\Http\Rest\V1\Controller)
 			{
 				$resolver = $controller->getActionResolver();
-				if ($resolver instanceof \Change\Http\Rest\Resolver)
+				if ($resolver instanceof \Change\Http\Rest\V1\Resolver)
 				{
 					$resolver->addResolverClasses('admin', '\Rbs\Admin\Http\Rest\AdminResolver');
 					$resolver->addResolverClasses('plugins', '\Rbs\Plugins\Http\Rest\PluginsResolver');

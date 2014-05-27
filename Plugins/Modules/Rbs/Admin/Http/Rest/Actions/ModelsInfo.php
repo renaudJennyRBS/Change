@@ -33,11 +33,11 @@ class ModelsInfo
 
 	/**
 	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @return \Change\Http\Rest\Result\ArrayResult
+	 * @return \Change\Http\Rest\V1\ArrayResult
 	 */
 	protected function generateResult($applicationServices)
 	{
-		$result = new \Change\Http\Rest\Result\ArrayResult();
+		$result = new \Change\Http\Rest\V1\ArrayResult();
 
 		$models = array();
 

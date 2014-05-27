@@ -19,7 +19,7 @@ class Movement
 	 */
 	public function getMovements($event)
 	{
-		$result = new \Change\Http\Rest\Result\CollectionResult();
+		$result = new \Change\Http\Rest\V1\CollectionResult();
 
 		if (($limit = $event->getRequest()->getQuery('limit', 20)) !== null)
 		{
@@ -49,7 +49,7 @@ class Movement
 
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$urlManager = $event->getUrlManager();
-			$vc = new \Change\Http\Rest\ValueConverter($urlManager, $documentManager);
+			$vc = new \Change\Http\Rest\V1\ValueConverter($urlManager, $documentManager);
 			foreach ($tmpMovements as $movement)
 			{
 				$targetId = $stockManager->getTargetIdFromTargetIdentifier($movement['target']);
@@ -92,7 +92,7 @@ class Movement
 
 				try
 				{
-					$result = new \Change\Http\Rest\Result\ArrayResult();
+					$result = new \Change\Http\Rest\V1\ArrayResult();
 					$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 
 					$stockManager = $cs->getStockManager();
@@ -103,20 +103,20 @@ class Movement
 				}
 				catch (\Exception $e)
 				{
-					$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+					$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 						'Movement creation failed', \Zend\Http\Response::STATUS_CODE_409);
 					$transactionManager->rollBack($e);
 				}
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 					'Missing parameters', \Zend\Http\Response::STATUS_CODE_409);
 			}
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Stock manager not found', \Zend\Http\Response::STATUS_CODE_409);
 		}
 
@@ -138,7 +138,7 @@ class Movement
 				$transactionManager = $event->getApplicationServices()->getTransactionManager();
 				try
 				{
-					$result = new \Change\Http\Rest\Result\ArrayResult();
+					$result = new \Change\Http\Rest\V1\ArrayResult();
 					$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 
 					$stockManager = $cs->getStockManager();
@@ -149,20 +149,20 @@ class Movement
 				}
 				catch (\Exception $e)
 				{
-					$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+					$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 						'Movement deletion failed', \Zend\Http\Response::STATUS_CODE_409);
 					$transactionManager->rollBack($e);
 				}
 			}
 			else
 			{
-				$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+				$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 					'Missing parameters', \Zend\Http\Response::STATUS_CODE_409);
 			}
 		}
 		else
 		{
-			$result = new \Change\Http\Rest\Result\ErrorResult(999999,
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
 				'Stock manager not found', \Zend\Http\Response::STATUS_CODE_409);
 		}
 		$event->setResult($result);

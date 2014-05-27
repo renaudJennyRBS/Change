@@ -10,7 +10,7 @@ namespace Rbs\Timeline\Documents;
 
 use Change\Documents\Events\Event;
 
-	/**
+/**
  * @name \Rbs\Timeline\Documents\Message
  */
 class Message extends \Compilation\Rbs\Timeline\Documents\Message
@@ -125,7 +125,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 	{
 		parent::onDefaultUpdateRestResult($event);
 		$restResult = $event->getParam('restResult');
-		if ($restResult instanceof \Change\Http\Rest\Result\DocumentLink)
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 			/* @var $message \Rbs\Timeline\Documents\Message */

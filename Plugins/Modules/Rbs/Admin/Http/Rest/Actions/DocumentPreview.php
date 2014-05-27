@@ -10,9 +10,8 @@ namespace Rbs\Admin\Http\Rest\Actions;
 
 use Change\Documents\Interfaces\Editable;
 use Change\Documents\Interfaces\Publishable;
-use Change\Http\Rest\PropertyConverter;
-use Change\Http\Rest\Result\ArrayResult;
-
+use Change\Http\Rest\V1\ArrayResult;
+use Change\Http\Rest\V1\PropertyConverter;
 use Zend\Http\Response as HttpResponse;
 
 /**

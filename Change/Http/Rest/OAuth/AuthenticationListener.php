@@ -11,9 +11,8 @@ namespace Change\Http\Rest\OAuth;
 use Change\Http\Event as HttpEvent;
 use Change\Http\OAuth\OAuthDbEntry;
 use Change\Http\Request;
-use Change\Http\Rest\Result\ArrayResult;
-
-use Change\Http\Rest\Result\ErrorResult;
+use Change\Http\Rest\V1\ArrayResult;
+use Change\Http\Rest\V1\ErrorResult;
 use Zend\Http\Header\Accept;
 use Zend\Http\Header\Authorization;
 use Zend\Http\Response as HttpResponse;
@@ -65,7 +64,7 @@ class AuthenticationListener
 			$event->setParam('resolver', $this);
 			$action = function ($event)
 			{
-				$action = new \Change\Http\Rest\Actions\DiscoverNameSpace();
+				$action = new \Change\Http\Rest\V1\DiscoverNameSpace();
 				$action->execute($event);
 			};
 			$event->setAction($action);
@@ -109,7 +108,7 @@ class AuthenticationListener
 	public function onRequest(HttpEvent $event)
 	{
 		$resolver = $event->getController()->getActionResolver();
-		if ($resolver instanceof \Change\Http\Rest\Resolver)
+		if ($resolver instanceof \Change\Http\Rest\V1\Resolver)
 		{
 			$resolver->addResolverClasses(static::RESOLVER_NAME, get_class($this));
 		}
@@ -572,7 +571,7 @@ class AuthenticationListener
 	/**
 	 * @param string $notAllowed
 	 * @param string[] $allow
-	 * @return ErrorResult
+	 * @return \Change\Http\Rest\V1\ErrorResult
 	 */
 	protected function buildNotAllowedError($notAllowed, array $allow)
 	{

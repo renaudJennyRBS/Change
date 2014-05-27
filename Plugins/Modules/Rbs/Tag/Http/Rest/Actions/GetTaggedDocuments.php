@@ -9,9 +9,9 @@
 namespace Rbs\Tag\Http\Rest\Actions;
 
 use Change\Documents\DocumentCollection;
-use Change\Http\Rest\Result\CollectionResult;
-use Change\Http\Rest\Result\DocumentLink;
-use Change\Http\Rest\Result\Link;
+use Change\Http\Rest\V1\CollectionResult;
+use Change\Http\Rest\V1\Link;
+use Change\Http\Rest\V1\Resources\DocumentLink;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -46,7 +46,7 @@ class GetTaggedDocuments
 
 	/**
 	 * @param \Change\Http\Event $event
-	 * @return \Change\Http\Rest\Result\DocumentResult
+	 * @return \Change\Http\Rest\V1\Resources\DocumentResult
 	 */
 	protected function generateResult($event)
 	{
