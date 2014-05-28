@@ -55,7 +55,7 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
             $this->assertStringEndsWith('is not set.', $e->getMessage());
         }
 
-        $_ENV['MYSQL_TEST_URL'] = "mysql://root:@localhost/change_4_testing";
+        $_ENV['MYSQL_TEST_URL'] = "mysql://root:@localhost/rbschangetest";
         $pdo = $provider->getDriver();
         $this->assertNotNull($pdo);
     }
