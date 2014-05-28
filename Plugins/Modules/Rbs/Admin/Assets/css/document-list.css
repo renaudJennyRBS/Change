@@ -151,6 +151,7 @@ rbs-document-list > .btn-toolbar {
 	margin-right: 5px;
 	padding: 10px;
 	border: 1px solid #EEEEEE;
+	border-radius: 4px;
 }
 
 .add-elements-bar a:hover {

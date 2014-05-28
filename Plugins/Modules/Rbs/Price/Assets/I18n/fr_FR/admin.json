@@ -54,7 +54,7 @@
 		"message":"prix,taxes,tarification,tarifs,zones,promotions"
 	},
 	"price_list":{
-		"message":"prix"
+		"message":"liste des prix"
 	},
 	"price_create":{
 		"message":"ajouter un prix"

@@ -134,7 +134,7 @@ h3.panel-title {
 .panel > .list-group:not(:last-child) > .list-group-item:last-child,
 .panel .list-group-item:last-child,
 .panel .form-actions {
-	border-radius: 0;
+	/*border-radius: 0;*/
 }
 
 .panel .panel-heading h3.panel-title {
@@ -147,8 +147,8 @@ h3.panel-title {
 
 .panel.panel-default {
 	background: none repeat scroll 0 0 #FFFFFF;
-	border: 1px solid #BBBBBB;
-	box-shadow: 0 0 0 3px #EEEEEE;
+	/*border: 1px solid #BBBBBB;
+	box-shadow: 0 0 0 3px #EEEEEE;*/
 }
 
 .panel.panel-default .panel-heading {
@@ -167,7 +167,7 @@ h3.panel-title {
 
 .panel.panel-success {
 	border-color: #94BA65;
-	box-shadow: 0 0 0 3px #f0f8dd;
+	/*box-shadow: 0 0 0 3px #f0f8dd;*/
 }
 
 .panel.panel-success .panel-heading {
@@ -181,17 +181,17 @@ h3.panel-title {
 
 .panel.panel-info {
 	border-color: #9ACFEA;
-	box-shadow: 0 0 0 3px #EEEEEE;
+	/*box-shadow: 0 0 0 3px #EEEEEE;*/
 }
 
 .panel.panel-warning {
 	border-color: #E0B873;
-	box-shadow: 0 0 0 3px #EEEEEE;
+	/*box-shadow: 0 0 0 3px #EEEEEE;*/
 }
 
 .panel.panel-danger {
 	border-color: #D97A78;
-	box-shadow: 0 0 0 3px #EEEEEE;
+	/*box-shadow: 0 0 0 3px #EEEEEE;*/
 }
 
 .btn-toolbar .btn-group {
@@ -639,7 +639,7 @@ pre {
 
 .panel.panel-selection {
 	border-color: #6f5499;
-	box-shadow: 0 0 0 3px #E6E2ED;
+	/*box-shadow: 0 0 0 3px #E6E2ED;*/
 }
 .panel.panel-selection.panel-heading h3.panel-title {
 	color: #6f5499;
