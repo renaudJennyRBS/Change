@@ -143,10 +143,10 @@ class DbProvider extends \Change\Db\DbProvider
             $url = $connectionInfos['url'];
 
             // If the field starts with 'ENV:', the following environment variable is used to configure MySQL
-            if (\substr($url, 0, 4) == "ENV:")
+            if (\strpos($url, 'ENV:') === 0)
             {
                 $mysql_url_var_name = \substr($url, 4);
-                if (!isset($_ENV["$mysql_url_var_name"]))
+                if (!isset($_ENV[$mysql_url_var_name]))
                 {
                     throw new \RuntimeException('Environment variable defined in database configuration is not set.', 999999);
                 }
