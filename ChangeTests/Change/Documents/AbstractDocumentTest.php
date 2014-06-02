@@ -351,9 +351,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$d1 = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$d1->setPStr('pStr d1');
 		$d1->save();
+		$this->assertFalse($d1->useCorrection());
 		/** @var $d2 \Project\Tests\Documents\Basic */
 		$d2 = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$d2->setPStr('pStr d2');
+		$this->assertFalse($d2->useCorrection());
 		$d2->save();
 
 		/* @var $c1 \Project\Tests\Documents\Correction */
@@ -368,6 +370,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$c1->getDocs1()->add($d1);
 		$c1->getDocs2()->add($d1);
 		$c1->create();
+
+		$this->assertTrue($c1->useCorrection());
+
+		$this->assertTrue($c1->useCorrection());
+
 		$this->assertFalse($c1->hasCorrection());
 		$this->assertFalse($c1->hasModifiedProperties());
 
@@ -447,5 +454,49 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertCount(2, $c1->getDocs2());
 		$this->assertFalse($c1->hasCorrection());
 		$this->assertFalse($c1->hasModifiedProperties());
+	}
+
+	public function testIgnoreCorrection()
+	{
+		/* @var $c1 \Project\Tests\Documents\Correction */
+		$c1 = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Correction');
+
+		$c1->setLabel('c1');
+		$c1->getCurrentLocalization()->setPublicationStatus(Publishable::STATUS_DRAFT);
+		$c1->setStr2('Str2');
+		$c1->getCurrentLocalization()->setStr4('Str4');
+		$c1->create();
+		$this->assertTrue($c1->useCorrection());
+		$this->assertFalse($c1->hasCorrection());
+		$this->assertFalse($c1->hasModifiedProperties());
+
+		$c1Id = $c1->getId();
+
+		$this->assertTrue($c1->useCorrection(false));
+		$this->assertFalse($c1->useCorrection());
+
+		$c1->setStr2('Str2 v2');
+		$c1->getCurrentLocalization()->setStr4('Str4 v2');
+
+		$this->assertTrue($c1->hasModifiedProperties());
+		$c1->update();
+		$this->assertFalse($c1->hasModifiedProperties());
+		$this->assertFalse($c1->hasCorrection());
+
+		$this->getApplicationServices()->getDocumentManager()->reset();
+
+		/* @var $c2 \Project\Tests\Documents\Correction */
+		$c2 = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($c1Id);
+		$this->assertSame($c2->getId(), $c1->getId());
+		$this->assertNotSame($c1, $c2);
+
+		$this->assertTrue($c2->useCorrection());
+		$this->assertFalse($c2->hasCorrection());
+
+		$this->assertEquals('Str2 v2', $c2->getStr2());
+		$this->assertEquals('Str4 v2', $c2->getCurrentLocalization()->getStr4());
+
+		$this->assertTrue($c2->useCorrection());
+		$this->assertFalse($c2->hasCorrection());
 	}
 }

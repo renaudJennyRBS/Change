@@ -17,6 +17,7 @@ use Change\Documents\Interfaces\Publishable;
  * @name \Change\Documents\Traits\Correction
 
  * @method integer getId() from \Change\Documents\AbstractDocument
+ * @method boolean useCorrection() from \Change\Documents\AbstractDocument
  * @method \Change\Db\DbProvider getDbProvider() from \Change\Documents\AbstractDocument
  * @method \Change\Documents\AbstractModel getDocumentModel() from \Change\Documents\AbstractDocument
  * @method \Change\Documents\DocumentManager getDocumentManager() from \Change\Documents\AbstractDocument
@@ -31,16 +32,6 @@ trait Correction
 	 * @var CorrectionInstance|null
 	 */
 	protected $correction = false;
-
-	/**
-	 * @api
-	 * @see \Change\Documents\Interfaces\Correction::useCorrection
-	 * @return boolean
-	 */
-	public function useCorrection()
-	{
-		return $this->getDocumentModel()->useCorrection();
-	}
 
 	/**
 	 * @return string
