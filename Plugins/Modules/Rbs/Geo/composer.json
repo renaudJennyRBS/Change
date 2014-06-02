@@ -3,7 +3,6 @@
 	"name": "rbs/geo",
 	"type":"rbschange-module",
 	"require": {
-		"rbschange/plugin-installer": "*",
-		"rbschange/core": "self.version"
+		"rbschange/plugin-installer": "*"
 	}
 }
