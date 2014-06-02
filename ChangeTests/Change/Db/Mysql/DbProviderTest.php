@@ -29,6 +29,7 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
     public function testGetConnectionWithURL()
     {
         $provider = $this->getApplicationServices()->getDbProvider();
+		$infos = $provider->getConnectionInfos();
 
         $provider->setConnectionInfos(
             array( "url" => "mysql://" )
@@ -56,7 +57,6 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
             $this->assertStringEndsWith('is not set.', $e->getMessage());
         }
 
-        $infos = $provider->getConnectionInfos();
         $_ENV['MYSQL_TEST_URL'] = "mysql://" .
             (isset($infos['user']) ? $infos['user'] : '') . ":" .
             (isset($infos['password']) ? $infos['password'] : '') . "@" .
