@@ -22,6 +22,7 @@ use Change\Documents\PropertiesValidationException;
  * @method initialize()
  * @method integer getPersistentState()
  * @method integer setPersistentState(integer $persistentState)
+ * @method boolean useCorrection()
  * @method \Change\Db\DbProvider getDbProvider()
  * @method \Change\Documents\DocumentManager getDocumentManager()
  * @method \Change\Documents\AbstractModel getDocumentModel()
@@ -377,7 +378,7 @@ trait DbStorage
 			throw $e;
 		}
 
-		if ($this->getDocumentModel()->useCorrection())
+		if ($this->useCorrection())
 		{
 			$this->populateCorrection();
 			$modifiedCorrection = $this->saveCorrection();

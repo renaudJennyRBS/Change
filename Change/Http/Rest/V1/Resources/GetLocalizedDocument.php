@@ -159,7 +159,7 @@ class GetLocalizedDocument
 	 */
 	protected function addCorrection($result, $document, $urlManager)
 	{
-		if ($document->getDocumentModel()->useCorrection())
+		if ($document->useCorrection())
 		{
 			/* @var $document \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
 			$correction = $document->getCurrentCorrection();

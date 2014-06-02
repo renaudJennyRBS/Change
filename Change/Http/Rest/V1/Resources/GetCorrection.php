@@ -32,7 +32,7 @@ class GetCorrection
 			return null;
 		}
 
-		if (!$document->getDocumentModel()->useCorrection())
+		if (!$document->useCorrection())
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);
 		}

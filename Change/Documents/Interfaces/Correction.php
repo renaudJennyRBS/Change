@@ -18,11 +18,6 @@ interface Correction
 	/**
 	 * @return boolean
 	 */
-	public function useCorrection();
-
-	/**
-	 * @return boolean
-	 */
 	public function hasCorrection();
 
 	/**

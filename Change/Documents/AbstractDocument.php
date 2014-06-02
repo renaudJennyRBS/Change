@@ -58,6 +58,11 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	protected $modifiedProperties = array();
 
 	/**
+	 * @var boolean
+	 */
+	protected $useCorrection = true;
+
+	/**
 	 * @var \Change\Documents\AbstractModel
 	 */
 	protected $documentModel;
@@ -191,6 +196,22 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 	public function getDocumentModelName()
 	{
 		return $this->documentModelName;
+	}
+
+	/**
+	 * @api
+	 * @param boolean|null $useCorrection
+	 * @return boolean
+	 */
+	public function useCorrection($useCorrection = null)
+	{
+		if (is_bool($useCorrection))
+		{
+			$oldValue = $this->useCorrection;
+			$this->useCorrection = $useCorrection;
+			return $oldValue;
+		}
+		return $this->useCorrection && $this->getDocumentModel()->useCorrection();
 	}
 
 	/**
@@ -622,7 +643,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$documentResult->setProperty($name, $c->getRestValue());
 			}
 
-			if ($document->getDocumentModel()->useCorrection())
+			if ($document->useCorrection())
 			{
 				/* @var $document \Change\Documents\Interfaces\Correction|\Change\Documents\AbstractDocument */
 				$correction = $document->getCurrentCorrection();
