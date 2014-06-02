@@ -26,6 +26,48 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
 	}
 
 
+    public function testGetConnectionWithURL()
+    {
+        $provider = $this->getApplicationServices()->getDbProvider();
+
+        $provider->setConnectionInfos(
+            array( "url" => "mysql://" )
+        );
+        try
+        {
+            $pdo = $provider->getDriver();
+            $this->fail('Invalid RuntimeException');
+        }
+        catch (\RuntimeException $e)
+        {
+            $this->assertStringStartsWith('Database URL is not valid', $e->getMessage());
+        }
+
+        $provider->setConnectionInfos(
+            array( "url" => "ENV:MYSQL_TEST_URL" )
+        );
+        try
+        {
+            $pdo = $provider->getDriver();
+            $this->fail('Invalid RuntimeException');
+        }
+        catch (\RuntimeException $e)
+        {
+            $this->assertStringEndsWith('is not set.', $e->getMessage());
+        }
+
+        $infos = $provider->getConnectionInfos();
+        $_ENV['MYSQL_TEST_URL'] = "mysql://" .
+            (isset($infos['user']) ? $infos['user'] : '') . ":" .
+            (isset($infos['password']) ? $infos['password'] : '') . "@" .
+            (isset($infos['host']) ? $infos['host'] : 'localhost') . ":" .
+            (isset($infos['port']) ? $infos['port'] : '3306') . "/" .
+            $infos['database'];
+
+        $pdo = $provider->getDriver();
+        $this->assertNotNull($pdo);
+    }
+
 	public function testGetInstance()
 	{
 		$provider = $this->getApplicationServices()->getDbProvider();
