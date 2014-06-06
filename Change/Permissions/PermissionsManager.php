@@ -249,6 +249,80 @@ class PermissionsManager
 	}
 
 	/**
+	 * @param string $role
+	 * @param integer $resource
+	 * @param string $privilege
+	 * @return array
+	 */
+	public function getAccessorIds($role, $resource, $privilege)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$qb->select($fb->column('accessor_id'));
+		$qb->from($fb->getSqlMapping()->getPermissionRuleTable());
+		$logicAnd = $fb->logicAnd(
+			$fb->eq($fb->column('role'), $fb->parameter('role')),
+			$fb->eq($fb->column('resource_id'), $fb->integerParameter('resourceId')),
+			$fb->eq($fb->column('privilege'), $fb->parameter('privilege'))
+		);
+		$qb->where($logicAnd);
+		$sq = $qb->query();
+		$sq->bindParameter('role', trim($role));
+		$sq->bindParameter('resourceId', intval($resource));
+		$sq->bindParameter('privilege', trim($privilege));
+		$test = $sq->getResults($sq->getRowsConverter()->addIntCol('accessor_id'));
+		return $test;
+	}
+
+	/**
+	 * @param string $role
+	 * @param integer $resource
+	 * @param string $privilege
+	 * @param array $accessorIds
+	 * @throws \Exception
+	 */
+	public function deleteRules($role, $resource, $privilege, $accessorIds = [])
+	{
+		$qb = $this->getDbProvider()->getNewStatementBuilder('deletePermissionRules');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->getSqlMapping()->getPermissionRuleTable());
+			$logicAnd = $fb->logicAnd(
+				$fb->eq($fb->column('role'), $fb->parameter('role')),
+				$fb->eq($fb->column('resource_id'), $fb->integerParameter('resourceId')),
+				$fb->eq($fb->column('privilege'), $fb->parameter('privilege'))
+			);
+
+			if (count($accessorIds))
+			{
+				$logicAnd->addArgument(
+				//TODO: find a good way to bind an array
+					$fb->in($fb->column('accessor_id'), $accessorIds)
+				);
+			}
+
+			$qb->where($logicAnd);
+		}
+
+		$dq = $qb->deleteQuery();
+		$dq->bindParameter('role', trim($role));
+		$dq->bindParameter('resourceId', intval($resource));
+		$dq->bindParameter('privilege', trim($privilege));
+		$tm = $this->getTransactionManager();
+		try
+		{
+			$tm->begin();
+			$dq->execute();
+			$tm->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $tm->rollBack($e);
+		}
+	}
+
+	/**
 	 * @param integer $sectionId
 	 * @param integer $websiteId
 	 * @param integer $accessorId
@@ -363,7 +437,7 @@ class PermissionsManager
 			if (count($accessorIds))
 			{
 				$logicAnd->addArgument(
-					//TODO: find a good way to bind an array
+				//TODO: find a good way to bind an array
 					$fb->in($fb->column('accessor_id'), $accessorIds)
 				);
 			}
