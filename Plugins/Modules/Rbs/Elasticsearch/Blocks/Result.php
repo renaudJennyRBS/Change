@@ -138,7 +138,8 @@ class Result extends Block
 						$from = ($pageNumber - 1) * $size;
 
 						$query = $searchQuery->getSearchQuery($searchText, $allowedSectionIds, null, $from, $size, array('model', 'title'));
-						$query->addHighlight(['tags_schema' => 'styled', 'fields' => [
+
+						$query->setHighlight(['tags_schema' => 'styled', 'fields' => [
 							'title' => ['number_of_fragments' => 0],
 							'content' => [
 								'fragment_size' => 150,
@@ -146,6 +147,7 @@ class Result extends Block
 								'no_match_size' => 150
 							]
 						]]);
+
 						$searchQuery->addFacets($query, array('model'));
 						$bool = $searchQuery->getFacetFilters($facetFilters);
 						if ($bool)
