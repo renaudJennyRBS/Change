@@ -166,8 +166,14 @@ class DbProvider extends \Change\Db\DbProvider
 			$username = isset($parsed_url['user']) ? $parsed_url['user'] : null;
 			$port = isset($parsed_url['port']) ? $parsed_url['port'] : 3306;
 			$host = isset($parsed_url['host']) ? $parsed_url['host'] : 'localhost';
-			$dnsOptions[] = 'host=' . $host;
-			$dnsOptions[] = 'port=' . $port;
+			$dsnOptions[] = 'host=' . $host;
+			$dsnOptions[] = 'port=' . $port;
+			// Set connection infos properly
+			$connectionInfos['database'] = $database;
+			$connectionInfos['password'] = $password;
+			$connectionInfos['user'] = $username;
+			$connectionInfos['port'] = $port;
+			$connectionInfos['host'] = $host;
 		}
 		else
 		{
