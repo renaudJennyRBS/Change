@@ -20,6 +20,9 @@
 	"password_placeholder":{
 		"message":"votre mot de passe"
 	},
+	"confirm_password_placeholder":{
+		"message":"confirmer votre mot de passe"
+	},
 	"remember_me":{
 		"message":"cochez pour rester connecté"
 	},

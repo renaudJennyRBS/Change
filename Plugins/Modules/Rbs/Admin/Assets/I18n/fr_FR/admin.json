@@ -357,6 +357,9 @@
 	"activation_properties":{
 		"message":"activation"
 	},
+	"permission_properties":{
+		"message":"permissions"
+	},
 	"now":{
 		"message":"maintenant"
 	},
