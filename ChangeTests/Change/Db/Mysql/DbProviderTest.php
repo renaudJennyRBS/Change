@@ -57,13 +57,12 @@ class DbProviderTest extends \ChangeTests\Change\TestAssets\TestCase
             $this->assertStringEndsWith('is not set.', $e->getMessage());
         }
 
-        $_ENV['MYSQL_TEST_URL'] = "mysql://" .
+		putenv('MYSQL_TEST_URL=mysql://' .
             (isset($infos['user']) ? $infos['user'] : '') . ":" .
             (isset($infos['password']) ? $infos['password'] : '') . "@" .
             (isset($infos['host']) ? $infos['host'] : 'localhost') . ":" .
             (isset($infos['port']) ? $infos['port'] : '3306') . "/" .
-            $infos['database'];
-
+            $infos['database']);
         $pdo = $provider->getDriver();
         $this->assertNotNull($pdo);
     }

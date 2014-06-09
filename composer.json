@@ -13,17 +13,18 @@
 			"url": "https://packages.zendframework.com/"
 		}
 	],
+	"minimum-stability":"dev",
 	"require": {
 		"php": ">=5.4.0",
-		"zendframework/zendframework": "2.*",
-		"zendframework/zendoauth": "2.*",
-		"twig/twig": "1.*",
-		"ruflin/elastica": "1.0.*",
-		"ircmaxell/password-compat": "1.0.*",
-		"michelf/php-markdown": "1.*",
-		"kriswallsmith/assetic":"1.*",
-		"oyejorge/less.php": "1.7.*",
-		"mrclay/minify": "2.*"
+		"zendframework/zendframework": "2.3.1",
+		"zendframework/zendoauth": "2.0.2",
+		"twig/twig": "1.15.1",
+		"ruflin/elastica": "1.1.1.1",
+		"ircmaxell/password-compat": "1.0.3",
+		"michelf/php-markdown": "1.4.1",
+		"kriswallsmith/assetic":"1.1.2",
+		"oyejorge/less.php": "1.7.0.1",
+		"mrclay/minify": "2.2.0"
 	},
 	"replace":{
 		"rbschange/core": "self.version",

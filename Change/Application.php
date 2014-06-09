@@ -151,7 +151,14 @@ class Application
 	{
 		if ($this->configuration === null)
 		{
-			$this->configuration = new Configuration\Configuration($this->getProjectConfigurationPaths());
+			$envMapping = null;
+			$envMappingPath = $this->getWorkspace()->appPath('Config', 'env.json');
+			if (is_readable($envMappingPath))
+			{
+					$data = \Change\Stdlib\File::read($envMappingPath);
+					$envMapping = \Zend\Json\Json::decode($data, \Zend\Json\Json::TYPE_ARRAY);
+			}
+			$this->configuration = new Configuration\Configuration($this->getProjectConfigurationPaths(), null, $envMapping);
 		}
 		if ($entryName)
 		{
@@ -325,11 +332,18 @@ class Application
 	 */
 	public function getProjectConfigurationPaths()
 	{
-		return [
+		$configs = [
 			Configuration\Configuration::AUTOGEN => $this->getWorkspace()
-					->appPath('Config', Configuration\Configuration::AUTOGEN),
-			Configuration\Configuration::PROJECT => $this->getWorkspace()->appPath('Config', Configuration\Configuration::PROJECT)
+					->appPath('Config', 'project.autogen.json'),
+			Configuration\Configuration::PROJECT => $this->getWorkspace()->appPath('Config', 'project.json'),
 		];
+		$changeInstanceConfigPath = getenv('CHANGE_INSTANCE_CONFIG_FILENAME');
+		if ($changeInstanceConfigPath === false)
+		{
+			$changeInstanceConfigPath = 'project.instance.json';
+		}
+		$configs[Configuration\Configuration::INSTANCE] = $this->getWorkspace()->appPath('Config', $changeInstanceConfigPath);
+		return $configs;
 	}
 
 	/**
