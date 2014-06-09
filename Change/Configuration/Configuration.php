@@ -16,8 +16,9 @@ use Zend\Json\Json;
  */
 class Configuration
 {
-	const AUTOGEN = 'project.autogen.json';
-	const PROJECT = 'project.json';
+	const AUTOGEN = 'AUTOGEN';
+	const PROJECT = 'PROJECT';
+	const INSTANCE = 'INSTANCE';
 
 	/**
 	 * @var string[]
@@ -33,9 +34,10 @@ class Configuration
 	/**
 	 * @param array $configurationFiles
 	 * @param array|null $config
+	 * @param array|null $envMapping
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct(array $configurationFiles, $config = null)
+	public function __construct(array $configurationFiles, $config = null, $envMapping = null)
 	{
 		$this->configurationFiles = $configurationFiles;
 		if (!is_array($config))
@@ -43,6 +45,17 @@ class Configuration
 			$config = $this->mergeJsonConfigurations();
 		}
 		$this->setConfigArray($config);
+		if (is_array($envMapping))
+		{
+			foreach ($envMapping as $key => $path)
+			{
+				$value = getenv($key);
+				if ($value !== false)
+				{
+					$this->addVolatileEntry($path, $value);
+				}
+			}
+		}
 	}
 
 	/**
