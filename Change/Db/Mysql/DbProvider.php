@@ -142,49 +142,52 @@ class DbProvider extends \Change\Db\DbProvider
         {
             $url = $connectionInfos['url'];
 
-            // If the field starts with 'ENV:', the following environment variable is used to configure MySQL
-            if (\strpos($url, 'ENV:') === 0)
-            {
-                $mysql_url_var_name = \substr($url, 4);
-                if (!isset($_ENV[$mysql_url_var_name]))
-                {
-                    throw new \RuntimeException('Environment variable defined in database configuration is not set.', 999999);
-                }
-                $url = $_ENV[$mysql_url_var_name];
-            }
+			// If the field starts with 'ENV:', the following environment variable is used to configure MySQL
+			if (\strpos($url, 'ENV:') === 0)
+			{
+				$mysql_url_var_name = \substr($url, 4);
+				$envUrl = getenv($mysql_url_var_name);
+				if ($envUrl === false)
+				{
+					throw new \RuntimeException('Environment variable defined in database configuration is not set.', 999999);
+				}
+				$url = $envUrl;
+			}
 
-            $parsed_url = \parse_url($url);
-            if ($parsed_url == FALSE)
-            {
-                throw new \RuntimeException('Database URL is not valid, use mysql://user:password@host:port/dbname.', 999999);
-            }
+			$parsed_url = \parse_url($url);
+			if ($parsed_url == false)
+			{
+				throw new \RuntimeException('Database URL is not valid, use mysql://user:password@host:port/dbname.', 999999);
+			}
 
-            // Remove the initial '/ or the URL path'
-            $database = isset($parsed_url['path']) ? \substr($parsed_url['path'], 1) : null;
-            $password = isset($parsed_url['pass']) ? $parsed_url['pass'] : null;
-            $username = isset($parsed_url['user']) ? $parsed_url['user'] : null;
-            $port = isset($parsed_url['port']) ? $parsed_url['port'] : 3306;
+			// Remove the initial '/ or the URL path'
+			$database = isset($parsed_url['path']) ? \substr($parsed_url['path'], 1) : null;
+			$password = isset($parsed_url['pass']) ? $parsed_url['pass'] : null;
+			$username = isset($parsed_url['user']) ? $parsed_url['user'] : null;
+			$port = isset($parsed_url['port']) ? $parsed_url['port'] : 3306;
+			$host = isset($parsed_url['host']) ? $parsed_url['host'] : 'localhost';
+			$dnsOptions[] = 'host=' . $host;
+			$dnsOptions[] = 'port=' . $port;
+		}
+		else
+		{
+			$database = isset($connectionInfos['database']) ? $connectionInfos['database'] : null;
+			$password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
+			$username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
 
-            $dnsOptions[] = 'host=' . $parsed_url['host'];
-            $dnsOptions[] = 'port=' . $port;
-        } else {
-            $database = isset($connectionInfos['database']) ? $connectionInfos['database'] : null;
-            $password = isset($connectionInfos['password']) ? $connectionInfos['password'] : null;
-            $username = isset($connectionInfos['user']) ? $connectionInfos['user'] : null;
-
-            $unix_socket = isset($connectionInfos['unix_socket']) ? $connectionInfos['unix_socket'] : null;
-            if ($unix_socket != null)
-            {
-                $dsnOptions[] = 'unix_socket=' . $unix_socket;
-            }
-            else
-            {
-                $host = isset($connectionInfos['host']) ? $connectionInfos['host'] : 'localhost';
-                $dsnOptions[] = 'host=' . $host;
-                $port = isset($connectionInfos['port']) ? $connectionInfos['port'] : 3306;
-                $dsnOptions[] = 'port=' . $port;
-            }
-        }
+			$unix_socket = isset($connectionInfos['unix_socket']) ? $connectionInfos['unix_socket'] : null;
+			if ($unix_socket != null)
+			{
+				$dsnOptions[] = 'unix_socket=' . $unix_socket;
+			}
+			else
+			{
+				$host = isset($connectionInfos['host']) ? $connectionInfos['host'] : 'localhost';
+				$dsnOptions[] = 'host=' . $host;
+				$port = isset($connectionInfos['port']) ? $connectionInfos['port'] : 3306;
+				$dsnOptions[] = 'port=' . $port;
+			}
+		}
 
         if ($database !== null)
         {
