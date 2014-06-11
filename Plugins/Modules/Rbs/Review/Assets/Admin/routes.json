@@ -19,9 +19,9 @@
 	},
 	"/Rbs/Review/Review/:id": {
 		"model": "Rbs_Review_Review",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Review/Review/form.twig",
+			"templateUrl": "Document/Rbs/Review/Review/edit.twig",
 			"labelKey": "m.rbs.review.documents.review | ucf",
 			"labelId": "id"
 		},
@@ -31,7 +31,7 @@
 		"model": "Rbs_Review_Review",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Review/Review/form.twig",
+			"templateUrl": "Document/Rbs/Review/Review/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

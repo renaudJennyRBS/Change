@@ -60,7 +60,6 @@ class Menu extends Block
 			}
 		}
 
-
 		return $parameters;
 	}
 

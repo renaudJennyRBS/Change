@@ -19,9 +19,9 @@
 	},
 	"/Rbs/Collection/Collection/:id": {
 		"model": "Rbs_Collection_Collection",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Collection/Collection/form.twig",
+			"templateUrl": "Document/Rbs/Collection/Collection/edit.twig",
 			"labelKey": "m.rbs.collection.documents.collection | ucf",
 			"labelId": "id"
 		},
@@ -31,7 +31,7 @@
 		"model": "Rbs_Collection_Collection",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Collection/Collection/form.twig",
+			"templateUrl": "Document/Rbs/Collection/Collection/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -39,9 +39,9 @@
 	"/Rbs/Collection/Item/": false,
 	"/Rbs/Collection/Item/:id": {
 		"model": "Rbs_Collection_Item",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
+			"templateUrl": "Document/Rbs/Collection/Item/edit.twig",
 			"labelKey": "m.rbs.collection.documents.item | ucf",
 			"labelId": "id"
 		},
@@ -51,7 +51,7 @@
 		"model": "Rbs_Collection_Item",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
+			"templateUrl": "Document/Rbs/Collection/Item/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -61,7 +61,7 @@
 		"model": "Rbs_Collection_Item",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Collection/Item/form.twig",
+			"templateUrl": "Document/Rbs/Collection/Item/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

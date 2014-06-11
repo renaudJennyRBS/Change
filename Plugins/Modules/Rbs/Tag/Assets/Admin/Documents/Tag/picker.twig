@@ -1,8 +1,7 @@
-<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}"
-                   model="{{ query.model }}"
-                   filter-query="query" extend="picker" use-properties="color userTag children">
+<rbs-document-list data-dlid="DLDocumentPicker{{ query.model }}" model="{{ query.model }}"
+	filter-query="query" extend="picker" use-properties="color userTag children">
 	<rbs-column name="label" primary="true">
-		<a href="javascript:;" ng-click="extend.selectDocument(doc)"><span rbs-tag="doc"></span></a>
-		<span ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
+		<a href="javascript:;" data-ng-click="extend.selectDocument(doc)"><span data-rbs-tag="doc"></span></a>
+		<span data-ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
 	</rbs-column>
 </rbs-document-list>

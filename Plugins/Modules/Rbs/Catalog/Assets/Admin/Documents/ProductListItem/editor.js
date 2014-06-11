@@ -1,5 +1,4 @@
-(function ()
-{
+(function() {
 	"use strict";
 
 	/**
@@ -8,18 +7,15 @@
 	 * @param $location
 	 * @constructor
 	 */
-	function Editor(REST, $q, $location)
-	{
+	function Editor(REST, $q, $location) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Catalog/ProductListItem/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			templateUrl: 'Document/Rbs/Catalog/ProductListItem/editor.twig',
+			replace: false,
+			require: 'rbsDocumentEditor',
 
-			link: function (scope, elm, attrs, editorCtrl)
-			{
-				scope.onLoad = function()
-				{
+			link: function(scope, elm, attrs, editorCtrl) {
+				scope.onLoad = function() {
 					// Load Product document is a product ID is found in the route params.
 					var defer = $q.defer(),
 						productId,
@@ -27,16 +23,14 @@
 
 					params = $location.search();
 
-					if (params.active === 'true')
-					{
+					if (params.active === 'true') {
 						scope.document.active = true;
 					}
 
-					if (params.product)
-					{
+					if (params.product) {
 						productId = parseInt(params.product, 10);
-						if (! isNaN(productId)) {
-							REST.resource(productId).then(function (product) {
+						if (!isNaN(productId)) {
+							REST.resource(productId).then(function(product) {
 								scope.document.product = product;
 								defer.resolve();
 							});

@@ -10,9 +10,9 @@
 	},
 	"/Rbs/Generic/Tag/:id": {
 		"model": "Rbs_Tag_Tag",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Tag/Tag/form.twig",
+			"templateUrl": "Document/Rbs/Tag/Tag/edit.twig",
 			"labelKey": "m.rbs.tag.documents.tag | ucf",
 			"labelId": "id"
 		},
@@ -22,7 +22,7 @@
 		"model": "Rbs_Tag_Tag",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Tag/Tag/form.twig",
+			"templateUrl": "Document/Rbs/Tag/Tag/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -30,5 +30,33 @@
 	"/Rbs/Tag/": false,
 	"/Rbs/Tag/Tag/": false,
 	"/Rbs/Tag/Tag/:id": false,
-	"/Rbs/Tag/Tag/new": false
+	"/Rbs/Tag/Tag/new": false,
+	"/Rbs/User/Profile/Tag": {
+		"module": "Rbs_User",
+		"name": "userTagList",
+		"rule": {
+			"templateUrl": "Document/Rbs/Tag/Tag/myTags-list.twig",
+			"labelKey": "m.rbs.tag.admin.my_tags_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/Profile/Tag/:id": {
+		"model": "Rbs_Tag_Tag",
+		"name": "userTagEdit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Tag/Tag/edit.twig",
+			"labelKey": "m.rbs.tag.documents.tag | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/User/Profile/Tag/new": {
+		"model": "Rbs_Tag_Tag",
+		"name": "userTagNew",
+		"rule": {
+			"templateUrl": "Document/Rbs/Tag/Tag/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	}
 }
