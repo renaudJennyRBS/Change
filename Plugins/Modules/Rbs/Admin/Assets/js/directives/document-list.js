@@ -773,8 +773,8 @@
 
 
 					scope.$watch('selectionContext', function (selectionContext) {
-						var selectionEnabled = scope.hasColumn('selectable') && (!selectionContext || !selectionContext.isSelection() || selectionContext.param('multiple'));
-						scope.selectionEnabled = selectionEnabled;
+						scope.selectionEnabled = scope.hasColumn('selectable') &&
+							(!selectionContext || !selectionContext.isSelection() || selectionContext.param('multiple'));
 						scope.selected = [];
 					});
 
@@ -1177,7 +1177,7 @@
 						} else {
 							return '...';
 						}
-					}
+					};
 
 					/**
 					 * Returns URL for a page (pagination)
