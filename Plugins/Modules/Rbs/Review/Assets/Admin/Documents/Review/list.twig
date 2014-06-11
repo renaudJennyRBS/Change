@@ -1,18 +1,21 @@
 <div class="row">
-
-	<div rbs-full-width>
+	<div data-rbs-full-width="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.review.admin.review_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Review_Review" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Review_Review"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Review_Review' | rbsURL:'new' =)">{{ i18n('m.rbs.review.admin.review_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsReviewReview"
-				model="Rbs_Review_Review" publishable="true" filter-collection="filter">
+			model="Rbs_Review_Review" publishable="true" filter-collection="filter">
 			<rbs-column name="target" primary="true">
-				<a href ng-href="(=doc|rbsURL=)">(= doc.target.label =)</a>
+				<a href="javascript:;" data-ng-href="(=doc|rbsURL=)">(= doc.target.label =)</a>
 			</rbs-column>
 			<rbs-column name="pseudonym"></rbs-column>
 			<rbs-column name="promoted">
@@ -27,10 +30,9 @@
 						<span class="text-success"><i class="icon-thumbs-up"></i> (= doc.upvote =)</span>
 						<span class="text-warning"><i class="icon-thumbs-down"></i> (= doc.downvote =)</span>
 					</div>
-					<p ng-bind-html="doc.content.h"></p>
+					<p data-ng-bind-html="doc.content.h"></p>
 				</div>
 			</rbs-preview>
 		</rbs-document-list>
 	</div>
-
 </div>
