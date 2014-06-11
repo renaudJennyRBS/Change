@@ -743,9 +743,9 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 				$attributes = ['model' => $model];
 				if ($excludedProperties)
 				{
-					//if the model is publishable, we exclude the title and the label from properties
-					//because they will be automatically added in the template and synced with each other
-					if ($model->isPublishable())
+					// If the model is publishable and we are not in translation view, we exclude the title and the label from
+					// properties because they will be automatically added in the template and synced with each other.
+					if ($model->isPublishable() && $view !== 'translate')
 					{
 						$excludedProperties = array_merge($excludedProperties, ['label', 'title']);
 					}
