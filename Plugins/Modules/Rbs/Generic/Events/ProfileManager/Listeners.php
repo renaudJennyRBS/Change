@@ -183,7 +183,12 @@ class Listeners implements ListenerAggregateInterface
 
 						$documentProfile->setFullName($profile->getPropertyValue('fullName'));
 						$documentProfile->setTitleCode($profile->getPropertyValue('titleCode'));
-						$documentProfile->setBirthDate($profile->getPropertyValue('birthDate'));
+						$birthDate = $profile->getPropertyValue('birthDate');
+						if (trim($birthDate) == '')
+						{
+							$birthDate = null;
+						}
+						$documentProfile->setBirthDate($birthDate);
 						$documentProfile->save();
 					}
 					$transactionManager->commit();

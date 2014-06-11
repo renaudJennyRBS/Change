@@ -71,6 +71,47 @@ class Install extends \Change\Plugins\InstallBase
 
 		$jobManager = $applicationServices->getJobManager();
 		$jobManager->createNewJob('Rbs_User_CleanAccountRequestTable');
+
+		// Init collection
+		$cm = $applicationServices->getCollectionManager();
+		if ($cm->getCollection('Rbs_User_Collection_Title') === null)
+		{
+			$tm = $applicationServices->getTransactionManager();
+			try
+			{
+				$tm->begin();
+				/* @var $item \Rbs\Collection\Documents\Item */
+				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item->setValue('m.');
+				$item->setLabel('m.');
+				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.user.setup.mister', array('ucf')));
+				$item->setLocked(true);
+				$item->save();
+
+				/* @var $item2 \Rbs\Collection\Documents\Item */
+				$item2 = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item2->setValue('mme');
+				$item2->setLabel('mme');
+				$item2->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.user.setup.miss', array('ucf')));
+				$item2->setLocked(true);
+				$item2->save();
+
+				/* @var $collection \Rbs\Collection\Documents\Collection */
+				$collection = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+				$collection->setLabel('User title');
+				$collection->setCode('Rbs_User_Collection_Title');
+				$collection->setLocked(true);
+				$collection->getItems()->add($item);
+				$collection->getItems()->add($item2);
+				$collection->save();
+				$tm->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $tm->rollBack($e);
+			}
+		}
+
 	}
 
 	/**
