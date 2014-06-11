@@ -1,0 +1,83 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Collection_Collection">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Collection_Collection'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-collection-collection-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.collection.admin.collection_locked_warning') | raw }}</p>
+
+				<rbs-field-text property="label" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'label'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<h3>
+					{{ i18n(propertyKey('Rbs_Collection_Collection', 'items'), ['ucf']) }}
+				</h3>
+
+				<div class="add-elements-bar">
+					<a href data-ng-click="cascadeCreate()">{{ i18n('m.rbs.collection.admin.item_create', ['ucf']) }}</a>
+				</div>
+
+				<rbs-document-list data-dlid="DLCollection1" model="Rbs_Collection_Item" collection="document.items" extend="this"
+					toolbar="false" selectable="false" correction="true">
+					<rbs-quick-actions>
+						<a data-ng-if="!doc.locked" href="javascript:;" data-ng-click="extend.deleteItem(doc)" class="danger">
+							<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
+						</a>
+					</rbs-quick-actions>
+
+					<rbs-column name="label" primary="true">
+						<i data-ng-if="doc.locked" class="icon-lock text-info"
+							title="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'locked'), ['ucf']) }}">
+						</i>
+						<a href data-ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
+					</rbs-column>
+					<rbs-column name="value"></rbs-column>
+					<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
+						<rbs-kb-switch>
+							<button data-rbs-kb-when="alt" data-ng-disabled="$first" class="btn btn-default btn-icon"
+								type="button" data-ng-click="extend.moveTop($index)"
+								title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
+								<i class="icon-step-forward icon-rotate-270"></i>
+							</button>
+							<button data-rbs-kb-default="" data-ng-disabled="$first" class="btn btn-default btn-icon"
+								type="button" data-ng-click="extend.moveUp($index)"
+								title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
+								<i class="icon-play icon-rotate-270"></i>
+							</button>
+						</rbs-kb-switch>
+						<rbs-kb-switch>
+							<button data-rbs-kb-when="alt" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
+								data-ng-click="extend.moveBottom($index)"
+								title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
+								<i class="icon-step-forward icon-rotate-90"></i>
+							</button>
+							<button data-rbs-kb-default="" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
+								data-ng-click="extend.moveDown($index)"
+								title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
+								<i class="icon-play icon-rotate-90"></i>
+							</button>
+						</rbs-kb-switch>
+					</rbs-column>
+				</rbs-document-list>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>
