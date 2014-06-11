@@ -1,23 +1,26 @@
-<div class="row" ng-controller="Rbs_Tag_Tag_TagsController">
-
-	<div rbs-aside-column>
-		<rbs-aside-plugin-menu></rbs-aside-plugin-menu>
+<div class="row" data-ng-controller="Rbs_Tag_Tag_TagsController">
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.tag.admin.tag_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Tag_Tag"></rbs-document-filter-panel>
 
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Tag_Tag" filter="filter" ></rbs-document-filter-panel>
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Tag_Tag' | rbsURL:'new' =)">{{ i18n('m.rbs.tag.admin.tag_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsTag1" model="Rbs_Tag_Tag" use-properties="children userTag" filter-collection="filter">
-
+		<rbs-document-list data-dlid="DLRbsTagTag" model="Rbs_Tag_Tag" filter-collection="filter">
 			<rbs-column name="label" primary="true">
-				<a href ng-href="(= doc | rbsURL:'form' =)"><span rbs-tag="doc"></span></a>
-				<span ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
+				<a href data-ng-href="(= doc | rbsURL:'form' =)"><span data-rbs-tag="doc"></span></a>
+				<span data-ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
 			</rbs-column>
 
 			<rbs-column name="color" align="center" width="160px">
@@ -27,13 +30,13 @@
 			<rbs-column name="module" converter-params="modules" converter="collection"></rbs-column>
 
 			<rbs-preview>
-				<span ng-pluralize="" count="doc.children.length" when="{0: '{{ i18nAttr('m.rbs.tag.admin.tag_no_child_tag') }}',
+				<span data-ng-pluralize="" data-count="doc.children.length" data-when="{0: '{{ i18nAttr('m.rbs.tag.admin.tag_no_child_tag') }}',
 					one: '{{ i18nAttr('m.rbs.tag.admin.tag_child_tag') }}',
 					other: '{{ i18nAttr('m.rbs.tag.admin.tag_child_tags') }}'}"></span>
-				<span ng-repeat="tag in doc.children"><a href ng-href="(= tag | rbsURL:'tree' =)"><span rbs-tag="tag"></span></a></span>
+				<span data-ng-repeat="tag in doc.children"><a href data-ng-href="(= tag | rbsURL:'tree' =)">
+						<span data-rbs-tag="tag"></span></a>
+				</span>
 			</rbs-preview>
-
 		</rbs-document-list>
 	</div>
-
 </div>

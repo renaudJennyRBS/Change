@@ -23,7 +23,7 @@
 	"tag_list":{
 		"message":"étiquettes communes"
 	},
-	"mytags_list":{
+	"my_tags_list":{
 		"message":"étiquettes personnelles"
 	},
 	"tag_create":{

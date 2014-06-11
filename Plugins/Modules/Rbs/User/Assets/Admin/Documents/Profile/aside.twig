@@ -1,6 +1,6 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h3 class="panel-title" ng-bind="user.pseudonym"></h3>
+		<h3 class="panel-title" data-ng-bind="user.pseudonym"></h3>
 	</div>
 	<div class="panel-body">
 		<rbs-avatar size='80' user-id='(= user.id =)'></rbs-avatar>
@@ -8,5 +8,10 @@
 </div>
 
 <rbs-links-panel>
-	<a rbs-active-route="" href="Rbs/User/Profile" rbs-panel-link="" icon="icon-user">{{ i18n('m.rbs.user.admin.profile', ['ucf']) }}</a>
+	<a data-rbs-active-route="" href="Rbs/User/Profile" data-rbs-panel-link="" data-icon="icon-user">
+		{{ i18n('m.rbs.user.admin.profile', ['ucf']) }}
+	</a>
+	<a data-rbs-active-route="" href="Rbs/User/Profile/Tag" data-rbs-panel-link="" data-icon="icon-tags">
+		{{ i18n('m.rbs.tag.admin.my_tags_list', ['ucf']) }}
+	</a>
 </rbs-links-panel>

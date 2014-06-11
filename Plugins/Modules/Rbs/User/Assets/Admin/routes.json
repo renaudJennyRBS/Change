@@ -68,7 +68,7 @@
 		"name": "userProfile",
 		"rule": {
 			"templateUrl": "Document/Rbs/User/Profile/profile.twig",
-			"labelKey": "m.rbs.user.admin.public_profile_sub_title | ucf"
+			"labelKey": "m.rbs.user.admin.profile | ucf"
 		},
 		"auto": false
 	},
