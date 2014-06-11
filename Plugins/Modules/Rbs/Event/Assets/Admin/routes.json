@@ -19,9 +19,9 @@
 	},
 	"/Rbs/Event/Category/:id": {
 		"model": "Rbs_Event_Category",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/Category/form.twig",
+			"templateUrl": "Document/Rbs/Event/Category/edit.twig",
 			"labelKey": "m.rbs.event.documents.category | ucf",
 			"labelId": "id"
 		},
@@ -31,7 +31,7 @@
 		"model": "Rbs_Event_Category",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/Category/form.twig",
+			"templateUrl": "Document/Rbs/Event/Category/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -41,7 +41,7 @@
 		"model": "Rbs_Event_Category",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/Category/form.twig",
+			"templateUrl": "Document/Rbs/Event/Category/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -57,9 +57,9 @@
 	},
 	"/Rbs/Event/Event/:id": {
 		"model": "Rbs_Event_Event",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/Event/form.twig",
+			"templateUrl": "Document/Rbs/Event/Event/edit.twig",
 			"labelKey": "m.rbs.event.documents.event | ucf",
 			"labelId": "id"
 		},
@@ -69,7 +69,7 @@
 		"model": "Rbs_Event_Event",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/Event/form.twig",
+			"templateUrl": "Document/Rbs/Event/Event/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -79,7 +79,7 @@
 		"model": "Rbs_Event_Event",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/Event/form.twig",
+			"templateUrl": "Document/Rbs/Event/Event/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -95,9 +95,9 @@
 	},
 	"/Rbs/Event/News/:id": {
 		"model": "Rbs_Event_News",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/News/form.twig",
+			"templateUrl": "Document/Rbs/Event/News/edit.twig",
 			"labelKey": "m.rbs.event.documents.news | ucf",
 			"labelId": "id"
 		},
@@ -107,7 +107,7 @@
 		"model": "Rbs_Event_News",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/News/form.twig",
+			"templateUrl": "Document/Rbs/Event/News/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -117,7 +117,7 @@
 		"model": "Rbs_Event_News",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Event/News/form.twig",
+			"templateUrl": "Document/Rbs/Event/News/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

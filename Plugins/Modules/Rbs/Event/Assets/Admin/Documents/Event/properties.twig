@@ -1,0 +1,43 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Event_Event', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field-date property="date" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'date'), ['ucf']) }}">
+</rbs-field-date>
+
+<rbs-field-date property="endDate"
+	label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'endDate'), ['ucf']) }}">
+</rbs-field-date>
+
+<hr />
+
+<rbs-field-rich-text property="summary" required="false" profile="Website"
+	label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'summary'), ['ucf']) }}">
+</rbs-field-rich-text>
+
+<rbs-field-rich-text property="text" required="false" profile="Website"
+	label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'text'), ['ucf']) }}">
+</rbs-field-rich-text>
+
+<hr />
+
+<rbs-field-picker property="detailVisual" label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'detailVisual'), ['ucf']) }}"
+	accepted-model="Rbs_Media_Image"
+	selector-title="{{ i18nAttr('m.rbs.event.admin.baseevent_detailvisual_picker_title', ['ucf']) }}">
+	<span class="help-block">{{ i18n('m.rbs.event.admin.baseevent_detailvisual_help', ['ucf']) }}</span>
+</rbs-field-picker>
+
+<rbs-field-picker property="listVisual" label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'listVisual'), ['ucf']) }}"
+	accepted-model="Rbs_Media_Image"
+	selector-title="{{ i18nAttr('m.rbs.event.admin.baseevent_listvisual_picker_title', ['ucf']) }}">
+	<span class="help-block">{{ i18n('m.rbs.event.admin.baseevent_listvisual_help', ['ucf']) }}</span>
+</rbs-field-picker>
+
+<hr />
+
+<rbs-field-picker-multiple property="categories"
+	label="{{ i18nAttr(propertyKey('Rbs_Event_Event', 'categories'), ['ucf']) }}"
+	accepted-model="Rbs_Event_Category"
+	selector-title="{{ i18nAttr('m.rbs.event.admin.baseevent_categories_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>
