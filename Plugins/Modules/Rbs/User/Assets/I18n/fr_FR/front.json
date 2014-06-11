@@ -130,5 +130,35 @@
 	},
 	"sending_reset_password_request_success":{
 		"message":"demande de ré-initialisation envoyée"
+	},
+	"edit_account_title":{
+		"message":"édition de mes informations personnelles"
+	},
+	"update_account_success":{
+		"message":"mise à jour effectuée avec succès"
+	},
+	"title":{
+		"message":"civilité"
+	},
+	"title_placeholder":{
+		"message":"civilité"
+	},
+	"fullname":{
+		"message":"nom complet"
+	},
+	"fullname_placeholder":{
+		"message":"nom complet"
+	},
+	"birthDate":{
+		"message":"date d'anniversaire"
+	},
+	"birthDate_placeholder":{
+		"message":"date d'anniversaire"
+	},
+	"submit_edit_account":{
+		"message":"mettre à jour"
+	},
+	"error_authentication_required":{
+		"message":"impossible d'enregistrer le profil utitlisateur, authentification requise"
 	}
 }

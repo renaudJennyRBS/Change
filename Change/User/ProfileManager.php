@@ -64,7 +64,8 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('user' => $user, 'profileName' => $profileName));
 		$event = new \Change\Events\Event(static::EVENT_LOAD, $this, $args);
-		$this->getEventManager()->trigger($event);
+		$em->trigger($event);
+
 		$profile = $event->getParam('profile');
 		if ($profile instanceof ProfileInterface)
 		{
@@ -76,7 +77,6 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param UserInterface $user
 	 * @param ProfileInterface $profile
-	 * @param ProfileInterface $profile
 	 * @return ProfileInterface|null
 	 */
 	public function saveProfile($user, $profile)
@@ -84,7 +84,7 @@ class ProfileManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('user' => $user, 'profile' => $profile));
 		$event = new \Change\Events\Event(static::EVENT_SAVE, $this, $args);
-		$this->getEventManager()->trigger($event);
+		$em->trigger($event);
 
 		$profile = $event->getParam('profile');
 		if ($profile instanceof ProfileInterface)

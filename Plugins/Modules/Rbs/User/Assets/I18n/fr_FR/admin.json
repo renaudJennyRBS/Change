@@ -249,5 +249,8 @@
 	},
 	"reset_password":{
 		"message":"Ré-initialisation de mot de passe"
+	},
+	"edit_account_label":{
+		"message":"Edition du profil"
 	}
 }

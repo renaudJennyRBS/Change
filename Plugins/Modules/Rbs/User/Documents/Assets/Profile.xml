@@ -8,7 +8,7 @@
 		<property name="defaultLCID" type="String">
 			<dboptions length="5"/>
 		</property>
-		<property name="defaultTimeZone" type="String" required="true">
+		<property name="defaultTimeZone" type="String">
 			<dboptions length="100"/>
 		</property>
 		<!-- Profile data properties accessible in Rbs_User profile -->
