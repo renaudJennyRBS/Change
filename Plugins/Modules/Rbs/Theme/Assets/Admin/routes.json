@@ -21,18 +21,9 @@
 		"model": "Rbs_Theme_Template",
 		"name": "form",
 		"rule": {
-			"templateUrl": "Document/Rbs/Theme/Template/form.twig",
+			"templateUrl": "Document/Rbs/Theme/Template/edit.twig",
 			"labelKey": "m.rbs.theme.documents.template | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/Theme/:themeId/:categoryName/new": {
-		"model": "Rbs_Theme_Template",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Theme/Template/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	},
