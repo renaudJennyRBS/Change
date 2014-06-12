@@ -20,8 +20,6 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
-
 		//Add a collection for sitemap change frequency
 		$cm = $applicationServices->getCollectionManager();
 		if ($cm->getCollection('Rbs_Seo_Collection_SitemapChangeFrequency') === null)

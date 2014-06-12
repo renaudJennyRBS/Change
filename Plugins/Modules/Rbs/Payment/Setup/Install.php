@@ -140,9 +140,6 @@ class Install extends \Change\Plugins\InstallBase
 		{
 			throw $applicationServices->getTransactionManager()->rollBack($e);
 		}
-
-		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
-		$applicationServices->getThemeManager()->installPluginAssets($plugin);
 	}
 
 	/**

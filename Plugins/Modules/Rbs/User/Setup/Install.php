@@ -31,8 +31,6 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
-
 		$transactionManager = $applicationServices->getTransactionManager();
 		try
 		{

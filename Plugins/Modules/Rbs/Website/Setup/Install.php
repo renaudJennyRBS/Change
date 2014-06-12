@@ -43,7 +43,6 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 		$rootNode = $applicationServices->getTreeManager()->getRootNode('Rbs_Website');
 		if (!$rootNode)
 		{

@@ -749,6 +749,16 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		$event->setName(static::EVENT_SETUP_DB_SCHEMA);
 		$installEventManager->trigger($event);
 
+
+		// Install Plugin Templates / Assets in Theme - this used to be called in the plugins' executeServices setup method
+		foreach ($plugins as $plugin)
+		{
+			$tm = $event->getApplicationServices()->getThemeManager();
+			$tm->installPluginTemplates($plugin);
+			$tm->installPluginAssets($plugin);
+		}
+
+
 		$event->setName(static::EVENT_SETUP_SERVICES);
 		$installEventManager->trigger($event);
 

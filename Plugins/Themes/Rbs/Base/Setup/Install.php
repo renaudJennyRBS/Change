@@ -23,8 +23,6 @@ class Install extends \Change\Plugins\InstallBase
 		$themeManager = $applicationServices->getThemeManager();
 		$pluginManager = $applicationServices->getPluginManager();
 		$modules = $pluginManager->getModules();
-		$themeManager->installPluginTemplates($plugin);
-		$themeManager->installPluginAssets($plugin);
 		foreach ($modules as $module)
 		{
 			if ($module->isAvailable())

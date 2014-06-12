@@ -72,7 +72,6 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeServices($plugin, $applicationServices)
 	{
-		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
 		$jobManager = $applicationServices->getJobManager();
 		$name = 'Rbs_Commerce_Carts_Cleanup';
 		$ids = $jobManager->getJobIdsByName($name);
