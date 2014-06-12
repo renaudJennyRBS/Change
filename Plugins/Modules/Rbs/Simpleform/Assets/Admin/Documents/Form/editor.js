@@ -1,64 +1,64 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	/**
-	 * @constructor
-	 */
-	function Editor(REST, EditorManager, ArrayUtils)
-	{
+	function rbsDocumentEditorRbsSimpleformFormEdit(ArrayUtils) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Simpleform/Form/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope, elm, attrs, editorCtrl)
-			{
-				scope.fieldManager = {};
-
-				scope.fieldManager.cascadeCreate = editorCtrl.registerCreateCascade('fields', 'Rbs_Simpleform_Field');
-				scope.fieldManager.cascadeEdit = editorCtrl.registerEditCascade('fields');
-
-				scope.fieldManager.moveTop = function(index){
-					ArrayUtils.move(scope.document.fields, index, 0);
+			link: function(scope, elm, attrs, editorCtrl) {
+				scope.onReady = function() {
+					if (!angular.isArray(scope.document.fields)) {
+						scope.document.fields = [];
+					}
 				};
 
-				scope.fieldManager.moveUp = function(index){
-					ArrayUtils.move(scope.document.fields, index, index-1);
+				scope.moveTop = function(index) {
+					if (angular.isArray(scope.document.fields)) {
+						ArrayUtils.move(scope.document.fields, index, 0);
+					}
 				};
 
-				scope.fieldManager.moveBottom = function(index){
-					ArrayUtils.move(scope.document.fields, index, scope.document.fields.length-1);
+				scope.moveUp = function(index) {
+					if (angular.isArray(scope.document.fields)) {
+						ArrayUtils.move(scope.document.fields, index, index - 1);
+					}
 				};
 
-				scope.fieldManager.moveDown = function(index){
-					ArrayUtils.move(scope.document.fields, index, index+1);
+				scope.moveBottom = function(index) {
+					if (angular.isArray(scope.document.fields)) {
+						ArrayUtils.move(scope.document.fields, index, scope.document.fields.length - 1);
+					}
 				};
 
-				scope.fieldManager.remove = function(index){
-					scope.document.fields.splice(index, 1);
+				scope.moveDown = function(index) {
+					if (angular.isArray(scope.document.fields)) {
+						ArrayUtils.move(scope.document.fields, index, index + 1);
+					}
 				};
 
-				scope.fieldManager.deleteItem = function(doc){
+				scope.remove = function(index) {
+					if (angular.isArray(scope.document.fields)) {
+						scope.document.fields.splice(index, 1);
+					}
+				};
+
+				scope.deleteField = function(fieldToBeDeleted) {
 					var index = null;
-					angular.forEach(scope.document.fields, function (field, i) {
-						if (field.id === doc[0].id)
-						{
+					angular.forEach(scope.document.fields, function(field, i) {
+						if (field.id === fieldToBeDeleted.id) {
 							index = i;
 						}
-
 					});
+					scope.remove(index);
+				};
 
-					scope.fieldManager.remove(index);
-
-				}
-
-				editorCtrl.init('Rbs_Simpleform_Form');
+				scope.cascadeCreate = editorCtrl.registerCreateCascade('fields', 'Rbs_Simpleform_Field');
+				scope.cascadeEdit = editorCtrl.registerEditCascade('fields');
 			}
 		};
 	}
 
-	Editor.$inject = ['RbsChange.REST', 'RbsChange.EditorManager', 'RbsChange.ArrayUtils'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsSimpleformForm', Editor);
+	rbsDocumentEditorRbsSimpleformFormEdit.$inject = ['RbsChange.ArrayUtils'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsSimpleformFormEdit', rbsDocumentEditorRbsSimpleformFormEdit);
 })();

@@ -1,0 +1,18 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field property="fieldTypeCode" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'fieldTypeCode'), ['ucf']) }}">
+	<select class="form-control" data-ng-required="true" data-ng-model="document.fieldTypeCode"
+		data-ng-change="fieldTypeUpdated()" data-rbs-items-from-collection="Rbs_Simpleform_FieldTypes">
+		<option value=""></option>
+	</select>
+</rbs-field>
+
+<rbs-field-boolean property="required" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'required'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<hr />
+
+<div data-role="fieldTypeConfig"></div>
