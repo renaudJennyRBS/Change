@@ -25,14 +25,4 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Event', '\Rbs\Event\Events\CollectionManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/PageManager/Rbs_Event', '\Rbs\Event\Events\PageManager\Listeners');
 	}
-
-	/**
-	 * @param \Change\Plugins\Plugin $plugin
-	 * @param \Change\Services\ApplicationServices $applicationServices
-	 * @throws \Exception
-	 */
-	public function executeServices($plugin, $applicationServices)
-	{
-		$applicationServices->getThemeManager()->installPluginTemplates($plugin);
-	}
 }
