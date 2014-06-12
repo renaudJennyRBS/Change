@@ -212,16 +212,15 @@
 					return function() {
 						var property = $scope.modelInfo.properties[propertyName];
 						var params = {
-							selector: true,
-							property: propertyName,
+							selector: true,							property: propertyName,
 							propertyType: property.type,
 							model: model,
 							label: title,
 							document: $scope.document,
 							ngModel: 'document.' + propertyName
 						};
-						var tagerURL = UrlManager.getUrl(model, null, 'new');
-						Navigation.startSelectionContext(tagerURL, 'editor.' + propertyName, params);
+						var targetURL = UrlManager.getUrl(model, null, 'new');
+						Navigation.startSelectionContext(targetURL, 'editor.' + propertyName, params);
 					};
 				}
 
@@ -233,8 +232,8 @@
 							document: $scope.document,
 							ngModel: 'document.' + propertyName
 						};
-						var tagerURL = UrlManager.getUrl(doc);
-						Navigation.startSelectionContext(tagerURL, null, params);
+						var targetURL = UrlManager.getUrl(doc);
+						Navigation.startSelectionContext(targetURL, null, params);
 					};
 				}
 
