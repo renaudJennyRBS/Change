@@ -40,6 +40,8 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$data = $event->getRequest()->getPost()->toArray();
 			$realm = $data['realm'];
 			$login = $data['login'];
+			$rememberMe = isset($data['rememberMe']) ? true : false;
+			$device = $data['device'];
 			$password = $data['password'];
 			unset($data['password']);
 
@@ -55,6 +57,19 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$accessorId = $user->getId();
 					$this->save($website, $accessorId);
 					$data = array('accessorId' => $accessorId, 'name' => $user->getName());
+
+					if ($rememberMe)
+					{
+						// Save token
+						$timestamp = new \DateTime();
+						$token = md5($login . $realm . $timestamp->getTimestamp());
+						$endDate = new \DateTime();
+						$endDate->add(new \DateInterval('P6M'));
+						$this->saveAutoLoginToken($event->getApplicationServices()->getTransactionManager(),
+							$event->getApplicationServices()->getDbProvider(), $accessorId, $token, $device, $endDate);
+
+						setcookie('RBSCHANGE_AUTOLOGIN', $token, $endDate->getTimestamp(), '/');
+					}
 				}
 				else
 				{
@@ -109,6 +124,43 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 	}
 
 	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param integer $userId
+	 * @param string $token
+	 * @param string $device
+	 * @param \DateTime $validityDate
+	 * @throws \Exception
+	 */
+	protected function saveAutoLoginToken($transactionManager, $dbProvider, $userId, $token, $device, $validityDate)
+	{
+		try
+		{
+			$transactionManager->begin();
+
+			$qb = $dbProvider->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+
+			$qb->insert($fb->table('rbs_user_auto_login'));
+			$qb->addColumns($fb->column('user_id'), $fb->column('token'), $fb->column('device'), $fb->column('validity_date'));
+			$qb->addValues($fb->parameter('user_id'), $fb->parameter('token'), $fb->parameter('device'), $fb->dateTimeParameter('validityDate'));
+			$iq = $qb->insertQuery();
+
+			$iq->bindParameter('user_id', $userId);
+			$iq->bindParameter('token', $token);
+			$iq->bindParameter('device', $device);
+			$iq->bindParameter('validityDate', $validityDate);
+			$iq->execute();
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
+	/**
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @return integer|null
 	 */
@@ -142,6 +194,45 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 				else
 				{
 					throw new \RuntimeException('Invalid AccessorId: ' . $accessorId, 999999);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function loginFromCookie(Event $event)
+	{
+		$website = $event->getParam('website');
+		if ($website instanceof \Change\Presentation\Interfaces\Website)
+		{
+			if ($event->getAuthenticationManager()->getCurrentUser()->getId() == null)
+			{
+				$cookie = $event->getRequest()->getCookie();
+				if (isset($cookie['RBSCHANGE_AUTOLOGIN']))
+				{
+					$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$qb->select($fb->column('user_id'));
+					$qb->from($fb->table('rbs_user_auto_login'));
+					$qb->where($fb->logicAnd(
+						$fb->eq($fb->column('token'), $fb->parameter('token')),
+						$fb->gt($fb->column('validity_date'), $fb->dateTimeParameter('validityDate'))
+					));
+					$sq = $qb->query();
+
+					$sq->bindParameter('token', $cookie['RBSCHANGE_AUTOLOGIN']);
+					$now = new \DateTime();
+					$sq->bindParameter('validityDate', $now);
+
+					$result = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('user_id'));
+
+					if ($result)
+					{
+						$this->save($website, $result);
+						$this->authenticate($event);
+					}
 				}
 			}
 		}

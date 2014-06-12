@@ -25,7 +25,33 @@
 			<div class="checkbox">
 				<label><input type="checkbox" name="rememberMe" {% if rememberMe %} checked="true" {% endif %}> {{ i18n('m.rbs.user.front.remember_me', ['ucf']) }}</label>
 			</div>
+			<input type="hidden" name="device" id="device"/>
 			<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}</button>
 		</fieldset>
 	</form>
+	<script type="text/javascript">
+		var userAgent = window.navigator.userAgent;
+
+		var system =
+			userAgent.match(/windows/i) ? 'Windows' :
+			userAgent.match(/kindle/i) ? 'Kindle' :
+			userAgent.match(/android/i) ? 'Android' :
+			userAgent.match(/ipad/i) ? 'iPad' :
+			userAgent.match(/iphone/i) ? 'iPhone' :
+			userAgent.match(/ipod/i) ? 'iPod' :
+			userAgent.match(/mac/i) ? 'OS X' :
+			userAgent.match(/(linux|x11)/i) ? 'Linux' :
+			'unknown system';
+
+		var webBrowser =
+			userAgent.match(/firefox/i) && !userAgent.match(/seamonkey/i) ? 'Firefox' :
+			userAgent.match(/seamonkey/i) ? 'Seamonkey' :
+			userAgent.match(/chrome/i) && !userAgent.match(/chromium/i) ? 'Chrome' :
+			userAgent.match(/chromium/i) ? 'Chromium' :
+			userAgent.match(/safari/i) && !userAgent.match(/chrome/i) && !userAgent.match(/chromium/i) ? 'Safari' :
+			userAgent.match(/msie/i) ? 'Internet Explorer' :
+			'unknown web browser';
+
+		window.document.getElementById('device').value = webBrowser + ' - ' + system;
+	</script>
 {% endif %}

@@ -251,6 +251,9 @@
 		"message":"Ré-initialisation de mot de passe"
 	},
 	"edit_account_label":{
-		"message":"Edition du profil"
+		"message":"édition du profil"
+	},
+	"manage_auto_login_token_label":{
+		"message":"gestion des tokens d'autologin"
 	}
 }

@@ -32,10 +32,23 @@ class Logout extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 */
 	public function logout(Event $event)
 	{
-		$event->getApplicationServices()->getAuthenticationManager()->logout(['httpEvent' => $event]);
+		$cookie = $event->getRequest()->getCookie();
+
+		$authenticationManager = $event->getAuthenticationManager();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$dbProvider = $event->getApplicationServices()->getDbProvider();
+
+		$currentUser = $authenticationManager->getCurrentUser();
+		$authenticationManager->logout(['httpEvent' => $event]);
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
 		{
+			if (isset($cookie['RBSCHANGE_AUTOLOGIN']))
+			{
+				$this->deleteCurrentToken($transactionManager, $dbProvider, $currentUser->getId(), $cookie['RBSCHANGE_AUTOLOGIN']);
+				setcookie('RBSCHANGE_AUTOLOGIN', '', (new \DateTime())->getTimestamp(), '/');
+			}
+
 			$session = new \Zend\Session\Container(static::DEFAULT_NAMESPACE);
 			unset($session[$website->getId()]);
 			$data = array();
@@ -44,7 +57,44 @@ class Logout extends \Change\Http\Web\Actions\AbstractAjaxAction
 		{
 			$data = array('error' => 'Invalid website');
 		}
+
 		$result = new \Change\Http\Web\Result\AjaxResult($data);
 		$event->setResult($result);
+	}
+
+	/**
+	 * @param \Change\Transaction\TransactionManager $transactionManager
+	 * @param \Change\Db\DbProvider $dbProvider
+	 * @param integer $userId
+	 * @param string $token
+	 */
+	protected function deleteCurrentToken($transactionManager, $dbProvider, $userId, $token)
+	{
+		try
+		{
+			$transactionManager->begin();
+
+			// Delete all token for this user_id
+			$qb = $dbProvider->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+
+			$qb->delete($fb->table('rbs_user_auto_login'));
+			$qb->where($fb->logicAnd(
+				$fb->eq($fb->column('token'), $fb->parameter('token')),
+				$fb->eq($fb->column('user_id'), $fb->parameter('userId'))
+			));
+			$dq = $qb->deleteQuery();
+
+			$dq->bindParameter('token', $token);
+			$dq->bindParameter('userId', $userId);
+			$dq->execute();
+
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			$transactionManager->rollBack($e);
+		}
+
 	}
 }
