@@ -160,5 +160,26 @@
 	},
 	"error_authentication_required":{
 		"message":"impossible d'enregistrer le profil utitlisateur, authentification requise"
+	},
+	"manage_auto_login_token_title":{
+		"message":"gestion des appareils en connexion automatique"
+	},
+	"device":{
+		"message":"appareil"
+	},
+	"validity_date":{
+		"message":"valide jusqu'à"
+	},
+	"revoke":{
+		"message":"invalider"
+	},
+	"error_invalid_token":{
+		"message":"clé d'authentification automatique invalide"
+	},
+	"error_delete_token":{
+		"message":"erreur durant la suppression de la clé d'authentification automatique"
+	},
+	"no_token":{
+		"message":"Aucun appareil en connexion automatique"
 	}
 }

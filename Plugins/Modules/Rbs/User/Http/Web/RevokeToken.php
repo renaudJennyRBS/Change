@@ -12,9 +12,9 @@ use Zend\Dom\Document;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \Rbs\User\Http\Web\EditAccount
+ * @name \Rbs\User\Http\Web\RevokeToken
  */
-class EditAccount extends \Change\Http\Web\Actions\AbstractAjaxAction
+class RevokeToken extends \Change\Http\Web\Actions\AbstractAjaxAction
 {
 	/**
 	 * @param Event $event
@@ -24,34 +24,44 @@ class EditAccount extends \Change\Http\Web\Actions\AbstractAjaxAction
 	{
 		if ($event->getRequest()->getMethod() === 'POST')
 		{
-			$key = 'Rbs_User';
-
 			$data = $event->getRequest()->getPost()->toArray();
+			$tokenId = $data['tokenId'];
 
 			$authenticationManager = $event->getApplicationServices()->getAuthenticationManager();
-			$profileManager = $event->getApplicationServices()->getProfileManager();
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
+			$transactionManager = $event->getApplicationServices()->getTransactionManager();
 
 			$currentUser = $authenticationManager->getCurrentUser();
 
 			if ($currentUser->getId() != null)
 			{
-				$profile = $profileManager->loadProfile($currentUser, $key);
-				$event->getApplicationServices()->getLogging()->fatal(get_class($profile));
-				$event->getApplicationServices()->getLogging()->fatal($profile->getName());
-				if (isset($data['fullName']))
+				if ($tokenId)
 				{
-					$profile->setPropertyValue('fullName', $data['fullName']);
+					try
+					{
+						$transactionManager->begin();
+						$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder();
+						$fb = $qb->getFragmentBuilder();
+						$qb->delete($fb->table('rbs_user_auto_login'));
+						$qb->where($fb->logicAnd(
+							$fb->eq($fb->column('id'), $fb->parameter('id'))
+						));
+						$dq = $qb->deleteQuery();
+						$dq->bindParameter('id', $tokenId);
+						$dq->execute();
+						$transactionManager->commit();
+					}
+					catch(\Exception $e)
+					{
+						$data['errors'][] = $i18nManager->trans('m.rbs.user.front.error_delete_token', ['ucf']);
+						$data['errors'][] = $e->getMessage();
+						$transactionManager->rollBack($e);
+					}
 				}
-				if (isset($data['titleCode']))
+				else
 				{
-					$profile->setPropertyValue('titleCode', $data['titleCode']);
+					$data['errors'][] = $i18nManager->trans('m.rbs.user.front.error_invalid_token', ['ucf']);
 				}
-				if (isset($data['birthDate']))
-				{
-					$profile->setPropertyValue('birthDate', $data['birthDate']);
-				}
-				$profileManager->saveProfile($currentUser, $profile);
 			}
 			else
 			{

@@ -35,6 +35,12 @@ class Listeners implements ListenerAggregateInterface
 
 		$callback = function (Event $event)
 		{
+			(new \Rbs\User\Http\Web\Login())->loginFromCookie($event);
+		};
+		$events->attach(Event::EVENT_AUTHENTICATE, $callback, 1);
+
+		$callback = function (Event $event)
+		{
 			$extension = new \Rbs\Generic\Presentation\Twig\Extension($event->getApplication(), $event->getApplicationServices(), $event->getServices('genericServices'), $event->getUrlManager());
 			$event->getApplicationServices()->getTemplateManager()->addExtension($extension);
 			(new \Rbs\Website\Events\WebsiteResolver())->resolve($event);

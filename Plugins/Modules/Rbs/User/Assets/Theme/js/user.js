@@ -59,4 +59,39 @@
 
 	rbsUserShortAccount.$inject = ['$rootScope'];
 	app.directive('rbsUserShortAccount', rbsUserShortAccount);
+
+	function rbsManageAutoLogin($http)
+	{
+		return {
+			restrict: 'A',
+			templateUrl: '/manageToken.tpl',
+			replace: false,
+
+			link: function(scope, elm, attrs) {
+				scope.tokens = angular.fromJson(attrs.tokens);
+				scope.errors = null;
+
+				scope.deleteToken = function (index) {
+					var params = {
+						tokenId : scope.tokens[index].id
+					};
+					$http.post('Action/Rbs/User/RevokeToken', params)
+						.success(function(data) {
+							scope.tokens.splice(index, 1);
+							scope.errors = null;
+							if (scope.tokens.length == 0)
+							{
+								scope.tokens = null;
+							}
+						})
+						.error(function(data) {
+							scope.errors = data.errors;
+						});
+				}
+			}
+		};
+	}
+	rbsManageAutoLogin.$inject = ['$http'];
+	app.directive('rbsManageAutoLogin', rbsManageAutoLogin);
+
 })();
