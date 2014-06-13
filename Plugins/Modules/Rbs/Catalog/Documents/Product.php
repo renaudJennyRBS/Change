@@ -200,7 +200,11 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 
 		if ($product->isPropertyModified('variantGroup'))
 		{
-			$product->setSku(null);
+			$variantGroup = $product->getVariantGroup();
+			if ($variantGroup && $variantGroup->getRootProduct() === $this)
+			{
+				$product->setSku(null);
+			}
 		}
 	}
 
