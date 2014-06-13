@@ -43,5 +43,8 @@
 	},
 	"breadcrumb_mailtemplates":{
 		"message":"templates de mail"
+	},
+	"default_configuration":{
+		"message":"configuration par défaut"
 	}
 }

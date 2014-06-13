@@ -1,26 +1,18 @@
-(function () {
-
+(function() {
 	"use strict";
 
-	function editorRbsThemeTemplate(ArrayUtils, REST)
-	{
+	function rbsDocumentEditorRbsThemeTemplateEdit(ArrayUtils, REST) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Theme/Template/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link : function (scope, element, attrs, editorCtrl)
-			{
+			link: function(scope, element, attrs, editorCtrl) {
 				scope.select = {websiteId: null};
-
 				scope.blockList = [];
-
 				scope.block = null;
-
 				scope.blockParameters = null;
 
-				scope.$on('Navigation.saveContext', function (event, args) {
+				scope.$on('Navigation.saveContext', function(event, args) {
 					var data = {select: scope.select, blockList: scope.blockList,
 						block: scope.block, blockParameters: scope.blockParameters};
 					args.context.savedData('templateEditor', data);
@@ -41,7 +33,7 @@
 						if (value.block && value.block.name === args.name && value.name != args.name) {
 							// If there is a block, load default parameters and open parameterize panel.
 							if (value.block.name) {
-								REST.blockInfo(args.name).then(function (blockInfo) {
+								REST.blockInfo(args.name).then(function(blockInfo) {
 									scope.blockList[key].name = args.name;
 									var parameters = {};
 									angular.forEach(blockInfo.parameters, function(parameter) {
@@ -60,7 +52,7 @@
 					});
 				});
 
-				scope.onLoad = function () {
+				scope.onLoad = function() {
 					if (!angular.isObject(scope.document.editableContent) || angular.isArray(scope.document.editableContent)) {
 						scope.document.editableContent = {}
 					}
@@ -70,14 +62,12 @@
 				};
 
 				scope.onReady = function() {
-					if (scope.blockList.length == 0)
-					{
+					if (scope.blockList.length == 0) {
 						scope.buildBlockList();
 					}
 				};
 
 				scope.buildBlockList = function() {
-
 					var editableContent = scope.document.editableContent,
 						contentByWebsite = scope.document.contentByWebsite,
 						blockList = [], webBlocks = {}, byWebsite, row;
@@ -107,8 +97,6 @@
 					}
 				});
 
-				editorCtrl.init('Rbs_Theme_Template');
-
 				scope.isEditorRow = function(row) {
 					return row.parameters;
 				};
@@ -117,7 +105,7 @@
 					return scope.block !== null;
 				};
 
-				scope.canChangeBlocName = function(row) {
+				scope.canChangeBlockName = function(row) {
 					return !(scope.inEditMode() || (scope.select.websiteId && !row.override));
 				};
 
@@ -174,7 +162,7 @@
 				};
 
 				scope.emptyBlock = function(row) {
-					var block =  scope.getBlockById(row.id);
+					var block = scope.getBlockById(row.id);
 					block.name = '';
 					block.parameters = {};
 					row.name = '';
@@ -215,32 +203,32 @@
 					row.override = false;
 				};
 
-				scope.hasTTL = function(seconds)
-				{
+				scope.hasTTL = function(seconds) {
 					return scope.blockParameters.TTL == seconds;
 				};
 
-				scope.setTTL = function(seconds)
-				{
+				scope.setTTL = function(seconds) {
 					scope.blockParameters.TTL = seconds;
 				};
 
-				scope.isVisibleFor = function (device) {
+				scope.isVisibleFor = function(device) {
 					if (device == 'raw') {
 						return scope.block.visibility == 'raw';
-					} else if (scope.block.visibility == 'raw') {
+					}
+					else if (scope.block.visibility == 'raw') {
 						return false;
 					}
 					return (!scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
 				};
 
-				scope.toggleVisibility = function (device) {
+				scope.toggleVisibility = function(device) {
 					var value = !scope.isVisibleFor(device), splat;
 
 					if (device == 'raw') {
 						if (value) {
 							scope.block.visibility = device;
-						} else {
+						}
+						else {
 							delete scope.block.visibility;
 						}
 						return;
@@ -251,21 +239,25 @@
 
 					if (scope.block.visibility) {
 						splat = scope.block.visibility.split('');
-						if (ArrayUtils.inArray(device, splat) !== -1 && ! value) {
+						if (ArrayUtils.inArray(device, splat) !== -1 && !value) {
 							ArrayUtils.removeValue(splat, device);
-						} else if (ArrayUtils.inArray(device, splat) === -1 && value) {
+						}
+						else if (ArrayUtils.inArray(device, splat) === -1 && value) {
 							splat.push(device);
 						}
 						splat.sort();
 						if (splat.join('') == '') {
 							delete scope.block.visibility;
-						} else {
+						}
+						else {
 							scope.block.visibility = splat.join('');
 						}
-					} else {
+					}
+					else {
 						if (value) {
 							scope.block.visibility = device;
-						} else {
+						}
+						else {
 							switch (device) {
 								case 'X' :
 									scope.block.visibility = 'SML';
@@ -287,6 +279,6 @@
 		};
 	}
 
-	editorRbsThemeTemplate.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemeTemplate', editorRbsThemeTemplate);
+	rbsDocumentEditorRbsThemeTemplateEdit.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemeTemplateEdit', rbsDocumentEditorRbsThemeTemplateEdit);
 })();

@@ -1,32 +1,20 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	/**
-	 * @constructor
-	 */
-	function Editor($compile)
-	{
+	function rbsDocumentEditorRbsSimpleformField($compile) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Simpleform/Field/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope, elm, attrs, editorCtrl)
-			{
-				scope.fieldTypeUpdated = function ()
-				{
+			link: function(scope, elm, attrs, editorCtrl) {
+				scope.fieldTypeUpdated = function() {
 					var directiveName = scope.document.fieldTypeCode;
 
-					if (! directiveName)
-					{
+					if (!directiveName) {
 						elm.find('[data-role="fieldTypeConfig"]').empty();
 					}
-					else
-					{
-						var callback = function (element)
-						{
+					else {
+						var callback = function(element) {
 							elm.find('[data-role="fieldTypeConfig"]').replaceWith(element);
 						};
 						directiveName = directiveName.replace(/_/g, '-').replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase();
@@ -36,8 +24,7 @@
 				};
 
 				scope.onLoad = function() {
-					if (!angular.isObject(scope.document.parameters) || angular.isArray(scope.document.parameters))
-					{
+					if (!angular.isObject(scope.document.parameters) || angular.isArray(scope.document.parameters)) {
 						scope.document.parameters = {};
 					}
 				};
@@ -45,12 +32,11 @@
 				scope.onReady = function() {
 					scope.fieldTypeUpdated();
 				};
-
-				editorCtrl.init('Rbs_Simpleform_Field');
 			}
 		};
 	}
 
-	Editor.$inject = ['$compile'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsSimpleformField', Editor);
+	rbsDocumentEditorRbsSimpleformField.$inject = ['$compile'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsSimpleformFieldNew', rbsDocumentEditorRbsSimpleformField);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsSimpleformFieldEdit', rbsDocumentEditorRbsSimpleformField);
 })();

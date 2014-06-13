@@ -218,8 +218,7 @@
 					return function() {
 						var property = $scope.modelInfo.properties[propertyName];
 						var params = {
-							selector: true,
-							property: propertyName,
+							selector: true,							property: propertyName,
 							propertyType: property.type,
 							model: model,
 							label: title,

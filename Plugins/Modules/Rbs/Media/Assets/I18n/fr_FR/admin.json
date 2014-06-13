@@ -13,5 +13,20 @@
 	},
 	"find_images":{
 		"message":"trouver des images"
+	},
+	"image_file_informations":{
+		"message":"informations sur le fichier"
+	},
+	"image_dimensions":{
+		"message":"dimensions"
+	},
+	"image_megapixels":{
+		"message":"megapixels"
+	},
+	"image_pixels":{
+		"message":"pixels"
+	},
+	"image_file":{
+		"message":"fichier"
 	}
 }

@@ -1,0 +1,160 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Theme_Template">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Theme_Template'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-theme-template-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="label" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Theme_Template', 'label'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Theme_Template', 'contentByWebsite'), ['ucf']) }}">
+					<rbs-document-select ng-model="select.websiteId" value-ids="true" accepted-model="Rbs_Website_Website"
+						empty-label="{{ i18nAttr('m.rbs.theme.admin.default_configuration', ['ucf']) }}">
+					</rbs-document-select>
+				</rbs-field>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th style="width:20%">{{ i18n('m.rbs.theme.admin.templates_zone_id', ['ucf']) }}</th>
+							<th style="width:50%">{{ i18n('m.rbs.theme.admin.templates_block', ['ucf']) }}</th>
+							<th style="width:30%"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-ng-repeat="row in blockList">
+							<td data-ng-if="isEditorRow(row)" colspan="3" data-ng-init="labelClass = 'col-lg-3'; controlsClass = 'col-lg-9'">
+								<div class="form-group">
+									<label class="control-label col-lg-3">{{ i18nAttr('m.rbs.admin.admin.block_visibility', ['ucf']) }}</label>
+									<div class="controls col-lg-9">
+										<div class="btn-toolbar" role="toolbar">
+											<div class="btn-group">
+												<button type="button" class="btn btn-sm" data-ng-click="toggleVisibility('X')"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('X')]">
+													{{ i18n('m.rbs.admin.admin.block_visibility_x', ['ucf']) }}
+												</button>
+												<button type="button" class="btn btn-sm" data-ng-click="toggleVisibility('S')"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('S')]">
+													{{ i18n('m.rbs.admin.admin.block_visibility_s', ['ucf']) }}
+												</button>
+												<button type="button" class="btn btn-sm" data-ng-click="toggleVisibility('M')"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('M')]">
+													{{ i18n('m.rbs.admin.admin.block_visibility_m', ['ucf']) }}
+												</button>
+												<button type="button" class="btn btn-sm" data-ng-click="toggleVisibility('L')"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('L')]">
+													{{ i18n('m.rbs.admin.admin.block_visibility_l', ['ucf']) }}
+												</button>
+											</div>
+											<button type="button" class="btn btn-sm" data-ng-click="toggleVisibility('raw')"
+												data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('raw')]">
+												{{ i18n('m.rbs.admin.admin.block_visibility_raw', ['ucf']) }}
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-lg-3">{{ i18nAttr('m.rbs.admin.admin.block_ttl', ['ucf']) }}</label>
+									<div class="controls col-lg-9">
+										<div class="form-inline">
+											<div class="btn-group">
+												<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(0)"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(0)]">
+													{{ i18n('m.rbs.admin.admin.block_ttl_none', ['ucf']) }}
+												</button>
+												<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(60)"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(60)]"
+													title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1minute', ['ucf']) }}">
+													{{ i18n('m.rbs.admin.admin.block_ttl_1m', ['ucf']) }}
+												</button>
+												<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(600)"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(600)]"
+													title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_10minutes', ['ucf']) }}">
+													{{ i18n('m.rbs.admin.admin.block_ttl_10m', ['ucf']) }}
+												</button>
+												<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(3600)"
+													data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(3600)]"
+													title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1hour', ['ucf']) }}">
+													{{ i18n('m.rbs.admin.admin.block_ttl_1h', ['ucf']) }}
+												</button>
+											</div>
+											<input type="number" data-rbs-integer="" class="form-control input-sm"
+												data-ng-model="blockParameters.TTL" size="4" />
+										</div>
+									</div>
+								</div>
+								<div data-ng-include="row.template"></div>
+								<div class="form-group">
+									<div class="col-lg-offset-3 col-lg-9">
+										<button data-ng-click="closeBlock($index)" class="btn btn-default btn-sm" type="button">
+											{{ i18n('m.rbs.theme.admin.templates_close', ['ucf']) }}
+										</button>
+									</div>
+								</div>
+							</td>
+							<td data-ng-if="!isEditorRow(row)"><div class="form-control-static">(= row.id =)</div></td>
+							<td data-ng-if="!isEditorRow(row)">
+								<div data-ng-show="!canChangeBlockName(row)" class="form-control-static">
+									<strong data-ng-show="row.id == block.id">(= row.block.label || row.name =)</strong>
+									<span data-ng-show="row.id != block.id">(= row.block.label || row.name =)</span>
+								</div>
+								<div data-ng-show="canChangeBlockName(row)">
+									<rbs-block-selector block="row.block" selected="(= row.name =)"
+										mail-suitable="(= document.mailSuitable =)"></rbs-block-selector>
+								</div>
+							</td>
+							<td data-ng-if="!isEditorRow(row)">
+								<div data-ng-if="!inEditMode()">
+									<button class="btn btn-default" type="button"
+										data-ng-click="addBlockOverride(row)" data-ng-show="canOverrideBlock(row)">
+										{{ i18n('m.rbs.theme.admin.templates_override', ['ucf']) }}
+									</button>
+									<button class="btn btn-default" type="button"
+										data-ng-click="removeBlockOverride(row)" data-ng-show="canRemoveOverrideBlock(row)">
+										{{ i18n('m.rbs.theme.admin.templates_removeoverride', ['ucf']) }}
+									</button>
+									<button class="btn btn-default" type="button"
+										data-ng-click="parametrizeBlock($index)" data-ng-show="canParametrizeBlock(row)">
+										{{ i18n('m.rbs.theme.admin.templates_parametrize', ['ucf']) }}
+									</button>
+									<button class="btn btn-default" type="button"
+										data-ng-click="emptyBlock(row)" data-ng-show="canEmptyBlock(row)">
+										{{ i18n('m.rbs.theme.admin.templates_clear', ['ucf']) }}
+									</button>
+								</div>
+								<div data-ng-if="inEditMode() && block.id == row.id">
+									<button data-ng-click="closeBlock($index+1)" class="btn btn-default" type="button">
+										{{ i18n('m.rbs.theme.admin.templates_close', ['ucf']) }}
+									</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

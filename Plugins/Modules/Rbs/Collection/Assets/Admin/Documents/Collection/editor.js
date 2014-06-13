@@ -45,7 +45,7 @@
 
 				scope.deleteItem = function(itemToBeDeleted) {
 					var index = null;
-					angular.forEach(scope.document.fields, function(item, i) {
+					angular.forEach(scope.document.items, function(item, i) {
 						if (item.id === itemToBeDeleted.id) {
 							index = i;
 						}

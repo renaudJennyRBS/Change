@@ -3,8 +3,7 @@
 		"module": "Rbs_Mail",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Mail/Mail/",
-			"labelKey": "m.rbs.mail.admin.module_name | ucf"
+			"redirectTo": "/Rbs/Mail/Mail/"
 		},
 		"auto": false
 	},
@@ -19,9 +18,9 @@
 	},
 	"/Rbs/Mail/Mail/:id": {
 		"model": "Rbs_Mail_Mail",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
+			"templateUrl": "Document/Rbs/Mail/Mail/edit.twig",
 			"labelKey": "m.rbs.mail.documents.mail | ucf",
 			"labelId": "id"
 		},
@@ -31,18 +30,9 @@
 		"model": "Rbs_Mail_Mail",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
+			"templateUrl": "Document/Rbs/Mail/Mail/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Mail/Mail/new": {
-		"model": "Rbs_Mail_Mail",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Mail/Mail/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
 	}

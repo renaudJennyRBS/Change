@@ -1,0 +1,49 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<hr />
+
+<rbs-field property="confirmationMode" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationMode'), ['ucf']) }}">
+	<select class="form-control" ng-required="true" ng-model="document.confirmationMode"
+		rbs-items-from-collection="Rbs_Simpleform_ConfirmationModes">
+	</select>
+</rbs-field>
+
+<div ng-hide="document.confirmationMode == 'page'">
+	<rbs-field-rich-text property="confirmationMessage" profile="Website"
+		label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationMessage'), ['ucf']) }}">
+	</rbs-field-rich-text>
+</div>
+<div ng-show="document.confirmationMode == 'page'">
+	<rbs-field-picker property="confirmationPage" accepted-model="Rbs_Website_StaticPage"
+		label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'confirmationPage'), ['ucf']) }}"
+		selector-title="{{ i18nAttr('m.rbs.simpleform.documents.form.confirmationpage_picker_title', ['ucf']) }}">
+	</rbs-field-picker>
+</div>
+
+<hr />
+
+<rbs-field-picker-multiple property="receiverUsers" accepted-model="Rbs_User_User"
+		label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverUsers'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.simpleform.admin.form_receiverusers_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>
+
+<rbs-field-picker-multiple property="receiverGroups" accepted-model="Rbs_User_Group"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverGroups'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.simpleform.admin.form_receivergroups_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>
+
+<rbs-field-text property="receiverEmails"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'receiverEmails'), ['ucf']) }}">
+</rbs-field-text>
+
+<hr />
+
+<rbs-field-boolean property="sendAcknowledgment"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'sendAcknowledgment'), ['ucf']) }}">
+</rbs-field-boolean>
+<rbs-field-boolean property="saveResponses"
+	label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'saveResponses'), ['ucf']) }}">
+</rbs-field-boolean>

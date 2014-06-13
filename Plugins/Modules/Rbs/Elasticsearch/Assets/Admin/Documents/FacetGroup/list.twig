@@ -1,24 +1,26 @@
 <div class="row">
-
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facetgroup_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-			model="Rbs_Elasticsearch_FacetGroup" filter="filter"></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Elasticsearch_FacetGroup"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			{% for newDocumentLink in attributes['newDocumentLinks'] %}
-				<a href ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">{{ newDocumentLink.label }}</a>
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
 			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsElasticsearchFacetGroup" model="Rbs_Elasticsearch_FacetGroup"
-			filter-collection="filter" activable="true" correction="true">
+		<rbs-document-list data-dlid="DLRbsElasticsearchFacetGroup"
+			model="Rbs_Elasticsearch_FacetGroup"
+			activable="true" correction="true" filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

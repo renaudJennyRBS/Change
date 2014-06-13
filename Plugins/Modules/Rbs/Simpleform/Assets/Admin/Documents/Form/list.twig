@@ -1,17 +1,21 @@
 <div class="row">
-
-	<div rbs-full-width>
+	<div data-rbs-full-width="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.simpleform.admin.form_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Simpleform_Form" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Simpleform_Form"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Simpleform_Form' | rbsURL:'new' =)">{{ i18n('m.rbs.simpleform.admin.form_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLCollection1" model="Rbs_Simpleform_Form" filter-collection="filter" publishable="true">
+		<rbs-document-list data-dlid="DLRbsSimpleformForm"
+			model="Rbs_Simpleform_Form"
+			publishable="true" filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

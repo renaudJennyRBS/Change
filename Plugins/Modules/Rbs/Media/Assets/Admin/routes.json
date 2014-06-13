@@ -19,9 +19,9 @@
 	},
 	"/Rbs/Media/Image/:id": {
 		"model": "Rbs_Media_Image",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Media/Image/form.twig",
+			"templateUrl": "Document/Rbs/Media/Image/edit.twig",
 			"labelKey": "m.rbs.media.documents.image | ucf",
 			"labelId": "id"
 		},
@@ -31,7 +31,7 @@
 		"model": "Rbs_Media_Image",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Media/Image/form.twig",
+			"templateUrl": "Document/Rbs/Media/Image/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -41,7 +41,7 @@
 		"model": "Rbs_Media_Image",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Media/Image/form.twig",
+			"templateUrl": "Document/Rbs/Media/Image/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
