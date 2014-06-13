@@ -41,7 +41,14 @@ class Request extends \Change\Http\Request
 					{
 						if (is_array($data))
 						{
-							$this->setPost(new Parameters($data));
+							if (\Zend\Stdlib\ArrayUtils::isList($data))
+							{
+								$this->setPost(new Parameters(['data' => $data]));
+							}
+							else
+							{
+								$this->setPost(new Parameters($data));
+							}
 						}
 					}
 				}
