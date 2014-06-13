@@ -1,4 +1,7 @@
 {
+	"image":{
+		"message":"image"
+	},
 	"image_alt":{
 		"message":"texte alternatif"
 	},
@@ -13,20 +16,5 @@
 	},
 	"image_mimetype":{
 		"message":"type MIME"
-	},
-	"image_file_informations":{
-		"message":"informations sur le fichier"
-	},
-	"image_dimensions":{
-		"message":"dimensions"
-	},
-	"image_megapixels":{
-		"message":"megapixels"
-	},
-	"image_file":{
-		"message":"fichier"
-	},
-	"image":{
-		"message":"image"
 	}
 }

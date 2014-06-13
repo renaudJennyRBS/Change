@@ -1,0 +1,52 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Media_Image">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Media_Image'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-media-image-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				{% include '@Rbs_Media/Documents/Image/properties.twig' %}
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="fileinfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.media.admin.image_file_informations', ['ucf']) }}">
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'width'), ['ucf']) }}">
+					<div class="form-control-static">
+						(= document.width | number =)
+						<abbr title="{{ i18nAttr('m.rbs.media.admin.image_pixels', ['ucf']) }}">px</abbr>
+					</div>
+				</rbs-field>
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'height'), ['ucf']) }}">
+					<div class="form-control-static">
+						(= document.height | number =)
+						<abbr title="{{ i18nAttr('m.rbs.media.admin.image_pixels', ['ucf']) }}">px</abbr>
+					</div>
+				</rbs-field>
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'mimeType'), ['ucf']) }}">
+					<div class="form-control-static">(= document.mimetype =)</div>
+				</rbs-field>
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>
