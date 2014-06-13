@@ -98,9 +98,10 @@ class MenuComposer
 				{
 					foreach ($tn->setTreeManager($this->treeManager)->getChildren() as $child)
 					{
-						if ($this->shouldBeDisplayed($doc))
+						$childDoc = $child->getDocument();
+						if ($this->shouldBeDisplayed($childDoc, $doc))
 						{
-							$entry->addChild($this->getMenuEntry($website, $child->getDocument(), $maxLevel - 1, $currentPage,
+							$entry->addChild($this->getMenuEntry($website, $childDoc, $maxLevel - 1, $currentPage,
 								$path));
 						}
 					}
@@ -119,19 +120,22 @@ class MenuComposer
 					{
 						if (isset($item['documentId']))
 						{
-							$subDoc = $this->documentManager->getDocumentInstance($item['documentId']);
-							$subEntry = $this->getMenuEntry($website, $subDoc, $maxLevel - 1, $currentPage, $path);
-							if ($subEntry !== null)
+							$childDoc = $this->documentManager->getDocumentInstance($item['documentId']);
+							if ($this->shouldBeDisplayed($childDoc, $doc))
 							{
-								if (isset($item['titleKey']))
+								$subEntry = $this->getMenuEntry($website, $childDoc, $maxLevel - 1, $currentPage, $path);
+								if ($subEntry !== null)
 								{
-									$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
+									if (isset($item['titleKey']))
+									{
+										$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
+									}
+									elseif (isset($item['title']))
+									{
+										$subEntry->setTitle($item['title']);
+									}
+									$entry->addChild($subEntry);
 								}
-								elseif (isset($item['title']))
-								{
-									$subEntry->setTitle($item['title']);
-								}
-								$entry->addChild($subEntry);
 							}
 						}
 						elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
@@ -157,17 +161,21 @@ class MenuComposer
 
 	/**
 	 * @param \Change\Documents\AbstractDocument $doc
+	 * @param \Change\Documents\AbstractDocument $parent
 	 * @return boolean
 	 */
-	protected function shouldBeDisplayed($doc)
+	protected function shouldBeDisplayed($doc, $parent)
 	{
 		if (!($doc instanceof \Change\Documents\Interfaces\Publishable) || !$doc->published())
 		{
 			return false;
 		}
-		if ($doc instanceof \Rbs\Website\Documents\StaticPage && $doc->getHideLinks())
+		if (!($parent instanceof \Rbs\Website\Documents\Menu))
 		{
-			return false;
+			if ($doc instanceof \Rbs\Website\Documents\StaticPage && $doc->getHideLinks())
+			{
+				return false;
+			}
 		}
 		return true;
 	}
