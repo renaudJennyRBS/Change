@@ -236,7 +236,9 @@ class FullTextIndexer
 							$pv = $property->getValue($document);
 							if ($pv instanceof RichtextProperty)
 							{
-								$content[] = $pv->getRawText();
+								$context = ['website' => $fulltext->getWebsite()];
+								$text = $event->getApplicationServices()->getRichTextManager()->render($pv, "Website", $context);
+								$content[] = strip_tags($text, '<p><br>');
 							}
 						}
 					}
