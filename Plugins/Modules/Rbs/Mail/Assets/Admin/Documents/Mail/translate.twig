@@ -1,0 +1,68 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Mail_Mail">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Mail_Mail'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+
+		<div class="panel panel-default" id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+			</div>
+			<div class="panel-body">
+				<div id="rbsStructureEditorBlockPropertiesPopup"
+					data-no-block-text="{{ i18nAttr('m.rbs.website.admin.no_block_selected', ['ucf']) }}"
+					data-edit-in-content="{{ i18nAttr('m.rbs.website.admin.edit_in_content', ['ucf']) }}">
+					{{ i18n('m.rbs.website.admin.no_block_selected', ['ucf']) }}
+				</div>
+			</div>
+		</div>
+
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit="" data-rbs-document-editor-translate=""
+			data-rbs-document-editor-rbs-mail-mail-translate="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="subject" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'subject'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-text property="senderName" 
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderName'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-text property="senderMail" 
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderMail'), ['ucf']) }}">
+				</rbs-field-text>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="content"
+				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'editableContent'), ['ucf']) }}">
+				<div data-rbs-tip="Rbs_MailEditor_Markdown">
+					{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
+				</div>
+
+				<rbs-structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
+					template="(= template =)" substitution-variables="(= document.substitutions =)">
+				</rbs-structure-editor>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

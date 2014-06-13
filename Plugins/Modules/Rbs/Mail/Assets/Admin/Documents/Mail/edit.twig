@@ -1,0 +1,117 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Mail_Mail">
+	<div class="col-md-12">
+		<button data-ng-if="!document.isVariation" type="button" class="btn btn-default pull-right" style="margin-left: 5px;"
+			data-ng-click="addMailVariation()">
+			<i class="icon-mail-reply-all"></i> {{ i18n('m.rbs.mail.admin.mail_add_mail_variation', ['ucf']) }}
+		</button>
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Mail_Mail'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+
+		<div class="panel panel-default" id="rbsWebsitePageBlockPropertiesAside" style="display: none;">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ i18n('m.rbs.website.admin.block_properties', ['ucf']) }}</h3>
+			</div>
+			<div class="panel-body">
+				<div id="rbsStructureEditorBlockPropertiesPopup"
+					data-no-block-text="{{ i18nAttr('m.rbs.website.admin.no_block_selected', ['ucf']) }}"
+					data-edit-in-content="{{ i18nAttr('m.rbs.website.admin.edit_in_content', ['ucf']) }}">
+					{{ i18n('m.rbs.website.admin.no_block_selected', ['ucf']) }}
+				</div>
+			</div>
+		</div>
+
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-mail-mail-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field property="code" label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'code'), ['ucf']) }}">
+					<p class="form-control-static">(= document.code =)</p>
+				</rbs-field>
+
+				<rbs-field-text property="label" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'label'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field property="subject" label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'subject'), ['ucf']) }}"
+					required="true">
+					<div class="input-group">
+						<input type="text" class="form-control" data-ng-model="document.subject" />
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								{{ i18n('m.rbs.mail.documents.mail_substitutions', ['ucf']) }} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu pull-right">
+								<li data-ng-repeat="variable in document.substitutions">
+									<a href="" data-ng-click="addSubstitutionVariable(variable)">(= variable =)</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</rbs-field>
+
+				<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'template'), ['ucf']) }}"
+					required="true" property="template" ng-model="document.template"
+					empty-label="{{ i18nAttr('m.rbs.mail.admin.mail_empty_mailtemplate', ['ucf']) }}"
+					accepted-model="Rbs_Theme_Template" filter-property="mailSuitable" filter-value="1">
+				</rbs-field-document-select>
+
+				<rbs-field-text property="senderName"
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderName'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-text property="senderMail"
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'senderMail'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-picker-multiple ng-if="document.isVariation" property="websites" accepted-model="Rbs_Website_Website"
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'websites'), ['ucf']) }}"
+					selector-title="{{ i18nAttr('m.rbs.mail.admin.mail_websites_picker_title', ['ucf']) }}"
+					allow-creation="false">
+				</rbs-field-picker-multiple>
+
+				<rbs-field-boolean property="useCache"
+					label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'useCache'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<div data-ng-show="document.useCache">
+					<rbs-field property="TTL" label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'TTL'), ['ucf']) }}">
+						<input class="form-control" size="7" data-rbs-smart-float="" data-ng-model="document.TTL" min="0"
+							type="number" />
+						<span class="help-block">{{ i18n('m.rbs.website.admin.page_ttl_help') }}</span>
+					</rbs-field>
+				</div>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="content"
+				data-editor-section-label="{{ i18nAttr(propertyKey('Rbs_Mail_Mail', 'editableContent'), ['ucf']) }}">
+				<div data-rbs-tip="Rbs_MailEditor_Markdown">
+					{{ i18n('m.rbs.admin.admin.rbs_pageeditor_markdown') | raw }}
+				</div>
+
+				<rbs-structure-editor property="editableContent" name="contents" ng-model="document.editableContent"
+					template="(= template =)" substitution-variables="(= document.substitutions =)">
+				</rbs-structure-editor>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

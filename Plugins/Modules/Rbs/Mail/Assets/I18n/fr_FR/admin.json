@@ -1,12 +1,12 @@
 {
 	"module_name":{
-		"message":"Mail"
+		"message":"mails"
 	},
 	"module_keywords":{
 		"message":"mail, email, e-mail, notification"
 	},
 	"mail_list":{
-		"message":"mail"
+		"message":"mails"
 	},
 	"mail_websites_picker_title":{
 		"message":"sélection des sites rattachés au mail"
