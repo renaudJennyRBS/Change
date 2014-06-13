@@ -1,0 +1,16 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'indexId'), ['ucf']) }}" required="true">
+	<select ng-model="document.indexId" class="form-control" required="true"
+			rbs-items-from-collection="Rbs_Elasticsearch_Collection_Indexes">
+		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
+	</select>
+</rbs-field>
+
+<rbs-field-picker-multiple required="true" property="facets"
+		label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_FacetGroup', 'facets'), ['ucf']) }}"
+		accepted-model="Rbs_Elasticsearch_Facet"
+		selector-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facetgroup_facets_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>
