@@ -1,0 +1,55 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Seo_ModelConfiguration">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Seo_ModelConfiguration'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-seo-model-configuration-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="modelName" disabled=""
+					label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'modelName'), ['ucf']) }}"></rbs-field-text>
+
+				<hr />
+
+				<rbs-field-boolean property="documentSeoAutoGenerate"
+					label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field
+					label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.sitemapDefaultChangeFrequency"
+						data-rbs-items-from-collection="Rbs_Seo_Collection_SitemapChangeFrequency">
+						<option value="">
+							{{ i18n('m.rbs.seo.admin.documentseo_sitemap_change_frequency_option', ['ucf']) }}
+						</option>
+					</select>
+				</rbs-field>
+
+				<rbs-field-float property="sitemapDefaultPriority"
+					label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultPriority'), ['ucf']) }}">
+				</rbs-field-float>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="meta"
+				data-editor-section-label="{{ i18nAttr('m.rbs.seo.admin.meta', ['ucf']) }}">
+
+				{% include '@Rbs_Seo/Documents/ModelConfiguration/localized-properties.twig' %}
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

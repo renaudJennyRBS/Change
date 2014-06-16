@@ -1,53 +1,36 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	/**
-	 * @param $http
-	 * @param REST
-	 * @param NotificationCenter
-	 * @param Utils
-	 * @constructor
-	 */
-	function Editor($http, REST, NotificationCenter, Utils, ErrorFormatter)
-	{
+	function rbsDocumentEditorRbsSeoDocumentSeo($http, REST, Utils) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Seo/DocumentSeo/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope, elm, attrs, editorCtrl)
-			{
-				scope.addMetaVariable = function (meta, variable)
-				{
-					if (scope.document[meta])
-					{
+			link: function(scope, elm, attrs, editorCtrl) {
+				scope.addMetaVariable = function(meta, variable) {
+					if (scope.document[meta]) {
 						scope.document[meta] += '{' + variable + '}';
 					}
-					else
-					{
+					else {
 						scope.document[meta] = '{' + variable + '}';
 					}
 				};
 
-				scope.onLoad = function () {
+				scope.onLoad = function() {
 					var target = scope.document.target;
-					if (target)
-					{
+					if (target) {
 						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'modelName': target.model });
-						$http.get(REST.getBaseUrl(url)).success(function (data){
+						$http.get(REST.getBaseUrl(url)).success(function(data) {
 							scope.metaVariables = data;
 							scope.variableCount = Object.keys(data).length;
 						});
 					}
 				};
-
-				editorCtrl.init('Rbs_Seo_DocumentSeo');
 			}
 		};
 	}
 
-	Editor.$inject = ['$http', 'RbsChange.REST', 'RbsChange.NotificationCenter', 'RbsChange.Utils', 'RbsChange.ErrorFormatter'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeo', Editor);
+	rbsDocumentEditorRbsSeoDocumentSeo.$inject = ['$http', 'RbsChange.REST', 'RbsChange.Utils'];
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeoEdit', rbsDocumentEditorRbsSeoDocumentSeo);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsSeoDocumentSeoTranslate', rbsDocumentEditorRbsSeoDocumentSeo);
 })();

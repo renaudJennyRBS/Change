@@ -20,13 +20,16 @@
 {% if property.type == 'text' or property.type == 'rich-text' %}
 
 				<rbs-field-{{ property.type }} property="{{ property.name }}" {% if property.required %}required="true"{% endif %}
-
 					label="{{ '{{' }} i18nAttr(propertyKey('{{ property.modelName }}', '{{ property.name }}'), ['ucf']) {{ '}}' }}"
 					{%- if property.type == 'picker' or property.type == 'picker-multiple' %}
-
 					accepted-model="{{ property.documentType }}"
 					{%- endif -%}>
 				</rbs-field-{{ property.type }}>
+{% else %}
+
+				<!-- cannot generate form for property "{{ property.name }}".
+					label="{{ '{{' }} i18nAttr(propertyKey('{{ property.modelName }}', '{{ property.name }}'), ['ucf']) {{ '}}' }}"
+				-->
 {% endif %}
 {% endfor %}
 			</fieldset>
