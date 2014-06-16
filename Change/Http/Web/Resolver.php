@@ -11,7 +11,6 @@ namespace Change\Http\Web;
 use Change\Http\BaseResolver;
 use Change\Http\Web\Actions\DisplayDocument;
 use Change\Http\Web\Actions\ExecuteByName;
-use Change\Http\Web\Actions\GeneratePathRule;
 use Change\Http\Web\Actions\GetStorageItemContent;
 use Change\Http\Web\Actions\GetThemeResource;
 use Change\Http\Web\Actions\RedirectPathRule;
@@ -78,14 +77,6 @@ class Resolver extends BaseResolver
 				}
 				else
 				{
-					$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
-					$action = function ($event)
-					{
-						$action = new GeneratePathRule();
-						$action->execute($event);
-					};
-					$this->setPathRuleAuthorization($event, $authorizedSectionId, $pathRule->getWebsiteId());
-					$event->setAction($action);
 					return;
 				}
 			}
