@@ -1,28 +1,36 @@
 <div class="row">
-
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
-		<rbs-page-header title="{{ i18nAttr('m.rbs.seo.admin.document_seo_auto_generation', ['ucf']) }}"></rbs-page-header><br />
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Seo_ModelConfiguration" filter="filter" ></rbs-document-filter-panel>
+	<div data-rbs-main-column="">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.seo.admin.modelconfiguration_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Seo_ModelConfiguration"></rbs-document-filter-panel>
 
-		<div rbs-tip="Rbs_Seo_ModelConfigurationList">
-			{{ i18n('m.rbs.seo.admin.modelconfiguration_list_help') | raw }}
+		<div class="add-elements-bar">
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLCollectionModelConfiguration" model="Rbs_Seo_ModelConfiguration"
-				filter-collection="filter" modificationDate="false" actions="" correction="true">
+		<rbs-document-list data-dlid="DLRbsSeoModelConfiguration" model="Rbs_Seo_ModelConfiguration"
+			correction="true" modificationDate="false" actions="" filter-collection="filter">
 			<rbs-quick-actions></rbs-quick-actions>
-			<rbs-column name="label" primary="true" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'label'), ['ucf']) }}"></rbs-column>
-			<rbs-column name="documentSeoAutoGenerate" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}">
+			<rbs-column name="label" primary="true"
+				label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'label'), ['ucf']) }}"></rbs-column>
+			<rbs-column name="documentSeoAutoGenerate"
+				label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'documentSeoAutoGenerate'), ['ucf']) }}">
 				(= doc.documentSeoAutoGenerate | rbsBoolean =)
 			</rbs-column>
-			<rbs-column name="sitemapDefaultChangeFrequency" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}"></rbs-column>
-			<rbs-column name="sitemapDefaultPriority" label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultPriority'), ['ucf']) }}"></rbs-column>
+			<rbs-column name="sitemapDefaultChangeFrequency"
+				label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultChangeFrequency'), ['ucf']) }}">
+			</rbs-column>
+			<rbs-column name="sitemapDefaultPriority"
+				label="{{ i18n(propertyKey('Rbs_Seo_ModelConfiguration', 'sitemapDefaultPriority'), ['ucf']) }}"></rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

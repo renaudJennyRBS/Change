@@ -19,9 +19,9 @@
 	},
 	"/Rbs/Seo/DocumentSeo/:id": {
 		"model": "Rbs_Seo_DocumentSeo",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
+			"templateUrl": "Document/Rbs/Seo/DocumentSeo/edit.twig",
 			"labelKey": "m.rbs.seo.documents.documentseo | ucf",
 			"labelId": "id"
 		},
@@ -31,18 +31,9 @@
 		"model": "Rbs_Seo_DocumentSeo",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
+			"templateUrl": "Document/Rbs/Seo/DocumentSeo/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Seo/DocumentSeo/new": {
-		"model": "Rbs_Seo_DocumentSeo",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Seo/DocumentSeo/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
 	},
@@ -57,9 +48,9 @@
 	},
 	"/Rbs/Seo/ModelConfiguration/:id": {
 		"model": "Rbs_Seo_ModelConfiguration",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
+			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/edit.twig",
 			"labelKey": "m.rbs.seo.documents.modelconfiguration | ucf",
 			"labelId": "id"
 		},
@@ -69,18 +60,9 @@
 		"model": "Rbs_Seo_ModelConfiguration",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
+			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Seo/ModelConfiguration/new": {
-		"model": "Rbs_Seo_ModelConfiguration",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Seo/ModelConfiguration/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
 	}
