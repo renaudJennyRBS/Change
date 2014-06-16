@@ -125,6 +125,7 @@ class DocumentLocalizedClass
 	{
 		$modifiedProperties = array();
 		$removeOldPropertiesValue = array();
+		$clearModifiedProperties = array();
 		$code = '';
 		foreach ($properties as $property)
 		{
@@ -137,6 +138,7 @@ class DocumentLocalizedClass
 				if ($property->getType() === 'RichText')
 				{
 					$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' !== null) {$this->'.$propertyName.'->setAsDefault();} return;';
+					$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
 				}
 				else
 				{
@@ -191,6 +193,17 @@ class DocumentLocalizedClass
 		}
 	}' . PHP_EOL;
 		}
+
+		if (count($clearModifiedProperties))
+		{
+			$code .= '
+	protected function clearModifiedProperties()
+	{
+		parent::clearModifiedProperties();
+		' . implode(PHP_EOL . '		', $clearModifiedProperties) . '
+	}' . PHP_EOL;
+		}
+
 		return $code;
 	}
 
