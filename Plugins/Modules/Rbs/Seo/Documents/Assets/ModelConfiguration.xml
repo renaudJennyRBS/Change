@@ -13,5 +13,7 @@
 		<property name="defaultMetaTitle" type="LongString" localized="true" has-correction="true" />
 		<property name="defaultMetaDescription" type="LongString" localized="true" has-correction="true" />
 		<property name="defaultMetaKeywords" type="LongString" localized="true" has-correction="true" />
+
+		<property name="pathTemplate" type="String" localized="true" has-correction="true" />
 	</properties>
 </document>

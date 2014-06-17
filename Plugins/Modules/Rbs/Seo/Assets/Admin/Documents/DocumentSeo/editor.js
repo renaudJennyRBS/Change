@@ -19,10 +19,10 @@
 				scope.onLoad = function() {
 					var target = scope.document.target;
 					if (target) {
-						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'modelName': target.model });
+						var url = Utils.makeUrl('Rbs/Seo/GetVariables', { 'modelName': target.model });
 						$http.get(REST.getBaseUrl(url)).success(function(data) {
-							scope.metaVariables = data;
-							scope.variableCount = Object.keys(data).length;
+							scope.metaVariables = data.metaVariables;
+							scope.pathVariables = data.pathVariables;
 						});
 					}
 				};

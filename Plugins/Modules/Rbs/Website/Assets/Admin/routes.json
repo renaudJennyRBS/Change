@@ -84,6 +84,14 @@
 		"auto": false
 	},
 	"/Rbs/Website/Menu/new": false,
+	"/Rbs/Website/Section/Browse/": {
+		"model": "Rbs_Website_Section",
+		"name": "selector",
+		"rule": {
+			"redirectTo": "/Rbs/Website/Topic/Browse/"
+		},
+		"auto": false
+	},
 	"/Rbs/Website/SectionPageFunction/": {
 		"model": "Rbs_Website_SectionPageFunction",
 		"name": "list",

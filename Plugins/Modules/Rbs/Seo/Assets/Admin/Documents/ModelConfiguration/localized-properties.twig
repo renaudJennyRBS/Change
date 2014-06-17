@@ -1,4 +1,19 @@
 
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'pathTemplate'), ['ucf']) }}">
+			<div class="input-group">
+				<input type="text" class="form-control" data-ng-model="document.pathTemplate" />
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{ i18n('m.rbs.seo.admin.meta_variables', ['ucf']) }} <span class="caret"></span></button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(key, variable) in pathVariables">
+							<a href="" data-ng-click="addMetaVariable('pathTemplate', key)">(= variable =)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<span class="help-block">{{ i18n('m.rbs.seo.admin.path_template_help', ['ucf']) }}</span>
+		</rbs-field>
+
 
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Seo_ModelConfiguration', 'defaultMetaTitle'), ['ucf']) }}">
 			<div class="input-group">
@@ -41,4 +56,3 @@
 				</div>
 			</div>
 		</rbs-field>
-	</fieldset>

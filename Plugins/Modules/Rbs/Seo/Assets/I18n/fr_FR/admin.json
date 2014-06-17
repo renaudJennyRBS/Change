@@ -97,5 +97,8 @@
 	},
 	"documentseo_target_model":{
 		"message":"type de la cible"
+	},
+	"path_template_help":{
+		"message": "ex: {section.title}/{document.title}.{document.id}.html"
 	}
 }

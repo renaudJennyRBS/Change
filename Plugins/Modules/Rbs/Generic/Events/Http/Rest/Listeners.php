@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -198,10 +198,10 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Admin\Http\Rest\Actions\ModelsInfo())->execute($event);
 					});
 					break;
-				case 'Rbs/Seo/GetMetaVariables' :
+				case 'Rbs/Seo/GetVariables' :
 					$event->setAction(function (Event $event)
 					{
-						(new \Rbs\Seo\Http\Rest\Actions\GetMetaVariables())->execute($event);
+						(new \Rbs\Seo\Http\Rest\Actions\GetVariables())->execute($event);
 					});
 					break;
 				case 'Rbs/Seo/CreateSeoForDocument' :
