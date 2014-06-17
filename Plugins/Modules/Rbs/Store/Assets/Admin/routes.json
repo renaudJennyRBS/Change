@@ -10,9 +10,9 @@
 	},
 	"/Rbs/Commerce/WebStore/:id": {
 		"model": "Rbs_Store_WebStore",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
+			"templateUrl": "Document/Rbs/Store/WebStore/edit.twig",
 			"labelKey": "m.rbs.store.documents.webstore | ucf",
 			"labelId": "id"
 		},
@@ -22,7 +22,7 @@
 		"model": "Rbs_Store_WebStore",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
+			"templateUrl": "Document/Rbs/Store/WebStore/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -32,7 +32,7 @@
 		"model": "Rbs_Store_WebStore",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Store/WebStore/form.twig",
+			"templateUrl": "Document/Rbs/Store/WebStore/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
