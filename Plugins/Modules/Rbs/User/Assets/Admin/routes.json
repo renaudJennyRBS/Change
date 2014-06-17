@@ -19,9 +19,9 @@
 	},
 	"/Rbs/User/Group/:id": {
 		"model": "Rbs_User_Group",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/User/Group/form.twig",
+			"templateUrl": "Document/Rbs/User/Group/edit.twig",
 			"labelKey": "m.rbs.user.documents.group | ucf",
 			"labelId": "id"
 		},
@@ -38,9 +38,9 @@
 	},
 	"/Rbs/User/Group/:id/Permissions/": {
 		"model": "Rbs_User_Group",
-		"name": "permission",
+		"name": "permissions",
 		"rule": {
-			"templateUrl": "Document/Rbs/User/User/permission.twig",
+			"templateUrl": "Document/Rbs/User/User/permissions.twig",
 			"labelKey": "m.rbs.user.admin.permissions | ucf"
 		},
 		"auto": false
@@ -58,7 +58,7 @@
 		"model": "Rbs_User_Group",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/User/Group/form.twig",
+			"templateUrl": "Document/Rbs/User/Group/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
@@ -86,9 +86,9 @@
 	},
 	"/Rbs/User/User/:id": {
 		"model": "Rbs_User_User",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/User/User/form.twig",
+			"templateUrl": "Document/Rbs/User/User/edit.twig",
 			"labelKey": "m.rbs.user.documents.user | ucf",
 			"labelId": "id"
 		},
@@ -105,9 +105,9 @@
 	},
 	"/Rbs/User/User/:id/Permissions/": {
 		"model": "Rbs_User_User",
-		"name": "permission",
+		"name": "permissions",
 		"rule": {
-			"templateUrl": "Document/Rbs/User/User/permission.twig",
+			"templateUrl": "Document/Rbs/User/User/permissions.twig",
 			"labelKey": "m.rbs.user.admin.permissions | ucf"
 		},
 		"auto": false
@@ -125,7 +125,7 @@
 		"model": "Rbs_User_User",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/User/User/form.twig",
+			"templateUrl": "Document/Rbs/User/User/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

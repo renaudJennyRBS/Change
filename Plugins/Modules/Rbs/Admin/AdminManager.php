@@ -591,6 +591,10 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		return isset($args['attributes']) && is_array($args['attributes']) ? $args['attributes'] : [];
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \RuntimeException
+	 */
 	public function onDefaultGetModelTwigAttributes(\Change\Events\Event $event)
 	{
 		/* @var $model \Change\Documents\AbstractModel */
