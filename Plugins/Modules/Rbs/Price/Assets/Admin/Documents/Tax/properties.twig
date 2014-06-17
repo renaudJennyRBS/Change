@@ -1,0 +1,91 @@
+<rbs-field-text
+	property="label" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Price_Tax', 'label'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-text
+	property="code" required="false"
+	label="{{ i18nAttr(propertyKey('Rbs_Price_Tax', 'code'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Tax', 'rounding'), ['ucf']) }}">
+	<select name="rounding" class="form-control" data-ng-model="document.rounding"
+		data-rbs-items-from-collection="Rbs_Price_Collection_TaxRoundingStrategy">
+	</select>
+	<span class="help-block">{{ i18n('m.rbs.price.admin.tax_rounding_help') }}</span>
+</rbs-field>
+
+<rbs-field-boolean
+	property="cascading"
+	label="{{ i18nAttr(propertyKey('Rbs_Price_Tax', 'cascading'), ['ucf']) }}">
+	<span class="help-block">{{ i18n('m.rbs.price.admin.tax_cascading_help') }}</span>
+</rbs-field-boolean>
+
+<h3>{{ i18n(propertyKey('Rbs_Price_Tax', 'data'), ['ucf']) }}</h3>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th></th>
+			<th data-ng-repeat="cat in document.data.c">
+				(= cat =)
+				<br/>
+				<small><a data-ng-click="deleteCategory($index)">{{ i18n('m.rbs.price.admin.tax_delete_category') }}</a></small>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr data-ng-repeat="zone in document.data.z">
+		<td>(= zone =)
+			<br/>
+			<small data-ng-show="$index">
+				<a data-ng-click="makeDefaultZone($index)">{{ i18n('m.rbs.price.admin.tax_make_default_zone') }}</a> |
+			</small>
+			<small><a data-ng-click="deleteZone($index)">{{ i18n('m.rbs.price.admin.tax_delete_zone') }}</a></small>
+
+		</td>
+		<td data-ng-repeat="cat in document.data.c track by $index">
+			<div class="input-group">
+				<input type="text" data-rbs-smart-float="" class="form-control"
+					data-ng-model="document.data.r[$index][$parent.$index]" style="width: 70px;" />
+				<span class="input-group-addon">%</span>
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<div class="row">
+	<div class="col-sm-6">
+		<div class="small"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.tax_add_zone', ['ucf']) }}</div>
+		<div class="input-group">
+			<div class="input-group">
+				<input name="newZoneName" class="form-control" size="20" type="text" data-ng-model="newZoneName" />
+				<span class="input-group-btn">
+					<button data-ng-disabled="form.newZoneName.$error.zoneExists || !form.newZoneName.$viewValue" type="button"
+						class="btn btn-default" data-ng-click="addZone(newZoneName)">
+						{{ i18n('m.rbs.price.admin.add', ['ucf']) }}
+					</button>
+				</span>
+			</div>
+		</div>
+		<p class="text-danger" data-ng-show="form.newZoneName.$error.zoneExists">{{ i18n('m.rbs.price.admin.zone_exists', ['ucf']) }}</p>
+	</div>
+	<div class="col-sm-6">
+		<div class="small"><i class="icon-plus-sign"></i> {{ i18n('m.rbs.price.admin.tax_add_category', ['ucf']) }}</div>
+		<div class="input-group">
+			<div class="input-group">
+				<input name="newCategoryName" class="form-control" size="20" type="text" data-ng-model="newCategoryName" />
+				<span class="input-group-btn">
+					<button data-ng-disabled="form.newCategoryName.$error.categoryExists || !form.newCategoryName.$viewValue"
+						type="button" class="btn btn-default" data-ng-click="addCategory(newCategoryName)">
+						{{ i18n('m.rbs.price.admin.add', ['ucf']) }}
+					</button>
+				</span>
+			</div>
+		</div>
+		<p class="text-danger" data-ng-show="form.newCategoryName.$error.categoryExists">
+			{{ i18n('m.rbs.price.admin.category_exists', ['ucf']) }}
+		</p>
+	</div>
+</div>
