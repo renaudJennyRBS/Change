@@ -1,37 +1,41 @@
 <div class="row">
-
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.shipping.admin.mode_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Shipping_Mode" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Shipping_Mode"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			{% for newDocumentLink in attributes['newDocumentLinks'] %}
-				<a href ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">{{ newDocumentLink.label }}</a>
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
 			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsShippingMode"
-				model="Rbs_Shipping_Mode" filter-collection="filter" activable="true" correction="true">
+		<rbs-document-list data-dlid="DLRbsShippingMode" model="Rbs_Shipping_Mode"
+			activable="true" correction="true" filter-collection="filter">
 			<rbs-column name="visual" thumbnail="XS" thumbnail-path="doc.visual.id"></rbs-column>
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-column name="code"></rbs-column>
 			<rbs-preview style="min-height: 200px">
-				<img rbs-storage-image="doc.visual.id" rbs-image-container-colorizer="td.preview" thumbnail="L" class="absolute-top-left"/>
+				<img data-rbs-storage-image="doc.visual.id" data-rbs-image-container-colorizer="td.preview" data-thumbnail="L"
+					class="absolute-top-left" alt="" />
 				<div style="margin-left: 290px;">
 					<h4>(= doc.label =)</h4>
 					<dl class="dl-horizontal">
 						<dt>{{ i18n('m.rbs.tag.admin.tags', ['ucf','lab']) }}</dt>
-						<dd ng-if="doc.getTags().length"><span rbs-tag="tag" ng-repeat="tag in doc.getTags()"></span></dd>
-						<dd ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
+						<dd data-ng-if="doc.getTags().length">
+							<span data-rbs-tag="tag" data-ng-repeat="tag in doc.getTags()"></span>
+						</dd>
+						<dd data-ng-if="!doc.getTags().length">{{ i18n('m.rbs.tag.admin.no_tags', ['ucf']) }}</dd>
 					</dl>
 				</div>
 			</rbs-preview>
 		</rbs-document-list>
 	</div>
-
 </div>
