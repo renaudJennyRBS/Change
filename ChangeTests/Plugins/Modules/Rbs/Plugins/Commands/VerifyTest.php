@@ -58,6 +58,7 @@ class VerifyTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testExecute()
 	{
+		$this->markTestSkipped();
 		$pm = $this->getApplicationServices()->getPluginManager();
 
 		//Fake the serialized plugin file by compiling all plugins, even those that are not already in database
@@ -97,6 +98,7 @@ class VerifyTest extends \ChangeTests\Change\TestAssets\TestCase
 		$verifyPlugin = new \Rbs\Plugins\Commands\Verify();
 		$verifyPlugin->execute($event);
 		$result = $response->toArray();
+		var_dump($response);
 		$this->assertArrayNotHasKey('error', $result);
 
 		//the result contain some data about certification
