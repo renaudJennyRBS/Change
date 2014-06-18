@@ -41,7 +41,7 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$realm = $data['realm'];
 			$login = $data['login'];
 			$rememberMe = isset($data['rememberMe']) ? true : false;
-			$device = $data['device'];
+			$device = isset($data['device']) ? $data['device'] : null;
 			$password = $data['password'];
 			unset($data['password']);
 
