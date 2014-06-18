@@ -20,6 +20,9 @@
 	"modelconfiguration_defaultmetakeywords":{
 		"message":"méta keywords par défaut"
 	},
+	"modelconfiguration_pathtemplate":{
+		"message":"modèle d'URL"
+	},
 	"documentseo":{
 		"message":"référencement d'un document"
 	},

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,9 +11,9 @@ namespace Rbs\Seo\Http\Rest\Actions;
 use Change\Http\Rest\V1\ArrayResult;
 
 /**
- * @name \Rbs\Seo\Http\Rest\Actions\GetMetaVariables
+ * @name \Rbs\Seo\Http\Rest\Actions\GetVariables
  */
-class GetMetaVariables
+class GetVariables
 {
 	public function execute(\Change\Http\Event $event)
 	{
@@ -30,7 +30,10 @@ class GetMetaVariables
 				{
 					$seoManager = $genericServices->getSeoManager();
 					$functions = array_merge($model->getAncestorsNames(), [$model->getName()]);
-					$result->setArray($seoManager->getMetaVariables($functions));
+					$array = ['metaVariables' => $seoManager->getMetaVariables($functions),
+						'pathVariables' => $seoManager->getPathVariables($model->getName()),
+					];
+					$result->setArray($array);
 					$event->setResult($result);
 				}
 				else

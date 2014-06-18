@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -186,6 +186,16 @@ class SharedListeners implements SharedListenerAggregateInterface
 			}
 		};
 		$events->attach('TransactionManager', 'commit', $callback, 10);
+
+		$callback = function ($event)
+		{
+			if ($event instanceof \Change\Events\Event)
+			{
+				(new \Rbs\Seo\Std\PathTemplateComposer())->onPopulatePathRule($event);
+			}
+		};
+		$events->attach('PathRuleManager', 'populatePathRule', $callback, 10);
+
 	}
 
 	/**

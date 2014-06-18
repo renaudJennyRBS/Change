@@ -18,10 +18,10 @@
 
 				scope.$watch('document.modelName', function(modelName) {
 					if (modelName) {
-						var url = Utils.makeUrl('Rbs/Seo/GetMetaVariables', { 'modelName': modelName });
+						var url = Utils.makeUrl('Rbs/Seo/GetVariables', { 'modelName': modelName });
 						$http.get(REST.getBaseUrl(url)).success(function(data) {
-							scope.metaVariables = data;
-							scope.variableCount = Object.keys(data).length;
+							scope.metaVariables = data.metaVariables;
+							scope.pathVariables = data.pathVariables;
 						})
 					}
 				});

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -88,6 +88,7 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach('getMetaVariables', array($this, 'onDefaultGetMetaVariables'), 5);
+		$eventManager->attach('getPathVariables', function($event) {(new \Rbs\Seo\Std\PathTemplateComposer())->onGetPathVariables($event);}, 5);
 		$eventManager->attach('getMetaSubstitutions', array($this, 'onDefaultGetMetaSubstitutions'), 5);
 		$eventManager->attach('getMetas', array($this, 'onDefaultGetMetas'), 5);
 	}
@@ -137,6 +138,18 @@ class SeoManager implements \Zend\EventManager\EventsCapableInterface
 			'functions' => $functions
 		));
 		$eventManager->trigger('getMetaVariables', $this, $args);
+		return isset($args['variables']) ? $args['variables'] : [];
+	}
+
+	/**
+	 * @param string $modelName
+	 * @return array
+	 */
+	public function getPathVariables($modelName)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['modelName' => $modelName]);
+		$eventManager->trigger('getPathVariables', $this, $args);
 		return isset($args['variables']) ? $args['variables'] : [];
 	}
 

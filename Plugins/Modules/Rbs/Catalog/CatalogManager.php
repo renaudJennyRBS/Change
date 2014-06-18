@@ -1090,7 +1090,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$priceInfo['price'] = $value;
 				$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
-				if ($taxes)
+				if (is_array($taxes))
 				{
 					$value = $priceManager->getValueWithTax($value, $taxes);
 					$priceInfo['priceWithTax'] = $value;
@@ -1121,7 +1121,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 					$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
 					$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
 						$currencyCode);
-					if ($taxes)
+					if (is_array($taxes))
 					{
 						$oldValue = $priceManager->getValueWithoutTax($oldValue, $taxes);
 						$priceInfo['priceWithoutDiscount'] = $oldValue;
@@ -1133,7 +1133,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					$priceInfo['priceWithoutDiscount'] = $oldValue;
 					$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
-					if ($taxes)
+					if (is_array($taxes))
 					{
 						$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
 						$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
