@@ -4,9 +4,7 @@
 	function Editor(i18n, Dialog, $http, REST) {
 		return {
 			restrict: 'A',
-			templateUrl: 'Document/Rbs/Payment/Transaction/editor.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
+			require: '^rbsDocumentEditorBase',
 
 			link: function(scope, elm, attrs, editorCtrl) {
 				function callActionUrlAndReload(url) {
@@ -44,12 +42,10 @@
 							callActionUrlAndReload(scope.document.META$.actions['refusePayment'].href);
 						});
 				};
-
-				editorCtrl.init('Rbs_Payment_Transaction');
 			}
 		};
 	}
 
 	Editor.$inject = ['RbsChange.i18n', 'RbsChange.Dialog', '$http', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsPaymentTransaction', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsPaymentTransactionEdit', Editor);
 })();

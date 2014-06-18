@@ -1,0 +1,23 @@
+<fieldset data-rbs-editor-section="technical"
+	data-editor-section-label="{{ i18nAttr('m.rbs.payment.admin.technical_properties', ['ucf']) }}">
+
+	<rbs-field-text property="merchantId" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'merchantId'), ['ucf']) }}"
+			input-class="form-control">
+	</rbs-field-text>
+
+	<rbs-field-text property="merchantCountry" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'merchantCountry'), ['ucf']) }}"
+			input-class="form-control">
+	</rbs-field-text>
+
+	<rbs-field property="tpeParmcomContent"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'tpeParmcomContent'), ['ucf']) }}">
+			<textarea name="tpeParmcomContent" data-ng-model="document.tpeParmcomContent" class="form-control" rows="10"></textarea>
+	</rbs-field>
+
+	<rbs-field property="tpeCertifContent"
+			label="{{ i18nAttr(propertyKey('Rbs_Payment_AtosSipsConnector', 'tpeCertifContent'), ['ucf']) }}">
+		<textarea name="tpeCertifContent" data-ng-model="document.tpeCertifContent" class="form-control" rows="10"></textarea>
+	</rbs-field>
+</fieldset>

@@ -10,9 +10,9 @@
 	},
 	"/Rbs/Commerce/AtosSipsConnector/:id": {
 		"model": "Rbs_Payment_AtosSipsConnector",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
+			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/edit.twig",
 			"labelKey": "m.rbs.payment.documents.atossipsconnector | ucf",
 			"labelId": "id"
 		},
@@ -22,7 +22,7 @@
 		"model": "Rbs_Payment_AtosSipsConnector",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
+			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -32,7 +32,7 @@
 		"model": "Rbs_Payment_AtosSipsConnector",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/form.twig",
+			"templateUrl": "Document/Rbs/Payment/AtosSipsConnector/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -57,9 +57,9 @@
 	},
 	"/Rbs/Commerce/DeferredConnector/:id": {
 		"model": "Rbs_Payment_DeferredConnector",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
+			"templateUrl": "Document/Rbs/Payment/DeferredConnector/edit.twig",
 			"labelKey": "m.rbs.payment.documents.deferredconnector | ucf",
 			"labelId": "id"
 		},
@@ -69,7 +69,7 @@
 		"model": "Rbs_Payment_DeferredConnector",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
+			"templateUrl": "Document/Rbs/Payment/DeferredConnector/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -79,7 +79,7 @@
 		"model": "Rbs_Payment_DeferredConnector",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/DeferredConnector/form.twig",
+			"templateUrl": "Document/Rbs/Payment/DeferredConnector/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -95,20 +95,11 @@
 	},
 	"/Rbs/Order/Transaction/:id": {
 		"model": "Rbs_Payment_Transaction",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Payment/Transaction/form.twig",
+			"templateUrl": "Document/Rbs/Payment/Transaction/edit.twig",
 			"labelKey": "m.rbs.payment.documents.transaction | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Order/Transaction/new": {
-		"model": "Rbs_Payment_Transaction",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Payment/Transaction/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	},

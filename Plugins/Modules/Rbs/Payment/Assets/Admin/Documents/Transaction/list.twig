@@ -1,15 +1,23 @@
 <div class="row">
 	<div data-rbs-aside-column="">
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.payment.admin.transaction_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-			model="Rbs_Payment_Transaction" filter="filter"></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Payment_Transaction"></rbs-document-filter-panel>
 
-		<rbs-document-list data-dlid="DLRbsPaymentTransaction"
-			model="Rbs_Payment_Transaction" filter-collection="filter" publishable="false">
+		<div class="add-elements-bar">
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsPaymentTransaction" model="Rbs_Payment_Transaction" filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-column name="amount">(= doc.formattedAmount =)</rbs-column>
 			<rbs-column name="processingStatus">(= doc.formattedProcessingStatus =)</rbs-column>
