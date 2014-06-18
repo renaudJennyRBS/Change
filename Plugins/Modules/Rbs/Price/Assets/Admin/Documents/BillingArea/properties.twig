@@ -1,0 +1,14 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'currencyCode'), ['ucf']) }}">
+	<select class="form-control" data-ng-model="document.currencyCode"
+		data-rbs-items-from-collection="Rbs_Price_Collection_Iso4217">
+	</select>
+</rbs-field>
+
+<rbs-field-picker-multiple property="taxes" required="false" accepted-model="Rbs_Price_Tax"
+	label="{{ i18nAttr(propertyKey('Rbs_Price_BillingArea', 'taxes'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.price.admin.billingarea_taxes_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>

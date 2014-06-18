@@ -1,7 +1,7 @@
-<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Simpleform_Field">
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Price_Tax">
 	<div class="col-md-12">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
-			sub-title="{{ i18nAttr(modelKey('Rbs_Simpleform_Field'), ['ucf']) }}"></rbs-page-header>
+			sub-title="{{ i18nAttr(modelKey('Rbs_Price_Tax'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -10,20 +10,11 @@
 
 	<div class="document-form" data-rbs-main-column="">
 		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
-			data-rbs-document-editor-rbs-simpleform-field-new="">
+			data-rbs-document-editor-rbs-price-tax-new="" name="form">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-				<rbs-field property="refLCID" required="true"
-					label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Field', 'refLCID'), ['ucf']) }}">
-					<select class="form-control" data-ng-model="document.refLCID"
-						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
-					</select>
-				</rbs-field>
-
-				<hr />
-
-				{% include '@Rbs_Simpleform/Documents/Field/properties.twig' %}
+				{% include '@Rbs_Price/Documents/Tax/properties.twig' %}
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"

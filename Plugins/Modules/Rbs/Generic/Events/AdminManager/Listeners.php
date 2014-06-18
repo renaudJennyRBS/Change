@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Gaël PORT
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 namespace Rbs\Generic\Events\AdminManager;
 
-use Change\Http\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -28,52 +27,23 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function ($event)
 		{
-			(new \Rbs\Timeline\Admin\GetModelTwigAttributes())->execute($event);
-		};
-		//Priority 1 (default value) to be sure to get the default attributes
-		$events->attach('getModelTwigAttributes', $callback);
-
-		$callback = function ($event)
-		{
 			(new \Rbs\Timeline\Admin\GetRoutes())->execute($event);
-		};
-		//Priority 1 (default value) to be sure to get the default routes
-		$events->attach('getRoutes', $callback);
-
-		$callback = function ($event)
-		{
-			(new \Rbs\Seo\Admin\GetModelTwigAttributes())->execute($event);
-		};
-		//Priority 1 (default value) to be sure to get the default attributes
-		$events->attach('getModelTwigAttributes', $callback);
-
-		$callback = function ($event)
-		{
 			(new \Rbs\Seo\Admin\GetRoutes())->execute($event);
-		};
-		//Priority 1 (default value) to be sure to get the default routes
-		$events->attach('getRoutes', $callback);
-
-		$callback = function ($event)
-		{
-			(new \Rbs\Tag\Admin\GetModelTwigAttributes())->execute($event);
-		};
-		//Priority 1 (default value) to be sure to get the default attributes
-		$events->attach('getModelTwigAttributes', $callback);
-
-		$callback = function ($event)
-		{
-			(new \Rbs\Website\Admin\GetModelTwigAttributes())->execute($event);
-		};
-		//Priority 1 (default value) to be sure to get the default attributes
-		$events->attach('getModelTwigAttributes', $callback);
-
-		$callback = function ($event)
-		{
 			(new \Rbs\Workflow\Admin\GetRoutes())->execute($event);
 		};
 		//Priority 1 (default value) to be sure to get the default routes
 		$events->attach('getRoutes', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Timeline\Admin\GetModelTwigAttributes())->execute($event);
+			(new \Rbs\Seo\Admin\GetModelTwigAttributes())->execute($event);
+			(new \Rbs\Tag\Admin\GetModelTwigAttributes())->execute($event);
+			(new \Rbs\User\Admin\GetModelTwigAttributes())->execute($event);
+			(new \Rbs\Website\Admin\GetModelTwigAttributes())->execute($event);
+		};
+		//Priority 1 (default value) to be sure to get the default attributes
+		$events->attach('getModelTwigAttributes', $callback);
 
 		$callback = function ($event)
 		{

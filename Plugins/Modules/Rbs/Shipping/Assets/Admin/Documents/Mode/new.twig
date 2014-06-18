@@ -1,7 +1,7 @@
-<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Event_Category">
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Shipping_Mode">
 	<div class="col-md-12">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
-			sub-title="{{ i18nAttr(modelKey('Rbs_Event_Category'), ['ucf']) }}"></rbs-page-header>
+			sub-title="{{ i18nAttr(modelKey('Rbs_Shipping_Mode'), ['ucf']) }}"></rbs-page-header>
 	</div>
 
 	<div data-rbs-aside-column="">
@@ -10,12 +10,12 @@
 
 	<div class="document-form" data-rbs-main-column="">
 		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
-			data-rbs-document-editor-rbs-event-category-new="">
+			data-rbs-document-editor-rbs-shipping-mode-new="">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field property="refLCID" required="true"
-					label="{{ i18nAttr(propertyKey('Rbs_Event_Category', 'refLCID'), ['ucf']) }}">
+					label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'refLCID'), ['ucf']) }}">
 					<select class="form-control" data-ng-model="document.refLCID"
 						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
 					</select>
@@ -23,12 +23,12 @@
 
 				<hr />
 
-				{% include '@Rbs_Event/Documents/Category/properties.twig' %}
+				{% include '@Rbs_Shipping/Documents/Mode/properties.twig' %}
 			</fieldset>
 
-			<fieldset data-rbs-editor-section="publication"
-				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
-				data-rbs-document-publication-section="">
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"

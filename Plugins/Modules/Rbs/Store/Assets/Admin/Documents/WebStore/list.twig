@@ -1,25 +1,31 @@
 <div class="row">
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.store.admin.webstore_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Store_WebStore" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Store_WebStore"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Store_WebStore' | rbsURL:'new' =)">{{ i18n('m.rbs.store.admin.webstore_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsStoreWebStore" model="Rbs_Store_WebStore" filter-collection="filter">
+		<rbs-document-list data-dlid="DLRbsStoreWebStore"
+			model="Rbs_Store_WebStore"
+			filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-column name="billingAreas">
-				<span class="label" ng-repeat="ba in doc.billingAreas">
-					<a href ng-href="(= ba | rbsURL =)">(= ba.label =)</a>
+				<span class="label" data-ng-repeat="ba in doc.billingAreas">
+					<a href data-ng-href="(= ba | rbsURL =)">(= ba.label =)</a>
 				</span>
 			</rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

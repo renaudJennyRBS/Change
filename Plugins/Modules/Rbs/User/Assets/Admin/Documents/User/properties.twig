@@ -1,0 +1,12 @@
+<rbs-field-text property="email" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_User_User', 'email'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-text property="login"
+	label="{{ i18nAttr(propertyKey('Rbs_User_User', 'login'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-picker-multiple property="groups" required="false" label="{{ i18nAttr('m.rbs.user.admin.group_list', ['ucf']) }}"
+	accepted-model="Rbs_User_Group"
+	selector-title="{{ i18nAttr('m.rbs.user.admin.group_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>

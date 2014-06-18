@@ -1,26 +1,34 @@
 <div class="row">
-
-	<div rbs-aside-column>
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.user.admin.group_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_User_Group" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_User_Group"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_User_Group' | rbsURL:'new' =)">{{ i18n('m.rbs.user.admin.group_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLGroup1" model="Rbs_User_Group" modification-date="false" filter-collection="filter">
+		<rbs-document-list data-dlid="DLRbsUserGroup" model="Rbs_User_Group" modification-date="false" filter-collection="filter">
 			<rbs-quick-actions>
-				[action default] ||
-				<a href="(= doc | rbsURL : 'permission' =)">{{ i18nAttr('m.rbs.user.admin.permission') }}</a>
+				<a href="javascript:;" data-ng-href="(= doc | rbsURL : 'groupUsers' =)">
+					{{ i18nAttr('m.rbs.user.admin.user_list') }} <i class="icon-user"></i>
+				</a>
+				<a href="javascript:;" data-ng-href="(= doc | rbsURL : 'permissions' =)">
+					{{ i18nAttr('m.rbs.user.admin.permissions') }} <i class="icon-shield"></i>
+				</a>
+				[action default]
 			</rbs-quick-actions>
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-column name="realm"></rbs-column>
 		</rbs-document-list>
 	</div>
-
 </div>

@@ -10,9 +10,9 @@
 	},
 	"/Rbs/Commerce/BillingArea/:id": {
 		"model": "Rbs_Price_BillingArea",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
+			"templateUrl": "Document/Rbs/Price/BillingArea/edit.twig",
 			"labelKey": "m.rbs.price.documents.billingarea | ucf",
 			"labelId": "id"
 		},
@@ -22,7 +22,7 @@
 		"model": "Rbs_Price_BillingArea",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
+			"templateUrl": "Document/Rbs/Price/BillingArea/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -32,7 +32,7 @@
 		"model": "Rbs_Price_BillingArea",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/BillingArea/form.twig",
+			"templateUrl": "Document/Rbs/Price/BillingArea/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -48,9 +48,9 @@
 	},
 	"/Rbs/Commerce/Tax/:id": {
 		"model": "Rbs_Price_Tax",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/Tax/form.twig",
+			"templateUrl": "Document/Rbs/Price/Tax/edit.twig",
 			"labelKey": "m.rbs.price.documents.tax | ucf",
 			"labelId": "id"
 		},
@@ -60,7 +60,7 @@
 		"model": "Rbs_Price_Tax",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Price/Tax/form.twig",
+			"templateUrl": "Document/Rbs/Price/Tax/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

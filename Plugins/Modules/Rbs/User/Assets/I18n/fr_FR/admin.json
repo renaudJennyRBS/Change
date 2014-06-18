@@ -65,9 +65,6 @@
 	"new_password":{
 		"message":"nouveau mot de passe"
 	},
-	"permission":{
-		"message":"permission"
-	},
 	"permission_rule":{
 		"message":"règle de permission"
 	},

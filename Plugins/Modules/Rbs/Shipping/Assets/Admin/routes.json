@@ -10,9 +10,9 @@
 	},
 	"/Rbs/Commerce/Mode/:id": {
 		"model": "Rbs_Shipping_Mode",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
+			"templateUrl": "Document/Rbs/Shipping/Mode/edit.twig",
 			"labelKey": "m.rbs.shipping.documents.mode | ucf",
 			"labelId": "id"
 		},
@@ -22,7 +22,7 @@
 		"model": "Rbs_Shipping_Mode",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
+			"templateUrl": "Document/Rbs/Shipping/Mode/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -32,7 +32,7 @@
 		"model": "Rbs_Shipping_Mode",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Shipping/Mode/form.twig",
+			"templateUrl": "Document/Rbs/Shipping/Mode/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

@@ -1,0 +1,29 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field-picker-multiple property="billingAreas" required="true" accepted-model="Rbs_Price_BillingArea"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'billingAreas'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.store.admin.store_billingareas_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>
+
+<span class="help-block" data-ng-show="document.countDefinedPrices > 0">
+	{{ i18n('m.rbs.store.admin.web_store_pricesvaluewithtax_locked', ['ucf']) | raw }}
+</span>
+
+<rbs-field-boolean property="pricesValueWithTax" ng-disabled="document.countDefinedPrices > 0"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'pricesValueWithTax'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-boolean property="displayPrices"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPrices'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-boolean property="displayPricesWithTax"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPricesWithTax'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-picker property="orderProcess" accepted-model="Rbs_Commerce_Process"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'orderProcess'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.store.admin.store_select_orderprocess', ['ucf']) }}">
+</rbs-field-picker>

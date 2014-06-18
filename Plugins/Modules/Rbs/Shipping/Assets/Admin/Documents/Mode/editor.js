@@ -1,26 +1,21 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	function Editor ($routeParams, REST) {
+	function rbsDocumentEditorRbsShippingMode() {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Shipping/Mode/editor.twig',
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link : function (scope, element, attrs, editorCtrl)
-			{
-				scope.onLoad = function(){
+			link: function(scope, element, attrs, editorCtrl) {
+				scope.onLoad = function() {
 					if (!angular.isObject(scope.document.cartFilterData) || angular.isArray(scope.document.cartFilterData)) {
 						scope.document.cartFilterData = {};
 					}
 				};
-
-				editorCtrl.init('Rbs_Shipping_Mode');
 			}
 		}
 	}
 
-	Editor.$inject = ['$routeParams', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsShippingMode', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsShippingModeNew', rbsDocumentEditorRbsShippingMode);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsShippingModeEdit', rbsDocumentEditorRbsShippingMode);
 })();

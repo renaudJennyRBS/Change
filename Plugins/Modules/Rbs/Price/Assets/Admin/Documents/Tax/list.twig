@@ -1,18 +1,23 @@
 <div class="row">
 	<div data-rbs-aside-column="">
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.price.admin.tax_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false"
-				model="Rbs_Price_Tax" filter="filter" ></rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Price_Tax"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href data-ng-href="(= 'Rbs_Price_Tax' | rbsURL:'new' =)">{{ i18n('m.rbs.price.admin.tax_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsPriceTax" model="Rbs_Price_Tax" filter-collection="filter" correction="true">
+		<rbs-document-list data-dlid="DLRbsPriceTax" model="Rbs_Price_Tax" correction="true" filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
 		</rbs-document-list>
 	</div>
