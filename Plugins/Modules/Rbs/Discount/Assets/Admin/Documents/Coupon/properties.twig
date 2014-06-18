@@ -1,0 +1,17 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'orderProcess'), ['ucf']) }}"
+		required="true" property="orderProcess" accepted-model="Rbs_Commerce_Process"
+		ng-model="document.orderProcess">
+</rbs-field-document-select>
+
+<rbs-field-text property="code" required="true" label="{{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'code'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Discount_Coupon', 'cartFilterData'), ['ucf']) }}">
+	<div data-rbs-document-filter-container="" data-filter="document.cartFilterData">
+		<div data-rbs-cart-filter-definitions=""></div>
+	</div>
+</rbs-field>

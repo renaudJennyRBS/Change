@@ -1,0 +1,26 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Discount_Discount', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Discount_Discount', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+
+<rbs-field-document-select label="{{ i18nAttr(propertyKey('Rbs_Discount_Discount', 'orderProcess'), ['ucf']) }}"
+		required="true" property="orderProcess" accepted-model="Rbs_Commerce_Process"
+		ng-model="document.orderProcess">
+</rbs-field-document-select>
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Discount_Discount', 'cartFilterData'), ['ucf']) }}">
+	<div data-rbs-document-filter-container="" data-filter="document.cartFilterData">
+		<div data-rbs-cart-filter-definitions=""></div>
+	</div>
+</rbs-field>
+
+<hr />
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Discount_Discount', 'discountType'), ['ucf']) }}" required="true">
+	<select data-ng-model="document.discountType" class="form-control" required="true"
+		data-rbs-items-from-collection="Rbs_Discount_Collection_DiscountTypes">
+		<option value="">{{ i18nAttr('m.rbs.discount.admin.select_discount_type', ['ucf']) }}</option>
+	</select>
+</rbs-field>
+
+<div id="RbsDiscountDiscountParametersData" data-ng-show="document.discountType"></div>

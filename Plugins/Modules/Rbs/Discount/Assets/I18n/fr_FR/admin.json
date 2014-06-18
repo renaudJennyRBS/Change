@@ -22,5 +22,8 @@
 	},
 	"discount_free_shipping_mode":{
 		"message":"Seulement pour le mode de livraison"
+	},
+	"select_discount_type":{
+		"message":"sélectionner un type de réduction"
 	}
 }

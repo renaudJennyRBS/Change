@@ -1,9 +1,7 @@
-(function (jQuery)
-{
+(function(jQuery) {
 	"use strict";
 
-	function Editor ($compile, $routeParams, REST) {
-
+	function Editor($compile, $routeParams, REST) {
 		function redrawDiscountParameterize($compile, scope, directiveName) {
 			var container = jQuery('#RbsDiscountDiscountParametersData');
 			var collection = container.children();
@@ -20,12 +18,11 @@
 		}
 
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Discount/Discount/editor.twig',
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link : function (scope, element, attrs, editorCtrl) {
-				scope.onLoad = function(){
+			link: function(scope, element, attrs, editorCtrl) {
+				scope.onLoad = function() {
 					if (scope.document.isNew() && $routeParams.hasOwnProperty('orderProcessId') && !scope.document.orderProcess) {
 						REST.resource('Rbs_Commerce_Process', $routeParams['orderProcessId']).then(function(process) {
 							scope.document.orderProcess = process;
@@ -42,16 +39,14 @@
 					}
 				};
 
-
 				scope.$watch('document.discountType', function(directiveName) {
 					redrawDiscountParameterize($compile, scope, directiveName);
 				});
-
-				editorCtrl.init('Rbs_Discount_Discount');
 			}
 		}
 	}
 
 	Editor.$inject = ['$compile', '$routeParams', 'RbsChange.REST'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsDiscountDiscount', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsDiscountDiscountNew', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsDiscountDiscountEdit', Editor);
 })(window.jQuery);
