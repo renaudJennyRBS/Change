@@ -121,9 +121,9 @@
 	},
 	"/Rbs/Order/Shipment/:id": {
 		"model": "Rbs_Order_Shipment",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/Shipment/form.twig",
+			"templateUrl": "Document/Rbs/Order/Shipment/edit.twig",
 			"labelKey": "m.rbs.order.documents.shipment | ucf",
 			"labelId": "id"
 		},
@@ -133,7 +133,7 @@
 		"model": "Rbs_Order_Shipment",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Order/Shipment/form.twig",
+			"templateUrl": "Document/Rbs/Order/Shipment/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true
