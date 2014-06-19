@@ -11,7 +11,7 @@ namespace Themes\Rbs\Common\Setup;
 /**
  * @name \Themes\Rbs\Common\Setup\Install
  */
-class Install extends \Change\Plugins\InstallBase
+class Install extends \Change\Plugins\ThemeInstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin

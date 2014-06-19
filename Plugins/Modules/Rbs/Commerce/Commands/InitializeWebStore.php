@@ -93,11 +93,18 @@ class InitializeWebStore extends \Rbs\Generic\Commands\AbstractInitialize
 
 			$this->addMenuToTemplates($website->getId(), $noSidebarTemplate, $sidebarTemplate, $applicationServices);
 
-			$response->addInfoMessage('Done.');
+			if ($response)
+			{
+				$response->addInfoMessage('Done.');
+			}
+
 		}
 		else
 		{
-			$response->addErrorMessage('templates, store or website are not valid');
+			if ($response)
+			{
+				$response->addErrorMessage('templates, store or website are not valid');
+			}
 			throw new \RuntimeException('Invalid arguments: templates, store or website are not valid', 999999);
 		}
 	}
