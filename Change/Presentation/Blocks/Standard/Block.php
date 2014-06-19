@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 namespace Change\Presentation\Blocks\Standard;
 
 use Change\Http\Web\Result\BlockResult;
+use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Parameters;
 
 /**
@@ -18,6 +19,8 @@ use Change\Presentation\Blocks\Parameters;
 class Block
 {
 	const DOCUMENT_TO_DISPLAY_PROPERTY_NAME = 'toDisplayDocumentId';
+
+	const FULLY_QUALIFIED_TEMPLATE_PROPERTY_NAME = 'fullyQualifiedTemplateName';
 
 	/**
 	 * @api
@@ -123,6 +126,13 @@ class Block
 		$attributes = $event->getParam('attributes', new \ArrayObject());
 		$event->setParam('templateName', $this->execute($event, $attributes));
 		$event->setParam('templateModuleName', $this->getTemplateModuleName());
+		$fullyQualifiedTemplateName = $event->getBlockParameters()->getParameter(static::FULLY_QUALIFIED_TEMPLATE_PROPERTY_NAME);
+		if (is_string($fullyQualifiedTemplateName) && strpos($fullyQualifiedTemplateName, ':'))
+		{
+			$parts = explode(':', $fullyQualifiedTemplateName);
+			$event->setParam('templateModuleName', $parts[0]);
+			$event->setParam('templateName', $parts[1]);
+		}
 	}
 
 	/**

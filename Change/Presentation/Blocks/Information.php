@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,6 +39,11 @@ class Information
 	 * @var ParameterInformation[]
 	 */
 	protected $parametersInformation = array();
+
+	/**
+	 * @var TemplateInformation[]
+	 */
+	protected $templatesInformation = array();
 
 	/**
 	 * @param string $name
@@ -120,11 +125,31 @@ class Information
 	}
 
 	/**
+	 * @param string $moduleName
+	 * @param string $templateName
+	 * @return \Change\Presentation\Blocks\TemplateInformation
+	 */
+	public function addTemplateInformation($moduleName, $templateName)
+	{
+		$templateInformation = new TemplateInformation($moduleName, $templateName);
+		$this->templatesInformation[$templateInformation->getFullyQualifiedTemplateName()] = $templateInformation;
+		return $templateInformation;
+	}
+
+	/**
+	 * @return \Change\Presentation\Blocks\TemplateInformation[]
+	 */
+	public function getTemplatesInformation()
+	{
+		return array_values($this->templatesInformation);
+	}
+
+	/**
 	 * @param string $name
 	 * @param string $type
 	 * @param bool $required
 	 * @param mixed $defaultValue
-	 * @return ParameterInformation
+	 * @return \Change\Presentation\Blocks\ParameterInformation
 	 */
 	public function addInformationMeta($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
 	{
@@ -214,13 +239,22 @@ class Information
 	 */
 	public function toArray()
 	{
-		$array = array('name' => $this->getName(), 'label' => $this->getLabel());
-		$parameters = array();
+		$array = ['name' => $this->getName(), 'label' => $this->getLabel()];
+
+		$parameters = [];
 		foreach($this->getParametersInformation() as $parameterInformation)
 		{
 			$parameters[] = $parameterInformation->toArray();
 		}
 		$array['parameters'] = $parameters;
+
+		$templates = [];
+		foreach ($this->getTemplatesInformation() as $template)
+		{
+			$templates[] = $template->toArray();
+		}
+		$array['templates'] = $templates;
+
 		return $array;
 	}
 }

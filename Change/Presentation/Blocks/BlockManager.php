@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -105,6 +105,10 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 				if ($infos instanceof Information)
 				{
 					$this->blocks[$name] = $infos;
+					$eventManager = $this->getEventManager();
+					$args = $eventManager->prepareArgs(['information' => $infos]);
+					$event = new Event(static::composeEventName(static::EVENT_INFORMATION, $name), $this, $args);
+					$eventManager->trigger($event);
 					return $infos;
 				}
 				else

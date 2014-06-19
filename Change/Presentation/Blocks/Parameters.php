@@ -1,12 +1,14 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 namespace Change\Presentation\Blocks;
+
+use Change\Presentation\Blocks\Standard\Block;
 
 /**
  * @name \Change\Presentation\Blocks\Parameters
@@ -161,9 +163,24 @@ class Parameters
 		{
 			foreach($parameters as $name => $value)
 			{
-				if (($meta = $this->getParameterMeta($name)) !== null && $meta->getDefaultValue() != $value)
+				if ($name === 'TTL')
 				{
-					$this->setParameterValue($name, $value);
+					$this->setParameterValue($name, intval($value));
+				}
+				else
+				{
+					$meta = $this->getParameterMeta($name);
+					if ($meta)
+					{
+						if ($meta->getDefaultValue() != $value)
+						{
+							$this->setParameterValue($name, $value);
+						}
+					}
+					else
+					{
+						$this->setParameterValue($name, $value);
+					}
 				}
 			}
 		}
