@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,36 +33,73 @@ class GetHtmlBlockParameters
 
 		if ($information instanceof \Change\Presentation\Blocks\Information)
 		{
+
 			$plugin = $event->getApplicationServices()->getPluginManager()->getModule($vendor, $shortModuleName);
 			if ($plugin && $plugin->isAvailable())
 			{
+
+				$fullyQualifiedTemplateName = $event->getRequest()->getQuery('fullyQualifiedTemplateName');
 				$workspace =  $event->getApplication()->getWorkspace();
-				$filePath = $workspace->composePath($plugin->getAssetsPath(), 'Admin', 'Blocks', $shortBlockName . '.twig');
-				if (!is_readable($filePath))
-				{
-					$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets', 'block-parameters.twig');
-				}
 
-				$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-
-				$genericServices = $event->getServices('genericServices');
-				if ($genericServices instanceof \Rbs\Generic\GenericServices)
+				if ($fullyQualifiedTemplateName)
 				{
-					$manager = $genericServices->getAdminManager();
+					foreach ($information->getTemplatesInformation() as $templateInformation)
+					{
+						if ($templateInformation->getFullyQualifiedTemplateName() == $fullyQualifiedTemplateName)
+						{
+							$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets', 'block-template-parameters.twig');
+							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+
+							$genericServices = $event->getServices('genericServices');
+							if ($genericServices instanceof \Rbs\Generic\GenericServices)
+							{
+								$manager = $genericServices->getAdminManager();
+							}
+							else
+							{
+								throw new \RuntimeException('GenericServices not set', 999999);
+							}
+
+							$attributes = array('templateInformation' => $templateInformation, 'information' => $information);
+							$renderer = function () use ($filePath, $manager, $attributes)
+							{
+								return $manager->renderTemplateFile($filePath, $attributes);
+							};
+							$result->setRenderer($renderer);
+							$event->setResult($result);
+							return;
+						}
+					}
 				}
 				else
 				{
-					throw new \RuntimeException('GenericServices not set', 999999);
-				}
+					$filePath = $workspace->composePath($plugin->getAssetsPath(), 'Admin', 'Blocks', $shortBlockName . '.twig');
+					if (!is_readable($filePath))
+					{
+						$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets', 'block-parameters.twig');
+					}
 
-				$attributes = array('information' => $information);
-				$renderer = function () use ($filePath, $manager, $attributes)
-				{
-					return $manager->renderTemplateFile($filePath, $attributes);
-				};
-				$result->setRenderer($renderer);
-				$event->setResult($result);
-				return;
+					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+
+					$genericServices = $event->getServices('genericServices');
+					if ($genericServices instanceof \Rbs\Generic\GenericServices)
+					{
+						$manager = $genericServices->getAdminManager();
+					}
+					else
+					{
+						throw new \RuntimeException('GenericServices not set', 999999);
+					}
+
+					$attributes = array('information' => $information);
+					$renderer = function () use ($filePath, $manager, $attributes)
+					{
+						return $manager->renderTemplateFile($filePath, $attributes);
+					};
+					$result->setRenderer($renderer);
+					$event->setResult($result);
+					return;
+				}
 			}
 		}
 
@@ -72,5 +109,9 @@ class GetHtmlBlockParameters
 			return null;
 		});
 		$event->setResult($result);
+	}
+
+	protected function renderParameters() {
+
 	}
 }

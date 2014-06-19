@@ -1,7 +1,7 @@
 (function() {
 	"use strict";
 
-	function rbsDocumentEditorRbsThemeTemplateEdit(ArrayUtils, REST) {
+	function rbsDocumentEditorRbsThemeTemplateEdit(ArrayUtils, REST, $http, $compile, $templateCache) {
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentEditorBase',
@@ -50,6 +50,77 @@
 							}
 						}
 					});
+				});
+
+				function onRenderParams() {
+					if (scope.block && scope.block.template) {
+						var template = scope.block.template;
+
+						scope.labelClass = 'col-lg-3';
+						scope.controlsClass = 'col-lg-9';
+						$http.get(template, {cache: $templateCache}).success(function (html) {
+							html = $(html);
+							html.find('rbs-document-picker-single')
+								.attr('data-navigation-block-id', scope.block.id)
+								.each(function () {
+									var el = $(this);
+									el.attr('property-label',
+										el.attr('property-label') + ' (' + scope.block.label + ')');
+								});
+							$compile(html)(scope, function (clone) {
+								element.find('[data-role="blockParametersContainer"]').append(clone);
+								onRenderTemplateParams();
+							});
+						});
+					}
+				}
+
+				function onRenderTemplateParams() {
+
+					if (!scope.block || !scope.blockParameters) {
+						return;
+					}
+					var blocName = scope.block.name;
+					var template = null;
+					angular.forEach(scope.blockList, function(value, key) {
+						if (value.block && value.block.name === blocName) {
+							template = value.block.template;
+						}
+					});
+
+					if (!template) {
+						return;
+					}
+
+					element.find('[data-role="templateBlockParametersContainer"]').html('');
+					if (angular.isString(scope.blockParameters.fullyQualifiedTemplateName) &&
+						scope.blockParameters.fullyQualifiedTemplateName.length) {
+
+						var templateURL = template + '?fullyQualifiedTemplateName=' + scope.blockParameters.fullyQualifiedTemplateName;
+
+						$http.get(templateURL, {cache: $templateCache}).success(function (html) {
+							html = $(html);
+							html.find('rbs-document-picker-single')
+								.attr('data-navigation-block-id', scope.block.id)
+								.each(function () {
+									var el = $(this);
+									el.attr('property-label',
+										el.attr('property-label') + ' (' + scope.block.label + ')');
+								});
+
+							$compile(html)(scope, function (clone) {
+								element.find('[data-role="templateBlockParametersContainer"]').append(clone);
+							});
+						});
+					}
+				}
+
+				scope.$watch('blockParameters.fullyQualifiedTemplateName', function (templateName) {
+					onRenderTemplateParams();
+				});
+
+				scope.$watch('block.template', function (templateName) {
+					onRenderParams();
 				});
 
 				scope.onLoad = function() {
@@ -137,7 +208,10 @@
 
 				scope.parametrizeBlock = function(index) {
 					var row = scope.blockList[index];
+
 					scope.block = scope.getBlockById(row.id);
+					scope.block.template = row.block.template;
+
 					if (row.block && row.block.hasOwnProperty('name')) {
 						if (row.name != row.block.name) {
 							row.name = row.block.name;
@@ -279,6 +353,6 @@
 		};
 	}
 
-	rbsDocumentEditorRbsThemeTemplateEdit.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST'];
+	rbsDocumentEditorRbsThemeTemplateEdit.$inject = ['RbsChange.ArrayUtils', 'RbsChange.REST', '$http', '$compile', '$templateCache'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsThemeTemplateEdit', rbsDocumentEditorRbsThemeTemplateEdit);
 })();

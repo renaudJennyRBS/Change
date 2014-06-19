@@ -83,8 +83,7 @@
 							if (blockType && blockType !== old) {
 								if (RICH_TEXT_BLOCK_NAMES.indexOf(blockType.name) > -1) {
 									onBlockTypeChanged(blockType);
-								}
-								else {
+								} else {
 									$http.get(blockType.template, {cache: $templateCache}).success(function (html) {
 										html = $(html);
 										html.find('rbs-document-picker-single')
@@ -98,11 +97,45 @@
 										$compile(html)(scope, function (clone) {
 											element.find('[data-role="blockParametersContainer"]').append(clone);
 											onBlockTypeChanged(blockType);
+											onRenderTemplateParams();
 										});
 									});
 								}
 							}
 						}, true);
+
+						function onRenderTemplateParams() {
+							if (!scope.block || !scope.block.name || !scope.blockParameters || !scope.blockType) {
+								return;
+							}
+
+							element.find('[data-role="templateBlockParametersContainer"]').html('');
+
+							if (angular.isString(scope.blockParameters.fullyQualifiedTemplateName) &&
+								scope.blockParameters.fullyQualifiedTemplateName.length) {
+
+								var templateURL = scope.blockType.template + '?fullyQualifiedTemplateName=' + scope.blockParameters.fullyQualifiedTemplateName;
+
+								$http.get(templateURL, {cache: $templateCache}).success(function (html) {
+									html = $(html);
+									html.find('rbs-document-picker-single')
+										.attr('data-navigation-block-id', scope.block.id)
+										.each(function () {
+											var el = $(this);
+											el.attr('property-label',
+												el.attr('property-label') + ' (' + scope.block.label + ')');
+										});
+
+									$compile(html)(scope, function (clone) {
+										element.find('[data-role="templateBlockParametersContainer"]').append(clone);
+									});
+								});
+							}
+						}
+
+						scope.$watch('blockParameters.fullyQualifiedTemplateName', function (templateName) {
+							onRenderTemplateParams();
+						});
 
 						// Block TTL options ------------------------------------------
 
