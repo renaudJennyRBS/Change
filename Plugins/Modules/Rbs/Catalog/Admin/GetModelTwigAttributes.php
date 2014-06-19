@@ -28,29 +28,11 @@ class GetModelTwigAttributes
 		if ($adminManager instanceof \Rbs\Admin\AdminManager && $model instanceof \Change\Documents\AbstractModel)
 		{
 			$attributes = $event->getParam('attributes');
-			//$attributes shouldn't be empty
-			if (!is_array($attributes))
-			{
-				$attributes = [];
-			}
-
-			//$attributes['asideDirectives'] can be empty
-			if (!isset($attributes['asideDirectives']))
-			{
-				$attributes['asideDirectives'] = [];
-			}
-
-			//$attributes['links'] can be empty
-			if (!isset($attributes['links']))
-			{
-				$attributes['links'] = [];
-			}
 
 			if ($model->getName() === 'Rbs_Catalog_ProductList' && $view == 'list' && !isset($attributes['listController']))
 			{
 				$attributes['listController'] = 'Rbs_Catalog_ProductList_ProductListController';
 			}
-
 
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 
@@ -59,15 +41,11 @@ class GetModelTwigAttributes
 				($modelName === 'Rbs_Catalog_CrossSellingProductList' || $modelName === 'Rbs_Catalog_ProductList' ||
 				$modelName === 'Rbs_Catalog_SectionProductList'))
 			{
-				$links = [
-					[
-						'name' => 'productListItems',
-						'href' => '(= document | rbsURL:\'productListItems\' =)',
-						'description' => $i18nManager->trans('m.rbs.catalog.admin.productlist_products_aside_link', ['ucf'])
-					]
+				$attributes['links'][] = [
+					'name' => 'productListItems',
+					'href' => '(= document | rbsURL:\'productListItems\' =)',
+					'description' => $i18nManager->trans('m.rbs.catalog.admin.productlist_products_aside_link', ['ucf'])
 				];
-
-				$attributes['links'] = array_merge($attributes['links'], $links);
 			}
 			else if (($view === 'edit' || $view === 'translate') && $modelName === 'Rbs_Catalog_Product')
 			{
@@ -79,7 +57,7 @@ class GetModelTwigAttributes
 
 				$attributes['asideDirectives'] = array_merge($attributes['asideDirectives'], $asideDirectives);
 
-				//Reorder the directives to put our asides just after the translation and menu asides
+				// Reorder the directives to put our asides just after the translation and menu asides.
 				$order = ['asideDirectives' =>
 					['rbs-aside-editor-menu', 'rbs-aside-translation', 'rbs-aside-product-variant-group', 'rbs-aside-product-set', 'rbs-aside-product-merchandising']
 				];

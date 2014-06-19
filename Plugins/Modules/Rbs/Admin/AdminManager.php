@@ -273,7 +273,6 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getMainMenu()
 	{
-		$mainMenu = ['sections' => [], 'entries' => []];
 		$pm = $this->getPluginManager();
 		$sections = [];
 		$entries = [];
@@ -290,7 +289,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 		}
-		uasort($sections, function($a, $b){
+		uasort($sections, function ($a, $b) {
 			$ida = isset($a['index']) ? $a['index'] : PHP_INT_MAX;
 			$idb = isset($b['index']) ? $b['index'] : PHP_INT_MAX;
 			return $ida >= $idb;
@@ -314,7 +313,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		foreach ($sections as $section)
 		{
 			$entries = $section['entries'];
-			usort($entries, function($a, $b){
+			usort($entries, function ($a, $b) {
 				return strcmp(\Change\Stdlib\String::stripAccents($a['label']), \Change\Stdlib\String::stripAccents($b['label']));
 			});
 			$section['entries'] = $entries;
@@ -504,7 +503,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$twig->addExtension($extension);
 		}
-		return $twig->render('@'.$moduleName.'/'.$pathName, $attributes);
+		return $twig->render('@' . $moduleName . '/' . $pathName, $attributes);
 	}
 
 	/**
@@ -540,9 +539,12 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		$routes = [];
 		foreach ($this->getPluginManager()->getModules() as $module)
 		{
-			if ($module->isAvailable()) {
-				$filePath = $this->getApplication()->getWorkspace()->composePath($module->getAssetsPath(), 'Admin', 'routes.json');
-				if (is_readable($filePath)) {
+			if ($module->isAvailable())
+			{
+				$filePath = $this->getApplication()->getWorkspace()
+					->composePath($module->getAssetsPath(), 'Admin', 'routes.json');
+				if (is_readable($filePath))
+				{
 					$moduleRoutes = json_decode(file_get_contents($filePath), true);
 					if (is_array($moduleRoutes))
 					{
@@ -607,45 +609,45 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		$module = $pluginManager->getModule($model->getVendorName(), $model->getShortModuleName());
 		if (!$module)
 		{
-			throw new \RuntimeException('module ' . $model->getVendorName() . '_' . $model->getShortModuleName() . ' is not found', 999999);
+			throw new \RuntimeException('module ' . $model->getVendorName() . '_' . $model->getShortModuleName()
+				. ' is not found', 999999);
 		}
 
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		switch ($view)
 		{
 			case 'new':
-				$attributes = [
-					'asideDirectives' => [['name' => 'rbs-aside-editor-menu']]
-				];
-
+				$attributes = ['asideDirectives' => [['name' => 'rbs-aside-editor-menu']]];
 				break;
+
 			case 'edit':
 				$attributes = [
-					'asideDirectives' => [['name' => 'rbs-aside-editor-menu']]
+					'asideDirectives' => [['name' => 'rbs-aside-editor-menu']],
+					'links' => []
 				];
 				if ($model->isLocalized())
 				{
-					array_push($attributes['asideDirectives'],
-						[
-							'name' => 'rbs-aside-translation',
-							'attributes' => [
-								['name' => 'document', 'value' => 'document']
-							]
+					$attributes['asideDirectives'][] = [
+						'name' => 'rbs-aside-translation',
+						'attributes' => [
+							['name' => 'document', 'value' => 'document']
 						]
-					);
+					];
 				}
 				break;
+
 			case 'list':
 				$newDocumentLinks = [];
 				$modelNames = [];
-				if (!$model->isAbstract()) {
+				if (!$model->isAbstract())
+				{
 					$key = strtolower(implode('.', ['m', $model->getVendorName(), $model->getShortModuleName(),
 						'admin', $model->getShortName() . '_create']));
 					$label = $i18nManager->trans($key, ['ucf']);
 					if ($key !== $label)
 					{
 						$modelNames[] = $model->getName();
-						$newDocumentLinks[] =['modelName' => $model->getName(), 'label' => $label];
+						$newDocumentLinks[] = ['modelName' => $model->getName(), 'label' => $label];
 					}
 				}
 
@@ -660,31 +662,29 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 						if ($key !== $label)
 						{
 							$modelNames[] = $m->getName();
-							$newDocumentLinks[] =['modelName' => $m->getName(), 'label' => $label];
+							$newDocumentLinks[] = ['modelName' => $m->getName(), 'label' => $label];
 						}
 					}
 				}
+
 				$attributes = [
 					'asideDirectives' => [['name' => 'rbs-default-asides-for-list']],
 					'newDocumentLinks' => $newDocumentLinks,
 					'modelNames' => $modelNames
 				];
 				break;
+
 			case 'translate':
 				$attributes = [
 					'asideDirectives' => [
 						['name' => 'rbs-aside-editor-menu'],
-						[
-							'name' => 'rbs-aside-translation',
-							'attributes' => [
-								['name' => 'document', 'value' => 'document']
-							]
-						]
-					]
+						['name' => 'rbs-aside-translation', 'attributes' => [['name' => 'document', 'value' => 'document']]]
+					],
+					'links' => []
 				];
 				break;
+
 			default:
-				//TODO?
 				break;
 		}
 

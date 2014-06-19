@@ -29,27 +29,11 @@ class GetModelTwigAttributes
 			if ($view == 'edit' || $view == 'translate')
 			{
 				$attributes = $event->getParam('attributes');
-				//$attributes shouldn't be empty
-				if (!is_array($attributes))
-				{
-					$attributes = [];
-				}
-				//$attributes['asideDirectives'] can be empty
-				if (!isset($attributes['asideDirectives']))
-				{
-					$attributes['asideDirectives'] = [];
-				}
 
-				$asideDirectives = [
-					[
-						'name' => 'rbs-aside-tag-selector',
-						'attributes' => [
-							['name' => 'document', 'value' => 'document']
-						]
-					]
+				$attributes['asideDirectives'][] = [
+					'name' => 'rbs-aside-tag-selector',
+					'attributes' => [['name' => 'document', 'value' => 'document']]
 				];
-
-				$attributes['asideDirectives'] = array_merge($attributes['asideDirectives'], $asideDirectives);
 
 				$event->setParam('attributes', $attributes);
 			}

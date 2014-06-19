@@ -22,36 +22,19 @@ class GetModelTwigAttributes
 	public function execute(Event $event)
 	{
 		$view = $event->getParam('view');
-		/* @var $model \Change\Documents\AbstractModel */
 		$model = $event->getParam('model');
 
 		$adminManager = $event->getTarget();
-		if ($adminManager instanceof \Rbs\Admin\AdminManager)
+		if ($adminManager instanceof \Rbs\Admin\AdminManager && $model instanceof \Change\Documents\AbstractModel)
 		{
 			if ($view != 'new' && $model->isPublishable())
 			{
 				$attributes = $event->getParam('attributes');
-				//$attributes shouldn't be empty
-				if (!is_array($attributes))
-				{
-					$attributes = [];
-				}
-				//$attributes['asideDirectives'] can be empty
-				if (!isset($attributes['asideDirectives']))
-				{
-					$attributes['asideDirectives'] = [];
-				}
 
-				$asideDirectives = [
-					[
-						'name' => 'rbs-aside-seo',
-						'attributes' => [
-							['name' => 'document', 'value' => 'document']
-						]
-					]
+				$attributes['asideDirectives'][] = [
+					'name' => 'rbs-aside-seo',
+					'attributes' => [['name' => 'document', 'value' => 'document']]
 				];
-
-				$attributes['asideDirectives'] = array_merge($attributes['asideDirectives'], $asideDirectives);
 
 				$event->setParam('attributes', $attributes);
 			}

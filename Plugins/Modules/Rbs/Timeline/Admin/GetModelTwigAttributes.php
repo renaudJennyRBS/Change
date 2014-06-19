@@ -22,37 +22,21 @@ class GetModelTwigAttributes
 	public function execute(Event $event)
 	{
 		$view = $event->getParam('view');
-		/* @var $model \Change\Documents\AbstractModel */
 		$model = $event->getParam('model');
 
 		$adminManager = $event->getTarget();
-		if ($adminManager instanceof \Rbs\Admin\AdminManager)
+		if ($adminManager instanceof \Rbs\Admin\AdminManager && $model instanceof \Change\Documents\AbstractModel)
 		{
 			if ($model->isEditable() && ($view === 'edit' || $view === 'translate'))
 			{
 				$attributes = $event->getParam('attributes');
-				//$attributes shouldn't be empty
-				if (!is_array($attributes))
-				{
-					$attributes = [];
-				}
-				//$attributes['links'] can be empty
-				if (!isset($attributes['links']))
-				{
-					$attributes['links'] = [];
-				}
 
 				$i18nManager = $event->getApplicationServices()->getI18nManager();
-
-				$links = [
-					[
-						'name' => 'timeline',
-						'href' => '(= document | rbsURL:\'timeline\' =)',
-						'description' => $i18nManager->trans('m.rbs.timeline.admin.admin_view_timeline', ['ucf'])
-					]
+				$attributes['links'][] = [
+					'name' => 'timeline',
+					'href' => '(= document | rbsURL:\'timeline\' =)',
+					'description' => $i18nManager->trans('m.rbs.timeline.admin.admin_view_timeline', ['ucf'])
 				];
-
-				$attributes['links'] = array_merge($attributes['links'], $links);
 
 				$event->setParam('attributes', $attributes);
 			}

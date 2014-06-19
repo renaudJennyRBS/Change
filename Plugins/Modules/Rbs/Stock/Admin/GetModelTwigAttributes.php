@@ -32,51 +32,34 @@ class GetModelTwigAttributes
 			if ($model->isEditable() && $view === 'edit')
 			{
 				$attributes = $event->getParam('attributes');
-				//$attributes shouldn't be empty
-				if (!is_array($attributes))
-				{
-					$attributes = [];
-				}
-				//$attributes['links'] can be empty
-				if (!isset($attributes['links']))
-				{
-					$attributes['links'] = [];
-				}
-
 				$i18nManager = $event->getApplicationServices()->getI18nManager();
 
 				if ($modelName === 'Rbs_Stock_InventoryEntry')
 				{
-					$links = [
-						[
-							'name' => 'movement',
-							'href' => '(= document.sku | rbsURL:\'movement\' =)',
-							'description' => $i18nManager->trans('m.rbs.stock.admin.see_movement', ['ucf'])
-						],
-						[
-							'name' => 'reservation',
-							'href' => '(= document.sku | rbsURL:\'reservation\' =)',
-							'description' => $i18nManager->trans('m.rbs.stock.admin.see_reservation', ['ucf'])
-						]
+					$attributes['links'][] = [
+						'name' => 'movement',
+						'href' => '(= document.sku | rbsURL:\'movement\' =)',
+						'description' => $i18nManager->trans('m.rbs.stock.admin.see_movement', ['ucf'])
+					];
+					$attributes['links'][] = [
+						'name' => 'reservation',
+						'href' => '(= document.sku | rbsURL:\'reservation\' =)',
+						'description' => $i18nManager->trans('m.rbs.stock.admin.see_reservation', ['ucf'])
 					];
 				}
 				else
 				{
-					$links = [
-						[
-							'name' => 'movement',
-							'href' => '(= document | rbsURL:\'movement\' =)',
-							'description' => $i18nManager->trans('m.rbs.stock.admin.see_movement', ['ucf'])
-						],
-						[
-							'name' => 'reservation',
-							'href' => '(= document | rbsURL:\'reservation\' =)',
-							'description' => $i18nManager->trans('m.rbs.stock.admin.see_reservation', ['ucf'])
-						]
+					$attributes['links'][] = [
+						'name' => 'movement',
+						'href' => '(= document | rbsURL:\'movement\' =)',
+						'description' => $i18nManager->trans('m.rbs.stock.admin.see_movement', ['ucf'])
+					];
+					$attributes['links'][] = [
+						'name' => 'reservation',
+						'href' => '(= document | rbsURL:\'reservation\' =)',
+						'description' => $i18nManager->trans('m.rbs.stock.admin.see_reservation', ['ucf'])
 					];
 				}
-
-				$attributes['links'] = array_merge($attributes['links'], $links);
 
 				$event->setParam('attributes', $attributes);
 			}
