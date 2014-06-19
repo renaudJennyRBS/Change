@@ -149,7 +149,7 @@ class GetDocumentCollection
 
 					if ($sortProperty)
 					{
-						$docQuery->addOrder($property->getName(), !$result->getDesc(), $childBuilder);
+						$docQuery->addOrder($sortProperty->getName(), !$result->getDesc(), $childBuilder);
 					}
 				}
 			}
