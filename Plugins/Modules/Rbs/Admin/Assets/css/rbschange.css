@@ -503,6 +503,11 @@ rbs-todo {
 	margin: 5px 0;
 }
 
+.rbs-aside-block a.a-inline {
+	display: inline;
+	margin: 0;
+}
+
 .rbs-aside-block a strong {
 	text-transform: uppercase;
 	font-size: 90%;

@@ -10,20 +10,11 @@
 	},
 	"/Rbs/Catalog/:productListName/:productListId/Products/:id": {
 		"model": "Rbs_Catalog_ProductListItem",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Catalog/:productListName/:productListId/Products/new": {
-		"model": "Rbs_Catalog_ProductListItem",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	},
@@ -56,7 +47,7 @@
 		"model": "Rbs_Catalog_ProductListItem",
 		"name": "crossSellingForm",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductListItem/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/ProductListItem/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.productlistitem | ucf",
 			"labelId": "id"
 		},
@@ -150,7 +141,7 @@
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-config",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/edit.twig",
 			"labelKey": "m.rbs.catalog.admin.variantgroup_variant_config | ucf"
 		},
 		"auto": false
@@ -186,7 +177,7 @@
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -330,9 +321,9 @@
 	},
 	"/Rbs/Commerce/Attribute/:id": {
 		"model": "Rbs_Catalog_Attribute",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Attribute/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Attribute/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.attribute | ucf",
 			"labelId": "id"
 		},
@@ -342,7 +333,7 @@
 		"model": "Rbs_Catalog_Attribute",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Attribute/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Attribute/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -352,7 +343,7 @@
 		"model": "Rbs_Catalog_Attribute",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/Attribute/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/Attribute/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

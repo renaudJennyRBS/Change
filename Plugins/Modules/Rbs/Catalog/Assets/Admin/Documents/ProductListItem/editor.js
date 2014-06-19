@@ -1,18 +1,10 @@
 (function() {
 	"use strict";
 
-	/**
-	 * @param REST
-	 * @param $q
-	 * @param $location
-	 * @constructor
-	 */
 	function Editor(REST, $q, $location) {
 		return {
 			restrict: 'A',
-			templateUrl: 'Document/Rbs/Catalog/ProductListItem/editor.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
+			require: '^rbsDocumentEditorBase',
 
 			link: function(scope, elm, attrs, editorCtrl) {
 				scope.onLoad = function() {
@@ -40,12 +32,10 @@
 
 					return null;
 				};
-
-				editorCtrl.init('Rbs_Catalog_ProductListItem');
 			}
 		};
 	}
 
 	Editor.$inject = ['RbsChange.REST', '$q', '$location'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProductListItem', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogProductListItemEdit', Editor);
 })();
