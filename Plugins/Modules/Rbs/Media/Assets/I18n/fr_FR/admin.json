@@ -28,5 +28,11 @@
 	},
 	"image_file":{
 		"message":"fichier"
+	},
+	"video_create":{
+		"message":"ajouter une vidéo"
+	},
+	"video_list":{
+		"message":"vidéos"
 	}
 }

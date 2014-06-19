@@ -111,18 +111,41 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
+		$eventManager->attach(Event::EVENT_DELETED, array($this, 'onDefaultDeleted'), 10);
 	}
 
+	/**
+	 * @param Event $event
+	 */
 	public function onDefaultSave(Event $event)
 	{
 		if ($this->isPropertyModified('path'))
 		{
+			if ($this->getPathOldValue())
+			{
+				@unlink($this->getPathOldValue());
+			}
+
 			$size = $this->getImageSize();
 			$this->setHeight($size['height']);
 			$this->setWidth($size['width']);
 		}
 	}
 
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultDeleted(Event $event)
+	{
+		if ($this->getPath())
+		{
+			@unlink($this->getPath());
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
 	public function onDefaultUpdateRestResult(Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

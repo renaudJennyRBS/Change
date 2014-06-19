@@ -189,6 +189,20 @@
 
 	/**
 	 * @ngdoc directive
+	 * @id RbsChange.directive:rbsFieldImage
+	 * @name Field video (upload)
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a control in a Document editor to select a video to upload.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('Video', '<rbs-uploader rbs-video-uploader="" storage-name="videos" file-accept="video/*"></div>', '[rbs-video-uploader]');
+
+	/**
+	 * @ngdoc directive
 	 * @id RbsChange.directive:rbsFieldFile
 	 * @name Field file (upload)
 	 * @restrict E

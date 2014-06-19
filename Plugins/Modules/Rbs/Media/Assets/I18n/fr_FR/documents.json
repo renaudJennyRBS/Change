@@ -16,5 +16,8 @@
 	},
 	"image_mimetype":{
 		"message":"type MIME"
+	},
+	"video":{
+		"message":"vidéo"
 	}
 }

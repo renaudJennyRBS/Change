@@ -15,14 +15,32 @@
 				scope.updatePreview = function updatePreviewFn (url) {
 				};
 
+				scope.fileOnload = function fileOnloadFn (event) {
+				};
+
+				scope.fileOnUpload = function fileOnUploadFn (response) {
+				};
+
 				scope.acceptedTypes = /.*/;
 				scope.fileAccept = attrs.fileAccept
 
 				scope.storageName = "files";
-
+				scope.editMode = null;
 
 				ngModel.$render = function ngModelRenderFn () {
 					if (angular.isObject(ngModel.$viewValue)) {
+
+						if (scope.editMode == null)
+						{
+							if (ngModel.$viewValue.data)
+							{
+								scope.editMode = false;
+							}
+							else
+							{
+								scope.editMode = true;
+							}
+						}
 						REST.storage.info(ngModel.$viewValue.storageURI).then(function (info) {
 							scope.fileSize = info.size;
 							scope.fileName = info.fileName;
@@ -32,7 +50,7 @@
 					}
 				};
 
-				var	inputFile = $(elm).find("input[type=file]"),
+				var	inputFile = scope.inputFile = $(elm).find("input[type=file]"),
 					reader = new FileReader();
 
 				scope.choose = function chooseFn () {
@@ -46,8 +64,7 @@
 						scope.fileName = inputFile.get(0).files[0].name;
 						scope.fileType = inputFile.get(0).files[0].type;
 						// Load the image to get its dimensions.
-						scope.updatePreview(event.target.result);
-						ngModel.$setViewValue("local:" + event.target.result);
+						scope.fileOnload(event);
 					});
 				};
 
@@ -64,17 +81,15 @@
 				scope.upload = function uploadFn () {
 					var	file = inputFile.get(0).files[0],
 						q = $q.defer();
-
 					if (ngModel.$pristine) {
-						console.log("uploader: no changes (pristine) => q is resolved with '" + ngModel.$viewValue + "'");
+						console.log("uploader: no changes (pristine) => q is resolved with : ", ngModel.$viewValue);
 						return null;
 					} else if (scope.acceptedTypes.test(file.type)) {
 						console.log("uploader: has changes (dirty) => uploading...");
 						REST.storage.upload(inputFile, attrs.storageName || scope.storageName).then(
 							function uploadSuccessFn (response) {
-								ngModel.$setViewValue(response);
-								ngModel.$render();
-								console.log("uploader: uploading complete => q is resolved with '" + ngModel.$viewValue + "'");
+								scope.fileOnUpload(response);
+								console.log("uploader: uploading complete => q is resolved with: ", ngModel.$viewValue);
 								q.resolve(response);
 							},
 							function uploadErrorFn (data) {
