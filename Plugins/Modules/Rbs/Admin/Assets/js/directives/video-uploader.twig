@@ -1,0 +1,11 @@
+<div>
+	<button class="btn btn-default" ng-click="choose()">{{ i18n('m.rbs.admin.admin.choose_video', ['ucf']) }}</button>
+	<div>
+		<button ng-show="loading" type="button" class="btn btn-default" disabled="disabled"><i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.admin.admin.reading', ['ucf']) }}</button>
+		<span ng-show="fileSize && fileName">
+			(= fileName =) &mdash;  <span ng-bind-html="fileSize | rbsFileSize"></span>
+		</span>
+	</div>
+	<video ng-show="videoSrc" ng-src="(= videoSrc =)" preload="(= preload =)" controls="controls" class="img-thumbnail" title="{{ i18nAttr('m.rbs.admin.admin.click_to_select_another_video', ['ucf']) }}"  width="(= previewWidth =)px" height="(= previewHeight =)px" style="cursor: pointer; display: block;"></video>
+	<input type="file" accept="(= fileAccept =)" name="file" style="text-indent: -3000px;opacity: 0; visibility: hidden; position: absolute;"/>
+</div>

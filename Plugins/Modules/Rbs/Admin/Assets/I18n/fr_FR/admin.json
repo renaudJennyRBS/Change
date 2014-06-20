@@ -330,6 +330,9 @@
 	"click_to_select_another_image":{
 		"message":"cliquer pour sélectionner une autre image depuis votre ordinateur"
 	},
+	"click_to_select_another_video":{
+		"message":"cliquer pour sélectionner une autre vidéo depuis votre ordinateur"
+	},
 	"activation":{
 		"message":"activation"
 	},
@@ -1442,5 +1445,13 @@
 	},
 	"select_block_render_template":{
 		"message":"sélectionner un template"
+	},
+	"reading":{
+		"message":"lecture",
+		"description":"used in video uploader"
+	},
+	"choose_video":{
+		"message":"choisir une vidéo",
+		"description":"used in video uploader"
 	}
 }

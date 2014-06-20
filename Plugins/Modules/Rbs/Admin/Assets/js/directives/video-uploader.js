@@ -11,20 +11,20 @@
 
 	/**
 	 * @ngdoc directive
-	 * @id RbsChange.directive:rbsImageUploader
+	 * @id RbsChange.directive:rbsVideoUploader
 	 * @name Image uploader
 	 * @restrict EA
 	 *
 	 * @description
 	 * Displays a control to select an image from the user's computer.
 	 */
-	angular.module('RbsChange').directive('rbsImageUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout)
+	angular.module('RbsChange').directive('rbsVideoUploader', ['RbsChange.REST', '$q', '$timeout', function (REST, $q, $timeout)
 	{
-		var MAX_PREVIEW_HEIGHT = 100;
+		var MAX_PREVIEW_HEIGHT = 200;
 
 		return {
 			restrict : 'EA',
-			templateUrl : 'Rbs/Admin/js/directives/image-uploader.twig',
+			templateUrl : 'Rbs/Admin/js/directives/video-uploader.twig',
 			require : 'ngModel',
 			scope : true,
 
@@ -32,34 +32,32 @@
 			{
 				scope.previewWidth = MAX_PREVIEW_HEIGHT * (16/9.0);
 				scope.previewHeight = MAX_PREVIEW_HEIGHT;
+				scope.justUploaded = false;
+
+				scope.preload = "auto";
 
 				scope.updatePreview = function updatePreviewFn (url)
 				{
-					var	img = new Image();
-					img.onload = function () {
-						$timeout(function () {
-							scope.imageWidth  = img.width;
-							scope.imageHeight = img.height;
-							scope.previewHeight = Math.min(scope.imageHeight, MAX_PREVIEW_HEIGHT);
-							scope.previewWidth = scope.previewHeight * (scope.imageWidth / scope.imageHeight);
-							scope.imageSrc = url;
-						});
-					};
-					img.src = url;
+					if ((!scope.justUploaded || (scope.justUploaded && scope.editMode)) && (scope.videoSrc == null || scope.videoSrc == undefined) && url != null)
+					{
+						console.log('Update video preview with url: ' + url);
+						scope.videoSrc = url;
+					}
 				};
 
 				scope.fileOnload = function fileOnloadFn (event) {
-					scope.updatePreview(event.target.result);
-					ngModel.$setViewValue("local:" + event.target.result);
+					scope.videoSrc = null;
+					ngModel.$setViewValue(scope.inputFile.get(0).files[0].name);
 				};
 
 				scope.fileOnUpload = function fileOnUploadFn (response) {
+					scope.justUploaded = true;
 					ngModel.$setViewValue(response);
 					ngModel.$render();
 				};
 
-				scope.acceptedTypes = /image\/(gif|jpeg|png)/;
-				scope.storageName = "images";
+				scope.acceptedTypes = /video\/(ogg|mp4|webm)/;
+				scope.storageName = "videos";
 			}
 		};
 	}]);
