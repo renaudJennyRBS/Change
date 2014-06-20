@@ -19,5 +19,11 @@
 	},
 	"video":{
 		"message":"vidéo"
+	},
+	"video_alt":{
+		"message":"texte alternatif"
+	},
+	"video_path":{
+		"message":"fichier"
 	}
 }
