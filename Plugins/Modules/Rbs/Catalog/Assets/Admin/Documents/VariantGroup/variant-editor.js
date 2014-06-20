@@ -10,11 +10,10 @@
 				restrict: 'A',
 				templateUrl: 'Document/Rbs/Catalog/VariantGroup/variant-editor.twig',
 				replace: false,
-				require: 'rbsDocumentEditor',
 
 				controller: function() {},
 
-				link: function(scope, elm, attrs, editorCtrl) {
+				link: function(scope, elm, attrs) {
 					var axesCount = 0, nextProductId = 0;
 
 					scope.path = [];
@@ -443,8 +442,6 @@
 						}
 						return count;
 					}
-
-					editorCtrl.init('Rbs_Catalog_VariantGroup');
 				}
 			};
 		}]);

@@ -301,9 +301,9 @@
 	"/Rbs/Catalog/VariantGroup/": false,
 	"/Rbs/Catalog/VariantGroup/:id": {
 		"model": "Rbs_Catalog_VariantGroup",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/VariantGroup/form.twig",
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/edit.twig",
 			"labelKey": "m.rbs.catalog.documents.variantgroup | ucf",
 			"labelId": "id"
 		},

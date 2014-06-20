@@ -60,14 +60,6 @@ class Resolver extends BaseResolver
 			$event->setAction($action);
 			return;
 		}
-		elseif ($relativePath === 'Rbs/Admin/editors.js')
-		{
-			$action = function($event) {
-				(new \Rbs\Admin\Http\Actions\GetDocumentEditors())->execute($event);
-			};
-			$event->setAction($action);
-			return;
-		}
 		elseif (preg_match('/^I18nPackage\/([a-z]{2}_[A-Z]{2})\/(((m|t)(\.[a-z0-9]+){3})|((c)(\.[a-z0-9]+)))\.json$/', $relativePath, $matches))
 		{
 			$lcid = $matches[1];

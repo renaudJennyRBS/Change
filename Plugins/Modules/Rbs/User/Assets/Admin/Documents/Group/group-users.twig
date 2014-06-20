@@ -1,19 +1,10 @@
 <div data-ng-controller="Rbs_User_Group_GroupUsersController">
-
-	<div rbs-aside-column>
-		<rbs-links-panel>
-			<a rbs-active-route="" class="list-group-item" href="(= document | rbsURL =)">{{ i18nAttr('m.rbs.admin.admin.properties', ['ucf']) }}</a>
-		</rbs-links-panel>
-		<rbs-default-asides-for-editor></rbs-default-asides-for-editor>
-		<rbs-links-panel>
-			<a rbs-active-route="" class="list-group-item" href="(= document | rbsURL:'productListItems' =)">{{ i18nAttr('m.rbs.user.admin.users_in_group', ['ucf']) }}</a>
-		</rbs-links-panel>
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></rbs-page-header>
 	</div>
 
-	<div rbs-main-column>
+	<div data-rbs-full-width="">
 		<form novalidate="" class="form-horizontal">
-			<rbs-page-header sub-title="{{ i18nAttr('m.rbs.user.admin.user_list', ['ucf']) }}"></rbs-page-header>
-
 			<rbs-document-list data-dlid="DLGroupUsers"
 				model="Rbs_User_User"
 				load-query="groupUsersQuery"
@@ -21,7 +12,8 @@
 				actions=""
 				reload="refresh()">
 				<rbs-quick-actions></rbs-quick-actions>
-				<rbs-action name="removeFromGroup" label="{{ i18nAttr('m.rbs.user.admin.group_users_remove_from_group', ['ucf']) }}"></rbs-action>
+				<rbs-action name="removeFromGroup"
+					label="{{ i18nAttr('m.rbs.user.admin.group_users_remove_from_group', ['ucf']) }}"></rbs-action>
 				<rbs-column name="login" primary="true"></rbs-column>
 				<rbs-column name="email"></rbs-column>
 			</rbs-document-list>
@@ -42,11 +34,11 @@
 					</rbs-document-picker-multiple>
 
 					<div class="btn-toolbar">
-						<button type="button" class="btn btn-primary" ng-click="addUsersFromPicker()" ng-disabled="disableAdd">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
+						<button type="button" class="btn btn-primary" data-ng-click="addUsersFromPicker()"
+							data-ng-disabled="disableAdd">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>
-
 </div>

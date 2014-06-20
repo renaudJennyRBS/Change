@@ -5,8 +5,10 @@
 	</div>
 
 	<div data-rbs-aside-column="">
-		{% set currentRootName = 'variant-config' %}
-		{% include '@Rbs_Catalog/Documents/VariantGroup/variant-aside-column.twig' %}
+		<div class="rbs-aside-block" data-ng-show="document.rootProduct">
+			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+			<rbs-document-preview document="document.rootProduct"></rbs-document-preview>
+		</div>
 	</div>
 
 	<div class="document-form" data-rbs-main-column="">

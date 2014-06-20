@@ -15,13 +15,6 @@
 	display: none;
 }
 
-rbs-form-button-bar > .confirmation-area.embedded-modal {
-	position: relative;
-	top: 46px;
-	margin-top: -46px;
-}
-
-
 .form-horizontal .col-lg-9 .embedded-modal {
 	margin-left: -180px;
 }

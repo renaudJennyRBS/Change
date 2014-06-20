@@ -49,13 +49,6 @@
 		// - promises: array of promises that should be resolved before the edit process is terminated.
 		'EditorPostSave'                 : 'Change:Editor.RegisterPostSavePromises',
 
-		// Raised from the <rbs-form-button-bar/> directive to build the contents displayed before the buttons.
-		// Single argument is a hash object with:
-		// - document: the document being edited in the Editor
-		// - contents: array of HTML Strings (Angular code is allowed as it will be compiled :))
-		// FIXME Deprecated, remove it.
-		'EditorFormButtonBarContents'    : 'Change:Editor.FormButtonBarContents',
-
 		// The following events are less useful for you...
 		'EditorDocumentUpdated'          : 'Change:Editor.DocumentUpdated',
 		'EditorCorrectionChanged'        : 'Change:CorrectionChanged',
@@ -105,55 +98,6 @@
 		OAuth.setSignedUrlPatternExclude(oauthUrl);
 	}]);
 
-
-	//-------------------------------------------------------------------------
-	//
-	// Default Directives for Editors that do not have specialized code.
-	// TODO: Fallback. Delete after refactoring form.twig/editor.twig
-	//
-	//-------------------------------------------------------------------------
-
-
-	function baseEditorDirective (modelName, linkFn) {
-		return {
-			restrict : 'A',
-			templateUrl : 'Document/' + modelName.replace(/_/g, '/') + '/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
-
-			link : function (scope, element, attrs, editorCtrl)
-			{
-				if (angular.isFunction(linkFn)) {
-					linkFn.apply(this, [scope, element, attrs, editorCtrl]);
-				}
-				editorCtrl.init(modelName);
-			}
-		};
-	}
-
-	__change.createEditorForModel = function (modelName, linkFn)
-	{
-		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, ''), function ()
-		{
-			return baseEditorDirective(modelName, linkFn);
-		});
-	};
-
-	__change.createEditorForModelTranslation = function (modelName, linkFn)
-	{
-		angular.module('RbsChange').directive('rbsDocumentEditor' + modelName.replace(/_/g, '') + 'Translate', function ()
-		{
-			var directive = baseEditorDirective(modelName, linkFn);
-			directive.templateUrl = 'Document/' + modelName.replace(/_/g, '/') + '/editor-translate.twig';
-			return directive;
-		});
-	};
-
-	__change.createEditorsForLocalizedModel = function (modelName, linkFn)
-	{
-		__change.createEditorForModel(modelName, linkFn);
-		__change.createEditorForModelTranslation(modelName, linkFn);
-	};
 
 	//-------------------------------------------------------------------------
 	//

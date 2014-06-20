@@ -471,18 +471,15 @@
 						previewButton = '<button type="button" class="btn-flat" ng-click="preview(doc, $event)" title="' + i18n.trans('m.rbs.admin.adminjs.preview') + '"><i ng-class="{\'icon-spinner icon-spin\':isPreviewLoading(doc), \'icon-eye-close\':hasPreview($index), \'icon-eye-open\':!hasPreview($index)}"></i></button>';
 					}
 
-					if (tElement.closest('rbs-document-editor').length === 0)
-					{
-						var selectHtml =
-								'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc)">' +
-								' <i class="icon-plus"></i></button>';
+					var selectHtml =
+							'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc)">' +
+							' <i class="icon-plus"></i></button>';
 
-						selectHtml += ' <button type="button" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc, true)">' +
-							i18n.trans('m.rbs.admin.adminjs.select') +
-							' <i class="icon-circle-arrow-right"></i></button>';
+					selectHtml += ' <button type="button" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc, true)">' +
+						i18n.trans('m.rbs.admin.adminjs.select') +
+						' <i class="icon-circle-arrow-right"></i></button>';
 
-						$td.find('.primary-cell').prepend('<span ng-show="selectionContext" class="pull-right quick-actions-buttons">' + previewButton + selectHtml + '</span>');
-					}
+					$td.find('.primary-cell').prepend('<span ng-show="selectionContext" class="pull-right quick-actions-buttons">' + previewButton + selectHtml + '</span>');
 
 					if (angular.isUndefined(__quickActions[dlid]) || __quickActions[dlid].contents.length > 0) {
 						// if quickActions markup is not present, default quick actions are taken
@@ -540,19 +537,15 @@
 				delete __gridItems[dlid];
 
 
-				if (tElement.closest('rbs-document-editor').length === 0)
-				{
-					var selectHtml =
-						'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc)">' +
-							' <i class="icon-plus"></i></button>';
+				var selectHtml =
+					'<button type="button" ng-show="selectionContext.param(\'multiple\')" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc)">' +
+						' <i class="icon-plus"></i></button>';
 
-					selectHtml += ' <button type="button" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc, true)">' +
-						i18n.trans('m.rbs.admin.adminjs.select') +
-						' <i class="icon-circle-arrow-right"></i></button>';
+				selectHtml += ' <button type="button" class="btn btn-selection btn-xs" ng-click="selectionContextAppend(doc, true)">' +
+					i18n.trans('m.rbs.admin.adminjs.select') +
+					' <i class="icon-circle-arrow-right"></i></button>';
 
-					inner.find('.caption').prepend('<div ng-show="selectionContext" class="quick-actions-buttons pull-right">' + selectHtml + '</div>');
-				}
-
+				inner.find('.caption').prepend('<div ng-show="selectionContext" class="quick-actions-buttons pull-right">' + selectHtml + '</div>');
 			}
 
 			return gridModeAvailable;
@@ -665,7 +658,7 @@
 					});
 
 					var navCtx = Navigation.getCurrentContext();
-					if (navCtx && navCtx.isSelection() && elm.closest('rbs-document-editor').length === 0)
+					if (navCtx && navCtx.isSelection())
 					{
 						scope.selectionContext = navCtx;
 						scope.selectionContextAppend = function (doc, commit)
