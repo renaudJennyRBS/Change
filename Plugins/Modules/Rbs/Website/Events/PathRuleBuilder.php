@@ -132,6 +132,8 @@ class PathRuleBuilder
 			return;
 		}
 
+		$successRuleId = -1;
+
 		$ruleByPath = $pathRuleManager->getPathRule($websiteId, $LCID, $newRule->getRelativePath());
 		if ($ruleByPath)
 		{
@@ -143,6 +145,7 @@ class PathRuleBuilder
 				$ruleByPath->setUserEdited(false);
 				$ruleByPath->setQuery($newRuleQuery);
 				$pathRuleManager->updatePathRule($ruleByPath);
+				$successRuleId = $ruleByPath->getRuleId();
 			}
 			else
 			{
@@ -158,6 +161,7 @@ class PathRuleBuilder
 						$ruleByPath->setUserEdited(false);
 						$ruleByPath->setQuery($newRuleQuery);
 						$pathRuleManager->updatePathRule($ruleByPath);
+						$successRuleId = $ruleByPath->getRuleId();
 					}
 					else
 					{
@@ -178,7 +182,7 @@ class PathRuleBuilder
 
 		foreach ($existingRules as $rule)
 		{
-			if ($rule->getQuery() == $newRuleQuery)
+			if ($rule->getQuery() == $newRuleQuery && $rule->getRuleId() != $successRuleId)
 			{
 				$pathRuleManager->updateRuleStatus($rule->getRuleId(), 301);
 			}
