@@ -1,19 +1,23 @@
 <div class="row">
 	<div data-rbs-aside-column="">
-		<rbs-default-asides-for-list></rbs-default-asides-for-list>
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
 	</div>
 
 	<div data-rbs-main-column="">
 		<rbs-page-header title="{{ i18nAttr('m.rbs.order.admin.shipment_list', ['ucf']) }}"></rbs-page-header>
-		<rbs-document-filter-panel open-by-default="false" model="Rbs_Order_Shipment" filter="filter">
-		</rbs-document-filter-panel>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Order_Shipment"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<a href="javascript:;" data-ng-href="(= 'Rbs_Order_Shipment' | rbsURL:'new' =)">{{ i18n('m.rbs.order.admin.shipment_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsOrderShipment"
-				model="Rbs_Order_Shipment" filter-query="query">
+		<rbs-document-list data-dlid="DLRbsOrderShipment" model="Rbs_Order_Shipment" filter-collection="filter">
 			<rbs-column name="code" primary="true"></rbs-column>
 			<rbs-column name="prepared">
 				(= doc.prepared | rbsBoolean =)

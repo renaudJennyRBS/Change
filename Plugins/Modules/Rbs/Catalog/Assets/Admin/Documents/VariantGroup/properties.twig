@@ -1,0 +1,79 @@
+<h3>
+	{{ i18n(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}
+	<input type="hidden" data-ng-model="document.axesAttributes" name="axesAttributesLength">
+</h3>
+
+<table data-ng-show="document.axesConfiguration.length > 0" class="table table-striped">
+	<thead>
+	<tr>
+		<th>
+			{{ i18n(propertyKey('Rbs_Catalog_Attribute', 'label'), ['ucf']) }}
+		</th>
+		<th>
+			{{ i18n('m.rbs.catalog.admin.axis_url', ['ucf']) }}
+		</th>
+		<th>
+			<span >{{ i18n('m.rbs.catalog.admin.axis_categorizable', ['ucf']) }}</span>
+		</th>
+		<th>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr data-ng-repeat="axisConfiguration in document.axesConfiguration">
+		<td>(= getAxisLabel($index) =)</td>
+		<td><rbs-switch ng-model="axisConfiguration.url" ng-disabled="$last" ng-change="checkNeedCategorizable($index)"></rbs-switch></td>
+		<td><rbs-switch ng-model="axisConfiguration.categorizable" ng-disabled="!$last || !needCategorizable"></rbs-switch></td>
+		<td style="width:180px">
+			<rbs-kb-switch>
+				<button data-ng-disabled="$first" data-rbs-kb-when="alt" class="btn btn-default btn-icon" type="button"
+					title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}" data-ng-click="moveTop($index)">
+					<i class="icon-step-forward icon-rotate-270"></i>
+				</button>
+				<button data-ng-disabled="$first" data-rbs-kb-default="" class="btn btn-default btn-icon" type="button"
+					title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}" data-ng-click="moveUp($index)">
+					<i class="icon-play icon-rotate-270"></i>
+				</button>
+			</rbs-kb-switch>
+			<rbs-kb-switch>
+				<button data-ng-disabled="$last" data-rbs-kb-when="alt" class="btn btn-default btn-icon" type="button"
+					title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}" data-ng-click="moveBottom($index)">
+					<i class="icon-step-forward icon-rotate-90"></i>
+				</button>
+				<button data-ng-disabled="$last" data-rbs-kb-default="" class="btn btn-default btn-icon" type="button"
+					title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}" data-ng-click="moveDown($index)">
+					<i class="icon-play icon-rotate-90"></i>
+				</button>
+			</rbs-kb-switch>
+			<button class="btn btn-danger btn-icon" type="button" data-ng-click="remove($index)"
+				title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
+				<i class="icon-remove"></i>
+			</button>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<div class="control-group property">
+	<div class="controls">
+		<rbs-document-picker-multiple ng-model="Attributes.axesToAdd" name="axesToAdd"
+			accepted-model="Rbs_Catalog_Attribute" master-label="(= document.label =)" disable-reordering="true"
+			property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'axesAttributes'), ['ucf']) }}"
+			selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_axesattributes_picker_title', ['ucf']) }}"
+			picker-template="picker-axis.twig">
+		</rbs-document-picker-multiple>
+		<div class="btn-toolbar">
+			<button type="button" class="btn btn-primary" data-ng-click="addAxisAttributesFromPicker()"
+				data-ng-disabled="Attributes.axesToAdd.length == 0">{{ i18n('m.rbs.admin.admin.add', ['ucf']) }}</button>
+		</div>
+	</div>
+</div>
+
+<hr />
+
+<rbs-field-picker-multiple property="othersAttributes"
+		label="{{ i18nAttr(propertyKey('Rbs_Catalog_VariantGroup', 'othersAttributes'), ['ucf']) }}"
+		accepted-model="Rbs_Catalog_Attribute"
+		selector-title="{{ i18nAttr('m.rbs.catalog.admin.variantgroup_othersAttributes_picker_title', ['ucf']) }}"
+		picker-template="picker-other.twig">
+</rbs-field-picker-multiple>

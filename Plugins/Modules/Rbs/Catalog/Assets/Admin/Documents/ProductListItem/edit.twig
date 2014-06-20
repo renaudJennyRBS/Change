@@ -1,0 +1,50 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Catalog_ProductListItem">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_ProductListItem'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-catalog-product-list-item-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<div class="row">
+					<div class="rbs-aside-block col-sm-6" data-ng-show="document.product">
+						<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
+						<rbs-document-preview document="document.product"></rbs-document-preview>
+					</div>
+
+					<div class="rbs-aside-block col-sm-6" data-ng-show="document.productList">
+						<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.concerned_product_list', ['ucf']) }}</h3>
+						<rbs-document-preview document="document.productList"></rbs-document-preview>
+					</div>
+				</div>
+
+				<rbs-field-picker ng-controller="Rbs_Catalog_ProductList_ProductListController" ng-if="!document.productList"
+					property="document.productList"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductListItem', 'productList'), ['ucf']) }}"
+					accepted-model="Rbs_Catalog_ProductList"
+					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_productlist_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

@@ -23,9 +23,9 @@
 	},
 	"/Rbs/Commerce/Process/:id": {
 		"model": "Rbs_Commerce_Process",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Commerce/Process/form.twig",
+			"templateUrl": "Document/Rbs/Commerce/Process/edit.twig",
 			"labelKey": "m.rbs.commerce.documents.process | ucf",
 			"labelId": "id"
 		},
@@ -33,9 +33,9 @@
 	},
 	"/Rbs/Commerce/Process/:orderProcessId/Fee/:id": {
 		"model": "Rbs_Commerce_Fee",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
+			"templateUrl": "Document/Rbs/Commerce/Fee/edit.twig",
 			"labelKey": "m.rbs.commerce.documents.fee | ucf",
 			"labelId": "id"
 		},
@@ -45,7 +45,7 @@
 		"model": "Rbs_Commerce_Fee",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
+			"templateUrl": "Document/Rbs/Commerce/Fee/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -55,7 +55,7 @@
 		"model": "Rbs_Commerce_Fee",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Commerce/Fee/form.twig",
+			"templateUrl": "Document/Rbs/Commerce/Fee/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -64,7 +64,7 @@
 		"model": "Rbs_Commerce_Process",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Commerce/Process/form.twig",
+			"templateUrl": "Document/Rbs/Commerce/Process/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": true

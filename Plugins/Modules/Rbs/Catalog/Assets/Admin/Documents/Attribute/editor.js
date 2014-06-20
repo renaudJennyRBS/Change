@@ -1,35 +1,22 @@
-(function ()
-{
+(function() {
 	"use strict";
 
-	/**
-	 * @param Models
-	 * @constructor
-	 */
-	function Editor(Models)
-	{
+	function Editor(Models) {
 		return {
-			restrict : 'A',
-			templateUrl : 'Document/Rbs/Catalog/Attribute/editor.twig',
-			replace : false,
-			require : 'rbsDocumentEditor',
+			restrict: 'A',
+			require: '^rbsDocumentEditorBase',
 
-			link: function (scope, elm, attrs, editorCtrl)
-			{
+			link: function(scope, elm, attrs, editorCtrl) {
 				scope.onReady = function() {
-
-					if (scope.document.documentType)
-					{
+					if (scope.document.documentType) {
 						scope.documentTypeLabel = Models.getModelLabel(scope.document.documentType);
 					}
-
 				};
-
-				editorCtrl.init('Rbs_Catalog_Attribute');
 			}
 		};
 	}
 
 	Editor.$inject = ['RbsChange.Models'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogAttribute', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogAttributeNew', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogAttributeEdit', Editor);
 })();

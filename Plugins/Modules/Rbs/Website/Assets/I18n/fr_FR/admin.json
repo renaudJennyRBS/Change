@@ -74,6 +74,9 @@
 	"topic_edit_current":{
 		"message":"éditer la section courante"
 	},
+	"topic_in_website":{
+		"message":"rubrique du site"
+	},
 	"page_pagetemplate_picker_title":{
 		"message":"sélectionner le modèle de page"
 	},

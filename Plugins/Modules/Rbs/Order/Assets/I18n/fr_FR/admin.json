@@ -260,6 +260,9 @@
 	"shipment_shipping_address":{
 		"message":"adresse"
 	},
+	"shipment_general_information":{
+		"message":"informations générales"
+	},
 	"order_send":{
 		"message":"expédier"
 	},

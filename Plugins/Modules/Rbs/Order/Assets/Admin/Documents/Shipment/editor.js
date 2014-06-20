@@ -4,9 +4,7 @@
 	function Editor(REST, $routeParams, ArrayUtils, $q, Query, i18n, NotificationCenter, ErrorFormatter, Dialog, $timeout, $http) {
 		return {
 			restrict: 'A',
-			templateUrl: 'Document/Rbs/Order/Shipment/editor.twig',
-			replace: false,
-			require: 'rbsDocumentEditor',
+			require: '^rbsDocumentEditorBase',
 
 			link: function(scope, elm, attrs, editorCtrl) {
 				scope.data = {
@@ -170,12 +168,6 @@
 					scope.data.remainLines = [];
 					scope.data.shipmentLines = [];
 					scope.data.asideLines = [];
-				}
-
-				function refreshCode() {
-//					if (!scope.document.code && scope.data.order && scope.data.carrier) {
-//						scope.document.code = 'E-' + scope.data.order.label + '-' + scope.document.shippingModeCode + '-?';
-//					}
 				}
 
 				function refreshOrderRemainder() {
@@ -369,12 +361,8 @@
 							'and': [
 								{
 									'op': 'eq',
-									'lexp': {
-										'property': 'ownerId'
-									},
-									'rexp': {
-										'value': ownerId
-									}
+									'lexp': { 'property': 'ownerId' },
+									'rexp': { 'value': ownerId }
 								}
 							]
 						}
@@ -519,5 +507,6 @@
 
 	Editor.$inject = ['RbsChange.REST', '$routeParams', 'RbsChange.ArrayUtils', '$q', 'RbsChange.Query', 'RbsChange.i18n',
 		'RbsChange.NotificationCenter', 'RbsChange.ErrorFormatter', 'RbsChange.Dialog', '$timeout', '$http'];
-	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderShipment', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderShipmentNew', Editor);
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsOrderShipmentEdit', Editor);
 })();

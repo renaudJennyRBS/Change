@@ -27,57 +27,37 @@ class GetModelTwigAttributes
 		$adminManager = $event->getTarget();
 		if ($adminManager instanceof \Rbs\Admin\AdminManager && $model instanceof \Change\Documents\AbstractModel)
 		{
+			$attributes = $event->getParam('attributes');
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+
 			if ($model->getRootName() == 'Rbs_User_Group' && $view == 'edit')
 			{
-				$i18nManager = $event->getApplicationServices()->getI18nManager();
-				$links = [
-					[
-						'name' => 'groupUsers',
-						'href' => '(= document | rbsURL:\'groupUsers\' =)',
-						'description' => $i18nManager->trans('m.rbs.user.admin.users_in_group_aside_link', ['ucf'])
-					],
-					[
-						'name' => 'permissions',
-						'href' => '(= document | rbsURL:\'permissions\' =)',
-						'description' => $i18nManager->trans('m.rbs.user.admin.permissions_aside_link', ['ucf'])
-					]
+				$attributes['links'][] = [
+					'name' => 'groupUsers',
+					'href' => '(= document | rbsURL:\'groupUsers\' =)',
+					'description' => $i18nManager->trans('m.rbs.user.admin.users_in_group_aside_link', ['ucf'])
 				];
-				$this->addLinks($event, $links);
+				$attributes['links'][] = [
+					'name' => 'permissions',
+					'href' => '(= document | rbsURL:\'permissions\' =)',
+					'description' => $i18nManager->trans('m.rbs.user.admin.permissions_aside_link', ['ucf'])
+				];
 			}
 			elseif ($model->getRootName() == 'Rbs_User_User' && $view == 'edit')
 			{
-				$i18nManager = $event->getApplicationServices()->getI18nManager();
-				$links = [
-					[
-						'name' => 'applications',
-						'href' => '(= document | rbsURL:\'applications\' =)',
-						'description' => $i18nManager->trans('m.rbs.user.admin.applications_aside_link', ['ucf'])
-					],
-					[
-						'name' => 'permissions',
-						'href' => '(= document | rbsURL:\'permissions\' =)',
-						'description' => $i18nManager->trans('m.rbs.user.admin.permissions_aside_link', ['ucf'])
-					]
+				$attributes['links'][] = [
+					'name' => 'applications',
+					'href' => '(= document | rbsURL:\'applications\' =)',
+					'description' => $i18nManager->trans('m.rbs.user.admin.applications_aside_link', ['ucf'])
 				];
-				$this->addLinks($event, $links);
+				$attributes['links'][] = [
+					'name' => 'permissions',
+					'href' => '(= document | rbsURL:\'permissions\' =)',
+					'description' => $i18nManager->trans('m.rbs.user.admin.permissions_aside_link', ['ucf'])
+				];
 			}
+
+			$event->setParam('attributes', $attributes);
 		}
-	}
-
-	/**
-	 * @param Event $event
-	 * @param array[] $links
-	 */
-	protected function addLinks(Event $event, $links)
-	{
-		$attributes = $event->getParam('attributes');
-		if (!is_array($attributes))
-		{
-			$attributes = [];
-		}
-
-		$attributes['links'] = array_merge(isset($attributes['links']) ? $attributes['links'] : [], $links);
-
-		$event->setParam('attributes', $attributes);
 	}
 }

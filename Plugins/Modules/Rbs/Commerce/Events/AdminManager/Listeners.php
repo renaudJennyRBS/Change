@@ -27,6 +27,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function ($event)
 		{
+			(new \Rbs\Commerce\Admin\GetModelTwigAttributes())->execute($event);
 			(new \Rbs\Catalog\Admin\GetModelTwigAttributes())->execute($event);
 			(new \Rbs\Price\Admin\GetModelTwigAttributes())->execute($event);
 			(new \Rbs\Stock\Admin\GetModelTwigAttributes())->execute($event);

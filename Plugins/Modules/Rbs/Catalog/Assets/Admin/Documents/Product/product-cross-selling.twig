@@ -1,12 +1,11 @@
-<div class="row" ng-controller="Rbs_Catalog_Product_CrossSellingController">
-
+<div class="row" data-ng-controller="Rbs_Catalog_Product_CrossSellingController">
 	<div class="col-md-12">
 		<div class="page-header">
 			<h2>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list', ['ucf']) }}</h2>
 		</div>
 	</div>
 
-	<div rbs-aside-column>
+	<div data-rbs-aside-column="">
 		<div class="rbs-aside-block">
 			<h3 class="panel-title">{{ i18n('m.rbs.catalog.admin.product_concerned_product', ['ucf']) }}</h3>
 			<rbs-document-preview document="product"></rbs-document-preview>
@@ -19,8 +18,7 @@
 		</div>
 	</div>
 
-	<div rbs-main-column>
-
+	<div data-rbs-main-column="">
 		<div class="add-elements-bar">
 			<a href="(= 'Rbs_Catalog_CrossSellingProductList' | rbsURL:'new':{productId: product.id} =)">
 				{{ i18nAttr('m.rbs.catalog.admin.crosssellingproductlist_crosssellingproductlist_create', ['ucf']) }}
@@ -30,17 +28,12 @@
 		<p>{{ i18n('m.rbs.catalog.admin.product_cross_selling_list_help') | raw }}</p>
 
 		<rbs-document-list data-dlid="DLRbsCatalogCrossSellingProductList" model="Rbs_Catalog_CrossSellingProductList"
-			activable="true" load-query="loadQuery">
+			activable="true" modification-date="false" load-query="loadQuery">
 			<rbs-column name="label" primary="true"></rbs-column>
-			<rbs-quick-actions>
-				<a href="(= doc | rbsURL:'productListItems' =)">{{ i18nAttr('m.rbs.catalog.documents.crosssellingproductlist.products') }}</a>
-				|| [action edit]
-				|| [action delete]
-			</rbs-quick-actions>
-			productListItems
 			<rbs-column name="crossSellingType"></rbs-column>
+			<rbs-column name="products" width="150px" label="{{ i18nAttr('m.rbs.catalog.documents.productlist_products', ['ucf']) }}" align="center">
+				<a href="(= doc | rbsURL:'productListItems' =)">{{ i18n('m.rbs.catalog.documents.productlist_configure_products', ['ucf']) }} <i class="icon-circle-arrow-right"></i></a>
+			</rbs-column>
 		</rbs-document-list>
-
 	</div>
-
 </div>

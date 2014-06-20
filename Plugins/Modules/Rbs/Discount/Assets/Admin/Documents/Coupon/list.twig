@@ -1,27 +1,43 @@
-<div class="row" ng-controller="Rbs_Discount_HeaderController">
-
-	<div rbs-full-width>
+<div class="row" data-ng-controller="Rbs_Discount_HeaderController">
+	<div data-rbs-full-width="">
 		<nav class="navbar navbar-default" role="navigation">
 			<form class="navbar-form navbar-left">
 				<div class="form-group">
-					<select ng-model="currentProcess" ng-options="p.label for p in processes" class="form-control"></select>
+					<select data-ng-model="currentProcess" data-ng-options="p.label for p in processes" class="form-control">
+					</select>
 				</div>
 			</form>
-			<ul class="nav navbar-nav" ng-if="currentProcess">
-				<li><a href ng-href="(= 'Rbs_Discount_Discount' | rbsURL:'list':{orderProcessId:orderProcessId} =)"><i class="icon-list-alt"></i> {{ i18n('m.rbs.discount.admin.discount_list', ['ucf']) }}</a></li>
-				<li class="active"><a href ng-href="(= 'Rbs_Discount_Coupon' | rbsURL:'list':{orderProcessId:orderProcessId} =)"><i class="icon-wrench"></i> {{ i18n('m.rbs.discount.admin.coupon_list', ['ucf']) }}</a></li>
+			<ul class="nav navbar-nav" data-ng-if="currentProcess">
+				<li>
+					<a href="javascript:;" data-ng-href="(= 'Rbs_Discount_Discount' | rbsURL:'list':{orderProcessId:orderProcessId} =)">
+						<i class="icon-list-alt"></i> {{ i18n('m.rbs.discount.admin.discount_list', ['ucf']) }}
+					</a>
+				</li>
+				<li class="active">
+					<a href="javascript:;" data-ng-href="(= 'Rbs_Discount_Coupon' | rbsURL:'list':{orderProcessId:orderProcessId} =)">
+						<i class="icon-wrench"></i> {{ i18n('m.rbs.discount.admin.coupon_list', ['ucf']) }}
+					</a>
+				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href ng-href="(= 'Rbs_Commerce_Process' | rbsURL:'list' =)"><i class="icon-cog"></i> {{ i18n('m.rbs.commerce.admin.manage_processes') }}</a></li>
+				<li>
+					<a href="javascript:;" data-ng-href="(= 'Rbs_Commerce_Process' | rbsURL:'list' =)">
+						<i class="icon-cog"></i> {{ i18n('m.rbs.commerce.admin.manage_processes') }}
+					</a>
+				</li>
 			</ul>
 		</nav>
 
 		<div class="add-elements-bar">
-			<a href ng-href="(= 'Rbs_Discount_Coupon' | rbsURL:'new':{orderProcessId:orderProcessId} =)">{{ i18n('m.rbs.discount.admin.coupon_create', ['ucf']) }}</a>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new':{orderProcessId:orderProcessId} =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Discount_Coupon" filter-query="query"
-				load-query="listLoadQuery" activable="true" correction="true" actions="default">
+		<rbs-document-list data-dlid="DLRbsDiscountCoupon" model="Rbs_Discount_Coupon" filter-query="query"
+			load-query="listLoadQuery" activable="true" correction="true" actions="default">
 			<rbs-column name="label" primary="true"></rbs-column>
 			<rbs-column name="code"></rbs-column>
 		</rbs-document-list>

@@ -1,24 +1,21 @@
-(function () {
-
+(function() {
 	"use strict";
 
 	var app = angular.module('RbsChange');
 
-	function AttributeController($scope)
-	{
+	function AttributeController($scope) {
 		$scope.params = {};
 		$scope.List = {};
 
 		$scope.loadQuery = {
 			"model": "Rbs_Catalog_Attribute",
-
 			"where": {
-				"and" : [
+				"and": [
 					{
-						"op" : "notExists",
-						"rexp" : {
-							"model" : "Rbs_Catalog_VariantGroup",
-							"property" : "groupAttribute"
+						"op": "notExists",
+						"rexp": {
+							"model": "Rbs_Catalog_VariantGroup",
+							"property": "groupAttribute"
 						}
 					}
 				]
@@ -28,5 +25,4 @@
 
 	AttributeController.$inject = ['$scope'];
 	app.controller('Rbs_Catalog_Attribute_AttributeController', AttributeController);
-
 })();

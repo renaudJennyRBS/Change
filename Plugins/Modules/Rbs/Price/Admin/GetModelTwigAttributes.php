@@ -22,8 +22,6 @@ class GetModelTwigAttributes
 	public function execute(Event $event)
 	{
 		$view = $event->getParam('view');
-
-		/* @var $model \Change\Documents\AbstractModel */
 		$model = $event->getParam('model');
 
 		$adminManager = $event->getTarget();
@@ -31,23 +29,11 @@ class GetModelTwigAttributes
 		{
 			$attributes = $event->getParam('attributes');
 
-			//$attributes shouldn't be empty
-			if (!is_array($attributes))
-			{
-				$attributes = [];
-			}
-
-			//$attributes['asideDirectives'] can be empty
-			if (!isset($attributes['asideDirectives']))
-			{
-				$attributes['asideDirectives'] = [];
-			}
-
-			$modelName = $model->getName();
-			if ($view === 'edit' && $modelName === 'Rbs_Price_Price')
+			if ($view === 'edit' && $model->getName() === 'Rbs_Price_Price')
 			{
 				$attributes['asideDirectives'][] = ['name' => 'rbs-aside-price'];
 			}
+
 			$event->setParam('attributes', $attributes);
 		}
 	}

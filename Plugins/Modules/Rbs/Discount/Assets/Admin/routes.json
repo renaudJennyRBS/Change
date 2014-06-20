@@ -45,9 +45,9 @@
 	},
 	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id": {
 		"model": "Rbs_Discount_Coupon",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
+			"templateUrl": "Document/Rbs/Discount/Coupon/edit.twig",
 			"labelKey": "m.rbs.discount.documents.coupon | ucf",
 			"labelId": "id"
 		},
@@ -57,7 +57,7 @@
 		"model": "Rbs_Discount_Coupon",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
+			"templateUrl": "Document/Rbs/Discount/Coupon/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -67,7 +67,7 @@
 		"model": "Rbs_Discount_Coupon",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/form.twig",
+			"templateUrl": "Document/Rbs/Discount/Coupon/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
@@ -83,9 +83,9 @@
 	},
 	"/Rbs/Discount/Process/:orderProcessId/Discount/:id": {
 		"model": "Rbs_Discount_Discount",
-		"name": "form",
+		"name": "edit",
 		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
+			"templateUrl": "Document/Rbs/Discount/Discount/edit.twig",
 			"labelKey": "m.rbs.discount.documents.discount | ucf",
 			"labelId": "id"
 		},
@@ -95,7 +95,7 @@
 		"model": "Rbs_Discount_Discount",
 		"name": "translate",
 		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
+			"templateUrl": "Document/Rbs/Discount/Discount/translate.twig",
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
@@ -105,7 +105,7 @@
 		"model": "Rbs_Discount_Discount",
 		"name": "new",
 		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/form.twig",
+			"templateUrl": "Document/Rbs/Discount/Discount/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false

@@ -89,6 +89,10 @@ body {
 	margin-top: 2px;
 }
 
+.navbar-nav.navbar-right:last-child {
+	margin-right: 0;
+}
+
 .dropdown-menu > li.dropdown-text {
 	display: block;
 	padding: 3px 20px;
@@ -497,6 +501,11 @@ rbs-todo {
 .rbs-aside-block a {
 	display: block;
 	margin: 5px 0;
+}
+
+.rbs-aside-block a.a-inline {
+	display: inline;
+	margin: 0;
 }
 
 .rbs-aside-block a strong {
