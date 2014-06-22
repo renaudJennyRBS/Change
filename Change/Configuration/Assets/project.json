@@ -49,6 +49,9 @@
 		"Http": {
 			"Web": {
 				"SingleWebsite": true
+			},
+			"Rest": {
+				"useCorrection": true
 			}
 		},
 		"User": {

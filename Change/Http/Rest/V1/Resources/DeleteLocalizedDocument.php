@@ -67,8 +67,9 @@ class DeleteLocalizedDocument
 			return;
 		}
 
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$document->useCorrection($event->getApplication()->getConfiguration()->getEntry('Change/Http/Rest/useCorrection'));
 
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{

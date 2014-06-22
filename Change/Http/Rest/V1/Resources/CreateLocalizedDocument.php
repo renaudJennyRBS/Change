@@ -53,6 +53,8 @@ class CreateLocalizedDocument
 			$document->initialize($documentId);
 		}
 
+		$document->useCorrection($event->getApplication()->getConfiguration()->getEntry('Change/Http/Rest/useCorrection'));
+
 		if (!($document instanceof Localizable))
 		{
 			throw new \RuntimeException('Invalid Parameter: documentId', 71000);

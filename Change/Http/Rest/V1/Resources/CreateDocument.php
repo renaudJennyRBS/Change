@@ -58,6 +58,9 @@ class CreateDocument
 		{
 			$document->initialize($documentId);
 		}
+
+		$document->useCorrection($event->getApplication()->getConfiguration()->getEntry('Change/Http/Rest/useCorrection'));
+
 		$properties = $event->getRequest()->getPost()->toArray();
 
 		$LCID = isset($properties['refLCID']) ? strval($properties['refLCID']) : $event->getApplicationServices()
