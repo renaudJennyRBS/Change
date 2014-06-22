@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -63,14 +63,19 @@ class InventoryEntry
 	 */
 	public function consolidateMovements($event)
 	{
-		$warehouseId = $event->getRequest()->getQuery('warehouseId');
-
 		$inventoryEntryId = $event->getParam('inventoryEntryId');
-		/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry*/
+
+		/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry */
 		$inventoryEntry = $event->getApplicationServices()->getDocumentManager()
 			->getDocumentInstance($inventoryEntryId, 'Rbs_Stock_InventoryEntry');
 
-		if ($inventoryEntry != null)
+		$cs = $event->getServices('commerceServices');
+		if (!($cs instanceof \Rbs\Commerce\CommerceServices))
+		{
+			$result = new \Change\Http\Rest\V1\ErrorResult(999999,
+				'Commerce services not set', \Zend\Http\Response::STATUS_CODE_409);
+		}
+		elseif ($inventoryEntry != null)
 		{
 			$transactionManager = $event->getApplicationServices()->getTransactionManager();
 			try
@@ -78,29 +83,19 @@ class InventoryEntry
 				$result = new \Change\Http\Rest\V1\ArrayResult();
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
 
-				$cs = $event->getServices('commerceServices');
-				if ($cs instanceof \Rbs\Commerce\CommerceServices)
-				{
-					$stockManager = $cs->getStockManager();
 
-					$transactionManager->begin();
+				$stockManager = $cs->getStockManager();
 
-					// Get movements
-					$movements = $stockManager->getInventoryMovementsBySku($inventoryEntry->getSku(), $warehouseId);
+				$transactionManager->begin();
 
-					$level = $inventoryEntry->getLevel();
-					// Foreach movements, add value of inventory level and delete movement
-					foreach ($movements as $movement)
-					{
-						$level += $movement['movement'];
-						$stockManager->deleteInventoryMovementById($movement['id']);
-					}
+				$stockManager->consolidateInventoryEntry($inventoryEntry);
 
-					$inventoryEntry->setLevel($level);
-					$inventoryEntry->save();
+				$nbMvt = $stockManager->countInventoryMovementsBySku($inventoryEntry->getSku(), $inventoryEntry->getWarehouseId());
+				$totalMvt = $stockManager->getValueOfMovementsBySku($inventoryEntry->getSku(), $inventoryEntry->getWarehouseId());
 
-					$transactionManager->commit();
-				}
+				$currentLevel = $inventoryEntry->getLevel() + $totalMvt;
+				$result->setArray(array('nbMovement' => $nbMvt, 'totalMovement' => $totalMvt, 'currentLevel' => $currentLevel, 'level' => $inventoryEntry->getLevel()));
+				$transactionManager->commit();
 			}
 			catch(\Exception $e)
 			{

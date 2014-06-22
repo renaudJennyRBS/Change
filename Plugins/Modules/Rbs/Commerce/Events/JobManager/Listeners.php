@@ -107,6 +107,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Catalog\Events\ItemOrderingUpdater())->onScheduledActivation($event);
 		};
 		$events->attach('process_scheduledActivation', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Stock\Job\UpdateProductAvailability())->execute($event);
+		};
+		$events->attach('process_Rbs_Stock_UpdateProductAvailability', $callBack, 5);
 	}
 
 	/**

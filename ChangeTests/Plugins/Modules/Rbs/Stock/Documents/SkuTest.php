@@ -7,7 +7,10 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 {
 	public static function setUpBeforeClass()
 	{
-		static::initDocumentsDb();
+		$appServices = static::initDocumentsDb();
+		$schema = new \Rbs\Stock\Setup\Schema($appServices->getDbProvider()->getSchemaManager());
+		$schema->generate();
+		$appServices->getDbProvider()->closeConnection();
 	}
 
 	public static function tearDownAfterClass()
@@ -214,12 +217,14 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 
 	public function testCleanInventory()
 	{
+		$documentManager = $this->getApplicationServices()->getDocumentManager();
+
 		/** @var $sku1 \Rbs\Stock\Documents\Sku */
-		$sku1 = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
+		$sku1 = $documentManager->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
 		$sku1->setCode('TATA');
 
 		/** @var $sku2 \Rbs\Stock\Documents\Sku */
-		$sku2 = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
+		$sku2 = $documentManager->getNewDocumentInstanceByModelName('Rbs_Stock_Sku');
 		$sku2->setCode('TITI');
 
 		$tm = $this->getApplicationServices()->getTransactionManager();
@@ -235,23 +240,31 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 			throw $tm->rollBack($e);
 		}
 
-		/** @var $stock1 \Rbs\Stock\Documents\InventoryEntry */
-		$stock1 = $this->getApplicationServices()->getDocumentManager()
-			->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
-		$stock1->setSku($sku1);
-		$stock1->setLevel(10);
-
-		/** @var $stock2 \Rbs\Stock\Documents\InventoryEntry */
-		$stock2 = $this->getApplicationServices()->getDocumentManager()
-			->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
-		$stock2->setSku($sku2);
-		$stock2->setLevel(20);
-
 		try
 		{
 			$tm->begin();
+			$query1 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
+			$query1->andPredicates($query1->eq('sku', $sku1));
+			$stocks = $query1->getDocuments();
+			$this->assertEquals(1, $stocks->count());
+
+			/** @var $stock1 \Rbs\Stock\Documents\InventoryEntry */
+			$stock1 = $stocks->offsetGet(0);
+			$this->assertInstanceOf('\Rbs\Stock\Documents\InventoryEntry', $stock1);
+			$stock1->setLevel(10);
 			$stock1->save();
+
+			$query1 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
+			$query1->andPredicates($query1->eq('sku', $sku2));
+			$stocks = $query1->getDocuments();
+			$this->assertEquals(1, $stocks->count());
+
+			/** @var $stock2 \Rbs\Stock\Documents\InventoryEntry */
+			$stock2 = $stocks->offsetGet(0);
+			$this->assertInstanceOf('\Rbs\Stock\Documents\InventoryEntry', $stock2);
+			$stock2->setLevel(20);
 			$stock2->save();
+
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -259,11 +272,11 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 			throw $tm->rollBack($e);
 		}
 
-		$query1 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query1 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query1->andPredicates($query1->eq('sku', $sku1));
 		$this->assertEquals(1, $query1->getCountDocuments());
 
-		$query2 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query2 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query2->andPredicates($query2->eq('sku', $sku2));
 		$this->assertEquals(1, $query2->getCountDocuments());
 
@@ -278,11 +291,11 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 			throw $tm->rollBack($e);
 		}
 
-		$query1 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query1 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query1->andPredicates($query1->eq('sku', $sku1));
 		$this->assertEquals(0, $query1->getCountDocuments());
 
-		$query2 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query2 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query2->andPredicates($query2->eq('sku', $sku2));
 		$this->assertEquals(1, $query2->getCountDocuments());
 
@@ -297,7 +310,7 @@ class SkuTest extends \ChangeTests\Change\TestAssets\TestCase
 			throw $tm->rollBack($e);
 		}
 
-		$query2 = $this->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$query2 = $documentManager->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query2->andPredicates($query2->eq('sku', $sku2));
 		$this->assertEquals(0, $query2->getCountDocuments());
 	}

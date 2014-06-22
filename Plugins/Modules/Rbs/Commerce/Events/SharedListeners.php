@@ -41,6 +41,7 @@ class SharedListeners implements SharedListenerAggregateInterface
 			return true;
 		}, 9997);
 
+		//Rbs_Catalog
 		$events->attach('Rbs_Catalog_ProductListItem', ['documents.created', 'documents.updated'], function ($event)
 		{
 			(new \Rbs\Catalog\Events\ItemOrderingUpdater)->onItemChange($event);
@@ -61,6 +62,16 @@ class SharedListeners implements SharedListenerAggregateInterface
 			(new \Rbs\Catalog\Events\ItemOrderingUpdater)->onSkuChange($event);
 		}, 5);
 
+		//Rbs_Stock
+		$events->attach('Rbs_Catalog_Product', ['documents.update'], function ($event)
+		{
+			(new \Rbs\Stock\Job\UpdateProductAvailability())->onProductSkuChange($event);
+		}, 5);
+
+		$events->attach('Rbs_Stock_InventoryEntry', ['documents.created', 'documents.updated'], function ($event)
+		{
+			(new \Rbs\Stock\Job\UpdateProductAvailability())->onInventoryEntryChange($event);
+		}, 10);
 	}
 
 	/**

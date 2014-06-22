@@ -161,7 +161,10 @@
 							<th>{{ i18n('m.rbs.stock.admin.sku_stock_info_warehouse', ['ucf']) }}</th>
 						</tr>
 						<tr ng-repeat="inventory in stockInfoData.inventoryData">
-							<td>(= inventory.inventoryLevel =)</td>
+							<td>
+								<a class="btn btn-xs btn-default active" type="button" title="{{ i18n('m.rbs.admin.admin.edit', ['ucf']) }}" ng-href="(= inventory | rbsURL =)">
+									<i class="icon-edit"></i> (= inventory.inventoryLevel =)</a>
+							</td>
 							<td>(= inventory.currentLevel =)</td>
 							<td>(= inventory.warehouse =)</td>
 						</tr>
