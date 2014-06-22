@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -14,8 +13,8 @@ use Change\Documents\Interfaces\Publishable;
 use Rbs\Website\Documents\Website;
 
 /**
-* @name \Rbs\Website\Events\PathRuleBuilder
-*/
+ * @name \Rbs\Website\Events\PathRuleBuilder
+ */
 class PathRuleBuilder
 {
 	/**
@@ -36,7 +35,8 @@ class PathRuleBuilder
 			if ($section)
 			{
 				$website = $section->getWebsite();
-				if ($website) {
+				if ($website)
+				{
 					$websiteIds[$website->getId()] = [];
 				}
 			}
@@ -49,7 +49,8 @@ class PathRuleBuilder
 				if ($website)
 				{
 					$websiteId = $website->getId();
-					if (!isset($websiteIds[$websiteId])) {
+					if (!isset($websiteIds[$websiteId]))
+					{
 						$websiteIds[$websiteId] = [$section->getId()];
 					}
 					elseif (!in_array($section->getId(), $websiteIds[$websiteId]))
@@ -60,7 +61,8 @@ class PathRuleBuilder
 			}
 		}
 
-		if (!count($websiteIds)) {
+		if (!count($websiteIds))
+		{
 			return;
 		}
 
@@ -71,7 +73,7 @@ class PathRuleBuilder
 		{
 			/** @var $website \Rbs\Website\Documents\Website */
 			$website = $documentManager->getDocumentInstance($websiteId);
-			foreach($website->getLCIDArray() as $LCID)
+			foreach ($website->getLCIDArray() as $LCID)
 			{
 				$documentManager->pushLCID($LCID);
 				$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
@@ -89,6 +91,49 @@ class PathRuleBuilder
 	}
 
 	/**
+	 * @param \Rbs\Website\Documents\SectionPageFunction $sectionPageFunction
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
+	 * @param \Change\Logging\Logging $logging
+	 */
+	public function updatePathRuleForSectionPageFunction(\Rbs\Website\Documents\SectionPageFunction $sectionPageFunction,
+		\Change\Documents\DocumentManager $documentManager, \Change\Http\Web\PathRuleManager $pathRuleManager, $logging)
+	{
+		$page = $sectionPageFunction->getPage();
+		if (!($page instanceof \Rbs\Website\Documents\FunctionalPage))
+		{
+			return;
+		}
+
+		$section = $sectionPageFunction->getSection();
+		if ($section instanceof \Rbs\Website\Documents\Website)
+		{
+			$website = $section;
+			$section = null;
+		}
+		elseif ($section instanceof \Rbs\Website\Documents\Topic)
+		{
+			$website = $section->getWebsite();
+			if (!$website)
+			{
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
+		$sectionId = $section ? $section->getId() : 0;
+
+		foreach ($website->getLCIDArray() as $LCID)
+		{
+			$documentManager->pushLCID($LCID);
+			$this->updatePathRule($page, $LCID, $website->getId(), $sectionId, $pathRuleManager, $logging);
+			$documentManager->popLCID();
+		}
+	}
+
+	/**
 	 * @param AbstractDocument $document
 	 * @param string $LCID
 	 * @param integer $websiteId
@@ -98,7 +143,8 @@ class PathRuleBuilder
 	 */
 	protected function updatePathRule($document, $LCID, $websiteId, $sectionId, $pathRuleManager, $logging)
 	{
-		$tmpRule = $pathRuleManager->getNewRule($websiteId, $LCID, $pathRuleManager->getDefaultRelativePath($document, $sectionId),
+		$tmpRule = $pathRuleManager->getNewRule($websiteId, $LCID,
+			$pathRuleManager->getDefaultRelativePath($document, $sectionId),
 			$document->getId(), 200, $sectionId);
 		$newRule = $pathRuleManager->populatePathRuleByDocument($tmpRule, $document);
 		if ($newRule === null)
@@ -111,7 +157,9 @@ class PathRuleBuilder
 		$existingRules = $pathRuleManager->findPathRules($websiteId, $LCID, $document->getId(), $sectionId);
 		foreach ($existingRules as $rule)
 		{
-			if ($rule->getDocumentId() != $newRule->getDocumentId() || $rule->getDocumentAliasId() != $newRule->getDocumentAliasId())
+			if ($rule->getDocumentId() != $newRule->getDocumentId()
+				|| $rule->getDocumentAliasId() != $newRule->getDocumentAliasId()
+			)
 			{
 				$rule->setDocumentId($newRule->getDocumentId());
 				$rule->setDocumentAliasId($newRule->getDocumentAliasId());
@@ -153,7 +201,9 @@ class PathRuleBuilder
 				$ruleByPath = $pathRuleManager->getPathRule($websiteId, $LCID, $newRule->getRelativePath());
 				if ($ruleByPath)
 				{
-					if ($ruleByPath->getDocumentId() == $document->getId() || $ruleByPath->getDocumentAliasId() == $document->getId())
+					if ($ruleByPath->getDocumentId() == $document->getId()
+						|| $ruleByPath->getDocumentAliasId() == $document->getId()
+					)
 					{
 						$ruleByPath->setDocumentId($newRule->getDocumentId());
 						$ruleByPath->setDocumentAliasId($newRule->getDocumentAliasId());
@@ -165,7 +215,8 @@ class PathRuleBuilder
 					}
 					else
 					{
-						$logging->error('Duplicate relative path rule '. $ruleByPath->getRuleId(). ' for document ' . $document);
+						$logging->error('Duplicate relative path rule ' . $ruleByPath->getRuleId() . ' for document '
+						. $document);
 						return;
 					}
 				}

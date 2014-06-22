@@ -41,6 +41,7 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'validateUnique'), 1);
 		$eventManager->attach(array(Event::EVENT_CREATED, Event::EVENT_UPDATED), array($this, 'hideLinksOnIndexPage'), 1);
+		$eventManager->attach(array(Event::EVENT_CREATED, Event::EVENT_UPDATED), array($this, 'buildPathRule'), 1);
 	}
 
 
@@ -91,5 +92,26 @@ class SectionPageFunction extends \Compilation\Rbs\Website\Documents\SectionPage
 
 		/* @var $restResult \Change\Http\Rest\V1\Resources\DocumentLink|\Change\Http\Rest\V1\Resources\DocumentResult */
 		$restResult->setProperty('label', $document->getLabel());
+	}
+
+
+	public function buildPathRule(\Change\Documents\Events\Event $event)
+	{
+		$doc = $event->getDocument();
+		if ($doc instanceof SectionPageFunction && $doc->getPage() instanceof FunctionalPage && $doc->getSection())
+		{
+			$functionCode = $doc->getFunctionCode();
+			$functions = $event->getApplicationServices()->getPageManager()->getFunctions();
+			foreach ($functions as $function)
+			{
+				if ($function['code'] == $functionCode && !$function['document'])
+				{
+					$applicationServices = $event->getApplicationServices();
+					(new \Rbs\Website\Events\PathRuleBuilder())->updatePathRuleForSectionPageFunction($doc,
+						$applicationServices->getDocumentManager(),
+						$applicationServices->getPathRuleManager(), $event->getApplication()->getLogging());
+				}
+			}
+		}
 	}
 }

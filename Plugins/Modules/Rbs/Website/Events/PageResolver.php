@@ -70,9 +70,16 @@ class PageResolver
 	 */
 	public function onPopulatePathRule(\Change\Events\Event $event)
 	{
+		/** @var $pathRule \Change\Http\Web\PathRule */
 		$pathRule = $event->getParam('pathRule');
+
+		if (!($pathRule instanceof \Change\Http\Web\PathRule))
+		{
+			return;
+		}
+
 		$document = $event->getParam('document');
-		if (($pathRule instanceof \Change\Http\Web\PathRule) && ($document instanceof Publishable))
+		if ($document instanceof Publishable)
 		{
 			$staticPage = null;
 			if ($document instanceof \Rbs\Website\Documents\StaticPage)
@@ -102,6 +109,34 @@ class PageResolver
 					$event->setParam('pathRule', $pathRule);
 					$event->stopPropagation();
 				}
+			}
+		}
+		elseif ($document instanceof \Rbs\Website\Documents\FunctionalPage)
+		{
+			$title = $document->getCurrentLocalization()->getTitle();
+			if ($title)
+			{
+				$section = null;
+				$path = $pathRule->normalizePath($title . '.html');
+				$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId(), 'Rbs_Website_Topic');
+				if ($section instanceof \Rbs\Website\Documents\Topic)
+				{
+					if (is_string($pathPart = $section->getPathPart()))
+					{
+						$sectionPath = $pathPart;
+					}
+					elseif (is_string($title = $section->getTitle()))
+					{
+						$sectionPath = $pathRule->normalizePath($title);
+					}
+					else
+					{
+						$sectionPath = $section->getId();
+					}
+					$path = $sectionPath . '/' . $path;
+				}
+				$pathRule->setRelativePath($path);
+				$pathRule->setQuery(null);
 			}
 		}
 	}
