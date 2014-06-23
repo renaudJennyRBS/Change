@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -137,8 +137,18 @@ class StockManager
 	}
 
 	/**
-	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
+	 * @api
+	 * @return integer[]
+	 */
+	public function getAvailableWarehouseIds()
+	{
+		return [0];
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
 	 * @return \Rbs\Stock\Documents\InventoryEntry|null
 	 */
 	public function getInventoryEntry($sku, $warehouse = null)
@@ -152,8 +162,9 @@ class StockManager
 	}
 
 	/**
-	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @return \Rbs\Stock\Documents\InventoryEntry|null
+	 * @api
+	 * @param \Rbs\Stock\Documents\Sku|integer $sku
+	 * @return \Rbs\Stock\Documents\InventoryEntry[]|null
 	 */
 	public function getInventoryEntries($sku)
 	{
@@ -165,6 +176,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param integer $level
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
@@ -198,6 +210,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param string $target
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
 	 * @return array
@@ -227,6 +240,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
 	 * @param integer|null $limit
@@ -285,6 +299,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
 	 * @return integer
@@ -327,6 +342,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @return array|mixed|null
 	 */
@@ -353,8 +369,9 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer $warehouse
 	 * @return integer
 	 */
 	public function getValueOfMovementsBySku($sku, $warehouse = null)
@@ -364,28 +381,68 @@ class StockManager
 		$qb->select($fb->alias($fb->sum($fb->column('movement')), 'movement'));
 		$qb->from($fb->table('rbs_stock_dat_mvt'));
 		$logicAnd = $fb->logicAnd(
-			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
+			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')),
+			$fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId'))
 		);
-		if ($warehouse !== null)
-		{
-			$logicAnd->addArgument($fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId')));
-		}
 		$qb->where($logicAnd);
 		$query = $qb->query();
 
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
 		$query->bindParameter('skuId', $skuId);
 
-		if ($warehouse !== null)
-		{
-			$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
-			$query->bindParameter('warehouseId', $warehouseId);
-		}
+		$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+		$query->bindParameter('warehouseId', $warehouseId);
 
 		return $query->getFirstResult($query->getRowsConverter()->addIntCol('movement')->singleColumn('movement'));
 	}
 
 	/**
+	 * @api
+	 * Requires an open transaction @see \Change\Transaction\TransactionManager::begin()
+	 * @param \Rbs\Stock\Documents\InventoryEntry $inventoryEntry
+	 */
+	public function consolidateInventoryEntry(\Rbs\Stock\Documents\InventoryEntry $inventoryEntry)
+	{
+		$warehouseId = $inventoryEntry->getWarehouseId();
+		$skuId = $inventoryEntry->getSkuId();
+
+		$valueOfMovementsBySku = $this->getValueOfMovementsBySku($skuId, $warehouseId);
+		if ($valueOfMovementsBySku !== 0)
+		{
+			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::consolidateInventoryEntry');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->delete($fb->table('rbs_stock_dat_mvt'));
+				$qb->where(
+					$fb->logicAnd(
+						$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')),
+						$fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId'))
+					)
+				);
+			}
+			$statement = $qb->deleteQuery();
+			$statement->bindParameter('skuId', $skuId);
+			$statement->bindParameter('warehouseId', $warehouseId);
+			$statement->execute();
+
+			if ($inventoryEntry->getSku() && $inventoryEntry->getSku()->getUnlimitedInventory())
+			{
+				$inventoryEntry->setLevel(static::UNLIMITED_LEVEL);
+			}
+			else
+			{
+				$inventoryEntry->setLevel($inventoryEntry->getLevel() + $valueOfMovementsBySku);
+
+			}
+			$inventoryEntry->setValueOfMovements(0);
+			$inventoryEntry->save();
+		}
+	}
+
+	/**
+	 * @api
+	 * Requires an open transaction @see \Change\Transaction\TransactionManager::begin()
 	 * Positive = receipt, negative = issue
 	 * @param integer $amount
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
@@ -397,7 +454,7 @@ class StockManager
 	 */
 	public function addInventoryMovement($amount, $sku, $warehouse = null, $date = null, $target = null)
 	{
-		$qb = $this->getDbProvider()->getNewStatementBuilder('addInventoryIssueReceipt');
+		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::addInventoryMovement');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -419,27 +476,76 @@ class StockManager
 			->bindParameter('dateValue', $dateValue)
 			->bindParameter('target', $target);
 		$is->execute();
-		return $is->getDbProvider()->getLastInsertId('rbs_catalog_dat_attribute');
+		$movementId = $is->getDbProvider()->getLastInsertId('rbs_stock_dat_mvt');
+
+		$entry = $this->getInventoryEntry($skuId, $warehouseId);
+		if ($entry instanceof \Rbs\Stock\Documents\InventoryEntry)
+		{
+			$valueOfMovements = intval($this->getValueOfMovementsBySku($skuId, $warehouseId));
+			$entry->updateValueOfMovements($valueOfMovements);
+		}
+
+		return $movementId;
 	}
 
 	/**
+	 * @api
+	 * Requires an open transaction @see \Change\Transaction\TransactionManager::begin()
 	 * @param integer $movementId
 	 */
 	public function deleteInventoryMovementById($movementId)
 	{
-		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::deleteInventoryMovementById');
-		if (!$qb->isCached())
+		$movementInfo = $this->getInfoByMovementId($movementId);
+		if (is_array($movementInfo))
 		{
-			$fb = $qb->getFragmentBuilder();
-			$qb->delete($fb->table('rbs_stock_dat_mvt'));
-			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('movementId')));
+			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::deleteInventoryMovementById');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->delete($fb->table('rbs_stock_dat_mvt'));
+				$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('movementId')));
+			}
+			$statement = $qb->deleteQuery();
+			$statement->bindParameter('movementId', $movementId);
+			$statement->execute();
+
+			list($skuId, $warehouseId) = $movementInfo;
+			$entry = $this->getInventoryEntry($skuId, $warehouseId);
+			if ($entry instanceof \Rbs\Stock\Documents\InventoryEntry)
+			{
+				$valueOfMovements = intval($this->getValueOfMovementsBySku($skuId, $warehouseId));
+				$entry->updateValueOfMovements($valueOfMovements);
+			}
 		}
-		$statement = $qb->deleteQuery();
-		$statement->bindParameter('movementId', $movementId);
-		$statement->execute();
 	}
 
 	/**
+	 * If return value is array index 0 is skuId and index 1 is warehouseId
+	 * @param integer $movementId
+	 * @return array|null
+	 */
+	protected function getInfoByMovementId($movementId)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getInfoByMovementId');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('warehouse_id'), $fb->column('sku_id'));
+			$qb->from($fb->table('rbs_stock_dat_mvt'));
+			$qb->where($fb->eq($fb->column('id'), $fb->integerParameter('movementId')));
+		}
+		$query = $qb->query();
+		$query->bindParameter('movementId', $movementId);
+		$result = $query->getFirstResult($query->getRowsConverter()->addIntCol('sku_id', 'warehouse_id'));
+		if (is_array($result))
+		{
+			return [$result['sku_id'], $result['warehouse_id']];
+		}
+		return null;
+	}
+
+	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @return integer
@@ -488,6 +594,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku[] $skus
 	 * @param integer|\Rbs\Store\Documents\WebStore|null $store
 	 * @return integer
@@ -537,6 +644,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku $sku
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @param integer $level
@@ -565,6 +673,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku[] $skus
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @param integer $level
@@ -582,6 +691,7 @@ class StockManager
 
 
 	/**
+	 * @api
 	 * @param string $threshold
 	 * @return string|null
 	 */
@@ -604,6 +714,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * Return not reserved quantity
 	 * @param string $targetIdentifier
 	 * @param \Rbs\Stock\Interfaces\Reservation[] $reservations
@@ -756,6 +867,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @return array|mixed|null
 	 */
@@ -853,6 +965,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param string $targetIdentifier
 	 * @return \Rbs\Stock\Interfaces\Reservation[]
 	 */
@@ -992,6 +1105,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param $targetIdentifier
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param $quantity
@@ -1060,6 +1174,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Store\Documents\WebStore|integer $store
 	 * @param integer|null $limit
@@ -1117,6 +1232,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param \Rbs\Store\Documents\WebStore|integer $store
 	 * @return integer
@@ -1163,6 +1279,7 @@ class StockManager
 	protected $skuIds = array();
 
 	/**
+	 * @api
 	 * @param string $code
 	 * @return \Rbs\Stock\Documents\Sku|null
 	 */
@@ -1193,6 +1310,7 @@ class StockManager
 	}
 
 	/**
+	 * @api
 	 * @param string $targetIdentifier
 	 * @return integer|null
 	 */
@@ -1204,7 +1322,62 @@ class StockManager
 		{
 			return $split[1];
 		}
-
 		return null;
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer $warehouse
+	 * @return bool
+	 */
+	public function getProductAvailability($product, $warehouse = null)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('getProductAvailability');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$tableIdt = $fb->identifier('rbs_stock_dat_availability');
+			$qb->select($fb->column('availability'))
+				->from($fb->table('rbs_stock_dat_availability'))
+				->where(
+					$fb->logicAnd(
+						$fb->gt($fb->column('availability', $tableIdt), $fb->number(0)),
+						$fb->eq($fb->column('product_id', $tableIdt),  $fb->integerParameter('productId')),
+						$fb->eq($fb->column('warehouse_id', $tableIdt) , $fb->integerParameter('warehouseId'))
+					)
+				);
+		}
+		$sq = $qb->query();
+		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
+		$sq->bindParameter('productId', $productId);
+		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse) ? $warehouse->getId() : intval($warehouse);
+		$sq->bindParameter('warehouseId', $warehouseId);
+
+		$availability = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('availability')->singleColumn('availability'));
+		return $availability ? true : false;
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Db\Query\Expressions\AbstractExpression $productSQLFragment
+	 * @param \Change\Db\Query\Expressions\AbstractExpression|null $warehouseSQLFragment
+	 * @return \Change\Db\Query\Predicates\Exists
+	 */
+	public function getProductAvailabilityRestriction($productSQLFragment, $warehouseSQLFragment = null)
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$fb = $qb->getFragmentBuilder();
+		$tableIdt = $fb->identifier('rbs_stock_dat_availability');
+		$qb->select($fb->allColumns())
+			->from($fb->table('rbs_stock_dat_availability'))
+			->where(
+				$fb->logicAnd(
+					$fb->gt($fb->column('availability', $tableIdt), $fb->number(0)),
+					$fb->eq($fb->column('warehouse_id', $tableIdt) , $warehouseSQLFragment ? $warehouseSQLFragment : $fb->number(0)),
+					$fb->eq($fb->column('product_id', $tableIdt), $productSQLFragment)
+				)
+			);
+		return $fb->exists($qb->query());
 	}
 }

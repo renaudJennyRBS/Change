@@ -14,16 +14,21 @@
 
 				scope.stockInfoData = {};
 				scope.onReady = function() {
-
-					if (!scope.document.isNew())
-					{
+					if (!scope.document.isNew()) {
 						// Load stock infos
 						var url = Utils.makeUrl('resources/Rbs/Stock/Sku/' + scope.document.id + '/stockInfo/');
 						$http.get(REST.getBaseUrl(url)).success(function(data) {
 							scope.stockInfoData = data;
 						});
 					}
+				}
 
+				scope.onReload = function() {
+					// Load stock infos
+					var url = Utils.makeUrl('resources/Rbs/Stock/Sku/' + scope.document.id + '/stockInfo/');
+					$http.get(REST.getBaseUrl(url)).success(function(data) {
+						scope.stockInfoData = data;
+					});
 				}
 			}
 		};

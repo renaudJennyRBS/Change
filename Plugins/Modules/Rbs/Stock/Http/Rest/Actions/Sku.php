@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -25,32 +25,31 @@ class Sku
 
 		if ($sku !== null)
 		{
-
 			$data = array();
-
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 
 				$stockManager = $cs->getStockManager();
+				$unlimited = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.stock.admin.unlimited_stock');
+				$inventoryEntries = $stockManager->getInventoryEntries($sku);
 
-				// Check if SKU has infinite stock or not
-				// If not, get all Inventory Entry of SKU
-				if (!$sku->getUnlimitedInventory())
+				foreach ($inventoryEntries as $inventoryEntry)
 				{
-
-					$inventoryEntries = $stockManager->getInventoryEntries($sku);
-
-					foreach ($inventoryEntries as $inventoryEntry)
+					/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry*/
+					if ($sku->getUnlimitedInventory())
 					{
-						$totalMvt = $stockManager->getValueOfMovementsBySku($sku, $inventoryEntry->getWarehouseId());
-
-						/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry*/
-						$inventoryData = array('inventoryLevel' => $inventoryEntry->getLevel(), 'currentLevel' => ($inventoryEntry->getLevel() + $totalMvt), 'warehouse' => $inventoryEntry->getWarehouseId());
-						$data['inventoryData'][] = $inventoryData;
+						$inventoryData = ['inventoryLevel' => $unlimited, 'currentLevel' => $unlimited, 'warehouse' => $inventoryEntry->getWarehouseId(),
+							'id' => $inventoryEntry->getId(), 'model' =>$inventoryEntry->getDocumentModelName(), 'unlimited' => true];
+					}
+					else
+					{
+						$totalMvt = $inventoryEntry->getValueOfMovements();
+					   $inventoryData = ['inventoryLevel' => $inventoryEntry->getLevel(), 'currentLevel' => ($inventoryEntry->getLevel() + $totalMvt), 'warehouse' => $inventoryEntry->getWarehouseId(),
+						'id' => $inventoryEntry->getId(), 'model' =>$inventoryEntry->getDocumentModelName(), 'unlimited' => false];
 					}
 
-
+					$data['inventoryData'][] = $inventoryData;
 				}
 
 				// Get movements informations

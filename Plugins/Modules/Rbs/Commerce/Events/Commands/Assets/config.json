@@ -99,5 +99,16 @@
 				"shortcut": "p"
 			}
 		}
+	},
+	"rbs_stock:check-inventory-entries": {
+		"description": "Check inventory entries for all sku and warehouse",
+		"options": {
+			"refreshAvailability": {
+				"description": "force refresh availability of products",
+				"shortcut": "r"
+			}
+		},
+		"arguments": {
+		}
 	}
 }

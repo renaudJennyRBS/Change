@@ -68,6 +68,8 @@ class UpdateLocalizedDocument
 			return;
 		}
 
+		$document->useCorrection($event->getApplication()->getConfiguration()->getEntry('Change/Http/Rest/useCorrection'));
+
 		$properties = $event->getRequest()->getPost()->toArray();
 		if (isset($properties['LCID']) && $properties['LCID'] != $LCID)
 		{

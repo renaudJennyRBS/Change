@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,6 +36,20 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 		'm' => ['cm' => 100, 'in' => 39.370078740157477],
 		'in' => ['cm' => 2.54, 'm' => 0.0254]
 	];
+
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
+
+		$eventManager->attach(array(Event::EVENT_CREATED), function ($event) {
+			(new \Rbs\Stock\Commands\CheckInventoryEntries())->onSkuCreated($event);
+		}, 5);
+
+		$eventManager->attach(array(Event::EVENT_UPDATED), function ($event) {
+			(new \Rbs\Stock\Commands\CheckInventoryEntries())->onSkuUpdated($event);
+		}, 5);
+	}
 
 	/**
 	 * @param string $toUnit
@@ -205,12 +219,6 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	{
 		$this->setCode($label);
 		return $this;
-	}
-
-	protected function attachEvents($eventManager)
-	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 	}
 
 	public function onDefaultSave(Event $event)

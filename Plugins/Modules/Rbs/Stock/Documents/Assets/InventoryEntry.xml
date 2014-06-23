@@ -7,5 +7,6 @@
 		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" required="true" />
 		<property name="warehouse" type="Document" document-type="Rbs_Stock_AbstractWarehouse" />
 		<property name="level" type="Integer" />
+		<property name="valueOfMovements" type="Integer" default-value="0"/>
 	</properties>
 </document>

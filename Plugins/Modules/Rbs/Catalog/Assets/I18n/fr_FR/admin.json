@@ -559,5 +559,8 @@
 	},
 	"product_list_show_ordering":{
 		"message": "Afficher le choix du tri"
+	},
+	"product_list_show_unavailable":{
+		"message": "Afficher les produits indisponible"
 	}
 }

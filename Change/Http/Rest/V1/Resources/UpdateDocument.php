@@ -56,6 +56,8 @@ class UpdateDocument
 			return;
 		}
 
+		$document->useCorrection($event->getApplication()->getConfiguration()->getEntry('Change/Http/Rest/useCorrection'));
+
 		if ($document instanceof Localizable)
 		{
 			$event->setParam('LCID', $document->getRefLCID());

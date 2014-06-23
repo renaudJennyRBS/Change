@@ -253,5 +253,8 @@
 	},
 	"no_information_to_display":{
 		"message":"aucune information à afficher"
+	},
+	"unlimited_stock":{
+		"message":"stock ilimité"
 	}
 }

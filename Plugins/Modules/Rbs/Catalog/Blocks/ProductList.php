@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Ready Business System, Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,6 +47,7 @@ class ProductList extends Block
 
 		$parameters->addParameterMeta('displayPrices');
 		$parameters->addParameterMeta('displayPricesWithTax');
+		$parameters->addParameterMeta('showUnavailable', true);
 
 		$parameters->addParameterMeta('redirectUrl');
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -172,14 +173,22 @@ class ProductList extends Block
 
 			$conditionId = $parameters->getParameter('conditionId');
 			$query = $documentManager->getNewQuery('Rbs_Catalog_Product', $documentManager->getLCID());
-			$query->andPredicates($query->published());
+			$predicates = [$query->published()];
+
+			if (!$parameters->getParameter('showUnavailable'))
+			{
+				$predicates[] = $commerceServices->getStockManager()->getProductAvailabilityRestriction($query->getColumn('id'));
+			}
+			$query->andPredicates($predicates);
 
 			$subQuery = $query->getModelBuilder('Rbs_Catalog_ProductListItem', 'product');
-			$subQuery->andPredicates(
+			$predicates = [
 				$subQuery->eq('productList', $productListId),
 				$subQuery->eq('condition', $conditionId ? $conditionId : 0),
 				$subQuery->activated()
-			);
+			];
+			$subQuery->andPredicates($predicates);
+
 
 			$billingAreaId = $parameters->getParameter('billingAreaId');
 			$webStoreId = $parameters->getParameter('webStoreId');
@@ -189,6 +198,7 @@ class ProductList extends Block
 			$queryBuilder = $this->addSort($parameters->getParameter('sortBy'), $defaultSortBy, $query, $subQuery, $webStoreId, $billingAreaId);
 			$rows = array();
 			$selectQuery = $queryBuilder->query();
+
 			$totalCount = $this->getCountDocuments($query, $selectQuery);
 			if ($totalCount)
 			{

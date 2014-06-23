@@ -180,7 +180,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	{
 		/** @var $product Product */
 		$product = $event->getDocument();
-		if ($product->isPropertyModified('attributeValues'))
+		$modifiedPropertyNames = $product->getModifiedPropertyNames();
+		if (in_array('attributeValues', $modifiedPropertyNames))
 		{
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
@@ -193,12 +194,12 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		}
 
 		// Section product list synchronization.
-		if ($product->isPropertyModified('publicationSections'))
+		if (in_array('publicationSections', $modifiedPropertyNames))
 		{
 			$product->synchronizeSectionDocumentLists();
 		}
 
-		if ($product->isPropertyModified('variantGroup'))
+		if (in_array('variantGroup', $modifiedPropertyNames))
 		{
 			$variantGroup = $product->getVariantGroup();
 			if ($variantGroup && $variantGroup->getRootProduct() === $this)

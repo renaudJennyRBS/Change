@@ -23,11 +23,11 @@
 
 				scope.isLocked = function() {
 					return scope.disabled;
-				}
+				};
 
 				scope.askUnlock = function() {
 					scope.disabled = !scope.disabled;
-				}
+				};
 
 				scope.confirmConsolidate = function ($event)
 				{
@@ -45,9 +45,9 @@
 					).then(function () {
 							var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/consolidate/', {warehouseId: scope.document.warehouse });
 							$http.get(REST.getBaseUrl(url))
-								.success(function() {
-									scope.info.nbMovement = null;
-									scope.info.totalMovement = null;
+								.success(function(result) {
+									scope.info = result;
+									scope.document.level = scope.original.level = result.level;
 								})
 								.error(function(){
 									NotificationCenter.error(
@@ -78,6 +78,9 @@
 				}
 
 				scope.onReady = function() {
+					loadInfos();
+				}
+				scope.onReload = function() {
 					loadInfos();
 				}
 

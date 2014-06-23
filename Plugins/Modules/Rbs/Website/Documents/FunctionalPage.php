@@ -48,6 +48,7 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 			array($this, 'onInitSupportedFunctions'), 5);
 
 		$eventManager->attach(Event::EVENT_DISPLAY_PAGE, array($this, 'onDocumentDisplayPage'), 10);
+		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'onUpdatePathRule'), 5);
 	}
 
 	/**
@@ -74,6 +75,31 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 					}
 					$event->setParam('page', $functionalPage);
 					$event->stopPropagation();
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onUpdatePathRule(Event $event)
+	{
+		$functionalPage = $event->getDocument();
+		if ($functionalPage instanceof FunctionalPage)
+		{
+			$modifiedPropertyNames = $event->getParam('modifiedPropertyNames');
+			if (is_array($modifiedPropertyNames) && in_array('title', $modifiedPropertyNames))
+			{
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_SectionPageFunction');
+				$query->andPredicates($query->eq('page', $functionalPage));
+
+				/** @var $sectionPageFunction \Rbs\Website\Documents\SectionPageFunction */
+				foreach ($query->getDocuments() as $sectionPageFunction)
+				{
+					$args = ['modifiedPropertyNames' => ['page']];
+					$event = new \Change\Documents\Events\Event(\Change\Documents\Events\Event::EVENT_UPDATED, $sectionPageFunction, $args);
+					$sectionPageFunction->getEventManager()->trigger($event);
 				}
 			}
 		}
