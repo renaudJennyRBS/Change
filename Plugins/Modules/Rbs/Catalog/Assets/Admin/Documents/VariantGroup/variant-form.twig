@@ -1,11 +1,20 @@
-<div class="row">
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Catalog_VariantGroup">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
 	<div data-rbs-aside-column="">
 		{% set currentRootName = 'variant-edit' %}
 		{% include '@Rbs_Catalog/Documents/VariantGroup/variant-aside-column.twig' %}
 	</div>
 
 	<div class="document-form" data-rbs-main-column="">
-		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></rbs-page-header>
-		<rbs-document-editor rbs-document-editor-rbs-catalog-variant-group-editor=""></rbs-document-editor>
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-catalog-variant-group-edit="" name="form">
+
+			<div data-rbs-document-editor-rbs-catalog-variant-group-editor=""></div>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
 	</div>
 </div>

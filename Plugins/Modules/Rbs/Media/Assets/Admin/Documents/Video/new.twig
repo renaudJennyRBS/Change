@@ -14,16 +14,24 @@
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-				<rbs-field-video property="path" required="true" label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'path'), ['ucf']) }}">
+				<rbs-field property="refLCID" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Media_Video', 'refLCID'), ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.refLCID"
+						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
+					</select>
+				</rbs-field>
+
+				<hr />
+
+				<rbs-field-video property="path" required="true" label="{{ i18nAttr(propertyKey('Rbs_Media_Video', 'path'), ['ucf']) }}">
 				</rbs-field-video>
 
 				<rbs-field-text property="label" required="true"
 					label="{{ i18nAttr(propertyKey('Rbs_Media_Video', 'label'), ['ucf']) }}">
 				</rbs-field-text>
 
-				<rbs-field-text property="alt" label="{{ i18nAttr(propertyKey('Rbs_Media_Image', 'alt'), ['ucf']) }}">
+				<rbs-field-text property="alt" label="{{ i18nAttr(propertyKey('Rbs_Media_Video', 'alt'), ['ucf']) }}">
 				</rbs-field-text>
-
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="activation"

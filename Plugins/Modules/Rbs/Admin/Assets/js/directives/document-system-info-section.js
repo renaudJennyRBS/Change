@@ -5,8 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-(function () {
-
+(function() {
 	"use strict";
 
 	/**
@@ -27,20 +26,17 @@
 	 *     </fieldset>
 	 * </pre>
 	 */
-	angular.module('RbsChange').directive('rbsDocumentSystemInfoSection', ['RbsChange.REST', function (REST)
-	{
+	angular.module('RbsChange').directive('rbsDocumentSystemInfoSection', ['RbsChange.REST', function(REST) {
 		return {
-			restrict    : 'A',
-			templateUrl : 'Rbs/Admin/js/directives/document-system-info-section.twig',
-			replace     : false,
+			restrict: 'A',
+			templateUrl: 'Rbs/Admin/js/directives/document-system-info-section.twig',
+			replace: false,
 
-			link : function (scope)
-			{
-				REST.getAvailableLanguages().then(function (langs) {
+			link: function(scope) {
+				REST.getAvailableLanguages().then(function(langs) {
 					scope.availableLanguages = langs.items;
 				});
 			}
 		};
 	}]);
-
 })();

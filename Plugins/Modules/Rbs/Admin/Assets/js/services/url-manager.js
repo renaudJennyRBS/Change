@@ -288,8 +288,7 @@
 					 * @param {Object=} params Parameters to append in the URL.
 					 */
 					'getUrl' : function (doc, params, name) {
-						//TODO fallback, delete this condition after form.twig refactoring
-						if (!name || name == 'form') {
+						if (!name) {
 							var result = getNamedUrl(doc, 'edit', params);
 							if (result != "javascript:;")
 								return result;

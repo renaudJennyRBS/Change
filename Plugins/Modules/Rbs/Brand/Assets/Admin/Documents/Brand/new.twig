@@ -23,22 +23,7 @@
 
 				<hr />
 
-				<rbs-field-label-title property="title" required="true"
-					label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'title'), ['ucf']) }}">
-				</rbs-field-label-title>
-
-				<rbs-field-rich-text property="description" required="false"
-					label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'description'), ['ucf']) }}">
-				</rbs-field-rich-text>
-
-				<rbs-field-picker property="visual" label="{{ i18nAttr('m.rbs.brand.documents.brand_visual', ['ucf']) }}"
-					accepted-model="Rbs_Media_Image"
-					selector-title="{{ i18nAttr('m.rbs.brand.admin.select_visual', ['ucf']) }}">
-				</rbs-field-picker>
-
-				<rbs-field-url property="websiteUrl" required="false"
-					label="{{ i18nAttr(propertyKey('Rbs_Brand_Brand', 'websiteUrl'), ['ucf']) }}">
-				</rbs-field-url>
+				{% include '@Rbs_Brand/Documents/Brand/properties.twig' %}
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="publication"

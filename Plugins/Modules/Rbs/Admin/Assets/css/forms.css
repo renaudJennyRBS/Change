@@ -27,10 +27,6 @@
 	padding: 10px 20px;
 }
 
-rbs-form-button-bar > .confirmation-area {
-	position: relative;
-}
-
 .form-vertical .form-group [class^="col-"],
 .form-vertical .form-group [class*=" col-"] {
 	display: block;
