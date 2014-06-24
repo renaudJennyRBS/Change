@@ -19,7 +19,7 @@
 
 		<rbs-document-list data-dlid="DLRbsTagTag" model="Rbs_Tag_Tag" filter-collection="filter">
 			<rbs-column name="label" primary="true">
-				<a href data-ng-href="(= doc | rbsURL:'form' =)"><span data-rbs-tag="doc"></span></a>
+				<a href data-ng-href="(= doc | rbsURL =)"><span data-rbs-tag="doc"></span></a>
 				<span data-ng-if="doc.children.length > 0" class="badge" title="">(= doc.children.length | number =)</span>
 			</rbs-column>
 

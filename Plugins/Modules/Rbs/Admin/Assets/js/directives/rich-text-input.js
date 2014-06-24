@@ -751,7 +751,7 @@
 					var doc = parseRbsDocumentHref(href);
 					if (doc !== null) {
 						doc.LCID = doc.LCID || Settings.get('LCID');
-						element.attr('href', UrlManager.getUrl(doc, null, doc.route || 'form'));
+						element.attr('href', UrlManager.getUrl(doc, null, doc.route || 'edit'));
 					}
 				});
 			}

@@ -95,11 +95,11 @@
 				};
 
 				ChangeDocument.prototype.url = function (name, params) {
-					return UrlManager.getUrl(this, params || {}, name || 'form');
+					return UrlManager.getUrl(this, params || {}, name || 'edit');
 				};
 
 				ChangeDocument.prototype.refUrl = function (name) {
-					return UrlManager.getUrl(this, { LCID: this.refLCID }, name || 'form');
+					return UrlManager.getUrl(this, { LCID: this.refLCID }, name || 'edit');
 				};
 
 				ChangeDocument.prototype.translateUrl = function (LCID) {

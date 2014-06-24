@@ -2,7 +2,7 @@
 	<div class="list-group">
 		<p class="list-group-item">
 			<a ng-show="!document.basePrice" rbs-aside-other-link="" href="(= document | rbsURL:'discount':{basePriceId:document.id} =)">{{ i18n('m.rbs.catalog.admin.price_create_discount', ['ucf']) | raw }}</a>
-			<a ng-show="document.basePrice" rbs-aside-other-link="" href="(= document.basePrice | rbsURL:'' =)">{{ i18n('m.rbs.price.admin.price_base', ['ucf']) | raw }}</a>
+			<a ng-show="document.basePrice" rbs-aside-other-link="" href="(= document.basePrice | rbsURL =)">{{ i18n('m.rbs.price.admin.price_base', ['ucf']) | raw }}</a>
 		</p>
 	</div>
 </div>

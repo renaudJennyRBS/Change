@@ -26,7 +26,7 @@
 							<tbody>
 								<tr data-ng-repeat="(productId, product) in data.products">
 									<td>
-										<a href="" data-ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'form':{id:productId} =)">
+										<a href="" data-ng-href="(= 'Rbs_Catalog_Product' | rbsURL:'edit':{id:productId} =)">
 											(= product.label =)
 										</a>
 									</td>
@@ -39,7 +39,7 @@
 										{{ i18n('m.rbs.catalog.admin.variantgroup_unlimited_inventory', ['ucf']) }}
 									</td>
 									<td>
-										<a href="" data-ng-href="(= 'Rbs_Stock_Sku' | rbsURL:'form':{id:product.sku.id} =)">
+										<a href="" data-ng-href="(= 'Rbs_Stock_Sku' | rbsURL:'edit':{id:product.sku.id} =)">
 											{{ i18n('m.rbs.catalog.admin.variantgroup_edit_sku', ['ucf']) }}
 										</a>
 									</td>

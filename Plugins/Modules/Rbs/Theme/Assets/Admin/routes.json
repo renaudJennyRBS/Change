@@ -19,7 +19,7 @@
 	},
 	"/Rbs/Generic/Theme/:themeId/:categoryName/:id": {
 		"model": "Rbs_Theme_Template",
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"templateUrl": "Document/Rbs/Theme/Template/edit.twig",
 			"labelKey": "m.rbs.theme.documents.template | ucf",

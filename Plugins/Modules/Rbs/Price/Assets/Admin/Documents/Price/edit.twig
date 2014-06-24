@@ -15,18 +15,18 @@
 					data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'sku'), ['ucf']) }}">
-					<p class="form-control-static"><a href="(= document.sku | rbsURL:'' =)">(= document.sku.label =)</a></p>
+					<p class="form-control-static"><a href="(= document.sku | rbsURL =)">(= document.sku.label =)</a></p>
 				</rbs-field>
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'webStore'), ['ucf']) }}">
-					<p class="form-control-static"><a href="(= document.webStore | rbsURL:'' =)">(= document.webStore.label =)</a>
+					<p class="form-control-static"><a href="(= document.webStore | rbsURL =)">(= document.webStore.label =)</a>
 					</p>
 				</rbs-field>
 
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'billingArea'), ['ucf']) }}">
 					<p class="form-control-static">
-						<a href="(= document.billingArea | rbsURL:'' =)">(= document.billingArea.label =)</a></p>
+						<a href="(= document.billingArea | rbsURL =)">(= document.billingArea.label =)</a></p>
 
 					<table ng-show="priceContext.taxInfo" class="table table-striped">
 						<thead>
@@ -61,7 +61,7 @@
 					<hr/>
 
 					<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'basePrice'), ['ucf']) }}">
-						<p class="form-control-static"><a href="(= document.basePrice | rbsURL:'form' =)">(=
+						<p class="form-control-static"><a href="(= document.basePrice | rbsURL =)">(=
 								document.basePrice.formattedValue =)</a></p>
 					</rbs-field>
 

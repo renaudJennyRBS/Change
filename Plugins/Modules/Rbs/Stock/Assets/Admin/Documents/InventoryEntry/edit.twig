@@ -15,7 +15,7 @@
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
 				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'sku'), ['ucf']) }}">
-					<p class="form-control-static"><a href="(= document.sku | rbsURL:'' =)">(= document.sku.label =)</a></p>
+					<p class="form-control-static"><a href="(= document.sku | rbsURL =)">(= document.sku.label =)</a></p>
 				</rbs-field>
 
 				<rbs-field
