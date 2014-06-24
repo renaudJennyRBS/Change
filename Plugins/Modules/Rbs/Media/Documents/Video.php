@@ -88,7 +88,7 @@ class Video extends \Compilation\Rbs\Media\Documents\Video
 	 */
 	public function onDefaultUpdate(Event $event)
 	{
-		if ($this->getPath() != $this->getPathOldValue())
+		if ($this->getPathOldValue() && $this->getPath() != $this->getPathOldValue())
 		{
 			$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPathOldValue());
 			$engine->unlink();

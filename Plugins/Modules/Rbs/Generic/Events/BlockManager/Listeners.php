@@ -63,6 +63,9 @@ class Listeners implements ListenerAggregateInterface
 
 		new RegisterByBlockName('Rbs_Geo_ManageAddresses', true, $events);
 
+		new RegisterByBlockName('Rbs_Media_Video', true, $events);
+		new RegisterByBlockName('Rbs_Media_Image', true, $events);
+
 		$callback = function($event)
 		{
 			(new \Change\Presentation\Blocks\FileCacheAdapter())->onGetCacheAdapter($event);

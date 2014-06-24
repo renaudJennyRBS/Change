@@ -40,5 +40,11 @@
 	},
 	"file_create":{
 		"message":"ajouter un fichier"
+	},
+	"video_label":{
+		"message":"vidéo"
+	},
+	"image_label":{
+		"message":"image"
 	}
 }

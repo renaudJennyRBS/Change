@@ -121,7 +121,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		if ($this->isPropertyModified('path'))
 		{
-			if ($this->getPath() != $this->getPathOldValue())
+			if ($this->getPathOldValue() && 	$this->getPath() != $this->getPathOldValue())
 			{
 				$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPathOldValue());
 				$engine->unlink();
