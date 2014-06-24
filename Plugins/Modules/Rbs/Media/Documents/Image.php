@@ -121,9 +121,10 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		if ($this->isPropertyModified('path'))
 		{
-			if ($this->getPathOldValue())
+			if ($this->getPath() != $this->getPathOldValue())
 			{
-				@unlink($this->getPathOldValue());
+				$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPathOldValue());
+				$engine->unlink();
 			}
 
 			$size = $this->getImageSize();
@@ -139,7 +140,8 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		if ($this->getPath())
 		{
-			@unlink($this->getPath());
+			$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPath());
+			$engine->unlink();
 		}
 	}
 

@@ -4,9 +4,9 @@ namespace Rbs\Media\Documents;
 use Change\Documents\Events\Event;
 
 /**
- * @name \Rbs\Media\Documents\Video
+ * @name \Rbs\Media\Documents\File
  */
-class Video extends \Compilation\Rbs\Media\Documents\Video
+class File extends \Compilation\Rbs\Media\Documents\File
 {
 	/**
 	 * @var \Change\Storage\StorageManager;
@@ -51,15 +51,6 @@ class Video extends \Compilation\Rbs\Media\Documents\Video
 		return $this;
 	}
 
-	/**
-	 * @return null|string
-	 */
-	public function getPublicURL()
-	{
-		$sm = $this->getStorageManager();
-		$changeUri = $this->getPath();
-		return $sm->getPublicURL($changeUri);
-	}
 
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager

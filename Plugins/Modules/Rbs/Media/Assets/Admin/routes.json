@@ -8,6 +8,44 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Media/File/": {
+		"model": "Rbs_Media_File",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Media/File/list.twig",
+			"labelKey": "m.rbs.media.admin.file_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Media/File/:id": {
+		"model": "Rbs_Media_File",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Media/File/edit.twig",
+			"labelKey": "m.rbs.media.documents.file | ucf",
+			"labelId": "id"
+		},
+		"auto": true
+	},
+	"/Rbs/Media/File/:id/translate/:LCID": {
+		"model": "Rbs_Media_File",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Media/File/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Media/File/new": {
+		"model": "Rbs_Media_File",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Media/File/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
 	"/Rbs/Media/Image/": {
 		"model": "Rbs_Media_Image",
 		"name": "list",
@@ -91,7 +129,7 @@
 			"templateUrl": "Document/Rbs/Media/video/list.twig",
 			"labelKey": "m.rbs.media.admin.video_list | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Media/video/:id": {
 		"model": "Rbs_Media_video",
@@ -101,7 +139,7 @@
 			"labelKey": "m.rbs.media.documents.video | ucf",
 			"labelId": "id"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Media/video/:id/translate/:LCID": {
 		"model": "Rbs_Media_video",
@@ -111,7 +149,7 @@
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Media/video/new": {
 		"model": "Rbs_Media_video",
@@ -120,6 +158,6 @@
 			"templateUrl": "Document/Rbs/Media/video/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
-		"auto": true
+		"auto": false
 	}
 }
