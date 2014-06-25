@@ -25,5 +25,11 @@
 	},
 	"video_path":{
 		"message":"fichier"
+	},
+	"file":{
+		"message":"fichier"
+	},
+	"file_path":{
+		"message":"fichier"
 	}
 }

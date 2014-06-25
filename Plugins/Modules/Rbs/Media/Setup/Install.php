@@ -48,6 +48,15 @@ class Install extends \Change\Plugins\InstallBase
 			'baseURL' => "/index.php"
 		), $videos);
 		$configuration->addPersistentEntry('Change/Storage/videos', $videos);
+
+		$files = $configuration->getEntry('Change/Storage/files', array());
+		$files = array_merge( array(
+			'class' => '\\Change\\Storage\\Engines\\LocalStorage',
+			'basePath' => 'App/Storage/files',
+			'useDBStat' => true,
+			'baseURL' => "/index.php"
+		), $files);
+		$configuration->addPersistentEntry('Change/Storage/files', $files);
 	}
 
 

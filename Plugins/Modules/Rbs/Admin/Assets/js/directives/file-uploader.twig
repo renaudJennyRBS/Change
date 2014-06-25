@@ -1,7 +1,7 @@
 <div>
 	<input type="file" accept="(= fileAccept =)" name="file"/>
 	<div>
-		<button ng-show="loading" type="button" class="btn btn-default" disabled="disabled"><i class="icon-spinner icon-spin"></i> Lecture...</button>
+		<button ng-show="loading" type="button" class="btn btn-default" disabled="disabled"><i class="icon-spinner icon-spin"></i> {{ i18n('m.rbs.admin.admin.reading', ['ucf']) }}</button>
 		<span ng-show="fileSize && fileName">
 			(= fileName =) &mdash; (= fileType =) &mdash; <span ng-bind-html="fileSize | rbsFileSize"></span>
 		</span>
