@@ -31,8 +31,7 @@ class GetRoutes
 		//NEVER USE the routesHelper directly from adminManager! That will call this method again (infinite loop)!
 		$routesHelper = new \Rbs\Admin\RoutesHelper($routes);
 
-		//TODO: the last name 'form' is a fallback, remove this name after form refactoring
-		$editRoutes = $routesHelper->getRoutesWithNames(['edit', 'form']);
+		$editRoutes = $routesHelper->getRoutesWithNames(['edit']);
 		$timelineRoutes = $routesHelper->getRoutesWithNames(['timeline']);
 		$editRoutes = $routesHelper->getRoutesDiff($editRoutes, $timelineRoutes, 'model');
 

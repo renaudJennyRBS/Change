@@ -26,7 +26,7 @@
 	"/Rbs/Discount/Discount/:id/translate/:LCID": false,
 	"/Rbs/Discount/Discount/new": false,
 	"/Rbs/Discount/Process/:id": {
-		"name": "form",
+		"name": "edit",
 		"rule": {
 			"redirectTo": "/Rbs/Commerce/Process/:id",
 			"labelKey": "m.rbs.commerce.documents.process | ucf",

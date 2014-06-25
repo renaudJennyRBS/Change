@@ -149,7 +149,7 @@
 	function RedirectToForm($routeParams, $location, REST, $filter) {
 		var listId = $routeParams.id;
 		REST.resource(listId).then(function(doc) {
-			$location.path($filter('rbsURL')(doc, 'form'));
+			$location.path($filter('rbsURL')(doc, 'edit'));
 		});
 	}
 

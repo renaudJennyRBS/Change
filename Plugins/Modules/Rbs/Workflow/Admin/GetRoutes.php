@@ -35,8 +35,7 @@ class GetRoutes
 			$routesHelper = new \Rbs\Admin\RoutesHelper($routes);
 			$modelManager = $event->getApplicationServices()->getModelManager();
 
-			//TODO: the last name 'form' is a fallback, remove this name after form refactoring
-			$editRoutes = $routesHelper->getRoutesWithNames(['edit', 'form']);
+			$editRoutes = $routesHelper->getRoutesWithNames(['edit']);
 			$workflowRoutes = $routesHelper->getRoutesWithNames(['workflow']);
 			$editRoutes = $routesHelper->getRoutesDiff($editRoutes, $workflowRoutes, 'model');
 

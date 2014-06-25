@@ -97,8 +97,8 @@
 						namedPaths = urls[key];
 						if (name && namedPaths.hasOwnProperty(name)) {
 							return namedPaths[name];
-						} else if (name === 'i18n' && namedPaths.hasOwnProperty('form')) {
-							return namedPaths['form'];
+						} else if (name === 'i18n' && namedPaths.hasOwnProperty('edit')) {
+							return namedPaths['edit'];
 						}
 					}
 					return null;
@@ -173,7 +173,7 @@
 						params = {};
 					}
 
-					url = getUrl(doc, name || 'form');
+					url = getUrl(doc, name || 'edit');
 
 					if (url === null) {
 						return "javascript:;";
@@ -240,13 +240,6 @@
 						return getNamedUrl(doc, 'edit', params);
 					},
 
-					'getFormUrl' : function (doc, params) {
-						var result = getNamedUrl(doc, 'edit', params);
-						if (result != "javascript:;")
-							return result;
-						return getNamedUrl(doc, 'form', params);
-					},
-
 					/**
 					 * @ngdoc function
 					 * @methodOf RbsChange.service:UrlManager
@@ -269,7 +262,7 @@
 					 * @description Returns the URL of the view that displays the editor to translate the given `doc`.
 					 *
 					 * @param {Document} doc Document.
-					 * @param {Object=} params Parameters to append in the URL.
+					 * @param {String=} LCID The LCID.
 					 */
 					'getTranslateUrl' : function (doc, LCID) {
 						return getNamedUrl(doc, 'translate', {'LCID': LCID || doc.LCID});
@@ -286,14 +279,10 @@
 					 *
 					 * @param {Document} doc Document.
 					 * @param {Object=} params Parameters to append in the URL.
+					 * @param {String=} name The route name. 'edit' if empty.
 					 */
 					'getUrl' : function (doc, params, name) {
-						if (!name) {
-							var result = getNamedUrl(doc, 'edit', params);
-							if (result != "javascript:;")
-								return result;
-						}
-						return getNamedUrl(doc, name, params);
+						return getNamedUrl(doc, (name ? name : 'edit'), params);
 					}
 				};
 			}];
