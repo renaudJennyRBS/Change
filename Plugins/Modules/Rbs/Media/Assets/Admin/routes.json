@@ -91,7 +91,7 @@
 			"templateUrl": "Document/Rbs/Media/Video/list.twig",
 			"labelKey": "m.rbs.media.admin.video_list | ucf"
 		},
-		"auto": false
+		"auto": true
 	},
 	"/Rbs/Media/Video/:id": {
 		"model": "Rbs_Media_Video",
@@ -101,7 +101,7 @@
 			"labelKey": "m.rbs.media.documents.video | ucf",
 			"labelId": "id"
 		},
-		"auto": false
+		"auto": true
 	},
 	"/Rbs/Media/Video/:id/translate/:LCID": {
 		"model": "Rbs_Media_Video",
@@ -111,7 +111,7 @@
 			"controller": "RbsChangeTranslateEditorController",
 			"labelKey": "m.rbs.admin.admin.translation | ucf"
 		},
-		"auto": false
+		"auto": true
 	},
 	"/Rbs/Media/Video/new": {
 		"model": "Rbs_Media_Video",
@@ -120,44 +120,6 @@
 			"templateUrl": "Document/Rbs/Media/Video/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
-		"auto": false
-	},
-	"/Rbs/Media/video/": {
-		"model": "Rbs_Media_video",
-		"name": "list",
-		"rule": {
-			"templateUrl": "Document/Rbs/Media/video/list.twig",
-			"labelKey": "m.rbs.media.admin.video_list | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Media/video/:id": {
-		"model": "Rbs_Media_video",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Media/video/edit.twig",
-			"labelKey": "m.rbs.media.documents.video | ucf",
-			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Media/video/:id/translate/:LCID": {
-		"model": "Rbs_Media_video",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Media/video/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Media/video/new": {
-		"model": "Rbs_Media_video",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Media/video/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
+		"auto": true
 	}
 }
