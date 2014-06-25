@@ -220,10 +220,10 @@
 		"description":"Used in the button bar in editors"
 	},
 	"btnSave":{
-		"message":"enregistrer<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
+		"message":"enregistrer<small>les modifications <span data-ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
 	"btnRevert":{
-		"message":"annuler<small>les modifications <span ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
+		"message":"annuler<small>les modifications <span data-ng-if=\"changes.length > 0\">((=changes.length=))<\/span><\/small>"
 	},
 	"titleRevert":{
 		"message":"Rétablir les dernières données enregistrées"
@@ -1297,10 +1297,31 @@
 		"message":"rechercher une adresse ou un lieu"
 	},
 	"choose_input_method":{
-		"message":"Veuillez choisir une méthode de saisie :"
+		"message":"Choix de la méthode de saisie"
 	},
 	"input_method_warning":{
-		"message":"Ce choix ne pourra pas être changé ultérieurement pour cette propriété de ce document."
+		"message":"Ce choix ne pourra pas être changé ultérieurement pour ce bloc ou cette propriété de ce document."
+	},
+	"input_method_markdown_title":{
+		"message":"Éditeur Markdown"
+	},
+	"input_method_markdown_button":{
+		"message":"Markdown"
+	},
+	"input_method_markdown_description":{
+		"message": "Un éditeur $OPEN_TAG$Markdown$CLOSE_TAG$ se concentre sur la structure du texte plutôt que sur le rendu final : il vous donne un contrôle absolu sur la structure de votre contenu. Un bouton vous permet de prévisualiser le rendu final à tout moment."
+	},
+	"input_method_wysiwyg_title":{
+		"message":"Éditeur WYSIWYG"
+	},
+	"input_method_wysiwyg_button":{
+		"message":"WYSIWYG"
+	},
+	"input_method_wysiwyg_description":{
+		"message":"Un éditeur $OPEN_TAG$What You See Is What You Get$CLOSE_TAG$ vous permet d'avoir un aperçu du rendu final directement en cours de frappe. En revanche, il ne donne pas beaucoup de contrôle sur la structure du document."
+	},
+	"input_method_show_descriptions":{
+		"message":"afficher les descriptions"
 	},
 	"wysiwyg_blocks":{
 		"message":"blocs"

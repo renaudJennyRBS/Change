@@ -1,6 +1,5 @@
-<div ng-switch="editorMode">
-
-	<div ng-switch-when="Markdown" class="tabbable">
+<div data-ng-switch="editorMode">
+	<div data-ng-switch-when="Markdown" class="tabbable">
 		<ul data-ng-show="useTabs" class="nav nav-tabs" style="margin-bottom: 0">
 			<li class="active">
 				<a href="javascript:;" data-role="editor" data-target="#rbsInputMarkdown(=editorId=)TabEditor" data-toggle="tab">
@@ -147,37 +146,58 @@
 
 	<rbs-wysiwyg-editor ng-switch-when="Html" name="wysiwygContent" ng-model="wysiwyg.content"></rbs-wysiwyg-editor>
 
-	<div ng-switch-when="Choose" class="well well-small">
-		<h4>{{ i18n('m.rbs.admin.admin.choose_input_method', ['ucf']) }}</h4>
+	<div data-ng-switch-when="Choose" class="well well-sm">
+		<div data-ng-show="!showChooseDetails">
+			<h4>
+				{{ i18n('m.rbs.admin.admin.choose_input_method', ['ucf', 'lab']) }}
+				<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Html')">
+					{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_button', ['ucf']) }}
+				</button>
+				<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Markdown')">
+					{{ i18n('m.rbs.admin.admin.input_method_markdown_button', ['ucf']) }}
+				</button>
 
-		<div class="row">
-			<div class="col-md-6">
-				<div class="thumbnail" style="text-align:center;">
-					<img src="/Assets/Rbs/Admin/img/wysiwyg.png"/>
-					<div class="caption">
-						<h3>WYSIWYG editor</h3>
-						<p>
-							Un éditeur <em>What You See Is What You Get</em> vous permet d'avoir un aperçu du rendu
-							final directement en cours de frappe. En revanche, il ne donne pas beaucoup de contrôle
-							sur la structure du document.
-						</p>
-						<p>
-							<button class="btn btn-primary btn-sm" type="button" ng-click="chooseEditorMode('Html')">Choisir WYSIWYG</button>
-						</p>
+				<button class="btn btn-info btn-sm pull-right" type="button" data-ng-click="showChooseDetails = true">
+					<i class="icon-question-sign"></i>
+					{{ i18n('m.rbs.admin.admin.input_method_show_descriptions', ['ucf']) }}
+				</button>
+			</h4>
+		</div>
+		<div data-ng-show="showChooseDetails">
+			<h4>
+				{{ i18n('m.rbs.admin.admin.choose_input_method', ['ucf']) }}
+			</h4>
+			<div class="row" data-ng-show="showChooseDetails">
+				<div class="col-md-6">
+					<div class="thumbnail text-center">
+						<img src="/Assets/Rbs/Admin/img/wysiwyg.png"/>
+						<div class="caption">
+							<h3>{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_title', ['ucf']) }}</h3>
+							<p>
+								{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_description', ['ucf'], { OPEN_TAG: '<em>', CLOSE_TAG: '</em>'}) | raw }}
+							</p>
+							<p>
+								<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Html')">
+									{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_button', ['ucf']) }}
+								</button>
+							</p>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="thumbnail" style="text-align:center;">
-					<img src="/Assets/Rbs/Admin/img/markdown.png"/>
-					<div class="caption">
-						<h3>Markdown editor</h3>
-						<p>
-							Un éditeur <em><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank">Markdown</a></em>
-							se concentre sur la structure du texte plutôt que sur le rendu final : il vous donne un contrôle
-							absolu sur la structure de votre contenu. Un bouton vous permet	de prévisualiser le rendu final à tout moment.
-						</p>
-						<p><button class="btn btn-primary btn-sm" type="button" ng-click="chooseEditorMode('Markdown')">Choisir Markdown</button></p>
+				<div class="col-md-6">
+					<div class="thumbnail text-center">
+						<img src="/Assets/Rbs/Admin/img/markdown.png"/>
+						<div class="caption">
+							<h3>{{ i18n('m.rbs.admin.admin.input_method_markdown_title', ['ucf']) }}</h3>
+							<p>
+								{{ i18n('m.rbs.admin.admin.input_method_markdown_description', ['ucf'], { OPEN_TAG: '<em><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank">', CLOSE_TAG: '</a></em>'}) | raw }}
+							</p>
+							<p>
+								<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Markdown')">
+									{{ i18n('m.rbs.admin.admin.input_method_markdown_button', ['ucf']) }}
+								</button>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
