@@ -365,7 +365,7 @@
 						}
 
 
-						scope.useTabs = angular.isUndefined(attrs.useTabs) || attrs.useTabs === 'true';
+						scope.useTabs = attrs.useTabs === 'true';
 						scope.draggable = attrs.draggable === 'true';
 						scope.editorId = ++editorIdCounter;
 						scope.useTextarea = !canUseAceEditor();

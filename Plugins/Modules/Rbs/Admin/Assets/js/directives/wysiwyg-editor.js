@@ -11,93 +11,93 @@
 		{
 			h1 : {
 				display : "H1",
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_1'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_1|ucf'),
 				block : true
 			},
 			h2 : {
 				display : "H2",
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_2'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_2|ucf'),
 				block : true
 			},
 			h3 : {
 				display : "H3",
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_3'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_3|ucf'),
 				block : true
 			},
 			h4 : {
 				display : "H4",
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_4'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_heading_4|ucf'),
 				block : true
 			},
 			p : {
 				display : "¶",
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_paragraph'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_paragraph|ucf'),
 				block : true
 			},
 			pre : {
 				display : "pre",
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_pre'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_pre|ucf'),
 				block : true
 			},
 			blockquote : {
 				display : '<i class="icon-quote-right"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_quote'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_quote|ucf'),
 				block : true
 			},
 			insertUnorderedList : {
 				display : '<i class="icon-list-ul"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_unordered_list')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_unordered_list|ucf')
 			},
 			insertOrderedList : {
 				display : '<i class="icon-list-ol"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_ordered_list')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_ordered_list|ucf')
 			},
 			undo : {
 				display : '<i class="icon-undo"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_undo')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_undo|ucf')
 			},
 			redo : {
 				display : '<i class="icon-repeat"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_redo')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_redo|ucf')
 			},
 			bold : {
 				display : '<i class="icon-bold"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_bold')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_bold|ucf')
 			},
 			justifyLeft : {
 				display : '<i class="icon-align-left"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_align_left')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_align_left|ucf')
 			},
 			justifyRight : {
 				display : '<i class="icon-align-right"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_align_right')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_align_right|ucf')
 			},
 			justifyCenter : {
 				display : '<i class="icon-align-center"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_align_center')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_align_center|ucf')
 			},
 			italic : {
 				display : '<i class="icon-italic"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_italic')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_italic|ucf')
 			},
 			underline : {
 				display : '<i class="icon-underline"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_underline')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_underline|ucf')
 			},
 			removeFormat : {
 				display : '<i class="icon-ban-circle"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_clear')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_clear|ucf')
 			},
 			insertImage : {
 				display : '<i class="icon-picture"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_insert_picture'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_insert_picture|ucf'),
 				action : function (scope) {
 					scope.selectImage();
 				}
 			},
 			insertExternalLink : {
 				display : '<i class="icon-external-link"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_insert_external_link'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_insert_external_link|ucf'),
 				action : function (scope) {
 					var urlLink = window.prompt(i18n.trans('m.rbs.admin.admin.enter_external_url'), 'http://');
 					if (urlLink) {
@@ -107,14 +107,14 @@
 			},
 			insertLink : {
 				display : '<i class="icon-link"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_insert_link'),
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_insert_link|ucf'),
 				action : function (scope) {
 					scope.selectLink();
 				}
 			},
 			unlink : {
 				display : '<i class="icon-unlink"></i>',
-				title : i18n.trans('m.rbs.admin.admin.wysiwyg_remove_link')
+				title : i18n.trans('m.rbs.admin.admin.wysiwyg_remove_link|ucf')
 			}
 		};
 
@@ -123,51 +123,34 @@
 			restrict : 'E',
 			require : 'ngModel',
 			scope : true,
-			template :
-				'<div class="btn-toolbar">' +
-					'<div class="btn-group pull-right" caption="' + i18n.trans('m.rbs.admin.admin.wysiwyg_tools') + '" style="margin-right: 5px;">' +
-						'<button type="button" ng-disabled="sourceView" class="btn btn-default btn-sm" title="(= getButtonTooltip(\'undo\') =)" ng-bind-html="getButtonLabel(\'undo\')" ng-click="runTool(\'undo\')"></button>' +
-						'<button type="button" ng-disabled="sourceView" class="btn btn-default btn-sm" title="(= getButtonTooltip(\'redo\') =)" ng-bind-html="getButtonLabel(\'redo\')" ng-click="runTool(\'redo\')"></button>' +
-						'<button class="btn btn-default btn-sm" type="button" ng-class="{\'active\': sourceView}" ng-click="toggleViewSource()"><i class="icon-code"></i></button>' +
-					'</div>' +
-					'<div class="btn-group" ng-repeat="group in toolbarConfig" caption="(= group.label =)">' +
-						'<button type="button" class="btn btn-default btn-sm" ng-repeat="tool in group.tools"' +
-						' title="(= getButtonTooltip(tool) =)"' +
-						' ng-bind-html="getButtonLabel(tool)"' +
-						' ng-class="{\'active\': toolIsActive(tool)}"' +
-						' ng-disabled="sourceView"' +
-						' ng-click="runTool(tool)"></button>' +
-					'</div>' +
-				'</div>' +
-				'<div ng-hide="sourceView" contenteditable="true" style="min-height: 150px; height: auto;" class="form-control"></div>' +
-				'<textarea ng-show="sourceView" ng-model="source" style="min-height: 150px; height: auto;" class="form-control"></textarea>',
+			templateUrl : 'Rbs/Admin/js/directives/wysiwyg-editor.twig',
 
 			link : function (scope, element, attrs, ngModel)
 			{
-				var opts = {},
-				    editableEl = element.find('[contenteditable]'),
+				var editableEl = element.find('[contenteditable]'),
 					sourceEl = element.find('textarea');
 
+				scope.draggable = attrs.draggable === 'true';
 				scope.tools = angular.copy(tools);
 				scope.toolbarConfig = [
 					{
-						label : i18n.trans('m.rbs.admin.admin.wysiwyg_blocks'),
+						label : i18n.trans('m.rbs.admin.admin.wysiwyg_blocks|ucf'),
 						tools : ['h1', 'h2', 'h3', 'h4', 'p', 'blockquote', 'pre']
 					},
 					{
-						label : i18n.trans('m.rbs.admin.admin.wysiwyg_lists'),
+						label : i18n.trans('m.rbs.admin.admin.wysiwyg_lists|ucf'),
 						tools : ['insertUnorderedList', 'insertOrderedList']
 					},
 					{
-						label : i18n.trans('m.rbs.admin.admin.wysiwyg_format'),
+						label : i18n.trans('m.rbs.admin.admin.wysiwyg_format|ucf'),
 						tools : ['bold', 'italic', 'underline', 'removeFormat']
 					},
 					{
-						label : i18n.trans('m.rbs.admin.admin.wysiwyg_alignment'),
+						label : i18n.trans('m.rbs.admin.admin.wysiwyg_alignment|ucf'),
 						tools : ['justifyLeft','justifyCenter','justifyRight']
 					},
 					{
-						label : i18n.trans('m.rbs.admin.admin.wysiwyg_insertion'),
+						label : i18n.trans('m.rbs.admin.admin.wysiwyg_insertion|ucf'),
 						tools : ['insertImage', 'insertLink', 'insertExternalLink', 'unlink']
 					}
 				];

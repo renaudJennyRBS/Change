@@ -104,7 +104,6 @@
 	cursor: default;
 }
 .structure-editor rbs-rich-text-input .ace_editor {
-	border: none;
 	box-shadow: none;
 	outline: 0 none;
 }

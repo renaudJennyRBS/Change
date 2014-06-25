@@ -138,7 +138,7 @@ a.editor-menu-item {
 	padding: 7px 44px 7px 0;
 	position: relative;
 	margin-top: 1px;
-	margin-right: 0px;
+	margin-right: 0;
 	line-height: 26px;
 	color: #888888;
 	background: linear-gradient(to right, white 0%, #F8F8F8 100%) repeat scroll 0 0 rgba(0, 0, 0, 0)
