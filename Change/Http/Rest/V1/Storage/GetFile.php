@@ -112,14 +112,14 @@ class GetFile
 	 */
 	public function onResultContent($event)
 	{
-		$itemInfo = $event->getParam('itemInfo');
-		if ($itemInfo instanceof \Change\Storage\ItemInfo)
+		$path = $event->getParam('path');
+		if ($path != null)
 		{
 			/* @var $result ArrayResult */
 			$result = $event->getResult();
 			$ra = $result->toArray();
 
-			$response = $event->getController()->createResponse();
+			$response = new \Change\Http\StreamResponse();
 
 			if (!$event->getController()->resultNotModified($event->getRequest(), $result))
 			{
@@ -136,7 +136,7 @@ class GetFile
 					$result->getHeaders()->addHeaderLine('Content-Type:  application/octet-stream');
 				}
 				$response->getHeaders()->addHeaders($result->getHeaders());
-				$response->setContent(file_get_contents($itemInfo->getPathname()));
+				$response->setUri($path);
 			}
 			else
 			{

@@ -31,22 +31,8 @@ class GetStorageItemContent
 			$result = new Resource($itemInfo->getPathname());
 			if ($itemInfo)
 			{
-				$md = \DateTime::createFromFormat('U', $itemInfo->getMTime());
-				$result->setHeaderLastModified($md);
-				$result->getHeaders()->addHeaderLine('Cache-Control', 'public');
-				$ifModifiedSince = $event->getRequest()->getIfModifiedSince();
-				if ($ifModifiedSince && $ifModifiedSince == $md)
-				{
-					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_304);
-					$result->setRenderer(function() {return null;});
-				}
-				else
-				{
-					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-					$contentType = $itemInfo->getMimeType();
-					$result->getHeaders()->addHeaderLine('Content-Type', $contentType ? $contentType : 'application/octet-stream');
-					$result->setRenderer(function() use ($itemInfo) {return file_get_contents($itemInfo->getPathname());});
-				}
+				$event->setParam('itemInfo', $itemInfo);
+				$event->getController()->getEventManager()->attach(\Change\Http\Event::EVENT_RESPONSE, array($this, 'onResultContent'), 10);
 			}
 			else
 			{
@@ -55,5 +41,39 @@ class GetStorageItemContent
 			}
 			$event->setResult($result);
 		}
+	}
+
+	/**
+	 * @param \Change\Http\Event $event
+	 * @return \Zend\Http\PhpEnvironment\Response
+	 */
+	public function onResultContent($event)
+	{
+		$itemInfo = $event->getParam('itemInfo');
+		if ($itemInfo instanceof \Change\Storage\ItemInfo)
+		{
+			/* @var $result \Change\Http\Web\Result\Resource */
+			$result = $event->getResult();
+
+			$response = new \Change\Http\StreamResponse();
+
+			if (!$event->getController()->resultNotModified($event->getRequest(), $result))
+			{
+				$response->setStatusCode(HttpResponse::STATUS_CODE_200);
+
+				$response->getHeaders()->clearHeaders();
+
+				$contentType = $itemInfo->getMimeType();
+				$result->getHeaders()->addHeaderLine('Content-Type', $contentType ? $contentType : 'application/octet-stream');
+				$response->getHeaders()->addHeaders($result->getHeaders());
+				$response->setUri($itemInfo->getPathname());
+			}
+			else
+			{
+				$response->setStatusCode(HttpResponse::STATUS_CODE_304);
+			}
+			return $response;
+		}
+		return null;
 	}
 }
