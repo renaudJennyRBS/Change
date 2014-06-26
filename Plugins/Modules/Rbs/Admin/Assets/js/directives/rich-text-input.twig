@@ -21,10 +21,21 @@
 							title="{{ i18nAttr('m.rbs.admin.admin.markdown_help', ['ucf']) }}" data-ng-click="openHelp()">
 							<i class="icon-info-sign"></i>
 						</button>
-						<button data-ng-if="!useTabs" type="button" class="btn btn-default btn-sm btn-icon"
-							data-ng-click="preview()" title="{{ i18nAttr('m.rbs.admin.admin.preview', ['ucf']) }}">
-							<i class="icon-eye-open"></i>
-						</button>
+
+						<div class="btn-group">
+							<button type="button" data-ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon"
+								data-ng-click="mdUndo()" title="{{ i18nAttr('m.rbs.admin.admin.undo', ['ucf']) }}">
+								<i class="icon-undo"></i>
+							</button>
+							<button type="button" data-ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon"
+								data-ng-click="mdRedo()" title="{{ i18nAttr('m.rbs.admin.admin.redo', ['ucf']) }}">
+								<i class="icon-repeat"></i>
+							</button>
+							<button data-ng-if="!useTabs" type="button" class="btn btn-default btn-sm btn-icon"
+								data-ng-click="preview()" title="{{ i18nAttr('m.rbs.admin.admin.preview', ['ucf']) }}">
+								<i class="icon-eye-open"></i>
+							</button>
+						</div>
 						<div data-ng-if="draggable" draggable="true" class="btn btn-default btn-sm btn-icon block-handle"
 							title="{{ i18nAttr('m.rbs.admin.admin.drag_block', ['ucf']) }}">
 							<i class="icon-move"></i>
@@ -79,13 +90,6 @@
 						<button type="button" data-ng-disabled="useTextarea"
 							title="{{ i18nAttr('m.rbs.admin.admin.italic', ['ucf']) }}" class="btn btn-default btn-sm btn-icon"
 							data-ng-click="mdItalic()"><i class="icon-italic"></i></button>
-					</div>
-
-					<div class="btn-group">
-						<button type="button" data-ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.undo', ['ucf']) }}"
-							class="btn btn-default btn-sm btn-icon" data-ng-click="mdUndo()"><i class="icon-undo"></i></button>
-						<button type="button" data-ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.redo', ['ucf']) }}"
-							class="btn btn-default btn-sm btn-icon" data-ng-click="mdRedo()"><i class="icon-repeat"></i></button>
 					</div>
 
 					<div class="btn-group" data-ng-if="availableSelectors.media">
@@ -173,7 +177,7 @@
 
 				<div class="pull-right">
 					<button class="btn btn-info btn-sm" type="button" data-ng-click="showChooseDetails = true">
-						<i class="icon-question-sign"></i>
+						<i class="icon-info-sign"></i>
 						{{ i18n('m.rbs.admin.admin.input_method_show_descriptions', ['ucf']) }}
 					</button>
 				</div>
