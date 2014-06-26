@@ -31,8 +31,6 @@
 							id,
 							$previewEl,
 							$editorTab,
-							$selectorsContainer,
-							$selectors,
 							renderEditorValue = function(){}, // Will be overwritten later, depending on the editor mode.
 							wysiwygInitialized = false,
 							editorModeChosen = false;
@@ -601,7 +599,6 @@
 						};
 
 
-
 						// ----------------------------------------------------
 						//
 						// WYSIWYG editor methods
@@ -686,25 +683,9 @@
 								}
 							}
 						}
-
 					}
 				};
 			}]);
-
-	/**
-	 * Document selector for links
-	 */
-	app.directive('rbsRichTextInputLinkSelector', [ function() {
-		return {
-			restrict: 'E',
-			scope: true,
-			templateUrl: 'Rbs/Admin/js/directives/rich-text-input-link-selector.twig',
-
-			compile: function(tElement) {
-				tElement.find("rbs-document-list").attr("data-dlid", "rbsRichTextInputLinkSelector" + (++editorIdCounter));
-			}
-		};
-	}]);
 
 
 	function parseRbsDocumentHref(href) {

@@ -142,9 +142,11 @@
 					<div data-role="rbs-ace-editor"></div>
 				</div>
 			</div>
-			<div class="tab-pane" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview">
-				<button data-ng-if="!useTabs" type="button" class="btn btn-default btn-sm pull-right active"
-					data-ng-click="closePreview()"><i class="icon-eye-open"></i></button>
+			<div class="tab-pane preview-container" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview">
+				<div class="preview-toolbar pull-right" data-ng-if="!useTabs">
+					<button type="button" class="btn btn-default btn-sm btn-icon active"
+						data-ng-click="closePreview()"><i class="icon-eye-open"></i></button>
+				</div>
 				<div class="preview-content"></div>
 			</div>
 		</div>

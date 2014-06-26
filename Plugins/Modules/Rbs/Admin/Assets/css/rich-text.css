@@ -31,6 +31,9 @@
 	line-height: 18px;
 }
 
+
+/* Editor chooser */
+
 .richtext-input-chooser {
 	padding: 10px;
 	background: #ececec;
@@ -45,6 +48,7 @@
 .richtext-input .richtext-input-chooser .btn-toolbar {
 	line-height: 35px;
 }
+
 
 /* Markdown editor (ace editor) */
 
@@ -64,53 +68,10 @@
 	color: #555555;
 }
 
-.rbs-rich-text-input-inner-selector .pagination ul > .disabled > a {
-	background: white;
-}
-
-.richtext-input .tab-pane[data-role="preview-container"] h1,
-.richtext-input .tab-pane[data-role="preview-container"] h2,
-.richtext-input .tab-pane[data-role="preview-container"] h3,
-.richtext-input .tab-pane[data-role="preview-container"] h4,
-.richtext-input .tab-pane[data-role="preview-container"] h5,
-.richtext-input .tab-pane[data-role="preview-container"] h6 {
-	margin-top: 0;
-}
-
-.richtext-input .tab-content {
-	background: white;
-}
-
-.rbs-rich-text-input-inner-selector {
-	padding: 10px 15px;
-	background: #444;
-	color: white;
-}
-
-.rbs-rich-text-input-inner-selector .table {
-	color: #333333;
-}
-
-.rbs-rich-text-input-inner-selector h4 {
-	margin: 0;
-}
-
-.rbs-rich-text-input-inner-selector button.close {
-	color: white;
-	opacity: 0.4;
-}
-
-.rbs-rich-text-input-inner-selector button.close:hover {
-	opacity: 0.8;
-}
-
 .richtext-input th,
-.richtext-input td,
-.rbs-rich-text-input-inner-selector th,
-.rbs-rich-text-input-inner-selector td {
+.richtext-input td {
 	background: white;
 }
-
 
 .richtext-input textarea {
 	display: block;
@@ -122,10 +83,27 @@
 	box-sizing: border-box;
 }
 
+
 .richtext-input .preview-container {
+	border-radius: 3px;
+	background: white;
 	padding: 5px;
-	background:white;
+	border: 1px solid #ccc;
 }
+
+.richtext-input .preview-container .preview-toolbar {
+	line-height: 35px;
+}
+
+.richtext-input .preview-container h1,
+.richtext-input .preview-container h2,
+.richtext-input .preview-container h3,
+.richtext-input .preview-container h4,
+.richtext-input .preview-container h5,
+.richtext-input .preview-container h6 {
+	margin-top: 0;
+}
+
 
 /* WYSIWYG editor - textAngular */
 
