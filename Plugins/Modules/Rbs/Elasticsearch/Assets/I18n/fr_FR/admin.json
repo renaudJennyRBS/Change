@@ -17,14 +17,8 @@
 	"result_function":{
 		"message":"Résultat de la recherche"
 	},
-	"result_fulltextindex":{
-		"message":"Index de recherche"
-	},
 	"facets":{
 		"message":"Facettes"
-	},
-	"facets_facetgroups":{
-		"message":"Groupe de facette"
 	},
 	"storeresult":{
 		"message":"Résultat d'une recherche magasin"
@@ -32,16 +26,13 @@
 	"storeresult_function":{
 		"message":"Résultat de recherche magasin"
 	},
-	"storeresult_storeindex":{
-		"message":"Index magasin"
-	},
-	"facetgroup_facets_picker_title":{
-		"message":"sélectionner les facettes du groupe"
+	"facets_picker_title":{
+		"message":"sélectionner les facettes"
 	},
 	"fulltext_name_help":{
 		"message":"Le nom sera généré automatiquement si ce champ n'est pas rempli."
 	},
-	"fulltext_list":{
+	"index_list":{
 		"message":"liste des index"
 	},
 	"fulltext_create":{
@@ -49,15 +40,6 @@
 	},
 	"storeindex_create":{
 		"message":"ajouter un index de recherche produits"
-	},
-	"storeindex_list":{
-		"message":"liste des index"
-	},
-	"facetgroup_list":{
-		"message":"liste des groupes de facettes"
-	},
-	"facetgroup_create":{
-		"message":"ajouter un groupe de facettes"
 	},
 	"facet_list":{
 		"message":"liste des facettes"
@@ -80,7 +62,74 @@
 	"website_picker_title":{
 		"message":"sélectionner un site web"
 	},
-	"store_picker_title":{
-		"message":"sélectionner un magasin"
+	"fulltext_label_website":{
+		"message":"index full-text de $WEBSITELABEL$"
+	},
+	"store_label_website":{
+		"message":"index produits de $WEBSITELABEL$"
+	},
+
+	"facet_multiplechoice":{
+		"message":"choix multiple"
+	},
+	"facet_collectioncode":{
+		"message":"liste de valeurs"
+	},
+	"facet_showemptyitem":{
+		"message":"voir les facettes vides"
+	},
+	"facet_attributeid":{
+		"message":"attribut"
+	},
+	"facet_type_term":{
+		"message":"Ensemble de valeurs"
+	},
+	"facet_type_range":{
+		"message":"Plage de valeurs"
+	},
+	"facet_configuration_type_price":{
+		"message":"prix public"
+	},
+	"facet_configuration_type_sku_threshold":{
+		"message":"niveau de stock"
+	},
+	"facet_configuration_type_attribute":{
+		"message":"attribut"
+	},
+	"facet_configuration_field_attribute":{
+		"message":"attribut lié"
+	},
+	"facet_configuration_field_multiple_choice":{
+		"message":"choix multiple"
+	},
+	"facet_configuration_field_collection_id":{
+		"message":"Restreindre aux valeurs de la liste"
+	},
+	"facet_configuration_field_show_empty_item":{
+		"message":"Voir les valeurs non affectées"
+	},
+	"facet_configuration_field_mapping_name":{
+		"message":"Nom de la facette dans Elasticsearch"
+	},
+	"facet_configuration_field_with_tax":{
+		"message":"Montant avec taxes"
+	},
+	"facet_configuration_field_interval":{
+		"message":"Interval"
+	},
+	"facet_configuration_field_min_amount":{
+		"message":"Montant minimum"
+	},
+	"facet_configuration_field_max_amount":{
+		"message":"Montant maximum"
+	},
+	"facet_configuration_field_threshold_collection_id":{
+		"message":"Titres des seuils de la liste"
+	},
+	"result_show_model_facet":{
+		"message":"voir la facette model"
+	},
+	"result_items_per_page":{
+		"message":"résultats par page"
 	}
 }

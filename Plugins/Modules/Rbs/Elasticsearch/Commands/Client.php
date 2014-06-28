@@ -32,9 +32,9 @@ class Client
 		}
 
 		$indexManager = $genericServices->getIndexManager();
-		if (is_string($name = $event->getParam('name')))
+		if (is_string($clientName = $event->getParam('name')))
 		{
-			$client = $indexManager->getClient($name);
+			$client = $indexManager->getElasticaClient($clientName);
 			if ($client)
 			{
 				try
@@ -45,13 +45,12 @@ class Client
 					{
 						$response->addInfoMessage('Server: ' . $srvStat['name'] . ' (' . $srvStat['version']['number'] . ') is ok ('
 							. $srvStat['status'] . ')');
+
 						if ($event->getParam('list'))
 						{
-							foreach ($indexManager->getIndexesDefinition($name) as $indexDef)
+							foreach ($indexManager->getIndexesDefinition($clientName) as $indexDef)
 							{
-								$response->addInfoMessage('Declared index "' . $indexDef->getName() . '", mapping: '
-									. $indexDef->getMappingName()
-									. ', language: ' . $indexDef->getAnalysisLCID());
+								$response->addInfoMessage('Declared index "' . $indexDef->getName() .'"');
 								$idx = $client->getIndex($indexDef->getName());
 								if ($idx->exists())
 								{
@@ -68,7 +67,7 @@ class Client
 						}
 						elseif (($indexName = $event->getParam('indexName')) != null)
 						{
-							$indexDef = $indexManager->findIndexDefinitionByName($name, $indexName);
+							$indexDef = $indexManager->findIndexDefinitionByName($clientName, $indexName);
 							if ($indexDef)
 							{
 								if ($event->getParam('delete'))
@@ -78,8 +77,8 @@ class Client
 								}
 								if ($event->getParam('create'))
 								{
-									$index = $indexManager->setIndexConfiguration($indexDef);
-									if ($index)
+									$index = $indexManager->createIndex($indexDef);
+									if ($index && $index->exists())
 									{
 										$response->addInfoMessage('index: "' . $indexName . '" created');
 									}
@@ -91,10 +90,10 @@ class Client
 
 								if ($event->getParam('facet-mapping') || $event->getParam('create'))
 								{
-									$mapping = $genericServices->getFacetManager()->getIndexMapping($indexDef);
-									if (count($mapping))
+									$facetsMappings = $genericServices->getFacetManager()->getIndexMapping($indexDef);
+									if (count($facetsMappings))
 									{
-										$indexManager->setFacetMapping($indexDef, $mapping);
+										$indexManager->updateFacetsMappings($indexDef, $facetsMappings);
 										$response->addInfoMessage('index: "' . $indexName . '" facet mapping updated');
 									}
 									elseif ($event->getParam('facet-mapping'))
@@ -117,12 +116,12 @@ class Client
 				catch (\Exception $e)
 				{
 					$applicationServices->getLogging()->exception($e);
-					$response->addErrorMessage('Error on client ' . $name . ': ' . $e->getMessage());
+					$response->addErrorMessage('Error on client ' . $clientName . ': ' . $e->getMessage());
 				}
 			}
 			else
 			{
-				$response->addErrorMessage('Invalid client name: ' . $name);
+				$response->addErrorMessage('Invalid client name: ' . $clientName);
 			}
 		}
 		else

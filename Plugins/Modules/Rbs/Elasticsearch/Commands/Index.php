@@ -49,7 +49,7 @@ class Index
 		{
 			try
 			{
-				$client = $indexManager->getClient($clientName);
+				$client = $indexManager->getElasticaClient($clientName);
 				if ($client)
 				{
 					$srvStat = $client->getStatus()->getServerStatus();
@@ -143,7 +143,7 @@ class Index
 						}
 						else
 						{
-							$indexManager->dispatchIndexationEvents($toIndex);
+							$indexManager->documentsBulkIndex($toIndex);
 						}
 					}
 

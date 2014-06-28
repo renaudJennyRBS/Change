@@ -1,0 +1,14 @@
+<rbs-field property="thresholdCollectionId" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_threshold_collection_id', ['ucf']) }}">
+	<select data-ng-model="facet.parameters.thresholdCollectionId" class="form-control"
+			data-rbs-items-from-collection="Rbs_Elasticsearch_CollectionIds" >
+		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
+	</select>
+</rbs-field>
+
+<rbs-field property="showEmptyItem" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_show_empty_item', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.showEmptyItem"></rbs-switch>
+</rbs-field>
+
+<rbs-field property="multipleChoice" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_multiple_choice', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.multipleChoice"></rbs-switch>
+</rbs-field>

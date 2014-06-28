@@ -1,6 +1,33 @@
 {
+	"settings": {
+		"index": {
+			"analysis": {
+				"analyzer": {
+					"text_analyzer": {
+						"tokenizer": "standard",
+						"filter": ["standard", "lowercase", "asciifolding", "elision", "text_snowball"]
+					}
+				},
+				"filter": {
+					"text_snowball": {
+						"type": "snowball",
+						"name": "English"
+					}
+				}
+			}
+		}
+	},
 	"mappings": {
-		"product": {
+		"document": {
+			"dynamic_templates": [
+				{
+					"strings": {
+						"match": "*",
+						"match_mapping_type": "string",
+						"mapping": {"type": "string", "index": "not_analyzed", "include_in_all": false}
+					}
+				}
+			],
 			"properties": {
 				"title":{
 					"type":"multi_field",
@@ -19,6 +46,7 @@
 					"properties": {
 						"position": {"type": "long"},
 						"listId": {"type": "long"},
+						"sectionId": {"type": "long"},
 						"itemId": {"type": "long"},
 						"creationDate": {"type": "date", "index": "not_analyzed"}
 					},
@@ -35,21 +63,17 @@
 						"endActivation": {"type": "date", "index": "not_analyzed"}
 					},
 					"type": "nested"
-				}
-			}
-		}
-	},
-	"settings": {
-		"index": {
-			"analysis": {
-				"analyzer": {
-					"text_analyzer": {
-						"tokenizer": "standard",
-						"filter": ["standard", "lowercase", "asciifolding", "elision", "text_snowball"]
-					}
 				},
-				"filter": {
-					"text_snowball": {"type": "snowball", "name": "English"}
+				"stocks" : {
+					"properties": {
+						"skuId": {"type": "long"},
+						"inventoryEntryId": {"type": "long"},
+						"warehouseId": {"type": "long"},
+						"availability": {"type": "long"},
+						"threshold": {"type": "string", "index": "not_analyzed", "include_in_all": false},
+						"thresholdIndex": {"type": "long"}
+					},
+					"type": "nested"
 				}
 			}
 		}

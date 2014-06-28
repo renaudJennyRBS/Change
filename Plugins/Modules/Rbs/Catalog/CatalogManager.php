@@ -1201,7 +1201,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		if ($product->getProductSet())
 		{
 			$set = $product->getProductSet();
-			$skus = array();
+			$skuArray = array();
 			foreach($set->getProducts() as $subProduct)
 			{
 				if ($onlyPublishedProduct && !$subProduct->published())
@@ -1210,14 +1210,14 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				elseif ($subProduct->getSku())
 				{
-					$skus[] = $subProduct->getSku();
+					$skuArray[] = $subProduct->getSku();
 				}
 				else
 				{
-					$skus = array_merge($skus, $this->getAllSku($subProduct));
+					$skuArray = array_merge($skuArray, $this->getAllSku($subProduct));
 				}
 			}
-			return $skus;
+			return $skuArray;
 		}
 		else
 		{
@@ -1238,13 +1238,13 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				else
 				{
-					$skus = array();
+					$skuArray = array();
 					$products = $this->getProductDescendants($product, true);
 					foreach ($products as $subProduct)
 					{
-						$skus[] = $subProduct->getSku();
+						$skuArray[] = $subProduct->getSku();
 					}
-					return $skus;
+					return $skuArray;
 				}
 			}
 		}

@@ -8,14 +8,21 @@
 namespace Rbs\Elasticsearch\Facet;
 
 /**
- * @name \Rbs\Elasticsearch\Facet\ModelFacetDefinition
+ * @name \Rbs\Elasticsearch\Facet\DocumentFacetDefinition
  */
-class ModelFacetDefinition implements FacetDefinitionInterface
+class DocumentFacetDefinition implements FacetDefinitionInterface
 {
+	const PARAM_MAPPING_NAME = 'mappingName';
+
+	/**
+	 * @var null|string
+	 */
+	protected $title;
+
 	/**
 	 * @var string
 	 */
-	protected $title = 'm.rbs.elasticsearch.fo.facet-model-title';
+	protected $fieldName;
 
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -23,50 +30,40 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	protected $parameters;
 
 	/**
-	 * @var \Change\I18n\I18nManager
+	 * @var \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[]
 	 */
-	protected $i18nManager;
-
-	function __construct()
-	{
-		$this->getParameters()->set(static::PARAM_MULTIPLE_CHOICE, true);
-	}
+	protected $children = [];
 
 	/**
-	 * @param \Change\I18n\I18nManager $i18nManager
-	 * @return $this
+	 * @var \Rbs\Elasticsearch\Facet\FacetDefinitionInterface
 	 */
-	public function setI18nManager($i18nManager)
-	{
-		$this->i18nManager = $i18nManager;
-		return $this;
-	}
+	protected $parent;
 
 	/**
-	 * @return \Change\I18n\I18nManager
+	 * @var string
 	 */
-	protected function getI18nManager()
-	{
-		return $this->i18nManager;
-	}
-
+	protected $mappingName;
 
 	/**
-	 * @param string $title
-	 * @return $this
+	 * @param \Rbs\Elasticsearch\Documents\Facet $facet
 	 */
-	public function setTitle($title)
+	function __construct(\Rbs\Elasticsearch\Documents\Facet $facet)
 	{
-		$this->title = $title;
-		return $this;
+		$this->fieldName = 'f_' . $facet->getId();
+		$this->parameters = $facet->getParameters();
+		$this->title = $facet->getCurrentLocalization()->getTitle();
+		if (!$this->title)
+		{
+			$this->title = $facet->getRefLocalization()->getTitle();
+		}
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getTitle()
+	protected function getMappingName()
 	{
-		return $this->getI18nManager()->trans($this->title);
+		return $this->mappingName;
 	}
 
 	/**
@@ -74,7 +71,7 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function getFieldName()
 	{
-		return 'model';
+		return $this->fieldName;
 	}
 
 	/**
@@ -90,11 +87,19 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->title;
+	}
+
+	/**
 	 * @return boolean
 	 */
 	public function hasChildren()
 	{
-		return false;
+		return count($this->children) > 0;
 	}
 
 	/**
@@ -102,7 +107,27 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function getChildren()
 	{
-		return [];
+		return $this->children;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[] $children
+	 * @return $this
+	 */
+	public function setChildren(array $children)
+	{
+		$this->children = $children;
+		return $this;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface|null $parent
+	 * @return $this
+	 */
+	public function setParent($parent)
+	{
+		$this->parent = $parent;
+		return $this;
 	}
 
 	/**
@@ -125,6 +150,24 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	}
 
 	/**
+	 * @deprecated
+	 * @return boolean
+	 */
+	public function getShowEmptyItem()
+	{
+		return $this->getParameters()->get('showEmptyItem', false);
+	}
+
+	/**
+	 * @deprecated
+	 * @return string
+	 */
+	public function getFacetType()
+	{
+		return $this->getParameters()->get('facetType', static::TYPE_TERM);
+	}
+
+	/**
 	 * @param array $facetFilters
 	 * @param array $context
 	 * @return \Elastica\Filter\Terms|null
@@ -144,10 +187,9 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 					$terms[] = $key;
 				}
 			}
-
 			if (count($terms))
 			{
-				$filterQuery = new \Elastica\Filter\Terms('model', $terms);
+				$filterQuery = new \Elastica\Filter\Terms($this->getMappingName(), $terms);
 				return $filterQuery;
 			}
 		}
@@ -160,8 +202,9 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function getAggregation(array $context = [])
 	{
-		$aggregation = new \Elastica\Aggregation\Terms('model');
-		$aggregation->setField('model');
+		$mappingName = $this->getMappingName();
+		$aggregation = new \Elastica\Aggregation\Terms($mappingName);
+		$aggregation->setField($mappingName);
 		return $aggregation;
 	}
 
@@ -172,7 +215,7 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	public function formatAggregation(array $aggregations)
 	{
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
-		$mappingName = 'model';
+		$mappingName = $this->getMappingName();
 		if (isset($aggregations[$mappingName]['buckets']))
 		{
 			foreach ($aggregations[$mappingName]['buckets'] as $bucket)
@@ -182,23 +225,5 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 			}
 		}
 		return $av;
-	}
-
-	/**
-	 * @deprecated
-	 * @return boolean
-	 */
-	public function getShowEmptyItem()
-	{
-		return false;
-	}
-
-	/**
-	 * @deprecated
-	 * @return string
-	 */
-	public function getFacetType()
-	{
-		return static::TYPE_TERM;
 	}
 }

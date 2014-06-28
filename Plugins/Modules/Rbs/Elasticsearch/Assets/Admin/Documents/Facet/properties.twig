@@ -2,50 +2,16 @@
 	label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'title'), ['ucf']) }}">
 </rbs-field-label-title>
 
-<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'facetType'), ['ucf']) }}" required="true">
-	<select data-ng-model="document.facetType" required="true" class="form-control"
-		data-rbs-items-from-collection="Rbs_Elasticsearch_Collection_FacetTypes" >
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'configurationType'), ['ucf']) }}">
+	<select data-ng-model="document.configurationType" class="form-control"
+			data-rbs-items-from-collection="Rbs_Elasticsearch_FacetConfigurationType">
 		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
 	</select>
 </rbs-field>
 
-<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'indexId'), ['ucf']) }}" required="true">
-	<select data-ng-model="document.indexId" required="true" class="form-control"
-		data-rbs-items-from-collection="Rbs_Elasticsearch_Collection_Indexes">
-		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
-	</select>
-</rbs-field>
+<div id="RbsElasticsearchFacetConfigurationOptions" ng-show="document.configurationType" class="col-lg-offset-3 col-lg-9"></div>
 
-<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'valuesExtractorName'), ['ucf']) }}">
-	<select data-ng-model="document.valuesExtractorName" class="form-control"
-		data-rbs-items-from-collection="Rbs_Elasticsearch_Collection_FacetValueExtractor">
-		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
-	</select>
-</rbs-field>
-
-<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'attributeId'), ['ucf']) }}">
-	<select data-ng-disabled="document.valuesExtractorName != 'Attribute'" data-ng-model="document.attributeId"
-		class="form-control" data-rbs-items-from-collection="Rbs_Elasticsearch_Collection_AttributeIds">
-		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
-	</select>
-</rbs-field>
-
-<rbs-field-boolean property="multipleChoice"
-	label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'multipleChoice'), ['ucf']) }}">
-</rbs-field-boolean>
-
-
-<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'collectionCode'), ['ucf']) }}">
-	<select data-ng-model="document.collectionCode" class="form-control"
-		data-rbs-items-from-collection="Rbs_Elasticsearch_Collection_CollectionCodes" >
-		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
-	</select>
-</rbs-field>
-
-<rbs-field-boolean property="showEmptyItem" data-ng-show="document.collectionCode"
-	label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'showEmptyItem'), ['ucf']) }}">
-</rbs-field-boolean>
-
-<rbs-field-text property="mappingName"
-		label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'fieldName'), ['ucf']) }}">
-</rbs-field-text>
+<rbs-field-picker-multiple property="facets" accepted-model="Rbs_Elasticsearch_Facet"
+		label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'facets'), ['ucf']) }}"
+		selector-title="{{ i18nAttr('m.rbs.elasticsearch.admin.facets_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>

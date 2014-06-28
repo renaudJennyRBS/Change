@@ -29,21 +29,49 @@ class Facets extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('useCurrentSectionProductList');
-		$parameters->addParameterMeta('facetGroups');
-		$parameters->addParameterMeta('facetFilters', null);
-		$parameters->addParameterMeta('formAction', null);
+		$parameters->addParameterMeta('showUnavailable', true);
+		$parameters->addParameterMeta('facets');
 		$parameters->addParameterMeta('sortBy');
 		$parameters->setNoCache();
-
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+		$parameters->addParameterMeta('facetFilters', null);
+		$parameters->addParameterMeta('formAction', null);
+		$parameters->addParameterMeta('indexId', null);
+		$parameters->addParameterMeta('commerceContext', []);
+
+		$commerceServices = $this->getCommerceServices($event);
+		$genericServices = $this->getGenericServices($event);
+
+		/** @var $website \Rbs\Website\Documents\Website */
+		$website = $event->getParam('website');
+		if ($commerceServices == null || $genericServices == null || !($website instanceof \Rbs\Website\Documents\Website))
 		{
 			$this->setInvalidParameters($parameters);
 			return $parameters;
 		}
+
+
+		$storeIndex = $genericServices->getIndexManager()->getStoreIndexByWebsite($website, $website->getLCID());
+		if (!$storeIndex)
+		{
+			$this->setInvalidParameters($parameters);
+			return $parameters;
+		}
+		$parameters->setParameterValue('indexId', $storeIndex->getId());
+
+		$ctx = $commerceServices->getContext();
+		$commerceContext = [];
+		if ($ctx->getZone()) {
+			$commerceContext['zone'] = $ctx->getZone();
+		}
+		if ($ctx->getWebStore()) {
+			$commerceContext['storeId'] = $ctx->getWebStore()->getId();
+		}
+		if ($ctx->getBillingArea()) {
+			$commerceContext['billingAreaId'] = $ctx->getBillingArea()->getId();
+		}
+		$parameters->setParameterValue('commerceContext', $commerceContext);
 
 		// Product list.
 		$this->setParameterValueForDetailBlock($parameters, $event);
@@ -60,41 +88,38 @@ class Facets extends Block
 			{
 				$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $defaultProductList->getId());
 			}
+			else
+			{
+				$this->setInvalidParameters($parameters);
+				return $parameters;
+			}
 		}
 
-		$facetGroups = $parameters->getParameterValue('facetGroups');
-		if (!is_array($facetGroups))
+		$facets = $parameters->getParameterValue('facets');
+		if (!is_array($facets))
 		{
-			$facetGroups = array();
+			$facets = array();
 		}
-		if (!count($facetGroups) && $parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME))
+
+		if (!count($facets) && $parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME))
 		{
 			$productListId = $parameters->getParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-			$productList = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListId);
-			if ($productList instanceof \Rbs\Catalog\Documents\ProductList)
+			/** @var $productList \Rbs\Catalog\Documents\ProductList */
+			$productList = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productListId, 'Rbs_Catalog_ProductList');
+			if ($productList)
 			{
-				foreach ($productList->getFacetGroups() as $group)
+				foreach ($productList->getFacets() as $facet)
 				{
-					$facetGroups[] = $group->getId();
+					$facets[] = $facet->getId();
 				}
 			}
 		}
-		$parameters->setParameterValue('facetGroups', $facetGroups);
+		$parameters->setParameterValue('facets', $facets);
 
 		$request = $event->getHttpRequest();
 		$uri = $event->getUrlManager()->getSelf();
 		$queryFilters = $request->getQuery('facetFilters', null);
-		$facetFilters = array();
-		if (is_array($queryFilters))
-		{
-			foreach ($queryFilters as $fieldName => $rawValue)
-			{
-				if (is_string($fieldName) && $rawValue)
-				{
-					$facetFilters[$fieldName] = $rawValue;
-				}
-			}
-		}
+		$facetFilters = $this->validateQueryFilters($queryFilters);
 		$parameters->setParameterValue('facetFilters', $facetFilters);
 
 		$sortBy = $request->getQuery('sortBy-facet');
@@ -110,13 +135,34 @@ class Facets extends Block
 	}
 
 	/**
+	 * @param $queryFilters
+	 * @return array
+	 */
+	protected function validateQueryFilters($queryFilters)
+	{
+		$facetFilters = array();
+		if (is_array($queryFilters))
+		{
+			foreach ($queryFilters as $fieldName => $rawValue)
+			{
+				if (is_string($fieldName) && $rawValue)
+				{
+					$facetFilters[$fieldName] = $rawValue;
+				}
+			}
+			return $facetFilters;
+		}
+		return $facetFilters;
+	}
+
+	/**
 	 * @param Parameters $parameters
 	 */
 	protected function setInvalidParameters($parameters)
 	{
-		$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, 0);
-		$parameters->setParameterValue('facetGroups', array());
-		$parameters->setParameterValue('facetFilters', array());
+		$parameters->setParameterValue('indexId', 0);
+		$parameters->setParameterValue('facets', []);
+		$parameters->setParameterValue('facetFilters', []);
 	}
 
 	/**
@@ -134,7 +180,7 @@ class Facets extends Block
 
 	/**
 	 * @param Event $event
-	 * @return \Rbs\Generic\GenericServices|null
+	 * @return \Rbs\Generic\GenericServices | null
 	 */
 	protected function getGenericServices($event)
 	{
@@ -144,6 +190,20 @@ class Facets extends Block
 			return null;
 		}
 		return $genericServices;
+	}
+
+	/**
+	 * @param Event $event
+	 * @return \Rbs\Commerce\CommerceServices
+	 */
+	protected function getCommerceServices($event)
+	{
+		$commerceServices = $event->getServices('commerceServices');
+		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+		{
+			return null;
+		}
+		return $commerceServices;
 	}
 
 	protected $collections = array();
@@ -179,81 +239,21 @@ class Facets extends Block
 		$documentManager = $applicationServices->getDocumentManager();
 
 		$genericServices = $this->getGenericServices($event);
-		if ($genericServices == null)
+		$commerceServices = $this->getCommerceServices($event);
+		if ($genericServices == null || $commerceServices == null)
 		{
-			$applicationServices->getLogging()->warn(__METHOD__ . ': genericServices not defined');
+			$applicationServices->getLogging()->warn(__METHOD__ . ': services not set');
 			return null;
 		}
 
 		$parameters = $event->getBlockParameters();
 
-		$productListId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		/** @var $productList \Rbs\Catalog\Documents\ProductList|null */
-		$productList = null;
-		if ($productListId !== null)
-		{
-			$productList = $documentManager->getDocumentInstance($productListId);
-			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
-			{
-				$applicationServices->getLogging()->warn(__METHOD__ . ': invalid product list');
-				return null;
-			}
-		}
+		$indexManager = $genericServices->getIndexManager();
 
-		$facets = array();
-		$facetGroups = array();
-		$storeIndexId = null;
-		$facetGroupIds = $parameters->getParameter('facetGroups');
-		if (count($facetGroupIds))
-		{
-			foreach ($facetGroupIds as $facetGroupId)
-			{
-				$groupHasFacets = false;
-				$group = $documentManager->getDocumentInstance($facetGroupId);
-				if (!($group instanceof \Rbs\Elasticsearch\Documents\FacetGroup))
-				{
-					continue;
-				}
-				if ($storeIndexId == null)
-				{
-					$storeIndexId = $group->getIndexId();
-				}
-				if ($storeIndexId && $storeIndexId == $group->getIndexId())
-				{
-					foreach ($group->getFacets() as $facet)
-					{
-						if ($facet->getIndexId() == $storeIndexId)
-						{
-							$groupHasFacets = true;
-							$facets[$facet->getFieldName()] = $facet;
-						}
-					}
-					if ($groupHasFacets)
-					{
-						$facetGroups[] = $group;
-					}
-				}
-			}
-		}
+		/** @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
+		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('indexId'));
 
-		if (count($facets))
-		{
-			$attributes['facetGroups'] = $facetGroups;
-		}
-		else
-		{
-			return null;
-		}
-
-		// Verify Index
-		$storeIndex = $documentManager->getDocumentInstance($storeIndexId);
-		if (!($storeIndex instanceof \Rbs\Elasticsearch\Documents\StoreIndex))
-		{
-			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index');
-			return null;
-		}
-
-		$client = $genericServices->getIndexManager()->getClient($storeIndex->getClientName());
+		$client = $indexManager->getElasticaClient($storeIndex->getClientName());
 		if (!$client)
 		{
 			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid client ' . $storeIndex->getClientName());
@@ -267,32 +267,49 @@ class Facets extends Block
 			return null;
 		}
 
-		// Create Query
-		$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($storeIndex);
-		$searchQuery->setFacetManager($genericServices->getFacetManager());
-		$searchQuery->setI18nManager($applicationServices->getI18nManager());
-		$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
-		$facetFilters = $parameters->getParameter('facetFilters');
-		if (is_array($facetFilters) && count($facetFilters))
+		$productListId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
+		$productList = null;
+		if ($productListId !== null)
 		{
-			$type = $index->getType($storeIndex->getDefaultTypeName());
-			$facetResults = array();
-			foreach ($facets as $facet)
+			/** @var $productList \Rbs\Catalog\Documents\ProductList|null */
+			$productList = $documentManager->getDocumentInstance($productListId);
+			if (!($productList instanceof \Rbs\Catalog\Documents\ProductList) || !$productList->activated())
 			{
-				$query = $searchQuery->getListFacetQuery($productList, $facet, $facetFilters);
-				if ($query)
-				{
-					$facetResults = array_merge($facetResults, $type->search($query)->getFacets());
-				}
+				$applicationServices->getLogging()->warn(__METHOD__ . ': invalid product list');
+				return null;
 			}
-			$attributes['facetValues'] = $searchQuery->buildFacetValues($facetResults, $facetFilters, $facets);
+		}
+
+		$facets = [];
+		$facetIds = $parameters->getParameter('facets');
+
+		if (is_array($facetIds) && count($facetIds))
+		{
+			$facets = $genericServices->getFacetManager()->resolveFacetIds($facetIds);
+		}
+
+		if (count($facets))
+		{
+			$attributes['facets'] = $facets;
 		}
 		else
 		{
-			$query = $searchQuery->getListFacetsQuery($productList, $facets);
-			$facetResults = $index->getType($storeIndex->getDefaultTypeName())->search($query)->getFacets();
-			$attributes['facetValues'] = $searchQuery->buildFacetValues($facetResults, $facetFilters, $facets);
+			return null;
 		}
+
+		$context = $parameters->getParameter('commerceContext');
+
+		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
+
+		$query = $queryHelper->getProductListQuery($productList);
+		$queryHelper->addFacets($query, $facets, $context);
+
+		$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
+
+		$facetsValues = $queryHelper->formatAggregations($result->getAggregations(), $facets);
+
+		$attributes['facetValues'] = $facetsValues;
+
 		return 'facets.twig';
 	}
 }

@@ -39,7 +39,7 @@ class Collections
 			foreach ($indexManager->getClientsName() as $clientName)
 			{
 				$items[$clientName] = $clientName;
-				$client = $indexManager->getClient($clientName);
+				$client = $indexManager->getElasticaClient($clientName);
 				if ($client)
 				{
 					try
@@ -70,7 +70,7 @@ class Collections
 	/**
 	 * @param \Change\Events\Event $event
 	 */
-	public function addCollectionCodes(\Change\Events\Event $event)
+	public function addCollectionIds(\Change\Events\Event $event)
 	{
 		$applicationServices = $event->getApplicationServices();
 		if ($applicationServices)
@@ -78,10 +78,10 @@ class Collections
 			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
 			$qb = $docQuery->dbQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
-			$query = $qb->addColumn($fb->alias($docQuery->getColumn('code'), 'code'))
+			$query = $qb->addColumn($fb->alias($docQuery->getColumn('id'), 'id'))
 				->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))->query();
-			$items = $query->getResults($query->getRowsConverter()->addStrCol('code', 'label')->indexBy('code'));
-			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_CollectionCodes', $items);
+			$items = $query->getResults($query->getRowsConverter()->addIntCol('id')->addStrCol('label')->indexBy('id'));
+			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_CollectionIds', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();
 		}
@@ -96,14 +96,27 @@ class Collections
 		if ($applicationServices)
 		{
 			$docQuery = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Catalog_Attribute');
-			$qb = $docQuery->dbQueryBuilder();
-			$fb = $qb->getFragmentBuilder();
-			$qb->where($fb->notIn($docQuery->getColumn('valueType'), array($fb->string('Text'), $fb->string('Group'))));
+			$docQuery->andPredicates($docQuery->notIn('valueType', ['Text' ,'Group', 'DocumentIdArray']));
+			$docQuery->addOrder('label');
 
-			$query = $qb->addColumn($fb->alias($docQuery->getColumn('id'), 'id'))
-				->addColumn($fb->alias($docQuery->getColumn('label'), 'label'))
-				->query();
-			$items = $query->getResults($query->getRowsConverter()->addStrCol('label')->addIntCol('id')->indexBy('id'));
+			$items = [];
+			/** @var $attr \Rbs\Catalog\Documents\Attribute */
+			foreach ($docQuery->getDocuments() as $attr)
+			{
+				if ($attr->getValueType() === 'Property')
+				{
+					$property = $attr->getModelProperty();
+					if ($property && in_array($property->getType(), ['Boolean', 'Integer', 'Float', 'Decimal',
+							'DateTime', 'Date', 'String', 'DocumentId', 'Document']))
+					{
+						$items[$attr->getId()] = $attr->getLabel();
+					}
+				}
+				else
+				{
+					$items[$attr->getId()] = $attr->getLabel();
+				}
+			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_AttributeIds', $items);
 			$event->setParam('collection', $collection);
 			$event->stopPropagation();
@@ -118,13 +131,13 @@ class Collections
 		$applicationServices = $event->getApplicationServices();
 		if ($applicationServices)
 		{
-			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_FullText');
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_Index');
 			$query->andPredicates($query->activated());
 			$items = array();
-			/* @var $indexDefinition \Rbs\Elasticsearch\Documents\FullText */
+			/* @var $indexDefinition \Rbs\Elasticsearch\Documents\Index */
 			foreach ($query->getDocuments() as $indexDefinition)
 			{
-				$items[$indexDefinition->getId()] = $indexDefinition->buildLabel($applicationServices->getI18nManager());
+				$items[$indexDefinition->getId()] = $indexDefinition->composeRestLabel($applicationServices->getI18nManager());
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_Indexes', $items);
 			$event->setParam('collection', $collection);
@@ -135,35 +148,17 @@ class Collections
 	/**
 	 * @param \Change\Events\Event $event
 	 */
-	public function addFacetTypes(\Change\Events\Event $event)
+	public function addFacetConfigurationType(\Change\Events\Event $event)
 	{
 		$applicationServices = $event->getApplicationServices();
 		if ($applicationServices)
 		{
 			$i18nManager = $applicationServices->getI18nManager();
 			$items = array();
-			$items[FacetDefinitionInterface::TYPE_TERM] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_type_term');
-			$items[FacetDefinitionInterface::TYPE_RANGE] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_type_range');
-			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetTypes', $items);
-			$event->setParam('collection', $collection);
-			$event->stopPropagation();
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function addFacetValueExtractor(\Change\Events\Event $event)
-	{
-		$applicationServices = $event->getApplicationServices();
-		if ($applicationServices)
-		{
-			$i18nManager = $applicationServices->getI18nManager();
-			$items = array();
-			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_attribute', array('ucf'));
-			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_price', array('ucf'));
-			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.documents.facet_value_extractor_sku_threshold', array('ucf'));
-			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetValueExtractor', $items);
+			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_attribute', array('ucf'));
+			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_price', array('ucf'));
+			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_sku_threshold', array('ucf'));
+			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_FacetConfigurationType', $items);
 			$event->setParam('collection', $collection);
 		}
 	}

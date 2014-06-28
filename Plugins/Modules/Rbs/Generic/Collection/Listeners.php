@@ -88,17 +88,14 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Elasticsearch_Collection_Indexes':
 					(new \Rbs\Elasticsearch\Collection\Collections())->addIndexes($event);
 					break;
-				case 'Rbs_Elasticsearch_Collection_CollectionCodes':
-					(new \Rbs\Elasticsearch\Collection\Collections())->addCollectionCodes($event);
+				case 'Rbs_Elasticsearch_CollectionIds':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addCollectionIds($event);
 					break;
 				case 'Rbs_Elasticsearch_Collection_AttributeIds':
 					(new \Rbs\Elasticsearch\Collection\Collections())->addAttributeIds($event);
 					break;
-				case 'Rbs_Elasticsearch_Collection_FacetTypes':
-					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetTypes($event);
-					break;
-				case 'Rbs_Elasticsearch_Collection_FacetValueExtractor':
-					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetValueExtractor($event);
+				case 'Rbs_Elasticsearch_FacetConfigurationType':
+					(new \Rbs\Elasticsearch\Collection\Collections())->addFacetConfigurationType($event);
 					break;
 				case 'Rbs_Geo_All_Countries_Codes':
 					(new \Rbs\Geo\Collection\Collections())->addAllCountriesCodes($event);
@@ -129,10 +126,9 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Theme_WebsiteIds',
 				'Rbs_Elasticsearch_Collection_Clients',
 				'Rbs_Elasticsearch_Collection_Indexes',
-				'Rbs_Elasticsearch_Collection_CollectionCodes',
+				'Rbs_Elasticsearch_CollectionIds',
 				'Rbs_Elasticsearch_Collection_AttributeIds',
-				'Rbs_Elasticsearch_Collection_FacetTypes',
-				'Rbs_Elasticsearch_Collection_FacetValueExtractor',
+				'Rbs_Elasticsearch_FacetConfigurationType',
 				'Rbs_Geo_All_Countries_Codes',
 				'Rbs_Geo_Collection_Countries'
 			));

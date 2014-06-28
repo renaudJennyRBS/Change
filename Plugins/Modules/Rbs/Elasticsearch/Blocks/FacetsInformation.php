@@ -29,9 +29,12 @@ class FacetsInformation extends Information
 		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
 
-		$this->addInformationMeta('facetGroups', \Change\Presentation\Blocks\ParameterInformation::TYPE_DOCUMENTIDARRAY)
-			->setAllowedModelsNames('Rbs_Elasticsearch_FacetGroup')
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets_facetgroups', $ucf));
+		$this->addInformationMeta('showUnavailable', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_unavailable', $ucf));
+
+		$this->addInformationMeta('facets', \Change\Presentation\Blocks\ParameterInformation::TYPE_DOCUMENTIDARRAY)
+			->setAllowedModelsNames('Rbs_Elasticsearch_Facet')
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
 
 		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}

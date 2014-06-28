@@ -27,8 +27,8 @@
 	"productlist_productsortdirection":{
 		"message":"sens de tri"
 	},
-	"productlist_facetgroups":{
-		"message":"groupes de facettes associés"
+	"productlist_facets":{
+		"message":"facettes associés"
 	},
 	"productlist_products":{
 		"message":"produits"

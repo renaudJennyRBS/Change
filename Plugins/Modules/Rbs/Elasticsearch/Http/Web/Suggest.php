@@ -54,12 +54,12 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 				if ($genericServices instanceof \Rbs\Generic\GenericServices)
 				{
 					$indexManager = $genericServices->getIndexManager();
-					$indexDef = $indexManager->findIndexDefinitionByMapping('fulltext', $LCID, array('website' => $website));
+					$indexDef = $indexManager->getFulltextIndexByWebsite($website, $LCID);
 					if ($indexDef)
 					{
 						$result['client'] = $indexDef->getClientName();
 						$result['indexName'] = $indexDef->getName();
-						$client = $indexManager->getClient($indexDef->getClientName());
+						$client = $indexManager->getElasticaClient($indexDef->getClientName());
 						if ($client)
 						{
 							$index = $client->getIndex($indexDef->getName());

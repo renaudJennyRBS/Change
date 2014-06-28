@@ -11,15 +11,17 @@
 		<label for="inputEmail3" class="col-sm-5 col-md-4 col-lg-3 control-label">
 			{{ i18n('m.rbs.elasticsearch.front.types', ['ucf']) }}
 		</label>
+{% if facet %}
 		<div class="col-sm-7 col-md-6 col-lg-9">
-			{% for fv in facet %}
+			{% for value in facet.values %}
 				<label class="checkbox-inline">
-					<input type="checkbox" name="facetFilters[model][]" value="{{ fv.value }}"
-						{% if fv.filtered %} checked="checked" {% endif %} />
-					{{ fv.valueTitle }} <span class="badge">{{ fv.count }}</span>
+					<input type="checkbox" name="facetFilters[{{ facet.fieldName }}][]" value="{{ value.key }}"
+						{% if facetValue.filtered %} checked="checked" {% endif %} />
+					{{ value.title }}{% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
 				</label>
 			{% endfor %}
 		</div>
+{% endif %}
 	</div>
 	<div class="form-group">
 		<div class="col-sm-7 col-md-6 col-lg-9 col-sm-offset-5 col-md-offset-4 col-lg-offset-3">
@@ -54,5 +56,4 @@
 		{% endblock %}
 	{% endfor %}
 </div>
-
 {% include 'Rbs_Generic/pagination.twig' %}

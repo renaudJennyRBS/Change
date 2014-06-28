@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	editable="true" localized="true">
 	<properties>
 		<property name="title" type="String" localized="true" has-correction="true"/>
-		<property name="mappingName" type="String" />
-		<property name="fieldName" type="String" stateless="true" />
-		<property name="indexId" type="DocumentId" />
-
-		<property name="multipleChoice" type="Boolean" stateless="true" />
-		<property name="facetType" type="String" stateless="true" />
-		<property name="collectionCode" type="String" stateless="true" />
-		<property name="showEmptyItem" type="Boolean" stateless="true" />
-		<property name="attributeId" type="DocumentId" stateless="true" />
-		<property name="valuesExtractorName" type="String" stateless="true" />
-		<property name="parametersData" type="JSON" />
+		<property name="indexCategory" type="String"/>
+		<property name="configurationType" type="String"/>
+		<property name="facets" type="DocumentArray" document-type="Rbs_Elasticsearch_Facet" />
+		<property name="parametersData" type="JSON" internal="true" />
 	</properties>
 </document>

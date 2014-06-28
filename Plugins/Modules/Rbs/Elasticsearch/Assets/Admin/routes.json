@@ -3,7 +3,7 @@
 		"module": "Rbs_Elasticsearch",
 		"name": "home",
 		"rule": {
-			"redirectTo": "/Rbs/Elasticsearch/FullText/",
+			"redirectTo": "/Rbs/Elasticsearch/Index/",
 			"labelKey": "m.rbs.elasticsearch.admin.module_name | ucf"
 		},
 		"auto": false
@@ -46,52 +46,13 @@
 		},
 		"auto": true
 	},
-	"/Rbs/Elasticsearch/FacetGroup/": {
-		"model": "Rbs_Elasticsearch_FacetGroup",
-		"name": "list",
-		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/list.twig",
-			"labelKey": "m.rbs.elasticsearch.admin.facetgroup_list | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Elasticsearch/FacetGroup/:id": {
-		"model": "Rbs_Elasticsearch_FacetGroup",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/edit.twig",
-			"labelKey": "m.rbs.elasticsearch.documents.facetgroup | ucf",
-			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Elasticsearch/FacetGroup/:id/translate/:LCID": {
-		"model": "Rbs_Elasticsearch_FacetGroup",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Elasticsearch/FacetGroup/new": {
-		"model": "Rbs_Elasticsearch_FacetGroup",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FacetGroup/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Elasticsearch/FullText/": {
 		"model": "Rbs_Elasticsearch_FullText",
 		"name": "list",
 		"rule": {
-			"templateUrl": "Document/Rbs/Elasticsearch/FullText/list.twig",
-			"labelKey": "m.rbs.elasticsearch.admin.fulltext_list | ucf"
+			"redirectTo": "/Rbs/Elasticsearch/Index/"
 		},
-		"auto": true
+		"auto": false
 	},
 	"/Rbs/Elasticsearch/FullText/:id": {
 		"model": "Rbs_Elasticsearch_FullText",
@@ -112,12 +73,20 @@
 		},
 		"auto": true
 	},
+	"/Rbs/Elasticsearch/Index/": {
+		"model": "Rbs_Elasticsearch_Index",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Elasticsearch/Index/list.twig",
+			"labelKey": "m.rbs.elasticsearch.admin.index_list | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Elasticsearch/StoreIndex/": {
 		"model": "Rbs_Elasticsearch_StoreIndex",
 		"name": "list",
 		"rule": {
-			"redirectTo": "/Rbs/Elasticsearch/FullText/",
-			"labelKey": "m.rbs.elasticsearch.admin.fulltext_list | ucf"
+			"redirectTo": "/Rbs/Elasticsearch/Index/"
 		},
 		"auto": false
 	},
