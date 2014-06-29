@@ -291,12 +291,27 @@ class StoreResult extends Block
 		}
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 		$query = $queryHelper->getProductListQuery($productList);
+		if (is_array($facetFilters) && count($facetFilters))
+		{
+			$facets = $storeIndex->getFacetsDefinition();
+			$filter = $queryHelper->getFacetsFilter($facets, $facetFilters, $context);
+			if ($filter)
+			{
+				$query->setFilter($filter);
+			}
+		}
+
+
 		$queryHelper->addSortArgs($query,$parameters->getParameter('sortBy'), $context);
+
+
+
+
 		$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
 		$size = $parameters->getParameter('itemsPerPage');
 		$from = ($pageNumber - 1) * $size;
 		$query->setFrom($from)->setSize($size);
-		$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
+		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 
 		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 		$attributes['totalCount'] = $totalCount = $searchResult->getTotalHits();

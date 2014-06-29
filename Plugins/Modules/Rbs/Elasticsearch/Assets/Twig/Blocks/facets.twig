@@ -9,19 +9,22 @@
 			{% for value in facetValue.values %}
 				<li><div class="checkbox"><label>
 					<input type="checkbox" name="facetFilters[{{ facetValue.fieldName }}][]" value="{{ value.key }}"
-						{% if facetValue.filtered %} checked="checked" {% endif %} />
-					{{ value.title }}{% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
+						{% if value.selected %} checked="checked" {% endif %} />
+					{{ value.title }} {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
 				</label></div></li>
 			{% endfor %}
 		{% else %}
 			{% for value in facetValue.values %}
 				<li><div class="radio"><label>
-					<input type="radio" name="facetFilters[{{ facetValue.fieldName }}]" value="{{ value.key }}"
-						{% if facetValue.filtered %} checked="checked" {% endif %} />
-							{{ value.title }}
-							{% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
+					<input type="radio" name="facetFilters[{{ facetValue.fieldName }}][]" value="{{ value.key }}"
+						{% if value.selected %} checked="checked" {% endif %} />
+							{{ value.title }} {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
 				</label></div></li>
 			{% endfor %}
+			<li><div class="radio"><label>
+				<input type="radio" name="facetFilters[{{ facetValue.fieldName }}][]" value="" />
+						{{ i18n('m.rbs.elasticsearch.front.unset_value', ['ucf']) }}
+			</label></div></li>
 		{% endif %}
 	</ol>
 {% endfor %}

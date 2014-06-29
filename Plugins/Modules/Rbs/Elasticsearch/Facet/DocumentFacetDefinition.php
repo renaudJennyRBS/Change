@@ -51,6 +51,7 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	{
 		$this->fieldName = 'f_' . $facet->getId();
 		$this->parameters = $facet->getParameters();
+		$this->parameters->set('configurationType', $facet->getConfigurationType());
 		$this->title = $facet->getCurrentLocalization()->getTitle();
 		if (!$this->title)
 		{
@@ -150,30 +151,13 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	}
 
 	/**
-	 * @deprecated
-	 * @return boolean
-	 */
-	public function getShowEmptyItem()
-	{
-		return $this->getParameters()->get('showEmptyItem', false);
-	}
-
-	/**
-	 * @deprecated
-	 * @return string
-	 */
-	public function getFacetType()
-	{
-		return $this->getParameters()->get('facetType', static::TYPE_TERM);
-	}
-
-	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\Terms|null
+	 * @return \Elastica\Filter\AbstractFilter[]
 	 */
-	public function getFilterQuery(array $facetFilters, array $context = [])
+	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
+		$filtersQuery = [];
 		$filterName = $this->getFieldName();
 		if (isset($facetFilters[$filterName]))
 		{
@@ -190,10 +174,10 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 			if (count($terms))
 			{
 				$filterQuery = new \Elastica\Filter\Terms($this->getMappingName(), $terms);
-				return $filterQuery;
+				$filtersQuery[] = $filterQuery;
 			}
 		}
-		return null;
+		return $filtersQuery;
 	}
 
 	/**

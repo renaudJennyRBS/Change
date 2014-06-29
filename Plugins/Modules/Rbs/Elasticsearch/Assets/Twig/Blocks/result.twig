@@ -16,8 +16,8 @@
 			{% for value in facet.values %}
 				<label class="checkbox-inline">
 					<input type="checkbox" name="facetFilters[{{ facet.fieldName }}][]" value="{{ value.key }}"
-						{% if facetValue.filtered %} checked="checked" {% endif %} />
-					{{ value.title }}{% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
+						{% if value.selected %} checked="checked" {% endif %} />
+					{{ value.title }}  {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
 				</label>
 			{% endfor %}
 		</div>
@@ -32,6 +32,7 @@
 	</div>
 </form>
 
+{% if showResult %}
 <h4>{{ i18n('m.rbs.elasticsearch.front.total_result_count', ['ucf', 'lab']) }} {{ totalCount }}</h4>
 <div class="list-group">
 	{% set separator = i18n('m.rbs.elasticsearch.front.fragment_separator', ['ucf']) %}
@@ -57,3 +58,4 @@
 	{% endfor %}
 </div>
 {% include 'Rbs_Generic/pagination.twig' %}
+{% endif %}

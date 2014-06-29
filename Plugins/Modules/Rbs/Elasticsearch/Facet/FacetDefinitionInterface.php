@@ -14,27 +14,6 @@ namespace Rbs\Elasticsearch\Facet;
 interface FacetDefinitionInterface
 {
 	/**
-	 * @deprecated
-	 */
-	const TYPE_TERM = 'term';
-
-	/**
-	 * @deprecated
-	 */
-	const TYPE_RANGE = 'range';
-
-	/**
-	 * @deprecated
-	 */
-	const PARAM_MULTIPLE_CHOICE = 'multipleChoice';
-
-	/**
-	 * @deprecated
-	 */
-	const PARAM_COLLECTION_CODE = 'collectionCode';
-
-
-	/**
 	 * @return string
 	 */
 	public function getTitle();
@@ -76,9 +55,9 @@ interface FacetDefinitionInterface
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\AbstractFilter|null
+	 * @return \Elastica\Filter\AbstractFilter[]
 	 */
-	public function getFilterQuery(array $facetFilters, array $context = []);
+	public function getFiltersQuery(array $facetFilters, array $context = []);
 
 	/**
 	 * @param array $context
@@ -91,16 +70,4 @@ interface FacetDefinitionInterface
 	 * @return \Rbs\Elasticsearch\Facet\AggregationValues
 	 */
 	public function formatAggregation(array $aggregations);
-
-	/**
-	 * @deprecated
-	 * @return string
-	 */
-	public function getFacetType();
-
-	/**
-	 * @deprecated
-	 * @return boolean
-	 */
-	public function getShowEmptyItem();
 }

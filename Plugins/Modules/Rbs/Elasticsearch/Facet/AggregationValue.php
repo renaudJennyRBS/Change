@@ -29,6 +29,11 @@ class AggregationValue
 	protected $title;
 
 	/**
+	 * @var boolean
+	 */
+	protected $selected;
+
+	/**
 	 * @var AggregationValues[]
 	 */
 	protected $aggregationValues = [];
@@ -57,6 +62,24 @@ class AggregationValue
 	public function getKey()
 	{
 		return $this->key;
+	}
+
+	/**
+	 * @param boolean $selected
+	 * @return $this
+	 */
+	public function setSelected($selected)
+	{
+		$this->selected = $selected;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getSelected()
+	{
+		return $this->selected;
 	}
 
 	/**

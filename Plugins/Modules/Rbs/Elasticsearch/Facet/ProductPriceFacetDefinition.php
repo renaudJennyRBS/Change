@@ -84,10 +84,11 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\Nested|null
+	 * @return \Elastica\Filter\AbstractFilter[]
 	 */
-	public function getFilterQuery(array $facetFilters, array $context = [])
+	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
+		$filtersQuery = [];
 		$filterName = $this->getFieldName();
 		if (isset($facetFilters[$filterName]))
 		{
@@ -118,23 +119,23 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 				$filterQuery->setPath('prices');
 				$nestedBool = new \Elastica\Query\Bool();
 
-				$nestedBool->addMust(new \Elastica\Filter\Term(['prices.billingAreaId' => $billingAreaId]));
-				$nestedBool->addMust(new \Elastica\Filter\Term(['prices.zone' => $zone]));
-				$nestedBool->addMust(new \Elastica\Filter\Term(['prices.storeId' => $storeId]));
-				$nestedBool->addMust(new \Elastica\Filter\Range('prices.startActivation', ['lte' => $now]));
-				$nestedBool->addMust(new \Elastica\Filter\Range('prices.endActivation', ['gt' => $now]));
+				$nestedBool->addMust(new \Elastica\Query\Term(['prices.billingAreaId' => $billingAreaId]));
+				$nestedBool->addMust(new \Elastica\Query\Term(['prices.zone' => $zone]));
+				$nestedBool->addMust(new \Elastica\Query\Term(['prices.storeId' => $storeId]));
+				$nestedBool->addMust(new \Elastica\Query\Range('prices.startActivation', ['lte' => $now]));
+				$nestedBool->addMust(new \Elastica\Query\Range('prices.endActivation', ['gt' => $now]));
 
 				foreach ($ranges as $range)
 				{
 					$nestedBool->addShould($range);
 				}
-
 				$nestedBool->setMinimumNumberShouldMatch(1);
 				$filterQuery->setQuery($nestedBool);
-				return $filterQuery;
+
+				$filtersQuery[] = $filterQuery;
 			}
 		}
-		return null;
+		return $filtersQuery;
 	}
 
 	/**

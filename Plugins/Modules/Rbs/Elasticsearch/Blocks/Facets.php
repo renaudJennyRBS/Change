@@ -288,9 +288,15 @@ class Facets extends Block
 			$facets = $genericServices->getFacetManager()->resolveFacetIds($facetIds);
 		}
 
+
+
 		if (count($facets))
 		{
 			$attributes['facets'] = $facets;
+			$facetFilters = $parameters->getParameter('facetFilters');
+			if (!is_array($facetFilters)) {
+				$facetFilters = [];
+			}
 		}
 		else
 		{
@@ -302,12 +308,16 @@ class Facets extends Block
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
 		$query = $queryHelper->getProductListQuery($productList);
-		$queryHelper->addFacets($query, $facets, $context);
+		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $context);
 
+		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 		$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 
 		$facetsValues = $queryHelper->formatAggregations($result->getAggregations(), $facets);
-
+		if (count($facetFilters))
+		{
+			$queryHelper->applyFacetFilters($facetsValues, $facetFilters);
+		}
 		$attributes['facetValues'] = $facetsValues;
 
 		return 'facets.twig';

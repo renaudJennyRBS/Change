@@ -137,18 +137,115 @@ class QueryHelper
 	}
 
 	/**
+	 * @param \Elastica\Query $query
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[] $facets
+	 * @param array $facetFilters
+	 * @param array $context
+	 * @return $this
+	 */
+	public function addFilteredFacets(\Elastica\Query $query, array $facets, array $facetFilters, array $context = [])
+	{
+		foreach ($facets as $facet)
+		{
+			$customFilter = $facetFilters;
+			unset($customFilter[$facet->getFieldName()]);
+			$aggregation = $facet->getAggregation($context);
+			if (count($customFilter))
+			{
+				$filter = $this->getFacetsFilter($facets, $customFilter, $context);
+				if ($filter)
+				{
+					$aggFilter = new \Elastica\Aggregation\Filter('filtered__' . $aggregation->getName());
+					$aggFilter->setFilter($filter);
+					$aggFilter->addAggregation($aggregation);
+					$query->addAggregation($aggFilter);
+					continue;
+				}
+			}
+			$query->addAggregation($aggregation);
+		}
+		$query->setSize(0);
+		return $this;
+	}
+
+	/**
 	 * @param array $aggregations
 	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[] $facets
 	 * @return \Rbs\Elasticsearch\Facet\AggregationValues[]
 	 */
 	public function formatAggregations(array $aggregations, array $facets)
 	{
+		foreach ($aggregations as $name => $val)
+		{
+			if (strpos($name, 'filtered__') === 0)
+			{
+				$name = substr($name, 10);
+				if (is_array($val) && isset($val[$name]))
+				{
+					$aggregations[$name] = $val[$name];
+				}
+			}
+		}
+
 		$formattedAggregations = [];
 		foreach ($facets as $facet)
 		{
 			$formattedAggregations[] = $facet->formatAggregation($aggregations);
 		}
 		return $formattedAggregations;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\AggregationValues[] $aggregationValues
+	 * @param array $facetFilters
+	 */
+	public function applyFacetFilters(array $aggregationValues, array $facetFilters)
+	{
+		foreach ($aggregationValues as $aggValues)
+		{
+			if (isset($facetFilters[$aggValues->getFieldName()]))
+			{
+				$facetFilter = $facetFilters[$aggValues->getFieldName()];
+				if (!is_array($facetFilter))
+				{
+					$facetFilter = [$facetFilter];
+				}
+
+				foreach ($aggValues->getValues() as $aggValue)
+				{
+					if (in_array(strval($aggValue->getKey()), $facetFilter))
+					{
+						$aggValue->setSelected(true);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[] $facets
+	 * @param array $facetFilters
+	 * @param array $context
+	 * @return \Elastica\Filter\Bool|null
+	 */
+	public function getFacetsFilter(array $facets, array $facetFilters, array $context)
+	{
+		$filters = [];
+		foreach ($facets as $facet)
+		{
+			$filters = array_merge($filters, $facet->getFiltersQuery($facetFilters, $context));
+		}
+
+		if (count($filters))
+		{
+			$bool = new \Elastica\Filter\Bool();
+			foreach ($filters as $filter)
+			{
+				$bool->addMust($filter);
+			}
+			return $bool;
+		}
+		return null;
 	}
 
 	/**

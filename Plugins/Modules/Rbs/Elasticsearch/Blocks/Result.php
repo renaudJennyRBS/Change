@@ -129,7 +129,6 @@ class Result extends Block
 		}
 		$searchText = trim($parameters->getParameter('searchText'), '');
 		$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
-		$facetFilters = $parameters->getParameter('facetFilters');
 
 		$indexManager = $genericServices->getIndexManager();
 
@@ -148,69 +147,95 @@ class Result extends Block
 		}
 
 		$showModelFacet = $parameters->getParameter('showModelFacet');
+		if ($showModelFacet)
+		{
+			$facetFilters = $parameters->getParameter('facetFilters');
+		}
+		else
+		{
+			$facetFilters = null;
+		}
+		$showResult = !empty($searchText);
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($fullTextIndex, $indexManager, $genericServices->getFacetManager());
 		$query = $queryHelper->getSearchQuery($searchText, $allowedSectionIds);
 		$queryHelper->addHighlight($query);
 		if ($showModelFacet)
 		{
 			$facets = $fullTextIndex->getFacetsDefinition();
+			if (is_array($facetFilters) && count($facetFilters))
+			{
+				$filter = $queryHelper->getFacetsFilter($facets, $facetFilters, []);
+				if ($filter)
+				{
+					$query->setFilter($filter);
+				}
+			}
 			$queryHelper->addFacets($query, $facets);
 		}
 		else
 		{
 			$facets = null;
 		}
+		$searchResult = null;
+		$attributes['items'] = [];
+		$attributes['showResult'] = $showResult;
 
-		$attributes['items'] = array();
-		$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
-		$size = $parameters->getParameter('itemsPerPage');
-		$from = ($pageNumber - 1) * $size;
-
-		$query->setFrom($from)->setSize($size);
-		$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
-
-		$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
-		$attributes['totalCount'] = $searchResult->getTotalHits();
-		if ($attributes['totalCount'])
+		if ($showResult)
 		{
-			$maxScore = $searchResult->getMaxScore();
-			$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
-			$i18nManager = $applicationServices->getI18nManager();
+			$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
+			$size = $parameters->getParameter('itemsPerPage');
+			$from = ($pageNumber - 1) * $size;
+			$query->setFrom($from)->setSize($size);
 
-			/* @var $result \Elastica\Result */
-			foreach ($searchResult->getResults() as $result)
+			//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
+			$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
+			$attributes['totalCount'] = $searchResult->getTotalHits();
+			if ($attributes['totalCount'])
 			{
-				$score = ceil(($result->getScore() / $maxScore) * 100);
-				$document = $documentManager->getDocumentInstance($result->getId());
-				if ($document instanceof \Change\Documents\Interfaces\Publishable && $document->published())
+				$maxScore = $searchResult->getMaxScore();
+				$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
+				$i18nManager = $applicationServices->getI18nManager();
+
+				/* @var $result \Elastica\Result */
+				foreach ($searchResult->getResults() as $result)
 				{
-					$highlights = $result->getHighlights();
-					if (isset($highlights['title']))
+					$score = ceil(($result->getScore() / $maxScore) * 100);
+					$document = $documentManager->getDocumentInstance($result->getId());
+					if ($document instanceof \Change\Documents\Interfaces\Publishable && $document->published())
 					{
-						$title = $highlights['title'][0];
+						$highlights = $result->getHighlights();
+						if (isset($highlights['title']))
+						{
+							$title = $highlights['title'][0];
+						}
+						else
+						{
+							$title = $i18nManager->transformHtml($result->title, $i18nManager->getLCID());
+						}
+						$attributes['items'][] =['id' => $result->getId(), 'score' => $score,
+							'title' => $title,'document' => $document,
+							'content' => isset($highlights['content']) ? $highlights['content'] : []
+						];
 					}
-					else
-					{
-						$title = $i18nManager->transformHtml($result->title, $i18nManager->getLCID());
-					}
-					$attributes['items'][] =['id' => $result->getId(), 'score' => $score,
-						'title' => $title,'document' => $document,
-						'content' => isset($highlights['content']) ? $highlights['content'] : []
-					];
 				}
 			}
 		}
-		else
+		elseif ($showModelFacet)
 		{
-			$attributes['items'] = false;
+			$query->setSize(0);
+			//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
+			$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
 		}
 
-		if ($showModelFacet)
+		if ($showModelFacet && $searchResult)
 		{
 			$facetValues = $queryHelper->formatAggregations($searchResult->getAggregations(), $facets);
+			if (is_array($facetFilters) && count($facetFilters))
+			{
+				$queryHelper->applyFacetFilters($facetValues, $facetFilters);
+			}
 			$attributes['facet'] = $facetValues[0];
 		}
-
 		return 'result.twig';
 	}
 }

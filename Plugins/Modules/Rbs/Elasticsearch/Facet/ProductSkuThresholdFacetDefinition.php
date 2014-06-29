@@ -94,10 +94,11 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\Nested|null
+	 * @return \Elastica\Filter\AbstractFilter[]
 	 */
-	public function getFilterQuery(array $facetFilters, array $context = [])
+	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
+		$filtersQuery = [];
 		$filterName = $this->getFieldName();
 		if (isset($facetFilters[$filterName]))
 		{
@@ -108,7 +109,7 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 				$key = strval($key);
 				if (!empty($key))
 				{
-					$thresholds[] = new \Elastica\Filter\Term(['stocks.threshold' => $key]);
+					$thresholds[] = new \Elastica\Query\Term(['stocks.threshold' => $key]);
 				}
 			}
 
@@ -119,17 +120,17 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 				$filterQuery = new \Elastica\Filter\Nested();
 				$filterQuery->setPath('stocks');
 				$nestedBool = new \Elastica\Query\Bool();
-				$nestedBool->addMust(new \Elastica\Filter\Term(['stocks.warehouseId' => $warehouseId]));
+				$nestedBool->addMust(new \Elastica\Query\Term(['stocks.warehouseId' => $warehouseId]));
 				foreach ($thresholds as $threshold)
 				{
 					$nestedBool->addShould($threshold);
 				}
 				$nestedBool->setMinimumNumberShouldMatch(1);
 				$filterQuery->setQuery($nestedBool);
-				return $filterQuery;
+				$filtersQuery[] = $filterQuery;
 			}
 		}
-		return null;
+		return $filtersQuery;
 	}
 
 	/**
