@@ -57,9 +57,10 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 	 */
 	public function onDefaultGetFacetsDefinition(\Change\Documents\Events\Event $event)
 	{
-		$mf = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
-		$mf->setI18nManager($event->getApplicationServices()->getI18nManager());
-		$event->setParam('facetsDefinition', [$mf]);
+		$modelFacetDefinition = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
+		$modelFacetDefinition->setI18nManager($event->getApplicationServices()->getI18nManager());
+		$modelFacetDefinition->setModelManager($event->getApplicationServices()->getModelManager());
+		$event->setParam('facetsDefinition', [$modelFacetDefinition]);
 	}
 
 	/**
@@ -96,7 +97,10 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		return [];
 	}
 
-
+	/**
+	 * @var \Rbs\Elasticsearch\Index\PublicationData
+	 */
+	protected $publicationData;
 
 	/**
 	 * @param \Change\Events\Event $event
@@ -112,9 +116,17 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 		$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus', Publishable::STATUS_FILED);
 		if ($publicationStatus == Publishable::STATUS_PUBLISHABLE)
 		{
-			$publicationData = new \Rbs\Elasticsearch\Index\PublicationData();
-			$publicationData->setDocumentManager($event->getApplicationServices()->getDocumentManager());
-			$publicationData->setTreeManager($event->getApplicationServices()->getTreeManager());
+			if ($this->publicationData === null)
+			{
+				$publicationData = new \Rbs\Elasticsearch\Index\PublicationData();
+				$publicationData->setDocumentManager($event->getApplicationServices()->getDocumentManager());
+				$publicationData->setTreeManager($event->getApplicationServices()->getTreeManager());
+			}
+			else
+			{
+				$publicationData = $this->publicationData;
+			}
+
 			$canonicalSectionId = $publicationData->getCanonicalSectionId($document, $index->getWebsite());
 
 			if ($canonicalSectionId)

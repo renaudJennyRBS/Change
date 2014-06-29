@@ -27,9 +27,14 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	 */
 	protected $i18nManager;
 
+	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
+
 	function __construct()
 	{
-		$this->getParameters()->set(static::PARAM_MULTIPLE_CHOICE, true);
+		$this->getParameters()->set('multipleChoice', true);
 	}
 
 	/**
@@ -48,6 +53,24 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	protected function getI18nManager()
 	{
 		return $this->i18nManager;
+	}
+
+	/**
+	 * @param \Change\Documents\ModelManager $modelManager
+	 * @return $this
+	 */
+	public function setModelManager($modelManager)
+	{
+		$this->modelManager = $modelManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\ModelManager
+	 */
+	protected function getModelManager()
+	{
+		return $this->modelManager;
 	}
 
 
@@ -127,10 +150,11 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\Terms|null
+	 * @return \Elastica\Filter\AbstractFilter[]
 	 */
-	public function getFilterQuery(array $facetFilters, array $context = [])
+	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
+		$filtersQuery = [];
 		$filterName = $this->getFieldName();
 		if (isset($facetFilters[$filterName]))
 		{
@@ -148,10 +172,10 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 			if (count($terms))
 			{
 				$filterQuery = new \Elastica\Filter\Terms('model', $terms);
-				return $filterQuery;
+				$filtersQuery[] = $filterQuery;
 			}
 		}
-		return null;
+		return $filtersQuery;
 	}
 
 	/**
@@ -177,28 +201,19 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 		{
 			foreach ($aggregations[$mappingName]['buckets'] as $bucket)
 			{
-				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count']);
+				$modelName = $bucket['key'];
+				$title = null;
+				$model = $this->getModelManager()->getModelByName($modelName);
+				if ($model)
+				{
+					$title = $this->getI18nManager()->trans($model->getLabelKey());
+				}
+				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($modelName, $bucket['doc_count'], $title);
 				$av->addValue($v);
 			}
 		}
 		return $av;
 	}
 
-	/**
-	 * @deprecated
-	 * @return boolean
-	 */
-	public function getShowEmptyItem()
-	{
-		return false;
-	}
 
-	/**
-	 * @deprecated
-	 * @return string
-	 */
-	public function getFacetType()
-	{
-		return static::TYPE_TERM;
-	}
 }
