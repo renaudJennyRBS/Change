@@ -11,6 +11,13 @@
 				if (!angular.isObject(scope.facet.parameters) || angular.isArray(scope.facet.parameters)) {
 					scope.facet.parameters = {};
 				}
+				var parameters = scope.facet.parameters;
+				if (!angular.isDefined(parameters.multipleChoice)) {
+					parameters.multipleChoice = true;
+				}
+				if (!angular.isDefined(parameters.showEmptyItem)) {
+					parameters.showEmptyItem = false;
+				}
 				scope.facet.indexCategory = 'store';
 			}
 		}
@@ -26,6 +33,19 @@
 				if (!angular.isObject(scope.facet.parameters) || angular.isArray(scope.facet.parameters)) {
 					scope.facet.parameters = {};
 				}
+				var parameters = scope.facet.parameters;
+				if (!angular.isDefined(parameters.withTax)) {
+					parameters.withTax = false;
+				}
+				if (!angular.isDefined(parameters.interval)) {
+					parameters.interval = 50;
+				}
+				if (!angular.isDefined(parameters.multipleChoice)) {
+					parameters.multipleChoice = true;
+				}
+				if (!angular.isDefined(parameters.showEmptyItem)) {
+					parameters.showEmptyItem = false;
+				}
 				scope.facet.indexCategory = 'store';
 			}
 		}
@@ -40,6 +60,13 @@
 			link : function (scope, element, attrs) {
 				if (!angular.isObject(scope.facet.parameters) || angular.isArray(scope.facet.parameters)) {
 					scope.facet.parameters = {};
+				}
+				var parameters = scope.facet.parameters;
+				if (!angular.isDefined(parameters.multipleChoice)) {
+					parameters.multipleChoice = true;
+				}
+				if (!angular.isDefined(parameters.showEmptyItem)) {
+					parameters.showEmptyItem = false;
 				}
 				scope.facet.indexCategory = 'store';
 			}

@@ -216,6 +216,10 @@ class QueryHelper
 					if (in_array(strval($aggValue->getKey()), $facetFilter))
 					{
 						$aggValue->setSelected(true);
+						if ($aggValue->hasAggregationValues())
+						{
+							$this->applyFacetFilters($aggValue->getAggregationValues(), $facetFilters);
+						}
 					}
 				}
 			}

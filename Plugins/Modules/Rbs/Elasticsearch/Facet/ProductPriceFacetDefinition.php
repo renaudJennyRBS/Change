@@ -12,6 +12,12 @@ namespace Rbs\Elasticsearch\Facet;
  */
 class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacetDefinition
 {
+
+	/**
+	 * @var \Change\I18n\I18nManager
+	 */
+	protected $i18nManager;
+
 	function __construct(\Rbs\Elasticsearch\Documents\Facet $facet)
 	{
 		parent::__construct($facet);
@@ -19,11 +25,30 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	}
 
 	/**
+	 * @param \Change\I18n\I18nManager $i18nManager
+	 * @return $this
+	 */
+	public function setI18nManager($i18nManager)
+	{
+		$this->i18nManager = $i18nManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\I18n\I18nManager
+	 */
+	protected function getI18nManager()
+	{
+		return $this->i18nManager;
+	}
+
+	/**
 	 * @return array
 	 */
 	protected function getDefaultParameters()
 	{
-		return  ['withTax' => false, 'interval' => 50, 'minAmount' => null, 'maxAmount' => null];
+		return  ['withTax' => false, 'interval' => 50, 'minAmount' => null, 'maxAmount' => null,
+			'multipleChoice' => true, 'showEmptyItem' => false];
 	}
 
 	/**
@@ -60,6 +85,10 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 							$validParameters[$name] = $value;
 						}
 					}
+					break;
+				case 'showEmptyItem':
+				case 'multipleChoice':
+					$validParameters[$name] = $value === 'false' ? false : boolval($value);
 					break;
 			}
 		}
@@ -174,12 +203,15 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		}
 		$contextFilter->setFilter($bool);
 
-
 		$interval = $this->getParameters()->get('interval');
 		$rangePrice = new \Elastica\Aggregation\Histogram('range_price', $field, $interval);
+		if ($this->getParameters()->get('showEmptyItem'))
+		{
+			$rangePrice->setMinimumDocumentCount(0);
+		}
+		$this->aggregateChildren($rangePrice, $context);
 		$contextFilter->addAggregation($rangePrice);
 		$nestedPrice->addAggregation($contextFilter);
-
 		return $nestedPrice;
 	}
 
@@ -192,12 +224,19 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
 		if (isset($aggregations['prices']['context']['range_price']['buckets']))
 		{
+			$interval = $this->getParameters()->get('interval');
 			$buckets = $aggregations['prices']['context']['range_price']['buckets'];
-			foreach ($buckets as $bucket)
+			$callback = function ($key) use ($interval)
 			{
-				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count']);
-				$av->addValue($v);
-			}
+				if ($key)
+				{
+					return $this->getI18nManager()->trans('m.rbs.elasticsearch.front.price_range', [],
+						['MINVALUE' => $key, 'MAXVALUE' => $key + $interval]);
+				}
+				return $this->getI18nManager()->trans('m.rbs.elasticsearch.front.price_before', [],
+					['MINVALUE' => $key, 'MAXVALUE' => $key + $interval]);
+			};
+			$this->formatCallableTitleAggregation($av, $callback, $buckets);
 		}
 		return $av;
 	}

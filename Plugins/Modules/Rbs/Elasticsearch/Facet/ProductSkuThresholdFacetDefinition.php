@@ -14,11 +14,6 @@ namespace Rbs\Elasticsearch\Facet;
 class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacetDefinition
 {
 
-	/**
-	 * @var \Change\Documents\DocumentManager
-	 */
-	protected $documentManager;
-
 	function __construct(\Rbs\Elasticsearch\Documents\Facet $facet)
 	{
 		parent::__construct($facet);
@@ -26,29 +21,11 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	}
 
 	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return $this
-	 */
-	public function setDocumentManager($documentManager)
-	{
-		$this->documentManager = $documentManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentManager
-	 */
-	protected function getDocumentManager()
-	{
-		return $this->documentManager;
-	}
-
-	/**
 	 * @return array
 	 */
 	protected function getDefaultParameters()
 	{
-		return  ['thresholdCollectionId' => null, 'showEmptyItem' => false, 'multipleChoice' => false];
+		return  ['thresholdCollectionId' => null, 'showEmptyItem' => false, 'multipleChoice' => true];
 	}
 
 	/**
@@ -81,8 +58,7 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 		}
 		if (!isset($validParameters['thresholdCollectionId']))
 		{
-			$query = $this->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
-			$coll = $query->andPredicates($query->eq('code', 'Rbs_Stock_Collection_Threshold'))->getFirstDocument();
+			$coll = $this->getCollectionByCode('Rbs_Stock_Collection_Threshold');
 			if ($coll)
 			{
 				$validParameters['thresholdCollectionId'] = $coll->getId();
@@ -139,11 +115,9 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	 */
 	public function getAggregation(array $context = [])
 	{
-
 		$context = $context + ['warehouseId' => 0];
 
 		$nestedPrice = new \Elastica\Aggregation\Nested('stocks', 'stocks');
-
 		$contextFilter = new \Elastica\Aggregation\Filter('context');
 		$warehouseId = intval($context['warehouseId']);
 
@@ -153,6 +127,9 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 
 		$field = 'stocks.threshold';
 		$term = (new \Elastica\Aggregation\Terms('threshold'))->setField($field);
+
+		$this->aggregateChildren($term, $context);
+
 		$contextFilter->addAggregation($term);
 		$nestedPrice->addAggregation($contextFilter);
 
@@ -165,14 +142,20 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	 */
 	public function formatAggregation(array $aggregations)
 	{
+		$collectionId = $this->getParameters()->get('thresholdCollectionId');
+		$items = $this->getCollectionItemsTitle($collectionId);
+
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
 		if (isset($aggregations['stocks']['context']['threshold']['buckets']))
 		{
 			$buckets = $aggregations['stocks']['context']['threshold']['buckets'];
-			foreach ($buckets as $bucket)
+			if ($items)
 			{
-				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count']);
-				$av->addValue($v);
+				$this->formatListAggregation($av, $items, $buckets);
+			}
+			else
+			{
+				$this->formatKeyAggregation($av, $buckets);
 			}
 		}
 		return $av;

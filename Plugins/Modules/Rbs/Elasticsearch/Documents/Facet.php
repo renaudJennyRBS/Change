@@ -161,6 +161,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet
 					break;
 				case 'Price':
 					$facetDefinition = new ProductPriceFacetDefinition($this);
+					$facetDefinition->setDocumentManager($this->getDocumentManager());
 					$facetDefinition->validateConfiguration($this);
 					$this->saveWrappedProperties();
 					break;
@@ -228,12 +229,12 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet
 		{
 			case 'Attribute':
 				$facetDefinition = new ProductAttributeFacetDefinition($facet);
-				$facetDefinition->setDocumentManager($applicationServices->getDocumentManager());
 				$facetDefinition->setCatalogManager($commerceServices->getCatalogManager());
 				$event->setParam('facetDefinition', $facetDefinition);
 				break;
 			case 'Price':
 				$facetDefinition = new ProductPriceFacetDefinition($facet);
+				$facetDefinition->setI18nManager($applicationServices->getI18nManager());
 				$event->setParam('facetDefinition', $facetDefinition);
 				break;
 			case 'SkuThreshold':
@@ -243,6 +244,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet
 
 		if ($facetDefinition)
 		{
+			$facetDefinition->setDocumentManager($applicationServices->getDocumentManager());
 			$facetDefinition->setParent($facet->getParent());
 			if ($facet->getFacetsCount())
 			{

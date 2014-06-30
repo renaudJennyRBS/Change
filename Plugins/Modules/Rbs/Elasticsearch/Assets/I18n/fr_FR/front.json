@@ -29,5 +29,12 @@
 	},
 	"unset_value":{
 		"message":"Deselectionner"
+	},
+	"price_before":{
+		"message":"moins de $MAXVALUE$"
+	},
+	"price_range":{
+		"message":"de $MINVALUE$ à $MAXVALUE$"
 	}
+
 }

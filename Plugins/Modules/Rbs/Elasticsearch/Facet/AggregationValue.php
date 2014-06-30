@@ -57,6 +57,22 @@ class AggregationValue
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function hasAggregationValues()
+	{
+		return count($this->aggregationValues) > 0;
+	}
+
+	/**
+	 * @return \Rbs\Elasticsearch\Facet\AggregationValues[]
+	 */
+	public function getAggregationValues()
+	{
+		return $this->aggregationValues;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getKey()

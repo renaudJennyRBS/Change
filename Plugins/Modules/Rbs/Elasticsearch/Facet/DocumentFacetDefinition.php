@@ -45,6 +45,11 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	protected $mappingName;
 
 	/**
+	 * @var \Change\Documents\DocumentManager
+	 */
+	protected $documentManager;
+
+	/**
 	 * @param \Rbs\Elasticsearch\Documents\Facet $facet
 	 */
 	function __construct(\Rbs\Elasticsearch\Documents\Facet $facet)
@@ -57,6 +62,34 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 		{
 			$this->title = $facet->getRefLocalization()->getTitle();
 		}
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param string $code
+	 * @return \Rbs\Collection\Documents\Collection|null
+	 */
+	protected function getCollectionByCode($code)
+	{
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Collection_Collection');
+		return $query->andPredicates($query->eq('code', $code))->getFirstDocument();
 	}
 
 	/**
@@ -188,8 +221,28 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	{
 		$mappingName = $this->getMappingName();
 		$aggregation = new \Elastica\Aggregation\Terms($mappingName);
+		if ($this->getParameters()->get('showEmptyItem'))
+		{
+			$aggregation->setMinimumDocumentCount(0);
+		}
 		$aggregation->setField($mappingName);
+		$this->aggregateChildren($aggregation, $context);
 		return $aggregation;
+	}
+
+	/**
+	 * @param \Elastica\Aggregation\AbstractAggregation $aggregation
+	 * @param array $context
+	 */
+	protected function aggregateChildren($aggregation, array $context)
+	{
+		if ($this->hasChildren())
+		{
+			foreach ($this->getChildren() as $children)
+			{
+				$aggregation->addAggregation($children->getAggregation($context));
+			}
+		}
 	}
 
 	/**
@@ -198,16 +251,118 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function formatAggregation(array $aggregations)
 	{
+		$collectionId = $this->getParameters()->get('thresholdCollectionId');
+		$items = $this->getCollectionItemsTitle($collectionId);
+
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
 		$mappingName = $this->getMappingName();
 		if (isset($aggregations[$mappingName]['buckets']))
 		{
-			foreach ($aggregations[$mappingName]['buckets'] as $bucket)
+			$buckets = $aggregations[$mappingName]['buckets'];
+			if ($items)
 			{
-				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count']);
-				$av->addValue($v);
+				$this->formatListAggregation($av, $items, $buckets);
+			}
+			else
+			{
+				$this->formatKeyAggregation($av, $buckets);
 			}
 		}
 		return $av;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\AggregationValues $av
+	 * @param array $buckets
+	 */
+	protected function formatKeyAggregation($av, $buckets)
+	{
+		foreach ($buckets as $bucket)
+		{
+			$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count']);
+			$av->addValue($v);
+			$this->formatChildren($v, $bucket);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\AggregationValues $av
+	 * @param \Callable $callable
+	 * @param array $buckets
+	 */
+	protected function formatCallableTitleAggregation($av, $callable, $buckets)
+	{
+		foreach ($buckets as $bucket)
+		{
+			$title = call_user_func($callable, $bucket['key']);
+			$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count'], $title);
+			$av->addValue($v);
+			$this->formatChildren($v, $bucket);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\AggregationValues $av
+	 * @param array $items
+	 * @param array $buckets
+	 */
+	protected function formatListAggregation($av, $items, $buckets)
+	{
+		$bucketByKey = [];
+		foreach ($buckets as $bucket)
+		{
+			$bucketByKey[$bucket['key']] = $bucket;
+		}
+
+		$showEmptyItem = $this->getParameters()->get('showEmptyItem');
+		foreach ($items as $key => $title)
+		{
+			$bucket = isset($bucketByKey[$key]) ? $bucketByKey[$key] : [];
+			if ($showEmptyItem || count($bucket))
+			{
+				$count = $bucket['doc_count'] ? $bucket['doc_count'] : 0;
+				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($key, $count, $title);
+				$av->addValue($v);
+				$this->formatChildren($v, $bucket);
+			}
+		}
+	}
+
+	/**
+	 * @param integer|null $collectionId
+	 * @return array|null
+	 */
+	protected function getCollectionItemsTitle($collectionId)
+	{
+		$items = null;
+		if ($collectionId)
+		{
+			$collection = $this->getDocumentManager()->getDocumentInstance($collectionId);
+			if ($collection instanceof \Rbs\Collection\Documents\Collection)
+			{
+				$items = [];
+				foreach ($collection->getItems() as $item)
+				{
+					$items[$item->getValue()] = $item->getTitle();
+				}
+				return count($items) ? $items : null;
+			}
+		}
+		return $items;
+	}
+
+	/**
+	 * @param \Rbs\Elasticsearch\Facet\AggregationValue $aggregationValue
+	 * @param array $bucket
+	 */
+	protected function formatChildren($aggregationValue, array $bucket)
+	{
+		if ($this->hasChildren())
+		{
+			foreach ($this->getChildren() as $children)
+			{
+				$aggregationValue->addAggregationValues($children->formatAggregation($bucket));
+			}
+		}
 	}
 }

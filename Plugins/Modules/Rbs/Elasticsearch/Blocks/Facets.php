@@ -288,8 +288,6 @@ class Facets extends Block
 			$facets = $genericServices->getFacetManager()->resolveFacetIds($facetIds);
 		}
 
-
-
 		if (count($facets))
 		{
 			$attributes['facets'] = $facets;

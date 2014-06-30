@@ -14,11 +14,6 @@ namespace Rbs\Elasticsearch\Facet;
 class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacetDefinition
 {
 	/**
-	 * @var \Change\Documents\DocumentManager
-	 */
-	protected $documentManager;
-
-	/**
 	 * @var \Rbs\Catalog\CatalogManager
 	 */
 	protected $catalogManager;
@@ -39,24 +34,6 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 		{
 			$this->mappingName = 'a_' . $this->getAttributeId();
 		}
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return $this
-	 */
-	public function setDocumentManager($documentManager)
-	{
-		$this->documentManager = $documentManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentManager
-	 */
-	protected function getDocumentManager()
-	{
-		return $this->documentManager;
 	}
 
 	/**
@@ -169,7 +146,7 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 	protected function getDefaultParameters()
 	{
 		return  ['attributeId' => null, 'mappingName' => null, 'collectionId' => null,
-			'showEmptyItem' => false, 'multipleChoice' => false];
+			'showEmptyItem' => false, 'multipleChoice' => true, 'documentId' => false];
 	}
 
 	/**
@@ -180,20 +157,24 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 		$facet->setIndexCategory('store');
 		$validParameters = $this->getDefaultParameters();
 		$currentParameters = $facet->getParameters();
+
+		/** @var $attribute \Rbs\Catalog\Documents\Attribute */
+		$attribute = null;
 		foreach ($currentParameters as $name => $value)
 		{
 			switch ($name) {
 				case 'attributeId':
 					if ($value) {
-						$attr = $this->getDocumentManager()->getDocumentInstance($value, 'Rbs_Catalog_Attribute');
-						if ($attr)
+						$attribute = $this->getDocumentManager()->getDocumentInstance($value, 'Rbs_Catalog_Attribute');
+						if ($attribute)
 						{
-							$validParameters[$name] = $attr->getId();
+							$validParameters[$name] = $attribute->getId();
 						}
 					}
 					break;
 				case 'collectionId':
-					if ($value) {
+					if ($value)
+					{
 						$coll = $this->getDocumentManager()->getDocumentInstance($value, 'Rbs_Collection_Collection');
 						if ($coll)
 						{
@@ -217,6 +198,68 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 					break;
 			}
 		}
+		if ($attribute)
+		{
+			if (!isset($validParameters['collectionId']) && $attribute->getCollectionCode())
+			{
+				$coll = $this->getCollectionByCode($attribute->getCollectionCode());
+				if ($coll)
+				{
+					$validParameters['collectionId'] = $coll->getId();
+				}
+			}
+
+			$checkDocumentType = $attribute->getValueType();
+			if ($checkDocumentType == \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
+			{
+				$property = $attribute->getModelProperty();
+				if ($property)
+				{
+					$checkDocumentType = $property->getType();
+				}
+			}
+			if ($checkDocumentType == 'DocumentId' || $checkDocumentType == 'Document') {
+				$validParameters['documentId'] = true;
+			}
+		}
+		else
+		{
+			$validParameters['documentId'] = false;
+		}
 		$facet->getParameters()->fromArray($validParameters);
+	}
+
+	/**
+	 * @param array $aggregations
+	 * @return \Rbs\Elasticsearch\Facet\AggregationValues
+	 */
+	public function formatAggregation(array $aggregations)
+	{
+		$collectionId = $this->getParameters()->get('thresholdCollectionId');
+		$documentId = $this->getParameters()->get('documentId');
+		if ($documentId && !$collectionId)
+		{
+			$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
+			$mappingName = $this->getMappingName();
+			if (isset($aggregations[$mappingName]['buckets']))
+			{
+				$buckets = $aggregations[$mappingName]['buckets'];
+				foreach ($buckets as $bucket)
+				{
+					$id = intval($bucket['key']);
+					$title = null;
+					$document = $this->getDocumentManager()->getDocumentInstance($id);
+					if ($document && $document->getDocumentModel()->isPublishable())
+					{
+						$title = $document->getDocumentModel()->getPropertyValue($document, 'title');
+					}
+					$v = new \Rbs\Elasticsearch\Facet\AggregationValue($bucket['key'], $bucket['doc_count'], $title);
+					$av->addValue($v);
+					$this->formatChildren($v, $bucket);
+				}
+			}
+			return $av;
+		}
+		return parent::formatAggregation($aggregations);
 	}
 }
