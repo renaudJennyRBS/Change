@@ -34,11 +34,11 @@
 
 				<hr />
 
-				<rbs-field-picker-multiple property="facetGroups"
-					label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'facetGroups'), ['ucf']) }}"
-					accepted-model="Rbs_Elasticsearch_FacetGroup"
-					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_facetgroups_picker_title', ['ucf']) }}">
-					<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_facetgroups_help') }} </span>
+				<rbs-field-picker-multiple property="facets"
+					label="{{ i18nAttr(propertyKey('Rbs_Catalog_ProductList', 'facets'), ['ucf']) }}"
+					accepted-model="Rbs_Elasticsearch_Facet"
+					selector-title="{{ i18nAttr('m.rbs.catalog.admin.productlist_facets_picker_title', ['ucf']) }}">
+					<span class="help-block">{{ i18n('m.rbs.catalog.admin.productlist_facets_help') }} </span>
 				</rbs-field-picker-multiple>
 			</fieldset>
 

@@ -13,39 +13,61 @@ namespace Rbs\Elasticsearch\Facet;
  */
 interface FacetDefinitionInterface
 {
-	const TYPE_TERM = 'term';
-	const TYPE_RANGE = 'range';
-
-	const PARAM_MULTIPLE_CHOICE = 'multipleChoice';
-	const PARAM_COLLECTION_CODE = 'collectionCode';
-
-	/**
-	 * @return integer
-	 */
-	public function getId();
-
-	/**
-	 * @return string
-	 */
-	public function getFieldName();
-
 	/**
 	 * @return string
 	 */
 	public function getTitle();
 
 	/**
+	 * Unique facet identifier for URL Query
 	 * @return string
 	 */
-	public function getFacetType();
-
-	/**
-	 * @return boolean
-	 */
-	public function getShowEmptyItem();
+	public function getFieldName();
 
 	/**
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getParameters();
+
+	/**
+	 * Part of index mapping
+	 * @return array
+	 */
+	public function getMapping();
+
+	/**
+	 * @return boolean
+	 */
+	public function hasChildren();
+
+	/**
+	 * @return FacetDefinitionInterface[]
+	 */
+	public function getChildren();
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param array $documentData
+	 * @return array
+	 */
+	public function addIndexData($document, array $documentData);
+
+	/**
+	 * @param array $facetFilters
+	 * @param array $context
+	 * @return \Elastica\Filter\AbstractFilter[]
+	 */
+	public function getFiltersQuery(array $facetFilters, array $context = []);
+
+	/**
+	 * @param array $context
+	 * @return \Elastica\Aggregation\AbstractAggregation
+	 */
+	public function getAggregation(array $context = []);
+
+	/**
+	 * @param $aggregations
+	 * @return \Rbs\Elasticsearch\Facet\AggregationValues
+	 */
+	public function formatAggregation(array $aggregations);
 }

@@ -5,9 +5,9 @@
 	</div>
 
 	<div data-rbs-main-column="">
-		<rbs-page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.facetgroup_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-page-header title="{{ i18nAttr('m.rbs.elasticsearch.admin.index_list', ['ucf']) }}"></rbs-page-header>
 		<rbs-document-filter-panel open-by-default="false" filter="filter"
-			model="Rbs_Elasticsearch_FacetGroup"></rbs-document-filter-panel>
+			model="Rbs_Elasticsearch_Index"></rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
 			{% for newDocumentLink in attributes['newDocumentLinks'] %}
@@ -17,10 +17,11 @@
 			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsElasticsearchFacetGroup"
-			model="Rbs_Elasticsearch_FacetGroup"
-			activable="true" correction="true" filter-collection="filter">
+		<rbs-document-list data-dlid="DLRbsElasticsearchIndex"
+			model="Rbs_Elasticsearch_Index" activable="true" filter-collection="filter">
 			<rbs-column name="label" primary="true"></rbs-column>
+			<rbs-column name="category"></rbs-column>
+			<rbs-column name="analysisLCID"></rbs-column>
 		</rbs-document-list>
 	</div>
 </div>

@@ -5,6 +5,6 @@
 	<properties>
 		<property name="productSortOrder" type="String" default-value="title" />
 		<property name="productSortDirection" type="String" default-value="asc" />
-		<property name="facetGroups" type="DocumentArray" document-type="Rbs_Elasticsearch_FacetGroup" />
+		<property name="facets" type="DocumentArray" document-type="Rbs_Elasticsearch_Facet" />
 	</properties>
 </document>

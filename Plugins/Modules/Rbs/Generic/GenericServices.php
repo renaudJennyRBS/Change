@@ -98,26 +98,20 @@ class GenericServices extends \Zend\Di\Di
 		$this->addApplicationClassDefinition($classDefinition);
 		$definitionList->addDefinition($classDefinition);
 
-		//FacetManager : Application, DocumentManager, I18nManager, CollectionManager
+		//FacetManager : Application, DocumentManager
 		$facetManagerClassName = $this->getInjectedClassName('FacetManager', '\Rbs\Elasticsearch\Facet\FacetManager');
 		$classDefinition = $this->getClassDefinition($facetManagerClassName);
 		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition
 			->addMethod('setDocumentManager', true)
-			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
-			->addMethod('setI18nManager', true)
-			->addMethodParameter('setI18nManager', 'i18nManager', array('required' => true))
-			->addMethod('setCollectionManager', true)
-			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//IndexManager : FacetManager, Application, DocumentManager
+		//IndexManager : Application, DocumentManager
 		$indexManagerClassName = $this->getInjectedClassName('IndexManager', 'Rbs\Elasticsearch\Index\IndexManager');
 		$classDefinition = $this->getClassDefinition($indexManagerClassName);
 		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition
-			->addMethod('setFacetManager', true)
-			->addMethodParameter('setFacetManager', 'facetManager', array('type' => 'FacetManager', 'required' => true))
 			->addMethod('setDocumentManager', true)
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);

@@ -128,61 +128,36 @@ class SharedListeners implements SharedListenerAggregateInterface
 		};
 		$events->attach('Documents', 'updateRestResult', $callback, 5);
 
-		$callback = function ($event)
-		{
-			if ($event instanceof \Change\Documents\Events\Event)
-			{
-				$application = $event->getApplication();
-				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
-				if ($toIndex)
-				{
-					$document = $event->getDocument();
-					$deleted = ($event->getName() == 'documents.deleted' || $event->getName() == 'documents.localized.deleted');
-					$toIndex[] = ['LCID' => $event->getApplicationServices()->getDocumentManager()->getLCID(),
-						'id' => $document->getId(),
-						'model' => $document->getDocumentModelName(), 'deleted' => $deleted];
-				}
-			}
-		};
 
-		$eventNames = array('documents.created', 'documents.localized.created', 'documents.updated',
-			'documents.deleted', 'documents.localized.deleted');
-		$events->attach('Documents', $eventNames, $callback, 5);
+		/** @var $toIndex \Rbs\Elasticsearch\Index\ToIndexDocuments */
+		$toIndex = null;
 
-		$callback = function ( $event)
+		$callback = function ($event) use (&$toIndex)
 		{
-			if ($event instanceof \Change\Events\Event &&  $event->getParam('primary'))
+			if (!$toIndex)
 			{
-				$genericServices = $event->getServices('genericServices');
-				if ($genericServices instanceof \Rbs\Generic\GenericServices)
-				{
-					if (count($genericServices->getIndexManager()->getClientsName()))
-					{
-						$event->getApplication()->getContext()->set('elasticsearch_toIndex', new \ArrayObject());
-					}
-				}
+				$toIndex = new \Rbs\Elasticsearch\Index\ToIndexDocuments();
 			}
+			$toIndex->start($event);
+
 		};
 		$events->attach('TransactionManager', 'begin', $callback);
 
-		$callback = function ($event)
+		$callback = function ($event) use (&$toIndex)
 		{
-			if ($event instanceof \Change\Events\Event && $event->getParam('primary'))
+			if ($toIndex)
 			{
+				$toIndex->indexDocument($event);
+			}
+		};
+		$events->attach('Documents', ['documents.created', 'documents.localized.created', 'documents.updated',
+			'documents.deleted', 'documents.localized.deleted'], $callback, 5);
 
-				$application = $event->getApplication();
-				/* @var $toIndex \ArrayObject */
-				$toIndex = $application->getContext()->get('elasticsearch_toIndex');
-				if ($toIndex)
-				{
-					if (count($toIndex))
-					{
-						/* @var $transactionManager \Change\Transaction\TransactionManager */
-						$jobManager = $event->getApplicationServices()->getJobManager();
-						$jobManager->createNewJob('Elasticsearch_Index', $toIndex->getArrayCopy(), null, false);
-					}
-					$application->getContext()->set('elasticsearch_toIndex', null);
-				}
+		$callback = function ($event) use (&$toIndex)
+		{
+			if ($toIndex)
+			{
+				$toIndex->addJob($event);
 			}
 		};
 		$events->attach('TransactionManager', 'commit', $callback, 10);

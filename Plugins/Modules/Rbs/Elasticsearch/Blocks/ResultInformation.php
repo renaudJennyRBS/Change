@@ -24,9 +24,12 @@ class ResultInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result', $ucf));
 
-		$this->addInformationMeta('fulltextIndex', Property::TYPE_DOCUMENTID, true)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_fulltextindex', $ucf))
-			->setAllowedModelsNames(array('Rbs_Elasticsearch_FullText'));
+		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, false, 20)
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_items_per_page', $ucf));
+
+		$this->addInformationMeta('showModelFacet', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_show_model_facet', $ucf));
+
 		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
 	}
 }

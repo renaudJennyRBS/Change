@@ -1,0 +1,23 @@
+<rbs-field property="withTax" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_with_tax', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.withTax"></rbs-switch>
+</rbs-field>
+
+<rbs-field property="interval" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_interval', ['ucf']) }}">
+	<input data-ng-model="facet.parameters.interval" type="number" class="form-control" />
+</rbs-field>
+
+<rbs-field property="minAmount" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_min_amount', ['ucf']) }}">
+	<input data-ng-model="facet.parameters.minAmount" type="number" class="form-control" />
+</rbs-field>
+
+<rbs-field property="maxAmount" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_max_amount', ['ucf']) }}">
+	<input data-ng-model="facet.parameters.maxAmount" type="number" class="form-control" />
+</rbs-field>
+
+<rbs-field property="showEmptyItem" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_show_empty_item', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.showEmptyItem"></rbs-switch>
+</rbs-field>
+
+<rbs-field property="multipleChoice" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_multiple_choice', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.multipleChoice"></rbs-switch>
+</rbs-field>

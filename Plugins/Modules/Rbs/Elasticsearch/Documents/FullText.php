@@ -8,223 +8,141 @@
  */
 namespace Rbs\Elasticsearch\Documents;
 
+use \Change\Documents\Interfaces\Publishable;
+
 /**
  * @name \Rbs\Elasticsearch\Documents\FullText
  */
 class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
-	implements \Rbs\Elasticsearch\Index\IndexDefinitionInterface
 {
 
 	/**
-	 * @return string
+	 * Attach specific document event
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
-	public function getLabel()
+	protected function attachEvents($eventManager)
 	{
-		return 'm.rbs.elasticsearch.documents.fulltext_label_website';
+		parent::attachEvents($eventManager);
+		$eventManager->attach('getDocumentIndexData', [$this, 'onDefaultGetDocumentIndexData'], 5);
+		$eventManager->attach('getFacetsDefinition', [$this, 'onDefaultGetFacetsDefinition'], 5);
 	}
 
-	/**
-	 * @param string $label
-	 * @return $this
-	 */
-	public function setLabel($label)
-	{
-		return $this;
-	}
 
-	/**
-	 * @return array
-	 */
-	public function getConfiguration()
+	protected function onCreate()
 	{
-		$configuration = $this->getConfigurationData();
-		return is_array($configuration) ? $configuration : array();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getMappingName()
-	{
-		return 'fulltext';
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDefaultTypeName()
-	{
-		return 'document';
+		$this->setCategory('fulltext');
+		if (!$this->getName())
+		{
+			$this->setName($this->getCategory() . '_' . $this->getWebsiteId() . '_' . strtolower($this->getAnalysisLCID()));
+		}
+		parent::onCreate();
 	}
 
 	/**
 	 * @param \Change\I18n\I18nManager $i18nManager
 	 * @return string
 	 */
-	public function buildLabel(\Change\I18n\I18nManager $i18nManager)
+	public function composeRestLabel(\Change\I18n\I18nManager $i18nManager)
 	{
 		if ($this->getWebsite())
 		{
-			return $i18nManager->trans($this->getLabel(), array('ucf'),
-				array('websiteLabel' => $this->getWebsite()->getLabel()));
+			$key = 'm.rbs.elasticsearch.admin.fulltext_label_website';
+			return $i18nManager->trans($key, array('ucf'), array('websiteLabel' => $this->getWebsite()->getLabel()));
 		}
-		return '';
+		return $this->getLabel();
 	}
 
 	/**
 	 * @param \Change\Documents\Events\Event $event
 	 */
-	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	public function onDefaultGetFacetsDefinition(\Change\Documents\Events\Event $event)
 	{
-		parent::onDefaultUpdateRestResult($event);
-		$restResult = $event->getParam('restResult');
+		$modelFacetDefinition = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
+		$modelFacetDefinition->setI18nManager($event->getApplicationServices()->getI18nManager());
+		$modelFacetDefinition->setModelManager($event->getApplicationServices()->getModelManager());
+		$event->setParam('facetsDefinition', [$modelFacetDefinition]);
+	}
 
-		/** @var $document FullText */
-		$document = $event->getDocument();
-		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+	/**
+	 * @param \Rbs\Elasticsearch\Index\IndexManager $indexManager
+	 * @param \Change\Documents\AbstractDocument|integer $document
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return array [type => [propety => value]]
+	 */
+	public function getDocumentIndexData(\Rbs\Elasticsearch\Index\IndexManager $indexManager, $document, $model = null)
+	{
+		if ($this->getWebsite())
 		{
-			$restResult->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));
-			$genericServices = $event->getServices('genericServices');
-			if ($genericServices instanceof \Rbs\Generic\GenericServices)
+			if ($document instanceof \Change\Documents\AbstractDocument)
 			{
-				$indexManager = $genericServices->getIndexManager();
-				$client = $indexManager->getClient($document->getClientName());
-				if ($client)
+				if ($document instanceof \Change\Documents\Interfaces\Publishable)
 				{
-					try
+					$eventManager = $this->getEventManager();
+					$args = $eventManager->prepareArgs(['document' => $document, 'indexManager' => $indexManager]);
+					$eventManager->trigger('getDocumentIndexData', $this, $args);
+					if (isset($args['documentData']) && is_array($args['documentData']))
 					{
-						$status = $client->getStatus();
-						$server = ['status' => $status->getServerStatus()];
-						$index = $client->getIndex($document->getName());
-						if ($index->exists())
-						{
-							$status = $index->getStatus();
-							$server['index'] = ['doc' => $status->get('docs'), 'index' => $status->get('index')];
-						}
+						return [$this->getDefaultTypeName() => $args['documentData']];
 					}
-					catch (\Exception $e)
-					{
-						$server = ['error' => $e->getMessage()];
-					}
-					$restResult->setProperty('server', $server);
+				}
+			}
+			elseif ($model instanceof \Change\Documents\AbstractModel && is_numeric($document))
+			{
+				if ($model->isPublishable())
+				{
+					return [$this->getDefaultTypeName() => []];
 				}
 			}
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
-		{
-			$documentLink = $restResult;
-			$documentLink->setProperty('label', $document->buildLabel($event->getApplicationServices()->getI18nManager()));
-		}
-	}
-
-	protected function onCreate()
-	{
-		if (!$this->getName())
-		{
-			$this->setName($this->buildDefaultIndexName());
-		}
-
-		$config = $this->getConfigurationData();
-		if (!is_array($config) || count($config) === 0)
-		{
-			$config = $this->buildDefaultConfiguration();
-			$this->setConfigurationData($config);
-		}
-
-		if (count($config))
-		{
-			$this->setActive(true);
-		}
-		else
-		{
-			$this->setActive(false);
-		}
-	}
-
-	public function resetConfiguration()
-	{
-		$config = $this->buildDefaultConfiguration();
-		$this->setConfigurationData($config);
-	}
-
-	protected function onUpdate()
-	{
-		if ($this->isPropertyModified('configurationData') && $this->getActive())
-		{
-			$config = $this->getConfigurationData();
-			if (!is_array($config) || count($config) == 0)
-			{
-				$this->setActive(false);
-			}
-		}
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function buildDefaultIndexName()
-	{
-		return $this->getMappingName() . '_' . $this->getWebsiteId() . '_' . strtolower($this->getAnalysisLCID());
-	}
-
-	/**
-	 * @return \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[]
-	 */
-	public function getFacetsDefinition()
-	{
-		$facets = $this->getFacets();
-		if (is_array($facets) ) {
-			$facetsDefinition = $facets;
-		}
-		else if (is_object($facets)  && method_exists($facets, 'toArray'))
-		{
-			$facetsDefinition = $facets->toArray();
-		}
-		else
-		{
-			$facetsDefinition = [];
-		}
-
-		if (count($facetsDefinition) === 0)
-		{
-			$facetsDefinition[] = $this->getDefaultModelFacet();
-		}
-		return $facetsDefinition;
-	}
-
-	/**
-	 * @return \Rbs\Elasticsearch\Facet\ModelFacetDefinition
-	 */
-	protected function getDefaultModelFacet()
-	{
-		$mf = new \Rbs\Elasticsearch\Facet\ModelFacetDefinition('model');
-		$mf->setTitle(new \Change\I18n\PreparedKey('m.rbs.elasticsearch.fo.facet-model-title'));
-		return $mf;
-	}
-
-	/**
-	 * @return array
-	 */
-	protected function buildDefaultConfiguration()
-	{
-		$config = array();
-		if ($this->getAnalysisLCID())
-		{
-			$configFile =
-				dirname(__DIR__) . '/Assets/Config/' . $this->getMappingName() . '_' . $this->getAnalysisLCID() . '.json';
-			if (file_exists($configFile))
-			{
-				return \Zend\Json\Json::decode(file_get_contents($configFile), \Zend\Json\Json::TYPE_ARRAY);
-			}
-		}
-		return $config;
-	}
-
-	/**
-	 * @return \Rbs\Elasticsearch\Documents\Facet[]
-	 */
-	public function getFacets()
-	{
 		return [];
+	}
+
+	/**
+	 * @var \Rbs\Elasticsearch\Index\PublicationData
+	 */
+	protected $publicationData;
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetDocumentIndexData(\Change\Events\Event $event )
+	{
+		/** @var $document \Change\Documents\AbstractDocument|\Change\Documents\Interfaces\Publishable */
+		$document = $event->getParam('document');
+
+		/** @var $index FullText */
+		$index = $event->getTarget();
+
+		$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus', Publishable::STATUS_FILED);
+		if ($publicationStatus == Publishable::STATUS_PUBLISHABLE)
+		{
+			if ($this->publicationData === null)
+			{
+				$publicationData = new \Rbs\Elasticsearch\Index\PublicationData();
+				$publicationData->setDocumentManager($event->getApplicationServices()->getDocumentManager());
+				$publicationData->setTreeManager($event->getApplicationServices()->getTreeManager());
+			}
+			else
+			{
+				$publicationData = $this->publicationData;
+			}
+
+			$canonicalSectionId = $publicationData->getCanonicalSectionId($document, $index->getWebsite());
+
+			if ($canonicalSectionId)
+			{
+				$documentData = $event->getParam('documentData');
+				if (!is_array($documentData)) {
+					$documentData = [];
+				}
+				$documentData['canonicalSectionId'] = $canonicalSectionId;
+				$documentData = $publicationData->addPublishableMetas($document, $documentData);
+
+				$documentData = $publicationData->addPublishableContent($document, $index->getWebsite(), $documentData,
+					$index, $event->getParam('indexManager'));
+
+				$event->setParam('documentData', $documentData);
+			}
+		}
 	}
 }

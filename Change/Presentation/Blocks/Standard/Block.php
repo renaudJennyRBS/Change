@@ -129,6 +129,7 @@ class Block
 		$fullyQualifiedTemplateName = $event->getBlockParameters()->getParameter(static::FULLY_QUALIFIED_TEMPLATE_PROPERTY_NAME);
 		if (is_string($fullyQualifiedTemplateName) && strpos($fullyQualifiedTemplateName, ':'))
 		{
+			$attributes['originalTemplateName'] = $event->getParam('templateName');
 			$parts = explode(':', $fullyQualifiedTemplateName);
 			$event->setParam('templateModuleName', $parts[0]);
 			$event->setParam('templateName', $parts[1]);

@@ -1,33 +1,58 @@
+{% macro render_facet(facetValue, subFacet) %}
+{% if facetValue.values|length %}
+	{% if subFacet %}
+	<h5>{{ facetValue.title }}</h5>
+	{% else %}
+	<h3>{{ facetValue.title }}</h3>
+	{% endif %}
+	<ol class="list-unstyled">
+		{% if facetValue.multipleChoice %}
+			{% for value in facetValue.values %}
+				<li><div class="checkbox"><label>
+							<input type="checkbox" name="facetFilters[{{ facetValue.fieldName }}][]" value="{{ value.key }}"
+									{% if value.selected %} checked="checked" {% endif %} />
+							{{ value.title }} {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
+						</label></div>
+						{% if value.aggregationValues|length %}
+							<div id="{{ facetValue.fieldName }}_{{ value.key }}" style="padding-left: 10px">
+							{% for subAggregation in value.aggregationValues %}
+								{{ _self.render_facet(subAggregation, true) }}
+							{% endfor %}
+							</div>
+						{% endif %}
+				</li>
+			{% endfor %}
+		{% else %}
+			{% for value in facetValue.values %}
+				<li><div class="radio"><label>
+							<input type="radio" name="facetFilters[{{ facetValue.fieldName }}][]" value="{{ value.key }}"
+									{% if value.selected %} checked="checked" {% endif %} />
+							{{ value.title }} {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
+						</label></div>
+					{% if value.aggregationValues|length %}
+						<div id="{{ facetValue.fieldName }}_{{ value.key }}" style="padding-left: 10px">
+							{% for subAggregation in value.aggregationValues %}
+								{{ _self.render_facet(subAggregation, true) }}
+							{% endfor %}
+						</div>
+					{% endif %}
+				</li>
+			{% endfor %}
+			<li><div class="radio"><label>
+						<input type="radio" name="facetFilters[{{ facetValue.fieldName }}][]" value="" />
+						{{ i18n('m.rbs.elasticsearch.front.unset_value', ['ucf']) }}
+					</label></div></li>
+		{% endif %}
+	</ol>
+{% endif %}
+{% endmacro %}
+
 <form class="form-inline" method="GET" action="{{ parameters.formAction }}">
 {% if parameters.sortBy %}
 	<input type="hidden" name="sortBy" value="{{ parameters.sortBy }}">
 {% endif %}
-	{% for group in facetGroups %}
-		<h3>{{ group.currentLocalization.title }}</h3>
-		{% for facet in group.facets %}
-			<h4>{{ facet.currentLocalization.title }}</h4>
-			 <ol class="list-unstyled">
-				{% if facet.multipleChoice %}
-					{% for facetValue in attribute(facetValues, facet.fieldName) %}
-						<li><div class="checkbox"><label>
-							<input type="checkbox" name="facetFilters[{{ facet.fieldName }}][]" value="{{ facetValue.value }}"
-								{% if facetValue.filtered %} checked="checked" {% endif %} />
-							{{ facetValue.valueTitle }}
-							{% if facetValue.count %}<span class="badge">{{ facetValue.count }}</span>{% endif %}
-						</label></div></li>
-					{% endfor %}
-				{% else %}
-					{% for facetValue in attribute(facetValues, facet.fieldName) %}
-						<li><div class="radio"><label>
-							<input type="radio" name="facetFilters[{{ facet.fieldName }}]" value="{{ facetValue.value }}"
-								{% if facetValue.filtered %} checked="checked" {% endif %} />
-							{{ facetValue.valueTitle }}
-							{% if facetValue.count %}<span class="badge">{{ facetValue.count }}</span>{% endif %}
-						</label></div></li>
-					{% endfor %}
-				{% endif %}
-			 </ol>
-		{% endfor %}
-	{% endfor %}
+{% for facetValue in facetValues %}
+	{{ _self.render_facet(facetValue, false) }}
+{% endfor %}
 	<button type="submit" class="btn btn-primary">{{ i18n('m.rbs.elasticsearch.front.facets_filter', ['ucf']) }}</button>
 </form>

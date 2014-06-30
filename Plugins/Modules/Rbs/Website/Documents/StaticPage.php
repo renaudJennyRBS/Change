@@ -114,26 +114,40 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 		}
 	}
 
+	/**
+	 * @param Event $event
+	 */
 	public function onDefaultFullTextContent(Event $event)
 	{
 		$document = $event->getDocument();
 		if ($document instanceof StaticPage)
 		{
-			$fullTextContent = array();
-			$layout = $document->getContentLayout();
-			foreach ($layout->getBlocks() as $block)
+			$website = ($document->getSection()) ? $document->getSection()->getWebsite() : null;
+			if ($website)
 			{
-				$params = $block->getParameters();
-				if (isset($params['content']) && isset($params['contentType']))
+				$fullTextContent = [];
+				$layout = $document->getContentLayout();
+				foreach ($layout->getBlocks() as $block)
 				{
-					$richText = new \Change\Documents\RichtextProperty($params['content']);
-					$richText->setEditor($params['contentType']);
-					$fullTextContent[] = $richText->getRawText();
+					$params = $block->getParameters();
+					if (isset($params['content']) && isset($params['contentType']))
+					{
+						$richText = new \Change\Documents\RichtextProperty($params['content']);
+						$richText->setEditor($params['contentType']);
+						$context = ['website' => $website];
+						$text = $event->getApplicationServices()->getRichTextManager()->render($richText, "Website", $context);
+						$text = trim(strip_tags($text, '<p><br>'));
+						if ($text)
+						{
+							$fullTextContent[] = $text;
+						}
+					}
 				}
-			}
-			if (count($fullTextContent))
-			{
-				$event->setParam('fullTextContent', $fullTextContent);
+
+				if (count($fullTextContent))
+				{
+					$event->setParam('fullTextContent', $fullTextContent);
+				}
 			}
 		}
 	}

@@ -24,14 +24,13 @@ class StoreResultInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.storeresult', $ucf));
 
-		$this->addInformationMeta('storeIndex', Property::TYPE_DOCUMENTID, true)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.storeresult_storeindex', $ucf))
-			->setAllowedModelsNames(array('Rbs_Elasticsearch_StoreIndex'));
-
 		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager);
 
 		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
+
+		$this->addInformationMeta('showUnavailable', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_unavailable', $ucf));
 
 		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_contextual_urls', $ucf));
@@ -44,5 +43,7 @@ class StoreResultInformation extends Information
 
 		$this->addInformationMeta('showOrdering', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_ordering', $ucf));
+
+
 	}
 }

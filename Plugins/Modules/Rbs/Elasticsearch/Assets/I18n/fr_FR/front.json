@@ -26,5 +26,15 @@
 	"fragment_separator":{
 		"message":" [...] ",
 		"description":"Used to separate the different fragments of the result description."
+	},
+	"unset_value":{
+		"message":"Deselectionner"
+	},
+	"price_before":{
+		"message":"moins de $MAXVALUE$"
+	},
+	"price_range":{
+		"message":"de $MINVALUE$ à $MAXVALUE$"
 	}
+
 }

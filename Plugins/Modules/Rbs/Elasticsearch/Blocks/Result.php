@@ -28,8 +28,7 @@ class Result extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('searchText');
-		$parameters->addParameterMeta('fulltextIndex');
-		$parameters->addParameterMeta('websiteId');
+		$parameters->addParameterMeta('showModelFacet', true);
 		$parameters->addParameterMeta('allowedSectionIds');
 		$parameters->addParameterMeta('itemsPerPage', 20);
 		$parameters->addParameterMeta('pageNumber', 1);
@@ -37,26 +36,28 @@ class Result extends Block
 		$parameters->setNoCache();
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$fulltextIndexId = $parameters->getParameter('fulltextIndex');
-		if (is_array($fulltextIndexId))
+
+		$genericServices = $this->getGenericServices($event);
+
+		/** @var $website \Rbs\Website\Documents\Website */
+		$website = $event->getParam('website');
+		if ($genericServices == null || !($website instanceof \Rbs\Website\Documents\Website))
 		{
-			$fulltextIndexId =  isset($fulltextIndexId['id']) ? $fulltextIndexId['id'] : null;
+			$this->setInvalidParameters($parameters);
+			return $parameters;
 		}
 
 
-		$fullTextIndex = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($fulltextIndexId);
-		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
+		$fulltextIndex = $genericServices->getIndexManager()->getFulltextIndexByWebsite($website, $website->getLCID());
+		if (!$fulltextIndex)
 		{
-			$websiteId = $fullTextIndex->getWebsiteId();
-			$allowedSectionIds = $event->getPermissionsManager()->getAllowedSectionIds($websiteId);
-			$parameters->setParameterValue('websiteId', $websiteId);
-			$parameters->setParameterValue('allowedSectionIds', $allowedSectionIds);
+			$this->setInvalidParameters($parameters);
+			return $parameters;
 		}
-		else
-		{
-			$fulltextIndexId = null;
-		}
-		$parameters->setParameterValue('fulltextIndex', $fulltextIndexId);
+
+		$parameters->setParameterValue('fulltextIndex', $fulltextIndex->getId());
+
+
 		$request = $event->getHttpRequest();
 		$queryFilters = $request->getQuery('facetFilters', null);
 		$facetFilters = array();
@@ -93,7 +94,13 @@ class Result extends Block
 		}
 		return $genericServices;
 	}
-
+	/**
+	 * @param Parameters $parameters
+	 */
+	protected function setInvalidParameters($parameters)
+	{
+		$parameters->setParameterValue('fulltextIndex', 0);
+	}
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param Event $event
@@ -102,109 +109,133 @@ class Result extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		$parameters = $event->getBlockParameters();
+		$fullTextIndexId = $parameters->getParameter('fulltextIndex');
+
 		$genericServices = $this->getGenericServices($event);
-		if (!$genericServices)
+		if (!$genericServices || !$fullTextIndexId)
 		{
 			return null;
 		}
+
 		$applicationServices = $event->getApplicationServices();
-		$parameters = $event->getBlockParameters();
-		$fullTextIndex = $applicationServices->getDocumentManager()->getDocumentInstance($parameters->getParameter('fulltextIndex'));
-		if ($fullTextIndex instanceof \Rbs\Elasticsearch\Documents\FullText && $fullTextIndex->activated())
+		$documentManager = $applicationServices->getDocumentManager();
+
+		/** @var $fullTextIndex \Rbs\Elasticsearch\Documents\FullText */
+		$fullTextIndex = $documentManager->getDocumentInstance($fullTextIndexId, 'Rbs_Elasticsearch_FullText');
+		if (!$fullTextIndex)
 		{
-			$searchText = trim($parameters->getParameter('searchText'), '');
-			$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
+			return null;
+		}
+		$searchText = trim($parameters->getParameter('searchText'), '');
+		$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
+
+		$indexManager = $genericServices->getIndexManager();
+
+		$client = $indexManager->getElasticaClient($fullTextIndex->getClientName());
+		if (!$client)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid client ' . $fullTextIndex->getClientName());
+			return null;
+		}
+
+		$index = $client->getIndex($fullTextIndex->getName());
+		if (!$index->exists())
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': index not exist ' . $fullTextIndex->getName());
+			return null;
+		}
+
+		$showModelFacet = $parameters->getParameter('showModelFacet');
+		if ($showModelFacet)
+		{
 			$facetFilters = $parameters->getParameter('facetFilters');
-
-			$genericServices = $this->getGenericServices($event);
-			$indexManager = $genericServices->getIndexManager();
-
-			$client = $indexManager->getClient($fullTextIndex->getClientName());
-			if ($client)
+		}
+		else
+		{
+			$facetFilters = null;
+		}
+		$showResult = !empty($searchText);
+		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($fullTextIndex, $indexManager, $genericServices->getFacetManager());
+		$query = $queryHelper->getSearchQuery($searchText, $allowedSectionIds);
+		$queryHelper->addHighlight($query);
+		if ($showModelFacet)
+		{
+			$facets = $fullTextIndex->getFacetsDefinition();
+			if (is_array($facetFilters) && count($facetFilters))
 			{
-				$index = $client->getIndex($fullTextIndex->getName());
-				if ($index->exists())
+				$filter = $queryHelper->getFacetsFilter($facets, $facetFilters, []);
+				if ($filter)
 				{
-					$searchQuery = new \Rbs\Elasticsearch\Index\SearchQuery($fullTextIndex);
-					$searchQuery->setFacetManager($genericServices->getFacetManager());
-					$searchQuery->setI18nManager($applicationServices->getI18nManager());
-					$searchQuery->setCollectionManager($applicationServices->getCollectionManager());
-
-					if ($searchText || (is_array($facetFilters) && count($facetFilters)))
-					{
-						$attributes['items'] = array();
-						$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
-						$size = $parameters->getParameter('itemsPerPage');
-						$from = ($pageNumber - 1) * $size;
-
-						$query = $searchQuery->getSearchQuery($searchText, $allowedSectionIds, null, $from, $size, array('model', 'title'));
-
-						$query->setHighlight(['tags_schema' => 'styled', 'fields' => [
-							'title' => ['number_of_fragments' => 0],
-							'content' => [
-								'fragment_size' => 150,
-								'number_of_fragments' => 3,
-								'no_match_size' => 150
-							]
-						]]);
-
-						$searchQuery->addFacets($query, array('model'));
-						$bool = $searchQuery->getFacetFilters($facetFilters);
-						if ($bool)
-						{
-							$query->setFilter($bool);
-						}
-
-						$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
-						$attributes['totalCount'] = $searchResult->getTotalHits();
-						if ($attributes['totalCount'])
-						{
-							$maxScore = $searchResult->getMaxScore();
-							$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
-							$documentManager = $applicationServices->getDocumentManager();
-							$i18nManager = $applicationServices->getI18nManager();
-
-							/* @var $result \Elastica\Result */
-							foreach ($searchResult->getResults() as $result)
-							{
-								$score = ceil(($result->getScore() / $maxScore) * 100);
-								$document = $documentManager->getDocumentInstance($result->getId());
-								if ($document instanceof \Change\Documents\Interfaces\Publishable && $document->published())
-								{
-									$highlights = $result->getHighlights();
-									if (isset($highlights['title']))
-									{
-										$title = $highlights['title'][0];
-									}
-									else
-									{
-										$title = $i18nManager->transformHtml($result->title, $i18nManager->getLCID());
-									}
-									$attributes['items'][] = array(
-										'id' => $result->getId(),
-										'score' => $score,
-										'title' => $title,
-										'content' => isset($highlights['content']) ? $highlights['content'] : array(),
-										'document' => $document
-									);
-								}
-							}
-						}
-						$facetValues = $searchQuery->buildFacetValues($searchResult->getFacets(), $facetFilters, array('model'));
-					}
-					else
-					{
-						$attributes['items'] = false;
-						$query = $searchQuery->getSearchQuery(null, $allowedSectionIds, null, 0, 0);
-						$searchQuery->addFacets($query,  array('model'));
-						$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
-						$facetValues = $searchQuery->buildFacetValues($searchResult->getFacets(), $facetFilters, array('model'));
-					}
-					$attributes['facet'] = isset($facetValues['model']) ? $facetValues['model'] : array();
+					$query->setFilter($filter);
 				}
 			}
-			return 'result.twig';
+			$queryHelper->addFacets($query, $facets);
 		}
-		return null;
+		else
+		{
+			$facets = null;
+		}
+		$searchResult = null;
+		$attributes['items'] = [];
+		$attributes['showResult'] = $showResult;
+
+		if ($showResult)
+		{
+			$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
+			$size = $parameters->getParameter('itemsPerPage');
+			$from = ($pageNumber - 1) * $size;
+			$query->setFrom($from)->setSize($size);
+
+			//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
+			$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
+			$attributes['totalCount'] = $searchResult->getTotalHits();
+			if ($attributes['totalCount'])
+			{
+				$maxScore = $searchResult->getMaxScore();
+				$attributes['pageCount'] = ceil($attributes['totalCount'] / $size);
+				$i18nManager = $applicationServices->getI18nManager();
+
+				/* @var $result \Elastica\Result */
+				foreach ($searchResult->getResults() as $result)
+				{
+					$score = ceil(($result->getScore() / $maxScore) * 100);
+					$document = $documentManager->getDocumentInstance($result->getId());
+					if ($document instanceof \Change\Documents\Interfaces\Publishable && $document->published())
+					{
+						$highlights = $result->getHighlights();
+						if (isset($highlights['title']))
+						{
+							$title = $highlights['title'][0];
+						}
+						else
+						{
+							$title = $i18nManager->transformHtml($result->title, $i18nManager->getLCID());
+						}
+						$attributes['items'][] =['id' => $result->getId(), 'score' => $score,
+							'title' => $title,'document' => $document,
+							'content' => isset($highlights['content']) ? $highlights['content'] : []
+						];
+					}
+				}
+			}
+		}
+		elseif ($showModelFacet)
+		{
+			$query->setSize(0);
+			//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
+			$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
+		}
+
+		if ($showModelFacet && $searchResult)
+		{
+			$facetValues = $queryHelper->formatAggregations($searchResult->getAggregations(), $facets);
+			if (is_array($facetFilters) && count($facetFilters))
+			{
+				$queryHelper->applyFacetFilters($facetValues, $facetFilters);
+			}
+			$attributes['facet'] = $facetValues[0];
+		}
+		return 'result.twig';
 	}
 }

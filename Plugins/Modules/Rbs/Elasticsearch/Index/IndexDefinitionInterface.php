@@ -14,16 +14,6 @@ namespace Rbs\Elasticsearch\Index;
 interface IndexDefinitionInterface
 {
 	/**
-	 * @return integer
-	 */
-	public function getId();
-
-	/**
-	 * @return string
-	 */
-	public function getName();
-
-	/**
 	 * @return string
 	 */
 	public function getClientName();
@@ -31,12 +21,12 @@ interface IndexDefinitionInterface
 	/**
 	 * @return string
 	 */
-	public function getMappingName();
+	public function getName();
 
 	/**
-	 * @return string
+	 * @return string fulltext | store
 	 */
-	public function getDefaultTypeName();
+	public function getCategory();
 
 	/**
 	 * @return string
@@ -52,4 +42,12 @@ interface IndexDefinitionInterface
 	 * @return \Rbs\Elasticsearch\Facet\FacetDefinitionInterface[]
 	 */
 	public function getFacetsDefinition();
+
+	/**
+	 * @param \Rbs\Elasticsearch\Index\IndexManager $indexManager
+	 * @param \Change\Documents\AbstractDocument|integer $document
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return array [type => [propety => value]]
+	 */
+	public function getDocumentIndexData(\Rbs\Elasticsearch\Index\IndexManager $indexManager, $document, $model = null);
 }
