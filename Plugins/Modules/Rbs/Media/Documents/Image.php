@@ -112,6 +112,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(Event::EVENT_CREATE, Event::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 		$eventManager->attach(Event::EVENT_DELETED, array($this, 'onDefaultDeleted'), 10);
+		$eventManager->attach('getDownloadUri', array($this, 'onDefaultGetDownloadUri'), 5);
 	}
 
 	/**
@@ -142,6 +143,17 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 		{
 			$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPath());
 			$engine->unlink();
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultGetDownloadUri(Event $event)
+	{
+		if ($this->activated())
+		{
+			$event->setParam('downloadUri', $this->getPath());
 		}
 	}
 
