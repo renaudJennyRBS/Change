@@ -133,4 +133,15 @@ class AggregationValue
 	{
 		return ($this->title) ? $this->title : $this->key;
 	}
+
+	public function toArray()
+	{
+		$array = ['key' => $this->key, 'value' => $this->value,
+			'title' => $this->title, 'selected' => $this->selected];
+		foreach ($this->aggregationValues as $aggregationValues)
+		{
+			$array['aggregationValues'][] = $aggregationValues->toArray();
+		}
+		return $array;
+	}
 }

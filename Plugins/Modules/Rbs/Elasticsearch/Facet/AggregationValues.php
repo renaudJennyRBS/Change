@@ -80,4 +80,16 @@ class AggregationValues
 	{
 		return $this->facet->getTitle();
 	}
+
+	public function toArray()
+	{
+		$array = [];
+		$array['facet']['fieldName'] = $this->facet->getFieldName();
+		$array['facet']['parameters'] = $this->facet->getParameters()->toArray();
+		foreach ($this->values as $value)
+		{
+			$array['values'][] = $value->toArray();
+		}
+		return $array;
+	}
 }
