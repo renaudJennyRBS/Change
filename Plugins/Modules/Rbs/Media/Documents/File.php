@@ -60,6 +60,7 @@ class File extends \Compilation\Rbs\Media\Documents\File
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
 		$eventManager->attach(Event::EVENT_DELETED, array($this, 'onDefaultDeleted'), 10);
+		$eventManager->attach('getDownloadUri', array($this, 'onDefaultGetDownloadUri'), 5);
 	}
 
 	/**
@@ -83,6 +84,17 @@ class File extends \Compilation\Rbs\Media\Documents\File
 		{
 			$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPathOldValue());
 			$engine->unlink();
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultGetDownloadUri(Event $event)
+	{
+		if ($this->activated())
+		{
+			$event->setParam('downloadUri', $this->getPath());
 		}
 	}
 }
