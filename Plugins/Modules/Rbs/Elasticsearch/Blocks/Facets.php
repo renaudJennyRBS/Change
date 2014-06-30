@@ -71,6 +71,7 @@ class Facets extends Block
 		if ($ctx->getBillingArea()) {
 			$commerceContext['billingAreaId'] = $ctx->getBillingArea()->getId();
 		}
+
 		$parameters->setParameterValue('commerceContext', $commerceContext);
 
 		// Product list.
@@ -300,12 +301,12 @@ class Facets extends Block
 		{
 			return null;
 		}
-
+		$availableInWarehouseId = $parameters->getParameter('showUnavailable') ? null : 0;
 		$context = $parameters->getParameter('commerceContext');
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
-		$query = $queryHelper->getProductListQuery($productList);
+		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $context);
 
 		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));

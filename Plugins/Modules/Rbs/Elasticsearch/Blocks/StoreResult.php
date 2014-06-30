@@ -283,6 +283,7 @@ class StoreResult extends Block
 			return null;
 		}
 
+		$availableInWarehouseId = $parameters->getParameter('showUnavailable') ? null : 0;
 		$context = $parameters->getParameter('commerceContext');
 		if ($productList)
 		{
@@ -290,7 +291,7 @@ class StoreResult extends Block
 			$context['productListSortBy'] = $productList->getProductSortOrder() . '.' . $productList->getProductSortDirection();
 		}
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
-		$query = $queryHelper->getProductListQuery($productList);
+		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
 		if (is_array($facetFilters) && count($facetFilters))
 		{
 			$facets = $storeIndex->getFacetsDefinition();
