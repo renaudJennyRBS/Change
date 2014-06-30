@@ -14,7 +14,7 @@ use Change\Commands\Events\Event;
 /**
  * @name \Change\Commands\RegisterPlugins
  */
-class RegisterPlugin
+class RegisterPlugin extends AbstractPluginCommand
 {
 	/**
 	 * @param Event $event
@@ -22,6 +22,11 @@ class RegisterPlugin
 	 */
 	public function execute(Event $event)
 	{
+		$this->initWithEvent($event);
+		$type = $this->getType();
+		$vendor = $this->getVendor();
+		$shortName = $this->getShortName();
+
 		$applicationServices = $event->getApplicationServices();
 
 		$response = $event->getCommandResponse();
@@ -63,9 +68,6 @@ class RegisterPlugin
 		else
 		{
 			$found = false;
-			$type = $event->getParam('type');
-			$vendor = $event->getParam('vendor');
-			$shortName = $event->getParam('name');
 			foreach ($pluginManager->getUnregisteredPlugins() as $plugin)
 			{
 				if ($plugin->getType() === $type && $plugin->getVendor() === $vendor && $plugin->getShortName() === $shortName)

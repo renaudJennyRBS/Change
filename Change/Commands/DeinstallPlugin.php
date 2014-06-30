@@ -13,7 +13,7 @@ use Change\Commands\Events\Event;
 /**
  * @name \Change\Commands\DeinstallPlugin
  */
-class DeinstallPlugin
+class DeinstallPlugin extends AbstractPluginCommand
 {
 	/**
 	 * @param Event $event
@@ -21,11 +21,12 @@ class DeinstallPlugin
 	 */
 	public function execute(Event $event)
 	{
-		$applicationServices = $event->getApplicationServices();
-		$type = $event->getParam('type');
-		$vendor = $event->getParam('vendor');
-		$shortName = $event->getParam('name');
+		$this->initWithEvent($event);
+		$type = $this->getType();
+		$vendor = $this->getVendor();
+		$shortName = $this->getShortName();
 
+		$applicationServices = $event->getApplicationServices();
 		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();
