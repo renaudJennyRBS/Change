@@ -7,7 +7,7 @@
 		<property name="title" type="String" localized="true"  required="true" has-correction="true"/>
 		<property name="description" type="RichText" localized="true" has-correction="true"/>
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
-		<property name="hasAddress" type="Boolean" default-value="false"/>
+		<property name="hasAddress" type="Boolean" default-value="true"/>
 		<property name="cartFilterData" type="JSON" has-correction="true"/>
 	</properties>
 </document>
