@@ -113,58 +113,115 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\AbstractFilter[]
+	 * @return \Elastica\Filter\AbstractFilter|null
 	 */
 	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
-		$filtersQuery = [];
+		/** @var $ranges \Elastica\Query\Range[] */
+		$ranges = [];
+		$orFilters = [];
 		$filterName = $this->getFieldName();
-		if (isset($facetFilters[$filterName]))
+		if (isset($facetFilters[$filterName]) && is_array($facetFilters[$filterName]))
 		{
-			$facetFilter = is_array($facetFilters[$filterName]) ? $facetFilters[$filterName] : [$facetFilters[$filterName]];
-			$ranges = [];
+			$facetFilter = $facetFilters[$filterName];
 			$interval = $this->getParameters()->get('interval');
 			$field = $this->getParameters()->get('withTax') ? 'prices.valueWithTax' : 'prices.value';
-
-			foreach ($facetFilter as $key)
+			foreach ($facetFilter as $key => $subFacetFilter)
 			{
 				if (is_numeric($key))
 				{
+					$andFilters = [];
 					$key = intval($key);
-					$ranges[] = new \Elastica\Query\Range($field, ['gte' => $key, 'lt' => $key + $interval]);
+					$range = new \Elastica\Query\Range($field, ['gte' => $key, 'lt' => $key + $interval]);
+					$ranges[] = $range;
+
+					if ($this->hasChildren())
+					{
+						$andFilters[] = $this->buildRangesFilter([$range], $context);
+						if (is_array($subFacetFilter))
+						{
+							foreach ($this->getChildren() as $childFacet)
+							{
+								$subFilter = $childFacet->getFiltersQuery($subFacetFilter, $context);
+								if ($subFilter)
+								{
+									$andFilters[] = $subFilter;
+								}
+							}
+						}
+					}
+
+					if (count($andFilters) == 1)
+					{
+						$orFilters[] = $andFilters[0];
+					}
+					elseif (count($andFilters) > 1)
+					{
+						$and =  new \Elastica\Filter\Bool();
+						foreach ($andFilters as $f)
+						{
+							$and->addMust($f);
+						}
+						$orFilters[] =$and;
+					}
 				}
-			}
-
-			if (count($ranges))
-			{
-				$context = $context + ['now' => new \DateTime(), 'zone' => '', 'billingAreaId' => 0, 'storeId' => 0];
-				$now = $context['now'];
-				if ($now instanceof \DateTime) {$now = $now->format(\DateTime::ISO8601);}
-				$zone = strval($context['zone']);
-				$billingAreaId = intval($context['billingAreaId']);
-				$storeId = intval($context['storeId']);
-
-				$filterQuery = new \Elastica\Filter\Nested();
-				$filterQuery->setPath('prices');
-				$nestedBool = new \Elastica\Query\Bool();
-
-				$nestedBool->addMust(new \Elastica\Query\Term(['prices.billingAreaId' => $billingAreaId]));
-				$nestedBool->addMust(new \Elastica\Query\Term(['prices.zone' => $zone]));
-				$nestedBool->addMust(new \Elastica\Query\Term(['prices.storeId' => $storeId]));
-				$nestedBool->addMust(new \Elastica\Query\Range('prices.startActivation', ['lte' => $now]));
-				$nestedBool->addMust(new \Elastica\Query\Range('prices.endActivation', ['gt' => $now]));
-
-				foreach ($ranges as $range)
-				{
-					$nestedBool->addShould($range);
-				}
-				$nestedBool->setMinimumNumberShouldMatch(1);
-				$filterQuery->setQuery($nestedBool);
-
-				$filtersQuery[] = $filterQuery;
 			}
 		}
-		return $filtersQuery;
+
+		if (count($orFilters) == 1)
+		{
+			return $orFilters[0];
+		}
+		elseif (count($orFilters) > 1)
+		{
+			$filter = new \Elastica\Filter\Bool();
+			foreach ($orFilters as $orFilter)
+			{
+				$filter->addShould($orFilter);
+			}
+			return $filter;
+		}
+		elseif (count($ranges))
+		{
+			return $this->buildRangesFilter($ranges, $context);
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Elastica\Query\Range[] $ranges
+	 * @param array $context
+	 * @return \Elastica\Filter\Nested
+	 */
+	protected function buildRangesFilter($ranges, array $context)
+	{
+		$context = $context + ['now' => new \DateTime(), 'zone' => '', 'billingAreaId' => 0, 'storeId' => 0];
+		$now = $context['now'];
+		if ($now instanceof \DateTime)
+		{
+			$now = $now->format(\DateTime::ISO8601);
+		}
+		$zone = strval($context['zone']);
+		$billingAreaId = intval($context['billingAreaId']);
+		$storeId = intval($context['storeId']);
+
+		$filterQuery = new \Elastica\Filter\Nested();
+		$filterQuery->setPath('prices');
+		$nestedBool = new \Elastica\Query\Bool();
+
+		$nestedBool->addMust(new \Elastica\Query\Term(['prices.billingAreaId' => $billingAreaId]));
+		$nestedBool->addMust(new \Elastica\Query\Term(['prices.zone' => $zone]));
+		$nestedBool->addMust(new \Elastica\Query\Term(['prices.storeId' => $storeId]));
+		$nestedBool->addMust(new \Elastica\Query\Range('prices.startActivation', ['lte' => $now]));
+		$nestedBool->addMust(new \Elastica\Query\Range('prices.endActivation', ['gt' => $now]));
+
+		foreach ($ranges as $range)
+		{
+			$nestedBool->addShould($range);
+		}
+		$nestedBool->setMinimumNumberShouldMatch(1);
+		$filterQuery->setQuery($nestedBool);
+		return $filterQuery;
 	}
 
 	/**

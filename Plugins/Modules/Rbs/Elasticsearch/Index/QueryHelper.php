@@ -217,19 +217,18 @@ class QueryHelper
 			if (isset($facetFilters[$aggValues->getFieldName()]))
 			{
 				$facetFilter = $facetFilters[$aggValues->getFieldName()];
-				if (!is_array($facetFilter))
+				if (is_array($facetFilter))
 				{
-					$facetFilter = [$facetFilter];
-				}
-
-				foreach ($aggValues->getValues() as $aggValue)
-				{
-					if (in_array(strval($aggValue->getKey()), $facetFilter))
+					foreach ($aggValues->getValues() as $aggValue)
 					{
-						$aggValue->setSelected(true);
-						if ($aggValue->hasAggregationValues())
+						$key = strval($aggValue->getKey());
+						if (isset($facetFilter[$key]))
 						{
-							$this->applyFacetFilters($aggValue->getAggregationValues(), $facetFilters);
+							$aggValue->setSelected(true);
+							if (is_array($facetFilter[$key]) && $aggValue->hasAggregationValues())
+							{
+								$this->applyFacetFilters($aggValue->getAggregationValues(), $facetFilter[$key]);
+							}
 						}
 					}
 				}
@@ -248,7 +247,11 @@ class QueryHelper
 		$filters = [];
 		foreach ($facets as $facet)
 		{
-			$filters = array_merge($filters, $facet->getFiltersQuery($facetFilters, $context));
+			$filter = $facet->getFiltersQuery($facetFilters, $context);
+			if ($filter)
+			{
+				$filters[] = $filter;
+			}
 		}
 
 		if (count($filters))

@@ -1,58 +1,32 @@
-{% macro render_facet(facetValue, subFacet) %}
-{% if facetValue.values|length %}
-	{% if subFacet %}
-	<h5>{{ facetValue.title }}</h5>
-	{% else %}
-	<h3>{{ facetValue.title }}</h3>
-	{% endif %}
-	<ol class="list-unstyled">
-		{% if facetValue.multipleChoice %}
-			{% for value in facetValue.values %}
-				<li><div class="checkbox"><label>
-							<input type="checkbox" name="facetFilters[{{ facetValue.fieldName }}][]" value="{{ value.key }}"
-									{% if value.selected %} checked="checked" {% endif %} />
-							{{ value.title }} {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
-						</label></div>
-						{% if value.aggregationValues|length %}
-							<div id="{{ facetValue.fieldName }}_{{ value.key }}" style="padding-left: 10px">
-							{% for subAggregation in value.aggregationValues %}
-								{{ _self.render_facet(subAggregation, true) }}
-							{% endfor %}
-							</div>
-						{% endif %}
-				</li>
-			{% endfor %}
-		{% else %}
-			{% for value in facetValue.values %}
-				<li><div class="radio"><label>
-							<input type="radio" name="facetFilters[{{ facetValue.fieldName }}][]" value="{{ value.key }}"
-									{% if value.selected %} checked="checked" {% endif %} />
-							{{ value.title }} {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
-						</label></div>
-					{% if value.aggregationValues|length %}
-						<div id="{{ facetValue.fieldName }}_{{ value.key }}" style="padding-left: 10px">
-							{% for subAggregation in value.aggregationValues %}
-								{{ _self.render_facet(subAggregation, true) }}
-							{% endfor %}
-						</div>
-					{% endif %}
-				</li>
-			{% endfor %}
-			<li><div class="radio"><label>
-						<input type="radio" name="facetFilters[{{ facetValue.fieldName }}][]" value="" />
-						{{ i18n('m.rbs.elasticsearch.front.unset_value', ['ucf']) }}
-					</label></div></li>
-		{% endif %}
-	</ol>
-{% endif %}
-{% endmacro %}
+<script type="text/javascript">
+window.__change.RbsElasticsearchFacet = {
+	"parameters" : {{ parameters.toArray | json_encode | raw }},
+	"facetValues" : [{% for facetValue in facetValues %}{{ facetValue.toArray | json_encode | raw }}{% if loop.last == false %},{% endif %}{% endfor %}]
+};
+</script>
 
-<form class="form-inline" method="GET" action="{{ parameters.formAction }}">
-{% if parameters.sortBy %}
-	<input type="hidden" name="sortBy" value="{{ parameters.sortBy }}">
-{% endif %}
-{% for facetValue in facetValues %}
-	{{ _self.render_facet(facetValue, false) }}
-{% endfor %}
+<script type="text/ng-template" id="/rbsElasticsearchFacetValues.tpl">
+	<h4 data-ng-hide="facet.parent">(= facet.title =)</h4>
+	<h5 data-ng-show="facet.parent" style="margin: 0">(= facet.title =)</h5>
+	<ol class="list-unstyled" style="margin-bottom: 10px;margin-left: 5px">
+		<li data-ng-repeat="value in facet.values"><div class="checkbox"><label>
+			<input type="checkbox" data-ng-model="value.selected" data-ng-change="selectionChange(value)" />
+				(= value.title =) <span class="badge" data-ng-show="value.value">(= value.value =)</span>
+			</label></div>
+			<div data-ng-if="value.aggregationValues" style="padding-left: 10px">
+				<div data-ng-repeat="aggregationValues in value.aggregationValues">
+					<div data-ng-show="aggregationValues.values" data-rbs-elasticsearch-facet="" data-facet="aggregationValues"></div>
+				</div>
+			</div>
+		</li>
+	</ol>
+</script>
+
+<form class="form-inline" data-ng-submit="submit()" data-rbs-elasticsearch-facet-container="">
+	<div data-ng-repeat="aggregationValues in facets" data-ng-show="aggregationValues.values">
+		<div data-rbs-elasticsearch-facet="" data-facet="aggregationValues"></div>
+		<hr />
+	</div>
+	<button class="btn btn-default btn-headline" type="button" ng-click="reset($event)">{{ i18n('m.rbs.elasticsearch.front.facets_reset', ['ucf']) }}</button>
 	<button type="submit" class="btn btn-primary">{{ i18n('m.rbs.elasticsearch.front.facets_filter', ['ucf']) }}</button>
 </form>

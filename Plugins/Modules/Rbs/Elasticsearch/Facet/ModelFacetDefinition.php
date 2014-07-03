@@ -113,6 +113,14 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	}
 
 	/**
+	 * @return null
+	 */
+	public function getParent()
+	{
+		return null;
+	}
+
+	/**
 	 * @return boolean
 	 */
 	public function hasChildren()
@@ -150,17 +158,16 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\AbstractFilter[]
+	 * @return \Elastica\Filter\AbstractFilter|null
 	 */
 	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
-		$filtersQuery = [];
 		$filterName = $this->getFieldName();
-		if (isset($facetFilters[$filterName]))
+		if (isset($facetFilters[$filterName]) && is_array($facetFilters[$filterName]))
 		{
-			$facetFilter = is_array($facetFilters[$filterName]) ? $facetFilters[$filterName] : [$facetFilters[$filterName]];
+			$facetFilter =  $facetFilters[$filterName];
 			$terms = [];
-			foreach ($facetFilter as $key)
+			foreach ($facetFilter as $key => $ignored)
 			{
 				$key = strval($key);
 				if (!empty($key))
@@ -171,11 +178,10 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 
 			if (count($terms))
 			{
-				$filterQuery = new \Elastica\Filter\Terms('model', $terms);
-				$filtersQuery[] = $filterQuery;
+				return new \Elastica\Filter\Terms('model', $terms);
 			}
 		}
-		return $filtersQuery;
+		return null;
 	}
 
 	/**

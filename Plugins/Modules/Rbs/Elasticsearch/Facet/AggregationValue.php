@@ -138,8 +138,11 @@ class AggregationValue
 	{
 		$array = ['key' => $this->key, 'value' => $this->value,
 			'title' => $this->title, 'selected' => $this->selected];
+
 		foreach ($this->aggregationValues as $aggregationValues)
 		{
+			$toArray = $aggregationValues->toArray();
+			$toArray['facet']['parent'] =
 			$array['aggregationValues'][] = $aggregationValues->toArray();
 		}
 		return $array;

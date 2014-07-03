@@ -15,7 +15,7 @@
 		<div class="col-sm-7 col-md-6 col-lg-9">
 			{% for value in facet.values %}
 				<label class="checkbox-inline">
-					<input type="checkbox" name="facetFilters[{{ facet.fieldName }}][]" value="{{ value.key }}"
+					<input type="checkbox" name="facetFilters[{{ facet.fieldName }}][{{ value.key }}]" value="1"
 						{% if value.selected %} checked="checked" {% endif %} />
 					{{ value.title }}  {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
 				</label>
