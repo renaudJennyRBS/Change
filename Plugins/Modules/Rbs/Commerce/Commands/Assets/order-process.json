@@ -8,19 +8,19 @@
 			"versionOfId": 0,
 			"_LCID": {
 				"fr_FR": {
-					"title": "Compte utilisateur"
+					"title": "rbs_commerce_initialize_user_account_topic"
 				},
 				"en_US": {
-					"title": "User account"
+					"title": "rbs_commerce_initialize_user_account_topic"
 				}
 			}
 		},
 
 		{
 			"_id": "rbs_commerce_initialize_cart_detail",
-			"_model": "Rbs_Website_FunctionalPage",
+			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.cart_detail"},
-			"website": {"_id": "website"},
+			"section": {"_id": "website"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {
@@ -38,7 +38,7 @@
 							]
 						}
 					},
-					"title": "Détail d'un avis"
+					"title": {"_i18n": "m.rbs.commerce.initialize.cart_detail"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -54,7 +54,7 @@
 							]
 						}
 					},
-					"title": "Review detail"
+					"title": {"_i18n": "m.rbs.commerce.initialize.cart_detail"}
 				}
 			}
 		},
@@ -88,7 +88,7 @@
 							]
 						}
 					},
-					"title": "Produit ajouté au panier"
+					"title": {"_i18n": "m.rbs.commerce.initialize.product_added_to_cart"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -104,7 +104,7 @@
 							]
 						}
 					},
-					"title": "Product added to cart"
+					"title": {"_i18n": "m.rbs.commerce.initialize.product_added_to_cart"}
 				}
 			}
 		},
@@ -138,7 +138,7 @@
 							]
 						}
 					},
-					"title": "Processus de commande"
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_process_page"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -154,7 +154,7 @@
 							]
 						}
 					},
-					"title": "Order process"
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_process_page"}
 				}
 			}
 		},
@@ -188,7 +188,7 @@
 							]
 						}
 					},
-					"title": "Retour après paiement"
+					"title": {"_i18n": "m.rbs.commerce.initialize.payment_return"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -204,7 +204,7 @@
 							]
 						}
 					},
-					"title": "Retour après paiement"
+					"title": {"_i18n": "m.rbs.commerce.initialize.payment_return"}
 				}
 			}
 		},
@@ -238,7 +238,7 @@
 							]
 						}
 					},
-					"title": "Inscription après transaction"
+					"title": {"_i18n": "m.rbs.commerce.initialize.create_account_for_transaction"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -254,7 +254,7 @@
 							]
 						}
 					},
-					"title": "Create account for transaction"
+					"title": {"_i18n": "m.rbs.commerce.initialize.create_account_for_transaction"}
 				}
 			}
 		},
@@ -265,12 +265,11 @@
 			"section":{"_id":"website"},
 			"page":{"_id":"rbs_commerce_initialize_create_account_for_transaction"}
 		},
-
 		{
 			"_id": "rbs_commerce_initialize_order_detail",
-			"_model": "Rbs_Website_StaticPage",
+			"_model": "Rbs_Website_FunctionalPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.order_detail"},
-			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"hideLinks": true,
 			"versionOfId": 0,
@@ -290,7 +289,7 @@
 							]
 						}
 					},
-					"title": "Détail d'une commande"
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_detail"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -306,7 +305,7 @@
 							]
 						}
 					},
-					"title": "Order detail"
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_detail"}
 				}
 			}
 		},
@@ -341,7 +340,7 @@
 							]
 						}
 					},
-					"title": "Liste des commandes"
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_list"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -357,7 +356,7 @@
 							]
 						}
 					},
-					"title": "Order list"
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_list"}
 				}
 			}
 		},
@@ -376,10 +375,10 @@
 			"code": "UPS",
 			"_LCID": {
 				"fr_FR": {
-					"title": "UPS"
+					"title": {"_i18n": "m.rbs.commerce.initialize.shipping_mode_ups"}
 				},
 				"en_US": {
-					"title": "UPS"
+					"title": {"_i18n": "m.rbs.commerce.initialize.shipping_mode_ups"}
 				}
 			}
 		},
@@ -391,10 +390,10 @@
 			"code": "TNT",
 			"_LCID": {
 				"fr_FR": {
-					"title": "TNT"
+					"title": {"_i18n": "m.rbs.commerce.initialize.shipping_mode_tnt"}
 				},
 				"en_US": {
-					"title": "TNT"
+					"title": {"_i18n": "m.rbs.commerce.initialize.shipping_mode_tnt"}
 				}
 			}
 		},
