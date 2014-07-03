@@ -68,7 +68,10 @@ class Install extends \Change\Plugins\InstallBase
 		}
 
 		$jobManager = $applicationServices->getJobManager();
-		$jobManager->createNewJob('Rbs_User_CleanAccountRequestTable');
+		if (count($jobManager->getJobIdsByName('Rbs_User_CleanAccountRequestTable')) == 0)
+		{
+			$jobManager->createNewJob('Rbs_User_CleanAccountRequestTable');
+		}
 
 		// Init collection
 		$cm = $applicationServices->getCollectionManager();

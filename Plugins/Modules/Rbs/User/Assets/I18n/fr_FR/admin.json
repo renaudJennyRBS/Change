@@ -131,7 +131,10 @@
 		"message":"Identification"
 	},
 	"function_create_account":{
-		"message":"création du compte utilisateur"
+		"message":"formulaire de création du compte utilisateur"
+	},
+	"function_create_account_success":{
+		"message":"création du compte utilisateur réussi"
 	},
 	"function_reset_password":{
 		"message":"Ré-initialisation du mot de passe"
