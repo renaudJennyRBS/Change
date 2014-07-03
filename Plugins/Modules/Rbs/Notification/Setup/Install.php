@@ -21,7 +21,10 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$jm = $applicationServices->getJobManager();
-		$jm->createNewJob('Rbs_Notification_SendMails');
+		if (count($jm->getJobIdsByName('Rbs_Notification_SendMails')) == 0)
+		{
+			$jm->createNewJob('Rbs_Notification_SendMails');
+		}
 	}
 
 	/**
