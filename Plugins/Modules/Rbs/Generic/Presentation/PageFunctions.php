@@ -42,6 +42,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.user.admin.function_create_account', $ucf),
 			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_User_CreateAccountSuccess', 'document' => false, 'block' => null,
+			'label' => $i18nManager->trans('m.rbs.user.admin.function_create_account_success', $ucf),
+			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];
+
 		$functions[] = ['code' => 'Rbs_User_Login', 'document' => false, 'block' => 'Rbs_User_Login',
 			'label' => $i18nManager->trans('m.rbs.user.admin.function_login', $ucf),
 			'section' => $i18nManager->trans('m.rbs.generic.admin.module_name', $ucf)];

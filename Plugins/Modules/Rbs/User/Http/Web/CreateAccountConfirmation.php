@@ -27,7 +27,12 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			$data = $event->getRequest()->getQuery()->toArray();
 			$urlManager = $event->getUrlManager();
 			$urlManager->setAbsoluteUrl(true);
-			$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', null, ['context' => 'create']);;
+
+			$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccountSuccess');
+			if (!$redirectURL)
+			{
+				$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', null, ['context' => 'create']);
+			}
 			$event->setParam('redirectLocation', $redirectURL);
 			$event->setParam('errorLocation', $redirectURL);
 
