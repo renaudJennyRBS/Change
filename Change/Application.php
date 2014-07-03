@@ -311,11 +311,11 @@ class Application
 	protected function registerSessionSaveHandler()
 	{
 		$type = $this->getConfiguration('Change/Session/SaveHandler/type');
-		if ($type === 'redis')
+		if ($type !== null)
 		{
 			$redis =  \Zend\Cache\StorageFactory::factory([
 					'adapter' => [
-						'name' => 'redis',
+						'name' => $type,
 						'options' => $this->getConfiguration('Change/Session/SaveHandler/options', [])
 					]
 				]);
