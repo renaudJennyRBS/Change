@@ -3,7 +3,7 @@
 		"message": "Boutique"
 	},
 	"terms_and_conditions": {
-		"message": "Termes et conditions"
+		"message": "Conditions générales de vente"
 	},
 	"product_detail": {
 		"message": "Détail d'un produit"
@@ -18,34 +18,34 @@
 		"message": "Édition d'un avis"
 	},
 	"user_account_topic": {
-		"message": "Compte utilisateur"
+		"message": "Mon compte"
 	},
 	"wishlist_list": {
-		"message": "Liste des wishlists"
+		"message": "Mes wishlists"
 	},
 	"wishlist_detail": {
 		"message": "Détail d'une wishlist"
 	},
 	"cart_detail": {
-		"message": "Détail du panier"
+		"message": "Mon panier"
 	},
 	"product_added_to_cart": {
-		"message": "Produit ajouté au panier"
+		"message": "Confirmation d'ajout au panier"
 	},
 	"order_process_page": {
-		"message": "Processus de commande"
+		"message": "Passer ma commande"
 	},
 	"payment_return": {
-		"message": "Retour après paiement"
+		"message": "Confirmation de paiement"
 	},
 	"create_account_for_transaction": {
 		"message": "Inscription après transaction"
 	},
 	"order_detail": {
-		"message": "Détail d'une commande"
+		"message": "Ma commande"
 	},
 	"order_list": {
-		"message": "Liste des commandes"
+		"message": "Mes commandes"
 	},
 	"billing_area_france": {
 		"message": "France"
@@ -60,6 +60,6 @@
 		"message": "Chèque"
 	},
 	"order_process": {
-		"message": "Processus de commande standard"
+		"message": "Single-page checkout"
 	}
 }

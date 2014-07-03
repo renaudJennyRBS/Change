@@ -380,7 +380,7 @@ class Import
 				}
 				else
 				{
-					$property->setValue($document, $value['_18n']);
+					$property->setValue($document, $value['_i18n']);
 				}
 			}
 			else
@@ -444,6 +444,17 @@ class Import
 				continue;
 			}
 			$value = $jsonLCID[$propertyName];
+			if ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			{
+				if ($this->getI18nManager())
+				{
+					$value = $this->getI18nManager()->trans($value['_i18n']);
+				}
+				else
+				{
+					$value = $value['_i18n'];
+				}
+			}
 			$property->setLocalizedValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
 		}
 	}

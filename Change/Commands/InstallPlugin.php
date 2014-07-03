@@ -14,19 +14,19 @@ use Change\Commands\Events\Event;
 /**
  * @name \Change\Commands\InstallPlugin
  */
-class InstallPlugin
+class InstallPlugin extends AbstractPluginCommand
 {
 	/**
 	 * @param Event $event
 	 */
 	public function execute(Event $event)
 	{
+		$this->initWithEvent($event);
+		$type = $this->getType();
+		$vendor = $this->getVendor();
+		$shortName = $this->getShortName();
+
 		$applicationServices = $event->getApplicationServices();
-
-		$type = $event->getParam('type');
-		$vendor = $event->getParam('vendor');
-		$shortName = $event->getParam('name');
-
 		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();

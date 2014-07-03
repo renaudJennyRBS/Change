@@ -170,10 +170,10 @@
 			"versionOfId": 0,
 			"_LCID": {
 				"fr_FR": {
-					"title": "Compte utilisateur"
+					"title": "Mon Compte"
 				},
 				"en_US": {
-					"title": "User account"
+					"title": "My Account"
 				}
 			}
 		},
@@ -333,9 +333,10 @@
 
 		{
 			"_id": "rbs_generic_initialize_unauthorized",
-			"_model": "Rbs_Website_StaticPage",
+			"_model": "Rbs_Website_FunctionalPage",
 			"label": {"_i18n": "m.rbs.generic.initialize.unauthorized"},
 			"section": {"_id": "website"},
+			"website": {"_id": "website"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {
@@ -348,12 +349,17 @@
 							"type": "container",
 							"items":[
 								{
-									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"parameters": {
+										"contentType": "Markdown",
+										"content": "###Accès interdit\nVous n'êtes pas autorisé à accéder à cette ressource. Veuillez vous identifier." ,
+										"TTL": 60
+									}
 								}
 							]
 						}
 					},
-					"title": "Autorisation nécessaire"
+					"title": {"_i18n": "m.rbs.generic.initialize.unauthorized"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -369,7 +375,7 @@
 							]
 						}
 					},
-					"title": "Unauthorized"
+					"title": {"_i18n": "m.rbs.generic.initialize.unauthorized"}
 				}
 			}
 		},

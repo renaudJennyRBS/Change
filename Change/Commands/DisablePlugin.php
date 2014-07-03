@@ -13,7 +13,7 @@ use Change\Commands\Events\Event;
 /**
  * @name \Change\Commands\DisablePlugin
  */
-class DisablePlugin
+class DisablePlugin extends AbstractPluginCommand
 {
 	/**
 	 * @param Event $event
@@ -21,11 +21,12 @@ class DisablePlugin
 	 */
 	public function execute(Event $event)
 	{
-		$applicationServices = $event->getApplicationServices();
-		$type = $event->getParam('type');
-		$vendor = $event->getParam('vendor');
-		$shortName = $event->getParam('name');
+		$this->initWithEvent($event);
+		$type = $this->getType();
+		$vendor = $this->getVendor();
+		$shortName = $this->getShortName();
 
+		$applicationServices = $event->getApplicationServices();
 		$response = $event->getCommandResponse();
 
 		$pluginManager = $applicationServices->getPluginManager();

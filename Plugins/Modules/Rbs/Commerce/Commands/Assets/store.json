@@ -20,7 +20,7 @@
 			"_id": "rbs_commerce_initialize_terms_and_conditions",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.terms_and_conditions"},
-			"section": {"_id": "rbs_commerce_initialize_store_topic"},
+			"section": {"_id": "website"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {
@@ -43,7 +43,7 @@
 							]
 						}
 					},
-					"title": "Termes et conditions"
+					"title": {"_i18n": "m.rbs.commerce.initialize.terms_and_conditions"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -64,7 +64,7 @@
 							]
 						}
 					},
-					"title": "Terms and conditions"
+					"title": {"_i18n": "m.rbs.commerce.initialize.terms_and_conditions"}
 				}
 			}
 		},
@@ -309,7 +309,7 @@
 							]
 						}
 					},
-					"title": "Liste des wishlists"
+					"title": "Mes wishlists"
 				},
 				"en_US": {
 					"editableContent": {
@@ -325,7 +325,7 @@
 							]
 						}
 					},
-					"title": "Wishlist list"
+					"title": "My Wishlists"
 				}
 			}
 		},
@@ -339,10 +339,10 @@
 
 		{
 			"_id": "rbs_commerce_initialize_wishlist_detail",
-			"_model": "Rbs_Website_StaticPage",
+			"_model": "Rbs_Website_FunctionalPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.wishlist_detail"},
-			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
-			"hideLinks": true,
+			"section": {"_id": "website"},
+			"website": {"_id": "website"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {
