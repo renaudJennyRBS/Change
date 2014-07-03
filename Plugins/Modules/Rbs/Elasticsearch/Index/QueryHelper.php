@@ -96,9 +96,10 @@ class QueryHelper
 
 	/**
 	 * @param \Rbs\Catalog\Documents\ProductList $productList
+	 * @param integer $availableInWarehouseId
 	 * @return \Elastica\Query
 	 */
-	public function getProductListQuery($productList = null)
+	public function getProductListQuery($productList = null, $availableInWarehouseId = null)
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
 		$multiMatch = new \Elastica\Query\MatchAll();
@@ -111,6 +112,16 @@ class QueryHelper
 			$nested->setPath('listItems');
 			$nestedBool = new \Elastica\Query\Bool();
 			$nestedBool->addMust(new \Elastica\Query\Term(['listId' => $productList->getId()]));
+			$nested->setQuery($nestedBool);
+			$bool->addMust($nested);
+		}
+		if ($availableInWarehouseId !== null)
+		{
+			$nested = new \Elastica\Filter\Nested();
+			$nested->setPath('stocks');
+			$nestedBool = new \Elastica\Query\Bool();
+			$nestedBool->addMust(new \Elastica\Query\Term(['warehouseId' => $availableInWarehouseId]));
+			$nestedBool->addMust(new \Elastica\Query\Range('availability', ['gt' => 0]));
 			$nested->setQuery($nestedBool);
 			$bool->addMust($nested);
 		}

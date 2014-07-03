@@ -128,7 +128,10 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
-		$query = $queryHelper->getProductListQuery($productList);
+		$showUnavailable = $request->getQuery('showUnavailable');
+		$availableInWarehouseId = ($showUnavailable !== 'false' && $showUnavailable !== '0') ? null : 0;
+
+		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $commerceContext);
 
 		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
