@@ -155,7 +155,7 @@ class Result extends Block
 		{
 			$facetFilters = null;
 		}
-		$showResult = !empty($searchText);
+		$showResult = !empty($searchText) || count($facetFilters);
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($fullTextIndex, $indexManager, $genericServices->getFacetManager());
 		$query = $queryHelper->getSearchQuery($searchText, $allowedSectionIds);
 		$queryHelper->addHighlight($query);
@@ -209,7 +209,12 @@ class Result extends Block
 						}
 						else
 						{
-							$title = $i18nManager->transformHtml($result->title, $i18nManager->getLCID());
+							$resultTitle = $result->title;
+							if (is_array($resultTitle))
+							{
+								$resultTitle = $resultTitle[0];
+							}
+							$title = $i18nManager->transformHtml($resultTitle, $i18nManager->getLCID());
 						}
 						$attributes['items'][] =['id' => $result->getId(), 'score' => $score,
 							'title' => $title,'document' => $document,

@@ -163,11 +163,11 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
 		$filterName = $this->getFieldName();
-		if (isset($facetFilters[$filterName]))
+		if (isset($facetFilters[$filterName]) && is_array($facetFilters[$filterName]))
 		{
-			$facetFilter = is_array($facetFilters[$filterName]) ? $facetFilters[$filterName] : [$facetFilters[$filterName]];
+			$facetFilter =  $facetFilters[$filterName];
 			$terms = [];
-			foreach ($facetFilter as $key)
+			foreach ($facetFilter as $key => $ignored)
 			{
 				$key = strval($key);
 				if (!empty($key))
