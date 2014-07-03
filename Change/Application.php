@@ -303,7 +303,26 @@ class Application
 					}
 				}
 			}
+			$this->registerSessionSaveHandler();
 			$this->started = true;
+		}
+	}
+
+	protected function registerSessionSaveHandler()
+	{
+		$type = $this->getConfiguration('Change/Session/SaveHandler/type');
+		if ($type !== null)
+		{
+			$redis =  \Zend\Cache\StorageFactory::factory([
+					'adapter' => [
+						'name' => $type,
+						'options' => $this->getConfiguration('Change/Session/SaveHandler/options', [])
+					]
+				]);
+			$adapter = new \Zend\Session\SaveHandler\Cache($redis);
+			$manager = new \Zend\Session\SessionManager();
+			$manager->setSaveHandler($adapter);
+			\Zend\Session\Container::setDefaultManager($manager);
 		}
 	}
 
