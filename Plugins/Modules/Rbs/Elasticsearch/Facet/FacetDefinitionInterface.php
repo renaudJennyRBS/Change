@@ -36,6 +36,11 @@ interface FacetDefinitionInterface
 	public function getMapping();
 
 	/**
+	 * @return \Rbs\Elasticsearch\Facet\FacetDefinitionInterface|null
+	 */
+	public function getParent();
+
+	/**
 	 * @return boolean
 	 */
 	public function hasChildren();
@@ -55,7 +60,7 @@ interface FacetDefinitionInterface
 	/**
 	 * @param array $facetFilters
 	 * @param array $context
-	 * @return \Elastica\Filter\AbstractFilter[]
+	 * @return \Elastica\Filter\AbstractFilter|null
 	 */
 	public function getFiltersQuery(array $facetFilters, array $context = []);
 

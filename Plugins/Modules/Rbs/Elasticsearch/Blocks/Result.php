@@ -187,7 +187,6 @@ class Result extends Block
 			$from = ($pageNumber - 1) * $size;
 			$query->setFrom($from)->setSize($size);
 
-			//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 			$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
 			$attributes['totalCount'] = $searchResult->getTotalHits();
 			if ($attributes['totalCount'])
@@ -223,7 +222,6 @@ class Result extends Block
 		elseif ($showModelFacet)
 		{
 			$query->setSize(0);
-			//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 			$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
 		}
 

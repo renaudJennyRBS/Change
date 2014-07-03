@@ -129,6 +129,14 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	}
 
 	/**
+	 * @return \Rbs\Elasticsearch\Facet\FacetDefinitionInterface|null
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
 	 * @return boolean
 	 */
 	public function hasChildren()
@@ -190,27 +198,66 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
-		$filtersQuery = [];
+		$terms = [];
+		$orFilters = [];
+
 		$filterName = $this->getFieldName();
-		if (isset($facetFilters[$filterName]))
+		if (isset($facetFilters[$filterName]) && is_array($facetFilters[$filterName]))
 		{
-			$facetFilter = is_array($facetFilters[$filterName]) ? $facetFilters[$filterName] : [$facetFilters[$filterName]];
-			$terms = [];
-			foreach ($facetFilter as $key)
+			$facetFilter = $facetFilters[$filterName];
+			foreach ($facetFilter as $term => $subFacetFilter)
 			{
-				$key = strval($key);
-				if (!empty($key))
+				$andFilters = [];
+				$terms[] = $term;
+				if ($this->hasChildren())
 				{
-					$terms[] = $key;
+					$andFilters[] = new \Elastica\Filter\Term([$this->getMappingName() => $term]);
+					if (is_array($subFacetFilter))
+					{
+						foreach ($this->getChildren() as $childFacet)
+						{
+							$subFilter = $childFacet->getFiltersQuery($subFacetFilter, $context);
+							if ($subFilter)
+							{
+								$andFilters[] = $subFilter;
+							}
+						}
+					}
+				}
+				if (count($andFilters) == 1)
+				{
+					$orFilters[] = $andFilters[0];
+				}
+				elseif (count($andFilters) > 1)
+				{
+					$and =  new \Elastica\Filter\Bool();
+					foreach ($andFilters as $f)
+					{
+						$and->addMust($f);
+					}
+					$orFilters[] =$and;
 				}
 			}
-			if (count($terms))
-			{
-				$filterQuery = new \Elastica\Filter\Terms($this->getMappingName(), $terms);
-				$filtersQuery[] = $filterQuery;
-			}
 		}
-		return $filtersQuery;
+
+		if (count($orFilters) == 1)
+		{
+			return $orFilters[0];
+		}
+		elseif (count($orFilters) > 1)
+		{
+			$filter = new \Elastica\Filter\Bool();
+			foreach ($orFilters as $orFilter)
+			{
+				$filter->addShould($orFilter);
+			}
+			return $filter;
+		}
+		elseif (count($terms))
+		{
+			return new \Elastica\Filter\Terms($this->getMappingName(), $terms);
+		}
+		return null;
 	}
 
 	/**

@@ -299,4 +299,16 @@ class Parameters
 	{
 		return strtolower($name[0]) . substr($name, 1);
 	}
+
+	/**
+	 * @return array
+	 */
+	public function toArray() {
+		$array = [];
+		foreach ($this->parametersMeta as $parameterMeta)
+		{
+			$array[$parameterMeta->getName()] = $this->getParameter($parameterMeta->getName());
+		}
+		return $array;
+	}
 }

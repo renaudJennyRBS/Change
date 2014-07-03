@@ -8,6 +8,9 @@
 	"facets_filter":{
 		"message":"filtrer"
 	},
+	"facets_reset":{
+		"message":"effacer"
+	},
 	"terms":{
 		"message":"termes"
 	},

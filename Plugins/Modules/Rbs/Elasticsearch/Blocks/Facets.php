@@ -309,7 +309,6 @@ class Facets extends Block
 		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $context);
 
-		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 		$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 
 		$facetsValues = $queryHelper->formatAggregations($result->getAggregations(), $facets);
@@ -318,7 +317,6 @@ class Facets extends Block
 			$queryHelper->applyFacetFilters($facetsValues, $facetFilters);
 		}
 		$attributes['facetValues'] = $facetsValues;
-
 		return 'facets.twig';
 	}
 }

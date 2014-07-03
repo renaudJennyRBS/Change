@@ -81,11 +81,22 @@ class AggregationValues
 		return $this->facet->getTitle();
 	}
 
+	/**
+	 * @return array
+	 */
 	public function toArray()
 	{
 		$array = [];
-		$array['facet']['fieldName'] = $this->facet->getFieldName();
-		$array['facet']['parameters'] = $this->facet->getParameters()->toArray();
+		$facet = $this->facet;
+		$array['title'] = $facet->getTitle();
+		$array['fieldName'] = $facet->getFieldName();
+		$array['parameters'] = $facet->getParameters()->toArray();
+		$array['hasChildren'] = $facet->hasChildren();
+		if ($facet->getParent())
+		{
+			$array['parent'] = $facet->getParent()->getFieldName();
+		}
+
 		foreach ($this->values as $value)
 		{
 			$array['values'][] = $value->toArray();

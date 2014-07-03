@@ -302,17 +302,12 @@ class StoreResult extends Block
 			}
 		}
 
-
 		$queryHelper->addSortArgs($query,$parameters->getParameter('sortBy'), $context);
-
-
-
 
 		$attributes['pageNumber'] = $pageNumber = intval($parameters->getParameter('pageNumber'));
 		$size = $parameters->getParameter('itemsPerPage');
 		$from = ($pageNumber - 1) * $size;
 		$query->setFrom($from)->setSize($size);
-		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 
 		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 		$attributes['totalCount'] = $totalCount = $searchResult->getTotalHits();

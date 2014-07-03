@@ -23,19 +23,24 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 	public function execute(Event $event)
 	{
 		$result = [];
+		$request = $event->getRequest();
 
 		$website = $event->getWebsite();
 		$genericServices = $this->getGenericServices($event);
 		$commerceServices = $this->getCommerceServices($event);
-		if ($commerceServices == null || $genericServices == null || !($website instanceof \Rbs\Website\Documents\Website))
+		if ($commerceServices == null || $genericServices == null || !($website instanceof \Rbs\Website\Documents\Website) ||
+		 !$request->getPost('indexId'))
 		{
 			$result['error'] = 'invalid parameters';
 			$webResult = $this->getNewAjaxResult($result);
 			$webResult->setHttpStatusCode(HttpResponse::STATUS_CODE_409);
 			$event->setResult($webResult);
 		}
+		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
 
-		$storeIndex = $genericServices->getIndexManager()->getStoreIndexByWebsite($website, $website->getLCID());
+		/** @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
+		$storeIndex = $documentManager->getDocumentInstance($request->getPost('indexId'), 'Rbs_Elasticsearch_StoreIndex');
 		if (!$storeIndex)
 		{
 			$result['error'] = 'invalid store index';
@@ -44,24 +49,8 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$event->setResult($webResult);
 		}
 
-		$ctx = $commerceServices->getContext();
-		$commerceContext = [];
-		if ($ctx->getZone()) {
-			$commerceContext['zone'] = $ctx->getZone();
-		}
-		if ($ctx->getWebStore()) {
-			$commerceContext['storeId'] = $ctx->getWebStore()->getId();
-		}
-		if ($ctx->getBillingArea()) {
-			$commerceContext['billingAreaId'] = $ctx->getBillingArea()->getId();
-		}
-
-		$request = $event->getRequest();
-
-		$applicationServices = $event->getApplicationServices();
-		$documentManager = $applicationServices->getDocumentManager();
-
-		$productListId = $request->getQuery('productList');
+		$commerceContext = $request->getPost('commerceContext');
+		$productListId = intval($request->getPost('toDisplayDocumentId'));
 
 		/** @var $productList \Rbs\Catalog\Documents\ProductList */
 		$productList = null;
@@ -77,22 +66,8 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 			}
 		}
 
-		$facets = $request->getQuery('facets');
-		if (!is_array($facets))
-		{
-			$facets = [];
-		}
-		else
-		{
-
-		}
-
-		if (!count($facets) && $productList)
-		{
-			$facets = $productList->getFacets()->getIds();
-		}
-
-		if (!$facets)
+		$facetIds =  $request->getPost('facets');
+		if (!is_array($facetIds) || !count($facetIds))
 		{
 			$result['error'] = 'no facet defined';
 			$webResult = $this->getNewAjaxResult($result);
@@ -100,12 +75,12 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$event->setResult($webResult);
 		}
 
+		$facets = $genericServices->getFacetManager()->resolveFacetIds($facetIds);
 
-		$facets = $genericServices->getFacetManager()->resolveFacetIds($facets);
-
-
-		$queryFilters = $request->getQuery('facetFilters', null);
+		$queryFilters = $request->getPost('facetFilters', null);
 		$facetFilters = $this->validateQueryFilters($queryFilters);
+		$showUnavailable = $request->getPost('showUnavailable');
+		$availableInWarehouseId = $showUnavailable ? null : 0;
 
 		$indexManager = $genericServices->getIndexManager();
 		$client = $indexManager->getElasticaClient($storeIndex->getClientName());
@@ -128,13 +103,9 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
-		$showUnavailable = $request->getQuery('showUnavailable');
-		$availableInWarehouseId = ($showUnavailable !== 'false' && $showUnavailable !== '0') ? null : 0;
-
 		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $commerceContext);
 
-		//$event->getApplication()->getLogging()->fatal(json_encode($query->toArray()));
 		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 
 		$facetsValues = $queryHelper->formatAggregations($searchResult->getAggregations(), $facets);
