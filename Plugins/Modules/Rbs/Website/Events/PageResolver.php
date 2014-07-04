@@ -31,15 +31,7 @@ class PageResolver
 			$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
 			if (!($section instanceof Section))
 			{
-				if ($document instanceof Publishable)
-				{
-					$section = $document->getCanonicalSection($event->getParam('website'));
-				}
-
-				if (!($section instanceof Section))
-				{
-					$section = $event->getParam('website');
-				}
+				$section = $event->getParam('website');
 			}
 
 			if ($section instanceof \Rbs\Website\Documents\Section)

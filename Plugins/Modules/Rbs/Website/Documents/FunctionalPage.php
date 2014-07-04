@@ -57,26 +57,22 @@ class FunctionalPage extends \Compilation\Rbs\Website\Documents\FunctionalPage
 	public function onDocumentDisplayPage(Event $event)
 	{
 		$functionalPage = $event->getDocument();
-		if ($functionalPage instanceof FunctionalPage)
+		$pathRule = $event->getParam("pathRule");
+
+		if ($functionalPage instanceof FunctionalPage && $pathRule instanceof \Change\Http\Web\PathRule &&
+			$pathRule->getWebsiteId() ==  $functionalPage->getWebsiteId())
 		{
-			$pathRule = $event->getParam("pathRule");
-			if ($pathRule instanceof \Change\Http\Web\PathRule)
-			{
-				if ($pathRule->getWebsiteId() ==  $functionalPage->getWebsiteId())
+				$functionalPage->setSection($functionalPage->getWebsite());
+				if ($pathRule->getSectionId())
 				{
-					$functionalPage->setSection($functionalPage->getWebsite());
-					if ($pathRule->getSectionId())
+					$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
+					if ($section instanceof Section)
 					{
-						$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($pathRule->getSectionId());
-						if ($section instanceof Section)
-						{
-							$functionalPage->setSection($section);
-						}
+						$functionalPage->setSection($section);
 					}
-					$event->setParam('page', $functionalPage);
-					$event->stopPropagation();
 				}
-			}
+				$event->setParam('page', $functionalPage);
+				$event->stopPropagation();
 		}
 	}
 

@@ -100,6 +100,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		$eventManager->attach(Event::EVENT_CREATED, array($this, 'onDefaultCreated'), 5);
 		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
 		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
+		$eventManager->attach(Event::EVENT_UPDATED, array($this, 'onDefaultUpdated'), 10);
 	}
 
 	/**
@@ -299,5 +300,67 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	public function hasVariants()
 	{
 		return !($this->getVariant()) && $this->getVariantGroup();
+	}
+
+	/**
+	 * @return null|Product
+	 */
+	protected function getRelatedRootProduct()
+	{
+		if ($this->getVariant() && $this->getVariantGroupId())
+		{
+			$variantGroup = $this->getVariantGroup();
+			if ($variantGroup)
+			{
+				return $variantGroup->getRootProduct();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return \Change\Documents\DocumentArrayProperty|\Rbs\Website\Documents\Section[]
+	 */
+	public function getPublicationSections()
+	{
+		$publicationSections = parent::getPublicationSections();
+		if ($publicationSections instanceof \Change\Documents\DocumentArrayProperty && !$publicationSections->count())
+		{
+			$rootProduct = $this->getRelatedRootProduct();
+			if ($rootProduct instanceof Product)
+			{
+				$publicationSections->setDefaultIds($rootProduct->getPublicationSections()->getIds());
+			}
+		}
+		return $publicationSections;
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultUpdated(Event $event)
+	{
+		if ($this !== $event->getDocument())
+		{
+			return;
+		}
+
+		$modifiedPropertyNames = $event->getParam('modifiedPropertyNames');
+		if (is_array($modifiedPropertyNames) && in_array('publicationSections', $modifiedPropertyNames))
+		{
+			if ($this->getVariantGroupId() && !$this->getVariant())
+			{
+				$query = $this->getDocumentManager()->getNewQuery($this->getDocumentModel());
+				$query->andPredicates($query->eq('variantGroup', $this->getVariantGroupId()),
+					$query->neq('id', $this->getId()));
+
+				/** @var $variantProduct Product */
+				foreach ($query->getDocuments() as $variantProduct)
+				{
+					$variantEvent = new Event(Event::EVENT_UPDATED, $variantProduct, ['modifiedPropertyNames' => ['publicationSections']]);
+					$variantProduct->getEventManager()->trigger($variantEvent);
+				}
+			}
+		}
 	}
 }
