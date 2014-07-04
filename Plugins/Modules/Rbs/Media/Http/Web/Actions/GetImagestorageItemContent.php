@@ -15,7 +15,7 @@ use Rbs\Media\Std\Resizer;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * @name \CRbs\Media\Http\Web\Actions\GetImagestorageItemContent
+ * @name \Rbs\Media\Http\Web\Actions\GetImagestorageItemContent
  */
 class GetImagestorageItemContent
 {
@@ -32,22 +32,31 @@ class GetImagestorageItemContent
 		$originalURI = $event->getParam('originalURI');
 		$maxWidth = $event->getParam('maxWidth', 0);
 		$maxHeight = $event->getParam('maxHeight', 0);
-
-		if (!($changeURI instanceof \Zend\Uri\Uri) || !($originalURI instanceof \Zend\Uri\Uri) || !file_exists($originalURI->toString()))
+		if (!($changeURI instanceof \Zend\Uri\Uri) || !($originalURI instanceof \Zend\Uri\Uri))
 		{
 			$event->setResult(new Result(HttpResponse::STATUS_CODE_404));
 			return;
 		}
-		if (!file_exists($changeURI->toString()))
+
+		$originalPath = $originalURI->toString();
+		$path = $changeURI->toString();
+		if (!file_exists($originalPath))
 		{
+			$event->setResult(new Result(HttpResponse::STATUS_CODE_404));
+			return;
+		}
+
+		if (!file_exists($path) || filemtime($path) < filemtime($originalPath))
+		{
+			$event->getApplication()->getLogging()->info(__METHOD__ . ' resize to ' . $path);
 			if ($maxWidth == 0 && $maxHeight == 0)
 			{
-				copy($originalURI->toString(), $changeURI->toString());
+				copy($originalPath, $path);
 			}
 			else
 			{
 				$resizer = new Resizer();
-				$resizer->resize($originalURI->toString(), $changeURI->toString(), $maxWidth, $maxHeight);
+				$resizer->resize($originalPath, $path, $maxWidth, $maxHeight);
 			}
 		}
 		$forwardedAction = new GetStorageItemContent();
