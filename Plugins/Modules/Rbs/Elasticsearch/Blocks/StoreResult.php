@@ -243,6 +243,13 @@ class StoreResult extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		$parameters = $event->getBlockParameters();
+		$indexId = $parameters->getParameter('indexId');
+		if (!$indexId)
+		{
+			return null;
+		}
+
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
 
@@ -250,9 +257,14 @@ class StoreResult extends Block
 		$genericServices = $this->getGenericServices($event);
 		$indexManager = $genericServices->getIndexManager();
 
-		$parameters = $event->getBlockParameters();
+
 		/** @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
-		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('indexId'));
+		$storeIndex = $documentManager->getDocumentInstance($indexId);
+		if (!$storeIndex)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index id: ' . $indexId);
+			return null;
+		}
 
 		$productListId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$productList = null;

@@ -236,6 +236,13 @@ class Facets extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		$parameters = $event->getBlockParameters();
+		$indexId = $parameters->getParameter('indexId');
+		if (!$indexId)
+		{
+			return null;
+		}
+
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
 
@@ -247,12 +254,15 @@ class Facets extends Block
 			return null;
 		}
 
-		$parameters = $event->getBlockParameters();
-
 		$indexManager = $genericServices->getIndexManager();
 
 		/** @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
-		$storeIndex = $documentManager->getDocumentInstance($parameters->getParameter('indexId'));
+		$storeIndex = $documentManager->getDocumentInstance($indexId);
+		if (!$storeIndex)
+		{
+			$applicationServices->getLogging()->warn(__METHOD__ . ': invalid store index id: ' . $indexId);
+			return null;
+		}
 
 		$client = $indexManager->getElasticaClient($storeIndex->getClientName());
 		if (!$client)
