@@ -1201,7 +1201,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		if ($product->getProductSet())
 		{
 			$set = $product->getProductSet();
-			$skuArray = array();
+			$skuArray = [];
 			foreach($set->getProducts() as $subProduct)
 			{
 				if ($onlyPublishedProduct && !$subProduct->published())
@@ -1238,17 +1238,21 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				else
 				{
-					$skuArray = array();
+					$skuArray = [];
 					$products = $this->getProductDescendants($product, true);
 					foreach ($products as $subProduct)
 					{
-						$skuArray[] = $subProduct->getSku();
+						$sku = $subProduct->getSku();
+						if ($sku)
+						{
+							$skuArray[] = $sku;
+						}
 					}
 					return $skuArray;
 				}
 			}
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -1396,8 +1400,13 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
+		if (!$productAxesConfiguration)
+		{
+			return [];
+		}
+
 		// Look for the product with the same values for the first axes and null for the other ones.
-		$descendants = array();
+		$descendants = [];
 		foreach ($variantConfiguration['products'] as $infoProduct)
 		{
 			if ($infoProduct['id'] !== $productAxesConfiguration['id'])
