@@ -255,5 +255,8 @@
 	},
 	"manage_auto_login_token_label":{
 		"message":"gestion des tokens d'autologin"
+	},
+	"change_password_label":{
+		"message":"changement de mot de passe"
 	}
 }
