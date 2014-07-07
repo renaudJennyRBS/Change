@@ -49,8 +49,10 @@ class DisplayDocument
 			$page = $documentEvent->getParam('page');
 			if ($page instanceof Page)
 			{
-				$event->getUrlManager()->setSection($page->getSection());
+				$section = $page->getSection();
+				$event->getUrlManager()->setSection($section);
 				$event->setParam('page', $page);
+				$event->setParam('section', $section);
 			}
 		}
 	}

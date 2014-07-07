@@ -123,6 +123,7 @@ abstract class Section extends \Compilation\Rbs\Website\Documents\Section implem
 				{
 					return;
 				}
+
 				if ($page instanceof FunctionalPage)
 				{
 					$page->setSection($document);

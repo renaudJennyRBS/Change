@@ -65,7 +65,8 @@ class MenuComposer
 			if ($doc instanceof \Rbs\Website\Documents\Section)
 			{
 				$indexPage = $doc->getIndexPage();
-				if ($indexPage instanceof \Change\Documents\Interfaces\Publishable && $indexPage->published())
+				if (($indexPage instanceof \Change\Documents\Interfaces\Publishable && $indexPage->published())
+					|| $indexPage instanceof \Rbs\Website\Documents\FunctionalPage)
 				{
 					$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
 				}

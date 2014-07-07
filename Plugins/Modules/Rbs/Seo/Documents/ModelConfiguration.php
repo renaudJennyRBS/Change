@@ -21,18 +21,35 @@ class ModelConfiguration extends \Compilation\Rbs\Seo\Documents\ModelConfigurati
 
 	public function onUpdated(\Change\Documents\Events\Event $event)
 	{
-		$document = $event->getDocument();
-		/* @var $document \Rbs\Seo\Documents\ModelConfiguration */
-		if ($document->getDocumentSeoAutoGenerate())
+		$modifiedPropertyNames = $event->getParam('modifiedPropertyNames');
+		if (!is_array($modifiedPropertyNames) || !count($modifiedPropertyNames))
 		{
-			$modelConfigurationInfos = [
-				'modelName' => $document->getModelName(),
-				'sitemapDefaultChangeFrequency' => $document->getSitemapDefaultChangeFrequency(),
-				'sitemapDefaultPriority' => $document->getSitemapDefaultPriority()
-			];
+			return;
+		}
 
+		$document = $event->getDocument();
+		if (in_array('modelName', $modifiedPropertyNames) ||
+			in_array('sitemapDefaultChangeFrequency', $modifiedPropertyNames) ||
+			in_array('sitemapDefaultPriority', $modifiedPropertyNames))
+		{
+			/* @var $document \Rbs\Seo\Documents\ModelConfiguration */
+			if ($document->getDocumentSeoAutoGenerate())
+			{
+				$modelConfigurationInfos = [
+					'modelName' => $document->getModelName(),
+					'sitemapDefaultChangeFrequency' => $document->getSitemapDefaultChangeFrequency(),
+					'sitemapDefaultPriority' => $document->getSitemapDefaultPriority()
+				];
+
+				$jm = $event->getApplicationServices()->getJobManager();
+				$jm->createNewJob('Rbs_Seo_DocumentSeoGenerator', $modelConfigurationInfos);
+			}
+		}
+
+		if (in_array('pathTemplate', $modifiedPropertyNames) || in_array('modelName', $modifiedPropertyNames))
+		{
 			$jm = $event->getApplicationServices()->getJobManager();
-			$jm->createNewJob('Rbs_Seo_DocumentSeoGenerator', $modelConfigurationInfos);
+			$jm->createNewJob('Rbs_Website_GeneratePathRulesByModel', ['modelName' => $document->getModelName()]);
 		}
 	}
 }

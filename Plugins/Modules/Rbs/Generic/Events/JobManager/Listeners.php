@@ -98,6 +98,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Mail\Job\SendMail())->execute($event);
 		};
 		$events->attach('process_Rbs_Mail_SendMail', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Website\Job\GeneratePathRulesByModel())->execute($event);
+		};
+		$events->attach('process_Rbs_Website_GeneratePathRulesByModel', $callBack, 5);
 	}
 
 	/**

@@ -33,8 +33,6 @@ class Resolver extends BaseResolver
 		if ($pathRule)
 		{
 			$event->setParam('pathRule', $pathRule);
-			$authorizedSectionId = $pathRule->getSectionId();
-
 			$dm = $event->getApplicationServices()->getDocumentManager();
 			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
 			$event->setParam('document', $document);
@@ -44,16 +42,6 @@ class Resolver extends BaseResolver
 				{
 					return;
 				}
-
-				if (!$authorizedSectionId)
-				{
-					$section = $document->getCanonicalSection($website);
-					$authorizedSectionId = ($section) ? $section->getId() : $pathRule->getWebsiteId();
-				}
-			}
-			elseif (!$authorizedSectionId)
-			{
-				$authorizedSectionId = $pathRule->getWebsiteId();
 			}
 
 			$urlManager = $event->getUrlManager();
@@ -64,7 +52,6 @@ class Resolver extends BaseResolver
 				{
 					return;
 				}
-
 				$queryParameters = $event->getRequest()->getQuery()->toArray();
 				$pathRule->setQueryParameters($queryParameters);
 				$validPathRule = $urlManager->getValidDocumentRule($document, $pathRule);
@@ -77,7 +64,7 @@ class Resolver extends BaseResolver
 				}
 				else
 				{
-					return;
+					$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
 				}
 			}
 
@@ -93,12 +80,21 @@ class Resolver extends BaseResolver
 			}
 			elseif ($pathRule->getHttpStatus() == HttpResponse::STATUS_CODE_200 && $document)
 			{
+				if (!$pathRule->getSectionId() && $document instanceof \Change\Documents\Interfaces\Publishable)
+				{
+					$section = $document->getCanonicalSection($website);
+					if ($section  && !($section instanceof Website))
+					{
+						$pathRule->setSectionId($section->getId());
+					}
+				}
+
 				$action = function ($event)
 				{
-					$action = new DisplayDocument();
-					$action->execute($event);
+					(new DisplayDocument())->execute($event);
 				};
 				$event->setAction($action);
+				$authorizedSectionId = $pathRule->getSectionId() ? $pathRule->getSectionId() : $pathRule->getWebsiteId();
 				$this->setPathRuleAuthorization($event, $authorizedSectionId, $pathRule->getWebsiteId());
 				return;
 			}
