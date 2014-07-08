@@ -52,6 +52,14 @@ class Video extends \Compilation\Rbs\Media\Documents\Video
 	}
 
 	/**
+	 * @return \Change\Storage\ItemInfo|null
+	 */
+	public function getItemInfo()
+	{
+		return $this->getStorageManager()->getItemInfo($this->getPath());
+	}
+
+	/**
 	 * @return null|string
 	 */
 	public function getPublicURL()
@@ -104,6 +112,22 @@ class Video extends \Compilation\Rbs\Media\Documents\Video
 		if ($this->activated())
 		{
 			$event->setParam('downloadUri', $this->getPath());
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultUpdateRestResult(Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		$result = $event->getParam('restResult');
+		/* @var $document Video */
+		$document = $event->getDocument();
+		if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+		{
+			$result->setProperty('publicurl', $document->getPublicURL());
 		}
 	}
 }

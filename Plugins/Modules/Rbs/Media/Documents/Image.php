@@ -80,6 +80,14 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	}
 
 	/**
+	 * @return \Change\Storage\ItemInfo|null
+	 */
+	public function getItemInfo()
+	{
+		return $this->getStorageManager()->getItemInfo($this->getPath());
+	}
+
+	/**
 	 * @param int $maxWidth
 	 * @param int $maxHeight
 	 * @return null|string
