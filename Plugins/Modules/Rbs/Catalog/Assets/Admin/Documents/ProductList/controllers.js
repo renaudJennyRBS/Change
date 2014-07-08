@@ -30,7 +30,8 @@
 					$scope.List = data.List;
 					$scope.productsUrl = data.productsUrl;
 					$scope.productList = data.productList;
-					Navigation.popContext(currentContext);
+					// Done by picker.
+					//Navigation.popContext(currentContext);
 					return;
 				}
 			}
