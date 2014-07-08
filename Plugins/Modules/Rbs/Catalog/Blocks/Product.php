@@ -76,14 +76,11 @@ class Product extends Block
 		if (!$parameters->getParameter('redirectUrl'))
 		{
 			$urlManager = $event->getUrlManager();
-			$oldValue = $urlManager->getAbsoluteUrl();
-			$urlManager->setAbsoluteUrl(true);
 			$uri =  $urlManager->getByFunction('Rbs_Commerce_Cart');
 			if ($uri)
 			{
 				$parameters->setParameterValue('redirectUrl',$uri->normalize()->toString());
 			}
-			$urlManager->setAbsoluteUrl($oldValue);
 		}
 		return $parameters;
 	}

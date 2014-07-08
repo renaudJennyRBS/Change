@@ -34,8 +34,7 @@ class ResetPasswordConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			}
 
 			$urlManager = $event->getUrlManager();
-			$urlManager->setAbsoluteUrl(true);
-			$redirectURL = $urlManager->getByFunction('Rbs_User_ResetPassword', null, ['token' => $token]);
+			$redirectURL = $urlManager->getByFunction('Rbs_User_ResetPassword', ['token' => $token]);
 			$event->setParam('redirectLocation', $redirectURL);
 			$event->setParam('errorLocation', $redirectURL);
 
@@ -84,8 +83,7 @@ class ResetPasswordConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			}
 
 			$urlManager = $event->getUrlManager();
-			$urlManager->setAbsoluteUrl(true);
-			$redirectURL = $urlManager->getByFunction('Rbs_User_ResetPassword', null, ['token' => $token, 'context' => $context]);
+			$redirectURL = $urlManager->getByFunction('Rbs_User_ResetPassword', ['token' => $token, 'context' => $context]);
 			$event->setParam('redirectLocation', $redirectURL);
 			$event->setParam('errorLocation', $redirectURL);
 

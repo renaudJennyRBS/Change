@@ -68,7 +68,7 @@ class MenuComposer
 				if (($indexPage instanceof \Change\Documents\Interfaces\Publishable && $indexPage->published())
 					|| $indexPage instanceof \Rbs\Website\Documents\FunctionalPage)
 				{
-					$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
+					$entry->setUrl($this->urlManager->getCanonicalByDocument($doc));
 				}
 				elseif ($maxLevel < 1)
 				{
@@ -81,7 +81,7 @@ class MenuComposer
 			}
 			else
 			{
-				$entry->setUrl($this->urlManager->getCanonicalByDocument($doc, $website));
+				$entry->setUrl($this->urlManager->getCanonicalByDocument($doc));
 				if ($currentPage === $doc)
 				{
 					$entry->setCurrent(true);

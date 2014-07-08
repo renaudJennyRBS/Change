@@ -122,16 +122,17 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			if ($product)
 			{
 				$urlManager = $event->getUrlManager();
-				$urlManager->setAbsoluteUrl(true);
+				$absoluteUrl = $urlManager->absoluteUrl(true);
 				if ($section instanceof \Change\Presentation\Interfaces\Section)
 				{
 					$url = $urlManager->getByDocument($product, $section, $query);
 				}
 				else
 				{
-					$url = $urlManager->getCanonicalByDocument($product, null, $query);
+					$url = $urlManager->getCanonicalByDocument($product, $query);
 				}
-				$result->setEntry('modalContentUrl', $url->toString());
+				$urlManager->absoluteUrl($absoluteUrl);
+				$result->setEntry('modalContentUrl', $url->normalize()->toString());
 			}
 		}
 		$event->setResult($result);

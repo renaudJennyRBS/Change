@@ -165,10 +165,6 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$applicationServices = $event->getApplicationServices();
 			$application = $event->getApplication();
-			$urlManager = $website->getUrlManager($LCID);
-			$urlManager->setAbsoluteUrl(true);
-			$urlManager->setPathRuleManager($applicationServices->getPathRuleManager());
-
 			$result = new \Change\Http\Web\Result\Page($mail->getCode());
 
 			$mailTemplate = $mail->getTemplate();

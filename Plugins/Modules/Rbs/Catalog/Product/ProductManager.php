@@ -127,7 +127,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 				foreach ($query->getDocuments() as $p)
 				{
 					/* @var $p \Rbs\Catalog\Documents\Product */
-					$url = $urlManager->getCanonicalByDocument($p)->toString();
+					$url = $urlManager->getCanonicalByDocument($p)->normalize()->toString();
 					$row = array('id' => $p->getId(), 'url' => $url);
 					$visual = $p->getFirstVisual();
 					$row['visual'] = $visual ? $visual->getPath() : null;

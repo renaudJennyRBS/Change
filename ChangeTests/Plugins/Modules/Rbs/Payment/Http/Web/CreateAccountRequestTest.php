@@ -53,8 +53,6 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->getNewMail();
 		$i18nManager = $this->getApplicationServices()->getI18nManager();
 		$urlManager = $website->getUrlManager($i18nManager->getLCID());
-		$urlManager->setPathRuleManager($this->getApplicationServices()->getPathRuleManager());
-		$urlManager->setAbsoluteUrl(true);
 
 		$event = new \Change\Http\Web\Event();
 		$event->setParams($this->getDefaultEventArguments());

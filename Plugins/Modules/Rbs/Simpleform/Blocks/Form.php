@@ -141,10 +141,10 @@ class Form extends Block
 				// Success URL.
 				if ($form->getConfirmationMode() == 'page' && $form->getConfirmationPage())
 				{
-					$absoluteUrl = $event->getUrlManager()->getAbsoluteUrl();
-					$event->getUrlManager()->setAbsoluteUrl(true);
-					$attributes['successURL'] = $event->getUrlManager()->getCanonicalByDocument($form->getConfirmationPage());
-					$event->getUrlManager()->setAbsoluteUrl($absoluteUrl);
+					$urlManager = $event->getUrlManager();
+					$absoluteUrl = $urlManager->absoluteUrl(true);
+					$attributes['successURL'] = $urlManager->getCanonicalByDocument($form->getConfirmationPage());
+					$urlManager->absoluteUrl($absoluteUrl);
 				}
 
 				// Cross Site Request Forgery prevention.

@@ -104,8 +104,7 @@ class DeferredConnectorReturnSuccess extends \Change\Http\Web\Actions\AbstractAj
 		{
 			$params = array('transactionId' => $transaction->getId());
 			$urlManager = $website->getUrlManager($LCID);
-			$urlManager->setPathRuleManager($pathRuleManager);
-			$uri = $urlManager->getByFunction($function, $website, $params, $LCID);
+			$uri = $urlManager->getByFunction($function, $params, $LCID);
 			if ($uri)
 			{
 				return $uri->normalize()->toString();

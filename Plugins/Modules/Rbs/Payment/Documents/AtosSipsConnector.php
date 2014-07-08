@@ -80,8 +80,6 @@ class AtosSipsConnector extends \Compilation\Rbs\Payment\Documents\AtosSipsConne
 			if ($transaction instanceof Transaction)
 			{
 				$urlManager = $httpEvent->getUrlManager();
-				$oldAbsoluteUrl = $urlManager->getAbsoluteUrl();
-				$urlManager->setAbsoluteUrl(true);
 
 				$httpInfos = $event->getParam('httpInfos', []);
 				$requestForm = new \Rbs\Payment\AtosSips\Request();
@@ -101,7 +99,6 @@ class AtosSipsConnector extends \Compilation\Rbs\Payment\Documents\AtosSipsConne
 				$requestForm->setAutomaticResponseUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId(), 'automatic' => 1]));
 				$requestForm->setCancelReturnUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId()]));
 
-				$urlManager->setAbsoluteUrl($oldAbsoluteUrl);
 				list ($stat, $error, $buffer) = $requestForm->encodeRequest();
 				if (intval($stat) === 0)
 				{

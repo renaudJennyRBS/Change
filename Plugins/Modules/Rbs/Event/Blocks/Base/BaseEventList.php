@@ -125,11 +125,11 @@ abstract class BaseEventList extends \Change\Presentation\Blocks\Standard\Block
 		{
 			if ($contextualUrls)
 			{
-				$url = $urlManager->getByDocument($document, $section)->toString();
+				$url = $urlManager->getByDocument($document, $section)->normalize()->toString();
 			}
 			else
 			{
-				$url = $urlManager->getCanonicalByDocument($document)->toString();
+				$url = $urlManager->getCanonicalByDocument($document)->normalize()->toString();
 			}
 			$item = array('url' => $url, 'doc' => $document);
 			$item['type'] = ($document instanceof \Rbs\Event\Documents\Event) ? 'event' : 'news';
@@ -156,11 +156,11 @@ abstract class BaseEventList extends \Change\Presentation\Blocks\Standard\Block
 				{
 					if ($contextualCategoryUrls)
 					{
-						$url = $urlManager->getByDocument($category, $section)->toString();
+						$url = $urlManager->getByDocument($category, $section)->normalize()->toString();
 					}
 					else
 					{
-						$url = $urlManager->getCanonicalByDocument($category)->toString();
+						$url = $urlManager->getCanonicalByDocument($category)->normalize()->toString();
 					}
 					$categoriesInfos[] = array('url' => $url, 'doc' => $category);
 				}
