@@ -1,0 +1,32 @@
+{
+	"bytes":{
+		"message":"octets"
+	},
+	"bytes_abbr":{
+		"message":"octets"
+	},
+	"kilobytes":{
+		"message":"kilo-octets"
+	},
+	"kilobytes_abbr":{
+		"message":"Ko"
+	},
+	"megabytes":{
+		"message":"méga-octets"
+	},
+	"megabytes_abbr":{
+		"message":"Mo"
+	},
+	"gigabytes":{
+		"message":"giga-octets"
+	},
+	"gigabytes_abbr":{
+		"message":"Go"
+	},
+	"terabytes":{
+		"message":"tera-octets"
+	},
+	"terabytes_abbr":{
+		"message":"To"
+	}
+}

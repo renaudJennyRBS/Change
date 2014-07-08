@@ -48,7 +48,24 @@ class GetI18nPackage
 			else
 			{
 				$modules = $event->getApplicationServices()->getPluginManager()->getModules();
-				$result = [];
+
+				// Core.
+				foreach (['filesize'] as $subPackage)
+				{
+					$packageName = implode('.', ['c', $subPackage]);
+					$keys = $i18nManager->getTranslationsForPackage($packageName, $LCID);
+					if (is_array($keys))
+					{
+						$package = array();
+						foreach ($keys as $key => $value)
+						{
+							$package[$key] = $value;
+						}
+						$packages[$packageName] = $package;
+					}
+				}
+
+				// Modules.
 				foreach ($modules as $module)
 				{
 					if ($module->isAvailable())

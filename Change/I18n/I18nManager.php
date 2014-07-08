@@ -463,6 +463,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	// Events.
+
 	/**
 	 * @return string
 	 */
@@ -713,6 +714,53 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 		return $localDate->setTimezone($this->getTimeZone());
 	}
 
+	// File size.
+
+	/**
+	 * @param string $LCID
+	 * @param string $fileSize
+	 * @param string[] $formatters
+	 * @return string
+	 */
+	public function formatFileSize($LCID, $fileSize, $formatters = array())
+	{
+		$units = ['bytes', 'kilobytes', 'megabytes', 'gigabytes', 'terabytes'];
+		$value = $fileSize;
+		$unitIndex = 0;
+		while ($value >= 1024 && $unitIndex < count($units))
+		{
+			$unitIndex++;
+			$value /= 1024.0;
+		}
+
+		$unitLabel = $this->transForLCID($LCID, 'c.filesize.' . $units[$unitIndex]);
+		$unitAbbr = $this->transForLCID($LCID, 'c.filesize.' . $units[$unitIndex] . '_abbr');
+		if ($unitLabel == $unitAbbr)
+		{
+			$text = intval($value) . ' ' . $unitAbbr;
+		}
+		else
+		{
+			$text = intval($value) . ' <abbr title="' . $this->transformUcf($unitLabel, $LCID) . '">' . $unitAbbr . '</abbr>';
+		}
+
+		if (count($formatters))
+		{
+			$text = $this->dispatchFormatting($text, $formatters, $LCID);
+		}
+		return $text;
+	}
+
+	/**
+	 * @param string $fileSize
+	 * @param string[] $formatters
+	 * @return string
+	 */
+	public function transFileSize($fileSize, $formatters = array())
+	{
+		return $this->formatFileSize($this->getLCID(), $fileSize, $formatters);
+	}
+
 	// Transformers.
 
 	/**
@@ -837,6 +885,8 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		return $text . '...';
 	}
+
+	// I18n files compilation.
 
 	public function removeCompiledCoreI18nFiles()
 	{
