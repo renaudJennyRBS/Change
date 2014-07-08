@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 namespace Rbs\Admin;
+
 use Change\Documents\Interfaces\Editable;
 use Change\Presentation\RichText\ParserInterface;
 
@@ -23,7 +24,8 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	public function parse($rawText, $context)
 	{
 		//replace @xxx and @+xxx by a linked user or user group if exist.
-		$rawText = preg_replace_callback('/\B(@\+?)([a-z0-9_\-]+)/i', function ($matches){
+		$rawText = preg_replace_callback('/\B(@\+?)([a-z0-9_\-]+)/i', function ($matches)
+		{
 			//                                1111  222222222222
 			$model = 'Rbs_User_User';
 			if ($matches[1] === '@+')
@@ -40,24 +42,25 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 
 			if ($result)
 			{
-				return '['. $matches[1] . $matches[2] . '](' . $result->getId() . ',public-profile "' . $matches[1] . $matches[2] . '")';
+				return '[' . $matches[1] . $matches[2] . '](' . $result->getId() . ',public-profile "' . $matches[1] . $matches[2]
+				. '")';
 			}
 			return $matches[1] . $matches[2];
 		}, $rawText);
 
 		//replace #xxx by a linked resource if exist.
-		$rawText = preg_replace_callback('/\B(#)(\d+)\b/', function ($matches){
+		$rawText = preg_replace_callback('/\B(#)(\d+)\b/', function ($matches)
+		{
 			//                                1  222
 			$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($matches[2]);
 			if ($document)
 			{
-				return '['. $matches[1] . $matches[2] . '](' . $document->getId() . ' "' . $matches[1] . $matches[2] . '")';
+				return '[' . $matches[1] . $matches[2] . '](' . $document->getId() . ' "' . $matches[1] . $matches[2] . '")';
 			}
 			return $matches[1] . $matches[2];
 		}, $rawText);
 		return $this->transform($rawText);
 	}
-
 
 	/**
 	 * @param $matches
@@ -65,7 +68,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 	 */
 	protected function _doAnchors_inline_callback($matches)
 	{
-		$link_text  = $this->runSpanGamut($matches[2]);
+		$link_text = $this->runSpanGamut($matches[2]);
 		$url = $matches[3] == '' ? $matches[4] : $matches[3];
 		$params = array();
 		if (!preg_match('/^(\d+)(,([a-z]{2}_[A-Z]{2}))?(,([a-z0-9\-_]+))?$/i', $url, $params))
@@ -85,7 +88,8 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 			return $this->hashPart('<span class="label label-important">Invalid Document: ' . $url . '</span>');
 		}
 
-		$result = '<a href rbs-document-popover rbs-document-href="' . $document->getDocumentModelName() . ',' . $document->getId();
+		$result =
+			'<a href rbs-document-popover rbs-document-href="' . $document->getDocumentModelName() . ',' . $document->getId();
 		if ($lcid)
 		{
 			$result .= ',' . $lcid;
@@ -97,7 +101,7 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		$result .= '"';
 
 		$link_text = $this->runSpanGamut($link_text);
-		if (! $link_text && $document instanceof Editable)
+		if (!$link_text && $document instanceof Editable)
 		{
 			/* @var $document Editable */
 			$link_text = $document->getLabel();
@@ -106,5 +110,4 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 
 		return $this->hashPart($result);
 	}
-
 }

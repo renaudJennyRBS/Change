@@ -1,5 +1,4 @@
 (function ($) {
-
 	"use strict";
 
 	var app = angular.module('RbsChange'),
@@ -328,7 +327,8 @@
 
 		return {
 			restrict: 'E',
-			template: '<select class="form-control" ng-model="block" ng-required="required" ng-options="block.label group by block.plugin for block in blocks"></select>',
+			template: '<select class="form-control" data-ng-model="block" data-ng-required="required"' +
+				'data-ng-options="block.label group by block.plugin for block in blocks"></select>',
 			scope: { block: '=', selected: '@', required: '@' },
 
 			link: function (scope, element, attrs) {
