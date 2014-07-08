@@ -726,11 +726,8 @@
 	"redo":{
 		"message":"rétablir"
 	},
-	"insert_picture":{
-		"message":"insérer une image"
-	},
-	"select_picture":{
-		"message":"Sélectionner une image à insérer dans l'éditeur ci-dessous"
+	"insert_media":{
+		"message":"insérer un média (image, vidéo ou fichier à télécharger)"
 	},
 	"insert_internal_link":{
 		"message":"insérer un lien interne"
@@ -738,20 +735,8 @@
 	"insert_external_link":{
 		"message":"insérer un lien externe"
 	},
-	"select_document_to_link":{
-		"message":"Sélectionner un document à lier dans l'éditeur ci-dessous"
-	},
-	"insert_user":{
-		"message":"insérer un utilisateur"
-	},
-	"select_user":{
-		"message":"Sélectionner un utilisateur à insérer dans l'éditeur ci-dessous"
-	},
-	"insert_usergroup":{
-		"message":"insérer un groupe d'utilisateurs"
-	},
-	"select_usergroup":{
-		"message":"Sélectionner un groupe d'utilisateurs à insérer dans l'éditeur ci-dessous"
+	"insert_mention":{
+		"message":"mentionner un utilisateur ou groupe"
 	},
 	"years":{
 		"message":"années"
@@ -1323,8 +1308,14 @@
 	"input_method_show_descriptions":{
 		"message":"afficher les descriptions"
 	},
-	"wysiwyg_blocks":{
+	"richtext_blocks":{
 		"message":"blocs"
+	},
+	"richtext_blocks_titles":{
+		"message":"titres"
+	},
+	"richtext_blocks_others":{
+		"message":"autres"
 	},
 	"wysiwyg_lists":{
 		"message":"listes"
@@ -1415,6 +1406,27 @@
 	},
 	"wysiwyg_enter_image_height":{
 		"message":"hauteur de l'image (laisser vide pour ne pas choisir)"
+	},
+	"wysiwyg_image_title":{
+		"message":"double-cliquez sur l'image pour fixer ses dimensions"
+	},
+	"wysiwyg_video_title":{
+		"message":"double-cliquez sur la vidéo pour fixer ses dimensions"
+	},
+	"richtext_select_media":{
+		"message":"choisissez le(s) média(s) à insérer"
+	},
+	"richtext_select_publishable_document":{
+		"message":"choisissez le(s) document(s) à lier"
+	},
+	"richtext_select_mentionable_document":{
+		"message":"choisissez le(s) groupe(s) ou utilisateur(s) à mentionner"
+	},
+	"richtext_button_insert":{
+		"message":"insérer"
+	},
+	"richtext_button_cancel_insertion":{
+		"message":"annuler l'insertion"
 	},
 	"tasks":{
 		"message":"tâches"

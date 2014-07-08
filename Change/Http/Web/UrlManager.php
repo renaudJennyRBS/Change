@@ -171,7 +171,7 @@ class UrlManager extends \Change\Http\UrlManager
 		{
 			return $this;
 		}
-		$key = $website->getId() .'/' . $LCID;
+		$key = $website->getId() . '/' . $LCID;
 		if (!isset($this->webUrlManagers[$key]))
 		{
 			$this->webUrlManagers[$key] = $website->getUrlManager($LCID);
@@ -225,7 +225,6 @@ class UrlManager extends \Change\Http\UrlManager
 		{
 			throw new \InvalidArgumentException('Argument 2 should be a Section or a Website', 999999);
 		}
-
 
 		if ($query instanceof \ArrayObject)
 		{
@@ -324,7 +323,7 @@ class UrlManager extends \Change\Http\UrlManager
 
 		if ($website === null)
 		{
-			$website =  $this->getWebsite();
+			$website = $this->getWebsite();
 		}
 
 		if ($website instanceof AbstractDocument)
@@ -358,9 +357,16 @@ class UrlManager extends \Change\Http\UrlManager
 		$websiteId = $website->getId();
 		$documentId = is_numeric($document) ? intval($document) : $document->getId();
 		$sectionId = $section ? $section->getId() : null;
-		if ($sectionId && $sectionId == $websiteId) {
+		if ($sectionId && $sectionId == $websiteId)
+		{
 			$sectionId = null;
 		}
+
+		if (!($this->getPathRuleManager() instanceof \Change\Http\Web\PathRuleManager))
+		{
+			throw new \LogicException('No PathRuleManager set!');
+		}
+
 		$pathRules = $this->getPathRuleManager()->findPathRules($websiteId, $LCID, $documentId, $sectionId);
 		if (count($pathRules))
 		{

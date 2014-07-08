@@ -1,0 +1,63 @@
+<div data-ng-show="!showChooseDetails">
+	<h4>
+		{{ i18n('m.rbs.admin.admin.choose_input_method', ['ucf']) }}
+	</h4>
+	<div class="btn-toolbar">
+		<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Html')">
+			{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_button', ['ucf']) }}
+		</button>
+		<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Markdown')">
+			{{ i18n('m.rbs.admin.admin.input_method_markdown_button', ['ucf']) }}
+		</button>
+
+		<div class="pull-right">
+			<button class="btn btn-info btn-sm" type="button" data-ng-click="showChooseDetails = true">
+				<i class="icon-info-sign"></i>
+				{{ i18n('m.rbs.admin.admin.input_method_show_descriptions', ['ucf']) }}
+			</button>
+		</div>
+	</div>
+</div>
+<div data-ng-show="showChooseDetails">
+	<h4>
+		{{ i18n('m.rbs.admin.admin.choose_input_method', ['ucf']) }}
+	</h4>
+	<div class="row" data-ng-show="showChooseDetails">
+		<div class="col-md-6">
+			<div class="thumbnail text-center">
+				<img src="/Assets/Rbs/Admin/img/wysiwyg.png"/>
+				<div class="caption">
+					<h3>{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_title', ['ucf']) }}</h3>
+					<p>
+						{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_description', ['ucf'], { OPEN_TAG: '<em>', CLOSE_TAG: '</em>'}) | raw }}
+					</p>
+					<p>
+						<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Html')">
+							{{ i18n('m.rbs.admin.admin.input_method_wysiwyg_button', ['ucf']) }}
+						</button>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="thumbnail text-center">
+				<img src="/Assets/Rbs/Admin/img/markdown.png"/>
+				<div class="caption">
+					<h3>{{ i18n('m.rbs.admin.admin.input_method_markdown_title', ['ucf']) }}</h3>
+					<p>
+						{{ i18n('m.rbs.admin.admin.input_method_markdown_description', ['ucf'], { OPEN_TAG: '<em><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank">', CLOSE_TAG: '</a></em>'}) | raw }}
+					</p>
+					<p>
+						<button class="btn btn-primary btn-sm" type="button" data-ng-click="chooseEditorMode('Markdown')">
+							{{ i18n('m.rbs.admin.admin.input_method_markdown_button', ['ucf']) }}
+						</button>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<p><small><strong class="text-danger">
+	<i class="icon-warning-sign"></i> {{ i18n('m.rbs.admin.admin.input_method_warning', ['ucf']) }}
+</strong></small></p>

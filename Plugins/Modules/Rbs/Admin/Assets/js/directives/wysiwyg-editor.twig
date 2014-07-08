@@ -20,7 +20,32 @@
 		</div>
 	</div>
 
-	<div class="btn-group" data-ng-repeat="group in toolbarConfig" data-caption="(= group.label =)">
+	<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.richtext_blocks', ['ucf']) }}">
+		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+			{{ i18nAttr('m.rbs.admin.admin.richtext_blocks', ['ucf']) }} <span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" data-role="menu">
+			<li class="dropdown-header">
+				{{ i18n('m.rbs.admin.admin.richtext_blocks_titles', ['ucf']) }}
+			</li>
+			<li data-ng-repeat="tool in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']">
+				<a tabindex="-1" href="javascript:;" data-ng-click="runTool(tool)">
+					<i class="icon-ok dropdown-item-icon" data-ng-if="toolIsActive(tool)"></i> (= getButtonTooltip(tool) =)
+				</a>
+			</li>
+			<li class="divider"></li>
+			<li class="dropdown-header">
+				{{ i18n('m.rbs.admin.admin.richtext_blocks_others', ['ucf']) }}
+			</li>
+			<li data-ng-repeat="tool in ['p', 'blockquote', 'pre']">
+				<a tabindex="-1" href="javascript:;" data-ng-click="runTool(tool)">
+					<i class="icon-ok dropdown-item-icon" data-ng-if="toolIsActive(tool)"></i> (= getButtonTooltip(tool) =)
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="btn-group" data-ng-repeat="group in toolbarConfig" data-ng-show="group.label" data-caption="(= group.label =)">
 		<button type="button" class="btn btn-default btn-sm btn-icon" data-ng-repeat="tool in group.tools"
 			title="(= getButtonTooltip(tool) =)" data-ng-bind-html="getButtonLabel(tool)"
 			data-ng-class="{'active': toolIsActive(tool)}" data-ng-disabled="sourceView"

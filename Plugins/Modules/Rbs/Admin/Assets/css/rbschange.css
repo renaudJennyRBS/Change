@@ -99,6 +99,12 @@ body {
 	line-height: 20px;
 }
 
+.dropdown-menu > li .dropdown-item-icon {
+	left: 0;
+	margin: 3px;
+	position: absolute;
+}
+
 .form-inline .form-control {
 	width: auto;
 }
@@ -684,4 +690,10 @@ pre {
 	background-color: #E8E8E8;
 	background-image: linear-gradient(to bottom, #F5F5F5 0%, #E8E8E8 100%);
 	background-repeat: repeat-x;
+}
+
+rbs-uploader .img-thumbnail {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
 }

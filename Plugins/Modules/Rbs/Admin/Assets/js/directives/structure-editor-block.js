@@ -104,8 +104,10 @@
 			"scope": {}, // isolated scope is required
 			"require": '^rbsStructureEditor',
 			"replace": true,
-			"template": '<div draggable="true" class="block btn btn-block btn-settings break-word block-draggable block-handle" ng-click="selectBlock($event)">' +
-				'<i class="icon-th-large"></i> <span ng-bind-html="item.label"></span><div><small>(= item.parameters | json =)</small></div>' +
+			"template": '<div draggable="true" class="block btn btn-block btn-settings break-word block-draggable block-handle"' +
+				'data-ng-click="selectBlock($event)">' +
+				'<i class="icon-th-large"></i> <span data-ng-bind-html="item.label"></span>' +
+				'<div><small>(= item.parameters | json =)</small></div>' +
 				'</div>',
 
 			"link": function seBlockTemplateLinkFn(scope, element, attrs, ctrl) {
@@ -134,11 +136,15 @@
 			"require": '^rbsStructureEditor',
 			"transclude": true,
 			"replace": true,
-			"template": '<div class="block block-draggable" ng-click="selectBlock($event)"><rbs-rich-text-input data-draggable="true" ng-readonly="readonly" use-tabs="false" ng-model="input.text" profile="(= profile =)" substitution-variables="(= substitutionVariables =)"></rbs-rich-text-input></div>',
+			"template": '<div class="block block-draggable" data-ng-click="selectBlock($event)">' +
+				'<rbs-rich-text-input data-draggable="true" ng-readonly="readonly" use-tabs="false" ng-model="input.text"' +
+				' profile="(= profile =)" substitution-variables="(= substitutionVariables =)"' +
+				'data-context-key="(= contextKey =)"></rbs-rich-text-input></div>',
 
 			"link": function seRichTextLinkFn(scope, element, attrs, ctrl) {
 				element.attr('block-label', "Markdown");
 				element.attr('block-type', "rich-text");
+				scope.contextKey = 'block_' + attrs.id + '_richtext';
 
 				scope.initItem = function (item) {
 					item.parameters = {

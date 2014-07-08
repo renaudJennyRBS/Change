@@ -200,3 +200,9 @@
 .grid-list-align-middle > li {
 	vertical-align: middle;
 }
+
+/* Richtext */
+.richtext img,
+.richtext video {
+	max-width: 100%;
+}
