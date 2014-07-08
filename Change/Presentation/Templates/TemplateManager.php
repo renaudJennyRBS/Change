@@ -104,16 +104,13 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->extensions === null)
 		{
+			$this->extensions = [];
 			$em = $this->getEventManager();
 			$arguments = $em->prepareArgs(array('extensions' => new \ArrayObject()));
-			$this->getEventManager()->trigger('registerExtensions', $this, $arguments);
+			$this->getEventManager()->trigger(static::EVENT_REGISTER_EXTENSIONS, $this, $arguments);
 			if ($arguments['extensions'] instanceof \ArrayObject)
 			{
 				$this->extensions = $arguments['extensions']->getArrayCopy();
-			}
-			else
-			{
-				$this->extensions = array();
 			}
 		}
 		return $this->extensions;
