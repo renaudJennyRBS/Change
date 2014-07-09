@@ -250,4 +250,28 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 			return $this->getWorkspace()->pluginsThemesPath($themeVendor, $shortThemeName, 'Assets', $resourcePath);
 		}
 	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
+	{
+		parent::onDefaultUpdateRestResult($event);
+
+		$document = $event->getDocument();
+		if (!$document instanceof Theme)
+		{
+			return;
+		}
+
+		$restResult = $event->getParam('restResult');
+		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+		{
+			$restResult->removeRelAction('delete');
+		}
+		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+		{
+			$restResult->removeRelAction('delete');
+		}
+	}
 }

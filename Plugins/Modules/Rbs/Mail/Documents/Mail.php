@@ -55,14 +55,29 @@ class Mail extends \Compilation\Rbs\Mail\Documents\Mail implements \Change\Prese
 	}
 
 	/**
-	 * @throws \RuntimeException
-	 * @throws \Exception
+	 * @param \Change\Documents\Events\Event $event
 	 */
-	protected function onDelete()
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		if (!$this->getIsVariation())
+		parent::onDefaultUpdateRestResult($event);
+
+		$document = $event->getDocument();
+		if (!$document instanceof Mail)
 		{
-			throw new \RuntimeException('can not delete an original mail', 999999);
+			return;
+		}
+
+		if (!$document->getIsVariation())
+		{
+			$restResult = $event->getParam('restResult');
+			if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+			{
+				$restResult->removeRelAction('delete');
+			}
+			elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+			{
+				$restResult->removeRelAction('delete');
+			}
 		}
 	}
 }

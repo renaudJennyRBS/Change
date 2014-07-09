@@ -113,14 +113,29 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 	}
 
 	/**
-	 * @throws \RuntimeException
-	 * @throws \Exception
+	 * @param \Change\Documents\Events\Event $event
 	 */
-	protected function onDelete()
+	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
-		if ($this->getLocked())
+		parent::onDefaultUpdateRestResult($event);
+
+		$document = $event->getDocument();
+		if (!$document instanceof Collection)
 		{
-			throw new \RuntimeException('can not delete locked collection', 999999);
+			return;
+		}
+
+		if ($document->getLocked())
+		{
+			$restResult = $event->getParam('restResult');
+			if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+			{
+				$restResult->removeRelAction('delete');
+			}
+			elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+			{
+				$restResult->removeRelAction('delete');
+			}
 		}
 	}
 
