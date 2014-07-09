@@ -1,11 +1,14 @@
-<div class="btn-group btn-block" style="margin-bottom: 10px">
-	<button type="button" class="btn dropdown-toggle btn-block" data-toggle="dropdown" ng-class="{true: 'btn-default', false: 'btn-info'}[missingTranslations]">
+<div class="btn-group btn-block" style="margin-bottom: 15px;" data-ng-show="rbsI18nItems.length">
+	<button type="button" class="btn dropdown-toggle btn-block" data-toggle="dropdown"
+		data-ng-class="{true: 'btn-default', false: 'btn-info'}[missingTranslations]">
 		(= rbsI18nItems.length | number =) {{ i18n('m.rbs.admin.adminjs.translations') }} ((= currentLCID =)) <span class="caret"></span>
 	</button>
 	<ul class="dropdown-menu pull-right" role="menu">
-		<li ng-repeat="item in rbsI18nItems"><a rbs-url-match-class="" href="javascript:;" ng-href="(= item.url =)" class="(= item.cssClass =)">
-				<span ng-if="item.badge" class="badge pull-right" ng-bind="item/badge"></span>
-				<i ng-if="item.icon" class="(= item.icon =)"></i> <span ng-bind-html="item.text"></span>
-			</a></li>
+		<li data-ng-repeat="item in rbsI18nItems">
+			<a data-rbs-url-match-class="" href="javascript:;" data-ng-href="(= item.url =)" class="(= item.cssClass =)">
+				<span data-ng-if="item.badge" class="badge pull-right" data-ng-bind="item/badge"></span>
+				<i data-ng-if="item.icon" class="(= item.icon =)"></i> <span data-ng-bind-html="item.text"></span>
+			</a>
+		</li>
 	</ul>
 </div>

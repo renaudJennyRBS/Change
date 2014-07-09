@@ -170,7 +170,7 @@
 
 		return {
 			restrict : 'E',
-			replace  : true,
+			replace  : false,
 			scope    : {'document': '='},
 			templateUrl : 'Rbs/Tag/rbs-aside-tag-selector.twig',
 
