@@ -9,6 +9,7 @@
 namespace Change\Http\Rest\V1\Resources;
 
 use Change\Http\Rest\V1\Link;
+use Change\Http\Rest\V1\Links;
 
 /**
  * @name \Change\Http\Rest\V1\Resources\DocumentLink
@@ -34,6 +35,11 @@ class DocumentLink extends Link
 	protected $LCID;
 
 	/**
+	 * @var Links
+	 */
+	protected $actions = array();
+
+	/**
 	 * @var array
 	 */
 	protected $properties;
@@ -47,6 +53,7 @@ class DocumentLink extends Link
 	public function __construct(\Change\Http\UrlManager $urlManager, \Change\Documents\AbstractDocument $document,
 		$action = self::MODE_LINK, $extraColumns = array())
 	{
+		$this->actions = new Links();
 		$this->document = $document;
 		$this->mode = $action;
 		if ($document instanceof \Change\Documents\Interfaces\Localizable)
@@ -118,6 +125,71 @@ class DocumentLink extends Link
 	public function getModelName()
 	{
 		return $this->document->getDocumentModelName();
+	}
+
+	/**
+	 * @param array|\Change\Http\Rest\V1\Links $actions
+	 */
+	public function setActions($actions)
+	{
+		if ($actions instanceof Links)
+		{
+			$this->actions = $actions;
+		}
+		elseif (is_array($actions))
+		{
+			$this->actions->exchangeArray($actions);
+		}
+	}
+
+	/**
+	 * @return \Change\Http\Rest\V1\Links
+	 */
+	public function getActions()
+	{
+		return $this->actions;
+	}
+
+	/**
+	 * @param string $rel
+	 * @return \Change\Http\Rest\V1\Link|array
+	 */
+	public function getRelAction($rel)
+	{
+		return $this->actions[$rel];
+	}
+
+	/**
+	 * @param \Change\Http\Rest\V1\Link|array $link
+	 */
+	public function addAction($link)
+	{
+		$this->actions[] = $link;
+	}
+
+	/**
+	 * @param string $rel
+	 * @param string|array|\Change\Http\Rest\V1\Link $link
+	 */
+	public function addRelAction($rel, $link)
+	{
+		$this->actions[$rel] = $link;
+	}
+
+	/**
+	 * @param string $rel
+	 */
+	public function removeRelAction($rel)
+	{
+		foreach ($this->actions as $index => $action)
+		{
+			/* @var $action \Change\Http\Rest\V1\Link */
+			if ($action->getRel() == 'delete')
+			{
+				$this->actions->offsetUnset($index);
+				break;
+			}
+		}
 	}
 
 	/**
@@ -205,6 +277,12 @@ class DocumentLink extends Link
 				{
 					$result[$name] = $this->convertToArray($value);
 				}
+			}
+
+			$actions = $this->getActions();
+			if ($actions->count())
+			{
+				$result['actions'] = $actions->toArray();
 			}
 		}
 		return $result;

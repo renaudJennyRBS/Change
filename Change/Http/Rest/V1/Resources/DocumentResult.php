@@ -173,6 +173,22 @@ class DocumentResult extends Result
 	}
 
 	/**
+	 * @param string $rel
+	 */
+	public function removeRelAction($rel)
+	{
+		foreach ($this->actions as $index => $action)
+		{
+			/* @var $action \Change\Http\Rest\V1\Link */
+			if ($action->getRel() == 'delete')
+			{
+				$this->actions->offsetUnset($index);
+				break;
+			}
+		}
+	}
+
+	/**
 	 * @param array $properties
 	 */
 	public function setProperties($properties)
@@ -311,6 +327,10 @@ class DocumentResult extends Result
 		return $this->urlManager;
 	}
 
+	/**
+	 * @param bool $includeLang
+	 * @return null|string
+	 */
 	public function getBaseUrl($includeLang = false)
 	{
 		$baseUrl = null;
