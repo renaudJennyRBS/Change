@@ -181,5 +181,47 @@
 	},
 	"no_token":{
 		"message":"Aucun appareil en connexion automatique"
+	},
+	"change_password_success":{
+		"message":"nouveau mot de passe enregistré et activé"
+	},
+	"current_password":{
+		"message":"ancien mot de passe"
+	},
+	"current_password_placeholder":{
+		"message":"votre ancien mot de passe"
+	},
+	"new_password":{
+		"message":"nouveau mot de passe"
+	},
+	"confirm_new_password":{
+		"message":"confirmez le nouveau mot de passe"
+	},
+	"new_password_placeholder":{
+		"message":"votre nouveau mot de passe"
+	},
+	"submit_change_password":{
+		"message":"enregistrer le mot de passe"
+	},
+	"error_empty_current_password":{
+		"message":"l'ancien mot de passe est vide."
+	},
+	"error_empty_new_password":{
+		"message":"le nouveau mot de passe est vide."
+	},
+	"authentication_required":{
+		"message":"authentification requise"
+	},
+	"user_not_found":{
+		"message":"utilisateur inconnu"
+	},
+	"change_password_failed":{
+		"message":"le mot de passe n'a pas pu être mis à jour. Merci de réessayer."
+	},
+	"current_password_not_match":{
+		"message":"l'ancien mot de passe ne correspond pas."
+	},
+	"change_your_password":{
+		"message":"Modifier votre mot de passe"
 	}
 }
