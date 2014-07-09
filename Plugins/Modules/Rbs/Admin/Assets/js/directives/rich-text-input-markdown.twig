@@ -1,0 +1,160 @@
+<div class="tabbable">
+	<ul data-ng-show="useTabs" class="nav nav-tabs" style="margin-bottom: 0">
+		<li class="active">
+			<a href="javascript:;" data-role="editor" data-target="#rbsInputMarkdown(=editorId=)TabEditor" data-toggle="tab">
+				{{ i18n('m.rbs.admin.admin.editor', ['ucf']) }}
+			</a>
+		</li>
+		<li>
+			<a href="javascript:;" data-role="preview" data-target="#rbsInputMarkdown(=editorId=)TabPreview" data-toggle="tab">
+				{{ i18n('m.rbs.admin.admin.preview', ['ucf']) }}
+				<span data-ng-if="previewing"><i class="icon-spinner icon-spin"></i></span>
+			</a>
+		</li>
+	</ul>
+	<div class="tab-content">
+		<div class="tab-pane active" id="rbsInputMarkdown(=editorId=)TabEditor">
+			<div class="btn-toolbar btn-toolbar-richtext" data-ng-if="! readOnly">
+				<div class="pull-right">
+					<div class="btn-group" data-caption="">
+						<button type="button" class="btn btn-sm btn-info btn-icon"
+							title="{{ i18nAttr('m.rbs.admin.admin.markdown_help', ['ucf']) }}" data-ng-click="openHelp()">
+							<i class="icon-info-sign"></i>
+						</button>
+					</div>
+
+					<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_tools', ['ucf']) }}">
+						<button type="button" data-ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon"
+							data-ng-click="mdUndo()" title="{{ i18nAttr('m.rbs.admin.admin.undo', ['ucf']) }}">
+							<i class="icon-undo"></i>
+						</button>
+						<button type="button" data-ng-disabled="useTextarea" class="btn btn-default btn-sm btn-icon"
+							data-ng-click="mdRedo()" title="{{ i18nAttr('m.rbs.admin.admin.redo', ['ucf']) }}">
+							<i class="icon-repeat"></i>
+						</button>
+						<button data-ng-if="!useTabs" type="button" class="btn btn-default btn-sm btn-icon"
+							data-ng-click="preview()" title="{{ i18nAttr('m.rbs.admin.admin.preview', ['ucf']) }}">
+							<i class="icon-eye-open"></i>
+						</button>
+					</div>
+
+					<div class="btn-group" data-caption="" data-ng-if="draggable">
+						<div draggable="true" class="btn btn-default btn-sm btn-icon block-handle"
+							title="{{ i18nAttr('m.rbs.admin.admin.drag_block', ['ucf']) }}">
+							<i class="icon-move"></i>
+						</div>
+					</div>
+				</div>
+
+				<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.richtext_blocks', ['ucf']) }}">
+					<button type="button" data-ng-disabled="useTextarea" class="btn btn-default btn-sm dropdown-toggle"
+						data-toggle="dropdown">{{ i18n('m.rbs.admin.admin.richtext_blocks', ['ucf']) }} <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" data-role="menu">
+						<li class="dropdown-header">
+							{{ i18n('m.rbs.admin.admin.richtext_blocks_titles', ['ucf']) }}
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(1)">
+								{{ i18n('m.rbs.admin.admin.heading_level_1', ['ucf']) }}
+							</a>
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(2)">
+								{{ i18n('m.rbs.admin.admin.heading_level_2', ['ucf']) }}
+							</a>
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(3)">
+								{{ i18n('m.rbs.admin.admin.heading_level_3', ['ucf']) }}
+							</a>
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(4)">
+								{{ i18n('m.rbs.admin.admin.heading_level_4', ['ucf']) }}
+							</a>
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(5)">
+								{{ i18n('m.rbs.admin.admin.heading_level_5', ['ucf']) }}
+							</a>
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(6)">
+								{{ i18n('m.rbs.admin.admin.heading_level_6', ['ucf']) }}
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li class="dropdown-header">
+							{{ i18n('m.rbs.admin.admin.richtext_blocks_others', ['ucf']) }}
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdHeading(0)">
+								{{ i18n('m.rbs.admin.admin.wysiwyg_paragraph', ['ucf']) }}
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_format', ['ucf']) }}">
+					<button type="button" data-ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.bold', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="mdBold()"><i class="icon-bold"></i></button>
+					<button type="button" data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.italic', ['ucf']) }}" class="btn btn-default btn-sm btn-icon"
+						data-ng-click="mdItalic()"><i class="icon-italic"></i></button>
+				</div>
+
+				<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_insertion', ['ucf']) }}">
+					<button data-ng-if="availableSelectors.media" type="button" data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.insert_media', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="selectMediasToInsert()">
+						<i class="icon-picture"></i>
+					</button>
+					<button data-ng-if="availableSelectors.links" type="button" data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.insert_internal_link', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="selectDocumentsToLink()">
+						<i class="icon-link"></i>
+					</button>
+					<button data-ng-if="availableSelectors.links" type="button" data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.insert_external_link', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="insertExternalLink()">
+						<i class="icon-external-link"></i>
+					</button>
+					<button data-ng-if="availableSelectors.mentions" type="button" data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.insert_mention', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="selectDocumentsToMention()">
+						<i class="icon-user"></i>
+					</button>
+				</div>
+
+				<div class="btn-group" data-caption="{{ i18n('m.rbs.mail.documents.mail_substitutions', ['ucf']) }}"
+					data-ng-if="availableSelectors.substitutionVariables">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						{{ i18n('m.rbs.mail.documents.mail_substitutions', ['ucf']) }} <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right">
+						<li data-ng-repeat="(variable, label) in substitutionVariables">
+							<a href="" data-ng-click="insertSubstitutionVariable(variable)">
+								(= label =) <small data-ng-show="label != variable">{(= variable =)}</small>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="substitution-variables"></div>
+
+			<div class="ace-editor-container">
+				<div data-role="rbs-ace-editor"></div>
+			</div>
+		</div>
+		<div class="tab-pane preview-container" data-role="preview-container" id="rbsInputMarkdown(=editorId=)TabPreview">
+			<div class="preview-toolbar pull-right" data-ng-if="!useTabs">
+				<div class="btn-group" data-caption="">
+					<button type="button" class="btn btn-default btn-sm btn-icon active"
+						data-ng-click="closePreview()"><i class="icon-eye-open"></i></button>
+				</div>
+			</div>
+			<div class="preview-content"></div>
+		</div>
+	</div>
+</div>

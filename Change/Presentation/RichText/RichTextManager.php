@@ -13,7 +13,6 @@ namespace Change\Presentation\RichText;
  */
 class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 {
-
 	use \Change\Events\EventsCapableTrait;
 
 	const DEFAULT_IDENTIFIER = 'Presentation.RichText';

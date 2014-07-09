@@ -99,9 +99,14 @@
 				$scope.hasStatus = hasStatus;
 
 				$scope.navigationContext = Navigation.getCurrentContext();
+				var lastLocationChangeSuccessUrl = $location.absUrl();
 
 				$scope.$on('$locationChangeSuccess', function (event) {
-					$scope.navigationContext = Navigation.getCurrentContext();
+					var url = $location.absUrl();
+					if (lastLocationChangeSuccessUrl != url) {
+						$scope.navigationContext = Navigation.getCurrentContext();
+						lastLocationChangeSuccessUrl = url;
+					}
 				});
 
 				// Load Model's information.
@@ -208,7 +213,8 @@
 							prepareEdition(document);
 						}
 
-						Navigation.popContext(currentContext);
+						// Done by picker.
+						//Navigation.popContext(currentContext);
 						return document;
 					}
 					return null;

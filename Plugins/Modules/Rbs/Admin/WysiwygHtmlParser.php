@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 namespace Rbs\Admin;
+
 use Change\Presentation\RichText\ParserInterface;
 
 /**
@@ -14,7 +15,6 @@ use Change\Presentation\RichText\ParserInterface;
  */
 class WysiwygHtmlParser implements ParserInterface
 {
-
 	/**
 	 * @var \Rbs\Website\Documents\Website|null
 	 */
@@ -34,29 +34,33 @@ class WysiwygHtmlParser implements ParserInterface
 	}
 
 	/**
-	 * @param null|\Rbs\Website\Documents\Website $website
-	 */
-	public function setWebsite($website)
-	{
-		$this->website = $website;
-	}
-
-	/**
-	 * @return null|\Rbs\Website\Documents\Website
-	 */
-	public function getWebsite()
-	{
-		return $this->website;
-	}
-
-	/**
-	 * @param integer $documentId
+	 * @param string $rawText
+	 * @param array $context
 	 * @return string
 	 */
-	protected function getUrl($documentId)
+	public function parse($rawText, $context)
+	{
+		if (isset($context['website']))
+		{
+			$this->website = $context['website'];
+		}
+
+		$replacements = array('<ul>' => '<ul class="bullet">');
+		$rawText = strtr($rawText, $replacements);
+
+		$rawText = $this->replaceHref($rawText);
+		$rawText = $this->replaceSrc($rawText);
+
+		return $rawText;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return string
+	 */
+	protected function getUrl($document)
 	{
 		$website = $this->website;
-		$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($documentId);
 		if ($document instanceof \Rbs\Website\Documents\StaticPage)
 		{
 			$website = $document->getSection() ? $document->getSection()->getWebsite() : null;
@@ -68,8 +72,24 @@ class WysiwygHtmlParser implements ParserInterface
 
 		if ($website)
 		{
-			$urlManager = $website->getUrlManager($this->applicationServices->getI18nManager()->getLCID());
-			return $urlManager->getCanonicalByDocument($documentId)->normalize()->toString();
+			$urlManager = $website->getUrlManager($website->getLCID());
+			return $urlManager->getCanonicalByDocument($document)->normalize()->toString();
+		}
+
+		return 'javascript:;';
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return string
+	 */
+	protected function getDownloadUrl($document)
+	{
+		$website = $this->website;
+		if ($website)
+		{
+			$urlManager = $website->getUrlManager($website->getLCID());
+			return $urlManager->getAjaxURL('Rbs_Media', 'Download', ['documentId' => $document->getId()]);
 		}
 
 		return 'javascript:;';
@@ -96,52 +116,55 @@ class WysiwygHtmlParser implements ParserInterface
 
 	/**
 	 * @param string $rawText
-	 * @param array $context
-	 * @return string
-	 */
-	public function parse($rawText, $context)
-	{
-		if (isset($context['website']))
-		{
-			$this->website = $context['website'];
-		}
-
-		$replacements = array('<ul>' => '<ul class="bullet">');
-		$rawText = strtr($rawText, $replacements);
-
-		$rawText = $this->replaceHref($rawText);
-		$rawText = $this->replaceSrc($rawText);
-
-		return $rawText;
-	}
-
-	/**
-	 * @param string $rawText
 	 * @return string
 	 */
 	protected function replaceHref($rawText)
 	{
-		if (preg_match_all('/<a\s[^>]+>/i', $rawText, $matches))
+		if (!preg_match_all('/<a\s[^>]+>[^<]*<\/a>/i', $rawText, $matches))
 		{
-			$links = array_unique($matches[0]);
-			foreach ($links as $link)
-			{
-				if (preg_match('/data-document-id="([0-9]+)"/', $link, $match))
-				{
-					$replaceLink = $link;
-					$documentId = intval($match[1]);
-					$href = $this->getUrl($documentId);
-
-					if (preg_match('/href="([^"]+)"/', $link, $hrefMatch))
-					{
-						$replaceLink = str_replace($hrefMatch[0], '', $replaceLink);
-					}
-
-					$replaceLink = str_replace($match[0], $match[0] . ' href="' . \Change\Stdlib\String::attrEscape($href) . '"', $replaceLink);
-					$rawText = str_replace($link, $replaceLink, $rawText);
-				}
-			}
 			return $rawText;
+		}
+
+		$links = array_unique($matches[0]);
+		foreach ($links as $link)
+		{
+			if (!preg_match('/data-document-id="([0-9]+)"/', $link, $match))
+			{
+				continue;
+			}
+
+			$documentId = intval($match[1]);
+			$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($documentId);
+			if ($document instanceof \Rbs\Media\Documents\File)
+			{
+				$href = $this->getDownloadUrl($document);
+
+				$itemInfo = $document->getItemInfo();
+				$size = $this->applicationServices->getI18nManager()->transFileSize($itemInfo->getSize());
+				$suffix = '  [' . strtoupper($itemInfo->getExtension()) . ' — ' . $size . ']';
+			}
+			elseif ($document instanceof \Change\Documents\AbstractDocument && $document->getDocumentModel()->isPublishable())
+			{
+				$href = $this->getUrl($document);
+				$suffix = '';
+			}
+			else
+			{
+				$href= 'javascript:;';
+				$suffix = '';
+			}
+			$href = \Change\Stdlib\String::attrEscape($href);
+
+			$replaceLink = $link;
+
+			if (preg_match('/href="([^"]+)"/', $link, $hrefMatch))
+			{
+				$replaceLink = str_replace($hrefMatch[0], '', $replaceLink);
+			}
+
+			$replaceLink = str_replace($match[0], $match[0] . ' href="' . $href . '"',
+				$replaceLink) . $suffix;
+			$rawText = str_replace($link, $replaceLink, $rawText);
 		}
 		return $rawText;
 	}
@@ -180,7 +203,8 @@ class WysiwygHtmlParser implements ParserInterface
 						$replaceLink = str_replace($dataMatch[0], '', $replaceLink);
 					}
 
-					$replaceLink = str_replace($match[0], $match[0] . ' src="' . \Change\Stdlib\String::attrEscape($href) . '"', $replaceLink);
+					$replaceLink = str_replace($match[0], $match[0] . ' src="' . \Change\Stdlib\String::attrEscape($href) . '"',
+						$replaceLink);
 					$rawText = str_replace($link, $replaceLink, $rawText);
 				}
 			}
@@ -188,5 +212,4 @@ class WysiwygHtmlParser implements ParserInterface
 		}
 		return $rawText;
 	}
-
 }

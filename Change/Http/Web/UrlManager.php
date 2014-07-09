@@ -347,9 +347,16 @@ class UrlManager extends \Change\Http\UrlManager
 		$websiteId = $website->getId();
 		$documentId = is_numeric($document) ? intval($document) : $document->getId();
 		$sectionId = $section ? $section->getId() : null;
-		if ($sectionId && $sectionId == $websiteId) {
+		if ($sectionId && $sectionId == $websiteId)
+		{
 			$sectionId = null;
 		}
+
+		if (!($this->getPathRuleManager() instanceof \Change\Http\Web\PathRuleManager))
+		{
+			throw new \LogicException('No PathRuleManager set!');
+		}
+
 		$pathRules = $this->getPathRuleManager()->findPathRules($websiteId, $LCID, $documentId, $sectionId);
 		if (count($pathRules))
 		{

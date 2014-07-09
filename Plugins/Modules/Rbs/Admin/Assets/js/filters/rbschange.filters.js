@@ -160,16 +160,16 @@
 	app.filter('rbsFileSize', ['RbsChange.i18n', function (i18n)
 	{
 		var units = [
-			['octets', i18n.trans('m.rbs.admin.adminjs.octets | ucf')],
-			['Ko', i18n.trans('m.rbs.admin.adminjs.kilobytes | ucf')],
-			['Mo', i18n.trans('m.rbs.admin.adminjs.megabytes | ucf')],
-			['Go', i18n.trans('m.rbs.admin.adminjs.gigabytes | ucf')],
-			['To', i18n.trans('m.rbs.admin.adminjs.terabytes | ucf')]
+			[i18n.trans('c.filesize.bytes')],
+			[i18n.trans('c.filesize.kilobytes_abbr'), i18n.trans('c.filesize.kilobytes | ucf')],
+			[i18n.trans('c.filesize.megabytes_abbr'), i18n.trans('c.filesize.megabytes | ucf')],
+			[i18n.trans('c.filesize.gigabytes_abbr'), i18n.trans('c.filesize.gigabytes | ucf')],
+			[i18n.trans('c.filesize.terabytes_abbr'), i18n.trans('c.filesize.terabytes | ucf')]
 		];
 
 		return function (bytes) {
 			var value = bytes, u = 0;
-			while (value >= 1024) {
+			while (value >= 1024 && u < units.length) {
 				u++;
 				value /= 1024.0;
 			}

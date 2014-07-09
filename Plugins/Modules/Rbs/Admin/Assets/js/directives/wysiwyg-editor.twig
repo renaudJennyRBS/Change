@@ -1,0 +1,57 @@
+<div class="btn-toolbar btn-toolbar-richtext">
+	<div class="pull-right">
+		<div class="btn-group" data-caption="{{ i18n('m.rbs.admin.admin.wysiwyg_tools') }}">
+			<button type="button" data-ng-disabled="sourceView" class="btn btn-default btn-sm btn-icon"
+				title="(= getButtonTooltip('undo') =)" data-ng-bind-html="getButtonLabel('undo')"
+				data-ng-click="runTool('undo')"></button>
+			<button type="button" data-ng-disabled="sourceView" class="btn btn-default btn-sm btn-icon"
+				title="(= getButtonTooltip('redo') =)" data-ng-bind-html="getButtonLabel('redo')"
+				data-ng-click="runTool('redo')"></button>
+			<button class="btn btn-default btn-sm btn-icon" type="button" data-ng-class="{'active': sourceView}"
+				data-ng-click="toggleViewSource()" title="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_view_source', ['ucf']) }}">
+				<i class="icon-code"></i>
+			</button>
+		</div>
+		<div class="btn-group" data-caption="" data-ng-if="draggable">
+			<div draggable="true" class="btn btn-default btn-sm btn-icon block-handle"
+				title="{{ i18nAttr('m.rbs.admin.admin.drag_block', ['ucf']) }}">
+				<i class="icon-move"></i>
+			</div>
+		</div>
+	</div>
+
+	<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.richtext_blocks', ['ucf']) }}">
+		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+			{{ i18nAttr('m.rbs.admin.admin.richtext_blocks', ['ucf']) }} <span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" data-role="menu">
+			<li class="dropdown-header">
+				{{ i18n('m.rbs.admin.admin.richtext_blocks_titles', ['ucf']) }}
+			</li>
+			<li data-ng-repeat="tool in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']">
+				<a tabindex="-1" href="javascript:;" data-ng-click="runTool(tool)">
+					<i class="icon-ok dropdown-item-icon" data-ng-if="toolIsActive(tool)"></i> (= getButtonTooltip(tool) =)
+				</a>
+			</li>
+			<li class="divider"></li>
+			<li class="dropdown-header">
+				{{ i18n('m.rbs.admin.admin.richtext_blocks_others', ['ucf']) }}
+			</li>
+			<li data-ng-repeat="tool in ['p', 'blockquote', 'pre']">
+				<a tabindex="-1" href="javascript:;" data-ng-click="runTool(tool)">
+					<i class="icon-ok dropdown-item-icon" data-ng-if="toolIsActive(tool)"></i> (= getButtonTooltip(tool) =)
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="btn-group" data-ng-repeat="group in toolbarConfig" data-ng-show="group.label" data-caption="(= group.label =)">
+		<button type="button" class="btn btn-default btn-sm btn-icon" data-ng-repeat="tool in group.tools"
+			title="(= getButtonTooltip(tool) =)" data-ng-bind-html="getButtonLabel(tool)"
+			data-ng-class="{'active': toolIsActive(tool)}" data-ng-disabled="sourceView"
+			data-ng-click="runTool(tool)"></button>
+	</div>
+</div>
+<div data-ng-hide="sourceView" contenteditable="true" style="min-height: 150px; height: auto;" class="form-control"></div>
+<textarea data-ng-show="sourceView" data-ng-model="source" style="min-height: 150px; height: auto;" class="form-control">
+</textarea>

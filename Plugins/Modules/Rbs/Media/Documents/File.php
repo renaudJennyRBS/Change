@@ -51,6 +51,13 @@ class File extends \Compilation\Rbs\Media\Documents\File
 		return $this;
 	}
 
+	/**
+	 * @return \Change\Storage\ItemInfo|null
+	 */
+	public function getItemInfo()
+	{
+		return $this->getStorageManager()->getItemInfo($this->getPath());
+	}
 
 	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager

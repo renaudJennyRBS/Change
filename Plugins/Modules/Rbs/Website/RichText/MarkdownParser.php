@@ -33,7 +33,6 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 		return $this->transform($rawText);
 	}
 
-
 	/**
 	 * @param $matches
 	 * @return string
@@ -64,32 +63,87 @@ class MarkdownParser extends \Change\Presentation\RichText\MarkdownParser implem
 			return parent::_doAnchors_inline_callback($matches);
 		}
 
-		/* @var $document \Change\Documents\AbstractDocument */
 		$document = $this->applicationServices->getDocumentManager()->getDocumentInstance($id, $model);
 
-		if (!$document)
+		if ($document instanceof \Rbs\Media\Documents\File)
 		{
-			return $this->hashPart('<span class="label label-danger">Invalid Document: ' . $documentId . '</span>');
+			return $this->parseDownloadLinkTag($document, $title, $link_text);
 		}
-
-		if ($this->website)
+		elseif ($document instanceof \Change\Documents\AbstractDocument && $document->getDocumentModel()->isPublishable())
 		{
-			$url = $this->website->getUrlManager($this->website->getLCID())->getCanonicalByDocument($document);
+			return $this->parseDocumentLinkTag($document, $title, $link_text);
 		}
 		else
 		{
-			$url = "javascript:;";
+			return $this->hashPart('<span class="label label-danger">Invalid Document: ' . $documentId . '</span>');
+		}
+	}
+
+	/**
+	 * @param \Rbs\Media\Documents\File $document
+	 * @param string $title
+	 * @param string $link_text
+	 * @return string
+	 */
+	protected function parseDownloadLinkTag($document, $title, $link_text)
+	{
+		if ($this->website)
+		{
+			// TODO clean up when urlManager will be refactored.
+			$urlManager = $this->website->getUrlManager($this->website->getLCID());
+			$urlManager->setPathRuleManager($this->applicationServices->getPathRuleManager());
+			$url = $urlManager->getAjaxURL('Rbs_Media', 'Download', ['documentId' => $document->getId()]);
+		}
+		else
+		{
+			$url = 'javascript:;';
 		}
 
-		$result = "<a href=\"$url\"";
+		$result = '<a href="' . $url . '"';
 		if (isset($title))
 		{
 			$title = $this->encodeAttribute($title);
-			$result .=  " title=\"$title\"";
+			$result .= ' title="' . $title . '"';
 		}
 
 		$link_text = $this->runSpanGamut($link_text);
-		$result .= ">$link_text</a>";
+
+		$itemInfo = $document->getItemInfo();
+		$size = $this->applicationServices->getI18nManager()->transFileSize($itemInfo->getSize());
+		$result .= '>' . $link_text . '</a> [' . strtoupper($itemInfo->getExtension()) . ' — ' . $size . ']';
+
+		return $this->hashPart($result);
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @param string $title
+	 * @param string $link_text
+	 * @return string
+	 */
+	protected function parseDocumentLinkTag($document, $title, $link_text)
+	{
+		if ($this->website)
+		{
+			// TODO clean up when urlManager will be refactored.
+			$urlManager = $this->website->getUrlManager($this->website->getLCID());
+			$urlManager->setPathRuleManager($this->applicationServices->getPathRuleManager());
+			$url = $urlManager->getCanonicalByDocument($document);
+		}
+		else
+		{
+			$url = 'javascript:;';
+		}
+
+		$result = '<a href="' . $url . '"';
+		if (isset($title))
+		{
+			$title = $this->encodeAttribute($title);
+			$result .= ' title="' . $title . '"';
+		}
+
+		$link_text = $this->runSpanGamut($link_text);
+		$result .= '>' . $link_text . '</a>';
 
 		return $this->hashPart($result);
 	}

@@ -22,12 +22,8 @@
 									'and': [
 										{
 											'op': 'eq',
-											'lexp': {
-												'property': 'contextId'
-											},
-											'rexp': {
-												'value': $scope.document.id
-											}
+											'lexp': { 'property': 'contextId' },
+											'rexp': { 'value': $scope.document.id }
 										}
 									]
 								},
@@ -51,15 +47,20 @@
 						});
 
 						scope.data = {};
-						scope.data.newMessage = "";
-						scope.sendMessage = function () {
+						scope.data.newMessage = { e: 'Markdown', h: null, t: ' ' };
+
+						scope.canSendMessage = function canSendMessage() {
+							return scope.data.newMessage.t.length && scope.data.newMessage.t != ' ';
+						};
+
+						scope.sendMessage = function sendMessage() {
 							var url = REST.getBaseUrl('resources/Rbs/Timeline/Message/');
 							$http.post(url, {
 								'contextId': scope.document.id,
-								'message': scope.data.newMessage,
+								'message': scope.data.newMessage.t,
 								'label': ' '
 							}).success(function () {
-								scope.data.newMessage = "";
+								scope.data.newMessage = { e: 'Markdown', h: null, t: ' ' };
 								rbsTimeline.reload();
 							});
 						};
@@ -91,21 +92,26 @@
 							}
 						});
 
-						//edit and remove
 						scope.user = User.get();
 
-						scope.editMessage = function (message) {
+						// Edit and remove.
+						scope.editMessage = function editMessage(message) {
 							message.editMode = true;
 							elm.find('.message-content').first().hide();
 						};
 
-						scope.updateMessage = function (message) {
+						scope.cancelMessageEdition = function cancelMessageEdition(message) {
+							message.editMode = false;
+							elm.find('.message-content').first().show();
+						};
+
+						scope.updateMessage = function updateMessage(message) {
 							REST.save(message).then(function () {
 								rbsTimeline.reload();
 							});
 						};
 
-						scope.removeMessage = function (message) {
+						scope.removeMessage = function removeMessage(message) {
 							REST['delete'](message).then(function () {
 								rbsTimeline.reload();
 							});

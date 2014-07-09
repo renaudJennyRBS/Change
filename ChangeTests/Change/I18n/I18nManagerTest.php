@@ -468,8 +468,40 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('16/10/2012 09:00', $manager->transDateTime($date));
 	}
 
-	// Transformers.
+	// File sizes.
 
+	public function testFormatFileSize()
+	{
+		$manager = $this->getApplicationServices()->getI18nManager();
+
+		$this->assertEquals('10 octets', $manager->formatFileSize('fr_FR', 10));
+		$this->assertEquals('9 <abbr title="Kilo-octets">Ko</abbr>', $manager->formatFileSize('fr_FR', 10*1024 - 1));
+		$this->assertEquals('10 <abbr title="Kilo-octets">Ko</abbr>', $manager->formatFileSize('fr_FR', 10*1024));
+		$this->assertEquals('9 <abbr title="Méga-octets">Mo</abbr>', $manager->formatFileSize('fr_FR', 10*1024*1024 -1));
+		$this->assertEquals('10 <abbr title="Méga-octets">Mo</abbr>', $manager->formatFileSize('fr_FR', 10*1024*1024));
+		$this->assertEquals('9 <abbr title="Giga-octets">Go</abbr>', $manager->formatFileSize('fr_FR', 10*1024*1024*1024 -1));
+		$this->assertEquals('10 <abbr title="Giga-octets">Go</abbr>', $manager->formatFileSize('fr_FR', 10*1024*1024*1024));
+		$this->assertEquals('9 <abbr title="Tera-octets">To</abbr>', $manager->formatFileSize('fr_FR', 10*1024*1024*1024*1024 -1));
+		$this->assertEquals('10 <abbr title="Tera-octets">To</abbr>', $manager->formatFileSize('fr_FR', 10*1024*1024*1024*1024));
+	}
+
+	public function testTransFileSize()
+	{
+		$manager = $this->getApplicationServices()->getI18nManager();
+		$manager->setLCID('fr_FR');
+
+		$this->assertEquals('10 octets', $manager->transFileSize(10));
+		$this->assertEquals('9 <abbr title="Kilo-octets">Ko</abbr>', $manager->transFileSize(10*1024 - 1));
+		$this->assertEquals('10 <abbr title="Kilo-octets">Ko</abbr>', $manager->transFileSize(10*1024));
+		$this->assertEquals('9 <abbr title="Méga-octets">Mo</abbr>', $manager->transFileSize(10*1024*1024 -1));
+		$this->assertEquals('10 <abbr title="Méga-octets">Mo</abbr>', $manager->transFileSize(10*1024*1024));
+		$this->assertEquals('9 <abbr title="Giga-octets">Go</abbr>', $manager->transFileSize(10*1024*1024*1024 -1));
+		$this->assertEquals('10 <abbr title="Giga-octets">Go</abbr>', $manager->transFileSize(10*1024*1024*1024));
+		$this->assertEquals('9 <abbr title="Tera-octets">To</abbr>', $manager->transFileSize(10*1024*1024*1024*1024 -1));
+		$this->assertEquals('10 <abbr title="Tera-octets">To</abbr>', $manager->transFileSize(10*1024*1024*1024*1024));
+	}
+
+	// Transformers.
 
 	public function testTransformLab()
 	{

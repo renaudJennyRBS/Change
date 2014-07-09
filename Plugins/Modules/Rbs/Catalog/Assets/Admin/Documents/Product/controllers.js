@@ -3,7 +3,7 @@
 
 	var app = angular.module('RbsChange');
 
-	function PricesController($scope, $routeParams, $location, Utils, REST, i18n, UrlManager) {
+	function PricesController($scope, $routeParams, $location, Utils, REST) {
 		$scope.params = {};
 		$scope.params.webStoreId = $routeParams.webStoreId;
 		$scope.params.areaId = $routeParams.areaId;
@@ -71,11 +71,10 @@
 			updatePricesURL();
 		};
 	}
-	PricesController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.REST', 'RbsChange.i18n',
-		'RbsChange.UrlManager'];
+	PricesController.$inject = ['$scope', '$routeParams', '$location', 'RbsChange.Utils', 'RbsChange.REST'];
 	app.controller('Rbs_Catalog_Product_PricesController', PricesController);
 
-	function CrossSellingController($scope, $routeParams, REST, i18n, UrlManager, Query) {
+	function CrossSellingController($scope, $routeParams, REST, Query) {
 		$scope.params = {};
 		$scope.List = {};
 
@@ -86,8 +85,7 @@
 			});
 		}
 	}
-	CrossSellingController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.UrlManager',
-		'RbsChange.Query'];
+	CrossSellingController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', 'RbsChange.Query'];
 	app.controller('Rbs_Catalog_Product_CrossSellingController', CrossSellingController);
 
 	function ProductListsController($scope, $routeParams, $http, $q, REST, NotificationCenter, i18n, Navigation) {
@@ -128,7 +126,8 @@
 			$scope.product = data.product;
 			$scope.productListItems = data.productListItems;
 			$scope.DATA = data.DATA;
-			Navigation.popContext(currentContext);
+			// Done by picker.
+			//Navigation.popContext(currentContext);
 		}
 		else {
 			REST.resource($routeParams.id).then(function(product) {
@@ -198,6 +197,7 @@
 					return true;
 				}
 			}
+			return false;
 		}
 	}
 	ProductListsController.$inject = ['$scope', '$routeParams', '$http', '$q', 'RbsChange.REST', 'RbsChange.NotificationCenter',

@@ -443,7 +443,8 @@
 						var search = scope.filter.search;
 						angular.extend(scope.filter, data.filter);
 						scope.filter.search = search;
-						Navigation.popContext(currentContext);
+						// Done by picker.
+						//Navigation.popContext(currentContext);
 					}
 				}
 			}],
