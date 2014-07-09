@@ -27,14 +27,12 @@ class ShortSearch extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('resultSectionId');
 		$parameters->addParameterMeta('searchText');
 		$parameters->addParameterMeta('formAction');
 		$parameters->addParameterMeta('sectionPageFunction', false);
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$resultSection = $event->getApplicationServices()->getDocumentManager()
-			->getDocumentInstance($parameters->getParameter('resultSectionId'));
-		$uri = $event->getUrlManager()->getByFunction('Rbs_Elasticsearch_Result', $resultSection);
+
+		$uri = $event->getUrlManager()->getByFunction('Rbs_Elasticsearch_Result');
 		if ($uri)
 		{
 			$formAction = $uri->normalize()->toString();

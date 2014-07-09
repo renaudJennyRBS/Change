@@ -32,15 +32,11 @@ class GenerateSitemap
 		}
 
 		$urlManager = $website->getUrlManager($LCID);
-		$urlManager->setPathRuleManager($applicationServices->getPathRuleManager());
-		$urlManager->setAbsoluteUrl(true);
 
 		//TODO: work but find a better way
 		//Create a special UrlManager to manage Assets URL.
 		//Useful for the url path to robots.txt, the sitemap Index and sitemaps.
-		$assetUrlManager = $website->getUrlManager($LCID);
-		$urlManager->setPathRuleManager($applicationServices->getPathRuleManager());
-		$assetUrlManager->setAbsoluteUrl(true);
+		$assetUrlManager = clone($urlManager);
 
 		$resourceBaseUrl = $application->getConfiguration()->getEntry('Change/Install/webBaseURLPath') . '/Assets';
 		$assetUrlManager->setScript($resourceBaseUrl . '/Rbs/Seo');
@@ -93,7 +89,7 @@ class GenerateSitemap
 						}
 
 						$url = $xml->createElement('url');
-						$documentUrl = $urlManager->getCanonicalByDocument($target, $website)->normalize()->toString();
+						$documentUrl = $urlManager->getCanonicalByDocument($target)->normalize()->toString();
 						//800 is the maximum number of characters composing an url because the norm fixes a file max size to 10MB.
 						//And with 10000 urls of 800 characters, the file size is approximately 10MB
 						if (strlen($documentUrl) > 800)

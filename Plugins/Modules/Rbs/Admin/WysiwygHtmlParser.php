@@ -69,7 +69,6 @@ class WysiwygHtmlParser implements ParserInterface
 		if ($website)
 		{
 			$urlManager = $website->getUrlManager($this->applicationServices->getI18nManager()->getLCID());
-			$urlManager->setPathRuleManager($this->applicationServices->getPathRuleManager());
 			return $urlManager->getCanonicalByDocument($documentId)->normalize()->toString();
 		}
 

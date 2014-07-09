@@ -58,9 +58,10 @@ class Resolver extends BaseResolver
 				if ($validPathRule instanceof PathRule)
 				{
 					//Rewritten url already exist
-					$urlManager->setAbsoluteUrl(true);
+					$absoluteUrl = $urlManager->absoluteUrl(true);
 					$location = $urlManager->getByPathInfo($validPathRule->getRelativePath(), $queryParameters);
 					$pathRule->setLocation($location->normalize()->toString());
+					$urlManager->absoluteUrl($absoluteUrl);
 				}
 				else
 				{

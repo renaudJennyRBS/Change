@@ -71,11 +71,12 @@ class ResetPasswordRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 					$LCID = $event->getRequest()->getLCID();
+
+					/** @var $website \Rbs\Website\Documents\Website */
 					$website = $event->getWebsite();
 
 					$documentManager->pushLCID($LCID);
 					$urlManager = $website->getUrlManager($LCID);
-					$urlManager->setAbsoluteUrl(true);
 
 					$confirmationURL = $urlManager->getAjaxURL('Rbs_User', 'ResetPasswordConfirmation', ['token' => $token]);
 

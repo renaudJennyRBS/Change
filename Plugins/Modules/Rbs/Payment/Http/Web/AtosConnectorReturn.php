@@ -165,12 +165,14 @@ class AtosConnectorReturn extends \Change\Http\Web\Actions\AbstractAjaxAction
 		if ($function)
 		{
 			$params = array('transactionId' => $transaction->getId());
-			$uri = $urlManager->getByFunction($function, null, $params);
+			$uri = $urlManager->getByFunction($function, $params);
 		}
+
 		if (!$uri)
 		{
-			$urlManager->setAbsoluteUrl(true);
+			$absoluteUrl = $urlManager->absoluteUrl(true);
 			$uri = $urlManager->getByPathInfo(null);
+			$urlManager->absoluteUrl($absoluteUrl);
 		}
 		return $uri->normalize()->toString();
 	}
@@ -185,8 +187,9 @@ class AtosConnectorReturn extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
 		if (!$uri)
 		{
-			$urlManager->setAbsoluteUrl(true);
+			$absoluteUrl = $urlManager->absoluteUrl(true);
 			$uri = $urlManager->getByPathInfo(null);
+			$urlManager->absoluteUrl($absoluteUrl);
 		}
 		return $uri->normalize()->toString();
 	}

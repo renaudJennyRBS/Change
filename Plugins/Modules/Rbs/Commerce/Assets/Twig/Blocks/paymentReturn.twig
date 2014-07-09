@@ -9,7 +9,7 @@
 			<p>{{ i18n('m.rbs.commerce.front.register_to_follow_orders', ['ucf']) }}</p>
 			<div>
 				<a class="btn btn-default btn-primary"
-					href="{{ functionURL('Rbs_Payment_CreateAccountForTransaction', null, {'transactionId': parameters.transactionId}) }}">
+					href="{{ functionURL('Rbs_Payment_CreateAccountForTransaction', {'transactionId': parameters.transactionId}) }}">
 					{{ i18n('m.rbs.commerce.front.register_button', ['ucf']) }}
 				</a>
 			</div>

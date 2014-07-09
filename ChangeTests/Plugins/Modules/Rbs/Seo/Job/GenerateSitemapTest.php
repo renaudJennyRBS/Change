@@ -65,8 +65,6 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 		$LCID = $website->getCurrentLCID();
 		$documentSeo = $this->getNewDocumentSeo($website);
 		$urlManager = $website->getUrlManager($LCID);
-		$urlManager->setPathRuleManager($this->getApplicationServices()->getPathRuleManager());
-		$urlManager->setAbsoluteUrl(true);
 
 		//we need to configure website to generate sitemap, that will create his own job, but that doesn't matter (we don't run it)
 		$website->setSitemapGeneration(true);
@@ -165,7 +163,7 @@ class GenerateSitemapTest extends \ChangeTests\Change\TestAssets\TestCase
 			$sitemapXml->getElementsByTagName('urlset')->item(0)->namespaceURI);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('url')->length);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('loc')->length);
-		$this->assertEquals($urlManager->getCanonicalByDocument($documentSeo->getTarget(), $website)->normalize()->toString(),
+		$this->assertEquals($urlManager->getCanonicalByDocument($documentSeo->getTarget())->normalize()->toString(),
 			$sitemapXml->getElementsByTagName('loc')->item(0)->textContent);
 		$this->assertEquals(1, $sitemapXml->getElementsByTagName('lastmod')->length);
 		$expectedLastmod = $documentSeo->getTarget()->getDocumentModel()->getProperty('modificationDate')->getValue($documentSeo->getTarget());

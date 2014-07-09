@@ -64,7 +64,7 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 			{
 				/* @var $document \Rbs\Event\Documents\BaseEvent */
 				$attributes['doc'] = $document;
-				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($document)->toString();
+				$attributes['canonicalUrl'] = $event->getUrlManager()->getCanonicalByDocument($document)->normalize()->toString();
 
 				if ($parameters->getParameter('showCategories'))
 				{
@@ -98,11 +98,11 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 					{
 						if ($section instanceof \Change\Presentation\Interfaces\Section)
 						{
-							$url = $event->getUrlManager()->getByDocument($category, $section)->toString();
+							$url = $event->getUrlManager()->getByDocument($category, $section)->normalize()->toString();
 						}
 						else
 						{
-							$url = $event->getUrlManager()->getCanonicalByDocument($category)->toString();
+							$url = $event->getUrlManager()->getCanonicalByDocument($category)->normalize()->toString();
 						}
 						$attributes['categories'][] = array('url' => $url, 'doc' => $category);
 					}

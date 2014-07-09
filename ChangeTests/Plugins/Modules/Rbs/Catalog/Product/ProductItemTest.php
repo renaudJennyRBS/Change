@@ -51,7 +51,7 @@ class ProductItemTest extends \ChangeTests\Change\TestAssets\TestCase
 		$website = $this->getNewReadonlyDocument('Rbs_Website_Website', 500);
 		$website->setBaseurl($baseUrl);
 		$urlManager = $website->getUrlManager($this->getApplicationServices()->getI18nManager()->getLCID());
-		$urlManager->setPathRuleManager($this->getApplicationServices()->getPathRuleManager());
+		$urlManager->absoluteUrl(false);
 		$this->assertEquals('document/800.html', $o->url($urlManager));
 	}
 

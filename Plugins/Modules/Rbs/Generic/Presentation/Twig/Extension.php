@@ -264,23 +264,11 @@ class Extension implements \Twig_ExtensionInterface
 	 * @param string|null $LCID
 	 * @return string|null
 	 */
-	public function canonicalURL($document, $website = null, $query = array(), $LCID = null)
+	public function canonicalURL($document, $query = array(), $LCID = null)
 	{
 		if (is_numeric($document) || $document instanceof \Change\Documents\AbstractDocument)
 		{
-			if (is_numeric($website))
-			{
-				$website = $this->getApplicationServices()->getDocumentManager()->getDocumentInstance($website);
-			}
-			if ($website instanceof \Change\Presentation\Interfaces\Section)
-			{
-				$website = $website->getWebsite();
-			}
-			if ($website === null || $website instanceof \Change\Presentation\Interfaces\Website)
-			{
-				return $this->getUrlManager()->getCanonicalByDocument($document, $website, $query, $LCID)->normalize()
-					->toString();
-			}
+			return $this->getUrlManager()->getCanonicalByDocument($document, $query, $LCID)->normalize()->toString();
 		}
 		return null;
 	}
@@ -345,17 +333,12 @@ class Extension implements \Twig_ExtensionInterface
 
 	/**
 	 * @param string $functionCode
-	 * @param \Change\Presentation\Interfaces\Website|null $website
 	 * @param array $query
 	 * @return null|string
 	 */
-	public function functionURL($functionCode, $website = null, $query = array())
+	public function functionURL($functionCode, $query = array())
 	{
-		if ($website === null)
-		{
-			$website = $this->getUrlManager()->getWebsite();
-		}
-		$uri = $this->getUrlManager()->getByFunction($functionCode, $website, $query);
+		$uri = $this->getUrlManager()->getByFunction($functionCode, $query);
 		return $uri ? $uri->normalize()->toString() : null;
 	}
 

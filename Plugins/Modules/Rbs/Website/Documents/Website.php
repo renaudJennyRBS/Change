@@ -91,32 +91,77 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	 */
 	public function getBaseurl()
 	{
-		return $this->getUrlManager($this->getLCID())->getByPathInfo('')->normalize()->toString();
+		return $this->getUrlManager(null)->getByPathInfo('')->normalize()->toString();
 	}
+
+
+	protected $urlManagersByLCID = [];
 
 	/**
 	 * @param string $LCID
+	 * @throws \RuntimeException
 	 * @return \Change\Http\Web\UrlManager
 	 */
 	public function getUrlManager($LCID)
 	{
-		$this->getDocumentManager()->pushLCID($LCID);
+		if (!$LCID)
+		{
+			$LCID = $this->getLCID();
+		}
 
-		$url = new Http();
-		$url->setScheme($this->getHttps() ? "https" : "http");
-		$url->setHost($this->getHostName());
-		$url->setPort($this->getPort());
-		$url->setPath('/');
+		if (!isset($this->urlManagersByLCID[$LCID]))
+		{
+			$event = new \Change\Documents\Events\Event('getUrlManager', $this, ['LCID' => $LCID]);
+			$this->getEventManager()->trigger($event);
 
-		$urlManager = new UrlManager($url, $this->getScriptName());
-		//TODO PathRuleManager not set
-		$urlManager->setDocumentManager($this->getDocumentManager());
-		$urlManager->setWebsite($this);
-		$urlManager->setLCID($LCID);
-		$urlManager->setBasePath($this->getPathPart());
+			$urlManager = $event->getParam('urlManager');
+			if ($urlManager instanceof \Change\Http\Web\UrlManager)
+			{
+				$this->urlManagersByLCID[$LCID] = $urlManager;
+			}
+			else
+			{
+				throw new \RuntimeException('Unable to get valid urlManager');
+			}
+		}
+		return $this->urlManagersByLCID[$LCID];
+	}
 
-		$this->getDocumentManager()->popLCID();
-		return $urlManager;
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultGetUrlManager(\Change\Documents\Events\Event $event)
+	{
+		if ($this !== $event->getDocument())
+		{
+			return;
+		}
+		$LCID = $event->getParam('LCID');
+		try
+		{
+			$this->getDocumentManager()->pushLCID($LCID);
+
+			$url = new Http();
+			$url->setScheme($this->getHttps() ? "https" : "http");
+			$url->setHost($this->getHostName());
+			$url->setPort($this->getPort());
+			$url->setPath('/');
+
+			$urlManager = new UrlManager($url, $this->getScriptName());
+			$urlManager->setDocumentManager($this->getDocumentManager());
+			$urlManager->setPathRuleManager($event->getApplicationServices()->getPathRuleManager());
+			$urlManager->absoluteUrl(true);
+			$urlManager->setWebsite($this);
+			$urlManager->setLCID($LCID);
+			$urlManager->setBasePath($this->getPathPart());
+			$this->getDocumentManager()->popLCID();
+
+			$event->setParam('urlManager', $urlManager);
+		}
+		catch (\Exception $e)
+		{
+			$this->getDocumentManager()->popLCID($e);
+		}
 	}
 
 	/**
@@ -125,8 +170,9 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onCreated'), 5);
-		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATE, array($this, 'onWebsiteUpdate'), 5);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, [$this, 'onCreated'], 5);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATE, [$this, 'onWebsiteUpdate'], 5);
+		$eventManager->attach('getUrlManager', [$this, 'onDefaultGetUrlManager'], 5);
 	}
 
 	/**
@@ -196,13 +242,13 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 		$jobManager = $event->getApplicationServices()->getJobManager();
 		if ($this->getSitemapGeneration())
 		{
-			$sitemaps = [];
-			foreach ($this->getSitemaps() as $sitemap)
+			$siteMaps = [];
+			foreach ($this->getSitemaps() as $siteMap)
 			{
-				if (!isset($sitemap['jobId']))
+				if (!isset($siteMap['jobId']))
 				{
-					$LCID = $sitemap['LCID'];
-					$timeInterval = $sitemap['timeInterval'];
+					$LCID = $siteMap['LCID'];
+					$timeInterval = $siteMap['timeInterval'];
 					if ($timeInterval && $LCID && in_array($LCID, $this->getLCIDArray()))
 					{
 						$job = $jobManager->createNewJob('Rbs_Seo_GenerateSitemap', [
@@ -210,7 +256,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 							'LCID' => $LCID,
 							'randomKey' => \Change\Stdlib\String::random()
 						]);
-						$sitemap['jobId'] = $job->getId();
+						$siteMap['jobId'] = $job->getId();
 					}
 					else
 					{
@@ -219,23 +265,23 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 					}
 				}
 				//Notify user for URL creation (if he want it, 'notify' attribute is added to sitemap)
-				elseif (isset($sitemap['notify']) && isset($sitemap['url']))
+				elseif (isset($siteMap['notify']) && isset($siteMap['url']))
 				{
-					$this->notifyUserOfSitemapURLCreation($sitemap, $event->getApplicationServices());
-					unset($sitemap['notify']);
+					$this->notifyUserOfSitemapURLCreation($siteMap, $event->getApplicationServices());
+					unset($siteMap['notify']);
 				}
-				$sitemaps[] = $sitemap;
+				$siteMaps[] = $siteMap;
 			}
-			$this->setSitemaps($sitemaps);
+			$this->setSitemaps($siteMaps);
 		}
 		else
 		{
 			//stop generation sitemap jobs if exist
-			foreach ($this->getSitemaps() as $sitemap)
+			foreach ($this->getSitemaps() as $siteMap)
 			{
-				if (isset($sitemap['jobId']))
+				if (isset($siteMap['jobId']))
 				{
-					$job = $jobManager->getJob($sitemap['jobId']);
+					$job = $jobManager->getJob($siteMap['jobId']);
 					if ($job !== null)
 					{
 						$jobManager->updateJobStatus($job, \Change\Job\JobInterface::STATUS_SUCCESS);
@@ -252,12 +298,12 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 	 */
 	protected function defaultSitemaps()
 	{
-		$sitemaps = [];
+		$siteMaps = [];
 		foreach ($this->getLCIDArray() as $LCID)
 		{
-			$sitemaps[] = ['LCID' => $LCID, 'timeInterval' => ''];
+			$siteMaps[] = ['LCID' => $LCID, 'timeInterval' => ''];
 		}
-		return $sitemaps;
+		return $siteMaps;
 	}
 
 	/**
@@ -331,5 +377,4 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 			}
 		}
 	}
-
 }

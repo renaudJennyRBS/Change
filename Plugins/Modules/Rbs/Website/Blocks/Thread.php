@@ -86,7 +86,7 @@ class Thread extends Block
 				$entry->setTitle($section->getTitle());
 				if ($section->getIndexPageId())
 				{
-					$entry->setUrl($urlManager->getCanonicalByDocument($section, $website));
+					$entry->setUrl($urlManager->getCanonicalByDocument($section));
 				}
 				$entry->setInPath(true);
 				$thread[] = $entry;

@@ -88,14 +88,11 @@ class ProductList extends Block
 		if (!$parameters->getParameter('redirectUrl'))
 		{
 			$urlManager = $event->getUrlManager();
-			$oldValue = $urlManager->getAbsoluteUrl();
-			$urlManager->setAbsoluteUrl(true);
 			$uri = $urlManager->getByFunction('Rbs_Commerce_Cart');
 			if ($uri)
 			{
 				$parameters->setParameterValue('redirectUrl', $uri->normalize()->toString());
 			}
-			$urlManager->setAbsoluteUrl($oldValue);
 		}
 
 		$webStore = $commerceServices->getContext()->getWebStore();
@@ -229,11 +226,11 @@ class ProductList extends Block
 					}
 					if ($contextualUrls)
 					{
-						$url = $event->getUrlManager()->getByDocument($product, $section)->toString();
+						$url = $event->getUrlManager()->getByDocument($product, $section)->normalize()->toString();
 					}
 					else
 					{
-						$url = $event->getUrlManager()->getCanonicalByDocument($product)->toString();
+						$url = $event->getUrlManager()->getCanonicalByDocument($product)->normalize()->toString();
 					}
 
 					$row = array('id' => $product->getId(), 'url' => $url);

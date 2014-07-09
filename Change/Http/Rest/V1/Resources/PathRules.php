@@ -97,8 +97,6 @@ class PathRules
 				{
 					$dm->pushLCID($LCID);
 					$um = $website->getUrlManager($LCID);
-					$um->setPathRuleManager($pathRuleManager);
-					$um->setAbsoluteUrl(true);
 					$baseUrl = $um->getByPathInfo(null)->normalize()->toString();
 					if ($document instanceof \Change\Presentation\Interfaces\Page ||
 						$document instanceof \Change\Presentation\Interfaces\Section)

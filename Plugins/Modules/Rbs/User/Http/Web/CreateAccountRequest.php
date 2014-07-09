@@ -76,7 +76,7 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 	 * @param string $email
 	 * @param array $parameters
 	 * @param string $LCID
-	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param \Rbs\Website\Documents\Website $website
 	 * @throws \Exception
 	 */
 	protected function createAccountRequest(\Change\Http\Web\Event $event, $email, $parameters, $website, $LCID)
@@ -113,7 +113,6 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$documentManager->pushLCID($LCID);
 		$urlManager = $website->getUrlManager($LCID);
-		$urlManager->setAbsoluteUrl(true);
 
 		$query = [
 			'requestId' => $requestId,
@@ -136,7 +135,6 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$event->getApplicationServices()->getLogging()->info($e);
 		}
 		$documentManager->popLCID();
-
 	}
 
 	/**

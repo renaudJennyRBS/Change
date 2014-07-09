@@ -13,9 +13,9 @@
 				<tr>
 					<td>
 						{% if order.id %}
-							{% set detailHref = functionURL('Rbs_Order_OrderDetail', null, {'orderId': order.id}) %}
+							{% set detailHref = functionURL('Rbs_Order_OrderDetail', {'orderId': order.id}) %}
 						{% else %}
-							{% set detailHref = functionURL('Rbs_Order_OrderDetail', null, {'cartIdentifier': order.cartIdentifier}) %}
+							{% set detailHref = functionURL('Rbs_Order_OrderDetail', {'cartIdentifier': order.cartIdentifier}) %}
 						{% endif %}
 						<a href="{{ detailHref }}">
 							{% if order.code %}

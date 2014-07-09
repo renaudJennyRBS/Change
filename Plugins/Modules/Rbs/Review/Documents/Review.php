@@ -73,7 +73,7 @@ class Review extends \Compilation\Rbs\Review\Documents\Review
 			'upvote' => $this->getUpvote(),
 			'downvote' => $this->getDownvote(),
 			//TODO: getLabel for target is not a good thing, find another way
-			'target' => [ 'title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target, $this->getSection()->getWebsite()) ],
+			'target' => [ 'title' => $target->getLabel(), 'url' => $urlManager->getCanonicalByDocument($target) ],
 			'author' => $author,
 			'email' => $email
 		];

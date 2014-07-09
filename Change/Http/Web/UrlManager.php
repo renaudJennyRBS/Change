@@ -45,10 +45,6 @@ class UrlManager extends \Change\Http\UrlManager
 	 */
 	protected $LCID;
 
-	/**
-	 * @var \Change\Http\Web\UrlManager[]
-	 */
-	protected $webUrlManagers = array();
 
 	/**
 	 * @param \Change\Documents\DocumentManager $documentManager
@@ -171,14 +167,7 @@ class UrlManager extends \Change\Http\UrlManager
 		{
 			return $this;
 		}
-		$key = $website->getId() .'/' . $LCID;
-		if (!isset($this->webUrlManagers[$key]))
-		{
-			$this->webUrlManagers[$key] = $website->getUrlManager($LCID);
-			$this->webUrlManagers[$key]->setAbsoluteUrl(true);
-			$this->webUrlManagers[$key]->setPathRuleManager($this->getPathRuleManager());
-		}
-		return $this->webUrlManagers[$key];
+		return $website->getUrlManager($LCID);
 	}
 
 	/**
@@ -195,37 +184,21 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Documents\AbstractDocument|integer $document
-	 * @param \Change\Presentation\Interfaces\Section|\Change\Presentation\Interfaces\Website $website
 	 * @param array $query
 	 * @param string $LCID
 	 * @throws \InvalidArgumentException
 	 * @return \Zend\Uri\Http
 	 */
-	public function getCanonicalByDocument($document, $website = null, $query = array(), $LCID = null)
+	public function getCanonicalByDocument($document, $query = array(), $LCID = null)
 	{
 		if (!is_numeric($document) && !($document instanceof \Change\Documents\AbstractDocument))
 		{
 			throw new \InvalidArgumentException('Argument 1 must be a AbstractDocument or integer', 999999);
 		}
 
-		if ($website === null)
-		{
-			$website = $this->website;
-		}
-		elseif ($website instanceof \Change\Presentation\Interfaces\Website)
-		{
-			//Nothing
-		}
-		elseif ($website instanceof \Change\Presentation\Interfaces\Section)
-		{
-			$website = $website->getWebsite();
-		}
-		else
-		{
-			throw new \InvalidArgumentException('Argument 2 should be a Section or a Website', 999999);
-		}
-
+		$website = $this->website;
 
 		if ($query instanceof \ArrayObject)
 		{
@@ -239,6 +212,7 @@ class UrlManager extends \Change\Http\UrlManager
 		{
 			$queryParameters = new \ArrayObject();
 		}
+
 		if (null === $LCID)
 		{
 			$LCID = $this->getLCID();
@@ -249,6 +223,7 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
+	 * @api
 	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param \Change\Presentation\Interfaces\Section|null $section
 	 * @param array $query
@@ -303,13 +278,13 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
+	 * @api
 	 * @param string $functionCode
-	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param array $query
 	 * @param string $LCID
 	 * @return \Zend\Uri\Http|null
 	 */
-	public function getByFunction($functionCode, $website = null, $query = array(), $LCID = null)
+	public function getByFunction($functionCode, $query = array(), $LCID = null)
 	{
 		$uri = null;
 		if (!is_string($functionCode) || empty($functionCode))
@@ -322,10 +297,7 @@ class UrlManager extends \Change\Http\UrlManager
 			$LCID = $this->getLCID();
 		}
 
-		if ($website === null)
-		{
-			$website =  $this->getWebsite();
-		}
+		$website =  $this->getWebsite();
 
 		if ($website instanceof AbstractDocument)
 		{
@@ -336,13 +308,30 @@ class UrlManager extends \Change\Http\UrlManager
 			$page = $event->getParam('page');
 			if ($page instanceof AbstractDocument)
 			{
-				$absoluteUrl = $this->getAbsoluteUrl();
-				$this->setAbsoluteUrl(true);
-				$uri = $this->getCanonicalByDocument($page, null, $query, $LCID);
-				$this->setAbsoluteUrl($absoluteUrl);
+				$absoluteUrl = $this->absoluteUrl(true);
+				$uri = $this->getCanonicalByDocument($page, $query, $LCID);
+				$this->absoluteUrl($absoluteUrl);
 			}
 		}
 		return $uri;
+	}
+
+	/**
+	 * @api
+	 * @param string $module
+	 * @param string $action
+	 * @param array $query
+	 * @return string
+	 */
+	public function getAjaxURL($module, $action, $query = array())
+	{
+		$module = is_array($module) ? $module : explode('_', $module);
+		$action = is_array($action) ? $action : array($action);
+		$pathInfo = array_merge(array('Action'), $module, $action);
+		$absoluteUrl = $this->absoluteUrl(true);
+		$url = $this->getByPathInfo($pathInfo, $query)->normalize()->toString();
+		$this->absoluteUrl($absoluteUrl);
+		return $url;
 	}
 
 	/**
@@ -448,37 +437,39 @@ class UrlManager extends \Change\Http\UrlManager
 	}
 
 	/**
+	 * @api
+	 * @param boolean|null $absoluteUrl
+	 * @return boolean
+	 */
+	public function absoluteUrl($absoluteUrl = null)
+	{
+		$oldValue = $this->absoluteUrl;
+		if (is_bool($absoluteUrl))
+		{
+			$this->absoluteUrl = $absoluteUrl;
+		}
+		return $oldValue;
+	}
+
+
+
+	/**
+	 * @deprecated
 	 * @param bool $absoluteUrl
 	 * @return $this
 	 */
 	public function setAbsoluteUrl($absoluteUrl = null)
 	{
-		if (is_bool($absoluteUrl))
-		{
-			$this->absoluteUrl = $absoluteUrl;
-		}
+		$this->absoluteUrl($absoluteUrl);
 		return $this;
 	}
 
 	/**
+	 * @deprecated
 	 * @return boolean
 	 */
 	public function getAbsoluteUrl()
 	{
-		return $this->absoluteUrl;
-	}
-
-	/**
-	 * @param string $module
-	 * @param string $action
-	 * @param array $query
-	 * @return string
-	 */
-	public function getAjaxURL($module, $action, $query = array())
-	{
-		$module = is_array($module) ? $module : explode('_', $module);
-		$action = is_array($action) ? $action : array($action);
-		$pathInfo = array_merge(array('Action'), $module, $action);
-		return $this->getByPathInfo($pathInfo, $query)->normalize()->toString();
+		return $this->absoluteUrl();
 	}
 }

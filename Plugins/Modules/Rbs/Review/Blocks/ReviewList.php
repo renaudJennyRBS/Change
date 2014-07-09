@@ -127,7 +127,7 @@ class ReviewList extends Block
 				$url = null;
 				if ($reviewFunctionalPageExist)
 				{
-					$url = $urlManager->getCanonicalByDocument($review, $review->getSection()->getWebsite());
+					$url = $urlManager->getCanonicalByDocument($review);
 				}
 				else
 				{

@@ -97,7 +97,6 @@ class WebsiteResolver
 				{
 					if ($path === '/')
 					{
-						$stdUrlManager->setAbsoluteUrl(true);
 						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
 						$result->setHeaderLocation($stdUrlManager->getByPathInfo(''));
 						$event->setResult($result);

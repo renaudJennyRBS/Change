@@ -56,7 +56,9 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('test', $urlManager->getByPathInfo('test')->toString());
 		$this->assertEquals('http://domain.net:80/', $urlManager->getByPathInfo('')->toString());
 
-		$this->assertSame($urlManager, $urlManager->setAbsoluteUrl(true));
+		$this->assertFalse($urlManager->absoluteUrl());
+		$this->assertFalse($urlManager->absoluteUrl(true));
+		$this->assertTrue($urlManager->absoluteUrl());
 		$this->assertEquals('http://domain.net:80/test', $urlManager->getByPathInfo('test')->toString());
 	}
 
@@ -67,11 +69,11 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$urlManager->setWebsite($website1);
 		$uri = $urlManager->getByPathInfoForWebsite($website1, $website1->getLCID(), 'test.html', array('a' => 'b'));
 		$this->assertEquals('test.html?a=b', $uri->toString());
-		$urlManager->setAbsoluteUrl(true);
+		$urlManager->absoluteUrl(true);
 		$uri = $urlManager->getByPathInfoForWebsite($website1, $website1->getLCID(), 'test.html', array('a' => 'b'));
 		$this->assertEquals('http://domain.net:80/test.html?a=b', $uri->toString());
 
-		$urlManager->setAbsoluteUrl(false);
+		$urlManager->absoluteUrl(false);
 		$website2 = new FakeWebsite_5842135();
 		$website2->id = 1001;
 		$website2->LCID = 'en_US';
@@ -149,8 +151,8 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$section2 = new FakeSection_5842135(2001, $website1);
 
 		$document3000 = $this->getNewReadonlyDocument('Project_Tests_Correction', 3000);
-
-		$uri = $urlManager->getCanonicalByDocument($document3000, $website1);
+		$urlManager->setWebsite($website1);
+		$uri = $urlManager->getCanonicalByDocument($document3000);
 		$this->assertEquals('testDoc3.html', $uri->toString());
 
 		$uri = $urlManager->getByDocument($document3000, $section1);
@@ -171,7 +173,7 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$document3001 = $this->getNewReadonlyDocument('Project_Tests_Correction', 3001);
 
-		$uri = $urlManager->getCanonicalByDocument($document3001, $website1);
+		$uri = $urlManager->getCanonicalByDocument($document3001);
 		$this->assertEquals('document/3001.html', $uri->toString());
 
 		//TODO Detect valid rule by queryParameters analysis
@@ -199,10 +201,10 @@ class UrlManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$document3001->getEventManager()->attach('selectPathRule', $callback);
 
-		$uri = $urlManager->getCanonicalByDocument($document3001, $website1, array('b' => 10));
+		$uri = $urlManager->getCanonicalByDocument($document3001, array('b' => 10));
 		$this->assertEquals('testA1.html?b=10&count=2&a=1&c=8', $uri->toString());
 
-		$uri = $urlManager->getCanonicalByDocument($document3001, $website1, array('b' => 12));
+		$uri = $urlManager->getCanonicalByDocument($document3001, array('b' => 12));
 		$this->assertEquals('testA2.html?b=12&count=2&a=2&c=8', $uri->toString());
 	}
 
@@ -372,7 +374,7 @@ class FakeWebsite_5842135 implements \Change\Presentation\Interfaces\Website
 		$url->setPath('/');
 		$urlManager = new \Change\Http\Web\UrlManager($url, $this->getScriptName());
 		$urlManager->setBasePath($this->getRelativePath());
-		$urlManager->setAbsoluteUrl(true);
+		$urlManager->absoluteUrl(true);
 		return $urlManager;
 	}
 

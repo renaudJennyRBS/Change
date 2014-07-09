@@ -26,12 +26,12 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 		{
 			$data = $event->getRequest()->getQuery()->toArray();
 			$urlManager = $event->getUrlManager();
-			$urlManager->setAbsoluteUrl(true);
+			$absoluteUrl = $urlManager->absoluteUrl(true);
 
 			$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccountSuccess');
 			if (!$redirectURL)
 			{
-				$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', null, ['context' => 'create']);
+				$redirectURL = $urlManager->getByFunction('Rbs_User_CreateAccount', ['context' => 'create']);
 			}
 			$event->setParam('redirectLocation', $redirectURL);
 			$event->setParam('errorLocation', $redirectURL);
@@ -52,6 +52,8 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 				$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
 				$event->setResult($result);
 			}
+
+			$urlManager->absoluteUrl($absoluteUrl);
 		}
 	}
 
