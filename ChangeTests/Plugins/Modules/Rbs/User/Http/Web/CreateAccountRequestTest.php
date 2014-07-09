@@ -159,7 +159,7 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$mail = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Mail_Mail');
 		/* @var $mail \Rbs\Mail\Documents\Mail */
-		$mail->setCode('user_account_request');
+		$mail->setCode('rbs_user_account_request');
 		$mail->setLabel('test account request mail');
 		$mail->getCurrentLocalization()->setSubject('test account request mail');
 
