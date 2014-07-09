@@ -29,7 +29,6 @@ class Richtext extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('content');
-		$parameters->addParameterMeta('contentType', 'Markdown');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		return $parameters;
 	}
@@ -45,10 +44,9 @@ class Richtext extends Block
 	{
 		$context = array('website' => $event->getUrlManager()->getWebsite());
 		$richText = new \Change\Documents\RichtextProperty($event->getBlockParameters()->getParameter('content'));
-		$richText->setEditor($event->getBlockParameters()->getParameter('contentType'));
 		$attributes['htmlContent'] = $event->getApplicationServices()
 			->getRichTextManager()
-			->render($richText, 'Website', $context);
+			->render($richText, 'Mail', $context);
 		return 'richtext.twig';
 	}
 }

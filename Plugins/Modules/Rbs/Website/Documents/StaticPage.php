@@ -130,12 +130,11 @@ class StaticPage extends \Compilation\Rbs\Website\Documents\StaticPage
 				foreach ($layout->getBlocks() as $block)
 				{
 					$params = $block->getParameters();
-					if (isset($params['content']) && isset($params['contentType']))
+					if (isset($params['content']))
 					{
 						$richText = new \Change\Documents\RichtextProperty($params['content']);
-						$richText->setEditor($params['contentType']);
 						$context = ['website' => $website];
-						$text = $event->getApplicationServices()->getRichTextManager()->render($richText, "Website", $context);
+						$text = $event->getApplicationServices()->getRichTextManager()->render($richText, 'Website', $context);
 						$text = trim(strip_tags($text, '<p><br>'));
 						if ($text)
 						{

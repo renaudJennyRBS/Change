@@ -1,11 +1,11 @@
 {
 	"documents": [
 		{
-			"_id": "user_account_request",
+			"_id": "rbs_user_account_request",
 			"_model": "Rbs_Mail_Mail",
 			"useCache": false,
 			"TTL": 0,
-			"code": "user_account_request",
+			"code": "rbs_user_account_request",
 			"substitutions": ["website", "link"],
 			"label": "Création de compte utilisateur",
 			"versionOfId": 0,
@@ -22,8 +22,11 @@
 								{
 									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
 									"parameters": {
-										"contentType": "Markdown",
-										"content": "Bonjour,\n\n### Vous avez fait une demande de création de compte pour le site \"{website}\"\n\nVeuillez confirmer votre adresse e-mail en cliquant sur le lien suivant : [{link}]({link} \"confirmer votre adresse e-mail\")\n\ncordialement.",
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Bonjour,\n\n### Vous avez fait une demande de création de compte pour le site \"{website}\"\n\nVeuillez confirmer votre adresse e-mail en cliquant sur le lien suivant : [{link}]({link} \"confirmer votre adresse e-mail\")\n\ncordialement."
+										},
 										"TTL": 0
 									}
 								}
@@ -35,11 +38,11 @@
 			}
 		},
 		{
-			"_id": "user_reset_password_request",
+			"_id": "rbs_user_reset_password_request",
 			"_model": "Rbs_Mail_Mail",
 			"useCache": false,
 			"TTL": 0,
-			"code": "user_reset_password_request",
+			"code": "rbs_user_reset_password_request",
 			"substitutions": ["website", "link"],
 			"label": "Demande de ré-initialisation de mot de passe",
 			"versionOfId": 0,
@@ -56,8 +59,11 @@
 								{
 									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
 									"parameters": {
-										"contentType": "Markdown",
-										"content": "Bonjour,\n\n### Vous avez fait une demande de ré-initialisation de mot de passe pour le site \"{website}\"\n\nVeuillez suivre ce mail pour accéder au changement de votre mot de passe : [{link}]({link} \"Changer de mot de passe\")\n\nSi vous n'êtes pas à l'origine de cette demande, ne tenez pas compte de cet email.\n\ncordialement.",
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Bonjour,\n\n### Vous avez fait une demande de ré-initialisation de mot de passe pour le site \"{website}\"\n\nVeuillez suivre ce mail pour accéder au changement de votre mot de passe : [{link}]({link} \"Changer de mot de passe\")\n\nSi vous n'êtes pas à l'origine de cette demande, ne tenez pas compte de cet email.\n\ncordialement."
+										},
 										"TTL": 0
 									}
 								}

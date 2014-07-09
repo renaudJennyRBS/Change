@@ -21,8 +21,11 @@
 								{
 									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
 									"parameters": {
-										"contentType": "Markdown",
-										"content": "Bonjour,\n\nNous vous informons que la transaction concernant le paiement est en cours\n\ncordialement.",
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Bonjour,\n\nNous vous informons que la transaction concernant le paiement est en cours\n\ncordialement."
+										},
 										"TTL": 0
 									}
 								}
@@ -55,8 +58,11 @@
 								{
 									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
 									"parameters": {
-										"contentType": "Markdown",
-										"content": "Bonjour,\n\nNous vous informons que la transaction concernant le paiement s'est terminée avec succès\n\ncordialement.",
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Bonjour,\n\nNous vous informons que la transaction concernant le paiement s'est terminée avec succès\n\ncordialement."
+										},
 										"TTL": 0
 									}
 								}
@@ -88,8 +94,11 @@
 								{
 									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
 									"parameters": {
-										"contentType": "Markdown",
-										"content": "Bonjour,\n\nUne erreur est servenue pendant la transaction de votre paiement\n\ncordialement.",
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Bonjour,\n\nUne erreur est servenue pendant la transaction de votre paiement\n\ncordialement."
+										},
 										"TTL": 0
 									}
 								}

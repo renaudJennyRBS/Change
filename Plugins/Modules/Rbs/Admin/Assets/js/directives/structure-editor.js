@@ -136,12 +136,11 @@
 						};
 
 						this.blockById = function (blockId) {
-							if (blockId === undefined) {
-								return selectedBlockId;
-							} else {
+							if (blockId !== undefined) {
 								selectedBlockId = blockId;
 								this.reselectBlock();
 							}
+							return selectedBlockId;
 						};
 
 						/**
@@ -202,6 +201,24 @@
 						 */
 						this.getItemById = function (id) {
 							return $scope.items[id] || null;
+						};
+
+						/**
+						 * Gets substitution variables.
+						 *
+						 * @returns {*|null}
+						 */
+						this.getSubstitutionVariables = function () {
+							return $scope.substitutionVariables;
+						};
+
+						/**
+						 * Sets substitution variables.
+						 *
+						 * @param {*|null} substitutionVariables
+						 */
+						this.setSubstitutionVariables = function (substitutionVariables) {
+							$scope.substitutionVariables = substitutionVariables;
 						};
 
 						/**
@@ -301,12 +318,6 @@
 							if (item.id && $scope.items[item.id]) {
 								throw new Error("Could not register item " + item.id +
 									": another item is registered with the same ID (" + $scope.items[item.id].type + ").");
-							}
-
-							// Add substitution variables if it's a rich text block.
-							if (item.type === 'block'
-									&& (item.name === 'Rbs_Mail_Richtext' || item.name === 'Rbs_Website_Richtext')) {
-								item.substitutionVariables = $attrs.substitutionVariables;
 							}
 
 							// Assign new unique ID and register the item.
@@ -674,7 +685,6 @@
 							contentReady = false,
 							templateInfo,
 							originalValue,
-							substitutionVariables,
 							pendingBlockPropertySetter = null;
 
 						scope.$on('Navigation.saveContext', function (event, args) {
@@ -732,7 +742,7 @@
 
 						attrs.$observe('substitutionVariables', function (value) {
 							if (value) {
-								substitutionVariables = value;
+								ctrl.setSubstitutionVariables(value);
 							}
 						});
 
@@ -786,10 +796,6 @@
 										scope.blockIdCounter = Math.max(item.id, scope.blockIdCounter);
 										registerItems(item);
 									});
-								}
-								//if the container/item is a mail rich text block, give it variable substitutions
-								if (container.type === 'block' && container.name === 'Rbs_Mail_Richtext') {
-									container.substitutionVariables = substitutionVariables;
 								}
 							}
 

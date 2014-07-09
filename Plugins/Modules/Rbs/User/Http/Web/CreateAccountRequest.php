@@ -128,7 +128,7 @@ class CreateAccountRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$mailManager = $genericServices->getMailManager();
 		try
 		{
-			$mailManager->send('user_account_request', $website, $LCID, $email, $params);
+			$mailManager->send('rbs_user_account_request', $website, $LCID, $email, $params);
 		}
 		catch (\RuntimeException $e)
 		{

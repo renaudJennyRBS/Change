@@ -148,8 +148,7 @@
 
 				scope.initItem = function (item) {
 					item.parameters = {
-						contentType: 'Markdown',
-						content: ''
+						content: { e: 'Markdown', 'h': null, 't': null }
 					};
 				};
 
@@ -157,9 +156,17 @@
 				if (!item.parameters) {
 					scope.initItem(item);
 				}
+				else if (!item.parameters.hasOwnProperty('content')) {
+					item.parameters.content = { e: 'Markdown', 'h': null, 't': null };
+				}
+				else if (typeof item.parameters.content === 'string') {
+					item.parameters.content = { e: 'Markdown', 'h': null, 't': item.parameters.content }
+				}
+
 				scope.input = {text: item.parameters.content};
 				scope.profile = item.name === 'Rbs_Mail_Richtext' ? 'Mail' : 'Website';
-				scope.substitutionVariables = item.substitutionVariables ? JSON.parse(item.substitutionVariables) : [];
+				var substitutionVariables = ctrl.getSubstitutionVariables();
+				scope.substitutionVariables = substitutionVariables ? JSON.parse(substitutionVariables) : [];
 
 				scope.$watch('input.text', function (text, old) {
 					if (text !== old) {
