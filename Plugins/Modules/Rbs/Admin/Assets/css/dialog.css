@@ -8,8 +8,9 @@
 	box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
 	border-radius: 0;
 	font-size: 14px;
-	background: #353432;
-	color: #eeeeee;border-top: 5px solid rgb(172,172,172);
+	background: #ffffff;
+	color: #333333;
+	border-top: 5px solid rgb(172,172,172);
 	border-left: 10px solid rgb(172,172,172);
 	border-top: 0 none;
 	display: none;
@@ -56,7 +57,7 @@
 .embedded-modal.bottom:after {
 	top: auto;
 	bottom: -9px;
-	border-top: 9px solid #FFFFFF;
+	border-top: 9px solid #000000;
 	border-bottom: none;
 }
 
@@ -99,7 +100,7 @@
 }
 
 .embedded-modal button.close {
-	color: white;
+	color: #333333;
 	opacity: 0.8;
 }
 

@@ -236,8 +236,9 @@
 					}
 
 					$el.fadeIn('fast');
-					options.pointedElement = $(options.pointedElement);
+
 					if (options.pointedElement) {
+						options.pointedElement = $(options.pointedElement);
 						var elTop = options.pointedElement.offset().top;
 						var embedTop = $el.offset().top;
 

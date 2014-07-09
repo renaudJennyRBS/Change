@@ -83,5 +83,48 @@ class UpdateTreeNode
 				throw new \RuntimeException('Invalid Parameter: parentNode', 71000);
 			}
 		}
+		else if (isset($properties['children']) && is_array($properties['children']))
+		{
+			$childrenIds = $properties['children'];
+
+			$transactionManager = $event->getApplicationServices()->getTransactionManager();
+			try
+			{
+				$transactionManager->begin();
+				$currentChildrenNodes = $treeManager->getChildrenNode($node);
+				$beforeNode = null;
+				foreach (array_reverse($childrenIds) as $childrenId)
+				{
+					$nodeToOrder = $this->findNode($currentChildrenNodes, $childrenId);
+					if ($nodeToOrder)
+					{
+						$treeManager->moveNode($nodeToOrder, $node, $beforeNode);
+						$beforeNode = $nodeToOrder;
+					}
+				}
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
+			}
+			(new GetTreeNodeCollection())->execute($event);
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\TreeNode[] $nodes
+	 * @param integer $id
+	 * @return \Change\Documents\TreeNode|null
+	 */
+	protected function findNode($nodes, $id)
+	{
+		foreach ($nodes as $node)
+		{
+			if ($node->getDocumentId() == $id) {
+				return $node;
+			}
+		}
+		return null;
 	}
 }

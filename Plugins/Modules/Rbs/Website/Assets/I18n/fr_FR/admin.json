@@ -429,5 +429,11 @@
 	},
 	"empty":{
 		"message":"vide"
+	},
+	"ordering_title":{
+		"message":"Ordonnancement des pages et rubriques"
+	},
+	"ordering_apply":{
+		"message":"Ordonner"
 	}
 }
