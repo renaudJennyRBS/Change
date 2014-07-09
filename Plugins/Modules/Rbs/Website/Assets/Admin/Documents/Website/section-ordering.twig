@@ -1,0 +1,44 @@
+	<header class="clearfix">
+		<button data-ng-click="closeOrdering()" class="close pull-right" style="margin-left:30px;" type="button">×</button>
+		<h3>{{ i18n('m.rbs.website.admin.ordering_title', ['ucf']) }}</h3>
+	</header>
+	<rbs-document-list data-dlid="DLOrderingCollection" collection="childrenToOrder" extend="orderingFunctions"
+			toolbar="false" selectable="false" correction="false">
+		<rbs-quick-actions>
+		</rbs-quick-actions>
+		<rbs-column name="label" primary="true" label="{{ i18n('c.documents.label', ['ucf']) }}">
+			<i ng-hide="extend.isTopic(doc)" class="tree-icon opacity-half icon-large icon-file-text-alt"></i>
+			<i ng-show="extend.isTopic(doc)" class="tree-icon opacity-half icon-large icon-folder-close"></i>
+			(= doc.label =)
+		</rbs-column>
+		<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
+			<rbs-kb-switch>
+				<button data-rbs-kb-when="alt" data-ng-disabled="$first" class="btn btn-default btn-icon"
+						type="button" data-ng-click="extend.moveTop($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
+					<i class="icon-step-forward icon-rotate-270"></i>
+				</button>
+				<button data-rbs-kb-default="" data-ng-disabled="$first" class="btn btn-default btn-icon"
+						type="button" data-ng-click="extend.moveUp($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
+					<i class="icon-play icon-rotate-270"></i>
+				</button>
+			</rbs-kb-switch>
+			<rbs-kb-switch>
+				<button data-rbs-kb-when="alt" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
+						data-ng-click="extend.moveBottom($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
+					<i class="icon-step-forward icon-rotate-90"></i>
+				</button>
+				<button data-rbs-kb-default="" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
+						data-ng-click="extend.moveDown($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
+					<i class="icon-play icon-rotate-90"></i>
+				</button>
+			</rbs-kb-switch>
+		</rbs-column>
+	</rbs-document-list>
+	<div class="form-actions">
+		<button class="btn btn-primary" ng-click="applyOrdering()"><i class="icon-white icon-ok"></i>{{ i18n('m.rbs.website.admin.ordering_apply', ['ucf']) }}</button>
+		<button type="button" class="btn btn-default" data-ng-click="closeOrdering()">{{ i18n('m.rbs.admin.admin.close', ['ucf']) }}</button>
+	</div>

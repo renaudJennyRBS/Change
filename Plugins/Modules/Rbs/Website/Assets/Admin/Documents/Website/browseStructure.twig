@@ -19,11 +19,14 @@
 		<div ng-controller="Rbs_Website_StructureController">
 
 			<div class="add-elements-bar">
-				<a href rbs-start-navigation="" data-navigation-node="(= currentWebsite.id =)" target-url="(= 'Rbs_Website_Topic' | rbsURL:'new':{website:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
-				<a href rbs-start-navigation="" data-navigation-node="(= currentWebsite.id =)" target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website:currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+				<a href rbs-start-navigation="" data-navigation-node="(= currentWebsite.id =)" target-url="(= 'Rbs_Website_Topic' | rbsURL:'new':{website:currentWebsite.id,tn: currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
+				<a href rbs-start-navigation="" data-navigation-node="(= currentWebsite.id =)" target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website:currentWebsite.id,tn: currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
+				<a ng-if="browseCollection.length" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.ordering_title', ['ucf']) }}"
+						ng-click="ordering(currentWebsite)" href> <i class="icon-sort-by-attributes icon-large"></i></a>
 			</div>
-
-			<rbs-document-list data-dlid="DLRbsWebsiteBrowser"
+			<div id="ordering_topic_modal_topic">
+			</div>
+			<rbs-document-list data-dlid="DLRbsWebsiteBrowser" ng-hide="childrenToOrder"
 					publishable="true"
 					model="Rbs_Website_Topic"
 					collection="browseCollection"
@@ -45,7 +48,7 @@
 					</a>
 				</rbs-quick-actions>
 
-				<rbs-column name="label" label="{{ i18n('c.documents.label', ['ucf']) }}" primary="true">
+				<rbs-column name="label" label="{{ i18nAttr('c.documents.label', ['ucf']) }}" primary="true">
 					<div class="depth-level-indicator" ng-style="extend.getIndicatorStyle(doc, $index)"></div>
 
 					<span class="pull-right">
@@ -55,7 +58,9 @@
 
 						<a ng-if="extend.isTopic(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.staticpage_create', ['ucf']) }}" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website: doc.website.id,tn: doc.id} =)">+ <i class="icon-file-text-alt icon-large"></i></a>
 						<a ng-if="extend.isTopic(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.topic_create', ['ucf']) }}" rbs-start-navigation="" data-navigation-node="(= doc.id =)" href target-url="(= 'Rbs_Website_Topic' | rbsURL:'new':{website: doc.website.id,tn: doc.id} =)">+ <i class="icon-folder-close-alt icon-large"></i></a>
-						<a ng-if="! extend.isFunction(doc)" ng-href="(= doc | rbsURL =)" class="btn-flat">{{ i18n('m.rbs.admin.admin.edit') }}</a>
+						<a ng-if="extend.isTopic(doc) && extend.hasChildren(doc)" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.ordering_title', ['ucf']) }}"
+								ng-click="extend.ordering(doc)" href> <i class="icon-sort-by-attributes icon-large"></i></a>
+						<a ng-if="! extend.isFunction(doc)" href target-url="(= doc | rbsURL =)" rbs-start-navigation="" data-navigation-editnode="(= doc.id =)" class="btn-flat">{{ i18n('m.rbs.admin.admin.edit') }}</a>
 					</span>
 
 					<span ng-if="extend.isTopic(doc)">
@@ -69,7 +74,7 @@
 
 					<span ng-if="extend.isPage(doc)">
 						<i class="tree-icon opacity-half icon-large icon-file-text-alt"></i>
-						<a href="(= doc | rbsURL =)" ng-bind="doc.label"></a>
+						<a href target-url="(= doc | rbsURL =)" rbs-start-navigation="" data-navigation-editnode="(= doc.id =)" ng-bind="doc.label"></a>
 						<small ng-if="doc.label != doc.title" class="text-muted" ng-bind="doc.title"></small>
 					</span>
 
