@@ -38,13 +38,13 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 						$richTextManager = $event->getApplicationServices()->getRichTextManager();
 
 						/* @var $shippingMode \Rbs\Shipping\Documents\Mode */
-						foreach ($shippingModes as $index => $shippingMode)
+						foreach ($shippingModes as $shippingMode)
 						{
 							$modeInfos = array(
 								'id' => $shippingMode->getId(),
 								'title' => $shippingMode->getCurrentLocalization()->getTitle(),
 								'description' => $richTextManager->render($shippingMode->getCurrentLocalization()
-										->getDescription(), "Website", $richTextContext)
+										->getDescription(), 'Website', $richTextContext)
 							);
 
 							$visual = $shippingMode->getVisual();

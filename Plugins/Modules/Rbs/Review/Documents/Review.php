@@ -15,23 +15,27 @@ use Change\Documents\Events\Event as DocumentEvent;
  */
 class Review extends \Compilation\Rbs\Review\Documents\Review
 {
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
 	}
 
+	/**
+	 * @param DocumentEvent $event
+	 */
 	public function onDefaultSave(DocumentEvent $event)
 	{
 		$review = $event->getDocument();
 		if ($review instanceof Review)
 		{
-			if ($review->isPropertyModified('content'))
-			{
-				$event->getApplicationServices()->getRichTextManager()->render($review->getContent(), 'Admin');
-			}
 			$targetLabel = $review->getTarget() ? $review->getTarget()->getLabel() : '';
-			$review->setLabel($event->getApplicationServices()->getI18nManager()->trans('m.rbs.review.admin.review_label_content', array('ucf'), array('targetLabel' => $targetLabel, 'pseudonym' => $review->getPseudonym())));
+			$key = 'm.rbs.review.admin.review_label_content';
+			$replacements = array('targetLabel' => $targetLabel, 'pseudonym' => $review->getPseudonym());
+			$review->setLabel($event->getApplicationServices()->getI18nManager()->trans($key, array('ucf'), $replacements));
 		}
 	}
 

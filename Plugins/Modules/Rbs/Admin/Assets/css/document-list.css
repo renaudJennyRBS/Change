@@ -75,7 +75,7 @@ rbs-document-list .panel-footer .pagination {
 	border-radius: 2px;
 }
 
-.document-list tr .quick-actions > .popover-content > a,
+.document-list tr .quick-actions > .popover-content a,
 .document-list tr .quick-actions > .popover-content .quick-action {
 	font-size: 90%;
 	text-transform: lowercase;
@@ -95,7 +95,7 @@ rbs-document-list .panel-footer .pagination {
 	position: relative;
 }
 
-.document-list tr .quick-actions > .popover-content > a i {
+.document-list tr .quick-actions > .popover-content a > i {
 	float: right;
 	margin-left: 10px;
 	-webkit-transition: -webkit-transform 0.05s ease-in;

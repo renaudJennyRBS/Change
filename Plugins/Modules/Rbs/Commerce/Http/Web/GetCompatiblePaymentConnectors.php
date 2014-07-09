@@ -44,7 +44,7 @@ class GetCompatiblePaymentConnectors extends \Change\Http\Web\Actions\AbstractAj
 								'id' => $paymentConnector->getId(),
 								'title' => $paymentConnector->getCurrentLocalization()->getTitle(),
 								'description' => $richTextManager->render($paymentConnector->getCurrentLocalization()
-										->getDescription(), "Website", $richTextContext)
+										->getDescription(), 'Website', $richTextContext)
 							);
 
 							$visual = $paymentConnector->getVisual();
