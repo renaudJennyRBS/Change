@@ -37,10 +37,6 @@ class Process extends \Compilation\Rbs\Commerce\Documents\Process
 			}
 			$documentResult->setProperty('modifiersOrder', $modifiersOrder);
 		}
-		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
-		{
-
-		}
 	}
 
 	/**

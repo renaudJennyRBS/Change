@@ -85,7 +85,7 @@
 					$(this).prevAll().addClass('active');
 				});
 
-				scope.$watch('document.pageTemplate', function(pageTemplate) {
+				scope.$watch('document.pageTemplate', function() {
 					scope.loadTemplate();
 				}, true);
 			}

@@ -1,7 +1,7 @@
 (function() {
 	"use strict";
 
-	function rbsDocumentEditorRbsMailMailEdit($http, REST, i18n, NotificationCenter, ErrorFormatter, $location) {
+	function rbsDocumentEditorRbsMailMailEdit($http, REST, i18n, NotificationCenter, ErrorFormatter, $location, Actions) {
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentEditorBase',
@@ -40,25 +40,37 @@
 					}
 				};
 
+				scope.$on('Navigation.saveContext', function(event, args) {
+					args.context.savedData('template', scope.template);
+				});
+
+				scope.onRestoreContext = function(currentContext) {
+					scope.template = currentContext.savedData('template');
+				};
+
 				scope.loadTemplate = function() {
-					if (scope.document.template) {
-						REST.resource(scope.document.template).then(function(template) {
-							scope.template = { "html": template.htmlForBackoffice, "data": template.editableContent };
-						});
+					var t = scope.document.template;
+					if (t) {
+						if (!scope.template || scope.template.id != t.id) {
+							REST.resource(t).then(function(template) {
+								scope.template = {id: template.id, html: template.htmlForBackoffice, data: template.editableContent};
+							});
+						}
 					}
 				};
 
 				scope.leaveSection = function(section) {
 					if (section === 'content') {
-						$('#rbsWebsitePageDefaultAsides').show();
+						$('[data-rbs-aside-column]').children().show();
 						$('#rbsWebsitePageBlockPropertiesAside').hide();
 					}
 				};
 
 				scope.enterSection = function(section) {
 					if (section === 'content') {
-						$('#rbsWebsitePageDefaultAsides').hide();
+						$('[data-rbs-aside-column]').children().hide();
 						$('#rbsWebsitePageBlockPropertiesAside').show();
+						$('rbs-aside-editor-menu').show();
 					}
 				};
 
@@ -75,16 +87,16 @@
 					}
 				};
 
-				scope.$watch('document.template', function(template, old) {
-					if (old && scope.document && template !== old && contentSectionInitialized) {
-						scope.loadTemplate();
-					}
+				scope.$watch('document.template', function() {
+					scope.loadTemplate();
 				}, true);
+
+				console.log(angular.copy(Actions.get('delete')));
 			}
 		};
 	}
 
 	rbsDocumentEditorRbsMailMailEdit.$inject = ['$http', 'RbsChange.REST', 'RbsChange.i18n', 'RbsChange.NotificationCenter',
-		'RbsChange.ErrorFormatter', '$location'];
+		'RbsChange.ErrorFormatter', '$location', 'RbsChange.Actions'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsMailMailEdit', rbsDocumentEditorRbsMailMailEdit);
 })();

@@ -618,6 +618,15 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 		$um = $documentResult->getUrlManager();
 		if ($documentResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
+			$selfLinks = $documentResult->getRelLink('self');
+			$selfLink = array_shift($selfLinks);
+			if ($selfLink instanceof \Change\Http\Rest\V1\Link)
+			{
+				$deleteLink = new \Change\Http\Rest\V1\Link($um, $selfLink->getPathInfo(), 'delete');
+				$deleteLink->setMethod('DELETE');
+				$documentResult->addAction($deleteLink);
+			}
+
 			if ($document->getTreeName())
 			{
 				$tn = $event->getApplicationServices()->getTreeManager()->getNodeByDocument($document);
@@ -702,8 +711,9 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$documentLink->setProperty($model->getProperty('documentVersion'));
 			}
 
-			$actions = $documentLink->getProperty('actions', []);
-
+			$deleteLink = new \Change\Http\Rest\V1\Link($um, $documentLink->getPathInfo(), 'delete');
+			$deleteLink->setMethod('DELETE');
+			$documentLink->addAction($deleteLink);
 
 			if ($document instanceof Publishable)
 			{
@@ -727,7 +737,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 					$query['LCID'] = $event->getApplicationServices()->getDocumentManager()->getLCID();
 				}
 				$l->setQuery($query);
-				$actions[] = $l;
+				$documentLink->addAction($l);
 			}
 
 			if ($document instanceof Localizable)
@@ -742,7 +752,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				if ($document->hasCorrection())
 				{
 					$l = new \Change\Http\Rest\V1\Resources\DocumentActionLink($um, $document, 'correction');
-					$actions[] = $l;
+					$documentLink->addAction($l);
 					$documentLink->setProperty('correction', true);
 				}
 			}
@@ -757,11 +767,6 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 						$documentLink->setProperty($property);
 					}
 				}
-			}
-
-			if (count($actions))
-			{
-				$documentLink->setProperty('actions', $actions);
 			}
 
 			if ($documentLink->getLCID())

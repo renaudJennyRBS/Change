@@ -98,7 +98,7 @@
 			}
 
 			function buildDeleteAction () {
-				return	'<a ng-hide="deleteConfirm[$index]" href="javascript:;" ng-click="askDeleteConfirmation($index, $event)" class="danger"><i class="icon-trash"></i> ' +
+				return	'<a ng-hide="deleteConfirm[$index] || !doc.isActionAvailable(\'delete\')" href="javascript:;" ng-click="askDeleteConfirmation($index, $event)" class="danger"><i class="icon-trash"></i> ' +
 							i18n.trans('m.rbs.admin.adminjs.delete') +
 						'</a>' +
 						'<div class="quick-action danger" ng-show="deleteConfirm[$index]">' +

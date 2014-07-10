@@ -85,7 +85,7 @@ class ResetPasswordRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$mailManager = $genericServices->getMailManager();
 					try
 					{
-						$mailManager->send('user_reset_password_request', $website, $LCID, $email,
+						$mailManager->send('rbs_user_reset_password_request', $website, $LCID, $email,
 							['website' => $website->getTitle(), 'link' => $confirmationURL]);
 					}
 					catch (\RuntimeException $e)

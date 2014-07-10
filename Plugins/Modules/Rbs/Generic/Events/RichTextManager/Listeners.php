@@ -35,7 +35,7 @@ class Listeners implements ListenerAggregateInterface
 				{
 					$event->setParser(new \Rbs\Admin\MarkdownParser($event->getApplicationServices()));
 				}
-				elseif ($event->getProfile() === 'Website')
+				elseif ($event->getProfile() === 'Website' || $event->getProfile() === 'Mail')
 				{
 					$event->setParser(new \Rbs\Website\RichText\MarkdownParser($event->getApplicationServices()));
 				}

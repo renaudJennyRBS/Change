@@ -392,7 +392,16 @@
 								});
 							}
 						});
-					}]
+					}],
+
+					isEnabled : function ($docs) {
+						for (var i=0 ; i<$docs.length ; i++) {
+							if ( ! $docs[i].isActionAvailable('delete') ) {
+								return false;
+							}
+						}
+						return true;
+					}
 				});
 
 

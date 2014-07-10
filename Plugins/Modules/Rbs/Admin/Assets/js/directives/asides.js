@@ -185,8 +185,7 @@
 					document: '='
 				},
 
-				link: function(scope, iElement) {
-					iElement.hide();
+				link: function(scope) {
 					var docPromise = $q.defer();
 
 					scope.$watch('document', function(doc) {
@@ -227,8 +226,6 @@
 							}
 						});
 
-						iElement.show();
-
 						if (contents.length > 1) {
 							scope.rbsI18nItems = contents;
 						}
@@ -251,16 +248,19 @@
 				document: '='
 			},
 
-			link: function(scope, iElement) {
-				iElement.hide();
+			link: function(scope) {
+				scope.showContent = false;
 				scope.$watch('document', function(doc) {
 					if (Utils.isDocument(doc)) {
-						iElement.show();
 						var seoLink = doc.getLink('seo');
 						if (seoLink) {
 							REST.call(seoLink, null, REST.resourceTransformer()).then(function(seoDocument) {
 								scope.seoDocument = seoDocument;
+								scope.showContent = true;
 							});
+						}
+						else {
+							scope.showContent = true;
 						}
 					}
 				});

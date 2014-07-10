@@ -94,17 +94,16 @@ class ProductListItem extends \Compilation\Rbs\Catalog\Documents\ProductListItem
 
 			if ($this->isHighlighted())
 			{
-				$actions[] = (new Link($urlManager, $pathInfo . '/downplay', 'downplay'))->toArray();
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/downplay', 'downplay'));
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/moveup', 'moveup'));
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/movedown', 'movedown'));
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'));
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'));
 			}
 			else
 			{
-				$actions[] = (new Link($urlManager, $pathInfo . '/highlight', 'highlight'))->toArray();
+				$restResult->addAction(new Link($urlManager, $pathInfo . '/highlight', 'highlight'));
 			}
-			$actions[] = (new Link($urlManager, $pathInfo . '/moveup', 'moveup'))->toArray();
-			$actions[] = (new Link($urlManager, $pathInfo . '/movedown', 'movedown'))->toArray();
-			$actions[] = (new Link($urlManager, $pathInfo . '/highlighttop', 'highlighttop'))->toArray();
-			$actions[] = (new Link($urlManager, $pathInfo . '/highlightbottom', 'highlightbottom'))->toArray();
-			$restResult->setProperty('actions', $actions);
 		}
 	}
 

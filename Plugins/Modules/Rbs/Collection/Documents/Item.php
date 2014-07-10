@@ -30,28 +30,36 @@ class Item extends \Compilation\Rbs\Collection\Documents\Item implements \Change
 	}
 
 	/**
-	 * @throws \RuntimeException
-	 * @throws \Exception
+	 * @param \Change\Documents\Events\Event $event
 	 */
-	protected function onDelete()
-	{
-		if ($this->getLocked())
-		{
-			throw new \RuntimeException('can not delete locked item', 999999);
-		}
-	}
-
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
-		/** @var $document Item */
+
 		$document = $event->getDocument();
+		if (!$document instanceof Item)
+		{
+			return;
+		}
+
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
 			$documentLink = $restResult;
 			$documentLink->setProperty('locked', $document->getLocked());
 			$documentLink->setProperty('value', $document->getValue());
+		}
+
+		if ($document->getLocked())
+		{
+			if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+			{
+				$restResult->removeRelAction('delete');
+			}
+			elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+			{
+				$restResult->removeRelAction('delete');
+			}
 		}
 	}
 

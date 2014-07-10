@@ -186,17 +186,14 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 			{
 				$pathParts = explode('/', $selfLink->getPathInfo());
 				array_pop($pathParts);
-				$link = new Link($urlManager, implode('/', $pathParts) . '/resize', 'resizeurl');
-				$result->addAction($link);
+				$result->addAction(new Link($urlManager, implode('/', $pathParts) . '/resize', 'resizeurl'));
 			}
 		}
 		else if ($result instanceof DocumentLink)
 		{
 			$pathParts = explode('/', $result->getPathInfo());
 			array_pop($pathParts);
-			$actions = $result->getProperty('actions', []);
-			$actions[] = new Link($urlManager, implode('/', $pathParts) . '/resize', 'resizeurl');
-			$result->setProperty('actions', $actions);
+			$result->addAction(new Link($urlManager, implode('/', $pathParts) . '/resize', 'resizeurl'));
 			$result->setProperty('width', $document->getWidth());
 			$result->setProperty('height', $document->getHeight());
 		}

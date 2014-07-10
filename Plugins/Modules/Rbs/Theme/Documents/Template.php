@@ -84,6 +84,7 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);
+
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
@@ -98,6 +99,7 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 			}
 			$documentLink->setProperty('mailSuitable', $pageTemplate->getMailSuitable());
 			$documentLink->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
+			$restResult->removeRelAction('delete');
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
@@ -109,9 +111,13 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 				$restResult->setProperty('themeId', $theme->getId());
 			}
 			$restResult->setProperty('categoryName', $pageTemplate->getMailSuitable() ? 'MailTemplates' : 'PageTemplates');
+			$restResult->removeRelAction('delete');
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isMailSuitable()
 	{
 		return $this->getMailSuitable();

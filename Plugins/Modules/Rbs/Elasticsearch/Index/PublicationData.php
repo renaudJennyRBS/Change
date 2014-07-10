@@ -164,7 +164,7 @@ class PublicationData
 					if ($pv instanceof \Change\Documents\RichtextProperty)
 					{
 						$context = ['website' => $website];
-						$text = $event->getApplicationServices()->getRichTextManager()->render($pv, "Website", $context);
+						$text = $event->getApplicationServices()->getRichTextManager()->render($pv, 'Website', $context);
 						$text = trim(strip_tags($text, '<p><br>'));
 						if ($text)
 						{

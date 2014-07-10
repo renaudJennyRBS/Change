@@ -33,81 +33,62 @@ class ExecuteTask
 		$result = $event->getParam('restResult');
 		$document = $event->getDocument();
 
-		if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+		if (!($result instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
+			&& !($result instanceof \Change\Http\Rest\V1\Resources\DocumentLink))
 		{
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$urlManager = $event->getParam('urlManager');
-			$actions = array();
-			if ($document instanceof Publishable || $document instanceof Correction)
+			return;
+		}
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$urlManager = $event->getParam('urlManager');
+		$actions = array();
+		if ($document instanceof Publishable || $document instanceof Correction)
+		{
+			/* @var $document \Change\Documents\AbstractDocument */
+			$LCID = null;
+			if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 			{
-				/* @var $document \Change\Documents\AbstractDocument */
 				$LCID = $result->getProperty('LCID');
-				$taskArray = $this->getEnabledTasksByDocument($documentManager, $document, $LCID);
-				$all = true;
-				foreach ($taskArray as $task)
+			}
+			elseif ($result instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+			{
+				$LCID = $result->getProperty('LCID');
+			}
+			$taskArray = $this->getEnabledTasksByDocument($documentManager, $document, $LCID);
+			$all = true;
+			foreach ($taskArray as $task)
+			{
+				$this->addTaskActionLink($task, $urlManager, $actions);
+				if ($all)
 				{
-					$this->addTaskActionLink($task, $urlManager, $actions);
-					if ($all)
+					if ($this->addExecuteAllActionLink($task, $urlManager, $actions))
 					{
-						if ($this->addExecuteAllActionLink($task, $urlManager, $actions))
-						{
-							$all = false;
-						}
-
+						$all = false;
 					}
-				}
-			}
-			elseif ($document instanceof Task)
-			{
-				if ($document->getStatus() === WorkItem::STATUS_ENABLED)
-				{
-					$this->addExecuteActionLink($document, $urlManager, $actions);
-					$this->addExecuteAllActionLink($document, $urlManager, $actions);
-				}
-			}
-
-			if (count($actions))
-			{
-				foreach ($actions as $action)
-				{
-					$result->addAction($action);
 				}
 			}
 		}
-		else if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+		elseif ($document instanceof Task)
 		{
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$urlManager = $event->getParam('urlManager');
-			$actions = $result->getProperty('actions', array());
-			if ($document instanceof Publishable || $document instanceof Correction)
+			if ($document->getStatus() === WorkItem::STATUS_ENABLED)
 			{
-				/* @var $document \Change\Documents\AbstractDocument */
-				$LCID = $result->getProperty('LCID');
-				$taskArray = $this->getEnabledTasksByDocument($documentManager, $document, $LCID);
-				$all = true;
-				foreach ($taskArray as $task)
-				{
-					$this->addTaskActionLink($task, $urlManager, $actions);
-					if ($all)
-					{
-						if($this->addExecuteAllActionLink($task, $urlManager, $actions))
-						{
-							$all = false;
-						}
-					}
-				}
+				$this->addExecuteActionLink($document, $urlManager, $actions);
+				$this->addExecuteAllActionLink($document, $urlManager, $actions);
 			}
-			elseif ($document instanceof Task)
+		}
+
+		if (count($actions))
+		{
+			foreach ($actions as $action)
 			{
-				if ($document->getStatus() === WorkItem::STATUS_ENABLED)
+				if ($result instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 				{
-					$this->addExecuteActionLink($document, $urlManager, $actions);
-					$this->addExecuteAllActionLink($document, $urlManager, $actions);
+					$result->addAction($action);
 				}
-			}
-			if (count($actions))
-			{
-				$result->setProperty('actions', $actions);
+				elseif ($result instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
+				{
+					$result->addAction($action);
+				}
 			}
 		}
 	}
