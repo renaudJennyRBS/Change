@@ -75,8 +75,12 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 					$options = $line->getOptions();
 					$options->set('formattedAmount', $pm->formatValue($line->getAmount(), $currency))
 						->set('formattedAmountWithTaxes', $pm->formatValue($line->getAmountWithTaxes(), $currency))
+						->set('formattedBasedAmount', $pm->formatValue($line->getBasedAmount(), $currency))
+						->set('formattedBasedAmountWithTaxes', $pm->formatValue($line->getBasedAmountWithTaxes(), $currency))
 						->set('formattedUnitAmount', $pm->formatValue($line->getUnitAmount(), $currency))
-						->set('formattedUnitAmountWithTaxes', $pm->formatValue($line->getUnitAmountWithTaxes(), $currency));
+						->set('formattedUnitAmountWithTaxes', $pm->formatValue($line->getUnitAmountWithTaxes(), $currency))
+						->set('formattedUnitBasedAmount', $pm->formatValue($line->getUnitBasedAmount(), $currency))
+						->set('formattedUnitBasedAmountWithTaxes', $pm->formatValue($line->getUnitBasedAmountWithTaxes(), $currency));
 
 					$productId = $options->get('productId');
 					if ($options->get('url') == null && $productId != null)

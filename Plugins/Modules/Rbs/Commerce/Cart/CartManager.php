@@ -1354,6 +1354,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$lineTaxes = [];
 			$amount = null;
 			$amountWithTaxes = null;
+			$basedAmount = null;
+			$basedAmountWithTaxes = null;
 
 			$lineQuantity = $line->getQuantity();
 			if ($lineQuantity)
@@ -1363,7 +1365,12 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					$price = $item->getPrice();
 					if ($price && (($value = $price->getValue()) !== null))
 					{
-						$lineItemValue = $value * $lineQuantity;
+						$lineItemBasedValue = $lineItemValue = $value * $lineQuantity;
+						if ($price->getBasePriceValue() !== null)
+						{
+							$lineItemBasedValue  = $price->getBasePriceValue() * $lineQuantity;
+						}
+
 						if ($taxes !== null)
 						{
 							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
@@ -1376,17 +1383,23 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							{
 								$amountWithTaxes += $lineItemValue;
 								$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+								$basedAmountWithTaxes += $lineItemBasedValue;
+								$basedAmount += $priceManager->getValueWithoutTax($lineItemBasedValue, $taxArray);
 							}
 							else
 							{
 								$amount += $lineItemValue;
 								$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
+								$basedAmount += $lineItemBasedValue;
+								$basedAmountWithTaxes += $priceManager->getValueWithTax($lineItemBasedValue, $taxArray);
 							}
 						}
 						else
 						{
 							$amountWithTaxes += $lineItemValue;
 							$amount += $lineItemValue;
+							$basedAmount += $lineItemBasedValue;
+							$basedAmountWithTaxes += $lineItemBasedValue;
 						}
 					}
 				}
@@ -1395,6 +1408,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$line->setTaxes($lineTaxes);
 			$line->setAmountWithTaxes($amountWithTaxes);
 			$line->setAmount($amount);
+			if ($amount != $basedAmount)
+			{
+				$line->setBasedAmountWithTaxes($basedAmountWithTaxes);
+				$line->setBasedAmount($basedAmount);
+			}
 			$linesAmount += $amount;
 			$linesAmountWithTaxes += $amountWithTaxes;
 			$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);

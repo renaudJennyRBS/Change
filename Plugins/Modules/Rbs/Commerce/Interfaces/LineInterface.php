@@ -59,6 +59,16 @@ interface LineInterface
 	public function getAmountWithTaxes();
 
 	/**
+	 * @return float|null
+	 */
+	public function getBasedAmount();
+
+	/**
+	 * @return float|null
+	 */
+	public function getBasedAmountWithTaxes();
+
+	/**
 	 * @return array
 	 */
 	public function toArray();
