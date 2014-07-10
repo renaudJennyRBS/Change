@@ -39,7 +39,7 @@ class ChangePassword extends \Change\Presentation\Blocks\Standard\Block
 			$parameters->setParameterValue('authenticated', true);
 		}
 
-		$parameters->setParameterValue('context', $event->getHttpRequest()->getQuery('context'));
+		$parameters->setParameterValue('contextChangePassword', $event->getHttpRequest()->getQuery('contextChangePassword'));
 
 		return $parameters;
 	}
