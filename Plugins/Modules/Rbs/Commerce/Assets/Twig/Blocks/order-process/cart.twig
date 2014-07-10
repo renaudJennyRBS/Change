@@ -1,20 +1,38 @@
 <script type="text/ng-template" id="/simpleLine.static.tpl">
 	<td>(= line.index+1 =)</td>
-	<td>
-		<a data-ng-if="line.options.url" href="javascript:;" data-ng-href="(= line.options.url =)">
+	<td data-ng-if="line.options.visualThumbnailSrc.Rbs_Commerce_Cart && line.options.url">
+		<a href="javascript:;" data-ng-href="(= line.options.url =)" class="pull-left" >
+			<img data-ng-src="(= line.options.visualThumbnailSrc.Rbs_Commerce_Cart =)" class="media-object" />
+		</a>
+	</td>
+	<td data-ng-if="line.options.visualThumbnailSrc.Rbs_Commerce_Cart && !line.options.url">
+		<img data-ng-src="(= line.options.visualThumbnailSrc.Rbs_Commerce_Cart =)" class="media-object" />
+	</td>
+	<td data-ng-if="!line.options.visualThumbnailSrc.Rbs_Commerce_Cart"></td>
+	<td data-ng-if="line.options.url">
+		<a href="javascript:;" data-ng-href="(= line.options.url =)">
 		(= line.designation =)
 		</a>
+		<dl class="dl-inline-items" data-ng-if="line.options.axesInfo" >
+			<dt data-ng-repeat-start="axeInfo in line.options.axesInfo">(= axeInfo.name =)</dt><dd data-ng-repeat-end="">(= axeInfo.value =)</dd>
+		</dl>
+	</td>
+	<td data-ng-if="!line.options.url">
+		(= line.designation =)
+		<dl class="dl-inline-items" data-ng-if="line.options.axesInfo" data-ng-repeat="axeInfo in line.options.axesInfo">
+			<dt>(= axeInfo.name =)</dt><dd>(= axeInfo.value =)</dd>
+		</dl>
 	</td>
 	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
 		<td class="price">
 			{% if parameters.displayPrices %}
-				(= line.options.formattedUnitAmount =)
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+				<del data-ng-if="line.basedAmount">(= line.options.formattedUnitBasedAmount =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></del>
+				<span>(= line.options.formattedUnitAmount =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></span>
 			{% endif %}
 			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
 			{% if parameters.displayPricesWithTax %}
-				(= line.options.formattedUnitAmountWithTaxes =)
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
+				<del data-ng-if="line.basedAmount">(= line.options.formattedUnitBasedAmountWithTaxes =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr></del>
+				<span>(= line.options.formattedUnitAmountWithTaxes =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr></span>
 			{% endif %}
 		</td>
 	{% endif %}
@@ -36,13 +54,13 @@
 	{% if parameters.displayPrices or parameters.displayPricesWithTax %}
 		<td class="price">
 			{% if parameters.displayPrices %}
-				(= line.options.formattedAmount =)
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+				<del data-ng-if="line.basedAmount">(= line.options.formattedBasedAmount =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></del>
+				<span>(= line.options.formattedAmount =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></span>
 			{% endif %}
 			{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
 			{% if parameters.displayPricesWithTax %}
-				(= line.options.formattedAmountWithTaxes =)
-				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
+				<del data-ng-if="line.basedAmount">(= line.options.formattedBasedAmountWithTaxes =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></del>
+				<span>(= line.options.formattedAmountWithTaxes =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr></span>
 			{% endif %}
 		</td>
 	{% endif %}
@@ -70,6 +88,7 @@
 			<thead>
 				<tr>
 					<th>#</th>
+					<th></th>
 					<th>{{ i18n('m.rbs.commerce.front.designation', ['ucf']) }}</th>
 					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
 						<th>{{ i18n('m.rbs.commerce.front.unit_price', ['ucf']) }}</th>

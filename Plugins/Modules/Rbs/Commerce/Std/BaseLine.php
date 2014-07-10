@@ -56,6 +56,16 @@ class BaseLine implements LineInterface
 	protected $amountWithTaxes;
 
 	/**
+	 * @var float|null
+	 */
+	protected $basedAmount;
+
+	/**
+	 * @var float|null
+	 */
+	protected $basedAmountWithTaxes;
+
+	/**
 	 * @var \Zend\Stdlib\Parameters
 	 */
 	protected $options;
@@ -237,6 +247,42 @@ class BaseLine implements LineInterface
 	}
 
 	/**
+	 * @param float|null $basedAmount
+	 * @return $this
+	 */
+	public function setBasedAmount($basedAmount)
+	{
+		$this->basedAmount = $basedAmount;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getBasedAmount()
+	{
+		return $this->basedAmount;
+	}
+
+	/**
+	 * @param float|null $basedAmountWithTaxes
+	 * @return $this
+	 */
+	public function setBasedAmountWithTaxes($basedAmountWithTaxes)
+	{
+		$this->basedAmountWithTaxes = $basedAmountWithTaxes;
+		return $this;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getBasedAmountWithTaxes()
+	{
+		return $this->basedAmountWithTaxes;
+	}
+
+	/**
 	 * @param array $array
 	 * @return $this
 	 */
@@ -310,6 +356,12 @@ class BaseLine implements LineInterface
 				case 'amountWithTaxes':
 					$this->setAmountWithTaxes($value);
 					break;
+				case 'basedAmount':
+					$this->setBasedAmount($value);
+					break;
+				case 'basedAmountWithTaxes':
+					$this->setBasedAmountWithTaxes($value);
+					break;
 			}
 
 			if ($this->quantity === null)
@@ -335,6 +387,8 @@ class BaseLine implements LineInterface
 			'taxes' => array(),
 			'amount' => $this->amount,
 			'amountWithTaxes' => $this->amountWithTaxes,
+			'basedAmount' => $this->basedAmount,
+			'basedAmountWithTaxes' => $this->basedAmountWithTaxes,
 			'options' => count($options) ? $options : null
 		];
 		foreach ($this->items as $item)
@@ -379,6 +433,9 @@ class BaseLine implements LineInterface
 
 		$this->setAmountWithTaxes($line->getAmountWithTaxes());
 		$this->setAmount($line->getAmount());
+
+		$this->setBasedAmountWithTaxes($line->getBasedAmountWithTaxes());
+		$this->setBasedAmount($line->getBasedAmount());
 		return $this;
 	}
 
@@ -429,6 +486,32 @@ class BaseLine implements LineInterface
 	public function getUnitAmountWithTaxes()
 	{
 		$value = $this->getAmountWithTaxes();
+		if ($value !== null && $this->getQuantity())
+		{
+			return $value / floatval($this->getQuantity());
+		}
+		return null;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getUnitBasedAmount()
+	{
+		$value = $this->getBasedAmount();
+		if ($value !== null && $this->getQuantity())
+		{
+			return $value / floatval($this->getQuantity());
+		}
+		return null;
+	}
+
+	/**
+	 * @return float|null
+	 */
+	public function getUnitBasedAmountWithTaxes()
+	{
+		$value = $this->getBasedAmountWithTaxes();
 		if ($value !== null && $this->getQuantity())
 		{
 			return $value / floatval($this->getQuantity());

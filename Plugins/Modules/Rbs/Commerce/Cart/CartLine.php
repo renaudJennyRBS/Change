@@ -154,6 +154,8 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 			'taxes' => $this->taxes,
 			'amount' => $this->amount,
 			'amountWithTaxes' => $this->amountWithTaxes,
+			'basedAmount' => $this->basedAmount,
+			'basedAmountWithTaxes' => $this->basedAmountWithTaxes,
 			'options' => $this->options);
 		return serialize($this->getCartManager()->getSerializableValue($serializedData));
 	}
@@ -184,6 +186,8 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		$this->taxes = $serializedData['taxes'];
 		$this->amount = $serializedData['amount'];
 		$this->amountWithTaxes = $serializedData['amountWithTaxes'];
+		$this->basedAmount = $serializedData['basedAmount'];
+		$this->basedAmountWithTaxes = $serializedData['basedAmountWithTaxes'];
 		$this->options = $serializedData['options'];
 		foreach ($this->items as $item)
 		{
