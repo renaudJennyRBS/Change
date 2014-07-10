@@ -18,6 +18,20 @@
 	white-space: normal;
 }
 
+.dl-inline-items > dt {
+	float: left;
+	margin-right: 4px;
+}
+.dl-inline-items > dt:after {
+	content: " : ";
+}
+
+/* Small complementary text in dt */
+.dl-horizontal dt small,
+.dl-horizontal dt .small {
+	font-weight: normal;
+}
+
 /* Inline form fields (i.e. for date picker) */
 .form-control.form-control-inline {
 	width: auto;
@@ -78,12 +92,6 @@
 
 .btn-icon.btn-xs {
 	width: 22px;
-}
-
-/* Small complementary text in dt */
-.dl-horizontal dt small,
-.dl-horizontal dt .small {
-	font-weight: normal;
 }
 
 /* Nowrap in dropdown toggles to no have the caret in an other line */

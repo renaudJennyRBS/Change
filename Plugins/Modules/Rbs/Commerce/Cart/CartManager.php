@@ -1188,6 +1188,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
 				if ($product instanceof \Rbs\Catalog\Documents\Product)
 				{
+					// Get Visual information
 					$visual = $product->getFirstVisual();
 					if ($visual instanceof \Rbs\Media\Documents\Image)
 					{
@@ -1211,6 +1212,36 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							{
 								$options->set('visualThumbnailSrc', $thumbnailSrcArray);
 							}
+						}
+					}
+					// If is a product variant, get axes
+					if ($product->getVariant())
+					{
+						$axesInfo = array();
+
+						$commerceServices = $event->getServices('commerceServices');
+						if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+						{
+
+							$catalogManager = $commerceServices->getCatalogManager();
+							$infos = $catalogManager->getVariantsConfiguration($product);
+
+							foreach($infos['axes']['products'] as $axesProduct)
+							{
+								if ($axesProduct['id'] == $product->getId())
+								{
+									foreach ($infos['axesNames'] as $key => $value)
+									{
+										$axesInfo[] = ['name' => $value, 'value' => $axesProduct['values'][$key]['value']];
+									}
+									break;
+								}
+							}
+						}
+
+						if (count($axesInfo) > 0)
+						{
+							$options->set('axesInfo', $axesInfo);
 						}
 					}
 				}
