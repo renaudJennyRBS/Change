@@ -374,6 +374,18 @@
 	"block_template_name":{
 		"message":"fichier twig"
 	},
+	"template_iframe_label":{
+		"message":"iframe"
+	},
+	"block_iframe_url":{
+		"message":"url"
+	},
+	"block_iframe_width":{
+		"message":"largeur"
+	},
+	"block_iframe_height":{
+		"message":"hauteur"
+	},
 	"switchlang":{
 		"message":"Changement de langue"
 	},
