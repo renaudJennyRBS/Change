@@ -201,7 +201,7 @@
 						if (tool && tool.block) {
 							return $document[0].queryCommandValue('formatBlock').toLowerCase() === toolId.toLowerCase();
 						}
-						else {
+						else if ($document[0].queryCommandSupported(toolId)) {
 							return $document[0].queryCommandState(toolId);
 						}
 					};
@@ -333,21 +333,27 @@
 							width, height;
 
 						// Well, this is not very sexy with a prompt, but it does the job for the moment.
-						width = window.prompt(i18n.trans('m.rbs.admin.admin.wysiwyg_enter_image_width | ucf'));
+						width = img.attr('width');
+						width = width ? width : '';
+						width = window.prompt(i18n.trans('m.rbs.admin.admin.wysiwyg_enter_image_width | ucf'), width ? width : '');
 						if (width) {
 							width = parseInt(width, 10);
 						}
 
-						height = window.prompt(i18n.trans('m.rbs.admin.admin.wysiwyg_enter_image_height | ucf'));
+						height = img.attr('height');
+						height = height ? height : '';
+						height = window.prompt(i18n.trans('m.rbs.admin.admin.wysiwyg_enter_image_height | ucf'), height ? height : '');
 						if (height) {
 							height = parseInt(height, 10);
 						}
 
 						if (width && !isNaN(width) && height && !isNaN(height)) {
-							img.attr('data-resize-width', width)
-								.attr('data-resize-height', height)
-								.attr('src', Utils.makeUrl(img.attr('src'), { maxWidth: width, maxHeight: height }))
-								.attr('title', width + 'x' + height);
+							img.attr('width', width);
+							img.attr('data-resize-width', width);
+							img.attr('height', height);
+							img.attr('data-resize-height', height);
+							img.attr('src', Utils.makeUrl(img.attr('src'), { maxWidth: width, maxHeight: height }));
+							img.attr('title', width + 'x' + height);
 							img.css({'max-width': ''});
 							updateNgModel();
 							commitNgModel();
