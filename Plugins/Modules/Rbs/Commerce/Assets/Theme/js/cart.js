@@ -448,11 +448,11 @@
 			);
 		}
 
-		function clearErrors(stepName) {
+		scope.clearErrors = function(stepName) {
 			scope[stepName].errors = [];
 		}
 
-		function addError(stepName, message) {
+		scope.addError = function(stepName, message) {
 			scope[stepName].errors.push(message);
 		}
 
@@ -515,7 +515,7 @@
 		};
 
 		scope.authenticate = function() {
-			clearErrors('information');
+			scope.clearErrors('information');
 			var postData = {
 				realm: scope.information.realm,
 				login: scope.information.login,
@@ -535,21 +535,21 @@
 					}
 					else if (data.hasOwnProperty('errors')) {
 						for (var i = 0; i < data.errors.length; i++) {
-							addError('information', data.errors[i]);
+							scope.addError('information', data.errors[i]);
 						}
 					}
 					delete scope.information.password;
 				})
 				.error(function(data) {
 					for (var i = 0; i < data.errors.length; i++) {
-						addError('information', data.errors[i]);
+						scope.addError('information', data.errors[i]);
 					}
 					delete scope.information.password;
 				});
 		};
 
 		scope.logout = function() {
-			clearErrors('information');
+			scope.clearErrors('information');
 			$http.post('Action/Rbs/User/Logout')
 				.success(function() { window.location.reload(); })
 				.error(function(data, status, headers) { console.log('Logout error', data, status, headers); });
@@ -560,7 +560,7 @@
 		};
 
 		scope.setEmail = function() {
-			clearErrors('information');
+			scope.clearErrors('information');
 
 			var postData = {
 				email: scope.information.email,
@@ -573,7 +573,7 @@
 				})
 				.error(function(data) {
 					for (var i = 0; i < data.errors.length; i++) {
-						addError('information', data.errors[i]);
+						scope.addError('information', data.errors[i]);
 					}
 				});
 		};
@@ -718,14 +718,14 @@
 		};
 
 		scope.getTransaction = function() {
-			clearErrors('payment');
+			scope.clearErrors('payment');
 			$http.get('Action/Rbs/Commerce/GetTransaction')
 				.success(function(transaction) {
 					if (angular.isObject(transaction)) {
 						scope.payment.transaction = transaction;
 					}
 					else {
-						addError('payment', transaction);
+						scope.addError('payment', transaction);
 					}
 				})
 				.error(function(data, status, headers) { console.log('GetTransaction error', data, status, headers); });
