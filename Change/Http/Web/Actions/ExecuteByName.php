@@ -33,6 +33,7 @@ class ExecuteByName
 			if (is_array($action) && count($action) === 3)
 			{
 				$className = '\\' . $action[0] . '\\' . $action[1] . '\\Http\\Web\\' . str_replace('/', '\\', $action[2]);
+
 				if (class_exists($className))
 				{
 					$callable = new $className();

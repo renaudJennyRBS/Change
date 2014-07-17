@@ -535,7 +535,7 @@
 					'getResourceUrl' : function (model, id, lcid) {
 						var url;
 
-						if (/[0-9]+/.test(model)) {
+						if (/^[0-9]+$/.test(model)) {
 							url = REST_BASE_URL + 'resources/' + model;
 						} else {
 							if (Utils.isDocument(model)) {

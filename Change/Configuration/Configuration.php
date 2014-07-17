@@ -54,14 +54,6 @@ class Configuration
 				{
 					$this->addVolatileEntry($path, $value);
 				}
-				else
-				{
-					// Fallback, look directly in $_ENV
-					if (isset($_ENV[$key]))
-					{
-						$this->addVolatileEntry($path, $_ENV[$key]);
-					}
-				}
 			}
 		}
 	}

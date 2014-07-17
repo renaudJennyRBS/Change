@@ -27,11 +27,17 @@ class AuthenticatedUser implements UserInterface
 	protected $groups;
 
 	/**
+	 * @var String
+	 */
+	protected $name;
+
+	/**
 	 * @param User $user
 	 */
 	function __construct(User $user)
 	{
 		$this->user = $user;
+		$this->setName($user->getLabel());
 	}
 
 	/**
@@ -43,11 +49,19 @@ class AuthenticatedUser implements UserInterface
 	}
 
 	/**
-	 * @return string
+	 * @param String $name
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+
+	/**
+	 * @return String
 	 */
 	public function getName()
 	{
-		return $this->user->getLabel();
+		return $this->name;
 	}
 
 	/**
@@ -73,4 +87,6 @@ class AuthenticatedUser implements UserInterface
 	{
 		return true;
 	}
+
+
 }

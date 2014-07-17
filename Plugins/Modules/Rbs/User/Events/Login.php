@@ -31,7 +31,17 @@ class Login
 			$user = $applicationServices->getDocumentManager()->getDocumentInstance($event->getParam('userId'));
 			if ($user instanceof \Rbs\User\Documents\User)
 			{
-				$event->setParam('user', new AuthenticatedUser($user));
+				$authenticatedUser = new AuthenticatedUser($user);
+				$profile = $event->getApplicationServices()->getProfileManager()->loadProfile($user, 'Rbs_User');
+				if ($profile)
+				{
+					$fullName = $profile->getPropertyValue('fullName');
+					if (!\Change\Stdlib\String::isEmpty($fullName))
+					{
+						$authenticatedUser->setName($fullName);
+					}
+				}
+				$event->setParam('user', $authenticatedUser);
 			}
 			return;
 		}
@@ -59,7 +69,17 @@ class Login
 			/* @var $document \Rbs\User\Documents\User */
 			if ($document->checkPassword($password))
 			{
-				$event->setParam('user', new AuthenticatedUser($document));
+				$authenticatedUser = new AuthenticatedUser($document);
+				$profile = $event->getApplicationServices()->getProfileManager()->loadProfile($document, 'Rbs_User');
+				if ($profile)
+				{
+					$fullName = $profile->getPropertyValue('fullName');
+					if (!\Change\Stdlib\String::isEmpty($fullName))
+					{
+						$authenticatedUser->setName($fullName);
+					}
+				}
+				$event->setParam('user', $authenticatedUser);
 				return;
 			}
 		}
