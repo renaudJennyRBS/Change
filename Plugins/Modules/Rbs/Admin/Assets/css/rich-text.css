@@ -110,9 +110,9 @@
 }
 
 
-/* WYSIWYG editor - textAngular */
+/* WYSIWYG editor */
 
-.richtext-input .richtext-input-wysiwyg .form-control {
+.richtext-input .richtext-input-wysiwyg .form-control.main-wywiwyg-control {
 	height: auto;
 	min-height: 150px;
 	border-radius: 0 0 3px 3px;

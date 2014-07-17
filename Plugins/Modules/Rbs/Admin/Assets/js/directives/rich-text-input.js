@@ -36,6 +36,14 @@
 							wysiwygInitialized = false,
 							editorModeChosen = false;
 
+						// Init the dialog.
+						if (!document.getElementById('rbs-rich-text-dialog')) {
+							$('<div class="modal fade" id="rbs-rich-text-dialog">' +
+								'	<div class="modal-dialog modal-lg"><div class="modal-content"></div></div>' +
+								'</div>'
+							).appendTo('body');
+						}
+
 						scope.contextKey = attrs.contextKey ? attrs.contextKey : attrs.ngModel;
 
 						function parseSubstitutionVariables(substitutions) {
@@ -733,15 +741,13 @@
 								var media = medias[i];
 								switch (media.model) {
 									case 'Rbs_Media_Image':
-										toInsert.push('<img src="' + media.META$.actions.resizeurl.href + '" title="' +
-											i18n.trans('m.rbs.admin.admin.wysiwyg_image_title | ucf | etc') +
-											'" data-document-id="' + media.id + '" style="max-width:500px;" />');
+										toInsert.push('<img src="' + media.META$.actions.resizeurl.href + '"' +
+											' data-document-id="' + media.id + '" />');
 										break;
 									case 'Rbs_Media_Video':
 										toInsert.push('<video src="' + media.publicurl + '" preload="auto"' +
-											' controls="controls" title="' +
-											i18n.trans('m.rbs.admin.admin.wysiwyg_video_title | ucf | etc') +
-											'" data-document-id="' + media.id + '" style="max-width:500px;"></video>');
+											' controls="controls"' +
+											' data-document-id="' + media.id + '"></video>');
 										break;
 									case 'Rbs_Media_File':
 										toInsert.push('<a href="javascript:;" data-document-id="' + media.id + '">' +
@@ -1056,4 +1062,142 @@
 				}
 			};
 		}]);
+
+	/**
+	 * Directive to edit properties for an external link.
+	 */
+	app.directive('rbsRichTextDialogExternalLink', function() {
+		return {
+			restrict: 'A',
+			scope: {
+				properties: '=',
+				onSubmit: '='
+			},
+			templateUrl: 'Rbs/Admin/js/directives/rich-text-dialog-external-link.twig',
+
+			link: function(scope, element, attrs) {
+				scope.canSubmit = function canSubmit() {
+					return scope.properties.href && scope.properties.text;
+				};
+			}
+		};
+	});
+
+	/**
+	 * Directive to edit properties for a document link.
+	 */
+	app.directive('rbsRichTextDialogDocumentLink', ['RbsChange.REST', function(REST) {
+		return {
+			restrict: 'A',
+			scope: {
+				properties: '=',
+				onSubmit: '='
+			},
+			templateUrl: 'Rbs/Admin/js/directives/rich-text-dialog-document-link.twig',
+
+			link: function(scope, element, attrs) {
+				scope.canSubmit = function canSubmit() {
+					return scope.properties.href && scope.properties.text;
+				};
+
+				scope.appendValue = function appendValue(propertyName, value) {
+					var newValue = scope.properties[propertyName];
+					newValue = (newValue ? (newValue + ' ') : '') + value;
+					scope.properties[propertyName] = newValue;
+				};
+
+				REST.resource(scope.properties.documentId).then(function(document) {
+					scope.document = document;
+					scope.predefinedValues = [];
+					if (document.hasOwnProperty('title')) {
+						scope.predefinedValues.push(document.title);
+					}
+					if (document.hasOwnProperty('label') &&
+						(!document.hasOwnProperty('title') || document.title != document.label)) {
+						scope.predefinedValues.push(document.label);
+					}
+				});
+
+			}
+		};
+	}]);
+
+	/**
+	 * Directive to edit properties for an image.
+	 */
+	app.directive('rbsRichTextDialogImage', ['RbsChange.REST', function(REST) {
+		return {
+			restrict: 'A',
+			scope: {
+				properties: '=',
+				onSubmit: '='
+			},
+			templateUrl: 'Rbs/Admin/js/directives/rich-text-dialog-image.twig',
+
+			link: function(scope, element, attrs) {
+				scope.canSubmit = function canSubmit() {
+					return (!scope.properties.height || scope.properties.height > 0)
+						&& (!scope.properties.width || scope.properties.width > 0);
+				};
+
+				scope.appendValue = function appendValue(propertyName, value) {
+					var newValue = scope.properties[propertyName];
+					newValue = (newValue ? (newValue + ' ') : '') + value;
+					scope.properties[propertyName] = newValue;
+				};
+
+				REST.resource(scope.properties.documentId).then(function(document) {
+					scope.document = document;
+					scope.predefinedValues = [];
+					if (document.hasOwnProperty('title')) {
+						scope.predefinedValues.push(document.title);
+					}
+					if (document.hasOwnProperty('label') &&
+						(!document.hasOwnProperty('title') || document.title != document.label)) {
+						scope.predefinedValues.push(document.label);
+					}
+				});
+
+			}
+		};
+	}]);
+
+	/**
+	 * Directive to edit properties for a video.
+	 */
+	app.directive('rbsRichTextDialogVideo', ['RbsChange.REST', function(REST) {
+		return {
+			restrict: 'A',
+			scope: {
+				properties: '=',
+				onSubmit: '='
+			},
+			templateUrl: 'Rbs/Admin/js/directives/rich-text-dialog-video.twig',
+
+			link: function(scope, element, attrs) {
+				scope.canSubmit = function canSubmit() {
+					return (!scope.properties.height || scope.properties.height > 0)
+						&& (!scope.properties.width || scope.properties.width > 0);
+				};
+
+				scope.appendValue = function appendValue(propertyName, value) {
+					var newValue = scope.properties[propertyName];
+					newValue = (newValue ? (newValue + ' ') : '') + value;
+					scope.properties[propertyName] = newValue;
+				};
+
+				REST.resource(scope.properties.documentId).then(function(document) {
+					scope.document = document;
+					scope.predefinedValues = [];
+					if (document.hasOwnProperty('title')) {
+						scope.predefinedValues.push(document.title);
+					}
+					if (document.hasOwnProperty('label') &&
+						(!document.hasOwnProperty('title') || document.title != document.label)) {
+						scope.predefinedValues.push(document.label);
+					}
+				});
+			}
+		};
+	}]);
 })(window.jQuery, ace);

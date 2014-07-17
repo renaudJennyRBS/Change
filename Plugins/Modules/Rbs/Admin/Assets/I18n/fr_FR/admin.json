@@ -1317,6 +1317,63 @@
 	"richtext_blocks_others":{
 		"message":"autres"
 	},
+	"richtext_document_link_properties":{
+		"message":"propriétés du lien vers un document"
+	},
+	"richtext_external_link_properties":{
+		"message":"propriétés du lien externe"
+	},
+	"richtext_link_href":{
+		"message":"URL du lien"
+	},
+	"richtext_link_document":{
+		"message":"document lié"
+	},
+	"richtext_link_text":{
+		"message":"texte du lien"
+	},
+	"richtext_link_title":{
+		"message":"titre du lien"
+	},
+	"richtext_image_properties":{
+		"message":"propriétés de l'image"
+	},
+	"richtext_video_properties":{
+		"message":"propriétés de la vidéo"
+	},
+	"richtext_image_document":{
+		"message":"image affichée"
+	},
+	"richtext_video_document":{
+		"message":"vidéo affichée"
+	},
+	"richtext_width":{
+		"message":"largeur"
+	},
+	"richtext_height":{
+		"message":"hauteur"
+	},
+	"richtext_leave_empty":{
+		"message":"laisser vide pour ne pas choisir."
+	},
+	"richtext_image_alt":{
+		"message":"texte alternatif"
+	},
+	"richtext_image_title":{
+		"message":"titre de l'image"
+	},
+	"richtext_video_title":{
+		"message":"titre de la vidéo"
+	},
+	"richtext_image_original_value":{
+		"message":"image originale"
+	},
+	"richtext_video_original_value":{
+		"message":"vidéo originale"
+	},
+	"richtext_insert_document_property":{
+		"message":"propriété du document"
+	},
 	"wysiwyg_lists":{
 		"message":"listes"
 	},
@@ -1400,12 +1457,6 @@
 	},
 	"wysiwyg_tools":{
 		"message":"outils"
-	},
-	"wysiwyg_enter_image_width":{
-		"message":"largeur de l'image (laisser vide pour ne pas choisir)"
-	},
-	"wysiwyg_enter_image_height":{
-		"message":"hauteur de l'image (laisser vide pour ne pas choisir)"
 	},
 	"wysiwyg_image_title":{
 		"message":"double-cliquez sur l'image pour fixer ses dimensions"
