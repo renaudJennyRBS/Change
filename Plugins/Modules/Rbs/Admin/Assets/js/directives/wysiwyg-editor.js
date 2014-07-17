@@ -3,8 +3,8 @@
 
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsWysiwygEditor', ['$timeout', '$document', '$q', '$rootScope', 'RbsChange.i18n', 'RbsChange.Utils',
-		function($timeout, $document, $q, $rootScope, i18n, Utils) {
+	app.directive('rbsWysiwygEditor', ['$timeout', '$document', '$q', '$rootScope', '$compile', 'RbsChange.i18n', 'RbsChange.Utils',
+		function($timeout, $document, $q, $rootScope, $compile, i18n, Utils) {
 			var tools =
 			{
 				h1: {
@@ -136,6 +136,7 @@
 					var editableEl = element.find('[contenteditable]'),
 						sourceEl = element.find('textarea');
 
+					scope.contextKey = attrs.contextKey;
 					scope.draggable = attrs.draggable === 'true';
 					scope.tools = angular.copy(tools);
 					scope.toolbarConfig = [
@@ -327,6 +328,7 @@
 					editableEl.on('mouseup', updateSelectedStyles);
 
 					editableEl.on('dblclick', 'img[data-document-id]', openImageSettings);
+					editableEl.on('dblclick', 'a', openLinkSettings);
 
 					function openImageSettings(event) {
 						var img = $(event.target),
@@ -359,6 +361,45 @@
 							commitNgModel();
 						}
 					}
+
+					var dialog = $('#rbs-rich-text-dialog');
+
+					function openLinkSettings(event) {
+						var dialogContent;
+						var link = $(event.target);
+						scope.linkToEdit = link;
+						scope.linkData = {
+							href: link.attr('href'),
+							title: link.attr('title'),
+							text: link.html()
+						};
+
+						// Document link case.
+						if (link.attr('data-document-id')) {
+							scope.linkData.documentId = link.attr('data-document-id');
+							dialogContent = '<div data-rbs-rich-text-dialog-document-link=""' +
+								' data-properties="linkData" data-on-submit="updateLink"></div>';
+						}
+						// External link case.
+						else {
+							dialogContent = '<div data-rbs-rich-text-dialog-external-link=""' +
+								' data-properties="linkData" data-on-submit="updateLink"></div>';
+						}
+
+						$compile(dialogContent)(scope, function(element) {
+							dialog.find('.modal-content').empty().append(element);
+							dialog.modal();
+						});
+					}
+
+					scope.updateLink = function updateLink() {
+						scope.linkToEdit.attr('href', scope.linkData.href);
+						scope.linkToEdit.attr('title', scope.linkData.title);
+						scope.linkToEdit.html(scope.linkData.text);
+						dialog.modal('hide');
+						updateNgModel();
+						commitNgModel();
+					};
 
 					// Updates buttons active state.
 					function updateSelectedStyles() {

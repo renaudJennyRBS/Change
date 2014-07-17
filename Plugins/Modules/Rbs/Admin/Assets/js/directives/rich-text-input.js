@@ -36,6 +36,14 @@
 							wysiwygInitialized = false,
 							editorModeChosen = false;
 
+						// Init the dialog.
+						if (!document.getElementById('rbs-rich-text-dialog')) {
+							$('<div class="modal fade" id="rbs-rich-text-dialog">' +
+								'	<div class="modal-dialog modal-lg"><div class="modal-content"></div></div>' +
+								'</div>'
+							).appendTo('body');
+						}
+
 						scope.contextKey = attrs.contextKey ? attrs.contextKey : attrs.ngModel;
 
 						function parseSubstitutionVariables(substitutions) {
@@ -1056,4 +1064,63 @@
 				}
 			};
 		}]);
+
+	/**
+	 * Directive to edit properties for an external link.
+	 */
+	app.directive('rbsRichTextDialogExternalLink', function() {
+		return {
+			restrict: 'A',
+			scope: {
+				properties: '=',
+				onSubmit: '='
+			},
+			templateUrl: 'Rbs/Admin/js/directives/rich-text-dialog-external-link.twig',
+
+			link: function(scope, element, attrs) {
+				scope.canSubmit = function canSubmit() {
+					return scope.properties.href && scope.properties.text;
+				};
+			}
+		};
+	});
+
+	/**
+	 * Directive to edit properties for a document link.
+	 */
+	app.directive('rbsRichTextDialogDocumentLink', ['RbsChange.REST', function(REST) {
+		return {
+			restrict: 'A',
+			scope: {
+				properties: '=',
+				onSubmit: '='
+			},
+			templateUrl: 'Rbs/Admin/js/directives/rich-text-dialog-document-link.twig',
+
+			link: function(scope, element, attrs) {
+				scope.canSubmit = function canSubmit() {
+					return scope.properties.href && scope.properties.text;
+				};
+
+				scope.appendValue = function appendValue(propertyName, value) {
+					var newValue = scope.properties[propertyName];
+					newValue = (newValue ? (newValue + ' ') : '') + value;
+					scope.properties[propertyName] = newValue;
+				};
+
+				REST.resource(scope.properties.documentId).then(function(document) {
+					scope.document = document;
+					scope.predefinedValues = [];
+					if (document.hasOwnProperty('title')) {
+						scope.predefinedValues.push(document.title);
+					}
+					if (document.hasOwnProperty('label') &&
+						(!document.hasOwnProperty('title') || document.title != document.label)) {
+						scope.predefinedValues.push(document.label);
+					}
+				});
+
+			}
+		};
+	}]);
 })(window.jQuery, ace);

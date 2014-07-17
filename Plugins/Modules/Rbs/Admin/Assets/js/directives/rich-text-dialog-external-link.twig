@@ -1,0 +1,47 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span aria-hidden="true">&times;</span>
+		<span class="sr-only">{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}</span>
+	</button>
+	<h4 class="modal-title">{{ i18n('m.rbs.admin.admin.richtext_external_link_properties', ['ucf']) }}</h4>
+</div>
+<div class="modal-body">
+	<div class="form-horizontal" data-ng-form="" data-name="linkProperties">
+		<div class="form-group" data-ng-class="{ 'has-error': linkProperties.href.$invalid }">
+			<label for="richtext-dialog-href" class="col-sm-3 control-label">
+				{{ i18n('m.rbs.admin.admin.richtext_link_href', ['ucf']) }}
+			</label>
+			<div class="col-sm-9">
+				<input type="url" class="form-control" id="richtext-dialog-href" name="href"
+					data-ng-model="properties.href" data-ng-required="true" />
+			</div>
+		</div>
+		<div class="form-group" data-ng-class="{ 'has-error': linkProperties.text.$invalid }">
+			<label for="richtext-dialog-text" class="col-sm-3 control-label">
+				{{ i18n('m.rbs.admin.admin.richtext_link_text', ['ucf']) }}
+			</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="richtext-dialog-text" name="text"
+					data-ng-model="properties.text" data-ng-required="true" />
+			</div>
+		</div>
+		<div class="form-group" data-ng-class="{ 'has-error': linkProperties.title.$invalid }">
+			<label for="richtext-dialog-title" class="col-sm-3 control-label">
+				{{ i18n('m.rbs.admin.admin.richtext_link_title', ['ucf']) }}
+			</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="richtext-dialog-title" name="title"
+					data-ng-model="properties.title" />
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-primary pull-left" data-ng-click="onSubmit()"
+		data-ng-disabled="!canSubmit()">
+		{{ i18n('m.rbs.admin.admin.submit', ['ucf']) }}
+	</button>
+	<button type="button" class="btn btn-default" data-dismiss="modal">
+		{{ i18n('m.rbs.admin.admin.cancel', ['ucf']) }}
+	</button>
+</div>

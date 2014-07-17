@@ -1317,6 +1317,27 @@
 	"richtext_blocks_others":{
 		"message":"autres"
 	},
+	"richtext_document_link_properties":{
+		"message":"propriétés du lien vers un document"
+	},
+	"richtext_external_link_properties":{
+		"message":"propriétés du lien externe"
+	},
+	"richtext_link_href":{
+		"message":"URL du lien"
+	},
+	"richtext_link_document":{
+		"message":"document lié"
+	},
+	"richtext_link_text":{
+		"message":"texte du lien"
+	},
+	"richtext_link_title":{
+		"message":"titre du lien"
+	},
+	"richtext_insert_document_property":{
+		"message":"propriété du document"
+	},
 	"wysiwyg_lists":{
 		"message":"listes"
 	},
