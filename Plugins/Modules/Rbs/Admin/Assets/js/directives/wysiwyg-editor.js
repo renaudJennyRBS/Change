@@ -252,6 +252,8 @@
 					scope.toggleViewSource = function() {
 						if (scope.sourceView) {
 							scope.sourceView = false;
+							updateNgModel();
+							commitNgModel();
 							refocus();
 						}
 						else {
