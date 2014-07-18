@@ -183,13 +183,13 @@ class WysiwygHtmlParser implements ParserInterface
 				if (preg_match('/data-document-id="([0-9]+)"/', $link, $match))
 				{
 					$width = 0;
-					if (preg_match('/data-resize-width="([0-9]+)"/', $link, $dataMatch))
+					if (preg_match('/width="([0-9]+)"/', $link, $dataMatch))
 					{
 						$width = intval($dataMatch[1]);
 					}
 
 					$height = 0;
-					if (preg_match('/data-resize-height="([0-9]+)"/', $link, $dataMatch))
+					if (preg_match('/height="([0-9]+)"/', $link, $dataMatch))
 					{
 						$height = intval($dataMatch[1]);
 					}
