@@ -28,5 +28,8 @@
 	},
 	"close":{
 		"message":"fermer"
+	},
+	"error_user_not_connected":{
+		"message":"utilisateur non connecté"
 	}
 }

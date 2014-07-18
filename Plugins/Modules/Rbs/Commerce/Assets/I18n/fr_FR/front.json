@@ -128,6 +128,9 @@
 	"modify":{
 		"message":"modifier"
 	},
+	"change_user":{
+		"message":"changer d'utilisateur"
+	},
 	"country":{
 		"message":"pays"
 	},

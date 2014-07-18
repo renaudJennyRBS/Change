@@ -139,6 +139,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getCartByIdentifier', [$this, 'onDefaultGetCartByIdentifier'], 5);
 		$eventManager->attach('mergeCart', [$this, 'onDefaultMergeCart'], 5);
 		$eventManager->attach('getUnlockedCart', [$this, 'onDefaultGetUnlockedCart'], 5);
+		$eventManager->attach('cloneCartContentForUser', [$this, 'onDefaultCloneCartContentForUser'], 5);
 		$eventManager->attach('lockCart', [$this, 'onDefaultLockCart'], 5);
 		$eventManager->attach('startProcessingCart', [$this, 'onDefaultStartProcessingCart'], 5);
 		$eventManager->attach('affectTransactionId', [$this, 'onDefaultAffectTransactionId'], 5);
@@ -498,6 +499,56 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$newCart->appendCoupon($coupon);
 			}
+
+			// Transfer reservations
+			$this->getStockManager()->transferReservations($cart->getIdentifier(), $newCart->getIdentifier());
+
+			$event->setParam('newCart', $newCart);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Change\User\UserInterface $user
+	 * @throws \RuntimeException
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	public function cloneCartContentForUser($cart, $user)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('cart' => $cart, 'user' => $user));
+		$this->getEventManager()->trigger('cloneCartContentForUser', $this, $args);
+		if (isset($args['newCart']) && $args['newCart'] instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			return $args['newCart'];
+		}
+		throw new \RuntimeException('Unable to get a new cart', 999999);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultCloneCartContentForUser(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		$user = $event->getParam('user');
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $user instanceof \Change\User\UserInterface)
+		{
+			/** @var $webStore \Rbs\Store\Documents\WebStore */
+			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone());
+			$newCart->getContext()->set('fromCart', $cart->getIdentifier());
+			$newCart->setUserId($user->getId());
+			$newCart->setOwnerId($user->getId());
+			foreach ($cart->getLines() as $line)
+			{
+				$this->addLine($newCart, $newCart->getNewLine($line->toArray()));
+			}
+
+			// Transfer reservations
+			$this->getStockManager()->transferReservations($cart->getIdentifier(), $newCart->getIdentifier());
+
 			$event->setParam('newCart', $newCart);
 		}
 	}

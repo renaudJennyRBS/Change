@@ -29,6 +29,11 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	protected $currentUser;
 
 	/**
+	 * @var boolean
+	 */
+	protected $confirmed = false;
+
+	/**
 	 * @param UserInterface $currentUser
 	 */
 	public function setCurrentUser($currentUser = null)
@@ -42,6 +47,24 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 	public function getCurrentUser()
 	{
 		return $this->currentUser === null ? new AnonymousUser() : $this->currentUser;
+	}
+
+	/**
+	 * @param boolean $confirmed
+	 * @return $this
+	 */
+	public function setConfirmed($confirmed)
+	{
+		$this->confirmed = $confirmed;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getConfirmed()
+	{
+		return $this->confirmed;
 	}
 
 	/**

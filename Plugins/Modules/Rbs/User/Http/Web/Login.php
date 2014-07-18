@@ -54,8 +54,9 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 				if ($user instanceof \Change\User\UserInterface)
 				{
 					$am->setCurrentUser($user);
+					$am->setConfirmed(true);
 					$accessorId = $user->getId();
-					$this->save($website, $accessorId);
+					$this->save($website, $accessorId, true);
 					$data = array('accessorId' => $accessorId, 'name' => $user->getName());
 
 					if ($rememberMe)
@@ -109,8 +110,9 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 	/**
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param integer $accessorId
+	 * @param boolean $confirmed
 	 */
-	protected function save(\Change\Presentation\Interfaces\Website $website, $accessorId)
+	protected function save(\Change\Presentation\Interfaces\Website $website, $accessorId, $confirmed)
 	{
 		$session = new \Zend\Session\Container(static::DEFAULT_NAMESPACE);
 		if ($accessorId === null || $accessorId === false)
@@ -119,7 +121,9 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 		else
 		{
-			$session[$website->getId()] = $accessorId;
+			$session[$website->getId()] = array();
+			$session[$website->getId()]['id'] = $accessorId;
+			$session[$website->getId()]['confirmed'] = $confirmed;
 		}
 	}
 
@@ -162,7 +166,7 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 	/**
 	 * @param \Change\Presentation\Interfaces\Website $website
-	 * @return integer|null
+	 * @return array|null
 	 */
 	protected function load(\Change\Presentation\Interfaces\Website $website)
 	{
@@ -183,17 +187,19 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$website = $event->getParam('website');
 		if ($website instanceof \Change\Presentation\Interfaces\Website)
 		{
-			$accessorId = $this->load($website);
-			if (is_int($accessorId))
+			$sessionInfos = $this->load($website);
+			if (is_int($sessionInfos['id']))
 			{
-				$user = $event->getAuthenticationManager()->getById($accessorId);
+				$user = $event->getAuthenticationManager()->getById($sessionInfos['id']);
 				if ($user instanceof \Change\User\UserInterface)
 				{
-					$event->getAuthenticationManager()->setCurrentUser($user);
+					$am = $event->getAuthenticationManager();
+					$am->setCurrentUser($user);
+					$am->setConfirmed($sessionInfos['confirmed']);
 				}
 				else
 				{
-					throw new \RuntimeException('Invalid AccessorId: ' . $accessorId, 999999);
+					throw new \RuntimeException('Invalid AccessorId: ' . $sessionInfos['id'], 999999);
 				}
 			}
 		}
@@ -230,7 +236,7 @@ class Login extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 					if ($result)
 					{
-						$this->save($website, $result);
+						$this->save($website, $result, false);
 						$this->authenticate($event);
 					}
 				}

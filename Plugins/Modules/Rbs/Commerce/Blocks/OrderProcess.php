@@ -32,6 +32,7 @@ class OrderProcess extends Block
 		$parameters->addParameterMeta('displayPricesWithTax');
 		$parameters->addParameterMeta('realm', 'web');
 		$parameters->addParameterMeta('accessorId');
+		$parameters->addParameterMeta('confirmed');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
@@ -63,10 +64,8 @@ class OrderProcess extends Block
 		}
 
 		$user = $event->getAuthenticationManager()->getCurrentUser();
-		if ($user->authenticated())
-		{
-			$parameters->setParameterValue('accessorId', $user->getId());
-		}
+		$parameters->setParameterValue('accessorId', $user->getId());
+		$parameters->setParameterValue('confirmed', $event->getAuthenticationManager()->getConfirmed());
 
 		return $parameters;
 	}

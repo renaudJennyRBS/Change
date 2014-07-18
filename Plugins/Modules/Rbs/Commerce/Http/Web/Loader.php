@@ -253,7 +253,7 @@ class Loader
 			$session = new \Zend\Session\Container('Rbs_Commerce');
 			$session['userId'] = $user->getId();
 
-			$profileManager = $event->getApplicationServices()->getProfileManager();;
+			$profileManager = $event->getApplicationServices()->getProfileManager();
 			$profile = $profileManager->loadProfile($user, 'Rbs_Commerce');
 			if (!($profile instanceof \Rbs\Commerce\Std\Profile))
 			{
@@ -388,15 +388,55 @@ class Loader
 		$session['userId'] = null;
 		$session['profile'] = null;
 
+		$options = $event->getParam('options');
+		/** @var $httpEvent \Change\Http\Web\Event */
+		$httpEvent = $options['httpEvent'];
+
 		/* @var $commerceServices CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof CommerceServices)
+		if (!($commerceServices instanceof CommerceServices))
+		{
+			$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
+			return;
+		}
+
+		$keepCart = $httpEvent->getRequest()->getPost('keepCart', false);
+		if (!$keepCart)
 		{
 			$context = $commerceServices->getContext();
 			if ($context->getCartIdentifier())
 			{
 				$context->setCartIdentifier(null);
 				$context->save();
+			}
+		}
+		else
+		{
+			$cartManager = $commerceServices->getCartManager();
+
+			$context = $commerceServices->getContext();
+			$contextCartIdentifier = $context->getCartIdentifier();
+			$currentCart = $contextCartIdentifier ? $cartManager->getCartByIdentifier($contextCartIdentifier) : null;
+
+			$user = new \Change\User\AnonymousUser();
+			$newCart = $cartManager->cloneCartContentForUser($currentCart, $user);
+
+			if ($newCart)
+			{
+				$context->setCartIdentifier($newCart->getIdentifier());
+				$context->save();
+
+				if ($newCart->getUserId() != 0)
+				{
+					$documentUser = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user->getId());
+					if ($documentUser instanceof \Rbs\User\Documents\User)
+					{
+						$newCart->setEmail($documentUser->getEmail());
+					}
+				}
+
+				$cartManager->normalize($newCart);
+				$cartManager->saveCart($newCart);
 			}
 		}
 	}
