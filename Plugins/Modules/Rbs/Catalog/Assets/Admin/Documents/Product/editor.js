@@ -20,7 +20,7 @@
 				scope.onRestoreContext = function(currentContext) {
 					var key = currentContext.valueKey(), value = currentContext.value();
 					if (key && key.split('.')[0] == 'attr') {
-						scope.attributeContext = {valueKey: key, value: value};
+						scope.attributeContext = {valueKey: key, value: value, model: currentContext.param('model')};
 					}
 				};
 

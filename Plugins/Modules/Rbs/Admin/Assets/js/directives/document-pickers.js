@@ -55,6 +55,9 @@
 
 		scope.$watchCollection('models.filtered', function(modelsFiltered) {
 			if (angular.isArray(modelsFiltered)) {
+				if (selectedModelName) {
+					selectModelName(selectedModelName);
+				}
 				if (!angular.isObject(scope.models.model) && modelsFiltered.length) {
 					scope.models.model = modelsFiltered[0];
 				}
@@ -152,7 +155,7 @@
 								docList.push(doc);
 								viewValue.push(doc);
 							}
-						})
+						});
 					}
 				}
 				else {
@@ -274,6 +277,7 @@
 		if (currentContext) {
 			var contextValue = currentContext.getSelectionValue(getContextValueKey());
 			if (contextValue !== undefined) {
+				selectModelName(currentContext.param('model'));
 				applyContextValue(contextValue);
 			}
 		}
@@ -281,9 +285,27 @@
 		scope.$on('updateContextValue', function(event, args) {
 			var contextValueKey = getContextValueKey(), valueKey = args.valueKey, value = args.value;
 			if (contextValueKey === valueKey) {
+				selectModelName(args.model);
 				applyContextValue(value);
 			}
 		});
+
+		var selectedModelName;
+		function selectModelName(modelName) {
+			if (!modelName) {
+				return;
+			}
+
+			selectedModelName = modelName;
+			if (angular.isObject(scope.models.filtered)) {
+				for (var i = 0; i < scope.models.filtered.length; i++) {
+					if (scope.models.filtered[i].name == modelName) {
+						scope.models.model = scope.models.filtered[i];
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	/**
