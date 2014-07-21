@@ -1419,6 +1419,12 @@
 	"wysiwyg_ordered_list":{
 		"message":"liste numérotée"
 	},
+	"wysiwyg_indent":{
+		"message":"augmenter le retrait"
+	},
+	"wysiwyg_outdent":{
+		"message":"réduire le retrait"
+	},
 	"wysiwyg_insert_picture":{
 		"message":"insérer une image"
 	},

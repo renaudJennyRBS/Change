@@ -60,6 +60,14 @@
 						display: '<i class="icon-list-ol"></i>',
 						title: i18n.trans('m.rbs.admin.admin.wysiwyg_ordered_list|ucf')
 					},
+					indent: {
+						display: '<i class="icon-indent-right"></i>',
+						title: i18n.trans('m.rbs.admin.admin.wysiwyg_indent|ucf')
+					},
+					outdent: {
+						display: '<i class="icon-indent-left"></i>',
+						title: i18n.trans('m.rbs.admin.admin.wysiwyg_outdent|ucf')
+					},
 					undo: {
 						display: '<i class="icon-undo"></i>',
 						title: i18n.trans('m.rbs.admin.admin.wysiwyg_undo|ucf')
@@ -147,11 +155,11 @@
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_lists|ucf'),
-								tools: ['insertUnorderedList', 'insertOrderedList']
+								tools: ['insertUnorderedList', 'insertOrderedList', 'indent', 'outdent']
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_format|ucf'),
-								tools: ['bold', 'italic', 'underline', 'removeFormat']
+								tools: ['bold', 'italic', 'removeFormat']
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_alignment|ucf'),
@@ -159,9 +167,6 @@
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_insertion|ucf'),
-								tools: ['insertImage', 'insertLink', 'insertExternalLink', 'unlink']
-							},
-							{
 								tools: ['insertImage', 'insertLink', 'insertExternalLink', 'unlink']
 							}
 						];
