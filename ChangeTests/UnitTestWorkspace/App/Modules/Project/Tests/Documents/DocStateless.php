@@ -107,38 +107,6 @@ class DocStateless extends \Compilation\Project\Tests\Documents\DocStateless
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getPXML()
-	{
-		return isset($this->data['PXML']) ? $this->data['PXML'] : null;
-	}
-
-	/**
-	 * @param string $pXML
-	 */
-	public function setPXML($pXML)
-	{
-		$this->data['PXML'] = $this->convertToInternalValue($pXML, Property::TYPE_XML);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getPObject()
-	{
-		return isset($this->data['PObject']) ? $this->data['PObject'] : null;
-	}
-
-	/**
-	 * @param string $pObject
-	 */
-	public function setPObject($pObject)
-	{
-		$this->data['PObject'] = $this->convertToInternalValue($pObject, Property::TYPE_OBJECT);
-	}
-
-	/**
 	 * @return \Project\Tests\Documents\Basic
 	 */
 	public function getPDocument()

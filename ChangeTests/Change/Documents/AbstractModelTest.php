@@ -30,11 +30,9 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Project_Tests', $modelBasic->getModuleName());
 		$this->assertEquals('Project_Tests_Basic', $modelBasic->getName());
 		$this->assertFalse($modelBasic->isLocalized());
-		$this->assertFalse($modelBasic->isFrontofficeIndexable());
-		$this->assertFalse($modelBasic->isBackofficeIndexable());
-		$this->assertFalse($modelBasic->isIndexable());
 		$this->assertFalse($modelBasic->isEditable());
 		$this->assertFalse($modelBasic->isPublishable());
+		$this->assertFalse($modelBasic->isInline());
 		$this->assertFalse($modelBasic->useVersion());
 		$this->assertFalse($modelBasic->useCorrection());
 		$this->assertFalse($modelBasic->hasDescendants());
@@ -47,11 +45,11 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Project_Tests_Basic', $modelBasic->getRootName());
 		$this->assertEquals('Project_Tests', $modelBasic->getTreeName());
 
-		$this->assertCount(22, $modelBasic->getProperties());
+		$this->assertCount(20, $modelBasic->getProperties());
 		$this->assertArrayHasKey('pStr', $modelBasic->getProperties());
 
 		$this->assertCount(0, $modelBasic->getLocalizedProperties());
-		$this->assertCount(22, $modelBasic->getNonLocalizedProperties());
+		$this->assertCount(20, $modelBasic->getNonLocalizedProperties());
 		$this->assertCount(0, $modelBasic->getPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getLocalizedPropertiesWithCorrection());
 		$this->assertCount(0, $modelBasic->getNonLocalizedPropertiesWithCorrection());
@@ -65,7 +63,7 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('pStr', $property->getName());
 
 		$names = $modelBasic->getPropertyNames();
-		$this->assertCount(22, $names);
+		$this->assertCount(20, $names);
 		$this->assertContains('id', $names);
 		$this->assertContains('model', $names);
 		$this->assertContains('creationDate', $names);
@@ -83,7 +81,6 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('Project_Tests_Localized', $inverseProperty->getRelatedDocumentType());
 		$this->assertEquals('pDocArr', $inverseProperty->getRelatedPropertyName());
 
-		$this->assertEquals('test', $modelBasic->getIcon());
 		$this->assertEquals('m.project.tests.documents.basic', $modelBasic->getLabelKey());
 		$this->assertEquals('undefined', $modelBasic->getPropertyLabelKey('undefined'));
 		$this->assertEquals('m.project.tests.documents.basic_pstr', $modelBasic->getPropertyLabelKey('pStr'));
@@ -100,9 +97,9 @@ class AbstractModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$modelLocalized = $modelManager->getModelByName('Project_Tests_Localized');
 		$this->assertTrue($modelLocalized->isLocalized());
-		$this->assertCount(38, $modelLocalized->getProperties());
-		$this->assertCount(18, $modelLocalized->getLocalizedProperties());
-		$this->assertCount(20, $modelLocalized->getNonLocalizedProperties());
+		$this->assertCount(34, $modelLocalized->getProperties());
+		$this->assertCount(16, $modelLocalized->getLocalizedProperties());
+		$this->assertCount(18, $modelLocalized->getNonLocalizedProperties());
 
 		$this->assertArrayHasKey('refLCID', $modelLocalized->getNonLocalizedProperties());
 		$this->assertArrayHasKey('LCID', $modelLocalized->getLocalizedProperties());

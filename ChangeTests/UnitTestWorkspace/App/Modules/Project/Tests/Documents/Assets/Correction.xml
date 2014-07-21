@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd"
-          icon="correction" backoffice-indexable="false" localized="true" publishable="true" editable="true">
+          localized="true" publishable="true" editable="true">
     <properties>
         <property name="label">
             <dboptions length="40" />

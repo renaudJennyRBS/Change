@@ -182,6 +182,43 @@ class ValueConverter
 					$restValue = null;
 				}
 				break;
+			case Property::TYPE_INLINE:
+				if ($propertyValue instanceof \Change\Documents\AbstractInline)
+				{
+					$restValue = $propertyValue->getRestValue($this->getUrlManager());
+				}
+				else
+				{
+					$restValue = null;
+				}
+				break;
+			case Property::TYPE_INLINEARRAY:
+				$restValue = [];
+				if ($propertyValue instanceof \Change\Documents\InlineArrayProperty && $propertyValue->count())
+				{
+					/** @var $inline \Change\Documents\AbstractInline */
+					foreach ($propertyValue as $inline)
+					{
+						$inlineValue = $this->toRestValue($inline, Property::TYPE_INLINE);
+						if (is_array($inlineValue))
+						{
+							$restValue[] = $inlineValue;
+						}
+					}
+				}
+				elseif (is_array($propertyValue) && count($propertyValue))
+				{
+					/** @var $inline \Change\Documents\AbstractInline */
+					foreach ($propertyValue as $inline)
+					{
+						$inlineValue = $this->toRestValue($inline, Property::TYPE_INLINE);
+						if (is_array($inlineValue))
+						{
+							$restValue[] = $inlineValue;
+						}
+					}
+				}
+				break;
 			default:
 				$restValue = $propertyValue;
 				break;
@@ -284,6 +321,31 @@ class ValueConverter
 				else
 				{
 					$value = is_string($restValue) ? $restValue : null;
+				}
+				break;
+			case Property::TYPE_INLINE:
+				if (is_array($restValue) && isset($restValue['model']))
+				{
+					$value = $this->documentManager->getNewInlineInstanceByModelName($restValue['model']);
+					$value->processRestValue($restValue, $this->urlManager);
+				}
+				else
+				{
+					$value = null;
+				}
+				break;
+			case Property::TYPE_INLINEARRAY:
+				$value = [];
+				if (is_array($restValue) && count($restValue))
+				{
+					foreach ($restValue as $restInlineValue)
+					{
+						$inline = $this->toPropertyValue($restInlineValue, Property::TYPE_INLINE);
+						if ($inline instanceof \Change\Documents\AbstractInline)
+						{
+							$value[] = $inline;
+						}
+					}
 				}
 				break;
 			default:

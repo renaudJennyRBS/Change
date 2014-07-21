@@ -14,8 +14,8 @@ namespace Change\Documents\Generators;
 class Property
 {
 	protected static $TYPES = ['String', 'Boolean', 'Integer', 'Float', 'Decimal',
-		'Date', 'DateTime', 'LongString', 'StorageUri', 'XML', 'Lob', 'RichText', 'JSON', 'Object',
-		'DocumentId', 'Document', 'DocumentArray'];
+		'Date', 'DateTime', 'LongString', 'StorageUri', 'Lob', 'RichText', 'JSON',
+		'DocumentId', 'Document', 'DocumentArray', 'Inline', 'InlineArray'];
 
 	protected static $RESERVED_PROPERTY_NAMES = ['id', 'model', 'treename', 'meta', 'metas', 'reflcid', 'lcid',
 		'creationdate', 'modificationdate', 'authorname', 'authorid', 'documentversion',
@@ -55,6 +55,16 @@ class Property
 	protected $documentType;
 
 	/**
+	 * @var string
+	 */
+	protected $inlineType;
+
+	/**
+	 * @var Model
+	 */
+	protected $inlineModel;
+
+	/**
 	 * @var boolean
 	 */
 	protected $internal;
@@ -92,7 +102,7 @@ class Property
 	/**
 	 * @var array
 	 */
-	protected $constraintArray;
+	protected $constraintArray = [];
 
 	/**
 	 * @var array
@@ -137,189 +147,6 @@ class Property
 		if (in_array(strtolower($name), self::$RESERVED_PROPERTY_NAMES))
 		{
 			throw new \RuntimeException('Invalid name attribute value: ' . $name, 54022);
-		}
-	}
-
-	/**
-	 * @param \DOMElement $xmlElement
-	 * @throws \RuntimeException
-	 */
-	public function initialize($xmlElement)
-	{
-		foreach ($xmlElement->attributes as $attribute)
-		{
-			/* @var $attribute \DOMNode */
-			$name = $attribute->nodeName;
-			$value = $attribute->nodeValue;
-			$tv = trim($value);
-			if ($tv == '' || $tv != $value)
-			{
-				throw new \RuntimeException('Invalid empty or spaced attribute value for ' . $name, 54021);
-			}
-			switch ($name)
-			{
-				case "name":
-					$this->checkReservedPropertyName($value);
-					$this->name = $value;
-					break;
-				case "type":
-					if (!in_array($value, static::$TYPES))
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					else
-					{
-						$this->type = $value;
-					}
-					break;
-				case "stateless":
-					if ($value === 'true')
-					{
-						$this->stateless = true;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "document-type":
-					if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					$this->documentType = $value;
-					break;
-				case "internal":
-					if ($value === 'true')
-					{
-						$this->internal = true;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "default-value":
-					$this->defaultValue = $value;
-					break;
-				case "required":
-					if ($value === 'true')
-					{
-						$this->required = true;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "min-occurs":
-					$this->minOccurs = intval($value);
-					if ($this->minOccurs <= 1)
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "max-occurs":
-					$this->maxOccurs = intval($value);
-					if ($this->maxOccurs <= 1)
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "localized":
-					if ($value === 'true')
-					{
-						$this->localized = true;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				case "has-correction":
-					if ($value === 'true')
-					{
-						$this->hasCorrection = true;
-					}
-					else
-					{
-						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
-					}
-					break;
-				default:
-					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value, 54023);
-					break;
-			}
-		}
-
-		if ($this->getName() === null)
-		{
-			throw new \RuntimeException('Property name can not be null', 54024);
-		}
-
-		if ($this->stateless && $this->hasCorrection)
-		{
-			throw new \RuntimeException('Property stateless can not be applicable', 54024);
-		}
-
-		foreach ($xmlElement->childNodes as $node)
-		{
-			/* @var $node \DOMElement */
-			if ($node->nodeName == 'constraint')
-			{
-				if ($this->constraintArray === null)
-				{
-					$this->constraintArray = array();
-				}
-				$params = array();
-				$name = null;
-				foreach ($node->attributes as $attr)
-				{
-					/* @var $attr \DOMAttr */
-					if ($attr->name === 'name')
-					{
-						$name = $attr->value;
-					}
-					else
-					{
-						$v = $attr->value;
-						if ($v === 'true')
-						{
-							$v = true;
-						}
-						elseif ($v === 'false')
-						{
-							$v = false;
-						}
-						$params[$attr->name] = $v;
-					}
-				}
-				if ($name)
-				{
-					$this->constraintArray[$name] = $params;
-				}
-				else
-				{
-					throw new \RuntimeException('Constraint Name can not be null', 54025);
-				}
-			}
-			elseif ($node->nodeName == 'dboptions' && !$this->stateless)
-			{
-				if ($this->dbOptions === null)
-				{
-					$this->dbOptions = array();
-				}
-				foreach ($node->attributes as $attr)
-				{
-					/* @var $attr \DOMAttr */
-					$this->dbOptions[$attr->name] = $attr->value;
-				}
-			}
-			elseif ($node->nodeType == XML_ELEMENT_NODE)
-			{
-				throw new \RuntimeException('Invalid property children node ' . $this->getName() . ' -> '
-				. $node->nodeName, 54026);
-			}
 		}
 	}
 
@@ -407,6 +234,14 @@ class Property
 	public function getDocumentType()
 	{
 		return $this->documentType;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getInlineType()
+	{
+		return $this->inlineType;
 	}
 
 	/**
@@ -546,103 +381,12 @@ class Property
 	/**
 	 * @throws \Exception
 	 */
-	public function validate()
-	{
-		switch ($this->name)
-		{
-			case 'label':
-				if ($this->type !== null)
-				{
-					$this->type = 'String';
-					$this->required = true;
-				}
-				break;
-			case 'title':
-				if ($this->type !== null)
-				{
-					$this->type = 'String';
-				}
-				break;
-			case 'refLCID':
-			case 'LCID':
-				$this->type = 'String';
-				$this->constraintArray['maxSize'] = array('max' => 5);
-				$this->dbOptions['length'] = 5;
-				$this->required = true;
-				break;
-			case 'creationDate':
-			case 'modificationDate':
-				$this->type = 'DateTime';
-				$this->required = true;
-				break;
-			case 'authorName':
-				$this->type = 'String';
-				$this->defaultValue = 'Anonymous';
-				$this->constraintArray['maxSize'] = array('max' => 100);
-				break;
-			case 'authorId':
-				$this->type = 'DocumentId';
-				break;
-			case 'documentVersion':
-				$this->type = 'Integer';
-				break;
-			case 'publicationStatus':
-				$this->type = 'String';
-				$this->defaultValue = 'DRAFT';
-				$this->required = true;
-				break;
-			case 'startPublication':
-				$this->type = 'DateTime';
-				break;
-			case 'endPublication':
-				$this->type = 'DateTime';
-				break;
-			case 'publicationSections':
-				$this->type = 'DocumentArray';
-				break;
-			case 'active':
-				$this->type = 'Boolean';
-				$this->defaultValue = 'true';
-				break;
-			case 'startActivation':
-				$this->type = 'DateTime';
-				break;
-			case 'endActivation':
-				$this->type = 'DateTime';
-				break;
-			case 'versionOfId':
-				$this->type = 'DocumentId';
-				$this->documentType = $this->model->getName();
-				break;
-			case 'treeName':
-				$this->type = 'String';
-				$this->constraintArray['maxSize'] = array('max' => 50);
-				$this->dbOptions['length'] = 50;
-				break;
-		}
-		$this->setDefaultConstraints();
-	}
-
-	/**
-	 * @throws \Exception
-	 */
 	public function validateInheritance()
 	{
-		$model = $this->getModel();
-		$pm = $model->getParent();
-		while ($pm)
-		{
-			$p = $pm->getPropertyByName($this->name);
-			if ($p)
-			{
-				$this->setParent($p);
-				break;
-			}
-			$pm = $pm->getParent();
-		}
-		$parentProp = $this->getParent();
+		$model = $this->model;
+		$parentProp = $this->initializeParent();
 
-		if ($this->stateless && ($model->checkStateless() || $parentProp))
+		if ($this->stateless && ($model->rootStateless() || $parentProp))
 		{
 			throw new \RuntimeException('Invalid stateless attribute on ' . $this, 54028);
 		}
@@ -652,19 +396,47 @@ class Property
 			if ($this->type === null)
 			{
 				$this->type = 'String';
-				$this->setDefaultConstraints();
+				$this->applyDefaultProperties();
 			}
+
 			$lcName = strtolower($this->name);
 			if ($this->labelKey === null && in_array($lcName, array_merge(static::$RESERVED_PROPERTY_NAMES, static::$COMMON_PROPERTY_NAMES)))
 			{
 				$this->setLabelKey('c.documents.' . $lcName);
 			}
+
+			if ($this->inlineModel)
+			{
+				$this->inlineModel->validateInheritance();
+			}
 		}
 		else
 		{
-			if ($this->type !== null || $this->localized !== null || $this->hasCorrection !== null)
+			if ($this->type || $this->localized || $this->hasCorrection)
 			{
 				throw new \RuntimeException('Invalid type redefinition attribute on ' . $this, 54027);
+			}
+
+			if ($this->inlineModel)
+			{
+				$parentInlineModel = null;
+				$pp = $parentProp;
+				while ($pp)
+				{
+					$parentInlineModel = $pp->inlineModel;
+					if ($parentInlineModel)
+					{
+						$this->inlineModel->setParent($parentInlineModel);
+						$this->inlineModel->validateInheritance();
+						break;
+					}
+					$pp = $pp->getParent();
+				}
+
+				if ($parentInlineModel === null)
+				{
+					throw new \RuntimeException('Invalid inline parent model: ' . $this, 999999);
+				}
 			}
 		}
 
@@ -677,24 +449,21 @@ class Property
 			$model->getRoot()->implementCorrection(true);
 		}
 
-		if ($model->checkLocalized())
+		if ($model->rootLocalized())
 		{
 			switch ($this->name)
 			{
 				case 'refLCID':
 				case 'versionOfId':
 				case 'treeName':
+				case 'label':
 					$this->makeLocalized(null);
 					break;
-				case 'label':
-					if ($this->localized !== null)
-					{
-						throw new \RuntimeException('Invalid localized attribute on ' . $this->model . '::' . $this, 54028);
-					}
-					break;
-				case 'LCID':
+
 				case 'creationDate':
 				case 'modificationDate':
+
+				case 'LCID':
 				case 'title':
 				case 'authorName':
 				case 'authorId':
@@ -710,13 +479,23 @@ class Property
 					$this->makeLocalized(true);
 			}
 		}
-		elseif ($this->localized !== null)
+		elseif ($this->localized)
 		{
 			throw new \RuntimeException('Invalid localized attribute on ' . $this, 54028);
 		}
 
 		$type = $this->getComputedType();
-		if ($type !== 'DocumentArray')
+		if ($type === 'DocumentArray')
+		{
+			$mi = $this->getComputedMinOccurs();
+			$ma = $this->getComputedMaxOccurs();
+			if ($ma < $mi)
+			{
+				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this, 54028);
+			}
+
+		}
+		else
 		{
 			if ($this->minOccurs !== null)
 			{
@@ -726,45 +505,17 @@ class Property
 			{
 				throw new \RuntimeException('Invalid max-occurs attribute on ' . $this, 54028);
 			}
-		}
-		else
-		{
-			$mi = $this->getComputedMinOccurs();
-			$ma = $this->getComputedMaxOccurs();
-			if ($ma < $mi)
+
+			if ($model->getRoot()->getInline())
 			{
-				throw new \RuntimeException('Invalid min-occurs max-occurs attribute value on ' . $this, 54028);
+				if ($type === 'Inline' || $type === 'InlineArray')
+				{
+					throw new \RuntimeException('Invalid Inline or InlineArray type attribute on ' . $this, 54028);
+				}
 			}
 		}
 	}
 
-	/**
-	 * Set default constraints in the property.
-	 */
-	public function setDefaultConstraints()
-	{
-		if ($this->type === 'String')
-		{
-			if ($this->constraintArray === null || !isset($this->constraintArray['maxSize']))
-			{
-				$this->constraintArray['maxSize'] = array('max' => 255);
-			}
-			if ($this->name === 'publicationStatus')
-			{
-				if (!isset($this->constraintArray['publicationStatus']))
-				{
-					$this->constraintArray['publicationStatus'] = array();
-				}
-			}
-		}
-		elseif ($this->type === 'StorageUri')
-		{
-			if ($this->constraintArray === null || !isset($this->constraintArray['storageUri']))
-			{
-				$this->constraintArray['storageUri'] = array();
-			}
-		}
-	}
 
 	/**
 	 * @return boolean
@@ -834,5 +585,352 @@ class Property
 	public function __toString()
 	{
 		return $this->model . '::' . $this->getName();
+	}
+
+	/**
+	 * @param \DOMElement $xmlElement
+	 * @param Compiler $compiler
+	 * @throws \RuntimeException
+	 */
+	public function initialize($xmlElement, Compiler $compiler)
+	{
+		$this->importXmlAttributes($xmlElement);
+
+		$this->importXmlChildNodes($xmlElement, $compiler);
+
+		$this->applyDefaultProperties();
+	}
+
+	/**
+	 * @param $xmlElement
+	 * @throws \RuntimeException
+	 */
+	public function importXmlAttributes($xmlElement)
+	{
+		foreach ($xmlElement->attributes as $attribute)
+		{
+			/* @var $attribute \DOMNode */
+			$name = $attribute->nodeName;
+			$value = $attribute->nodeValue;
+			$tv = trim($value);
+			if ($tv == '' || $tv != $value)
+			{
+				throw new \RuntimeException('Invalid empty or spaced attribute value for ' . $name, 54021);
+			}
+
+			switch ($name)
+			{
+				case "name":
+					$this->checkReservedPropertyName($value);
+					$this->name = $value;
+					break;
+				case "type":
+					if (!in_array($value, static::$TYPES))
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					elseif ($this->model->getInline() && ($value == 'Inline' || $value == 'InlineArray'))
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					else
+					{
+						$this->type = $value;
+					}
+					break;
+				case "stateless":
+					if ($value === 'true')
+					{
+						$this->stateless = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "document-type":
+					if (!preg_match('/^[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+_[A-Z][A-Za-z0-9]+$/', $value))
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					$this->documentType = $value;
+					break;
+				case "internal":
+					if ($value === 'true')
+					{
+						$this->internal = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "default-value":
+					$this->defaultValue = $value;
+					break;
+				case "required":
+					if ($value === 'true')
+					{
+						$this->required = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "min-occurs":
+					$this->minOccurs = intval($value);
+					if ($this->minOccurs <= 1)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "max-occurs":
+					$this->maxOccurs = intval($value);
+					if ($this->maxOccurs <= 1)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "localized":
+					if ($value === 'true')
+					{
+						$this->localized = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "has-correction":
+					if ($value === 'true')
+					{
+						$this->hasCorrection = true;
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				default:
+					throw new \RuntimeException('Invalid property attribute ' . $name . ' = ' . $value, 54023);
+					break;
+			}
+		}
+
+		if ($this->name === null)
+		{
+			throw new \RuntimeException('Property name can not be null', 54024);
+		}
+
+		if ($this->stateless && $this->hasCorrection)
+		{
+			throw new \RuntimeException('Property stateless can not be applicable', 54024);
+		}
+
+		if ($this->localized && ($this->type == 'Document' || $this->type == 'DocumentArray'))
+		{
+			throw new \RuntimeException('Invalid localized attribute on Document property: ' . $this, 54022);
+		}
+	}
+
+	/**
+	 * @param $xmlElement
+	 * @param Compiler $compiler
+	 * @throws \RuntimeException
+	 */
+	public function importXmlChildNodes($xmlElement, Compiler $compiler)
+	{
+		foreach ($xmlElement->childNodes as $node)
+		{
+			/* @var $node \DOMElement */
+			if ($node->nodeName == 'constraint')
+			{
+				if ($this->constraintArray === null)
+				{
+					$this->constraintArray = array();
+				}
+				$params = array();
+				$name = null;
+				foreach ($node->attributes as $attr)
+				{
+					/* @var $attr \DOMAttr */
+					if ($attr->name === 'name')
+					{
+						$name = $attr->value;
+					}
+					else
+					{
+						$v = $attr->value;
+						if ($v === 'true')
+						{
+							$v = true;
+						}
+						elseif ($v === 'false')
+						{
+							$v = false;
+						}
+						$params[$attr->name] = $v;
+					}
+				}
+				if ($name)
+				{
+					$this->constraintArray[$name] = $params;
+				}
+				else
+				{
+					throw new \RuntimeException('Constraint Name can not be null', 54025);
+				}
+			}
+			elseif ($node->nodeName == 'dboptions' && !$this->stateless)
+			{
+				if ($this->dbOptions === null)
+				{
+					$this->dbOptions = array();
+				}
+				foreach ($node->attributes as $attr)
+				{
+					/* @var $attr \DOMAttr */
+					$this->dbOptions[$attr->name] = $attr->value;
+				}
+			}
+			elseif ($node->nodeName == 'inline')
+			{
+				if ($this->inlineType)
+				{
+					throw new \RuntimeException('Duplicate property children node ' . $this->getName() . ' -> '
+						. $node->nodeName, 54026);
+				}
+				$documentName = $this->model->getShortName() . ucfirst($this->getName());
+				$model = new Model($this->model->getVendor(), $this->model->getShortModuleName(), $documentName);
+				$model->setXmlInlineElement($node, $compiler);
+				$this->inlineModel = $model;
+				$this->inlineType = $model->getName();
+				$compiler->addModel($model);
+			}
+			elseif ($node->nodeType == XML_ELEMENT_NODE)
+			{
+				throw new \RuntimeException('Invalid property children node ' . $this->getName() . ' -> '
+					. $node->nodeName, 54026);
+			}
+		}
+
+		if (($this->type === 'Inline' || $this->type === 'InlineArray') && !$this->inlineType)
+		{
+			throw new \RuntimeException('Inline property required inline document' . $this , 54026);
+		}
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function applyDefaultProperties()
+	{
+		switch ($this->name)
+		{
+			case 'label':
+				if ($this->type !== null)
+				{
+					$this->type = 'String';
+					$this->required = true;
+				}
+				break;
+			case 'title':
+				if ($this->type !== null)
+				{
+					$this->type = 'String';
+				}
+				break;
+			case 'refLCID':
+			case 'LCID':
+				$this->type = 'String';
+				$this->constraintArray['maxSize'] = array('max' => 5);
+				$this->dbOptions['length'] = 5;
+				$this->required = true;
+				break;
+			case 'authorName':
+				$this->type = 'String';
+				$this->defaultValue = 'Anonymous';
+				$this->constraintArray['maxSize'] = array('max' => 100);
+				break;
+			case 'authorId':
+				$this->type = 'DocumentId';
+				break;
+			case 'documentVersion':
+				$this->type = 'Integer';
+				break;
+			case 'publicationStatus':
+				$this->type = 'String';
+				$this->defaultValue = 'DRAFT';
+				$this->required = true;
+				break;
+			case 'creationDate':
+			case 'modificationDate':
+				$this->type = 'DateTime';
+				$this->defaultValue = 'now';
+				break;
+			case 'active':
+				$this->type = 'Boolean';
+				$this->defaultValue = 'true';
+				break;
+			case 'startPublication':
+			case 'endPublication':
+			case 'startActivation':
+			case 'endActivation':
+				$this->type = 'DateTime';
+				break;
+			case 'versionOfId':
+				$this->type = 'DocumentId';
+				$this->documentType = $this->model->getName();
+				break;
+			case 'treeName':
+				$this->type = 'String';
+				$this->constraintArray['maxSize'] = array('max' => 50);
+				$this->dbOptions['length'] = 50;
+				break;
+		}
+
+		if ($this->type === 'String')
+		{
+			if (!isset($this->constraintArray['maxSize']))
+			{
+				$this->constraintArray['maxSize'] = array('max' => 255);
+			}
+
+			if ($this->name === 'publicationStatus')
+			{
+				if (!isset($this->constraintArray['publicationStatus']))
+				{
+					$this->constraintArray['publicationStatus'] = array();
+				}
+			}
+		}
+		elseif ($this->type === 'StorageUri')
+		{
+			if (!isset($this->constraintArray['storageUri']))
+			{
+				$this->constraintArray['storageUri'] = array();
+			}
+		}
+	}
+
+	/**
+	 * @return Property|null
+	 */
+	protected function initializeParent()
+	{
+		$model = $this->getModel();
+		$parentModel = $model->getParent();
+		while ($parentModel)
+		{
+			$p = $parentModel->getPropertyByName($this->name);
+			if ($p)
+			{
+				$this->setParent($p);
+				return $p;
+			}
+			$parentModel = $parentModel->getParent();
+		}
+		return null;
 	}
 }

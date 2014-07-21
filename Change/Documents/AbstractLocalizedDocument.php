@@ -168,9 +168,6 @@ abstract class AbstractLocalizedDocument implements \Serializable
 			case Property::TYPE_JSON:
 				return ($inputValue === null || is_string($inputValue)) ? $inputValue : json_encode($inputValue);
 
-			case Property::TYPE_OBJECT:
-				return ($inputValue === null || is_string($inputValue)) ? $inputValue : serialize($inputValue);
-
 			default:
 				return $inputValue === null ? $inputValue : strval($inputValue);
 		}

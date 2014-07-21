@@ -204,7 +204,6 @@ class DocumentManager
 	 */
 	public function rollBack(\Change\Events\Event $event)
 	{
-
 		$count = $event->getParam('count');
 		if (isset($this->LCIDStackTransaction[$count]))
 		{
@@ -264,9 +263,10 @@ class DocumentManager
 	}
 
 	/**
+	 * @api
 	 * @param string $modelName
 	 * @throws \InvalidArgumentException
-	 * @return AbstractDocument
+	 * @return \Change\Documents\AbstractDocument
 	 */
 	public function getNewDocumentInstanceByModelName($modelName)
 	{
@@ -279,11 +279,11 @@ class DocumentManager
 	}
 
 	/**
-	 * @param AbstractModel $model
-	 * @throws \RuntimeException
-	 * @return AbstractDocument
+	 * @api
+	 * @param \Change\Documents\AbstractModel $model
+	 * @return \Change\Documents\AbstractDocument
 	 */
-	public function getNewDocumentInstanceByModel(AbstractModel $model)
+	public function getNewDocumentInstanceByModel(\Change\Documents\AbstractModel $model)
 	{
 		$newDocument = $this->createNewDocumentInstance($model);
 		$this->newInstancesCounter--;
@@ -293,15 +293,15 @@ class DocumentManager
 	}
 
 	/**
-	 * @param AbstractModel $model
+	 * @param \Change\Documents\AbstractModel $model
 	 * @throws \RuntimeException
-	 * @return AbstractDocument
+	 * @return \Change\Documents\AbstractDocument
 	 */
-	protected function createNewDocumentInstance(AbstractModel $model)
+	protected function createNewDocumentInstance(\Change\Documents\AbstractModel $model)
 	{
-		if ($model->isAbstract())
+		if ($model->isAbstract() || $model->isInline())
 		{
-			throw new \RuntimeException('Unable to create instance of abstract model: ' . $model, 999999);
+			throw new \RuntimeException('Unable to create document instance of model: ' . $model, 999999);
 		}
 		$className = $model->getDocumentClassName();
 		if (!class_exists($className))
@@ -309,7 +309,7 @@ class DocumentManager
 			throw new \RuntimeException('Class could not be loaded ' . $className, 999999);
 		}
 
-		/* @var $document AbstractDocument */
+		/* @var $document \Change\Documents\AbstractDocument */
 		$document = new $className($model);
 		$document->setApplication($this->getApplication())
 			->setDocumentManager($this)
@@ -328,6 +328,62 @@ class DocumentManager
 		{
 			$document->onDefaultInjection($event);
 		}
+	}
+
+	/**
+	 * @api
+	 * @param string $modelName
+	 * @param boolean $initializeDefault
+	 * @throws \InvalidArgumentException
+	 * @return \Change\Documents\AbstractInline
+	 */
+	public function getNewInlineInstanceByModelName($modelName, $initializeDefault = true)
+	{
+		$model = $this->getModelManager()->getModelByName($modelName);
+		if ($model === null)
+		{
+			throw new \InvalidArgumentException('Invalid model name (' . $modelName . ')', 50002);
+		}
+		return $this->getNewInlineInstanceByModel($model, $initializeDefault);
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param boolean $initializeDefault
+	 * @return \Change\Documents\AbstractInline
+	 */
+	public function getNewInlineInstanceByModel(AbstractModel $model, $initializeDefault = true)
+	{
+		$newDocument = $this->createNewInlineInstance($model);
+		if ($initializeDefault)
+		{
+			$newDocument->setDefaultValues();
+		}
+		return $newDocument;
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @throws \RuntimeException
+	 * @return \Change\Documents\AbstractInline
+	 */
+	protected function createNewInlineInstance(\Change\Documents\AbstractModel $model)
+	{
+		if ($model->isAbstract() || !$model->isInline())
+		{
+			throw new \RuntimeException('Unable to create inline instance of model: ' . $model->getName(), 999999);
+		}
+		$className = $model->getDocumentClassName();
+		if (!class_exists($className))
+		{
+			throw new \RuntimeException('Class could not be loaded ' . $className, 999999);
+		}
+
+		/* @var $inlineDocument AbstractInline */
+		$inlineDocument = new $className($model);
+		$inlineDocument->setApplication($this->getApplication())->setDocumentManager($this);
+		return $inlineDocument;
 	}
 
 	/**
@@ -353,6 +409,11 @@ class DocumentManager
 				$this->getLogging()->warn(__METHOD__ . ' Invalid document model name: ' . $modelName);
 				return null;
 			}
+		}
+		elseif ($model && !($model instanceof AbstractModel))
+		{
+			$this->getLogging()->warn(__METHOD__ . ' Invalid document model'. $model);
+			return null;
 		}
 
 		$document = $this->getFromCache($id);

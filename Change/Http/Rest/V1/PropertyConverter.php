@@ -19,7 +19,7 @@ use Change\Http\UrlManager;
 class PropertyConverter extends ValueConverter
 {
 	/**
-	 * @var \Change\Documents\AbstractDocument
+	 * @var \Change\Documents\AbstractDocument|\Change\Documents\AbstractInline
 	 */
 	protected $document;
 
@@ -29,12 +29,12 @@ class PropertyConverter extends ValueConverter
 	protected $property;
 
 	/**
-	 * @param \Change\Documents\AbstractDocument $document
+	 * @param \Change\Documents\AbstractDocument|\Change\Documents\AbstractInline $document
 	 * @param \Change\Documents\Property $property
 	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param \Change\Http\UrlManager $urlManager
 	 */
-	public function __construct(AbstractDocument $document, Property $property, DocumentManager $documentManager = null, UrlManager $urlManager = null)
+	public function __construct($document, Property $property, DocumentManager $documentManager = null, UrlManager $urlManager = null)
 	{
 		parent::__construct($urlManager, $documentManager);
 		$this->document = $document;

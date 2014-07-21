@@ -73,7 +73,7 @@ class AdminRoutes
 					}
 
 					$model = $modelManager->getModelByName($modelName);
-					if ($model->isAbstract())
+					if ($model->isAbstract() || $model->isInline())
 					{
 						continue;
 					}

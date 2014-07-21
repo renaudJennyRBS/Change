@@ -117,6 +117,7 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 		};
 		$events->attach($identifiers, 'updateRestResult', $callBack, 5);
 
+
 		$callBack = function ($event)
 		{
 			if ($event instanceof \Change\Documents\Events\Event)
@@ -125,6 +126,24 @@ class DefaultSharedListenerAggregate implements SharedListenerAggregateInterface
 			}
 		};
 		$events->attach($identifiers, 'correctionFiled', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			if ($event instanceof \Change\Documents\Events\InlineEvent)
+			{
+				$event->getDocument()->onDefaultGetRestValue($event);
+			}
+		};
+		$events->attach('Inline', 'getRestValue', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			if ($event instanceof \Change\Documents\Events\InlineEvent)
+			{
+				$event->getDocument()->onDefaultProcessRestValue($event);
+			}
+		};
+		$events->attach('Inline', 'processRestValue', $callBack, 5);
 
 
 		$callBack = function ($event)

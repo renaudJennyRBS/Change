@@ -131,6 +131,10 @@ use Change\Documents\InverseProperty;
 		{	
 			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getExtends()) . ';'. PHP_EOL;
 		}
+		elseif ($model->getInline() && $model->getParent())
+		{
+			$code .= '		$this->ancestorsNames[] = ' . $this->escapePHPValue($model->getParent()->getName()) . ';'. PHP_EOL;
+		}
 
 		if (!$model->getReplace())
 		{
@@ -190,6 +194,7 @@ use Change\Documents\InverseProperty;
 			if ($property->getMinOccurs() !== null) {$affects[] = '->setMinOccurs('.$this->escapePHPValue($property->getMinOccurs()).')';}
 			if ($property->getMaxOccurs() !== null) {$affects[] = '->setMaxOccurs('.$this->escapePHPValue($property->getMaxOccurs()).')';}
 			if ($property->getDocumentType() !== null) {$affects[] = '->setDocumentType('.$this->escapePHPValue($property->getDocumentType()).')';}
+			if ($property->getInlineType() !== null) {$affects[] = '->setInlineType('.$this->escapePHPValue($property->getInlineType()).')';}
 			if ($property->getDefaultValue() !== null) {$affects[] = '->setDefaultValue('.$this->escapePHPValue($property->getDefaultPhpValue(), false).')';}
 			if ($property->getLocalized() !== null) {$affects[] = '->setLocalized('.$this->escapePHPValue($property->getLocalized()).')';}
 			if ($property->getHasCorrection() !== null) {$affects[] = '->setHasCorrection('.$this->escapePHPValue($property->getHasCorrection()).')';}
@@ -249,21 +254,20 @@ use Change\Documents\InverseProperty;
 		return '.$this->escapePHPValue($model->getDocumentLocalizedClassName()).';
 	}';
 
-		if ($model->getIcon())
+		if ($model->getInline())
 		{
 			$code .= '
 	/**
 	 * @api
-	 * @return string
+	 * @return boolean
 	 */
-	public function getIcon()
+	public function isInline()
 	{
-		return '. $this->escapePHPValue($model->getIcon()).';
+		return true;
 	}'. PHP_EOL;
 		}
 
-
-		if ($model->getStateless())
+		if ($model->getStateless() || $model->getInline())
 		{
 			$code .= '
 	/**
@@ -315,45 +319,6 @@ use Change\Documents\InverseProperty;
 	}'. PHP_EOL;
 		}
 
-		if ($model->getHasUrl() !== null)
-		{
-			$code .= '
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasURL()
-	{
-		return '. $this->escapePHPValue($model->getHasUrl()).';
-	}'. PHP_EOL;
-		}
-		
-		if ($model->getFrontofficeIndexable() !== null)
-		{
-			$code .= '
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isFrontofficeIndexable()
-	{
-		return '. $this->escapePHPValue($model->getFrontofficeIndexable()).' && $this->hasURL();
-	}'. PHP_EOL;
-		}
-		
-		if ($model->getBackofficeIndexable() !== null)
-		{
-			$code .= '
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isBackofficeIndexable()
-	{
-		return '. $this->escapePHPValue($model->getBackofficeIndexable()).';
-	}'. PHP_EOL;
-		}
-		
 		if ($model->getPublishable() !== null)
 		{
 			$code .= '

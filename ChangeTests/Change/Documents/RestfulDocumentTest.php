@@ -77,9 +77,11 @@ class RestfulDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$event->getRequest()->setPost(new \Zend\Stdlib\Parameters($data));
 		$event->setParams($this->getDefaultEventArguments());
 
+		/** @var $newDocument \Project\Tests\Documents\Basic */
 		$newDocument = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
 		$eventManager = $this->getApplication()->getSharedEventManager();
 		$eventManager->attach('Project_Tests_Basic', 'populateDocumentFromRestEvent', function(\Change\Documents\Events\Event $event){
+			/* @var $document \Project\Tests\Documents\Basic */
 			$document = $event->getDocument();
 			$this->assertNull($document->getPStr());
 			$document->setPStr('tutu');

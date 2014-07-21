@@ -36,6 +36,11 @@ class Model
 	/**
 	 * @var boolean
 	 */
+	protected $inline;
+
+	/**
+	 * @var boolean
+	 */
 	protected $abstract;
 
 	/**
@@ -49,19 +54,14 @@ class Model
 	protected $parent;
 
 	/**
-	 * @var \Change\Documents\Generators\Model
+	 * @var Property[]
 	 */
-	protected $extendedModel;
-
-	/**
-	 * @var Property
-	 */
-	protected $properties = array();
+	protected $properties = [];
 
 	/**
 	 * @var InverseProperty
 	 */
-	protected $inverseProperties = array();
+	protected $inverseProperties = [];
 
 	/**
 	 * @var string
@@ -82,26 +82,6 @@ class Model
 	 * @var boolean
 	 */
 	protected $localized;
-
-	/**
-	 * @var string
-	 */
-	protected $icon;
-
-	/**
-	 * @var boolean
-	 */
-	protected $hasUrl;
-
-	/**
-	 * @var boolean
-	 */
-	protected $frontofficeIndexable;
-
-	/**
-	 * @var boolean
-	 */
-	protected $backofficeIndexable;
 
 	/**
 	 * @var boolean
@@ -174,14 +154,32 @@ class Model
 
 	/**
 	 * @param \DOMDocument $domDocument
+	 * @param Compiler $compiler
 	 * @throws \RuntimeException
 	 */
-	public function setXmlDocument($domDocument)
+	public function setXmlDocument($domDocument, Compiler $compiler)
 	{
-		$this->importAttributes($domDocument->documentElement);
 		if ($domDocument->documentElement)
 		{
-			foreach ($domDocument->documentElement->childNodes as $xmlSectionNode)
+			$this->setXmlElement($domDocument->documentElement, $compiler);
+		}
+		else
+		{
+			throw new \RuntimeException('Invalid XML document', 54008);
+		}
+	}
+
+	/**
+	 * @param \DOMElement $element
+	 * @param Compiler $compiler
+	 * @throws \RuntimeException
+	 */
+	public function setXmlElement($element, Compiler $compiler)
+	{
+		if ($element)
+		{
+			$this->importAttributes($element);
+			foreach ($element->childNodes as $xmlSectionNode)
 			{
 				/* @var $xmlSectionNode \DOMElement */
 				if ($xmlSectionNode->nodeType === XML_ELEMENT_NODE)
@@ -189,14 +187,15 @@ class Model
 					switch ($xmlSectionNode->localName)
 					{
 						case 'properties':
-							$this->importProperties($xmlSectionNode);
+							$this->importProperties($xmlSectionNode, $compiler);
 							break;
 						default:
 							throw new \RuntimeException('Invalid properties node name ' . $this . ' '
-							. $xmlSectionNode->localName, 54008);
+								. $xmlSectionNode->localName, 54008);
 					}
 				}
 			}
+			$this->addStandardProperties();
 		}
 	}
 
@@ -223,50 +222,67 @@ class Model
 			switch ($name)
 			{
 				case "stateless":
-					if ($value === 'true')
-					{
-						$this->stateless = true;
-					}
-					else
+					$this->stateless = ($value === 'true');
+					if ($this->stateless === false)
 					{
 						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
 					}
 					break;
 				case "abstract":
 					$this->abstract = ($value === 'true');
+					if ($this->abstract === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "extends":
 					$this->extends = $value;
+					if (count(explode('_', $value)) != 3)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "replace":
 					$this->replace = ($value === 'true');
-					break;
-				case "icon":
-					$this->icon = $value;
-					break;
-				case "has-url":
-					$this->hasUrl = ($value === 'true');
-					break;
-				case "frontoffice-indexable":
-					$this->frontofficeIndexable = ($value === 'true');
-					break;
-				case "backoffice-indexable":
-					$this->backofficeIndexable = ($value === 'true');
+					if ($this->replace === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "editable":
 					$this->editable = ($value === 'true');
+					if ($this->editable === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "publishable":
 					$this->publishable = ($value === 'true');
+					if ($this->publishable === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "activable":
 					$this->activable = ($value === 'true');
+					if ($this->activable === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "use-version":
 					$this->useVersion = ($value === 'true');
+					if ($this->useVersion === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "localized":
 					$this->localized = ($value === 'true');
+					if ($this->localized === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
 					break;
 				case "tree-name":
 					if ($value === 'false')
@@ -295,23 +311,17 @@ class Model
 			}
 		}
 
-		if ($this->localized === false || $this->editable === false
-			|| $this->publishable === false || $this->activable === false || $this->replace === false)
+		if ($this->stateless === false || $this->localized === false || $this->editable === false
+			|| $this->publishable === false || $this->activable === false
+			|| $this->replace === false || $this->useVersion === false)
 		{
 			throw new \RuntimeException('Invalid attribute value true expected', 54012);
 		}
 
 		if ($this->stateless)
 		{
-			if ($this->backofficeIndexable !== null)
-			{
-				$this->backofficeIndexable = false;
-			}
-
-			if ($this->extends || $this->hasUrl || $this->frontofficeIndexable || $this->backofficeIndexable
-				|| $this->localized || $this->editable
-				|| $this->publishable || $this->activable
-				|| $this->useVersion
+			if ($this->extends || $this->localized || $this->editable
+				|| $this->publishable || $this->activable || $this->useVersion
 			)
 			{
 				throw new \RuntimeException('Property stateless can not be applicable', 54024);
@@ -321,57 +331,15 @@ class Model
 		{
 			throw new \RuntimeException('Property publishable and activable can not be applicable', 54024);
 		}
-	}
 
-	/**
-	 * @param \DOMElement $propertiesElement
-	 * @throws \RuntimeException
-	 */
-	protected function importProperties($propertiesElement)
-	{
-		foreach ($propertiesElement->childNodes as $xmlProperty)
-		{
-			if ($xmlProperty->nodeType === XML_ELEMENT_NODE)
-			{
-				if ($xmlProperty->nodeName == "property")
-				{
-					$property = new Property($this);
-					$property->initialize($xmlProperty);
-					$this->addProperty($property);
-				}
-				else
-				{
-					throw new \RuntimeException('Invalid property node name ' . $this . ' ' . $xmlProperty->nodeName, 54013);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param Property $property
-	 * @throws \RuntimeException
-	 */
-	public function addProperty(Property $property)
-	{
-		if (isset($this->properties[$property->getName()]))
-		{
-			throw new \RuntimeException('Duplicate property name ' . $this . '::' . $property->getName(), 54014);
-		}
-		$this->properties[$property->getName()] = $property;
-	}
-
-	/**
-	 * @throws \RuntimeException
-	 */
-	public function validate()
-	{
 		if (strlen($this->getName()) > 50)
 		{
 			throw new \RuntimeException('Invalid document element name ' . $this . ' too long', 54009);
 		}
+
 		if ($this->extends)
 		{
-			if ($this->localized !== null)
+			if ($this->localized)
 			{
 				throw new \RuntimeException('Invalid localized attribute ' . $this, 54015);
 			}
@@ -397,23 +365,34 @@ class Model
 			{
 				throw new \RuntimeException('Invalid inject attribute ' . $this, 54018);
 			}
+		}
+	}
 
-			$creationDate = new Property($this, 'creationDate', 'DateTime');
-			$creationDate->setDefaultValue('now');
-			$this->properties[$creationDate->getName()] = $creationDate;
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function addStandardProperties()
+	{
+		if (!$this->extends)
+		{
+			$property = new Property($this, 'creationDate', 'DateTime');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
 
-			$modificationDate = new Property($this, 'modificationDate', 'DateTime');
-			$modificationDate->setDefaultValue('now');
-			$this->properties[$modificationDate->getName()] = $modificationDate;
+			$property = new Property($this, 'modificationDate', 'DateTime');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
+		}
 
-			if ($this->localized)
-			{
-				$property = new Property($this, 'refLCID', 'String');
-				$this->properties[$property->getName()] = $property;
+		if ($this->localized)
+		{
+			$property = new Property($this, 'refLCID', 'String');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
 
-				$property = new Property($this, 'LCID', 'String');
-				$this->properties[$property->getName()] = $property;
-			}
+			$property = new Property($this, 'LCID', 'String');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
 		}
 
 		if ($this->editable)
@@ -421,16 +400,20 @@ class Model
 			if (!isset($this->properties['label']))
 			{
 				$property = new Property($this, 'label', 'String');
+				$property->applyDefaultProperties();
 				$this->properties[$property->getName()] = $property;
 			}
 
 			$property = new Property($this, 'authorName', 'String');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'authorId', 'DocumentId');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'documentVersion', 'Integer');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 		}
 
@@ -439,6 +422,7 @@ class Model
 			if (!isset($this->properties['title']))
 			{
 				$property = new Property($this, 'title', 'String');
+				$property->applyDefaultProperties();
 				$this->properties[$property->getName()] = $property;
 			}
 
@@ -446,50 +430,219 @@ class Model
 			{
 				$property = new Property($this, 'publicationSections', 'DocumentArray');
 				$property->setStateless(true);
+				$property->applyDefaultProperties();
 				$this->properties[$property->getName()] = $property;
-			}
-			else
-			{
-				/* @var $publicationSectionProperty Property */
-				$publicationSectionProperty = $this->properties['publicationSections'];
-				if ($publicationSectionProperty->getType() !== 'DocumentArray')
-				{
-					throw new \RuntimeException('publicationSections must be DocumentArray', 999999);
-				}
 			}
 
 			$property = new Property($this, 'publicationStatus', 'String');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'startPublication', 'DateTime');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'endPublication', 'DateTime');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 		}
 		elseif ($this->activable)
 		{
 			$property = new Property($this, 'active', 'Boolean');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'startActivation', 'DateTime');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 
 			$property = new Property($this, 'endActivation', 'DateTime');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 		}
 
 		if ($this->useVersion)
 		{
 			$property = new Property($this, 'versionOfId', 'DocumentId');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
+		}
+	}
+
+	/**
+	 * @param \DOMElement $element
+	 * @param Compiler $compiler
+	 * @throws \RuntimeException
+	 */
+	public function setXmlInlineElement($element, Compiler $compiler)
+	{
+		if ($element)
+		{
+			$this->importInlineAttributes($element);
+			foreach ($element->childNodes as $xmlSectionNode)
+			{
+				/* @var $xmlSectionNode \DOMElement */
+				if ($xmlSectionNode->nodeType === XML_ELEMENT_NODE)
+				{
+					switch ($xmlSectionNode->localName)
+					{
+						case 'properties':
+							$this->importProperties($xmlSectionNode, $compiler);
+							break;
+						default:
+							throw new \RuntimeException('Invalid properties node name ' . $this . ' '
+								. $xmlSectionNode->localName, 54008);
+					}
+				}
+			}
+
+			$this->addStandardInlineProperties();
+		}
+	}
+
+	/**
+	 * @param \DOMElement $xmlElement
+	 * @throws \RuntimeException
+	 */
+	protected function importInlineAttributes($xmlElement)
+	{
+		if ($xmlElement->localName !== 'inline')
+		{
+			throw new \RuntimeException('Invalid document element name ' . $this, 54009);
+		}
+		$this->inline = true;
+		foreach ($xmlElement->attributes as $attribute)
+		{
+			$name = $attribute->nodeName;
+			$value = $attribute->nodeValue;
+			$tv = trim($value);
+			if ($tv == '' || $tv != $value)
+			{
+				throw new \RuntimeException('Invalid empty attribute value for ' . $this . ' ' . $name, 54010);
+			}
+			switch ($name)
+			{
+				case "name":
+					if (!preg_match('/^[A-Z][A-Za-z0-9]+$/', $value))
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					$this->shortName = $value;
+					break;
+				case "editable":
+					$this->editable = ($value === 'true');
+					if ($this->editable === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "activable":
+					$this->activable = ($value === 'true');
+					if ($this->activable === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "localized":
+					$this->localized = ($value === 'true');
+					if ($this->localized === false)
+					{
+						throw new \RuntimeException('Invalid ' . $name . ' attribute value: ' . $value, 54022);
+					}
+					break;
+				case "xsi:schemaLocation":
+					// just ignore it
+					break;
+				default:
+					throw new \RuntimeException('Invalid attribute name ' . $this . ' ' . $name . ' = ' . $value, 54011);
+					break;
+			}
+		}
+
+		if (strlen($this->getName()) > 50)
+		{
+			throw new \RuntimeException('Invalid document element name ' . $this . ' too long', 54009);
+		}
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function addStandardInlineProperties()
+	{
+		if ($this->localized)
+		{
+			$property = new Property($this, 'refLCID', 'String');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'LCID', 'String');
+			$property->applyDefaultProperties();
 			$this->properties[$property->getName()] = $property;
 		}
 
-		foreach ($this->properties as $property)
+		if ($this->editable)
 		{
-			/* @var $property Property */
-			$property->validate();
+			if (!isset($this->properties['label']))
+			{
+				$property = new Property($this, 'label', 'String');
+				$property->applyDefaultProperties();
+				$this->properties[$property->getName()] = $property;
+			}
 		}
+
+		if ($this->activable)
+		{
+			$property = new Property($this, 'active', 'Boolean');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'startActivation', 'DateTime');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
+
+			$property = new Property($this, 'endActivation', 'DateTime');
+			$property->applyDefaultProperties();
+			$this->properties[$property->getName()] = $property;
+		}
+	}
+
+	/**
+	 * @param \DOMElement $propertiesElement
+	 * @param Compiler $compiler
+	 * @throws \RuntimeException
+	 */
+	protected function importProperties($propertiesElement, Compiler $compiler)
+	{
+		foreach ($propertiesElement->childNodes as $xmlProperty)
+		{
+			if ($xmlProperty->nodeType === XML_ELEMENT_NODE)
+			{
+				if ($xmlProperty->nodeName == "property")
+				{
+					$property = new Property($this);
+					$property->initialize($xmlProperty, $compiler);
+					$this->addProperty($property);
+				}
+				else
+				{
+					throw new \RuntimeException('Invalid property node name ' . $this . ' ' . $xmlProperty->nodeName, 54013);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Property $property
+	 * @throws \RuntimeException
+	 */
+	public function addProperty(Property $property)
+	{
+		if (isset($this->properties[$property->getName()]))
+		{
+			throw new \RuntimeException('Duplicate property name ' . $this . '::' . $property->getName(), 54014);
+		}
+		$this->properties[$property->getName()] = $property;
 	}
 
 	/**
@@ -497,7 +650,7 @@ class Model
 	 */
 	public function validateInheritance()
 	{
-		if ($this->getUseVersion() !== null)
+		if ($this->getUseVersion())
 		{
 			if ($this->checkAncestorUseVersion())
 			{
@@ -505,7 +658,7 @@ class Model
 			}
 		}
 
-		if ($this->getPublishable() !== null)
+		if ($this->getPublishable())
 		{
 			if ($this->checkAncestorPublishable())
 			{
@@ -513,11 +666,26 @@ class Model
 			}
 		}
 
-		if ($this->getActivable() !== null)
+		if ($this->getActivable())
 		{
 			if ($this->checkAncestorActivable())
 			{
 				throw new \RuntimeException('Duplicate activable attribute on ' . $this, 54020);
+			}
+		}
+
+		if ($this->getInline())
+		{
+			if ($this->getParent())
+			{
+				if (!$this->getRoot()->getInline())
+				{
+					throw new \RuntimeException('Invalid inline attribute on ' . $this, 54020);
+				}
+			}
+			else
+			{
+				$this->stateless = true;
 			}
 		}
 
@@ -537,32 +705,22 @@ class Model
 			if ($addProperty)
 			{
 				$property = new Property($this, 'treeName', 'String');
-				$property->validate();
+				$property->applyDefaultProperties();
 				$this->properties[$property->getName()] = $property;
 			}
 		}
 
+		if ($this->getAbstract() === null && $this->getParent() && $this->getParent()->getAbstract())
+		{
+			$this->abstract = false;
+		}
+
 		foreach ($this->properties as $property)
 		{
+
 			/* @var $property Property */
 			$property->validateInheritance();
 		}
-	}
-
-	/**
-	 * @return \Change\Documents\Generators\Model
-	 */
-	public function getExtendedModel()
-	{
-		return $this->extendedModel;
-	}
-
-	/**
-	 * @param \Change\Documents\Generators\Model $extendModel
-	 */
-	public function setExtendedModel($extendModel)
-	{
-		$this->extendedModel = $extendModel;
 	}
 
 	/**
@@ -646,6 +804,14 @@ class Model
 	/**
 	 * @return boolean
 	 */
+	public function getInline()
+	{
+		return $this->inline;
+	}
+
+	/**
+	 * @return boolean
+	 */
 	public function getStateless()
 	{
 		return $this->stateless;
@@ -684,6 +850,7 @@ class Model
 	}
 
 	/**
+	 * @param null $modelName
 	 * @return string|null
 	 */
 	public function replacedBy($modelName = null)
@@ -701,38 +868,6 @@ class Model
 	public function getLocalized()
 	{
 		return $this->localized;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getIcon()
-	{
-		return $this->icon;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getHasUrl()
-	{
-		return $this->hasUrl;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getFrontofficeIndexable()
-	{
-		return $this->frontofficeIndexable;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function getBackofficeIndexable()
-	{
-		return $this->backofficeIndexable;
 	}
 
 	/**
@@ -794,7 +929,7 @@ class Model
 			$ancestors[] = $this->parent;
 			return $ancestors;
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -808,7 +943,7 @@ class Model
 	/**
 	 * @return boolean
 	 */
-	public function checkLocalized()
+	public function rootLocalized()
 	{
 		return $this->getRoot()->getLocalized() == true;
 	}
@@ -816,7 +951,7 @@ class Model
 	/**
 	 * @return boolean
 	 */
-	public function checkStateless()
+	public function rootStateless()
 	{
 		return $this->getRoot()->getStateless() == true;
 	}
@@ -927,6 +1062,25 @@ class Model
 	/**
 	 * @return string
 	 */
+	public function getParentDocumentClassName()
+	{
+		if ($this->parent)
+		{
+			return $this->parent->getDocumentClassName();
+		}
+		elseif ($this->inline)
+		{
+			return '\Change\Documents\AbstractInline';
+		}
+		else
+		{
+			return '\Change\Documents\AbstractDocument';
+		}
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getBaseDocumentClassName()
 	{
 		return '\\' . $this->getCompilationNameSpace() . '\\' . $this->getShortBaseDocumentClassName();
@@ -962,6 +1116,25 @@ class Model
 	public function getDocumentLocalizedClassName()
 	{
 		return '\\' . $this->getCompilationNameSpace() . '\\' . $this->getShortDocumentLocalizedClassName();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getParentDocumentLocalizedClassName()
+	{
+		if ($this->parent)
+		{
+			return $this->parent->getDocumentLocalizedClassName();
+		}
+		elseif ($this->inline)
+		{
+			return '\Change\Documents\AbstractLocalizedInline';
+		}
+		else
+		{
+			return '\Change\Documents\AbstractLocalizedDocument';
+		}
 	}
 
 	/**

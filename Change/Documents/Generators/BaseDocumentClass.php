@@ -49,12 +49,12 @@ class BaseDocumentClass
 /**
  * @name ' . $model->getBaseDocumentClassName() . '
  * @method ' . $model->getModelClassName() . ' getDocumentModel()'. PHP_EOL .
-			($model->checkLocalized() ? ' * @method ' . $model->getDocumentLocalizedClassName() . ' getCurrentLocalization()'. PHP_EOL : '') .
-			($model->checkLocalized() ? ' * @method ' . $model->getDocumentLocalizedClassName() . ' getRefLocalization()'. PHP_EOL : '') .
+			($model->rootLocalized() ? ' * @method ' . $model->getDocumentLocalizedClassName() . ' getCurrentLocalization()'. PHP_EOL : '') .
+			($model->rootLocalized() ? ' * @method ' . $model->getDocumentLocalizedClassName() . ' getRefLocalization()'. PHP_EOL : '') .
 			' */' . PHP_EOL;
 
-		$parentModel = $model->getParent();
-		$extend = $parentModel ? $parentModel->getDocumentClassName() : '\Change\Documents\AbstractDocument';
+
+		$extend = $model->getParentDocumentClassName();
 
 		$interfaces = array();
 		$uses = array();
@@ -117,7 +117,7 @@ class BaseDocumentClass
 
 		if (count($properties))
 		{
-			if (!$model->checkStateless())
+			if (!$model->rootStateless())
 			{
 				$code .= $this->getMembers($model, $properties);
 			}
@@ -130,7 +130,7 @@ class BaseDocumentClass
 				}
 
 				/* @var $property \Change\Documents\Generators\Property */
-				if ($property->getStateless() || $model->checkStateless())
+				if ($property->getStateless() || $model->rootStateless())
 				{
 					$code .= $this->getPropertyStatelessCode($model, $property);
 				}
@@ -142,9 +142,13 @@ class BaseDocumentClass
 				{
 					$code .= $this->getPropertyRichTextAccessors($model, $property);
 				}
-				elseif ($property->getType() === 'Object')
+				elseif ($property->getType() === 'Inline')
 				{
-					$code .= $this->getPropertyObjectAccessors($model, $property);
+					$code .= $this->getPropertyInlineAccessors($model, $property);
+				}
+				elseif ($property->getType() === 'InlineArray')
+				{
+					$code .= $this->getPropertyInlineArrayAccessors($model, $property);
 				}
 				elseif ($property->getType() === 'DocumentArray')
 				{
@@ -259,11 +263,6 @@ class BaseDocumentClass
 			$resetProperties[] = '$this->resetCurrentLocalized();';
 			$modifiedProperties[] = '$names = array_merge($names, $this->getCurrentLocalization()->getModifiedPropertyNames());';
 		}
-		if ($model->implementCorrection())
-		{
-			$resetProperties[] = '$this->corrections = null;';
-		}
-
 		$code = '';
 		foreach ($properties as $property)
 		{
@@ -284,6 +283,27 @@ class BaseDocumentClass
 				$memberValue =  ' = 0;';
 				$modifiedProperties[] = 'if ($this->'.$propertyName.' instanceof \Change\Documents\DocumentArrayProperty && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' instanceof \Change\Documents\DocumentArrayProperty) {$this->'.$propertyName.'->setAsDefault();} return;';
+				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
+			}
+			elseif ($property->getType() === 'Inline')
+			{
+				$memberValue =  ' = null;';
+				$code .= '
+	/**
+	 * @var ' . $this->getCommentaryMemberType($property) . '|boolean
+	 */
+	private $' . $propertyName . 'Old = false;' . PHP_EOL;
+				$resetProperties[] = 'if ($this->'.$propertyName.') {$this->'.$propertyName.'->link(null);};';
+				$resetProperties[] = '$this->'.$propertyName.'Old = false;';
+				$modifiedProperties[] = 'if ($this->checkModified'.ucfirst($propertyName).'()) {$names[] = \''.$propertyName.'\';}';
+				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': $this->'.$propertyName.'Old = false; return;';
+				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
+			}
+			elseif ($property->getType() === 'InlineArray')
+			{
+				$memberValue =  ' = null;';
+				$modifiedProperties[] = 'if ($this->'.$propertyName.' instanceof \Change\Documents\InlineArrayProperty && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
+				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' instanceof \Change\Documents\InlineArrayProperty) {$this->'.$propertyName.'->setAsDefault();} return;';
 				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
 			}
 			elseif ($property->getType() === 'RichText')
@@ -397,12 +417,13 @@ class BaseDocumentClass
 				{
 					return $this->compiler->getModelByName($property->getDocumentType())->getDocumentClassName();
 				}
+			case 'Inline' :
+			case 'InlineArray' :
+				return $this->compiler->getModelByName($property->getInlineType())->getDocumentClassName();
 			case 'JSON' :
 				return 'array';
 			case 'RichText' :
 				return '\Change\Documents\RichtextProperty';
-			case 'Object' :
-				return 'mixed';
 			default:
 				return 'string';
 		}
@@ -434,6 +455,10 @@ class BaseDocumentClass
 				return '\DateTime';
 			case 'RichText' :
 				return '\Change\Documents\RichtextProperty';
+			case 'Inline' :
+				return $this->compiler->getModelByName($property->getInlineType())->getDocumentClassName();
+			case 'InlineArray' :
+				return '\Change\Documents\InlineArrayProperty';
 			default:
 				return 'string';
 		}
@@ -623,18 +648,6 @@ class BaseDocumentClass
 	{
 		' . $var . ' = $this->get' . $un . '();
 		return (' . $var . ' === null) ? null : \Zend\Json\Json::encode(' . $var . ');
-	}';
-		}
-		if ($property->getType() === 'Object')
-		{
-			$code[] = '
-	/**
-	 * @return string|null
-	 */
-	public function get' . $un . 'String()
-	{
-		' . $var . ' = $this->get' . $un . '();
-		return (' . $var . ' === null) ? null : serialize(' . $var . ');
 	}';
 		}
 		elseif ($property->getType() === 'Document')
@@ -892,89 +905,230 @@ class BaseDocumentClass
 		return $code;
 	}
 
+
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param \Change\Documents\Generators\Property $property
 	 * @return string
 	 */
-	protected function getPropertyObjectAccessors($model, $property)
+	protected function getPropertyInlineAccessors($model, $property)
 	{
+		$inlineType = $property->getInlineType();
+		$inlineModel = $this->compiler->getModelByName($inlineType);
+		$inlineModelShortName = $inlineModel->getShortName();
+		$inlineModelClassName = $inlineModel->getDocumentClassName();
 		$name = $property->getName();
 		$mn = '$this->' . $name;
+		$mno = $mn.'Old';
 		$var = '$' . $name;
-		$en = $this->escapePHPValue($name);
-		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
 
 		$code = '
 	/**
-	 * @return string|null
+	 * @param boolean|null $modified
+	 * @return boolean
 	 */
-	public function get' . $un . 'OldStringValue()
+	protected function checkModified'.$un.'($modified = null)
 	{
-		return $this->getOldPropertyValue(' . $en . ');
-	}
-
-	/**
-	 * @return ' . $ct . '|null
-	 */
-	public function get' . $un . 'OldValue()
-	{
-		' . $var . ' = $this->get' . $un . 'OldStringValue();
-		return ' . $var . ' === null ? ' . $var . ' : unserialize(' . $var . ');
-	}
-
-	/**
-	 * @param ' . $ct . ' ' . $var . '
-	 * @return $this
-	 */
-	public function set' . $un . '(' . $var . ')
-	{
-		if ($this->getPersistentState() == static::STATE_LOADING)
+		if (is_bool($modified))
 		{
-			' . $mn . ' = ' . $var . ' === null ? null : ' . $var . ';
-			return $this;
-		}
-		$this->load();
-		$newString = (' . $var . ' !== null) ? serialize(' . $var . ') : null;
-		if (' . $mn . ' !== $newString)
-		{
-			if (array_key_exists(' . $en . ', $this->modifiedProperties))
+			if ($modified)
 			{
-				if ($this->modifiedProperties[' . $en . '] === $newString)
+				if ('.$mno.' === false)
 				{
-					unset($this->modifiedProperties[' . $en . ']);
+					'.$mno.' = '.$mn.' ? clone('.$mn.') : null;
 				}
 			}
 			else
 			{
-				$this->modifiedProperties[' . $en . '] = ' . $mn . ';
+				'.$mno.' = false;
 			}
-			' . $mn . ' = $newString;
+			return $modified;
+		}
+		$modified = false;
+		if ('.$mno.' !== false)
+		{
+			if ('.$mn.' !== '.$mno.')
+			{
+				$modified = '.$mn.' ? !'.$mn.'->isEquals('.$mno.') : true;
+				if (!$modified)
+				{
+					'.$mno.' = false;
+				}
+			}
+		}
+		return $modified;
+	}
+
+	/**
+	 * @return '.$inlineModelClassName.'
+	 */
+	public function new'.$inlineModelShortName.'()
+	{
+		return $this->getDocumentManager()->getNewInlineInstanceByModelName(\''.$inlineType.'\', true);
+	}
+
+	/**
+	 * @param '.$inlineModelClassName.'|null '.$var.'
+	 * @return $this
+	 */
+	public function set'.$un.'('.$var.')
+	{
+		if ($this->getPersistentState() == static::STATE_LOADING)
+		{
+			if (is_string('.$var.'))
+			{
+				$dbData = unserialize('.$var.');
+				if (is_array($dbData) && isset($dbData[\'model\']))
+				{
+					$model = $this->getDocumentManager()->getModelManager()->getModelByName($dbData[\'model\']);
+					if ($model && $model->isInline())
+					{
+						'.$var.' = $this->getDocumentManager()->getNewInlineInstanceByModel($model, false);
+						if ('.$var.' instanceof '.$inlineModelClassName.')
+						{
+							'.$var.'->dbData($dbData);
+							'.$var.'->link(function () {$this->checkModified'.$un.'(true);});
+							'.$mn.' = '.$var.';
+						}
+					}
+				}
+			}
+			return $this;
+		}
+		$this->load();
+		if ('.$var.' === null || '.$var.' instanceof '.$inlineModelClassName.')
+		{
+			$this->checkModified'.$un.'(true);
+			'.$mn.' = '.$var.';
+			if ('.$var.' instanceof '.$inlineModelClassName.')
+			{
+				'.$var.'->link(function () {$this->checkModified'.$un.'(true);});
+			}
 		}
 		return $this;
 	}
 
 	/**
-	 * @return string
+	 * @return '.$inlineModelClassName.'|null
 	 */
-	public function get' . $un . 'String()
-	{
-		$this->load();
-		return ' . $mn . ';
-	}
-
-	/**
-	 * @return ' . $ct . '|null
-	 */
-	public function get' . $un . '()
+	public function get'.$un.'()
 	{
 		if ($this->getPersistentState() == static::STATE_SAVING)
 		{
-			return ' . $mn . ';
+			'.$var.' = '.$mn.';
+			if ('.$var.' instanceof '.$inlineModelClassName.')
+			{
+				'.$var.'->link(function () {$this->checkModified'.$un.'(true);});
+				return serialize('.$var.'->dbData());
+			}
+			return null;
 		}
 		$this->load();
-		return ' . $mn . ' === null ? null : unserialize(' . $mn . ');
+		return '.$mn.';
+	}
+
+	/**
+	 * @return '.$inlineModelClassName.'|null
+	 */
+	public function get'.$un.'OldValue()
+	{
+		return $this->checkModified'.$un.'() ? '.$mno.' : null;
+	}' . PHP_EOL;
+
+		return $code;
+	}
+
+
+	/**
+	 * @param \Change\Documents\Generators\Model $model
+	 * @param \Change\Documents\Generators\Property $property
+	 * @return string
+	 */
+	protected function getPropertyInlineArrayAccessors($model, $property)
+	{
+		$inlineType = $property->getInlineType();
+		$inlineModel = $this->compiler->getModelByName($inlineType);
+		$inlineModelShortName = $inlineModel->getShortName();
+		$inlineModelClassName = $inlineModel->getDocumentClassName();
+		$name = $property->getName();
+		$mn = '$this->' . $name;
+		$var = '$' . $name;
+		$un = ucfirst($name);
+
+		$code = '
+
+	protected function check'.$un.'Initialized()
+	{
+		if ('.$mn.' === null)
+		{
+			$elements = new \Change\Documents\InlineArrayProperty($this->getDocumentManager(), \''.$inlineType.'\');
+			'.$mn.' = $elements;
+		}
+	}
+	
+	/**
+	 * @return '.$inlineModelClassName.'
+	 */
+	public function new'.$inlineModelShortName.'()
+	{
+		return $this->getDocumentManager()->getNewInlineInstanceByModelName(\''.$inlineType.'\', true);
+	}
+
+	/**
+	 * @param '.$inlineModelClassName.'[] '.$var.'
+	 * @return $this
+	 */
+	public function set'.$un.'('.$var.')
+	{
+		if ($this->getPersistentState() == static::STATE_LOADING)
+		{
+			if (is_string('.$var.'))
+			{
+				$dbData = unserialize('.$var.');
+				if (is_array($dbData))
+				{
+					$this->check'.$un.'Initialized();
+					'.$mn.'->dbData($dbData);
+				}
+			}
+			return $this;
+		}
+		$this->load();
+		$this->check'.$un.'Initialized();
+		'.$mn.'->setAll(is_array('.$var.') ? '.$var.' : null);
+		return $this;
+	}
+
+	/**
+	 * @return \Change\Documents\InlineArrayProperty|'.$inlineModelClassName.'[]
+	 */
+	public function get'.$un.'()
+	{
+		if ($this->getPersistentState() == static::STATE_SAVING)
+		{
+			'.$var.' = '.$mn.';
+			if ('.$var.' instanceof \Change\Documents\InlineArrayProperty && '.$var.'->count())
+			{
+				return serialize('.$var.'->dbData());
+			}
+			return null;
+		}
+		$this->load();
+		$this->check'.$un.'Initialized();
+		return '.$mn.';
+	}
+
+	/**
+	 * @return '.$inlineModelClassName.'[]
+	 */
+	public function get'.$un.'OldValue()
+	{
+		if ('.$mn.' instanceof \Change\Documents\InlineArrayProperty && '.$mn.'->isModified())
+		{
+			return '.$mn.'->getDefaultDocuments();
+		}
+		return [];
 	}' . PHP_EOL;
 
 		return $code;

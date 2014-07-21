@@ -1,0 +1,34 @@
+<inline name="InlineCompile" activable="true"  editable="true" localized="true">
+	<properties>
+		<property name="pString" type="String"/>
+		<property name="pDecimal" type="Decimal"/>
+		<property name="pFloat" type="Float" />
+		<property name="pInteger" type="Integer" />
+		<property name="pLongString" type="LongString" />
+		<property name="pBoolean" type="Boolean" />
+		<property name="pDate" type="Date" />
+		<property name="pDateTime" type="DateTime"/>
+		<property name="pDocument" type="Document" />
+		<property name="pDocumentArray" type="DocumentArray" />
+		<property name="pDocId" type="DocumentId" />
+		<property name="pJSON" type="JSON" />
+		<property name="pRichText" type="RichText" />
+		<property name="pLob" type="Lob" />
+		<property name="pStorageUri" type="StorageUri" />
+
+		<property name="lString" type="String" localized="true" />
+		<property name="lLongString" type="LongString" localized="true" />
+		<property name="lLob" type="Lob" localized="true" />
+		<property name="lStorageUri" type="StorageUri" localized="true" />
+		<property name="lInteger" type="Integer" localized="true" />
+		<property name="lDecimal" type="Decimal" localized="true" />
+		<property name="lFloat" type="Float" localized="true" />
+		<property name="lBoolean" type="Boolean" localized="true" />
+		<property name="lDate" type="Date" localized="true" />
+		<property name="lDateTime" type="DateTime" localized="true" />
+		<property name="lDocId" type="DocumentId" localized="true" />
+		<property name="lJSON" type="JSON" localized="true" />
+		<property name="lRichText" type="RichText" localized="true" />
+
+	</properties>
+</inline>

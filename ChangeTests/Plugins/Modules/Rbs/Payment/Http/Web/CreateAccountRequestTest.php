@@ -35,7 +35,6 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 	public function testExecute()
 	{
 		// Register generic services.
-		$genericServices = $this->genericServices;
 
 		$requestParams = new \Zend\Stdlib\Parameters([
 			'email' => 'test@test.com',
@@ -54,9 +53,8 @@ class CreateAccountRequestTest extends \ChangeTests\Change\TestAssets\TestCase
 		$i18nManager = $this->getApplicationServices()->getI18nManager();
 		$urlManager = $website->getUrlManager($i18nManager->getLCID());
 
-		$event = new \Change\Http\Web\Event();
-		$event->setParams($this->getDefaultEventArguments());
-		$event->getServices()->set('genericServices', $genericServices);
+		$event = new \Change\Http\Web\Event('test', null, $this->getDefaultEventArguments());
+
 		$event->setParam('website', $website);
 		$event->setUrlManager($urlManager);
 		$request = new \Change\Http\Request();

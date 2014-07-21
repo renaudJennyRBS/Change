@@ -82,10 +82,10 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 			$relOrderDef = $schemaManager->newIntegerFieldDefinition(\'relorder\')->setDefaultValue(\'0\')->setNullable(false);
 			$relatedIdDef = $schemaManager->newIntegerFieldDefinition(\'relatedid\')->setDefaultValue(\'0\')->setNullable(false);' . PHP_EOL;
 		
-		foreach ($this->compiler->getModelsByLevel(0) as $model)
+		foreach ($this->compiler->getRootModelNames() as $modelName)
 		{
-			/* @var $model \Change\Documents\Generators\Model */
-			if ($model->getStateless()) {continue;}
+			$model = $this->compiler->getModelByName($modelName);
+			if ($model->getStateless() || $model->getInline()) {continue;}
 			$descendants = $this->compiler->getDescendants($model);
 			$this->completeDbOptions($model, $descendants, $this->schemaManager);
 			$code .= $this->generateTableDef($model, $descendants);
@@ -210,7 +210,7 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		}
 		$lines[] = '				->addKey($this->newPrimaryKey()->addField($idDef));';
 
-		if ($model->checkLocalized())
+		if ($model->rootLocalized())
 		{
 			$tnEsc = $this->escapePHPValue($this->sqlMapping->getDocumentI18nTableName($model->getName()));
 			$lines[] = '			$this->tables['.$tnEsc.'] = $schemaManager->newTableDefinition('.$tnEsc.')';
@@ -258,10 +258,11 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 		}
 		return implode(PHP_EOL, $lines);
 	}
-	
+
 	/**
 	 * @param \Change\Documents\Generators\Model $model
 	 * @param boolean $localized
+	 * @throws \RuntimeException
 	 * @return string[]
 	 */
 	protected function addDefFields($model, $localized)
@@ -304,13 +305,13 @@ class Schema extends \\Change\\Db\\Schema\\SchemaDefinition
 						break;
 					case 'LongString' :
 					case 'StorageUri' :
-					case 'XML' :
 					case 'RichText' :
 					case 'JSON' :
 						$fd = '$schemaManager->newTextFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Lob' :
-					case 'Object' :
+					case 'Inline' :
+					case 'InlineArray' :
 						$fd = '$schemaManager->newLobFieldDefinition('.$fnEsc.', '. $dbOptionsEsc .')';
 						break;
 					case 'Boolean' :

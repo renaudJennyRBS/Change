@@ -282,24 +282,6 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 		$this->assertNull($cl->getPLJson());
 	}
 
-	public function testXMLPropertyAccessors()
-	{
-		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
-
-		$this->assertNull($basicDoc->getPXml());
-		$this->assertFalse($basicDoc->isPropertyModified('pXml'));
-
-		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root><test id=\"tutu\" tata=\"titi\">Toto</test></root>\n";
-		$this->assertSame($basicDoc, $basicDoc->setPXml($xml));
-		$this->assertTrue($basicDoc->isPropertyModified('pXml'));
-		$this->assertEquals($xml, $basicDoc->getPXml());
-
-		$basicDoc->setPXml(null);
-		$this->assertNull($basicDoc->getPXml());
-		$this->assertFalse($basicDoc->isPropertyModified('pLJson'));
-	}
-
 	public function testRichtextPropertyAccessors()
 	{
 		/* @var $basicDoc \Project\Tests\Documents\Basic */
@@ -363,23 +345,6 @@ class AbstractDocumentPropertiesTest extends \ChangeTests\Change\TestAssets\Test
 
 		$basicDoc->setPlob(null);
 		$this->assertNull($basicDoc->getPlob());
-	}
-
-	public function testObjectPropertyAccessors()
-	{
-		/* @var $basicDoc \Project\Tests\Documents\Basic */
-		$basicDoc = $this->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModelName('Project_Tests_Basic');
-
-		$this->assertNull($basicDoc->getPObj());
-
-		$data = array('toto' => 'youpi', 'plop' => 12.2, 1 => 'test');
-		$serialized = serialize($data);
-		$this->assertSame($basicDoc, $basicDoc->setPObj($data));
-		$this->assertEquals($data, $basicDoc->getPObj());
-		$this->assertEquals($serialized, $basicDoc->getPObjString());
-
-		$basicDoc->setPObj(null);
-		$this->assertNull($basicDoc->getPObj());
 	}
 
 	public function testDocumentIdPropertyAccessors()
