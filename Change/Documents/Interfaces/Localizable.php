@@ -10,8 +10,6 @@ namespace Change\Documents\Interfaces;
 
 /**
  * @name \Change\Documents\Interfaces\Localizable
- * @method integer getId()
- * @method \Change\Documents\AbstractModel getDocumentModel()
  */
 interface Localizable
 {

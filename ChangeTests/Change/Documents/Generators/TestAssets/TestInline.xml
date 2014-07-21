@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+		  localized="true" activable="true" editable="true">
+	<properties>
+		<property name="items" type="InlineArray" has-correction="true">
+			<inline name="TestInlineItem" localized="true" activable="true" editable="true">
+				<properties>
+					<property name="title" type="String" localized="true"/>
+					<property name="description" type="RichText" localized="true"/>
+					<property name="visual" type="Document" document-type="Rbs_Media_Image"/>
+					<property name="targetUrl" type="String" localized="true"/>
+					<property name="extendedData" type="JSON" />
+				</properties>
+			</inline>
+		</property>
+
+		<property name="detail" type="Inline" has-correction="true">
+			<inline>
+				<properties>
+					<property name="title" type="String"/>
+					<property name="description" type="RichText"/>
+					<property name="visual" type="Document" document-type="Rbs_Media_Image"/>
+					<property name="targetUrl" type="String"/>
+					<property name="targetDocument" type="Document"/>
+					<property name="extendedData" type="JSON" />
+				</properties>
+			</inline>
+		</property>
+	</properties>
+</document>

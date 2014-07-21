@@ -29,6 +29,7 @@ class CreateAccountRequest extends \Rbs\User\Http\Web\CreateAccountRequest
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$transactionId = $event->getRequest()->getQuery('transactionId');
 			$transaction = $documentManager->getDocumentInstance($transactionId);
+
 			if (!($transaction instanceof \Rbs\Payment\Documents\Transaction) || !$transaction->getEmail())
 			{
 				$parametersErrors = array($i18nManager->trans('m.rbs.commerce.front.invalid_transaction'));

@@ -50,7 +50,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 			$eventCollection[] = $event->getName();
 		};
 		$basicDoc->getEventManager()->attach("*", $callBack);
-		
+
 		$this->assertEquals(AbstractDocument::STATE_NEW, $basicDoc->getPersistentState());
 		$this->assertLessThan(0 , $basicDoc->getId());
 		$this->assertTrue($basicDoc->isNew());
@@ -61,7 +61,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertNull($basicDoc->getPStr());
 		$this->assertNull($basicDoc->getPStrOldValue());
-		
+
 		$this->assertInstanceOf('\DateTime', $basicDoc->getCreationDate());
 		$this->assertInstanceOf('\DateTime', $basicDoc->getModificationDate());
 
@@ -72,11 +72,11 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertCount(1, $errors);
 		$this->assertArrayHasKey('pStr', $errors);
-		
+
 		$basicDoc->setPStr('string');
 		$this->assertEquals('string', $basicDoc->getPStr());
 		$this->assertNull($basicDoc->getPStrOldValue());
-		
+
 		$basicDoc->setPInt(50);
 		$basicDoc->setPFloat(0.03);
 
@@ -97,12 +97,12 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($basicDoc->isNew());
 		$this->assertFalse($basicDoc->isDeleted());
 		$this->assertFalse($basicDoc->hasModifiedProperties());
-		
+
 		$basicDoc->setPStr('string 2');
 		$this->assertTrue($basicDoc->hasModifiedProperties());
 		$this->assertTrue($basicDoc->isPropertyModified('pStr'));
 		$this->assertEquals('string', $basicDoc->getPStrOldValue());
-		
+
 		$basicDoc->setPStr('string');
 		$this->assertFalse($basicDoc->hasModifiedProperties());
 		$this->assertFalse($basicDoc->isPropertyModified('pStr'));
@@ -112,10 +112,10 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$basicDoc->setPDec(8.7);
 		$this->assertTrue($basicDoc->hasModifiedProperties());
 		$this->assertCount(2, $basicDoc->getModifiedPropertyNames());
-		
+
 		$this->assertNull($basicDoc->getPDecOldValue());
 		$this->assertEquals('string', $basicDoc->getPStrOldValue());
-		
+
 		$basicDoc->save();
 		$this->assertEquals(array(Event::EVENT_UPDATE, Event::EVENT_UPDATED), $eventCollection->getArrayCopy());
 		$eventCollection->exchangeArray(array());
@@ -124,7 +124,7 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($basicDoc->hasModifiedProperties());
 		$this->assertEquals('string 2', $basicDoc->getPStr());
 		$this->assertEquals('8.7', $basicDoc->getPDec());
-		
+
 		$documentId = $basicDoc->getId();
 		$this->getApplicationServices()->getDocumentManager()->reset();
 
@@ -136,15 +136,15 @@ class AbstractDocumentTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertInstanceOf('\Project\Tests\Documents\Basic', $basicDoc2);
 		$this->assertEquals(AbstractDocument::STATE_INITIALIZED, $basicDoc2->getPersistentState());
 		$this->assertNotSame($basicDoc, $basicDoc2);
-		
+
 		$this->assertEquals('string 2', $basicDoc2->getPStr());
 		$this->assertEquals(AbstractDocument::STATE_LOADED, $basicDoc2->getPersistentState());
-		
+
 		$basicDoc2->delete();
 		$this->assertEquals(array(Event::EVENT_LOADED, Event::EVENT_DELETE, Event::EVENT_DELETED), $eventCollection->getArrayCopy());
 		$this->assertEquals(AbstractDocument::STATE_DELETED, $basicDoc2->getPersistentState());
 		$this->assertTrue($basicDoc2->isDeleted());
-		
+
 		$datas = $this->getApplicationServices()->getDocumentManager()->getBackupData($documentId);
 		$this->assertArrayHasKey('pStr', $datas);
 		$this->assertEquals('string 2', $datas['pStr']);

@@ -229,6 +229,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 				$model = $this->getDocumentModel();
 				$identifiers = array_merge($model->getAncestorsNames(), array($model->getName(), 'Documents'));
 				$this->eventManager = $this->application->getNewEventManager($identifiers);
+				$this->eventManager->setEventClass('\Change\Documents\Events\Event');
 			}
 			else
 			{
@@ -298,7 +299,7 @@ abstract class AbstractDocument implements \Serializable, EventsCapableInterface
 			case Property::TYPE_JSON:
 				return ($inputValue === null || is_string($inputValue)) ? $inputValue : json_encode($inputValue);
 
-			case Property::TYPE_OBJECT:
+			case Property::TYPE_INLINE:
 				return ($inputValue === null || is_string($inputValue)) ? $inputValue : serialize($inputValue);
 
 			case Property::TYPE_DOCUMENT:

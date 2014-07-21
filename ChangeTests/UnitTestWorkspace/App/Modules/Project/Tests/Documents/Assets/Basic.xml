@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd" 
-	icon="test" backoffice-indexable="false" tree-name="Project_Tests">
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd"
+	tree-name="Project_Tests">
 	<properties>
 		<property name="pStr" type="String" required="true"/>
 		<property name="pBool" type="Boolean" />
@@ -12,13 +12,10 @@
 		<property name="pDaTi" type="DateTime" />
 		<property name="pText" type="LongString" />
 		<property name="pJson" type="JSON" />
-		<property name="pXml" type="XML" />
 		<property name="pRt" type="RichText" />
 		<property name="plob" type="Lob" />
-		<property name="pObj" type="Object" />
 		<property name="pDocId" type="DocumentId" />
 		<property name="pStorUri" type="StorageUri" />
-		
 		<property name="pDocInst" type="Document" document-type="Project_Tests_Localized" />
 		<property name="pDocArr" type="DocumentArray" document-type="Project_Tests_Localized"/>
 	</properties>

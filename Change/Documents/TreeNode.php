@@ -228,6 +228,7 @@ class TreeNode
 	/**
 	 * @param $childrenCount
 	 * @param integer $childrenCount
+	 * @return $this
 	 */
 	public function setChildrenCount($childrenCount)
 	{

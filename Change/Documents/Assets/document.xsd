@@ -13,7 +13,37 @@
 			<xs:documentation source="version">4.0</xs:documentation>
 			<xs:documentation source="description">
 				A property type : String | Boolean | Integer | Float | Decimal |
-				Date | DateTime | LongString | StorageUri | XML | Lob | RichText | JSON | Object
+				Date | DateTime | LongString | StorageUri | Lob | RichText | JSON
+				DocumentId | Document | DocumentArray | InlineArray | Inline
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="String"/>
+			<xs:enumeration value="Boolean"/>
+			<xs:enumeration value="Integer"/>
+			<xs:enumeration value="Float"/>
+			<xs:enumeration value="Decimal"/>
+			<xs:enumeration value="Date"/>
+			<xs:enumeration value="DateTime"/>
+			<xs:enumeration value="LongString"/>
+			<xs:enumeration value="StorageUri"/>
+			<xs:enumeration value="Lob"/>
+			<xs:enumeration value="RichText"/>
+			<xs:enumeration value="JSON"/>
+			<xs:enumeration value="DocumentId"/>
+			<xs:enumeration value="Document"/>
+			<xs:enumeration value="DocumentArray"/>
+			<xs:enumeration value="InlineArray"/>
+			<xs:enumeration value="Inline"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="inlinePropertyType">
+		<xs:annotation>
+			<xs:documentation source="version">4.0</xs:documentation>
+			<xs:documentation source="description">
+				A property type : String | Boolean | Integer | Float | Decimal |
+				Date | DateTime | LongString | StorageUri | RichText | JSON
 				DocumentId | Document | DocumentArray
 			</xs:documentation>
 		</xs:annotation>
@@ -27,11 +57,9 @@
 			<xs:enumeration value="DateTime"/>
 			<xs:enumeration value="LongString"/>
 			<xs:enumeration value="StorageUri"/>
-			<xs:enumeration value="XML"/>
 			<xs:enumeration value="Lob"/>
 			<xs:enumeration value="RichText"/>
 			<xs:enumeration value="JSON"/>
-			<xs:enumeration value="Object"/>
 			<xs:enumeration value="DocumentId"/>
 			<xs:enumeration value="Document"/>
 			<xs:enumeration value="DocumentArray"/>
@@ -147,6 +175,48 @@
 		</xs:attribute>
 	</xs:complexType>
 
+
+	<xs:complexType name="inline">
+		<xs:annotation>
+			<xs:documentation source="version">4.0</xs:documentation>
+			<xs:documentation source="description">
+				The inline element is the child of property element of type
+				InlineDocumentArray | InlineDocument.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="properties" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="constraint" type="constraint" minOccurs="0" maxOccurs="10"/>
+								</xs:sequence>
+								<xs:attribute name="name" use="required" type="xs:string"/>
+								<xs:attribute name="type" use="optional" type="inlinePropertyType" default="String"/>
+								<xs:attribute name="document-type" type="documentModel"/>
+								<xs:attribute name="internal" type="xs:boolean" default="true"/>
+								<xs:attribute name="default-value" type="xs:string"/>
+								<xs:attribute name="required" type="xs:boolean" default="true"/>
+								<xs:attribute name="min-occurs" type="xs:int" default="2"/>
+								<xs:attribute name="max-occurs" type="xs:int" default="10"/>
+								<xs:attribute name="localized" type="xs:boolean" default="true"/>
+								<!-- stateless exclude: has-correction. -->
+								<xs:attribute name="stateless" type="xs:boolean" default="true"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="name" type="xs:string" />
+		<xs:attribute name="localized" type="xs:boolean" default="true"/>
+		<xs:attribute name="editable" type="xs:boolean" default="true"/>
+		<xs:attribute name="activable" type="xs:boolean" default="true"/>
+	</xs:complexType>
+
+
 	<xs:element name="document">
 		<xs:annotation>
 			<xs:documentation source="version">4.0</xs:documentation>
@@ -164,6 +234,7 @@
 									<xs:sequence>
 										<xs:element name="dboptions" type="dbOptions" minOccurs="0" maxOccurs="1"/>
 										<xs:element name="constraint" type="constraint" minOccurs="0" maxOccurs="10"/>
+										<xs:element name="inline" type="inline"  minOccurs="0" maxOccurs="1"/>
 									</xs:sequence>
 									<xs:attribute name="name" use="required" type="xs:string"/>
 									<xs:attribute name="type" use="optional" type="propertyType" default="String"/>

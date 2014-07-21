@@ -88,21 +88,22 @@ class GetModelInformation
 					'resourcestree/' . str_replace('_', '/', $model->getTreeName()) . '/', 'tree');
 				$result->addLink($pnl);
 			}
-			$pnl = new Link($event->getUrlManager(),
-				'resources/' . str_replace('_', '/', $model->getName()) . '/', 'collection');
-			$result->addLink($pnl);
+
+			if (!$model->isInline())
+			{
+				$pnl = new Link($event->getUrlManager(),
+					'resources/' . str_replace('_', '/', $model->getName()) . '/', 'collection');
+				$result->addLink($pnl);
+			}
 
 			// Meta.
 			$result->setMeta('name', $model->getName());
 			$result->setMeta('label', $i18nm->trans($model->getLabelKey(), array('ucf')));
-			$result->setMeta('icon', $model->getIcon());
 			$result->setMeta('parentName', $model->getParentName());
 			$result->setMeta('rootName', $model->getRootName());
 			$result->setMeta('treeName', $model->getTreeName());
 			$result->setMeta('editable', $model->isEditable());
-			$result->setMeta('indexable', $model->isIndexable());
-			$result->setMeta('backofficeIndexable', $model->isBackofficeIndexable());
-			$result->setMeta('frontofficeIndexable', $model->isFrontofficeIndexable());
+			$result->setMeta('inline', $model->isInline());
 			$result->setMeta('localized', $model->isLocalized());
 			$result->setMeta('publishable', $model->isPublishable());
 			$result->setMeta('activable', $model->isActivable());
@@ -113,7 +114,15 @@ class GetModelInformation
 			$newInstance = null;
 			if (!$model->isAbstract())
 			{
-				$newInstance = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+				if ($model->isInline())
+				{
+					$newInstance = $event->getApplicationServices()->getDocumentManager()->getNewInlineInstanceByModel($model);
+				}
+				else
+				{
+					$newInstance = $event->getApplicationServices()->getDocumentManager()->getNewDocumentInstanceByModel($model);
+				}
+
 			}
 			// Properties.
 			foreach ($model->getProperties() as $property)
@@ -128,6 +137,10 @@ class GetModelInformation
 				if ($property->getDocumentType())
 				{
 					$infos['documentType'] = $property->getDocumentType();
+				}
+				if ($property->getInlineType())
+				{
+					$infos['inlineType'] = $property->getInlineType();
 				}
 				$infos['localized'] = $property->getLocalized();
 				$infos['stateless'] = $property->getStateless();
@@ -165,7 +178,7 @@ class GetModelInformation
 	 */
 	protected function addSortablePropertiesForModel($model, $result, $mm, $parentName = null)
 	{
-		if ($model instanceof \Change\Documents\AbstractModel)
+		if ($model instanceof \Change\Documents\AbstractModel && !$model->isInline())
 		{
 			foreach ($model->getProperties() as $property)
 			{

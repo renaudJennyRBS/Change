@@ -123,6 +123,15 @@ abstract class AbstractModel
 	 * @api
 	 * @return boolean
 	 */
+	public function isInline()
+	{
+		return false;
+	}
+
+	/**
+	 * @api
+	 * @return boolean
+	 */
 	public function isStateless()
 	{
 		return false;
@@ -144,42 +153,6 @@ abstract class AbstractModel
 	public function isLocalized()
 	{
 		return false;
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isFrontofficeIndexable()
-	{
-		return false;
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isBackofficeIndexable()
-	{
-		return true;
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function hasUrl()
-	{
-		return false;
-	}
-
-	/**
-	 * @api
-	 * @return boolean
-	 */
-	public function isIndexable()
-	{
-		return $this->isBackofficeIndexable() || $this->isFrontofficeIndexable();
 	}
 
 	/**
@@ -320,13 +293,24 @@ abstract class AbstractModel
 	{
 		$this->properties = array();
 
-		$p = new Property('id', 'Integer');
-		$p->setLabelKey('c.documents.id');
-		$this->properties['id'] = $p->setRequired(true);
-
 		$p =  new Property('model', 'String');
 		$p->setLabelKey('c.documents.model');
 		$this->properties['model'] = $p->setRequired(true)->setDefaultValue($this->getName());
+
+		if (!$this->isInline())
+		{
+			$p = new Property('id', 'Integer');
+			$p->setLabelKey('c.documents.id');
+			$this->properties['id'] = $p->setRequired(true);
+
+			$p = new Property('creationDate', 'DateTime');
+			$p->setLabelKey('c.documents.creationdate');
+			$this->properties['creationDate'] = $p->setRequired(true)->setDefaultValue('now')->setLocalized($this->isLocalized());
+
+			$p = new Property('modificationDate', 'DateTime');
+			$p->setLabelKey('c.documents.modificationdate');
+			$this->properties['modificationDate'] = $p->setRequired(true)->setDefaultValue('now')->setLocalized($this->isLocalized());
+		}
 	}
 
 	/**
@@ -432,12 +416,12 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
+	 * @param AbstractDocument|AbstractInline $document
 	 * @param string $propertyName
 	 * @param mixed $defaultValue [optional]
 	 * @return mixed|null
 	 */
-	public function getPropertyValue(AbstractDocument $document, $propertyName, $defaultValue = null)
+	public function getPropertyValue($document, $propertyName, $defaultValue = null)
 	{
 		if ($this->hasProperty($propertyName))
 		{
@@ -448,12 +432,12 @@ abstract class AbstractModel
 
 	/**
 	 * @api
-	 * @param AbstractDocument|Interfaces\Publishable|Interfaces\Localizable|Interfaces\Editable|Interfaces\Activable $document
+	 * @param AbstractDocument|AbstractInline $document
 	 * @param string $propertyName
 	 * @param mixed $value
 	 * @return $this
 	 */
-	public function setPropertyValue(AbstractDocument $document, $propertyName, $value)
+	public function setPropertyValue($document, $propertyName, $value)
 	{
 		if ($this->hasProperty($propertyName))
 		{
@@ -537,16 +521,6 @@ abstract class AbstractModel
 	{
 		$property = $this->getProperty($name);
 		return $property ? $property->getLabelKey() : $name;
-
-	}
-
-	/**
-	 * @api
-	 * @return string
-	 */
-	public function getIcon()
-	{
-		return 'document';
 	}
 
 	/**

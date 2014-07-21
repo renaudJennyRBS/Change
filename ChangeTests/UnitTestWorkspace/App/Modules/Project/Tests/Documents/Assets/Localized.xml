@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd" 
-	icon="test" backoffice-indexable="false" localized="true">
+	localized="true">
 	<properties>
 		<property name="pStr" type="String" required="true"/>
 		<property name="pBool" type="Boolean" />
@@ -14,12 +14,11 @@
 		<property name="pText" type="LongString" />
 		<property name="pStorUri" type="StorageUri" />
 		<property name="pJson" type="JSON" />
-		<property name="pXml" type="XML" />
+
 		<property name="pRt" type="RichText" />
 		<property name="plob" type="Lob" />
-		<property name="pObj" type="Object" />
-	
-		<property name="pDocId" type="DocumentId" />	
+
+		<property name="pDocId" type="DocumentId" />
 		<property name="pDocInst" type="Document" document-type="Project_Tests_Basic" />
 		<property name="pDocArr" type="DocumentArray" document-type="Project_Tests_Basic"/>
 			
@@ -34,11 +33,9 @@
 		<property name="pLText" type="LongString"  localized="true" />
 		<property name="pLStorUri" type="StorageUri"  localized="true" />
 		<property name="pLJson" type="JSON"  localized="true" />
-		<property name="pLXml" type="XML"  localized="true" />
 		<property name="pLRt" type="RichText"  localized="true" />
 		<property name="pLlob" type="Lob"  localized="true" />
-		<property name="pLObj" type="Object"  localized="true" />
-		
+
 		<property name="pLDocId" type="DocumentId"  localized="true" />
 	</properties>
 </document>

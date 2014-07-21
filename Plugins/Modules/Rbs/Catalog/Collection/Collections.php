@@ -149,8 +149,9 @@ class Collections
 	{
 		$excludedProperties = array('id', 'model', 'refLCID', 'LCID', 'publicationSections', 'attribute', 'attributeValues',
 			'newSkuOnCreation', 'authorId', 'documentVersion', 'publicationStatus');
-		$excludedTypes = array(\Change\Documents\Property::TYPE_XML, \Change\Documents\Property::TYPE_STORAGEURI,
-			\Change\Documents\Property::TYPE_JSON, \Change\Documents\Property::TYPE_LOB, \Change\Documents\Property::TYPE_OBJECT);
+		$excludedTypes = array(\Change\Documents\Property::TYPE_STORAGEURI,
+			\Change\Documents\Property::TYPE_JSON, \Change\Documents\Property::TYPE_LOB,
+			\Change\Documents\Property::TYPE_INLINE, \Change\Documents\Property::TYPE_INLINEARRAY);
 		$applicationServices = $event->getApplicationServices();
 		if ($applicationServices)
 		{

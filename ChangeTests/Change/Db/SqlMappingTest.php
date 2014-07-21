@@ -97,13 +97,14 @@ class SqlMappingTest extends \PHPUnit_Framework_TestCase
 			$sqlMapping->getDbScalarType(Property::TYPE_STORAGEURI));
 		$this->assertEquals(ScalarType::TEXT,
 			$sqlMapping->getDbScalarType(Property::TYPE_RICHTEXT));
-		$this->assertEquals(ScalarType::TEXT,
-			$sqlMapping->getDbScalarType(Property::TYPE_XML));
+
 
 		$this->assertEquals(ScalarType::LOB,
 			$sqlMapping->getDbScalarType(Property::TYPE_LOB));
 		$this->assertEquals(ScalarType::LOB,
-			$sqlMapping->getDbScalarType(Property::TYPE_OBJECT));
+			$sqlMapping->getDbScalarType(Property::TYPE_INLINE));
+		$this->assertEquals(ScalarType::LOB,
+			$sqlMapping->getDbScalarType(Property::TYPE_INLINEARRAY));
 
 		$this->assertEquals(ScalarType::STRING,
 			$sqlMapping->getDbScalarType('Unknown'));

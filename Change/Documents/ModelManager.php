@@ -90,16 +90,14 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if (!array_key_exists($modelName, $this->documentModels))
 		{
-			$className = $this->getModelClassName($modelName);
+			$className = $this->buildModelClassName($modelName);
 			if ($className)
 			{
 				/* @var $model \Change\Documents\AbstractModel */
 				$model = new $className($this);
 				if ($model->getReplacedBy())
 				{
-					$className = $this->getModelClassName($model->getReplacedBy());
-					$model = new $className($this);
-					$this->documentModels[$model->getReplacedBy()] = $model;
+					$model = $this->getModelByName($model->getReplacedBy());
 				}
 				$this->documentModels[$modelName] = $model;
 			}
@@ -185,7 +183,7 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $modelName
 	 * @return NULL|string
 	 */
-	protected function getModelClassName($modelName)
+	protected function buildModelClassName($modelName)
 	{
 		$parts = explode('_', $modelName);
 		if (count($parts) === 3)

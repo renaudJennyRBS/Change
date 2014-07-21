@@ -108,11 +108,11 @@ class SqlMapping
 			case \Change\Documents\Property::TYPE_LONGSTRING:
 			case \Change\Documents\Property::TYPE_STORAGEURI:
 			case \Change\Documents\Property::TYPE_RICHTEXT:
-			case \Change\Documents\Property::TYPE_XML:
 				return \Change\Db\ScalarType::TEXT;
 	
 			case \Change\Documents\Property::TYPE_LOB:
-			case \Change\Documents\Property::TYPE_OBJECT:
+			case \Change\Documents\Property::TYPE_INLINE:
+			case \Change\Documents\Property::TYPE_INLINEARRAY:
 				return \Change\Db\ScalarType::LOB;
 		}
 		return \Change\Db\ScalarType::STRING;

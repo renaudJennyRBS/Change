@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Eric Hauswald
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,10 @@
 namespace Change\Documents\Generators;
 
 /**
- * @name \Change\Documents\Generators\DocumentLocalizedClass
+ * @name \Change\Documents\Generators\InlineLocalizedClass
  * @api
  */
-class DocumentLocalizedClass
+class InlineLocalizedClass
 {
 	/**
 	 * @var \Change\Documents\Generators\Compiler
@@ -51,16 +51,7 @@ class DocumentLocalizedClass
 		$this->compiler = $compiler;
 		$code = '<' . '?php' . PHP_EOL . 'namespace ' . $model->getCompilationNameSpace() . ';' . PHP_EOL;
 
-		$parentModel = $model->getParent();
-		if ($parentModel !== null)
-		{
-			$extend = $parentModel->getDocumentLocalizedClassName();
-		}
-		else
-		{
-			$extend = '\Change\Documents\AbstractLocalizedDocument';
-		}
-
+		$extend = $model->getParentDocumentLocalizedClassName();
 		$code .= 'class ' . $model->getShortDocumentLocalizedClassName() . ' extends ' . $extend . PHP_EOL;
 		$code .= '{' . PHP_EOL;
 		$properties = $this->getLocalizedProperties($model);
@@ -84,7 +75,8 @@ class DocumentLocalizedClass
 		foreach ($model->getProperties() as $property)
 		{
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($property->getParent() == null && !$property->getStateless() && $property->getLocalized())
+			if ($property->getParent() == null && !$property->getStateless()
+				&& $property->getLocalized() && $property->getName() !== 'LCID')
 			{
 				$properties[$property->getName()] = $property;
 			}
@@ -123,33 +115,26 @@ class DocumentLocalizedClass
 	 */
 	protected function getMembers($model, $properties)
 	{
-		$modifiedProperties = array();
-		$removeOldPropertiesValue = array();
-		$clearModifiedProperties = array();
+		$unsetProperties = [];
+		$fromDbData = [];
+		$toDbData = [];
+
 		$code = '';
 		foreach ($properties as $property)
 		{
-			$memberValue = ' = null;';
 			$propertyName = $property->getName();
 
+			$memberValue = ' = null;';
+			if ($property->getType() == 'DocumentId')
+			{
+				$memberValue = ' = 0;';
+			}
+			$unsetProperties[] = '$this->' . $propertyName . $memberValue;
+			$fromDbData[] = '$this->'.$propertyName.'FromDbData($dbData);';
+			$toDbData[] = '$dbData = $this->'.$propertyName.'ToDbData($dbData);';
+
 			/* @var $property \Change\Documents\Generators\Property */
-			if ($propertyName !== 'LCID')
-			{
-				if ($property->getType() === 'RichText')
-				{
-					$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' !== null) {$this->'.$propertyName.'->setAsDefault();} return;';
-					$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
-				}
-				else
-				{
-					$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': unset($this->modifiedProperties[\''.$propertyName.'\']); return;';
-				}
-			}
-			if ($property->getType() === 'RichText')
-			{
-				$modifiedProperties[] = 'if ($this->'.$propertyName.' !== null && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
-			}
-			elseif ($property->getType() === 'DocumentId')
+			if ($property->getType() === 'DocumentId')
 			{
 				$memberValue = ' = 0;';
 			}
@@ -161,46 +146,41 @@ class DocumentLocalizedClass
 	private $' . $property->getName() . $memberValue . PHP_EOL;
 		}
 
-		if (count($modifiedProperties))
+		$code .= '
+	/**
+	 * @api
+	 */
+	public function unsetProperties()
+	{
+		parent::unsetProperties();
+		' . implode(PHP_EOL. '		', $unsetProperties) . '
+	}' . PHP_EOL;
+
+		if (count($fromDbData))
 		{
 			$code .= '
 	/**
 	 * @api
-	 * @return string[]
+	 * @param array $dbData
 	 */
-	public function getModifiedPropertyNames()
+	public function fromDbData(array $dbData)
 	{
-		$names =  parent::getModifiedPropertyNames();
-		' . implode(PHP_EOL . '		', $modifiedProperties) . '
-		return $names;
+		parent::fromDbData($dbData);
+		' . implode(PHP_EOL. '		', $fromDbData) . '
 	}' . PHP_EOL;
 		}
 
-		if (count($removeOldPropertiesValue))
+		if (count($toDbData))
 		{
 			$code .= '
 	/**
-	 * @api
-	 * @param string $propertyName
+	 * @return array
 	 */
-	public function removeOldPropertyValue($propertyName)
+	protected function toDbData()
 	{
-		switch ($propertyName)
-		{
-			' . implode(PHP_EOL . '			', $removeOldPropertiesValue) . '
-			default:
-				parent::removeOldPropertyValue($propertyName);
-		}
-	}' . PHP_EOL;
-		}
-
-		if (count($clearModifiedProperties))
-		{
-			$code .= '
-	protected function clearModifiedProperties()
-	{
-		parent::clearModifiedProperties();
-		' . implode(PHP_EOL . '		', $clearModifiedProperties) . '
+		$dbData = parent::toDbData();
+		' . implode(PHP_EOL. '		', $toDbData) . '
+		return $dbData;
 	}' . PHP_EOL;
 		}
 
@@ -286,7 +266,58 @@ class DocumentLocalizedClass
 		$en = $this->escapePHPValue($name);
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
-		$code = '
+		$eType = $this->escapePHPValue($property->getType());
+
+		if ($property->getType() === 'Date')
+		{
+			$code = '
+	/**
+	 * @param array $dbData
+	 * @return array
+	 */
+	private function '.$name.'ToDbData($dbData)
+	{
+		$dbData['.$en.'] = '.$mn.' instanceof \DateTime ? '.$mn.'->format(\'Y-m-d\') : null;
+		return $dbData;
+	}';
+		}
+		elseif ($property->getType() === 'DateTime')
+		{
+			$code = '
+	/**
+	 * @param array $dbData
+	 * @return array
+	 */
+	private function '.$name.'ToDbData($dbData)
+	{
+		$dbData['.$en.'] = '.$mn.' instanceof \DateTime ? '.$mn.'->format(\DateTime::ISO8601) : null;
+		return $dbData;
+	}';
+		}
+		else
+		{
+			$code = '
+	/**
+	 * @param array $dbData
+	 * @return array
+	 */
+	private function '.$name.'ToDbData($dbData)
+	{
+		$dbData['.$en.'] = '.$mn.';
+		return $dbData;
+	}';
+		}
+
+		$code .= '
+
+	/**
+	 * @param array $dbData
+	 */
+	private function '.$name.'FromDbData($dbData)
+	{
+		'.$mn.' = $this->convertToInternalValue(isset($dbData['.$en.']) ? $dbData['.$en.'] : null, '.$eType.');
+	}
+
 	/**
 	 * @param ' . $ct . '|null ' . $var . '
 	 * @return $this
@@ -294,23 +325,9 @@ class DocumentLocalizedClass
 	public function set' . $un . '(' . $var . ')
 	{
 		' . $this->buildValConverter($property, $var) . ';
-		if ($this->getPersistentState() == \Change\Documents\AbstractDocument::STATE_LOADING)
+		if (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
 		{
-			' . $mn . ' = ' . $var . ';
-		}
-		elseif (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
-		{
-			if (array_key_exists(' . $en . ', $this->modifiedProperties))
-			{
-				if (' . $this->buildEqualsProperty('$this->modifiedProperties[' . $en . ']', $var, $property->getType()) . ')
-				{
-					unset($this->modifiedProperties[' . $en . ']);
-				}
-			}
-			else
-			{
-				$this->modifiedProperties[' . $en . '] = ' . $mn . ';
-			}
+			$this->onPropertyUpdate();
 			' . $mn . ' = ' . $var . ';
 		}
 		return $this;
@@ -322,14 +339,6 @@ class DocumentLocalizedClass
 	public function get' . $un . '()
 	{
 		return ' . $mn . ';
-	}
-
-	/**
-	 * @return ' . $ct . '|null
-	 */
-	public function get' . $un . 'OldValue()
-	{
-		return $this->getOldPropertyValue(' . $en . ');
 	}' . PHP_EOL;
 		return $code;
 	}
@@ -349,31 +358,34 @@ class DocumentLocalizedClass
 		$un = ucfirst($name);
 		$code = '
 	/**
+	 * @param array $dbData
+	 * @return array
+	 */
+	private function '.$name.'ToDbData($dbData)
+	{
+		$dbData['.$en.'] = (is_array('.$mn.') && count('.$mn.')) ? '.$mn.' : null;
+		return $dbData;
+	}
+
+	/**
+	 * @param array $dbData
+	 */
+	private function '.$name.'FromDbData($dbData)
+	{
+		'.$mn.' = (isset($dbData['.$en.']) && is_array($dbData['.$en.']) && count($dbData['.$en.'])) ? $dbData['.$en.'] : null;
+	}
+
+	/**
 	 * @param '. $ct .'|null ' . $var . '
 	 * @return $this
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
-		if ($this->getPersistentState() == \Change\Documents\AbstractDocument::STATE_LOADING)
+		'.$var.' = (is_array('.$var.') && count('.$var.')) ? '.$var.' : null;
+		if (' . $this->buildNotEqualsProperty($mn, $var, $property->getType()) . ')
 		{
+			$this->onPropertyUpdate();
 			' . $mn . ' = ' . $var . ';
-			return $this;
-		}
-		$newString = (' . $var . ' !== null) ? \Zend\Json\Json::encode(' . $var . ') : null;
-		if (' . $mn . ' !== $newString)
-		{
-			if (array_key_exists(' . $en . ', $this->modifiedProperties))
-			{
-				if ($this->modifiedProperties[' . $en . '] === $newString)
-				{
-					unset($this->modifiedProperties[' . $en . ']);
-				}
-			}
-			else
-			{
-				$this->modifiedProperties[' . $en . '] = ' . $mn . ';
-			}
-			' . $mn . ' = $newString;
 		}
 		return $this;
 	}
@@ -383,20 +395,7 @@ class DocumentLocalizedClass
 	 */
 	public function get' . $un . '()
 	{
-		if ($this->getPersistentState() == \Change\Documents\AbstractDocument::STATE_SAVING)
-		{
-			return ' . $mn . ';
-		}
-		return ' . $mn . ' === null ? null : \Zend\Json\Json::decode(' . $mn . ', \Zend\Json\Json::TYPE_ARRAY);
-	}
-
-	/**
-	 * @return ' . $ct . '|null
-	 */
-	public function get' . $un . 'OldValue()
-	{
-		' . $var . ' = $this->getOldPropertyValue(' . $en . ');
-		return ' . $var . ' === null ? ' . $var . ' : \Zend\Json\Json::decode(' . $var . ', \Zend\Json\Json::TYPE_ARRAY);
+		return ' . $mn . ';
 	}' . PHP_EOL;
 		return $code;
 	}
@@ -413,7 +412,26 @@ class DocumentLocalizedClass
 		$mn = '$this->' . $name;
 		$ct = $this->getCommentaryType($property);
 		$un = ucfirst($name);
+		$en = $this->escapePHPValue($name);
 		$code = '
+	/**
+	 * @param array $dbData
+	 * @return array
+	 */
+	private function '.$name.'ToDbData($dbData)
+	{
+		$dbData['.$en.'] = (' . $mn . '  instanceof ' . $ct . ' && !' . $mn . '->isEmpty()) ? '.$mn.'->toArray() : null;
+		return $dbData;
+	}
+
+	/**
+	 * @param array $dbData
+	 */
+	private function '.$name.'FromDbData($dbData)
+	{
+		'.$mn.' = new ' . $ct . '(isset($dbData['.$en.']) ? $dbData['.$en.'] : null);
+	}
+
 	/**
 	 * @param string|array|' . $ct . '|null ' . $var . '
 	 * @throws \InvalidArgumentException
@@ -421,31 +439,18 @@ class DocumentLocalizedClass
 	 */
 	public function set' . $un . '(' . $var . ')
 	{
-		if ($this->getPersistentState() == \Change\Documents\AbstractDocument::STATE_LOADING)
+		if (!(' . $mn . '  instanceof ' . $ct . '))
 		{
-			' . $mn . ' = new ' . $ct . '(' . $var . ');
-			return $this;
+			' . $mn . ' = new ' . $ct . '(null);
 		}
-		if (' . $mn . ' === null)
+		if (!(' . $var . '  instanceof ' . $ct . '))
 		{
-			' . $mn . ' = new ' . $ct . '();
+			' . $var . ' = new ' . $ct . '(' . $var . ');
 		}
-
-		if (is_string(' . $var . '))
+		if (' . $this->buildNotEqualsProperty($mn . '->toArray()', $var. '->toArray()', $property->getType()) . ')
 		{
-			' . $mn . '->fromJSONString(' . $var . ');
-		}
-		elseif (' . $var . ' === null || is_array(' . $var . '))
-		{
-			' . $mn . '->fromArray(' . $var . ');
-		}
-		elseif (' . $var . '  instanceof ' . $ct . ')
-		{
-			' . $mn . '->fromRichtextProperty(' . $var . ');
-		}
-		elseif (' . $var . ' !== null)
-		{
-			throw new \InvalidArgumentException(\'Argument 1 must be an array, string, ' . $ct . ' or null\', 52005);
+			$this->onPropertyUpdate();
+			' . $mn . ' = ' . $var . ';
 		}
 		return $this;
 	}
@@ -455,23 +460,11 @@ class DocumentLocalizedClass
 	 */
 	public function get' . $un . '()
 	{
-		if ($this->getPersistentState() == \Change\Documents\AbstractDocument::STATE_SAVING)
+		if (!(' . $mn . '  instanceof ' . $ct . '))
 		{
-			return (' . $mn . ' !== null) ? ' . $mn . '->toJSONString() : null;
-		}
-		if (' . $mn . ' === null)
-		{
-			' . $mn . ' = new ' . $ct . '();
+			' . $mn . ' = new ' . $ct . '(null);
 		}
 		return ' . $mn . ';
-	}
-
-	/**
-	 * @return ' . $ct . '
-	 */
-	public function get' . $un . 'OldValue()
-	{
-		return new ' . $ct . '((' . $mn . ' !== null) ? ' . $mn . '->getDefaultJSONString() : null);
 	}' . PHP_EOL;
 		return $code;
 	}
@@ -520,6 +513,8 @@ class DocumentLocalizedClass
 			case 'Integer' :
 			case 'DocumentId' :
 				return 'integer';
+			case 'JSON' :
+				return 'array';
 			case 'Date' :
 			case 'DateTime' :
 				return '\DateTime';

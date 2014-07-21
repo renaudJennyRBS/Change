@@ -16,12 +16,12 @@ class Compiler
 	/**
 	 * \Change\Documents\Generators\Model[]
 	 */
-	protected $models = array();
+	protected $models = [];
 	
 	/**
 	 * @var array
 	 */
-	protected $modelNamesByExtendLevel = array();
+	protected $rootModelNames = [];
 	
 	/**
 	 * @var \Change\Application
@@ -57,7 +57,7 @@ class Compiler
 		if (is_readable($definitionPath) && $doc->load($definitionPath))
 		{
 			$model = new Model($vendor, $moduleName, $documentName);
-			$model->setXmlDocument($doc);
+			$model->setXmlDocument($doc, $this);
 			$this->addModel($model);
 		}
 		else
@@ -72,17 +72,56 @@ class Compiler
 	 */
 	public function buildTree()
 	{
-		$injectionArray = array();
+		$this->initReplacedBy();
+
+		$this->buildParent();
+	}
+
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function initReplacedBy()
+	{
 		foreach ($this->models as $model)
 		{
-			
 			/* @var $model Model */
-			
-			$model->validate();
-			
 			$modelName = $model->getName();
 			$extendName = $model->getExtends();
+			if ($extendName)
+			{
+				if ($model->getReplace())
+				{
+					$replacedModel = $this->getModelByName($extendName);
+					if (!$replacedModel)
+					{
+						throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $extendName, 54002);
+					}
+					$oldReplacedBy = $replacedModel->replacedBy();
+					if ($oldReplacedBy && $oldReplacedBy != $modelName)
+					{
+						throw new \RuntimeException('Model ' . $extendName . ' must be replaced by ' . $modelName . ' but already replaced by ' . $oldReplacedBy, 54005);
+					}
+					$replacedModel->replacedBy($modelName);
+				}
+			}
+		}
+	}
 
+	/**
+	 * @throws \RuntimeException
+	 */
+	public function buildParent()
+	{
+		$models = $this->models;
+		foreach ($models as $model)
+		{
+			/* @var $model Model */
+			if ($model->getInline())
+			{
+				continue;
+			}
+			$modelName = $model->getName();
+			$extendName = $model->getExtends();
 			if ($extendName)
 			{
 				$extModel = $this->getModelByName($extendName);
@@ -90,92 +129,67 @@ class Compiler
 				{
 					throw new \RuntimeException('Document ' . $modelName . ' extend unknown ' . $model->getExtends(), 54002);
 				}
-				$model->setExtendedModel($extModel);
+				if ($extModel->replacedBy() && $extModel->replacedBy() != $modelName)
+				{
+					$extModel = $this->getModelByName($extModel->replacedBy());
+				}
 				$model->setParent($extModel);
-				if ($model->getReplace())
-				{
-					if (isset($injectionArray[$extendName]))
-					{
-						throw new \RuntimeException('Duplicate Injection on ' . $modelName . ' for ' . $extendName. ' Already Injected by ' . $injectionArray[$extendName], 54003);
-					}
-					$injectionArray[$extendName] = $model;
-					$extModel->replacedBy($model->getName());
-				}
 			}
-			elseif ($model->getReplace())
+			else
 			{
-				throw new \RuntimeException('Invalid Injection on ' . $modelName, 54004);
+				$this->rootModelNames[] = $modelName;
 			}
 		}
-		
-		foreach ($this->models as $model)
-		{
-			/* @var $model Model */
-			$extModel = $model->getExtendedModel();
-			if ($extModel)
-			{
-				$extendName = $extModel->getName();
-				
-				if (in_array($extModel, $injectionArray))
-				{
-					throw new \RuntimeException($model . ' extends a "replace" model ' . $extendName, 54005);
-				}
-				
-				if (isset($injectionArray[$extendName]) && $injectionArray[$extendName] !== $model)
-				{
-					$model->setParent($injectionArray[$extModel->getName()]);
-				}
-			}
-		}
-			
-		$this->modelNamesByExtendLevel = array();
-		foreach ($this->models as $model)
-		{
-			/* @var $model Model */
-			$nbAncestor = count($model->getAncestors());
-			$this->modelNamesByExtendLevel[$nbAncestor][] = $model->getName(); 
-		}		
-		ksort($this->modelNamesByExtendLevel);
 	}
-	
+
 	/**
 	 * 
 	 */
 	public function validateInheritance()
 	{
-		foreach ($this->modelNamesByExtendLevel as $modelNames)
+		foreach ($this->rootModelNames as $modelName)
 		{
-			foreach ($modelNames as $modelName)
+			$model = $this->getModelByName($modelName);
+			$this->validateInheritanceByModelName($model);
+		}
+	}
+
+	/**
+	 * @param Model $model
+	 * @throws \RuntimeException
+	 */
+	public function validateInheritanceByModelName($model)
+	{
+		$model->validateInheritance();
+		if (!$model->rootStateless() && !$model->getInline())
+		{
+			//Add Inverse Properties
+			foreach ($model->getProperties() as $property)
 			{
-				$model = $this->getModelByName($modelName);
-				
-				$model->validateInheritance();
-
-				if ($model->checkStateless())
+				/* @var $property \Change\Documents\Generators\Property */
+				if (!$property->getStateless() && $property->hasRelation())
 				{
-					continue;
-				}
-
-				//Add Inverse Properties
-				foreach ($model->getProperties() as $property)
-				{
-					/* @var $property \Change\Documents\Generators\Property */
-					if (!$property->getStateless() && $property->hasRelation())
+					$documentType = $property->getDocumentType();
+					if ($documentType)
 					{
-						$docType = $property->getDocumentType();
-						if ($docType)
+						$targetModel = $this->getModelByName($documentType);
+						if (!$targetModel)
 						{
-							$im = $this->getModelByName($docType);
-							if (!$im)
-							{
-								throw new \RuntimeException('Inverse Property on unknown Model ' . $docType . ' (' . $modelName . '::' . $property->getName() . ')', 54006);
-							}
-							$ip = new InverseProperty($im, $property);
-							$im->addInverseProperty($ip);
+							throw new \RuntimeException('Inverse Property on unknown Model ' . $documentType . ' (' . $model->getName() . '::'
+								. $property->getName() . ')', 54006);
 						}
+
+						$inverseProperty = new InverseProperty($targetModel, $property);
+						$targetModel->addInverseProperty($inverseProperty);
 					}
 				}
 			}
+		}
+
+		$children = $this->getChildren($model);
+		foreach ($children as $child)
+		{
+			$this->validateInheritanceByModelName($child);
 		}
 	}
 	
@@ -197,43 +211,31 @@ class Compiler
 		$name = $this->cleanModelName($fullName);
 		return isset($this->models[$name]) ? $this->models[$name] : null;
 	}
-	
+
 	/**
 	 * @param Model $model
+	 * @throws \RuntimeException
 	 */
 	public function addModel(Model $model)
 	{
-		$this->models[$this->cleanModelName($model->getName())] = $model;
-	}
-	
-	/**
-	 * @param Model $model
-	 * @return Model|null
-	 */
-	public function getParent($model)
-	{
-		if ($model->getExtends())
+		$key = $this->cleanModelName($model->getName());
+		if (isset($this->models[$key]))
 		{
-			return $this->getModelByName($model->getExtends());
+			throw new \RuntimeException('Duplicate model name: ' . $key);
 		}
-		return null;
+		$this->models[$key] = $model;
 	}
 	
 	/**
 	 * @param Model $model
 	 * @return Model
-	 * @throws \Exception
 	 */	
 	public function getAncestors($model)
 	{
-		$result = array();
-		while (($model = $this->getParent($model)) !== null)
+		$result = [];
+		while (($model = $model->getParent()) !== null)
 		{
 			$modelName = $model->getName();
-			if (isset($result[$modelName]))
-			{
-				throw new \RuntimeException('Recursion on ' . $modelName, 54007);
-			}
 			$result[$modelName] = $model;
 		}
 		return array_reverse($result, true);
@@ -241,18 +243,17 @@ class Compiler
 	
 	/**
 	 * @param Model $model
-	 * @return Model
+	 * @return Model[]
 	 */
 	public function getChildren($model)
 	{
-		$result = array();
-		foreach ($this->models as $cm)
+		$result = [];
+		/** @var $child Model */
+		foreach ($this->models as $child)
 		{
-			/* @var $cm Model */
-			$cmp = $cm->getExtends() ? $this->getModelByName($cm->getExtends()) : null;
-			if ($cmp === $model)
+			if ($child->getParent() === $model)
 			{
-				$result[$cm->getName()] = $cm;
+				$result[$child->getName()] = $child;
 			}
 		}
 		return $result;
@@ -274,7 +275,8 @@ class Compiler
 				continue;
 			}
 			$result[$name] = $cm;
-			$dm = $this->getDescendants($cm);
+
+			$dm = $this->getDescendants($cm, $excludeInjected);
 			if (count($dm))
 			{
 				$result = array_merge($result, $dm);
@@ -292,24 +294,13 @@ class Compiler
 	}
 
 	/**
-	 * @param integer $level
-	 * @return Model
+	 * @return Model[]
 	 */
-	public function getModelsByLevel($level = 0)
+	public function getRootModelNames()
 	{
-		$models = array();
-		if (isset($this->modelNamesByExtendLevel[$level]))
-		{
-			$models = array();
-			foreach ($this->modelNamesByExtendLevel[$level] as $fullName)
-			{
-				$models[] = $this->getModelByName($fullName);
-			}
-		}
-		return $models;
+		return $this->rootModelNames;
 	}
-	
-	
+
 	public function saveModelsPHPCode()
 	{
 		$compilationPath = $this->application->getWorkspace()->compilationPath();
@@ -325,14 +316,28 @@ class Compiler
 			/* @var $model Model */
 			$generator = new ModelClass();
 			$generator->savePHPCode($this, $model, $compilationPath);
-			
-			$generator = new BaseDocumentClass();
-			$generator->savePHPCode($this, $model, $compilationPath);
-			
-			if ($model->checkLocalized())
+			if ($model->getInline())
 			{
-				$generator = new DocumentLocalizedClass();
+				$generator = new BaseInlineClass();
 				$generator->savePHPCode($this, $model, $compilationPath);
+
+				if ($model->rootLocalized())
+				{
+					$generator = new InlineLocalizedClass();
+					$generator->savePHPCode($this, $model, $compilationPath);
+				}
+			}
+			else
+			{
+
+				$generator = new BaseDocumentClass();
+				$generator->savePHPCode($this, $model, $compilationPath);
+
+				if ($model->rootLocalized())
+				{
+					$generator = new DocumentLocalizedClass();
+					$generator->savePHPCode($this, $model, $compilationPath);
+				}
 			}
 		}
 

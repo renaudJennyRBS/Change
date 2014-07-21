@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 https://raw.github.com/RBSChange/Change/master/Change/Documents/Assets/document.xsd" 
-	icon="test" stateless="true">
+	stateless="true">
 	<properties>
 		<property name="label" type="String" required="true"/>
 		<property name="pDate" type="Date" />
         <property name="pJSON" type="JSON" />
-        <property name="pXML" type="XML" />
-        <property name="pObject" type="Object" />
 		<property name="pDocument" type="Document" document-type="Project_Tests_Basic" />
 		<property name="pDocumentArray" type="DocumentArray" document-type="Project_Tests_DocStateless"/>
 	</properties>

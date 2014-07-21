@@ -18,7 +18,7 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$definitionPath = __DIR__ . '/TestAssets/TestType.xml';
 		$model = $compiler->loadDocument('Change', 'Test', 'TestType', $definitionPath);
 		$this->assertEquals('Change_Test_TestType', $model->getName());
-		$this->assertCount(1, $compiler->getModels());
+		$this->assertCount(3, $compiler->getModels());
 		
 		$this->setExpectedException('\RuntimeException', 'Unable to load document definition');
 		$compiler->loadDocument('Change', 'test', 'test1',  __DIR__ . '/TestAssets/notfound');
@@ -38,8 +38,8 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$definitionPath = __DIR__ . '/TestAssets/TestTypeRepl.xml';
 		$m3 = $compiler->loadDocument('Change', 'Test', 'TestTypeRepl', $definitionPath);
 		
-		$this->assertCount(3, $compiler->getModels());
-		$this->assertCount(0, $compiler->getModelsByLevel(0));
+		$this->assertCount(5, $compiler->getModels());
+		$this->assertCount(0, $compiler->getRootModelNames());
 
 		$userModel = new \Change\Documents\Generators\Model('Rbs', 'User', 'User');
 		$compiler->addModel($userModel);
@@ -47,9 +47,10 @@ class CompilerTest extends \ChangeTests\Change\TestAssets\TestCase
 		$compiler->buildTree();
 		$compiler->validateInheritance();
 
-		$this->assertCount(2, $compiler->getModelsByLevel(0));
-		$this->assertCount(1, $compiler->getModelsByLevel(1));
-		$this->assertCount(1, $compiler->getModelsByLevel(2));
+		$this->assertSame($m1, $m3->getParent());
+		$this->assertSame($m3, $m2->getParent());
+
+		$this->assertCount(2, $compiler->getRootModelNames());
 		
 		$p1 = $m1->getPropertyByName('int1');
 		$this->assertCount(0, $p1->getAncestors());

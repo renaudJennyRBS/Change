@@ -6,6 +6,14 @@ namespace ChangeTests\Documents\Generators;
  */
 class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 {
+	/**
+	 * @return \Change\Documents\Generators\Compiler
+	 */
+	protected function getCompiler()
+	{
+		return new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+	}
+
 	public function testConstruct()
 	{
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
@@ -15,19 +23,16 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals('change_generic_document', $model->getName());
 		
 		$this->assertNull($model->getParent());
-		$this->assertNull($model->getExtendedModel());
 		$this->assertCount(0, $model->getProperties());
 		$this->assertCount(0, $model->getInverseProperties());
 		$this->assertNull($model->getExtends());
 		$this->assertNull($model->getReplace());
+		$this->assertNull($model->replacedBy());
 		$this->assertNull($model->getLocalized());
-		$this->assertNull($model->getIcon());
-		$this->assertNull($model->getHasUrl());
-		$this->assertNull($model->getFrontofficeIndexable());
-		$this->assertNull($model->getBackofficeIndexable());
 		$this->assertNull($model->getPublishable());
 		$this->assertNull($model->getUseVersion());
 		$this->assertNull($model->getEditable());
+		$this->assertNull($model->getInline());
 		$this->assertNull($model->getStateless());
 		$this->assertNull($model->getAbstract());
 
@@ -54,19 +59,18 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	 */	
 	public function testSetXmlDocument(\Change\Documents\Generators\Model $model)
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
-		$doc->loadXML('<document icon="icon" has-url="true"
-			frontoffice-indexable="true" backoffice-indexable="true" editable="true" publishable="true" abstract="true"
-			use-version="true" localized="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http">
+		$doc->loadXML('<document editable="true" publishable="true" abstract="true"
+			use-version="true" localized="true">
 	<properties>
 		<property name="test" />
 	</properties>
 </document>');
-		$model->setXmlDocument($doc);
-		$this->assertCount(1, $model->getProperties());
+		$model->setXmlDocument($doc, $compiler);
 		$this->assertTrue($model->getAbstract());
-		
-		$model->validate();
+
+		$model->addStandardProperties();
 		$this->assertCount(15, $model->getProperties());
 				
 		$this->assertInstanceOf('\Change\Documents\Generators\Property', $model->getPropertyByName('test'));
@@ -101,14 +105,11 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		<property name="test" default-value="essai" />
 	</properties>
 </document>');
-		$model2->setXmlDocument($doc);
-		$model2->setExtendedModel($model);
+		$model2->setXmlDocument($doc, $compiler);
 		$model2->setParent($model);
 		$this->assertTrue($model2->getReplace());
 		$this->assertEquals("change_generic_document", $model2->getExtends());
-		$this->assertEquals($model, $model2->getExtendedModel());
 		$this->assertEquals($model, $model2->getParent());
-		
 		$this->assertCount(1, $model2->getAncestors());
 		
 		return $model2;
@@ -125,7 +126,7 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 		$model->validateInheritance();
 		
 		$this->assertNull($model->getLocalized());
-		$this->assertTrue($model->checkLocalized());
+		$this->assertTrue($model->rootLocalized());
 		
 		$this->assertNull($model->getUseVersion());
 		$this->assertTrue($model->checkAncestorUseVersion());
@@ -139,6 +140,7 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	
 	public function testInvalidDocumentNode()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<documents>
 	<properties>
@@ -148,84 +150,90 @@ class ModelTest extends \ChangeTests\Change\TestAssets\TestCase
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->setExpectedException('\RuntimeException', 'Invalid document element name');
-		$model->setXmlDocument($doc);
+		$model->setXmlDocument($doc, $compiler);
 	}
 	
 	public function testInvalidEmptyAttribute()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document test="" > </document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->setExpectedException('\RuntimeException', 'Invalid empty attribute value');
-		$model->setXmlDocument($doc);
+		$model->setXmlDocument($doc, $compiler);
 	}
 
 	public function testInvalidAttributeName()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document test="test" > </document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->setExpectedException('\RuntimeException', 'Invalid attribute name');
-		$model->setXmlDocument($doc);
+		$model->setXmlDocument($doc, $compiler);
 	}
 	
 	public function testInvalidTrueAttribute()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document localized="false" > </document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
-		$this->setExpectedException('\RuntimeException', 'Invalid attribute value true');
-		$model->setXmlDocument($doc);
+		$this->setExpectedException('\RuntimeException', 'Invalid localized attribute value: false');
+		$model->setXmlDocument($doc, $compiler);
 	}
 	
 	public function testInvalidPropertiesNode()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document><property name="test" /></document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->setExpectedException('\RuntimeException', 'Invalid properties node name');
-		$model->setXmlDocument($doc);
+		$model->setXmlDocument($doc, $compiler);
 	}
 	
 	public function testInvalidPropertyNode()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document><properties><prop name="test" /></properties></document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->setExpectedException('\RuntimeException', 'Invalid property node name');
-		$model->setXmlDocument($doc);
+		$model->setXmlDocument($doc, $compiler);
 	}
 	
 	public function testInvalidDuplicatePropertyNode()
 	{
+		$compiler = $this->getCompiler();
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<document><properties><property name="test" /><property name="test" /></properties></document>');
 	
 		$model = new \Change\Documents\Generators\Model('change', 'generic', 'document');
 		$this->setExpectedException('\RuntimeException', 'Duplicate property name');
-		$model->setXmlDocument($doc);
+		$model->setXmlDocument($doc, $compiler);
 	}
 	
 	public function testValidate()
 	{
-		$cmp = new \Change\Documents\Generators\Compiler($this->getApplication(), $this->getApplicationServices());
+		$compiler = $this->getCompiler();
 		$model = new \Change\Documents\Generators\Model('change', 'testing', 'test');
 		$doc = new \DOMDocument('1.0', 'utf-8');
 		$doc->loadXML('<?xml version="1.0" encoding="UTF-8"?>
-<document icon="test">
+<document>
 	<properties>
 		<property name="string1" type="String" localized="true" />
 		<property name="string2" type="String" />
 	</properties>
 </document>');
 
-		$model->setXmlDocument($doc);
-		$model->validate();
+		$model->setXmlDocument($doc, $compiler);
+		$model->addStandardProperties();
 		$this->assertCount(4, $model->getProperties());
 		$this->assertNull($model->getLocalized());
 	}
