@@ -142,6 +142,11 @@
 					if (attributes.login) {
 						scope.information.login = attributes.login;
 						scope.information.guest = false;
+
+						if (scope.confirmed == true)
+						{
+							scope.setUserConfirmed();
+						}
 					}
 					else {
 						scope.information.guest = true;
@@ -448,13 +453,19 @@
 			);
 		}
 
+		scope.init = function(accessordId, confirmed)
+		{
+			scope.accessordId = accessordId;
+			scope.confirmed = angular.fromJson(confirmed);
+		};
+
 		scope.clearErrors = function(stepName) {
 			scope[stepName].errors = [];
-		}
+		};
 
 		scope.addError = function(stepName, message) {
 			scope[stepName].errors.push(message);
-		}
+		};
 
 		scope.isStepEnabled = function(stepName) {
 			for (var i = 0; i < scope.steps.length; i++) {
@@ -510,6 +521,12 @@
 			}
 		};
 
+		scope.setUserConfirmed = function() {
+			scope.information.userId = scope.accessorId;
+			var postData = { userId: scope.information.userId };
+			updateCart($http, scope, postData, scope.setAuthenticated);
+		}
+
 		scope.canAuthenticate = function() {
 			return scope.information.login && scope.information.password;
 		};
@@ -529,6 +546,7 @@
 
 						scope.information.guest = false;
 						scope.information.userId = data['accessorId'];
+						scope.confirmed = true;
 
 						var postData = { userId: scope.information.userId };
 						updateCart($http, scope, postData, scope.setAuthenticated);
@@ -550,8 +568,10 @@
 
 		scope.logout = function() {
 			scope.clearErrors('information');
-			$http.post('Action/Rbs/User/Logout')
-				.success(function() { window.location.reload(); })
+			$http.post('Action/Rbs/User/Logout', {keepCart:true})
+				.success(function() {
+					window.location.reload();
+				})
 				.error(function(data, status, headers) { console.log('Logout error', data, status, headers); });
 		};
 

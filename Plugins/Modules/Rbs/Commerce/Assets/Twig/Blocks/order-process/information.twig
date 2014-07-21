@@ -104,7 +104,7 @@
 					<p>{{ i18n('m.rbs.commerce.front.please_log_out', ['ucf']) }}</p>
 					<a class="btn btn-primary"
 						href="{{ ajaxURL('Rbs_User', 'Logout') }}?redirectLocation={{ currentURL()|url_encode }}">
-						{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}
+						{{ i18n('m.rbs.commerce.front.change_user', ['ucf']) }}
 					</a>
 				</div>
 			</div>
@@ -114,7 +114,7 @@
 
 <div class="vertical-if-animation" data-ng-if="!isAuthenticated()">
 	<div class="vertical-if-animation-content row" data-rbs-commerce-authentication-step="" data-realm="{{ parameters.realm }}"
-		data-login="{{ user.login }}">
+		data-login="{{ user.email }}">
 	</div>
 </div>
 
@@ -125,7 +125,10 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">{{ i18n('m.rbs.user.front.email', ['ucf']) }}</div>
 					<div class="panel-body">
-						<button class="btn btn-default pull-right" data-ng-click="unsetAuthenticated()">
+						<button data-ng-if="information.login" class="btn btn-default pull-right" data-ng-click="logout()">
+							{{ i18n('m.rbs.commerce.front.change_user', ['ucf']) }}
+						</button>
+						<button data-ng-if="!information.login" class="btn btn-default pull-right" data-ng-click="unsetAuthenticated()">
 							{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
 						</button>
 						(= information.email =)

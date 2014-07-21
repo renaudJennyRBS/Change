@@ -1106,6 +1106,38 @@ class StockManager
 
 	/**
 	 * @api
+	 * @param string $fromTargetIdentifier
+	 * @param string $toTargetIdentifier
+	 * @throws \Exception
+	 */
+	public function transferReservations($fromTargetIdentifier, $toTargetIdentifier)
+	{
+		$transactionManager = $this->getTransactionManager();
+		try
+		{
+			$transactionManager->begin();
+			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::transferReservations');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('rbs_stock_dat_res'));
+				$qb->assign($fb->column('target'), $fb->parameter('toTargetIdentifier'));
+				$qb->where($fb->eq($fb->column('target'), $fb->parameter('fromTargetIdentifier')));
+			}
+			$statement = $qb->updateQuery();
+			$statement->bindParameter('toTargetIdentifier', $toTargetIdentifier);
+			$statement->bindParameter('fromTargetIdentifier', $fromTargetIdentifier);
+			$statement->execute();
+			$transactionManager->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $transactionManager->rollBack($e);
+		}
+	}
+
+	/**
+	 * @api
 	 * @param $targetIdentifier
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
 	 * @param $quantity

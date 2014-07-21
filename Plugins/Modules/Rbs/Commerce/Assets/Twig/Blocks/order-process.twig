@@ -35,7 +35,7 @@
 
 {% include 'Rbs_Geo/address-form.twig' %}
 
-<div class="row" data-ng-controller="rbsCommerceOrderProcessController" data-ng-init="accessorId = '{{ parameters.accessorId }}'">
+<div class="row" data-ng-controller="rbsCommerceOrderProcessController" data-ng-init="init({{ parameters.accessorId }},{{ parameters.confirmed | json_encode }})">
 	<div class="col-sm-3 process-sidebar-container">
 		<div class="process-sidebar" data-rbs-commerce-process-menu="" data-steps="steps" data-current-step="currentStep"></div>
 	</div>
