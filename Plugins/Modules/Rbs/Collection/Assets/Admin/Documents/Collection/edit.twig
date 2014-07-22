@@ -24,52 +24,8 @@
 					{{ i18n(propertyKey('Rbs_Collection_Collection', 'items'), ['ucf']) }}
 				</h3>
 
-				<div class="add-elements-bar">
-					<a href data-ng-click="cascadeCreate()">{{ i18n('m.rbs.collection.admin.item_create', ['ucf']) }}</a>
-				</div>
-
-				<rbs-document-list data-dlid="DLCollection1" model="Rbs_Collection_Item" collection="document.items" extend="this"
-					toolbar="false" selectable="false" correction="true">
-					<rbs-quick-actions>
-						<a data-ng-if="!doc.locked" href="javascript:;" data-ng-click="extend.deleteItem(doc)" class="danger">
-							<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
-						</a>
-					</rbs-quick-actions>
-
-					<rbs-column name="label" primary="true">
-						<i data-ng-if="doc.locked" class="icon-lock text-info"
-							title="{{ i18nAttr(propertyKey('Rbs_Collection_Item', 'locked'), ['ucf']) }}">
-						</i>
-						<a href data-ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
-					</rbs-column>
-					<rbs-column name="value"></rbs-column>
-					<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
-						<rbs-kb-switch>
-							<button data-rbs-kb-when="alt" data-ng-disabled="$first" class="btn btn-default btn-icon"
-								type="button" data-ng-click="extend.moveTop($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
-								<i class="icon-step-forward icon-rotate-270"></i>
-							</button>
-							<button data-rbs-kb-default="" data-ng-disabled="$first" class="btn btn-default btn-icon"
-								type="button" data-ng-click="extend.moveUp($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
-								<i class="icon-play icon-rotate-270"></i>
-							</button>
-						</rbs-kb-switch>
-						<rbs-kb-switch>
-							<button data-rbs-kb-when="alt" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
-								data-ng-click="extend.moveBottom($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
-								<i class="icon-step-forward icon-rotate-90"></i>
-							</button>
-							<button data-rbs-kb-default="" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
-								data-ng-click="extend.moveDown($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
-								<i class="icon-play icon-rotate-90"></i>
-							</button>
-						</rbs-kb-switch>
-					</rbs-column>
-				</rbs-document-list>
+				<rbs-inline-array inline-array="document.items" new-model="Rbs_Collection_CollectionItem" can-delete="canDeleteItem">
+				</rbs-inline-array>
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"

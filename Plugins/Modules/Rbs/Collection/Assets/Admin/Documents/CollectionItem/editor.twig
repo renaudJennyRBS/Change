@@ -1,0 +1,24 @@
+<div rbs-collection-collection-item-editor="">
+	<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_CollectionItem', 'label'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field property="value" required="required" label="{{ i18nAttr(propertyKey('Rbs_Collection_CollectionItem', 'value'), ['ucf']) }}">
+		<input type="text" class="form-control" ng-disabled="document.locked" name="value"
+				ng-model="document.value" required="required">
+	</rbs-field>
+
+	<hr />
+
+	<rbs-field property="LCID" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Collection_CollectionItem', 'LCID'), ['ucf']) }}">
+		<select required="true" class="form-control" data-ng-model="localization.LCID" ng-options="key as value.label for (key , value) in LCIDArray()">
+		</select>
+	</rbs-field>
+
+	<rbs-field property="title" required="true" label="{{ i18nAttr(propertyKey('Rbs_Collection_CollectionItem', 'title'), ['ucf']) }}">
+		<input type="text" class="form-control" ng-disabled="!localization.LCID" name="label"
+				ng-model="document.LCID[localization.LCID].title" required="required">
+	</rbs-field>
+</div>
+

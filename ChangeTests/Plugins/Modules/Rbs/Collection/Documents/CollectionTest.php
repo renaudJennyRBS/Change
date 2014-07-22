@@ -16,16 +16,16 @@ class CollectionTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$this->getApplicationServices()->getTransactionManager()->begin();
 		$dm = $this->getApplicationServices()->getDocumentManager();
-		$item = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
-		/* @var $item \Rbs\Collection\Documents\Item */
-		$item->setLabel('Test1');
-		$item->setValue('test1');
-		$item->save();
 
 		$collection = $dm->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
 		/* @var $collection \Rbs\Collection\Documents\Collection */
 		$collection->setCode('rbsCollectionTest1');
 		$collection->setLabel('RbsCollectionTest1');
+
+		$item = $collection->newCollectionItem();
+		$item->setLabel('Test1');
+		$item->setValue('test1');
+
 		$collection->setItems(array($item));
 		$collection->save();
 

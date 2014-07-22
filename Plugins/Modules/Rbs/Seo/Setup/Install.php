@@ -36,67 +36,55 @@ class Install extends \Change\Plugins\InstallBase
 				$collection->setCode('Rbs_Seo_Collection_SitemapChangeFrequency');
 				$collection->setLocked(true);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('always');
 				$item->setLabel('always');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_always', array('ucf')));
-				$item->save();
+
 				$collection->getItems()->add($item);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('hourly');
 				$item->setLabel('hourly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_hourly', array('ucf')));
-				$item->save();
 				$collection->getItems()->add($item);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('daily');
 				$item->setLabel('daily');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_daily', array('ucf')));
-				$item->save();
 				$collection->getItems()->add($item);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('weekly');
 				$item->setLabel('weekly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_weekly', array('ucf')));
-				$item->save();
 				$collection->getItems()->add($item);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('monthly');
 				$item->setLabel('monthly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_monthly', array('ucf')));
-				$item->save();
 				$collection->getItems()->add($item);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('yearly');
 				$item->setLabel('yearly');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_yearly', array('ucf')));
-				$item->save();
 				$collection->getItems()->add($item);
 
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item = $collection->newCollectionItem();
 				$item->setValue('never');
 				$item->setLabel('never');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()
 					->trans('m.rbs.seo.documents.documentseo_sitemap_change_frequency_never', array('ucf')));
-				$item->save();
+
 				$collection->getItems()->add($item);
 
 				$collection->save();

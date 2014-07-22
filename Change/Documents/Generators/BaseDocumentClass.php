@@ -254,10 +254,11 @@ class BaseDocumentClass
 	 */
 	protected function getMembers($model, $properties)
 	{
-		$resetProperties = array();
-		$modifiedProperties = array();
-		$removeOldPropertiesValue = array();
-		$clearModifiedProperties = array();
+		$resetProperties = [];
+		$modifiedProperties = [];
+		$removeOldPropertiesValue = [];
+		$clearModifiedProperties = [];
+		$cleanUp = [];
 		if ($model->getLocalized())
 		{
 			$resetProperties[] = '$this->resetCurrentLocalized();';
@@ -298,6 +299,7 @@ class BaseDocumentClass
 				$modifiedProperties[] = 'if ($this->checkModified'.ucfirst($propertyName).'()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': $this->'.$propertyName.'Old = false; return;';
 				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
+				$cleanUp[] = 'if ($this->'.$propertyName. ' instanceof \Change\Documents\AbstractInline) {$this->'.$propertyName.'->cleanUp();};';
 			}
 			elseif ($property->getType() === 'InlineArray')
 			{
@@ -305,6 +307,7 @@ class BaseDocumentClass
 				$modifiedProperties[] = 'if ($this->'.$propertyName.' instanceof \Change\Documents\InlineArrayProperty && $this->'.$propertyName.'->isModified()) {$names[] = \''.$propertyName.'\';}';
 				$removeOldPropertiesValue[] = 'case \''.$propertyName.'\': if ($this->'.$propertyName.' instanceof \Change\Documents\InlineArrayProperty) {$this->'.$propertyName.'->setAsDefault();} return;';
 				$clearModifiedProperties[] = '$this->removeOldPropertyValue(\''.$propertyName.'\');';
+				$cleanUp[] = 'if ($this->'.$propertyName. ' instanceof \Change\Documents\InlineArrayProperty) {$this->'.$propertyName.'->cleanUp();};';
 			}
 			elseif ($property->getType() === 'RichText')
 			{
@@ -354,6 +357,16 @@ class BaseDocumentClass
 		$names =  parent::getModifiedPropertyNames();
 		' . implode(PHP_EOL. '		', $modifiedProperties) . '
 		return $names;
+	}' . PHP_EOL;
+		}
+
+		if (count($cleanUp))
+		{
+			$code .= '
+	public function cleanUp()
+	{
+		parent::cleanUp();
+		' . implode(PHP_EOL . '			', $cleanUp) . '
 	}' . PHP_EOL;
 		}
 

@@ -20,14 +20,17 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 {
 	/**
 	 * @param string $value
-	 * @return \Change\Collection\ItemInterface|null
+	 * @return \Rbs\Collection\Documents\CollectionItem|null
 	 */
 	public function getItemByValue($value)
 	{
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Collection_Item');
-		$collectionQuery = $query->getModelBuilder('Rbs_Collection_Collection', 'items');
-		$collectionQuery->andPredicates($collectionQuery->eq('id', $this->getId()), $query->eq('value', $value));
-		return $query->getFirstDocument();
+		foreach ($this->getItems() as $item)
+		{
+			if ($item->getValue() == $value) {
+				return $item;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -97,17 +100,25 @@ class Collection extends \Compilation\Rbs\Collection\Documents\Collection implem
 		{
 			$this->setCode($this->getCodeOldValue());
 		}
-		if ($this->isPropertyModified('items'))
+
+		$oldItems = $this->getItems()->getDefaultDocuments();
+		if (is_array($oldItems) && count($oldItems))
 		{
-			foreach (array_diff($this->getItemsOldValueIds(), $this->getItemsIds()) as $removedIds)
+			/** @var $oldItem \Rbs\Collection\Documents\CollectionItem */
+			foreach ($oldItems as $oldItem)
 			{
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $this->getDocumentManager()->getDocumentInstance($removedIds);
-				if ($item->getLocked())
+				if ($oldItem->getLocked())
 				{
-					throw new \RuntimeException('can not removed locked item from collection', 999999);
+					$item = $this->getItemByValue($oldItem->getValue());
+					if ($item)
+					{
+						$item->setLocked(true);
+					}
+					else
+					{
+						$this->getItems()->add($oldItem);
+					}
 				}
-				$item->delete();
 			}
 		}
 	}

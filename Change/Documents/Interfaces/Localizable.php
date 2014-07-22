@@ -40,13 +40,13 @@ interface Localizable
 
 	/**
 	 * @api
-	 * @return \Change\Documents\AbstractLocalizedDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument|\Change\Documents\AbstractLocalizedInline
 	 */
 	public function getCurrentLocalization();
 
 	/**
 	 * @api
-	 * @return \Change\Documents\AbstractLocalizedDocument
+	 * @return \Change\Documents\AbstractLocalizedDocument|\Change\Documents\AbstractLocalizedInline
 	 */
 	public function getRefLocalization();
 

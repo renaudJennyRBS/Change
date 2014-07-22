@@ -5,16 +5,16 @@
 	"collection_locked":{
 		"message":"verrouillée"
 	},
-	"item_value":{
+	"collectionitem_value":{
 		"message":"valeur"
 	},
-	"item_locked":{
+	"collectionitem_locked":{
 		"message":"verrouillée"
 	},
 	"collection":{
 		"message":"collection"
 	},
-	"item":{
+	"collectionitem":{
 		"message":"élément"
 	}
 }

@@ -35,7 +35,6 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function (Event $event)
 		{
 			(new \Rbs\Workflow\Job\DocumentCleanUp())->cleanUp($event);
-			(new \Rbs\Collection\Job\CleanUpListItems())->cleanUp($event);
 		};
 		$events->attach('process_Change_Document_CleanUp', $callback, 10);
 
