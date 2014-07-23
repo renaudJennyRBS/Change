@@ -41,6 +41,8 @@ class ImportAttributes
 
 		$import = new \Rbs\Generic\Json\Import($applicationServices->getDocumentManager());
 		$import->setDocumentCodeManager($applicationServices->getDocumentCodeManager());
+		$import->getOptions()->set('resolveInlineDocument', [$import, 'defaultResolveCollectionItem']);
+
 		try
 		{
 			$applicationServices->getTransactionManager()->begin();

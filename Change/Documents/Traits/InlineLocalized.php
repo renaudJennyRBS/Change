@@ -310,6 +310,9 @@ trait InlineLocalized
 				continue;
 			}
 			$LCID = $localizedRestValue['LCID'];
+			if ($this->getRefLCID() == null) {
+				$this->setRefLCID($LCID);
+			}
 			if (!isset($this->localizedPartArray[$LCID]))
 			{
 				/** @var $localizedPart \Change\Documents\AbstractLocalizedInline */

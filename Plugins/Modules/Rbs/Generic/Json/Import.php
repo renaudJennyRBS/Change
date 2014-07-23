@@ -9,6 +9,7 @@
 namespace Rbs\Generic\Json;
 
 use Change\Documents\AbstractDocument;
+use Change\Documents\AbstractInline;
 
 /**
  * @name \Rbs\Generic\Json\Import
@@ -339,7 +340,57 @@ class Import
 				continue;
 			}
 			$value = $jsonDocument[$propertyName];
-			if ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
+			if ($property->getType() === \Change\Documents\Property::TYPE_INLINE)
+			{
+				if (is_array($value) && isset($value['_model']) && isset($value['_inline']))
+				{
+					$subDoc = $property->getValue($document);
+					if (!$subDoc)
+					{
+						$subDoc = $this->getDocumentManager()->getNewInlineInstanceByModelName($value['_model']);
+					}
+					if ($subDoc)
+					{
+						$this->importInline($subDoc, $value);
+					}
+					$property->setValue($document, $subDoc);
+				}
+
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_INLINEARRAY)
+			{
+				$docs = [];
+				if (is_array($value))
+				{
+					/** @var $subDocs \Change\Documents\InlineArrayProperty */
+					$subDocs = $property->getValue($document);
+					foreach ($value as $jsonSubDocument)
+					{
+						if (is_array($jsonSubDocument) && isset($jsonSubDocument['_model']) && isset($jsonSubDocument['_inline']))
+						{
+							/** @var $subDoc \Change\Documents\AbstractInline */
+							$subDoc = null;
+							$callback = $this->getOptions()->get('resolveInlineDocument');
+							if (is_callable($callback))
+							{
+								$subDoc = call_user_func($callback, $jsonSubDocument, $subDocs);
+							}
+							if (!$subDoc)
+							{
+								$subDoc = $this->getDocumentManager()->getNewInlineInstanceByModelName($jsonSubDocument['_model']);
+							}
+
+							if ($subDoc)
+							{
+								$this->importInline($subDoc, $jsonSubDocument);
+								$docs[] = $subDoc;
+							}
+						}
+					}
+				}
+				$property->setValue($document, $docs);
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
 			{
 				$subDoc = null;
 				if (is_array($value))
@@ -457,5 +508,166 @@ class Import
 			}
 			$property->setLocalizedValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
 		}
+	}
+
+	/**
+	 * @param AbstractInline $document
+	 * @param array $jsonDocument
+	 */
+	protected function importInline(AbstractInline $document, array $jsonDocument)
+	{
+		if (!isset($jsonDocument['_model']))
+		{
+			return;
+		}
+
+		if ($this->addOnly && !$document->isNew())
+		{
+			return;
+		}
+		$model = $document->getDocumentModel();
+		foreach ($model->getProperties() as $property)
+		{
+			$propertyName = $property->getName();
+			if ($property->getLocalized() || !array_key_exists($propertyName, $jsonDocument))
+			{
+				continue;
+			}
+			$value = $jsonDocument[$propertyName];
+			if ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENT)
+			{
+				$subDoc = null;
+				if (is_array($value))
+				{
+					$subDoc = $this->resolveDocument($value);
+					if ($subDoc)
+					{
+						$this->import($subDoc, $value);
+					}
+				}
+				$property->setValue($document, $subDoc);
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_DOCUMENTARRAY)
+			{
+				$docs = [];
+				if (is_array($value))
+				{
+					foreach ($value as $jsonSubDocument)
+					{
+						if (is_array($jsonSubDocument))
+						{
+							$subDoc = $this->resolveDocument($jsonSubDocument);
+							if ($subDoc)
+							{
+								$this->import($subDoc, $jsonSubDocument);
+								$docs[] = $subDoc;
+							}
+						}
+					}
+				}
+				$property->setValue($document, $docs);
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			{
+				if ($this->getI18nManager())
+				{
+					$property->setValue($document, $this->getI18nManager()->trans($value['_i18n']));
+				}
+				else
+				{
+					$property->setValue($document, $value['_i18n']);
+				}
+			}
+			else
+			{
+				$property->setValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
+			}
+		}
+
+		$callback = $this->getOptions()->get('preSave');
+		if (is_callable($callback))
+		{
+			call_user_func($callback, $document, $jsonDocument);
+		}
+
+		/** @var $document \Change\Documents\Interfaces\Localizable|AbstractInline */
+		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			if (isset($jsonDocument['_LCID']) && is_array($jsonDocument['_LCID']))
+			{
+				foreach ($jsonDocument['_LCID'] as $LCID => $jsonLCID)
+				{
+					try
+					{
+						$this->getDocumentManager()->pushLCID($LCID);
+						if ($document->getRefLCID() === null)
+						{
+							$document->setRefLCID($LCID);
+						}
+						$localizedPart = $document->getCurrentLocalization();
+						$this->importInlineLCID($model, $localizedPart, $jsonLCID);
+						$this->getDocumentManager()->popLCID();
+					}
+					catch (\Exception $e)
+					{
+						$this->getDocumentManager()->popLCID($e);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param \Change\Documents\AbstractLocalizedInline $document
+	 * @param array $jsonLCID
+	 */
+	protected function importInlineLCID($model, \Change\Documents\AbstractLocalizedInline $document, array $jsonLCID)
+	{
+		foreach ($model->getProperties() as $property)
+		{
+			$propertyName = $property->getName();
+			if (!$property->getLocalized() || !array_key_exists($propertyName, $jsonLCID))
+			{
+				continue;
+			}
+			$value = $jsonLCID[$propertyName];
+			if ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			{
+				if ($this->getI18nManager())
+				{
+					$value = $this->getI18nManager()->trans($value['_i18n']);
+				}
+				else
+				{
+					$value = $value['_i18n'];
+				}
+			}
+			$property->setLocalizedValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
+		}
+	}
+
+	/**
+	 * @param array $jsonSubDocument
+	 * @param \Change\Documents\InlineArrayProperty $subDocs
+	 * @return \Change\Documents\AbstractInline|null
+	 */
+	public function defaultResolveCollectionItem($jsonSubDocument, $subDocs)
+	{
+		if ($subDocs instanceof \Change\Documents\InlineArrayProperty && is_array($jsonSubDocument))
+		{
+			if (isset($jsonSubDocument['_model']) && $jsonSubDocument['_model'] === 'Rbs_Collection_CollectionItem'
+				&& isset($jsonSubDocument['value']))
+			{
+				foreach ($subDocs as $subDoc)
+				{
+					if ($subDoc instanceof \Rbs\Collection\Documents\CollectionItem && $subDoc->getValue() === $jsonSubDocument['value'])
+					{
+						return $subDoc;
+					}
+				}
+			}
+		}
+		return null;
 	}
 } 

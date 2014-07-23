@@ -49,11 +49,6 @@ class ExportAttributes
 		$export->setDocuments($attributes);
 		$export->addDocuments($collections);
 
-		$allowedDocumentProperty = function($document, $parentDocument, $parentProperty, $level) {
-			return ($document instanceof \Rbs\Collection\Documents\Item);
-		};
-		$export->getOptions()->set('allowedDocumentProperty', $allowedDocumentProperty);
-
 		$buildDocumentCode = function($document, $contextId) {
 			if ($document instanceof \Rbs\Collection\Documents\Collection)
 			{

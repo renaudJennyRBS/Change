@@ -81,24 +81,22 @@ class Install extends \Change\Plugins\InstallBase
 			try
 			{
 				$tm->begin();
-				/* @var $item \Rbs\Collection\Documents\Item */
-				$item = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				/* @var $collection \Rbs\Collection\Documents\Collection */
+				$collection = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+
+				$item = $collection->newCollectionItem();
 				$item->setValue('m.');
 				$item->setLabel('m.');
 				$item->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.user.setup.mister', array('ucf')));
 				$item->setLocked(true);
-				$item->save();
 
-				/* @var $item2 \Rbs\Collection\Documents\Item */
-				$item2 = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$item2 = $collection->newCollectionItem();
 				$item2->setValue('mme');
 				$item2->setLabel('mme');
 				$item2->getCurrentLocalization()->setTitle($applicationServices->getI18nManager()->trans('m.rbs.user.setup.miss', array('ucf')));
 				$item2->setLocked(true);
-				$item2->save();
 
-				/* @var $collection \Rbs\Collection\Documents\Collection */
-				$collection = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Collection');
+
 				$collection->setLabel('User title');
 				$collection->setCode('Rbs_User_Collection_Title');
 				$collection->setLocked(true);

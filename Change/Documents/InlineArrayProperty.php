@@ -413,16 +413,13 @@ class InlineArrayProperty  implements \Iterator, \Countable, \ArrayAccess
 	 */
 	public function removeAll()
 	{
-		if ($this->count())
+		$this->saveDefault();
+		foreach ($this->inlineDocuments as $inlineDocument)
 		{
-			$this->saveDefault();
-			foreach ($this->inlineDocuments as $inlineDocument)
-			{
-				$inlineDocument->link(null);
-			}
-			$this->inlineDocuments = [];
-			$this->rewind();
+			$inlineDocument->cleanUp();
 		}
+		$this->inlineDocuments = [];
+		$this->rewind();
 		return $this;
 	}
 
@@ -479,5 +476,22 @@ class InlineArrayProperty  implements \Iterator, \Countable, \ArrayAccess
 				$this->defaultDocuments[] = clone($inlineDocument);
 			}
 		}
+	}
+
+	public function cleanUp()
+	{
+		/** @var $inlineDocument AbstractInline */
+		foreach ($this->inlineDocuments as $inlineDocument)
+		{
+			$inlineDocument->cleanUp();
+		}
+		if (is_array($this->defaultDocuments))
+		{
+			foreach ($this->defaultDocuments as $inlineDocument)
+			{
+				$inlineDocument->cleanUp();
+			}
+		}
+		$this->updateCallback = null;
 	}
 }

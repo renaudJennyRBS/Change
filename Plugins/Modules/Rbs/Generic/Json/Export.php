@@ -9,6 +9,7 @@
 namespace Rbs\Generic\Json;
 
 use Change\Documents\AbstractDocument;
+use Change\Documents\AbstractInline;
 
 /**
  * @name \Rbs\Generic\Json\Export
@@ -337,9 +338,30 @@ class Export
 					$array[$propertyName] = $this->getDocumentAsArray($value, $level + 1);
 				}
 			}
+			elseif ($value instanceof AbstractInline)
+			{
+				$array[$propertyName] = $this->getInlineDocumentAsArray($value, $level + 1);
+			}
+			elseif ($value instanceof \Change\Documents\InlineArrayProperty)
+			{
+				$pv = [];
+				/** @var $subDoc AbstractInline */
+				foreach ($value as $subDoc)
+				{
+					$v = $this->getInlineDocumentAsArray($subDoc, $level + 1);
+					if ($v !== null)
+					{
+						$pv[] = $v;
+					}
+				}
+				if (count($pv)) {
+					$array[$propertyName] = $pv;
+				}
+			}
 			elseif ($value instanceof \Change\Documents\DocumentArrayProperty)
 			{
 				$pv = [];
+				/** @var $subDoc AbstractDocument */
 				foreach ($value as $subDoc)
 				{
 					if (!$this->allowedToExport($subDoc, $document, $property, $level))
@@ -421,8 +443,117 @@ class Export
 	}
 
 	/**
+	 * @param AbstractInline $document
+	 * @param integer $level
+	 * @return array|null
+	 */
+	protected function getInlineDocumentAsArray(AbstractInline $document, $level = 0)
+	{
+		$model = $document->getDocumentModel();
+		$array = ['_model' => $model->getName(), '_inline' => true];
+		foreach ($model->getProperties() as $property)
+		{
+			$propertyName = $property->getName();
+			if ($property->getLocalized() || $property->getStateless() || in_array($propertyName, $this->ignoredProperties))
+			{
+				continue;
+			}
+			$value = $property->getValue($document);
+			if ($value instanceof AbstractDocument)
+			{
+				if ($this->allowedToExport($value, $document, $property, $level))
+				{
+					$array[$propertyName] = $this->getDocumentAsArray($value, $level + 1);
+				}
+			}
+			elseif ($value instanceof \Change\Documents\DocumentArrayProperty)
+			{
+				$pv = [];
+				foreach ($value as $subDoc)
+				{
+					if (!$this->allowedToExport($subDoc, $document, $property, $level))
+					{
+						continue;
+					}
+					$v = $this->getDocumentAsArray($subDoc, $level + 1);
+					if ($v !== null)
+					{
+						$pv[] = $v;
+					}
+				}
+				if (count($pv)) {
+					$array[$propertyName] = $pv;
+				}
+			}
+			elseif ($property->getType() == \Change\Documents\Property::TYPE_DOCUMENTID)
+			{
+				$v = $this->getDocumentManager()->getDocumentInstance($value);
+				if ($v instanceof AbstractDocument && $this->allowedToExport($v, $document, $property, $level))
+				{
+					$array[$propertyName] = $this->getContextCode($v);
+				}
+				else
+				{
+					$array[$propertyName] = 0;
+				}
+			}
+			else
+			{
+				$array[$propertyName] = $this->getValueConverter()->toRestValue($value, $property->getType());
+			}
+		}
+
+		if ($document instanceof \Change\Documents\Interfaces\Localizable)
+		{
+			$refLCID = $document->getRefLCID();
+			$array['_LCID'] = [$refLCID => $this->getInlineDocumentAsLCIDArray($document, $model, $refLCID)] ;
+			foreach ($document->getLCIDArray() as $LCID)
+			{
+				if ($LCID === $refLCID)
+				{
+					continue;
+				}
+				$array['_LCID'][$LCID] = $this->getInlineDocumentAsLCIDArray($document, $model, $LCID);
+			}
+		}
+
+		$callback = $this->getOptions()->get('toArray');
+		if (is_callable($callback))
+		{
+			return call_user_func($callback, $document, $array);
+		}
+		return $array;
+	}
+
+	/**
+	 * @param AbstractInline|\Change\Documents\Interfaces\Localizable $document
+	 * @param \Change\Documents\AbstractModel $model
+	 * @param string $LCID
+	 * @return array|null
+	 */
+	protected function getInlineDocumentAsLCIDArray($document, $model, $LCID)
+	{
+		$array = [];
+		$this->getDocumentManager()->pushLCID($LCID);
+		$localizedPart = $document->getCurrentLocalization();
+		foreach ($model->getProperties() as $property)
+		{
+
+			$propertyName = $property->getName();
+			if (!$property->getLocalized() || in_array($propertyName, $this->ignoredProperties))
+			{
+				continue;
+			}
+			$value = $property->getLocalizedValue($localizedPart);
+			$array[$propertyName] = $this->getValueConverter()->toRestValue($value, $property->getType());
+		}
+		$this->getDocumentManager()->popLCID();
+		return $array;
+	}
+
+	/**
 	 * @param AbstractDocument $document
-	 * @param AbstractDocument $parentDocument
+	 * @param AbstractDocument|AbstractInline $parentDocument
 	 * @param \Change\Documents\Property $parentProperty
 	 * @param integer $level
 	 * @return boolean

@@ -133,44 +133,34 @@ class Install extends \Change\Plugins\InstallBase
 				$taxTitle->setCode('Rbs_Price_Collection_TaxTitle');
 
 
-				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $taxTitle->newCollectionItem();
 				$title->setValue('GST');
 				$title->setLabel('Goods and Services Tax');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.gst'));
-				$title->create();
 				$taxTitle->getItems()->add($title);
 
-				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $taxTitle->newCollectionItem();
 				$title->setValue('PST');
 				$title->setLabel('Provincial Sales Taxes (CANADA)');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.pst'));
-				$title->create();
 				$taxTitle->getItems()->add($title);
 
-				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $taxTitle->newCollectionItem();
 				$title->setValue('HST');
 				$title->setLabel('Harmonized Sales Tax (CANADA)');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.hst'));
-				$title->create();
 				$taxTitle->getItems()->add($title);
 
-				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $taxTitle->newCollectionItem();
 				$title->setValue('QST');
 				$title->setLabel('Quebec Sales Tax (CANADA)');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.qst'));
-				$title->create();
 				$taxTitle->getItems()->add($title);
 
-				/* @var $title \Rbs\Collection\Documents\Item */
-				$title = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Collection_Item');
+				$title = $taxTitle->newCollectionItem();
 				$title->setValue('TVAFR');
 				$title->setLabel('Taxe sur la valeur ajoutée');
 				$title->getCurrentLocalization()->setTitle($i18nManager->trans('m.rbs.price.setup.tvafr'));
-				$title->create();
 				$taxTitle->getItems()->add($title);
 
 				$taxTitle->create();
