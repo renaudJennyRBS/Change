@@ -392,16 +392,36 @@ class Correction
 			$value = $this->datas[$name];
 			if (is_array($value))
 			{
+				$array = [];
 				$dm = $this->documentManager;
-				return array_map(function($val) use($dm) {
+				foreach ($value as $val)
+				{
 					if ($val instanceof DocumentWeakReference)
 					{
-						return (($doc = $val->getDocument($dm)) === null) ? $val : $doc;
+						$doc = $val->getDocument($dm);
+						if ($doc) {
+							$array[] = $doc;
+						}
 					}
-					return $val;
-				}, $value);
+					elseif ($val instanceof InlineWeakReference)
+					{
+						$doc = $val->getDocument($dm);
+						if ($doc) {
+							$array[] = $doc;
+						}
+					}
+					else
+					{
+						$array[] = $val;
+					}
+				}
+				return $array;
 			}
 			elseif ($value instanceof DocumentWeakReference)
+			{
+				return (($doc = $value->getDocument($this->documentManager)) === null) ? $value : $doc;
+			}
+			elseif ($value instanceof InlineWeakReference)
 			{
 				return (($doc = $value->getDocument($this->documentManager)) === null) ? $value : $doc;
 			}
@@ -426,6 +446,21 @@ class Correction
 			elseif ($value instanceof AbstractDocument)
 			{
 				$value = new DocumentWeakReference($value);
+			}
+			elseif ($value instanceof AbstractInline)
+			{
+				$value = new InlineWeakReference($value);
+			}
+			elseif ($value instanceof InlineArrayProperty)
+			{
+				$data = [];
+				/** @var $inline AbstractInline */
+				foreach ($value as $inline)
+				{
+					$data[] = new InlineWeakReference($inline);
+
+				}
+				$value = $data;
 			}
 			$this->datas[$name] = $value;
 			$this->modified = true;

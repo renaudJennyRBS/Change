@@ -41,11 +41,8 @@ class MigrateItemDocuments
 		$query = $qb->query();
 		$result = $query->getResults($query->getRowsConverter()->addBoolCol('locked')
 			->addIntCol('list_id', 'item_id')->addStrCol('label', 'value', 'reflcid', 'lcid', 'title'));
-		var_export($result);
 
 		$tm->begin();
-
-
 		/** @var $collection \Rbs\Collection\Documents\Collection */
 		$collection = null;;
 		foreach ($result as $itemInfo)

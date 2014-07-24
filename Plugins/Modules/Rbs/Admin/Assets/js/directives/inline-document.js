@@ -352,4 +352,134 @@
 			}
 		};
 	}]);
+
+	angular.module('RbsChange').directive('rbsInlineActivationSection', ['RbsChange.Settings', function(Settings) {
+		return {
+			restrict: 'E',
+			templateUrl: 'Rbs/Admin/js/directives/inline-activation-section.twig',
+			link : function (scope, elm, attrs) {
+				var _timeZone = Settings.get('TimeZone');
+
+				function now () {
+					return moment.utc().tz(_timeZone);
+				}
+
+				scope.activableDocument = function() {
+					if (scope.document && scope.document.LCID)
+					{
+						return scope.document.LCID[scope.localization.currentLCID()];
+					}
+					return scope.document;
+				};
+
+				function toIso (date) {
+					return date.zone('+0000').format('YYYY-MM-DDTHH:mm:ssZZ')
+				}
+
+				function setActivationClasses() {
+					var d = scope.activableDocument();
+					if (d && d.startActivation && d.endActivation) {
+						var startAct = moment(d.startActivation);
+						var endAct = moment(d.endActivation);
+
+						if (endAct.diff(startAct, 'weeks', true) == 1) {
+							scope.activationOffsetClass = {"1w": "active", "2w" : null, "1M": null};
+						} else if (endAct.diff(startAct, 'weeks', true) == 2) {
+							scope.activationOffsetClass = {"1w": null, "2w" : "active", "1M": null};
+						} else if (endAct.diff(startAct, 'months', true) == 1) {
+							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": "active"};
+						} else {
+							scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
+						}
+					}
+					else {
+						scope.activationOffsetClass = {"1w": null, "2w" : null, "1M": null};
+					}
+				}
+
+				scope.$on('Change:TimeZoneChanged', function (event, tz) {
+					_timeZone = tz;
+				});
+
+				//2014-04-08T07:29:09+0000
+				scope.activationNow = function(){
+					scope.activableDocument().startActivation = toIso(now());
+				};
+
+				scope.activationTomorrow = function(){
+					scope.activableDocument().startActivation = toIso(now().startOf('d').add('d', 1));
+				};
+
+				scope.activationNextMonday = function(){
+					scope.activableDocument().startActivation = toIso(now().add('w', 1).startOf('w').startOf('d'));
+				};
+
+				scope.activationNextMonth = function(){
+					scope.activableDocument().startActivation = toIso(now().add('M', 1).startOf('M').startOf('d'));
+				};
+
+				scope.$watch('activableDocument().startActivation', function(newValue, oldValue){
+					if (newValue != oldValue && angular.isObject(scope.activationOffsetClass)) {
+						if (newValue) {
+							if (scope.activationOffsetClass['1w']) {
+								scope.endActivationOneWeek();
+							} else if (scope.activationOffsetClass['2w']) {
+								scope.endActivationTwoWeeks();
+							} else if (scope.activationOffsetClass['1M']) {
+								scope.endActivationOneMonth();
+							}
+						} else {
+							setActivationClasses();
+						}
+					}
+				});
+
+				scope.$watch('activableDocument().endActivation', function(){
+					setActivationClasses();
+				});
+
+				scope.endActivationOneWeek = function(toggle){
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1w']) {
+						scope.activationOffsetClass['1w'] = null;
+						return;
+					}
+					var d = scope.activableDocument();
+					d.endActivation = toIso(moment(d.startActivation).add('w', 1));
+					scope.activationOffsetClass = {"1w":"active", "2w" : null, "1M": null};
+				};
+
+				scope.endActivationTwoWeeks = function(toggle){
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['2w']) {
+						scope.activationOffsetClass['2w'] = null;
+						return;
+					}
+					var d = scope.activableDocument();
+					d.endActivation = toIso(moment(d.startActivation).add('w', 2));
+					scope.activationOffsetClass = {"1w":null, "2w" : "active", "1M": null};
+				};
+
+				scope.endActivationOneMonth = function(toggle) {
+					if (toggle && scope.activationOffsetClass && scope.activationOffsetClass['1M']) {
+						scope.activationOffsetClass['1M'] = null;
+						return;
+					}
+					var d = scope.activableDocument();
+					d.endActivation = toIso(moment(d.startActivation).add('M', 1));
+					scope.activationOffsetClass = {"1w":null, "2w" : null, "1M": "active"};
+				};
+
+				scope.endActivationTomorrow = function(){
+					scope.activableDocument().endActivation = toIso(moment().endOf('d'));
+				};
+
+				scope.endActivationEndOfWeek = function(){
+					scope.activableDocument().endActivation = toIso(moment().endOf('w'));
+				};
+
+				scope.endActivationEndOfMonth = function(){
+					scope.activableDocument().endActivation = toIso(moment().endOf('M'));
+				};
+			}
+		};
+	}]);
 })(window.jQuery);
