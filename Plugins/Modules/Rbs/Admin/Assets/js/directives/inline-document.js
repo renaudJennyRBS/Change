@@ -10,14 +10,14 @@
 	"use strict";
 	var app = angular.module('RbsChange');
 
-	app.directive('rbsInlineArray', ['RbsChange.ArrayUtils', 'RbsChange.i18n', function (ArrayUtils, i18n) {
+	app.directive('rbsInlineArray', ['RbsChange.ArrayUtils', 'RbsChange.i18n', 'RbsChange.Navigation', function (ArrayUtils, i18n, Navigation) {
 		return {
 			restrict : 'E',
 			templateUrl : 'Rbs/Admin/js/directives/inline-array.twig',
 			scope : {
 				'inlineArray' : '=',
-				'canDelete' : '=',
-				'refLCID' : '=', 'LCID' : '='
+				'checkDelete' : '=',
+				'refLcid' : '=', 'lcid' : '='
 			},
 
 			link: function(scope, element, attrs) {
@@ -25,11 +25,34 @@
 				scope.editionInfos = [];
 				scope.newModel = attrs['newModel'];
 
-				if (!angular.isFunction(scope.canDelete)) {
+				scope.$on('Navigation.saveContext', function(event, args) {
+					args.context.savedData(attrs.inlineArray, {editionInfos: scope.editionInfos});
+				});
+
+				var currentContext = Navigation.getCurrentContext();
+				if (currentContext) {
+					var data = currentContext.savedData(attrs.inlineArray);
+					if (data) {
+						scope.editionInfos = data.editionInfos;
+					}
+				}
+
+				if (angular.isFunction(scope.checkDelete)) {
+					scope.canDelete = scope.checkDelete;
+
+				} else {
 					scope.canDelete = function (inline) {
 						return true;
 					}
 				}
+
+				scope.getContextKey = function(index) {
+					return scope.newModel + '_' + index;
+				};
+
+				scope.inTranslation = function() {
+					return scope.lcid != null && scope.lcid != scope.refLcid;
+				};
 
 				scope.getIndex = function(inline) {
 					if (angular.isArray(scope.inlineArray)) {
@@ -137,6 +160,78 @@
 		};
 	}]);
 
+	app.directive('rbsInlineSingle', ['RbsChange.i18n', 'RbsChange.Navigation', function (i18n, Navigation) {
+		return {
+			restrict : 'E',
+			templateUrl : 'Rbs/Admin/js/directives/inline-single.twig',
+			scope : {
+				'inline' : '=',
+				'refLcid' : '=', 'lcid' : '='
+			},
+
+			link: function(scope, element, attrs) {
+
+				scope.edition = {"edit":false};
+				scope.newModel = attrs['newModel'];
+
+				scope.$on('Navigation.saveContext', function(event, args) {
+					args.context.savedData(attrs.inline, {edition: scope.edition});
+				});
+
+				var currentContext = Navigation.getCurrentContext();
+				if (currentContext) {
+					var data = currentContext.savedData(attrs.inline);
+					if (data) {
+						scope.edition = data.edition;
+					}
+				}
+
+				scope.getContextKey = function() {
+					return scope.newModel;
+				};
+
+				scope.inTranslation = function() {
+					return scope.lcid != null && scope.lcid != scope.refLcid;
+				};
+
+				scope.isEmpty = function() {
+					return !scope.inline;
+				};
+
+				scope.inlineLabel = function() {
+					if (scope.inline && scope.inline.label) {
+						return scope.inline.label;
+					}
+					return i18n.trans('m.rbs.admin.admin.edit|ucf');
+				};
+
+				scope.inEdition = function() {
+					return scope.edition.edit;
+				};
+
+				scope.addItem = function() {
+					if (scope.newModel) {
+						scope.inline = {"model": scope.newModel};
+						scope.editInline();
+					}
+				};
+
+				scope.editInline = function() {
+					scope.edition.edit = true;
+				};
+
+				scope.closeEditor = function() {
+					scope.edition.edit = false;
+				};
+
+				scope.deleteInline = function() {
+					scope.edition.edit = false;
+					scope.inline = null;
+				};
+			}
+		};
+	}]);
+
 	var LCIDArray = null;
 
 	function loadLCID(REST) {
@@ -151,17 +246,43 @@
 		});
 	}
 
-	app.directive('rbsInlineDocument', ['$http', '$templateCache', '$compile', 'RbsChange.REST',
-		function ($http, $templateCache, $compile, REST) {
+	app.directive('rbsInlineDocument', ['$http', '$templateCache', '$compile', 'RbsChange.REST', 'RbsChange.Navigation',
+		function ($http, $templateCache, $compile, REST, Navigation) {
 		return {
 			restrict : 'E',
 			scope : {
 				'document' : '=',
-				'refLCID' : '=', 'LCID' : '='
+				'refLcid' : '=', 'lcid' : '='
 			},
 			link: function(scope, element, attrs) {
-				scope.localization = {"refLCID": scope.refLCID, "LCID": scope.LCID};
 				scope.modelInfo = null;
+				scope.localization = {
+					"refLCID": scope.refLcid,
+					"LCID" : scope.lcid,
+					"inTranslation": function() {
+						return this.LCID != null && this.LCID != this.refLCID;
+					},
+					"currentLCID": function() {
+						return this.inTranslation() ? this.LCID : this.refLCID;
+					}
+				};
+
+				scope.getContextKey = function () {
+					return attrs.contextKey || 'rbsInlineDocument';
+				};
+
+				scope.$on('Navigation.saveContext', function(event, args) {
+					args.context.savedData(scope.getContextKey(), {localization: scope.localization, modelInfo: scope.modelInfo});
+				});
+
+				var currentContext = Navigation.getCurrentContext();
+				if (currentContext) {
+					var data = currentContext.savedData(scope.getContextKey());
+					if (data) {
+						scope.localization = data.localization;
+						scope.modelInfo = data.modelInfo;
+					}
+				}
 
 				scope.LCIDArray = function() {
 					if (LCIDArray === null) {
@@ -196,8 +317,7 @@
 						if (!scope.modelInfo) {
 							REST.modelInfo(model).then(function (modelInfo) {
 								scope.modelInfo = modelInfo;
-								if (modelInfo.metas.localized)
-								{
+								if (modelInfo.metas.localized) {
 									scope.LCIDArray();
 								}
 							});
@@ -208,23 +328,27 @@
 					}
 				});
 
-				scope.$watch('document.refLCID', function (refLCID) {
+				scope.$watch('refLcid', function (refLCID) {
 					scope.localization.refLCID = refLCID;
-					scope.localization.LCID = refLCID;
+					scope.defineLocalization(refLCID);
 				});
 
-				scope.$watch('localization.LCID', function (LCID) {
-					if (LCID) {
-						if (scope.document) {
-							if (!angular.isObject(scope.document['LCID'])) {
-								scope.document['LCID'] = {};
-							}
-							if (!angular.isObject(scope.document['LCID'][LCID])) {
-								scope.document['LCID'][LCID] = {"LCID": LCID};
-							}
+				scope.$watch('lcid', function (lcid) {
+					scope.localization.LCID = lcid;
+					scope.defineLocalization(lcid);
+				});
+
+				scope.defineLocalization = function(LCID) {
+					if (LCID && scope.document) {
+						var d = scope.document;
+						if (!angular.isObject(d['LCID']) || angular.isArray(d['LCID']) ) {
+							d['LCID'] = {};
+						}
+						if (!angular.isObject(d['LCID'][LCID])) {
+							d['LCID'][LCID] = {"LCID": LCID};
 						}
 					}
-				})
+				}
 			}
 		};
 	}]);

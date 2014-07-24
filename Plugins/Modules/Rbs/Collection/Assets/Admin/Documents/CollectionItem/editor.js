@@ -20,14 +20,21 @@
 					}
 				});
 
+				//When loading item
+				scope.$watch('document.refLCID', function (refLCID) {
+					scope.localization.refLCID = refLCID;
+					scope.localization.LCID = refLCID;
+				});
+
 				scope.$watch('localization.LCID', function (LCID) {
-					if (scope.document && LCID) {
+					scope.defineLocalization(LCID);
+					if (LCID && scope.document) {
 						var d = scope.document;
-						if (d.LCID && d.LCID[LCID] && !d.LCID[LCID].title) {
+						if (d['LCID'] && d['LCID'][LCID] && !d.LCID[LCID].title) {
 							d.LCID[LCID].title = d.label;
 						}
 					}
-				});
+				})
 			}
 		};
 	}

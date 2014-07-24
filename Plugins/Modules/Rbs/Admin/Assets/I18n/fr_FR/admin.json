@@ -450,6 +450,9 @@
 	"please_wait":{
 		"message":"Merci de bien vouloir patienter<br \/>quelques secondes :)"
 	},
+	"no_defined":{
+		"message":"non défini"
+	},
 	"close":{
 		"message":"fermer"
 	},
