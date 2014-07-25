@@ -93,8 +93,38 @@
 								{{ i18n('m.rbs.admin.admin.wysiwyg_paragraph', ['ucf']) }}
 							</a>
 						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdBlockQuote()">
+								{{ i18n('m.rbs.admin.admin.wysiwyg_quote', ['ucf']) }}
+							</a>
+						</li>
+						<li>
+							<a tabindex="-1" href="javascript:;" data-ng-click="mdPre()">
+								{{ i18n('m.rbs.admin.admin.wysiwyg_pre', ['ucf']) }}
+							</a>
+						</li>
 					</ul>
 				</div>
+
+				<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_lists', ['ucf']) }}">
+					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_unordered_list', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="mdUnorderedList()">
+						<i class="icon-list-ul"></i>
+					</button>
+					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_ordered_list', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="mdOrderedList()">
+						<i class="icon-list-ol"></i>
+					</button>
+					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_indent', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="mdIndent()">
+						<i class="icon-indent-right"></i>
+					</button>
+					<button type="button" title="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_outdent', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="mdOutdent()">
+						<i class="icon-indent-left"></i>
+					</button>
+				</div>
+
 				<div class="btn-group" data-caption="{{ i18nAttr('m.rbs.admin.admin.wysiwyg_format', ['ucf']) }}">
 					<button type="button" data-ng-disabled="useTextarea" title="{{ i18nAttr('m.rbs.admin.admin.bold', ['ucf']) }}"
 						class="btn btn-default btn-sm btn-icon" data-ng-click="mdBold()"><i class="icon-bold"></i></button>

@@ -553,10 +553,7 @@
 						};
 
 						scope.mdHeading = function(level) {
-							var range = editor.getSelectionRange(),
-								line = session.getLine(range.start.row),
-								c = 0, i,
-								newRange, headingMarker = '';
+							var range = editor.getSelectionRange(), i, headingMarker = '';
 
 							// Prepare heading marker.
 							for (i = 0; i < level; i++) {
@@ -566,30 +563,217 @@
 								headingMarker += ' ';
 							}
 
-							// Check if the line containing the selection is already a heading or not.
-							while (line.charAt(c) === '#') {
+							replaceMarker(range, headingMarker);
+						};
+
+						scope.mdOrderedList = function() {
+							var range = editor.getSelectionRange();
+							replaceMarker(range, '{LINE_NUMBER}. ');
+						};
+
+						scope.mdUnorderedList = function() {
+							var range = editor.getSelectionRange();
+							replaceMarker(range, '* ');
+						};
+
+						scope.mdPre = function() {
+							var range = editor.getSelectionRange();
+							replaceMarker(range, '    ');
+						};
+
+						scope.mdBlockQuote = function() {
+							var range = editor.getSelectionRange();
+							replaceMarker(range, '> ');
+						};
+
+						function replaceMarker(range, newMarker) {
+							var line, endColumn, lineNumber = 0;
+							var originalRange = angular.copy(range);
+							var startRow = range.start.row, endRow = range.end.row;
+							for (var i = startRow; i <= endRow; i++) {
+								line = session.getLine(i);
+
+								var startC, endC;
+								if (newMarker == '> ') {
+									startC = 0;
+									endC = blockQuoteMarkerLength(line, 0);
+								}
+								else {
+									startC = blockQuoteMarkerLength(line, 0);
+									endC = otherMarkerLength(line, startC);
+								}
+
+								// Replace existing marker with the new one.
+								var newRange = angular.copy(originalRange);
+								newRange.setStart(i, startC);
+								newRange.setEnd(i, endC);
+								if (endC < line.length) {
+									lineNumber++;
+									session.replace(newRange, newMarker.replace('{LINE_NUMBER}', lineNumber));
+								}
+								else {
+									lineNumber = 0;
+									session.replace(newRange, '');
+								}
+							}
+
+							line = session.getLine(endRow);
+							endColumn = line.length;
+
+							line = session.getLine(endRow + 1);
+							if (line.length > 0) {
+								session.insert({'row': endRow + 1, 'column': 0}, "\n");
+							}
+
+							line = session.getLine(startRow - 1);
+							if (line.length > 0) {
+								session.insert({'row': startRow, 'column': 0}, "\n");
+								startRow++;
+								endRow++;
+							}
+
+							range.setStart(startRow, 0);
+							range.setEnd(endRow, endColumn);
+							session.getSelection().setSelectionRange(range);
+						}
+
+						function otherMarkerLength(line, c) {
+							// Ordered list.
+							var result = orderedListMarkerLength(line, c);
+							if (result > c) {
+								return result;
+							}
+
+							// Unordered list.
+							result = unorderedListMarkerLength(line, c);
+							if (result > c) {
+								return result;
+							}
+
+							// Title.
+							result = titleMarkerLength(line, c);
+							if (result > c) {
+								return result;
+							}
+
+							return c;
+						}
+
+						function blockQuoteMarkerLength(line, c) {
+							if (line.charAt(c) === '>') {
+								var tmpC = 0;
+								while (line.charAt(tmpC) === '>') {
+									tmpC++;
+								}
+								if (line.charAt(tmpC) === ' ') {
+									c += tmpC + 1;
+								}
+							}
+							return c;
+						}
+
+						function orderedListMarkerLength(line, c) {
+							while (line.charAt(c) === ' ') {
 								c++;
 							}
-							if (c > 0) {
-								// Replace existing heading marker with the new one.
-								newRange = angular.copy(range);
-								newRange.start.column = 0;
-								newRange.end.row = newRange.start.row;
+
+							if (parseInt(line.charAt(c)) == line.charAt(c)) {
+								var tmpC = 0;
+								while (parseInt(line.charAt(c + tmpC)) == line.charAt(c + tmpC)) {
+									tmpC++;
+								}
+								if (line.charAt(c + tmpC) === '.' && line.charAt(c + tmpC + 1) === ' ') {
+									c += tmpC + 2;
+								}
+							}
+
+							return c;
+						}
+
+						function unorderedListMarkerLength(line, c) {
+							while (line.charAt(c) === ' ') {
+								c++;
+							}
+
+							if (line.charAt(c) === '*' && line.charAt(c + 1) === ' ') {
+								return c + 2;
+							}
+
+							return c;
+						}
+
+						function titleMarkerLength(line, c) {
+							while (line.charAt(c) === ' ') {
+								c++;
+							}
+
+							if (line.charAt(c) === '#') {
+								while (line.charAt(c) === '#') {
+									c++;
+								}
 								if (line.charAt(c) === ' ') {
 									c++;
 								}
-								newRange.end.column = c;
-								session.replace(newRange, headingMarker);
-
-								// FIXME : fix replacement of # at the end of the line
-
 							}
-							else if (range.isEmpty()) {
-								session.insert({'row': range.start.row, 'column': 0}, headingMarker);
+
+							return c;
+						}
+
+						function replaceInRange(range, line, start, end, replacement) {
+							var newRange = angular.copy(range);
+							newRange.setStart(line, start);
+							newRange.setEnd(line, end);
+							session.replace(newRange, replacement);
+						}
+
+						scope.mdIndent = function() {
+							var range = editor.getSelectionRange();
+							var startRow = range.start.row, endRow = range.end.row;
+							for (var i = startRow; i <= endRow; i++) {
+								var line = session.getLine(i);
+
+								// Block quote case.
+								if (blockQuoteMarkerLength(line, 0)) {
+									replaceInRange(range, i, 0, 0, '>');
+								}
+								// Lists.
+								else if (orderedListMarkerLength(line, 0) > 0 || unorderedListMarkerLength(line, 0) > 0) {
+									replaceInRange(range, i, 0, 0, '    ');
+								}
 							}
-							else {
-								// Create new heading with the selection.
-								editor.insert("\n\n" + headingMarker + session.getTextRange(range) + "\n\n");
+						};
+
+						scope.mdOutdent = function() {
+							var range = editor.getSelectionRange();
+							var line, markerLength;
+							var startRow = range.start.row, endRow = range.end.row;
+							for (var i = startRow; i <= endRow; i++) {
+								line = session.getLine(i);
+
+								// Block quote case.
+								markerLength = blockQuoteMarkerLength(line, 0);
+								console.log(line, 'block quote', markerLength);
+								if (markerLength) {
+									if (markerLength > 2) {
+										markerLength = 1;
+									}
+									replaceInRange(range, i, 0, markerLength, '');
+									continue;
+								}
+
+								// List.
+								markerLength = orderedListMarkerLength(line, 0);
+								console.log(line, 'ol', markerLength);
+								if (!markerLength) {
+									markerLength = unorderedListMarkerLength(line, 0);
+									console.log(line, 'ul', markerLength);
+								}
+								if (markerLength) {
+									if (markerLength > 4 && line.charAt(3) == ' ') {
+										markerLength = 4;
+									}
+									replaceInRange(range, i, 0, markerLength, '');
+								}
 							}
 						};
 
