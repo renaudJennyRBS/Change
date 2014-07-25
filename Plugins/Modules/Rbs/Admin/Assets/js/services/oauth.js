@@ -312,6 +312,7 @@
 							oauthData.tokenKey = oauthObject.getAccessTokenKey();
 							oauthData.tokenSecret = oauthObject.getAccessTokenSecret();
 							delete oauthData.temporary;
+							localStorageService.clearAll();
 							localStorageService.add(cfgLocalStorageKeyName, JSON.stringify(oauthData));
 
 							// Tells the rest of the world that the authentication is successful :)
@@ -330,7 +331,7 @@
 				 */
 				'logout' : function () {
 					oauthData = {};
-					localStorageService.remove(cfgLocalStorageKeyName);
+					localStorageService.clearAll();
 				},
 
 				'hasOAuthData' : function() {
