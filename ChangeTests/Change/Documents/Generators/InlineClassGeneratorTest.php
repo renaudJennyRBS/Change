@@ -408,7 +408,7 @@ class InlineClassGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertEquals(1, $callBackCount);
 		$this->assertTrue($instance->isModified());
 
-		$this->assertEquals(new \DateTime('2014-07-17T00:00:00+0000'), $instance->getPDate());
+		$this->assertEquals('2014-07-17 00:00:00', $instance->getPDate()->format('Y-m-d H:i:s'));
 		$instance->setPDate(new \DateTime('2014-07-17T00:00:00+0000'));
 		$this->assertEquals(1, $callBackCount);
 		$instance->setPDate('2014-07-17');
@@ -421,7 +421,7 @@ class InlineClassGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 		$instance->getDocumentModel()->getProperty('pDate')->setDefaultValue($date2);
 		$instance->setDefaultValues();
 		$this->assertEquals(2, $callBackCount);
-		$this->assertEquals(new \DateTime('2014-07-18T00:00:00+0000'), $instance->getPDate());
+		$this->assertEquals('2014-07-18 00:00:00', $instance->getPDate()->format('Y-m-d H:i:s'));
 		$this->assertFalse($instance->isModified());
 
 		$dbData = $instance->dbData();
@@ -431,7 +431,7 @@ class InlineClassGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$dbData['pDate'] = '2014-07-17';
 		$instance->dbData($dbData);
-		$this->assertEquals(new \DateTime('2014-07-17T00:00:00+0000'), $instance->getPDate());
+		$this->assertEquals('2014-07-17 00:00:00', $instance->getPDate()->format('Y-m-d H:i:s'));
 		$this->assertEquals(2, $callBackCount);
 
 		$instance->cleanUp();
@@ -1286,7 +1286,7 @@ class InlineClassGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertFalse($localizedPart->isEmpty());
 		$this->assertEquals(1, $callBackCount);
 
-		$this->assertEquals(new \DateTime('2014-07-17T00:00:00+0000'), $localizedPart->getLDate());
+		$this->assertEquals('2014-07-17 00:00:00', $localizedPart->getLDate()->format('Y-m-d H:i:s'));
 
 		$localizedPart->setLDate(new \DateTime('2014-07-17T16:31:33+0000'));
 		$this->assertEquals(1, $callBackCount);
@@ -1302,7 +1302,7 @@ class InlineClassGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 		$instance->resetCurrentLocalized();
 		$localizedPart = $instance->getRefLocalization();
 
-		$this->assertEquals(new \DateTime('2014-07-18T00:00:00+0000'), $localizedPart->getLDate());
+		$this->assertEquals('2014-07-18 00:00:00', $localizedPart->getLDate()->format('Y-m-d H:i:s'));
 		$this->assertEquals(1, $callBackCount);
 		$this->assertFalse($localizedPart->isModified());
 
@@ -1321,7 +1321,7 @@ class InlineClassGeneratorTest extends \ChangeTests\Change\TestAssets\TestCase
 		$localizedPart = $instance->getRefLocalization();
 		$this->assertEquals(2, $callBackCount);
 		$this->assertFalse($localizedPart->isModified());
-		$this->assertEquals(new \DateTime('2014-07-18T00:00:00+0000'), $localizedPart->getLDate());
+		$this->assertEquals('2014-07-18 00:00:00', $localizedPart->getLDate()->format('Y-m-d H:i:s'));
 
 		$instance->cleanUp();
 	}
