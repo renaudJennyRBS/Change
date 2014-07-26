@@ -215,6 +215,9 @@
 	"productlist_create":{
 		"message":"ajouter une liste de produits"
 	},
+	"productlist_edit":{
+		"message":"editer la liste de produits"
+	},
 	"sectionproductlist_create":{
 		"message":"ajouter une liste de produits synchronisée avec une section"
 	},
