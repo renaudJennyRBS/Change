@@ -35,6 +35,7 @@ class PathTemplateComposer
 				$pathTemplate = $modelConfigurationLocalized->getPathTemplate();
 				if ($pathTemplate)
 				{
+					$documentManager = $applicationServices->getDocumentManager();
 					if (preg_match_all('/\{([a-zA-Z0-9\.]+)\}/', $pathTemplate, $matches, PREG_SET_ORDER))
 					{
 						foreach ($matches as $match)
@@ -45,8 +46,7 @@ class PathTemplateComposer
 							$context = $document;
 							if ($varPath[$varPathIndex] == 'section')
 							{
-								$context = $applicationServices->getDocumentManager()
-									->getDocumentInstance($pathRule->getSectionId());
+								$context = $documentManager->getDocumentInstance($pathRule->getSectionId());
 								$varPathIndex = 1;
 								if (!isset($varPath[$varPathIndex]))
 								{
@@ -62,7 +62,7 @@ class PathTemplateComposer
 								}
 							}
 
-							$value = $this->resolveVarPath($varPath, $varPathIndex, $context);
+							$value = $this->resolveVarPath($varPath, $varPathIndex, $context, $documentManager, $applicationServices->getTreeManager());
 							$value = $this->normalizePathValue($value);
 							$pathTemplate = str_replace($match[0], $value, $pathTemplate);
 						}
@@ -83,9 +83,11 @@ class PathTemplateComposer
 	 * @param string[] $varPath
 	 * @param integer $varPathIndex
 	 * @param mixed $context
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Documents\TreeManager $treeManager
 	 * @return mixed
 	 */
-	protected function resolveVarPath(array $varPath, $varPathIndex, $context)
+	protected function resolveVarPath(array $varPath, $varPathIndex, $context, $documentManager, $treeManager)
 	{
 		if ($context === null || !isset($varPath[$varPathIndex]))
 		{
@@ -95,23 +97,30 @@ class PathTemplateComposer
 		$propertyName = $varPath[$varPathIndex];
 		if ($context instanceof \Change\Documents\AbstractDocument)
 		{
-			$model = $context->getDocumentModel();
-			/** @var $property \Change\Documents\Property */
-			$property = $model->getProperty($propertyName);
-			if ($property)
+			if ($propertyName === 'ancestorsTitles' && $context instanceof \Rbs\Website\Documents\Topic)
 			{
-				$context = $property->getValue($context);
+				$context = $this->buildAncestorsTitles($context, $documentManager, $treeManager);
 			}
 			else
 			{
-				$callable = [$context, 'get' . ucfirst($propertyName)];
-				if (is_callable($callable))
+				$model = $context->getDocumentModel();
+				/** @var $property \Change\Documents\Property */
+				$property = $model->getProperty($propertyName);
+				if ($property)
 				{
-					$context = call_user_func($callable);
+					$context = $property->getValue($context);
 				}
 				else
 				{
-					$context = null;
+					$callable = [$context, 'get' . ucfirst($propertyName)];
+					if (is_callable($callable))
+					{
+						$context = call_user_func($callable);
+					}
+					else
+					{
+						$context = null;
+					}
 				}
 			}
 		}
@@ -146,9 +155,37 @@ class PathTemplateComposer
 		$varPathIndex++;
 		if ($varPathIndex < count($varPath))
 		{
-			return $this->resolveVarPath($varPath, $varPathIndex, $context);
+			return $this->resolveVarPath($varPath, $varPathIndex, $context, $documentManager, $treeManager);
 		}
 		return $context;
+	}
+
+	/**
+	 * @param \Rbs\Website\Documents\Topic $topic
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Documents\TreeManager $treeManager
+	 * @return string|null
+	 */
+	public function buildAncestorsTitles(\Rbs\Website\Documents\Topic $topic,
+		\Change\Documents\DocumentManager $documentManager, \Change\Documents\TreeManager $treeManager)
+	{
+		$node = $treeManager->getNodeByDocument($topic);
+		$titles = [];
+		if ($node)
+		{
+			$ids = $node->getAncestorIds();
+			if (count($ids) > 2) {
+				foreach (array_slice($ids, 2) as $topicId)
+				{
+					$ancestorTopic = $documentManager->getDocumentInstance($topicId);
+					if ($ancestorTopic instanceof \Rbs\Website\Documents\Topic)
+					{
+						$titles[] = $ancestorTopic->getCurrentLocalization()->getTitle();
+					}
+				}
+			}
+		}
+		return count($titles) ? implode('/', $titles) : null;
 	}
 
 	/**
@@ -214,7 +251,7 @@ class PathTemplateComposer
 
 		$i18nManager = $applicationServices->getI18nManager();
 		$variables['section.title'] = $i18nManager->trans('m.rbs.seo.admin.meta_variable_section_title', ['ucf']);
-
+		$variables['section.ancestorsTitles'] = $i18nManager->trans('m.rbs.seo.admin.meta_variable_section_ancestors_titles', ['ucf']);
 		$modelName = $event->getParam('modelName');
 		$model = $applicationServices->getModelManager()->getModelByName($modelName);
 		if ($model)
