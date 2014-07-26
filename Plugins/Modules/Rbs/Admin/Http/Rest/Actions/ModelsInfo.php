@@ -46,6 +46,10 @@ class ModelsInfo
 		foreach ($modelManager->getModelsNames() as $modelName)
 		{
 			$model = $modelManager->getModelByName($modelName);
+			if (!$model)
+			{
+				continue;
+			}
 			$pluginKey = strtolower('m.' . $model->getVendorName() . '.' . $model->getShortModuleName() . '.admin.module_name');
 			$pluginLabel = $i18n->trans($pluginKey);
 			if ($pluginKey == $pluginLabel) {
