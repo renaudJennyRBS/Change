@@ -8,7 +8,6 @@
  */
 namespace Rbs\Elasticsearch\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
 
 /**
@@ -23,6 +22,6 @@ class ShortSearchInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.shortsearch', $ucf));
-		$this->addTTL(3600, $i18nManager->trans('"m.rbs.admin.admin.ttl', $ucf));
+		$this->addTTL(3600);
 	}
 }

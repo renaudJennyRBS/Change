@@ -30,6 +30,6 @@ class ResultInformation extends Information
 		$this->addInformationMeta('showModelFacet', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_show_model_facet', $ucf));
 
-		$this->addTTL(0)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
+		$this->addTTL(0);
 	}
 }
