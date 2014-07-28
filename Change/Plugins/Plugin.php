@@ -379,20 +379,29 @@ class Plugin
 	 */
 	public function getAbsolutePath()
 	{
+		return $this->getWorkspace()->composeAbsolutePath($this->getRelativePath());
+	}
+
+	/**
+	 *
+	 */
+	public function getRelativePath()
+	{
 		if (!$this->isProjectPath())
 		{
 			if ($this->isModule())
 			{
-				return $this->getWorkspace()->pluginsModulesPath($this->vendor, $this->shortName);
+				return $this->getWorkspace()->pluginsModulesRelativePath($this->vendor, $this->shortName);
 			}
-			return $this->getWorkspace()->pluginsThemesPath($this->vendor, $this->shortName);
+			return $this->getWorkspace()->pluginsThemesRelativePath($this->vendor, $this->shortName);
 		}
 		if ($this->isModule())
 		{
-			return $this->getWorkspace()->projectModulesPath('Project', $this->shortName);
+			return $this->getWorkspace()->projectModulesRelativePath('Project', $this->shortName);
 		}
-		return $this->getWorkspace()->projectThemesPath('Project', $this->shortName);
+		return $this->getWorkspace()->projectThemesRelativePath('Project', $this->shortName);
 	}
+
 
 	/**
 	 * @api

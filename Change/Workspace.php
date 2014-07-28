@@ -67,7 +67,7 @@ class Workspace
 	}
 
 	/**
-	 * Build a path relative to the project's modules folder (App/Modules/)
+	 * Build an absolute path to the project's modules folder (App/Modules/)
 	 *
 	 * @api
 	 * @return string
@@ -80,7 +80,20 @@ class Workspace
 	}
 
 	/**
-	 * Build a path relative to the plugins modules folder (Plugins/Modules/)
+	 * Build a relative path to the project's modules folder (App/Modules/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function projectModulesRelativePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'App', 'Modules');
+		return call_user_func_array(array($this, 'composePath'), $args);
+	}
+
+	/**
+	 * Build an absolute path to the plugins modules folder (Plugins/Modules/)
 	 *
 	 * @api
 	 * @return string
@@ -93,7 +106,20 @@ class Workspace
 	}
 
 	/**
-	 * Build a path relative to the project's themes folder (App/Themes/)
+	 * Build a relative path to the plugins modules folder (Plugins/Modules/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function pluginsModulesRelativePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'Plugins', 'Modules');
+		return call_user_func_array(array($this, 'composePath'), $args);
+	}
+
+	/**
+	 * Build an absolute path to the project's themes folder (App/Themes/)
 	 *
 	 * @api
 	 * @return string
@@ -105,8 +131,22 @@ class Workspace
 		return call_user_func_array(array($this, 'appPath'), $args);
 	}
 
+
 	/**
-	 * Build a path relative to the plugins themes folder (Plugins/Themes/)
+	 * Build a relative path to the project's themes folder (App/Themes/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function projectThemesRelativePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'App', 'Themes');
+		return call_user_func_array(array($this, 'composePath'), $args);
+	}
+
+	/**
+	 * Build an absolute path to the plugins themes folder (Plugins/Themes/)
 	 *
 	 * @api
 	 * @return string
@@ -116,6 +156,19 @@ class Workspace
 		$args = func_get_args();
 		array_unshift($args, 'Plugins', 'Themes');
 		return call_user_func_array(array($this, 'projectPath'), $args);
+	}
+
+	/**
+	 * Build a relative path to the plugins themes folder (Plugins/Themes/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function pluginsThemesRelativePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'Plugins', 'Themes');
+		return call_user_func_array(array($this, 'composePath'), $args);
 	}
 	
 	/**
