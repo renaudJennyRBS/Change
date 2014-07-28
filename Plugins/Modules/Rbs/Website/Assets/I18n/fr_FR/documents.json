@@ -124,5 +124,8 @@
 	},
 	"text":{
 		"message":"texte"
+	},
+	"text_text":{
+		"message":"texte"
 	}
 }

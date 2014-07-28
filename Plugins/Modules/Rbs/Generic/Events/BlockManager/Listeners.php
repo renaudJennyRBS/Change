@@ -35,6 +35,7 @@ class Listeners implements ListenerAggregateInterface
 		new  RegisterByBlockName('Rbs_Website_Exception', true, $events);
 		new  RegisterByBlockName('Rbs_Website_Error', true, $events);
 		new  RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
+		new  RegisterByBlockName('Rbs_Website_Text', true, $events);
 
 		new  RegisterByBlockName('Rbs_User_Login', true, $events);
 		new  RegisterByBlockName('Rbs_User_AccountShort', true, $events);
