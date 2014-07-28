@@ -1,7 +1,7 @@
 (function() {
 	"use strict";
 
-	function rbsDocumentEditorRbsCollectionCollectionEdit(ArrayUtils) {
+	function rbsDocumentEditorRbsCollectionCollectionEdit() {
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentEditorBase',
@@ -19,7 +19,5 @@
 			}
 		};
 	}
-
-	rbsDocumentEditorRbsCollectionCollectionEdit.$inject = ['RbsChange.ArrayUtils'];
 	angular.module('RbsChange').directive('rbsDocumentEditorRbsCollectionCollectionEdit', rbsDocumentEditorRbsCollectionCollectionEdit);
 })();

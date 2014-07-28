@@ -15,37 +15,9 @@
 	 * Attach handlers:
 	 * - create new tags in a Document's Editor (pre-save).
 	 * - affect tags in a Document's Editor (post-save).
-	 * - build predicates for "filter:hasTag" in <rbs-document-list/>.
 	 */
 	app.run(['RbsChange.TagService', 'RbsChange.Events', 'RbsChange.i18n', '$rootScope', '$q', '$timeout', function (TagService, Events, i18n, $rootScope, $q, $timeout)
 	{
-		// Filter 'hasTag' for <rbs-document-list/>.
-		$rootScope.$on(Events.DocumentListApplyFilter, function (event, args) {
-			var	filter = args.filter,
-				predicates = args.predicates,
-				p, filterName, filterValue, tags;
-
-			p = filter.indexOf(':');
-			if (p === -1) {
-				return;
-			}
-
-			filterName = filter.substring(0, p);
-			if (filterName !== 'hasTag') {
-				return;
-			}
-
-			filterValue = filter.substring(p+1);
-			tags = filterValue.split(/,/);
-			for (p=0 ; p<tags.length ; p++) {
-				predicates.push({
-					"op"  : "hasTag",
-					"tag" : parseInt(tags[p], 10)
-				});
-			}
-		});
-
-
 		function affectTagToDocuments (tag, documents)
 		{
 			var promises = [];

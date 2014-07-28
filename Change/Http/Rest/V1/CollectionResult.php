@@ -33,17 +33,15 @@ class CollectionResult extends \Change\Http\Result
 	 */
 	protected $limit = 10;
 
-
 	/**
 	 * @var string
 	 */
 	protected $sort = 'id';
 
-
 	/**
 	 * @var boolean
 	 */
-	protected $desc = false;
+	protected $desc = true;
 
 	/**
 	 * @var integer

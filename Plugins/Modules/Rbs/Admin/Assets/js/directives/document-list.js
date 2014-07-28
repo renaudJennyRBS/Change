@@ -74,7 +74,8 @@
 	 *     </div>
 	 * </pre>
 	 */
-	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Actions, NotificationCenter, Settings, Events, PaginationPageSizes, Navigation, ErrorFormatter)
+	function documentListDirectiveFn ($q, $rootScope, $location, $cacheFactory, i18n, REST, Utils, ArrayUtils, Actions,
+		NotificationCenter, Settings, Events, PaginationPageSizes, Navigation, ErrorFormatter, localStorageService)
 	{
 		/**
 		 * Build the HTML used in the "Quick actions" toolbar.
@@ -1213,25 +1214,60 @@
 						});
 					}
 
-					function getDefaultSortColumn () {
-						return attrs.defaultSortColumn || 'modificationDate';
+					function getStoredSort() {
+						if (attrs.model && scope.filterCollection) {
+							var local = localStorageService.get('list_sort_' + attrs.model);
+							if (local) {
+								return angular.fromJson(local);
+							}
+						}
+						return null;
 					}
 
-					function getDefaultSortDir () {
-						return attrs.defaultSortDir || (getDefaultSortColumn() === 'modificationDate' ? 'desc' : 'asc');
+					function removeStoredSort() {
+						if (attrs.model && scope.filterCollection) {
+							localStorageService.remove('list_sort_' + attrs.model);
+						}
 					}
 
-					scope.sort =  {
-						'column'     : getDefaultSortColumn(),
-						'descending' : getDefaultSortDir() === 'desc'
-					};
+					function saveStoredSort(sort) {
+						if (attrs.model && scope.filterCollection) {
+							if (!sort) {
+								removeStoredSort();
+							} else {
+								localStorageService.add('list_sort_' + attrs.model, angular.toJson(sort));
+							}
+						}
+					}
+
+					function getEmptySort() {
+						return {column: 'id', descending: true, offset: 0};
+					}
+
+					function getDefaultSort() {
+						var sort = getStoredSort();
+						if (sort) {
+							return sort;
+						}
+						return getEmptySort();
+					}
+
+
+
+					scope.sort = getDefaultSort();
 					scope.localSortColumn = null;
 
 					scope.headerUrl = function (sortProperty) {
 						var search = angular.copy($location.search());
 						search.sort = sortProperty;
 						if (scope.sort.column === sortProperty) {
-							search.desc = ! scope.sort.descending;
+							if (!scope.sort.descending) {
+								search.desc = true;
+							} else {
+								var emptySort = getEmptySort();
+								search.sort = emptySort.column;
+								search.desc = emptySort.descending ? 'desc' : 'asc';
+							}
 						} else {
 							search.desc = false;
 						}
@@ -1272,7 +1308,6 @@
 					//
 					// Resources loading.
 					//
-
 					function setExternalCollection (collection) {
 						if (angular.isObject(collection) && collection.pagination && collection.resources) {
 							documentCollectionLoadedCallback(collection);
@@ -1341,29 +1376,20 @@
 						// TODO Reorganize this to use a query for tree and/or tag
 						if (angular.isObject(queryObject) && angular.isObject(queryObject.where)) {
 							promise = REST.query(prepareQueryObject(queryObject), {'column': columnNames});
-						} else {
-							if (scope.currentFilter) {
-								var query = {
-									"model" : attrs.model,
-									"where" : {
-										"and" : []
-									}
-								};
-								$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
-									"filter" : scope.currentFilter,
-									"predicates" : query.where.and
-								});
-								promise = REST.query(prepareQueryObject(query), {'column': columnNames});
-							} else {
-								if (elm.is('[collection-url]')) {
-									if (attrs.collectionUrl) {
-										promise = REST.collection(scope.collectionUrl, params);
-									}
-								} else if (attrs.model && ! attrs.loadQuery) {
-									params.filter = scope.filterCollection;
-									promise = REST.collection(attrs.model, params);
-								}
+						} else if (elm.is('[collection-url]')) {
+							if (attrs.collectionUrl) {
+								promise = REST.collection(scope.collectionUrl, params);
 							}
+						} else if (attrs.model && !attrs.loadQuery) {
+							if (scope.filterCollection) {
+								params.filter = angular.copy(scope.filterCollection);
+								$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
+									"filter" : params.filter,
+									"model" : attrs.model,
+									"scope": scope
+								});
+							}
+							promise = REST.collection(attrs.model, params);
 						}
 
 						if (promise) {
@@ -1404,29 +1430,27 @@
 							return;
 						}
 
-						var	offset = parseInt(search.offset || 0, 10),
-							limit  = search.limit ? parseInt(search.limit, 10) : Settings.get('pagingSize', PAGINATION_DEFAULT_LIMIT),
+						var defaultSort = getDefaultSort();
+						var	offset = parseInt(search.hasOwnProperty('offset') ? search.offset : defaultSort.offset, 10),
+							limit  = search.hasOwnProperty('limit') ? parseInt(search.limit, 10) : Settings.get('pagingSize', PAGINATION_DEFAULT_LIMIT),
 							paginationChanged, sortChanged = false,
-							desc = (search.desc === 'true'),
-							filter = search.filter,
-							filterChanged = scope.currentFilter !== filter;
+							desc = search.hasOwnProperty('desc') ? (search.desc === 'true') : defaultSort.descending,
+							sort = search.hasOwnProperty('sort') ? search.sort : defaultSort.column;
+
 
 						paginationChanged = scope.pagination.offset !== offset || scope.pagination.limit !== limit;
 						scope.pagination.offset = offset;
 						scope.pagination.limit = limit;
 
-						if (search.sort) {
-							sortChanged = scope.sort.column !== search.sort;
-							scope.sort.column = search.sort;
-							if (desc !== scope.sort.descending) {
-								sortChanged = true;
-								scope.sort.descending = desc;
-							}
+						sortChanged = scope.sort.column !== sort || scope.sort.descending !== desc || scope.sort.offset !== offset;
+						if (sortChanged) {
+							scope.sort.column = sort;
+							scope.sort.descending = desc;
+							scope.sort.offset = offset;
+							saveStoredSort(scope.sort);
 						}
 
-						scope.currentFilter = filter;
-
-						if (paginationChanged || sortChanged || filterChanged) {
+						if (paginationChanged || sortChanged) {
 							reload();
 						}
 
@@ -1558,6 +1582,11 @@
 						if (scope.filterCollection &&
 							scope.filterCollection.filters && scope.filterCollection.filters.length > 0) {
 							query.filter = angular.copy(scope.filterCollection);
+							$rootScope.$broadcast('Change:DocumentList.ApplyFilter', {
+								"filter" : query.filter,
+								"model" : attrs.model,
+								"scope": scope
+							});
 						}
 						return query;
 					}
@@ -1575,7 +1604,6 @@
 							reload();
 						}
 					});
-
 
 					var currentQuickActionsIndex = -1;
 
@@ -1636,7 +1664,7 @@
 		'RbsChange.Utils', 'RbsChange.ArrayUtils', 'RbsChange.Actions',
 		'RbsChange.NotificationCenter', 'RbsChange.Settings',
 		'RbsChange.Events', 'RbsChange.PaginationPageSizes',
-		'RbsChange.Navigation', 'RbsChange.ErrorFormatter',
+		'RbsChange.Navigation', 'RbsChange.ErrorFormatter', 'localStorageService',
 		documentListDirectiveFn
 	]);
 

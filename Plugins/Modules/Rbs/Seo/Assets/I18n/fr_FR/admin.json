@@ -59,6 +59,9 @@
 	"meta_variable_section_title":{
 		"message":"titre de la section"
 	},
+	"meta_variable_section_ancestors_titles":{
+		"message":"titre des ancêtres de la section"
+	},
 	"head_metas":{
 		"message":"métas d'en-têtes de la page"
 	},

@@ -356,6 +356,21 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 						}
 						$definition['config']['possibleValues'] = $possibleValues;
 					}
+					elseif ($definition['name'] === 'model')
+					{
+						$possibleValues = [];
+						$possibleValues[] = ['value' => $model->getName(),
+							"label" => $i18nManager->trans($model->getLabelKey(), ['ucf'])];
+						foreach ($model->getDescendantsNames() as $descendantName)
+						{
+							$descendantModel = $this->getModelByName($descendantName);
+							if ($descendantModel) {
+								$possibleValues[] = ['value' => $descendantModel->getName(),
+									"label" => $i18nManager->trans($descendantModel->getLabelKey(), ['ucf'])];
+							}
+						}
+						$definition['config']['possibleValues'] = $possibleValues;
+					}
 
 					if (!isset($definition['config']['group']))
 					{

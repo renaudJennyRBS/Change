@@ -1,0 +1,16 @@
+<div class="panel panel-default" data-ng-show="ready">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="icon-list"></i> {{ i18nAttr(modelKey('Rbs_Catalog_ProductList'), ['ucf']) }}</h3>
+	</div>
+	<div class="list-group">
+		<span class="list-group-item">
+			<a data-ng-show="productList.id" href="javascript:;" data-ng-href="(= productList | rbsURL:'edit' =)">
+				<i class="icon-pencil"></i> {{ i18n('m.rbs.catalog.admin.productlist_edit', ['ucf']) | raw }}
+			</a>
+			<a data-ng-hide="productList.id" href="javascript:;"
+				data-ng-href="(= 'Rbs_Catalog_SectionProductList' | rbsURL:'new':{sectionId:document.id}=)">
+				<i class="icon-plus"></i> {{ i18n('m.rbs.catalog.admin.productlist_create', ['ucf']) | raw }}
+			</a>
+		</span>
+	</div>
+</div>

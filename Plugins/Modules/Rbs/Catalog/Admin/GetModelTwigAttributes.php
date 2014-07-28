@@ -64,7 +64,12 @@ class GetModelTwigAttributes
 
 				$adminManager->getSortedAttributes($attributes, $order);
 			}
-
+			else if (($view === 'edit' || $view === 'translate') && $modelName === 'Rbs_Website_Topic') {
+				$asideDirectives = [
+					['name' => 'rbs-aside-section-product-list']
+				];
+				$attributes['asideDirectives'] = array_merge($attributes['asideDirectives'], $asideDirectives);
+			}
 			$event->setParam('attributes', $attributes);
 		}
 	}

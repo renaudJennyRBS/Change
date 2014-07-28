@@ -1,0 +1,24 @@
+<div data-ng-show="isEmpty()">
+	<button data-ng-hide="inTranslation()" data-ng-click="addItem()" class="btn btn-default btn-sm" type="button">
+		<i class="icon-plus"></i> {{ i18n('m.rbs.admin.admin.add', ['ucf']) }}
+	</button>
+	<span data-ng-show="inTranslation()">{{ i18n('m.rbs.admin.admin.no_defined', ['ucf']) }}</span>
+</div>
+
+<div data-ng-show="!isEmpty()">
+	<span data-ng-if="!inEdition()" class="form-control">(= inlineLabel() =)</span>
+	<div data-ng-if="inEdition()">
+		<rbs-inline-document document="inline" data-ref-lcid="refLcid" data-lcid="lcid" data-context-key="(= getContextKey() =)"></rbs-inline-document>
+	</div>
+	<div class="picker-toolbar form-inline">
+		<button type="button" class="btn btn-primary btn-sm" data-ng-click="editInline()" data-ng-hide="inEdition()">
+			{{ i18n('m.rbs.admin.admin.edit') }}
+		</button>
+		<button data-ng-click="closeEditor()" class="btn btn-primary btn-sm" type="button" data-ng-show="inEdition()">
+			{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
+		</button>
+		<button class="btn btn-danger btn-sm" data-ng-click="deleteInline()" data-ng-hide="inTranslation()">
+			<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
+		</button>
+	</div>
+</div>
