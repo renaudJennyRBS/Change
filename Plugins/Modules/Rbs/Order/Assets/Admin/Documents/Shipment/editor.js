@@ -45,7 +45,7 @@
 				};
 
 				scope.onReady = function() {
-					if (scope.isNew()) {
+					if (scope.document.isNew()) {
 						// Pre-fill fields if there is data in query url.
 						if ($routeParams.hasOwnProperty('orderId')) {
 							setOrderByOrderId($routeParams.orderId);
@@ -83,7 +83,6 @@
 					refreshOrderRemainderLocked = false;
 
 					if (scope.data.order && (scope.data.carrier && scope.data.carrier.id > 0)) {
-						refreshCode();
 						refreshOrderRemainder();
 					}
 				}
@@ -196,7 +195,7 @@
 							//sort shipmentLines from documentData;
 							dispatchOrderLines();
 						}
-						if (scope.isNew()) {
+						if (scope.document.isNew()) {
 							scope.document.address = angular.isObject(data.address) ? data.address : { __addressFieldsId: null };
 						}
 					}, function(error) {
@@ -500,7 +499,7 @@
 					}
 				});
 
-				editorCtrl.init('Rbs_Order_Shipment');
+				//editorCtrl.init('Rbs_Order_Shipment');
 			}
 		};
 	}
