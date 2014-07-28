@@ -53,9 +53,63 @@ class WorkspaceTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @depends testConstruct
 	 */
+	public function testProjectModulesRelativePath(Workspace $workspace)
+	{
+		$expected = implode(DIRECTORY_SEPARATOR, array('App','Modules', 'Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$this->assertEquals($expected, $workspace->projectModulesRelativePath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
 	public function testPluginsModulesPath(Workspace $workspace)
 	{
 		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'Plugins','Modules','Dir1', 'Dir2', 'Dir3', 'File.php'));
 		$this->assertEquals($expected, $workspace->pluginsModulesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
+	public function testPluginsModulesRelativePath(Workspace $workspace)
+	{
+		$expected = implode(DIRECTORY_SEPARATOR, array('Plugins','Modules','Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$this->assertEquals($expected, $workspace->pluginsModulesRelativePath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
+	public function testProjectThemesPath(Workspace $workspace)
+	{
+		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'App','Themes', 'Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$this->assertEquals($expected, $workspace->projectThemesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
+	public function testProjectThemesRelativePath(Workspace $workspace)
+	{
+		$expected = implode(DIRECTORY_SEPARATOR, array('App','Themes', 'Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$this->assertEquals($expected, $workspace->projectThemesRelativePath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
+	public function testPluginsThemesPath(Workspace $workspace)
+	{
+		$expected = implode(DIRECTORY_SEPARATOR, array(PROJECT_HOME , 'Plugins','Themes','Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$this->assertEquals($expected, $workspace->pluginsThemesPath('Dir1', 'Dir2', 'Dir3', 'File.php'));
+	}
+
+	/**
+	 * @depends testConstruct
+	 */
+	public function testPluginsThemesRelativePath(Workspace $workspace)
+	{
+		$expected = implode(DIRECTORY_SEPARATOR, array('Plugins','Themes','Dir1', 'Dir2', 'Dir3', 'File.php'));
+		$this->assertEquals($expected, $workspace->pluginsThemesRelativePath('Dir1', 'Dir2', 'Dir3', 'File.php'));
 	}
 }

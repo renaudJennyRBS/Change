@@ -54,7 +54,10 @@ class Autoloader extends StandardAutoloader
 		if (is_readable($cachePath))
 		{
 			$namespaces = unserialize(file_get_contents($cachePath));
-			$this->registerNamespaces($namespaces);
+			foreach ($namespaces as $name => $relativePath)
+			{
+				$this->registerNamespace($name, $this->workspace->composeAbsolutePath($relativePath));
+			}
 			return;
 		}
 
@@ -68,34 +71,14 @@ class Autoloader extends StandardAutoloader
 			{
 				/** @var $plugin Plugin */
 				$plugin->setWorkspace($workspace);
-				$namespaces[$plugin->getNamespace() . '\\'] = $plugin->getAbsolutePath();
+				$relativePath = $plugin->getRelativePath();
+				$namespace = $plugin->getNamespace() . '\\';
+				$namespaces[$namespace] = $relativePath;
+				$this->registerNamespace($namespace, $this->workspace->composeAbsolutePath($relativePath));
 			}
 			$content = serialize($namespaces);
 			\Change\Stdlib\File::write($cachePath, $content);
-			$this->registerNamespaces($namespaces);
 		}
-	}
-
-	/**
-	 * @param array $pluginData
-	 * @param \Change\Workspace $workspace
-	 * @return string
-	 */
-	protected function buildNamespacePath($pluginData, $workspace)
-	{
-		if ($pluginData['vendor'] !== 'Project')
-		{
-			if ($pluginData['type'] === Plugin::TYPE_MODULE)
-			{
-				return $workspace->pluginsModulesPath($pluginData['vendor'], $pluginData['shortName']);
-			}
-			return $workspace->pluginsThemesPath($pluginData['vendor'], $pluginData['shortName']);
-		}
-		if ($pluginData['type'] === Plugin::TYPE_MODULE)
-		{
-			return $workspace->projectModulesPath('Project', $pluginData['shortName']);
-		}
-		return $workspace->projectThemesPath('Project', $pluginData['shortName']);
 	}
 
 	/**

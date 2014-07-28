@@ -31,6 +31,33 @@ class Workspace extends \Change\Workspace
 		// TODO Auto-generated method stub
 		return PROJECT_HOME . '/ChangeTests/UnitTestWorkspace/Compilation';
 	}
+
+	/**
+	 * Build a relative path to the project's modules folder (App/Modules/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function projectModulesRelativePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'ChangeTests', 'UnitTestWorkspace', 'App', 'Modules');
+		return call_user_func_array(array($this, 'composePath'), $args);
+	}
+
+	/**
+	 * Build a relative path to the project's modules folder (App/Modules/)
+	 *
+	 * @api
+	 * @return string
+	 */
+	public function projectThemesRelativePath()
+	{
+		$args = func_get_args();
+		array_unshift($args, 'ChangeTests', 'UnitTestWorkspace', 'App', 'Themes');
+		return call_user_func_array(array($this, 'composePath'), $args);
+	}
+
 	/**
 	 * @api
 	 * @return string
