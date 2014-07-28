@@ -60,6 +60,14 @@
 						display: '<i class="icon-list-ol"></i>',
 						title: i18n.trans('m.rbs.admin.admin.wysiwyg_ordered_list|ucf')
 					},
+					indent: {
+						display: '<i class="icon-indent-right"></i>',
+						title: i18n.trans('m.rbs.admin.admin.wysiwyg_indent|ucf')
+					},
+					outdent: {
+						display: '<i class="icon-indent-left"></i>',
+						title: i18n.trans('m.rbs.admin.admin.wysiwyg_outdent|ucf')
+					},
 					undo: {
 						display: '<i class="icon-undo"></i>',
 						title: i18n.trans('m.rbs.admin.admin.wysiwyg_undo|ucf')
@@ -147,11 +155,11 @@
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_lists|ucf'),
-								tools: ['insertUnorderedList', 'insertOrderedList']
+								tools: ['insertUnorderedList', 'insertOrderedList', 'indent', 'outdent']
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_format|ucf'),
-								tools: ['bold', 'italic', 'underline', 'removeFormat']
+								tools: ['bold', 'italic', 'removeFormat']
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_alignment|ucf'),
@@ -159,9 +167,6 @@
 							},
 							{
 								label: i18n.trans('m.rbs.admin.admin.wysiwyg_insertion|ucf'),
-								tools: ['insertImage', 'insertLink', 'insertExternalLink', 'unlink']
-							},
-							{
 								tools: ['insertImage', 'insertLink', 'insertExternalLink', 'unlink']
 							}
 						];
@@ -194,11 +199,11 @@
 							updateSelectedStyles();
 						};
 
-						scope.wrapSelection = function(command, options) {
+						scope.wrapSelection = function wrapSelection(command, options) {
 							$document[0].execCommand(command, false, options || null);
 						};
 
-						scope.queryState = function(toolId) {
+						scope.queryState = function queryState(toolId) {
 							var tool = scope.tools[toolId];
 							if (tool && tool.block) {
 								return $document[0].queryCommandValue('formatBlock').toLowerCase() === toolId.toLowerCase();
@@ -206,6 +211,7 @@
 							else if ($document[0].queryCommandSupported(toolId)) {
 								return $document[0].queryCommandState(toolId);
 							}
+							return null;
 						};
 
 						scope.selectDocumentsToLink = function() {
@@ -376,9 +382,7 @@
 							scope.imageToEdit.attr('alt', scope.imageData.alt);
 							scope.imageToEdit.attr('title', scope.imageData.title);
 							scope.imageToEdit.attr('width', width);
-							scope.imageToEdit.attr('data-resize-width', width);
 							scope.imageToEdit.attr('height', height);
-							scope.imageToEdit.attr('data-resize-height', height);
 							scope.imageToEdit.attr('src',
 								Utils.makeUrl(scope.imageToEdit.attr('src'), { maxWidth: width, maxHeight: height }));
 							dialog.modal('hide');
