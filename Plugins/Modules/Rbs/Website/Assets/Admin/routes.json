@@ -1,4 +1,42 @@
 {
+	"/Rbs/Generic/Text/": {
+		"model": "Rbs_Website_Text",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Text/list.twig",
+			"labelKey": "m.rbs.website.admin.text_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Text/:id": {
+		"model": "Rbs_Website_Text",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Text/edit.twig",
+			"labelKey": "m.rbs.website.documents.text | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Text/:id/translate/:LCID": {
+		"model": "Rbs_Website_Text",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Text/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/Text/new": {
+		"model": "Rbs_Website_Text",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Text/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Generic/Website/": {
 		"model": "Rbs_Website_Website",
 		"name": "list",
@@ -116,6 +154,10 @@
 		"auto": false
 	},
 	"/Rbs/Website/StaticPage/new": false,
+	"/Rbs/Website/Text/": false,
+	"/Rbs/Website/Text/:id": false,
+	"/Rbs/Website/Text/:id/translate/:LCID": false,
+	"/Rbs/Website/Text/new": false,
 	"/Rbs/Website/Topic/": false,
 	"/Rbs/Website/Topic/:id": false,
 	"/Rbs/Website/Topic/:id/translate/:LCID": false,

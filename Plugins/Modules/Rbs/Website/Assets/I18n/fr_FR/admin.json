@@ -447,5 +447,23 @@
 	},
 	"ordering_apply":{
 		"message":"Ordonner"
+	},
+	"text_list":{
+		"message":"textes"
+	},
+	"text_create":{
+		"message":"ajouter un texte"
+	},
+	"text":{
+		"message":"texte"
+	},
+	"text_only":{
+		"message":"texte seul"
+	},
+	"text_with_title":{
+		"message":"texte avec titre"
+	},
+	"text_title_level":{
+		"message":"niveau du titre [1] à 6"
 	}
 }
