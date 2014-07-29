@@ -15,6 +15,9 @@ use Change\Documents\Property;
  */
 class ContextualListInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformation
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -26,6 +29,5 @@ class ContextualListInformation extends \Rbs\Event\Blocks\Base\BaseEventListInfo
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_section_id', $ucf));
 		$this->addInformationMeta('includeSubSections', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_include_sub_sections', $ucf));
-		$this->getParameterInformation('templateName')->setDefaultValue('contextual-list.twig');
 	}
 }

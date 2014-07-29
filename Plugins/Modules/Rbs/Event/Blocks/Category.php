@@ -25,7 +25,6 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('sectionRestriction', 'website');
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$parameters->getParameterMeta('templateName')->setDefaultValue('category.twig');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -100,6 +99,6 @@ class Category extends \Rbs\Event\Blocks\Base\BaseEventList
 		$query->addOrder('date', false);
 
 		$hasList = $this->renderList($event, $attributes, $query, $section, $website);
-		return $hasList ? $parameters->getParameter('templateName') : null;
+		return $hasList ? 'category.twig' : null;
 	}
 }

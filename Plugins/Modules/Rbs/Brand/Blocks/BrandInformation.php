@@ -24,6 +24,6 @@ class BrandInformation extends Information
 		$this->setLabel($i18nManager->trans('m.rbs.brand.admin.brand', $ucf));
 		$this->addInformationMetaForDetailBlock('Rbs_Brand_Brand', $i18nManager);
 
-		$this->addTTL(60)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
+		$this->addTTL(60);
 	}
 }

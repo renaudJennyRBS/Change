@@ -13,6 +13,9 @@ namespace Rbs\Event\Blocks;
  */
 class NewsInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -20,6 +23,5 @@ class NewsInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 		$ucf = array('ucf');
 		$this->setLabel($i18nManager->trans('m.rbs.event.admin.news_label', $ucf));
 		$this->addInformationMetaForDetailBlock('Rbs_Event_News', $i18nManager);
-		$this->getParameterInformation('templateName')->setDefaultValue('news.twig');
 	}
 }

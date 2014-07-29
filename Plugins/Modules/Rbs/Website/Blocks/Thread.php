@@ -28,7 +28,6 @@ class Thread extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('templateName', 'thread.twig');
 		$parameters->addParameterMeta('separator', '/');
 		$parameters->addParameterMeta('sectionId');
 		$parameters->addParameterMeta('documentId');
@@ -115,7 +114,7 @@ class Thread extends Block
 
 		$attributes['thread'] = $thread;
 
-		return $parameters->getTemplateName();
+		return 'thread.twig';
 	}
 
 	/**

@@ -55,18 +55,12 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertInstanceOf('\\Change\\Presentation\\Blocks\\Parameters', $parameters);
 
-		$this->assertTrue(isset($parameters->templateName));
 		$this->assertFalse(isset($parameters->zearazefazefazfazf));
 
 		$meta = $parameters->getParameterMeta('separator');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
 		$this->assertEquals('/', $meta->getDefaultValue());
 		$this->assertEquals('>', $parameters->getParameter('separator'));
-
-		$meta = $parameters->getParameterMeta('templateName');
-		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
-		$this->assertEquals('thread.twig', $meta->getDefaultValue());
-		$this->assertEquals('thread.twig', $parameters->getParameter('templateName'));
 
 		$meta = $parameters->getParameterMeta('documentId');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);

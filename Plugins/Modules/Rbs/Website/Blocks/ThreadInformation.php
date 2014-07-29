@@ -16,6 +16,9 @@ use Change\Presentation\Blocks\Information;
  */
 class ThreadInformation extends Information
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);

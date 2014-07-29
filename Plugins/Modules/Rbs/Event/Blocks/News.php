@@ -14,25 +14,19 @@ namespace Rbs\Event\Blocks;
 class News extends \Rbs\Event\Blocks\Base\BaseEvent
 {
 	/**
-	 * Event Params 'website', 'document', 'page'
-	 * @api
-	 * Set Block Parameters on $event
-	 * @param \Change\Presentation\Blocks\Event $event
-	 * @return \Change\Presentation\Blocks\Parameters
-	 */
-	protected function parameterize($event)
-	{
-		$parameters = parent::parameterize($event);
-		$parameters->getParameterMeta('templateName')->setDefaultValue('news.twig');
-		return $parameters;
-	}
-
-	/**
 	 * @param \Change\Documents\AbstractDocument $document
 	 * @return boolean
 	 */
 	protected function isValidDocument($document)
 	{
 		return ($document instanceof \Rbs\Event\Documents\News && $document->published());
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getDefaultTemplateName()
+	{
+		return 'news.twig';
 	}
 }

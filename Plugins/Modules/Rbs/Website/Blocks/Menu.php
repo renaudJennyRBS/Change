@@ -111,8 +111,16 @@ class Menu extends Block
 			$menuComposer = new \Rbs\Website\Menu\MenuComposer($event->getUrlManager(), $i18nManager, $dm, $treeManager);
 			$attributes['root'] = $menuComposer->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
 			$attributes['uniqueId'] = uniqid();
-			return $parameters->getTemplateName();
+			return $this->getDefaultTemplateName();
 		}
 		return null;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getDefaultTemplateName()
+	{
+		return 'menu-inline.twig';
 	}
 }

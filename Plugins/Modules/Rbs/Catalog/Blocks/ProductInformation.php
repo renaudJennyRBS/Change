@@ -32,6 +32,6 @@ class ProductInformation extends Information
 		$this->addInformationMeta('attributesDisplayMode', Property::TYPE_STRING, false, 'table')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_attributes_display_mode', $ucf));
 
-		$this->addTTL(60)->setLabel($i18nManager->trans('m.rbs.admin.admin.ttl', $ucf));
+		$this->addTTL(60);
 	}
 }

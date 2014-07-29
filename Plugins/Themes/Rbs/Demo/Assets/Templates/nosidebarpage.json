@@ -15,8 +15,7 @@
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
 				"documentId" : null,
-				"maxLevel" : 1,
-				"templateName" : "menu-inline.twig"
+				"maxLevel" : 1
 			}
 		},
 		"headerTop2" : {
@@ -56,7 +55,8 @@
 			"parameters" : {
 				"documentId" : null,
 				"maxLevel" : 2,
-				"templateName" : "menu-scroll-inverse.twig"
+				"fullyQualifiedTemplateName": "Rbs_Website:menu-scroll.twig",
+				"inverseColors" : true
 			}
 		},
 
@@ -96,7 +96,7 @@
 			"parameters" : {
 				"TTL" : 60,
 				"availableWebStoreIds" : [],
-				"templateName" : "webStoreSelector-vertical.twig"
+				"fullyQualifiedTemplateName": "Rbs_Store:webStoreSelector-vertical.twig"
 			}
 		},
 		"footerMiddle2" : {
@@ -106,8 +106,8 @@
 			"parameters" : {
 				"documentId" : null,
 				"maxLevel" : 1,
-				"templateName" : "menu-vertical.twig",
-				"showTitle" : false
+				"showTitle" : false,
+				"fullyQualifiedTemplateName": "Rbs_Website:menu-vertical.twig"
 			}
 		},
 		"footerMiddle3" : {
@@ -117,8 +117,8 @@
 			"parameters" : {
 				"documentId" : null,
 				"maxLevel" : 2,
-				"templateName" : "menu-vertical.twig",
-				"showTitle" : true
+				"showTitle" : true,
+				"fullyQualifiedTemplateName": "Rbs_Website:menu-vertical.twig"
 			}
 		},
 		"footerMiddle4" : {
@@ -128,8 +128,8 @@
 			"parameters" : {
 				"documentId" : null,
 				"maxLevel" : 3,
-				"templateName" : "menu-vertical.twig",
-				"showTitle" : true
+				"showTitle" : true,
+				"fullyQualifiedTemplateName": "Rbs_Website:menu-vertical.twig"
 			}
 		},
 		"footerBottom1" : {
@@ -138,8 +138,7 @@
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
 				"documentId" : null,
-				"maxLevel" : 1,
-				"templateName" : "menu-inline.twig"
+				"maxLevel" : 1
 			}
 		},
 		"footerBottom2" : {

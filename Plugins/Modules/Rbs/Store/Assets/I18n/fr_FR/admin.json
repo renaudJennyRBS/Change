@@ -31,5 +31,8 @@
 	},
 	"web_store_pricesvaluewithtax_locked": {
 		"message":"Le mode de saisie des prix ne peut être modifié, car il existe des prix définis pour cette boutique."
+	},
+	"template_vertical_label": {
+		"message":"rendu vertical"
 	}
 }

@@ -1,11 +1,11 @@
-{% macro item(item) %}
+{% macro item(item, parameters) %}
 	{% import _self as menu %}
 	<li{% if item.isInPath or item.isCurrent %} class="active"{% endif %}>
 		<a href="{{ item.url }}">{{ item.title }}</a>
-		{% if item.hasChild and item.isInPath %}
+		{% if item.hasChild and (parameters.getParameter('deployAll') or item.isInPath) %}
 			<ul class="sub-menu">
 				{% for child in item.getChildren %}
-					{{ menu.item(child) }}
+					{{ menu.item(child, parameters) }}
 				{% endfor %}
 			</ul>
 		{% endif %}
@@ -22,7 +22,7 @@
 	{% if root.hasChild %}
 		<ul class="nav nav-contextual">
 			{% for child in root.children %}
-				{{ menu.item(child) }}
+				{{ menu.item(child, parameters) }}
 			{% endfor %}
 		</ul>
 	{% endif %}

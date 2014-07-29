@@ -1,7 +1,9 @@
 <div>
+{% set hasParameter = false %}
 {% for param in information.parametersInformation %}
-	{% if param.name != 'TTL' %}
+	{% if param.name != 'TTL' and param.name != 'fullyQualifiedTemplateName' %}
 		{% set inputId = information.name ~ "_" ~ param.name %}
+		{% set hasParameter = true %}
 		<div class="form-group">
 			<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ param.label }}</label>
 			<div class="controls (= controlsClass =)">
@@ -41,12 +43,16 @@
 
 {% set templates = information.templatesInformation %}
 {% if templates|length != 0 %}
+	{% if hasParameter %}
+		<hr />
+	{% endif %}
+
 	{% set inputId = information.name ~ "_fullyQualifiedTemplateName" %}
 	<div class="form-group">
 		<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ i18n('m.rbs.admin.admin.block_render_template', ['ucf']) }}</label>
 		<div class="controls (= controlsClass =)">
 			<select id="{{ inputId }}" name="fullyQualifiedTemplateName" ng-model="blockParameters.fullyQualifiedTemplateName" class="form-control">
-				<option value="">{{ i18n('m.rbs.admin.admin.select_block_render_template', ['ucf']) }}</option>
+				<option value="">{{ i18n('m.rbs.admin.admin.default_template', ['ucf']) }}</option>
 {% for template in templates %}
 				<option value="{{ template.fullyQualifiedTemplateName }}">{{ template.label }}</option>
 {% endfor %}

@@ -32,7 +32,6 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 		$parameters->addParameterMeta('showTime', true);
 		$parameters->addParameterMeta('showCategories', true);
 		$parameters->addParameterMeta('contextualUrls', true);
-		$parameters->addParameterMeta('templateName');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -107,9 +106,14 @@ abstract class BaseEvent extends \Change\Presentation\Blocks\Standard\Block
 						$attributes['categories'][] = array('url' => $url, 'doc' => $category);
 					}
 				}
-				return $parameters->getParameter('templateName');
+				return $this->getDefaultTemplateName();
 			}
 		}
 		return null;
 	}
+
+	/**
+	 * @return string
+	 */
+	abstract protected function getDefaultTemplateName();
 }

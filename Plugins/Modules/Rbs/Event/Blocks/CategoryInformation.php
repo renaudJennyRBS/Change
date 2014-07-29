@@ -15,6 +15,9 @@ use Change\Documents\Property;
  */
 class CategoryInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformation
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -25,6 +28,5 @@ class CategoryInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformatio
 		$this->addInformationMeta('sectionRestriction', Property::TYPE_STRING, true, 'website')
 			->setLabel($i18nManager->trans('m.rbs.event.admin.category_section_restriction', $ucf))
 			->setCollectionCode('Rbs_Event_Collection_SectionRestrictions');
-		$this->getParameterInformation('templateName')->setDefaultValue('category.twig');
 	}
 }

@@ -13,6 +13,9 @@ namespace Rbs\Website\Blocks;
  */
 class SiteMapInformation extends MenuInformation
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -20,7 +23,6 @@ class SiteMapInformation extends MenuInformation
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.sitemap', $ucf));
-		$this->getParameterInformation('templateName')->setDefaultValue('siteMap.twig');
 		$this->getParameterInformation('maxLevel')->setDefaultValue(5);
 		$this->removeParameterInformation('documentId');
 	}

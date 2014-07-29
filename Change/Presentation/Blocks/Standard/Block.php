@@ -9,7 +9,6 @@
 namespace Change\Presentation\Blocks\Standard;
 
 use Change\Http\Web\Result\BlockResult;
-use Change\Presentation\Blocks\BlockManager;
 use Change\Presentation\Blocks\Parameters;
 
 /**
@@ -124,15 +123,23 @@ class Block
 		$result = new BlockResult($blockLayout->getId(), $blockLayout->getName());
 		$event->setBlockResult($result);
 		$attributes = $event->getParam('attributes', new \ArrayObject());
-		$event->setParam('templateName', $this->execute($event, $attributes));
-		$event->setParam('templateModuleName', $this->getTemplateModuleName());
-		$fullyQualifiedTemplateName = $event->getBlockParameters()->getParameter(static::FULLY_QUALIFIED_TEMPLATE_PROPERTY_NAME);
-		if (is_string($fullyQualifiedTemplateName) && strpos($fullyQualifiedTemplateName, ':'))
+
+		$originalTemplateName = $this->execute($event, $attributes);
+		if ($originalTemplateName)
 		{
-			$attributes['originalTemplateName'] = $event->getParam('templateName');
-			$parts = explode(':', $fullyQualifiedTemplateName);
-			$event->setParam('templateModuleName', $parts[0]);
-			$event->setParam('templateName', $parts[1]);
+			$fullyQualifiedTemplateName = $event->getBlockParameters()->getParameter(static::FULLY_QUALIFIED_TEMPLATE_PROPERTY_NAME);
+			if (is_string($fullyQualifiedTemplateName) && strpos($fullyQualifiedTemplateName, ':'))
+			{
+				$attributes['originalTemplateName'] = $originalTemplateName;
+				$parts = explode(':', $fullyQualifiedTemplateName);
+				$event->setParam('templateModuleName', $parts[0]);
+				$event->setParam('templateName', $parts[1]);
+			}
+			else
+			{
+				$event->setParam('templateModuleName', $this->getTemplateModuleName());
+				$event->setParam('templateName', $originalTemplateName);
+			}
 		}
 	}
 

@@ -2,6 +2,9 @@
 	"module_name":{
 		"message":"Actualités et événements"
 	},
+	"module_keywords":{
+		"message":"actus, actualités, événements, news, calendrier"
+	},
 	"base_event_show_time":{
 		"message":"afficher les heures et minutes"
 	},

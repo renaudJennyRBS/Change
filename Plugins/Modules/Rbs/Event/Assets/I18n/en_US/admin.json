@@ -2,6 +2,9 @@
   "module_name":{
     "message":"News and events"
   },
+  "module_keywords":{
+    "message":"news, events, calendar"
+  },
   "base_event_show_time":{
     "message":"display hours and minutes"
   },
