@@ -235,6 +235,15 @@ class Information
 	}
 
 	/**
+	 * @param array $parametersValues
+	 * @return array
+	 */
+	public function normalizeParameters($parametersValues)
+	{
+		return $parametersValues;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function toArray()

@@ -20,6 +20,11 @@ class Block extends Item
 	protected $name;
 
 	/**
+	 * @var string
+	 */
+	protected $label;
+
+	/**
 	 * @var string|null
 	 */
 	protected $visibility;
@@ -56,6 +61,16 @@ class Block extends Item
 	{
 		parent::initialize($data);
 		$this->name = $data['name'];
+		$this->label = isset($data['label']) ? $data['label']: null;
 		$this->visibility = isset($data['visibility']) ? $data['visibility']: null;
+	}
+
+	public function toArray()
+	{
+		$result = parent::toArray();
+		$result['name'] = $this->name;
+		$result['label'] = $this->label;
+		$result['visibility'] = $this->visibility;
+		return $result;
 	}
 }

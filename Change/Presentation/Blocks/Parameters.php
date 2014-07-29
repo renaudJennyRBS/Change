@@ -303,7 +303,8 @@ class Parameters
 	/**
 	 * @return array
 	 */
-	public function toArray() {
+	public function toArray()
+	{
 		$array = [];
 		foreach ($this->parametersMeta as $parameterMeta)
 		{

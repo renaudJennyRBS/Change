@@ -8,6 +8,7 @@
  */
 namespace Rbs\Website\Documents;
 
+use Change\Documents\Events\Event;
 use Change\Presentation\Layout\Layout;
 use Zend\Http\Response as HttpResponse;
 
@@ -16,6 +17,24 @@ use Zend\Http\Response as HttpResponse;
  */
 abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \Change\Presentation\Interfaces\Page
 {
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_UPDATE], [$this, 'onNormalizeEditableContent'], 5);
+	}
+
+	public function onNormalizeEditableContent(Event $event)
+	{
+		if ($event->getDocument() !== $this || !$this->isPropertyModified('editableContent'))
+		{
+			return;
+		}
+		$contentLayout = new Layout($this->getCurrentLocalization()->getEditableContent());
+		$blocks = $contentLayout->getBlocks();
+		$event->getApplicationServices()->getBlockManager()->normalizeBlocksParameters($blocks);
+		$this->getCurrentLocalization()->setEditableContent($contentLayout->toArray());
+	}
+
 	/**
 	 * @see \Change\Presentation\Interfaces\Page::getIdentifier()
 	 * @return string
@@ -59,4 +78,6 @@ abstract class Page extends \Compilation\Rbs\Website\Documents\Page implements \
 	{
 		return $this->getPageTemplate();
 	}
+
+
 }

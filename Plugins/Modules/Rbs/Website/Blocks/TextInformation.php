@@ -29,6 +29,10 @@ class TextInformation extends \Change\Presentation\Blocks\Information
 		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'textWithTitle.twig');
 		$templateInformation->setLabel($i18nManager->trans('m.rbs.website.admin.text_with_title', $ucf));
 		$templateInformation->addParameterInformation('titleLevel', \Change\Documents\Property::TYPE_INTEGER, false, 1)
-			->setLabel($i18nManager->trans('m.rbs.website.admin.text_title_level', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.website.admin.text_title_level', $ucf))
+			->setNormalizeCallback(function ($parametersValues) {
+				$value = isset($parametersValues['titleLevel']) ? intval($parametersValues['titleLevel']) : 1;
+				return ($value >= 1 && $value <= 6) ? $value : null;
+			});
 	}
 }

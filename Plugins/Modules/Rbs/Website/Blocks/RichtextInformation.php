@@ -8,6 +8,7 @@
  */
 namespace Rbs\Website\Blocks;
 
+use Change\Documents\Property;
 /**
  * @name \Rbs\Website\Blocks\RichtextInformation
  */
@@ -20,5 +21,7 @@ class RichtextInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.richtext', $ucf));
+		$this->addInformationMeta('content', Property::TYPE_RICHTEXT, false)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.richtext_content', $ucf));
 	}
 }

@@ -8,6 +8,7 @@
  */
 namespace Rbs\Theme\Documents;
 
+use Change\Documents\Events\Event;
 use Change\Presentation\Layout\Layout;
 use Zend\Json\Json;
 
@@ -17,6 +18,48 @@ use Zend\Json\Json;
 class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Change\Presentation\Interfaces\Template
 {
 	const FILE_META_KEY = "fileMeta";
+
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_UPDATE], [$this, 'onNormalizeEditableContent'], 5);
+	}
+
+	public function onNormalizeEditableContent(Event $event)
+	{
+		if ($event->getDocument() !== $this)
+		{
+			return;
+		}
+
+		$modifiedPropertyNames = $this->getModifiedPropertyNames();
+		if (in_array('editableContent', $modifiedPropertyNames)) {
+			$blockManager = $event->getApplicationServices()->getBlockManager();
+			$contentLayout = new Layout($this->getEditableContent());
+			$blocks = $contentLayout->getBlocks();
+			$blockManager->normalizeBlocksParameters($blocks);
+			$this->setEditableContent($contentLayout->toArray());
+		}
+
+		if (in_array('contentByWebsite', $modifiedPropertyNames))
+		{
+			$contentByWebsite = $this->getContentByWebsite();
+			if (is_array($contentByWebsite))
+			{
+				$normalizedContentByWebsite = [];
+				$blockManager = $event->getApplicationServices()->getBlockManager();
+				foreach ($contentByWebsite as $websiteId => $editableContent)
+				{
+					$contentLayout = new Layout($editableContent);
+					$blocks = $contentLayout->getBlocks();
+					$blockManager->normalizeBlocksParameters($blocks);
+					$normalizedContentByWebsite[$websiteId] = $contentLayout->toArray();
+				}
+				$this->setContentByWebsite($normalizedContentByWebsite);
+			}
+		}
+	}
+
 	/**
 	 * @param integer $websiteId
 	 * @return \Change\Presentation\Layout\Layout

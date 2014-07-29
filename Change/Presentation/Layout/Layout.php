@@ -134,9 +134,26 @@ class Layout
 			}
 			else
 			{
-				$item->setItems(array());
+				$item->setItems([]);
 			}
 			$result[$key] = $item;
+		}
+		return $result;
+	}
+
+	public function toArray()
+	{
+		$result = [];
+		if (!is_array($this->items))
+		{
+			return $result;
+		}
+		foreach ($this->items as $key => $item)
+		{
+			if ($item instanceof Item)
+			{
+				$result[$key] = $item->toArray();
+			}
 		}
 		return $result;
 	}

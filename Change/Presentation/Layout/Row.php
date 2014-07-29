@@ -52,4 +52,11 @@ class Row extends Item
 		parent::initialize($data);
 		$this->grid = $data['grid'];
 	}
+
+	public function toArray()
+	{
+		$result = parent::toArray();
+		$result['grid'] = $this->grid;
+		return $result;
+	}
 }
