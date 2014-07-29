@@ -203,9 +203,6 @@
 	"menu":{
 		"message":"Bloc de menu"
 	},
-	"menu_templatename":{
-		"message":"mode de rendu"
-	},
 	"menu_contextual":{
 		"message":"contextuel à la rubrique"
 	},
@@ -341,6 +338,21 @@
 	"menu_menus_are_grouped_by_website":{
 		"message":"<strong>Les menus sont classés par site web.<\/strong><br\/>Choisissez un site web pour accéder aux menus qui lui sont rattachés."
 	},
+	"template_menu_contextual_label":{
+		"message":"menu contextuel"
+	},
+	"template_menu_vertical_label":{
+		"message":"menu vertical"
+	},
+	"template_menu_scroll_label":{
+		"message":"menu principal déroulant"
+	},
+	"block_menu_deploy_all":{
+		"message":"déployer tous les éléments"
+	},
+	"block_menu_inverse_colors":{
+		"message":"inverser les couleurs"
+	},
 	"functionalpage_website_help":{
 		"message":"Le site web contenant la page."
 	},
@@ -367,12 +379,6 @@
 	},
 	"thread_separator":{
 		"message":"séparateur de lien"
-	},
-	"block_module_name":{
-		"message":"module source du fichier twig"
-	},
-	"block_template_name":{
-		"message":"fichier twig"
 	},
 	"template_iframe_label":{
 		"message":"iframe"

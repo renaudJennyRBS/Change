@@ -27,9 +27,16 @@ class SiteMap extends Menu
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->getParameterMeta('templateName')->setDefaultValue('siteMap.twig');
 		$parameters->getParameterMeta('maxLevel')->setDefaultValue(5);
 		$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $event->getParam('website')->getId());
 		return $parameters;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getDefaultTemplateName()
+	{
+		return 'siteMap.twig';
 	}
 }

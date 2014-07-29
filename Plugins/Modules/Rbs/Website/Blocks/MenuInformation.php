@@ -16,6 +16,9 @@ use Change\Presentation\Blocks\Information;
  */
 class MenuInformation extends Information
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -23,8 +26,6 @@ class MenuInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.menu', $ucf));
-		$this->addInformationMeta('templateName', Property::TYPE_STRING, true, 'menu-vertical.twig')
-			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_templatename', $ucf));
 		$this->addInformationMeta('contextual', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_contextual', $ucf));
 		$this->addInformationMetaForDetailBlock(array('Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'), $i18nManager);
@@ -32,5 +33,20 @@ class MenuInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_maxlevel', $ucf));
 		$this->addInformationMeta('showTitle', Property::TYPE_BOOLEAN, true, false)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_showtitle', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'menu-contextual.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.website.admin.template_menu_contextual_label', ['ucf']));
+		$templateInformation->addParameterInformation('deployAll', Property::TYPE_BOOLEAN, false)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.block_menu_deploy_all', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'menu-vertical.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.website.admin.template_menu_vertical_label', ['ucf']));
+		$templateInformation->addParameterInformation('deployAll', Property::TYPE_BOOLEAN, false)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.block_menu_deploy_all', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'menu-scroll.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.website.admin.template_menu_scroll_label', ['ucf']));
+		$templateInformation->addParameterInformation('inverseColors', Property::TYPE_BOOLEAN, true)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.block_menu_inverse_colors', $ucf));
 	}
 }

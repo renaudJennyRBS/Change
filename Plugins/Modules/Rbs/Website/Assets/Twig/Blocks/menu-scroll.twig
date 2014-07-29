@@ -13,7 +13,7 @@
 {% endmacro %}
 {% import _self as menu %}
 
-<nav class="navbar">
+<nav class="navbar{% if parameters.getParameter('inverseColors') %} navbar-inverse{% endif %}">
 	<div class="navbar-header">
 		{% if root.hasChild %}
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse-{{ uniqueId }}">
