@@ -31,7 +31,6 @@ class WebStoreSelector extends Block
 		$parameters->addParameterMeta('availableWebStoreIds', array());
 		$parameters->addParameterMeta('billingAreaId');
 		$parameters->addParameterMeta('zone');
-		$parameters->addParameterMeta('templateName', 'webStoreSelector-horizontal.twig');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -100,6 +99,6 @@ class WebStoreSelector extends Block
 		}
 		$attributes['webStoreData'] = $data;
 
-		return $parameters->getParameter('templateName');
+		return 'webStoreSelector-horizontal.twig';
 	}
 }

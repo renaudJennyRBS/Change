@@ -114,7 +114,7 @@
 			"parameters" : {
 				"TTL" : 60,
 				"availableWebStoreIds" : [],
-				"templateName" : "webStoreSelector-vertical.twig"
+				"fullyQualifiedTemplateName": "Rbs_Store:webStoreSelector-vertical.twig"
 			}
 		},
 		"footerMiddle2" : {

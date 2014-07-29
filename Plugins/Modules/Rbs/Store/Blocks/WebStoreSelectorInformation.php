@@ -8,7 +8,6 @@
  */
 namespace Rbs\Store\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
 use Change\Presentation\Blocks\ParameterInformation;
 
@@ -30,7 +29,8 @@ class WebStoreSelectorInformation extends Information
 		$this->addInformationMeta('availableWebStoreIds', ParameterInformation::TYPE_DOCUMENTIDARRAY, true, array())
 			->setAllowedModelsNames('Rbs_Store_WebStore')
 			->setLabel($i18nManager->trans('m.rbs.store.admin.web_store_selector_available_web_stores', $ucf));
-		$this->addInformationMeta('templateName', Property::TYPE_STRING, false, 'webStoreSelector-horizontal.twig')
-			->setLabel($i18nManager->trans('m.rbs.generic.admin.block_template_name', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Store', 'webStoreSelector-vertical.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.store.admin.template_vertical_label', ['ucf']));
 	}
 }
