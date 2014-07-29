@@ -15,6 +15,9 @@ use Change\Documents\Property;
  */
 class CalendarInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformation
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -26,6 +29,5 @@ class CalendarInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformatio
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_section_id', $ucf));
 		$this->addInformationMeta('includeSubSections', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_include_sub_sections', $ucf));
-		$this->getParameterInformation('templateName')->setDefaultValue('calendar.twig');
 	}
 }

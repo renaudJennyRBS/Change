@@ -25,7 +25,6 @@ class Calendar extends \Rbs\Event\Blocks\Base\BaseEventList
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('includeSubSections', true);
 		$parameters->addParameterMeta('date');
-		$parameters->getParameterMeta('templateName')->setDefaultValue('calendar.twig');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -54,7 +53,6 @@ class Calendar extends \Rbs\Event\Blocks\Base\BaseEventList
 	protected function doExecute($event, $attributes, $website, $section)
 	{
 		$i18n = $event->getApplicationServices()->getI18nManager();
-		$parameters = $event->getBlockParameters();
 		$date = \DateTime::createFromFormat('Y-m-d',$event->getBlockParameters()->getParameter('date'));
 		$attributes['date'] = clone $date;
 
@@ -149,7 +147,7 @@ class Calendar extends \Rbs\Event\Blocks\Base\BaseEventList
 		$query = $this->getQuery($event, $website, $section, $intervalBegin, $intervalEnd);
 		$this->renderList($event, $attributes, $query, $section, $website);
 
-		return $parameters->getParameter('templateName');
+		return 'calendar.twig';
 	}
 
 	/**

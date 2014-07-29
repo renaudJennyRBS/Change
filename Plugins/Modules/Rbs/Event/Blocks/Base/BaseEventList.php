@@ -30,7 +30,6 @@ abstract class BaseEventList extends \Change\Presentation\Blocks\Standard\Block
 		$parameters->addParameterMeta('contextualUrls', true);
 		$parameters->addParameterMeta('contextualCategoryUrls', false);
 		$parameters->addParameterMeta('itemsPerPage', 10);
-		$parameters->addParameterMeta('templateName', 'base-event-list.twig');
 		$parameters->addParameterMeta('pageNumber', 1);
 
 		$request = $event->getHttpRequest();

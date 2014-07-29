@@ -24,7 +24,6 @@ class ContextualList extends \Rbs\Event\Blocks\Base\BaseEventList
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('includeSubSections', true);
-		$parameters->getParameterMeta('templateName')->setDefaultValue('contextual-list.twig');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		return $parameters;
@@ -61,6 +60,6 @@ class ContextualList extends \Rbs\Event\Blocks\Base\BaseEventList
 		$query->addOrder('date', false);
 
 		$hasList = $this->renderList($event, $attributes, $query, $section, $website);
-		return $hasList ? $parameters->getParameter('templateName') : null;
+		return $hasList ? 'contextual-list.twig' : null;
 	}
 }

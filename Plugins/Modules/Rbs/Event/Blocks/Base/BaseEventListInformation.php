@@ -15,6 +15,9 @@ use Change\Documents\Property;
  */
 abstract class BaseEventListInformation extends \Change\Presentation\Blocks\Information
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onInformation(\Change\Events\Event $event)
 	{
 		parent::onInformation($event);
@@ -31,7 +34,5 @@ abstract class BaseEventListInformation extends \Change\Presentation\Blocks\Info
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_contextual_category_urls', $ucf));
 		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, true, 10)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_items_per_page', $ucf));
-		$this->addInformationMeta('templateName', Property::TYPE_STRING, false)
-			->setLabel($i18nManager->trans('m.rbs.generic.admin.block_template_name', $ucf));
 	}
 }
