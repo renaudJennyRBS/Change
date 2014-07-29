@@ -28,18 +28,16 @@ class GetHtmlBlockParameters
 		$shortModuleName = $event->getParam('shortModuleName');
 		$shortBlockName = $event->getParam('shortBlockName');
 
-		$blockName = $vendor. '_' . $shortModuleName . '_' . $shortBlockName;
+		$blockName = $vendor . '_' . $shortModuleName . '_' . $shortBlockName;
 		$information = $event->getApplicationServices()->getBlockManager()->getBlockInformation($blockName);
 
 		if ($information instanceof \Change\Presentation\Blocks\Information)
 		{
-
 			$plugin = $event->getApplicationServices()->getPluginManager()->getModule($vendor, $shortModuleName);
 			if ($plugin && $plugin->isAvailable())
 			{
-
 				$fullyQualifiedTemplateName = $event->getRequest()->getQuery('fullyQualifiedTemplateName');
-				$workspace =  $event->getApplication()->getWorkspace();
+				$workspace = $event->getApplication()->getWorkspace();
 
 				if ($fullyQualifiedTemplateName)
 				{
@@ -47,7 +45,8 @@ class GetHtmlBlockParameters
 					{
 						if ($templateInformation->getFullyQualifiedTemplateName() == $fullyQualifiedTemplateName)
 						{
-							$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets', 'block-template-parameters.twig');
+							$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets',
+								'block-template-parameters.twig');
 							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
 
 							$genericServices = $event->getServices('genericServices');
@@ -111,7 +110,7 @@ class GetHtmlBlockParameters
 		$event->setResult($result);
 	}
 
-	protected function renderParameters() {
-
+	protected function renderParameters()
+	{
 	}
 }
