@@ -1546,5 +1546,9 @@
 	"choose_video":{
 		"message":"choisir une vidéo",
 		"description":"used in video uploader"
+	},
+	"default_template":{
+		"message":"rendu par défaut",
+		"description":"used in template selection in block properties"
 	}
 }
