@@ -54,7 +54,7 @@
 	function HeaderController ($scope, $routeParams, $location, REST, $filter) {
 		$scope.currentWebsiteId = $routeParams.id;
 		$scope.currentWebsite = null;
-		$scope.view = $routeParams.view;
+		$scope.view = $routeParams.hasOwnProperty('view') ? $routeParams.view : 'structure';
 		$scope.websites = [];
 
 		REST.treeChildren('Rbs/Website').then(function (root) {
@@ -71,7 +71,8 @@
 
 		$scope.$watch('currentWebsite', function (website) {
 			if (website && (website.id != $scope.currentWebsiteId)) {
-				var path = $filter('rbsURL')(website, 'structure');
+				console.log($routeParams);
+				var path = $filter('rbsURL')(website, $scope.view);
 				$location.path(path);
 			}
 		});
@@ -561,9 +562,6 @@
 	];
 	app.controller('Rbs_Website_StructureController', StructureController);
 
-
-
-
 	/**
 	 * @param $scope
 	 * @param Query
@@ -578,10 +576,47 @@
 			}
 		});
 	}
-
-
 	MenusController.$inject = ['$scope', 'RbsChange.Query'];
 	app.controller('Rbs_Website_MenusController', MenusController);
 
 
+	/**
+	 * @param $scope
+	 * @param $routeParams
+	 * @constructor
+	 */
+	function FunctionalPagesController($scope, $routeParams)
+	{
+		$scope.defaultFilter = {name: "group", operator: "AND", parameters: {},
+			filters: [
+				{
+					name: "website",
+					parameters: {
+						propertyName: "website", operator: "eq", value: parseInt($routeParams.id, 10)
+					}
+				}
+			]
+		};
+		$scope.functionCodes = {
+			format : function(json) {
+				var functions = {};
+				angular.forEach(json, function(fl) {
+					angular.forEach(fl, function(code) {
+						functions[code] = code;
+					})
+				});
+				var result = '';
+				angular.forEach(functions, function(code) {
+					if (result.length) {
+						result += ', ' + code;
+					} else {
+						result = code;
+					}
+				});
+				return result;
+			}
+		}
+	}
+	FunctionalPagesController.$inject = ['$scope', '$routeParams'];
+	app.controller('Rbs_Website_FunctionalPagesController', FunctionalPagesController);
 })(window.jQuery);
