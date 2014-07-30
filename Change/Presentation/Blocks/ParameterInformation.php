@@ -79,6 +79,14 @@ class ParameterInformation
 	}
 
 	/**
+	 * @return mixed|null
+	 */
+	public function getDefaultValue()
+	{
+		return isset($this->attributes['defaultValue']) ? $this->attributes['defaultValue'] : null;
+	}
+
+	/**
 	 * @param boolean $required
 	 * @return $this
 	 */
@@ -180,7 +188,7 @@ class ParameterInformation
 		else
 		{
 			$name = $this->getName();
-			return isset($parametersValues[$name]) ? $parametersValues[$name] : null;
+			return isset($parametersValues[$name]) ? $parametersValues[$name] : $this->getDefaultValue();
 		}
 	}
 }

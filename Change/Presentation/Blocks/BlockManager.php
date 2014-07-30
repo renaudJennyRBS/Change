@@ -331,6 +331,11 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 						$validParameters[$paramInfo->getName()] = $paramInfo;
 					}
 
+					if (!isset($parameters['TTL']) || !is_int($parameters['TTL']))
+					{
+						$parameters['TTL'] = intval($validParameters['TTL']->getDefaultValue());
+					}
+
 					$templates = $blockInformation->getTemplatesInformation();
 					if (count($templates))
 					{
