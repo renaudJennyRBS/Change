@@ -298,7 +298,7 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function formatAggregation(array $aggregations)
 	{
-		$collectionId = $this->getParameters()->get('thresholdCollectionId');
+		$collectionId = $this->getParameters()->get('collectionId');
 		$items = $this->getCollectionItemsTitle($collectionId);
 
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);

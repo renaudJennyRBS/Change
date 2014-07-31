@@ -235,7 +235,7 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 	 */
 	public function formatAggregation(array $aggregations)
 	{
-		$collectionId = $this->getParameters()->get('thresholdCollectionId');
+		$collectionId = $this->getParameters()->get('collectionId');
 		$documentId = $this->getParameters()->get('documentId');
 		if ($documentId && !$collectionId)
 		{
