@@ -149,4 +149,22 @@ abstract class Item
 		}
 		return null;
 	}
+
+	public function toArray()
+	{
+		$result = ['type' => $this->getType(), 'id' => $this->id,
+			'parameters' => is_array($this->parameters) ? $this->parameters : []];
+		if (!is_array($this->items))
+		{
+			return $result;
+		}
+		foreach ($this->items as $key => $item)
+		{
+			if ($item instanceof Item)
+			{
+				$result['items'][$key] = $item->toArray();
+			}
+		}
+		return $result;
+	}
 }

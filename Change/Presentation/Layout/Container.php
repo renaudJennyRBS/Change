@@ -20,11 +20,6 @@ class Container extends Item
 	protected $grid;
 
 	/**
-	 * @var string
-	 */
-	protected $gridMode;
-
-	/**
 	 * @return int
 	 */
 	public function getGrid()
@@ -48,5 +43,12 @@ class Container extends Item
 	{
 		parent::initialize($data);
 		$this->grid = $data['grid'];
+	}
+
+	public function toArray()
+	{
+		$result = parent::toArray();
+		$result['grid'] = $this->grid;
+		return $result;
 	}
 }

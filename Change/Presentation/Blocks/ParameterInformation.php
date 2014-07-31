@@ -24,6 +24,11 @@ class ParameterInformation
 	protected $attributes;
 
 	/**
+	 * @var \Callable
+	 */
+	protected $normalizeCallback;
+
+	/**
 	 * @param string $name
 	 * @param string $type
 	 * @param boolean $required
@@ -71,6 +76,14 @@ class ParameterInformation
 	{
 		$this->attributes['defaultValue'] = $defaultValue;
 		return $this;
+	}
+
+	/**
+	 * @return mixed|null
+	 */
+	public function getDefaultValue()
+	{
+		return isset($this->attributes['defaultValue']) ? $this->attributes['defaultValue'] : null;
 	}
 
 	/**
@@ -145,4 +158,37 @@ class ParameterInformation
 		return array_key_exists($name, $this->attributes);
 	}
 
+	/**
+	 * @param Callable $normalizeCallback
+	 * @return $this
+	 */
+	public function setNormalizeCallback($normalizeCallback)
+	{
+		if (is_callable($normalizeCallback))
+		{
+			$this->normalizeCallback = $normalizeCallback;
+		}
+		else
+		{
+			$this->normalizeCallback = null;
+		}
+		return $this;
+	}
+
+	/**
+	 * @param array $parametersValues
+	 * @return mixed|null
+	 */
+	public function normalizeValue(array $parametersValues)
+	{
+		if ($this->normalizeCallback)
+		{
+			return call_user_func($this->normalizeCallback, $parametersValues);
+		}
+		else
+		{
+			$name = $this->getName();
+			return isset($parametersValues[$name]) ? $parametersValues[$name] : $this->getDefaultValue();
+		}
+	}
 }

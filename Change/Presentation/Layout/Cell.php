@@ -44,4 +44,11 @@ class Cell extends Item
 		parent::initialize($data);
 		$this->size = $data['size'];
 	}
+
+	public function toArray()
+	{
+		$result = parent::toArray();
+		$result['size'] = $this->size;
+		return $result;
+	}
 }

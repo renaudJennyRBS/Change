@@ -266,9 +266,6 @@
 	"functionalpage_create":{
 		"message":"ajouter une page fonctionnelle"
 	},
-	"functionalpage_pagetemplate_picker_title":{
-		"message":"sélectionner un modèle de page"
-	},
 	"topic_list":{
 		"message":"rubriques"
 	},
@@ -432,6 +429,9 @@
 	},
 	"breadcrumb_functions":{
 		"message":"fonctions"
+	},
+	"breadcrumb_functional_pages" : {
+		"message":"pages fonctionnelles"
 	},
 	"manage_website_structure":{
 		"message":"organiser la <strong>structure</strong>"

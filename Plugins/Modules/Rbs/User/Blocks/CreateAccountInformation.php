@@ -25,5 +25,6 @@ class CreateAccountInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.user.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.create_account', $ucf));
+		$this->addTTL(0);
 	}
 }

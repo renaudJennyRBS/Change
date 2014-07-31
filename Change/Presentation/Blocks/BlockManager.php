@@ -299,4 +299,75 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		$this->cacheAdapter = $cacheAdapter;
 		return $this;
 	}
+
+	/**
+	 * @param \Change\Presentation\Layout\Block[] $blocks
+	 */
+	public function normalizeBlocksParameters(array $blocks)
+	{
+		foreach ($blocks as $block)
+		{
+			if ($block instanceof \Change\Presentation\Layout\Block)
+			{
+				$blockInformation = $this->getBlockInformation($block->getName());
+				if ($blockInformation instanceof Information) {
+					$parameters = $block->getParameters();
+					if (!is_array($parameters))
+					{
+						$parameters = [];
+					}
+					$parameters = $blockInformation->normalizeParameters($parameters);
+					if (!is_array($parameters))
+					{
+						$parameters = [];
+					}
+
+					/** @var $validParameters \Change\Presentation\Blocks\ParameterInformation[] */
+					$validParameters = [];
+					$validParameters['TTL'] = new \Change\Presentation\Blocks\ParameterInformation('TTL', \Change\Documents\Property::TYPE_INTEGER, false, 60);
+
+					foreach ($blockInformation->getParametersInformation() as $paramInfo)
+					{
+						$validParameters[$paramInfo->getName()] = $paramInfo;
+					}
+
+					if (!isset($parameters['TTL']) || !is_int($parameters['TTL']))
+					{
+						$parameters['TTL'] = intval($validParameters['TTL']->getDefaultValue());
+					}
+
+					$templates = $blockInformation->getTemplatesInformation();
+					if (count($templates))
+					{
+						$validParameters['fullyQualifiedTemplateName'] = new \Change\Presentation\Blocks\ParameterInformation('fullyQualifiedTemplateName', \Change\Documents\Property::TYPE_STRING, false, null);
+						if (isset($parameters['fullyQualifiedTemplateName']))
+						{
+							$fullyQualifiedTemplateName = $parameters['fullyQualifiedTemplateName'];
+							foreach ($templates as $template)
+							{
+								if ($template->getFullyQualifiedTemplateName() == $fullyQualifiedTemplateName)
+								{
+									foreach ($template->getParametersInformation() as $paramInfo)
+									{
+										$validParameters[$paramInfo->getName()] = $paramInfo;
+									}
+								}
+							}
+						}
+					}
+
+					$normalizedParameters = [];
+					foreach ($validParameters as $name => $validParameter)
+					{
+						$value = $validParameter->normalizeValue($parameters);
+						if ($value !== null)
+						{
+							$normalizedParameters[$name] = $value;
+						}
+					}
+					$block->setParameters($normalizedParameters);
+				}
+			}
+		}
+	}
 }

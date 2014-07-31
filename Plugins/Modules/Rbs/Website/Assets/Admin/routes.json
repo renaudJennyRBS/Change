@@ -101,7 +101,10 @@
 		"name": "selector",
 		"rule": {
 			"controller": "Rbs_Website_WebsiteSelector",
-			"template": "<div></div>"
+			"template": "<div></div>",
+			"options": {
+				"view": "functionalpages"
+			}
 		},
 		"auto": false
 	},
@@ -182,12 +185,27 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Website/Website/:id/FunctionalPages/": {
+		"model": "Rbs_Website_Website",
+		"name": "functionalpages",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/Website/browseFunctionalPages.twig",
+			"labelKey": "m.rbs.website.admin.breadcrumb_functional_pages | ucf",
+			"options": {
+				"view": "functionalpages"
+			}
+		},
+		"auto": false
+	},
 	"/Rbs/Website/Website/:id/Functions/": {
 		"model": "Rbs_Website_Website",
 		"name": "functions",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Website/browseFunctions.twig",
-			"labelKey": "m.rbs.website.admin.breadcrumb_functions | ucf"
+			"labelKey": "m.rbs.website.admin.breadcrumb_functions | ucf",
+			"options": {
+				"view": "functions"
+			}
 		},
 		"auto": false
 	},
@@ -196,7 +214,10 @@
 		"name": "menus",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Website/browseMenus.twig",
-			"labelKey": "m.rbs.website.admin.breadcrumb_menus | ucf"
+			"labelKey": "m.rbs.website.admin.breadcrumb_menus | ucf",
+			"options": {
+				"view": "menus"
+			}
 		},
 		"auto": false
 	},
@@ -205,11 +226,43 @@
 		"name": "structure",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Website/browseStructure.twig",
-			"labelKey": "m.rbs.website.admin.breadcrumb_structure | ucf"
+			"labelKey": "m.rbs.website.admin.breadcrumb_structure | ucf",
+			"options": {
+				"view": "structure"
+			}
 		},
 		"auto": false
 	},
 	"/Rbs/Website/Website/:id/translate/:LCID": false,
+	"/Rbs/Website/Website/:website/FunctionalPages/FunctionalPage/:id": {
+		"model": "Rbs_Website_FunctionalPage",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/FunctionalPage/edit.twig",
+			"labelKey": "m.rbs.website.documents.functionalpage | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/FunctionalPages/FunctionalPage/:id/translate/:LCID": {
+		"model": "Rbs_Website_FunctionalPage",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/FunctionalPage/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Website/Website/:website/FunctionalPages/FunctionalPage/new": {
+		"model": "Rbs_Website_FunctionalPage",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/FunctionalPage/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Website/Website/:website/Menus/Menu/:id": {
 		"model": "Rbs_Website_Menu",
 		"name": "edit",
@@ -236,35 +289,6 @@
 		"name": "new",
 		"rule": {
 			"templateUrl": "Document/Rbs/Website/Menu/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Website/Website/:website/Structure/FunctionalPage/:id": {
-		"model": "Rbs_Website_FunctionalPage",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Website/FunctionalPage/edit.twig",
-			"labelKey": "m.rbs.website.documents.functionalpage | ucf",
-			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Website/Website/:website/Structure/FunctionalPage/:id/translate/:LCID": {
-		"model": "Rbs_Website_FunctionalPage",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Website/FunctionalPage/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Website/Website/:website/Structure/FunctionalPage/new": {
-		"model": "Rbs_Website_FunctionalPage",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Website/FunctionalPage/new.twig",
 			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
