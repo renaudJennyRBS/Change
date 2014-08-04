@@ -5,9 +5,10 @@
 		<rbs-token-list ng-if="!disableReordering && doc.list.length > 1" items="doc.list" rows="true"></rbs-token-list>
 	</div>
 
-	<div data-ng-show="isEmpty() || multiple" class="auto-complete-input input-group input-group-sm">
+	<div data-ng-show="isEmpty() || multiple" class="auto-complete-input"
+		data-ng-class="{'input-group': models.filtered.length }">
 		<span class="input-group-addon" data-ng-if="models.filtered.length">
-			<select class="form-control input-sm" data-ng-model="models.model" data-ng-disabled="!multiple && !isEmpty()"
+			<select class="form-control" data-ng-model="models.model" data-ng-disabled="!multiple && !isEmpty()"
 				data-ng-options="m.label group by m.plugin for m in models.filtered">
 			</select>
 		</span>
