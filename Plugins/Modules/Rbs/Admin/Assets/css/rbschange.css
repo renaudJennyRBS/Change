@@ -648,7 +648,9 @@ pre {
 	border-color: #6f5499;
 }
 
-.btn-selection:hover {
+.btn-selection:hover,
+.btn-selection:active,
+.btn-selection:focus {
 	background: #6f5499;
 	color: white;
 }

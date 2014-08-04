@@ -443,7 +443,7 @@
 		'RbsChange.Models', function(REST, Utils, Navigation, $timeout, UrlManager, Models) {
 			return {
 				restrict: 'EA',
-				templateUrl: 'Rbs/Admin/js/directives/document-picker-multiple.twig',
+				templateUrl: 'Rbs/Admin/js/directives/document-picker.twig',
 				require: 'ngModel',
 				scope: true,
 
@@ -481,7 +481,7 @@
 			function(REST, Utils, Navigation, $timeout, UrlManager, Models) {
 				return {
 					restrict: 'EA',
-					templateUrl: 'Rbs/Admin/js/directives/document-picker-multiple.twig',
+					templateUrl: 'Rbs/Admin/js/directives/document-picker.twig',
 					require: 'ngModel',
 					scope: true,
 
