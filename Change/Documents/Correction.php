@@ -394,7 +394,7 @@ class Correction
 			{
 				$array = [];
 				$dm = $this->documentManager;
-				foreach ($value as $val)
+				foreach ($value as $key => $val)
 				{
 					if ($val instanceof DocumentWeakReference)
 					{
@@ -412,7 +412,7 @@ class Correction
 					}
 					else
 					{
-						$array[] = $val;
+						$array[$key] = $val;
 					}
 				}
 				return $array;
