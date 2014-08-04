@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System, Eric Hauswald
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -9,6 +8,7 @@
 namespace Change\Presentation\Blocks;
 
 use Change\Http\Web\Result\BlockResult;
+use Change\Presentation\Blocks\Standard\UpdateBlockInformation;
 
 /**
  * @name \Change\Presentation\Blocks\BlockManager
@@ -43,6 +43,15 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getConfiguration()
 	{
 		return $this->getApplication()->getConfiguration();
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach(static::EVENT_INFORMATION, [$this, 'onDefaultInformation']);
 	}
 
 	/**
@@ -83,6 +92,100 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 			$eventManager->trigger($event);
 		}
 		return array_keys($this->blocks);
+	}
+
+	public function onDefaultInformation(Event $event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		$pluginManager = $applicationServices->getPluginManager();
+		$this->registerBlocksTemplates($pluginManager);
+	}
+
+	/**
+	 * @param \Change\Plugins\PluginManager $pluginManager
+	 */
+	protected function registerBlocksTemplates($pluginManager)
+	{
+		foreach ($pluginManager->getThemes() as $themePlugin)
+		{
+			if ($themePlugin->getActivated())
+			{
+				$blocksTemplatesFile = $this->getApplication()->getWorkspace()
+					->composePath($themePlugin->getAbsolutePath(), 'blocks-templates.json');
+				if (is_readable($blocksTemplatesFile))
+				{
+					$configuration = json_decode(file_get_contents($blocksTemplatesFile), true);
+					if (is_array($configuration) && count($configuration))
+					{
+						foreach ($configuration as $blockName => $blockConfig)
+						{
+							if (isset($blockConfig['templates']) && is_array($blockConfig['templates'])
+								&& count($blockConfig['templates'])
+							)
+							{
+								$templates = $blockConfig['templates'];
+								new UpdateBlockInformation($blockName, $this->getEventManager(), function ($event) use ($templates)
+								{
+									$this->onUpdateTemplateInformation($event, $templates);
+								});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 * @param array $templatesConfiguration
+	 */
+	protected function onUpdateTemplateInformation(Event $event, array $templatesConfiguration)
+	{
+		$information = $event->getParam('information');
+		if ($information instanceof \Change\Presentation\Blocks\Information)
+		{
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+			foreach ($templatesConfiguration as $fullyQualifiedTemplateName => $templateConfig)
+			{
+				$templateInformation = $information->addTemplateInformation($fullyQualifiedTemplateName);
+				if (isset($templateConfig['label']))
+				{
+					$templateInformation->setLabel($i18nManager->trans($templateConfig['label'], ['ucf']));
+				}
+				else
+				{
+					$templateInformation->setLabel($templateInformation->getTemplateName());
+				}
+				if (isset($templateConfig['parameters']) && is_array($templateConfig['parameters']))
+				{
+					foreach ($templateConfig['parameters'] as $parameterName => $parameterConfig)
+					{
+						$type = isset($parameterConfig['type']) ? $parameterConfig['type'] : \Change\Documents\Property::TYPE_STRING;
+						$required = isset($parameterConfig['required']) ? $parameterConfig['required'] === true : false;
+						$defaultValue = isset($parameterConfig['defaultValue']) ? $parameterConfig['defaultValue'] : null;
+						$parameter = $templateInformation->addParameterInformation($parameterName, $type, $required,
+							$defaultValue);
+						if (isset($parameterConfig['label']))
+						{
+							$parameter->setLabel($i18nManager->trans($parameterConfig['label'], ['ucf']));
+						}
+						else
+						{
+							$parameter->setLabel($parameterName);
+						}
+						if (isset($parameterConfig['allowedModelsNames']))
+						{
+							$parameter->setAllowedModelsNames($parameterConfig['allowedModelsNames']);
+						}
+						if (isset($parameterConfig['collectionCode']))
+						{
+							$parameter->setCollectionCode($parameterConfig['collectionCode']);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -186,7 +289,8 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 			if ($cacheAdapter->hasItem($key))
 			{
 				$result = $cacheAdapter->getItem($key);
-				if ($result instanceof BlockResult){
+				if ($result instanceof BlockResult)
+				{
 					$result->setId($blockLayout->getId());
 				}
 			}
@@ -251,8 +355,8 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				catch (\Exception $e)
 				{
-					$error = 'Unable to render "'.$relativePath.'" template for block ' . $blockLayout->getName();
-					$result->setHtml('<!-- '. $error .' -->');
+					$error = 'Unable to render "' . $relativePath . '" template for block ' . $blockLayout->getName();
+					$result->setHtml('<!-- ' . $error . ' -->');
 					$this->getApplication()->getLogging()->error($error);
 					$this->getApplication()->getLogging()->exception($e);
 				}
@@ -310,7 +414,8 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 			if ($block instanceof \Change\Presentation\Layout\Block)
 			{
 				$blockInformation = $this->getBlockInformation($block->getName());
-				if ($blockInformation instanceof Information) {
+				if ($blockInformation instanceof Information)
+				{
 					$parameters = $block->getParameters();
 					if (!is_array($parameters))
 					{

@@ -24,9 +24,6 @@ class XhtmlTemplate extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('moduleName', 'Rbs_Website');
-		$parameters->addParameterMeta('templateName', 'xhtml-empty.twig');
-
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		return $parameters;
 	}
@@ -40,8 +37,6 @@ class XhtmlTemplate extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$parameters = $event->getBlockParameters();
-		$this->setTemplateModuleName($parameters->getParameter('moduleName'));
-		return $parameters->getParameter('templateName');
+		return 'xhtml-empty.twig';
 	}
 }

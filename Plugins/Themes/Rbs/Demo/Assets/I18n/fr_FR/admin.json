@@ -7,5 +7,14 @@
 	},
 	"sidebarpage_label":{
 		"message":"page avec sidebar"
+	},
+	"copyright_label":{
+		"message":"copyright"
+	},
+	"powered_by":{
+		"message":"auteur"
+	},
+	"logo_label":{
+		"message":"logo"
 	}
 }

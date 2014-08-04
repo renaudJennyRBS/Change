@@ -7,13 +7,11 @@
 			"visibility" : "raw",
 			"parameters" : {}
 		},
-
 		"headerTop1" : {
 			"id" : "headerTop1",
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
-				"documentId" : null,
 				"maxLevel" : 1
 			}
 		},
@@ -43,8 +41,7 @@
 			"type" : "block",
 			"name" : "Rbs_Website_XhtmlTemplate",
 			"parameters" : {
-				"moduleName" : "Rbs_Demo",
-				"templateName" : "xhtml-logo.twig"
+				"fullyQualifiedTemplateName": "Rbs_Demo:xhtml-logo.twig"
 			}
 		},
 		"mainMenu" : {
@@ -52,7 +49,6 @@
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
-				"documentId" : null,
 				"maxLevel" : 2,
 				"fullyQualifiedTemplateName": "Rbs_Website:menu-scroll.twig",
 				"inverseColors" : true
@@ -79,7 +75,6 @@
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
 				"contextual" : true,
-				"documentId" : null,
 				"maxLevel" : 2,
 				"fullyQualifiedTemplateName": "Rbs_Website:menu-contextual.twig",
 				"showTitle" : true
@@ -122,7 +117,6 @@
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
-				"documentId" : null,
 				"maxLevel" : 1,
 				"showTitle" : false,
 				"fullyQualifiedTemplateName": "Rbs_Website:menu-vertical.twig"
@@ -133,7 +127,6 @@
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
-				"documentId" : null,
 				"maxLevel" : 2,
 				"showTitle" : true,
 				"fullyQualifiedTemplateName": "Rbs_Website:menu-vertical.twig"
@@ -144,7 +137,6 @@
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
-				"documentId" : null,
 				"maxLevel" : 3,
 				"showTitle" : true,
 				"fullyQualifiedTemplateName": "Rbs_Website:menu-vertical.twig"
@@ -155,7 +147,6 @@
 			"type" : "block",
 			"name" : "Rbs_Website_Menu",
 			"parameters" : {
-				"documentId" : null,
 				"maxLevel" : 1
 			}
 		},
@@ -164,8 +155,7 @@
 			"type" : "block",
 			"name" : "Rbs_Website_XhtmlTemplate",
 			"parameters" : {
-				"moduleName" : "Rbs_Demo",
-				"templateName" : "xhtml-copyright.twig"
+				"fullyQualifiedTemplateName": "Rbs_Demo:xhtml-copyright.twig"
 			}
 		}
 	}

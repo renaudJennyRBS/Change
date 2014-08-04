@@ -268,7 +268,7 @@ class Parameters
 	 */
 	function __isset($name)
 	{
-		return ($this->hasParameterValue($name) || $this->hasParameterMeta($name));
+		return true;
 	}
 
 	/**
@@ -286,7 +286,7 @@ class Parameters
 		{
 			return $this->getParameterMeta($name)->getDefaultValue();
 		}
-		throw new \InvalidArgumentException('Argument 1 must be a valid parameter name: ' . $name, 999999);
+		return null;
 	}
 
 

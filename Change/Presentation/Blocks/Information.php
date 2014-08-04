@@ -129,7 +129,7 @@ class Information
 	 * @param string $templateName
 	 * @return \Change\Presentation\Blocks\TemplateInformation
 	 */
-	public function addTemplateInformation($moduleName, $templateName)
+	public function addTemplateInformation($moduleName, $templateName = null)
 	{
 		$templateInformation = new TemplateInformation($moduleName, $templateName);
 		$this->templatesInformation[$templateInformation->getFullyQualifiedTemplateName()] = $templateInformation;

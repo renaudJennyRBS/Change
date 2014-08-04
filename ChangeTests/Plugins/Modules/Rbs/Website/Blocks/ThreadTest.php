@@ -55,7 +55,8 @@ class ThreadTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$this->assertInstanceOf('\\Change\\Presentation\\Blocks\\Parameters', $parameters);
 
-		$this->assertFalse(isset($parameters->zearazefazefazfazf));
+		$this->assertTrue(isset($parameters->zearazefazefazfazf));
+		$this->assertNull($parameters->zearazefazefazfazf);
 
 		$meta = $parameters->getParameterMeta('separator');
 		$this->assertInstanceOf('\Change\Presentation\Blocks\ParameterMeta', $meta);
