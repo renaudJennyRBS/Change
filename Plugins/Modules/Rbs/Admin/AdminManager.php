@@ -168,6 +168,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('getModelTwigAttributes', array($this, 'onDefaultGetModelTwigAttributes'), 5);
 		$eventManager->attach('getRoutes', array($this, 'onDefaultGetRoutes'), 5);
+		$eventManager->attach('searchDocuments', array($this, 'onDefaultSearchDocuments'), 5);
 	}
 
 	/**
@@ -870,6 +871,10 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		return $result;
 	}
 
+	/**
+	 * @param array $menuJson
+	 * @return array
+	 */
 	private function parseEntries($menuJson)
 	{
 		$result = [];
@@ -936,5 +941,46 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		$args = $this->getEventManager()->prepareArgs([]);
 		$this->getEventManager()->trigger('getGenericSettingsStructures', $this, $args);
 		return isset($args['structures']) && is_array($args['structures']) ? $args['structures'] : [];
+	}
+
+	/**
+	 * @param string $modelName
+	 * @param string $searchString
+	 * @param integer $limit
+	 * @return \Change\Documents\AbstractDocument[]
+	 */
+	public function searchDocuments($modelName, $searchString, $limit = 10)
+	{
+		$args = $this->getEventManager()->prepareArgs([
+			'modelName' => $modelName,
+			'searchString' => $searchString,
+			'limit' => $limit
+		]);
+		$this->getEventManager()->trigger('searchDocuments', $this, $args);
+		return isset($args['documents']) && is_array($args['documents']) ? $args['documents'] : [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultSearchDocuments($event)
+	{
+		$model = $event->getApplicationServices()->getModelManager()->getModelByName($event->getParam('modelName'));
+		if (!$model || $model->isStateless())
+		{
+			return;
+		}
+
+		$property = $model->getProperty('label');
+		if (!$property || $property->getStateless())
+		{
+			return;
+		}
+
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($model);
+		$query->andPredicates($query->like('label', $event->getParam('searchString')));
+		$query->addOrder('label');
+		$query->addOrder('id');
+		$event->setParam('documents', $query->getDocuments(0, $event->getParam('limit'))->toArray());
 	}
 }

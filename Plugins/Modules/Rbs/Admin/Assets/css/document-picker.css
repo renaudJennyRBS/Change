@@ -42,8 +42,7 @@ rbs-document-picker-single .input-append + .btn-group {
 	margin-bottom: auto;
 }
 
-rbs-document-picker-single > .picker-toolbar,
-rbs-document-picker-multiple > .picker-toolbar,
+.document-picker > .picker-toolbar,
 rbs-document-chained-select .btn-toolbar{
 	background: none repeat scroll 0 0 #F5F5F5;
 	border-bottom-left-radius: 4px;
@@ -57,8 +56,7 @@ rbs-document-chained-select .btn-toolbar{
 	z-index: 0;
 }
 
-rbs-document-picker-single .empty,
-rbs-document-picker-multiple .empty{
+.document-picker .empty {
 	color: silver;
 	font-style: italic;
 }
@@ -84,4 +82,66 @@ rbs-document-picker-multiple .empty{
 select option.empty-value {
 	font-style: italic;
 	color: #999999;
+}
+
+.document-picker {
+	position: relative;
+}
+
+.document-picker .auto-complete-input {
+	margin-top: 4px;
+	width: 100%;
+}
+.document-picker.document-picker-empty .auto-complete-input {
+	margin-top: 0;
+}
+.document-picker .auto-complete-input .input-group-addon {
+	width: 1%;
+	padding: 0;
+	border: none;
+}
+.document-picker .auto-complete-input .input-group-addon select {
+	width: auto;
+	border-top-left-radius: inherit;
+	border-bottom-left-radius: inherit;
+}
+
+.document-picker .auto-complete-list {
+	position: absolute;
+	padding: 7px;
+	background: #444444;
+	color: white;
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	border-radius: 4px;
+	border: 1px solid white;
+	z-index: 1000;
+}
+
+.document-picker .auto-complete-list:after {
+	border-bottom: 6px solid #444444;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 10px;
+	position: absolute;
+	top: -6px;
+}
+
+.document-picker .auto-complete-list:before {
+	border-bottom: 7px solid white;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	content: "";
+	display: inline-block;
+	left: 9px;
+	position: absolute;
+	top: -7px;
+}
+
+.document-picker .auto-complete-list ul {
+	margin-bottom: 0;
+}
+.document-picker .auto-complete-list li {
+	padding: 2px;
 }
