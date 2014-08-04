@@ -7,7 +7,7 @@
 	{
 		$templateCache.put(
 			'picker-item-Rbs_Catalog_Product.html',
-			'<span style="line-height: 30px"><img rbs-storage-image="item.adminthumbnail" thumbnail="XS"/> (= item.label =)</span>'
+			'<span style="line-height: 30px"><img rbs-storage-image="item.adminthumbnail" thumbnail="XS"/> (= item.label =) <small class="text-muted">(= item.model|rbsModelLabel =)</small></span>'
 		);
 	}]);
 

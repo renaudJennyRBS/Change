@@ -14,7 +14,7 @@
 	app.run(['$templateCache', function ($templateCache)
 	{
 		if (! $templateCache.get('picker-item-default.html')) {
-			$templateCache.put('picker-item-default.html', '(= item.label =)');
+			$templateCache.put('picker-item-default.html', '(= item.label =) <small class="text-muted">(= item.model|rbsModelLabel =)</small>');
 		}
 	}]);
 

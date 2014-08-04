@@ -5,7 +5,10 @@
 	var app = angular.module('RbsChange');
 
 	app.run(['$templateCache', function($templateCache) {
-		$templateCache.put('picker-item-Rbs_Media_Image.html', '<span style="line-height: 30px"><img rbs-storage-image="item" thumbnail="XS"/> (= item.label =) ((= item.width =) &times; (= item.height =))</span>');
+		$templateCache.put(
+			'picker-item-Rbs_Media_Image.html',
+			'<span style="line-height: 30px"><img rbs-storage-image="item" thumbnail="XS"/> (= item.label =) ((= item.width =) &times; (= item.height =)) <small class="text-muted">(= item.model|rbsModelLabel =)</small></span>'
+		);
 	}]);
 
 	/**
