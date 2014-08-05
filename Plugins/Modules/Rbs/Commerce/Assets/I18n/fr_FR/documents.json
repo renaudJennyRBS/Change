@@ -8,6 +8,9 @@
 	"process_shippingmodes":{
 		"message":"modes de livraison"
 	},
+	"process_shippingzones":{
+		"message":"zones de livraison"
+	},
 	"process_paymentconnectors":{
 		"message":"modes de paiement"
 	},

@@ -138,7 +138,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.mailing_address', ['ucf']) }}</div>
 					<div class="panel-body">
-						<div class="row">
+						<div data-ng-show="addresses" class="row">
 							<div data-ng-repeat-start="address in addresses" class="col-md-6 col-lg-4">
 								<h3>(= address.name =)</h3>
 								<address>
@@ -162,8 +162,21 @@
 							* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
 						</p>
 
-						<div data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
-							data-zone-code="(= cart.zone =)">
+
+						<div data-ng-if="shippingZonesCode.length > 0 && information.login" data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
+							data-address-name="information.address.name" data-manage-name="true"
+							data-zone-code="(= shippingZonesCode | json =)">
+						</div>
+						<div data-ng-if="shippingZonesCode.length > 0 &&  !information.login" data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
+							data-zone-code="(= shippingZonesCode | json =)">
+						</div>
+
+						<div>
+							<button type="button" class="btn btn-sm btn-primary"
+								data-ng-if="information.address.__id"
+								data-ng-click="clearAddress()">
+								{{ i18n('m.rbs.commerce.front.button_use_new_address', ['ucf']) }}
+							</button>
 						</div>
 					</div>
 				</div>
@@ -184,7 +197,7 @@
 							<div class="col-md-6">
 								<address class="no-bottom-margin">
 									<strong>(= cart.address.__lines[0] =)</strong>
-									<div data-ng-repeat="line in cart.address.__lines" data-ng-if="!$first">(= line =)</div>
+									<div data-ng-repeat="line in cart.address.__lines" data-ng-show="!$first">(= line =)</div>
 								</address>
 							</div>
 						</div>

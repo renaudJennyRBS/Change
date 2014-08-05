@@ -74,6 +74,14 @@
 				delete(existingAddress[key]);
 			}
 		});
+		if (addressToUse.hasOwnProperty('name'))
+		{
+			existingAddress.name = addressToUse.name;
+		}
+		if (addressToUse.hasOwnProperty('__id'))
+		{
+			existingAddress.__id = addressToUse.__id;
+		}
 	}
 
 	function rbsCommerceCartData() {
@@ -170,8 +178,30 @@
 			templateUrl: '/shipping-mode-selector.static.tpl',
 
 			link: function(scope, element, attributes) {
-				scope.modes = [];
 				scope.display = { readonly: attributes.readonly };
+				scope.deliveryIndex = attributes.deliveryIndex;
+				scope.hasLogin = attributes.hasOwnProperty('login') && attributes.login != '';
+				scope.addressModes = [];
+				scope.pickupModes = [];
+				scope.isShippingAddressValid = {value : false};
+				scope.cart.context.isShippingAddressValid = [];
+
+				if (typeof scope.cart.context.shippingAddress === "undefined")
+				{
+					scope.cart.context.shippingAddress = [];
+				}
+				if (typeof scope.cart.context.shippingAddress[scope.deliveryIndex] === "undefined")
+				{
+					scope.cart.context.shippingAddress[scope.deliveryIndex] = angular.copy(scope.cart.address);
+				}
+				if (!scope.shippingAddress)
+				{
+					scope.shippingAddress = angular.copy(scope.cart.context.shippingAddress[scope.deliveryIndex]);
+				}
+
+				attributes.$observe('readonly', function(newValue) {
+					scope.display.readonly = (newValue == 'true');
+				});
 
 				function setupConfigurationZone() {
 					var mode = scope.currentMode;
@@ -184,38 +214,116 @@
 					$compile(element.find('.configuration-zone'))(scope);
 				}
 
-				attributes.$observe('readonly', function(newValue) {
-					scope.display.readonly = (newValue == 'true');
-				});
-
-				$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines})
-					.success(function(data) {
-						scope.modes = data;
-						if (scope.modes.length == 1) {
-							scope.selectMode(0);
-						}
-						else {
-							for (var i = 0; i < scope.modes.length; i++) {
-								if (scope.modes[i].id == scope.delivery.modeId) {
-									scope.selectMode(i);
+				function loadCompatibleShippingModes(needAddress) {
+					var modes = [];
+					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines, needAddress: needAddress})
+						.success(function(data) {
+							modes = data;
+							if (needAddress)
+							{
+								scope.addressModes = data;
+								if (scope.delivery.modeId !== null)
+								{
+									for (var i = 0; i < scope.addressModes.length; i++) {
+										if (scope.addressModes[i].id == scope.delivery.modeId)
+										{
+											scope.selectAddressMode(i);
+										}
+									}
 								}
 							}
-						}
-					})
-					.error(function(data, status, headers) {
-						console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status, headers);
-					});
+							else
+							{
+								scope.pickupModes = data;
+								if (scope.delivery.modeId !== null)
+								{
+									for (var i = 0; i < scope.pickupModes.length; i++) {
+										if (scope.pickupModes[i].id == scope.delivery.modeId)
+										{
+											scope.selectPickupMode(i);
+										}
+									}
+								}
+							}
+						})
+						.error(function(data, status, headers) {
+							console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status, headers);
+						});
+				}
 
-				scope.selectMode = function(index) {
-					var mode = scope.modes[index];
+				loadCompatibleShippingModes(true);
+				loadCompatibleShippingModes(false);
+
+				scope.selectAddressMode = function(index) {
+					var mode = scope.addressModes[index];
+					scope.currentMode = mode;
 					scope.delivery.modeId = mode.id;
 					scope.delivery.modeTitle = mode.title;
-					scope.currentMode = mode;
+					scope.delivery.address = scope.shippingAddress;
+					scope.delivery.isConfigured = true;
 					setupConfigurationZone();
+				};
+
+				scope.selectPickupMode = function(index) {
+					var mode = scope.pickupModes[index];
+					scope.currentMode = mode;
+					scope.delivery.modeId = mode.id;
+					scope.delivery.modeTitle = mode.title;
+					scope.delivery.isConfigured = false;
+					setupConfigurationZone();
+					scope.delivery.address = null;
 				};
 
 				scope.trustHtml = function(html) {
 					return $sce.trustAsHtml(html);
+				};
+
+				scope.openEditShippingAddressForm = function() {
+					scope.editShippingAddress = true;
+					angular.forEach(scope.shippingAddress, function(value, key) {
+						if (key != 'countryCode' && key != '__addressFieldsId') {
+							scope.shippingAddress[key] = null;
+						}
+					});
+					scope.shippingAddress.name = '';
+					scope.isShippingAddressValid.value = false;
+					scope.delivery.underConfiguration = true;
+				};
+
+				scope.cancelShippingAddressForm = function() {
+					scope.editShippingAddress = false;
+					scope.shippingAddress = angular.copy(scope.cart.context.shippingAddress[scope.deliveryIndex]);
+					scope.delivery.underConfiguration = false;
+				};
+
+				scope.loadShippingAddressInForm = function(address, addressName) {
+					scope.shippingAddress = address;
+					scope.shippingAddress.name = addressName;
+				};
+
+				scope.addressCannotBeUsed = false;
+				scope.addressCanBeUsed = function(address) {
+					var bool = (address.countryCode == scope.shippingAddress.countryCode);
+					if (!bool)
+					{
+						scope.addressCannotBeUsed = true;
+						return false;
+					}
+					return true;
+				};
+
+				scope.hasAddressCannotBeUsed = function() {
+					return scope.addressCannotBeUsed;
+				};
+
+				scope.validShippingAddressForm = function() {
+					var postData = { contextShippingAddress: scope.shippingAddress, deliveryIndex: scope.deliveryIndex };
+					updateCart($http, scope, postData, function(data) {
+						scope.delivery.underConfiguration = false;
+						scope.editShippingAddress = false;
+						scope.shippingAddress = angular.copy(scope.cart.context.shippingAddress[scope.deliveryIndex]);
+						scope.addressModes = loadCompatibleShippingModes(true);
+					});
 				};
 			}
 		}
@@ -230,8 +338,8 @@
 			restrict: 'AE',
 			scope: false,
 			link: function(scope) {
-				scope.delivery.isConfigured = true;
 				scope.delivery.address = null;
+				scope.delivery.isConfigured = true;
 			}
 		}
 	}
@@ -245,35 +353,6 @@
 			scope: false,
 			templateUrl: '/shipping-mode-configuration-address.static.tpl',
 			link: function(scope) {
-				if (!scope.delivery.hasOwnProperty('address')) {
-					scope.delivery.address = { __addressFieldsId: null };
-				}
-
-				if (!scope.delivery.options.hasOwnProperty('usePostalAddress')) {
-					scope.delivery.options.usePostalAddress = 1;
-				}
-
-				function applyPostalAddressIfNecessary() {
-					if (parseInt(scope.delivery.options.usePostalAddress) == 1) {
-						scope.delivery.address = angular.copy(scope.cart.address);
-						scope.delivery.isConfigured = true;
-					}
-					else {
-						scope.delivery.isConfigured = false;
-					}
-				}
-
-				applyPostalAddressIfNecessary();
-
-				scope.$watch('delivery.options.usePostalAddress', applyPostalAddressIfNecessary);
-
-				scope.isReadOnly = function() {
-					return scope.readonly;
-				};
-
-				scope.hasInvalidAddresses = hasInvalidAddresses;
-				scope.isValidAddress = isValidAddress;
-				scope.applyAddress = applyAddress;
 			}
 		}
 	}
@@ -421,6 +500,7 @@
 		scope.originalQuantities = {};
 		scope.information = { errors: [], authenticated: false, email: null };
 		scope.shipping = { errors: [], deliveries: [] };
+		scope.shippingZonesCode = [];
 		scope.payment = { errors: [], newCouponCode: null, transaction: null };
 		scope.currentStep = null;
 		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
@@ -431,6 +511,15 @@
 			})
 			.error(function(data, status, headers) {
 				console.log('GetAddresses error', data, status, headers);
+			}
+		);
+
+		$http.get('Action/Rbs/Commerce/GetShippingZonesCode')
+			.success(function(data) {
+				scope.shippingZonesCode = data;
+			})
+			.error(function(data, status, headers) {
+				console.log('GetShippingZones error', data, status, headers);
 			}
 		);
 
@@ -518,6 +607,9 @@
 			scope.information.address = getObject(scope.cart.address, true);
 			if (!scope.information.hasOwnProperty('isAddressValid')) {
 				scope.information.isAddressValid = false;
+			}
+			if (!scope.information.hasOwnProperty('name')) {
+				scope.information.name = '';
 			}
 		};
 
@@ -629,9 +721,77 @@
 			var postData = { address: scope.information.address };
 			var callback = function() {
 				scope.information.address = getObject(scope.cart.address, true);
+
+				if (!scope.information.address.hasOwnProperty('name') || (scope.information.address.hasOwnProperty('name') && scope.information.address.name == '') )
+				{
+					var lineCount = scope.information.address.__lines.length;
+					scope.information.address.name = scope.information.address.__lines[0] - scope.information.address.__lines[lineCount-1];
+				}
+				if (scope.information.login)
+				{
+					scope.saveAddress(scope.information.address, function(){
+						// Update again cart to add address id
+						var postData = { address: scope.information.address };
+						updateCart($http, scope, postData);
+					});
+				}
 				scope.setCurrentStep('shipping');
 			};
 			updateCart($http, scope, postData, callback);
+		};
+
+		scope.clearAddress = function () {
+			scope.information.address.name = '';
+			angular.forEach(scope.information.address, function(value, key) {
+				if (key != 'countryCode' && key != '__addressFieldsId') {
+					scope.information.address[key] = null;
+				}
+			});
+		};
+
+		scope.saveAddress = function (address, successAddCallback, errorCallback) {
+			var postData = {
+				name: address.name,
+				fieldValues: address
+			};
+
+			if (address.__id)
+			{
+				console.log('UpdateAddress');
+				$http.post('Action/Rbs/Geo/UpdateAddress', postData)
+					.success(function(data) {
+						scope.addresses = angular.copy(data);
+					})
+					.error(function(data, status, headers) { console.log('Update Address error', data, status, headers); });
+			}
+			else
+			{
+				console.log('AddAddress');
+				$http.post('Action/Rbs/Geo/AddAddress', postData)
+					.success(function(data) {
+						var maxId = 0;
+						for (var i=0; i < data.length; i++)
+						{
+							if (data[i].fieldValues.__id && data[i].fieldValues.__id > maxId)
+							{
+								maxId = data[i].fieldValues.__id;
+							}
+						}
+						for (var j=0; j < data.length; j++)
+						{
+							if (data[j].fieldValues.__id && data[j].fieldValues.__id == maxId)
+							{
+								address.__id = maxId;
+								scope.addresses.push(data[j]);
+								if (angular.isFunction(successAddCallback)) {
+									successAddCallback(address, data[j]);
+								}
+								break;
+							}
+						}
+					})
+					.error(function(data, status, headers) { console.log('Add Address error', data, status, headers); });
+			}
 		};
 
 		/**
@@ -657,7 +817,7 @@
 
 		scope.isShippingStepComplete = function() {
 			for (var i = 0; i < scope.shipping.deliveries.length; i++) {
-				if (!scope.shipping.deliveries[i].isConfigured) {
+				if (!scope.shipping.deliveries[i].isConfigured || scope.shipping.deliveries[i].underConfiguration) {
 					return false;
 				}
 			}
@@ -706,10 +866,23 @@
 					address: delivery.address,
 					options: delivery.options
 				});
+
 			}
 			var postData = { shippingModes: scope.cart.shippingModes };
 			updateCart($http, scope, postData, function() {
 				scope.setShippingDeliveries();
+
+				if (scope.information.login)
+				{
+					for (i = 0; i < scope.cart.shippingModes.length; i++) {
+						scope.saveAddress(scope.cart.shippingModes[i].address, function(){
+							// Update again cart to add address id
+							var postData = { shippingModes: scope.cart.shippingModes };
+							updateCart($http, scope, postData);
+						});
+					}
+				}
+
 				scope.setCurrentStep('payment');
 			});
 		};

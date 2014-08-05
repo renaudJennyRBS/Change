@@ -2,7 +2,7 @@
 	<form name="addressForm" class="form-horizontal">
 		{% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
 		{% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
-		<div class="form-group" data-ng-if="data.name !== undefined" data-ng-class="{
+		<div class="form-group" data-ng-if="manageName === true" data-ng-class="{
 				'has-error': !readonly && addressForm.addressName.$invalid,
 				'has-success': !readonly && addressForm.addressName.$dirty && !addressForm.addressName.$invalid
 			}">
@@ -24,10 +24,10 @@
 				{{ i18n('m.rbs.geo.front.country', ['ucf']) }}
 			</label>
 			<div class="{{ rightColumnElementClass }}">
-				<div data-ng-show="readonly || countries.length == 1" class="form-control-static">
+				<div data-ng-show="readonly || countries.length == 1 || fieldValues['__id'] != null" class="form-control-static">
 					(= countryTitle(fieldValues.countryCode) =)
 				</div>
-				<select data-ng-show="!readonly && countries.length > 1" id="rbs-geo-address-country-{{ blockId }}"
+				<select data-ng-show="!readonly && countries.length > 1 && !fieldValues['__id']" id="rbs-geo-address-country-{{ blockId }}"
 					required="required" data-ng-model="fieldValues.countryCode" class="form-control" name="country"
 					data-ng-options="country.code as country.title for country in countries"
 					data-ng-class="{

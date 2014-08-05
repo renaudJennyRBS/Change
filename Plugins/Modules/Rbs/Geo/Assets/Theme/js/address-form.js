@@ -21,16 +21,17 @@
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
 				scope.data = {};
-				scope.zoneCode = attributes.zoneCode;
+				scope.zoneCode = angular.fromJson(attributes.zoneCode);
 				scope.readonly = attributes.readonly;
+				scope.manageName = attributes.hasOwnProperty('manageName');
 
 				attributes.$observe('readonly', function(newValue) {
 					scope.readonly = (newValue == 'true');
 				});
 
 				attributes.$observe('zoneCode', function(newValue) {
-					scope.zoneCode = newValue;
-					$http.post('Action/Rbs/Geo/GetCountriesByZoneCode', {zoneCode: newValue})
+					scope.zoneCode = angular.fromJson(newValue);
+					$http.post('Action/Rbs/Geo/GetCountriesByZoneCode', {zoneCode: scope.zoneCode})
 						.success(function(data) {
 							console.log('rbsAddressForm - GetCountriesByZoneCode success');
 							scope.countries = data;
@@ -70,6 +71,10 @@
 
 				scope.$watch('data.name', function(newValue) {
 					scope.addressName = newValue;
+				});
+
+				scope.$watch('addressName', function(newValue) {
+					scope.data.name = newValue;
 				});
 
 				ngModel.$render = function ngModelRenderFn() {
