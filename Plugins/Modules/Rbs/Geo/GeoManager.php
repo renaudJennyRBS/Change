@@ -78,28 +78,45 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		$zoneCode = $event->getParam('zoneCode');
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 
+		if (($zoneCode && is_array($zoneCode) && count($zoneCode) == 0))
+		{
+			$zoneCode = null;
+		}
+
 		// If a zone code is specified, look for a country having this code or a country with a zone on it having this code.
 		if ($zoneCode)
 		{
-			$query = $documentManager->getNewQuery('Rbs_Geo_Country');
-			$pb = $query->getPredicateBuilder();
-			$query->andPredicates($pb->eq('code', $zoneCode), $pb->activated());
-			$country = $query->getFirstDocument();
-			if ($country)
+
+			if (!is_array($zoneCode))
 			{
-				$event->setParam('countries', array($country));
-				return;
+				$zoneCode = [$zoneCode];
 			}
 
+			$queryZone = $documentManager->getNewQuery('Rbs_Geo_Zone');
+			$queryZone->andPredicates($queryZone->in($queryZone->getColumn('code'), $zoneCode));
+			$qZone = $queryZone->dbQueryBuilder()->query();
+			$countriesIdZone = $qZone->getResults($qZone->getRowsConverter()->addIntCol('country'));
+
 			$query = $documentManager->getNewQuery('Rbs_Geo_Country');
-			$pb = $query->getPredicateBuilder();
-			$query->andPredicates($pb->activated());
-			$d2qb = $query->getModelBuilder('Rbs_Geo_Zone', 'country');
-			$query->andPredicates($d2qb->eq('code', $zoneCode));
-			$country = $query->getFirstDocument();
-			if ($country)
+			$query->andPredicates($query->activated());
+			if (count($countriesIdZone) > 0)
 			{
-				$event->setParam('countries', array($country));
+				$query->andPredicates(
+					$query->getPredicateBuilder()->logicOr(
+						$query->in('code', $zoneCode),
+						$query->in('id', $countriesIdZone)
+					)
+				);
+			}
+			else
+			{
+				$query->andPredicates($query->in('code', $zoneCode));
+			}
+			$countries = $query->getDocuments()->toArray();
+
+			if (count($countries) > 0)
+			{
+				$event->setParam('countries', $countries);
 				return;
 			}
 		}

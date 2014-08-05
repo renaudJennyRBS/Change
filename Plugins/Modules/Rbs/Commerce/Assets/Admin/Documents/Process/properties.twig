@@ -6,6 +6,11 @@
 	selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_shippingmodes_picker_title', ['ucf']) }}">
 </rbs-field-picker-multiple>
 
+<rbs-field-picker-multiple property="shippingZones" accepted-model="Rbs_Geo_Zone"
+	label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'shippingZones'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_shippingzones_picker_title', ['ucf']) }}">
+</rbs-field-picker-multiple>
+
 <rbs-field-picker-multiple property="paymentConnectors" accepted-model="Rbs_Payment_Connector"
 	label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'paymentConnectors'), ['ucf']) }}"
 	selector-title="{{ i18nAttr('m.rbs.commerce.admin.process_paymentconnectors_picker_title', ['ucf']) }}">

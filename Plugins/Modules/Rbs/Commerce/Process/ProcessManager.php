@@ -81,6 +81,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getOrderProcessByCart', [$this, 'onDefaultGetOrderProcessByCart'], 5);
 		$eventManager->attach('getCompatibleShippingModes', [$this, 'onDefaultGetCompatibleShippingModes'], 5);
 		$eventManager->attach('getCompatiblePaymentConnectors', [$this, 'onDefaultGetCompatiblePaymentConnectors'], 5);
+		$eventManager->attach('getShippingZones', [$this, 'onDefaultGetShippingZones'], 5);
 		$eventManager->attach('getShippingFee', [$this, 'onDefaultGetShippingFee'], 5);
 	}
 
@@ -152,12 +153,13 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Rbs\Commerce\Documents\Process $orderProcess
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param boolean|null $needAddress
 	 * @return \Rbs\Shipping\Documents\Mode[]
 	 */
-	public function getCompatibleShippingModes($orderProcess, $cart)
+	public function getCompatibleShippingModes($orderProcess, $cart, $needAddress)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart]);
+		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart, 'needAddress' => $needAddress]);
 		$this->getEventManager()->trigger('getCompatibleShippingModes', $this, $args);
 		if (isset($args['shippingModes']) && is_array($args['shippingModes']))
 		{
@@ -173,6 +175,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$cart = $event->getParam('cart');
 		$orderProcess = $event->getParam('orderProcess');
+		$needAddress = $event->getParam('needAddress');
 		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $orderProcess instanceof \Rbs\Commerce\Documents\Process)
 		{
 			$shippingModes = [];
@@ -180,7 +183,17 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				if ($shippingMode->isCompatibleWith($cart))
 				{
-					$shippingModes[] = $shippingMode;
+					if ($needAddress === null)
+					{
+						$shippingModes[] = $shippingMode;
+					}
+					else
+					{
+						if ($shippingMode->getHasAddress() === $needAddress)
+						{
+							$shippingModes[] = $shippingMode;
+						}
+					}
 				}
 			}
 			$event->setParam('shippingModes', $shippingModes);
@@ -224,6 +237,37 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 			$event->setParam('paymentConnectors', $paymentConnectors);
+		}
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Commerce\Documents\Process $orderProcess
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @return \Rbs\Commerce\Documents\Fee|null
+	 */
+	public function getShippingZones($orderProcess, $cart)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart]);
+		$this->getEventManager()->trigger('getShippingZones', $this, $args);
+		if (isset($args['zones']))
+		{
+			return $args['zones'];
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetShippingZones(\Change\Events\Event $event)
+	{
+		$orderProcess = $event->getParam('orderProcess');
+		if ($orderProcess instanceof \Rbs\Commerce\Documents\Process)
+		{
+			$event->setParam('zones', $orderProcess->getShippingZones());
 		}
 	}
 

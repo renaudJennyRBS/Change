@@ -42,7 +42,7 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		$request = $event->getRequest();
 		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
-		$validKeys = ['lineQuantities', 'userId', 'email', 'address', 'shippingModes', 'coupons'];
+		$validKeys = ['lineQuantities', 'userId', 'email', 'address', 'shippingModes', 'coupons', 'contextShippingAddress'];
 		if (count(array_intersect($validKeys, array_keys($arguments))) == 0)
 		{
 			(new GetCurrentCart())->execute($event);
@@ -101,6 +101,24 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$address->setLines($genericServices->getGeoManager()->getFormattedAddress($address));
 			}
 			$cart->setAddress($address);
+		}
+
+		if (isset($arguments['contextShippingAddress']) && isset($arguments['deliveryIndex']))
+		{
+			$contextShippingAddressArray = array();
+
+			if (!is_array($arguments['contextShippingAddress']) || !count($arguments['contextShippingAddress']))
+			{
+				$contextShippingAddressArray[$arguments['deliveryIndex']] = null;
+			}
+			else
+			{
+				$contextShippingAddress = new \Rbs\Geo\Address\BaseAddress($arguments['contextShippingAddress']);
+				$contextShippingAddress->setLines($genericServices->getGeoManager()->getFormattedAddress($contextShippingAddress));
+				$contextShippingAddressArray[$arguments['deliveryIndex']] = $contextShippingAddress->toArray();
+			}
+			$cart->getContext()
+				->set('shippingAddress', $contextShippingAddressArray);
 		}
 
 		if (isset($arguments['shippingModes']))

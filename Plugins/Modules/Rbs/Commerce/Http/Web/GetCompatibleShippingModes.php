@@ -31,7 +31,9 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 				$orderProcess = $commerceServices->getProcessManager()->getOrderProcessByCart($cart);
 				if ($orderProcess)
 				{
-					$shippingModes = $commerceServices->getProcessManager()->getCompatibleShippingModes($orderProcess, $cart);
+					$needAddress = $event->getRequest()->getPost('needAddress');
+
+					$shippingModes = $commerceServices->getProcessManager()->getCompatibleShippingModes($orderProcess, $cart, $needAddress);
 					if (count($shippingModes))
 					{
 						$richTextContext = array('website' => $event->getUrlManager()->getWebsite());
@@ -44,7 +46,8 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 								'id' => $shippingMode->getId(),
 								'title' => $shippingMode->getCurrentLocalization()->getTitle(),
 								'description' => $richTextManager->render($shippingMode->getCurrentLocalization()
-										->getDescription(), 'Website', $richTextContext)
+										->getDescription(), 'Website', $richTextContext),
+								'hasAddress' => $shippingMode->getHasAddress()
 							);
 
 							$visual = $shippingMode->getVisual();

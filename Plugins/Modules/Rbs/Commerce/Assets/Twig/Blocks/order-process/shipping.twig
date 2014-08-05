@@ -1,29 +1,123 @@
 <script type="text/ng-template" id="/shipping-mode-selector.static.tpl">
-	<div>
-		<div class="panel panel-default" data-ng-if="modes.length > 1 && !display.readonly">
-			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_mode', ['ucf']) }}</div>
-			<div class="panel-body">
-				{{ i18n('m.rbs.commerce.front.select_shipping_mode', ['ucf']) }}
+	<div data-ng-show="!display.readonly">
+		<div data-ng-hide="editShippingAddress" class="row">
+			<div class="col-md-4">
+				<address class="no-bottom-margin">
+					<strong>(= shippingAddress.__lines[0] =)</strong>
+					<div data-ng-repeat="line in shippingAddress.__lines" data-ng-show="!$first">(= line =)</div>
+				</address>
+				<br/>
+				<button type="button" class="btn btn-sm btn-primary"
+					data-ng-click="openEditShippingAddressForm()">
+					{{ i18n('m.rbs.commerce.front.button_use_another_address', ['ucf']) }}
+				</button>
 			</div>
-			<div class="list-group">
-				<a data-ng-repeat="(index, mode) in modes" href="javascript:" class="list-group-item"
-					data-ng-class="{active: mode.id == delivery.modeId}" data-ng-click="selectMode(index)">
-					<div class="row">
-						<div class="col-sm-5 col-md-6 col-lg-7">
-							(= mode.title =)<br />
-							<div class="small" data-ng-bind-html="trustHtml(mode.description)"></div>
-						</div>
-						<div class="col-sm-2 price">
-							(= mode.feesValue =)
-						</div>
-						<div class="col-sm-5 col-md-4 col-lg-3">
-							<img data-ng-if="mode.visualUrl" data-ng-src="(= mode.visualUrl =)" />
-						</div>
+			<div class="col-md-8">
+				<div class="panel panel-default" data-ng-show="addressModes.length > 0">
+					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.home_shipping_mode', ['ucf']) }}</div>
+					<div class="panel-body">
+						{{ i18n('m.rbs.commerce.front.select_shipping_mode', ['ucf']) }}
 					</div>
-				</a>
+					<div class="list-group">
+						<a data-ng-repeat="(index, mode) in addressModes" href="javascript:" class="list-group-item"
+							data-ng-class="{active: mode.id == delivery.modeId}" data-ng-click="selectAddressMode(index)">
+							<div class="row">
+								<div class="col-sm-5 col-md-6 col-lg-7">
+									(= mode.title =)<br />
+									<div class="small" data-ng-bind-html="trustHtml(mode.description)"></div>
+								</div>
+								<div class="col-sm-2 price">
+									(= mode.feesValue =)
+								</div>
+								<div class="col-sm-5 col-md-4 col-lg-3">
+									<img data-ng-if="mode.visualUrl" data-ng-src="(= mode.visualUrl =)" />
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="panel panel-default" data-ng-if="modes.length == 1 || display.readonly">
+		<div data-ng-show="editShippingAddress">
+			<div data-ng-show="addresses" class="row">
+				<div data-ng-repeat-start="address in addresses" class="col-md-6 col-lg-4">
+					<h3>(= address.name =)</h3>
+					<address>
+						<strong>(= address.lines[0] =)</strong>
+						<div data-ng-repeat="line in address.lines track by $index" data-ng-show="!$first">
+							(= line =)
+						</div>
+					</address>
+					<p>
+						<button type="button" class="btn btn-sm btn-primary"
+							data-ng-click="loadShippingAddressInForm(address.fieldValues, address.name)"
+							data-ng-disabled="!addressCanBeUsed(address.fieldValues)">
+							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+						</button> <span data-ng-if="!addressCanBeUsed(address.fieldValues)">*</span>
+					</p>
+				</div>
+				<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg"></div>
+				<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md"></div>
+			</div>
+			<p data-ng-if="hasAddressCannotBeUsed()">
+				* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
+			</p>
+			<div class="row">
+				<div class="col-md-12">
+					<div data-ng-if="zoneCode.length > 0 && hasLogin" data-rbs-address-form="" data-ng-model="shippingAddress" data-valid="isShippingAddressValid.value"
+						data-address-name="shippingAddress.name" data-manage-name="true"
+						data-zone-code="(= zoneCode | json =)">
+					</div>
+					<div data-ng-if="zoneCode.length > 0 && !hasLogin" data-rbs-address-form="" data-ng-model="shippingAddress" data-valid="isShippingAddressValid.value"
+						data-zone-code="(= zoneCode | json =)">
+					</div>
+					<button type="button" class="btn btn-sm btn-primary"
+						data-ng-click="validShippingAddressForm()"
+						data-ng-disabled="!isShippingAddressValid.value">
+							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+					</button>
+					<button type="button" class="btn btn-sm btn-primary"
+						data-ng-click="cancelShippingAddressForm()">
+							{{ i18n('m.rbs.commerce.front.cancel_use_this_address', ['ucf']) }}
+					</button>
+				</div>
+			</div>
+		</div>
+		<div data-ng-hide="editShippingAddress" class="row">
+			<div class="col-md-12">
+				<div class="panel panel-default" data-ng-show="pickupModes.length > 0">
+					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.pickup_shipping_mode', ['ucf']) }}</div>
+					<div class="panel-body">
+						{{ i18n('m.rbs.commerce.front.select_shipping_mode', ['ucf']) }}
+					</div>
+					<div class="list-group">
+						<a data-ng-repeat="(index, mode) in pickupModes" href="javascript:" class="list-group-item"
+							data-ng-class="{active: mode.id == delivery.modeId}" data-ng-click="selectPickupMode(index)">
+							<div class="row">
+								<div class="col-sm-5 col-md-6 col-lg-7">
+									(= mode.title =)<br />
+									<div class="small" data-ng-bind-html="trustHtml(mode.description)"></div>
+								</div>
+								<div class="col-sm-2 price">
+									(= mode.feesValue =)
+								</div>
+								<div class="col-sm-5 col-md-4 col-lg-3">
+									<img data-ng-if="mode.visualUrl" data-ng-src="(= mode.visualUrl =)" />
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div data-ng-hide="editShippingAddress" class="row">
+			<div class="col-md-12">
+				<div class="configuration-zone"></div>
+			</div>
+		</div>
+	</div>
+	<div data-ng-show="display.readonly">
+		<div class="panel panel-default" >
 			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_mode', ['ucf']) }}</div>
 			<div class="panel-body">
 				<div class="row">
@@ -38,84 +132,32 @@
 						<img data-ng-if="currentMode.visualUrl" data-ng-src="(= currentMode.visualUrl =)" />
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="configuration-zone"></div>
+					</div>
+				</div>
 			</div>
 		</div>
-
-		<div class="configuration-zone"></div>
 	</div>
 </script>
 
 <script type="text/ng-template" id="/shipping-mode-configuration-address.static.tpl">
-	<div class="panel panel-default">
-		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_address', ['ucf']) }}</div>
-		<div class="panel-body">
-			<div class="vertical-show-hide-animation" data-ng-show="!display.readonly">
-				<div class="vertical-show-hide-animation-content">
-					<ol>
-						<li class="radio">
-							<label>
-								<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="1">
-								{{ i18n('m.rbs.commerce.front.use_postal_address') }}
-							</label>
-						</li>
-						<li class="radio">
-							<label>
-								<input type="radio" data-ng-model="delivery.options.usePostalAddress" value="0">
-								{{ i18n('m.rbs.commerce.front.use_another_address') }}
-							</label>
-						</li>
-					</ol>
-
-					<div data-ng-if="delivery.options.usePostalAddress == 0" class="vertical-if-animation">
-						<div class="vertical-if-animation-content">
-							<div class="row">
-								<div data-ng-repeat-start="address in addresses" class="col-md-6 col-lg-4">
-									<h3>(= address.name =)</h3>
-									<address>
-										<strong>(= address.lines[0] =)</strong>
-										<div data-ng-repeat="line in address.lines track by $index" data-ng-if="!$first">
-											(= line =)
-										</div>
-									</address>
-									<p>
-										<button type="button" class="btn btn-sm btn-primary"
-											data-ng-disabled="isValidAddress(delivery.address, address)"
-											data-ng-click="applyAddress(delivery.address, address)">
-											{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
-										</button>
-										<span data-ng-if="isValidAddress(delivery.address, address)">*</span>
-									</p>
-								</div>
-								<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg"></div>
-								<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md"></div>
-							</div>
-							<p data-ng-if="hasInvalidAddresses(delivery.address, addresses)">
-								* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
-							</p>
-
-							<div data-rbs-address-form="" data-ng-model="delivery.address" data-valid="delivery.isConfigured"
-								data-zone-code="(= zoneCode =)">
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="vertical-show-hide-animation" data-ng-show="display.readonly">
-				<div class="vertical-show-hide-animation-content">
-					<address class="no-bottom-margin">
-						<strong>(= delivery.address.__lines[0] =)</strong>
-						<div data-ng-repeat="line in delivery.address.__lines" data-ng-if="!$first">(= line =)</div>
-					</address>
-				</div>
-			</div>
+	<div data-ng-show="display.readonly">
+		<hr/>
+		<h3>{{ i18n('m.rbs.commerce.front.shipping_address', ['ucf']) }}</h3>
+		<div>
+			<address class="no-bottom-margin">
+				<strong>(= delivery.address.__lines[0] =)</strong>
+				<div data-ng-repeat="line in delivery.address.__lines" data-ng-show="!$first">(= line =)</div>
+			</address>
 		</div>
 	</div>
 </script>
 
-<div data-ng-repeat="(index, delivery) in shipping.deliveries">
+<div data-ng-repeat="delivery in shipping.deliveries">
 	<div data-ng-if="shipping.deliveries.length > 1">
-		<h3>{{ i18n('m.rbs.commerce.front.delivery_n', ['ucf'], {'number': '(= index+1 =)'}) }}</h3>
+		<h3>{{ i18n('m.rbs.commerce.front.delivery_n', ['ucf'], {'number': '(= $index + 1 =)'}) }}</h3>
 
 		<div class="panel panel-default">
 			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.lines_included', ['ucf']) }}</div>
@@ -138,8 +180,8 @@
 		</div>
 	</div>
 
-	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="cart.zone" data-cart="cart"
-		data-readonly="(= !isCurrentStep('shipping') =)" data-addresses="addresses"></div>
+	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="shippingZonesCode" data-cart="cart"
+		data-readonly="(= !isCurrentStep('shipping') =)" data-addresses="addresses" data-delivery-index="(= $index =)" data-login="information.login"></div>
 </div>
 
 <div data-ng-show="isCurrentStep('shipping')" class="clearfix">
