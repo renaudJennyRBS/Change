@@ -642,36 +642,36 @@ class AttributeManager
 
 	/**
 	 * @param array $attributeValues
+	 * @param Attribute $attribute
 	 * @return array|null
 	 */
-	public function normalizeRestAttributeValues($attributeValues)
+	public function normalizeRestAttributeValues($attributeValues, $attribute)
 	{
-		$normalizedValues = array();
+		if ($attribute instanceof Attribute)
+		{
+			$normalizedValues = $this->getInlineAttributeDefaultValue($attribute);
+		}
+		else
+		{
+			return null;
+		}
+
 		if (is_array($attributeValues) && count($attributeValues))
 		{
 			$utcTimeZone = new \DateTimeZone('UTC');
-			$documentManager = $this->getDocumentManager();
 			foreach ($attributeValues as $attributeValue)
 			{
 				$id = intval($attributeValue['id']);
-				$attribute = $documentManager->getDocumentInstance($id);
-				if (!$attribute instanceof Attribute)
+				if (!isset($normalizedValues[$id]))
 				{
 					continue;
 				}
-
-				$valueType = $attribute->getValueType();
-				if ($valueType === Attribute::TYPE_PROPERTY)
-				{
-					//Property Attribute has no value
-					continue;
-				}
-
+				$valueType = $normalizedValues[$id]['valueType'];
 				$value = isset($attributeValue['value']) ? $attributeValue['value'] : null;
 				if ($value === null)
 				{
 					//null value no need conversion
-					$normalizedValues[] = array('id' => $id, 'valueType' => $valueType, 'value' => $value);
+					$normalizedValues[$id]['value'] = null;
 					continue;
 				}
 
@@ -722,14 +722,40 @@ class AttributeManager
 						$value = (new \Change\Documents\RichtextProperty($value))->toArray();
 						break;
 				}
-				$normalizedValues[] = array('id' => $id, 'valueType' => $valueType, 'value' => $value);
+				$normalizedValues[$id]['value'] = $value;
 			}
 		}
-		if (count($normalizedValues))
-		{
-			return $normalizedValues;
+
+		return array_values($normalizedValues);
+	}
+
+	/**
+	 * @param Attribute $attribute
+	 * @return array
+	 */
+	protected function getInlineAttributeDefaultValue(Attribute $attribute)
+	{
+		$defaultValues = [];
+		$attributeId = $attribute->getId();
+		$valueType = $attribute->getValueType();
+
+		$value = ['id' => $attributeId, 'valueType' => $valueType, 'value' => null];
+		switch ($valueType) {
+			case Attribute::TYPE_PROPERTY:
+				break;
+			case Attribute::TYPE_GROUP:
+				foreach ($attribute->getAttributes() as $subAttribute)
+				{
+					foreach ($this->getInlineAttributeDefaultValue($subAttribute) as $id => $value)
+					{
+						$defaultValues[$id] = $value;
+					}
+				}
+				break;
+			default:
+				$defaultValues[$attributeId] = $value;
 		}
-		return null;
+		return $defaultValues;
 	}
 
 	/**

@@ -115,7 +115,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		if ($cs instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
-			$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues);
+			$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues, $product->getAttribute());
 			$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
 		}
 
@@ -182,13 +182,13 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		/** @var $product Product */
 		$product = $event->getDocument();
 		$modifiedPropertyNames = $product->getModifiedPropertyNames();
-		if (in_array('attributeValues', $modifiedPropertyNames))
+		if (in_array('attributeValues', $modifiedPropertyNames) || in_array('attribute', $modifiedPropertyNames))
 		{
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
 				$attributeValues = $product->getCurrentLocalization()->getAttributeValues();
-				$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues);
+				$normalizedAttributeValues = $cs->getAttributeManager()->normalizeRestAttributeValues($attributeValues, $product->getAttribute());
 				$product->getCurrentLocalization()->setAttributeValues($normalizedAttributeValues);
 				$cs->getAttributeManager()->setAttributeValues($product, $normalizedAttributeValues);
 			}
