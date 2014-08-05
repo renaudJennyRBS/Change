@@ -137,7 +137,7 @@ class AggregationValue
 	public function toArray()
 	{
 		$array = ['key' => $this->key, 'value' => $this->value,
-			'title' => $this->title, 'selected' => $this->selected];
+			'title' => $this->getTitle(), 'selected' => $this->selected];
 
 		foreach ($this->aggregationValues as $aggregationValues)
 		{

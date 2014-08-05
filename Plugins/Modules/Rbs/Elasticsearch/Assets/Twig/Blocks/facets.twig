@@ -1,6 +1,6 @@
 <script type="text/javascript">
 window.__change.RbsElasticsearchFacet = {
-	"parameters" : {{ parameters.toArray | json_encode | raw }},
+	"parameters" : {{ parameters.toArray() | json_encode | raw }},
 	"facetValues" : [{% for facetValue in facetValues %}{{ facetValue.toArray | json_encode | raw }}{% if loop.last == false %},{% endif %}{% endfor %}]
 };
 </script>
