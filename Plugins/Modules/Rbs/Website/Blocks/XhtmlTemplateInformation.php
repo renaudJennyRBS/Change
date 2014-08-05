@@ -22,12 +22,8 @@ class XhtmlTemplateInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans($i18nManager->trans('m.rbs.website.admin.xhtml_template', $ucf)));
-		$this->addInformationMeta('moduleName', Property::TYPE_STRING, true, 'Rbs_Website')
-			->setLabel($i18nManager->trans('m.rbs.website.admin.block_module_name', $ucf));
-		$this->addInformationMeta('templateName', Property::TYPE_STRING, false)
-			->setLabel($i18nManager->trans('m.rbs.website.admin.block_template_name', $ucf));
-
 		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'xhtml-iframe.twig');
+
 		$templateInformation->setLabel($i18nManager->trans('m.rbs.website.admin.template_iframe_label', ['ucf']));
 		$templateInformation->addParameterInformation('url', Property::TYPE_STRING, true)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.block_iframe_url', $ucf));

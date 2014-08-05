@@ -41,21 +41,31 @@ class PathRuleBuilder
 				}
 			}
 		}
+		else if ($document instanceof \Rbs\Website\Documents\Topic)
+		{
+			$website = $document->getWebsite();
+			if ($website)
+			{
+				$websiteIds[$website->getId()] = [];
+			}
+		}
 		else
 		{
 			foreach ($document->getPublicationSections() as $section)
 			{
+				$sectionId = $section->getId();
 				$website = $section->getWebsite();
 				if ($website)
 				{
 					$websiteId = $website->getId();
 					if (!isset($websiteIds[$websiteId]))
 					{
-						$websiteIds[$websiteId] = [$section->getId()];
+						$websiteIds[$websiteId] = [];
 					}
-					elseif (!in_array($section->getId(), $websiteIds[$websiteId]))
+
+					if ($websiteId != $sectionId && !in_array($sectionId, $websiteIds[$websiteId]))
 					{
-						$websiteIds[$websiteId][] = $section->getId();
+						$websiteIds[$websiteId][] = $sectionId;
 					}
 				}
 			}

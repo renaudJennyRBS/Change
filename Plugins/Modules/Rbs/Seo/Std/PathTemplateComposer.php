@@ -46,7 +46,16 @@ class PathTemplateComposer
 							$context = $document;
 							if ($varPath[$varPathIndex] == 'section')
 							{
-								$context = $documentManager->getDocumentInstance($pathRule->getSectionId());
+								if ($document instanceof \Rbs\Website\Documents\StaticPage || $document instanceof \Rbs\Website\Documents\Topic)
+								{
+									$node = $applicationServices->getTreeManager()->getNodeByDocument($document);
+									$context = ($node) ? $documentManager->getDocumentInstance($node->getParentId()) : null;
+								}
+								else
+								{
+									$context = $documentManager->getDocumentInstance($pathRule->getSectionId());
+								}
+
 								$varPathIndex = 1;
 								if (!isset($varPath[$varPathIndex]))
 								{

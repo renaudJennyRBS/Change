@@ -8,6 +8,8 @@
  */
 namespace Rbs\Generic\Commands;
 
+use Change\Presentation\Layout\Layout;
+
 /**
 * @name \Rbs\Generic\Commands\AbstractInitialize
 */
@@ -85,33 +87,8 @@ abstract class AbstractInitialize
 	 */
 	protected function addMenuToTemplates($websiteId, $noSidebarTemplate, $sidebarTemplate, $applicationServices)
 	{
-		$mainMenu = ["id" => "mainMenu", "type" => "block", "name" => "Rbs_Website_Menu", "parameters" => [
-			"documentId" => null, "maxLevel" => 2, "templateName" => "menu-scroll-inverse.twig", "TTL" => 60,
-			"toDisplayDocumentId" => $websiteId
-		]
-		];
-
-		$contentByWebsite = $noSidebarTemplate->getContentByWebsite();
-		if (isset($contentByWebsite[$websiteId]))
-		{
-			$contentByWebsite[$websiteId]['mainMenu'] = $mainMenu;
-		}
-		else
-		{
-			$contentByWebsite[$websiteId] = ['mainMenu' => $mainMenu];
-		}
-		$noSidebarTemplate->setContentByWebsite($contentByWebsite);
-
-		$contentByWebsite = $sidebarTemplate->getContentByWebsite();
-		if (isset($contentByWebsite[$websiteId]))
-		{
-			$contentByWebsite[$websiteId]['mainMenu'] = $mainMenu;
-		}
-		else
-		{
-			$contentByWebsite[$websiteId] = ['mainMenu' => $mainMenu];
-		}
-		$sidebarTemplate->setContentByWebsite($contentByWebsite);
+		$this->updateTemplateMenuParameters($noSidebarTemplate, $websiteId);
+		$this->updateTemplateMenuParameters($sidebarTemplate, $websiteId);
 
 		$transactionManager = $applicationServices->getTransactionManager();
 		try
@@ -125,6 +102,50 @@ abstract class AbstractInitialize
 		{
 			$transactionManager->rollBack($e);
 			$applicationServices->getLogging()->error('Error when trying to update templates in Generic Website initialization: ' . $e->getMessage());
+		}
+	}
+
+	/**
+	 * @param \Rbs\Theme\Documents\Template $noSidebarTemplate
+	 * @param integer $websiteId
+	 * @param integer $toDisplayDocumentId
+	 */
+	protected function updateTemplateMenuParameters($noSidebarTemplate, $websiteId, $toDisplayDocumentId = null)
+	{
+		if ($toDisplayDocumentId === null)
+		{
+			$toDisplayDocumentId = $websiteId;
+		}
+		$websiteContents = $noSidebarTemplate->getContentByWebsite();
+		if (!is_array($websiteContents))
+		{
+			$websiteContents = [];
+		}
+
+		if (isset($websiteContents[$websiteId]))
+		{
+			$websiteContent = new Layout($websiteContents[$websiteId]);
+		}
+		else
+		{
+			$websiteContent = new Layout();
+		}
+
+		$blockMenu = $websiteContent->getBlockById('mainMenu');
+		if (!$blockMenu)
+		{
+			$layout = new Layout($noSidebarTemplate->getEditableContent());
+			$blockMenu = $layout->getBlockById('mainMenu');
+		}
+
+		if ($blockMenu && $blockMenu->getName() == "Rbs_Website_Menu")
+		{
+			$parameters = $blockMenu->getParameters();
+			$parameters['toDisplayDocumentId'] = $toDisplayDocumentId;
+			$blockMenu->setParameters($parameters);
+			$websiteContent->addItem($blockMenu);
+			$websiteContents[$websiteId] = $websiteContent->toArray();
+			$noSidebarTemplate->setContentByWebsite($websiteContents);
 		}
 	}
 } 

@@ -47,7 +47,7 @@ class Layout
 	 */
 	public function setItems(array $items)
 	{
-		$this->items = array();
+		$this->items = [];
 		foreach ($items as $value)
 		{
 			if ($value instanceof Item)
@@ -55,6 +55,18 @@ class Layout
 				$this->items[$value->getId()] = $value;
 			}
 		}
+	}
+
+	/**
+	 * @param Item $item
+	 */
+	public function addItem(Item $item)
+	{
+		if (!is_array($this->items))
+		{
+			$this->items = [];
+		}
+		$this->items[$item->getId()] = $item;
 	}
 
 	/**
@@ -101,6 +113,22 @@ class Layout
 	public function getBlocks()
 	{
 		return $this->getItemsByType('block');
+	}
+
+	/**
+	 * @param string $blocId
+	 * @return Block|null
+	 */
+	public function getBlockById($blocId)
+	{
+		foreach ($this->getBlocks() as $block)
+		{
+			if ($block->getId() == $blocId)
+			{
+				return $block;
+			}
+		}
+		return null;
 	}
 
 	/**
