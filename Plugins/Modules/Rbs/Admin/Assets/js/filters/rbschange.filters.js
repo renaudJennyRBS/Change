@@ -128,6 +128,23 @@
 
 	});
 
+	/**
+	 * @ngdoc filter
+	 * @name RbsChange.filter:rbsModelLabel
+	 * @function
+	 *
+	 * @description
+	 * Returns the model's label.
+	 *
+	 * @param {String} string The model's label.
+	 */
+	app.filter('rbsModelLabel', ['RbsChange.Models', function (Models)
+	{
+		return function (input) {
+			return Models.getModelLabel(input);
+		};
+	}]);
+
 
 	/**
 	 * @ngdoc filter

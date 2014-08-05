@@ -37,6 +37,9 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 		'in' => ['cm' => 2.54, 'm' => 0.0254]
 	];
 
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
@@ -75,6 +78,8 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	/**
 	 * @param $value
 	 * @param string $unit
+	 * @throws \InvalidArgumentException
+	 * @return $this
 	 */
 	public function setMass($value, $unit = self::UNIT_MASS_KG)
 	{
@@ -117,6 +122,8 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	 * @param $type
 	 * @param $value
 	 * @param $unit
+	 * @throws \InvalidArgumentException
+	 * @return $this
 	 */
 	protected function setLengthValue($type, $value, $unit)
 	{
@@ -137,6 +144,7 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	/**
 	 * @param $value
 	 * @param string $unit
+	 * @return $this
 	 */
 	public function setLength($value, $unit = self::UNIT_LENGTH_M)
 	{
@@ -167,6 +175,7 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	/**
 	 * @param $value
 	 * @param string $unit
+	 * @return $this
 	 */
 	public function setWidth($value, $unit = self::UNIT_LENGTH_M)
 	{
@@ -197,6 +206,7 @@ class Sku extends \Compilation\Rbs\Stock\Documents\Sku
 	/**
 	 * @param $value
 	 * @param string $unit
+	 * @return $this
 	 */
 	public function setHeight($value, $unit = self::UNIT_LENGTH_M)
 	{

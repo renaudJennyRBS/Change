@@ -16,6 +16,7 @@ use Rbs\Admin\Http\Rest\Actions\CurrentTasks;
 use Rbs\Admin\Http\Rest\Actions\DocumentList;
 use Rbs\Admin\Http\Rest\Actions\DocumentPreview;
 use Rbs\Admin\Http\Rest\Actions\GetCurrentUser;
+use Rbs\Admin\Http\Rest\Actions\SearchDocuments;
 use Rbs\Admin\Http\Rest\Actions\TagsInfo;
 use Rbs\Admin\Http\Rest\Actions\UpdateCurrentUser;
 
@@ -44,7 +45,7 @@ class AdminResolver
 	 */
 	public function getNextNamespace($event, $namespaceParts)
 	{
-		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList', 'blockList');
+		return array('currentUser', 'currentTasks', 'tagsInfo', 'documentPreview', 'documentList', 'searchDocuments', 'blockList');
 	}
 
 	/**
@@ -78,14 +79,22 @@ class AdminResolver
 				if ($method === Request::METHOD_GET)
 				{
 					$action = new GetCurrentUser();
-					$event->setAction(function($event) use($action) {$action->execute($event);});
-					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+					$event->setAction(function($event) use($action) {
+						$action->execute($event);
+					});
+					$event->setAuthorization(function() use ($event) {
+						return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+					});
 				}
 				elseif ($method === Request::METHOD_PUT)
 				{
 					$action = new UpdateCurrentUser();
-					$event->setAction(function($event) use($action) {$action->execute($event);});
-					$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+					$event->setAction(function($event) use($action) {
+						$action->execute($event);
+					});
+					$event->setAuthorization(function() use ($event) {
+						return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+					});
 				}
 			}
 			elseif ($actionName === 'currentTasks')
@@ -93,28 +102,45 @@ class AdminResolver
 				$event->setAction(function($event) {
 					(new CurrentTasks())->execute($event);
 				});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				$event->setAuthorization(function() use ($event) {
+					return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+				});
 			}
 			elseif ($actionName === 'tagsInfo')
 			{
 				$event->setAction(function($event) {
 					(new TagsInfo())->execute($event);
 				});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				$event->setAuthorization(function() use ($event) {
+					return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+				});
 			}
 			elseif ($actionName === 'documentPreview')
 			{
 				$event->setAction(function($event) {
 					(new DocumentPreview())->execute($event);
 				});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				$event->setAuthorization(function() use ($event) {
+					return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+				});
 			}
 			elseif ($actionName === 'documentList')
 			{
 				$event->setAction(function($event) {
 					(new DocumentList())->execute($event);
 				});
-				$event->setAuthorization(function() use ($event) {return $event->getAuthenticationManager()->getCurrentUser()->authenticated();});
+				$event->setAuthorization(function() use ($event) {
+					return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+				});
+			}
+			elseif ($actionName === 'searchDocuments')
+			{
+				$event->setAction(function($event) {
+					(new SearchDocuments())->execute($event);
+				});
+				$event->setAuthorization(function() use ($event) {
+					return $event->getAuthenticationManager()->getCurrentUser()->authenticated();
+				});
 			}
 
 			elseif ($actionName === 'blockList')
@@ -123,7 +149,6 @@ class AdminResolver
 					(new BlockList())->execute($event);
 				});
 			}
-
 		}
 	}
 }

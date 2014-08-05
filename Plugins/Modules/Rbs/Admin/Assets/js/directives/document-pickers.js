@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-(function($) {
+(function() {
 	"use strict";
 
 	var app = angular.module('RbsChange');
@@ -33,7 +33,7 @@
 			scope.acceptedModel = iElement.attr('accepted-model');
 		});
 
-		attrs.$observe('selectModel', function(value) {
+		attrs.$observe('selectModel', function() {
 			if (attrs.hasOwnProperty('selectModel')) {
 				var filter = scope.$eval(attrs.selectModel);
 				if (angular.isArray(filter)) {
@@ -171,7 +171,7 @@
 		});
 
 		// Watch from changes coming from the <rbs-token-list/> which is bound to `scope.doc.list`.
-		scope.$watchCollection('doc.list', function(documents, old) {
+		scope.$watchCollection('doc.list', function(documents) {
 			if (documents.length === 0 && ngModel.$viewValue === undefined) {
 				return;
 			}
@@ -183,7 +183,7 @@
 			}
 		});
 
-		scope.hasTragetUrl = function() {
+		scope.hasTargetUrl = function() {
 			if (scope.selectorUrl) {
 				return true;
 			}
@@ -291,6 +291,7 @@
 		});
 
 		var selectedModelName;
+
 		function selectModelName(modelName) {
 			if (!modelName) {
 				return;
@@ -306,6 +307,116 @@
 				}
 			}
 		}
+
+		// Selection by label.
+
+		scope.autoComplete = {
+			show: false,
+			refreshing: false,
+			value: '',
+			documents: [],
+			open: openAutoCompleteList,
+			close: closeAutoCompleteList,
+			refresh: refreshAutoCompleteList,
+			add: autoCompleteAdd
+		};
+
+		function autoCompleteAdd(document) {
+			if (!multiple) {
+				closeAutoCompleteList();
+			}
+			scope.doc.list.push(document);
+		}
+
+		function openAutoCompleteList() {
+			if (scope.autoComplete.show) {
+				return;
+			}
+
+			refreshListPosition();
+			scope.autoComplete.show = true;
+		}
+
+		function refreshListPosition() {
+			var input = iElement.find('input[type=text]');
+			var css = {
+				'left': input.offset().left - iElement.offset().left + 'px',
+				'top': (input.outerHeight() + input.offset().top + 3 - iElement.offset().top) + 'px',
+				'width': input.outerWidth(),
+				'transition': 'top 1s ease'
+			};
+			iElement.find('.auto-complete-list').css(css);
+		}
+
+		function closeAutoCompleteList() {
+			if (!scope.autoComplete.show) {
+				return;
+			}
+
+			scope.autoComplete.show = false;
+		}
+
+		function refreshAutoCompleteList() {
+			scope.autoComplete.error = null;
+			if (!scope.autoComplete.value.trim().length) {
+				scope.autoComplete.documents = [];
+				closeAutoCompleteList();
+			}
+			else if (!scope.autoComplete.refreshing) {
+				openAutoCompleteList();
+				scope.autoComplete.refreshing = true;
+				setTimeout(doRefreshAutoCompleteList, 1000);
+			}
+		}
+
+		function doRefreshAutoCompleteList() {
+			var value = angular.lowercase(scope.autoComplete.value.trim());
+			if (!value.length) {
+				scope.autoComplete.documents = [];
+				scope.autoComplete.refreshing = false;
+				return;
+			}
+
+			var model = null;
+			if (angular.isObject(scope.models.model)) {
+				model = scope.models.model.name;
+			}
+			else if (scope.acceptedModel) {
+				model = scope.acceptedModel;
+			}
+			else {
+				console.log('no model');
+				scope.autoComplete.documents = [];
+				scope.autoComplete.refreshing = false;
+				return;
+			}
+
+			var params = {
+				modelName: model,
+				searchString: value,
+				limit: 10
+			};
+
+			REST.call(REST.getBaseUrl('admin/searchDocuments'), params).then(
+				function(data) {
+					scope.autoComplete.documents = data.resources;
+					scope.autoComplete.refreshing = false;
+				},
+				function(error) {
+					console.log('admin/searchDocuments', error);
+					scope.autoComplete.error = error;
+					scope.autoComplete.refreshing = false;
+				}
+			);
+		}
+
+		scope.$watchCollection('doc.list', function() {
+			if (scope.autoComplete.show) {
+				setTimeout(refreshListPosition, 100);
+			}
+		});
+
+		scope.$watch('models.model', refreshAutoCompleteList);
 	}
 
 	/**
@@ -332,7 +443,7 @@
 		'RbsChange.Models', function(REST, Utils, Navigation, $timeout, UrlManager, Models) {
 			return {
 				restrict: 'EA',
-				templateUrl: 'Rbs/Admin/js/directives/document-picker-multiple.twig',
+				templateUrl: 'Rbs/Admin/js/directives/document-picker.twig',
 				require: 'ngModel',
 				scope: true,
 
@@ -370,7 +481,7 @@
 			function(REST, Utils, Navigation, $timeout, UrlManager, Models) {
 				return {
 					restrict: 'EA',
-					templateUrl: 'Rbs/Admin/js/directives/document-picker-multiple.twig',
+					templateUrl: 'Rbs/Admin/js/directives/document-picker.twig',
 					require: 'ngModel',
 					scope: true,
 
@@ -489,4 +600,4 @@
 			};
 		}]);
 
-})(window.jQuery);
+})();

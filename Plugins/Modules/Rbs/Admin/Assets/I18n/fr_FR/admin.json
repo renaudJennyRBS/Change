@@ -327,6 +327,15 @@
 	"picker_help_filter":{
 		"message":"Pour bénéficier de filtres de recherches plus avancés, vous pouvez vous rendre directement dans $HTMLOPEN$le module concerné$HTMLCLOSE$."
 	},
+	"no_document_to_suggest":{
+		"message":"Aucun document ne correspond."
+	},
+	"an_error_occured":{
+		"message":"Une erreur s'est produite lors de la recherche."
+	},
+	"you_can_search_in_module":{
+		"message":"Vous pouvez également rechercher directement dans le module concerné via le bouton « ajouter à la sélection »."
+	},
 	"click_to_select_another_image":{
 		"message":"cliquer pour sélectionner une autre image depuis votre ordinateur"
 	},

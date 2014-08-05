@@ -56,11 +56,13 @@
 
 
 .token-list > li.selected {
-	background-color: #0088CC;
+	background: #08c linear-gradient(to top, #059 0%, #08c 100%);
 	border-color: #005599;
 	color: white;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.75);
-	background-image: -moz-linear-gradient(bottom, #005599 0%, #0088CC 100%);
+}
+.token-list > li.selected .text-muted {
+	color: #ddd;
 }
 
 .token-list > li.muted,

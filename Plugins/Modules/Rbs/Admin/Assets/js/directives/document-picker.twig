@@ -1,0 +1,64 @@
+<div class="document-picker" data-ng-class="{ 'document-picker-empty': !doc.list.length }">
+	<div data-ng-hide="isEmpty()">
+		<rbs-token-list ng-if="disableReordering || doc.list.length == 1" items="doc.list" rows="true" disable-reordering="true">
+		</rbs-token-list>
+		<rbs-token-list ng-if="!disableReordering && doc.list.length > 1" items="doc.list" rows="true"></rbs-token-list>
+	</div>
+
+	<div data-ng-show="isEmpty() || multiple" class="auto-complete-input"
+		data-ng-class="{'input-group': models.filtered.length }">
+		<span class="input-group-addon" data-ng-if="models.filtered.length">
+			<select class="form-control" data-ng-model="models.model" data-ng-disabled="!multiple && !isEmpty()"
+				data-ng-options="m.label group by m.plugin for m in models.filtered">
+			</select>
+		</span>
+		<input data-ng-if="selectorTitle" type="text" class="form-control" data-ng-keyup="autoComplete.refresh()"
+			data-ng-model="autoComplete.value" placeholder="(= selectorTitle =)" />
+		<input data-ng-if="!selectorTitle" type="text" class="form-control" data-ng-keyup="autoComplete.refresh()"
+			data-ng-model="autoComplete.value" placeholder="{{ i18nAttr('m.rbs.admin.admin.picker_no_element', ['ucf']) }}" />
+	</div>
+
+	<div class="picker-toolbar form-inline">
+		<button type="button" class="btn btn-default btn-sm pull-right" data-ng-click="clear()" data-ng-disabled="isEmpty()"
+			title="{{ i18nAttr('m.rbs.admin.admin.picker_clear_tooltip', ['ucf']) }}">
+			<i class="icon-eraser"></i>
+			<span data-ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_clear') }}</span>
+		</button>
+
+		<button type="button" class="btn btn-selection btn-sm" data-ng-disabled="!hasTargetUrl() || (!multiple && !isEmpty())"
+			data-ng-click="beginSelectSession()" title="{{ i18nAttr('m.rbs.admin.admin.picker_in_place_tooltip', ['ucf', 'etc']) }}">
+			<i class="icon-external-link"></i>
+			<span data-ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_in_place', ['etc']) }}</span>
+		</button>
+	</div>
+
+	<div class="auto-complete-list" data-ng-show="autoComplete.show">
+		<button class="btn btn-default btn-xs pull-right" data-ng-click="autoComplete.close()" type="button">
+			<i class="icon-remove icon-large"></i>
+		</button>
+		<div data-ng-show="autoComplete.refreshing" class="text-center">
+			<i class="icon-spinner icon-spin icon-3x"></i><br />
+			{{ i18n('m.rbs.admin.admin.loading', ['ucf']) }}
+		</div>
+		<div data-ng-hide="autoComplete.refreshing">
+			<ul class="list-unstyled" data-ng-if="autoComplete.documents.length">
+				<li data-ng-repeat="document in autoComplete.documents">
+					<button class="btn btn-selection btn-xs btn-icon" data-ng-click="autoComplete.add(document)" type="button"
+						title="{{ i18nAttr('m.rbs.admin.admin.select', ['ucf']) }}">
+						<i class="icon-plus"></i>
+					</button>
+					(= document.label =)
+				</li>
+			</ul>
+			<div data-ng-if="autoComplete.error">
+				<p class="text-warning">{{ i18n('m.rbs.admin.admin.an_error_occured', ['ucf']) }}</p>
+				{{ i18n('m.rbs.admin.admin.you_can_search_in_module', ['ucf']) }}
+			</div>
+			<div data-ng-if="!autoComplete.error && !autoComplete.documents.length">
+				<p class="text-warning">{{ i18n('m.rbs.admin.admin.no_document_to_suggest', ['ucf']) }}</p>
+				{{ i18n('m.rbs.admin.admin.you_can_search_in_module', ['ucf']) }}
+			</div>
+
+		</div>
+	</div>
+</div>
