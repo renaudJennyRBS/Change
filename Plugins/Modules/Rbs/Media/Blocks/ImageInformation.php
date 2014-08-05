@@ -24,5 +24,15 @@ class ImageInformation extends \Change\Presentation\Blocks\Information
 		$this->setSection($i18nManager->trans('m.rbs.media.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.media.admin.image_label', $ucf));
 		$this->addInformationMetaForDetailBlock('Rbs_Media_Image', $i18nManager);
+
+		$this->addInformationMeta('fillSpace', \Change\Documents\Property::TYPE_BOOLEAN, false, false)
+			->setLabel($i18nManager->trans('m.rbs.media.admin.block_fill_space', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Media', 'image-thumbnail.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.media.admin.template_thumbnail_label', ['ucf']));
+		$templateInformation->addParameterInformation('thumbnailTitle', \Change\Documents\Property::TYPE_STRING, false)
+			->setLabel($i18nManager->trans('m.rbs.media.admin.block_thumbnail_title', $ucf));
+		$templateInformation->addParameterInformation('thumbnailText', \Change\Documents\Property::TYPE_STRING, false)
+			->setLabel($i18nManager->trans('m.rbs.media.admin.block_thumbnail_text', $ucf));
 	}
 }

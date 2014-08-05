@@ -1,0 +1,9 @@
+<div class="thumbnail">
+	<img src="{{ src }}" alt="{{ alt }}"{% if parameters.fillSpace %} style="width: 100%;"{% endif %} />
+	{% if parameters.thumbnailTitle or parameters.thumbnailText %}
+		<div class="caption">
+			{% if parameters.thumbnailTitle %}<h3>{{ parameters.thumbnailTitle }}</h3>{% endif %}
+			{% if parameters.thumbnailText %}<div>{{ parameters.thumbnailText }}</div>{% endif %}
+		</div>
+	{% endif %}
+</div>
