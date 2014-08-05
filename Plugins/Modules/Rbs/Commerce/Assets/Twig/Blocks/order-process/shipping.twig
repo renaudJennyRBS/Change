@@ -66,10 +66,10 @@
 				<div class="col-md-12">
 					<div data-ng-if="zoneCode.length > 0 && hasLogin" data-rbs-address-form="" data-ng-model="shippingAddress" data-valid="isShippingAddressValid.value"
 						data-address-name="shippingAddress.name" data-manage-name="true"
-						data-zone-code="(= zoneCode | json =)">
+						data-zone-code="(= zoneCode =)">
 					</div>
 					<div data-ng-if="zoneCode.length > 0 && !hasLogin" data-rbs-address-form="" data-ng-model="shippingAddress" data-valid="isShippingAddressValid.value"
-						data-zone-code="(= zoneCode | json =)">
+						data-zone-code="(= zoneCode =)">
 					</div>
 					<button type="button" class="btn btn-sm btn-primary"
 						data-ng-click="validShippingAddressForm()"
