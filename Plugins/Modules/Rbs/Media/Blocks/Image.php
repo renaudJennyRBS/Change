@@ -24,6 +24,7 @@ class Image extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
+		$parameters->addParameterMeta('fillSpace', false);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$this->setParameterValueForDetailBlock($parameters, $event);

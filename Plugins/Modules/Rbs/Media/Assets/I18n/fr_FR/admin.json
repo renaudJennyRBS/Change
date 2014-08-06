@@ -46,5 +46,17 @@
 	},
 	"image_label":{
 		"message":"image"
+	},
+	"block_fill_space":{
+		"message":"remplir l'espace (agrandir si nécessaire)"
+	},
+	"block_thumbnail_title":{
+		"message":"titre de la légende"
+	},
+	"block_thumbnail_text":{
+		"message":"texte de la légende"
+	},
+	"template_thumbnail_label":{
+		"message":"avec légende"
 	}
 }
