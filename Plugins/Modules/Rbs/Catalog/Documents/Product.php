@@ -138,7 +138,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		if ($product instanceof Product)
 		{
 			// Section product list synchronization.
-			if ($product->getPublicationSections()->count())
+			if ($product->getPublicationSectionsCount())
 			{
 				$product->synchronizeSectionDocumentLists();
 			}
@@ -324,7 +324,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 	public function getPublicationSections()
 	{
 		$publicationSections = parent::getPublicationSections();
-		if ($publicationSections instanceof \Change\Documents\DocumentArrayProperty && !$publicationSections->count())
+		if ($publicationSections instanceof \Change\Documents\DocumentArrayProperty && !$publicationSections->count()
+			&& !$publicationSections->isModified())
 		{
 			$rootProduct = $this->getRelatedRootProduct();
 			if ($rootProduct instanceof Product)
