@@ -32,7 +32,7 @@ class Login
 			if ($user instanceof \Rbs\User\Documents\User)
 			{
 				$authenticatedUser = new AuthenticatedUser($user);
-				$profile = $event->getApplicationServices()->getProfileManager()->loadProfile($user, 'Rbs_User');
+				$profile = $event->getApplicationServices()->getProfileManager()->loadProfile($authenticatedUser, 'Rbs_User');
 				if ($profile)
 				{
 					$fullName = $profile->getPropertyValue('fullName');
@@ -70,7 +70,7 @@ class Login
 			if ($document->checkPassword($password))
 			{
 				$authenticatedUser = new AuthenticatedUser($document);
-				$profile = $event->getApplicationServices()->getProfileManager()->loadProfile($document, 'Rbs_User');
+				$profile = $event->getApplicationServices()->getProfileManager()->loadProfile($authenticatedUser, 'Rbs_User');
 				if ($profile)
 				{
 					$fullName = $profile->getPropertyValue('fullName');

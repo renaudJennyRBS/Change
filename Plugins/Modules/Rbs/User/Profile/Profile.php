@@ -16,6 +16,8 @@ class Profile extends \Change\User\AbstractProfile
 	function __construct()
 	{
 		$this->properties = array(
+			'firstName' => '',
+			'lastName' => '',
 			'fullName' => '',
 			'titleCode' => '',
 			'birthDate' => null
@@ -31,10 +33,44 @@ class Profile extends \Change\User\AbstractProfile
 	}
 
 	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getPropertyValue($name)
+	{
+		if ($name == 'fullName')
+		{
+			$lName = $this->getPropertyValue('lastName');
+			$fName = $this->getPropertyValue('firstName');
+			if ($lName == null && $fName == null)
+			{
+				return null;
+			}
+
+			$fullName = '';
+			if ($lName == null)
+			{
+				$lName = '';
+			}
+			if ($fName == null)
+			{
+				$fName = '';
+			}
+			if (trim($lName) != '' && trim($fName) != '')
+			{
+				$fullName = ' ' . $lName;
+			}
+			return $fName . $fullName;
+		}
+
+		return parent::getPropertyValue($name);
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getPropertyNames()
 	{
-		return array('fullName', 'titleCode', 'birthDate');
+		return array('firstName', 'lastName', 'fullName', 'titleCode', 'birthDate');
 	}
 }

@@ -86,7 +86,8 @@ class Listeners implements ListenerAggregateInterface
 					$documentProfile = $query->getFirstDocument();
 					if ($documentProfile instanceof \Rbs\User\Documents\Profile)
 					{
-						$profile->setPropertyValue('fullName', $documentProfile->getFullName());
+						$profile->setPropertyValue('firstName', $documentProfile->getFirstName());
+						$profile->setPropertyValue('lastName', $documentProfile->getLastName());
 						$profile->setPropertyValue('titleCode', $documentProfile->getTitleCode());
 						$profile->setPropertyValue('birthDate', $documentProfile->getBirthDate());
 					}
@@ -181,7 +182,8 @@ class Listeners implements ListenerAggregateInterface
 							$documentProfile->setUser($docUser);
 						}
 
-						$documentProfile->setFullName($profile->getPropertyValue('fullName'));
+						$documentProfile->setFirstName($profile->getPropertyValue('firstName'));
+						$documentProfile->setLastName($profile->getPropertyValue('lastName'));
 						$documentProfile->setTitleCode($profile->getPropertyValue('titleCode'));
 						$birthDate = $profile->getPropertyValue('birthDate');
 						if (trim($birthDate) == '')

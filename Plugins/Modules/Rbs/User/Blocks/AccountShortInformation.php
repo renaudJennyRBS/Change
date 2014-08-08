@@ -21,5 +21,9 @@ class AccountShortInformation extends \Change\Presentation\Blocks\Information
 		$this->setSection($i18nManager->trans('m.rbs.user.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.account_short', $ucf));
 		$this->addInformationMetaForDetailBlock(array('Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'), $i18nManager);
+
+		$this->addInformationMeta('userAccountPage', \Change\Documents\Property::TYPE_DOCUMENTID, false, null)
+			->setLabel($i18nManager->trans('m.rbs.user.admin.user_account_page', array('ucf')))
+			->setAllowedModelsNames(array('Rbs_Website_Topic', 'Rbs_Website_StaticPage'));
 	}
 }
