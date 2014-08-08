@@ -21,7 +21,7 @@
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
 				scope.data = {};
-				scope.zoneCode = angular.fromJson(attributes.zoneCode);
+				scope.zoneCode = attributes.zoneCode;
 				scope.readonly = attributes.readonly;
 				scope.manageName = attributes.hasOwnProperty('manageName');
 

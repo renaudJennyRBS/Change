@@ -165,10 +165,10 @@
 
 						<div data-ng-if="shippingZonesCode.length > 0 && information.login" data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
 							data-address-name="information.address.name" data-manage-name="true"
-							data-zone-code="(= shippingZonesCode | json =)">
+							data-zone-code="(= shippingZonesCode =)">
 						</div>
 						<div data-ng-if="shippingZonesCode.length > 0 &&  !information.login" data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
-							data-zone-code="(= shippingZonesCode | json =)">
+							data-zone-code="(= shippingZonesCode =)">
 						</div>
 
 						<div>

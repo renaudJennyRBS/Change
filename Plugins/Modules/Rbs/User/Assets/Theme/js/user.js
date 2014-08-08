@@ -53,6 +53,15 @@
 					scope.accessorId = params.accessorId;
 					scope.accessorName = params.accessorName;
 				});
+
+				$rootScope.$on('rbsUserProfileUpdated', function(event, params) {
+					if (params.profile.fullName !== null && params.profile.fullName != '')
+					{
+						scope.userNowConnected = true;
+						scope.accessorId = params.userId;
+						scope.accessorName = params.profile.fullName;
+					}
+				});
 			}
 		}
 	}
@@ -93,5 +102,51 @@
 	}
 	rbsManageAutoLogin.$inject = ['$http'];
 	app.directive('rbsManageAutoLogin', rbsManageAutoLogin);
+
+
+	function rbsEditAccount($http, $rootScope)
+	{
+		return {
+			restrict: 'A',
+			templateUrl: '/editAccount.tpl',
+			replace: false,
+
+			link: function(scope, elm, attrs) {
+				scope.success = false;
+				scope.readonly = true;
+
+				scope.userId = attrs.userId;
+				scope.profile = angular.fromJson(attrs.profile);
+				scope.items = angular.fromJson(attrs.titles);
+
+				scope.openEdit = function() {
+					scope.readonly = false;
+					scope.profileBackup = angular.copy(scope.profile);
+				};
+
+				scope.saveAccount = function() {
+					$http.post('Action/Rbs/User/EditAccount', scope.profile)
+						.success(function(data) {
+							scope.errors = null;
+							scope.readonly = true;
+							scope.profile = data;
+							var params = {'profile': scope.profile, 'userId': scope.userId};
+							$rootScope.$broadcast('rbsUserProfileUpdated', params);
+						})
+						.error(function(data) {
+							scope.errors = data.errors;
+						});
+				};
+
+				scope.cancelEdit = function() {
+					scope.readonly = true;
+					scope.profile = angular.copy(scope.profileBackup);
+				};
+
+			}
+		}
+	}
+	rbsEditAccount.$inject = ['$http', '$rootScope'];
+	app.directive('rbsEditAccount', rbsEditAccount);
 
 })();

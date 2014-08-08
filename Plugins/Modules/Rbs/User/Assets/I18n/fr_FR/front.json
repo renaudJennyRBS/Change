@@ -134,6 +134,9 @@
 	"edit_account_title":{
 		"message":"édition de mes informations personnelles"
 	},
+	"account_title":{
+		"message":"mes informations personnelles"
+	},
 	"update_account_success":{
 		"message":"mise à jour effectuée avec succès"
 	},
@@ -143,11 +146,23 @@
 	"title_placeholder":{
 		"message":"civilité"
 	},
-	"fullname":{
+	"full_name":{
 		"message":"nom complet"
 	},
-	"fullname_placeholder":{
+	"full_name_placeholder":{
 		"message":"nom complet"
+	},
+	"first_name":{
+		"message":"prénom"
+	},
+	"first_name_placeholder":{
+		"message":"prénom"
+	},
+	"last_name":{
+		"message":"nom"
+	},
+	"last_name_placeholder":{
+		"message":"nom"
 	},
 	"birthDate":{
 		"message":"date d'anniversaire"
@@ -157,6 +172,12 @@
 	},
 	"submit_edit_account":{
 		"message":"mettre à jour"
+	},
+	"button_edit_account":{
+		"message":"modifier mes informations"
+	},
+	"cancel_edit_account":{
+		"message":"annuler"
 	},
 	"error_authentication_required":{
 		"message":"impossible d'enregistrer le profil utitlisateur, authentification requise"

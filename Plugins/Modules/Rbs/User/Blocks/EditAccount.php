@@ -24,9 +24,7 @@ class EditAccount extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('authenticated', false);
-		$parameters->addParameterMeta('errId');
-		$parameters->addParameterMeta('formAction', 'Action/Rbs/User/EditAccount');
-		$parameters->addParameterMeta('context');
+		$parameters->addParameterMeta('accessorId', null);
 
 		$parameters->setNoCache();
 
@@ -36,14 +34,7 @@ class EditAccount extends \Change\Presentation\Blocks\Standard\Block
 		if ($user->authenticated())
 		{
 			$parameters->setParameterValue('authenticated', true);
-		}
-
-		$request = $event->getHttpRequest();
-		$errId = $request->getQuery('errId');
-		$parameters->setParameterValue('errId', $errId);
-		if (!$errId)
-		{
-			$parameters->setParameterValue('context', $request->getQuery('context'));
+			$parameters->setParameterValue('accessorId', $user->getId());
 		}
 
 		return $parameters;
@@ -59,12 +50,11 @@ class EditAccount extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$key = 'Rbs_User';
 
-		$parameters = $event->getBlockParameters();
-		$errId = $parameters->getParameter('errId');
-
 		$authenticationManager = $event->getApplicationServices()->getAuthenticationManager();
 		$profileManager = $event->getApplicationServices()->getProfileManager();
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		$collectionManager = $event->getApplicationServices()->getCollectionManager();
 
 		$currentUser = $authenticationManager->getCurrentUser();
 
@@ -77,33 +67,48 @@ class EditAccount extends \Change\Presentation\Blocks\Standard\Block
 			$data['email'] = $user->getEmail();
 		}
 
-		if ($errId)
+		$profile = $profileManager->loadProfile($currentUser, $key);
+
+		$data['fullName'] = $profile->getPropertyValue('fullName');
+		$data['firstName'] = $profile->getPropertyValue('firstName');
+		$data['lastName'] = $profile->getPropertyValue('lastName');
+
+		$date = $profile->getPropertyValue('birthDate');
+		$birthDate = null;
+		$formattedDate = null;
+		if ($date != null)
 		{
-			$session = new \Zend\Session\Container('Change_Errors');
-			$sessionErrors = isset($session[$errId]) ? $session[$errId] : null;
-			if ($sessionErrors && is_array($sessionErrors))
+			$birthDate = $date->format('Y-m-d');
+			$LCID = $i18nManager->getLCID();
+			$formattedDate = $i18nManager->formatDate($LCID, $date, $i18nManager->getDateFormat($LCID));
+		}
+		$data['birthDate'] = $birthDate;
+		$data['formattedBirthDate'] = $formattedDate;
+
+		$collection = $collectionManager->getCollection('Rbs_User_Collection_Title');
+
+		$data['titleCode'] = $profile->getPropertyValue('titleCode');
+		if ($data['titleCode'])
+		{
+			// Get title of titleCode
+			if ($collection)
 			{
-				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
-				$data['titleCode'] = isset($sessionErrors['titleCode']) ? $sessionErrors['titleCode'] : '';
-				$data['fullName'] = isset($sessionErrors['fullName']) ? $sessionErrors['fullName'] : '';
-				$data['birthDate'] = isset($sessionErrors['birthDate']) ? $sessionErrors['birthDate'] : '';
+				$item = $collection->getItemByValue($data['titleCode']);
+				$data['titleCodeTitle'] = $item->getTitle();
 			}
 		}
-		else
-		{
-			$profile = $profileManager->loadProfile($currentUser, $key);
 
-			$data['titleCode'] = $profile->getPropertyValue('titleCode');
-			$data['fullName'] = $profile->getPropertyValue('fullName');
-			$date = $profile->getPropertyValue('birthDate');
-			if ($date != null)
+		$items = [];
+		if ($collection)
+		{
+			foreach ($collection->getItems() as $tmp)
 			{
-				$date = $date->format('Y-m-d');
+				$items[] = ['title' => $tmp->getTitle(), 'value' => $tmp->getValue()];
 			}
-			$data['birthDate'] = $date;
 		}
 
-		$attributes['data'] = $data;
+		$attributes['profile'] = $data;
+		$attributes['items'] = $items;
 
 		return 'edit-account.twig';
 	}

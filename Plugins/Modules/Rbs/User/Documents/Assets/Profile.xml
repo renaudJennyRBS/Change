@@ -13,7 +13,8 @@
 		</property>
 		<!-- Profile data properties accessible in Rbs_User profile -->
 		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
-		<property name="fullName" type="String" />
+		<property name="firstName" type="String" />
+		<property name="lastName" type="String" />
 		<property name="titleCode" type="String" />
 		<property name="birthDate" type="Date" />
 	</properties>

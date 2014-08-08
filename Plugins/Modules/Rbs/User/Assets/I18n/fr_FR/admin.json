@@ -116,6 +116,9 @@
 	"account_short":{
 		"message":"Compte utilisateur réduit"
 	},
+	"user_account_page":{
+		"message":"Page du compte utilisateur"
+	},
 	"create_account":{
 		"message":"creation d'un compte utilisateur",
 		"description":"account creation block name (backoffice use)"

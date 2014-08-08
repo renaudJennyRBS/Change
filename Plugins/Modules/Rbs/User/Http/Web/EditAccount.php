@@ -39,19 +39,40 @@ class EditAccount extends \Change\Http\Web\Actions\AbstractAjaxAction
 				$profile = $profileManager->loadProfile($currentUser, $key);
 				$event->getApplicationServices()->getLogging()->fatal(get_class($profile));
 				$event->getApplicationServices()->getLogging()->fatal($profile->getName());
-				if (isset($data['fullName']))
+				if (isset($data['firstName']))
 				{
-					$profile->setPropertyValue('fullName', $data['fullName']);
+					$profile->setPropertyValue('firstName', $data['firstName']);
 				}
-				if (isset($data['titleCode']))
+				if (isset($data['lastName']))
+				{
+					$profile->setPropertyValue('lastName', $data['lastName']);
+				}
+				if (isset($data['titleCode']) && $data['titleCode'] != '')
 				{
 					$profile->setPropertyValue('titleCode', $data['titleCode']);
+					$collectionManager = $event->getApplicationServices()->getCollectionManager();
+					$collection = $collectionManager->getCollection('Rbs_User_Collection_Title');
+					if ($collection)
+					{
+						$item = $collection->getItemByValue($data['titleCode']);
+						if ($item != null)
+						{
+							$data['titleCodeTitle'] = $item->getTitle();
+						}
+					}
 				}
 				if (isset($data['birthDate']))
 				{
 					$profile->setPropertyValue('birthDate', $data['birthDate']);
+					$date = new \DateTime($data['birthDate']);
+					$LCID = $i18nManager->getLCID();
+					$formattedDate = $i18nManager->formatDate($LCID, $date, $i18nManager->getDateFormat($LCID));
+					$data['formattedBirthDate'] = $formattedDate;
 				}
+
 				$profileManager->saveProfile($currentUser, $profile);
+
+				$data['fullName'] = $profile->getPropertyValue('fullName');
 			}
 			else
 			{
