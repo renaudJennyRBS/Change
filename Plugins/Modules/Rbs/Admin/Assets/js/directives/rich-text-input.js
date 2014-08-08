@@ -309,9 +309,11 @@
 						scope.availableSelectors = {
 							'media': true,
 							'links': true,
+							'anchors': true,
 							'mentions': false
 						};
 						if (attrs.profile === 'Admin') {
+							scope.availableSelectors.anchors = false;
 							scope.availableSelectors.mentions = true;
 						}
 
@@ -880,6 +882,26 @@
 								var title = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link_title'));
 
 								scope.mdInsertText(buildMdLinkTag(href, title || href));
+							}
+						};
+
+						scope.insertExternalOrAnchorLink = function() {
+							var href = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_or_anchor_link'), 'http://');
+
+							if (href != null && href != '') {
+								var title = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_external_link_title'));
+
+								scope.mdInsertText(buildMdLinkTag(href, title || href));
+							}
+						};
+
+						scope.insertAnchor = function() {
+							var anchorName = prompt(i18n.trans('m.rbs.admin.adminjs.richtext_enter_anchor_name'), '');
+							if (anchorName != null && anchorName != '') {
+								if (anchorName.charAt(0) !== '#') {
+									anchorName = '#' + anchorName;
+								}
+								scope.mdInsertText(' {' + anchorName + '}');
 							}
 						};
 

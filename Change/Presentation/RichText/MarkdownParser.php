@@ -11,7 +11,7 @@ namespace Change\Presentation\RichText;
 /**
  * @name \Change\Presentation\RichText\MarkdownParser
  */
-class MarkdownParser extends \Michelf\Markdown
+class MarkdownParser extends \Michelf\MarkdownExtra
 {
 	/**
 	 * @var \Change\Services\ApplicationServices
