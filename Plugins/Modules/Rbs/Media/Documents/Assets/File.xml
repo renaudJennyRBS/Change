@@ -4,6 +4,7 @@
 	localized="true" editable="true" activable="true">
 	<properties>
 		<property name="title" type="String" localized="true" has-correction="true"/>
+		<property name="description" type="RichText" localized="true" has-correction="true"/>
 		<property name="path" type="StorageUri" />
 		<property name="mimeType" type="String" stateless="true" />
 	</properties>

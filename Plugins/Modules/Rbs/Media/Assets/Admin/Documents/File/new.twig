@@ -23,13 +23,7 @@
 
 				<hr />
 
-				<rbs-field-file property="path" required="true" label="{{ i18nAttr(propertyKey('Rbs_Media_File', 'path'), ['ucf']) }}">
-				</rbs-field-file>
-
-				<rbs-field-label-title property="title" required="true"
-					label="{{ i18nAttr(propertyKey('Rbs_Media_File', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Media_File', 'title'), ['ucf']) }}">
-				</rbs-field-label-title>
-
+				{% include '@Rbs_Media/Documents/File/properties.twig' %}
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="activation"

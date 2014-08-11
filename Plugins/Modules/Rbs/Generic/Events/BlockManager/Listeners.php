@@ -17,7 +17,6 @@ use Zend\EventManager\ListenerAggregateInterface;
  */
 class Listeners implements ListenerAggregateInterface
 {
-
 	/**
 	 * Attach one or more listeners
 	 * Implementors may add an optional $priority argument; the EventManager
@@ -27,25 +26,25 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		new  RegisterByBlockName('Rbs_Website_Menu', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Thread', true, $events);
-		new  RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
-		new  RegisterByBlockName('Rbs_Website_SwitchLang', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Richtext', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Exception', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Error', true, $events);
-		new  RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
-		new  RegisterByBlockName('Rbs_Website_Text', true, $events);
+		new RegisterByBlockName('Rbs_Website_Menu', true, $events);
+		new RegisterByBlockName('Rbs_Website_Thread', true, $events);
+		new RegisterByBlockName('Rbs_Website_SiteMap', true, $events);
+		new RegisterByBlockName('Rbs_Website_SwitchLang', true, $events);
+		new RegisterByBlockName('Rbs_Website_Richtext', true, $events);
+		new RegisterByBlockName('Rbs_Website_Exception', true, $events);
+		new RegisterByBlockName('Rbs_Website_Error', true, $events);
+		new RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
+		new RegisterByBlockName('Rbs_Website_Text', true, $events);
 
-		new  RegisterByBlockName('Rbs_User_Login', true, $events);
-		new  RegisterByBlockName('Rbs_User_AccountShort', true, $events);
-		new  RegisterByBlockName('Rbs_User_CreateAccount', true, $events);
-		new  RegisterByBlockName('Rbs_User_ResetPassword', true, $events);
-		new  RegisterByBlockName('Rbs_User_EditAccount', true, $events);
-		new  RegisterByBlockName('Rbs_User_ManageAutoLoginToken', true, $events);
-		new  RegisterByBlockName('Rbs_User_ChangePassword', true, $events);
+		new RegisterByBlockName('Rbs_User_Login', true, $events);
+		new RegisterByBlockName('Rbs_User_AccountShort', true, $events);
+		new RegisterByBlockName('Rbs_User_CreateAccount', true, $events);
+		new RegisterByBlockName('Rbs_User_ResetPassword', true, $events);
+		new RegisterByBlockName('Rbs_User_EditAccount', true, $events);
+		new RegisterByBlockName('Rbs_User_ManageAutoLoginToken', true, $events);
+		new RegisterByBlockName('Rbs_User_ChangePassword', true, $events);
 
-		new  RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
+		new RegisterByBlockName('Rbs_Simpleform_Form', true, $events);
 
 		new RegisterByBlockName('Rbs_Review_ReviewList', true, $events);
 		new RegisterByBlockName('Rbs_Review_PostReview', true, $events);
@@ -67,8 +66,9 @@ class Listeners implements ListenerAggregateInterface
 
 		new RegisterByBlockName('Rbs_Media_Video', true, $events);
 		new RegisterByBlockName('Rbs_Media_Image', true, $events);
+		new RegisterByBlockName('Rbs_Media_File', true, $events);
 
-		$callback = function($event)
+		$callback = function ($event)
 		{
 			(new \Change\Presentation\Blocks\FileCacheAdapter())->onGetCacheAdapter($event);
 		};

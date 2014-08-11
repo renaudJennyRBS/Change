@@ -31,5 +31,8 @@
 	},
 	"file_path":{
 		"message":"fichier"
+	},
+	"file_description":{
+		"message":"description"
 	}
 }
