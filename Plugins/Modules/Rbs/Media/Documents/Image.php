@@ -42,6 +42,9 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 		return $this->storageManager;
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onDefaultInjection(\Change\Events\Event $event)
 	{
 		parent::onDefaultInjection($event);
@@ -130,7 +133,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		if ($this->isPropertyModified('path'))
 		{
-			if ($this->getPathOldValue() && 	$this->getPath() != $this->getPathOldValue())
+			if ($this->getPathOldValue() && $this->getPath() != $this->getPathOldValue())
 			{
 				$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPathOldValue());
 				$engine->unlink();

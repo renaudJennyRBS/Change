@@ -54,13 +54,12 @@ class Image extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$imageId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 
+		$imageId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		if ($imageId)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			/* @var $video \Rbs\Media\Documents\Image */
 			$image = $documentManager->getDocumentInstance($imageId);
 			if ($image instanceof \Rbs\Media\Documents\Image)
 			{

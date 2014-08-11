@@ -26,6 +26,9 @@ class Video extends \Compilation\Rbs\Media\Documents\Video
 		return $this->storageManager;
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onDefaultInjection(\Change\Events\Event $event)
 	{
 		parent::onDefaultInjection($event);
