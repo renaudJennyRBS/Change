@@ -849,6 +849,7 @@
 				}
 				scope.shipping.deliveries.push(defaultDelivery);
 
+				scope.cart.shippingModes[0] = {};
 				/*var deliveryTemp = { lines: [ scope.cart.lines[0] ] };
 				 scope.shipping.deliveries.push(deliveryTemp);*/
 			}
