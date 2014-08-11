@@ -100,6 +100,13 @@ select option.empty-value {
 	padding: 0;
 	border: none;
 }
+/**
+ * With the "width: 1%", the picker takes 100% width in the filter configuration interface (in Chrome and IE only)
+ * TODO: find a better way to fix it. It will maybe be fixed with a newer version of Bootstrap?
+ */
+[rbs-document-filter-container] .document-picker .auto-complete-input .input-group-addon {
+	width: auto;
+}
 .document-picker .auto-complete-input .input-group-addon select {
 	width: auto;
 	border-top-left-radius: inherit;
