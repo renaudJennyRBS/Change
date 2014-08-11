@@ -144,10 +144,22 @@
 						class="btn btn-default btn-sm btn-icon" data-ng-click="selectDocumentsToLink()">
 						<i class="icon-link"></i>
 					</button>
-					<button data-ng-if="availableSelectors.links" type="button" data-ng-disabled="useTextarea"
+					<button data-ng-if="availableSelectors.links && availableSelectors.anchors" type="button"
+						data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.insert_external_or_anchor_link', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="insertExternalOrAnchorLink()">
+						<i class="icon-external-link"></i>
+					</button>
+					<button data-ng-if="availableSelectors.links && !availableSelectors.anchors" type="button"
+						data-ng-disabled="useTextarea"
 						title="{{ i18nAttr('m.rbs.admin.admin.insert_external_link', ['ucf']) }}"
 						class="btn btn-default btn-sm btn-icon" data-ng-click="insertExternalLink()">
 						<i class="icon-external-link"></i>
+					</button>
+					<button data-ng-if="availableSelectors.anchors" type="button" data-ng-disabled="useTextarea"
+						title="{{ i18nAttr('m.rbs.admin.admin.insert_anchor', ['ucf']) }}"
+						class="btn btn-default btn-sm btn-icon" data-ng-click="insertAnchor()">
+						<i class="icon-anchor"></i>
 					</button>
 					<button data-ng-if="availableSelectors.mentions" type="button" data-ng-disabled="useTextarea"
 						title="{{ i18nAttr('m.rbs.admin.admin.insert_mention', ['ucf']) }}"

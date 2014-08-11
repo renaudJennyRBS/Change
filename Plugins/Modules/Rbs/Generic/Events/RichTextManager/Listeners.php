@@ -8,7 +8,6 @@
  */
 namespace Rbs\Generic\Events\RichTextManager;
 
-use Change\Presentation\RichText\Event;
 use Change\Presentation\RichText\RichTextManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -27,29 +26,51 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (Event $event)
+		$callback = function (\Change\Events\Event $event)
 		{
-			if ($event->getEditor() === 'Markdown')
+			if (!$event->getParam('html'))
 			{
-				if ($event->getProfile() === 'Admin')
+				$parser = null;
+				$richText = $event->getParam('richText');
+				if ($richText->getEditor() === 'Markdown')
 				{
-					$event->setParser(new \Rbs\Admin\MarkdownParser($event->getApplicationServices()));
+					$profile = $event->getParam('profile');
+					if ($profile === 'Admin')
+					{
+						$parser = new \Rbs\Admin\MarkdownParser($event->getApplicationServices());
+					}
+					elseif ($profile === 'Website' || $profile === 'Mail')
+					{
+						$parser = new \Rbs\Website\RichText\MarkdownParser($event->getApplicationServices());
+					}
 				}
-				elseif ($event->getProfile() === 'Website' || $event->getProfile() === 'Mail')
+				else if ($richText->getEditor() === 'Html')
 				{
-					$event->setParser(new \Rbs\Website\RichText\MarkdownParser($event->getApplicationServices()));
+					$parser = new \Rbs\Admin\WysiwygHtmlParser($event->getApplicationServices());
 				}
-			}
-			else if ($event->getEditor() === 'Html')
-			{
-				$event->setParser(new \Rbs\Admin\WysiwygHtmlParser($event->getApplicationServices()));
-			}
-			else
-			{
-				$event->setParser(new \Rbs\Admin\PlainTextParser());
+				else
+				{
+					$parser = new \Rbs\Admin\PlainTextParser();
+				}
+
+				if ($parser)
+				{
+					$event->setParam('html', $parser->parse($richText->getRawText(), $event->getParam('context')));
+				}
 			}
 		};
-		$events->attach(RichTextManager::EVENT_GET_PARSER, $callback, 5);
+		$events->attach(RichTextManager::EVENT_RENDER, $callback, 5);
+
+		$callback = function (\Change\Events\Event $event)
+		{
+			$html = $event->getParam('html');
+			if ($html && $event->getParam('profile') === 'Website')
+			{
+				$processor = new \Rbs\Website\RichText\PostProcessor();
+				$event->setParam('html', $processor->process($html, $event->getParam('context')));
+			}
+		};
+		$events->attach(RichTextManager::EVENT_RENDER, $callback, 1);
 	}
 
 	/**

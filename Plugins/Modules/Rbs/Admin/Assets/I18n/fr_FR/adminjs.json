@@ -251,8 +251,14 @@
 	"richtext_enter_external_link":{
 		"message":"Veuillez saisir l'adresse de la page à lier"
 	},
+	"richtext_enter_external_or_anchor_link":{
+		"message":"Veuillez saisir l'adresse de la page ou l'ancre à lier"
+	},
 	"richtext_enter_external_link_title":{
 		"message":"Veuillez saisir le titre du lien (optionnel)"
+	},
+	"richtext_enter_anchor_name":{
+		"message":"Veuillez saisir le nom de l'ancre"
 	},
 	"picker_create_title":{
 		"message":"$PROPERTY$ : création d'un nouvel élément"

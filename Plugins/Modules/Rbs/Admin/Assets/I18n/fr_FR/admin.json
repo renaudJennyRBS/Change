@@ -747,6 +747,12 @@
 	"insert_external_link":{
 		"message":"insérer un lien externe"
 	},
+	"insert_external_or_anchor_link":{
+		"message":"insérer un lien externe ou vers une ancre"
+	},
+	"insert_anchor":{
+		"message":"insérer une ancre"
+	},
 	"insert_mention":{
 		"message":"mentionner un utilisateur ou groupe"
 	},

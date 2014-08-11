@@ -406,7 +406,10 @@ class Extension implements \Twig_ExtensionInterface
 	{
 		if ($richText instanceof \Change\Documents\RichtextProperty)
 		{
-			$context = array('website' => $this->getUrlManager()->getWebsite());
+			$context = array(
+				'website' => $this->getUrlManager()->getWebsite()/*,
+				'currentURI' => $this->getUrlManager()->getSelf()*/
+			);
 			return $this->getApplicationServices()->getRichTextManager()->render($richText, 'Website', $context);
 		}
 		return htmlspecialchars(strval($richText));

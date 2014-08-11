@@ -16,7 +16,7 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	const DEFAULT_IDENTIFIER = 'Presentation.RichText';
-	const EVENT_GET_PARSER = 'GetParser';
+	const EVENT_RENDER = 'render';
 
 	/**
 	 * @return null|string|string[]
@@ -43,20 +43,15 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 	public function render(\Change\Documents\RichtextProperty $richText, $profile, $context = null)
 	{
 		$eventManager = $this->getEventManager();
-		$event = new Event(static::EVENT_GET_PARSER, $this);
-		$event->setProfile($profile);
-		$event->setEditor($richText->getEditor());
-		$event->setContext($context);
-		$eventManager->trigger($event);
-
-		if ($event->getParser())
-		{
-			$output = $event->getParser()->parse($richText->getRawText(), $context);
-			// TODO Should we save this result in the RichtextProperty?
-			$richText->setHtml($output);
-			return $output;
-		}
-
-		return '';
+		$params = [
+			'profile' => $profile,
+			'richText' => $richText,
+			'context' => $context
+		];
+		$params = $eventManager->prepareArgs($params);
+		$eventManager->trigger(static::EVENT_RENDER, $this, $params);
+		$html = (isset($params['html']) ? $params['html'] : '');
+		$richText->setHtml($html);
+		return $html;
 	}
 }
