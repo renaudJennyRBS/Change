@@ -34,6 +34,11 @@ interface ShippingModeInterface
 	public function getAddress();
 
 	/**
+	 * @return \Rbs\Geo\Address\AddressInterface
+	 */
+	public function getAddressReference();
+
+	/**
 	 * @return \Zend\Stdlib\Parameters
 	 */
 	public function getOptions();

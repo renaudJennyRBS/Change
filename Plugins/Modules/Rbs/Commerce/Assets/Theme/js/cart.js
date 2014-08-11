@@ -181,27 +181,75 @@
 				scope.display = { readonly: attributes.readonly };
 				scope.deliveryIndex = attributes.deliveryIndex;
 				scope.hasLogin = attributes.hasOwnProperty('login') && attributes.login != '';
-				scope.addressModes = [];
-				scope.pickupModes = [];
+				scope.addressModes = null;
+				scope.pickupModes = null;
 				scope.isShippingAddressValid = {value : false};
-				scope.cart.context.isShippingAddressValid = [];
 
-				if (typeof scope.cart.context.shippingAddress === "undefined")
+				scope.delivery.isShippingAddressValid = {value : false};
+
+				if (!scope.delivery.addressReference.hasOwnProperty('__addressFieldsId'))
 				{
-					scope.cart.context.shippingAddress = [];
-				}
-				if (typeof scope.cart.context.shippingAddress[scope.deliveryIndex] === "undefined")
-				{
-					scope.cart.context.shippingAddress[scope.deliveryIndex] = angular.copy(scope.cart.address);
+					scope.delivery.addressReference = angular.copy(scope.cart.address);
 				}
 				if (!scope.shippingAddress)
 				{
-					scope.shippingAddress = angular.copy(scope.cart.context.shippingAddress[scope.deliveryIndex]);
+					scope.shippingAddress = angular.copy(scope.delivery.addressReference);
 				}
 
 				attributes.$observe('readonly', function(newValue) {
 					scope.display.readonly = (newValue == 'true');
 				});
+
+				scope.$watchCollection('addressModes', function() {
+					updateSelectedMode();
+				});
+
+				scope.$watchCollection('pickupModes', function() {
+					updateSelectedMode();
+				});
+
+				function updateSelectedMode() {
+					if (scope.addressModes != null && scope.pickupModes != null)
+					{
+						var i;
+						var modeFound = false;
+						if (scope.delivery.modeId !== null)
+						{
+							for (i = 0; i < scope.addressModes.length; i++) {
+								if (scope.addressModes[i].id == scope.delivery.modeId)
+								{
+									scope.selectAddressMode(i);
+									modeFound = true;
+									break;
+								}
+							}
+							for (i = 0; i < scope.pickupModes.length; i++) {
+								if (scope.pickupModes[i].id == scope.delivery.modeId)
+								{
+									scope.selectPickupMode(i);
+									modeFound = true;
+									break;
+								}
+							}
+						}
+						if (!modeFound)
+						{
+							scope.currentMode = null;
+							scope.delivery.modeId = null;
+							scope.delivery.modeTitle = null;
+							scope.delivery.address = null;
+							scope.delivery.isConfigured = false;
+							// Need to update cart to delete mode id ? Currently it's impossible to valid cart in status
+							if (scope.cart.shippingModes[scope.deliveryIndex].id != null && scope.cart.shippingModes[scope.deliveryIndex].id > 0)
+							{
+								scope.cart.shippingModes[scope.deliveryIndex].id = null;
+								scope.cart.shippingModes[scope.deliveryIndex].title = null;
+								var postData = { shippingModes: scope.cart.shippingModes };
+								updateCart($http, scope, postData);
+							}
+						}
+					}
+				}
 
 				function setupConfigurationZone() {
 					var mode = scope.currentMode;
@@ -215,35 +263,15 @@
 				}
 
 				function loadCompatibleShippingModes(needAddress) {
-					var modes = [];
 					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines, needAddress: needAddress})
 						.success(function(data) {
-							modes = data;
 							if (needAddress)
 							{
 								scope.addressModes = data;
-								if (scope.delivery.modeId !== null)
-								{
-									for (var i = 0; i < scope.addressModes.length; i++) {
-										if (scope.addressModes[i].id == scope.delivery.modeId)
-										{
-											scope.selectAddressMode(i);
-										}
-									}
-								}
 							}
 							else
 							{
 								scope.pickupModes = data;
-								if (scope.delivery.modeId !== null)
-								{
-									for (var i = 0; i < scope.pickupModes.length; i++) {
-										if (scope.pickupModes[i].id == scope.delivery.modeId)
-										{
-											scope.selectPickupMode(i);
-										}
-									}
-								}
 							}
 						})
 						.error(function(data, status, headers) {
@@ -259,7 +287,7 @@
 					scope.currentMode = mode;
 					scope.delivery.modeId = mode.id;
 					scope.delivery.modeTitle = mode.title;
-					scope.delivery.address = scope.shippingAddress;
+					scope.delivery.address = scope.delivery.addressReference;
 					scope.delivery.isConfigured = true;
 					setupConfigurationZone();
 				};
@@ -269,9 +297,9 @@
 					scope.currentMode = mode;
 					scope.delivery.modeId = mode.id;
 					scope.delivery.modeTitle = mode.title;
+					scope.delivery.address = null;
 					scope.delivery.isConfigured = false;
 					setupConfigurationZone();
-					scope.delivery.address = null;
 				};
 
 				scope.trustHtml = function(html) {
@@ -292,7 +320,7 @@
 
 				scope.cancelShippingAddressForm = function() {
 					scope.editShippingAddress = false;
-					scope.shippingAddress = angular.copy(scope.cart.context.shippingAddress[scope.deliveryIndex]);
+					scope.shippingAddress = angular.copy(scope.delivery.addressReference);
 					scope.delivery.underConfiguration = false;
 				};
 
@@ -317,11 +345,14 @@
 				};
 
 				scope.validShippingAddressForm = function() {
-					var postData = { contextShippingAddress: scope.shippingAddress, deliveryIndex: scope.deliveryIndex };
-					updateCart($http, scope, postData, function(data) {
+					scope.cart.shippingModes[scope.deliveryIndex].addressReference = angular.copy(scope.shippingAddress);
+
+					var postData = { shippingModes: scope.cart.shippingModes };
+					updateCart($http, scope, postData, function() {
 						scope.delivery.underConfiguration = false;
 						scope.editShippingAddress = false;
-						scope.shippingAddress = angular.copy(scope.cart.context.shippingAddress[scope.deliveryIndex]);
+						scope.shippingAddress = angular.copy(scope.cart.shippingModes[scope.deliveryIndex].addressReference);
+						scope.delivery.addressReference = angular.copy(scope.shippingAddress);
 						scope.addressModes = loadCompatibleShippingModes(true);
 					});
 				};
@@ -542,9 +573,9 @@
 			);
 		}
 
-		scope.init = function(accessordId, confirmed)
+		scope.init = function(accessorId, confirmed)
 		{
-			scope.accessordId = accessordId;
+			scope.accessorId = accessorId;
 			scope.confirmed = angular.fromJson(confirmed);
 		};
 
@@ -605,6 +636,16 @@
 			scope.information.email = scope.cart.email;
 			scope.information.confirmEmail = scope.cart.email;
 			scope.information.address = getObject(scope.cart.address, true);
+
+			if (!scope.information.address.hasOwnProperty('__addressFieldsId'))
+			{
+				for (var i = 0; i < scope.addresses.length; i++) {
+					if (scope.addresses[i].default == true) {
+						applyAddress(scope.information.address, scope.addresses[i]);
+					}
+				}
+			}
+
 			if (!scope.information.hasOwnProperty('isAddressValid')) {
 				scope.information.isAddressValid = false;
 			}
@@ -757,7 +798,6 @@
 
 			if (address.__id)
 			{
-				console.log('UpdateAddress');
 				$http.post('Action/Rbs/Geo/UpdateAddress', postData)
 					.success(function(data) {
 						scope.addresses = angular.copy(data);
@@ -766,7 +806,6 @@
 			}
 			else
 			{
-				console.log('AddAddress');
 				$http.post('Action/Rbs/Geo/AddAddress', postData)
 					.success(function(data) {
 						var maxId = 0;
@@ -804,7 +843,7 @@
 
 			if (scope.shipping.deliveries.length == 0) {
 				// TODO: handle forced shipping modes.
-				var defaultDelivery = { lines: [], address: {}, options: { } };
+				var defaultDelivery = { lines: [], address: {}, addressReference: {}, options: { } };
 				for (var i = 0; i < scope.cart.lines.length; i++) {
 					defaultDelivery.lines.push(scope.cart.lines[i]);
 				}
@@ -835,16 +874,21 @@
 						modeTitle: cartDelivery.title,
 						lines: [],
 						address: getObject(cartDelivery.address, true),
+						addressReference: getObject(cartDelivery.addressReference, true),
 						options: getObject(cartDelivery.options, true)
 					};
-					for (j = 0; j < cartDelivery.lineKeys.length; j++) {
-						var key = cartDelivery.lineKeys[j];
-						for (k = 0; k < scope.cart.lines.length; k++) {
-							if (key == scope.cart.lines[k].key) {
-								delivery.lines.push(scope.cart.lines[k]);
+					if (cartDelivery.lineKeys)
+					{
+						for (j = 0; j < cartDelivery.lineKeys.length; j++) {
+							var key = cartDelivery.lineKeys[j];
+							for (k = 0; k < scope.cart.lines.length; k++) {
+								if (key == scope.cart.lines[k].key) {
+									delivery.lines.push(scope.cart.lines[k]);
+								}
 							}
 						}
 					}
+
 					scope.shipping.deliveries.push(delivery);
 				}
 			}
@@ -864,10 +908,12 @@
 					title: delivery.modeTitle,
 					lineKeys: lineKeys,
 					address: delivery.address,
+					addressReference: delivery.addressReference,
 					options: delivery.options
 				});
 
 			}
+
 			var postData = { shippingModes: scope.cart.shippingModes };
 			updateCart($http, scope, postData, function() {
 				scope.setShippingDeliveries();

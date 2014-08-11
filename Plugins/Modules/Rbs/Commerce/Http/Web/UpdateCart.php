@@ -103,24 +103,6 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$cart->setAddress($address);
 		}
 
-		if (isset($arguments['contextShippingAddress']) && isset($arguments['deliveryIndex']))
-		{
-			$contextShippingAddressArray = array();
-
-			if (!is_array($arguments['contextShippingAddress']) || !count($arguments['contextShippingAddress']))
-			{
-				$contextShippingAddressArray[$arguments['deliveryIndex']] = null;
-			}
-			else
-			{
-				$contextShippingAddress = new \Rbs\Geo\Address\BaseAddress($arguments['contextShippingAddress']);
-				$contextShippingAddress->setLines($genericServices->getGeoManager()->getFormattedAddress($contextShippingAddress));
-				$contextShippingAddressArray[$arguments['deliveryIndex']] = $contextShippingAddress->toArray();
-			}
-			$cart->getContext()
-				->set('shippingAddress', $contextShippingAddressArray);
-		}
-
 		if (isset($arguments['shippingModes']))
 		{
 			$shippingModes = array();
@@ -131,6 +113,11 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 				if ($address)
 				{
 					$address->setLines($genericServices->getGeoManager()->getFormattedAddress($address));
+				}
+				$addressReference = $mode->getAddressReference();
+				if ($addressReference)
+				{
+					$addressReference->setLines($genericServices->getGeoManager()->getFormattedAddress($addressReference));
 				}
 				$shippingModes[] = $mode;
 			}

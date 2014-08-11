@@ -13,7 +13,7 @@
 				</button>
 			</div>
 			<div class="col-md-8">
-				<div class="panel panel-default" data-ng-show="addressModes.length > 0">
+				<div class="panel panel-default" data-ng-show="addressModes && addressModes.length > 0">
 					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.home_shipping_mode', ['ucf']) }}</div>
 					<div class="panel-body">
 						{{ i18n('m.rbs.commerce.front.select_shipping_mode', ['ucf']) }}
@@ -85,7 +85,7 @@
 		</div>
 		<div data-ng-hide="editShippingAddress" class="row">
 			<div class="col-md-12">
-				<div class="panel panel-default" data-ng-show="pickupModes.length > 0">
+				<div class="panel panel-default" data-ng-show="pickupModes && pickupModes.length > 0">
 					<div class="panel-heading">{{ i18n('m.rbs.commerce.front.pickup_shipping_mode', ['ucf']) }}</div>
 					<div class="panel-body">
 						{{ i18n('m.rbs.commerce.front.select_shipping_mode', ['ucf']) }}
