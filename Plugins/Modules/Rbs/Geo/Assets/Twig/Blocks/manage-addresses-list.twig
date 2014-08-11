@@ -72,7 +72,9 @@
 			<h2>{{ i18n('m.rbs.geo.front.add_new_address_title', ['ucf']) }}</h2>
 			<div data-rbs-address-form="" data-ng-model="data.newAddress.fieldValues"
 				data-valid="data.isNewAddressValid"
-				data-address-name="data.newAddress.name" data-clear-address="clearAddress">
+				data-address-name="data.newAddress.name"
+				data-manage-name=""
+				data-clear-address="clearAddress">
 				<button type="button" class="btn btn-primary" data-ng-disabled="!data.isNewAddressValid"
 					data-ng-click="addNewAddress()">
 					{{ i18n('m.rbs.geo.front.button_save', ['ucf']) }}
