@@ -542,9 +542,9 @@
 			);
 		}
 
-		scope.init = function(accessordId, confirmed)
+		scope.init = function(accessorId, confirmed)
 		{
-			scope.accessordId = accessordId;
+			scope.accessorId = accessorId;
 			scope.confirmed = angular.fromJson(confirmed);
 		};
 
