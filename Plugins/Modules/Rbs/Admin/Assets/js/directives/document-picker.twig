@@ -7,7 +7,7 @@
 
 	<div data-ng-show="isEmpty() || multiple" class="auto-complete-input"
 		data-ng-class="{'input-group': models.filtered.length > 1 }">
-		<span class="input-group-addon" data-ng-if="models.filtered.length > 1">
+		<span class="input-group-addon input-group-addon-select" data-ng-if="models.filtered.length > 1">
 			<select class="form-control" data-ng-model="models.model" data-ng-disabled="!multiple && !isEmpty()"
 				data-ng-options="m.label group by m.plugin for m in models.filtered">
 			</select>
