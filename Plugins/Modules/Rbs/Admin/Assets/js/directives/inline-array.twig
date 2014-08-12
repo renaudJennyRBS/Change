@@ -7,45 +7,56 @@
 	</thead>
 	<tbody>
 	<tr data-ng-repeat="inline in inlineArray">
-		<td data-ng-if="isEditorRow(inline)" colspan="3" data-ng-init="labelClass = 'col-lg-3'; controlsClass = 'col-lg-9'">
-			<rbs-inline-document document="inline" data-context-key="(= getContextKey($index) =)" data-ref-lcid="refLcid" data-lcid="lcid"></rbs-inline-document>
-			<button data-ng-click="closeEditor(inline)" class="btn btn-primary" type="button">
-				{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
-			</button>
-			<button  data-ng-if="canDelete(inline) && !inTranslation()" class="btn btn-danger" data-ng-click="deleteItem(inline)">
-				<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
-			</button>
+		<td data-ng-if="isEditorRow(inline)" colspan="3" data-ng-init="labelClass = 'col-lg-3'; controlsClass = 'col-lg-9'"
+			class="document-inline-editor">
+			<div class="form-properties">
+				<rbs-inline-document document="inline" data-context-key="(= getContextKey($index) =)" data-ref-lcid="refLcid"
+					data-lcid="lcid"></rbs-inline-document>
+			</div>
+			<div class="form-actions">
+				<button data-ng-click="closeEditor(inline)" class="btn btn-primary" type="button">
+					{{ i18nAttr('m.rbs.admin.admin.close', ['ucf']) }}
+				</button>
+				<button  data-ng-if="canDelete(inline) && !inTranslation()" class="btn btn-danger pull-right"
+					data-ng-click="deleteItem(inline)">
+					<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
+				</button>
+			</div>
 		</td>
-		<td data-ng-if="!isEditorRow(inline)"><div class="form-control-static">
-				<a href="javascript:;" data-ng-click="editItem(inline)"><i class="icon-pencil"></i> (= rowLabel(inline) =)</a></div></td>
 		<td data-ng-if="!isEditorRow(inline)">
-			<div data-ng-hide="inTranslation()">
+			<div class="form-control-static">
+				<a href="javascript:;" data-ng-click="editItem(inline)"><i class="icon-pencil"></i> (= rowLabel(inline) =)</a>
+			</div>
+		</td>
+		<td data-ng-if="!isEditorRow(inline)">
+			<div data-ng-hide="inTranslation()" class="text-right">
 				<rbs-kb-switch>
 					<button data-rbs-kb-when="alt" data-ng-disabled="$first" class="btn btn-default btn-icon"
-							type="button" data-ng-click="moveTop($index)"
-							title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
+						type="button" data-ng-click="moveTop($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
 						<i class="icon-step-forward icon-rotate-270"></i>
 					</button>
 					<button data-rbs-kb-default="" data-ng-disabled="$first" class="btn btn-default btn-icon"
-							type="button" data-ng-click="moveUp($index)"
-							title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
+						type="button" data-ng-click="moveUp($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
 						<i class="icon-play icon-rotate-270"></i>
 					</button>
 				</rbs-kb-switch>
 				<rbs-kb-switch>
 					<button data-rbs-kb-when="alt" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
-							data-ng-click="moveBottom($index)"
-							title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
+						data-ng-click="moveBottom($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
 						<i class="icon-step-forward icon-rotate-90"></i>
 					</button>
 					<button data-rbs-kb-default="" data-ng-disabled="$last" class="btn btn-default btn-icon" type="button"
-							data-ng-click="moveDown($index)"
-							title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
+						data-ng-click="moveDown($index)"
+						title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
 						<i class="icon-play icon-rotate-90"></i>
 					</button>
 				</rbs-kb-switch>
-				<button data-ng-if="canDelete(inline)" class="btn btn-danger" data-ng-click="deleteItem(inline)">
-					<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
+				<button data-ng-if="canDelete(inline)" class="btn btn-danger btn-icon" data-ng-click="deleteItem(inline)"
+					title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
+					<i class="icon-trash"></i>
 				</button>
 			</div>
 		</td>

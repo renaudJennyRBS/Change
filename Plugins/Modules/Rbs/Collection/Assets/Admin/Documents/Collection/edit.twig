@@ -20,6 +20,8 @@
 					label="{{ i18nAttr(propertyKey('Rbs_Collection_Collection', 'label'), ['ucf']) }}">
 				</rbs-field-text>
 
+				<hr />
+
 				<h3>{{ i18n(propertyKey('Rbs_Collection_Collection', 'items'), ['ucf']) }}</h3>
 				<rbs-inline-array inline-array="document.items" new-model="Rbs_Collection_CollectionItem" check-delete="canDeleteItem">
 				</rbs-inline-array>

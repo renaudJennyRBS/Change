@@ -15,6 +15,6 @@
 		<property name="code" type="String" required="true">
 			<constraint name="unique" />
 		</property>
-		<property name="locked" type="Boolean" default-value="false"></property>
+		<property name="locked" type="Boolean" default-value="false" />
 	</properties>
 </document>
