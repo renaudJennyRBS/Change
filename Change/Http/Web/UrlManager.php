@@ -395,10 +395,24 @@ class UrlManager extends \Change\Http\UrlManager
 		if (count($pathRules))
 		{
 			$queryParameters = new \ArrayObject($pathRule->getQueryParameters());
-			$pathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
-			if ($pathRule instanceof PathRule)
+			$selectedPathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
+			if ($selectedPathRule instanceof PathRule)
 			{
-				return $pathRule;
+				return $selectedPathRule;
+			}
+		}
+
+		if ($pathRule->getSectionId() != 0)
+		{
+			$pathRules = $this->getPathRuleManager()->findPathRules($websiteId, $LCID, $document->getId(), 0);
+			if (count($pathRules))
+			{
+				$queryParameters = new \ArrayObject($pathRule->getQueryParameters());
+				$selectedPathRule = $this->selectPathRule($document, $pathRules, $queryParameters);
+				if ($selectedPathRule instanceof PathRule)
+				{
+					return $selectedPathRule;
+				}
 			}
 		}
 		return null;

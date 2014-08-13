@@ -3,7 +3,19 @@
 	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 	editable="true">
 	<properties>
-		<property name="fields" type="DocumentArray" document-type="Rbs_Geo_AddressField" has-correction="true"/>
-		<property name="fieldsLayoutData" type="JSON" />
+		<property name="fields" type="InlineArray" has-correction="true">
+			<inline name="AddressField" localized="true" editable="true">
+				<properties>
+					<property name="locked" type="Boolean" default-value="false" />
+					<property name="code" type="String" required="true" />
+					<property name="title" type="String" localized="true" />
+					<property name="required" type="Boolean" default-value="false" />
+					<property name="collectionCode" type="String" />
+					<property name="defaultValue" type="String" />
+					<property name="match" type="String" />
+				</properties>
+			</inline>
+		</property>
+		<property name="fieldsLayoutData" type="JSON" internal="true"/>
 	</properties>
 </document>

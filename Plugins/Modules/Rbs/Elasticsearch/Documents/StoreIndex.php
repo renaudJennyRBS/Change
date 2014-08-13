@@ -107,6 +107,14 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 				{
 					return [$this->getDefaultTypeName() => []];
 				}
+				elseif ($model->isInstanceOf('Rbs_Catalog_ProductSet'))
+				{
+					$rootProduct = $model->getPropertyValue($document, 'rootProduct');
+					if ($rootProduct)
+					{
+						$this->indexProducts($indexManager, [$rootProduct]);
+					}
+				}
 				elseif ($model->isInstanceOf('Rbs_Stock_InventoryEntry'))
 				{
 					$products = $this->getIndexedProductByInventoryEntryId($indexManager, $documentId);

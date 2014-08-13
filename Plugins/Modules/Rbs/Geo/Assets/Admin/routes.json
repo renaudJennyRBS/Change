@@ -27,35 +27,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Generic/AddressField/:id": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressField/edit.twig",
-			"labelKey": "m.rbs.geo.documents.addressfield | ucf",
-			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/AddressField/:id/translate/:LCID": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressField/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Generic/AddressField/new": {
-		"model": "Rbs_Geo_AddressField",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Geo/AddressField/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
-	},
 	"/Rbs/Generic/AddressFields/": {
 		"model": "Rbs_Geo_AddressFields",
 		"name": "list",

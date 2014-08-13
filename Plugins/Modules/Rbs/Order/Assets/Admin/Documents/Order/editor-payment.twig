@@ -72,7 +72,7 @@
 					</tr>
 					<tr data-ng-if="!priceInfo.withTax" data-ng-show="amounts.totalFeesAmount || amounts.totalDiscountsAmount">
 						<td>{{ i18n('m.rbs.order.admin.order_lines_amount_without_taxes', ['ucf', 'lab']) | raw }}</td>
-						<td>(= document.linesAmountWithoutTaxes | number:priceInfo.decimals =)</td>
+						<td>(= document.linesAmount | number:priceInfo.decimals =)</td>
 					</tr>
 					<tr data-ng-show="amounts.totalFeesAmount">
 						<td>{{ i18n('m.rbs.order.admin.order_total_fees_amount', ['ucf']) }}</td>

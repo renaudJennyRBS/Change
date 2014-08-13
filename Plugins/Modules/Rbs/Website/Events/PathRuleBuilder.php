@@ -29,6 +29,7 @@ class PathRuleBuilder
 		}
 
 		$websiteIds = [];
+		$allSectionIds = [0];
 		if ($document instanceof \Rbs\Website\Documents\StaticPage)
 		{
 			$section = $document->getSection();
@@ -66,6 +67,7 @@ class PathRuleBuilder
 					if ($websiteId != $sectionId && !in_array($sectionId, $websiteIds[$websiteId]))
 					{
 						$websiteIds[$websiteId][] = $sectionId;
+						$allSectionIds[] = $sectionId;
 					}
 				}
 			}
@@ -79,6 +81,20 @@ class PathRuleBuilder
 		$pathRuleManager = $event->getApplicationServices()->getPathRuleManager();
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$logging = $event->getApplicationServices()->getLogging();
+
+		$modifiedPropertyNames = $event->getParam('modifiedPropertyNames');
+		if (is_array($modifiedPropertyNames) && in_array('publicationSections', $modifiedPropertyNames))
+		{
+			$oldRules = $pathRuleManager->getAllForDocumentId($document->getId());
+			foreach ($oldRules as $oldRule)
+			{
+				if (!in_array($oldRule->getSectionId(), $allSectionIds) && $oldRule->getHttpStatus() == 200)
+				{
+					$pathRuleManager->updateRuleStatus($oldRule->getRuleId(), 301);
+				}
+			}
+		}
+
 		foreach ($websiteIds as $websiteId => $sectionIds)
 		{
 			/** @var $website \Rbs\Website\Documents\Website */

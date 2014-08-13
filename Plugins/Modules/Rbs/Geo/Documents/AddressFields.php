@@ -6,26 +6,87 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\geo\Documents;
+namespace Rbs\Geo\Documents;
+
+use Change\Documents\Events\Event;
 
 /**
- * @name \Rbs\geo\Documents\AddressFields
+ * @name \Rbs\Geo\Documents\AddressFields
  */
 class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 {
-	/**
-	 * @var array|null
-	 */
-	protected $fieldsName = null;
 
-	protected function loadFieldsName()
+	protected function attachEvents($eventManager)
 	{
-		$names = array();
-		foreach ($this->getFields() as $field)
+		parent::attachEvents($eventManager);
+		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_UPDATE], array($this, 'onDefaultCheckFields'), 5);
+		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onAddSystemFields'), 1);
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getSystemFieldsNames()
+	{
+		return ['zipCode', 'locality', 'territorialUnitCode', 'countryCode'];
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultCheckFields(Event $event)
+	{
+		if ($this !== $event->getDocument())
 		{
-			$names[$field->getCode()] = $field->getId();
+			return;
 		}
-		$this->fieldsName = $names;
+		$systemFieldsNames = $this->getSystemFieldsNames();
+		$fields = $this->getFields();
+		foreach ($fields as $field)
+		{
+			$code = $field->getCode();
+			if ($code)
+			{
+				if (in_array($field->getCode(), $systemFieldsNames))
+				{
+					$field->setLocked(true);
+				}
+			}
+			else
+			{
+				$field->setCode(uniqid('auto_'));
+			}
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onAddSystemFields(Event $event)
+	{
+		if ($this !== $event->getDocument())
+		{
+			return;
+		}
+		$systemFieldsNames = $this->getSystemFieldsNames();
+		foreach ($systemFieldsNames as $fieldName)
+		{
+			$field = $this->getFieldByName($fieldName);
+			if (!$field && $fieldName != 'territorialUnitCode')
+			{
+				$field = $this->newAddressField();
+				$field->setLocked(true);
+				$field->setLabel($fieldName);
+				$field->setCode($fieldName);
+				if ($fieldName == 'countryCode')
+				{
+					$field->setCollectionCode('Rbs_Geo_Collection_Countries');
+				}
+				$field->setRefLCID($this->getDocumentManager()->getLCID());
+				$field->getRefLocalization()->setTitle($fieldName);
+				$this->getFields()->add($field);
+			}
+		}
 	}
 
 	/**
@@ -34,13 +95,11 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 	 */
 	public function getFieldByName($fieldName)
 	{
-		if ($this->fieldsName === null)
+		foreach ($this->getFields() as $field)
 		{
-			$this->loadFieldsName();
-		}
-		if (isset($this->fieldsName[$fieldName]))
-		{
-			return $this->getDocumentManager()->getDocumentInstance($this->fieldsName[$fieldName]);
+			if ($field->getCode() == $fieldName) {
+				return $field;
+			}
 		}
 		return null;
 	}
@@ -50,11 +109,12 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 	 */
 	public function getFieldsName()
 	{
-		if ($this->fieldsName === null)
+		$fieldsName = [];
+		foreach ($this->getFields() as $field)
 		{
-			$this->loadFieldsName();
+			$fieldsName[] = $field->getCode();
 		}
-		return array_keys($this->fieldsName);
+		return $fieldsName;
 	}
 
 	/**
@@ -88,6 +148,7 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 			$addressFields = $event->getDocument();
 			$restResult->setProperty('editorDefinition', $this->buildEditorDefinition($addressFields));
 			$restResult->setProperty('fieldsLayout', $this->getFieldsLayout());
+			$restResult->setProperty('systemFieldsNames', $this->getSystemFieldsNames());
 		}
 	}
 
@@ -97,26 +158,20 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 	 */
 	protected function buildEditorDefinition(AddressFields $addressFields)
 	{
-		$definition = array('fields' => array());
-		$ids = array();
+		$definition = ['fields' => []];
 		foreach ($addressFields->getFields() as $addressField)
 		{
-			$ids[] = $addressField->getId();
-
 			$def = array(
-				'id' => $addressField->getId(),
 				'title' => $addressField->getTitle(),
 				'code' => $addressField->getCode(),
 				'required' => $addressField->getRequired(),
 				'defaultValue' => $addressField->getDefaultValue(),
 				'collectionCode' => $addressField->getCollectionCode()
 			);
-
 			$definition['fields'][] = $def;
 		}
 		if (count($definition['fields']))
 		{
-			$definition['ids'] = $ids;
 			return $definition;
 		}
 		return null;
