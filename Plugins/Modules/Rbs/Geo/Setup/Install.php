@@ -128,13 +128,15 @@ class Install extends \Change\Plugins\InstallBase
 					$fields->setLabel($model['label']);
 					foreach ($model['fields'] as $fieldData)
 					{
-						$field = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_AddressField');
+						$field = $fields->newAddressField();
 						foreach ($fieldData as $propertyName => $propertyValue)
 						{
 							$field->getDocumentModel()->setPropertyValue($field, $propertyName, $propertyValue);
+							if ($propertyName == 'title')
+							{
+								$field->getDocumentModel()->setPropertyValue($field, 'label', $propertyValue);
+							}
 						}
-						$field->create();
-
 						$fields->getFields()->add($field);
 					}
 					if (isset($model['fieldsLayoutData']))

@@ -1,0 +1,36 @@
+<div data-rbs-geo-address-field-editor="">
+	<rbs-field-text property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'label'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<p class="text" data-ng-if="document.locked">{{ i18n('m.rbs.geo.admin.addressfield_locked_warning') | raw }}</p>
+	<rbs-field-text property="code" required="true" ng-disabled="document.locked"
+			label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'code'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field-boolean property="required" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'required'), ['ucf']) }}">
+	</rbs-field-boolean>
+
+	<rbs-field-text property="match" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'match'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'collectionCode'), ['ucf']) }}">
+		<select data-ng-model="document.collectionCode" class="form-control"
+				data-rbs-items-from-collection="Rbs_Collection_Collection_List">
+			<option value=""> {{ i18n('m.rbs.geo.admin.addressfield_select_collectioncode', ['ucf']) }}</option>
+		</select>
+	</rbs-field>
+
+	<rbs-field property="title" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'title'), ['ucf']) }}">
+		<div class="input-group">
+			<span class="input-group-addon input-group-addon-select">
+				<select required="required" class="form-control" data-ng-model="localization.LCID"
+						data-ng-options="key as value.label for (key , value) in LCIDArray()">
+				</select>
+			</span>
+			<input type="text" class="form-control" data-ng-disabled="!localization.LCID" name="label"
+					data-ng-model="document.LCID[localization.LCID].title" required="required">
+		</div>
+	</rbs-field>
+</div>
