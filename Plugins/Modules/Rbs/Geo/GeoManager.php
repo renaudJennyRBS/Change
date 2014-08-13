@@ -343,7 +343,6 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			return;
 		}
 
-		// If the addressId represents an address document it is owned by the current user, delete it.
 		$tm = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
@@ -363,6 +362,13 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			$address->save();
 
 			$tm->commit();
+
+			// Check if an default address is set
+			$defaultAddress = $this->getDefaultAddress();
+			if ($defaultAddress == null)
+			{
+				$this->setDefaultAddress($address);
+			}
 		}
 		catch (\Exception $e)
 		{
