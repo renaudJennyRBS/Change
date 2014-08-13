@@ -54,7 +54,8 @@
 						<i class="icon-play icon-rotate-90"></i>
 					</button>
 				</rbs-kb-switch>
-				<button data-ng-if="canDelete(inline)" class="btn btn-danger btn-icon" data-ng-click="deleteItem(inline)"
+				<button data-ng-disabled="!canDelete(inline)" class="btn btn-danger btn-icon"
+						type="button" data-ng-click="deleteItem(inline)"
 					title="{{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}">
 					<i class="icon-trash"></i>
 				</button>
