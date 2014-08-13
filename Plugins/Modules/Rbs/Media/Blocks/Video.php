@@ -54,13 +54,12 @@ class Video extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$videoId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 
+		$videoId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		if ($videoId)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			/* @var $video \Rbs\Media\Documents\Video */
 			$video = $documentManager->getDocumentInstance($videoId);
 			if ($video instanceof \Rbs\Media\Documents\Video)
 			{

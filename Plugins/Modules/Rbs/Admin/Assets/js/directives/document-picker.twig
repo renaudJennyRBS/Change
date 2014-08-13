@@ -6,8 +6,8 @@
 	</div>
 
 	<div data-ng-show="isEmpty() || multiple" class="auto-complete-input"
-		data-ng-class="{'input-group': models.filtered.length }">
-		<span class="input-group-addon" data-ng-if="models.filtered.length">
+		data-ng-class="{'input-group': models.filtered.length > 1 }">
+		<span class="input-group-addon input-group-addon-select" data-ng-if="models.filtered.length > 1">
 			<select class="form-control" data-ng-model="models.model" data-ng-disabled="!multiple && !isEmpty()"
 				data-ng-options="m.label group by m.plugin for m in models.filtered">
 			</select>
@@ -18,12 +18,14 @@
 			data-ng-model="autoComplete.value" placeholder="{{ i18nAttr('m.rbs.admin.admin.picker_no_element', ['ucf']) }}" />
 	</div>
 
-	<div class="picker-toolbar form-inline">
-		<button type="button" class="btn btn-default btn-sm pull-right" data-ng-click="clear()" data-ng-disabled="isEmpty()"
-			title="{{ i18nAttr('m.rbs.admin.admin.picker_clear_tooltip', ['ucf']) }}">
-			<i class="icon-eraser"></i>
-			<span data-ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_clear') }}</span>
-		</button>
+	<div class="picker-toolbar">
+		<div class="pull-right" style="margin-left: 4px;">
+			<button type="button" class="btn btn-default btn-sm" data-ng-click="clear()" data-ng-disabled="isEmpty()"
+				title="{{ i18nAttr('m.rbs.admin.admin.picker_clear_tooltip', ['ucf']) }}">
+				<i class="icon-eraser"></i>
+				<span data-ng-if="showButtonsLabel"> {{ i18n('m.rbs.admin.admin.picker_clear') }}</span>
+			</button>
+		</div>
 
 		<button type="button" class="btn btn-selection btn-sm" data-ng-disabled="!hasTargetUrl() || (!multiple && !isEmpty())"
 			data-ng-click="beginSelectSession()" title="{{ i18nAttr('m.rbs.admin.admin.picker_in_place_tooltip', ['ucf', 'etc']) }}">

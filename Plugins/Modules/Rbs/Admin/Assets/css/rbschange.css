@@ -699,3 +699,22 @@ rbs-uploader .img-thumbnail {
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
 }
+
+/* Input group addon containing a select */
+.input-group .input-group-addon.input-group-addon-select {
+	width: 1%;
+	padding: 0;
+	border: none;
+}
+/**
+ * With the "width: 1%", the picker takes 100% width in the filter configuration interface (in Chrome and IE only)
+ * TODO: find a better way to fix it. It will maybe be fixed with a newer version of Bootstrap?
+ */
+[rbs-document-filter-container] .input-group .input-group-addon.input-group-addon-select {
+	width: auto;
+}
+.input-group .input-group-addon.input-group-addon-select select {
+	width: auto;
+	border-top-left-radius: inherit;
+	border-bottom-left-radius: inherit;
+}

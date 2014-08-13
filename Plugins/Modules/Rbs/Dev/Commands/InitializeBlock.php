@@ -107,14 +107,14 @@ class InitializeBlock
 		$filePath = $blockDir . DIRECTORY_SEPARATOR . 'Listeners.php' ;
 		if ($plugin->getPackage())
 		{
-			$response->addWarningMessage('Your plugin is in a package. Look into its main plugin find the listeners.');
-			$response->addWarningMessage('Please add the following line the executeApplication method of this class to register your block:');
+			$response->addWarningMessage('Your plugin is in a package. Look into its main plugin for the listener class for BlockManager.');
+			$response->addWarningMessage('Please add the following line the attach() method of this class to register your block:');
 			$response->addWarningMessage(PHP_EOL . '		new RegisterByBlockName(\'' . $blockFullName . '\', true, $events);' . PHP_EOL);
 		}
 		elseif (file_exists($filePath))
 		{
-			$response->addWarningMessage('Listeners Class File already exists at path ' . $filePath);
-			$response->addWarningMessage('Please add the following line the executeApplication method of this class to register your block:');
+			$response->addWarningMessage('Listeners Class File for BlockManager already exists at path ' . $filePath);
+			$response->addWarningMessage('Please add the following line the attach() method of this class to register your block:');
 			$response->addWarningMessage(PHP_EOL . '		new RegisterByBlockName(\'' . $blockFullName . '\', true, $events);' . PHP_EOL);
 		}
 		else

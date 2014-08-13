@@ -1,0 +1,42 @@
+{% if parameters.blockTitle %}<h1>{{ parameters.blockTitle }}</h1>{% endif %}
+
+{% for row in files|batch(parameters.itemsPerRow) %}
+	<div class="row">
+		{% for file in row %}
+			{% if parameters.itemsPerRow == 1 %}
+				<div class="col-sm-12">
+			{% elseif parameters.itemsPerRow == 2 %}
+				<div class="col-sm-6">
+			{% elseif parameters.itemsPerRow == 3 %}
+				<div class="col-sm-4">
+			{% elseif parameters.itemsPerRow == 4 %}
+				<div class="col-sm-6 col-md-3">
+			{% endif %}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">{{ file.document.currentLocalization.title }}</h3>
+					</div>
+					<div class="panel-body">
+						{% if not file.document.currentLocalization.description.isEmpty %}
+							<div class="richtext">
+								{{ file.document.currentLocalization.description|richText }}
+							</div>
+						{% endif %}
+						<dl class="no-bottom-margin no-top-margin">
+							<dt>{{ i18n('m.rbs.media.front.type', ['ucf']) }}</dt>
+							<dd>{{ file.document.mimeType }}</dd>
+							<dt>{{ i18n('m.rbs.media.front.size', ['ucf']) }}</dt>
+							<dd>{{ file.formattedSize|raw }}</dd>
+						</dl>
+					</div>
+					<div class="panel-footer">
+						<span class="glyphicon glyphicon-save"></span>
+						<a href="{{ ajaxURL('Rbs_Media', 'Download', {'documentId': file.document.id}) }}">
+							{{ i18n('m.rbs.media.front.download', ['ucf']) }}
+						</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endfor %}

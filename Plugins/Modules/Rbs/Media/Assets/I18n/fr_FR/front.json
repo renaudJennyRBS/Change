@@ -1,0 +1,11 @@
+{
+	"download":{
+		"message":"télécharger"
+	},
+	"type":{
+		"message":"type"
+	},
+	"size":{
+		"message":"taille"
+	}
+}

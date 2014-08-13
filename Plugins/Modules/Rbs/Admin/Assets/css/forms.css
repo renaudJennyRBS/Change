@@ -216,3 +216,15 @@ rbs-gps-google-maps .map-input {
 	text-overflow: ellipsis;
 	margin-top: 5px;
 }
+
+/* Inline-documents */
+.table .document-inline-editor {
+	padding: 15px 0;
+}
+.document-inline-editor .form-actions {
+	background-image: linear-gradient(to top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.08) 100%);
+	border-top: 5px solid rgba(0, 0, 0, 0.11);
+}
+.document-inline-editor .form-properties {
+	padding: 0 8px;
+}

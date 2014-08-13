@@ -47,6 +47,15 @@
 	"image_label":{
 		"message":"image"
 	},
+	"file_label":{
+		"message":"fichiers à télécharger"
+	},
+	"block_to_display_document_ids":{
+		"message":"documents à afficher"
+	},
+	"block_title":{
+		"message":"titre du bloc"
+	},
 	"block_fill_space":{
 		"message":"remplir l'espace (agrandir si nécessaire)"
 	},
@@ -56,7 +65,13 @@
 	"block_thumbnail_text":{
 		"message":"texte de la légende"
 	},
+	"block_items_per_row":{
+		"message":"éléments par lignes (entre 1 et 4)"
+	},
 	"template_thumbnail_label":{
 		"message":"avec légende"
+	},
+	"template_file_thumbnail_label":{
+		"message":"vignettes"
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Gaël PORT
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,9 @@
 namespace Rbs\Media\Blocks;
 
 /**
- * @name \Rbs\Media\Blocks\Image
+ * @name \Rbs\Media\Blocks\File
  */
-class Image extends \Change\Presentation\Blocks\Standard\Block
+class File extends \Change\Presentation\Blocks\Standard\Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -23,26 +23,10 @@ class Image extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$parameters->addParameterMeta('fillSpace', false);
-
+		$parameters->addParameterMeta('toDisplayDocumentIds');
+		$parameters->addParameterMeta('blockTitle');
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$this->setParameterValueForDetailBlock($parameters, $event);
-
 		return $parameters;
-	}
-
-	/**
-	 * @param \Change\Documents\AbstractDocument $document
-	 * @return boolean
-	 */
-	protected function isValidDocument($document)
-	{
-		if ($document instanceof \Rbs\Media\Documents\Image && $document->activated())
-		{
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -55,18 +39,28 @@ class Image extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = $event->getBlockParameters();
 
-		$imageId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		if ($imageId)
+		$fileIds = $parameters->getParameter('toDisplayDocumentIds');
+		if (is_array($fileIds) && count($fileIds))
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$storageManager =  $event->getApplicationServices()->getStorageManager();
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
 
-			$image = $documentManager->getDocumentInstance($imageId);
-			if ($image instanceof \Rbs\Media\Documents\Image)
+			$attributes['files'] = [];
+			foreach ($fileIds as $fileId)
 			{
-				$attributes['src'] = $image->getPublicURL();
-				$attributes['alt'] = $image->getCurrentLocalization()->getAlt();
-				return 'image.twig';
+				$file = $documentManager->getDocumentInstance($fileId);
+				if ($file instanceof \Rbs\Media\Documents\File)
+				{
+					$itemInfo = $storageManager->getItemInfo($file->getPath());
+					$attributes['files'][] = [
+						'document' => $file,
+						'size' => $itemInfo->getSize(),
+						'formattedSize' => $i18nManager->transFileSize($itemInfo->getSize())
+					];
+				}
 			}
+			return count($attributes['files']) ? 'file.twig' : null;
 		}
 
 		return null;

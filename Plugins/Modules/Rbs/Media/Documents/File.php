@@ -87,7 +87,7 @@ class File extends \Compilation\Rbs\Media\Documents\File
 	 */
 	public function onDefaultUpdate(Event $event)
 	{
-		if ($this->getPath() != $this->getPathOldValue())
+		if ($this->getPathOldValue() && $this->getPath() != $this->getPathOldValue())
 		{
 			$engine = $this->getStorageManager()->getStorageByStorageURI($this->getPathOldValue());
 			$engine->unlink();

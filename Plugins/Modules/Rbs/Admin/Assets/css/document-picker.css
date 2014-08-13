@@ -95,16 +95,6 @@ select option.empty-value {
 .document-picker.document-picker-empty .auto-complete-input {
 	margin-top: 0;
 }
-.document-picker .auto-complete-input .input-group-addon {
-	width: 1%;
-	padding: 0;
-	border: none;
-}
-.document-picker .auto-complete-input .input-group-addon select {
-	width: auto;
-	border-top-left-radius: inherit;
-	border-bottom-left-radius: inherit;
-}
 
 .document-picker .auto-complete-list {
 	position: absolute;
