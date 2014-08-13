@@ -29,7 +29,7 @@ class Form extends \Compilation\Rbs\Simpleform\Documents\Form
 		$fields = array();
 		foreach ($this->getFields() as $field)
 		{
-			/* @var $field \Rbs\Simpleform\Documents\Field */
+			/* @var $field \Rbs\Simpleform\Documents\FormField */
 			if (!$field->getCurrentLocalization()->isNew())
 			{
 				$fields[] = $field;

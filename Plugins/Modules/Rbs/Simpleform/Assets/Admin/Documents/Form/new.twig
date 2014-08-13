@@ -26,6 +26,22 @@
 				{% include '@Rbs_Simpleform/Documents/Form/properties.twig' %}
 			</fieldset>
 
+			<fieldset data-rbs-editor-section="fields"
+				data-editor-section-label="{{ i18nAttr('m.rbs.simpleform.admin.field_list', ['ucf']) }}">
+
+				<rbs-field-boolean property="useCaptcha"
+					label="{{ i18nAttr(propertyKey('Rbs_Simpleform_Form', 'useCaptcha'), ['ucf']) }}">
+					<span class="help-block">{{ i18n('m.rbs.simpleform.admin.form_usecaptcha_help', ['ucf']) }}</span>
+				</rbs-field-boolean>
+
+				<hr />
+
+				<h3>{{ i18n(propertyKey('Rbs_Simpleform_Form', 'fields'), ['ucf']) }}</h3>
+				<rbs-inline-array inline-array="document.fields" new-model="Rbs_Simpleform_FormField"
+					data-ref-lcid="document.refLCID">
+				</rbs-inline-array>
+			</fieldset>
+
 			<fieldset data-rbs-editor-section="publication"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.publication_properties', ['ucf']) }}"
 				data-rbs-document-publication-section="">

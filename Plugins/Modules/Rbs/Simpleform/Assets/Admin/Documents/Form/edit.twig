@@ -27,50 +27,10 @@
 
 				<hr />
 
-				<div class="add-elements-bar">
-					<a href="javascript:;" data-ng-click="cascadeCreate()">
-						{{ i18n('m.rbs.simpleform.admin.field_create', ['ucf']) }}
-					</a>
-				</div>
-
-				<rbs-document-list data-dlid="DLFormFields1" model="Rbs_Simpleform_Field" collection="document.fields"
-					extend="this" toolbar="false" selectable="false" correction="true">
-					<rbs-quick-actions>
-						<a href="javascript:;" data-ng-click="extend.deleteField(doc)" class="danger">
-							<i class="icon-trash"></i> {{ i18nAttr('m.rbs.admin.admin.delete', ['ucf']) }}
-						</a>
-					</rbs-quick-actions>
-
-					<rbs-column name="label" primary="true">
-						<a href="javascript:;" data-ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
-					</rbs-column>
-					<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
-						<rbs-kb-switch>
-							<button data-rbs-kb-when="alt" data-ng-disabled="$first" class="btn btn-default btn-icon"
-								type="button" data-ng-click="extend.moveTop($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_top', ['ucf']) }}">
-								<i class="icon-step-forward icon-rotate-270"></i>
-							</button>
-							<button data-rbs-kb-default="" data-ng-disabled="$first" class="btn btn-default btn-icon"
-								type="button" data-ng-click="extend.moveUp($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_up', ['ucf']) }}">
-								<i class="icon-play icon-rotate-270"></i>
-							</button>
-						</rbs-kb-switch>
-						<rbs-kb-switch>
-							<button data-rbs-kb-when="alt" data-ng-disabled="$last" class="btn btn-default btn-icon"
-								type="button" data-ng-click="extend.moveBottom($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_bottom', ['ucf']) }}">
-								<i class="icon-step-forward icon-rotate-90"></i>
-							</button>
-							<button data-rbs-kb-default="" data-ng-disabled="$last" class="btn btn-default btn-icon"
-								type="button" data-ng-click="extend.moveDown($index)"
-								title="{{ i18nAttr('m.rbs.admin.admin.move_down', ['ucf']) }}">
-								<i class="icon-play icon-rotate-90"></i>
-							</button>
-						</rbs-kb-switch>
-					</rbs-column>
-				</rbs-document-list>
+				<h3>{{ i18n(propertyKey('Rbs_Simpleform_Form', 'fields'), ['ucf']) }}</h3>
+				<rbs-inline-array inline-array="document.fields" new-model="Rbs_Simpleform_FormField"
+					data-ref-lcid="document.refLCID">
+				</rbs-inline-array>
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="publication"

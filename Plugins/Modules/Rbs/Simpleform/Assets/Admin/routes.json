@@ -7,36 +7,6 @@
 		},
 		"auto": false
 	},
-	"/Rbs/Simpleform/Field/": false,
-	"/Rbs/Simpleform/Field/:id": {
-		"model": "Rbs_Simpleform_Field",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Simpleform/Field/edit.twig",
-			"labelKey": "m.rbs.simpleform.documents.field | ucf",
-			"labelId": "id"
-		},
-		"auto": true
-	},
-	"/Rbs/Simpleform/Field/:id/translate/:LCID": {
-		"model": "Rbs_Simpleform_Field",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Simpleform/Field/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": true
-	},
-	"/Rbs/Simpleform/Field/new": {
-		"model": "Rbs_Simpleform_Field",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Simpleform/Field/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": true
-	},
 	"/Rbs/Simpleform/Form/": {
 		"model": "Rbs_Simpleform_Form",
 		"name": "list",

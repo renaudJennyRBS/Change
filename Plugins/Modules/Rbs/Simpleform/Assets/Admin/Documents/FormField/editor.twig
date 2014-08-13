@@ -1,0 +1,32 @@
+<div data-rbs-simpleform-form-field-editor="">
+	<rbs-field-text data-ng-if="!localization.inTranslation()" property="label" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Simpleform_FormField', 'label'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field property="title" required="true" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_FormField', 'title'), ['ucf']) }}">
+		<input type="text" name="title" class="form-control" data-ng-model="document.LCID[localization.currentLCID()].title" />
+	</rbs-field>
+
+	<rbs-field property="helpText" label="{{ i18nAttr(propertyKey('Rbs_Simpleform_FormField', 'helpText'), ['ucf']) }}">
+		<rbs-rich-text-input ng-model="document.LCID[localization.currentLCID()].helpText"></rbs-rich-text-input>
+	</rbs-field>
+
+	<div data-ng-if="!localization.inTranslation()">
+		<rbs-field property="fieldTypeCode" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_FormField', 'fieldTypeCode'), ['ucf']) }}">
+			<select class="form-control" data-ng-required="true" data-ng-model="document.fieldTypeCode"
+				data-rbs-items-from-collection="Rbs_Simpleform_FieldTypes">
+				<option value=""></option>
+			</select>
+		</rbs-field>
+
+		<rbs-field property="required"
+			label="{{ i18nAttr(propertyKey('Rbs_Simpleform_FormField', 'required'), ['ucf']) }}">
+			<rbs-switch ng-model="document.required"></rbs-switch>
+		</rbs-field>
+
+		<hr />
+
+		<div data-role="fieldTypeConfig"></div>
+	</div>
+</div>
