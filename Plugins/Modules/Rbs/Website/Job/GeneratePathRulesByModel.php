@@ -55,6 +55,7 @@ class GeneratePathRulesByModel
 						try
 						{
 							$docEvent = new \Change\Documents\Events\Event('refreshPathRule', $doc, $event->getParams());
+							$docEvent->setParam('modifiedPropertyNames', ['publicationSections']);
 							$pathRuleBuilder->updatePathRules($docEvent);
 						}
 						catch (\Exception $e)
