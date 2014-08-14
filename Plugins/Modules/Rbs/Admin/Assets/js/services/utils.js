@@ -222,6 +222,22 @@
 			/**
 			 * @ngdoc function
 			 * @methodOf RbsChange.service:Utils
+			 * @name RbsChange.service:Utils#isInlineDocument
+			 *
+			 * @description
+			 * Indicates whether the given `obj` is an inline Document or not.
+			 *
+			 * @param {Object} obj Object.
+			 *
+			 * @returns {Boolean} true if the given `obj` is an inline Document.
+			 */
+			isInlineDocument: function(obj) {
+				return angular.isObject(obj) && angular.isDefined(obj.model) && !angular.isDefined(obj.id);
+			},
+
+			/**
+			 * @ngdoc function
+			 * @methodOf RbsChange.service:Utils
 			 * @name RbsChange.service:Utils#isModelName
 			 *
 			 * @description
@@ -351,7 +367,7 @@
 			 * @returns {Object} Model's information.
 			 */
 			modelInfo: function(modelName) {
-				var splat = modelName.split(/[\/_]/);
+				var splat = (modelName) ? modelName.split(/[\/_]/) : [];
 				if (splat.length !== 3) {
 					throw new Error("Could not parse model name '" + modelName +
 						"'. Model names are composed of three parts: '<vendor>_<module>_<document>'.");

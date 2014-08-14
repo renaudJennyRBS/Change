@@ -22,6 +22,15 @@
 						$compile(html)(scope, callback);
 					}
 				});
+
+				scope.$watch('document.label', function (label, oldLabel) {
+					var d = scope.document, LCID = scope.localization.currentLCID();
+					if (d && LCID) {
+						if (d.LCID && d.LCID[LCID] && d.LCID[LCID].title == oldLabel) {
+							d.LCID[LCID].title = label;
+						}
+					}
+				});
 			}
 		};
 	}

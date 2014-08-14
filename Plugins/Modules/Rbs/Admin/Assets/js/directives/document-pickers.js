@@ -35,7 +35,13 @@
 
 		attrs.$observe('selectModel', function() {
 			if (attrs.hasOwnProperty('selectModel')) {
-				var filter = scope.$eval(attrs.selectModel);
+				// Handle case of a single model, e.g.: select-model="Rbs_Website_Menu"
+				var filterJSON = attrs.selectModel;
+				if (filterJSON.charAt(0) != '{') {
+					filterJSON = '{ name: ["' + filterJSON + '"] }';
+				}
+
+				var filter = scope.$eval(filterJSON);
 				if (angular.isArray(filter)) {
 					scope.models.filters = {name: filter};
 				}
@@ -325,7 +331,9 @@
 			if (!multiple) {
 				closeAutoCompleteList();
 			}
-			scope.doc.list.push(document);
+			REST.resource(document.model, document.id).then(function (doc) {
+				scope.doc.list.push(doc);
+			});
 		}
 
 		function openAutoCompleteList() {
