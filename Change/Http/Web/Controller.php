@@ -97,6 +97,11 @@ class Controller extends \Change\Http\Controller
 			$response = $event->getController()->createResponse();
 			$response->setStatusCode($result->getHttpStatusCode());
 			$response->getHeaders()->addHeaders($result->getHeaders());
+			$monitoring = $event->getApplication()->getConfiguration()->getEntry('Change/Http/Web/Monitoring');
+			if ($monitoring)
+			{
+				$response->getHeaders()->addHeaderLine('Change-Memory-Usage: ' . number_format(memory_get_usage()));
+			}
 
 			if ($result instanceof \Change\Http\Web\Result\Page)
 			{

@@ -48,10 +48,12 @@
 		},
 		"Http": {
 			"Web": {
-				"SingleWebsite": true
+				"SingleWebsite": true,
+				"Monitoring" : false
 			},
 			"Rest": {
-				"useCorrection": true
+				"useCorrection": true,
+				"Monitoring" : false
 			}
 		},
 		"User": {

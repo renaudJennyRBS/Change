@@ -23,6 +23,7 @@ class DefaultPageResult
 		/* @var $page \Change\Presentation\Interfaces\Page */
 		$page = $event->getPage();
 		$pageManager = $event->getPageManager();
+		$monitoring = $pageManager->getMonitoring();
 		$pageTemplate = $page->getTemplate();
 		$applicationServices = $event->getApplicationServices();
 
@@ -59,20 +60,39 @@ class DefaultPageResult
 			foreach ($blocks as $block)
 			{
 				/* @var $block \Change\Presentation\Layout\Block */
+				$bm = ($monitoring) ?  ['n' => $block->getName(), 'p' => ['d' => microtime(true), 'm' => memory_get_usage()]] : null;
 				$blockParameter = $blockManager->getParameters($block, $pageManager->getHttpWebEvent());
 				$blockInputs[] = array($block, $blockParameter);
+				if ($bm)
+				{
+					$bm['p']['d'] = microtime(true) - $bm['p']['d'];
+					$bm['p']['m'] = memory_get_usage() - $bm['p']['m'];
+					$monitoring['blocks'][$block->getId()] = $bm;
+				}
 			}
 
 			$blockResults = array();
 			foreach ($blockInputs as $infos)
 			{
+				/** @var $blockLayout \Change\Presentation\Layout\Block */
+				/** @var $parameters \Change\Presentation\Blocks\Parameters */
 				list($blockLayout, $parameters) = $infos;
-
-				/* @var $blockLayout \Change\Presentation\Layout\Block */
+				if ($bm = ($monitoring ? $monitoring['blocks'][$blockLayout->getId()] : null))
+				{
+					$bm['r'] = ['d' => microtime(true), 'm' => memory_get_usage()];
+				}
 				$blockResult = $blockManager->getResult($blockLayout, $parameters, $pageManager->getHttpWebEvent());
 				if (isset($blockResult))
 				{
 					$blockResults[$blockLayout->getId()] = $blockResult;
+				}
+				if ($monitoring)
+				{
+					$bm['r']['d'] = microtime(true) - $bm['r']['d'];
+					$bm['r']['m'] = memory_get_usage() - $bm['r']['m'];
+					$bm['r']['t'] = $parameters->getTTL();
+					$bm['r']['c'] = $parameters->getParameterValue('_cached') === true;
+					$monitoring['blocks'][$blockLayout->getId()] = $bm;
 				}
 			}
 			$result->setBlockResults($blockResults);
@@ -110,6 +130,15 @@ class DefaultPageResult
 
 			\Change\Stdlib\File::write($cachePath, $htmlTemplate);
 			touch($cachePath, $cacheTime);
+		}
+
+		if ($monitoring)
+		{
+			$monitoring = $monitoring->getArrayCopy();
+			$monitoring['page']['c'] = false;
+			$monitoring['page']['d'] = microtime(true) - $monitoring['page']['d'];
+			$monitoring['page']['m'] = memory_get_usage() - $monitoring['page']['m'];
+			$result->setMonitoring($monitoring);
 		}
 
 		$templateManager = $event->getApplicationServices()->getTemplateManager();

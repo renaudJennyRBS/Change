@@ -41,6 +41,11 @@ class Page extends Result
 	protected $html;
 
 	/**
+	 * @var array
+	 */
+	protected $monitoring;
+
+	/**
 	 * @var \Change\Http\Web\Result\BlockResult[]
 	 */
 	protected $blockResults;
@@ -175,6 +180,24 @@ class Page extends Result
 	}
 
 	/**
+	 * @param array $monitoring
+	 * @return $this
+	 */
+	public function setMonitoring($monitoring)
+	{
+		$this->monitoring = $monitoring;
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getMonitoring()
+	{
+		return $this->monitoring;
+	}
+
+	/**
 	 * Used by template
 	 * @param string $id
 	 * @param string|null $class
@@ -237,6 +260,6 @@ class Page extends Result
 	 */
 	public function toHtml()
 	{
-		return $this->html;
+		return $this->getHtml();
 	}
 }
