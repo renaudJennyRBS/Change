@@ -19,21 +19,23 @@
 			</ul>
 		</nav>
 
-		<div ng-controller="Rbs_Website_MenusController">
-
+		<div data-ng-controller="Rbs_Website_MenusController">
 			<div class="add-elements-bar">
-				<a href ng-href="(= 'Rbs_Website_Menu' | rbsURL:'new':{'website':currentWebsite.id,'LCID':currentWebsite.LCID} =)">{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}</a>
+				<a href="javascript:;"
+					data-ng-href="(= 'Rbs_Website_Menu' | rbsURL:'new':{'website':currentWebsite.id,'LCID':currentWebsite.LCID} =)">
+					{{ i18n('m.rbs.website.admin.menu_create', ['ucf']) }}
+				</a>
 			</div>
 
 			<rbs-document-list data-dlid="DLRbsWebsiteMenu" model="Rbs_Website_Menu" filter-query="query"
 					load-query="listLoadQuery" activable="true" correction="true" actions="default" use-properties="website">
 				<rbs-column name="label" primary="true">
-					<strong><a href ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
+					<strong><a href="javascript:;" data-ng-href="(= doc | rbsURL =)">(= doc.label =)</a></strong>
 				</rbs-column>
-				<rbs-column name="items">
-				<span ng-repeat="item in doc.items">
-					<span class="label label-default" ng-bind-html="item.title"></span>
-				</span>
+				<rbs-column name="entries">
+					<span data-ng-repeat="entry in doc.entries">
+						<span class="label label-default" data-ng-bind-html="entry.label"></span>
+					</span>
 				</rbs-column>
 			</rbs-document-list>
 		</div>

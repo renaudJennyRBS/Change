@@ -1,0 +1,56 @@
+<div data-rbs-website-menu-entry-editor="">
+	<rbs-field-text data-ng-if="!localization.inTranslation()" property="label" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'label'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field data-ng-if="!localization.inTranslation()" property="entryTypeCode" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'entryTypeCode'), ['ucf']) }}">
+		<select class="form-control" data-ng-required="true" data-ng-model="document.entryTypeCode">
+			<option value=""></option>
+			<option value="document">{{ i18n('m.rbs.website.admin.menu_entry_type_document', ['ucf']) }}</option>
+			<option value="url">{{ i18n('m.rbs.website.admin.menu_entry_type_url', ['ucf']) }}</option>
+			<option value="menu">{{ i18n('m.rbs.website.admin.menu_entry_type_menu', ['ucf']) }}</option>
+		</select>
+	</rbs-field>
+
+	<hr />
+
+	<p class="help-block" data-ng-if="document.entryTypeCode == 'document'">
+		{{ i18n('m.rbs.website.admin.menu_entry_type_document_help', ['ucf']) }}
+	</p>
+	<p class="help-block" data-ng-if="document.entryTypeCode == 'menu'">
+		{{ i18n('m.rbs.website.admin.menu_entry_type_menu_help', ['ucf']) }}
+	</p>
+	<p class="help-block" data-ng-if="document.entryTypeCode == 'url'">
+		{{ i18n('m.rbs.website.admin.menu_entry_type_url_help', ['ucf']) }}
+	</p>
+
+	<rbs-field data-ng-if="!localization.inTranslation() && document.entryTypeCode == 'document'" property="targetDocument"
+		required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'targetDocument'), ['ucf']) }}">
+		<rbs-document-picker-single ng-model="document.targetDocument" select-model="{publishable:true, abstract:false}"
+			property-label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'targetDocument'), ['ucf']) }}"
+			context-key="(= getContextKey() =)_targetDocument">
+		</rbs-document-picker-single>
+	</rbs-field>
+
+	<rbs-field data-ng-if="!localization.inTranslation() && document.entryTypeCode == 'menu'" property="subMenu"
+		required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'subMenu'), ['ucf']) }}">
+		<rbs-document-picker-single ng-model="document.subMenu" select-model="Rbs_Website_Menu"
+			property-label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'subMenu'), ['ucf']) }}"
+			context-key="(= getContextKey() =)_subMenu">
+		</rbs-document-picker-single>
+	</rbs-field>
+
+	<rbs-field property="title" required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'title'), ['ucf']) }}">
+		<input type="text" name="title" class="form-control" data-ng-model="document.LCID[localization.currentLCID()].title" />
+	</rbs-field>
+
+	<rbs-field data-ng-if="document.entryTypeCode == 'url'" property="url" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'url'), ['ucf']) }}">
+		<input type="text" name="url" class="form-control" data-ng-model="document.LCID[localization.currentLCID()].url" />
+	</rbs-field>
+	<rbs-field data-ng-if="document.entryTypeCode == 'menu'" property="url"
+		label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'url'), ['ucf']) }}">
+		<input type="text" name="url" class="form-control" data-ng-model="document.LCID[localization.currentLCID()].url" />
+	</rbs-field>
+</div>

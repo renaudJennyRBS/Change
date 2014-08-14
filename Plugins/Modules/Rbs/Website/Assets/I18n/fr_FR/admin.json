@@ -281,24 +281,6 @@
 	"menu_website_picker_title":{
 		"message":"sélectionner le site web associé au menu"
 	},
-	"menu_section_items":{
-		"message":"Entrées du menu"
-	},
-	"menu_select_document":{
-		"message":"Document"
-	},
-	"menu_url":{
-		"message":"URL"
-	},
-	"menu_i18nKey":{
-		"message":"clé de traduction"
-	},
-	"menu_this_menu_is_empty":{
-		"message":"Ce menu est vide."
-	},
-	"menu_this_menu_is_empty_help":{
-		"message":"\n\t\tUtiliser la liste <em>Ajouter<\/em> ci-dessous pour ajouter des entrées à ce menu.\n\t"
-	},
 	"menu_function_print_page":{
 		"message":"imprimer la page"
 	},
@@ -308,29 +290,23 @@
 	"menu_function_bookmark_page":{
 		"message":"ajouter la page aux favoris"
 	},
-	"menu_add_items":{
-		"message":"ajouter des entrées"
+	"menu_entry_type_document":{
+		"message":"pointant vers un document publiable"
 	},
-	"menu_add_document_item":{
-		"message":"ajouter une entrée pointant vers un document"
-	},
-	"menu_add_document_item_help":{
+	"menu_entry_type_document_help":{
 		"message":"Vous pouvez sélectionner un document publiable. Après avoir choisi un document, il est possible de modifier le titre à afficher dans le menu."
 	},
-	"menu_add_url_item":{
-		"message":"ajouter une entrée pointant vers une URL"
+	"menu_entry_type_url":{
+		"message":"pointant vers une URL"
 	},
-	"menu_add_url_item_help":{
-		"message":"Utilisez ce mode pour inclure des liens vers des pages externes au site. Pour un lien vers une URL interne, privilégiez plutôt le formulaire ci-dessus."
+	"menu_entry_type_url_help":{
+		"message":"Utilisez ce mode pour inclure des liens vers des pages externes au site. Pour un lien vers une URL interne, privilégiez plutôt une entrée pointant vers un document publiable."
 	},
-	"menu_select_document_to_add_to_menu":{
-		"message":"sélectionner un document à ajouter au menu"
+	"menu_entry_type_menu":{
+		"message":"incluant un menu"
 	},
-	"menu_add_this_element":{
-		"message":"ajouter cet élément au menu"
-	},
-	"menu_update_this_element":{
-		"message":"mettre à jour l'élément du menu"
+	"menu_entry_type_menu_help":{
+		"message":"Vous pouvez sélectionner un menu. Après avoir choisi un menu, il est possible de modifier le titre à afficher ainsi que spécifier une URL."
 	},
 	"menu_menus_are_grouped_by_website":{
 		"message":"<strong>Les menus sont classés par site web.<\/strong><br\/>Choisissez un site web pour accéder aux menus qui lui sont rattachés."

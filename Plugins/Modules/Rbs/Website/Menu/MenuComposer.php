@@ -114,45 +114,59 @@ class MenuComposer
 			}
 			elseif ($doc instanceof \Rbs\Website\Documents\Menu)
 			{
-				$items = $doc->getCurrentLocalization()->getItems();
-				if (is_array($items))
+				/** @var $entryDoc \Rbs\Website\Documents\MenuEntry */
+				foreach ($doc->getEntries()->toArray() as $entryDoc)
 				{
-					foreach ($items as $item)
+					$title = $entryDoc->getCurrentLocalization()->getTitle();
+					switch ($entryDoc->getEntryTypeCode())
 					{
-						if (isset($item['documentId']))
-						{
-							$childDoc = $this->documentManager->getDocumentInstance($item['documentId']);
+						case 'document':
+							$childDoc = $entryDoc->getTargetDocument();
 							if ($this->shouldBeDisplayed($childDoc, $doc))
 							{
 								$subEntry = $this->getMenuEntry($website, $childDoc, $maxLevel - 1, $currentPage, $path);
 								if ($subEntry !== null)
 								{
-									if (isset($item['titleKey']))
+									if ($title)
 									{
-										$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
-									}
-									elseif (isset($item['title']))
-									{
-										$subEntry->setTitle($item['title']);
+										$subEntry->setTitle($title);
 									}
 									$entry->addChild($subEntry);
 								}
 							}
-						}
-						elseif (isset($item['url']) && (isset($item['title']) || isset($item['titleKey'])))
-						{
-							$subEntry = new \Rbs\Website\Menu\MenuEntry();
-							if (isset($item['titleKey']))
+							break;
+
+						case 'menu':
+							$subMenu = $entryDoc->getSubMenu();
+							if ($subMenu)
 							{
-								$subEntry->setTitle($this->i18nManager->trans($item['titleKey'], ['ucf']));
+								$subEntry = $this->getMenuEntry($website, $subMenu, $maxLevel - 1, $currentPage, $path);
+								if ($subEntry !== null)
+								{
+									if ($title)
+									{
+										$subEntry->setTitle($title);
+									}
+									$url = $entryDoc->getCurrentLocalization()->getUrl();
+									if ($url)
+									{
+										$subEntry->setUrl($url);
+									}
+									$entry->addChild($subEntry);
+								}
 							}
-							else
+							break;
+
+						case 'url':
+							$url = $entryDoc->getCurrentLocalization()->getUrl();
+							if ($title && $url)
 							{
-								$subEntry->setTitle($item['title']);
+								$subEntry = new \Rbs\Website\Menu\MenuEntry();
+								$subEntry->setTitle($title);
+								$subEntry->setUrl($url);
+								$entry->addChild($subEntry);
 							}
-							$subEntry->setUrl($item['url']);
-							$entry->addChild($subEntry);
-						}
+							break;
 					}
 				}
 			}

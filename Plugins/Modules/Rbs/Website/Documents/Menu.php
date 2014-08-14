@@ -25,20 +25,6 @@ class Menu extends \Compilation\Rbs\Website\Documents\Menu
 		$document = $event->getDocument();
 		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
-			$items = $restResult->getProperty('items');
-			if (is_array($items))
-			{
-				$i18n = $event->getApplicationServices()->getI18nManager();
-				foreach ($items as $index => $item)
-				{
-					if (isset($item['titleKey']))
-					{
-						$items[$index]['title'] = $i18n->trans($item['titleKey'], array('ucf'));
-					}
-				}
-				$restResult->setProperty('items', $items);
-			}
-
 			$vc = new \Change\Http\Rest\V1\ValueConverter($restResult->getUrlManager(), $event->getApplicationServices()->getDocumentManager());
 			$restResult->setProperty('website', $vc->toRestValue($document->getWebsite(), \Change\Documents\Property::TYPE_DOCUMENT));
 		}

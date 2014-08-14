@@ -494,4 +494,12 @@ class InlineArrayProperty  implements \Iterator, \Countable, \ArrayAccess
 		}
 		$this->updateCallback = null;
 	}
+
+	/**
+	 * @return AbstractInline[]
+	 */
+	public function toArray()
+	{
+		return $this->inlineDocuments;
+	}
 }
