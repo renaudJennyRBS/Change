@@ -1,0 +1,14 @@
+<div class="structure-editor" data-fields-rows-layout="">
+	<div class="row" ng-repeat="row in templateLayout" data-fields-row="(= $index =)">{% spaceless %}
+		<div ng-repeat-start="field in row" data-field-row-drop="" data-field-row="(= field.row =)" data-field-col="(= field.col =)"><span class="label label-default"><i class="icon-plus"></i></span></div>
+		<div ng-repeat-end="" data-address-field="(= field.name =)" data-field-row="(= field.row =)" data-field-col="(= field.col =)"><span class="label label-success"><i class="icon-move"></i> (= field.label =)</span></div>
+		<div data-field-row-drop="" data-field-row="(= $index =)" data-field-col="(= row.length =)"><span class="label label-default"><i class="icon-plus"></i></span></div>
+		<div data-field-row-drop="" data-field-row="(= $index + 1 =)" data-field-col="-1"><span class="label label-default">&nbsp;<i class="icon-level-down"></i>&nbsp;</span></div>
+	{% endspaceless %}</div>
+</div>
+
+<div class="structure-editor" data-fields-sand-box="">
+	<div class="row" data-field-row-drop="" data-field-row="-1" data-field-col="-1">
+		<div ng-repeat="field in fields" data-address-field="(= field.code =)" data-sand-box="true"><span class="label label-success"><i class="icon-move"></i> (= field.label =)</span></div>
+	</div>
+</div>
