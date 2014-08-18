@@ -1,0 +1,15 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Website_Menu', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field-picker property="website" required="true" accepted-model="Rbs_Website_Website"
+	label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'website'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.website.admin.menu_website_picker_title', ['ucf']) }}">
+</rbs-field-picker>
+
+<hr />
+
+<h3>{{ i18n(propertyKey('Rbs_Website_Menu', 'entries'), ['ucf']) }}</h3>
+<rbs-inline-array inline-array="document.entries" new-model="Rbs_Website_MenuEntry"
+	data-ref-lcid="document.refLCID">
+</rbs-inline-array>

@@ -29,19 +29,22 @@
 	"form_saveresponses":{
 		"message":"enregistrer les réponses"
 	},
+	"form_fields":{
+		"message":"champs"
+	},
 	"form":{
 		"message":"formulaire"
 	},
-	"field":{
+	"formfield":{
 		"message":"champ"
 	},
-	"field_required":{
+	"formfield_required":{
 		"message":"requis"
 	},
-	"field_fieldtypecode":{
+	"formfield_fieldtypecode":{
 		"message":"type de champ"
 	},
-	"field_helptext":{
+	"formfield_helptext":{
 		"message":"texte d'aide"
 	},
 	"response":{

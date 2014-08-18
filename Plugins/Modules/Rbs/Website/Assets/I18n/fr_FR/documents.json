@@ -119,8 +119,20 @@
 	"menu_title":{
 		"message":"titre"
 	},
-	"menu_items":{
+	"menu_entries":{
 		"message":"entrées de menu"
+	},
+	"menuentry_entrytypecode":{
+		"message":"type d'entrée"
+	},
+	"menuentry_targetdocument":{
+		"message":"document"
+	},
+	"menuentry_url":{
+		"message":"URL"
+	},
+	"menuentry_submenu":{
+		"message":"menu"
 	},
 	"text":{
 		"message":"texte"

@@ -4,7 +4,17 @@
 	localized="true" activable="true" editable="true">
 	<properties>
 		<property name="website" type="Document" document-type="Rbs_Website_Website" required="true" />
-		<property name="items" type="JSON" localized="true" has-correction="true"/>
+		<property name="entries" type="InlineArray" has-correction="true">
+			<inline name="MenuEntry" localized="true" editable="true">
+				<properties>
+					<property name="title" type="String" localized="true" />
+					<property name="entryTypeCode" type="String" required="true" />
+					<property name="targetDocument" type="Document" />
+					<property name="url" type="String" localized="true" />
+					<property name="subMenu" type="Document" />
+				</properties>
+			</inline>
+		</property>
 		<property name="title" type="String" localized="true" has-correction="true" />
 	</properties>
 </document>

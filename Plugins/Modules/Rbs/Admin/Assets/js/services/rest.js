@@ -297,17 +297,27 @@
 					}
 
 					// Transform sub-documents into ChangeDocument instances.
-					angular.forEach(properties, function (value, name) {
-						if (Utils.isDocument(value)) {
-							properties[name] = buildChangeDocument(value);
-						} else if (angular.isArray(value)) {
-							angular.forEach(value, function (v, i) {
-								if (Utils.isDocument(value[i])) {
-									value[i] = buildChangeDocument(value[i]);
-								}
-							});
-						}
-					});
+					var transformSubDocument = function (properties) {
+						angular.forEach(properties, function (value, name) {
+							if (Utils.isDocument(value)) {
+								properties[name] = buildChangeDocument(value);
+							}
+							else if (Utils.isInlineDocument(value)) {
+								transformSubDocument(value);
+							}
+							else if (angular.isArray(value)) {
+								angular.forEach(value, function (v, i) {
+									if (Utils.isDocument(value[i])) {
+										value[i] = buildChangeDocument(value[i]);
+									}
+									else if (Utils.isInlineDocument(value[i])) {
+										transformSubDocument(value[i]);
+									}
+								});
+							}
+						});
+					};
+					transformSubDocument(properties);
 
 					angular.extend(chgDoc, properties);
 					return chgDoc;

@@ -4,7 +4,8 @@
 
 	function cleanParameters(ArrayUtils, scope, parameterNames)
 	{
-		for (var key in scope.document.parameters)
+		var key;
+		for (key in scope.document.parameters)
 		{
 			console.log('scope.document.parameters.' + key);
 			if (scope.document.parameters.hasOwnProperty(key) && ArrayUtils.inArray(key, parameterNames) == -1)
@@ -15,7 +16,7 @@
 		}
 		for (var i in parameterNames)
 		{
-			var key = parameterNames[i];
+			key = parameterNames[i];
 			if (!scope.document.parameters.hasOwnProperty(key))
 			{
 				scope.document.parameters[key] = null;

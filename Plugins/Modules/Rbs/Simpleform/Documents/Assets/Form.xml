@@ -5,7 +5,18 @@
 	<properties>
 		<property name="title" has-correction="true" />
 		<property name="publicationSections" type="DocumentArray" document-type="Rbs_Website_Section" />
-		<property name="fields" type="DocumentArray" document-type="Rbs_Simpleform_Field" max-occurs="100" has-correction="true"/>
+		<property name="fields" type="InlineArray" has-correction="true">
+			<inline name="FormField" localized="true" editable="true">
+				<properties>
+					<property name="name" type="String" required="true" />
+					<property name="title" type="String" localized="true" />
+					<property name="helpText" type="RichText" localized="true" />
+					<property name="fieldTypeCode" type="String" required="true" />
+					<property name="required" type="Boolean" default-value="false" />
+					<property name="parameters" type="JSON" />
+				</properties>
+			</inline>
+		</property>
 		<property name="receiverUsers" type="DocumentArray" document-type="Rbs_User_User" />
 		<property name="receiverGroups" type="DocumentArray" document-type="Rbs_User_Group" />
 		<property name="receiverEmails" type="LongString">
