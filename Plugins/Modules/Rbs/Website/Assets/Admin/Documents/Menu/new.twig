@@ -16,7 +16,7 @@
 
 				<rbs-field property="refLCID" required="true"
 					label="{{ i18nAttr(propertyKey('Rbs_Website_Menu', 'refLCID'), ['ucf']) }}">
-					<select class="form-control" data-ng-model="document.refLCID"
+					<select class="form-control" data-ng-model="document.refLCID" required="true"
 						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
 					</select>
 				</rbs-field>
