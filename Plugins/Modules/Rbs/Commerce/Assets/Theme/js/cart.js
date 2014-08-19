@@ -263,7 +263,7 @@
 				}
 
 				function loadCompatibleShippingModes(needAddress) {
-					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines, needAddress: needAddress})
+					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines, needAddress: needAddress, deliveryIndex: scope.deliveryIndex})
 						.success(function(data) {
 							if (needAddress)
 							{
