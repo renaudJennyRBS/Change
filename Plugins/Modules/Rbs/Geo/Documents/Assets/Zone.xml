@@ -8,5 +8,6 @@
 			<constraint name="unique" />
 		</property>
 		<property name="country" type="Document" document-type="Rbs_Geo_Country" />
+		<property name="addressFilterData" type="JSON" />
 	</properties>
 </document>

@@ -1,0 +1,17 @@
+<ol class="list-inline form-inline">
+	<li>
+		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
+	</li>
+	<li>(= filterDefinition.config.label =)</li>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.operator">
+			<option value="eq">{{ i18n('m.rbs.admin.admin.isequals') }}</option>
+			<option value="neq">{{ i18n('m.rbs.admin.admin.isdifferentof') }}</option>
+		</select>
+	</li>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.value"
+				data-rbs-items-from-collection="Rbs_Geo_Collection_Countries">
+		</select>
+	</li>
+</ol>

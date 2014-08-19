@@ -8,6 +8,9 @@
 	"mode_select_visual":{
 		"message":"sélectionner un visuel"
 	},
+	"mode_select_delivery_zones":{
+		"message":"sélectionner des zones de livraison"
+	},
 	"module_name":{
 		"message":"expéditions"
 	},

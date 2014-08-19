@@ -22,6 +22,11 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_FORMAT_ADDRESS = 'formatAddress';
 
 	/**
+	 * @var \Rbs\Geo\Address\AddressFilters
+	 */
+	protected $addressFilters;
+
+	/**
 	 * @param \Change\Events\EventManager $eventManager
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
@@ -34,6 +39,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('updateAddress', [$this, 'onDefaultUpdateAddress'], 5);
 		$eventManager->attach('setDefaultAddress', [$this, 'onDefaultSetDefaultAddress'], 5);
 		$eventManager->attach('getDefaultAddress', [$this, 'onDefaultGetDefaultAddress'], 5);
+		$eventManager->attach('getZoneByCode', [$this, 'onDefaultGetZoneByCode'], 5);
+
 	}
 
 	/**
@@ -548,5 +555,102 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$event->setParam('defaultAddress', $address);
 		}
+	}
+
+	/**
+	 * @param string $codeZone
+	 * @return \Rbs\Geo\Documents\Zone|null
+	 */
+	public function getZoneByCode($codeZone)
+	{
+		if (is_string($codeZone))
+		{
+			$eventManager = $this->getEventManager();
+			$args = $eventManager->prepareArgs(['codeZone' => $codeZone]);
+			$this->getEventManager()->trigger('getZoneByCode', $this, $args);
+			if (isset($args['zone']) && $args['zone'] instanceof \Rbs\Geo\Documents\Zone)
+			{
+				return $args['zone'];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @var array
+	 */
+	protected $zonesByCode = [];
+
+	/**
+	 * Input param codeZone
+	 * Output param zone
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetZoneByCode($event)
+	{
+		$codeZone = $event->getParam('codeZone');
+		if (is_string($codeZone))
+		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			if (isset($this->zonesByCode[$codeZone]))
+			{
+				$event->setParam('zone', $documentManager->getDocumentInstance($this->zonesByCode[$codeZone]));
+				return;
+			}
+			$query = $documentManager->getNewQuery('Rbs_Geo_Zone');
+			$query->andPredicates($query->eq('code', $codeZone));
+			$zone = $query->getFirstDocument();
+			if ($zone)
+			{
+				$this->zonesByCode[$codeZone] = $zone->getId();
+				$event->setParam('zone', $documentManager->getDocumentInstance($this->zonesByCode[$codeZone]));
+			}
+		}
+	}
+
+	/**
+	 * @param array $options
+	 * @return array
+	 */
+	public function getAddressFiltersDefinition($options = [])
+	{
+		if ($this->addressFilters === null)
+		{
+			$this->addressFilters = new \Rbs\Geo\Address\AddressFilters($this->getApplication());
+		}
+		return $this->addressFilters->getDefinitions($options);
+	}
+
+	/**
+	 * @param \Rbs\Geo\Address\AddressInterface $address
+	 * @param \Rbs\Geo\Documents\Zone|string $zone
+	 * @param array $options
+	 * @return boolean
+	 */
+	public function isValidAddressForZone(\Rbs\Geo\Address\AddressInterface $address, $zone, array $options = [])
+	{
+		if ($this->addressFilters === null)
+		{
+			$this->addressFilters = new \Rbs\Geo\Address\AddressFilters($this->getApplication());
+		}
+		if (is_string($zone))
+		{
+			$zone = $this->getZoneByCode($zone);
+			if (!$zone)
+			{
+				return false;
+			}
+		}
+		if ($zone instanceof \Rbs\Geo\Documents\Zone)
+		{
+			$options['zone'] = $zone;
+			return $this->addressFilters->isValid($address, $zone->getAddressFilterData(), $options);
+		}
+		elseif (is_null($zone))
+		{
+			return true;
+		}
+		return false;
+
 	}
 }

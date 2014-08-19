@@ -1,0 +1,21 @@
+<ol class="list-inline form-inline">
+	<li>
+		<button type="button" class="btn btn-default btn-xs" data-ng-click="delFilter()"><span class="glyphicon glyphicon-minus"></span></button>
+	</li>
+	<li>(= filterDefinition.config.label =)</li>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.fieldName"
+				data-rbs-items-from-collection="Rbs_Geo_AddressField_Names">
+		</select>
+	<li>
+		<select class="form-control" data-ng-model="filter.parameters.operator">
+			<option value="isNull">{{ i18n('m.rbs.admin.admin.isnull') }}</option>
+			<option value="eq">{{ i18n('m.rbs.admin.admin.isequals') }}</option>
+			<option value="neq">{{ i18n('m.rbs.admin.admin.isdifferentof') }}</option>
+			<option value="match">{{ i18n('m.rbs.geo.admin.match_operator') }}</option>
+		</select>
+	</li>
+	<li ng-show="filter.parameters.operator != 'isNull'">
+		<input type="text" class="form-control" data-ng-model="filter.parameters.value">
+	</li>
+</ol>

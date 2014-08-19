@@ -103,6 +103,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Geo_Collection_Countries':
 					(new \Rbs\Geo\Collection\Collections())->addCountries($event);
 					break;
+				case 'Rbs_Geo_AddressField_Names':
+					(new \Rbs\Geo\Collection\Collections())->addAddressFieldNames($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -130,7 +133,8 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Elasticsearch_Collection_AttributeIds',
 				'Rbs_Elasticsearch_FacetConfigurationType',
 				'Rbs_Geo_All_Countries_Codes',
-				'Rbs_Geo_Collection_Countries'
+				'Rbs_Geo_Collection_Countries',
+				'Rbs_Geo_AddressField_Names'
 			));
 			$event->setParam('codes', $codes);
 		};

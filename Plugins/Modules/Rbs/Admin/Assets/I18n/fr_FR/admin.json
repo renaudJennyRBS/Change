@@ -176,6 +176,9 @@
 	"is":{
 		"message":"est"
 	},
+	"isEquals":{
+		"message":"est égale à"
+	},
 	"isNot":{
 		"message":"n'est pas"
 	},

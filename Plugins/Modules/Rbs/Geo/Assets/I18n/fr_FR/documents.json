@@ -23,6 +23,9 @@
 	"zone_title":{
 		"message":"titre"
 	},
+	"zone_addressfilterdata":{
+		"message":"validation d'adresse"
+	},
 	"addressfield_required":{
 		"message":"requis"
 	},

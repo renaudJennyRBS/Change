@@ -27,7 +27,11 @@
 					selector-title="{{ i18nAttr('m.rbs.geo.admin.zone_country_picker_title', ['ucf']) }}">
 				</rbs-field-picker>
 
-				<rbs-todo>RBSChange/evolutions#55 critères de validité d'une adresse.</rbs-todo>
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'addressFilterData'), ['ucf']) }}">
+					<div data-rbs-document-filter-container="" data-filter="document.addressFilterData">
+						<div data-rbs-geo-address-filter-definitions=""></div>
+					</div>
+				</rbs-field>
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"
