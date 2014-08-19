@@ -152,6 +152,16 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 		}
 	}
 
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		if ($name == 'fieldsLayout')
+		{
+			$this->setFieldsLayoutData($value, is_array($value) ? $value : null);
+			return true;
+		}
+		return parent::processRestData($name, $value, $event);
+	}
+
 	/**
 	 * @param AddressFields $addressFields
 	 * @return array|null

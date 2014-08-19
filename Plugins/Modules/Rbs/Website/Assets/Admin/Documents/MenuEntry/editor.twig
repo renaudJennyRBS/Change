@@ -13,17 +13,19 @@
 		</select>
 	</rbs-field>
 
-	<hr />
+	<div data-ng-if="!localization.inTranslation()">
+		<hr />
 
-	<p class="help-block" data-ng-if="document.entryTypeCode == 'document'">
-		{{ i18n('m.rbs.website.admin.menu_entry_type_document_help', ['ucf']) }}
-	</p>
-	<p class="help-block" data-ng-if="document.entryTypeCode == 'menu'">
-		{{ i18n('m.rbs.website.admin.menu_entry_type_menu_help', ['ucf']) }}
-	</p>
-	<p class="help-block" data-ng-if="document.entryTypeCode == 'url'">
-		{{ i18n('m.rbs.website.admin.menu_entry_type_url_help', ['ucf']) }}
-	</p>
+		<p class="help-block" data-ng-if="document.entryTypeCode == 'document'">
+			{{ i18n('m.rbs.website.admin.menu_entry_type_document_help', ['ucf']) }}
+		</p>
+		<p class="help-block" data-ng-if="document.entryTypeCode == 'menu'">
+			{{ i18n('m.rbs.website.admin.menu_entry_type_menu_help', ['ucf']) }}
+		</p>
+		<p class="help-block" data-ng-if="document.entryTypeCode == 'url'">
+			{{ i18n('m.rbs.website.admin.menu_entry_type_url_help', ['ucf']) }}
+		</p>
+	</div>
 
 	<rbs-field data-ng-if="!localization.inTranslation() && document.entryTypeCode == 'document'" property="targetDocument"
 		required="true" label="{{ i18nAttr(propertyKey('Rbs_Website_MenuEntry', 'targetDocument'), ['ucf']) }}">

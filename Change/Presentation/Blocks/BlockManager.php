@@ -292,6 +292,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 				if ($result instanceof BlockResult)
 				{
 					$result->setId($blockLayout->getId());
+					$parameters->setParameterValue('_cached', true);
 				}
 			}
 			else

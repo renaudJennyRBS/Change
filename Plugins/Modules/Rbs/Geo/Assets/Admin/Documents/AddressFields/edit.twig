@@ -23,6 +23,12 @@
 				<h3>{{ i18n(propertyKey('Rbs_Geo_AddressFields', 'fields'), ['ucf']) }}</h3>
 				<rbs-inline-array inline-array="document.fields" new-model="Rbs_Geo_AddressField" check-delete="canDeleteItem">
 				</rbs-inline-array>
+
+				<hr />
+				<h3>Mise en forme</h3>
+				<rbs-address-composer data-fields="document.fields" data-fields-layout="document.fieldsLayout">
+
+				</rbs-address-composer>
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"

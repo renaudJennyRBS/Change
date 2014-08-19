@@ -10,7 +10,7 @@
 	<link rel="icon" type="image/png" href="{{ resourceURL('Theme/Rbs/Demo/img/favicon.png') }}" />
 	<!-- cssHead -->
 	<script type="text/javascript">
-		window.__change = {};
+		window.__change = {monitoring: {{ pageResult.getMonitoring() | json_encode | raw}} };
 	</script>
 </head>
 <body>

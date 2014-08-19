@@ -117,9 +117,10 @@ class Controller extends \Change\Http\Controller
 		$result = $event->getResult();
 		if ($result instanceof Result)
 		{
-			$response = $event->getController()->createResponse();
+			$response = $this->createResponse();
 			$response->getHeaders()->addHeaders($result->getHeaders());
-			if ($this->getApplication()->inDevelopmentMode())
+			$monitoring = $this->getApplication()->getConfiguration()->getEntry('Change/Http/Rest/Monitoring');
+			if ($monitoring)
 			{
 				$response->getHeaders()->addHeaderLine('Change-Memory-Usage: ' . number_format(memory_get_usage()));
 			}

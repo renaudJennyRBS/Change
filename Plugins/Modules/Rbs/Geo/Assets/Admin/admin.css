@@ -1,0 +1,14 @@
+rbs-address-composer {
+	font-size: 1.2em;
+}
+
+rbs-address-composer [data-address-field],
+rbs-address-composer [data-field-row-drop] {
+	display: inline-block;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+rbs-address-composer .drop-over .label {
+	background: red;
+}

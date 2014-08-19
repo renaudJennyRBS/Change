@@ -54,6 +54,10 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $permissionsManager;
 
+	/**
+	 * @var \ArrayObject|null
+	 */
+	protected $monitoring = null;
 
 	/**
 	 * @return \Change\Configuration\Configuration
@@ -211,6 +215,9 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if ($this->getRequest()->isGet())
 			{
+				$monitoring = $webEvent->getApplication()->getConfiguration()->getEntry('Change/Http/Web/Monitoring');
+				$this->monitoring = ($monitoring) ? new \ArrayObject(['page' => ['d' => microtime(true), 'm' => memory_get_usage()]]) : null;
+
 				$cacheAdapter = $this->getCacheAdapter();
 				if ($cacheAdapter && ($TTL = $page->getTTL()) > 0)
 				{
@@ -221,20 +228,51 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 					if ($cacheAdapter->hasItem($key))
 					{
 						$result = $cacheAdapter->getItem($key);
+						$this->addMonitoring($result, true);
 					}
 					else
 					{
 						$result = $this->dispatchGetPageResult($page);
 						$cacheAdapter->addItem($key, $result);
+						$this->addMonitoring($result);
 					}
 					return $result;
 				}
 			}
-			return $this->dispatchGetPageResult($page);
+			$result = $this->dispatchGetPageResult($page);
+			$this->addMonitoring($result);
+			return $result;
 		}
 		return null;
 	}
 
+	/**
+	 * @api
+	 * @return \ArrayObject|null
+	 */
+	public function getMonitoring()
+	{
+		return $this->monitoring;
+	}
+
+	/**
+	 * @param \Change\Http\Web\Result\Page|null $result
+	 * @param bool $cached
+	 * @return \Change\Http\Web\Result\Page|null
+	 */
+	protected function addMonitoring($result, $cached = false)
+	{
+		if ($this->monitoring && $result instanceof \Change\Http\Web\Result\Page)
+		{
+			$monitoring = $this->monitoring->getArrayCopy();
+			$monitoring['page']['c'] = $cached;
+			$monitoring['page']['d'] = microtime(true) - $monitoring['page']['d'];
+			$monitoring['page']['m'] = memory_get_usage() - $monitoring['page']['m'];
+			$result->getHeaders()->addHeaderLine('Change-Monitoring-Page: ' . json_encode($monitoring));
+
+		}
+		return $result;
+	}
 	/**
 	 * @return array
 	 */
