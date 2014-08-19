@@ -623,9 +623,28 @@
 			return scope.currentStep == stepName;
 		};
 
+		scope.getNextStep = function() {
+			var currentIndex = 0;
+			for (var i = 0; i < scope.steps.length; i++) {
+				if (scope.steps[i] == scope.currentStep) {
+					currentIndex = i;
+					break;
+				}
+			}
+			if (currentIndex < scope.steps.length-2)
+			{
+				currentIndex++;
+			}
+			return scope.steps[currentIndex];
+		};
+
 		scope.hasInvalidAddresses = hasInvalidAddresses;
 		scope.isValidAddress = isValidAddress;
 		scope.applyAddress = applyAddress;
+
+		scope.prepareCartStep = function() {
+			scope.setCurrentStep(scope.getNextStep());
+		}
 
 		/**
 		 * Information step
@@ -776,7 +795,7 @@
 						updateCart($http, scope, postData);
 					});
 				}
-				scope.setCurrentStep('shipping');
+				scope.setCurrentStep(scope.getNextStep());
 			};
 			updateCart($http, scope, postData, callback);
 		};
@@ -930,7 +949,7 @@
 					}
 				}
 
-				scope.setCurrentStep('payment');
+				scope.setCurrentStep(scope.getNextStep());
 			});
 		};
 
