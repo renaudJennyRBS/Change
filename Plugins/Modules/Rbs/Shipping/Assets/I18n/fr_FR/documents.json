@@ -13,5 +13,8 @@
 	},
 	"mode_cartfilterdata":{
 		"message":"Critères d'application"
+	},
+	"mode_deliveryzones":{
+		"message":"Zones de livraison"
 	}
 }

@@ -70,5 +70,38 @@
 	},
 	"manage_addresses_label":{
 		"message":"gestion des adresses"
+	},
+	"country_code_filter":{
+		"message":"par code pays"
+	},
+	"country_code_value":{
+		"message":"le code pays"
+	},
+	"zip_code_filter":{
+		"message":"par code postal"
+	},
+	"zip_code_value":{
+		"message":"le code postal"
+	},
+	"field_filter":{
+		"message":"un champs d'adresse"
+	},
+	"field_value":{
+		"message":"le champs"
+	},
+	"match_operator":{
+		"message":"valide l'expression régulière"
+	},
+	"zone_fr_a":{
+		"message":"France Continental"
+	},
+	"zone_fr_b":{
+		"message":"France Corse"
+	},
+	"zone_fr_c":{
+		"message":"France DOM"
+	},
+	"zone_fr_d":{
+		"message":"France TOM"
 	}
 }

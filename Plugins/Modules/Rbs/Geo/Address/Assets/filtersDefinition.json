@@ -1,0 +1,38 @@
+[
+	{
+		"name": "countryCode",
+		"parameters": {
+			"fieldName": "countryCode"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.geo.admin.country_code_filter",
+			"label": "m.rbs.geo.admin.country_code_value"
+		},
+		"directiveName": "rbs-geo-address-filter-country-field"
+	},
+	{
+		"name": "zipCode",
+		"parameters": {
+			"fieldName": "zipCode"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.geo.admin.zip_code_filter",
+			"label": "m.rbs.geo.admin.zip_code_value"
+		},
+		"directiveName": "rbs-geo-address-filter-zip-field"
+	},
+	{
+		"name": "field",
+		"parameters": {
+			"fieldName": null
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.geo.admin.field_filter",
+			"label": "m.rbs.geo.admin.field_value"
+		},
+		"directiveName": "rbs-geo-address-filter-field"
+	}
+]

@@ -57,4 +57,32 @@ class Collections
 		$event->setParam('collection', $collection);
 		$event->stopPropagation();
 	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function addAddressFieldNames(\Change\Events\Event $event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		$array = [];
+		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_AddressFields');
+		$excludedCodes = ['zipCode', 'countryCode'];
+
+		/* @var $addressFields \Rbs\Geo\Documents\AddressFields */
+		foreach ($query->getDocuments() as $addressFields)
+		{
+			foreach ($addressFields->getFields() as $addressField)
+			{
+				$code = $addressField->getCode();
+				if (!isset($array[$code]) && !in_array($code, $excludedCodes))
+				{
+					$array[$code] = ['label' => $addressField->getLabel(), 'title' => $addressField->getCurrentLocalization()->getTitle()];
+				}
+			}
+		}
+
+		$collection = new \Change\Collection\CollectionArray('Rbs_Geo_AddressField_Names', $array);
+		$event->setParam('collection', $collection);
+		$event->stopPropagation();
+	}
 }

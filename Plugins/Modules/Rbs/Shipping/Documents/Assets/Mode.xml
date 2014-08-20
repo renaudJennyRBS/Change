@@ -9,5 +9,6 @@
 		<property name="visual" type="Document" document-type="Rbs_Media_Image" has-correction="true"/>
 		<property name="hasAddress" type="Boolean" default-value="true"/>
 		<property name="cartFilterData" type="JSON" has-correction="true"/>
+		<property name="deliveryZones" type="DocumentArray" document-type="Rbs_Geo_Zone" />
 	</properties>
 </document>

@@ -167,6 +167,7 @@ class Install extends \Change\Plugins\InstallBase
 									$FRCZone->setCode('FRC');
 									$FRCZone->setLabel('France continentale');
 									$FRCZone->setCountry($country);
+									$FRCZone->setAddressFilterData(json_decode('{"name":"group","parameters":{"all":0,"configured":0},"operator":"AND","filters":[{"name":"countryCode","parameters":{"fieldName":"countryCode","operator":"eq","value":"FR"}},{"name":"zipCode","parameters":{"fieldName":"zipCode","operator":"match","value":"^((0[1-9])|([1345678][0-9])|(9[0-5])|(2[1-9]))[0-9]{3}$"}}]}', true));
 									$FRCZone->save();
 								}
 							}

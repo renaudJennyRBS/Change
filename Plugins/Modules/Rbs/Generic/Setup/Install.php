@@ -25,6 +25,7 @@ class Install extends \Change\Plugins\InstallBase
 			'\Rbs\Generic\Events\SharedListeners');
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Generic', '\Rbs\Generic\Collection\Listeners');
 
+		$configuration->addPersistentEntry('Change/Events/Http/Admin/Rbs_Generic', '\Rbs\Generic\Events\Http\Admin\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Http/Rest/Rbs_Generic', '\Rbs\Generic\Events\Http\Rest\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Http/Web/Rbs_Generic', '\Rbs\Generic\Events\Http\Web\Listeners');
 

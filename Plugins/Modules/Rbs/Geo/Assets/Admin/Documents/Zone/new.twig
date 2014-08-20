@@ -26,6 +26,13 @@
 					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'country'), ['ucf']) }}"
 					selector-title="{{ i18nAttr('m.rbs.geo.admin.zone_country_picker_title', ['ucf']) }}">
 				</rbs-field-picker>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'addressFilterData'), ['ucf']) }}">
+					<div data-rbs-document-filter-container="" data-filter="document.addressFilterData">
+						<div data-rbs-geo-address-filter-definitions=""></div>
+					</div>
+				</rbs-field>
+
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"
