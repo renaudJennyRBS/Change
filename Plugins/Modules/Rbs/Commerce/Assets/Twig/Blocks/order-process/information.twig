@@ -149,26 +149,21 @@
 								</address>
 								<p>
 									<button type="button" class="btn btn-sm btn-primary"
-										data-ng-disabled="isValidAddress(information.address, address)"
 										data-ng-click="applyAddress(information.address, address)">
 										{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
-									</button> <span data-ng-if="isValidAddress(information.address, address)">*</span>
+									</button>
 								</p>
 							</div>
 							<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg"></div>
 							<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md"></div>
 						</div>
-						<p data-ng-if="hasInvalidAddresses(information.address, addresses)">
-							* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
-						</p>
 
-
-						<div data-ng-if="shippingZonesCode.length > 0 && information.login" data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
-							data-address-name="information.address.name" data-manage-name="true"
-							data-zone-code="(= shippingZonesCode =)">
+						<div data-ng-if="information.login" data-rbs-address-form="" data-ng-model="information.address"
+							data-valid="information.isAddressValid"
+							data-address-name="information.address.name" data-manage-name="true">
 						</div>
-						<div data-ng-if="shippingZonesCode.length > 0 &&  !information.login" data-rbs-address-form="" data-ng-model="information.address" data-valid="information.isAddressValid"
-							data-zone-code="(= shippingZonesCode =)">
+						<div data-ng-if="!information.login" data-rbs-address-form="" data-ng-model="information.address"
+								data-valid="information.isAddressValid">
 						</div>
 
 						<div>

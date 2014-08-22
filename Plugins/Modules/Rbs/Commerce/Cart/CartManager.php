@@ -178,6 +178,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			}
 
 			$cart->setZone($zone);
+
 			if (count($context))
 			{
 				foreach ($context as $key => $value)
@@ -188,6 +189,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					}
 				}
 			}
+			$cart->getContext()->set('LCID', $this->getDocumentManager()->getLCID());
 			return $cart;
 		}
 		throw new \RuntimeException('Unable to get a new cart', 999999);

@@ -147,7 +147,7 @@
 		"message":"utiliser une autre adresse"
 	},
 	"button_use_new_address":{
-		"message":"Créer une nouvelle adresse où sélectionner un autre pays"
+		"message":"Créer une nouvelle adresse"
 	},
 	"only_addresses_in_the_selected_country_can_be_used":{
 		"message":"Seules les adresses situées dans le pays sélectionné ci-dessous peuvent être sélectionnées."
