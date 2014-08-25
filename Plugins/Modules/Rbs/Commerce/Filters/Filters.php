@@ -49,6 +49,7 @@ class Filters implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach(['isValidTotalAmountValue', 'isValidTotalPriceValue'], [$this, 'onDefaultIsValidTotalAmountValue'], 5);
 		$eventManager->attach('isValidPaymentAmountValue', [$this, 'onDefaultIsValidPaymentAmountValue'], 5);
 		$eventManager->attach('isValidHasCoupon', [$this, 'onDefaultIsValidHasCoupon'], 5);
+		$eventManager->attach('isValidHasCreditNote', [$this, 'onDefaultIsValidHasCreditNote'], 5);
 	}
 
 	/**
@@ -224,6 +225,48 @@ class Filters implements \Zend\EventManager\EventsCapableInterface
 			{
 				$amount =  $value->getPaymentAmountWithTaxes();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultIsValidHasCreditNote($event)
+	{
+		$filter = $event->getParam('filter');
+		if (isset($filter['parameters']) && is_array($filter['parameters']))
+		{
+			$value = $event->getParam('value');
+			if ($value instanceof \Rbs\Commerce\Cart\Cart)
+			{
+				/** @var $creditNotes \Rbs\Commerce\Process\BaseCreditNote[] */
+				$creditNotes = $value->getCreditNotes();
+				$amount = null;
+				if (is_array($creditNotes) && count($creditNotes))
+				{
+					$amount = 0.0;
+					foreach ($creditNotes as $creditNote)
+					{
+						$amount += abs($creditNote->getAmount());
+					}
+				}
+				$event->setParam('valid', $amount !== null && $amount > 0.0);
+			}
+			elseif ($value instanceof \Rbs\Order\Documents\Order)
+			{
+				/** @var $creditNotes \Rbs\Commerce\Process\BaseCreditNote[] */
+				$creditNotes = $value->getCreditNotes();
+				$amount = null;
+				if (is_array($creditNotes) && count($creditNotes))
+				{
+					$amount = 0.0;
+					foreach ($creditNotes as $creditNote)
+					{
+						$amount += abs($creditNote->getAmount());
+					}
+				}
+				$event->setParam('valid', $amount !== null && $amount > 0.0);
 			}
 		}
 	}

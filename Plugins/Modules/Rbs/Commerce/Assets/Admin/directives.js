@@ -28,4 +28,35 @@
 			}
 		};
 	});
+
+	app.directive('rbsCommerceFilterHasCreditNote', function() {
+		return {
+			restrict: 'A',
+			require: '^rbsDocumentFilterContainer',
+			templateUrl : 'Rbs/Commerce/filter-has-credit-note.twig',
+			scope: {
+				filter : '=', contextKey: "@"
+			},
+			link: function(scope, element, attrs, containerController) {
+				containerController.linkNode(scope);
+
+				scope.filter.parameters.operator = 'gt';
+
+				if (!scope.filter.parameters.hasOwnProperty('value')){
+					scope.filter.parameters.value = 0.0;
+				}
+
+				scope.isConfigured = function() {
+					return true;
+				};
+
+				scope.$on('countAllFilters', function(event, args) {
+					args.all++;
+					if (scope.isConfigured()) {
+						args.configured++;
+					}
+				});
+			}
+		};
+	});
 })(window.jQuery);
