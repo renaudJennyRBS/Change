@@ -14,6 +14,16 @@
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
+				<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'ownerId'), ['ucf']) }}"
+						accepted-model="Rbs_User_User" value-ids="true">
+				</rbs-field-picker>
+
+				<rbs-field-text property="targetIdentifier" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'targetIdentifier'), ['ucf']) }}">
+					<span class="help-block" data-ng-if="document.target">
+						<a class="go-to-link" href="javascript:;" data-ng-href="(= document.target|rbsURL:'edit' =)" data-ng-bind="document.target.label"></a>
+					</span>
+				</rbs-field-text>
+
 				<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'code'), ['ucf']) }}">
 				</rbs-field-text>
 
@@ -26,6 +36,27 @@
 					<select data-ng-model="document.currencyCode" data-rbs-items-from-collection="Rbs_Price_Collection_Iso4217"
 						class="form-control"></select>
 				</rbs-field>
+
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'amountNotApplied'), ['ucf']) }}">
+					<rbs-price-input data-ng-model="document.amountNotApplied" data-currency-code="(= document.currencyCode =)">
+					</rbs-price-input>
+				</rbs-field>
+
+				<h3>{{ i18nAttr('m.rbs.order.admin.credit_note_usage', ['ucf']) }}</h3>
+				<table class="document-list table table-condensed table-bordered table-striped table-hover token">
+					<thead>
+						<tr>
+							<th>{{ i18nAttr('m.rbs.order.documents.creditnote_targetidentifier', ['ucf']) }}</th>
+							<th>{{ i18nAttr('m.rbs.order.admin.credit_note_amount', ['ucf']) }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-ng-repeat="usage in document.usedIn" class="normal-row">
+							<td><a href="" data-ng-href="(= usage.target|rbsURL:'edit' =)">(= usage.label =)</a></td>
+							<td>(= usage.formattedAmount =)</td>
+						</tr>
+					</tbody>
+				</table>
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"

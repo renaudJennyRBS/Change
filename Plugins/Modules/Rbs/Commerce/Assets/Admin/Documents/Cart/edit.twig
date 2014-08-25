@@ -268,8 +268,8 @@
 										<td style="width: 100px;">(= cart.context.formattedTotalAmountWithTaxes =)</td>
 									</tr>
 									<tr data-ng-repeat="creditNote in cart.creditNotes">
-										<td>(= creditNote.title =)</td>
-										<td style="width: 100px;">(= note.options.formattedAmount =)</td>
+										<td><a href="" data-ng-href="(= 'Rbs_Order_CreditNote'|rbsURL:'edit':{id:creditNote.id} =)"> {{ i18n('m.rbs.order.admin.order_credit_note_amount', ['ucf', 'lab']) }} (= creditNote.title =) </a></td>
+										<td style="width: 100px;">(= creditNote.options.formattedAmount =)</td>
 									</tr>
 									<tr>
 										<td>

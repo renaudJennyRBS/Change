@@ -42,17 +42,20 @@
 	function paymentsController(scope, REST, $routeParams, NotificationCenter, i18n, ErrorFormatter) {
 		scope.transactions = [];
 		scope.invoices = [];
+		scope.creditNotes = [];
 
 		if (!scope.document) {
 			REST.resource('Rbs_Order_Order', $routeParams.id).then(function(order) {
 				scope.document = order;
 				loadTransactions();
 				loadInvoices();
+				loadCreditNotes();
 			});
 		}
 		else {
 			loadTransactions();
 			loadInvoices();
+			loadCreditNotes();
 		}
 
 		function loadTransactions() {
@@ -89,6 +92,39 @@
 				REST.call(invoicesLink, { column: [ 'code', 'formattedAmountWithTax', 'creationDate'] })
 					.then(successCallback, errorCallback);
 			}
+		}
+
+		function loadCreditNotes() {
+			var loadQuery = {
+				"model": "Rbs_Order_CreditNote",
+				"where": {
+					"and": [
+						{
+							"op": "eq",
+							"lexp" : {
+								"property" : 'targetIdentifier'
+							},
+							"rexp" : {
+								"value" : scope.document.identifier
+							}
+						}
+					]
+				}
+			};
+
+			var successCallback = function(data) {
+				scope.creditNotes = data.resources;
+			};
+			var errorCallback = function(error) {
+				NotificationCenter.error(
+					i18n.trans('m.rbs.order.admin.invalid_query_order_invoices | ucf'),
+					ErrorFormatter.format(error)
+				);
+				console.error(error);
+			};
+
+			REST.query(loadQuery, {column: [ 'label', 'amount', 'amountNotApplied'] })
+				.then(successCallback, errorCallback);
 		}
 	}
 

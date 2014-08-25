@@ -513,6 +513,23 @@ class OrderPresentation
 	}
 
 	/**
+	 * @return float|null
+	 */
+	public function getTotalCreditNotesAmount()
+	{
+		if (count($this->creditNotes))
+		{
+			$totalCreditNotesAmount = 0.0;
+			foreach ($this->creditNotes as $creditNote)
+			{
+				$totalCreditNotesAmount += $creditNote->getAmount();
+			}
+			return $totalCreditNotesAmount;
+		}
+		return null;
+	}
+
+	/**
 	 * @param float $paymentAmountWithTaxes
 	 * @return $this
 	 */

@@ -274,10 +274,15 @@ class Cart
 						}
 					}
 
-					foreach ($cart->getCreditNotes() as $note)
+					if (count($cart->getCreditNotes()))
 					{
-						$options = $note->getOptions();
-						$options->set('formattedAmount', $pm->formatValue($note->getAmount(), $currency));
+						$totalCreditNotesAmount = 0.0;
+						foreach ($cart->getCreditNotes() as $creditNote)
+						{
+							$creditNote->getOptions()->set('formattedAmount', $pm->formatValue($creditNote->getAmount(), $currency));
+							$totalCreditNotesAmount += $creditNote->getAmount();
+						}
+						$cart->getContext()->set('formattedTotalCreditNotesAmount', $pm->formatValue($totalCreditNotesAmount, $currency));
 					}
 				}
 

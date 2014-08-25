@@ -108,11 +108,21 @@ class GetCurrentCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 						->set('formattedAmountWithTaxes', $pm->formatValue($fee->getAmountWithTaxes(), $currency));
 				}
 
-				foreach ($cart->getCreditNotes() as $note)
+				if (count($cart->getCreditNotes()))
 				{
-					$options = $note->getOptions();
-					$options->set('formattedAmount', $pm->formatValue($note->getAmount(), $currency));
+					$totalCreditNotesAmount = 0.0;
+					foreach ($cart->getCreditNotes() as $creditNote)
+					{
+						$creditNote->getOptions()->set('formattedAmount', $pm->formatValue($creditNote->getAmount(), $currency));
+						$totalCreditNotesAmount += $creditNote->getAmount();
+					}
+					$cart->getContext()->set('formattedTotalCreditNotesAmount', $pm->formatValue($totalCreditNotesAmount, $currency));
 				}
+				else
+				{
+					$cart->getContext()->set('formattedTotalCreditNotesAmount', null);
+				}
+
 			}
 			$cartArray = $cart->toArray();
 			if ($cart->getIdentifier())

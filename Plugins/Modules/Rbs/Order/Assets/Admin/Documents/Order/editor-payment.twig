@@ -86,9 +86,9 @@
 						<td>{{ i18n('m.rbs.order.admin.order_total_amount_with_taxes', ['ucf']) | raw }}</td>
 						<td style="width: 100px;">(= document.totalAmountWithTaxes | number:priceInfo.decimals =)</td>
 					</tr>
-					<tr data-ng-repeat="note in document.creditNotes">
-						<td>(= note.title =)</td>
-						<td style="width: 100px;">(= note.amountWithTaxes | number:priceInfo.decimals =)</td>
+					<tr data-ng-repeat="creditNote in document.creditNotes">
+						<td><a href="" data-ng-href="(= 'Rbs_Order_CreditNote'|rbsURL:'edit':{id:creditNote.id} =)"> {{ i18n('m.rbs.order.admin.order_credit_note_amount', ['ucf', 'lab']) }} (= creditNote.title =) </a></td>
+						<td style="width: 100px;">(= creditNote.amount | number:priceInfo.decimals =)</td>
 					</tr>
 					<tr>
 						<td><strong>{{ i18n('m.rbs.order.admin.order_amount_to_pay', ['ucf']) | raw }}</strong></td>

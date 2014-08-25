@@ -264,5 +264,8 @@
 	},
 	"free_shipping_fee":{
 		"message":"offert"
+	},
+	"credit_notes_total_amounts":{
+		"message":"avoirs"
 	}
 }

@@ -130,8 +130,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach('validCart', [$this, 'onDefaultValidCart'], 5);
 
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 15);
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 10);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 20);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 15);
+		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeCreditNotes'], 10);
 		$eventManager->attach('normalize', [$this, 'onDefaultNormalizePresentation'], 5);
 
 		$eventManager->attach('getNewCart', [$this, 'onDefaultGetNewCart'], 5);
@@ -971,13 +972,26 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 		{
+			$cartIdentifier = $cart->getIdentifier();
 			$tm = $event->getApplicationServices()->getTransactionManager();
 			$dbProvider = $event->getApplicationServices()->getDbProvider();
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			try
 			{
 				$tm->begin();
 
-				$this->getStockManager()->cleanupReservations($cart->getIdentifier());
+				$removedCreditNotes = $cart->removeAllCreditNotes();
+				foreach ($removedCreditNotes as $removedCreditNote)
+				{
+					$creditNoteDocument = $documentManager->getDocumentInstance($removedCreditNote->getId());
+					if ($creditNoteDocument instanceof \Rbs\Order\Documents\CreditNote)
+					{
+						$creditNoteDocument->removeUsageByTargetIdentifier($cartIdentifier);
+						$creditNoteDocument->save();
+					}
+				}
+
+				$this->getStockManager()->cleanupReservations($cartIdentifier);
 
 				$qb = $dbProvider->getNewStatementBuilder();
 				$fb = $qb->getFragmentBuilder();
@@ -1220,6 +1234,132 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							$this->buildTotalAmount($cart, $priceManager);
 						}
 					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultNormalizeCreditNotes(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof Cart)
+		{
+			$cartIdentifier = $cart->getIdentifier();
+			$toSave = [];
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$removedCreditNotes = $cart->removeAllCreditNotes();
+
+			foreach ($removedCreditNotes as $removedCreditNote)
+			{
+				$creditNoteDocument = $documentManager->getDocumentInstance($removedCreditNote->getId());
+				if ($creditNoteDocument instanceof \Rbs\Order\Documents\CreditNote)
+				{
+					$creditNoteDocument->removeUsageByTargetIdentifier($cartIdentifier);
+					$toSave[$creditNoteDocument->getId()] = $creditNoteDocument;
+				}
+			}
+
+			$paymentAmountWithTaxes = $cart->getTotalAmountWithTaxes();
+			$cart->setPaymentAmountWithTaxes($paymentAmountWithTaxes);
+			$ownerId = $cart->getOwnerId();
+			if (!$ownerId)
+			{
+				$ownerId = $cart->getUserId();
+			}
+
+			if (!$ownerId)
+			{
+				if (count($toSave))
+				{
+					$tm = $event->getApplicationServices()->getTransactionManager();
+					try
+					{
+						$tm->begin();
+
+						/** @var $document \Rbs\Order\Documents\CreditNote */
+						foreach ($toSave as $document)
+						{
+							if (count($document->getModifiedPropertyNames()))
+							{
+								$document->save();
+							}
+						}
+
+						$tm->commit();
+					}
+					catch (\Exception $e)
+					{
+						$event->getApplication()->getLogging()->exception($e);
+						$tm->rollBack($e);
+					}
+				}
+				return;
+			}
+
+			$query = $documentManager->getNewQuery('Rbs_Order_CreditNote');
+			$query->andPredicates($query->eq('ownerId', $ownerId), $query->eq('currencyCode', $cart->getCurrencyCode()),
+				$query->gt('currencyCode', 0));
+
+			/** @var $document \Rbs\Order\Documents\CreditNote */
+			foreach ($query->getDocuments() as $document)
+			{
+				if (!isset($toSave[$document->getId()]))
+				{
+					$toSave[$document->getId()] = $document;
+				}
+			}
+
+			if (count($toSave))
+			{
+				ksort($toSave);
+				$tm = $event->getApplicationServices()->getTransactionManager();
+				try
+				{
+					$tm->begin();
+
+					foreach ($toSave as $document)
+					{
+						$baseCreditNote = null;
+						$amountNotApplied = $document->getAmountNotApplied();
+						if ($paymentAmountWithTaxes > 0 && $amountNotApplied > 0)
+						{
+							if ($paymentAmountWithTaxes > $amountNotApplied)
+							{
+								$amount = -$amountNotApplied;
+								$paymentAmountWithTaxes += $amount;
+							}
+							else
+							{
+								$amount = -$paymentAmountWithTaxes;
+								$paymentAmountWithTaxes = 0;
+							}
+							$document->setUsageByTargetIdentifier($cartIdentifier, $amount);
+							$baseCreditNote = new \Rbs\Commerce\Process\BaseCreditNote();
+							$baseCreditNote->setId($document->getId());
+							$baseCreditNote->setAmount($amount);
+							$baseCreditNote->setTitle($document->getCode());
+						}
+
+						if (count($document->getModifiedPropertyNames()))
+						{
+							$document->save();
+						}
+
+						if ($baseCreditNote)
+						{
+							$cart->appendCreditNote($baseCreditNote);
+							$cart->setPaymentAmountWithTaxes($paymentAmountWithTaxes);
+						}
+					}
+					$tm->commit();
+				}
+				catch (\Exception $e)
+				{
+					$event->getApplication()->getLogging()->exception($e);
+					$tm->rollBack($e);
 				}
 			}
 		}
