@@ -484,8 +484,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			return;
 		}
 
-		$user = $documentManager->getDocumentInstance($user->getId());
-		if (!($user instanceof \Rbs\User\Documents\User))
+		$userDocument = $documentManager->getDocumentInstance($user->getId());
+		if (!($userDocument instanceof \Rbs\User\Documents\User))
 		{
 			return;
 		}
@@ -496,9 +496,27 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$tm->begin();
 
-			$user->setMeta('Rbs_Geo_DefaultAddressId', $address->getId());
-			$user->saveMetas();
-
+			$userDocument->setMeta('Rbs_Geo_DefaultAddressId', $address->getId());
+			$userProfile = $event->getApplicationServices()->getProfileManager()->loadProfile($user, 'Rbs_User');
+			if ($userProfile instanceof \Rbs\User\Profile\Profile)
+			{
+				$addressFieldsValue = $address->getFields();
+				$update = false;
+				foreach ($userProfile->getPropertyNames() as $propertyName)
+				{
+					$profileValue = $userProfile->getPropertyValue($propertyName);
+					if (isset($addressFieldsValue[$propertyName]) && ($profileValue === null || $profileValue === ''))
+					{
+						$userProfile->setPropertyValue($propertyName, $addressFieldsValue[$propertyName]);
+						$update = true;
+					}
+				}
+				if ($update)
+				{
+					$event->getApplicationServices()->getProfileManager()->saveProfile($user, $userProfile);
+				}
+			}
+			$userDocument->saveMetas();
 			$tm->commit();
 		}
 		catch (\Exception $e)

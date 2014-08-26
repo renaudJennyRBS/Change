@@ -727,6 +727,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			$context['decimals'] = $nf->getAttribute(\NumberFormatter::FRACTION_DIGITS);
 			$context['formattedPaymentAmountWithTaxes'] = $nf->formatCurrency($order->getPaymentAmountWithTaxes(), $currency);
 			$documentResult->setProperty('context', $context);
+			$documentResult->setProperty('identifier', $order->getIdentifier());
 
 			$taxes = [];
 			foreach ($order->getTaxes() as $tax)

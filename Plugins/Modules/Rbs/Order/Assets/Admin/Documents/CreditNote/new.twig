@@ -14,6 +14,14 @@
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
+
+				<rbs-field-picker property="ownerId" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'ownerId'), ['ucf']) }}"
+						accepted-model="Rbs_User_User" value-ids="true">
+				</rbs-field-picker>
+
+				<rbs-field-text property="targetIdentifier" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'targetIdentifier'), ['ucf']) }}">
+				</rbs-field-text>
+
 				<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'code'), ['ucf']) }}">
 				</rbs-field-text>
 

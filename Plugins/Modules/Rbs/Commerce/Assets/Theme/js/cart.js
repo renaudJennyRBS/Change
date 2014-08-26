@@ -644,7 +644,7 @@
 
 		scope.prepareCartStep = function() {
 			scope.setCurrentStep(scope.getNextStep());
-		}
+		};
 
 		/**
 		 * Information step

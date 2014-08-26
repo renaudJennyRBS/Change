@@ -451,5 +451,21 @@
 	},
 	"order_no_shipment_yet":{
 		"message":"Cette commande n'a encore donné lieu à aucune expédition."
+	},
+	"order_add_creditnote":{
+		"message":"ajouter un avoir"
+	},
+	"order_no_credit_notes_yet":{
+		"message":"Cette commande n'est liée à aucun avoir."
+	},
+	"order_credit_note_amount":{
+		"message":"avoir"
+	},
+	"credit_note_usage":{
+		"message":"Utilisation de l'avoir"
+	},
+	"credit_note_amount":{
+		"message":"montant"
 	}
+
 }

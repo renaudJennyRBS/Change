@@ -220,13 +220,11 @@
 							<td>{{ i18n('m.rbs.commerce.front.total_amount_with_tax', ['ucf']) }}</td>
 							<td class="price">{{ formatPrice(order.totalAmountWithTaxes, order.currencyCode) }}</td>
 						</tr>
-					{% endif %}
-					{% for creditNotes in order.creditNotes %}
 						<tr>
-							<td>{{ note.title }}</td>
-							<td class="price">{{ formatPrice(note.amountWithTaxes, order.currencyCode) }}</td>
+							<td>{{ i18n('m.rbs.commerce.front.credit_notes_total_amounts', ['ucf']) }}</td>
+							<td class="price">{{ formatPrice(order.totalCreditNotesAmount, order.currencyCode) }}</td>
 						</tr>
-					{% endfor %}
+					{% endif %}
 					<tr>
 						<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
 						<td class="price">{{ formatPrice(order.paymentAmountWithTaxes, order.currencyCode) }}</td>

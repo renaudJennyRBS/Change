@@ -516,6 +516,19 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 					}
 				}
 
+				if (is_array($order->getCreditNotes()))
+				{
+					foreach($order->getCreditNotes() as $creditNoteData)
+					{
+						$document = $documentManager->getDocumentInstance($creditNoteData->getId());
+						if ($document instanceof \Rbs\Order\Documents\CreditNote)
+						{
+							$document->renameTargetIdentifier($cart->getIdentifier(), $orderIdentifier);
+							$document->save();
+						}
+					}
+				}
+
 				$commerceServices = $event->getServices('commerceServices');
 				if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 				{

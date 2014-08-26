@@ -47,5 +47,17 @@
 			"selectModel": "{\"name\":\"Rbs_Discount_Coupon\"}"
 		},
 		"directiveName": "rbs-document-filter-property-document"
+	},
+	{
+		"name": "hasCreditNote",
+		"parameters": {
+			"propertyName": "creditNotes"
+		},
+		"config": {
+			"group": "m.rbs.admin.admin.properties",
+			"listLabel": "m.rbs.commerce.admin.has_credit_note_filter",
+			"label": "m.rbs.commerce.admin.has_credit_note"
+		},
+		"directiveName": "rbs-commerce-filter-has-credit-note"
 	}
 ]
