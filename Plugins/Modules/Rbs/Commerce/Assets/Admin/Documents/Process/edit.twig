@@ -23,7 +23,7 @@
 					<rbs-quick-actions></rbs-quick-actions>
 					<rbs-column name="model" label="{{ i18nAttr('c.documents.model', ['ucf']) }}" >(= doc.modelName =)</rbs-column>
 					<rbs-column name="label" primary="true" label="{{ i18nAttr('c.documents.label', ['ucf']) }}">
-						<a href="javascript:;" data-ng-click="extend.cascadeEdit(doc)">(= doc.label =)</a>
+						<a href="" data-ng-href="(= doc | rbsURL:'edit' =)">(= doc.label =)</a>
 					</rbs-column>
 					<rbs-column name="actions" width="88" label="{{ i18nAttr('m.rbs.admin.admin.sort_actions', ['ucf']) }}">
 						<rbs-kb-switch>

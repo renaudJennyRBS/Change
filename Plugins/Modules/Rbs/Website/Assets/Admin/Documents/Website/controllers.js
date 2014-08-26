@@ -58,7 +58,7 @@
 		$scope.websites = [];
 
 		REST.treeChildren('Rbs/Website').then(function (root) {
-			REST.treeChildren(root.resources[0]).then(function (websites) {
+			REST.treeChildren(root.resources[0], {limit:100,offset:0}).then(function (websites) {
 				$scope.websites = websites.resources;
 				for (var i=0 ; i < websites.resources.length; i++) {
 					if (websites.resources[i].id == $scope.currentWebsiteId) {
@@ -152,7 +152,7 @@
 		}
 
 		function loadNode(nodeInfo) {
-			return REST.treeChildren(nodeInfo.document, {limit: 100, column:['functions','title', 'website']}).then(
+			return REST.treeChildren(nodeInfo.document, {limit:100,offset:0, column:['functions','title', 'website']}).then(
 				// Success
 				function (results) {
 					// Children in tree
@@ -436,7 +436,7 @@
 		$scope.ordering = function(doc) {
 			var url = 'Rbs/Website/Documents/Website/section-ordering.twig';
 
-			REST.treeChildren(doc).then(
+			REST.treeChildren(doc, {limit:100,offset:0}).then(
 				// Success
 				function (results) {
 					// Children in tree

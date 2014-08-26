@@ -1,4 +1,80 @@
 {
+	"/Rbs/Commerce/Process/:orderProcessId/Coupon/": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/list.twig",
+			"labelKey": "m.rbs.discount.admin.coupon_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Coupon/:id": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/edit.twig",
+			"labelKey": "m.rbs.discount.documents.coupon | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Coupon/:id/translate/:LCID": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Coupon/new": {
+		"model": "Rbs_Discount_Coupon",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Coupon/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Discount/": {
+		"model": "Rbs_Discount_Discount",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/list.twig",
+			"labelKey": "m.rbs.discount.admin.discount_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Discount/:id": {
+		"model": "Rbs_Discount_Discount",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/edit.twig",
+			"labelKey": "m.rbs.discount.documents.discount | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Discount/:id/translate/:LCID": {
+		"model": "Rbs_Discount_Discount",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Process/:orderProcessId/Discount/new": {
+		"model": "Rbs_Discount_Discount",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Discount/Discount/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Discount/": {
 		"module": "Rbs_Discount",
 		"name": "home",
@@ -31,82 +107,6 @@
 			"redirectTo": "/Rbs/Commerce/Process/:id",
 			"labelKey": "m.rbs.commerce.documents.process | ucf",
 			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Coupon/": {
-		"model": "Rbs_Discount_Coupon",
-		"name": "list",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/list.twig",
-			"labelKey": "m.rbs.discount.admin.coupon_list | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id": {
-		"model": "Rbs_Discount_Coupon",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/edit.twig",
-			"labelKey": "m.rbs.discount.documents.coupon | ucf",
-			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Coupon/:id/translate/:LCID": {
-		"model": "Rbs_Discount_Coupon",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Coupon/new": {
-		"model": "Rbs_Discount_Coupon",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Coupon/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Discount/": {
-		"model": "Rbs_Discount_Discount",
-		"name": "list",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/list.twig",
-			"labelKey": "m.rbs.discount.admin.discount_list | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Discount/:id": {
-		"model": "Rbs_Discount_Discount",
-		"name": "edit",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/edit.twig",
-			"labelKey": "m.rbs.discount.documents.discount | ucf",
-			"labelId": "id"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Discount/:id/translate/:LCID": {
-		"model": "Rbs_Discount_Discount",
-		"name": "translate",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/translate.twig",
-			"controller": "RbsChangeTranslateEditorController",
-			"labelKey": "m.rbs.admin.admin.translation | ucf"
-		},
-		"auto": false
-	},
-	"/Rbs/Discount/Process/:orderProcessId/Discount/new": {
-		"model": "Rbs_Discount_Discount",
-		"name": "new",
-		"rule": {
-			"templateUrl": "Document/Rbs/Discount/Discount/new.twig",
-			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
 		},
 		"auto": false
 	}

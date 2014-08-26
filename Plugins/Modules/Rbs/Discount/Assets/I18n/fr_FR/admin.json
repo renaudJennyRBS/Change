@@ -25,5 +25,20 @@
 	},
 	"select_discount_type":{
 		"message":"sélectionner un type de réduction"
+	},
+	"type_rows_fixed":{
+		"message":"Montant fixe sur les lignes"
+	},
+	"discount_rows_fixed_amount":{
+		"message":"montant"
+	},
+	"discount_rows_fixed_with_tax":{
+		"message":"montant avec taxes"
+	},
+	"type_rows_percent":{
+		"message":"Pourcentage sur les lignes"
+	},
+	"discount_rows_percent_value":{
+		"message":"pourcentage"
 	}
 }

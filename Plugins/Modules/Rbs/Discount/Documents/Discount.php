@@ -96,6 +96,20 @@ class Discount extends \Compilation\Rbs\Discount\Documents\Discount
 						$event->setParam('modifier', $modifier);
 					}
 					break;
+				case 'rbs-discount-rows-fixed':
+					if ($value instanceof \Rbs\Commerce\Cart\Cart)
+					{
+						$modifier = new \Rbs\Discount\Modifiers\RowsFixedDiscount($discount, $value, $commerceServices->getPriceManager());
+						$event->setParam('modifier', $modifier);
+					}
+					break;
+				case 'rbs-discount-rows-percent':
+					if ($value instanceof \Rbs\Commerce\Cart\Cart)
+					{
+						$modifier = new \Rbs\Discount\Modifiers\RowsPercentDiscount($discount, $value, $commerceServices->getPriceManager());
+						$event->setParam('modifier', $modifier);
+					}
+					break;
 			}
 		}
 	}

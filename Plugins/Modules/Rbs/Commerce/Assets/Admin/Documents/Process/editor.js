@@ -36,9 +36,7 @@
 							}
 						});
 						scope.fieldManager.remove(index);
-					},
-
-					cascadeEdit: editorCtrl.registerEditCascade('modifiersOrder')
+					}
 				};
 			}
 		}
