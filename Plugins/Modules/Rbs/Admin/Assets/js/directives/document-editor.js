@@ -35,8 +35,6 @@
 	 * (these methods can be called from the child Directives that require this one):
 	 *
 	 * - `prepareContext()`
-	 * - `registerCreateCascade()`
-	 * - `registerEditCascade()`
 	 * - `submit()`
 	 * - `prepareCreation()`
 	 * - `prepareEdition()`
@@ -218,36 +216,6 @@
 						return document;
 					}
 					return null;
-				}
-
-				function registerCreateCascade(propertyName, model, title) {
-					return function() {
-						var property = $scope.modelInfo.properties[propertyName];
-						var params = {
-							selector: true,
-							property: propertyName,
-							propertyType: property.type,
-							model: model,
-							label: title,
-							document: $scope.document,
-							ngModel: 'document.' + propertyName
-						};
-						var targetURL = UrlManager.getUrl(model, null, 'new');
-						Navigation.startSelectionContext(targetURL, 'editor.' + propertyName, params);
-					};
-				}
-
-				function registerEditCascade(propertyName, title) {
-					return function(doc) {
-						var params = {
-							property: propertyName,
-							label: title,
-							document: $scope.document,
-							ngModel: 'document.' + propertyName
-						};
-						var targetURL = UrlManager.getUrl(doc);
-						Navigation.startSelectionContext(targetURL, null, params);
-					};
 				}
 
 				//-----------------------------------------------//
@@ -871,8 +839,6 @@
 
 				return {
 					prepareContext: prepareContext,
-					registerCreateCascade: registerCreateCascade,
-					registerEditCascade: registerEditCascade,
 
 					submit: submit,
 					prepareCreation: prepareCreation,
