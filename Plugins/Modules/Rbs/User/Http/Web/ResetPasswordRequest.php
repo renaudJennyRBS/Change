@@ -67,7 +67,6 @@ class ResetPasswordRequest extends \Change\Http\Web\Actions\AbstractAjaxAction
 					}
 
 					// Send email
-					// Send a mail to confirm email.
 					$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 					$LCID = $event->getRequest()->getLCID();

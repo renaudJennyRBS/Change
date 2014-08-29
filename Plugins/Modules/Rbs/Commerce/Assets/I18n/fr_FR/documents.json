@@ -11,6 +11,9 @@
 	"process_paymentconnectors":{
 		"message":"modes de paiement"
 	},
+	"process_sendmailorderconfirm":{
+		"message":"mail de confirmation de commande"
+	},
 	"fee":{
 		"message":"frais"
 	},
