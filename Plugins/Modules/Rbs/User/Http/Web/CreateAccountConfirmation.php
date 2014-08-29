@@ -182,6 +182,38 @@ class CreateAccountConfirmation extends \Change\Http\Web\Actions\AbstractAjaxAct
 			throw $tm->rollBack($e);
 		}
 
+		// Send email to confirm creation
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+		$LCID = $event->getRequest()->getLCID();
+
+		/** @var $website \Rbs\Website\Documents\Website */
+		$website = $event->getWebsite();
+
+		$documentManager->pushLCID($LCID);
+		$urlManager = $website->getUrlManager($LCID);
+
+		$uri = $urlManager->getByFunction('Rbs_User_Login');
+		$connexionUrl = '';
+		if ($uri != null)
+		{
+			$connexionUrl = $uri->toString();
+		}
+
+		/* @var \Rbs\Generic\GenericServices $genericServices */
+		$genericServices = $event->getServices('genericServices');
+		$mailManager = $genericServices->getMailManager();
+		try
+		{
+			$mailManager->send('rbs_user_account_valid', $website, $LCID, $user->getEmail(),
+				['website' => $website->getTitle(), 'link' => $connexionUrl]);
+		}
+		catch (\RuntimeException $e)
+		{
+			$event->getApplicationServices()->getLogging()->info($e);
+		}
+		$documentManager->popLCID();
+
 		return $user;
 	}
 }
