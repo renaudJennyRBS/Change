@@ -202,7 +202,7 @@ class WebsiteResolver
 	protected function getCache($application)
 	{
 		$options = array('cacheDir' => $application->getWorkspace()->cachePath(),
-			'namespace' => 'Rbs_Website');
+			'namespace' => 'Rbs_Website', 'umask' => false, 'dirPermission' => false, 'filePermission' => false);
 		$cache = new \Zend\Cache\Storage\Adapter\Filesystem($options);
 		$plugin = new \Zend\Cache\Storage\Plugin\ExceptionHandler(array('throw_exceptions' => false));
 		$cache->addPlugin($plugin);

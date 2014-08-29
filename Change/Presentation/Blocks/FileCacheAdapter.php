@@ -27,7 +27,7 @@ class FileCacheAdapter
 			\Change\Stdlib\File::mkdir($cacheDir);
 
 			$cacheOptions = new \Zend\Cache\Storage\Adapter\FilesystemOptions(
-				array('cache_dir'=> $cacheDir . DIRECTORY_SEPARATOR));
+				array('cache_dir'=> $cacheDir . DIRECTORY_SEPARATOR, 'umask' => false, 'dirPermission' => false, 'filePermission' => false));
 			$cache->setOptions($cacheOptions);
 
 			$cachePlugin = new \Zend\Cache\Storage\Plugin\Serializer();
