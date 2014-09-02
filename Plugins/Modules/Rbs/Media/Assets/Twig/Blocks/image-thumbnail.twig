@@ -1,5 +1,7 @@
 <div class="thumbnail">
-	<img src="{{ src }}" alt="{{ alt }}"{% if parameters.fillSpace %} style="width: 100%;"{% endif %} />
+	<div{% if parameters.alignment != 'fill' %} class="text-{{ parameters.alignment }}"{% endif %}>
+		<img src="{{ src }}" alt="{{ alt }}" style="{% if parameters.alignment != 'fill' %}max-{% endif %}width: 100%;" />
+	</div>
 	{% if parameters.thumbnailTitle or parameters.thumbnailText %}
 		<div class="caption">
 			{% if parameters.thumbnailTitle %}<h3>{{ parameters.thumbnailTitle }}</h3>{% endif %}

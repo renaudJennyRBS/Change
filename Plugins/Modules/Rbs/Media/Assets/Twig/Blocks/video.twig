@@ -1,1 +1,3 @@
-<video src="{{ src }}" preload="auto" controls="controls" style="{% if not parameters.fillSpace %}max-{% endif %}width: 100%;">{{ alt }}</video>
+<div{% if parameters.alignment != 'fill' %} class="text-{{ parameters.alignment }}"{% endif %}>
+	<video src="{{ src }}" preload="auto" controls="controls" style="{% if parameters.alignment != 'fill' %}max-{% endif %}width: 100%;">{{ alt }}</video>
+</div>
