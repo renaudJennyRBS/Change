@@ -16,14 +16,14 @@
 	"minimum-stability":"dev",
 	"require": {
 		"php": ">=5.4.0",
-		"zendframework/zendframework": "dev-master",
+		"zendframework/zendframework": "2.3.2",
 		"zendframework/zendoauth": "2.0.2",
-		"twig/twig": "1.15.1",
-		"ruflin/elastica": "1.1.1.1",
+		"twig/twig": "1.16.0",
+		"ruflin/elastica": "1.3.0.0",
 		"ircmaxell/password-compat": "1.0.3",
 		"michelf/php-markdown": "1.4.1",
 		"kriswallsmith/assetic":"1.1.2",
-		"oyejorge/less.php": "1.7.0.1",
+		"oyejorge/less.php": "1.7.0.2",
 		"mrclay/minify": "2.2.0"
 	},
 	"replace":{
