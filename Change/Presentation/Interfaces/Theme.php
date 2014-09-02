@@ -32,6 +32,11 @@ interface Theme
 
 	/**
 	 * @param string $moduleName
+	 */
+	public function removeTemplatesContent($moduleName);
+
+	/**
+	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
 	 * @return void
