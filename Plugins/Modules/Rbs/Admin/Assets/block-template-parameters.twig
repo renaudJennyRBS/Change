@@ -4,7 +4,9 @@
 	<div class="form-group">
 		<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ param.label }}</label>
 		<div class="controls (= controlsClass =)">
-			{% if param.type == 'Integer' %}
+			{% if param.collectionCode %}
+				<select id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" class="form-control" rbs-items-from-collection="{{ param.collectionCode }}"></select>
+			{% elseif param.type == 'Integer' %}
 				<input type="number" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
 			{% elseif param.type == 'String' %}
 				<input type="text" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" />
@@ -18,8 +20,6 @@
 				<textarea class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}"></textarea>
 			{% elseif param.type == 'RichText' %}
 				<rbs-rich-text-input{% if param.required %} required="required"{% endif %} id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}"></rbs-rich-text-input>
-			{% elseif param.type == 'Collection' %}
-				<select id="{{ inputId }}" name="{{ param.name }}" ng-model="blockParameters.{{ param.name }}" class="form-control" rbs-items-from-collection="{{ param.collectionCode }}"></select>
 			{% elseif param.type == 'Document' or param.type == 'DocumentId' %}
 				<rbs-document-picker-single property-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
 						ng-model="blockParameters.{{ param.name }}"
