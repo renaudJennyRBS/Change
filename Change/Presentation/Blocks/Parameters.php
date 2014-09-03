@@ -8,8 +8,6 @@
  */
 namespace Change\Presentation\Blocks;
 
-use Change\Presentation\Blocks\Standard\Block;
-
 /**
  * @name \Change\Presentation\Blocks\Parameters
  */
@@ -24,12 +22,12 @@ class Parameters
 	/**
 	 * @var ParameterMeta[]
 	 */
-	protected $parametersMeta = array();
+	protected $parametersMeta = [];
 
 	/**
 	 * @var array
 	 */
-	protected $parameters = array();
+	protected $parameters = [];
 
 
 	function __construct($name)
@@ -310,6 +308,6 @@ class Parameters
 		{
 			$array[$parameterMeta->getName()] = $this->getParameter($parameterMeta->getName());
 		}
-		return $array;
+		return array_merge($array, $this->parameters);
 	}
 }

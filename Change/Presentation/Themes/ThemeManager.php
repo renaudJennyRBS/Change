@@ -195,18 +195,30 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function installPluginTemplates($plugin, $theme = null)
 	{
-		$path = $plugin->getTwigAssetsPath();
-		if (!$path)
-		{
-			return;
-		}
 		if ($theme === null)
 		{
+			if ($plugin->isTheme())
+			{
+				return;
+			}
 			$theme = $this->getDefault();
 		}
 		else
 		{
 			$theme->setThemeManager($this);
+			$theme->removeTemplatesContent(null);
+		}
+
+		$moduleName = $plugin->isTheme() ? null : $plugin->getName();
+		if ($moduleName)
+		{
+			$theme->removeTemplatesContent($moduleName);
+		}
+
+		$path = $plugin->getTwigAssetsPath();
+		if (!$path)
+		{
+			return;
 		}
 
 		$includedExtensions = ['twig'];
@@ -220,7 +232,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 				&& in_array($current->getExtension(), $includedExtensions)
 			)
 			{
-				$moduleName = $plugin->isTheme() ? null : $plugin->getName();
 				$theme->installTemplateContent($moduleName, $current->getSubPathname(),
 					file_get_contents($current->getPathname()));
 			}

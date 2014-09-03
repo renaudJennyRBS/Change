@@ -159,6 +159,15 @@ class DefaultTheme implements Theme
 
 	/**
 	 * @param string $moduleName
+	 */
+	public function removeTemplatesContent($moduleName)
+	{
+		$basePath = $this->getWorkspace()->composePath($this->getTemplateBasePath(), $moduleName);
+		\Change\Stdlib\File::rmdir($basePath);
+	}
+
+	/**
+	 * @param string $moduleName
 	 * @param string $pathName
 	 * @param string $content
 	 * @return void
