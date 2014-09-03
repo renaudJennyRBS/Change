@@ -10,13 +10,11 @@
 		</rbs-document-filter-panel>
 
 		<div class="add-elements-bar">
-			<div class="add-elements-bar">
-				{% for newDocumentLink in attributes['newDocumentLinks'] %}
-					<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
-						{{ newDocumentLink.label }}
-					</a>
-				{% endfor %}
-			</div>
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
 		</div>
 
 		<rbs-document-list data-dlid="DLRbsCatalogProduct" model="Rbs_Catalog_Product" publishable="true" filter-collection="filter">

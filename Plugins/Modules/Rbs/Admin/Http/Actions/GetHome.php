@@ -50,7 +50,6 @@ class GetHome
 		$devMode = $event->getApplication()->inDevelopmentMode();
 		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
 		{
-
 			$resourceDirectoryPath = $devMode ? $manager->getResourceDirectoryPath() : null;
 			$resourceBaseUrl = $manager->getResourceBaseUrl();
 
