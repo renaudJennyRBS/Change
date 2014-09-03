@@ -9,7 +9,7 @@
 namespace Rbs\Website\RichText;
 
 /**
- * @name \Rbs\Website\RichText\MarkdownParser
+ * @name \Rbs\Website\RichText\PostProcessor
  */
 class PostProcessor
 {

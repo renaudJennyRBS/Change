@@ -120,7 +120,7 @@ class WysiwygHtmlParser implements ParserInterface
 	 */
 	protected function replaceHref($rawText)
 	{
-		if (!preg_match_all('/<a\s[^>]+>[^<]*<\/a>/i', $rawText, $matches))
+		if (!preg_match_all('/<a\s[^>]+>.*<\/a>/Usi', $rawText, $matches))
 		{
 			return $rawText;
 		}
@@ -138,7 +138,6 @@ class WysiwygHtmlParser implements ParserInterface
 			if ($document instanceof \Rbs\Media\Documents\File)
 			{
 				$href = $this->getDownloadUrl($document);
-
 				$itemInfo = $document->getItemInfo();
 				$size = $this->applicationServices->getI18nManager()->transFileSize($itemInfo->getSize());
 				$suffix = '  [' . strtoupper($itemInfo->getExtension()) . ' — ' . $size . ']';
@@ -162,8 +161,7 @@ class WysiwygHtmlParser implements ParserInterface
 				$replaceLink = str_replace($hrefMatch[0], '', $replaceLink);
 			}
 
-			$replaceLink = str_replace($match[0], $match[0] . ' href="' . $href . '"',
-				$replaceLink) . $suffix;
+			$replaceLink = str_replace($match[0], $match[0] . ' href="' . $href . '"', $replaceLink) . $suffix;
 			$rawText = str_replace($link, $replaceLink, $rawText);
 		}
 		return $rawText;
