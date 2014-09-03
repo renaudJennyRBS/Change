@@ -50,6 +50,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Generic\Commands\InitializeWebsite())->getGenericSettingsStructures($event);
 		};
 		$events->attach('getGenericSettingsStructures', $callback, 5);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\User\Admin\SearchDocuments())->execute($event);
+		};
+		$events->attach('searchDocuments', $callback, 10);
 	}
 
 	/**
