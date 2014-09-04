@@ -94,7 +94,10 @@ class EditAccount extends \Change\Presentation\Blocks\Standard\Block
 			if ($collection)
 			{
 				$item = $collection->getItemByValue($data['titleCode']);
-				$data['titleCodeTitle'] = $item->getTitle();
+				if ($item != null)
+				{
+					$data['titleCodeTitle'] = $item->getTitle();
+				}
 			}
 		}
 

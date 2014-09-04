@@ -250,11 +250,18 @@
 	RbsCatalogProductItemController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
-	function RbsCatalogProductSetController(scope, $http, $compile) {
+	function RbsCatalogProductSetController(scope, $http, $compile, $rootScope) {
+		scope.pictogramFormats = {};
+		scope.visualFormats = {};
+		scope.product = {};
 		scope.productLoading = false;
+
+		scope.addLine = function() {
+			addLine(scope, $http, $compile, $rootScope);
+		};
 	}
 
-	RbsCatalogProductSetController.$inject = ['$scope', '$http', '$compile'];
+	RbsCatalogProductSetController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
 	app.controller('RbsCatalogProductSetController', RbsCatalogProductSetController);
 
 	function RbsCatalogVariantProductController(scope, $http, $compile, $rootScope) {
