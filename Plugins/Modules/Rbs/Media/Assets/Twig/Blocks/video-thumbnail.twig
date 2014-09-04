@@ -1,5 +1,7 @@
 <div class="thumbnail">
-	<video src="{{ src }}" preload="auto" controls="controls"{% if parameters.fillSpace %} style="width: 100%;"{% endif %}>{{ alt }}</video>
+	<div{% if parameters.alignment != 'fill' %} class="text-{{ parameters.alignment }}"{% endif %}>
+		<video src="{{ src }}" preload="auto" controls="controls" style="{% if parameters.alignment != 'fill' %}max-{% endif %}width: 100%;">{{ alt }}</video>
+	</div>
 	{% if parameters.thumbnailTitle or parameters.thumbnailText %}
 		<div class="caption">
 			{% if parameters.thumbnailTitle %}<h3>{{ parameters.thumbnailTitle }}</h3>{% endif %}

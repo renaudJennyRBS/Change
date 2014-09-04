@@ -42,6 +42,14 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Commerce\Commands\InitializeOrderProcess())->getGenericSettingsStructures($event);
 		};
 		$events->attach('getGenericSettingsStructures', $callback, 5);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Order\Admin\SearchDocuments())->execute($event);
+			(new \Rbs\Payment\Admin\SearchDocuments())->execute($event);
+			(new \Rbs\Stock\Admin\SearchDocuments())->execute($event);
+		};
+		$events->attach('searchDocuments', $callback, 10);
 	}
 
 	/**

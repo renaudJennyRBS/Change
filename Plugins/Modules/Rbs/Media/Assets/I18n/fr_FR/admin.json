@@ -56,9 +56,6 @@
 	"block_title":{
 		"message":"titre du bloc"
 	},
-	"block_fill_space":{
-		"message":"remplir l'espace (agrandir si nécessaire)"
-	},
 	"block_thumbnail_title":{
 		"message":"titre de la légende"
 	},
@@ -67,6 +64,24 @@
 	},
 	"block_items_per_row":{
 		"message":"éléments par lignes (entre 1 et 4)"
+	},
+	"block_image_alignment":{
+		"message":"alignement de l'image"
+	},
+	"block_video_alignment":{
+		"message":"alignement de la video"
+	},
+	"block_alignment_left":{
+		"message":"à gauche"
+	},
+	"block_alignment_right":{
+		"message":"à droite"
+	},
+	"block_alignment_center":{
+		"message":"au centre"
+	},
+	"block_alignment_fill":{
+		"message":"remplir l'espace (agrandir si nécessaire)"
 	},
 	"template_thumbnail_label":{
 		"message":"avec légende"

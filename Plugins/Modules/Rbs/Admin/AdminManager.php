@@ -965,6 +965,11 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultSearchDocuments($event)
 	{
+		if (is_array($event->getParam('documents')))
+		{
+			return;
+		}
+
 		$model = $event->getApplicationServices()->getModelManager()->getModelByName($event->getParam('modelName'));
 		if (!$model || $model->isStateless())
 		{

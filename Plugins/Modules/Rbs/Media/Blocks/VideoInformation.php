@@ -25,8 +25,9 @@ class VideoInformation extends \Change\Presentation\Blocks\Information
 		$this->setLabel($i18nManager->trans('m.rbs.media.admin.video_label', $ucf));
 		$this->addInformationMetaForDetailBlock('Rbs_Media_Video', $i18nManager);
 
-		$this->addInformationMeta('fillSpace', \Change\Documents\Property::TYPE_BOOLEAN, false, false)
-			->setLabel($i18nManager->trans('m.rbs.media.admin.block_fill_space', $ucf));
+		$this->addInformationMeta('alignment', \Change\Documents\Property::TYPE_STRING, false, 'left')
+			->setCollectionCode('Rbs_Media_BlockAlignments')
+			->setLabel($i18nManager->trans('m.rbs.media.admin.block_video_alignment', $ucf));
 
 		$templateInformation = $this->addTemplateInformation('Rbs_Media', 'video-thumbnail.twig');
 		$templateInformation->setLabel($i18nManager->trans('m.rbs.media.admin.template_thumbnail_label', ['ucf']));

@@ -82,6 +82,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Theme_WebsiteIds':
 					(new \Rbs\Theme\Collection\Collections())->addWebsiteIds($event);
 					break;
+				case 'Rbs_Media_BlockAlignments':
+					(new \Rbs\Media\Collection\Collections())->addBlockAlignments($event);
+					break;
 				case 'Rbs_Elasticsearch_Collection_Clients':
 					(new \Rbs\Elasticsearch\Collection\Collections())->addClients($event);
 					break;
