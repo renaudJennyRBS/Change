@@ -130,6 +130,7 @@ class Resolver extends BaseResolver
 				$matches)
 			)
 			{
+				$request = $event->getRequest();
 				$event->setParam('action', array($matches[1], $matches[2], $matches[3]));
 				$action = function ($event)
 				{
@@ -137,10 +138,13 @@ class Resolver extends BaseResolver
 					$action->execute($event);
 				};
 				$event->setAction($action);
-				$event->setAuthorization(function ()
+				if (!$request->getPost('anonymous', $request->getQuery('anonymous')))
 				{
-					return true;
-				});
+					$event->setAuthorization(function ()
+					{
+						return true;
+					});
+				}
 				return;
 			}
 
