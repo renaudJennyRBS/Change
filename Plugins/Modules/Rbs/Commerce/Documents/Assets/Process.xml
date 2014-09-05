@@ -7,5 +7,6 @@
 		<property name="shippingModes" type="DocumentArray" document-type="Rbs_Shipping_Mode" />
 		<property name="modifiersOrderData" type="JSON" />
 		<property name="sendMailOrderConfirm" type="Boolean" default-value="true"/>
+		<property name="sendMailOrderCanceled" type="Boolean" default-value="true"/>
 	</properties>
 </document>
