@@ -5,12 +5,12 @@
 			"Theme/Rbs/Base/css/bootstrap-complements.css"
 		],
 		"jsAssets" : [
-			"Theme/Rbs/Base/js/jquery-1.10.2.min.js",
+			"Theme/Rbs/Base/js/jquery-2.1.1.min.js",
 			"Theme/Rbs/Base/js/bootstrap.min.js",
 			"Theme/Rbs/Base/js/bootstrap-complements.js",
-			"Theme/Rbs/Base/js/angular-1.2.12/angular.min.js",
-			"Theme/Rbs/Base/js/angular-1.2.12/angular-cookies.min.js",
-			"Theme/Rbs/Base/js/angular-1.2.12/angular-animate.min.js",
+			"Theme/Rbs/Base/js/angular-1.2.23/angular.min.js",
+			"Theme/Rbs/Base/js/angular-1.2.23/angular-cookies.min.js",
+			"Theme/Rbs/Base/js/angular-1.2.23/angular-animate.min.js",
 			"Theme/Rbs/Base/js/rbschangeapp.js"
 		]
 	}
