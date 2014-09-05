@@ -399,7 +399,7 @@ class Extension implements \Twig_ExtensionInterface
 	}
 
 	/**
-	 * @param \Change\Documents\RichtextProperty $richText
+	 * @param \Change\Documents\RichtextProperty|array $richText
 	 * @return string
 	 */
 	public function richText($richText)
@@ -410,6 +410,15 @@ class Extension implements \Twig_ExtensionInterface
 				'website' => $this->getUrlManager()->getWebsite(),
 				'currentURI' => $this->getUrlManager()->getSelf()
 			);
+			return $this->getApplicationServices()->getRichTextManager()->render($richText, 'Website', $context);
+		}
+		elseif (is_array($richText) && isset($richText['e']) && isset($richText['t']) && array_key_exists('h', $richText))
+		{
+			$context = array(
+				'website' => $this->getUrlManager()->getWebsite(),
+				'currentURI' => $this->getUrlManager()->getSelf()
+			);
+			$richText = new \Change\Documents\RichtextProperty($richText);
 			return $this->getApplicationServices()->getRichTextManager()->render($richText, 'Website', $context);
 		}
 		return htmlspecialchars(strval($richText));
