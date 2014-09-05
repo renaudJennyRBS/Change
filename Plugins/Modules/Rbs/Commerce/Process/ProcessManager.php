@@ -84,6 +84,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getCompatiblePaymentConnectors', [$this, 'onDefaultGetCompatiblePaymentConnectors'], 5);
 		$eventManager->attach('getShippingZones', [$this, 'onDefaultGetShippingZones'], 5);
 		$eventManager->attach('getShippingFee', [$this, 'onDefaultGetShippingFee'], 5);
+		$eventManager->attach('getShippingFeesEvaluation', [$this, 'onDefaultGetShippingFeesEvaluation'], 5);
 	}
 
 	/**
@@ -357,6 +358,128 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 					return;
 				}
 			}
+		}
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Commerce\Documents\Process $orderProcess
+	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @return array
+	 */
+	public function getShippingFeesEvaluation($orderProcess, $cart, $website)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart, 'website' => $website]);
+		$this->getEventManager()->trigger('getShippingFeesEvaluation', $this, $args);
+		if (isset($args['feesEvaluation']) && is_array($args['feesEvaluation']))
+		{
+			return $args['feesEvaluation'];
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetShippingFeesEvaluation(\Change\Events\Event $event)
+	{
+
+		$feesEvaluation = ['countries' => [], 'shippingModes' => []];
+		$cart = $event->getParam('cart');
+		$orderProcess = $event->getParam('orderProcess');
+		/** @var $website \Change\Presentation\Interfaces\Website */
+		$website = $event->getParam('website');
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices && $cart instanceof \Rbs\Commerce\Cart\Cart &&
+			$orderProcess instanceof \Rbs\Commerce\Documents\Process)
+		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$i18nManager = $event->getApplicationServices()->getI18nManager();
+			$priceManager = $commerceServices->getPriceManager();
+			$currencyCode = $cart->getCurrencyCode();
+			$zone = $cart->getZone();
+			$taxes = $cart->getTaxes();
+			if (!$currencyCode || !$zone || count($taxes) == 0)
+			{
+				$taxes = null;
+			}
+			if ($website)
+			{
+				$richTextContext = [
+					'website' => $website,
+					'currentURI' => $website->getUrlManager($i18nManager->getLCID())->getBaseUri()
+				];
+			}
+			else
+			{
+				$richTextContext = null;
+			}
+
+			$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
+			$billingArea = $cart->getBillingArea();
+			$priceOptions = ['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart];
+			foreach ($orderProcess->getShippingModes() as $shippingMode)
+			{
+				if (!$shippingMode->activated())
+				{
+					continue;
+				}
+
+				$countries = [];
+				foreach ($shippingMode->getDeliveryZones() as $deliveryZone)
+				{
+					$country = $deliveryZone->getCountry();
+					if ($country && $country->getAddressFields())
+					{
+						$countries[$country->getCode()] = $i18nManager->trans($country->getI18nTitleKey(), ['ucf']);
+					}
+				}
+
+				if (count($countries))
+				{
+
+					$feesEvaluation['countries'] = array_merge($feesEvaluation['countries'], $countries);
+					$shippingModeEntry = ['id' => $shippingMode->getId(), 'countries' => array_keys($countries),
+						'sku' => null, 'amount' => null, 'amountWithTax' => null,
+						'title' => $shippingMode->getCurrentLocalization()->getTitle(),
+						'description' => null];
+
+					if ($richTextContext)
+					{
+						$shippingModeEntry['description'] = $event->getApplicationServices()->getRichTextManager()->render($shippingMode->getCurrentLocalization()->getDescription(), 'Website', $richTextContext);
+					}
+
+					$fee = $this->getShippingFee($orderProcess, $cart, $shippingMode);
+					if ($fee && (($sku = $fee->getSku()) != null))
+					{
+						$shippingModeEntry['sku'] = $sku->getCode();
+						$price = $priceManager->getPriceBySku($sku, $priceOptions);
+						if ($price && $price->getValue())
+						{
+							$shippingTaxes = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode);
+							if ($price->isWithTax())
+							{
+								$shippingModeEntry['amountWithTax'] = $price->getValue();
+								$shippingModeEntry['amount'] = $priceManager->getValueWithoutTax($price->getValue(), $shippingTaxes);
+							}
+							else
+							{
+								$shippingModeEntry['amount'] = $price->getValue();
+								$shippingModeEntry['amountWithTax'] = $priceManager->getValueWithTax($price->getValue(), $shippingTaxes);
+							}
+						}
+					}
+					$feesEvaluation['shippingModes'][] = $shippingModeEntry;
+				}
+			}
+		}
+
+		if (count($feesEvaluation['countries']))
+		{
+			$event->setParam('feesEvaluation', $feesEvaluation);
 		}
 	}
 
