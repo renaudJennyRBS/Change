@@ -349,12 +349,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 							if (file_exists($resourceFilePath))
 							{
 								$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
-								if (substr($resourceFilePath, -4) === '.css')
-								{
-									$filter = new \Change\Presentation\Themes\CssVarFilter($theme->getCssVariables());
-									$asset->ensureFilter($filter);
-								}
-								elseif (substr($resourceFilePath, -5) === '.less')
+								if (substr($resourceFilePath, -5) === '.less')
 								{
 									$cacheDir = $this->getApplication()->getWorkspace()->cachePath('less');
 									\Change\Stdlib\File::mkdir($cacheDir);

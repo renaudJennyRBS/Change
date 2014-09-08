@@ -2,20 +2,20 @@
 	font-size: 1em;
 }
 .star-rating label{
-	color: var(main-light-text-color);
+	color: #999;
 }
 .star-rating label:hover{
-	color: var(main-link-color);
+	color: #9eb110;
 }
 .star-rating .selected label{
-	color: var(main-text-color);
+	color: #393a41;
 }
 .star-rating-display{
-	color: var(main-light-text-color);
+	color: #999;
 	letter-spacing: -0.4em;
 }
 .star-rating-display .full {
-	color: var(main-text-color);
+	color: #393a41;
 }
 
 .row-review-rating-average {
