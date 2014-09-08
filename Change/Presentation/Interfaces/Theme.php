@@ -84,9 +84,4 @@ interface Theme
 	 * @return string
 	 */
 	public function getResourceFilePath($resourcePath);
-
-	/**
-	 * @return array
-	 */
-	public function getCssVariables();
 }

@@ -32,6 +32,7 @@
 						"untouched": {"include_in_all": false, "index": "not_analyzed", "type": "string"}
 					}
 				},
+				"content": {"type": "string", "boost": 2, "analyzer": "custom_french_analyzer"},
 				"model": {"type": "string", "index": "not_analyzed"},
 				"startPublication": {"type": "date", "index": "not_analyzed"},
 				"endPublication": {"type": "date", "index": "not_analyzed"},

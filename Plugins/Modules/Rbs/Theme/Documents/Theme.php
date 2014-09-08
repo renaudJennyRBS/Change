@@ -179,7 +179,7 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 		$res = null;
 		if (substr($resourcePath, -4) === '.css')
 		{
-			$res = new \Rbs\Theme\Std\CssFileResource($path, $this->getCssVariables());
+			$res = new \Rbs\Theme\Std\CssFileResource($path, []);
 		}
 		if ($res === null)
 		{
@@ -193,30 +193,6 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 
 		$parentTheme = ($this->getParentTheme()) ? $this->getParentTheme() : $this->getThemeManager()->getDefault();
 		return $parentTheme->getResource($resourcePath);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getCssVariables()
-	{
-		if ($this->cssVariables === null)
-		{
-			$this->cssVariables = array();
-			$variablesRes = $this->getResourceFilePath('variables.json');
-			if (file_exists($variablesRes))
-			{
-				$variables = json_decode(\Change\Stdlib\File::read($variablesRes), true);
-				if (is_array($variables))
-				{
-					foreach ($variables as $name => $value)
-					{
-						$this->cssVariables['var(' . $name . ')'] = $value;
-					}
-				}
-			}
-		}
-		return $this->cssVariables;
 	}
 
 	/**

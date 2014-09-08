@@ -68,6 +68,15 @@ abstract class Index extends \Compilation\Rbs\Elasticsearch\Documents\Index impl
 	}
 
 	/**
+	 * @api
+	 */
+	public function resetConfiguration()
+	{
+		$config = $this->buildDefaultConfiguration();
+		$this->setConfigurationData($config);
+	}
+
+	/**
 	 * @return array
 	 */
 	protected function buildDefaultConfiguration()

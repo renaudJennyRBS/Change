@@ -314,12 +314,4 @@ class DefaultTheme implements Theme
 
 		return $configuration;
 	}
-
-	/**
-	 * @return array
-	 */
-	public function getCssVariables()
-	{
-		return [];
-	}
 }

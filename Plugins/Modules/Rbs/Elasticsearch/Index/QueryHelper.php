@@ -9,8 +9,6 @@
 namespace Rbs\Elasticsearch\Index;
 
 use Rbs\Elasticsearch\Facet\FacetManager;
-use Rbs\Elasticsearch\Index\IndexDefinitionInterface;
-use Rbs\Elasticsearch\Index\IndexManager;
 
 /**
 * @name \Rbs\Elasticsearch\Index\QueryHelper
@@ -97,12 +95,22 @@ class QueryHelper
 	/**
 	 * @param \Rbs\Catalog\Documents\ProductList $productList
 	 * @param integer $availableInWarehouseId
+	 * @param string $searchText
 	 * @return \Elastica\Query
 	 */
-	public function getProductListQuery($productList = null, $availableInWarehouseId = null)
+	public function getProductListQuery($productList = null, $availableInWarehouseId = null, $searchText = null)
 	{
 		$now = (new \DateTime())->format(\DateTime::ISO8601);
-		$multiMatch = new \Elastica\Query\MatchAll();
+		if ($searchText)
+		{
+			$multiMatch = new \Elastica\Query\MultiMatch();
+			$multiMatch->setQuery($searchText);
+			$multiMatch->setFields(array('title', 'content'));
+		}
+		else
+		{
+			$multiMatch = new \Elastica\Query\MatchAll();
+		}
 		$bool = new \Elastica\Filter\Bool();
 		$bool->addMust(new \Elastica\Filter\Range('startPublication', array('lte' => $now)));
 		$bool->addMust(new \Elastica\Filter\Range('endPublication', array('gt' => $now)));

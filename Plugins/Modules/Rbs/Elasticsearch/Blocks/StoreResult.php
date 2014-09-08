@@ -36,6 +36,7 @@ class StoreResult extends Block
 		$parameters->addParameterMeta('itemsPerPage', 9);
 		$parameters->addParameterMeta('showOrdering', true);
 		$parameters->addParameterMeta('showUnavailable', true);
+		$parameters->addParameterMeta('requiredSearchText', false);
 		$parameters->setNoCache();
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -48,6 +49,7 @@ class StoreResult extends Block
 		$parameters->addParameterMeta('facetFilters', null);
 		$parameters->addParameterMeta('indexId', null);
 		$parameters->addParameterMeta('commerceContext', []);
+		$parameters->addParameterMeta('searchText', null);
 
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber',
@@ -72,6 +74,15 @@ class StoreResult extends Block
 			return $parameters;
 		}
 		$parameters->setParameterValue('indexId', $storeIndex->getId());
+
+		if ($parameters->getParameter('requiredSearchText'))
+		{
+			$searchText = $event->getHttpRequest()->getQuery('searchText');
+			if (!\Change\Stdlib\String::isEmpty($searchText))
+			{
+				$parameters->setParameterValue('searchText', trim($searchText));
+			}
+		}
 
 		$ctx = $commerceServices->getContext();
 		$commerceContext = [];
@@ -242,9 +253,16 @@ class StoreResult extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		$indexId = $parameters->getParameter('indexId');
+
 		if (!$indexId)
 		{
 			return null;
+		}
+
+		$searchText = null;
+		if ($parameters->getParameter('requiredSearchText'))
+		{
+			$searchText = $parameters->getParameter('searchText');
 		}
 
 		$applicationServices = $event->getApplicationServices();
@@ -300,7 +318,7 @@ class StoreResult extends Block
 			$context['productListSortBy'] = $productList->getProductSortOrder() . '.' . $productList->getProductSortDirection();
 		}
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
-		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
+		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId, $searchText);
 		if (is_array($facetFilters) && count($facetFilters))
 		{
 			$facets = $storeIndex->getFacetsDefinition();

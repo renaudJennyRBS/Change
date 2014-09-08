@@ -114,6 +114,9 @@
 			"delete": {
 				"description": "delete index"
 			},
+			"default-configuration": {
+				"description": "restaure default configuration"
+			},
 			"facet-mapping": {
 				"description": "set facet mapping",
 				"shortcut": "f"

@@ -70,6 +70,25 @@ class Client
 							$indexDef = $indexManager->findIndexDefinitionByName($clientName, $indexName);
 							if ($indexDef)
 							{
+								if ($event->getParam('default-configuration')) {
+									if ($indexDef instanceof \Rbs\Elasticsearch\Documents\Index) {
+										$tm = $applicationServices->getTransactionManager();
+										try
+										{
+											$tm->begin();
+											$indexDef->resetConfiguration();
+											$indexDef->save();
+											$tm->commit();
+											$response->addInfoMessage('index: "' . $indexName . '" configuration reset');
+										}
+										catch (\Exception $e)
+										{
+											$tm->rollBack($e);
+											$response->addErrorMessage($e->getMessage());
+										}
+									}
+								}
+
 								if ($event->getParam('delete'))
 								{
 									$indexManager->deleteIndex($indexDef);
@@ -87,6 +106,7 @@ class Client
 										$response->addErrorMessage('index: "' . $indexName . '" not created');
 									}
 								}
+
 
 								if ($event->getParam('facet-mapping') || $event->getParam('create'))
 								{
